@@ -1796,7 +1796,8 @@ url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/s
 format intermagnet_dbdt
 origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
 compiler tools/harvest/src/bin/intermagnet_dbdt_compiler.rs
-at earth
+on earth 67.37 26.63 178
+station SOD
 ttl 86400
 field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
 
@@ -7239,6 +7240,12 @@ ttl 86400
 at earth
 hapi F=swarm_magnetic_field_intensity_nt
 field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_absolute_vertical_tec_tecu
+field swarm_absolute_vertical_tec_tecu swarm_absolute_vertical_tec_tecu inverse-square em TECU 86400 0.0 0.0
 
 url https://weather.uwyo.edu/wsgi/sounding?datetime={yesterday}%2000:00:00&id=72293&src=UNKNOWN&type=TEXT:CSV
 ttl 86400
