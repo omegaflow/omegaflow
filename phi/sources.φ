@@ -10288,6 +10288,19 @@ at earth
 ttl 604800
 field observable_hz pioneer10_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer11_odf.bin
+format pioneer11_odf
+origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER
+compiler tools/harvest/src/bin/pioneer11_odf_compiler.rs
+at earth
+field observable_hz pioneer11_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin
+format pioneer10_telemetry
+origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/TELEMETRY
+compiler tools/harvest/src/bin/pioneer_telemetry_compiler.rs
+at earth
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
 format atdf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/
@@ -15746,10 +15759,11 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nereid
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/ ; body vectors via JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 cca3d4cd47b9b1b94b18c2a01682ff71764aa99dcc35939420f05002a6d41312
 at new_horizons
 no-cadence
 
@@ -15949,17 +15963,19 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at vesta
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/ ; body vectors via JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 185f2c188115598aef5e56000b392e14d40935025a809bfda9ffd7e86dd1afd9
 at voyager1
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2.bin
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/ ; body vectors via JPL Horizons (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 dfaa08fc76b1fba7aed4c8a26a659c9f0187bd3f4d46bf2843be7996763c6b10
 at voyager2
 no-cadence
 
