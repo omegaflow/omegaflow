@@ -574,6 +574,7 @@ pub fn write_binary(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::archivar::motion::{CHEBYSHEV_N, chebyshev_evaluate};
     use crate::archivar::bsp_reader::daf::{DOUBLE_BYTES, DafFile, RECORD_BYTES};
     use crate::archivar::bsp_reader::spk::SpkFile;
 
