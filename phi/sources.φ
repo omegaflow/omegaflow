@@ -9210,6 +9210,14 @@ on earth 0 0 0
 ttl 604800
 field icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square em m 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.oceannetworks.ca/onc_hydrophone_psd.bin
+format onc_hydrophone_psd
+origin https://data.oceannetworks.ca/api/archivefiles?method=getListByLocation&token={OCEANNETWORKS_TOKEN}&locationCode=BACNH.H1&deviceCategoryCode=HYDROPHONE&dataProductCode=HSD
+compiler tools/harvest/src/bin/onc_hydrophone_compiler.rs
+at earth
+ttl 604800
+field onc_hydrophone_psd_db onc_hydrophone_psd_db gaussian-inverse-square acoustic dB 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
 origin https://doi.pangaea.de/10.1594/PANGAEA.758961?format=textfile
 compiler tools/harvest/src/bin/pangaea_harvester.rs

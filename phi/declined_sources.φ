@@ -1414,10 +1414,6 @@ decline static-archive
 url https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.csv
 note grind: grind_terrapulse_b.φ
 
-decline spectral-series
-url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
-note ONC Hydrophon — Schalldruck-Spektraldichte ist 1921-Bin-Serie (MATLAB-v5 miCOMPRESSED), kein Skalar-Feldblock; Reduktion = Band-Wahl (0-Kanon, NRS-Präzedenz). Parser mat5.rs existiert, Register traegt nur Skalare.
-
 decline superseded-by-integrated
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv
 note curl: curl: (28) Operation timed out after 12000 milliseconds with 5040954 bytes received Bereits integriert; dead war Duplikat/URL-Fragment.
