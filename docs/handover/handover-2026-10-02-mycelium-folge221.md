@@ -3,7 +3,7 @@
   session: Mycelium-Folge 221
   class: handover
   date: 2026-10-02
-  sha256: 821623199636657a13e23bfe5bab27576dd3f478ddb044c2a464b3b48d586f10
+  sha256: b2f34e8c843e624f8f92d586e2317d487d1f7e47e0d4ff022570fb5cf1340890
   status: live
 -->
 # Handover — Mycelium-Folge 221 (2026-10-02)
@@ -84,6 +84,20 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-09-30) kein Producer-Bin/Register/Wf.
 - **Blockade:** Producer fehlt
 - **Braucht:** kein Schritt zur Kante — erst ein Bau-Auftrag ändert den Zustand.
+
+### Weberin-Eignung — zweite Linie + Archiv-Route
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Done-Marker `state/stimmen/2026-10-02_weberin-archiv.done`
+- **Lage:** (gemessen 2026-10-02) `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` trägt die gemessene „zweite Linie"-Tafel (5 Größen; plus GLM-5.3-Nachtrag; GIC live `absent`, Archiv nur Tages-JPEG, Proxy IMAGE/Nurmijärvi) — **dieses Dokument wird von dieser Zeile getragen**. Live-Kampagne (`2026-10-02_weberin.*`) und Archiv-Kampagne (`2026-10-02_weberin-archiv.*`, PID 280135) laufen. **FMI-GIC-Anfrage 2026-10-02 durch den Operator gesendet** (Gegenüber: FMI, GIC recordings; Artefakt `state/mail/fmi-gic-request-2026-10-02.md`).
+- **Blockade:** Läufe in flight
+- **Braucht:** Archiv-Antworten ernten und jede URL per `--verdict` messen; FMI-Antwort abwarten.
+
+### `blocked_sources.φ` — 7 mycelium-`pending`-Portale ohne Arm (future-167/165)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** je Zeile (`phi/blocked_sources.φ`)
+- **Lage:** (gemessen 2026-10-02 via `register_lookup --orphans`) `:473` https://swarm-diss.eo.esa.int/ (Swarm TEC), `:477` https://gportal.jaxa.jp/, `:485` https://www.leos.ac.cn/, `:489` https://clpds.bao.ac.cn/, `:493` https://pds-geosciences.wustl.edu/missions/viking/gravity.html, `:497` https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/, `:501` https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv — HTTP 200/206, aber kein Daten-Endpoint/Arm gemessen.
+- **Blockade:** je Zeile (Arm/Reader fehlt)
+- **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
 
 ## Träger (Meta) — offene Prosadokumente ohne lebenden Owner-Träger
 
