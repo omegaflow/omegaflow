@@ -1037,9 +1037,15 @@ pub fn main_flow() {
         Ok(path) => path,
         Err(_) => "data/weberin_verdicts.bin".to_string(),
     };
-    let verdicts_shared: std::sync::Arc<std::sync::RwLock<Vec<VerdictLine>>> = std::sync::Arc::new(
-        std::sync::RwLock::new(load_weberin_verdicts(&verdicts_path)),
-    );
+    let station_verdicts_path = match std::env::var("OMEGAFLOW_WEBERIN_VERDICTS_STATION") {
+        Ok(path) => path,
+        Err(_) => "data/weberin_verdicts_station.bin".to_string(),
+    };
+    let verdicts_shared: std::sync::Arc<std::sync::RwLock<Vec<VerdictLine>>> =
+        std::sync::Arc::new(std::sync::RwLock::new(merge_verdict_lines(
+            &load_weberin_verdicts_or_cdn(&verdicts_path),
+            &load_weberin_verdicts_or_cdn(&station_verdicts_path),
+        )));
     register_verdicts_shared(verdicts_shared.clone());
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))

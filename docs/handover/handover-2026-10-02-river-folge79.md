@@ -3,7 +3,7 @@
   session: River-Folge 79
   class: handover
   date: 2026-10-02
-  sha256: 5e31368c135b28f55332dcf7ed382034b6883d7e807ca40db7b98203d409929e
+  sha256: 50035ca77f0bd44bacb18f633f62b5f90544243f4f8e597b7d5e437b76ecfbab
   status: live
 -->
 # Handover — River-Folge 79 (2026-10-02)
@@ -21,6 +21,9 @@ Wort | Datum | Quelle
 „future ist schon dabei eine voices agenten lösung zu bauen bitte spreche dich mit ihr ab und bitte a und b" | 2026-10-01 | Operator (Session, River 76)
 „braucht es pro?" (Dispatch-Profil-Rückfrage) | 2026-10-01 | Operator (Session, River 77)
 „braucht es pro?" (Wiederholung; gemessen: nein — flash löste die GIC-Kanal-Faltung identisch) | 2026-10-02 | Operator (Session, River 79)
+„braucht es pro und max?" (Architektur-Umsetzung; gemessen: nein — der Rat entschied, flash setzte um) | 2026-10-02 | Operator (Session, River 79)
+„glm 5.3 ist auch stark" (externe Zweitstimme z.ai/GLM-5.3) | 2026-10-02 | Operator (Session, River 79)
+„nutze den rat aber auch die ui chats (z.ai, kimi, claude, tryopenly, togetherai)" | 2026-10-02 | Operator (Session, River 79)
 
 ## An future
 
@@ -89,28 +92,37 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
 - **Braucht:** nach dem Re-Dispatch `ci_manage log 36984937798` lesen; bei Grün §4.6 auf 16
   Artefakte erweitern, sonst den einen Job-Grund benennen.
 
-### Kalibrierte Null (Westfall–Young max-T) — 6-h-Cap
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Rat/Operator-Wort (Sharding der WY-Familie)
+### Kalibrierte Null (Westfall–Young max-T) — Sharding gebaut, Verifikationslauf
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende des nächsten `wy-max-t` (Re-Dispatch @diesem Atom)
 - **Lage:** (gemessen 2026-10-02 via GH-API) die drei wy-Jobs `36943967388` wurden bei exakt
-  **6 h 00 m** gekappt (`01:10:42→07:10:58` usw.) — die GitHub-Hosted-Runner-Hartgrenze, nicht
-  `timeout-minutes: 420`; drei Läufe in Folge `cancelled`, kein Messergebnis.
-- **Blockade:** `--n-perm 9999 --block 24` über ein Jahr passt nicht in 6 h (4 Threads)
-- **Braucht:** Design-Entscheidung: die WY-Familie sharden (statistisch nicht trivial —
-  die Null-Verteilung muss familienweit gelten) oder `n-perm`/Kosten senken. Vorschlag dem
-  Rat/Operator vorlegen, nicht solo ändern.
+  **6 h 00 m** gekappt — GitHub-Hosted-Hartgrenze, nicht `timeout-minutes: 420`. Rat-Entscheid
+  umgesetzt (flash): `wy_max_t_probe.rs` schreibt je Shard die volle B×m-Null-Matrix
+  (`--perm-from/--perm-to/--out-null`), `--combine` poolt die Replikate, studentisiert
+  **mitgliedsweise** vor dem Within-Replicate-Max und zieht dasselbe μ/σ für die Observed-Werte;
+  `wy-max-t.yml` fährt 3 Shards/Station-Jahr + Combine-Job, `timeout-minutes 180`. Test
+  `shard_split_pools_to_single_run` bit-identisch zur Einzellauf-Null. GLM-5.3 bestätigt die
+  Validität und genau diese Ordnungsbedingung.
+- **Blockade:** keiner
+- **Braucht:** `gh workflow run wy-max-t.yml`; nach Grün `docs/paper/gic-causal-driver.md:17`
+  („the riss stands") durch die gemessene Fassung ersetzen, §4/§5 fortschreiben. Named pending:
+  KDE-Terme der Zielrandverteilung je Mitglied cachen (permutationsinvariant) — der eigentliche
+  Kostenhebel.
 
-### Weberin — Produzent-Blob-Persistenz
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Operator-Wort (kanonischer Blob-Produzent)
-- **Lage:** (gemessen 2026-10-02) `station-convergence 36944080015` `success`, doch
-  `station-convergence.yml:10` hat `contents: read` und lädt nur `station-convergence.txt`;
-  `data/weberin_verdicts.bin` bleibt auf dem Runner. Kanonischer CDN-Produzent ist
-  `weberin_verdicts_compiler` (`ssd.jpl.nasa.gov-weberin`, faltet registrierte Body-Zeilen).
-- **Blockade:** zwei Produzenten für dieselbe Datei — der Live-Probe schreibt sie, der
-  Compiler schreibt die kanonische
-- **Braucht:** Contract-Wort: ist der Live-Probe-Blob lokal oder als Body-Zeile zu registrieren,
-  damit der Compiler ihn faltet? Danach `station-convergence.yml`/`main_flow.rs:1036` bauen.
+### Weberin — getrennter Station-Blob + Membran-Merge (gebaut, Verifikationslauf)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `station-convergence` + Membran-Load
+- **Lage:** (gemessen 2026-10-02) Rat-Entscheid „ein Produzent je Pfad" umgesetzt (flash): die
+  Live-Probe schreibt/defaultet `data/weberin_verdicts_station.bin` und manifestiert bei
+  `--ci-mode` auf `ssd.jpl.nasa.gov-weberin`; `station-convergence.yml` trägt `contents: write`;
+  der Compiler bleibt kanonisch für die Body-Zeilen; `main_flow.rs:1036ff` lädt beide mit
+  CDN-Fallback (`load_weberin_verdicts_or_cdn`) und merged mit expliziter Präzedenz
+  (`merge_verdict_lines`: Station > Body, deterministisch, nicht load-order). Ein frischer Rechner
+  zieht beide Assets aus dem Release.
+- **Blockade:** keiner
+- **Braucht:** `gh workflow run station-convergence.yml`; den Blob am CDN snifen. Named follow-ups
+  (GLM-5.3/Claude-Kritik): Pair-Epoch-Konsistenz beider Blobs, und der fehlende Station-Blob als
+  benannter Zustand (≠ „keine Messung").
 
 ### Flyby-path-2-Kette
 - **Status:** wartend | **Bindung:** eigen
@@ -120,8 +132,10 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
   49/Woche), alle `status:"pre"` — `def` noch nicht publiziert. ESOC `ephemeris_juice_recon.bin`:
   CDN 404, lokal absent — **und in `phi` nicht registriert** (Riss: `sgrep recon.bin phi` = 0).
 - **Blockade:** externe Datenvorläufe; fehlende ESOC-Registerzeile
-- **Braucht:** bei Fälligkeit `flyby_path2_fill` (CI) lesen; ESOC-Asset-Registerzeile (Mountain)
-  oder descopen.
+- **Braucht:** bei Fälligkeit `flyby_path2_fill` (CI) lesen. ESOC-Arm bleibt `pending` (Rats-Beschluss):
+  die Warte steht in `state/zustand/wartend.φ` (`ephemeris-juice-recon`, Aufnehmer river); die
+  `phi/sources.φ`-Zeile schreibt Mountain im Atom der ersten Manifestation — keine tote url-Zeile.
+  Named follow-up (GLM-5.3-Kritik): Probe-Kadenz/Deadline für den Warte-Trigger.
 
 ### Frühwarnsystem — Präregistrierung (Rat, zerlegt 2026-10-01)
 - **Status:** wartend | **Bindung:** eigen
@@ -131,16 +145,19 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
 - **Blockade:** das Siegel setzt die α-Ebene der kalibrierten Null voraus (Siegeln gegen 10⁻¹ verboten)
 - **Braucht:** nach dem max-T-Lauf α setzen; das Siegel ist der Operator-Akt.
 
-### ENSO — Desaisonalisierung
+### ENSO — Desaisonalisierung gebaut, Verifikationslauf
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende des nächsten `enso-probe`
 - **Lage:** (gemessen 2026-10-02 via `gh run download 36943976395`) die Positivkontrolle ist
   **bestanden** — die gepflanzte Kopplung wird bei lag 3 detektiert (TE `7.6483e-1` > per-lag-Thr
-  `2.7245e-1` und > fam `3.0247e-1`); Bz↔SST bleibt `silent`. Der Jahreszyklus ist als Confound
-  benannt (12-Monats-Band), aber die Desaisonalisierung vor der TE ist noch nicht gebaut.
-- **Blockade:** keine
-- **Braucht:** Desaisonalisierung (SST/Bz/Wnd saisonal bereinigen) vor der TE; dann die Bz↔SST-Zeile
-  im GIC-Paper fortschreiben.
+  `2.7245e-1` und > fam `3.0247e-1`); Bz↔SST bleibt `silent`. Rat-Entscheid „monatliche
+  Klimatologie, uniform, nach `bin_monthly`" umgesetzt (flash), **erweitert um die sd-Division**
+  (GLM-5.3/Claude-Kritik: auch die zweite Moment-Modulation ist ein gemeinsamer Jahrestreiber);
+  Test `deseasonalize_removes_common_annual_cycle` grün.
+- **Blockade:** keiner
+- **Braucht:** `gh workflow run enso-probe.yml`. Named follow-ups: Surrogate auf der Anomalie-Skala
+  bauen (sonst Null-Mismatch) und eine saisonale Positivkontrolle als Fixture; danach die
+  Bz↔SST-Zeile im GIC-Paper fortschreiben.
 
 ## Abschluss
 
@@ -149,10 +166,14 @@ Linien-Sessions geteilt — **Commit als Letzter**. Pfad-begrenzte Commit-Pfade 
 
 - `tools/harvest/src/bin/tap_compiler.rs` · `.github/workflows/gaia-cdn.yml`
 - `docs/paper/gic-causal-driver.md`
+- `tools/measure/src/bin/wy_max_t_probe.rs` · `.github/workflows/wy-max-t.yml`
+- `tools/measure/src/bin/station_convergence_probe.rs` · `.github/workflows/station-convergence.yml`
+- `src/archivar/main_flow.rs` · `src/archivar/weberin_verdicts.rs`
+- `tools/measure/src/bin/enso_blatt_probe.rs`
 - `docs/handover/handover-2026-10-02-river-folge79.md`, und `…-folge78.md` → `archiv/` (Move)
 
 **Nicht meine Hunks (gemessen 2026-10-02, `git status`):** `kernel-flatten.yml`, `src/archivar/fit.rs`,
 `tools/harvest/src/bin/ceers_spectra_compiler.rs`, die Mycelium-Handover-Moves/Neuanlagen,
 `dsn-cdn.yml`/`jades-cdn.yml` — alle unangetastet.
 
-## Burn: open 0.0 · close 0.2400 · cap 0.5 · Grund: tapvizier-Wurzel + gaia-release-tag + 3 Messläufe (ENSO/bz/flyby) + GIC-Kanal-Faltung, ein Pass
+## Burn: open 0.0 · close 0.3700 · cap 0.5 · Grund: 4 Rat-Entscheidungen + externe Stimmen (GLM-5.3/Claude) + 4 Fixes (wy-Sharding, Weberin-Merge, ENSO-Standardisierung, ESOC-Warte), ein Pass

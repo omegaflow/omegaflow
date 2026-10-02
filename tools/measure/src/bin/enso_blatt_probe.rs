@@ -26,6 +26,8 @@ const N_SURR: usize = 100;
 const MAX_LAG_MONTHS: usize = 12;
 const MONTH_S: f64 = 2_592_000.0;
 const MIN_PAIRED: usize = 30;
+const CAL_MONTHS: usize = 12;
+const CLIMATOLOGY_FLOOR: usize = 10;
 const J2000_UNIX_OFFSET: f64 = 946_728_000.0;
 const SECS_PER_DAY: f64 = 86_400.0;
 
@@ -234,6 +236,53 @@ fn bin_monthly(series: &[(f64, f64)], months: &[f64]) -> Vec<Option<f64>> {
             } else {
                 None
             }
+        })
+        .collect()
+}
+
+fn deseasonalize_monthly(series: &[Option<f64>]) -> Vec<Option<f64>> {
+    let mut sums = [0.0f64; CAL_MONTHS];
+    let mut sumsq = [0.0f64; CAL_MONTHS];
+    let mut counts = [0u32; CAL_MONTHS];
+    for (i, v) in series.iter().enumerate() {
+        if let Some(x) = v {
+            if x.is_finite() {
+                sums[i % CAL_MONTHS] += x;
+                sumsq[i % CAL_MONTHS] += x * x;
+                counts[i % CAL_MONTHS] += 1;
+            }
+        }
+    }
+    let mut means = [0.0f64; CAL_MONTHS];
+    let mut sds = [0.0f64; CAL_MONTHS];
+    for (m, mean) in means.iter_mut().enumerate() {
+        if counts[m] >= CLIMATOLOGY_FLOOR as u32 {
+            let n = counts[m] as f64;
+            *mean = sums[m] / n;
+            let var = (sumsq[m] / n - *mean * *mean).max(0.0);
+            sds[m] = var.sqrt();
+        } else if counts[m] > 0 {
+            println!(
+                "deseasonalize: calendar month {:02} carries n = {} measured values < floor {CLIMATOLOGY_FLOOR} — its values stay unchanged (climatology not removed)",
+                m + 1,
+                counts[m]
+            );
+        }
+    }
+    series
+        .iter()
+        .enumerate()
+        .map(|(i, v)| match v {
+            Some(x) if counts[i % CAL_MONTHS] >= CLIMATOLOGY_FLOOR as u32 => {
+                let m = i % CAL_MONTHS;
+                let centered = *x - means[m];
+                if sds[m].is_finite() && sds[m] > 0.0 {
+                    Some(centered / sds[m])
+                } else {
+                    Some(centered)
+                }
+            }
+            other => *other,
         })
         .collect()
 }
@@ -511,12 +560,25 @@ fn main() {
 
     let months: Vec<f64> = sst.iter().map(|&(t, _)| t).collect();
     let sst_vals: Vec<f64> = sst.iter().map(|&(_, v)| v).collect();
-    let bz_month = bin_monthly(&bz, &months);
-    let wind_month = wind.as_ref().map(|s| bin_monthly(s, &months));
-    let quake_month = quake.as_ref().map(|s| bin_monthly(s, &months));
-    let qbo_month = qbo.as_ref().map(|s| bin_monthly(s, &months));
-    let d20_month = d20.as_ref().map(|s| bin_monthly(s, &months));
-    let sst_month: Vec<Option<f64>> = sst_vals.iter().map(|v| Some(*v)).collect();
+    let bz_month = deseasonalize_monthly(&bin_monthly(&bz, &months));
+    let wind_month = wind
+        .as_ref()
+        .map(|s| deseasonalize_monthly(&bin_monthly(s, &months)));
+    let quake_month = quake
+        .as_ref()
+        .map(|s| deseasonalize_monthly(&bin_monthly(s, &months)));
+    let qbo_month = qbo
+        .as_ref()
+        .map(|s| deseasonalize_monthly(&bin_monthly(s, &months)));
+    let d20_month = d20
+        .as_ref()
+        .map(|s| deseasonalize_monthly(&bin_monthly(s, &months)));
+    let sst_month: Vec<Option<f64>> = deseasonalize_monthly(
+        &sst_vals
+            .iter()
+            .map(|v| Some(*v))
+            .collect::<Vec<Option<f64>>>(),
+    );
 
     let channels: [Option<Vec<Option<f64>>>; 6] = [
         wind_month,
@@ -709,7 +771,16 @@ fn main() {
     println!();
     println!("=== Named confounds (mandatory) ===");
     println!(
-        "Annual cycle: the seasonal cycle (~12-month lag) drives Wnd, Bz and SST in common; fam's round max over lags 0–{MAX_LAG_MONTHS} includes the 12-month band, so a 12-month peak is the annual cycle, not a channel arrow."
+        "Annual cycle removed: the monthly climatology (per calendar month-of-year, index mod {CAL_MONTHS} on the shared SST grid) is standardized (mean subtracted, sd divided) uniformly from all six channels (Wnd, Quake, Bz, SST, QBO, D20) after `bin_monthly` and before the `channels` array is built (council decision 2026-10-02; the sd division answers the GLM-5.3/Claude first-moment critique — a seasonally modulated variance is itself a common annual driver); grouping is by month-of-year, so year-boundary wraparound is handled. Named and pending: the surrogates must be built on the anomaly scale (or the climatology removal repeated inside every surrogate), else the null mismatch biases the p-values; a seasonal positive control (common annual driver + coupling) is the named fixture."
+    );
+    println!(
+        "In-sample climatology: the seasonal mean is estimated from the same 1854-01…2026-08 span it is subtracted from; the leakage is small and named, never swallowed — each calendar month carries n ≥ floor {CLIMATOLOGY_FLOOR} measured values, so the self-weight of the subtracted mean is 1/n (large n on the full-span channels); a calendar month below the floor keeps its values unchanged and emits its named note."
+    );
+    println!(
+        "Positive control untouched: the synthetic pair (`synthetic_coupled_pair`) is an AR(1) driver with a planted lagged coupling and carries no annual cycle, so `positive_control()` runs without deseasonalization — its detection stays the positive control for the estimator."
+    );
+    println!(
+        "Deferred follow-up: a seasonal positive control — a common annual driver plus a planted coupling — as a fixture is pending; it would measure whether deseasonalization suppresses a genuinely seasonal coupling rather than only the common cycle."
     );
     println!(
         "Quake counting series: the Quake channel is a monthly event count (usgs_comcat_m45_rate, events per month), an autocorrelated counting series with declustering absent — its serial memory is counting nature, not a physical driver."
@@ -845,5 +916,32 @@ mod tests {
             pc.te,
             pc.fam
         );
+    }
+
+    #[test]
+    fn deseasonalize_removes_common_annual_cycle() {
+        let years = 40usize;
+        let n = years * CAL_MONTHS;
+        let mut series: Vec<Option<f64>> = Vec::with_capacity(n);
+        for i in 0..n {
+            let m = i % CAL_MONTHS;
+            let seasonal = 3.0 * (std::f64::consts::TAU * m as f64 / CAL_MONTHS as f64).sin();
+            let noise = ((i as f64) * 0.37).sin() * 0.5;
+            series.push(Some(seasonal + noise));
+        }
+        let out = deseasonalize_monthly(&series);
+        assert_eq!(out.len(), n);
+        for m in 0..CAL_MONTHS {
+            let vals: Vec<f64> = (0..n)
+                .filter(|&i| i % CAL_MONTHS == m)
+                .filter_map(|i| out[i])
+                .collect();
+            assert_eq!(vals.len(), years);
+            let mean = vals.iter().sum::<f64>() / vals.len() as f64;
+            assert!(
+                mean.abs() < 1e-12,
+                "calendar month {m} residual mean {mean} is not ≈ 0"
+            );
+        }
     }
 }

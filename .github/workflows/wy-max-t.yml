@@ -11,33 +11,97 @@ permissions:
 env:
   RUSTFLAGS: -D warnings
 jobs:
-  wy:
+  wy-selftest:
     runs-on: ubuntu-latest
-    timeout-minutes: 420
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the Westfall-Young max-T selftest
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT selftest"
+            cargo run --release -p omegaflow-measure --bin wy_max_t_probe -- --selftest --n-perm 300 --block 1 --threads 4
+          } > "wy-max-t-selftest.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wy-max-t-selftest
+          path: wy-max-t-selftest.txt
+
+  wy-shards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
         include:
-          - point: selftest
-            args: --selftest --n-perm 300 --block 1 --threads 4
           - point: abk-2024
-            args: --station ABK --hour-start 2024-01-01 --hour-end 2024-12-31 --n-perm 9999 --block 24 --threads 4
+            args: --station ABK --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
           - point: abk-2025
-            args: --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31 --n-perm 9999 --block 24 --threads 4
+            args: --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31 --block 24 --threads 4
           - point: sod-2024
-            args: --station SOD --hour-start 2024-01-01 --hour-end 2024-12-31 --n-perm 9999 --block 24 --threads 4
+            args: --station SOD --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
+        shard:
+          - id: 0
+            from: 0
+            to: 3333
+          - id: 1
+            from: 3333
+            to: 6666
+          - id: 2
+            from: 6666
+            to: 9999
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Run the Westfall-Young max-T permutation
+      - name: Run the Westfall-Young max-T shard
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
-            echo "POINT ${{ matrix.point }}"
-            cargo run --release -p omegaflow-measure --bin wy_max_t_probe -- ${{ matrix.args }}
-          } > "wy-max-t-${{ matrix.point }}.txt"
+            echo "POINT ${{ matrix.point }} SHARD ${{ matrix.shard.id }}"
+            cargo run --release -p omegaflow-measure --bin wy_max_t_probe -- ${{ matrix.args }} --n-perm 9999 --perm-from ${{ matrix.shard.from }} --perm-to ${{ matrix.shard.to }} --out-null "null-${{ matrix.point }}-${{ matrix.shard.id }}.bin"
+          } > "wy-max-t-${{ matrix.point }}-${{ matrix.shard.id }}.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: wy-max-t-${{ matrix.point }}
-          path: wy-max-t-${{ matrix.point }}.txt
+          name: wy-null-${{ matrix.point }}-${{ matrix.shard.id }}
+          path: |
+            null-${{ matrix.point }}-${{ matrix.shard.id }}.bin
+            wy-max-t-${{ matrix.point }}-${{ matrix.shard.id }}.txt
+
+  wy-combine:
+    needs: wy-shards
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: abk-2024
+            args: --station ABK --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
+          - point: abk-2025
+            args: --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31 --block 24 --threads 4
+          - point: sod-2024
+            args: --station SOD --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the shard null matrices
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wy-null-${{ matrix.point }}-*
+          merge-multiple: true
+      - name: Combine the shards into the pooled family bound
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }} COMBINE"
+            cargo run --release -p omegaflow-measure --bin wy_max_t_probe -- ${{ matrix.args }} --n-perm 9999 --combine null-${{ matrix.point }}-*.bin
+          } > "wy-max-t-${{ matrix.point }}-combined.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wy-max-t-${{ matrix.point }}-combined
+          path: wy-max-t-${{ matrix.point }}-combined.txt
