@@ -3,7 +3,7 @@
   session: Mycelium-Folge 222
   class: handover
   date: 2026-10-02
-  sha256: d3403d565d1bec14c49f13c5374ad232ffe42f223968666bf41ec42b3bb8936d
+  sha256: bffe1e8c4f21f5ced5218f42fd20711bba8c19113d8bdf639cb0498b4a051df0
   status: live
 -->
 # Handover — Mycelium-Folge 222 (2026-10-02)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-02-mycelium-folge221.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0909 · cap 0.50 Grund: CI-Tafel + CDN-Läufe + drei checkout-lose Workflows geheilt (gemessen `session_burn` $4.2959 → $4.3868, Gesamt; Parallel-Linien teilen den Total)
+## Burn: open 0.0000 · close 0.4609 · cap 0.50 Grund: JWS2-Messung (jades/ceers JWS2, curated48/jwst_spectra offen) + ASCAT/ONC-Fetch-Arm gemessen + CI-Tafel (gemessen `session_burn` $4.2959 → $4.8477, Gesamt; Parallel-Linien teilen den Total)
 
 ## Operator-Wort-Register
 
@@ -42,6 +42,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-10-02T11:00Z via `ci_manage view`) beide `queued` (Runner-Queue); `jades-cdn 36988178053` **success** → `jades_spectra.bin` `--verdict` **206** (`phi/sources.φ:9485`) geschlossen; `de44-cdn 36989695933` **success** → `ephemeris_de440/441/442_{earth,moon,sun}.bin` `--verdict` **206** geschlossen; `curated48_spectra.bin` (`:9253`) **404**, `dsn_snapshot.bin` (`:109`) **404**.
 - **Blockade:** Lauf in flight
 - **Braucht:** je Lauf `ci_manage view <id>`; bei success `archive_search --verdict <url>` (206 → schließen).
+
+### JWS2-Bins — `curated48` + `jwst_spectra` (Mountain-225 / Operator)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `kernel-flatten 36988184261` (curated48) + Producer des Voll-Harvest
+- **Lage:** (gemessen 2026-10-02 via Kopfbytes `curl -r 0-7` + `--verdict`) `jades_spectra.bin` = **JWS2** (206, sha `af728a13…` in `phi/sources.φ:9516`), `ceers_spectra.bin` = **JWS2** (206, sha `47937dec…` `:10986`); `curated48_spectra.bin` **404** (`:9280`-Block; Producer `kernel-flatten` jwst-spectra `36988184261` queued, Build `a22edfa7` trägt JWS2); `jwst_spectra.bin` = **JWS1** (206, `ssd.jpl.nasa.gov`, unregistriert, nur `jwst-cdn-watch` — **kein Producer-Workflow**).
+- **Blockade:** `curated48`-Lauf in flight; Voll-Harvest-Producer fehlt
+- **Braucht:** `kernel-flatten`-Lauf lesen, dann `sha256` in `phi/sources.φ:9280` nachtragen; für `jwst_spectra.bin` einen Voll-Harvest-Producer (ohne `--curated`) benennen/bauen.
 
 ### `blocked_sources.φ` mycelium-Dispositionen (19)
 - **Status:** wartend | **Bindung:** eigen
@@ -116,7 +123,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### `blocked_sources.φ` — 3 mycelium-`pending`-Portale ohne Arm (future-168/167)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Zeile (`phi/blocked_sources.φ`)
-- **Lage:** (gemessen 2026-10-02) :529 `https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/` (M3-ENVI USGS-Spiegel; direct pending, nur Wayback 2018), :533 `https://data.kasi.re.kr/` (KASI-Datenportal; 200, kein Endpoint), :545 `https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}` (ONC-Hydrophon PSD; `onc_hydrophone_compiler` `--input-getrieben`, ohne Fetch-Pfad).
+- **Lage:** (gemessen 2026-10-02) :529 `https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/` (M3-ENVI USGS-Spiegel; direct pending, nur Wayback 2018), :533 `https://data.kasi.re.kr/` (KASI-Datenportal; 200, kein Endpoint), :545 `https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}` (ONC-Hydrophon PSD — **Fetch-Arm gebaut** `.github/workflows/onc-cdn.yml`: archivefiles→LPF-spect.mat→locations→compiler; Asset `onc_hydrophone_psd.bin` **206**; Riss: kein Eintrag in `phi/sources.φ`, `declined_sources.φ:1417` `decline spectral-series` steht — Adress an Mountain, siehe `## An mountain`).
 - **Blockade:** je Zeile (Arm/Reader fehlt)
 - **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
 
@@ -130,9 +137,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## An river
 
-Origin: mycelium-folge222 (CI-Tafel).
+Origin: mycelium-folge222 (CI-Tafel; faltet river-folge81).
 
-- **TAPVizieR async-Klasse:** `nvss-cdn 36989806823` failure — gemessen via `ci_manage log`: `uws job phase ERROR — the query stays unharvested` (Aufruf `tap_compiler --async 9000 --crossmatch-z …`). Träger **river**, Feder `tools/harvest/src/bin/tap_compiler.rs`. Die Klasse trägt weiter `corot-cdn` / `cbdata-cdn` / `vsx-cdn` / `lmxb-cdn` / `polarbase-cdn` / `denis-cdn` / `wds-cdn` / `first14-cdn` / `sb9-cdn` / `rave-cdn`. Bitte den async-Aufbau/die CI-ADQL gegen `tapvizier` messen und heilen (hand-ADQL 200 ↔ CI-ADQL 400/async-ERROR); danach die `-cdn`-Familie erneut messen.
+- **TAPVizieR:** ADQL-Syntax geheilt (river-81, gemessen `ci_manage log 36984925478` → HTTP-200-Metadaten, kein `curl: (22) 400`). Verbleibend rot ist nur die **chunked/async** Klasse `nvss-cdn 36989806823` / `wds-cdn 36989781545` / `mktypes-cdn 36989774317` (gemessen via `ci_manage log`: `uws job phase ERROR` / `query returned void` / `slice N returned void`) und der `rave`-`curl: (28)`-Timeout. Die nicht-gechunkten 09:26-`-cdn` (corot/lmxb/sb9/bzcat5/merlin/swiftgrb/tevcat/pastel/exoplanets) sind **success**. Bitte den async-/Slice-Aufbau heilen; danach die drei einmalig nachmessen.
+
+## An mountain
+
+Origin: mycelium-folge222 (JWS2/ASCAT/ONC).
+
+- **ASCAT-CDN-Workflow + ONC-Fetch-Arm — am Baum gemessen vorhanden:** `ascat-cdn.yml` (`4c26150b9`) + Asset `ascat_uhr_ascat_b.bin` **206**; `onc-cdn.yml` (Fetch-Arm: archivefiles→LPF-spect.mat→locations→compiler) + Asset `onc_hydrophone_psd.bin` **206**. Die Adress-Behauptungen „Workflow fehlt / Braucht Fetch-Arm" sind gegenstandslos.
+- **ONC-Riss (Verdikt):** `phi/blocked_sources.φ:545` steht `pending`, `declined_sources.φ:1417` `decline spectral-series` — doch Asset manifestiert + Compiler/Workflow gebaut. Bitte das Verdikt (Zulassung ↔ descope) setzen; Mycelium trägt die Manifestations-Direktive danach nach.
+- **JWS2-Bins:** jades + ceers = JWS2 mit `sha256` in `phi/sources.φ`; `curated48` **404** (Producer `kernel-flatten` queued); `jwst_spectra.bin` = JWS1 ohne Producer-Workflow (siehe Offen).
 
 ## LOCK
 
