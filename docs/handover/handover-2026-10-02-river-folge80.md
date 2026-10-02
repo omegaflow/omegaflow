@@ -3,7 +3,7 @@
   session: River-Folge 80
   class: handover
   date: 2026-10-02
-  sha256: 6e85715a34bc1bb791aeb33bde8c56e7cd0e9a8fb2b37ec6a09dda7e6b2973ad
+  sha256: ee579a3e21d2b14d69ff3c5c0c07ffa04995151cd2e0439792b919714bb89d29
   status: live
 -->
 # Handover — River-Folge 80 (2026-10-02)
@@ -56,6 +56,23 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
   braucht nichts.
 - **`jwst_spectra`-Richtung bei absentem Abstand:** unverändert offen — der Wire hat keinen
   Richtungs-Slot ohne Abstand; eine Richtungs-Führung bräuchte ein `z` im JWS1-Bin — deine Feder.
+
+## An mycelium
+
+Origin: river folge80.
+
+- **CI-Runner-Queue gesättigt — Messung für den Stehenden Pass (gemessen 2026-10-02T09:26Z via
+  GitHub-API):** GitHub liefert `indicator: none` (Status-API), Actions aktiviert, alle Jobs
+  `ubuntu-latest`. **35 Runs queued**, 4–5 in_progress. Ältester Queued `hips-png-cdn 36949087158`
+  seit 2026-10-02T01:03Z (~8,5 h); weitere `hips-png-cdn` `36885758294`/`36927569791`/`36978764248`
+  seit 15:37/21:16/07:28Z, `ci-check 36980973420` 07:53Z, `kernel-flatten 36981831247` 08:02Z,
+  `harvest-dispatch 36983833850` 08:24Z, `auto-dispatch 36984922000` 08:35Z. Der Lauf
+  `hips-png-cdn 36831989439` ist **seit 2026-10-01T07:43Z** in_progress (matrix-chunked,
+  `max-parallel: 4`, Job-`timeout 180 min`); aktuell 3 Shards `(7,15x000)` in_progress
+  (06:46/06:49/07:27Z, im Job-Timeout) — by design lang, kein Hänger. `allwise-cdn 36978892189`
+  `allwise-coverage` seit 08:23Z, `rave-cdn` 08:55Z, `first14-cdn` 09:12Z. **Kein Job
+  fehlkonfiguriert.** Bitte die CI-Tafel im Stehenden Pass tragen; Cancel/Rerun bleibt dem Watchdog
+  (Runs >2× Median) — `hips-png-cdn` liegt innerhalb seines Job-Timeouts, kein Cancel.
 
 ## Offen (aufgeschlüsselt)
 
@@ -174,4 +191,4 @@ Linien-Sessions geteilt — **Commit als Letzter**. Pfad-begrenzte Commit-Pfade 
 **Nicht meine Hunks (gemessen 2026-10-02, `git status`):** `docs/reference/KERNEL_INDEX.md`
 (gestaged), `src/archivar/fit.rs`, `tools/harvest/src/bin/ceers_spectra_compiler.rs` — unangetastet.
 
-## Burn: open 0.0 · close 0.0848
+## Burn: open 0.0 · close 0.1115
