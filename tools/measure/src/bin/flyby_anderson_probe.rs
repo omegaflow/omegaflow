@@ -11,6 +11,7 @@ const DEFAULT_DE: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
 const DEFAULT_INPOP: &str = "data/ftp.imcce.fr/ephemeris_inpop_earth.bin";
 const DEFAULT_EPM: &str = "data/ftp.iaaras.ru/ephemeris_epm_earth.bin";
 const EARTH: &str = "earth";
+const FIRST_ROW_REF_S: f64 = 86_400.0;
 
 fn arg_str(args: &[String], flag: &str) -> Option<String> {
     args.iter()
@@ -248,15 +249,34 @@ fn main() {
 
     let mut house: Vec<HouseLine> = Vec::with_capacity(lines.len());
     let mut t_prev: Option<f64> = None;
-    for l in &lines {
+    for (i, l) in lines.iter().enumerate() {
         let t_tdb = lsk.as_ref().and_then(|lsk| lsk.unix_to_tdb(l.t_utc));
         let anomaly = flyby_anomaly_mm_s(l);
-        let prev = house.last();
-        let dt_prev = match (t_tdb, t_prev) {
-            (Some(t), Some(tp)) if t > tp => Some(t - tp),
-            _ => None,
+        let h = if i == 0 {
+            match t_tdb {
+                Some(t) => {
+                    let reference =
+                        house_line(&de, &inpop, &epm, Some(t - FIRST_ROW_REF_S), None, None, None);
+                    house_line(
+                        &de,
+                        &inpop,
+                        &epm,
+                        t_tdb,
+                        anomaly,
+                        Some(&reference),
+                        Some(FIRST_ROW_REF_S),
+                    )
+                }
+                None => house_line(&de, &inpop, &epm, t_tdb, anomaly, None, None),
+            }
+        } else {
+            let prev = house.last();
+            let dt_prev = match (t_tdb, t_prev) {
+                (Some(t), Some(tp)) if t > tp => Some(t - tp),
+                _ => None,
+            };
+            house_line(&de, &inpop, &epm, t_tdb, anomaly, prev, dt_prev)
         };
-        let h = house_line(&de, &inpop, &epm, t_tdb, anomaly, prev, dt_prev);
         println!(
             "t_utc {} — meas {} mm/s, pred {} mm/s, anomaly {} mm/s | tdot_max {} mm/s | {}",
             l.t_utc,
