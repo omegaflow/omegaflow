@@ -3,7 +3,7 @@
   session: River-Folge 82
   class: handover
   date: 2026-10-02
-  sha256: e323e1ba8dcd689927100c8e024b16cd87ae82ec3250ad67c9a75aa916b1885b
+  sha256: 0a0015bfe39db7ef01d32f4cfd07605abecbfd9505a75bc06aa2179879997b63
   status: live
 -->
 # Handover — River-Folge 82 (2026-10-02)
@@ -78,6 +78,22 @@ Origin: river folge82 (Auftrag des Operators, 2026-10-02).
   Thermik-Konsens hält, wahrscheinlichster Ausgang „keine Entscheidung am Floor".
   **Zahlen-Korrektur:** die zitierte Vorlage „133/218 Hz" trägt der Baum nicht — er trägt
   160–340 Hz Quiet-Day-Streuung und 57,7/105 Hz post-Mask-RMS (`probe-front-dark-matter.md:516,541`).
+- **ESA/ESOC ist die zweite, unabhängige Zeugenlinie (gemessen 2026-10-02).** Hoffmann &
+  Budnik 2026 („Rosetta Earth Flyby Anomaly Revisited", Proc. 30th ISSFD, arXiv:2609.23482,
+  `--verdict` HTTP 206) rechnen Rosettas 2005-Vorbeiflug mit **ESOCs eigenem
+  Orbit-Determination-System** auf den originären radiometrischen Tracking-Daten
+  (2-Weg-Doppler + Range; ESTRACK NNO1 + DSN Goldstone/Madrid). Ihre Table 1 listet weitere
+  Nicht-NASA-Flybys: BepiColombo 2020-04-10 `0`, Solar Orbiter 2021-11-27 `0`, JUICE I
+  2024-08-20 `0,10 ± 0,6` mm/s — eine agency-unabhängige Rekonstruktionslinie, nicht NASA-DSN.
+  **Riss:** die Rohdaten sind **nicht öffentlich** (kein Data-Availability-Statement; PSA
+  Rosetta RSI nur EAR2/2007, EAR1/2005 fehlt; BepiColombo MORE `release 2099`; Solar Orbiter
+  kein Radio-Science-Produkt; Hayabusa2/Chang'e 5-T1 kein Tracking). Eigenständige Nachrechnung
+  braucht eine ESOC-Datenanfrage (per-Akt-Wort, Operator-Hand) — neben dem bestehenden
+  JPL-Entwurf `state/mail/dsn-jpl-odf-request.md`.
+- **`rosetta_odf` trägt keine ODF (Name ≠ Implementation).** Das registrierte Rosetta-Bin
+  trägt Felder `carrier_level_dbm`/`polar_angle_cycles` — RSI **IFMS Closed-Loop AGC**, keine
+  Bodenstations-Doppler/Range; der Formatname `rosetta_odf` ist irreführend. Mountain-Verdikt:
+  umbenennen oder als IFMS führen.
 
 ## An mycelium
 
