@@ -47,6 +47,7 @@ pub mod des_y6;
 pub mod dl3;
 pub mod double;
 pub mod drs_fits;
+pub mod dsn;
 pub mod eea;
 pub mod eels;
 pub mod emc;

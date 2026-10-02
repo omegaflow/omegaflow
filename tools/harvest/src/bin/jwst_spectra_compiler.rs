@@ -2,8 +2,8 @@ use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 use omegaflow::jwst::{
-    JwstSpectrum, bins_from_jwst_rows, finalize_workdir, ledger_append, ledger_done, mjd_to_unix,
-    parse_jwst_bin, write_sidecar,
+    JwstSpectrum, bins_from_jwst_rows, collect_table, finalize_workdir, fits_spectrum_rows,
+    ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin, write_sidecar,
 };
 use omegaflow::lsk::parse as parse_lsk;
 use std::io::Write;
@@ -357,144 +357,6 @@ fn angular_distance_deg(a_ra: f64, a_dec: f64, b_ra: f64, b_dec: f64) -> f64 {
     let (s_b, c_b) = b_dec.to_radians().sin_cos();
     let cos_ang = s_a * s_b + c_a * c_b * d_ra.cos();
     cos_ang.acos().to_degrees()
-}
-
-struct TablePickup {
-    axis: Vec<f64>,
-    flux_rows: Vec<Vec<f64>>,
-    dq_rows: Vec<Option<Vec<i64>>>,
-}
-
-fn collect_table(t: &FitsTable, bytes: &[u8]) -> Option<TablePickup> {
-    let wl_col = t.column("WAVELENGTH")?;
-    let flux_col = t.column("FLUX")?;
-    let dq_col = t.column("DQ");
-    if wl_col.repeat <= 1 {
-        let mut axis = Vec::with_capacity(t.n_rows);
-        let mut flux = Vec::with_capacity(t.n_rows);
-        let mut dq_row: Option<Vec<i64>> = None;
-        for r in 0..t.n_rows {
-            axis.push(t.cell_f64(bytes, r, wl_col)?);
-            flux.push(t.cell_f64(bytes, r, flux_col)?);
-            if let Some(c) = dq_col {
-                dq_row
-                    .get_or_insert_with(|| Vec::with_capacity(t.n_rows))
-                    .push(t.cell_i64(bytes, r, c)?);
-            }
-        }
-        return Some(TablePickup {
-            axis,
-            flux_rows: vec![flux],
-            dq_rows: vec![dq_row],
-        });
-    }
-    let mut axis: Option<Vec<f64>> = None;
-    let mut flux_rows = Vec::with_capacity(t.n_rows);
-    let mut dq_rows = Vec::with_capacity(t.n_rows);
-    for r in 0..t.n_rows {
-        let wl = t.cell_array_f64(bytes, r, wl_col)?;
-        let flux = t.cell_array_f64(bytes, r, flux_col)?;
-        if wl.len() != flux.len() || wl.is_empty() {
-            return None;
-        }
-        let dq = match dq_col {
-            Some(c) => {
-                let d = t.cell_array_i64(bytes, r, c)?;
-                if d.len() != wl.len() {
-                    return None;
-                }
-                Some(d)
-            }
-            None => None,
-        };
-        match &axis {
-            None => axis = Some(wl),
-            Some(a) => {
-                if a.len() != wl.len() {
-                    return None;
-                }
-                for (x, y) in a.iter().zip(wl.iter()) {
-                    if (x - y).abs() / x.max(1e-30) > 1e-9 {
-                        return None;
-                    }
-                }
-            }
-        }
-        flux_rows.push(flux);
-        dq_rows.push(dq);
-    }
-    Some(TablePickup {
-        axis: axis?,
-        flux_rows,
-        dq_rows,
-    })
-}
-
-fn median(vals: &mut Vec<f64>) -> f64 {
-    vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-    let n = vals.len();
-    if n % 2 == 1 {
-        vals[n / 2]
-    } else {
-        (vals[n / 2 - 1] + vals[n / 2]) * 0.5
-    }
-}
-
-fn reduce_table(pickup: TablePickup, name: &str) -> Option<Vec<(f64, f64)>> {
-    let n = pickup.axis.len();
-    let mut out = Vec::with_capacity(n);
-    for i in 0..n {
-        let wl = pickup.axis[i];
-        if !wl.is_finite() || wl <= 0.0 {
-            continue;
-        }
-        let mut vals = Vec::with_capacity(pickup.flux_rows.len());
-        for (r, f) in pickup.flux_rows.iter().enumerate() {
-            if let Some(Some(dq)) = pickup.dq_rows.get(r) {
-                if dq[i] & 1 != 0 {
-                    continue;
-                }
-            }
-            let v = f[i];
-            if v.is_finite() && v > 0.0 {
-                vals.push(v);
-            }
-        }
-        if vals.is_empty() {
-            continue;
-        }
-        out.push((wl, median(&mut vals)));
-    }
-    if out.is_empty() {
-        eprintln!("{}: no valid bins — the spectrum stays void", name);
-        return None;
-    }
-    Some(out)
-}
-
-fn fits_spectrum_rows(bytes: &[u8], name: &str) -> Option<Vec<(f64, f64)>> {
-    let mut off = 0usize;
-    if let Some((_, data_end)) = FitsHeader::parse(bytes, 0) {
-        off = data_end;
-    }
-    let mut all: Vec<(f64, f64)> = Vec::new();
-    while off + 80 <= bytes.len() {
-        let Some((t, next)) = FitsTable::parse(bytes, off) else {
-            break;
-        };
-        if let Some(pickup) = collect_table(&t, bytes) {
-            if let Some(reduced) = reduce_table(pickup, name) {
-                all.extend(reduced);
-            }
-        }
-        off = next;
-    }
-    if all.is_empty() {
-        None
-    } else {
-        all.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-        Some(all)
-    }
 }
 
 fn probe_fits(path: &str) {

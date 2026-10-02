@@ -259,6 +259,23 @@ pub struct NamedSeries {
 }
 
 pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
+    if format == "dsn_snapshot" {
+        let (rows, names) = dsn::series_parse(bytes)?;
+        let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
+        return Some(NamedSeries {
+            rows: rows
+                .into_iter()
+                .map(|(t, value, comp)| SeriesRow {
+                    t,
+                    value,
+                    comp,
+                    freq,
+                    bin_width,
+                })
+                .collect(),
+            names,
+        });
+    }
     let (names, raw_rows) = match format {
         "pds3_fixed_width" => {
             let table = pds3_table::parse_table(bytes)?;
@@ -843,6 +860,11 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "ersstv5_nino34" => match comp {
             crate::geo::COMP_ERSSTV5 => Some("ersstv5_nino34_ssta"),
+            _ => None,
+        },
+        "ascat_wind" => match comp {
+            crate::geo::COMP_ASCAT_WSPD => Some("ascat_wind_speed_m_s"),
+            crate::geo::COMP_ASCAT_WDIR => Some("ascat_wind_direction_deg"),
             _ => None,
         },
         _ => None,
