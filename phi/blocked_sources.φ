@@ -528,11 +528,11 @@ note Planck Legacy Archive WebUI (ESA) — 2026-10-02 HTTP 206 (1 B, direct), JS
 
 pending
 url https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/
-note M3-ENVI USGS-Spiegel (Chandrayaan-1 M3) — 2026-10-02 direct pending (kein Response, auch Proton), nur Wayback 2018-08-24; Mirror-Kandidat zur ip-blocked-Zeile 469, lebende Route ungemessen. future-folge168.
+note M3-ENVI USGS-Spiegel (Chandrayaan-1 M3) — 2026-10-02 direct+Proton kein Response, nur Wayback 2018-08-24; Arm pds3_img_compiler gebaut (:13), WUSTL-Asset present (6aa0eb1f…); offen bleibt die lebende JPL/USGS-Route. future-folge168.
 
 pending
 url https://data.kasi.re.kr/
-note KASI-Datenportal (Danuri/KPLO) — 2026-10-02 HTTP 200 (11409 B); Portal, kein Daten-Endpoint/Arm gemessen; pda.kasi.re.kr bleibt blocked account (Zeile 448). future-folge168.
+note KASI Science Data Portal (Danuri/KPLO) — 2026-10-02 HTTP 200 (11409 B); die Seite verlinkt eine Data-APIs-Doku (Confluence), Endpoint ungemessen; pda.kasi.re.kr bleibt blocked account (448). Braucht: API-Doc messen. future-folge168.
 
 descoped
 url https://shadowcam.sese.asu.edu/
