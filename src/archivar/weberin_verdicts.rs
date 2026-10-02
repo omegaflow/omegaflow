@@ -182,6 +182,48 @@ pub fn load_weberin_verdicts(path: &str) -> Vec<VerdictLine> {
     }
 }
 
+pub const WEBERIN_RELEASE_TAG: &str = "ssd.jpl.nasa.gov-weberin";
+
+pub fn load_weberin_verdicts_or_cdn(path: &str) -> Vec<VerdictLine> {
+    if let Ok(bytes) = std::fs::read(path) {
+        return parse_weberin_verdicts(&bytes);
+    }
+    if !path.starts_with("data/") {
+        return Vec::new();
+    }
+    let Some(basename) = std::path::Path::new(path)
+        .file_name()
+        .and_then(|n| n.to_str())
+    else {
+        return Vec::new();
+    };
+    let url = format!(
+        "{}/{}/{}",
+        crate::archivar::cdn::cdn_base(),
+        WEBERIN_RELEASE_TAG,
+        basename
+    );
+    let Some(bytes) = fetch_raw_bytes(&url) else {
+        return Vec::new();
+    };
+    if let Some(parent) = std::path::Path::new(path).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    let _ = std::fs::write(path, &bytes);
+    parse_weberin_verdicts(&bytes)
+}
+
+pub fn merge_verdict_lines(body: &[VerdictLine], station: &[VerdictLine]) -> Vec<VerdictLine> {
+    let mut merged = body.to_vec();
+    for line in station {
+        match merged.iter_mut().find(|l| l.name == line.name) {
+            Some(slot) => *slot = line.clone(),
+            None => merged.push(line.clone()),
+        }
+    }
+    merged
+}
+
 pub fn riss_bodies(lines: &[VerdictLine]) -> Vec<&VerdictLine> {
     lines
         .iter()
@@ -377,5 +419,66 @@ mod tests {
         assert_eq!(live.len(), 2);
         assert!(live.iter().all(|l| l.name != "apophis"));
         assert_eq!(live_verdicts(&lines, None).len(), 3);
+    }
+
+    #[test]
+    fn merge_replaces_a_same_named_body_line_with_the_station_line() {
+        let body = vec![
+            VerdictLine {
+                name: "station-ABK".into(),
+                word: VerdictWord::Absent,
+                knot: [None, None],
+                sep: None,
+                weave_epoch: 1.0,
+            },
+            VerdictLine {
+                name: "ceres".into(),
+                word: VerdictWord::Placed,
+                knot: [None, None],
+                sep: Some(2.5e4),
+                weave_epoch: 1.0,
+            },
+        ];
+        let station = vec![VerdictLine {
+            name: "station-ABK".into(),
+            word: VerdictWord::Riss,
+            knot: [
+                Some(WitnessLine::Station(StationLine::IntermagnetGround)),
+                Some(WitnessLine::Station(StationLine::SwarmOverflight)),
+            ],
+            sep: Some(9.19e3),
+            weave_epoch: 2.0,
+        }];
+        let merged = merge_verdict_lines(&body, &station);
+        assert_eq!(merged.len(), 2);
+        let abk = merged
+            .iter()
+            .find(|l| l.name == "station-ABK")
+            .expect("station line");
+        assert_eq!(abk.word, VerdictWord::Riss);
+        assert_eq!(abk.weave_epoch, 2.0);
+        assert!(merged.iter().any(|l| l.name == "ceres"));
+    }
+
+    #[test]
+    fn merge_unions_distinct_names() {
+        let body = vec![VerdictLine {
+            name: "ceres".into(),
+            word: VerdictWord::Placed,
+            knot: [None, None],
+            sep: Some(2.5e4),
+            weave_epoch: 1.0,
+        }];
+        let station = vec![VerdictLine {
+            name: "station-ABK".into(),
+            word: VerdictWord::Absent,
+            knot: [None, None],
+            sep: None,
+            weave_epoch: 2.0,
+        }];
+        let merged = merge_verdict_lines(&body, &station);
+        assert_eq!(merged.len(), 2);
+        assert!(merged.iter().any(|l| l.name == "ceres"));
+        assert!(merged.iter().any(|l| l.name == "station-ABK"));
     }
 }

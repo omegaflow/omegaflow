@@ -76,6 +76,53 @@ fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
         .map(|s| s.as_str())
 }
 
+fn args_after_all(args: &[String], flag: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    if let Some(i) = args.iter().position(|a| a == flag) {
+        for a in &args[i + 1..] {
+            if a.starts_with("--") {
+                break;
+            }
+            out.push(a.clone());
+        }
+    }
+    out
+}
+
+fn write_null_matrix(path: &str, nulls: &[Vec<f64>]) -> bool {
+    let m = nulls.first().map_or(0, |row| row.len());
+    let mut bytes = Vec::with_capacity(nulls.len() * m * 8);
+    for row in nulls {
+        for &v in row.iter() {
+            bytes.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    std::fs::write(path, bytes).is_ok()
+}
+
+fn read_null_matrix(path: &str, m_expected: usize) -> Option<Vec<Vec<f64>>> {
+    let bytes = std::fs::read(path).ok()?;
+    if bytes.len() % 8 != 0 || m_expected == 0 {
+        return None;
+    }
+    let total = bytes.len() / 8;
+    if total % m_expected != 0 {
+        return None;
+    }
+    let b = total / m_expected;
+    let mut out = Vec::with_capacity(b);
+    for r in 0..b {
+        let mut row = Vec::with_capacity(m_expected);
+        for c in 0..m_expected {
+            let i = (r * m_expected + c) * 8;
+            let arr: [u8; 8] = bytes[i..i + 8].try_into().ok()?;
+            row.push(f64::from_le_bytes(arr));
+        }
+        out.push(row);
+    }
+    Some(out)
+}
+
 fn disk_cache(name: &str) -> String {
     cache_root()
         .join("bz_retro")
@@ -499,7 +546,8 @@ fn prepare_members(raw: &[Vec<f32>]) -> Vec<Member> {
 
 fn null_matrix(
     members: &[Member],
-    n_perm: usize,
+    perm_from: usize,
+    perm_to: usize,
     block: usize,
     mode: ResampleMode,
     seed: u64,
@@ -512,13 +560,17 @@ fn null_matrix(
         Some(member) => member.target.len(),
         None => return Vec::new(),
     };
-    let mut nulls: Vec<Vec<f64>> = vec![vec![f64::NAN; m]; n_perm];
-    let workers = threads.min(n_perm);
-    let chunk = (n_perm + workers - 1) / workers;
+    let count = perm_to.saturating_sub(perm_from);
+    let mut nulls: Vec<Vec<f64>> = vec![vec![f64::NAN; m]; count];
+    if count == 0 {
+        return nulls;
+    }
+    let workers = threads.min(count);
+    let chunk = (count + workers - 1) / workers;
     std::thread::scope(|s| {
         let mut handles = Vec::new();
         for (ti, slice) in nulls.chunks_mut(chunk).enumerate() {
-            let start = ti * chunk;
+            let start = perm_from + ti * chunk;
             handles.push(s.spawn(move || {
                 let mut buf = vec![0f32; n];
                 for (off, row) in slice.iter_mut().enumerate() {
@@ -628,39 +680,14 @@ fn quantile(sorted: &[f64], alpha: f64) -> Option<f64> {
     Some(sorted[idx.saturating_sub(1).min(b - 1)])
 }
 
-fn run_family(
-    members: &[Member],
-    times: &[f64],
-    n_perm: usize,
-    block: usize,
-    alpha: f64,
-    seed: u64,
-    threads: usize,
-    mode: ResampleMode,
-) {
-    let n = members[0].target.len();
-    let mode_name = match mode {
-        ResampleMode::Driver => "driver-bootstrap (seasonal block, month/hour matched)",
-        ResampleMode::Condition => "condition-permutation (block)",
-    };
-    println!(
-        "family: K = {} declared (index-hash dedup of {} candidate (pair,lag) statistics) | n = {} | B = {} | resample = {} | block = {} | alpha = {} | seed = {}",
-        FAMILY_K,
-        FAMILY_K * 2,
-        n,
-        n_perm,
-        mode_name,
-        block,
-        alpha,
-        seed
-    );
-    println!(
-        "construction: rank-Gauss per channel before the TE; one resample of the driver dependence is shared across the K statistics per draw; each statistic is studentized and bias-corrected against its own null."
-    );
-    let mut observed: Vec<Option<f64>> = Vec::with_capacity(members.len());
-    for m in members {
-        observed.push(transfer_entropy_lag(&m.target, &m.driver, m.lag));
-    }
+fn observed_family(members: &[Member]) -> Vec<Option<f64>> {
+    members
+        .iter()
+        .map(|m| transfer_entropy_lag(&m.target, &m.driver, m.lag))
+        .collect()
+}
+
+fn print_observed(members: &[Member], observed: &[Option<f64>]) {
     for (m, te) in members.iter().zip(observed.iter()) {
         match te {
             Some(v) => println!("observed {} | lag {} | TE {}", m.label, m.lag, v),
@@ -677,27 +704,23 @@ fn run_family(
         })
         .fold(0.0, f64::max);
     println!("lag-0/1 identity check (max |TE(lag0) - TE(lag1)|): {lag1_delta:.4e}");
+}
 
-    let (buckets, pos_bucket) = phase_data(times);
-    let nulls = null_matrix(
-        members,
-        n_perm,
-        block,
-        mode,
-        seed,
-        threads,
-        &buckets,
-        &pos_bucket,
-    );
-    let sigma = sigma_per_statistic(&nulls);
-    let null_means = null_means_per_statistic(&nulls);
+fn report_family_partition(
+    members: &[Member],
+    observed: &[Option<f64>],
+    nulls: &[Vec<f64>],
+    alpha: f64,
+) {
+    let sigma = sigma_per_statistic(nulls);
+    let null_means = null_means_per_statistic(nulls);
     for (m, s) in members.iter().zip(sigma.iter()) {
         match s {
             Some(s) => println!("sigma {} = {s:.4e}", m.label),
             None => println!("sigma {} absent — the null carries no spread", m.label),
         }
     }
-    let stud_null = studentized_maxima(&nulls, &sigma);
+    let stud_null = studentized_maxima(nulls, &sigma);
     let mut finite: Vec<f64> = stud_null
         .iter()
         .copied()
@@ -785,6 +808,69 @@ fn run_family(
     );
 }
 
+fn run_family(
+    members: &[Member],
+    times: &[f64],
+    perm_from: usize,
+    perm_to: usize,
+    block: usize,
+    alpha: f64,
+    seed: u64,
+    threads: usize,
+    mode: ResampleMode,
+    out_null: Option<&str>,
+) {
+    let n = members[0].target.len();
+    let count = perm_to.saturating_sub(perm_from);
+    let mode_name = match mode {
+        ResampleMode::Driver => "driver-bootstrap (seasonal block, month/hour matched)",
+        ResampleMode::Condition => "condition-permutation (block)",
+    };
+    println!(
+        "family: K = {} declared (index-hash dedup of {} candidate (pair,lag) statistics) | n = {} | B = {} | replicates [{}..{}) | resample = {} | block = {} | alpha = {} | seed = {}",
+        FAMILY_K,
+        FAMILY_K * 2,
+        n,
+        count,
+        perm_from,
+        perm_to,
+        mode_name,
+        block,
+        alpha,
+        seed
+    );
+    println!(
+        "construction: rank-Gauss per channel before the TE; one resample of the driver dependence is shared across the K statistics per draw; each statistic is studentized and bias-corrected against its own null."
+    );
+    let observed = observed_family(members);
+    print_observed(members, &observed);
+
+    let (buckets, pos_bucket) = phase_data(times);
+    let nulls = null_matrix(
+        members,
+        perm_from,
+        perm_to,
+        block,
+        mode,
+        seed,
+        threads,
+        &buckets,
+        &pos_bucket,
+    );
+    if let Some(path) = out_null {
+        if write_null_matrix(path, &nulls) {
+            println!(
+                "null matrix written: {path} | rows = {} | m = {} (NaN rows kept)",
+                nulls.len(),
+                members.len()
+            );
+        } else {
+            println!("{path} writes void — the null matrix stays unwritten");
+        }
+    }
+    report_family_partition(members, &observed, &nulls, alpha);
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let selftest = args.iter().any(|a| a == "--selftest");
@@ -828,6 +914,19 @@ fn main() {
         }
     };
     let gpd = args.iter().any(|a| a == "--gpd");
+    let perm_from = match arg_after(&args, "--perm-from").and_then(|v| v.parse::<usize>().ok()) {
+        Some(v) => v,
+        None => 0,
+    };
+    let perm_to = arg_after(&args, "--perm-to")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(n_perm);
+    let out_null = arg_after(&args, "--out-null").map(|s| s.to_string());
+    let combine_paths = args_after_all(&args, "--combine");
+    if combine_paths.is_empty() && perm_to <= perm_from {
+        println!("replicate range [{perm_from}..{perm_to}) is empty — no measurement");
+        return;
+    }
 
     println!("=== Westfall-Young max-T permutation probe (Bz / L1 drivers -> dB/dt) ===");
     if let Some(now) = now_unix() {
@@ -875,12 +974,14 @@ fn main() {
         run_family(
             &members,
             &times,
+            0,
             n_perm.min(400),
             block,
             alpha,
             seed,
             threads,
             mode,
+            out_null.as_deref(),
         );
         return;
     }
@@ -968,14 +1069,151 @@ fn main() {
     println!(
         "seed derivation: round = {round} | station = {station} | year = {year} | seed = {seed}"
     );
+
+    if !combine_paths.is_empty() {
+        let mut pooled: Vec<Vec<f64>> = Vec::new();
+        for path in &combine_paths {
+            match read_null_matrix(path, members.len()) {
+                Some(rows) => {
+                    println!("pooled shard {path}: {} replicates", rows.len());
+                    pooled.extend(rows);
+                }
+                None => {
+                    println!(
+                        "{path} reads void — the pooled null stays incomplete; no measurement"
+                    );
+                    return;
+                }
+            }
+        }
+        println!(
+            "combine: pooled B = {} | m = {} | alpha = {} | seed = {} (shards carried the same seed and global replicate indices)",
+            pooled.len(),
+            members.len(),
+            alpha,
+            seed
+        );
+        let observed = observed_family(&members);
+        print_observed(&members, &observed);
+        report_family_partition(&members, &observed, &pooled, alpha);
+        return;
+    }
+
     run_family(
         &members,
         &aligned_times,
-        n_perm,
+        perm_from,
+        perm_to,
         block,
         alpha,
         seed,
         threads,
         mode,
+        out_null.as_deref(),
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn bits_eq(a: &[Vec<f64>], b: &[Vec<f64>]) -> bool {
+        a.len() == b.len()
+            && a.iter().zip(b.iter()).all(|(ra, rb)| {
+                ra.len() == rb.len()
+                    && ra
+                        .iter()
+                        .zip(rb.iter())
+                        .all(|(x, y)| x.to_bits() == y.to_bits())
+            })
+    }
+
+    #[test]
+    fn shard_split_pools_to_single_run() {
+        let n = 240usize;
+        let n_perm = 300usize;
+        let block = 1usize;
+        let mut state = 0x1234_5678_9ABC_DEF0u64;
+        let ch = synthetic_channels(n, 0.5, 4, &mut state);
+        let members = prepare_members(&ch);
+        assert_eq!(members.len(), FAMILY_K);
+        let epoch = iso_to_unix("2024-01-01T00:00:00Z").expect("epoch");
+        let times: Vec<f64> = (0..n).map(|i| epoch + i as f64 * HOUR).collect();
+        let (buckets, pos_bucket) = phase_data(&times);
+        let seed = 0xDEAD_BEEF_1234_5678u64;
+
+        let full = null_matrix(
+            &members,
+            0,
+            n_perm,
+            block,
+            ResampleMode::Driver,
+            seed,
+            4,
+            &buckets,
+            &pos_bucket,
+        );
+        assert_eq!(full.len(), n_perm);
+
+        let bounds = [n_perm / 3, 2 * n_perm / 3];
+        let mut shards: Vec<Vec<Vec<f64>>> = Vec::new();
+        let mut lo = 0usize;
+        for &hi in &bounds {
+            shards.push(null_matrix(
+                &members,
+                lo,
+                hi,
+                block,
+                ResampleMode::Driver,
+                seed,
+                4,
+                &buckets,
+                &pos_bucket,
+            ));
+            lo = hi;
+        }
+        shards.push(null_matrix(
+            &members,
+            lo,
+            n_perm,
+            block,
+            ResampleMode::Driver,
+            seed,
+            4,
+            &buckets,
+            &pos_bucket,
+        ));
+
+        let dir = std::env::temp_dir();
+        let mut pooled: Vec<Vec<f64>> = Vec::new();
+        for (si, shard) in shards.iter().enumerate() {
+            let path = dir.join(format!("wy_max_t_probe_shard_{si}.bin"));
+            let p = path.to_string_lossy().into_owned();
+            assert!(write_null_matrix(&p, shard));
+            let back = read_null_matrix(&p, members.len()).expect("read");
+            assert!(bits_eq(shard, &back));
+            pooled.extend(back);
+            let _ = std::fs::remove_file(&path);
+        }
+        assert!(
+            bits_eq(&full, &pooled),
+            "pooled shards equal the single run"
+        );
+
+        let sigma_full = sigma_per_statistic(&full);
+        let sigma_pool = sigma_per_statistic(&pooled);
+        let max_full = studentized_maxima(&full, &sigma_full);
+        let max_pool = studentized_maxima(&pooled, &sigma_pool);
+        assert!(
+            max_full
+                .iter()
+                .zip(max_pool.iter())
+                .all(|(a, b)| a.to_bits() == b.to_bits())
+        );
+        let mut f_full: Vec<f64> = max_full.iter().copied().filter(|v| v.is_finite()).collect();
+        let mut f_pool: Vec<f64> = max_pool.iter().copied().filter(|v| v.is_finite()).collect();
+        f_full.sort_by(|a, b| a.total_cmp(b));
+        f_pool.sort_by(|a, b| a.total_cmp(b));
+        assert!(bits_eq(&[f_full], &[f_pool]));
+    }
 }
