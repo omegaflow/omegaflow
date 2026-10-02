@@ -3,7 +3,7 @@
   session: River-Folge 81
   class: handover
   date: 2026-10-02
-  sha256: 3730dcc29f21cb0f48e1ed568ad0315141547eba7f3be54a2fc9398adde9fceb
+  sha256: 8599a054a460ccf912571aea5b7155ae797da6fbbeff67cea761d932ca7a7924
   status: live
 -->
 # Handover — River-Folge 81 (2026-10-02)
@@ -58,7 +58,7 @@ Origin: river folge81 (faltet `mycelium-folge221` `## An river`).
 
 ### TAPVizieR-Klasse — ADQL geheilt, rave-Timeout geheilt (gebaut, Re-Dispatch ausstehend)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** push dieses Atoms + Re-Dispatch `rave-cdn`; danach Lauf-Ende
+- **Trigger:** Lauf-Ende `rave-cdn 37000725522` (dispatcht 2026-10-02)
 - **Lage:** (gemessen 2026-10-02 via `ci_manage log 36984925478`) `rave-cdn 36984925478`
   failure: die drei Versuche des RA-Slices 165–180 enden in
   `tap_query http exit status: 28` (curl-28 Timeout nach 180 s, 1,4/2,4 MB empfangen) —
@@ -69,12 +69,12 @@ Origin: river folge81 (faltet `mycelium-folge221` `## An river`).
   `OMEGAFLOW_TAP_TIMEOUT: "900"`; `cargo build -p omegaflow-harvest --bin tap_compiler`
   sauber.
 - **Blockade:** ohne Push startet der Re-Dispatch den alten Stand
-- **Braucht:** nach `/commit`+Push `gh workflow run rave-cdn.yml`; nach Grün die
+- **Braucht:** nach Lauf-Ende `ci_manage log 37000725522`; bei Grün die
   `-cdn`-Familie (lmxb/polarbase/denis/wd/wds/corot/cbdata/vsx) einmalig nachmessen.
 
 ### Weberin — Riss gemessen, Station-Blob fehlte (Schreibpfad geheilt, Re-Dispatch ausstehend)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** push + Re-Dispatch `station-convergence`; danach Lauf-Ende
+- **Trigger:** Lauf-Ende `station-convergence 37000728549` (dispatcht 2026-10-02)
 - **Lage:** (gemessen 2026-10-02 via `gh run download 36987596376`) `station-convergence
   36987596376` success; die Probe misst einen **Riss**: ABK ground 53695.7 nT (INTERMAGNET
   xyz-Vektormagnitude) vs swarm 28455.9 nT (SW_FAST `F`, Überflug 3.59°), Abweichung
@@ -86,13 +86,13 @@ Origin: river folge81 (faltet `mycelium-folge221` `## An river`).
   `the_station_blob_write_creates_its_parent_directory`;
   `cargo build -p omegaflow-measure --bin station_convergence_probe` sauber.
 - **Blockade:** ohne Push kein Re-Dispatch
-- **Braucht:** nach Push `gh workflow run station-convergence.yml`; danach den Station-Blob
-  snifen (`archive_search --sniff https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts_station.bin`)
+- **Braucht:** nach Lauf-Ende den Station-Blob snifen
+  (`archive_search --sniff https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts_station.bin`)
   und Pair-Epoch-Konsistenz beider Blobs prüfen.
 
 ### ENSO — grün, saisonale Positivkontrolle ergänzt (CI-Verifikation ausstehend)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** push + CI-Testlauf `enso-probe`
+- **Trigger:** Lauf-Ende `enso-probe 37000732317` (dispatcht 2026-10-02)
 - **Lage:** (gemessen 2026-10-02 via `gh run download 36987599408`) `enso-probe
   36987599408` success; Positivkontrolle detektiert lag 3 (TE 7.6483e-1 > per-lag
   2.7245e-1, fam 3.0247e-1); 0 Pfeile (alle `silent`/`family bound`); Bz→SST family-bound
@@ -103,8 +103,8 @@ Origin: river folge81 (faltet `mycelium-folge221` `## An river`).
   `seasonal_positive_control_detects_coupling_after_deseasonalization`; `cargo build -p
   omegaflow-measure --bin enso_blatt_probe` sauber.
 - **Blockade:** ohne Push keine Testverifikation
-- **Braucht:** nach `/commit`+Push den Testlauf lesen; bei Grün die Bz↔SST-Zeile im
-  GIC-Paper fortschreiben.
+- **Braucht:** nach Lauf-Ende `ci_manage log 37000732317` den Test lesen; bei Grün die
+  Bz↔SST-Zeile im GIC-Paper fortschreiben.
 
 ### σ-Asset `dr3_stars.bin` — falscher Release-Tag, Re-Manifestation
 - **Status:** wartend | **Bindung:** eigen
@@ -157,8 +157,9 @@ Origin: river folge81 (faltet `mycelium-folge221` `## An river`).
 
 ## Abschluss
 
-Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Der Baum ist mit parallelen
-Linien-Sessions geteilt — **Commit als Letzter**. Pfad-begrenzte Commit-Pfade dieser Session:
+Committet (`654da0efa`) und gepusht; die drei Verifikationsläufe dispatcht
+(`rave-cdn 37000725522`, `station-convergence 37000728549`, `enso-probe 37000732317`).
+Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `.github/workflows/rave-cdn.yml`
 - `tools/harvest/src/bin/tap_compiler.rs`
@@ -167,9 +168,8 @@ Linien-Sessions geteilt — **Commit als Letzter**. Pfad-begrenzte Commit-Pfade 
 - `docs/handover/handover-2026-10-02-river-folge81.md`, und `…-folge80.md` → `archiv/` (Move)
 
 **Nicht meine Hunks (gemessen 2026-10-02, `git status`):**
-`.github/workflows/{twomass,wd,ztf}-cdn.yml`, `docs/paper/eclipse-clock-worldlines.md`,
-`docs/reference/KERNEL_INDEX.md` (gestaged), `phi/blocked_sources.φ`, `phi/sources.φ`,
-`src/archivar/fit.rs`, `docs/handover/handover-2026-10-02-mycelium-folge222.md` + der
-mycelium-221-Archiv-Move — unangetastet.
+`docs/paper/eclipse-clock-worldlines.md`, `docs/reference/KERNEL_INDEX.md` (gestaged),
+`phi/blocked_sources.φ`, `phi/sources.φ`, `src/archivar/fit.rs`, der mountain-224-Archiv-Move
++ `docs/handover/handover-2026-10-02-mountain-folge225.md` — unangetastet.
 
 ## Burn: open 0.0000 · close 0.3549 · cap 0.50 Grund: TAP-Timeout-Heilung + Station-Blob-Schreibpfad + ENSO-Jahreskontrolle (gemessen `session_burn` $4.0470 → $4.4019, Gesamt; Parallel-Linien teilen den Total)
