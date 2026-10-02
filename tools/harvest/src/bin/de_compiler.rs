@@ -212,6 +212,9 @@ fn main() {
         granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         nutation.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        granules.dedup_by(|a, b| (a.0 - b.0).abs() < 1e-9);
+        rotations.dedup_by(|a, b| (a.0 - b.0).abs() < 1e-9);
+        nutation.dedup_by(|a, b| (a.0 - b.0).abs() < 1e-9);
         if granules.is_empty() {
             eprintln!(
                 "de: {} (target {}) carries no type-2/type-20 granule — skipped",
