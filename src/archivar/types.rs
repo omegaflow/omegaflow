@@ -4,7 +4,7 @@ pub trait Radiator: Send + Sync {
     fn accept(&mut self, field: Arc<Buffer>);
 }
 
-pub const Φ: f64 = 1.618033988749895;
+pub const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
 
 #[derive(Clone)]
 pub enum Motion {
