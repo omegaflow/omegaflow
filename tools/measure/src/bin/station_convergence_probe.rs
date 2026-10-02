@@ -639,8 +639,14 @@ fn station_blob_line(
     }
 }
 
-fn write_station_verdict(out: &str, line: &VerdictLine) {
-    let mut lines = match std::fs::read(out) {
+fn write_station_verdict(out: &str, line: &VerdictLine) -> bool {
+    let path = PathBuf::from(out);
+    if let Some(parent) = path.parent() {
+        if !parent.as_os_str().is_empty() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+    }
+    let mut lines = match std::fs::read(&path) {
         Ok(bytes) => parse_weberin_verdicts(&bytes),
         Err(_) => Vec::new(),
     };
@@ -651,18 +657,24 @@ fn write_station_verdict(out: &str, line: &VerdictLine) {
         Some(s) => format!("{s:.1} nT"),
         None => "absent".to_string(),
     };
-    match std::fs::write(out, &bytes) {
-        Ok(()) => println!(
-            "station verdict written: {} {} sep {sep} weave_epoch {:.3} ({} line(s) -> {out})",
-            line.name,
-            line.word.word(),
-            line.weave_epoch,
-            lines.len()
-        ),
-        Err(_) => eprintln!(
-            "station verdict: {out} did not take the {} byte(s) — the live ledger keeps its stand",
-            bytes.len()
-        ),
+    match std::fs::write(&path, &bytes) {
+        Ok(()) => {
+            println!(
+                "station verdict written: {} {} sep {sep} weave_epoch {:.3} ({} line(s) -> {out})",
+                line.name,
+                line.word.word(),
+                line.weave_epoch,
+                lines.len()
+            );
+            true
+        }
+        Err(_) => {
+            eprintln!(
+                "station verdict: {out} did not take the {} byte(s) — the live ledger keeps its stand",
+                bytes.len()
+            );
+            false
+        }
     }
 }
 
@@ -829,8 +841,12 @@ fn main() {
             match embedded_lsk().and_then(|l| l.system_now_tdb()) {
                 Some(weave_epoch) => {
                     let line = station_blob_line(&station, word, dev, weave_epoch);
-                    write_station_verdict(&out, &line);
-                    if ci_mode && !upload_release("ssd.jpl.nasa.gov-weberin", &out) {
+                    let written = write_station_verdict(&out, &line);
+                    if ci_mode && !written {
+                        eprintln!(
+                            "station verdict: {out} was not written — the manifest to ssd.jpl.nasa.gov-weberin is pending"
+                        );
+                    } else if ci_mode && !upload_release("ssd.jpl.nasa.gov-weberin", &out) {
                         eprintln!(
                             "station verdict: {out} did not reach the CDN release ssd.jpl.nasa.gov-weberin — the station bin stands local, the manifest is pending"
                         );
@@ -1000,5 +1016,19 @@ mod tests {
         );
         let back = parse_weberin_verdicts(&encode_weberin_verdicts(std::slice::from_ref(&line)));
         assert_eq!(back, vec![line]);
+    }
+
+    #[test]
+    fn the_station_blob_write_creates_its_parent_directory() {
+        let path = std::env::temp_dir().join(format!(
+            "omegaflow-station-probe-{}/nested/verdicts.bin",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_dir_all(path.parent().unwrap().parent().unwrap());
+        let line = station_blob_line("ABK", VerdictWord::Riss, 25239.8, 9.0e8);
+        assert!(write_station_verdict(path.to_str().unwrap(), &line));
+        let bytes = std::fs::read(&path).unwrap();
+        assert_eq!(parse_weberin_verdicts(&bytes), vec![line]);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap().parent().unwrap());
     }
 }
