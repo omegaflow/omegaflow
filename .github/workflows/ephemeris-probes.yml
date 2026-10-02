@@ -1,0 +1,96 @@
+name: ephemeris-probes
+
+# Die Ephemeriden-abhängigen Probes laufen in CI, nie auf der Operator-Maschine
+# (Probe-Regel). `eclipse_shadow_probe` holt ihre sun/moon/earth-Bins selbst aus dem
+# CDN (`ensure_bin` → `{CDN_BASE}/<netloc>/<asset>`); `flyby_anderson_probe` braucht
+# die drei Erd-Haus-Linien und die Anderson-Residuen-Tabelle.
+#
+# `ephemeris_house_gate` hat den eigenen Workflow `.github/workflows/ephemeris-house-gate.yml`.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  eclipse-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Sonnenfinsternis-Schatten 2017-08-21 aus den rohen sun/moon/earth-Weltlinien
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin eclipse_shadow_probe
+          } > eclipse-shadow-2017.txt 2>&1
+          cat eclipse-shadow-2017.txt
+      - name: Sonnenfinsternis-Schatten 2024-04-08 (EVENT_2024_UNIX) — dieselbe Suche
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin eclipse_shadow_probe -- --day-unix 1712534400
+          } > eclipse-shadow-2024.txt 2>&1
+          cat eclipse-shadow-2024.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eclipse-shadow
+          path: |
+            eclipse-shadow-2017.txt
+            eclipse-shadow-2024.txt
+
+  flyby-anderson:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Anderson-Residuen-Tabelle auf das CDN manifestieren (CI-only; getrackter Seed tools/measure/anderson_residuals.tsv)
+        run: |
+          seed=tools/measure/anderson_residuals.tsv
+          sha="$(sha256sum "$seed" | cut -d' ' -f1)"
+          [ "$sha" = "093e9e47b2d5f12fcccd9387ecc925512013af7398f188360fccfb5e029ddfb6" ] || {
+            echo "seed sha $sha != register sha — the asset stays unmanifested"; exit 1; }
+          gh release view anderson-residuals --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create anderson-residuals --repo omegaflow/sources \
+                 --title "Anderson flyby residuals — curated Table I" \
+                 --notes "Curated Anderson et al. 2008 (PRL 100, 091102) Table I. Written by ephemeris-probes.yml (CI-only)."
+          gh release upload anderson-residuals "$seed" --repo omegaflow/sources --clobber
+          mkdir -p data/flyby2
+          cp "$seed" data/flyby2/anderson_residuals.tsv
+      - name: Die drei Erd-Haus-Linien aus dem CDN laden
+        run: |
+          mkdir -p data/ssd.jpl.nasa.gov-de data/ftp.imcce.fr data/ftp.iaaras.ru
+          gh release download ssd.jpl.nasa.gov-de --repo omegaflow/sources \
+            --pattern ephemeris_de441_earth.bin --clobber -D data/ssd.jpl.nasa.gov-de
+          gh release download ftp.imcce.fr --repo omegaflow/sources \
+            --pattern ephemeris_inpop_earth.bin --clobber -D data/ftp.imcce.fr
+          gh release download ftp.iaaras.ru --repo omegaflow/sources \
+            --pattern ephemeris_epm_earth.bin --clobber -D data/ftp.iaaras.ru
+      - name: Die Anderson-Flyby-Anomalie gegen die drei Häuser messen
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin flyby_anderson_probe
+          } > flyby-anderson.txt 2>&1
+          cat flyby-anderson.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flyby-anderson
+          path: |
+            flyby-anderson.txt
+            data/flyby2/anderson-probe-2026-09-28.json
