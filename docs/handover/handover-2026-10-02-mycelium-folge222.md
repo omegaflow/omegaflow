@@ -3,7 +3,7 @@
   session: Mycelium-Folge 222
   class: handover
   date: 2026-10-02
-  sha256: 2caecfe15f680b07e2c7689757cbd421dbe3b9b786899ea06e37e9d3fc019398
+  sha256: 29691b1b3a78c3533d9c899353b335d7b6d2556a618f2a7a121283bb23f3e9f1
   status: live
 -->
 # Handover — Mycelium-Folge 222 (2026-10-02)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-02-mycelium-folge221.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.4609 · cap 0.50 Grund: JWS2-Messung (jades/ceers JWS2, curated48/jwst_spectra offen) + ASCAT/ONC-Fetch-Arm gemessen + CI-Tafel (gemessen `session_burn` $4.2959 → $4.8477, Gesamt; Parallel-Linien teilen den Total)
+## Burn: open 0.0000 · close 0.5000 · cap 0.50 Grund: Ephemeriden-Suche (Schwarm-Dispatch + 2 flash-Taucher + `archive_search`) + Adress-Folds; Atom-Cap erreicht (gemessen `session_burn` Gesamt $4.2959 → $6.7998, inkl. Parallel-Linien + Taucher — nicht isolierbar, der Atom-Anteil steht am Cap)
 
 ## Operator-Wort-Register
 
@@ -49,6 +49,20 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-10-02 via Kopfbytes `curl -r 0-7` + `--verdict`) `jades_spectra.bin` = **JWS2** (206, sha `af728a13…` in `phi/sources.φ:9516`), `ceers_spectra.bin` = **JWS2** (206, sha `47937dec…` `:10986`); `curated48_spectra.bin` **404** (`:9280`-Block; Producer `kernel-flatten` jwst-spectra `36988184261` queued, Build `a22edfa7` trägt JWS2). `jwst_spectra.bin` = **JWS1** (206, `ssd.jpl.nasa.gov`) — **bewusst eingefroren**, kein offener Punkt: GJ-806-Mismatch-Evidenz (NExScI-spectra 0 rows), der Voll-Harvest konvergiert nicht (5,7 h CI, 0 neu, 1502 skips, Budget-Abbruch, `92624f972`); Operator-Entscheid **Versionierung statt Ersetzung** — aktives Asset = `curated48_spectra.bin`, die Register-URL wurde umgehängt (`dda26c048`, `261644df2`). `jwst-cdn-watch` ist der Alt-Watcher darauf.
 - **Blockade:** `curated48`-Lauf in flight
 - **Braucht:** `kernel-flatten`-Lauf lesen, dann `sha256` in `phi/sources.φ:9280` nachtragen (JWS2). `jwst_spectra.bin` bleibt JWS1 (Befund), kein Producer.
+
+### PETREL19 — Manifestation nach Mountain-Verdikt (river-82 / Operator)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Mountain setzt das Verdikt/die `phi/sources.φ`-Zeile (Lizenz geklärt)
+- **Lage:** Register-Eintrag `phi/blocked_sources.φ:549` `pending` (owner mycelium); (gemessen 2026-10-02, Diver `general`/`grind-flash` via `--verdict`/`--sniff` + GitHub-API) `https://github.com/TIAN-we/petrel19` (Wei Tian/PMO; Tian 2023, CeMDA 135,38) stage-1 **206**, Branch `main`, letzter Push 2024-05-07; Coverage **1799-10-13 → 2106-05-05 ET** (`release_notes.txt` bestätigt). **Keine LICENSE** (`raw …/LICENSE` **404**, API `license: null`; der 503 des Auftrags nicht reproduziert). Dateien (Bytes · sha256): `fmt_spice/PETREL19_translation.bsp` 46 976 000 · `0fb34ddd…`; `PETREL19_time.bsp` 3 923 968 · `90636bd0…`; `PETREL19_rotation.bpc` 4 595 712 · `dc5d48a1…`; `PETREL19.mk` 1 030 · `2c6ce7a5…`; `PETREL19.tpc` 17 475; `fmt_de/PETREL19_ASCII.HEADER` 45 263 · `8f24ac42…`, `.PART1` 63 888 071 · `2ddc05ee…`, `.PART2` 51 519 446 · `8bc7b489…`. Format SPICE BSP/BCP + DE-ASCII.
+- **Blockade:** Lizenz-Verdikt (Mountain); ohne stehenden Arm keine Transport-Zeile (future-169)
+- **Braucht:** Mountain-Verdikt; danach `url`/`origin`/`compiler`/Tag in `phi/sources.φ` unter dem **Produzenten-Tag** (nicht `ssd.jpl.nasa.gov`-Legacy), dann Kernel-Flatten/CDN-Release der neuen Bins (`ephemeris_bin`-Route).
+
+### Schwarm-Lauf „andere Ephemeriden" (detached)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Done-Marker `state/stimmen/2026-10-02_ephemeriden.done`
+- **Lage:** (gemessen 2026-10-02T12:54Z) `state/stimmen/2026-10-02_autolauf-ephemeriden.sh` pid 346302, erste Stimme `nemotron-super`; Prompt `state/stimmen/prompt-ephemeriden-2026-10-02.txt`; Outputs `2026-10-02_ephemeriden-<modell>.md`.
+- **Blockade:** Läufe in flight
+- **Braucht:** bei Done-Marker die Messrouten sichten und an Mountain falten.
 
 ### `blocked_sources.φ` mycelium-Dispositionen (19)
 - **Status:** wartend | **Bindung:** eigen
@@ -150,6 +164,9 @@ Origin: mycelium-folge222 (JWS2/ASCAT/ONC).
 - **KASI-DALO:** `https://data.kasi.re.kr/confluence/display/KSDA/KASI+Science+Data+Archive+APIs` 200; `blocked_sources.φ:534` `pending`, `pda.kasi.re.kr` `blocked account` (`:448`). Braucht Verdikt/Arm.
 - **Alt-Mirror — kein Transport-Bedarf (registriert über andere Route):** M3-ODE `ode.rsl.wustl.edu/moon/m3.aspx` 206 (M3 läuft über `pds3_img`, `:9854`; `pdsimage` `:529` bleibt pending); WOD-THREDDS `data.nodc.noaa.gov/thredds/…` 200 (läuft über `noaa-wod-pds.s3`, `:9676`); MESSENGER-WUSTL `pds-geosciences.wustl.edu/messenger/` 200 (läuft über `pds-ppi.igpp.ucla.edu`, `:9929`).
 - **JWS2-Bins:** jades + ceers = JWS2 mit `sha256` in `phi/sources.φ`; `curated48` **404** (Producer `kernel-flatten` queued) — sha256 folgt. `jwst_spectra.bin` = JWS1 **bewusst eingefroren** (GJ-806-Mismatch-Evidenz; Voll-Harvest konvergiert nicht; Versionierung `dda26c048`/`261644df2`), kein offener Punkt.
+- **Viertes Ephemeriden-Haus PETREL19 (faltet river-82 `## An mountain`):** Datei-Messung vollständig (s. Offen); `LICENSE` **404**. Bitte Verdikt + `ephemeris_*`-Compiler-Arm (SPICE→`ephemeris_binary`) prüfen; `ephemeris_house_gate`/`flyby_anderson_probe` (heute fest `de`/`inpop`/`epm`, `ephemeris_house_gate.rs:297-299`) um das vierte Haus erweitern; Addendum `docs/paper/flyby-path-2-falsification-metric-addendum.md:125` auf den Artefakt-Stand (1,2494 mm/s `rift-excluded`) heben.
+- **Weitere Häuser (Diver-Messung 2026-10-02):** PMOE2003 (PMO, 2003–2007) — keine Download-URL messbar (`pending`); CAS/Shanghai nutzt INPOP19a. **VSOP87** `ftp.imcce.fr/pub/ephem/planets/vsop87/` 200, **VSOP2013** `…/vsop2013/` 206, **ELP2000-82B** `…/moon/elp82b/` 200 (Original ELP/MPP02 `pending`). Japan (NAOJ ECO Kalender), Indien (PAC Almanach), Russland außer EPM (SAI: Satelliten/DEA431), Brasilien (nichts), ESA/ESOC (NAIF/JPL) — **kein weiteres unabhängiges planetennahes Haus** gemessen.
+- **GSICS/KASI bleiben Verdikt-Zeilen (future-169):** Transport-Zeilen nur bei stehendem Arm; GSICS (CSV = Plot-Manifeste) und KASI (JSON-Endpoint ungemessen) ohne Arm → keine `url`/`field`-Zeile von Mycelium.
 
 ## LOCK
 
