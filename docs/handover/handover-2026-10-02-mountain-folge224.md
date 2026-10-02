@@ -3,7 +3,7 @@
   session: Mountain-Folge 224
   class: handover
   date: 2026-10-02
-  sha256: de568e7c8ebbae7c3e8c72e9b8fdad5f8edb29edceaeb73310b2ad0d08ffdec0
+  sha256: 79638f422da4d87364667f98b861746c836bbe6ab9d245ba6aa7725bc5c850db
   status: live
 -->
 # Handover — Mountain-Folge 224 (2026-10-02)
@@ -23,11 +23,13 @@ Die adressierten `## An mountain`-Blöcke aus `mycelium-folge220`, `river-folge7
   `phi/blocked_sources.φ` gesetzt; Dokumente/Portale (GSICS/JMA/MAT-Spec) declined.
 - `future-folge168`-Kandidaten (Finding = Claim nachgemessen): 6 von 10 sind
   Landeseiten bereits getragener Datensätze (`gdp_drifter`/`wod`/`superdarn`), keine
-  neuen Quellen; 5 neue Endpunkte (BSEE×2, BOEM, PDS-PPI-Suche, `surveys.roe.ac.uk/ssa`)
-  als `pending` in `phi/blocked_sources.φ`; WFAU ist kein Riss — `tap.roe.ac.uk` bleibt
-  TCP-tot (`dead_sources.φ:111/115`), `surveys.roe.ac.uk` ist ein getrennter live-Host.
+  neuen Quellen. Von den 5 neuen Endpunkten sind **4 `descoped`** (BSEE×2, BOEM,
+  PDS-PPI-Suche — Infrastruktur-Geometrie bzw. Modellwind, kein 9-Kraft-Medium) und
+  **1 umgesetzt**: WFAU SSA als `format tap`-Quelle (`tap.roe.ac.uk/ssa/sync`,
+  `SSA.Source`) in `phi/sources.φ`. Die `dead_sources.φ`-SSA/OSA-Zeilen (TCP-tot) waren
+  stale — alle vier WFAU-TAPs (`osa/ssa/wsa/vsa`) antworten 2026-10-02 (400/200).
 
-## Burn: open 0.0035 · close 0.4482 (line-Agent kumulativ, 2026-10-02) · cap 0.50 (raised: operator-directed double pass incl. council + UI consult) (reason: fired CEERS trigger, register dispositions, future-168 fold, occultation council+UI descope)
+## Burn: open 0.0000 · close 0.1713 (diese Line-Session, session_burn 2026-10-02) · cap 0.30 (raised: operator-directed multi-pass incl. council + UI consult + WFAU build) (reason: fired CEERS trigger, future-168 fold with 4 descopes + WFAU SSA source build, dead-entry healing, occultation council+UI descope)
 
 ## Operator-Wort-Register
 
@@ -91,6 +93,13 @@ Wort | Datum | Quelle
 - **Blockade:** Format-/Arm-Entscheidung je Punkt.
 - **Braucht:** (a) Hydrophon-MAT als Eingabe registrieren oder descopen; (b) Spiegel-Arm oder descopen.
 
+### WFAU OSA (UKIRT/ATLAS DR1) — Source offen
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-02) `http://tap.roe.ac.uk/osa/sync` antwortet 400 (TAP-Parser lebt); die alte `dead_sources.φ`-Zeile war stale (TCP-tot, 2026-09-15) und ist getilgt. SSA ist als `format tap`-Quelle registriert (`phi/sources.φ`, `SSA.Source`); WSA/VSA bleiben `decline superseded-by-integrated` (NOIRLab).
+- **Blockade:** OSA-Tabelle/Spalten ungemessen.
+- **Braucht:** OSA-Quelle im SSA-Muster (Tabelle + `format tap`-Block) registrieren.
+
 ## Träger (Prosa, eigene)
 
 - `docs/auftrag/auftrag-flyby2-kette.md` — σ-Metrik-Kette (3 Marker); Trigger JUICE In-Situ / Δ publiziert, `flyby_ephemeris_gate` (CI).
@@ -121,6 +130,6 @@ Origin: mountain folge224.
 
 Origin: mountain folge224.
 
-- **future-168-Kandidaten korrigiert (Finding = Claim):** die 6 GDP/WOD/SuperDARN-Zeilen sind Landeseiten bereits registrierter Datensätze (`gdp_drifter` `sources.φ:875`, `wod` `:9640`, `superdarn` `:9261`/`:11007`) — keine neuen Quellen; die WFAU-„Riss"-Behauptung ist keine: `tap.roe.ac.uk` bleibt tot (`dead_sources.φ:111/115`), `surveys.roe.ac.uk/ssa` ist ein getrennter live-Host (206).
+- **future-168-Kandidaten korrigiert (Finding = Claim):** die 6 GDP/WOD/SuperDARN-Zeilen sind Landeseiten bereits registrierter Datensätze (`gdp_drifter` `sources.φ:875`, `wod` `:9640`, `superdarn` `:9261`/`:11007`) — keine neuen Quellen; BSEE×2/BOEM/PDS-PPI `descoped` (`blocked_sources.φ`), WFAU SSA als `format tap`-Quelle registriert; die alten `dead_sources.φ`-Zeilen waren stale — alle vier WFAU-TAPs (`osa/ssa/wsa/vsa`) antworten 2026-10-02.
 - **CSES `/query.php`** ist ein SSDC-CAS-Login (`<title>Login</title>`) → Wall, kein Datenkanal ohne Konto. Ein Kontoantrag ist ein per-Akt-Operator-Wort.
 - **DEMETER Order-API** `regards.cnes.fr/api/v1/rs-order` = 403 (blocked account); Order 18400 läuft, Ablauf `2026-10-05` (`state/zustand/wartend.φ:4`). Der offene SPASE-Pfad ist `origin` in `phi/blocked_sources.φ:100`; die Antwort-Frist ist ein Future-Wiedervorlage-Punkt.
