@@ -3,7 +3,7 @@
   session: River-Folge 82
   class: handover
   date: 2026-10-02
-  sha256: 0a0015bfe39db7ef01d32f4cfd07605abecbfd9505a75bc06aa2179879997b63
+  sha256: d5038221b92db2173ba14421f8958c05d97fb100ec4589434aace114e2525cb6
   status: live
 -->
 # Handover — River-Folge 82 (2026-10-02)
@@ -121,35 +121,49 @@ Origin: river folge82 (Auftrag des Operators, 2026-10-02).
   Lauf 2026-10-02: tdot_max 1,2494 mm/s → `rift-excluded`. Artefakt
   `data/flyby2/anderson-probe-2026-09-28.json` neu geschrieben.
 
-### Anonyme Methodenfrage (TE über externen Steuerparameter) — Schwarm läuft
-- **Status:** wartend | **Bindung:** eigen (Schwarm read-only)
-- **Trigger:** Done-Marker `state/stimmen/2026-10-02_te-nichtzeitlich.done`
-- **Lage:** (gemessen 2026-10-02) Dispatch nach Futures Muster: Prompt-Datei
-  `state/stimmen/2026-10-02_te-nichtzeitlich-frage.txt` (anonymisiert, kein
-  state-Datenbyte), Script `state/stimmen/2026-10-02_autolauf-te-nichtzeitlich.sh`,
-  detached PID 343096, `opencode run --pure -m <modell> --agent voice … --file <prompt>`,
-  10 Modelle sequenziell, Ausgabe `…-<mshort>.md`, Log + `.done`. Die drei
-  `stimme.sh`-API-Stimmen (zai/gemini/mistral) antworteten 429/503 (Quota).
+### Anonyme Methodenfrage (TE über externen Steuerparameter) — geerntet
+- **Status:** erledigt (Schwarm geerntet); kein offener Kern.
+- **Lage:** (gemessen 2026-10-02, `state/stimmen/2026-10-02_te-nichtzeitlich-*.md`) Konsens der
+  fünf tragenden Stimmen: TE über p ist nur unter vier Bedingungen wohlgestellt — strikte
+  Monotonie, quasi-statischer/adiabatischer Sweep, Stationarität entlang p, Ergodizität; ein
+  gemeinsamer monotoner Trend beider Kanäle erzeugt scheinbare Richtung. Die Null muss die
+  Autokorrelation jedes Kanals erhalten und nur die Kreuzkopplung zerstören; **Index-Permutation
+  ist keine gültige Null** (sie zerstört jede Autokorrelation). Empfehlung: entlang p detrenden,
+  dann IAAFT/phasenrandomisierte Surrogate (bei nicht-äquidistantem p: Block-Bootstrap, Blocklänge
+  > Korrelationslänge); bei verbleibender Nichtstationarität bedingte MI bzw. partielle TE mit p
+  als Kovariate (KSG). Divergenz: ob IAAFT (äquidistantes p nötig) oder Block-Bootstrap führt.
+  5 Läufe trugen (nemotronsuper, nemotronultra, deepseek, muse, kiloultra), 5 trugen nichts
+  (glm53, glm53flash, kimik3, qwen38, gemini38 — rc=124/API-Quota).
 - **Blockade:** keine
-- **Braucht:** nach dem Done-Marker die `.md` ernten, jede Kernaussage am Baum gegenprüfen,
-  trägt-Kandidaten als `## An mountain` (Methodenfrage) falten. Der Pioneer-Schwarm
-  (`state/stimmen/2026-10-02_autolauf-pioneer.sh`, PID 352966) wartet bounded auf diesen
-  Done-Marker, dann 10 Modelle mit `archive_search`.
+- **Braucht:** die Methode steht dem privaten `complex_te_probe` bereit (LOCK privat, Operator-Wort);
+  kein öffentlicher Schritt.
 
-### Pioneer-Anomalie — Rat entschieden, Schwarm läuft, Lauf operator-gebunden
+### Pioneer-Anomalie — Rat entschieden, Schwarm geerntet, Lauf operator-gebunden
 - **Status:** operator-gebunden | **Bindung:** eigen/Mountain
 - **Trigger:** Operator-Wort (über Futures Operator-Queue)
-- **Lage:** (gemessen 2026-10-02) Der Rat hat die Frage gestellt und entschieden: **nicht
-  öffnen wie vorgelegt** — das Drei-Haus-Tor ist für Pioneer der falsche Null; der öffenbare
-  Rest ist ein Voranmelde-Blatt (Familie Station×Ära×Form, WY max-T, dreiteiliges Kriterium).
-  Front C hält: die Anomalie liegt unter dem Reduktions-Floor (Baum-Zahlen 160–340 Hz
-  Quiet-Day / 57,7/105 Hz post-Mask-RMS — die Vorlage-Zahl „133/218" ist nicht Baum).
-  Schwarm läuft: `state/stimmen/2026-10-02_autolauf-pioneer.sh` (PID 352966), Prompt
-  `…_pioneer-frage.txt`, 10 Modelle mit `archive_search`.
+- **Lage:** (gemessen 2026-10-02) Rat: **nicht öffnen wie vorgelegt** — das Drei-Haus-Tor ist
+  für Pioneer der falsche Null (Haus-Spread ~3,65 µm/s leckt, dominiert nicht); der öffenbare
+  Rest ist ein Voranmelde-Blatt (Familie Station×Ära×Form, WY max-T, dreiteiliges Kriterium);
+  Floor hält (Baum-Zahlen 160–340 Hz Quiet-Day / 57,7/105 Hz post-Mask-RMS). **Schwarm
+  geerntet:** die 10 `…_pioneer-*.md` sind **rohe Tool-Transkripte, keine Prosa-Antworten**;
+  5 trugen Quellen (nemotronsuper/ultra, deepseek, muse, kiloultra), 5 trugen nichts.
+  Tragende Quellen (am Baum/Netz geprüft): a_P = (8,74 ± 1,33)e-10 m/s² (Anderson 2002,
+  arXiv:gr-qc/0104064, HTTP 206; Baum `text-as-data-pioneer.md:85`); Turyshev et al. 2012
+  PRL 108,241101 = **arXiv:1204.2507** (206; Baum `probe-front-dark-matter.md:667`, η-Werte
+  `:462`); Turyshev & Toth 2010 LRR 13,4 (Volltext im Baum); Turyshev et al. 2011 PRL
+  107,081103 (206, zeitliches Abklingen); Bertolami et al. 2012 (arXiv:1211.6939, 206);
+  Pioneer-Doppler öffentlich (SPDF + NAIF, `phi/sources.φ:10363-10394`). Dissens als
+  arXiv-Text: ten Boom 2013 (arXiv:1307.0537, 206), Hodge 2009 (arXiv:0907.0425, 206).
+  **Risse:** die Task-Vorgabe `arXiv:1105.3869` trägt Turyshev 2012 **nicht** (es ist eine
+  Mathematik-Arbeit — korrekt ist `1204.2507`); ADS `2012PhLB..711..337F` löst nicht auf (405);
+  PDS `SS-20141008.shtml` 404; Grokipedia/Brave-Populärquellen unbacked. **Der Baum
+  widerspricht der Settled-Form:** `probe-front-dark-matter.md:650-662` misst die Drift als
+  unaufgelöst, Hypothesen near-degenerate („limit, not failure") — das 2012-Modell ist
+  Parameter-Lieferant, kein abgeschlossenes Verdikt.
 - **Blockade:** der Lauf braucht das Operator-Wort; die Blatt-Vorbereitung (Mountain) ist
   autonom
-- **Braucht:** Operator-Wort für das Pioneer-Floor-Falsifikations-Atom; bis dahin erntet
-  der nächste Pass die Schwarm-`.md` und prüft die Quellen am Baum.
+- **Braucht:** Operator-Wort für das Pioneer-Floor-Falsifikations-Atom; bis dahin steht das
+  Schwarm-Material als Quellen-Zettel in `state/stimmen/2026-10-02_pioneer-*.md`.
 
 ## Abschluss
 
