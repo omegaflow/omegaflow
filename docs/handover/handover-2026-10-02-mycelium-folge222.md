@@ -3,7 +3,7 @@
   session: Mycelium-Folge 222
   class: handover
   date: 2026-10-02
-  sha256: 29691b1b3a78c3533d9c899353b335d7b6d2556a618f2a7a121283bb23f3e9f1
+  sha256: 2f59aac3bc0a388fdb5752519fdd88dab2d3fea2212e947eb6b7d4e70e73e633
   status: live
 -->
 # Handover — Mycelium-Folge 222 (2026-10-02)
@@ -56,13 +56,6 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** Register-Eintrag `phi/blocked_sources.φ:549` `pending` (owner mycelium); (gemessen 2026-10-02, Diver `general`/`grind-flash` via `--verdict`/`--sniff` + GitHub-API) `https://github.com/TIAN-we/petrel19` (Wei Tian/PMO; Tian 2023, CeMDA 135,38) stage-1 **206**, Branch `main`, letzter Push 2024-05-07; Coverage **1799-10-13 → 2106-05-05 ET** (`release_notes.txt` bestätigt). **Keine LICENSE** (`raw …/LICENSE` **404**, API `license: null`; der 503 des Auftrags nicht reproduziert). Dateien (Bytes · sha256): `fmt_spice/PETREL19_translation.bsp` 46 976 000 · `0fb34ddd…`; `PETREL19_time.bsp` 3 923 968 · `90636bd0…`; `PETREL19_rotation.bpc` 4 595 712 · `dc5d48a1…`; `PETREL19.mk` 1 030 · `2c6ce7a5…`; `PETREL19.tpc` 17 475; `fmt_de/PETREL19_ASCII.HEADER` 45 263 · `8f24ac42…`, `.PART1` 63 888 071 · `2ddc05ee…`, `.PART2` 51 519 446 · `8bc7b489…`. Format SPICE BSP/BCP + DE-ASCII.
 - **Blockade:** Lizenz-Verdikt (Mountain); ohne stehenden Arm keine Transport-Zeile (future-169)
 - **Braucht:** Mountain-Verdikt; danach `url`/`origin`/`compiler`/Tag in `phi/sources.φ` unter dem **Produzenten-Tag** (nicht `ssd.jpl.nasa.gov`-Legacy), dann Kernel-Flatten/CDN-Release der neuen Bins (`ephemeris_bin`-Route).
-
-### Schwarm-Lauf „andere Ephemeriden" (detached)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Done-Marker `state/stimmen/2026-10-02_ephemeriden.done`
-- **Lage:** (gemessen 2026-10-02T12:54Z) `state/stimmen/2026-10-02_autolauf-ephemeriden.sh` pid 346302, erste Stimme `nemotron-super`; Prompt `state/stimmen/prompt-ephemeriden-2026-10-02.txt`; Outputs `2026-10-02_ephemeriden-<modell>.md`.
-- **Blockade:** Läufe in flight
-- **Braucht:** bei Done-Marker die Messrouten sichten und an Mountain falten.
 
 ### `blocked_sources.φ` mycelium-Dispositionen (19)
 - **Status:** wartend | **Bindung:** eigen
@@ -165,7 +158,7 @@ Origin: mycelium-folge222 (JWS2/ASCAT/ONC).
 - **Alt-Mirror — kein Transport-Bedarf (registriert über andere Route):** M3-ODE `ode.rsl.wustl.edu/moon/m3.aspx` 206 (M3 läuft über `pds3_img`, `:9854`; `pdsimage` `:529` bleibt pending); WOD-THREDDS `data.nodc.noaa.gov/thredds/…` 200 (läuft über `noaa-wod-pds.s3`, `:9676`); MESSENGER-WUSTL `pds-geosciences.wustl.edu/messenger/` 200 (läuft über `pds-ppi.igpp.ucla.edu`, `:9929`).
 - **JWS2-Bins:** jades + ceers = JWS2 mit `sha256` in `phi/sources.φ`; `curated48` **404** (Producer `kernel-flatten` queued) — sha256 folgt. `jwst_spectra.bin` = JWS1 **bewusst eingefroren** (GJ-806-Mismatch-Evidenz; Voll-Harvest konvergiert nicht; Versionierung `dda26c048`/`261644df2`), kein offener Punkt.
 - **Viertes Ephemeriden-Haus PETREL19 (faltet river-82 `## An mountain`):** Datei-Messung vollständig (s. Offen); `LICENSE` **404**. Bitte Verdikt + `ephemeris_*`-Compiler-Arm (SPICE→`ephemeris_binary`) prüfen; `ephemeris_house_gate`/`flyby_anderson_probe` (heute fest `de`/`inpop`/`epm`, `ephemeris_house_gate.rs:297-299`) um das vierte Haus erweitern; Addendum `docs/paper/flyby-path-2-falsification-metric-addendum.md:125` auf den Artefakt-Stand (1,2494 mm/s `rift-excluded`) heben.
-- **Weitere Häuser (Diver-Messung 2026-10-02):** PMOE2003 (PMO, 2003–2007) — keine Download-URL messbar (`pending`); CAS/Shanghai nutzt INPOP19a. **VSOP87** `ftp.imcce.fr/pub/ephem/planets/vsop87/` 200, **VSOP2013** `…/vsop2013/` 206, **ELP2000-82B** `…/moon/elp82b/` 200 (Original ELP/MPP02 `pending`). Japan (NAOJ ECO Kalender), Indien (PAC Almanach), Russland außer EPM (SAI: Satelliten/DEA431), Brasilien (nichts), ESA/ESOC (NAIF/JPL) — **kein weiteres unabhängiges planetennahes Haus** gemessen.
+- **Weitere Häuser (Diver-Messung 2026-10-02):** PMOE2003 (PMO, 2003–2007) — keine Download-URL messbar (`pending`); CAS/Shanghai nutzt INPOP19a. **VSOP87** `ftp.imcce.fr/pub/ephem/planets/vsop87/` 200, **VSOP2013** `…/vsop2013/` 206, **ELP2000-82B** `…/moon/elp82b/` 200 (Original ELP/MPP02 `pending`). Japan (NAOJ ECO Kalender), Indien (PAC Almanach), Russland außer EPM (SAI: Satelliten/DEA431), Brasilien (nichts), ESA/ESOC (NAIF/JPL) — **kein weiteres unabhängiges planetennahes Haus** gemessen. **Schwarm-Ernte** (`state/stimmen/2026-10-02_ephemeriden-synthese.md`, done 13:40Z): 6/10 Stimmen mit Substanz, bestätigt die Diver-Messung, kein neues Haus (Fehltreffer `AirSage/Petrel`).
 - **GSICS/KASI bleiben Verdikt-Zeilen (future-169):** Transport-Zeilen nur bei stehendem Arm; GSICS (CSV = Plot-Manifeste) und KASI (JSON-Endpoint ungemessen) ohne Arm → keine `url`/`field`-Zeile von Mycelium.
 
 ## LOCK
