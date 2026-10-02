@@ -377,9 +377,9 @@ pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
 note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs (HCV1, 12 B Header + 20 B/Record) + das2_iowa_compiler.rs; series_component_name ohne hapi_csv-Arm → kein Feld; kein Workflow/Release. Braucht: component_name + Workflow.
 
-pending
+descoped
 url http://occultations.ct.utfpr.edu.br/
-note Occultation-DB UTFPR (SOSB/Lucky Star): 200; occultation_compiler.rs gebaut (RA/Dec sexagesimal→Grad, delta_au dist_scale 1.495978707e11, leere ra_position skip; cargo build ok 2026-09-27); Stations-lat/lon absent. Sources-Zeile = Mycelium.
+note Occultation-DB UTFPR (SOSB/Lucky Star) descoped 2026-10-02: Δ geozentrisch, als SSB-Punkt û·Δ liegt jede Zeile um −R_E(t) verschoben (bis ~1 au; occ.php?p=156305 Δ 5.5126 au); kein Arm für geozentrische Epoche. Compiler bleibt Erbe.
 
 released
 url https://moon.bao.ac.cn/
@@ -501,4 +501,24 @@ note Cassini titanNotebook tray (PDS Atmospheres) — 2026-10-02 HTTP 200 (13058
 pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
 note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-02 HTTP 206 (1 B); kein CSV-Reader (juno_odf_compiler erntet jnogrv_* ODF). future-folge165.
+
+pending
+url https://www.bsee.gov/offshore-data-tools
+note BSEE Offshore Data & Tools (US DOI) — 2026-10-02 HTTP 200 (49613 B); Portal, kein Einzeldatei-Endpoint/Arm gemessen. future-folge168.
+
+pending
+url https://www.data.bsee.gov/Pipeline/ROWDescriptions/Default.aspx
+note BSEE Pipeline Right-of-Way (US DOI) — 2026-10-02 HTTP 200 (240837 B); HTML-Tabelle, kein Arm. future-folge168.
+
+pending
+url https://www.boem.gov/oil-gas-energy/mapping-and-data
+note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206 (1 B); Portal, kein Daten-Endpoint/Arm gemessen. future-folge168.
+
+pending
+url https://search-pdsppi.igpp.ucla.edu/search
+note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200 (18027 B); Such-Portal ohne Einzeldatei-Endpoint; die pds-ppi-Datensätze selbst sind registriert. future-folge168.
+
+pending
+url https://surveys.roe.ac.uk/ssa
+note WFAU SuperCOSMOS SSA (ROE) — 2026-10-02 HTTP 206 (1 B); Web-Host, getrennt von `tap.roe.ac.uk` (dead_sources.φ:111/115, TCP-tot) — kein Riss, sondern live-Mirror-Kandidat; kein Arm gemessen. future-folge168.
 

@@ -3,7 +3,7 @@
   session: Mountain-Folge 224
   class: handover
   date: 2026-10-02
-  sha256: ea9082dc34cf5a75761d7eee5695e64b2f3292008eabb4f66147b505abb918e1
+  sha256: de568e7c8ebbae7c3e8c72e9b8fdad5f8edb29edceaeb73310b2ad0d08ffdec0
   status: live
 -->
 # Handover — Mountain-Folge 224 (2026-10-02)
@@ -13,16 +13,21 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; die
 zitierte Runde steht auf `fb8ebc16c`, der laufende HEAD trägt die Punkte selbst).
 Diese Session konsumierte `handover-2026-10-02-mountain-folge223.md` (→ `archiv/`).
 
-Die adressierten `## An mountain`-Blöcke aus `mycelium-folge220`, `river-folge79`
-und `future-folge167` sind gemessen und gefaltet:
+Die adressierten `## An mountain`-Blöcke aus `mycelium-folge220`, `river-folge79`,
+`future-folge167` und `future-folge168` sind gemessen und gefaltet:
 - `mycelium-folge220`-Orphan-Zensus → gegenstandslos (`register_lookup --orphan-docs`
   = 0, gemessen 2026-10-02).
 - `river-folge79`-Namens-Riss → gebaut von `river-folge80` (`85ccfeac7`: `series_channel_name`
   qualifiziert den Kanalnamen mit dem Stationscode), gegenstandslos.
 - `future-folge167`-Kandidaten → die neuen Daten-Endpunkte als `pending` in
   `phi/blocked_sources.φ` gesetzt; Dokumente/Portale (GSICS/JMA/MAT-Spec) declined.
+- `future-folge168`-Kandidaten (Finding = Claim nachgemessen): 6 von 10 sind
+  Landeseiten bereits getragener Datensätze (`gdp_drifter`/`wod`/`superdarn`), keine
+  neuen Quellen; 5 neue Endpunkte (BSEE×2, BOEM, PDS-PPI-Suche, `surveys.roe.ac.uk/ssa`)
+  als `pending` in `phi/blocked_sources.φ`; WFAU ist kein Riss — `tap.roe.ac.uk` bleibt
+  TCP-tot (`dead_sources.φ:111/115`), `surveys.roe.ac.uk` ist ein getrennter live-Host.
 
-## Burn: open 0.0035 · close 0.2168 (line-Agent kumulativ, 2026-10-02) · cap 0.40 (reason: operator-directed single-pass — fired CEERS trigger, register dispositions, addressed folds)
+## Burn: open 0.0035 · close 0.4482 (line-Agent kumulativ, 2026-10-02) · cap 0.50 (raised: operator-directed double pass incl. council + UI consult) (reason: fired CEERS trigger, register dispositions, future-168 fold, occultation council+UI descope)
 
 ## Operator-Wort-Register
 
@@ -82,9 +87,9 @@ Wort | Datum | Quelle
 ### future-folge167: Arme ohne Source/Format
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-02) drei Arme/Quellen ohne Register-Deckung: (a) `occultation_compiler.rs` baut JSON-Events (`NETLOC occultations.ct.utfpr.edu.br`, `/api/events`, RA/Dec/delta) — kein `format`/source-Block, `phi/blocked_sources.φ` trägt die Quelle nur als `pending`; (b) `onc_hydrophone_compiler` liest `--input <mat>` — `data.oceannetworks.ca/api` (200) ist kein Fetch-Pfad des Arms; (c) Planck-ESA-Spiegel `pla.esac.esa.int` (206) und PSA-FTP `psaftp.esac.esa.int` (200) tragen keine fetch-seitige Quelle (bestehende Arme ernten andere Hosts).
+- **Lage:** (gemessen 2026-10-02) zwei Arme/Quellen ohne Register-Deckung: (a) `onc_hydrophone_compiler` liest `--input <mat>` — `data.oceannetworks.ca/api` (200) ist kein Fetch-Pfad des Arms; (b) Planck-ESA-Spiegel `pla.esac.esa.int` (206) und PSA-FTP `psaftp.esac.esa.int` (200) tragen keine fetch-seitige Quelle (bestehende Arme ernten andere Hosts). Die Occultation-DB UTFPR ist `descoped`: Δ ist geozentrisch, als SSB-Punkt `û·Δ` läge jede Zeile um `−R_E(t)` verschoben (bis ~1 au) — Rat + claude-UI bestätigen; kein Arm für geozentrische Epoche.
 - **Blockade:** Format-/Arm-Entscheidung je Punkt.
-- **Braucht:** (a) Format-Verdikt für die Occultation-JSON (Reader) oder Verwerfen; (b) Hydrophon-MAT als Eingabe registrieren oder descopen; (c) Spiegel-Arm oder descopen.
+- **Braucht:** (a) Hydrophon-MAT als Eingabe registrieren oder descopen; (b) Spiegel-Arm oder descopen.
 
 ## Träger (Prosa, eigene)
 
@@ -116,5 +121,6 @@ Origin: mountain folge224.
 
 Origin: mountain folge224.
 
+- **future-168-Kandidaten korrigiert (Finding = Claim):** die 6 GDP/WOD/SuperDARN-Zeilen sind Landeseiten bereits registrierter Datensätze (`gdp_drifter` `sources.φ:875`, `wod` `:9640`, `superdarn` `:9261`/`:11007`) — keine neuen Quellen; die WFAU-„Riss"-Behauptung ist keine: `tap.roe.ac.uk` bleibt tot (`dead_sources.φ:111/115`), `surveys.roe.ac.uk/ssa` ist ein getrennter live-Host (206).
 - **CSES `/query.php`** ist ein SSDC-CAS-Login (`<title>Login</title>`) → Wall, kein Datenkanal ohne Konto. Ein Kontoantrag ist ein per-Akt-Operator-Wort.
 - **DEMETER Order-API** `regards.cnes.fr/api/v1/rs-order` = 403 (blocked account); Order 18400 läuft, Ablauf `2026-10-05` (`state/zustand/wartend.φ:4`). Der offene SPASE-Pfad ist `origin` in `phi/blocked_sources.φ:100`; die Antwort-Frist ist ein Future-Wiedervorlage-Punkt.
