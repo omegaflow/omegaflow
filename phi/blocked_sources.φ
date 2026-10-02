@@ -98,6 +98,7 @@ note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (m
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
+origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml
 note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
 
 descoped
@@ -440,7 +441,7 @@ pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
-pending
+descoped
 url http://pds.wh.sdu.edu.cn
 note Shandong Univ. Planetary Science Research Center Weihai (Portal) — 2026-09-28 root 206, /data/ 404; Link-Inventar nur .htm + Fremd-Archive, keine Einzeldatei. Kein Datenpfad gemessen. future-folge150.
 
@@ -460,12 +461,12 @@ pending
 url https://pds.shadowcam.im-ldi.com/derived/
 note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
 
-blocked account
+descoped
 url https://catalogue.dataspace.copernicus.eu/stac/collections
 reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
-note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → blocked account.
+note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → descoped (View, kein Download).
 
 blocked ip-blocked
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/
-note M3-ENVI-Cube (Chandrayaan-1 M3) — CI-Lauf 36737530030: .HDR HTTP 403 (Datacenter-IP-Block, `ci_manage log`); lokal 206 gemessen; kein Mirror. WUSTL/Mini-RF-Schwester present; M3-Manifestation braucht andere Route/Feder.
+note M3-ENVI-Cube (Chandrayaan-1 M3) — CI 36737530030 .HDR 403 (Datacenter-IP-Block, `ci_manage log`); lokal 206. 2026-10-02: ODE/SBN/USGS nur Navigation, Wayback 2016 Page-Snapshot, kein lebender Daten-Mirror; Manifestation braucht andere Feder.
 
