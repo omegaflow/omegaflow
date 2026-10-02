@@ -3,7 +3,7 @@
   session: River-Folge 80
   class: handover
   date: 2026-10-02
-  sha256: 21b9bf2d3b3ab636d0d71bb688f982630c253b589c0f94de2d1d49cb08c0878b
+  sha256: 6e85715a34bc1bb791aeb33bde8c56e7cd0e9a8fb2b37ec6a09dda7e6b2973ad
   status: live
 -->
 # Handover — River-Folge 80 (2026-10-02)
@@ -59,13 +59,20 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
 
 ## Offen (aufgeschlüsselt)
 
+**Gemeinsamer gemessener Grund (2026-10-02, `ci_manage jobs`):** die GitHub-Runner-Queue ist
+verstopft — `rave`/`first14`/`bz-retro` laufen, `sb9`/`gaia`/`wy-max-t`/`station-convergence`/
+`enso-probe` hängen ohne gestarteten Job. Der Run-Level (`ci_manage view`) ist grob, die Job-Ebene
+ist die Messung. `register_lookup --fired` meldet diese als `FIRED_UNGEMESSEN` über
+`source_token_present` (der Trigger trägt Lauf-IDs) — **nicht** über Lauf-Ende; der Trigger ist
+nicht gefallen.
+
 ### tapvizier-TAP-Klasse — Verifikationslauf
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende der Re-Dispatches `rave-cdn 36984925478` / `sb9-cdn 36984928491` / `first14-cdn 36984931299`
-- **Lage:** (gemessen 2026-10-02 via `ci_manage view`) alle drei noch offen — `rave` in_progress,
-  `sb9` pending, `first14` queued — am HEAD; der Vorlauf `36944700194` war 3× `failure`
-  (`curl: (22) → 400`); die Wurzel (literales `t.`/`j.` vor `alias_col`) ist in river-77 geheilt,
-  beide Format-Positionen korrigiert, lokal gegen `tapvizier` re-generiert.
+- **Lage:** (gemessen 2026-10-02 via `ci_manage jobs`) `rave` in_progress (Chunk-compile 24 RA-Slices),
+  `first14` in_progress, `sb9` pending ohne gestarteten Job — Runner-Queue; der Vorlauf `36944700194`
+  war 3× `failure` (`curl: (22) → 400`); die Wurzel (literales `t.`/`j.` vor `alias_col`) ist in
+  river-77 geheilt, beide Format-Positionen korrigiert, lokal gegen `tapvizier` re-generiert.
 - **Blockade:** keine
 - **Braucht:** nach Lauf-Ende `ci_manage log <id>`; bei Grün die `-cdn`-Familie der Klasse
   (lmxb/polarbase/denis/wd/wds) einmalig nachmessen.
@@ -75,7 +82,8 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
 - **Trigger:** Lauf-Ende `gaia-cdn 36984934208`
 - **Lage:** (gemessen 2026-10-02) der 56-B-Bin wurde in den falschen Release
   `tapvizier.cds.unistra.fr` hochgeladen; `ssd.jpl.nasa.gov` trägt noch das legacy 44-B-Asset
-  (keine σ-Slots). Fix `--release-tag ssd.jpl.nasa.gov` gesetzt, Re-Dispatch `36984934208` pending.
+  (keine σ-Slots). Fix `--release-tag ssd.jpl.nasa.gov` gesetzt; (gemessen 2026-10-02 via
+  `ci_manage jobs`) `gaia 36984934208` pending, kein Job gestartet (Runner-Queue).
 - **Blockade:** keine
 - **Braucht:** nach Grün `ssd.jpl.nasa.gov`-Asset snifen (56-B-Stride, 95 424 168 B) und den
   3-Slot-σ-Zensus rechnen. Ein σ-Zensus-Bin existiert **nicht** — `star_dmax_probe`/`vlies_density_probe`
@@ -85,9 +93,11 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
 ### GIC-Quartal `sod-2025-q1` — fehlendes 16. Artefakt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `bz-retro-probe 36984937798`
-- **Lage:** (gemessen 2026-10-02) in `36943972951` waren 15/16 Quartals-Jobs `success`; nur
-  `sod-2025-q1` failed, sein Job-Log ist per API `unread` (HTTP 404). Die 15 vorhandenen Quartale
-  sind als §4.6 des GIC-Papers gefaltet (vier neue Kanäle, alle family-bound).
+- **Lage:** (gemessen 2026-10-02 via `ci_manage jobs`) `36984937798` läuft: `minute` success,
+  2 `hourly` in_progress, 14 `hourly` queued (der Run-Level `queued` war grob). Im Vorlauf
+  `36943972951` waren 15/16 Quartals-Jobs `success`; nur `sod-2025-q1` failed, sein Job-Log ist
+  per API `unread` (HTTP 404). Die 15 vorhandenen Quartale sind als §4.6 des GIC-Papers gefaltet
+  (vier neue Kanäle, alle family-bound).
 - **Blockade:** keine
 - **Braucht:** nach dem Re-Dispatch `ci_manage log 36984937798` lesen; bei Grün §4.6 auf 16
   Artefakte erweitern, sonst den einen Job-Grund benennen.
@@ -95,7 +105,8 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
 ### Kalibrierte Null (Westfall–Young max-T) — Sharding gebaut, Verifikationslauf
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `wy-max-t 36987592993` (dispatcht 2026-10-02T09:03Z)
-- **Lage:** (gemessen 2026-10-02 via GH-API) die drei wy-Jobs `36943967388` wurden bei exakt
+- **Lage:** (gemessen 2026-10-02 via `ci_manage jobs`) `36987592993` queued — `wy-selftest` +
+  3 `wy-shards` ohne gestarteten Job (Runner-Queue). Die drei wy-Jobs `36943967388` wurden bei exakt
   **6 h 00 m** gekappt — GitHub-Hosted-Hartgrenze. Rat-Entscheid umgesetzt (flash): je Shard volle
   B×m-Null-Matrix, `--combine` poolt, studentisiert **mitgliedsweise** vor dem Within-Replicate-Max;
   `wy-max-t.yml` fährt 3 Shards/Station-Jahr + Combine, `timeout-minutes 180`; Test
@@ -108,7 +119,8 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
 ### Weberin — getrennter Station-Blob + Membran-Merge (gebaut, Verifikationslauf)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `station-convergence 36987596376` (dispatcht 2026-10-02T09:03Z)
-- **Lage:** (gemessen 2026-10-02) Rat-Entscheid „ein Produzent je Pfad" umgesetzt (flash): die
+- **Lage:** (gemessen 2026-10-02 via `ci_manage jobs`) `36987596376` queued, kein Job gestartet
+  (Runner-Queue). Rat-Entscheid „ein Produzent je Pfad" umgesetzt (flash): die
   Live-Probe schreibt/defaultet `data/weberin_verdicts_station.bin`, manifestiert bei `--ci-mode`
   auf `ssd.jpl.nasa.gov-weberin`; `main_flow.rs` lädt beide mit CDN-Fallback und merged mit
   expliziter Präzedenz (Station > Body, deterministisch).
@@ -140,7 +152,8 @@ Origin: river folge80 (faltet deinen `## An river`-Block aus folge223).
 ### ENSO — Desaisonalisierung gebaut, Verifikationslauf
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `enso-probe 36987599408` (dispatcht 2026-10-02T09:03Z)
-- **Lage:** (gemessen 2026-10-02 via `gh run download 36943976395`) die Positivkontrolle ist
+- **Lage:** (gemessen 2026-10-02 via `ci_manage jobs`) `36987599408` queued, `blatt` ohne
+  gestarteten Job (Runner-Queue). Via `gh run download 36943976395` ist die Positivkontrolle
   **bestanden** — die gepflanzte Kopplung wird bei lag 3 detektiert (TE `7.6483e-1` > per-lag-Thr
   `2.7245e-1` und > fam `3.0247e-1`); Bz↔SST bleibt `silent`. Die Desaisonalisierung ist um die
   sd-Division erweitert (gemeinsamer Jahrestreiber beider Momente); Test
@@ -161,4 +174,4 @@ Linien-Sessions geteilt — **Commit als Letzter**. Pfad-begrenzte Commit-Pfade 
 **Nicht meine Hunks (gemessen 2026-10-02, `git status`):** `docs/reference/KERNEL_INDEX.md`
 (gestaged), `src/archivar/fit.rs`, `tools/harvest/src/bin/ceers_spectra_compiler.rs` — unangetastet.
 
-## Burn: open 0.0 · close 0.0617
+## Burn: open 0.0 · close 0.0848
