@@ -458,6 +458,41 @@ fn synthetic_coupled_pair(
     )
 }
 
+#[cfg(test)]
+fn synthetic_seasonal_pair(
+    n: usize,
+    planted_lag: usize,
+    coupling: f64,
+    ar: f64,
+    driver_noise: f64,
+    target_noise: f64,
+    annual_amp: f64,
+    seed: u64,
+) -> (Vec<f32>, Vec<f32>) {
+    let mut state = seed | 1;
+    let mut driver = vec![0.0f64; n];
+    let mut target = vec![0.0f64; n];
+    let mut d = 0.0f64;
+    let mut x = 0.0f64;
+    for t in 0..n {
+        let annual =
+            annual_amp * (std::f64::consts::TAU * t as f64 / CAL_MONTHS as f64).sin();
+        d = ar * d + driver_noise * gaussian_noise(&mut state);
+        let lagged = if t >= planted_lag {
+            driver[t - planted_lag]
+        } else {
+            0.0
+        };
+        x = ar * x + coupling * lagged + target_noise * gaussian_noise(&mut state);
+        driver[t] = d + annual;
+        target[t] = x + annual;
+    }
+    (
+        driver.iter().map(|&v| v as f32).collect(),
+        target.iter().map(|&v| v as f32).collect(),
+    )
+}
+
 fn positive_control() -> Option<PositiveControl> {
     let (driver, target) = synthetic_coupled_pair(
         PC_N,
@@ -915,6 +950,47 @@ mod tests {
             pc.best_lag,
             pc.te,
             pc.fam
+        );
+    }
+
+    #[test]
+    fn seasonal_positive_control_detects_coupling_after_deseasonalization() {
+        let n = 40 * CAL_MONTHS;
+        let (driver, target) = synthetic_seasonal_pair(
+            n,
+            PC_PLANTED_LAG,
+            PC_COUPLING,
+            PC_AR,
+            PC_DRIVER_NOISE,
+            PC_TARGET_NOISE,
+            1.0,
+            SURROGATE_SEED,
+        );
+        let driver_series: Vec<Option<f64>> = driver.iter().map(|&v| Some(v as f64)).collect();
+        let target_series: Vec<Option<f64>> = target.iter().map(|&v| Some(v as f64)).collect();
+        let driver_anom = deseasonalize_monthly(&driver_series);
+        let target_anom = deseasonalize_monthly(&target_series);
+        for m in 0..CAL_MONTHS {
+            let vals: Vec<f64> = (0..n)
+                .filter(|&i| i % CAL_MONTHS == m)
+                .filter_map(|i| target_anom[i])
+                .collect();
+            assert_eq!(vals.len(), n / CAL_MONTHS);
+            let mean = vals.iter().sum::<f64>() / vals.len() as f64;
+            assert!(
+                mean.abs() < 1e-12,
+                "calendar month {m} residual mean {mean} is not ≈ 0"
+            );
+        }
+        let (target_v, driver_v) = paired_series(&target_anom, &driver_anom);
+        let te = transfer_entropy_lag(&target_v, &driver_v, PC_PLANTED_LAG)
+            .expect("the seasonal pair carries a measurable TE at the planted lag");
+        let (_, _, thr) =
+            surrogate_stats_phase_n(&target_v, &driver_v, PC_PLANTED_LAG, SURROGATE_SEED, N_SURR)
+                .expect("the seasonal pair carries surrogate statistics");
+        assert!(
+            te > thr,
+            "the deseasonalized seasonal coupling is not detected: TE {te:.4e} <= threshold {thr:.4e}"
         );
     }
 
