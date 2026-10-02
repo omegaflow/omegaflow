@@ -1379,6 +1379,12 @@ format reference
 sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/anderson-residuals/anderson_residuals.tsv
+format reference
+origin https://arxiv.org/abs/0806.4159 + https://web.archive.org/web/20081016172147/http://www2.phys.canterbury.ac.nz/editorial/Anderson2008.pdf
+sha256 093e9e47b2d5f12fcccd9387ecc925512013af7398f188360fccfb5e029ddfb6
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin
 format swot_l2_lr_ssh
 origin https://archive.podaac.earthdata.nasa.gov
@@ -9244,6 +9250,14 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
+format jwst_spectra
+origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
+compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
+at sun
+ttl 604800
+field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdarn_rawacf.bin
 format superdarn_rawacf
 origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
@@ -10399,14 +10413,6 @@ origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
 at sun
 ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/curated48_spectra.bin
-format jwst_spectra
-origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
-compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
-at sun
-ttl 604800
-field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
 format catalog_tycho
