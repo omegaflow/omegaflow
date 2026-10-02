@@ -6,6 +6,15 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      epoch_ymd:
+        description: "House-query epoch YYYY-MM-DD (default 2026-09-28, the JUICE flyby)"
+        required: false
+        default: "2026-09-28"
+      epoch_hms:
+        description: "House-query epoch HH:MM:SS (empty = the JUICE perigee default)"
+        required: false
+        default: ""
 permissions:
   contents: read
 env:
@@ -27,11 +36,16 @@ jobs:
             --pattern ephemeris_inpop_earth.bin --clobber -D data/ftp.imcce.fr
           gh release download ftp.iaaras.ru --repo omegaflow/sources \
             --pattern ephemeris_epm_earth.bin --clobber -D data/ftp.iaaras.ru
-      - name: Run the three-house Earth ephemeris gate (JUICE flyby ±2 d)
+      - name: Run the three-house Earth ephemeris gate at the chosen epoch (±2 d)
         run: |
+          epoch="${{ inputs.epoch_ymd || '2026-09-28' }}"
+          args="--epoch-ymd $epoch --register data/flyby2/house-gate-$epoch.json"
+          if [ -n "${{ inputs.epoch_hms }}" ]; then
+            args="$args --epoch-hms ${{ inputs.epoch_hms }}"
+          fi
           {
             echo "SHA $(git rev-parse HEAD)"
-            cargo run --release -p omegaflow-measure --bin ephemeris_house_gate
+            cargo run --release -p omegaflow-measure --bin ephemeris_house_gate -- $args
           } > ephemeris-house-gate.txt 2>&1
       - uses: actions/upload-artifact@v4
         if: always()
@@ -39,4 +53,4 @@ jobs:
           name: ephemeris-house-gate
           path: |
             ephemeris-house-gate.txt
-            data/flyby2/house-gate-2026-09-28.json
+            data/flyby2/house-gate-*.json
