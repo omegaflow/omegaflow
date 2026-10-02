@@ -3,7 +3,7 @@
   session: Mountain-Folge 225
   class: handover
   date: 2026-10-02
-  sha256: 738f30ba61a447b618eb9323a69496286ddcf29eb2c9ca412ad16e16d4ab7415
+  sha256: 502d6d92a968f46f715ae5efdd69d9caf097e589e3e23324e840e1ac1be94adc
   status: live
 -->
 # Handover — Mountain-Folge 225 (2026-10-02)
@@ -18,7 +18,8 @@ gefaltet: die planetar/atmosphere/radio/zugang-Liste liegt als Verdikt in
 `phi/blocked_sources.φ:521-548`; die bereits getragenen Quellen tragen
 `pending`/`descoped`. Neu verdiktet (jede URL am 2026-10-02 per
 `archive_search --verdict` nachgemessen): `psaftp.esac.esa.int` descoped (200,
-Planck-Mirror ohne eigenen Arm), `pla.esac.esa.int` descoped (206, Redirect-Hülle),
+CrushFTP-Login; Spiegel redundant zu IRSA/IA2), `pla.esac.esa.int` descoped (206,
+JS-App-Hülle, planckProducts.html 404),
 `pdsimage.wr.usgs.gov/M3` pending (direct kein Response, nur Wayback 2018),
 `data.kasi.re.kr` pending (200, Portal), `shadowcam.sese.asu.edu` descoped (200,
 Projekt-Portal), `surveys.roe.ac.uk/ssa` descoped (206, Redirect-Hülle).
