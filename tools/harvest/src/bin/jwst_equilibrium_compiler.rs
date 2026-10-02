@@ -310,6 +310,8 @@ mod tests {
                 epoch_tdb: 8.4e8,
                 host: "WASP-39".to_string(),
                 obs_id: "jw01366-o001_t001_niriss".to_string(),
+                redshift: 0.0,
+                z_kind: 0,
                 bins: vec![(2.5e14, 1.0e13, 4.2e-24)],
             },
             JwstSpectrum {
@@ -319,6 +321,8 @@ mod tests {
                 epoch_tdb: 8.4e8,
                 host: "TRAPPIST-1".to_string(),
                 obs_id: "jw00001".to_string(),
+                redshift: 0.0,
+                z_kind: 0,
                 bins: vec![(2.5e14, 1.0e13, 4.2e-24)],
             },
             JwstSpectrum {
@@ -328,6 +332,8 @@ mod tests {
                 epoch_tdb: 8.4e8,
                 host: "UNKNOWN-HOST".to_string(),
                 obs_id: "jw00002".to_string(),
+                redshift: 0.0,
+                z_kind: 0,
                 bins: vec![(2.5e14, 1.0e13, 4.2e-24)],
             },
         ]
@@ -365,6 +371,8 @@ mod tests {
             epoch_tdb: 8.4e8,
             host: "COLD".to_string(),
             obs_id: "jw00003".to_string(),
+            redshift: 0.0,
+            z_kind: 0,
             bins: vec![(2.5e14, 1.0e13, 4.2e-24)],
         }];
         let mut single = HashMap::new();

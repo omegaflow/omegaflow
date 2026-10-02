@@ -1,8 +1,9 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsImage, FitsTable};
 use omegaflow::jwst::{
-    JwstSpectrum, bins_from_jwst_rows, collect_table, finalize_workdir, ledger_append, ledger_done,
-    mjd_to_unix, parse_jwst_bin, reduce_table, write_sidecar,
+    JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT, JWST_Z_SPEC, JwstSpectrum, bins_from_jwst_rows, collect_table,
+    finalize_workdir, ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin, reduce_table,
+    write_sidecar,
 };
 use omegaflow::lsk::parse as parse_lsk;
 use std::collections::HashSet;
@@ -11,6 +12,9 @@ use std::time::{Duration, Instant};
 
 const CEERS_BASE: &str = "https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec";
 const CEERS_ORIGIN: &str = "web.corral.tacc.utexas.edu";
+const DAWN_Z_API: &str = "https://grizli-cutout.herokuapp.com/nirspec_extractions";
+const DAWN_Z_RADIUS_ARCSEC: f64 = 10.0;
+const DAWN_Z_MATCH_ARCSEC: f64 = 1.0;
 
 fn ceers_url(base: &str, nirspec: u32, disperser: &str, msa: u32) -> String {
     format!(
@@ -21,6 +25,198 @@ fn ceers_url(base: &str, nirspec: u32, disperser: &str, msa: u32) -> String {
 fn product_stem(label: &str) -> String {
     let name = label.rsplit('/').next().unwrap_or(label);
     name.strip_suffix(".fits").unwrap_or(name).to_string()
+}
+
+fn msa_from_stem(stem: &str) -> Option<u32> {
+    let bytes = stem.as_bytes();
+    for i in 0..bytes.len() {
+        if bytes[i] != b'-' || i + 7 > bytes.len() {
+            continue;
+        }
+        let digits = &bytes[i + 1..i + 7];
+        if !digits.iter().all(|b| b.is_ascii_digit()) {
+            continue;
+        }
+        if i + 7 < bytes.len() && bytes[i + 7] != b'_' {
+            continue;
+        }
+        let text = std::str::from_utf8(digits).ok()?;
+        return text.parse::<u32>().ok();
+    }
+    None
+}
+
+struct DawnRow {
+    msa: Option<u32>,
+    srcid: Option<i64>,
+    ra: f64,
+    dec: f64,
+    z: f64,
+    grade: Option<i64>,
+    sn50: Option<f64>,
+    exptime: Option<f64>,
+}
+
+fn dawn_file_msa(file: &str) -> Option<u32> {
+    let core = file.strip_suffix(".spec.fits")?;
+    core.rsplit('_').next()?.parse::<u32>().ok()
+}
+
+fn curl_text(url: &str, timeout_secs: u64) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("-L")
+        .arg("--retry")
+        .arg("2")
+        .arg("--retry-delay")
+        .arg("2")
+        .arg("--retry-all-errors")
+        .arg("--max-time")
+        .arg(timeout_secs.to_string())
+        .arg(url)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        eprintln!("dawn z {}: exit {} — z stays absent", url, out.status);
+        return None;
+    }
+    String::from_utf8(out.stdout).ok()
+}
+
+fn parse_dawn_z(text: &str) -> Vec<DawnRow> {
+    let mut lines = text.lines();
+    let Some(header) = lines.next() else {
+        return Vec::new();
+    };
+    let cols: Vec<&str> = header.split(',').map(|c| c.trim()).collect();
+    let idx = |name: &str| cols.iter().position(|c| *c == name);
+    let (Some(i_src), Some(i_ra), Some(i_dec), Some(i_z)) =
+        (idx("srcid"), idx("ra"), idx("dec"), idx("z"))
+    else {
+        return Vec::new();
+    };
+    let i_grade = idx("grade");
+    let i_sn = idx("sn50");
+    let i_exp = idx("exptime");
+    let i_file = idx("file");
+    let mut out = Vec::new();
+    for line in lines {
+        let cells: Vec<&str> = line.split(',').collect();
+        let get = |i: usize| cells.get(i).map(|s| s.trim());
+        let Some(ra) = get(i_ra)
+            .and_then(|s| s.parse::<f64>().ok())
+            .filter(|v| v.is_finite())
+        else {
+            continue;
+        };
+        let Some(dec) = get(i_dec)
+            .and_then(|s| s.parse::<f64>().ok())
+            .filter(|v| v.is_finite())
+        else {
+            continue;
+        };
+        let Some(z) = get(i_z)
+            .and_then(|s| s.parse::<f64>().ok())
+            .filter(|v| v.is_finite() && *v > 0.0)
+        else {
+            continue;
+        };
+        let srcid = get(i_src).and_then(|s| s.parse::<i64>().ok());
+        let msa = i_file
+            .and_then(|i| get(i))
+            .and_then(dawn_file_msa);
+        let grade = i_grade
+            .and_then(|i| get(i))
+            .and_then(|s| s.parse::<i64>().ok());
+        let sn50 = i_sn
+            .and_then(|i| get(i))
+            .and_then(|s| s.parse::<f64>().ok())
+            .filter(|v| v.is_finite());
+        let exptime = i_exp
+            .and_then(|i| get(i))
+            .and_then(|s| s.parse::<f64>().ok())
+            .filter(|v| v.is_finite());
+        out.push(DawnRow {
+            msa,
+            srcid,
+            ra,
+            dec,
+            z,
+            grade,
+            sn50,
+            exptime,
+        });
+    }
+    out
+}
+
+fn dawn_stronger(a: &DawnRow, b: &DawnRow) -> bool {
+    match (a.grade, b.grade) {
+        (Some(x), Some(y)) if x != y => x > y,
+        (Some(_), None) => true,
+        (None, Some(_)) => false,
+        _ => match (a.sn50, b.sn50) {
+            (Some(x), Some(y)) if x != y => x > y,
+            (Some(_), None) => true,
+            (None, Some(_)) => false,
+            _ => match (a.exptime, b.exptime) {
+                (Some(x), Some(y)) => x > y,
+                (Some(_), None) => true,
+                _ => false,
+            },
+        },
+    }
+}
+
+fn angular_sep_arcsec(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
+    let d2r = std::f64::consts::PI / 180.0;
+    let ddec = (dec2 - dec1) * d2r;
+    let dra = (ra2 - ra1) * d2r * dec1.to_radians().cos().abs();
+    (dra * dra + ddec * ddec).sqrt() / d2r * 3600.0
+}
+
+fn nearest_dawn_row<'a>(rows: &'a [DawnRow], ra: f64, dec: f64) -> Option<&'a DawnRow> {
+    let mut best: Option<(&DawnRow, f64)> = None;
+    for row in rows {
+        let sep = angular_sep_arcsec(ra, dec, row.ra, row.dec);
+        if !sep.is_finite() {
+            continue;
+        }
+        let take = match best {
+            Some((_, s)) => sep < s,
+            None => true,
+        };
+        if take {
+            best = Some((row, sep));
+        }
+    }
+    best.and_then(|(row, sep)| if sep <= DAWN_Z_MATCH_ARCSEC { Some(row) } else { None })
+}
+
+fn dawn_z(ra: f64, dec: f64, msa: Option<u32>) -> Option<(f64, u8)> {
+    let url = format!(
+        "{DAWN_Z_API}?coords={ra},{dec}&size={DAWN_Z_RADIUS_ARCSEC}&output=csv"
+    );
+    let text = curl_text(&url, 30)?;
+    let rows = parse_dawn_z(&text);
+    if rows.is_empty() {
+        return None;
+    }
+    let by_id = msa.and_then(|m| {
+        let target = m as i64;
+        let mut best: Option<&DawnRow> = None;
+        for row in &rows {
+            if row.msa == Some(m) || row.srcid == Some(target) {
+                best = match best {
+                    Some(b) if !dawn_stronger(row, b) => Some(b),
+                    _ => Some(row),
+                };
+            }
+        }
+        best
+    });
+    let pick = by_id.or_else(|| nearest_dawn_row(&rows, ra, dec));
+    pick.map(|row| (row.z, JWST_Z_SPEC))
 }
 
 fn curl_get(url: &str, dest: &str) -> bool {
@@ -175,15 +371,25 @@ fn probe_fits(path: &str) {
         }
     }
     match x1d_meta(&bytes, path) {
-        Some(m) => eprintln!(
-            "reduced: {} bins, ra {:.6} dec {:.6} epoch_mjd {:.6} host {} obs_id {:?}",
-            m.rows.len(),
-            m.ra_deg,
-            m.dec_deg,
-            m.epoch_mjd,
-            m.host,
-            m.obs_id_primary
-        ),
+        Some(m) => {
+            let msa = msa_from_stem(&product_stem(path));
+            let (z, kind) = match dawn_z(m.ra_deg, m.dec_deg, msa) {
+                Some(v) => v,
+                None => (JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT),
+            };
+            eprintln!(
+                "reduced: {} bins, ra {:.6} dec {:.6} epoch_mjd {:.6} host {} obs_id {:?} msa {:?} z {} kind {}",
+                m.rows.len(),
+                m.ra_deg,
+                m.dec_deg,
+                m.epoch_mjd,
+                m.host,
+                m.obs_id_primary,
+                msa,
+                z,
+                kind
+            );
+        }
         None => eprintln!("reduced: void"),
     }
 }
@@ -432,6 +638,11 @@ fn main() {
             named_skips += 1;
             continue;
         }
+        let msa = msa_from_stem(&stem);
+        let (redshift, z_kind) = match dawn_z(meta.ra_deg, meta.dec_deg, msa) {
+            Some(v) => v,
+            None => (JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT),
+        };
         let spec = JwstSpectrum {
             ra_deg: meta.ra_deg,
             dec_deg: meta.dec_deg,
@@ -439,6 +650,8 @@ fn main() {
             epoch_tdb,
             host: meta.host.clone(),
             obs_id: stem.clone(),
+            redshift,
+            z_kind,
             bins,
         };
         if !write_sidecar(&workdir, &spec)
@@ -459,12 +672,14 @@ fn main() {
         }
         harvested += 1;
         eprintln!(
-            "[{}] {} {}: {} bins, epoch_tdb {}",
+            "[{}] {} {}: {} bins, epoch_tdb {}, z {} kind {}",
             n,
             meta.host,
             stem,
             spec.bins.len(),
-            spec.epoch_tdb
+            spec.epoch_tdb,
+            spec.redshift,
+            spec.z_kind
         );
     }
 
@@ -490,11 +705,16 @@ fn main() {
     }
     match parse_jwst_bin(&bytes) {
         Some(parsed) => {
+            let spec_z = parsed
+                .iter()
+                .filter(|s| s.z_kind == JWST_Z_SPEC && s.redshift.is_finite() && s.redshift > 0.0)
+                .count();
             eprintln!(
-                "{}: {} records, {} B — roundtrip parses",
+                "{}: {} records, {} B, {} carrying spec-z — roundtrip parses",
                 out_path,
                 parsed.len(),
-                bytes.len()
+                bytes.len(),
+                spec_z
             );
         }
         None => {

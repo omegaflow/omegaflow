@@ -39,6 +39,8 @@ pub struct SpectralHash {
     pub force_type: f64,
     pub absorption: f64,
     pub advection: f64,
+    pub redshift: f64,
+    pub z_kind: u8,
     pub bins: Vec<(f64, f64, f64)>,
 }
 

@@ -2325,6 +2325,8 @@ pub fn main_flow() {
                         force_type: field.force as f64,
                         absorption: field.absorption,
                         advection: field.advection,
+                        redshift: 0.0,
+                        z_kind: 0,
                         bins,
                     };
                     eprintln!(
@@ -2460,6 +2462,8 @@ pub fn main_flow() {
                             force_type: field.force as f64,
                             absorption: field.absorption,
                             advection: field.advection,
+                            redshift: 0.0,
+                            z_kind: 0,
                             bins: star.bins,
                         };
                         let _ = ftx.send(FetchResult {
@@ -2621,6 +2625,8 @@ pub fn main_flow() {
                             force_type: field.force as f64,
                             absorption: field.absorption,
                             advection: field.advection,
+                            redshift: spec.redshift,
+                            z_kind: spec.z_kind,
                             bins: spec.bins,
                         };
                         let _ = ftx.send(FetchResult {
@@ -2932,6 +2938,7 @@ pub fn main_flow() {
                     | "ams02_spec"
                     | "lro_trk"
                     | "hamqsl_solar"
+                    | "dsn_snapshot"
                     | "usgs_comcat_m45"
                     | "aia"
                     | "eve"

@@ -114,7 +114,7 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
                 vx,
                 vy,
                 vz,
-                0.0,
+                if sh.redshift > 0.0 { sh.redshift } else { 0.0 },
                 0.0,
                 0.0,
                 0.0,
