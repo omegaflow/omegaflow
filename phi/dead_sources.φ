@@ -107,14 +107,6 @@ dead 404
 url http://reg.bom.gov.au/fwo/IDD60901/IDD60901.95765.json
 note HTTP 404 — Endpoint weg.
 
-dead unreachable
-url http://tap.roe.ac.uk/osa/sync
-note WFAU OSA (UKIRT/ATLAS DR1) — tap.roe.ac.uk TCP-tot (curl 000, 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror. Konsument-Kandidat: statische Mehrband-Farbe als S²-Zeugen-Material — Wiedervorlage 2026-12-02 (Gaia DR4).
-
-dead unreachable
-url http://tap.roe.ac.uk/ssa/sync
-note WFAU SSA (SuperCOSMOS) — tap.roe.ac.uk TCP-tot (curl 000, 2026-09-15); kein Wayback-Snapshot, kein lebender Mirror. Konsument-Kandidat: SuperCOSMOS-pm als zweite pm-Linie (60-Jahre-Basis) — Wiedervorlage 2026-12-02.
-
 dead 404
 url http://wwlln.net/cgi-bin/output.cgi?format=json&type=stations&limit=100
 note HTTP 404 — Endpoint weg.
