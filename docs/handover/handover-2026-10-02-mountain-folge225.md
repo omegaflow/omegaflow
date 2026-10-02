@@ -3,7 +3,7 @@
   session: Mountain-Folge 225
   class: handover
   date: 2026-10-02
-  sha256: 502d6d92a968f46f715ae5efdd69d9caf097e589e3e23324e840e1ac1be94adc
+  sha256: daa0d4f9587456e7b011d9ebaf752bc538b6c9f547475760e7c8c68355494902
   status: live
 -->
 # Handover — Mountain-Folge 225 (2026-10-02)
@@ -15,7 +15,7 @@ zitierte Runde steht auf `fb8ebc16c`). Diese Session konsumierte
 
 Die adressierten `## An mountain`-Blöcke aus `future-folge168` sind gemessen und
 gefaltet: die planetar/atmosphere/radio/zugang-Liste liegt als Verdikt in
-`phi/blocked_sources.φ:521-548`; die bereits getragenen Quellen tragen
+`phi/blocked_sources.φ:521-543`; die bereits getragenen Quellen tragen
 `pending`/`descoped`. Neu verdiktet (jede URL am 2026-10-02 per
 `archive_search --verdict` nachgemessen): `psaftp.esac.esa.int` descoped (200,
 CrushFTP-Login; Spiegel redundant zu IRSA/IA2), `pla.esac.esa.int` descoped (206,
@@ -50,13 +50,6 @@ Wort | Datum | Quelle
 - **Blockade:** Lauf-Ende offen; JWS2-Bins unmanifestiert.
 - **Braucht:** `ci_manage log 37000386415` einmal; Mycelium manifestiert die JWS2-Bins; danach `sha256` in `phi/sources.φ`.
 
-### ONC-Hydrophon PSD — Arm ohne Fetch-Pfad
-- **Status:** pending (parser-gap) | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-02) `tools/harvest/src/bin/onc_hydrophone_compiler.rs` gebaut (schreibt `COMP_ONC_PSD`), aber `--input <mat>`-getrieben und ohne Fetch-Pfad von `data.oceannetworks.ca/api/archivefile/download`; `declined_sources.φ:1417-1419` trägt die alte spectral-series-Ablehnung. Verdikt-Zeile in `phi/blocked_sources.φ` gesetzt.
-- **Blockade:** Fetch-Arm fehlt.
-- **Braucht:** Fetch-Arm (archivefile→MAT) oder expliziter `--input`-Harvest.
-
 ## Träger (Prosa, eigene)
 
 - `docs/auftrag/auftrag-flyby2-kette.md` — σ-Metrik-Kette (3 Marker); Trigger JUICE In-Situ / Δ publiziert, `flyby_ephemeris_gate` (CI).
@@ -78,7 +71,7 @@ Origin: mountain folge225.
 
 Origin: mountain folge225.
 
-- **future-folge168-Block vollständig gefaltet:** die sechs unregistrierten URLs sind verdiktet (`phi/blocked_sources.φ:521-548`); `pda.kasi.re.kr` bleibt `blocked account` (`:448`), `kari.re.kr/kpds` `descoped` (`:457`). Die SSA/OSA-Registerzeilen sind kanonisch sortiert (SSA-Block lag seit der letzten Session url-order-verletzend; `register_sort --write` geheilt).
+- **future-folge168-Block vollständig gefaltet:** die sechs unregistrierten URLs sind verdiktet (`phi/blocked_sources.φ:521-543`); `pda.kasi.re.kr` bleibt `blocked account` (`:448`), `kari.re.kr/kpds` `descoped` (`:457`). Die SSA/OSA-Registerzeilen sind kanonisch sortiert (SSA-Block lag seit der letzten Session url-order-verletzend; `register_sort --write` geheilt).
 - **DE441-Granulat-Naht-Befund:** `de_compiler.rs:215` dedupliziert per t0; Census auf den re-manifestierten CDN-Bins (`de441`/`inpop`/`epm`) zeigt `overlapping pairs 0`.
 
 ## LOCK

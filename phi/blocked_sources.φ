@@ -542,7 +542,3 @@ descoped
 url https://surveys.roe.ac.uk/ssa
 note WFAU/SSA live-Host (ROE) — 2026-10-02 HTTP 206 (1 B); Redirect-Hülle, ebenso www-wfau.roe.ac.uk/ssa (2026-10-02 pending, Wayback 2022); die Quelle steht bei tap.roe.ac.uk/ssa (sources.φ:11054), kein Host mit eigenem Arm. future-folge168.
 
-pending
-url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
-note ONC-Hydrophon PSD — onc_hydrophone_compiler gebaut (COMP_ONC_PSD), aber --input-getrieben ohne Fetch-Pfad; declined_sources.φ:1417-1419 trägt die alte spectral-series-Ablehnung. Braucht Fetch-Arm. future-folge167.
-
