@@ -28,7 +28,7 @@ impl LeapSeconds {
             Some(leap) => self.delta_t_a + leap,
             None => {
                 let &(_, first_unix) = self.deltas.first()?;
-                if !(unix < first_unix) {
+                if unix.partial_cmp(&first_unix) != Some(std::cmp::Ordering::Less) {
                     return None;
                 }
                 delta_t_at_unix(unix)
@@ -46,7 +46,7 @@ impl LeapSeconds {
         }
         let &(_, first_unix) = self.deltas.first()?;
         let first_tdb = first_unix + self.delta_t_a + self.leap_at(first_unix)? - J2000_UNIX_OFFSET;
-        if !(tdb < first_tdb) {
+        if tdb.partial_cmp(&first_tdb) != Some(std::cmp::Ordering::Less) {
             return None;
         }
         let mut unix = tdb + J2000_UNIX_OFFSET;
