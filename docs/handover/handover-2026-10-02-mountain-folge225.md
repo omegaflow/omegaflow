@@ -3,7 +3,7 @@
   session: Mountain-Folge 225
   class: handover
   date: 2026-10-02
-  sha256: 6e1abd047ca8b9dba3b58d06f7de770a2858fdf9408a774ff9ef2589f0b00887
+  sha256: 776a39b1790c79f5c68b2620e683dc38ef387ad603c790a3c2cf76167744affa
   status: live
 -->
 # Handover — Mountain-Folge 225 (2026-10-02)
@@ -40,6 +40,7 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-02 | Operator (Session, Mountain 225)
 „Committe und pushe jetzt — nur deine eigene Arbeit, gemessen nicht beteuert … das Commit-Wort" | 2026-10-02 | Operator (Session, Mountain 221)
 „braucht es max?" — pro/max nur mit benanntem Hart-Atom oder gemessener flash-Fehllage; flash-first | 2026-10-02 | Operator (Session, Mountain 222)
+„ich schicke immer an omegaflow im cc damit ihr sie im ledger habt" — jeder Operator-Send trägt `code@omegaflow.space` im Cc (Ledger-Aufnahme) | 2026-10-02 | Operator (Session, Mountain 225)
 
 ## Offen (aufgeschlüsselt)
 
@@ -52,10 +53,10 @@ Wort | Datum | Quelle
 
 ### PETREL19 — viertes Ephemeriden-Haus (Aufnahme wartet auf Lizenz)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lizenz-Verdikt — `github.com/TIAN-we/petrel19` LICENSE erscheint oder der Autor (Wei Tian) erteilt Erlaubnis.
-- **Lage:** (gemessen 2026-10-02) `github.com/TIAN-we/petrel19` (stage-1 206), GitHub-API 200 `license: null`, kein LICENSE; Repo trägt `fmt_spice/` (SPICE `.bsp/.mk/.time/.bpc`) + `fmt_de/` ASCII; Coverage ET 1799-10-13..2106-05-05; Arm `tools/harvest/src/bin/ephemeris_compiler.rs` steht. Der IAU-Commission-X2-Bericht (200) nennt China als vierten Beitragräger. Verdikt-Zeile in `phi/blocked_sources.φ`.
+- **Trigger:** Antwort von Wei Tian auf die Lizenz-Anfrage — Beleg im Mail-Ledger (Cc an `code@omegaflow.space`).
+- **Lage:** (gemessen 2026-10-02) `github.com/TIAN-we/petrel19` (stage-1 206), GitHub-API 200 `license: null`, kein LICENSE; Repo trägt `fmt_spice/` (SPICE `.bsp/.mk/.time/.bpc`) + `fmt_de/` ASCII; Coverage ET 1799-10-13..2106-05-05; Arm `tools/harvest/src/bin/ephemeris_compiler.rs` steht. Anfrage abgeschickt 2026-10-02 (Operator-Hand, Proton `code@omegaflow.space`) an `tian-we@163.com`; Entwurf `state/mail/petrel19-lizenz-anfrage-2026-10-02.md`; Dritt-Wait `state/zustand/wartend.φ` (`petrel19-license`). Verdikt-Zeile in `phi/blocked_sources.φ`.
 - **Blockade:** Lizenz ungeklärt.
-- **Braucht:** Lizenz-Verdikt; danach eine Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
+- **Braucht:** Antwort abwarten (Wiedervorlage); bei Lizenz die Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
 
 ### Probe-Artefakt vs Haus-Gate — Spalten-Riss
 - **Status:** eigen | **Bindung:** eigen
@@ -88,7 +89,7 @@ Origin: mountain folge225.
 - **future-folge168-Block vollständig gefaltet:** die sechs unregistrierten URLs sind verdiktet (`phi/blocked_sources.φ:521-543`); `pda.kasi.re.kr` bleibt `blocked account` (`:448`), `kari.re.kr/kpds` `descoped` (`:457`). Die SSA/OSA-Registerzeilen sind kanonisch sortiert (SSA-Block lag seit der letzten Session url-order-verletzend; `register_sort --write` geheilt).
 - **DE441-Granulat-Naht-Befund:** `de_compiler.rs:215` dedupliziert per t0; Census auf den re-manifestierten CDN-Bins (`de441`/`inpop`/`epm`) zeigt `overlapping pairs 0`.
 - **GSICS/KASI-Residuen verdiktet:** GSICS `descoped` (die CSVs `GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv` sind Plot-Manifeste, keine Zahlen → kein numerischer Arm); KASI-API `pending` mit gemessenem Endpoint `data.kasi.re.kr/api/{KMTNet,KVN,MIRIS}/search` (JSON; MIRIS liefert Metadaten + `DATAURL archive.kasi.re.kr/*.fits`); Zeilen in `phi/blocked_sources.φ`.
-- **PETREL19-Lizenz-Anfrage vorbereitet (Operator-Hand):** Artefakt `state/mail/petrel19-lizenz-anfrage-2026-10-02.md` + `.body.txt`; Adresse `tian-we@163.com` gemessen (Springer-`mailto`, 200); `smail --dry-run` sauber (3 QUELLEN auflösen, Body ohne Block). Ausführung: `smail --to tian-we@163.com --from code@omegaflow.space --subject "PETREL19 ephemeris files — license / terms of use" --body state/mail/petrel19-lizenz-anfrage-2026-10-02.body.txt` — Send = Operator-Wort (Human threshold).
+- **PETREL19-Lizenz-Anfrage gesendet (Operator-Hand, 2026-10-02):** an `tian-we@163.com`, Cc `code@omegaflow.space` (Ledger-Aufnahme); Entwurf `state/mail/petrel19-lizenz-anfrage-2026-10-02.md`; Dritt-Wait `state/zustand/wartend.φ` (`petrel19-license`); Mountain faltet die Antwort zur Verdikt-Zeile.
 
 ## An river
 
