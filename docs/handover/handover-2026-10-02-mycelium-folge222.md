@@ -3,7 +3,7 @@
   session: Mycelium-Folge 222
   class: handover
   date: 2026-10-02
-  sha256: bffe1e8c4f21f5ced5218f42fd20711bba8c19113d8bdf639cb0498b4a051df0
+  sha256: a5b19d8cbe9e0efaf0b04aaac70067a7e7fb3d84864c1a1075ca8a0bc2ce430f
   status: live
 -->
 # Handover — Mycelium-Folge 222 (2026-10-02)
@@ -45,10 +45,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### JWS2-Bins — `curated48` + `jwst_spectra` (Mountain-225 / Operator)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `kernel-flatten 36988184261` (curated48) + Producer des Voll-Harvest
-- **Lage:** (gemessen 2026-10-02 via Kopfbytes `curl -r 0-7` + `--verdict`) `jades_spectra.bin` = **JWS2** (206, sha `af728a13…` in `phi/sources.φ:9516`), `ceers_spectra.bin` = **JWS2** (206, sha `47937dec…` `:10986`); `curated48_spectra.bin` **404** (`:9280`-Block; Producer `kernel-flatten` jwst-spectra `36988184261` queued, Build `a22edfa7` trägt JWS2); `jwst_spectra.bin` = **JWS1** (206, `ssd.jpl.nasa.gov`, unregistriert, nur `jwst-cdn-watch` — **kein Producer-Workflow**).
-- **Blockade:** `curated48`-Lauf in flight; Voll-Harvest-Producer fehlt
-- **Braucht:** `kernel-flatten`-Lauf lesen, dann `sha256` in `phi/sources.φ:9280` nachtragen; für `jwst_spectra.bin` einen Voll-Harvest-Producer (ohne `--curated`) benennen/bauen.
+- **Trigger:** Lauf-Ende `kernel-flatten 36988184261` (curated48)
+- **Lage:** (gemessen 2026-10-02 via Kopfbytes `curl -r 0-7` + `--verdict`) `jades_spectra.bin` = **JWS2** (206, sha `af728a13…` in `phi/sources.φ:9516`), `ceers_spectra.bin` = **JWS2** (206, sha `47937dec…` `:10986`); `curated48_spectra.bin` **404** (`:9280`-Block; Producer `kernel-flatten` jwst-spectra `36988184261` queued, Build `a22edfa7` trägt JWS2). `jwst_spectra.bin` = **JWS1** (206, `ssd.jpl.nasa.gov`) — **bewusst eingefroren**, kein offener Punkt: GJ-806-Mismatch-Evidenz (NExScI-spectra 0 rows), der Voll-Harvest konvergiert nicht (5,7 h CI, 0 neu, 1502 skips, Budget-Abbruch, `92624f972`); Operator-Entscheid **Versionierung statt Ersetzung** — aktives Asset = `curated48_spectra.bin`, die Register-URL wurde umgehängt (`dda26c048`, `261644df2`). `jwst-cdn-watch` ist der Alt-Watcher darauf.
+- **Blockade:** `curated48`-Lauf in flight
+- **Braucht:** `kernel-flatten`-Lauf lesen, dann `sha256` in `phi/sources.φ:9280` nachtragen (JWS2). `jwst_spectra.bin` bleibt JWS1 (Befund), kein Producer.
 
 ### `blocked_sources.φ` mycelium-Dispositionen (19)
 - **Status:** wartend | **Bindung:** eigen
@@ -147,7 +147,7 @@ Origin: mycelium-folge222 (JWS2/ASCAT/ONC).
 
 - **ASCAT-CDN-Workflow + ONC-Fetch-Arm — am Baum gemessen vorhanden:** `ascat-cdn.yml` (`4c26150b9`) + Asset `ascat_uhr_ascat_b.bin` **206**; `onc-cdn.yml` (Fetch-Arm: archivefiles→LPF-spect.mat→locations→compiler) + Asset `onc_hydrophone_psd.bin` **206**. Die Adress-Behauptungen „Workflow fehlt / Braucht Fetch-Arm" sind gegenstandslos.
 - **ONC-Riss (Verdikt):** `phi/blocked_sources.φ:545` steht `pending`, `declined_sources.φ:1417` `decline spectral-series` — doch Asset manifestiert + Compiler/Workflow gebaut. Bitte das Verdikt (Zulassung ↔ descope) setzen; Mycelium trägt die Manifestations-Direktive danach nach.
-- **JWS2-Bins:** jades + ceers = JWS2 mit `sha256` in `phi/sources.φ`; `curated48` **404** (Producer `kernel-flatten` queued); `jwst_spectra.bin` = JWS1 ohne Producer-Workflow (siehe Offen).
+- **JWS2-Bins:** jades + ceers = JWS2 mit `sha256` in `phi/sources.φ`; `curated48` **404** (Producer `kernel-flatten` queued) — sha256 folgt. `jwst_spectra.bin` = JWS1 **bewusst eingefroren** (GJ-806-Mismatch-Evidenz; Voll-Harvest konvergiert nicht; Versionierung `dda26c048`/`261644df2`), kein offener Punkt.
 
 ## LOCK
 
