@@ -2,7 +2,7 @@
   title: Survey — Warteliste: offene Alternativen (Stand 2026-09-14, Runde 2)
   class: survey
   date: 2026-09-14
-  sha256: f5ec41f028cd0affdfdc0249070897d9f33535ff562043b163223a32bb87a321
+  sha256: 85533d1197c9cb50782521fd0251dd2d416442a38d973a89512821cf685ba5b4
   status: live
   see-also: docs/handover/archiv/handover-2026-09-14-entscheid-folge6.md phi/pipeline/ledger.φ
 -->
@@ -49,7 +49,7 @@ lokal — der Zugang existiert, es ist kein Warten.
 | Warte | gemessene Teilroute | was fehlt |
 |---|---|---|
 | Voyager Roh-Doppler | PDS-Rings `pds-rings.seti.org/pds4/bundles/voyager_rss_raw/` — rohe **ODR** (Open-Loop, Okkultation): VG1 Jupiter, VG2 Jupiter, VG2 Uranus/PODR, anonym | closed-loop DSN-Doppler ODF/TRK-2-34/TNF — nur Cassini/Maven/DART tragen TRK-2-34-Bundles, nicht Voyager |
-| NSE/SAMPLE_AUTHOR | IOP NJP 12, 105006 (2010) Fig. 5b/6 + arXiv 1008.4298 + Stuttgarter Diss. `impulse.mlz-[redacted].de/record/2120` + DTU-Orbit-Volltext-PDF `backend.orbit.dtu.dk/ws/files/9907046/plugin_1367_2630_12_10_105006.pdf` (2026-09-16 gemessen: 200, magic pdf, 806 306 B, sha256 [redacted]4095feb41b148a34e75a7ac89dfe93274caa67c2df44e81730399) | kein Deposit (arXiv 1008.4298 nur TeX+8 Figuren; iMPULSE `record/2120` nur Metadaten; MPG Edmond/Zenodo/Dataverse/DataCite ohne Datensatz); **Route offen (Mail 2026-09-17, `state/mail/mail_ledger.φ`): MPI-FKF/LAB_A sendet die rohen/reduzierten LAB_A-NSE-Dateien direkt („a few days") — auf Eingang: `[redacted]`-Quelle + Compiler + `sources.φ`**; Präzedenz gemessen: Zenodo `10.5281/zenodo.18306252` (RESEDA/BaZrO₃, FRM-II, 2026) zeigt, dass FRM-II-Spin-Echo-Deposits existieren |
+| Datensatz-Route | redigiert (privat, Operator-Wort 2026-10-02) | — |
 
 ## Bleibt offen (keine offene Route gemessen)
 
@@ -68,7 +68,4 @@ wo eine offene Route gemessen ist, ist das Warten hinfällig.
 
 ## Identität geklärt
 
-**NSE/SAMPLE_AUTHOR** = die Neutron-Spin-Echo-Zwischenstreufunktion I(q,t) von
-unterdotiertem YBa₂Cu₃O₆₊ₓ aus SAMPLE_AUTHOR et al., *New J. Phys.* 12, 105006 (2010),
-gemessen an **LAB_A** (MLZ/FRM-II, MPI-FKF). Beleg: `state/mail/mail_ledger.φ:8`
-(gesendete Mail) und `docs/handover/archiv/handover-2026-09-12-entscheid-folge3.md:59`.
+Referenz redigiert (privat, Operator-Wort 2026-10-02); Herkunft/Nachweis ausschließlich in `state/`.

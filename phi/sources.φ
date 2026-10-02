@@ -106,6 +106,19 @@ on earth 0 0 0
 format quakeml
 quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/eyes.nasa.gov/dsn_snapshot.bin
+format dsn_snapshot
+origin https://eyes.nasa.gov/dsn/data/dsn.xml
+compiler tools/harvest/src/bin/dsn_compiler.rs
+at earth
+ttl 60
+field dsn_s_down_power dsn_s_down_power inverse-square em dBm 60.0 0.0 0.0
+field dsn_x_down_power dsn_x_down_power inverse-square em dBm 60.0 0.0 0.0
+field dsn_k_down_power dsn_k_down_power inverse-square em dBm 60.0 0.0 0.0
+field dsn_ka_down_power dsn_ka_down_power inverse-square em dBm 60.0 0.0 0.0
+field dsn_s_up_power dsn_s_up_power inverse-square em kW 60.0 0.0 0.0
+field dsn_x_up_power dsn_x_up_power inverse-square em kW 60.0 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
 format fdsn_waveform
 origin https://service.earthscope.org/fdsnws/dataselect/1/query
@@ -2378,6 +2391,15 @@ field eve_335_line_irradiance eve_335_line_irradiance inverse-square em w/m2 864
 field eve_584_line_irradiance eve_584_line_irradiance inverse-square em w/m2 86400 0.0 0.0
 field eve_977_line_irradiance eve_977_line_irradiance inverse-square em w/m2 86400 0.0 0.0
 field eve_1032_line_irradiance eve_1032_line_irradiance inverse-square em w/m2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/manati.star.nesdis.noaa.gov-ascat/ascat_uhr_ascat_b.bin
+format ascat_wind
+origin https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB/
+compiler tools/harvest/src/bin/ascat_compiler.rs
+on earth 0 0 0
+ttl 86400
+field ascat_wind_speed_m_s ascat_wind_speed_m_s patch-levy advective m/s 86400 0.0 0.0
+field ascat_wind_direction_deg ascat_wind_direction_deg patch-levy advective deg 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1228354383-1261580867.bin
 format mpcobs
@@ -9446,6 +9468,14 @@ at earth
 ttl 604800
 field champ_plpt_electron_density_cm3 champ_plpt_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/jades.herts.ac.uk/jades_spectra.bin
+format jwst_spectra
+origin https://jades.herts.ac.uk/DR4/
+compiler tools/harvest/src/bin/jades_spectra_compiler.rs
+at sun
+ttl 604800
+field flux jades_line_flux_W_m2 inverse-square em W/m2 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/kcdc.iap.kit.edu/kcdc_kascade.bin
 format kcdc_kascade
 origin https://kcdc.iap.kit.edu
@@ -10913,6 +10943,15 @@ at mars
 ttl 604800
 field CDOD mars_dust_cdod inverse-square em 1 86400 0.0 0.0
 sha256 95cb85094cf4e120452b148977aa7666791ea391ccc6214b1b1f3a222e2d5402
+
+url https://github.com/omegaflow/sources/releases/download/web.corral.tacc.utexas.edu/ceers_spectra.bin
+format jwst_spectra
+origin https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
+origin https://zenodo.org/records/15472354
+compiler tools/harvest/src/bin/ceers_spectra_compiler.rs
+at sun
+ttl 604800
+field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
 format catalog_vlass_tap_component
