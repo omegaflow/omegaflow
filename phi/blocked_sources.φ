@@ -548,5 +548,5 @@ note WFAU/SSA live-Host (ROE) — 2026-10-02 HTTP 206 (1 B); Redirect-Hülle, eb
 
 pending
 url https://github.com/TIAN-we/petrel19
-note PETREL19 (China, Wei Tian) — 2026-10-02 GitHub-API 200 license:null, kein LICENSE; Repo fmt_spice/ (.bsp/.mk/.bpc) + fmt_de/ ASCII, Coverage 1799-10-13..2106-05-05; Arm ephemeris_compiler.rs steht; Aufnahme erst nach Lizenz-Verdikt. river-folge82.
+note PETREL19 — 2026-10-02 GitHub-API license:null; README + release_notes tragen nur Provenienz (Tian 2023, DOI 10.1007/s10569-023-10151-6), keine Lizenz; Coverage 1799-10-13..2106-05-05; Arm ephemeris_compiler.rs steht; Aufnahme nach Lizenz-Verdikt.
 
