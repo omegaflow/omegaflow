@@ -244,6 +244,24 @@ unkonsumierbar) → `blocked_sources.φ` mit Gap-Verweis (oder `park/` bei
 Block-Draft); `key-needed` → `blocked_sources.φ` mit Key-Marker;
 `decline` (Oszillator-Gate) → `declined_sources.φ`.
 
+**Weberin-Eignung — die vierte Prüfung (Operator-Wort 2026-10-02).** Nach
+`force`/τ/Klassifikation wird jede Quelle zusätzlich auf die *komplette*
+Weberin-Eignung geprüft (`docs/concepts/die-weberin.md` §3/§4/§8). Vier Punkte,
+je benannt, vor jedem `url`/`compiler`-Eintrag:
+
+1. **Linien-/Zeugen-Art** — trägt die Quelle eine physikalische Kraft oder einen
+   der drei Zeugen (S²-Richtung, räumliche Gestalt/Binding, Presence)? Ein
+   Katalog/Abgeleitetes trägt keine.
+2. **Zeitreihe** — trägt sie eine Reihe (τ/TE, Takens-Einbettung), oder nur einen
+   Einzelpunkt? Ohne Reihe gibt es kein Gewebe (Vlies/TE), nur einen Zettel.
+3. **4D-Anker** — ICRS/TDB + Körper/Station? Ohne Rahmen keine Weltlinie.
+4. **Zweite unabhängige Linie** — gibt es sie auf derselben Größe, oder läuft nur
+   *eine*? Eine einzelne Linie ergibt `absent`/DirectionOnly, nie Placed. Ein
+   Kanal ist **nicht** „gedeckt", solange nur eine Linie läuft; die fehlende
+   zweite Linie ist ein Register-Punkt (`pending`/`blocked`), nie stillschweigend
+   „gedeckt". Die Auswertung ist gebaut: `weberin_verdicts_compiler`
+   (`sources.φ:10409`).
+
 **Toter Endpoint ist kein Endzustand.** Funktioniert der Endpoint nicht, wird
 erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
 Redirects, Pfad-Renames) und Misspellings. `dead 404/400/5xx/dns/timeout`
