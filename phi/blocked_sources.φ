@@ -504,17 +504,17 @@ note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-02 HTTP 206 (1 B)
 
 descoped
 url https://www.bsee.gov/offshore-data-tools
-note BSEE Offshore Data & Tools (US DOI) — 2026-10-02 HTTP 200 (49613 B); nur Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium; Arm nicht baubar. future-folge168.
+note BSEE Offshore Data & Tools (US DOI) — 2026-10-02 HTTP 200; Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium, kein Zeuge (keine Messlinie). future-folge168.
 
 descoped
 url https://www.data.bsee.gov/Pipeline/ROWDescriptions/Default.aspx
-note BSEE Pipeline Right-of-Way (US DOI) — 2026-10-02 HTTP 200 (240837 B); ROW-Routen-Geometrie ohne Kraftfeld (Verdikt der BSEE/BOEM-Klasse). future-folge168.
+note BSEE Pipeline Right-of-Way (US DOI) — 2026-10-02 HTTP 200 (240837 B); ROW-Routen-Geometrie, kein Kraftfeld, kein Zeuge (administratives Inventar). future-folge168.
 
 descoped
 url https://www.boem.gov/oil-gas-energy/mapping-and-data
-note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind (decline model-forecast, declined_sources.φ:1305); kein beobachtetes Kraftfeld. future-folge168.
+note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind. Kein Kraftfeld, kein Zeuge: ein Modell ist kein Welt-Zeugnis (declined_sources.φ:1305). future-folge168.
 
 descoped
 url https://search-pdsppi.igpp.ucla.edu/search
-note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200 (18027 B); legacy Tomcat/JSP, nur Anzeige-Metadaten (/gallery/*.json) + HTML, kein Daten-Endpoint; PPI-Daten stehen bereits. future-folge168.
+note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200; legacy Tomcat/JSP, nur Anzeige-Metadaten (/gallery/*.json) + HTML, kein Daten-Endpoint; PPI-Daten stehen, kein Zeuge. future-folge168.
 
