@@ -3,6 +3,7 @@ use omegaflow::archivar::{
     embedded_lsk, encode_weberin_verdicts, fetch_raw, load_sources, parse_json,
     parse_weberin_verdicts, source_name_from_url,
 };
+use omegaflow::cdn::upload_release;
 use omegaflow::intermagnet;
 use omegaflow::weberin::{StationLine, WitnessLine};
 use std::path::PathBuf;
@@ -127,13 +128,13 @@ fn arg_f64(args: &[String], name: &str) -> Option<f64> {
 
 fn usage() {
     println!(
-        "usage: station_convergence_probe [--station ABK] [--lat f64 --lon f64] [--radius deg] [--tolerance-nT f64] [--live] [--start ISO] [--stop ISO] [--data-dir DIR] [--out <path>] [--grammar]"
+        "usage: station_convergence_probe [--station ABK] [--lat f64 --lon f64] [--radius deg] [--tolerance-nT f64] [--live] [--start ISO] [--stop ISO] [--data-dir DIR] [--out <path>] [--ci-mode] [--grammar]"
     );
     println!(
         "default: offline over the flowing fanout-ring caches under the archivar cache dir; --live fetches the two HAPI lines (INTERMAGNET ground xyzf, SWARM scalar F with Latitude/Longitude)."
     );
     println!(
-        "the measured station VerdictLine is written into the live ledger (default --out data/weberin_verdicts.bin); only a measured encounter is written, the prior line of the same station is replaced, every other ledger line is kept."
+        "the measured station VerdictLine is written into its own station ledger (default --out data/weberin_verdicts_station.bin); only a measured encounter is written, the prior line of the same station is replaced, every other ledger line is kept. --ci-mode manifests the station bin to the CDN release ssd.jpl.nasa.gov-weberin; the registered body lines stay the compiler's."
     );
 }
 
@@ -677,6 +678,7 @@ fn main() {
         return;
     }
     let live = flag(&args, "--live");
+    let ci_mode = flag(&args, "--ci-mode");
     let station = arg_after(&args, "--station")
         .unwrap_or(GROUND_DATASET)
         .to_string();
@@ -703,7 +705,7 @@ fn main() {
     };
     let out = match arg_after(&args, "--out") {
         Some(p) => p.to_string(),
-        None => "data/weberin_verdicts.bin".to_string(),
+        None => "data/weberin_verdicts_station.bin".to_string(),
     };
 
     let (start, stop) = if live {
@@ -828,6 +830,11 @@ fn main() {
                 Some(weave_epoch) => {
                     let line = station_blob_line(&station, word, dev, weave_epoch);
                     write_station_verdict(&out, &line);
+                    if ci_mode && !upload_release("ssd.jpl.nasa.gov-weberin", &out) {
+                        eprintln!(
+                            "station verdict: {out} did not reach the CDN release ssd.jpl.nasa.gov-weberin — the station bin stands local, the manifest is pending"
+                        );
+                    }
                 }
                 None => eprintln!(
                     "station verdict: the system TDB epoch reads void (naif0012 leap table) — {out} keeps its stand"
