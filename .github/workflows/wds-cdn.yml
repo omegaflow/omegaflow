@@ -11,6 +11,7 @@ permissions:
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
+  OMEGAFLOW_TAP_TIMEOUT: "1800"
 jobs:
   wds:
     runs-on: ubuntu-latest
