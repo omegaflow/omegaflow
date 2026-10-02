@@ -42,7 +42,7 @@ jobs:
             printf '%-26s %-26s %-6s %s\n' "$release" "$asset" "$code" "$reg" | tee -a cdn-health.txt
             case "$code" in 200|302) ;; *) fail=1 ;; esac
           }
-          check jwst_spectra.bin ssd.jpl.nasa.gov
+          check curated48_spectra.bin exoplanetarchive.ipac.caltech.edu
           check spectra.bin ssd.jpl.nasa.gov
           check nvss.json ssd.jpl.nasa.gov
           check first14.json ssd.jpl.nasa.gov
