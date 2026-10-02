@@ -2,8 +2,9 @@ use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::json::{JsonVal, jnum, jpath_val, jstr, parse_json};
 use omegaflow::jwst::{
-    JwstSpectrum, bins_from_jwst_rows, collect_table, finalize_workdir, fits_spectrum_rows,
-    ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin, write_sidecar,
+    JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT, JwstSpectrum, bins_from_jwst_rows, collect_table,
+    finalize_workdir, fits_spectrum_rows, ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin,
+    write_sidecar,
 };
 use omegaflow::lsk::parse as parse_lsk;
 use std::io::Write;
@@ -725,6 +726,8 @@ fn main() {
                 epoch_tdb,
                 host: target.host.clone(),
                 obs_id: row.obs_id.clone(),
+                redshift: JWST_REDSHIFT_ABSENT,
+                z_kind: JWST_Z_ABSENT,
                 bins,
             };
             if !write_sidecar(&workdir, &spec)

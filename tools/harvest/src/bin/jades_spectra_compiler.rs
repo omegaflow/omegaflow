@@ -1,7 +1,8 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsImage, FitsTable};
 use omegaflow::jwst::{
-    JWST_HOST_BYTES, JWST_LEDGER, JWST_OBSID_BYTES, JwstSpectrum, finalize_workdir, ledger_append,
+    JWST_HOST_BYTES, JWST_LEDGER, JWST_OBSID_BYTES, JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT,
+    JWST_Z_PAPER, JWST_Z_PHOT, JWST_Z_SPEC, JwstSpectrum, finalize_workdir, ledger_append,
     ledger_done, parse_jwst_bin, write_sidecar,
 };
 use omegaflow::lsk::parse as parse_lsk;
@@ -14,6 +15,9 @@ const JADES_ORIGIN: &str = "jades.herts.ac.uk";
 const META_EXTNAME: &str = "Obs_info";
 const LINE_EXTNAME: &str = "R100_5pix";
 const LINE_EXTNAME_FALLBACK: &str = "R1000_5pix";
+const Z_SPEC_COLUMN: &str = "z_Spec";
+const Z_PHOT_COLUMN: &str = "z_phot";
+const Z_PAPER_COLUMN: &str = "z_paper";
 
 const C_LIGHT: f64 = 299_792_458.0;
 const ANGSTROM_M: f64 = 1e-10;
@@ -139,6 +143,32 @@ fn probe_fits(path: &str) {
                     eprintln!("  col {} {} {}", c.name, c.code, c.repeat);
                 }
             }
+            if name.trim() == META_EXTNAME {
+                for col_name in [Z_SPEC_COLUMN, Z_PHOT_COLUMN, Z_PAPER_COLUMN] {
+                    let Some(c) = table.column(col_name) else {
+                        eprintln!("  z {col_name}: absent");
+                        continue;
+                    };
+                    let mut n = 0usize;
+                    let mut lo = f64::INFINITY;
+                    let mut hi = f64::NEG_INFINITY;
+                    for r in 0..table.n_rows {
+                        if let Some(v) = table.cell_f64(&bytes, r, c)
+                            && v.is_finite()
+                            && v > 0.0
+                        {
+                            n += 1;
+                            lo = lo.min(v);
+                            hi = hi.max(v);
+                        }
+                    }
+                    if n == 0 {
+                        eprintln!("  z {col_name}: no positive value");
+                    } else {
+                        eprintln!("  z {col_name}: {n} positive, min {lo}, max {hi}");
+                    }
+                }
+            }
             if next <= off {
                 break;
             }
@@ -194,6 +224,8 @@ struct Target {
     dec_deg: f64,
     epoch_tdb: f64,
     line_row: usize,
+    redshift: f64,
+    z_kind: u8,
 }
 
 fn targets(
@@ -219,6 +251,11 @@ fn targets(
         eprintln!("{LINE_EXTNAME}: Unique_ID column absent — the line table stays unjoined");
         return Vec::new();
     };
+    let z_arms = [
+        (meta.column(Z_SPEC_COLUMN), JWST_Z_SPEC),
+        (meta.column(Z_PHOT_COLUMN), JWST_Z_PHOT),
+        (meta.column(Z_PAPER_COLUMN), JWST_Z_PAPER),
+    ];
     let mut line_row_of: HashMap<String, usize> = HashMap::new();
     for r in 0..line.n_rows {
         if let Some(uid) = line.cell_str(bytes, r, line_uid_c) {
@@ -261,12 +298,22 @@ fn targets(
         let Some(line_row) = line_row_of.get(&uid).copied() else {
             continue;
         };
+        let (redshift, z_kind) = z_arms
+            .iter()
+            .find_map(|(col, kind)| {
+                col.and_then(|c| meta.cell_f64(bytes, r, c))
+                    .filter(|v| v.is_finite() && *v > 0.0)
+                    .map(|v| (v, *kind))
+            })
+            .unwrap_or((JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT));
         out.push(Target {
             unique_id: uid,
             ra_deg: ra,
             dec_deg: dec,
             epoch_tdb,
             line_row,
+            redshift,
+            z_kind,
         });
     }
     out
@@ -455,6 +502,8 @@ fn main() {
             epoch_tdb: t.epoch_tdb,
             host: t.unique_id.clone(),
             obs_id: t.unique_id.clone(),
+            redshift: t.redshift,
+            z_kind: t.z_kind,
             bins,
         };
         if !write_sidecar(&workdir, &spec)
