@@ -1,8 +1,8 @@
 <!--
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
-  date: 2026-08-28
-  sha256: b54d52984feddea16f6b413ef1806109b05682b8eedf24a000d07b6e4ff87655
+  date: 2026-10-02
+  sha256: aebeaedd626023d51b2023f9327dc32bd0e1ed77b9b41a44d0ab30d0da97e8fc
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -115,6 +115,24 @@ For each channel c (plasma-pressure gradient, IMF-Bz, Kp, Swarm) over the perige
 ### Threshold: fam (phase-randomized surrogates)
 
 The threshold is fam, the family bound of the phase-randomized surrogate null: the pre-registered series is phase-randomized to build the null ensemble, and each channel residual is tested against it, with multiple-comparison correction across all channels. Agreement = no channel carries a residual above fam (silence is a full finding). Over fam = the pre-registered field state does not agree with the measured one — falsification. No hardcoded threshold is used; fam derives from the live data.
+
+## The Anderson flyby-class probe — the MESSENGER rift is a granule seam (measured 2026-10-02)
+
+The Anderson-class estimator test weighs the six pre-registered Earth flybys
+(`flyby_anderson_probe`, `anderson_residuals.tsv`) against the family bound and
+the three Earth house ephemeris lines. On the re-manifested (solver-fixed) CDN
+bins (`ephemeris-probes` run `36978176405` @`04ca197e6`, success) the six rows
+read: Galileo I `pending` (tdot_max `pending`); Galileo II −4.6 mm/s / tdot_max
+0.00512, NEAR 13.46 / 0.00389, Cassini −2 / 0.00660, Rosetta 1.82 / 0.00310 —
+`rift-excluded`; MESSENGER 0.02 mm/s / tdot_max 0.03252 — `rift-generator`
+(`data/flyby2/anderson-probe-2026-09-28.json`, CI artifact). The MESSENGER
+reading is a granule-seam artifact, not a physical rift:
+`ephemeris_granule_census --series --date 2005-08-02 --half-days 3` places the
+epoch exactly on a DE- and EPM-granule boundary (JD 2453584.5), with a 13.4 mm/s
+one-hour change in DE–INPOP / INPOP–EPM in the adjacent hour while DE–EPM stays
+flat 0.0 mm/s — the same granule-artifact class named for folge216. The riss is
+carried, not smoothed: the probe stamps `rift-generator`, the census resolves it
+as a seam; the physical bound stays the council chord (3.65 µm/s).
 
 ## What stays unchanged
 
