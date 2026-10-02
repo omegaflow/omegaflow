@@ -546,3 +546,7 @@ descoped
 url https://surveys.roe.ac.uk/ssa
 note WFAU/SSA live-Host (ROE) — 2026-10-02 HTTP 206 (1 B); Redirect-Hülle, ebenso www-wfau.roe.ac.uk/ssa (2026-10-02 pending, Wayback 2022); die Quelle steht bei tap.roe.ac.uk/ssa (sources.φ:11054), kein Host mit eigenem Arm. future-folge168.
 
+pending
+url https://github.com/TIAN-we/petrel19
+note PETREL19 (China, Wei Tian) — 2026-10-02 GitHub-API 200 license:null, kein LICENSE; Repo fmt_spice/ (.bsp/.mk/.bpc) + fmt_de/ ASCII, Coverage 1799-10-13..2106-05-05; Arm ephemeris_compiler.rs steht; Aufnahme erst nach Lizenz-Verdikt. river-folge82.
+
