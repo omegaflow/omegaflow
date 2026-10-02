@@ -518,3 +518,31 @@ descoped
 url https://search-pdsppi.igpp.ucla.edu/search
 note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200; legacy Tomcat/JSP, nur Anzeige-Metadaten (/gallery/*.json) + HTML, kein Daten-Endpoint; PPI-Daten stehen, kein Zeuge. future-folge168.
 
+descoped
+url https://psaftp.esac.esa.int/
+note Planck/PSA-FTP-Mirror (ESA) — 2026-10-02 HTTP 200 (19704 B, direct); kein eigener Fetch-Pfad: die registrierten Planck-Arme ernten irsa.ipac.caltech.edu (sources.φ:9418-9454) und archives.ia2.inaf.it (sources.φ:8746). future-folge168.
+
+descoped
+url https://pla.esac.esa.int/
+note Planck-ESA-Mirror (ESA) — 2026-10-02 HTTP 206 (1 B, direct); Redirect-Hülle ohne Einzeldatei-Endpoint; kein Fetch-Pfad, Planck-Arme ernten IRSA/IA2. future-folge168.
+
+pending
+url https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/
+note M3-ENVI USGS-Spiegel (Chandrayaan-1 M3) — 2026-10-02 direct pending (kein Response, auch Proton), nur Wayback 2018-08-24; Mirror-Kandidat zur ip-blocked-Zeile 469, lebende Route ungemessen. future-folge168.
+
+pending
+url https://data.kasi.re.kr/
+note KASI-Datenportal (Danuri/KPLO) — 2026-10-02 HTTP 200 (11409 B); Portal, kein Daten-Endpoint/Arm gemessen; pda.kasi.re.kr bleibt blocked account (Zeile 448). future-folge168.
+
+descoped
+url https://shadowcam.sese.asu.edu/
+note ShadowCam-Host (ASU) — 2026-10-02 HTTP 200 (8742 B); Projekt-Portal; der Datensatz steht bei pds.shadowcam.im-ldi.com/derived/ (Zeile 461, pending), kein zweiter Fetch-Pfad. future-folge168.
+
+descoped
+url https://surveys.roe.ac.uk/ssa
+note WFAU/SSA live-Host (ROE) — 2026-10-02 HTTP 206 (1 B); Redirect-Hülle, ebenso www-wfau.roe.ac.uk/ssa (2026-10-02 pending, Wayback 2022); die Quelle steht bei tap.roe.ac.uk/ssa (sources.φ:11054), kein Host mit eigenem Arm. future-folge168.
+
+pending
+url https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}
+note ONC-Hydrophon PSD — onc_hydrophone_compiler gebaut (COMP_ONC_PSD), aber --input-getrieben ohne Fetch-Pfad; declined_sources.φ:1417-1419 trägt die alte spectral-series-Ablehnung. Braucht Fetch-Arm. future-folge167.
+
