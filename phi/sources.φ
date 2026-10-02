@@ -10955,6 +10955,7 @@ format jwst_spectra
 origin https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
 origin https://zenodo.org/records/15472354
 compiler tools/harvest/src/bin/ceers_spectra_compiler.rs
+sha256 47937dec2184a870337462d5220285485c99306e838f3fb88e6f90dd1324438d
 at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0

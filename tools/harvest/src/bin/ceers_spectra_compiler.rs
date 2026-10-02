@@ -1,9 +1,9 @@
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsImage, FitsTable};
 use omegaflow::jwst::{
-    JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT, JWST_Z_SPEC, JwstSpectrum, bins_from_jwst_rows, collect_table,
-    finalize_workdir, ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin, reduce_table,
-    write_sidecar,
+    JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT, JWST_Z_SPEC, JwstSpectrum, bins_from_jwst_rows,
+    collect_table, finalize_workdir, ledger_append, ledger_done, mjd_to_unix, parse_jwst_bin,
+    reduce_table, write_sidecar,
 };
 use omegaflow::lsk::parse as parse_lsk;
 use std::collections::HashSet;
@@ -122,9 +122,7 @@ fn parse_dawn_z(text: &str) -> Vec<DawnRow> {
             continue;
         };
         let srcid = get(i_src).and_then(|s| s.parse::<i64>().ok());
-        let msa = i_file
-            .and_then(|i| get(i))
-            .and_then(dawn_file_msa);
+        let msa = i_file.and_then(|i| get(i)).and_then(dawn_file_msa);
         let grade = i_grade
             .and_then(|i| get(i))
             .and_then(|s| s.parse::<i64>().ok());
@@ -190,13 +188,17 @@ fn nearest_dawn_row<'a>(rows: &'a [DawnRow], ra: f64, dec: f64) -> Option<&'a Da
             best = Some((row, sep));
         }
     }
-    best.and_then(|(row, sep)| if sep <= DAWN_Z_MATCH_ARCSEC { Some(row) } else { None })
+    best.and_then(|(row, sep)| {
+        if sep <= DAWN_Z_MATCH_ARCSEC {
+            Some(row)
+        } else {
+            None
+        }
+    })
 }
 
 fn dawn_z(ra: f64, dec: f64, msa: Option<u32>) -> Option<(f64, u8)> {
-    let url = format!(
-        "{DAWN_Z_API}?coords={ra},{dec}&size={DAWN_Z_RADIUS_ARCSEC}&output=csv"
-    );
+    let url = format!("{DAWN_Z_API}?coords={ra},{dec}&size={DAWN_Z_RADIUS_ARCSEC}&output=csv");
     let text = curl_text(&url, 30)?;
     let rows = parse_dawn_z(&text);
     if rows.is_empty() {
