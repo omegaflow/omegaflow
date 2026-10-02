@@ -3,7 +3,7 @@
   session: River-Folge 82
   class: handover
   date: 2026-10-02
-  sha256: d5038221b92db2173ba14421f8958c05d97fb100ec4589434aace114e2525cb6
+  sha256: 72a8b44d20690211ae2f79aa384f18603e9aa6a8ac5c6322776c1481f0f667ca
   status: live
 -->
 # Handover — River-Folge 82 (2026-10-02)
@@ -111,6 +111,9 @@ Origin: river folge82 (Auftrag des Operators, 2026-10-02).
 
 - `docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md` (`class: sheet`) — das formale
   Rats-Blatt zur Anderson-Flyby-Klasse; Header-sha `8aa321e4…`.
+- `docs/blatt/blatt-te-externer-steuerparameter.md` (`class: sheet`) — die TE-Methode über
+  einen externen Steuerparameter (Wohlgestelltheit, Null, Ersatzmaß); Header-sha `596553e1…`.
+  Träger für den privaten `complex_te_probe`-Pfad (LOCK).
 
 ## Offen (aufgeschlüsselt)
 
