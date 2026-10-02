@@ -87,25 +87,40 @@ fn report(word: &str, path: &str) {
         }
     }
     let mut gap_max: Option<f64> = None;
+    let mut gap_at_jd = 0.0;
     let mut mism: Vec<f64> = Vec::new();
+    let mut mism_max: Option<(f64, f64)> = None;
+    let mut overlaps = 0usize;
     for pair in gs.windows(2) {
         let a = pair[0];
         let b = pair[1];
-        let gap = ((b.t0_jd - b.dt_jd) - (a.t0_jd + a.dt_jd)).abs();
+        let end_a = a.t0_jd + a.dt_jd;
+        let start_b = b.t0_jd - b.dt_jd;
+        if start_b < end_a - 1.0e-6 {
+            overlaps += 1;
+            continue;
+        }
+        let gap = (start_b - end_a).abs();
         if match gap_max {
             Some(m) => gap > m,
             None => true,
         } {
             gap_max = Some(gap);
+            gap_at_jd = start_b;
         }
         let d = dist_km(sample(a, 1.0), sample(b, -1.0));
         if d.is_finite() {
             mism.push(d);
+            if match mism_max {
+                Some((m, _)) => d > m,
+                None => true,
+            } {
+                mism_max = Some((d, start_b));
+            }
         }
     }
     mism.sort_by(|a, b| a.partial_cmp(b).unwrap());
     let mism_med = mism.get(mism.len() / 2).copied();
-    let mism_max = mism.last().copied();
     println!("{word}: {path}");
     println!(
         "  granules {n}, half-width dt (d): min {} median {} max {}",
@@ -120,10 +135,13 @@ fn report(word: &str, path: &str) {
         num(span_yr)
     );
     println!(
-        "  boundary gap max {} d, reconstruction mismatch (km): median {} max {}",
+        "  boundary gap max {} d at JD {}, reconstruction mismatch (km): median {} max {} at JD {}, overlapping pairs {}",
         num(gap_max),
+        num(Some(gap_at_jd)),
         num(mism_med),
-        num(mism_max)
+        num(mism_max.map(|x| x.0)),
+        num(mism_max.map(|x| x.1)),
+        overlaps
     );
 }
 
