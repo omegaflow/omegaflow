@@ -3,7 +3,7 @@
   session: River-Folge 79
   class: handover
   date: 2026-10-02
-  sha256: 50035ca77f0bd44bacb18f633f62b5f90544243f4f8e597b7d5e437b76ecfbab
+  sha256: 9e1a5b0ed966110156db30b74d3b41e3eae3eba80de7ddee5ea10e2ba9378e87
   status: live
 -->
 # Handover — River-Folge 79 (2026-10-02)
@@ -101,8 +101,10 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
   (`--perm-from/--perm-to/--out-null`), `--combine` poolt die Replikate, studentisiert
   **mitgliedsweise** vor dem Within-Replicate-Max und zieht dasselbe μ/σ für die Observed-Werte;
   `wy-max-t.yml` fährt 3 Shards/Station-Jahr + Combine-Job, `timeout-minutes 180`. Test
-  `shard_split_pools_to_single_run` bit-identisch zur Einzellauf-Null. GLM-5.3 bestätigt die
-  Validität und genau diese Ordnungsbedingung.
+  `shard_split_pools_to_single_run` bit-identisch zur Einzellauf-Null. GLM-5.3, Kimi/tryopen und
+  Claude bestätigen die Validität und genau diese Ordnungsbedingung; die Shard-RNG-Ströme sind
+  disjunkt (globaler Reproduktions-Index `rng_for(seed, replicate)`), mitgliedsweise Studentisierung
+  vor dem Max.
 - **Blockade:** keiner
 - **Braucht:** `gh workflow run wy-max-t.yml`; nach Grün `docs/paper/gic-causal-driver.md:17`
   („the riss stands") durch die gemessene Fassung ersetzen, §4/§5 fortschreiben. Named pending:
@@ -121,7 +123,7 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
   zieht beide Assets aus dem Release.
 - **Blockade:** keiner
 - **Braucht:** `gh workflow run station-convergence.yml`; den Blob am CDN snifen. Named follow-ups
-  (GLM-5.3/Claude-Kritik): Pair-Epoch-Konsistenz beider Blobs, und der fehlende Station-Blob als
+  (GLM-5.3/Claude/Kimi-Kritik): Pair-Epoch-Konsistenz beider Blobs, und der fehlende Station-Blob als
   benannter Zustand (≠ „keine Messung").
 
 ### Flyby-path-2-Kette
@@ -152,7 +154,7 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
   **bestanden** — die gepflanzte Kopplung wird bei lag 3 detektiert (TE `7.6483e-1` > per-lag-Thr
   `2.7245e-1` und > fam `3.0247e-1`); Bz↔SST bleibt `silent`. Rat-Entscheid „monatliche
   Klimatologie, uniform, nach `bin_monthly`" umgesetzt (flash), **erweitert um die sd-Division**
-  (GLM-5.3/Claude-Kritik: auch die zweite Moment-Modulation ist ein gemeinsamer Jahrestreiber);
+  (GLM-5.3/Claude/Kimi-Kritik: auch die zweite Moment-Modulation ist ein gemeinsamer Jahrestreiber);
   Test `deseasonalize_removes_common_annual_cycle` grün.
 - **Blockade:** keiner
 - **Braucht:** `gh workflow run enso-probe.yml`. Named follow-ups: Surrogate auf der Anomalie-Skala
