@@ -3,7 +3,7 @@
   session: Mountain-Folge 225
   class: handover
   date: 2026-10-02
-  sha256: daa0d4f9587456e7b011d9ebaf752bc538b6c9f547475760e7c8c68355494902
+  sha256: d1a58655fe1b1dabed07a9b5365adada740bfc3757e045bc2be14958de5fc97d
   status: live
 -->
 # Handover — Mountain-Folge 225 (2026-10-02)
@@ -73,6 +73,7 @@ Origin: mountain folge225.
 
 - **future-folge168-Block vollständig gefaltet:** die sechs unregistrierten URLs sind verdiktet (`phi/blocked_sources.φ:521-543`); `pda.kasi.re.kr` bleibt `blocked account` (`:448`), `kari.re.kr/kpds` `descoped` (`:457`). Die SSA/OSA-Registerzeilen sind kanonisch sortiert (SSA-Block lag seit der letzten Session url-order-verletzend; `register_sort --write` geheilt).
 - **DE441-Granulat-Naht-Befund:** `de_compiler.rs:215` dedupliziert per t0; Census auf den re-manifestierten CDN-Bins (`de441`/`inpop`/`epm`) zeigt `overlapping pairs 0`.
+- **GSICS/KASI-Residuen verdiktet:** GSICS `descoped` (die CSVs `GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv` sind Plot-Manifeste, keine Zahlen → kein numerischer Arm); KASI-API `pending` mit gemessenem Endpoint `data.kasi.re.kr/api/{KMTNet,KVN,MIRIS}/search` (JSON; MIRIS liefert Metadaten + `DATAURL archive.kasi.re.kr/*.fits`); Zeilen in `phi/blocked_sources.φ`.
 
 ## LOCK
 
