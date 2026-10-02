@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-10-02
-  sha256: aebeaedd626023d51b2023f9327dc32bd0e1ed77b9b41a44d0ab30d0da97e8fc
+  sha256: 8a9b741ed9a4457d025ae8c13b44d7cf73de4d619a443e7b4e1e27be36695b1a
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -122,7 +122,7 @@ The Anderson-class estimator test weighs the six pre-registered Earth flybys
 (`flyby_anderson_probe`, `anderson_residuals.tsv`) against the family bound and
 the three Earth house ephemeris lines. On the re-manifested (solver-fixed) CDN
 bins (`ephemeris-probes` run `36978176405` @`04ca197e6`, success) the six rows
-read: Galileo I `pending` (tdot_max `pending`); Galileo II −4.6 mm/s / tdot_max
+read: Galileo I +3.92 mm/s / tdot_max 1.2494 — `rift-excluded`; Galileo II −4.6 mm/s / tdot_max
 0.00512, NEAR 13.46 / 0.00389, Cassini −2 / 0.00660, Rosetta 1.82 / 0.00310 —
 `rift-excluded`; MESSENGER 0.02 mm/s / tdot_max 0.03252 — `rift-generator`
 (`data/flyby2/anderson-probe-2026-09-28.json`, CI artifact). The MESSENGER
