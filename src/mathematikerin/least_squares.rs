@@ -25,9 +25,11 @@ pub fn solve_normal_equations(
         bz.swap(i, pivot);
         for j in i + 1..n {
             let factor = a[j][i] / a[i][i];
-            for k in i..n {
-                let aik = a[i][k];
-                a[j][k] -= factor * aik;
+            let (top, bottom) = a.split_at_mut(j);
+            let row_i = &top[i];
+            let row_j = &mut bottom[0];
+            for (aik, ajk) in row_i[i..n].iter().zip(row_j[i..n].iter_mut()) {
+                *ajk -= factor * aik;
             }
             bx[j] -= factor * bx[i];
             by[j] -= factor * by[i];
@@ -68,7 +70,7 @@ mod tests {
         assert_eq!(z, vec![0.0, 0.0]);
         assert!(
             solve_normal_equations(
-                &vec![vec![0.0, 0.0], vec![0.0, 1.0]],
+                &[vec![0.0, 0.0], vec![0.0, 1.0]],
                 &[1.0, 1.0],
                 &[0.0, 0.0],
                 &[0.0, 0.0]

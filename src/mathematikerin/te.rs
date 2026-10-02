@@ -1949,7 +1949,7 @@ fn exact_fft(re: &mut [f64], im: &mut [f64], inverse: bool) {
     }
 }
 
-const Φ: f64 = 1.618033988749895;
+const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
 
 fn silverman_f64(v: &[f64]) -> Option<f64> {
     let n = v.len() as f64;

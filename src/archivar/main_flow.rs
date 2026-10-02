@@ -24,6 +24,14 @@ pub fn select_beat_source(
     }
 }
 
+pub fn jwst_spectrum_motion(rec: Arc<StarRec>, anchor: Option<&Motion>) -> Option<Motion> {
+    if rec.plx_mas.is_finite() && rec.plx_mas > 0.0 {
+        Some(Motion::Spherical { rec })
+    } else {
+        anchor.cloned()
+    }
+}
+
 pub struct StderrRadiator {
     pub last_line: String,
     pub interactive: bool,
@@ -2560,12 +2568,26 @@ pub fn main_flow() {
                         return;
                     }
                     let total = specs.len();
+                    let anchor = match &src.frame {
+                        Frame::Surface {
+                            body_name,
+                            lat,
+                            lon,
+                            alt,
+                        } => Some(Motion::Surface {
+                            body_name: body_name.clone(),
+                            lat: *lat,
+                            lon: *lon,
+                            alt: *alt,
+                        }),
+                        Frame::Barycenter { body_name, scale } => Some(Motion::Barycenter {
+                            body_name: body_name.clone(),
+                            scale: *scale,
+                        }),
+                        Frame::Manifest => None,
+                    };
                     let mut named_skips = 0usize;
                     for spec in specs {
-                        if spec.plx_mas <= 0.0 {
-                            named_skips += 1;
-                            continue;
-                        }
                         let rec = Arc::new(StarRec {
                             ra_deg: spec.ra_deg,
                             dec_deg: spec.dec_deg,
@@ -2581,10 +2603,17 @@ pub fn main_flow() {
                             sigma_pm_ra_masyr: None,
                             sigma_pm_de_masyr: None,
                         });
+                        let motion = match jwst_spectrum_motion(rec, anchor.as_ref()) {
+                            Some(motion) => motion,
+                            None => {
+                                named_skips += 1;
+                                continue;
+                            }
+                        };
                         let hash_name = format!("jwst_spectra.flux.{}.{}", spec.host, spec.obs_id);
                         let hash = SpectralHash {
                             name: hash_name,
-                            motion: Motion::Spherical { rec },
+                            motion,
                             epoch: spec.epoch_tdb,
                             ttl: src_ttl as f64,
                             tau: field.tau,

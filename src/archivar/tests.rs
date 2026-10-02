@@ -25,6 +25,44 @@ fn beat_source_precedence_is_total() {
     assert_eq!(select_beat_source(false, None, Some("")), BeatSource::None);
 }
 
+#[test]
+fn jwst_spectrum_without_parallax_keeps_a_declared_anchor() {
+    use crate::archivar::main_flow::jwst_spectrum_motion;
+    let rec = Arc::new(StarRec {
+        ra_deg: 53.0,
+        dec_deg: -27.8,
+        pm_ra_masyr: 0.0,
+        pm_de_masyr: 0.0,
+        plx_mas: 0.0,
+        flux: 0.0,
+        mag: 0.0,
+        tau: 0.0,
+        color_index: 0.0,
+        rv_m_s: 0.0,
+        sigma_plx_mas: None,
+        sigma_pm_ra_masyr: None,
+        sigma_pm_de_masyr: None,
+    });
+    let anchor = Motion::Barycenter {
+        body_name: "sun".into(),
+        scale: 1.0,
+    };
+    assert!(matches!(
+        jwst_spectrum_motion(rec.clone(), Some(&anchor)),
+        Some(Motion::Barycenter { .. })
+    ));
+    assert!(jwst_spectrum_motion(rec.clone(), None).is_none());
+
+    let measured = Arc::new(StarRec {
+        plx_mas: 4.6,
+        ..(*rec).clone()
+    });
+    assert!(matches!(
+        jwst_spectrum_motion(measured, Some(&anchor)),
+        Some(Motion::Spherical { .. })
+    ));
+}
+
 fn field_fixture(name: &str, tau: f64) -> FieldConfig {
     FieldConfig {
         key: name.into(),

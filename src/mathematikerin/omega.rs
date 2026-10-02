@@ -2,7 +2,7 @@ use super::*;
 use std::io::Write;
 use std::sync::atomic::AtomicU8;
 
-pub const Φ: f64 = 1.618033988749895;
+pub const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
 
 pub const C: f64 = crate::archivar::types::C_LIGHT;
 
