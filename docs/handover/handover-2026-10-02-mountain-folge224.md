@@ -3,7 +3,7 @@
   session: Mountain-Folge 224
   class: handover
   date: 2026-10-02
-  sha256: 79638f422da4d87364667f98b861746c836bbe6ab9d245ba6aa7725bc5c850db
+  sha256: 3a7ffe3b374568e9e59c0667a380ece77d98dd8e9403e28002cbf30c962008c8
   status: live
 -->
 # Handover — Mountain-Folge 224 (2026-10-02)
@@ -24,12 +24,14 @@ Die adressierten `## An mountain`-Blöcke aus `mycelium-folge220`, `river-folge7
 - `future-folge168`-Kandidaten (Finding = Claim nachgemessen): 6 von 10 sind
   Landeseiten bereits getragener Datensätze (`gdp_drifter`/`wod`/`superdarn`), keine
   neuen Quellen. Von den 5 neuen Endpunkten sind **4 `descoped`** (BSEE×2, BOEM,
-  PDS-PPI-Suche — Infrastruktur-Geometrie bzw. Modellwind, kein 9-Kraft-Medium) und
+  PDS-PPI-Suche — Infrastruktur-Geometrie bzw. Modellwind: kein 9-Kraft-Medium **und
+  keine Zeugen-Klasse** `s2-direction`/`point-event`/`gestalt`/`substance`/`presence`; ein
+  Modell ist kein Welt-Zeugnis) und
   **1 umgesetzt**: WFAU SSA als `format tap`-Quelle (`tap.roe.ac.uk/ssa/sync`,
   `SSA.Source`) in `phi/sources.φ`. Die `dead_sources.φ`-SSA/OSA-Zeilen (TCP-tot) waren
   stale — alle vier WFAU-TAPs (`osa/ssa/wsa/vsa`) antworten 2026-10-02 (400/200).
 
-## Burn: open 0.0000 · close 0.1713 (diese Line-Session, session_burn 2026-10-02) · cap 0.30 (raised: operator-directed multi-pass incl. council + UI consult + WFAU build) (reason: fired CEERS trigger, future-168 fold with 4 descopes + WFAU SSA source build, dead-entry healing, occultation council+UI descope)
+## Burn: open 0.0000 · close 0.1859 (diese Line-Session, session_burn 2026-10-02) · cap 0.30 (raised: operator-directed multi-pass incl. council + UI consult + WFAU build) (reason: fired CEERS trigger, future-168 fold with 4 descopes + WFAU SSA source build, dead-entry healing, occultation council+UI descope)
 
 ## Operator-Wort-Register
 
