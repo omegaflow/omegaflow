@@ -29,7 +29,7 @@ fn tap_query(root: &str, adql: &str) -> Option<String> {
             "tap_query http {}: {} body={}",
             out.status,
             String::from_utf8_lossy(&out.stderr).trim(),
-            &body[..body.len().min(400)]
+            &body[..body.len().min(1600)]
         );
         None
     }
@@ -64,7 +64,7 @@ fn tap_query_votable(root: &str, adql: &str, td: bool, maxrec: usize) -> Option<
             "tap_query_votable http {}: {} body={}",
             out.status,
             String::from_utf8_lossy(&out.stderr).trim(),
-            &body[..body.len().min(400)]
+            &body[..body.len().min(1600)]
         );
         None
     }
@@ -96,7 +96,7 @@ fn tap_query_csv(root: &str, adql: &str) -> Option<String> {
             "tap_query_csv http {}: {} body={}",
             out.status,
             String::from_utf8_lossy(&out.stderr).trim(),
-            &body[..body.len().min(400)]
+            &body[..body.len().min(1600)]
         );
         None
     }
@@ -1105,7 +1105,7 @@ fn main() {
             };
             let radius_deg = xmatch_radius / 3600.0;
             let fc = format!(
-                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', t.{}, t.{}), CIRCLE('ICRS', j.{}, j.{}, {}))",
+                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', {}, {}), CIRCLE('ICRS', {}, {}, {}))",
                 table_ref,
                 xtable,
                 alias_col("t", &cra),
@@ -1168,7 +1168,7 @@ fn main() {
             };
             let radius_deg = xmatch_radius / 3600.0;
             let fc = format!(
-                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', t.{}, t.{}), CIRCLE('ICRS', j.{}, j.{}, {}))",
+                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', {}, {}), CIRCLE('ICRS', {}, {}, {}))",
                 table_ref,
                 xtable,
                 alias_col("t", &cra),

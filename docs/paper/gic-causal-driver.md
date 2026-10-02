@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 20f15fee71a13887592464fc692d447d3d30cac7b661430f038aace3071056ff
+  sha256: 66c03f93f344fb3ca7ab15ad2d8d9be8983cbe217891d36900d0d6104bf3c689
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -20,7 +20,7 @@ Geomagnetically induced currents (GIC) are driven by the induced geoelectric fie
 
 - Transfer entropy measures how much information flows from solar-wind drivers to rapid ground magnetic-field changes at two observatories.
 - The southward interplanetary magnetic field leads the yearly response but does not clear the family bound at the quarterly grain.
-- The particle-density control never clears the bound, and the daily grain is empty: no family-clearing hourly driver is established.
+- The particle-density control never clears the bound, and the daily grain is empty: no family-clearing hourly driver is established; the four derived channels (Bs, Clock, P_dyn, M_A) stay family bound in all 15 quarterly artifacts.
 
 ## Plain Language Summary
 
@@ -401,6 +401,37 @@ confound rather than a result: the driver enters as a daily median while the
 target enters as a daily maximum, and a daily-maximum Bz driver was not
 measured, so the emptiness of this grain is not yet separated from the
 median-versus-maximum mismatch.
+
+### 4.6 Derived channels at the hardened quarterly grain (15 artifacts, n_surr = 100)
+
+Four derived solar-wind channels are measured alongside Bz, Newell, Speed and
+Density in every quarterly `bz-retro-probe` artifact: the rectified southward
+field Bs = max(−Bz, 0), the IMF clock angle Clock = atan2(By, Bz) [deg 0–360], the dynamic
+pressure P_dyn = 1.67e-6·n·v² [nPa], and the Alfvén Mach number
+M_A = v·√n/(21.8·B), B = √(Bx²+By²+Bz²). The table aggregates the best-lag row
+of each channel over the 15 artifacts (ABK 2024-q1…2025-q4, eight; SOD
+2024-q1…q4 and 2025-q2…q4, seven; SOD 2025-q1 is absent — its CI job failed):
+
+| channel | best lag h (quarters) | TE range | own threshold range | fam range | verdict |
+|---|---|---|---|---|---|
+| Bs → dB/dt | 0 (10), 2 (5) | 9.421e-2–1.534e-1 | 7.716e-2–1.267e-1 | 1.720e-1–2.090e-1 | family bound (15/15) |
+| Clock → dB/dt | 0 (5), 2 (5), 3 (1), 4 (2), 6 (2) | 6.790e-2–1.072e-1 | 7.751e-2–1.277e-1 | 1.720e-1–2.090e-1 | family bound (15/15) |
+| P_dyn → dB/dt | 4 (5), 5 (5), 6 (4), 3 (1) | 9.296e-2–1.498e-1 | 8.811e-2–1.315e-1 | 1.720e-1–2.090e-1 | family bound (15/15) |
+| M_A → dB/dt | 3 (6), 4 (5), 5 (3), 6 (1) | 5.405e-2–1.111e-1 | 8.513e-2–1.278e-1 | 1.720e-1–2.090e-1 | family bound (15/15) |
+
+No derived channel clears the round family bound in any of the 15 artifacts —
+zero arrows — so they add no family-clearing driver. At the per-lag grain the
+four separate, and the separation is named, not smoothed: P_dyn exceeds its own
+μ + 2σ threshold at the best lag in all 15 artifacts; Bs in 13 of 15 (below at
+ABK 2025-q4, 1.1292e-1 vs 1.2672e-1, and SOD 2025-q4, 1.0492e-1 vs 1.1142e-1);
+Clock in 2 of 15 (ABK 2024-q4 and SOD 2024-q4); M_A in none. The `bz-retro-probe`
+hourly pair verdict is binary at this grain — `te > fam ? "arrow" : "family
+bound"` (`tools/measure/src/bin/bz_retro_probe.rs:651`) — and emits no per-lag
+`silent` state, so the printed `family bound` certifies only that the value sits
+below the round maximum, never a per-lag clearing. P_dyn is therefore the only
+one of the four whose per-lag excess is uniform across the 15 quarters, and it
+still does not clear `fam`; the family-bound verdict of the hardened quarterly
+round extends to all four derived channels.
 
 ## 5. Discussion
 
