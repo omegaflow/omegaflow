@@ -520,11 +520,11 @@ note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200; legacy Tomcat/JSP, nu
 
 descoped
 url https://psaftp.esac.esa.int/
-note Planck/PSA-FTP-Mirror (ESA) — 2026-10-02 HTTP 200 (19704 B, direct); kein eigener Fetch-Pfad: die registrierten Planck-Arme ernten irsa.ipac.caltech.edu (sources.φ:9418-9454) und archives.ia2.inaf.it (sources.φ:8746). future-folge168.
+note Planck/PSA-FTP-Gateway (ESA) — 2026-10-02 HTTP 200 (19704 B) = CrushFTP-WebInterface-Login (gemessen); die getragenen Planck-Produkte ernten irsa.ipac.caltech.edu (sources.φ:9418-9454) + archives.ia2.inaf.it (8746). future-folge168.
 
 descoped
 url https://pla.esac.esa.int/
-note Planck-ESA-Mirror (ESA) — 2026-10-02 HTTP 206 (1 B, direct); Redirect-Hülle ohne Einzeldatei-Endpoint; kein Fetch-Pfad, Planck-Arme ernten IRSA/IA2. future-folge168.
+note Planck Legacy Archive WebUI (ESA) — 2026-10-02 HTTP 206 (1 B, direct), JS/app-getrieben, planckProducts.html 404, kein statischer Einzeldatei-Pfad; die getragenen Planck-Produkte ernten IRSA/IA2 (sources.φ:9418-9454, 8746). future-folge168.
 
 pending
 url https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/
