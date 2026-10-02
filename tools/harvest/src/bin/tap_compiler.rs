@@ -222,6 +222,17 @@ fn uws_phase(job: &str) -> Option<String> {
         .map(|s| s.trim().to_string())
 }
 
+fn uws_error(job: &str) -> Option<String> {
+    Command::new("curl")
+        .arg("-sS")
+        .arg(format!("{}/error", job))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+}
+
 fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
     let base = root.replace("/tap/sync", "/tap/async");
     let out = Command::new("curl")
@@ -268,8 +279,11 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
         if phase == "COMPLETED" {
             break;
         }
-        if phase == "ERROR" {
-            eprintln!("uws job phase {phase} — the query stays unharvested");
+        if phase == "ERROR" || phase == "ABORTED" {
+            match uws_error(&job) {
+                Some(msg) => eprintln!("uws job phase {phase} — {msg}"),
+                None => eprintln!("uws job phase {phase} — the query stays unharvested"),
+            }
             return None;
         }
         std::thread::sleep(std::time::Duration::from_secs(10));
