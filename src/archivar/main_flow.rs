@@ -3062,9 +3062,9 @@ pub fn main_flow() {
                                 freq: row.freq,
                                 bin_width: row.bin_width,
                                 epoch: row.t,
-                                station_code: None,
+                                station_code: src.station_code.clone(),
                                 position: Position::Source,
-                                name: fc.name.clone(),
+                                name: series_channel_name(&fc.name, src.station_code.as_deref()),
                                 value: row.value,
                             },
                             fc.clone(),
@@ -5463,9 +5463,16 @@ fn series_field_name<'a>(format: &str, comp: u32, names: &'a [String]) -> Option
     series_component_name(format, comp).or_else(|| names.get(comp as usize).map(String::as_str))
 }
 
+fn series_channel_name(field_name: &str, station_code: Option<&str>) -> String {
+    match station_code {
+        Some(code) => format!("{}_{}", field_name, code.to_ascii_lowercase()),
+        None => field_name.to_string(),
+    }
+}
+
 #[cfg(test)]
 mod series_field_name_tests {
-    use super::series_field_name;
+    use super::{series_channel_name, series_field_name};
 
     #[test]
     fn joins_static_table_or_data_driven_names() {
@@ -5480,6 +5487,22 @@ mod series_field_name_tests {
             Some("rpw_e_y")
         );
         assert_eq!(series_field_name("rpw_efield", 99, &[]), None);
+    }
+
+    #[test]
+    fn qualifies_the_channel_identity_with_the_station() {
+        assert_eq!(
+            series_channel_name("intermagnet_dbdt", Some("ABK")),
+            "intermagnet_dbdt_abk"
+        );
+        assert_eq!(
+            series_channel_name("intermagnet_dbdt", Some("SOD")),
+            "intermagnet_dbdt_sod"
+        );
+        assert_eq!(
+            series_channel_name("intermagnet_dbdt", None),
+            "intermagnet_dbdt"
+        );
     }
 }
 

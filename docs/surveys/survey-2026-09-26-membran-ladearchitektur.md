@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-30
-  sha256: 6d1de9e57aa29be987bd5e26c81be7cc5f246886861ebd661eb071311a07ccbb
+  sha256: cb5268968e0a55f1fad8cdb81c83f9dc2de7f320f0801639542c297eb20f6ae6
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -207,7 +207,7 @@ der am Insert als endliches `extent` gesetzt wird. Der Legacy-Baum widerlegt bei
    fehlende Leitung (`weberin_verdicts` nur zum Relay) wird gebaut; das
    TE→permeability→radiation-Muster ist die Vorlage.
 
-## 7. Offene Punkte — historisch, alle geschlossen (Nachträge 2026-09-28/29/30)
+## 7. Historische Punkte — alle geschlossen (Nachträge 2026-09-28/29/30)
 
 **Nachtrag 2026-09-28 (Mountain 196, gemessen):** Die Enclosure-Vereinheitlichung
 (Verdikt 2, §6) ist gebaut — `src/archivar/membrane.rs:353` `enclosure_rho(vmax, amax,
