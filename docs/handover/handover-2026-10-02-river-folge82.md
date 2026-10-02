@@ -3,7 +3,7 @@
   session: River-Folge 82
   class: handover
   date: 2026-10-02
-  sha256: 72a8b44d20690211ae2f79aa384f18603e9aa6a8ac5c6322776c1481f0f667ca
+  sha256: 7049877902d6ee8180c823d47ad4d59c5bb1c74363631ea42880e8e82c416162
   status: live
 -->
 # Handover — River-Folge 82 (2026-10-02)
@@ -33,6 +33,8 @@ Wort | Datum | Quelle
 „2. wer schliesst es?" (Träger des Rats-Blatt-Risses) | 2026-10-02 | Operator (Session, River 82)
 „3 ist übergeben" | 2026-10-02 | Operator (Session, River 82)
 „5 bitte an den schwarm stellen und pioneer bitte an rat und schwarm mit archive search" | 2026-10-02 | Operator (Session, River 82)
+„1 ja bitte" (privaten TE-Pfad entlocken; Detrend/CMI-Arm bauen, lokaler Lauf) | 2026-10-02 | Operator (Session, River 82)
+„ja voranmelde und dann lauf in ci" (Pioneer-Floor-Falsifikation) | 2026-10-02 | Operator (Session, River 82)
 
 ## An mountain
 
@@ -94,6 +96,20 @@ Origin: river folge82 (Auftrag des Operators, 2026-10-02).
   trägt Felder `carrier_level_dbm`/`polar_angle_cycles` — RSI **IFMS Closed-Loop AGC**, keine
   Bodenstations-Doppler/Range; der Formatname `rosetta_odf` ist irreführend. Mountain-Verdikt:
   umbenennen oder als IFMS führen.
+- **Privater TE-Pfad — Operator-Wort liegt vor (2026-10-02 „1 ja bitte").** Der Operator
+  entlockt den privaten Pfad: den `complex_te_probe` um den **Detrend-along-p-Arm** und den
+  **CMI/pTE-mit-p-Kovariate-Arm** erweitern (Methode: `docs/blatt/blatt-te-externer-steuerparameter.md`),
+  dann den Lauf **lokal/silent** fahren — **nie in CI** (die NSE-Daten bleiben im Haus,
+  LOCK privat). Träger Mountain (private Experiment-Linie `state/mountain/kuprat-complex-te/`).
+  Step: Probe bauen, `--selftest` grün, dann der Sweep; `no statement`/`pending` bleiben
+  erlaubte Ergebnisse (0 honored).
+- **Pioneer-Floor-Falsifikation — Operator-Wort liegt vor (2026-10-02 „ja voranmelde und dann
+  lauf in ci").** Mountain baut das **Voranmelde-Blatt** (Familie Station×Ära×Form, WY max-T
+  nach GIC §3.2, Block-Bootstrap 2⁴ d/500 Surrogate/fixierter Seed; dreiteiliges Kriterium:
+  Familie geräumt ∧ beide Sonden zeichengleich heliozentrisch ∧ Drei-Form-Test > 2× Null-p95),
+  dann **Lauf in CI** (`pioneer-floor.yml` bzw. der vorhandene Probe-Workflow). Das Blatt ist
+  Voraussetzung; kein Statistik-Wert vor dem Blatt. Die Quellen/Baum-Risse aus der Schwarm-Ernte
+  (arXiv:1204.2507 statt 1105.3869; Baum: Drift unaufgelöst, near-degenerate) trägt das Blatt.
 
 ## An mycelium
 
