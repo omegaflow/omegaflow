@@ -3,12 +3,19 @@ use omegaflow::json::{JsonVal, parse_json};
 use std::io::Write;
 use std::process::Command;
 
+fn tap_curl_timeout() -> String {
+    match std::env::var("OMEGAFLOW_TAP_TIMEOUT") {
+        Ok(v) => v,
+        Err(_) => "180".to_string(),
+    }
+}
+
 fn tap_query(root: &str, adql: &str) -> Option<String> {
     let out = Command::new("curl")
         .arg("-sS")
         .arg("--fail-with-body")
         .arg("-m")
-        .arg("180")
+        .arg(tap_curl_timeout())
         .arg("-G")
         .arg("--data-urlencode")
         .arg("REQUEST=doQuery")
@@ -41,7 +48,7 @@ fn tap_query_votable(root: &str, adql: &str, td: bool, maxrec: usize) -> Option<
         .arg("-sS")
         .arg("--fail-with-body")
         .arg("-m")
-        .arg("180")
+        .arg(tap_curl_timeout())
         .arg("-G")
         .arg("--data-urlencode")
         .arg("REQUEST=doQuery")
