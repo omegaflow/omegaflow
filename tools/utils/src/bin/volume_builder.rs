@@ -380,6 +380,7 @@ fn main() {
             sha256: None,
             window: None,
             live_only: false,
+            station_code: None,
         };
         match build_netcdf4_volume(&src, &bytes) {
             Some((live_name, live)) => match compare_volumes(&volume, &live) {
