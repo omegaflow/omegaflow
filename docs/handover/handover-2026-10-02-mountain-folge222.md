@@ -3,7 +3,7 @@
   session: Mountain-Folge 222
   class: handover
   date: 2026-10-02
-  sha256: 309e6d23014c3e52843a18681dd25abe9cbdb4983cf14c62b6d027732f7c8674
+  sha256: 939149e1668aa4a2bd2423cd76eb2fe4eff922cbda8e8bace9bb788fb7eb2bd8
   status: live
 -->
 # Handover — Mountain-Folge 222 (2026-10-02)
@@ -16,7 +16,7 @@ Die adressierten `## An mountain`-Blöcke aus `future-folge165` sind gemessen un
 die Offen-Liste gefaltet; der `river-folge77`-Block ist bereits seit folge221 erledigt
 (Feldname = gemessene Größe, Identität trägt `station`, 5 Absolutpfade gesetzt).
 
-## Burn: open 0.0024 · close 0.2713 · cap 0.30 (reason: operator-directed long atom — five dives and two probe runs in one pass)
+## Burn: open 0.0024 · close 0.3910 · cap 0.40 (reason: operator-directed multi-atom pass — seven dives, a council round, the JWS2 contract build, and the CEERS spec-z wiring)
 
 ## Operator-Wort-Register
 
@@ -87,12 +87,12 @@ Wort | Datum | Quelle
 - **Blockade:** keine.
 - **Braucht:** WMM/Kernel-Satz lokalisieren (`glob **/WMM*`, `glob **/*.COF`); vorhandenes als `descoped`/`disponiert` benennen, fehlendes als `pending` registrieren.
 
-### JWS1-Kontrakt — extragalaktische Spektren ohne Richtungs-Slot
+### JWS2-Kontrakt — z getragen, Position am Anker (gebaut)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Contract-Entscheid, ob JWS1 einen `z`/Distanz-Slot trägt.
-- **Lage:** (gemessen 2026-10-02, river-folge78 + `src/archivar/main_flow.rs:27`) der Wire hat ohne Abstand keinen Richtungs-Slot; extragalaktische Spektren (JADES/CEERS) sitzen am deklarierten `at`-Anker (sun), die eigentliche Messung (`spec.bins`) ist vollständig geführt. Eine echte Richtungs-/Distanz-Führung bräuchte ein `z` im JWS1-Bin.
-- **Blockade:** kein Record trägt eine Distanz (Parallaxe absent, kein `z`).
-- **Braucht:** Mountain-Contract-Entscheid: `z`-Slot im JWS1-Bin (`src/archivar/jwst.rs`) + Compiler (`jades_spectra_compiler`/`ceers_spectra_compiler`) + `phi/harvest.φ`; danach Mycelium-Manifestation.
+- **Trigger:** CI-Testlauf (`cargo test` der `jwst_bin_*`-Tests) + Mycelium-Manifest der JWS2-Bins.
+- **Lage:** (gemessen 2026-10-02, Rat + Bau) der Wire trägt `z` schon (`force_type 0` → `pole_x`, Tolman `(1+z)⁻⁴`, `spatial.rs:646`); gebaut ist die Leitung: JWS2-Record (Magic `JWS2`, Kopf 137 B = JWS1-Kopf + `z f64` + `z_kind u8`), JWS1-Lesearm bleibt (echtes `curated48_spectra.bin` → 214 spectra gelesen), `SpectralHash` + `redshift`/`z_kind`, `membrane.rs` setzt `Sample.z` (>0). JADES-z am FITS-Header gemessen: `z_Spec` 3787/5190 > `z_phot` 4853/5190 > `z_paper` 14/5190; Sentinel `z <= 0` = absent. Consumer (`main_flow.rs:27 jwst_spectrum_motion`) **unverändert** — kein Platzieren, kein Kosmologie-Modell.
+- **Blockade:** keine.
+- **Braucht:** CI-Testlauf (`jwst_bin_roundtrip*`, `_legacy_jws1`, `_sentinel`, `_refuses_malformed`); Mycelium manifestiert die JWS2-Bins (jades/ceers, `--ci-mode`); danach `sha256` in `phi/sources.φ` jades/ceers messen und nachtragen. Risse bis zur Kante gefahren: **CEERS z jetzt getragen** — die eigene Master-CSV trägt kein z, aber die **DAWN JWST Archive**-spec-z (`https://grizli-cutout.herokuapp.com/nirspec_extractions?coords=…&output=csv`, Zenodo `15472354`) ist verknüpft: gemessen `084733 → z 3.2418063, z_kind 1`, mehrere Linien wählen die stärkere (keine Mittelung), API-Ausfall/Ziel ohne Match → absent. Riss: `srcid` ist **nicht** allgemein die `MSA_ID` — der Compiler greift primär die Zahl vor `.spec.fits` (`file`-Spalte) plus Koordinate (≤1″). `origin https://zenodo.org/records/15472354` in `phi/sources.φ` ergänzt. **curated48 plx-tragend** — `jwst_spectra_compiler:169` leitet `plx = 1000/dist`; z nicht anwendbar (galaktisch). Das JADES-`url`-Asset 404, weil der CDN-Workflow `jades-cdn` (Mycelium) noch fehlt — angefordert.
 
 ### future-folge166 gefaltet — Korona-Netloc, M3-Mirror, KASI, CDSE-CCM
 - **Status:** eigen | **Bindung:** eigen

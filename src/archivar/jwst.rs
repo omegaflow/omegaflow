@@ -2,11 +2,19 @@ use crate::archivar::fits::{FitsHeader, FitsTable};
 use crate::archivar::types::C_LIGHT;
 
 pub const JWST_MAGIC: [u8; 4] = *b"JWS1";
+pub const JWST_MAGIC_V2: [u8; 4] = *b"JWS2";
 pub const JWST_HEADER_BYTES: usize = 8;
 pub const JWST_HOST_BYTES: usize = 32;
 pub const JWST_OBSID_BYTES: usize = 64;
 pub const JWST_RECORD_BYTES: usize = 8 + 8 + 4 + 8 + JWST_HOST_BYTES + JWST_OBSID_BYTES + 4;
+pub const JWST_RECORD_BYTES_V2: usize = JWST_RECORD_BYTES + 8 + 1;
 pub const JWST_BIN_BYTES: usize = 24;
+
+pub const JWST_REDSHIFT_ABSENT: f64 = 0.0;
+pub const JWST_Z_ABSENT: u8 = 0;
+pub const JWST_Z_SPEC: u8 = 1;
+pub const JWST_Z_PHOT: u8 = 2;
+pub const JWST_Z_PAPER: u8 = 3;
 
 pub const JY_TO_W_M2_HZ: f64 = 1e-26;
 
@@ -18,6 +26,8 @@ pub struct JwstSpectrum {
     pub epoch_tdb: f64,
     pub host: String,
     pub obs_id: String,
+    pub redshift: f64,
+    pub z_kind: u8,
     pub bins: Vec<(f64, f64, f64)>,
 }
 
@@ -216,15 +226,18 @@ fn read_padded(bytes: &[u8], off: &mut usize, len: usize) -> Option<String> {
 
 pub fn write_jwst_bin(specs: &[JwstSpectrum]) -> Option<Vec<u8>> {
     let mut out = Vec::with_capacity(
-        JWST_HEADER_BYTES + specs.len() * (JWST_RECORD_BYTES + 512 * JWST_BIN_BYTES),
+        JWST_HEADER_BYTES + specs.len() * (JWST_RECORD_BYTES_V2 + 512 * JWST_BIN_BYTES),
     );
-    out.extend_from_slice(&JWST_MAGIC);
+    out.extend_from_slice(&JWST_MAGIC_V2);
     out.extend_from_slice(&(specs.len() as u32).to_le_bytes());
     for s in specs {
         if !s.ra_deg.is_finite() || !s.dec_deg.is_finite() || !s.epoch_tdb.is_finite() {
             return None;
         }
         if !s.plx_mas.is_finite() {
+            return None;
+        }
+        if !s.redshift.is_finite() {
             return None;
         }
         out.extend_from_slice(&s.ra_deg.to_le_bytes());
@@ -237,6 +250,8 @@ pub fn write_jwst_bin(specs: &[JwstSpectrum]) -> Option<Vec<u8>> {
         if !push_padded(&mut out, &s.obs_id, JWST_OBSID_BYTES) {
             return None;
         }
+        out.extend_from_slice(&s.redshift.to_le_bytes());
+        out.push(s.z_kind);
         out.extend_from_slice(&(s.bins.len() as u32).to_le_bytes());
         for &(freq, bin_width, val) in &s.bins {
             if !freq.is_finite() || !bin_width.is_finite() || !val.is_finite() {
@@ -251,14 +266,26 @@ pub fn write_jwst_bin(specs: &[JwstSpectrum]) -> Option<Vec<u8>> {
 }
 
 pub fn parse_jwst_bin(bytes: &[u8]) -> Option<Vec<JwstSpectrum>> {
-    if bytes.len() < JWST_HEADER_BYTES || bytes[0..4] != JWST_MAGIC {
+    if bytes.len() < JWST_HEADER_BYTES {
         return None;
     }
+    let legacy = if bytes[0..4] == JWST_MAGIC {
+        true
+    } else if bytes[0..4] == JWST_MAGIC_V2 {
+        false
+    } else {
+        return None;
+    };
+    let record_bytes = if legacy {
+        JWST_RECORD_BYTES
+    } else {
+        JWST_RECORD_BYTES_V2
+    };
     let count = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
     let mut off = JWST_HEADER_BYTES;
     let mut specs = Vec::with_capacity(count);
     for _ in 0..count {
-        if off + JWST_RECORD_BYTES > bytes.len() {
+        if off + record_bytes > bytes.len() {
             return None;
         }
         let ra = f64::from_le_bytes(bytes[off..off + 8].try_into().ok()?);
@@ -268,12 +295,23 @@ pub fn parse_jwst_bin(bytes: &[u8]) -> Option<Vec<JwstSpectrum>> {
         off += 28;
         let host = read_padded(bytes, &mut off, JWST_HOST_BYTES)?;
         let obs_id = read_padded(bytes, &mut off, JWST_OBSID_BYTES)?;
+        let (redshift, z_kind) = if legacy {
+            (JWST_REDSHIFT_ABSENT, JWST_Z_ABSENT)
+        } else {
+            let z = f64::from_le_bytes(bytes[off..off + 8].try_into().ok()?);
+            let kind = bytes[off + 8];
+            off += 9;
+            (z, kind)
+        };
         if off + 4 > bytes.len() {
             return None;
         }
         let n_bins = u32::from_le_bytes(bytes[off..off + 4].try_into().ok()?) as usize;
         off += 4;
         if !ra.is_finite() || !dec.is_finite() || !plx.is_finite() || !epoch.is_finite() {
+            return None;
+        }
+        if !redshift.is_finite() {
             return None;
         }
         if off + n_bins * JWST_BIN_BYTES > bytes.len() {
@@ -297,6 +335,8 @@ pub fn parse_jwst_bin(bytes: &[u8]) -> Option<Vec<JwstSpectrum>> {
             epoch_tdb: epoch,
             host,
             obs_id,
+            redshift,
+            z_kind,
             bins,
         });
     }
@@ -414,8 +454,29 @@ mod tests {
             epoch_tdb: 8.4e8,
             host: host.to_string(),
             obs_id: obs_id.to_string(),
+            redshift: JWST_REDSHIFT_ABSENT,
+            z_kind: JWST_Z_ABSENT,
             bins: vec![(2.5e14, 1.0e13, 4.2e-24), (2.6e14, 1.0e13, 4.0e-24)],
         }
+    }
+
+    fn legacy_jws1(s: &JwstSpectrum) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(&JWST_MAGIC);
+        out.extend_from_slice(&1u32.to_le_bytes());
+        out.extend_from_slice(&s.ra_deg.to_le_bytes());
+        out.extend_from_slice(&s.dec_deg.to_le_bytes());
+        out.extend_from_slice(&(s.plx_mas as f32).to_le_bytes());
+        out.extend_from_slice(&s.epoch_tdb.to_le_bytes());
+        push_padded(&mut out, &s.host, JWST_HOST_BYTES);
+        push_padded(&mut out, &s.obs_id, JWST_OBSID_BYTES);
+        out.extend_from_slice(&(s.bins.len() as u32).to_le_bytes());
+        for &(freq, bin_width, val) in &s.bins {
+            out.extend_from_slice(&freq.to_le_bytes());
+            out.extend_from_slice(&bin_width.to_le_bytes());
+            out.extend_from_slice(&val.to_le_bytes());
+        }
+        out
     }
 
     #[test]
@@ -425,13 +486,55 @@ mod tests {
             spec("K2-18", "jw02722"),
         ];
         let bytes = write_jwst_bin(&specs).unwrap();
+        assert_eq!(&bytes[0..4], &JWST_MAGIC_V2);
         let parsed = parse_jwst_bin(&bytes).unwrap();
         assert_eq!(parsed.len(), 2);
         assert_eq!(parsed[0].host, "WASP-39");
         assert_eq!(parsed[0].obs_id, "jw01366-o001_t001_niriss");
         assert_eq!(parsed[0].plx_mas, 4.6f32 as f64);
+        assert_eq!(parsed[0].redshift, JWST_REDSHIFT_ABSENT);
+        assert_eq!(parsed[0].z_kind, JWST_Z_ABSENT);
         assert_eq!(parsed[0].bins, specs[0].bins);
         assert_eq!(parsed[1].bins, specs[1].bins);
+    }
+
+    #[test]
+    fn jwst_bin_roundtrip_carries_redshift() {
+        let mut s = spec("JADES-GS-z14-0", "gs_z14_0");
+        s.redshift = 14.32;
+        s.z_kind = JWST_Z_SPEC;
+        let bytes = write_jwst_bin(&[s]).unwrap();
+        assert_eq!(
+            bytes.len(),
+            JWST_HEADER_BYTES + JWST_RECORD_BYTES_V2 + 2 * JWST_BIN_BYTES
+        );
+        let parsed = parse_jwst_bin(&bytes).unwrap();
+        assert_eq!(parsed[0].redshift, 14.32);
+        assert_eq!(parsed[0].z_kind, JWST_Z_SPEC);
+    }
+
+    #[test]
+    fn jwst_bin_reads_legacy_jws1() {
+        let s = spec("WASP-39", "jw01366-o001_t001_niriss");
+        let bytes = legacy_jws1(&s);
+        assert_eq!(&bytes[0..4], &JWST_MAGIC);
+        let parsed = parse_jwst_bin(&bytes).unwrap();
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].host, "WASP-39");
+        assert_eq!(parsed[0].redshift, JWST_REDSHIFT_ABSENT);
+        assert_eq!(parsed[0].z_kind, JWST_Z_ABSENT);
+        assert_eq!(parsed[0].bins, s.bins);
+    }
+
+    #[test]
+    fn jwst_bin_sentinel_holds_absent_redshift() {
+        let mut s = spec("WASP-39", "obs");
+        s.redshift = -1.0;
+        s.z_kind = JWST_Z_ABSENT;
+        let bytes = write_jwst_bin(&[s]).unwrap();
+        let parsed = parse_jwst_bin(&bytes).unwrap();
+        assert!(parsed[0].redshift <= 0.0);
+        assert_eq!(parsed[0].z_kind, JWST_Z_ABSENT);
     }
 
     #[test]
@@ -443,6 +546,9 @@ mod tests {
         assert!(parse_jwst_bin(&bytes[..bytes.len() - 3]).is_none());
         let truncated = &bytes[..bytes.len() - 1];
         assert!(parse_jwst_bin(truncated).is_none());
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert!(parse_jwst_bin(&trailing).is_none());
     }
 
     #[test]
