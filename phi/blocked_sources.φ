@@ -532,7 +532,11 @@ note M3-ENVI USGS-Spiegel (Chandrayaan-1 M3) — 2026-10-02 direct+Proton kein R
 
 pending
 url https://data.kasi.re.kr/
-note KASI Science Data Portal (Danuri/KPLO) — 2026-10-02 HTTP 200 (11409 B); die Seite verlinkt eine Data-APIs-Doku (Confluence), Endpoint ungemessen; pda.kasi.re.kr bleibt blocked account (448). Braucht: API-Doc messen. future-folge168.
+note KASI Science Data Portal — 2026-10-02 HTTP 200; Data-APIs nennt data.kasi.re.kr/api/{KMTNet,KVN,MIRIS}/search (JSON; MIRIS gemessen: metadata + DATAURL archive.kasi.re.kr/*.fits); Arm offen; pda.kasi.re.kr blocked account (448). future-folge168.
+
+descoped
+url https://star.nesdis.noaa.gov/GOESCal/G16_GSICS_ABI_IR_Coeff_static.php
+note GSICS-Kalibrierung — 2026-10-02: die CSVs (GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv, 200 text/csv) sind Plot-Manifeste (PNG-Pfade), keine Zahlen; Radianz-Quellen gk2a_ami/goes_abi/himawari_hsd stehen — kein numerischer Arm. future-folge166.
 
 descoped
 url https://shadowcam.sese.asu.edu/
