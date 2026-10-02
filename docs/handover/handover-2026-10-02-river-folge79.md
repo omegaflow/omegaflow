@@ -3,7 +3,7 @@
   session: River-Folge 79
   class: handover
   date: 2026-10-02
-  sha256: 26784490bed1daf114db872ddd539707699866e22aa62ed7981756538c667916
+  sha256: 5e31368c135b28f55332dcf7ed382034b6883d7e807ca40db7b98203d409929e
   status: live
 -->
 # Handover — River-Folge 79 (2026-10-02)
@@ -53,7 +53,7 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
 
 ### tapvizier-TAP-Klasse — Verifikationslauf (geheilt)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende der Re-Dispatches `rave-cdn`/`sb9-cdn`/`first14-cdn` (dieser Atom)
+- **Trigger:** Lauf-Ende der Re-Dispatches `rave-cdn 36984925478` / `sb9-cdn 36984928491` / `first14-cdn 36984931299`
 - **Lage:** (gemessen 2026-10-02) Wurzel gemessen: river-77 („ADQL quoting") setzte in der
   `CONTAINS`-Join-Klausel ein literales `t.`/`j.` **vor** `alias_col` → `t.t."RAJ2000"`,
   `j.j."RA_ICRS"` → CDS 400 „unresolved identifiers"; die ADQL war sonst gültig. Beide
@@ -65,7 +65,7 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
 
 ### σ-Asset `dr3_stars.bin` — falscher Release-Tag, Re-Manifestation
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `gaia-cdn` (dieser Atom)
+- **Trigger:** Lauf-Ende `gaia-cdn 36984934208`
 - **Lage:** (gemessen 2026-10-02) der 56-B-Bin (`1 704 003×56 = 95 424 168 B`) wurde vom Lauf
   `36943970102` in den **falschen** Release `tapvizier.cds.unistra.fr` hochgeladen
   (`gh api … updated 2026-10-02T00:48:55Z`); der registrierte Release `ssd.jpl.nasa.gov` trägt
@@ -78,6 +78,16 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
   — `star_dmax_probe`/`vlies_density_probe` lesen den Katalog ohne die σ-Felder
   (`spatial.rs` `sigma_plx_mas`/`sigma_pm_ra_masyr`/`sigma_pm_de_masyr` bleiben unkonsumiert);
   minimales neues Bin nötig (Layout `tap_compiler.rs:437-488`, 0.0 = absent).
+
+### GIC-Quartal `sod-2025-q1` — fehlendes 16. Artefakt
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `bz-retro-probe 36984937798`
+- **Lage:** (gemessen 2026-10-02) in `36943972951` waren 15/16 Quartals-Jobs `success`; nur
+  `sod-2025-q1` failed, sein Job-Log ist per API `unread` (HTTP 404). Die 15 vorhandenen Quartale
+  sind als §4.6 des GIC-Papers gefaltet (vier neue Kanäle, alle family-bound).
+- **Blockade:** keiner
+- **Braucht:** nach dem Re-Dispatch `ci_manage log 36984937798` lesen; bei Grün §4.6 auf 16
+  Artefakte erweitern, sonst den einen Job-Grund benennen.
 
 ### Kalibrierte Null (Westfall–Young max-T) — 6-h-Cap
 - **Status:** blockiert | **Bindung:** eigen
