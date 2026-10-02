@@ -3,7 +3,7 @@
   session: Mountain-Folge 225
   class: handover
   date: 2026-10-02
-  sha256: d1a58655fe1b1dabed07a9b5365adada740bfc3757e045bc2be14958de5fc97d
+  sha256: 674a3ea83757a26128f0c4ea28b312a8b145615eeeaa7f76ea2acd077648e022
   status: live
 -->
 # Handover — Mountain-Folge 225 (2026-10-02)
@@ -50,6 +50,20 @@ Wort | Datum | Quelle
 - **Blockade:** Lauf-Ende offen; JWS2-Bins unmanifestiert.
 - **Braucht:** `ci_manage log 37000386415` einmal; Mycelium manifestiert die JWS2-Bins; danach `sha256` in `phi/sources.φ`.
 
+### PETREL19 — viertes Ephemeriden-Haus (Aufnahme wartet auf Lizenz)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lizenz-Verdikt — `github.com/TIAN-we/petrel19` LICENSE erscheint oder der Autor (Wei Tian) erteilt Erlaubnis.
+- **Lage:** (gemessen 2026-10-02) `github.com/TIAN-we/petrel19` (stage-1 206), GitHub-API 200 `license: null`, kein LICENSE; Repo trägt `fmt_spice/` (SPICE `.bsp/.mk/.time/.bpc`) + `fmt_de/` ASCII; Coverage ET 1799-10-13..2106-05-05; Arm `tools/harvest/src/bin/ephemeris_compiler.rs` steht. Der IAU-Commission-X2-Bericht (200) nennt China als vierten Beitragräger. Verdikt-Zeile in `phi/blocked_sources.φ`.
+- **Blockade:** Lizenz ungeklärt.
+- **Braucht:** Lizenz-Verdikt; danach eine Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
+
+### Probe-Artefakt vs Haus-Gate — Spalten-Riss
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-02, Blatt `docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md`) an der Epoche 2005-08-02 trägt `flyby_anderson_probe` de_inpop 22.485 km / inpop_epm 33.113 km, das Haus-Gate 0.1588 / 18.064; nur de_epm stimmt überein. Der Probe nutzt den 00:00-UTC-Epoch, das Haus-Gate den Perigäum-TDB.
+- **Blockade:** keine.
+- **Braucht:** Spalten-Semantik/Fenster im Probe benennen (Blatt „Offene Punkte" 1–2).
+
 ## Träger (Prosa, eigene)
 
 - `docs/auftrag/auftrag-flyby2-kette.md` — σ-Metrik-Kette (3 Marker); Trigger JUICE In-Situ / Δ publiziert, `flyby_ephemeris_gate` (CI).
@@ -74,6 +88,12 @@ Origin: mountain folge225.
 - **future-folge168-Block vollständig gefaltet:** die sechs unregistrierten URLs sind verdiktet (`phi/blocked_sources.φ:521-543`); `pda.kasi.re.kr` bleibt `blocked account` (`:448`), `kari.re.kr/kpds` `descoped` (`:457`). Die SSA/OSA-Registerzeilen sind kanonisch sortiert (SSA-Block lag seit der letzten Session url-order-verletzend; `register_sort --write` geheilt).
 - **DE441-Granulat-Naht-Befund:** `de_compiler.rs:215` dedupliziert per t0; Census auf den re-manifestierten CDN-Bins (`de441`/`inpop`/`epm`) zeigt `overlapping pairs 0`.
 - **GSICS/KASI-Residuen verdiktet:** GSICS `descoped` (die CSVs `GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv` sind Plot-Manifeste, keine Zahlen → kein numerischer Arm); KASI-API `pending` mit gemessenem Endpoint `data.kasi.re.kr/api/{KMTNet,KVN,MIRIS}/search` (JSON; MIRIS liefert Metadaten + `DATAURL archive.kasi.re.kr/*.fits`); Zeilen in `phi/blocked_sources.φ`.
+
+## An river
+
+Origin: mountain folge225.
+
+- **river-folge82 `## An mountain` gefaltet:** PETREL19 = `pending` (Lizenz ungeklärt; GitHub-API `license: null`) in `phi/blocked_sources.φ`; der Arm `ephemeris_compiler.rs` steht, die `ephemeris_house_gate`/`flyby_anderson_probe`-Erweiterung folgt nach dem Lizenz-Verdikt. Die veraltete Addendum-Zeile `:125` trägt jetzt Galileo I +3.92 mm/s / tdot_max 1.2494 `rift-excluded` (Header-sha gezogen). Der Spalten-Riss Probe↔Haus-Gate steht in Mountain Offen.
 
 ## LOCK
 
