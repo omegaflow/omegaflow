@@ -502,23 +502,19 @@ pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
 note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-02 HTTP 206 (1 B); kein CSV-Reader (juno_odf_compiler erntet jnogrv_* ODF). future-folge165.
 
-pending
+descoped
 url https://www.bsee.gov/offshore-data-tools
-note BSEE Offshore Data & Tools (US DOI) — 2026-10-02 HTTP 200 (49613 B); Portal, kein Einzeldatei-Endpoint/Arm gemessen. future-folge168.
+note BSEE Offshore Data & Tools (US DOI) — 2026-10-02 HTTP 200 (49613 B); nur Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium; Arm nicht baubar. future-folge168.
 
-pending
+descoped
 url https://www.data.bsee.gov/Pipeline/ROWDescriptions/Default.aspx
-note BSEE Pipeline Right-of-Way (US DOI) — 2026-10-02 HTTP 200 (240837 B); HTML-Tabelle, kein Arm. future-folge168.
+note BSEE Pipeline Right-of-Way (US DOI) — 2026-10-02 HTTP 200 (240837 B); ROW-Routen-Geometrie ohne Kraftfeld (Verdikt der BSEE/BOEM-Klasse). future-folge168.
 
-pending
+descoped
 url https://www.boem.gov/oil-gas-energy/mapping-and-data
-note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206 (1 B); Portal, kein Daten-Endpoint/Arm gemessen. future-folge168.
+note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind (decline model-forecast, declined_sources.φ:1305); kein beobachtetes Kraftfeld. future-folge168.
 
-pending
+descoped
 url https://search-pdsppi.igpp.ucla.edu/search
-note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200 (18027 B); Such-Portal ohne Einzeldatei-Endpoint; die pds-ppi-Datensätze selbst sind registriert. future-folge168.
-
-pending
-url https://surveys.roe.ac.uk/ssa
-note WFAU SuperCOSMOS SSA (ROE) — 2026-10-02 HTTP 206 (1 B); Web-Host, getrennt von `tap.roe.ac.uk` (dead_sources.φ:111/115, TCP-tot) — kein Riss, sondern live-Mirror-Kandidat; kein Arm gemessen. future-folge168.
+note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200 (18027 B); legacy Tomcat/JSP, nur Anzeige-Metadaten (/gallery/*.json) + HTML, kein Daten-Endpoint; PPI-Daten stehen bereits. future-folge168.
 
