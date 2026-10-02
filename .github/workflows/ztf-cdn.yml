@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Compile ZTF light curves and upload to CDN
         run: |
           curl -sSfL --retry 3 --max-time 300 -o dr3_stars.bin \
