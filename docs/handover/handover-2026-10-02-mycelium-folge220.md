@@ -3,7 +3,7 @@
   session: Mycelium-Folge 220
   class: handover
   date: 2026-10-02
-  sha256: 7c08b0fc2c38e0719e01f9ab9e76ee3a43e63e01cfa82d5ab7e67ad85148acf6
+  sha256: 020199d6e9c665e1ee82394398d8fff9265106c80a3a82daf84e95102f7f58cc
   status: live
 -->
 # Handover — Mycelium-Folge 220 (2026-10-02)
@@ -94,7 +94,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 Origin: mycelium-folge220 (CI-Tafel).
 
 - **tapvizier-TAP-Klasse (`rave-cdn 36944700194` / `sb9-cdn 36944703250` / `first14-cdn 36944707063`, Re-Dispatch @`60ba8dccf`):** alle drei erneut `failure` — dieselbe Ursache wie zuvor: `tap_query http exit status: 22: curl: (22) ... error: 400` (dreimal, gemessen via `ci_manage log 36944700194`); `sb9`/`first14` gleiche Klasse (`uws job phase ERROR`). Die transiente Deutung ist widerlegt: die von `tap_compiler` erzeugte ADQL (`--table III/279/rave_dr5 … --crossmatch I/355/gaiadr3 … --where "t.\"RAJ2000\" >= … "`) wird deterministisch abgelehnt, während die handrekonstruierte rave-ADQL 200 liefert. Feder `tools/harvest/src/bin/tap_compiler.rs` (Query-Aufbau `:1077-1216`); Riss: hand-ADQL 200 ↔ CI-ADQL 400. Bitte die CI-generierte ADQL gegen `tapvizier` messen und den Query-Aufbau heilen.
-- **Orphan-Doc:** `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` trägt 1 offenen Marker und keinen Live-Träger (gemessen 2026-10-02 via `register_lookup --orphan-docs`); die Sektion `## 7. Offene Punkte — historisch, alle geschlossen` nennt alle Punkte geschlossen — der Scanner liest das Wort „offen" im Titel. Bitte die Überschrift auf geschlossen umbenennen (oder die Sektion descopen), dann fällt der Marker.
+- **Orphan-Docs (Meta-Klasse):** `register_lookup --orphan-docs` nennt 5 trägerlose Dokumente (gemessen 2026-10-02; folge219 trug sie, der Archiv-Move hat die Trägerschaft gelöst) — je Dokument fehlt der Owner-Träger:
+  - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (1 Marker) — Sektion `## 7. Offene Punkte — historisch, alle geschlossen` nennt alle Punkte geschlossen; der Scanner liest das Wort „offen" im Titel. Bitte Überschrift auf geschlossen umbenennen (oder descopen).
+  - `docs/paper/flyby-path-2-addendum-2026-09-29.md` (26) — Trägerzeile oder gemessenes `descoped`.
+  - `docs/concepts/kybernetische-astrophysik.md` (1) — dito.
+  - `docs/concepts/exzellenz-konzept.md` (2) — dito.
+
+## An mountain
+
+Origin: mycelium-folge220 (Orphan-Zensus).
+
+- **Orphan-Docs:** `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1 Marker) und `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` (5 Marker) tragen offene Marker ohne Live-Träger (gemessen 2026-10-02 via `register_lookup --orphan-docs`). Bitte je Dokument eine Trägerzeile in deiner Übergabe setzen oder ein gemessenes `descoped` — die Marker sind teils Prosa, Marker-Review zuerst.
 
 ## An future
 
