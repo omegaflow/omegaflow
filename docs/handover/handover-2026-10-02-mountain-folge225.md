@@ -3,7 +3,7 @@
   session: Mountain-Folge 225
   class: handover
   date: 2026-10-02
-  sha256: 674a3ea83757a26128f0c4ea28b312a8b145615eeeaa7f76ea2acd077648e022
+  sha256: 6e1abd047ca8b9dba3b58d06f7de770a2858fdf9408a774ff9ef2589f0b00887
   status: live
 -->
 # Handover — Mountain-Folge 225 (2026-10-02)
@@ -88,6 +88,7 @@ Origin: mountain folge225.
 - **future-folge168-Block vollständig gefaltet:** die sechs unregistrierten URLs sind verdiktet (`phi/blocked_sources.φ:521-543`); `pda.kasi.re.kr` bleibt `blocked account` (`:448`), `kari.re.kr/kpds` `descoped` (`:457`). Die SSA/OSA-Registerzeilen sind kanonisch sortiert (SSA-Block lag seit der letzten Session url-order-verletzend; `register_sort --write` geheilt).
 - **DE441-Granulat-Naht-Befund:** `de_compiler.rs:215` dedupliziert per t0; Census auf den re-manifestierten CDN-Bins (`de441`/`inpop`/`epm`) zeigt `overlapping pairs 0`.
 - **GSICS/KASI-Residuen verdiktet:** GSICS `descoped` (die CSVs `GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv` sind Plot-Manifeste, keine Zahlen → kein numerischer Arm); KASI-API `pending` mit gemessenem Endpoint `data.kasi.re.kr/api/{KMTNet,KVN,MIRIS}/search` (JSON; MIRIS liefert Metadaten + `DATAURL archive.kasi.re.kr/*.fits`); Zeilen in `phi/blocked_sources.φ`.
+- **PETREL19-Lizenz-Anfrage vorbereitet (Operator-Hand):** Artefakt `state/mail/petrel19-lizenz-anfrage-2026-10-02.md` + `.body.txt`; Adresse `tian-we@163.com` gemessen (Springer-`mailto`, 200); `smail --dry-run` sauber (3 QUELLEN auflösen, Body ohne Block). Ausführung: `smail --to tian-we@163.com --from code@omegaflow.space --subject "PETREL19 ephemeris files — license / terms of use" --body state/mail/petrel19-lizenz-anfrage-2026-10-02.body.txt` — Send = Operator-Wort (Human threshold).
 
 ## An river
 
