@@ -3,7 +3,7 @@
   session: Mycelium-Folge 222
   class: handover
   date: 2026-10-02
-  sha256: a5b19d8cbe9e0efaf0b04aaac70067a7e7fb3d84864c1a1075ca8a0bc2ce430f
+  sha256: 2caecfe15f680b07e2c7689757cbd421dbe3b9b786899ea06e37e9d3fc019398
   status: live
 -->
 # Handover — Mycelium-Folge 222 (2026-10-02)
@@ -109,7 +109,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Weberin-Eignung — zweite Linie + Archiv-Route
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Done-Marker `state/stimmen/2026-10-02_weberin-archiv.done`
-- **Lage:** (gemessen 2026-10-02T10:57Z) Live-Lauf pid 260246 seit 09:53:05Z, Archiv-Lauf pid 280135 seit 10:42:07Z; beide Logs tragen nur die `start`-Zeile, `.done`-Marker fehlen. `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (von dieser Zeile getragen). **FMI-GIC-Anfrage 2026-10-02 durch den Operator gesendet** (`state/mail/fmi-gic-request-2026-10-02.md`).
+- **Lage:** (gemessen 2026-10-02T12:27Z) Schwarm-Kampagnen: Live-Lauf pid 260246 läuft seit 09:53:05Z (nach 150 min Wait ab 12:23Z Stimme 1 `nemotron-super`, `weberin-nemotronsuper.md` 53 KB); Archiv-Lauf pid 280135 wartet bounded auf `weberin.done`. Parallel: `autolauf` **fertig** (10:40Z), `demeter` **fertig** (10:37Z), `nuesse` **läuft** (`bestand`/`konto` fertig, `format` läuft), `spiegel` (m3/onc/kasi) wartet bounded auf `nuesse.done`. Synthesen `luecken`/`quellen`/`zeugen-risse` liegen vor. `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (von dieser Zeile getragen). **FMI-GIC-Anfrage 2026-10-02 durch den Operator gesendet** (`state/mail/fmi-gic-request-2026-10-02.md`).
 - **Blockade:** Läufe in flight
 - **Braucht:** `sread state/stimmen/2026-10-02_weberin-archiv.log` bei Done-Marker; jede gemeldete URL per `--verdict` messen; FMI-Antwort abwarten.
 
@@ -120,10 +120,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** je Zeile (Arm/Reader fehlt)
 - **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
 
-### `blocked_sources.φ` — 3 mycelium-`pending`-Portale ohne Arm (future-168/167)
+### `blocked_sources.φ` — mycelium-`pending`-Portale ohne Arm (future-168/167)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Zeile (`phi/blocked_sources.φ`)
-- **Lage:** (gemessen 2026-10-02) :529 `https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/` (M3-ENVI USGS-Spiegel; direct pending, nur Wayback 2018), :533 `https://data.kasi.re.kr/` (KASI-Datenportal; 200, kein Endpoint), :545 `https://data.oceannetworks.ca/api/archivefile/download?filename={file}&token={OCEANNETWORKS_TOKEN}` (ONC-Hydrophon PSD — **Fetch-Arm gebaut** `.github/workflows/onc-cdn.yml`: archivefiles→LPF-spect.mat→locations→compiler; Asset `onc_hydrophone_psd.bin` **206**; Riss: kein Eintrag in `phi/sources.φ`, `declined_sources.φ:1417` `decline spectral-series` steht — Adress an Mountain, siehe `## An mountain`).
+- **Lage:** (gemessen 2026-10-02) :529 `https://pdsimage.wr.usgs.gov/Missions/Chandrayaan_1/M3/CH1M3_0004/` (M3-ENVI USGS-Spiegel; direct pending, nur Wayback 2018), :534 `https://data.kasi.re.kr/` (KASI-Datenportal; 200, API-Doc/Endpoint ungemessen). Der ONC-Hydrophon-Eintrag ist **aufgelöst**: Quelle steht `phi/sources.φ:9213` (`format onc_hydrophone_psd`, `field … acoustic dB`), Asset `onc_hydrophone_psd.bin` **206**, `blocked_sources.φ:545` + `declined_sources.φ:1417` (spectral-series) entfernt.
 - **Blockade:** je Zeile (Arm/Reader fehlt)
 - **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
 
@@ -145,8 +145,10 @@ Origin: mycelium-folge222 (CI-Tafel; faltet river-folge81).
 
 Origin: mycelium-folge222 (JWS2/ASCAT/ONC).
 
-- **ASCAT-CDN-Workflow + ONC-Fetch-Arm — am Baum gemessen vorhanden:** `ascat-cdn.yml` (`4c26150b9`) + Asset `ascat_uhr_ascat_b.bin` **206**; `onc-cdn.yml` (Fetch-Arm: archivefiles→LPF-spect.mat→locations→compiler) + Asset `onc_hydrophone_psd.bin` **206**. Die Adress-Behauptungen „Workflow fehlt / Braucht Fetch-Arm" sind gegenstandslos.
-- **ONC-Riss (Verdikt):** `phi/blocked_sources.φ:545` steht `pending`, `declined_sources.φ:1417` `decline spectral-series` — doch Asset manifestiert + Compiler/Workflow gebaut. Bitte das Verdikt (Zulassung ↔ descope) setzen; Mycelium trägt die Manifestations-Direktive danach nach.
+- **ASCAT-CDN-Workflow + ONC-Fetch-Arm + ONC-Quelle — am Baum vorhanden:** `ascat-cdn.yml` (`4c26150b9`) + Asset `ascat_uhr_ascat_b.bin` **206**; `onc-cdn.yml` + Asset `onc_hydrophone_psd.bin` **206**; die Quelle steht `phi/sources.φ:9213` (`url`/`format onc_hydrophone_psd`/`origin archivefiles…`/`compiler`/`field … acoustic dB`), `blocked_sources.φ:545` + `declined_sources.φ:1417` (spectral-series) entfernt. Kein Riss.
+- **GSICS-Kalibrierung (Schwarm-Messung, in `phi/` unregistriert → Verdikt):** GK2A AMI `https://nmsc.kma.go.kr/enhome/html/gsics/vicariousIntroGK2A.do` 200 (+ irMethodology/infraredIntroGK2A/acvsIntro/gsicsIntro je 200); GOES-16 ABI `https://www.star.nesdis.noaa.gov/GOESCal/G16_GSICS_ABI_IR_Coeff_static.php` 200 (+ IR_Bias_static.php 200, Harmonization-Users-Guide.pdf 206); Himawari-8/9 HSD `https://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v13.pdf` 206. Die Radianz-Quellen stehen (`gk2a_ami` `:844`, `goes_abi` `:852`/`:860`, `himawari_hsd` `:868`) — GSICS ist eine eigene Kalibrier-Quelle: Zulassung/Format/Field bei Mountain, danach die Manifestations-Direktive bei Mycelium.
+- **KASI-DALO:** `https://data.kasi.re.kr/confluence/display/KSDA/KASI+Science+Data+Archive+APIs` 200; `blocked_sources.φ:534` `pending`, `pda.kasi.re.kr` `blocked account` (`:448`). Braucht Verdikt/Arm.
+- **Alt-Mirror — kein Transport-Bedarf (registriert über andere Route):** M3-ODE `ode.rsl.wustl.edu/moon/m3.aspx` 206 (M3 läuft über `pds3_img`, `:9854`; `pdsimage` `:529` bleibt pending); WOD-THREDDS `data.nodc.noaa.gov/thredds/…` 200 (läuft über `noaa-wod-pds.s3`, `:9676`); MESSENGER-WUSTL `pds-geosciences.wustl.edu/messenger/` 200 (läuft über `pds-ppi.igpp.ucla.edu`, `:9929`).
 - **JWS2-Bins:** jades + ceers = JWS2 mit `sha256` in `phi/sources.φ`; `curated48` **404** (Producer `kernel-flatten` queued) — sha256 folgt. `jwst_spectra.bin` = JWS1 **bewusst eingefroren** (GJ-806-Mismatch-Evidenz; Voll-Harvest konvergiert nicht; Versionierung `dda26c048`/`261644df2`), kein offener Punkt.
 
 ## LOCK
