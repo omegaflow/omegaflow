@@ -1,0 +1,17 @@
+# Anderson flyby residuals — Anderson et al. 2008, PRL 100, 091102, Table I
+# columns: t_utc | dz_meas_mm_s | dz_pred_mm_s
+# convention: + toward Earth (ANDERSON_TOWARD_EARTH, src/mathematikerin/doppler.rs:269)
+# dz_pred 0.0 = null model (no anomaly expected) — the probe reads anomaly = meas - pred
+# provenance of the central values and signs (cross-checked 2026-10-01):
+#   PRL 100,091102 (Wayback PDF, corrupt text layer) + arXiv:0806.4159 + en.wikipedia.org/wiki/Flyby_anomaly
+#   SOURCE: https://web.archive.org/web/20081016172147/http://www2.phys.canterbury.ac.nz/editorial/Anderson2008.pdf
+#   SOURCE: https://arxiv.org/abs/0806.4159
+# RISS (not smoothed): the PDF digit layer corrupts the sigma column — Galileo II sigma 1.0 (Wikipedia) vs 0.08 (0806.4159),
+#   MESSENGER 0.01 vs 0.05; sigma is not read by flyby_anderson_probe, the riss stays named.
+# t_utc = perigee date at 00:00 UTC (date resolution; exact closest-approach times pending a clean Table I)
+660614400 +3.92 0.0
+723772800 -4.6 0.0
+885513600 +13.46 0.0
+934934400 -2.0 0.0
+1109894400 +1.82 0.0
+1122940800 +0.02 0.0
