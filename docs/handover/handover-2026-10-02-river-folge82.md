@@ -3,7 +3,7 @@
   session: River-Folge 82
   class: handover
   date: 2026-10-02
-  sha256: 1a02a5a1be8b94110093f6cb635c621506abb088654cec45cf31fda8ce8a86d7
+  sha256: e323e1ba8dcd689927100c8e024b16cd87ae82ec3250ad67c9a75aa916b1885b
   status: live
 -->
 # Handover — River-Folge 82 (2026-10-02)
@@ -30,6 +30,9 @@ Wort | Datum | Quelle
 „3. bitte gebe das bei mountain und mycellium in auftrag ich möchte auch die anderen ephemeriden" | 2026-10-02 | Operator (Session, River 82)
 „4 ja ticket ist angelegt" (PII/History-Redaktion) | 2026-10-02 | Operator (Session, River 82)
 „5 ja als anonyme frage dispatchen" (TE über externen Steuerparameter) | 2026-10-02 | Operator (Session, River 82)
+„2. wer schliesst es?" (Träger des Rats-Blatt-Risses) | 2026-10-02 | Operator (Session, River 82)
+„3 ist übergeben" | 2026-10-02 | Operator (Session, River 82)
+„5 bitte an den schwarm stellen und pioneer bitte an rat und schwarm mit archive search" | 2026-10-02 | Operator (Session, River 82)
 
 ## An mountain
 
@@ -59,6 +62,22 @@ Origin: river folge82 (Auftrag des Operators, 2026-10-02).
   das Haus-Gate den Perigäum-TDB. Offener Punkt: Spalten-Semantik/Fenster im Probe benennen
   (Blatt „Offene Punkte" 1–2). Trägt das Verdikt nicht (tdot_max ist eine Rate), steht aber
   offen.
+- **Rats-Blatt-Riss — Trägerschaft (Operator-Frage „wer schließt es?").** Blatt-Riss und
+  offene Punkte 1–4 liegen in Mountains Feder (Rätsel Ⅱ Flyby, `survey-raetsel-bestand.md:32`;
+  die Ephemeriden-Artefakte und die Prosa). Mountain schließt: Spalten-Semantik/Fenster im
+  Probe benennen, die Addendum-Zeile `:125` heben, die Ein-Tages-Konvention ins Artefakt
+  tragen.
+- **Pioneer-Floor-Falsifikations-Blatt.** Der Rat (2026-10-02) entschied: **nicht** als
+  „Anomalie-Neuanalyse" öffnen — das Drei-Haus-Tor ist für Pioneer der falsche Null
+  (Haus-Spread ~3,65 µm/s leckt, dominiert nicht; die Pioneer-Systematik sind DSN-Station/
+  Uhren + Sonnengravitation). Der öffenbare Rest ist ein Voranmelde-Blatt: Familie
+  Station×Ära×Form, WY max-T nach GIC §3.2, Block-Bootstrap 2⁴ d/500 Surrogate/fixierter Seed;
+  dreiteiliges Kriterium (Familie geräumt ∧ beide Sonden zeichengleich heliozentrisch ∧
+  Drei-Form-Test linear vs ∝t² vs RTG-exp > 2× Null-p95). Owner Mountain; der Lauf ist
+  Operator-Wort-gebunden, die Blatt-Vorbereitung ist der autonome Schritt. Ehrlicher Prior:
+  Thermik-Konsens hält, wahrscheinlichster Ausgang „keine Entscheidung am Floor".
+  **Zahlen-Korrektur:** die zitierte Vorlage „133/218 Hz" trägt der Baum nicht — er trägt
+  160–340 Hz Quiet-Day-Streuung und 57,7/105 Hz post-Mask-RMS (`probe-front-dark-matter.md:516,541`).
 
 ## An mycelium
 
@@ -97,19 +116,24 @@ Origin: river folge82 (Auftrag des Operators, 2026-10-02).
   `stimme.sh`-API-Stimmen (zai/gemini/mistral) antworteten 429/503 (Quota).
 - **Blockade:** keine
 - **Braucht:** nach dem Done-Marker die `.md` ernten, jede Kernaussage am Baum gegenprüfen,
-  trägt-Kandidaten als `## An mountain` (Methodenfrage) falten.
+  trägt-Kandidaten als `## An mountain` (Methodenfrage) falten. Der Pioneer-Schwarm
+  (`state/stimmen/2026-10-02_autolauf-pioneer.sh`, PID 352966) wartet bounded auf diesen
+  Done-Marker, dann 10 Modelle mit `archive_search`.
 
-### Pioneer-Anomalie — Nachrechnung (Frage des Operators)
-- **Status:** offen (Operator-Frage, Rat noch nicht gerufen) | **Bindung:** eigen/Rat
-- **Trigger:** Rats-Wort / Operator-Wort
-- **Lage:** (gemessen 2026-10-02, Baum) Front C hat die Anomalie als unter dem
-  Reduktionsboden (133/218 Hz) liegend gemessen; Pioneer 10/11 NAVIO geerntet;
-  `pioneer-11-ODF-Manifest` (`56866a3d9`); die Anderson-Ephemeriden (5 NAIF-Cruise-Ports +
-  6 Horizons-Arcs) und das Drei-Haus-Tor existieren. Offen: ob Turyshevs thermische
-  Erklärung vollständig ist oder ein Rest bleibt, wenn man seine Daten mit
-  Westfall-Young + Drei-Haus-Tor nachrechnet.
-- **Blockade:** das ist eine Rat-/Architektur-Frage (neues Atom), kein Sofort-Bau
-- **Braucht:** Operator-Wort, den Rat zu rufen; dann eigenes Rats-Blatt + Probe.
+### Pioneer-Anomalie — Rat entschieden, Schwarm läuft, Lauf operator-gebunden
+- **Status:** operator-gebunden | **Bindung:** eigen/Mountain
+- **Trigger:** Operator-Wort (über Futures Operator-Queue)
+- **Lage:** (gemessen 2026-10-02) Der Rat hat die Frage gestellt und entschieden: **nicht
+  öffnen wie vorgelegt** — das Drei-Haus-Tor ist für Pioneer der falsche Null; der öffenbare
+  Rest ist ein Voranmelde-Blatt (Familie Station×Ära×Form, WY max-T, dreiteiliges Kriterium).
+  Front C hält: die Anomalie liegt unter dem Reduktions-Floor (Baum-Zahlen 160–340 Hz
+  Quiet-Day / 57,7/105 Hz post-Mask-RMS — die Vorlage-Zahl „133/218" ist nicht Baum).
+  Schwarm läuft: `state/stimmen/2026-10-02_autolauf-pioneer.sh` (PID 352966), Prompt
+  `…_pioneer-frage.txt`, 10 Modelle mit `archive_search`.
+- **Blockade:** der Lauf braucht das Operator-Wort; die Blatt-Vorbereitung (Mountain) ist
+  autonom
+- **Braucht:** Operator-Wort für das Pioneer-Floor-Falsifikations-Atom; bis dahin erntet
+  der nächste Pass die Schwarm-`.md` und prüft die Quellen am Baum.
 
 ## Abschluss
 
