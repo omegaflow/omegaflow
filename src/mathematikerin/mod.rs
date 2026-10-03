@@ -26,6 +26,7 @@ pub mod shaders;
 pub mod te;
 #[cfg(test)]
 mod tests;
+pub mod wy_max_t;
 
 pub use actuators::*;
 pub use omega::*;
