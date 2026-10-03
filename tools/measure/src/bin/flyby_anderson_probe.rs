@@ -53,17 +53,18 @@ fn residual_word(s: &str) -> Result<Option<f64>, String> {
     }
 }
 
-fn parse_residuals(text: &str) -> Result<Vec<FlybyResidual>, String> {
+fn parse_residuals(text: &str) -> Result<(Vec<FlybyResidual>, Vec<Option<f64>>), String> {
     let mut out = Vec::new();
+    let mut epochs = Vec::new();
     for (li, line) in text.lines().enumerate() {
         let line = line.trim();
         if line.is_empty() || line.starts_with('#') {
             continue;
         }
         let cols: Vec<&str> = line.split_whitespace().collect();
-        if cols.len() != 3 {
+        if cols.len() != 3 && cols.len() != 4 {
             return Err(format!(
-                "line {} carries {} columns, not 3",
+                "line {} carries {} columns, not 3 or 4",
                 li + 1,
                 cols.len()
             ));
@@ -82,13 +83,20 @@ fn parse_residuals(text: &str) -> Result<Vec<FlybyResidual>, String> {
             .map_err(|e| format!("line {} dz_meas {}: {e}", li + 1, cols[1]))?;
         let dz_pred_mm_s = residual_word(cols[2])
             .map_err(|e| format!("line {} dz_pred {}: {e}", li + 1, cols[2]))?;
+        let epoch_tdb = match cols.get(3) {
+            Some(w) => {
+                residual_word(w).map_err(|e| format!("line {} t_epoch_tdb {}: {e}", li + 1, w))?
+            }
+            None => None,
+        };
         out.push(FlybyResidual {
             t_utc,
             dz_meas_mm_s,
             dz_pred_mm_s,
         });
+        epochs.push(epoch_tdb);
     }
-    Ok(out)
+    Ok((out, epochs))
 }
 
 fn load_house(path: &str) -> Option<HashMap<String, BodyEphemeris>> {
@@ -182,15 +190,25 @@ fn house_line(
     }
 }
 
-fn register_json(lines: &[FlybyResidual], house: &[HouseLine]) -> String {
+fn register_json(
+    lines: &[FlybyResidual],
+    house: &[HouseLine],
+    epoch_override: &[Option<f64>],
+) -> String {
     let mut s = String::new();
     s.push_str("{\n");
     s.push_str("  \"probe\": \"flyby_anderson_probe\",\n");
     s.push_str(&format!("  \"convention\": \"{ANDERSON_TOWARD_EARTH}\",\n"));
     s.push_str(&format!("  \"first_row_ref_s\": {FIRST_ROW_REF_S},\n"));
-    s.push_str(
-        "  \"epoch_basis\": \"row t_utc -> TDB via NAIF LSK; pair deltas at that single instant\",\n",
-    );
+    if epoch_override.iter().any(|e| e.is_some()) {
+        s.push_str(
+            "  \"epoch_basis\": \"row t_epoch_tdb override where present, else row t_utc -> TDB via NAIF LSK; pair deltas at that single instant\",\n",
+        );
+    } else {
+        s.push_str(
+            "  \"epoch_basis\": \"row t_utc -> TDB via NAIF LSK; pair deltas at that single instant\",\n",
+        );
+    }
     s.push_str(
         "  \"tdot_max_scope\": \"max over de_inpop/de_epm/inpop_epm pair slopes over the inter-row TDB delta; row 0 over first_row_ref_s\",\n",
     );
@@ -199,10 +217,11 @@ fn register_json(lines: &[FlybyResidual], house: &[HouseLine]) -> String {
         let anomaly = flyby_anomaly_mm_s(l);
         let h = &house[i];
         s.push_str(&format!(
-            "    {{\"t_utc\": {}, \"dz_meas_mm_s\": {}, \"dz_pred_mm_s\": {}, \"anomaly_mm_s\": {}, \
+            "    {{\"t_utc\": {}, \"t_epoch_tdb\": {}, \"dz_meas_mm_s\": {}, \"dz_pred_mm_s\": {}, \"anomaly_mm_s\": {}, \
              \"de_inpop_km\": {}, \"de_epm_km\": {}, \"inpop_epm_km\": {}, \
              \"tdot_max_mm_s\": {}, \"verdict\": \"{}\"}}",
             l.t_utc,
+            num_json(epoch_override.get(i).copied().flatten()),
             num_json(l.dz_meas_mm_s),
             num_json(l.dz_pred_mm_s),
             num_json(anomaly),
@@ -232,22 +251,23 @@ fn main() {
 
     println!("flyby_anderson_probe — Anderson flyby residual, convention {ANDERSON_TOWARD_EARTH}");
 
-    let lines: Vec<FlybyResidual> = match std::fs::read_to_string(&residuals_path) {
-        Ok(text) => match parse_residuals(&text) {
-            Ok(v) => {
-                println!("residuals: {residuals_path} — {} lines", v.len());
-                v
+    let (lines, epoch_override): (Vec<FlybyResidual>, Vec<Option<f64>>) =
+        match std::fs::read_to_string(&residuals_path) {
+            Ok(text) => match parse_residuals(&text) {
+                Ok((v, e)) => {
+                    println!("residuals: {residuals_path} — {} lines", v.len());
+                    (v, e)
+                }
+                Err(e) => {
+                    eprintln!("flyby_anderson_probe: {e}");
+                    std::process::exit(2);
+                }
+            },
+            Err(_) => {
+                println!("residuals: absent ({residuals_path}) — the table stays pending");
+                (Vec::new(), Vec::new())
             }
-            Err(e) => {
-                eprintln!("flyby_anderson_probe: {e}");
-                std::process::exit(2);
-            }
-        },
-        Err(_) => {
-            println!("residuals: absent ({residuals_path}) — the table stays pending");
-            Vec::new()
-        }
-    };
+        };
 
     let de = load_house(&de_path);
     let inpop = load_house(&inpop_path);
@@ -256,8 +276,15 @@ fn main() {
 
     let mut house: Vec<HouseLine> = Vec::with_capacity(lines.len());
     let mut t_prev: Option<f64> = None;
+    let mut overrides_used = 0usize;
     for (i, l) in lines.iter().enumerate() {
-        let t_tdb = lsk.as_ref().and_then(|lsk| lsk.unix_to_tdb(l.t_utc));
+        let t_tdb = match epoch_override.get(i).copied().flatten() {
+            Some(t) => {
+                overrides_used += 1;
+                Some(t)
+            }
+            None => lsk.as_ref().and_then(|lsk| lsk.unix_to_tdb(l.t_utc)),
+        };
         let anomaly = flyby_anomaly_mm_s(l);
         let h = if i == 0 {
             match t_tdb {
@@ -306,6 +333,13 @@ fn main() {
         house.push(h);
     }
 
+    if overrides_used > 0 {
+        println!(
+            "epoch override: {overrides_used} of {} rows carry t_epoch_tdb",
+            lines.len()
+        );
+    }
+
     let n_meas = lines.iter().filter(|l| l.dz_meas_mm_s.is_some()).count();
     let n_pred = lines.iter().filter(|l| l.dz_pred_mm_s.is_some()).count();
     let n_anom = lines
@@ -314,7 +348,7 @@ fn main() {
         .count();
     println!("count: {n_meas} measured, {n_pred} predicted, {n_anom} residual lines");
 
-    let json = register_json(&lines, &house);
+    let json = register_json(&lines, &house, &epoch_override);
     if let Some(parent) = std::path::Path::new(&register_path).parent() {
         std::fs::create_dir_all(parent).ok();
     }
@@ -330,6 +364,21 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn parse_residuals_reads_optional_epoch_override() {
+        let text = "100.0 +1.0 0.0 999.5\n200.0 +2.0 0.0 pending\n";
+        let (lines, epochs) = parse_residuals(text).expect("parses");
+        assert_eq!(lines.len(), 2);
+        assert_eq!(epochs[0], Some(999.5));
+        assert_eq!(epochs[1], None);
+        assert_eq!(lines[1].t_utc, 200.0);
+    }
+
+    #[test]
+    fn parse_residuals_rejects_two_columns() {
+        assert!(parse_residuals("100.0 +1.0\n").is_err());
+    }
 
     #[test]
     fn pair_slope_reads_the_change_not_the_offset() {

@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: bacca3d98cf0e7c95d2f7f145ff3d26c16467300d5c534ded7129f79c5a7687b
+  sha256: dd271696f2c2f9441de4172b4c01c20a74102fc4dbc02acb247037e8736009f2
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -66,12 +66,14 @@ Wort | Datum | Quelle
   die Spalten-Semantik ist benannt (`register_json` schreibt `first_row_ref_s`, `epoch_basis`,
   `tdot_max_scope`); die Absolut-Spalten (00:00-UTC vs Perigäum-TDB) bleiben unversöhnt
   (`docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md:71-82,101-104`). Die Perigäum-Zeiten
-  selbst fehlen im Baum: `tools/measure/anderson_residuals.tsv` trägt `t_utc = perigee date at
+  selbst fehlen im Baum:   `tools/measure/anderson_residuals.tsv` trägt `t_utc = perigee date at
   00:00 UTC` (Zeile 11), exakte closest-approach-Zeiten `pending a clean Table I`.
-- **Blockade:** kein Perigäum-Zeit-Feld im Residuen-Artefakt.
-- **Braucht:** Probe einen Epochen-Override geben (optionales `t_epoch_tdb` je Zeile, statt
-  `unix_to_tdb(l.t_utc)`); das Feld ist ohne saubere Anderson-Table-I `pending` — der
-  Override-Mechanismus ist der autonome Schritt.
+  **Override gebaut (2026-10-03):** `parse_residuals` nimmt eine optionale 4. Spalte
+  `t_epoch_tdb`; `register_json` schreibt `t_epoch_tdb` je Zeile und schaltet `epoch_basis`
+  um; Tests `parse_residuals_reads_optional_epoch_override`, `_rejects_two_columns`.
+- **Blockade:** kein Perigäum-Zeit-Feld im Residuen-Artefakt (Override-Mechanismus steht).
+- **Braucht:** Perigäum-TDB je Zeile aus einer sauberen Anderson-Table-I eintragen, dann
+  Neu-Lauf und Spalten-Vergleich mit dem Haus-Gate.
 
 ### RoPeR `.2C` — PDS4 `Table_Binary` mit `Group_Field_Binary`, Group-Flattening offen
 - **Status:** eigen | **Bindung:** eigen
@@ -91,11 +93,14 @@ Wort | Datum | Quelle
 - **Trigger:** keine.
 - **Lage:** (gemessen 2026-10-03 via `pdftotext`) DSN 810-005 Modul 214 Rev B liegt in
   `docs/reference/810-005-214B-ranging.txt` (+ `.pdf`). Der TNF-Arm `odf.rs` trägt die
-  Ranging-Formate (SEQ/PN-Phase, Codes 2–5), aber **keine Ranging-Code-/Ambiguitätsauflösung**
-  (`sgrep -i ambig src/archivar/odf.rs` = 0).
+  Ranging-Formate (SEQ/PN-Phase, Codes 2–5). **§2.2-Kern gebaut (2026-10-03):**
+  `ranging_component_code`/`_length`/`ranging_composite_period`/`ranging_ambiguity_resolution_m`
+  (Tabelle 2; L = 1 009 470 nach Gl. 9; Auflösung `c·L/(4·f_RR)` nach Gl. 11, ≈75 660 km bei
+  1 MHz) + drei Tests — die Ambiguitätsauflösung ist die Gl. 11, nicht `c·f_R/2`.
 - **Blockade:** keine.
-- **Braucht:** Ranging-Code-Auflösung im `odf.rs`-TNF-Arm (Komponenten-Code-Tabelle §2.2;
-  Ambiguität `c·f_R/2`) gegen ein Ranging-Format-2–5-Sample testen.
+- **Braucht:** die Auflösung an ein Ranging-Format-2–5-Sample verdrahten
+  (`first_comp_num`/`last_comp_num`/`chop_comp_num` aus `TnfDt2`/`TnfDt3` + `f_RR`) und den
+  Spalten-Vergleich ziehen.
 
 ### Pioneer-Floor-Lauf — Blatt steht, Workflow + Run offen
 - **Status:** eigen | **Bindung:** eigen
@@ -103,13 +108,13 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-03) das Voranmelde-Blatt steht:
   `docs/blatt/blatt-pioneer-floor-falsifikation.md` (Header-sha `7a2ec29e…`); Methode, Null,
   dreiteiliges Kriterium fixiert; „GIC §3.2" als unentfaltete Referenz benannt.
-  `pioneer-floor.yml` fehlt; die Analyse-Bins stehen (`pioneer_navio_negative_fuzzy --zone`
-  → `{p10,p11}_navio_subkhz_zone_daily.bin`; `pioneer_navio_zone_drift`), die Zone-Bins sind
-  nicht CDN-registriert.
-- **Blockade:** kein Lauf-Workflow; die Zone-Bins müssen in CI erzeugt werden.
-- **Braucht:** `pioneer-floor.yml` bauen: Corpus von CDN → `pioneer_navio_residuum` →
-  `pioneer_navio_negative_fuzzy --zone` → `pioneer_navio_zone_drift`, Artefakt-Upload; dann
-  dispatch. Kein Statistik-Wert vor dem Blatt.
+  **`pioneer-floor.yml` gebaut (2026-10-03):** Corpus von CDN (`pioneer{10,11}_navio.bin`
+  + `ephemeris_{earth,pioneer10_daily,pioneer11_daily}.bin`) → `pioneer_navio_residuum` →
+  `pioneer_navio_negative_fuzzy --zone` → `pioneer_navio_zone_drift`, Artefakt-Upload.
+- **Blockade:** keiner (die `pioneer{10,11}_navio.bin` sind auf dem CDN, 206 gemessen
+  2026-10-03).
+- **Braucht:** Dispatch `gh workflow run pioneer-floor.yml`; dann Artefakt
+  `pioneer-floor.txt` lesen (kein Statistik-Wert vor dem Blatt).
 
 ## LOCK
 
