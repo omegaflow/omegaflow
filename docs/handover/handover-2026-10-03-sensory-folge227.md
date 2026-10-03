@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: e1374008a18b093182d94fa5c02e33e4c645d446a05a0bce0549fe1502f5fd4a
+  sha256: fa574ef2c19f139987913486b4a954a3def06a1584cb4ad066ab9e05f2d9d0ab
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -218,6 +218,7 @@ breiter messen.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` …" | 2026-10-03 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 227.
 - **Wort:** „Starte die Sensory-Linie **in einem Pass** … `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-03 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 227.
 - **Wort:** „kannst du nicht mal die recherche leiter (deepseek, freie api, freie UI chat) recherchieren lassen welche medizinischen datenquellen es gibt um wirklich forschen zu können? das betrifft somatik, psychosomatik, biologie, chemie psychologie, neurologie und ich weiss nicht welche gebiete noch" | 2026-10-03 | Operator (Session) — Recherche-Auftrag: Landschaft medizinischer/生命-Wissenschafts-Datenquellen; Sensory-Folge 227.
+- **Wort:** „bitte fixen Zwei Auffälligkeiten: archive_search --ensembl liefert HTTP 500 (Modus defekt, Quelle selbst erreichbar) — ein Fix-Kandidat. Und .secrets bleiben unberührt (nur Schlüsselnamen)." | 2026-10-03 | Operator (Session) — Fix `archive_search --ensembl` (`46427ceea`) + `.secrets`-Disziplin; Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
 
@@ -248,6 +249,13 @@ breiter messen.
 - **Lage:** (gemessen 2026-10-03 F227) erste Landschaft steht: `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha256 `4ead2c97…`, ~90 Quellen über Somatik/Neuro/Psyche/Biologie/Chemie/Genomik/Strukturbiologie/Bildgebung, jede mit `archive_search --verdict`-Messung und Zugangszustand). Zwei `general`-Agenten (flash-first) je ein Feldblock; Bestandsabgleich: nur OpenNeuro + PhysioNet registriert, NeuroVault `declined`, alles andere Kandidaten-Pool. Die Register-Schreibung (`phi/sources.φ`) ist Mountains Recht.
 - **Blockade:** keine.
 - **Braucht:** Mountains Verdikt + die Register-Zeilen in `phi/sources.φ` für die Kandidaten (Route `## An mountain`); die DUA-/Kosten-Zugänge (UK Biobank, dbGaP, EGA, All of Us, MIMIC-IV, NDA/ABCD, OASIS, PPMI, Add Health, HRS, SHARE, SOEP, ICPSR) in die Future-Operator-Queue.
+
+### archive_search --ensembl — Wrapper-Frische (Fix)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Abschluss des `tools-build`-Laufs zu `46427ceea` (rolling release `tools-latest`).
+- **Lage:** (gemessen 2026-10-03 F227) der Modus ist auf die Ensembl-REST-API umgebaut (`tools/utils/src/bin/archive_search/ensembl.rs`, `46427ceea`); lokal gemessen via `cargo build -p omegaflow-utils --bin archive_search` + `./target/debug/archive_search --ensembl {p53,TP53,ENSG00000141510,zzzznotagene}` (Gen/LRG/Transkripte/absent). Die `bin/`-Wrapper lesen `tools-latest` — dort ist der Fix erst nach dem Release-Rebuild frisch.
+- **Blockade:** `tools-latest` noch auf dem Vor-`46427ceea`-Stand.
+- **Braucht:** `ci_manage list` auf den `tools-build`-Lauf zu `46427ceea`; danach `bin/.tools_ensure archive_search` und `archive_search --ensembl p53` erneut messen.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
