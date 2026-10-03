@@ -8,11 +8,17 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: Concrete PRADAN Ch2 file URL (…/ch2_{payload}_l1_{YYYY}_{MM}.zip)
-        required: true
+        description: Concrete PRADAN Ch2 file URL (…/ch2_{payload}_l1_{YYYY}_{MM}.zip); leave empty with latest=true
+        required: false
         type: string
+        default: ""
+      latest:
+        description: Resolve the newest month-wise product from the login-gated catalog and download it
+        required: false
+        type: boolean
+        default: false
       out:
-        description: Output path (default data/pradan.issdc.gov.in/<file name from url>)
+        description: Output path (default data/pradan.issdc.gov.in/<resolved file name>)
         required: false
         type: string
         default: ""
@@ -39,9 +45,22 @@ jobs:
         id: idempotence
         env:
           INPUT_URL: ${{ inputs.url }}
+          INPUT_LATEST: ${{ inputs.latest }}
           INPUT_OUT: ${{ inputs.out }}
         run: |
-          filename="${INPUT_URL##*/}"
+          if [ -n "$INPUT_URL" ]; then
+            filename="${INPUT_URL##*/}"
+          elif [ "$INPUT_LATEST" = "true" ]; then
+            cargo run -p omegaflow-harvest --release --bin pradan_ch2_compiler -- --list > pradan_list.txt
+            filename="$(awk -F'[= ]' '/^file=/{f=$2} END{print f}' pradan_list.txt)"
+            if [ -z "$filename" ]; then
+              echo "::error::pradan_ch2_compiler --list resolved no month-wise product"
+              exit 1
+            fi
+          else
+            echo "::error::either url or latest=true is required"
+            exit 1
+          fi
           out="${INPUT_OUT:-data/pradan.issdc.gov.in/$filename}"
           echo "out=$out" >> "$GITHUB_OUTPUT"
           echo "asset=$filename" >> "$GITHUB_OUTPUT"
@@ -65,17 +84,22 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         env:
           INPUT_URL: ${{ inputs.url }}
+          INPUT_LATEST: ${{ inputs.latest }}
           INPUT_TIMEOUT: ${{ inputs.timeout }}
           OUT: ${{ steps.idempotence.outputs.out }}
         run: |
-          args=(--url "$INPUT_URL" --out "$OUT")
+          if [ "$INPUT_LATEST" = "true" ] && [ -z "$INPUT_URL" ]; then
+            args=(--latest --out "$OUT")
+          else
+            args=(--url "$INPUT_URL" --out "$OUT")
+          fi
           if [ -n "$INPUT_TIMEOUT" ]; then
             args+=(--timeout-s "$INPUT_TIMEOUT")
           fi
           cargo run -p omegaflow-harvest --release --bin pradan_ch2_compiler -- "${args[@]}" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "pradan-cdn: Ch2 download returned void" \
-                 "pradan_ch2_compiler returned void for $INPUT_URL. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 "pradan_ch2_compiler returned void for url='$INPUT_URL' latest='$INPUT_LATEST'. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
       - name: Upload the downloaded zip to the CDN
         if: steps.idempotence.outputs.present == 'false'
