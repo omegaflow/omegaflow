@@ -11,6 +11,7 @@
   min-n: 100
   cond: gyirong_open-meteo_temperature_2m (Tagesgang-Proxi)
   sha256: 205e31528715f3f1a424602d1ff5a7a2bbb62a746b737426cfe7b455527d9a1d
+  see-also: docs/paper/cross-screening-tibet.md docs/blatt/blatt-der-grat.md docs/handover/handover-2026-10-03-sensory-folge224.md
   status: live
 -->
 
