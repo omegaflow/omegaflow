@@ -2,16 +2,16 @@
   title: Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
   class: paper
   date: 2026-09-11
-  sha256: cbb2f1e7e5f32d940b9e7f79acb67b8bf8c5ea59133ae8098ac3aca876a59f0f
+  sha256: f952c1951d4857619528d468991c030ae485cf1acf7d062caea90f8f65209c83
   status: live
-  see-also: 
+  see-also: docs/surveys/survey-2026-10-03-exzellenz-gate.md docs/handover/handover-2026-10-03-sensory-folge224.md
 -->
 # Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
 
 ## Abstract
 
 A life-bearing atmosphere departs from thermochemical equilibrium: it carries
-species whose coexistence a dead chemistry cannot reproduce. We measure that
+species whose coexistence a dead chemistry does not reproduce. We measure that
 departure as a co-indexed fact. For 48 curated JWST
 transmission-spectroscopy targets we collect the species that the literature
 reports as detected, and ask whether thermochemical equilibrium at each
@@ -36,7 +36,7 @@ planet's temperature, at solar element abundances and 1 bar. A species whose
 equilibrium mixing ratio is below a named floor, while the literature reports
 it detected, is a disequilibrium hit. The signal is not a transfer-entropy
 number; it is the coexistence of a species with the temperature at which the
-dead chemistry cannot make it.
+dead chemistry does not make it.
 
 ## 2. Data
 

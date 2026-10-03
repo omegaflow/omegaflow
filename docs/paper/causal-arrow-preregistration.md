@@ -2,7 +2,7 @@
   title: The causal arrow, pre-registration (Trishuli flood 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: 4ad4286292f86835ee9c6df4e9667f6b3a6355f374fce90a98ebd52259afb316
+  sha256: ab0c340032d02b83f68e3fa1ab8448d9ca3d96fc598f8c479bbf76d918ea5360
   status: live
   see-also: docs/paper/sturzflut-tibet-pfeil.md docs/concepts/der-kausalpfeil.md
 -->
@@ -27,7 +27,7 @@ never 0.0.
 - **The arrow under test:** Niederschlag → Abfluss (Regen → Flut) at the
   Trishuli. The response series (discharge / river stage / lake level) is
   **not yet co-located or co-temporal** for the event; the protocol is
-  sealed so the verdict cannot be tuned after the data.
+  sealed so the verdict stays untuned after the data.
 - **The method (fixed):** `te_pair_probe` — transfer entropy
   `TE(A→B)` and `TE(B→A)` at each lag, tested against phase-randomized
   surrogates; a direction is a **finding** only if `TE > mean + 2σ` of the
