@@ -1,7 +1,8 @@
 use std::env;
+use std::f64::consts::TAU;
 use std::process::exit;
 
-use omegaflow::archivar::witness::WitnessKind;
+use omegaflow::archivar::witness::{WitnessKind, magic_identity, series_gate};
 use omegaflow::archivar::{
     Extract, FieldConfig, SourceConfig, embedded_lsk, extract_series, fetch_raw_bytes_headers,
     geo_series_component_name, geo_series_parse_bin, load_sources, series_component_name,
@@ -702,6 +703,503 @@ fn parse_epoch(s: &str) -> Option<f64> {
         days as f64 * 86_400.0 + hh as f64 * 3_600.0 + mm as f64 * 60.0 + ss as f64
             - shift_s as f64,
     )
+}
+
+
+
+
+
+
+
+
+
+
+const DIRECTION_SURROGATES: usize = 1000;
+const DIRECTION_ALPHA: f64 = 0.05;
+
+const DIRECTION_RA_KEYS: [&str; 10] = [
+    "ra",
+    "ra_deg",
+    "ra2000",
+    "raj2000",
+    "ra_mean",
+    "ramean",
+    "src_ra",
+    "right_ascension",
+    "ra_icrs",
+    "centroid_ra",
+];
+const DIRECTION_DEC_KEYS: [&str; 10] = [
+    "dec",
+    "dec_deg",
+    "dec2000",
+    "dej2000",
+    "dec_mean",
+    "decmean",
+    "src_dec",
+    "declination",
+    "dec_icrs",
+    "centroid_dec",
+];
+
+fn splitmix64(state: &mut u64) -> u64 {
+    *state = state.wrapping_add(0x9E37_79B9_7F4A_7C15);
+    let mut z = *state;
+    z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+    z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+    z ^ (z >> 31)
+}
+
+fn uniform_unit(state: &mut u64) -> f64 {
+    (splitmix64(state) >> 11) as f64 / (1u64 << 53) as f64
+}
+
+fn scalar_after(rest: &str) -> Option<f64> {
+    let rest = rest.trim_start();
+    let rest = rest
+        .strip_prefix(':')
+        .or_else(|| rest.strip_prefix('='))?
+        .trim_start();
+    let end = rest
+        .find(|c: char| {
+            !(c.is_ascii_digit() || c == '.' || c == '+' || c == '-' || c == 'e' || c == 'E')
+        })
+        .unwrap_or(rest.len());
+    if end == 0 {
+        return None;
+    }
+    let v: f64 = rest[..end].parse().ok()?;
+    v.is_finite().then_some(v)
+}
+
+fn object_key_scalar(body: &str, keys: &[&str]) -> Option<f64> {
+    for key in keys {
+        let quoted = format!("\"{key}\"");
+        if let Some(pos) = body.find(&quoted) {
+            if let Some(v) = scalar_after(&body[pos + quoted.len()..]) {
+                return Some(v);
+            }
+        }
+    }
+    let lower = body.to_ascii_lowercase();
+    for key in keys {
+        let pat = format!("{key}=");
+        if let Some(pos) = lower.find(&pat) {
+            if let Some(v) = scalar_after(&body[pos + key.len()..]) {
+                return Some(v);
+            }
+        }
+    }
+    None
+}
+
+fn parse_object_pairs(text: &str) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    collect_objects(text, &mut out);
+    out
+}
+
+fn strip_nested_braces(body: &str) -> String {
+    let mut out = String::with_capacity(body.len());
+    let mut depth = 0i32;
+    for c in body.chars() {
+        match c {
+            '{' => depth += 1,
+            '}' => {
+                if depth > 0 {
+                    depth -= 1;
+                }
+            }
+            _ => {
+                if depth == 0 {
+                    out.push(c);
+                } else {
+                    out.push(' ');
+                }
+            }
+        }
+    }
+    out
+}
+
+fn collect_objects(text: &str, out: &mut Vec<(f64, f64)>) {
+    let bytes = text.as_bytes();
+    let mut i = 0usize;
+    while i < bytes.len() {
+        if bytes[i] != b'{' {
+            i += 1;
+            continue;
+        }
+        let start = i + 1;
+        let mut depth = 1usize;
+        let mut j = start;
+        while j < bytes.len() && depth > 0 {
+            match bytes[j] {
+                b'{' => depth += 1,
+                b'}' => depth -= 1,
+                _ => {}
+            }
+            j += 1;
+        }
+        if depth != 0 {
+            break;
+        }
+        let body = &text[start..j - 1];
+        let shallow = strip_nested_braces(body);
+        if let (Some(ra), Some(dec)) = (
+            object_key_scalar(&shallow, &DIRECTION_RA_KEYS),
+            object_key_scalar(&shallow, &DIRECTION_DEC_KEYS),
+        ) {
+            out.push((ra, dec));
+        }
+        if body.contains('{') {
+            collect_objects(body, out);
+        }
+        i = j;
+    }
+}
+
+fn parse_column_pairs(text: &str) -> Vec<(f64, f64)> {
+    let mut lines = text
+        .lines()
+        .map(|l| l.trim())
+        .filter(|l| !l.is_empty() && !l.starts_with('#'));
+    let Some(header) = lines.next() else {
+        return Vec::new();
+    };
+    let cols: Vec<String> = header
+        .split(',')
+        .map(|c| c.trim().trim_matches('"').to_ascii_lowercase())
+        .collect();
+    let ra_i = cols
+        .iter()
+        .position(|c| DIRECTION_RA_KEYS.contains(&c.as_str()));
+    let dec_i = cols
+        .iter()
+        .position(|c| DIRECTION_DEC_KEYS.contains(&c.as_str()));
+    let (Some(ra_i), Some(dec_i)) = (ra_i, dec_i) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for line in lines {
+        let cells: Vec<&str> = line.split(',').collect();
+        let cell = |i: usize| -> Option<f64> {
+            cells
+                .get(i)?
+                .trim()
+                .trim_matches('"')
+                .parse::<f64>()
+                .ok()
+                .filter(|v| v.is_finite())
+        };
+        if let (Some(ra), Some(dec)) = (cell(ra_i), cell(dec_i)) {
+            out.push((ra, dec));
+        }
+    }
+    out
+}
+
+fn witness_directions(w: &WitnessRecord) -> Result<Vec<(f64, f64)>, String> {
+    let Some(bytes) = fetch_raw_bytes_headers(&w.url, &[]) else {
+        return Err(format!("witness '{}' fetch void", w.key));
+    };
+    let text = String::from_utf8_lossy(&bytes);
+    let mut pairs = parse_object_pairs(&text);
+    if pairs.is_empty() {
+        pairs = parse_column_pairs(&text);
+    }
+    if pairs.is_empty() {
+        return Err(format!(
+            "witness '{}' carries no parseable ra/dec pair ({} bytes fetched)",
+            w.key,
+            bytes.len()
+        ));
+    }
+    Ok(pairs)
+}
+
+fn rayleigh_z(angles: &[f64]) -> Option<f64> {
+    let n = angles.len();
+    if n == 0 {
+        return None;
+    }
+    let mut c = 0.0f64;
+    let mut s = 0.0f64;
+    for &a in angles {
+        if !a.is_finite() {
+            return None;
+        }
+        c += a.cos();
+        s += a.sin();
+    }
+    let r = ((c / n as f64).powi(2) + (s / n as f64).powi(2)).sqrt();
+    Some(n as f64 * r * r)
+}
+
+fn rayleigh_p(z: f64, n: usize) -> f64 {
+    if n == 0 {
+        return 1.0;
+    }
+    let nf = n as f64;
+    let corr = 1.0 + (2.0 * z - z * z) / (4.0 * nf)
+        - (24.0 * z - 132.0 * z * z + 76.0 * z * z * z - 9.0 * z * z * z * z) / (288.0 * nf * nf);
+    ((-z).exp() * corr).clamp(0.0, 1.0)
+}
+
+fn kuiper_v(values: &[f64]) -> Option<f64> {
+    let n = values.len();
+    if n == 0 {
+        return None;
+    }
+    let mut v: Vec<f64> = Vec::with_capacity(n);
+    for &x in values {
+        if !x.is_finite() {
+            return None;
+        }
+        v.push(x);
+    }
+    v.sort_by(|a, b| a.total_cmp(b));
+    let nf = n as f64;
+    let mut d_plus = f64::NEG_INFINITY;
+    let mut d_minus = f64::NEG_INFINITY;
+    for (i, &x) in v.iter().enumerate() {
+        let i_f = i as f64;
+        d_plus = d_plus.max((i_f + 1.0) / nf - x);
+        d_minus = d_minus.max(x - i_f / nf);
+    }
+    Some(d_plus + d_minus)
+}
+
+fn kuiper_p(v: f64, n: usize) -> f64 {
+    if n == 0 || v <= 0.0 {
+        return 1.0;
+    }
+    let nf = n as f64;
+    let lambda = (nf.sqrt() + 0.155 + 0.24 / nf.sqrt()) * v;
+    let mut sum = 0.0f64;
+    for k in 1..=100 {
+        let kf = k as f64;
+        let term = (-2.0 * kf * kf * lambda * lambda).exp();
+        sum += if k % 2 == 1 { term } else { -term };
+    }
+    (2.0 * sum).clamp(0.0, 1.0)
+}
+
+fn von_mises_fit(angles: &[f64]) -> Option<(f64, f64)> {
+    let n = angles.len();
+    if n == 0 {
+        return None;
+    }
+    let mut c = 0.0f64;
+    let mut s = 0.0f64;
+    for &a in angles {
+        if !a.is_finite() {
+            return None;
+        }
+        c += a.cos();
+        s += a.sin();
+    }
+    let r = ((c / n as f64).powi(2) + (s / n as f64).powi(2)).sqrt();
+    let mu = s.atan2(c).rem_euclid(TAU);
+    let kappa = if r < 0.53 {
+        2.0 * r + r.powi(3) + 5.0 * r.powi(5) / 6.0
+    } else if r < 0.85 {
+        -0.4 + 1.39 * r + 0.43 / (1.0 - r)
+    } else if r < 1.0 {
+        1.0 / (r.powi(3) - 4.0 * r * r + 3.0 * r)
+    } else {
+        f64::INFINITY
+    };
+    Some((mu, kappa))
+}
+
+fn direction_angles(pairs: &[(f64, f64)]) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
+    let ra_deg: Vec<f64> = pairs.iter().map(|(ra, _)| ra.rem_euclid(360.0)).collect();
+    let angles: Vec<f64> = ra_deg
+        .iter()
+        .map(|d| d.to_radians().rem_euclid(TAU))
+        .collect();
+    let ra_frac: Vec<f64> = ra_deg.iter().map(|d| d / 360.0).collect();
+    let dec_frac: Vec<f64> = pairs
+        .iter()
+        .map(|(_, dec)| ((dec + 90.0).rem_euclid(180.0)) / 180.0)
+        .collect();
+    (angles, ra_frac, dec_frac)
+}
+
+fn run_direction_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
+    println!("=== direction query — circular form over phi/witnesses.φ ===");
+    let Some(w) = find_witness(witnesses, name) else {
+        println!("DIRECTION: pending — '{name}' stands in no witness block");
+        return 0;
+    };
+    if w.kind != Some(WitnessKind::S2Direction) {
+        println!(
+            "DIRECTION: refuse — witness {} kind {} is no s2-direction arm",
+            w.key, w.kind_token
+        );
+        return 0;
+    }
+    println!(
+        "witness {} | kind {} | record {} | force {} | {}",
+        w.key,
+        w.kind_token,
+        w.records.join("+"),
+        w.force.as_deref().unwrap_or("absent"),
+        w.url
+    );
+    let pairs = match witness_directions(w) {
+        Ok(p) => p,
+        Err(reason) => {
+            println!("DIRECTION: pending — {reason}; the arm stays pending, never a silent 0.0");
+            return 0;
+        }
+    };
+    if pairs.len() < 3 {
+        println!(
+            "DIRECTION: pending — witness {} carries n = {} direction(s) < 3; a circular test needs a sample",
+            w.key,
+            pairs.len()
+        );
+        return 0;
+    }
+    let (angles, ra_frac, dec_frac) = direction_angles(&pairs);
+    let z = rayleigh_z(&angles);
+    let v_ra = kuiper_v(&ra_frac);
+    let v_dec = kuiper_v(&dec_frac);
+    let fit = von_mises_fit(&angles);
+    println!("directions loaded: n = {}", pairs.len());
+
+    let mut state = SURROGATE_SEED;
+    let mut zs = Vec::with_capacity(DIRECTION_SURROGATES);
+    let mut vs = Vec::with_capacity(DIRECTION_SURROGATES);
+    for _ in 0..DIRECTION_SURROGATES {
+        let mut u_ra = Vec::with_capacity(pairs.len());
+        let mut u_dec = Vec::with_capacity(pairs.len());
+        for _ in 0..pairs.len() {
+            u_ra.push(uniform_unit(&mut state));
+            u_dec.push(uniform_unit(&mut state));
+        }
+        let sim_angles: Vec<f64> = u_ra.iter().map(|u| u * TAU).collect();
+        if let Some(zz) = rayleigh_z(&sim_angles) {
+            zs.push(zz);
+        }
+        if let Some(vv) = kuiper_v(&u_ra) {
+            vs.push(vv);
+        }
+    }
+    zs.sort_by(|a, b| a.total_cmp(b));
+    vs.sort_by(|a, b| a.total_cmp(b));
+    let thr_z = quantile(&zs, DIRECTION_ALPHA);
+    let thr_v = quantile(&vs, DIRECTION_ALPHA);
+    println!(
+        "null: uniform direction null (Rayleigh z on RA, Kuiper V on RA/Dec) | B = {DIRECTION_SURROGATES}"
+    );
+    if let Some(z) = z {
+        let word = match thr_z {
+            Some(t) if z > t => "non-uniform",
+            Some(_) => "uniform-consistent",
+            None => "threshold pending",
+        };
+        println!(
+            "Rayleigh (RA): z = {z:.4e} | p = {:.4e} | surrogate threshold = {} | {word}",
+            rayleigh_p(z, pairs.len()),
+            fmt_opt(thr_z)
+        );
+    } else {
+        println!("Rayleigh (RA): absent — the sample carries a non-finite angle");
+    }
+    if let Some(v) = v_ra {
+        let word = match thr_v {
+            Some(t) if v > t => "non-uniform",
+            Some(_) => "uniform-consistent",
+            None => "threshold pending",
+        };
+        println!(
+            "Kuiper (RA): V = {v:.4e} | p = {:.4e} | surrogate threshold = {} | {word}",
+            kuiper_p(v, pairs.len()),
+            fmt_opt(thr_v)
+        );
+    }
+    if let Some(v) = v_dec {
+        println!(
+            "Kuiper (Dec): V = {v:.4e} | p = {:.4e}",
+            kuiper_p(v, pairs.len())
+        );
+    }
+    match fit {
+        Some((mu, kappa)) => println!("von Mises fit: mu = {mu:.4e} rad | kappa = {kappa:.4e}"),
+        None => println!("von Mises fit: absent — the sample carries a non-finite angle"),
+    }
+    println!(
+        "null discipline: the threshold is the measured (1 - alpha = {:.2}) surrogate quantile over {DIRECTION_SURROGATES} uniform draws; the arm is carried, never a silent 0.0.",
+        1.0 - DIRECTION_ALPHA
+    );
+    0
+}
+
+
+
+
+
+
+
+
+
+
+fn witness_magic(records: &[String]) -> Option<[u8; 4]> {
+    for r in records {
+        let upper = r.trim().to_ascii_uppercase();
+        if upper.len() == 4 {
+            let b = upper.as_bytes();
+            return Some([b[0], b[1], b[2], b[3]]);
+        }
+    }
+    None
+}
+
+fn run_spectral_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
+    println!("=== spectral / substance / gestalt form over phi/witnesses.φ ===");
+    let Some(w) = find_witness(witnesses, name) else {
+        println!("SPECTRAL: pending — '{name}' stands in no witness block");
+        return 0;
+    };
+    let nature = match w.kind {
+        Some(WitnessKind::Substance) => {
+            "a single material-probe spectrum (one probe, no repeat epoch)"
+        }
+        Some(WitnessKind::Gestalt) => {
+            "a body-surface raster (tau = geological stability, no stamped axis)"
+        }
+        Some(WitnessKind::S2Direction) => {
+            "a direction catalogue (a circular arm — use --direction)"
+        }
+        Some(WitnessKind::Presence) => "a presence field",
+        Some(WitnessKind::PointEvent) => "an event train (use the descriptor path)",
+        None => "an unregistered witness kind",
+    };
+    println!(
+        "witness {} | kind {} | record {} | force {} | {}",
+        w.key,
+        w.kind_token,
+        w.records.join("+"),
+        w.force.as_deref().unwrap_or("absent"),
+        w.url
+    );
+    let magic = witness_magic(&w.records);
+    let token = magic.map(|m| String::from_utf8_lossy(&m).into_owned());
+    let identity = magic.and_then(magic_identity);
+    println!(
+        "magic_identity({}) = {:?} | series_gate = {:?}",
+        token.as_deref().unwrap_or("absent"),
+        identity,
+        series_gate(magic, &[])
+    );
+    println!(
+        "SPECTRAL: refuse — witness {} carries {nature}; the series gate refuses a witness record as an oscillator series (src/archivar/witness.rs:80), and the pre-registered spectral arm compares >= 2 aligned epochs of one probe. Missing data side: a repeated epoch axis (>= 2 epochs). No value is fabricated; the arm stays an honest refusal.",
+        w.key
+    );
+    0
 }
 
 fn load_text_rows(src: &SourceConfig, fc: &FieldConfig, bytes: &[u8]) -> Option<Vec<(f64, f64)>> {
@@ -1842,7 +2340,229 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
     }
 }
 
-fn run_parity_witness(name: &str, witnesses: &[WitnessRecord]) -> i32 {
+
+
+
+
+
+
+
+
+
+
+const EVENT_WINDOW_S: f64 = 7.0 * 86_400.0;
+const EVENT_BIN_S: f64 = 3_600.0;
+const EVENT_FLOOR: usize = 2;
+const EVENT_SURROGATES: usize = 100;
+const EVENT_GUARD_S: f64 = 6.0 * 3_600.0;
+
+struct EventAverage {
+    lag_s: Vec<f64>,
+    mean: Vec<Option<f64>>,
+    event_count: usize,
+}
+
+fn sample_nearest(series: &[(f64, f64)], t: f64) -> Option<f64> {
+    if series.is_empty() {
+        return None;
+    }
+    let mut lo = 0usize;
+    let mut hi = series.len();
+    while lo < hi {
+        let mid = (lo + hi) / 2;
+        if series[mid].0 < t {
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+    let before = lo.checked_sub(1).and_then(|i| series.get(i));
+    let after = series.get(lo);
+    let pick = match (before, after) {
+        (Some(b), Some(a)) => {
+            if (b.0 - t).abs() <= (a.0 - t).abs() {
+                Some(*b)
+            } else {
+                Some(*a)
+            }
+        }
+        (Some(b), None) => Some(*b),
+        (None, Some(a)) => Some(*a),
+        (None, None) => None,
+    };
+    pick.filter(|(_, v)| v.is_finite()).map(|(_, v)| v)
+}
+
+fn event_triggered_average(
+    driver: &[(f64, f64)],
+    events: &[(f64, f64)],
+    window_s: f64,
+    bin_s: f64,
+) -> EventAverage {
+    let n_bins = (window_s / bin_s).floor().max(0.0) as usize + 1;
+    let lag_s: Vec<f64> = (0..n_bins).map(|k| k as f64 * bin_s).collect();
+    let mut sums = vec![0.0f64; n_bins];
+    let mut counts = vec![0usize; n_bins];
+    let mut event_count = 0usize;
+    let (Some(&(d0, _)), Some(&(d1, _))) = (driver.first(), driver.last()) else {
+        return EventAverage {
+            lag_s,
+            mean: vec![None; n_bins],
+            event_count: 0,
+        };
+    };
+    for &(te, _) in events {
+        if te < d0 + window_s || te > d1 - window_s {
+            continue;
+        }
+        event_count += 1;
+        for (k, lag) in lag_s.iter().enumerate() {
+            if let Some(v) = sample_nearest(driver, te + lag) {
+                sums[k] += v;
+                counts[k] += 1;
+            }
+        }
+    }
+    let mean = (0..n_bins)
+        .map(|k| {
+            if counts[k] > 0 {
+                Some(sums[k] / counts[k] as f64)
+            } else {
+                None
+            }
+        })
+        .collect();
+    EventAverage {
+        lag_s,
+        mean,
+        event_count,
+    }
+}
+
+fn eta_peak(avg: &EventAverage) -> Option<f64> {
+    let mut best: Option<f64> = None;
+    for v in avg.mean.iter().flatten() {
+        let a = v.abs();
+        best = Some(best.map_or(a, |b| b.max(a)));
+    }
+    best
+}
+
+struct EventNull {
+    surrogates: usize,
+    mean: f64,
+    sd: f64,
+    threshold: f64,
+}
+
+fn wrap_time(t: f64, d0: f64, span: f64) -> f64 {
+    d0 + (t - d0).rem_euclid(span)
+}
+
+fn omori_preserving_shift_null(
+    driver: &[(f64, f64)],
+    events: &[(f64, f64)],
+    window_s: f64,
+    bin_s: f64,
+    surrogates: usize,
+    guard_s: f64,
+    seed: u64,
+) -> Option<EventNull> {
+    if events.len() < EVENT_FLOOR || surrogates < 2 || driver.len() < 2 {
+        return None;
+    }
+    let (d0, d1) = (driver.first()?.0, driver.last()?.0);
+    let span = d1 - d0;
+    if !(span > 2.0 * guard_s) {
+        return None;
+    }
+    let mut state = seed;
+    let mut peaks = Vec::with_capacity(surrogates);
+    for _ in 0..surrogates {
+        let magnitude = guard_s + uniform_unit(&mut state) * (span - 2.0 * guard_s);
+        let offset = if uniform_unit(&mut state) < 0.5 {
+            magnitude
+        } else {
+            magnitude - span
+        };
+        let mut shifted: Vec<(f64, f64)> = driver
+            .iter()
+            .map(|&(t, v)| (wrap_time(t + offset, d0, span), v))
+            .collect();
+        shifted.sort_by(|a, b| a.0.total_cmp(&b.0));
+        let avg = event_triggered_average(&shifted, events, window_s, bin_s);
+        if let Some(p) = eta_peak(&avg) {
+            peaks.push(p);
+        }
+    }
+    if peaks.len() < 2 {
+        return None;
+    }
+    let mean = peaks.iter().sum::<f64>() / peaks.len() as f64;
+    let var = peaks.iter().map(|p| (p - mean) * (p - mean)).sum::<f64>() / (peaks.len() - 1) as f64;
+    let sd = var.sqrt();
+    Some(EventNull {
+        surrogates: peaks.len(),
+        mean,
+        sd,
+        threshold: mean + 2.0 * sd,
+    })
+}
+
+fn run_event_conditional(driver: &[(f64, f64)], events: &[(f64, f64)]) {
+    println!(
+        "event-conditional form: window {} s | bin {} s | guard {} s",
+        EVENT_WINDOW_S, EVENT_BIN_S, EVENT_GUARD_S
+    );
+    let avg = event_triggered_average(driver, events, EVENT_WINDOW_S, EVENT_BIN_S);
+    println!(
+        "event-triggered average: {} event(s) inside the driver span | {} lag cells | observed ETA peak |mean| = {}",
+        avg.event_count,
+        avg.lag_s.len(),
+        fmt_opt(eta_peak(&avg))
+    );
+    if avg.event_count < EVENT_FLOOR {
+        println!(
+            "event-conditional block: n = {} event(s) < floor {EVENT_FLOOR}; a single event carries no distribution. Missing data side: >= {EVENT_FLOOR} events (a declustered mainshock set).",
+            avg.event_count
+        );
+        return;
+    }
+    match omori_preserving_shift_null(
+        driver,
+        events,
+        EVENT_WINDOW_S,
+        EVENT_BIN_S,
+        EVENT_SURROGATES,
+        EVENT_GUARD_S,
+        SURROGATE_SEED,
+    ) {
+        Some(null) => {
+            let word = match eta_peak(&avg) {
+                Some(p) if p > null.threshold => "above the null",
+                Some(_) => "consistent with the null",
+                None => "absent",
+            };
+            println!(
+                "Omori-preserving circular driver shift null: B = {} | mean = {:.4e} | sd = {:.4e} | threshold (mean + 2 sd) = {:.4e}",
+                null.surrogates, null.mean, null.sd, null.threshold
+            );
+            println!(
+                "event-conditional verdict: {word} — the event train's clustering stays fixed, only the driver alignment is broken; the null is Omori-preserving by construction."
+            );
+        }
+        None => println!(
+            "event-conditional null pending — the driver span is too short for the guard band or the train carries < {EVENT_FLOOR} events"
+        ),
+    }
+}
+
+fn run_parity_witness(
+    name: &str,
+    witnesses: &[WitnessRecord],
+    sources: &[SourceConfig],
+    driver_name: Option<&str>,
+) -> i32 {
     println!("=== parity bridge — witness register over phi/witnesses.φ ===");
     let Some(w) = find_witness(witnesses, name) else {
         println!("PARITY-WITNESS: pending — '{name}' stands in no witness block");
@@ -1863,10 +2583,31 @@ fn run_parity_witness(name: &str, witnesses: &[WitnessRecord]) -> i32 {
     let load = load_witness_arm(w, State::Built);
     print_arm("witness", &arm, &load);
     match &load {
-        ArmLoad::WitnessReady { series, .. } => println!(
-            "event train: {} stamped events, t in TDB from the loaded record",
-            series.len()
-        ),
+        ArmLoad::WitnessReady { series, .. } => {
+            println!(
+                "event train: {} stamped events, t in TDB from the loaded record",
+                series.len()
+            );
+            if w.kind == Some(WitnessKind::PointEvent) {
+                match driver_name {
+                    Some(dn) => match find_field_source(sources, dn) {
+                        Some((source, field)) => match load_field(&source, &field) {
+                            Ok(driver) => run_event_conditional(&driver, series),
+                            Err(reason) => {
+                                println!("event-conditional query pending — driver '{dn}' {reason}")
+                            }
+                        },
+                        None => println!(
+                            "event-conditional query pending — driver '{dn}' stands in no source block"
+                        ),
+                    },
+                    None => println!(
+                        "event-conditional block: the point-event train carries n = {} event(s); the event-triggered average (event_triggered_average) and the Omori-preserving circular driver shift null (omori_preserving_shift_null) are built, but no aligned driver series was named (--driver <field>). Missing data side: a driver series; then the form needs >= {EVENT_FLOOR} events.",
+                        series.len()
+                    ),
+                }
+            }
+        }
         ArmLoad::Pending(reason) => println!("witness arm stays pending — {reason}"),
         ArmLoad::Ready { .. } => {}
     }
@@ -1880,12 +2621,23 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds>"
+        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | modes --direction <witness> | --spectral <witness> | --parity-witness <witness> [--driver <field>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
+    if let Some(name) = arg_after(&args, "--direction") {
+        exit(run_direction_query(name, &witnesses));
+    }
+    if let Some(name) = arg_after(&args, "--spectral") {
+        exit(run_spectral_query(name, &witnesses));
+    }
     if let Some(name) = arg_after(&args, "--parity-witness") {
-        exit(run_parity_witness(name, &witnesses));
+        exit(run_parity_witness(
+            name,
+            &witnesses,
+            &sources,
+            arg_after(&args, "--driver"),
+        ));
     }
     if sources.is_empty() {
         eprintln!("phi/sources.φ carries no block — the register stays unread");
@@ -1959,6 +2711,85 @@ mod tests {
         assert!(
             maxt.mde.iter().all(|m| m.is_some()),
             "the MDE row carries a value per statistic with a finite sigma"
+        );
+    }
+
+    #[test]
+    fn direction_statistics_measure_a_clustered_sample() {
+        let clustered: Vec<f64> = (0..10).map(|i| 0.05 + i as f64 * 1.0e-4).collect();
+        let z = rayleigh_z(&clustered).expect("a finite clustered sample carries a Rayleigh z");
+        assert!(z > 9.0, "a concentrated sample carries a large Rayleigh z");
+        assert!(
+            rayleigh_p(z, clustered.len()).is_finite(),
+            "the Rayleigh p-value is finite"
+        );
+        let uniform: Vec<f64> = (0..8).map(|i| i as f64 * TAU / 8.0).collect();
+        let z_uniform = rayleigh_z(&uniform).expect("the uniform sample carries a z");
+        assert!(
+            z_uniform < 1.0e-6,
+            "an evenly spaced circle carries a vanishing Rayleigh z"
+        );
+        let v = kuiper_v(&[0.5]).expect("a single cell carries a Kuiper V");
+        assert!(
+            (v - 1.0).abs() < 1.0e-12,
+            "one cell at the midpoint gives V = 1"
+        );
+        assert!(kuiper_p(v, 1).is_finite(), "the Kuiper p-value is finite");
+        let (mu, kappa) =
+            von_mises_fit(&clustered).expect("the clustered sample carries a von Mises fit");
+        assert!(
+            mu.is_finite() && kappa > 0.0,
+            "the fit carries mu and a positive kappa"
+        );
+    }
+
+    #[test]
+    fn direction_parsers_read_json_and_columns() {
+        let json = r#"[{"ra":10.5,"dec":-20.0},{"ra":30,"dec":41}]"#;
+        let pairs = parse_object_pairs(json);
+        assert_eq!(pairs.len(), 2, "two JSON objects carry two direction pairs");
+        assert!((pairs[0].0 - 10.5).abs() < 1.0e-12);
+        assert!((pairs[0].1 + 20.0).abs() < 1.0e-12);
+        let csv = "ra,dec\n10,20\n30,40\n";
+        let cols = parse_column_pairs(csv);
+        assert_eq!(cols.len(), 2, "the named columns carry two direction pairs");
+        assert!((cols[1].1 - 40.0).abs() < 1.0e-12);
+    }
+
+    #[test]
+    fn event_triggered_average_counts_and_fills_the_window() {
+        let driver: Vec<(f64, f64)> = (0..240)
+            .map(|i| (i as f64 * 3_600.0, (i as f64 * 0.1).sin()))
+            .collect();
+        let events = [(100.0 * 3_600.0, 1.0)];
+        let avg = event_triggered_average(&driver, &events, 86_400.0, 3_600.0);
+        assert_eq!(
+            avg.lag_s.len(),
+            25,
+            "a one-day window at one-hour bins has 25 cells"
+        );
+        assert_eq!(avg.event_count, 1, "the covered event is counted");
+        assert!(
+            avg.mean.iter().all(|m| m.is_some()),
+            "a fully covered window fills every cell"
+        );
+    }
+
+    #[test]
+    fn omori_shift_null_stays_absent_below_the_event_floor() {
+        let driver: Vec<(f64, f64)> = (0..240).map(|i| (i as f64 * 3_600.0, i as f64)).collect();
+        let single = [(100.0 * 3_600.0, 1.0)];
+        assert!(
+            omori_preserving_shift_null(&driver, &single, 86_400.0, 3_600.0, 8, 3_600.0, 7,)
+                .is_none(),
+            "one event carries no shift-null distribution"
+        );
+        let paired = [(100.0 * 3_600.0, 1.0), (150.0 * 3_600.0, 1.0)];
+        let null = omori_preserving_shift_null(&driver, &paired, 86_400.0, 3_600.0, 8, 3_600.0, 7)
+            .expect("two covered events carry a shift-null distribution");
+        assert!(
+            null.threshold.is_finite() && null.surrogates >= 2,
+            "the Omori-preserving null carries a measured threshold"
         );
     }
 }

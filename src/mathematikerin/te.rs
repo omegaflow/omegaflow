@@ -29,6 +29,61 @@ pub fn kde_n_eff(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
     Some(pairs as f64 * hx * hx * hy)
 }
 
+
+
+
+
+
+
+pub const TE_BIAS_MK: &[(usize, f64)] = &[
+    (800, -8.866e-2),
+    (1260, -7.693e-2),
+    (1600, -7.136e-2),
+    (2200, -6.095e-2),
+    (4000, -4.161e-2),
+    (10000, 0.000e0),
+];
+
+
+pub fn te_bias_m_k(n: usize) -> Option<f64> {
+    TE_BIAS_MK.iter().find(|&&(k, _)| k == n).map(|&(_, m)| m)
+}
+
+
+
+
+pub const TE_BIAS_MK_EMBEDDED: Option<f64> = None;
+
+
+
+pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
+    te - m_k
+}
+
+
+
+pub const TE_NEFF_THRESHOLD: Option<f64> = None;
+
+
+pub fn transfer_entropy_bias_adjusted_above(
+    te: f64,
+    m_k: f64,
+    n_eff: f64,
+    floor: f64,
+) -> Option<f64> {
+    if n_eff.is_finite() && n_eff >= floor && te.is_finite() && m_k.is_finite() {
+        Some(transfer_entropy_bias_adjusted(te, m_k))
+    } else {
+        None
+    }
+}
+
+
+
+pub fn transfer_entropy_bias_adjusted_gated(te: f64, m_k: f64, n_eff: f64) -> Option<f64> {
+    transfer_entropy_bias_adjusted_above(te, m_k, n_eff, TE_NEFF_THRESHOLD?)
+}
+
 pub fn transfer_entropy(x: &[f32], y: &[f32]) -> Option<f64> {
     let n = x.len();
     if n < 8 {
@@ -3870,6 +3925,53 @@ mod tests {
         assert!(
             kde_n_eff(&constant, &y[..64], 0).is_none(),
             "a constant series carries no bandwidth, so n_eff stays absent"
+        );
+    }
+
+    #[test]
+    fn gate_te_bias_adjusted_sign_and_n_floor() {
+
+        let te = -1.3e-2;
+        let m_k = te_bias_m_k(1260).expect("the operating size carries a measured bias");
+        assert!(m_k < 0.0, "the measured bias is negative, got {m_k}");
+        let adjusted = transfer_entropy_bias_adjusted(te, m_k);
+        assert!(
+            adjusted > te,
+            "the negative bias correction raises the value: {adjusted} > {te}"
+        );
+
+
+        let mut previous = f64::INFINITY;
+        for &(_, m) in TE_BIAS_MK {
+            assert!(
+                m.abs() < previous,
+                "the bias magnitude must fall as n grows, got {m}"
+            );
+            previous = m.abs();
+        }
+        assert!(
+            te_bias_m_k(10_000).is_some_and(|m| m.abs() < f64::EPSILON),
+            "the reference size is bias-free"
+        );
+        assert!(
+            te_bias_m_k(1234).is_none(),
+            "an unmeasured size stays absent, never zero"
+        );
+
+        assert!(
+            transfer_entropy_bias_adjusted_above(te, m_k, 7.0, 8.0).is_none(),
+            "below the n floor the correction stays absent"
+        );
+        let at_floor = transfer_entropy_bias_adjusted_above(te, m_k, 8.0, 8.0)
+            .expect("at the floor the correction applies");
+        assert!(
+            (at_floor - (te - m_k)).abs() < 1e-15,
+            "the floor correction subtracts m_k, got {at_floor}"
+        );
+
+        assert!(
+            transfer_entropy_bias_adjusted_gated(te, m_k, 1.0e9).is_none(),
+            "an unmeasured n_eff threshold applies no correction"
         );
     }
 
