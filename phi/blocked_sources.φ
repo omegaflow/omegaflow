@@ -51,46 +51,6 @@ url https://regards.cnes.fr/api/v1/rs-order
 origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml
 note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
 
-blocked parser-def curation
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
-gap curation
-note HTTP 400 2026-09-25 ADQL: Spalten ra/dec fehlen in gaiadr3.vari_classifier_result (nur source_id) — Query ill-formed; kein Query-Arm-Surface, per-entry ADQL-Rewrite; Reader-Arm steht extract.rs votable_to_json.
-
-blocked parser-def curation
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-gap curation
-note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query ill-formed; kein Query-Arm-Surface, per-entry ADQL-Rewrite; phot_g_mean_mag=em mag.
-
-blocked parser-def astrometry-reader
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
-gap astrometry-reader
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
-
-blocked parser-def astrometry-reader
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
-gap astrometry-reader
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
-
-blocked parser-def astrometry-reader
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
-gap astrometry-reader
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
-
-blocked parser-def astrometry-reader
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
-gap astrometry-reader
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
-
-blocked parser-def astrometry-reader
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
-gap astrometry-reader
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
-
-blocked parser-def astrometry-reader
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
-gap astrometry-reader
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
-
 blocked account
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
 note LHAASO: gemessen 2026-09-26 — API 200 (18 Datensätze), 4 Rohklassen gated; Zugang nur per IHEP-Konto (CSTNET-ID) + Kollaborations-Agreement → Operator-Wort/Anfrage (Future).
@@ -110,11 +70,6 @@ note iaga-text — 2026-09-27: IAGA-2002-Reader steht (src/archivar/iaga.rs:55);
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
 note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs (HCV1, 12 B Header + 20 B/Record) + das2_iowa_compiler.rs; series_component_name ohne hapi_csv-Arm → kein Feld; kein Workflow/Release. Braucht: component_name + Workflow.
-
-blocked parser-def astrometry-reader
-url http://occultations.ct.utfpr.edu.br/
-gap astrometry-reader
-note Occultation-DB UTFPR (SOSB/Lucky Star): Δ geozentrisch, als SSB-Punkt û·Δ liegt jede Zeile um −R_E(t) verschoben (bis ~1 au); kein Arm für geozentrische Epoche. Compiler bleibt Erbe.
 
 pending
 url https://moon.bao.ac.cn/
