@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 6ab909ad2ae5c846481cd5747ff6c574d1ca7f55c6492bc5b23e07c5ca47c47b
+  sha256: 0553c28cc13577fbb499a399d1a0b6f9f8e7ef54b94ae18d788983ee19026d04
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -165,6 +165,39 @@ Wort | Datum | Quelle
 - **Workflow-Domäne (Rat).** `bz-yearly-maxt.yml` und `field-te-query.yml` sind formal
   Mycelium; zieht der Rat die Grenze streng, gehen sie als Punkte dorthin.
 
+## Mehr-Stimmen-Review (Rat + UI-Chats + Taucher)
+
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `field-te-query 37120826017`.
+- **Lage:** (gemessen 2026-10-03) die 6 Pendings wurden dem Rat, einem adversarischen Taucher
+  und den UI-Frontier-Stimmen vorgelegt. Geantwortet: **z.ai GLM-5.3** und **Claude**
+  (Rohmaterial `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
+  `state/stimmen/2026-10-03_claude-ui_te-engine-review.md`); **Kimi** Kontingent aufgebraucht,
+  **Together** keine Antwort, der `voice`-Agentenlauf (`opencode run -m nvidia/z-ai/glm-5.3
+  --agent voice`) hing 15 min ohne Output. Die Reviews nennen konkrete Defekte:
+  - **Rissä: `pair_lag_index_hash` faltet lag 0 und lag 1 auf denselben Hash**
+    (`src/mathematikerin/wy_max_t.rs:262`, `shift = 1` für beide) → die „K=6 distinkten" sind
+    real 6 Paare bei **nur lag 0**; lag-0-TE ist richtungs-symmetrisch. Name ≠ Implementation;
+    der Selftest besteht nur wegen der Kollision. Fix: lag-0 aus der Familie, lag-1 getrennt hashen.
+  - **Null:** die beobachtete Statistik mit demselben Null-Ensemble-μ/σ zentrieren/skalieren
+    wie die Maxima (nicht null-zentriert — der KDE-Bias-Boden würde sonst aufaddiert); Dedup
+    über Deskriptor-Tupel, nie über berechnete Werte; gemeinsamer Seed über Stationen/Runden
+    miscalibriert; GPD bei B=1e4, α=0.01 **nicht** nötig; bei heavy-tailed Response nie die
+    Antwort phase-randomisieren, sondern den Driver verschieben.
+  - **Bias:** rang-normalisieren; **ein** Bandbreiten-Vektor für alle vier Dichte-Terme;
+    `TE_adj = TE − m_k` (Orbit-Mittel); Gaussian-Copula-Boden; n_eff-Gate (~300).
+  - **Storm:** Selektion muss `F_{t−1}`-messbar sein (nicht response-/Kp-konditioniert), Einheit
+    = Episode, gepaarte Differenz D.
+  - **Sparse Katalog: die `erbq-solar`-Implementierung ist ungültig** — leere Bins fallen,
+    d.h. auf dem Outcome konditioniert; „lag" indiziert ein nicht-kontiguierliches Subsample.
+    Korrekt: Compensated-Score (ETAS-Baseline) für Treiber→Katalog; Matched-Control-Event-Study
+    auf declusterten Mainshocks für Katalog→Ionosphäre; Blind-Alignment; Vorabregistrierung.
+  - **Migration:** Golden Record je Probe, zweistufige Parität (erst bug-compat, dann
+    statistische Äquivalenz), Verdikte **loggen**, nicht gaten.
+- **Braucht:** den `pair_lag_index_hash`-Riss fixen (eigener Atom); die Reviews in
+  `field_te_query`/`wy_max_t` einarbeiten; `erbq-solar` als **ungültig descopen** und auf das
+  Matched-Control-Design umbauen.
+
 ## Abschluss
 
 Pfad-begrenzte Commit-Pfade dieser Session:
@@ -179,4 +212,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `.github/workflows/bz-yearly-maxt.yml`
 - `tools/measure/src/bin/field_te_query.rs`, `.github/workflows/field-te-query.yml`
 
-## Burn: open 0.0153 · close 0.1606 · cap 0.50 — Grund: River-85 — Membran-Vermerk + exzellenz-Gate geheilt; GIC-Riss: storm-only + Bias + kalibrierte WY-max-T-Null gebaut/verdrahtet; Rats-Verdikt + `field_te_query`-Query-Kern + Zeugen-Arm + erste Zeugen-Messung gebaut, 8 CI-Läufe dispatcht. `close` = River-Linien-Session (gemessen `session_burn`, $0.1606); die dispatchten Taucher (6×grind-flash $0.3678 + general $0.0174 + Rat $0.0484 = $0.4336) trugen zusätzlich — das Atom lief damit über den Haus-Cap 0.50; benannt, nicht geglättet (Maschinen-Total 0.7972 inkl. fremder Parallel-Linien).
+## Burn: open 0.0153 · close 0.2529 · cap 0.50 — Grund: River-85 — Membran-Vermerk + exzellenz-Gate geheilt; GIC-Riss: storm-only + Bias + kalibrierte WY-max-T-Null gebaut/verdrahtet; Rats-Verdikt + `field_te_query`-Query-Kern + Zeugen-Arm + erste Zeugen-Messung; Mehr-Stimmen-Review (Rat + z.ai/Claude-UI + adversarischer Taucher), 8 CI-Läufe dispatcht. `close` = River-Linien-Session (gemessen `session_burn`, $0.2529); die dispatchten Stimmen (6×grind-flash $0.3678 + 2×Rat $0.1256 + 2×general $0.065 = $0.558) trugen zusätzlich — das Atom lief damit über den Haus-Cap 0.50; benannt, nicht geglättet (Maschinen-Total 1.1171 inkl. fremder Parallel-Linien).
