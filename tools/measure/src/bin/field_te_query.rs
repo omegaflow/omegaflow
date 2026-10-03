@@ -1,6 +1,7 @@
 use std::env;
 use std::process::exit;
 
+use omegaflow::archivar::witness::WitnessKind;
 use omegaflow::archivar::{
     Extract, FieldConfig, SourceConfig, embedded_lsk, extract_series, fetch_raw_bytes_headers,
     geo_series_component_name, geo_series_parse_bin, load_sources, series_component_name,
@@ -69,6 +70,22 @@ impl Seasonal {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Register {
+    Sources,
+    Witnesses,
+}
+
+#[derive(Clone)]
+struct WitnessRecord {
+    kind: Option<WitnessKind>,
+    kind_token: String,
+    key: String,
+    url: String,
+    records: Vec<String>,
+    force: Option<String>,
+}
+
 #[derive(Clone)]
 struct Arm {
     name: String,
@@ -85,6 +102,7 @@ struct Descriptor {
     seasonal: Seasonal,
     lags: Vec<usize>,
     surrogate: usize,
+    register: Register,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -127,6 +145,8 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut seasonal = Seasonal::None;
     let mut lags: Option<Vec<usize>> = None;
     let mut surrogate: Option<usize> = None;
+    let mut register = Register::Sources;
+    let mut witness_primary = false;
 
     for (lineno, raw) in text.lines().enumerate() {
         let line = raw.trim();
@@ -155,6 +175,11 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                     })?,
                     None => State::Built,
                 };
+                if head == "driver" && witness_primary {
+                    return Err(format!(
+                        "descriptor:{at}: driver and witness name one primary arm — one per round"
+                    ));
+                }
                 let arm = Arm {
                     name: name.to_string(),
                     state,
@@ -164,6 +189,43 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                     "target" => target = Some(arm),
                     _ => cond = Some(arm),
                 }
+            }
+            "witness" => {
+                let name = parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: witness carries no name"))?;
+                let state = match parts.get(2).copied() {
+                    Some(t) => State::parse(t).ok_or_else(|| {
+                        format!("descriptor:{at}: witness state '{t}' names no built|pending|probe")
+                    })?,
+                    None => State::Built,
+                };
+                if driver.is_some() || witness_primary {
+                    return Err(format!(
+                        "descriptor:{at}: witness and driver name one primary arm — one per round"
+                    ));
+                }
+                witness_primary = true;
+                register = Register::Witnesses;
+                driver = Some(Arm {
+                    name: name.to_string(),
+                    state,
+                });
+            }
+            "register" => {
+                let token = parts
+                    .get(1)
+                    .copied()
+                    .ok_or_else(|| format!("descriptor:{at}: register carries no token"))?;
+                register = match token {
+                    "sources" => Register::Sources,
+                    "witnesses" => Register::Witnesses,
+                    other => {
+                        return Err(format!(
+                            "descriptor:{at}: register '{other}' names no sources|witnesses"
+                        ));
+                    }
+                };
             }
             "event" | "gate" => {
                 let name = parts
@@ -256,6 +318,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             Some(s) => s,
             None => 100,
         },
+        register,
     })
 }
 
@@ -291,6 +354,14 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
             .map_err(|_| format!("--surrogate '{t}' carries no count"))?,
         None => 100,
     };
+    let register = match arg_after(args, "--register") {
+        Some("sources") => Register::Sources,
+        Some("witnesses") => Register::Witnesses,
+        Some(other) => {
+            return Err(format!("--register '{other}' names no sources|witnesses"));
+        }
+        None => Register::Sources,
+    };
     Ok(Descriptor {
         pair: None,
         driver: Arm {
@@ -307,6 +378,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         seasonal,
         lags,
         surrogate,
+        register,
     })
 }
 
@@ -353,6 +425,192 @@ fn find_field_source(sources: &[SourceConfig], name: &str) -> Option<(SourceConf
     None
 }
 
+fn witness_kind_token(token: &str) -> Option<WitnessKind> {
+    match token {
+        "s2-direction" => Some(WitnessKind::S2Direction),
+        "point-event" => Some(WitnessKind::PointEvent),
+        "gestalt" => Some(WitnessKind::Gestalt),
+        "presence" => Some(WitnessKind::Presence),
+        "substance" => Some(WitnessKind::Substance),
+        _ => None,
+    }
+}
+
+fn load_witnesses() -> Vec<WitnessRecord> {
+    match std::fs::read_to_string("phi/witnesses.φ") {
+        Ok(content) => parse_witnesses(&content),
+        Err(_) => Vec::new(),
+    }
+}
+
+fn parse_witnesses(content: &str) -> Vec<WitnessRecord> {
+    let mut out: Vec<WitnessRecord> = Vec::new();
+    let mut block: Vec<&str> = Vec::new();
+    for raw in content.lines().chain(std::iter::once("")) {
+        let line = raw.trim();
+        if line.is_empty() {
+            if !block.is_empty() {
+                if let Some(w) = witness_from_block(&block, &out) {
+                    out.push(w);
+                }
+                block.clear();
+            }
+            continue;
+        }
+        block.push(line);
+    }
+    out
+}
+
+fn witness_from_block(lines: &[&str], out: &[WitnessRecord]) -> Option<WitnessRecord> {
+    let mut kind: Option<WitnessKind> = None;
+    let mut kind_token = String::new();
+    let mut url: Option<String> = None;
+    let mut records: Vec<String> = Vec::new();
+    let mut force: Option<String> = None;
+    for line in lines {
+        if line.starts_with('#') {
+            continue;
+        }
+        let mut parts = line.split_whitespace();
+        let Some(head) = parts.next() else {
+            continue;
+        };
+        match head {
+            "witness" => {
+                let Some(tok) = parts.next() else {
+                    continue;
+                };
+                kind = witness_kind_token(tok);
+                kind_token = tok.to_string();
+            }
+            "url" => {
+                if let Some(v) = parts.next() {
+                    url = Some(v.to_string());
+                }
+            }
+            "record" => {
+                for t in parts {
+                    records.push(t.to_string());
+                }
+            }
+            "force" => {
+                force = parts.next().map(|s| s.to_string());
+            }
+            _ => {}
+        }
+    }
+    let url = url?;
+    if url.is_empty() || kind_token.is_empty() {
+        return None;
+    }
+    let idx = out.iter().filter(|w| w.kind_token == kind_token).count();
+    let key = format!("{kind_token}#{idx}");
+    Some(WitnessRecord {
+        kind,
+        kind_token,
+        key,
+        url,
+        records,
+        force,
+    })
+}
+
+fn find_witness<'a>(witnesses: &'a [WitnessRecord], name: &str) -> Option<&'a WitnessRecord> {
+    if let Some(w) = witnesses.iter().find(|w| w.key == name) {
+        return Some(w);
+    }
+    let by_record: Vec<&WitnessRecord> = witnesses
+        .iter()
+        .filter(|w| w.records.iter().any(|r| r == name))
+        .collect();
+    if by_record.len() == 1 {
+        return Some(by_record[0]);
+    }
+    let by_url: Vec<&WitnessRecord> = witnesses.iter().filter(|w| w.url.contains(name)).collect();
+    if by_url.len() == 1 {
+        return Some(by_url[0]);
+    }
+    None
+}
+
+fn witness_series(w: &WitnessRecord) -> Result<Vec<(f64, f64)>, String> {
+    let Some(bytes) = fetch_raw_bytes_headers(&w.url, &[]) else {
+        return Err(format!("witness '{}' fetch void", w.key));
+    };
+    let text = String::from_utf8_lossy(&bytes);
+    let stamps = event_unix_from_text(&text);
+    if stamps.is_empty() {
+        return Err(format!(
+            "witness '{}' record carries no parsed event timestamp",
+            w.key
+        ));
+    }
+    let Some(lsk) = embedded_lsk() else {
+        return Err("leap-second table absent — the witness event train stays unmeasured".into());
+    };
+    let mut out = Vec::new();
+    for unix in stamps {
+        if let Some(t) = lsk.unix_to_tdb(unix) {
+            if t.is_finite() {
+                out.push((t, 1.0));
+            }
+        }
+    }
+    if out.is_empty() {
+        return Err(format!(
+            "witness '{}' carries no timestamp inside the leap-second window",
+            w.key
+        ));
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    Ok(out)
+}
+
+fn event_unix_from_text(text: &str) -> Vec<f64> {
+    let mut out = Vec::new();
+    for key in ["\"time_\"", "\"time\"", "\"at\""] {
+        let mut from = 0usize;
+        while let Some(rel) = text[from..].find(key) {
+            let at = from + rel + key.len();
+            from = at;
+            let rest = text[at..].trim_start();
+            let Some(body) = rest.strip_prefix(':') else {
+                continue;
+            };
+            if let Some(v) = parse_json_time_scalar(body.trim_start()) {
+                out.push(v);
+            }
+        }
+    }
+    out
+}
+
+fn parse_json_time_scalar(body: &str) -> Option<f64> {
+    if let Some(inner) = body.strip_prefix('"') {
+        let end = inner.find('"')?;
+        return parse_epoch(&inner[..end]);
+    }
+    let end = body
+        .find(|c: char| c == ',' || c == '}' || c == ']' || c.is_whitespace())
+        .unwrap_or(body.len());
+    let v: f64 = body[..end].parse().ok()?;
+    if !v.is_finite() {
+        return None;
+    }
+    Some(if v.abs() >= 1.0e11 { v / 1_000.0 } else { v })
+}
+
+fn offset_sign(time: &str) -> Option<usize> {
+    if let Some(i) = time.rfind('+') {
+        return Some(i);
+    }
+    match time.rfind('-') {
+        Some(i) if i > 0 => Some(i),
+        _ => None,
+    }
+}
+
 fn parse_epoch(s: &str) -> Option<f64> {
     let s = s.trim();
     if let Ok(v) = s.parse::<f64>() {
@@ -364,6 +622,24 @@ fn parse_epoch(s: &str) -> Option<f64> {
             Some((d, t)) => (d, t),
             None => (s, "0"),
         },
+    };
+    let (time, shift_s) = match offset_sign(time) {
+        Some(i) => {
+            let sign = if time.as_bytes()[i] == b'+' {
+                1i64
+            } else {
+                -1i64
+            };
+            let off = &time[i + 1..];
+            let mut op = off.split(':');
+            let oh: i64 = op.next()?.parse().ok()?;
+            let om: i64 = match op.next() {
+                Some(v) => v.parse().ok()?,
+                None => 0,
+            };
+            (&time[..i], sign * (oh * 3_600 + om * 60))
+        }
+        None => (time, 0),
     };
     let mut dp = date.split('-');
     let y: i64 = dp.next()?.parse().ok()?;
@@ -387,7 +663,10 @@ fn parse_epoch(s: &str) -> Option<f64> {
         None => 0,
     };
     let days = days_from_civil(y, m, d)?;
-    Some(days as f64 * 86_400.0 + hh as f64 * 3_600.0 + mm as f64 * 60.0 + ss as f64)
+    Some(
+        days as f64 * 86_400.0 + hh as f64 * 3_600.0 + mm as f64 * 60.0 + ss as f64
+            - shift_s as f64,
+    )
 }
 
 fn load_text_rows(src: &SourceConfig, fc: &FieldConfig, bytes: &[u8]) -> Option<Vec<(f64, f64)>> {
@@ -542,24 +821,77 @@ enum ArmLoad {
         field: FieldConfig,
         series: Vec<(f64, f64)>,
     },
+    WitnessReady {
+        detail: String,
+        series: Vec<(f64, f64)>,
+    },
     Pending(String),
 }
 
-fn load_arm(sources: &[SourceConfig], arm: &Arm) -> ArmLoad {
+fn try_source(sources: &[SourceConfig], arm: &Arm) -> Option<ArmLoad> {
+    find_field_source(sources, &arm.name).map(|(source, field)| match load_field(&source, &field) {
+        Ok(series) => ArmLoad::Ready {
+            source,
+            field,
+            series,
+        },
+        Err(reason) => ArmLoad::Pending(reason),
+    })
+}
+
+fn try_witness(witnesses: &[WitnessRecord], arm: &Arm) -> Option<ArmLoad> {
+    find_witness(witnesses, &arm.name).map(|w| load_witness_arm(w, arm.state))
+}
+
+fn load_witness_arm(w: &WitnessRecord, state: State) -> ArmLoad {
+    if state == State::Pending {
+        return ArmLoad::Pending("descriptor state pending (register duty)".into());
+    }
+    if w.kind != Some(WitnessKind::PointEvent) {
+        return ArmLoad::Pending(format!(
+            "witness '{}' kind {} is no event channel (τ=0 catalogue/spectrum/gestalt) — never poured into a series, never 0.0",
+            w.key, w.kind_token
+        ));
+    }
+    match witness_series(w) {
+        Ok(series) => ArmLoad::WitnessReady {
+            detail: format!(
+                "record {} force {} | {}",
+                w.records.join("+"),
+                w.force.as_deref().unwrap_or("absent"),
+                w.url
+            ),
+            series,
+        },
+        Err(reason) => ArmLoad::Pending(reason),
+    }
+}
+
+fn load_arm(
+    sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
+    arm: &Arm,
+    register: Register,
+) -> ArmLoad {
     if arm.state == State::Pending {
         return ArmLoad::Pending("descriptor state pending (register duty)".into());
     }
-    match find_field_source(sources, &arm.name) {
-        Some((source, field)) => match load_field(&source, &field) {
-            Ok(series) => ArmLoad::Ready {
-                source,
-                field,
-                series,
-            },
-            Err(reason) => ArmLoad::Pending(reason),
-        },
-        None => ArmLoad::Pending(format!("'{}' stands in no register block", arm.name)),
+    let order: [u8; 2] = if register == Register::Witnesses {
+        [1, 0]
+    } else {
+        [0, 1]
+    };
+    for which in order {
+        let attempt = if which == 0 {
+            try_source(sources, arm)
+        } else {
+            try_witness(witnesses, arm)
+        };
+        if let Some(load) = attempt {
+            return load;
+        }
     }
+    ArmLoad::Pending(format!("'{}' stands in no register block", arm.name))
 }
 
 fn print_arm(role: &str, arm: &Arm, load: &ArmLoad) {
@@ -578,6 +910,14 @@ fn print_arm(role: &str, arm: &Arm, load: &ArmLoad) {
             series.len(),
             source.url
         ),
+        ArmLoad::WitnessReady { detail, series } => {
+            println!(
+                "ARM {role:<6} {} {} | witness | n = {} | {detail}",
+                arm.name,
+                arm.state.name(),
+                series.len()
+            );
+        }
         ArmLoad::Pending(reason) => {
             println!(
                 "PENDING {role:<6} {} {} — {reason}",
@@ -996,6 +1336,7 @@ fn print_result(result: &QueryResult, desc: &Descriptor) {
 fn execute(
     desc: &Descriptor,
     sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
     fam_override: Option<f64>,
 ) -> Option<QueryResult> {
     println!("=== field_te_query — fields by name over the Archivar path, the one TE machine ===");
@@ -1009,9 +1350,12 @@ fn execute(
         desc.surrogate
     );
 
-    let driver_load = load_arm(sources, &desc.driver);
-    let target_load = load_arm(sources, &desc.target);
-    let cond_load = desc.cond.as_ref().map(|a| load_arm(sources, a));
+    let driver_load = load_arm(sources, witnesses, &desc.driver, desc.register);
+    let target_load = load_arm(sources, witnesses, &desc.target, desc.register);
+    let cond_load = desc
+        .cond
+        .as_ref()
+        .map(|a| load_arm(sources, witnesses, a, desc.register));
     print_arm("driver", &desc.driver, &driver_load);
     print_arm("target", &desc.target, &target_load);
     if let (Some(arm), Some(load)) = (&desc.cond, &cond_load) {
@@ -1029,7 +1373,7 @@ fn execute(
     }
 
     let driver_series = match &driver_load {
-        ArmLoad::Ready { series, .. } => series,
+        ArmLoad::Ready { series, .. } | ArmLoad::WitnessReady { series, .. } => series,
         ArmLoad::Pending(reason) => {
             println!();
             println!("driver arm pending ({reason}) — the pair stays unmeasured");
@@ -1037,7 +1381,7 @@ fn execute(
         }
     };
     let target_series = match &target_load {
-        ArmLoad::Ready { series, .. } => series,
+        ArmLoad::Ready { series, .. } | ArmLoad::WitnessReady { series, .. } => series,
         ArmLoad::Pending(reason) => {
             println!();
             println!("target arm pending ({reason}) — the pair stays unmeasured");
@@ -1045,7 +1389,9 @@ fn execute(
         }
     };
     let cond_series = match &cond_load {
-        Some(ArmLoad::Ready { series, .. }) => Some(series.as_slice()),
+        Some(ArmLoad::Ready { series, .. }) | Some(ArmLoad::WitnessReady { series, .. }) => {
+            Some(series.as_slice())
+        }
         _ => None,
     };
 
@@ -1087,7 +1433,7 @@ fn is_arrow(word: &str) -> bool {
     word == "arrow"
 }
 
-fn run_parity(sources: &[SourceConfig]) -> i32 {
+fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
     let desc = Descriptor {
         pair: Some("enso-bz-sst (Blatt I)".into()),
         driver: Arm {
@@ -1107,8 +1453,9 @@ fn run_parity(sources: &[SourceConfig]) -> i32 {
         seasonal: Seasonal::Climatology,
         lags: (0..=12).collect(),
         surrogate: 100,
+        register: Register::Sources,
     };
-    let Some(result) = execute(&desc, sources, Some(REC_FAM)) else {
+    let Some(result) = execute(&desc, sources, witnesses, Some(REC_FAM)) else {
         println!();
         println!("PARITY: UNMEASURED (an arm or the alignment stays absent)");
         return 0;
@@ -1196,20 +1543,58 @@ fn run_parity(sources: &[SourceConfig]) -> i32 {
     }
 }
 
+fn run_parity_witness(name: &str, witnesses: &[WitnessRecord]) -> i32 {
+    println!("=== parity bridge — witness register over phi/witnesses.φ ===");
+    let Some(w) = find_witness(witnesses, name) else {
+        println!("PARITY-WITNESS: pending — '{name}' stands in no witness block");
+        return 0;
+    };
+    println!(
+        "witness {} | kind {} | record {} | force {} | {}",
+        w.key,
+        w.kind_token,
+        w.records.join("+"),
+        w.force.as_deref().unwrap_or("absent"),
+        w.url
+    );
+    let arm = Arm {
+        name: w.key.clone(),
+        state: State::Built,
+    };
+    let load = load_witness_arm(w, State::Built);
+    print_arm("witness", &arm, &load);
+    match &load {
+        ArmLoad::WitnessReady { series, .. } => println!(
+            "event train: {} stamped events, t in TDB from the loaded record",
+            series.len()
+        ),
+        ArmLoad::Pending(reason) => println!("witness arm stays pending — {reason}"),
+        ArmLoad::Ready { .. } => {}
+    }
+    println!(
+        "PARITY-WITNESS: pending — no recorded witness TE verdict in docs/ to compare against (measured 2026-10-03 via sgrep over docs/; the point-event register verdict docs/handover/archiv/handover-2026-10-01-mountain-folge218.md:69 names the record build, no TE parity). The arm is measured, the parity stays named pending, never invented."
+    );
+    0
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n>"
+        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n>"
     );
     let sources = load_sources();
+    let witnesses = load_witnesses();
+    if let Some(name) = arg_after(&args, "--parity-witness") {
+        exit(run_parity_witness(name, &witnesses));
+    }
     if sources.is_empty() {
         eprintln!("phi/sources.φ carries no block — the register stays unread");
         exit(2);
     }
 
     if args.iter().any(|a| a == "--parity") {
-        exit(run_parity(&sources));
+        exit(run_parity(&sources, &witnesses));
     }
 
     let desc = if let Some(path) = arg_after(&args, "--descriptor") {
@@ -1237,7 +1622,7 @@ fn main() {
         }
     };
 
-    match execute(&desc, &sources, None) {
+    match execute(&desc, &sources, &witnesses, None) {
         Some(_) => {
             println!("Silent lines are findings. Exit 0.");
         }
