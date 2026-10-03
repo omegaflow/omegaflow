@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: a52c76e75bfcdc2539779137b32383e628d7bcd73addccdcb4cbb88cfdc5c3d4
+  sha256: 16b40d1664f08b8e75412ec71a2eab7957f8a1c0d5f60c6481c16eef7d3d9a70
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -34,7 +34,7 @@ Wort | Datum | Quelle
 „ja voranmelde und dann lauf in ci" — Pioneer-Floor-Voranmelde-Blatt bauen, dann Lauf in CI | 2026-10-02 | Operator (river-folge82)
 „braucht es pro und max?" — Reaffirmation flash-first; pro/max nur mit gemessener flash-Fehllage | 2026-10-03 | Operator (Session, Mountain 227)
 „ja bitte" — `descoped` aus `blocked_sources.φ` auflösen, in `declined`/`dead` migrieren; blocked hält nur Gewolltes | 2026-10-03 | Operator (Session, Mountain 229)
-„kannst du dich bitte darum kümmern? 9 blocked parser-def" — die 9 parser-def auflösen (Astrometrie ohne Wire-Slot → `decline direction-only`) | 2026-10-03 | Operator (Session, Mountain 229)
+„kannst du dich bitte darum kümmern? 9 blocked parser-def" — die 9 parser-def als Weberin-zweite-Linie führen (`blocked parser-def astrometry-reader`/`curation`), nicht declinen | 2026-10-03 | Operator (Session, Mountain 229)
 
 ## Offen (aufgeschlüsselt)
 
@@ -125,6 +125,19 @@ Wort | Datum | Quelle
   fehlende Arm ist als gap-Token `hdf4` in `phi/blocked_sources.φ` deklariert.
 - **Blockade:** HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert.
 - **Braucht:** HDF4-Reader-Arm für NBIT/SKPHUFF/SZIP bauen; dann die zwei CMG-Bins gegen die Quellen prüfen.
+
+### Weberin zweite Linie — astrometry-reader/curation-Arme (9 parser-def)
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-03) 6 VizieR `asu-tsv` `J/A+A/582/A8/{ariel,miran,obero,titan,umbri,uranu}_j`
+  (Uranus-Monde) + `occultations.ct.utfpr.edu.br` = gemessene Astrometrie = **zweite unabhängige
+  Positions-Linie** der Weberin (`survey-2026-09-07-weberin-sonnensystem-kette.md`: „Planeten/Monde
+  eine Linie (SPK), die zweite pending"); 2 Gaia-ADQL (`vari_classifier_result`, `cluster_ka`) =
+  ill-formed (HTTP 400). Alle 9 stehen `blocked parser-def` mit `gap` (`astrometry-reader` ×7,
+  `curation` ×2).
+- **Blockade:** Wire-Richtungsarm (`SkyDirection` aus JD/RA/Dec) fehlt; die zwei Gaia-Queries ill-formed.
+- **Braucht:** `astrometry-reader`-Arm (Position-Serie → `SkyDirection` für die Weberin) + ADQL-Rewrite;
+  dann Registrierung/Manifestation.
 
 ## Träger (Prosa, eigene)
 

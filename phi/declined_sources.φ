@@ -130,10 +130,6 @@ decline registry/katalog
 url http://nida.esac.esa.int/nida-sl-tap/tap
 note ISO-Archiv (Infrared Space Observatory) — nida-TAP trägt Beobachtungs-Metadaten, kein Messwert-Feld.
 
-decline no-physical-force
-url http://occultations.ct.utfpr.edu.br/
-note Geozentrische Occultation-Serie Δ (kein 9-Kraft-Feld; SSB-ICRS-Arm fehlt); Compiler bleibt Erbe.
-
 decline registry/katalog
 url http://oirsa.cfa.harvard.edu:8080/tap
 note data_public-Views + ivoa.obscore — Spektren-Metadaten, kein Messwert-Feld in der Zeile.
@@ -2007,10 +2003,6 @@ decline no-physical-force
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
 
-decline query-ill-formed
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-note Gaia DR3 gaia_source cluster_ka: ADQL HTTP 400 (Identifier/Spalte fehlt) — ill-formed Query, kein Wire-Feld; eine korrigierte ADQL wäre eine neue Registrierung.
-
 decline no-physical-force
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
 note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
@@ -2054,10 +2046,6 @@ note Gaia DR3: field bp_rp — Farbindex; cmap plx 3. DROP, kein 9-Kraft-Kanal.
 decline no-physical-force
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. DROP, kein 9-Kraft-Kanal.
-
-decline query-ill-formed
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
-note Gaia DR3 vari_classifier: ADQL HTTP 400 (Identifier/Spalte fehlt) — ill-formed Query, kein Wire-Feld; eine korrigierte ADQL wäre eine neue Registrierung.
 
 decline infrastructure
 url https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
@@ -4346,30 +4334,6 @@ note EUMETSAT-WMS-Bildkacheln.
 decline derived-product
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
 note Swarm TII E-Feld (TCT02/16) — keyless HAPI, aber experimentell, stopDate 2025-12-04, E-Feld ABGELEITET (E=−V×B); direkte Messung ist Ionendrift (Vixh/Viy/Viz m/s). Abgeleitet + Feed beendet → kein Oszillator; live-Swarm-Felder in sources.φ.
-
-decline direction-only
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec (Richtung ohne Distanz, kein 9-Kraft-Feld, kein Wire-Slot); Konsument uranus_*_probe liest camargo_*.tsv über camargo_uranus-manifestor.
-
-decline direction-only
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec (Richtung ohne Distanz, kein 9-Kraft-Feld, kein Wire-Slot); Konsument uranus_*_probe liest camargo_*.tsv über camargo_uranus-manifestor.
-
-decline direction-only
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec (Richtung ohne Distanz, kein 9-Kraft-Feld, kein Wire-Slot); Konsument uranus_*_probe liest camargo_*.tsv über camargo_uranus-manifestor.
-
-decline direction-only
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec (Richtung ohne Distanz, kein 9-Kraft-Feld, kein Wire-Slot); Konsument uranus_*_probe liest camargo_*.tsv über camargo_uranus-manifestor.
-
-decline direction-only
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec (Richtung ohne Distanz, kein 9-Kraft-Feld, kein Wire-Slot); Konsument uranus_*_probe liest camargo_*.tsv über camargo_uranus-manifestor.
-
-decline direction-only
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec (Richtung ohne Distanz, kein 9-Kraft-Feld, kein Wire-Slot); Konsument uranus_*_probe liest camargo_*.tsv über camargo_uranus-manifestor.
 
 decline registry/katalog
 url https://vo-tap.oma.be/tap
