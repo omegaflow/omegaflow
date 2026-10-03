@@ -34,6 +34,13 @@ on:
         description: phase-randomized surrogate count (screen 200, confirmation 1000)
         type: string
         default: "200"
+      cohort:
+        description: hyperscanning cohort (ds007822 triads, ds007471 dyads)
+        type: choice
+        options:
+          - ds007822
+          - ds007471
+        default: ds007822
 permissions:
   contents: read
 env:
@@ -48,6 +55,7 @@ jobs:
       - name: Run the family FN/FP gates (the family-max null calibration)
         run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate joint_channel_family_gate coherent_null_fp_gate self_null_discriminator fn_gate_sweep nominees_round_trip --nocapture
       - name: Fetch the ds007822 EEG recordings and build the manifest
+        if: inputs.cohort == 'ds007822'
         run: |
           set -euo pipefail
           H=$(curl -sS -X POST https://openneuro.org/crn/graphql \
@@ -81,6 +89,24 @@ jobs:
             nch=$((nch+1))
           done < channels.tsv
           echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
+          sort -o manifest.txt manifest.txt
+          head -6 manifest.txt
+      - name: Fetch the ds007471 dyad EEG recordings and build the manifest
+        if: inputs.cohort == 'ds007471'
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-harvest --bin brainvision_compiler -- \
+            --dataset ds007471 --participant L
+          cargo run --release -p omegaflow-harvest --bin brainvision_compiler -- \
+            --dataset ds007471 --participant R
+          mkdir -p data
+          : > manifest.txt
+          for i in $(seq -w 1 32); do
+            sub="sub-$i"
+            base="data/openneuro.org/ds007471/$sub/eeg/${sub}_task-jointaction_eeg"
+            printf 'jointaction pair-%s L %s_L.bin\n' "$i" "$base" >> manifest.txt
+            printf 'jointaction pair-%s R %s_R.bin\n' "$i" "$base" >> manifest.txt
+          done
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
       - name: Run the joint family-wise TE screen across the channel family and write the per-cell nominees (Takens tau, dim 3)
