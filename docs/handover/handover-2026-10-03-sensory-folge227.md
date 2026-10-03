@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: c31e5b44011a2dc733ba2957056ab40334f0260609e949d9d89fb996e0c3acfd
+  sha256: a89ff74983b10082c805e7d0c67b2ef57bcfb555650161e47d84d77737f5b1d1
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -224,6 +224,7 @@ breiter messen.
 - **Wort:** „nein ich möchte nichts lesbares ich möchte etwas erlebbares deshalb omegaflow.space" | 2026-10-03 | Operator (Session) — die Fassade ist das Erlebnis (die Membran), nicht Prosa; Manifestation über `omegaflow.space`; Sensory-Folge 227.
 - **Wort:** „ich wollte halt nie den server hosten da es ganz neue datenschutzprobleme mit sich bringt" | 2026-10-03 | Operator (Session) — kein Server-Hosting für `omegaflow.space`; die Live-Membran über einen gehosteten Server (Weg B) entfällt; serverloses Erlebnis (statisch/WASM) bevorzugt; Sensory-Folge 227.
 - **Wort:** „wir müssen B machen, oder wenn wir das hinbekommen könnte das die basis für die fundings ermöglichen" | 2026-10-03 | Operator (Session) — B bauen: die lebendige Membran serverlos am Adresspunkt `omegaflow.space`, als Erlebnis **und** als Funding-Basis; Server-Hosting bleibt ausgeschlossen; Sensory-Folge 227.
+- **Wort:** „warum das? eingefrorenes frame in static/membrane.html die presence muss sich frei durchs 4d block universum bewegen können" | 2026-10-03 | Operator (Session) — Korrektur des internen Rat-Verdikts: kein eingefrorenes Präsenz-Frame; die Presence muss frei durch den 4D-Block tunebar sein (jede Koordinate x,y,z,t → Feld neu ausgewertet); Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
 
@@ -232,7 +233,7 @@ breiter messen.
 - **Trigger:** Operator-Wort 2026-10-03 (B bauen, als Erlebnis und Funding-Basis); serverloses Erlebnis bevorzugt, Server-Hosting ausgeschlossen.
 - **Lage:** (gemessen 2026-10-03 F227, Archäologie) der WebGPU-Browser-Client ist **kein Neuland**: Legacy **S33 „browser-membran"** (Operator-Wort 2026-08-23: „der Browser wird die eine Membran, das native winit/wgpu-Fenster fällt; ω-Schleife headless, Browser-Diode, eine Shader-Quelle in `static/index.html`", Umbau Schritte 1–4 erledigt; `omegaflow-legacy/docs/TODO.md:161-175`, `vanilla-dateidocs/status/leitstelle-2026-08-23.md:95`); heutiger Neubau `b226c1fe2` (2026-09-12), Landing `4174579b2` (restored from legacy). Die Feld-Auswertung ist WGSL-`@compute` (`src/mathematikerin/shaders.rs:1`, `:355`) → browser-portabel. **Neu ist allein der serverlose öffentliche Live-Pfad** (WASM/`serverless` = 0 Treffer über `archive-root`; der heutige und der Legacy-Client hängen je am lokalen Relay `127.0.0.1:1618`). **Riss:** `docs/handover/archiv/handover-2026-09-08-atom-c-offene-pflichten.md:63-65` behauptet, der Browser-Render-Zweig habe „in keinem Commit existiert" — der gemessene Baum widerlegt das.
 - **Blockade:** keine — die Machbarkeit ist gemessen; offen ist allein die Architektur-/Schicht-Entscheidung.
-- **Braucht:** Rat für die Architektur (River/Mycelium/Mountain): erster Schritt ein serverloser Prototyp `FIELD_WGSL` + ein eingefrorener Daten-Slice in einer Browser-Seite. Commit-Liste des Bestands: `archive-root/commit_rewrite-2026-09-06/commits.tsv`; Surveys: `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md`, `omegaflow-legacy/docs/surveys/survey-2026-08-19-landschaft.md`.
+- **Braucht:** **Rat (intern, 2026-10-03)** empfahl `static/membrane.html` + eingefrorenes Präsenz-Frame + `FIELD_WGSL`-`@compute` + `requestAnimationFrame`, kein WASM im ersten Schritt. **Operator-Korrektur (2026-10-03):** ein eingefrorenes Frame trägt die **freie Bewegung nicht** („die presence muss sich frei durchs 4d block universum bewegen können") — die Presence muss an jede Koordinate (x,y,z,t) tunebar bleiben, das Feld dort neu ausgewertet. Daraus folgt der eigentliche Kern von B: die **Browser-seitige Auswertung** — Archivar (Enclosure-Lookup über die statischen CDN-Daten) **plus** Mathematikerin (`FIELD_WGSL`); der Archivar fehlt im Browser (WASM oder JS-Port), nur die Mathematikerin ist schon WGSL. Der erste Beweis muss die **Bewegung** zeigen (Presence tunen → Feld neu), ohne Server. Server-Hosting bleibt ausgeschlossen. Der interne Rat und der externe Kanal (`opencode run --agent voice`) sind mit dieser korrigierten Frage neu zu berufen. Commit-Liste: `archive-root/commit_rewrite-2026-09-06/commits.tsv`; Surveys: `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md`, `omegaflow-legacy/docs/surveys/survey-2026-08-19-landschaft.md`.
 
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
