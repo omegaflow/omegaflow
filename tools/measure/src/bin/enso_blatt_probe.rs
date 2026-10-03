@@ -475,8 +475,7 @@ fn synthetic_seasonal_pair(
     let mut d = 0.0f64;
     let mut x = 0.0f64;
     for t in 0..n {
-        let annual =
-            annual_amp * (std::f64::consts::TAU * t as f64 / CAL_MONTHS as f64).sin();
+        let annual = annual_amp * (std::f64::consts::TAU * t as f64 / CAL_MONTHS as f64).sin();
         d = ar * d + driver_noise * gaussian_noise(&mut state);
         let lagged = if t >= planted_lag {
             driver[t - planted_lag]

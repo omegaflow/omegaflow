@@ -106,7 +106,12 @@ fn month_hour_bucket(t: f64) -> Option<usize> {
     Some(((m - 1) * 24 + hour) as usize)
 }
 
-pub fn phase_data(times: &[f64]) -> (Vec<Vec<usize>>, Vec<Option<usize>>) {
+pub struct PhaseIndex {
+    pub buckets: Vec<Vec<usize>>,
+    pub pos_bucket: Vec<Option<usize>>,
+}
+
+pub fn phase_data(times: &[f64]) -> PhaseIndex {
     let mut buckets: Vec<Vec<usize>> = vec![Vec::new(); MONTH_HOUR_BUCKETS];
     let mut pos: Vec<Option<usize>> = Vec::with_capacity(times.len());
     for (i, &t) in times.iter().enumerate() {
@@ -116,7 +121,10 @@ pub fn phase_data(times: &[f64]) -> (Vec<Vec<usize>>, Vec<Option<usize>>) {
         }
         pos.push(b);
     }
-    (buckets, pos)
+    PhaseIndex {
+        buckets,
+        pos_bucket: pos,
+    }
 }
 
 fn block_permutation(n: usize, block: usize, state: &mut u64) -> Vec<usize> {
@@ -191,7 +199,7 @@ fn inv_norm(p: f64) -> f64 {
         -3.969_683_028_665_376e1,
         2.209_460_984_245_205e2,
         -2.759_285_104_469_687e2,
-        1.383_577_518_672_690e2,
+        1.383_577_518_672_69e2,
         -3.066_479_806_614_716e1,
         2.506_628_277_459_239e0,
     ];
@@ -316,31 +324,29 @@ pub fn prepare_members(raw: &[Vec<f32>]) -> Vec<Member> {
 
 pub fn null_matrix(
     members: &[Member],
-    perm_from: usize,
-    perm_to: usize,
+    perm: std::ops::Range<usize>,
     block: usize,
     mode: ResampleMode,
     seed: u64,
     threads: usize,
-    buckets: &[Vec<usize>],
-    pos_bucket: &[Option<usize>],
+    phase: &PhaseIndex,
 ) -> Vec<Vec<f64>> {
     let m = members.len();
     let n = match members.first() {
         Some(member) => member.target.len(),
         None => return Vec::new(),
     };
-    let count = perm_to.saturating_sub(perm_from);
+    let count = perm.end.saturating_sub(perm.start);
     let mut nulls: Vec<Vec<f64>> = vec![vec![f64::NAN; m]; count];
     if count == 0 {
         return nulls;
     }
     let workers = threads.min(count);
-    let chunk = (count + workers - 1) / workers;
+    let chunk = count.div_ceil(workers);
     std::thread::scope(|s| {
         let mut handles = Vec::new();
         for (ti, slice) in nulls.chunks_mut(chunk).enumerate() {
-            let start = perm_from + ti * chunk;
+            let start = perm.start + ti * chunk;
             handles.push(s.spawn(move || {
                 let mut buf = vec![0f32; n];
                 for (off, row) in slice.iter_mut().enumerate() {
@@ -348,9 +354,13 @@ pub fn null_matrix(
                     let mut state = rng_for(seed, replicate);
                     let idx = match mode {
                         ResampleMode::Condition => block_permutation(n, block, &mut state),
-                        ResampleMode::Driver => {
-                            bootstrap_indices_seasonal(n, block, &mut state, buckets, pos_bucket)
-                        }
+                        ResampleMode::Driver => bootstrap_indices_seasonal(
+                            n,
+                            block,
+                            &mut state,
+                            &phase.buckets,
+                            &phase.pos_bucket,
+                        ),
                     };
                     if idx.len() != n {
                         continue;

@@ -2,7 +2,7 @@ use omegaflow::archivar::cache_root;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::omni2::{COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
 use omegaflow::mathematikerin::wy_max_t::*;
-use omegaflow::te::transfer_entropy_lag;
+use omegaflow::te::{kde_n_eff, transfer_entropy_lag};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const HOUR: f64 = 3600.0;
@@ -256,6 +256,12 @@ fn print_observed(members: &[Member], observed: &[Option<f64>]) {
             None => println!("observed {} | TE absent (n < 8)", m.label),
         }
     }
+    for m in members {
+        match kde_n_eff(&m.target, &m.driver, m.lag) {
+            Some(ne) => println!("n_eff {} | lag {} | {}", m.label, m.lag, ne),
+            None => println!("n_eff {} absent — the pair count stays under 8", m.label),
+        }
+    }
     let lag1_delta = members
         .iter()
         .enumerate()
@@ -300,6 +306,11 @@ fn report_family_partition(
         finite.len(),
         q
     );
+    for (mi, m) in members.iter().enumerate() {
+        if let Some(s) = sigma.get(mi).copied().flatten() {
+            println!("MDE {} = {} (quantile · sigma)", m.label, q * s);
+        }
+    }
 
     let obs_stud: Vec<Option<f64>> = observed
         .iter()
@@ -408,17 +419,15 @@ fn run_family(
     let observed = observed_family(members);
     print_observed(members, &observed);
 
-    let (buckets, pos_bucket) = phase_data(times);
+    let phase = phase_data(times);
     let nulls = null_matrix(
         members,
-        perm_from,
-        perm_to,
+        perm_from..perm_to,
         block,
         mode,
         seed,
         threads,
-        &buckets,
-        &pos_bucket,
+        &phase,
     );
     if let Some(path) = out_null {
         if write_null_matrix(path, &nulls) {
@@ -702,19 +711,17 @@ mod tests {
         assert_eq!(members.len(), FAMILY_K);
         let epoch = iso_to_unix("2024-01-01T00:00:00Z").expect("epoch");
         let times: Vec<f64> = (0..n).map(|i| epoch + i as f64 * HOUR).collect();
-        let (buckets, pos_bucket) = phase_data(&times);
+        let phase = phase_data(&times);
         let seed = 0xDEAD_BEEF_1234_5678u64;
 
         let full = null_matrix(
             &members,
-            0,
-            n_perm,
+            0..n_perm,
             block,
             ResampleMode::Driver,
             seed,
             4,
-            &buckets,
-            &pos_bucket,
+            &phase,
         );
         assert_eq!(full.len(), n_perm);
 
@@ -724,27 +731,23 @@ mod tests {
         for &hi in &bounds {
             shards.push(null_matrix(
                 &members,
-                lo,
-                hi,
+                lo..hi,
                 block,
                 ResampleMode::Driver,
                 seed,
                 4,
-                &buckets,
-                &pos_bucket,
+                &phase,
             ));
             lo = hi;
         }
         shards.push(null_matrix(
             &members,
-            lo,
-            n_perm,
+            lo..n_perm,
             block,
             ResampleMode::Driver,
             seed,
             4,
-            &buckets,
-            &pos_bucket,
+            &phase,
         ));
 
         let dir = std::env::temp_dir();
