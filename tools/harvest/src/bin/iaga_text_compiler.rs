@@ -1,4 +1,4 @@
-use omegaflow::archivar::geo::{GeoRec, parse_bin, verify_bin, write_bin};
+use omegaflow::archivar::geo::{GeoRec, MAGIC_IAGA, parse_bin, verify_bin, write_bin};
 use omegaflow::archivar::iaga::{parse_text, to_geo_rows};
 use omegaflow::archivar::membrane::embedded_lsk;
 use omegaflow::archivar::quaoar_occlt::{zip_entries, zip_extract};
@@ -8,7 +8,6 @@ use std::process::Command;
 
 const NETLOC: &str = "zenodo.org";
 const ZIP_URL: &str = "https://zenodo.org/api/records/10594301/files/Mag_Data.zip/content";
-const MAGIC_IAGA: [u8; 4] = *b"IGA1";
 const DEFAULT_OUT: &str = "data/zenodo.org/iaga_text.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -114,9 +113,15 @@ fn main() {
         std::process::exit(1);
     }
     match parse_bin(MAGIC_IAGA, &bin) {
-        Some(roundtrip) if roundtrip.len() == records.len() => {
+        Some(roundtrip)
+            if roundtrip.len() == records.len()
+                && roundtrip
+                    .iter()
+                    .zip(&records)
+                    .all(|(a, b)| a.station == b.station && a.comp == b.comp) =>
+        {
             eprintln!(
-                "{out}: {} records ({} of {} .sec members parsed, {} B, {ZIP_URL}), roundtrip parses",
+                "{out}: {} records ({} of {} .sec members parsed, {} B, {ZIP_URL}), roundtrip parses with station",
                 records.len(),
                 parsed,
                 members,
