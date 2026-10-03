@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: cc5f4733363f29f9824ab4820141780be920492cd9adc16e12d5853e6ad6193d
+  sha256: 3f0cd5ea9e0fc8f83c080d5ade6019baa593b611be6aee3e3d50970afa85cdff
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -38,6 +38,7 @@ Wort | Datum | Quelle
 „Starte die River-Linie in einem Pass …" / „ich musste leider neustarten" | 2026-10-02 | Operator (Session, River 83)
 „Starte die River-Linie in einem Pass …" | 2026-10-03 | Operator (Session, River 84)
 „## An river: [vier Dokumente]" — fruehwarnsystem-praeregistrierung.md (GIC/Bz-Vorhersagezelle, unsealed, broken-null-control), flyby-path-2-addendum-2026-09-29.md (26 Marker, Path-2), survey-2026-09-26-membran-ladearchitektur.md (Membran-Pfad), exzellenz-konzept.md (Prüfmaßstab vor Veröffentlichung) | 2026-10-03 | Operator (Session, River 84)
+„erst über ci messen, dann anstoßen und die Dokumente bearbeiten" | 2026-10-03 | Operator (Session, River 84)
 
 ## Träger (Prosa, eigene)
 
@@ -70,22 +71,11 @@ Wort | Datum | Quelle
   **geheilt** (2026-10-03): `:270` sagte „wird gesetzt, sobald der Body final ist", der Body
   ist final und der Header-sha steht; die Schlusszeile jetzt präsentisch, Header-sha
   `ac51f42e…`. Offen: den Maßstab auf die Papers anwenden.
-
-## Offen (aufgeschlüsselt)
-
-### nvss async — Server-Phase ERROR nur auf dem Runner-Pfad, Ursache offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** nächster `nvss-cdn`-Lauf oder eine gemessene Server-Ursache am TAPVizieR-async
-- **Lage:** (gemessen 2026-10-02 23:12 via `ci_manage view 37069595693` + `log`) `nvss-cdn
-  37069595693` failure: async job `1790982742122` → `phase ERROR` 11 s nach `PHASE=RUN`;
-  der neue `{job}/error`-Arm liefert leer. Zweiter Lauf `36989806823` ebenso ERROR. Dieselbe
-  Query läuft von der Operator-Maschine als `EXECUTING`/`WRITING_RESULT` — der Fehler tritt
-  nur auf dem Runner-Pfad auf. **Die Sync-Timeout-Klasse ist geschlossen:** wds
-  `37069590122` und mktypes `37069592547` sind nach `OMEGAFLOW_TAP_TIMEOUT: "1800"` / `"900"`
-  **success**.
-- **Blockade:** die Server-Ursache ist nicht gemessen (`{job}/error` leer)
-- **Braucht:** den nvss-Workflow RA-chunked wie wds/mktypes fahren (je Slice `--async`);
-  Litmus: `--limit` senken und den eigenen Runner-Job `<errorSummary>` lesen.
+- `docs/auftrag/auftrag-flyby2-kette.md` (`class: auftrag`) — die Path-2-Kette vor dem
+  JUICE-Perigäum (Frist ≤ 24 h nach der ersten Perigäum-Zelle). Das Addendum (2026-09-29)
+  trägt die gefüllte Kette; die σ-Metrik wurde durch das revidierte Blatt überholt und bleibt
+  `pending`. Nächster Schritt: die Rest-Zellen wie im Addendum füllen (OMNI2-Lag, kp `def`
+  final, swarm cell 25); sonst gemessenes `descoped` mit dem Addendum als Befund.
 
 ## An mountain
 
