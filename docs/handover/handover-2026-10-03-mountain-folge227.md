@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: fcb188323d91d28786050e79cd18f68a6d17a40108f8782f8e3782d96d4f55c2
+  sha256: b0447a881552dc0026ca9ac6b47160d414d5608c7f7c9d233886949f278d3ddb
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -121,28 +121,6 @@ Wort | Datum | Quelle
   Step: Probe bauen, `--selftest` grün, dann der Sweep; `no statement`/`pending` bleiben
   erlaubte Ergebnisse (0 honored). Der private Wort-Laut nur im privaten
   `state/operator-gespraeche/`.
-
-## An mycelium
-
-Origin: mountain folge227.
-
-- **JWS2-Bin:** den JWS2-Bin-Namen benennen, `sources.φ`-Zeile `format`/`url`/`origin`/
-  `compiler` + `sha256` setzen; der `jwst-cdn-watch 37000087113` ist grün, aber kein
-  JWS2-Bin registriert. Dann fällt der Punkt.
-- **M3 (Chandrayaan-1 M3, ENVI):** Verdikt ist gesetzt (`phi/blocked_sources.φ:545-547`
-  auf die lebende Route `pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0004/`, direct 200 gemessen
-  2026-10-03); der Arm `pds3_img_compiler` steht, das M3-Asset `pds3_img_m3g20081118t222604_v03_loc.bin`
-  (8758832 B, sha `5771de98…`, roundtrip, folge218) ist unregistriert. Bitte die
-  `sources.φ`-Zeile (`format pds3_img`, `origin` = JPL-Route, `compiler`
-  `tools/harvest/src/bin/pds3_img_compiler.rs`) setzen und manifestieren. CI-Runner-403
-  bleibt (lokaler Bau, CI-IP) — Transport nennt das gemessene Hindernis.
-- **RoPeR (HX1, Zenodo 15812343/15812357):** Compiler
-  `tools/harvest/src/bin/roper_pds4_compiler.rs` steht (parst die `.2CL`-Gruppe 2048×(R,I) f32
-  → G2CB `gras_2c`; Sample 106 496 Bins, sha `d4b7397a…`, roundtrip, 2026-10-03). Bitte die
-  `sources.φ`-Zeile setzen (`format gras_2c`, `origin` = Zenodo-Record, `compiler` = der Bin,
-  `url` = Release `zenodo.org/<asset>.bin`) und `roper_pds4_compiler --ci-mode` je `.2C`-Paar
-  dispatchen. Der `comp`-Slot trägt den Range-Bin, der Wert die Amplitude `sqrt(R²+I²)`; die
-  Feld-/Force-Zuordnung je Bin ist der offene Zuordnungsteil.
 
 ## An future
 
