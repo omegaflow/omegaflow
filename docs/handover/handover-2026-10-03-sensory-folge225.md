@@ -213,7 +213,39 @@ breiter messen.
 - **Wort:** „nein dann hole ich mir lieber einen neuen mit sauberer hygiene und garantie" | 2026-10-03 | Operator (Session) — Vorliebe: neu mit Hygiene + Garantie statt gebraucht; neue Kandidaten Garmin HRM-200 63,50 € / Polar H10 75,63 €; kein Kauf-Entscheid (siehe nächstes Wort); Sensory-Folge 225.
 - **Wort:** „nein ich wollte nur wissen warum es zweimal geführt wird und eigentlich sind operator gebunden sachen von future" | 2026-10-03 | Operator (Session) — Ownership: operator-gebundene Sachen gehören zu Future; `rr-brustgurt` von sensory-LOCK + mycelium-Dublette an `## An future` geroutet, `state/zustand/wartend.φ:22` Aufnehmer → future; Sensory-Folge 225.
 
+- **Wort:** „ja bitte 1-3 aber das ist für mich ein eigenes tool, das wir dann in den unterschiedlichsten medizinischen bereichen einsetzen können, oder seh ich das falsch?" | 2026-10-03 | Operator (Session) — Workflow-Erweiterung (max_points/Mehrkanal/n-Scaling) umgesetzt (`84cefbec2`); das Kopplungs-Werkzeug als eigenes Atom geführt, Träger Sensory (gemessen: `sensory folge142–150`); keine medizinische Zweckbehauptung ohne Endpunktvalidierung (MDR-Zweckbestimmung je Indikation).
+- **Wort:** „sollte das eigene tool nicht ins repo? und können wir das bitte umsetzen?" | 2026-10-03 | Operator (Session) — Repo-Zugehörigkeit bejaht: Messwerkzeug liegt bereits im Repo (`tools/measure/src/bin/hyperscanning_group_te.rs`, `src/mathematikerin/te.rs`, `.github/workflows/hyperscanning-te.yml`); offen: joint cross-channel family + Methodenpapier; Gruppentherapie-Paket bleibt außerhalb Omegaflows.
+- **Wort:** „ja" (die 4 offenen Punkte in die Sensory-Übergabe eintragen) | 2026-10-03 | Operator (Session) — Punkte in `## Offen` gefaltet; Sensory-Folge 225.
+
 ## Offen (aufgeschlüsselt)
+
+### Hyperscanning-TE — joint cross-channel family (FWER über Kanäle)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner — sofort baubar.
+- **Lage:** (gemessen 2026-10-03 via `sread .github/workflows/hyperscanning-te.yml`) je Kanal eine eigene Familie (eigene FWER-Linie); der Workflow `84cefbec2` loopt über Kanäle, korrigiert aber nicht joint; Bin `tools/measure/src/bin/hyperscanning_group_te.rs`.
+- **Blockade:** keine.
+- **Braucht:** Bin-Änderung — ein gemeinsames Familien-Maximum über (Kanäle × Triaden × geordnete Paare) je Task, Kalibrier-Gates (`family_fn_gate`/`family_fp_gate`) erweitert, Test.
+
+### Hyperscanning-TE — Methodenpapier (ds007822 = Machbarkeit)
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner — Aufstieg (i) der Validierungskette.
+- **Lage:** (gemessen 2026-10-03 via `fd`/`sgrep docs`) ein kalibrierter Triaden-TE-Screen existiert; kein Pre-Registrierungs-/Methodenpapier im Repo gefunden.
+- **Blockade:** keine.
+- **Braucht:** `docs/paper/`-Entwurf (Zweck, Pre-Registrierung, Daten ds007822, Schwellen, FP/FN-Ergebnisse) + Doku-Träger in dieser Übergabe.
+
+### Hyperscanning-TE — Validierung der neuen Läufe
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Abschluss von run `37129873384` (Fz,Cz,Pz + scales 1024/2048/4096/8192) / `37129875260` (Fz, `max_points=0` ungekappt).
+- **Lage:** (gemessen 2026-10-03 via `gh workflow run`) beide dispatched, queued; `concurrency` serialisiert sie.
+- **Blockade:** CI-Lauf.
+- **Braucht:** `ci_manage view/log <id>` + Artefakt `hyperscanning-te-report` auswerten (Nominees, Bestätigung, Skalierungskurve).
+
+### Hyperscanning-TE — zweite Kohorte (Validierung)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der Methodenpapier-Punkt (oben) ist geschlossen — Beleg ist das dann stehende `docs/paper/`-Artefakt.
+- **Lage:** (gemessen 2026-10-03) nur ds007822 (Triaden) in der Pipeline; zweite Hyperscanning-Kohorte nicht registriert.
+- **Blockade:** Trigger.
+- **Braucht:** zweite offene Multi-Brain-Kohorte suchen/registrieren (`archive_search`/OpenNeuro), vorregistrieren.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -344,6 +376,12 @@ Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist auto
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). `/consent` ist der
 session-weite Consent (Delegation), nie das Commit-Wort. Dieses Atom hat kein
 `/commit`-Wort erhalten — Commit/Push stehen aus.
+
+Fortsetzung (dieses Atom): `.github/workflows/hyperscanning-te.yml` um `max_points`
+(0 = voll), Mehrkanal-Loop und `scales` (n-Skalierung) erweitert — **committet +
+gepusht `84cefbec2`**; Operator-Worte + 4 offene Punkte in Register/`## Offen`
+gefaltet; zwei Läufe dispatcht (`37129873384` Mehrkanal+scales, `37129875260`
+Fz ungekappt, queued).
 
 Eigene Pfade dieses Atoms (Commit/Push pending `/commit`):
 - `docs/handover/handover-2026-10-03-sensory-folge225.md` (Vorwärtsschreibung, dieses Atom),
