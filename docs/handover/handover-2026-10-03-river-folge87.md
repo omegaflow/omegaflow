@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: 532e82f2c3147f6dc2da6b1740d04aa5412d0589d6bb63a9fbbc1c2d8c67c6b1
+  sha256: aba280f2a3713e0e4e544025bcc35ddaa2c1d43415af4d26e9d10df5d4955ab0
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -131,32 +131,48 @@ Wort | Datum | Quelle
 - **Rest-Zellen:** OMNI2 26 (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` — pending bis
   Trigger (unverändert).
 
-### Zeugen im universellen Myzel — Form gebaut, Daten blockieren
+### Zeugen im universellen Myzel — Form gebaut und an JMA gemessen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein declustertes Multi-Event-Train (`witnesses.φ`).
-- **Lage:** (gemessen 2026-10-03 via `cargo build -p omegaflow-measure --bin field_te_query`
-  + `--parity-witness point-event#1`) die event-konditionierte Form ist **gebaut und
-  verdrahtet**: `event_triggered_average` + `omori_preserving_shift_null` (7 d Fenster /
-  1 h Bin / 6 h Guard, B = 100) im `--parity-witness <witness> [--driver <field>]`-Pfad.
-  Der Register-Zeugenpfad trägt weiter nur `point-event#1` (n = 1) → die Form läuft ins
-  gemessen Leere (`n=1`), kein Verdikt.
-- **Blockade:** ein einzelnes point-event trägt keine Serie.
-- **Braucht:** ein declustertes Multi-Event-Train + benannter Driver, dann
-  `field_te_query --parity-witness point-event#1 --driver <field>`.
+- **Trigger:** Korrektur/Descope der zwei Einzel-Feature-Zeugen-URLs (`witnesses.φ:146,152`).
+- **Lage:** (gemessen 2026-10-03 via `returnCountOnly` + `--parity-witness point-event#2
+  --driver solar_f107_flux_sfu`) die Form (`event_triggered_average` +
+  `omori_preserving_shift_null`, 7 d/1 h/6 h Guard) läuft auf dem **JMA-Zeugen**
+  (`point-event#2`, 227 Ereignisse, 2026-09-04…10-03) mit `solar_f107_flux_sfu`
+  (`phi/sources.φ:426-429`, Span 2026-08-23…10-03): **171 Ereignisse** im Fenster,
+  ETA-Peak |mean| = 1.071e-20 < Null-Schwelle (mean+2σ) = 1.294e-20 → **kein Pfeil**
+  (consistent with the null). Die „n=1"-Meldung von `#0/#1` ist gemessen die Quelle:
+  Chile- und Tohoku-URL sind Einzel-Feature-Layer (`returnCountOnly` = 1, Layer
+  „…_M_7p1" / „Epicenter of the 9/16/").
+- **Blockade:** die zwei Einzel-Feature-URLs; kein recorded TE-Verdikt in den Dokumenten
+  für die Parität.
+- **Braucht:** die zwei URLs auf echte Katalog-Queries korrigieren oder descopen (An
+  mountain); für `#2` bleibt die Parität benannt-pending (kein recorded Verdict).
 - **Riss (benannt):** `phi/pipeline/descriptors/erbq-solar.te` ist als Test schwach.
+
+### `load_field` expandiert URL-Templates nicht
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der nächste Lauf, der ein Template-Feld (`{now}`/`{week_ago}`/`{lat}`) lädt.
+- **Lage:** (gemessen 2026-10-03 via `--parity-witness`-Lauf) `omni_solarwind_flow_speed_kms`
+  (`phi/sources.φ:593`) ist auflösbar, aber `load_field` reicht die Platzhalter
+  ungeprüft durch → HTTP 400; RTSW/Open-Meteo-Felder sind so nicht ladbar.
+- **Blockade:** keiner.
+- **Braucht:** die Template-Auflösung in `load_field` (oder eine benannte Verweigerung,
+  wenn kein Kontext die Platzhalter füllt).
 
 ### Probes-Wanderung (62 TE-Probes)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Probe die Paritätsbrücke `GLEICH`.
 - **Lage:** (gemessen 2026-10-03 via `sgrep -l 'transfer_entropy' tools/measure/src/bin`)
-  **62** TE-Bins verifiziert; 1 Probe (ENSO Blatt I) ist `GLEICH`; für `bz_retro_probe`
-  steht `phi/pipeline/descriptors/bz_retro.te` (grammatikrein gegen `parse_descriptor`).
-  `bz_blatt_probe` und `gic_storm_probe` verweigern mit gemessenem Grund: kein
-  per-Minute-|dB/dt|-Feld (registriert ist nur das 1-h-`intermagnet_dbdt`) bzw. kein
-  Kp-Feld im Register.
-- **Blockade:** 58 Bins unbearbeitet; der Parity-Lauf ist CI-gebunden.
-- **Braucht:** je Bin Deskriptor + `field-te-query`-Parität (`GLEICH`); die zwei
-  fehlenden Felder (per-Minute-dB/dt, Kp) zuerst als Quelle klären (An mountain).
+  **62** TE-Bins verifiziert; 1 Probe (ENSO Blatt I) ist `GLEICH`; Deskriptoren stehen
+  für `bz_retro`, `aia_ladder`, `aia_three_year` (`phi/pipeline/descriptors/*.te`,
+  grammatikrein gegen `parse_descriptor`). Fünf Bins verweigern mit gemessenem Grund:
+  `bz_blatt` (kein per-Minute-|dB/dt|-Feld), `gic_storm` (kein Kp-Feld),
+  `bigbang_echo` (kein Galaxien-Dichte-Feld), `bison_basu`/`bison_cycle` (bison_shift/
+  f107_penticton nicht registriert).
+- **Blockade:** **56** Bins unbearbeitet; der Parity-Lauf ist CI-gebunden.
+- **Braucht:** je Bin Deskriptor + `field-te-query`-Parität (`GLEICH`); die fehlenden
+  Felder (per-Minute-dB/dt, Kp, Galaxien-Dichte, bison_shift/f107_penticton) zuerst als
+  Quelle klären (An mountain).
 
 ### Nicht-point-event-Zeugen — Formen gebaut
 - **Status:** wartend | **Bindung:** eigen
@@ -217,6 +233,13 @@ Origin: river folge87.
   `intermagnet_dbdt` nur als 1-h-Asset, `phi/sources.φ:1806-1813`); `gic_storm_probe`
   braucht ein **Kp-Feld** (`sgrep` in `phi/sources.φ`: kein `kp`/`planetary`-Treffer).
   Ohne diese Arme bleiben beide Deskriptoren `pending`.
+- **Zwei point-event-Zeugen-URLs sind Einzel-Feature-Layer.** Gemessen 2026-10-03 via
+  `returnCountOnly`: `phi/witnesses.φ:146` (Chile) und `:152` (Tohoku) liefern
+  `{"count":1}` (Layer „…_M_7p1" / „Epicenter of the 9/16/"). Bitte auf echte
+  Katalog-Queries korrigieren oder als Einzelereignis descopen — der JMA-Zeuge (`:157`)
+  ist ein echter Train (227 Ereignisse). Nebenbefund: die kompilierten `quake_ptevent`-
+  Assets (chile 45 B, tohoku 45 B, jma 7181 B) liegen auf dem CDN, sind aber **nicht**
+  in `phi/sources.φ` registriert.
 
 ## An mycelium
 
@@ -257,8 +280,10 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `tools/measure/src/bin/bz_retro_probe.rs`
 - `tools/measure/src/bin/field_te_query.rs`
 - `phi/pipeline/descriptors/bz_retro.te`
+- `phi/pipeline/descriptors/aia_ladder.te`
+- `phi/pipeline/descriptors/aia_three_year.te`
 - `tools/measure/src/bin/enso_blatt_probe.rs`
 - `docs/handover/handover-2026-10-03-river-folge87.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge86.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0000 · close 0.1220 · cap 0.50 — Grund: River-87 (ein Atom, parallele Taucher) — die vier `wy_max_t`-clippy-Lints + `enso_blatt_probe`-Format geheilt; `te::kde_n_eff` + MDE-Zeile + Gate-Test gebaut; `field_te_query` mit dem studentisierten Bucket-max-T-Null + n_eff/MDE-Zeile verdrahtet (`compute_max_t`); der `wy-max-t`-Pending als Concurrency-Ghost gemessen und gecancelt (zentrierter Lauf `queued`); drei `grind-flash`-Taucher: Probes-Inventur (62 verifiziert, `bz_retro.te`), TE-Bias-Schicht (`transfer_entropy_bias_adjusted`, gemessene `TE_BIAS_MK`) und die Zeugen-Query-Formen (direction/spectral/event). `close` = Line-Session (gemessen `session_burn`, $0.1220).
+## Burn: open 0.0000 · close 0.1630 · cap 0.50 — Grund: River-87 (parallele Taucher) — die vier `wy_max_t`-clippy-Lints + `enso_blatt_probe`-Format geheilt; `te::kde_n_eff` + MDE-Zeile gebaut; `field_te_query` mit dem studentisierten Bucket-max-T-Null + n_eff/MDE verdrahtet; der `wy-max-t`-Pending als Concurrency-Ghost gemessen und gecancelt (zentrierter Lauf `queued`); `grind-flash`-Taucher: Probes-Inventur (62, `bz_retro.te` + `aia_ladder.te` + `aia_three_year.te`, 56 Rest), TE-Bias-Schicht (`transfer_entropy_bias_adjusted`, `TE_BIAS_MK`), Zeugen-Formen (direction/spectral/event) und die JMA×F107-Messung (171 Events, kein Pfeil). `close` = Line-Session (gemessen `session_burn`, $0.1630).

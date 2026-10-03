@@ -1,0 +1,23 @@
+# aia_ladder.te — TE-Probes-Wanderung: the aia_ladder_probe pair over registered fields.
+# driver: cool AIA coronal band 304 A, aia_304_dn (phi/sources.φ:1835 ff., format `aia`,
+#   AIA1 contract, aia_compiler.rs:13). aia_ladder_probe.rs:14-22 LADDER index 5 (304 A);
+#   :319-346 reads the cool band; :435-454 sweeps the adjacent rungs p -> p+1.
+# target: hot AIA band 131 A, aia_131_dn (phi/sources.φ:1831 ff.). aia_ladder_probe.rs:14-22
+#   LADDER index 1 (131 A); the first ladder rung stack_pair(events, 0, 1, lag) :437.
+# The probe measures the whole seven-rung ladder 304 -> 131 -> 171 -> 193 -> 211 -> 335 -> 94
+#   and prints D = TE(cool->hot) - TE(hot->cool) per rung (:403-405); field_te_query carries
+#   one driver/target pair, so this descriptor names the first (coolest) rung, the remaining
+#   rungs stay the probe's own ladder sweep, never folded into one arm.
+# cond: none — the probe carries no cTE conditioning arm. Its flare epochs are an event-stack
+#   trigger (GOES XRS-B b_flux > 5e-6 W/m^2, aia_ladder_probe.rs:11,70-108,251-308) or the
+#   AIA-304 median trigger when --goes-dir is absent (:378-399); the event-triggered form is
+#   the witness path (event_triggered_average), not this descriptor's cond arm.
+pair aia-ladder
+register sources
+driver aia_304_dn
+target aia_131_dn
+cadence live
+bin 24
+seasonal none
+lags 0,1,2,3,4,5,6,7,8,9,10,11,12
+surrogate 10
