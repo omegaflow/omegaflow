@@ -3,7 +3,7 @@
   session: River-Folge 86
   class: handover
   date: 2026-10-03
-  sha256: 25fd86ad6095acc8fdd9fbf017afb5c7b749aca9f1ebb3134f3d580362500990
+  sha256: ea63d8bf70ada7b7299c006c85035455d86f1972c10dc83a8c7c2d2623d4378a
   status: live
 -->
 # Handover — River-Folge 86 (2026-10-03)
@@ -165,7 +165,11 @@ Wort | Datum | Quelle
   Think** (Rohantwort `state/stimmen/2026-10-03_zai-ui_te-konstruktion-folge86.md`; Prompt
   `state/stimmen/2026-10-03_te-konstruktion-folge86.prompt.txt`; frühere Stimmen
   `state/stimmen/2026-10-03_{zai-ui,claude-ui,kimi-k3-tryingopen}_te-engine-review*.md`)
-  tragen einstimmig:
+  tragen einstimmig. Frische Zweitbefragung: `chat.z.ai` GLM-5.3 Deep Think antwortete
+  (Rohmaterial oben); `claude.ai` (Sonnet 5.5 Max) lief ~10 min Extended Thinking ohne
+  Ausgabe und wurde gestoppt; `tryingopen.com` bot nur ein Edge-Modell (LFM2.5-VL 3B) —
+  die externen Gegenstimmen derselben Nacht liegen in den `claude-ui`/`kimi-k3`-Rohdateien.
+  Die Stimmen tragen:
   1. **Null-Zentrierung — gebaut.** `v/σ` war niveau-gültig, aber nicht ehrlich: der
      KDE-Bias-Boden blähte Familien-Schwelle und Beobachtung gleich auf. `studentized_maxima`
      (`src/mathematikerin/wy_max_t.rs`) nimmt jetzt `means` und rechnet `(v−μ)/σ`;
