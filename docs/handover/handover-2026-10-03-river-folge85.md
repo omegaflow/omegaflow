@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 0195022bb39b6e59b5385ca3f3b98930fce6bf7e3f3cc8bed465abe3a88578d2
+  sha256: 585797f5d42f8e2e34c63529630d9b274a68f513efce7d7e81668e88127d389a
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -196,8 +196,11 @@ Wort | Datum | Quelle
   Sichere Kimi-K3-Teile: `…_te-engine-review.md` (Item 1), `…_te-engine-review-part2.md`
   (Item 2–4: Bias-Bound/Subsample-Skalierung/n_eff-Gate; Storm `F_{t−1}`-messbar mit
   Selection-im-Null-Loop; Sparser Katalog: Bins behalten, **zirkulärer Driver-Shift** mit
-  Guard-Band als exakte Omori-erhaltende Null). **Item 5–6 noch per weiterem `Weiter` zu
-  ziehen** (K3-Limit „5 messages"; der Tab verliert den Chat beim Reload). Die Reviews nennen konkrete Defekte:
+  Guard-Band als exakte Omori-erhaltende Null), `…_part3.md` (Item 5–6: Paritätskette
+  Input→TE(σ-relativ)→Null→Verdikt, ganze K-Zelle nicht nur das Max; Deskriptor-Metadaten;
+  Refuse am Parser für Nicht-Zeit-Zeugen, Richtung→zirkulär/Rayleigh-Kuiper/von-Mises,
+  Spektren→Formvergleich oder Epochen-Skalar, einzelnes Spektrum→refuse). Alle K3-Teile
+  gesichert (K3-Limit „5 messages" → frische Chats je Item-Block). Die Reviews nennen konkrete Defekte:
   - **Rissä: `pair_lag_index_hash` faltet lag 0 und lag 1 auf denselben Hash**
     (`src/mathematikerin/wy_max_t.rs:262`, `shift = 1` für beide) → die „K=6 distinkten" sind
     real 6 Paare bei **nur lag 0**; lag-0-TE ist richtungs-symmetrisch. Name ≠ Implementation;
