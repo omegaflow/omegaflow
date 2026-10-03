@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: b2f30c1c6d71aec459637e64b991b3bcf416b994ef803f26d750bfae4e64534e
+  sha256: 98ce1a7408ad0c63f729d2a0644b361cc2462d6bbbd8176881cd796154c080e8
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -32,6 +32,8 @@ Wort | Datum | Quelle
 „Starte die River-Linie in einem Pass …" | 2026-10-03 | Operator (Session, River 86) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „braucht es pro?" | 2026-10-03 | Operator (River 86) — mechanischer Reader-Arm-Port → `grind-flash` (flash-first)
 „Starte die River-Linie in einem Pass …" | 2026-10-03 | Operator (Session, River 87) — session-weiter Delegations-Consent, nicht das Commit-Wort
+„den rat und die verschiedenen llms befragen" | 2026-10-03 | Operator (River 87) — Stimmen-Befragung zur Flyby-Trajektorie
+„ja bitte wobei die vom 27 auch noch genutzt werden darf sie ist immer noch vor dem flyby" | 2026-10-03 | Operator (River 87) — Trajektorien-Entscheid: Seal-Arc `aeb3c82f…` offiziell, die 27.-Erneuerung `eee376ef…` als zulässige Vor-Flug-Linie, der 02.-Stand `018ce2ca…` als Nach-Flug-Vergleich
 
 ## Träger (Prosa, eigene)
 
@@ -114,29 +116,25 @@ Wort | Datum | Quelle
 - **Braucht:** den `wy-max-t 37135385236`-Lauf lesen und `TE_NEFF_THRESHOLD` aus der
   Messung setzen (nur die Konstante, nicht die Verdrahtung).
 
-### Flyby-Path-2 — Trajektorien-Riss, Tube nicht gebaut
+### Flyby-Path-2 — Trajektorie entschieden (drei Linien)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-Wort zur Trajektorie (`018ce2ca…` als Trajektorie nennen oder den
-  Seal-Arc `aeb3c82f…` aufs CDN wiederherstellen).
-- **Lage:** (gemessen 2026-10-03 via `gh run download 37116911686` + `archive_search
-  --sniff` + GitHub-API, Mycelium-227) der Fill-Lauf `37116911686` (success) maß
-  `sha256 018ce2ca…` (538 696 B) ≠ Seal `aeb3c82f…` (106 704 B); der Erzeuger ist der
-  `kernel-flatten`-Lauf `37029375744` @`1e6d21f2f` (2026-10-02, `--systems …,juice`).
-  Das 2026-09-27 benannte `eee376eff…` ist überholt — die CDN-Erneuerung ist ein
-  **dritter Stand**. Der Addendum §2026-10-03 trägt jetzt die Erzeugerkette; lokal mißt
-  `data/ssd.jpl.nasa.gov/ephemeris_juice.bin` weiter `aeb3c82f…`.
-- **Blockade:** die Trajektorien-Wahl ist Operator-Wort (Seal-Klausel,
-  `flyby-path-2-preregistration.md` §Addendum).
-- **Braucht:** Operator-Wort. Befragung (Operator-Wort „den rat und die verschiedenen
-  llms befragen", 2026-10-03): **Rat → (b) Seal-Arc `aeb3c82f…`** (Tube steht auf ihm;
-  `eee376ef…` = zweite Δ-Zeugenlinie; `018ce2ca…` = Nach-Flug-Drift). **Alle fünf
-  externen LLMs → (c) `eee376ef…`**: `claude.ai` Sonnet 5.5 Maximal, `chat.z.ai`
-  GLM-5.3 Deep Think, `arena.ai` (Google), `gemini-2.5-flash`, `glm-4.5-flash`; der
-  gemeinsame Caveat: (c) trägt nur, wenn die `eee376ef…`-Bytes hash-verifizierbar sind
-  und die 09-27-Benennung unabhängig vor-dem-Flug zeitgestempelt ist, sonst (b).
-  `mistral` 429, `chat.deepseek.com` Login-Wall, `kimi.ai` Kontingent erschöpft (kein
-  Verdikt). Rohmaterial `state/stimmen/2026-10-03_flyby-trajektorie-synthese.md`.
-  **Riss getragen** — zwei begründete Positionen, Operator-Wort entscheidet.
+- **Trigger:** der nächste `flyby-path2-fill`-Lauf auf der offiziellen Linie.
+- **Wort:** „ja bitte wobei die vom 27 auch noch genutzt werden darf sie ist immer noch
+  vor dem flyby" | 2026-10-03 | Operator (River 87).
+- **Lage:** (gemessen 2026-10-03 via `omega_sh sha`) alle drei Fassungen liegen vor und
+  hash-verifizieren: Seal-Arc `aeb3c82f…` (106 704 B,
+  `data/ssd.jpl.nasa.gov/ephemeris_juice.bin`), 27.-Erneuerung `eee376ef…` (538 696 B,
+  `data/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin`), 02.-Stand `018ce2ca…` (538 696 B,
+  CDN). Damit ist der Caveat der Befragung (Bytes nicht wiederherstellbar) aufgehoben.
+  Befragung: Rat → Seal-Arc (Tube steht darauf); alle fünf externen LLMs (Claude Sonnet
+  5.5 Maximal, GLM-5.3 Deep Think, arena/Google, zwei Flash) → 27.-Erneuerung; Rohmaterial
+  `state/stimmen/2026-10-03_flyby-trajektorie-synthese.md`.
+- **Rollenzuteilung (Operator-Wort):** `aeb3c82f…` = **offizielle** Trajektorie;
+  `eee376ef…` = zulässige **Vor-Flug-Linie** (zweiter Zeuge, nie gemittelt);
+  `018ce2ca…` = **Nach-Flug-Vergleichslinie**. Keine Zahl wird gemittelt, keine ausgesucht.
+- **Blockade:** keine.
+- **Braucht:** den `flyby-path2-fill`-Lauf mit den drei Linien getrennt und klar
+  beschriftet; die 27.- und die 02.-Linie als Vergleich nach der offiziellen auswerten.
 - **Riss (benannt, Rat 2026-10-03):** Tube-Perigäum 11:43:50 UTC / 15 034 km vs.
   revidierte Präregistrierung 11:45:12 ± 10 s / 15 018 km (~82 s) — zwei
   vorabregistrierte Quellen, nicht zu mitteln.

@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 32196ff7a70d1a1624b84103914557d8fa357b8c55d8c4dc20e9f4bb734027b5
+  sha256: 763430fbc3d13cc9d545943c4e39405c0b95e96c1d0a84cc1a22bc9573d76635
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -237,6 +237,13 @@ superseded; the current CDN arc is the third state `018ce2ca…`. The seal binds
 to the Blatt arc `aeb3c82f…`; the trajectory choice — name `018ce2ca…` as the
 trajectory or restore the sealed arc — is the operator's word (the seal clause,
 preregistration §Addendum).
+
+The operator's word (2026-10-03) resolves it: the sealed arc `aeb3c82f…` is the
+**official** trajectory; the 2026-09-27 renewal `eee376ef…` is an admissible
+**pre-flight line** (its bytes are present and hash-verified at
+`data/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin`); the 2026-10-02 state
+`018ce2ca…` is a **post-flight comparison line**. No line is averaged, none is
+selected by outcome.
 
 ## Next steps
 
