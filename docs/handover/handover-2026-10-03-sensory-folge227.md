@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 372b93717d3e3843755659bf768fd55907346d8d2320f2e02a38034ac2edd143
+  sha256: a3dccc52c9c33b9cb8b5a8a9f79be2f0a632eb0f4157791f695bab609c325d10
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -220,6 +220,7 @@ breiter messen.
 - **Wort:** „ja bitte abbrechen und wenn möglich priorisieren" (Vorgänger `37128441536` abbrechen, damit der joint-Lauf `37133961687` den concurrency-Slot bekommt) | 2026-10-03 | Operator (Session) — `ci_manage cancel 37128441536` ausgeführt; Sensory-Folge 226.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` …" | 2026-10-03 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 227.
 - **Wort:** „Starte die Sensory-Linie **in einem Pass** … `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-03 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 227.
+- **Wort:** „kannst du nicht mal die recherche leiter (deepseek, freie api, freie UI chat) recherchieren lassen welche medizinischen datenquellen es gibt um wirklich forschen zu können? das betrifft somatik, psychosomatik, biologie, chemie psychologie, neurologie und ich weiss nicht welche gebiete noch" | 2026-10-03 | Operator (Session) — Recherche-Auftrag: Landschaft medizinischer/生命-Wissenschafts-Datenquellen; Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
 
@@ -243,6 +244,13 @@ breiter messen.
 - **Lage:** (gemessen 2026-10-03 F227) Arm **gebaut** (`1226e9082`): `brainvision_compiler --participant L|R` trennt die gemessenen **64 Kanäle** eines Dyaden-Files (Ch1–32 `_R`, Ch33–64 `_L`, 1000 Hz; ein File pro `sub-01`..`sub-32` = 32 Dyaden) in je ein Teilnehmer-Bin `<…>_eeg_L.bin`/`_R.bin` (point-major, passend zu `channel_series`); Workflow-Input `cohort` (ds007822|ds007471) baut den `manifest.txt` aus `jointaction pair-<NN> {L,R}`. `cargo check`/`--tests -p omegaflow-harvest` 0 Fehler/0 Warnungen; die zwei Pfade sind committet. Riss zum Präreg: dort stand „32-Kanal", gemessen sind es 64 (2×32) in einem File — die Dyade ist `_L`/`_R` im selben File, kein Subjekt-Subjekt-Join.
 - **Blockade:** der Validierungs-Trigger (Lauf `37133961687`) ist noch nicht ausgewertet; der `concurrency`-Slot der Workflow-Gruppe ist durch denselben Lauf belegt.
 - **Braucht:** nach dem Validierungsartefakt `gh workflow run hyperscanning-te.yml -f cohort=ds007471 -f channel=Cz`, dann `ci_manage view <id>` + Artefakt auswerten.
+
+### Medizinische Datenquellen-Landschaft (Somatik/Psychosomatik/Biologie/Chemie/Psychologie/Neurologie/…)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-Wort 2026-10-03 (Recherche-Auftrag, s. Wort-Register) — Recherche in diesem Atom angestoßen.
+- **Lage:** (gemessen 2026-10-03 F227) erste Landschaft steht: `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha256 `4ead2c97…`, ~90 Quellen über Somatik/Neuro/Psyche/Biologie/Chemie/Genomik/Strukturbiologie/Bildgebung, jede mit `archive_search --verdict`-Messung und Zugangszustand). Zwei `general`-Agenten (flash-first) je ein Feldblock; Bestandsabgleich: nur OpenNeuro + PhysioNet registriert, NeuroVault `declined`, alles andere Kandidaten-Pool. Die Register-Schreibung (`phi/sources.φ`) ist Mountains Recht.
+- **Blockade:** keine.
+- **Braucht:** Mountains Verdikt + `phi/sources.φ`-Zeilen für die Kandidaten (Route `## An mountain`); die DUA-/Kosten-Zugänge (UK Biobank, dbGaP, EGA, All of Us, MIMIC-IV, NDA/ABCD, OASIS, PPMI, Add Health, HRS, SHARE, SOEP, ICPSR) in die Future-Operator-Queue.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -273,6 +281,19 @@ Origin: sensory-folge225.
   2026-10-03:** neu mit Hygiene + Garantie (nicht gebraucht). Kein ANT+-Stick nötig
   (`src/archivar/ble.rs`: BLE-GATT `2A37` inkl. RR). **Gleichwertig:** Garmin HRM-Dual/Pro/
   HRM-Fit; die alten Garmin HRM-Run/Tri/Swim broadcasten kein Live-RR. Kauf = Operator-Hand.
+
+## An mountain
+
+Origin: sensory-folge227.
+
+- **Medizinische/Life-Science-Datenquellen — Kandidaten-Pool für den Register.**
+  Operator-Wort 2026-10-03; die gemessene Landschaft liegt in
+  `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha256 `4ead2c97…`).
+  ~90 Quellen (Somatik/Neuro/Psyche/Biologie/Chemie/Genomik/Proteomik/Metabolomik/
+  Strukturbiologie/Bildgebung/Register), jede mit `archive_search --verdict`-Stand
+  (2026-10-03); nur OpenNeuro + PhysioNet registriert, NeuroVault `declined`. Bitte
+  die Quellen nach deinem Verdikt (Force-Gate/Zulassung) in `phi/sources.φ`
+  disponieren. Die DUA-/Kosten-Zugänge sind an Future geroutet.
 
 ## Träger (Orphan-Faltung)
 
