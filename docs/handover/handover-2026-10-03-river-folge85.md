@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 44036ff9ca6d2051cba3814d8f78876ece1227c34b76a173c2fd698cd0ba693f
+  sha256: 0195022bb39b6e59b5385ca3f3b98930fce6bf7e3f3cc8bed465abe3a88578d2
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -192,9 +192,12 @@ Wort | Datum | Quelle
   (Rohmaterial `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
   `…_claude-ui_…`, `…_kimi-k3-tryingopen_te-engine-review.md`); `kimi.ai` Kontingent
   aufgebraucht; **Together** keine Antwort. **tryingopen.com begrenzt die Ausgabe auf ~4000
-  Zeichen** — mit `Weiter`/`continue` den Rest holen (Operator-Hinweis 2026-10-03); die
-  Kimi-Antwort war beim Sichern noch in Fortsetzung, der Rest ist beim nächsten Pass aus dem
-  Tab zu ziehen. Die Reviews nennen konkrete Defekte:
+  Zeichen** — mit `Weiter`/`continue` den Rest holen (Operator-Hinweis 2026-10-03, ausgeführt).
+  Sichere Kimi-K3-Teile: `…_te-engine-review.md` (Item 1), `…_te-engine-review-part2.md`
+  (Item 2–4: Bias-Bound/Subsample-Skalierung/n_eff-Gate; Storm `F_{t−1}`-messbar mit
+  Selection-im-Null-Loop; Sparser Katalog: Bins behalten, **zirkulärer Driver-Shift** mit
+  Guard-Band als exakte Omori-erhaltende Null). **Item 5–6 noch per weiterem `Weiter` zu
+  ziehen** (K3-Limit „5 messages"; der Tab verliert den Chat beim Reload). Die Reviews nennen konkrete Defekte:
   - **Rissä: `pair_lag_index_hash` faltet lag 0 und lag 1 auf denselben Hash**
     (`src/mathematikerin/wy_max_t.rs:262`, `shift = 1` für beide) → die „K=6 distinkten" sind
     real 6 Paare bei **nur lag 0**; lag-0-TE ist richtungs-symmetrisch. Name ≠ Implementation;
