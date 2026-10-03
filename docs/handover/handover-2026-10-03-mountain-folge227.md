@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: aa029a592ee41374464924f49a9d8263f7fce23db2ef7fcc80d0b8abbdcf93f2
+  sha256: 695cbc70c09bf96cef87b53ccf299ff0c852ca22cb68337baeecbb0506729414
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-02-mountain-folge226.md` (→ `archiv/`).
 
-## Burn: open 0.0002 · close 0.1721 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3 verdict, Pioneer-Floor Blatt, RoPeR compiler, Ranging §2.2)
+## Burn: open 0.0002 · close 0.2896 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3 verdict, RoPeR compiler, Ranging §2.2, Rätsel-Survey-Heilung, Orphan-Träger, Pioneer-Floor-Lauf)
 
 ## Operator-Wort-Register
 
@@ -35,17 +35,6 @@ Wort | Datum | Quelle
 „braucht es pro und max?" — Reaffirmation flash-first; pro/max nur mit gemessener flash-Fehllage | 2026-10-03 | Operator (Session, Mountain 227)
 
 ## Offen (aufgeschlüsselt)
-
-### JWS2-Kontrakt — CI grün, Manifestation offen (Trigger gefeuert)
-- **Status:** wartend | **Bindung:** eigen (Manifestation: Mycelium)
-- **Trigger:** `jwst-cdn-watch 37000087113` Lauf-Ende — **gefeuert**: `completed success`
-  (measured 2026-10-03 via `ci_manage view 37000087113`).
-- **Lage:** (gemessen 2026-10-03) der Watch trackt `jwst_spectra.bin`; **keine `jws2`-Zeile**
-  in `phi/sources.φ` (`sgrep -i jws2 phi/sources.φ` = 0). Riss: der folge226-Trigger nennt
-  den Spectra-Watch, nicht einen JWS2-Bin-Namen.
-- **Blockade:** JWS2-Bin-Name + Manifestation (Mycelium).
-- **Braucht:** Mycelium benennt den JWS2-Bin, setzt die `sources.φ`-Zeile + `sha256`; dann
-  fällt der Punkt. Watch-Trigger gegen den JWS2-Arm prüfen.
 
 ### PETREL19 — viertes Ephemeriden-Haus (Aufnahme wartet auf Lizenz)
 - **Status:** wartend | **Bindung:** eigen
@@ -90,27 +79,14 @@ Wort | Datum | Quelle
   dagegen messen; die PN-Codes 4/5 tragen keine `first_comp_num` im DT4/DT5 — dort bleibt die
   Auflösung bis zu einer Feldmessung offen.
 
-### Pioneer-Floor-Lauf — Blatt steht, Workflow + Run offen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03) das Voranmelde-Blatt steht:
-  `docs/blatt/blatt-pioneer-floor-falsifikation.md` (Header-sha `7a2ec29e…`); Methode, Null,
-  dreiteiliges Kriterium fixiert; „GIC §3.2" als unentfaltete Referenz benannt.
-  **`pioneer-floor.yml` gebaut (2026-10-03):** Corpus von CDN (`pioneer{10,11}_navio.bin`
-  + `ephemeris_{earth,pioneer10_daily,pioneer11_daily}.bin`) → `pioneer_navio_residuum` →
-  `pioneer_navio_negative_fuzzy --zone` → `pioneer_navio_zone_drift`, Artefakt-Upload.
-- **Blockade:** keiner (die `pioneer{10,11}_navio.bin` sind auf dem CDN, 206 gemessen
-  2026-10-03).
-- **Braucht:** Lauf `pioneer-floor 37111508656` (dispatcht 2026-10-03) endet → Artefakt
-  `pioneer-floor.txt` einmalig lesen (`ci_manage log`/Artifact); kein Statistik-Wert vor dem
-  Blatt. Nicht pollen.
-
 ## Träger (Prosa, eigene)
 
 - `docs/surveys/survey-raetsel-bestand.md` (`class: survey`, Header-sha `524d61dc…`) —
   stehende Rätsel-Messreihe; native Prosa Mountain, folge227 gefaltet, auf Kanal-Keys
   statt driftender `sources.φ`-Ziffern umgestellt (river-folge84-Messung), Risse geheilt.
-- `docs/blatt/blatt-pioneer-floor-falsifikation.md` (`class: sheet`, Header-sha `7a2ec29e…`).
+- `docs/blatt/blatt-pioneer-floor-falsifikation.md` (`class: sheet`, Header-sha `5bb1696b…`) —
+  Voranmelde-Blatt + Lauf-Ergebnis (CI `37111508656` success: beide Sonden `keine Präferenz
+  (Limit)`, Drift nicht aufgelöst → keine Entscheidung am Floor).
 - `docs/concepts/kybernetische-astrophysik.md` (`class: concept`) — das Rätsel-Register
   (zwölf Nadeln, der Kuprat); Träger für seinen offenen Marker.
 - `docs/concepts/tools-map.md` (`class: concept`) — die Werkzeug-Karte; Träger für ihre
