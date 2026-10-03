@@ -3,7 +3,7 @@
   session: River-Folge 86
   class: handover
   date: 2026-10-03
-  sha256: afa73df14472c4f806f87352defd8159f62a7016d78b0074babf9cc0e6586ba6
+  sha256: 5e355ebfa602c3682d023bcfed78f99afa17f4f1916e7e0d44e5cfc6925d371b
   status: live
 -->
 # Handover — River-Folge 86 (2026-10-03)
@@ -156,20 +156,52 @@ Wort | Datum | Quelle
 - **Blockade:** eigener Atom (saisonaler Bucket-`null_matrix`).
 - **Braucht:** die max-T-Null in `field_te_query` verdrahten.
 
-## Mehr-Stimmen-Review (Baum-Messung)
+## Rat + externe Berater — Konstruktionsfragen (Wort: „befrage rat und externe berater")
 
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** keiner (Baum-Messung gelandet).
-- **Lage:** (gemessen 2026-10-03 via `sgrep`/`sread`) die Review-Defekte wurden gegen den
-  Baum gehalten: `pair_lag_index_hash` ist die dokumentierte lag-0/1-Identität (Paper §3.1,
-  `:155,163`) — kein Code-Defekt; die Studentisierung ist konsistent
-  (`obs/σ` gegen `null-max v/σ`). Rohmaterial:
-  `state/stimmen/2026-10-03_{zai-ui,claude-ui,kimi-k3-tryingopen}_te-engine-review*.md`.
-- **Blockade:** die restlichen Review-Punkte (Null-Zentrierung, Bias-Korrektur,
-  storm-Selektion `F_{t−1}`, sparse-Katalog-Design, `erbq-solar` als ungültig) sind
-  Konstruktions-/Vorabregistrierungs-Fragen.
-- **Braucht:** diese Punkte dem Rat vorlegen (Architektur); `erbq-solar` gemessen
-  descopen und auf das Matched-Control-Design (`sensory-folge225:289-296`) umbauen.
+- **Trigger:** Lauf-Ende des nächsten `wy-max-t`/`bz-yearly-maxt` auf der zentrierten Skala.
+- **Lage:** (gemessen 2026-10-03) die drei offenen Review-Konstruktionsfragen wurden dem Rat
+  und den externen UI-Stimmen vorgelegt. **Rat** (5 Stimmen) + **`chat.z.ai` GLM-5.3 Deep
+  Think** (Rohantwort `state/stimmen/2026-10-03_zai-ui_te-konstruktion-folge86.md`; Prompt
+  `state/stimmen/2026-10-03_te-konstruktion-folge86.prompt.txt`; frühere Stimmen
+  `state/stimmen/2026-10-03_{zai-ui,claude-ui,kimi-k3-tryingopen}_te-engine-review*.md`)
+  tragen einstimmig:
+  1. **Null-Zentrierung — gebaut.** `v/σ` war niveau-gültig, aber nicht ehrlich: der
+     KDE-Bias-Boden blähte Familien-Schwelle und Beobachtung gleich auf. `studentized_maxima`
+     (`src/mathematikerin/wy_max_t.rs`) nimmt jetzt `means` und rechnet `(v−μ)/σ`;
+     `wy_max_t_probe.rs`/`bz_retro_probe.rs` zentrieren die Beobachtung mit demselben
+     `null_means`; Paper §3.2 benennt die Zentrierung. `cargo check` = 0/0.
+  2. **`erbq-solar` — descoped mit Befund.** Deskriptor-Header trägt den Befund
+     (outcome-konditionierter Bin-Abfall, Phase-Null ohne Omori, n = 1 gemessen); der Arm
+     bleibt Übungs-Fixture, das rigorose Design ist ein neuer vorabregistrierter Atom
+     (`sensory-folge225:289-296`).
+  3. **`pair_lag_index_hash` baum-geprüft:** die lag-0/1-Faltung ist die dokumentierte
+     Identität (Paper §3.1), kein Code-Defekt.
+- **Blockade:** keine.
+- **Braucht:** nach dem Push `wy-max-t`/`bz-yearly-maxt` auf der zentrierten Skala dispatchen;
+  die Läufe `37118991157`/`37133825315` sind die ersten Zeugen auf der alten `v/σ`-Skala —
+  benannt, kein Riss.
+
+### `n_eff`-Gate — Diagnose + vorabregistriertes Power-Gate
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der erste Lauf, der `n_eff` je Member druckt (`wy-max-t`).
+- **Lage:** (gemessen 2026-10-03, Rat + z.ai) ein Harttor 30 ist schlechter als nichts: die
+  Formel `n·h^d` läßt die Serial-Dependence-Inflation `κ = 1+2Σρ` und die d-aware Bandbreite
+  (`h ∝ n^(−1/(d+4))`, d = 3 → `n h^d ≈ 54`) aus. Rat: `te.rs::kde_n_eff(x,y,lag) = n·hx²·hy`
+  als benannte Diagnose; z.ai: `MDEₖ = q̂₀.₉₅(max-null)·σ̂ₖ` als vorabregistriertes Power-Gate
+  („unterpowert" statt „null"). Die Schwelle entsteht aus dem ersten `n_eff`-Lauf, nie per Dekret.
+- **Blockade:** Diagnose noch nicht gebaut.
+- **Braucht:** `kde_n_eff` + Diagnosezeile in `field_te_query.rs`/`wy_max_t_probe.rs`; `MDE`-Zeile;
+  dann den ersten Lauf lesen.
+
+### TE-Estimator-Bias-Korrektur
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der erste `n_eff`-/Bias-Lauf.
+- **Lage:** (gemessen 2026-10-03, Paper §6) die Bias-Tabelle steht (negativer Bias, Richtung 5/5);
+  die Korrektur (rang-normalisieren, ein Bandbreiten-Vektor, `TE_adj = TE − m_k`, `n_eff`-Gate)
+  ist als Konstruktion offen (Rat + z.ai).
+- **Blockade:** Konstruktions-Entscheidung hängt am `n_eff`-Gate.
+- **Braucht:** die Korrektur bauen, sobald die `n_eff`-Diagnose steht.
 
 ## An mycelium
 
@@ -207,7 +239,9 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/paper/gic-causal-driver.md`
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md`
 - `src/archivar/twomass.rs`, `src/archivar/extract.rs`, `src/archivar/main_flow.rs`, `src/archivar/fetch.rs`
+- `src/mathematikerin/wy_max_t.rs`, `tools/measure/src/bin/wy_max_t_probe.rs`, `tools/measure/src/bin/bz_retro_probe.rs`
+- `phi/pipeline/descriptors/erbq-solar.te`
 - `docs/handover/handover-2026-10-03-river-folge86.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge85.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0153 · close 0.121 — Grund: River-86 — Reader-Arme `twomass_psc`/`swarm_tec` gebaut (`cargo check` 0 Fehler / 0 Warnungen); GIC-Paper §6 (Estimator-Bias gemessen, storm-only measured `pending`); Flyby-Addendum (Trajektorien-Riss, Fill-Lauf 37116911686); `field_te_query`-Parität GLEICH; `wy-max-t` re-dispatched (37133825315). Gemessen `session_burn`: Line-Session $0.0841 + `grind-flash` Reader-Arme $0.0371; Maschinen-Total $0.6050 inkl. fremder Parallel-Linien.
+## Burn: open 0.0153 · close 0.1909 · cap 0.50 — Grund: River-86 (zwei Atome) — Reader-Arme `twomass_psc`/`swarm_tec` gebaut (`cargo check` 0/0); GIC-Paper §6 (Estimator-Bias gemessen, storm-only `pending`) + §3.2 (zentrierte Studentisierung); Flyby-Addendum (Trajektorien-Riss, Fill-Lauf 37116911686); `field_te_query`-Parität GLEICH; `wy-max-t` re-dispatched (37133825315); Rat (5 Stimmen) + `chat.z.ai` GLM-5.3 Deep Think zu den drei Konstruktionsfragen → Null-Zentrierung gebaut (`cargo check` 0/0), `erbq-solar` descoped mit Befund; Commit `a4f145981`. `close` = Line-Session (gemessen `session_burn`, $0.1909); die dispatchten Stimmen trugen zusätzlich (Rat $0.1691 + `grind-flash` Reader-Arme $0.0371); Maschinen-Total $1.2736 inkl. fremder Parallel-Linien.

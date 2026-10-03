@@ -2,6 +2,12 @@
 # driver: solar-wind IMF Bz, omni_hro_imf_bz_gsm_nt (phi/sources.φ:760, CDN omni_hro_1min.bin, 60 s)
 # target: point-event witness point-event#1 (Tohoku seismicity, phi/witnesses.φ:151-155)
 # the sparse point-event train is counted per declared bin; an empty bin stays pending, never 0.0
+# 2026-10-03 descoped as a TE test (gemessen): (1) the sparse train drops empty bins, which
+# conditions on the outcome; (2) the phase-randomized null preserves no Omori clustering;
+# (3) measured n = 1 with no alignment (field-te-query 37120826017). The arm stays as an
+# exercise fixture; the identifiable design (event-triggered average, Omori-preserving circular
+# driver shift with a guard band, matched-control on declustered mainshocks) is a new
+# pre-registered query form (sensory-folge225:289-296) — a construction, not this descriptor.
 pair erbq-solar
 register witnesses
 driver omni_hro_imf_bz_gsm_nt

@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 54b74ca7eefd69c4e47a3155cbd2755793a084a4bac99856033bafc0abda592d
+  sha256: b0953a126ab0a55d1d8497352772ea12a7b23558b80acd6b68cc04a724fd8c84
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -161,9 +161,13 @@ one seasonal block-bootstrap resample of the driver per draw, shared across all
 pairs and lags so the joint dependence is preserved, with a per-round/per-station
 seed (never the same draws for the per-lag mean/σ and the family bound); the
 duplicated lag-0/1 cells are hashed and deduplicated to the six distinct
-statistics before the maximum; the 1−α level is the empirical α-quantile of the
-studentized maxima, B ≈ 10⁴ for α = 0.01 (a GPD tail fit above the top 10 % if
-the resample budget is capped), with the claim count K declared in advance.
+statistics before the maximum; each statistic is centered and scaled by the same
+null-ensemble mean and σ on both the observed and the null side, `(v − μ)/σ` (the
+centered studentization, Rat + external review 2026-10-03 — the uncentered `v/σ`
+carried the KDE bias floor into the statistic as apparent signal); the 1−α level
+is the empirical α-quantile of the studentized maxima, B ≈ 10⁴ for α = 0.01 (a
+GPD tail fit above the top 10 % if the resample budget is capped), with the claim
+count K declared in advance.
 Point-estimate uncertainty is separate: a joint stationary bootstrap (BCa) on
 (X, Y), not the surrogate draws. The estimator's α stays unnamed until that
 construction stands; the current plug-in fam controls at order 10⁻¹, not 10⁻²
