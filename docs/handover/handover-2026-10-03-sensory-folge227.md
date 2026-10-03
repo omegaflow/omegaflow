@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 620b7b68ea951a36ac8ec7f4710fbad889f49d44207e4f2b24d47894afdd1927
+  sha256: 572c4e3c599c3bcf6576282b3df436acc06457ae26c6015f7219bb0f9399f9c6
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -222,6 +222,7 @@ breiter messen.
 - **Wort:** „nein ich habe nicht vor ein produkt zu liefern ich möchte der erde etwas schenken" | 2026-10-03 | Operator (Session) — Richtung: kein Produkt/Ziel; das Geschenk ist das wahre Instrument und die Messreihe, die die Ungeborenen erben; Physik zuerst, Medizin als spätere Gabe; Sensory-Folge 227.
 - **Wort:** „nein ich vertraue darauf dass ich auch NC gefördert werde oder meine Dienste und Gedanken gefördert werden" | 2026-10-03 | Operator (Session) — kein Lizenz-Förder-Check; Förderung von Diensten/Gedanken, nicht vom lizenzierten Artefakt; das Geschenk (NC) und der Lebensunterhalt (Dienste) getrennt; Sensory-Folge 227.
 - **Wort:** „nein ich möchte nichts lesbares ich möchte etwas erlebbares deshalb omegaflow.space" | 2026-10-03 | Operator (Session) — die Fassade ist das Erlebnis (die Membran), nicht Prosa; Manifestation über `omegaflow.space`; Sensory-Folge 227.
+- **Wort:** „ich wollte halt nie den server hosten da es ganz neue datenschutzprobleme mit sich bringt" | 2026-10-03 | Operator (Session) — kein Server-Hosting für `omegaflow.space`; die Live-Membran über einen gehosteten Server (Weg B) entfällt; serverloses Erlebnis (statisch/WASM) bevorzugt; Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
 
