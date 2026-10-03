@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-03
   version: 3
-  sha256: 0aee298459fa27813f6430d03abb9770a735673e5fc6f3feadee637cba13861b
+  sha256: 3bbd366dfc3b54ab5fcc0e258653ffb2e201d5141d91f1c799b0248be7f0eaa5
   status: live
   see-also: docs/paper/pioneer-anomaly-lrr-2010-4.txt, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), tools/measure/src/bin/pioneer_text_correlation.rs
 -->
@@ -12,7 +12,7 @@
 
 ## Abstract
 
-We hold the 8 767 numbers of the Pioneer review (Turyshev & Toth 2010) as a data sequence against the Doppler series of both probes. The reading series of the text carries no correlation that exceeds its own permutation null — the arrangement of the numbers contains nothing about the measurement series. The only digit-exact relation is the mantissa: the band numbers (211.052 MHz, 2 150 MHz, 2 091 MHz, 2.18 GHz) hit the carriers of the data digit-exactly (ΔMant ≈ 10⁻⁹ to 10⁻⁶). This proximity is expected by construction: the review cites the system's nominal carrier frequencies, which the DSN data carry as well — both describe the same specification on different scales (GHz against Hz). The mantissa measures that the review cites the DSN specification correctly; it does not carry an independent relation.
+We hold the 8 767 numbers of the Pioneer review (Turyshev & Toth 2010) as a data sequence against the Doppler series of both probes. The reading series of the text carries no correlation that exceeds its own permutation null — the arrangement of the numbers contains nothing about the measurement series. The only digit-exact relation is the mantissa: the band numbers (211.052 MHz, 2 150 MHz, 2 091 MHz, 2.18 GHz) hit the carriers of the data digit-exactly (ΔMant ≈ 10⁻⁹ to 10⁻⁶). This proximity is construction-fixed: the review cites the system's nominal carrier frequencies, which the DSN data carry as well — both describe the same specification on different scales (GHz against Hz). The mantissa measures that the review cites the DSN specification correctly; it does not carry an independent relation.
 
 
 ## 1. The measurement series
@@ -40,7 +40,7 @@ digit-exact. P10: 211.052 ↔ 2 110 520 000 Hz (ΔMant 2.6×10⁻⁹), 2 150 MHz
 (1.4×10⁻⁶), 2 024 MHz (4.6×10⁻⁶). P11: 211.052 ↔ 2 110 520 000 Hz
 (4.6×10⁻⁹), 2 091 MHz (4.8×10⁻⁷), 2.18 GHz (7.8×10⁻⁶). The article carries the
 bands; the data carry the same bands — the same digits, a different
-power of ten. The proximity is expected by construction: these are the
+power of ten. The proximity is construction-fixed: these are the
 nominal carrier frequencies of the tracking system (uplink 2 110 MHz,
 downlink 2 292 MHz, transponder ratio 240/221; Anderson et al. 2002), which
 a review of the anomaly cites and the DSN data both carry. The mantissa
