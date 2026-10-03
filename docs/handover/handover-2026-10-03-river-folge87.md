@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: aba280f2a3713e0e4e544025bcc35ddaa2c1d43415af4d26e9d10df5d4955ab0
+  sha256: ceec887645b0da50d800bc4d354033a34260f0b72468828027c71e4ad0671256
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -116,18 +116,19 @@ Wort | Datum | Quelle
 
 ### Flyby-Path-2 — Trajektorien-Riss, Tube nicht gebaut
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Benennung der Flattener-Erneuerung (`flyby-path-2-preregistration.md:21`)
-  oder Wiederherstellung des versiegelten Arc `aeb3c82f…` im CDN.
-- **Lage:** (gemessen 2026-10-03 via `gh run download 37116911686` + `curl`+sha256) der
-  Fill-Lauf `37116911686` (success) maß `sha256 018ce2ca…` (538 696 B) ≠ Seal
-  `aeb3c82f…` (106 704 B, `flyby-path-2-preregistration.md:21`); kein Tube gebaut,
-  Verdikt **riss** (`data/flyby2/tube-juice-2026-09-28.json`). Lokal mißt
-  `data/ssd.jpl.nasa.gov/ephemeris_juice.bin` weiter `aeb3c82f…` (106 704 B); das
-  CDN-Asset ist der erneuerte 538 696-B-Arc. Addendum §2026-10-03 trägt den Riss.
-- **Blockade:** der Seal bindet den alten Arc, das CDN trägt einen erneuerten.
-- **Braucht:** die CDN-Erneuerung nachmessen (An mycelium) und dann die Erneuerung im
-  Prereg benennen (`flyby-path-2-preregistration.md:21`) oder das Flatten auf den
-  versiegelten Arc pinnen; erst danach füllt der nächste Fill-Lauf.
+- **Trigger:** Operator-Wort zur Trajektorie (`018ce2ca…` als Trajektorie nennen oder den
+  Seal-Arc `aeb3c82f…` aufs CDN wiederherstellen).
+- **Lage:** (gemessen 2026-10-03 via `gh run download 37116911686` + `archive_search
+  --sniff` + GitHub-API, Mycelium-227) der Fill-Lauf `37116911686` (success) maß
+  `sha256 018ce2ca…` (538 696 B) ≠ Seal `aeb3c82f…` (106 704 B); der Erzeuger ist der
+  `kernel-flatten`-Lauf `37029375744` @`1e6d21f2f` (2026-10-02, `--systems …,juice`).
+  Das 2026-09-27 benannte `eee376eff…` ist überholt — die CDN-Erneuerung ist ein
+  **dritter Stand**. Der Addendum §2026-10-03 trägt jetzt die Erzeugerkette; lokal mißt
+  `data/ssd.jpl.nasa.gov/ephemeris_juice.bin` weiter `aeb3c82f…`.
+- **Blockade:** die Trajektorien-Wahl ist Operator-Wort (Seal-Klausel,
+  `flyby-path-2-preregistration.md` §Addendum).
+- **Braucht:** Operator-Wort: `018ce2ca…` als Trajektorie nennen **oder** den Seal-Arc
+  `aeb3c82f…` wiederherstellen; erst danach baut der nächste Fill-Lauf einen Tube.
 - **Rest-Zellen:** OMNI2 26 (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` — pending bis
   Trigger (unverändert).
 
@@ -283,6 +284,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `phi/pipeline/descriptors/aia_ladder.te`
 - `phi/pipeline/descriptors/aia_three_year.te`
 - `tools/measure/src/bin/enso_blatt_probe.rs`
+- `docs/paper/flyby-path-2-addendum-2026-09-29.md`
 - `docs/handover/handover-2026-10-03-river-folge87.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge86.md` (Move aus `docs/handover/`)
 
