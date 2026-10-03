@@ -2,7 +2,7 @@
   title: The lead geometry carries direction: TE asymmetry in the MIT-BIH ECG
   class: paper
   date: 2026-08-24
-  sha256: 8710bad6caf299f983127265bd0c8fd1fceb111b34247dc5a4e401f225161707
+  sha256: 2149c0d667a9d117eb3966a60a1ec1f05e4248b463033935063fd38e3da08e83
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md
 -->
@@ -203,7 +203,7 @@ the sharper information about the chest lead's future.
 
 ---
 
-*Data and code:* the instrument lives in `tools/work/src/bin/mitdb_sweep_probe.rs`
+*Data and code:* the instrument lives in `tools/measure/src/bin/mitdb_sweep_probe.rs`
 (silent print binary, std-only); the estimator in `src/mathematikerin/te.rs` (canonical,
 untouched); the WFDB-212 decoder in `src/archivar/mitdb.rs`. All verdicts are
 machine-measured; the register language of the system is German, this
