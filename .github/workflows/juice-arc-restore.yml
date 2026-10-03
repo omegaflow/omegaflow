@@ -1,0 +1,37 @@
+name: juice-arc-restore
+
+concurrency:
+  group: juice-arc-restore
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: 1e6d21f2fed489c23b0f0b19db96604422dc8b8d
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the archived sources index of the 2026-10-02 crawl
+        run: gh run download 37029375744 -n sources-index -R omegaflow/omegaflow
+      - name: Re-flatten the JUICE ephemeris from the archived index and upload ephemeris_juice.bin
+        run: |
+          cargo run --release -p omegaflow-harvest --bin ephemeris_compiler -- \
+            --fetch-from phi/sources_index.φ \
+            --systems juice \
+            --dest kernels \
+            --ci-mode \
+            --omega-g phi/pipeline/catalog/solar_omega_g.φ \
+            --index phi/sources_index.φ
