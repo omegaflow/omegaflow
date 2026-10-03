@@ -705,15 +705,6 @@ fn parse_epoch(s: &str) -> Option<f64> {
     )
 }
 
-
-
-
-
-
-
-
-
-
 const DIRECTION_SURROGATES: usize = 1000;
 const DIRECTION_ALPHA: f64 = 0.05;
 
@@ -1137,15 +1128,6 @@ fn run_direction_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
     );
     0
 }
-
-
-
-
-
-
-
-
-
 
 fn witness_magic(records: &[String]) -> Option<[u8; 4]> {
     for r in records {
@@ -2339,16 +2321,6 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         1
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 const EVENT_WINDOW_S: f64 = 7.0 * 86_400.0;
 const EVENT_BIN_S: f64 = 3_600.0;

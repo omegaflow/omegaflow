@@ -29,12 +29,6 @@ pub fn kde_n_eff(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
     Some(pairs as f64 * hx * hx * hy)
 }
 
-
-
-
-
-
-
 pub const TE_BIAS_MK: &[(usize, f64)] = &[
     (800, -8.866e-2),
     (1260, -7.693e-2),
@@ -44,26 +38,17 @@ pub const TE_BIAS_MK: &[(usize, f64)] = &[
     (10000, 0.000e0),
 ];
 
-
 pub fn te_bias_m_k(n: usize) -> Option<f64> {
     TE_BIAS_MK.iter().find(|&&(k, _)| k == n).map(|&(_, m)| m)
 }
 
-
-
-
 pub const TE_BIAS_MK_EMBEDDED: Option<f64> = None;
-
-
 
 pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
     te - m_k
 }
 
-
-
 pub const TE_NEFF_THRESHOLD: Option<f64> = None;
-
 
 pub fn transfer_entropy_bias_adjusted_above(
     te: f64,
@@ -77,8 +62,6 @@ pub fn transfer_entropy_bias_adjusted_above(
         None
     }
 }
-
-
 
 pub fn transfer_entropy_bias_adjusted_gated(te: f64, m_k: f64, n_eff: f64) -> Option<f64> {
     transfer_entropy_bias_adjusted_above(te, m_k, n_eff, TE_NEFF_THRESHOLD?)
@@ -3930,7 +3913,6 @@ mod tests {
 
     #[test]
     fn gate_te_bias_adjusted_sign_and_n_floor() {
-
         let te = -1.3e-2;
         let m_k = te_bias_m_k(1260).expect("the operating size carries a measured bias");
         assert!(m_k < 0.0, "the measured bias is negative, got {m_k}");
@@ -3939,7 +3921,6 @@ mod tests {
             adjusted > te,
             "the negative bias correction raises the value: {adjusted} > {te}"
         );
-
 
         let mut previous = f64::INFINITY;
         for &(_, m) in TE_BIAS_MK {

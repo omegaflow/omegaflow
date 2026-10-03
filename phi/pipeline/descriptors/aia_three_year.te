@@ -1,0 +1,23 @@
+# aia_three_year.te — TE-Probes-Wanderung: the aia_three_year_probe pair over registered fields.
+# driver: cool AIA coronal band 304 A, aia_304_dn (phi/sources.φ:1835 ff., format `aia`,
+#   AIA1 contract, aia_compiler.rs:13). aia_three_year_probe.rs:12-20 LADDER index 5 (304 A);
+#   :299-327 reads the cool band; :386-402 sweeps the adjacent rungs p -> p+1.
+# target: hot AIA band 131 A, aia_131_dn (phi/sources.φ:1831 ff.). aia_three_year_probe.rs:12-20
+#   LADDER index 1 (131 A); the first ladder rung stack_pair(&events, 0, 1, lag) :388.
+# The probe merges the three yearly AIA bins into one ladder stack (:283-360) and prints
+#   D = TE(cool->hot) - TE(hot->cool) per rung (:362-365); field_te_query carries one
+#   driver/target pair, so this descriptor names the first (coolest) rung, the remaining
+#   rungs stay the probe's own ladder sweep, never folded into one arm.
+# cond: none — the flare epochs are an event-stack trigger. This probe requires the GOES
+#   XRS-B channel (--year <aia_lines.bin> <goes-dir>, aia_three_year_probe.rs:264-298;
+#   b_flux > 5e-6 W/m^2 :9,:349); the event-triggered form is the witness path
+#   (event_triggered_average), not this descriptor's cond arm.
+pair aia-three-year
+register sources
+driver aia_304_dn
+target aia_131_dn
+cadence live
+bin 24
+seasonal none
+lags 0,1,2,3,4,5,6,7,8,9,10,11,12
+surrogate 10
