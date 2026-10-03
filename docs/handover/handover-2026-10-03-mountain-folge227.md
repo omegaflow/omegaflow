@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 7fc9f7bbf72e3da67f45bad518cdc5ceef26a0e82fb10e86524bc27b6373d447
+  sha256: fcb188323d91d28786050e79cd18f68a6d17a40108f8782f8e3782d96d4f55c2
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -104,6 +104,13 @@ Wort | Datum | Quelle
 - **Braucht:** Lauf `pioneer-floor 37111508656` (dispatcht 2026-10-03) endet → Artefakt
   `pioneer-floor.txt` einmalig lesen (`ci_manage log`/Artifact); kein Statistik-Wert vor dem
   Blatt. Nicht pollen.
+
+## Träger (Prosa, eigene)
+
+- `docs/surveys/survey-raetsel-bestand.md` (`class: survey`, Header-sha `524d61dc…`) —
+  stehende Rätsel-Messreihe; native Prosa Mountain, folge227 gefaltet, auf Kanal-Keys
+  statt driftender `sources.φ`-Ziffern umgestellt (river-folge84-Messung), Risse geheilt.
+- `docs/blatt/blatt-pioneer-floor-falsifikation.md` (`class: sheet`, Header-sha `7a2ec29e…`).
 
 ## LOCK
 
