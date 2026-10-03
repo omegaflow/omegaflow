@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: 24ae3191207001c75c99564505333f0553630ea33d0f9a99f96f3257eed3584e
+  sha256: 7a668ba02dcedd91dc6e0106f43f4548a913c7ea30f402cb1dafbe287077c43d
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -61,6 +61,31 @@ Wort | Datum | Quelle
 - **Blockade:** die Server-Ursache ist nicht gemessen (`{job}/error` leer)
 - **Braucht:** den nvss-Workflow RA-chunked wie wds/mktypes fahren (je Slice `--async`);
   Litmus: `--limit` senken und den eigenen Runner-Job `<errorSummary>` lesen.
+
+## An mountain
+
+Origin: river folge84.
+
+- **`docs/surveys/survey-raetsel-bestand.md` gegen HEAD `3be3ff972` gemessen (2026-10-03,
+  read-only, zwei Taucher).** Die Struktur hält (Artefakte, Verdikt-Texte, Papers); die
+  `sources.φ`-Zeilennummern sind **systematisch gedriftet** (~+14 im 400er, ~+31 im 2400er,
+  ~+146–172 im 10–11k-Bereich) — als stehende Messreihe ist die Survey zu renummerieren.
+  Echte Risse (kein Zeilendrift):
+  - Ⅰ: „per-Voxel-Jeans-Engine fehlt (`sgrep jeans tools`→0)" widerlegt —
+    `tools/measure/src/bin/jeans_residuum_probe.rs` existiert; der HI-Kanal
+    (`hi4pi`/`21cm`/`hi_gas`/`neutral`) = 0 Treffer.
+  - Ⅱ: „DSN-Live-Tracking fehlt; eyes/dsn absent" widerlegt — `phi/sources.φ:109-121`
+    trägt `dsn_snapshot.bin` (eyes.nasa.gov); die zitierte `dead_sources.φ:355` trägt Euclid.
+  - Ⅳ: Swarm-TEC vorhanden (`sources.φ:7276`); `ledger.φ:14-16` trägt AFAD (nicht CSES);
+    CSES-Termin 2026-10-02 gefeuert (Operator-Wort „Nein"); kein `laic*.bin` /
+    `phi/pipeline/laic_harvest/` im Baum.
+  - Ⅺ: `openneuro_eeg.rs` fehlt — real `tools/harvest/src/bin/openneuro_compiler.rs`.
+  - ENSO: „kein enso-Bin" widerlegt — `tools/measure/src/bin/enso_blatt_probe.rs` existiert;
+    der Zuschnitt `wartend.φ:23` liegt jetzt auf `:21` und ist resolved.
+  - Querschnitt 3: der Ⅸ-`peak-flux`-Spot `:10509` trägt jetzt den SuperMAG-Compiler.
+  - Ⅻ B-Moden nicht nachgemessen (`open`).
+  Die Survey ist derzeit trägerlos (orphan; `handover-2026-10-03-mycelium-folge224.md:183`
+  nennt es) — native Prosa Mountain; Trägerzeile oder gemessenes `descoped` fehlt.
 
 ## Abschluss
 
