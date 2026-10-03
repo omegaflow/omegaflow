@@ -83,9 +83,9 @@ fn parse_residuals(text: &str) -> Result<(Vec<FlybyResidual>, Vec<Option<f64>>),
             .map_err(|e| format!("line {} dz_meas {}: {e}", li + 1, cols[1]))?;
         let dz_pred_mm_s = residual_word(cols[2])
             .map_err(|e| format!("line {} dz_pred {}: {e}", li + 1, cols[2]))?;
-        let epoch_tdb = match cols.get(3) {
+        let perigee_utc = match cols.get(3) {
             Some(w) => {
-                residual_word(w).map_err(|e| format!("line {} t_epoch_tdb {}: {e}", li + 1, w))?
+                residual_word(w).map_err(|e| format!("line {} t_perigee_utc {}: {e}", li + 1, w))?
             }
             None => None,
         };
@@ -94,7 +94,7 @@ fn parse_residuals(text: &str) -> Result<(Vec<FlybyResidual>, Vec<Option<f64>>),
             dz_meas_mm_s,
             dz_pred_mm_s,
         });
-        epochs.push(epoch_tdb);
+        epochs.push(perigee_utc);
     }
     Ok((out, epochs))
 }
@@ -202,7 +202,7 @@ fn register_json(
     s.push_str(&format!("  \"first_row_ref_s\": {FIRST_ROW_REF_S},\n"));
     if epoch_override.iter().any(|e| e.is_some()) {
         s.push_str(
-            "  \"epoch_basis\": \"row t_epoch_tdb override where present, else row t_utc -> TDB via NAIF LSK; pair deltas at that single instant\",\n",
+            "  \"epoch_basis\": \"row t_perigee_utc (UT) -> TDB via NAIF LSK where present, else row t_utc -> TDB via NAIF LSK; pair deltas at that single instant\",\n",
         );
     } else {
         s.push_str(
@@ -217,7 +217,7 @@ fn register_json(
         let anomaly = flyby_anomaly_mm_s(l);
         let h = &house[i];
         s.push_str(&format!(
-            "    {{\"t_utc\": {}, \"t_epoch_tdb\": {}, \"dz_meas_mm_s\": {}, \"dz_pred_mm_s\": {}, \"anomaly_mm_s\": {}, \
+            "    {{\"t_utc\": {}, \"t_perigee_utc\": {}, \"dz_meas_mm_s\": {}, \"dz_pred_mm_s\": {}, \"anomaly_mm_s\": {}, \
              \"de_inpop_km\": {}, \"de_epm_km\": {}, \"inpop_epm_km\": {}, \
              \"tdot_max_mm_s\": {}, \"verdict\": \"{}\"}}",
             l.t_utc,
@@ -279,9 +279,9 @@ fn main() {
     let mut overrides_used = 0usize;
     for (i, l) in lines.iter().enumerate() {
         let t_tdb = match epoch_override.get(i).copied().flatten() {
-            Some(t) => {
+            Some(u) => {
                 overrides_used += 1;
-                Some(t)
+                lsk.as_ref().and_then(|lsk| lsk.unix_to_tdb(u))
             }
             None => lsk.as_ref().and_then(|lsk| lsk.unix_to_tdb(l.t_utc)),
         };
@@ -335,7 +335,7 @@ fn main() {
 
     if overrides_used > 0 {
         println!(
-            "epoch override: {overrides_used} of {} rows carry t_epoch_tdb",
+            "epoch override: {overrides_used} of {} rows carry t_perigee_utc",
             lines.len()
         );
     }

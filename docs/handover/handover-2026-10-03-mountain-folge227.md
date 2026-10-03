@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 695cbc70c09bf96cef87b53ccf299ff0c852ca22cb68337baeecbb0506729414
+  sha256: 9fe11ac7394b9dc25b322270752d73b12155b4f03d8d0ffe66b2a8a78408a21c
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-02-mountain-folge226.md` (→ `archiv/`).
 
-## Burn: open 0.0002 · close 0.2896 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3 verdict, RoPeR compiler, Ranging §2.2, Rätsel-Survey-Heilung, Orphan-Träger, Pioneer-Floor-Lauf)
+## Burn: open 0.0002 · close 0.3495 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3, RoPeR, Ranging §2.2, Rätsel-Survey, Orphan-Träger, Pioneer-Floor-Lauf, Perigäum-Zeiten via Horizons)
 
 ## Operator-Wort-Register
 
@@ -48,21 +48,21 @@ Wort | Datum | Quelle
   + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern
   (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
 
-### Probe-Artefakt vs Haus-Gate — Semantik benannt, Epochen-Neu-Lauf offen
+### Probe-Artefakt vs Haus-Gate — Perigäum-Zeiten gesetzt, Haus-Quellen-Riss benannt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-02 via `sread tools/measure/src/bin/flyby_anderson_probe.rs`)
-  die Spalten-Semantik ist benannt (`register_json` schreibt `first_row_ref_s`, `epoch_basis`,
-  `tdot_max_scope`); die Absolut-Spalten (00:00-UTC vs Perigäum-TDB) bleiben unversöhnt
-  (`docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md:71-82,101-104`). Die Perigäum-Zeiten
-  selbst fehlen im Baum:   `tools/measure/anderson_residuals.tsv` trägt `t_utc = perigee date at
-  00:00 UTC` (Zeile 11), exakte closest-approach-Zeiten `pending a clean Table I`.
-  **Override gebaut (2026-10-03):** `parse_residuals` nimmt eine optionale 4. Spalte
-  `t_epoch_tdb`; `register_json` schreibt `t_epoch_tdb` je Zeile und schaltet `epoch_basis`
-  um; Tests `parse_residuals_reads_optional_epoch_override`, `_rejects_two_columns`.
-- **Blockade:** kein Perigäum-Zeit-Feld im Residuen-Artefakt (Override-Mechanismus steht).
-- **Braucht:** Perigäum-TDB je Zeile aus einer sauberen Anderson-Table-I eintragen, dann
-  Neu-Lauf und Spalten-Vergleich mit dem Haus-Gate.
+- **Lage:** (gemessen 2026-10-03) **Perigäum-Zeiten besorgt:** JPL Horizons (CENTER `500@399`,
+  Range-Minimum, 1-min) für alle sechs Vorbeiflüge — Galileo I `1990-12-08 20:35`, II
+  `1992-12-08 15:09`, NEAR `1998-01-23 07:23`, Cassini `1999-08-18 03:28`, Rosetta
+  `2005-03-04 22:09`, MESSENGER `2005-08-02 19:13` UTC (Höhen 303–2338 km, decken die
+  bekannten; ±30 s). Als 4. Spalte `t_perigee_utc` in `tools/measure/anderson_residuals.tsv`;
+  der Probe mappt UT→TDB via NAIF LSK. Lauf 6/6 Override: Galileo I `tdot_max` 1,4349,
+  MESSENGER 0,02634 `rift-generator`. **Riss bleibt:** am selben Perigäum trägt der Probe
+  MESSENGER `de_inpop` 22,49 km / `inpop_epm` 33,14 km gegen das Haus-Gate 0,16/18,06 km —
+  beide ziehen nicht dieselben Ephemeriden-Bins/Quellen.
+- **Blockade:** keine (die Haus-Quellen-Differenz ist der nächste Messpunkt).
+- **Braucht:** die vom Haus-Gate geladenen Ephemeriden-Bins gegen die Probe-Defaults
+  (`data/ssd.jpl.nasa.gov-de/…` vs `data/ssd.jpl.nasa.gov/…`) abgleichen und den Riss auflösen.
 
 ### Ranging-Decode — §2.2 gebaut und verdrahtet, Live-Sample fehlt
 - **Status:** eigen | **Bindung:** eigen
