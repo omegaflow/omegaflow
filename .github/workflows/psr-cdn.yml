@@ -18,11 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Ensure the atnf.csiro.au release exists on the CDN
+      - name: Ensure the tapvizier.cds.unistra.fr release exists on the CDN
         run: |
-          gh release view atnf.csiro.au --repo omegaflow/sources >/dev/null 2>&1 \
-            || gh release create atnf.csiro.au --repo omegaflow/sources \
-                 --title "atnf.csiro.au" --notes "CDN family release"
+          gh release view tapvizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create tapvizier.cds.unistra.fr --repo omegaflow/sources \
+                 --title "tapvizier.cds.unistra.fr" --notes "CDN family release"
       - name: Compile ATNF pulsar catalog and upload to CDN
         run: |
           cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
@@ -39,4 +39,4 @@ jobs:
                  "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           sha256sum psr.json | tee psr.json.sha256
-          gh release upload atnf.csiro.au psr.json.sha256 --repo omegaflow/sources --clobber
+          gh release upload tapvizier.cds.unistra.fr psr.json.sha256 --repo omegaflow/sources --clobber

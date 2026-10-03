@@ -9,6 +9,23 @@ use std::process::Command;
 
 const CDN_REPO: &str = "omegaflow/sources";
 
+const COMPILER_NETLOCS: &[&str] = &[
+    "ssd.jpl.nasa.gov",
+    "spdf.gsfc.nasa.gov",
+    "physionet.org",
+    "sentinel1euwest.blob.core.windows.net",
+    "archive-api.open-meteo.com",
+    "irsa.ipac.caltech.edu",
+    "data.pmel.noaa.gov",
+    "fermi.gsfc.nasa.gov",
+    "service.iris.edu",
+    "vizier.cfa.harvard.edu",
+    "noaa-eri-pds.s3.amazonaws.com",
+    "dachs.fai.kz",
+    "gsaweb.ast.cam.ac.uk",
+    "ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca",
+];
+
 fn release_tag_netloc(tag: &str) -> (&str, bool) {
     match tag.strip_prefix("www.") {
         Some(bare) => (bare, true),
@@ -265,6 +282,12 @@ fn host_known(tag: &str, hosts: &BTreeSet<String>) -> bool {
             tag.strip_prefix(h.as_str())
                 .is_some_and(|rest| rest.starts_with('-'))
         })
+        || COMPILER_NETLOCS.iter().any(|h| {
+            tag == *h
+                || tag
+                    .strip_prefix(h)
+                    .is_some_and(|rest| rest.starts_with('-'))
+        })
 }
 
 fn tag_baseline(root: &str) -> BTreeSet<String> {
@@ -448,20 +471,7 @@ fn main() {
     let source_netlocs: BTreeSet<String> = netloc_of_source.keys().cloned().collect();
     let release_netlocs: BTreeSet<String> = tag_netloc.values().cloned().collect();
 
-    let dataset_hosts: BTreeSet<String> = [
-        "ssd.jpl.nasa.gov",
-        "spdf.gsfc.nasa.gov",
-        "physionet.org",
-        "sentinel1euwest.blob.core.windows.net",
-        "archive-api.open-meteo.com",
-        "irsa.ipac.caltech.edu",
-        "data.pmel.noaa.gov",
-        "fermi.gsfc.nasa.gov",
-        "service.iris.edu",
-    ]
-    .iter()
-    .map(|s| s.to_string())
-    .collect();
+    let dataset_hosts: BTreeSet<String> = COMPILER_NETLOCS.iter().map(|s| s.to_string()).collect();
 
     let non_source_tags: BTreeSet<&str> =
         ["srdata.nist.gov", "rave-survey.org"].into_iter().collect();

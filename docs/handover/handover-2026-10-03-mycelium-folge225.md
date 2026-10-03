@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Cap-Gate gebaut, zwei Cap-Bypass-Writer rotiert
   class: handover
   date: 2026-10-03
-  sha256: 949a37387956d36ca2d2d58724110b0bcee20fc6bd3e7432a868b8b4af2e08f0
+  sha256: 36bc0852363909e14746e84c8fc4f0e9e91534610ccec1595dca3e6c72d8e6d4
   status: live
 -->
 # Handover — Mycelium-Folge 225 (2026-10-03)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-03-mycelium-folge224.md` (→ `archiv/`).
 
-## Burn: open 0.0017 · close 0.0847 (gemessen `session_burn`; Grund: Cap-Gate + Tag-Diff + Baseline, nvss/gaia/omni2-Rotation, Handover)
+## Burn: open 0.0017 · close 0.1162 (gemessen `session_burn`; Grund: Cap-Wache + Tag-Diff, nvss/gaia/omni2-Rotation, sw/KPLO/ISRO/MBRSC/6-Host-Messungen, Handover)
 
 ## Operator-Wort-Register
 
@@ -54,9 +54,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Step-5(b), Teil 2 — Register↔Workflow-Tag-Diff (gebaut)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** neuer literaler Workflow-Release-Tag, der nicht in `phi/sources.φ` oder `docs/specs/cdn-tag-baseline.txt` steht
-- **Lage:** (gemessen 2026-10-03) `cdn_reconcile --fail` difft die literalen Tags aus `gh release create/upload` + `--release-tag` in `.github/workflows` gegen die Host-Menge aus `phi/sources.φ` (`cdn_tag_from_url` + `extract_netloc` + `origin`-Netlocs = **255 Hosts**); grün, wenn der Tag ein Registry-Host ist oder `<host>-<familie>`. Dynamische Tokens (`$tag`/`${}`) exempt; `tools-latest` (Omegaflow-Tools-Repo) exempt. **6 gemessene Drifts** in `docs/specs/cdn-tag-baseline.txt`: `vizier.cfa.harvard.edu`, `noaa-eri-pds.s3.amazonaws.com`, `dachs.fai.kz`, `gsaweb.ast.cam.ac.uk`, `atnf.csiro.au`, `ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca`. Lokal gemessen: `cap+tag contract clean (255 registry hosts)`, exit 0.
-- **Blockade:** die 6 Baseline-Zeilen brauchen je eine Quellen-Bindung (Mountain-Verdikt + Mycelium-`url`/`origin`).
-- **Braucht:** je Baseline-Host den Port-Schritt (`docs/SOURCE_PORT.md`), Zeile streichen; dann Probe-Writer-Rebindung, dann je Lösch-Klasse ein Atom mit gemessener Tabelle.
+- **Lage:** (gemessen 2026-10-03) `cdn_reconcile --fail` difft die literalen Tags aus `gh release create/upload` + `--release-tag` in `.github/workflows` gegen die Registry-Hosts (255) **und** die §1-Compiler-Netlocs (`COMPILER_NETLOCS`, `cdn_reconcile.rs`). Die **6 gemessenen Drifts sind aufgelöst**: `vizier.cfa.harvard.edu`, `noaa-eri-pds.s3.amazonaws.com`, `dachs.fai.kz`, `gsaweb.ast.cam.ac.uk`, `ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca` als §1-Compiler-Netlocs geführt; `atnf.csiro.au` (echter Orphan — die Daten liegen unter `tapvizier.cds.unistra.fr`) in `psr-cdn.yml` umgebunden. `docs/specs/cdn-tag-baseline.txt` ist **leer**. Gemessen: `cap+tag contract clean (255 registry hosts)`, exit 0.
+- **Blockade:** keine
+- **Braucht:** die fünf als §1 geführten Hosts tragen je einen **Riss** (declined/witness vs. manifestiert) — s. `## An mountain`; dann Probe-Writer-Rebindung und je Lösch-Klasse ein Atom.
 
 ### viking-text-cdn — Capped-Release-Fix, Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
@@ -82,9 +82,16 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### KPLO/KARI `blocked_sources.φ:456` — offener Datenpfad
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächste Messung des Verzeichnisses — Beleg: `phi/blocked_sources.φ:456` direct 200 (2026-10-03)
-- **Lage:** (gemessen 2026-10-03) `https://www.kari.re.kr/kpds/published/KPLO/KPLO/PublicRelease/` direct 200 (2146 B), anonymes Verzeichnis (POLCAM/LUTI/KMAG/KGRS + SPICE). Offener Datenpfad.
-- **Blockade:** Daten-Endpoint je Datei nicht gemessen
-- **Braucht:** Verzeichnis per `archive_search --verdict`/`--playground` je Datei messen, dann Compiler-Dispatch.
+- **Lage:** (gemessen 2026-10-03 via `archive_search --playwright`) das Verzeichnis ist anonym; SPICE-Bundle messbar: `…/kernels//readme.txt` 200 (1475 B), `…/kernels//bundle_kplo_spice_v013.xml` 200 (4276 B); Download-Pfad `…/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/`. KGRS/POLCAM-Links leer auf Tiefe 1.
+- **Blockade:** keiner
+- **Braucht:** SPICE-Bundle-XML + `kernels/`-Verzeichnis als Quelle registrieren/portieren (`docs/SOURCE_PORT.md`); dann Compiler-Dispatch.
+
+### `blocked_sources.φ:389` Swarm TEC — DISS-Datenpfad gemessen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Mountain setzt die Disposition zu `phi/blocked_sources.φ:389`
+- **Lage:** (gemessen 2026-10-03 via `archive_search --playwright` + `--verdict`) `https://swarm-diss.eo.esa.int/` ist ein JS-Directory-Browser (Swarm Data Access); der Download-Pfad ist `https://swarm-diss.eo.esa.int/?do=download&file=swarm/<pfad>`; konkret `…%2FLevel1b%2FEntire_mission_data%2FMAGx_LR.txt` **HTTP 200, 1 098 162 B** (auch über Proton 200). Kein `descoped` — die Quelle ist harvestierbar.
+- **Blockade:** keiner
+- **Braucht:** Mountain setzt die Disposition (`released`/`pending`) auf dieser Messung; danach Mycelium: `swarm_compiler` auf `?do=download&file=swarm/…` bauen + `blocked_sources.φ:389` heben.
 
 ### RoPeR-Familie — Sample registriert, Manifest + Familien-Register offen
 - **Status:** wartend | **Bindung:** eigen
@@ -117,16 +124,16 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### released-Quellen ohne Download-Lauf — ISRO/ISSDC (PRADAN)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Harvest-Lauf des ISRO/ISSDC-Endpoints
-- **Lage:** (gemessen 2026-10-02 via `phi/blocked_sources.φ:392-394`) released 2026-09-29, Konto Operator-Hand 2026-09-28 (future-folge149); `--verdict` ch2 200 (31050 B), chmapbrowse/mrbrowse 404; OIDC-Flow browserlos verifiziert (future-159, Connector f7bfce9b7). Download end-to-end offen.
-- **Blockade:** Download-Pfad je Dataset nicht gemessen
-- **Braucht:** `archive_search --playwright`/`sfetch` der ch2/mom/aditya Download-Endpoints messen, dann Compiler-Dispatch.
+- **Lage:** (gemessen 2026-10-03) ch2-Portal 200 (31330 B); `/protected/*` = Keycloak-Login (4270 B); konkrete Datei `…/ch2/protected/downloadFile/class_holder/ch2_{payload}_l1_{YYYY}_{MM}.zip` **302 → Keycloak OIDC** (realm `issdc`, client `Pradan`); mrbrowse timeout. Compiler steht: `pradan_ch2_compiler.rs` (liest `PRADAN_USER`/`PRADAN_PASS`, `:100-101`).
+- **Blockade:** Account-Credential (Operator-Hand); Konto liegt vor
+- **Braucht:** Credentials in `.secrets.local` setzen (Operator-Hand), dann `pradan_ch2_compiler --ci-mode`.
 
 ### released-Quellen ohne Download-Lauf — MBRSC (EMM/Al-Amal)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Harvest-Lauf des MBRSC-Endpoints
-- **Lage:** (gemessen 2026-10-02 via `phi/blocked_sources.φ:396-398`) released 2026-09-29, Cognito-Signup+Login Operator-Hand 2026-09-28 (future-folge149); `--verdict` 200 (2789 B). Download end-to-end offen.
-- **Blockade:** Daten-Endpoint im SDC nicht gemessen
-- **Braucht:** Daten-Endpoint messen; dann Compiler-Dispatch.
+- **Lage:** (gemessen 2026-10-03) SDC-Shell 200 (2789 B); API `https://mdhkq4bfae.execute-api.eu-west-1.amazonaws.com/prod/science-files-metadata?instrument_id=exi&data_level=l2` **401** (Cognito-Token nötig), S3-Objekt **403**; API-Doc-PDF öffentlich. **Kein Compiler** (`archive_search emiratesmarsmission --root tools` = 0).
+- **Blockade:** Cognito-Token (Signup/Login Operator-Hand); Compiler fehlt
+- **Braucht:** `emm_sdc_compiler` bauen (API-Contract gemessen: `science-files-metadata` → `science-files-download` mit `Authorization: <Cognito access token>`); Token-Beschaffung Operator-Hand.
 
 ### released-Quellen ohne Transfer-Lauf — SuperDARN MAP-Grid (Globus)
 - **Status:** wartend | **Bindung:** eigen
@@ -227,6 +234,8 @@ Origin: mycelium-folge225 (Register-Duties).
 - **`docs/surveys/survey-2026-09-16-dead-sources-relevanz.md`** (1 offener Marker) trägt keinen lebenden Owner-Träger — bitte Trägerzeile oder gemessenes `descoped`.
 - **`docs/surveys/survey-raetsel-bestand.md`** (6 offene Marker, u. a. „Fremde Feder (Mountain)": `witness kuprat` fehlt — `:90`) trägt keinen lebenden Owner-Träger — bitte Trägerzeile oder gemessenes `descoped`.
 - **`twomass_psc.bin` UNREGISTERED:** `cdn-health` fand `irsa.ipac.caltech.edu/twomass_psc.bin` **200**, aber keine Quellen-Zeile in `phi/sources.φ`. Braucht: Zulassung/Format/Field (2MASS PSC J<11), dann schreibt Mycelium `url`/`origin`/`compiler`/`sha256`.
+- **Fünf §1-Compiler-Hosts mit Riss (gemessen 2026-10-03):** `vizier.cfa.harvard.edu` (camargo_uranus → `uranus_*_probe`; die asu-tsv-URLs sind in `blocked_sources.φ:233-253` als „kein 9-Kraft-Wert" descoped), `noaa-eri-pds.s3.amazonaws.com` (`eri_imagery.bin`; Quelle in `declined_sources.φ:5185` declined), `dachs.fai.kz` (`fai_kz_obscore.bin`; `declined_sources.φ:2125` nennt dasselbe Asset), `gsaweb.ast.cam.ac.uk` (`gaia_alerts.bin`; `witnesses.φ:58` Witness vs. `declined_sources.φ:2217` declined), `ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca` (`vlass_sources_se.bin`; `declined_sources.φ:4369` declined `/argus`, anderer Pfad). Bitte je Host die Disposition klären: lebt der Manifestor gegen ein declined/witness-Verdikt? Mycelium führt die Hosts jetzt als §1-Compiler-Netlocs.
+- **`blocked_sources.φ:389` Swarm TEC:** Disposition angefragt — die Messung (2026-10-03) zeigt einen harvestierbaren DISS-Download (`?do=download&file=swarm/…`, 200, 1 098 162 B). Bitte `released` (oder `pending`), kein `descoped`.
 
 ## Abschluss
 
