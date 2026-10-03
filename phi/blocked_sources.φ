@@ -441,9 +441,9 @@ pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
-pending
-url http://pds.wh.sdu.edu.cn
-note Shandong PDS-Spiegel (SDU Weihai/WUSTL) — 2026-10-03 Browser: Daten 222.194.16.107/planet-data + FTP ftp://222.194.16.107/, Login 222.194.16.107/login/; Chang'e-1/2-Archive (GRS-2C, Interferometer, DEM, X-Ray-2B). future-folge226.
+blocked ip-blocked
+url http://222.194.16.107/planet-data
+note Shandong PDS-Spiegel (SDU Weihai) listet diesen Host + FTP; via --verdict Timeout (von hier nicht erreichbar, cn-only); kein Pfad gemessen. Portal pds.wh.sdu.edu.cn. future-folge226.
 
 blocked account
 url https://pda.kasi.re.kr/
@@ -532,7 +532,7 @@ note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206; Geometrie + 
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
-note PDS-PPI (UCLA) — 2026-10-03 Browser + --verdict: Maschinenendpunkte EPN-TAP vo-pds-ppi.igpp.ucla.edu (200) + Dateisystem /data (200; 301 archive/data/); „kein Daten-Endpoint" widerlegt. future-folge226.
+note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabilities,sync} je 200 per curl (kein Browser); Dateisystem /data/ 200; Arm tap_compiler passt. future-folge226.
 
 descoped
 url https://psaftp.esac.esa.int/
