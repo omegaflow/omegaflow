@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 1a30a946fbae9a1fe5693bfae8c5daa8c3b32eaa9fc9ade06bf5c3c95a395efd
+  sha256: 1bfa1e9cbcfaf8f8e9502680a671cf961c63a896ce33123a587bba8a16c09c14
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -65,13 +65,16 @@ Wort | Datum | Quelle
 
 ### Flyby-Path-2 Rest-Zellen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** OMNI2-Lag (~6 d nach dem Perigäum, HAPI 1201), kp `def` (finale
-  GFZ-Freigabe), ESA/ESOC-Publikation des post-flyby SPK + Kovarianz.
-- **Lage:** (gemessen 2026-10-03, aus `handover-2026-10-03-river-folge84.md`) swarm
-  cell 25 gefüllt; OMNI2 26 Zellen, ACE 3/14/16, Δ/σ_recon offen.
-- **Blockade:** externe Freigabe/Lag.
-- **Braucht:** sobald ein Trigger feuert, `flyby_ephemeris_gate --recon` bzw. die
-  Zellen wie im Addendum füllen.
+- **Trigger:** Lauf-Ende `flyby-path2-fill 37116911686` (dispatched 2026-10-03, Trigger
+  = Lauf-Ende); danach weiter OMNI2-Lag (~6 d, HAPI 1201), kp `def`, ESA/ESOC-SPK.
+- **Lage:** (gemessen 2026-10-03 via curl) OMNI2 HAPI 1201 unverändert (86 B, „no data");
+  GFZ liefert die Kp-Reihe, alle 25 Intervalle `status: "pre"` (kein `def`); die ACE-1h-
+  Quelle trägt jetzt `2026-09-28T13:00` (Swepam, Zelle 14) und `02:00` (Mag), Zelle 16
+  (15:00) fehlt beidseitig; Recon-Asset absent. Weil die ACE-Quelle seither Zellen
+  geschlossen hat, wurde der read-only CI-Fill neu dispatcht (misst am lebenden Stand).
+- **Blockade:** OMNI2-Lag, GFZ-`def`, ESA-SPK stehen; nur ACE/ Swarm messbar.
+- **Braucht:** `ci_manage view/log 37116911686` nach Lauf-Ende lesen; gefüllte Zellen ins
+  Addendum nachtragen, OMNI2/kp-`def`/Δ,σ_recon bleiben pending bis zum Trigger.
 
 ## Abschluss
 
