@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: af04d1815259bf11bf3c8cc29ddb0161e1126a9fcbf43c2182d806da263d2f8f
+  sha256: fd162e09ea965e312d5f2dfd0181c4c933be67695118748d100003129af74ebc
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -15,8 +15,20 @@ wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
 
 Wort | Datum | Quelle
 --- | --- | ---
-„Starte die River-Linie in einem Pass …" | 2026-10-03 | Operator (Session, River 85)
+„Starte die River-Linie in einem Pass …" | 2026-10-03 | Operator (Session, River 85) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „Erste Handlung: `sread docs/concepts/tool-forms.md` …" | 2026-10-03 | Operator (Session, River 85)
+„aber das kann doch alles in einem atom gemacht werden" | 2026-10-03 | Operator (River 85) — die offenen GIC-Stränge in einem Pass
+„warum bauen wir silos … wir brauchen doch nur ein universelles myzel … nichts anderes als die Weberin auf TE ebene" | 2026-10-03 | Operator (River 85) — Universal-Myzel-These → Rats-Verdikt + `field_te_query`
+„wir können doch die weberin auch mit einbeziehen … TE nicht nur mit Sources sondern auch mit Unterstützung der Zeugen … welche Dateien liegen noch in Phi die … ins universelle Mycellium sollten?" | 2026-10-03 | Operator (River 85) — Zeugen-Arm + φ-Zensus (nur `witnesses.φ` fehlt)
+„ja bitt ebauen" | 2026-10-03 | Operator (River 85) — Zeugen-Arm
+„braucht es pro?" | 2026-10-03 | Operator (River 85) — gemessen: nein, flash
+„ja bitte" | 2026-10-03 | Operator (River 85) — erste Zeugen-Messung (`erbq-solar`)
+„… den rat und die stimmen flash taucher mit harten bandagen kostenlose voices … und ui chats befrags" | 2026-10-03 | Operator (River 85) — Mehr-Stimmen-Befragung zu den 6 Pendings
+„die frontier modelle sind eigentlich fast alle nur über ui chat erreichbar" | 2026-10-03 | Operator (River 85) — Roster-Korrektur: Frontier nur UI, nicht API
+„du sollst nicht nvidia glm nutzen … schau mal die läufe von future und mycelium" | 2026-10-03 | Operator (River 85) — UI-Trio; **Kimi K3 nur via `tryingopen.com`**; `future-folge169`
+„kannst du jetzt bitte nochmal eine korrekte befragung machen?" | 2026-10-03 | Operator (River 85) — korrekte UI-Befragung (z.ai/Claude/Kimi K3)
+„kannst du es irgendwo verankern wie du die tools genutzt hast …" | 2026-10-03 | Operator (River 85) — Stimmen-Route in `docs/concepts/tools-map.md` verankert
+„jast du das alles so übergeben dass die nächste session sofort weitermachen kann?" | 2026-10-03 | Operator (River 85) — Abschluss-Kontrolle
 
 ## Träger (Prosa, eigene)
 
