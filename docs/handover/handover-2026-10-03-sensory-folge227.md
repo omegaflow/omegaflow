@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: fa574ef2c19f139987913486b4a954a3def06a1584cb4ad066ab9e05f2d9d0ab
+  sha256: c3505d8835a83235d86563f91a383dfdd3f1bb5c375f387e2d9cd0ce6bf8bb7b
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -253,7 +253,7 @@ breiter messen.
 ### archive_search --ensembl — Wrapper-Frische (Fix)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Abschluss des `tools-build`-Laufs zu `46427ceea` (rolling release `tools-latest`).
-- **Lage:** (gemessen 2026-10-03 F227) der Modus ist auf die Ensembl-REST-API umgebaut (`tools/utils/src/bin/archive_search/ensembl.rs`, `46427ceea`); lokal gemessen via `cargo build -p omegaflow-utils --bin archive_search` + `./target/debug/archive_search --ensembl {p53,TP53,ENSG00000141510,zzzznotagene}` (Gen/LRG/Transkripte/absent). Die `bin/`-Wrapper lesen `tools-latest` — dort ist der Fix erst nach dem Release-Rebuild frisch.
+- **Lage:** (gemessen 2026-10-03 F227) der Modus ist auf die Ensembl-REST-API umgebaut (`tools/utils/src/bin/archive_search/ensembl.rs`, `46427ceea`); lokal gemessen via `cargo build -p omegaflow-utils --bin archive_search` + `./target/debug/archive_search --ensembl {p53,TP53,ENSG00000141510,zzzznotagene}` (Gen/LRG/Transkripte/absent). Die Wrapper in `bin/` lesen `tools-latest` — dort ist der Fix erst nach dem Release-Rebuild frisch.
 - **Blockade:** `tools-latest` noch auf dem Vor-`46427ceea`-Stand.
 - **Braucht:** `ci_manage list` auf den `tools-build`-Lauf zu `46427ceea`; danach `bin/.tools_ensure archive_search` und `archive_search --ensembl p53` erneut messen.
 
