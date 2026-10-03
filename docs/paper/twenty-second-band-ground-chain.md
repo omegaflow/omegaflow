@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-18
   version: 12
-  sha256: 370249da1c70812e2efb3552672ffc037ca768bfc9d9e525b31a460ae27a78ec
+  sha256: 480dfbc1088794cbde367c06dce99c2c6f32a98eab29064973e656b04265c58a
   status: live
   see-also: docs/paper/probe-front-dark-matter.md, docs/handover/archiv/handover-2026-09-09-mechanische-reste.md (Pioneer-Front), docs/reference/
 -->
@@ -259,7 +259,7 @@ ODDUMP `.asc.gz` (the NAVIO series, 1973–2002).
 Station-dependent periodic residuals are a documented artifact class in
 Pioneer Doppler. Levy et al. (2009, Adv. Space Res.) resolve periodic terms
 at the sidereal day and its harmonic and attribute them to station-condition-
-dependent media-model errors; Anderson et al. (2002) report the diurnal and
+dependent media-model deviations; Anderson et al. (2002) report the diurnal and
 seasonal variation; Bertotti & Giampieri (1998) treat solar-coronal plasma as
 dispersive Doppler noise. The ~20-s complex (44–56 mHz) with station-dependent
 dominant frequencies reported here does not appear in these treatments or the review
