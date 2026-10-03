@@ -1,0 +1,37 @@
+name: te-bias-n
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      replicates:
+        description: 'fixed-seed replicates per n'
+        default: '5'
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  te-bias-n:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the TE bias-vs-n probe
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT te-bias-n"
+            cargo run --release -p omegaflow-measure --bin te_bias_n_probe -- \
+              --replicates ${{ github.event.inputs.replicates }} \
+              --ns 800,1260,1600,2200,4000,10000
+          } > "te-bias-n.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: te-bias-n
+          path: te-bias-n.txt
