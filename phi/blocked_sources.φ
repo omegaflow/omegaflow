@@ -319,7 +319,7 @@ note MAP-Grid RST DataMap released 2026-09-29 (Globus-Auth Operator-Hand 2026-09
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777 + Label-Fetch): raw HK .xml tragen Table_Character; pds4_binary_compiler routet die File_Area-Klasse jetzt auf den pds4_fixed_width-Arm (pds4.rs, assemble/axis_of). Occ-Spektrum ungemessen; Sample/Asset offen.
+note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777): raw HK .xml = Table_Character, pds4_binary_compiler routet auf den pds4_fixed_width-Arm (pds4.rs). Occ-Spektrum ungemessen; Sample/Asset offen.
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
@@ -383,12 +383,12 @@ reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal
 note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → descoped (View, kein Download).
 
 blocked ip-blocked
-url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/
-note M3-ENVI-Cube (Chandrayaan-1 M3) — CI 36737530030 .HDR 403 (Datacenter-IP-Block, `ci_manage log`); lokal 206. 2026-10-02: ODE/SBN/USGS nur Navigation, Wayback 2016 Page-Snapshot, kein lebender Daten-Mirror; Manifestation braucht andere Feder.
+url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
+note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Route direct 206 (`_0004` 404); Asset `pds3_img_m3g20081118t222604_v03_loc.bin` steht (sha 5771de98…); CI-Runner `.HDR` 403 (Datacenter-IP, CI 36737530030), CDN 404, lokal roundtrip. future-folge168.
 
 pending
 url https://swarm-diss.eo.esa.int/
-note Swarm TEC discrimination (ESA) — 2026-10-02 HTTP 200 (43497 B); kein Daten-Endpoint/Arm gemessen (ionex-Arm trägt andere TEC). future-folge167.
+note Swarm TEC discrimination (ESA) — 2026-10-03: Backend `?do=download&file=…/TEC/TMS/Sat_A/*.ZIP` 200 zip (sha 8a94f1fd…); CDF-Compiler `swarm_tec_compiler.rs` verifiziert (26827 Records, bin 42550ef8…); Reader-Arm offen. future-folge167.
 
 pending
 url https://gportal.jaxa.jp/
@@ -409,22 +409,6 @@ note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-03: Konto registriert (clpds.bao.ac.
 pending
 url https://pds-geosciences.wustl.edu/missions/viking/gravity.html
 note Viking Mars gravity (WUSTL) — 2026-10-02 HTTP 206 (1 B); kein Daten-Endpoint/Arm gemessen. future-folge167.
-
-pending
-url https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
-note Viking 1/2 differenced range (JPL SSD planetary text) — Arm steht (viking_text; 15030 Samples roundtrip); Transport url/compiler → Mycelium. future-folge169.
-
-pending
-url https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt
-note Viking 1/2 range (JPL SSD planetary text) — Arm steht (viking_text, 1258 Range + 15030 Differenced roundtrip); Transport url/compiler → Mycelium. future-folge169.
-
-pending
-url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
-note Voyager 1 merged (SPDF hourly/daily |B|+Plasma) — Arm steht (voyager_merged, 20111 Samples roundtrip); Transport url/compiler/Tags → Mycelium. future-folge226.
-
-pending
-url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
-note Voyager 2 merged (SPDF hourly/daily |B|+Plasma) — Arm steht (voyager_merged, 58570 Samples roundtrip); Transport url/compiler/Tags → Mycelium. future-folge226.
 
 pending
 url https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/
@@ -458,13 +442,9 @@ descoped
 url https://pla.esac.esa.int/
 note Planck Legacy Archive WebUI (ESA) — 2026-10-02 HTTP 206 (1 B, direct), JS/app-getrieben, planckProducts.html 404, kein statischer Einzeldatei-Pfad; die getragenen Planck-Produkte ernten IRSA/IA2 (sources.φ:9418-9454, 8746). future-folge168.
 
-blocked ip-blocked
-url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
-note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Route `.../CH1M3_0003/` direct 206 (`_0004` 404); Quellen-Zeile `sources.φ:9884` steht (sha 5771de98…), CDN 404 — CI-Runner-403 blockt den Manifestor; lokaler Bau roundtrip. future-folge168.
-
 pending
 url https://data.kasi.re.kr/
-note KASI Science Data Portal — 2026-10-02 HTTP 200; Data-APIs nennt data.kasi.re.kr/api/{KMTNet,KVN,MIRIS}/search (JSON; MIRIS gemessen: metadata + DATAURL archive.kasi.re.kr/*.fits); Arm offen; pda.kasi.re.kr blocked account (448). future-folge168.
+note KASI Science Data Portal — 2026-10-02 HTTP 200; Data-APIs api/{KMTNet,KVN,MIRIS}/search (JSON; MIRIS: metadata + DATAURL archive.kasi.re.kr/*.fits); Arm offen; pda.kasi.re.kr-Konto descoped, Weg KARI/KPDS. future-folge168.
 
 descoped
 url https://star.nesdis.noaa.gov/GOESCal/G16_GSICS_ABI_IR_Coeff_static.php
