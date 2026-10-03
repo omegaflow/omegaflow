@@ -192,3 +192,48 @@ pending
 url https://github.com/TIAN-we/petrel19
 note PETREL19 — 2026-10-02 GitHub-API license:null; README + release_notes tragen nur Provenienz (Tian 2023, DOI 10.1007/s10569-023-10151-6), keine Lizenz; Coverage 1799-10-13..2106-05-05; Arm ephemeris_compiler.rs steht; Aufnahme nach Lizenz-Verdikt.
 
+blocked parser-def astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def astrometry-reader
+url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def astrometry-reader
+url http://occultations.ct.utfpr.edu.br/
+gap astrometry-reader
+note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
+
+blocked parser-def curation
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
+gap curation
+note ADQL HTTP 400 (Identifier/Spalte fehlt) — ill-formed Query; Gaia-Astrometrie als zweite Linie (Weberin); korrigierte ADQL + Reader-Arm offen.
+
+blocked parser-def curation
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
+gap curation
+note ADQL HTTP 400 (Identifier/Spalte fehlt) — ill-formed Query; Gaia-Astrometrie als zweite Linie (Weberin); korrigierte ADQL + Reader-Arm offen.
+
