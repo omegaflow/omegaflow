@@ -159,6 +159,43 @@ pub fn read_bin(data: &[u8]) -> Option<Vec<[f64; 8]>> {
     Some(out)
 }
 
+pub const COMP_J: u32 = 1;
+pub const COMP_E_J: u32 = 2;
+pub const COMP_H: u32 = 3;
+pub const COMP_E_H: u32 = 4;
+pub const COMP_K: u32 = 5;
+pub const COMP_E_K: u32 = 6;
+pub const COMP_MAX: u32 = 6;
+
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_J => Some("twomass_j_mag"),
+        COMP_E_J => Some("twomass_e_j_mag"),
+        COMP_H => Some("twomass_h_mag"),
+        COMP_E_H => Some("twomass_e_h_mag"),
+        COMP_K => Some("twomass_k_mag"),
+        COMP_E_K => Some("twomass_e_k_mag"),
+        _ => None,
+    }
+}
+
+pub fn component_value(record: &[f64; 8], comp: u32) -> Option<f64> {
+    let v = match comp {
+        COMP_J => record[2],
+        COMP_E_J => record[3],
+        COMP_H => record[4],
+        COMP_E_H => record[5],
+        COMP_K => record[6],
+        COMP_E_K => record[7],
+        _ => return None,
+    };
+    if v.is_finite() && v > 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
 pub fn file_list() -> Vec<String> {
     let mut names = Vec::with_capacity(PSC_FILE_COUNT);
     for p in ['a', 'b'] {

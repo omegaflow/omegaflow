@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 9755bbe15c8b558371c633c3eea63b1197cd34841fbc8f03429b789347082ac2
+  sha256: d6fc0d2aa2e7b182d287c1e07432cf292e10b50d6d519d1702d813726ad75480
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -215,6 +215,21 @@ reconstruction), never a number. Agreement remains silence.
   (the 2026-09-30 re-run carries 0.667 for cells 23–25, revised from 0.00).
 - JUICE in-situ field — after the flyby (the seal's comparison target).
 - Δ, σ_recon — post-flyby reconstruction not published.
+
+## 2026-10-03 fill re-run — the trajectory riss stands
+
+The CI re-run (`flyby-path2-fill`, run 37116911686, 2026-10-03, success) read
+the arc locally absent, fetched the CDN `ephemeris_juice.bin`, and measured
+`sha256 018ce2ca680b195ceda4e4013ceed1a4d0c80ddb1732629d456ffa197bd33e20`
+(538 696 B) against the seal `aeb3c82f…` (106 704 B, `:21`). The two arcs
+differ, so no tube was built from the unsealed arc — verdict **riss**, both
+witnesses named (`data/flyby2/tube-juice-2026-09-28.json`). The local
+`data/ssd.jpl.nasa.gov/ephemeris_juice.bin` still measures `aeb3c82f…`
+(106 704 B); the CDN asset is the renewed 538 696 B arc (re-measured
+2026-10-03 by `curl` + sha256). Per the seal's own rule the renewal is named
+before the flight; until it is named every tube cell stays unbuilt. The riss
+is registered in the folge86 handover with its next measurement (the origin of
+the CDN renewal).
 
 ## Next steps
 
