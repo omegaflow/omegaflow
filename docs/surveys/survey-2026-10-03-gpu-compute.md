@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 0e4995c95b8c73224f597c701b1204f4309a867279f8ea9d903e09b81abb0ba4
+  sha256: 5a2e822ce9ce7818206209602e93ca13a193d969e66c33b45fb03a2c28567628
   status: live
   see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
@@ -130,3 +130,35 @@ Aufruf: `opencode run --agent voice` (public-only, `archive_search_public`), **6
 - **Lehre:** eine **vierteilige** Frage überlastet die Stimmen — der tragfähige Modus ist **eine
   Frage je Lauf** (`docs/concepts/free-voices.md:43`). Die Stimme bleibt Zeuge (Claim), nie die
   Messung; kein Drittquellen-Fakt ging ungeprüft ins Blatt.
+
+## H. Der naheliegende Weg: der lokale GPU-Worker (Desktop GTX 970)
+
+Der Operator-Einwand ist gemessen richtig: schwere Läufe landen immer wieder ungeschützt auf der
+lokalen Maschine. Belegt:
+
+- **Seit 2026-09-09 offen, nie gebaut:** „Desktop-Fork (GTX 970) — der 30-Jahres-Lauf braucht die
+  GPU; ~80–90 min" steht in ~10 archivierten Übergaben (z. B.
+  `docs/handover/archiv/handover-2026-09-09-te-atom-4.md:42`).
+- **Messbarer Schaden:** am 2026-09-07 wurde ein `solar-seconds-matrix.service` auf der
+  Operator-Maschine gekillt, das Ergebnis ging verloren (`docs/handover/archiv/handover-2026-09-07-korona-konditional-session.md:66-70`).
+- **Hardware:** Desktop = **i7-2600K (4C/8T, ~2–2,5× XPS 13)**, **GTX 970** (Maxwell, Vulkan). Die
+  Karte hilft dem **topologischen `te_compute`**, nicht dem skalaren Pfad (`…:70`).
+- **Headless-tauglich:** die GPU-Anforderungen laufen `compatible_surface: None` (kein Fenster) —
+  ein stiller Worker kann den echten Adapter nutzen (`src/mathematikerin/scalar_te_gpu.rs:22-26`,
+  `src/mathematikerin/omega.rs:1256-1270`). Die CI nutzt nur lavapipe, also keine echte GPU.
+
+Zwei Formen:
+
+1. **Lokaler GPU-Worker (empfohlen zuerst):** eine systemd-Unit auf dem Desktop, headless und
+   still; Aufträge werden abgelegt (Datei/Ordner), der Worker läuft sie und schreibt Ergebnis +
+   Log zurück. **Kein GitHub-Kopplung, keine Sicherheitskante, sofort nutzbar** — und genau die
+   stille-Background-Semantik des Hauses.
+2. **Self-hosted GitHub-Actions-Runner** auf dem Desktop (`runs-on: [self-hosted, gpu]`):
+   CI dispatcht GPU-Jobs direkt dorthin; Actions-Gebühr **$0**. **Sicherheitskante:** für
+   **öffentliche** Repos warnt GitHub ausdrücklich (`docs.github.com/…/security/secure-use`,
+   2026-10-03) — nur eigene Events (`push`/`workflow_dispatch`), ephemer, oder über **Cirun**
+   („free for Open Source", ephemere On-Prem-Runner).
+
+Der Unterschied ist die Kopplung: Form 1 offloadet schwere GPU-Läufe von der XPS auf den Desktop,
+ohne das öffentliche Repo zu berühren. Form 2 lohnt nur, wenn die Läufe **CI-getrieben** sein
+sollen.
