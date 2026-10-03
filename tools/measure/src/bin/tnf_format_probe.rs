@@ -44,6 +44,42 @@ fn main() {
         for r in &rows {
             *row_hist.entry(r[odf::TNF_ROW_FORMAT] as i64).or_insert(0) += 1;
         }
+        if args.iter().any(|a| a == "--ranging") {
+            let mut ranging: BTreeMap<u8, usize> = BTreeMap::new();
+            let mut printed = 0usize;
+            for f in &frames {
+                let end = f.offset + f.total_len;
+                if end > bytes.len() {
+                    continue;
+                }
+                let slice = &bytes[f.offset..end];
+                let (first, last, cycle) = match f.format_code {
+                    odf::TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+                        let Some(d) = odf::tnf_dt2(f, slice) else {
+                            continue;
+                        };
+                        (d.first_comp_num, d.last_comp_num, d.rng_cycle_time)
+                    }
+                    odf::TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+                        let Some(d) = odf::tnf_dt3(f, slice) else {
+                            continue;
+                        };
+                        (d.first_comp_num, d.last_comp_num, d.rng_cycle_time)
+                    }
+                    _ => continue,
+                };
+                *ranging.entry(f.format_code).or_insert(0) += 1;
+                if printed < 5 {
+                    let res = odf::tnf_ranging_resolution(f, slice);
+                    eprintln!(
+                        "{url}: ranging fmt {} first {first} last {last} cycle {cycle:.6}s -> {res:?} m",
+                        f.format_code
+                    );
+                    printed += 1;
+                }
+            }
+            eprintln!("{url}: ranging frames {ranging:?}");
+        }
         eprintln!(
             "{url}: {} B, {} frames, frame codes {frame_hist:?}, {} rows, row codes {row_hist:?}",
             bytes.len(),
