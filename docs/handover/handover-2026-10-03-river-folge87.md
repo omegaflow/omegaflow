@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: 9b9e43af8d20f90c9a2529b586ca764fdad46e053c9ed2042cb4b122d6662e84
+  sha256: b2f30c1c6d71aec459637e64b991b3bcf416b994ef803f26d750bfae4e64534e
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -128,13 +128,15 @@ Wort | Datum | Quelle
 - **Blockade:** die Trajektorien-Wahl ist Operator-Wort (Seal-Klausel,
   `flyby-path-2-preregistration.md` §Addendum).
 - **Braucht:** Operator-Wort. Befragung (Operator-Wort „den rat und die verschiedenen
-  llms befragen", 2026-10-03): **Rat einstimmig → Seal-Arc `aeb3c82f…`** (der Tube steht
-  auf ihm; `eee376ef…` = zweite Δ-Zeugenlinie; `018ce2ca…` = Nach-Flug-Drift, benannt,
-  nie substituiert; Mycelium-Pflicht: Seal-Arc auf den CDN-Namen zurückführen oder
-  pinnen). **`zai/glm-4.5-flash` + `gemini-2.5-flash` → `eee376ef…`** (Vor-Flug-
-  Erneuerung, benannt). `mistral` 429; `chat.z.ai` GLM-5.3 Deep Think pending. Rohmaterial
-  `state/stimmen/2026-10-03_flyby-trajektorie-synthese.md`. **Riss getragen** — zwei
-  Positionen, Operator-Wort entscheidet.
+  llms befragen", 2026-10-03): **Rat → (b) Seal-Arc `aeb3c82f…`** (Tube steht auf ihm;
+  `eee376ef…` = zweite Δ-Zeugenlinie; `018ce2ca…` = Nach-Flug-Drift). **Alle fünf
+  externen LLMs → (c) `eee376ef…`**: `claude.ai` Sonnet 5.5 Maximal, `chat.z.ai`
+  GLM-5.3 Deep Think, `arena.ai` (Google), `gemini-2.5-flash`, `glm-4.5-flash`; der
+  gemeinsame Caveat: (c) trägt nur, wenn die `eee376ef…`-Bytes hash-verifizierbar sind
+  und die 09-27-Benennung unabhängig vor-dem-Flug zeitgestempelt ist, sonst (b).
+  `mistral` 429, `chat.deepseek.com` Login-Wall, `kimi.ai` Kontingent erschöpft (kein
+  Verdikt). Rohmaterial `state/stimmen/2026-10-03_flyby-trajektorie-synthese.md`.
+  **Riss getragen** — zwei begründete Positionen, Operator-Wort entscheidet.
 - **Riss (benannt, Rat 2026-10-03):** Tube-Perigäum 11:43:50 UTC / 15 034 km vs.
   revidierte Präregistrierung 11:45:12 ± 10 s / 15 018 km (~82 s) — zwei
   vorabregistrierte Quellen, nicht zu mitteln.
