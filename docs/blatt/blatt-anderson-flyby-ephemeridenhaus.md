@@ -2,7 +2,7 @@
   title: Rats-Blatt — Anderson-Flyby-Klasse (Sechs-Zeilen-Verdikt, Ephemeriden-Haus-Riss)
   class: sheet
   date: 2026-10-02
-  sha256: 8aa321e46c6f6b53909475e9b9674fe6b8ba464618dfbca7ff4f6b1d5dfdab1f
+  sha256: dcd08061f581d941814fb9dbc73430d3f14a5a896970133f3e38c553db18fda9
   status: live
   see-also: data/flyby2/anderson-probe-2026-09-28.json data/flyby2/house-gate-2026-09-28.json docs/paper/flyby-path-2-falsification-metric-addendum.md docs/paper/flyby-path-2-preregistration.md docs/handover/archiv/handover-2026-10-01-mountain-folge217.md
 -->
@@ -98,15 +98,20 @@ Verdrahtung — getragen, nicht geglättet.
 
 ## Offene Punkte
 
-1. **Spalten-Semantik des Probe-Artefakts** — welche Reihe, Epoche und Haus-Paare speisen
-   de_inpop/de_epm/inpop_epm und tdot_max; das Artefakt trägt es nicht mit. Schritt:
-   Quell-Lesung (`sread tools/measure/src/bin/flyby_anderson_probe.rs`), dann
-   epochen-aufgelöster Neu-Lauf.
-2. **tdot_max gegen Census-Skala am MESSENGER-Tag** — der Probe trägt 0,0325 mm/s, der
-   Census 13,4 mm/s Stunden-Wechsel. Wenn tdot_max eine DE–EPM-Größe ist, stimmen beide
-   Linien; wenn es das Maximum über alle drei Paare ist, nicht. Schritt: die Fenster- und
-   Serien-Definition der tdot_max-Messung benennen.
-3. **Addendum-Zeile veraltet** — `flyby-path-2-falsification-metric-addendum.md:125` trägt
-   „Galileo I `pending`"; das Artefakt trägt 1,2494 mm/s `rift-excluded`. Träger Mountain.
-4. **Ein-Tages-Referenz der ersten Zeile** — im Probe-Code benannt (`FIRST_ROW_REF_S`),
-   im Artefakt nicht mitgeführt. Schritt: die Konvention im Artefakt mitführen.
+1. **Epochen-aufgelöster Neu-Lauf des Probe** — die Spalten-Semantik ist benannt (s. u.);
+   die Absolut-Spalten am 00:00-UTC-Epoch konvergieren mit dem Perigäum-TDB-Haus-Gate
+   weiterhin nicht. Schritt: der Probe einen Epochen-/Fenster-Override geben (statt
+   `l.t_utc` das Perigäum-TDB) und die drei Paar-Deltas an dieser Epoche lesen.
+
+Spalten-Semantik (Quell-Lesung 2026-10-02,
+`tools/measure/src/bin/flyby_anderson_probe.rs`; seit 2026-10-02 im Artefakt mitgeführt):
+
+- `de_inpop_km` / `de_epm_km` / `inpop_epm_km` — Baryzentrums-Distanzen der drei Haus-Paare
+  an **einem** Zeitpunkt `t_tdb`; je Zeile `unix_to_tdb(l.t_utc)`, nicht das Perigäum.
+- `tdot_max_mm_s` — **Maximum** über die drei Paar-Slopes `|Δd|·1e6/Δt` über das
+  TDB-Intervall zur Vorzeile; Zeile 0 über `FIRST_ROW_REF_S` = 86400 s. Kein DE–EPM-Skalar.
+  Das Fenster der Zeilen 1–5 ist der Inter-Flyby-Abstand, das Census-Fenster ist eine
+  Stundenserie im selben Vorbeiflug — `0,0325` und `13,4` mm/s messen verschiedene Fenster
+  und stehen beide.
+- Die Addendum-Zeile `:125` trägt den Artefakt-Stand (Galileo I +3,92 mm/s / tdot_max
+  1,2494 `rift-excluded`); die Ein-Tages-Referenz ist im Artefakt (`first_row_ref_s`).
