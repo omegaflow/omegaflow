@@ -571,8 +571,9 @@ mod tests {
     #[test]
     #[ignore = "reads the operator's own [redacted] FIT named by OMEGAFLOW_FIT_SAMPLE; the file stays on this machine, never CI, never CDN"]
     fn fr945_fit_parses_local_only() {
-        let path = std::env::var("OMEGAFLOW_FIT_SAMPLE")
-            .expect("OMEGAFLOW_FIT_SAMPLE names the operator's own [redacted] .fit on this machine");
+        let path = std::env::var("OMEGAFLOW_FIT_SAMPLE").expect(
+            "OMEGAFLOW_FIT_SAMPLE names the operator's own [redacted] .fit on this machine",
+        );
         let bytes = std::fs::read(&path).expect("read the [redacted] FIT on this machine");
         let batch = parse_fit(&bytes).expect("the [redacted] FIT passes the header and CRC gates");
         assert!(
