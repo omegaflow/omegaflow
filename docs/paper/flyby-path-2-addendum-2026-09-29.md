@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: d6fc0d2aa2e7b182d287c1e07432cf292e10b50d6d519d1702d813726ad75480
+  sha256: 32196ff7a70d1a1624b84103914557d8fa357b8c55d8c4dc20e9f4bb734027b5
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -228,8 +228,15 @@ witnesses named (`data/flyby2/tube-juice-2026-09-28.json`). The local
 (106 704 B); the CDN asset is the renewed 538 696 B arc (re-measured
 2026-10-03 by `curl` + sha256). Per the seal's own rule the renewal is named
 before the flight; until it is named every tube cell stays unbuilt. The riss
-is registered in the folge86 handover with its next measurement (the origin of
-the CDN renewal).
+is registered in the folge86 handover. Its origin is now measured
+(Mycelium-227, 2026-10-03): the CDN asset was produced by the `kernel-flatten`
+run `37029375744` @`1e6d21f2f` (success, 2026-10-02, step `--systems
+planets,jupiter,saturn,mars,uranus,neptune,pluto,juice`; CDN `updated_at`
+2026-10-02T22:07:06Z). The 2026-09-27 renewal `eee376eff…` is thereby
+superseded; the current CDN arc is the third state `018ce2ca…`. The seal binds
+to the Blatt arc `aeb3c82f…`; the trajectory choice — name `018ce2ca…` as the
+trajectory or restore the sealed arc — is the operator's word (the seal clause,
+preregistration §Addendum).
 
 ## Next steps
 
