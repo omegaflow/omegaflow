@@ -187,6 +187,13 @@ fn register_json(lines: &[FlybyResidual], house: &[HouseLine]) -> String {
     s.push_str("{\n");
     s.push_str("  \"probe\": \"flyby_anderson_probe\",\n");
     s.push_str(&format!("  \"convention\": \"{ANDERSON_TOWARD_EARTH}\",\n"));
+    s.push_str(&format!("  \"first_row_ref_s\": {FIRST_ROW_REF_S},\n"));
+    s.push_str(
+        "  \"epoch_basis\": \"row t_utc -> TDB via NAIF LSK; pair deltas at that single instant\",\n",
+    );
+    s.push_str(
+        "  \"tdot_max_scope\": \"max over de_inpop/de_epm/inpop_epm pair slopes over the inter-row TDB delta; row 0 over first_row_ref_s\",\n",
+    );
     s.push_str("  \"residuals\": [\n");
     for (i, l) in lines.iter().enumerate() {
         let anomaly = flyby_anomaly_mm_s(l);
@@ -255,8 +262,15 @@ fn main() {
         let h = if i == 0 {
             match t_tdb {
                 Some(t) => {
-                    let reference =
-                        house_line(&de, &inpop, &epm, Some(t - FIRST_ROW_REF_S), None, None, None);
+                    let reference = house_line(
+                        &de,
+                        &inpop,
+                        &epm,
+                        Some(t - FIRST_ROW_REF_S),
+                        None,
+                        None,
+                        None,
+                    );
                     house_line(
                         &de,
                         &inpop,
