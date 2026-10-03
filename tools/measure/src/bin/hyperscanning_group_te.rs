@@ -36,7 +36,7 @@ fn usage() {
          family, FWER = 1 - percentile, the stricter line) and the per-cell distribution (each\n\
          ordered pair against its own surrogate series, naming the weaker transfer the family\n\
          maximum masks):\n\
-         \x20 hyperscanning_group_te --manifest <file> [--channel <label>]\n\
+         \x20 hyperscanning_group_te --manifest <file> [--channel <label>[,<label>...]]\n\
          \x20     [--surrogates <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
          \x20     [--null phase|coherent-phase] [--nominees-out <file>] [--nominees <file>]\n\
          \x20 --nominees-out <file> writes the per-cell survivors of the screen (the nominees:\n\
@@ -50,7 +50,9 @@ fn usage() {
          \x20 pair null for transfer beyond the linear cross-correlation.\n\
          manifest lines: <task> <triad> <slot> <path> (blank and # lines skipped).\n\
          each path reads as a text .set, a MAT-v5 EEG struct, or an EEGB .bin; one series per\n\
-         participant is taken (--channel, default Fz) — a named electrode, not the common average.\n\
+         participant is taken (--channel, default Fz; comma-separated labels pool every channel\n\
+         into ONE joint family maximum over channels x triads x ordered pairs, so the FWER is\n\
+         corrected across the whole channel set) — a named electrode, not the common average.\n\
          without --max-points each series is read in full (the physical truth); n and srate print.\n\
          an absent recording drops its triad from the family, never a fabricated 0 (0 honored)."
     );
@@ -87,6 +89,7 @@ struct Nominee {
     slot: usize,
     te: f64,
     threshold: f64,
+    channel: String,
 }
 
 fn parse_nominees(text: &str) -> Vec<Nominee> {
@@ -105,7 +108,9 @@ fn parse_nominees(text: &str) -> Vec<Nominee> {
             Some(slot),
             Some(te),
             Some(threshold),
+            Some(channel),
         ) = (
+            it.next(),
             it.next(),
             it.next(),
             it.next(),
@@ -132,17 +137,18 @@ fn parse_nominees(text: &str) -> Vec<Nominee> {
             slot,
             te,
             threshold,
+            channel: channel.to_string(),
         });
     }
     out
 }
 
 fn write_nominees(path: &str, nominees: &[Nominee]) -> bool {
-    let mut text = String::from("# task\ttriad\tdriver\ttarget\tslot\tte\tthreshold\n");
+    let mut text = String::from("# task\ttriad\tdriver\ttarget\tslot\tte\tthreshold\tchannel\n");
     for n in nominees {
         text.push_str(&format!(
-            "{}\t{}\t{}\t{}\t{}\t{:.17e}\t{:.17e}\n",
-            n.task, n.triad, n.driver, n.target, n.slot, n.te, n.threshold
+            "{}\t{}\t{}\t{}\t{}\t{:.17e}\t{:.17e}\t{}\n",
+            n.task, n.triad, n.driver, n.target, n.slot, n.te, n.threshold, n.channel
         ));
     }
     match std::fs::write(path, text) {
@@ -214,6 +220,7 @@ fn family_max(series: &[Vec<f32>], dim: usize) -> Option<f64> {
 
 struct Cell {
     triad: String,
+    channel: String,
     driver: String,
     target: String,
     tau_x: usize,
@@ -226,11 +233,16 @@ fn cell_slot(offset: usize, members: usize, i: usize, j: usize) -> usize {
     offset + i * (members - 1) + if j < i { j } else { j - 1 }
 }
 
-fn observed_cells(triads: &[(String, Vec<(String, Vec<f32>)>)], dim: usize) -> Vec<Cell> {
+fn observed_cells(
+    triads: &[(String, Vec<(String, Vec<f32>)>)],
+    channels: &[String],
+    dim: usize,
+) -> Vec<Cell> {
     let mut out = Vec::new();
     let mut offset = 0usize;
-    for (triad, series) in triads {
+    for (t, (triad, series)) in triads.iter().enumerate() {
         let members = series.len();
+        let channel = &channels[t];
         for i in 0..members {
             for j in 0..members {
                 if i == j {
@@ -239,6 +251,7 @@ fn observed_cells(triads: &[(String, Vec<(String, Vec<f32>)>)], dim: usize) -> V
                 if let Some(est) = topological_te_estimate(&series[j].1, &series[i].1, dim) {
                     out.push(Cell {
                         triad: triad.clone(),
+                        channel: channel.clone(),
                         driver: series[i].0.clone(),
                         target: series[j].0.clone(),
                         tau_x: est.tau_x,
@@ -443,7 +456,6 @@ fn print_verdict(verdict: &str, n: &Nominee, te: Option<f64>, threshold: Option<
 fn run_confirmation(
     entries: &[(String, String, String, String)],
     nominees: &[Nominee],
-    channel: &str,
     max_points: Option<usize>,
     n_surr: usize,
     pct: f64,
@@ -453,24 +465,31 @@ fn run_confirmation(
     let mut tasks: Vec<String> = nominees.iter().map(|n| n.task.clone()).collect();
     tasks.sort();
     tasks.dedup();
+    let mut channels: Vec<String> = nominees.iter().map(|n| n.channel.clone()).collect();
+    channels.sort();
+    channels.dedup();
     println!(
-        "hyperscanning group TE confirmation | channel [{channel}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {} | fresh seed",
+        "hyperscanning group TE confirmation | channels [{}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {} | fresh seed",
+        channels.join(", "),
         if coherent { "coherent-phase" } else { "phase" }
     );
     let mut confirmed_total = 0usize;
     let mut pending_total = 0usize;
     for task in &tasks {
-        let mut triad_ids: Vec<String> = entries
+        let task_nominees: Vec<&Nominee> = nominees.iter().filter(|n| &n.task == task).collect();
+        let mut triad_keys: Vec<(String, String)> = task_nominees
             .iter()
-            .filter(|e| &e.0 == task)
-            .map(|e| e.1.clone())
+            .map(|n| (n.channel.clone(), n.triad.clone()))
             .collect();
-        triad_ids.sort();
-        triad_ids.dedup();
+        triad_keys.sort();
+        triad_keys.dedup();
         let mut triads: Vec<(String, Vec<(String, Vec<f32>)>)> = Vec::new();
-        for triad in &triad_ids {
+        for (channel, triad) in &triad_keys {
             let mut members: Vec<(String, Vec<f32>)> = Vec::new();
-            for entry in entries.iter().filter(|e| &e.0 == task && &e.1 == triad) {
+            for entry in entries
+                .iter()
+                .filter(|e| &e.0 == task && format!("{}@{}", e.1, channel) == triad.as_str())
+            {
                 if let Some((series, _srate)) = load_series(&entry.3, channel, max_points) {
                     members.push((entry.2.clone(), series));
                 }
@@ -479,7 +498,6 @@ fn run_confirmation(
                 triads.push((triad.clone(), members));
             }
         }
-        let task_nominees: Vec<&Nominee> = nominees.iter().filter(|n| &n.task == task).collect();
         let mut plan: Vec<(usize, usize, usize, &Nominee)> = Vec::new();
         for n in &task_nominees {
             let Some(ti) = triads.iter().position(|(id, _)| id == &n.triad) else {
@@ -547,10 +565,19 @@ fn main() {
         eprintln!("hyperscanning_group_te: --manifest <file> required");
         exit(2);
     };
-    let channel = match arg_value(&args, "--channel") {
-        Some(c) => c,
-        None => "Fz".to_string(),
+    let channels: Vec<String> = match arg_value(&args, "--channel") {
+        Some(v) => v
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        None => vec!["Fz".to_string()],
     };
+    if channels.is_empty() {
+        eprintln!("hyperscanning_group_te: --channel carries no label");
+        exit(2);
+    }
+    let channel_list = channels.join(", ");
     let confirm_path = arg_value(&args, "--nominees");
     let nominees_out = arg_value(&args, "--nominees-out");
     let confirming = confirm_path.is_some();
@@ -624,9 +651,7 @@ fn main() {
             );
             return;
         }
-        run_confirmation(
-            &entries, &nominees, &channel, max_points, n_surr, pct, seed, coherent,
-        );
+        run_confirmation(&entries, &nominees, max_points, n_surr, pct, seed, coherent);
         return;
     }
 
@@ -637,12 +662,13 @@ fn main() {
     let mut nominees: Vec<Nominee> = Vec::new();
 
     println!(
-        "hyperscanning group TE screen | channel [{channel}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {}",
+        "hyperscanning group TE screen | channels [{channel_list}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {}",
         if coherent { "coherent-phase" } else { "phase" }
     );
 
     for task in &tasks {
         let mut triads: Vec<(String, Vec<(String, Vec<f32>)>)> = Vec::new();
+        let mut triad_channels: Vec<String> = Vec::new();
         let mut triad_ids: Vec<String> = entries
             .iter()
             .filter(|e| &e.0 == task)
@@ -650,30 +676,33 @@ fn main() {
             .collect();
         triad_ids.sort();
         triad_ids.dedup();
-        for triad in &triad_ids {
-            let mut members: Vec<(String, Vec<f32>)> = Vec::new();
-            for entry in entries.iter().filter(|e| &e.0 == task && &e.1 == triad) {
-                match load_series(&entry.3, &channel, max_points) {
-                    Some((series, srate)) => {
-                        println!(
-                            "  [{task}/{triad}/{slot}] n = {} srate = {}",
-                            series.len(),
-                            match srate {
-                                Some(s) => format!("{s}"),
-                                None => "absent".to_string(),
-                            },
+        for ch in &channels {
+            for triad in &triad_ids {
+                let mut members: Vec<(String, Vec<f32>)> = Vec::new();
+                for entry in entries.iter().filter(|e| &e.0 == task && &e.1 == triad) {
+                    match load_series(&entry.3, ch, max_points) {
+                        Some((series, srate)) => {
+                            println!(
+                                "  [{task}/{triad}@{ch}/{slot}] n = {} srate = {}",
+                                series.len(),
+                                match srate {
+                                    Some(s) => format!("{s}"),
+                                    None => "absent".to_string(),
+                                },
+                                slot = entry.2
+                            );
+                            members.push((entry.2.clone(), series));
+                        }
+                        None => println!(
+                            "  [{task}/{triad}@{ch}/{slot}] absent — no readable [{ch}] series (0 honored)",
                             slot = entry.2
-                        );
-                        members.push((entry.2.clone(), series));
+                        ),
                     }
-                    None => println!(
-                        "  [{task}/{triad}/{slot}] absent — no readable [{channel}] series (0 honored)",
-                        slot = entry.2
-                    ),
                 }
-            }
-            if members.len() >= 2 {
-                triads.push((triad.clone(), members));
+                if members.len() >= 2 {
+                    triads.push((format!("{triad}@{ch}"), members));
+                    triad_channels.push(ch.clone());
+                }
             }
         }
 
@@ -683,7 +712,7 @@ fn main() {
             continue;
         }
 
-        let cells = observed_cells(&triads, DIM);
+        let cells = observed_cells(&triads, &triad_channels, DIM);
         let family = surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent);
         let Some(threshold) = percentile(&family.maxima, pct) else {
             println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
@@ -702,6 +731,7 @@ fn main() {
                     slot: c.slot,
                     te: c.te,
                     threshold: t,
+                    channel: c.channel.clone(),
                 });
             }
         }
@@ -880,7 +910,7 @@ mod tests {
             "G01".to_string(),
             vec![("S01".to_string(), a), ("S02".to_string(), b)],
         )];
-        let cells = observed_cells(&triads, DIM);
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
         assert!(!cells.is_empty(), "the structured pair carries no cell");
         let maxima = surrogate_family_maxima(&triads, DIM, 50, SEED, false).maxima;
         let threshold = percentile(&maxima, 95.0).expect("the family maximum is measurable");
@@ -907,7 +937,7 @@ mod tests {
             let b = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
             let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
             let triads = vec![("G01".to_string(), members)];
-            let cells = observed_cells(&triads, DIM);
+            let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
             if cells.is_empty() {
                 continue;
             }
@@ -944,7 +974,7 @@ mod tests {
                 ("S02".to_string(), b.clone()),
             ],
         )];
-        let cells = observed_cells(&triads, DIM);
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
         assert!(cells.is_empty(), "a white pair carries no cell");
         assert!(
             family_max(&[a, b], DIM).is_none(),
@@ -966,7 +996,7 @@ mod tests {
         ];
         let triads = vec![("G01".to_string(), members)];
         let fm = family_max(&series, DIM).expect("the family carries a maximum");
-        let cells = observed_cells(&triads, DIM);
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
         let om = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
         assert_eq!(
             fm, om,
@@ -1030,7 +1060,7 @@ mod tests {
                 ("D".to_string(), d),
             ],
         )];
-        let cells = observed_cells(&triads, DIM);
+        let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
         let family = surrogate_family_maxima(&triads, DIM, 100, SEED, true);
         let family_threshold =
             percentile(&family.maxima, 95.0).expect("the family maximum is measurable");
@@ -1541,7 +1571,7 @@ mod tests {
             let b = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
             let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
             let triads = vec![("G01".to_string(), members)];
-            let cells = observed_cells(&triads, DIM);
+            let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
             if cells.is_empty() {
                 continue;
             }
@@ -1574,7 +1604,7 @@ mod tests {
             let b = rich_series(400, &mut rng);
             let members = vec![("S01".to_string(), a), ("S02".to_string(), b)];
             let triads = vec![("G01".to_string(), members)];
-            let cells = observed_cells(&triads, DIM);
+            let cells = observed_cells(&triads, &["Fz".to_string()], DIM);
             if cells.is_empty() {
                 continue;
             }
@@ -1597,17 +1627,120 @@ mod tests {
     }
 
     #[test]
+    fn joint_channel_family_gate() {
+        let mut rng = SEED ^ 0x70A1_7C0F;
+        let (a, b, c, d) = fn_gate_fixture(&mut rng);
+        let fz = vec![(
+            "G01@Fz".to_string(),
+            vec![("A".to_string(), a), ("B".to_string(), b)],
+        )];
+        let cz = vec![(
+            "G01@Cz".to_string(),
+            vec![("C".to_string(), c), ("D".to_string(), d)],
+        )];
+        let mut joint = fz.clone();
+        joint.extend(cz.clone());
+        let channels_joint = vec!["Fz".to_string(), "Cz".to_string()];
+        let cells_fz = observed_cells(&fz, &["Fz".to_string()], DIM);
+        let cells_cz = observed_cells(&cz, &["Cz".to_string()], DIM);
+        let cells_joint = observed_cells(&joint, &channels_joint, DIM);
+        assert!(
+            !cells_joint.is_empty(),
+            "the joint two-channel family carries cells"
+        );
+        assert!(
+            cells_joint.iter().any(|x| x.channel == "Fz")
+                && cells_joint.iter().any(|x| x.channel == "Cz"),
+            "the joint family tags each cell with its own channel"
+        );
+        let max_fz = cells_fz
+            .iter()
+            .map(|x| x.te)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let max_cz = cells_cz
+            .iter()
+            .map(|x| x.te)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let max_joint = cells_joint
+            .iter()
+            .map(|x| x.te)
+            .fold(f64::NEG_INFINITY, f64::max);
+        assert_eq!(
+            max_joint,
+            max_fz.max(max_cz),
+            "the joint family maximum pools both channels: joint {max_joint:.4e} vs Fz {max_fz:.4e} / Cz {max_cz:.4e}"
+        );
+
+        let mut rng = SEED ^ 0xC0FF_2211;
+        let trials = 20usize;
+        let mut fp = 0usize;
+        let mut meas = 0usize;
+        for t in 0..trials {
+            let phase_a = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_b = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_c = next_rng(&mut rng) * std::f64::consts::TAU;
+            let phase_d = next_rng(&mut rng) * std::f64::consts::TAU;
+            let s0 = ar1_sine(400, 0.6, 37.0, phase_a, 0.05, &mut rng);
+            let s1 = ar1_sine(400, 0.6, 43.0, phase_b, 0.05, &mut rng);
+            let s2 = ar1_sine(400, 0.6, 47.0, phase_c, 0.05, &mut rng);
+            let s3 = ar1_sine(400, 0.6, 53.0, phase_d, 0.05, &mut rng);
+            let joint = vec![
+                (
+                    "G01@Fz".to_string(),
+                    vec![("S01".to_string(), s0), ("S02".to_string(), s1)],
+                ),
+                (
+                    "G01@Cz".to_string(),
+                    vec![("S03".to_string(), s2), ("S04".to_string(), s3)],
+                ),
+            ];
+            let channels = vec!["Fz".to_string(), "Cz".to_string()];
+            let cells = observed_cells(&joint, &channels, DIM);
+            if cells.is_empty() {
+                continue;
+            }
+            let family = surrogate_family_maxima(&joint, DIM, 50, SEED ^ (t as u64), false);
+            meas += 1;
+            if !per_cell_survivors(&cells, &family, 95.0).is_empty() {
+                fp += 1;
+            }
+        }
+        println!("joint per-cell-FP gate: {fp} of {meas} measurable trials carried a survivor");
+        assert!(
+            meas >= 16,
+            "joint per-cell-FP gate: {} of {trials} measurable — the machine stays silent too often",
+            meas
+        );
+        assert!(
+            fp <= 8,
+            "joint per-cell-FP gate: {fp} of {meas} above their own null — the joint family exceeds chance"
+        );
+    }
+
+    #[test]
     fn nominees_round_trip() {
-        let text = "# task\ttriad\tdriver\ttarget\tslot\tte\tthreshold\npddecision\tG01\tA\tB\t0\t1.5e0\t2.5e-1\n";
+        let text = "# task\ttriad\tdriver\ttarget\tslot\tte\tthreshold\tchannel\npddecision\tG01@Cz\tA\tB\t0\t1.5e0\t2.5e-1\tCz\n";
         let n = parse_nominees(text);
         assert_eq!(n.len(), 1);
         assert_eq!(n[0].task, "pddecision");
-        assert_eq!(n[0].triad, "G01");
+        assert_eq!(n[0].triad, "G01@Cz");
         assert_eq!(n[0].driver, "A");
         assert_eq!(n[0].target, "B");
         assert_eq!(n[0].slot, 0);
         assert_eq!(n[0].te, 1.5);
         assert_eq!(n[0].threshold, 0.25);
+        assert_eq!(n[0].channel, "Cz");
+        let round_path =
+            std::env::temp_dir().join("omegaflow_hyperscanning_nominees_round_trip.tsv");
+        let round_path = round_path.to_str().expect("the temp path is UTF-8");
+        let round = write_nominees(round_path, &n);
+        assert!(round, "the nominee list is writable");
+        let back = parse_nominees(
+            &std::fs::read_to_string(round_path).expect("the written nominee list is readable"),
+        );
+        assert_eq!(back.len(), 1);
+        assert_eq!(back[0].triad, "G01@Cz");
+        assert_eq!(back[0].channel, "Cz");
     }
 
     fn deterministic_pair_fixture(n: usize, delay: usize, rng: &mut u64) -> (Vec<f32>, Vec<f32>) {
@@ -1684,6 +1817,7 @@ mod tests {
             slot: 0,
             te: 0.0,
             threshold: 0.0,
+            channel: "Fz".to_string(),
         };
         let plan = vec![(0usize, 0usize, 1usize, &nominee)];
         let dists = confirmation_cell_nulls(&triads, &plan, DIM, 200, CONFIRM_SEED, false);

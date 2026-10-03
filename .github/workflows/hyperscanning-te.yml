@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run the family FN/FP gates (the family-max null calibration)
-        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate coherent_null_fp_gate self_null_discriminator fn_gate_sweep nominees_round_trip --nocapture
+        run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate joint_channel_family_gate coherent_null_fp_gate self_null_discriminator fn_gate_sweep nominees_round_trip --nocapture
       - name: Fetch the ds007822 EEG recordings and build the manifest
         run: |
           set -euo pipefail
@@ -83,51 +83,39 @@ jobs:
           echo "downloaded $count .set file(s) + $nch channels.tsv sidecar(s)"
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
-      - name: Run the family-wise TE screen per channel and write the per-cell nominees (Takens tau, dim 3)
-        # NOTE: each channel is its own family (its own FWER line). A joint
-        # family maximum across channels (one corrected line over channels x
-        # triads x pairs) is a bin change still pending — treat the per-channel
-        # percentiles as exploratory until it lands.
+      - name: Run the joint family-wise TE screen across the channel family and write the per-cell nominees (Takens tau, dim 3)
+        # The joint family maximum pools every requested channel with every
+        # triad and ordered pair into ONE corrected line per task (channels x
+        # triads x pairs) — the FWER is the family maximum over the union.
         run: |
           set -o pipefail
           mp_arg=""
           if [ "${{ inputs.max_points }}" != "0" ] && [ -n "${{ inputs.max_points }}" ]; then mp_arg="--max-points ${{ inputs.max_points }}"; fi
-          : > report.txt
-          IFS=',' read -ra CHS <<< "${{ inputs.channel }}"
-          for ch in "${CHS[@]}"; do
-            ch="${ch// /}"
-            [ -z "$ch" ] && continue
-            echo "===== channel $ch =====" | tee -a report.txt
-            {
-              echo "SHA $(git rev-parse HEAD)"
-              cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
-                --manifest manifest.txt --channel "$ch" $mp_arg --surrogates "${{ inputs.surrogates }}" \
-                --percentile "${{ inputs.percentile }}" \
-                --null "${{ inputs.null_model }}" \
-                --nominees-out "nominees_${ch}.tsv"
-            } | tee "report_${ch}.txt" | tee -a report.txt
-          done
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt --channel "${{ inputs.channel }}" $mp_arg --surrogates "${{ inputs.surrogates }}" \
+              --percentile "${{ inputs.percentile }}" \
+              --null "${{ inputs.null_model }}" \
+              --nominees-out nominees.tsv
+          } | tee report.txt
       - name: Confirm the nominees against their own per-cell nulls (p99, 1000 surrogates, fresh seed)
         if: always()
         run: |
           set -o pipefail
           mp_arg=""
           if [ "${{ inputs.max_points }}" != "0" ] && [ -n "${{ inputs.max_points }}" ]; then mp_arg="--max-points ${{ inputs.max_points }}"; fi
-          : > confirmation.txt
-          IFS=',' read -ra CHS <<< "${{ inputs.channel }}"
-          for ch in "${CHS[@]}"; do
-            ch="${ch// /}"
-            [ -z "$ch" ] && continue
-            [ -f "nominees_${ch}.tsv" ] || continue
-            echo "===== channel $ch =====" | tee -a confirmation.txt
-            {
-              echo "SHA $(git rev-parse HEAD)"
-              cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
-                --manifest manifest.txt --channel "$ch" $mp_arg \
-                --nominees "nominees_${ch}.tsv" \
-                --null "${{ inputs.null_model }}"
-            } | tee "confirmation_${ch}.txt" | tee -a confirmation.txt
-          done
+          if [ ! -f nominees.tsv ]; then
+            echo "no nominee list — the per-cell silence is the finding (0 honored)" | tee confirmation.txt
+            exit 0
+          fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt $mp_arg \
+              --nominees nominees.tsv \
+              --null "${{ inputs.null_model }}"
+          } | tee confirmation.txt
       - name: n-scaling run (print-only, per n and channel)
         if: inputs.scales != ''
         run: |
@@ -158,10 +146,8 @@ jobs:
           name: hyperscanning-te-report
           path: |
             report.txt
-            report_*.txt
-            nominees_*.tsv
+            nominees*.tsv
             confirmation.txt
-            confirmation_*.txt
             scaling.txt
             scaling_*.txt
 
