@@ -3,7 +3,7 @@
   session: Sensory-Folge 226
   class: handover
   date: 2026-10-03
-  sha256: 17f840f0cc4f9f2a69d90f91e2249e9a173b0e2ba6dc387d8ad2702491758129
+  sha256: ad627b48e4dee07c110db91c54bb375b1826c4482d9b34bc3cdfa8778cf2f1b3
   status: live
 -->
 # Handover — Sensory-Folge 226 (2026-10-03)
@@ -223,7 +223,7 @@ breiter messen.
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakt `hyperscanning-te-report`.
-- **Lage:** (gemessen 2026-10-03 F226) Entwurf steht: `docs/paper/hyperscanning-te-preregistration.md`, sha256 `65b2946a…`; Zweck, Daten, Estimator, Schwellen, die Gate-Namen und die Entscheidungsregel sind mit `file:line` belegt, die FP/FN-/Skalierungszahlen sind darin `pending` benannt.
+- **Lage:** (gemessen 2026-10-03 F226) Entwurf steht: `docs/paper/hyperscanning-te-preregistration.md`, sha256 `b064ad67…`; Zweck, Daten, Estimator, Schwellen, die Gate-Namen und die Entscheidungsregel sind mit `file:line` belegt, die FP/FN-/Skalierungszahlen sind darin `pending` benannt.
 - **Blockade:** Validierungsartefakt.
 - **Braucht:** `ci_manage view/log <id>` des joint-Laufs; danach den Entwurf um die gemessenen FP/FN + n-Skalierung fortschreiben, Header-sha via `omega_sh sha` neu.
 
@@ -236,10 +236,10 @@ breiter messen.
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der Präregistrierungs-Punkt (oben) ist geschlossen — Beleg ist das dann stehende Papier-Artefakt unter `docs/paper/`.
-- **Lage:** (gemessen 2026-10-03) nur ds007822 (Triaden) in der Pipeline; zweite Hyperscanning-Kohorte nicht registriert.
-- **Blockade:** Trigger.
-- **Braucht:** zweite offene Multi-Brain-Kohorte suchen/registrieren (`archive_search`/OpenNeuro), vorregistrieren.
+- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Artefakt `hyperscanning-te-report` zu Lauf `37133961687`.
+- **Lage:** (gemessen 2026-10-03 F226) nur `ds007822` (Triaden) in der Pipeline; Kandidaten gemessen: `ds007471` (Dyaden, 32-Kanal-EEG, BrainVision `.vhdr`, 1000 Hz, CC0) als primäre zweite Kohorte, `ds008192` (fNIRS)/`ds004103` (fMRI) andere Modalität; Lesepfad gemessen — CI-Probe `openneuro-eeg-probe 37127134440` success (`ds007471` sub-01 via `brainvision_compiler`, `ds008192` sub-101 via `snirf_compiler`, `ci_manage view`); in `docs/paper/hyperscanning-te-preregistration.md` als zweite Kohorte vorregistriert.
+- **Blockade:** Manifest-Arm `ds007471` (`_eeg.vhdr`, Dyaden-Join) im Workflow fehlt.
+- **Braucht:** `.github/workflows/hyperscanning-te.yml` um einen `ds007471`-Manifest-Arm erweitern (Dyaden-Join, BrainVision), dann `gh workflow run`.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -379,7 +379,7 @@ Fortsetzung (dieses Atom): die **joint cross-channel family** gebaut
 die Bestätigung lädt je Nominee den eigenen Kanal; neuer Kalibrier-Gate-Test
 `joint_channel_family_gate`; `cargo check --tests -p omegaflow-measure` 0 Fehler /
 0 Warnungen. Die **Präregistrierung** steht:
-`docs/paper/hyperscanning-te-preregistration.md` (sha256 `65b2946a…`).
+`docs/paper/hyperscanning-te-preregistration.md` (sha256 `b064ad67…`).
 
 Eigene Pfade dieses Atoms:
 - `tools/measure/src/bin/hyperscanning_group_te.rs`,
