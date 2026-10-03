@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 0b1e126d57d4b23179c1c42b4173340cc230b715ea59d16d4a044cedce1a07c4
+  sha256: 7fc9f7bbf72e3da67f45bad518cdc5ceef26a0e82fb10e86524bc27b6373d447
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-02-mountain-folge226.md` (→ `archiv/`).
 
-## Burn: open 0.0002 · close 0.0540 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3 verdict, Pioneer-Floor Blatt)
+## Burn: open 0.0002 · close 0.1721 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3 verdict, Pioneer-Floor Blatt, RoPeR compiler, Ranging §2.2)
 
 ## Operator-Wort-Register
 
@@ -75,32 +75,20 @@ Wort | Datum | Quelle
 - **Braucht:** Perigäum-TDB je Zeile aus einer sauberen Anderson-Table-I eintragen, dann
   Neu-Lauf und Spalten-Vergleich mit dem Haus-Gate.
 
-### RoPeR `.2C` — PDS4 `Table_Binary` mit `Group_Field_Binary`, Group-Flattening offen
+### Ranging-Decode — §2.2 gebaut und verdrahtet, Live-Sample fehlt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03 via Zenodo-Label `…_00046_A.2CL`) `Table_Binary`,
-  `Record_Binary` `record_length` 16453 B × 52 records; `Group_Field_Binary Scientific_Data`
-  2048 Wiederholungen × (R,I) `IEEE754LSBSingle`; danach V/P/Attitude `SignedMSB2`. Der
-  `pds4_binary`-Arm (`src/archivar/pds4_binary.rs`) parst flache `Field_Binary`-Listen, keine
-  Gruppen; `pds4_binary_compiler.rs` nimmt `--label`/`--dat`. Registersatz `.2CL`+`.2C` voll
-  in Zenodo `15812343`/`15812357`.
-- **Blockade:** kein Group-Field-Parser im `pds4_binary`-Arm.
-- **Braucht:** `pds4_binary` um `Group_Field_Binary` erweitern (+ Test) oder einen dedizierten
-  `roper_pds4_compiler` bauen; dann `.2C`+`.2CL` gegen den Zenodo-Satz laufen.
-
-### Ranging-Decode — 810-005-214 öffnet die Range-Ambiguität
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03 via `pdftotext`) DSN 810-005 Modul 214 Rev B liegt in
-  `docs/reference/810-005-214B-ranging.txt` (+ `.pdf`). Der TNF-Arm `odf.rs` trägt die
-  Ranging-Formate (SEQ/PN-Phase, Codes 2–5). **§2.2-Kern gebaut (2026-10-03):**
-  `ranging_component_code`/`_length`/`ranging_composite_period`/`ranging_ambiguity_resolution_m`
-  (Tabelle 2; L = 1 009 470 nach Gl. 9; Auflösung `c·L/(4·f_RR)` nach Gl. 11, ≈75 660 km bei
-  1 MHz) + drei Tests — die Ambiguitätsauflösung ist die Gl. 11, nicht `c·f_R/2`.
-- **Blockade:** keine.
-- **Braucht:** die Auflösung an ein Ranging-Format-2–5-Sample verdrahten
-  (`first_comp_num`/`last_comp_num`/`chop_comp_num` aus `TnfDt2`/`TnfDt3` + `f_RR`) und den
-  Spalten-Vergleich ziehen.
+- **Lage:** (gemessen 2026-10-03) DSN 810-005 Modul 214 Rev B liegt in
+  `docs/reference/810-005-214B-ranging.txt` (+ `.pdf`). **Gebaut:** `ranging_component_code`/
+  `_length`/`ranging_composite_period`/`ranging_ambiguity_resolution_m` (Tabelle 2; L = 1 009 470
+  nach Gl. 9; Auflösung `c·L/(4·f_RR)` nach Gl. 11, ≈75 660 km bei 1 MHz), `ranging_resolution_from_cycle_time_m`
+  und **`tnf_ranging_resolution(frame, bytes)`** (verdrahtet `TnfDt2`/`TnfDt3` `first_comp_num`/
+  `last_comp_num`/`rng_cycle_time`, Codes 2/3) + vier Tests. Die Auflösung ist Gl. 11, nicht
+  `c·f_R/2` (Handover-Korrektur).
+- **Blockade:** kein Ranging-Format-2–5-Sample im Baum (die Tests decken die Mathematik).
+- **Braucht:** ein echtes SEQ/PN-Ranging-Sample (Format 2–5) ziehen und `tnf_ranging_resolution`
+  dagegen messen; die PN-Codes 4/5 tragen keine `first_comp_num` im DT4/DT5 — dort bleibt die
+  Auflösung bis zu einer Feldmessung offen.
 
 ### Pioneer-Floor-Lauf — Blatt steht, Workflow + Run offen
 - **Status:** eigen | **Bindung:** eigen
@@ -141,6 +129,13 @@ Origin: mountain folge227.
   `sources.φ`-Zeile (`format pds3_img`, `origin` = JPL-Route, `compiler`
   `tools/harvest/src/bin/pds3_img_compiler.rs`) setzen und manifestieren. CI-Runner-403
   bleibt (lokaler Bau, CI-IP) — Transport nennt das gemessene Hindernis.
+- **RoPeR (HX1, Zenodo 15812343/15812357):** Compiler
+  `tools/harvest/src/bin/roper_pds4_compiler.rs` steht (parst die `.2CL`-Gruppe 2048×(R,I) f32
+  → G2CB `gras_2c`; Sample 106 496 Bins, sha `d4b7397a…`, roundtrip, 2026-10-03). Bitte die
+  `sources.φ`-Zeile setzen (`format gras_2c`, `origin` = Zenodo-Record, `compiler` = der Bin,
+  `url` = Release `zenodo.org/<asset>.bin`) und `roper_pds4_compiler --ci-mode` je `.2C`-Paar
+  dispatchen. Der `comp`-Slot trägt den Range-Bin, der Wert die Amplitude `sqrt(R²+I²)`; die
+  Feld-/Force-Zuordnung je Bin ist der offene Zuordnungsteil.
 
 ## An future
 

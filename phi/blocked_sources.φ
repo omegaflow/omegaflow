@@ -15,7 +15,7 @@ note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabell
 note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin fehlt.
 note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin + Sample fehlen.
-note gap-Token gras-2c — GRAS-HX1-RoPeR-Rohdaten (.2C binär + .2CL Label); Reader-Arm steht (src/archivar/gras_2c.rs, strukturell, 2026-09-29); Format .2C ungemessen, Compiler-Bin + Sample fehlen.
+note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, Record 16453×52, Group_Field_Binary 2048×(R,I) f32 LE); Compiler roper_pds4_compiler.rs → G2CB, Sample 15812343 106496 Bins sha d4b7397a… roundtrip (2026-10-03).
 note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
@@ -423,7 +423,7 @@ note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): Assets pds4_fits_ce1_mrm.fits + pds4_fi
 
 pending
 url https://zenodo.org/api/records/15812343
-note Tianwen-1 RoPeR CH-2 (Zenodo cc-by-4.0) — 2026-10-03: .2CL Table_Binary, Record_Binary 16453×52 B, Group_Field_Binary 2048×(R,I) float + V/P/Attitude SignedMSB2; pds4_binary-Arm kennt keine Gruppen → Flattening nötig. future-folge226.
+note Tianwen-1 RoPeR CH-2 (Zenodo cc-by-4.0) — 2026-10-03: roper_pds4_compiler parst .2CL-Gruppe 2048×(R,I) f32 → G2CB; Sample 15812343 106496 Bins sha d4b7397a… roundtrip; Registrierung/Transport Mycelium. future-folge226.
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
