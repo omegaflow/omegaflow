@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: c702c13f9b5d01024cbfeb538b0f9597a02036fbeedb0fdd2c7fef2effe909ea
+  sha256: c3bd3af4fe8cde880bfa4999789567420a986342d57f50e946119792ce0e9788
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-02-mountain-folge226.md` (→ `archiv/`).
 
-## Burn: open 0.0002 · close 0.4201 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3, RoPeR, Ranging §2.2, Rätsel-Survey, Orphan-Träger, Pioneer-Floor-Lauf, Horizons-Perigäen, Blocked-Verdikte, Exzellenz-Gate-Papiere)
+## Burn: open 0.0002 · close 0.4654 · cap 0.5 Grund: operator-directed multi-atom overrun (ci-gate-Lints, M3, RoPeR, Ranging §2.2, Rätsel-Survey, Orphan-Träger, Pioneer-Floor, Horizons-Perigäen, Blocked-Verdikte, Register-Hygiene, Exzellenz-Gate-Papiere)
 
 ## Operator-Wort-Register
 
