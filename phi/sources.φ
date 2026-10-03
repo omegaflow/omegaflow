@@ -9881,6 +9881,15 @@ field ce2_mrm_t2 t2 gaussian-inverse-square thermal K 604800 0.0 0.0
 field ce2_mrm_t3 t3 gaussian-inverse-square thermal K 604800 0.0 0.0
 field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-imaging.jpl.nasa.gov/pds3_img_m3g20081118t222604_v03_loc.bin
+format pds3_img
+origin https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.HDR
+origin https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.IMG
+compiler tools/harvest/src/bin/pds3_img_compiler.rs
+sha256 5771de9891015b2ee50c436fbbfe7e87f6c5a15332d7d0505e3792505d1851c4
+at moon
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/galileo_odf.bin
 format galileo_odf
 origin https://pds-ppi.igpp.ucla.edu/annex/GO-J-RSS-1-ODF-V1.0/ODF/
@@ -10334,6 +10343,24 @@ field bx_nT bc_mpo_mag_bx inverse-square em nT 604800 0.0 0.0
 field by_nT bc_mpo_mag_by inverse-square em nT 604800 0.0 0.0
 field bz_nT bc_mpo_mag_bz inverse-square em nT 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/rave-survey.org/rave_dr5.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=III/279/rave_dr5
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+flux_from_mag gmag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+rv_scale 1000.0
+dist_scale 3.085677581e16
+field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
 format dawn_odf
 origin https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-ceres/data-odf/ + https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-vesta/data-odf/
@@ -10394,6 +10421,28 @@ at earth
 ttl 604800
 field observable_hz pioneer11_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager1_merged.bin
+format voyager1_merged
+origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
+compiler tools/harvest/src/bin/voyager_merged_compiler.rs
+at earth
+ttl 604800
+field voyager1_b_nt voyager1_b_nt inverse-square em nT 604800 0.0 0.0
+field voyager1_speed_km_s voyager1_speed_km_s patch-levy advective km/s 604800 0.0 0.0
+field voyager1_density_n_cc voyager1_density_n_cc gaussian-inverse-square diffusion cm-3 604800 0.0 0.0
+field voyager1_temp_k voyager1_temp_k exponential-decay thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager2_merged.bin
+format voyager2_merged
+origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
+compiler tools/harvest/src/bin/voyager_merged_compiler.rs
+at earth
+ttl 604800
+field voyager2_b_nt voyager2_b_nt inverse-square em nT 604800 0.0 0.0
+field voyager2_speed_km_s voyager2_speed_km_s patch-levy advective km/s 604800 0.0 0.0
+field voyager2_density_n_cc voyager2_density_n_cc gaussian-inverse-square diffusion cm-3 604800 0.0 0.0
+field voyager2_temp_k voyager2_temp_k exponential-decay thermal K 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_occlt.bin
 format voyager_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/ ; https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/titan_occultation_medium_band/
@@ -10443,6 +10492,15 @@ dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/viking_lander_tracking.bin
+format viking_text
+origin https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt ; https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
+compiler tools/harvest/src/bin/viking_text_compiler.rs
+at earth
+ttl 604800
+field viking_lander_range_km viking_lander_range_km inverse-square em km 604800 0.0 0.0
+field viking_lander_range_rate_km_s viking_lander_range_rate_km_s inverse-square em km/s 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts.bin
 format weberin_verdicts
 origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
@@ -10470,6 +10528,15 @@ dec dec
 z z
 field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst_spectra.bin
+format jwst_spectra
+origin https://mast.stsci.edu/api/v0.1/Download/file
+compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
+sha256 fb18192418cec56b5ff736f215e7c78572f2124e4f9460bada7e107f0bcc5535
+at sun
+ttl 604800
+field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
@@ -10610,24 +10677,6 @@ dist dist_mpc
 dist_scale 3.085677581e22
 field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/denis.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/denis/denis
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-flux_from_mag jmag
-ra ra
-dec dec
-dist dist_pc
-pmra pmra
-pmdec pmdec
-radvel rv
-rv_scale 1000.0
-dist_scale 3.085677581e16
-field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
-field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/exoplanets.json
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync table=pscomppars
 compiler tools/harvest/src/bin/tap_compiler.rs
@@ -10742,42 +10791,6 @@ dist_scale 3.085677581e16
 field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/mktypes.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/mk/mktypes
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-flux_from_mag mag
-ra ra
-dec dec
-dist dist_pc
-pmra pmra
-pmdec pmdec
-radvel rv
-rv_scale 1000.0
-dist_scale 3.085677581e16
-field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/pastel.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/pastel/pastel
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-flux_from_mag mag
-ra ra
-dec dec
-dist dist_pc
-pmra pmra
-pmdec pmdec
-radvel rv
-rv_scale 1000.0
-dist_scale 3.085677581e16
-field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
-field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/polarbase.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/polarbase/polarbase
 compiler tools/harvest/src/bin/tap_compiler.rs
@@ -10825,24 +10838,6 @@ cmap .
 ra ra
 dec dec
 z z
-
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/rave_dr5.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=III/279/rave_dr5
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-flux_from_mag gmag
-ra ra
-dec dec
-dist dist_pc
-pmra pmra
-pmdec pmdec
-radvel rv
-rv_scale 1000.0
-dist_scale 3.085677581e16
-field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/sb9.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/sb9/main
@@ -10925,25 +10920,6 @@ plx plx
 field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/wds.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/wds/wds
-compiler tools/harvest/src/bin/tap_compiler.rs
-ttl 604800
-at sun
-cmap .
-flux_from_mag mag1
-ra ra
-dec dec
-dist dist_pc
-pmra pmra
-pmdec pmdec
-radvel rv
-rv_scale 1000.0
-dist_scale 3.085677581e16
-field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
-field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
-field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/toar-data.fz-juelich.de/toar_surface_o3.bin
 format toar_surface_o3
 origin https://toar-data.fz-juelich.de/api/v2/
@@ -10965,6 +10941,24 @@ field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
 field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/denis.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/denis/denis
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+flux_from_mag jmag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+rv_scale 1000.0
+dist_scale 3.085677581e16
+field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/extinction_curves.json
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJ/663/320/stars&-out.all
 compiler tools/harvest/src/bin/extinction_curves_compiler.rs
@@ -10977,6 +10971,61 @@ field rv extinction_rv inverse-square em 1 604800 0.0 0.0
 field e_rv extinction_rv_unc inverse-square em 1 604800 0.0 0.0
 field ebv extinction_ebv_mag inverse-square em mag 604800 0.0 0.0
 field e_ebv extinction_ebv_unc_mag inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/mktypes.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/mk/mktypes
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+rv_scale 1000.0
+dist_scale 3.085677581e16
+field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/pastel.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/pastel/pastel
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+rv_scale 1000.0
+dist_scale 3.085677581e16
+field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/wds.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/wds/wds
+compiler tools/harvest/src/bin/tap_compiler.rs
+ttl 604800
+at sun
+cmap .
+flux_from_mag mag1
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+rv_scale 1000.0
+dist_scale 3.085677581e16
+field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vo.lmd.jussieu.fr/mars_dust_MY25_1FpSol.bin
 origin http://vo.lmd.jussieu.fr/tap/sync (mars_dust.epn_core, access_url http://vo.lmd.jussieu.fr:8080/mars_dust/griddedcdod/griddedcdod_MY25_1FpSol.fits)
@@ -11032,6 +11081,14 @@ rows .
 lat lat
 lon lon
 field 2 wwlln_thunder_hours_h patch-levy em h 604800.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210630005145_20210630005917_00046_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 d4b7397a17f65a46e107a36e57e0a92300cca74cfed1ed89739fe029b660d6fd
+at mars
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
@@ -16174,34 +16231,3 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/viking_lander_tracking.bin
-format viking_text
-origin https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt ; https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
-compiler tools/harvest/src/bin/viking_text_compiler.rs
-at earth
-ttl 604800
-field viking_lander_range_km viking_lander_range_km inverse-square em km 604800 0.0 0.0
-field viking_lander_range_rate_km_s viking_lander_range_rate_km_s inverse-square em km/s 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager1_merged.bin
-format voyager1_merged
-origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
-compiler tools/harvest/src/bin/voyager_merged_compiler.rs
-at earth
-ttl 604800
-field voyager1_b_nt voyager1_b_nt inverse-square em nT 604800 0.0 0.0
-field voyager1_speed_km_s voyager1_speed_km_s patch-levy advective km/s 604800 0.0 0.0
-field voyager1_density_n_cc voyager1_density_n_cc gaussian-inverse-square diffusion cm-3 604800 0.0 0.0
-field voyager1_temp_k voyager1_temp_k exponential-decay thermal K 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager2_merged.bin
-format voyager2_merged
-origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
-compiler tools/harvest/src/bin/voyager_merged_compiler.rs
-at earth
-ttl 604800
-field voyager2_b_nt voyager2_b_nt inverse-square em nT 604800 0.0 0.0
-field voyager2_speed_km_s voyager2_speed_km_s patch-levy advective km/s 604800 0.0 0.0
-field voyager2_density_n_cc voyager2_density_n_cc gaussian-inverse-square diffusion cm-3 604800 0.0 0.0
-field voyager2_temp_k voyager2_temp_k exponential-decay thermal K 604800 0.0 0.0
