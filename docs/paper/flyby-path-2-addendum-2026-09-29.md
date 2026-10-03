@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: adabfe749a5b88b460ab0f47ed72b3ff23a845c0e0c6223d5c1c925e445f0a1b
+  sha256: 15a506646003ef6454295b78888168788ee7d9f02b49e46607c8ff5387d36777
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -161,10 +161,11 @@ values when GFZ releases them. Re-measured 2026-09-30 (`kp.gfz.de`): the
   (`start=2026-09-28T14:58:50Z&stop=2026-09-29T00:58:50Z&parameters=F&format=csv`;
   HTTP 200, 1 416 623 B, sha256 `d5185547…`;
   `data/vires.services/swarm-magalr-20260928T145850-20260929T005850.csv`). A
-  re-run of `flyby_path2_fill` fills the register cells 16–24; cell 25 stays
-  `pending` there (its fetch stop is the start of cell 25), so cell 25 comes
-  from the direct window. Mean F per cell (0–15 from the mirror, 16–25 from the
-  HAPI window):
+   re-run of `flyby_path2_fill` filled the register cells 16–24; the fetch-stop
+   fix (`river 73`, `e7eae7862`) extended the stop past cell 25, and the 2026-10-03
+   re-run (frozen RTSW snapshots, live Swarm) filled cell 25 in the register as
+   well (39625 nT vs the direct window's 39627). Mean F per cell (0–15 from the
+   mirror, 16–25 from the HAPI window):
 
 cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25
 ---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
@@ -173,8 +174,8 @@ samples | 831 | 3561 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3600 | 3
 
 F spans 18.8–53.7 kT over the 26-cell window (the orbit mixes latitudes); the
 per-cell min/max live in the raw mirror. The register (bin) means for cells
-16–24 agree within 6 nT (measured). The bin's stop boundary at cell 25 is
-named, never smoothed.
+16–25 agree within 6 nT (measured). The earlier stop boundary at cell 25 is
+healed (register cell 25 filled 2026-10-03), never smoothed.
 
 ## OMNI2 (verification channel)
 
@@ -206,11 +207,6 @@ reconstruction), never a number. Agreement remains silence.
 
 ## Cells left pending — the complete list with reasons
 
-- swarm_f cell 25 in the tube register — the bin's HAPI fetch stop is the start
-  of cell 25, so the register leaves it `pending`; the supplement above carries
-  the direct-window value (39627 nT, n = 3600). Cells 0–24 now carry measured
-  means (HAPI stopDate 2026-09-30T10:16:18Z, measured 2026-09-30); the register's
-  0–15 stand beside the raw-mirror table above.
 - omni2_pressure / omni2_bz, all 26 cells — HAPI 1201 (no data, ~6 d lag;
   re-measured 2026-09-30).
 - ace channels, cells 3 (bt/speed/density), 14 (speed/density), 16 — 1-h file
@@ -223,10 +219,8 @@ reconstruction), never a number. Agreement remains silence.
 ## Next steps
 
 - The CI fill (`flyby-path2-fill.yml`, river's named step) dispatched after the
-  seal; the 2026-09-30 re-run filled the register's swarm cells 16–24.
-- Swarm cell 25: the bin's fetch stop is the start of cell 25; it fills once the
-  stop carries the extra hour (a bin fix, named) — the direct-window value above
-  stands meanwhile.
+  seal; the 2026-09-30 re-run filled the register's swarm cells 16–24, and the
+  2026-10-03 re-run (with the `river 73` fetch-stop fix) filled cell 25.
 - kp `def` fills on the final GFZ release; OMNI2 fills ~4–6 d after the perigee
   (HAPI 1201).
 - The recon gate scores Δ when ESA/ESOC publishes the SPK + covariance.

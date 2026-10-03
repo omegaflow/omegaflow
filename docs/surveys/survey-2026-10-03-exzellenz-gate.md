@@ -1,0 +1,92 @@
+<!--
+  title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
+  class: survey
+  date: 2026-10-03
+  sha256: 757a1102e30f6bbbc8cccb30478e6d5b456191bac929ef63069b145340a58994
+  status: live
+  see-also: docs/concepts/exzellenz-konzept.md
+-->
+# Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
+
+Anlass: `docs/concepts/exzellenz-konzept.md` §4 — der Maßstab wird auf die
+Papers angewendet, jede Verletzung benannt, nichts geglättet. Methode: zwei
+read-only Taucher (flash, 2026-10-03) über `docs/paper/*.md` + `docs/blatt/*.md`;
+`sha256` via `omega_sh sha`, siehe-auch/Codepfade via `glob`, Verdiktswörter via
+`sgrep`. Gemessen am Arbeitsbaum um HEAD `29993494b`.
+
+## Klassifikation
+
+- **Messpaper/-Sheet (Gegenstand des Maßstabs):** `big-bang-echo-sheet-12`,
+  `broken-null-control`, `corona-heating-ladder`, `cross-screening-tibet`,
+  `causal-arrow-preregistration`, `dark-flow-sheet-8`, `depth-phase-echo-fleet`,
+  `eclipse-clock-worldlines`, `flyby-path-1-cold-cases`, `flyby-path-2-*`,
+  `galileo-rotor-spin-era-floor`, `gic-causal-driver`, `ground-sources-20s-band`,
+  `h0-lines-register`, `jwst-disequilibrium-survey`, `laic-arrow-direction`,
+  `lead-geometry-direction`, `nadel-v-fresh-area-dip-scan`, `neptune-rift-ephemerides`,
+  `planet-nine-kbo-residue`, `probe-front-dark-matter`, `signal-cone-audit-sheet`,
+  `solar-cycle-dynamo`, `solar-seconds-matrix`, `sturzflut-tibet-pfeil`,
+  `text-as-data-pioneer`, `tonga-lamb-crosscheck`, `twenty-second-band-ground-chain`,
+  `uranus-rift-ephemerides` + die `docs/blatt/*.md` (sonne-erde, der-grat,
+  kreuz-screening-gyirong, solar-seconds, thuan, anderson-flyby, pioneer-floor,
+  te-externer, fruehwarnsystem).
+- **Externe Referenz-Abstracts (kein omegaflow-Messpaper):**
+  `armstrong-1998-phase-scintillation-abstract`, `armstrong-woo-estabrook-1979-…`,
+  `asmar-2005-…`, `woo-armstrong-1979-jgr-abstract`,
+  `yu-tong-fang-hu-2022-…`, `terminologie-der-gegenstroemung` (trägt `class: paper`,
+  ist aber Begriffskanon, kein Verdikt).
+- **Fremd-Volltexte außerhalb des Genres:** `pioneer-anomaly-lrr-2010-4.txt`,
+  `armstrong-woo-estabrook-1979-….txt`.
+
+## Wahrheits-Schwelle (§2) — bestätigt
+
+`omega_sh sha` stimmt bei allen geprüften Papers exakt mit dem Header-`sha256`;
+alle Titel ≤75 arxiv-Zeichen, alle gelesenen Abstracts <200 Wörter; die
+siehe-auch-Pfade lösen auf (außer unten); §2.2–2.6 tragen (stille Befunde sind
+als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §3.5).
+
+## Verstöße
+
+| Paper | Stufe | Verstoß (file:line) |
+|---|---|---|
+| `jwst-disequilibrium-survey` | 2.8 | `:7` `see-also:` leer — kein Survey-/Handover-Träger |
+| `jwst-disequilibrium-survey` | 2.9 | `:14`/`:39` „cannot reproduce/make it" |
+| `planet-nine-kbo-residue` | 2.8 | Header ohne `see-also` |
+| `planet-nine-kbo-residue` | 2.9 | `:54` `fallback`, `:105`/`:106` `must`, `:194` `expected` |
+| `planet-nine-kbo-residue` | 2.10 | `:113` nennt `tools/work/src/bin/te_ground_truth.rs` (real `tools/measure`) |
+| `lead-geometry-direction` | 2.10 | `:206` nennt `tools/work/src/bin/mitdb_sweep_probe.rs` (real `tools/measure`) |
+| `lead-geometry-direction` | 2.9 | `:16`/`:38`/`:135`/`:173` „cannot …" |
+| `solar-cycle-dynamo` | 2.10 | `:523–531` nennt `tools/work/src/bin/*` (real `tools/harvest`/`tools/measure`) |
+| `solar-cycle-dynamo` | 2.9 | `:53` `failed`, `:44` `should`, `:366` `expected`, `:388`/`:400`/`:459` `cannot` |
+| `flyby-path-2-falsification-metric-addendum` | 2.7/3.2 | `:18` nennt den Pre-Reg-Header-sha `502e06c3…`; der Baum trägt `0ed15f81…` |
+| `flyby-path-2-falsification-metric-addendum` | 2.9 | `:140` `failed`, `:66`/`:74` `cannot` |
+| `flyby-path-2-preregistration-revised` | 2.9 | `:102` „Expected physics:" |
+| `flyby-path-2-addendum-2026-09-29` | 2.9 | `:204` „cannot be applied" |
+| `gic-causal-driver` | 2.9 | `:179`/`:182`/`:183` `must …`, `:413` `failed`, `:116`/`:138`/`:244`/`:379`/`:465`/`:578`/`:691` `expected`, `:60` `cannot` |
+| `broken-null-control` | 2.9 | `:58` `must not`, `:92` `must pass`, `:191` `expected` |
+| `corona-heating-ladder` | 2.9 | `:365` `failed`, `:525` `must`, `:30`/`:287` `cannot` |
+| `causal-arrow-preregistration` | 2.9 | `:30` `cannot` |
+| `probe-front-dark-matter` | 2.9 | `:122`/`:300`/`:580` `cannot`, `:86`–`:700` `must`, `:63`–`:761` `error` |
+| `twenty-second-band-ground-chain` | 2.9 | `:262` `error` |
+| `uranus-rift-ephemerides` | 2.9 | `:36` `must`, `:13`/`:23` `error` |
+| `text-as-data-pioneer` | 2.9 | `:15`/`:43` `expected` |
+| `blatt-kreuz-screening-gyirong` | 2.8 | kein `see-also` |
+| `exzellenz-konzept` | 2.7 | `:20`/`:189` „15 Papers" gegen 38 `docs/paper/*.md` (im selben Atom geheilt) |
+
+## Verdikt
+
+Die **Wahrheits-Schwelle** tragen 9 Dokumente nicht (2.8/2.10/2.7-Risse oben;
+die `2.9`-Verdiktswörter sind der häufigste Verstoß, in 15 Papern). Die
+**Ehren-Schwelle** (§3.1–3.5) fällt mit, wo der 2.9-Verstoß und bei `jwst` der
+fehlende Zuordnungsträger zusammenkommen; alle übrigen Papers tragen beide
+Schwellen. Die `2.9`-Fälle sind Ownership-gebunden (je Papier-Träger), die
+`2.8`/`2.10`-Fälle mechanisch heilbar.
+
+## Nächster Schritt
+
+- `2.8`: `see-also` in `jwst-disequilibrium-survey`, `planet-nine-kbo-residue`,
+  `blatt-kreuz-screening-gyirong` setzen — Träger der drei benennen.
+- `2.10`: `tools/work/` → `tools/measure`/`tools/harvest` in `solar-cycle-dynamo`,
+  `lead-geometry-direction`, `planet-nine-kbo-residue`.
+- `2.7`: `flyby-path-2-falsification-metric-addendum:18` auf den gemessenen
+  Pre-Reg-sha heilen (im selben Atom geschehen).
+- `2.9`: die 15 Verdiktswort-Papers je Träger heilen.

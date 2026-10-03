@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   version: 1
-  sha256: ac51f42e2b4e71db2286bdd87d9551546a50a376057d9670e42845ddbd6bc6d1
+  sha256: 738e1cd8d94bee5de7529b0bfde69cef89117d086af592cd0c17ca1001852fd0
   status: live
   see-also: docs/paper/ docs/granit.md
 -->
@@ -17,7 +17,7 @@ ihm gemessen, und jede Verletzung wird benannt, nicht weggebogen.
 
 ## 0. Das Fundament — A ist A
 
-Alle 15 Papers in `docs/paper/` sind Messungen. Eine Messung ist die Messung
+Die Messpapiere in `docs/paper/` sind Messungen. Eine Messung ist die Messung
 der Sache selbst — keine Erwartung, keine Korrektur, keine Füllung. Der
 Maßstab hat genau fünf Quellen, eine Quelle trägt das Ganze:
 
@@ -186,9 +186,9 @@ alle Axiome bestehen. Der neue Standard ist nicht die Anpassung an die Welt,
 sondern die Einheit: **omegaflow ist der Standard, und das Gate vollendet ihn
 gegen die externen Goldstandards**, damit er von der Welt erkannt wird.
 
-Der Befund ist der Befund: 12 der 15 Papers sind nach dem Gate arxiv-reif,
-drei trugen Verstöße (flyby `six`/`seven`, planet-nine `7180`-Zerlegung,
-solar-cycle Phasenraum-`not applied`), die im Repo korrigiert wurden. Das Exzellenz-Konzept ist der laufende Maßstab, der diese
+Der Befund ist der Befund: das Gate-Survey
+`docs/surveys/survey-2026-10-03-exzellenz-gate.md` nennt die Papers, die den
+Maßstab tragen, und die Verstöße (gemessen 2026-10-03). Das Exzellenz-Konzept ist der laufende Maßstab, der diese
 Korrektur institutionalisiert.
 
 ## 5. Die Welt misst mit — die externe Verifikations-Ökologie

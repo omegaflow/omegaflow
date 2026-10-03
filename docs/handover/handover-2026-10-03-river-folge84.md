@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: 3f0cd5ea9e0fc8f83c080d5ade6019baa593b611be6aee3e3d50970afa85cdff
+  sha256: c1b32c1d1701b9bece59bc2c5f3b5d51d500b7009d60f297aee7367d53ff0bda
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -55,22 +55,26 @@ Wort | Datum | Quelle
   angestoßen 2026-10-03: `wy-max-t 37114779681`** (Trigger = Lauf-Ende). Danach α/X/Z/Bz
   benennen; das Siegel setzt der Operator (kein Siegel ohne Operator-Wort).
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` (`class: paper`) — Path-2-Fill-Run am
-  JUICE-Perigäum (2026-09-28, Fenster 22:41:53Z→23:01:08Z). Der CI-Fill
-  (`flyby-path2-fill.yml`) lief nach dem Seal; der 2026-09-30-Refill füllte die swarm-Zellen
-  16–24. Offen (trigger-/fristgebunden, kein Dispatch): tube-Register swarm cell 25 (Bin-Fix
-  des HAPI-fetch-stop), OMNI2 26 Zellen (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` (finale
-  GFZ-Freigabe), Δ/σ_recon (post-flyby SPK + Kovarianz). `flyby_ephemeris_gate --recon` sobald
-  ESA/ESOC publiziert.
+  JUICE-Perigäum (2026-09-28, Fenster 22:41:53Z→23:01:08Z). Der CI-Fill lief nach dem Seal;
+  der 2026-09-30-Refill füllte die swarm-Zellen 16–24, und die 2026-10-03-Regeneration
+  (Bin-Fix `river 73`, eingefrorene RTSW-Spiegel) füllte **cell 25** (39625 nT) — das
+  Addendum ist entsprechend geheilt. Offen (trigger-/fristgebunden): OMNI2 26 Zellen
+  (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` (finale GFZ-Freigabe), Δ/σ_recon
+  (post-flyby SPK + Kovarianz). `flyby_ephemeris_gate --recon` sobald ESA/ESOC publiziert.
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (`class: survey`) —
   Membran-Ladearchitektur (Presence-Hülle, Enclosure, Lichtkegel); der eine Satz: nicht der
   ganze Katalog, nur die Presence-Hülle darf laden. Offen: `--arxiv`/`--brave` pending
   (HTTP 406/402); `bounded_cells 0` entschieden (Aufruf-Artefakt, kein Riss). Nächster
   Schritt: bei Änderung des Membran-Pfads neu messen.
 - `docs/concepts/exzellenz-konzept.md` (`class: concept`, `version: 1`) — Prüfmaßstab vor
-  Veröffentlichung (10 Stufen + 5 Ehren-Stufen + externe Verifikation). Der sha-Riss ist
-  **geheilt** (2026-10-03): `:270` sagte „wird gesetzt, sobald der Body final ist", der Body
-  ist final und der Header-sha steht; die Schlusszeile jetzt präsentisch, Header-sha
-  `ac51f42e…`. Offen: den Maßstab auf die Papers anwenden.
+  Veröffentlichung (10 Stufen + 5 Ehren-Stufen + externe Verifikation). **Angewendet
+  2026-10-03**: das Gate-Survey `docs/surveys/survey-2026-10-03-exzellenz-gate.md` nennt die
+  Papers, die den Maßstab tragen, und die Verstöße; der sha-Riss (`:270`) und der
+  „15 Papers"-Alt-Zähler (`:20`/`:189`) sind geheilt (Header-sha `738e1cd8…`). Offen: die
+  2.8/2.10-Risse (see-also, `tools/work`-Codepfade) und die 2.9-Verdiktswörter je Träger.
+- `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (`class: survey`) — die Anwendung des
+  Exzellenz-Maßstabs auf die Papers (zwei read-only Taucher, HEAD `29993494b`); Träger der
+  Verstöße bis zur Heilung.
 - `docs/auftrag/auftrag-flyby2-kette.md` (`class: auftrag`) — die Path-2-Kette vor dem
   JUICE-Perigäum (Frist ≤ 24 h nach der ersten Perigäum-Zelle). Das Addendum (2026-09-29)
   trägt die gefüllte Kette; die σ-Metrik wurde durch das revidierte Blatt überholt und bleibt
@@ -109,6 +113,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `src/mathematikerin/machines/tests.rs`
 - `docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md`, `docs/blatt/blatt-te-externer-steuerparameter.md`
 - `docs/concepts/exzellenz-konzept.md`
+- `docs/surveys/survey-2026-10-03-exzellenz-gate.md`
+- `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/paper/flyby-path-2-falsification-metric-addendum.md`
 - `docs/handover/archiv/handover-2026-10-02-river-folge83.md` (Move aus `docs/handover/`)
 - `docs/handover/handover-2026-10-03-river-folge84.md`
 
