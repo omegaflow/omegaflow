@@ -314,6 +314,14 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let (names, rows) = pds4_fits::parse_named_series(bytes)?;
             (names, rows)
         }
+        "gras_2c" => {
+            let recs = gras_2c::parse_series(bytes)?;
+            let max_comp = recs.iter().map(|r| r.2).max()?;
+            let names: Vec<String> = (0..=max_comp)
+                .map(|k| format!("gras_2c_gate_{k:04}"))
+                .collect();
+            (names, recs)
+        }
         _ => return None,
     };
     let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
@@ -6622,6 +6630,26 @@ mod fixed_width_series_tests {
         let bin = gras_2c::write_bin(&[(1.5e9, 2.5, 0), (1.5e9 + 1.0, -3.5, 1)]);
         let series = series_parse_bin("gras_2c", &bin).expect("series parses");
         assert_eq!(series, vec![(1.5e9, 2.5, 0), (1.5e9 + 1.0, -3.5, 1)]);
+    }
+
+    #[test]
+    fn gras_2c_named_series_carries_gate_channels_without_a_band() {
+        let bin = gras_2c::write_bin(&[(1.5e9, 2.5, 0), (1.5e9 + 1.0, -3.5, 3)]);
+        let named = series_named("gras_2c", &bin).expect("named series parses");
+        assert_eq!(
+            named.names,
+            vec![
+                "gras_2c_gate_0000",
+                "gras_2c_gate_0001",
+                "gras_2c_gate_0002",
+                "gras_2c_gate_0003",
+            ]
+        );
+        assert_eq!(named.rows.len(), 2);
+        assert_eq!(named.rows[1].comp, 3);
+        assert_eq!(named.rows[0].value, 2.5);
+        assert_eq!(named.rows[0].freq, spectral::SPECTRAL_NO_BAND);
+        assert_eq!(named.rows[0].bin_width, spectral::SPECTRAL_NO_BAND);
     }
 
     #[test]
