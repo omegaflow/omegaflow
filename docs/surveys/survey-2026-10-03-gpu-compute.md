@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 9a769f9054b7ce35960b61cd7267199d8bf6aa4246e58f95b2e1436bcb935b9e
+  sha256: 0e4995c95b8c73224f597c701b1204f4309a867279f8ea9d903e09b81abb0ba4
   status: live
   see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
@@ -112,3 +112,21 @@ Codespaces (keine GPU), Binder/Deepnote. Paid-und-headless: RunPod, Vast.ai, Lam
 2. **Wenn automatisierte GPU-Messläufe gewünscht sind:** zuerst **Kaggle** (einziger echter Gratis-Batch, 30 h/Woche), dann **Modal** ($30/Monat gratis, headless) — beide ohne GitHub-Planwechsel.
 3. **GitHub-GPU nur**, wenn Team/GHEC ohnehin gewollt ist: dann T4-larger-runner zu $0.052/min.
 4. **Self-hosted GTX 970** ist $0, aber die public-Repo-Sicherheitskante und die ungemessene wgpu-Lauffähigkeit stehen dagegen; über **Cirun** (free for OSS) ließe sich die Karte kontrollierter poolen.
+
+## G. Stimmen-Lauf (freie LLM-Flotte, 2026-10-03)
+
+Aufruf: `opencode run --agent voice` (public-only, `archive_search_public`), **6 Modelle**, eine
+**4-teilige** Frage; Rohströme in `state/stimmen/2026-10-03_gpu-compute-*.md`.
+
+- **Ergebnis (gemessen am Lauf-Log):** nur `moonshotai/kimi-k3` endete `rc=0` — mit **leerem**
+  40-Byte-Body; die fünf übrigen (nemotron-ultra/super, gemini-3.7-flash, qwen3.8-27b,
+  nemotron-super openrouter) liefen in die 300-s-Kappe (`rc=124`) mit **rohen Suchströmen, ohne
+  fertige Antwort**.
+- **Kein neuer Primärquellen-Fakt.** Ihr Material **bestätigt** den Befund (GitHub-Pricing und
+  `…/security/secure-use`; Colab-FAQ „dynamic usage limits … vary over time") und liefert nur
+  Drittquellen: `gmicloud.ai/blog/…gpu-cloud-trials-2026` (Aggregator, HTTP 200), `reddit.com/r/kaggle/…`,
+  `davesnider.com/gputests` („a GPU runner … doesn't automatically give you GPU acceleration — the
+  hosted image comes with mesa and llvmpipe"), `dvc.org/blog/cml-self-hosted-runners-on-demand-with-gpus`.
+- **Lehre:** eine **vierteilige** Frage überlastet die Stimmen — der tragfähige Modus ist **eine
+  Frage je Lauf** (`docs/concepts/free-voices.md:43`). Die Stimme bleibt Zeuge (Claim), nie die
+  Messung; kein Drittquellen-Fakt ging ungeprüft ins Blatt.
