@@ -339,6 +339,29 @@ pub fn ranging_ambiguity_resolution_m(first: u8, last: u8, range_clock_hz: f64) 
     let v = 299_792_458.0 * l / (4.0 * range_clock_hz);
     v.is_finite().then_some(v)
 }
+
+pub fn ranging_resolution_from_cycle_time_m(first: u8, last: u8, cycle_time_s: f64) -> Option<f64> {
+    if !cycle_time_s.is_finite() || cycle_time_s <= 0.0 {
+        return None;
+    }
+    let l = ranging_composite_period(first, last)? as f64;
+    ranging_ambiguity_resolution_m(first, last, l / cycle_time_s)
+}
+
+pub fn tnf_ranging_resolution(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+    let (first, last, cycle) = match frame.format_code {
+        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt2(frame, bytes)?;
+            (d.first_comp_num, d.last_comp_num, d.rng_cycle_time)
+        }
+        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt3(frame, bytes)?;
+            (d.first_comp_num, d.last_comp_num, d.rng_cycle_time)
+        }
+        _ => return None,
+    };
+    ranging_resolution_from_cycle_time_m(first, last, cycle)
+}
 pub const TNF_FORMAT_DOPPLER_COUNT: u8 = 6;
 pub const TNF_FORMAT_SEQUENTIAL_RANGE: u8 = 7;
 pub const TNF_FORMAT_ANGLE: u8 = 8;
@@ -2106,6 +2129,16 @@ mod tests {
         assert!((r - 75_660_000.0).abs() < 100_000.0, "got {r}");
         assert_eq!(ranging_ambiguity_resolution_m(1, 6, 0.0), None);
         assert_eq!(ranging_ambiguity_resolution_m(1, 6, f64::NAN), None);
+    }
+
+    #[test]
+    fn ranging_resolution_from_cycle_time_matches_the_table() {
+        let cycle = 1_009_470.0 / 1.0e6;
+        let r = ranging_resolution_from_cycle_time_m(1, 6, cycle).expect("resolves");
+        assert!((r - 75_660_000.0).abs() < 100_000.0, "got {r}");
+        assert_eq!(ranging_resolution_from_cycle_time_m(1, 6, 0.0), None);
+        assert_eq!(ranging_resolution_from_cycle_time_m(0, 6, cycle), None);
+        assert_eq!(ranging_resolution_from_cycle_time_m(1, 7, cycle), None);
     }
 
     fn example_words() -> [u32; 9] {
