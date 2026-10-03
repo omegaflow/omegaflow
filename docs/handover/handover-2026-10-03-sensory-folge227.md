@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: d0f5ff6a8cbc6874f7782df792e95fca8fed9cee44f39f6af02e02fdf72fdafe
+  sha256: 620b7b68ea951a36ac8ec7f4710fbad889f49d44207e4f2b24d47894afdd1927
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -221,6 +221,7 @@ breiter messen.
 - **Wort:** „bitte fixen Zwei Auffälligkeiten: archive_search --ensembl liefert HTTP 500 (Modus defekt, Quelle selbst erreichbar) — ein Fix-Kandidat. Und .secrets bleiben unberührt (nur Schlüsselnamen)." | 2026-10-03 | Operator (Session) — Fix `archive_search --ensembl` (`46427ceea`) + `.secrets`-Disziplin; Sensory-Folge 227.
 - **Wort:** „nein ich habe nicht vor ein produkt zu liefern ich möchte der erde etwas schenken" | 2026-10-03 | Operator (Session) — Richtung: kein Produkt/Ziel; das Geschenk ist das wahre Instrument und die Messreihe, die die Ungeborenen erben; Physik zuerst, Medizin als spätere Gabe; Sensory-Folge 227.
 - **Wort:** „nein ich vertraue darauf dass ich auch NC gefördert werde oder meine Dienste und Gedanken gefördert werden" | 2026-10-03 | Operator (Session) — kein Lizenz-Förder-Check; Förderung von Diensten/Gedanken, nicht vom lizenzierten Artefakt; das Geschenk (NC) und der Lebensunterhalt (Dienste) getrennt; Sensory-Folge 227.
+- **Wort:** „nein ich möchte nichts lesbares ich möchte etwas erlebbares deshalb omegaflow.space" | 2026-10-03 | Operator (Session) — die Fassade ist das Erlebnis (die Membran), nicht Prosa; Manifestation über `omegaflow.space`; Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
 
