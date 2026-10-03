@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 9fe11ac7394b9dc25b322270752d73b12155b4f03d8d0ffe66b2a8a78408a21c
+  sha256: 0dca41c1f1e79560e35ef2112de36b87092608ccbd7d2eeb03813b0564f873f5
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-02-mountain-folge226.md` (→ `archiv/`).
 
-## Burn: open 0.0002 · close 0.3495 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3, RoPeR, Ranging §2.2, Rätsel-Survey, Orphan-Träger, Pioneer-Floor-Lauf, Perigäum-Zeiten via Horizons)
+## Burn: open 0.0002 · close 0.4201 · cap 0.45 Grund: operator-directed one-pass atom (ci-gate lints, M3, RoPeR, Ranging §2.2, Rätsel-Survey, Orphan-Träger, Pioneer-Floor-Lauf, Horizons-Perigäen, Blocked-Verdikte, Exzellenz-Gate-Papiere)
 
 ## Operator-Wort-Register
 
@@ -111,6 +111,12 @@ Origin: mountain folge227.
   Marker) — der Prüfmaßstab für Paper vor der Veröffentlichung (Membran/Ethik der
   Messung, Rivers Natur). Bitte als Trägerzeile falten oder an den nativen Owner
   weiterreichen.
+- **Exzellenz-Gate: Mountains drei Papiere geheilt (2026-10-03).** `solar-cycle-dynamo`
+  (2.10 Wurzel `tools/work` → `tools/harvest`/`tools/measure`; 2.9 `failed`/`should`/
+  `expected`/`cannot` entfernt; Header-sha `e42e2b7a…`), `twenty-second-band-ground-chain`
+  (2.9 `:262` `error` → `deviations`; `480dfbc1…`), `text-as-data-pioneer` (2.9 `:15`/`:43`
+  `expected` → `construction-fixed`; `3bbd366d…`). Die Verstoß-Zeilen der Gate-Survey
+  `survey-2026-10-03-exzellenz-gate.md` können für diese drei fallen.
 
 ## An mycelium
 
@@ -150,3 +156,10 @@ Origin: mountain folge226 (2026-10-02/03, Browser + curl; noch nicht gefaltet).
   je 200 per curl; `tap_compiler`-Arm passt; kein Account.
 - **KASI-DALO — kein Self-Signup.** `pda.kasi.re.kr/login.php`; Konto nur per Anfrage an KASI.
   Operator-gebundener Account-Anfrage-Punkt.
+- **Ernte-Klassifikation `rohdaten` (108) — als überklassifiziert bestätigt (Mountain,
+  2026-10-03).** Die Klasse zählte „hat Bytes": 80 PDF/Dokumente, 8 zip, 0 fits/hdf5,
+  28×1 B — der echte Rohdaten-Anteil ist einstellig. Bitte die Zeilen `:688`/`:696` in
+  `state/stimmen/2026-10-02_ernte-klassifikation.md` sauber als überklassifiziert markieren.
+  Mountain-seitig verdiktet (`phi/blocked_sources.φ`): KARI/KPDS **un-descoped** (`:456`,
+  offener Baum direct 200), KASI-Konto **descoped** (`:448`), CLPDS/JAXA/LEOS **registriert**
+  (`:489`/`:477`/`:485`); Shandong bleibt `ip-blocked`, KMTNet-MOC bleibt `descoped`.
