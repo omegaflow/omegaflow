@@ -810,6 +810,10 @@ decline commercial
 url https://api.purpleair.com/v1/sensors
 note paid plan (HTTP 402 mit PURPLEAIR_KEY, 403 ohne), kommerzielle Quelle — declined 2026-09-26 (Operator-Wort: commercial).
 
+decline redistribution
+url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+note kommerziell (paid plan, HTTP 402 mit Key / 403 ohne, 2026-09-26); Operator-Wort 2026-09-26.
+
 decline derived-radar-product
 url https://api.rainviewer.com/public/weather-maps.json
 note Radar-Komposit-Tile-Manifest (weather-maps.json, HTTP 200, 818 B): Liste vergangener/Nowcast-Radar-Tile-Pfade, keine Punkt-Messung; derived image product.
@@ -1021,6 +1025,10 @@ note ESO tap_obs — ObsCore/phase3v2-Spalten sind Beobachtungs-Discovery-Metada
 decline file-inventory
 url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
 note jsonsummary liefert ein Datei-Inventar (filename, file_size, file_md5) — kein ra/dec, kein Messwert in dieser Route (Port-Befund 2026-08-15).
+
+decline no-physical-force
+url https://archive.kasi.re.kr/kasi/moc/kmtnet_archive_moc.fits
+note KASI KMTNet Coverage-MOC (2026-09-29, sha256 f34ff61f…): FITS BINTABLE TFIELDS=1 TTYPE1='RANGE' MOCVERS=2.0 ORDERING=RANGE; bandlose RANGE-MOC, kein fp01-Band; moc-reader verworfen.
 
 decline infrastructure
 url https://archive.nrao.edu/
@@ -1558,6 +1566,11 @@ decline derived-product
 url https://ds.iris.edu/spud/momenttensor
 note IRIS-SPUD-Moment-Tensor (momenttensor.json): HTTP 500 am 2026-09-07; IRIS-fdsnws/event = Gone. Moment-Tensor gehört GCMT (globalcmt.org); Waveform via service.earthscope.org (fdsn_waveform.bin) registriert. Host lebt (Browser 2026-09-10).
 
+decline superseded-by-integrated
+url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
+reg https://urs.earthdata.nasa.gov/users/new
+note MODIS/Terra LST Daily CMG V061 (gemessen 2026-09-27): 1 Granule ≈ 17,2 M Records ≈ 688 MB, ~6,7 TB über 27 Jahre; Ein-Asset reißt 2-GiB-Cap + 16-GB-RAM. 8-day/monthly leben als per-Granule-Serie.
+
 decline catalog
 url https://earth-search.aws.element84.com/v0/search
 note STAC-Suchkatalog (Metadata-Suche).
@@ -1970,6 +1983,10 @@ decline no-physical-force
 url https://gcn.nasa.gov/api/v0.1/circulars?subject=IceCube&limit=100&format=json
 note GCN circulars (IceCube, API v0.1): text notices, no scalar measurement.
 
+decline significance-registry
+url https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created
+note GCN Fermi/GBM events: ra_deg/dec_deg cmap; sigma = Lokalisierungsfehler (deg laut GCN-Doku), Name trägt kein Einheiten-Token, Metadatum der Detektion.
+
 decline text-warning
 url https://gcn.nasa.gov/circulars/44806.json
 note GCN-Circular (Freitext-JSON, kein ra/dec) — Text-Warnung, kein Feldwert.
@@ -1977,6 +1994,58 @@ note GCN-Circular (Freitext-JSON, kein ra/dec) — Text-Warnung, kein Feldwert.
 decline alerts
 url https://gdacs.org/xml/rss.xml
 note Katastrophen-Warnungen (Alerts per Gate declined).
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
+note Gaia DR3 (Himmelspatch): field par — Astrometrie; cmap plx 2. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
+note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3 trägt Entfernung, radvel 4. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+2000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+11
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
+note Gaia DR3 (ferne): field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
+note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
+note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. DROP, kein 9-Kraft-Kanal.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.5+AND+phot_g_mean_mag+<+14+AND+parallax+>+2
+note Gaia DR3: field bp_rp — Farbindex; cmap plx 3. DROP, kein 9-Kraft-Kanal.
+
+decline no-physical-force
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
+note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. DROP, kein 9-Kraft-Kanal.
 
 decline infrastructure
 url https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
@@ -2250,6 +2319,10 @@ decline duplicate-eop
 url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
 note IERS-EOP (bulletinb.json/eopc04.json/eopc04.1962-now.json CDN-Captures, HTTP 200): UT1-UTC + Polbewegung — dieselbe Messung wie der registrierte maia.usno.navy.mil ser7/finals.all-Block (ut1_utc/pmx/pmy) — Duplikat.
 
+decline kein-feld
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+note IERS EOP C04: geosphere_earth_orientation_raw = Komposit (x/y_pole, UT1-UTC, LOD, dPsi/dEps in einer Zeile) — kein Skalarfeld; Komponenten einzeln auto-detektierbar.
+
 decline registry/katalog
 url https://hreda.esac.esa.int/hreda-sl-tap/tap
 note experiment/mission/team/affiliation/v_* — reine Archiv-/Organisations-Metadaten, kein Messwert.
@@ -2413,6 +2486,10 @@ note Kp/Ap-geomagnetischer-Aktivitäts-Index (1932–2026, dimensionslos, abgele
 decline no-physical-force
 url https://kp.gfz.de/
 note grind: grind_terrapulse_a.φ
+
+decline aggregate-index
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
+note GFZ SN index: solar_sunspot_number = Wolf-Zahl (Index; Hausposition ssn DROP); Index, keine Feldmessung mit Einheit.
 
 decline aggregated-index
 url https://kp.gfz.de/fileadmin/files_for_gfz_cms/Kp_ap_since_1932.txt
@@ -2777,6 +2854,10 @@ note Publikations-Metadaten.
 decline reference-constant
 url https://pdgapi.lbl.gov/
 note Particle Data Group Konstanten — Referenz, keine Feldmessung (Force-Gate 2026-09-23).
+
+decline derived-product
+url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
+note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED ring occultation τ(r)-Profile, binned+rekonstruiert (Marouf 1986); Roh-RSS nicht im Bundle (→ cassini_tnf).
 
 decline catalog-registry
 url https://pds.nasa.gov/api/search/1/products?limit=1
@@ -3810,6 +3891,18 @@ decline catalog-registry
 url https://simbad.u-strasbg.fr/
 note astronomisches Objekt-Register (Identifier+Positionen), Katalog ohne Messwert am Punkt (200).
 
+decline no-physical-force
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
+note SIMBAD basic (EB): field plx_mas — Astrometrie; cmap plx 2 trägt Entfernung, radvel 5/redshift 6. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
+note SIMBAD basic (Pulsar): field plx_mas — Astrometrie; cmap plx 2. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
+decline no-physical-force
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
+note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx.
+
 decline registry
 url https://sios-svalbard.org/
 note SIOS (Svalbard Arctic Observing): Drupal-Koordinations-/Metadaten-Portal, 200 gemessen 2026-09-23; Stations-Daten dezentral bei Mitgliedsstationen, Domain traegt Katalog statt Messwert.
@@ -3993,6 +4086,10 @@ note OpenLandMap STAC (HTTP 200) — Boden-Katalog, kein Messwert.
 decline no-physical-force
 url https://stackexchange.com/
 note Stack Exchange Q&A — kein Feld (Force-Gate 2026-09-23).
+
+decline imagery
+url https://star.nesdis.noaa.gov/GOESCal/G16_GSICS_ABI_IR_Coeff_static.php
+note GSICS-Kalibrierung 2026-10-02: CSVs (GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv) sind Plot-Manifeste (PNG-Pfade), keine Zahlen; Radianz-Quellen stehen — kein numerischer Arm.
 
 decline infrastructure
 url https://stat.ripe.net/data/announced-prefixes/data.json?resource=8.8.8.8
@@ -4418,13 +4515,25 @@ decline catalog
 url https://www.astrouw.edu.pl/~jskowron/OGLE/
 note Recheck b4 2026-08-18: 404 HTML — OGLE-Pfad absent. Katalog via VizieR (tap_index) vorhanden. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
+decline geographic-infrastructure
+url https://www.boem.gov/oil-gas-energy/mapping-and-data
+note BOEM Offshore Mapping & Data (US DOI) 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind. Kein Kraftfeld, kein Zeuge: ein Modell ist kein Welt-Zeugnis.
+
 decline aggregate-index
 url https://www.bom.gov.au/climate/mjo/
 note MJO-RMM-Index (rmm.74toRealtime.json CDN-Capture): Madden-Julian-Oszillations-Phasenindex, aggregiert und positionslos.
 
+decline geographic-infrastructure
+url https://www.bsee.gov/offshore-data-tools
+note BSEE Offshore Data & Tools (US DOI) 2026-10-02 HTTP 200; Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium, kein Zeuge (keine Messlinie).
+
 decline aggregate-index
 url https://www.cpc.ncep.noaa.gov/data/indices/
 note CPC-Telekonnektions-Indizes (oni.ascii.json/sstoi.json/soi.json/norm.nao-Captures, 6 Assets): SOI/ONI/SSTOI/NAO — aggregierte, skalare, positionslose Klima-Indizes.
+
+decline unit-arm
+url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
+note NOAA CPC AMO: Monats-Spalten jan..dec tragen kein Einheiten-Token (Anomalie °C) — namensbasiert nicht bestimmbar.
 
 decline aggregate-index
 url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
@@ -4457,6 +4566,10 @@ note Kristallstruktur-Daten.
 decline redistribution
 url https://www.ctbto.org
 note CTBTO/IMS hydroacoustic (H11/H01) — Zugang kontrolliert (VDEC/Registrierung), kein anonymer Zugang; IMS-Daten nicht frei redistribuierbar (staatliche Kontrolle) — CDN-Redistribution ausgeschlossen. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline geographic-infrastructure
+url https://www.data.bsee.gov/Pipeline/ROWDescriptions/Default.aspx
+note BSEE Pipeline Right-of-Way (US DOI) 2026-10-02 HTTP 200 (240837 B); ROW-Routen-Geometrie, kein Kraftfeld, kein Zeuge (administratives Inventar).
 
 decline literature
 url https://www.dimensions.ai/products/free
@@ -5037,6 +5150,10 @@ note Sonnenfleckenrelativzahl (täglich) — skalar, positionslos.
 decline aggregate-index
 url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
 note Sonnenfleckenrelativzahl (monatlich) — skalar, positionslos.
+
+decline aggregate-index
+url https://www.sidc.be/silso/datafiles/SN_d_tot_V2.0.txt
+note SILSO sunspot: sunspot_number = Wolf-Zahl (Index; Hausposition ssn/number_spots DROP), std_dev = Statistik; kein Feld mit physikalischer Einheit.
 
 decline infrastructure
 url https://www.skao.int/

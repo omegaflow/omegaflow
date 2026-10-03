@@ -246,7 +246,7 @@ Work surface: `phi/pipeline/`
 registers are the queue: `register_lookup --open` surfaces the state registers
 owner-tagged — `phi/blocked_sources.φ` (`blocked parser-def` → mountain,
 `blocked account`/`blocked key` → future → operator, `blocked ip-blocked`/`pending`
-→ mycelium, `descoped` → released), `phi/pipeline/ledger.φ` (`ausstehend`/`verifiziert`/
+→ mycelium), `phi/pipeline/ledger.φ` (`ausstehend`/`verifiziert`/
 `kompiliert` → mycelium, `parser-gap` → mountain, `void`/`disponiert` released),
 `phi/sources.φ` + `witnesses.φ` + `footprints.φ` + `nrs_stations.φ` + `harvest.φ`
 (offene Marker → mycelium, `asset fehlt` → mountain), the `probe_*` drafts, and the catalog

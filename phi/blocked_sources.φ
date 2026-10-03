@@ -1,4 +1,4 @@
-note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty), descoped (gemessen: nie gebaut); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
+note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
 note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (18 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png); register-eigen: iaga-text.
 note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
 note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
@@ -20,28 +20,6 @@ note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); k
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 note gap-Token hdf4 — HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert; MOD11C2/C3 registriert (sources.φ:15358/:15367), 0 lesbare Kanäle.
-
-descoped
-url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
-reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST Daily CMG V061 descoped (gemessen 2026-09-27): 1 Granule ≈ 17,2 M Records ≈ 688 MB; Jahr ≈ 250 GB, ~6,7 TB über 27 Jahre; Ein-Asset reißt 2-GiB-Cap + 16-GB-RAM. 8-day/monthly leben als per-Granule-Serie.
-
-descoped
-url https://api.lasair.lsst.ac.uk/api
-note LSST-Twin tot gemessen 2026-09-26 (direct kein Response / Proton 404); ZTF-Zwilling lasair-ztf.lsst.ac.uk/api/query/ + LASAIR_TOKEN 200 (echte Objekte). LSST descoped; ZTF-Kanal lebt. Braucht: ZTF-Quelle nach sources.φ.
-reg https://lasair.lsst.ac.uk/
-
-descoped
-url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
-note Voyager open-loop ODR (PDS-Rings, 2026-09-14 anonym 200, jetzt 504/Cloudflare). Bau31: unitless ADC-Zählwerte, Doppler/Opazitäts-Produkt NICHT im Bundle → descoped. PPI-Basisband als voyager_odr in sources.φ; Reihen-Leser-Arm offen.
-
-descoped
-url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/cruise/
-note Voyager 1/2 closed-loop Doppler descoped (gemessen 2026-09-26 via archive_search --verdict): SPDF/PDS cruise/ 404 (direct + Proton), Wayback ohne Snapshot; radio_science_rss nur Okkultation; NSSDC nur Encounter; ODR→ODF nicht konvertierbar.
-
-descoped
-url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
-note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — normal optical depth τ(r)-Profile, binned+rekonstruiert (Marouf 1986). 2026-09-19 tar.gz HTTP 200 (5.7G+v1 397M), offen. Raw RSS NICHT im Bundle → atmos.nmsu.edu (cassini_tnf).
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -68,168 +46,52 @@ pending
 url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
 note MESSENGER Erd-Encounter 2005 absent: Bundle data-odf/ 2007-2015, kein 2005 (survey-2026-09-14-weberin-quellen-rerun.md:210; sfetch --links 2026-09-30); messenger_odf.bin = Venus/Merkur. Quelle bleibt; nur Erd-Ketten-Rolle absent.
 
-descoped
-url https://pds-geosciences.wustl.edu/radiosciencedocs/
-note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
-
 pending
 url https://regards.cnes.fr/api/v1/rs-order
 origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml
 note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
 
-descoped
-url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
-note kommerziell (paid plan, HTTP 402 mit Key / 403 ohne, 2026-09-26) → declined_sources.φ (Operator-Wort 2026-09-26).
-
-descoped
-url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:923 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
-
-descoped
-url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:1001 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
-
-descoped
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-note HTTP 400 2026-09-25 HAPI 1400: {week_ago} unersetzt. descoped (gemessen: URL integriert → phi/sources.φ:5526 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Template-Fix).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3 trägt Entfernung, radvel 4. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+-0.1+AND+phot_g_mean_mag+<+12
-note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
-note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
+blocked parser-def curation
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
-note HTTP 400 2026-09-25 ADQL: Spalten ra/dec fehlen in gaiadr3.vari_classifier_result (nur source_id) — Query ill-formed. descoped (gemessen: kein Query-Arm-Surface — per-entry ADQL-Rewrite; Reader-Arm steht extract.rs votable_to_json).
+gap curation
+note HTTP 400 2026-09-25 ADQL: Spalten ra/dec fehlen in gaiadr3.vari_classifier_result (nur source_id) — Query ill-formed; kein Query-Arm-Surface, per-entry ADQL-Rewrite; Reader-Arm steht extract.rs votable_to_json.
 
-descoped
+blocked parser-def curation
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query ill-formed. descoped (gemessen: kein Query-Arm-Surface — per-entry ADQL-Rewrite; phot_g_mean_mag=em mag).
+gap curation
+note HTTP 400 2026-09-25 ADQL: Spalte cluster_ka existiert nicht in gaiadr3.gaia_source — Query ill-formed; kein Query-Arm-Surface, per-entry ADQL-Rewrite; phot_g_mean_mag=em mag.
 
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0.5+AND+phot_g_mean_mag+<+14+AND+parallax+>+2
-note Gaia DR3: field bp_rp — Farbindex; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+50
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+2000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+11
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+<+0.3+AND+parallax+>+0+AND+phot_g_mean_mag+<+14
-note Gaia DR3 (ferne): field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+parallax_over_error+>+3
-note Gaia DR3: field parallax_mas — Astrometrie; cmap plx 3. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
-note Gaia DR3 (Himmelspatch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
-note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
-note SIMBAD basic (EB): field plx_mas — Astrometrie; cmap plx 2 trägt Entfernung, radvel 5/redshift 6. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
-note SIMBAD basic (Pulsar): field plx_mas — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
-note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
-
-descoped
-url https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=100000&limit=100
-note OpenAQ latest: value trägt die Einheit je Zeile in der Spalte unit (parameter-abhängig: µg/m³, ppm, ppb) — namensbasiert nicht bestimmbar; location/parameter strukturell. descoped (gemessen: unit-auto-detect ohne Namens-Token unmöglich).
-
-descoped
-url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
-note INCOIS Tsunami OPR: wave_height_m löst auf (acoustic m); significance = Detektions-Statistik (einheitenlos), keine Feldmessung. descoped (gemessen: significance ohne physikalische Einheit).
-
-descoped
-url https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created
-note GCN Fermi/GBM events: ra_deg/dec_deg cmap; sigma = Lokalisierungsfehler (deg laut GCN-Doku) — der Name trägt kein Einheiten-Token, Metadatum der Detektion. descoped (gemessen: sigma nicht namensbestimmbar, keine Feldmessung).
-
-descoped
-url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
-note GCN AMON IceCube: signalness = Klassifikator-Score (0-1, Statistik); energy ohne Einheiten-Token im Namen (TeV laut AMON-Doku, nicht namensbestimmbar). descoped (gemessen: kein Feld mit namensbestimmbarer Einheit).
-
-descoped
-url https://gcn.nasa.gov/api/alerts/icecube?alert_type=gold&limit=100
-note GCN IceCube gold: ra/dec cmap; significance = Detektions-Statistik (einheitenlos). descoped (gemessen: significance ohne physikalische Einheit).
-
-descoped
-url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
-note GCN IceCube bronze: significance = Detektions-Statistik (einheitenlos). descoped (gemessen: significance ohne physikalische Einheit).
-
-descoped
-url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
-note NOAA CPC AMO: Monats-Spalten jan..dec tragen kein Einheiten-Token (Anomalie °C) — namensbasiert nicht bestimmbar. descoped (gemessen: Spaltennamen jan..dec ohne Einheit).
-
-descoped
-url https://www.sidc.be/silso/datafiles/SN_d_tot_V2.0.txt
-note SILSO sunspot: sunspot_number = Wolf-Zahl (Index; Hausposition: ssn/number_spots DROP), std_dev = Statistik. descoped (gemessen: kein Feld mit physikalischer Einheit).
-
-descoped
-url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
-note GFZ SN index: solar_sunspot_number = Wolf-Zahl (Index; Hausposition ssn DROP). descoped (gemessen: Index, keine Feldmessung mit Einheit).
-
-descoped
-url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
-note IERS EOP C04: geosphere_earth_orientation_raw = Komposit-Datensatz (x/y_pole, UT1-UTC, LOD, dPsi/dEps in einer Zeile) — kein Skalarfeld. descoped (gemessen: Komposit ohne Einheit eines Skalars; Komponenten einzeln auto-detektierbar).
-
-descoped
+blocked parser-def astrometry-reader
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
+gap astrometry-reader
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-descoped
+blocked parser-def astrometry-reader
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
+gap astrometry-reader
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-descoped
+blocked parser-def astrometry-reader
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
+gap astrometry-reader
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-descoped
+blocked parser-def astrometry-reader
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
+gap astrometry-reader
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-descoped
+blocked parser-def astrometry-reader
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
+gap astrometry-reader
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-descoped
+blocked parser-def astrometry-reader
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
-note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
+gap astrometry-reader
+note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert; Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-descoped
+blocked account
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
 note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement nötig, IHEP-Konto verlangt CSTNET-ID (nicht vorhanden). API 200 (18 Datensätze, 4 Rohklassen gated).
 
@@ -237,17 +99,9 @@ pending
 url https://www.gosat-gw.nies.go.jp
 note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml (fae4a5081). 36283215548 rot: Leerfenster als Overflow fehlklassifiziert; Empty/Overflow getrennt (2026-09-27); Re-Dispatch offen.
 
-descoped
+blocked account
 url https://data.lsst.cloud/api/tap/sync
 note Rubin/LSST descoped 2026-09-26: data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); Survey off-sky, jetzt kein Bedarf. Bei Survey-Daten wieder aufnehmen.
-
-descoped
-url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
-note EMC (nicht MT): CC BY 4.0, nc 200 HDF5 anonym; Roh-nc reference sources.φ:1298+; 8 volume.bin CDN sha256-verankert. volume_netcdf descoped (2026-09-27): statisch, kein Frische-Gewinn, LITHO1.0 ohne Rang-3-Var; Arm bleibt fuer aendernde 3D-Gitter.
-
-descoped
-url http://pithia.cbk.waw.pl/tap
-note epncore — 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f; Arm epncore-spatial steht (parse.rs:319).
 
 pending
 url https://zenodo.org/records/10594301
@@ -257,9 +111,10 @@ pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
 note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs (HCV1, 12 B Header + 20 B/Record) + das2_iowa_compiler.rs; series_component_name ohne hapi_csv-Arm → kein Feld; kein Workflow/Release. Braucht: component_name + Workflow.
 
-descoped
+blocked parser-def astrometry-reader
 url http://occultations.ct.utfpr.edu.br/
-note Occultation-DB UTFPR (SOSB/Lucky Star) descoped 2026-10-02: Δ geozentrisch, als SSB-Punkt û·Δ liegt jede Zeile um −R_E(t) verschoben (bis ~1 au; occ.php?p=156305 Δ 5.5126 au); kein Arm für geozentrische Epoche. Compiler bleibt Erbe.
+gap astrometry-reader
+note Occultation-DB UTFPR (SOSB/Lucky Star): Δ geozentrisch, als SSB-Punkt û·Δ liegt jede Zeile um −R_E(t) verschoben (bis ~1 au); kein Arm für geozentrische Epoche. Compiler bleibt Erbe.
 
 pending
 url https://moon.bao.ac.cn/
@@ -321,18 +176,6 @@ pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
-descoped
-url http://222.194.16.107/planet-data
-note Shandong PDS-Spiegel (SDU Weihai) — 2026-10-03: cn-only, direkt+Proton Timeout, Wayback nur Listing; kein CN-Exit. Redundant: CLPDS (NAOC/GRAS) trägt Chang'e-1/2-PDS3 kanonisch. future-folge226.
-
-descoped
-url https://pda.kasi.re.kr/
-note KASI-DALO (Danuri/KPLO) — 2026-10-03: das Konto (pda.kasi.re.kr/login.php) ist nicht nötig; dieselben Instrumente liegen anonym im KARI-KPDS-Baum (`kari.re.kr/kpds/published/KPLO/KPLO/PublicRelease/`). Konto-Block descoped. future-folge226.
-
-descoped
-url https://archive.kasi.re.kr/kasi/moc/kmtnet_archive_moc.fits
-note KASI KMTNet Coverage-MOC (2026-09-29, 1848960 B sha256 f34ff61f…): FITS BINTABLE TFIELDS=1 TTYPE1='RANGE' MOCVERS=2.0 ORDERING=RANGE; bandlose RANGE-MOC, kein fp01-Band (footprint.rs); moc-reader verworfen.
-
 pending
 url https://www.kari.re.kr/kpds/published/KPLO/KPLO/PublicRelease/
 note Danuri/KPLO KPDS (KARI) — 2026-10-03 un-descoped: `.../published/KPLO/KPLO/PublicRelease/` direct 200 (2146 B), anonymes Verzeichnis (POLCAM/LUTI/KMAG/KGRS + SPICE); das HTML-Portal war nur der Login-Weg. Offener Datenpfad.
@@ -341,7 +184,7 @@ pending
 url https://pds.shadowcam.im-ldi.com/derived/
 note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
 
-descoped
+blocked account
 url https://catalogue.dataspace.copernicus.eu/stac/collections
 reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
 note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → descoped (View, kein Download).
@@ -382,45 +225,13 @@ pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
 note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-02 HTTP 206 (1 B); kein CSV-Reader (juno_odf_compiler erntet jnogrv_* ODF). future-folge165.
 
-descoped
-url https://www.bsee.gov/offshore-data-tools
-note BSEE Offshore Data & Tools (US DOI) — 2026-10-02 HTTP 200; Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium, kein Zeuge (keine Messlinie). future-folge168.
-
-descoped
-url https://www.data.bsee.gov/Pipeline/ROWDescriptions/Default.aspx
-note BSEE Pipeline Right-of-Way (US DOI) — 2026-10-02 HTTP 200 (240837 B); ROW-Routen-Geometrie, kein Kraftfeld, kein Zeuge (administratives Inventar). future-folge168.
-
-descoped
-url https://www.boem.gov/oil-gas-energy/mapping-and-data
-note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind. Kein Kraftfeld, kein Zeuge: ein Modell ist kein Welt-Zeugnis (declined_sources.φ:1305). future-folge168.
-
 pending
 url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabilities,sync} je 200 per curl (kein Browser); Dateisystem /data/ 200; Arm tap_compiler passt. future-folge226.
 
-descoped
-url https://psaftp.esac.esa.int/
-note Planck/PSA-FTP-Gateway (ESA) — 2026-10-02 HTTP 200 (19704 B) = CrushFTP-WebInterface-Login (gemessen); die getragenen Planck-Produkte ernten irsa.ipac.caltech.edu (sources.φ:9418-9454) + archives.ia2.inaf.it (8746). future-folge168.
-
-descoped
-url https://pla.esac.esa.int/
-note Planck Legacy Archive WebUI (ESA) — 2026-10-02 HTTP 206 (1 B, direct), JS/app-getrieben, planckProducts.html 404, kein statischer Einzeldatei-Pfad; die getragenen Planck-Produkte ernten IRSA/IA2 (sources.φ:9418-9454, 8746). future-folge168.
-
 pending
 url https://data.kasi.re.kr/
 note KASI Science Data Portal — 2026-10-02 HTTP 200; Data-APIs api/{KMTNet,KVN,MIRIS}/search (JSON; MIRIS: metadata + DATAURL archive.kasi.re.kr/*.fits); Arm offen; pda.kasi.re.kr-Konto descoped, Weg KARI/KPDS. future-folge168.
-
-descoped
-url https://star.nesdis.noaa.gov/GOESCal/G16_GSICS_ABI_IR_Coeff_static.php
-note GSICS-Kalibrierung — 2026-10-02: die CSVs (GOESCal/G16-ABI/*_{Coeff,Bias}_static.csv, 200 text/csv) sind Plot-Manifeste (PNG-Pfade), keine Zahlen; Radianz-Quellen gk2a_ami/goes_abi/himawari_hsd stehen — kein numerischer Arm. future-folge166.
-
-descoped
-url https://shadowcam.sese.asu.edu/
-note ShadowCam-Host (ASU) — 2026-10-02 HTTP 200 (8742 B); Projekt-Portal; der Datensatz steht bei pds.shadowcam.im-ldi.com/derived/ (Zeile 461, pending), kein zweiter Fetch-Pfad. future-folge168.
-
-descoped
-url https://surveys.roe.ac.uk/ssa
-note WFAU/SSA live-Host (ROE) — 2026-10-02 HTTP 206 (1 B); Redirect-Hülle, ebenso www-wfau.roe.ac.uk/ssa (2026-10-02 pending, Wayback 2022); die Quelle steht bei tap.roe.ac.uk/ssa (sources.φ:11054), kein Host mit eigenem Arm. future-folge168.
 
 pending
 url https://github.com/TIAN-we/petrel19

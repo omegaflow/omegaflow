@@ -99,6 +99,10 @@ dead 404
 url http://maxi.riken.jp/alert/novae/json/novae_list.json
 note HTTP 404 — Endpoint weg.
 
+dead 5xx
+url http://pithia.cbk.waw.pl/tap
+note epncore 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f.
+
 dead 404
 url http://polly.tropos.de/api/stations?format=json
 note HTTP 404 — Endpoint weg.
@@ -138,6 +142,11 @@ note Fink: DNS löst auf (157.136.255.32), Connect fehlt (curl 000) — vom Arch
 dead 404
 url https://api.ifremer.fr/argoweb/float/list?days=30&format=json
 note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.lasair.lsst.ac.uk/api
+reg https://lasair.lsst.ac.uk/
+note LSST-Twin tot gemessen 2026-09-26 (direct kein Response / Proton 404); ZTF-Zwilling lasair-ztf.lsst.ac.uk/api/query/ + LASAIR_TOKEN 200. ZTF-Kanal lebt.
 
 dead dns-unresolved
 url https://api.mbari.org/m3/ctd?format=json&platform=MARS&limit=200&start=
@@ -700,6 +709,10 @@ url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&RE
 note HTTP 404 — Endpoint weg.
 
 dead 5xx
+url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
+note Voyager open-loop ODR (PDS-Rings): 2026-09-14 anonym 200, jetzt 504/Cloudflare; unitless ADC-Zählwerte, Doppler/Opazitäts-Produkt nicht im Bundle. PPI-Basisband als voyager_odr in sources.φ.
+
+dead 5xx
 url https://polarwatch.noaa.gov/erddap/griddap/noaacrwdhwDaily.csv?dhw
 note HTTP 500 — Server antwortet nicht brauchbar.
 
@@ -790,6 +803,10 @@ note HTTP 404 — Endpoint weg.
 dead unreachable
 url https://spaceweather.sansa.org.za/
 note SANSA-Ionosonde (em): 000 direkt + Proton + UA gemessen 2026-09-23; Geo-Verdacht ZA offen, Re-Check.
+
+dead 404
+url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/cruise/
+note Voyager 1/2 closed-loop Doppler (gemessen 2026-09-26): SPDF/PDS cruise/ 404 (direct + Proton), Wayback ohne Snapshot; radio_science_rss nur Okkultation; NSSDC nur Encounter.
 
 dead 404
 url https://stationview.raspberryshake.org/api/stations
@@ -962,7 +979,6 @@ note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: H
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
 note ALeRCE: ztf.alerce.online DNS dead, ztf.alerce.cl Connect blockiert. Recheck 2026-09-11 (anonym): api.alerce.online/alerts/v1/objects HTTP 200 — Compiler-Pfad sources.φ:848 live. ztf.alerce.online bleibt DNS-tot.
-
 
 dead unreachable
 url http://sprite.atmos.nthu.edu.tw/
