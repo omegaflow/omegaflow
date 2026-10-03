@@ -1,0 +1,49 @@
+name: kplo-spice-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  kplo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view www.kari.re.kr --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ephemeris_kplo.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ephemeris_kplo.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ephemeris_kplo.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the www.kari.re.kr release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view www.kari.re.kr --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www.kari.re.kr --repo omegaflow/sources \
+              --title "www.kari.re.kr" \
+              --notes "flattened KARI KPDS ephemeris bins compiled for omegaflow (CDN tag = <netloc>)"
+          fi
+      - name: Compile the KPLO/Danuri SPICE ephemeris and upload to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin kplo_spice_compiler -- \
+            --out ephemeris_kplo.bin \
+            --ci-mode
