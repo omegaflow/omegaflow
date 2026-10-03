@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 0553c28cc13577fbb499a399d1a0b6f9f8e7ef54b94ae18d788983ee19026d04
+  sha256: 634b8dbd8bd6ae957dc7acd3bf4deb4ac6c4035b33cbe2929849e68ccd6b83b4
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -170,11 +170,17 @@ Wort | Datum | Quelle
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `field-te-query 37120826017`.
 - **Lage:** (gemessen 2026-10-03) die 6 Pendings wurden dem Rat, einem adversarischen Taucher
-  und den UI-Frontier-Stimmen vorgelegt. Geantwortet: **z.ai GLM-5.3** und **Claude**
-  (Rohmaterial `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
-  `state/stimmen/2026-10-03_claude-ui_te-engine-review.md`); **Kimi** Kontingent aufgebraucht,
-  **Together** keine Antwort, der `voice`-Agentenlauf (`opencode run -m nvidia/z-ai/glm-5.3
-  --agent voice`) hing 15 min ohne Output. Die Reviews nennen konkrete Defekte:
+  und den UI-Frontier-Stimmen vorgelegt. **Roster (Operator-Wort `future-folge169`, gefaltet
+  `mycelium-folge225:20-22`): scharfe Recherche nur über die UI — `chat.z.ai` (GLM-5.3 Geo/Deep
+  Search) · `claude.ai` · `kimi.ai`; Kimi K3 **nur über `tryingopen.com`** (4000-Zeichen-Limit);
+  `arena.ai/search/direct?model_a=claude-sonnet-5-search`. Die API-Flotte (`voice`-Agent,
+  `text_review`) ist Masse/Reproduzierbarkeit, **nicht** der scharfe Kanal; `nvidia/z-ai/glm-5.3`
+  via `opencode run --agent voice` hing 15 min ohne Output — nur ein paar nvidia-LLMs sind nutzbar.**
+  Geantwortet: **z.ai GLM-5.3** und **Claude** (Rohmaterial
+  `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
+  `state/stimmen/2026-10-03_claude-ui_te-engine-review.md`); **Kimi K3 via tryingopen.com**
+  antwortet (beim Pass noch `replying` — Ergebnis beim nächsten Pass lesen); `kimi.ai`
+  Kontingent aufgebraucht; **Together** keine Antwort. Die Reviews nennen konkrete Defekte:
   - **Rissä: `pair_lag_index_hash` faltet lag 0 und lag 1 auf denselben Hash**
     (`src/mathematikerin/wy_max_t.rs:262`, `shift = 1` für beide) → die „K=6 distinkten" sind
     real 6 Paare bei **nur lag 0**; lag-0-TE ist richtungs-symmetrisch. Name ≠ Implementation;
