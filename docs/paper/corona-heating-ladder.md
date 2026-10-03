@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-06
   version: 11
-  sha256: 7a0051ca5e402fd4f78282e9bd270583a5bf3e8fa7a3af77e4bd1a9dc11581be
+  sha256: cbf24039218de72ca028b5d1d82291a288648cef1903efd781addf3fd6ae5afa
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07; full 5-confounder conditioning (all bands, binned vs ksg) 2026-09-16
   status: live
   see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
@@ -27,7 +27,7 @@ energy then flows *upward* with a *wave-crossing time lag*, roughly 10–30 s
 across the thin transition region and ~100 s across the thick corona.
 Nanoflares are local, stochastic reconnection events in the corona itself;
 they carry *no consistent inter-layer lag* — every layer heats together or
-not at all. Correlation cannot separate these: all spectral lines co-vary
+not at all. Correlation separates none of these: all spectral lines co-vary
 through their common origin in the flare and the solar cycle. Transfer
 entropy (Schreiber, 2000) is the natural instrument: a directional,
 model-free measure of information flow, here applied *across the temperature
@@ -283,8 +283,8 @@ every h).
 | 3.0 | 2.17e-1 | 3.24e-1 | 0.67 | no |
 
 The arrow holds only through h ≈ 1.75 and falls below fam at h ≥ 2.0. The
-failure is robust to the surrogate count: fam is the maximum of the round's
-surrogate D, so a larger surrogate sample (stricter band) cannot lower it —
+absence is robust to the surrogate count: fam is the maximum of the round's
+surrogate D, so a larger surrogate sample (stricter band) does not lower it —
 an arrow that misses the loose n=10 band misses any sharper band a fortiori.
 No other EVE rung clears fam at any h in 0.5–3.0. Under a combined
 family-bound + bandwidth criterion, the EVE-2011 ladder carries no robust
@@ -362,7 +362,7 @@ artifact, now measured, not assumed.
 What survives conditioning is the transition-region entry 304→131 Å, upward at
 every lag and growing with lag. It is bandwidth-stable — positive from h 0.5
 (+6.61e-2) through h 3.0 (+1.08e-2), never flipping sign, unlike the EVE
-1032→131 candidate of §4.4 which failed at h ≥ 2.0 — and reproduced across all
+1032→131 candidate of §4.4 which does not clear fam at h ≥ 2.0 — and reproduced across all
 three years at 96 s (2013 +5.20e-2, 2014 +4.26e-2, 2015 +4.63e-2). It survives
 the GOES and 94 confounders and the two-confounder sets {GOES,335}, {GOES,94}
 and {94,335} (D|C at 96 s: +2.39e-2, +2.37e-2, +8.93e-3, forward arrow in
@@ -521,8 +521,8 @@ two silences and one fragile candidate.
   335→94 included — are silent.
 - **Bandwidth sensitivity (new, measured).** The EVE fam verdict is not
   robust to the KDE bandwidth (§4.4): the single 1032→131 arrow that clears
-  fam at h=1.0 fails at h ≥ 2.0, and the failure is robust to the surrogate
-  count (a larger surrogate band is stricter). A verdict must now survive
+  fam at h=1.0 does not clear fam at h ≥ 2.0, and the absence is robust to the surrogate
+  count (a larger surrogate band is stricter). A verdict survives
   both the family bound and the bandwidth cross-check to be called an arrow.
 - **109 events, one solar-maximum window.** The event ensemble is a single
   90-day window; a second window or a cycle-spanning ensemble is not

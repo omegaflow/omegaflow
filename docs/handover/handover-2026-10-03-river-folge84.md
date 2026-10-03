@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: b5e709cc387efb5967e0e32880fbc0384fcf4c8452c6199f873c92559ca5945b
+  sha256: 2db1d10f8ba1d4199d4dfd9d979b302445ebefe555307e6ea44d07a3865d9c77
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -70,8 +70,11 @@ Wort | Datum | Quelle
   Veröffentlichung (10 Stufen + 5 Ehren-Stufen + externe Verifikation). **Angewendet
   2026-10-03**: das Gate-Survey `docs/surveys/survey-2026-10-03-exzellenz-gate.md` nennt die
   Papers, die den Maßstab tragen, und die Verstöße; der sha-Riss (`:270`) und der
-  „15 Papers"-Alt-Zähler (`:20`/`:189`) sind geheilt (Header-sha `738e1cd8…`). Offen: die
-  2.8/2.10-Risse (see-also, verschobene Codepfade) und die 2.9-Verdiktswörter je Träger.
+  „15 Papers"-Alt-Zähler (`:20`/`:189`) sind geheilt (Header-sha `738e1cd8…`); Rivers
+  eigene 2.9-Stellen in `lead-geometry-direction`, `gic-causal-driver`,
+  `corona-heating-ladder`, `flyby-path-2-preregistration-revised`, `flyby-path-2-addendum`,
+  `flyby-path-2-falsification-metric-addendum` sind 2026-10-03 sprachgeheilt (Header-shas neu).
+  Offen: die 2.8/2.10/2.9 der fremden Papers (adressiert an Sensory/Mountain).
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (`class: survey`) — die Anwendung des
   Exzellenz-Maßstabs auf die Papers (zwei read-only Taucher, HEAD `29993494b`); Träger der
   Verstöße bis zur Heilung.
@@ -80,19 +83,6 @@ Wort | Datum | Quelle
   trägt die gefüllte Kette; die σ-Metrik wurde durch das revidierte Blatt überholt und bleibt
   `pending`. Nächster Schritt: die Rest-Zellen wie im Addendum füllen (OMNI2-Lag, kp `def`
   final, swarm cell 25); sonst gemessenes `descoped` mit dem Addendum als Befund.
-
-## Offen (aufgeschlüsselt)
-
-### Exzellenz §2.9 — Rivers eigene Papiere
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keiner — eigener Akt.
-- **Lage:** (gemessen 2026-10-03, Gate-Survey) Verdiktswörter in
-  `lead-geometry-direction`, `gic-causal-driver`, `corona-heating-ladder`,
-  `flyby-path-2-preregistration-revised`, `flyby-path-2-addendum`,
-  `flyby-path-2-falsification-metric-addendum` (Citations im Survey).
-- **Blockade:** keine.
-- **Braucht:** je Stelle die Verdiktswörter in beobachtende Sprache heilen (River) —
-  der 2.10-Codepfad in `lead-geometry-direction` ist bereits geheilt.
 
 ## An mountain
 
@@ -150,6 +140,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md`
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/paper/flyby-path-2-falsification-metric-addendum.md`
 - `docs/paper/lead-geometry-direction.md`
+- `docs/paper/gic-causal-driver.md`, `docs/paper/corona-heating-ladder.md`,
+  `docs/paper/flyby-path-2-preregistration-revised.md`
 - `docs/handover/archiv/handover-2026-10-02-river-folge83.md` (Move aus `docs/handover/`)
 - `docs/handover/handover-2026-10-03-river-folge84.md`
 
