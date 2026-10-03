@@ -53,7 +53,7 @@ note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt;
 
 blocked account
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
-note LHAASO: gemessen 2026-09-26 — API 200 (18 Datensätze), 4 Rohklassen gated; Zugang nur per IHEP-Konto (CSTNET-ID) + Kollaborations-Agreement → Operator-Wort/Anfrage (Future).
+note LHAASO — 2026-09-26: API 200 (18 Datensätze), 4 Rohklassen gated (IHEP/CSTNET + Agreement → Future); Roh bleibt gated, offen ist der Katalog `cdsarc.cds.unistra.fr/viz-bin/cat?J/ApJS/271/25` 200 (VizieR).
 
 pending
 url https://www.gosat-gw.nies.go.jp
@@ -61,11 +61,11 @@ note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 6
 
 blocked account
 url https://data.lsst.cloud/api/tap/sync
-note Rubin/LSST — data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); TAP datenrechtlich gated, Survey off-sky → kein Bedarf jetzt; Operator-Wort bei Survey-Daten (Wiedervorlage).
+note Rubin/LSST — data-rights gated, Survey off-sky (Petition SLAC ruht, mail_ledger.φ:39-68); offene Broker: Fink 200, ALeRCE `alerce.science` 200 (neu), ANTARES 206; RSP tap 404; Embargo (Alerts J2, Kataloge J6).
 
 pending
 url https://zenodo.org/records/10594301
-note iaga-text — 2026-09-27: IAGA-2002-Reader steht (src/archivar/iaga.rs:55); Mag_Data.zip, 16 .sec-Dateien 1-Hz XYZF, Fill 88888.00/99999.00 = absent; Modell-Teil decline model (declined_sources.φ:5143); Ernte/Registrierung offen.
+note iaga-text — 2026-09-27: IAGA-2002-Reader + Wire-Arm (`format iaga_text`, IGA1 stationstragend) stehen; Mag_Data.zip 16 .sec (1-Hz XYZF), Fill 88888/99999 = absent; Modell-Teil decline model; Ernte/Registrierung offen.
 
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
@@ -81,7 +81,7 @@ note Tianwen-1/Zhurong (CNSA) — 2026-09-29: Konto Operator-Hand 2026-09-28 (fu
 
 pending
 url https://pradan.issdc.gov.in/ch2
-note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict ch2 200 (31050 B), chmapbrowse/mrbrowse 404; OIDC-Flow browserlos verifiziert (future-159, Connector f7bfce9b7); Ernte Mycelium.
+note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — 2026-09-29: Konto Operator-Hand, OIDC-Flow verifiziert (future-159); roher `ch2_*.zip` geerntet, aber `format pradan_ch2`-Reader-Arm fehlt; Ernte Mycelium.
 
 pending
 url https://sdc.emiratesmarsmission.ae/
@@ -142,7 +142,7 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 blocked account
 url https://catalogue.dataspace.copernicus.eu/stac/collections
 reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
-note CDSE-CCM — /stac/collections 200 public; Download nur mit Lizenzrolle U-R-P/N-P-A (P=View); Operator-Wort 2026-10-01: kein Download → Zugang operator-gebunden (Future), Token liegt.
+note CDSE-CCM — STAC/OData-Katalog offen (`/stac/collections` 200; `Products` 200, `@odata.count` 197410), Download 401 (Lizenzrolle U-R-P/N-P-A, Eligibility → Future); offen: Copernicus DEM 30 m `copernicus-dem-30m.s3.amazonaws.com` 200.
 
 pending
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/

@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 16b40d1664f08b8e75412ec71a2eab7957f8a1c0d5f60c6481c16eef7d3d9a70
+  sha256: 164bcac5b89de94b883ea09e579015194df23cf2aed8df2ff722dcd48f44c718
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -136,8 +136,22 @@ Wort | Datum | Quelle
   ill-formed (HTTP 400). Alle 9 stehen `blocked parser-def` mit `gap` (`astrometry-reader` ×7,
   `curation` ×2).
 - **Blockade:** Wire-Richtungsarm (`SkyDirection` aus JD/RA/Dec) fehlt; die zwei Gaia-Queries ill-formed.
-- **Braucht:** `astrometry-reader`-Arm (Position-Serie → `SkyDirection` für die Weberin) + ADQL-Rewrite;
-  dann Registrierung/Manifestation.
+- **Braucht:** `astrometry-reader`-Arm — Riss gemessen (2026-10-03): `SkyDirection` trägt eine feste
+  Richtung + photometrische Bänder, eine bewegte `(JD, RA, Dec)`-Serie hat keinen Slot. Vorschlag:
+  neues AST1-Modul (`MAGIC b"AST1"`, `AstroSample{tdb, ra_deg, dec_deg, e_ra_mas, e_dec_mas}`,
+  beide Fehler getrennt), JD→TDB via `embedded_lsk`; Konsument = Weberin-Verdict-Pfad.
+  Dazu die zwei Gaia-ADQL (Query 1 korrigiert gemessen: JOIN `vari_classifier_result`→`gaia_source`
+  on `source_id`, Klasse `'RR'`).
+
+### pradan_ch2-Reader-Arm — roher ISRO-Zip ohne `format`
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** CI-Lauf `pradan-cdn.yml` mit konkretem `ch2_*.zip` (liefert ein Sample).
+- **Lage:** (gemessen 2026-10-03) `tools/harvest/src/bin/pradan_ch2_compiler.rs` lädt den rohen Zip
+  (Magic `PK`/`SIMPLE`), aber es gibt keinen `format pradan_ch2`-Reader in `extract.rs`/`main_flow.rs`
+  und keine Registrierung; ein Sample fehlt.
+- **Blockade:** das innere Produkt-Format (PDS4/GeoTIFF/CSV je Payload) ist ungemessen.
+- **Braucht:** ein `ch2_*.zip`-Sample über `pradan-cdn.yml` ziehen, die inneren Dateien sniffen,
+  dann den `format pradan_ch2`-Arm bauen.
 
 ## Träger (Prosa, eigene)
 
