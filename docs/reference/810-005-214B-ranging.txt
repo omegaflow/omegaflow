@@ -1,0 +1,2827 @@
+Deep Space Network
+
+214
+Pseudo-Noise and Regenerative
+Ranging
+Document Owner:
+
+Signature Provided
+
+Approved by:
+
+06/20/2019
+
+Signature Provided
+
+06/13/2019
+
+Andrew O’Dea
+Date
+Telemetry, Tracking, and Command
+System Engineer
+
+Timothy Pham
+Communications Systems Chief
+Engineer
+
+Date
+
+Prepared By:
+
+Released by:
+
+Signature Provided
+
+06/13/2019
+
+Signature Provided
+
+06/20/2019
+
+Peter Kinman
+Telecommunications Technical
+Consultant
+
+Date
+
+Christine Chang
+DSN Document Release Authority
+
+Date
+
+DSN No. 810-005, 214, Rev. B
+Issue Date: July 17, 2019
+JPL D-19379; CL# 19-4105
+Jet Propulsion Laboratory
+California Institute of Technology
+
+Users must ensure that they are using the current version in DSN Telecommunications Link Design Handbook website:
+https://deepspace.jpl.nasa.gov/dsndocs/810-005/
+© <2019> California Institute of Technology.
+U.S. Government sponsorship acknowledged.
+
+1 of 47
+
+810-005
+214, Rev. B
+
+Review Acknowledgment
+By signing below, the signatories acknowledge that they have reviewed this document and
+provided comments, if any, to the signatories on the Cover Page.
+
+Signature Provided
+
+06/13/2019
+
+Signature Provided
+
+Jeff Berner
+DSN Project Chief Engineer
+
+Date
+
+Scott Bryant
+Date
+DSN Ranging Cognizant Development
+Engineer
+
+2
+
+06/18/2019
+
+810-005
+214, Rev. B
+
+Document Change Log
+Prepared By
+
+Affected
+Sections or
+pages
+
+10/7/2003
+10/28/2015
+
+P. W. Kinman
+P. W. Kinman
+
+All
+All
+
+New Module
+Added CCSDS range codes. Added curve fits for
+probability of acquisition. Added model for turnaround ranging channel with SDST AGC. Added
+performance comparison of PN and sequential
+ranging.
+
+07/17/2019
+
+P. W. Kinman
+
+Many
+
+Rewrote “Allocation of Link Power” section,
+including new models for downlink phase deviation
+for each of two types of turn-around ranging
+channels. Added new equation for chip rate.
+Added new information on DSS delay. Added
+glossary. Rewrote many paragraphs for improved
+clarity.
+
+Rev
+
+Issue Date
+
+Initial
+A
+
+B
+
+3
+
+Change Summary
+
+810-005
+214, Rev. B
+
+Contents
+Section
+1.
+
+Page
+Introduction .......................................................................................................................6
+1.1
+1.2
+
+2.
+
+Purpose.....................................................................................................................6
+Scope ........................................................................................................................6
+
+General Information ..........................................................................................................6
+2.1
+2.2
+
+2.3
+
+2.4
+2.5
+
+2.6
+
+2.7
+
+System Description ..................................................................................................7
+Parameters Specified for Ranging Operations .........................................................9
+2.2.1 Chip Rate and Range-Clock Frequency .......................................................9
+2.2.2 Ranging Signal Structure ...........................................................................10
+2.2.3 Integration Time.........................................................................................15
+2.2.4 Uplink Ranging Modulation Index ............................................................16
+2.2.5 Tolerance....................................................................................................16
+Allocation of Link Power.......................................................................................16
+2.3.1 Uplink ........................................................................................................19
+2.3.2 Downlink....................................................................................................20
+Uplink Spectrum ....................................................................................................27
+Range Measurement Performance .........................................................................29
+2.5.1 Cross-Correlation Factors ..........................................................................29
+2.5.2 Range Measurement Error Due to Thermal Noise ....................................31
+2.5.3 Probability of Acquisition ..........................................................................34
+2.5.4 Processing a Set of Range Measurements .................................................38
+2.5.5 Comparison of PN Ranging and Sequential Ranging ................................39
+2.5.6 Non-Coherent Operation ............................................................................40
+Range Corrections ..................................................................................................41
+2.6.1 DSS Delay..................................................................................................42
+2.6.2 Z-Correction ...............................................................................................43
+Total Error for Range Measurement ......................................................................44
+
+Appendix: Glossary of Parameters .........................................................................................45
+References ................................................................................................................................47
+
+4
+
+810-005
+214, Rev. B
+
+Illustrations
+Figure
+
+Page
+
+Figure 1. The DSN Ranging System Architecture......................................................................... 8
+Figure 2. PN Ranging Signal When Third Harmonic of Range Clock is Blocked ...................... 15
+Figure 3. Bessel Functions of the First Kind of Order 0 and 1 .................................................... 20
+Figure 4. Downlink rms Phase Deviation by Ranging Signal (No Command Feedthrough) ...... 23
+Figure 5. Downlink rms Phase Deviation by Noise (No Command Feedthrough) ..................... 24
+Figure 6. Downlink Ranging-Signal Power to Total Power (No Telemetry, No Command) ..... 26
+Figure 7. Downlink Carrier Suppression (No Telemetry, No Command)................................... 26
+Figure 8. Uplink Spectrum for the DSN Range Code Ranging Signal ........................................ 29
+Figure 9. Standard Deviation of Range Measurement Error for the DSN and T4B Codes ......... 32
+Figure 10. Standard Deviation of Range Measurement Error for the T2B Code ........................ 33
+Figure 11. Probability of Acquisition for the DSN Range Code and the T4B Code ................... 37
+Figure 12. Probability of Acquisition for the T2B Code ............................................................. 37
+Figure 13. Comparison of Sequential Ranging and PN Ranging ................................................ 40
+Figure 14. DSS Delay Calibration ............................................................................................... 42
+Figure 15. DSS Delay as a Function of Downlink Frequency..................................................... 43
+
+Tables
+Table
+
+Page
+
+Table 1. CCSDS Chip Rates ........................................................................................................ 11
+Table 2. Component Codes .......................................................................................................... 12
+Table 3. Cross-Correlation Factors, DSN Range Code ............................................................... 30
+Table 4. Cross-Correlation Factors, T4B (Reference 4) .............................................................. 30
+Table 5. Cross-Correlation Factors, T2B (Reference 4) .............................................................. 30
+Table 6. Interpolation Table ......................................................................................................... 36
+Table 7. Parameters for Equation (62) ......................................................................................... 38
+
+5
+
+810-005
+214, Rev. B
+
+1.
+
+Introduction
+
+1.1
+
+Purpose
+
+This module describes capabilities of the Deep Space Network (DSN) for pseudonoise (PN) ranging. These capabilities are available within the 70-m, the 34-m High Efficiency
+(HEF), and the 34-m Beam Waveguide (BWG) subnets. Performance depends on whether the
+spacecraft transponder uses a turn-around (non-regenerative) ranging channel or a regenerative
+ranging channel. Performance parameters are provided for both cases.
+
+1.2
+
+Scope
+
+The material contained in this module covers the PN ranging system that may be
+utilized by both near-Earth and deep-space missions. This document describes those parameters
+and operational considerations that are independent of the particular antenna being used to
+provide the telecommunications link. For antenna-dependent parameters, refer to Module 101,
+103, or 104 of this handbook. The other ranging scheme employed by the DSN is sequential
+ranging, described in Module 203.
+An overview of the ranging system is given in Section 2.1. The parameters to be
+specified for ranging operations are explained in Section 2.2. The distribution of link power is
+characterized in Section 2.3. The spectrum of an uplink carrier modulated by a PN ranging
+signal is discussed in Section 2.4. The performance of turn-around and regenerative ranging is
+summarized in Section 2.5. Non-coherent ranging is also discussed there. Section 2.6 describes
+the corrections required to determine the actual range to a spacecraft. The total error for a range
+measurement is discussed in Section 2.7.
+
+2.
+
+General Information
+
+The ranging signal of interest in this module is a logical combination of a range
+clock and several PN codes; this signaling technique is called PN ranging. A different signaling
+technique, sequential ranging, is also supported by the DSN. The same instrumentation within
+the DSN supports both PN ranging and sequential ranging. However, there are performance
+differences between these two signaling techniques. This module only discusses PN ranging.
+Sequential ranging is discussed in Module 203.
+A spacecraft transponder may have either a turn-around ranging channel or a
+regenerative ranging channel. The DSN processes a PN ranging signal in the same way for both
+types of transponder ranging channel. The performance of a PN range measurement will
+generally be better when the transponder uses a regenerative ranging channel. This module
+characterizes the performance of both regenerative ranging and non-regenerative (turn-around)
+ranging when the PN-ranging signaling technique is employed.
+The range clock is coherently related to the carrier. The uplink carrier is often
+tuned during a tracking pass, in order to compensate for the Doppler effect on the uplink carrier,
+thereby reducing stress on the transponder’s carrier-tracking loop. As the uplink carrier is tuned,
+the range-clock frequency varies proportionately.
+
+6
+
+810-005
+214, Rev. B
+In two-way ranging, one Deep Space Station (DSS) both transmits the uplink and
+receives the downlink. For two-way ranging, the user may calculate the round-trip light time
+(RTLT) from data provided by the DSN: phase measurements of the ranging signal and a record
+of the transmitted uplink carrier frequency.
+Three-way ranging is also supported, for which one DSS transmits the uplink and
+a different DSS receives the downlink. As with two-way ranging, the DSN reports phase
+measurements of the ranging signal and a record of the uplink-carrier frequency. From these
+data, the user may calculate the light time for the travel of the ranging signal from the uplink
+DSS, through the spacecraft, to the downlink DSS.
+To put matters in perspective, the measurements discussed here are phase
+measurements and the resulting data permit the user to calculate time delays. Range cannot be
+calculated directly and accurately from the time delays because the range changes significantly
+over the course of the signal travel time. Similar measurement techniques employed in terrestrial
+applications, where the distances and measurement times are much smaller, typically permit the
+calculation of the range as the two-way time delay times the speed of an electromagnetic wave
+divided by 2. That has been the justification for using the term range measurement for this class
+of measurement technique. The two-way and three-way time delays calculated for deep-space
+missions are useful in the orbit determination process. These calculated delays assist in the
+improvement of trajectory models; and so, indirectly, the delays assist in the estimation of range
+as a function of time.
+It is customary to quote range measurement error in units of meters. For two-way
+ranging, the range error is defined as the error in the two-way time delay times the speed of
+electromagnetic waves in vacuum divided by 2. (The division by two accounts for the fact that
+range is a one-way distance but the time delay is two-way.)
+
+2.1
+
+System Description
+
+The DSN ranging system records the phase of the ranging signal that is
+transmitted and measures the phase of the ranging signal that returns. For two-way ranging, both
+recorded phase values (that of the uplink ranging signal and that of the downlink ranging signal)
+apply to a common instant in time, an epoch of the 1-pulse per second timing reference, which
+becomes the common time tag. From the difference between the uplink and downlink phases
+and from the history of the transmitted range-clock frequency (which can be calculated from the
+history of the uplink-carrier frequency), a user may compute the RTLT (Reference 1). This twoway time delay applies to a signal arriving at the DSS at the instant specified by the time tag.
+The architecture for the DSN ranging system is shown in Figure 1. The ranging
+signal originates in the Uplink Subsystem (UPL). The returned signal is processed in the
+Downlink Tracking and Telemetry Subsystem (DTT). Both the UPL and the DTT are located at
+the Deep Space Communications Complex (DSCC).
+The signal processing in the UPL may be summarized as follows. The Uplink
+Signal Generator (USG) synthesizes the range clock such that it is coherently related to the
+uplink carrier. The range-clock frequency equals a rational factor times the uplink carrier
+frequency. The USG generates the ranging signal, which is the range clock modified by
+additional signal structure that makes possible resolution of the phase ambiguity. A sample of
+7
+
+810-005
+214, Rev. B
+the uplink phase, which is required for the delay measurement, is passed from the USG to the
+Uplink Processor Assembly (UPA). The USG modulates the uplink carrier with the ranging
+signal. The klystron supplies the final stage of power amplification for the uplink carrier.
+The downlink carrier, after amplification within the Low-Noise Amplifier (LNA),
+passes to the DTT. Frequency down-conversion to an intermediate frequency (IF) takes place in
+the RF-to-IF Downconverter (RID). The IF signal is sent to an IF-to-Digital Converter (IDC).
+Demodulation of the IF carrier occurs in the Receiver, Ranging and Telemetry (RRT) processor.
+Also within the RRT, the correlation of the received, baseband ranging signal with a local model
+produces a measurement of the downlink phase. This downlink phase is passed to the Downlink
+Channel Controller (DCC).
+
+Figure 1. The DSN Ranging System Architecture
+Uplink phase samples, each corresponding to an epoch of the 1-PPS (pulse per
+second) clock, are passed from the UPA, via the Data Capture and Delivery (DCD) software, to
+the Tracking Data Delivery Subsystem (TDDS), located in Pasadena. The DCC passes the
+downlink phase measurement and its time tag (an epoch of the 1-PPS clock), via the DCD, to the
+TDDS. A history of the uplink range clock’s frequency is also needed for the calculation of the
+two-way time delay. Since the uplink range clock is coherently related to the uplink carrier, this
+necessary information can be derived from the history of the uplink carrier frequency, which is
+supplied by the UPA to the TDDS. All data required for the two-way delay calculation are
+archived by the TDDS for later use by a navigation team or other users.
+The IDC, RRT, and DCC required for the processing of a downlink carrier are
+located within a Downlink Channel Processing Cabinet (DCPC). Each DCPC supports a single
+channel. For spacecraft with multiple channels (for example, X-band and Ka-band), or for
+
+8
+
+810-005
+214, Rev. B
+multiple spacecraft within a single antenna beamwidth, multiple DCPCs will be assigned to that
+antenna.
+The DSN uses the Range Unit (RU) to deliver the difference of the ranging signal’s
+uplink phase and downlink phase. Since the range clock and the carrier are coherently related, it
+is permissible to define the RU in terms of carrier phase. For an S-band uplink, the RU is
+defined as two cycles of the carrier. For an X-band uplink, one RU is (749⁄221) times two
+cycles of the carrier. For a Ka-band uplink, one RU is (3599⁄221) times two cycles of the
+carrier. Because the RU is defined with a factor (1 for an S-band uplink, 749⁄221 for an Xband uplink, and 3599⁄221 for a Ka-band uplink) that is proportional to frequency, the RU is
+proportional to time delay. (But the RU is a dimensionless unit.) One RU corresponds to
+approximately 0.94 ns of time delay.
+A user may convert a two-way phase delay in RU into a two-way time delay as follows:
+2 × 𝑅𝑅𝑅𝑅
+,
+S-band uplink
+⎧
+𝑓𝑓𝑆𝑆
+⎪
+⎪ 749 2 × 𝑅𝑅𝑅𝑅
+∙
+,
+X-band uplink
+Two-way Time Delay =
+𝑓𝑓𝑋𝑋
+⎨ 221
+⎪
+⎪3599 ∙ 2 × 𝑅𝑅𝑅𝑅 , Ka-band uplink
+⎩ 221
+𝑓𝑓𝐾𝐾𝐾𝐾
+
+(1)
+
+where 𝑓𝑓𝑆𝑆 is the frequency of an S-band uplink carrier, 𝑓𝑓𝑋𝑋 is the frequency of an X-band uplink
+carrier, and 𝑓𝑓𝐾𝐾𝐾𝐾 is the frequency of a Ka-band uplink carrier. For example, if the uplink carrier is
+in the X band with a frequency of 7.16 GHz and the two-way phase delay is reported as
+6,500,000 RU, then the two-way time delay is 6,153,467 ns.
+
+2.2
+
+Parameters Specified for Ranging Operations
+The following subsections present the parameters that are required in ranging
+
+operations.
+2.2.1
+
+Chip Rate and Range-Clock Frequency
+In the PN ranging system, the PN ranging signal is created by filtering a
+composite code, where timing is defined by the range clock. The chip rate 𝑓𝑓chip for the
+composite code is defined in terms of a rational factor 𝐴𝐴⁄𝐵𝐵 (a ratio of two positive integers).
+𝐴𝐴
+× 𝑓𝑓𝑆𝑆 ,
+S-band uplink
+⎧
+𝐵𝐵
+⎪
+221 𝐴𝐴
+(2)
+𝑓𝑓chip =
+× × 𝑓𝑓𝑋𝑋 ,
+X-band uplink
+⎨ 749 𝐵𝐵
+⎪ 221 𝐴𝐴
+⎩3599 × 𝐵𝐵 × 𝑓𝑓𝐾𝐾𝐾𝐾 , Ka-band uplink
+
+𝑓𝑓𝑆𝑆 is the frequency of an S-band uplink carrier, 𝑓𝑓𝑋𝑋 is the frequency of an X-band uplink carrier,
+and 𝑓𝑓𝐾𝐾𝐾𝐾 is the frequency of a Ka-band uplink carrier. 𝐴𝐴⁄𝐵𝐵 is defined, in turn, by the whole
+numbers 𝑙𝑙𝐶𝐶𝐶𝐶 and 𝑘𝑘𝐶𝐶𝐶𝐶 (Reference 2).
+9
+
+810-005
+214, Rev. B
+𝐴𝐴
+𝑙𝑙𝐶𝐶𝐶𝐶
+=
+𝐵𝐵 128 ∙ 2𝑘𝑘𝐶𝐶𝐶𝐶
+
+(3)
+
+The chip rate is coherently related to the uplink carrier frequency, as suggested by Equation (2).
+𝑙𝑙𝐶𝐶𝐶𝐶 and 𝑘𝑘𝐶𝐶𝐶𝐶 are whole numbers that together determine the rational factor 𝐴𝐴⁄𝐵𝐵 relating 𝑓𝑓chip to
+the uplink carrier frequency. Table 1 lists the selections for 𝑙𝑙𝐶𝐶𝐶𝐶 and 𝑘𝑘𝐶𝐶𝐶𝐶 . This table also indicates
+the approximate value of the chip rate that corresponds to each pair of whole numbers 𝑙𝑙𝐶𝐶𝐶𝐶 and
+𝑘𝑘𝐶𝐶𝐶𝐶 . The exact chip rate depends, as indicated in Equation (2), on the uplink carrier frequency
+(and, therefore, on the channel assignment and on any Doppler compensation that may be done
+on the uplink).
+The range clock is a periodic signal. Each half-cycle of the range clock
+corresponds to one chip. Therefore,
+𝑓𝑓𝑅𝑅𝑅𝑅 =
+
+𝑓𝑓chip
+2
+
+(4)
+
+The approximate value of 𝑓𝑓𝑅𝑅𝑅𝑅 is given in Table 1 for numbers pairs 𝑙𝑙𝐶𝐶𝐶𝐶 and 𝑘𝑘𝐶𝐶𝐶𝐶 of that table.
+The exact value of 𝑓𝑓𝑅𝑅𝑅𝑅 depends on the uplink carrier frequency.
+The DTT receiver uses the range clock in two ways. First, the phase of the range
+clock is measured; this determines the accuracy of the range measurement. Second, the receiver
+achieves chip synchronization using the range clock; this is a necessary precursor to resolving
+the ambiguity.
+2.2.2
+
+Ranging Signal Structure
+In the PN ranging system, a filtered composite code is used for ranging. The
+timing of the composite code is set by the range clock. Three different composite codes are
+available: the DSN range code, the CCSDS T4B code, and the CCSDS T2B code. Each of these
+composite codes is built from a common set of component codes. The three composite codes
+differ from each other because of the manner in which the component codes are combined.
+2.2.2.1
+
+Component Codes
+Table 2 lists the component codes. In this table, a component code is represented
+as a finite-length sequence of bits. The length of the n-th component code is denoted 𝜆𝜆𝑛𝑛 for 1 ≤
+𝑛𝑛 ≤ 6. The lengths are: 𝜆𝜆1 = 2, 𝜆𝜆2 = 7, 𝜆𝜆3 = 11, 𝜆𝜆4 = 15, 𝜆𝜆5 = 19, and 𝜆𝜆6 = 23. (The first
+component code is the 2-bit sequence representing the range clock.) The n-th component code is
+denoted 𝑏𝑏𝑛𝑛 (𝑖𝑖), where 𝑖𝑖 represents a discrete-time index, 0 ≤ 𝑖𝑖 < 𝜆𝜆𝑛𝑛 . The proper order of each of
+these component codes is determined by reading the bits in each row from left to right. So, for
+example, the first three bits of 𝑏𝑏3 (∙) are all 1s and the final bit is a 0.
+It is also useful to represent each component code as a sequence of chips (with the
+bi-polar values ±1).
+𝑐𝑐𝑛𝑛 (𝑖𝑖) = 2 𝑏𝑏𝑛𝑛 (𝑖𝑖) − 1
+
+where 𝑐𝑐𝑛𝑛 (𝑖𝑖) = ±1. Equation (5) translates a binary 1 into +1 and a logical 0 into −1.
+10
+
+(5)
+
+810-005
+214, Rev. B
+
+Table 1. CCSDS Chip Rates
+𝑙𝑙𝐶𝐶𝐶𝐶
+
+94*
+
+𝑘𝑘𝐶𝐶𝐶𝐶
+6
+
+𝐴𝐴⁄𝐵𝐵
+
+47/4096
+
+Approximate value of 𝑓𝑓chip
+24 MHz
+
+Approximate value of 𝑓𝑓𝑅𝑅𝑅𝑅
+
+64
+
+6
+
+1/128
+
+16 MHz
+
+8 MHz
+
+32
+
+6
+
+1/256
+
+8 MHz
+
+4 MHz
+
+16
+
+6
+
+1/512
+
+4 MHz
+
+2 MHz
+
+12
+
+6
+
+3/2048
+
+3 MHz
+
+1.5 MHz
+
+11
+
+6
+
+11/8192
+
+2.8 MHz
+
+1.4 MHz
+
+10
+
+6
+
+5/4096
+
+2.6 MHz
+
+1.3 MHz
+
+9
+
+6
+
+9/8192
+
+2.3 MHz
+
+1.15 MHz
+
+8
+
+6
+
+1/1024
+
+2 MHz
+
+1 MHz
+
+7
+
+6
+
+7/8192
+
+1.8 MHz
+
+900 kHz
+
+6
+
+6
+
+3/4096
+
+1.5 MHz
+
+750 kHz
+
+5
+
+6
+
+5/8192
+
+1.3 MHz
+
+650 kHz
+
+4
+
+6
+
+1/2048
+
+1 MHz
+
+500 kHz
+
+3
+
+6
+
+3/8192
+
+750 kHz
+
+375 kHz
+
+2
+
+6
+
+1/4096
+
+500 kHz
+
+250 kHz
+
+1
+
+6
+
+1/8192
+
+250 kHz
+
+125 kHz
+
+2
+
+8
+
+1/16384
+
+128 kHz
+
+64 kHz
+
+2
+
+9
+
+1/32768
+
+64 kHz
+
+32 kHz
+
+2
+
+10
+
+1/65536
+
+32 kHz
+
+16 kHz
+
+12 MHz
+
+*This rate is used by the Bepi-Colombo mission and is outside defined CCSDS rates
+
+11
+
+810-005
+214, Rev. B
+Table 2. Component Codes
+𝑏𝑏𝑛𝑛
+
+code
+
+𝑏𝑏1
+
+1, 0
+
+𝜆𝜆𝑛𝑛
+
+𝑏𝑏2
+
+1, 1, 1, 0, 0, 1, 0
+
+7
+
+𝑏𝑏3
+
+1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0
+
+11
+
+𝑏𝑏4
+
+1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0
+
+15
+
+𝑏𝑏5
+
+1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0
+
+19
+
+𝑏𝑏6
+
+1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0
+
+23
+
+2
+
+2.2.2.2
+
+DSN Range Code
+The DSN range code (also called the JPL range code) was the first composite
+code to be implemented and validated with the current ranging instrumentation in the DSN.
+Following is an explanation of how this composite code is generated from the component codes
+listed in Table 2.
+For each finite-length PN code 𝑏𝑏𝑛𝑛 (𝑖𝑖), a periodic code 𝑏𝑏𝑛𝑛 ′ (𝑖𝑖) of period 𝜆𝜆𝑛𝑛 is
+formed by endless repetition:
+𝑏𝑏𝑛𝑛 ′ (𝑖𝑖) = 𝑏𝑏𝑛𝑛 (𝑖𝑖 mod 𝜆𝜆𝑛𝑛 )
+
+(6)
+
+𝑏𝑏 ′ (𝑖𝑖) = 𝑏𝑏1 ′ (𝑖𝑖) ∪ [𝑏𝑏2 ′ (𝑖𝑖) ∩ 𝑏𝑏3 ′ (𝑖𝑖) ∩ 𝑏𝑏4 ′ (𝑖𝑖) ∩ 𝑏𝑏5 ′ (𝑖𝑖) ∩ 𝑏𝑏6 ′ (𝑖𝑖)]
+
+(7)
+
+𝑏𝑏 ′ (𝑖𝑖 + 𝐿𝐿) = 𝑏𝑏 ′ (𝑖𝑖)
+
+(8)
+
+where 𝑏𝑏𝑛𝑛 ′ (𝑖𝑖) is binary valued. In this document, the prime (′) indicates a periodic sequence
+(made from a finite-length sequence by periodic extension).
+The composite code is
+
+where ∪ and ∩ are the logical OR and logical AND operators, respectively. Since the
+component code lengths 𝜆𝜆𝑛𝑛 (1 ≤ 𝑛𝑛 ≤ 6) are relatively prime, the period L (in bits) of the
+composite code is the product of the component code lengths. That is,
+where
+
+6
+
+𝐿𝐿 = � 𝜆𝜆𝑛𝑛 = 1,009,470
+
+(9)
+
+𝑐𝑐 ′ (𝑖𝑖) = 2 𝑏𝑏 ′ (𝑖𝑖) − 1
+
+(10)
+
+𝑛𝑛=1
+
+The periodic chip sequence corresponding to the periodic bit sequence 𝑏𝑏 ′ (𝑖𝑖) is
+where 𝑏𝑏 ′ (𝑖𝑖) is the periodic bit sequence of Equation (7). 𝑐𝑐 ′ (𝑖𝑖) is bi-polar, 𝑐𝑐 ′ (𝑖𝑖) = ±1.
+12
+
+810-005
+214, Rev. B
+In this design a large L is obtained from relatively small component code lengths.
+A large L is necessary for resolution of the range ambiguity, yet small 𝜆𝜆𝑛𝑛 are needed for a
+practical implementation of the correlators at the receiver. The ambiguity resolution of this code
+is given by
+ambiguity resolution =
+
+𝑐𝑐 ∙ 𝐿𝐿
+4𝑓𝑓𝑅𝑅𝑅𝑅
+
+(11)
+
+where 𝑓𝑓𝑅𝑅𝑅𝑅 is the range-clock frequency and 𝑐𝑐 is the speed of electromagnetic waves in vacuum.
+For a range clock of approximately 1 MHz, the ambiguity resolution is 75,660 km.
+An important property of this composite code is that it approximates a sequence
+of period 2 bits. The composite code equals 𝑏𝑏1 ′ (𝑖𝑖), the first component with a period of 2 bits,
+most of the time. The effect of the other 5 component codes is to invert a small fraction (1/32) of
+the logical 0s in 𝑏𝑏1 ′ (𝑖𝑖). Since 𝑏𝑏1 ′ (𝑖𝑖) corresponds to the range clock, the composite code may be
+viewed as the range clock with an occasional inversion of a logical 0.
+Most of this ranging signal’s power lies at the range-clock frequency. This is
+desirable, since the accuracy of the range measurement is set by a correlation against a local
+model of the range clock. The occasional inversion is necessary to resolve the range ambiguity,
+but for this purpose the inversions need not be frequent.
+2.2.2.3
+
+CCSDS T4B Code
+The Consultative Committee for Space Data Systems (CCSDS) recommends a
+composite code called T4B for use in deep-space ranging (Reference 2). The T4B code employs
+the same set of component codes that are used by the DSN range code (Table 2). The T4B code
+is constructed from the component chip sequences:
+𝑐𝑐𝑛𝑛 ′ (𝑖𝑖) = 𝑐𝑐𝑛𝑛 (𝑖𝑖 mod 𝜆𝜆𝑛𝑛 )
+
+(12)
+
+𝑐𝑐 ′ (𝑖𝑖) = sign[4𝑐𝑐1 ′ (𝑖𝑖) + 𝑐𝑐2 ′ (𝑖𝑖) − 𝑐𝑐3 ′ (𝑖𝑖) − 𝑐𝑐4 ′ (𝑖𝑖) + 𝑐𝑐5 ′ (𝑖𝑖) − 𝑐𝑐6 ′ (𝑖𝑖)]
+
+(13)
+
+where 𝑐𝑐𝑛𝑛 (∙) = ±1 is the chip sequence of length 𝜆𝜆𝑛𝑛 for the 𝑛𝑛-th component code, as given by
+Equation (5), and 𝑐𝑐𝑛𝑛 ′ (∙) is its periodic extension. The periodic, composite chip sequence 𝑐𝑐 ′ (𝑖𝑖) is
+computed from the components 𝑐𝑐𝑛𝑛 ′ (𝑖𝑖) as follows:
+where 𝑐𝑐 ′ (𝑖𝑖) = ±1 and where sign[∙] is the algebraic sign of its argument. The period of the
+composite code 𝑐𝑐 ′ (𝑖𝑖) equals 𝐿𝐿, as given in Equation (9). The ambiguity resolution of this code is
+the same as that for the DSN range code; this resolution is given in Equation (11).
+As suggested by Equation (13), the range clock 𝑐𝑐1 ′ (𝑖𝑖) has a disproportionate
+influence on the composite code 𝑐𝑐 ′ (𝑖𝑖). The composite code may be viewed as the range clock
+with an occasional inversion of a chip. (With the T4B code, unlike the DSN range code, the
+inversion may go in either direction: −1 → +1 or +1 → −1.) As with the DSN range code,
+most of the ranging signal’s power lies at the range-clock frequency. As shown in Section 2.5,
+the performance of the T4B code is close to that of the DSN range code.
+2.2.2.4
+
+CCSDS T2B Code
+The CCSDS recommends a second composite code, called T2B, which provides
+an alternative to the T4B code in performance trade-off space (Reference 2). The T2B code
+13
+
+810-005
+214, Rev. B
+employs the same set of component codes (Table 2) that are used by the DSN range code and the
+T4B code. The periodic, composite chip sequence 𝑐𝑐 ′ (𝑖𝑖) for the T2B code is computed from the
+components 𝑐𝑐𝑛𝑛 ′ (𝑖𝑖) as follows:
+𝑐𝑐 ′ (𝑖𝑖) = sign[2𝑐𝑐1 ′ (𝑖𝑖) + 𝑐𝑐2 ′ (𝑖𝑖) − 𝑐𝑐3 ′ (𝑖𝑖) − 𝑐𝑐4 ′ (𝑖𝑖) + 𝑐𝑐5 ′ (𝑖𝑖) − 𝑐𝑐6 ′ (𝑖𝑖)]
+
+(14)
+
+The period of the T2B code equals 𝐿𝐿, as given in Equation (9). The ambiguity
+resolution of this code is the same as that for the T4B code and the DSN range code; this
+resolution is given in Equation (11).
+In the construction of the T2B code, using Equation (14), the range clock 𝑐𝑐1 ′ (𝑖𝑖)
+gets only 2 “votes”, whereas in the construction of the T4B code, using Equation (13), the range
+clock gets 4 “votes”. As a result, the T2B code places less power in the range clock. The T2B
+code will therefore generally produce a less accurate range measurement than the T4B code;
+however, the T2B code will achieve a better probability of acquisition for smaller received
+power levels.
+2.2.2.5
+
+PN Ranging Signal
+The PN ranging signal is created by filtering the composite code. This is
+accomplished with the uplink ranging filter, which is digitally implemented within the USG.
+The uplink ranging filter is a low-pass filter with a configurable bandwidth. The default (and
+minimum) bandwidth is 1.2 MHz. The PN ranging signal, available at the output of the uplink
+ranging filter, is used to phase-modulate the uplink carrier. This modulation also happens in the
+USG.
+The purpose of the uplink ranging filter is to limit the bandwidth of the modulated
+uplink carrier. Because phase modulation is a non-linear modulation, the bandwidth of a carrier
+that is phase-modulated by the PN ranging signal can be much wider than twice the bandwidth of
+the PN ranging signal. If the composite code were not low-pass filtered, but instead sent directly
+to the phase modulator, the bandwidth of the uplink carrier would, in general, be much wider yet.
+(The command signal, if present, also contributes to the bandwidth of the uplink carrier, but
+typically the command signal has a much smaller bandwidth than the PN ranging signal. The PN
+ranging signal, when present, is therefore the modulating signal that plays the dominant role in
+determining the bandwidth of the uplink carrier.)
+The bandwidth of the uplink ranging filter has a default value of 1.2 MHz. This is
+also the minimum bandwidth. This filter can be configured for a larger bandwidth. For a rangeclock frequency larger than 1 MHz, it will be necessary to use a larger bandwidth. The decision
+about what bandwidth to use will be based, in part, on the effect of the filter on the PN ranging
+signal but also must account for spectral occupancy of the uplink carrier.
+The composite code, as it appears at the input to the uplink ranging filter, is a
+sequence of bi-polar chips, where each chip is represented by a rectangular pulse. The uplink
+ranging filter will remove the highest-frequency content from this chip stream, so the PN ranging
+signal at the filter output will have slower transitions and smooth features. In the case where the
+uplink ranging filter passes the fundamental harmonic of the range clock but blocks third and
+higher-order harmonics of the range clock, a square-wave range clock on the filter input becomes
+a sinewave range clock on the filter output. The composite code on the filter input becomes on
+the filter output, in this case, a sequence of bi-polar chips, where each chip may be represented
+14
+
+810-005
+214, Rev. B
+approximately by a half-cycle of a sinewave. This is illustrated in Figure 2 for the first eight
+chips of the DSN range code. The parameter 𝑇𝑇𝑐𝑐 is the chip period. The range-clock frequency
+equals 1⁄(2𝑇𝑇𝑐𝑐 ). This is the desired situation for the purpose of minimizing the spectral
+occupancy of the uplink carrier.
+The range clock is modeled, in this module, as a sinewave. The PN ranging
+signal is modeled as the composite code but with each chip a half-cycle of a sinewave, as
+depicted in Figure 2. These models are good approximations when the uplink ranging filter
+passes the fundamental harmonic of the range clock but blocks the third harmonic (and higherorder harmonics) of the range clock. Even if this condition is not strictly met, these models are
+useful as first-order approximations; they lead to performance equations that may be easily
+calculated. Trying to get more accurate results would typically involve computer simulations.
+There is also the limiting case where the bandwidth of the uplink ranging filter is
+much larger than the range-clock frequency. In this limit, the range clock is a square-wave and
+the PN ranging signal is the composite code (with chips represented by rectangular pulses). This
+limiting case is only approached when the range-clock frequency is much smaller than 400 kHz
+(one-third of 1.2 MHz). Since the accuracy of the range measurement improves with increasing
+range-clock frequency, this scenario is not common.
+
+Figure 2. PN Ranging Signal When Third Harmonic of Range Clock is Blocked
+
+2.2.3
+
+Integration Time
+The integration time T should be large enough that the probability of range
+measurement acquisition is close to 1.0 and the range error due to downlink thermal noise is
+small (see Section 2.5). In the special case of non-coherent ranging, the presence of a frequency
+mismatch between the received ranging signal and the local model means that there is also
+15
+
+810-005
+214, Rev. B
+reason to keep T relatively small, so that an optimum T should be carefully chosen for noncoherent ranging.
+Uplink Ranging Modulation Index
+The uplink ranging modulation index is chosen to get a suitable distribution of
+power among the ranging and command sidebands and the residual carrier on the uplink (see
+Section 2.3). With turn-around (non-regenerative) ranging, the uplink ranging modulation index
+also affects the distribution of power on the downlink carrier. The analysis appearing below
+employs an rms phase deviation of the uplink carrier. This rms phase deviation equals the peak
+modulation index divided by √2 for the usual case of a sinewave range clock.
+2.2.4
+
+2.2.5
+
+Tolerance
+The tolerance plays a role in deciding whether to judge range acquisitions as “in
+lock” or “out of lock”. The ranging process does not use a phase-locked loop, so ranging lock
+status is estimated using the ranging probability of acquisition. For any given range acquisition,
+the ratio 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 of the downlink ranging signal power to the noise spectral density is measured.
+From this measured 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 , an estimate of the probability of acquisition 𝑃𝑃acq is calculated.
+Section 2.5 describes the calculation of the 𝑃𝑃acq from 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 .
+Tolerance may be selected over the range of 0.0% to 100.0%. The default value
+for tolerance is 99%. An acquisition lock status depends upon the following criteria:
+𝑃𝑃acq (%) ≥ Tolerance results in Acquisition declared “in lock”
+
+𝑃𝑃acq (%) < Tolerance results in Acquisition declared “out of lock”
+
+This procedure is explained for the example where the tolerance has the default
+value of 99%. For a given acquisition, 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 is measured. From this measured value, the
+probability of acquisition 𝑃𝑃acq is calculated; this number is the probability that the ambiguity is
+correctly resolved for this particular acquisition. Treating 𝑃𝑃acq as a percentage, it is compared
+with the tolerance of 99%. If 𝑃𝑃acq (%) equals or exceeds 99%, the acquisition is declared “in
+lock”. Otherwise, it is declared “out of lock”. Note that the “out of lock” ranging data may be
+valid data, with a probability of 𝑃𝑃acq (%) of being correct.
+
+2.3
+
+Allocation of Link Power
+
+The power allocation for a link is the distribution of power among the important
+link components: the residual carrier, the ranging sidebands, and the data (command or
+telemetry) sidebands. The following notation is used here for both the uplink and downlink:
+𝑃𝑃𝐶𝐶
+
+= power in residual carrier
+
+𝑃𝑃𝐷𝐷
+
+= usable power in data sidebands
+
+𝑃𝑃𝑅𝑅
+𝑃𝑃𝑇𝑇
+
+= usable power in ranging sidebands
+= total link power
+
+16
+
+810-005
+214, Rev. B
+𝑃𝑃𝐶𝐶 is the power in a single spectral line at the carrier frequency. When 𝑃𝑃𝐶𝐶 is finite
+(greater than zero), carrier synchronization may be obtained at the receiver using a phase-locked
+loop that tracks this residual carrier. (Carrier synchronization may also be obtained with a
+Costas loop tracking the data sidebands, which are symmetrically located about the nominal
+carrier frequency.)
+𝑃𝑃𝑅𝑅 is that portion of the power in the ranging sidebands that is used in the range
+measurement. 𝑃𝑃𝑅𝑅 includes both the spread-spectrum content arising from the PN code
+components as well as the two discrete spectral lines (at 𝑓𝑓𝑅𝑅𝑅𝑅 Hz above and at 𝑓𝑓𝑅𝑅𝑅𝑅 Hz below the
+residual carrier) that correspond to the range clock’s fundamental harmonic. Higher-order
+harmonics (beyond the fundamental harmonic) of the range clock are not used in a range
+measurement and are not included in 𝑃𝑃𝑅𝑅 . The range measurement error is determined by the
+discrete spectral lines of the range clock’s fundamental harmonic. Ambiguity resolution is
+achieved using the spread-spectrum content.
+For the uplink, 𝑃𝑃𝐷𝐷 is that portion of the power in the command sidebands that is
+employed in command detection in the transponder. In the most common signal design for a
+deep-space uplink, command data modulate a sinewave subcarrier and 𝑃𝑃𝐷𝐷 only accounts for the
+power in the sidebands associated with the upper and lower fundamental harmonic of the
+subcarrier frequency. In the case of a sinewave subcarrier, the higher-order harmonics of the
+subcarrier frequency are not employed in command detection in the typical transponder and are
+not included in 𝑃𝑃𝐷𝐷 .
+For some missions, the command signal is bi-polar. An example of this is when
+the command symbols, represented as rectangular pulses, directly phase-modulate the uplink
+carrier. In this case, the uplink 𝑃𝑃𝐷𝐷 accounts for all power in command sidebands, since the
+command detection process in the typical transponder utilizes all command sidebands arising
+from a bi-polar command signal.
+For the downlink, 𝑃𝑃𝐷𝐷 is that portion of the power in the telemetry sidebands that is
+employed in telemetry detection at the station. Commonly, the telemetry signal is bi-polar; this
+happens when rectangular pulses (the telemetry symbols) directly phase-modulate the downlink
+carrier or when these symbols modulate a square-wave subcarrier that, in turn, phase-modulates
+the downlink carrier. In such cases, all of the power in the telemetry sidebands is employed in
+telemetry detection. This is a result of both the data and the subcarrier (if present) being bipolar.
+For some missions, the telemetry signal modulates a sinewave subcarrier and this
+composite signal phase-modulates the downlink carrier. In such a case, the downlink 𝑃𝑃𝐷𝐷 is that
+portion of the power in the telemetry sidebands that is employed in telemetry detection at the
+station. Not included is the power in the higher-order harmonics of the subcarrier frequency.
+𝑃𝑃𝑇𝑇 is not, in general, the sum of 𝑃𝑃𝐶𝐶 , 𝑃𝑃𝑅𝑅 , and 𝑃𝑃𝐷𝐷 . In general, 𝑃𝑃𝑇𝑇 is larger than that
+sum. There are multiple reasons for this. First, 𝑃𝑃𝑅𝑅 does not account for power in the higherorder harmonics of the sinewave range clock. Second, when multiple signals (for example, a
+ranging signal and a telemetry signal) simultaneously phase-modulate a carrier, intermodulation
+products arise. These intermodulation products consume link power but do not contribute to
+either the range measurement or telemetry detection. Moreover, for the downlink, noise
+sidebands are present (in the case of turn-around ranging).
+17
+
+810-005
+214, Rev. B
+In calculating power allocations for a modulated carrier, it is necessary to
+characterize the level of the modulation. In this document, the root-mean-square (rms) phase
+deviation of the carrier will be used for this purpose. The following symbols are used in this
+module to represent rms phase deviation of the carrier:
+uplink:
+uplink:
+downlink:
+downlink:
+downlink:
+downlink:
+downlink:
+
+𝜙𝜙𝑟𝑟
+𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐
+𝜃𝜃𝑟𝑟𝑟𝑟
+𝜃𝜃𝑟𝑟
+𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐
+𝜃𝜃𝑛𝑛
+𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡
+
+=
+=
+=
+=
+=
+=
+=
+
+rms phase deviation by ranging signal, rad rms
+rms phase deviation by command signal, rad rms
+rms phase deviation by ranging signal (strong signal), rad rms
+rms phase deviation by ranging signal, rad rms
+rms phase deviation by feedthrough command signal, rad rms
+rms phase deviation by noise, rad rms
+rms phase deviation by telemetry signal, rad rms
+
+On the uplink, 𝜙𝜙𝑟𝑟 and 𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 are parameters, constant for any given tracking pass.
+For a sinewave range clock, 𝜙𝜙𝑟𝑟 is related to the peak modulation index for uplink ranging by:
+𝜙𝜙𝑟𝑟 = (peak modulation index for uplink ranging, rad)⁄√2
+
+(15)
+
+When a sinewave subcarrier is used with command, 𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 is related to the peak modulation
+index for command by:
+𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 = (peak modulation index for command, rad)⁄√2,
+
+sinewave
+subcarrier
+
+(16)
+
+However, for a bi-polar command signal, 𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 equals the peak modulation index for command.
+On the downlink, 𝜃𝜃𝑟𝑟𝑟𝑟 is a constant parameter that is determined by the AGC in the
+turn-around ranging channel. 𝜃𝜃𝑟𝑟𝑟𝑟 is the rms phase deviation of the downlink carrier by the
+ranging signal in a strong-signal scenario. In such a scenario, the noise in the transponder’s
+ranging channel is negligible compared with the ranging signal and there is no command. This
+scenario occurs in a test facility before flight and in the early phase of flight when the ranging
+signal-to-noise ratio in the transponder’s ranging channel is large. For a sinewave range clock,
+𝜃𝜃𝑟𝑟𝑟𝑟 is related to the peak modulation index (strong signal) by:
+𝜃𝜃𝑟𝑟𝑟𝑟 = (strong-signal peak modulation index for downlink ranging, rad)⁄√2
+
+(17)
+
+When PN ranging is done with a turn-around (non-regenerative) ranging channel,
+the variables 𝜃𝜃𝑟𝑟 , 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 and 𝜃𝜃𝑛𝑛 become important. Within a turn-around channel the uplink carrier
+is demodulated, and the baseband signal plus noise that is the result of this demodulation is
+presented to a filter. The filter output is applied to an automatic gain control (AGC) circuit. The
+signal plus noise that exits the turn-around ranging channel is phase-modulated onto the
+downlink carrier.
+For an arbitrary signal-to-noise ratio in a turn-around ranging channel, the rms
+phase deviation by ranging signal on the downlink, denoted 𝜃𝜃𝑟𝑟 , is less than or equal to 𝜃𝜃𝑟𝑟𝑟𝑟 . Thus,
+𝜃𝜃𝑟𝑟 is a variable, depending on both the parameter 𝜃𝜃𝑟𝑟𝑟𝑟 and the ranging signal-to-noise ratio in the
+ranging channel. 𝜃𝜃𝑟𝑟𝑠𝑠 is the limiting value of 𝜃𝜃𝑟𝑟 , corresponding to the strong-signal case. If
+18
+
+810-005
+214, Rev. B
+command is present on the uplink and that command passes through the transponder’s ranging
+channel, then 𝜃𝜃𝑟𝑟 also depends on the command signal-to-noise ratio in the ranging channel.
+Uplink noise passes through the ranging channel and is phase-modulated onto the
+downlink carrier. 𝜃𝜃𝑛𝑛 is the rms phase deviation by this ranging-channel noise. 𝜃𝜃𝑛𝑛 , like 𝜃𝜃𝑟𝑟 , is a
+variable that depends on both the parameter 𝜃𝜃𝑟𝑟𝑟𝑟 and the ranging signal-to-noise ratio (and,
+possibly, also the command signal-to-noise ratio) in the ranging channel.
+𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 is the rms phase deviation of the downlink carrier due to telemetry. When
+the telemetry signal is bi-polar, the rms phase deviation and the peak modulation index for
+telemetry are identical. When a sinewave subcarrier is used with telemetry, 𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 is related to the
+peak modulation index for telemetry by:
+
+2.3.1
+
+𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 = (peak modulation index for telemetry, rad)⁄√2,
+
+sinewave
+subcarrier
+
+(18)
+
+Uplink
+The equations of this subsection represent the case where a ranging signal and a
+command signal are simultaneously present on the uplink carrier. The range clock is taken here
+to be a sinewave. The ratio of 𝑃𝑃𝐶𝐶 to 𝑃𝑃𝑇𝑇 , the carrier suppression, is
+The ratio of 𝑃𝑃𝑅𝑅 to 𝑃𝑃𝑇𝑇 is
+
+𝑃𝑃𝐶𝐶
+�
+= 𝐽𝐽0 2 �√2 𝜙𝜙𝑟𝑟 � ∙ 𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 )
+𝑃𝑃𝑇𝑇 U/L
+
+𝑃𝑃𝑅𝑅
+�
+= 2𝐽𝐽1 2 �√2 𝜙𝜙𝑟𝑟 � ∙ 𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 )
+𝑃𝑃𝑇𝑇 U/L
+
+The ratio of the fundamental command sideband power to 𝑃𝑃𝑇𝑇 is
+
+𝑃𝑃𝐷𝐷
+�
+= 𝐽𝐽0 2 �√2 𝜙𝜙𝑟𝑟 � ∙ 𝑀𝑀𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 )
+𝑃𝑃𝑇𝑇 U/L
+
+(19)
+
+(20)
+
+(21)
+
+where 𝐽𝐽0 (∙) and 𝐽𝐽1 (∙) are Bessel functions of the first kind of order 0 and 1, respectively. These
+functions are plotted in Figure 3. When the argument 𝑥𝑥 of 𝐽𝐽0 (𝑥𝑥) and 𝐽𝐽1 (𝑥𝑥) is small and positive,
+the following approximations may be used:
+𝐽𝐽0 (𝑥𝑥) ≅ 1,
+
+𝐽𝐽1 (𝑥𝑥) ≅ 𝑥𝑥⁄2,
+
+0 ≤ 𝑥𝑥 ≪ 1
+0 ≤ 𝑥𝑥 ≪ 1
+
+(22)
+(23)
+
+The suppression factor 𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ) in Equations (19) and (20) and the
+modulation factor 𝑀𝑀𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ) in Equation (21) depend on whether the command signal is bipolar or uses a sinewave subcarrier. These two factors are given by:
+
+19
+
+810-005
+214, Rev. B
+
+𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ) = �
+𝑀𝑀𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ) = �
+
+cos 2 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ),
+bi-polar
+2
+𝐽𝐽0 �√2 𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 �, sinewave subcarrier
+
+sin2 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ),
+bi-polar
+2
+2𝐽𝐽1 �√2 𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 �, sinewave subcarrier
+
+(24)
+
+(25)
+
+In the event that command is absent from the uplink, the factor 𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ) in Equations (19)
+and (20) can be omitted, since 𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (0) = 1.
+
+Figure 3. Bessel Functions of the First Kind of Order 0 and 1
+
+2.3.2
+
+Downlink
+The equations for power allocation on the downlink depend on whether the
+transponder has a turn-around (non-regenerative) ranging channel or a regenerative ranging
+channel.
+2.3.2.1
+
+Turn-Around (Non-Regenerative) Ranging
+A turn-around ranging channel demodulates the uplink carrier, filters the
+baseband signal, applies automatic gain control, and then re-modulates the baseband signal onto
+the downlink carrier. The AGC serves the important purpose of ensuring that the downlink
+20
+
+810-005
+214, Rev. B
+carrier suppression is approximately constant, independent of received uplink signal level. The
+bandwidth 𝐵𝐵𝑅𝑅 of the transponder’s ranging channel must be larger (typically about 50% larger)
+than the range-clock frequency, in order to pass the ranging signal with minimal distortion. For
+example, 𝐵𝐵𝑅𝑅 is typically about 1.5 MHz when the transponder is intended to accommodate a
+range clock of 1 MHz. Substantial thermal noise from the uplink also passes through this
+channel. In many deep space scenarios, the thermal noise dominates over the ranging signal in
+this wideband, turn-around channel. Moreover, command signal from the uplink may pass
+through this ranging channel. In general, then, noise and command signal as well as the desired
+ranging signal are modulated onto the downlink carrier whenever the ranging channel is active
+(Reference 3).
+The equations of this subsection represent the case where a ranging signal, a
+(feedthrough) command signal and noise are simultaneously present in the ranging channel, so
+that all three of these components, plus telemetry, phase-modulate the downlink carrier. The
+range clock is taken here to be a sinewave. The ratio of 𝑃𝑃𝐶𝐶 to 𝑃𝑃𝑇𝑇 , the carrier suppression, is
+𝑃𝑃𝐶𝐶
+2
+�
+= 𝐽𝐽0 2 �√2 𝜃𝜃𝑟𝑟 � ∙ 𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 ) ∙ 𝑒𝑒 −𝜃𝜃𝑛𝑛 ∙ 𝑆𝑆𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+𝑃𝑃𝑇𝑇 D/L
+
+(26)
+
+The ratio of 𝑃𝑃𝑅𝑅 to 𝑃𝑃𝑇𝑇 is
+
+(27)
+
+The ratio of the telemetry sideband power to 𝑃𝑃𝑇𝑇 is
+
+(28)
+
+𝑃𝑃𝑅𝑅
+2
+�
+= 2𝐽𝐽1 2 �√2 𝜃𝜃𝑟𝑟 � ∙ 𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 ) ∙ 𝑒𝑒 −𝜃𝜃𝑛𝑛 ∙ 𝑆𝑆𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+𝑃𝑃𝑇𝑇 D/L
+𝑃𝑃𝐷𝐷
+2
+�
+= 𝐽𝐽0 2 �√2 𝜃𝜃𝑟𝑟 � ∙ 𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 ) ∙ 𝑒𝑒 −𝜃𝜃𝑛𝑛 ∙ 𝑀𝑀𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+𝑃𝑃𝑇𝑇 D/L
+
+where 𝐽𝐽0 (∙) and 𝐽𝐽1 (∙) are Bessel functions of the first kind of order 0 and 1, respectively.
+The command-feedthrough suppression factor 𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 ) that appears in each of
+Equations (26), (27) and (28) depends on whether the command signal is bi-polar or uses a
+sinewave subcarrier. This factor is given by:
+𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 ) = �
+
+cos2 (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 ),
+bi-polar
+2
+𝐽𝐽0 �√2 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 �, sinewave subcarrier
+
+(29)
+
+In the event that command feedthrough is absent from the ranging channel, the factor 𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 )
+in each of Equations (26), (27) and (28) can be omitted, since 𝑆𝑆𝑓𝑓𝑓𝑓ℎ (0) = 1.
+
+The suppression factor 𝑆𝑆𝑡𝑡𝑡𝑡𝑡𝑡 (𝜙𝜙𝑡𝑡𝑡𝑡𝑡𝑡 ) in Equations (26) and (27) and the modulation
+factor 𝑀𝑀𝑡𝑡𝑡𝑡𝑡𝑡 (𝜙𝜙𝑡𝑡𝑡𝑡𝑡𝑡 ) in Equation (28) depend on whether the telemetry signal is bi-polar or uses a
+sinewave subcarrier. These two factors are given by:
+𝑆𝑆𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 ) = �
+
+cos 2 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 ),
+bi-polar
+2
+𝐽𝐽0 �√2 𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 �, sinewave subcarrier
+21
+
+(30)
+
+810-005
+214, Rev. B
+sin2 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 ),
+bi-polar
+𝑀𝑀𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 ) = � 2
+2𝐽𝐽1 �√2 𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 �, sinewave subcarrier
+
+(31)
+
+For a turn-around ranging channel, the downlink rms phase deviations 𝜃𝜃𝑟𝑟 , 𝜃𝜃𝑛𝑛 , and
+(if command feedthrough is present) 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 depend on the ranging signal-to-noise ratio 𝜌𝜌𝑟𝑟 and (if
+command feedthrough is present) the command signal-to-noise ratio 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 in the ranging
+channel.
+𝑃𝑃𝑅𝑅
+𝑃𝑃𝑇𝑇
+1
+𝜌𝜌𝑟𝑟 = �
+∙ �
+∙
+(32)
+𝑃𝑃𝑇𝑇 U/L 𝑁𝑁0 U/L 𝐵𝐵𝑅𝑅
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 =
+
+where
+
+𝑃𝑃𝐷𝐷
+𝑃𝑃𝑇𝑇
+1
+�
+∙ �
+∙
+𝑃𝑃𝑇𝑇 U/L 𝑁𝑁0 U/L 𝐵𝐵𝑅𝑅
+
+(33)
+
+𝑃𝑃𝑇𝑇 ⁄𝑁𝑁0 |U/L = uplink total power to noise spectral density ratio, Hz
+𝐵𝐵𝑅𝑅
+
+= noise-equivalent (one-sided) bandwidth of transponder’s ranging channel, Hz
+
+In some transponders with a turn-around ranging channel, the AGC is designed to
+keep constant the average of the absolute value of the voltage at the AGC output. In other
+transponders, the AGC is designed to keep constant the rms voltage at the AGC output. For both
+types of AGC, the downlink rms phase deviations 𝜃𝜃𝑟𝑟 , 𝜃𝜃𝑛𝑛 , and 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 depend on 𝜌𝜌𝑟𝑟 and 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 (as
+well as the parameter 𝜃𝜃𝑟𝑟𝑟𝑟 ). Turn-around ranging channels with both types of AGC are treated
+below.
+2.3.2.1.1
+AGC with Constant Average of Absolute Value of Voltage
+When the transponder’s ranging channel has an AGC that keeps constant the
+average of the absolute value of the channel voltage, there are no exact, analytical expressions
+for the rms phase deviations 𝜃𝜃𝑟𝑟 , 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 and 𝜃𝜃𝑛𝑛 . However, these rms phase deviations may be
+obtained by computer simulation. Curve fits to the simulations appear below.
+𝜃𝜃𝑟𝑟𝑟𝑟
+(34)
+𝜃𝜃𝑟𝑟 =
+1 + exp[𝛾𝛾 − 0.79 ∙ ln(𝜌𝜌𝑟𝑟 )]
+where
+−1.2,
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0
+(35)
+𝛾𝛾 = �
+0.88 ],
+ln[0.3 + 0.27 ∙ 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 > 0
+Here exp(∙) and ln(∙) are the exponential function and natural logarithm, respectively. In the
+event that there is no command feedthrough, 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0 and 𝜃𝜃𝑟𝑟 depends only on the constant
+parameter 𝜃𝜃𝑟𝑟𝑟𝑟 and the ranging signal-to-noise ratio 𝜌𝜌𝑟𝑟 . The asymptotes for Equation (34) are
+lim 𝜃𝜃𝑟𝑟 = 0 and lim 𝜃𝜃𝑟𝑟 = 𝜃𝜃𝑟𝑟𝑟𝑟 .
+𝜌𝜌𝑟𝑟 →0
+
+𝜌𝜌𝑟𝑟 →∞
+
+A similar set of equations are valid (approximately) for 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐
+22
+
+810-005
+214, Rev. B
+
+where
+
+𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 =
+
+𝜃𝜃𝑟𝑟𝑟𝑟
+1 + exp[𝜒𝜒 − 0.79 ∙ ln(𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 )]
+
+𝜒𝜒 = ln[0.3 + 0.27 ∙ 𝜌𝜌𝑟𝑟 0.88 ]
+
+The asymptotes for Equation (36) are lim 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 = 0 and
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 →0
+
+lim 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 = 𝜃𝜃𝑟𝑟𝑟𝑟 .
+
+𝜃𝜃𝑟𝑟𝑟𝑟 ∙ �2⁄√𝜋𝜋�
+1 + exp[−0.87 + 0.81 ∙ ln(𝜌𝜌𝑟𝑟𝑟𝑟𝑟𝑟 )]
+
+where 𝜌𝜌𝑟𝑟𝑟𝑟𝑟𝑟 is the root-sum-square of 𝜌𝜌𝑟𝑟 and 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 :
+
+𝜌𝜌𝑟𝑟𝑟𝑟𝑟𝑟 = �𝜌𝜌𝑟𝑟 2 + 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 2
+
+(37)
+
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 →∞
+
+A curve-fit to the simulation data for 𝜃𝜃𝑛𝑛 as a function of 𝜌𝜌𝑟𝑟 and 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 is:
+𝜃𝜃𝑛𝑛 =
+
+(36)
+
+(38)
+
+(39)
+
+The asymptotes for this curve are lim 𝜃𝜃𝑛𝑛 = 𝜃𝜃𝑟𝑟𝑟𝑟 ∙ �2⁄√𝜋𝜋� and lim 𝜃𝜃𝑛𝑛 = 0.
+𝜌𝜌𝑟𝑟𝑟𝑟𝑟𝑟 →0
+
+𝜌𝜌𝑟𝑟𝑟𝑟𝑟𝑟 →∞
+
+Since 𝜃𝜃𝑟𝑟 is directly proportional to the parameter 𝜃𝜃𝑟𝑟𝑟𝑟 , the ratio 𝜃𝜃𝑟𝑟 ⁄𝜃𝜃𝑟𝑟𝑟𝑟 may be
+plotted as a function of 𝜌𝜌𝑟𝑟 (and 𝜌𝜌𝑟𝑟 alone when 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0). This appears in Figure 4 for the case
+of no command feedthrough: 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0 and 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 = 0. The solid curve labeled AAV is valid
+for a turn-around ranging channel whose AGC keeps constant the average of the absolute voltage
+(AAV). Figure 4 shows that the ratio 𝜃𝜃𝑟𝑟 ⁄𝜃𝜃𝑟𝑟𝑟𝑟 increases monotonically as a function of 𝜌𝜌𝑟𝑟 with a
+limiting value of 1. (In other words, the strong-signal value of 𝜃𝜃𝑟𝑟 is 𝜃𝜃𝑟𝑟𝑟𝑟 .) The AAV curve of
+Figure 4 comes from Equations (34) and (35) with 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0.
+
+Figure 4. Downlink rms Phase Deviation by Ranging Signal (No Command Feedthrough)
+23
+
+810-005
+214, Rev. B
+
+The ratio 𝜃𝜃𝑛𝑛 ⁄𝜃𝜃𝑟𝑟𝑟𝑟 may also be plotted as a function of 𝜌𝜌𝑟𝑟 when 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0. This
+appears in Figure 5. The solid curve labeled AAV is valid for a turn-around ranging channel
+whose AGC keeps constant the average of the absolute voltage (AAV). Figure 5 shows that the
+ratio 𝜃𝜃𝑛𝑛 ⁄𝜃𝜃𝑟𝑟𝑟𝑟 decreases monotonically as a function of 𝜌𝜌𝑟𝑟 . The AAV curve of Figure 5 comes
+from Equations (38) and (39) with 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0.
+
+Figure 5. Downlink rms Phase Deviation by Noise (No Command Feedthrough)
+
+2.3.2.1.2
+
+AGC with Constant Root-Mean-Square Voltage
+In some transponders, especially older designs, the ranging channel has an AGC
+that enforces a constant rms voltage at the AGC output. Since an unchanging rms voltage
+corresponds to an unchanging power, this type of AGC is also called a power-controlled AGC.
+An AGC that enforces constant rms voltage (equivalently, constant power) at the
+AGC output is characterized by the following relationship among the rms phase deviations 𝜃𝜃𝑟𝑟 ,
+𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 , 𝜃𝜃𝑛𝑛 , and 𝜃𝜃𝑟𝑟𝑟𝑟 .
+𝜃𝜃𝑟𝑟 2 + 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 2 + 𝜃𝜃𝑛𝑛 2 = 𝜃𝜃𝑟𝑟𝑟𝑟 2
+
+(40)
+
+In other words, the total power in the turn-around ranging channel, which equals the ranging
+signal power plus the feedthrough command signal power plus the noise power in the channel
+bandwidth, equals a constant value. The rms phase deviations are given by
+
+24
+
+810-005
+214, Rev. B
+
+𝜌𝜌𝑟𝑟
+𝜃𝜃𝑟𝑟 = 𝜃𝜃𝑟𝑟𝑟𝑟 ∙ �
+1 + 𝜌𝜌𝑟𝑟 + 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐
+𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 = 𝜃𝜃𝑟𝑟𝑟𝑟 ∙ �
+1 + 𝜌𝜌𝑟𝑟 + 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐
+𝜃𝜃𝑛𝑛 =
+
+𝜃𝜃𝑟𝑟𝑟𝑟
+
+�1 + 𝜌𝜌𝑟𝑟 + 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐
+
+(41)
+
+(42)
+
+(43)
+
+The ratio 𝜃𝜃𝑟𝑟 ⁄𝜃𝜃𝑟𝑟𝑟𝑟 is plotted as a function of 𝜌𝜌𝑟𝑟 in Figure 4 for the case of no
+command feedthrough: 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0 and 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 = 0. The dashed curve labeled RMS is valid for a
+turn-around ranging channel whose AGC enforces a constant rms voltage at the AGC output.
+The RMS curve of Figure 4 comes from Equation (41) with 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0.
+The ratio 𝜃𝜃𝑛𝑛 ⁄𝜃𝜃𝑟𝑟𝑟𝑟 is plotted as a function of 𝜌𝜌𝑟𝑟 in Figure 5 for the case of no
+command feedthrough: 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0 and 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 = 0. The dashed curve labeled RMS is valid for a
+turn-around ranging channel whose AGC enforces a constant rms voltage at the AGC output.
+The RMS curve of Figure 5 comes from Equation (43) with 𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐 = 0.
+2.3.2.1.3
+
+Comparison of Two AGC Types
+As explained above, there are two types of AGC that have been employed in
+transponders with turn-around ranging channels. These two AGCs differ in the quantity that is
+kept constant: either the average of the absolute voltage (AAV) or the root-mean-square (RMS).
+Figure 6 plots 𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |𝐷𝐷/𝐿𝐿 as a function of 𝜌𝜌𝑟𝑟 for each of the two AGC types. For
+all curves in this figure, there is no telemetry and there is no command feedthrough. For each
+AGC type, there are two curves: one for 𝜃𝜃𝑟𝑟𝑟𝑟 = 0.2 rad rms and a second for 𝜃𝜃𝑟𝑟𝑟𝑟 = 0.4 rad rms.
+𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |𝐷𝐷/𝐿𝐿 was calculated using Equation (27). The phase deviations 𝜃𝜃𝑟𝑟 and 𝜃𝜃𝑛𝑛 needed within
+Equation (27) were calculated using the equations of Subsection 2.3.2.1.1 for the AAV curves
+and Subsection 2.3.2.1.2 for the RMS curves.
+Figure 7 plots the carrier suppression 𝑃𝑃𝐶𝐶 ⁄𝑃𝑃𝑇𝑇 |𝐷𝐷/𝐿𝐿 as a function of 𝜌𝜌𝑟𝑟 for each of
+the two AGC types. For all curves in this figure, there is no telemetry and there is no command
+feedthrough. For each AGC type, there are two curves: one for 𝜃𝜃𝑟𝑟𝑟𝑟 = 0.2 rad rms and a second
+for 𝜃𝜃𝑟𝑟𝑟𝑟 = 0.4 rad rms. 𝑃𝑃𝐶𝐶 ⁄𝑃𝑃𝑇𝑇 |𝐷𝐷/𝐿𝐿 was calculated using Equation (26). The phase deviations 𝜃𝜃𝑟𝑟
+and 𝜃𝜃𝑛𝑛 needed within Equation (26) were calculated using the equations of Subsection 2.3.2.1.1
+for the AAV curves and Subsection 2.3.2.1.2 for the RMS curves.
+
+25
+
+810-005
+214, Rev. B
+
+Figure 6. Downlink Ranging-Signal Power to Total Power (No Telemetry, No Command)
+
+Figure 7. Downlink Carrier Suppression (No Telemetry, No Command)
+26
+
+810-005
+214, Rev. B
+2.3.2.2
+
+Regenerative Ranging
+A regenerative ranging channel demodulates the uplink carrier, tracks the range
+clock, detects the range code, and modulates a ranging signal on the downlink. A regenerative
+ranging channel produces a clean ranging signal, free of command feedthrough and with little
+noise, because this channel has a small bandwidth. (This bandwidth is orders-of-magnitude
+smaller than the 1.5-MHz bandwidth of the typical turn-around ranging channel.) For the
+purpose of calculating the distribution of power on the downlink in the case of regenerative
+ranging, the following equations may be used. There will, in general, be phase jitter on the
+downlink ranging signal that is caused by uplink thermal noise and this jitter is an error source
+for the two-way range measurement. This error is considered in Section 2.5.
+The carrier suppression is
+𝑃𝑃𝐶𝐶
+�
+= 𝐽𝐽0 2 �√2 𝜃𝜃𝑟𝑟𝑟𝑟 � ∙ cos 2 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+𝑃𝑃𝑇𝑇 D/L
+
+(44)
+
+The ratio of available ranging signal power to total power is
+
+𝑃𝑃𝑅𝑅
+�
+= 2 𝐽𝐽1 2 �√2 𝜃𝜃𝑟𝑟𝑟𝑟 � ∙ cos2 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+𝑃𝑃𝑇𝑇 D/L
+
+(45)
+
+The ratio of available telemetry (data) signal power to total power is
+𝑃𝑃𝐷𝐷
+�
+= 𝐽𝐽0 2 �√2 𝜃𝜃𝑟𝑟𝑟𝑟 � ∙ sin2 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+𝑃𝑃𝑇𝑇 D/L
+
+(46)
+
+In these equations, 𝜃𝜃𝑟𝑟𝑟𝑟 is the (strong-signal) rms phase deviation of the downlink carrier by the
+ranging signal, and 𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 is the telemetry modulation index.
+
+2.4
+
+Uplink Spectrum
+
+The spectrum of the uplink carrier is of some concern because of the very large
+transmitter powers used on the uplink for deep space missions. A mathematical model for this
+spectrum is given here for the case of a sinewave range clock and no command.
+A PN ranging signal is periodic, so its spectrum consists of discrete spectral lines.
+The spectrum of an uplink carrier that has been phase modulated by only a PN ranging signal
+also consists of discrete spectral lines.
+As described in Section 2.2, the composite chip sequence 𝑐𝑐 ′ (∙) is similar to the
+′ (∙),
+range clock 𝑐𝑐1
+except that some chips are inverted. A discrepancy signal 𝑑𝑑′ (∙) is defined by
+𝑑𝑑′ (𝑖𝑖) = 𝑐𝑐1 ′ (𝑖𝑖) ∙ 𝑐𝑐 ′ (𝑖𝑖)
+
+(47)
+
+𝑑𝑑′ (𝑖𝑖) equals +1 when the range clock and the composite code agree, which is most of the time.
+When the range clock and the composite code disagree, 𝑑𝑑′ (𝑖𝑖) equals −1. The PN ranging signal
+may be mathematically modeled as 𝑑𝑑(𝑖𝑖)sin(𝜋𝜋𝜋𝜋⁄𝑇𝑇𝑐𝑐 ) for 𝑖𝑖𝑇𝑇𝑐𝑐 ≤ 𝑡𝑡 < (𝑖𝑖 + 1)𝑇𝑇𝑐𝑐 , where 𝑇𝑇𝑐𝑐 is the chip
+period. In words, the PN ranging signal is a sinewave (range clock) of frequency 1⁄(2𝑇𝑇𝑐𝑐 ) except
+that there is an occasional inversion of a half-cycle. When this signal phase modulates the uplink
+27
+
+810-005
+214, Rev. B
+carrier with an rms phase deviation 𝜙𝜙𝑟𝑟 (radians rms), the fractional power in each discrete
+spectral line is given by
+fraction of uplink total power in the
+⎧discrete spectral line with frequency
+𝑃𝑃𝑘𝑘
+= |𝑋𝑋𝑘𝑘 |2 =
+𝑘𝑘
+𝑃𝑃𝑇𝑇
+⎨
+𝑓𝑓𝐶𝐶 +
+⎩
+𝐿𝐿𝑇𝑇𝑐𝑐
+
+(48)
+
+where 𝑃𝑃𝑇𝑇 is the total uplink power, 𝑓𝑓𝐶𝐶 is the uplink carrier frequency, 𝐿𝐿 is the period in chips of
+the composite code, k is an integer harmonic number, and 𝑋𝑋𝑘𝑘 is given by
+∞
+
+𝐿𝐿−1
+
+𝑚𝑚=−∞
+
+𝑛𝑛=0
+
+1
+𝑚𝑚 𝑘𝑘
+1
+2𝑘𝑘
+𝑋𝑋𝑘𝑘 =
+� sinc � − � � 𝐽𝐽𝑚𝑚 �√2 𝜙𝜙𝑟𝑟 𝑑𝑑 ′ (𝑛𝑛)� exp �𝑗𝑗𝑗𝑗 �𝑛𝑛 + � �𝑚𝑚 − ��
+𝐿𝐿
+2 𝐿𝐿
+2
+𝐿𝐿
+
+where 𝐽𝐽𝑚𝑚 (∙) is the Bessel function of the first kind of order m, and
+sinc(𝑥𝑥) =
+
+sin(𝜋𝜋𝜋𝜋)
+𝜋𝜋𝜋𝜋
+
+(49)
+
+(50)
+
+Equation (49) may be evaluated numerically. The values of the Bessel functions
+decrease very rapidly with increasing |𝑚𝑚|, so in practice it is possible to get good accuracy while
+including only a few terms from the sum over the integer m. In evaluating Equation (49), the
+following identity is useful.
+𝐽𝐽 (𝑥𝑥), 𝑚𝑚 even
+𝐽𝐽−𝑚𝑚 (𝑥𝑥) = � 𝑚𝑚
+−𝐽𝐽𝑚𝑚 (𝑥𝑥), 𝑚𝑚 odd
+
+(51)
+
+There is a symmetrical power distribution about the carrier. So for every discrete
+spectral line at 𝑓𝑓𝐶𝐶 + 𝑘𝑘⁄(𝐿𝐿𝐿𝐿) whose power is given by Equation (48), there is also a discrete
+spectral line at 𝑓𝑓𝐶𝐶 − 𝑘𝑘⁄(𝐿𝐿𝐿𝐿) with the same power.
+Figure 8 illustrates the uplink spectrum for a sinewave range clock with the DSN
+range code and an rms phase deviation 𝜙𝜙𝑟𝑟 = 0.2 rad rms. The horizontal axis represents the
+ratio of the frequency offset from the residual carrier to the range-clock frequency. The vertical
+axis is the ratio of the power in a discrete-spectral line to the total signal power, expressed in
+decibels. The residual carrier is located at the horizontal coordinate 0, and it has a power of
+−0.2 dB relative to 𝑃𝑃𝑇𝑇 . In other words, the carrier suppression is −0.2 dB. The lower
+fundamental harmonic has a horizontal coordinate of −1 (a frequency of 𝑓𝑓𝐶𝐶 − 𝑓𝑓𝑅𝑅𝑅𝑅 ), and the
+upper fundamental harmonic has a horizontal coordinate of +1 (a frequency of 𝑓𝑓𝐶𝐶 + 𝑓𝑓𝑅𝑅𝑅𝑅 ); each
+of these has a power of −17.5 dB relative to 𝑃𝑃𝑇𝑇 . The lower second harmonic has a horizontal
+coordinate of −2 (a frequency of 𝑓𝑓𝐶𝐶 − 2𝑓𝑓𝑅𝑅𝑅𝑅 ), and the upper second harmonic has a horizontal
+coordinate of +2 (a frequency of 𝑓𝑓𝐶𝐶 + 2𝑓𝑓𝑅𝑅𝑅𝑅 ); each of these has a power of −39.7 dB relative to
+𝑃𝑃𝑇𝑇 . The smaller spectral lines that lie between 𝑓𝑓𝐶𝐶 − 2𝑓𝑓𝑅𝑅𝑅𝑅 and 𝑓𝑓𝐶𝐶 + 2𝑓𝑓𝑅𝑅𝑅𝑅 arise from the
+occasional inversions of half-cycles as represented by 𝑑𝑑′ (𝑖𝑖); this is the spectrum spreading that
+permits the amibiguity to be resolved.
+
+28
+
+810-005
+214, Rev. B
+
+Figure 8. Uplink Spectrum for the DSN Range Code Ranging Signal
+
+2.5
+
+Range Measurement Performance
+
+Thermal noise has two effects on range measurements. First, there is a standard
+deviation of range measurement error due to thermal noise. Second, there is a probability of
+acquisition of the range measurement that is less than 100% due to the presence of thermal noise.
+The cross-correlation factors of a composite code plays a role in the performance of PN ranging
+in the presence of thermal noise.
+2.5.1
+
+Cross-Correlation Factors
+The cross-correlation factors 𝑅𝑅𝑛𝑛 (with zero delay) are defined by
+𝐿𝐿−1
+
+1
+𝑅𝑅𝑛𝑛 = � 𝑐𝑐 ′ (𝑖𝑖)𝑐𝑐𝑛𝑛 ′ (𝑖𝑖)
+𝐿𝐿
+𝑖𝑖=0
+
+(52)
+
+where 𝐿𝐿 is the period (in chips) of the composite code, 𝑐𝑐 ′ (𝑖𝑖) = ±1 is the chip sequence, and
+𝑐𝑐𝑛𝑛 ′ (𝑖𝑖) = ±1 is the (periodic extension of the) chip sequence for the n-th component code. The
+cross-correlation factors are given in tables that follow: Table 3 for the DSN range code,
+Table 4 for the T4B code, and Table 5 for the T2B code.
+
+29
+
+810-005
+214, Rev. B
+Table 3. Cross-Correlation Factors, DSN Range Code
+𝑛𝑛
+1
+
+𝜆𝜆𝑛𝑛
+
+𝑅𝑅𝑛𝑛
+
+2
+
+0.9544
+
+2
+
+7
+
+0.0456
+
+3
+
+11
+
+0.0456
+
+4
+
+15
+
+0.0456
+
+5
+
+19
+
+0.0456
+
+6
+
+23
+
+0.0456
+
+Table 4. Cross-Correlation Factors, T4B (Reference 4)
+𝑛𝑛
+1
+
+𝜆𝜆𝑛𝑛
+
+𝑅𝑅𝑛𝑛
+
+2
+
+0.9387
+
+2
+
+7
+
+0.0613
+
+3
+
+11
+
+0.0613
+
+4
+
+15
+
+0.0613
+
+5
+
+19
+
+0.0613
+
+6
+
+23
+
+0.0613
+
+Table 5. Cross-Correlation Factors, T2B (Reference 4)
+𝑛𝑛
+1
+
+𝜆𝜆𝑛𝑛
+
+𝑅𝑅𝑛𝑛
+
+2
+
+0.6274
+
+2
+
+7
+
+0.2447
+
+3
+
+11
+
+0.2481
+
+4
+
+15
+
+0.2490
+
+5
+
+19
+
+0.2492
+
+6
+
+23
+
+0.2496
+
+30
+
+810-005
+214, Rev. B
+
+2.5.2
+
+Range Measurement Error Due to Thermal Noise
+The standard deviation 𝜎𝜎𝜌𝜌 of range measurement error, in meters rms, due to
+downlink thermal noise is given by
+
+where
+
+𝜎𝜎𝜌𝜌 =
+
+𝑐𝑐
+
+𝑓𝑓𝑅𝑅𝑅𝑅 ∙ 𝐴𝐴𝑐𝑐 ∙ 𝑅𝑅1 ∙ �32𝜋𝜋 2 ∙ 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 )
+
+(53)
+
+𝑐𝑐 = speed of electromagnetic waves in vacuum, 299,792,458 m⁄s
+𝐴𝐴𝑐𝑐 = fractional loss of correlation amplitude due to frequency mismatch (𝐴𝐴𝑐𝑐 ≤ 1)
+
+𝑅𝑅1 = cross-correlation factor for the correlation against the range clock
+𝑇𝑇 = range measurement integration time
+𝑓𝑓𝑅𝑅𝑅𝑅 = frequency of the range clock
+
+𝐴𝐴𝑐𝑐 = 1 under the normal circumstances, in which the range clock is coherently
+related to the carrier. In the special case of non-coherent ranging, 𝐴𝐴𝑐𝑐 < 1.
+𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 , the ratio of the downlink ranging signal power to the noise spectral
+density, is given by
+𝑃𝑃𝑅𝑅 𝑃𝑃𝑅𝑅
+𝑃𝑃𝑇𝑇
+= �
+∙
+�
+𝑁𝑁0 𝑃𝑃𝑇𝑇 D/L 𝑁𝑁0 D/L
+
+(54)
+
+where 𝑃𝑃𝑇𝑇 ⁄𝑁𝑁0 |𝐷𝐷/𝐿𝐿 is the downlink total signal to noise spectral density ratio and where 𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |𝐷𝐷/𝐿𝐿
+is the ratio of downlink ranging signal power to total power as given by Equation (27) for turnaround (non-regenerative) ranging or as given by Equation (45) for regenerative ranging.
+The factor 𝑃𝑃𝑅𝑅 is that portion of the power in the downlink ranging sidebands that
+is used in the range measurement, either in the correlation that determines the range
+measurement error or in the resolution of the ambiguity. The power 𝑅𝑅1 2 𝑃𝑃𝑅𝑅 is utilized in the
+correlation that determines the range measurement error. It may be noted that 𝜎𝜎𝜌𝜌 2 , the square of
+the standard deviation given in Equation (53), is inversely proportional to 𝑅𝑅1 2 𝑃𝑃𝑅𝑅 . In the
+spectrum of the modulated downlink carrier, the power 𝑅𝑅1 2 𝑃𝑃𝑅𝑅 is evenly divided between the
+discrete spectral line 𝑓𝑓𝑅𝑅𝑅𝑅 hertz below the residual carrier and the discrete spectral line 𝑓𝑓𝑅𝑅𝑅𝑅 hertz
+above the residual carrier.
+For the DSN and T4B codes, the standard deviation of range measurement error
+(meters) due to thermal noise is plotted in Figure 9 against the product 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ), expressed in
+decibels: 10 log(𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ). These curves were calculated from Equation (53) using the crosscorrelation factor 𝑅𝑅1 given in Table 3 for the DSN range code and Table 4 for the T4B code.
+Also, the range clock was taken to be a 1-MHz sinewave and 𝐴𝐴𝑐𝑐 was taken to be 1. The factor
+𝑅𝑅1 depends on the range code. For the DSN range code, 𝑅𝑅1 = 0.9544. For the T4B code, 𝑅𝑅1 =
+0.9387. This difference is the reason the two curves in Figure 9 do not overlap.
+31
+
+810-005
+214, Rev. B
+
+Figure 9. Standard Deviation of Range Measurement Error for the DSN and T4B Codes
+The T2B code was designed to operate at smaller values of 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ). For the
+T2B code, the standard deviation of range measurement error (meters) due to thermal noise is
+plotted in Figure 10. This curve was calculated from Equation (53) using the cross-correlation
+factor 𝑅𝑅1 given in Table 5. The range clock was taken to be a 1-MHz sinewave, and 𝐴𝐴𝑐𝑐 was
+taken to be 1. The factor 𝑃𝑃𝑅𝑅 in the product 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) is that portion of the power in the
+downlink ranging sidebands that is used in the range measurement, either in the correlation that
+determines the range measurement error or in the resolution of the ambiguity.
+The standard deviation of the two-way time delay 𝜎𝜎𝜏𝜏 , in seconds, is related to 𝜎𝜎𝜌𝜌 ,
+as given in Eq. (53), by
+𝜎𝜎𝜏𝜏 =
+
+2
+∙ 𝜎𝜎
+𝑐𝑐 𝜌𝜌
+
+(55)
+
+The factor of 2 in Eq. (55) accounts for the fact that 𝜎𝜎𝜌𝜌 characterizes the error in the one-way
+range, while 𝜎𝜎𝜏𝜏 characterizes the error in a two-way time delay. The standard deviation of the
+two-way phase delay 𝜎𝜎𝑅𝑅𝑅𝑅 , as measured in range units, is related to 𝜎𝜎𝜏𝜏 by
+
+32
+
+810-005
+214, Rev. B
+𝑓𝑓𝑆𝑆
+∙ 𝜎𝜎 ,
+S-band uplink
+2 𝜏𝜏
+221 𝑓𝑓𝑋𝑋
+𝜎𝜎𝑅𝑅𝑅𝑅 =
+∙ ∙ 𝜎𝜎𝜏𝜏 ,
+X-band uplink
+⎨ 749 2
+⎪ 221 𝑓𝑓𝐾𝐾𝐾𝐾
+⎩3599 ∙ 2 ∙ 𝜎𝜎𝜏𝜏 , Ka-band uplink
+⎧
+⎪
+
+(56)
+
+where 𝑓𝑓𝑆𝑆 is the frequency of an S-band uplink carrier, 𝑓𝑓𝑋𝑋 is the frequency of an X-band uplink
+carrier, and 𝑓𝑓𝐾𝐾𝐾𝐾 is the frequency of an X-band uplink carrier.
+
+Figure 10. Standard Deviation of Range Measurement Error for the T2B Code
+2.5.2.1
+
+Range Measurement Error for Turn-Around (Non-Regenerative) Ranging
+For turn-around ranging, Equation (53) accounts for both uplink and downlink
+thermal noise. In this case, 𝑃𝑃𝑅𝑅 is reduced by the effect of uplink noise and any command
+feedthrough. This can be understood from Equation (27) by noting that 𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |𝐷𝐷/𝐿𝐿 depends on
+the rms phase deviations 𝜃𝜃𝑟𝑟 , 𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 , and 𝜃𝜃𝑛𝑛 .
+2.5.2.2
+
+Range Measurement Error for Regenerative Ranging
+For regenerative ranging, the standard deviation 𝜎𝜎𝑅𝑅𝑅𝑅 of range measurement error,
+in meters rms, due to uplink and downlink thermal noise is given by
+
+33
+
+810-005
+214, Rev. B
+
+𝜎𝜎𝑅𝑅𝑅𝑅 = �𝜎𝜎𝜌𝜌 2 + 𝜎𝜎U/L 2
+
+(57)
+
+𝜎𝜎𝜌𝜌 2 is the square of the standard deviation 𝜎𝜎𝜌𝜌 of the range measurement error due to downlink
+thermal noise. 𝜎𝜎𝜌𝜌 is calculated from Equation (53). In the case of regenerative ranging, this
+calculation uses the 𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |D/L that is defined in Equation (45). This (regenerative-ranging)
+𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |D/L contains no contribution from uplink thermal noise.
+
+Uplink thermal noise causes phase jitter on the regenerated ranging signal. This
+phase jitter arises in the tracking loop that is part of the regeneration signal processing
+(Reference 5). This tracking jitter is a potential error source for the two-way range
+measurement. The standard deviation 𝜎𝜎U/L of range measurement error, meters rms, for this
+error source is given by
+𝜎𝜎U/L =
+
+𝑐𝑐
+𝐵𝐵𝑅𝑅𝑅𝑅
+�
+4𝜋𝜋𝑅𝑅1 𝑓𝑓𝑅𝑅𝑅𝑅 𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |U/L ∙ 𝑃𝑃𝑇𝑇 ⁄𝑁𝑁0 |U/L
+
+(58)
+
+where 𝐵𝐵𝑅𝑅𝑅𝑅 is the bandwidth of the loop that tracks the uplink range clock. The error 𝜎𝜎U/L only
+applies in the case of regenerative ranging. The range measurement error for a two-way,
+regenerative ranging measurement is computed as the root-sum-square of 𝜎𝜎U/L and 𝜎𝜎𝜌𝜌 , as
+indicated in Equation (57). For some missions it will be typical that 𝜎𝜎U/L ≪ 𝜎𝜎𝜌𝜌 , in which case
+𝜎𝜎𝑅𝑅𝑅𝑅 can be approximated as 𝜎𝜎𝜌𝜌 .
+
+Regenerative ranging has better performance than turn-around ranging. A
+difference in bandwidth is the reason for this. With regenerative ranging, the bandwidth of the
+transponder’s range-clock loop, 𝐵𝐵𝑅𝑅𝑅𝑅 in Equation (58), is typically small, perhaps a few hertz.
+With turn-around ranging, the bandwidth 𝐵𝐵𝑅𝑅 of the transponder’s ranging channel is typically
+about 1.5 MHz.
+2.5.3
+
+Probability of Acquisition
+A correct determination of the range can only happen if the ambiguity is correctly
+resolved. This is accomplished with a set of correlations within the RRT between the received
+baseband ranging signal and local models of the component codes. A range measurement is
+successfully acquired when every code component is correctly acquired. The probability of
+acquisition 𝑃𝑃acq for the range measurement is the product of the five probabilities 𝑃𝑃𝑛𝑛 , 2 ≤ 𝑛𝑛 ≤ 6.
+6
+
+𝑃𝑃acq = � 𝑃𝑃𝑛𝑛
+
+(59)
+
+𝑛𝑛=2
+
+𝑃𝑃𝑛𝑛 is the probability of acquiring the n-th component code (2 ≤ 𝑛𝑛 ≤ 6). Each 𝑃𝑃𝑛𝑛 is calculated by
+𝑃𝑃𝑛𝑛 =
+
+1
+
+∞
+
+� 𝑒𝑒
+√𝜋𝜋 −∞
+
+−𝑥𝑥 2
+
+1 + erf�𝑥𝑥 + 𝐴𝐴𝑐𝑐 𝑅𝑅𝑛𝑛 �𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 )�
+�
+�
+2
+34
+
+𝜆𝜆𝑛𝑛 −1
+
+𝑑𝑑𝑑𝑑
+
+(60)
+
+810-005
+214, Rev. B
+where 𝜆𝜆𝑛𝑛 and 𝑅𝑅𝑛𝑛 are the code length (in chips) and cross-correlation factor for the n-th
+component code. Numerical integration is required to evaluate Equation (60). The error
+function erf(∙) is defined by
+erf(𝑦𝑦) =
+
+2
+
+𝑦𝑦
+
+2
+
+� 𝑒𝑒 −𝑡𝑡 𝑑𝑑𝑑𝑑
+
+√𝜋𝜋 0
+
+(61)
+
+The value that Equation (59) gives for 𝑃𝑃acq is, in general, greater than 0 and less
+than 1. 𝑃𝑃acq is often characterized as a percentage (between 0% and 100%).
+
+When interpreting Equation (60), it should be remembered that 𝑃𝑃𝑅𝑅 is that portion
+of the power in the downlink ranging sidebands that is used in the range measurement. Not all of
+the power 𝑃𝑃𝑅𝑅 is employed in acquisition (the resolution of the ambiguity). The power that helps
+with the code-component 𝑛𝑛 correlation is 𝑅𝑅𝑛𝑛 2 𝑃𝑃𝑅𝑅 , where 2 ≤ 𝑛𝑛 ≤ 6.
+Table 6 lists required values for (𝐴𝐴𝑐𝑐 𝑅𝑅𝑛𝑛 )2 ∙ 𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 (in decibels) as a function of
+𝜆𝜆𝑛𝑛 (the code length) and 𝑃𝑃𝑛𝑛 (the probability of acquiring the n-th component code). This table is
+based on Equation (60). The first column of Table 6 is log(𝑃𝑃𝑛𝑛 ), where log(∙) is the common
+logarithm (the base-10 logarithm).
+Here is an example of how Table 6 can be used. If the desired 𝑃𝑃𝑛𝑛 for a component
+code of length 19 is 0.99, then log(𝑃𝑃𝑛𝑛 ) = −0.0044. From Table 6, the decibel values 9.9 dB
+and 10.1 dB are found for log(𝑃𝑃𝑛𝑛 ) = −0.005 and log(𝑃𝑃𝑛𝑛 ) = −0.004, respectively. An
+interpolation suggests that (𝐴𝐴𝑐𝑐 𝑅𝑅𝑛𝑛 )2 ∙ 𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 must be about 10.0 dB in order to correctly
+acquire with probability 𝑃𝑃𝑛𝑛 = 0.99 the component code having 𝜆𝜆𝑛𝑛 = 19. Of course, it is
+important to recall that 𝑃𝑃𝑛𝑛 = 0.99 is not the probability of acquisition of the composite code.
+There are several component codes that must be correctly acquired before the range
+measurement is successfully acquired. 𝑃𝑃acq is given by Equation (59), and it will be less than the
+value of any individual 𝑃𝑃𝑛𝑛 .
+For the DSN range code and the T4B code, 𝑃𝑃acq is plotted in Figure 11 as a
+function of the product 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ), in decibels: 10 log(𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ). For the T2B code, 𝑃𝑃acq is
+plotted in Figure 12 as a function of the product 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ), in decibels. The curves in these
+two figures were calculated from Equations (59) and (60) using 𝐴𝐴𝑐𝑐 = 1 and cross-correlation
+factors from Table 3, Table 4, and Table 5.
+
+35
+
+810-005
+214, Rev. B
+Table 6. Interpolation Table
+Required (𝐴𝐴𝑐𝑐 𝑅𝑅𝑛𝑛 )2 ∙ 𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 (in decibels) for Given 𝜆𝜆𝑛𝑛 and 𝑃𝑃𝑛𝑛
+
+log ( Pn )
+
+λn = 7
+
+λn = 11
+
+λn = 15
+
+λn = 19
+
+λn = 23
+
+−0.050
+
+5.7
+
+6.5
+
+6.9
+
+7.1
+
+7.4
+
+−0.040
+
+6.2
+
+6.9
+
+7.2
+
+7.5
+
+7.7
+
+−0.030
+
+6.7
+
+7.3
+
+7.7
+
+7.9
+
+8.1
+
+−0.020
+
+7.4
+
+7.9
+
+8.3
+
+8.5
+
+8.7
+
+−0.010
+
+8.3
+
+8.8
+
+9.1
+
+9.3
+
+9.4
+
+−0.009
+
+8.4
+
+8.9
+
+9.2
+
+9.4
+
+9.5
+
+−0.008
+
+8.6
+
+9.0
+
+9.3
+
+9.5
+
+9.7
+
+−0.007
+
+8.7
+
+9.2
+
+9.4
+
+9.6
+
+9.8
+
+−0.006
+
+8.9
+
+9.3
+
+9.6
+
+9.8
+
+9.9
+
+−0.005
+
+9.1
+
+9.5
+
+9.8
+
+9.9
+
+10.1
+
+−0.004
+
+9.3
+
+9.7
+
+10.0
+
+10.1
+
+10.3
+
+−0.003
+
+9.6
+
+10.0
+
+10.2
+
+10.4
+
+10.5
+
+−0.002
+
+9.9
+
+10.3
+
+10.5
+
+10.7
+
+10.8
+
+−0.001
+
+10.5
+
+10.8
+
+11.0
+
+11.1
+
+11.3
+
+36
+
+810-005
+214, Rev. B
+
+Figure 11.
+
+Probability of Acquisition for the DSN Range Code and the T4B Code
+
+Figure 12. Probability of Acquisition for the T2B Code
+37
+
+810-005
+214, Rev. B
+An approximation of 𝑃𝑃acq may be calculated using the following curve fit:
+𝑐𝑐 𝑍𝑍 3 + 𝑐𝑐2 𝑍𝑍 2 + 𝑐𝑐1 𝑍𝑍 + 𝑐𝑐0 , 𝑍𝑍1 ≤ 𝑍𝑍 ≤ 𝑍𝑍2
+𝑃𝑃acq = � 3
+1.00,
+𝑍𝑍 > 𝑍𝑍2
+
+where 𝑍𝑍 is the product 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) in units of decibels,
+𝑍𝑍 = 10 log[𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 )]
+
+dB
+
+(62)
+
+(63)
+
+The parameters for the model of Equation (62) are given in Table 7. The correct set of
+parameters depends on the code (DSN range code, T4B, or T2B), as indicated in Table 7. The
+model of Equation (62) is not reliable for 𝑍𝑍 < 𝑍𝑍1 dB. For 𝑍𝑍 > 𝑍𝑍2 dB, the approximation
+𝑃𝑃acq = 1 may be used.
+Table 7. Parameters for Equation (62)
+
+DSN range code
+
+T4B
+
+T2B
+
+𝑍𝑍1
+
+30 dB
+
+28 dB
+
+16 dB
+
+𝑐𝑐3
+
+−0.0039916
+
+−0.0038441
+
+−0.0037013
+
+𝑐𝑐1
+
+−13.2253
+
+−10.8645
+
+−3.7427
+
+𝑍𝑍2
+𝑐𝑐2
+𝑐𝑐0
+
+37 dB
+
+0.400534
+144.154
+
+35 dB
+
+0.356736
+109.048
+
+23 dB
+
+0.208431
+21.833
+
+Comparing Figure 9 and Figure 11, it becomes clear that the DSN range code was
+designed to give a 𝜎𝜎𝜌𝜌 of about 0.2 to 0.3 meter when the product 𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 is just large enough
+(about 37 to 38 dB) to assure a high probability of acquisition. The T4B code has better
+acquisition performance than the DSN range code. Comparing Figure 10 and Figure 12, it can
+be seen that the T2B code achieves a high 𝑃𝑃acq for considerably smaller 𝑇𝑇 ∙ 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 , but the price
+paid is a larger 𝜎𝜎𝜌𝜌 , about 2 meters.
+2.5.4
+
+Processing a Set of Range Measurements
+For a given PN range code, a minimum 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) product is needed to achieve
+a high 𝑃𝑃acq , and there is an approximate range measurement error (standard deviation)
+corresponding to this 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ). In the example discussed above, the DSN range code
+ordinarily requires that 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) be about 37 to 38 dB in order to assure a high 𝑃𝑃acq , and the
+corresponding range measurement error is about 0.2 to 0.3 meter.
+Sometimes the available 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) is smaller than the minimum value for
+which a range code was designed to work. It is still possible to acquire range measurements with
+38
+
+810-005
+214, Rev. B
+the correct resolution of the ambiguity even under the circumstance of a low 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ). This
+is accomplished by using a large set of range measurements (obtained from one station tracking
+one spacecraft).
+Reference 6 describes the “Plurality Voting Method” for accomplishing range
+acquisitions for a large measurement data set when 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) is low. This method employs
+range residuals for the given set of range measurements. A range residual is the difference
+between the measured two-way delay and the predicted two-way delay, where the predicted
+value is computed from a spacecraft ephemeris. Doppler velocity residuals can also be used.
+The Plurality Voting Method, making use of a large set of range measurements, increases the
+acquisition probability beyond that given in Eq. (59). This method does not, however, improve
+the standard deviation of acquired range measurements. The Plurality Voting Method has value
+in scenarios where 𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) is adequate for the required range accuracy (standard deviation)
+but is inadequate (in the absence of this special method) for the required acquisition probability.
+2.5.5
+
+Comparison of PN Ranging and Sequential Ranging
+It is instructive to compare the performance of turn-around PN ranging with
+sequential ranging (Reference 7). For both techniques, a minimum integration time 𝑇𝑇 can be
+calculated as a function of 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 for a given range measurement error 𝜎𝜎𝜌𝜌 (due to thermal noise)
+and a given 𝑃𝑃acq . For the purpose of the present comparison, 𝜎𝜎𝜌𝜌 is taken to be 0.2 m and 𝑃𝑃acq is
+taken to be 0.99. Furthermore, the range-clock frequency 𝑓𝑓𝑅𝑅𝑅𝑅 is taken to be 1 MHz.
+For the analysis presented here, the minimum 𝑇𝑇 is calculated for the DSN range
+code by finding, for a given 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 , the smallest 𝑇𝑇 that satisfies the two constraints: 𝜎𝜎𝜌𝜌 < 0.2 m,
+as calculated with Equation (53), and 𝑃𝑃acq > 0.99, as calculated with Equations (59) and (60).
+
+For sequential ranging, the number of sinewaves in the sequence is taken to be 20;
+this gives an ambiguity resolution of 78,590 km, comparable with the 75,660 km ambiguity
+resolution offered by the DSN range code. The minimum 𝑇𝑇 for sequential ranging is the
+minimum cycle time consistent with a range error (due to thermal noise) of 0.2 m and a
+probability of acquisition of 0.99. The cycle time includes the range-clock integration time 𝑇𝑇1
+plus 19 times the ambiguity integration time 𝑇𝑇2 plus the required deadtime seconds.
+Figure 13 shows the ratio of the minimum 𝑇𝑇 (cycle time) for sequential ranging to
+the minimum 𝑇𝑇 (integration time) for PN ranging as a function of 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 . This figure is intended
+as a performance comparison of sequential ranging and turn-around PN ranging. The underlying
+assumption is that 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 is approximately the same for these two ranging techniques for a given
+set of link parameters.
+In principle, a plot like this also applies to regenerative PN ranging. However,
+𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 will not be the same for regenerative PN ranging and (non-regenerative) sequential
+ranging. In general, it is expected that regenerative PN ranging will out-perform (nonregenerative) sequential ranging.
+The results of Figure 13 suggest that sequential ranging has a small performance
+advantage over turn-around PN ranging for small 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 (less than about 12 dB-Hz for the
+parameters used here) but that PN ranging has a performance advantage for 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 larger than
+this. When the sequential ranging minimum 𝑇𝑇 is larger than the PN ranging minimum 𝑇𝑇 (that is,
+39
+
+810-005
+214, Rev. B
+when 𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 is larger than about 12 dB-Hz), the choice to use PN ranging means that more range
+measurements can be made in a given period than can be made with sequential ranging.
+
+Figure 13. Comparison of Sequential Ranging and PN Ranging
+PN ranging has an operational advantage over sequential ranging. With
+sequential ranging, a large increase in the RTLT during the tracking pass forces a measurement
+restart. This is not an issue for PN ranging. The PN range code has a period of approximately
+0.5 second when the range clock has its typical frequency of about 1 MHz. (The measurement
+integration time 𝑇𝑇 is larger, as the measurement comprises multiple periods of the PN range
+code.) With PN ranging, the downlink can start processing at any 1-second boundary.
+2.5.6
+
+Non-Coherent Operation
+A non-coherent ranging technique has been described in Reference 8. For the
+sake of economy, this technique employs a transceiver, rather than a transponder, at the
+spacecraft. With such a technique, the downlink carrier is not coherent with the uplink carrier,
+and the downlink range clock is not coherent with the downlink carrier. This means that there
+will ordinarily be a frequency mismatch between the received downlink range clock and its local
+model. This mismatch is to be minimized by Doppler compensation of the uplink carrier, but it
+will not be possible, in general, to eliminate completely the frequency mismatch. With this noncoherent technique, range measurement performance will not be as good as that which can be
+achieved with coherent operation using a transponder. Nonetheless, non-coherent range
+measurement performance is expected to be adequate for some mission scenarios.
+
+40
+
+810-005
+214, Rev. B
+The frequency mismatch inherent in non-coherent ranging has two effects on
+performance. One is a loss 𝐴𝐴𝑐𝑐 of correlation amplitude, which increases the thermal noise
+contribution to measurement error. The other is a direct contribution to range measurement
+error. This direct contribution is much the more important of these two effects.
+The loss of correlation amplitude is represented by 𝐴𝐴𝑐𝑐 where 0 < 𝐴𝐴𝑐𝑐 < 1. The
+standard deviation 𝜎𝜎𝜌𝜌 of range measurement error due to thermal noise is given by Equation (53),
+and the probability of acquisition (considering the effect of thermal noise) is given by Equations
+(59) and (60). The amplitude loss factor 𝐴𝐴𝑐𝑐 is, for non-coherent operation, given by
+𝐴𝐴𝑐𝑐 = |sinc(2∆𝑓𝑓𝑅𝑅𝑅𝑅 𝑇𝑇)|
+
+(64)
+
+where ∆𝑓𝑓𝑅𝑅𝑅𝑅 is the frequency mismatch between the received range clock and its local model.
+The function sinc(∙) is defined by Equation (50). For coherent operation, ∆𝑓𝑓𝑅𝑅𝑅𝑅 = 0 and 𝐴𝐴𝑐𝑐 = 1.
+The direct contribution of frequency mismatch to range measurement error is
+given by
+range error due to ∆𝑓𝑓𝑅𝑅𝑅𝑅 =
+
+𝑐𝑐 ∆𝑓𝑓𝑅𝑅𝑅𝑅
+∙
+∙ 𝑇𝑇,
+4 𝑓𝑓𝑅𝑅𝑅𝑅
+
+m
+
+(65)
+
+The range error given by Eq. (65) is in meters (with 𝑐𝑐 in m/s, 𝑇𝑇 in seconds, and with ∆𝑓𝑓𝑅𝑅𝑅𝑅 and
+𝑓𝑓𝑅𝑅𝑅𝑅 sharing the same units). It is worth noting that this measurement error is directly
+proportional to both the fractional frequency mismatch ∆𝑓𝑓𝑅𝑅𝑅𝑅 ⁄𝑓𝑓𝑅𝑅𝑅𝑅 and the measurement
+integration time 𝑇𝑇. The fractional frequency error will, in general, comprise two terms: a
+fractional frequency error due to uncertainty in the spacecraft oscillator frequency and a
+fractional frequency error due to imperfect uplink Doppler predicts.
+Non-coherent ranging measurements should be done with regenerative ranging
+using PN signals. The reason for this follows. The direct error contribution due to frequency
+mismatch is directly proportional to the measurement integration time, as can be seen in
+Equation (65). So, for non-coherent operation, it is important to make 𝑇𝑇 as small as possible.
+This is achieved with regenerative ranging, and regenerative ranging is only available with a PN
+ranging signal.
+With non-coherent operation, the range error due to frequency mismatch increases
+with 𝑇𝑇 and the range error due to thermal noise decreases with 𝑇𝑇. Therefore, it is important to
+seek an optimal value for 𝑇𝑇, in order to get the best possible performance. Reference 8 offers
+guidance in this matter.
+
+2.6
+
+Range Corrections
+
+Range is defined to be the distance from the reference point on the DSS antenna
+to the reference point on the spacecraft antenna. The reference point of a DSS antenna is the
+intersection of the azimuth and elevation axes. When the two-way time delay is measured, the
+result includes more than just the two-way delay between the reference points of the DSS and
+spacecraft antennas. The measured two-way delay also includes station delay and spacecraft
+delay. These extra delays must be determined through calibration and then removed from the
+measured two-way time delay. The spacecraft delay is measured during DSN compatibility
+
+41
+
+810-005
+214, Rev. B
+testing prior to launch. The station delay is determined in two parts: the DSS delay and the Zcorrection.
+A range measurement (that has not yet been corrected) provides the two-way
+delay through the station uplink path, starting from the USG, to and from the spacecraft, and
+through the station downlink path, ending in the RRT. Figure 14 illustrates the two-way signal
+path at the station. It is necessary to determine the uplink station delay for the path from the
+USG to the antenna reference point, to determine the downlink station delay for the path from
+the antenna reference point to the RRT, and to remove these delays from the measured two-way
+delay.
+
+Figure 14. DSS Delay Calibration
+
+2.6.1
+
+DSS Delay
+The DSS delay is obtained by a calibration that mimics an actual two-way range
+measurement, except that the signal path lies entirely within the station. A portion of the uplink
+carrier is diverted through a coupler to a test translator. The test translator shifts the carrier to the
+downlink frequency (while not altering the modulation) and feeds this frequency-shifted carrier
+to a coupler that places it on the downlink path within the station. The DSS delay contains most
+of the station delay. To be precise, the DSS delay comprises the delay from the USG to the
+ranging coupler on the uplink, the delay through the test translator (and its cables), and the delay
+from the ranging coupler on the downlink to the RRT.
+Figure 14 is a somewhat abstract representation of the configuration. The
+microwave instrumentation shown in this figure is not an official subsystem, rather it is a
+conceptual grouping of microwave signal paths and microwave devices. On the uplink, the
+uplink carrier that is output from the klystron passes through the microwave instrumentation on
+its way to the reference point of the antenna. On the downlink, the downlink passes through the
+microwave instrumentation on its way to the LNA. Along the uplink path, a portion of the
+uplink carrier is coupled to the test translator. The portion of the carrier that has been frequency
+shifted to the downlink band inside the test translator is then coupled to the downlink path. The
+specific details of the microwave instrumentation are generally different at different DSSs and
+42
+
+810-005
+214, Rev. B
+for different bands within a given DSS. Modules 101, 103 and 104 should be consulted for those
+details.
+The DSS delay is station and configuration dependent. It should be measured for
+every ranging pass. This measurement is called precal for pre-track calibration and postcal for
+post-track calibration. The former is done at the beginning of a ranging pass; the latter is only
+needed when there is a change in equipment configuration during the track or precal was not
+performed due to a lack of time.
+The DSS delay varies significantly as a function of carrier frequency. This is
+illustrated in Figure 15 for an X-band (uplink and downlink) calibration at DSS 63. The vertical
+axis on this plot is the DSS delay, labeled STDL in this plot. The difference between the largest
+and smallest delays over the 8400—8450 MHz band is about 18 ns in this case. On both the
+lower and upper ends of this band, the rise in station delay originates in the klystron on the
+uplink side of the station. The ripple in the station delay arises from impedance mismatches;
+every transmission line that has some mismatch at both ends will introduce ripple in the group
+delay.
+
+Figure 15. DSS Delay as a Function of Downlink Frequency
+
+2.6.2
+
+Z-Correction
+The DSS delay itself must be corrected. This is accomplished with the Zcorrection. The DSS delay includes the delay through the test translator (and its cables), but the
+test translator is not in the signal path of an actual range measurement. Moreover, the DSS delay
+does not include, but should include, the delays between the ranging couplers and the antenna
+reference point.
+
+43
+
+810-005
+214, Rev. B
+The Z-correction is defined as the delay through the test translator (and its cables)
+minus the uplink and downlink delays between the ranging couplers and the antenna reference
+point. The DSS delay minus the Z-correction therefore gives the delay between the USG and the
+antenna reference point plus the delay between the antenna reference point and the RRT. This is
+exactly the quantity that must be subtracted from a range measurement in order to produce a twoway delay relative to the antenna reference point.
+The test translator delay is measured by installing a zero delay device (ZDD) in
+place of the test translator. Since the ZDD delay is measured in the laboratory, the signal delay
+contributed by the test translator can be calculated to a known precision. This measurement is
+made approximately once each year or when there are hardware changes in this portion of the
+signal path. The delays between the ranging couplers and the antenna reference point are stable
+and need not be updated often; they are determined by a combination of calculation and
+measurement.
+
+2.7
+
+Total Error for Range Measurement
+
+Several error sources contribute to the total error for a range measurement. For
+two-way range measurement, the two most important error sources are typically thermal noise
+and station calibration error. The error due to thermal noise is discussed in Section 2.5. The
+error in calibrating and removing the station delay is often the dominant error source for twoway ranging. For two-way range measurements in the X band, there is typically about 6 ns of
+station calibration error in the two-way delay, corresponding to a (one-way) range error of about
+1 meter.
+The error in calibrating and removing the spacecraft delay is stable for a given
+spacecraft and a given band pairing (for example, X band on the uplink and X band on the
+downlink). The orbit determination program can, given enough range measurements for this
+spacecraft and band pairing, solve for this error.
+There are error contributions, usually small compared to the station calibration
+error, due to the passage of the uplink and downlink through the troposphere, ionosphere and
+solar corona (Reference 9). When the angle between the sun and the spacecraft, as seen from the
+station, is small and the spacecraft is beyond the sun, the error contribution from the solar corona
+can become the dominant contributor to error in the range measurement.
+For three-way ranging (in which one station transmits the uplink and a second
+station receives the downlink), the total delay measurement error is larger than for two-way.
+There are two reasons for this. First, there is a clock offset between the transmitting and
+receiving stations. Second, the calibration of the station delays is more difficult to achieve
+accurately in this case.
+
+44
+
+810-005
+214, Rev. B
+
+Appendix: Glossary of Parameters
+𝑃𝑃𝑇𝑇 ⁄𝑁𝑁0 |U/L
+
+ratio of uplink total power to noise spectral density, Hz
+
+𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |U/L
+
+ratio of uplink ranging-signal to total power
+
+𝑃𝑃𝑇𝑇 ⁄𝑁𝑁0 |D/L
+
+ratio of downlink total power to noise spectral density, Hz
+
+𝑃𝑃𝑅𝑅 ⁄𝑃𝑃𝑇𝑇 |D/L
+
+ratio of downlink ranging-signal to total power
+
+𝑃𝑃𝐶𝐶 ⁄𝑃𝑃𝑇𝑇 |U/L
+
+ratio of uplink residual-carrier to total power
+
+𝑃𝑃𝐷𝐷 ⁄𝑃𝑃𝑇𝑇 |U/L
+
+ratio of uplink command-signal to total power
+
+𝑃𝑃𝐶𝐶 ⁄𝑃𝑃𝑇𝑇 |D/L
+
+ratio of downlink residual-carrier to total power
+
+𝑃𝑃𝐷𝐷 ⁄𝑃𝑃𝑇𝑇 |D/L
+
+ratio of downlink telemetry to total power
+
+𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0
+𝑃𝑃𝑘𝑘 ⁄𝑃𝑃𝑇𝑇
+𝑍𝑍
+
+𝜌𝜌𝜌𝜌
+
+ratio of downlink ranging-signal power to noise spectral density, Hz
+ratio of discrete spectral line power to total power
+𝑇𝑇 ∙ (𝑃𝑃𝑅𝑅 ⁄𝑁𝑁0 ) in decibels
+
+ranging signal-to-noise ratio in transponder’s ranging channel
+
+𝜌𝜌𝑐𝑐𝑐𝑐𝑐𝑐
+
+command-feedthrough signal-to-noise ratio in transponder’s ranging channel
+
+𝐵𝐵𝑅𝑅𝑅𝑅
+
+noise-equivalent bandwidth of uplink code-tracking loop, Hz
+
+𝑇𝑇𝑐𝑐
+
+chip period, s
+
+𝑓𝑓𝑅𝑅𝑅𝑅
+
+range-clock frequency, Hz
+
+𝑓𝑓𝑆𝑆
+
+S-band carrier frequency, Hz
+
+𝑓𝑓𝐾𝐾𝐾𝐾
+
+Ka-band carrier frequency, Hz
+
+𝐴𝐴⁄𝐵𝐵
+
+rational factor that, together with the uplink carrier frequency, sets the chip rate
+
+𝐵𝐵𝑅𝑅
+
+noise-equivalent bandwidth of transponder’s ranging channel, Hz
+
+𝑇𝑇
+
+integration time for range measurement, s
+
+𝑓𝑓chip
+
+chip rate, Hz
+
+𝑓𝑓𝐶𝐶
+
+frequency of residual carrier, Hz
+
+𝑓𝑓𝑋𝑋
+
+X-band carrier frequency, Hz
+
+∆𝑓𝑓𝑅𝑅𝑅𝑅
+
+difference between the received range-clock frequency and its local model, Hz
+
+𝑐𝑐
+
+speed of electromagnetic waves in vacuum, m/s
+
+45
+
+810-005
+214, Rev. B
+𝜆𝜆𝑛𝑛
+
+period of 𝑛𝑛-th component code
+
+𝑅𝑅𝑛𝑛
+
+cross-correlation factor of code component 𝑛𝑛 against composite code
+
+𝜙𝜙𝑟𝑟
+
+phase deviation of uplink carrier by ranging signal, rad rms
+
+𝜃𝜃𝑟𝑟𝑟𝑟
+
+phase deviation of downlink carrier by ranging signal (strong signal), rad rms
+
+𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐
+
+phase deviation of downlink carrier by command feedthrough, rad rms
+
+𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡
+
+telemetry modulation index, rad
+
+𝐿𝐿
+
+𝐴𝐴𝑐𝑐
+
+length of composite code
+
+fractional loss of correlation amplitude due to non-coherent frequency
+mismatch
+
+𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐
+
+phase deviation of uplink carrier by command signal, rad rms
+
+𝜃𝜃𝑟𝑟
+
+phase deviation of downlink carrier by ranging signal, rad rms
+
+𝜃𝜃𝑛𝑛
+
+phase deviation of downlink carrier by noise, rad rms
+
+𝑆𝑆𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑚𝑚𝑚𝑚 )
+
+suppression factor on uplink due to command
+
+𝑆𝑆𝑓𝑓𝑓𝑓ℎ (𝜃𝜃𝑐𝑐𝑐𝑐𝑐𝑐 )
+
+suppression factor on downlink due to command feedthrough
+
+𝑀𝑀𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+
+modulation factor on downlink for telemetry
+
+𝑀𝑀𝑐𝑐𝑐𝑐𝑐𝑐 (𝜙𝜙𝑐𝑐𝑐𝑐𝑐𝑐 ) modulation factor on uplink for command
+𝑆𝑆𝑡𝑡𝑡𝑡𝑡𝑡 (𝜃𝜃𝑡𝑡𝑡𝑡𝑡𝑡 )
+
+suppression factor on downlink due to telemetry
+
+𝑃𝑃𝑛𝑛
+
+probability of acquiring the 𝑛𝑛-the component code
+
+𝜎𝜎𝜌𝜌
+
+standard deviation of range measurement error due to downlink noise, m
+
+𝜎𝜎𝑅𝑅𝑅𝑅
+
+standard deviation of range measurement error due to all noise, m
+
+𝜎𝜎RU
+
+standard deviation of the two-way phase delay, RU
+
+𝑃𝑃acq
+
+probability of acquisition
+
+𝜎𝜎U/L
+
+standard deviation of range measurement error due to uplink noise, m
+
+𝜎𝜎𝜏𝜏
+
+standard deviation of two-way delay, s
+
+46
+
+810-005
+214, Rev. B
+
+References
+1. J. B. Berner, S. H. Bryant, and P. W. Kinman, “Range Measurement as Practiced in the
+Deep Space Network,” Proceedings of the IEEE, Vol. 95, No. 11, November 2007.
+2. Consultative Committee for Space Data Systems, "Pseudo-Noise (PN) Ranging
+Systems," CCSDS 414.1-B-2, February 2014.
+3. P. W. Kinman and J. B. Berner, “Two-Way Ranging During Early Mission Phase,” 2003
+IEEE Aerospace Conference, March 8-15, 2003, Big Sky, MT.
+4. J. L. Massey, G. Boscagli, and E. Vassallo, "Regenerative Pseudo-Noise (PN) Ranging
+Sequences for Deep-Space Missions," Int. J. Satellite Communications and Networking,
+Vol. 25, No. 3, pp. 285-304, May/June 2007.
+5. J. B. Berner, J. M. Layland, P. W. Kinman, and J. R. Smith, “Regenerative Pseudo-Noise
+Ranging for Deep-Space Applications,” TMO Progress Report 42-137, Jet Propulsion
+Laboratory, Pasadena, CA, May 15, 1999.
+6. J. R. Jensen, “A Plurality Voting Method for Acquisition of Regenerative Ranging
+Measurements,” 2013 IEEE Aerospace Conference, March 2-9, 2013, Big Sky, MT.
+7. J. B. Berner and S. H. Bryant, “Operations Comparison of Deep Space Ranging Types:
+Sequential Tone vs. Pseudo-Noise,” 2002 IEEE Aerospace Conference, March 9-16,
+2002, Big Sky, MT.
+8. M. K. Reynolds, M. J. Reinhart, R. S. Bokulic, and S. H. Bryant, “A Two-Way
+Noncoherent Ranging Technique for Deep Space Missions,” 2002 IEEE Aerospace
+Conference, March 9-16, 2002, Big Sky, MT.
+9. C. L. Thornton and J. S. Border, Radiometric Tracking Techniques for Deep-Space
+Navigation, Monograph 1 of the Deep-Space Communications and Navigation Series, Jet
+Propulsion Laboratory, Pasadena, CA, 2000.
+
+47
+
+

@@ -24,3 +24,4 @@ Seeds/Zensus unter `docs/surveys/`.
 | `dsn_redr.2021-07-31.pdf` | REDR format SIS, Voyager Jupiter radio occultation (open-loop receiver records) | Simpson 2021, PDS radiosci.documentation |
 | `redr_unpack.pdf` | Interpretation and use of binary REDR data (worked Voyager 1 example) | PDS radiosci.documentation |
 | `810-005-202E-doppler.pdf` | DSN 810-005 module 202 Rev E, Doppler Tracking — one/two/three-way Doppler, measurement errors, solar phase scintillation | DSN/JPL deepspace.jpl.nasa.gov |
+| `810-005-214B-ranging.pdf` (`.txt`) | DSN 810-005 module 214 Rev B, Pseudo-Noise and Regenerative Ranging — sequential/PN component codes, DSN/JPL range code, ambiguity resolution, regenerative ranging | DSN/JPL deepspace.jpl.nasa.gov |
