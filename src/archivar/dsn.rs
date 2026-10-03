@@ -24,7 +24,7 @@ pub fn component_name(comp: u32) -> Option<String> {
     let kind = comp / 16;
     let rest = comp % 16;
     let band = BANDS.get((rest / 2) as usize)?;
-    let dir = if rest % 2 == 0 { "down" } else { "up" };
+    let dir = if rest.is_multiple_of(2) { "down" } else { "up" };
     let suffix = match kind {
         KIND_POWER => "power",
         KIND_ACTIVE => "active",
@@ -316,7 +316,9 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Snapshot> {
     })
 }
 
-pub fn series_parse(bytes: &[u8]) -> Option<(Vec<(f64, f64, u32)>, Vec<String>)> {
+pub type SeriesRows = (Vec<(f64, f64, u32)>, Vec<String>);
+
+pub fn series_parse(bytes: &[u8]) -> Option<SeriesRows> {
     let snapshot = parse_bin(bytes)?;
     let mut rows = Vec::new();
     for r in &snapshot.records {
