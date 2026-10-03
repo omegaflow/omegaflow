@@ -3,7 +3,7 @@
   session: Sensory-Folge 226
   class: handover
   date: 2026-10-03
-  sha256: ad627b48e4dee07c110db91c54bb375b1826c4482d9b34bc3cdfa8778cf2f1b3
+  sha256: 632d124582464f87ccc70a7b3c54d57c4e32a072e3100414c3b92708edc08b6b
   status: live
 -->
 # Handover — Sensory-Folge 226 (2026-10-03)
@@ -217,6 +217,7 @@ breiter messen.
 - **Wort:** „ja" (die 4 offenen Punkte in die Sensory-Übergabe eintragen) | 2026-10-03 | Operator (Session) — Punkte in `## Offen` gefaltet; Sensory-Folge 225.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-10-03 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 226.
 - **Wort:** „Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … LOCK nie vorlegen. Wartend nie vorlegen. Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-03 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 226.
+- **Wort:** „ja bitte abbrechen und wenn möglich priorisieren" (Vorgänger `37128441536` abbrechen, damit der joint-Lauf `37133961687` den concurrency-Slot bekommt) | 2026-10-03 | Operator (Session) — `ci_manage cancel 37128441536` ausgeführt; Sensory-Folge 226.
 
 ## Offen (aufgeschlüsselt)
 
@@ -230,9 +231,9 @@ breiter messen.
 ### Hyperscanning-TE — Validierung der neuen Läufe (joint family + gates)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Abschluss eines `hyperscanning-te`-Laufs am joint-family-Stand; Artefakt `hyperscanning-te-report`.
-- **Lage:** (gemessen 2026-10-03 F226 via `ci_manage status`/`view`, dann `gh workflow run`) der joint-family-Lauf **`37133961687`** ist dispatcht (`-f channel=Fz,Cz,Pz`, HEAD `62742649c`); `37129873384` = cancelled, `37129875260` = pending (`concurrency`), `37128441536` = in_progress (Step `screen`; per-channel-Bin). Der joint-family-Bin ist gebaut und kompiliert inkl. Test `joint_channel_family_gate` (`cargo check --tests -p omegaflow-measure`, 0 Fehler/0 Warnungen, 2026-10-03); die zwei geänderten Pfade sind committet (`62742649c`).
-- **Blockade:** CI-Lauf `37133961687`.
-- **Braucht:** `ci_manage view/log 37133961687` + Artefakt `hyperscanning-te-report` auswerten (joint family-max, Nominees, Bestätigung, Skalierungskurve).
+- **Lage:** (gemessen 2026-10-03 F226 via `ci_manage status`/`view`, `gh workflow run`, `ci_manage cancel`) der joint-family-Lauf **`37133961687`** ist dispatcht (`-f channel=Fz,Cz,Pz`, HEAD `8456b1ef5`) und steht `pending` in der `concurrency`-Gruppe; der Vorgänger `37128441536` (alter per-channel-Bin, `screen` seit 14:05Z) wurde auf Operator-Wort abgebrochen (`ci_manage cancel`, cancel requested), um den Slot freizugeben. Der joint-family-Bin ist gebaut und kompiliert inkl. Test `joint_channel_family_gate` (`cargo check --tests -p omegaflow-measure`, 0 Fehler/0 Warnungen); die zwei geänderten Pfade sind committet.
+- **Blockade:** der Vorgänger-Run `37128441536` gibt den `concurrency`-Slot erst beim tatsächlichen Abbruch (oder am 6-h-Job-Timeout, ~20:05Z) frei.
+- **Braucht:** `ci_manage view/jobs 37133961687` + Artefakt `hyperscanning-te-report` auswerten, sobald der joint-Lauf gelaufen ist (joint family-max, Nominees, Bestätigung, Skalierungskurve).
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
