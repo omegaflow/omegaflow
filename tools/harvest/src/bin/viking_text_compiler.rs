@@ -4,7 +4,7 @@ use omegaflow::cdn::upload_release;
 
 const RANGE_URL: &str = "https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt";
 const DIFFERENCED_URL: &str = "https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt";
-const NETLOC: &str = "ssd.jpl.nasa.gov";
+const FAMILY_TAG: &str = "ssd.jpl.nasa.gov-planets";
 const OUT: &str = "data/ssd.jpl.nasa.gov/viking_lander_tracking.bin";
 
 fn main() {
@@ -66,7 +66,7 @@ fn main() {
         if !verified {
             std::process::exit(2);
         }
-        if !upload_release(NETLOC, OUT) {
+        if !upload_release(FAMILY_TAG, OUT) {
             std::process::exit(2);
         }
     }

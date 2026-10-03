@@ -20,7 +20,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Compile the Vlies catalog-density field once and upload to CDN
         run: |
-          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+          gh release download ssd.jpl.nasa.gov-vlies --repo omegaflow/sources \
             --pattern vlies_density.vlde --clobber 2>/dev/null || \
           ( gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
               --pattern dr3_stars.bin --clobber && \

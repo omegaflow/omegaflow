@@ -1,0 +1,44 @@
+name: roper-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      record:
+        description: Zenodo record id carrying the RoPeR .2C/.2CL pairs
+        required: true
+        default: "15812343"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  roper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile every RoPeR .2C pair and upload to the CDN
+        run: |
+          record="${{ github.event.inputs.record }}"
+          curl -s "https://zenodo.org/api/records/${record}" -o record.json
+          cargo build --release -p omegaflow-harvest --bin roper_pds4_compiler
+          jq -r '.files[] | select(.key | endswith(".2CL")) | .key' record.json | while read -r lbl; do
+            dat="${lbl%.2CL}.2C"
+            LBL=$(jq -r --arg k "$lbl" '.files[] | select(.key==$k) | .links.self' record.json)
+            DAT=$(jq -r --arg k "$dat" '.files[] | select(.key==$k) | .links.self' record.json)
+            if [ -z "$DAT" ]; then
+              echo "$dat: no .2C companion — skipped"
+              continue
+            fi
+            ./target/release/roper_pds4_compiler --label "$LBL" --dat "$DAT" --ci-mode \
+              || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                   "flatten: roper returned void" \
+                   "$lbl compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                   health; exit 1; }
+          done
