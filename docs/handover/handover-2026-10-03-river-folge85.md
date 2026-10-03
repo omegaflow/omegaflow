@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 96ccb78658dc8a5c05002856a832778761595461387582b8647e71cfe8622c8c
+  sha256: af04d1815259bf11bf3c8cc29ddb0161e1126a9fcbf43c2182d806da263d2f8f
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -202,6 +202,8 @@ Wort | Datum | Quelle
 - **Braucht:** den `pair_lag_index_hash`-Riss fixen (eigener Atom); die Reviews in
   `field_te_query`/`wy_max_t` einarbeiten; `erbq-solar` als **ungültig descopen** und auf das
   Matched-Control-Design umbauen.
+- **Verankert (2026-10-03):** die korrekte Stimmen-Route steht agentenweit in
+  `docs/concepts/tools-map.md` §„Stimmen-Befragung — die korrekte Route".
 
 ## Abschluss
 
@@ -216,5 +218,6 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/wy_max_t_probe.rs`
 - `.github/workflows/bz-yearly-maxt.yml`
 - `tools/measure/src/bin/field_te_query.rs`, `.github/workflows/field-te-query.yml`
+- `docs/concepts/tools-map.md` (Stimmen-Befragung verankert)
 
 ## Burn: open 0.0153 · close 0.2529 · cap 0.50 — Grund: River-85 — Membran-Vermerk + exzellenz-Gate geheilt; GIC-Riss: storm-only + Bias + kalibrierte WY-max-T-Null gebaut/verdrahtet; Rats-Verdikt + `field_te_query`-Query-Kern + Zeugen-Arm + erste Zeugen-Messung; Mehr-Stimmen-Review (Rat + z.ai/Claude-UI + adversarischer Taucher), 8 CI-Läufe dispatcht. `close` = River-Linien-Session (gemessen `session_burn`, $0.2529); die dispatchten Stimmen (6×grind-flash $0.3678 + 2×Rat $0.1256 + 2×general $0.065 = $0.558) trugen zusätzlich — das Atom lief damit über den Haus-Cap 0.50; benannt, nicht geglättet (Maschinen-Total 1.1171 inkl. fremder Parallel-Linien).
