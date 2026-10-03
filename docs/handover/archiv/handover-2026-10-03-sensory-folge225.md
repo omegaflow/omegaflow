@@ -3,7 +3,7 @@
   session: Sensory-Folge 225
   class: handover
   date: 2026-10-03
-  sha256: e0e2e2d254c6937f992c82ee793df6e934f9f1307d98e851204a4b6000cb0081
+  sha256: 0806e4c71f09237bdf3e1f11ec4c2f90f785cec6b6b7762cbb375199cbdd6d36
   status: live
 -->
 # Handover — Sensory-Folge 225 (2026-10-03)
@@ -214,7 +214,7 @@ breiter messen.
 - **Wort:** „nein ich wollte nur wissen warum es zweimal geführt wird und eigentlich sind operator gebunden sachen von future" | 2026-10-03 | Operator (Session) — Ownership: operator-gebundene Sachen gehören zu Future; `rr-brustgurt` von sensory-LOCK + mycelium-Dublette an `## An future` geroutet, `state/zustand/wartend.φ:22` Aufnehmer → future; Sensory-Folge 225.
 
 - **Wort:** „ja bitte 1-3 aber das ist für mich ein eigenes tool, das wir dann in den unterschiedlichsten medizinischen bereichen einsetzen können, oder seh ich das falsch?" | 2026-10-03 | Operator (Session) — Workflow-Erweiterung (max_points/Mehrkanal/n-Scaling) umgesetzt (`84cefbec2`); das Kopplungs-Werkzeug als eigenes Atom geführt, Träger Sensory (gemessen: `sensory folge142–150`); keine medizinische Zweckbehauptung ohne Endpunktvalidierung (MDR-Zweckbestimmung je Indikation).
-- **Wort:** „sollte das eigene tool nicht ins repo? und können wir das bitte umsetzen?" | 2026-10-03 | Operator (Session) — Repo-Zugehörigkeit bejaht: Messwerkzeug liegt bereits im Repo (`tools/measure/src/bin/hyperscanning_group_te.rs`, `src/mathematikerin/te.rs`, `.github/workflows/hyperscanning-te.yml`); offen: joint cross-channel family + Methodenpapier; Gruppentherapie-Paket bleibt außerhalb Omegaflows.
+- **Wort:** „sollte das eigene tool nicht ins repo? und können wir das bitte umsetzen?" | 2026-10-03 | Operator (Session) — Repo-Zugehörigkeit bejaht: Messwerkzeug liegt bereits im Repo (`tools/measure/src/bin/hyperscanning_group_te.rs`, `src/mathematikerin/te.rs`, `.github/workflows/hyperscanning-te.yml`); offen: joint cross-channel family + Methodenpapier; ein privates Recherchepaket bleibt außerhalb Omegaflows.
 - **Wort:** „ja" (die 4 offenen Punkte in die Sensory-Übergabe eintragen) | 2026-10-03 | Operator (Session) — Punkte in `## Offen` gefaltet; Sensory-Folge 225.
 
 ## Offen (aufgeschlüsselt)
