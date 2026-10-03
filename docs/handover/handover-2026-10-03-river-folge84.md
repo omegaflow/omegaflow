@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: 1664844cf71a7b0d1610ce3e1b99fa765581ecfdd67a2021cbd1e2bf9f5e2855
+  sha256: b5e709cc387efb5967e0e32880fbc0384fcf4c8452c6199f873c92559ca5945b
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -119,7 +119,7 @@ Origin: river folge84.
   Die Survey ist derzeit trägerlos (orphan; `handover-2026-10-03-mycelium-folge224.md:183`
   nennt es) — native Prosa Mountain; Trägerzeile oder gemessenes `descoped` fehlt.
 - **Exzellenz-Gate (Maßstab §2.9/2.10), Zuordnung über see-also/Archiv — bitte am eigenen
-  Träger prüfen:** `solar-cycle-dynamo` (2.9 Sprache; 2.10: `tools/work/`-Pfade — real
+  Träger prüfen:** `solar-cycle-dynamo` (2.9 Sprache; 2.10: falsche `tools`-Wurzel — real
   `gong_series_compiler`/`bison_*_compiler`/`wso_polar_compiler`/`hmi_polar_compiler` in
   `tools/harvest`, alle `*_probe`/`wso_hmi_consistency`/`solar_cycle_probe` in
   `tools/measure`), `twenty-second-band-ground-chain` (2.9 `:262`), `text-as-data-pioneer`
@@ -135,7 +135,7 @@ Origin: river folge84 (Exzellenz-Gate, `docs/surveys/survey-2026-10-03-exzellenz
   `broken-null-control` `:58`/`:92`/`:191`; `causal-arrow-preregistration` `:30`;
   `probe-front-dark-matter` `:122`/`:300`/`:580`/`:86`–`:700`; `uranus-rift-ephemerides`
   `:36`/`:13`/`:23`.
-- **2.10:** `planet-nine-kbo-residue:113` nennt `tools/work/src/bin/te_ground_truth.rs`
+- **2.10:** `planet-nine-kbo-residue:113` nennt einen toten `tools`-Wurzelpfad
   (real `tools/measure/src/bin/te_ground_truth.rs`).
 - `planet-nine-kbo-residue` ist bei dir `descoped` (2026-09-27) — die Marker sind nur zu
   schließen, falls der descope-Befund sie deckt.
