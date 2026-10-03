@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — gefeuerte Läufe gelesen, RoPeR-Familie (41 Zeilen) registriert, dropped-gate-Shallow-Artefakt geheilt, UWS-Fehlerarm gebaut
   class: handover
   date: 2026-10-03
-  sha256: e72bffd6b9023253efd295ffbf05387f36140b782fb1cea48856205852ab6370
+  sha256: 1fb88188f895808760b84595092dee48a2826080d32175bc9f1ef27883cb2e21
   status: live
 -->
 # Handover — Mycelium-Folge 226 (2026-10-03)
@@ -33,6 +33,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - Wort | 2026-09-30 | „du committest immer als letzter also warte" | Quelle: Mycelium-Session 213.
 - Wort | 2026-09-30 | „vorbestehend ist verboten mein wort" | Quelle: mountain-209.
 - Wort | 2026-10-01 | „ja möchte ich" | Quelle: Mycelium-Session 215 — VCO-rs-Register auf das PDS4-20190704-Asset umstellen.
+- Wort | 2026-10-03 | „§1-Compiler-Hosts verdiktet: vizier.cfa keep · noaa-eri-pds declined → eri-cdn.yml+noaa_eri_compiler entfernen · dachs.fai.kz declined → fai-kz-cdn.yml+fai_kz_compiler entfernen · gsaweb keep · ws.cadc keep." | Quelle: Operator-Session 2026-10-03 (deckt mountain-folge229:183-196) — ausgeführt in Mycelium-226: fünf Manifest-Dateien entfernt, `COMPILER_NETLOCS` bereinigt, `cdn_reconcile --fail` clean (256).
 
 ## Haus (die vier Orte) — gemessen 2026-10-03
 
@@ -55,8 +56,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** neuer literaler Workflow-Release-Tag, der nicht im Register oder in der Tag-Baseline steht (`phi/sources.φ`, `docs/specs/cdn-tag-baseline.txt`)
 - **Lage:** (gemessen 2026-10-03) `cdn_reconcile --fail` sauber: `cap+tag contract clean (256 registry hosts)`, exit 0. Die **6 Drifts** bleiben aufgelöst; `docs/specs/cdn-tag-baseline.txt` leer.
-- **Blockade:** die fünf als §1 geführten Hosts tragen je einen Riss (declined/witness vs. manifestiert) — s. `## An mountain`.
-- **Braucht:** Mountain klärt je Host die Disposition; dann Probe-Writer-Rebindung und je Lösch-Klasse ein Atom (Operator-Wort vor destruktiver Entfernung).
+- **Blockade:** keine — die fünf §1-Hosts sind verdiktet (vizier.cfa / gsaweb / ws.cadc **keep**; noaa-eri-pds / dachs.fai.kz **declined** → Workflow+Compiler entfernt, Mycelium-226).
+- **Braucht:** Probe-Writer-Rebindung; dann je Lösch-Klasse ein Atom (Operator-Wort vor destruktiver Entfernung).
 
 ### KPLO/KARI KPDS — SPICE-Bundle gemessen, Compiler fehlt
 - **Status:** wartend | **Bindung:** eigen
@@ -218,7 +219,7 @@ Origin: mycelium-folge226 (Register-Duties).
 - **Viking/Voyager-Transport:** `viking_lander_tracking.bin` liegt auf `ssd.jpl.nasa.gov-planets` (**206**), `sha256 da0e55ff…` nachgetragen; `voyager{1,2}_merged.bin` manifestiert. Die vier `pending` `blocked_sources.φ:497/501/505/509` können nach dem Viking-Erfolg fallen.
 - **gaia-family-Tag:** `gaia-cdn 37116854188` success; `dr3_stars.bin` auf `ssd.jpl.nasa.gov-gaia` **206**, `phi/sources.φ:10512` umgebunden. `omni2-cdn 37116855612` success (Idempotenz-Read), `psr-cdn 37122655039` success.
 - **Regel (Future folge172, privat):** vor jedem `Operator-Hand`/`operator-gebunden`-Label `.secrets.local` per `bin/secrets_keys` messen; ein Label wird im selben Pass vorgelegt oder als gewortet vermerkt.
-- **Fünf §1-Compiler-Hosts mit Riss** und **`blocked_sources.φ:389` Swarm TEC** sowie **M3-Route** und **JWS2/RoPeR-Feld-Zuordnung** bleiben wie in folge225 `## An mountain` — hier zitiert, nicht kopiert.
+- **§1-Compiler-Hosts verdiktet und ausgeführt (Mycelium-226):** vizier.cfa / gsaweb / ws.cadc **keep** (Netlocs bleiben); noaa-eri-pds / dachs.fai.kz **declined** → `eri-cdn.yml`+`noaa_eri_compiler.rs`, `fai-kz-cdn.yml`+`fai_kz_compiler.rs`+das `fai_kz`-Archivar-Modul entfernt, `COMPILER_NETLOCS` bereinigt; `cdn_reconcile --fail` clean (256). Offen bei Mountain: **`blocked_sources.φ:389` Swarm TEC**, **M3-Route**, **JWS2/RoPeR-Feld-Zuordnung**.
 
 ## Abschluss
 
