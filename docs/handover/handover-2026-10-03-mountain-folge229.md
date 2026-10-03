@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 66199aa94b331b74a1f9245d29465e48dcfdcc7e295f33419099486d1dcf4bc7
+  sha256: ad66003e0b58370eca0c79b3def9a3d16f62c2729e2329d2cc7e0a65ac1e55f7
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -95,8 +95,12 @@ Wort | Datum | Quelle
   „42 `.2C`-Paare" meint 42 **Datei**-Paare (42 `.2C` + 42 `.2CL`), nicht 42 Paare je Record.
 - **Blockade:** band-tragender Reader-Arm fehlt (die range-Dimension ist nicht darstellbar;
   `gras_2c::parse_series` setzt hart `SPECTRAL_NO_BAND`, `extract.rs:244`).
-- **Braucht:** `gras_2c`-Reader-Arm mit `(t, v, comp, freq, bin_width)` bauen (River, siehe
-  `## An river`); danach die `field`-Zeile setzen.
+- **Braucht:** band-/range-tragenden `gras_2c`-Reader-Arm bauen (**eigene Feder, nicht River**).
+  Band vermessen 2026-10-03: HF/CH2 = 0,45–2,15 GHz (B = 1,7 GHz), 2048 Bins sind die
+  puls-komprimierte FFT (Zhou 2020, DOI `10.26464/epp2020054`; Remote Sensing 15(4):966).
+  **Riss:** Paper nennt 512 Bins, PDS-`.2C` trägt 2048; und die 2048 Bins sind Range-Gates
+  (synthetische Zeitantwort), keine Frequenzbins — die `freq`/`bin_width`-Abbildung ist zu
+  entscheiden, kein fabriziertes Achsen-Mapping.
 
 ### Dispositions-Register-Hygiene — 110 `sources.φ:<n>`-Zitate driften
 - **Status:** eigen | **Bindung:** eigen
@@ -109,16 +113,6 @@ Wort | Datum | Quelle
   Schreibzeitpunkt (git) — sonst droht ein falscher Kanal-Key.
 - **Braucht:** je Zitat den Ziel-Netloc über den Git-Stand des Schreib-Commits messen, dann
   `sources.φ:<n>` durch den Netloc ersetzen; **nie** die Nummer nachführen.
-
-### descoped-Stale-Zwillinge im blocked-Register löschen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03, Mycelium 225) Stichprobe der 80 `descoped`-Notizen:
-  ~18 **Stale-Zwillinge** (URL bereits in `phi/sources.φ`), ~15 Feld-Drops (Gaia
-  `parallax_mas`/`bp_rp`), ~29 „kein Arm", 1 kommerziell korrekt.
-- **Blockade:** keiner (mechanisch, aber Einzelfall-Review).
-- **Braucht:** je Stale-Zwilling die URL in `phi/sources.φ` suchen; existiert sie, den
-  Eintrag löschen (`released`), sonst behalten.
 
 ## Träger (Prosa, eigene)
 
@@ -165,15 +159,6 @@ Origin: mountain folge229.
   absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0`. Danach Mycelium:
   `url`/`origin`/`compiler`/`sha256`.
 
-- **`gras_2c` — band-tragender Reader-Arm fehlt (Schema + Compiler stehen).** Gemessen
-  2026-10-03: das 2C-Schema ist vermessen (52 Records × 2048 (R,I)-f32-Bins; Compiler →
-  G2CB `(t, amp, comp)`), aber `series_named`/`series_component_name` haben keinen
-  `gras_2c`-Arm → 0 Kanäle. Ein Einzelname würde 2048 Bins je Trace auf einen Kanal kollabieren
-  (range verloren); `gras_2c::parse_series` setzt hart `SPECTRAL_NO_BAND` (`extract.rs:244`).
-  Bitte den Arm band-tragend bauen: `(t, v, comp, freq, bin_width)` emittieren, damit die
-  range-Achse im `field`/`freq`/`bin_width`-Vertrag darstellbar ist. Danach schreibt Mountain
-  die `field`-Zeile. Details: gap-Token `gras-2c` (`phi/blocked_sources.φ:18`).
-
 ## An mycelium
 
 Origin: mountain folge229.
@@ -197,6 +182,15 @@ Origin: mountain folge229.
     VLASS-Assets (`vlass_tap_source/component.bin`, `phi/sources.φ:11049/:11061`) liegen unter
     `ws-uv.canfar.net`; die `/argus`-decline (`phi/declined_sources.φ:4369`) ist ein anderer Pfad,
     kein Kollisions-Riss.
+
+- **Chandrayaan-1 M3 — CDN-Manifest offen (Mountain-Verdikt: `released`).** `phi/blocked_sources.φ:385`
+  von `blocked ip-blocked` auf `released` gehoben: das Asset ist lokal geerntet + registriert
+  (`phi/sources.φ:9884`, sha `5771de98…`, format `pds3_img`), der JPL-Direktpfad liefert 206 — nur der
+  **CI-Runner-Datacenter-IP** bekommt `.HDR` 403 (CI `36737530030`), daher ist die CDN-Release-URL
+  **404** (gemessen 2026-10-03 via `archive_search --verdict`). Braucht: Manifestation aus dem
+  gebauten Asset (`pds3_img_compiler --dat <lokal>` umgeht den JPL-Fetch) oder ein anderer CI-Egress.
+  Analog: `phi/blocked_sources.φ:360` Shandong-Spiegel von `blocked ip-blocked` auf `descoped`
+  (redundant, CLPDS `:406` deckt Chang'e-1/2-PDS3).
 
 - **`released`-Harvest-Duties tragen (das Register löst sie nicht als Punkt).** Die
   `released`-Quellen in `phi/blocked_sources.φ` (Zugang/Arm geklärt) tragen den offenen

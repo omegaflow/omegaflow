@@ -357,9 +357,9 @@ pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
-blocked ip-blocked
+descoped
 url http://222.194.16.107/planet-data
-note Shandong PDS-Spiegel (SDU Weihai) listet diesen Host + FTP; via --verdict Timeout (von hier nicht erreichbar, cn-only); kein Pfad gemessen. Portal pds.wh.sdu.edu.cn. future-folge226.
+note Shandong PDS-Spiegel (SDU Weihai) — 2026-10-03: cn-only, direkt+Proton Timeout, Wayback nur Listing; kein CN-Exit. Redundant: CLPDS (NAOC/GRAS) trägt Chang'e-1/2-PDS3 kanonisch. future-folge226.
 
 descoped
 url https://pda.kasi.re.kr/
@@ -382,9 +382,9 @@ url https://catalogue.dataspace.copernicus.eu/stac/collections
 reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
 note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → descoped (View, kein Download).
 
-blocked ip-blocked
+released
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
-note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Route direct 206 (`_0004` 404); Asset `pds3_img_m3g20081118t222604_v03_loc.bin` steht (sha 5771de98…); CI-Runner `.HDR` 403 (Datacenter-IP, CI 36737530030), CDN 404, lokal roundtrip. future-folge168.
+note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Asset pds3_img_m3g20081118t222604_v03_loc.bin registriert (sources.φ:9884, sha 5771de98…), lokal roundtrip; CI-Runner .HDR 403 (Datacenter-IP, CI 36737530030) → CDN 404, Manifest offen. future-folge168.
 
 pending
 url https://swarm-diss.eo.esa.int/
