@@ -111,75 +111,6 @@ fn files_from_json(body: &str) -> Option<Vec<(String, String)>> {
     Some(out)
 }
 
-struct BvGroup {
-    stem: String,
-    vhdr_url: String,
-    vmrk_url: Option<String>,
-    eeg_url: Option<String>,
-}
-
-fn bv_groups_from_json(body: &str) -> Option<Vec<BvGroup>> {
-    let root = parse_json(body)?;
-    let files = jpath_val(&root, "data.dataset.latestSnapshot.files")?;
-    let JsonVal::Arr(items) = files else {
-        return Some(Vec::new());
-    };
-    let mut map: std::collections::BTreeMap<
-        String,
-        (Option<String>, Option<String>, Option<String>),
-    > = std::collections::BTreeMap::new();
-    for it in items {
-        let JsonVal::Obj(map_item) = it else {
-            continue;
-        };
-        let filename = match map_item.get("filename") {
-            Some(JsonVal::Str(s)) => s.clone(),
-            _ => continue,
-        };
-        let Some((stem, ext)) = filename.rsplit_once('.') else {
-            continue;
-        };
-        let ext = ext.to_ascii_lowercase();
-        if !matches!(ext.as_str(), "vhdr" | "vmrk" | "eeg") {
-            continue;
-        }
-        let url = match map_item.get("urls") {
-            Some(JsonVal::Arr(u)) => u.iter().find_map(|v| match v {
-                JsonVal::Str(s) => Some(s.clone()),
-                _ => None,
-            }),
-            _ => None,
-        };
-        let Some(url) = url else {
-            continue;
-        };
-        let entry = map.entry(stem.to_string()).or_insert((None, None, None));
-        match ext.as_str() {
-            "vhdr" => entry.0 = Some(url),
-            "vmrk" => entry.1 = Some(url),
-            "eeg" => entry.2 = Some(url),
-            _ => {}
-        }
-    }
-    let mut out = Vec::new();
-    for (stem, (vhdr, vmrk, eeg)) in map {
-        if let Some(vhdr_url) = vhdr {
-            out.push(BvGroup {
-                stem,
-                vhdr_url,
-                vmrk_url: vmrk,
-                eeg_url: eeg,
-            });
-        }
-    }
-    Some(out)
-}
-
-fn brainvision_files(hexsha: &str, dataset: &str) -> Option<Vec<BvGroup>> {
-    let body = graphql(&files_query(hexsha, dataset))?;
-    bv_groups_from_json(&body)
-}
-
 fn latest_snapshot(dataset: &str) -> Option<(String, String)> {
     let body = graphql(&snapshot_query(dataset))?;
     snapshot_from_json(&body)
@@ -410,193 +341,6 @@ fn extract_eeg(bytes: &[u8]) -> Option<EegExtract> {
     })
 }
 
-struct Vhdr {
-    nchan: usize,
-    srate: f64,
-    labels: Vec<String>,
-    resolution: Vec<f64>,
-}
-
-fn parse_vhdr(text: &str) -> Option<Vhdr> {
-    let mut section = String::new();
-    let mut nchan: Option<usize> = None;
-    let mut interval_us: Option<f64> = None;
-    let mut dataformat: Option<String> = None;
-    let mut orientation: Option<String> = None;
-    let mut binary: Option<String> = None;
-    let mut labels: Vec<String> = Vec::new();
-    let mut resolution: Vec<f64> = Vec::new();
-    for line in text.lines() {
-        let line = line.trim();
-        if line.is_empty() || line.starts_with(';') {
-            continue;
-        }
-        if line.starts_with('[') && line.ends_with(']') {
-            section = line[1..line.len() - 1].to_string();
-            continue;
-        }
-        let Some((key, value)) = line.split_once('=') else {
-            continue;
-        };
-        let key = key.trim();
-        let value = value.trim();
-        match section.as_str() {
-            "Common Infos" => match key {
-                "DataFormat" => dataformat = Some(value.to_string()),
-                "DataOrientation" => orientation = Some(value.to_string()),
-                "NumberOfChannels" => nchan = value.parse().ok(),
-                "SamplingInterval" => interval_us = value.parse().ok(),
-                _ => {}
-            },
-            "Binary Infos" => {
-                if key == "BinaryFormat" {
-                    binary = Some(value.to_string());
-                }
-            }
-            "Channel Infos" => {
-                let Some(rest) = key.strip_prefix("Ch") else {
-                    continue;
-                };
-                if !rest.chars().all(|c| c.is_ascii_digit()) {
-                    continue;
-                }
-                let mut parts = value.split(',');
-                let name = parts.next().unwrap_or("").replace("\\1", ",");
-                let _reference = parts.next();
-                let res = parts
-                    .next()
-                    .and_then(|s| s.trim().parse::<f64>().ok())
-                    .unwrap_or(1.0);
-                labels.push(name);
-                resolution.push(res);
-            }
-            _ => {}
-        }
-    }
-    let nchan = nchan?;
-    if nchan == 0 || nchan != labels.len() || resolution.len() != nchan {
-        return None;
-    }
-    if labels.iter().any(|l| l.len() > 0xFFFF) {
-        return None;
-    }
-    if !dataformat
-        .as_deref()
-        .unwrap_or("")
-        .eq_ignore_ascii_case("BINARY")
-    {
-        return None;
-    }
-    if !orientation
-        .as_deref()
-        .unwrap_or("")
-        .eq_ignore_ascii_case("MULTIPLEXED")
-    {
-        return None;
-    }
-    if !binary
-        .as_deref()
-        .unwrap_or("")
-        .eq_ignore_ascii_case("INT_16")
-    {
-        return None;
-    }
-    let interval_us = interval_us?;
-    if !interval_us.is_finite() || interval_us <= 0.0 {
-        return None;
-    }
-    let srate = 1_000_000.0 / interval_us;
-    if !srate.is_finite() || srate <= 0.0 {
-        return None;
-    }
-    Some(Vhdr {
-        nchan,
-        srate,
-        labels,
-        resolution,
-    })
-}
-
-fn brainvision_events(vmrk: &str) -> Option<Events> {
-    let mut section = String::new();
-    let mut events: Vec<EegEvent> = Vec::new();
-    for line in vmrk.lines() {
-        let line = line.trim();
-        if line.is_empty() || line.starts_with(';') {
-            continue;
-        }
-        if line.starts_with('[') && line.ends_with(']') {
-            section = line[1..line.len() - 1].to_string();
-            continue;
-        }
-        if section != "Marker Infos" {
-            continue;
-        }
-        let Some((key, value)) = line.split_once('=') else {
-            continue;
-        };
-        if !key.trim().starts_with("Mk") {
-            continue;
-        }
-        let mut parts = value.split(',');
-        let mk_type = parts.next().unwrap_or("").trim();
-        let description = parts.next().unwrap_or("").trim();
-        let position = parts.next().and_then(|s| s.trim().parse::<f64>().ok());
-        let type_ = if !description.is_empty() {
-            Some(description.to_string())
-        } else if !mk_type.is_empty() {
-            Some(mk_type.to_string())
-        } else {
-            None
-        };
-        events.push(EegEvent {
-            type_,
-            latency: position,
-            duration: None,
-            urevent: None,
-        });
-    }
-    if events.is_empty() {
-        None
-    } else {
-        Some(Events::Normalized(events))
-    }
-}
-
-fn extract_brainvision(vhdr: &str, vmrk: &str, eeg: &[u8]) -> Option<EegExtract> {
-    let header = parse_vhdr(vhdr)?;
-    let frame_bytes = header.nchan.checked_mul(2)?;
-    if eeg.is_empty() || eeg.len() % frame_bytes != 0 {
-        return None;
-    }
-    let pnts = (eeg.len() / frame_bytes) as u64;
-    if pnts == 0 {
-        return None;
-    }
-    let frames = (pnts as usize).checked_mul(header.nchan)?;
-    let mut samples: Vec<f32> = Vec::with_capacity(frames);
-    for (i, chunk) in eeg.chunks_exact(2).enumerate() {
-        let raw = i16::from_le_bytes([chunk[0], chunk[1]]) as f64;
-        let value = raw * header.resolution[i % header.nchan];
-        if !value.is_finite() {
-            return None;
-        }
-        samples.push(value as f32);
-    }
-    if samples.len() != frames {
-        return None;
-    }
-    Some(EegExtract {
-        nbchan: u32::try_from(header.nchan).ok()?,
-        pnts,
-        trials: 1,
-        srate: Some(header.srate),
-        labels: header.labels,
-        samples: Samples::Single(samples),
-        events: brainvision_events(vmrk),
-    })
-}
-
 fn sha256_bytes(hex: &str) -> Option<[u8; 32]> {
     if hex.len() != 64 {
         return None;
@@ -676,22 +420,6 @@ fn run(args: &[String]) -> Result<(), String> {
     };
 
     if let Some(local) = arg_value(args, "--local") {
-        if local.ends_with(".vhdr") {
-            let vhdr = std::fs::read_to_string(&local)
-                .map_err(|e| format!("read {local} returned void: {e}"))?;
-            let stem = local.trim_end_matches(".vhdr");
-            let vmrk_path = format!("{stem}.vmrk");
-            let eeg_path = format!("{stem}.eeg");
-            let vmrk = std::fs::read_to_string(&vmrk_path)
-                .map_err(|e| format!("read {vmrk_path} returned void: {e}"))?;
-            let eeg = std::fs::read(&eeg_path)
-                .map_err(|e| format!("read {eeg_path} returned void: {e}"))?;
-            let extract = extract_brainvision(&vhdr, &vmrk, &eeg)
-                .ok_or_else(|| format!("{local}: the .vhdr carries no EEG contract"))?;
-            eprintln!("{local}:");
-            report(&extract);
-            return Ok(());
-        }
         let bytes =
             std::fs::read(&local).map_err(|e| format!("read {local} returned void: {e}"))?;
         let extract = extract_eeg(&bytes)
@@ -708,12 +436,8 @@ fn run(args: &[String]) -> Result<(), String> {
     let (snapshot_tag, hexsha) =
         latest_snapshot(&dataset).ok_or("the OpenNeuro snapshot carries no tag or hexsha")?;
     let files = set_files(&hexsha, &dataset).ok_or("the OpenNeuro file tree reads void")?;
-    let bv_groups =
-        brainvision_files(&hexsha, &dataset).ok_or("the OpenNeuro file tree reads void")?;
-    if files.is_empty() && bv_groups.is_empty() {
-        return Err(
-            "the dataset carries no .set/.vhdr file — nothing manifestiert (0 honored)".into(),
-        );
+    if files.is_empty() {
+        return Err("the dataset carries no .set file — nothing manifestiert (0 honored)".into());
     }
     let filtered: Vec<&(String, String)> = files
         .iter()
@@ -734,29 +458,9 @@ fn run(args: &[String]) -> Result<(), String> {
         })
         .collect();
 
-    let bv_filtered: Vec<&BvGroup> = bv_groups
-        .iter()
-        .filter(|g| {
-            let subject_ok = match &subject_filter {
-                Some(s) => g.stem.contains(s.as_str()),
-                None => true,
-            };
-            let session_ok = match &session_filter {
-                Some(s) => g.stem.contains(&format!("/ses-{s}/")),
-                None => true,
-            };
-            let task_ok = match &task_filter {
-                Some(t) => g.stem.contains(&format!("_task-{t}_")),
-                None => true,
-            };
-            subject_ok && session_ok && task_ok
-        })
-        .collect();
-
     eprintln!(
-        "{dataset} snapshot {snapshot_tag} ({hexsha}): {} .set + {} .vhdr file(s), out root {out_root}",
-        filtered.len(),
-        bv_filtered.len()
+        "{dataset} snapshot {snapshot_tag} ({hexsha}): {} .set file(s), out root {out_root}",
+        filtered.len()
     );
     let mut staged: Vec<String> = Vec::new();
     let mut skipped = 0usize;
@@ -808,87 +512,9 @@ fn run(args: &[String]) -> Result<(), String> {
         );
         staged.push(bin_path);
     }
-    for g in &bv_filtered {
-        let (vhdr_url, Some(vmrk_url), Some(eeg_url)) = (&g.vhdr_url, &g.vmrk_url, &g.eeg_url)
-        else {
-            eprintln!(
-                "{}: the .vhdr carries no .vmrk/.eeg companion — skipped (0 honored)",
-                g.stem
-            );
-            skipped += 1;
-            continue;
-        };
-        let vhdr_path = format!("{out_root}/{}.vhdr", g.stem);
-        let vmrk_path = format!("{out_root}/{}.vmrk", g.stem);
-        let eeg_path = format!("{out_root}/{}.eeg", g.stem);
-        if ci_mode || !std::path::Path::new(&vhdr_path).exists() {
-            download(vhdr_url, &vhdr_path)?;
-        }
-        if ci_mode || !std::path::Path::new(&vmrk_path).exists() {
-            download(vmrk_url, &vmrk_path)?;
-        }
-        if ci_mode || !std::path::Path::new(&eeg_path).exists() {
-            download(eeg_url, &eeg_path)?;
-        }
-        let vhdr_text = match std::fs::read_to_string(&vhdr_path) {
-            Ok(t) => t,
-            Err(e) => {
-                eprintln!("read {vhdr_path} returned void: {e}");
-                skipped += 1;
-                continue;
-            }
-        };
-        let vmrk_text = match std::fs::read_to_string(&vmrk_path) {
-            Ok(t) => t,
-            Err(e) => {
-                eprintln!("read {vmrk_path} returned void: {e}");
-                skipped += 1;
-                continue;
-            }
-        };
-        let eeg_bytes = match std::fs::read(&eeg_path) {
-            Ok(b) => b,
-            Err(e) => {
-                eprintln!("read {eeg_path} returned void: {e}");
-                skipped += 1;
-                continue;
-            }
-        };
-        let extract = match extract_brainvision(&vhdr_text, &vmrk_text, &eeg_bytes) {
-            Some(ex) => ex,
-            None => {
-                eprintln!("{vhdr_path}: the .vhdr carries no EEG contract — skipped (0 honored)");
-                skipped += 1;
-                continue;
-            }
-        };
-        eprintln!("{vhdr_path}:");
-        report(&extract);
-        let bin_path = format!("{out_root}/{}.bin", g.stem);
-        let Some(bin) = build_bin(&extract, &eeg_bytes, &snapshot_tag, &hexsha, vhdr_url) else {
-            eprintln!("{vhdr_path}: the compact asset stays unwritten (0 honored)");
-            skipped += 1;
-            continue;
-        };
-        std::fs::write(&bin_path, &bin)
-            .map_err(|e| format!("write {bin_path} returned void: {e}"))?;
-        let parsed = parse_bin(&bin).ok_or_else(|| {
-            format!("{bin_path}: roundtrip parse void — the asset stays unverified")
-        })?;
-        let n_events = match &parsed.events {
-            Some(Events::Normalized(evs)) => evs.len(),
-            Some(Events::Verbatim(_)) | None => 0,
-        };
-        eprintln!(
-            "{bin_path}: {} bytes, roundtrip parses ({n_events} normalized events)",
-            bin.len()
-        );
-        staged.push(bin_path);
-    }
     if staged.is_empty() {
         return Err(
-            "no .set/.vhdr file carries an EEG contract — the harvest stays void (0 honored)"
-                .into(),
+            "no .set file carries an EEG contract — the harvest stays void (0 honored)".into(),
         );
     }
     if !ci_mode {
@@ -1375,101 +1001,5 @@ mod tests {
             }
             _ => panic!("event kind mismatch"),
         }
-    }
-
-    #[test]
-    fn parse_vhdr_reads_the_brainvision_header() {
-        let text = "Brain Vision Data Exchange Header File Version 1.0\n\
-[Common Infos]\n\
-DataFormat=BINARY\n\
-DataOrientation=MULTIPLEXED\n\
-NumberOfChannels=2\n\
-SamplingInterval=1000\n\
-[Binary Infos]\n\
-BinaryFormat=INT_16\n\
-[Channel Infos]\n\
-Ch1=Fz,ref,0.5,uV\n\
-Ch2=Cz,ref,0.5,uV\n";
-        let vhdr = parse_vhdr(text).expect("the header parses");
-        assert_eq!(vhdr.nchan, 2);
-        assert!((vhdr.srate - 1000.0).abs() < 1e-9);
-        assert_eq!(vhdr.labels, vec!["Fz".to_string(), "Cz".to_string()]);
-        assert_eq!(vhdr.resolution, vec![0.5, 0.5]);
-    }
-
-    #[test]
-    fn extract_brainvision_interleaves_int16_by_resolution() {
-        let text = "[Common Infos]\n\
-DataFormat=BINARY\n\
-DataOrientation=MULTIPLEXED\n\
-NumberOfChannels=2\n\
-SamplingInterval=1000\n\
-[Binary Infos]\n\
-BinaryFormat=INT_16\n\
-[Channel Infos]\n\
-Ch1=Fz,ref,0.5,uV\n\
-Ch2=Cz,ref,0.5,uV\n";
-        let mut eeg = Vec::new();
-        for x in [1i16, 2, 3, 4, 5, 6] {
-            eeg.extend_from_slice(&x.to_le_bytes());
-        }
-        let extract = extract_brainvision(text, "", &eeg).expect("the int16 samples extract");
-        assert_eq!(extract.nbchan, 2);
-        assert_eq!(extract.pnts, 3);
-        assert_eq!(extract.trials, 1);
-        match extract.samples {
-            Samples::Single(s) => assert_eq!(s, vec![0.5, 1.0, 1.5, 2.0, 2.5, 3.0]),
-            _ => panic!("not single"),
-        }
-    }
-
-    #[test]
-    fn extract_brainvision_refuses_a_partial_frame() {
-        let text = "[Common Infos]\n\
-DataFormat=BINARY\n\
-DataOrientation=MULTIPLEXED\n\
-NumberOfChannels=2\n\
-SamplingInterval=1000\n\
-[Binary Infos]\n\
-BinaryFormat=INT_16\n\
-[Channel Infos]\n\
-Ch1=Fz,,0.5,uV\n\
-Ch2=Cz,,0.5,uV\n";
-        assert!(extract_brainvision(text, "", &[0u8; 2]).is_none());
-        assert!(extract_brainvision(text, "", &[]).is_none());
-    }
-
-    #[test]
-    fn brainvision_events_read_marker_infos() {
-        let vmrk = "Brain Vision Data Exchange Marker File Version 1.0\n\
-[Marker Infos]\n\
-Mk1=Stimulus,S  1,1,0,0\n\
-Mk2=Stimulus,S  2,1,0,0\n";
-        match brainvision_events(vmrk) {
-            Some(Events::Normalized(evs)) => {
-                assert_eq!(evs.len(), 2);
-                assert_eq!(evs[0].type_.as_deref(), Some("S  1"));
-                assert_eq!(evs[0].latency, Some(1.0));
-                assert_eq!(evs[1].latency, Some(2.0));
-            }
-            _ => panic!("markers missing"),
-        }
-        assert!(brainvision_events("[Marker Infos]\n").is_none());
-    }
-
-    #[test]
-    fn bv_groups_from_json_groups_the_three_companions() {
-        let body = r#"{"data":{"dataset":{"latestSnapshot":{"files":[
-            {"filename":"sub-01/eeg/sub-01_task-jointaction_eeg.vhdr","urls":["https://x/vhdr"]},
-            {"filename":"sub-01/eeg/sub-01_task-jointaction_eeg.vmrk","urls":["https://x/vmrk"]},
-            {"filename":"sub-01/eeg/sub-01_task-jointaction_eeg.eeg","urls":["https://x/eeg"]},
-            {"filename":"sub-01/eeg/sub-01_task-jointaction_events.tsv","urls":["https://x/tsv"]}
-        ]}}}}"#;
-        let groups = bv_groups_from_json(body).expect("the tree parses");
-        assert_eq!(groups.len(), 1);
-        assert_eq!(groups[0].stem, "sub-01/eeg/sub-01_task-jointaction_eeg");
-        assert_eq!(groups[0].vhdr_url, "https://x/vhdr");
-        assert_eq!(groups[0].vmrk_url.as_deref(), Some("https://x/vmrk"));
-        assert_eq!(groups[0].eeg_url.as_deref(), Some("https://x/eeg"));
     }
 }
