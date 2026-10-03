@@ -88,10 +88,6 @@ url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
 note MESSENGER Erd-Encounter 2005 absent: Bundle data-odf/ 2007-2015, kein 2005 (survey-2026-09-14-weberin-quellen-rerun.md:210; sfetch --links 2026-09-30); messenger_odf.bin = Venus/Merkur. Quelle bleibt; nur Erd-Ketten-Rolle absent.
 
 descoped
-url https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
-note Rosetta IFMS origin 404 (direct+Proton+Wayback ohne Snapshot, --verdict 2026-09-30); PSA-Baum umgebaut, RSI-Root live (200, --verdict 2026-09-30) — origin auf RSI-Root erneuert (sources.φ:8950/8960/8970); Asset+sha256 auf CDN leben (sources.φ:8948).
-
-descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
 note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
 
@@ -102,24 +98,12 @@ origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/D
 note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
 
 descoped
-url https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
-note Dataverse doi:10.7910/DVN/K88GFI API 200 (72473 B) 2026-09-26; anonymer TAP-Weg decaps_dr2.object live 200 (443699 B, 5000 rows, FORMAT c=203) → integriert phi/sources.φ:9704-9715 (format tap, ttl 31536000); kein Konto-Gate.
-
-descoped
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
 note kommerziell (paid plan, HTTP 402 mit Key / 403 ohne, 2026-09-26) → declined_sources.φ (Operator-Wort 2026-09-26).
 
 descoped
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:356 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
-
-descoped
 url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:923 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
-
-descoped
-url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson. descoped (gemessen: URL integriert → phi/sources.φ:949 — Stale-Zwilling; kein Query-Arm-Surface, per-entry URL-Fix).
 
 descoped
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
@@ -128,62 +112,6 @@ note HTTP 400 2026-09-25: /query ohne Layer-ID → 400, /0/query → 200 geojson
 descoped
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
 note HTTP 400 2026-09-25 HAPI 1400: {week_ago} unersetzt. descoped (gemessen: URL integriert → phi/sources.φ:5526 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Template-Fix).
-
-descoped
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
-note HTTP 400 2026-09-25 ADQL: table J/A+A/609/A117/table1 not found; 11 unresolved identifiers. descoped (gemessen: URL integriert → phi/sources.φ:5832 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
-note HTTP 400 2026-09-25 HAPI 1405: Fenster 2010-09-17 außerhalb Abdeckung. descoped (gemessen: URL integriert → phi/sources.φ:5842 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown column "dec". descoped (gemessen: URL integriert → phi/sources.φ:7365 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","mag_v". descoped (gemessen: URL integriert → phi/sources.φ:7374 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra_dr2,dec_dr2,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown columns "ra_dr2","dec_dr2". descoped (gemessen: URL integriert → phi/sources.φ:7486 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown column "ep_flux". descoped (gemessen: URL integriert → phi/sources.φ:9289 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url https://tools.ssdc.asi.it/TAPSSDC/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+catalogs.mmc_bzcat5th+WHERE+flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: Unknown columns "ra","dec","flux". descoped (gemessen: URL integriert → phi/sources.φ:9352 — Stale-Zwilling; kein Query-Arm-Surface).
-
-descoped
-url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA,DEC,Total_flux,E_Total_flux,Peak_flux,E_Peak_flux+FROM+cirada.VLASS_Component+WHERE+Total_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable. descoped (gemessen: URL integriert → phi/sources.φ:9403 — Stale-Zwilling; Reader-Arm steht extract.rs votable_to_json).
-
-descoped
-url https://ws-uv.canfar.net/youcat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA_Source,DEC_Source,Total_flux_source,E_Total_flux_source+FROM+cirada.VLASSQL_Source+WHERE+Total_flux_source+IS+NOT+NULL
-note HTTP 400 2026-09-25 VOTable: "unknown format: json" — Dienst liefert nur VOTable. descoped (gemessen: URL integriert → phi/sources.φ:9413 — Stale-Zwilling; Reader-Arm steht extract.rs votable_to_json).
-
-descoped
-url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
-note HTTP 400 2026-09-25 ADQL: reserviertes Wort "public" unquoted. descoped (gemessen: URL integriert → phi/sources.φ:9422 — Stale-Zwilling; kein Query-Arm-Surface, per-entry Quote-Fix).
-
-descoped
-url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
-note HTTP 200 2026-09-26 (254541 B) — plx entfernt; RAdeg,DEdeg,HRV,Teff_K integriert → phi/sources.φ (gavo.aip.de ravedr4).
-
-descoped
-url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+r.ra,r.dec,r.z,f.objid,f.corrfibmag_u,f.corrfibmag_g,f.corrfibmag_r+FROM+specphot.rcsed+AS+r+JOIN+specphot.rcsed_fibermags+AS+f+ON+r.objid=f.objid+WHERE+f.corrfibmag_g+IS+NOT+NULL
-note HTTP 200 2026-09-26 (454247 B) — ra/dec/z via JOIN specphot.rcsed; corrfibmag_u/g/r integriert → phi/sources.φ (padc-tap-rcsed.obspm.fr).
-
-descoped
-url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag,vr+FROM+hyperleda.galaxies+WHERE+vr+IS+NOT+NULL
-note HTTP 200 2026-09-26 (201877 B) — al2000/de2000/v/bmag ersetzt durch ra,dec,mag,vr; integriert → phi/sources.φ (voparis-tap-astro-m.obspm.fr hyperleda).
-
-descoped
-url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
-note HTTP 200 2026-09-26 (442297 B) — Position via JOIN ogle.objects_all (raj2000/dej2000); obs_time,magnitude integriert → phi/sources.φ (skvo.science.upjs.sk ogle).
 
 descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,phot_g_mean_mag,parallax,radial_velocity+FROM+gaiadr3.gaia_source+WHERE+radial_velocity+IS+NOT+NULL+AND+ABS(radial_velocity)+>+300
@@ -262,10 +190,6 @@ url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&fo
 note SIMBAD basic (QSO): field plx_mas — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
 descoped
-url https://services.swpc.noaa.gov/json/solar_regions.json
-note 2026-09-26: dead /products/solar-regions.json 404; live /json/solar_regions.json 200 138703B sha9a91cea7. area Millionstel, spot_class McIntosh, number_spots/region DROP; Einheit gefunden → integriert phi/sources.φ:998.
-
-descoped
 url https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=100000&limit=100
 note OpenAQ latest: value trägt die Einheit je Zeile in der Spalte unit (parameter-abhängig: µg/m³, ppm, ppb) — namensbasiert nicht bestimmbar; location/parameter strukturell. descoped (gemessen: unit-auto-detect ohne Namens-Token unmöglich).
 
@@ -290,10 +214,6 @@ url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
 note GCN IceCube bronze: significance = Detektions-Statistik (einheitenlos). descoped (gemessen: significance ohne physikalische Einheit).
 
 descoped
-url https://weather.cma.cn/api/now/54511
-note CMA now (Station 54511): field temp_c/humidity_pct/pressure_hpa/wind_speed_ms/wind_dir/precip_mm/feels_like_c. descoped (gemessen: URL integriert → phi/sources.φ:372 — Stale-Zwilling).
-
-descoped
 url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
 note NOAA CPC AMO: Monats-Spalten jan..dec tragen kein Einheiten-Token (Anomalie °C) — namensbasiert nicht bestimmbar. descoped (gemessen: Spaltennamen jan..dec ohne Einheit).
 
@@ -304,10 +224,6 @@ note SILSO sunspot: sunspot_number = Wolf-Zahl (Index; Hausposition: ssn/number_
 descoped
 url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
 note GFZ SN index: solar_sunspot_number = Wolf-Zahl (Index; Hausposition ssn DROP). descoped (gemessen: Index, keine Feldmessung mit Einheit).
-
-descoped
-url https://www.jma.go.jp/bosai/quake/data/list.json
-note JMA quake list: lastline geosphere_earthquakes_jma_recent_mag. descoped (gemessen: URL integriert → phi/sources.φ:423 — Stale-Zwilling).
 
 descoped
 url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
