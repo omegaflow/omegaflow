@@ -2,9 +2,9 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-03
-  sha256: b064ad670cf8845a0ddbb57d93669d5f4a420d3117add95de33bbae642cadacd
+  sha256: 11ccdb90e8ccfeb8c802a88b80e77b6f556acb68412e1630f44d88dbe442ec53
   status: live
-  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-03-sensory-folge226.md
+  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-03-sensory-folge227.md
 -->
 ## Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
 
@@ -250,19 +250,22 @@ The registered result is the decision rule; the data value it will read is
   (`.github/workflows/hyperscanning-te.yml:119-142`,
   `.github/workflows/hyperscanning-te.yml:151`).
 - **Second cohort** — pre-registered candidate (measured 2026-10-03): **`ds007471`**
-  (dyads, 32-channel EEG, `BrainVision` `.vhdr`, 1000 Hz, CC0) is the primary second
-  cohort; `ds008192` (fNIRS + MoCap) and `ds004103` (fMRI) stay other-modality
-  candidates. The read path is measured: CI probe `openneuro-eeg-probe` run
-  `37127134440` (success) read `ds007471` sub-01 through `brainvision_compiler` and
-  `ds008192` sub-101 through `snirf_compiler` (`ci_manage view 37127134440`,
-  2026-10-03). Only `ds007822` is in the hyperscanning pipeline today; Braucht: a
-  `ds007471` manifest arm (dyad join, `_eeg.vhdr`) in
-  `.github/workflows/hyperscanning-te.yml` + its run before analysis.
+  (dyads, 64-channel BrainVision `.vhdr` — 32 `_R` + 32 `_L` in one file per
+  `sub-01`..`sub-32`, 1000 Hz, CC0) is the primary second cohort; `ds008192` (fNIRS +
+  MoCap) and `ds004103` (fMRI) stay other-modality candidates. The read path is
+  measured: CI probe `openneuro-eeg-probe` run `37127134440` (success) read `ds007471`
+  sub-01 through `brainvision_compiler` and `ds008192` sub-101 through `snirf_compiler`
+  (`ci_manage view 37127134440`, 2026-10-03). The dyad join is the `_L`/`_R` channel
+  split inside one file; the manifest arm is built (commit `1226e9082`):
+  `brainvision_compiler --participant L|R` writes one per-participant bin, and the
+  workflow input `cohort=ds007471` builds `manifest.txt` with
+  `jointaction pair-<NN> {L,R}`. Braucht: the run (after the ds007822 validation) before
+  analysis.
 
 ### Träger / Carrier
 
 This document's carrier is the Sensory handover
-`docs/handover/handover-2026-10-03-sensory-folge226.md` — the open point
+`docs/handover/handover-2026-10-03-sensory-folge227.md` — the open point
 `### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)`,
 whose `Lage` names this draft and whose `Braucht` names the validation artifact
 that will carry the FP/FN and n-scaling numbers.
