@@ -1,0 +1,18 @@
+# bz_retro.te — TE-Probes-Wanderung: the bz_retro_probe pair over registered fields.
+# driver: OMNI2 hourly IMF Bz, omni_imf_bz_gsm_nt (phi/sources.φ:1408 omni2_serie.bin,
+#   :1422 omni2_serie_1h.bin; bz_retro_probe.rs:757 reads omni2_serie_1h.bin COMP_BZ)
+# target: ABK hourly |dB/dt|, intermagnet_dbdt (phi/sources.φ:1806-1813, imag-data
+#   abk_dbdt_1h.bin; bz_retro_probe.rs:177-192 load_cdn_station_dbdt)
+# cond: the probe's PCMCI cross-check conditions on Speed+Density (two arms,
+#   bz_retro_probe.rs:528-529); field_te_query carries one cond arm, so the primary
+#   Bz<->dB/dt pairs stay unconditional (bz_retro_probe.rs:877-897) — the two-arm
+#   conditioning stays a named pending, never folded into a single-arm cTE.
+pair bz-retro
+register sources
+driver omni_imf_bz_gsm_nt
+target intermagnet_dbdt
+cadence live
+bin 3600
+seasonal none
+lags 0,1,2,3,4,5,6
+surrogate 100

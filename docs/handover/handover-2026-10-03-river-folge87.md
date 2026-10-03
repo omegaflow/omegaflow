@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: 2b1fae54caebf742e6751d79a438726572abcbbcba1e570f80afb72528b9c115
+  sha256: 532e82f2c3147f6dc2da6b1740d04aa5412d0589d6bb63a9fbbc1c2d8c67c6b1
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -99,14 +99,20 @@ Wort | Datum | Quelle
   `field_te_query`-Zeile ist verdrahtet: `compute_max_t` druckt `kde_n_eff` + MDE je
   Member (siehe Lage).
 
-### TE-Estimator-Bias-Korrektur
+### TE-Estimator-Bias-Korrektur — Schicht gebaut, Schwelle pending
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste `n_eff`-/Bias-Lauf.
-- **Lage:** (gemessen 2026-10-03, Paper §6) die Bias-Tabelle steht (negativer Bias, Richtung 5/5);
-  die Korrektur (rang-normalisieren, ein Bandbreiten-Vektor, `TE_adj = TE − m_k`, `n_eff`-Gate)
-  ist als Konstruktion offen (Rat + z.ai).
-- **Blockade:** Konstruktions-Entscheidung hängt am `n_eff`-Gate.
-- **Braucht:** die Korrektur bauen, sobald die `n_eff`-Diagnose im Lauf steht.
+- **Trigger:** der erste `n_eff`-druckende Lauf.
+- **Lage:** (gemessen 2026-10-03 via CI `te-bias-n 37118666568` + `cargo check`) die
+  Korrektur steht als additive, benannte Schicht in `src/mathematikerin/te.rs`:
+  `transfer_entropy_bias_adjusted(te, m_k) = TE − m_k`, gemessene Tabelle `TE_BIAS_MK`
+  (n = 800…10000, negatives Vorzeichen, |m_k| fallend bis 0), `te_bias_m_k(n)`
+  (unbenanntes n → absent, nie 0), `transfer_entropy_bias_adjusted_gated` über
+  `TE_NEFF_THRESHOLD`. Gate-Test `gate_te_bias_adjusted_sign_and_n_floor`; der rohe
+  Schätzer bleibt unberührt. `cargo check` 0/0.
+- **Blockade:** `TE_NEFF_THRESHOLD = None` — die Schwelle entsteht erst aus der
+  gemessenen `n_eff`-Verteilung.
+- **Braucht:** den `wy-max-t 37135385236`-Lauf lesen und `TE_NEFF_THRESHOLD` aus der
+  Messung setzen (nur die Konstante, nicht die Verdrahtung).
 
 ### Flyby-Path-2 — Trajektorien-Riss, Tube nicht gebaut
 - **Status:** wartend | **Bindung:** eigen
@@ -125,36 +131,46 @@ Wort | Datum | Quelle
 - **Rest-Zellen:** OMNI2 26 (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` — pending bis
   Trigger (unverändert).
 
-### Zeugen im universellen Myzel — Arm gebaut, erste Messung ohne Alignment
+### Zeugen im universellen Myzel — Form gebaut, Daten blockieren
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `field-te-query 37120826017` (success, gelesen).
-- **Lage:** (gemessen 2026-10-03 via `gh run download 37120826017`) der Zeugen-Arm lädt
-  **nur** `point-event#1` (n = 1), der Lauf meldet `alignment absent: bin window
-  carries no overlap between the arms` — die Query bleibt ungemessen (`pending`). Der
-  Lauf übt den Arm.
-- **Blockade:** ein einzelnes point-event trägt keine Serie; kein Zeugen-TE-Verdikt.
-- **Braucht:** mehr point-events in den Zeugen-Pfad oder eine ereignis-konditionierte
-  Query-Form; das rigorose Design (event-triggered average, Omori-erhaltende
-  Shift-Null, vorabregistriert) steht in `sensory-folge225:289-296`.
+- **Trigger:** ein declustertes Multi-Event-Train (`witnesses.φ`).
+- **Lage:** (gemessen 2026-10-03 via `cargo build -p omegaflow-measure --bin field_te_query`
+  + `--parity-witness point-event#1`) die event-konditionierte Form ist **gebaut und
+  verdrahtet**: `event_triggered_average` + `omori_preserving_shift_null` (7 d Fenster /
+  1 h Bin / 6 h Guard, B = 100) im `--parity-witness <witness> [--driver <field>]`-Pfad.
+  Der Register-Zeugenpfad trägt weiter nur `point-event#1` (n = 1) → die Form läuft ins
+  gemessen Leere (`n=1`), kein Verdikt.
+- **Blockade:** ein einzelnes point-event trägt keine Serie.
+- **Braucht:** ein declustertes Multi-Event-Train + benannter Driver, dann
+  `field_te_query --parity-witness point-event#1 --driver <field>`.
 - **Riss (benannt):** `phi/pipeline/descriptors/erbq-solar.te` ist als Test schwach.
 
 ### Probes-Wanderung (62 TE-Probes)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Probe die Paritätsbrücke `GLEICH`.
-- **Lage:** (gemessen 2026-10-03 via `docs/blatt/sonne-erde-blatt.md:24`) der Query-Kern
-  `field_te_query` steht; die erste Probe (ENSO Blatt I) ist `GLEICH`.
-- **Blockade:** 61 Probes warten auf ihre Brücke.
-- **Braucht:** pro Probe ein `field_te_query`-Deskriptor + Parität (`GLEICH`), dann
-  entlassen.
+- **Lage:** (gemessen 2026-10-03 via `sgrep -l 'transfer_entropy' tools/measure/src/bin`)
+  **62** TE-Bins verifiziert; 1 Probe (ENSO Blatt I) ist `GLEICH`; für `bz_retro_probe`
+  steht `phi/pipeline/descriptors/bz_retro.te` (grammatikrein gegen `parse_descriptor`).
+  `bz_blatt_probe` und `gic_storm_probe` verweigern mit gemessenem Grund: kein
+  per-Minute-|dB/dt|-Feld (registriert ist nur das 1-h-`intermagnet_dbdt`) bzw. kein
+  Kp-Feld im Register.
+- **Blockade:** 58 Bins unbearbeitet; der Parity-Lauf ist CI-gebunden.
+- **Braucht:** je Bin Deskriptor + `field-te-query`-Parität (`GLEICH`); die zwei
+  fehlenden Felder (per-Minute-dB/dt, Kp) zuerst als Quelle klären (An mountain).
 
-### Nicht-point-event-Zeugen
+### Nicht-point-event-Zeugen — Formen gebaut
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** je Arm eine Query-Form (`witnesses.φ`).
-- **Lage:** (gemessen 2026-10-03 via `sgrep`) 17 `s2-direction`/`sky1`, 4 `substance`,
-  3 `gestalt` werden als `pending`/`probe` verweigert; keine Query-Form existiert.
-- **Blockade:** Richtungs-/Spektral-Query-Form fehlt.
-- **Braucht:** je Arm eine Query-Form (Richtung → zirkulär/Rayleigh-Kuiper/von-Mises;
-  Spektren → Formvergleich oder Epochen-Skalar; Einzelspektrum → refuse).
+- **Trigger:** je Arm eine getragene Messung (`witnesses.φ`).
+- **Lage:** (gemessen 2026-10-03 via `cargo build -p omegaflow-measure --bin field_te_query`)
+  die Formen stehen: `--direction <witness>` (Rayleigh/Kuiper/von-Mises gegen eine
+  gemessene uniforme Null, Schwelle aus 1000 Surrogaten, volle-Kreis-RNG) und
+  `--spectral <witness>` (magic → `WitnessKind` + `series_gate`-Verweigerung;
+  Einzelspektrum → refuse). Agent-Messung am `s2-direction#0`-Arm (ANTARES, n = 1000):
+  Rayleigh z = 566.95 > Schwelle 3.03 — **am CI nachzumessen**, ist als Zahl noch Claim.
+- **Blockade:** die 4 `substance`- und 3 `gestalt`-Arme brauchen eine ≥2-Epochen-
+  Wiederholung derselben Probe (Datenseite).
+- **Braucht:** eine wiederholte Probe je substanz-/gestalt-Arm; die `--direction`-Zahl
+  im CI nachmessen.
 
 ### GPD-Tail-Fit in `wy_max_t`
 - **Status:** wartend | **Bindung:** eigen
@@ -196,6 +212,11 @@ Origin: river folge87.
   `src/archivar/twomass.rs` + `mod.rs:158`. `cargo check` = 0/0. Es fehlt allein die
   Register-Zeile (`format`/`cmap`/`field`) in `phi/sources.φ` — danach schreibt
   Mycelium `url`/`origin`/`compiler`/`sha256`.
+- **Zwei fehlende Felder für die Probes-Wanderung (Register = deine Zeile).** Gemessen
+  2026-10-03: `bz_blatt_probe` braucht ein **per-Minute-|dB/dt|**-Feld (registriert ist
+  `intermagnet_dbdt` nur als 1-h-Asset, `phi/sources.φ:1806-1813`); `gic_storm_probe`
+  braucht ein **Kp-Feld** (`sgrep` in `phi/sources.φ`: kein `kp`/`planetary`-Treffer).
+  Ohne diese Arme bleiben beide Deskriptoren `pending`.
 
 ## An mycelium
 
@@ -235,8 +256,9 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `tools/measure/src/bin/wy_max_t_probe.rs`
 - `tools/measure/src/bin/bz_retro_probe.rs`
 - `tools/measure/src/bin/field_te_query.rs`
+- `phi/pipeline/descriptors/bz_retro.te`
 - `tools/measure/src/bin/enso_blatt_probe.rs`
 - `docs/handover/handover-2026-10-03-river-folge87.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge86.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0000 · close 0.0921 · cap 0.50 — Grund: River-87 (ein Atom) — die vier `wy_max_t`-clippy-Lints + `enso_blatt_probe`-Format geheilt (cargo check 0/0, measure-Bins grün); `te::kde_n_eff` + MDE-Zeile + Gate-Test gebaut; `field_te_query` mit dem studentisierten Bucket-max-T-Null + n_eff/MDE-Zeile verdrahtet (`compute_max_t`, Gate-Test); der `wy-max-t`-Pending als Concurrency-Ghost gemessen und gecancelt (zentrierter Lauf `queued`); Reader-Arm-Adressen (mountain) gefaltet. `close` = Line-Session (gemessen `session_burn`, $0.0921).
+## Burn: open 0.0000 · close 0.1220 · cap 0.50 — Grund: River-87 (ein Atom, parallele Taucher) — die vier `wy_max_t`-clippy-Lints + `enso_blatt_probe`-Format geheilt; `te::kde_n_eff` + MDE-Zeile + Gate-Test gebaut; `field_te_query` mit dem studentisierten Bucket-max-T-Null + n_eff/MDE-Zeile verdrahtet (`compute_max_t`); der `wy-max-t`-Pending als Concurrency-Ghost gemessen und gecancelt (zentrierter Lauf `queued`); drei `grind-flash`-Taucher: Probes-Inventur (62 verifiziert, `bz_retro.te`), TE-Bias-Schicht (`transfer_entropy_bias_adjusted`, gemessene `TE_BIAS_MK`) und die Zeugen-Query-Formen (direction/spectral/event). `close` = Line-Session (gemessen `session_burn`, $0.1220).
