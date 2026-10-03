@@ -3184,6 +3184,135 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "twomass_psc" {
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(rows) = twomass::read_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for r in &rows {
+            if !r[0].is_finite() || !r[1].is_finite() {
+                continue;
+            }
+            let ra = r[0].to_radians();
+            let dec = r[1].to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca, cd * sa, sd];
+            for comp in 1..=twomass::COMP_MAX {
+                let Some(name) = twomass::component_name(comp) else {
+                    continue;
+                };
+                let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                    continue;
+                };
+                let Some(value) = twomass::component_value(r, comp) else {
+                    continue;
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        station_code: None,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    (*fc).clone(),
+                ));
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "swarm_tec" {
+        const MAGIC: [u8; 4] = *b"SCTE";
+        const FIELDS: usize = 5;
+        const REC_BYTES: usize = FIELDS * 8;
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        if buf.len() < 8 || buf[0..4] != MAGIC {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let n = u32::from_le_bytes([buf[4], buf[5], buf[6], buf[7]]) as usize;
+        if buf.len() != 8 + n * REC_BYTES {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for i in 0..n {
+            let base = 8 + i * REC_BYTES;
+            let cell = |k: usize| -> Option<f64> {
+                buf.get(base + k * 8..base + k * 8 + 8)
+                    .and_then(|b| <[u8; 8]>::try_from(b).ok())
+                    .map(f64::from_le_bytes)
+            };
+            let (Some(lat), Some(lon), Some(radius_km), Some(t), Some(vtec)) =
+                (cell(0), cell(1), cell(2), cell(3), cell(4))
+            else {
+                continue;
+            };
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !radius_km.is_finite()
+                || !t.is_finite()
+                || !vtec.is_finite()
+                || radius_km <= 0.0
+            {
+                continue;
+            }
+            let Some(epoch) = lsk.unix_to_tdb(t) else {
+                continue;
+            };
+            let (sa, ca) = lon.to_radians().sin_cos();
+            let (sd, cd) = lat.to_radians().sin_cos();
+            let radius_m = radius_km * 1000.0;
+            let p = [cd * ca * radius_m, cd * sa * radius_m, sd * radius_m];
+            for fc in &fields {
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        station_code: None,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value: vtec,
+                    },
+                    fc.clone(),
+                ));
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
     if src.format == "catalog_charm2" {
         let mut buf = Vec::new();
         if let Ok(mut f) = std::fs::File::open(body) {
