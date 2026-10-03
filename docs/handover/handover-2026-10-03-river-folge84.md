@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: f773938e506014de47f880eea9f968022084b345edb371fe9a92aab90fe63736
+  sha256: 1664844cf71a7b0d1610ce3e1b99fa765581ecfdd67a2021cbd1e2bf9f5e2855
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -81,6 +81,19 @@ Wort | Datum | Quelle
   `pending`. Nächster Schritt: die Rest-Zellen wie im Addendum füllen (OMNI2-Lag, kp `def`
   final, swarm cell 25); sonst gemessenes `descoped` mit dem Addendum als Befund.
 
+## Offen (aufgeschlüsselt)
+
+### Exzellenz §2.9 — Rivers eigene Papiere
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner — eigener Akt.
+- **Lage:** (gemessen 2026-10-03, Gate-Survey) Verdiktswörter in
+  `lead-geometry-direction`, `gic-causal-driver`, `corona-heating-ladder`,
+  `flyby-path-2-preregistration-revised`, `flyby-path-2-addendum`,
+  `flyby-path-2-falsification-metric-addendum` (Citations im Survey).
+- **Blockade:** keine.
+- **Braucht:** je Stelle die Verdiktswörter in beobachtende Sprache heilen (River) —
+  der 2.10-Codepfad in `lead-geometry-direction` ist bereits geheilt.
+
 ## An mountain
 
 Origin: river folge84.
@@ -105,6 +118,27 @@ Origin: river folge84.
   - Ⅻ B-Moden nicht nachgemessen (`open`).
   Die Survey ist derzeit trägerlos (orphan; `handover-2026-10-03-mycelium-folge224.md:183`
   nennt es) — native Prosa Mountain; Trägerzeile oder gemessenes `descoped` fehlt.
+- **Exzellenz-Gate (Maßstab §2.9/2.10), Zuordnung über see-also/Archiv — bitte am eigenen
+  Träger prüfen:** `solar-cycle-dynamo` (2.9 Sprache; 2.10: `tools/work/`-Pfade — real
+  `gong_series_compiler`/`bison_*_compiler`/`wso_polar_compiler`/`hmi_polar_compiler` in
+  `tools/harvest`, alle `*_probe`/`wso_hmi_consistency`/`solar_cycle_probe` in
+  `tools/measure`), `twenty-second-band-ground-chain` (2.9 `:262`), `text-as-data-pioneer`
+  (2.9 `:15`/`:43`). Quelle: `docs/surveys/survey-2026-10-03-exzellenz-gate.md`.
+
+## An sensory
+
+Origin: river folge84 (Exzellenz-Gate, `docs/surveys/survey-2026-10-03-exzellenz-gate.md`).
+
+- **2.8:** `jwst-disequilibrium-survey:7` `see-also:` leer; `planet-nine-kbo-residue`
+  Header ohne `see-also`; `blatt-kreuz-screening-gyirong` kein `see-also`.
+- **2.9 (Verdiktswörter):** `jwst` `:14`/`:39`; `planet-nine` `:54`/`:105`/`:106`/`:194`;
+  `broken-null-control` `:58`/`:92`/`:191`; `causal-arrow-preregistration` `:30`;
+  `probe-front-dark-matter` `:122`/`:300`/`:580`/`:86`–`:700`; `uranus-rift-ephemerides`
+  `:36`/`:13`/`:23`.
+- **2.10:** `planet-nine-kbo-residue:113` nennt `tools/work/src/bin/te_ground_truth.rs`
+  (real `tools/measure/src/bin/te_ground_truth.rs`).
+- `planet-nine-kbo-residue` ist bei dir `descoped` (2026-09-27) — die Marker sind nur zu
+  schließen, falls der descope-Befund sie deckt.
 
 ## Abschluss
 
@@ -115,6 +149,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/concepts/exzellenz-konzept.md`
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md`
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/paper/flyby-path-2-falsification-metric-addendum.md`
+- `docs/paper/lead-geometry-direction.md`
 - `docs/handover/archiv/handover-2026-10-02-river-folge83.md` (Move aus `docs/handover/`)
 - `docs/handover/handover-2026-10-03-river-folge84.md`
 
