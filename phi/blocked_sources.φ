@@ -93,7 +93,7 @@ note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein I
 
 blocked account
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
-note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement nötig, IHEP-Konto verlangt CSTNET-ID (nicht vorhanden). API 200 (18 Datensätze, 4 Rohklassen gated).
+note LHAASO: gemessen 2026-09-26 — API 200 (18 Datensätze), 4 Rohklassen gated; Zugang nur per IHEP-Konto (CSTNET-ID) + Kollaborations-Agreement → Operator-Wort/Anfrage (Future).
 
 pending
 url https://www.gosat-gw.nies.go.jp
@@ -101,7 +101,7 @@ note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 6
 
 blocked account
 url https://data.lsst.cloud/api/tap/sync
-note Rubin/LSST descoped 2026-09-26: data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); Survey off-sky, jetzt kein Bedarf. Bei Survey-Daten wieder aufnehmen.
+note Rubin/LSST — data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); TAP datenrechtlich gated, Survey off-sky → kein Bedarf jetzt; Operator-Wort bei Survey-Daten (Wiedervorlage).
 
 pending
 url https://zenodo.org/records/10594301
@@ -187,7 +187,7 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 blocked account
 url https://catalogue.dataspace.copernicus.eu/stac/collections
 reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
-note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → descoped (View, kein Download).
+note CDSE-CCM — /stac/collections 200 public; Download nur mit Lizenzrolle U-R-P/N-P-A (P=View); Operator-Wort 2026-10-01: kein Download → Zugang operator-gebunden (Future), Token liegt.
 
 pending
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
