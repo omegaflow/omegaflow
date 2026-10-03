@@ -421,18 +421,26 @@ pub fn null_means_per_statistic(nulls: &[Vec<f64>]) -> Vec<Option<f64>> {
         .collect()
 }
 
-pub fn studentized_maxima(nulls: &[Vec<f64>], sigma: &[Option<f64>]) -> Vec<f64> {
+pub fn studentized_maxima(
+    nulls: &[Vec<f64>],
+    means: &[Option<f64>],
+    sigma: &[Option<f64>],
+) -> Vec<f64> {
     nulls
         .iter()
         .map(|row| {
             let mut sup = f64::NEG_INFINITY;
             for (mi, &v) in row.iter().enumerate() {
-                if let Some(s) = sigma.get(mi).copied().flatten() {
-                    if v.is_finite() {
-                        let t = v / s;
-                        if t > sup {
-                            sup = t;
-                        }
+                let (Some(m), Some(s)) = (
+                    means.get(mi).copied().flatten(),
+                    sigma.get(mi).copied().flatten(),
+                ) else {
+                    continue;
+                };
+                if v.is_finite() {
+                    let t = (v - m) / s;
+                    if t > sup {
+                        sup = t;
                     }
                 }
             }

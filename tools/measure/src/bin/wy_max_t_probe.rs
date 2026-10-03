@@ -282,7 +282,7 @@ fn report_family_partition(
             None => println!("sigma {} absent — the null carries no spread", m.label),
         }
     }
-    let stud_null = studentized_maxima(nulls, &sigma);
+    let stud_null = studentized_maxima(nulls, &null_means, &sigma);
     let mut finite: Vec<f64> = stud_null
         .iter()
         .copied()
@@ -305,8 +305,9 @@ fn report_family_partition(
         .iter()
         .enumerate()
         .map(|(mi, o)| {
+            let m = null_means.get(mi).copied().flatten()?;
             let s = sigma.get(mi).copied().flatten()?;
-            Some((*o)? / s)
+            Some(((*o)? - m) / s)
         })
         .collect();
     let obs_max = obs_stud
@@ -763,9 +764,11 @@ mod tests {
         );
 
         let sigma_full = sigma_per_statistic(&full);
+        let means_full = null_means_per_statistic(&full);
         let sigma_pool = sigma_per_statistic(&pooled);
-        let max_full = studentized_maxima(&full, &sigma_full);
-        let max_pool = studentized_maxima(&pooled, &sigma_pool);
+        let means_pool = null_means_per_statistic(&pooled);
+        let max_full = studentized_maxima(&full, &means_full, &sigma_full);
+        let max_pool = studentized_maxima(&pooled, &means_pool, &sigma_pool);
         assert!(
             max_full
                 .iter()
