@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: a533e2626d87687c718b138349d5e59faf6b8cc75a3750d80e93fb77c28506f7
+  sha256: 3fc5eae49567982ac0495b2b7eeea14adf2f79c9bc5cd5da3ad1f70b83533358
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -111,6 +111,38 @@ Wort | Datum | Quelle
 - **Blockade:** das Ergebnis liegt nur in CI.
 - **Braucht:** `ci_manage log 37118666568`; Bias-Tabelle ins Paper §6.
 
+### field_te_query — universeller TE-Kern (Rats-Verdikt 2026-10-03)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `field-te-query 37119910342` (Parity-Brücke).
+- **Lage:** (gemessen 2026-10-03 via `cargo check`, `sgrep`) `tools/measure/src/bin/field_te_query.rs`
+  (1241 Z.) + `.github/workflows/field-te-query.yml` gebaut: Feld-Selektor über den
+  Archivar-Pfad (`sources.φ`), Deskriptor-Grammatik (`cadence|seasonal|lags|surrogate|event|gate`,
+  Arm-Zustand `built|pending|probe`), die eine TE-Maschine (`te.rs`) mit der einen
+  Phase-Surrogat-Null; `--parity` fährt `omni_hro_imf_bz_gsm_nt × ersstv5_nino34_ssta`
+  gegen das aufgezeichnete Blatt I (`docs/blatt/sonne-erde-blatt.md:24`). Das Rats-Verdikt
+  (2026-10-03) trägt: Query-Kern statt Probes-Verschmelzung; 62 TE-Probes / 112 eigene
+  `serie`-Dateien bleiben unangetastet; TE bleibt abgeleiteter Query-Term.
+- **Blockade:** das Parity-Ergebnis liegt nur in CI; die `wy_max_t`-max-T-Null ist im Kern
+  **nicht** als Verdikt-Null verdrahtet (es läuft die Phase-Surrogat-Null aus `te.rs` —
+  genau die, die das Blatt erzeugte; eine andere wäre eine neue Null → eigener Atom).
+- **Braucht:** `ci_manage log 37119910342`; bei `PARITY: GLEICH` die Brücke als
+  Reproduktion tragen, bei `ABWEICHEND` den Riss benennen.
+
+### Zeugen im universellen Myzel
+- **Status:** operator-gebunden | **Bindung:** eigen
+- **Trigger:** Operator-Wort (im Atom gefragt).
+- **Lage:** (gemessen 2026-10-03 via `sread`/`sgrep`) `phi/*.φ` trägt 14 Dateien; nur
+  `phi/witnesses.φ` (161 Z., 27 `witness`) ist ein Akteurs-Register, das der Kern noch
+  nicht liest. Die anderen sind korrekt außen: Dispositions-Register (Verdikte),
+  `harvest.φ` (Transport), `footprints.φ` (Gewebtes/Gate), `nrs_stations.φ` (declined),
+  `supermag_stations.φ` (`note descoped 2026-09-18`), Meta/Index. Die Zeugen sind keine
+  Felder: nur `point-event` (Skalar an Ort+Zeit) ist TE-fähig; `s2-direction`/`sky1`
+  (Richtungskataloge) und `substance` (Spektren) brauchen eigene Query-Formen.
+- **Blockade:** kein Bau begonnen (Operator-Wort steht aus).
+- **Braucht:** den Zeugen-Arm in `field_te_query` (`--register witnesses`, `point-event`
+  als Event-Kanal, sky/substance als `pending`/`probe`), danach eine Parity-Brücke für
+  einen Zeugen.
+
 ## Abschluss
 
 Pfad-begrenzte Commit-Pfade dieser Session:
@@ -123,5 +155,6 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `src/mathematikerin/mod.rs`, `src/mathematikerin/wy_max_t.rs`
 - `tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/wy_max_t_probe.rs`
 - `.github/workflows/bz-yearly-maxt.yml`
+- `tools/measure/src/bin/field_te_query.rs`, `.github/workflows/field-te-query.yml`
 
-## Burn: open 0.0153 · close 0.1898 · cap 0.50 — Grund: River-85 — Membran-Werkzeug-Vermerk geheilt, exzellenz-Gate geschlossen, GIC-Riss bearbeitet: storm-only + Bias-Instrument gebaut, kalibrierte WY-max-T-Null extrahiert und optional verdrahtet, 4 CI-Läufe dispatcht (gemessen `session_burn`; close = eigene Kosten River-Linie $0.0782 + 3×grind-flash $0.1116 = 0.1898; das Maschinen-Total lag bei 0.7921 inkl. fremder Parallel-Linien, nicht angerechnet)
+## Burn: open 0.0153 · close 0.4417 · cap 0.50 — Grund: River-85 — Membran-Vermerk + exzellenz-Gate geheilt; GIC-Riss: storm-only + Bias + kalibrierte WY-max-T-Null gebaut/verdrahtet; Rats-Verdikt + `field_te_query`-Query-Kern gebaut, 6 CI-Läufe dispatcht (gemessen `session_burn`; close = eigene Kosten River-Linie $0.1265 + 4×grind-flash $0.2494 + general $0.0174 + Rat $0.0484 = 0.4417; Maschinen-Total 0.7149 inkl. fremder Parallel-Linien, nicht angerechnet)
