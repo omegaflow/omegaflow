@@ -2,7 +2,7 @@
   title: The lead geometry carries direction: TE asymmetry in the MIT-BIH ECG
   class: paper
   date: 2026-08-24
-  sha256: 2149c0d667a9d117eb3966a60a1ec1f05e4248b463033935063fd38e3da08e83
+  sha256: b616c6b7beeeed9fb348172f2ec9fa452ba9d4b47ddba09c1cdaf1b55668be05
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md
 -->
@@ -13,7 +13,7 @@
 ## Abstract
 
 Two leads of the same ECG recording measure the same heart, so any directed
-transfer entropy (TE) between them cannot be a causal arrow — it is a
+transfer entropy (TE) between them is no causal arrow — it is a
 property of the lead geometry. We measure Takens-embedded TE (dim 3, order 3,
 auto-MI-τ, phase-randomized null μ + 2σ over ten surrogates, deterministic
 seed) between the two simultaneous leads of all 48 recordings of the MIT-BIH
@@ -35,7 +35,7 @@ A standard 12-lead ECG records the same electric field of the heart from
 twelve positions on the body. The MIT-BIH Arrhythmia database records two of
 these leads simultaneously per patient: one modified limb lead (MLII) and one
 precordial (chest) lead (V1, V2, V4 or V5). Two views of the same source
-cannot carry causal information about each other — the heart drives both —
+carry no causal information about each other — the heart drives both —
 but they can differ in *which lead carries the sharper information* about the
 other's future. Transfer entropy (Schreiber, 2000) is the natural instrument:
 a directional, model-free measure of information flow. Applied between two
@@ -132,7 +132,7 @@ The asymmetry is carried by a single lead configuration: MLII↔V1 (n = 40)
 carries 17 limb→chest against 6 chest→limb (P = 0.0173). MLII↔V5 (n = 3) is
 balanced 1/1 and, at n = 3, carries no statement. MLII↔V4 (n = 1) and
 MLII↔V2 (n = 2) are too sparse to speak. V2↔V5 (n = 2) is a chest↔chest
-pair and cannot carry a chest↔limb direction; its single arrow is counted as
+pair and carries no chest↔limb direction; its single arrow is counted as
 chest↔chest.
 
 The answer to the posed question is measured and honest: the limb→chest
@@ -170,7 +170,7 @@ the diagnostic sense.
   process, not the AR(1) process the calibration gate uses.
 - **One pair type dominates.** 40 of 48 recordings are MLII↔V1; the other
   four configurations carry n ≤ 3. The pair-type split therefore rests on a
-  single configuration and cannot be a cross-configuration comparison.
+  single configuration and is not a cross-configuration comparison.
 - **Two records, one patient.** MIT-BIH records 201 and 202 are two
   recordings of the same subject (both MLII↔V1); the PhysioNet documentation
   of the database records 48 half-hour excerpts obtained from 47 subjects

@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-27
   version: 2
-  sha256: e25d8faf41f56b7e7aa270ac93e1ce71a06f4e5e8906f2c1e246f7bb3b772908
+  sha256: 1ac301dc95afc43f461c63218585e006ce3aa733f49144d2fbe9dae9c105ee83
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -99,7 +99,7 @@ a full finding. δ does not depend on the flyby; the rule and δ are fixed befor
 
 ## Discussion
 
-Expected physics: an anomaly in the Earth-flyby energy transfer of the Anderson
+Predicted physics: an anomaly in the Earth-flyby energy transfer of the Anderson
 class (Anderson et al. 2008; Turyshev & Toth 2011; Acedo & Bel 2016); the
 trajectory test can only bound a position deviation, not a mm/s Doppler residual.
 

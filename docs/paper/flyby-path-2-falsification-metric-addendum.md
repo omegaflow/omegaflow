@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-10-02
-  sha256: 88a0035b79743d814f7b87fbfb6d2908a89072c5a08819568c17ac19189d790d
+  sha256: a6b7d13c0a7b212049fe67d3a1beaa0451f00dc8ed4cbdb2f6557925c61a3062
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -63,7 +63,7 @@ Route line drift, measured 2026-09-26 against the working tree: RTSW mag/wind
 formerly `:6059-6078`); OMNI2 moved to `:605` (formerly `:918-928`). The Kp route
 (`noaa-planetary-k-index.json`) was removed from `phi/sources.φ` in commit
 `61e272ab0` (mycelium folge156 — the six index lines dropped as "misclassified").
-The NOAA URL still serves HTTP 200 (stage 1), but the Kp cell cannot fill from a
+The NOAA URL still serves HTTP 200 (stage 1), but the Kp cell fills from no
 registered route until the route is re-registered. This is a riss — the sealed
 chain names a Kp channel the register no longer carries; it is carried here, not
 smoothed.
@@ -71,7 +71,7 @@ smoothed.
 OMNI2 (`:605`): HTTP 200, 1-h merged; the 13.–19.09. window served populated
 on 20.09., but a 19.09. window re-measured 2026-09-26 returns an empty HAPI
 payload (header only) → latency is multi-day, ~6 d (measured 2026-09-23) — it
-cannot carry the pre-flyby prediction; it is the verification channel. Its
+does not carry the pre-flyby prediction; it is the verification channel. Its
 time-shift convention is verified before any OMNI2 cell fills.
 
 The RTSW feed is multi-source and carries a per-reading `source` field (measured:
@@ -137,5 +137,5 @@ as a seam; the physical bound stays the council chord (3.65 µm/s).
 ## What stays unchanged
 
 - Only the field state is pre-registered; no mm/s number (0 honored).
-- pending cells stay pending, never 0.0; a source that failed is missing, not zero.
+- pending cells stay pending, never 0.0; an absent source is missing, not zero.
 - The trajectory hashes stay untouched; the pre-registration header sha advanced only by the named pre-flyby readiness note (2026-09-26, §"Scope"), never by the metric.
