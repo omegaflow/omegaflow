@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: fd162e09ea965e312d5f2dfd0181c4c933be67695118748d100003129af74ebc
+  sha256: 44036ff9ca6d2051cba3814d8f78876ece1227c34b76a173c2fd698cd0ba693f
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -191,7 +191,10 @@ Wort | Datum | Quelle
   Geantwortet (korrekte UI-Route): **z.ai GLM-5.3**, **Claude**, **Kimi K3 via tryingopen.com**
   (Rohmaterial `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
   `…_claude-ui_…`, `…_kimi-k3-tryingopen_te-engine-review.md`); `kimi.ai` Kontingent
-  aufgebraucht; **Together** keine Antwort. Die Reviews nennen konkrete Defekte:
+  aufgebraucht; **Together** keine Antwort. **tryingopen.com begrenzt die Ausgabe auf ~4000
+  Zeichen** — mit `Weiter`/`continue` den Rest holen (Operator-Hinweis 2026-10-03); die
+  Kimi-Antwort war beim Sichern noch in Fortsetzung, der Rest ist beim nächsten Pass aus dem
+  Tab zu ziehen. Die Reviews nennen konkrete Defekte:
   - **Rissä: `pair_lag_index_hash` faltet lag 0 und lag 1 auf denselben Hash**
     (`src/mathematikerin/wy_max_t.rs:262`, `shift = 1` für beide) → die „K=6 distinkten" sind
     real 6 Paare bei **nur lag 0**; lag-0-TE ist richtungs-symmetrisch. Name ≠ Implementation;
