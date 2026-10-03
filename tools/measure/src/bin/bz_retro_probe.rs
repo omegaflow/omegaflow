@@ -2,7 +2,7 @@ use omegaflow::archivar::omni2::{COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_V18
 use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
 use omegaflow::mathematikerin::wy_max_t;
 use omegaflow::te::{
-    PcmciParams, TeEstimator, TeNull, pcmci_links, phase_randomized_surrogate,
+    PcmciParams, TeEstimator, TeNull, kde_n_eff, pcmci_links, phase_randomized_surrogate,
     surrogate_stats_phase_n, transfer_entropy_lag, transfer_entropy_lag_h,
 };
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -1018,17 +1018,15 @@ fn run_hourly(
                     );
                 } else {
                     let seed = wy_max_t::round_seed(0, station, sy);
-                    let (buckets, pos_bucket) = wy_max_t::phase_data(&aligned_times);
+                    let phase = wy_max_t::phase_data(&aligned_times);
                     let nulls = wy_max_t::null_matrix(
                         &members,
-                        0,
-                        n_perm,
+                        0..n_perm,
                         24,
                         wy_max_t::ResampleMode::Driver,
                         seed,
                         threads,
-                        &buckets,
-                        &pos_bucket,
+                        &phase,
                     );
                     let sigma = wy_max_t::sigma_per_statistic(&nulls);
                     let null_means = wy_max_t::null_means_per_statistic(&nulls);
@@ -1067,14 +1065,25 @@ fn run_hourly(
                                     "observed studentized family maximum: pending — no statistic carries a measured spread"
                                 );
                             }
+                            for (mi, m) in members.iter().enumerate() {
+                                if let Some(s) = sigma.get(mi).copied().flatten() {
+                                    println!("MDE {:<18} | lag {} | {}", m.label, m.lag, q * s);
+                                }
+                            }
                             for (m, o) in members.iter().zip(obs_stud.iter()) {
+                                let neff = match kde_n_eff(&m.target, &m.driver, m.lag) {
+                                    Some(ne) => format!("{ne:.4e}"),
+                                    None => "pending".to_string(),
+                                };
                                 match o {
-                                    Some(t) => {
-                                        println!("{:<18} | lag {} | T_stud {t:.4e}", m.label, m.lag)
-                                    }
-                                    None => {
-                                        println!("{:<18} | lag {} | T_stud pending", m.label, m.lag)
-                                    }
+                                    Some(t) => println!(
+                                        "{:<18} | lag {} | n_eff {neff} | T_stud {t:.4e}",
+                                        m.label, m.lag
+                                    ),
+                                    None => println!(
+                                        "{:<18} | lag {} | n_eff {neff} | T_stud pending",
+                                        m.label, m.lag
+                                    ),
                                 }
                             }
                         }
