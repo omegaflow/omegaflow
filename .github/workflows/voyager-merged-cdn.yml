@@ -1,0 +1,37 @@
+name: voyager-merged-cdn
+
+# Der Voyager-Merged-Compiler (`voyager_merged_compiler`) als CDN-Manifestator.
+# Ohne diesen Workflow bleiben die `url`-Zeiger
+# `…/spdf.gsfc.nasa.gov/voyager{1,2}_merged.bin` unmanifestiert.
+# Quelle sind die SPDF-Merged-Tagesreihen (|B|+Plasma)
+# `…/pub/data/voyager/voyager{1,2}/merged/voyager{1,2}_daily.asc`; der
+# Release-Tag folgt der Quellen-Herkunft (`spdf.gsfc.nasa.gov`). Ein
+# Wochenlauf deckt die Tages-Kadenz; das Register führt `ttl 604800`.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 4 * * 1"
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  voyager:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Die Voyager-1/2-Merged-Reihen kompilieren und auf das CDN manifestieren
+        run: |
+          cargo run --release -p omegaflow-harvest --bin voyager_merged_compiler -- \
+            --ci-mode

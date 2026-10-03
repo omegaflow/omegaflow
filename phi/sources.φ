@@ -9289,6 +9289,7 @@ url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
+sha256 e9c75a3639143198d881733c28ae34384938f92b39078831cbb07912d77dbf9e
 at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
@@ -16173,3 +16174,34 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/viking_lander_tracking.bin
+format viking_text
+origin https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt ; https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
+compiler tools/harvest/src/bin/viking_text_compiler.rs
+at earth
+ttl 604800
+field viking_lander_range_km viking_lander_range_km inverse-square em km 604800 0.0 0.0
+field viking_lander_range_rate_km_s viking_lander_range_rate_km_s inverse-square em km/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager1_merged.bin
+format voyager1_merged
+origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
+compiler tools/harvest/src/bin/voyager_merged_compiler.rs
+at earth
+ttl 604800
+field voyager1_b_nt voyager1_b_nt inverse-square em nT 604800 0.0 0.0
+field voyager1_speed_km_s voyager1_speed_km_s patch-levy advective km/s 604800 0.0 0.0
+field voyager1_density_n_cc voyager1_density_n_cc gaussian-inverse-square diffusion cm-3 604800 0.0 0.0
+field voyager1_temp_k voyager1_temp_k exponential-decay thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager2_merged.bin
+format voyager2_merged
+origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
+compiler tools/harvest/src/bin/voyager_merged_compiler.rs
+at earth
+ttl 604800
+field voyager2_b_nt voyager2_b_nt inverse-square em nT 604800 0.0 0.0
+field voyager2_speed_km_s voyager2_speed_km_s patch-levy advective km/s 604800 0.0 0.0
+field voyager2_density_n_cc voyager2_density_n_cc gaussian-inverse-square diffusion cm-3 604800 0.0 0.0
+field voyager2_temp_k voyager2_temp_k exponential-decay thermal K 604800 0.0 0.0
