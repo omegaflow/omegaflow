@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 0dca41c1f1e79560e35ef2112de36b87092608ccbd7d2eeb03813b0564f873f5
+  sha256: c702c13f9b5d01024cbfeb538b0f9597a02036fbeedb0fdd2c7fef2effe909ea
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -117,6 +117,12 @@ Origin: mountain folge227.
   (2.9 `:262` `error` → `deviations`; `480dfbc1…`), `text-as-data-pioneer` (2.9 `:15`/`:43`
   `expected` → `construction-fixed`; `3bbd366d…`). Die Verstoß-Zeilen der Gate-Survey
   `survey-2026-10-03-exzellenz-gate.md` können für diese drei fallen.
+- **Register-Hygiene `phi/blocked_sources.φ` abgeschlossen (2026-10-03):** 21 **exakte
+  Stale-Zwillinge** (`descoped`-Block, dessen `url` wörtlich als `url`/`origin` in
+  `phi/sources.φ` registriert ist) gelöscht — `descoped` 80 → 59, `pending`/`ip-blocked`
+  unberührt (84 Zeilen entfernt). Dazu: KARI/KPDS **un-descoped** (`:456`), KASI-Konto
+  **descoped**, CLPDS/JAXA/LEOS **registriert**. Der Hygiene-Block + der KARI-Fix können
+  fallen.
 
 ## An mycelium
 
