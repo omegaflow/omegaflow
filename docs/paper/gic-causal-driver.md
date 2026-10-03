@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 66c03f93f344fb3ca7ab15ad2d8d9be8983cbe217891d36900d0d6104bf3c689
+  sha256: 6c5cfefa17ff3bff44fc17d46dfafa70dbf22440213e5ccdba79af2aa6800bf9
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -57,7 +57,7 @@ what lag, is both a physics question and an operational one: forecasters
 watch the solar-wind monitor 30–90 minutes upstream of the magnetosphere, and
 an identified driver at the correct lag is a warning channel.
 
-Correlation cannot separate these candidates: all solar-wind quantities
+Correlation separates none of these candidates: all solar-wind quantities
 co-vary through their common origin. Transfer entropy (Schreiber, 2000) is
 the natural instrument: a directional, model-free measure of information flow
 between time series, closely related to Granger causality but nonlinear and
@@ -113,7 +113,7 @@ TE(Y→X; τ) = Σ_t ln [ p(x_{t+τ}, x_t, y_t) · p(x_t) / ( p(x_t, y_t) · p(x
 
 (nats; m = n − τ samples) is estimated by the KDE estimator with Silverman
 bandwidths (Schreiber, 2000; Kaiser & Schreiber, 2002). X is the target
-(ground dB/dt), Y the driver (Bz, speed, density). No pre-shift is applied: the lag sweep *is* the L1→Earth propagation time, expected at 30–60 min for
+(ground dB/dt), Y the driver (Bz, speed, density). No pre-shift is applied: the lag sweep *is* the L1→Earth propagation time, 30–60 min for
 300–800 km/s. At the minute grain a lag-0 or sweep-edge arrow is treated as an
 artefact candidate, not a finding (the minute probe names it so,
 `bz_blatt_probe.rs`). At the hourly grain the travel time straddles the
@@ -135,7 +135,7 @@ driver (f64 FFT, deterministic seed) yield the per-lag threshold μ + 2σ. In
 addition, the **family bound** fam = the maximum surrogate TE over *all*
 pairs × lags of the measurement round — the multiple-comparison control:
 with the yearly round's twelve pair-lag calls carrying six distinct statistics
-(the lag-0 and lag-1 arms are algebraically identical, §3.1), a per-lag excess is expected
+(the lag-0 and lag-1 arms are algebraically identical, §3.1), a per-lag excess arises
 by chance; an arrow requires TE > fam (and therefore exceeds every null TE
 of the round). fam is an empirical plug-in maximum — the largest surrogate
 TE actually drawn in this round — not a quantile of a closed-form maximum
@@ -176,11 +176,11 @@ tabulated TE, threshold and fam.
 
 ### 3.3 Controls
 
-Three structural null controls: (i) the density channel must be silent
+Three structural null controls: (i) the density channel is silent
 (density does not drive reconnection — a positive density arrow would indict
 the instrument, not the physics); (ii) the reverse direction dB/dt→driver
-must not beat its threshold; (iii) in the minute grain, the quietest 6-hour
-sub-window must stay silent. The PE gate (a 2⁴-ring of the driver's own
+does not beat its threshold; (iii) in the minute grain, the quietest 6-hour
+sub-window stays silent. The PE gate (a 2⁴-ring of the driver's own
 permutation entropy, jump ⇔ |pe − mean| > 2σ) is part of the pipeline but
 requires ≥ 8 segments: at 22 h it has 3 — no verdict; at the yearly grains
 it is not applied (this manuscript reports its absence, not its outcome).
@@ -241,7 +241,7 @@ a finite-sample signature, while the asymmetry ratio TE(X→Y)/TE(Y→X) rises
 steadily with c (2.1 at c = 0.05 to 8.4 at c = 0.40, n = 10 000). At n = 1 000
 the reverse channel never clears its own threshold at any c ≤ 0.5; at larger
 n it clears it from c ≈ 0.2. The reverse arrow is therefore n-dependent and
-not a stable asymmetry property: it is the estimator's expected response
+not a stable asymmetry property: it is the estimator's response
 under strong bidirectional coupling and finite samples, and the direction is
 carried by the asymmetry (dominance of the known direction), not by an
 absolute reverse silence. This is the reading the paper takes for the
@@ -376,7 +376,7 @@ staying below its own per-lag threshold (1.0708e-1) — the direction asymmetry
 (forward 1.1695 vs reverse 1.0682, ratio 1.09) is smaller than at Abisko
 (1.20 in 2024) and below the calibrated benchmark floor (2.1–8.4, §3.5), so
 it does not carry the direction on its own. The reverse channel
-is not silent here; §3.5 and §6 treat this as the estimator's expected
+is not silent here; §3.5 and §6 treat this as the estimator's
 reverse response under strong coupling, not as a null failure, and it tempers
 a strictly one-way reading.
 
@@ -410,7 +410,7 @@ field Bs = max(−Bz, 0), the IMF clock angle Clock = atan2(By, Bz) [deg 0–360
 pressure P_dyn = 1.67e-6·n·v² [nPa], and the Alfvén Mach number
 M_A = v·√n/(21.8·B), B = √(Bx²+By²+Bz²). The table aggregates the best-lag row
 of each channel over the 15 artifacts (ABK 2024-q1…2025-q4, eight; SOD
-2024-q1…q4 and 2025-q2…q4, seven; SOD 2025-q1 is absent — its CI job failed):
+2024-q1…q4 and 2025-q2…q4, seven; SOD 2025-q1 is absent — its CI job is red):
 
 | channel | best lag h (quarters) | TE range | own threshold range | fam range | verdict |
 |---|---|---|---|---|---|
@@ -462,7 +462,7 @@ rounds — but the only calibrated asymmetry scale of the instrument is the
 Hénon benchmark range (2.1–8.4, §3.5); the SOD ratio 1.09 lies below that
 floor and carries no direction weight on its own. Per §3.5, a weak reverse
 response under strong coupling is the
-estimator's expected behavior, not a null failure; the Sodankylä reverse arrow
+estimator's behavior, not a null failure; the Sodankylä reverse arrow
 is therefore inconclusive on its own — it neither establishes a reverse
 coupling nor fails the null — and it tempers a strictly one-way reading of
 that round. The yearly arrows sit at the lag-0
@@ -575,7 +575,7 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   yearly arrow is not reproduced by the hardened quarterly null, and the
   PCMCI verdict is itself round-dependent. The two bounds are not directly
   comparable — the hardened round draws 100 surrogates over a larger
-  pair-lag family than the yearly round's 10, so a higher bound is expected
+  pair-lag family than the yearly round's 10, so a higher bound arises
   by construction. Both probes now run n_surr = 100 (`bz_blatt_probe.rs:10`,
   `bz_retro_probe.rs:10`, since `43096531d`, 2026-09-25). The comparable
   yearly-round re-measure at n_surr = 100 has run
@@ -688,7 +688,7 @@ exceeds the reverse in every yearly round (ratios 1.20 and 1.14 at ABK
 2024/2025, 1.09 at SOD 2024 — below the benchmark floor 2.1, §3.5); the
 daily grain is empty because
 daily medians wash the driver out; and the reverse channel shows a weak,
-expected response under strong coupling — the estimator's ground-truth
+response under strong coupling — the estimator's ground-truth
 verdict is NOT PASS (§3.5), which tempers every strictly
 one-way reading. A family-clearing driver at the hourly
 grain is not established. For the grid operator: watch Bz at L1 rather than

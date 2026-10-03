@@ -2,7 +2,7 @@
   title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: fb818b2152a7eeb4f4721a5a67dadd108a65a41e2a0cfcf381b88a72acb27042
+  sha256: f493c12a0602c366639bed42afed80601beb13f290033d779d88b937a0b35bb6
   status: live
   see-also: docs/concepts/exzellenz-konzept.md
 -->
@@ -89,7 +89,10 @@ als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §
   `twenty-second-band-ground-chain` und `text-as-data-pioneer` (Pioneer-Front,
   `handover-2026-10-03-mountain-folge227.md` Burn).
 - **Geheilt 2026-10-03:** `flyby-path-2-falsification-metric-addendum` (2.7-Hash),
-  `lead-geometry-direction` (2.10-Codepfad), `exzellenz-konzept` (2.7-Zähler).
+  `lead-geometry-direction` (2.10-Codepfad), `exzellenz-konzept` (2.7-Zähler) und die
+  2.9-Sprachheilung in Rivers eigenen Papern (`lead-geometry-direction`, `gic-causal-driver`,
+  `corona-heating-ladder`, `flyby-path-2-preregistration-revised`, `flyby-path-2-addendum`,
+  `flyby-path-2-falsification-metric-addendum`; Header-shas neu gesetzt).
 - **Adressiert:** die Verstöße reisen als `## An sensory` / `## An mountain`-Zeilen
   in `handover-2026-10-03-river-folge84.md`.
 
