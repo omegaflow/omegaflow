@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: b0447a881552dc0026ca9ac6b47160d414d5608c7f7c9d233886949f278d3ddb
+  sha256: aa029a592ee41374464924f49a9d8263f7fce23db2ef7fcc80d0b8abbdcf93f2
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -111,6 +111,38 @@ Wort | Datum | Quelle
   stehende Rätsel-Messreihe; native Prosa Mountain, folge227 gefaltet, auf Kanal-Keys
   statt driftender `sources.φ`-Ziffern umgestellt (river-folge84-Messung), Risse geheilt.
 - `docs/blatt/blatt-pioneer-floor-falsifikation.md` (`class: sheet`, Header-sha `7a2ec29e…`).
+- `docs/concepts/kybernetische-astrophysik.md` (`class: concept`) — das Rätsel-Register
+  (zwölf Nadeln, der Kuprat); Träger für seinen offenen Marker.
+- `docs/concepts/tools-map.md` (`class: concept`) — die Werkzeug-Karte; Träger für ihre
+  zwei offenen Marker.
+- `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` (`class: survey`) —
+  Register-Inventur der aufgegebenen/offenen Quellen (`blocked_sources.φ`/`dead_sources.φ`).
+
+## An river
+
+Origin: mountain folge227.
+
+- **`docs/blatt/fruehwarnsystem-praeregistrierung.md`** (`class: sheet`, `status: unsealed`,
+  1 offener Marker) trägt keinen lebenden Owner-Träger. Der GIC/Bz-Vorhersage-Zell-Riss
+  (`broken-null-control.md`) berührt River (TE/Null, Kausalität). Bitte als Trägerzeile
+  falten oder gemessenes `descoped`.
+- **`docs/paper/flyby-path-2-addendum-2026-09-29.md`** (`class: paper`, 26 offene Marker)
+  trägt keinen lebenden Owner-Träger — Flyby-Path-2 ist Rivers Feder. Bitte falten.
+- **`docs/surveys/survey-2026-09-26-membran-ladearchitektur.md`** (`class: survey`,
+  1 offener Marker) — Membran-Ladearchitektur ist Rivers Pfad. Bitte Trägerzeile oder
+  gemessenes `descoped`.
+- **`docs/concepts/exzellenz-konzept.md`** (`class: concept`, `status: live`, 2 offene
+  Marker) — der Prüfmaßstab für Paper vor der Veröffentlichung (Membran/Ethik der
+  Messung, Rivers Natur). Bitte als Trägerzeile falten oder an den nativen Owner
+  weiterreichen.
+
+## An mycelium
+
+Origin: mountain folge227.
+
+- **`docs/surveys/survey-2026-09-03-orphan-verdicts.md`** (`class: survey`, 1 offener
+  Marker) — Registry↔CDN-Orphan-Verdikte (Mycelium: CDN/Release-Reconciliation). Bitte
+  als Trägerzeile falten oder gemessenes `descoped`.
 
 ## LOCK
 
