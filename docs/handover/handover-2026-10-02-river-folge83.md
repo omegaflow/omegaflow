@@ -3,7 +3,7 @@
   session: River-Folge 83
   class: handover
   date: 2026-10-02
-  sha256: 0418bc00032aa5a25e16f47a475349ad71e47fa1fca837d60f016859687e8733
+  sha256: 4c631094a47165fdf06d517aa87ab40c1f729ed9d0bf8f86dd7b210c47e3be21
   status: live
 -->
 # Handover — River-Folge 83 (2026-10-02)
@@ -47,22 +47,19 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### TAPVizieR async-/Slice-Klasse — Sync-Timeout geheilt, Neulauf offen
+### nvss async — Server-Phase ERROR nur auf dem Runner-Pfad, Ursache offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `wds-cdn 37069590122` / `mktypes-cdn 37069592547` / `nvss-cdn 37069595693`
-- **Lage:** (gemessen 2026-10-02 via `ci_manage log 36989774317` / `36989781545`) mktypes
-  `slice 72.0` und wds `slice 0` enden in `curl: (28)` nach 180 s (1 622 125 B bzw.
-  967 676 B empfangen) → `query returned void` → Workflow-`slice N returned void`. Der
-  Neulauf `rave-cdn 37001533680` ist **success** nach `OMEGAFLOW_TAP_TIMEOUT: "900"`
-  (river-81, `654da0efa`). nvss `uws job phase ERROR` 11 s nach `PHASE=RUN` (async);
-  dieselbe Query mißt am TAPVizieR-async `EXECUTING`/`WRITING_RESULT` — keine Syntax-/
-  Größen-Ablehnung, die Ursache ist serverseitig/transient. Geheilt: `OMEGAFLOW_TAP_TIMEOUT`
-  `1800` (wds) / `900` (mktypes); `tap_compiler` druckt bei `ERROR`/`ABORTED` die gemessene
-  `{job}/error`-Ursache statt `phase ERROR`.
-- **Blockade:** keine
-- **Braucht:** die drei dispatchten Läufe einmalig lesen: `ci_manage view 37069590122`
-  (wds) / `37069592547` (mktypes) / `37069595693` (nvss); bei Rot `ci_manage log <id>` für
-  den gemessenen Ausgang.
+- **Trigger:** nächster `nvss-cdn`-Lauf oder eine gemessene Server-Ursache am TAPVizieR-async
+- **Lage:** (gemessen 2026-10-02 23:12 via `ci_manage view 37069595693` + `log`) `nvss-cdn
+  37069595693` failure: async job `1790982742122` → `phase ERROR` 11 s nach `PHASE=RUN`;
+  der neue `{job}/error`-Arm liefert leer. Zweiter Lauf `36989806823` ebenso ERROR. Dieselbe
+  Query läuft von der Operator-Maschine als `EXECUTING`/`WRITING_RESULT` — der Fehler tritt
+  nur auf dem Runner-Pfad auf. **Die Sync-Timeout-Klasse ist geschlossen:** wds
+  `37069590122` und mktypes `37069592547` sind nach `OMEGAFLOW_TAP_TIMEOUT: "1800"` / `"900"`
+  **success**.
+- **Blockade:** die Server-Ursache ist nicht gemessen (`{job}/error` leer)
+- **Braucht:** den nvss-Workflow RA-chunked wie wds/mktypes fahren (je Slice `--async`);
+  Litmus: `--limit` senken und den eigenen Runner-Job `<errorSummary>` lesen.
 
 ## Abschluss
 
@@ -72,4 +69,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `tools/harvest/src/bin/tap_compiler.rs`
 - `docs/handover/handover-2026-10-02-river-folge83.md`, und `…-folge82.md` → `archiv/` (Move)
 
-## Burn: open 0.0000 · close 0.0671 · cap 0.50 Grund: TAPVizieR async-/Slice-Heilung — langer TAP-Timeout + async-Fehlerursache, drei Läufe dispatcht (gemessen `session_burn`, River-Session `$0.0671`; Gesamt $0.2329, Parallel-Linien teilen den Total)
+## Burn: open 0.0000 · close 0.1016 · cap 0.50 Grund: TAPVizieR Sync-Timeout-Heilung + async-Fehlerursache; wds/mktypes success, nvss offen (gemessen `session_burn`, River-Session `$0.1016`; Gesamt $0.6048, Parallel-Linien teilen den Total)
