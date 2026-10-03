@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: 7a668ba02dcedd91dc6e0106f43f4548a913c7ea30f402cb1dafbe287077c43d
+  sha256: 590103609b5bb86b7565f0a4d3da128d6384d891ca485bf76d7164e61e1a07c3
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -37,6 +37,7 @@ Wort | Datum | Quelle
 „ja voranmelde und dann lauf in ci" (Pioneer-Floor-Falsifikation) | 2026-10-02 | Operator (Session, River 82)
 „Starte die River-Linie in einem Pass …" / „ich musste leider neustarten" | 2026-10-02 | Operator (Session, River 83)
 „Starte die River-Linie in einem Pass …" | 2026-10-03 | Operator (Session, River 84)
+„## An river: [vier Dokumente]" — fruehwarnsystem-praeregistrierung.md (GIC/Bz-Vorhersagezelle, unsealed, broken-null-control), flyby-path-2-addendum-2026-09-29.md (26 Marker, Path-2), survey-2026-09-26-membran-ladearchitektur.md (Membran-Pfad), exzellenz-konzept.md (Prüfmaßstab vor Veröffentlichung) | 2026-10-03 | Operator (Session, River 84)
 
 ## Träger (Prosa, eigene)
 
@@ -45,6 +46,27 @@ Wort | Datum | Quelle
 - `docs/blatt/blatt-te-externer-steuerparameter.md` (`class: sheet`) — die TE-Methode über
   einen externen Steuerparameter (Wohlgestelltheit, Null, Ersatzmaß). Träger für den
   privaten `complex_te_probe`-Pfad (LOCK, Operator-Wort liegt vor).
+- `docs/blatt/fruehwarnsystem-praeregistrierung.md` (`class: sheet`, `status: unsealed`) —
+  GIC/Bz-Vorhersagezelle; die α-Ebene wartet auf die kalibrierte Westfall–Young-max-T-Null
+  (`docs/specs/broken-null-control.md`). Gemessen 2026-10-03: `wy-max-t 36867148250`
+  **cancelled** (2026-10-01T21:42Z), kein neuerer Lauf — die Null ist nicht gelandet.
+  Nächster Schritt: `wy-max-t` neu dispatchen, dann α/X/Z/Bz benennen; das Siegel setzt
+  der Operator (kein Siegel ohne Operator-Wort).
+- `docs/paper/flyby-path-2-addendum-2026-09-29.md` (`class: paper`) — Path-2-Fill-Run am
+  JUICE-Perigäum (2026-09-28, Fenster 22:41:53Z→23:01:08Z). Offen: tube-Register swarm
+  cell 25 (Bin-Fix), OMNI2 alle 26 Zellen (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def`
+  (finale GFZ-Freigabe), Δ/σ_recon (post-flyby SPK + Kovarianz fehlt). Nächster Schritt:
+  `flyby-path2-fill.yml` (Rivers benannter Schritt) nach dem Seal; `flyby_ephemeris_gate --recon`
+  sobald ESA/ESOC publiziert.
+- `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (`class: survey`) —
+  Membran-Ladearchitektur (Presence-Hülle, Enclosure, Lichtkegel); der eine Satz: nicht der
+  ganze Katalog, nur die Presence-Hülle darf laden. Offen: `--arxiv`/`--brave` pending
+  (HTTP 406/402); `bounded_cells 0` entschieden (Aufruf-Artefakt, kein Riss). Nächster
+  Schritt: bei Änderung des Membran-Pfads neu messen.
+- `docs/concepts/exzellenz-konzept.md` (`class: concept`, `version: 1`) — Prüfmaßstab vor
+  Veröffentlichung (10 Stufen + 5 Ehren-Stufen + externe Verifikation). Riss: `:69` „sein Body
+  ist final" gegen `:270` „sha256 wird gesetzt, sobald sein Body final ist" — der Header-sha
+  steht bereits. Nächster Schritt: den Maßstab auf die Papers anwenden, den sha-Widerspruch heilen.
 
 ## Offen (aufgeschlüsselt)
 
