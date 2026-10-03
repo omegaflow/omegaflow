@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-03
-  sha256: 65b2946a46d31e720aeb16ce033856c788eb7d0c470115140ae9832c4f910a80
+  sha256: b064ad670cf8845a0ddbb57d93669d5f4a420d3117add95de33bbae642cadacd
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-03-sensory-folge226.md
 -->
@@ -249,9 +249,15 @@ The registered result is the decision rule; the data value it will read is
   members of the same artifact
   (`.github/workflows/hyperscanning-te.yml:119-142`,
   `.github/workflows/hyperscanning-te.yml:151`).
-- **Second cohort** — pending — Braucht: a second multi-brain cohort
-  registered in `phi/` before analysis; only `ds007822` is in the pipeline
-  (`docs/handover/handover-2026-10-03-sensory-folge225.md:243-248`).
+- **Second cohort** — pre-registered candidate (measured 2026-10-03): **`ds007471`**
+  (dyads, 32-channel EEG, `BrainVision` `.vhdr`, 1000 Hz, CC0) is the primary second
+  cohort; `ds008192` (fNIRS + MoCap) and `ds004103` (fMRI) stay other-modality
+  candidates. The read path is measured: CI probe `openneuro-eeg-probe` run
+  `37127134440` (success) read `ds007471` sub-01 through `brainvision_compiler` and
+  `ds008192` sub-101 through `snirf_compiler` (`ci_manage view 37127134440`,
+  2026-10-03). Only `ds007822` is in the hyperscanning pipeline today; Braucht: a
+  `ds007471` manifest arm (dyad join, `_eeg.vhdr`) in
+  `.github/workflows/hyperscanning-te.yml` + its run before analysis.
 
 ### Träger / Carrier
 
