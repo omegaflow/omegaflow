@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 75ec33b47eb29b4ac04509adb0c4580c1105812a5767ee1ea312b63942b3ddf3
+  sha256: 66199aa94b331b74a1f9245d29465e48dcfdcc7e295f33419099486d1dcf4bc7
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -50,7 +50,7 @@ Wort | Datum | Quelle
 
 ### MESSENGER-Probe vs Haus-Gate — Riss ist die Epochen-Naht, nicht das Verzeichnis
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf `ephemeris-house-gate` @`2005-08-02 19:13:08` (MESSENGER-Perigäum, dispatched).
+- **Trigger:** Lauf `ephemeris-house-gate 37134474346` @`2005-08-02 19:13:08` (MESSENGER-Perigäum, dispatched 2026-10-03).
 - **Lage:** (gemessen 2026-10-03 via grind-flash) Die 228er-Hypothese „`ssd.jpl.nasa.gov-de/…`
   vs `ssd.jpl.nasa.gov/…`" ist **widerlegt**: `flyby_anderson_probe.rs:10-12` ==
   `ephemeris_house_gate.rs:11-13` (wortgleich `data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin`,
