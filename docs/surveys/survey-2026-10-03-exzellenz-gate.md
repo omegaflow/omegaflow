@@ -2,7 +2,7 @@
   title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 757a1102e30f6bbbc8cccb30478e6d5b456191bac929ef63069b145340a58994
+  sha256: fb818b2152a7eeb4f4721a5a67dadd108a65a41e2a0cfcf381b88a72acb27042
   status: live
   see-also: docs/concepts/exzellenz-konzept.md
 -->
@@ -71,6 +71,27 @@ als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §
 | `text-as-data-pioneer` | 2.9 | `:15`/`:43` `expected` |
 | `blatt-kreuz-screening-gyirong` | 2.8 | kein `see-also` |
 | `exzellenz-konzept` | 2.7 | `:20`/`:189` „15 Papers" gegen 38 `docs/paper/*.md` (im selben Atom geheilt) |
+
+## Träger der Verstöße (am lebenden Bestand gemessen)
+
+- **River (eigen, nicht fremd):** `lead-geometry-direction` (2.10 geheilt 2026-10-03;
+  2.9 offen), `gic-causal-driver`, `corona-heating-ladder`,
+  `flyby-path-2-preregistration-revised`, `flyby-path-2-addendum`,
+  `flyby-path-2-falsification-metric-addendum` — `handover-2026-09-29-river-folge65.md:55-59`
+  (Rivers Papiere) + die Flyby-Kette.
+- **Sensory:** `jwst-disequilibrium-survey` (`handover-2026-10-03-sensory-folge224.md:295`),
+  `planet-nine-kbo-residue` (descoped, `:297`), `blatt-kreuz-screening-gyirong` (`:266`),
+  `broken-null-control` (`:299`), `causal-arrow-preregistration` (`:257`),
+  `probe-front-dark-matter` (`:301`), `uranus-rift-ephemerides` (`axiom-gate-*`,
+  sensory-folge168–170).
+- **Mountain (Zuordnung über see-also/Archiv, am lebenden Träger nicht direkt gemessen):**
+  `solar-cycle-dynamo` (see-also `corona-heating-ladder`; forschung-folge134),
+  `twenty-second-band-ground-chain` und `text-as-data-pioneer` (Pioneer-Front,
+  `handover-2026-10-03-mountain-folge227.md` Burn).
+- **Geheilt 2026-10-03:** `flyby-path-2-falsification-metric-addendum` (2.7-Hash),
+  `lead-geometry-direction` (2.10-Codepfad), `exzellenz-konzept` (2.7-Zähler).
+- **Adressiert:** die Verstöße reisen als `## An sensory` / `## An mountain`-Zeilen
+  in `handover-2026-10-03-river-folge84.md`.
 
 ## Verdikt
 
