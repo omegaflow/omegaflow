@@ -1566,10 +1566,10 @@ decline derived-product
 url https://ds.iris.edu/spud/momenttensor
 note IRIS-SPUD-Moment-Tensor (momenttensor.json): HTTP 500 am 2026-09-07; IRIS-fdsnws/event = Gone. Moment-Tensor gehört GCMT (globalcmt.org); Waveform via service.earthscope.org (fdsn_waveform.bin) registriert. Host lebt (Browser 2026-09-10).
 
-decline superseded-by-integrated
+decline asset-volume
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
 reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST Daily CMG V061 (gemessen 2026-09-27): 1 Granule ≈ 17,2 M Records ≈ 688 MB, ~6,7 TB über 27 Jahre; Ein-Asset reißt 2-GiB-Cap + 16-GB-RAM. 8-day/monthly leben als per-Granule-Serie.
+note MODIS/Terra LST Daily CMG V061 (gemessen 2026-09-27): 1 Granule ≈ 17,2 M Records ≈ 688 MB, ~6,7 TB über 27 Jahre; Ein-Asset reißt 2-GiB-Cap + 16-GB-RAM; nur per-Granule-Serie tragbar. Asset-Volumen, kein Quellen-Verdikt.
 
 decline catalog
 url https://earth-search.aws.element84.com/v0/search
