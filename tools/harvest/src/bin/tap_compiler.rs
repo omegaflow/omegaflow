@@ -222,15 +222,35 @@ fn uws_phase(job: &str) -> Option<String> {
         .map(|s| s.trim().to_string())
 }
 
+fn tag_text(xml: &str, tag: &str) -> Option<String> {
+    let open = format!("<{tag}>");
+    let close = format!("</{tag}>");
+    let body = xml.split_once(&open)?.1.split_once(&close)?.0.trim();
+    if body.is_empty() {
+        None
+    } else {
+        Some(body.to_string())
+    }
+}
+
 fn uws_error(job: &str) -> Option<String> {
-    Command::new("curl")
+    let document = Command::new("curl")
         .arg("-sS")
-        .arg(format!("{}/error", job))
+        .arg(job)
         .output()
         .ok()
         .and_then(|o| String::from_utf8(o.stdout).ok())
-        .map(|s| s.trim().to_string())
-        .filter(|s| !s.is_empty())
+        .and_then(|s| tag_text(&s, "errorSummary").or_else(|| tag_text(&s, "message")));
+    document.or_else(|| {
+        Command::new("curl")
+            .arg("-sS")
+            .arg(format!("{}/error", job))
+            .output()
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+    })
 }
 
 fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
