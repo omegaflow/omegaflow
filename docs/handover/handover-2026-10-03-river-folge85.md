@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 82f54aa2da7487c915e9a15cf99c1fc728d90f7d2e15f0b33e7f0bd8f7e9ea02
+  sha256: 6ab909ad2ae5c846481cd5747ff6c574d1ca7f55c6492bc5b23e07c5ca47c47b
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -128,19 +128,42 @@ Wort | Datum | Quelle
 - **Braucht:** `ci_manage log 37120272811`; bei `PARITY: GLEICH` die Brücke als
   Reproduktion tragen, bei `ABWEICHEND` den Riss benennen.
 
-### Zeugen im universellen Myzel — Arm gebaut
+### Zeugen im universellen Myzel — Arm gebaut, erste Messung läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `field-te-query 37120272811` (Zeugen-Arm exercised).
+- **Trigger:** Lauf-Ende `field-te-query 37120826017` (Parity + Zeugen-Messung).
 - **Lage:** (gemessen 2026-10-03 via `cargo check`, `sgrep`) der Zeugen-Arm ist gebaut:
   `--register witnesses` bzw. Deskriptor `witness <name> [built|pending|probe]`,
   Namensschlüssel `<typ>#<index>` (Alias `record`-Token/URL-Teilstring); `witness_series`
   lädt **nur `point-event`** (3 `erbq`-Zeugen) als Präsenz-Event-Train auf dem Grid;
   `s2-direction`/`sky1` (17), `substance` (4), `gestalt` (3) werden als `pending`/`probe`
   **verweigert**, nie in eine Serie gegossen, nie 0.0. Kein neuer Schätzer, keine neue Null.
-- **Blockade:** kein aufgezeichnetes Zeugen-TE-Verdikt in `docs/` → `--parity-witness` ist
-  `pending` (keine Zahl erfunden); es entsteht erst als erste Zeugen-Messung.
-- **Braucht:** `ci_manage log 37120272811`; danach einen `point-event`-Deskriptor als erste
-  Zeugen-Messung fahren, damit eine spätere Parity-Brücke etwas zu vergleichen hat.
+- **Blockade:** die Zeugen-Parity bleibt `pending` (kein aufgezeichnetes Zeugen-TE-Verdikt
+  in `docs/`); das erste Verdikt entsteht erst aus diesem Lauf.
+- **Braucht:** `ci_manage log 37120826017`; dann ist das erste Zeugen-Verdikt der
+  Vergleichspunkt. **Riss (benannt):** der Deskriptor `phi/pipeline/descriptors/erbq-solar.te`
+  (driver `omni_hro_imf_bz_gsm_nt` × point-event#1 Tohoku, `bin 3600`) ist als
+  *identifizierbarer* Test schwach — regionale Sequenzkataloge, ereignis-konditioniertes
+  Subsample, Phase-Null ohne Omori-Clustering; `docs/handover/handover-2026-10-03-sensory-folge225.md:289-296`
+  nennt das rigorose Design. Der Lauf übt den Arm, er ist keine Erdbeeben-Solar-Evidenz.
+
+## Noch zu bauen (Pendings)
+
+- **Zeugen-TE, identifizierbar (eigen).** Vorabregistriertes Design: `event-triggered average`
+  + `event-shuffled`-Surrogate (Omori erhalten) + `stratified quiet` + `TE(X→Y|Kp)`
+  (`handover-2026-10-03-sensory-folge225.md:289-296`); der `erbq-solar`-Deskriptor ist nur
+  die Arm-Übung. **Braucht:** Rat-/Operator-vorabregistrierter Lauf.
+- **Nicht-point-event-Zeugen (pending).** 17 `s2-direction`/`sky1`, 4 `substance`,
+  3 `gestalt` brauchen eigene Query-Formen (Richtungs-/Spektral-Query), keine TE;
+  bis dahin als `pending`/`probe` verweigert. **Braucht:** je Arm eine Query-Form.
+- **`field_te_query` als Konsument der max-T-Null (eigen).** Im Kern läuft die
+  Phase-Surrogat-Null; die `wy_max_t`-studentisierte max-T-Null als Verdikt-Null ist ein
+  eigener Atom (saisonaler Bucket-`null_matrix`).
+- **GPD-Tail-Fit (pending)** in `wy_max_t`: nur „if the resample budget is capped"
+  (`docs/paper/gic-causal-driver.md:165-166`).
+- **Probes-Wanderung (eigen).** Jede der 62 TE-Probes wird per Paritätsbrücke durch
+  `field_te_query` reproduziert und dann entlassen — probe für probe, erst bei `GLEICH`.
+- **Workflow-Domäne (Rat).** `bz-yearly-maxt.yml` und `field-te-query.yml` sind formal
+  Mycelium; zieht der Rat die Grenze streng, gehen sie als Punkte dorthin.
 
 ## Abschluss
 
@@ -156,4 +179,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `.github/workflows/bz-yearly-maxt.yml`
 - `tools/measure/src/bin/field_te_query.rs`, `.github/workflows/field-te-query.yml`
 
-## Burn: open 0.0153 · close 0.1456 · cap 0.50 — Grund: River-85 — Membran-Vermerk + exzellenz-Gate geheilt; GIC-Riss: storm-only + Bias + kalibrierte WY-max-T-Null gebaut/verdrahtet; Rats-Verdikt + `field_te_query`-Query-Kern + Zeugen-Arm gebaut, 7 CI-Läufe dispatcht. `close` = River-Linien-Session (gemessen `session_burn`, $0.1456); die dispatchten Taucher (5×grind-flash $0.3080 + general $0.0174 + Rat $0.0484 = $0.3738) trugen zusätzlich — das Atom lief damit über den Haus-Cap 0.50; benannt, nicht geglättet (Maschinen-Total 0.8180 inkl. fremder Parallel-Linien).
+## Burn: open 0.0153 · close 0.1606 · cap 0.50 — Grund: River-85 — Membran-Vermerk + exzellenz-Gate geheilt; GIC-Riss: storm-only + Bias + kalibrierte WY-max-T-Null gebaut/verdrahtet; Rats-Verdikt + `field_te_query`-Query-Kern + Zeugen-Arm + erste Zeugen-Messung gebaut, 8 CI-Läufe dispatcht. `close` = River-Linien-Session (gemessen `session_burn`, $0.1606); die dispatchten Taucher (6×grind-flash $0.3678 + general $0.0174 + Rat $0.0484 = $0.4336) trugen zusätzlich — das Atom lief damit über den Haus-Cap 0.50; benannt, nicht geglättet (Maschinen-Total 0.7972 inkl. fremder Parallel-Linien).
