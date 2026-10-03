@@ -2,7 +2,7 @@
   title: Voranmelde-Blatt — Pioneer-Floor-Falsifikation (Familie Station×Ära×Form)
   class: sheet
   date: 2026-10-03
-  sha256: 7a2ec29e24e77c2e31a94895c4217fc5294248910777a9d58f6ea4a70641a992
+  sha256: 5bb1696b0acd87f45f26950de2df3be7db2afa4067c5f07835d3d352d47607fe
   status: live
   see-also: docs/paper/probe-front-dark-matter.md docs/handover/archiv/handover-2026-10-02-river-folge82.md docs/handover/handover-2026-10-02-mountain-folge226.md phi/sources.φ
 -->
@@ -113,12 +113,26 @@ Operator-Maschine.
    Pioneer-Epoche.
 4. Ein belegter „GIC §3.2"-Bezug, der die Methode neu festlegt.
 
+## Lauf-Ergebnis (2026-10-03, CI `pioneer-floor 37111508656`, success)
+
+Der Lauf fuhr Corpus → `pioneer_navio_residuum` → `pioneer_navio_negative_fuzzy --zone` →
+`pioneer_navio_zone_drift`; gemessen aus dem Artifact `pioneer-floor.txt`:
+
+- **P10 (>50 AU, 1035 Tage):** Maske 40/1035 verworfen (995 bleiben); lag-1 0,075;
+  Null-p95 |slope| 6,725e-3 Hz/d; realer linearer Slope −1,088e-3 Hz/d (0,40σ) =
+  −1,73× Anomalie; Δ∝t² 0,0018 gegen p95 0,0007; Δexp −0,0003 → **keine Präferenz (Limit)**.
+- **P11 (15–30 AU, 606 Tage):** Maske 21/606 verworfen (585 bleiben); lag-1 0,029;
+  Null-p95 1,570e-2 Hz/d; real −1,003e-2 Hz/d (1,67σ) = −16,00× Anomalie; Δ∝t² −0,0018
+  gegen 0,0012; Δexp −0,0172 → **keine Präferenz (Limit)**.
+
+**Verdikt:** das dritte Kriteriums-Bein (Drei-Form-Test > 2× Null-p95) trägt für keine
+Sonde — der Drift ist nicht aufgelöst. Damit **keine Entscheidung am Floor** (0 honored),
+wie im ehrlichen Prior benannt. Die Beine 1–2 (family-geräumte Zelle, zeichengleiche
+Heliozentrik) sind aus diesem Output nicht entschieden und bleiben offen.
+
 ## Offene Punkte
 
 1. **„GIC §3.2" entfalten** — die Referenz im Baum unentfaltet (river-folge82:76);
-   vor dem Lauf aus der Quelle belegen oder `unverified` tragen. Schritt: Quelle
-   identifizieren (`archive_search 'GIC' --all` / Autor-Suche), in diesem Blatt belegen.
-2. **`pioneer-floor.yml` bauen** — der Lauf-Workflow; die Analyse-Bin fehlt ggf.;
-   fehlender Arm wird als `pending` benannt, kein fakes Grün.
-3. **Seed/Bootstrap-Modul prüfen** — ob ein wiederverwendbarer Block-Bootstrap mit
-   fixiertem Seed im Baum steht (`sgrep -i bootstrap tools/measure`), sonst bauen.
+   vor einem erneuten Lauf aus der Quelle belegen oder `unverified` tragen.
+2. **Beine 1–2** — eine family-geräumte Zelle (Station×Ära×Form) und die zeichengleiche
+   Heliozentrik beider Sonden aus dem negativen-fuzzy-Census herausziehen.
