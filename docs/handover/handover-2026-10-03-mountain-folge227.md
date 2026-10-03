@@ -3,7 +3,7 @@
   session: Mountain-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: dd271696f2c2f9441de4172b4c01c20a74102fc4dbc02acb247037e8736009f2
+  sha256: 0b1e126d57d4b23179c1c42b4173340cc230b715ea59d16d4a044cedce1a07c4
   status: live
 -->
 # Handover — Mountain-Folge 227 (2026-10-03)
@@ -113,8 +113,9 @@ Wort | Datum | Quelle
   `pioneer_navio_negative_fuzzy --zone` → `pioneer_navio_zone_drift`, Artefakt-Upload.
 - **Blockade:** keiner (die `pioneer{10,11}_navio.bin` sind auf dem CDN, 206 gemessen
   2026-10-03).
-- **Braucht:** Dispatch `gh workflow run pioneer-floor.yml`; dann Artefakt
-  `pioneer-floor.txt` lesen (kein Statistik-Wert vor dem Blatt).
+- **Braucht:** Lauf `pioneer-floor 37111508656` (dispatcht 2026-10-03) endet → Artefakt
+  `pioneer-floor.txt` einmalig lesen (`ci_manage log`/Artifact); kein Statistik-Wert vor dem
+  Blatt. Nicht pollen.
 
 ## LOCK
 
