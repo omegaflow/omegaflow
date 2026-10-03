@@ -2,7 +2,7 @@
   title: Survey — Medizinische/Life-Science-Datenquellen
   class: survey
   date: 2026-10-03
-  sha256: 4ead2c9755efe8e506eba8182181adc6d2719bbb594e8c30404d84ff76505787
+  sha256: feb2807818faf2b6bd66f009f0c0e7fd0c1f949e7230dc80b9cc1e05ca9a1c5e
   status: live
   see-also: docs/handover/handover-2026-10-03-sensory-folge227.md phi/sources.φ
 -->
@@ -169,7 +169,7 @@ Reactome (`--reactome p53` → R-HSA-69541; [206]; CC0) · Gene Ontology/QuickGO
 - **Lizenzpflichtig/kommerziell:** CCDC/CSD, DrugBank, OMIM (Bulk), TAIR.
 - **Direkt blockiert (403), nur Browser/Proton/Wayback:** UK Biobank, All of Us-Programmseite, ICPSR/openICPSR, HRS, GESIS, OECD, OMIM, WormBase, TAIR, DrugBank.
 - **Gemessen nicht erreichbar (404):** `tripod.nih.gov/tox21/`, `broadinstitute.org/cell-painting`.
-- **Modus defekt (Quelle erreichbar):** `archive_search --ensembl` → HTTP 500.
+- **Behoben 2026-10-03 (`46427ceea`):** `archive_search --ensembl` → EBI Search bricht für die Domäne `ensembl` serverseitig ab (Pfad-Form HTTP 500; uniprot/chembl/reactome 200); der Modus läuft jetzt über die Ensembl-REST-API `rest.ensembl.org/xrefs/symbol/homo_sapiens/…` + `lookup/id/…` (gemessen: p53/TP53/ENSG/nonsense).
 - **Ungemessen:** NIST WebBook, korrekte Cell-Painting-/Tox21-Heimaturls, GTEx-API-Pfad, CELLxGENE-API, BfArM/EUDAMED/EMA, verschiedene Bulk-Endpunkte.
 
 ## Offen / Braucht
