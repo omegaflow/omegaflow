@@ -19,7 +19,7 @@ note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, Record 16453×52, 
 note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
-note gap-Token hdf4 — HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert; MOD11C2/C3 registriert (sources.φ:15358/:15367), 0 lesbare Kanäle.
+note gap-Token hdf4 — HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert; MOD11C2/C3 registriert (data.lpdaac.earthdatacloud.nasa.gov), 0 lesbare Kanäle.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -146,7 +146,7 @@ note CDSE-CCM — STAC/OData-Katalog offen (`/stac/collections` 200; `Products` 
 
 pending
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
-note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Asset pds3_img_m3g20081118t222604_v03_loc.bin registriert (sources.φ:9884, sha 5771de98…), lokal roundtrip; CI-Runner .HDR 403 (Datacenter-IP, CI 36737530030) → CDN 404, Manifest offen. future-folge168.
+note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Asset pds3_img_m3g20081118t222604_v03_loc.bin registriert (pds-imaging.jpl.nasa.gov, sha 5771de98…), lokal roundtrip; CI-Runner .HDR 403 (IP, CI 36737530030) → CDN 404, Manifest offen. future-folge168.
 
 pending
 url https://swarm-diss.eo.esa.int/
@@ -230,10 +230,10 @@ note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberi
 blocked parser-def curation
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
 gap curation
-note ADQL HTTP 400 (Identifier/Spalte fehlt) — ill-formed Query; Gaia-Astrometrie als zweite Linie (Weberin); korrigierte ADQL + Reader-Arm offen.
+note Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; TAP_SCHEMA 248 tables and no gaiadr3.* column matches cluster/member — cluster membership is absent from the Gaia TAP; corrected query pending (external catalog).
 
 blocked parser-def curation
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27RR+Lyrae%27
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.source_id%2Cg.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp%2Cv.best_class_name+FROM+gaiadr3.vari_classifier_result+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27RR%27
 gap curation
-note ADQL HTTP 400 (Identifier/Spalte fehlt) — ill-formed Query; Gaia-Astrometrie als zweite Linie (Weberin); korrigierte ADQL + Reader-Arm offen.
+note Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR'), JOIN vari_classifier_result×gaia_source; Gaia-Astrometrie als zweite Linie (Weberin); Reader-Arm offen.
 

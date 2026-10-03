@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 164bcac5b89de94b883ea09e579015194df23cf2aed8df2ff722dcd48f44c718
+  sha256: e2b906147a4416f4e585ada30d51fd66959e368833face90a66999f360244fcc
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -50,41 +50,20 @@ Wort | Datum | Quelle
   + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern
   (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
 
-### MESSENGER-Probe vs Haus-Gate — Riss ist die Epochen-Naht, nicht das Verzeichnis
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf `ephemeris-house-gate 37134474346` @`2005-08-02 19:13:08` (MESSENGER-Perigäum, dispatched 2026-10-03).
-- **Lage:** (gemessen 2026-10-03 via grind-flash) Die 228er-Hypothese „`ssd.jpl.nasa.gov-de/…`
-  vs `ssd.jpl.nasa.gov/…`" ist **widerlegt**: `flyby_anderson_probe.rs:10-12` ==
-  `ephemeris_house_gate.rs:11-13` (wortgleich `data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin`,
-  `data/ftp.imcce.fr/…inpop…`, `data/ftp.iaaras.ru/…epm…`); ein `ssd.jpl.nasa.gov`-Ephemeriden-Bin
-  existiert im Baum nicht (`de_compiler.rs:15` schreibt nach `ssd.jpl.nasa.gov-de`). Der Riss ist
-  der **Epochen-Zeitpunkt**: die Probe liest 2005-08-02 **00:00 UTC** (JD 2453584.5, die
-  DE/EPM-Granulat-Naht), das Gate-Ergebnis 0,1588/18,064 km entstand in `8ddd02f48` (2026-09-30)
-  noch mit der JUICE-Konstante `PERIGEE_UNIX_HMS_S = 11:45:12` für alle sechs Epochen
-  (`ephemeris_house_gate.rs:9`). Naht-Signatur: `de_epm` stimmt (17,914 vs 17,916), nur die
-  INPOP-Paare springen.
-- **Blockade:** Post-Override-Artefakt `data/flyby2/anderson-probe-2026-09-28.json` lokal absent;
-  die Ephemeriden-Bins sind CI-only (`glob data/**/ephemeris_*earth*` leer).
-- **Braucht:** Ergebnis des dispatched `ephemeris-house-gate` (MESSENGER, `19:13:08`) lesen;
-  konvergiert `de_inpop` gegen ~22,49 km, ist `body_barycenter_position` an der
-  INPOP-Granulat-Naht (`src/archivar/motion.rs:117`) der nächste Messpunkt — nie das Verzeichnis.
-
-### Ranging-Decode — echtes Format-2/3-Sample gemessen, Decoder liefert None
+### Ranging-Decode — DT2-Offsets korrekt; falsches Ranging-Modell (Sequential ≠ PN)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03 via `tnf_format_probe --ranging` gegen MRO MAGr TNF
-  `https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/tnf/mromagr2011_359_0115xmmmv1.tnf`,
-  48 940 916 B, sha256 `4caf60ec…`): 202 339 Frames, darunter **4284 Format-2** (UL-SEQ) und
-  **20 Format-3** (DL-SEQ); `tnf_dt2`/`tnf_dt3` dekodieren sie, aber `tnf_ranging_resolution`
-  liefert für **alle** `None`. Ursache gemessen: die dekodierten `first_comp_num=4`,
-  `last_comp_num=14`; `ranging_composite_period` weist `last > 6` ab (Tabelle 2
-  `docs/reference/810-005-214B-ranging.txt:712` trägt nur `b1..b6`, L(1..6)=1 009 470). Riss:
-  realer Frame vs. Spec-Komponentenbereich 1..6.
-- **Blockade:** ungemessen, ob die DT2/DT3-Offsets (`odf.rs:711/:712` → `bytes[164]/[165]`) für
-  die MRO-MAGr-TNF-Version passen oder die Komponentenzahl real >6 ist.
-- **Braucht:** die DT2-Feld-Offsets gegen das MRO-MAGr-TNF-Schema/TRK-2-34 messen (oder belegen,
-  dass `first/last` nur 1..6 tragen); `tnf_format_probe --ranging` (gebaut, `tools/measure`) auf
-  weitere TNF-Homes anwenden.
+- **Lage:** (gemessen 2026-10-03) Die DT2/DT3-Offsets sind **verifiziert**: TRK-2-34 Table 3-10
+  (byte 62/63 → absolut `odf.rs:711/712` = `bytes[164]/[165]`; `rng_cycle_time` @194) deckt sich
+  exakt mit dem NASA-PDS-Referenzdecoder PyTrk234. Der reale MRO-MAGr-Frame (`first=4,last=14`,
+  4284 Format-2 / 20 Format-3) ist ein **legales Sequential-Ranging** — die verdrahtete Mathematik
+  (`ranging_composite_period`) implementiert aber die **PN-Range-Code-Tabelle 2** (b1..b6,
+  L=1 009 470, 810-005-214B) und schließt Sequential explizit aus (Module 203).
+- **Blockade:** `docs/reference/` trägt nur Modul 214B (PN), nicht Modul 203 (Sequential).
+- **Braucht:** Modul 203 (Sequential: Ambiguität aus der tiefsten Komponententone
+  `f_n = F_EXC·2^-(n+2)`, `F_EXC = FRQ_UP·exc_scalar_num/exc_scalar_den`) ziehen und porten; bis
+  dahin liefert `tnf_ranging_resolution` für Codes 2/3 ein **benanntes None** (nie einen
+  fabrizierten Wert). Der Modul-214-Pfad bleibt nur für PN (4/5) gültig.
 
 ### RoPeR `gras_2c` — Mapper-Arm fehlt, field-Zuordnung blockiert
 - **Status:** blockiert | **Bindung:** eigen
@@ -103,18 +82,6 @@ Wort | Datum | Quelle
   **Riss:** Paper nennt 512 Bins, PDS-`.2C` trägt 2048; und die 2048 Bins sind Range-Gates
   (synthetische Zeitantwort), keine Frequenzbins — die `freq`/`bin_width`-Abbildung ist zu
   entscheiden, kein fabriziertes Achsen-Mapping.
-
-### Dispositions-Register-Hygiene — 110 `sources.φ:<n>`-Zitate driften
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03, Mycelium 225) 1685 `note`-Zeilen über
-  `dead_/declined_/blocked_sources.φ`, max_len 256 (kein Eintrag >256). **110** Notizen
-  zitieren `sources.φ:<n>` (dead 5 · declined 89 · blocked 16); `sources.φ` ist grow-only
-  (16233 Z.), die Zitate driften.
-- **Blockade:** die mechanische Umstellung braucht das Ziel der zitierten Zeile zum
-  Schreibzeitpunkt (git) — sonst droht ein falscher Kanal-Key.
-- **Braucht:** je Zitat den Ziel-Netloc über den Git-Stand des Schreib-Commits messen, dann
-  `sources.φ:<n>` durch den Netloc ersetzen; **nie** die Nummer nachführen.
 
 ### HDF4-Reader-Arm — MODIS LST CMG (NBIT/SKPHUFF/SZIP) fehlt
 - **Status:** blockiert | **Bindung:** eigen
@@ -136,12 +103,11 @@ Wort | Datum | Quelle
   ill-formed (HTTP 400). Alle 9 stehen `blocked parser-def` mit `gap` (`astrometry-reader` ×7,
   `curation` ×2).
 - **Blockade:** Wire-Richtungsarm (`SkyDirection` aus JD/RA/Dec) fehlt; die zwei Gaia-Queries ill-formed.
-- **Braucht:** `astrometry-reader`-Arm — Riss gemessen (2026-10-03): `SkyDirection` trägt eine feste
-  Richtung + photometrische Bänder, eine bewegte `(JD, RA, Dec)`-Serie hat keinen Slot. Vorschlag:
-  neues AST1-Modul (`MAGIC b"AST1"`, `AstroSample{tdb, ra_deg, dec_deg, e_ra_mas, e_dec_mas}`,
-  beide Fehler getrennt), JD→TDB via `embedded_lsk`; Konsument = Weberin-Verdict-Pfad.
-  Dazu die zwei Gaia-ADQL (Query 1 korrigiert gemessen: JOIN `vari_classifier_result`→`gaia_source`
-  on `source_id`, Klasse `'RR'`).
+- **Braucht:** `astrometry-reader`-Arm — AST1-Modul **gebaut** (`src/archivar/astrometry_series.rs`,
+  `MAGIC b"AST1"`, `AstroSample{tdb,ra_deg,dec_deg,e_ra_mas,e_dec_mas}`, beide Fehler getrennt;
+  JD→TDB via `embedded_lsk`); offen: der Compiler, der die VizieR-`asu-tsv` → AST1 schreibt, und
+  die Registrierung. Gaia-ADQL: Q1 korrigiert (JOIN `vari_classifier_result`→`gaia_source`,
+  Klasse `'RR'`, HTTP 200); Q2 (`cluster_ka`) **pending** — die Gaia-TAP trägt keine Cluster-Tabelle.
 
 ### pradan_ch2-Reader-Arm — roher ISRO-Zip ohne `format`
 - **Status:** blockiert | **Bindung:** eigen

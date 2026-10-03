@@ -594,7 +594,7 @@ note HTTP 404 — Endpoint weg.
 
 dead unreachable
 url https://leda.univ-lyon1.fr/
-note direkter curl 000/timeout 2026-09-30; VizieR VII/237 200 (2003-Snapshot). HyperLEDA TAP trägt vr/mag bereits (sources.φ:8750) → decline superseded-by-integrated.
+note direkter curl 000/timeout 2026-09-30; VizieR VII/237 200 (2003-Snapshot). HyperLEDA TAP trägt vr/mag bereits (voparis-tap-astro-m.obspm.fr) → decline superseded-by-integrated.
 
 dead dns-unresolved
 url https://lightningwa.info/api/
@@ -722,7 +722,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://pskreporter.info/cgi-bin/lastspots.cgi?last=24
-note HTTP 404 (Endpoint weg). 2026-09-26 Host 200; Empfangsreport-Registry (Menschensignale), kein Feld am Punkt; durch IONEX-TEC (sources.φ:1222) gedeckt → decline registry/katalog.
+note HTTP 404 (Endpoint weg). 2026-09-26 Host 200; Empfangsreport-Registry (Menschensignale), kein Feld am Punkt; durch IONEX-TEC (cddis.nasa.gov) gedeckt → decline registry/katalog.
 
 dead 404
 url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.2026.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start=2026-08-08T00%3A00%3A00Z&time_end=2026-08-08T23%3A59%3A59Z&timeStride=1&accept=csv
@@ -942,7 +942,7 @@ note HTTP 404 — Endpoint weg.
 
 dead 404
 url https://www.reversebeacon.net/dxlast24h.json
-note HTTP 404 (Endpoint weg). 2026-09-26 Host 200; Empfangsreport-Registry (Menschensignale), kein Feld am Punkt; durch IONEX-TEC (sources.φ:1222) gedeckt → decline registry/katalog.
+note HTTP 404 (Endpoint weg). 2026-09-26 Host 200; Empfangsreport-Registry (Menschensignale), kein Feld am Punkt; durch IONEX-TEC (cddis.nasa.gov) gedeckt → decline registry/katalog.
 
 dead 404
 url https://www.sidc.be/products/bulletins/DAILY_BULLETIN.json
@@ -978,7 +978,7 @@ note curl: curl: (6) Could not resolve host: www2.usgs.gov Browser 2026-09-10: H
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
-note ALeRCE: ztf.alerce.online DNS dead, ztf.alerce.cl Connect blockiert. Recheck 2026-09-11 (anonym): api.alerce.online/alerts/v1/objects HTTP 200 — Compiler-Pfad sources.φ:848 live. ztf.alerce.online bleibt DNS-tot.
+note ALeRCE: ztf.alerce.online DNS dead, ztf.alerce.cl Connect blockiert. Recheck 2026-09-11 (anonym): api.alerce.online/alerts/v1/objects HTTP 200 — Compiler-Pfad api.alerce.online live. ztf.alerce.online bleibt DNS-tot.
 
 dead unreachable
 url http://sprite.atmos.nthu.edu.tw/
@@ -1034,5 +1034,5 @@ note HTTP 404 direct+Proton, kein Wayback-Snapshot; 2026-09-29.
 
 dead 404
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rosetta.bin
-note superseded → ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin sources.φ:15947; rosetta-ephemeris-cdn.yml deleted; kernel-flatten.yml:121 horizons_compiler --flyby; --verdict 404/404 no-CDX 2026-09-29; ORER 0 Granule, Typ 18/19 ohne Reader-Arm.
+note superseded → ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin ssd.jpl.nasa.gov; rosetta-ephemeris-cdn.yml deleted; kernel-flatten.yml:121 horizons_compiler --flyby; --verdict 404/404 no-CDX 2026-09-29; ORER 0 Granule, Typ 18/19 ohne Reader-Arm.
 
