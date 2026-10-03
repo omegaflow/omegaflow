@@ -23,7 +23,7 @@ jobs:
           mkdir -p cache
           gh release download irsa.ipac.caltech.edu --repo omegaflow/sources \
             --pattern cmb_planck_smica_n64.json --clobber --dir cache
-          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+          gh release download tapvizier.cds.unistra.fr --repo omegaflow/sources \
             --pattern cosmicflows_cf4.json --clobber --dir cache
       - name: Run the dark-flow TE (CMB x peculiar velocity; Haufen channels pending)
         run: |

@@ -2,10 +2,11 @@ name: viking-text-cdn
 
 # Der Viking-Text-Compiler (`viking_text_compiler`) als CDN-Manifestator.
 # Ohne diesen Workflow bleibt der `url`-Zeiger
-# `…/ssd.jpl.nasa.gov/viking_lander_tracking.bin` unmanifestiert.
+# `…/ssd.jpl.nasa.gov-planets/viking_lander_tracking.bin` unmanifestiert.
 # Quelle sind die JPL-SSD-Planetentexte
-# `…/dat/planets/viking{range,doppler}.txt`; der Release-Tag folgt der
-# Quellen-Herkunft (`ssd.jpl.nasa.gov`). Die Reihe reift langsam; ein
+# `…/dat/planets/viking{range,doppler}.txt`; der Release-Tag ist die Familie
+# `ssd.jpl.nasa.gov-planets` — der Host-Release `ssd.jpl.nasa.gov` ist bei
+# 1000 Assets gekappt. Die Reihe reift langsam; ein
 # Monatslauf genügt dem Register-`ttl 604800`.
 
 concurrency:
