@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-30
-  sha256: cb5268968e0a55f1fad8cdb81c83f9dc2de7f320f0801639542c297eb20f6ae6
+  sha256: ea7246113faef565e7cc0172843e53048e5c23f66586f24999c77f0a854d9ad1
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -270,8 +270,10 @@ Commit nachgezogen, Gate-Fixture `jump_residual_acceleration_term`.
   (Legacy-TODO, vanilla-dateidocs, concept-history) und `archive_search` (--crossref,
   --openalex, --github, --wiki, --tavily, --exa, --linkup, --marginalia, --mwmbl,
   --all, --playwright).
-- `--arxiv` = `pending` (HTTP 406 Query-Cap); `--brave` = `pending` (HTTP 402,
-  `--mwmbl` als keyless-Ersatz); UE-Docs = `blocked` (403 Cloudflare).
+- `--arxiv`/`--brave` antworten wieder (gemessen 2026-10-03 River: `--arxiv`
+  liefert Treffer, `--brave` liefert Treffer ohne 402; die früheren 406/402 sind
+  nicht mehr); `--mwmbl` bleibt der keyless-Ersatz; UE-Docs = `blocked`
+  (403 Cloudflare).
 - z.ai-Sessions per API/UI aus `state/zai-export` identifiziert und angeschrieben;
   Session 35 (Kontext-Überlast, 243 Nachrichten) generiert nicht mehr.
 
