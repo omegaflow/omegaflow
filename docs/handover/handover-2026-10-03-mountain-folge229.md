@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 5ad331e7f38bed7bdae12a2ac07f7207d89662f6494fc14b486392ac8ce56b28
+  sha256: de70fe891ddf18b47d57d25a654c2da6d0f216aee68e0e0c848a0e0b4afb67d0
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -33,6 +33,7 @@ Wort | Datum | Quelle
 „1 ja bitte" — den privaten TE-Pfad entlocken (Detrend-along-p + CMI/pTE-mit-p-Kovariate), Lauf lokal/silent, nie CI (LOCK privat) | 2026-10-02 | Operator (river-folge82)
 „ja voranmelde und dann lauf in ci" — Pioneer-Floor-Voranmelde-Blatt bauen, dann Lauf in CI | 2026-10-02 | Operator (river-folge82)
 „braucht es pro und max?" — Reaffirmation flash-first; pro/max nur mit gemessener flash-Fehllage | 2026-10-03 | Operator (Session, Mountain 227)
+„ja bitte" — `descoped` aus `blocked_sources.φ` auflösen, in `declined`/`dead` migrieren; blocked hält nur Gewolltes | 2026-10-03 | Operator (Session, Mountain 229)
 
 ## Offen (aufgeschlüsselt)
 
@@ -123,6 +124,16 @@ Wort | Datum | Quelle
   fehlende Arm ist als gap-Token `hdf4` in `phi/blocked_sources.φ` deklariert.
 - **Blockade:** HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert.
 - **Braucht:** HDF4-Reader-Arm für NBIT/SKPHUFF/SZIP bauen; dann die zwei CMG-Bins gegen die Quellen prüfen.
+
+### Reader-Arme der migrierten parser-def-Klassen (astrometry-reader ×7, curation ×2)
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-03) Aus der `descoped`-Auflösung in `phi/blocked_sources.φ`: 7 VizieR
+  asu-tsv (`J/A+A/582/A8`, `vizier.cfa.harvard.edu`) + `occultations.ct.utfpr.edu.br` →
+  `blocked parser-def astrometry-reader`; 2 Gaia-`vari_classifier`-ADQL → `blocked parser-def curation`.
+  gap-Token stehen (`blocked_sources.φ:6/:7`).
+- **Blockade:** Positions-Serie JD/RA/Dec ohne Skalarfeld (astrometry-reader); per-entry ADQL-Rewrite (curation).
+- **Braucht:** `astrometry-reader`-Arm und `curation`-Arm bauen.
 
 ## Träger (Prosa, eigene)
 
