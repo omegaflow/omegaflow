@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the falsification metric (addendum)
   class: paper
   date: 2026-10-02
-  sha256: 8a9b741ed9a4457d025ae8c13b44d7cf73de4d619a443e7b4e1e27be36695b1a
+  sha256: 88a0035b79743d814f7b87fbfb6d2908a89072c5a08819568c17ac19189d790d
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
 -->
@@ -15,7 +15,7 @@ This addendum seals the falsification metric for the Path-2 pre-registration, re
 
 ## Scope
 
-This Blatt is an addendum to the Path-2 pre-registration, sealed 2026-08-28 — before the JUICE Earth flyby. It does not modify the sealed pre-registration; it only names the missing falsification metric, so the verdict after the flyby is not post-hoc. The original pre-registration's sealed prediction form (header sha256 6f24f98a01decc82025652ec0302afd75a06e53bc14743fec79d5ca0ef44b2d0 at sealing) stays untouched; its body advanced by a named pre-flyby readiness note (2026-09-26), so its header sha256 is now 502e06c3d9b0b66652552973e612d514dc82fac293d0453beae7e27933be2f01.
+This Blatt is an addendum to the Path-2 pre-registration, sealed 2026-08-28 — before the JUICE Earth flyby. It does not modify the sealed pre-registration; it only names the missing falsification metric, so the verdict after the flyby is not post-hoc. The original pre-registration's sealed prediction form (header sha256 6f24f98a01decc82025652ec0302afd75a06e53bc14743fec79d5ca0ef44b2d0 at sealing) stays untouched; its body advanced by a named pre-flyby readiness note (2026-09-26), so its header sha256 is now 0ed15f81d839c5710954e803354d4d29aa2f48b94c803094ea4ca1887a327002.
 
 ## The prediction chain (Trishuli-muster)
 
