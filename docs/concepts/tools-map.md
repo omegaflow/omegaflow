@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: 13a7b6b79c58deb6b9f637d09d7d8e8a3eff63880f782fe71a0c23c6ea45e43f
+  sha256: 7d747a468b1ed6492809048feb1ffdf8d647c620a0f22d0f867652510a7f38d6
   status: live
   see-also: AGENTS.md
 -->
@@ -355,7 +355,8 @@ die API-Flotte dient der **Masse/Reproduzierbarkeit**, nie dem scharfen Kanal.
 1. **Scharfe Recherche → UI-Chats** (die einzige Route für Frontier-Modelle). Roster
    (Operator-Wort `future-folge169`, gefaltet `mycelium-folge225`): `chat.z.ai`
    (GLM-5.3 Geo/Deep Search) · `claude.ai` · `kimi.ai`. **Kimi K3 nur über
-   `tryingopen.com`** (4000-Zeichen-Limit); für Sonnet 5.5 Search
+   `tryingopen.com`** — die Ausgabe ist auf **~4000 Zeichen** begrenzt: mit `Weiter`/
+   `continue` den Rest holen, ggf. mehrfach (der Operator-Hinweis 2026-10-03); für Sonnet 5.5 Search
    `arena.ai/search/direct?model_a=claude-sonnet-5-search`. Prozedur (Selektoren, Senden,
    Antwort-Lesen, Aufräumen): `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md` +
    `state/stimmen/README.md`; Rohantworten privat nach `state/stimmen/<TS>_<site>_<slug>.md`.
