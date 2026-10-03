@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: ad66003e0b58370eca0c79b3def9a3d16f62c2729e2329d2cc7e0a65ac1e55f7
+  sha256: 3b6ba32c3049537e7d6a648998fd5f19c47d1dff580c6800a1c7da4dd2790a1a
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -192,16 +192,11 @@ Origin: mountain folge229.
   Analog: `phi/blocked_sources.φ:360` Shandong-Spiegel von `blocked ip-blocked` auf `descoped`
   (redundant, CLPDS `:406` deckt Chang'e-1/2-PDS3).
 
-- **`released`-Harvest-Duties tragen (das Register löst sie nicht als Punkt).** Die
-  `released`-Quellen in `phi/blocked_sources.φ` (Zugang/Arm geklärt) tragen den offenen
-  Download nur im `note`, nicht im offenen Satz. Bitte als Ernte-Punkte falten:
-  `moon.bao.ac.cn` (Chang'e 1–6 GRAS), `nssdc.ac.cn` (Tianwen-1/Zhurong),
-  `sdc.emiratesmarsmission.ae` (Hope/Al-Amal EMM, MBRSC — Compiler fehlt),
-  `superdarn.ca/data-download` (MAP-Grid RST, Globus).
-- **ISRO/ISSDC (PRADAN) — kein Operator-Akt.** `released`; die Credentials stehen gemessen
-  in `.secrets.local` (`PRADAN_USER`/`PRADAN_PASS`, via `bin/secrets_keys`, 2026-10-03),
-  Compiler steht → Ernte ist autonomes Lesen. Der frühere „Operator-Hand"-Verdacht war stale.
-- **KPLO/KARI KPDS** (`kari.re.kr/kpds/.../PublicRelease/`) harvestierbar; Mycelium.
+- **5 Harvest-Duties von `released` auf `pending` gehoben (owner Mycelium).** `phi/blocked_sources.φ`
+  `:300` Chang'e 1–6 GRAS · `:304` Tianwen-1/Zhurong · `:308` ISRO/ISSDC (PRADAN: Credentials
+  `PRADAN_USER`/`PRADAN_PASS` in `.secrets.local`, kein Operator-Akt) · `:312` EMM/MBRSC ·
+  `:316` MAP-Grid RST/Globus — die offene Ernte steht jetzt im offenen Satz
+  (`register_lookup --open`), nicht nur im `note`. KARI/KPDS `:372` war schon `pending`.
 - **Regel (Future folge172, privat):** vor jedem `Operator-Hand`/`operator-gebunden`-Label
   `.secrets.local` per `bin/secrets_keys` messen; ein Label wird im selben Pass vorgelegt
   oder als gewortet vermerkt.
