@@ -445,17 +445,17 @@ blocked ip-blocked
 url http://222.194.16.107/planet-data
 note Shandong PDS-Spiegel (SDU Weihai) listet diesen Host + FTP; via --verdict Timeout (von hier nicht erreichbar, cn-only); kein Pfad gemessen. Portal pds.wh.sdu.edu.cn. future-folge226.
 
-blocked account
+descoped
 url https://pda.kasi.re.kr/
-note KASI-DALO (Danuri/KPLO) — 2026-10-03 Browser: data_{polcam,luti,kmag,kgrs}.php (Katalog lesbar), Login pda.kasi.re.kr/login.php, keine Selbst-Registrierung. future-folge226.
+note KASI-DALO (Danuri/KPLO) — 2026-10-03: das Konto (pda.kasi.re.kr/login.php) ist nicht nötig; dieselben Instrumente liegen anonym im KARI-KPDS-Baum (`kari.re.kr/kpds/published/KPLO/KPLO/PublicRelease/`). Konto-Block descoped. future-folge226.
 
 descoped
 url https://archive.kasi.re.kr/kasi/moc/kmtnet_archive_moc.fits
 note KASI KMTNet Coverage-MOC (2026-09-29, 1848960 B sha256 f34ff61f…): FITS BINTABLE TFIELDS=1 TTYPE1='RANGE' MOCVERS=2.0 ORDERING=RANGE; bandlose RANGE-MOC, kein fp01-Band (footprint.rs); moc-reader verworfen.
 
-descoped
-url https://www.kari.re.kr/kpds/
-note Danuri/KPLO KPDS (KARI) — 2026-09-29 HTML-Portal 200 (3969525 B), kein maschinenlesbarer Daten-Endpoint gemessen (0 honored); html_to_json-Arm steht, trägt aber keine Daten; descoped (gemessen: kein Datenpfad).
+pending
+url https://www.kari.re.kr/kpds/published/KPLO/KPLO/PublicRelease/
+note Danuri/KPLO KPDS (KARI) — 2026-10-03 un-descoped: `.../published/KPLO/KPLO/PublicRelease/` direct 200 (2146 B), anonymes Verzeichnis (POLCAM/LUTI/KMAG/KGRS + SPICE); das HTML-Portal war nur der Login-Weg. Offener Datenpfad.
 
 pending
 url https://pds.shadowcam.im-ldi.com/derived/
@@ -476,7 +476,7 @@ note Swarm TEC discrimination (ESA) — 2026-10-02 HTTP 200 (43497 B); kein Date
 
 pending
 url https://gportal.jaxa.jp/
-note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-03 Browser: Suche ohne Registrierung, Download nur nach Registrierung gportal.jaxa.jp/gpr/user/regist1; SFTP-Direktabruf. future-folge226.
+note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-03: Konto registriert (gportal.jaxa.jp/gpr/user/regist1); Suche offen, Download/SFTP nach Login. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
@@ -484,11 +484,11 @@ note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200 (60809 B); kein CSES-Rohdat
 
 pending
 url https://www.leos.ac.cn/
-note LEOS = Notfallministerium/National Inst. of Natural Hazards (CSES 张衡一号), nicht CAS — 2026-10-03 Browser: SPA leos.ac.cn/#/, Daten-/Modellservice mit 注册/登录, aktuell „暂无数据". future-folge226.
+note LEOS = Notfallministerium/National Inst. of Natural Hazards (CSES 张衡一号), nicht CAS — 2026-10-03: Konto registriert; SPA leos.ac.cn/#/ Daten-/Modellservice, aktuell „暂无数据". future-folge226.
 
-blocked account
+pending
 url https://clpds.bao.ac.cn/
-note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-03 Browser: SPA-API /moon-admin/client/science/{catalogue,dataInfoList} 200, PDS3-Einzelprodukte; Download login-gated, Register clpds.bao.ac.cn/register. future-folge226.
+note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-03: Konto registriert (clpds.bao.ac.cn/register); SPA-API /moon-admin/client/science/{catalogue,dataInfoList} 200, PDS3-Einzelprodukte; Download nach Login. future-folge226.
 
 pending
 url https://pds-geosciences.wustl.edu/missions/viking/gravity.html
