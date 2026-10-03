@@ -20,7 +20,15 @@ const SP_CHUNKED: u16 = 5;
 
 const CODER_NONE: u16 = 0;
 const CODER_RLE: u16 = 1;
+const CODER_NBIT: u16 = 2;
+const CODER_SKPHUFF: u16 = 3;
 const CODER_DEFLATE: u16 = 4;
+const CODER_SZIP: u16 = 5;
+
+const SKPHUFF_MAX_CHAR: usize = 255;
+const SUCCMAX: usize = 256;
+const TWICEMAX: usize = 513;
+const ROOT: usize = 0;
 
 pub const DFNT_CHAR8: i16 = 4;
 pub const DFNT_UCHAR8: i16 = 3;
@@ -291,8 +299,23 @@ impl<'a> Hdf4<'a> {
         match be_u16(raw, 0)? {
             SP_LINKED => self.linked(dd),
             SP_CHUNKED => self.chunked_data(tag, ref_),
+            SP_COMP => self.compressed_element(raw),
             _ => Some(raw.to_vec()),
         }
+    }
+
+    fn compressed_element(&self, raw: &[u8]) -> Option<Vec<u8>> {
+        if be_u16(raw, 0)? != SP_COMP {
+            return None;
+        }
+        let length = be_i32(raw, 4)?;
+        let comp_ref = be_u16(raw, 8)?;
+        if length < 0 {
+            return None;
+        }
+        let header = raw.get(10..)?;
+        let stream = self.element_bytes(DFTAG_COMPRESSED, comp_ref)?;
+        decode_coded(header, &stream, length as usize)
     }
 
     fn element_bytes(&self, tag: u16, ref_: u16) -> Option<Vec<u8>> {
@@ -409,7 +432,6 @@ impl<'a> Hdf4<'a> {
         }
         let comp_len = be_i32(tail, 2)? as usize;
         let comp = tail.get(6..6 + comp_len)?;
-        let coder = be_u16(comp, 2)?;
         let vh = self.vheader(tbl_ref)?;
         let nrec = vh.nrecords as usize;
         let ivsize = vh.ivsize as usize;
@@ -431,7 +453,7 @@ impl<'a> Hdf4<'a> {
             let rec = vs.get(i * ivsize..(i + 1) * ivsize)?;
             let chk_tag = be_u16(rec, ivsize - 4)?;
             let chk_ref = be_u16(rec, ivsize - 2)?;
-            let chunk = self.chunk_bytes(chk_tag, chk_ref, coder, want)?;
+            let chunk = self.chunk_bytes(chk_tag, chk_ref, comp, want)?;
             let mut idx = 0u64;
             let mut ok = true;
             for (d, &stride) in strides.iter().enumerate() {
@@ -454,9 +476,15 @@ impl<'a> Hdf4<'a> {
         Some(out)
     }
 
-    fn chunk_bytes(&self, chk_tag: u16, chk_ref: u16, coder: u16, want: usize) -> Option<Vec<u8>> {
+    fn chunk_bytes(
+        &self,
+        chk_tag: u16,
+        chk_ref: u16,
+        header: &[u8],
+        want: usize,
+    ) -> Option<Vec<u8>> {
         if let Some(slice) = self.normal(chk_tag, chk_ref) {
-            return decode_chunk(slice, coder, want);
+            return decode_coded(header, slice, want);
         }
         let dd = self.dd(chk_tag | SPECIAL, chk_ref)?;
         let end = dd.offset.checked_add(dd.length)?;
@@ -466,7 +494,7 @@ impl<'a> Hdf4<'a> {
         }
         let comp_ref = be_u16(raw, 8)?;
         let stream = self.element_bytes(DFTAG_COMPRESSED, comp_ref)?;
-        decode_chunk(&stream, coder, want)
+        decode_coded(header, &stream, want)
     }
 
     pub fn sds(&self) -> Vec<Sds> {
@@ -577,13 +605,251 @@ pub struct Sds {
     pub range: Option<(f64, f64)>,
 }
 
-fn decode_chunk(stream: &[u8], coder: u16, want: usize) -> Option<Vec<u8>> {
-    match coder {
+fn decode_coded(header: &[u8], stream: &[u8], want: usize) -> Option<Vec<u8>> {
+    match be_u16(header, 2)? {
         CODER_NONE => Some(stream.to_vec()),
         CODER_RLE => rle_decode(stream, want),
         CODER_DEFLATE => zlib_inflate(stream, want),
+        CODER_NBIT => {
+            let typ = be_i16(header, 4)?;
+            let sign_ext = be_u16(header, 6)? != 0;
+            let fill_one = be_u16(header, 8)? != 0;
+            let start_bit = be_i32(header, 12)?;
+            let bit_len = be_i32(header, 16)?;
+            nbit_decode(stream, want, typ, sign_ext, fill_one, start_bit, bit_len)
+        }
+        CODER_SKPHUFF => {
+            let skip_size = be_u32(header, 4)? as usize;
+            skphuff_decode(stream, want, skip_size)
+        }
+        CODER_SZIP => None,
         _ => None,
     }
+}
+
+struct BitReader<'a> {
+    data: &'a [u8],
+    byte: usize,
+    bit: u8,
+}
+
+impl<'a> BitReader<'a> {
+    fn new(data: &'a [u8]) -> Self {
+        BitReader {
+            data,
+            byte: 0,
+            bit: 0,
+        }
+    }
+
+    fn read(&mut self, n: usize) -> Option<u32> {
+        if n > 32 {
+            return None;
+        }
+        let mut v = 0u32;
+        for _ in 0..n {
+            let byte = *self.data.get(self.byte)?;
+            let b = ((byte >> (7 - self.bit)) & 1) as u32;
+            v = (v << 1) | b;
+            self.bit += 1;
+            if self.bit == 8 {
+                self.bit = 0;
+                self.byte += 1;
+            }
+        }
+        Some(v)
+    }
+}
+
+fn mask8(n: usize) -> u8 {
+    if n >= 8 {
+        0xFF
+    } else {
+        ((1u16 << n) - 1) as u8
+    }
+}
+
+fn mask32(n: usize) -> u32 {
+    if n >= 32 { u32::MAX } else { (1u32 << n) - 1 }
+}
+
+fn nbit_decode(
+    stream: &[u8],
+    want: usize,
+    typ: i16,
+    sign_ext: bool,
+    fill_one: bool,
+    mask_off: i32,
+    mask_len: i32,
+) -> Option<Vec<u8>> {
+    let nt_size = type_size(typ)?;
+    if !(1..=8).contains(&nt_size) || want % nt_size != 0 || mask_len < 1 {
+        return None;
+    }
+    let bits = (nt_size * 8) as i32;
+    if !(0..bits).contains(&mask_off) {
+        return None;
+    }
+    let mask_top = mask_off;
+    let mask_bot = mask_off - (mask_len - 1);
+    if mask_bot < 0 {
+        return None;
+    }
+    let mut info = vec![(0i32, 0usize, 0u8); nt_size];
+    let mut top_bit = bits - 1;
+    let mut bot_bit = bits - 8;
+    for slot in info.iter_mut() {
+        if mask_top >= top_bit {
+            if mask_bot <= bot_bit {
+                *slot = (7, 8, 0xFF);
+            } else {
+                let len = (top_bit - mask_bot + 1) as usize;
+                *slot = (7, len, mask8(len) << (8 - len));
+                break;
+            }
+        } else if mask_top >= bot_bit {
+            if mask_bot < bot_bit {
+                let len = (mask_top - bot_bit + 1) as usize;
+                *slot = (mask_top - bot_bit, len, mask8(len));
+            } else {
+                let len = (mask_top - mask_bot + 1) as usize;
+                *slot = (mask_top - bot_bit, len, mask8(len) << (mask_bot - bot_bit));
+                break;
+            }
+        }
+        top_bit -= 8;
+        bot_bit -= 8;
+    }
+    let mut mask_buf = vec![if fill_one { 0xFFu8 } else { 0u8 }; nt_size];
+    if fill_one {
+        for (i, s) in info.iter().enumerate() {
+            mask_buf[i] &= !s.2;
+        }
+    }
+    let sign_ext_mask = !(mask32((mask_off % 8) as usize)) as u8;
+    let sign_byte = nt_size as i32 - ((mask_off / 8) + 1);
+    let sign_mask = mask32(((mask_off % 8) + 1) as usize) ^ mask32((mask_off % 8) as usize);
+    let mut reader = BitReader::new(stream);
+    let mut out = vec![0u8; want];
+    for item in 0..want / nt_size {
+        let base = item * nt_size;
+        out[base..base + nt_size].copy_from_slice(&mask_buf);
+        if sign_ext {
+            let mut sign_bit = 0u32;
+            for (j, &(offset, len, mask)) in info.iter().enumerate() {
+                if len > 0 {
+                    let input = reader.read(len)?;
+                    let shift = (offset - len as i32) + 1;
+                    if shift >= 0 {
+                        out[base + j] |= mask & ((input << shift as u32) as u8);
+                    }
+                    if j as i32 == sign_byte && (sign_mask & input) != 0 {
+                        sign_bit = 1;
+                    }
+                }
+            }
+            if sign_bit != (fill_one as u32) && sign_byte >= 0 {
+                let sb = sign_byte as usize;
+                for b in out[base..base + sb].iter_mut() {
+                    *b = if sign_bit == 1 { 0xFF } else { 0x00 };
+                }
+                if sb < nt_size {
+                    if sign_bit == 1 {
+                        out[base + sb] |= sign_ext_mask;
+                    } else {
+                        out[base + sb] &= !sign_ext_mask;
+                    }
+                }
+            }
+        } else {
+            for (j, &(offset, len, mask)) in info.iter().enumerate() {
+                if len > 0 {
+                    let input = reader.read(len)?;
+                    let shift = (offset - len as i32) + 1;
+                    if shift >= 0 {
+                        out[base + j] |= mask & ((input << shift as u32) as u8);
+                    }
+                }
+            }
+        }
+    }
+    Some(out)
+}
+
+struct SplayTree {
+    left: Vec<usize>,
+    right: Vec<usize>,
+    up: Vec<usize>,
+}
+
+impl SplayTree {
+    fn new() -> Self {
+        SplayTree {
+            left: (0..SUCCMAX).map(|j| j << 1).collect(),
+            right: (0..SUCCMAX).map(|j| (j << 1) + 1).collect(),
+            up: (0..TWICEMAX).map(|i| i >> 1).collect(),
+        }
+    }
+
+    fn splay(&mut self, plain: u8) {
+        let mut a = plain as usize + SUCCMAX;
+        loop {
+            let c = self.up[a];
+            if c != ROOT {
+                let d = self.up[c];
+                let mut b = self.left[d];
+                if c == b {
+                    b = self.right[d];
+                    self.right[d] = a;
+                } else {
+                    self.left[d] = a;
+                }
+                if a == self.left[c] {
+                    self.left[c] = b;
+                } else {
+                    self.right[c] = b;
+                }
+                self.up[a] = d;
+                self.up[b] = c;
+                a = d;
+            } else {
+                a = c;
+            }
+            if a == ROOT {
+                break;
+            }
+        }
+    }
+}
+
+fn skphuff_decode(stream: &[u8], want: usize, skip_size: usize) -> Option<Vec<u8>> {
+    if !(1..=SUCCMAX).contains(&skip_size) {
+        return None;
+    }
+    let mut trees: Vec<SplayTree> = (0..skip_size).map(|_| SplayTree::new()).collect();
+    let mut reader = BitReader::new(stream);
+    let mut out = Vec::with_capacity(want);
+    let mut skip_pos = 0usize;
+    for _ in 0..want {
+        let tree = &mut trees[skip_pos];
+        let mut a = ROOT;
+        loop {
+            let bit = reader.read(1)?;
+            a = if bit == 0 {
+                tree.left[a]
+            } else {
+                tree.right[a]
+            };
+            if a > SKPHUFF_MAX_CHAR {
+                break;
+            }
+        }
+        let plain = (a - SUCCMAX) as u8;
+        tree.splay(plain);
+        out.push(plain);
+        skip_pos = (skip_pos + 1) % skip_size;
+    }
+    Some(out)
 }
 
 fn rle_decode(stream: &[u8], want: usize) -> Option<Vec<u8>> {
@@ -989,5 +1255,140 @@ mod tests {
         assert_eq!(sds.data, expect);
         assert!((sds.scale.expect("scale present") - 0.02).abs() < 1e-6);
         assert!(sds.fill.is_none());
+    }
+
+    #[test]
+    fn nbit_decodes_a_full_width_field() {
+        let out = nbit_decode(&[0x12, 0x34], 2, DFNT_UINT16, false, false, 15, 16)
+            .expect("the full 16-bit field expands");
+        assert_eq!(out, vec![0x12, 0x34]);
+    }
+
+    #[test]
+    fn nbit_masks_and_fills_the_extracted_bits() {
+        assert_eq!(
+            nbit_decode(&[0x80], 1, DFNT_UINT8, false, false, 7, 1).as_deref(),
+            Some(&[0x80][..])
+        );
+        assert_eq!(
+            nbit_decode(&[0x00], 1, DFNT_UINT8, false, false, 7, 1).as_deref(),
+            Some(&[0x00][..])
+        );
+        assert_eq!(
+            nbit_decode(&[0x80], 1, DFNT_UINT8, false, true, 7, 1).as_deref(),
+            Some(&[0xFF][..])
+        );
+        assert_eq!(
+            nbit_decode(&[0x00], 1, DFNT_UINT8, false, true, 7, 1).as_deref(),
+            Some(&[0x7F][..])
+        );
+    }
+
+    #[test]
+    fn coded_header_routes_nbit() {
+        let mut header = Vec::new();
+        header.extend_from_slice(&0u16.to_be_bytes());
+        header.extend_from_slice(&CODER_NBIT.to_be_bytes());
+        header.extend_from_slice(&(DFNT_UINT16 as i32).to_be_bytes());
+        header.extend_from_slice(&0u16.to_be_bytes());
+        header.extend_from_slice(&0u16.to_be_bytes());
+        header.extend_from_slice(&15i32.to_be_bytes());
+        header.extend_from_slice(&16i32.to_be_bytes());
+        assert_eq!(
+            decode_coded(&header, &[0xAB, 0xCD], 2).as_deref(),
+            Some(&[0xAB, 0xCD][..])
+        );
+    }
+
+    #[test]
+    fn sp_comp_descriptor_assembles_the_uncompressed_element() {
+        let mut body = Vec::new();
+        body.extend_from_slice(&SP_COMP.to_be_bytes());
+        body.extend_from_slice(&0u16.to_be_bytes());
+        body.extend_from_slice(&2i32.to_be_bytes());
+        body.extend_from_slice(&2u16.to_be_bytes());
+        body.extend_from_slice(&0u16.to_be_bytes());
+        body.extend_from_slice(&CODER_NBIT.to_be_bytes());
+        body.extend_from_slice(&(DFNT_UINT16 as i32).to_be_bytes());
+        body.extend_from_slice(&0u16.to_be_bytes());
+        body.extend_from_slice(&0u16.to_be_bytes());
+        body.extend_from_slice(&15i32.to_be_bytes());
+        body.extend_from_slice(&16i32.to_be_bytes());
+        let special_off = 4 + 6 + 2 * 12;
+        let compressed_off = special_off + body.len();
+        let mut file = Vec::new();
+        file.extend_from_slice(&MAGIC);
+        file.extend_from_slice(&2u16.to_be_bytes());
+        file.extend_from_slice(&0i32.to_be_bytes());
+        file.extend_from_slice(&wrap(
+            DFTAG_SD | SPECIAL,
+            1,
+            special_off as i32,
+            body.len() as i32,
+        ));
+        file.extend_from_slice(&wrap(DFTAG_COMPRESSED, 2, compressed_off as i32, 2));
+        file.extend_from_slice(&body);
+        file.extend_from_slice(&[0xAB, 0xCD]);
+        let hdf = Hdf4::parse(&file).expect("the synthetic SP_COMP file parses");
+        assert_eq!(
+            hdf.element_bytes(DFTAG_SD, 1).as_deref(),
+            Some(&[0xAB, 0xCD][..])
+        );
+    }
+
+    fn skphuff_encode(data: &[u8], skip_size: usize) -> Vec<u8> {
+        let mut trees: Vec<SplayTree> = (0..skip_size).map(|_| SplayTree::new()).collect();
+        let mut bits: Vec<u8> = Vec::new();
+        let mut pos = 0usize;
+        for &byte in data {
+            let tree = &trees[pos];
+            let mut path = Vec::new();
+            let mut a = byte as usize + SUCCMAX;
+            while a != ROOT {
+                let parent = tree.up[a];
+                path.push(u8::from(tree.right[parent] == a));
+                a = parent;
+            }
+            bits.extend(path.iter().rev());
+            trees[pos].splay(byte);
+            pos = (pos + 1) % skip_size;
+        }
+        let mut out = Vec::new();
+        let mut acc = 0u8;
+        let mut n = 0u8;
+        for b in bits {
+            acc = (acc << 1) | b;
+            n += 1;
+            if n == 8 {
+                out.push(acc);
+                acc = 0;
+                n = 0;
+            }
+        }
+        if n > 0 {
+            out.push(acc << (8 - n));
+        }
+        out
+    }
+
+    #[test]
+    fn skphuff_decodes_the_initial_balanced_code() {
+        assert_eq!(
+            skphuff_decode(&[0xA0, 0x80], 1, 1).as_deref(),
+            Some(&[0x41][..])
+        );
+    }
+
+    #[test]
+    fn skphuff_roundtrips_the_splaying_tree() {
+        for skip_size in [1usize, 2, 3] {
+            let data = [0x41u8, 0x42, 0x43, 0x41, 0x41, 0x00, 0xFF, 0x42];
+            let packed = skphuff_encode(&data, skip_size);
+            assert_eq!(
+                skphuff_decode(&packed, data.len(), skip_size).as_deref(),
+                Some(&data[..]),
+                "skip_size {skip_size}"
+            );
+        }
     }
 }

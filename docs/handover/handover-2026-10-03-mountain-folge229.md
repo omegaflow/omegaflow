@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 6fc638df83d781f90989a89f68f12076a3a0c57c40e5b0484b314ad073c14c75
+  sha256: 99f7b7e0fdccda70d8ba8840d8c2985be8f85aca7b3101f80c28f04d611eeaaa
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -76,22 +76,24 @@ Wort | Datum | Quelle
   „42 `.2C`-Paare" meint 42 **Datei**-Paare (42 `.2C` + 42 `.2CL`), nicht 42 Paare je Record.
 - **Blockade:** band-tragender Reader-Arm fehlt (die range-Dimension ist nicht darstellbar;
   `gras_2c::parse_series` setzt hart `SPECTRAL_NO_BAND`, `extract.rs:244`).
-- **Braucht:** band-/range-tragenden `gras_2c`-Reader-Arm bauen (**eigene Feder, nicht River**).
-  Band vermessen 2026-10-03: HF/CH2 = 0,45–2,15 GHz (B = 1,7 GHz), 2048 Bins sind die
-  puls-komprimierte FFT (Zhou 2020, DOI `10.26464/epp2020054`; Remote Sensing 15(4):966).
-  **Riss:** Paper nennt 512 Bins, PDS-`.2C` trägt 2048; und die 2048 Bins sind Range-Gates
-  (synthetische Zeitantwort), keine Frequenzbins — die `freq`/`bin_width`-Abbildung ist zu
-  entscheiden, kein fabriziertes Achsen-Mapping.
+- **Braucht:** `series_named("gras_2c")`-Arm **gebaut** (pro Gate Kanäle `gras_2c_gate_<k:04>`,
+  `SPECTRAL_NO_BAND`); offen: (a) eine quellen-weite `range <start_m> <step_m>`-Direktive (die
+  Range-Achse hat keinen Wire-Slot; Chirp 0,45–2,15 GHz ist Quellen-Eigenschaft, kein per-Bin —
+  `freq` wäre Fabrikation), (b) die `field`-Zeilen `gras_2c_gate_*` in `phi/sources.φ` (sonst 0
+  Kanäle trotz Arm). `comp` ist der Range-Gate-Index, kein Polarisationspaar (Zhou 2020,
+  DOI `10.26464/epp2020054`).
 
-### HDF4-Reader-Arm — MODIS LST CMG (NBIT/SKPHUFF/SZIP) fehlt
+### HDF4 — MODIS CMG: Granulen lesen bereits; SZIP-Codec fehlt
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03) MOD11C2/MOD11C3 (`e4ftl01.cr.usgs.gov`) sind integriert
-  (`sources.φ:15358/:15367`); der Compiler steht, aber der HDF4-Decompressor (NBIT/SKPHUFF/SZIP) fehlt →
-  das Bin trägt 0 lesbare Kanäle. Die zwei `released`-Einträge sind gelöscht (integrierte Twins); das
-  fehlende Arm ist als gap-Token `hdf4` in `phi/blocked_sources.φ` deklariert.
-- **Blockade:** HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert.
-- **Braucht:** HDF4-Reader-Arm für NBIT/SKPHUFF/SZIP bauen; dann die zwei CMG-Bins gegen die Quellen prüfen.
+- **Lage:** (gemessen 2026-10-03) Die „0 lesbare Kanäle"-Behauptung ist **widerlegt**: CI
+  `36386043292`/`36320557426` zeigen gelesene MOD11C2/C3-Granulen (17,6 M / 8,6 M Records,
+  roundtrip) über den vorhandenen Chunked-Pfad (NONE/RLE/DEFLATE, `src/archivar/hdf4.rs`).
+  **Gebaut:** NBIT + SKPHUFF-Decoder (std-only) + Tests. **SZIP (CODER 5) verweigert**:
+  `cszip.c` bindet `szlib.h`/libaec — kein std-only-Dekoder, neue Dependency nötig.
+- **Blockade:** SZIP-Dekoder (libaec) fehlt; ein `format`-Dispatch braucht die SDS/NDG-Auswahl
+  (macht der Compiler), ein blinder Arm wäre Fabrikation.
+- **Braucht:** Entscheid libaec-Dependency (oder SZIP-Granulen meiden); sonst kein MODIS-Rest.
 
 ### Weberin zweite Linie — astrometry-reader/curation-Arme (9 parser-def)
 - **Status:** blockiert | **Bindung:** eigen
@@ -104,10 +106,12 @@ Wort | Datum | Quelle
   `curation` ×2).
 - **Blockade:** Wire-Richtungsarm (`SkyDirection` aus JD/RA/Dec) fehlt; die zwei Gaia-Queries ill-formed.
 - **Braucht:** `astrometry-reader`-Arm — AST1-Modul **gebaut** (`src/archivar/astrometry_series.rs`,
-  `MAGIC b"AST1"`, `AstroSample{tdb,ra_deg,dec_deg,e_ra_mas,e_dec_mas}`, beide Fehler getrennt;
-  JD→TDB via `embedded_lsk`); offen: der Compiler, der die VizieR-`asu-tsv` → AST1 schreibt, und
-  die Registrierung. Gaia-ADQL: Q1 korrigiert (JOIN `vari_classifier_result`→`gaia_source`,
-  Klasse `'RR'`, HTTP 200); Q2 (`cluster_ka`) **pending** — die Gaia-TAP trägt keine Cluster-Tabelle.
+  `MAGIC b"AST1"`, beide Fehler getrennt; JD→TDB via `embedded_lsk`) und **Compiler gebaut**
+  (`tools/harvest/src/bin/vizier_astrometry_compiler.rs`, liest asu-tsv → AST1; 13 313 Samples über
+  6 Tabellen, sha `bc21177b…`); offen: der `format astrometry_series`-Reader-Arm (Weberin-Konsument)
+  + Registrierung, und `Sat` hat keinen `AstroSample`-Slot. Gaia-ADQL: Q1 korrigiert (JOIN
+  `vari_classifier_result`→`gaia_source`, Klasse `'RR'`, HTTP 200); Q2 (`cluster_ka`) **pending** —
+  die Gaia-TAP trägt keine Cluster-Tabelle.
   Träger: `phi/blocked_sources.φ::gap:astrometry-reader ×7`, `phi/blocked_sources.φ::gap:curation ×2`.
 
 ### pradan_ch2-Reader-Arm — roher ISRO-Zip ohne `format`
@@ -214,9 +218,10 @@ Origin: mountain folge229.
 ## LOCK
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82):
-  den `complex_te_probe` um den Detrend-along-p-Arm und den CMI/pTE-mit-p-Kovariate-Arm
-  erweitern (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf **lokal/silent**,
-  **nie in CI** (NSE-Daten bleiben im Haus). Träger `state/mountain/kuprat-complex-te/`.
-  Step: Probe bauen, `--selftest` grün, dann der Sweep; `no statement`/`pending` bleiben
-  erlaubte Ergebnisse (0 honored). Der private Wort-Laut nur im privaten
-  `state/operator-gespraeche/`.
+  `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern
+  (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf **lokal/silent**, **nie in CI**
+  (NSE-Daten bleiben im Haus). Träger `state/mountain/kuprat-complex-te/`. **Gebaut (privat):**
+  beide Arme, `--selftest` grün; offen: der Sweep. **Riss:** die KDE-CMI verliert Power bei großer
+  Kovariat-Varianz (Bandbreiten-Blähung) — der Detrend-Arm trägt den steilen Fall, der
+  Conditional-Arm den milden. `no statement`/`pending` bleiben erlaubte Ergebnisse (0 honored).
+  Der private Wort-Laut nur im privaten `state/operator-gespraeche/`.
