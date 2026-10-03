@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   version: 1
-  sha256: 0e2d4d21559e393d936a5aeea5c9bb5b56354b97419bf3cf2d5c8f275e5bc95d
+  sha256: ac51f42e2b4e71db2286bdd87d9551546a50a376057d9670e42845ddbd6bc6d1
   status: live
   see-also: docs/paper/ docs/granit.md
 -->
@@ -267,5 +267,5 @@ gemessen — nie erzeugt — wurde.
 
 ***
 
-*Dieses Konzept trägt seine eigene Messlatte. Sein `sha256` wird gesetzt,
-sobald sein Body final ist — nicht früher.*
+*Dieses Konzept trägt seine eigene Messlatte. Sein `sha256` steht im Header —
+der Body ist final.*
