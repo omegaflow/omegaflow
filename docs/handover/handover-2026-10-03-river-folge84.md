@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: c1b32c1d1701b9bece59bc2c5f3b5d51d500b7009d60f297aee7367d53ff0bda
+  sha256: f773938e506014de47f880eea9f968022084b345edb371fe9a92aab90fe63736
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -71,7 +71,7 @@ Wort | Datum | Quelle
   2026-10-03**: das Gate-Survey `docs/surveys/survey-2026-10-03-exzellenz-gate.md` nennt die
   Papers, die den Maßstab tragen, und die Verstöße; der sha-Riss (`:270`) und der
   „15 Papers"-Alt-Zähler (`:20`/`:189`) sind geheilt (Header-sha `738e1cd8…`). Offen: die
-  2.8/2.10-Risse (see-also, `tools/work`-Codepfade) und die 2.9-Verdiktswörter je Träger.
+  2.8/2.10-Risse (see-also, verschobene Codepfade) und die 2.9-Verdiktswörter je Träger.
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (`class: survey`) — die Anwendung des
   Exzellenz-Maßstabs auf die Papers (zwei read-only Taucher, HEAD `29993494b`); Träger der
   Verstöße bis zur Heilung.
