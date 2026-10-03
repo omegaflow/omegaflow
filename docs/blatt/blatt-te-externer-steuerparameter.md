@@ -1,5 +1,5 @@
 <!--
-  title: Blatt — Transfer-Entropie über einen externen Steuerparameter (Wohlgestelltheit, Null, Ersatzmaß)
+  title: Blatt — Transfer-Entropie über einen externen Steuerparameter
   class: sheet
   date: 2026-10-02
   sha256: 596553e1860b1f2b69b6218cb53f9c81c3f1d95c2df37c871d0da991f54907ef
