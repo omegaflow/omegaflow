@@ -29,6 +29,26 @@ jobs:
           ts=$(date -u +%Y%m%dT%H%M%SZ)
           curl -fsS "https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json" -o "$d/rtsw_mag_1m-$ts.json"
           curl -fsS "https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json" -o "$d/rtsw_wind_1m-$ts.json"
+      - name: Fetch the sealed trajectory arc for the chosen line
+        run: |
+          d=data/ssd.jpl.nasa.gov
+          mkdir -p "$d"
+          base=https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris
+          case "${{ inputs.line }}" in
+            official)
+              curl -fsSL "$base/ephemeris_juice_official.bin" -o "$d/ephemeris_juice.bin"
+              ;;
+            renewed)
+              curl -fsSL "$base/ephemeris_juice_renewed.bin" -o "$d/ephemeris_juice_renewed.bin"
+              ;;
+            postflight)
+              curl -fsSL "$base/ephemeris_juice.bin" -o "$d/ephemeris_juice_postflight.bin"
+              ;;
+            *)
+              echo "line '${{ inputs.line }}' names no official|renewed|postflight" >&2
+              exit 2
+              ;;
+          esac
       - name: Run the JUICE flyby path-2 fill (perigee ±12 h)
         run: |
           {
