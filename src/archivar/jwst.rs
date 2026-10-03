@@ -133,7 +133,7 @@ pub fn collect_table(t: &FitsTable, bytes: &[u8]) -> Option<TablePickup> {
     })
 }
 
-fn median(vals: &mut Vec<f64>) -> f64 {
+fn median(vals: &mut [f64]) -> f64 {
     vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
     let n = vals.len();
     if n % 2 == 1 {
@@ -153,10 +153,10 @@ pub fn reduce_table(pickup: TablePickup, name: &str) -> Option<Vec<(f64, f64)>> 
         }
         let mut vals = Vec::with_capacity(pickup.flux_rows.len());
         for (r, f) in pickup.flux_rows.iter().enumerate() {
-            if let Some(Some(dq)) = pickup.dq_rows.get(r) {
-                if dq[i] & 1 != 0 {
-                    continue;
-                }
+            if let Some(Some(dq)) = pickup.dq_rows.get(r)
+                && dq[i] & 1 != 0
+            {
+                continue;
             }
             let v = f[i];
             if v.is_finite() && v > 0.0 {
@@ -185,10 +185,10 @@ pub fn fits_spectrum_rows(bytes: &[u8], name: &str) -> Option<Vec<(f64, f64)>> {
         let Some((t, next)) = FitsTable::parse(bytes, off) else {
             break;
         };
-        if let Some(pickup) = collect_table(&t, bytes) {
-            if let Some(reduced) = reduce_table(pickup, name) {
-                all.extend(reduced);
-            }
+        if let Some(pickup) = collect_table(&t, bytes)
+            && let Some(reduced) = reduce_table(pickup, name)
+        {
+            all.extend(reduced);
         }
         off = next;
     }
