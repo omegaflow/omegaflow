@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: db6ec40f76c18d75570a0259d385256bf232397194e3ec59eb215968a95f7617
+  sha256: cc5f4733363f29f9824ab4820141780be920492cd9adc16e12d5853e6ad6193d
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -49,24 +49,27 @@ Wort | Datum | Quelle
 - `docs/blatt/fruehwarnsystem-praeregistrierung.md` (`class: sheet`, `status: unsealed`) —
   GIC/Bz-Vorhersagezelle; die α-Ebene wartet auf die kalibrierte Westfall–Young-max-T-Null
   (`docs/specs/broken-null-control.md`). Gemessen 2026-10-03: `wy-max-t 36867148250`
-  **cancelled** (2026-10-01T21:42Z), kein neuerer Lauf — die Null ist nicht gelandet.
-  Nächster Schritt: `wy-max-t` neu dispatchen, dann α/X/Z/Bz benennen; das Siegel setzt
-  der Operator (kein Siegel ohne Operator-Wort).
+  **cancelled** (2026-10-01T21:42Z; `selftest` success, die drei `wy`-Jobs
+  sod-2024/abk-2025/abk-2024 extern cancelled) — die Null war nicht gelandet. **Neu
+  angestoßen 2026-10-03: `wy-max-t 37114779681`** (Trigger = Lauf-Ende). Danach α/X/Z/Bz
+  benennen; das Siegel setzt der Operator (kein Siegel ohne Operator-Wort).
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` (`class: paper`) — Path-2-Fill-Run am
-  JUICE-Perigäum (2026-09-28, Fenster 22:41:53Z→23:01:08Z). Offen: tube-Register swarm
-  cell 25 (Bin-Fix), OMNI2 alle 26 Zellen (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def`
-  (finale GFZ-Freigabe), Δ/σ_recon (post-flyby SPK + Kovarianz fehlt). Nächster Schritt:
-  `flyby-path2-fill.yml` (Rivers benannter Schritt) nach dem Seal; `flyby_ephemeris_gate --recon`
-  sobald ESA/ESOC publiziert.
+  JUICE-Perigäum (2026-09-28, Fenster 22:41:53Z→23:01:08Z). Der CI-Fill
+  (`flyby-path2-fill.yml`) lief nach dem Seal; der 2026-09-30-Refill füllte die swarm-Zellen
+  16–24. Offen (trigger-/fristgebunden, kein Dispatch): tube-Register swarm cell 25 (Bin-Fix
+  des HAPI-fetch-stop), OMNI2 26 Zellen (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` (finale
+  GFZ-Freigabe), Δ/σ_recon (post-flyby SPK + Kovarianz). `flyby_ephemeris_gate --recon` sobald
+  ESA/ESOC publiziert.
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (`class: survey`) —
   Membran-Ladearchitektur (Presence-Hülle, Enclosure, Lichtkegel); der eine Satz: nicht der
   ganze Katalog, nur die Presence-Hülle darf laden. Offen: `--arxiv`/`--brave` pending
   (HTTP 406/402); `bounded_cells 0` entschieden (Aufruf-Artefakt, kein Riss). Nächster
   Schritt: bei Änderung des Membran-Pfads neu messen.
 - `docs/concepts/exzellenz-konzept.md` (`class: concept`, `version: 1`) — Prüfmaßstab vor
-  Veröffentlichung (10 Stufen + 5 Ehren-Stufen + externe Verifikation). Riss: `:69` „sein Body
-  ist final" gegen `:270` „sha256 wird gesetzt, sobald sein Body final ist" — der Header-sha
-  steht bereits. Nächster Schritt: den Maßstab auf die Papers anwenden, den sha-Widerspruch heilen.
+  Veröffentlichung (10 Stufen + 5 Ehren-Stufen + externe Verifikation). Der sha-Riss ist
+  **geheilt** (2026-10-03): `:270` sagte „wird gesetzt, sobald der Body final ist", der Body
+  ist final und der Header-sha steht; die Schlusszeile jetzt präsentisch, Header-sha
+  `ac51f42e…`. Offen: den Maßstab auf die Papers anwenden.
 
 ## Offen (aufgeschlüsselt)
 
@@ -115,7 +118,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/mathematikerin/machines/tests.rs`
 - `docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md`, `docs/blatt/blatt-te-externer-steuerparameter.md`
+- `docs/concepts/exzellenz-konzept.md`
 - `docs/handover/archiv/handover-2026-10-02-river-folge83.md` (Move aus `docs/handover/`)
 - `docs/handover/handover-2026-10-03-river-folge84.md`
 
-## Burn: open 0.0027 · close 0.0154 · cap 0.50 — Grund: River-84 — OMX3-Testmagie geheilt, Blatt-Titel ≤75, matrix-rotor-Ursache als Runner-Shutdown gemessen (gemessen `session_burn`, River-Session)
+## Burn: open 0.0027 · close 0.0154 · cap 0.50 — Grund: River-84 — OMX3-Testmagie, Blatt-Titel ≤75, matrix-rotor-Ursache, vier Träger-Dokumente gefaltet, exzellenz-sha-Riss geheilt, wy-max-t angestoßen (gemessen `session_burn`, River-Session)
