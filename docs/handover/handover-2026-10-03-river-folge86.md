@@ -3,7 +3,7 @@
   session: River-Folge 86
   class: handover
   date: 2026-10-03
-  sha256: 5e355ebfa602c3682d023bcfed78f99afa17f4f1916e7e0d44e5cfc6925d371b
+  sha256: 25fd86ad6095acc8fdd9fbf017afb5c7b749aca9f1ebb3134f3d580362500990
   status: live
 -->
 # Handover — River-Folge 86 (2026-10-03)
@@ -57,7 +57,7 @@ Wort | Datum | Quelle
 
 ### fruehwarnsystem α-Ebene — wartet auf die wy-max-t-Null
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `wy-max-t 37133825315` (re-dispatched 2026-10-03T15:26Z).
+- **Trigger:** Lauf-Ende `wy-max-t 37135385236` (zentrierte Skala, dispatched 2026-10-03).
 - **Lage:** (gemessen 2026-10-03 via `ci_manage jobs 37114779681` + gh-Run-API) die
   letzten fünf Läufe endeten `cancelled` (`36843561883`, `36867148250`, `36943967388`,
   `36987592993`, `37114779681`); im letzten Lauf war `wy-selftest` success, alle
@@ -70,7 +70,7 @@ Wort | Datum | Quelle
 
 ### GIC kalibrierte Null — studentisierte Westfall–Young max-T
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `bz-yearly-maxt 37118991157` (in Arbeit) und `wy-max-t 37133825315`.
+- **Trigger:** Lauf-Ende `bz-yearly-maxt 37135387518` und `wy-max-t 37135385236` (zentrierte Skala).
 - **Lage:** (gemessen 2026-10-03 via `ci_manage jobs 37118991157`) drei Jobs
   `in_progress` (sod-2024, abk-2024, abk-2025), B = 10⁴; die Konstruktion steht
   (`src/mathematikerin/wy_max_t.rs`, `bz_retro_probe.rs --null max-t`). Baum-Messung
@@ -178,9 +178,9 @@ Wort | Datum | Quelle
   3. **`pair_lag_index_hash` baum-geprüft:** die lag-0/1-Faltung ist die dokumentierte
      Identität (Paper §3.1), kein Code-Defekt.
 - **Blockade:** keine.
-- **Braucht:** nach dem Push `wy-max-t`/`bz-yearly-maxt` auf der zentrierten Skala dispatchen;
-  die Läufe `37118991157`/`37133825315` sind die ersten Zeugen auf der alten `v/σ`-Skala —
-  benannt, kein Riss.
+- **Braucht:** die zentrierten Läufe `wy-max-t 37135385236` + `bz-yearly-maxt 37135387518`
+  nach Lauf-Ende lesen; die alten Läufe `37118991157`/`37133825315` bleiben die ersten Zeugen
+  auf der `v/σ`-Skala — benannt, kein Riss.
 
 ### `n_eff`-Gate — Diagnose + vorabregistriertes Power-Gate
 - **Status:** wartend | **Bindung:** eigen
