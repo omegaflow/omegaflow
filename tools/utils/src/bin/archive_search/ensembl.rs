@@ -1,35 +1,43 @@
 use crate::json;
 use crate::net::{get, urlencode};
 
-const ENDPOINT: &str = "https://www.ebi.ac.uk/ebisearch/ws/rest/ensembl";
+const XREFS: &str = "https://rest.ensembl.org/xrefs/symbol/homo_sapiens";
+const LOOKUP: &str = "https://rest.ensembl.org/lookup/id";
 
 pub fn ensembl_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!("{XREFS}/{}?content-type=application/json", urlencode(query));
+    let mut out = match get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => parse_xrefs(&f.body),
+        Some(f) => return vec![format!("pending — ensembl HTTP {}", f.status_text())],
+        None => return vec!["pending — no network".to_string()],
+    };
+    if out.is_empty() {
+        out = lookup_lines(query);
+    }
+    if out.is_empty() {
+        return vec![format!("absent — ensembl carries no entry: {}", query)];
+    }
+    out.truncate(max);
+    out
+}
+
+fn lookup_lines(query: &str) -> Vec<String> {
     let url = format!(
-        "{}?query={}&format=json&size={}",
-        ENDPOINT,
-        urlencode(query),
-        max
+        "{LOOKUP}/{}?content-type=application/json",
+        urlencode(query)
     );
     match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => {
-            let out = parse_ensembl(&f.body);
-            if out.is_empty() {
-                vec![format!("absent — ensembl carries no entry: {}", query)]
-            } else {
-                out
-            }
-        }
-        Some(f) => vec![format!("pending — ensembl HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        Some(f) if f.status == Some(200) => parse_lookup(&f.body),
+        _ => Vec::new(),
     }
 }
 
-fn parse_ensembl(body: &str) -> Vec<String> {
+fn parse_xrefs(body: &str) -> Vec<String> {
     let mut out = Vec::new();
     let Some(v) = json::parse(body) else {
         return out;
     };
-    let Some(entries) = v.get("entries").and_then(|e| e.as_arr()) else {
+    let Some(entries) = v.as_arr() else {
         return out;
     };
     for entry in entries {
@@ -37,7 +45,7 @@ fn parse_ensembl(body: &str) -> Vec<String> {
             continue;
         };
         let mut line = format!("url https://www.ensembl.org/id/{}", id);
-        if let Some(source) = entry.get("source").and_then(|s| s.as_str()) {
+        if let Some(source) = entry.get("type").and_then(|s| s.as_str()) {
             line.push_str(&format!("\tsource: {}", source));
         }
         out.push(line);
@@ -45,24 +53,50 @@ fn parse_ensembl(body: &str) -> Vec<String> {
     out
 }
 
+fn parse_lookup(body: &str) -> Vec<String> {
+    let Some(v) = json::parse(body) else {
+        return Vec::new();
+    };
+    let Some(id) = v.get("id").and_then(|i| i.as_str()) else {
+        return Vec::new();
+    };
+    let mut line = format!("url https://www.ensembl.org/id/{}", id);
+    if let Some(source) = v.get("biotype").and_then(|s| s.as_str()) {
+        line.push_str(&format!("\tsource: {}", source));
+    }
+    vec![line]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn reads_the_entry_fields() {
-        let body =
-            r#"{"hitCount":1979,"entries":[{"id":"ENSG00000139618","source":"ensembl_gene"}]}"#;
+    fn reads_the_xref_fields() {
+        let body = r#"[{"id":"ENSG00000141510","type":"gene"},{"id":"LRG_321","type":"gene"}]"#;
         assert_eq!(
-            parse_ensembl(body),
+            parse_xrefs(body),
             vec![
-                "url https://www.ensembl.org/id/ENSG00000139618\tsource: ensembl_gene".to_string()
+                "url https://www.ensembl.org/id/ENSG00000141510\tsource: gene".to_string(),
+                "url https://www.ensembl.org/id/LRG_321\tsource: gene".to_string()
             ]
         );
     }
 
     #[test]
-    fn an_entry_without_an_id_carries_nothing() {
-        assert!(parse_ensembl(r#"{"entries":[{"source":"ensembl_gene"}]}"#).is_empty());
+    fn an_xref_without_an_id_carries_nothing() {
+        assert!(parse_xrefs(r#"[{"type":"gene"}]"#).is_empty());
+    }
+
+    #[test]
+    fn reads_the_lookup_id_and_biotype() {
+        let body = r#"{"id":"ENSG00000141510","display_name":"TP53","biotype":"protein_coding"}"#;
+        assert_eq!(
+            parse_lookup(body),
+            vec![
+                "url https://www.ensembl.org/id/ENSG00000141510\tsource: protein_coding"
+                    .to_string()
+            ]
+        );
     }
 }
