@@ -8,9 +8,12 @@ use omegaflow::archivar::{
     series_rows,
 };
 use omegaflow::lsk::days_from_civil;
-use omegaflow::mathematikerin::wy_max_t::{Member, observed_family};
+use omegaflow::mathematikerin::wy_max_t::{
+    Member, ResampleMode, null_matrix, null_means_per_statistic, observed_family, phase_data,
+    quantile, sigma_per_statistic, studentized_maxima,
+};
 use omegaflow::te::{
-    conditional_embedded_te_phase, surrogate_max_phase_n, surrogate_stats_phase_n,
+    conditional_embedded_te_phase, kde_n_eff, surrogate_max_phase_n, surrogate_stats_phase_n,
 };
 
 const MONTH_S: f64 = 2_592_000.0;
@@ -18,6 +21,8 @@ const CAL_MONTHS: usize = 12;
 const CLIMATOLOGY_FLOOR: usize = 10;
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const TE_FLOOR: usize = 8;
+const MAXT_ALPHA: f64 = 0.05;
+const MAXT_N_CAP: usize = 2000;
 
 const REC_FAM: f64 = 2.9610e-1;
 const REC_D2T_WORD: &str = "silent";
@@ -1253,6 +1258,16 @@ struct Direction {
     best_te: Option<f64>,
 }
 
+struct MaxT {
+    replicas: usize,
+    finite: usize,
+    quantile: f64,
+    observed_max: Option<f64>,
+    clears: bool,
+    mde: Vec<Option<f64>>,
+    n_eff: Vec<Option<f64>>,
+}
+
 struct QueryResult {
     n_paired: usize,
     fam: Option<f64>,
@@ -1261,6 +1276,7 @@ struct QueryResult {
     d2t: Direction,
     t2d: Direction,
     cte: Option<(f64, f64)>,
+    maxt: Option<MaxT>,
 }
 
 fn direction_of(rows: &[LagRow], d2t: bool, fam: Option<f64>) -> Direction {
@@ -1301,10 +1317,74 @@ fn direction_of(rows: &[LagRow], d2t: bool, fam: Option<f64>) -> Direction {
     }
 }
 
+fn compute_max_t(
+    members: &[Member],
+    observed: &[Option<f64>],
+    times_s: &[f64],
+    block: usize,
+    surrogates: usize,
+) -> Option<MaxT> {
+    let n = times_s.len();
+    if n == 0 || n > MAXT_N_CAP || surrogates < 2 {
+        return None;
+    }
+    let phase = phase_data(times_s);
+    let threads = std::thread::available_parallelism().map_or(1, |p| p.get());
+    let nulls = null_matrix(
+        members,
+        0..surrogates,
+        block,
+        ResampleMode::Driver,
+        SURROGATE_SEED,
+        threads,
+        &phase,
+    );
+    let sigma = sigma_per_statistic(&nulls);
+    let means = null_means_per_statistic(&nulls);
+    let stud = studentized_maxima(&nulls, &means, &sigma);
+    let mut finite: Vec<f64> = stud.iter().copied().filter(|v| v.is_finite()).collect();
+    finite.sort_by(|a, b| a.total_cmp(b));
+    let quantile_v = quantile(&finite, MAXT_ALPHA)?;
+    let obs_stud: Vec<Option<f64>> = observed
+        .iter()
+        .enumerate()
+        .map(|(mi, o)| {
+            let mu = means.get(mi).copied().flatten()?;
+            let s = sigma.get(mi).copied().flatten()?;
+            Some(((*o)? - mu) / s)
+        })
+        .collect();
+    let raw_max = obs_stud
+        .iter()
+        .flatten()
+        .copied()
+        .fold(f64::NEG_INFINITY, f64::max);
+    let observed_max = raw_max.is_finite().then_some(raw_max);
+    let mde: Vec<Option<f64>> = sigma
+        .iter()
+        .map(|s| s.map(|sig| quantile_v * sig))
+        .collect();
+    let n_eff: Vec<Option<f64>> = members
+        .iter()
+        .map(|m| kde_n_eff(&m.target, &m.driver, m.lag))
+        .collect();
+    Some(MaxT {
+        replicas: surrogates,
+        finite: finite.len(),
+        quantile: quantile_v,
+        observed_max,
+        clears: observed_max.is_some_and(|v| v > quantile_v),
+        mde,
+        n_eff,
+    })
+}
+
 fn analyze(
     desc: &Descriptor,
     target_s: &[f32],
     driver_s: &[f32],
+    times_s: &[f64],
+    block: usize,
     cond_triple: Option<(&[f32], &[f32], &[f32])>,
     fam_override: Option<f64>,
 ) -> QueryResult {
@@ -1329,6 +1409,7 @@ fn analyze(
         meta.push((lag, false));
     }
     let observed = observed_family(&members);
+    let maxt = compute_max_t(&members, &observed, times_s, block, desc.surrogate);
 
     let mut rows: Vec<LagRow> = Vec::with_capacity(desc.lags.len());
     for &lag in &desc.lags {
@@ -1386,6 +1467,7 @@ fn analyze(
         d2t,
         t2d,
         cte,
+        maxt,
     }
 }
 
@@ -1426,6 +1508,34 @@ fn print_result(result: &QueryResult, desc: &Descriptor) {
             "core family bound over the declared arms = {}",
             fmt_opt(result.fam_core)
         );
+    }
+    match &result.maxt {
+        Some(mt) => {
+            println!(
+                "studentized max-T null (bucket resample, B = {}): {} finite | (1 - alpha) quantile = {}",
+                mt.replicas,
+                mt.finite,
+                fmt_opt(Some(mt.quantile))
+            );
+            println!(
+                "observed studentized family maximum = {} | clears quantile: {}",
+                fmt_opt(mt.observed_max),
+                mt.clears
+            );
+            for (i, &lag) in desc.lags.iter().enumerate() {
+                for (dir, mi) in [("driver->target", 2 * i), ("target->driver", 2 * i + 1)] {
+                    println!(
+                        "max-T {dir} | lag {lag} | n_eff {} | MDE {}",
+                        fmt_opt(mt.n_eff.get(mi).copied().flatten()),
+                        fmt_opt(mt.mde.get(mi).copied().flatten())
+                    );
+                }
+            }
+        }
+        None => println!(
+            "studentized max-T null: pending — no studentized bucket max-T null was measured (paired n = {} vs cap {MAXT_N_CAP}, B = {}); the phase-surrogate family bound stands",
+            result.n_paired, desc.surrogate
+        ),
     }
     println!(
         "driver -> target: {} | best lag {} | TE {}",
@@ -1590,10 +1700,29 @@ fn execute(
         );
         return None;
     }
+    let times_s: Vec<f64> = aligned
+        .grid
+        .iter()
+        .zip(aligned.target.iter())
+        .zip(aligned.driver.iter())
+        .filter_map(|((&t, a), b)| match (a, b) {
+            (Some(x), Some(y)) if x.is_finite() && y.is_finite() => Some(t),
+            _ => None,
+        })
+        .collect();
+    let block = if aligned.cadence_s <= 3600.0 { 24 } else { 1 };
     let cond_in = cond_triple
         .as_ref()
         .map(|(t, d, c)| (t.as_slice(), d.as_slice(), c.as_slice()));
-    let result = analyze(desc, &target_s, &driver_s, cond_in, fam_override);
+    let result = analyze(
+        desc,
+        &target_s,
+        &driver_s,
+        &times_s,
+        block,
+        cond_in,
+        fam_override,
+    );
     print_result(&result, desc);
     Some(result)
 }
@@ -1799,5 +1928,37 @@ fn main() {
         None => {
             println!("The query stays unmeasured; pending arms are named above. Exit 0.");
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn maxt_wiring_carries_a_finite_quantile_on_a_synthetic_month() {
+        let n = 480usize;
+        let epoch = 1_000_000_000.0f64;
+        let times: Vec<f64> = (0..n).map(|i| epoch + i as f64 * MONTH_S).collect();
+        let driver: Vec<f32> = (0..n).map(|i| (i as f32 * 0.31).sin()).collect();
+        let target: Vec<f32> = (0..n)
+            .map(|i| 0.5 * (i as f32 * 0.31).sin() + (i as f32 * 0.7).cos())
+            .collect();
+        let members = vec![
+            Member::new("d2t", 0, 1, target.clone(), driver.clone()),
+            Member::new("t2d", 1, 1, driver.clone(), target.clone()),
+        ];
+        let observed = observed_family(&members);
+        let maxt = compute_max_t(&members, &observed, &times, 1, 20)
+            .expect("the synthetic family carries a max-T null");
+        assert!(
+            maxt.quantile.is_finite(),
+            "the studentized max-T quantile must be finite"
+        );
+        assert_eq!(maxt.n_eff.len(), 2, "n_eff is carried per member");
+        assert!(
+            maxt.mde.iter().all(|m| m.is_some()),
+            "the MDE row carries a value per statistic with a finite sigma"
+        );
     }
 }

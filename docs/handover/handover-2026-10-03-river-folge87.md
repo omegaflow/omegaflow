@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: 98750d526f071ad14e73e73a4d7ca1eb238f6c080b1aad49bd918f0fa34917ad
+  sha256: 2b1fae54caebf742e6751d79a438726572abcbbcba1e570f80afb72528b9c115
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -59,14 +59,15 @@ Wort | Datum | Quelle
 ### fruehwarnsystem α-Ebene — wartet auf die wy-max-t-Null
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `wy-max-t 37135385236` (zentrierte Skala, dispatched 2026-10-03).
-- **Lage:** (gemessen 2026-10-03 via `ci_manage view 37135385236`) der Lauf steht
-  `pending` (queued @16:02Z, nie gestartet); die letzten fünf abgeschlossenen Läufe
-  endeten `cancelled`. Der Abbruch-Akteur ist `unread` —
-  `/tmp/opencode/ci_watchdog.log` trägt keine `cancel`-Zeile.
-- **Blockade:** die Null landet nicht; der neue Lauf hat noch nicht gestartet.
+- **Lage:** (gemessen 2026-10-03 via `ci_manage view/jobs`) die Concurrency-Gruppe
+  `wy-max-t` (`cancel-in-progress: false`) wurde vom Ghost-Lauf `37133825315` gehalten
+  (7 h alt gegen den 180-min-Job-Timeout, 2/3 Shards `cancelled`, `updated_at` 17:40Z
+  eingefroren); `37135385236` stand deshalb `pending`. Der Ghost ist gecancelt
+  (`cancelled`), der zentrierte Lauf steht jetzt `queued`.
+- **Blockade:** die Null entsteht erst im Lauf; er hat noch nicht gestartet.
 - **Braucht:** `ci_manage jobs 37135385236` + `ci_manage log 37135385236` nach Lauf-Ende;
-  bleibt der Lauf wieder cancelled, den Abbruch messen (Run-API) und die Shard-Größe
-  (3×3333 Permutationen je Punkt) prüfen.
+  bleibt der Lauf wieder in Shard-Cancel hängen, die Shard-Größe (3×3333 Permutationen
+  je Punkt) prüfen — Workflow-Domäne ist formal Mycelium.
 
 ### GIC kalibrierte Null — studentisierte Westfall–Young max-T
 - **Status:** wartend | **Bindung:** eigen
@@ -94,9 +95,9 @@ Wort | Datum | Quelle
   `gate_kde_n_eff_scales_with_pairs_and_bandwidth` (te.rs). `cargo check` 0/0.
 - **Blockade:** die Schwelle entsteht erst aus dem ersten n_eff-druckenden Lauf.
 - **Braucht:** den nächsten `wy-max-t`/`bz-yearly-maxt`-Lauf lesen und die Schwelle
-  aus der gemessenen `n_eff`-Verteilung ableiten, nie per Dekret (Rat + z.ai). Der
-  `field_te_query`-Arm (conditional-embedded TE) trägt noch keine n_eff-Zeile → siehe
-  eigenen Punkt.
+  aus der gemessenen `n_eff`-Verteilung ableiten, nie per Dekret (Rat + z.ai). Die
+  `field_te_query`-Zeile ist verdrahtet: `compute_max_t` druckt `kde_n_eff` + MDE je
+  Member (siehe Lage).
 
 ### TE-Estimator-Bias-Korrektur
 - **Status:** wartend | **Bindung:** eigen
@@ -106,16 +107,6 @@ Wort | Datum | Quelle
   ist als Konstruktion offen (Rat + z.ai).
 - **Blockade:** Konstruktions-Entscheidung hängt am `n_eff`-Gate.
 - **Braucht:** die Korrektur bauen, sobald die `n_eff`-Diagnose im Lauf steht.
-
-### `field_te_query` als Konsument der max-T-Null + n_eff-Zeile
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** gebaute `wy_max_t`-Bucket-`null_matrix`.
-- **Lage:** (gemessen 2026-10-03 via `sgrep`) `field_te_query.rs` ruft
-  `conditional_embedded_te_phase` (`:1378`), nicht den `wy_max_t`-Pfad; die
-  studentisierte max-T-Null und `kde_n_eff` sind dort nicht verdrahtet.
-- **Blockade:** eigener Atom (saisonaler Bucket-`null_matrix` für den conditional-embedded Arm).
-- **Braucht:** die max-T-Null in `field_te_query` verdrahten und eine `n_eff`-Zeile für den
-  conditional-embedded Pfad ergänzen.
 
 ### Flyby-Path-2 — Trajektorien-Riss, Tube nicht gebaut
 - **Status:** wartend | **Bindung:** eigen
@@ -218,6 +209,12 @@ Origin: river folge87.
   `tools/measure/src/bin/enso_blatt_probe.rs:475` formatiert. `cargo check` 0/0,
   `cargo build -p omegaflow-measure --bin {wy_max_t_probe,bz_retro_probe,enso_blatt_probe}`
   grün. Nach dem Push läuft `ci-gate` neu — bitte den Lauf lesen.
+- **`wy-max-t` — Pending-Grund gemessen und gelöst.** Die Concurrency-Gruppe
+  (`cancel-in-progress: false`) wurde vom Ghost `37133825315` gehalten (7 h alt,
+  Timeout 180 min, 2/3 Shards `cancelled`, `updated_at` 17:40Z eingefroren); der
+  zentrierte `37135385236` stand `pending`. Der Ghost ist gecancelt, der zentrierte
+  Lauf `queued`. **Braucht:** den Lauf lesen; bleibt er wieder in Shard-Cancel hängen,
+  die Shard-Größe (3×3333 je Punkt) prüfen — die Workflow-Domäne ist formal dein.
 - **`nvss-cdn` — Post-Fix-Lauf rot, Punkt gehört ins CDN.** Gemessen 2026-10-03:
   `nvss-cdn 37116852558` (head `73b6e9cd1`) = `failure`; `tap_compiler` gegen
   `tapvizier.cds.unistra.fr` meldet dreimal `uws job phase ERROR — the query stays
@@ -237,8 +234,9 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `src/mathematikerin/wy_max_t.rs`
 - `tools/measure/src/bin/wy_max_t_probe.rs`
 - `tools/measure/src/bin/bz_retro_probe.rs`
+- `tools/measure/src/bin/field_te_query.rs`
 - `tools/measure/src/bin/enso_blatt_probe.rs`
 - `docs/handover/handover-2026-10-03-river-folge87.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge86.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0000 · close 0.0424 · cap 0.50 — Grund: River-87 (ein Atom) — die vier `wy_max_t`-clippy-Lints + `enso_blatt_probe`-Format geheilt (cargo check 0/0, measure-Bins grün); `te::kde_n_eff` + MDE-Zeile + Gate-Test gebaut; Reader-Arm-Adressen (mountain) gefaltet. `close` = Line-Session (gemessen `session_burn`, $0.0424).
+## Burn: open 0.0000 · close 0.0921 · cap 0.50 — Grund: River-87 (ein Atom) — die vier `wy_max_t`-clippy-Lints + `enso_blatt_probe`-Format geheilt (cargo check 0/0, measure-Bins grün); `te::kde_n_eff` + MDE-Zeile + Gate-Test gebaut; `field_te_query` mit dem studentisierten Bucket-max-T-Null + n_eff/MDE-Zeile verdrahtet (`compute_max_t`, Gate-Test); der `wy-max-t`-Pending als Concurrency-Ghost gemessen und gecancelt (zentrierter Lauf `queued`); Reader-Arm-Adressen (mountain) gefaltet. `close` = Line-Session (gemessen `session_burn`, $0.0921).
