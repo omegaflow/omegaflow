@@ -2,7 +2,7 @@
   title: The solar-cycle dynamo: transfer entropy to the activity index
   class: paper
   date: 2026-08-22
-  sha256: 56e480ca75845ddc27bcaf5dd2bf79863d4e3fd64241d74ea5d87d879c013f0d
+  sha256: e42e2b7ae98e49f26a305aa48787f870fa9f8f83800dbc5407ffa735d2ed6997
   fam-machine: post-fix
   status: live
   see-also: docs/paper/corona-heating-ladder.md
@@ -41,7 +41,7 @@ What remained unmeasured are the two *internal* signatures — the interior
 (GONG mode frequencies) and the polar field (the Vorläufer relation) — which
 is the commission this paper reports. The physical questions are specific.
 Does the interior carry the activity: does the p-mode frequency shift lead
-F10.7, as the interior field building toward maximum should precede the
+F10.7, as the interior field building toward maximum precedes the
 surface eruption? And does the old polar field carry the next cycle: does
 the polar field at minimum lead F10.7 by the ~5–6 year Vorläufer lag
 (Svalgaard, Cliver & Kamide, 2005; Muñoz-Jaramillo et al., 2013)?
@@ -50,7 +50,7 @@ Both measurements are reported exactly as the machine measured them,
 including the silent verdicts (0 honored). The cadences are monthly, the
 null is phase-randomized, and the bound is the family bound (the strongest
 surrogate of the whole round). Three and 4.5 cycles respectively are
-statistically thin; a silent result is the honest answer, not a failed one.
+statistically thin; a silent result is the honest answer, not a deficiency.
 
 ## 2. Data
 
@@ -363,7 +363,7 @@ is not a single-instrument artefact. The factor of ~4.5–5.5 (HMI larger) is a
 systematic scale difference, not noise: HMI measures the *radial* field over a
 60° cap with no line saturation, while WSO measures the *line-of-sight* field
 in a polemost aperture and carries the unapplied ~1.8× saturation factor, so a
-constant factor larger than unity is expected; the near-zero OLS intercept
+constant factor larger than unity follows; the near-zero OLS intercept
 confirms it is a pure scale offset. The prior r = 0.86/factor ~1 number
 (Kutsenko & Abramenko 2016) is the solar *mean* magnetic field, not the polar
 field — the polar-field cross-instrument number is reported here for the first
@@ -385,7 +385,7 @@ field at minimum leads the next cycle's activity by ~5–6 years — predicts a
 TE(P→F) arrow at lag 60–72 months. The peak does land there, at 70 months.
 But it does not clear the phase-randomized family bound, and the bound is
 inflated at exactly that lag by the KDE sweep artefact (m = n − τ shrinks
-from 603 to 531 across the sweep), so the coincidence cannot be read as a
+from 603 to 531 across the sweep), so the coincidence is not read as a
 finding. The stronger direction at every lag is TE(F→P) — the activity
 carrying information about the polar field's future — which is the reverse
 of the predictor relation and also silent.
@@ -397,7 +397,7 @@ entire cycle-shared envelope. Second, the confound: all three series —
 frequency shift, polar field, activity — are driven by the same cycle, so
 the *directional* residual is what remains after a large common component,
 and the phase-randomized null preserves the spectrum of that common
-component. A real but weak lead would be exactly what this grain cannot
+component. A real but weak lead would be exactly what this grain does not
 resolve.
 
 **What is measured, not what was hoped.** The measurements close two open
@@ -456,7 +456,7 @@ step for a physical jump.
   instrument on the same three interior cycles, not a fourth), 603 WSO months
   and seven tidal cycles — three or four realizations each, at most. A
   transfer-entropy measurement of a cycle-scale lead needs more realizations
-  than this; the null cannot be tightened without more data.
+  than this; the null is not tightened without more data.
 - **The family bound at high lag.** The bound is the strongest surrogate of
   the round, and it grows with the lag through the sweep artefact; the
   honest read is therefore "no arrow anywhere", not "close at 70 months".
@@ -520,15 +520,15 @@ series that a future observer will inherit.
 
 *Data and code:* the harvests, probes and register live in the omegaflow
 repository — `src/archivar/lzw.rs` (std-only Unix-compress decoder), `src/archivar/gong_series.rs`
-(GTS1 bin), `tools/work/src/bin/gong_series_compiler.rs`, `tools/work/src/bin/gong_cycle_probe.rs`;
-`src/archivar/bison_shift.rs` (BSN1 bin), `tools/work/src/bin/bison_shift_compiler.rs`,
-`tools/work/src/bin/bison_cycle_probe.rs`; `src/archivar/bison_basu.rs` (BSN2 bin),
-`tools/work/src/bin/bison_basu_compiler.rs` (Fig.-2 vector extraction),
-`tools/work/src/bin/bison_basu_probe.rs`; `src/archivar/wso_polar.rs` (WSP1 bin),
-`tools/work/src/bin/wso_polar_compiler.rs`, `tools/work/src/bin/wso_cycle_probe.rs`;
-`src/archivar/hmi_polar.rs` (HMP1 bin), `tools/work/src/bin/hmi_polar_compiler.rs`,
-`tools/work/src/bin/wso_hmi_consistency.rs`, `tools/work/src/bin/hmi_cycle_probe.rs`; the planetary
-driver `tools/work/src/bin/solar_cycle_probe.rs`; the canonical scalar estimator
+(GTS1 bin), `tools/harvest/src/bin/gong_series_compiler.rs`, `tools/measure/src/bin/gong_cycle_probe.rs`;
+`src/archivar/bison_shift.rs` (BSN1 bin), `tools/harvest/src/bin/bison_shift_compiler.rs`,
+`tools/measure/src/bin/bison_cycle_probe.rs`; `src/archivar/bison_basu.rs` (BSN2 bin),
+`tools/harvest/src/bin/bison_basu_compiler.rs` (Fig.-2 vector extraction),
+`tools/measure/src/bin/bison_basu_probe.rs`; `src/archivar/wso_polar.rs` (WSP1 bin),
+`tools/harvest/src/bin/wso_polar_compiler.rs`, `tools/measure/src/bin/wso_cycle_probe.rs`;
+`src/archivar/hmi_polar.rs` (HMP1 bin), `tools/harvest/src/bin/hmi_polar_compiler.rs`,
+`tools/measure/src/bin/wso_hmi_consistency.rs`, `tools/measure/src/bin/hmi_cycle_probe.rs`; the planetary
+driver `tools/measure/src/bin/solar_cycle_probe.rs`; the canonical scalar estimator
 `src/mathematikerin/te.rs` is untouched, the Takens-embedded estimator (`topological_te_phase`)
 is its CPU reference. Both harvests are wired into the CI sun job with an
 asset guard. All verdicts are machine-measured; the register language of the
