@@ -19,6 +19,16 @@ pub fn silverman(v: &[f32]) -> Option<f64> {
     Some(1.06 * var.sqrt() * n.powf(-0.2))
 }
 
+pub fn kde_n_eff(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
+    let pairs = x.len().checked_sub(lag)?;
+    if pairs < 8 {
+        return None;
+    }
+    let hx = silverman(x)?;
+    let hy = silverman(y)?;
+    Some(pairs as f64 * hx * hx * hy)
+}
+
 pub fn transfer_entropy(x: &[f32], y: &[f32]) -> Option<f64> {
     let n = x.len();
     if n < 8 {
@@ -3838,6 +3848,28 @@ mod tests {
             te.abs() < 0.05,
             "independent TE should be near zero, got {}",
             te
+        );
+    }
+
+    #[test]
+    fn gate_kde_n_eff_scales_with_pairs_and_bandwidth() {
+        let n = 400;
+        let x: Vec<f32> = (0..n).map(|t| (t as f32 * 0.37).sin()).collect();
+        let y: Vec<f32> = (0..n).map(|t| (t as f32 * 0.71).cos()).collect();
+        let full = kde_n_eff(&x, &y, 0).expect("the full pair count carries n_eff");
+        let lagged = kde_n_eff(&x, &y, 40).expect("the lagged pair count carries n_eff");
+        let expected = (n - 40) as f64 / n as f64;
+        assert!(
+            (lagged / full - expected).abs() < 1e-9,
+            "n_eff must scale with the pair count, got ratio {}",
+            lagged / full
+        );
+        let short: Vec<f32> = x[..7].to_vec();
+        assert!(kde_n_eff(&short, &short, 0).is_none(), "the n floor stays");
+        let constant = vec![1.0f32; 64];
+        assert!(
+            kde_n_eff(&constant, &y[..64], 0).is_none(),
+            "a constant series carries no bandwidth, so n_eff stays absent"
         );
     }
 
