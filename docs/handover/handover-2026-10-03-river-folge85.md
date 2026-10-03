@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 1bfa1e9cbcfaf8f8e9502680a671cf961c63a896ce33123a587bba8a16c09c14
+  sha256: a533e2626d87687c718b138349d5e59faf6b8cc75a3750d80e93fb77c28506f7
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -76,6 +76,41 @@ Wort | Datum | Quelle
 - **Braucht:** `ci_manage view/log 37116911686` nach Lauf-Ende lesen; gefüllte Zellen ins
   Addendum nachtragen, OMNI2/kp-`def`/Δ,σ_recon bleiben pending bis zum Trigger.
 
+### GIC kalibrierte Null — studentisierte Westfall–Young max-T
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `bz-yearly-maxt 37118991157` (dispatched 2026-10-03) und
+  `wy-max-t 37114779681` (queued).
+- **Lage:** (gemessen 2026-10-03, read-only Taucher + `cargo check`) die Konstruktion ist
+  aus `wy_max_t_probe.rs` in `src/mathematikerin/wy_max_t.rs` extrahiert;
+  `bz_retro_probe.rs` trägt `--null <plugin|max-t>` (Default `plugin`, berichtete
+  Ergebnisse unverändert), der max-T-Pfad fährt nur `--hourly --yearly-round`
+  (sechs distinkte Statistiken, saisonaler Driver-Bootstrap, empirisches α-Quantil).
+  GPD-Tail bleibt `pending`. Kein früherer Konsument (`bz_retro_probe` = Plug-in-fam,
+  `bz_blatt_probe` = BH-FDR).
+- **Blockade:** die Zahl entsteht erst im CI-Lauf (B = 10⁴).
+- **Braucht:** `ci_manage log 37118991157` + `37114779681`; Quantil + Verdikt ins Paper
+  (`docs/paper/gic-causal-driver.md:643-647`), das offene Konstrukt schließen oder den
+  Riss benennen. **Workflow-Domäne:** zieht der Rat die Grenze streng, geht
+  `bz-yearly-maxt.yml` als eigener Punkt an Mycelium.
+
+### GIC storm-only Sub-Analyse
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `gic-storm 37118664799`.
+- **Lage:** (gemessen 2026-10-03 via `cargo check -p omegaflow-measure`) `tools/measure/src/bin/gic_storm_probe.rs` + `.github/workflows/gic-storm.yml`
+  gebaut (Matrix ABK/SOD 2024/2025, `Kp >= 5`, Storm- vs Jahres-Rund), 0 warnings; das Paper
+  nennt die storm-only-Analyse als offenen Schritt (`:661-663`).
+- **Blockade:** das Ergebnis liegt nur in CI.
+- **Braucht:** `ci_manage log 37118664799`; die Tabelle ins Paper §6.
+
+### TE-Estimator-Bias vs n
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf-Ende `te-bias-n 37118666568`.
+- **Lage:** (gemessen 2026-10-03 via `cargo check -p omegaflow-measure`) `tools/measure/src/bin/te_bias_n_probe.rs` + `.github/workflows/te-bias-n.yml`
+  gebaut (Hénon, n = 800…10000, KDE/Silverman, 5 Replikate); das Paper nennt den
+  unkorrigierten Bias bei n ≈ 1260–2200 offen (`:655-660`).
+- **Blockade:** das Ergebnis liegt nur in CI.
+- **Braucht:** `ci_manage log 37118666568`; Bias-Tabelle ins Paper §6.
+
 ## Abschluss
 
 Pfad-begrenzte Commit-Pfade dieser Session:
@@ -83,5 +118,10 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge84.md` (Move aus `docs/handover/`)
 - `docs/handover/handover-2026-10-03-river-folge85.md`
+- `tools/measure/src/bin/gic_storm_probe.rs`, `tools/measure/src/bin/te_bias_n_probe.rs`
+- `.github/workflows/gic-storm.yml`, `.github/workflows/te-bias-n.yml`
+- `src/mathematikerin/mod.rs`, `src/mathematikerin/wy_max_t.rs`
+- `tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/wy_max_t_probe.rs`
+- `.github/workflows/bz-yearly-maxt.yml`
 
-## Burn: open 0.0153 · close 0.1156 · cap 0.50 — Grund: River-85 — Membran-Werkzeug-Vermerk geheilt (arxiv/brave), adressierte Blöcke gefaltet, exzellenz-Gate geschlossen (gemessen `session_burn`; Gesamt von 5 Linien-Sessions geteilt, Parallel-Linien teilen den Total)
+## Burn: open 0.0153 · close 0.1898 · cap 0.50 — Grund: River-85 — Membran-Werkzeug-Vermerk geheilt, exzellenz-Gate geschlossen, GIC-Riss bearbeitet: storm-only + Bias-Instrument gebaut, kalibrierte WY-max-T-Null extrahiert und optional verdrahtet, 4 CI-Läufe dispatcht (gemessen `session_burn`; close = eigene Kosten River-Linie $0.0782 + 3×grind-flash $0.1116 = 0.1898; das Maschinen-Total lag bei 0.7921 inkl. fremder Parallel-Linien, nicht angerechnet)
