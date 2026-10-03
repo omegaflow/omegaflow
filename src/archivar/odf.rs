@@ -301,6 +301,44 @@ pub const TNF_FORMAT_UL_SEQ_RANGING_PHASE: u8 = 2;
 pub const TNF_FORMAT_DL_SEQ_RANGING_PHASE: u8 = 3;
 pub const TNF_FORMAT_UL_PN_RANGING_PHASE: u8 = 4;
 pub const TNF_FORMAT_DL_PN_RANGING_PHASE: u8 = 5;
+
+pub fn ranging_component_code(n: u8) -> Option<&'static [u8]> {
+    match n {
+        1 => Some(&[1, 0]),
+        2 => Some(&[1, 1, 1, 0, 0, 1, 0]),
+        3 => Some(&[1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0]),
+        4 => Some(&[1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0]),
+        5 => Some(&[1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0]),
+        6 => Some(&[
+            1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+        ]),
+        _ => None,
+    }
+}
+
+pub fn ranging_component_length(n: u8) -> Option<u64> {
+    ranging_component_code(n).map(|c| c.len() as u64)
+}
+
+pub fn ranging_composite_period(first: u8, last: u8) -> Option<u64> {
+    if first < 1 || last > 6 || first > last {
+        return None;
+    }
+    let mut l = 1u64;
+    for n in first..=last {
+        l = l.checked_mul(ranging_component_length(n)?)?;
+    }
+    Some(l)
+}
+
+pub fn ranging_ambiguity_resolution_m(first: u8, last: u8, range_clock_hz: f64) -> Option<f64> {
+    if !range_clock_hz.is_finite() || range_clock_hz <= 0.0 {
+        return None;
+    }
+    let l = ranging_composite_period(first, last)? as f64;
+    let v = 299_792_458.0 * l / (4.0 * range_clock_hz);
+    v.is_finite().then_some(v)
+}
 pub const TNF_FORMAT_DOPPLER_COUNT: u8 = 6;
 pub const TNF_FORMAT_SEQUENTIAL_RANGE: u8 = 7;
 pub const TNF_FORMAT_ANGLE: u8 = 8;
@@ -2045,6 +2083,30 @@ pub fn tnf_phase_series(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ranging_component_lengths_are_the_prime_set() {
+        let lens: Vec<u64> = (1..=6).filter_map(ranging_component_length).collect();
+        assert_eq!(lens, vec![2, 7, 11, 15, 19, 23]);
+        assert_eq!(ranging_component_length(0), None);
+        assert_eq!(ranging_component_length(7), None);
+    }
+
+    #[test]
+    fn ranging_composite_period_matches_the_spec() {
+        assert_eq!(ranging_composite_period(1, 6), Some(1_009_470));
+        assert_eq!(ranging_composite_period(0, 6), None);
+        assert_eq!(ranging_composite_period(1, 7), None);
+        assert_eq!(ranging_composite_period(3, 2), None);
+    }
+
+    #[test]
+    fn ranging_ambiguity_resolution_at_one_mhz_is_seventy_five_thousand_km() {
+        let r = ranging_ambiguity_resolution_m(1, 6, 1.0e6).expect("resolves");
+        assert!((r - 75_660_000.0).abs() < 100_000.0, "got {r}");
+        assert_eq!(ranging_ambiguity_resolution_m(1, 6, 0.0), None);
+        assert_eq!(ranging_ambiguity_resolution_m(1, 6, f64::NAN), None);
+    }
 
     fn example_words() -> [u32; 9] {
         [
