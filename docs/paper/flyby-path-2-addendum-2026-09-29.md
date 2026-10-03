@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 15a506646003ef6454295b78888168788ee7d9f02b49e46607c8ff5387d36777
+  sha256: 9755bbe15c8b558371c633c3eea63b1197cd34841fbc8f03429b789347082ac2
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -202,7 +202,7 @@ built `d310d5888`) and Δ, σ_recon **`pending`** — the post-flyby
 reconstruction (SPK + 1-σ covariance) is not published;
 `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` is absent (measured
 2026-09-28). No in-situ JUICE field measurement exists yet, so the σ-metric
-cannot be applied — it is `pending` with the named trigger (the published
+is not applied — it is `pending` with the named trigger (the published
 reconstruction), never a number. Agreement remains silence.
 
 ## Cells left pending — the complete list with reasons
