@@ -3873,6 +3873,7 @@ pub fn main_flow() {
                     | "glm_l1b"
                     | "glm_l2"
                     | "supermag_1m"
+                    | "iaga_text"
                     | "noaa_ghcn_d"
                     | "noaa_gsod"
                     | "noaa_isd"

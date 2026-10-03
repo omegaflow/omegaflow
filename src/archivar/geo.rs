@@ -16,6 +16,7 @@ pub const MAGIC_TRMMLIS: [u8; 4] = *b"TRL1";
 pub const MAGIC_GLML1B: [u8; 4] = *b"GLM1";
 pub const MAGIC_GLML2: [u8; 4] = *b"GLM2";
 pub const MAGIC_SMG: [u8; 4] = *b"SMG1";
+pub const MAGIC_IAGA: [u8; 4] = *b"IGA1";
 pub const MAGIC_GHCN: [u8; 4] = *b"GHC1";
 pub const MAGIC_GSOD: [u8; 4] = *b"GSD1";
 pub const MAGIC_ISD: [u8; 4] = *b"ISD1";
@@ -246,6 +247,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "glm_l1b" => Some(MAGIC_GLML1B),
         "glm_l2" => Some(MAGIC_GLML2),
         "supermag_1m" => Some(MAGIC_SMG),
+        "iaga_text" => Some(MAGIC_IAGA),
         "noaa_ghcn_d" => Some(MAGIC_GHCN),
         "noaa_gsod" => Some(MAGIC_GSOD),
         "noaa_isd" => Some(MAGIC_ISD),
@@ -293,6 +295,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "glm_l1b" => Some(COMP_GLML1B_MAX),
         "glm_l2" => Some(COMP_GLML2_MAX),
         "supermag_1m" => Some(COMP_SMG_MAX),
+        "iaga_text" => Some(COMP_IAGA_D),
         "noaa_ghcn_d" => Some(COMP_GHCN_MAX),
         "noaa_gsod" => Some(COMP_GSOD_MAX),
         "noaa_isd" => Some(COMP_ISD_MAX),
@@ -383,7 +386,7 @@ pub fn smg_record_at(bytes: &[u8], idx: usize) -> Option<GeoRec> {
 }
 
 pub fn write_bin(magic: [u8; 4], records: &[GeoRec]) -> Vec<u8> {
-    let smg = magic == MAGIC_SMG;
+    let smg = magic == MAGIC_SMG || magic == MAGIC_IAGA;
     let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
     let mut buf = Vec::with_capacity(8 + records.len() * rec);
     buf.extend_from_slice(&magic);
@@ -415,7 +418,7 @@ pub fn parse_bin(magic: [u8; 4], bytes: &[u8]) -> Option<Vec<GeoRec>> {
     if magic == MAGIC_GDP {
         return crate::gdp_drifter::parse_bin(bytes).map(|r| crate::gdp_drifter::to_geo(&r));
     }
-    let smg = magic == MAGIC_SMG;
+    let smg = magic == MAGIC_SMG || magic == MAGIC_IAGA;
     let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
     if n > (bytes.len() - 8) / rec {
@@ -472,7 +475,7 @@ pub fn verify_bin(magic: [u8; 4], bytes: &[u8]) -> Option<usize> {
     if bytes.len() < 8 || bytes[0..4] != magic {
         return None;
     }
-    let smg = magic == MAGIC_SMG;
+    let smg = magic == MAGIC_SMG || magic == MAGIC_IAGA;
     let rec = if smg { SMG_REC_BYTES } else { REC_BYTES };
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
     if n > (bytes.len() - 8) / rec {
@@ -746,6 +749,32 @@ mod tests {
         assert_eq!(pack_iaga("tro"), None);
         assert_eq!(pack_iaga("TROO"), None);
         assert_eq!(iaga_of(0), None);
+    }
+
+    #[test]
+    fn iaga_station_survives_the_station_layout() {
+        let rec = |station, t| GeoRec {
+            t,
+            lat: 58.759,
+            lon: -94.088,
+            alt: 15.0,
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: 1.0,
+            val: 10053.54,
+            comp: COMP_IAGA_X,
+            station,
+        };
+        let records = vec![
+            rec(pack_iaga("FCC").unwrap(), 1_680_000_000.0),
+            rec(pack_iaga("TRO").unwrap(), 1_680_000_001.0),
+        ];
+        let bytes = write_bin(MAGIC_IAGA, &records);
+        assert_eq!(bytes.len(), 8 + 2 * SMG_REC_BYTES);
+        let parsed = parse_bin(MAGIC_IAGA, &bytes).unwrap();
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(iaga_of(parsed[0].station).as_deref(), Some("FCC"));
+        assert_eq!(iaga_of(parsed[1].station).as_deref(), Some("TRO"));
+        assert_eq!(parsed[1].val, 10053.54);
     }
 
     #[test]

@@ -819,6 +819,15 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_SMG_Z_GEO => Some("supermag_z_geo_nt"),
             _ => None,
         },
+        "iaga_text" => match comp {
+            crate::geo::COMP_IAGA_X => Some("iaga_x_nt"),
+            crate::geo::COMP_IAGA_Y => Some("iaga_y_nt"),
+            crate::geo::COMP_IAGA_Z => Some("iaga_z_nt"),
+            crate::geo::COMP_IAGA_F => Some("iaga_f_nt"),
+            crate::geo::COMP_IAGA_H => Some("iaga_h_nt"),
+            crate::geo::COMP_IAGA_D => Some("iaga_d_arcmin"),
+            _ => None,
+        },
         "noaa_ghcn_d" => match comp {
             crate::geo::COMP_GHCN_TMAX => Some("noaa_ghcn_d_tmax_c"),
             crate::geo::COMP_GHCN_TMIN => Some("noaa_ghcn_d_tmin_c"),
