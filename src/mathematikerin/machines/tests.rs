@@ -292,7 +292,7 @@ mod matrix_record_tests {
             "temp file {tmp} left behind"
         );
         let saved = std::fs::read(&path).expect("state readable");
-        assert!(saved.starts_with(b"OMX2"));
+        assert!(saved.starts_with(b"OMX3"));
         assert!(MatrixMachine::load_state_from(&path).is_some());
 
         std::fs::create_dir_all(&tmp).expect("blocked temp path stands");
