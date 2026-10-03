@@ -62,6 +62,9 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
             }
             out
         }),
+        "viking_text" => viking_text::parse_series(bytes),
+        "voyager1_merged" => voyager_merged::parse_series(bytes),
+        "voyager2_merged" => voyager_merged::parse_series(bytes),
         "vex_odf" => odf::parse_series(bytes),
         "galileo_odf" => odf::parse_series(bytes),
         "dawn_odf" => odf::parse_series(bytes),
@@ -574,6 +577,25 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "rosetta_odf" => match comp {
             ifms_agc::COMP_CARRIER_LEVEL => Some("rosetta_odf_carrier_level_dbm"),
             ifms_agc::COMP_POLAR_ANGLE => Some("rosetta_odf_polar_angle_cycles"),
+            _ => None,
+        },
+        "viking_text" => match comp {
+            viking_text::COMP_RANGE_KM => Some("viking_lander_range_km"),
+            viking_text::COMP_RANGE_RATE_KM_S => Some("viking_lander_range_rate_km_s"),
+            _ => None,
+        },
+        "voyager2_merged" => match comp {
+            voyager_merged::COMP_B_NT => Some("voyager2_b_nt"),
+            voyager_merged::COMP_SPEED_KM_S => Some("voyager2_speed_km_s"),
+            voyager_merged::COMP_DENSITY_N_CC => Some("voyager2_density_n_cc"),
+            voyager_merged::COMP_TEMP_K => Some("voyager2_temp_k"),
+            _ => None,
+        },
+        "voyager1_merged" => match comp {
+            voyager_merged::COMP_B_NT => Some("voyager1_b_nt"),
+            voyager_merged::COMP_SPEED_KM_S => Some("voyager1_speed_km_s"),
+            voyager_merged::COMP_DENSITY_N_CC => Some("voyager1_density_n_cc"),
+            voyager_merged::COMP_TEMP_K => Some("voyager1_temp_k"),
             _ => None,
         },
         "vex_odf" => match comp {

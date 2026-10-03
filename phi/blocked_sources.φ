@@ -423,7 +423,7 @@ note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): Assets pds4_fits_ce1_mrm.fits + pds4_fi
 
 pending
 url https://zenodo.org/api/records/15812343
-note Tianwen-1 RoPeR CH-2 (Jilin Univ., Zenodo cc-by-4.0) — Arm steht (src/archivar/gras_2c.rs); Format .2C ungemessen, Compiler-Bin + Sample fehlen. 15812343/15812357 je 84 Files, 7502747 237626152 B, 8035493 393996707 B.
+note Tianwen-1 RoPeR CH-2 (Jilin Univ., Zenodo cc-by-4.0) — 2026-10-03: .2CL = PDS4-Label (record_length 16453, I/Q + Velocity/Position/Attitude) → Arm pds4_binary steht, Compiler-Bin fehlt. Spec EUMETSAT EPS/MIS/SPE/97234. future-folge226.
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
@@ -441,13 +441,13 @@ pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
-descoped
+pending
 url http://pds.wh.sdu.edu.cn
-note Shandong Univ. Planetary Science Research Center Weihai (Portal) — 2026-09-28 root 206, /data/ 404; Link-Inventar nur .htm + Fremd-Archive, keine Einzeldatei. Kein Datenpfad gemessen. future-folge150.
+note Shandong PDS-Spiegel (SDU Weihai/WUSTL) — 2026-10-03 Browser: Daten 222.194.16.107/planet-data + FTP ftp://222.194.16.107/, Login 222.194.16.107/login/; Chang'e-1/2-Archive (GRS-2C, Interferometer, DEM, X-Ray-2B). future-folge226.
 
 blocked account
 url https://pda.kasi.re.kr/
-note KASI-DALO (Danuri/KPLO, KASI) — 2026-09-29 HTTP 200 (16331 B) Login-Wall; kein Daten-Endpoint gemessen (blocked account).
+note KASI-DALO (Danuri/KPLO) — 2026-10-03 Browser: data_{polcam,luti,kmag,kgrs}.php (Katalog lesbar), Login pda.kasi.re.kr/login.php, keine Selbst-Registrierung. future-folge226.
 
 descoped
 url https://archive.kasi.re.kr/kasi/moc/kmtnet_archive_moc.fits
@@ -476,7 +476,7 @@ note Swarm TEC discrimination (ESA) — 2026-10-02 HTTP 200 (43497 B); kein Date
 
 pending
 url https://gportal.jaxa.jp/
-note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-02 HTTP 206 (1 B); Portal ohne Einzeldatei-Endpoint; kein Arm. future-folge167.
+note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-03 Browser: Suche ohne Registrierung, Download nur nach Registrierung gportal.jaxa.jp/gpr/user/regist1; SFTP-Direktabruf. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
@@ -484,15 +484,31 @@ note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200 (60809 B); kein CSES-Rohdat
 
 pending
 url https://www.leos.ac.cn/
-note LEOS (CAS) — 2026-10-02 HTTP 206 (1 B); kein Daten-Endpoint/Arm gemessen. future-folge167.
+note LEOS = Notfallministerium/National Inst. of Natural Hazards (CSES 张衡一号), nicht CAS — 2026-10-03 Browser: SPA leos.ac.cn/#/, Daten-/Modellservice mit 注册/登录, aktuell „暂无数据". future-folge226.
 
-pending
+blocked account
 url https://clpds.bao.ac.cn/
-note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-02 HTTP 206 (1 B); Portal, kein Daten-Endpoint/Arm gemessen. future-folge167.
+note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-03 Browser: SPA-API /moon-admin/client/science/{catalogue,dataInfoList} 200, PDS3-Einzelprodukte; Download login-gated, Register clpds.bao.ac.cn/register. future-folge226.
 
 pending
 url https://pds-geosciences.wustl.edu/missions/viking/gravity.html
 note Viking Mars gravity (WUSTL) — 2026-10-02 HTTP 206 (1 B); kein Daten-Endpoint/Arm gemessen. future-folge167.
+
+pending
+url https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
+note Viking 1/2 differenced range (JPL SSD planetary text) — Arm steht (viking_text; 15030 Samples roundtrip); Transport url/compiler → Mycelium. future-folge169.
+
+pending
+url https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt
+note Viking 1/2 range (JPL SSD planetary text) — Arm steht (viking_text, 1258 Range + 15030 Differenced roundtrip); Transport url/compiler → Mycelium. future-folge169.
+
+pending
+url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
+note Voyager 1 merged (SPDF hourly/daily |B|+Plasma) — Arm steht (voyager_merged, 20111 Samples roundtrip); Transport url/compiler/Tags → Mycelium. future-folge226.
+
+pending
+url https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
+note Voyager 2 merged (SPDF hourly/daily |B|+Plasma) — Arm steht (voyager_merged, 58570 Samples roundtrip); Transport url/compiler/Tags → Mycelium. future-folge226.
 
 pending
 url https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/
@@ -514,9 +530,9 @@ descoped
 url https://www.boem.gov/oil-gas-energy/mapping-and-data
 note BOEM Offshore Mapping & Data (US DOI) — 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind. Kein Kraftfeld, kein Zeuge: ein Modell ist kein Welt-Zeugnis (declined_sources.φ:1305). future-folge168.
 
-descoped
-url https://search-pdsppi.igpp.ucla.edu/search
-note PDS-PPI Search-Portal (UCLA) — 2026-10-02 HTTP 200; legacy Tomcat/JSP, nur Anzeige-Metadaten (/gallery/*.json) + HTML, kein Daten-Endpoint; PPI-Daten stehen, kein Zeuge. future-folge168.
+pending
+url https://pds-ppi.igpp.ucla.edu/data
+note PDS-PPI (UCLA) — 2026-10-03 Browser + --verdict: Maschinenendpunkte EPN-TAP vo-pds-ppi.igpp.ucla.edu (200) + Dateisystem /data (200; 301 archive/data/); „kein Daten-Endpoint" widerlegt. future-folge226.
 
 descoped
 url https://psaftp.esac.esa.int/
