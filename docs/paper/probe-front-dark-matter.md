@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-15
   version: 11
-  sha256: e9788694360931a50750ec9c55c542c003aa6e346002d20a0ed80ac84809d868
+  sha256: aedc3294722e6bb14571ac50f6025b2d70c205b4925690d2c4e46525a3c42e6c
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -60,7 +60,7 @@ probe is a named quantity, not a subtracted one.
 (5-minute raster outside ±1.2 d, 1-minute inside; fine granules 0.03 d, degree 17),
 compiled by `horizons_compiler --flyby` into `ephemeris_voyager*_*.bin`: V1 Jupiter
 1979-03-05, V1 Saturn 1980-11-12, V2 Jupiter 1979-07-09, V2 Saturn 1981-08-26,
-V2 Uranus 1986-01-24, V2 Neptune 1989-08-25. Round-trip fit error 218 m (Uranus) to
+V2 Uranus 1986-01-24, V2 Neptune 1989-08-25. Round-trip fit residual 218 m (Uranus) to
 2.5 km (V1 Saturn); Neptune 9.67 × 10⁶ m at the tightest swingby — named, not hidden.
 
 **2.3 Ephemerides and constants.** Planet states from the CDN Chebyshev bins
@@ -83,14 +83,14 @@ is there: a real point mass gives a_rad = GM/d², hence a_rad · d² = GM, a con
 The measured GM is the median of a_rad · d² over the ±90-day window around the
 closest approach; the constancy gate demands median absolute deviation < ½ GM. The
 signal-strength gate demands max |a_rad| > 5 × the mission median |a_res| (the clump
-must exceed the granule floor locally, else R·d² at 600 AU reports a Jupiter-scale
+exceeds the granule floor locally, else R·d² at 600 AU reports a Jupiter-scale
 phantom — the residual baseline times d²). An overshoot mask drops any step with
 |a_res| > 100 × median (the planetary-encounter granule artifacts).
 
 **3.3 Positive control (leave-one-out).** For each fine flyby arc the target planet is
 removed from a_bekannt; the residue then contains the planet's pull, and
-R·d² = GM_planet within the closest-approach window (±1 d). The machine must recover
-the known GM. This is the gravitational re-detection test the grid must pass before it
+R·d² = GM_planet within the closest-approach window (±1 d). The machine recovers
+the known GM. This is the gravitational re-detection test the grid passes before it
 is pointed into the dark.
 
 **3.4 Estimator hardening.** The canonical scalar transfer entropy
@@ -119,7 +119,7 @@ Ruck, m/s²):
 | voyager2 | 19516 | 1977-08-24 → 2031-01-28 | 2.54e-8 | 4.455e-1 | 4.456e-1 | 1979-07-10 (Jupiter) |
 | new_horizons | 9116 | 2006-01-23 → 2031-01-07 | 8.56e-8 | 6.013e-2 | 3.359e-2 | 2031-01-01 (edge) |
 
-The encounter maxima are granule overshoot, not gravity — the 32-day granule cannot
+The encounter maxima are granule overshoot, not gravity — the 32-day granule does not
 carry a one-day encounter; the New-Horizons maximum sits at the prediction boundary
 (a named edge artifact). The quiet-cruise floor is the granule fit precision.
 
@@ -226,7 +226,7 @@ the drift (2.3 × 10⁻⁸ ± 4.6 × 10⁻⁸ m/s²): the thermal recoil scale
 not carried at this floor. The NAVIO-clean series as the primary chain
 (Deduktion 9 — same cuts, Earth center instead of a station, the record carries
 none) with the beat-plausibility gate (|OBSVBL| ≤ 2·f0·v_max/c ≈ 5 × 10⁵ Hz)
-discards 44 % of the overlap era as the readme's named error classes
+discards 44 % of the overlap era as the readme's named discard classes
 (misplaced counts, ±500k, Ku records); the basis falls to 13.8 kHz with
 A = 15.3 Hz/(m/s) (two-way scale; the OBSVBL = ν_ref − ν_recv convention from
 the 2010 review is confirmed by the fit — C = 0.99975 ≈ 1 on the reconstructed
@@ -297,7 +297,7 @@ the ATDF count chain is documented (TRK-2-25, DSN 820-13 Rev. A, 1988 — count
 resolution 0.001 cycle, reference in 0.1 Hz, 2³² modulo reset; Morabito & Asmar
 1995 [9] — integer counts plus a fractional resolver term, 1-MHz bias): the
 0.001-cycle quantization is ~1 mHz per 1-s count, ~50× below the measured line
-frequencies — the count quantization cannot carry them; the raw count field
+frequencies — the count quantization does not carry them; the raw count field
 carries all 1000 fractional bins uniformly (Deduktion 22: 1/256-lattice share
 0.259 ≈ 256/1000, top bins 2.0× the mean density — Poisson), no 1/256 resolver
 lattice survives into the ATDF — the 256-divider candidate is measured and
@@ -393,7 +393,7 @@ Deduction 2 — TEC (ionosphere): the phase path length shifts the sky frequency
 
 Deduction 3 — Solar plasma: the electron column along the light path (OMNI2-N1800, 1/r² profile) supplies dTEC_solar/dt; occultation (b < R_Sun) refuses the column (0 honored).
 
-Deduction 4 — Spacecraft dynamics: radiation pressure (advective; TSI + area/mass/reflectivity) and RTG recoil (advective; Pu-238 half-life) as accelerations at the spacecraft position, the trajectory propagated from the Horizons initial state, plus the a_P scan. Self-test: the Pioneer anomaly (8.74 × 10⁻¹⁰ m/s² sunward) must appear as a carried drift — or its absence is a finding (0 honored).
+Deduction 4 — Spacecraft dynamics: radiation pressure (advective; TSI + area/mass/reflectivity) and RTG recoil (advective; Pu-238 half-life) as accelerations at the spacecraft position, the trajectory propagated from the Horizons initial state, plus the a_P scan. Self-test: the Pioneer anomaly (8.74 × 10⁻¹⁰ m/s² sunward) appears as a carried drift — or its absence is a finding (0 honored).
 
 Deduction 5 — Ramp: the residuum slope against the ramp term ramp_rate·(t − segment midpoint) measures the empirical coupling k (the unit of field 112 stays uninterpreted — the measurement carries it) and subtracts it.
 
@@ -403,7 +403,7 @@ Deduction 7 — Daily-curve cut: the slope per segment is measured on the residu
 
 Deduction 8 — Telemetry-recoil cut: the harvested power channels (PRTG/Pshunt/Pbus) carry the sunward recoil a = η·P(t)/(m·c) — η scanned empirically, the direction the named Turyshev symmetry.
 
-Deduction 9 — NAVIO chain: the cleaned second reduction becomes the carrier itself — Earth center instead of the station site (the record carries no station, named), the same cuts (epoch offsets, plasma, daily slope, dynamics scans) — and the ATDF becomes the witness. The OBSVBL semantics carry the 2010s research: OBSVBL = received cycles − reference (FREQCY) per count interval in Hz, the DSN convention (Δν)_DSN = ν0 − ν (positive = receding); obs = OBSVBL + FREQCY reconstructs the received sky frequency; A ≈ 15.3 Hz/(m/s) ≈ 2ν/c is the two-way scale. The beat-plausibility gate (|OBSVBL| ≤ 2·f0·v_max/c ≈ 5 × 10⁵ Hz) discards the readme's named error classes — discarded, not averaged.
+Deduction 9 — NAVIO chain: the cleaned second reduction becomes the carrier itself — Earth center instead of the station site (the record carries no station, named), the same cuts (epoch offsets, plasma, daily slope, dynamics scans) — and the ATDF becomes the witness. The OBSVBL semantics carry the 2010s research: OBSVBL = received cycles − reference (FREQCY) per count interval in Hz, the DSN convention (Δν)_DSN = ν0 − ν (positive = receding); obs = OBSVBL + FREQCY reconstructs the received sky frequency; A ≈ 15.3 Hz/(m/s) ≈ 2ν/c is the two-way scale. The beat-plausibility gate (|OBSVBL| ≤ 2·f0·v_max/c ≈ 5 × 10⁵ Hz) discards the readme's named discard classes — discarded, not averaged.
 
 Deduction 10 — Segment mask: segments (≥ 20 samples) whose RMS exceeds 4× the p90 of the segment RMS are individual corrupt days — discarded, not averaged; the gate derives from the live data (p90) × 2².
 
@@ -423,7 +423,7 @@ Deduction 23 — The reference chain: does the ref_hz slot itself carry the line
 
 Deduction 24 — The signal-strength scaling: PLL loop noise grows at weak SNR (line amplitude ∝ 1/√SNR), while a fixed spur (reference leak) would stay constant — per station the strong/medium/weak groups are split and the line amplitude (absolute and relative to the group RMS) is measured.
 
-Deduction 26 — Spacecraft coherence: if the station chain carries the line (a continuous ~20-s station oscillation), P10 and P11 carry THE SAME phase at 0.714 mHz, referenced to TDB t = 0 — the phase difference must be STABLE across two halves of the common window. Null: circularly shifted series (same spectrum, random phase) — 200 surrogates.
+Deduction 26 — Spacecraft coherence: if the station chain carries the line (a continuous ~20-s station oscillation), P10 and P11 carry THE SAME phase at 0.714 mHz, referenced to TDB t = 0 — the phase difference is STABLE across two halves of the common window. Null: circularly shifted series (same spectrum, random phase) — 200 surrogates.
 
 Deduction 27 — The two-/three-way split: in three-way (Ground Mode 3) the receiving station counts the transmitting station's signal. If the receive chain carries the line, f(Mode 2) and f(Mode 3) agree per station; if the transmit/uplink chain does, the three-way shows the transmitting station's frequency. Local block de-trending of the sky frequency, LS 44–56 mHz. Measured (PASF sub-10-s vs NAVIO (rx, tx), 103 261 matched): the frequency is receiver-fixed and the amplitude depends on the (rx, tx) pair — a two-way-link effect.
 
@@ -521,7 +521,7 @@ in the 1–3 Hz range against a two-orders-higher floor. The test becomes
 discriminating only on sub-Hz aggregation. The sub-kHz basis improved anomaly
 measurability ~100× over the kHz chain (from 2×10⁴ to 150–340× under the floor);
 the remaining bottleneck is per-sample scatter surviving the day-median, not
-reduction systematics (the kHz chain's systematic errors — station offsets,
+reduction systematics (the kHz chain's systematics — station offsets,
 dumps, jumps — were removed; that was the 100× gain). The path to the anomaly
 runs through regression over the full quiet series or week/month binned medians
 (√N over time), not through further masking. Limit, not failure; the floor is the
@@ -577,7 +577,7 @@ the same pass (`blocked_sources.φ:51`): `radio_science_rss` carries
 `saturn_encounter_data` + `saturn_occultation_medium_band` and no Cruise
 directory — the Voyager Doppler at SPDF stays open, named not claimed.
 
-**5.7 Why the form test cannot decide on this span.** The degeneracy is not the
+**5.7 Why the form test does not decide on this span.** The degeneracy is not the
 noise alone. Over the 27.4-y P10 span the Pu-238 thermal curve falls only 19.5 %
 — nearly a straight line; ∝t² over the same span separates from linear by
 tenths of a Hz against a ~1 Hz total anomaly amplitude. The three models are
@@ -697,7 +697,7 @@ programmatically on the rendered 1983 scan; the y-axis was converted by logarith
 (one-decade-per-gridline) interpolation between the printed decade labels, calibrated
 against the printed gridlines; the x-axis month-letter sequence is the reliable anchor,
 with tick 1 read as Jun 1980 (inferred). No value here is good to better than ~±10 %;
-any value needed tighter must be re-measured from the original document. Legend markers
+any value needed tighter is re-measured from the original document. Legend markers
 (● VLBI, ▲ VOYAGER ΔDOR) and annotation glyphs are excluded where resolved; merged pairs
 and annotation-adjacent candidates are flagged in the notes.
 
@@ -729,7 +729,7 @@ and annotation-adjacent candidates are flagged in the notes.
 
 Printed annotations (as printed): `7 × 10⁻¹³ ±9 (Δf/T DERIVED)` · `1.6 × 10⁻¹³ ±3
 (Δl/T DERIVED)` · `1.8 × 10⁻¹³ ±7 (Δf/F DERIVED)` · `−3.9 × 10⁻¹³ ±4 (Δf/f DERIVED)`.
-Notes: no error bars on this figure; the Sep-1980 circle may be two merged dots; one
+Notes: no uncertainty bars on this figure; the Sep-1980 circle may be two merged dots; one
 Jul-1980 merged pair carries a second centroid ≈ −7.3 × 10⁻¹³ (counted once above);
 the mid/late-1981 month labels are the least certain (trust the x-pixel).
 
@@ -758,7 +758,7 @@ the mid/late-1981 month labels are the least certain (trust the x-pixel).
 
 Printed annotations (as printed): `5.7 × 10⁻¹³ ±5 (Δf/T DERIVED)` and
 `5.8 × 10⁻¹³ ±8 (Δf/F DERIVED)`; the leading sign glyph is unreadable/ambiguous in
-the scan. Notes: no error bars; the top row is dense and two or three candidates in the
+the scan. Notes: no uncertainty bars; the top row is dense and two or three candidates in the
 annotation-arrow region (x≈780–1020) may be glyphs rather than data; six
 clearly-separated sub-zero points are unambiguous.
 

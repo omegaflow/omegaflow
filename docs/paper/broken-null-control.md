@@ -2,7 +2,7 @@
   title: Broken null control — the phase-randomized surrogate gate
   class: paper
   date: 2026-09-12
-  sha256: 03e956611a1056f6e81a4a845b914d9b1261a49de0533ffe5acf39fc91be74b0
+  sha256: 2afc99841934869d49f9afb50ef945ef36505d0b388e8564de0a310642436a1a
   status: live
   see-also: docs/specs/broken-null-control.md
 -->
@@ -55,7 +55,7 @@ arrow is fam-significant only above this maximum.
 
 The null channel runs with the measurement, always. The four control pairs pair
 the solar-wind proton density (Dichte-RTSW, an em-quiet but wind-driven channel)
-against X-Ray, EUV-304, EUV-284 and Bz. It *must not* be significant. It is
+against X-Ray, EUV-304, EUV-284 and Bz. It *is not* significant. It is
 measured, not assumed.
 
 ## The finding
@@ -89,7 +89,7 @@ threshold — and the cascade stays silent.
 ## The form
 
 The Kalibrier-Gate lives as tests in `src/mathematikerin/te.rs` (`#[cfg(test)]`).
-Every change to the estimator or to the null must pass all four:
+Every change to the estimator or to the null runs all four:
 
 - `calibration_fp_independent_ar1_stays_near_chance` — false positives on
   independent AR(1) series stay near chance.
@@ -188,7 +188,7 @@ stays silent. The single-cell verdict is window- and bandwidth-conditional; the
 fam correction is the stable statement.
 
 The scientific content is a negative: the cascade was an artifact of the test,
-and fixing the test leaves silence where a result was expected. 0 honored — the
+and fixing the test leaves silence where the naive threshold had shown a result. 0 honored — the
 silence is the answer.
 
 ## References
