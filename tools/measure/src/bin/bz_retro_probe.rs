@@ -1031,7 +1031,8 @@ fn run_hourly(
                         &pos_bucket,
                     );
                     let sigma = wy_max_t::sigma_per_statistic(&nulls);
-                    let stud = wy_max_t::studentized_maxima(&nulls, &sigma);
+                    let null_means = wy_max_t::null_means_per_statistic(&nulls);
+                    let stud = wy_max_t::studentized_maxima(&nulls, &null_means, &sigma);
                     let mut finite: Vec<f64> =
                         stud.iter().copied().filter(|v| v.is_finite()).collect();
                     finite.sort_by(|a, b| a.total_cmp(b));
@@ -1042,8 +1043,9 @@ fn run_hourly(
                                 .iter()
                                 .enumerate()
                                 .map(|(mi, o)| {
+                                    let m = null_means.get(mi).copied().flatten()?;
                                     let s = sigma.get(mi).copied().flatten()?;
-                                    Some((*o)? / s)
+                                    Some(((*o)? - m) / s)
                                 })
                                 .collect();
                             let obs_max = obs_stud
