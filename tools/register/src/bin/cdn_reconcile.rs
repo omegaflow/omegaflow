@@ -20,8 +20,6 @@ const COMPILER_NETLOCS: &[&str] = &[
     "fermi.gsfc.nasa.gov",
     "service.iris.edu",
     "vizier.cfa.harvard.edu",
-    "noaa-eri-pds.s3.amazonaws.com",
-    "dachs.fai.kz",
     "gsaweb.ast.cam.ac.uk",
     "ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca",
 ];
