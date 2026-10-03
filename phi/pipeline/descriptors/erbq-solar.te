@@ -1,0 +1,13 @@
+# erbq-solar.te — first witness measurement over the witnesses arm of field_te_query.
+# driver: solar-wind IMF Bz, omni_hro_imf_bz_gsm_nt (phi/sources.φ:760, CDN omni_hro_1min.bin, 60 s)
+# target: point-event witness point-event#1 (Tohoku seismicity, phi/witnesses.φ:151-155)
+# the sparse point-event train is counted per declared bin; an empty bin stays pending, never 0.0
+pair erbq-solar
+register witnesses
+driver omni_hro_imf_bz_gsm_nt
+target point-event#1
+cadence live
+bin 3600
+seasonal none
+lags 0,1,3,6,12,24,48,72
+surrogate 100
