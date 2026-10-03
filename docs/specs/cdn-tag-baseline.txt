@@ -1,12 +1,12 @@
 # cdn_reconcile --fail — gemessene Registry↔Workflow-Tag-Baseline (Mycelium 225, 2026-10-03)
 #
 # Je Zeile ein Release-Tag, den ein Workflow schreibt, der (noch) an keinen Host in
-# phi/sources.φ gebunden ist. Das Gate bleibt rot bei JEDER neuen Zeile; eine Zeile wird
-# gelöscht, sobald ihr Host in phi/sources.φ gebunden ist (Step-5 Familien-Bindung).
-# Kein Cap-Tag ist hier je exempt — die Cap-Wache ist hart.
-vizier.cfa.harvard.edu
-noaa-eri-pds.s3.amazonaws.com
-dachs.fai.kz
-gsaweb.ast.cam.ac.uk
-atnf.csiro.au
-ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca
+# phi/sources.φ oder an keine §1-Compiler-Netloc (cdn_reconcile.rs COMPILER_NETLOCS)
+# gebunden ist. Das Gate bleibt rot bei JEDER neuen Zeile; eine Zeile wird gelöscht,
+# sobald ihr Host gebunden ist. Kein Cap-Tag ist hier je exempt — die Cap-Wache ist hart.
+#
+# 2026-10-03 (Mycelium 225): leer. Die sechs gemessenen Drifts sind aufgelöst —
+# vizier.cfa.harvard.edu, noaa-eri-pds.s3.amazonaws.com, dachs.fai.kz,
+# gsaweb.ast.cam.ac.uk, ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca als §1-Compiler-Netlocs
+# in COMPILER_NETLOCS geführt; atnf.csiro.au (echter Orphan) in psr-cdn.yml auf
+# tapvizier.cds.unistra.fr umgebunden.
