@@ -33,7 +33,7 @@ jobs:
             --mag-bands 1.94 11.5 0.1 \
             --epoch 2016 --limit 90000 --star-bin \
             --union-bright kernels/bright_stars.json \
-            --release-tag ssd.jpl.nasa.gov \
+            --release-tag ssd.jpl.nasa.gov-gaia \
             --out dr3_stars.bin \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

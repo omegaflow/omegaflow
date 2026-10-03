@@ -42,7 +42,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view ssd.jpl.nasa.gov --repo omegaflow/sources \
+          if gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset ${{ inputs.asset }} already present — manifest skipped"
