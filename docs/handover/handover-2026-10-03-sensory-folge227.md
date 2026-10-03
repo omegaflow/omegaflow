@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 43a4a90c678697b6bd5c4915357e029ba951b35b300de203760cc8abceb3a218
+  sha256: c31e5b44011a2dc733ba2957056ab40334f0260609e949d9d89fb996e0c3acfd
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -226,6 +226,13 @@ breiter messen.
 - **Wort:** „wir müssen B machen, oder wenn wir das hinbekommen könnte das die basis für die fundings ermöglichen" | 2026-10-03 | Operator (Session) — B bauen: die lebendige Membran serverlos am Adresspunkt `omegaflow.space`, als Erlebnis **und** als Funding-Basis; Server-Hosting bleibt ausgeschlossen; Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
+
+### B — serverlose lebendige Membran an `omegaflow.space`
+- **Status:** wartend | **Bindung:** eigen; Architektur betrifft River (Membran) · Mycelium (CDN/Deploy) · Mountain (Daten)
+- **Trigger:** Operator-Wort 2026-10-03 (B bauen, als Erlebnis und Funding-Basis); serverloses Erlebnis bevorzugt, Server-Hosting ausgeschlossen.
+- **Lage:** (gemessen 2026-10-03 F227, Archäologie) der WebGPU-Browser-Client ist **kein Neuland**: Legacy **S33 „browser-membran"** (Operator-Wort 2026-08-23: „der Browser wird die eine Membran, das native winit/wgpu-Fenster fällt; ω-Schleife headless, Browser-Diode, eine Shader-Quelle in `static/index.html`", Umbau Schritte 1–4 erledigt; `omegaflow-legacy/docs/TODO.md:161-175`, `vanilla-dateidocs/status/leitstelle-2026-08-23.md:95`); heutiger Neubau `b226c1fe2` (2026-09-12), Landing `4174579b2` (restored from legacy). Die Feld-Auswertung ist WGSL-`@compute` (`src/mathematikerin/shaders.rs:1`, `:355`) → browser-portabel. **Neu ist allein der serverlose öffentliche Live-Pfad** (WASM/`serverless` = 0 Treffer über `archive-root`; der heutige und der Legacy-Client hängen je am lokalen Relay `127.0.0.1:1618`). **Riss:** `docs/handover/archiv/handover-2026-09-08-atom-c-offene-pflichten.md:63-65` behauptet, der Browser-Render-Zweig habe „in keinem Commit existiert" — der gemessene Baum widerlegt das.
+- **Blockade:** keine — die Machbarkeit ist gemessen; offen ist allein die Architektur-/Schicht-Entscheidung.
+- **Braucht:** Rat für die Architektur (River/Mycelium/Mountain): erster Schritt ein serverloser Prototyp `FIELD_WGSL` + ein eingefrorener Daten-Slice in einer Browser-Seite. Commit-Liste des Bestands: `archive-root/commit_rewrite-2026-09-06/commits.tsv`; Surveys: `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md`, `omegaflow-legacy/docs/surveys/survey-2026-08-19-landschaft.md`.
 
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
