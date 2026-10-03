@@ -6,6 +6,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      line:
+        description: "trajectory line: official|renewed|postflight"
+        required: false
+        default: "official"
 permissions:
   contents: read
 env:
@@ -29,7 +34,7 @@ jobs:
           {
             echo "SHA $(git rev-parse HEAD)"
             echo "PERIGEE 2026-09-28T11:45:12Z"
-            cargo run --release -p omegaflow-measure --bin flyby_path2_fill -- --flyby juice --snapshots data/services.swpc.noaa.gov
+            cargo run --release -p omegaflow-measure --bin flyby_path2_fill -- --flyby juice --line "${{ inputs.line }}" --snapshots data/services.swpc.noaa.gov
           } > "flyby-path2-fill.txt"
       - uses: actions/upload-artifact@v4
         if: always()
@@ -37,5 +42,5 @@ jobs:
           name: flyby-path2-fill
           path: |
             flyby-path2-fill.txt
-            data/flyby2/tube-juice-2026-09-28.json
+            data/flyby2/tube-juice-2026-09-28*.json
             data/services.swpc.noaa.gov/*.json

@@ -16,6 +16,10 @@ const PERIGEE_YEAR: i64 = 2026;
 const PERIGEE_MONTH: i64 = 9;
 const PERIGEE_DAY: i64 = 28;
 const SEAL_JUICE_SHA256: &str = "aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a";
+const RENEWED_JUICE_SHA256: &str =
+    "eee376effcb4def668a61d47ab7ea2e6f7b0b7cc3f884ea6634997349d4389b5";
+const POSTFLIGHT_JUICE_SHA256: &str =
+    "018ce2ca680b195ceda4e4013ceed1a4d0c80ddb1732629d456ffa197bd33e20";
 const SEAL_SITE: &str = "docs/paper/flyby-path-2-preregistration.md:21";
 const L1_DISTANCE_M: f64 = 1.5e9;
 const C_M_S: f64 = 2.99792458e8;
@@ -39,7 +43,6 @@ const SWARM_HAPI_URL: &str = "https://vires.services/hapi/data?id=SW_FAST_MAGA_L
 const OMNI2_HAPI_URL: &str = "https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={start}T00:00:00Z&time.max={end}T23:59:59Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=csv";
 const ACE_MAG_URL: &str = "https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json";
 const ACE_SWEPAM_URL: &str = "https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json";
-const TUBE_JSON_PATH: &str = "data/flyby2/tube-juice-2026-09-28.json";
 
 struct RtswMag {
     t: f64,
@@ -786,19 +789,20 @@ fn cell_utc_label(t_tdb: f64, lsk: &LeapSeconds) -> String {
     }
 }
 
-fn riss_json(measured_sha: &str, measured_bytes: usize) -> String {
+fn riss_json(measured_sha: &str, measured_bytes: usize, line: TrajectoryLine) -> String {
     let mut s = String::new();
     s.push_str("{\n");
     s.push_str("  \"flyby\": \"juice\",\n");
     s.push_str("  \"perigee_date\": \"2026-09-28\",\n");
     s.push_str(&format!(
-        "  \"trajectory\": {{\"verdict\": \"{}\", \"seal_sha256\": \"{}\", \"measured_sha256\": \"{}\", \"measured_bytes\": {}}},\n",
+        "  \"trajectory\": {{\"line\": \"{}\", \"verdict\": \"{}\", \"seal_sha256\": \"{}\", \"measured_sha256\": \"{}\", \"measured_bytes\": {}}},\n",
+        line.word(),
         VerdictWord::Riss.word(),
-        SEAL_JUICE_SHA256,
+        line.seal(),
         measured_sha,
         measured_bytes
     ));
-    s.push_str(&format!("  \"seal_site\": \"{}\",\n", SEAL_SITE));
+    s.push_str(&format!("  \"seal_site\": \"{}\",\n", line.seal_site()));
     s.push_str("  \"tube\": \"no tube built from the unsealed arc\"\n");
     s.push_str("}\n");
     s
@@ -808,6 +812,7 @@ fn tube_json(
     verdict: VerdictWord,
     measured_sha: &str,
     measured_bytes: usize,
+    line: TrajectoryLine,
     t0: f64,
     n_hours: usize,
     t_p: f64,
@@ -821,13 +826,14 @@ fn tube_json(
     s.push_str("  \"flyby\": \"juice\",\n");
     s.push_str("  \"perigee_date\": \"2026-09-28\",\n");
     s.push_str(&format!(
-        "  \"trajectory\": {{\"verdict\": \"{}\", \"seal_sha256\": \"{}\", \"measured_sha256\": \"{}\", \"measured_bytes\": {}}},\n",
+        "  \"trajectory\": {{\"line\": \"{}\", \"verdict\": \"{}\", \"seal_sha256\": \"{}\", \"measured_sha256\": \"{}\", \"measured_bytes\": {}}},\n",
+        line.word(),
         verdict.word(),
-        SEAL_JUICE_SHA256,
+        line.seal(),
         measured_sha,
         measured_bytes
     ));
-    s.push_str(&format!("  \"seal_site\": \"{}\",\n", SEAL_SITE));
+    s.push_str(&format!("  \"seal_site\": \"{}\",\n", line.seal_site()));
     s.push_str("  \"tube\": {\n");
     s.push_str(&format!("    \"t0_tdb\": {},\n", f64_json(t0)));
     s.push_str(&format!("    \"n_hours\": {},\n", n_hours));
@@ -911,6 +917,64 @@ fn table_value(v: Option<f64>, width: usize, precision: usize) -> String {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum TrajectoryLine {
+    Official,
+    Renewed,
+    Postflight,
+}
+
+impl TrajectoryLine {
+    fn parse(token: &str) -> Option<Self> {
+        match token {
+            "official" => Some(Self::Official),
+            "renewed" => Some(Self::Renewed),
+            "postflight" => Some(Self::Postflight),
+            _ => None,
+        }
+    }
+
+    fn word(self) -> &'static str {
+        match self {
+            Self::Official => "official",
+            Self::Renewed => "renewed",
+            Self::Postflight => "postflight",
+        }
+    }
+
+    fn seal(self) -> &'static str {
+        match self {
+            Self::Official => SEAL_JUICE_SHA256,
+            Self::Renewed => RENEWED_JUICE_SHA256,
+            Self::Postflight => POSTFLIGHT_JUICE_SHA256,
+        }
+    }
+
+    fn seal_site(self) -> &'static str {
+        match self {
+            Self::Official => SEAL_SITE,
+            Self::Renewed => "docs/paper/flyby-path-2-preregistration.md:58-70",
+            Self::Postflight => "docs/paper/flyby-path-2-addendum-2026-09-29.md",
+        }
+    }
+
+    fn default_arc(self) -> &'static str {
+        match self {
+            Self::Official => "data/ssd.jpl.nasa.gov/ephemeris_juice.bin",
+            Self::Renewed => "data/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin",
+            Self::Postflight => "data/ssd.jpl.nasa.gov/ephemeris_juice_postflight.bin",
+        }
+    }
+
+    fn tube_suffix(self) -> &'static str {
+        match self {
+            Self::Official => "",
+            Self::Renewed => "-renewed",
+            Self::Postflight => "-postflight",
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let flyby = args
@@ -929,6 +993,28 @@ fn main() {
         );
         std::process::exit(2);
     }
+    let line = match args
+        .iter()
+        .position(|a| a == "--line")
+        .and_then(|i| args.get(i + 1))
+    {
+        Some(t) => match TrajectoryLine::parse(t) {
+            Some(l) => l,
+            None => {
+                eprintln!("--line '{t}' names no official|renewed|postflight");
+                std::process::exit(2);
+            }
+        },
+        None => TrajectoryLine::Official,
+    };
+    let arc_path = match args
+        .iter()
+        .position(|a| a == "--arc")
+        .and_then(|i| args.get(i + 1))
+    {
+        Some(path) => path.clone(),
+        None => line.default_arc().to_string(),
+    };
     let lsk = match parse_lsk(NAIF_LSK_EMBEDDED) {
         Some(l) => l,
         None => {
@@ -937,7 +1023,6 @@ fn main() {
         }
     };
 
-    let arc_path = "data/ssd.jpl.nasa.gov/ephemeris_juice.bin".to_string();
     let mut bytes = std::fs::read(&arc_path).ok();
     if bytes.is_none() {
         std::fs::create_dir_all("data/ssd.jpl.nasa.gov").ok();
@@ -955,32 +1040,37 @@ fn main() {
         std::process::exit(2);
     };
     let measured_sha = sha256_hex(&bytes);
-    let verdict: VerdictWord = if measured_sha == SEAL_JUICE_SHA256 {
+    let verdict: VerdictWord = if measured_sha == line.seal() {
         VerdictWord::Placed
     } else {
         VerdictWord::Riss
     };
     println!(
-        "trajectory: {} sha256 {} ({} B)",
+        "trajectory line {}: {} sha256 {} ({} B)",
+        line.word(),
         verdict.word(),
         measured_sha,
         bytes.len()
+    );
+    let tube_path = format!(
+        "data/flyby2/tube-juice-2026-09-28{}.json",
+        line.tube_suffix()
     );
     if verdict == VerdictWord::Riss {
         println!(
             "trajectory riss: measured sha256 {} ({} B) != seal sha256 {} ({})",
             measured_sha,
             bytes.len(),
-            SEAL_JUICE_SHA256,
-            SEAL_SITE
+            line.seal(),
+            line.seal_site()
         );
         println!(
             "no tube built from the unsealed arc — the riss stands with both witnesses (verdict {})",
             verdict.word()
         );
         std::fs::create_dir_all("data/flyby2").ok();
-        if std::fs::write(TUBE_JSON_PATH, riss_json(&measured_sha, bytes.len())).is_ok() {
-            println!("riss register: {TUBE_JSON_PATH}");
+        if std::fs::write(&tube_path, riss_json(&measured_sha, bytes.len(), line)).is_ok() {
+            println!("riss register: {tube_path}");
         }
         return;
     }
@@ -1166,6 +1256,7 @@ fn main() {
         verdict,
         &measured_sha,
         bytes.len(),
+        line,
         t0,
         n_hours,
         t_p,
@@ -1174,10 +1265,10 @@ fn main() {
         &cell_channels,
         &lsk,
     );
-    if std::fs::write(TUBE_JSON_PATH, json).is_ok() {
-        println!("tube register: {TUBE_JSON_PATH}");
+    if std::fs::write(&tube_path, json).is_ok() {
+        println!("tube register: {tube_path}");
     } else {
-        eprintln!("tube register write void: {TUBE_JSON_PATH}");
+        eprintln!("tube register write void: {tube_path}");
         std::process::exit(2);
     }
 

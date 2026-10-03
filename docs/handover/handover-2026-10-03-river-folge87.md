@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: 98ce1a7408ad0c63f729d2a0644b361cc2462d6bbbd8176881cd796154c080e8
+  sha256: 78a7563ec347cd38d934b990a318b272d874cf08e43162b779549a1787465180
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -133,8 +133,13 @@ Wort | Datum | Quelle
   `eee376ef…` = zulässige **Vor-Flug-Linie** (zweiter Zeuge, nie gemittelt);
   `018ce2ca…` = **Nach-Flug-Vergleichslinie**. Keine Zahl wird gemittelt, keine ausgesucht.
 - **Blockade:** keine.
-- **Braucht:** den `flyby-path2-fill`-Lauf mit den drei Linien getrennt und klar
-  beschriftet; die 27.- und die 02.-Linie als Vergleich nach der offiziellen auswerten.
+- **Braucht:** der `--line`/`--arc`-Schalter ist **gebaut** (`flyby_path2_fill.rs`:
+  `official|renewed|postflight`, eigenes Tube-JSON `…-<line>.json`), der Workflow
+  `flyby-path2-fill.yml` trägt einen `line`-Dispatch-Eingang. Für die drei Läufe **in CI**
+  müssen der Seal-Arc `aeb3c82f…` und die 27.-Erneuerung `eee376ef…` als fetchbare
+  CDN-URLs manifestiert werden (An mycelium) — sonst fetcht CI den Postflight-Stand
+  `018ce2ca…` und die `official`/`renewed`-Linie meldet ehrlich `riss`. Danach je Linie
+  ein Dispatch; die 27.- und die 02.-Linie als Vergleich nach der offiziellen auswerten.
 - **Riss (benannt, Rat 2026-10-03):** Tube-Perigäum 11:43:50 UTC / 15 034 km vs.
   revidierte Präregistrierung 11:45:12 ± 10 s / 15 018 km (~82 s) — zwei
   vorabregistrierte Quellen, nicht zu mitteln.
@@ -255,6 +260,15 @@ Origin: river folge87.
 
 Origin: river folge87.
 
+- **Flyby-Path-2: die zwei Vor-Flug-Bahnen für CI fetchbar machen.** Gemessen 2026-10-03
+  via `omega_sh sha`: der Seal-Arc `aeb3c82f…` (106 704 B,
+  `data/ssd.jpl.nasa.gov/ephemeris_juice.bin`) und die 27.-Erneuerung `eee376ef…`
+  (538 696 B, `data/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin`) liegen nur **lokal**;
+  das CDN `ephemeris_juice.bin` trägt den Postflight-Stand `018ce2ca…`. Bitte beide unter
+  eigenen fetchbaren CDN-URLs manifestieren (`url`/`origin` in `phi/sources.φ`), damit
+  `flyby_path2_fill --line official|renewed` in CI die richtigen Bytes zieht; sonst melden
+  beide ehrlich `riss`.
+
 - **`ci-gate` @`f0adb5e42` — clippy/format (river) behoben.** Die vier Lints in
   `src/mathematikerin/wy_max_t.rs` sind geheilt: `excessive_precision` (Zentrierten-
   Kommentar), `too_many_arguments` (`null_matrix` 9→7: `perm: Range<usize>` +
@@ -294,6 +308,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `phi/pipeline/descriptors/aia_three_year.te`
 - `tools/measure/src/bin/enso_blatt_probe.rs`
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md`
+- `tools/measure/src/bin/flyby_path2_fill.rs`
+- `.github/workflows/flyby-path2-fill.yml`
 - `docs/handover/handover-2026-10-03-river-folge87.md`
 - `docs/handover/archiv/handover-2026-10-03-river-folge86.md` (Move aus `docs/handover/`)
 
