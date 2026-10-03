@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: e2b906147a4416f4e585ada30d51fd66959e368833face90a66999f360244fcc
+  sha256: 6fc638df83d781f90989a89f68f12076a3a0c57c40e5b0484b314ad073c14c75
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -108,6 +108,7 @@ Wort | Datum | Quelle
   JD→TDB via `embedded_lsk`); offen: der Compiler, der die VizieR-`asu-tsv` → AST1 schreibt, und
   die Registrierung. Gaia-ADQL: Q1 korrigiert (JOIN `vari_classifier_result`→`gaia_source`,
   Klasse `'RR'`, HTTP 200); Q2 (`cluster_ka`) **pending** — die Gaia-TAP trägt keine Cluster-Tabelle.
+  Träger: `phi/blocked_sources.φ::gap:astrometry-reader ×7`, `phi/blocked_sources.φ::gap:curation ×2`.
 
 ### pradan_ch2-Reader-Arm — roher ISRO-Zip ohne `format`
 - **Status:** blockiert | **Bindung:** eigen
