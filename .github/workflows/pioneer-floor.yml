@@ -1,0 +1,54 @@
+name: pioneer-floor
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pioneer-floor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the Pioneer-10/11 NAVIO corpus and ephemerides from the CDN
+        run: |
+          mkdir -p data/spdf.gsfc.nasa.gov data/ssd.jpl.nasa.gov
+          for attempt in 1 2 3; do
+            gh release download spdf.gsfc.nasa.gov --repo omegaflow/sources \
+              --pattern 'pioneer10_navio.bin' --pattern 'pioneer11_navio.bin' \
+              --clobber --dir data/spdf.gsfc.nasa.gov \
+              && gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+              --pattern 'ephemeris_earth.bin' \
+              --pattern 'ephemeris_pioneer10_daily.bin' \
+              --pattern 'ephemeris_pioneer11_daily.bin' \
+              --clobber --dir data/ssd.jpl.nasa.gov \
+              && break
+            echo "corpus fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s data/spdf.gsfc.nasa.gov/pioneer10_navio.bin
+          test -s data/spdf.gsfc.nasa.gov/pioneer11_navio.bin
+          test -s data/ssd.jpl.nasa.gov/ephemeris_earth.bin
+          test -s data/ssd.jpl.nasa.gov/ephemeris_pioneer10_daily.bin
+          test -s data/ssd.jpl.nasa.gov/ephemeris_pioneer11_daily.bin
+      - name: Anchor the corpus
+        run: echo "SHA $(git rev-parse HEAD)" > pioneer-floor.txt
+      - name: Reduce the NAVIO residual and the quiet-zone daily basis
+        run: |
+          cargo run --release -p omegaflow-measure --bin pioneer_navio_residuum >> pioneer-floor.txt 2>&1
+          cargo run --release -p omegaflow-measure --bin pioneer_navio_negative_fuzzy -- --zone >> pioneer-floor.txt 2>&1
+      - name: Three-form drift test against the block-bootstrap null (Blatt docs/blatt/blatt-pioneer-floor-falsifikation.md)
+        run: cargo run --release -p omegaflow-measure --bin pioneer_navio_zone_drift >> pioneer-floor.txt 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pioneer-floor
+          path: pioneer-floor.txt
