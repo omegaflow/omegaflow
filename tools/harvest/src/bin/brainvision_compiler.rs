@@ -234,6 +234,55 @@ fn report(ex: &BrainVisionEeg) {
     );
 }
 
+fn participant_of(args: &[String]) -> Result<Option<String>, String> {
+    match arg_value(args, "--participant") {
+        None => Ok(None),
+        Some(p) if p == "L" || p == "R" => Ok(Some(p)),
+        Some(other) => Err(format!(
+            "--participant {other} names no side — L|R; the harvest stays void (0 honored)"
+        )),
+    }
+}
+
+fn filter_participant(ex: &BrainVisionEeg, participant: &str) -> Option<BrainVisionEeg> {
+    let suffix = format!("_{participant}");
+    let samples = match &ex.samples {
+        Samples::Single(s) => s,
+        Samples::Double(_) => return None,
+    };
+    let pnts = usize::try_from(ex.pnts).ok()?;
+    let mut labels: Vec<String> = Vec::new();
+    let mut channels: Vec<usize> = Vec::new();
+    for (i, label) in ex.labels.iter().enumerate() {
+        let Some(stripped) = label.strip_suffix(&suffix) else {
+            continue;
+        };
+        if stripped.is_empty() {
+            return None;
+        }
+        labels.push(stripped.to_string());
+        channels.push(i);
+    }
+    if channels.is_empty() {
+        return None;
+    }
+    let nbchan = u32::try_from(channels.len()).ok()?;
+    let mut out = Vec::with_capacity(channels.len().checked_mul(pnts)?);
+    for t in 0..pnts {
+        for &ch in &channels {
+            out.push(*samples.get(ch * pnts + t)?);
+        }
+    }
+    Some(BrainVisionEeg {
+        nbchan,
+        pnts: ex.pnts,
+        srate: ex.srate,
+        labels,
+        samples: Samples::Single(out),
+        events: ex.events.clone(),
+    })
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let dataset = match arg_value(args, "--dataset") {
@@ -244,6 +293,7 @@ fn run(args: &[String]) -> Result<(), String> {
         Some(p) => p,
         None => format!("data/{NETLOC}/{dataset}"),
     };
+    let participant = participant_of(args)?;
 
     if let Some(local) = arg_value(args, "--local") {
         let vhdr_bytes =
@@ -271,6 +321,14 @@ fn run(args: &[String]) -> Result<(), String> {
             .and_then(|f| std::fs::read(parent.join(f)).ok());
         let ex = extract(&vhdr_bytes, vmrk_bytes.as_deref(), &eeg_bytes)
             .ok_or_else(|| format!("{local}: the triple carries no BrainVision contract"))?;
+        let ex = match &participant {
+            Some(p) => filter_participant(&ex, p).ok_or_else(|| {
+                format!(
+                    "{local}: participant {p} touches no channel — the report stays void (0 honored)"
+                )
+            })?,
+            None => ex,
+        };
         eprintln!("{local}:");
         report(&ex);
         return Ok(());
@@ -392,11 +450,24 @@ fn run(args: &[String]) -> Result<(), String> {
                 continue;
             }
         };
+        let ex = match &participant {
+            Some(p) => match filter_participant(&ex, p) {
+                Some(f) => f,
+                None => {
+                    eprintln!("{rel}: participant {p} touches no channel — skipped (0 honored)");
+                    skipped += 1;
+                    continue;
+                }
+            },
+            None => ex,
+        };
         eprintln!("{rel}:");
         report(&ex);
-        let bin_rel = match rel.strip_suffix(".vhdr") {
-            Some(s) => format!("{s}.bin"),
-            None => format!("{rel}.bin"),
+        let bin_rel = match (rel.strip_suffix(".vhdr"), &participant) {
+            (Some(stem), Some(p)) => format!("{stem}_{p}.bin"),
+            (Some(stem), None) => format!("{stem}.bin"),
+            (None, Some(p)) => format!("{rel}_{p}.bin"),
+            (None, None) => format!("{rel}.bin"),
         };
         let bin_path = format!("{out_root}/{bin_rel}");
         let Some(bin) = build_bin(
@@ -605,6 +676,82 @@ mod tests {
                 }
             }
             _ => panic!("event kind mismatch"),
+        }
+    }
+
+    fn fixture_participant_vhdr() -> Vec<u8> {
+        "Brain Vision Data Exchange Header File Version 1.0\r\n\
+         [Common Infos]\r\n\
+         DataFile=sub-01_task-jointaction_eeg.eeg\r\n\
+         MarkerFile=sub-01_task-jointaction_eeg.vmrk\r\n\
+         DataFormat=BINARY\r\n\
+         DataOrientation=MULTIPLEXED\r\n\
+         NumberOfChannels=4\r\n\
+         SamplingInterval=1000\r\n\
+         [Binary Infos]\r\n\
+         BinaryFormat=INT_16\r\n\
+         [Channel Infos]\r\n\
+         Ch1=A_L,,1,µV\r\n\
+         Ch2=B_L,,1,µV\r\n\
+         Ch3=A_R,,1,µV\r\n\
+         Ch4=B_R,,1,µV\r\n"
+            .as_bytes()
+            .to_vec()
+    }
+
+    fn fixture_participant_eeg() -> Vec<u8> {
+        let mut b = Vec::new();
+        for v in [10i16, 20, 30, 40, 11, 21, 31, 41] {
+            b.extend_from_slice(&v.to_le_bytes());
+        }
+        b
+    }
+
+    #[test]
+    fn participant_filter_keeps_its_channels_and_strips_the_suffix() {
+        let vhdr = fixture_participant_vhdr();
+        let eeg = fixture_participant_eeg();
+        let ex = extract(&vhdr, None, &eeg).expect("the 4-channel triple extracts");
+        assert_eq!(ex.nbchan, 4);
+        assert_eq!(ex.pnts, 2);
+        assert_eq!(
+            ex.labels,
+            vec![
+                "A_L".to_string(),
+                "B_L".to_string(),
+                "A_R".to_string(),
+                "B_R".to_string()
+            ]
+        );
+
+        let left = filter_participant(&ex, "L").expect("the L side carries channels");
+        assert_eq!(left.nbchan, 2);
+        assert_eq!(left.pnts, 2);
+        assert_eq!(left.labels, vec!["A".to_string(), "B".to_string()]);
+        match &left.samples {
+            Samples::Single(s) => assert_eq!(s, &vec![10.0f32, 20.0, 11.0, 21.0]),
+            Samples::Double(_) => panic!("the filtered series stays f32"),
+        }
+        let bin = build_bin(
+            &left,
+            &vhdr,
+            None,
+            &eeg,
+            "1.0.1",
+            "470458bcff173ca37018a9cb7a55c3804ccc1759",
+            "https://s3.amazonaws.com/openneuro.org/ds007471/sub-01/eeg/sub-01_task-jointaction_eeg.vhdr",
+        )
+        .expect("the filtered asset writes");
+        let parsed = parse_bin(&bin).expect("the filtered asset parses");
+        assert_eq!(parsed.nbchan, 2);
+        assert_eq!(parsed.pnts, 2);
+        assert_eq!(parsed.labels, vec!["A".to_string(), "B".to_string()]);
+
+        let right = filter_participant(&ex, "R").expect("the R side carries channels");
+        assert_eq!(right.labels, vec!["A".to_string(), "B".to_string()]);
+        match &right.samples {
+            Samples::Single(s) => assert_eq!(s, &vec![30.0f32, 40.0, 31.0, 41.0]),
+            Samples::Double(_) => panic!("the filtered series stays f32"),
         }
     }
 }
