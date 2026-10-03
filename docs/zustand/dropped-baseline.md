@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: b7cafb5fe31bb9ebf3824874b2576ce5226a5cfefa2181cad3e4c36e2aa77c07
+  sha256: a09856a62f7cfcd0800e44924a7da25550334abff7c2c9b3a6a1177b07cec2c0
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1131
+dropped-baseline 1141
+measured 2026-10-03 (Mycelium-Folge 227, ci-gate 37143781597 @5ea91ac76 dropped-gate: baseline 1131 | current 1141 | delta 10. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1131 — die Atom-Abschlüsse mountain-225…229, river-86, sensory-226 und mycelium-226; die `review`-Pässe dieser Runde. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-03 (Mycelium-Folge 226: dropped-gate @f0adb5e42 baseline 1351 | current 1388 | delta 37 — **kein Drop, ein Shallow-Clone-Artefakt**: `actions/checkout` ohne `fetch-depth` sah im `register_lookup --dropped`-Resolver (`git log --all -p`) nur den Tip-Patch, darum driftete die CI-Zahl mit jedem Commit. Fix: `dropped-gate`-Checkout auf `fetch-depth: 0` (`ci-gate.yml:76-79`). Der volle-Historie-Zähler ohne `state/` (CI-Menge) misst **1131**; der lokale Zähler mit `state/` 1115. Baseline auf 1131 neu gestempelt — die früheren CI-only-Werte waren dieselbe Shallow-Menge.)
 measured 2026-10-01 (Mycelium-Folge 218, ci-gate 36936698719 @3965e3814 dropped-gate: baseline 1339 | current 1351 | delta 12. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1339 — die Atom-Abschlüsse mountain-219/220/221, sensory-217/218, river-77 u. a. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-01 (Mycelium-Folge 217, ci-gate 36860776495 @6f9b5103a dropped-gate: baseline 1330 | current 1339 | delta 9. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1330 — die Atom-Abschlüsse mycelium-216, mountain-216/217, river-76. Der Lauf `36860776495` trägt die letzte gemessene dropped-gate-Zahl vor dem annehmenden Commit; lokal misst `register_lookup --dropped --count` = 1071 (unter der Baseline, andere Menge — die Gate-Zahl ist CI-only). Absorbiert durch diesen Bump im annehmenden Commit.)
