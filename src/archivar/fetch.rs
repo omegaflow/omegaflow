@@ -218,11 +218,6 @@ fn redirect_target(
     }
 }
 
-/// Fetches bytes with headers, following the first redirect without the
-/// headers: an authenticated OData asset redirects to a presigned URL that
-/// rejects a resent Authorization header with 403 (curl resends custom headers
-/// on a same-host redirect). The target is fetched bare; no redirect target
-/// carries the headers.
 pub fn fetch_raw_bytes_headers_redirect_with(
     url: &str,
     headers: &[(String, String)],
@@ -1107,6 +1102,8 @@ pub fn live_sweep(
                 | "alerce"
                 | "catalog_tycho"
                 | "catalog_allwise_psd"
+                | "twomass_psc"
+                | "swarm_tec"
                 | "spectral"
                 | "xp_spectra"
                 | "jwst_spectra"

@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 6c5cfefa17ff3bff44fc17d46dfafa70dbf22440213e5ccdba79af2aa6800bf9
+  sha256: 54b74ca7eefd69c4e47a3155cbd2755793a084a4bac99856033bafc0abda592d
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -652,15 +652,33 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   8% line and is analysed separately (the membrane null is a different rule;
   `gate_membrane_fpr_diagnostic` measures the four Rat diagnostics). The
   manuscript claims the calibrated nominal rate, α_nom = 1/(n_surr+1).
-- **Estimator bias at the operating n.** The KDE/Silverman estimator carries a
-  bias in the three-dimensional conditional density (x_{t+τ}, x_t, y_t) at the
-  operating sample sizes (n ≈ 1260–2200 per round); no explicit small-sample
-  bias correction is applied. The Hénon benchmark validates the direction at
-  n = 10 000 and does not bound the bias at the smaller n where the verdicts
-  are taken.
-- **No storm-only sub-analysis.** The yearly round pools storm and quiet hours
-  into one TE; whether the Bz arrow is carried by a few storm days is not yet
-  separated. A storm-selective or block-resampled sub-analysis is an open step.
+- **Estimator bias at the operating n is measured.** The KDE/Silverman estimator
+  carries a bias in the conditional density (x_{t+τ}, x_t, y_t) at the operating
+  sample sizes; a coupled Hénon benchmark (c = 0.20, known X→Y, lag 1, scalar
+  Silverman-KDE, 5 fixed-seed replicates) now measures it
+  (`tools/measure/src/bin/te_bias_n_probe.rs`, `.github/workflows/te-bias-n.yml`,
+  CI run 37118666568, success). Against the validated n = 10 000 reference
+  TE(X→Y) = 2.4402e-1 the forward bias is −8.87e-2 (n = 800), −7.69e-2
+  (n = 1260), −7.14e-2 (n = 1600), −6.10e-2 (n = 2200) and −4.16e-2
+  (n = 4000), tending to 0 at n = 10 000; the direction X→Y is recovered in
+  5/5 replicates at every n. The bias magnitude therefore grows toward the
+  operating sizes (n ≈ 1260–2200) while the direction verdict is stable. No
+  explicit small-sample correction is applied and every reported TE value
+  carries this negative bias; the correction (a subsample/`n_eff` bound) is an
+  open construction.
+- **Storm-only sub-analysis is measured and stays `pending` on the Kp channel.**
+  The storm-selective round is built (`tools/measure/src/bin/gic_storm_probe.rs`,
+  `.github/workflows/gic-storm.yml`, CI run 37118664799, success) and runs the
+  six-pair round both on the yearly window and on Kp ≥ 5 storm hours at ABK and
+  SOD. The wired SWPC Kp channel carries only 59–60 records on its 3-h grid, so
+  no hour clears Kp ≥ 5 and the storm round has n = 0 — carried as `pending`,
+  never a fabricated zero. The yearly round it reports is consistent with §4
+  (Bz→dB/dt at ABK 2024 1.2707e-1 vs fam 1.0974e-1, ABK 2025 1.3345e-1 vs
+  1.2439e-1 arrow, SOD 2024 1.1696e-1 vs 1.0850e-1, SOD 2025 1.2134e-1 vs
+  1.2634e-1 family bound). The open step is a complete Kp series (the GFZ series
+  reads `pre`, not `def`) and a `F_{t−1}`-measurable storm selection applied
+  inside the null loop; whether the Bz arrow is carried by a few storm days is
+  not yet separated.
 - **Surrogate-machine generation.** The family bounds in this version were
   measured under the corrected (post-fix) surrogate RNG
   (`fam-machine: post-fix`, §3.4). The pre-fix run (fam 2024 = 0.12480) is
