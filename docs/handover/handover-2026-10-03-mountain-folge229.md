@@ -3,7 +3,7 @@
   session: Mountain-Folge 229
   class: handover
   date: 2026-10-03
-  sha256: 3b6ba32c3049537e7d6a648998fd5f19c47d1dff580c6800a1c7da4dd2790a1a
+  sha256: 5ad331e7f38bed7bdae12a2ac07f7207d89662f6494fc14b486392ac8ce56b28
   status: live
 -->
 # Handover — Mountain-Folge 229 (2026-10-03)
@@ -114,6 +114,16 @@ Wort | Datum | Quelle
 - **Braucht:** je Zitat den Ziel-Netloc über den Git-Stand des Schreib-Commits messen, dann
   `sources.φ:<n>` durch den Netloc ersetzen; **nie** die Nummer nachführen.
 
+### HDF4-Reader-Arm — MODIS LST CMG (NBIT/SKPHUFF/SZIP) fehlt
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-03) MOD11C2/MOD11C3 (`e4ftl01.cr.usgs.gov`) sind integriert
+  (`sources.φ:15358/:15367`); der Compiler steht, aber der HDF4-Decompressor (NBIT/SKPHUFF/SZIP) fehlt →
+  das Bin trägt 0 lesbare Kanäle. Die zwei `released`-Einträge sind gelöscht (integrierte Twins); das
+  fehlende Arm ist als gap-Token `hdf4` in `phi/blocked_sources.φ` deklariert.
+- **Blockade:** HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert.
+- **Braucht:** HDF4-Reader-Arm für NBIT/SKPHUFF/SZIP bauen; dann die zwei CMG-Bins gegen die Quellen prüfen.
+
 ## Träger (Prosa, eigene)
 
 - `docs/surveys/survey-raetsel-bestand.md` (`class: survey`, Header-sha `524d61dc…`) —
@@ -183,8 +193,8 @@ Origin: mountain folge229.
     `ws-uv.canfar.net`; die `/argus`-decline (`phi/declined_sources.φ:4369`) ist ein anderer Pfad,
     kein Kollisions-Riss.
 
-- **Chandrayaan-1 M3 — CDN-Manifest offen (Mountain-Verdikt: `released`).** `phi/blocked_sources.φ:385`
-  von `blocked ip-blocked` auf `released` gehoben: das Asset ist lokal geerntet + registriert
+- **Chandrayaan-1 M3 — CDN-Manifest offen.** `phi/blocked_sources.φ` (`pds-imaging.jpl.nasa.gov/data/m3/`)
+  von `blocked ip-blocked` über `released` auf `pending` gehoben: das Asset ist lokal geerntet + registriert
   (`phi/sources.φ:9884`, sha `5771de98…`, format `pds3_img`), der JPL-Direktpfad liefert 206 — nur der
   **CI-Runner-Datacenter-IP** bekommt `.HDR` 403 (CI `36737530030`), daher ist die CDN-Release-URL
   **404** (gemessen 2026-10-03 via `archive_search --verdict`). Braucht: Manifestation aus dem
@@ -192,11 +202,15 @@ Origin: mountain folge229.
   Analog: `phi/blocked_sources.φ:360` Shandong-Spiegel von `blocked ip-blocked` auf `descoped`
   (redundant, CLPDS `:406` deckt Chang'e-1/2-PDS3).
 
-- **5 Harvest-Duties von `released` auf `pending` gehoben (owner Mycelium).** `phi/blocked_sources.φ`
-  `:300` Chang'e 1–6 GRAS · `:304` Tianwen-1/Zhurong · `:308` ISRO/ISSDC (PRADAN: Credentials
-  `PRADAN_USER`/`PRADAN_PASS` in `.secrets.local`, kein Operator-Akt) · `:312` EMM/MBRSC ·
-  `:316` MAP-Grid RST/Globus — die offene Ernte steht jetzt im offenen Satz
-  (`register_lookup --open`), nicht nur im `note`. KARI/KPDS `:372` war schon `pending`.
+- **`released`-Zustand aufgelöst (Register-Hygiene).** `phi/blocked_sources.φ` trägt **0 `released`**.
+  7 Einträge mit offener Arbeit auf `pending` (owner Mycelium) gehoben: `moon.bao.ac.cn` (Chang'e 1–6
+  GRAS) · `nssdc.ac.cn` (Tianwen-1/Zhurong) · `pradan.issdc.gov.in` (ISRO/ISSDC; `PRADAN_USER`/
+  `PRADAN_PASS` in `.secrets.local`, kein Operator-Akt) · `sdc.emiratesmarsmission.ae` (EMM/MBRSC) ·
+  `superdarn.ca/data-download` (MAP-Grid RST/Globus) · `pds-imaging.jpl.nasa.gov` (M3-CDN-Manifest) ·
+  `zenodo.org/records/10594301` (iaga-text, Reader steht, Quelle unregistriert). 2 `released` mit
+  HDF4-Arm-Lücke (MOD11C2/C3) **gelöscht** (integrierte Twins) + gap-Token `hdf4` deklariert; 1 → `descoped` (epncore, Backend
+  tot); **6 terminale** `released` (SuperDARN-FITACF/AllWISE/sensor.community/Planck-PSZ2/Mariner10/html)
+  **gelöscht** — die Quelle lebt in `sources.φ`, git trägt. KARI/KPDS war schon `pending`.
 - **Regel (Future folge172, privat):** vor jedem `Operator-Hand`/`operator-gebunden`-Label
   `.secrets.local` per `bin/secrets_keys` messen; ein Label wird im selben Pass vorgelegt
   oder als gewortet vermerkt.

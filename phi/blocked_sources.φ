@@ -19,21 +19,12 @@ note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, Record 16453×52, 
 note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
+note gap-Token hdf4 — HDF4-Kompression (NBIT/SKPHUFF/SZIP) nicht implementiert; MOD11C2/C3 registriert (sources.φ:15358/:15367), 0 lesbare Kanäle.
 
 descoped
 url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C1.061/
 reg https://urs.earthdata.nasa.gov/users/new
 note MODIS/Terra LST Daily CMG V061 descoped (gemessen 2026-09-27): 1 Granule ≈ 17,2 M Records ≈ 688 MB; Jahr ≈ 250 GB, ~6,7 TB über 27 Jahre; Ein-Asset reißt 2-GiB-Cap + 16-GB-RAM. 8-day/monthly leben als per-Granule-Serie.
-
-released
-url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C2.061/
-reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST 8-day CMG V061. 2026-09-26: cloud 303→206 gemessen (206, 1024 B, HDF4). → phi/sources.φ:15358. Compiler steht; Arm-Gap hdf4 NBIT/SKPHUFF/SZIP.
-
-released
-url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C3.061/
-reg https://urs.earthdata.nasa.gov/users/new
-note MODIS/Terra LST Monthly CMG V061. 2026-09-26: cloud 303→206 gemessen (206, 1024 B, HDF4). → phi/sources.φ:15367. Compiler steht; Arm-Gap hdf4 NBIT/SKPHUFF/SZIP.
 
 descoped
 url https://api.lasair.lsst.ac.uk/api
@@ -52,11 +43,6 @@ descoped
 url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
 note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED RING OCCULTATION DATA — normal optical depth τ(r)-Profile, binned+rekonstruiert (Marouf 1986). 2026-09-19 tar.gz HTTP 200 (5.7G+v1 397M), offen. Raw RSS NICHT im Bundle → atmos.nmsu.edu (cassini_tnf).
 
-released
-url https://superdarn.ca/data-download
-reg https://superdarn.ca/piagreement
-note SuperDARN FITACF released 2026-09-26: bz2-Arm steht, → phi/sources.φ:9461; workflow .github/workflows/superdarn-cdn.yml (sdc-serv.usask.ca/data/{Y}/{M}/{file} 200). CI superdarn-cdn 36268001985 success. MAP-Grid Globus 20e8a751… (ACTIVE).
-
 pending
 url https://psa.esa.int/psa-tap/tap/
 reg https://www.cosmos.esa.int/web/psa/contact-us
@@ -69,11 +55,6 @@ note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
 note Mariner 10 Radio-Science/Tracking (762 7-Track-Tapes, SDDPT 73-085A-0008). 2026-09-17: Gesamtkorpus request-only. Teilroute: SPDF red_tele_signal_data_venus_occlt/ — 9 .tar à ~19,5 MB anonym, PSPA-00316. Anfrage 2026-09-16 (:208), Antwort offen.
-
-released
-url https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
-at mariner10
-note NAIF SPK M10_archive_1.bsp (51200 B, HTTP 200 2026-09-25). ephemeris_mariner10.bin gebaut (mariner10-ephemeris-cdn 36181036369; 648 B, sha256 7ad8b8bf, sources.φ). mariner10-Route in frame_registry.φ beim kernel-flatten-Pass prüfen.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
@@ -90,7 +71,6 @@ note MESSENGER Erd-Encounter 2005 absent: Bundle data-odf/ 2007-2015, kein 2005 
 descoped
 url https://pds-geosciences.wustl.edu/radiosciencedocs/
 note ODF-Word-Arm geschlossen odf.rs:56/62/74. pathfinder_odf-Compiler gebaut (mprs_0001/0002, 28 .odf, sha256-Dedup). lro_odf/ulysses_odf descoped: LRO RSS nur TRK/utF (kein odf/, lro_trk deckt); Ulysses SCE nur TDF=ATDF (kein odf/, ulysses_atdf deckt).
-
 
 pending
 url https://regards.cnes.fr/api/v1/rs-order
@@ -173,10 +153,6 @@ descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2078%20AND%2082%20AND%20dec%20BETWEEN%20-71%20AND%20-68%20AND%20parallax%20IS%20NOT%20NULL
 note Gaia DR3 (Patch): field par — Astrometrie; cmap plx 2. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
 
-released
-url https://irsa.ipac.caltech.edu/TAP
-note AllWISE allsky_4band_p3as_psd released 2026-09-26: async-UWS Arm+Consumer gebaut (folge172), allwise-cdn 36238458915 success. Job 23542882 COMPLETED (VOTable 1.3).
-
 descoped
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
 note SIMBAD basic (EB): field plx_mas — Astrometrie; cmap plx 2 trägt Entfernung, radvel 5/redshift 6. descoped (gemessen: → src/archivar/port.rs:1698/1706 — Astrometrie/Farbindex DROP, kein 9-Kraft-Kanal; Entfernung via cmap plx).
@@ -253,10 +229,6 @@ descoped
 url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
 note Record=1 epoch+1 Motion (types.rs:41); JD/RA/Dec ohne dist=Richtung, kein ICRS-Ort, kein 9-Kraft-Wert (force_type/val absent); Serie ist keine Skalar-Serie (SeriesRow extract.rs:89); Positions-Serie ohne Record-Slot.
 
-released
-url https://maps.sensor.community/data/v2/data.json
-note 2026-09-26 Spiegel 200 8 572 935 B (17 773 Records, value_type je Eintrag); Keyed-Selector gebaut (json.rs `key=value`); registriert phi/sources.φ (5 Felder, pressure→acoustic); Daten DbCL 1.0; api-403 bleibt.
-
 descoped
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
 note LHAASO: gemessen 2026-09-26 kein Weg — Kollaborations-Review/Agreement nötig, IHEP-Konto verlangt CSTNET-ID (nicht vorhanden). API 200 (18 Datensätze, 4 Rohklassen gated).
@@ -269,25 +241,17 @@ descoped
 url https://data.lsst.cloud/api/tap/sync
 note Rubin/LSST descoped 2026-09-26: data-rights-Petition bei Shaughnessy (SLAC) ruht (mail_ledger.φ:39-68); Survey off-sky, jetzt kein Bedarf. Bei Survey-Daten wieder aufnehmen.
 
-released
-url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,snr+FROM+planck.com_pccs2_sz_mmf3
-note 2026-09-26 korrigierte ADQL name,ra,dec,snr → HTTP 200, echte PSZ2-Zeilen; registriert in phi/sources.φ:8078 (planck_psz2_compiler, redshift-Crossmatch com_pccs2_sz_union 925/1271).
-
 descoped
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/
 note EMC (nicht MT): CC BY 4.0, nc 200 HDF5 anonym; Roh-nc reference sources.φ:1298+; 8 volume.bin CDN sha256-verankert. volume_netcdf descoped (2026-09-27): statisch, kein Frische-Gewinn, LITHO1.0 ohne Rang-3-Var; Arm bleibt fuer aendernde 3D-Gitter.
 
-released
+descoped
 url http://pithia.cbk.waw.pl/tap
-note epncore released 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f; Arm epncore-spatial steht (parse.rs:319).
+note epncore — 2026-09-27: pithia backend-tot (TAP 200, /tap/tables 500, PG refused); planeto decline registry/katalog (declined_sources.φ:213); Port revertiert 73f35156f; Arm epncore-spatial steht (parse.rs:319).
 
-released
+pending
 url https://zenodo.org/records/10594301
-note iaga-text released 2026-09-27: IAGA-2002-Reader steht (src/archivar/iaga.rs:55); Mag_Data.zip, 16 .sec-Dateien 1-Hz XYZF, Fill 88888.00/99999.00 = absent; Modell-Teil (MT_Data/Network.xlsx) bleibt decline model (declined_sources.φ:5143).
-
-released
-url https://superdarn.ca/radar-info
-note html released 2026-09-27: Radar-Positionen maschinenlesbar via github.com/vtsuperdarn/hdw.dat (41 hdw.dat.<code>, lat Feld 4/lon Feld 5, raw 200 gemessen); HTML-Arm nicht nötig. FITACF/RAWACF stehen (sources.φ:11487/:9814).
+note iaga-text — 2026-09-27: IAGA-2002-Reader steht (src/archivar/iaga.rs:55); Mag_Data.zip, 16 .sec-Dateien 1-Hz XYZF, Fill 88888.00/99999.00 = absent; Modell-Teil decline model (declined_sources.φ:5143); Ernte/Registrierung offen.
 
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
@@ -382,7 +346,7 @@ url https://catalogue.dataspace.copernicus.eu/stac/collections
 reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
 note CDSE-CCM 2026-10-01: /stac/collections 200 public; $value mit Token 403 (Token liegt); Download nur C-S-U-I/U-R-P/N-P-A/I-O, P=View; Operator ohne U-R-P/N-P-A (Wort 2026-10-01) → descoped (View, kein Download).
 
-released
+pending
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
 note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Asset pds3_img_m3g20081118t222604_v03_loc.bin registriert (sources.φ:9884, sha 5771de98…), lokal roundtrip; CI-Runner .HDR 403 (Datacenter-IP, CI 36737530030) → CDN 404, Manifest offen. future-folge168.
 
