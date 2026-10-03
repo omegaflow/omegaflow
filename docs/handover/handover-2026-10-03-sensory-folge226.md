@@ -3,7 +3,7 @@
   session: Sensory-Folge 226
   class: handover
   date: 2026-10-03
-  sha256: 632d124582464f87ccc70a7b3c54d57c4e32a072e3100414c3b92708edc08b6b
+  sha256: 38083da1549212d94140faf5b63324b6c46cfc7afb42b57029b80684ce13cafb
   status: live
 -->
 # Handover — Sensory-Folge 226 (2026-10-03)
@@ -218,6 +218,9 @@ breiter messen.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-10-03 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 226.
 - **Wort:** „Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … LOCK nie vorlegen. Wartend nie vorlegen. Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-03 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 226.
 - **Wort:** „ja bitte abbrechen und wenn möglich priorisieren" (Vorgänger `37128441536` abbrechen, damit der joint-Lauf `37133961687` den concurrency-Slot bekommt) | 2026-10-03 | Operator (Session) — `ci_manage cancel 37128441536` ausgeführt; Sensory-Folge 226.
+- **Wort:** „1-3 4 ja mit der üblichen reccherche crew 5 fulltextzugang habe ich keinen" | 2026-10-03 | Operator (Session) — Evidenzlandkarte-Erweiterung: 1–3 gearbeitet, 4 via free-Diver, 5 Paywall bleibt ohne Zugang (abstrakt-verifiziert); Sensory-Folge 226.
+- **Wort:** „braucht es max? und willst du nicht auch die kostenlosen api und ui chat taucher nutzen?" | 2026-10-03 | Operator (Session) — Modell-Politik: kein `max` für die Literatursuche; free Diver genutzt; Sensory-Folge 226.
+- **Wort:** „kannst du bitte https://www.rehaklinik-glotterbad.de/startseite/ vermessen und ob du vorträge findest, das design farben, ci und auch die komplette seite inkl philosophie menschenbild ausrichtung etc" | 2026-10-03 | Operator (Session) — Site-Reconnaissance ausgeführt; Sensory-Folge 226.
 
 ## Offen (aufgeschlüsselt)
 
