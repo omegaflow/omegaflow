@@ -2,8 +2,9 @@
   title: No Arrow Beyond the Family Bound: Planet Nine limits in the Kuiper Belt
   class: paper
   date: 2026-08-22
-  sha256: f86397b5dff416c2737a0ba34a770e178024ca61d01f834935c1cc3a2f5992d6
+  sha256: e7a13bbccca80826d3f80386dcd6d2c65f9ed2b9bd7fca6b09b91adaabc1e07e
   fam-machine: pre-fix
+  see-also: docs/surveys/survey-raetsel-bestand.md docs/handover/handover-2026-10-03-sensory-folge224.md
   status: live
 -->
 
@@ -51,7 +52,7 @@ throughout) and are published here with seeds and commands (§6).
 `full-prec=true`, deduplicated with one-page over-fetch; a ∈ (30, 200) AU, e < 0.9,
 plus an ETNO page a > 200 AU, e < 0.99) and cross-checked against the Minor Planet
 Center `Distant.txt` (8258 fixed-width records; join by number or provisional
-designation, fallback unique element-space match within 5 × 10⁻³ AU in a,
+designation, a secondary unique element-space match within 5 × 10⁻³ AU in a,
 5 × 10⁻³ in e, 0.05° in i; epochs within 30 d). Cross-check result: 4802 agree,
 912 disagree, 119 element-joins, 19 absent, 1328 epoch-separated — the MPC/JPL
 divergence concentrates in high-eccentricity orbits (different perturbation models).
@@ -102,15 +103,15 @@ Threshold: phase-randomized surrogates (f64 FFT, 10 realizations, mean + 2σ —
 the broken-null-control protocol, Kaiser & Schreiber 2002). Family bound: fam =
 maximum surrogate TE of the whole round (families + probes + controls);
 an arrow is fam-significant only above fam. Null controls: I, Sun-only
-self-consistency (must vanish); II, cold classical subset (e < 0.15, i < 5°,
-n = 1060 — the dynamically quiet population, must be still); III, the surrogate
+self-consistency (vanishes); II, cold classical subset (e < 0.15, i < 5°,
+n = 1060 — the dynamically quiet population, still); III, the surrogate
   threshold itself. Families below n = 30 carry no statement.
 
 **Estimator validation.** The scalar estimator is the field's canonical
 `transfer_entropy_lag`, validated against the Schreiber (2000) benchmark — two
 unidirectionally coupled Hénon maps (c = 0.2, lag 1, n = 10 000 after a
 1000-step transient, ten phase-randomized surrogates, family bound over the
-whole round) in `tools/work/src/bin/te_ground_truth.rs`. The known direction is
+whole round) in `tools/measure/src/bin/te_ground_truth.rs`. The known direction is
 reconstructed: TE(X→Y) = 2.46 × 10⁻¹, asymmetry 6.75×, the reverse residual
 3.64 × 10⁻² (the generalized-synchrony artifact, over its own threshold but
 below the family bound fam = 4.55 × 10⁻²), and the c = 0 control is silent in
@@ -191,7 +192,7 @@ is known belt structure; the P9 selection itself is quieter than the uniform nul
 
 No arrow in Table 1 or Table 2 reaches the family bound; the null controls behave
 as designed (I vanishes, II is still). The strongest sub-fam flow sits in the
-resonant families (3:2, 5:2) — the expected signature of Neptune's kick structure,
+resonant families (3:2, 5:2) — the signature of Neptune's kick structure,
 not of an external perturber. Table 3 reproduces the known population statistics:
 the catalogue-level P9 selection shows no ϖ clustering and no planetary
 anti-alignment, in agreement with the bias analyses (Shankman et al. 2017;
