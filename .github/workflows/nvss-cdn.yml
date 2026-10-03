@@ -43,7 +43,7 @@ jobs:
             [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
           done
           jq -s 'add' kernels/nvss_c*.json > nvss.json
-          gh release upload ssd.jpl.nasa.gov nvss.json --clobber --repo omegaflow/sources \
+          gh release upload ssd.jpl.nasa.gov-nvss nvss.json --clobber --repo omegaflow/sources \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: nvss returned void" \
                  "nvss chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
