@@ -1,10 +1,17 @@
 use omegaflow::archivar::omni2::{COMP_BX, COMP_BY, COMP_BZ, COMP_N1800, COMP_V1800, parse_bin};
 use omegaflow::archivar::{JsonVal, fetch_raw, fetch_raw_bytes, parse_json, scalar_of};
+use omegaflow::mathematikerin::wy_max_t;
 use omegaflow::te::{
     PcmciParams, TeEstimator, TeNull, pcmci_links, phase_randomized_surrogate,
     surrogate_stats_phase_n, transfer_entropy_lag, transfer_entropy_lag_h,
 };
 use std::time::{SystemTime, UNIX_EPOCH};
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum NullMode {
+    Plugin,
+    MaxT,
+}
 
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 100;
@@ -703,6 +710,9 @@ fn run_hourly(
     force_harvest: bool,
     yearly_round: bool,
     threads: usize,
+    null_mode: NullMode,
+    n_perm: usize,
+    alpha: f64,
 ) {
     let sy: i64 = hour_start
         .get(..4)
@@ -970,6 +980,109 @@ fn run_hourly(
                 "{from:>12} → {to:<12} | lag {lag} h | TE {te:.4e} | thr {thr:.4e} | fam {fam:.4e} | {v}"
             );
         }
+
+        if null_mode == NullMode::MaxT {
+            let channels = [&dbdt, &bz, &speed, &density];
+            let mut aligned: Vec<Vec<f32>> = vec![Vec::new(); 4];
+            let mut aligned_times: Vec<f64> = Vec::new();
+            for i in 0..n_cells {
+                if channels.iter().all(|c| c[i].is_some()) {
+                    for (ci, c) in channels.iter().enumerate() {
+                        if let Some(v) = c[i] {
+                            aligned[ci].push(v);
+                        }
+                    }
+                    aligned_times.push(t0 + i as f64 * HOUR);
+                }
+            }
+            let n_mt = aligned.first().map_or(0, |c| c.len());
+            println!();
+            println!(
+                "=== Westfall-Young max-T null (rank-Gauss, seasonal driver bootstrap, alpha = {alpha}, B = {n_perm}, block = 24 h) ==="
+            );
+            println!("plugin fam = {fam:.4e}");
+            println!(
+                "GPD tail: pending — the empirical max-T quantile carries the family bound; the estimator stays untouched."
+            );
+            if n_mt < 8 {
+                println!(
+                    "max-T null: pending — the aligned family carries {n_mt} complete hours (n < 8)"
+                );
+            } else {
+                let members = wy_max_t::prepare_members(&aligned);
+                if members.len() != wy_max_t::FAMILY_K {
+                    println!(
+                        "max-T null: pending — {} distinct statistics, {} declared",
+                        members.len(),
+                        wy_max_t::FAMILY_K
+                    );
+                } else {
+                    let seed = wy_max_t::round_seed(0, station, sy);
+                    let (buckets, pos_bucket) = wy_max_t::phase_data(&aligned_times);
+                    let nulls = wy_max_t::null_matrix(
+                        &members,
+                        0,
+                        n_perm,
+                        24,
+                        wy_max_t::ResampleMode::Driver,
+                        seed,
+                        threads,
+                        &buckets,
+                        &pos_bucket,
+                    );
+                    let sigma = wy_max_t::sigma_per_statistic(&nulls);
+                    let stud = wy_max_t::studentized_maxima(&nulls, &sigma);
+                    let mut finite: Vec<f64> =
+                        stud.iter().copied().filter(|v| v.is_finite()).collect();
+                    finite.sort_by(|a, b| a.total_cmp(b));
+                    match wy_max_t::quantile(&finite, alpha) {
+                        Some(q) => {
+                            let observed = wy_max_t::observed_family(&members);
+                            let obs_stud: Vec<Option<f64>> = observed
+                                .iter()
+                                .enumerate()
+                                .map(|(mi, o)| {
+                                    let s = sigma.get(mi).copied().flatten()?;
+                                    Some((*o)? / s)
+                                })
+                                .collect();
+                            let obs_max = obs_stud
+                                .iter()
+                                .flatten()
+                                .copied()
+                                .fold(f64::NEG_INFINITY, f64::max);
+                            println!(
+                                "max-T (1-alpha) quantile = {q:.4e} | B = {} finite | n = {n_mt} | alpha = {alpha}",
+                                finite.len()
+                            );
+                            if obs_max.is_finite() {
+                                println!(
+                                    "observed studentized family maximum = {obs_max:.4e} | clears max-T quantile: {}",
+                                    obs_max > q
+                                );
+                            } else {
+                                println!(
+                                    "observed studentized family maximum: pending — no statistic carries a measured spread"
+                                );
+                            }
+                            for (m, o) in members.iter().zip(obs_stud.iter()) {
+                                match o {
+                                    Some(t) => {
+                                        println!("{:<18} | lag {} | T_stud {t:.4e}", m.label, m.lag)
+                                    }
+                                    None => {
+                                        println!("{:<18} | lag {} | T_stud pending", m.label, m.lag)
+                                    }
+                                }
+                            }
+                        }
+                        None => println!(
+                            "max-T (1-alpha) quantile: pending — no finite replicate carries a spread (B = {n_perm}, n = {n_mt})"
+                        ),
+                    }
+                }
+            }
+        }
         return;
     }
 
@@ -1116,14 +1229,41 @@ fn main() {
         .and_then(|v| v.parse::<usize>().ok())
         .filter(|&t| t > 0)
         .unwrap_or(1usize);
+    let null_mode = match arg_after(&args, "--null").unwrap_or("plugin") {
+        "plugin" => NullMode::Plugin,
+        "max-t" => NullMode::MaxT,
+        other => {
+            eprintln!("--null {other} names no mode — plugin|max-t; plugin stands");
+            NullMode::Plugin
+        }
+    };
+    let alpha = arg_after(&args, "--alpha")
+        .and_then(|v| v.parse::<f64>().ok())
+        .filter(|v| v.is_finite() && *v > 0.0 && *v < 1.0)
+        .unwrap_or(0.05);
+    let n_perm = arg_after(&args, "--n-perm")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|&v| v > 0)
+        .unwrap_or(10_000);
     let Some(now) = now_unix() else {
         return;
     };
     println!("=== Bz retro probe — the driver over 60 years (storm ensemble) ===");
     println!("system time: {}", iso_utc(now));
+    let null_name = match null_mode {
+        NullMode::Plugin => "plugin (max surrogate TE of the round)",
+        NullMode::MaxT => {
+            "max-t (studentized Westfall-Young, rank-Gauss, seasonal driver bootstrap)"
+        }
+    };
     println!(
-        "Estimator: KDE-TE (Silverman), family threshold = max surrogate TE of the round (multiple-comparison correction), phase-randomized surrogates (f64 FFT, {N_SURR} realizations)."
+        "Estimator: KDE-TE (Silverman); null = {null_name}; plugin surrogates = phase-randomized (f64 FFT, {N_SURR} realizations); max-t offline B = {n_perm}, alpha = {alpha}."
     );
+    if null_mode == NullMode::MaxT && !(hourly && yearly_round) {
+        println!(
+            "max-t selector: the Westfall-Young max-T null is wired to the hourly yearly round (--hourly --yearly-round); this path carries the plugin threshold."
+        );
+    }
 
     if hourly {
         run_hourly(
@@ -1134,6 +1274,9 @@ fn main() {
             force_harvest,
             yearly_round,
             threads,
+            null_mode,
+            n_perm,
+            alpha,
         );
         return;
     }
