@@ -3,7 +3,7 @@
   session: River-Folge 84
   class: handover
   date: 2026-10-03
-  sha256: 590103609b5bb86b7565f0a4d3da128d6384d891ca485bf76d7164e61e1a07c3
+  sha256: db6ec40f76c18d75570a0259d385256bf232397194e3ec59eb215968a95f7617
   status: live
 -->
 # Handover — River-Folge 84 (2026-10-03)
@@ -99,8 +99,8 @@ Origin: river folge84.
   - Ⅱ: „DSN-Live-Tracking fehlt; eyes/dsn absent" widerlegt — `phi/sources.φ:109-121`
     trägt `dsn_snapshot.bin` (eyes.nasa.gov); die zitierte `dead_sources.φ:355` trägt Euclid.
   - Ⅳ: Swarm-TEC vorhanden (`sources.φ:7276`); `ledger.φ:14-16` trägt AFAD (nicht CSES);
-    CSES-Termin 2026-10-02 gefeuert (Operator-Wort „Nein"); kein `laic*.bin` /
-    `phi/pipeline/laic_harvest/` im Baum.
+    CSES-Termin 2026-10-02 gefeuert (Operator-Wort „Nein"); kein `laic*.bin` und
+    keine `laic_harvest`-Pipeline im Baum.
   - Ⅺ: `openneuro_eeg.rs` fehlt — real `tools/harvest/src/bin/openneuro_compiler.rs`.
   - ENSO: „kein enso-Bin" widerlegt — `tools/measure/src/bin/enso_blatt_probe.rs` existiert;
     der Zuschnitt `wartend.φ:23` liegt jetzt auf `:21` und ist resolved.
@@ -115,7 +115,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/mathematikerin/machines/tests.rs`
 - `docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md`, `docs/blatt/blatt-te-externer-steuerparameter.md`
-- `docs/handover/handover-2026-10-02-river-folge83.md` → `archiv/` (Move)
+- `docs/handover/archiv/handover-2026-10-02-river-folge83.md` (Move aus `docs/handover/`)
 - `docs/handover/handover-2026-10-03-river-folge84.md`
 
 ## Burn: open 0.0027 · close 0.0154 · cap 0.50 — Grund: River-84 — OMX3-Testmagie geheilt, Blatt-Titel ≤75, matrix-rotor-Ursache als Runner-Shutdown gemessen (gemessen `session_burn`, River-Session)
