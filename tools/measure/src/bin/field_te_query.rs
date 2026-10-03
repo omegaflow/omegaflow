@@ -103,6 +103,7 @@ struct Descriptor {
     lags: Vec<usize>,
     surrogate: usize,
     register: Register,
+    bin: Option<f64>,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -147,6 +148,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut surrogate: Option<usize> = None;
     let mut register = Register::Sources;
     let mut witness_primary = false;
+    let mut bin: Option<f64> = None;
 
     for (lineno, raw) in text.lines().enumerate() {
         let line = raw.trim();
@@ -288,6 +290,20 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 })?;
                 surrogate = Some(n);
             }
+            "bin" => {
+                let token = parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: bin carries no width"))?;
+                let seconds: f64 = token.parse().map_err(|_| {
+                    format!("descriptor:{at}: bin '{token}' carries no second count")
+                })?;
+                if !(seconds.is_finite() && seconds > 0.0) {
+                    return Err(format!(
+                        "descriptor:{at}: bin '{token}' is no positive finite width"
+                    ));
+                }
+                bin = Some(seconds);
+            }
             other => {
                 return Err(format!("descriptor:{at}: unknown directive '{other}'"));
             }
@@ -319,6 +335,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             None => 100,
         },
         register,
+        bin,
     })
 }
 
@@ -362,6 +379,18 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         }
         None => Register::Sources,
     };
+    let bin = match arg_after(args, "--bin") {
+        Some(t) => {
+            let seconds: f64 = t
+                .parse()
+                .map_err(|_| format!("--bin '{t}' carries no second count"))?;
+            if !(seconds.is_finite() && seconds > 0.0) {
+                return Err(format!("--bin '{t}' is no positive finite width"));
+            }
+            Some(seconds)
+        }
+        None => None,
+    };
     Ok(Descriptor {
         pair: None,
         driver: Arm {
@@ -379,6 +408,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         lags,
         surrogate,
         register,
+        bin,
     })
 }
 
@@ -928,6 +958,14 @@ fn print_arm(role: &str, arm: &Arm, load: &ArmLoad) {
     }
 }
 
+fn print_count_arm(role: &str, cells: &[Option<f64>]) {
+    let carried = cells.iter().filter(|c| c.is_some()).count();
+    let pending = cells.len() - carried;
+    println!(
+        "count arm {role}: {carried} bins carry events | {pending} bins pending (no event inside the fetched train — never 0.0 as a physical value)"
+    );
+}
+
 fn median_dt(series: &[(f64, f64)]) -> Option<f64> {
     if series.len() < 2 {
         return None;
@@ -976,6 +1014,31 @@ fn bin_to_grid(series: &[(f64, f64)], grid: &[f64], last_step: f64) -> Vec<Optio
                 None
             }
         })
+        .collect()
+}
+
+fn bin_count_to_grid(series: &[(f64, f64)], grid: &[f64], last_step: f64) -> Vec<Option<f64>> {
+    let mut counts = vec![0u32; grid.len()];
+    let mut mi = 0usize;
+    for &(t, _) in series {
+        while mi + 1 < grid.len() && t >= grid[mi + 1] {
+            mi += 1;
+        }
+        if t < grid[mi] {
+            continue;
+        }
+        let hi = match grid.get(mi + 1) {
+            Some(&h) => h,
+            None => grid[mi] + last_step,
+        };
+        if t >= hi {
+            continue;
+        }
+        counts[mi] += 1;
+    }
+    counts
+        .iter()
+        .map(|&c| if c > 0 { Some(c as f64) } else { None })
         .collect()
 }
 
@@ -1039,29 +1102,95 @@ fn align(
     target: &[(f64, f64)],
     cond: Option<&[(f64, f64)]>,
     seasonal: Seasonal,
+    driver_count: bool,
+    target_count: bool,
+    cond_count: bool,
+    bin_seconds: Option<f64>,
 ) -> Result<Aligned, String> {
-    let d_dt = median_dt(driver).ok_or("driver cadence underdetermined (< 2 stamped samples)")?;
-    let t_dt = median_dt(target).ok_or("target cadence underdetermined (< 2 stamped samples)")?;
-    let (grid_from_target, grid_dt) = if t_dt >= d_dt {
-        (true, t_dt)
-    } else {
-        (false, d_dt)
-    };
     let monthly = matches!(seasonal, Seasonal::Climatology);
+    let (grid, grid_dt) = match bin_seconds {
+        Some(step) => {
+            if !(step.is_finite() && step > 0.0) {
+                return Err(format!("bin {step} is no positive finite width"));
+            }
+            let d0 = driver
+                .first()
+                .map(|p| p.0)
+                .ok_or("driver carries no stamped sample")?;
+            let d1 = driver
+                .last()
+                .map(|p| p.0)
+                .ok_or("driver carries no stamped sample")?;
+            let t0 = target
+                .first()
+                .map(|p| p.0)
+                .ok_or("target carries no stamped sample")?;
+            let t1 = target
+                .last()
+                .map(|p| p.0)
+                .ok_or("target carries no stamped sample")?;
+            let mut start = d0.max(t0);
+            let mut end = d1.min(t1);
+            if let Some(c) = cond {
+                if let (Some(c0), Some(c1)) = (c.first().map(|p| p.0), c.last().map(|p| p.0)) {
+                    start = start.max(c0);
+                    end = end.min(c1);
+                }
+            }
+            if !(end > start) {
+                return Err("bin window carries no overlap between the arms".into());
+            }
+            let n = ((end - start) / step).ceil() as usize;
+            if n == 0 {
+                return Err("bin window carries no cell".into());
+            }
+            let grid: Vec<f64> = (0..n).map(|i| start + i as f64 * step).collect();
+            (grid, step)
+        }
+        None => {
+            let d_dt =
+                median_dt(driver).ok_or("driver cadence underdetermined (< 2 stamped samples)")?;
+            let t_dt =
+                median_dt(target).ok_or("target cadence underdetermined (< 2 stamped samples)")?;
+            let grid_from_target = if target_count && !driver_count {
+                false
+            } else if driver_count && !target_count {
+                true
+            } else {
+                t_dt >= d_dt
+            };
+            let grid_dt = if grid_from_target { t_dt } else { d_dt };
+            let grid: Vec<f64> = if grid_from_target {
+                target.iter().map(|p| p.0).collect()
+            } else {
+                driver.iter().map(|p| p.0).collect()
+            };
+            (grid, grid_dt)
+        }
+    };
     if monthly && !(25.0 * 86_400.0..=32.0 * 86_400.0).contains(&grid_dt) {
         return Err(format!(
             "climatology+standardize needs a monthly grid arm (slowest cadence {grid_dt:.0} s); the deseasonalization lives on grid index mod {CAL_MONTHS}"
         ));
     }
-    let grid: Vec<f64> = if grid_from_target {
-        target.iter().map(|p| p.0).collect()
-    } else {
-        driver.iter().map(|p| p.0).collect()
-    };
     let last_step = if monthly { MONTH_S } else { grid_dt };
-    let mut d_cells = bin_to_grid(driver, &grid, last_step);
-    let mut t_cells = bin_to_grid(target, &grid, last_step);
-    let mut c_cells = cond.map(|c| bin_to_grid(c, &grid, last_step));
+    let mut d_cells = if driver_count {
+        bin_count_to_grid(driver, &grid, last_step)
+    } else {
+        bin_to_grid(driver, &grid, last_step)
+    };
+    let mut t_cells = if target_count {
+        bin_count_to_grid(target, &grid, last_step)
+    } else {
+        bin_to_grid(target, &grid, last_step)
+    };
+    let mut c_cells = cond.map(|c| {
+        if cond_count {
+            bin_count_to_grid(c, &grid, last_step)
+        } else {
+            bin_to_grid(c, &grid, last_step)
+        }
+    });
     if monthly {
         d_cells = deseasonalize(&d_cells);
         t_cells = deseasonalize(&t_cells);
@@ -1395,7 +1524,28 @@ fn execute(
         _ => None,
     };
 
-    let aligned = match align(driver_series, target_series, cond_series, desc.seasonal) {
+    let driver_count = match &driver_load {
+        ArmLoad::WitnessReady { .. } => true,
+        _ => false,
+    };
+    let target_count = match &target_load {
+        ArmLoad::WitnessReady { .. } => true,
+        _ => false,
+    };
+    let cond_count = match &cond_load {
+        Some(ArmLoad::WitnessReady { .. }) => true,
+        _ => false,
+    };
+    let aligned = match align(
+        driver_series,
+        target_series,
+        cond_series,
+        desc.seasonal,
+        driver_count,
+        target_count,
+        cond_count,
+        desc.bin,
+    ) {
         Ok(a) => a,
         Err(reason) => {
             println!();
@@ -1404,11 +1554,30 @@ fn execute(
         }
     };
     println!();
-    println!(
-        "aligned grid: cells {} | cadence {} s (measured from the slowest arm)",
-        aligned.grid.len(),
-        fmt_opt(Some(aligned.cadence_s))
-    );
+    if desc.bin.is_some() {
+        println!(
+            "aligned grid: cells {} | cadence {} s (declared bin)",
+            aligned.grid.len(),
+            fmt_opt(Some(aligned.cadence_s))
+        );
+    } else {
+        println!(
+            "aligned grid: cells {} | cadence {} s (measured from the slowest arm)",
+            aligned.grid.len(),
+            fmt_opt(Some(aligned.cadence_s))
+        );
+    }
+    if driver_count {
+        print_count_arm("driver", &aligned.driver);
+    }
+    if target_count {
+        print_count_arm("target", &aligned.target);
+    }
+    if cond_count {
+        if let Some(c) = &aligned.cond {
+            print_count_arm("cond", c);
+        }
+    }
     let (target_s, driver_s) = pair2(&aligned.target, &aligned.driver);
     let cond_triple = aligned
         .cond
@@ -1454,6 +1623,7 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         lags: (0..=12).collect(),
         surrogate: 100,
         register: Register::Sources,
+        bin: None,
     };
     let Some(result) = execute(&desc, sources, witnesses, Some(REC_FAM)) else {
         println!();
@@ -1581,7 +1751,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n>"
+        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds>"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
