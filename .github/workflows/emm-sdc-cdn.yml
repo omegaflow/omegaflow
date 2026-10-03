@@ -10,7 +10,9 @@ permissions:
   contents: write
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EMM_COGNITO_REFRESH_TOKEN: ${{ secrets.EMM_COGNITO_REFRESH_TOKEN }}
   EMM_COGNITO_TOKEN: ${{ secrets.EMM_COGNITO_TOKEN }}
+  EMM_COGNITO_CLIENT_ID: ${{ secrets.EMM_COGNITO_CLIENT_ID }}
   RUSTFLAGS: -D warnings
 jobs:
   emm-sdc:
