@@ -297,25 +297,25 @@ descoped
 url http://occultations.ct.utfpr.edu.br/
 note Occultation-DB UTFPR (SOSB/Lucky Star) descoped 2026-10-02: Δ geozentrisch, als SSB-Punkt û·Δ liegt jede Zeile um −R_E(t) verschoben (bis ~1 au; occ.php?p=156305 Δ 5.5126 au); kein Arm für geozentrische Epoche. Compiler bleibt Erbe.
 
-released
+pending
 url https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) released 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict 206 (1 B); Download end-to-end offen (Harvest-Duty).
+note Chang'e 1–6 GRAS (CNSA) — 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict 206 (1 B); Download end-to-end offen (Harvest-Duty, Mycelium).
 
-released
+pending
 url https://www.nssdc.ac.cn/
-note Tianwen-1/Zhurong (CNSA) released 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict 206 (1 B); Download end-to-end offen (Harvest-Duty).
+note Tianwen-1/Zhurong (CNSA) — 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict 206 (1 B); Download end-to-end offen (Harvest-Duty, Mycelium).
 
-released
+pending
 url https://pradan.issdc.gov.in/ch2
-note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) released 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict ch2 200 (31050 B), chmapbrowse/mrbrowse 404; OIDC-Flow browserlos verifiziert (future-159, Connector f7bfce9b7).
+note Chandrayaan-2/3, MOM, Aditya-L1 (ISRO/ISSDC) — 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict ch2 200 (31050 B), chmapbrowse/mrbrowse 404; OIDC-Flow browserlos verifiziert (future-159, Connector f7bfce9b7); Ernte Mycelium.
 
-released
+pending
 url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM (MBRSC VAE) released 2026-09-29: Cognito-Signup+Login Operator-Hand 2026-09-28 (future-folge149), --verdict 200 (2789 B); Download end-to-end offen (Harvest-Duty).
+note Hope/Al-Amal EMM (MBRSC VAE) — 2026-09-29: Cognito-Signup+Login Operator-Hand 2026-09-28 (future-folge149), --verdict 200 (2789 B); Download end-to-end offen (Harvest-Duty, Mycelium).
 
-released
+pending
 url https://superdarn.ca/data-download
-note MAP-Grid RST DataMap released 2026-09-29 (Globus-Auth Operator-Hand 2026-09-28, future-folge149): Globus-only 8e844226-2eea-479c-b5e4-bac908b725bc /local_data/map/ 55690F; Transfer→externe Platte offen; RST-Byte-Offsets pending. sensory-folge195.
+note MAP-Grid RST DataMap — 2026-09-29 (Globus-Auth Operator-Hand 2026-09-28, future-folge149): Globus-only 8e844226-2eea-479c-b5e4-bac908b725bc /local_data/map/ 55690F; Transfer→externe Platte offen; RST-Byte-Offsets pending. sensory-folge195.
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
