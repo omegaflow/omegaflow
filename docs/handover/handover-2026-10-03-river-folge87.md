@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: ceec887645b0da50d800bc4d354033a34260f0b72468828027c71e4ad0671256
+  sha256: 9b9e43af8d20f90c9a2529b586ca764fdad46e053c9ed2042cb4b122d6662e84
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -127,8 +127,17 @@ Wort | Datum | Quelle
   `data/ssd.jpl.nasa.gov/ephemeris_juice.bin` weiter `aeb3c82f…`.
 - **Blockade:** die Trajektorien-Wahl ist Operator-Wort (Seal-Klausel,
   `flyby-path-2-preregistration.md` §Addendum).
-- **Braucht:** Operator-Wort: `018ce2ca…` als Trajektorie nennen **oder** den Seal-Arc
-  `aeb3c82f…` wiederherstellen; erst danach baut der nächste Fill-Lauf einen Tube.
+- **Braucht:** Operator-Wort. Befragung (Operator-Wort „den rat und die verschiedenen
+  llms befragen", 2026-10-03): **Rat einstimmig → Seal-Arc `aeb3c82f…`** (der Tube steht
+  auf ihm; `eee376ef…` = zweite Δ-Zeugenlinie; `018ce2ca…` = Nach-Flug-Drift, benannt,
+  nie substituiert; Mycelium-Pflicht: Seal-Arc auf den CDN-Namen zurückführen oder
+  pinnen). **`zai/glm-4.5-flash` + `gemini-2.5-flash` → `eee376ef…`** (Vor-Flug-
+  Erneuerung, benannt). `mistral` 429; `chat.z.ai` GLM-5.3 Deep Think pending. Rohmaterial
+  `state/stimmen/2026-10-03_flyby-trajektorie-synthese.md`. **Riss getragen** — zwei
+  Positionen, Operator-Wort entscheidet.
+- **Riss (benannt, Rat 2026-10-03):** Tube-Perigäum 11:43:50 UTC / 15 034 km vs.
+  revidierte Präregistrierung 11:45:12 ± 10 s / 15 018 km (~82 s) — zwei
+  vorabregistrierte Quellen, nicht zu mitteln.
 - **Rest-Zellen:** OMNI2 26 (HAPI 1201, ~6 d Lag), ACE 3/14/16, kp `def` — pending bis
   Trigger (unverändert).
 
