@@ -2,7 +2,7 @@ use omegaflow::archivar::{
     JsonVal, SourceConfig, cdn_manifest_map, extract_netloc, jstr, load_sources_from, parse_json,
     reference_name_from_url, source_name_from_url,
 };
-use omegaflow::cdn::MODIS_LST_CMG_FAMILY;
+use omegaflow::cdn::{CAPPED_RELEASE, MODIS_LST_CMG_FAMILY};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::env;
 use std::process::Command;
@@ -210,10 +210,53 @@ fn is_shard_of(name: &str, stems: &[String]) -> bool {
     })
 }
 
+fn cap_contract(root: &str) -> Vec<String> {
+    let dir = format!("{}/.github/workflows", root);
+    let mut files: Vec<String> = Vec::new();
+    if let Ok(rd) = std::fs::read_dir(&dir) {
+        for e in rd.flatten() {
+            let p = e.path();
+            if p.extension().and_then(|x| x.to_str()) == Some("yml") {
+                files.push(p.to_string_lossy().into_owned());
+            }
+        }
+    }
+    files.sort();
+    let mut out = Vec::new();
+    for f in &files {
+        let Ok(text) = std::fs::read_to_string(f) else {
+            continue;
+        };
+        let short = f.rsplit('/').next().unwrap_or(f);
+        for (i, line) in text.lines().enumerate() {
+            for (needle, kind) in [
+                ("gh release upload ", "gh release upload"),
+                ("--release-tag ", "--release-tag"),
+            ] {
+                let mut from = 0usize;
+                while let Some(pos) = line[from..].find(needle) {
+                    let start = from + pos + needle.len();
+                    let raw = line[start..].split_whitespace().next().unwrap_or("");
+                    let tag = raw.trim_matches(|c| c == '\'' || c == '"');
+                    if tag == CAPPED_RELEASE {
+                        out.push(format!(
+                            "{short}:{}: {kind} writes the capped release {CAPPED_RELEASE} — use the family tag \"<host>-<family>\" (cdn.rs CAPPED_RELEASE)",
+                            i + 1
+                        ));
+                    }
+                    from = start;
+                }
+            }
+        }
+    }
+    out
+}
+
 fn main() {
     let mut root = String::from(".");
     let mut out_path = String::from("docs/specs/cdn_reconciliation.json");
     let mut source_path = String::from("phi/sources.φ");
+    let mut fail = false;
     let args: Vec<String> = env::args().collect();
     let mut i = 1;
     while i < args.len() {
@@ -230,9 +273,22 @@ fn main() {
                 i += 1;
                 source_path = args[i].clone();
             }
+            "--fail" => fail = true,
             _ => {}
         }
         i += 1;
+    }
+
+    if fail {
+        let drift = cap_contract(&root);
+        if drift.is_empty() {
+            eprintln!("cdn_reconcile: cap contract clean");
+            return;
+        }
+        for d in &drift {
+            eprintln!("cdn_reconcile: {d}");
+        }
+        std::process::exit(2);
     }
 
     let full_sources = format!("{}/{}", root, source_path);
@@ -567,6 +623,17 @@ mod tests {
         assert_eq!(
             cdn_tag_from_url("https://github.com/omegaflow/sources/releases/download//x.bin"),
             None
+        );
+    }
+
+    #[test]
+    fn no_workflow_writes_the_capped_release() {
+        let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
+        let drift = cap_contract(root);
+        assert!(
+            drift.is_empty(),
+            "capped-release writers in .github/workflows:\n{}",
+            drift.join("\n")
         );
     }
 }
