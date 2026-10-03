@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Cap-Gate gebaut, zwei Cap-Bypass-Writer rotiert
   class: handover
   date: 2026-10-03
-  sha256: 36bc0852363909e14746e84c8fc4f0e9e91534610ccec1595dca3e6c72d8e6d4
+  sha256: 9332cf5b0b2991650d48d817a7184f25981e82ff381dc9f8f8c9772289f111f1
   status: live
 -->
 # Handover — Mycelium-Folge 225 (2026-10-03)
@@ -90,8 +90,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Mountain setzt die Disposition zu `phi/blocked_sources.φ:389`
 - **Lage:** (gemessen 2026-10-03 via `archive_search --playwright` + `--verdict`) `https://swarm-diss.eo.esa.int/` ist ein JS-Directory-Browser (Swarm Data Access); der Download-Pfad ist `https://swarm-diss.eo.esa.int/?do=download&file=swarm/<pfad>`; konkret `…%2FLevel1b%2FEntire_mission_data%2FMAGx_LR.txt` **HTTP 200, 1 098 162 B** (auch über Proton 200). Kein `descoped` — die Quelle ist harvestierbar.
-- **Blockade:** keiner
-- **Braucht:** Mountain setzt die Disposition (`released`/`pending`) auf dieser Messung; danach Mycelium: `swarm_compiler` auf `?do=download&file=swarm/…` bauen + `blocked_sources.φ:389` heben.
+- **Blockade:** der Reader-Arm fehlt (Membran, River); `format`/`field` erst nach deckendem Arm in `sources.φ`
+- **Braucht:** `swarm_tec_compiler.rs` (Mountain, gebaut, uncommittet: CDF-Magic `cd f3 00 01`, 26 827 Records, 0 skipped, VTEC ∈ [−0.263, 36.82] TECU, bin sha `42550ef8…`, Roundtrip identisch) + Parser-Vertrag `map .` (nicht `cmap .` — `CelestialMap` bindet `lat`/`lon` nicht). Rivers `main_flow`-Arm (als `## An river` in mountain-folge228); danach Mycelium `url`/`origin`/`compiler`/`sha256` in `sources.φ` + `blocked_sources.φ:389` heben.
 
 ### RoPeR-Familie — Sample registriert, Manifest + Familien-Register offen
 - **Status:** wartend | **Bindung:** eigen
@@ -125,8 +125,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Harvest-Lauf des ISRO/ISSDC-Endpoints
 - **Lage:** (gemessen 2026-10-03) ch2-Portal 200 (31330 B); `/protected/*` = Keycloak-Login (4270 B); konkrete Datei `…/ch2/protected/downloadFile/class_holder/ch2_{payload}_l1_{YYYY}_{MM}.zip` **302 → Keycloak OIDC** (realm `issdc`, client `Pradan`); mrbrowse timeout. Compiler steht: `pradan_ch2_compiler.rs` (liest `PRADAN_USER`/`PRADAN_PASS`, `:100-101`).
-- **Blockade:** Account-Credential (Operator-Hand); Konto liegt vor
-- **Braucht:** Credentials in `.secrets.local` setzen (Operator-Hand), dann `pradan_ch2_compiler --ci-mode`.
+- **Blockade:** keine — `PRADAN_USER`/`PRADAN_PASS` liegen in `.secrets.local` (gemessen 2026-10-03 via `bin/secrets_keys`; der frühere „Operator-Hand"-Vermerk war stale)
+- **Braucht:** `pradan_ch2_compiler --ci-mode` (Mycelium; Konto vorhanden, kein Operator-Akt).
 
 ### released-Quellen ohne Download-Lauf — MBRSC (EMM/Al-Amal)
 - **Status:** wartend | **Bindung:** eigen
@@ -180,9 +180,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### `blocked_sources.φ` — 7 mycelium-`pending`-Portale ohne Arm (future-167/165)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Zeile (`phi/blocked_sources.φ`)
-- **Lage:** (gemessen 2026-10-02 via `register_lookup --orphans`) :473 https://swarm-diss.eo.esa.int/ (Swarm TEC), :477 https://gportal.jaxa.jp/, :483 https://limadou.ssdc.asi.it/ (CSES), :485 https://www.leos.ac.cn/, :489 https://clpds.bao.ac.cn/, :493 Viking gravity WUSTL, :497 Cassini titanNotebook, :501 Juno Gravity CSV — HTTP 200/206, aber kein Daten-Endpoint/Arm gemessen.
+- **Lage:** (gemessen 2026-10-03) :473 Swarm TEC (`swarm-diss.eo.esa.int` DISS-Download 200), :477 https://gportal.jaxa.jp/ (Login-Portal), :483 https://limadou.ssdc.asi.it/ (CSES, Login), :485 https://www.leos.ac.cn/ (SPA, kein Endpoint), :489 https://clpds.bao.ac.cn/ (JSON-Katalog 200, Produkte nach Login), :493 Viking gravity (`vmar001l.dat` 206 — harvestierbar), :497 Cassini titanNotebook (Host pending), :501 Juno Gravity CSV (Host pending).
 - **Blockade:** je Zeile (Arm/Reader fehlt)
-- **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
+- **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`). Konten vorhanden (gemessen 2026-10-03 via `bin/secrets_keys`): `LEOS_USER/_PASS`, `CLPDS_USER/_PASS`, `JAXA_GPORTAL_USER/_PASS`, `KASI_DALO_USER/_PASS` — kein Konto-/Key-Gap.
 
 ### `blocked_sources.φ` — mycelium-`pending`-Portale ohne Arm (future-168/167)
 - **Status:** wartend | **Bindung:** eigen
@@ -236,6 +236,7 @@ Origin: mycelium-folge225 (Register-Duties).
 - **`twomass_psc.bin` UNREGISTERED:** `cdn-health` fand `irsa.ipac.caltech.edu/twomass_psc.bin` **200**, aber keine Quellen-Zeile in `phi/sources.φ`. Braucht: Zulassung/Format/Field (2MASS PSC J<11), dann schreibt Mycelium `url`/`origin`/`compiler`/`sha256`.
 - **Fünf §1-Compiler-Hosts mit Riss (gemessen 2026-10-03):** `vizier.cfa.harvard.edu` (camargo_uranus → `uranus_*_probe`; die asu-tsv-URLs sind in `blocked_sources.φ:233-253` als „kein 9-Kraft-Wert" descoped), `noaa-eri-pds.s3.amazonaws.com` (`eri_imagery.bin`; Quelle in `declined_sources.φ:5185` declined), `dachs.fai.kz` (`fai_kz_obscore.bin`; `declined_sources.φ:2125` nennt dasselbe Asset), `gsaweb.ast.cam.ac.uk` (`gaia_alerts.bin`; `witnesses.φ:58` Witness vs. `declined_sources.φ:2217` declined), `ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca` (`vlass_sources_se.bin`; `declined_sources.φ:4369` declined `/argus`, anderer Pfad). Bitte je Host die Disposition klären: lebt der Manifestor gegen ein declined/witness-Verdikt? Mycelium führt die Hosts jetzt als §1-Compiler-Netlocs.
 - **`blocked_sources.φ:389` Swarm TEC:** Disposition angefragt — die Messung (2026-10-03) zeigt einen harvestierbaren DISS-Download (`?do=download&file=swarm/…`, 200, 1 098 162 B). Bitte `released` (oder `pending`), kein `descoped`.
+- **Register-Hygiene der Dispositions-Register (gemessen 2026-10-03, Mycelium 225):** `note`-Längen sauber — **1685** `note`-Zeilen über `dead_/declined_/blocked_sources.φ`, **max_len 256** (kein Eintrag >256). **Zeilennummern-Drift: 110** Notizen zitieren `sources.φ:<n>` (dead 5 · declined 89 · blocked 16), z. B. `dead_sources.φ:588 → sources.φ:8750`, `dead_sources.φ:712 → sources.φ:1222`, `declined_sources.φ:263 → sources.φ:1367`; `sources.φ` ist grow-only (16233 Z.), die Zitate driften. Bitte mechanisch auf einen Kanal-Key (Netloc/Quellen-Identität) umstellen, nie die Nummer nachführen. `register_lookup --descoped-check` = 0 widerlegt, `--stale --persist 3` = 0.
 
 ## Abschluss
 
