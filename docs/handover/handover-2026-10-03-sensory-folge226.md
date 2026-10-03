@@ -3,7 +3,7 @@
   session: Sensory-Folge 226
   class: handover
   date: 2026-10-03
-  sha256: 20eced551c95dfcc7e342365ab41f32f13aa6190355926b7a48531c157507ace
+  sha256: 17f840f0cc4f9f2a69d90f91e2249e9a173b0e2ba6dc387d8ad2702491758129
   status: live
 -->
 # Handover — Sensory-Folge 226 (2026-10-03)
@@ -230,9 +230,9 @@ breiter messen.
 ### Hyperscanning-TE — Validierung der neuen Läufe (joint family + gates)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Abschluss eines `hyperscanning-te`-Laufs am joint-family-Stand; Artefakt `hyperscanning-te-report`.
-- **Lage:** (gemessen 2026-10-03 F226 via `ci_manage status`/`view`) `37129873384` = cancelled, `37129875260` = pending (`concurrency`), `37128441536` = in_progress (Step `screen`; per-channel-Bin). Der joint-family-Bin ist gebaut und kompiliert inkl. Test `joint_channel_family_gate` (`cargo check --tests -p omegaflow-measure`, 0 Fehler/0 Warnungen, 2026-10-03); die zwei geänderten Pfade (`.github/workflows/hyperscanning-te.yml`, `tools/measure/src/bin/hyperscanning_group_te.rs`) sind in diesem Atom committet.
-- **Blockade:** kein CI-Lauf am joint-Stand.
-- **Braucht:** `gh workflow run hyperscanning-te.yml -f channel=Fz,Cz,Pz` (nach Push), dann `ci_manage view/log <id>` + Artefakt `hyperscanning-te-report` auswerten (joint family-max, Nominees, Bestätigung, Skalierungskurve).
+- **Lage:** (gemessen 2026-10-03 F226 via `ci_manage status`/`view`, dann `gh workflow run`) der joint-family-Lauf **`37133961687`** ist dispatcht (`-f channel=Fz,Cz,Pz`, HEAD `62742649c`); `37129873384` = cancelled, `37129875260` = pending (`concurrency`), `37128441536` = in_progress (Step `screen`; per-channel-Bin). Der joint-family-Bin ist gebaut und kompiliert inkl. Test `joint_channel_family_gate` (`cargo check --tests -p omegaflow-measure`, 0 Fehler/0 Warnungen, 2026-10-03); die zwei geänderten Pfade sind committet (`62742649c`).
+- **Blockade:** CI-Lauf `37133961687`.
+- **Braucht:** `ci_manage view/log 37133961687` + Artefakt `hyperscanning-te-report` auswerten (joint family-max, Nominees, Bestätigung, Skalierungskurve).
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
