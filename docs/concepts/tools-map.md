@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: 0a362364f530f1d1a4d891669489b040a1ac9279c3b10f81f6aa1e4098993506
+  sha256: 13a7b6b79c58deb6b9f637d09d7d8e8a3eff63880f782fe71a0c23c6ea45e43f
   status: live
   see-also: AGENTS.md
 -->
@@ -345,6 +345,38 @@ Vier Pfade sind vier Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
   Brücken laden nebeneinander; **kein** Projekt-`opencode.json`-Eintrag (Merge-Semantik
   global↔Projekt vermieden). Rückbau: Extension entfernen + `…/NativeMessagingHosts/com.opencode.browser.plugin.json`
   + `~/.config/opencode/browser/` löschen + `npm uninstall -g opencode-chromium`.
+
+## Stimmen-Befragung — die korrekte Route (gemessen 2026-10-03)
+
+Drei Mechanismen, nie verwechseln. Die **scharfe Recherche** läuft nur über die UI;
+
+die API-Flotte dient der **Masse/Reproduzierbarkeit**, nie dem scharfen Kanal.
+
+1. **Scharfe Recherche → UI-Chats** (die einzige Route für Frontier-Modelle). Roster
+   (Operator-Wort `future-folge169`, gefaltet `mycelium-folge225`): `chat.z.ai`
+   (GLM-5.3 Geo/Deep Search) · `claude.ai` · `kimi.ai`. **Kimi K3 nur über
+   `tryingopen.com`** (4000-Zeichen-Limit); für Sonnet 5.5 Search
+   `arena.ai/search/direct?model_a=claude-sonnet-5-search`. Prozedur (Selektoren, Senden,
+   Antwort-Lesen, Aufräumen): `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md` +
+   `state/stimmen/README.md`; Rohantworten privat nach `state/stimmen/<TS>_<site>_<slug>.md`.
+2. **Masse/Reproduzierbarkeit → API-Flotte**: `bin/text_review <draft>` (Modelle in
+   `tools/measure/free_models.tsv`); `bash state/stimmen/stimme.sh <zai|gemini|mistral> <prompt.txt>`.
+3. **Öffentlich messende Stimme → `voice`-Agent** (`opencode.json`): read-only, bash nur
+   `./bin/archive_search_public <öffentlicher-modus> <query>` + `./bin/voice_read_full <spill>`;
+   Aufruf `opencode run -m <provider/model> --agent voice`.
+
+Grenzen / gemessene Ausfälle — **nicht** als scharfen Kanal verwenden:
+- `nvidia/z-ai/glm-5.3` via `opencode run --agent voice` hing 15 min ohne Output; nur ein
+  paar nvidia-LLMs sind nutzbar (River-76-Rang ist alt — der `voice`-Agent trägt die
+  Frontier-Modelle **nicht** zuverlässig; die UI ist der Weg).
+- `text_review` über die blockierten `zai`-Zeilen (`free_models.tsv` `blocked`) hängt; `--all`
+  ist langsam. Für eine kleine Auswahl `--model`/`--provider`/`--timeout` setzen.
+- `kimi.ai` liefert **kein K3** (schneller Modus, Kontingent schnell erschöpft); K3 nur
+  `tryingopen.com`. Together liefert schwache/keine Antworten.
+- **ToS**: `claude.ai`/`kimi.ai`/`arena.ai` untersagen Automatisierung — nur mit Operator-Wort,
+  nie still; das Konto-/Sperr-Risiko trägt der Operator (Quelle: `state/stimmen/README.md`).
+- **Cloud-Grenze**: nur public/technische Prompts (keine `state/`-, Register- oder Secret-Daten);
+  die Antwort ist Rohmaterial, nie Verdikt. Ein UI-Prompt ist ein Dritt-Akt → per-Akt-Consent.
 
 ## Profile (aus AGENTS.md) — gemessene Kosten ihres erlaubten Satzes
 
