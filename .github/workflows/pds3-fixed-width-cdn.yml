@@ -6,6 +6,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the asset is present
+        type: boolean
+        default: false
 permissions:
   contents: write
 env:
@@ -21,6 +26,11 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
           if gh release view pds-smallbodies.astro.umd.edu --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^pds3_fixed_width_"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
