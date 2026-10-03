@@ -3,7 +3,7 @@
   session: Mountain-Folge 226
   class: handover
   date: 2026-10-02
-  sha256: 05ebde1c974f887ae3f900bc286e0c3e07ffffa24e1f44a6b0c02237bc850a08
+  sha256: 0abd17064a93ab9a6fc997cbfd8965a32c40e468263ba08ec986b69a955c7c67
   status: live
 -->
 # Handover — Mountain-Folge 226 (2026-10-02)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-02-mountain-folge225.md` (→ `archiv/`).
 
-## Burn: open 0.0018 · close 0.3551 (line-agent kumulativ; Session-Delta 0.3533, gemessen 2026-10-03 via session_burn) · cap 0.45 Grund: operator-directed one-pass multi-atom (viking_text + voyager_merged + Browser-Portale + RoPeR/PDS4 + Ranging 810-005-214)
+## Burn: open 0.0018 · close 0.3786 (line-agent kumulativ; Session-Delta 0.3768, gemessen 2026-10-03 via session_burn) · cap 0.45 Grund: operator-directed one-pass multi-atom (viking_text + voyager_merged + Browser-Portale + RoPeR/PDS4 + Ranging 810-005-214)
 
 Die drei adressierten `## An mountain`-Blöcke (future-folge169, mycelium-folge222,
 river-folge82) sind gemessen und gefaltet. `rosetta_odf` ist am Baum entschieden:
@@ -227,10 +227,15 @@ Origin: mountain folge226.
   `https://gportal.jaxa.jp/`: Suche ohne Registrierung, Download/SFTP nur mit Konto;
   **Registrierung `https://gportal.jaxa.jp/gpr/user/regist1`**. Bitte als
   operator-gebundenen Account-Punkt aufnehmen.
-- **Shandong PDS-Spiegel (SDU Weihai) — offen, kein Login (gemessen 2026-10-03).**
-  `222.194.16.107/planet-data` + `ftp://222.194.16.107/` (Chang'e-1/2 PDS-Archive), nur die
-  Visualisierung `222.194.16.107/login/` braucht Login — der Spiegel selbst ist ein
-  Transport-Ziel (Mycelium), kein Account.
+- **Shandong PDS-Spiegel (SDU Weihai) — von hier nicht erreichbar (gemessen 2026-10-03).**
+  Das Portal `pds.wh.sdu.edu.cn` listet `222.194.16.107/planet-data` + FTP (Chang'e-1/2);
+  der Host antwortet via `--verdict` nicht (Timeout, cn-only) → `blocked ip-blocked`. Der
+  Browser half nicht — die JavaScript-Oberfläche ist nur der Wegweiser, der Spiegel selbst
+  bleibt unerreichbar.
+- **PDS-PPI EPN-TAP — Maschinenendpunkt (gemessen 2026-10-03, curl).**
+  `https://vo-pds-ppi.igpp.ucla.edu/tap/capabilities` und `…/tap/sync?REQUEST=doQuery…`
+  je 200 per **curl** (kein Browser nötig). Der `tap_compiler`-Arm passt; Dateisystem
+  `/data/` 200. Kein Account — Zulassung/Arm bei Mountain, Manifestation bei Mycelium.
 - **KASI-DALO — kein Self-Signup (gemessen 2026-10-03).** Login
   `pda.kasi.re.kr/login.php`; Konto nur per Anfrage an KASI (KMAG/KGRS/POLCAM/LUTI-Daten).
   Bitte als Account-Anfrage-Punkt aufnehmen.
