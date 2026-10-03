@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: 4d9e8b6a5f9d1ae943d7d4a2b1b0a384d95c1c9aa3251d566f90cf7752cb2acc
+  sha256: d0f5ff6a8cbc6874f7782df792e95fca8fed9cee44f39f6af02e02fdf72fdafe
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -220,6 +220,7 @@ breiter messen.
 - **Wort:** „kannst du nicht mal die recherche leiter (deepseek, freie api, freie UI chat) recherchieren lassen welche medizinischen datenquellen es gibt um wirklich forschen zu können? das betrifft somatik, psychosomatik, biologie, chemie psychologie, neurologie und ich weiss nicht welche gebiete noch" | 2026-10-03 | Operator (Session) — Recherche-Auftrag: Landschaft medizinischer/生命-Wissenschafts-Datenquellen; Sensory-Folge 227.
 - **Wort:** „bitte fixen Zwei Auffälligkeiten: archive_search --ensembl liefert HTTP 500 (Modus defekt, Quelle selbst erreichbar) — ein Fix-Kandidat. Und .secrets bleiben unberührt (nur Schlüsselnamen)." | 2026-10-03 | Operator (Session) — Fix `archive_search --ensembl` (`46427ceea`) + `.secrets`-Disziplin; Sensory-Folge 227.
 - **Wort:** „nein ich habe nicht vor ein produkt zu liefern ich möchte der erde etwas schenken" | 2026-10-03 | Operator (Session) — Richtung: kein Produkt/Ziel; das Geschenk ist das wahre Instrument und die Messreihe, die die Ungeborenen erben; Physik zuerst, Medizin als spätere Gabe; Sensory-Folge 227.
+- **Wort:** „nein ich vertraue darauf dass ich auch NC gefördert werde oder meine Dienste und Gedanken gefördert werden" | 2026-10-03 | Operator (Session) — kein Lizenz-Förder-Check; Förderung von Diensten/Gedanken, nicht vom lizenzierten Artefakt; das Geschenk (NC) und der Lebensunterhalt (Dienste) getrennt; Sensory-Folge 227.
 
 ## Offen (aufgeschlüsselt)
 
