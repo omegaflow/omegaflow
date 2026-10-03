@@ -3,7 +3,7 @@
   session: Sensory-Folge 227
   class: handover
   date: 2026-10-03
-  sha256: a3dccc52c9c33b9cb8b5a8a9f79be2f0a632eb0f4157791f695bab609c325d10
+  sha256: e1374008a18b093182d94fa5c02e33e4c645d446a05a0bce0549fe1502f5fd4a
   status: live
 -->
 # Handover — Sensory-Folge 227 (2026-10-03)
@@ -23,10 +23,7 @@ diese Folge ist 227. Der Stehende Pass wird zitiert, nie kopiert:
 `state/zustand/standing-pass.md` (Stand HEAD `179167c66` == `origin/main`, gemessen
 2026-10-03T17:52Z). Eigene Messung dieses Atoms (2026-10-03 F227): HEAD `1226e9082`
 == `origin/main` (`git rev-parse`); im Arbeitsbaum fremde uncommittete Hünke
-(`tools/measure/src/bin/field_te_query.rs`, `tools/harvest/src/bin/vizier_astrometry_compiler.rs`,
-`src/mathematikerin/wy_max_t.rs`, `tools/measure/src/bin/enso_blatt_probe.rs`,
-`tools/measure/src/bin/bz_retro_probe.rs`, `tools/measure/src/bin/wy_max_t_probe.rs` —
-nicht berührt). Eigener Register-Pass: `register_lookup --fired sensory` = 2
+(river/mountain/grind, per `git status` gemessen — nicht berührt). Eigener Register-Pass: `register_lookup --fired sensory` = 2
 (`hyperscanning-te zweite kohorte` FIRED_UNGEMESSEN — Trigger gemessen ungefeuert,
 `ox64-m2c` FIRED); `--stale sensory --persist 3` = 0; `--addressed sensory` = 1
 (mycelium-folge226, gefaltet); `--orphan-docs` = 0; `--orphans` = 1 (mycelium, fremd);
@@ -250,7 +247,7 @@ breiter messen.
 - **Trigger:** Operator-Wort 2026-10-03 (Recherche-Auftrag, s. Wort-Register) — Recherche in diesem Atom angestoßen.
 - **Lage:** (gemessen 2026-10-03 F227) erste Landschaft steht: `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha256 `4ead2c97…`, ~90 Quellen über Somatik/Neuro/Psyche/Biologie/Chemie/Genomik/Strukturbiologie/Bildgebung, jede mit `archive_search --verdict`-Messung und Zugangszustand). Zwei `general`-Agenten (flash-first) je ein Feldblock; Bestandsabgleich: nur OpenNeuro + PhysioNet registriert, NeuroVault `declined`, alles andere Kandidaten-Pool. Die Register-Schreibung (`phi/sources.φ`) ist Mountains Recht.
 - **Blockade:** keine.
-- **Braucht:** Mountains Verdikt + `phi/sources.φ`-Zeilen für die Kandidaten (Route `## An mountain`); die DUA-/Kosten-Zugänge (UK Biobank, dbGaP, EGA, All of Us, MIMIC-IV, NDA/ABCD, OASIS, PPMI, Add Health, HRS, SHARE, SOEP, ICPSR) in die Future-Operator-Queue.
+- **Braucht:** Mountains Verdikt + die Register-Zeilen in `phi/sources.φ` für die Kandidaten (Route `## An mountain`); die DUA-/Kosten-Zugänge (UK Biobank, dbGaP, EGA, All of Us, MIMIC-IV, NDA/ABCD, OASIS, PPMI, Add Health, HRS, SHARE, SOEP, ICPSR) in die Future-Operator-Queue.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
