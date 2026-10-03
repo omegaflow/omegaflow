@@ -2,7 +2,7 @@
   title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: f493c12a0602c366639bed42afed80601beb13f290033d779d88b937a0b35bb6
+  sha256: 0275ced7df76a9cab73363f9b7b94c32356fde00d7c84f49e3343ac25261e9f1
   status: live
   see-also: docs/concepts/exzellenz-konzept.md
 -->
@@ -96,21 +96,17 @@ als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §
 - **Adressiert:** die Verstöße reisen als `## An sensory` / `## An mountain`-Zeilen
   in `handover-2026-10-03-river-folge84.md`.
 
-## Verdikt
+## Verdikt — geheilt am 2026-10-03
 
-Die **Wahrheits-Schwelle** tragen 9 Dokumente nicht (2.8/2.10/2.7-Risse oben;
-die `2.9`-Verdiktswörter sind der häufigste Verstoß, in 15 Papern). Die
-**Ehren-Schwelle** (§3.1–3.5) fällt mit, wo der 2.9-Verstoß und bei `jwst` der
-fehlende Zuordnungsträger zusammenkommen; alle übrigen Papers tragen beide
-Schwellen. Die `2.9`-Fälle sind Ownership-gebunden (je Papier-Träger), die
-`2.8`/`2.10`-Fälle mechanisch heilbar.
+Alle oben benannten Verstöße wurden noch am 2026-10-03 in ihren Träger-Linien geheilt:
+River seine eigenen (`lead-geometry-direction`, `gic-causal-driver`,
+`corona-heating-ladder`, `flyby-path-2-preregistration-revised`, die zwei Flyby-Addenda,
+plus die 2.7-Hash- und 2.10-Pfad-Risse), Sensory die seinen (2.8 `see-also`, 2.10
+`planet-nine`-Pfad, 2.9 in sechs Papern; `planet-nine-kbo-residue` bleibt `descoped`),
+Mountain die seinen (`solar-cycle-dynamo`, `twenty-second-band-ground-chain`,
+`text-as-data-pioneer`). Verifikation am Baum (2026-10-03): `sgrep` findet
+`cannot`/`failed`/`expected`/`should`/`must` nicht mehr; verbleibende `error`-Treffer sind
+Messgrößen (`error bars`, `digitization error`). Alle Header-`sha256` sind nachgezogen.
 
-## Nächster Schritt
-
-- `2.8`: `see-also` in `jwst-disequilibrium-survey`, `planet-nine-kbo-residue`,
-  `blatt-kreuz-screening-gyirong` setzen — Träger der drei benennen.
-- `2.10`: `tools/work/` → `tools/measure`/`tools/harvest` in `solar-cycle-dynamo`,
-  `lead-geometry-direction`, `planet-nine-kbo-residue`.
-- `2.7`: `flyby-path-2-falsification-metric-addendum:18` auf den gemessenen
-  Pre-Reg-sha heilen (im selben Atom geschehen).
-- `2.9`: die 15 Verdiktswort-Papers je Träger heilen.
+**Offen:** keiner aus diesem Gate. Jedes neue Paper läuft vor Veröffentlichung erneut
+durch §2–§3 — der Maßstab bleibt lebend.
