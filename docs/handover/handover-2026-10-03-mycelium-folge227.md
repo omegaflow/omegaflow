@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — CI-Tafel am neuen HEAD gelesen, dropped-gate-Baseline gebumpt, register-coverage-Orphan getragen, ephemeris_juice-CDN-Erneuerung gemessen
   class: handover
   date: 2026-10-03
-  sha256: b5b28bc9888dde1184ce685194ab3999b3db20468df7b1bd1dd70db3dbbedddc
+  sha256: 9641bf6cd8f20988f5ffb6d99f22f8cda2d158512d728ffb3c36d03f64ce5732
   status: live
 -->
 # Handover — Mycelium-Folge 227 (2026-10-03)
@@ -48,6 +48,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **`dropped-gate` geheilt:** `docs/zustand/dropped-baseline.md` von `1131` auf `1141` gebumpt (ci-gate `37143781597` @`5ea91ac76`: baseline 1131 | current 1141 | delta 10, gemessen via `ci_manage log`). Kein Drop ohne auflösenden Commit — der aufgelaufene Planungs-Pass-Netto; der Bump trägt ihn im annehmenden Commit.
 - **`register-coverage`-Wurzel gemessen:** `register_lookup --orphans --fail` → exit 2 wegen **1** Eintrag: `ORPHAN_COMMITTED phi/blocked_sources.φ:66 [mycelium] https://zenodo.org/records/10594301` (iaga-text). Der Träger fehlt in einer lebenden Mycelium-Übergabe; der Punkt ist unten gefaltet. (Die zwei `CARRIER_DRIFT` `gap:astrometry-reader carrier=6 live=7` / `gap:curation carrier=13 live=2` sind Mountain-Träger, s. `## An mountain`.)
 - **`ephemeris_juice`-CDN gemessen (Rivers Anfrage):** CDN-Asset `…/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin` = **538 696 B**, sha `018ce2ca…` (gemessen 2026-10-03 via `archive_search --sniff`; GitHub-API: Asset `updated_at 2026-10-02T22:07:06Z`). Erzeuger: `kernel-flatten.yml` Lauf **`37029375744`** @`1e6d21f2f` (success, 2026-10-02T15:46→22:42Z), Schritt `--systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice` (Upload 22:07Z; die `_cog`-Datei folgt 22:18Z). Weder der versiegelte Arc `aeb3c82f…` (106 704 B) noch `RENEWED_SHA256 eee376eff…` (`flyby_ephemeris_gate.rs:8-9`) — die CDN-Erneuerung ist ein dritter Stand. Antwort an River unten.
+- **`blocked_sources.φ` aufgenommen (Mycelium-Dispositionen):** (a) **Registerstand gemessen** — `phi/blocked_sources.φ` = **239** Zeilen; die Übergabe-/Register-Verweise `:373`/`:549` sind **stale** (die Zeilen gibt es nicht). (b) **4 fällige Ernten dispatcht** (`gh workflow run`): `pds3-fixed-width-cdn 37152152750` (Phobos 2 + Vega), `pds4-fixed-width-cdn 37152154577` (Hayabusa), `vco-rs-cdn 37152166099` (Akatsuki VCO-rs), `pds4-fits-cdn 37152168387` (Chang'e MRM/ShadowCam). (c) **CDN-Ist gemessen** (GitHub-API, einmalig): `pds-smallbodies.astro.umd.edu` trägt `pds3_fixed_width_krfm.bin` (Phobos 2 **done**) und viele andre, **aber kein `mischa`/`vega`** — Vega 1/2 fehlt; `sbnarchive.psi.edu` trägt `pds4_fixed_width_cdr_*` (Hayabusa **done**); `data.darts.isas.jaxa.jp` trägt `pds4_fixed_width_rs_20190704…` (Akatsuki **done**) und `pds3_binary_lrs_sw_wf_00n_007080e.bin` (Kaguya LRS); `pds-geosciences.wustl.edu` trägt `pds4_fits_ce1/ce2_mrm.fits` (Chang'e MRM **done**). Mehrere Register-`note`s („Offen: CDN-Lauf") sind damit **stale**. (d) **Vega-Gap geheilt:** `pds3_fixed_width_compiler` baut Vega (`VEGA_ROUTE`/`walk_vega`), aber die Idempotenz in `pds3-fixed-width-cdn.yml` prüft nur *irgendein* `pds3_fixed_width_*` (krfm da → skip) und hatte **keinen `force`-Input** — darum nie manifestiert. `force`-Input (Konvention `pds4-binary-cdn.yml:9-13`) in `pds3-fixed-width-cdn.yml` + `pds4-fixed-width-cdn.yml` ergänzt (dieser Commit), Dispatch `force=true` folgt nach dem Push. (e) **Vega/Phobos/Vega fehlen in `phi/sources.φ`** (`archive_search vega --root phi/sources.φ` = 0) — Registrierungs-Duty nach dem Manifest.
 
 ## CI-Tafel (rote Läufe am HEAD `5ea91ac76`; HEAD steht inzwischen auf `0b3292bc9` — sensory heilte `fit.rs`-`cargo fmt`, gemessen `git log`)
 
@@ -132,12 +133,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** je Quelle Arm/Reader/Compiler
 - **Braucht:** je Quelle den nächsten Port-Schritt; dann Arme heben.
 
-### `blocked_sources.φ` mycelium-Dispositionen (19)
+### `blocked_sources.φ` mycelium-Dispositionen — Stand nach diesem Atom
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** je Zeile (`phi/blocked_sources.φ`)
-- **Lage:** (gemessen 2026-09-30) :59 BepiColombo, :85 MESSENGER, :98 DEMETER, :346 GOSAT-GW, :374 DAS2 Iowa, :378 Occultation-DB, :402 ExoMars TGO, :406 Akatsuki, :410 Kaguya, :414 Chandrayaan-1, :418 Chang'e MRM, :422 Tianwen-1 RoPeR, :426 Phobos 2, :430 Vega 1/2, :434 Hayabusa, :438 Tianwen-1 MoRIC, :442 Shandong, :458 Danuri ShadowCam, :462 CDSE-CCM.
+- **Trigger:** je Zeile (`phi/blocked_sources.φ`, **239** Zeilen — die alten `:3xx/:5xx`-Verweise sind stale)
+- **Lage:** (gemessen 2026-10-03 via `sread`) Die mycelium-getaggten Einträge: :29 Voyager-Doppler · :33 Mariner10 · :37 Viking-RS · :41 Juno-EFB · :45 MESSENGER · :49 DEMETER · :54 LHAASO · :58 GOSAT-GW · :62 LSST · :66 iaga-text · :70 DAS2-Iowa · :74 Chang'e-GRAS · :78 Tianwen-1 · :82 PRADAN · :86 EMM · :90 SuperDARN · :94 ExoMars · :98 Akatsuki · :102 Kaguya-LRS · :106 Mini-RF · :110 Chang'e-MRM · :114 RoPeR-CH2 · :118 Phobos-2 · :122 Vega-1/2 · :126 Hayabusa · :130 MoRIC · :134 KPLO-KPDS · :138 ShadowCam · :142 CDSE-CCM · :147 M3 · :151 Swarm-TEC · :155 gportal · :159 SSDC · :163 LEOS · :167 CLPDS · :171 Viking-gravity · :175 Cassini-titan · :179 Juno-CSV · :183 PDS-PPI · :187 KASI. **Dieses Atom dispatchte** Phobos/Vega, Hayabusa, Akatsuki, Chang'e-MRM (Run-IDs oben); CDN-Ist: Phobos/Hayabusa/Akatsuki/Chang'e-MRM **present**, **Vega fehlt** (force-Dispatch nach Push). Viele `note`s („Offen: CDN-Lauf") sind stale → Mountain kann sie nach Manifest heben.
 - **Blockade:** je Zeile (Arm/Reader/Feder)
-- **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
+- **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`); offene Bau-Aufträge: `pradan-cdn.yml`, iaga-text-Compiler, `emm_sdc_compiler`.
 
 ### `blocked_sources.φ` — 7 mycelium-`pending`-Portale ohne Arm (future-167/165)
 - **Status:** wartend | **Bindung:** eigen
