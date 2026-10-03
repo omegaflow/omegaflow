@@ -210,7 +210,7 @@ fn is_shard_of(name: &str, stems: &[String]) -> bool {
     })
 }
 
-fn cap_contract(root: &str) -> Vec<String> {
+fn literal_release_tags(root: &str) -> Vec<(String, usize, String, String)> {
     let dir = format!("{}/.github/workflows", root);
     let mut files: Vec<String> = Vec::new();
     if let Ok(rd) = std::fs::read_dir(&dir) {
@@ -227,28 +227,75 @@ fn cap_contract(root: &str) -> Vec<String> {
         let Ok(text) = std::fs::read_to_string(f) else {
             continue;
         };
-        let short = f.rsplit('/').next().unwrap_or(f);
+        let short = f.rsplit('/').next().unwrap_or(f).to_string();
         for (i, line) in text.lines().enumerate() {
             for (needle, kind) in [
-                ("gh release upload ", "gh release upload"),
-                ("--release-tag ", "--release-tag"),
+                ("gh release upload ", "upload"),
+                ("gh release create ", "create"),
+                ("--release-tag ", "release-tag"),
             ] {
                 let mut from = 0usize;
                 while let Some(pos) = line[from..].find(needle) {
                     let start = from + pos + needle.len();
                     let raw = line[start..].split_whitespace().next().unwrap_or("");
                     let tag = raw.trim_matches(|c| c == '\'' || c == '"');
-                    if tag == CAPPED_RELEASE {
-                        out.push(format!(
-                            "{short}:{}: {kind} writes the capped release {CAPPED_RELEASE} — use the family tag \"<host>-<family>\" (cdn.rs CAPPED_RELEASE)",
-                            i + 1
-                        ));
+                    if is_literal_tag(tag) {
+                        out.push((short.clone(), i + 1, kind.to_string(), tag.to_string()));
                     }
                     from = start;
                 }
             }
         }
     }
+    out
+}
+
+fn is_literal_tag(tag: &str) -> bool {
+    !tag.is_empty()
+        && !tag.contains('$')
+        && !tag.contains('{')
+        && !tag.contains('(')
+        && !tag.contains('/')
+        && tag != "tools-latest"
+}
+
+fn host_known(tag: &str, hosts: &BTreeSet<String>) -> bool {
+    hosts.contains(tag)
+        || hosts.iter().any(|h| {
+            tag.strip_prefix(h.as_str())
+                .is_some_and(|rest| rest.starts_with('-'))
+        })
+}
+
+fn tag_baseline(root: &str) -> BTreeSet<String> {
+    let path = format!("{}/docs/specs/cdn-tag-baseline.txt", root);
+    let mut set = BTreeSet::new();
+    if let Ok(text) = std::fs::read_to_string(&path) {
+        for l in text.lines() {
+            let l = l.trim();
+            if !l.is_empty() && !l.starts_with('#') {
+                set.insert(l.to_string());
+            }
+        }
+    }
+    set
+}
+
+fn contract(root: &str, hosts: &BTreeSet<String>, exempt: &BTreeSet<String>) -> Vec<String> {
+    let mut out = Vec::new();
+    for (file, line, kind, tag) in literal_release_tags(root) {
+        if (kind == "upload" || kind == "release-tag") && tag == CAPPED_RELEASE {
+            out.push(format!(
+                "{file}:{line}: {kind} writes the capped release {CAPPED_RELEASE} — use the family tag \"<host>-<family>\" (cdn.rs CAPPED_RELEASE)"
+            ));
+        } else if !host_known(&tag, hosts) && !exempt.contains(&tag) {
+            out.push(format!(
+                "{file}:{line}: {kind} writes \"{tag}\", not bound in phi/sources.φ"
+            ));
+        }
+    }
+    out.sort();
+    out.dedup();
     out
 }
 
@@ -280,9 +327,35 @@ fn main() {
     }
 
     if fail {
-        let drift = cap_contract(&root);
+        let full = format!("{}/{}", root, source_path);
+        let content = match std::fs::read_to_string(&full) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("cdn_reconcile: read {} void: {}", full, e);
+                std::process::exit(1);
+            }
+        };
+        let sources: Vec<SourceConfig> = load_sources_from(&content);
+        let mut hosts: BTreeSet<String> = BTreeSet::new();
+        for s in &sources {
+            if let Some(tag) = cdn_tag_from_url(&s.url) {
+                hosts.insert(tag.to_string());
+            }
+            if let Some(nl) = extract_netloc(&s.url) {
+                hosts.insert(nl.to_string());
+            }
+            if let Some(origin) = &s.origin {
+                for nl in origin_netlocs(origin) {
+                    hosts.insert(nl);
+                }
+            }
+        }
+        let drift = contract(&root, &hosts, &tag_baseline(&root));
         if drift.is_empty() {
-            eprintln!("cdn_reconcile: cap contract clean");
+            eprintln!(
+                "cdn_reconcile: cap+tag contract clean ({} registry hosts)",
+                hosts.len()
+            );
             return;
         }
         for d in &drift {
@@ -629,11 +702,17 @@ mod tests {
     #[test]
     fn no_workflow_writes_the_capped_release() {
         let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
-        let drift = cap_contract(root);
+        let bad: Vec<String> = literal_release_tags(root)
+            .into_iter()
+            .filter(|(_, _, kind, tag)| {
+                (kind == "upload" || kind == "release-tag") && tag == CAPPED_RELEASE
+            })
+            .map(|(f, l, k, t)| format!("{f}:{l}: {k} {t}"))
+            .collect();
         assert!(
-            drift.is_empty(),
+            bad.is_empty(),
             "capped-release writers in .github/workflows:\n{}",
-            drift.join("\n")
+            bad.join("\n")
         );
     }
 }
