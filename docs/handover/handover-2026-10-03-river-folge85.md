@@ -3,7 +3,7 @@
   session: River-Folge 85
   class: handover
   date: 2026-10-03
-  sha256: 634b8dbd8bd6ae957dc7acd3bf4deb4ac6c4035b33cbe2929849e68ccd6b83b4
+  sha256: 96ccb78658dc8a5c05002856a832778761595461387582b8647e71cfe8622c8c
   status: live
 -->
 # Handover — River-Folge 85 (2026-10-03)
@@ -176,11 +176,10 @@ Wort | Datum | Quelle
   `arena.ai/search/direct?model_a=claude-sonnet-5-search`. Die API-Flotte (`voice`-Agent,
   `text_review`) ist Masse/Reproduzierbarkeit, **nicht** der scharfe Kanal; `nvidia/z-ai/glm-5.3`
   via `opencode run --agent voice` hing 15 min ohne Output — nur ein paar nvidia-LLMs sind nutzbar.**
-  Geantwortet: **z.ai GLM-5.3** und **Claude** (Rohmaterial
-  `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
-  `state/stimmen/2026-10-03_claude-ui_te-engine-review.md`); **Kimi K3 via tryingopen.com**
-  antwortet (beim Pass noch `replying` — Ergebnis beim nächsten Pass lesen); `kimi.ai`
-  Kontingent aufgebraucht; **Together** keine Antwort. Die Reviews nennen konkrete Defekte:
+  Geantwortet (korrekte UI-Route): **z.ai GLM-5.3**, **Claude**, **Kimi K3 via tryingopen.com**
+  (Rohmaterial `state/stimmen/2026-10-03_zai-ui_te-engine-review.md`,
+  `…_claude-ui_…`, `…_kimi-k3-tryingopen_te-engine-review.md`); `kimi.ai` Kontingent
+  aufgebraucht; **Together** keine Antwort. Die Reviews nennen konkrete Defekte:
   - **Rissä: `pair_lag_index_hash` faltet lag 0 und lag 1 auf denselben Hash**
     (`src/mathematikerin/wy_max_t.rs:262`, `shift = 1` für beide) → die „K=6 distinkten" sind
     real 6 Paare bei **nur lag 0**; lag-0-TE ist richtungs-symmetrisch. Name ≠ Implementation;
