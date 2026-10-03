@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Cap-Gate gebaut, zwei Cap-Bypass-Writer rotiert
   class: handover
   date: 2026-10-03
-  sha256: f2bbdc72051ba8b3df6fabbc848a9ad8a88c2aeb650c96814a1bf1e9b08b6d2b
+  sha256: 949a37387956d36ca2d2d58724110b0bcee20fc6bd3e7432a868b8b4af2e08f0
   status: live
 -->
 # Handover — Mycelium-Folge 225 (2026-10-03)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-03-mycelium-folge224.md` (→ `archiv/`).
 
-## Burn: open 0.0017 · close 0.0543 (gemessen `session_burn`; Grund: Cap-Gate `cdn_reconcile --fail` + nvss/gaia/omni2-Rotation + Handover)
+## Burn: open 0.0017 · close 0.0847 (gemessen `session_burn`; Grund: Cap-Gate + Tag-Diff + Baseline, nvss/gaia/omni2-Rotation, Handover)
 
 ## Operator-Wort-Register
 
@@ -51,12 +51,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** die zwei Family-Tags existieren erst nach dem nächsten Lauf; darum noch **kein** Registry-Rebind (kein Fenster ohne Asset).
 - **Braucht:** nach Push `gh workflow run nvss-cdn.yml` + `gh workflow run gaia-cdn.yml`; nach 206 je Asset die Register-`url`s rebinden (`phi/sources.φ:10541` nvss → `ssd.jpl.nasa.gov-nvss/`, `:10512` dr3_stars → `ssd.jpl.nasa.gov-gaia/`) und die Altwriter verlieren.
 
-### Step-5(b), Teil 2 — Register↔Workflow-Tag-Diff (offen)
+### Step-5(b), Teil 2 — Register↔Workflow-Tag-Diff (gebaut)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf `nvss-cdn`/`gaia-cdn` endet mit 206 auf `ssd.jpl.nasa.gov-nvss`/`-gaia`
-- **Lage:** (gemessen 2026-10-03) der zweite Teil des Rats-Entscheids — `cdn_reconcile --fail` soll die erwartete Tag-Menge aus `phi/sources.φ` gegen die `gh release create/upload`-Tags in `.github/workflows` diffen (dynamische Familien modis-Jahr/ps1-Slabs/spk-Shards exempt). Noch nicht gebaut: der literale Scan sieht nur feste Tags; die dynamischen (`$tag`/matrix) bleiben exempt, brauchen also die §1-Klassen-Konstanten. Der Cap-Teil (Teil 1) steht.
-- **Blockade:** die Tag-Diff braucht die 13-Netloc-Familien-Bindung (multi-Atom).
-- **Braucht:** `cap_contract` um den erwarteten Registry-Tag-Satz erweitern (`cdn_tag_from_url` über die `url`-Zeilen), Drift melden; vorher Familien-Identität je `*-cdn.yml` an `sources.φ` binden.
+- **Trigger:** neuer literaler Workflow-Release-Tag, der nicht in `phi/sources.φ` oder `docs/specs/cdn-tag-baseline.txt` steht
+- **Lage:** (gemessen 2026-10-03) `cdn_reconcile --fail` difft die literalen Tags aus `gh release create/upload` + `--release-tag` in `.github/workflows` gegen die Host-Menge aus `phi/sources.φ` (`cdn_tag_from_url` + `extract_netloc` + `origin`-Netlocs = **255 Hosts**); grün, wenn der Tag ein Registry-Host ist oder `<host>-<familie>`. Dynamische Tokens (`$tag`/`${}`) exempt; `tools-latest` (Omegaflow-Tools-Repo) exempt. **6 gemessene Drifts** in `docs/specs/cdn-tag-baseline.txt`: `vizier.cfa.harvard.edu`, `noaa-eri-pds.s3.amazonaws.com`, `dachs.fai.kz`, `gsaweb.ast.cam.ac.uk`, `atnf.csiro.au`, `ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca`. Lokal gemessen: `cap+tag contract clean (255 registry hosts)`, exit 0.
+- **Blockade:** die 6 Baseline-Zeilen brauchen je eine Quellen-Bindung (Mountain-Verdikt + Mycelium-`url`/`origin`).
+- **Braucht:** je Baseline-Host den Port-Schritt (`docs/SOURCE_PORT.md`), Zeile streichen; dann Probe-Writer-Rebindung, dann je Lösch-Klasse ein Atom mit gemessener Tabelle.
 
 ### viking-text-cdn — Capped-Release-Fix, Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
