@@ -1,0 +1,37 @@
+name: viking-text-cdn
+
+# Der Viking-Text-Compiler (`viking_text_compiler`) als CDN-Manifestator.
+# Ohne diesen Workflow bleibt der `url`-Zeiger
+# `…/ssd.jpl.nasa.gov/viking_lander_tracking.bin` unmanifestiert.
+# Quelle sind die JPL-SSD-Planetentexte
+# `…/dat/planets/viking{range,doppler}.txt`; der Release-Tag folgt der
+# Quellen-Herkunft (`ssd.jpl.nasa.gov`). Die Reihe reift langsam; ein
+# Monatslauf genügt dem Register-`ttl 604800`.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 1 * *"
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  viking:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Die Viking-Lander-Tracking-Reihe kompilieren und auf das CDN manifestieren
+        run: |
+          cargo run --release -p omegaflow-harvest --bin viking_text_compiler -- \
+            --ci-mode
