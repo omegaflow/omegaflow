@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss/CLPDS/iEEG-Fixes, goes_euvs-Alignment, Exposom-Arme, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: 4dc19ebeed607f9c8696c4f244db1f638fe78a8a3d0efe50fdad083331cf1370
+  sha256: 816274f157f4f6f3e135c268832eb849aa9d65e280be39995293da5955442cbb
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -73,16 +73,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Braucht:** Logs lesen; `sha256` beider Assets in `sources.φ`; WQP-Vokabular-Riss = Mountain (s. `## An mountain`).
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Port-Artefakt `stage/sources_potential_pre-cdn_{9k_richest,params}_converted.φ` erzeugt
-- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` = 825 Blöcke, `:6` = 63 Blöcke; `glob phi/pipeline/stage/*` = **leer** — die in `index.φ:3-4` als `erledigt` notierten `stage/…_converted.φ` fehlen am Träger (gitignored, nicht reproduziert). `src/archivar/port.rs` ist aktuell durch eine andere Linie uncommittet modifiziert.
-- **Blockade:** Port-Lauf (Konverter-Spec = Mountain) + laufende Fremd-Edit an `port.rs`.
-- **Braucht:** Port-Lauf `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ` (Bin-Bindung über SOURCE_PORT.md §5); dann Register-Zeilen.
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Port-Runner im Baum (dann `stage/sources_potential_pre-cdn_{9k_richest,params}_converted.φ`)
+- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` = 825 Blöcke, `:6` = 63 Blöcke; `glob phi/pipeline/stage/*` = **leer**. Der im `ledger.φ`-Note genannte Ausführer war laut Note **„derselbe Working-Tree-Bin"** — ein nie committeter Bin; im Baum existiert er nicht (`--port`/`--probe` stehen in keinem Bin; `glob tools/**/bin/*port*` = leer), nur der Motor `src/archivar/port.rs`. `src/archivar/port.rs` ist zusätzlich durch eine andere Linie uncommittet modifiziert.
+- **Blockade:** der Port-Runner (Working-Tree-Bin) ist verloren — nicht im getrackten Baum.
+- **Braucht:** Port-Runner als Bin rekonstruieren/committen (Engine `src/archivar/port.rs`; Konverter-Spec = Mountain), dann Lauf `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ`; Register-Zeilen.
 
 ## CI-Lage (fact level, gemessen 2026-10-04)
 
 - **grün:** `euvs-cdn 37235359207` (Asset `goes_euvs.bin` liegt nun auf `ncei.noaa.gov`, `--sniff` sha256 `45b9c0ae…` == Register) · `swpc-mirror-cdn 37235378718` · `pages-deploy 37223715722` · `openneuro-cdn 37231228641` (ds005034).
-- **rot:** `ieeg-cdn 37235356150` (503, s. o.) · `auto-dispatch 37235337903` (nicht-eigen, `unread`) · frühere `ci-check 37223709589`/`37220591967` (VerdictLine-Scope, Träger River, s. `## An river`).
+- **rot:** `ieeg-cdn 37235356150` (503, s. o.) · frühere `ci-check 37223709589`/`37220591967` (VerdictLine-Scope, Träger River, s. `## An river`).
+- **`auto-dispatch 37235337903` = failure — gemessen und gefixt (eigen):** `auto-dispatch.yml:41` feuert `gh workflow run ieeg-cdn.yml` ohne den Pflicht-Input `dataset` → HTTP 422 „Required input 'dataset' not provided". `ieeg-cdn.yml` + `openneuro-cdn.yml` tragen `dataset` jetzt `required: false` mit Default, sodass der bare Dispatch trägt (Commit `78c86f64a`).
 - **in flight:** `nvss-cdn 37233581603` · `clpds-cdn 37233584228` · `openneuro-cdn 37233586379` · `wqp-cdn 37236691679` · `eea-noise-cdn 37236694323` · `dsn-cdn 37231588840` · `placebo-ave-cdn 37231225779` · `ps1-cdn 37228914571` · `hips-png-cdn 37225669618` · `allwise-cdn 37225741223` · `tools-build 37235337896` · `ci-check 37236691571`; je `unread`, `ci_manage log <id>` bei Abschluss.
 
 ## Orphan-Zensus
