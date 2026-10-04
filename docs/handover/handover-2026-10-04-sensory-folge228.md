@@ -3,7 +3,7 @@
   session: Sensory-Folge 228
   class: handover
   date: 2026-10-04
-  sha256: 0eb7a51162ed4ed5633a67c61cd234104dfbe836544b1e0f3a5335751c4a6214
+  sha256: 524d769adb7616192636a26f681e5049d5502a5a17ba6e812f2f3c8466b12078
   status: live
 -->
 # Handover — Sensory-Folge 228 (2026-10-04)
@@ -419,7 +419,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0781 — session_burn (opencode.db, 2026-10-04 F228, deepseek-flash; „Sensory-Linie in einem Pass abarbeiten" $0.0781, zwei `general`-Taucher (B-CDN-Korpus, CI-Triage) im Fenster $0.1756; kein pro/max-Dispatch dieses Atoms)
+## Burn: open 0.0000 · close 0.1375 — session_burn (opencode.db, 2026-10-04 F228, deepseek-flash; „Sensory-Linie in einem Pass abarbeiten" $0.1375, drei `general`-Taucher (B-CDN-Korpus, CI-Triage, CORS-Pfad) im Fenster; kein pro/max-Dispatch dieses Atoms)
 
 ## Abschluss
 
