@@ -26972,3 +26972,24 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_rrl.bin
+origin https://gea.esac.esa.int/tap-server/tap/sync
+format gaia_rrl
+compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
+at sun
+ttl 86400
+field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
+field parallax gaia_rrl_parallax_mas inverse-square em mas 86400 0.0 0.0
+field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/viking_grav_vmar001l.bin
+origin https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
+format viking_grav
+compiler tools/harvest/src/bin/viking_grav_compiler.rs
+at mars
+ttl 604800
+field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
+field LONGITUDE viking_grav_longitude_deg inverse-square em deg 604800 0.0 0.0
+field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square em mm/s2 604800 0.0 0.0
+field ALTITUDE viking_grav_altitude_km inverse-square em km 604800 0.0 0.0
