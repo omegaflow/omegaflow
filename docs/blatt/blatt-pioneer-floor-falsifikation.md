@@ -4,7 +4,7 @@
   date: 2026-10-03
   sha256: 5bb1696b0acd87f45f26950de2df3be7db2afa4067c5f07835d3d352d47607fe
   status: live
-  see-also: docs/paper/probe-front-dark-matter.md docs/handover/archiv/handover-2026-10-02-river-folge82.md docs/handover/handover-2026-10-02-mountain-folge226.md phi/sources.φ
+  see-also: docs/paper/probe-front-dark-matter.md docs/handover/archiv/handover-2026-10-02-river-folge82.md docs/handover/archiv/handover-2026-10-02-mountain-folge226.md phi/sources.φ
 -->
 # Voranmelde-Blatt — Pioneer-Floor-Falsifikation (Familie Station×Ära×Form)
 
