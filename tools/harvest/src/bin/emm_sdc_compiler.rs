@@ -91,10 +91,11 @@ fn fetch_access_token(refresh_token: &str, client_id: &str) -> Option<String> {
         }
     };
     if code != Some(200) {
-        let reason = match json_str_field(&body, "error").or_else(|| json_str_field(&body, "message")) {
-            Some(v) => v,
-            None => "no error field".to_string(),
-        };
+        let reason =
+            match json_str_field(&body, "error").or_else(|| json_str_field(&body, "message")) {
+                Some(v) => v,
+                None => "no error field".to_string(),
+            };
         let code_s = match code.map(|c| c.to_string()) {
             Some(v) => v,
             None => "void".to_string(),
@@ -242,9 +243,8 @@ fn main() {
         Some(v) => v,
         None => DEFAULT_CLIENT_ID.to_string(),
     };
-    let refresh_spec: Option<(String, String)> = refresh
-        .as_ref()
-        .map(|rt| (rt.clone(), client_id.clone()));
+    let refresh_spec: Option<(String, String)> =
+        refresh.as_ref().map(|rt| (rt.clone(), client_id.clone()));
     let mut token = String::new();
     if let Some(rt) = &refresh {
         match fetch_access_token(rt, &client_id) {

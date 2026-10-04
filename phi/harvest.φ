@@ -42,6 +42,14 @@ pattern ^gaia_sso_tno\.bin$
 idempotent true
 
 asset present
+format ephemeris_binary
+tag www.kari.re.kr
+arm kplo_spice_compiler
+workflow kplo-spice-cdn.yml
+pattern ^ephemeris_kplo\.bin$
+idempotent true
+
+asset present
 format ephemeris_epm
 tag ftp.iaaras.ru
 arm epm_compiler
@@ -105,6 +113,14 @@ tag planet.physics.uiowa.edu
 arm das2_iowa_compiler
 workflow das2-iowa-cdn.yml
 pattern ^das2_iowa_.+\.bin$
+idempotent true
+
+asset present
+format iaga_text
+tag zenodo.org
+arm iaga_text_compiler
+workflow iaga-text-cdn.yml
+pattern ^iaga_text\.bin$
 idempotent true
 
 asset present
