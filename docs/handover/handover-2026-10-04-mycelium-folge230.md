@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: 14f8b2e7af19814c9dd3122739e342753eaf02d67089afb8d5154f056e0dc82c
+  sha256: edebed4463b5c06f86996999d25b716b7b031e4183bc9db25c432f011580ccff
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -52,6 +52,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **JAXA-`absent`-Ursache gemessen:** nicht die Quelle fehlte — `JAXA_GPORTAL_USER/_PASS` sind lokal in `.secrets.local` (`bin/secrets_keys`), fehlten aber als Repo-Secrets (`gh secret list`; der Workflow liest `secrets.JAXA_GPORTAL_*`). `bin/secrets-sync.sh --set` gesetzt (33 Secrets inkl. JAXA + `OMEGAFLOW_SECRETS_FILE`).
 - **SUDEP dispatcht:** `openneuro-cdn ds004100` → `37219510577`.
 - **Exposom- + nvss-Recherche** (2 flash-Taucher, ~$0.035): Exposom-Endpunkte gemessen, NVSS-SkyServer-Route belegt.
+- **Registry↔CDN-Reconciliation bereinigt:** `cdn_reconcile`-www-Asymmetrie gefixt (`netloc_of_source` strippt `www.` jetzt wie `tag_netloc`; orphan 144→143). Je Orphan-Tag die Disposition via `register_lookup <tag>` **gemessen** (live/dead/declined/blocked/pending); **56** Releases ohne `live`/`blocked`/`pending`/`verwahrt` gelöscht (`gh release delete --cleanup-tag`), die **77** `internal`-Familien-Scherben (MODIS/ps1/ssd `--`-Tags) behalten. Stand: orphan **87** (77 internal + 10 gehalten). `byte_identical_duplicate_groups` 14 = Koinzidenz (verschiedene Netlocs), **nicht** gelöscht.
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -120,7 +121,6 @@ Origin: mycelium-folge230. **Routed — Operator-Akt (per-Akt-Wort), keine Masch
 - **EEG-Portale** `blocked_sources.φ:231/:235/:239` (iEEG.org / TUH EEG / NSRR PSG): Registration/DUA. TUH läuft bereits (`wartend.φ:39` tuh-eeg-access; `:38` eligibility resolved). iEEG.org + NSRR Registration offen.
 - **GIC-Rohserie** `space.fmi.fi/gic/`: FMI-Anfrage läuft (`wartend.φ:40` fmi-gic-maentsaelae, gesendet 2026-10-02, keine Antwort) — Wiedervorlage, kein Send von der Maschine.
 - **SUDEP `ds004100`:** OpenNeuro-Harvest dispatcht (`37219510577`); kein Operator-Akt.
-- **Registry↔CDN-Reconciliation — Lösch-Entscheid:** `cdn_reconcile` gemessen (`docs/specs/cdn_reconciliation.json`, committet): `orphan_releases` 144 (davon `dataset_host` 4 / `internal` MODIS-LST-Jahre), `byte_identical_duplicate_groups` 14, `www_prefixed` 1 (`www.kari.re.kr`). **Frage:** darf ich die benannten Lösch-Klassen bereinigen (je Klasse ein Atom)? **Bei Ja:** Klasse für Klasse entfernen/normalisieren; **bei Nein:** die Messung bleibt als Spec stehen, kein Eingriff.
 
 ## An sensory
 
