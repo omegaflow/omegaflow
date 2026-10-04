@@ -174,13 +174,12 @@ fn subdivide_star(
 fn descend_star_cells<F: FnMut(&Vec<Arc<Sample>>)>(
     hash: &SpatialHash,
     level: u8,
-    ci: i64,
-    cj: i64,
-    ck: i64,
+    cell: [i64; 3],
     qlo: [f64; 3],
     qhi: [f64; 3],
     emit: &mut F,
 ) {
+    let [ci, cj, ck] = cell;
     let key = StarCellKey {
         level,
         cell: (ci, cj, ck),
@@ -210,7 +209,7 @@ fn descend_star_cells<F: FnMut(&Vec<Arc<Sample>>)>(
                 if zhi < qlo[2] || zlo > qhi[2] {
                     continue;
                 }
-                descend_star_cells(hash, child, ci2, cj2, ck2, qlo, qhi, emit);
+                descend_star_cells(hash, child, [ci2, cj2, ck2], qlo, qhi, emit);
             }
         }
     }
@@ -821,7 +820,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             for ci in lo.0..=hi.0 {
                 for cj in lo.1..=hi.1 {
                     for ck in lo.2..=hi.2 {
-                        descend_star_cells(hash, 0, ci, cj, ck, qlo, qhi, &mut emit_star);
+                        descend_star_cells(hash, 0, [ci, cj, ck], qlo, qhi, &mut emit_star);
                     }
                 }
             }
