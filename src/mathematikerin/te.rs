@@ -48,7 +48,7 @@ pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
     te - m_k
 }
 
-pub const TE_NEFF_THRESHOLD: Option<f64> = None;
+pub const TE_NEFF_THRESHOLD: Option<f64> = Some(1.8166e1);
 
 pub fn transfer_entropy_bias_adjusted_above(
     te: f64,
@@ -3950,9 +3950,14 @@ mod tests {
             "the floor correction subtracts m_k, got {at_floor}"
         );
 
+        let n_eff_floor = TE_NEFF_THRESHOLD.expect("the measured n_eff floor stands");
         assert!(
-            transfer_entropy_bias_adjusted_gated(te, m_k, 1.0e9).is_none(),
-            "an unmeasured n_eff threshold applies no correction"
+            transfer_entropy_bias_adjusted_gated(te, m_k, n_eff_floor - 1.0).is_none(),
+            "below the measured n_eff floor the correction stays absent"
+        );
+        assert!(
+            transfer_entropy_bias_adjusted_gated(te, m_k, n_eff_floor).is_some(),
+            "at the measured floor the correction applies"
         );
     }
 
