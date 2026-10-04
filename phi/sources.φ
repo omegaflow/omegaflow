@@ -9177,6 +9177,7 @@ url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds
 format clpds
 origin https://clpds.bao.ac.cn/moon-admin/client/science/catalogue
 compiler tools/harvest/src/bin/clpds_compiler.rs
+sha256 6b58494194749bc90f7188c80d717a36a2143e7d65a084d6502341098733805f
 at moon
 ttl 604800
 
@@ -9184,6 +9185,7 @@ url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds
 format clpds
 origin https://clpds.bao.ac.cn/moon-admin/client/science/dataInfoList
 compiler tools/harvest/src/bin/clpds_compiler.rs
+sha256 21154461f5b7069af045ac1a450811166c54d66888d43e84b6481462bcc3b1d8
 at moon
 ttl 604800
 
@@ -9219,6 +9221,30 @@ sha256 772e51d16c4a68537255144f66faba5c7aade396cfc5f17d9572e7e7afb2a776
 at moon
 ttl 604800
 field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kmtnet.json
+format kasi
+origin https://data.kasi.re.kr/api/KMTNet/search?ra=270.694&dec=-30.066&rad=60&unit=arcmin&limit=100000
+compiler tools/harvest/src/bin/kasi_compiler.rs
+sha256 da1f16549f20ce348d2145e23764a35086ebca3006f8dbec8e7459916fcf62ce
+at sun
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kvn.json
+format kasi
+origin https://data.kasi.re.kr/api/KVN/search?ra=267.075&dec=-28.127&rad=1.5&unit=degree
+compiler tools/harvest/src/bin/kasi_compiler.rs
+sha256 de2540bd0082d332779bccbc9548b6ffb5e5472b027a4f40682cea0f1893e13a
+at sun
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_miris.json
+format kasi
+origin https://data.kasi.re.kr/api/MIRIS/search?ra=84.0&dec=-70.0
+compiler tools/harvest/src/bin/kasi_compiler.rs
+sha256 3ce1dee202297c644c637c2e45d0a0d025e5201a2e7d3ab17e9f00ddb99f7026
+at sun
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
 format gedi_l2a

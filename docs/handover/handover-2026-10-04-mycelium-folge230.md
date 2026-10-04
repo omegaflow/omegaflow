@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — nvss-SkyServer-Route gebaut, WASM-Web-Build in pages-deploy, CSES/goes_euvs sha256
   class: handover
   date: 2026-10-04
-  sha256: 2f6d2e08f9f9778f71e09a71feafabf2ae82688d194c45d5bcb1d539b3d23fe8
+  sha256: 3b08d47a99545fb3d67f3ad7be2e22cbcd1d252e876dffe028e0baa85f7a9765
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -52,11 +52,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Exposom-Domänen-x gemessen** (flash-Taucher): neun Domänen ohne x-Home — offene Endpunkte WQP (`waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes` 200), EEA-Lärm-ArcGIS-REST (200, 38 Layer), O*NET-Zip (`dl_files/database/db_29_0_text.zip` 206), Exposome-Explorer (`/system/downloads/current/environmental_pollutants.csv.zip` 206), USDA-FoodAccess-Seite (200); Licht/Grünraum/GHSL = Earthdata-Token bzw. CDN+Compiler; CAMS-Pollen/CANJEM/Black-Marble/GHSL-Einzeldatei/EEA-Layer-Query = `unread`.
 - **nvss alternative Route gemessen** (flash-Taucher): SkyServer DR18 `SpecObj` 200, 629 645 Zeilen im gescheiterten Slice, 4,48 MB je 5°-Fenster; VizieR TAP 503 (auch Proton); ASU `V/154`-Range 0 B; NED TAP 200 (nur Per-Ziel-Resolver); kein vorgefertigter NVSS×SDSS-Katalog gefunden.
 
+### Nachtrag (Fortsetzung, gemessen 2026-10-04T17:2xZ)
+
+- **CLPDS `sha256` nachgetragen** (`clpds_catalogue.json` `6b584941…`, `clpds_files.jsonl` `21154461…`, Release-API) — die Assets lagen am CDN; der Lauf `37200676549` war nur vom Push verdrängt, nicht rot.
+- **KASI registriert** (Lauf `37199896276` = **success**, aber **kein** Register-Block vorhanden — der frühere „registriert"-Vermerk war falsch): `kasi_miris.json` `3ce1dee2…`, `kasi_kmtnet.json` `da1f1654…`, `kasi_kvn.json` `de2540bd…`, `format kasi`, `at sun`, ttl 604800, `compiler kasi_compiler.rs`. `register_sort` = canonical (2602 Blöcke).
+- **SUDEP dispatcht:** `openneuro-cdn ds004100` → `37219510577` (queued). Arm `openneuro_compiler`/`openneuro-cdn.yml` existierte bereits — kein Neubau.
+- **JAXA-`absent`-Ursache gemessen:** nicht die Quelle fehlte — `bin/secrets_keys` zeigt `JAXA_GPORTAL_USER/_PASS` **lokal**; `gh secret list` zeigte sie **nicht** im Repo (Workflow liest `secrets.JAXA_GPORTAL_*`). `bin/secrets-sync.sh --set` gesetzt (33 Secrets inkl. JAXA + `OMEGAFLOW_SECRETS_FILE`-Auffrischung); neu dispatcht `jaxa-gportal-cdn 37220243355`.
+- **Tag-Defekt benannt:** mehrere Punkte dieser Übergabe tragen `Bindung: eigen`, obwohl ihr nächster Schritt ein Mountain-Verdikt / Operator-Wort / eine andere Linie ist — beim nächsten Pass korrigieren, kein `eigen` vortäuschen.
+
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
-- **`nvss-cdn 37197870103` @`39c25db97` = failure** — ASU-`V/154`-Range 88..137 leer/Timeout. **Fix gebaut, im Atom** (SkyServer-Primärarm). Braucht Lauf `nvss-cdn` (nach Push dispatcht).
-- `cses-efd-cdn 37196088057` @`25a3a46bd` = **success** · `cses-hpm-cdn 37214214253` = **success** · `cses-scm-cdn 37214216529` = **success** · `emm-sdc-cdn 37195699687` @`6fdcbcef9` = **success** (wireproxy-Exit trug diesmal) · `pages-deploy 37196979821` = **success**.
-- `astrometry-witness-cdn 37214209546` = queued (`unread`); `cuprate-cdn`/`ps1-cdn`/`ci-check` queued (Träger andere Linien).
+- **keine roten Läufe im Fenster**; der frühere `nvss-cdn 37197870103` (ASU-Route leer) ist durch Fix + neuen Lauf abgelöst.
+- **in flight (queued, Runner-Knappheit):** `nvss-cdn 37218852211` @`7ccc360e8` · `pages-deploy 37218848775` @`7ccc360e8` · `openneuro-cdn 37219510577` @`7ccc360e8` · `jaxa-gportal-cdn 37220243355` @`7ccc360e8` — je `unread`.
+- **success (fact level):** `cses-efd-cdn 37196088057` · `cses-hpm-cdn 37214214253` · `cses-scm-cdn 37214216529` · `emm-sdc-cdn 37195699687` · `cuprate-cdn 37214211680` · `astrometry-witness-cdn 37214209546` · `pages-deploy 37196979821`.
 
 ## Offen (aufgeschlüsselt)
 
@@ -146,10 +154,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### `blocked_sources.φ` mycelium-Portale (KASI/CLPDS/JAXA/LEOS)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `kasi-cdn`/`clpds-cdn`/`jaxa-gportal-cdn`-Läufe; LEOS-Register (Mountain)
-- **Lage:** (gemessen 2026-10-04) KASI/CLPDS/JAXA Parser+Workflows gebaut, in `sources.φ` registriert (`register_sort` canonical @2599); JAXA-Download-Arm live (`check_dlconfig` SUCCESS → `fetch` 206); LEOS auth-gated (`40301`) → `blocked account`-Vorschlag an Mountain.
-- **Blockade:** CI-Dispatch/`sha256` nach Manifest; LEOS-Register-Grammatik (Mountain)
-- **Braucht:** Läufe lesen → `sha256`; LEOS `blocked account` (Mountain).
+- **Trigger:** `jaxa-gportal-cdn`-Lauf `37220243355`; LEOS-Register (Mountain)
+- **Lage:** (gemessen 2026-10-04) KASI + CLPDS **registriert mit `sha256`** (`register_sort` canonical @2602); JAXA-Parser + Download-Arm live, Repo-Secrets gesetzt, Lauf `37220243355` queued (`unread`); LEOS auth-gated (`40301`) → `blocked account`-Vorschlag an Mountain.
+- **Blockade:** JAXA-Lauf (queued); LEOS-Register-Grammatik (Mountain)
+- **Braucht:** JAXA-Lauf lesen → `sources.φ`-Block `sha256`; LEOS `blocked account` (Mountain).
 
 ### `blocked_sources.φ` — 3 mycelium-EEG-Portale (`:231/:235/:239`)
 - **Status:** wartend | **Bindung:** eigen
