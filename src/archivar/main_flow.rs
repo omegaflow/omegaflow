@@ -3160,6 +3160,7 @@ pub fn main_flow() {
                             bin.pnts,
                             bin.nwavelengths
                         );
+                        let _ = ftx.send(empty(true));
                     } else {
                         let Some(bin) = crate::archivar::openneuro_eeg::parse_bin(&bytes) else {
                             eprintln!(
@@ -3171,16 +3172,53 @@ pub fn main_flow() {
                             let _ = ftx.send(empty(true));
                             return;
                         };
+                        let position = match &src.frame {
+                            Frame::Surface {
+                                body_name,
+                                lat,
+                                lon,
+                                alt,
+                            } => Position::Surface {
+                                body_name: body_name.clone(),
+                                lat: *lat,
+                                lon: *lon,
+                                alt: *alt,
+                            },
+                            Frame::Barycenter { body_name, scale } => Position::Barycenter {
+                                body_name: body_name.clone(),
+                                scale: *scale,
+                            },
+                            Frame::Manifest => Position::Source,
+                        };
+                        let channels = crate::archivar::openneuro_eeg::emit_channels(
+                            &bin,
+                            &position,
+                            now,
+                            src_ttl as f64,
+                            crate::archivar::openneuro_eeg::EEG_CHANNEL_CAP,
+                        );
                         eprintln!(
-                            "\r\x1b[K{} {}: {} electrodes × {} samples × {} trials — parses (no field lines: electrode positions carry no body frame)",
+                            "\r\x1b[K{} {}: {} electrodes × {} samples × {} trials — {} channels emitted at the source anchor (cap {}/electrode; read epoch, no recorded start time)",
                             fmt,
                             source_name(&url),
                             bin.nbchan,
                             bin.pnts,
-                            bin.trials
+                            bin.trials,
+                            channels.len(),
+                            crate::archivar::openneuro_eeg::EEG_CHANNEL_CAP
                         );
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
                     }
-                    let _ = ftx.send(empty(true));
                 });
                 continue;
             }

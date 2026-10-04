@@ -1,5 +1,9 @@
+use crate::archivar::{Channel, FieldConfig, Position};
+
 pub const MAGIC: [u8; 4] = *b"EEGB";
 pub const VERSION: u32 = 1;
+
+pub const EEG_CHANNEL_CAP: usize = 4096;
 
 pub const FLAG_DOUBLE: u32 = 1;
 pub const FLAG_EVENTS: u32 = 2;
@@ -289,6 +293,82 @@ pub fn parse_bin(bytes: &[u8]) -> Option<OpenNeuroEeg> {
     })
 }
 
+fn sample_at(samples: &Samples, index: usize) -> Option<f64> {
+    match samples {
+        Samples::Single(v) => v.get(index).map(|x| f64::from(*x)),
+        Samples::Double(v) => v.get(index).copied(),
+    }
+}
+
+pub fn emit_channels(
+    eeg: &OpenNeuroEeg,
+    position: &Position,
+    epoch: f64,
+    tau: f64,
+    cap: usize,
+) -> Vec<(Channel, FieldConfig)> {
+    let (Some(force), Some(kernel)) = (
+        crate::force::force_id_of("electric"),
+        crate::archivar::kernel_id_of("gaussian-inverse-square"),
+    ) else {
+        return Vec::new();
+    };
+    let nbchan = eeg.nbchan as usize;
+    if cap == 0 || nbchan == 0 || eeg.labels.len() != nbchan {
+        return Vec::new();
+    }
+    let Some(points) = (eeg.pnts as usize).checked_mul(eeg.trials as usize) else {
+        return Vec::new();
+    };
+    if points == 0 {
+        return Vec::new();
+    }
+    let stride = points.div_ceil(cap);
+    let mut out = Vec::new();
+    for (idx, label) in eeg.labels.iter().enumerate() {
+        let name = if label.is_empty() {
+            format!("e{idx}")
+        } else {
+            label.clone()
+        };
+        let fc = FieldConfig {
+            key: name.clone(),
+            name,
+            kernel,
+            force,
+            tau,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "V".to_string(),
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+        };
+        for k in (0..points).step_by(stride) {
+            let Some(value) = sample_at(&eeg.samples, k * nbchan + idx) else {
+                continue;
+            };
+            if !value.is_finite() {
+                continue;
+            }
+            out.push((
+                Channel {
+                    name: fc.name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    station_code: Some(label.clone()),
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -399,5 +479,71 @@ mod tests {
         let mut bytes = write_bin(&eeg);
         bytes.pop();
         assert!(parse_bin(&bytes).is_none());
+    }
+
+    #[test]
+    fn electrodes_emit_at_the_anchor_with_electric_force() {
+        let samples = Samples::Single(vec![1.0, 10.0, 2.0, 20.0, f32::NAN, 30.0]);
+        let eeg = bin(samples, None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        let anchor = Position::Barycenter {
+            body_name: "earth".to_string(),
+            scale: 1.0,
+        };
+        let emitted = emit_channels(&parsed, &anchor, 1234.5, 86400.0, EEG_CHANNEL_CAP);
+        assert_eq!(emitted.len(), 5);
+        for (channel, fc) in &emitted {
+            assert!(channel.value.is_finite());
+            assert_eq!(channel.epoch, 1234.5);
+            assert!(matches!(
+                &channel.position,
+                Position::Barycenter { body_name, .. } if body_name == "earth"
+            ));
+            assert_eq!(fc.force, 8);
+            assert_eq!(fc.kernel, 1);
+            assert_eq!(fc.unit, "V");
+            assert_eq!(fc.key, channel.name);
+            assert!(channel.station_code.is_some());
+        }
+        let e0: Vec<_> = emitted
+            .iter()
+            .filter(|(c, _)| c.station_code.as_deref() == Some("Fp1"))
+            .collect();
+        let e1: Vec<_> = emitted
+            .iter()
+            .filter(|(c, _)| c.station_code.as_deref() == Some("Fp2"))
+            .collect();
+        assert_eq!(e0.len(), 2);
+        assert_eq!(e1.len(), 3);
+    }
+
+    #[test]
+    fn the_scan_cap_decimates_evenly_and_is_honored() {
+        let eeg = OpenNeuroEeg {
+            nbchan: 1,
+            pnts: 10,
+            trials: 1,
+            srate: Some(100.0),
+            sha256: [0; 32],
+            snapshot_tag: "1.0.1".to_string(),
+            hexsha: "470458bcff173ca37018a9cb7a55c3804ccc1759".to_string(),
+            origin_url: "https://s3.amazonaws.com/openneuro.org/ds005034/x.set".to_string(),
+            labels: vec!["Fp1".to_string()],
+            events: None,
+            samples: Samples::Single((0..10).map(|i| i as f32).collect()),
+        };
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        let anchor = Position::Surface {
+            body_name: "earth".to_string(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let emitted = emit_channels(&parsed, &anchor, 99.0, 86400.0, 3);
+        assert_eq!(emitted.len(), 3);
+        let values: Vec<f64> = emitted.iter().map(|(c, _)| c.value).collect();
+        assert_eq!(values, vec![0.0, 4.0, 8.0]);
     }
 }
