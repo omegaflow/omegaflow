@@ -61,11 +61,11 @@ note Rubin/LSST — data-rights gated, Survey off-sky (Petition SLAC ruht, mail_
 
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs (HCV1, 12 B Header + 20 B/Record) + das2_iowa_compiler.rs; series_component_name ohne hapi_csv-Arm → kein Feld; kein Workflow/Release. Braucht: component_name + Workflow.
+note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs + das2_iowa_compiler.rs registriert (sources.φ:16370), Workflow das2-iowa-cdn.yml steht (2026-09-30). Offen: Feld-Verdikt (kein field im Block).
 
 pending
 url https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206 (1 B); Konto Operator-Hand 2026-09-28. Produkt-Arme pds3_img/pds4_fits/gras_2c stehen, Portal-Ernte-Arm + Reader fehlen → Blocker Download/Compiler. future-folge149.
+note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206; Konto Operator-Hand; clpds_compiler.rs + clpds-cdn.yml + gras_2c-Reader stehen (sources.φ:9176). Offen: Portal-Ernte. future-folge149.
 
 descoped
 url https://www.nssdc.ac.cn/
@@ -85,11 +85,11 @@ note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777): raw HK .xm
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki VCO-rs (JAXA/ISAS) 2026-09-30: sources.φ `pds3_fixed_width` + harvest `pds3_fixed_width_darts` stehen (RECORD_BYTES 276, ^DOPPLER_TABLE); Reader-Key bleibt; offen: Workflow pds3-fixed-width-darts-cdn.yml (Mycelium).
+note Akatsuki VCO-rs (JAXA/ISAS) — sources.φ:25583 (format pds4_fixed_width, compiler pds4_binary_compiler); Workflow vco-rs-cdn.yml steht. Die frühere Note nannte falschen Arm/Workflow (Riss). 2026-10-04.
 
 pending
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
-note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm gebaut 2026-09-30 (P3BV v2, 1971 Z./7 Spalten, Array-Bytes per Row); CDN-Asset noch v1 (P3BN, nur START_STEP) → Re-Manifest Mycelium; sources.φ-Block steht.
+note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
 
 pending
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
@@ -97,19 +97,15 @@ note Chandrayaan-1 Mini-RF (ISRO, PDS Geosciences) — Arm+Compiler stehen (49b1
 
 pending
 url https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
-note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): Assets pds4_fits_ce1_mrm.fits + pds4_fits_ce2_mrm.fits present 2026-09-30; BINTABLE-Spalten t1..t4 (NAXIS1 151); cadence unread (no-cadence).
-
-pending
-url https://zenodo.org/api/records/15812343
-note Tianwen-1 RoPeR CH-2 (Zenodo cc-by-4.0) — 2026-10-03: roper_pds4_compiler parst .2CL-Gruppe 2048×(R,I) f32 → G2CB; Sample 15812343 106496 Bins sha d4b7397a… roundtrip; Registrierung/Transport Mycelium. future-folge226.
+note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): registriert sources.φ:9921 (pds4_fits_ce1/ce2_mrm + 8 Felder); Assets present; offen: cadence unread.
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
-note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, Einheiten im .lbl, 2026-09-28 HTTP 206. Arm + Konsument stehen (pds3_table.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:224. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
+note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, HTTP 206. Arm/Konsument + CDN (pds3-fixed-width-cdn.yml, harvest.φ:243); offen: Feld-Verdikt je Spalte.
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
-note Vega 1/2 Halley 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width, Einheiten im .lbl. Arm + Konsument stehen (pds3_table.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:224. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
+note Vega 1/2 Halley 7 Instrument-Sets PDS3 — HTTP 206; pds3_fixed_width registriert (vega2-Origins), CDN-Workflow steht; offen: Feld-Verdikt je Spalte.
 
 pending
 url https://sbnarchive.psi.edu/pds4/hayabusa/
@@ -124,16 +120,12 @@ url https://pds.shadowcam.im-ldi.com/derived/
 note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
 
 pending
-url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/
-note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Asset pds3_img_m3g20081118t222604_v03_loc.bin registriert (pds-imaging.jpl.nasa.gov, sha 5771de98…), lokal roundtrip; CI-Runner .HDR 403 (IP, CI 36737530030) → CDN 404, Manifest offen. future-folge168.
-
-pending
 url https://gportal.jaxa.jp/
-note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-04: Konto; auth 200, catalog_records 15 949, Quota voll; Port-Arm jaxa_gportal_compiler.rs + jaxa-gportal-cdn.yml gebaut. Blocker: Record-Download (add_download.json/SFTP), Reader fehlt. future-folge226.
+note JAXA G-Portal — sources.φ:9408; jaxa_gportal_compiler.rs + jaxa-gportal-cdn.yml + Reader jaxa_gportal.rs stehen. Offen: Record-Download (add_download.json/SFTP), Quota. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
-note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200 (60809 B); kein CSES-Rohdaten-Arm gemessen. future-folge167.
+note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn (cses-{lap,efd,hpm,scm}-Compiler + Workflows, sources.φ 27 Z.); limadou-Host ohne Rohdatenpfad → descope-Kandidat. future-folge167.
 
 pending
 url https://www.leos.ac.cn/
@@ -161,7 +153,7 @@ note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabi
 
 pending
 url https://data.kasi.re.kr/
-note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (6 276 B), public (kein Key); kasi_compiler.rs + kasi-cdn.yml gebaut (kasi_{miris,kmtnet,kvn}.json, name/ra/dec/jd/dataurl); Reader-Arm fehlt (sgrep kasi src = 0). future-folge168.
+note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
 
 pending
 url https://github.com/TIAN-we/petrel19
