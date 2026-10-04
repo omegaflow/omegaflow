@@ -67,9 +67,9 @@ pending
 url https://moon.bao.ac.cn/
 note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206 (1 B); Konto Operator-Hand 2026-09-28. Produkt-Arme pds3_img/pds4_fits/gras_2c stehen, Portal-Ernte-Arm + Reader fehlen → Blocker Download/Compiler. future-folge149.
 
-pending
+descoped
 url https://www.nssdc.ac.cn/
-note Tianwen-1/Zhurong (CNSA) — 2026-10-04: --verdict 206 (1 B); Konto Operator-Hand 2026-09-28. Kein nssdc-Arm (sgrep src+tools = 0); clpds_compiler.rs trägt nur Tianwen-2-Katalog → Blocker Ernte-Arm + Reader. future-folge149.
+note Tianwen-1/Zhurong (CNSA) — descoped 2026-10-04 (Operator-Wort, Future 177): CDS-HiPS `CDS_P_Mars_Tianwen1-MoRIC` (`:119`, ODbL, anonym, Arm hips.rs) trägt die Oberfläche; NSSDC nur Konto-gebunden. future-folge149.
 
 pending
 url https://sdc.emiratesmarsmission.ae/
@@ -168,34 +168,6 @@ url https://github.com/TIAN-we/petrel19
 note PETREL19 — 2026-10-02 GitHub-API license:null; README + release_notes tragen nur Provenienz (Tian 2023, DOI 10.1007/s10569-023-10151-6), keine Lizenz; Coverage 1799-10-13..2106-05-05; Arm ephemeris_compiler.rs steht; Aufnahme nach Lizenz-Verdikt.
 
 pending
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
-url https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
-url http://occultations.ct.utfpr.edu.br/
-note Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin; survey-2026-09-07-weberin-sonnensystem-kette.md: Planeten/Monde zweite Linie pending); kein 9-Kraft-Wert, Richtungs-Wire; Serien-Arm fehlt.
-
-pending
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
 note Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; TAP_SCHEMA 248 tables and no gaiadr3.* column matches cluster/member — cluster membership is absent from the Gaia TAP; corrected query pending (external catalog).
 
@@ -209,7 +181,7 @@ note ieeg.org (UPenn) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D
 
 pending
 url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (4) zweite Linie ieeg.org/OpenNeuro. Zugang Registrierung+DUA; Arm+Asset fehlen.
+note TUH EEG (Temple) — Weberin §8: 4D-Anker fehlt; EDF-Arm steht (src/archivar/edf.rs); 2026-10-04 NEDC-Formular erlaubt Affiliation self → ausfüllbar; Senden = Operator-Hand, Future führt.
 
 pending
 url https://sleepdata.org
