@@ -18,6 +18,9 @@ const DEFAULT_RA_BUFFER_DEG: f64 = 2.0;
 const GRID_CELL_DEG: f64 = 0.05;
 const ARCSEC_PER_RAD: f64 = 206_264.806_247_096_36;
 const DEFAULT_LIMIT: usize = 5_000_000;
+const SKYSERVER_SQL: &str = "https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch";
+const SKYSERVER_CHUNK_DEG: f64 = 5.0;
+const SKYSERVER_MAX_ROWS: usize = 500_000;
 
 struct NvssRow {
     name: String,
@@ -48,7 +51,7 @@ fn asu_timeout() -> u64 {
         .unwrap_or(1800)
 }
 
-fn asu_fetch(url: &str, timeout: u64) -> Option<String> {
+fn http_fetch(url: &str, timeout: u64) -> Option<String> {
     let out = Command::new("curl")
         .arg("-sS")
         .arg("--fail-with-body")
@@ -62,7 +65,7 @@ fn asu_fetch(url: &str, timeout: u64) -> Option<String> {
     } else {
         let body = String::from_utf8_lossy(&out.stdout);
         eprintln!(
-            "asu fetch http {}: {} body={}",
+            "http fetch {}: {} body={}",
             out.status,
             String::from_utf8_lossy(&out.stderr).trim(),
             &body[..body.len().min(600)]
@@ -74,13 +77,58 @@ fn asu_fetch(url: &str, timeout: u64) -> Option<String> {
 fn asu_fetch_mirrors(query: &str, timeout: u64) -> Option<String> {
     for attempt in 1..=3 {
         for root in ASU_MIRRORS {
-            if let Some(body) = asu_fetch(&format!("{root}?{query}"), timeout) {
+            if let Some(body) = http_fetch(&format!("{root}?{query}"), timeout) {
                 return Some(body);
             }
         }
         eprintln!("vizier_asu_compiler: ASU mirror round {attempt} returned void");
     }
     None
+}
+
+fn percent_encode(s: &str) -> String {
+    let mut o = String::new();
+    for b in s.bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'.' | b'-' | b'_' | b'~' => {
+                o.push(b as char);
+            }
+            _ => o.push_str(&format!("%{b:02X}")),
+        }
+    }
+    o
+}
+
+fn skyserver_range(lo: f64, hi: f64, limit: usize, timeout: u64) -> Vec<SdssRow> {
+    let top = limit.min(SKYSERVER_MAX_ROWS);
+    let mut out = Vec::new();
+    let mut a = lo;
+    while a < hi {
+        let b = (a + SKYSERVER_CHUNK_DEG).min(hi);
+        let sql = format!(
+            "SELECT TOP {top} ra,dec,z FROM SpecObj WHERE ra BETWEEN {a} AND {b} AND z > -1 AND z < 8"
+        );
+        let url = format!("{SKYSERVER_SQL}?cmd={}&format=csv", percent_encode(&sql));
+        match http_fetch(&url, timeout) {
+            Some(body) => {
+                let mut part = sdss_skyserver_rows(&body);
+                if part.len() >= top {
+                    eprintln!(
+                        "vizier_asu_compiler: SDSS SkyServer {a}..{b} returned {top} rows — the reply is truncated, the crossmatch stays unwritten"
+                    );
+                    std::process::exit(1);
+                }
+                eprintln!(
+                    "vizier_asu_compiler: SDSS SkyServer {a}..{b}: {} rows",
+                    part.len()
+                );
+                out.append(&mut part);
+            }
+            None => eprintln!("vizier_asu_compiler: SDSS SkyServer {a}..{b} returned void"),
+        }
+        a = b;
+    }
+    out
 }
 
 fn parse_asu_tsv(text: &str) -> (Vec<String>, Vec<Vec<String>>) {
@@ -185,6 +233,61 @@ fn sdss_rows(text: &str) -> Vec<SdssRow> {
             continue;
         };
         let Ok(z) = z_raw.parse::<f64>() else {
+            continue;
+        };
+        if !ra.is_finite() || !dec.is_finite() || !z.is_finite() {
+            continue;
+        }
+        out.push(SdssRow {
+            ra,
+            dec,
+            z_raw: z_raw.clone(),
+        });
+    }
+    out
+}
+
+fn sdss_skyserver_rows(text: &str) -> Vec<SdssRow> {
+    let mut names: Vec<String> = Vec::new();
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let t = line.trim_end_matches('\r');
+        if t.trim().is_empty() {
+            continue;
+        }
+        if let Some(rest) = t.trim_start_matches('#').strip_prefix("Table") {
+            if names.is_empty() {
+                if let Some(cols) = rest.split_whitespace().last() {
+                    if cols.contains(',') {
+                        names = cols.split(',').map(|c| c.trim().to_string()).collect();
+                    }
+                }
+            }
+            continue;
+        }
+        let cells: Vec<String> = t.split(',').map(|c| c.trim().to_string()).collect();
+        if names.is_empty() {
+            names = cells;
+            continue;
+        }
+        let (Some(i_ra), Some(i_dec), Some(i_z)) = (
+            col_index(&names, "ra"),
+            col_index(&names, "dec"),
+            col_index(&names, "z"),
+        ) else {
+            eprintln!("sdss skyserver: columns absent, available {names:?}");
+            return Vec::new();
+        };
+        let (Some(ra_s), Some(dec_s), Some(z_raw)) =
+            (cells.get(i_ra), cells.get(i_dec), cells.get(i_z))
+        else {
+            continue;
+        };
+        let (Ok(ra), Ok(dec), Ok(z)) = (
+            ra_s.parse::<f64>(),
+            dec_s.parse::<f64>(),
+            z_raw.parse::<f64>(),
+        ) else {
             continue;
         };
         if !ra.is_finite() || !dec.is_finite() || !z.is_finite() {
@@ -345,17 +448,22 @@ fn main() {
     };
     let mut sdss: Vec<SdssRow> = Vec::new();
     for (a, b) in windows {
-        let query = format!(
-            "-source={SDSS_TABLE}&-out={SDSS_SELECT}&-out.max={limit}&RA_ICRS={a}..{b}&zsp={ZSP_RANGE}"
-        );
-        let Some(body) = asu_fetch_mirrors(&query, timeout) else {
-            eprintln!("vizier_asu_compiler: SDSS ASU {a}..{b} returned void");
-            std::process::exit(1);
-        };
-        let mut part = sdss_rows(&body);
+        let mut part = skyserver_range(a, b, limit, timeout);
+        if part.is_empty() {
+            eprintln!(
+                "vizier_asu_compiler: SDSS SkyServer {a}..{b} returned void — compiling over the VizieR ASU arm"
+            );
+            let query = format!(
+                "-source={SDSS_TABLE}&-out={SDSS_SELECT}&-out.max={limit}&RA_ICRS={a}..{b}&zsp={ZSP_RANGE}"
+            );
+            part = match asu_fetch_mirrors(&query, timeout) {
+                Some(body) => sdss_rows(&body),
+                None => Vec::new(),
+            };
+        }
         if part.len() >= limit {
             eprintln!(
-                "vizier_asu_compiler: SDSS ASU {a}..{b} returned {limit} rows — the reply is truncated, the crossmatch stays unwritten"
+                "vizier_asu_compiler: SDSS {a}..{b} returned {limit} rows — the reply is truncated, the crossmatch stays unwritten"
             );
             std::process::exit(1);
         }
@@ -502,5 +610,43 @@ deg\tdeg\t\n\
         assert_eq!(parse_ra_range("45:0"), None);
         assert_eq!(parse_ra_range("x:45"), None);
         assert_eq!(parse_ra_range("0;45"), None);
+    }
+
+    const SKYSERVER_FIXTURE: &str = "\
+#Table1\n\
+ra,dec,z\n\
+10.000000,0.000000,0.10000\n\
+10.001000,0.000000,0.20000\n\
+20.000000,0.000000,\n";
+
+    #[test]
+    fn skyserver_csv_names_are_read_in_header_order() {
+        let rows = sdss_skyserver_rows(SKYSERVER_FIXTURE);
+        assert_eq!(rows.len(), 2, "the z-less third row is refused");
+        assert!((rows[0].ra - 10.0).abs() < 1e-9);
+        assert_eq!(rows[0].z_raw, "0.10000");
+    }
+
+    #[test]
+    fn skyserver_error_message_carries_no_row() {
+        let rows = sdss_skyserver_rows("#Table1\nerror_message\n\"error: limit is\"\n");
+        assert!(rows.is_empty());
+    }
+
+    #[test]
+    fn percent_encode_keeps_sql_tokens() {
+        assert_eq!(
+            percent_encode("SELECT TOP 5 ra FROM x WHERE z > -1"),
+            "SELECT%20TOP%205%20ra%20FROM%20x%20WHERE%20z%20%3E%20-1"
+        );
+    }
+
+    #[test]
+    fn crossmatch_takes_skyserver_rows() {
+        let nvss = nvss_rows(NVSS_FIXTURE, None);
+        let sdss = sdss_skyserver_rows(SKYSERVER_FIXTURE);
+        let out = crossmatch(&nvss, &sdss, 10.0);
+        assert_eq!(out.len(), 1);
+        assert!(out[0].contains("\"z\":0.10000"));
     }
 }

@@ -13364,6 +13364,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_efd.bin
 format cses_efd
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b54 (EFD_ULF_L2_028981; dataset 10.57760/sciencedb.06921, CC0)
 compiler tools/harvest/src/bin/cses_efd_compiler.rs
+sha256 8d7fd66d48128a11a91ef19da9daa1ed99b704c5441ea692ee84efe183784ba6
 at earth
 ttl 604800
 field X_WAVE cses_efd_ulf_ex_v_m inverse-square electric V/m 86400 0.0 0.0
@@ -20979,6 +20980,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes
 format goes_euvs
 origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs
 compiler tools/harvest/src/bin/euvs_compiler.rs
+sha256 45b9c0ae5e18af3c5347840b47c09484839273de02a31e802e5f387fbd1ff207
 at sun
 ttl 31536000
 field goes_euvs_lya1216 goes_euvs_lya1216 inverse-square em wm2_1au 31536000 0.0 0.0
