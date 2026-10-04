@@ -3,7 +3,7 @@
   session: River-Folge 88
   class: handover
   date: 2026-10-04
-  sha256: ca4273fd4324f80a1e75791ec59116b5c7bc87cd24bb749d7027013c9d88eef8
+  sha256: 80e476296aee7630cdf137d777e21969549ebebc6f1aaef3214334c90431a1c9
   status: live
 -->
 # Handover — River-Folge 88 (2026-10-04)
@@ -76,26 +76,31 @@ Wort | Datum | Quelle
 
 ### fruehwarnsystem α-Ebene — wartet auf die wy-max-t-Null
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `wy-max-t 37174495789` (9 Shards à 1111; dispatched 2026-10-04).
-- **Lage:** (gemessen 2026-10-04) der Vorgänger brach am 180-min-Job-Timeout ab
-  (21:43:51Z → 00:43:14Z); die Shard-Größe ist geheilt, der neue Lauf dispatcht.
+- **Trigger:** Lauf-Ende `wy-max-t 37187464365` (9 Shards à 1111; re-dispatched 2026-10-04
+  nach dem Timeout-Fix `ba9c64047`).
+- **Lage:** (gemessen 2026-10-04 via `ci_manage jobs/log 37174495789`) auch **1111**
+  Permutationen liefen **179 min** (Shard 5: Probes-Start 04:50:18Z → `The operation was
+  canceled.` 07:49:36Z) und brachen am alten `timeout-minutes: 180` ab; die Shard-Größe
+  war also noch zu groß. Das Job-Timeout steht jetzt auf **350 min** (`ba9c64047`), die
+  Läufe `37174495789`/`37174497340` sind gecancelt und neu dispatcht.
 - **Blockade:** die Null entsteht erst im Lauf.
-- **Braucht:** `ci_manage jobs/log 37174495789` nach Lauf-Ende.
+- **Braucht:** `ci_manage jobs/log 37187464365` nach Lauf-Ende.
 
 ### GIC kalibrierte Null — studentisierte Westfall–Young max-T
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `bz-yearly-maxt 37174497340` (10 Shards à 1000 + Combine) und
-  `wy-max-t 37174495789`.
+- **Trigger:** Lauf-Ende `bz-yearly-maxt 37187466569` (10 Shards à 1000 + Combine) und
+  `wy-max-t 37187464365`.
 - **Lage:** (gemessen 2026-10-04) `bz_retro_probe` hat `--perm-from/--perm-to/--out-null/
-  --combine` (Shard-Probe gepoolt B = 200, identischer Seed; `cargo check` 0/0);
-  Workflow geshardet + dispatcht. `pair_lag_index_hash` faltet lag 0/1 = dokumentierte
-  Identität, kein Defekt.
+  --combine` (Shard-Probe gepoolt B = 200, identischer Seed; `cargo check` 0/0).
+  **1000** Permutationen liefen **178,5 min** (Shard 3: 04:47:03Z → 07:45:31Z) und
+  brachen am alten 180-min-Timeout ab; Timeout jetzt 350 min (`ba9c64047`), neu
+  dispatcht. `pair_lag_index_hash` faltet lag 0/1 = dokumentierte Identität, kein Defekt.
 - **Blockade:** die Zahl entsteht erst im Lauf.
-- **Braucht:** `ci_manage log 37174497340`; Quantil + Verdikt ins Paper.
+- **Braucht:** `ci_manage log 37187466569`; Quantil + Verdikt ins Paper.
 
 ### `n_eff`-Gate — Schwelle aus dem ersten vollständigen Lauf
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste Lauf (`37174495789`/`37174497340`), der `n_eff` je Member druckt.
+- **Trigger:** der erste Lauf (`37187464365`/`37187466569`), der `n_eff` je Member druckt.
 - **Lage:** (gemessen 2026-10-03) `te::kde_n_eff` = `m·hx²·hy`, Silverman; gedruckt in
   `wy_max_t_probe.rs`/`bz_retro_probe.rs`; MDE-Zeile nach der Quantil-Ausgabe; Gate-Test
   `gate_kde_n_eff_scales_with_pairs_and_bandwidth`.
@@ -111,30 +116,34 @@ Wort | Datum | Quelle
 - **Blockade:** `TE_NEFF_THRESHOLD = None`.
 - **Braucht:** nach dem Lauf `TE_NEFF_THRESHOLD` setzen.
 
-### Flyby-Path-2 — official/renewed placed, postflight-Restore läuft
+### Flyby-Path-2 — official/renewed placed, postflight füllt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `juice-arc-restore 37174498970` (`--systems` auf die Producer-Liste
-  geheilt, dispatched 2026-10-04).
-- **Lage:** (gemessen 2026-10-04) official placed (15 034 km / 11:43:50Z), renewed placed
-  (62 745 km / 11:58:50Z), postflight riss (`ephemeris_juice.bin` = aeb3c82f statt Seal
-  018ce2ca). Restore mit `--systems juice` reproduzierte nur den Seal; jetzt geheilt.
-- **Blockade:** der postflight-Arc entsteht erst im Restore-Lauf.
-- **Braucht:** `ephemeris_juice.bin` auf `018ce2ca…` sniff-verifizieren, dann
-  `flyby-path2-fill --line postflight` dispatchen.
+- **Trigger:** Lauf-Ende `flyby-path2-fill 37187374751` (`--line postflight`, dispatched
+  2026-10-04 nach dem Restore).
+- **Lage:** (gemessen 2026-10-04 via `archive_search --sniff`) der Restore
+  `juice-arc-restore 37174498970` (success) brachte `ephemeris_juice.bin` zurück:
+  **538 696 B, sha `018ce2ca…`** == Seal. official placed (15 034 km / 11:43:50Z),
+  renewed placed (62 745 km / 11:58:50Z). Der `--systems`-Fix des Restores war korrekt.
+- **Blockade:** der postflight-Tube entsteht erst im Lauf.
+- **Braucht:** `ci_manage jobs/log 37187374751` nach Lauf-Ende; den postflight-Tube gegen
+  die official-Linie in den Addendum eintragen.
 
 ### Zeugen im universellen Myzel — JMA-Verdikt gemessen, CI-Job dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `field-te-query 37177455640` (Job `witness-jma`, dispatched 2026-10-04).
-- **Lage:** (gemessen 2026-10-04, lokaler `field_te_query --parity-witness point-event#2
-  --driver solar_f107_flux_sfu`-Lauf) JMA-Zeuge: **230** Stempel, **170** Events im
-  Treiber-Span, 169 Lag-Zellen; ETA-Peak |mean| = **1.0706e-20** < Omori-Null-Schwelle
-  (mean + 2 sd) = **1.3443e-20** → **kein Pfeil** (consistent with the null). Der Arm
-  endet built-in mit `PARITY-WITNESS: pending — no recorded witness TE verdict in docs/`.
-  Die zwei URL-Risse sind geheilt (mountain 230: Chile `/1` count 6, Tohoku `/5` count 198).
-  Neuer CI-Job `witness-jma` in `field-te-query.yml` (Committed `7aa70cf75`).
+- **Trigger:** Lauf-Ende `field-te-query 37187424991` (Jobs `parity`/`witness`/`witness-jma`,
+  re-dispatched 2026-10-04 nach dem `te.rs`-Fix).
+- **Lage:** (gemessen 2026-10-04) der JMA-`point-event#2`-Lauf (lokal): **230** Stempel,
+  **170** Events, 169 Lag-Zellen; ETA-Peak |mean| = **1.0706e-20** < Omori-Null **1.3443e-20**
+  → **kein Pfeil**; built-in `PARITY-WITNESS: pending — no recorded witness TE verdict in docs/`.
+  Der erste `field-te-query`-Lauf fand zugleich einen **Defekt**: der alte `witness`-Job
+  (`erbq-solar.te`, Tohoku `#1`, n = 198) panikte in `src/mathematikerin/te.rs:161`
+  (`index out of bounds: len 44, index 48`) — `transfer_entropy_lag`/`_h` rechneten
+  `n − lag` ohne Guard. **Geheilt** (`n.checked_sub(lag)?`, Gate-Test
+  `gate_transfer_entropy_lag_beyond_series_is_none`, Committed `bfb7d9d1b`); neu dispatcht.
+  Die zwei URL-Risse sind geheilt (Chile `/1` count 6, Tohoku `/5` count 198).
 - **Blockade:** die Vergleichsseite (ein recorded TE-Verdikt) fehlt in `docs/` — by design
   `pending`.
-- **Braucht:** `ci_manage log 37177455640`; das CI-Verdikt als recorded verdict führen.
+- **Braucht:** `ci_manage log 37187424991`; das CI-Verdikt als recorded verdict führen.
 
 ### `load_field` URL-Templates — Uhr-Marker aufgelöst, Anker/Secrets pending
 - **Status:** wartend | **Bindung:** eigen
@@ -248,8 +257,9 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `.github/workflows/field-te-query.yml`
 - `tools/measure/src/bin/bz_retro_probe.rs`
 - `tools/measure/src/bin/field_te_query.rs`
+- `src/mathematikerin/te.rs`
 - `phi/pipeline/descriptors/corona_ladder.te`
 - `phi/pipeline/descriptors/enso_blatt.te`
 - `phi/pipeline/descriptors/solar_seconds_matrix.te`
 
-## Burn: open 0.0000 · close 0.1113 (Line-Session; Taucher im Fenster zusätzlich) · cap 0.50 — Grund: River-88 (Taucher-Welle: Flyby-Auswertung, max-T-Sharding/Combine, juice-Restore-Heilung, load_field-Uhr-Marker + Guard, JMA-CI-Job, `cond`-Grammatik, Probes-Re-Scope, Zeugen-Verdrahtung; 4 Läufe dispatcht)
+## Burn: open 0.0000 · close 0.1113 (Line-Session; Taucher im Fenster zusätzlich) · cap 0.50 — Grund: River-88 (Taucher-Welle + frische Messung: Flyby-Restore grün + postflight dispatcht; max-T-Timeouts bei 1000–1111 Perms gemessen, Timeout auf 350 min + neu dispatcht; `te.rs`-lag-Panik geheilt; JMA-Parität gemessen)
