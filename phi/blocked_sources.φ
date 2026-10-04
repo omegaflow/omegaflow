@@ -11,10 +11,10 @@ note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 
 note gap-Token html-parser-arm — HTML-Quelle (Tabelle/Seite) → Positions-Felder; Arm steht (extract.rs html_to_json + html_table_rows, Dispatch extract.rs:3496/:5417; fetch.rs:603 format_readable "html").
 note gap-Token pds3-fixed-width — PDS3 fixed-width ASCII-Tabelle, Spalten per Byte-Position, Einheiten im .lbl-Label, kein In-File-Header; Arm steht (src/archivar/pds3_table.rs; tools/harvest/src/bin/pds3_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-ENVI-Cube; Arm steht (src/archivar/pds3_img.rs; tools/harvest/src/bin/pds3_img_compiler.rs); WUSTL/Mini-RF-Asset present 2026-10-01 (sha256 6aa0eb1f…), M3 CI-403.
-note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm steht (src/archivar/pds3_binary.rs, 2026-09-28); Compiler-Bin fehlt.
+note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm steht (src/archivar/pds3_binary.rs, 2026-09-28); Compiler-Bin steht (tools/harvest/src/bin/pds3_binary_compiler.rs, c0af97075).
 note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
-note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin fehlt.
-note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin + Sample fehlen.
+note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin steht (tools/harvest/src/bin/pds4_binary_compiler.rs, c0af97075).
+note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin steht (tools/harvest/src/bin/pds4_fits_compiler.rs, 30d93daf7); Sample fehlt.
 note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, 2048×(R,I) f32 LE); Compiler roper_pds4_compiler.rs → G2CB, Sample 15812343 roundtrip (2026-10-03); `range`-Direktive parst als Metadaten (parse.rs), Wire-Slot fehlt.
 note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
