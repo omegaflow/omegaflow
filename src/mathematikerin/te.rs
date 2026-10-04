@@ -149,7 +149,7 @@ pub fn transfer_entropy_lag(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
     if n < 8 {
         return None;
     }
-    let m = n - lag;
+    let m = n.checked_sub(lag)?;
     if m < 8 {
         return None;
     }
@@ -193,7 +193,7 @@ pub fn transfer_entropy_lag_h(x: &[f32], y: &[f32], lag: usize, factor: f64) -> 
         return None;
     }
     let shift = if lag == 0 { 1usize } else { lag };
-    let m = n - shift;
+    let m = n.checked_sub(shift)?;
     if m < 8 {
         return None;
     }
@@ -5176,6 +5176,25 @@ mod tests {
         assert!(
             above.is_some(),
             "Kalibrier-Gate n-Floor reduced-TE: n=300 above the table size carries a verdict"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_lag_beyond_series_is_none() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(44, 0.7, &mut rng);
+        let b = gate_ar1(44, 0.7, &mut rng);
+        assert!(
+            transfer_entropy_lag(&a, &b, 48).is_none(),
+            "Kalibrier-Gate lag n-floor: lag 48 > n 44 carries no estimate (no usize underflow)"
+        );
+        assert!(
+            transfer_entropy_lag_h(&a, &b, 48, 1.0).is_none(),
+            "Kalibrier-Gate lag n-floor: the bandwidth variant refuses the same lag"
+        );
+        assert!(
+            transfer_entropy_lag(&a, &b, 8).is_some(),
+            "Kalibrier-Gate lag n-floor: lag 8 < n 44 still carries an estimate"
         );
     }
 
