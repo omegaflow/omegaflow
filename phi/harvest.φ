@@ -116,6 +116,15 @@ pattern ^das2_iowa_.+\.bin$
 idempotent true
 
 asset present
+format hips_png
+tag alasky.cds.unistra.fr
+arm hips_png_compiler
+args --properties https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/properties --tile https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/Norder7/Dir0/Npix0.png
+pattern ^hips_png_[0-9]+_[0-9]+\.bin$
+idempotent true
+timeout 120
+
+asset present
 format iaga_text
 tag zenodo.org
 arm iaga_text_compiler

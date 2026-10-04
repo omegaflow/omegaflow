@@ -9009,6 +9009,13 @@ dec dec
 plx parallax
 field phot_g_mean_mag gaia_dr3_g_mag inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/alasky.cds.unistra.fr/hips_png_7_0.bin
+format hips_png
+origin https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/Norder7/Dir0/Npix0.png
+compiler tools/harvest/src/bin/hips_png_compiler.rs
+at mars
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/almascience.org/eht_uvfits.bin
 format eht_uvfits
 origin https://almascience.org/almadata/ec/eht/2016.1.01404.V/
@@ -16955,6 +16962,8 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_krfm.bin
 format pds3_fixed_width
 origin https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/krfm.dat
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+sha256 69e20d261157fc2a74c48de8fec6b774a948d33930ca782c19dc261ed228fd54
 at mars
 ttl 604800
 field RADIOMETER1 pds3_krfm_radiometer1 inverse-square em count 604800 0.0 0.0
@@ -17064,6 +17073,69 @@ compiler tools/harvest/src/bin/dawn_odf_compiler.rs
 at earth
 ttl 604800
 field observable_hz dawn_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_f_20051029_20051118.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_f_20051029_20051118.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_f_20051029_20051118.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_opt_20050911_20050929.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050911_20050929.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050911_20050929.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_opt_20050930_20051028.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_opt_20051029_20051118.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_uf_20050911_20050929.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_uf_20050930_20051028.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_uf_20051029_20051118.bin
+format pds4_fixed_width
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.xml
+origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.tab
+compiler tools/harvest/src/bin/pds4_fixed_width_compiler.rs
+at itokawa
+ttl 604800
+field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_efd.bin
 format cses_efd
