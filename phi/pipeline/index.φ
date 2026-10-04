@@ -1,7 +1,7 @@
 
 descoped 0 pipeline/queue/master.φ
-verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored; Merge blockiert — Queue-Grammatik korrupt, 0/729 ohne Fabrikation konvertierbar, handover-2026-09-22-mycelium-folge140.md:112)
-verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored; Join-Paar zu _9k_richest, Merge an derselben korrupten Queue-Grammatik blockiert)
+verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger, gitignored; Live 2026-10-04: 825 url-Blöcke, 1387 `field`-Direktiven alle 3-Token `field <key> <name>` (Force/Einheit/τ fehlen; 0 inverse-square/gaussian), 826 `source` ohne Parser-Arm, 566 `force` nur blockweise, 22 on-earth-Frames; Merge-Artefakte ~url:1330, ~=res:5100, stray lat/lon/source:5101-5106; 0/729 ohne Fabrikation konvertierbar; Konverter-Spec: per-Feld Force/Einheit/τ-Registry nötig, Synthese = Fabrikation; folge140.md:112)
+verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger, gitignored; Live 2026-10-04: 63 url-Blöcke, 19 `field`, 59 `source`, 14 `count`; Blöcke teilen URL und splitten Direktiven (astronauts:77-94); dieselbe Wurzel wie :3 — 3-Token-Felder ohne Force/Einheit/τ, `source` ohne Parser-Arm; Join mit _9k_richest)
 
 descoped 0 pipeline/catalog/tap_index.φ
 index 0 pipeline/catalog/tap_index_ari.φ
@@ -26,7 +26,7 @@ erledigt 17 pipeline/catalog/grind_arcgis_index.φ
 descoped 0 pipeline/catalog/heliocloud_catalog.φ
 erledigt 0 pipeline/catalog/terrapulse_catalog.φ
 erledigt 0 pipeline/catalog/esa_geomagnetic_catalog.φ
-verifiziert 0 pipeline/catalog/archeology_gaps_index.φ (Probe 2026-09-22: 35 live/18 dead; Nachmessung 2026-09-30: 11 absent/7 pending; Disposition in sources/dead ausstehend — Fremdregister)
+erledigt 0 pipeline/catalog/archeology_gaps_index.φ (Live 2026-10-04: 52 candidate/20 decline/3 dead/1 disponiert inline; Kreuzprobe in diesem Atom — jeder der 52 Endpunkte im Baum: declined_sources.φ:270 aeronet, :1247 cddis, :1295 celestrak, :1379 oulu, :1591 amentum, :2404 healthmap, :2668 maia, :2788 neo, :3068 promed; dead_sources.φ:348 dods, :984 sprite, :988 asim, :992 cr0, :996 wmap, :1000 lgdc, :1008 renass, :1012 palmer, :1016 iris; sources.φ:1201 aeronet-Host, :1099 fireball, :6971 maia-finals, :9517 isc, :13809 noirlab; Inline-`candidate`-Marker sind stale Behauptungen, der Baum trägt die Disposition; Klassen-Träger korpora_heim.φ:50 redistribute — Port geschlossen)
 descoped 0 pipeline/catalog/arcgis_catalog.φ
 erledigt 0 pipeline/catalog/copernicus_catalog.φ (3 Kandidaten disponiert: declined_sources.φ:1211, :1271, :1844; ads.atmosphere decline :262)
 index 0 pipeline/catalog/gaia_swpc_esa_vokabular.φ
