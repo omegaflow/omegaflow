@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: b01b0f066dc33306a72cee37af07cacbf089d677bf0ff65b302aa6061339dc7c
+  sha256: e480af9f1b11c155d9ae4bba5a9c7287465b7bb0ee3d7169e40e5e641029ce05
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -132,16 +132,19 @@ Wort | Datum | Quelle
   Bedingung: `unsealed` + vor Sicht des 1-min-Derivats + sichtbare Text-Änderung.
   Angewandt: `docs/blatt/fruehwarnsystem-praeregistrierung.md:26` präzisiert
   („1-min-dB/dt an X; hourly/daily-Maxima bleiben Ausgangszeuge") + Slots-Tabelle
-  Z.95 (sha `71a33ffd…`).
+  Z.95 (sha `71a33ffd…`). **River 92 (Bau):** `intermagnet_dbdt_compiler.rs` trägt den
+  `--grain minute`-Arm, `intermagnet-cdn.yml` die `minute`-Option, der neue Bin
+  `tools/measure/src/bin/bz_dbdt_delay_probe.rs` misst Z per Minuten-Lag-Kreuzkorrelation
+  (Lag-Bereich `0..=--max-lag-min` — kein Lag-0/1-Rand); `abk_dbdt_1m.bin` ist in
+  `phi/sources.φ:1829-1836` registriert. `cargo check`/`build` grün.
 - **Blockade:** keine (der frühere `blockiert`-Tag aus folge91 ist widerlegt — das
   Roh-Korn liegt, es fehlt nur der Bau; der Schritt steht).
-- **Braucht:** (1) Mountain — `intermagnet_dbdt_compiler.rs:238-246` um `--grain
-  minute` erweitern (HAPI `PT1M` ist die Quelle; Roh-Korn `supermag_1m` liegt schon);
-  (2) Mycelium — Derivat `abk_dbdt_1m.bin` harvesten + als Register-Zeile in
-  `phi/sources.φ` und CDN manifestieren; (3) River — `wy_max_t_probe.rs:156-171` um den
-  `{station}_dbdt_1m.bin`-Ladearm erweitern; (4) re-run der Zelle am 1-min-Korn;
-  (5) Abisko-Null-Arm (X-Slot) konstruieren. Das Siegel setzt der Operator; sein Wort
-  gilt dem präzisierten Wortlaut.
+- **Braucht:** (1)–(3) **gebaut (River 92)** — Compiler `--grain minute`, Workflow-Option,
+  neuer Bin `bz_dbdt_delay_probe`, Register-Zeile; (4) **offen:** CDN-Harvest
+  `gh workflow run intermagnet-cdn.yml -f station=ABK -f grain=minute -f start=2024 -f end=2024 -f asset=abk_dbdt_1m.bin`;
+  (5) **offen:** re-run `cargo run -p omegaflow-measure --bin bz_dbdt_delay_probe -- --station ABK --start 2024-01-01 --end 2024-12-31`;
+  (6) Abisko-Null-Arm (X-Slot). Das Siegel setzt der Operator; sein Wort gilt dem
+  präzisierten Wortlaut.
 
 ### GIC kalibrierte Null (bz-yearly-maxt) — läuft
 - **Status:** wartend | **Bindung:** eigen
@@ -228,7 +231,11 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/mathematikerin/tests.rs`
 - `docs/blatt/fruehwarnsystem-praeregistrierung.md`
+- `tools/harvest/src/bin/intermagnet_dbdt_compiler.rs`
+- `.github/workflows/intermagnet-cdn.yml`
+- `tools/measure/src/bin/bz_dbdt_delay_probe.rs`
+- `phi/sources.φ`
 - `docs/handover/handover-2026-10-05-river-folge92.md`
 - `docs/handover/archiv/handover-2026-10-04-river-folge91.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0023 · close 0.1322 · cap 0.25 — Grund: `ci-check`-VerdictLine-Scope-Fix + Taucher-Messung des 1-min-Zeugen + Rat-Verdikt zur Kadenz-Präzisierung
+## Burn: open 0.0023 · close 0.1900 · cap 0.25 — Grund: `ci-check`-VerdictLine-Scope-Fix + 1-min-Zeugen-Messung + Rat-Verdikt zur Kadenz-Präzisierung + 1-min-Z-Bau (Compiler + Probe + Register); line $0.0743 + Rat $0.0664 + general $0.0283 + grind-flash Probe

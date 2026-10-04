@@ -1826,6 +1826,15 @@ station ABK
 ttl 86400
 field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1m.bin
+format intermagnet_dbdt
+origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
+compiler tools/harvest/src/bin/intermagnet_dbdt_compiler.rs
+on earth 68.358 18.823 380
+station ABK
+ttl 86400
+field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/sod_dbdt_1h.bin
 format intermagnet_dbdt
 origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
