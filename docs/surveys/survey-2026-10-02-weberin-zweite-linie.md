@@ -75,6 +75,14 @@ am Baum widerlegt (`gasum_today`). Z.ai bestätigt `absent`.
 
 ## Offen (nächster Schritt)
 
+> **Nachtrag gemessen 2026-10-04 (Future 177).** GIC-ASCII: `space.fmi.fi/gic/man_ascii` liefert
+> `man1999.zip`…`man2022.zip` + `man202301-09.zip` (200), `man2023.zip`/`man2024.zip` = **404**
+> → kein ASCII nach 2023-09 (Stop 2023-10-23); Compiler steht (`fmi_gic_compiler.rs`,
+> `phi/sources.φ:16506`). EPA `data.epa.ie/radmon/api/v1/measurements` = **STALE** (200; jüngste
+> `samp_time` 2013-02-20, `last_updated` 2015-07-15) → keine Live-Zweitlinie. C9-Infraschall:
+> `http://ceein.infp.ro/fdsnws/station/1/query?level=channel&format=text` = 200 (39 Stationen),
+> Kanal **BDF** trägt Einheit **Pa** + Sensitivität. Träger: Future-Folge 177.
+
 - Die restlichen Klassen des Re-Runs (`survey-2026-09-14-weberin-quellen-rerun.md`) mit
   derselben Spalte „zweite Linie" fortschreiben (Gravimeter, Seismik, Lightning, HF-Radar …).
 - **GIC-Archiv harvesten** (Kalibrier-Linie, nicht `absent`): `space.fmi.fi/gic/?page=gasum_prel`
