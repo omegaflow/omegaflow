@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: 3526c3756595555813674695178a145473cd2ec27b5afc6432cd0c7fad0efaab
+  sha256: beb1c0c7a12888c4edfd7440de51fa652be7a31506455b7c44ebd0f69ea03bd0
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -299,9 +299,9 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 
 ### Weberin zweite Linie — eigene Messschritte des Surveys
 - **Status:** autonom | **Bindung:** eigen
-- **Lage:** (gemessen 2026-10-04 F229-Fortsetzung) Träger `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (Header-sha `56244e45…`). **In diesem Atom gearbeitet:** GIC-ASCII-Marker geschlossen (nur Plots, request-only); EPA-Aktualität gemessen (`data.epa.ie/radmon/api/v1/measurements` = 9 453 260 Records, aufsteigend, Seite 1 = 2013, `last_updated` 2015 → kein `page=1`-Live-Feed); C9-Pa-Kalibrierung = **Timeout** → `unread`; die zweite Linie der restlichen Klassen (Gravimeter, Seismik, Lightning, HF-Radar, Neutrino, Transients) ist als Tabelle im neuen Abschnitt `## Nachtrag` getragen (GLM 200/302 468 B und EMODnet 200/766 B frisch gemessen). **Ehrlicher Rest:** Gravimeter hat noch **keine echte** zweite Linie (IGETS↔IGETS-DOI = gleiche Quelle); C9 bleibt bei Erreichbarkeit nachzumessen.
-- **Blockade:** keine (die request-only-/Mountain-/Mycelium-Marker des Surveys sind getragen, nicht Teil dieses Schritts).
-- **Braucht:** C9 erneut `archive_search --verdict`/`--sniff` (Timeout → bei Erreichbarkeit); für Gravimeter eine wirklich unabhängige zweite Linie; Ergebnisse in den Survey, Header-sha (`omega_sh sha`) neu.
+- **Lage:** (gemessen 2026-10-04 F229-Fortsetzung) Träger `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (Header-sha `0e76613c…`). **In diesem Atom gearbeitet:** GIC-ASCII-Marker geschlossen (nur Plots, request-only); EPA-Aktualität gemessen (9 453 260 Records, aufsteigend, Seite 1 = 2013 → kein `page=1`-Live-Feed); **C9/CEEIN aufgelöst** (live über HTTP 200/849 B; C9 = tschechisches Mikrobarograph-Netz, `BDF` in Pa; HTTPS timeout; Attribution-Host↔Netz als Riss getragen); **Gravimeter-Zweitlinie = BGI AGrav** (`api.sedoo.fr/get-agrav-rest/`, 200/853 714 B JSON, `gravity` in m/s², unabhängig von GFZ/IGETS); zweite Linien der restlichen Klassen als Tabelle im `## Nachtrag` (GLM 200/302 468 B, EMODnet 200/766 B frisch). **Chat-UI-Zweitstimme (Z.ai/GLM-5.3):** gefragt, Antwort `pending` (nicht abgewartet).
+- **Blockade:** keine.
+- **Braucht:** nur noch die Chat-UI-Antwort lesen (`chat.z.ai/c/a0366dde-…`, falls sie kam); die Verdikte der neuen Linien (BGI AGrav, C9-Attribution) sind Mountain-Registratur.
 
 ### B — serverlose lebendige Membran an `omegaflow.space`
 - **Status:** wartend | **Bindung:** eigen (Mycelium-Antwort gefaltet: Weg D autonom) — Architektur **WASM entschieden und gebaut** (`044afbe42`/`ede41905e`/`42268d146`, Bundle 128 753 B, Paritäts-Toleranz `f7fa71940`/`815d7df43`/`80417fd53`); `static/membrane.html` liegt (river-90); WASM-Web-Target + Staging in `pages-deploy.yml` (mycelium-230).
@@ -427,7 +427,7 @@ werden getragen, nie geglättet (0 honored).
   2026-10-04 F229**: die GIC-ASCII-Frage ist widerlegt — `space.fmi.fi/gic/gicdata/` +
   `gasum/{1998…2023}/` + `gasum/prel/` tragen nur Plots, kein Daten-Download, Rohserie
   request-only; getragen bleiben die GIC-Harvest-, EPA-Aktualitäts- und C9-Kalibrier-Marker;
-Header-sha `56244e45…`).
+Header-sha `0e76613c…`).
 - **Browser (getragen F202, STT-Route geschlossen F209):**
   `docs/surveys/survey-2026-09-20-browser-anbindung.md` (2 Marker) — Sensor-Marker
   STT-Route (`:89-90`) **geschlossen 2026-09-29** (Messnachtrag; Web Speech = Online-
