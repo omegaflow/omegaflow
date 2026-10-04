@@ -219,16 +219,18 @@ fn request(
     };
     let ts = iso_utc_now()?;
     let sig = signature(&user, &pass_md5, method, host, &path, &query, &ts, body);
-    let hdr_path = "/tmp/opencode/ieeg_hdr.txt";
-    let body_path = "/tmp/opencode/ieeg_body.bin";
+    let tmp_dir = std::env::temp_dir().join("ieeg_compiler");
+    let _ = fs::create_dir_all(&tmp_dir);
+    let hdr_path = tmp_dir.join("ieeg_hdr.txt");
+    let body_path = tmp_dir.join("ieeg_body.bin");
     let mut cmd = Command::new("curl");
     cmd.arg("-sS")
         .arg("--max-time")
         .arg("600")
         .arg("-D")
-        .arg(hdr_path)
+        .arg(&hdr_path)
         .arg("-o")
-        .arg(body_path)
+        .arg(&body_path)
         .arg("-H")
         .arg(format!("username: {user}"))
         .arg("-H")
@@ -260,8 +262,8 @@ fn request(
         );
         return None;
     }
-    let hdr_text = fs::read_to_string(hdr_path).ok()?;
-    let body_bytes = fs::read(body_path).ok()?;
+    let hdr_text = fs::read_to_string(&hdr_path).ok()?;
+    let body_bytes = fs::read(&body_path).ok()?;
     let mut status = 0u16;
     let mut headers = Vec::new();
     for (i, line) in hdr_text.lines().enumerate() {
