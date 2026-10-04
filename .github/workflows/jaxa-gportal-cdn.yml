@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       dataset:
-        description: 'G-Portal dataset id (e.g. 12001000 = GPM/DPR KuPR L1B)'
+        description: 'G-Portal dataset id (e.g. 12001000 = GPM/DPR KuPR L1B, 10003027 = GCOM-C/SGLI)'
         required: false
         type: string
         default: '12001000'
@@ -27,6 +27,21 @@ on:
         required: false
         type: string
         default: '100'
+      pages:
+        description: 'page count; >1 switches to CSW paging'
+        required: false
+        type: string
+        default: '1'
+      download:
+        description: 'order the first products for download (writes in the JAXA account — per-act consent)'
+        required: false
+        type: boolean
+        default: false
+      download_limit:
+        description: 'number of products to order (>=1)'
+        required: false
+        type: string
+        default: '1'
   push:
     paths:
       - 'tools/harvest/src/bin/jaxa_gportal_compiler.rs'
@@ -67,23 +82,49 @@ jobs:
             echo "$SLUG missing — compiling and manifesting"
           fi
       - name: Compile and manifest the G-Portal catalogue page
-        if: steps.idempotence.outputs.present == 'false'
+        if: github.event_name == 'workflow_dispatch' || steps.idempotence.outputs.present == 'false'
         run: |
           set -euo pipefail
           DATASET="${{ inputs.dataset }}"
           FROM="${{ inputs.from }}"
           TO="${{ inputs.to }}"
           COUNT="${{ inputs.count }}"
+          PAGES="${{ inputs.pages }}"
           if [ -z "$DATASET" ]; then DATASET="12001000"; fi
           if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
           if [ -z "$TO" ]; then TO="2015/01/01"; fi
           if [ -z "$COUNT" ]; then COUNT="100"; fi
+          if [ -z "$PAGES" ]; then PAGES="1"; fi
           cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
-            --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" \
+            --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" --pages "$PAGES" \
             --manifest "${{ steps.idempotence.outputs.slug }}" \
             --quota \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "jaxa-gportal-cdn: G-Portal catalogue returned void" \
                  "jaxa_gportal_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Order the first products for download (per-act consent)
+        if: github.event_name == 'workflow_dispatch' && inputs.download
+        run: |
+          set -euo pipefail
+          DATASET="${{ inputs.dataset }}"
+          FROM="${{ inputs.from }}"
+          TO="${{ inputs.to }}"
+          COUNT="${{ inputs.count }}"
+          PAGES="${{ inputs.pages }}"
+          DL="${{ inputs.download_limit }}"
+          if [ -z "$DATASET" ]; then DATASET="12001000"; fi
+          if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
+          if [ -z "$TO" ]; then TO="2015/01/01"; fi
+          if [ -z "$COUNT" ]; then COUNT="100"; fi
+          if [ -z "$PAGES" ]; then PAGES="1"; fi
+          if [ -z "$DL" ]; then DL="1"; fi
+          cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
+            --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" --pages "$PAGES" \
+            --manifest "${{ steps.idempotence.outputs.slug }}" \
+            --download --download-limit "$DL" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: G-Portal download order returned void" \
+                 "jaxa_gportal_compiler --download returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
