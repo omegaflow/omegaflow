@@ -167,6 +167,7 @@ pub struct OmegaLoop {
     pub sky_named: String,
     pub sky_fingerprint: Option<(u64, u64)>,
     pub vlies_fingerprint: Option<(u64, u64)>,
+    pub witness_fingerprint: Option<(usize, u64)>,
     pub sky_perm_t: Option<f64>,
     pub field_cap: u32,
     pub buf_sel: usize,
@@ -288,6 +289,7 @@ impl OmegaLoop {
             sky_named: String::new(),
             sky_fingerprint: None,
             vlies_fingerprint: None,
+            witness_fingerprint: None,
             sky_perm_t: None,
             field_cap: 0,
             buf_sel: 0,
@@ -973,6 +975,18 @@ impl OmegaLoop {
     }
 
     pub fn sky_reload(&mut self) {
+        let witness_dir = astrometry_witness_dir();
+        let witness_fp = witness_fingerprint(&witness_dir);
+        if self.witness_fingerprint != witness_fp {
+            self.witness_fingerprint = witness_fp;
+            self.sky.witnesses = load_witnesses(&witness_dir);
+            let samples: usize = self.sky.witnesses.iter().map(|s| s.samples.len()).sum();
+            if samples > 0 {
+                self.sky_say(&format!(
+                    "{samples} astrometry direction sample(s) held as S² direction witness (moving direction, no scalar channel)"
+                ));
+            }
+        }
         let path = sky_asset_path();
         let meta = match std::fs::metadata(&path) {
             Ok(m) => m,
@@ -1059,6 +1073,11 @@ impl OmegaLoop {
             Err(poisoned) => crate::archivar::riss_names(&poisoned.into_inner(), Some(t)),
         };
         let mut oscs = osc_window(&self.sky.directions, t, S2_TAU_DEFAULT_S);
+        oscs.extend(direction_witness_window(
+            &self.sky.witnesses,
+            t,
+            S2_TAU_DEFAULT_S,
+        ));
         oscs.extend(event_window(&self.sky.events, t, S2_TAU_DEFAULT_S));
         let mut riss_hull: Vec<String> = Vec::new();
         let mut silent_worldlines = 0usize;
