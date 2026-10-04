@@ -3,7 +3,7 @@
   session: Mountain-Folge 233
   class: handover
   date: 2026-10-04
-  sha256: 2275eb502153916dfc6bc44d441a22f5f0fb4066bec5d48b6c14edaa3196527f
+  sha256: d6cdb0ee7922f791c32419ae1e90946bfaff236dfa51000fb40de67c08bb62d4
   status: live
 -->
 # Handover — Mountain-Folge 233 (2026-10-04)
@@ -46,7 +46,7 @@ Audit aller Mountain-eigenen Einträge in `phi/blocked_sources.φ` (2026-10-04/0
 - **Trigger:** ein gefetchtes `emm_exi_l2.tar` (Member-Schema)
 - **Lage:** (gemessen 2026-10-04 via `glob`/`sgrep`) `emm_sdc_compiler.rs` erkennt nur Container-Magic; kein tar-Reader in `src/archivar`; kein `emm_exi_l2.tar` lokal (`gh release view` → not found).
 - **Blockade:** Member-Schema + Einheit ungemessen
-- **Braucht:** ein `emm_exi_l2.tar` fetchen (Cognito = Operator-Hand), Member-Schema + Einheit messen, dann `src/archivar/emm_sdc.rs`.
+- **Braucht:** ein `emm_exi_l2.tar` fetchen (Cognito = Operator-Hand), Member-Schema + Einheit messen; der Reader-Arm ist neu zu bauen (kein vorhandener Pfad).
 
 ### LEOS-Reader-Arm — Gap
 - **Status:** blockiert | **Bindung:** eigen
