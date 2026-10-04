@@ -2,7 +2,7 @@
   title: Survey — Weberin-Eignung: die zweite unabhängige Linie je Messgröße (2026-10-02)
   class: survey
   date: 2026-10-04
-  sha256: 0e76613cc7efa8a70001b9a7ba53617d7d9c1424f9ebe775dbadea13e259ee94
+  sha256: a8c3afb0cdbf9ae6b0db99aa4067e66897381b2fa07569e03d12148323768fe2
   status: live
   see-also: docs/concepts/die-weberin.md docs/SOURCE_PORT.md docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md
 -->
@@ -142,5 +142,11 @@ in **m/s²**, `meterUuid`/`laser`/`operator` — BGI/GET-OMP Toulouse + BKG/SEDO
 von GFZ/IGETS**). Harvest: `curl -s "https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=" -o data/api.sedoo.fr/agrav_all_stations.json`.
 Verdikt Mountain (`phi/sources.φ`), Compiler/Manifestation Mycelium. GFZ-Seiten
 (`icgem.gfz-potsdam.de`, `ggp.gfz-potsdam.de`) bleiben **nicht** unabhängig.
-**Chat-UI-Zweitstimme:** Z.ai/GLM-5.3 (Deep Think Max) gefragt 2026-10-04 — Antwort nach
-mehreren Minuten noch `pending` (Chat `chat.z.ai/c/a0366dde-…`), nicht abgewartet.
+**Chat-UI-Zweitstimme (Z.ai/GLM-5.3, Deep Think Max; `chat.z.ai/c/a0366dde-…`, gemessen
+2026-10-04):** bestätigt (a) BGI/AGrav als zweite Linie — mit dem Caveat, dass **BKG an AGrav
+und IGETS** beteiligt ist (nicht völlig getrennte Institutionen); (b) C9 = tschechisches Netz
+(IAP Prag), verteilt über den rumänischen NIEP-EIDA-Knoten `ceein.infp.ro`/`www.ceein.eu` als
+Teil von CEEIN, `BDF` in Pa. Es nennt weitere Kandidaten — **am Baum gemessen, beide tot**
+(Claim ohne Messung zählt nicht): `www.ngs.noaa.gov/GRAV/` = **404** (nur Wayback),
+`www.usgs.gov/toolsanddata` = **403** (blocked); `www.ceein.eu` = **200** (14 693 B) live.
+Damit bleibt **BGI AGrav** die einzige gemessene unabhängige Gravimeter-Zweitlinie.
