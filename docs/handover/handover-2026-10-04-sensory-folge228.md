@@ -3,7 +3,7 @@
   session: Sensory-Folge 228
   class: handover
   date: 2026-10-04
-  sha256: 1addb68b50ffef5897fd455d3a54a444cc8941fda59b1120ab024e66b3a5f0bd
+  sha256: 5ff4c1d8fdd9bd6943aa063846824a0115d4fbe29042a4f211dc795cdaab13f2
   status: live
 -->
 # Handover — Sensory-Folge 228 (2026-10-04)
@@ -52,7 +52,7 @@ Das Rat-Ziel `≲ 2 ms` ist **nicht** erreicht — der Rest ist die 8-Zellen-Bel
 
 **Zwei flash-Taucher (2026-10-04 F228, `general`):**
 - **B-CDN-Korpus:** `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B (sha `07af335b…`/`3c49075f…`/`346f5af3…`), `dr3_stars.bin` 75 001 828 B (sha `fb9a1408…`), alle 200. **CORS: `access-control-allow-origin` auf allen vier absolut absent** (OPTIONS → 404). Ein direktes browser-`fetch()` von `omegaflow.space` auf die Release-URLs ist damit CORS-verwehrt — der serverlose Pfad braucht Same-Origin/Proxy. Das ist die harte Randbedingung für B.
-- **CI-Triage:** `hyperscanning-te 37156315929` `screen` in_progress, Timeout 360 min → Deadline 03:48Z; kein gemessener Grund für rerun/cancel. `ci-gate 37166323740 @a064896a4`: `register` 17 `url`-order-Verstöße in `phi/sources.φ` (Mountain), `dropped-gate` 1141→1144 (Mycelium), `format` `tools/harvest/emm_sdc_compiler.rs:242` + `kplo_spice_compiler.rs:173` (Mycelium), `clippy` `src/archivar/hdf4.rs:686` `manual_is_multiple_of` (Mountain/River) — **keine Sensory-Datei**, nicht meine Linie.
+- **CI-Triage:** `hyperscanning-te 37156315929` `screen` in_progress, Timeout 360 min → Deadline 03:48Z; kein gemessener Grund für rerun/cancel. `ci-gate 37166323740 @a064896a4`: `register` 17 `url`-order-Verstöße in `phi/sources.φ` (Mountain), `dropped-gate` 1141→1144 (Mycelium), `format` `tools/harvest/src/bin/emm_sdc_compiler.rs:242` + `tools/harvest/src/bin/kplo_spice_compiler.rs:173` (Mycelium), `clippy` `src/archivar/hdf4.rs:686` `manual_is_multiple_of` (Mountain/River) — **keine Sensory-Datei**, nicht meine Linie.
 
 **ox64-M2C (2026-10-04 F228, Browser-Bridge):** DHL-Status unverändert — „Freigabe der Sendung im
 Ursprungsland", Zielland Deutschland, letztes Event Mi 23.09.2026 02:40 China VR; kein DE-Event.
