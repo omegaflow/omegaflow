@@ -21,7 +21,7 @@ jobs:
       - name: Compile GOES EUV Lyman-alpha 2009-2020 once and upload to CDN
         run: |
           mkdir -p kernels
-          gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
+          gh release download ncei.noaa.gov --repo omegaflow/sources \
             --pattern goes_euvs.bin --clobber 2>/dev/null || \
             cargo run -p omegaflow-harvest --release --bin euvs_compiler -- \
               --out goes_euvs.bin --ci-mode
