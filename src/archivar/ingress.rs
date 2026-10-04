@@ -28,6 +28,7 @@ pub fn parse_serial_sample(line: &str) -> Option<(String, f64)> {
     Some((k.trim().to_string(), val))
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, Option<f64>)>>) {
     loop {
         for name in serial_ports() {

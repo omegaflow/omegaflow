@@ -1,5 +1,8 @@
+#[cfg(not(target_arch = "wasm32"))]
 use super::*;
+#[cfg(not(target_arch = "wasm32"))]
 use std::io::Write;
+#[cfg(not(target_arch = "wasm32"))]
 use std::sync::atomic::AtomicU8;
 
 pub const Φ: f64 = std::f64::consts::GOLDEN_RATIO;
@@ -62,6 +65,7 @@ pub fn aim_pulse_ms(v: [f64; 3]) -> (Option<f32>, Option<f32>) {
     (pan_ms, tilt_ms)
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn storage_entry(
     read_only: bool,
     visibility: wgpu::ShaderStages,
@@ -108,6 +112,7 @@ impl PresenceState {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub struct OmegaLoop {
     pub rx: mpsc::Receiver<Arc<Buffer>>,
     pub req_tx: mpsc::SyncSender<SenseReq>,
@@ -212,6 +217,7 @@ pub struct OmegaLoop {
     pub perm_log_gen: u64,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl OmegaLoop {
     pub fn new(
         rx: mpsc::Receiver<Arc<Buffer>>,
@@ -1890,6 +1896,7 @@ impl OmegaLoop {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub struct LoopCtx {
     pub time: Arc<Mutex<Option<LeapSeconds>>>,
     pub consent: Arc<AtomicBool>,
@@ -1907,6 +1914,7 @@ pub struct LoopCtx {
     pub verdicts: Arc<RwLock<Vec<crate::archivar::VerdictLine>>>,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn run_loop(
     rx: mpsc::Receiver<Arc<Buffer>>,
     req_tx: mpsc::SyncSender<SenseReq>,
@@ -1926,12 +1934,14 @@ pub fn run_loop(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub struct LoopRadiator {
     pub tx: mpsc::SyncSender<Arc<Buffer>>,
     pub shutdown: Arc<AtomicBool>,
     pub _thread: Option<thread::JoinHandle<()>>,
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl LoopRadiator {
     pub fn new(ctx: LoopCtx) -> Self {
         let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
@@ -2023,6 +2033,7 @@ impl LoopRadiator {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl Radiator for LoopRadiator {
     fn accept(&mut self, field: Arc<Buffer>) {
         if let Err(mpsc::TrySendError::Disconnected(_)) = self.tx.try_send(field) {
@@ -2031,12 +2042,14 @@ impl Radiator for LoopRadiator {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl LoopRadiator {
     pub fn shutdown_flag(&self) -> Arc<AtomicBool> {
         self.shutdown.clone()
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl Drop for LoopRadiator {
     fn drop(&mut self) {
         self.shutdown.store(true, Ordering::SeqCst);

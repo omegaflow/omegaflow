@@ -111,9 +111,11 @@ pub use mathematikerin::equilibrium;
 pub use mathematikerin::force;
 pub use mathematikerin::healpix;
 pub use mathematikerin::least_squares;
+#[cfg(not(target_arch = "wasm32"))]
 pub use mathematikerin::machines;
 pub use mathematikerin::mat;
 pub use mathematikerin::media;
 pub use mathematikerin::s2;
+#[cfg(not(target_arch = "wasm32"))]
 pub use mathematikerin::scalar_te_gpu;
 pub use mathematikerin::te;
