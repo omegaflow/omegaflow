@@ -176,3 +176,24 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_
 record rixs
 force em
 note Epochen-Textserie des --spectral-Arms (Eloss/weight/err aus sw_spin.txt): OD1 q=(0.33,0), Zenodo 7286412, Zip im rixs_series_compiler entpackt. Paar mit UD_0p33_0. Substance, em.
+
+witness point-event
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=OBJECTID%20IN%20(1,2,3,4,5,6,7,9,12,13,14,16,17,18,21,22,23,24,25,26,30,31,32,33,34,35,36,37,38,40,42,43,44,45,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,70,72,73,75,76,77,81,82,83,85,87,89,90,91,92,94,95,96,98,101,102,103,105,107,108,109,110,111,112,113,115,117,118,120,121,122,123,124,125,126,127,128,130,134,135,137,138,139,140,142,143,144,145,146,147,148,149,150,151,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,183,184,187,188,189,190,191,192,193,194,195,196,197,198)&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+record erbq_mainshock
+force seismic-body
+note Declustered Mainshock-Set (magnitude-local-maxima, Gardner-Knopoff 1974: L=10^(0.1238M+0.983) km, T=10^(0.032M+2.738) d): 153 of 198 Tohoku M>=7 mainshocks (1911-2021); the query filters the 153 OBJECTIDs.
+
+witness gestalt
+url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
+record gbco
+note GEBCO_2023 ice_surface_elevation (CEDA OPeNDAP-ASCII, 2026-10-04 HTTP 200, 261329 B): Jahresgitter-Subset elevation[0:215:43199][0:431:86399]; Epochen-Paar mit GEBCO_2026. Gestalt, geologische Stabilitaet.
+
+witness gestalt
+url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2026/ice_surface_elevation/netcdf/GEBCO_2026.nc.ascii?elevation[0:215:43199][0:431:86399]
+record gbco
+note GEBCO_2026 ice_surface_elevation (CEDA OPeNDAP-ASCII, 2026-10-04 HTTP 200, 261378 B): Jahresgitter-Subset elevation[0:215:43199][0:431:86399]; Epochen-Paar mit GEBCO_2023. Gestalt, geologische Stabilitaet.
+
+witness gestalt
+url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=esriascii
+record gmr1
+note GMRT GridServer format=esriascii (2026-10-04 HTTP 200, 1719152 B): Textgitter Elevation m; nur das aktuelle Gitter — kein Versions-Schalter, kein zweiter gmrt-Epoch-Block moeglich. Gestalt, geologische Stabilitaet.

@@ -1339,6 +1339,77 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
 }
 
 #[test]
+fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_riss() {
+    use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
+    let t = 8.4e8;
+    let sample = || AstroSample {
+        tdb: t,
+        ra_deg: 12.5,
+        dec_deg: -4.5,
+        e_ra_mas: 0.4,
+        e_dec_mas: 0.5,
+    };
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(vec![VerdictLine {
+                    name: "held".to_string(),
+                    word: VerdictWord::Riss,
+                    knot: [None, None],
+                    sep: Some(1.0),
+                    weave_epoch: t,
+                }])),
+            },
+        )
+    };
+    app.t_presence = t;
+    app.sky.witnesses = vec![
+        AstroSeries {
+            name: "held".to_string(),
+            samples: vec![sample()],
+        },
+        AstroSeries {
+            name: "sosb_lucky_star".to_string(),
+            samples: vec![sample()],
+        },
+    ];
+    let held = app.verdict_direction_only();
+    assert_eq!(held, 1);
+    let verdicts = app.verdicts.read().unwrap();
+    assert_eq!(verdicts.len(), 2);
+    let riss = verdicts.iter().find(|l| l.name == "held").unwrap();
+    assert_eq!(riss.word, VerdictWord::Riss);
+    let direction = verdicts
+        .iter()
+        .find(|l| l.name == "sosb_lucky_star")
+        .unwrap();
+    assert_eq!(direction.word, VerdictWord::DirectionOnly);
+    assert_eq!(direction.knot, [None, None]);
+    assert_eq!(direction.sep, None);
+    assert_eq!(direction.weave_epoch, t);
+}
+
+#[test]
 fn sky_tick_folds_bodies_by_name_and_stations_last() {
     use crate::archivar::{BodyEphemeris, BodyProperties, Buffer};
     use crate::machines::{MetaAnchor, NameMeta};
