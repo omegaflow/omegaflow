@@ -35,7 +35,7 @@ const REC_T2D_TE: f64 = 2.2693e-1;
 const REC_CTE: f64 = 8.3587e-3;
 const REC_CTE_THR: f64 = 2.6118e-2;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum State {
     Built,
     Pending,
@@ -1153,13 +1153,149 @@ fn witness_magic(records: &[String]) -> Option<[u8; 4]> {
     None
 }
 
-fn run_spectral_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
+fn spectral_epoch_names(arg: &str) -> Vec<&str> {
+    arg.split(',')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .collect()
+}
+
+fn parse_axis_value_pairs(text: &str) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut nums = line
+            .split(|c: char| c == ',' || c.is_whitespace())
+            .filter_map(|t| t.trim().parse::<f64>().ok())
+            .filter(|v| v.is_finite());
+        if let (Some(axis), Some(val)) = (nums.next(), nums.next()) {
+            out.push((axis, val));
+        }
+    }
+    out
+}
+
+fn spectral_epoch_series(w: &WitnessRecord) -> Result<Vec<(f64, f64)>, String> {
+    let url = resolve_time_markers(&w.url);
+    guard_url_template_resolved(&url)?;
+    let Some(bytes) = fetch_raw_bytes_headers(&url, &[]) else {
+        return Err(format!("witness '{}' fetch void ({url})", w.key));
+    };
+    let text = String::from_utf8_lossy(&bytes);
+    if w.records.iter().any(|r| r == "rixs")
+        && let Some(spec) = omegaflow::rixs::parse_sw_spin(&text)
+    {
+        return Ok(spec.eloss_ev.into_iter().zip(spec.weight).collect());
+    }
+    let pairs = parse_axis_value_pairs(&text);
+    if pairs.is_empty() {
+        return Err(format!(
+            "witness '{}' carries no parseable axis/value series ({} bytes fetched)",
+            w.key,
+            bytes.len()
+        ));
+    }
+    Ok(pairs)
+}
+
+fn axis_tolerance(axis: &[(f64, f64)]) -> f64 {
+    let mut xs: Vec<f64> = axis.iter().map(|&(x, _)| x).collect();
+    xs.sort_by(|a, b| a.total_cmp(b));
+    let mut min_gap = f64::INFINITY;
+    for pair in xs.windows(2) {
+        let gap = pair[1] - pair[0];
+        if gap > 0.0 && gap < min_gap {
+            min_gap = gap;
+        }
+    }
+    if min_gap.is_finite() {
+        min_gap * 0.5
+    } else {
+        1.0e-6
+    }
+}
+
+fn align_spectral_epochs(
+    epoch_a: &[(f64, f64)],
+    epoch_b: &[(f64, f64)],
+    tol: f64,
+) -> Vec<(f64, f64, f64)> {
+    let mut out = Vec::new();
+    for &(ax, av) in epoch_a {
+        let mut best: Option<(f64, f64)> = None;
+        for &(bx, bv) in epoch_b {
+            let d = (bx - ax).abs();
+            if d <= tol && best.is_none_or(|(bd, _)| d < bd) {
+                best = Some((d, bv));
+            }
+        }
+        if let Some((_, bv)) = best {
+            out.push((ax, av, bv));
+        }
+    }
+    out.sort_by(|a, b| a.0.total_cmp(&b.0));
+    out
+}
+
+struct SpectralEpochComparison {
+    n: usize,
+    correlation: Option<f64>,
+    mean_abs_delta: f64,
+    max_abs_delta: f64,
+    sign_agreement: f64,
+}
+
+fn compare_spectral_epochs(aligned: &[(f64, f64, f64)]) -> Option<SpectralEpochComparison> {
+    if aligned.len() < 2 {
+        return None;
+    }
+    let n = aligned.len() as f64;
+    let mean_abs_delta = aligned.iter().map(|&(_, a, b)| (a - b).abs()).sum::<f64>() / n;
+    let max_abs_delta = aligned
+        .iter()
+        .map(|&(_, a, b)| (a - b).abs())
+        .fold(0.0_f64, f64::max);
+    let agree = aligned
+        .iter()
+        .filter(|&&(_, a, b)| a.signum() == b.signum())
+        .count();
+    let sign_agreement = agree as f64 / n;
+    let mean_a = aligned.iter().map(|&(_, a, _)| a).sum::<f64>() / n;
+    let mean_b = aligned.iter().map(|&(_, _, b)| b).sum::<f64>() / n;
+    let mut cov = 0.0;
+    let mut var_a = 0.0;
+    let mut var_b = 0.0;
+    for &(_, a, b) in aligned {
+        cov += (a - mean_a) * (b - mean_b);
+        var_a += (a - mean_a).powi(2);
+        var_b += (b - mean_b).powi(2);
+    }
+    let denom = (var_a * var_b).sqrt();
+    let correlation = if denom > 0.0 { Some(cov / denom) } else { None };
+    Some(SpectralEpochComparison {
+        n: aligned.len(),
+        correlation,
+        mean_abs_delta,
+        max_abs_delta,
+        sign_agreement,
+    })
+}
+
+fn run_spectral_query(name_arg: &str, witnesses: &[WitnessRecord]) -> i32 {
     println!("=== spectral / substance / gestalt form over phi/witnesses.φ ===");
-    let Some(w) = find_witness(witnesses, name) else {
-        println!("SPECTRAL: pending — '{name}' stands in no witness block");
+    let names = spectral_epoch_names(name_arg);
+    let Some(&first) = names.first() else {
+        println!("SPECTRAL: pending — no witness named");
         return 0;
     };
-    let nature = match w.kind {
+    let Some(w0) = find_witness(witnesses, first) else {
+        println!("SPECTRAL: pending — '{first}' stands in no witness block");
+        return 0;
+    };
+    let nature = match w0.kind {
         Some(WitnessKind::Substance) => {
             "a single material-probe spectrum (one probe, no repeat epoch)"
         }
@@ -1175,13 +1311,13 @@ fn run_spectral_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
     };
     println!(
         "witness {} | kind {} | record {} | force {} | {}",
-        w.key,
-        w.kind_token,
-        w.records.join("+"),
-        w.force.as_deref().unwrap_or("absent"),
-        w.url
+        w0.key,
+        w0.kind_token,
+        w0.records.join("+"),
+        w0.force.as_deref().unwrap_or("absent"),
+        w0.url
     );
-    let magic = witness_magic(&w.records);
+    let magic = witness_magic(&w0.records);
     let token = magic.map(|m| String::from_utf8_lossy(&m).into_owned());
     let identity = magic.and_then(magic_identity);
     println!(
@@ -1190,10 +1326,101 @@ fn run_spectral_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
         identity,
         series_gate(magic, &[])
     );
+    if names.len() < 2 {
+        println!(
+            "SPECTRAL: refuse — witness {} carries {nature}; the series gate refuses a witness record as an oscillator series (src/archivar/witness.rs:80), and the pre-registered spectral arm compares >= 2 aligned epochs of one probe. Missing data side: a repeated epoch axis (>= 2 epochs). No value is fabricated; the arm stays an honest refusal.",
+            w0.key
+        );
+        return 0;
+    }
+    let mut epochs: Vec<&WitnessRecord> = Vec::with_capacity(names.len());
+    for n in &names {
+        match find_witness(witnesses, n) {
+            Some(w) => epochs.push(w),
+            None => {
+                println!("SPECTRAL: pending — epoch '{n}' stands in no witness block");
+                return 0;
+            }
+        }
+    }
+    for w in &epochs[1..] {
+        if w.kind != w0.kind || w.records != w0.records {
+            println!(
+                "SPECTRAL: refuse — epoch {} (kind {}, record {}) is no repeated epoch of one probe (kind {}, record {})",
+                w.key,
+                w.kind_token,
+                w.records.join("+"),
+                w0.kind_token,
+                w0.records.join("+")
+            );
+            return 0;
+        }
+    }
+    let mut loaded: Vec<(String, Vec<(f64, f64)>)> = Vec::with_capacity(epochs.len());
+    for w in &epochs {
+        match spectral_epoch_series(w) {
+            Ok(series) => loaded.push((w.key.clone(), series)),
+            Err(reason) => {
+                println!("SPECTRAL: pending — {reason}; the arm stays pending, never a silent 0.0");
+                return 0;
+            }
+        }
+    }
     println!(
-        "SPECTRAL: refuse — witness {} carries {nature}; the series gate refuses a witness record as an oscillator series (src/archivar/witness.rs:80), and the pre-registered spectral arm compares >= 2 aligned epochs of one probe. Missing data side: a repeated epoch axis (>= 2 epochs). No value is fabricated; the arm stays an honest refusal.",
-        w.key
+        "epochs loaded: {} block(s) of one probe | reference {} carries {} point(s)",
+        loaded.len(),
+        loaded[0].0,
+        loaded[0].1.len()
     );
+    let tol = axis_tolerance(&loaded[0].1);
+    let mut any = false;
+    for (key, series) in &loaded[1..] {
+        println!(
+            "epoch {} carries {} point(s) | reference {} carries {} point(s)",
+            key,
+            series.len(),
+            loaded[0].0,
+            loaded[0].1.len()
+        );
+        let aligned = align_spectral_epochs(&loaded[0].1, series, tol);
+        match compare_spectral_epochs(&aligned) {
+            Some(cmp) => {
+                any = true;
+                println!(
+                    "epoch pair {} vs {}: aligned n = {}",
+                    loaded[0].0, key, cmp.n
+                );
+                println!(
+                    "magnitude: mean |Δ| = {:.6e} | max |Δ| = {:.6e} | sign agreement = {:.4}",
+                    cmp.mean_abs_delta, cmp.max_abs_delta, cmp.sign_agreement
+                );
+                match cmp.correlation {
+                    Some(r) => println!("correlation over the aligned axis: r = {r:.6}"),
+                    None => println!(
+                        "correlation over the aligned axis: absent — one epoch carries no variance over the aligned axis"
+                    ),
+                }
+                println!(
+                    "the two epochs are carried side by side (never averaged): reference {} point(s), epoch {} point(s), shared axis {} point(s)",
+                    loaded[0].1.len(),
+                    series.len(),
+                    cmp.n
+                );
+            }
+            None => println!(
+                "epoch pair {} vs {}: pending — {} aligned point(s) (< 2); the epochs carry no shared axis within tolerance {:.3e}",
+                loaded[0].0,
+                key,
+                aligned.len(),
+                tol
+            ),
+        }
+    }
+    if !any {
+        println!(
+            "SPECTRAL: pending — no epoch pair aligns to >= 2 points; the arm stays pending, never a silent 0.0"
+        );
+    }
     0
 }
 
@@ -2640,7 +2867,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | modes --direction <witness> | --spectral <witness> | --parity-witness <witness> [--driver <field>]"
+        "grammar: pair <label> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -2917,6 +3144,77 @@ cadence live
         assert!(
             err.contains("aia_171_dn") || err.contains("maybe"),
             "the refusal names the confounder: {err}"
+        );
+    }
+
+    #[test]
+    fn spectral_epoch_names_split_a_paired_call() {
+        assert_eq!(
+            spectral_epoch_names("substance#0,substance#1"),
+            vec!["substance#0", "substance#1"],
+            "a comma-separated pair carries two epochs"
+        );
+        assert_eq!(
+            spectral_epoch_names("rixs"),
+            vec!["rixs"],
+            "a single name stays a single epoch"
+        );
+        assert!(
+            spectral_epoch_names(" , ").is_empty(),
+            "blank entries carry no epoch"
+        );
+    }
+
+    #[test]
+    fn spectral_axis_value_parser_skips_a_header_and_junk() {
+        let text =
+            "Eloss weight err\n-0.8951 19.6285 1.5233\n-0.2432 93.5101 3.0285\nnot a number here\n";
+        let pairs = parse_axis_value_pairs(text);
+        assert_eq!(pairs.len(), 2, "only the two numeric rows carry a pair");
+        assert!((pairs[0].0 + 0.8951).abs() < 1.0e-12);
+        assert!((pairs[1].1 - 93.5101).abs() < 1.0e-12);
+    }
+
+    #[test]
+    fn spectral_epochs_align_on_the_shared_axis() {
+        let epoch_a = vec![(0.0, 1.0), (1.0, 2.0), (2.0, 3.0)];
+        let epoch_b = vec![(0.0, 10.0), (1.0, 20.0), (2.0, 30.0), (3.0, 40.0)];
+        let aligned = align_spectral_epochs(&epoch_a, &epoch_b, 0.5);
+        assert_eq!(aligned.len(), 3, "the shared axis carries three points");
+        assert_eq!(
+            aligned[1],
+            (1.0, 2.0, 20.0),
+            "point one of the axis carries both epochs side by side"
+        );
+        let none = align_spectral_epochs(&epoch_a, &[(10.0, 1.0)], 0.5);
+        assert!(none.is_empty(), "a disjoint axis carries no aligned point");
+    }
+
+    #[test]
+    fn spectral_epoch_comparison_never_averages() {
+        let aligned = vec![(0.0, 1.0, 3.0), (1.0, 2.0, 2.0), (2.0, 3.0, 1.0)];
+        let cmp = compare_spectral_epochs(&aligned).expect("three aligned points carry a verdict");
+        assert_eq!(cmp.n, 3);
+        assert!(
+            (cmp.mean_abs_delta - 4.0 / 3.0).abs() < 1.0e-12,
+            "the magnitude is the mean of the per-axis deltas, not a mean over epochs"
+        );
+        assert!(
+            (cmp.max_abs_delta - 2.0).abs() < 1.0e-12,
+            "the largest per-axis delta is carried"
+        );
+        assert!(
+            (cmp.sign_agreement - 1.0 / 3.0).abs() < 1.0e-12,
+            "only the midpoint keeps the sign"
+        );
+        let r = cmp.correlation.expect("both epochs carry variance");
+        assert!(
+            (r + 1.0).abs() < 1.0e-12,
+            "the anti-correlated epoch pair carries r = -1: {r}"
+        );
+        assert!(
+            compare_spectral_epochs(&aligned[..1]).is_none(),
+            "one aligned point carries no comparison"
         );
     }
 }

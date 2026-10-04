@@ -1,0 +1,22 @@
+# solar_hourly_event.te — TE-Probes-Wanderung: the solar_hourly_event_probe pair over registered fields.
+# driver: GOES XRS-A channel, goes_xrs_xrsa (phi/sources.φ:832, goes_xrs.bin, 3600 s).
+#   solar_hourly_event_probe.rs:537-547 actor 0 "XRSA"; the first actor pair (:640-648).
+# target: GOES XRS-B channel, goes_xrs_xrsb (phi/sources.φ:833). solar_hourly_event_probe.rs
+#   :548-557 actor 1 "XRSB".
+# The probe is an event-wise all-actor matrix over 2013-2015 (11 actors, 110 directed pairs x
+#   8 lags; solar_hourly_event_probe.rs:480-509, :640-680); field_te_query carries one
+#   driver/target pair, so this descriptor names the first pair, the remaining directed pairs
+#   stay the probe's own matrix.
+# cond: none — the flare events (GOES b_flux > 5e-6 W/m^2, :490) feed an event stack, not a
+#   cond arm.
+# cadence: hourly cells (solar_hourly_event_probe.rs:17 HOUR 3600.0; :18 LAGS_HOUR 0..7;
+#   :20 N_SURR 10).
+pair solar-hourly-event
+register sources
+driver goes_xrs_xrsa
+target goes_xrs_xrsb
+cadence live
+bin 3600
+seasonal none
+lags 0,1,2,3,4,5,6,7
+surrogate 10
