@@ -3,7 +3,7 @@
   session: River-Folge 91
   class: handover
   date: 2026-10-04
-  sha256: 0627ab53e54ee89679e599358c6702f59624ba4a676600fa142c13813e22a1b8
+  sha256: 12e7039d9d67a0840bc3cc0869b199d99b1afd291a1efd901a48258efea681fa
   status: live
 -->
 # Handover — River-Folge 91 (2026-10-04)
@@ -191,9 +191,6 @@ Origin: river folge91.
   Felder fehlen. Bitte als Source/Field führen oder benannt descopen.
 - **declustered Mainshock-Set für `point-event#1`.** Der Zeuge trägt kein
   Declustering-Flag; die ETA-Form (`EVENT_FLOOR=2`) braucht ≥ 2 alignierte Mainevents.
-- **Text-Serien-Endpunkte:** `gbco` = CEDA OPeNDAP-ASCII-Jahresgitter; `gmrt` =
-  GridServer `format=esriascii`; `rixs` (Zenodo-Zip), `SRTM15+` (NetCDF), `gl30`
-  (COG-GeoTIFF) ohne nativen Text-Endpunkt — zwei `witnesses.φ`-Blöcke je Probe.
 - **iEEG-Elektroden:** der Harvest-Arm `ieeg_edf` steht; Elektroden-Koordinaten +
   Kanal-Matrix registrieren/ableiten (Rivers 4D-Anker je Elektrode hängt daran).
 
