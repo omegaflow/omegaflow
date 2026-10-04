@@ -74,6 +74,15 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
 
 .info { font-size: 0.65rem; color: #5a5550; max-width: 22rem; text-align: center; line-height: 1.5; margin-bottom: 0.5rem; }
 
+.membrane { margin-top: 1rem; }
+.membrane a {
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #8a8270; text-decoration: none;
+  border-bottom: 1px solid rgba(138,130,112,0.25); padding-bottom: 2px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.membrane a:hover { color: #c4b9a8; border-color: rgba(196,185,168,0.5); }
+
 .platforms { font-size: 0.6rem; color: #3a3630; margin-top: 1.5rem; }
 .platforms a { color: #5a5550; text-decoration: none; }
 .platforms a:hover { color: #8a8270; }
@@ -95,6 +104,8 @@ a#btn-Φ::before { box-shadow: 0 0 60px rgba(184,160,216,0.15); }
   <span><b>binary</b>~10 MB</span>
   <span><b>sources</b>CDN</span>
 </div>
+
+<div class="membrane"><a href="/membrane.html">the living membrane &rarr;</a></div>
 
 <div class="platforms" id="platforms"></div>
 <div class="note">unsigned — macOS Gatekeeper and Windows SmartScreen will ask before running</div>

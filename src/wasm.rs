@@ -4,14 +4,16 @@ use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 
 use crate::archivar::{
-    BodyEphemeris, MembraneCtx, SampleRecord, SpatialHash, build_spatial_hash, build_star_samples,
-    parse_ephemeris_binary, query_hash,
+    BodyEphemeris, MembraneCtx, Sample, SampleRecord, SpatialHash, all_body_anchor_samples,
+    build_spatial_hash, build_star_samples, parse_ephemeris_binary, query_hash,
 };
 
 #[wasm_bindgen]
 pub struct MembraneLookup {
-    hash: SpatialHash,
+    stars: Vec<Sample>,
+    hash: Option<SpatialHash>,
     eph: HashMap<String, BodyEphemeris>,
+    bodies_sealed: usize,
 }
 
 impl MembraneLookup {
@@ -32,10 +34,11 @@ impl MembraneLookup {
     #[wasm_bindgen(constructor)]
     pub fn new(stars: &[u8], catalog_epoch_yr: f64) -> MembraneLookup {
         let samples = build_star_samples(stars, Some(catalog_epoch_yr));
-        let hash = build_spatial_hash(samples.into_iter().map(Arc::new).collect(), 1.0);
         MembraneLookup {
-            hash,
+            stars: samples,
+            hash: None,
             eph: HashMap::new(),
+            bodies_sealed: usize::MAX,
         }
     }
 
@@ -49,11 +52,31 @@ impl MembraneLookup {
         }
     }
 
-    pub fn query(&self, cx: f64, cy: f64, cz: f64, t2: f64, fx: f64, fy: f64, fz: f64) -> Vec<f64> {
+    pub fn query(
+        &mut self,
+        cx: f64,
+        cy: f64,
+        cz: f64,
+        t2: f64,
+        fx: f64,
+        fy: f64,
+        fz: f64,
+    ) -> Vec<f64> {
+        if self.hash.is_none() || self.bodies_sealed != self.eph.len() {
+            let mut all: Vec<Arc<Sample>> = self.stars.iter().cloned().map(Arc::new).collect();
+            for s in all_body_anchor_samples(&self.eph, t2) {
+                all.push(Arc::new(s));
+            }
+            self.hash = Some(build_spatial_hash(all, 1.0));
+            self.bodies_sealed = self.eph.len();
+        }
+        let Some(hash) = self.hash.as_ref() else {
+            return Vec::new();
+        };
         let floor = [1e-40f64; 9];
         let mut records: Vec<SampleRecord> = Vec::new();
         query_hash(
-            &self.hash,
+            hash,
             MembraneCtx {
                 center: [cx, cy, cz],
                 t2,

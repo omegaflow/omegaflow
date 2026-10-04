@@ -37,6 +37,10 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
 const CATALOG_EPOCH_YR = 2000.0;       // the register's catalog_epoch (phi/sources.φ)
 const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the catalog epoch on UNIX
 const VIEW_SPAN_M = 2.53e17;           // the measured star enclosure at the SSB (≈ 8.2 pc, c·age)
+// The body anchors (phi/sources.φ:3450-3469, `at earth|moon|sun`); each staged
+// .bin carries the measured props. The anchor's field ttl is the .bin's own
+// granule span — never the register's ttl 86400, which is the fetch cadence.
+const BODIES = ["earth", "moon", "sun"];
 
 const canvas = document.getElementById("surface");
 const statusEl = document.getElementById("status");
@@ -398,6 +402,13 @@ async function boot() {
   } catch {
     status("lookup absent (omegaflow.js / omegaflow_bg.wasm) — honest black");
     return;
+  }
+  status("anchoring bodies…");
+  for (const body of BODIES) {
+    const eph = await fetchBytes("/ephemeris_de440_" + body + ".bin");
+    if (eph) {
+      lookup.load_ephemeris(body, eph);
+    }
   }
   const ok = await initGPU();
   if (!ok) {

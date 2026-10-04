@@ -1,4 +1,4 @@
-use omegaflow::te::transfer_entropy_lag;
+use omegaflow::te::{kde_n_eff, transfer_entropy_lag};
 
 const TRANSIENT: usize = 1000;
 const COUPLING: f64 = 0.2;
@@ -166,6 +166,7 @@ fn main() {
     for &n in &ns {
         let mut fwd: Vec<f64> = Vec::with_capacity(reps);
         let mut rev: Vec<f64> = Vec::with_capacity(reps);
+        let mut neffs: Vec<f64> = Vec::with_capacity(reps);
         let mut dir_ok = 0usize;
         for d in &reps_data {
             if let (Some(f), Some(r)) = (te_fwd(d, n), te_rev(d, n)) {
@@ -174,6 +175,9 @@ fn main() {
                 }
                 fwd.push(f);
                 rev.push(r);
+            }
+            if let Some(ne) = kde_n_eff(&d.x[..n], &d.y[..n], 1) {
+                neffs.push(ne);
             }
         }
         if fwd.is_empty() {
@@ -201,6 +205,13 @@ fn main() {
             mr,
             ratio,
             format!("{dir_ok}/{}", fwd.len())
+        ));
+        let neff_mean = mean(&neffs).unwrap_or(f64::NAN);
+        line(&format!(
+            "{:>7} | kde_n_eff mean = {:.4e} over {} replicate(s)",
+            n,
+            neff_mean,
+            neffs.len()
         ));
     }
 
