@@ -97,3 +97,13 @@ jobs:
           "health: dropped-gate returned void" \
           "dropped-gate failed on ${{ github.sha }}" \
           health
+
+  register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
+    - run: cargo run -q -p omegaflow-register --bin cdn_reconcile -- --fail
+    - run: cargo run -q -p omegaflow-register --bin path_reference_scan -- .
