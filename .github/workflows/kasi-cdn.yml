@@ -1,0 +1,47 @@
+name: kasi-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/kasi_compiler.rs'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  kasi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the three assets already exist on the CDN
+        id: idempotence
+        run: |
+          assets=$(gh release view data.kasi.re.kr --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if printf '%s\n' "$assets" | grep -qx "kasi_miris.json" \
+             && printf '%s\n' "$assets" | grep -qx "kasi_kmtnet.json" \
+             && printf '%s\n' "$assets" | grep -qx "kasi_kvn.json"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "assets already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "assets missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the KASI observation catalogues
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin kasi_compiler -- \
+            --out . \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "kasi-cdn: KASI observation catalogues returned void" \
+                 "kasi_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
