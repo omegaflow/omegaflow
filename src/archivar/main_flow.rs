@@ -3354,11 +3354,28 @@ pub fn main_flow() {
                     match astrometry_series::parse_bin(&bytes) {
                         Some(series) => {
                             let samples: usize = series.iter().map(|s| s.samples.len()).sum();
+                            let wdir = crate::mathematikerin::s2::astrometry_witness_dir();
+                            let mut key = String::with_capacity(name.len());
+                            for ch in name.chars() {
+                                if ch.is_ascii_alphanumeric() || ch == '.' || ch == '-' || ch == '_'
+                                {
+                                    key.push(ch);
+                                } else {
+                                    key.push('_');
+                                }
+                            }
+                            let witness_held = std::fs::create_dir_all(&wdir).is_ok()
+                                && std::fs::write(wdir.join(format!("{key}.ast1")), &bytes).is_ok();
                             eprintln!(
-                                "\r\x1b[Kastrometry_series {}: {} direction series, {} samples held (no field line: a JD/RA/Dec direction series has no scalar Channel slot in the 26×f64 wire and no AstroSample slot in the SeriesRow stream)",
+                                "\r\x1b[Kastrometry_series {}: {} direction series, {} samples emitted as S² direction witness (moving RA/Dec rests on the sphere, no scalar Channel slot in the 26×f64 wire){}",
                                 source_name(&url),
                                 series.len(),
-                                samples
+                                samples,
+                                if witness_held {
+                                    ""
+                                } else {
+                                    " — witness write void, held in the content cache"
+                                }
                             );
                         }
                         None => {

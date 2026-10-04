@@ -1,4 +1,5 @@
 use crate::archivar::lsk::LeapSeconds;
+use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};
 
 pub const MAGIC: [u8; 4] = *b"AST1";
 pub const HEADER_BYTES: usize = 8;
@@ -106,6 +107,19 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<AstroSeries>> {
     Some(series)
 }
 
+pub fn direction_only_lines(series: &[AstroSeries], weave_epoch: f64) -> Vec<VerdictLine> {
+    series
+        .iter()
+        .map(|s| VerdictLine {
+            name: s.name.clone(),
+            word: VerdictWord::DirectionOnly,
+            knot: [None, None],
+            sep: None,
+            weave_epoch,
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -181,6 +195,17 @@ mod tests {
         let bytes = write_bin(&[sample_series()]).unwrap();
         assert!(parse_bin(&bytes[..bytes.len() - 1]).is_none());
         assert!(parse_bin(b"").is_none());
+    }
+
+    #[test]
+    fn a_direction_series_reads_as_a_direction_only_witness_without_a_distance() {
+        let lines = direction_only_lines(&[sample_series()], 3.2e8);
+        assert_eq!(lines.len(), 1);
+        assert_eq!(lines[0].name, "Camargo+2015 Uranu");
+        assert_eq!(lines[0].word, VerdictWord::DirectionOnly);
+        assert_eq!(lines[0].knot, [None, None]);
+        assert_eq!(lines[0].sep, None);
+        assert_eq!(lines[0].weave_epoch, 3.2e8);
     }
 
     #[test]

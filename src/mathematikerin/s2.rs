@@ -1,3 +1,4 @@
+use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
 use crate::archivar::skydirection::{SkyDirection, parse_bin};
 use crate::archivar::vlies::{DensityField, pixel_direction};
 use crate::archivar::{BodyEphemeris, Motion, body_barycenter_position};
@@ -107,6 +108,104 @@ pub fn osc_window(directions: &[SkyDirection], t: f64, default_tau_s: f64) -> Ve
         .iter()
         .map(|d| S2Osc::from_direction(d, t, default_tau_s))
         .collect()
+}
+
+pub fn astro_series_tau_s(series: &AstroSeries, default_tau_s: f64) -> f64 {
+    let mut gaps: Vec<f64> = Vec::new();
+    for w in series.samples.windows(2) {
+        let dt = (w[1].tdb - w[0].tdb).abs();
+        if dt.is_finite() && dt > 0.0 {
+            gaps.push(dt);
+        }
+    }
+    if gaps.is_empty() {
+        return default_tau_s;
+    }
+    gaps.sort_by(|a, b| a.total_cmp(b));
+    gaps[gaps.len() / 2]
+}
+
+fn astro_sample_sigma_rad(sample: &AstroSample) -> Option<f64> {
+    let mas = sample.e_ra_mas.max(sample.e_dec_mas);
+    if mas.is_finite() && mas > 0.0 {
+        Some(mas.to_radians() / 3600.0)
+    } else {
+        None
+    }
+}
+
+impl S2Osc {
+    pub fn from_astro_sample(sample: &AstroSample, t: f64, tau_s: f64) -> Self {
+        let ra = sample.ra_deg.to_radians();
+        let dec = sample.dec_deg.to_radians();
+        let (sa, ca) = ra.sin_cos();
+        let (sd, cd) = dec.sin_cos();
+        let weight = if tau_s.is_finite() && tau_s > 0.0 && sample.tdb.is_finite() {
+            (-(t - sample.tdb).abs() / tau_s).exp()
+        } else {
+            0.0
+        };
+        S2Osc {
+            p_hat: [cd * ca, cd * sa, sd],
+            sigma_rad: astro_sample_sigma_rad(sample),
+            weight,
+        }
+    }
+}
+
+pub fn direction_witness_window(series: &[AstroSeries], t: f64, default_tau_s: f64) -> Vec<S2Osc> {
+    let mut oscs = Vec::new();
+    for s in series {
+        let tau = astro_series_tau_s(s, default_tau_s);
+        for sample in &s.samples {
+            oscs.push(S2Osc::from_astro_sample(sample, t, tau));
+        }
+    }
+    oscs
+}
+
+pub fn astrometry_witness_dir() -> std::path::PathBuf {
+    if let Ok(p) = std::env::var("OMEGAFLOW_ASTROMETRY_WITNESS_DIR") {
+        return std::path::PathBuf::from(p);
+    }
+    crate::archivar::state_dir().join("astrometry_witness")
+}
+
+pub fn witness_fingerprint(dir: &std::path::Path) -> Option<(usize, u64)> {
+    let entries = std::fs::read_dir(dir).ok()?;
+    let mut count = 0usize;
+    let mut latest = 0u64;
+    for entry in entries.flatten() {
+        let Ok(meta) = entry.metadata() else {
+            continue;
+        };
+        count += 1;
+        if let Ok(modified) = meta.modified() {
+            if let Ok(d) = modified.duration_since(std::time::UNIX_EPOCH) {
+                latest = latest.max(d.as_secs());
+            }
+        }
+    }
+    Some((count, latest))
+}
+
+pub fn load_witnesses(dir: &std::path::Path) -> Vec<AstroSeries> {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if !path.is_file() {
+            continue;
+        }
+        if let Ok(bytes) = std::fs::read(&path) {
+            if let Some(mut series) = crate::archivar::astrometry_series::parse_bin(&bytes) {
+                out.append(&mut series);
+            }
+        }
+    }
+    out
 }
 
 pub fn angular_kernel(cos_gamma: f64, sigma_rad: Option<f64>, lmax: u32) -> f64 {
@@ -230,6 +329,7 @@ pub struct SkyReport {
 
 pub struct SkyState {
     pub directions: Vec<SkyDirection>,
+    pub witnesses: Vec<AstroSeries>,
     pub vlies: Option<DensityField>,
     pub events: Vec<S2EventRecord>,
     pub oscs: Vec<S2Osc>,
@@ -252,6 +352,7 @@ impl SkyState {
     pub fn new() -> Self {
         SkyState {
             directions: Vec::new(),
+            witnesses: Vec::new(),
             vlies: None,
             events: Vec::new(),
             oscs: Vec::new(),
@@ -387,6 +488,63 @@ mod tests {
         assert_eq!(oscs[0].weight, 0.0);
         let field = field_at(oscs[0].p_hat, &oscs, S2_LMAX);
         assert_eq!(field, 0.0);
+    }
+
+    #[test]
+    fn an_astrometry_series_radiates_as_a_moving_direction_witness_not_a_scalar() {
+        let series = AstroSeries {
+            name: "Camargo+2015 Uranu".to_string(),
+            samples: vec![
+                AstroSample {
+                    tdb: 2.4e9,
+                    ra_deg: 288.7273,
+                    dec_deg: -22.7528,
+                    e_ra_mas: 57.0,
+                    e_dec_mas: 49.0,
+                },
+                AstroSample {
+                    tdb: 2.4e9 + 86400.0,
+                    ra_deg: 288.7291,
+                    dec_deg: -22.7521,
+                    e_ra_mas: 47.0,
+                    e_dec_mas: 42.0,
+                },
+            ],
+        };
+        let oscs = direction_witness_window(std::slice::from_ref(&series), 2.4e9, S2_TAU_DEFAULT_S);
+        assert_eq!(
+            oscs.len(),
+            2,
+            "one oscillator per measured direction sample"
+        );
+        for o in &oscs {
+            let n = (o.p_hat[0] * o.p_hat[0] + o.p_hat[1] * o.p_hat[1] + o.p_hat[2] * o.p_hat[2])
+                .sqrt();
+            assert!(
+                (n - 1.0).abs() < 1e-12,
+                "the witness rests on the unit sphere"
+            );
+            assert!(
+                o.sigma_rad.is_some_and(|s| s > 0.0),
+                "the measured arcsec errors broaden the kernel"
+            );
+        }
+        assert!(
+            oscs[0].weight > 0.0 && oscs[1].weight > 0.0,
+            "both epochs are live at the first sample epoch"
+        );
+        let d0 = oscs[0].p_hat;
+        let d1 = oscs[1].p_hat;
+        let sep = (d0[0] - d1[0]).powi(2) + (d0[1] - d1[1]).powi(2) + (d0[2] - d1[2]).powi(2);
+        assert!(
+            sep > 0.0,
+            "the direction moves between the measured samples"
+        );
+        let field = field_at(oscs[0].p_hat, &oscs, S2_LMAX);
+        assert!(
+            field.is_finite() && field > 0.0,
+            "the witness radiates on S²"
+        );
     }
 
     #[test]
