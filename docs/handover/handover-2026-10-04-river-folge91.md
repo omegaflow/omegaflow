@@ -3,7 +3,7 @@
   session: River-Folge 91
   class: handover
   date: 2026-10-04
-  sha256: 169b7712f9f962ea45691b6965ef9383e52a8c0f487514dd3a74208217a113d1
+  sha256: 4fff183970f92e237be1dbb88f4d49dc32699e7a6b3a4452b0c4d430394944e0
   status: live
 -->
 # Handover — River-Folge 91 (2026-10-04)
@@ -85,6 +85,12 @@ Wort | Datum | Quelle
   (`te_bias_n_probe.rs`, `te-bias-n 37234616152`) misst n_eff(n = 800) = **18.166** →
   `TE_NEFF_THRESHOLD = Some(1.8166e1)`, der gemessene Boden am kleinsten
   Tabellen-Eintrag. Gate-Test auf beiden Seiten (unter/auf dem Boden) geprüft.
+- **Die corona-confound- und dispersion-solar-Matrizen sind gemessen (River 91).**
+  `field-te-query 37223713088` success: corona-confound 72/72 Zellen (9/9 Arme),
+  dispersion-solar 56/56 (8/8 Arme), FDR BH q = 0.05: **0 von 72** und **0 von 56**
+  Zellen passieren, alle `silent` (Artefakte `field-te-matrix-corona`/
+  `-dispersion`). Die Matrix-Grammatik parst und liefert Zahlen — die 2 Gaps sind
+  geschlossen.
 - **Workflow-Domäne (Rat, fünf Stimmen, 2026-10-04).** Eigentum folgt der Natur der
   Datei: der **Mess-Instrument-Körper** (`wy-max-t.yml`, `bz-yearly-maxt.yml`,
   `field-te-query.yml`) gehört River; die **Transport-Grammatik** (Budget, Runner,
@@ -139,18 +145,6 @@ Wort | Datum | Quelle
 - **Braucht:** `ci_manage log 37235150270 --all` nach Lauf-Ende; dann die
   ABK-Combines prüfen.
 
-### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `field-te-query 37223713088`.
-- **Lage:** (gemessen 2026-10-04) `field-te-query 37223713088` ist `queued`;
-  9 Deskriptoren bestehen, die 2 Matrix-Gaps (`corona_confound_matrix`,
-  `dispersion_solar`) sind gebaut (River-90-Commit). 4 Kandidaten sind am Baum
-  nicht tragfähig (`laic`/`trishuli_gauge` kein Register-Paar;
-  `solar_causal_graph`/`signal_cone_audit` brauchen `f107_penticton` + Lya1216).
-- **Blockade:** der Lauf ist im Runner-Stau; die Felder fehlen.
-- **Braucht:** `ci_manage log 37223713088 --all` lesen (parsen die Matrix-Jobs?);
-  Felder (An mountain).
-
 ## An mountain
 
 Origin: river folge91.
@@ -161,9 +155,10 @@ Origin: river folge91.
   Zenodo-Zip mit eigenem Parser, `gl30`/`SRTM15+`/GHSL descoped. Bitte die
   abgeleiteten `axis value`-Serien je Probe ableiten (zwei Epochen, gleiche Achse);
   Rivers `--spectral`-Form steht, Mycelium manifestiert die Serie.
-- **`f107_penticton` + Lya1216 (Probes-Wanderung).** Zwei Kandidaten
-  (`solar_causal_graph`, `signal_cone_audit`) sind am Baum nicht tragfähig, weil diese
-  Felder fehlen. Bitte als Source/Field führen oder benannt descopen.
+- **Probes-Wanderung — 4 Kandidaten am Baum nicht tragfähig (nächster Schritt
+  Mountains Natur).** `solar_causal_graph`/`signal_cone_audit` brauchen
+  `f107_penticton` + Lya1216; `laic`/`trishuli_gauge` haben kein Register-Paar.
+  Bitte als Source/Field führen oder benannt descopen.
 - **declustered Mainshock-Set für `point-event#1`.** Der Zeuge trägt kein
   Declustering-Flag; die ETA-Form (`EVENT_FLOOR=2`) braucht ≥ 2 alignierte Mainevents.
 - **iEEG-Elektroden:** der Harvest-Arm `ieeg_edf` steht; Elektroden-Koordinaten +
