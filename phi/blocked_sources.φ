@@ -101,15 +101,15 @@ note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): registriert sources.φ:9921 (pds4_fits_
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
-note Phobos 2 KRFM krfm.dat — PDS3 fixed-width, HTTP 206. Arm/Konsument + CDN (pds3-fixed-width-cdn.yml, harvest.φ:243); offen: Feld-Verdikt je Spalte.
+note Phobos 2 KRFM krfm.dat — 2026-10-04 HTTP 206; 15 Spalten (5 Radiometer + 9 Photometer, 12-bit). Feld-Verdikt: pds3_krfm_radiometer1..5 + photometer1..9, em count (W/m2/sr-Kalibrierung fehlt — Riss). Offen: sources.φ-Block + CDN (Mycelium).
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
-note Vega 1/2 Halley 7 Instrument-Sets PDS3 — HTTP 206; pds3_fixed_width registriert (vega2-Origins), CDN-Workflow steht; offen: Feld-Verdikt je Spalte.
+note Vega 1/2 MISCHA PDS3 — 2026-10-04 HTTP 206; 8 ASCII-Sampling-Dirs, 2 Schemata (Vektor 8, Spektren 17), nicht 7; pds3_fixed_width + CDN-Workflow stehen; kartiert: BX/BY/BZ + F00..F15; offen: Verdikt BT/BU/BUXPSSO/FLAG (Vektor-Schema 8 Spalten).
 
 pending
 url https://sbnarchive.psi.edu/pds4/hayabusa/
-note Hayabusa LIDAR cdr_*.tab — 2026-09-28 HTTP 206; fixed-width ~30 Spalten, Einheiten im XML-Label. Arm + Konsument stehen (pds4.rs, extract.rs series_named); CI-Manifest phi/harvest.φ:234. Offen: CDN-Lauf, Feld-Verdikt je Spalte.
+note Hayabusa LIDAR cdr_*.tab — 2026-10-04 HTTP 206; 31 Spalten. Arm+Workflow stehen (pds4.rs, harvest.φ). Feld-Verdikt: RANGE hay_lidar_range inverse-square em km; übrige Spalten DROP (Geometrie/Anker). Offen: sources.φ-Block + CDN (Mycelium).
 
 pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
@@ -127,9 +127,9 @@ pending
 url https://limadou.ssdc.asi.it/
 note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn (cses-{lap,efd,hpm,scm}-Compiler + Workflows, sources.φ 27 Z.); limadou-Host ohne Rohdatenpfad → descope-Kandidat. future-folge167.
 
-pending
+blocked account
 url https://www.leos.ac.cn/
-note LEOS (CSES 张衡一号), nicht CAS — 2026-10-04: Konto; /api/admin/data/front/list 200 = status 40301 登录超时 (Login-Gate). Kein Arm (sgrep leos src = 0) → Blocker Login + Reader. future-folge226.
+note LEOS (CSES) — 2026-10-04: /api/admin/data/front/list status 40301 登录超时 (Konto-Gate; LEOS_USER/PASS in .secrets.local); kein Arm (sgrep leos src=0) → Braucht: Reader-Arm + Konto-Session. future-folge226.
 
 pending
 url https://clpds.bao.ac.cn/
@@ -156,10 +156,6 @@ url https://data.kasi.re.kr/
 note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
 
 pending
-url https://github.com/TIAN-we/petrel19
-note PETREL19 — 2026-10-02 GitHub-API license:null; README + release_notes tragen nur Provenienz (Tian 2023, DOI 10.1007/s10569-023-10151-6), keine Lizenz; Coverage 1799-10-13..2106-05-05; Arm ephemeris_compiler.rs steht; Aufnahme nach Lizenz-Verdikt.
-
-pending
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
 note Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; TAP_SCHEMA 248 tables and no gaiadr3.* column matches cluster/member — cluster membership is absent from the Gaia TAP; corrected query pending (external catalog).
 
@@ -169,13 +165,13 @@ note Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR
 
 pending
 url https://www.ieeg.org
-note ieeg.org (UPenn) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (kein ICRS je Elektrode) (4) zweite Linie OpenNeuro/PhysioNet-EEG. Zugang Registrierung+User Agreement; Arm+Asset fehlen.
+note ieeg.org (UPenn) — 2026-10-04 chrome-devtools (login omegaflow): 657 Datasets, öffentl. EEG-Dataset öffnet OHNE User-Agreement; Arm ieeg_edf steht (9d416e57b, edf.rs); Asset/sources.φ-Block + 4D-Anker fehlen.
 
 pending
 url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — Weberin §8: 4D-Anker fehlt; EDF-Arm steht (src/archivar/edf.rs); 2026-10-04 NEDC-Formular erlaubt Affiliation self → ausfüllbar; Senden = Operator-Hand, Future führt.
+note TUH EEG (Temple) — 2026-10-04: NEDC-Formular + signierte PDF gesendet (mail_ledger.φ:367, nach :366 "Use self"); Antwort offen (wartend.φ:39). EDF-Arm tuh_eeg steht (9d416e57b, edf.rs); 4D-Anker fehlt.
 
-pending
+descoped
 url https://sleepdata.org
-note NSRR — Schlaf-PSG — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (4) zweite Linie OpenNeuro/PhysioNet. Access pending (direkt ohne Antwort 2026-10-04); Arm+Asset fehlen.
+note NSRR — 2026-10-04: descoped (Human-Subjects-/HIPAA-Training Pflicht, absent); Konto bestätigt (mail_ledger.φ:361/:362), NSRR_USER/PASS/EMAIL in .secrets.local; Arm nsrr_psg steht (9d416e57b, edf.rs); Asset-Block fehlt.
 
