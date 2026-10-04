@@ -2953,6 +2953,8 @@ pub fn main_flow() {
                     | "hamqsl_solar"
                     | "dsn_snapshot"
                     | "usgs_comcat_m45"
+                    | "quake_ptevent"
+                    | "f107"
                     | "aia"
                     | "eve"
             ) {
@@ -4127,6 +4129,8 @@ pub fn main_flow() {
                     | "esacci_sst_l4_cdr3"
                     | "ersstv5_nino34"
                     | "cses_efd"
+                    | "cses_hpm"
+                    | "cses_scm"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

@@ -360,6 +360,7 @@ fn main() {
             post_body: None,
             target: None,
             catalog: None,
+            range: None,
             max_freq: None,
             min_freq: None,
             body: None,
