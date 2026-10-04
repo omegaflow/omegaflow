@@ -94,7 +94,10 @@ fn fetch_access_token(refresh_token: &str, client_id: &str) -> Option<String> {
         let reason =
             match json_str_field(&body, "error").or_else(|| json_str_field(&body, "message")) {
                 Some(v) => v,
-                None => "no error field".to_string(),
+                None => format!(
+                    "unrecognized body: {}",
+                    body.chars().take(200).collect::<String>()
+                ),
             };
         let code_s = match code.map(|c| c.to_string()) {
             Some(v) => v,
