@@ -3,7 +3,7 @@
   session: River-Folge 90
   class: handover
   date: 2026-10-04
-  sha256: 28cbc60dc4a3b553a1f25de446fcebe47f7162ad75668d8ed3ae7ad26027594e
+  sha256: be13cceff51c001247914acea18b0862be92e50c0537524a23b08ce3b696f7c7
   status: live
 -->
 # Handover — River-Folge 90 (2026-10-04)
@@ -118,9 +118,10 @@ Wort | Datum | Quelle
   Legacy-44-B-Stand.
 - **Blockade:** der Browser-Manifest ist nicht gelesen; `continue-on-error` auf dem wasm-Build
   heißt: der Lauf kann ohne Bundle grün sein.
-- **Braucht:** `gh workflow run pages-deploy.yml`; `ci_manage log <id>` lesen (stehen
-  `pkg/omegaflow.js`/`omegaflow_bg.wasm` in `_site/`?), dann `/membrane.html` im Browser.
-  Ephemeris-Arm (Bodies) folgt als eigenes Atom (`MembraneLookup.load_ephemeris` fehlt im wasm-Einstieg).
+- **Braucht:** `pages-deploy 37223715722` ist dispatcht (`waiting`, Stau; gemessen 2026-10-04
+  via `ci_manage view`); `ci_manage log 37223715722` lesen (stehen `pkg/omegaflow.js`/
+  `omegaflow_bg.wasm` in `_site/`?), dann `/membrane.html` im Browser. Ephemeris-Arm (Bodies)
+  folgt als eigenes Atom (`MembraneLookup.load_ephemeris` fehlt im wasm-Einstieg).
 
 ### fruehwarnsystem α-Ebene — wartet auf die wy-max-t-Null
 - **Status:** wartend | **Bindung:** eigen
@@ -182,8 +183,9 @@ Wort | Datum | Quelle
   `signal_cone_audit` brauchen `f107_penticton` + Lya1216).
 - **Blockade:** die Descriptoren sind noch **ungepusht**; der Matrix-Parser ist der Beleg (CI).
   `f107_penticton` + Lya1216 fehlen (An mountain).
-- **Braucht:** nach `/commit`+Push `gh workflow run field-te-query.yml`; `ci_manage log
-  <matrix-corona|matrix-dispersion>` lesen; Felder (An mountain).
+- **Braucht:** `field-te-query 37223713088` ist dispatcht (`queued`, Stau; gemessen 2026-10-04
+  via `ci_manage view`); `ci_manage log 37223713088` lesen (die Jobs `matrix-corona`/
+  `matrix-dispersion` — parst der Descriptor, liefert die Matrix Zahlen?); Felder (An mountain).
 
 ### Nicht-point-event-Zeugen — Text-Endpunkte gemessen
 - **Status:** wartend | **Bindung:** eigen
