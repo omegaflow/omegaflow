@@ -230,13 +230,13 @@ note Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR
 
 pending
 url https://www.ieeg.org
-note ieeg.org (UPenn) — rohes klinisches iEEG (Elektrodenpotentiale, electric V); Zugang Registrierung+User Agreement (operator-gebunden); Arm+Asset fehlen. Riss: EEG-Zeile sources.φ:3415 deklariert advective m/s².
+note ieeg.org (UPenn) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (kein ICRS je Elektrode) (4) zweite Linie OpenNeuro/PhysioNet-EEG. Zugang Registrierung+User Agreement; Arm+Asset fehlen. Riss: sources.φ:3415 advective m/s².
 
 pending
 url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — rohes klinisches EEG, >30 000 Sitzungen; Registrierung+DUA (operator-gebunden); Arm+Asset fehlen.
+note TUH EEG (Temple) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (4) zweite Linie ieeg.org/OpenNeuro. Zugang Registrierung+DUA; Arm+Asset fehlen.
 
 pending
 url https://sleepdata.org
-note NSRR — Schlaf-PSG (EEG/ECG/EMG); Access pending (direkt ohne Antwort 2026-10-04); Arm+Asset fehlen.
+note NSRR — Schlaf-PSG — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (4) zweite Linie OpenNeuro/PhysioNet. Access pending (direkt ohne Antwort 2026-10-04); Arm+Asset fehlen.
 
