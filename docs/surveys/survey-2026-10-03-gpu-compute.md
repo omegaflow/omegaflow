@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 14e028e0d33cc74d3b2877daec6bc337b592c3f0378adad2006c87d1b7c3c612
+  sha256: a39fae365a2145f03b88fa1f6ab935eec3df4fd5496974e2ec0b7b210753035d
   status: live
   see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
@@ -196,3 +196,29 @@ GPU-Typen „vary over time", Ressourcen „not guaranteed and not unlimited", L
 die graphics-Capability gibt es nur dort, wo der Anbieter sie injiziert (bezahlter Container mit
 `NVIDIA_DRIVER_CAPABILITIES=graphics`) oder lokal (XPS-iGPU, Intel/Mesa). Für unseren WGSL-Pfad ist
 der freie Weg damit **erschöpft**.
+
+## J. Vulkan-Karte (2026-10-04) — wo unser WGSL läuft
+
+Entscheidend ist **nicht** „GPU", sondern **Vulkan** (Treiber-Userspace mit `graphics`-Capability).
+Gemessen über die Flotte (`archive_search`) + lokal (`vulkaninfo`):
+
+| Weg | Typ | Vulkan | Beleg |
+|---|---|---|---|
+| **XPS 13 (Intel HD 520, SKL GT2)** | iGPU, Mesa ANV 25.2.8 | **ja** (Vulkan 1.4.318) | lokal `vulkaninfo --summary` 2026-10-04 |
+| **Vast.ai** | Container **oder Linux-VM**, eigenes Image | **ja, verifiziert** | `nvidia/cudagl` + GTX 1070 Ti, `vulkaninfo` listet Gerät — `github.com/brianonbased-dev/HoloScript` (206), 2026-05-29 |
+| **RunPod** | Container, eigenes Image | möglich (`NVIDIA_DRIVER_CAPABILITIES=all`), per-Host | `docs.runpod.io/pods/templates/environment-variables` (200) |
+| **Google Cloud (Trial $300/90 T)** | volle VM, eigener Treiber | ja (installierbar) | `download.nvidia.com/.../installedcomponents.html` (200) |
+| **Lambda (V100 $0.79/h)** | volle Instanz | ja (eigener Treiber) | `lambda.ai/pricing` (200) |
+| **Oracle OCI (A10 $2/h, Trial $300/30 T)** | volle VM | ja (eigener Treiber) | `docs.oracle.com/.../computeshapes.htm` (200) |
+| Kaggle | Container `compute,utility` | **nein** | §I |
+| Colab | Container, Stub | **nein** | §I2 |
+| Modal | gVisor/`nvproxy`, compute-only | **nein** | `gvisor.dev/docs/user_guide/gpu` (206) |
+| SageMaker Studio Lab | Container, **kein sudo**, geschlossen | nein | `github.com/aws/studio-lab-examples/issues/118` (200) |
+| Lightning AI (~80 GPU-h) | Container, fester Treiber | unbelegt | `lightning.ai/pricing` (200) |
+| Paperspace Gradient | Container (root) | unbelegt | `docs.digitalocean.com/.../use-terminal/` (200) |
+
+**Regel aus der Messung:** Vulkan gibt es dort, wo wir **Treiber/Capability kontrollieren** — oder
+wo der Anbieter `graphics` injiziert. Freie Notebook-Container (Kaggle, Colab, Modal, SageMaker)
+sind **compute-only** und fallen aus. Wirklich frei mit Vulkan ist nur die **lokale XPS-iGPU**;
+sonst **volle VM** (GCP-Trial, Lambda, Oracle) oder **Vast.ai/RunPod** (bezahlt, Container mit
+`graphics`).
