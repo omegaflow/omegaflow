@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: bc7a111394d2ecc9f737231a76be7f0e8365e049d99c9f5d3e40346ff37ef3c1
+  sha256: 14f8b2e7af19814c9dd3122739e342753eaf02d67089afb8d5154f056e0dc82c
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -83,34 +83,6 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Port-Artefakt noch nicht erzeugt
 - **Braucht:** Port-Lauf → `stage/…_converted.φ`, dann Register-Zeilen (Konverter-Spec = Mountain).
 
-### Registry↔CDN-Reconciliation (Step 5)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-Wort vor destruktiver Entfernung
-- **Lage:** (gemessen 2026-10-04 via `cdn_reconcile` → `docs/specs/cdn_reconciliation.json`) `orphan_releases` 144 · `unmanifested_source_netlocs` 31 · `asset_name_divergence` 6873 · `missing_assets` 687 · `byte_identical_duplicate_groups` 14 · `www_prefixed` 1 (`www.kari.re.kr`); Klassen `orphan_releases_by_class` (`dataset_host` 4 / `internal` MODIS-LST-Jahre). `pds3_ring_occ.bin` 404 (Riss).
-- **Blockade:** Operator-Wort (destruktive Entfernung)
-- **Braucht:** je Lösch-Klasse ein Atom (Operator-Wort zuerst); `www.kari.re.kr`-Tag-Normalisierung.
-
-### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`
-- **Status:** wartend | **Bindung:** eigen (Meta-Träger)
-- **Trigger:** `register_lookup --orphan-docs` nennt ein neues trägerloses Dokument
-- **Lage:** (gemessen 2026-10-04) `:78` 976-B-`pending`; `:96` Punkt 1 = Migrationsplan (Byte-Messung je Holding, außerhalb Repo).
-- **Blockade:** keine
-- **Braucht:** Byte-Messung der Holdings (Migration).
-
-### `http_401`-Residuum
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** neue Mail/Asset-Messung
-- **Lage:** (gemessen 2026-09-30) nach der GitHub-PAT-Rotation kein neuer 401.
-- **Blockade:** keine
-- **Braucht:** weiter beobachten.
-
-### PRADAN — Arm gebaut
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** weitere `downloadFile`-Payloads gebraucht
-- **Lage:** (gemessen 2026-10-04) `ch2_cla_l1_2025_10.zip` auf CDN, Reader-Arm gebaut (`src/archivar/pradan_ch2.rs`).
-- **Blockade:** keine
-- **Braucht:** kein Schritt.
-
 ## LOCK
 
 (kein Eintrag.)
@@ -148,6 +120,7 @@ Origin: mycelium-folge230. **Routed — Operator-Akt (per-Akt-Wort), keine Masch
 - **EEG-Portale** `blocked_sources.φ:231/:235/:239` (iEEG.org / TUH EEG / NSRR PSG): Registration/DUA. TUH läuft bereits (`wartend.φ:39` tuh-eeg-access; `:38` eligibility resolved). iEEG.org + NSRR Registration offen.
 - **GIC-Rohserie** `space.fmi.fi/gic/`: FMI-Anfrage läuft (`wartend.φ:40` fmi-gic-maentsaelae, gesendet 2026-10-02, keine Antwort) — Wiedervorlage, kein Send von der Maschine.
 - **SUDEP `ds004100`:** OpenNeuro-Harvest dispatcht (`37219510577`); kein Operator-Akt.
+- **Registry↔CDN-Reconciliation — Lösch-Entscheid:** `cdn_reconcile` gemessen (`docs/specs/cdn_reconciliation.json`, committet): `orphan_releases` 144 (davon `dataset_host` 4 / `internal` MODIS-LST-Jahre), `byte_identical_duplicate_groups` 14, `www_prefixed` 1 (`www.kari.re.kr`). **Frage:** darf ich die benannten Lösch-Klassen bereinigen (je Klasse ein Atom)? **Bei Ja:** Klasse für Klasse entfernen/normalisieren; **bei Nein:** die Messung bleibt als Spec stehen, kein Eingriff.
 
 ## An sensory
 
