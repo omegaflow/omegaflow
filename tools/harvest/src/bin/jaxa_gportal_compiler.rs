@@ -1,5 +1,6 @@
 use omegaflow::archivar::json::{JsonVal, jnum, jpath_val, json_num, jstr, parse_json, scalar_of};
 use omegaflow::cdn::upload_release;
+use std::collections::HashSet;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -11,6 +12,11 @@ const LANDING_URL: &str = "https://gportal.jaxa.jp/gpr/";
 const LOGIN_URL: &str = "https://gportal.jaxa.jp/gpr/auth/authenticate.json";
 const QUOTA_URL: &str = "https://gportal.jaxa.jp/gpr/search/service/get_download_limit";
 const CATALOG_URL: &str = "https://gportal.jaxa.jp/gpr/search/catalog_records.json";
+const CSW_URL: &str = "https://gportal.jaxa.jp/csw/csw";
+const CHECK_DL_URL: &str = "https://gportal.jaxa.jp/gpr/search/service/check_dlconfig.json";
+const ADD_DOWNLOAD_URL: &str = "https://gportal.jaxa.jp/gpr/search/service/add_download.json";
+const SFTP_HOST: &str = "ftp.gportal.jaxa.jp";
+const SFTP_PORT: u16 = 2051;
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0";
 const SESSION_COOKIE: &str = "iPlanetDirectoryPro";
 const CSRF_COOKIE: &str = "fuel_csrf_token";
@@ -208,6 +214,53 @@ fn curl_status(
     code.trim().parse::<u16>().ok()
 }
 
+fn download_url(r: &Record) -> Option<&str> {
+    r.app_file_path.as_deref().or(r.url.as_deref())
+}
+
+fn fetch_file(jar: &Jar, url: &str, out_path: &Path, max_bytes: Option<u64>) -> Option<(u16, u64)> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-g")
+        .arg("-L")
+        .arg("-m")
+        .arg(CATALOG_BOUND_S.to_string())
+        .arg("--connect-timeout")
+        .arg(CONNECT_BOUND_S.to_string())
+        .arg("-b")
+        .arg(&jar.path)
+        .arg("-c")
+        .arg(&jar.path)
+        .arg("-o")
+        .arg(out_path)
+        .arg("-w")
+        .arg("%{http_code} %{size_download}");
+    if let Some(n) = max_bytes {
+        cmd.arg("-r").arg(format!("0-{}", n.saturating_sub(1)));
+    }
+    for (k, v) in landing_headers() {
+        cmd.arg("-H").arg(format!("{k}: {v}"));
+    }
+    if let Some(proxy) = proxy_env() {
+        cmd.env("ALL_PROXY", proxy);
+    }
+    let output = cmd.arg(url).output().ok()?;
+    if !output.status.success() {
+        eprintln!(
+            "jaxa fetch: curl returned ({}): {}",
+            output.status,
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+        return None;
+    }
+    let text = String::from_utf8_lossy(&output.stdout);
+    let mut fields = text.split_whitespace();
+    let code = fields.next()?.parse::<u16>().ok()?;
+    let size = fields.next()?.parse::<u64>().ok()?;
+    Some((code, size))
+}
+
 fn body_text(path: &Path) -> Option<String> {
     let bytes = fs::read(path).ok()?;
     Some(String::from_utf8_lossy(&bytes).into_owned())
@@ -306,7 +359,13 @@ fn service_post(
         return None;
     };
     if code != 200 {
-        eprintln!("jaxa {url} returned HTTP {code}");
+        let detail = body_text(&out)
+            .map(|t| t.trim().chars().take(400).collect::<String>())
+            .filter(|t| !t.is_empty());
+        match detail {
+            Some(t) => eprintln!("jaxa {url} returned HTTP {code}: {t}"),
+            None => eprintln!("jaxa {url} returned HTTP {code}"),
+        }
         return None;
     }
     body_text(&out)
@@ -327,6 +386,7 @@ struct Record {
     size: f64,
     version: Option<String>,
     url: Option<String>,
+    app_file_path: Option<String>,
     ascending_node_lon: Option<f64>,
 }
 
@@ -420,6 +480,7 @@ fn one_record(feature: &JsonVal) -> Option<Record> {
         size,
         version: jstr(props, "product.version"),
         url: jstr(props, "product.fileName"),
+        app_file_path: jstr(props, "product.appFilePath"),
         ascending_node_lon: jstr(props, "ascendingNodeLongitude")
             .and_then(|s| s.trim().parse::<f64>().ok())
             .filter(|v| v.is_finite()),
@@ -508,6 +569,9 @@ fn record_json(r: &Record) -> String {
     if let Some(v) = &r.url {
         out.push_str(&format!(",\"url\":{}", json_str(v)));
     }
+    if let Some(v) = &r.app_file_path {
+        out.push_str(&format!(",\"app_url\":{}", json_str(v)));
+    }
     if let Some(v) = r.ascending_node_lon {
         out.push_str(&format!(",\"ascending_node_lon\":{v}"));
     }
@@ -556,6 +620,8 @@ fn catalog_search(
     to: &str,
     count: u64,
     out_name: &str,
+    out_dir: &str,
+    dump: bool,
 ) -> Option<Catalog> {
     let extra = vec![
         ("dataset[0][id]".to_string(), dataset.to_string()),
@@ -565,7 +631,204 @@ fn catalog_search(
         ("count".to_string(), count.to_string()),
     ];
     let text = service_post(jar, CATALOG_URL, &extra, out_name, CATALOG_BOUND_S)?;
+    if dump {
+        let path = PathBuf::from(out_dir).join("jaxa_gportal_catalog_raw.json");
+        if fs::write(&path, &text).is_err() {
+            eprintln!("jaxa catalog: write {} returned void", path.display());
+        }
+    }
     parse_catalog(&text)
+}
+
+fn iso_day(day: &str, end_of_day: bool) -> String {
+    let dashed = normalize_date(day).replace('/', "-");
+    if end_of_day {
+        format!("{dashed}T23:59:59")
+    } else {
+        format!("{dashed}T00:00:00")
+    }
+}
+
+fn csw_search(
+    jar: &Jar,
+    dataset: &str,
+    from: &str,
+    to: &str,
+    count: u64,
+    start_index: u64,
+    out_name: &str,
+    out_dir: &str,
+    dump: bool,
+) -> Option<Catalog> {
+    let url = format!(
+        "{CSW_URL}?service=CSW&version=3.0.0&request=GetRecords&outputFormat=application/json&datasetId={}&startTime={}&endTime={}&count={count}&startIndex={start_index}",
+        uri_encode(dataset),
+        uri_encode(&iso_day(from, false)),
+        uri_encode(&iso_day(to, true)),
+    );
+    let out = jar.response_path(out_name);
+    let code = curl_status(&url, None, &landing_headers(), jar, &out, CATALOG_BOUND_S)?;
+    if code != 200 {
+        eprintln!("jaxa csw {url} returned HTTP {code}");
+        return None;
+    }
+    let text = body_text(&out)?;
+    if dump {
+        let path = PathBuf::from(out_dir).join(format!("jaxa_gportal_csw_raw_{start_index}.json"));
+        if fs::write(&path, &text).is_err() {
+            eprintln!("jaxa csw: write {} returned void", path.display());
+        }
+    }
+    parse_catalog(&text)
+}
+
+fn merge_page(merged: &mut Catalog, seen: &mut HashSet<String>, cat: Catalog, page: u64) -> usize {
+    if page == 0 {
+        merged.matched = cat.matched;
+    }
+    let mut added = 0usize;
+    for record in cat.records {
+        if seen.insert(record.id.clone()) {
+            merged.records.push(record);
+            added += 1;
+        }
+    }
+    merged.returned = Some(merged.records.len() as u64);
+    added
+}
+
+fn catalog_pages(
+    jar: &Jar,
+    dataset: &str,
+    from: &str,
+    to: &str,
+    count: u64,
+    pages: u64,
+    out_dir: &str,
+    dump: bool,
+    use_csw: bool,
+) -> Option<Catalog> {
+    let mut merged = Catalog {
+        matched: None,
+        returned: None,
+        records: Vec::new(),
+    };
+    let mut seen: HashSet<String> = HashSet::new();
+    if !use_csw {
+        let cat = catalog_search(
+            jar,
+            dataset,
+            from,
+            to,
+            count,
+            "catalog_0.json",
+            out_dir,
+            dump,
+        )?;
+        merge_page(&mut merged, &mut seen, cat, 0);
+        return Some(merged);
+    }
+    let mut start_index: u64 = 1;
+    for page in 0..pages {
+        let out_name = format!("csw_{page}.json");
+        let cat = csw_search(
+            jar,
+            dataset,
+            from,
+            to,
+            count,
+            start_index,
+            &out_name,
+            out_dir,
+            dump,
+        )?;
+        let returned = cat.returned;
+        let added = merge_page(&mut merged, &mut seen, cat, page);
+        if added == 0 {
+            eprintln!(
+                "jaxa_gportal_compiler: csw page {page} (startIndex {start_index}) carried no new record — paging stops"
+            );
+            break;
+        }
+        match returned {
+            Some(0) => break,
+            Some(n) => start_index += n,
+            None => {
+                eprintln!(
+                    "jaxa_gportal_compiler: csw page {page} carries no numberOfRecordsReturned — paging stops at startIndex {start_index}"
+                );
+                break;
+            }
+        }
+        if let Some(matched) = merged.matched
+            && merged.records.len() as u64 >= matched
+        {
+            break;
+        }
+    }
+    Some(merged)
+}
+
+fn check_download_config(jar: &Jar, records: &[&Record], out_dir: &str) -> Option<bool> {
+    let mut extra: Vec<(String, String)> = Vec::new();
+    for (i, r) in records.iter().enumerate() {
+        let file = r.app_file_path.as_deref().or(r.url.as_deref())?;
+        let dataset = r.dataset_id.as_deref()?;
+        extra.push((format!("checkDlList[{i}][granuleId]"), r.id.clone()));
+        extra.push((format!("checkDlList[{i}][size]"), format!("{}", r.size)));
+        extra.push((format!("checkDlList[{i}][fileName]"), file.to_string()));
+        extra.push((format!("checkDlList[{i}][datasetId]"), dataset.to_string()));
+    }
+    let text = service_post(
+        jar,
+        CHECK_DL_URL,
+        &extra,
+        "check_dlconfig.json",
+        HTTP_BOUND_S,
+    )?;
+    let path = PathBuf::from(out_dir).join("jaxa_gportal_check_dlconfig.json");
+    if fs::write(&path, &text).is_err() {
+        eprintln!(
+            "jaxa check_dlconfig: write {} returned void",
+            path.display()
+        );
+        return None;
+    }
+    let json = parse_json(&text)?;
+    let status = jstr(&json, "status")?;
+    if status != "SUCCESS" {
+        eprintln!(
+            "jaxa check_dlconfig: status {status} — the quota gate refuses (response at {})",
+            path.display()
+        );
+        return Some(false);
+    }
+    Some(true)
+}
+
+fn add_download(jar: &Jar, r: &Record, idx: usize, out_dir: &str) -> Option<bool> {
+    let file = r.app_file_path.as_deref().or(r.url.as_deref())?;
+    let dataset = r.dataset_id.as_deref()?;
+    let extra = vec![
+        ("datasetId[]".to_string(), dataset.to_string()),
+        ("size".to_string(), format!("{}", r.size)),
+        ("granuleId".to_string(), r.id.clone()),
+    ];
+    let out_name = format!("add_download_{idx}.json");
+    let text = service_post(jar, ADD_DOWNLOAD_URL, &extra, &out_name, HTTP_BOUND_S)?;
+    let path = PathBuf::from(out_dir).join(format!("jaxa_gportal_{out_name}"));
+    if fs::write(&path, &text).is_err() {
+        eprintln!("jaxa add_download: write {} returned void", path.display());
+        return None;
+    }
+    eprintln!(
+        "jaxa add_download: {} | granule {} size {} file_url {}",
+        path.display(),
+        r.id,
+        r.size,
+        file
+    );
+    Some(true)
 }
 
 fn quota_json(text: &str) -> Option<String> {
@@ -767,8 +1030,22 @@ fn main() {
         },
         None => 100,
     };
+    let pages: u64 = match arg_value(&args, "--pages") {
+        Some(v) => match v.parse() {
+            Ok(n) if n >= 1 => n,
+            _ => {
+                eprintln!("jaxa_gportal_compiler: --pages carries no page count >= 1 — refused");
+                std::process::exit(2);
+            }
+        },
+        None => 1,
+    };
 
-    let Some(catalog) = catalog_search(&jar, &dataset, &from, &to, count, "catalog.json") else {
+    let dump_raw = args.iter().any(|a| a == "--catalog-raw");
+    let use_csw = pages > 1 || args.iter().any(|a| a == "--csw");
+    let Some(catalog) = catalog_pages(
+        &jar, &dataset, &from, &to, count, pages, &out_dir, dump_raw, use_csw,
+    ) else {
         eprintln!(
             "jaxa_gportal_compiler: the catalog search returned void — no manifest (0 honored)"
         );
@@ -823,6 +1100,104 @@ fn main() {
             std::process::exit(1);
         }
     }
+    if args.iter().any(|a| a == "--download") {
+        let limit: u64 = match arg_value(&args, "--download-limit") {
+            Some(v) => match v.parse() {
+                Ok(n) if n >= 1 => n,
+                _ => {
+                    eprintln!(
+                        "jaxa_gportal_compiler: --download-limit carries no count >= 1 — refused"
+                    );
+                    std::process::exit(2);
+                }
+            },
+            None => 1,
+        };
+        let mut orderable: Vec<&Record> = Vec::new();
+        let mut skipped = 0usize;
+        for r in catalog.records.iter().take(limit as usize) {
+            if r.dataset_id.is_some() && (r.app_file_path.is_some() || r.url.is_some()) {
+                orderable.push(r);
+            } else {
+                skipped += 1;
+            }
+        }
+        if orderable.is_empty() {
+            eprintln!(
+                "jaxa_gportal_compiler: no record of the first {limit} carries datasetId+file url — no order ({} skipped, 0 honored)",
+                skipped
+            );
+            std::process::exit(1);
+        }
+        match check_download_config(&jar, &orderable, &out_dir) {
+            Some(true) => eprintln!(
+                "jaxa check_dlconfig: SUCCESS ({} item(s), {skipped} skipped)",
+                orderable.len()
+            ),
+            Some(false) => {
+                eprintln!("jaxa_gportal_compiler: the download config gate refused");
+                std::process::exit(1);
+            }
+            None => {
+                eprintln!("jaxa_gportal_compiler: the download config response returned void");
+                std::process::exit(1);
+            }
+        }
+        for (i, r) in orderable.iter().enumerate() {
+            match add_download(&jar, r, i, &out_dir) {
+                Some(true) => {}
+                Some(false) | None => {
+                    eprintln!(
+                        "jaxa_gportal_compiler: add_download for {} returned void",
+                        r.id
+                    );
+                    std::process::exit(1);
+                }
+            }
+        }
+        if args.iter().any(|a| a == "--fetch-file") {
+            let max_bytes = match arg_value(&args, "--probe-bytes") {
+                Some(v) => match v.parse::<u64>() {
+                    Ok(n) if n >= 1 => Some(n),
+                    _ => {
+                        eprintln!(
+                            "jaxa_gportal_compiler: --probe-bytes carries no byte count >= 1 — refused"
+                        );
+                        std::process::exit(2);
+                    }
+                },
+                None => None,
+            };
+            for (i, r) in orderable.iter().enumerate() {
+                let Some(url) = download_url(r) else {
+                    eprintln!("jaxa fetch: {} carries no file url", r.id);
+                    std::process::exit(1);
+                };
+                let path = PathBuf::from(&out_dir).join(format!("jaxa_gportal_{i}_{}.bin", r.id));
+                match fetch_file(&jar, url, &path, max_bytes) {
+                    Some((code, size)) if (200..300).contains(&code) => eprintln!(
+                        "jaxa fetch: {} → HTTP {code}, {size} B, {}",
+                        r.id,
+                        path.display()
+                    ),
+                    Some((code, _)) => {
+                        eprintln!("jaxa fetch: {} returned HTTP {code}", r.id);
+                        std::process::exit(1);
+                    }
+                    None => {
+                        eprintln!("jaxa fetch: {} returned void", r.id);
+                        std::process::exit(1);
+                    }
+                }
+            }
+        } else {
+            eprintln!(
+                "jaxa_gportal_compiler: {} product(s) registered; payload transfer via HTTP GET file_url with the session cookie, or SFTP {SFTP_HOST}:{SFTP_PORT}",
+                orderable.len()
+            );
+        }
+    }
+
     if args.iter().any(|a| a == "--ci-mode") && !upload_release(NETLOC, &manifest) {
         eprintln!("jaxa_gportal_compiler: CDN upload returned void");
         std::process::exit(1);

@@ -1,4 +1,12 @@
 
+ausstehend
+queue phi/pipeline/queue/sources_potential_pre-cdn_9k_richest.φ
+note 825 Blöcke am Datenträger (gitignored); 1387 3-Token-field-Direktiven ohne Force/Einheit/τ, 826 source ohne Parser-Arm; Konverter-Spec (per-Feld-Registry) fehlt → 0/729 ohne Fabrikation konvertierbar (folge140.md:112).
+
+ausstehend
+queue phi/pipeline/queue/sources_potential_pre-cdn_params.φ
+note 63 Blöcke am Datenträger (gitignored); 19 field, 59 source, 14 count; Join-Paar zu _9k_richest, dieselbe Wurzel: 3-Token-Felder ohne Force/Einheit/τ, source ohne Parser-Arm.
+
 disponiert
 kandidat http://pithia.cbk.waw.pl/tap
 note 2026-09-27 released in phi/blocked_sources.φ (Backend tot: PG refused, /tap/tables 500; Arm epncore-spatial steht parse.rs:319); planeto decline registry/katalog (declined_sources.φ:213).

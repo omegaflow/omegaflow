@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: c62cec432f3fdc619902e9cec7e97a8c44fffc2ea6c5ad5915c356c9bfe302a2
+  sha256: ba47628a1415b6785004e00241e049889f9fd853ceda5b41fadf447f354b9a64
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -54,9 +54,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **B-Pfad gemessen (Rat-Auftrag, 2026-10-04):** `src/archivar/relay.rs` (1618) trägt Feld-Rahmen (26×f64) + statische JS — **keine** Binär-Asset-Route; `static/*.js` fetcht `dr3_stars.bin`/`ephemeris_de440_*` **nicht**. Operator-Wort (`ereignisse.φ:56545`): B = **serverlose Membran an `omegaflow.space`, kein Server-Hosting** → der lokale Kanal ist B's Weg nicht; die vier Assets müssen same-origin am Pages-**Artefakt** liegen. `pages-deploy.yml` baut `_site` via `upload-pages-artifact` (Artefakt, keine Repo-Historie) → Asset-Staging ist ein Workflow-Edit im eigenen Repo, **kein Drittakt**. A/C (Cloudflare-Worker/R2) entfallen; B warum: Funding-Basis.
 - **B-Staging gesetzt (Operator-Wort „ja bitte", 2026-10-04):** `.github/workflows/pages-deploy.yml` lädt die vier Assets aus dem Release nach `_site/`, prüft `sha256sum` gegen die gemessenen CDN-Digests (dr3_stars 75 001 828 B `fb9a1408…` vom Tag `ssd.jpl.nasa.gov`; de440 je 6 629 784 B `adc990bc…`/`acb42881…`/`9d059db3…` vom Tag `ssd.jpl.nasa.gov-de`), kopiert `static/membrane.html` mit. Same-origin unter `omegaflow.space/<name>`. **Riss gemessen:** `ssd.jpl.nasa.gov-gaia/dr3_stars.bin` = 95 424 168 B `745a3f71…` (Register `:12507`, `format catalog_tycho`) ≠ B-Stand.
 - **nvss-Härtung (Operator-Wort „umsetzen", 2026-10-04):** `tools/harvest/src/bin/vizier_asu_compiler.rs` um Mirror-Fallback + 3 Retry-Runden erweitert (`ASU_MIRRORS`: cds.unistra.fr / cfa.harvard.edu / u-strasbg.fr; `asu_fetch_mirrors`); `cargo build --bin vizier_asu_compiler` grün. Gemessen: ASU lebt (SDSS 0..47 → HTTP 200, 12,5 MB), TAPVizieR weiter 503; der CI-Fehlschlag war ein ungehärteter Einzelversuch, keine tote Route.
-- **D5 geklärt (Rat + Schwarm, 2026-10-04):** „Röhren-Asset" ohne Körper (`zeugnis.md:383`); Riss Rat (`wartend`, Bau Mountain/River) vs Schwarm (Vlies = §10-Feld → `descoped`-Kandidat). Status von `blockiert` auf `wartend` gesetzt, an Mountain/River geroutet.
+- **D5 geklärt (Rat + Schwarm, 2026-10-04; Namensentscheid):** „Röhren-Asset" ohne Körper (`zeugnis.md:383`); **Entscheid:** Röhren-Asset = position-indizierte 20k-Abbildung (§14.1), nicht das §10-Vlies (`vlies_density.vlde`, gebaut). Riss getragen: `die-weberin.md:276-279` (liest es als Vlies) vs `zeugnis.md:374-376`. Status `wartend`, Producer bei Mountain/River.
 - **Port-Schritt (Taucher, 2026-10-04):** `kasi_compiler.rs` + `.github/workflows/kasi-cdn.yml` gebaut (KASI_DALO public, live 11/1000/100 Sätze); `clpds_compiler.rs` + `clpds-cdn.yml` gebaut (CLPDS-Dateien **öffentlich** gemessen, catalogue 98 + files 568 396, Annex-Arm offen); LEOS = Daten-Absenz; JAXA_GPORTAL = Account; Shandong-Zeile `:444` stale (nicht in `phi/`). `ledger.φ:6` SSDC → `disponiert` (query.php CAS-Login, TAPSSDC 69 Tabellen / 0 CSES → `blocked_sources.φ:135`); `index.φ` 5 offen.
-- **Port-Nachtrag (Taucher, 2026-10-04):** **CLPDS-Annex-Arm gebaut** (`clpds_compiler.rs --with-annex`, Cap 100, live 2 IDs). **JAXA_GPORTAL gegen die Secrets gemessen: Zugang offen** (`POST /gpr/auth/authenticate.json` 200, `catalog_records.json` 15 949, Quota voll) → nächster Bau: Parser + `add_download.json`. **LEOS keine Absenz**: `/api/admin/data/front/*` auth-gated (`40301`). **`index.φ` 5→3 offen** (`:22`/`:31` `erledigt`).
+- **Port-Nachtrag (Taucher, 2026-10-04):** **CLPDS-Annex-Arm gebaut** (`clpds_compiler.rs --with-annex`, Cap 100, live 2 IDs). **JAXA_GPORTAL gegen die Secrets gemessen: Zugang offen** (`POST /gpr/auth/authenticate.json` 200, `catalog_records.json` 15 949, Quota voll); **Parser + Download-Arm gebaut** (live `check_dlconfig` SUCCESS, `add_download` 200, `fetch` 206; CSW-Paginierung `--pages`). **LEOS keine Absenz**: `/api/admin/data/front/*` auth-gated (`40301`). **`index.φ` 5→3 offen** (`:22`/`:31` `erledigt`).
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -133,9 +133,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Register-Träger — `phi/pipeline/index.φ` + `ledger.φ`
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Port-Schritt `index.φ`; `blocked_sources.φ:135` (Mountain)
-- **Lage:** (gemessen 2026-10-04) `index.φ` = **3 offen** (`:3`/`:4` korrupte Queue; `:29` undisponierte Live-Kandidaten); `:22` b2find + `:31` copernicus → **`erledigt`**; `ledger.φ:6` SSDC → **`disponiert`** gesetzt (query.php = CAS-Login, TAPSSDC 69 Tabellen / 0 CSES), verweist auf `blocked_sources.φ:135`. Riss: `wartend.φ:10` zitiert `ledger.φ:15-16` (Zeilen verschoben).
+- **Lage:** (gemessen 2026-10-04) `index.φ` = **3 offen**: `:3` (825 `url`-Blocks / 1387 3-Token-`field`, Konverter-Spec fehlt → Synthese = Fabrikation), `:4` (63 `url`/19 `field`, Wurzel wie `:3`), `:29` (`archeology_gaps` 52 candidate/20 decline/3 dead/1 disponiert, Register-Kreuzprobe gelaufen; Disposition = Mountain). `:22` b2find + `:31` copernicus → **`erledigt`**; `ledger.φ:6` SSDC → **`disponiert`** (query.php = CAS-Login, TAPSSDC 69 Tabellen / 0 CSES) → `blocked_sources.φ:135`. Riss: `wartend.φ:10` zitiert `ledger.φ:15-16` (Zeilen verschoben).
+- **Lage (Queue, `ledger.φ`):** `825 Blöcke am Datenträger (gitignored); 1387 3-Token-field-Direktiven ohne Force/Einheit/τ, 826 source ohne Parser-Arm; Konverter-Spec (per-Feld-Registry) fehlt → 0/729 ohne Fabrikation konvertierbar (folge140.md:112).` · `63 Blöcke am Datenträger (gitignored); 19 field, 59 source, 14 count; Join-Paar zu _9k_richest, dieselbe Wurzel: 3-Token-Felder ohne Force/Einheit/τ, source ohne Parser-Arm.`
 - **Blockade:** `blocked_sources.φ:134-136` noch `pending` ohne `reg` (Mountain → `blocked account`)
-- **Braucht:** Mountain setzt `:135` `blocked account` + `reg`; dann Operator/PI via Future. Die 5 `index.φ`-Einträge: Merge-/Void-Port.
+- **Braucht:** Mountain setzt `:135` `blocked account` + `reg`; dann Operator/PI via Future. Die 3 verbleibenden `index.φ`-Einträge: Konverter-Spec (`:3`/`:4`) + Disposition (`:29`) durch Mountain.
 
 ### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`
 - **Status:** wartend | **Bindung:** eigen (Meta-Träger)
@@ -147,7 +148,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### `blocked_sources.φ` mycelium-Portale (KASI gebaut; CLPDS offen; LEOS/JAXA)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `kasi-cdn.yml`-Lauf; `clpds_compiler.rs`; JAXA-Konto (Operator)
-- **Lage:** (gemessen 2026-10-04) **KASI_DALO** `:163` — API public (`/api/{MIRIS,KMTNet,KVN}/search` 200: 11/1000/100 Sätze), **Compiler `kasi_compiler.rs` + `kasi-cdn.yml` gebaut** (kein Key). **CLPDS** `:143` — Dateien **öffentlich** (`clpds.bao.ac.cn/PUBDATA/…A.0A` 200, 534 450 B; Login-Annahme widerlegt); **Compiler `clpds_compiler.rs` + `clpds-cdn.yml` gebaut** (catalogue 98 + files 568 396; `dataAnnex`-URL nur im Detail → separates Annex-Arm). **LEOS** `:139` — **keine Absenz**: SPA-„暂无数据" = Pre-Login-Zustand, dahinter auth-gated Katalog-API `/api/admin/data/front/*` (`40301` ohne Login). **JAXA_GPORTAL** `:131` — **Zugang gemessen offen** (`POST /gpr/auth/authenticate.json` 200 mit den Secrets; `catalog_records.json` 15 949 Records; Download-Quota voll); **Compiler `jaxa_gportal_compiler.rs` + `jaxa-gportal-cdn.yml` gebaut** (live 45/5 Records); Download-Arm `add_download.json` offen. **Shandong** — nicht in `phi/` (Handover `:444` stale → Riss).
+- **Lage:** (gemessen 2026-10-04) **KASI_DALO** `:163` — API public (`/api/{MIRIS,KMTNet,KVN}/search` 200: 11/1000/100 Sätze), **Compiler `kasi_compiler.rs` + `kasi-cdn.yml` gebaut** (kein Key). **CLPDS** `:143` — Dateien **öffentlich** (`clpds.bao.ac.cn/PUBDATA/…A.0A` 200, 534 450 B; Login-Annahme widerlegt); **Compiler `clpds_compiler.rs` + `clpds-cdn.yml` gebaut** (catalogue 98 + files 568 396; `dataAnnex`-URL nur im Detail → separates Annex-Arm). **LEOS** `:139` — **keine Absenz**: SPA-„暂无数据" = Pre-Login-Zustand, dahinter auth-gated Katalog-API `/api/admin/data/front/*` (`40301` ohne Login). **JAXA_GPORTAL** `:131` — **Zugang gemessen offen** (`POST /gpr/auth/authenticate.json` 200 mit den Secrets; `catalog_records.json` 15 949 Records; Download-Quota voll); **Compiler `jaxa_gportal_compiler.rs` + `jaxa-gportal-cdn.yml` gebaut** (live 45/5 Records); **Download-Arm gebaut** (`check_dlconfig` SUCCESS → `add_download` 200 → `fetch` HTTP 206; CSW-Paginierung). Offen: Workflow-Verdrahtung + `sources.φ`-Registrierung (Mountain). **Shandong** — nicht in `phi/` (Handover `:444` stale → Riss).
 - **Blockade:** KASI/CLPDS = CI-Dispatch/Registrierung; JAXA = Parser/Download-Arm; LEOS = Login-Gate
 - **Braucht:** KASI + CLPDS dispatchten (sha + `sources.φ`-Block Mountain); JAXA-Parser (Search/Quota/Download); LEOS `blocked account` (Mountain-Register).
 
@@ -174,10 +175,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### D5-Orphan-Residuum — Röhren-Asset (Rat + Schwarm, 2026-10-04)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Definition/Producer des Röhren-Assets steht — `docs/concepts/zeugnis.md:383` §14.4
-- **Lage:** (gemessen 2026-10-04, Rat + Schwarm) „Röhren-Asset" hat **keinen Körper**: genau ein Vorkommen im Baum (`zeugnis.md:383`), kein Format/Magic/Producer/Reader. **Riss zwischen Rat und Schwarm, ungeglättet:** Rat → eigener Bau-Auftrag für Mountain/River (nicht Mycelium); ungebaut = `absent` (`zeugnis.md:385-387`). Schwarm (Baum-Lesung) → das §10-Feld ist mit dem **Vlies** bereits realisiert (`src/archivar/vlies.rs` MAGIC `VLDE`, `vlies_density_compiler.rs`, `vlies-density-cdn.yml`, `phi/witnesses.φ:121/:124`, Asset HTTP 206 gemessen) → `descoped`-Kandidat. Offener Riss darunter: `die-weberin.md:276-279` (20k-Abbildung „gebaut") vs `zeugnis.md:374-376` („wird komplett gebaut").
-- **Blockade:** keine harte — das Label war der Block (8 Atome „kein Schritt zur Kante")
-- **Braucht:** Producer-Definition (Mountain/River); der CDN-Weg folgt dem Vlies-Muster (`src/archivar/cdn.rs:41` `upload_release`/`--ci-mode`) sobald sie steht.
+- **Trigger:** Producer der position-indizierten 20k-Abbildung steht (Mountain/River) — `docs/concepts/zeugnis.md:383` §14.4
+- **Lage:** (gemessen 2026-10-04) Der `Röhren-Asset`-String hat genau ein Vorkommen im Baum (`zeugnis.md:383` §14.4). **Namensentscheid:** Röhren-Asset = die position-indizierte 20k-Abbildung (§14.1), **nicht** das §10-Vlies — §10 benennt die Dichtefelder explizit als Vlies, realisiert als `vlies_density.vlde` (`src/archivar/vlies.rs` MAGIC `VLDE`, `vlies_density_compiler.rs`, `vlies-density-cdn.yml`, `phi/witnesses.φ:121-124`, gebaut+manifestiert); §14.4 nennt den CDN-Manifestations-Weg eines **eigenen** Assets (20k-Tafeln → position-indizierter Bestand), das keinen Producer/Format/Reader hat → `absent`. **Riss, ungeglättet:** `die-weberin.md:276-279` + §6 liest dieselbe Abbildung als Vlies-Dichte (`vlies_density_compiler`) = gebaut; `zeugnis.md:374-376` §14.1 führt sie als eigenen Bau-Linien-Abschnitt (position-indizierter Bestand, Gold-Katalog als Stichprobe). Beide Zeugen getragen, nie geglättet.
+- **Blockade:** Producer/Format/Reader des position-indizierten Bestands fehlen (kein Format/Magic im Baum)
+- **Braucht:** Producer der position-indizierten 20k-Abbildung (Mountain/River); das §10-Vlies ist gebaut und darf nicht als Röhren-Asset gespiegelt werden. Der CDN-Weg folgt `src/archivar/cdn.rs:41` `upload_release`/`--ci-mode` sobald er steht.
 
 ### Weberin-Eignung — zweite Linie + Archiv-Route (`docs/surveys/survey-2026-10-02-weberin-zweite-linie.md`)
 - **Status:** wartend | **Bindung:** eigen
@@ -219,7 +220,7 @@ Origin: mycelium-folge229 (adressierte Blöcke mountain-230 gefaltet).
 - **EEG-Portale `:231/:235/:239`** — EDF-Arme gebaut (`main_flow.rs:3237`); offen nur Registration/DUA (→ Future) + Asset.
 - **Weberin-Astrometrie-Serie `:170–:202`** — Arm gebaut (`extract.rs:210` `astrometry_series`); offen allein deine Disposition der 8 `pending`-Zeilen.
 - **Vier Serien-Assets (rixs/gbco/gmrt/gl30)** — offene Witness-Epochen-Endpunkte (abgeleitete `axis value`-Textserie je Epoche); River liefert die Form.
-- **D5/Röhren-Asset** — `zeugnis.md:383` §14.4: „Röhren-Asset" ohne Datenvertrag; wenn es das position-indizierte Bestand (§14.1) oder die Tafel-Dichtefelder (§10, = Vlies) meint, gehört der Producer in deine Bau-Linie. Riss: `die-weberin.md:276-279` vs `zeugnis.md:374-376`.
+- **D5/Röhren-Asset** — Namensentscheid (2026-10-04): das Röhren-Asset ist die position-indizierte 20k-Abbildung (§14.1), **nicht** das §10-Vlies (das ist `vlies_density.vlde`, gebaut). §14.4 verlangt damit einen eigenen Producer/Format/Reader — dein Bau; Riss getragen: `die-weberin.md:276-279` (liest es als Vlies) vs `zeugnis.md:374-376`.
 
 ## An river
 
@@ -229,7 +230,7 @@ Origin: mycelium-folge229 (adressierte Blöcke river-88 gefaltet).
 - **Serien-Assets (rixs/gbco/gmrt/gl30):** sobald die Register-Zeilen stehen, manifestiert Mycelium.
 - **B-Asset-Pfad gesetzt:** `pages-deploy.yml` lädt die vier B-Assets same-origin nach `omegaflow.space/<name>`: `fetch('/dr3_stars.bin')`, `fetch('/ephemeris_de440_{earth,moon,sun}.bin')`. `static/membrane.html` wird beim Deploy mitkopiert (`_site/membrane.html`). Baue die Seite auf genau diese Pfade; die Bytes sind sha-geprüft gegen die gemessenen CDN-Digests.
 - **Swarm TEC / Weberin-Astrometrie** — Arme gebaut (`extract.rs:3410` / `extract.rs:210` `astrometry_series`); offen sind die **Witness-Epochen-Endpunkte** (rixs/gbco/gmrt/gl30): je Epoche eine abgeleitete `axis value`-Textserie auf eigenem CDN-Endpunkt.
-- **D5/Röhren-Asset** — `zeugnis.md:383` §14.4; die Röhre ist als Live-Abfrage gebaut, das Feld als Vlies manifestiert; der Producer-Entscheid liegt bei Mountain/River.
+- **D5/Röhren-Asset** — Namensentscheid (2026-10-04): Röhren-Asset = position-indizierte 20k-Abbildung (§14.1), nicht das §10-Vlies; die Live-Röhre und das Vlies (`vlies_density.vlde`) stehen, der CDN-Manifestations-Weg des position-indizierten Bestands ist der offene Producer (Mountain). Riss: `die-weberin.md:276-279` vs `zeugnis.md:374-376`.
 
 ## An future
 
