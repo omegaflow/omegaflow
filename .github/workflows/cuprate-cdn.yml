@@ -30,6 +30,12 @@ jobs:
             --rixs kernels/spin728/exp_data/azimuthal_analysis \
             --out kernels \
             --ci-mode
+      - name: Emit the rIXS text series for the spectral epoch arm
+        run: |
+          cargo run -p omegaflow-harvest --release --bin rixs_series_compiler -- \
+            --zip kernels/spin728.zip \
+            --out kernels \
+            --ci-mode
       - name: Harvest cuprate RIXS charge/plasmon (Zenodo 15179114) and upload to CDN
         run: |
           mkdir -p kernels

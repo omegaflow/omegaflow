@@ -12373,6 +12373,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_hpm.bin
 format cses_hpm
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b52 (CSES_HPM_FG2_0028981; dataset 10.57760/sciencedb.06921, CC0)
 compiler tools/harvest/src/bin/cses_hpm_compiler.rs
+sha256 a6870b12d9b439b627b78009e180e2a932d5b766778e14fd7cbf20a9cf0e0172
 at earth
 ttl 604800
 field FG2_X cses_hpm_fg2_x_nt inverse-square em nT 86400 0.0 0.0
@@ -12395,6 +12396,7 @@ url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_scm.bin
 format cses_scm
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55 (SCM_ULF_L1_0028981; dataset 10.57760/sciencedb.06921, CC0)
 compiler tools/harvest/src/bin/cses_scm_compiler.rs
+sha256 c1fed9fa9e1fd2bfad2ec2f35209ee0c8b3dacc3a986b71d9f7fa8f1856f9545
 at earth
 ttl 604800
 field X_WAVE cses_scm_ulf_x_nt inverse-square em nT 86400 0.0 0.0
@@ -20034,6 +20036,14 @@ format astrometry_series
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
 sha256 2d1a8d9942bae59cb177ff6e0194757339cdc7aad69edfe1733117abd1ccec4f
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/sosb_lucky_star.ast1
+format astrometry_series
+origin https://occultations.ct.utfpr.edu.br/api/events?pageSize=100&page=1
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 6d848b990628207622f6fd402d646e132b3209a1ffd848772c35f7647ca71d3e
 at sun
 ttl 31536000
 

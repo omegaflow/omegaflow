@@ -164,3 +164,15 @@ url https://www.jma.go.jp/bosai/quake/data/list.json
 record erbq
 force seismic-body
 note JMA-Erdbebenliste (2026-10-01 gemessen, JSON): cod "+lat+lon-depth/", mag, at (ISO 8601 JST); depth in m, fehlendes cod → lat/lon/depth absent, mag "Ｍ不明" → absent; nie 0.0. quake_ptevent_compiler.
+
+witness substance
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_UD_0p33_0.txt
+record rixs
+force em
+note Epochen-Textserie des --spectral-Arms (Eloss/weight/err aus sw_spin.txt): UD q=(0.33,0), Zenodo 7286412, Zip im rixs_series_compiler entpackt. Paar mit OD1_0p33_0. Substance, em.
+
+witness substance
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt
+record rixs
+force em
+note Epochen-Textserie des --spectral-Arms (Eloss/weight/err aus sw_spin.txt): OD1 q=(0.33,0), Zenodo 7286412, Zip im rixs_series_compiler entpackt. Paar mit UD_0p33_0. Substance, em.
