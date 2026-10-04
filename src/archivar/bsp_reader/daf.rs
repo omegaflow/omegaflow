@@ -91,6 +91,14 @@ fn read_exact_at(file: &std::fs::File, buf: &mut [u8], offset: u64) -> std::io::
         }
         Ok(())
     }
+    #[cfg(not(any(unix, windows)))]
+    {
+        let _ = (file, buf, offset);
+        Err(std::io::Error::new(
+            std::io::ErrorKind::Unsupported,
+            "read_exact_at is unavailable on this target — use the byte path (DafFile::from_data)",
+        ))
+    }
 }
 
 pub const RECORD_BYTES: usize = 1024;
