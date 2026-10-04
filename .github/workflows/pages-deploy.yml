@@ -21,6 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: wasm-pack
     - run: |
         mkdir -p _site
         cp static/landing.html _site/index.html
@@ -29,6 +35,13 @@ jobs:
         ls -lh _site
     - name: Stage the membrane page (when it stands)
       run: cp static/membrane.html _site/membrane.html 2>/dev/null || true
+    - name: Build the wasm web bundle (browser target, ES module)
+      continue-on-error: true
+      run: wasm-pack build --target web --release --out-dir pkg
+    - name: Stage the wasm bundle next to the membrane page
+      run: |
+        cp pkg/omegaflow.js pkg/omegaflow_bg.wasm _site/ 2>/dev/null \
+          || echo "wasm bundle absent — the membrane stays an honest black"
     - name: Stage the B assets same-origin (serverless membrane)
       run: |
         set -euo pipefail
