@@ -69,6 +69,7 @@ pub mod flyby_encounters;
 pub mod footprint;
 pub mod fresnel;
 pub mod fugin;
+pub mod gaia_rrl;
 pub mod gaia_sso;
 pub mod galileo_odr;
 pub mod gdp_drifter;
@@ -209,6 +210,7 @@ pub mod types;
 pub mod units;
 pub mod uvfits;
 pub mod uws;
+pub mod viking_grav;
 pub mod wqp_result;
 
 pub use astrometry::*;

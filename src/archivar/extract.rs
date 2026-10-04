@@ -111,6 +111,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "jaxa_gportal" => jaxa_gportal::parse_series(bytes),
         "wqp_result" => wqp_result::parse_series(bytes),
         "eea_noise" => eea_noise::parse_series(bytes),
+        "gaia_rrl" => gaia_rrl::parse_series(bytes),
+        "viking_grav" => viking_grav::parse_series(bytes),
         _ => None,
     }
 }
@@ -212,6 +214,7 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
         }
         "hips_png" => hips::parse_bin(bytes).map(|_| 1),
         "astrometry_series" => astrometry_series_counts(bytes).map(|(_, samples)| samples),
+        "viking_grav" => pds3_table::parse_table(bytes).map(|t| t.rows.len()),
         _ => None,
     }
 }
@@ -364,6 +367,8 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "jaxa_gportal" => jaxa_gportal::declared_fields(tau),
         "wqp_result" => wqp_result::declared_fields(tau),
         "eea_noise" => eea_noise::declared_fields(tau),
+        "gaia_rrl" => gaia_rrl::declared_fields(tau),
+        "viking_grav" => viking_grav::declared_fields(tau),
         _ => Vec::new(),
     }
 }
@@ -739,6 +744,8 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "jaxa_gportal" => jaxa_gportal::component_name(comp),
         "wqp_result" => wqp_result::component_name(comp),
         "eea_noise" => eea_noise::component_name(comp),
+        "gaia_rrl" => gaia_rrl::component_name(comp),
+        "viking_grav" => viking_grav::component_name(comp),
         _ => None,
     }
 }

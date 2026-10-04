@@ -74,6 +74,15 @@ idempotent true
 timeout 120
 
 asset present
+format gaia_rrl
+tag gea.esac.esa.int
+arm gaia_rrl_compiler
+workflow gaia-rrl-cdn.yml
+pattern ^gaia_rrl\.bin$
+idempotent true
+timeout 240
+
+asset present
 format gedi_l2a
 tag data.lpdaac.earthdatacloud.nasa.gov
 arm gedi_l2a_compiler
@@ -360,6 +369,15 @@ tag earthquake.usgs.gov
 arm usgs_comcat_compiler
 workflow usgs-comcat-cdn.yml
 pattern ^usgs_comcat_m45\.bin$
+idempotent true
+timeout 240
+
+asset present
+format viking_grav
+tag pds-geosciences.wustl.edu
+arm viking_grav_compiler
+workflow viking-grav-cdn.yml
+pattern ^viking_grav_vmar001l\.bin$
 idempotent true
 timeout 240
 
