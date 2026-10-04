@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: 93887f3e8e4c6241d5708c017749522991f1d1ab4ce761bd9fc9dc95b2b21d00
+  sha256: 6a86eefb9536de53063c3286c3f0863dc6e35fcb7cfaf8f8f90dcd6066232fd0
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -67,12 +67,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Offen (aufgeschlüsselt)
 
-### `nvss-cdn` — TAPVizieR 503, Wiederholungslauf offen
+### `nvss-cdn` — ASU-Fallback gebaut, TAPVizieR 503
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** TAPVizieR wieder erreichbar → `gh workflow run nvss-cdn.yml`
-- **Lage:** (gemessen 2026-10-04 via `archive_search --verdict`) Host `tapvizier.cds.unistra.fr` **503** (stage 1 + Proton; Wayback 200). Der UWS-Fehlerarm steht.
-- **Blockade:** TAPVizieR 503
-- **Braucht:** nach Host-Rückkehr `gh workflow run nvss-cdn.yml`, dann `ci_manage log <id>` (die `<errorSummary>`-Zeile); danach Register-Rebind `phi/sources.φ` (`nvss.json`) auf `ssd.jpl.nasa.gov-nvss/`.
+- **Trigger:** `nvss-cdn 37179915112` → `ci_manage log`
+- **Lage:** (gemessen 2026-10-04) TAPVizieR **503**; Fallback `tools/harvest/src/bin/vizier_asu_compiler.rs` (VizieR ASU TSV, lokaler Crossmatch) + `nvss-cdn.yml` `route: auto|tap|asu` gebaut, `nvss-cdn 37179915112` dispatcht. Kein TAP-Mirror existiert (VizieR-Spiegel sind ASU-only; HEASARC-TAP führt `V/154/sdss16` nicht).
+- **Blockade:** keine (ASU-Route)
+- **Braucht:** Lauf lesen; bei Grün Register-Rebind `nvss.json`.
 
 ### EMM/MBRSC — Secret erneuert, Manifest-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
@@ -130,13 +130,6 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Bindungen (Probe-Writer) stehen.
 - **Braucht:** Probe-Writer-Rebindung; dann je Lösch-Klasse ein Atom.
 
-### `naif.jpl.nasa.gov` — unbound canonical tag; Bindung blockiert am fehlenden `format`-Arm
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Mountain setzt einen `phi/sources.φ`-`format`-Arm für rohe CK/DAF-Kernel (oder entscheidet `format reference` als provenance-only)
-- **Lage:** (gemessen 2026-10-04) Der Tag trägt **575** rohe SPICE-Kernel (`.bc` 570, `.bsp` 4, `.tsc` 1); `phi/sources.φ` trägt **0** naif-Bindungen (97 `naif`-Treffer = `origin`-Provenienz). Die **Origins sind 575/575 ableitbar** (GLL-CK-Indexe prime/ext/c23/c30/i24 + root, `a_old_versions`, JUICE, SCLK; Map `/tmp/opencode/naif_origin_map.tsv`). **Blocker:** kein `format`-Token für binäre `.bc`/`.tsc` (Census 186 Formate: `spk` 7, `kernel_text` 4, aber `ck`/`daf`/`sclk` = 0); dem SPK-Template fehlt zudem das Frame-Feld (`parse.rs:82`). Writer (`ephemeris_compiler`/`manifestor`) lesen `sources_index.φ` und fetchen `naif.jpl.nasa.gov` direkt — **0** CDN-Release-Referenzen im Code; eine Bindung wäre Provenienz-only.
-- **Blockade:** fehlender Format/Frame-Arm (Mountain)
-- **Braucht:** Mountain-Format-Arm für rohe Kernel; dann die 575 Origins binden.
-
 ### Register-Träger — `phi/pipeline/index.φ` + `ledger.φ` SSDC offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster Port `phi/pipeline/index.φ`; SSDC-Meldung `state/zustand/wartend.φ:10`
@@ -185,6 +178,15 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-10-03) **kein** `.done` (`register_lookup --fired` meldet den Trigger, die Dateimessung widerlegt das: `unread`-Fire). Synthesen liegen vor.
 - **Blockade:** Schwarm-Läufe ohne Done-Marker
 - **Braucht:** `sread state/stimmen/2026-10-02_weberin-archiv.log` bei Done-Marker; jede URL per `--verdict`.
+
+## Nachtrag 2 (Operator-Wort: alle Punkte, viele Taucher)
+
+- **`naif.jpl.nasa.gov` — gebunden (Blocker war ein Fehlschluss).** 575 rohe Kernel als `format reference`-Provenienz (Origins 575/575, sha aus dem CDN-Digest, `ttl 31536000`) in `phi/sources.φ`; `register_sort` canonical. `format reference` (`parse.rs:83`) ist der Provenienz-Sitz, kein neuer Arm nötig.
+- **`nvss` — ASU-Fallback gebaut + dispatcht.** Neu `tools/harvest/src/bin/vizier_asu_compiler.rs` (VizieR ASU TSV + lokaler Crossmatch; Fixture-Tests grün) + `nvss-cdn.yml` `route: auto|tap|asu`; `nvss-cdn 37179915112` dispatcht. TAPVizieR bleibt 503; kein TAP-Mirror existiert.
+- **CSES — Compiler + Workflow + Dispatch.** Neu `tools/harvest/src/bin/cses_lap_compiler.rs` (HDF5; ScienceDB `10.57760/sciencedb.06921`, CC0, anonymous; `geo.rs`/`extract.rs`-Arm `cses_lap`, `MAGIC_CSES_LAP`), Register-Block + `.github/workflows/cses-lap-cdn.yml`; `cses-lap-cdn 37180476998` dispatcht (manifest-pending → Tag `scidb.cn`).
+- **`swarm_tec` — CDN-Wiring + Workflow + Dispatch.** `swarm_tec_compiler.rs` um Fetch (`--url` ESA-ZIP → `inflate::zip_members`) + `--ci-mode`-Upload erweitert; neu `.github/workflows/swarm-tec-cdn.yml`; `swarm-tec-cdn 37180445982` dispatcht (26827 Records, sha `42550ef8…`).
+- **`bidsleep`-Kraft geheilt:** 3 Zeilen `advective m/s2` → `gravity m/s2` (Beschleunigung gehört zu gravity, wie die 3 Geschwister-Zeilen).
+- **`pradan_ch2`:** `field pradan_ch2_cla_l1_counts … inverse-square em count` ergänzt (main_flow-Deklaration).
 
 ## LOCK
 
