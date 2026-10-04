@@ -325,9 +325,7 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
         "gras_2c" => {
             let recs = gras_2c::parse_series(bytes)?;
             let max_comp = recs.iter().map(|r| r.2).max()?;
-            let names: Vec<String> = (0..=max_comp)
-                .map(|k| format!("gras_2c_gate_{k:04}"))
-                .collect();
+            let names: Vec<String> = (0..=max_comp).map(gras_2c::gate_name).collect();
             (names, recs)
         }
         _ => return None,
@@ -346,6 +344,17 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             .collect(),
         names,
     })
+}
+
+pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<FieldConfig> {
+    match format {
+        "gras_2c" => names
+            .iter()
+            .enumerate()
+            .filter_map(|(comp, _)| gras_2c::gate_field(comp as u32, tau))
+            .collect(),
+        _ => Vec::new(),
+    }
 }
 
 pub fn sample_phase(channel: &Channel, sensor: &FieldConfig) -> Option<f64> {
@@ -6666,6 +6675,39 @@ mod fixed_width_series_tests {
         assert_eq!(named.rows[0].value, 2.5);
         assert_eq!(named.rows[0].freq, spectral::SPECTRAL_NO_BAND);
         assert_eq!(named.rows[0].bin_width, spectral::SPECTRAL_NO_BAND);
+    }
+
+    #[test]
+    fn gras_2c_declares_gate_channels_without_field_lines() {
+        let bin = gras_2c::write_bin(&[(1.5e9, 2.5, 0), (1.5e9 + 1.0, -3.5, 3)]);
+        let named = series_named("gras_2c", &bin).expect("named series parses");
+        let fields = series_declared_fields("gras_2c", &named.names, 604800.0);
+        assert_eq!(fields.len(), 4);
+        assert_eq!(fields[0].name, "gras_2c_gate_0000");
+        assert_eq!(fields[3].name, "gras_2c_gate_0003");
+        assert_eq!(fields[0].force, crate::force::force_id_of("em").unwrap());
+        assert_eq!(
+            fields[0].kernel,
+            crate::archivar::kernel_id_of("inverse-square").unwrap()
+        );
+        assert_eq!(fields[0].unit, gras_2c::GATE_UNIT);
+        assert_eq!(fields[0].tau, 604800.0);
+        assert_eq!(fields[0].freq, spectral::SPECTRAL_NO_BAND);
+        assert_eq!(fields[0].bin_width, spectral::SPECTRAL_NO_BAND);
+        let joined: Vec<&str> = named
+            .rows
+            .iter()
+            .filter_map(|row| {
+                let name = series_component_name("gras_2c", row.comp)
+                    .or_else(|| named.names.get(row.comp as usize).map(String::as_str))?;
+                fields
+                    .iter()
+                    .find(|fc| fc.name == name)
+                    .map(|fc| fc.name.as_str())
+            })
+            .collect();
+        assert_eq!(joined.len(), named.rows.len());
+        assert_eq!(joined, vec!["gras_2c_gate_0000", "gras_2c_gate_0003"]);
     }
 
     #[test]

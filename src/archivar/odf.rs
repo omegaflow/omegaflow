@@ -425,6 +425,55 @@ pub fn tnf_ranging_resolution(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
     let _ = tnf_seq_ranging_components(frame, bytes)?;
     None
 }
+
+pub const TNF_PAIR_TIME_WINDOW_S: f64 = 60.0;
+
+fn tnf_time_tag_seconds(frame: &TnfSfdu) -> Option<f64> {
+    let day0 = crate::archivar::lsk::days_from_civil(frame.year as i64, 1, 1)?;
+    Some((day0 + frame.doy as i64 - 1) as f64 * 86_400.0 + frame.sec)
+}
+
+fn tnf_ul_freq_candidate(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+    let end = frame.offset.checked_add(frame.total_len)?;
+    let slice = bytes.get(frame.offset..end)?;
+    let v = match frame.format_code {
+        TNF_FORMAT_DOPPLER_COUNT => tnf_dt6(frame, slice)?.ul_freq,
+        TNF_FORMAT_SEQUENTIAL_RANGE => tnf_dt7(frame, slice)?.ul_freq,
+        _ => return None,
+    };
+    (v.is_finite() && v > 0.0).then_some(v)
+}
+
+pub fn tnf_pair_ul_freq(frames: &[TnfSfdu], bytes: &[u8], ranging_frame: &TnfSfdu) -> Option<f64> {
+    let t = tnf_time_tag_seconds(ranging_frame)?;
+    let mut best_dist = f64::INFINITY;
+    let mut best_freq: Option<f64> = None;
+    let mut tied = false;
+    for f in frames {
+        if f.scft_id != ranging_frame.scft_id || f.mission_id != ranging_frame.mission_id {
+            continue;
+        }
+        let Some(freq) = tnf_ul_freq_candidate(f, bytes) else {
+            continue;
+        };
+        let Some(tf) = tnf_time_tag_seconds(f) else {
+            continue;
+        };
+        let d = (tf - t).abs();
+        if d > TNF_PAIR_TIME_WINDOW_S {
+            continue;
+        }
+        if d < best_dist {
+            best_dist = d;
+            best_freq = Some(freq);
+            tied = false;
+        } else if d == best_dist && best_freq != Some(freq) {
+            tied = true;
+        }
+    }
+    if tied { None } else { best_freq }
+}
+
 pub const TNF_FORMAT_DOPPLER_COUNT: u8 = 6;
 pub const TNF_FORMAT_SEQUENTIAL_RANGE: u8 = 7;
 pub const TNF_FORMAT_ANGLE: u8 = 8;
@@ -2278,6 +2327,81 @@ mod tests {
         let dl = scan_tnf_sfdus(&dt3).unwrap();
         let r = tnf_ranging_resolution_with_frq_up(&dl[0], &dt3, frq_up).expect("resolves");
         assert!((r - want).abs() < 1e-6, "DL got {r} want {want}");
+    }
+
+    fn tnf_frame(
+        format_code: u8,
+        scft_id: u8,
+        year: u16,
+        doy: u16,
+        sec: f64,
+        len: usize,
+    ) -> Vec<u8> {
+        let mut b = vec![0u8; len];
+        sfdu_label(&mut b, format_code, year, doy, sec);
+        b[39] = scft_id;
+        b
+    }
+
+    fn tnf_ranging_index(frames: &[TnfSfdu]) -> usize {
+        frames
+            .iter()
+            .position(|f| f.format_code == TNF_FORMAT_UL_SEQ_RANGING_PHASE)
+            .unwrap()
+    }
+
+    #[test]
+    fn tnf_pair_ul_freq_pairs_by_chain_and_time_tag() {
+        let mut dt6 = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12345.0, 220);
+        put_f64(&mut dt6, 174, 7.169e9);
+        let mut dt2 = tnf_frame(TNF_FORMAT_UL_SEQ_RANGING_PHASE, 7, 2015, 100, 12345.0, 214);
+        dt2[164] = 4;
+        dt2[165] = 24;
+
+        let mut buf = dt6.clone();
+        buf.extend_from_slice(&dt2);
+        let frames = scan_tnf_sfdus(&buf).unwrap();
+        let r = tnf_ranging_index(&frames);
+        assert_eq!(tnf_pair_ul_freq(&frames, &buf, &frames[r]), Some(7.169e9));
+
+        let mut dt6_far = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12300.0, 220);
+        put_f64(&mut dt6_far, 174, 1.0e9);
+        let mut buf2 = dt6_far.clone();
+        buf2.extend_from_slice(&dt6);
+        buf2.extend_from_slice(&dt2);
+        let frames2 = scan_tnf_sfdus(&buf2).unwrap();
+        let r2 = tnf_ranging_index(&frames2);
+        assert_eq!(
+            tnf_pair_ul_freq(&frames2, &buf2, &frames2[r2]),
+            Some(7.169e9)
+        );
+
+        let mut dt6_other = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 9, 2015, 100, 12345.0, 220);
+        put_f64(&mut dt6_other, 174, 8.4e9);
+        let mut buf3 = dt6_other.clone();
+        buf3.extend_from_slice(&dt2);
+        let frames3 = scan_tnf_sfdus(&buf3).unwrap();
+        let r3 = tnf_ranging_index(&frames3);
+        assert_eq!(tnf_pair_ul_freq(&frames3, &buf3, &frames3[r3]), None);
+
+        let mut dt6_late = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 13900.0, 220);
+        put_f64(&mut dt6_late, 174, 7.169e9);
+        let mut buf4 = dt6_late.clone();
+        buf4.extend_from_slice(&dt2);
+        let frames4 = scan_tnf_sfdus(&buf4).unwrap();
+        let r4 = tnf_ranging_index(&frames4);
+        assert_eq!(tnf_pair_ul_freq(&frames4, &buf4, &frames4[r4]), None);
+
+        let mut dt6_a = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12315.0, 220);
+        put_f64(&mut dt6_a, 174, 1.0e9);
+        let mut dt6_b = tnf_frame(TNF_FORMAT_DOPPLER_COUNT, 7, 2015, 100, 12375.0, 220);
+        put_f64(&mut dt6_b, 174, 2.0e9);
+        let mut buf5 = dt6_a.clone();
+        buf5.extend_from_slice(&dt6_b);
+        buf5.extend_from_slice(&dt2);
+        let frames5 = scan_tnf_sfdus(&buf5).unwrap();
+        let r5 = tnf_ranging_index(&frames5);
+        assert_eq!(tnf_pair_ul_freq(&frames5, &buf5, &frames5[r5]), None);
     }
 
     fn example_words() -> [u32; 9] {
