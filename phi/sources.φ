@@ -9173,6 +9173,20 @@ field eop_iers_ut1_utc_s eop_iers_ut1_utc_s inverse-square gravity s 86400 0.0 0
 field eop_iers_polar_motion_x_arcsec eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0 0.0
 field eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_catalogue.json
+format clpds
+origin https://clpds.bao.ac.cn/moon-admin/client/science/catalogue
+compiler tools/harvest/src/bin/clpds_compiler.rs
+at moon
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_files.jsonl
+format clpds
+origin https://clpds.bao.ac.cn/moon-admin/client/science/dataInfoList
+compiler tools/harvest/src/bin/clpds_compiler.rs
+at moon
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
 format argo_bgc
 origin https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz
@@ -9364,6 +9378,13 @@ compiler tools/harvest/src/bin/gong_compiler.rs
 at sun
 ttl 604800
 field gong_amp gong_mode_amplitude_m_s gaussian-inverse-square acoustic m/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gportal_12001000_2015-01-01_2015-01-01.json
+format jaxa_gportal
+origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
+compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/ams02_spec.bin
 format ams02_spec
