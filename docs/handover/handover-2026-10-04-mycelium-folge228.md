@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: 3ece33b6ab79e8b6f0bd5fbfb49d4dfcd5155bddd2eb12fb97965f0bbc373109
+  sha256: c82c75c2d17b268d39b0486770f7ca70de421b705ac7d62b37cdbd74d932b7be
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -56,6 +56,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **`ephemeris_juice.bin`-CDN gemessen:** `ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin` = **106 704 B**, sha `aeb3c82f…` (`archive_search --sniff`, 2026-10-04) — der **versiegelte Arc** liegt jetzt auf dem CDN, nicht mehr der Postflight `018ce2ca…`. `juice-arc-restore 37165635404` (success) + `flyby-path2-fill 37166537879` (success @`a064896a4`) haben den Arс gesetzt. Antwort an River unten.
 - **TAPVizieR erneut 503** (`archive_search --verdict`, stage 1 + Proton 503; Wayback 200) → `nvss` bleibt wartend.
 - **Kaguya-LRS** `pds3_binary_lrs_sw_wf_00n_007080e.bin` ist bereits registriert (`sources.φ:9188`, sha `772e51d1…` == API-Digest) — kein Rebind nötig.
+- **Nachtrag (Fortsetzung, Operator-Wort „alle Punkte, viele Taucher"):** (a) **sha256-Rebind** für `ephemeris_new_horizons_long` (`→28568e3c…`), `ephemeris_voyager1_long` (`→459a3912…`), `ephemeris_voyager2_long` (`→8d716add…`) — Register-sha war stale, gegen den CDN-Digest verifiziert. (b) **M3-Route**: `planetarydata.jpl.nasa.gov/img/data/m3/...` 206 (stage 1 + Proton), sha-identisch; Compiler-Konstanten + Register-`origin` umgestellt. (c) **`pds3_fixed_width`-Familie**: 389 Assets gemessen; der Bulk-Register-Versuch wurde am `unbacked_mirror`-Gate blockiert (kein `origin` in der Compiler-Form) und zurückgenommen. (d) **SSDC** `limadou.ssdc.asi.it/query.php` = CAS-Login-Wall (Playwright, 2026-10-04) — wartend. (e) **Step-5**: alle 13 Netlocs registriert außer `naif.jpl.nasa.gov` (0 Bindungen, s. Offen). (f) **Portale** gemessen: `clpds.bao.ac.cn` + `data.kasi.re.kr` tragen APIs; `gportal`/`leos` Login/SPA; Viking `vmar001l.dat` an beiden Kandidatenpfaden 404; `titanNotebook`/`Juno-CSV` heute ohne Antwort.
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -80,12 +81,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Refresh-Token abgewiesen
 - **Braucht:** frische Extraktion `localStorage.cognitoTokens.refresh_token` (Browser-Gruppe `emm`) → Repo-Secret; dann `emm-sdc-cdn` erneut dispatchen.
 
-### M3-Asset — Register live, CDN-Präsenz absent (CI-403)
+### M3-Asset — Route geheilt, Manifest-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** runner-erreichbare Route zu `pds-imaging.jpl.nasa.gov` (Mountain) oder ein Mirror
-- **Lage:** (gemessen 2026-10-03) `phi/sources.φ:9884` sha `5771de98…`; CDN `--verdict` 404; CI-Runner `.HDR` 403.
-- **Blockade:** runner-erreichbare Fetch-Route
-- **Braucht:** Mountain misst eine runner-erreichbare M3-Route; dann `pds3-img-cdn.yml`.
+- **Trigger:** `pds3-img-cdn.yml`-Lauf (in diesem Atom dispatcht) → `ci_manage log`
+- **Lage:** (gemessen 2026-10-04) `planetarydata.jpl.nasa.gov/img/data/m3/...` liefert `.HDR`/`.IMG` **206** (stage 1 + Proton exit; sha-identisch mit dem JPL-Produkt); `pds3_img_compiler`-Konstanten + Register-`origin` darauf umgestellt (Compiler-Host war hardcodiert).
+- **Blockade:** keine (Route messbar)
+- **Braucht:** Manifest-Lauf lesen; dann CDN-Präsenz des `pds3_img`-Assets.
 
 ### KPLO/KARI KPDS — registriert; Format `ephemeris_binary` — Reader-Route messen
 - **Status:** wartend | **Bindung:** eigen
@@ -101,12 +102,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Reader-Arm fehlt (Mountain)
 - **Braucht:** Archivar-Parser-Arm `pradan_ch2` (Mountain); dann `downloadFile`-Route für weitere Payloads.
 
-### Vega — `pds3-fixed-width --force` grün, Asset-Name↔Route offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Port-Schritt `docs/SOURCE_PORT.md`
-- **Lage:** (gemessen 2026-10-04) `pds3-fixed-width-cdn 37152262659` (force) = success; die neu-aktualisierten Assets unter `pds-smallbodies.astro.umd.edu` sind datums-codierte `pds3_fixed_width_*` (Force-Lauf 21:15Z). Vega 1/2 fehlt in `phi/sources.φ` (sgrep vega/mischa = 0); die Zuordnung `VEGA_ROUTE`→CDN-Dateiname ist nicht gemessen.
-- **Blockade:** Asset-Name↔Route-Zuordnung ungemessen
-- **Braucht:** `pds3_fixed_width_compiler.rs` `walk_vega`-Outputnamen messen, dann `url`-Zeile in `phi/sources.φ`.
+### `pds3_fixed_width`-Familie (Vega2-MISCHA + Phobos) — Registrierung blockiert am unbacked-Mirror-Gate
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** `print_register_lines` im Compiler emittiert `origin <tab-url>`
+- **Lage:** (gemessen 2026-10-04) 389 `pds3_fixed_width_*.bin` unter Tag `pds-smallbodies.astro.umd.edu` (Vega2-MISCHA-Fan-out: `asset_name = pds3_fixed_width_<tab-stem>.bin`; `VEGA_ROUTE = …/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/`). Ein Bulk-Insert der Compiler-Form (`url`/`format`/`ttl`) wurde vom Commit-Gate als **`unbacked_mirror`** blockiert (jeder Block braucht `origin`/`terms`) und wieder zurückgenommen; `phi/sources.φ` trägt nur die 5 bounded Edits.
+- **Blockade:** `origin`-Emission fehlt im Compiler (`pds3_fixed_width_compiler.rs::print_register_lines`)
+- **Braucht:** `print_register_lines` um die `origin <dat-url>`-Zeile erweitern, dann die 389 Blöcke mit Origin registrieren.
 
 ### Swarm TEC — `blocked_sources.φ:389`, Reader-Arm offen
 - **Status:** wartend | **Bindung:** eigen
@@ -136,6 +137,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Bindungen (Probe-Writer) stehen.
 - **Braucht:** Probe-Writer-Rebindung; dann je Lösch-Klasse ein Atom.
 
+### `naif.jpl.nasa.gov` — unbound canonical tag (Step-5-Riss)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Port-Schritt `docs/SOURCE_PORT.md` (Build-Writer auf das manifest-Release umstellen)
+- **Lage:** (gemessen 2026-10-04) Der Tag `naif.jpl.nasa.gov` trägt **575** rohe SPICE-Kernel (`.bc` 570/concrete, `.bsp` 4, `.tsc` 1); `phi/sources.φ` trägt **0** `releases/download/naif.jpl.nasa.gov`-Bindungen (die 97 `naif`-Treffer sind `origin`-Provenienz). Kein Namens-Overlap mit `ssd.jpl.nasa.gov-ephemeris` (64 kompilierte Bündel) → **unbound canonical tag**, kein stale Duplikat. Writer (`ephemeris_compiler`, `spacecraft_ephemeris_compiler`, `kernel-flatten.yml`) schreiben weiter auf den ssd-Tag.
+- **Blockade:** keine (Quelle 200)
+- **Braucht:** je konsumiertem Kernel eine `url`-Bindung unter dem naif-Tag; Writer-Umstellung auf das manifest-Release.
+
 ### Register-Träger — `phi/pipeline/index.φ` + `ledger.φ` SSDC offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster Port `phi/pipeline/index.φ`; SSDC-Meldung `state/zustand/wartend.φ:10`
@@ -146,9 +154,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` Marker
 - **Status:** wartend | **Bindung:** eigen (Meta-Träger)
 - **Trigger:** `register_lookup --orphan-docs` nennt ein neues trägerloses Dokument
-- **Lage:** (gemessen 2026-10-03) `--orphan-docs` = 0. **Riss:** die Marker-Zeile nennt `phi/sources.φ:15747/15950/15957` für voyager/new_horizons-Placeholder-URLs — diese Zeilen tragen heute fremden Inhalt (Datei verschoben).
+- **Lage:** (gemessen 2026-10-04) `--orphan-docs` = 0. Der `:75`-Marker (voyager/new_horizons-URL-Feder) ist **aufgelöst**: die drei `_long.bin` sind unter `ssd.jpl.nasa.gov-horizons` registriert (`sources.φ:16515/16546/16554`) und sha-rebunden; die Survey-Zeile ist auf den neuen Stand fortgeschrieben. Offen bleibt der `:42`-Marker (archivar_cache→repo/cache-Mapping).
 - **Blockade:** keine
-- **Braucht:** voyager/new_horizons-URL-Feder (survey:75) am heutigen Registerstand nachmessen und rebinden.
+- **Braucht:** `:42`-Marker am heutigen Baum nachmessen; dann schließen.
 
 ### `blocked_sources.φ` mycelium-Portale ohne Arm
 - **Status:** wartend | **Bindung:** eigen
