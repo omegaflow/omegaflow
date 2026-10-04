@@ -3,7 +3,7 @@
   session: River-Folge 88
   class: handover
   date: 2026-10-04
-  sha256: 50646799b04936d8871514ec641fde92d782e220a1ee36eb48d49bb66b545051
+  sha256: ca4273fd4324f80a1e75791ec59116b5c7bc87cd24bb749d7027013c9d88eef8
   status: live
 -->
 # Handover — River-Folge 88 (2026-10-04)
@@ -38,6 +38,7 @@ Wort | Datum | Quelle
 „ich möchte dass du bitte alle punkte bearbeitest nichts verschleppst nutze viele flash taucher" | 2026-10-04 | Operator (River 88) — alle offenen Punkte in einem Atom, flash-first
 „braucht es max oder pro?" | 2026-10-04 | Operator (River 88) — Dispatch-Profil-Rückfrage (Antwort: flash-first; max/pro nur bei gemessener flash-Fehllage)
 „CI-Triage: das rote ci-gate 37166323740 ist keine Sensory-Datei — register (Mountain), dropped-gate+format (Mycelium), clippy hdf4.rs:686 (Mountain/River)." | 2026-10-04 | Operator (River 88) — Job→Linien-Zuordnung des roten `ci-gate`
+„aber das hat doch nicht alles mit läufen zu tun? … und ist das wirklich gemessen?" | 2026-10-04 | Operator (River 88) — Prüfmaßstab: lauf-unabhängige Punkte arbeiten; `descoped` nur mit Baum-Befund
 
 ## Träger (Prosa, eigene)
 
@@ -61,166 +62,163 @@ Wort | Datum | Quelle
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (`class: survey`) — Anwendung des
   Maßstabs; Offen: keiner aus diesem Gate.
 
+## Entscheidungen (kein Offen)
+
+- **Workflow-Domäne (Rat, fünf Stimmen, 2026-10-04).** Eigentum folgt der Natur der
+  Datei, nicht dem Verzeichnis: der **Mess-Instrument-Körper** (`wy-max-t.yml`,
+  `bz-yearly-maxt.yml`, `field-te-query.yml` — sie tragen ein Probe-Bin als Aktuator)
+  gehört der messenden Linie (River); die **Transport-Grammatik** (Budget, Runner,
+  Toolchain, Manifestation) bleibt Mycelium, an beiden Enden benannt. Kein Riss ohne
+  zwei gemessene Linien über dieselbe Sache; „formal Mycelium" war ein unbenannter
+  Default. Die Shard-Fixes waren damit River-Akte.
+
 ## Offen (aufgeschlüsselt)
 
 ### fruehwarnsystem α-Ebene — wartet auf die wy-max-t-Null
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `wy-max-t 37174495789` (dispatched 2026-10-04, 9 Shards à 1111).
-- **Lage:** (gemessen 2026-10-04) der Vorgänger `37135385236` brach am 180-min-Job-Timeout
-  ab (Probes-Start 21:43:51Z, `The operation was canceled.` 00:43:14Z; 3×3333 Permutationen).
-  Die Shard-Größe ist geheilt (`.github/workflows/wy-max-t.yml` 9×1111, Committed
-  `b60b756f2`); der neue Lauf ist dispatcht.
+- **Trigger:** Lauf-Ende `wy-max-t 37174495789` (9 Shards à 1111; dispatched 2026-10-04).
+- **Lage:** (gemessen 2026-10-04) der Vorgänger brach am 180-min-Job-Timeout ab
+  (21:43:51Z → 00:43:14Z); die Shard-Größe ist geheilt, der neue Lauf dispatcht.
 - **Blockade:** die Null entsteht erst im Lauf.
-- **Braucht:** `ci_manage jobs 37174495789` + `ci_manage log 37174495789` nach Lauf-Ende.
+- **Braucht:** `ci_manage jobs/log 37174495789` nach Lauf-Ende.
 
 ### GIC kalibrierte Null — studentisierte Westfall–Young max-T
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `bz-yearly-maxt 37174497340` (dispatched 2026-10-04, 10 Shards
-  à 1000 + Combine) und `wy-max-t 37174495789`.
-- **Lage:** (gemessen 2026-10-04) `bz_retro_probe` hat jetzt `--perm-from/--perm-to/
-  --out-null/--combine` (analog `wy_max_t_probe`; Shard-Probe gepoolt B = 100 + 100 = 200,
-  identischer Seed; `cargo check` 0/0, Committed `b60b756f2`); der Workflow ist geshardet
-  und dispatcht. B = 10⁴; `pair_lag_index_hash` faltet lag 0/1 = die dokumentierte
-  Identität (`gic-causal-driver.md:155,163`), kein Defekt.
+- **Trigger:** Lauf-Ende `bz-yearly-maxt 37174497340` (10 Shards à 1000 + Combine) und
+  `wy-max-t 37174495789`.
+- **Lage:** (gemessen 2026-10-04) `bz_retro_probe` hat `--perm-from/--perm-to/--out-null/
+  --combine` (Shard-Probe gepoolt B = 200, identischer Seed; `cargo check` 0/0);
+  Workflow geshardet + dispatcht. `pair_lag_index_hash` faltet lag 0/1 = dokumentierte
+  Identität, kein Defekt.
 - **Blockade:** die Zahl entsteht erst im Lauf.
 - **Braucht:** `ci_manage log 37174497340`; Quantil + Verdikt ins Paper.
 
-### `n_eff`-Gate — Diagnose gebaut, Schwelle aus dem ersten vollständigen Lauf
+### `n_eff`-Gate — Schwelle aus dem ersten vollständigen Lauf
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste Lauf (`wy-max-t 37174495789` / `bz-yearly-maxt 37174497340`),
-  der `n_eff` je Member druckt.
-- **Lage:** (gemessen 2026-10-03 via `cargo check`) `te::kde_n_eff(x,y,lag)` = `m·hx²·hy`
-  mit `m = n − lag`, Silverman; gedruckt in `wy_max_t_probe.rs`/`bz_retro_probe.rs`;
-  MDE-Zeile nach der Quantil-Ausgabe; Gate-Test
-  `gate_kde_n_eff_scales_with_pairs_and_bandwidth`. `cargo check` 0/0.
-- **Blockade:** der erste vollständige Lauf fehlt (die alten brachen am Timeout).
-- **Braucht:** nach dem Lauf die Schwelle aus der `n_eff`-Verteilung ableiten (Rat + z.ai).
+- **Trigger:** der erste Lauf (`37174495789`/`37174497340`), der `n_eff` je Member druckt.
+- **Lage:** (gemessen 2026-10-03) `te::kde_n_eff` = `m·hx²·hy`, Silverman; gedruckt in
+  `wy_max_t_probe.rs`/`bz_retro_probe.rs`; MDE-Zeile nach der Quantil-Ausgabe; Gate-Test
+  `gate_kde_n_eff_scales_with_pairs_and_bandwidth`.
+- **Blockade:** vollständiger Lauf fehlt.
+- **Braucht:** Schwelle aus der `n_eff`-Verteilung ableiten (Rat + z.ai).
 
-### TE-Estimator-Bias-Korrektur — Schicht gebaut, Schwelle pending
+### TE-Estimator-Bias-Korrektur — Schwelle pending
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der erste `n_eff`-druckende Lauf.
-- **Lage:** (gemessen 2026-10-03 via CI `te-bias-n 37118666568` + `cargo check`) die
-  Korrektur steht als additive Schicht in `src/mathematikerin/te.rs`:
-  `transfer_entropy_bias_adjusted(te, m_k) = TE − m_k`, `TE_BIAS_MK`, `te_bias_m_k(n)`
-  (unbenanntes n → absent, nie 0), `transfer_entropy_bias_adjusted_gated` über
-  `TE_NEFF_THRESHOLD`. Gate-Test `gate_te_bias_adjusted_sign_and_n_floor`.
+- **Lage:** (gemessen 2026-10-03) `transfer_entropy_bias_adjusted` + `TE_BIAS_MK` +
+  `te_bias_m_k` + `transfer_entropy_bias_adjusted_gated` in `src/mathematikerin/te.rs`;
+  Gate-Test `gate_te_bias_adjusted_sign_and_n_floor`.
 - **Blockade:** `TE_NEFF_THRESHOLD = None`.
-- **Braucht:** nach dem Lauf `TE_NEFF_THRESHOLD` setzen (nur die Konstante).
+- **Braucht:** nach dem Lauf `TE_NEFF_THRESHOLD` setzen.
 
 ### Flyby-Path-2 — official/renewed placed, postflight-Restore läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `juice-arc-restore 37174498970` (dispatched 2026-10-04; `--systems`
-  auf die Producer-Liste `planets,jupiter,saturn,mars,uranus,neptune,pluto,juice` geheilt,
-  Committed `b60b756f2`).
-- **Lage:** (gemessen 2026-10-04 via `ci_manage` + Artefakte + `archive_search --sniff`)
-  official `37158607593` **placed** (aeb3c82f, 15 034 km / 11:43:50Z); renewed `37158609804`
-  **placed** (eee376ef, 62 745 km / 11:58:50Z); postflight `37166537879` **riss** —
-  `ephemeris_juice.bin` trug `aeb3c82f…` (106 704 B), nicht den Seal `018ce2ca…` (538 696 B).
-  Der Restore-Lauf nutzte `--systems juice` und reproduzierte nur den Seal; jetzt geheilt und
-  neu dispatcht. Der Addendum `§2026-10-04` trägt den Stand.
+- **Trigger:** Lauf-Ende `juice-arc-restore 37174498970` (`--systems` auf die Producer-Liste
+  geheilt, dispatched 2026-10-04).
+- **Lage:** (gemessen 2026-10-04) official placed (15 034 km / 11:43:50Z), renewed placed
+  (62 745 km / 11:58:50Z), postflight riss (`ephemeris_juice.bin` = aeb3c82f statt Seal
+  018ce2ca). Restore mit `--systems juice` reproduzierte nur den Seal; jetzt geheilt.
 - **Blockade:** der postflight-Arc entsteht erst im Restore-Lauf.
-- **Braucht:** nach dem Lauf `ephemeris_juice.bin` auf `018ce2ca…` sniff-verifizieren, dann
-  `flyby-path2-fill --line postflight` dispatchen und auswerten.
+- **Braucht:** `ephemeris_juice.bin` auf `018ce2ca…` sniff-verifizieren, dann
+  `flyby-path2-fill --line postflight` dispatchen.
 
-### Zeugen im universellen Myzel — URL-Riss geheilt, Parität pending
+### Zeugen im universellen Myzel — JMA-Verdikt gemessen, CI-Job dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** die getragene `--parity-witness point-event#2`-Messung (recorded verdict).
-- **Lage:** (gemessen 2026-10-04 via `general`-Taucher, `returnCountOnly`) die zwei
-  Einzel-Feature-URLs sind **geheilt** (mountain 230, `683f8015d`): Chile `FeatureServer/1`
-  → `{"count":6}` (Aftershocks), Tohoku `FeatureServer/5` → `{"count":198}` (USGS 1 century);
-  Tohoku Layer 4 trägt 5785. Der JMA-Zeuge (`:157`) bleibt der Train (227). Die alte
-  `{"count":1}`-Messung betraf Layer 0. Für `#2` (JMA × F107, 171 Ereignisse, kein Pfeil)
-  fehlt weiter ein recorded verdict in den Dokumenten.
-- **Blockade:** kein recorded TE-Verdikt; `phi/pipeline/descriptors/erbq-solar.te` ist als
-  Test schwach (benannter Riss).
-- **Braucht:** die `--parity-witness point-event#2`-Zahl ins CI und als recorded verdict;
-  `erbq-solar.te` stärken.
+- **Trigger:** Lauf-Ende `field-te-query 37177455640` (Job `witness-jma`, dispatched 2026-10-04).
+- **Lage:** (gemessen 2026-10-04, lokaler `field_te_query --parity-witness point-event#2
+  --driver solar_f107_flux_sfu`-Lauf) JMA-Zeuge: **230** Stempel, **170** Events im
+  Treiber-Span, 169 Lag-Zellen; ETA-Peak |mean| = **1.0706e-20** < Omori-Null-Schwelle
+  (mean + 2 sd) = **1.3443e-20** → **kein Pfeil** (consistent with the null). Der Arm
+  endet built-in mit `PARITY-WITNESS: pending — no recorded witness TE verdict in docs/`.
+  Die zwei URL-Risse sind geheilt (mountain 230: Chile `/1` count 6, Tohoku `/5` count 198).
+  Neuer CI-Job `witness-jma` in `field-te-query.yml` (Committed `7aa70cf75`).
+- **Blockade:** die Vergleichsseite (ein recorded TE-Verdikt) fehlt in `docs/` — by design
+  `pending`.
+- **Braucht:** `ci_manage log 37177455640`; das CI-Verdikt als recorded verdict führen.
 
-### `load_field` URL-Templates — benannte Verweigerung gebaut
+### `load_field` URL-Templates — Uhr-Marker aufgelöst, Anker/Secrets pending
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der nächste Lauf, der ein Template-Feld lädt (`--line postflight`/RTSW).
-- **Lage:** (gemessen 2026-10-04 via `cargo check 0/0`) `load_field`
-  (`tools/measure/src/bin/field_te_query.rs`) verweigert jetzt einen unaufgelösten
-  `{…}`-Slot mit benanntem Fehler (`guard_url_template_resolved`), statt einen HTTP-400-
-  Rohtext durchzureichen; drei Gate-Tests. Committed `b60b756f2`. Es gibt keinen
-  Clock-/Koordinaten-Kontext in `load_field` — die Auflösung fehlt bewusst (keine
-  Fabrikation).
-- **Blockade:** ein Kontext (Epoch, Station-lat/lon) müsste von den Aufrufern durchgereicht
-  werden, um die Slots zu füllen.
-- **Braucht:** entscheiden, ob die Aufrufer einen Kontext liefern (dann Auflösung bauen)
-  oder die Template-Quellen registriert `pending` bleiben.
+- **Trigger:** der nächste Lauf, der eine Anker-/Secret-tragende Quelle lädt.
+- **Lage:** (gemessen 2026-10-04 via Taucher + `cargo check`) `load_field` löst jetzt die
+  Uhr-Marker (`{now}`/`{week_ago}`/`{hour_ago}`/…) über `live_markers()` auf (`{week_ago}`
+  165 Quellen, `{now}` 161 u. a.) und verweigert einen verbleibenden Slot benannt.
+  Weiter `pending`: Koordinaten/Station (`{station}` 11, `{lon}/{lat}` je 3/5 — Anker fehlt)
+  und Secret-Slots (`{OCEANNETWORKS_TOKEN}`, `{EARTHDATA_EDL_TOKEN}`, `{FIRMS_MAP_KEY}`,
+  `{FROST_BASIC_AUTH}`, …). Committed `7aa70cf75`; 5 Gate-Tests.
+- **Blockade:** kein Aufrufer trägt einen Stations-/Koordinaten-Anker; Secret-Wiring fehlt.
+- **Braucht:** Anker-Variante in der Register-Quelle (An mountain) **oder** `--lat/--lon`-Flag
+  (River); Secret-Slots als eigene Duty.
 
-### Probes-Wanderung — 3 Desmond, Inventar steht
+### Probes-Wanderung — re-skopiert: 20 Bins brauchen einen Deskriptor
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Probe die Paritätsbrücke `GLEICH`.
-- **Lage:** (gemessen 2026-10-04 via `sgrep`/`glob` + Taucher) 62 TE-Bins; **7** Deskriptoren
-  jetzt (`aia_ladder`, `aia_three_year`, `bz_retro` + neu `corona_ladder`, `enso_blatt`,
-  `solar_seconds_matrix`; `erbq-solar.te` bedient den Zeugen-Arm). Die Neu-Deskriptoren
-  Committed `b60b756f2`. Inventar: einige Bins sind `gap` (konditionierte/Matrix-Form trägt
-  die Deskriptor-Grammatik nicht: `corona_conditional`, `corona_confound_matrix`,
-  `dispersion_solar`), andere `kein Paar`/`synthetisch`/`Datei-Input`.
-- **Blockade:** 55 Bins offen; einige brauchen eine Deskriptor-Grammatik für konditionierte
-  Formen; mehrere brauchen registrierte Felder.
-- **Braucht:** die `gap`-Form-Grammatik erweitern (River); fehlende Felder als Quelle klären
-  (An mountain — Liste unten).
+- **Lage:** (gemessen 2026-10-04 via Taucher) 62 TE-Bins; **36 brauchen keinen**
+  Quellen-Paar-Deskriptor (synthetisch/Datei-Input/Population/Null-Kalibrierung). **20
+  brauchen einen und haben keinen:** 17 schlichte Paare (`bigbang_echo`, `bison_basu`,
+  `bison_cycle`, `bz_blatt`, `gic_storm`, `gong_cycle`, `hmi_cycle`, `long_window`, `laic`,
+  `nobel_probe_corona`, `solar_3year_matrix`, `solar_causal_graph`, `solar_cycle`,
+  `solar_hourly_event`, `signal_cone_audit`, `trishuli_gauge`, `wso_cycle`) + 3
+  Konditional/Matrix-Gap (`corona_conditional`, `corona_confound_matrix`, `dispersion_solar`).
+  **Gebaut:** `cond` ist jetzt wiederholbar (Konfounder-Liste, 2 Gate-Tests, Committed
+  `7aa70cf75`) — `corona_conditional` trägt damit seine Form. Von den 17 sind 12 zusätzlich
+  feld-blockiert.
+- **Blockade:** 12 Bins fehlt ein registriertes Feld; die Matrix-Form-Grammatik fehlt noch
+  (`corona_confound_matrix`, `dispersion_solar`).
+- **Braucht:** Deskriptoren für die feld-tragenden Bins schreiben; Matrix-Grammatik
+  entscheiden; Felder (An mountain, Liste unten).
 
-### Nicht-point-event-Zeugen — wiederholte Proben, 4 von 7 getragen
+### Nicht-point-event-Zeugen — nur `--spectral`, Epochen-Fächer fehlt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Arm eine getragene Messung (`witnesses.φ`).
-- **Lage:** (gemessen 2026-10-04 via `general`-Taucher) wiederholte Probe (≥2 Epochen) gefunden:
-  `substance rixs` (Zenodo `6535323`, 3 Versionen) · `gestalt gbco` (GEBCO-Jahresgitter 2020/2023/2024)
-  · `gestalt gmrt` → Ersatz **SRTM15+** (Scripps, 5 datierte Releases) · `gestalt gl30` → Kandidat
-  (Copernicus-Jahresrelease). **Absent** mit Beleg: `rixc`, `srd6`, `eels` (keine ≥2 Epochen).
-- **Blockade:** die Proben sind gefunden, aber nicht in die Arme verdrahtet; 3 Arme absent.
-- **Braucht:** die gefundenen Quellen als Zeugen-Arme fahren (`field_te_query --direction`/
-  `--spectral`) und die Messung am CI nachziehen; für `rixc`/`srd6`/`eels` bleibt `absent` benannt.
+- **Lage:** (gemessen 2026-10-04 via Taucher) alle vier getragenen Arme sind
+  `substance`/`gestalt`, `--direction` verweigert sie ausnahmslos (nur `s2-direction`).
+  `--spectral` liest heute nur Magic/force/url und **fächert die ≥2 Epochen nicht auf** —
+  genau die im Refusal benannte fehlende Seite. Wiederholte Proben gefunden: `rixs`
+  (Zenodo 6535323, 3 Versionen), `gbco` (GEBCO-Jahresgitter), Ersatz `SRTM15+` für `gmrt`
+  (5 Releases), `gl30`-Kandidat; `rixc`/`srd6`/`eels` absent. Die `witness`-Eintragstexte
+  sind vorbereitet (An mountain). `magic_identity` (`src/archivar/witness.rs:24`) trägt
+  `srtm` noch nicht.
+- **Blockade:** `--spectral` Epochen-Fächer + `magic_identity`-Einträge sind Code-Akte;
+  die Einträge sind Register-Akte.
+- **Braucht:** den `--spectral`-Epochen-Fächer bauen (River) + `magic_identity` erweitern;
+  die vorbereiteten `witness`-Einträge registrieren (Owner-Linie).
 
 ### GPD-Tail-Fit in `wy_max_t` — descoped
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** keiner.
-- **Lage:** (gemessen 2026-10-04) B = 10⁴ deckt α = 0.01; kein gecapptes Resample-Budget.
-- **Befund:** (gemessen 2026-10-04) `gic-causal-driver.md:165-166` bindet den GPD-Tail-Fit
-  allein an ein gecapptes Budget; bei B = 10⁴ existiert kein Cap → nie gebaut, nicht nötig.
-- **Braucht:** nichts; öffnet sich nur bei einem künftigen Budget-Cap.
-
-### Workflow-Domäne — Rat-Verdikt
-- **Status:** descoped | **Bindung:** eigen
-- **Trigger:** keiner.
-- **Lage:** (gemessen 2026-10-04 via Rat, fünf Stimmen) Eigentum folgt der Natur der Datei,
-  nicht dem Verzeichnis: der **Mess-Instrument-Körper** (`wy-max-t.yml`, `bz-yearly-maxt.yml`,
-  `field-te-query.yml` tragen ein Probe-Bin als Aktuator) gehört der messenden Linie (River);
-  die **Transport-Grammatik** (Budget, Runner, Toolchain, Manifestation) bleibt Mycelium,
-  an beiden Enden benannt. Kein Riss ohne zwei gemessene Linien über dieselbe Sache; „formal
-  Mycelium" war ein unbenannter Default.
-- **Befund:** (gemessen 2026-10-04) der Rat trägt die Grenze Natur-vor-Verzeichnis; die
-  Shard-Fixes waren damit River-Akte.
+- **Lage:** (gemessen 2026-10-04) `bz_retro_probe.rs:1122` druckt „GPD tail: pending — the
+  empirical max-T quantile carries the family bound; the estimator stays untouched." Der
+  Code führt den GPD-Schätzer nie; die empirische Quantile trägt die Schranke.
+- **Blockade:** keine.
+- **Befund:** (gemessen 2026-10-04) → `tools/measure/src/bin/bz_retro_probe.rs:1122` — der
+  GPD-Tail-Fit ist nicht verdrahtet; nur ein künftiger Budget-Cap öffnet ihn.
 - **Braucht:** nichts.
 
 ### Rat + externe Berater — Konstruktionsfragen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `wy-max-t 37174495789` / `bz-yearly-maxt 37174497340`.
-- **Lage:** (gemessen 2026-10-03) Rat + `chat.z.ai` GLM-5.3 Deep Think + `claude.ai` Sonnet 5.5
-  tragen: (1) Null-Zentrierung gebaut (`studentized_maxima` nimmt `means`); (2) `erbq-solar`
-  descoped mit Befund; (3) `pair_lag_index_hash` ist die dokumentierte lag-0/1-Identität.
+- **Lage:** (gemessen 2026-10-03) Rat + z.ai + Claude tragen: (1) Null-Zentrierung gebaut;
+  (2) `erbq-solar` descoped mit Befund; (3) `pair_lag_index_hash` = dokumentierte
+  lag-0/1-Identität.
 - **Blockade:** keine.
-- **Braucht:** die zentrierten Läufe nach Lauf-Ende lesen.
+- **Braucht:** die zentrierten Läufe lesen.
 
 ## An mountain
 
 Origin: river folge88.
 
 - **Reader-Arme `twomass_psc` + `swarm_tec` — gebaut, Register-Zeile fehlt.** Gemessen
-  2026-10-04 im Baum: `main_flow.rs:4622` (`twomass_psc`) und `:4680` (`swarm_tec`) tragen
-  die Fetch-Branches; `src/archivar/twomass.rs` liegt. Es fehlt allein die Register-Zeile
-  (`format`/`cmap`/`field`) in `phi/sources.φ` — danach Mycelium `url`/`origin`/`compiler`/`sha256`.
-- **Fehlende Felder für die Probes-Wanderung (Register = deine Zeile).** `bz_blatt_probe`
-  braucht ein **per-Minute-|dB/dt|**-Feld (registriert nur 1-h `intermagnet_dbdt`,
-  `phi/sources.φ:1806-1813`); `gic_storm_probe` ein **Kp-Feld**; ferner `f107_penticton`
-  für `bison_basu`/`bison_cycle`/`gong_cycle`/`hmi_cycle`/`wso_cycle`/`long_window`/
-  `solar_cycle`/`solar_3year_matrix`; eine Galaxien-Dichte für `bigbang_echo`.
-- **`quake_ptevent`-Assets.** Die kompilierten Assets (chile/tohoku/jma) liegen auf dem CDN,
-  sind aber **nicht** in `phi/sources.φ` registriert. Die zwei Feature-URLs sind von mountain 230
-  geheilt (Chile `/1` count 6, Tohoku `/5` count 198).
+  2026-10-04: `main_flow.rs:4622`/`:4680` tragen die Branches; `src/archivar/twomass.rs` liegt.
+  Es fehlt allein die Register-Zeile (`format`/`cmap`/`field`) in `phi/sources.φ`.
+- **Fehlende Felder für 12 der 17 Probe-Deskriptor-Bins.** `bz_blatt` (per-Minute-|dB/dt|;
+  registriert nur 1-h `intermagnet_dbdt`), `gic_storm` (Kp), `f107_penticton` für `bison_basu`/
+  `bison_cycle`/`gong_cycle`/`hmi_cycle`/`wso_cycle`/`long_window`/`solar_cycle`/
+  `solar_3year_matrix`, Galaxien-Dichte für `bigbang_echo`.
+- **Vorbereitete `witness`-Einträge für die nicht-point-event-Arme** (Register = deine Zeile):
+  `rixs` (Zenodo-Konzept 6535323), `gbco` (GEBCO-Jahresgitter), `srtm` (SRTM15+ für `gmrt`),
+  `gl30`-Kandidat. Die vollen Eintragstexte liegen im Taucher-Bericht dieser Session; die
+  `url`s sind `--verdict`-geprüft (200/206). `magic_identity` (`src/archivar/witness.rs:24`)
+  muss `srtm` noch bekommen (River-Code-Akt).
 
 ## An mycelium
 
@@ -228,17 +226,13 @@ Origin: river folge88.
 
 - **CI-Triage (Operator-Wort 2026-10-04) zum roten `ci-gate 37166323740` @`a064896a4`:**
   Job `register` → Mountain; `dropped-gate` + `format` → Mycelium; `clippy hdf4.rs:686` →
-  Mountain/River. Gemessen: `register` = 17 url-order violations in den zenodo
-  `gras_2c_roper`-URLs; `dropped-gate` = delta 3 (Baseline 1141→1144); `format` =
-  `tools/harvest/src/bin/emm_sdc_compiler.rs:91,242` + `kplo_spice_compiler.rs:173`; `clippy`
-  = `manual_is_multiple_of`. Der clippy und der url-order sind von **mountain 230**
-  (`d2ba1189d`) bereits geheilt — der Run ist stale; bitte den Stehenden Pass/CI-Tafel
-  gegenmessen.
-- **`juice-arc-restore 37174498970` dispatcht (river).** Der Restore nutzt jetzt die volle
-  Producer-Systems-Liste (`planets,jupiter,saturn,mars,uranus,neptune,pluto,juice`); bitte
-  `ephemeris_juice.bin` nach Lauf-Ende auf `018ce2ca…` (538 696 B) sniff-verifizieren.
-- **`wy-max-t 37174495789` + `bz-yearly-maxt 37174497340` dispatcht (river)** — Sharding
-  gegen den 180-min-Job-Timeout. Bitte die Läufe einmalig lesen; kein Polling.
+  Mountain/River. Gemessen: `register` = 17 url-order violations (zenodo `gras_2c_roper`);
+  `dropped-gate` = delta 3; `format` = `emm_sdc_compiler.rs:91,242` + `kplo_spice_compiler.rs:173`;
+  `clippy` = `manual_is_multiple_of`. clippy + url-order sind von **mountain 230** (`d2ba1189d`)
+  geheilt — der Run ist stale; bitte den Stehenden Pass/CI-Tafel gegenmessen.
+- **Dispatchte River-Läufe:** `juice-arc-restore 37174498970` · `wy-max-t 37174495789` ·
+  `bz-yearly-maxt 37174497340` · `field-te-query 37177455640`. Bitte je einmal lesen
+  (kein Polling); `ephemeris_juice.bin` nach dem Restore auf `018ce2ca…` prüfen.
 - **`nvss-cdn`** — TAPVizieR 503, wartet (kein River-Schritt).
 
 ## Abschluss
@@ -251,10 +245,11 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `.github/workflows/wy-max-t.yml`
 - `.github/workflows/bz-yearly-maxt.yml`
 - `.github/workflows/juice-arc-restore.yml`
+- `.github/workflows/field-te-query.yml`
 - `tools/measure/src/bin/bz_retro_probe.rs`
 - `tools/measure/src/bin/field_te_query.rs`
 - `phi/pipeline/descriptors/corona_ladder.te`
 - `phi/pipeline/descriptors/enso_blatt.te`
 - `phi/pipeline/descriptors/solar_seconds_matrix.te`
 
-## Burn: open 0.0000 · close 0.1113 · cap 0.50 — Grund: River-88 (Taucher-Welle: Flyby-Drei-Linien-Auswertung, max-T-Sharding + Combine, juice-Restore-Heilung, load_field-Verweigerung, 3 Deskriptoren, Zeugen-URL-Riss geheilt; 3 Läufe dispatcht `37174495789`/`37174497340`/`37174498970`)
+## Burn: open 0.0000 · close 0.1113 (Line-Session; Taucher im Fenster zusätzlich) · cap 0.50 — Grund: River-88 (Taucher-Welle: Flyby-Auswertung, max-T-Sharding/Combine, juice-Restore-Heilung, load_field-Uhr-Marker + Guard, JMA-CI-Job, `cond`-Grammatik, Probes-Re-Scope, Zeugen-Verdrahtung; 4 Läufe dispatcht)
