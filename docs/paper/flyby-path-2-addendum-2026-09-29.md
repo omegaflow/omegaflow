@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 763430fbc3d13cc9d545943c4e39405c0b95e96c1d0a84cc1a22bc9573d76635
+  sha256: 8b9143f481299d6c581ca6d62c86be6eae004520be7d5adea47e030ff57f6e7d
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -245,8 +245,45 @@ The operator's word (2026-10-03) resolves it: the sealed arc `aeb3c82f…` is th
 `018ce2ca…` is a **post-flight comparison line**. No line is averaged, none is
 selected by outcome.
 
+## 2026-10-04 — the three lines built: official and renewed placed, postflight riss on the CDN
+
+The `river 87` line switch (`flyby_path2_fill --line`, `c0dbc0ede`) and the
+line-sharp fetch (`mycelium 227`, `38419ddcf`) dispatched the three lines on the
+CDN arcs. Measured 2026-10-04 via `ci_manage` and the run artifacts
+(`flyby-path2-fill.txt`, `tube-juice-2026-09-28*.json`):
+
+- **official** (run `37158607593`, success): arc `aeb3c82f…` (106 704 B) — tube
+  **placed**, perigee `2026-09-28T11:43:50Z` geocentric **15 034 km**, 26 hourly
+  cells (`data/flyby2/tube-juice-2026-09-28.json`). Against the revised
+  preregistration (`11:45:12 ± 10 s` / `15 018 km`) the sealed arc stands 82 s
+  early / +16 km — the flyby is carried.
+- **renewed** (run `37158609804`, success): arc `eee376ef…` (538 696 B) — tube
+  **placed**, perigee `2026-09-28T11:58:50Z` geocentric **62 745 km**, 26 cells
+  (`…-renewed.json`). The environment grid is identical to the official tube
+  (same hourly snapshots); the two lines diverge only in the perigee witness:
+  15 034 km vs 62 745 km. The renewed arc does not carry the flyby minimum —
+  it stands as the named second witness, never averaged (riss named, operator's
+  word 2026-10-03).
+- **postflight** (run `37166537879`, success): measured `aeb3c82f…` (106 704 B)
+  != the seal `018ce2ca…` → **riss**, no tube built. The CDN
+  `ephemeris_juice.bin` at the run carried the official arc, not the postflight
+  state.
+
+Re-measured 2026-10-04 via `archive_search --sniff`: `ephemeris_juice.bin` =
+`aeb3c82f…` (106 704 B); `ephemeris_juice_official.bin` = `aeb3c82f…`;
+`ephemeris_juice_renewed.bin` = `eee376ef…`. The postflight arc `018ce2ca…`
+(538 696 B) is **absent** from the CDN. The `juice-arc-restore` run
+`37165635404` (success, 2026-10-04T00:48Z) restored only 106 704 B — its
+`--systems juice` reproduces the sealed arc, not the producer's
+`--systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice` that yielded
+`018ce2ca…` (kernel-flatten `37029375744` @`1e6d21f2f`). The postflight
+comparison line is `pending` on the CDN restore, not measured.
+
 ## Next steps
 
+- The postflight arc is restored (Mycelium, `juice-arc-restore`) with the
+  producer's full systems list `planets,jupiter,saturn,mars,uranus,neptune,pluto,juice`;
+  then `flyby-path2-fill --line postflight` reads its own bytes.
 - The CI fill (`flyby-path2-fill.yml`, river's named step) dispatched after the
   seal; the 2026-09-30 re-run filled the register's swarm cells 16–24, and the
   2026-10-03 re-run (with the `river 73` fetch-stop fix) filled cell 25.
