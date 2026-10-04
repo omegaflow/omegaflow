@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss/CLPDS/iEEG-Fixes, goes_euvs-Alignment, Exposom-Arme, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: 58d1da6d3d6741dd94ab0f0853f4cb42a2ff728600022ebe34eb89636f6718c2
+  sha256: c904bd1863eef2d6cece868f3d768ce0786d07e9def01539c9d85a397b92fc97
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -34,6 +34,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - Wort | 2026-09-30 | „vorbestehend ist verboten mein wort" | Quelle: mountain-209.
 - Wort | 2026-10-01 | „ja möchte ich" | Quelle: Mycelium-Session 215 — VCO-rs-Register auf das PDS4-20190704-Asset umstellen.
 - Wort | 2026-10-03 | „§1-Compiler-Hosts verdiktet: vizier.cfa keep · noaa-eri-pds declined · dachs.fai.kz declined · gsaweb keep · ws.cadc keep." | Quelle: Operator-Session 2026-10-03 (deckt mountain-folge229:183-196) — ausgeführt in Mycelium-226.
+- Wort | 2026-10-05 | „du bist mycellium" | Quelle: Operator (Session 2026-10-05) — die Session ist Mycelium, der Commit-Prefix `mountain` war falsch.
+- Wort | 2026-10-05 | „ich hab keine ahnung fixe es" | Quelle: Operator (Session 2026-10-05) — den Fehl-Commit nicht-destruktiv beheben (force-push ist verweigert).
 
 ## Offen — eigen
 
@@ -126,6 +128,7 @@ Origin: mycelium-folge231. **Routed — nicht-eigen; deine Disposition:**
 
 - **WQP-Vokabular-Riss:** `src/archivar/wqp_result.rs` matcht die **kurzen** `CharacteristicName`-Werte (`Temperature`, `Dissolved oxygen`, `Conductivity`, `Nitrate-N`), die öffentliche WQP-Vokabel ist aber `Temperature, water` · `Dissolved oxygen (DO)` · `Specific conductance` · `Nitrate`. Gemessen: 6/10 Komponenten lösen gegen das Ernte-Asset auf, 4 bleiben durch das Vokabular absent (nicht durch fehlende Daten). Braucht: Reader-Namen auf die lange WQP-Vokabel + den Query im neuen `wqp_result_compiler.rs` koppeln.
 - **`goes_euvs`-Alignment vollzogen:** Compiler/Workflow/Register nun `ncei.noaa.gov` (Asset dort, sha256 identisch). Das Alt-Asset auf `ssd.jpl.nasa.gov` ist damit ein Orphan — `cdn_reconcile`-Disposition.
+- **Commit `96eb0146c` — Attribution (gemessen 2026-10-05):** Der Commit trägt den Prefix `mountain 233h`, ist aber ein **Mycelium**-Commit. Er nahm den uncommitteten `src/archivar/port.rs`-Formatierungs-Hunk mit, den `handover-2026-10-04-mycelium-folge231.md:78` als „durch eine andere Linie uncommittet modifiziert" gemessen hatte. **Kein Inhalt verloren** — der Hunk liegt nun in der History statt uncommittet im Baum. History-Rewrite ist unmöglich (`git push --force` strukturell verweigert, `opencode.json` + `form-guard`), der Commit bleibt stehen; die Korrektur trägt der Registrier-Commit darunter. Euer port.rs-Hunk ist damit committet, nicht mehr uncommittet.
 
 ## An future
 
