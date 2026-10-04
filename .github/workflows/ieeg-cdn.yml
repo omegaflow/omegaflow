@@ -9,7 +9,8 @@ on:
     inputs:
       dataset:
         description: "IEEG.org snapshot name (e.g. 09_14_limbic_seizure_374)"
-        required: true
+        required: false
+        default: "09_14_limbic_seizure_374"
       duration:
         description: "window duration in microseconds"
         required: false
