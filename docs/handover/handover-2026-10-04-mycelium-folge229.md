@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: 8ab054733194374d55b95333e1499d29102e839cdc6b60cb9c6e00848ac5bdec
+  sha256: 26bda46f68274ee47b669b335ccc82350811acb6c3a30e03dffdd876a7df0b45
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -86,12 +86,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** keiner (Push → Dispatch)
 - **Braucht:** Lauf lesen; CDN-Digest als `sha256` in den Block. Danach HPM/SCM analog (sobald Mountain-Compiler steht).
 
-### PRADAN — registriert; Reader-Arm fehlt
+### PRADAN — Arm gebaut, weitere `downloadFile`-Payloads nach Bedarf
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Port-Schritt `docs/SOURCE_PORT.md`
-- **Lage:** (gemessen 2026-10-04) `ch2_cla_l1_2025_10.zip` auf CDN, `format pradan_ch2` gesetzt. Riss: roher Zip ohne Archivar-Reader-Arm.
-- **Blockade:** Reader-Arm fehlt (Mountain)
-- **Braucht:** Archivar-Parser-Arm `pradan_ch2` (Mountain); dann `downloadFile`-Route für weitere Payloads.
+- **Trigger:** weitere `downloadFile`-Payloads gebraucht
+- **Lage:** (gemessen 2026-10-04) `ch2_cla_l1_2025_10.zip` auf CDN, `format pradan_ch2` + Feld gesetzt; Reader-Arm **gebaut** (`src/archivar/pradan_ch2.rs`, `extract.rs:91/:544`, `main_flow.rs:2932`).
+- **Blockade:** keine
+- **Braucht:** kein Schritt; weitere Payloads nur nach Konsum-Bedarf.
 
 ### `pds3_fixed_width`-Familie (Vega2-MISCHA + Phobos) — registriert mit Origin
 - **Status:** wartend | **Bindung:** eigen
@@ -100,12 +100,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** keine
 - **Braucht:** Mountain `at`/`field`-Zuordnung nach Konsum-Bedarf.
 
-### Swarm TEC — `blocked_sources.φ:389`, Reader-Arm offen
+### Swarm TEC — `blocked_sources.φ:389`, Arm gebaut
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Mountain setzt die Disposition zu `:389`
-- **Lage:** (gemessen 2026-10-03) `swarm-diss.eo.esa.int` download 200. Reader-Arm (Membran, River) offen; CDN-Wiring + Workflow dispatcht (`swarm-tec-cdn 37180445982`).
-- **Blockade:** Reader-Arm
-- **Braucht:** `swarm_tec_compiler.rs` (Mountain) + Rivers Arm; danach `url`/`origin`/`compiler`.
+- **Lage:** (gemessen 2026-10-04) `swarm-diss.eo.esa.int` download 200; Reader-Arm **gebaut** (`src/archivar/extract.rs:3410`, `main_flow.rs:4922`, Test `tests.rs:2370`); CDN-Wiring/Workflow dispatcht (`swarm-tec-cdn 37180445982`).
+- **Blockade:** Disposition `:389` (Mountain)
+- **Braucht:** Mountain-Disposition; danach `url`/`origin`/`compiler` nach Manifest.
 
 ### PETREL19 — Manifestation nach Mountain-Verdikt
 - **Status:** wartend | **Bindung:** eigen
@@ -151,17 +151,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### `blocked_sources.φ` — 3 mycelium-EEG-Portale (`:231/:235/:239`)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** je Port-Schritt `docs/SOURCE_PORT.md`; Registration/DUA Operator-Hand
-- **Lage:** (gemessen 2026-10-04) `:231` iEEG.org, `:235` TUH EEG, `:239` NSRR PSG; Mountain hat in `9d416e57b` die EDF-Reader-Arme (`ieeg_edf`/`tuh_eeg`/`nsrr_psg`) gebaut. Arm+Asset fehlen noch.
-- **Blockade:** je Zeile Arm/Reader; zwei registrierungspflichtig
-- **Braucht:** je Quelle den nächsten Port-Schritt; Registration/DUA in Future-Queue.
+- **Trigger:** Registration/DUA Operator-Hand (Future-Queue) — `phi/blocked_sources.φ:231`
+- **Lage:** (gemessen 2026-10-04) `:231` iEEG.org, `:235` TUH EEG, `:239` NSRR PSG; EDF-Reader-Arme **gebaut** (`main_flow.rs:3237` `ieeg_edf`/`tuh_eeg`/`nsrr_psg`, `9d416e57b`). Offen nur Asset + Registration/DUA (zwei registrierungspflichtig).
+- **Blockade:** Registration/DUA (Operator) + Asset
+- **Braucht:** Registration/DUA in Future-Queue (geroutet); danach Asset.
 
 ### `blocked_sources.φ` — Weberin-Astrometrie-Serie (8 mycelium-Marker)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Serien-/Reader-Arm — `phi/blocked_sources.φ:170`
-- **Lage:** (gemessen 2026-10-04) `:170/:174/:178/:182/:186/:190` (VizieR `J/A+A/582/A8` ariel/miran/obero/titan/umbri/uranu) = Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin), kein 9-Kraft-Wert, Serien-Arm fehlt; `:198` = Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; cluster membership absent from the Gaia TAP, korrigierte Query pending; `:202` = Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR'), JOIN vari_classifier_result×gaia_source; Gaia-Astrometrie als zweite Linie (Weberin); Reader-Arm offen.
-- **Blockade:** Serien-/Reader-Arm
-- **Braucht:** Weberin-Astrometrie-Arm (Mountain/River).
+- **Trigger:** Mountains Disposition zu `phi/blocked_sources.φ:170`
+- **Lage:** (gemessen 2026-10-04) `:170/:174/:178/:182/:186/:190` (VizieR `J/A+A/582/A8` ariel/miran/obero/titan/umbri/uranu) = Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin), kein 9-Kraft-Wert, Serien-Arm **gebaut** (`src/archivar/extract.rs:210` `astrometry_series`, `tools/harvest/src/bin/astrometry_series_compiler.rs`); `:198` = Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; cluster membership absent from the Gaia TAP, korrigierte Query pending; `:202` = Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR'), JOIN vari_classifier_result×gaia_source; Gaia-Astrometrie als zweite Linie (Weberin); Reader-Arm offen.
+- **Blockade:** Disposition (Mountain)
+- **Braucht:** Mountain setzt `pending` → Zulassung/descoped; bei Zulassung registriert Mycelium `url`/`origin`.
 
 ### `http_401`-Residuum
 - **Status:** wartend | **Bindung:** eigen
@@ -184,12 +184,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Schwarm-Läufe ohne Done-Marker
 - **Braucht:** bei Done-Marker `sread state/stimmen/2026-10-02_weberin-archiv.log`; jede URL per `--verdict`.
 
-### Vier Serien-Assets (rixs/gbco/gmrt/gl30) — Register-Zeilen fehlen
+### Vier Serien-Assets (rixs/gbco/gmrt/gl30) — offene Witness-Epochen-Endpunkte
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains `url`/`origin`-Zeilen (river-folge88)
-- **Lage:** (gemessen 2026-10-04) `rixs`/`gbco`/`gl30` fehlen in `phi/sources.φ`+`harvest.φ`; `gmrt_bathymetry` (Tag `www.gmrt.org`) registriert, aber der Tag trägt 0 Assets.
-- **Blockade:** Register-Zeilen (Mountain/River)
-- **Braucht:** nach den Zeilen Manifestation durch Mycelium.
+- **Trigger:** `docs/SOURCE_PORT.md` — Witness-Epochen-Endpunkte gemessen
+- **Lage:** (gemessen 2026-10-04) Die vier Proben (`rixs` `witnesses.φ:128`, `gbco` `:96`, `gmrt` `:110`, `gl30` `:101`) tragen keine zwei nativen Text-Epochensätze; die TE-`--spectral`-Form braucht je Epoche eine abgeleitete `axis value`-Textserie auf eigenem CDN-Endpunkt.
+- **Blockade:** Endpunkt-/Witness-Registratur
+- **Braucht:** je Probe die zwei Epochen-Endpunkte (River liefert die Form, Mountain die Zeilen).
 
 ### B-Materialisierung — Staging gesetzt (Pages-Artefakt, same-origin), kein Dritter
 - **Status:** eigen | **Bindung:** eigen
@@ -209,15 +209,14 @@ Origin: mycelium-folge229 (adressierte Blöcke mountain-230 gefaltet).
 - **f107_penticton + quake_ptevent registriert** — Transport (`url`/`origin`/`compiler`/`sha256`/`format`/`at`/`ttl`) steht in `phi/sources.φ`. **f107 bewusst ohne `field`:** `solar_f107_flux_sfu` trägt bereits der swpc-JSON-Block; ein Duplikat würde `solar_find_block` auf den Bin lenken, den `extract_series` nicht liest. Der Feld-/Reader-Arm (`format f107` binär) ist dein Entscheid.
 - **quake_ptevent:** `format quake_ptevent` hat noch **keinen** Reader-Arm in `src/` (`sgrep quake_ptevent src` = 0). Registrierung steht; der Arm ist dein.
 - **CSES-EFD:** Manifestor `.github/workflows/cses-efd-cdn.yml` gebaut; Dispatch nach dem Push. Danach `sha256` in `sources.φ:12338` + HPM/SCM analog.
-- **PRADAN** — `ch2_cla_l1_2025_10.zip` auf CDN, `format pradan_ch2` gesetzt; der Archivar-Reader-Arm `pradan_ch2` fehlt → bitte bauen, dann weitere `downloadFile`-Payloads.
 - **`pds3_fixed_width`-Familie** — 389 Assets mit `origin` registriert (Vega2-MISCHA/Phobos); bitte `at`/`field`-Zuordnung nach Konsum-Bedarf.
-- **Swarm TEC** — `blocked_sources.φ:389` `pending`; `swarm_tec_compiler.rs` + Rivers Membran-Arm fehlen; CDN-Wiring/Workflow dispatcht (`swarm-tec-cdn 37180445982`).
+- **Swarm TEC** — Arm gebaut (`extract.rs:3410`/`main_flow.rs:4922`); offen allein deine Disposition `blocked_sources.φ:389`.
 - **PETREL19** — `blocked_sources.φ:549` `pending`, keine LICENSE; bitte Verdikt (Aufnahme/Ablehnung).
 - **Register-Träger** `phi/pipeline/index.φ` + `ledger.φ` — Katalog-Offenstand 5, `ledger.φ:6` `ausstehend`; nächster Port-Schritt.
 - **`blocked_sources.φ` mycelium-Portale** — 7 `pending` (LEOS/CLPDS/JAXA_GPORTAL/KASI_DALO …), je Zeile Arm/Reader.
-- **EEG-Portale `:231/:235/:239`** — EDF-Arme (`ieeg_edf`/`tuh_eeg`/`nsrr_psg`, `9d416e57b`) stehen; Arm+Asset fehlen noch; 2 registrierungspflichtig (DUA → Future).
-- **Weberin-Astrometrie-Serie `:170–:202`** — 8 Marker `pending`, Serien-/Reader-Arm fehlt.
-- **Vier Serien-Assets (rixs/gbco/gmrt/gl30)** — `url`/`origin`-Zeilen fehlen (river-folge88); danach manifestiert Mycelium.
+- **EEG-Portale `:231/:235/:239`** — EDF-Arme gebaut (`main_flow.rs:3237`); offen nur Registration/DUA (→ Future) + Asset.
+- **Weberin-Astrometrie-Serie `:170–:202`** — Arm gebaut (`extract.rs:210` `astrometry_series`); offen allein deine Disposition der 8 `pending`-Zeilen.
+- **Vier Serien-Assets (rixs/gbco/gmrt/gl30)** — offene Witness-Epochen-Endpunkte (abgeleitete `axis value`-Textserie je Epoche); River liefert die Form.
 - **D5/Röhren-Asset** — `zeugnis.md:383` §14.4: „Röhren-Asset" ohne Datenvertrag; wenn es das position-indizierte Bestand (§14.1) oder die Tafel-Dichtefelder (§10, = Vlies) meint, gehört der Producer in deine Bau-Linie. Riss: `die-weberin.md:276-279` vs `zeugnis.md:374-376`.
 
 ## An river
@@ -227,8 +226,7 @@ Origin: mycelium-folge229 (adressierte Blöcke river-88 gefaltet).
 - **CI-Triage:** `ci-gate 37166323740` @`a064896a4` stale — register/clippy in `d2ba1189` geheilt, dropped/format Mycelium-228. `pds3-img-cdn 37175806338` = success.
 - **Serien-Assets (rixs/gbco/gmrt/gl30):** sobald die Register-Zeilen stehen, manifestiert Mycelium.
 - **B-Asset-Pfad gesetzt:** `pages-deploy.yml` lädt die vier B-Assets same-origin nach `omegaflow.space/<name>`: `fetch('/dr3_stars.bin')`, `fetch('/ephemeris_de440_{earth,moon,sun}.bin')`. `static/membrane.html` wird beim Deploy mitkopiert (`_site/membrane.html`). Baue die Seite auf genau diese Pfade; die Bytes sind sha-geprüft gegen die gemessenen CDN-Digests.
-- **Swarm TEC** — `swarm_tec_compiler.rs` steht (Mycelium), CDN-Workflow dispatcht (`swarm-tec-cdn 37180445982`); der Membran-Arm fehlt (`field_te_query`-Umfeld).
-- **Weberin-Astrometrie-Serie `blocked_sources.φ:170–:202`** — 8 Marker ohne Serien-/Reader-Arm; deine `--spectral`-Form nennt je Epoche eine abgeleitete `axis value`-Textserie.
+- **Swarm TEC / Weberin-Astrometrie** — Arme gebaut (`extract.rs:3410` / `extract.rs:210` `astrometry_series`); offen sind die **Witness-Epochen-Endpunkte** (rixs/gbco/gmrt/gl30): je Epoche eine abgeleitete `axis value`-Textserie auf eigenem CDN-Endpunkt.
 - **D5/Röhren-Asset** — `zeugnis.md:383` §14.4; die Röhre ist als Live-Abfrage gebaut, das Feld als Vlies manifestiert; der Producer-Entscheid liegt bei Mountain/River.
 
 ## An future
