@@ -21,7 +21,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
             Some(FieldIdentity::Witness(WitnessKind::PointEvent))
         }
         b"SKY1" | b"SKD1" | b"VLDE" => Some(FieldIdentity::Witness(WitnessKind::S2Direction)),
-        b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" | b"GMR1" | b"G3D1" => {
+        b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" | b"GMR1" | b"G3D1" | b"SRTM" => {
             Some(FieldIdentity::Witness(WitnessKind::Gestalt))
         }
         b"ISCB" | b"EHB1" => Some(FieldIdentity::Witness(WitnessKind::Presence)),
@@ -143,6 +143,18 @@ mod tests {
         assert_eq!(
             magic_identity(*b"GL90"),
             Some(FieldIdentity::Witness(WitnessKind::Gestalt))
+        );
+    }
+
+    #[test]
+    fn srtm_is_gestalt() {
+        assert_eq!(
+            magic_identity(*b"SRTM"),
+            Some(FieldIdentity::Witness(WitnessKind::Gestalt))
+        );
+        assert_eq!(
+            witness_gate(Some(*b"SRTM"), Some(WitnessKind::Gestalt), true),
+            WitnessVerdict::Holds(WitnessKind::Gestalt)
         );
     }
 

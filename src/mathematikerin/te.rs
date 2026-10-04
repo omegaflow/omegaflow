@@ -239,7 +239,7 @@ pub fn transfer_entropy_conditional(x: &[f32], y: &[f32], c: &[f32], lag: usize)
     if lag == 0 {
         return transfer_entropy_conditional(x, y, c, 1);
     }
-    let m = n - lag;
+    let m = n.checked_sub(lag)?;
     if m < 8 {
         return None;
     }
@@ -298,7 +298,7 @@ pub fn transfer_entropy_conditional_h(
     if lag == 0 {
         return transfer_entropy_conditional_h(x, y, c, 1, factor);
     }
-    let m = n - lag;
+    let m = n.checked_sub(lag)?;
     if m < 8 {
         return None;
     }
@@ -357,7 +357,7 @@ pub fn transfer_entropy_conditional_2(
     if lag == 0 {
         return transfer_entropy_conditional_2(x, y, c1, c2, 1);
     }
-    let m = n - lag;
+    let m = n.checked_sub(lag)?;
     if m < 8 {
         return None;
     }
@@ -2453,7 +2453,7 @@ pub fn transfer_entropy_embedded_kde_scaled(
     }
     let back_x = (dim - 1) * tau_x;
     let back_y = (dim - 1) * tau_y;
-    if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
+    if emb_x.len() != n.checked_sub(back_x)? || emb_y.len() != n.checked_sub(back_y)? {
         return None;
     }
     let t_low = back_x.max(back_y);
@@ -2592,7 +2592,7 @@ pub fn transfer_entropy_embedded_ksg(
     }
     let back_x = (dim - 1) * tau_x;
     let back_y = (dim - 1) * tau_y;
-    if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
+    if emb_x.len() != n.checked_sub(back_x)? || emb_y.len() != n.checked_sub(back_y)? {
         return None;
     }
     let t_low = back_x.max(back_y);
@@ -2717,10 +2717,10 @@ pub fn transfer_entropy_embedded_ksg_conditional(
     let back_x = (dim - 1) * lags.x;
     let back_y = (dim - 1) * lags.y;
     let back_z = if dim_z == 0 { 0 } else { (dim_z - 1) * lags.z };
-    if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
+    if emb_x.len() != n.checked_sub(back_x)? || emb_y.len() != n.checked_sub(back_y)? {
         return None;
     }
-    if dim_z > 0 && emb_z.len() != n - back_z {
+    if dim_z > 0 && emb_z.len() != n.checked_sub(back_z)? {
         return None;
     }
     let t_low = back_x.max(back_y).max(back_z);
@@ -5195,6 +5195,88 @@ mod tests {
         assert!(
             transfer_entropy_lag(&a, &b, 8).is_some(),
             "Kalibrier-Gate lag n-floor: lag 8 < n 44 still carries an estimate"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_conditional_lag_beyond_series_is_none() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(44, 0.7, &mut rng);
+        let b = gate_ar1(44, 0.7, &mut rng);
+        let c = gate_ar1(44, 0.7, &mut rng);
+        assert!(
+            transfer_entropy_conditional(&a, &b, &c, 48).is_none(),
+            "Kalibrier-Gate lag n-floor: the conditional estimator refuses lag 48 > n 44 (no usize underflow)"
+        );
+        assert!(
+            transfer_entropy_conditional(&a, &b, &c, 8).is_some(),
+            "Kalibrier-Gate lag n-floor: lag 8 < n 44 still carries a conditional estimate"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_conditional_h_lag_beyond_series_is_none() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(44, 0.7, &mut rng);
+        let b = gate_ar1(44, 0.7, &mut rng);
+        let c = gate_ar1(44, 0.7, &mut rng);
+        assert!(
+            transfer_entropy_conditional_h(&a, &b, &c, 48, 1.0).is_none(),
+            "Kalibrier-Gate lag n-floor: the conditional bandwidth variant refuses lag 48 > n 44"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_conditional_2_lag_beyond_series_is_none() {
+        let mut rng = 0x2722_0A95_517C_C1B7u64;
+        let a = gate_ar1(44, 0.7, &mut rng);
+        let b = gate_ar1(44, 0.7, &mut rng);
+        let c = gate_ar1(44, 0.7, &mut rng);
+        assert!(
+            transfer_entropy_conditional_2(&a, &b, &c, &c, 48).is_none(),
+            "Kalibrier-Gate lag n-floor: the two-confounder conditional estimator refuses lag 48 > n 44"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_embedded_kde_back_beyond_series_is_none() {
+        let x = vec![0.1f64; 44];
+        let emb = vec![vec![0.0f64; 2]];
+        assert!(
+            transfer_entropy_embedded_kde_scaled(&x, &emb, &emb, 48, 1, 1.0).is_none(),
+            "Kalibrier-Gate embedded back-floor: tau 48 > n 44 carries no estimate (no usize underflow)"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_embedded_ksg_back_beyond_series_is_none() {
+        let x = vec![0.1f64; 44];
+        let emb = vec![vec![0.0f64; 2]];
+        assert!(
+            transfer_entropy_embedded_ksg(&x, &emb, &emb, 48, 1, TE_KSG_K).is_none(),
+            "Kalibrier-Gate embedded back-floor: the KSG estimator refuses tau 48 > n 44"
+        );
+    }
+
+    #[test]
+    fn gate_transfer_entropy_embedded_ksg_conditional_back_beyond_series_is_none() {
+        let x = vec![0.1f64; 44];
+        let emb = vec![vec![0.0f64; 2]];
+        let lags = EmbeddingLags { x: 48, y: 1, z: 1 };
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(&x, &emb, &emb, &[], lags, TE_KSG_K)
+                .is_none(),
+            "Kalibrier-Gate embedded back-floor: the conditional KSG estimator refuses tau_x 48 > n 44"
+        );
+        let emb_full = vec![vec![0.0f64; 2]; 43];
+        let emb_z = vec![vec![0.0f64; 2]];
+        let z_lags = EmbeddingLags { x: 1, y: 1, z: 48 };
+        assert!(
+            transfer_entropy_embedded_ksg_conditional(
+                &x, &emb_full, &emb_full, &emb_z, z_lags, TE_KSG_K
+            )
+            .is_none(),
+            "Kalibrier-Gate embedded back-floor: the conditional KSG estimator refuses tau_z 48 > n 44"
         );
     }
 
