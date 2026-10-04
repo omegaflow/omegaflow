@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: f931d2acdebaaa92cda611ac9fed58d208c0fa98bac56ffe900c4f2ea91302d5
+  sha256: b01b0f066dc33306a72cee37af07cacbf089d677bf0ff65b302aa6061339dc7c
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -111,8 +111,8 @@ Wort | Datum | Quelle
 ## Offen (aufgeschlüsselt)
 
 ### fruehwarnsystem α-Ebene — Sodankylä gelesen; 1-min-Zeuge präzisiert (Rat), Bau offen
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** der ABK-1-min-`dB/dt`-Bau steht (Compiler-Arm + Derivat + Probe-Ladearm); dann ist Z auflösbar.
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner — der Bau läuft jetzt (Rats-Verdikt b, Blatt präzisiert; kein operator- oder fremd-gesetzter Block).
 - **Lage:** (gemessen 2026-10-04 River 91; ergänzt 2026-10-05 River 92) `wy-max-t
   37187464365` success auf `ba9c640479`; SOD 2024 gepooltes Quantil 2.4831,
   Familien-Maximum 10.18, family clears (vier Member `family-clearing`), n_eff ≈ 44.5;
@@ -133,9 +133,8 @@ Wort | Datum | Quelle
   Angewandt: `docs/blatt/fruehwarnsystem-praeregistrierung.md:26` präzisiert
   („1-min-dB/dt an X; hourly/daily-Maxima bleiben Ausgangszeuge") + Slots-Tabelle
   Z.95 (sha `71a33ffd…`).
-- **Blockade:** der fehlende ABK-1-min-`dB/dt`-Bau (Compiler-Arm + Derivat +
-  Probe-Ladearm); Z ist am stündlichen Lag-0/1-Rand-Bin nicht auflösbar; X bleibt ein
-  eigener Slot (Abisko-Null void). Das Instrument ist präzisiert, nicht das Ergebnis.
+- **Blockade:** keine (der frühere `blockiert`-Tag aus folge91 ist widerlegt — das
+  Roh-Korn liegt, es fehlt nur der Bau; der Schritt steht).
 - **Braucht:** (1) Mountain — `intermagnet_dbdt_compiler.rs:238-246` um `--grain
   minute` erweitern (HAPI `PT1M` ist die Quelle; Roh-Korn `supermag_1m` liegt schon);
   (2) Mycelium — Derivat `abk_dbdt_1m.bin` harvesten + als Register-Zeile in
