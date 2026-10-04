@@ -2,7 +2,7 @@
   title: Survey — Weberin-Eignung: die zweite unabhängige Linie je Messgröße (2026-10-02)
   class: survey
   date: 2026-10-04
-  sha256: 0171eeb323dd8a3f85dc925260f5d87f978349ea0876699af210bcfd8198a7a8
+  sha256: 56244e45b5a4c6cfc7598967daddc1ba4a861ddce21787fef13de97cc0924741
   status: live
   see-also: docs/concepts/die-weberin.md docs/SOURCE_PORT.md docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md
 -->
@@ -99,3 +99,28 @@ am Baum widerlegt (`gasum_today`). Z.ai bestätigt `absent`.
   request-only (Kalibrier-Linie = der Archiv-Proxy `-dX/dt`, nicht die Rohserie).
 - `data.epa.ie`-Aktualität und C9-Pa-Kalibrierung tiefer messen (`--sniff`/Inhalt).
 - Kandidaten als `url`/`compiler`-Zeilen: Verdikt ist Mountain (`phi/sources.φ`).
+
+## Nachtrag — restliche Klassen + EPA/C9 (gemessen 2026-10-04, F229-Fortsetzung)
+
+Der Survey deckte die Größen 1–5 (Gamma, Hydrophon, GIC, Infraschall, BGC-Argo).
+Hier die zweite unabhängige Linie der restlichen Klassen, mit dem Re-Run-Stand
+(`survey-2026-09-14-weberin-quellen-rerun.md`) und den frisch gemessenen Linien:
+
+| Größe (Klasse) | zweite Linie(n) | Beleg |
+|---|---|---|
+| Boden-Gravimeter (gravity) | IGETS Stationsliste `isdc.gfz.de/igets-data-base` **200** (162 937 B) ↔ IGETS DOI-OAI `doidb.wdc-terra.org/oaip/oai` **200** (462 B) | rerun 1.1/1.2 — **gleiche Quelle**, keine echte zweite Linie |
+| Seismik (seismic) | EarthScope IU **200** (10 345 B) ↔ GEOFON GE **200** (14 820 B) ↔ RaspberryShake AM **200** (3 775 512 B) | rerun 4.1/4.2/4.3 |
+| Lightning (lightning) | WWLLN Thunder-Hour **200** (48 685 822 B) ↔ GLM S3 `noaa-goes16.s3.amazonaws.com` **200** (302 468 B) | rerun 6.1; **frisch 2026-10-04** |
+| HF-Radar (hf_radar) | IOOS `hfradar.ioos.us/…/allDatasets.json` **200** (19 924 B) ↔ EMODnet `erddap.emodnet-physics.eu/erddap/index.json` **200** (766 B) | rerun 8.1; **frisch 2026-10-04** |
+| Neutrino (neutrino) | HAWC 2HWC/3HWC **200** (18 588/51 833 B) ↔ LHAASO 1LHAASO **200** (16 456 B) | rerun 10.1/10.2/10.3 |
+| Transients (transient) | Fink/LSST **200** (42 B) ↔ ALeRCE **200** (5 740 B) | rerun 11.2/11.4 |
+
+**EPA-Aktualität (gemessen 2026-10-04, `archive_search --verdict` + `curl` + `jaq`):**
+`data.epa.ie/radmon/api/v1/measurements` ist ein **historisches Bulk-API**
+(`count 9 453 260`, `page 1`, `per_page 50`, aufsteigend): Seite 1 trägt
+`samp_time` **2013-02-20**, `last_updated` **2015-07-15** — kein Live-Feed auf
+Seite 1; die jüngsten Werte liegen am Reihenende (9,45 M Records). Als zweite
+Linie nur über den jüngsten Filter/letzte Seite brauchbar.
+
+**C9-Pa-Kalibrierung (gemessen 2026-10-04):** `ceein.infp.ro/fdsnws/` **Timeout**
+(curl 40 s, `archive_search` 60 s) → **`unread`** (nicht `absent`); Wiedervorlage.
