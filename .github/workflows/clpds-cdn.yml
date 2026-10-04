@@ -1,0 +1,46 @@
+name: clpds-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/clpds_compiler.rs'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  clpds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the catalogue and file manifest already exist on the CDN
+        id: idempotence
+        run: |
+          assets=$(gh release view clpds.bao.ac.cn --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if printf '%s\n' "$assets" | grep -qx "clpds_catalogue.json" \
+             && printf '%s\n' "$assets" | grep -qx "clpds_files.jsonl"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "assets already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "assets missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the CLPDS Chang'e/Tianwen catalogue
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin clpds_compiler -- \
+            --out . \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "clpds-cdn: CLPDS catalogue returned void" \
+                 "clpds_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
