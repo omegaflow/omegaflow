@@ -1,7 +1,7 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: 11f6d1bc9480b43850338d06967ef5470a6c918702f9fc07a080da07364de507
+  sha256: e9952d96f0a433c0a08a1ca9c7848f88730da58fcd942a68cac72ccbde458239
 -->
 # sources.φ — Canonical Format Specification
 
@@ -71,6 +71,7 @@ A directive value may be wrapped in double quotes to carry whitespace (e.g.
 | `field <key> <force> <unit> <tau> <kernel>` | 6 | Same, with explicit kernel name. |
 | `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Legacy long form. τ > 0 required. |
 | `field <key> <identifier>` | 3 | **Refused** (τ-Gate): an annotation-only field carries no τ, so the parser refuses it — writing it produces nothing. Legacy corpora only; the `--gold` port migrates it to a τ-carrying form. |
+| `range <start_m> <step_m>` | 3 | **Physical series axis (source-register metadata).** First gate position and uniform gate spacing in metres: `range(k) = start_m + k·step_m`. Both finite, `start_m >= 0`, `step_m > 0`; otherwise `Invalid Syntax` and the value stays `None` (never a silent 0). Source-wide; resets at the next `url`. **Convention (Rat, 2026-10-04):** the axis is the raw measurement — for the deramped RoPeR CH2 (Tianwen-1/Zhurong) the vacuum one-way electrical range `step_m = c·T_p·f_s/(2·B·N_FFT) = 0.01722 m` (Zhou+2020, EPP 4(4) doi:10.26464/epp2020054 Tab. 3; Liu+2023, RS 15(4) 966). A relative permittivity (ε_r=4 → 0.00861 m depth) is a **named consumer model**, never folded into the register axis; the absolute first-gate/electronic offset stays absent. |
 | `first/last/lastrow/objlast/path/deep/regex <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Positioned scalar extract variants (same 9-token config). |
 | `count <path> [name]` | 2–3 | Extracted but τ = 0 → never manifests unless paired with a τ-carrying `field` of the same name. |
 | `geojson <mag_key> <min_mag> <out1> <out2> <tau> <absorption> <advection>` | 8 | GeoJSON event extract. |
