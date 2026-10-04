@@ -3,7 +3,7 @@
   session: River-Folge 91
   class: handover
   date: 2026-10-04
-  sha256: a0a9d4a70d85dcb9f87c94e1e01f9ddf5f4ab4ba11aef370223944a7bc4fe8c5
+  sha256: 169b7712f9f962ea45691b6965ef9383e52a8c0f487514dd3a74208217a113d1
   status: live
 -->
 # Handover — River-Folge 91 (2026-10-04)
@@ -49,9 +49,10 @@ Wort | Datum | Quelle
 
 - `docs/paper/gic-causal-driver.md` (`class: paper`) — §6 trägt die **gemessene**
   kalibrierte Westfall–Young-max-T-Null (SOD 2024: Quantil 2.4831, Familien-Maximum
-  10.18, family clears; Abisko void) und die Estimator-Bias-Tabelle (`te-bias-n`
-  37118666568). Offen: die Bias-Korrektur (`TE_NEFF_THRESHOLD`), die BCa-Intervalle,
-  der vollständige Kp-Kanal.
+  10.18, family clears; Abisko void) und die Estimator-Bias-Tabelle (`te-bias-n`)
+  mit der gesetzten Korrektur-Schwelle (`TE_NEFF_THRESHOLD = 18.166`). Offen: die
+  Verdrahtung der Korrektur in die Proben, die BCa-Intervalle, der vollständige
+  Kp-Kanal.
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` (`class: paper`) — Offen: OMNI2
   26 Zellen, ACE 3/14/16, kp `def`, Δ/σ_recon.
 - `docs/auftrag/auftrag-flyby2-kette.md` (`class: auftrag`) — Trägerzeile (dieselben
@@ -77,12 +78,13 @@ Wort | Datum | Quelle
   Register-86400 = Fetch-Pflicht), `tau = ∞`/`1/omega_g`, `color_index = 0`-Pad
   (ungemessene Farbe), fehlender Prop-Slot = benannte Absenz. Gebaut in
   `src/archivar/membrane.rs` (`body_anchor_samples`) + `src/wasm.rs` (Lazy-Seal).
-- **`TE_NEFF_THRESHOLD` bleibt `None` (Rat 2026-10-04).** Die zwei n_eff-Punkte (44.5
-  operativ, 10.58 Selftest n=240) sind zwei Reihenklassen, keine Verteilung; Gate und
-  Tabelle sind über `n_eff` vs. `n` geschlüsselt. Der ehrliche Schritt: `kde_n_eff` je
-  `n` in `te_bias_n_probe` drucken, `te-bias-n` neu, dann
-  `TE_NEFF_THRESHOLD = Some(n_eff(n=800))` — der gemessene Boden am kleinsten
-  Tabellen-Eintrag, nicht eine geratene Konstante.
+- **`TE_NEFF_THRESHOLD` gesetzt (Rat + `te-bias-n` 2026-10-04).** Der Rat: `None`,
+  bis der Kalibrier-`n_eff` je `n` gemessen ist — die zwei Reihenklassen (44.5
+  operativ, 10.58 Selftest n=240) tragen keine Verteilung; Gate und Tabelle sind
+  über `n_eff` vs. `n` geschlüsselt. Der neue `kde_n_eff`-Druck
+  (`te_bias_n_probe.rs`, `te-bias-n 37234616152`) misst n_eff(n = 800) = **18.166** →
+  `TE_NEFF_THRESHOLD = Some(1.8166e1)`, der gemessene Boden am kleinsten
+  Tabellen-Eintrag. Gate-Test auf beiden Seiten (unter/auf dem Boden) geprüft.
 - **Workflow-Domäne (Rat, fünf Stimmen, 2026-10-04).** Eigentum folgt der Natur der
   Datei: der **Mess-Instrument-Körper** (`wy-max-t.yml`, `bz-yearly-maxt.yml`,
   `field-te-query.yml`) gehört River; die **Transport-Grammatik** (Budget, Runner,
@@ -100,23 +102,6 @@ Wort | Datum | Quelle
   kein Epoch-Riss.
 
 ## Offen (aufgeschlüsselt)
-
-### B — serverlose lebende Membran: Ephemeris-Arm gebaut, CI-Verifikation offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `pages-deploy`-Lauf auf dem River-91-Commit (baut das wasm-Bundle +
-  stagt es).
-- **Lage:** (gemessen 2026-10-04 River 91) `https://omegaflow.space/membrane.html`
-  liefert 206, `omegaflow.js`/`omegaflow_bg.wasm`/
-  `ephemeris_de440_{earth,moon,sun}.bin` je 206; im Browser rendert die Seite
-  „stars 101 · scale 6.33e14 m/px" mit aktivem WebGPU-Adapter — B ist **live
-  verifiziert**. Der Ephemeris-Arm ist gebaut (`body_anchor_samples`,
-  `src/wasm.rs` Lazy-Seal, JS-Fetch der drei `.bin`).
-- **Blockade:** `pages-deploy.yml` baut wasm mit `continue-on-error: true` (ein
-  Bundle-Fehler macht den Lauf nicht rot → die Seite bliebe schwarz).
-- **Braucht:** `ci_manage log <pages-deploy-Run@River-91>` lesen (stehen
-  `pkg/omegaflow.js`/`omegaflow_bg.wasm` in `_site/`?), dann `/membrane.html` im
-  Browser erneut (Körper-Anker sichtbar nur in Körper-Nähe — `extent = radius_m`,
-  am SSB ehrlich schwarz).
 
 ### fruehwarnsystem α-Ebene — Sodankylä-Null gelesen, Abisko void
 - **Status:** blockiert | **Bindung:** eigen
@@ -153,17 +138,6 @@ Wort | Datum | Quelle
 - **Blockade:** der Runner-Stau.
 - **Braucht:** `ci_manage log 37235150270 --all` nach Lauf-Ende; dann die
   ABK-Combines prüfen.
-
-### n_eff-Gate / TE-Estimator-Bias — n_eff-Druck gebaut, Lauf offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `te-bias-n`-Lauf mit der neuen `n_eff`-Spalte.
-- **Lage:** (gemessen 2026-10-04 River 91) `kde_n_eff` je `(n, Replikat)` ist in
-  `tools/measure/src/bin/te_bias_n_probe.rs` gedruckt (Build 0/0); der Rat setzte
-  `TE_NEFF_THRESHOLD` bleibt `None`. Erster n_eff-Druck des operativen Laufs:
-  ≈ 44.5.
-- **Blockade:** der Kalibrier-`n_eff` je `n` (800…10000) fehlt noch.
-- **Braucht:** `te-bias-n` dispatcht; danach `TE_NEFF_THRESHOLD = Some(n_eff(n=800))`
-  aus der gemessenen Tabelle setzen.
 
 ### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen

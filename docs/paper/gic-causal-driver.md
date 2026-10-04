@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 09af946a3859e98b96bf89218271ab132842124c9c827bb63f3b06b6ed36280b
+  sha256: b11eaf2338129488e15666a2718ce7632d8a30705222cc6ac8648650c407b213
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -155,7 +155,7 @@ streams are dependent (the shared deterministic seed across pairs and lags), the
 twelve pair-lag calls carry only six distinct statistics (the lag-0/1 identity,
 §3.1), and the true null of the maximum is misspecified for non-stationary,
 heavy-tailed hourly maxima. A calibrated null distribution of the round
-maximum is the open construction. The concrete form (reviewer consultation,
+maximum is constructed and measured (Sodankylä 2024, §6). The concrete form (reviewer consultation,
 2026-10-01): a studentized Westfall–Young max-T over the distinct statistics —
 one seasonal block-bootstrap resample of the driver per draw, shared across all
 pairs and lags so the joint dependence is preserved, with a per-round/per-station
@@ -543,7 +543,7 @@ round-maximum multiple-comparison control in the spirit of Runge et al.
 (2019); its family-wise error rate was calibrated on the null battery, where
 the empirical rate fell near the nominal 1/(n_surr+1) — a calibration that
 does not transfer to this dependent, heavy-tailed, non-stationary design (the
-calibrated round-maximum null is the open construction, §3.2); the surrogate design follows the
+calibrated round-maximum null is built and measured, §3.2, §6); the surrogate design follows the
 phase-randomization practice of
 Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 (here answered by the family bound rather than by shuffling the condition).
@@ -644,8 +644,8 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   draws are dependent (the shared deterministic seed), whose twelve pair-lag
   calls carry six distinct statistics (the lag-0/1 identity, §3.1), and whose
   null maximum is misspecified for non-stationary, heavy-tailed hourly maxima.
-  A calibrated null distribution of the round-maximum is the open construction;
-  its concrete studentized Westfall–Young max-T form is given in §3.2. The
+  A calibrated null distribution of the round-maximum is measured (§6); its
+  studentized Westfall–Young max-T form is given in §3.2. The
   current plug-in fam controls at order 10⁻¹, not 10⁻². The sampling variance at
   n_surr = 10 is carried by the reported Wilson CI, not asserted, and the
   n_surr = 100 points pin the operating value at the low-nominal end. No confidence interval is reported on the TE values
@@ -668,8 +668,9 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   5/5 replicates at every n. The bias magnitude therefore grows toward the
   operating sizes (n ≈ 1260–2200) while the direction verdict is stable. No
   explicit small-sample correction is applied and every reported TE value
-  carries this negative bias; the correction (a subsample/`n_eff` bound) is an
-  open construction.
+  carries this negative bias; the correction's floor is measured and stands
+  (`TE_NEFF_THRESHOLD = 18.166` = the `kde_n_eff` at n = 800, `te-bias-n` run
+  37234616152), but no reported value applies it yet — the wiring stays open.
 - **The calibrated round-maximum null is measured at Sodankylä 2024; the Abisko
   pooled null stays incomplete.** The studentized Westfall–Young max-T
   construction named at §3.2 now runs end-to-end
