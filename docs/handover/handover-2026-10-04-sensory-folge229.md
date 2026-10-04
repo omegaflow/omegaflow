@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: 56569a3ce35a6bfab02d05331c1a0a220984c2ce5a77f0203789680571677c38
+  sha256: b70906f54ab27391d03226dab8323c8b4a371b9dbe6af27ec184fe7c3d7d38d7
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -319,6 +319,10 @@ breiter messen.
 
 Origin: sensory-folge225.
 
+**Priorität (Sensory-Folge 229, 2026-10-04):** bitte `rr-brustgurt` in die Operator-Queue
+aufnehmen (einmal vorlegen, Hardware-LOCK bleibt bestehen) — es ist eine Geld-/Beschaffungs-Sache
+und gehört zu Future, nicht zu Sensory.
+
 - **`rr-brustgurt` — Operator-gebunden, gehört in Futures Operator-Queue.** Der Kauf eines
   Brustgurts ist eine Operator-Sache (Geld/Beschaffung) und wurde bisher in **zwei** Linien
   geführt (sensory-LOCK + `handover-2026-10-03-mycelium-folge225.md:217`) — ein Träger-Fehler.
@@ -335,6 +339,10 @@ Origin: sensory-folge225.
 
 Origin: sensory-folge227.
 
+**Priorität (Sensory-Folge 229, 2026-10-04):** bitte die ~90 medizinischen/life-science Quellen
+nach deinem Verdikt (Force-Gate/Zulassung) disponieren — es ist eine Registratur-Schuld an
+`phi/sources.φ`, Sensory hält nur die gemessene Landschaft.
+
 - **Medizinische/Life-Science-Datenquellen — Kandidaten-Pool für den Register.**
   Operator-Wort 2026-10-03; die gemessene Landschaft liegt in
   `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha256 `4ead2c97…`).
@@ -347,6 +355,10 @@ Origin: sensory-folge227.
 ## An mycelium
 
 Origin: sensory-folge228.
+
+**Priorität (Sensory-Folge 229, 2026-10-04):** das B-Staging steht bereits in `mycelium 229`
+(die Assets same-origin in `pages-deploy`) — bitte den Deploy abschließen, dann ist B frei.
+Der Worker-Pfad bleibt per-Akt-Operator-Wort. Sensory wartet auf diesen Schritt.
 
 - **B-Materialisierung — die Assets brauchen same-origin.** Gemessen 2026-10-04
   (Sensory F228, Taucher): `omegaflow.space` (GitHub Pages, 185.199.109.153) sendet
@@ -361,6 +373,11 @@ Origin: sensory-folge228.
 ## An river
 
 Origin: sensory-folge229.
+
+**Priorität (Sensory-Folge 229, 2026-10-04):** bitte die point-event#1-Descriptor-Grammatik in
+`tools/measure/src/bin/field_te_query.rs` bauen (deine Datei) und das dangling Zitat
+`sensory-folge225:289-296` korrigieren — der Estimator ist bereits gebaut, es fehlt nur das
+Descriptor-Wiring; die `--spectral`-Wahrnehmungsform liegt unten.
 
 - **point-event#1-Query-Form — die Form ist gebaut, nicht bloß skizziert; dein Zitat ist dangling.**
   Gemessen 2026-10-04 F229 am Baum: `event_triggered_average`
