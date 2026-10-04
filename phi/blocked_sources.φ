@@ -2,7 +2,7 @@ note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung ech
 note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (18 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png); register-eigen: iaga-text.
 note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
 note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
-note gap-Token konverter — Feld-Einheit falsch abgebildet (mag als nT); Konverter-Arm fehlt.
+note gap-Token konverter — Feld-Einheit falsch als mag; Arm fehlt. (gemessen 2026-10-04: kein `_mag`/`_magnitude`-Feld ist Magnetmessung — alle sind astronomische Magnituden; psp_imf_bmag_nt trägt _nt/nT) → ohne benanntes Feld/Paar nicht baubar.
 note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten Körpers, kein Skalarfeld; Serien-Arm steht (astrometry_series.rs direction_only_lines + astrometry_series_compiler.rs, 2026-10-04).
 note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); kein Arm-Surface (per-entry-Fix; 15/17 integriert) — 2026-09-25 descoped.
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
@@ -73,15 +73,15 @@ note Tianwen-1/Zhurong (CNSA) — descoped 2026-10-04 (Operator-Wort, Future 177
 
 pending
 url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM (MBRSC VAE) — 2026-10-04: --verdict 200 (2 789 B); Cognito-Login Operator-Hand; emm_sdc_compiler.rs + emm-sdc-cdn.yml gebaut (emm_exi_l2.tar), Lauf 37190567318 rot (Proxy ohne Body). Reader fehlt. future-folge149.
+note Hope/Al-Amal EMM (MBRSC) — 2026-10-04: --verdict 200; emm_sdc_compiler.rs+emm-sdc-cdn.yml gebaut, Lauf 37190567318 rot. Reader-Gap: kein tar-Reader in src/archivar, kein emm_exi_l2.tar (Member-Schema+Einheit ungemessen). Cognito Operator-Hand.
 
-pending
+blocked account
 url https://superdarn.ca/data-download
-note MAP-Grid RST DataMap — 2026-09-29 (Globus-Auth Operator-Hand 2026-09-28, future-folge149): Globus-only 8e844226-2eea-479c-b5e4-bac908b725bc /local_data/map/ 55690F; Transfer→externe Platte offen; RST-Byte-Offsets pending. sensory-folge195.
+note MAP-Grid RST (DMap) — gemessen 2026-10-04: MAP nur als Globus-/BAS-/NSSC-Konto-Mirror, kein plain RST-URL; ascii-download nur FITACF → Zugang = Konto, RST-Offsets gegenstandslos.
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO ACS (ESA/Roskosmos) — 2026-09-30 (CI 36701710777): raw HK .xml = Table_Character, pds4_binary_compiler routet auf den pds4_fixed_width-Arm (pds4.rs). Occ-Spektrum ungemessen; Sample/Asset offen.
+note ExoMars TGO ACS — 2026-10-04: .tab Table_Character → pds4_fixed_width; Feld ROW_DATA → acs_nir_solar_occultation_spectrum gaussian-inverse-square em count. Registrierung Mycelium.
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
@@ -94,10 +94,6 @@ note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten
 pending
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
 note Chandrayaan-1 Mini-RF (ISRO, PDS Geosciences) — Arm+Compiler stehen (49b18dd6f); Endpunkt 2026-09-30: pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/.../level1/*.img + raw/*.dat (206). Sample+Asset Mycelium.
-
-pending
-url https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
-note Chang'e-1/-2 MRM (WUSTL PDS4+FITS): registriert sources.φ:9921 (pds4_fits_ce1/ce2_mrm + 8 Felder); Assets present; offen: cadence unread.
 
 pending
 url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
@@ -125,7 +121,7 @@ note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn
 
 blocked account
 url https://www.leos.ac.cn/
-note LEOS (CSES) — 2026-10-04: /api/admin/data/front/list status 40301 登录超时 (Konto-Gate; LEOS_USER/PASS in .secrets.local); kein Arm (sgrep leos src=0) → Braucht: Reader-Arm + Konto-Session. future-folge226.
+note LEOS (CSES) — 2026-10-04: /api/admin/data/front/list 40301 登录超时; kein Arm (sgrep leos src=0). Reader-Gap: keine authentifizierte JSON-Antwort/Schema; Konto-Session Operator-Hand (LEOS_USER/PASS in .secrets.local).
 
 pending
 url https://clpds.bao.ac.cn/
@@ -133,15 +129,15 @@ note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13 207 B);
 
 pending
 url https://pds-geosciences.wustl.edu/missions/viking/gravity.html
-note Viking Mars gravity (WUSTL) — 2026-10-02 HTTP 206 (1 B); kein Daten-Endpoint/Arm gemessen. future-folge167.
+note Viking Mars gravity — 2026-10-04: Endpunkt `.../mg_1001/vikgrav/` (vmar001l.dat 22569 Rows/42 B); Arm pds3_fixed_width steht; ACCELERATION → viking_orbiter2_los_accel inverse-square gravity mm/s**2 (achsenlos). Registrierung Mycelium.
 
-pending
+descoped
 url https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/
-note Cassini titanNotebook tray (PDS Atmospheres) — 2026-10-02 HTTP 200 (13058 B); Log-Baum, kein ODF-Einzeldatei-Endpunkt; cassini_odf_compiler erntet atmos.nmsu.edu/*.ODF, nicht diesen Baum. future-folge165.
+note Cassini titanNotebook tray — gemessen 2026-10-02 200/13058 B: Log-/Browse-Baum, kein Feld-Serien-Endpunkt; 2026-10-04 verdict pending, Wayback ohne Snapshot → trägt keine Feldserie; ODF-Serie steht sources.φ:9074 (cassini_odf). future-folge165.
 
 pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
-note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-02 HTTP 206 (1 B); kein CSV-Reader (juno_odf_compiler erntet jnogrv_* ODF). future-folge165.
+note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-04: generischer `csv`-Arm liest Plain-CSV (extract.rs:3846, kein neuer Arm nötig); Host 000/Wayback ohne Snapshot, 2026-10-02 nur 1 B → Feld-Verdikt nicht messbar. future-folge165.
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
@@ -151,21 +147,17 @@ pending
 url https://data.kasi.re.kr/
 note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
 
-pending
+descoped
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-note Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; TAP_SCHEMA 248 tables and no gaiadr3.* column matches cluster/member — cluster membership is absent from the Gaia TAP; corrected query pending (external catalog).
-
-pending
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+g.source_id%2Cg.ra%2Cg.dec%2Cg.phot_g_mean_mag%2Cg.parallax%2Cg.bp_rp%2Cv.best_class_name+FROM+gaiadr3.vari_classifier_result+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+g.source_id+%3D+v.source_id+WHERE+v.best_class_name+%3D+%27RR%27
-note Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR'), JOIN vari_classifier_result×gaia_source; Gaia-Astrometrie als zweite Linie (Weberin); Reader-Arm offen.
+note gemessen 2026-10-03: gaiadr3.cluster_ka HTTP 400; TAP_SCHEMA 248 Tabellen, keine cluster/member-Spalte → keine Mitgliedschaft in der Gaia-TAP; extern: VizieR J/A+A/633/A99/members 2026-10-04 HTTP 200 (Cantat-Gaudin+2020).
 
 pending
 url https://www.ieeg.org
-note ieeg.org (UPenn) — 2026-10-04 chrome-devtools (login omegaflow): 657 Datasets, öffentl. EEG-Dataset öffnet OHNE User-Agreement; Arm ieeg_edf steht (9d416e57b, edf.rs); Asset/sources.φ-Block + 4D-Anker fehlen.
+note ieeg.org — 2026-10-04: REST ohne Elektroden-Koordinaten (kein MNI); /api 503; Bau-Schritt = BIDS-Sidecar `*_electrodes.tsv` (`src/archivar/electrodes.rs`); ds003844 x=y=z=0.
 
-pending
+descoped
 url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — 2026-10-04: NEDC-Formular + signierte PDF gesendet (mail_ledger.φ:367, nach :366 "Use self"); Antwort offen (wartend.φ:39). EDF-Arm tuh_eeg steht (9d416e57b, edf.rs); 4D-Anker fehlt.
+note TUH EEG (Temple) — 2026-10-04: descoped — Elektroden-Doku rein symbolisch (Ferrell et al. 2020 par.nsf.gov/servlets/purl/10199699: Label/Text, keine Koordinaten; edf.rs EdfSignal ohne Positionsfeld); NEDC-Formular gesendet (wartend.φ:39).
 
 descoped
 url https://sleepdata.org
