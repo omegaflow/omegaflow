@@ -3,7 +3,7 @@
   session: River-Folge 91
   class: handover
   date: 2026-10-04
-  sha256: 82ad47fbf0e365c2eeadf8260449f42b76144d5ca00af88d17da1b07c297216f
+  sha256: a0a9d4a70d85dcb9f87c94e1e01f9ddf5f4ab4ba11aef370223944a7bc4fe8c5
   status: live
 -->
 # Handover — River-Folge 91 (2026-10-04)
@@ -199,11 +199,10 @@ Origin: river folge91.
 
 Origin: river folge91.
 
-- **B-Membran — Web-Ziel + Staging stehen; Bundle-Verifikation offen.**
-  `pages-deploy.yml` baut `--target web` und stagt `pkg/*` mit
-  `continue-on-error: true`; das neue Ephemeris-JS ruft `load_ephemeris` je Körper.
-  Bitte den `pages-deploy`-Lauf auf dem River-91-Commit lesen (Bundle in `_site/`?)
-  und den `continue-on-error` benannt halten (ein Bundle-Fehler wäre sonst still).
+- **B-Membran — `continue-on-error: true` auf dem wasm-Build (Transport-Grammatik).**
+  `pages-deploy.yml` baut `--target web` und stagt `pkg/*`; ein Bundle-Fehler macht
+  den Lauf nicht rot (die Seite bliebe schwarz). Bitte entscheiden, ob der wasm-Build
+  fehlschlagen darf — Rivers B-Punkt liest den `pages-deploy`-Lauf.
 - **Vier Serien-Assets (rixs/gbco/gmrt/gl30):** Witness-Epochen-Endpunkte (Rivers Form,
   Mountains Zeilen); gl30/SRTM15+/GHSL sind descoped.
 - **`ephemeris_juice`:** aktueller CDN-Stand Tag `ssd.jpl.nasa.gov-ephemeris` =
