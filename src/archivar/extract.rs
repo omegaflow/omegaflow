@@ -915,6 +915,13 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ASCAT_WDIR => Some("ascat_wind_direction_deg"),
             _ => None,
         },
+        "cses_lap" => match comp {
+            crate::geo::COMP_CSES_DENS => Some("cses_lap_electron_density_cm3"),
+            crate::geo::COMP_CSES_TEMP => Some("cses_lap_electron_temp_k"),
+            crate::geo::COMP_CSES_UP => Some("cses_lap_up_v"),
+            crate::geo::COMP_CSES_UF => Some("cses_lap_uf_v"),
+            _ => None,
+        },
         _ => None,
     }
 }

@@ -12322,6 +12322,18 @@ at earth
 ttl 604800
 field observable_hz dawn_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_lap.bin
+format cses_lap
+origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b50 (CSES_01_LAP_1_L02_A3_028981; dataset 10.57760/sciencedb.06921)
+compiler tools/harvest/src/bin/cses_lap_compiler.rs
+sha256 8ad1b259cdd2a3edff1a667a8d7bd8567aed1ef8f2b6af7b52fdb5f098875138
+at earth
+ttl 604800
+field A311 cses_lap_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field A321 cses_lap_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field UP cses_lap_up_v inverse-square electric V 86400 0.0 0.0
+field UF cses_lap_uf_v inverse-square electric V 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
 origin https://space.fmi.fi/gic/man_ascii
