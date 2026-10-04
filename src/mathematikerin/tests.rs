@@ -1341,6 +1341,7 @@ fn sky_tick_projects_event_threads_and_keeps_the_epochless_gate_closed() {
 #[test]
 fn a_direction_witness_series_is_held_as_direction_only_without_displacing_a_riss() {
     use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
+    use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};
     let t = 8.4e8;
     let sample = || AstroSample {
         tdb: t,
