@@ -6,12 +6,22 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      route:
+        description: "harvest route: auto tries TAPVizieR then falls back to VizieR ASU"
+        type: choice
+        options:
+          - auto
+          - tap
+          - asu
+        default: auto
 permissions:
   contents: write
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
   OMEGAFLOW_TAP_TIMEOUT: "1800"
+  OMEGAFLOW_ASU_TIMEOUT: "2700"
 jobs:
   nvss:
     runs-on: ubuntu-latest
@@ -19,29 +29,59 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Chunk-compile NVSS (8 RA-slices) and upload to CDN
+      - name: Compile NVSS (TAP, ASU fallback) into 8 RA-slices
         run: |
           mkdir -p kernels
-          for lo in $(seq 0 45 315); do
-            hi=$(awk "BEGIN{print $lo+45}")
-            out="kernels/nvss_c${lo}.json"
-            [ -s "$out" ] && continue
-            for attempt in 1 2 3; do
-              cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
-                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-                --table "VIII/65/nvss" \
-                --columns 'name:NVSS;ra:RAJ2000;dec:DEJ2000;flux:S1.4' \
-                --crossmatch-z 'V/154/sdss16:RA_ICRS:DE_ICRS:zsp' \
-                --xmatch-radius 10 \
-                --skip-null flux \
-                --skip-null z \
-                --async 9000 --limit 300000 \
-                --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
-                --out "$out" && break
-              sleep 60
+          route="${{ github.event.inputs.route }}"
+          [ -z "$route" ] && route=auto
+          tap_ok=true
+          if [ "$route" = "asu" ]; then
+            tap_ok=false
+          else
+            for lo in $(seq 0 45 315); do
+              hi=$(awk "BEGIN{print $lo+45}")
+              out="kernels/nvss_c${lo}.json"
+              [ -s "$out" ] && continue
+              slice_ok=false
+              for attempt in 1 2 3; do
+                cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+                  --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                  --table "VIII/65/nvss" \
+                  --columns 'name:NVSS;ra:RAJ2000;dec:DEJ2000;flux:S1.4' \
+                  --crossmatch-z 'V/154/sdss16:RA_ICRS:DE_ICRS:zsp' \
+                  --xmatch-radius 10 \
+                  --skip-null flux \
+                  --skip-null z \
+                  --async 9000 --limit 300000 \
+                  --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
+                  --out "$out" && { slice_ok=true; break; }
+                sleep 60
+              done
+              if [ "$slice_ok" != true ]; then
+                tap_ok=false
+                break
+              fi
             done
-            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
-          done
+          fi
+          if [ "$tap_ok" != true ]; then
+            if [ "$route" = "tap" ]; then
+              echo "TAP route requested and returned void"
+              exit 1
+            fi
+            echo "TAPVizieR returned void — compiling over the VizieR ASU fallback"
+            for lo in $(seq 0 45 315); do
+              hi=$(awk "BEGIN{print $lo+45}")
+              out="kernels/nvss_c${lo}.json"
+              cargo run -p omegaflow-harvest --release --bin vizier_asu_compiler -- \
+                --out "$out" \
+                --ra-range "${lo}:${hi}" \
+                --xmatch-radius 10 \
+                || { echo "slice ${lo} returned void over ASU"; exit 1; }
+              [ -s "$out" ] || { echo "slice ${lo} returned void over ASU"; exit 1; }
+            done
+          fi
+      - name: Concat slices and upload to CDN
+        run: |
           jq -s 'add' kernels/nvss_c*.json > nvss.json
           gh release upload ssd.jpl.nasa.gov-nvss nvss.json --clobber --repo omegaflow/sources \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
