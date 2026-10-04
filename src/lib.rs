@@ -3,6 +3,8 @@ pub mod archivar;
 #[cfg(feature = "commit_gate")]
 pub mod gate;
 pub mod mathematikerin;
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
 pub mod weberin;
 
 #[cfg(feature = "commit_gate")]

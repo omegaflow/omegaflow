@@ -843,6 +843,7 @@ dependencies = [
  "naga",
  "pollster",
  "serialport",
+ "wasm-bindgen",
  "wgpu",
 ]
 
