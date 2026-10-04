@@ -683,7 +683,7 @@ fn nbit_decode(
     mask_len: i32,
 ) -> Option<Vec<u8>> {
     let nt_size = type_size(typ)?;
-    if !(1..=8).contains(&nt_size) || want % nt_size != 0 || mask_len < 1 {
+    if !(1..=8).contains(&nt_size) || !want.is_multiple_of(nt_size) || mask_len < 1 {
         return None;
     }
     let bits = (nt_size * 8) as i32;

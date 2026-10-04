@@ -1103,6 +1103,7 @@ pub fn live_sweep(
                 | "catalog_tycho"
                 | "catalog_allwise_psd"
                 | "twomass_psc"
+                | "astrometry_series"
                 | "swarm_tec"
                 | "spectral"
                 | "xp_spectra"

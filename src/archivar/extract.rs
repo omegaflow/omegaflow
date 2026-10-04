@@ -203,8 +203,15 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
             Some(n)
         }
         "hips_png" => hips::parse_bin(bytes).map(|_| 1),
+        "astrometry_series" => astrometry_series_counts(bytes).map(|(_, samples)| samples),
         _ => None,
     }
+}
+
+pub fn astrometry_series_counts(bytes: &[u8]) -> Option<(usize, usize)> {
+    let series = astrometry_series::parse_bin(bytes)?;
+    let samples: usize = series.iter().map(|s| s.samples.len()).sum();
+    Some((series.len(), samples))
 }
 
 const MPCOBS_RECORD_STRIDE: usize = 50;
@@ -6659,5 +6666,35 @@ mod fixed_width_series_tests {
         assert!(series_named("pds4_binary", b"XXXX").is_none());
         assert!(series_named("pds4_fits", b"XXXX").is_none());
         assert!(series_named("gras_2c", b"XXXX").is_none());
+    }
+
+    #[test]
+    fn astrometry_series_reads_a_direction_series_without_a_scalar_slot() {
+        let series = astrometry_series::AstroSeries {
+            name: "uranu".to_string(),
+            samples: vec![
+                astrometry_series::AstroSample {
+                    tdb: 2.4e9,
+                    ra_deg: 288.7273,
+                    dec_deg: -22.7528,
+                    e_ra_mas: 57.0,
+                    e_dec_mas: 49.0,
+                },
+                astrometry_series::AstroSample {
+                    tdb: 2.4e9 + 86400.0,
+                    ra_deg: 288.7291,
+                    dec_deg: -22.7521,
+                    e_ra_mas: 47.0,
+                    e_dec_mas: 42.0,
+                },
+            ],
+        };
+        let bin = astrometry_series::write_bin(std::slice::from_ref(&series))
+            .expect("finite measured samples write");
+        assert_eq!(astrometry_series_counts(&bin), Some((1, 2)));
+        assert_eq!(verify_records("astrometry_series", &bin), Some(2));
+        assert!(series_named("astrometry_series", &bin).is_none());
+        assert!(astrometry_series_counts(b"XXXX").is_none());
+        assert!(verify_records("astrometry_series", b"XXXX").is_none());
     }
 }
