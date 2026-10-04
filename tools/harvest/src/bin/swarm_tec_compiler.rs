@@ -256,6 +256,8 @@ fn compile(path: &str, out: &str) {
     }
 
     println!("format swarm_tec");
+    println!("ttl 86400");
+    println!("at earth");
     println!("cmap .");
     println!("lat Latitude");
     println!("lon Longitude");
@@ -278,4 +280,29 @@ fn main() {
     }
     eprintln!("usage: swarm_tec_compiler --probe <cdf> | --file <cdf> --out <bin>");
     std::process::exit(2);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bin_roundtrip_preserves_records() {
+        let records = vec![
+            [50.0, 10.0, 6800.0, 1_700_000_000.0, 12.5],
+            [-30.0, 200.0, 6900.0, 1_700_000_060.0, 3.25],
+        ];
+        let bytes = write_bin(&records);
+        assert_eq!(bytes.len(), 8 + records.len() * FIELDS * 8);
+        assert_eq!(parse_bin(&bytes).as_deref(), Some(records.as_slice()));
+    }
+
+    #[test]
+    fn parse_bin_rejects_foreign_magic_and_short_body() {
+        assert!(parse_bin(b"SCTE").is_none());
+        assert!(parse_bin(b"XXXX").is_none());
+        let good = write_bin(&[[0.0; FIELDS]]);
+        let short = good[..good.len() - 1].to_vec();
+        assert!(parse_bin(&short).is_none());
+    }
 }
