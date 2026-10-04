@@ -3260,6 +3260,74 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "astrometry_series" {
+                let url = archive.sources[i].url.clone();
+                let src_ttl = archive.sources[i].ttl;
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("astrometry").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_astrometry_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!(
+                                    "astrometry_series {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    url
+                                );
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("astrometry_series {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("astrometry_series {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    match astrometry_series::parse_bin(&bytes) {
+                        Some(series) => {
+                            let samples: usize = series.iter().map(|s| s.samples.len()).sum();
+                            eprintln!(
+                                "\r\x1b[Kastrometry_series {}: {} direction series, {} samples held (no field line: a JD/RA/Dec direction series has no scalar Channel slot in the 26×f64 wire and no AstroSample slot in the SeriesRow stream)",
+                                source_name(&url),
+                                series.len(),
+                                samples
+                            );
+                        }
+                        None => {
+                            eprintln!(
+                                "astrometry_series {}: bin reads void — {} B carry no AST1 contract",
+                                url,
+                                bytes.len()
+                            );
+                        }
+                    }
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
             if archive.sources[i].format == "spk" {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

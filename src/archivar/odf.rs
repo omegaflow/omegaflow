@@ -348,19 +348,55 @@ pub fn ranging_resolution_from_cycle_time_m(first: u8, last: u8, cycle_time_s: f
     ranging_ambiguity_resolution_m(first, last, l / cycle_time_s)
 }
 
+pub const SEQ_RANGING_FIRST_COMPONENT: u8 = 4;
+pub const SEQ_RANGING_LAST_COMPONENT: u8 = 24;
+
+pub fn seq_ranging_component_frequency_hz(n: u8, f_exc_hz: f64) -> Option<f64> {
+    if !f_exc_hz.is_finite() || f_exc_hz <= 0.0 {
+        return None;
+    }
+    if !(SEQ_RANGING_FIRST_COMPONENT..=SEQ_RANGING_LAST_COMPONENT).contains(&n) {
+        return None;
+    }
+    let f = f_exc_hz * 2f64.powi(-(i32::from(n) + 2));
+    (f.is_finite() && f > 0.0).then_some(f)
+}
+
+pub fn seq_ranging_ambiguity_resolution_m(first: u8, last: u8, f_exc_hz: f64) -> Option<f64> {
+    if first > last {
+        return None;
+    }
+    let f_first = seq_ranging_component_frequency_hz(first, f_exc_hz)?;
+    let v = 299_792_458.0 / (2.0 * f_first);
+    v.is_finite().then_some(v)
+}
+
+fn tnf_seq_ranging_f_exc_hz(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+    match frame.format_code {
+        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+            tnf_dt2(frame, bytes)?;
+        }
+        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+            tnf_dt3(frame, bytes)?;
+        }
+        _ => return None,
+    }
+    None
+}
+
 pub fn tnf_ranging_resolution(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
-    let (first, last, cycle) = match frame.format_code {
+    let (first, last) = match frame.format_code {
         TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
             let d = tnf_dt2(frame, bytes)?;
-            (d.first_comp_num, d.last_comp_num, d.rng_cycle_time)
+            (d.first_comp_num, d.last_comp_num)
         }
         TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
             let d = tnf_dt3(frame, bytes)?;
-            (d.first_comp_num, d.last_comp_num, d.rng_cycle_time)
+            (d.first_comp_num, d.last_comp_num)
         }
         _ => return None,
     };
-    ranging_resolution_from_cycle_time_m(first, last, cycle)
+    seq_ranging_ambiguity_resolution_m(first, last, tnf_seq_ranging_f_exc_hz(frame, bytes)?)
 }
 pub const TNF_FORMAT_DOPPLER_COUNT: u8 = 6;
 pub const TNF_FORMAT_SEQUENTIAL_RANGE: u8 = 7;
@@ -2139,6 +2175,31 @@ mod tests {
         assert_eq!(ranging_resolution_from_cycle_time_m(1, 6, 0.0), None);
         assert_eq!(ranging_resolution_from_cycle_time_m(0, 6, cycle), None);
         assert_eq!(ranging_resolution_from_cycle_time_m(1, 7, cycle), None);
+    }
+
+    #[test]
+    fn seq_ranging_frequencies_follow_module_203_table_1() {
+        let f4 = 1_032_556.981_f64;
+        let f_exc = f4 * 2f64.powi(6);
+        let got = seq_ranging_component_frequency_hz(4, f_exc).expect("resolves");
+        assert!((got - f4).abs() < 1e-6, "got {got}");
+        for n in SEQ_RANGING_FIRST_COMPONENT..SEQ_RANGING_LAST_COMPONENT {
+            let a = seq_ranging_component_frequency_hz(n, f_exc).unwrap();
+            let b = seq_ranging_component_frequency_hz(n + 1, f_exc).unwrap();
+            assert!((a / b - 2.0).abs() < 1e-12, "n={n} {a} {b}");
+        }
+        assert_eq!(seq_ranging_component_frequency_hz(3, f_exc), None);
+        assert_eq!(seq_ranging_component_frequency_hz(25, f_exc), None);
+        assert_eq!(seq_ranging_component_frequency_hz(4, 0.0), None);
+        assert_eq!(seq_ranging_component_frequency_hz(4, f64::NAN), None);
+
+        let r = seq_ranging_ambiguity_resolution_m(4, 24, f_exc).expect("resolves");
+        let want = 299_792_458.0 / (2.0 * f4);
+        assert!((r - want).abs() < 1e-6, "got {r} want {want}");
+        assert_eq!(seq_ranging_ambiguity_resolution_m(3, 24, f_exc), None);
+        assert_eq!(seq_ranging_ambiguity_resolution_m(24, 4, f_exc), None);
+        assert_eq!(seq_ranging_ambiguity_resolution_m(4, 24, 0.0), None);
+        assert_eq!(seq_ranging_ambiguity_resolution_m(4, 24, f64::NAN), None);
     }
 
     fn example_words() -> [u32; 9] {
