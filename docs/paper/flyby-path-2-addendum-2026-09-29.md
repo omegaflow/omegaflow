@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 8b9143f481299d6c581ca6d62c86be6eae004520be7d5adea47e030ff57f6e7d
+  sha256: 0224cbfac3fd0cac5348a91da24c79ba021af14d436f1b057d86b9c92064a7a4
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -245,7 +245,7 @@ The operator's word (2026-10-03) resolves it: the sealed arc `aeb3c82f…` is th
 `018ce2ca…` is a **post-flight comparison line**. No line is averaged, none is
 selected by outcome.
 
-## 2026-10-04 — the three lines built: official and renewed placed, postflight riss on the CDN
+## 2026-10-04 — the three lines built: official, renewed and postflight placed
 
 The `river 87` line switch (`flyby_path2_fill --line`, `c0dbc0ede`) and the
 line-sharp fetch (`mycelium 227`, `38419ddcf`) dispatched the three lines on the
@@ -276,14 +276,20 @@ Re-measured 2026-10-04 via `archive_search --sniff`: `ephemeris_juice.bin` =
 `37165635404` (success, 2026-10-04T00:48Z) restored only 106 704 B — its
 `--systems juice` reproduces the sealed arc, not the producer's
 `--systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice` that yielded
-`018ce2ca…` (kernel-flatten `37029375744` @`1e6d21f2f`). The postflight
-comparison line is `pending` on the CDN restore, not measured.
+`018ce2ca…` (kernel-flatten `37029375744` @`1e6d21f2f`).
+
+The restore was re-run with the producer's full systems list (Committed `b60b756f2`) and
+returned the asset: `ephemeris_juice.bin` = `018ce2ca…` (538 696 B, `--sniff` 2026-10-04).
+The `--line postflight` re-run (`37187374751`, success) then built the tube: **placed**,
+perigee `2026-09-28T11:58:50Z` geocentric **62 745 km**, 26 hourly cells
+(`data/flyby2/tube-juice-2026-09-28-postflight.json`). The postflight and renewed arcs
+(the two 538 696 B states) agree at 62 745 km; the sealed official arc (106 704 B) stands
+at 15 034 km. The riss is carried as three named witnesses, never averaged.
 
 ## Next steps
 
-- The postflight arc is restored (Mycelium, `juice-arc-restore`) with the
-  producer's full systems list `planets,jupiter,saturn,mars,uranus,neptune,pluto,juice`;
-  then `flyby-path2-fill --line postflight` reads its own bytes.
+- The three lines are built (2026-10-04): official `15 034 km`, renewed and postflight
+  `62 745 km`. The official/renewed/postflight riss is carried, never averaged.
 - The CI fill (`flyby-path2-fill.yml`, river's named step) dispatched after the
   seal; the 2026-09-30 re-run filled the register's swarm cells 16–24, and the
   2026-10-03 re-run (with the `river 73` fetch-stop fix) filled cell 25.

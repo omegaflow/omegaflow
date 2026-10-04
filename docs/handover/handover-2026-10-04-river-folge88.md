@@ -3,7 +3,7 @@
   session: River-Folge 88
   class: handover
   date: 2026-10-04
-  sha256: 0edcebfb1b440a69353464d6b634abad949f2d74d84ea9ccb8bb4b6236da7444
+  sha256: 072b8010146f01772f953aaa056cc4f3773ffeccd74fb73995e5ced89b620a00
   status: live
 -->
 # Handover — River-Folge 88 (2026-10-04)
@@ -116,34 +116,33 @@ Wort | Datum | Quelle
 - **Blockade:** `TE_NEFF_THRESHOLD = None`.
 - **Braucht:** nach dem Lauf `TE_NEFF_THRESHOLD` setzen.
 
-### Flyby-Path-2 — official/renewed placed, postflight füllt
+### Flyby-Path-2 — drei Linien gebaut; Rest-Zellen offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `flyby-path2-fill 37187374751` (`--line postflight`, dispatched
-  2026-10-04 nach dem Restore).
-- **Lage:** (gemessen 2026-10-04 via `archive_search --sniff`) der Restore
-  `juice-arc-restore 37174498970` (success) brachte `ephemeris_juice.bin` zurück:
-  **538 696 B, sha `018ce2ca…`** == Seal. official placed (15 034 km / 11:43:50Z),
-  renewed placed (62 745 km / 11:58:50Z). Der `--systems`-Fix des Restores war korrekt.
-- **Blockade:** der postflight-Tube entsteht erst im Lauf.
-- **Braucht:** `ci_manage jobs/log 37187374751` nach Lauf-Ende; den postflight-Tube gegen
-  die official-Linie in den Addendum eintragen.
+- **Trigger:** externe Releases — finaler GFZ-`kp def` und ESA/ESOC-SPK-`Δ/σ_recon`;
+  Träger `docs/auftrag/auftrag-flyby2-kette.md`.
+- **Lage:** (gemessen 2026-10-04) der Restore `juice-arc-restore 37174498970` brachte
+  `ephemeris_juice.bin` auf `018ce2ca…` (538 696 B); die **drei Linien sind gebaut**:
+  official 15 034 km / 11:43:50Z, renewed 62 745 km / 11:58:50Z, postflight 62 745 km /
+  11:58:50Z (`37187374751` success). Der Addendum `§2026-10-04` trägt den Stand. Offen sind
+  nur die **Rest-Zellen**: OMNI2 26 Zellen (HAPI 1201), ACE 3/14/16, kp `def`, Δ/σ_recon.
+- **Blockade:** die Zellen entstehen erst mit externen Releases.
+- **Braucht:** kp `def` am GFZ-Release, Δ/σ_recon an der ESA-SPK nachtragen (kein River-Lauf).
 
 ### Zeugen im universellen Myzel — JMA-Verdikt gemessen, CI-Job dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `field-te-query 37187424991` (Jobs `parity`/`witness`/`witness-jma`,
-  re-dispatched 2026-10-04 nach dem `te.rs`-Fix).
-- **Lage:** (gemessen 2026-10-04) der JMA-`point-event#2`-Lauf (lokal): **230** Stempel,
-  **170** Events, 169 Lag-Zellen; ETA-Peak |mean| = **1.0706e-20** < Omori-Null **1.3443e-20**
-  → **kein Pfeil**; built-in `PARITY-WITNESS: pending — no recorded witness TE verdict in docs/`.
-  Der erste `field-te-query`-Lauf fand zugleich einen **Defekt**: der alte `witness`-Job
-  (`erbq-solar.te`, Tohoku `#1`, n = 198) panikte in `src/mathematikerin/te.rs:161`
-  (`index out of bounds: len 44, index 48`) — `transfer_entropy_lag`/`_h` rechneten
-  `n − lag` ohne Guard. **Geheilt** (`n.checked_sub(lag)?`, Gate-Test
-  `gate_transfer_entropy_lag_beyond_series_is_none`, Committed `bfb7d9d1b`); neu dispatcht.
-  Die zwei URL-Risse sind geheilt (Chile `/1` count 6, Tohoku `/5` count 198).
-- **Blockade:** die Vergleichsseite (ein recorded TE-Verdikt) fehlt in `docs/` — by design
-  `pending`.
-- **Braucht:** `ci_manage log 37187424991`; das CI-Verdikt als recorded verdict führen.
+- **Trigger:** die neue vorabregistrierte Query-Form für den starken `point-event#1`-Test
+  (`sensory-folge225:289-296`).
+- **Lage:** (gemessen 2026-10-04) `field-te-query 37187424991` ist **komplett grün**
+  (`parity`/`witness`/`witness-jma`); der JMA-`point-event#2`-Lauf: **230** Stempel,
+  **170** Events, ETA-Peak |mean| = **1.0706e-20** < Omori-Null **1.3443e-20** → **kein
+  Pfeil**; das CI-Artefakt trägt das Verdikt. Der erste Lauf hatte einen **Defekt** gefunden
+  (`te.rs:161`-Panik, `n − lag`-Unterlauf), der geheilt ist (`bfb7d9d1b`); zusätzlich sechs
+  weitere Unterlauf-Stellen gehärtet (`8581d7ac2`). Die zwei URL-Risse sind geheilt.
+- **Blockade:** `erbq-solar.te` (point-event#1) ist als Test schwach (sparse Train,
+  Omori-Null) — bewusst descoped; der starke Test ist eine neue Query-Form, nicht dieses
+  Descriptor.
+- **Braucht:** die neue `point-event#1`-Query-Form vorabregistrieren (Sensory/River), dann
+  messen; das CI-JMA-Verdikt als recorded verdict ablegen.
 
 ### `load_field` URL-Templates — Uhr-Marker aufgelöst, Anker/Secrets pending
 - **Status:** wartend | **Bindung:** eigen
