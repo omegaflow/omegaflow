@@ -13925,6 +13925,23 @@ field w4mpro allwise_w4_mag inverse-square em mag 31536000 0.0 0.0
 field w3snr allwise_w3_snr inverse-square em 1 31536000 0.0 0.0
 field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/twomass_psc.bin
+format twomass_psc
+origin https://irsa.ipac.caltech.edu/2MASS/download/allsky/
+compiler tools/harvest/src/bin/twomass_compiler.rs
+sha256 8448b0bb6afb18ae720a9dcf78ee69f636cbbd33bf1bb669a1d0dbecf4364d92
+at sun
+ttl 31536000
+cmap .
+ra ra
+dec dec
+field jmag twomass_j_mag inverse-square em mag 31536000 0.0 0.0
+field e_jmag twomass_e_j_mag inverse-square em mag 31536000 0.0 0.0
+field hmag twomass_h_mag inverse-square em mag 31536000 0.0 0.0
+field e_hmag twomass_e_h_mag inverse-square em mag 31536000 0.0 0.0
+field kmag twomass_k_mag inverse-square em mag 31536000 0.0 0.0
+field e_kmag twomass_e_k_mag inverse-square em mag 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
 origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
 compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
