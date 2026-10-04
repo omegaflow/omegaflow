@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: e480af9f1b11c155d9ae4bba5a9c7287465b7bb0ee3d7169e40e5e641029ce05
+  sha256: 904ed5dbd9bbdb3e9b080251ff5690f054c19cf82caa5a8e4fa5de4037f2d67b
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -140,9 +140,10 @@ Wort | Datum | Quelle
 - **Blockade:** keine (der frühere `blockiert`-Tag aus folge91 ist widerlegt — das
   Roh-Korn liegt, es fehlt nur der Bau; der Schritt steht).
 - **Braucht:** (1)–(3) **gebaut (River 92)** — Compiler `--grain minute`, Workflow-Option,
-  neuer Bin `bz_dbdt_delay_probe`, Register-Zeile; (4) **offen:** CDN-Harvest
-  `gh workflow run intermagnet-cdn.yml -f station=ABK -f grain=minute -f start=2024 -f end=2024 -f asset=abk_dbdt_1m.bin`;
-  (5) **offen:** re-run `cargo run -p omegaflow-measure --bin bz_dbdt_delay_probe -- --station ABK --start 2024-01-01 --end 2024-12-31`;
+  neuer Bin `bz_dbdt_delay_probe`, Register-Zeile; (4) **dispatcht:** CDN-Harvest
+  `intermagnet-cdn 37242692202` (asset `abk_dbdt_1m.bin`; `head_sha fab425aa6`) — bei
+  Grün `sha256`/`url` gegen `phi/sources.φ:1829-1836` prüfen, sonst re-dispatch;
+  (5) **offen (nach Grün):** re-run `cargo run -p omegaflow-measure --bin bz_dbdt_delay_probe -- --station ABK --start 2024-01-01 --end 2024-12-31`;
   (6) Abisko-Null-Arm (X-Slot). Das Siegel setzt der Operator; sein Wort gilt dem
   präzisierten Wortlaut.
 
