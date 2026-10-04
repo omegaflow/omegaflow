@@ -8,21 +8,8 @@ const BASE: &str = "https://noise.discomap.eea.europa.eu/arcgis/rest/services/no
 const ASSET: &str = "eea_noise_2025.json";
 
 const FIELDS: [&str; 15] = [
-    "SNLD55",
-    "SNLD65",
-    "SNLD75",
-    "SNLN50",
-    "SNLN60",
-    "SNLN70",
-    "NLD5559",
-    "NLD6064",
-    "NLD6569",
-    "NLD7074",
-    "NLN5054",
-    "NLN5559",
-    "NLN6064",
-    "NLN6569",
-    "N_INHAB",
+    "SNLD55", "SNLD65", "SNLD75", "SNLN50", "SNLN60", "SNLN70", "NLD5559", "NLD6064", "NLD6569",
+    "NLD7074", "NLN5054", "NLN5559", "NLN6064", "NLN6569", "N_INHAB",
 ];
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -82,7 +69,11 @@ fn main() {
     };
     match parse_series(&bytes) {
         Some(rows) if !rows.is_empty() => {
-            eprintln!("eea_noise_compiler: {} record(s), {} B", rows.len(), bytes.len())
+            eprintln!(
+                "eea_noise_compiler: {} record(s), {} B",
+                rows.len(),
+                bytes.len()
+            )
         }
         Some(_) => {
             eprintln!(

@@ -1821,10 +1821,7 @@ fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str,
 }
 
 fn port_drop_key(kl: &str) -> bool {
-    if kl.contains("earth_orientation")
-        || kl.ends_with("obs_data")
-        || kl == "magnetosphere"
-    {
+    if kl.contains("earth_orientation") || kl.ends_with("obs_data") || kl == "magnetosphere" {
         return true;
     }
     if kl.contains("\\d") {
@@ -4501,7 +4498,10 @@ mod probe_classify_tests {
             probe_classify_for_block("sep", Some("em")),
             ("em", "arcsec", 604800.0)
         );
-        assert_eq!(probe_classify_for_block("sep", Some("thermal")).0, "UNCERTAIN");
+        assert_eq!(
+            probe_classify_for_block("sep", Some("thermal")).0,
+            "UNCERTAIN"
+        );
         assert_eq!(
             probe_classify_for_block("wds_separation_arcsec", Some("thermal")),
             ("em", "arcsec", 604800.0)
