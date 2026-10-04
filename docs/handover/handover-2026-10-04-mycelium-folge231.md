@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss/CLPDS/iEEG-Fixes, goes_euvs-Alignment, Exposom-Arme, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: bd4f808b101f681f1e9b99ae3ea71cf7299e54a60a197936beed4df2005979e7
+  sha256: 58d1da6d3d6741dd94ab0f0853f4cb42a2ff728600022ebe34eb89636f6718c2
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -89,12 +89,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
   - `:118` JAXA G-Portal — `sha256` steht; offen: Record-Download (`add_download.json`/SFTP).
   - `:122` CSES/LIMADOU — CSES materialisiert; limadou ohne Rohdatenpfad → **Mountain-descope**.
   - `:130` CLPDS — Annex gefixt, Lauf `37233584228`.
-  - `:134` Viking Mars gravity — **gebaut**: Compiler `viking_grav_compiler.rs` + Reader-Arm `viking_grav.rs` + Workflow; Lauf `37240023565`; Asset `viking_grav_vmar001l.bin` sha256 `5f7c8814…` (22569 Zeilen). Riss: kein Zeitkanal → declared catalog epoch 1976-01-01 (keine Fabrikation).
+  - `:134` Viking Mars gravity — **gebaut + Lauf `37240023565` success**; Asset `viking_grav_vmar001l.bin` `sha256 5f7c8814…` (903 492 B) in `sources.φ` nachgetragen. Riss: kein Zeitkanal → declared catalog epoch 1976-01-01 (keine Fabrikation).
   - `:138` Cassini titanNotebook — Host `*.nmsu.edu` **heute down** (Ladder pending, Wayback nichts); Inhalt SPASS-`.txt`-Logs, kein ODF → **wartend (extern)**.
   - `:142` Juno Gravity CSV — derselbe Host down; Format ungemessen → **wartend (extern)**.
   - `:146` PDS-PPI (UCLA) — EPN-TAP `vo-pds-ppi.igpp.ucla.edu/tap/sync` 200, `tap_compiler` passt (schema-qualifiziert `<schema>.epn_core`); **Dataset-Kuration offen**.
   - `:158` (`:150`-Drift) Gaia `cluster_ka` — **Mountain-descoped** (extern VizieR `J/A+A/633/A99/members`).
-  - `:154` Gaia `vari_classifier_result` — **Riss, nicht geglättet:** Mountain-Befund (2026-10-05, `blocked_sources.φ:154`) sagt „generischer `format tap` liest das JSON (extract.rs:3854), **kein neuer Arm**"; der Mycelium-Batch hat einen dedizierten Arm gebaut (`gaia_rrl_compiler.rs` + Reader `src/archivar/gaia_rrl.rs`, Commit `0a18abb3e`, Block `format gaia_rrl`). Beide Linien stehen; Entscheid Mountain/River. Lauf `37240025484`.
+  - `:154` Gaia `vari_classifier_result` — **Riss, nicht geglättet:** Mountain-Befund (2026-10-05, `blocked_sources.φ:154`) sagt „generischer `format tap` liest das JSON (extract.rs:3854), **kein neuer Arm**"; der Mycelium-Batch hat einen dedizierten Arm gebaut (`gaia_rrl_compiler.rs` + Reader `src/archivar/gaia_rrl.rs`, Commit `0a18abb3e`, Block `format gaia_rrl`). Beide Linien stehen; Entscheid Mountain/River. Lauf `37240025484` = **failure** `Gaia TAP HTTP 500` (transient) → re-dispatch bei Server.
   - `:162` ieeg.org — Lauf `37235356150` (503) + Fix; `sources.φ`-Block + 4D-Anker fehlen.
 - **Blockade:** je Eintrag (Mountain-Disposition / externer Host / Operator-Hand).
 - **Braucht:** `:110`/`:134`/`:154`/`:162` Läufe lesen + `sha256`; `:102`/`:106`/`:122`/`:154` = Mountain-Disposition/Registrierung; `:114` = Mountain/River-Format-Entscheid; `:138`/`:142` = Host-Rückkehr; `:146` = Dataset-Kuration.
