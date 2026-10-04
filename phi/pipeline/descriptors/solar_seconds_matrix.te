@@ -1,0 +1,22 @@
+# solar_seconds_matrix.te — TE-Probes-Wanderung: the solar_seconds_matrix_probe pair over
+#   registered fields.
+# driver: cool AIA coronal band 304 A, aia_304_dn (phi/sources.φ:1835, format `aia`, AIA1
+#   contract, aia_compiler.rs). solar_seconds_matrix_probe.rs:28-36 AIA_BANDS index 0 (304A);
+#   :533-552 builds the 304 A grid; the first directed pair is pairs[(0,1)] (:632-638).
+# target: hot AIA band 131 A, aia_131_dn (phi/sources.φ:1831). AIA_BANDS index 1 (131A); the
+#   probe sweeps all 9 actors' 72 directed pairs (7 AIA + XRSA + XRSB, :581-587) and prints
+#   D = TE(A->B) - TE(B->A) per pair; field_te_query carries one driver/target pair, so this
+#   descriptor names the first (coolest cross-band) pair, the remaining directed pairs stay the
+#   probe's own matrix.
+# cond: none — the probe measures bivariate TE per pair, no conditioning arm. Flare epochs
+#   (GOES b_flux > 5e-6 W/m^2, :490) feed the event stack, not a cond arm.
+# cadence: 24-s cells (solar_seconds_matrix_probe.rs:7 DT 24.0; :25 LAG_MAX 12; :23 N_SURR 10).
+pair solar-seconds-matrix
+register sources
+driver aia_304_dn
+target aia_131_dn
+cadence live
+bin 24
+seasonal none
+lags 0,1,2,3,4,5,6,7,8,9,10,11,12
+surrogate 10
