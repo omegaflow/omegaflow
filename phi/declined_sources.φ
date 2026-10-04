@@ -5315,6 +5315,374 @@ decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
 
+decline registry/katalog
+url https://www.nitrc.org
+note Dataset-Registry (ABIDE/ADHD-200/NKI) — kein Messwert-Feld am Punkt; 200 (2026-10-03).
+
+decline registry/katalog
+url https://www.ebrains.eu
+note Atlanten+Modelle+Plattform — Registry; 200 (2026-10-03).
+
+decline registry/katalog
+url https://www.synapse.org
+note Projekt-Registry (AD Knowledge Portal/PsychENCODE); 200 (2026-10-03).
+
+decline registry/katalog
+url https://dataverse.harvard.edu
+note Generisches Repo, kein Feld am Punkt; 202 (2026-10-03).
+
+decline registry/katalog
+url https://osf.io
+note Präregistrierungs-/Repo-Plattform; 200 (2026-10-04).
+
+decline registry/katalog
+url https://nda.nih.gov
+note Archiv/Registry psychiatrischer Kohorten; 200 (2026-10-03).
+
+decline registry/katalog
+url https://datadryad.org
+note Generisches Repo; 200 (2026-10-04).
+
+decline health-stats
+url https://wwwn.cdc.gov/nchs/nhanes/
+note Bevölkerungs-/Laborsurvey — Aggregatstatistik, kein Feld; 206 (2026-10-03).
+
+decline health-stats
+url https://www.ukbiobank.ac.uk
+note Kohorte (Genomik/MRI/Wearable) — DUA; 403 direkt (Wayback, 2026-10-03).
+
+decline health-stats
+url https://www.researchallofus.org
+note Kohorte Workbench+DUA; 200 (2026-10-03).
+
+decline health-stats
+url https://biolincc.nhlbi.nih.gov
+note Kohorten-Repo (Framingham/ARIC) — DUA; 200 (2026-10-03).
+
+decline health-stats
+url https://ghoapi.azureedge.net/api/
+note Mortalitäts-/Morbiditätsstatistik; 200 (2026-10-03).
+
+decline health-stats
+url https://ec.europa.eu/eurostat
+note SDMX-Gesundheitsstatistik; 200 (2026-10-03).
+
+decline health-stats
+url https://healthdata.gov
+note Public-Health-/Medicare-Statistik; 200 (2026-10-03).
+
+decline health-stats
+url https://ghdx.healthdata.org
+note Global-Burden-of-Disease-Aggregate; 200 (2026-10-03).
+
+decline health-stats
+url https://www.oecd.org
+note Gesundheitsstatistik; 403 direkt (Wayback, 2026-10-03).
+
+decline health-stats
+url https://addhealth.cpc.unc.edu
+note Longitudinale Kohorte — DUA/Kosten; 206 (2026-10-03).
+
+decline health-stats
+url https://hrs.isr.umich.edu
+note Kohorte >50 — DUA; 403 direkt (Wayback, 2026-10-03).
+
+decline health-stats
+url https://www.share-project.org
+note Kohorte 28 Länder — DUA; 200 (2026-10-03).
+
+decline health-stats
+url https://www.diw.de/soep
+note Sozio-oekonomisches Panel — DUA; 200 (2026-10-03).
+
+decline no-physical-force
+url https://gss.norc.org
+note US-Sozial-/Einstellungsdaten — kein propagierendes Feld; 206 (2026-10-03).
+
+decline no-physical-force
+url https://ukdataservice.ac.uk
+note Sozialsurvey — kein Feld; 200 (2026-10-03).
+
+decline no-physical-force
+url https://openpsychometrics.org
+note Psychometrische Selbstberichte — kein Feld; 206 (2026-10-03).
+
+decline no-physical-force
+url https://www.psychdata.de
+note Psychologische Umfragedaten — kein Feld; 200 (2026-10-03).
+
+decline no-physical-force
+url https://www.gesis.org
+note Sozialwissenschaft — kein Feld; 403 direkt (Wayback, 2026-10-03).
+
+decline no-physical-force
+url https://www.icpsr.umich.edu
+note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
+
+decline no-physical-force
+url https://www.openicpsr.org
+note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
+
+decline imagery
+url https://humanconnectome.org
+note MRI/MEG-Kohorte — Bild ist kein Feld; 200 (2026-10-03).
+
+decline imagery
+url https://abcdstudy.org
+note Longitudinale Bildgebung (~11 900) — DUC; 200 (2026-10-03).
+
+decline imagery
+url https://www.oasis-brains.org
+note Altern/Demenz MRI/PET — DUA; 200 (2026-10-03).
+
+decline imagery
+url https://www.ppmi-info.org
+note Parkinson-Längsschnitt MRI — DUA; 200 (2026-10-03).
+
+decline imagery
+url https://camcan-archive.mrc-cbu.cam.ac.uk
+note Lebensspannen-MEG/MRI — Data Share Agreement; 200 (2026-10-03).
+
+decline imagery
+url https://idr.openmicroscopy.org
+note Mikroskopie-Bilder (OME-Zarr/TIFF) — Bild ist kein Feld; 200 (2026-10-03).
+
+decline imagery
+url https://www.broadinstitute.org/cell-painting
+note Zell-Bild-Assay; 404 direkt — Daten via PubChem/registry.opendata.aws (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/gap/
+note dbGaP — Sequenz+Phänotyp, DUA; kein Kraft-Kanal; 200 (2026-10-03).
+
+decline molecular
+url https://portal.gdc.cancer.gov
+note GDC/TCGA — Genomik; 200 (2026-10-03).
+
+decline molecular
+url https://ega-archive.org
+note EGA — Genomik, Rohdaten DUA; 200 (2026-10-03).
+
+decline molecular
+url https://www.encodeproject.org
+note ENCODE — funktionelle Genomik; 200 (2026-10-03).
+
+decline molecular
+url https://gtexportal.org
+note GTEx — Expression; Portal 206, Rohsequenz DUA (2026-10-03).
+
+decline molecular
+url https://www.finngen.fi
+note FinnGen — Genomik, individual-level DUA; 206 (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/clinvar
+note ClinVar — Variantenklassifikation; 200 (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/sra
+note SRA — Rohsequenz; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/ena/browser/
+note ENA — Rohsequenz; 206 (2026-10-03).
+
+decline molecular
+url https://data.humancellatlas.org
+note Human Cell Atlas — Einzelzell-Transkriptomik; 206 (2026-10-03).
+
+decline molecular
+url https://cellxgene.cziscience.com
+note CZ CELLxGENE — Single-Cell H5AD; 206 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/gxa/
+note Expression Atlas — differentielle Expression; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/arrayexpress/
+note ArrayExpress — Transkriptomik; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/pride/
+note PRIDE — Proteomik/mzML; 206 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/metabolights/
+note MetaboLights — Metabolomik; 206 (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/
+note NCBI GenBank/Entrez — Sequenz-/Expressionsdatenbank; kein Kraft-Kanal; 200 (2026-10-03).
+
+decline molecular
+url https://www.ensembl.org/
+note Ensembl — Genomsequenz/-annotation; 206 (2026-10-03).
+
+decline molecular
+url https://www.internationalgenome.org/
+note IGSR/1000 Genomes — Sequenz; 206 (2026-10-03).
+
+decline molecular
+url https://gnomad.broadinstitute.org/
+note gnomAD — Allelfrequenz-Aggregat; 206 (2026-10-03).
+
+decline molecular
+url https://datacommons.cancer.gov/repository/proteomic-data-commons
+note PDC — Proteomik; URL nicht per verdict gemessen (2026-10-03).
+
+decline molecular
+url https://www.proteinatlas.org/
+note Human Protein Atlas — Expressions-/Bilddatenbank; 200 (2026-10-03).
+
+decline molecular
+url https://www.metabolomicsworkbench.org/
+note Metabolomics Workbench — Spektren; 200 (2026-10-03).
+
+decline molecular
+url https://massbank.eu/
+note MassBank — Referenz-Massenspektren; 200 (2026-10-03).
+
+decline molecular
+url https://bmrb.io/
+note BMRB — NMR-Spektren; 200 (2026-10-03).
+
+decline molecular
+url https://www.informatics.jax.org/
+note MGI — Maus-Genomdatenbank; 200 (2026-10-03).
+
+decline molecular
+url https://zfin.org/
+note ZFIN — Zebrafisch-Genomdatenbank; 200 (2026-10-03).
+
+decline molecular
+url https://flybase.org/
+note FlyBase — Drosophila-Genomdatenbank; 206 (2026-10-03).
+
+decline molecular
+url https://wormbase.org/
+note WormBase — Nematoden-Genomdatenbank; 403 (2026-10-03).
+
+decline molecular
+url https://www.yeastgenome.org/
+note SGD — Hefe-Genomdatenbank; 200 (2026-10-03).
+
+decline molecular
+url https://www.arabidopsis.org/
+note TAIR — Pflanzengenom, Registrierung/lizenzpflichtig; 403 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/chembl/
+note ChEMBL — Bioaktivitäts-Datenbank; 200 (2026-10-03).
+
+decline molecular
+url https://www.crystallography.net/
+note COD — Kristallstrukturen (CIF); 200 (2026-10-03).
+
+decline molecular
+url https://webbook.nist.gov/
+note NIST WebBook — Referenzspektren; URL nicht per verdict gemessen (2026-10-03).
+
+decline molecular
+url https://www.bindingdb.org/
+note BindingDB — Bindungsaffinitäten; 206 (2026-10-03).
+
+decline molecular
+url https://tripod.nih.gov/tox21/
+note Tox21 — Toxikologie; 404 direkt, Daten via PubChem (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/pdbe/emdb/
+note EMDB — Kryo-EM-Dichtekarten; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/interpro
+note InterPro — Proteinfamilien; 206 (2026-10-03).
+
+decline molecular
+url https://www.med.unc.edu/pgc/
+note PGC — psychiatrische GWAS-Summaries; 200 (2026-10-03).
+
+decline aggregate-index
+url https://www.ebi.ac.uk/gwas/
+note GWAS Catalog — kuratierte Assoziationen; 200 (2026-10-03).
+
+decline aggregate-index
+url https://api.opengwas.io/api/
+note IEU OpenGWAS — Summary-Statistik, Token; 200 (2026-10-03).
+
+decline aggregate-index
+url https://platform.opentargets.org
+note Open Targets — Target-Disease-Associationen; 206 (2026-10-03).
+
+decline reference
+url https://www.ebi.ac.uk/ols4
+note EBI OLS4 — Ontologien (HPO/DOID/MONDO); 206 (2026-10-03).
+
+decline reference
+url https://reactome.org
+note Reactome — Pfad-Wissensbasis; 206 (2026-10-03).
+
+decline reference
+url https://geneontology.org
+note Gene Ontology — Ontologie; 206 (2026-10-03).
+
+decline model
+url https://zinc.docking.org/
+note ZINC — Docking-Vorhersagen; 200 (2026-10-03).
+
+decline model
+url https://alphafold.ebi.ac.uk/
+note AlphaFold DB — vorhergesagte Strukturen; 200 (2026-10-03).
+
+decline model
+url https://www.ebi.ac.uk/biomodels
+note BioModels — SBML-Modelle; 206 (2026-10-03).
+
+decline commercial
+url https://www.ccdc.cam.ac.uk/
+note CCDC/CSD — lizenzpflichtig (akademische Lizenz); 206 (2026-10-03).
+
+decline commercial
+url https://go.drugbank.com/
+note DrugBank — kommerziell lizenziert; 403 direkt (Wayback, 2026-10-03).
+
+decline commercial
+url https://www.omim.org
+note OMIM — Mendelsche Gene, Registrierung/Subskription; 403 direkt (Wayback, 2026-10-03).
+
+decline registry
+url https://www.isrctn.com
+note ISRCTN — Studien-Registry; 200 (2026-10-03).
+
+decline registry
+url https://www.who.int/clinical-trials-registry-platform
+note WHO ICTRP — Meta-Registry; 200 (2026-10-03).
+
+decline registry
+url https://www.bfarm.de
+note BfArM — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
+
+decline registry
+url https://ec.europa.eu/tools/eudamed
+note EUDAMED — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
+
+decline registry
+url https://www.ema.europa.eu
+note EMA — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
+
+decline literature
+url https://www.nber.org
+note NBER — Working Papers; 200 (2026-10-03).
+
+decline literature
+url https://www.medrxiv.org
+note medRxiv — Preprints; 206 (2026-10-03).
+
+decline literature
+url https://www.ebi.ac.uk/europepmc/webservices/rest/search
+note Europe PMC — Literaturindex; 200 (2026-10-03).
+
 decline superseded-by-catalog
 url https://datadc.ihep.ac.cn/resource/astro/lhaaso
 note LHAASO (gemessen 2026-10-03): API 200 (18 Datensätze), Rohklassen IHEP/CSTNET-gegated; der Katalog ist als `lhaaso_sky1` registriert (`phi/sources.φ`); Roh nicht nötig → descoped.
