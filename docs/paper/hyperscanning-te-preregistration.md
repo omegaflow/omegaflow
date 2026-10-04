@@ -2,9 +2,9 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-04
-  sha256: dc1bb0b8c45fa9a8915908700128f760c39aa0f86d412fc0e6d944280aa5bacc
+  sha256: f3eba3b849a9de43ebe961980ebb0c517dba64073f7d04003ff474a7cfed3db7
   status: live
-  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-04-sensory-folge229.md
+  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-04-sensory-folge230.md
 -->
 ## Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
 
@@ -272,7 +272,7 @@ absence of a family-significant cell is a measured absence, not a zero).
   carries `scaling.txt` / `scaling_*.txt`
   (`.github/workflows/hyperscanning-te.yml:208-217`). Braucht: run
   `37217425078` (`scales=512,1024,2048,4096`, dispatched 2026-10-04
-  F229) — read on completion.
+  F229; measured 2026-10-04 F230: still **queued**) — read on completion.
 - **Second cohort** — pre-registered candidate (measured 2026-10-03): **`ds007471`**
   (dyads, 64-channel BrainVision `.vhdr` — 32 `_R` + 32 `_L` in one file per
   `sub-01`..`sub-32`, 1000 Hz, CC0) is the primary second cohort; `ds008192` (fNIRS +
@@ -283,10 +283,15 @@ absence of a family-significant cell is a measured absence, not a zero).
   split inside one file; the manifest arm is built (commit `1226e9082`):
   `brainvision_compiler --participant L|R` writes one per-participant bin, and the
   workflow input `cohort=ds007471` builds `manifest.txt` with
-  `jointaction pair-<NN> {L,R}`. Braucht: run `37209904312` (`cohort=ds007471`,
-  channel `Cz`, head `4bcd4631`, dispatched 2026-10-04T14:36Z) is in flight;
-  evaluate `hyperscanning-te-report-jointaction` on completion
-  (`ci_manage view/jobs/log 37209904312`).
+  `jointaction pair-<NN> {L,R}`. **Measured (2026-10-04 F230):** run `37209904312`
+  (`cohort=ds007471`, channel `Cz`, head `4bcd4631`) — `plan`/`confirm` success; the
+  `screen (jointaction)` job's **screen step succeeded**, the per-cell **confirmation
+  step ran past the 330-min `screen` cap** (`.github/workflows/hyperscanning-te.yml:88`),
+  job cancelled (started 15:10:00Z → cancelled 20:45:00Z), no artifact. Re-dispatched
+  **`37235249763`** (`cohort=ds007471`, channel `Cz`, **`max_points=2048`** — a
+  compute-bounded deviation from the 4096 default, recorded here; the full-cap run
+  exceeded the platform job cap). Braucht: read on completion
+  (`ci_manage view/jobs/log 37235249763`).
 
 ### Träger / Carrier
 
