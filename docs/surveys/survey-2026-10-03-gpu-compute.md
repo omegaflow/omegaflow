@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: a16eae6589a709c73df176dbd9a81e7d3f96db253185655e60a18f51bc989e80
+  sha256: 57c95f7cfd26e6bc9fdf813ce5f1ffe651bcb8415f78fdccd437e093fd294d98
   status: live
   see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
@@ -149,6 +149,31 @@ Gemessen zum verbleibenden lokalen Weg:
 - `docs/concepts/archivar-mathematikerin.md:40`: die Compute-Strategie ruht nie auf einer fremden
   Cloud-GPU.
 
-**Konsequenz:** Will man mehr GPU-Leistung als die XPS-iGPU, geht es **nur remote** — **Kaggle**
-(gratis, API) oder **Modal** ($30/Monat gratis), ohne GitHub-Planwechsel (§B). Die „GTX 970"-Hoffnung
-ist aus dem Weg; der seit 2026-09-09 getragene Worker wird **nicht** gebaut.
+**Konsequenz:** Will man mehr GPU-Leistung als die XPS-iGPU, geht es **nur remote** — und der freie
+**Kaggle-Weg trägt unsere GPU nicht** (CUDA-only, kein Vulkan — §I); es bleibt ein
+**Vulkan-fähiger Container-Provider** (RunPod/Vast, bezahlt, `NVIDIA_DRIVER_CAPABILITIES=graphics`)
+oder die lokale iGPU. Die „GTX 970"-Hoffnung ist aus dem Weg; der seit 2026-09-09 getragene Worker
+wird **nicht** gebaut.
+
+## I. Kaggle-Praxisprobe (2026-10-03): der freie Weg trägt unsere GPU nicht
+
+Gebaut: `tools/utils/src/bin/kaggle_kernel.rs` (Rust std + curl, Legacy-REST `push`/`status`/`output`)
++ R-Probe-Kernel (`state/future/kaggle-gpu-probe/`, **kein Python**). Konto registriert, Legacy-API-Key
+in `~/.kaggle/kaggle.json`, API-Antwort **200**.
+
+Gemessen im Lauf (Kernel `johannestyroller/omegaflow-gpu-probe`, laut Kaggle-Seite auf **„GPU T4 x2"**):
+
+- Ubuntu 22.04.4; `KAGGLE_DOCKER_IMAGE=gcr.io/kaggle-gpu-images/rstats` (R-Image).
+- `/proc/driver/nvidia/` **vorhanden** (GPU ist angehängt), **aber**: `nvidia-smi` fehlt, keine
+  `libnvidia*` im Userspace, keine Vulkan-ICD (`/usr/share/vulkan/icd.d/` fehlt).
+- `NVIDIA_DRIVER_CAPABILITIES=compute,utility` — **kein `graphics`**; der Vulkan-/GL-Userspace wird
+  vom NVIDIA-Container-Runtime also **nicht injiziert**.
+- Nach `apt install libvulkan1 mesa-vulkan-drivers vulkan-tools`: Vulkan-Loader 1.3.204 da, Gerät ist
+  nur **llvmpipe** (CPU, `DEVICE_TYPE_CPU`); `vulkaninfo` mit `nvidia_icd.json` scheitert
+  (`ERROR_INCOMPATIBLE_DRIVER`).
+
+**Verdikt:** Kaggles freie GPU ist **CUDA-compute-only** und stellt **kein Vulkan**. wgpu hat keinen
+CUDA-Backend → unser WGSL-Pfad (`te_compute`, Membran) läuft dort **nicht**. Der freie GPU-Weg ist für
+die GPU-Arbeit **geschlossen**; es bleibt llvmpipe (CPU, wie die CI — kein Gewinn) oder ein
+**Container-Provider mit Vulkan** (`NVIDIA_DRIVER_CAPABILITIES=graphics` + NVIDIA-ICD, RunPod/Vast;
+bezahlt, §D).
