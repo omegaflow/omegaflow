@@ -3,7 +3,7 @@
   session: River-Folge 89
   class: handover
   date: 2026-10-04
-  sha256: ef2ce200ab18ed39985f0351dc0d5f47d7ae3ca95c0d31b098841cc6a0edb10a
+  sha256: a150ed5309009a198a939d9c4e2acf14bfd39f4fb7d39b6fe9000b936ee95935
   status: live
 -->
 # Handover — River-Folge 89 (2026-10-04)
@@ -78,18 +78,28 @@ Wort | Datum | Quelle
   (Nemotron, `state/stimmen/2026-09-30_laic-design-frage_nemotron.txt:9`) erhält Omori
   nur in Distribution und ändert das Sampling-Design. Sie reist als **abgelehnte
   Alternative mit gemessenem Grund**, nie als Riss geglättet.
-- **Zähl-Panel + Grammatik (Rat + Schwarm 2026-10-04).** Neues Token `count quantile <q>`
-  in der `form event-conditional`-Form: Zählung pro Driver-Quantil-Bin gegen die
-  **Shift-Null-Verteilung pro Bin** (mean ± 2 sd über B Verschiebungen; `n/span` nur
-  gedruckte diagnostische Baseline, nie der Test), Guard = **gemessene
-  Driver-Dekorrelationszeit** (1/e-Autokorrelation; absent → benanntes `pending`, nie
-  still 6 h), kompensierter z-Score `(O − null_mean)/√null_mean` je Bin als Diagnostik.
-  Gebaut in `field_te_query.rs` (`run_count_panel`, `driver_decorrelation_s`,
-  `largest_pow2_bin`, `quantile_sorted`) + 6 Gate-Tests; Träger
-  `phi/pipeline/descriptors/erbq-event.te`. **Magnituden-gewichtete (kompensierte) Zählung
-  descoped** für das Primär-Panel; **matched-control ist die Shift-Null**; der
-  **declustered Mainshock-Set** bleibt ableitbarer Side-Deliverable (An mountain). Schwarm
-  gemessen: gemini bestätigt die `(O−E)/√E`-Kompensation; zai http 000, mistral 429.
+- **Zähl-Panel (Frontier-Trio + Literatur, gebaut 2026-10-04).** Neues Token `count quantile <q>`
+  in der `form event-conditional`-Form. Der Test ist das **empirische Rang-p**
+  `(1 + #{stat* ≥ stat})/(B+1)` (Phipson & Smyth 2010, `10.2202/1544-6115.1585`;
+  North/Curtis/Sham 2002, `10.1086/341527`): pro-Bin-Rang-p + Benjamini-Hochberg über die q Bins,
+  global χ² = Σ(n_b − E_b)²/E_b mit empirischem p. **Erwartung exposure-gewichtet**
+  λ0 = n/T_exposure, E_b = λ0·T_b (nicht n/q). **mean+2sd ist nur Screening** (trägt kein p,
+  nicht korrigierbar). Null = zirkulärer Driver-Shift mit **gemessenem Dekorrelations-Guard**
+  (1/e-Autokorrelation; absent → benanntes `pending`). Auflösungsregel B+1 ≥ q/α (q=8, α=0.05 →
+  B ≥ 160). Gebaut in `field_te_query.rs` (`run_count_panel`, `driver_decorrelation_s`,
+  `largest_pow2_bin`, `quantile_sorted`) + 6 Gate-Tests; Träger `erbq-event.te` (B=1000). Build 0/0.
+  **Riss (getragen):** der lokale Rat sagte mean+2sd — die Literatur entscheidet für das Rang-p;
+  der Rat ist überstimmt, nicht geglättet.
+- **Kirkley 2025 gemessen** (`arXiv:2506.16215`, *Transfer entropy for finite data*): TE hat bei
+  sparse bins einen **positiven Bias**, die reduzierte TE ist der finite-data-Ausweg; bei n=198
+  bleiben die Bins dünn → Surrogat-Rang-p ist der ehrliche Weg, **ETAS bleibt gesperrt**.
+  **Cochran 1954** (`10.2307/3001616`): kein erwarteter Zellwert < 1, ≤ 20 % < 5 — q=8 (E≈25) im Standard.
+- **Matrix-Grammatik — Frontier-Verdikt (zu bauen).** z.ai GLM-5.3 + Claude Sonnet 5.5 + Kimi K3
+  einhellig: `matrix rect|full|upper`; `drivers`/`targets` (rect) bzw. `channels` (full/upper);
+  `cond rest` → `cond(d,t) = pool ∖ {d,t}` **auf Identität**, Driver UND Target raus; `cond none`;
+  `fdr bh|by <q> over matrix|row|col` Pflicht, `expect cells <n>` als Lint; Underpowered-Guard
+  B+1 ≥ m/q (m=21 → B ≥ 419). Riss zum Rat-Token (`form pair-matrix`/`cond complement`/`pairing …`):
+  beide Sets benannt, noch nicht gebaut.
 - **Grammatik `form event-conditional`** (Rat + gebaut, Atom 1). Das Token erlaubt
   `witness <name>` **und** `driver <field>` gemeinsam; der Zeuge löst im Witness-Register,
   das Feld im Quellen-Register (Form-deklarierter Split); fehlt ein Arm, verweigert der
@@ -165,15 +175,14 @@ Wort | Datum | Quelle
 ### Zeugen im universellen Myzel — Form verdrahtet; Datenseite fehlt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein `--descriptor phi/pipeline/descriptors/erbq-event.te`-Lauf (count panel, q = 8).
-- **Lage:** (gemessen 2026-10-04) Der Ratsverdikt ist gefaltet (Entscheidungen oben).
-  Gebaut (`field_te_query.rs`): `form event-conditional` + `count quantile <q>` (Zähl-Panel
-  pro Driver-Quantil-Bin, Shift-Null pro Bin, gemessener Dekorrelations-Guard, kompensierter
-  z-Score) + 6 Gate-Tests; Träger `erbq-event.te`. `erbq-solar.te` bleibt als TE-Test descoped;
-  der CLI-Pfad `--parity-witness` bleibt.
+- **Lage:** (gemessen 2026-10-04) Gebaut (`field_te_query.rs`): `form event-conditional` +
+  `count quantile <q>` (Zähl-Panel, exposure-gewichtetes E_b, **empirisches Rang-p** + BH,
+  gemessener Dekorrelations-Guard) + 6 Gate-Tests; Träger `erbq-event.te` (B=1000). Der
+  CI-Job `witness-count` in `.github/workflows/field-te-query.yml` führt den Lauf.
 - **Blockade:** der declustered Mainshock-Set fehlt (Side-Deliverable, An mountain); das
-  count-Panel läuft bereits auf dem vollen Zug (n = 198), die ETA-Form braucht ≥ 2 Mainevents.
-- **Braucht:** An mountain — declustered Mainshock-Set ableiten (magnitude-local-maxima)
-  oder als neue Record-Zeile in `phi/witnesses.φ`; dann `--descriptor erbq-event.te` messen.
+  count-Panel läuft bereits auf dem vollen Zug (n = 198).
+- **Braucht:** `gh workflow run field-te-query.yml` (dispatcht), Artefakt `field-te-count`
+  lesen; An mountain — declustered Mainshock-Set (magnitude-local-maxima) für die ETA-Form.
 
 ### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen
@@ -268,7 +277,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `tools/measure/src/bin/field_te_query.rs`
 - `phi/pipeline/descriptors/erbq-event.te`
 - `phi/pipeline/descriptors/erbq-solar.te`
+- `.github/workflows/field-te-query.yml`
 - `docs/handover/handover-2026-10-04-river-folge89.md`
 - `docs/handover/archiv/handover-2026-10-04-river-folge88.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0000 · close 0.1341 (Line-Session; Taucher im Fenster zusätzlich: council $0.1142, RIXS-Taucher) · cap 0.50 — Grund: River-89 (Ratsverdikt point-event#1-Null + Grammatik; `form event-conditional` + `count quantile`-Zähl-Panel + 6 Gate-Tests; dangling Zitat geheilt; RIXS-Textserie gemessen (19 × `sw_spin.txt`); Mycelium-B-Asset-Pfad + CDN-Stand `018ce2ca` gemessen; Schwarm: gemini 200, zai http 000 / mistral 429)
+## Burn: open 0.0000 · close 0.2924 (Line-Session; Taucher im Fenster zusätzlich: council $0.1142, Taucher) · cap 0.50 — Grund: River-89 (Zähl-Panel auf empirisches Rang-p + exposure-gewichtete Erwartung nach Frontier-Trio + Literatur umgebaut (Phipson/Smyth, North, Theiler, Cochran 1954, Kirkley 2025); `form event-conditional` + `count quantile` + CI-Job `witness-count`; dangling Zitat geheilt; RIXS-Textserie gemessen (19 × `sw_spin.txt`); Mycelium-B-Asset-Pfad + CDN-Stand `018ce2ca`; Schwarm-Trio z.ai GLM-5.3 / Kimi K3 / Claude Sonnet 5.5 + gemini)

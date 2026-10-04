@@ -2,6 +2,9 @@
 # witness: point-event#1 (Tohoku seismicity, phi/witnesses.φ); driver: solar-wind IMF Bz, 60 s.
 # form event-conditional refuses at parse if either arm is absent; `count quantile 8` runs the
 # count panel (q = largest power of two with n/q >= 20 for n = 198 -> 8, expected ~24.75/bin).
+# The panel tests observed bin counts against the exposure-weighted expectation; the verdict is the
+# empirical rank p (1 + #{>=obs})/(B+1) with a Benjamini-Hochberg step over the bins (Phipson & Smyth
+# 2010; Theiler 1992). mean+2sd stays screening only. B = 1000 resolves q/alpha = 160 at alpha 0.05.
 # The event times stay fixed; only the driver shifts, so the Omori clustering is part of the null.
 # The declustered mainshock set is a named side deliverable (An mountain), not a prerequisite.
 pair erbq-event
@@ -11,4 +14,4 @@ driver omni_hro_imf_bz_gsm_nt
 count quantile 8
 cadence live
 bin 3600
-surrogate 100
+surrogate 1000
