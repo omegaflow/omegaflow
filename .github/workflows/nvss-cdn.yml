@@ -83,6 +83,9 @@ jobs:
       - name: Concat slices and upload to CDN
         run: |
           jq -s 'add' kernels/nvss_c*.json > nvss.json
+          gh release view ssd.jpl.nasa.gov-nvss --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create ssd.jpl.nasa.gov-nvss --repo omegaflow/sources \
+                 --title "ssd.jpl.nasa.gov-nvss" --notes "CDN family release"
           gh release upload ssd.jpl.nasa.gov-nvss nvss.json --clobber --repo omegaflow/sources \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "flatten: nvss returned void" \

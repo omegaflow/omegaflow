@@ -9409,6 +9409,7 @@ url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_
 format jaxa_gportal
 origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
 compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
+sha256 ec7bfbf3ddd56b478774f698127f58884940c3a806ad4ead0ae5b0e1e26eedeb
 at earth
 ttl 604800
 
@@ -16674,8 +16675,8 @@ at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nvss.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-nvss/nvss.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss xmatch=V/154/sdss16
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
 at sun
