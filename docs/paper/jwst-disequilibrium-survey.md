@@ -4,7 +4,7 @@
   date: 2026-09-11
   sha256: f952c1951d4857619528d468991c030ae485cf1acf7d062caea90f8f65209c83
   status: live
-  see-also: docs/surveys/survey-2026-10-03-exzellenz-gate.md docs/handover/handover-2026-10-03-sensory-folge224.md
+  see-also: docs/surveys/survey-2026-10-03-exzellenz-gate.md docs/handover/archiv/handover-2026-10-03-sensory-folge224.md
 -->
 # Disequilibrium Survey of 48 JWST Exoplanet Transmission Atmospheres
 
