@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: c82c75c2d17b268d39b0486770f7ca70de421b705ac7d62b37cdbd74d932b7be
+  sha256: 0ddfa7616bbdfdbdd88984352b49d49f8a53e576422a185dcba37d25340b0f47
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -49,18 +49,18 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
   - **iaga_text** — `zenodo.org`, `^iaga_text\.bin$`, arm `iaga_text_compiler`, workflow `iaga-text-cdn.yml`; CDN 165 742 988 B, sha `3e7a532f…` (GitHub-API-`digest`), origin `…/records/10594301/files/Mag_Data.zip/content`, `format iaga_text`, `at earth`, `ttl 604800`.
   - **ephemeris_kplo** — `www.kari.re.kr`, `^ephemeris_kplo\.bin$`, arm `kplo_spice_compiler`, workflow `kplo-spice-cdn.yml`; CDN 22 152 B, `format ephemeris_binary`, origin `…/kpds/search/dirviewer/…/spk/`, `at kplo`, `no-cadence` (ephemeris-Form, kein sha256 wie die übrigen Bündel).
   - **pradan_ch2** — `pradan.issdc.gov.in`, `ch2_cla_l1_2025_10.zip` 254 320 207 B, sha `f0fd23d6…`, `format pradan_ch2`, `at moon`, `ttl 604800`; **kein** harvest.φ-Block (Workflow verlangt Pflicht-`url`).
-  - `register_sort phi/sources.φ` = **17** url-order violations (alle Mountain-gras_2c/ssd, s. `## An mountain`) — die eigenen Blöcke erzeugen **0** neue; `harvest_reg --check` = 42 Blöcke, gemessen + in Ordnung.
+  - `register_sort phi/sources.φ` = **canonical** (0 Violations, 2003 Blöcke) @`f995dbed3` — Mountain heilte die 17 in `d2ba1189`; `harvest_reg --check` = 42 Blöcke, gemessen + in Ordnung.
 - **CI-`format` geheilt:** `tools/harvest/src/bin/emm_sdc_compiler.rs` + `kplo_spice_compiler.rs` per `cargo fmt -- <pfad>` formatiert (ci-gate `37166323740` format-Job rot auf genau diese Dateien).
 - **dropped-Baseline 1144** (`docs/zustand/dropped-baseline.md`): ci-gate `37166323740` @`a064896a4` dropped-gate baseline 1141 | current 1144 | delta 3 (gemessen `ci_manage log`).
 - **EMM `emm-sdc-cdn 37155219824` = failure, gemessen:** `emm_sdc_compiler: Cognito token exchange HTTP 403 — no error field; the access token is not renewed` (`ci_manage log`). Der Refresh-Grant (`grant_type=refresh_token`) wird mit **403** abgewiesen — das gesetzte Repo-Secret `EMM_COGNITO_REFRESH_TOKEN` trägt nicht. Kein stiller 0; benannte Abwesenheit.
 - **`ephemeris_juice.bin`-CDN gemessen:** `ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin` = **106 704 B**, sha `aeb3c82f…` (`archive_search --sniff`, 2026-10-04) — der **versiegelte Arc** liegt jetzt auf dem CDN, nicht mehr der Postflight `018ce2ca…`. `juice-arc-restore 37165635404` (success) + `flyby-path2-fill 37166537879` (success @`a064896a4`) haben den Arс gesetzt. Antwort an River unten.
 - **TAPVizieR erneut 503** (`archive_search --verdict`, stage 1 + Proton 503; Wayback 200) → `nvss` bleibt wartend.
 - **Kaguya-LRS** `pds3_binary_lrs_sw_wf_00n_007080e.bin` ist bereits registriert (`sources.φ:9188`, sha `772e51d1…` == API-Digest) — kein Rebind nötig.
-- **Nachtrag (Fortsetzung, Operator-Wort „alle Punkte, viele Taucher"):** (a) **sha256-Rebind** für `ephemeris_new_horizons_long` (`→28568e3c…`), `ephemeris_voyager1_long` (`→459a3912…`), `ephemeris_voyager2_long` (`→8d716add…`) — Register-sha war stale, gegen den CDN-Digest verifiziert. (b) **M3-Route**: `planetarydata.jpl.nasa.gov/img/data/m3/...` 206 (stage 1 + Proton), sha-identisch; Compiler-Konstanten + Register-`origin` umgestellt. (c) **`pds3_fixed_width`-Familie**: 389 Assets gemessen; der Bulk-Register-Versuch wurde am `unbacked_mirror`-Gate blockiert (kein `origin` in der Compiler-Form) und zurückgenommen. (d) **SSDC** `limadou.ssdc.asi.it/query.php` = CAS-Login-Wall (Playwright, 2026-10-04) — wartend. (e) **Step-5**: alle 13 Netlocs registriert außer `naif.jpl.nasa.gov` (0 Bindungen, s. Offen). (f) **Portale** gemessen: `clpds.bao.ac.cn` + `data.kasi.re.kr` tragen APIs; `gportal`/`leos` Login/SPA; Viking `vmar001l.dat` an beiden Kandidatenpfaden 404; `titanNotebook`/`Juno-CSV` heute ohne Antwort.
+- **Nachtrag (Fortsetzung, Operator-Wort „alle Punkte, viele Taucher"):** (a) **sha256-Rebind** für `ephemeris_new_horizons_long` (`→28568e3c…`), `ephemeris_voyager1_long` (`→459a3912…`), `ephemeris_voyager2_long` (`→8d716add…`) — Register-sha war stale, gegen den CDN-Digest verifiziert. (b) **M3-Route**: `planetarydata.jpl.nasa.gov/img/data/m3/...` 206 (stage 1 + Proton), sha-identisch; Compiler-Konstanten + Register-`origin` umgestellt. (c) **`pds3_fixed_width`-Familie**: 389 Assets mit `origin` aus dem PDS-Verzeichnisbaum registriert (`register_sort` canonical, Gate clean). (d) **SSDC** `limadou.ssdc.asi.it/query.php` = CAS-Login-Wall (Playwright, 2026-10-04) — wartend. (e) **Step-5**: alle 13 Netlocs registriert außer `naif.jpl.nasa.gov` (0 Bindungen, s. Offen). (f) **Portale** gemessen: `clpds.bao.ac.cn` + `data.kasi.re.kr` tragen APIs; `gportal`/`leos` Login/SPA; Viking `vmar001l.dat` an beiden Kandidatenpfaden 404; `titanNotebook`/`Juno-CSV` heute ohne Antwort.
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
-- **`ci-gate 37166323740` @`a064896a4` = failure** (gemessen `ci_manage log`): `register` (17 url-order violations, Mountain), `dropped-gate` (1144 vs 1141 → in diesem Atom gebumpt), `format` (emm/kplo → in diesem Atom geheilt), `clippy` (`src/archivar/hdf4.rs:686` `manual implementation of .is_multiple_of()`, Mountain); `build` grün.
+- **`ci-gate 37166323740` @`a064896a4` = failure** (gemessen `ci_manage log`; Operator-Triage 2026-10-04): `register` (17 url-order violations, Mountain — in `d2ba1189` geheilt), `dropped-gate` (1144 vs 1141 → in diesem Atom gebumpt), `format` (emm/kplo → in diesem Atom geheilt), `clippy` (`src/archivar/hdf4.rs:686` `manual implementation of .is_multiple_of()`, **Mountain/River**); `build` grün.
 - **`flyby-path2-fill 37166537879` = success** @`a064896a4`; **`quake-feeds-cdn 37168875473` = success**; **`register-coverage`** mehrfach success (zuletzt `37168834595`).
 - **`ci-gate 37170753273` @`a2d96fc3f` = queued** (neuer HEAD, noch kein Ergebnis — `unread`); viele ältere ci-gate `cancelled` (neuer Push verdrängt). Kein Polling.
 - Grün/queued (fact level): `allwise-cdn 37169613359` · `hips-png-cdn 37169568955` · `register-coverage 37169480648` queued.
@@ -102,12 +102,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Reader-Arm fehlt (Mountain)
 - **Braucht:** Archivar-Parser-Arm `pradan_ch2` (Mountain); dann `downloadFile`-Route für weitere Payloads.
 
-### `pds3_fixed_width`-Familie (Vega2-MISCHA + Phobos) — Registrierung blockiert am unbacked-Mirror-Gate
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** `print_register_lines` im Compiler emittiert `origin <tab-url>`
-- **Lage:** (gemessen 2026-10-04) 389 `pds3_fixed_width_*.bin` unter Tag `pds-smallbodies.astro.umd.edu` (Vega2-MISCHA-Fan-out: `asset_name = pds3_fixed_width_<tab-stem>.bin`; `VEGA_ROUTE = …/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/`). Ein Bulk-Insert der Compiler-Form (`url`/`format`/`ttl`) wurde vom Commit-Gate als **`unbacked_mirror`** blockiert (jeder Block braucht `origin`/`terms`) und wieder zurückgenommen; `phi/sources.φ` trägt nur die 5 bounded Edits.
-- **Blockade:** `origin`-Emission fehlt im Compiler (`pds3_fixed_width_compiler.rs::print_register_lines`)
-- **Braucht:** `print_register_lines` um die `origin <dat-url>`-Zeile erweitern, dann die 389 Blöcke mit Origin registrieren.
+### `pds3_fixed_width`-Familie (Vega2-MISCHA + Phobos) — registriert mit Origin
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `pds3-fixed-width-cdn.yml`-Manifest-Lauf (`37152262659` grün)
+- **Lage:** (gemessen 2026-10-04) 389 `pds3_fixed_width_*.bin` unter Tag `pds-smallbodies.astro.umd.edu` aus dem PDS-Verzeichnisbaum rekonstruiert (Vega2-MISCHA-Fan-out: 8 subdirs × 3 Jahre, `asset_name = pds3_fixed_width_<tab-stem>.bin`; 389 stem-Match, 0 unmatched) und in `phi/sources.φ` registriert — jeder Block mit `origin <tab-url>`; `register_sort` = **canonical** (0 Violations, 2003 Blocks), Commit-Gate exit 0, 0 `unbacked_mirror`.
+- **Blockade:** keine
+- **Braucht:** Mountain `at`/`field`-Zuordnung nach Konsum-Bedarf.
 
 ### Swarm TEC — `blocked_sources.φ:389`, Reader-Arm offen
 - **Status:** wartend | **Bindung:** eigen
@@ -165,6 +165,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** je Zeile Arm/Reader
 - **Braucht:** je Zeile den nächsten Port-Schritt (`docs/SOURCE_PORT.md`).
 
+### `blocked_sources.φ` — 3 neue mycelium-EEG-Portale (`:231/:235/:239`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** je Port-Schritt `docs/SOURCE_PORT.md`; Registration/DUA Operator-Hand
+- **Lage:** (gemessen 2026-10-04) `:231` `https://www.ieeg.org` (UPenn iEEG, Registration+User Agreement), `:235` `https://isip.piconepress.com/projects/tuh_eeg/` (TUH EEG, DUA), `:239` `https://sleepdata.org` (NSRR PSG; direkt ohne Antwort 2026-10-04); Arm+Asset fehlen. **Riss:** die EEG-Zeile `sources.φ:3415` deklariert `advective m/s²` (Datenkontrakt, Mountain).
+- **Blockade:** je Zeile Arm/Reader; zwei registrierungspflichtig
+- **Braucht:** je Quelle den nächsten Port-Schritt; Registration/DUA in Future-Queue.
+
 ### `http_401`-Residuum
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** neue Mail/Asset-Messung
@@ -203,7 +210,7 @@ Origin: mycelium-folge228 (Antwort auf river-folge87 `## An mycelium`).
 Origin: mycelium-folge228 (Register-/CI-Duties).
 
 - **`clippy` `src/archivar/hdf4.rs:686`** (ci-gate `37166323740`): `manual implementation of .is_multiple_of()`. Zeile `if !(1..=8).contains(&nt_size) || want % nt_size != 0 || mask_len < 1` → `!want.is_multiple_of(nt_size)`. Deine Datei.
-- **`register` 17 url-order violations** (`register_sort phi/sources.φ`, alle `zenodo.org/gras_2c_roper_*` + `ssd.jpl.nasa.gov-gaia`/`-weberin`): `register_sort --write` ordnet kanonisch (ttl asc, url asc). Die Mycelium-Folge228-Blöcke (iaga/kplo/pradan) erzeugen **0** neue. Register-Ordnung ist dein Recht.
+- **`register`** — die 17 url-order violations sind in `d2ba1189` **geheilt** (`register_sort` canonical @`f995dbed3`); Dank. Offen bleibt allein `clippy hdf4.rs:686` (Mountain/River, Operator-Triage).
 - **Hebungen nach Registration:** `phi/blocked_sources.φ:66` (iaga-text), `:82` (pradan), `:134` (KPLO) können fallen — die CDN-Assets sind registriert (sha/Größe in `phi/sources.φ`).
 - **Vega** — `pds3-fixed-width --force 37152262659` grün; die Zuordnung `VEGA_ROUTE`→CDN-Dateiname (`pds-smallbodies.astro.umd.edu`, datums-codierte `pds3_fixed_width_*`) ist offen.
 - Offen bei dir: `blocked_sources.φ:389` Swarm TEC · M3-Route · JWS2/RoPeR-Feld-Zuordnung.
