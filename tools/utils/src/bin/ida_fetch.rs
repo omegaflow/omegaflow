@@ -158,7 +158,10 @@ fn login() {
     if let Some(r) = redirect {
         note = format!(" -> {r}");
     }
-    println!("ida_fetch: login ok (http {code}{note}; jar {})", jar.display());
+    println!(
+        "ida_fetch: login ok (http {code}{note}; jar {})",
+        jar.display()
+    );
 }
 
 fn get(url: &str) {
