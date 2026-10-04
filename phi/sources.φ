@@ -24074,6 +24074,7 @@ compiler tools/harvest/src/bin/f107_compiler.rs
 sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
 at sun
 ttl 31536000
+field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/goes_euvs.bin
 format goes_euvs
