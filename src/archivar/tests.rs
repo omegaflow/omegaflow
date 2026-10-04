@@ -12717,3 +12717,86 @@ fn epncore_extract_skips_rows_without_a_measured_region() {
     };
     assert!(channels.is_empty(), "{:?}", channels.len());
 }
+
+#[test]
+fn body_anchor_carries_measured_props_and_own_granule_span() {
+    let now = 8.0e8;
+    let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+    cx[0] = 1.0;
+    let props = super::BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 90.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 190.147,
+        dw_dt_deg_per_day: 360.9856235,
+        radius_m: 6378136.6,
+        flattening: None,
+        gaussian_inverse_square: 0.0,
+        gaussian_inverse: 0.0,
+        erfc: 0.0,
+        patch_levy: 0.0,
+        exponential_decay: 0.0,
+        gm: Some(3.986004418e14),
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nut_ra: None,
+        nut_dec: None,
+        nutation: None,
+        omega_g: None,
+    };
+    let eph = super::BodyEphemeris {
+        granules: vec![
+            super::ChebyshevGranule {
+                t0_jd: super::J2000_EPOCH + now / 86400.0,
+                dt_jd: 1.0,
+                cx,
+                cy: [0.0; super::CHEBYSHEV_N],
+                cz: [0.0; super::CHEBYSHEV_N],
+            },
+            super::ChebyshevGranule {
+                t0_jd: super::J2000_EPOCH + now / 86400.0 + 32.0,
+                dt_jd: 1.0,
+                cx,
+                cy: [0.0; super::CHEBYSHEV_N],
+                cz: [0.0; super::CHEBYSHEV_N],
+            },
+        ],
+        rotation_matrices: vec![],
+        props: Some(props),
+        orbit: None,
+        granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
+    };
+    let mut map = HashMap::new();
+    map.insert("earth".to_string(), eph);
+    let samples = super::body_anchor_samples("earth", &map, now);
+    assert_eq!(
+        samples.len(),
+        1,
+        "one measured channel (gm); the absent omega_g stays silent, never a fabricated zero"
+    );
+    let s = &samples[0];
+    assert_eq!(s.name, "earth.mass");
+    assert!(
+        (s.val - 3.986004418e14).abs() < 1.0,
+        "val is the measured gm"
+    );
+    assert!(
+        (s.extent - 6378136.6).abs() < 1e-3,
+        "extent is the measured radius"
+    );
+    assert!((s.force_type - 1.0).abs() < 1e-9, "gravity anchor");
+    let want_ttl = 34.0 * 86400.0;
+    assert!(
+        (s.ttl - want_ttl).abs() < 1e-3,
+        "ttl {} != granule span {}",
+        s.ttl,
+        want_ttl
+    );
+    assert!(
+        s.ttl != 86400.0,
+        "ttl is the body's own span, not the register fetch cadence"
+    );
+}
