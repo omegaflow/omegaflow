@@ -27,6 +27,26 @@ jobs:
         cp CNAME _site/CNAME 2>/dev/null || true
         dd if=/dev/urandom of=_site/probe_64k.bin bs=1024 count=64
         ls -lh _site
+    - name: Stage the membrane page (when it stands)
+      run: cp static/membrane.html _site/membrane.html 2>/dev/null || true
+    - name: Stage the B assets same-origin (serverless membrane)
+      run: |
+        set -euo pipefail
+        stage() {
+          tag="$1"; name="$2"; want="$3"
+          curl -sSfL --retry 3 --max-time 1800 -o "_site/$name" \
+            "https://github.com/omegaflow/sources/releases/download/$tag/$name"
+          got=$(sha256sum "_site/$name" | cut -d' ' -f1)
+          if [ "$got" != "$want" ]; then
+            echo "sha256 mismatch for $name: got $got want $want — the staged bytes are not the measured asset"
+            exit 1
+          fi
+          ls -l "_site/$name"
+        }
+        stage ssd.jpl.nasa.gov dr3_stars.bin fb9a14089ef8348e12961caf8253c8e886b4a16862a1a71394b96465d75bcfbb
+        stage ssd.jpl.nasa.gov-de ephemeris_de440_earth.bin adc990bc6e1f80fa5befb91197c3e937c625529a3dd7a125a46dc4f23b36efe1
+        stage ssd.jpl.nasa.gov-de ephemeris_de440_moon.bin acb42881d50c8b381eda877b68b46dc60a4db14eafc60f05d62ba35db564d048
+        stage ssd.jpl.nasa.gov-de ephemeris_de440_sun.bin 9d059db300c042058f726667e7d29e4303597fc4481e34969f44686e5a4b90f9
     - uses: actions/configure-pages@v4
     - uses: actions/upload-pages-artifact@v3
       with:
