@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: c41a8b649eb9f86bbbf0071d880f1dd8d5b9a67c4c90ff79cf9893fd3bc849af
+  sha256: bc7a111394d2ecc9f737231a76be7f0e8365e049d99c9f5d3e40346ff37ef3c1
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -56,7 +56,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
 - **keine roten Läufe im Fenster**; der frühere `nvss-cdn 37197870103` (ASU-Route leer) ist durch Fix + neuen Lauf abgelöst.
-- **in flight (queued, Runner-Knappheit):** `nvss-cdn 37218852211` · `pages-deploy 37220624724` · `openneuro-cdn 37219510577` · `jaxa-gportal-cdn 37220243355` — je `unread`.
+- **`openneuro-cdn 37219510577` @`7ccc360e8` = failure** (gemessen `ci_manage log`): `openneuro_compiler: the dataset carries no .set file — nothing manifestiert (0 honored)` — ds004100 ist SEEG (kein EEGLAB `.set`); der Arm liest das Format nicht → Mountain-Parser (`## An mountain`).
+- **in flight (queued, Runner-Knappheit):** `nvss-cdn 37218852211` · `pages-deploy 37220624724` · `jaxa-gportal-cdn 37220243355` — je `unread`.
 - **success (fact level):** `cses-efd-cdn 37196088057` · `cses-hpm-cdn 37214214253` · `cses-scm-cdn 37214216529` · `emm-sdc-cdn 37195699687` · `cuprate-cdn 37214211680` · `astrometry-witness-cdn 37214209546` · `pages-deploy 37196979821`.
 
 ## Offen — eigen (nur Mycelium-arbeitbar)
@@ -75,12 +76,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Verdikt (River Seite / Mountain `catalog_epoch`)
 - **Braucht:** Verdikt → Staging-Tag angleichen **oder** Register-`catalog_epoch` korrigieren; beides dann im eigenen Workflow.
 
+### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Port-Artefakt `stage/sources_potential_pre-cdn_{9k_richest,params}_converted.φ` erzeugt
+- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` note: `825 Blöcke (gitignored); Port 2026-10-04 via target/debug/omegaflow, Working Tree mit Register-Name-Index-Fix (src/archivar/port.rs, uncommitted) → stage/sources_potential_pre-cdn_9k_richest_converted.φ`; `:6` note: `63 Blöcke (gitignored); Port 2026-10-04 (derselbe Working-Tree-Bin) → stage/sources_potential_pre-cdn_params_converted.φ`.
+- **Blockade:** Port-Artefakt noch nicht erzeugt
+- **Braucht:** Port-Lauf → `stage/…_converted.φ`, dann Register-Zeilen (Konverter-Spec = Mountain).
+
 ### Registry↔CDN-Reconciliation (Step 5)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `cdn_reconcile` — gemessene Tag-Menge je Netloc
-- **Lage:** (gemessen 2026-10-03) `survey-2026-09-03-orphan-verdicts.md` trägt den 13-Netloc-Plan; `pds3_ring_occ.bin` 404 (Riss).
-- **Blockade:** Probe-Writer-Rebindung
-- **Braucht:** Probe-Writer-Rebindung; dann je Lösch-Klasse ein Atom.
+- **Trigger:** Operator-Wort vor destruktiver Entfernung
+- **Lage:** (gemessen 2026-10-04 via `cdn_reconcile` → `docs/specs/cdn_reconciliation.json`) `orphan_releases` 144 · `unmanifested_source_netlocs` 31 · `asset_name_divergence` 6873 · `missing_assets` 687 · `byte_identical_duplicate_groups` 14 · `www_prefixed` 1 (`www.kari.re.kr`); Klassen `orphan_releases_by_class` (`dataset_host` 4 / `internal` MODIS-LST-Jahre). `pds3_ring_occ.bin` 404 (Riss).
+- **Blockade:** Operator-Wort (destruktive Entfernung)
+- **Braucht:** je Lösch-Klasse ein Atom (Operator-Wort zuerst); `www.kari.re.kr`-Tag-Normalisierung.
 
 ### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`
 - **Status:** wartend | **Bindung:** eigen (Meta-Träger)
@@ -120,6 +128,7 @@ Origin: mycelium-folge230. **Routed — nicht-eigen; deine Disposition/Arm:**
 - **Weberin-Astrometrie-Serie** `:170/:174/:178/:182/:186/:190`: Disposition (Serien-Arm gebaut `extract.rs:210`).
 - **D5/Röhren-Asset:** Producer der position-indizierten 20k-Abbildung (`zeugnis.md:383`); nicht das §10-Vlies (`vlies_density.vlde`, gebaut).
 - **LEOS** `blocked_sources.φ:139`: auth-gated (`40301`) → `blocked account` + `reg`.
+- **openneuro-cdn ds004100 (SUDEP):** `openneuro_compiler: the dataset carries no .set file` — ds004100 ist SEEG (BIDS, **kein** EEGLAB `.set`); der Arm braucht einen SEEG-Format-Reader. Kein Asset → kein `sha256`.
 - **goes_euvs/AST1/CSES-HPM/SCM:** `sha256` steht, aus Mycelium-Sicht erledigt.
 
 ## An river
