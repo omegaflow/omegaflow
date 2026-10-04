@@ -32,14 +32,17 @@ sondern als überholt benannt — Riss, nicht stille Korrektur.
 |---|---|---|---|
 | `~/knowledge` | nein | `~/archive/knowledge` | 36 G |
 | `~/backups` | nein | `~/archive-state` (sessions/provenance) **+** `~/archive/knowledge/omegaflow` | 9,8 G + 21 G |
-| `~/.local/state/omegaflow/archivar_cache` | nein | `~/projects/omegaflow/cache` (Kandidat, nicht bewiesen) | 11 G |
+| `~/.local/state/omegaflow/archivar_cache` | nein | `$OMEGAFLOW_STATE/archivar_cache` (Default `cache` im Repo-Root; gemessen 2026-10-04, `fetch.rs:1422`) | 11 G |
 
 Realer Ist-Baum: `~/archive/` = 36 G (davon `knowledge/` 36 G, `archive-root/` 840 M,
 `cdn-sources/` 26 M, `funding/` 16 K, `media/` 9,6 M). Repo-`data/` = **79 G** (Top-netloc:
 `ssd.jpl.nasa.gov` 3,4 G, `pds-ppi.igpp.ucla.edu` 3,3 G, `naif.jpl.nasa.gov` 2,3 G,
 `jsoc.stanford.edu` 2,0 G, `pradan.issdc.gov.in` 1,1 G). Die Byte-Zahlen im Gesamtland-Abschnitt
 unten sind damit stale; die Mapping-Zuordnung `~/backups` → `archive-state` + `archive/knowledge/omegaflow`
-ist gemessen, die Zuordnung `archivar_cache` → `repo/cache` ist **Kandidat** (`pending`, nicht bewiesen).
+ist gemessen; die Cache-Wurzel ist **kontextabhängig** (gemessen 2026-10-04, Mycelium-228):
+`cache_root()` (`src/archivar/fetch.rs:1422`) = `$OMEGAFLOW_STATE/archivar_cache`, Default `cache`
+im Repo-Root; der Watchdog setzt `OMEGAFLOW_STATE=~/.local/state/omegaflow`
+(`bin/ci-watchdog.service:10`), die CI `data/state` (`.github/workflows/health-check.yml:26`).
 
 ## Gesamtland (gemessen, vor Aufräum)
 
