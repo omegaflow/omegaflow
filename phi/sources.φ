@@ -26987,6 +26987,7 @@ url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl
 origin https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
 format viking_grav
 compiler tools/harvest/src/bin/viking_grav_compiler.rs
+sha256 5f7c8814f84a1f187c0321b2dc1ada3315ab93be9de42d9a54df958cfcc1f7a4
 at mars
 ttl 604800
 field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
