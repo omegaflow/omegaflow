@@ -2,7 +2,11 @@ use std::collections::HashMap;
 use std::io::Write;
 use std::process::Command;
 
-const ASU_ROOT: &str = "https://vizier.cds.unistra.fr/viz-bin/asu-tsv";
+const ASU_MIRRORS: [&str; 3] = [
+    "https://vizier.cds.unistra.fr/viz-bin/asu-tsv",
+    "https://vizier.cfa.harvard.edu/viz-bin/asu-tsv",
+    "https://vizier.u-strasbg.fr/viz-bin/asu-tsv",
+];
 const NVSS_TABLE: &str = "VIII/65/nvss";
 const SDSS_TABLE: &str = "V/154/sdss16";
 const NVSS_SELECT: &str = "NVSS,S1.4";
@@ -65,6 +69,18 @@ fn asu_fetch(url: &str, timeout: u64) -> Option<String> {
         );
         None
     }
+}
+
+fn asu_fetch_mirrors(query: &str, timeout: u64) -> Option<String> {
+    for attempt in 1..=3 {
+        for root in ASU_MIRRORS {
+            if let Some(body) = asu_fetch(&format!("{root}?{query}"), timeout) {
+                return Some(body);
+            }
+        }
+        eprintln!("vizier_asu_compiler: ASU mirror round {attempt} returned void");
+    }
+    None
 }
 
 fn parse_asu_tsv(text: &str) -> (Vec<String>, Vec<Vec<String>>) {
@@ -305,15 +321,15 @@ fn main() {
     };
     let timeout = asu_timeout();
 
-    let nvss_url = match window {
+    let nvss_query = match window {
         Some((lo, hi)) => format!(
-            "{ASU_ROOT}?-source={NVSS_TABLE}&-out={NVSS_SELECT}&-out.add={NVSS_ADD}&-out.max={limit}&_RAJ2000={lo}..{hi}"
+            "-source={NVSS_TABLE}&-out={NVSS_SELECT}&-out.add={NVSS_ADD}&-out.max={limit}&_RAJ2000={lo}..{hi}"
         ),
-        None => format!(
-            "{ASU_ROOT}?-source={NVSS_TABLE}&-out={NVSS_SELECT}&-out.add={NVSS_ADD}&-out.max={limit}"
-        ),
+        None => {
+            format!("-source={NVSS_TABLE}&-out={NVSS_SELECT}&-out.add={NVSS_ADD}&-out.max={limit}")
+        }
     };
-    let Some(body) = asu_fetch(&nvss_url, timeout) else {
+    let Some(body) = asu_fetch_mirrors(&nvss_query, timeout) else {
         eprintln!("vizier_asu_compiler: NVSS ASU returned void");
         std::process::exit(1);
     };
@@ -329,10 +345,10 @@ fn main() {
     };
     let mut sdss: Vec<SdssRow> = Vec::new();
     for (a, b) in windows {
-        let url = format!(
-            "{ASU_ROOT}?-source={SDSS_TABLE}&-out={SDSS_SELECT}&-out.max={limit}&RA_ICRS={a}..{b}&zsp={ZSP_RANGE}"
+        let query = format!(
+            "-source={SDSS_TABLE}&-out={SDSS_SELECT}&-out.max={limit}&RA_ICRS={a}..{b}&zsp={ZSP_RANGE}"
         );
-        let Some(body) = asu_fetch(&url, timeout) else {
+        let Some(body) = asu_fetch_mirrors(&query, timeout) else {
             eprintln!("vizier_asu_compiler: SDSS ASU {a}..{b} returned void");
             std::process::exit(1);
         };
