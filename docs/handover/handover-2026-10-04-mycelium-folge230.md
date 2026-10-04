@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: 816c52197dea562cd6f76a469c8cb7158ad74601a223e17a07535bb1b8529c7c
+  sha256: f8fcfdb983eca3f477b795bc34d942437819bacfd26498d045c8f7e3f400e5c6
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -70,12 +70,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Runner-Queue (Hosted-Runner-Knappheit, gemessen `ci_manage status`)
 - **Braucht:** je Lauf `ci_manage log <id>`; bei Grün `nvss.json`-Rebind / `sources.φ`-Block `sha256` (JAXA, OpenNeuro) / WASM-Artefakt-Prüfung.
 
-### iEEG-Ernte-Arm bauen (Mycelium) — Zugang offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Compiler gebaut → `ieeg-cdn`-Lauf → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04, future-176-Adresse) Konto `omegaflow` auf `www.ieeg.org` live; öffentliche Datensätze öffnen **ohne User-Agreement-Gate** (657 Datensätze, z. B. `09_14_limbic_seizure_374` R/O, 64 Kanäle). Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF-Reader `src/archivar/extract.rs`, `9d416e57b`). **Fehlt:** Harvest-Bin (`sgrep tools` = 0), Workflow, `format ieeg_edf` + `url`/`origin`/`compiler` in `sources.φ`.
-- **Blockade:** keiner
-- **Braucht:** Compiler + Workflow bauen → CI-Lauf → CDN-Manifestation + `sources.φ`-Block. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
+### iEEG-Ernte-Arm bauen (Mycelium) — Zugang: Riss, nicht „offen"
+- **Status:** wartend | **Bindung:** eigen (Arm) / Zugang Operator
+- **Trigger:** Zugangsweg gemessen — `blocked_sources.φ:180` (keyless-Endpunkt oder iEEG-Creds)
+- **Lage:** (gemessen 2026-10-04) Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF `src/archivar/extract.rs`, `9d416e57b`). **Zugang-Riss:** future-176-Adresse „Konto `omegaflow` live, öffentliche Datensätze ohne UA-Gate (657, z. B. `09_14_limbic_seizure_374`)" vs `blocked_sources.φ:180` + `survey-…medizinische-datenquellen.md:63` „Registrierung + User Agreement" vs `river-folge90:243` „Login genügt". `bin/secrets_keys` (vollständige Liste, 138 Keys): **kein** iEEG-Key; EEG-nah nur `NSRR_*`; `IDA_*` = `ida_fetch.rs` (anderer Dienst).
+- **Blockade:** kein gemessener keyless Zugang; keine iEEG-Creds in `secrets` für CI
+- **Braucht:** keyless Download-Endpunkt **oder** die `omegaflow`-iEEG-Creds → `secrets-sync` → dann Compiler + `ieeg-cdn.yml` + `sources.φ`-Block. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
 - **Status:** wartend | **Bindung:** eigen
@@ -102,7 +102,7 @@ Origin: mycelium-folge230. **Routed — nicht-eigen; deine Disposition/Arm:**
 - **D5/Röhren-Asset:** Producer der position-indizierten 20k-Abbildung (`zeugnis.md:383`); nicht das §10-Vlies (`vlies_density.vlde`, gebaut).
 - **LEOS** `blocked_sources.φ:139`: auth-gated (`40301`) → `blocked account` + `reg`.
 - **openneuro-cdn ds004100 (SUDEP):** `openneuro_compiler: the dataset carries no .set file` — ds004100 ist SEEG (BIDS, **kein** EEGLAB `.set`); der Arm braucht einen SEEG-Format-Reader. Kein Asset → kein `sha256`.
-- **EEG-Portale `blocked_sources.φ:179/:183/:187`:** iEEG.org-Zugang **offen** (öffentlich, kein Key) → Arm-Bau bei Mycelium; TUH/NEDC Zugang (Operator); NSRR `descoped`. `format ieeg_edf`-Block in `sources.φ` nach dem Compiler.
+- **EEG-Portale `blocked_sources.φ:179/:183/:187`:** iEEG.org — **Zugang-Riss** (future-176 „Konto live/ohne UA" vs `:180`+Survey „Registration+User Agreement" vs River-90 „Login genügt"); kein iEEG-Key in `secrets`. TUH/NEDC Zugang (Operator); NSRR `descoped`. `format ieeg_edf`-Block in `sources.φ` nach dem Compiler.
 - **goes_euvs/AST1/CSES-HPM/SCM:** `sha256` steht, aus Mycelium-Sicht erledigt.
 
 ## An river
@@ -119,7 +119,7 @@ Origin: mycelium-folge230. **Routed:**
 
 Origin: mycelium-folge230. **Routed — Operator-Akt (per-Akt-Wort), keine Maschinen-Hand:**
 
-- **EEG-Portale** `blocked_sources.φ:179/:183/:187`: **iEEG.org — Zugang offen** (Konto `omegaflow`, öffentliche Datensätze ohne UA-Gate) → Bau-Punkt bei Mycelium (`## Offen — eigen`), kein Operator-Akt. **TUH/NEDC** Formular (`wartend.φ:39`) = Operator-Akt. **NSRR — descoped** (Human-Subjects-/HIPAA-Attestierung fehlt), kein Compiler ins Leere; lokale Creds vorhanden, aber kein Bedarf.
+- **EEG-Portale** `blocked_sources.φ:179/:183/:187`: **iEEG.org — Zugang-Riss** (s. `## Offen — eigen`); braucht keyless-Endpunkt **oder** Creds von dir, dann Arm-Bau = Mycelium. **TUH/NEDC** Formular (`wartend.φ:39`) = Operator-Akt. **NSRR — descoped** (Human-Subjects-/HIPAA-Attestierung fehlt); lokale Creds vorhanden, kein Bedarf.
 - **GIC-Rohserie** `space.fmi.fi/gic/`: FMI-Anfrage läuft (`wartend.φ:40` fmi-gic-maentsaelae, gesendet 2026-10-02, keine Antwort) — Wiedervorlage, kein Send von der Maschine.
 - **SUDEP `ds004100`:** OpenNeuro-Harvest dispatcht (`37219510577`); kein Operator-Akt.
 
