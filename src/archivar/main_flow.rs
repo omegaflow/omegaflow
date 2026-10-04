@@ -3231,6 +3231,112 @@ pub fn main_flow() {
             }
             if matches!(
                 archive.sources[i].format.as_str(),
+                "ieeg_edf" | "tuh_eeg" | "nsrr_psg"
+            ) {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("edf").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_edf_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let Some(header) = crate::archivar::edf::parse_edf(&bytes) else {
+                        eprintln!(
+                            "{} {}: {} B carry no EDF/EDF+ header",
+                            fmt,
+                            source_name(&url),
+                            bytes.len()
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
+                    let position = match &src.frame {
+                        Frame::Surface {
+                            body_name,
+                            lat,
+                            lon,
+                            alt,
+                        } => Position::Surface {
+                            body_name: body_name.clone(),
+                            lat: *lat,
+                            lon: *lon,
+                            alt: *alt,
+                        },
+                        Frame::Barycenter { body_name, scale } => Position::Barycenter {
+                            body_name: body_name.clone(),
+                            scale: *scale,
+                        },
+                        Frame::Manifest => Position::Source,
+                    };
+                    let channels = crate::archivar::extract::edf_emit_channels(
+                        &bytes,
+                        &position,
+                        now,
+                        src_ttl as f64,
+                        crate::archivar::extract::EDF_CHANNEL_CAP,
+                    );
+                    eprintln!(
+                        "\r\x1b[K{} {}: {} signals × {:.3} s records — {} channels emitted at the source anchor (cap {}/signal; voltages → electric/V, other units skipped by name)",
+                        fmt,
+                        source_name(&url),
+                        header.signals.len(),
+                        header.record_duration_s,
+                        channels.len(),
+                        crate::archivar::extract::EDF_CHANNEL_CAP
+                    );
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok: true,
+                        sample_ttl_override: None,
+                    });
+                });
+                continue;
+            }
+            if matches!(
+                archive.sources[i].format.as_str(),
                 "catalog_mpcorb"
                     | "catalog_dcom5"
                     | "catalog_des_y6"

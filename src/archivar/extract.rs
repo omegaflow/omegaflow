@@ -1285,6 +1285,99 @@ pub fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
+pub const EDF_CHANNEL_CAP: usize = 4096;
+
+fn edf_force_unit(unit: &str) -> Option<(&'static str, &'static str, f64, f64)> {
+    match unit {
+        "V" => Some(("electric", "V", 1.0, 0.0)),
+        "mV" => Some(("electric", "V", 1.0e-3, 0.0)),
+        "uV" | "µV" | "μV" => Some(("electric", "V", 1.0e-6, 0.0)),
+        "nV" => Some(("electric", "V", 1.0e-9, 0.0)),
+        "degC" | "°C" => Some(("thermal", "K", 1.0, 273.15)),
+        _ => None,
+    }
+}
+
+pub fn edf_emit_channels(
+    bytes: &[u8],
+    position: &Position,
+    epoch: f64,
+    tau: f64,
+    cap: usize,
+) -> Vec<(Channel, FieldConfig)> {
+    if cap == 0 {
+        return Vec::new();
+    }
+    let Some(header) = crate::archivar::edf::parse_edf(bytes) else {
+        return Vec::new();
+    };
+    let Some(kernel) = kernel_id_of("gaussian-inverse-square") else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for (idx, signal) in header.signals.iter().enumerate() {
+        let Some((force_name, unit, scale, offset)) = edf_force_unit(&signal.unit) else {
+            eprintln!(
+                "edf: signal '{}' unit '{}' maps to no force — skipped",
+                signal.label, signal.unit
+            );
+            continue;
+        };
+        let Some(force) = force_id_of(force_name) else {
+            continue;
+        };
+        let samples = crate::archivar::edf::signal_samples(bytes, &header, idx);
+        if samples.is_empty() {
+            continue;
+        }
+        let name = if signal.label.is_empty() {
+            format!("e{idx}")
+        } else {
+            signal.label.clone()
+        };
+        let fc = FieldConfig {
+            key: name.clone(),
+            name: name.clone(),
+            kernel,
+            force,
+            tau,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: unit.to_string(),
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+        };
+        let stride = samples.len().div_ceil(cap);
+        for k in (0..samples.len()).step_by(stride) {
+            let Some(raw) = samples[k] else {
+                continue;
+            };
+            if !raw.is_finite() {
+                continue;
+            }
+            let value = raw * scale + offset;
+            if !value.is_finite() {
+                continue;
+            }
+            out.push((
+                Channel {
+                    name: name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    station_code: Some(signal.label.clone()),
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    out
+}
+
 pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
     match ext {
         Extract::Map { fields, .. }
@@ -6747,5 +6840,170 @@ mod fixed_width_series_tests {
         assert!(series_named("astrometry_series", &bin).is_none());
         assert!(astrometry_series_counts(b"XXXX").is_none());
         assert!(verify_records("astrometry_series", b"XXXX").is_none());
+    }
+}
+
+#[cfg(test)]
+mod edf_arm_tests {
+    use super::*;
+
+    struct Sig {
+        label: &'static str,
+        unit: &'static str,
+        p_min: f64,
+        p_max: f64,
+        d_min: f64,
+        d_max: f64,
+        digital: Vec<i16>,
+    }
+
+    fn put(v: &mut Vec<u8>, s: &str, len: usize) {
+        let mut f = s.as_bytes().to_vec();
+        f.resize(len, b' ');
+        v.extend_from_slice(&f);
+    }
+
+    fn synth(sigs: &[Sig]) -> Vec<u8> {
+        let ns = sigs.len();
+        let mut h = Vec::new();
+        put(&mut h, "0", 8);
+        put(&mut h, "patient", 80);
+        put(&mut h, "recording", 80);
+        put(&mut h, "01.01.20", 8);
+        put(&mut h, "00.00.00", 8);
+        put(&mut h, &(256 + 256 * ns).to_string(), 8);
+        put(&mut h, "EDF+C", 44);
+        put(&mut h, "1", 8);
+        put(&mut h, "1", 8);
+        put(&mut h, &ns.to_string(), 4);
+        for s in sigs {
+            put(&mut h, s.label, 16);
+        }
+        for _ in sigs {
+            put(&mut h, "", 80);
+        }
+        for s in sigs {
+            put(&mut h, s.unit, 8);
+        }
+        for s in sigs {
+            put(&mut h, &s.p_min.to_string(), 8);
+        }
+        for s in sigs {
+            put(&mut h, &s.p_max.to_string(), 8);
+        }
+        for s in sigs {
+            put(&mut h, &s.d_min.to_string(), 8);
+        }
+        for s in sigs {
+            put(&mut h, &s.d_max.to_string(), 8);
+        }
+        for _ in sigs {
+            put(&mut h, "", 80);
+        }
+        for s in sigs {
+            put(&mut h, &s.digital.len().to_string(), 8);
+        }
+        for _ in sigs {
+            put(&mut h, "", 32);
+        }
+        for s in sigs {
+            for v in &s.digital {
+                h.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+        h
+    }
+
+    #[test]
+    fn edf_arm_emits_voltage_channels_at_the_anchor() {
+        let bytes = synth(&[Sig {
+            label: "EEG Fpz-Cz",
+            unit: "uV",
+            p_min: 0.0,
+            p_max: 100.0,
+            d_min: 0.0,
+            d_max: 100.0,
+            digital: vec![0, 50, 100],
+        }]);
+        let position = Position::Barycenter {
+            body_name: "earth".to_string(),
+            scale: 1.0,
+        };
+        let channels = edf_emit_channels(&bytes, &position, 100.0, 60.0, EDF_CHANNEL_CAP);
+        assert_eq!(channels.len(), 3);
+        let (ch, fc) = &channels[2];
+        assert_eq!(fc.force, crate::force::force_id_of("electric").unwrap());
+        assert_eq!(fc.unit, "V");
+        assert_eq!(ch.station_code.as_deref(), Some("EEG Fpz-Cz"));
+        assert_eq!(ch.z, 0.0);
+        assert_eq!(ch.freq, 0.0);
+        assert_eq!(ch.bin_width, 0.0);
+        assert_eq!(ch.epoch, 100.0);
+        assert!((ch.value - 1.0e-4).abs() < 1.0e-12);
+        match &ch.position {
+            Position::Barycenter { body_name, scale } => {
+                assert_eq!(body_name, "earth");
+                assert_eq!(*scale, 1.0);
+            }
+            _ => panic!("anchor is not the source frame"),
+        }
+    }
+
+    #[test]
+    fn edf_arm_skips_a_unit_with_no_honest_force() {
+        let bytes = synth(&[
+            Sig {
+                label: "EEG",
+                unit: "uV",
+                p_min: 0.0,
+                p_max: 100.0,
+                d_min: 0.0,
+                d_max: 100.0,
+                digital: vec![0, 50, 100],
+            },
+            Sig {
+                label: "SpO2",
+                unit: "%",
+                p_min: 0.0,
+                p_max: 100.0,
+                d_min: 0.0,
+                d_max: 100.0,
+                digital: vec![97, 98],
+            },
+        ]);
+        let channels = edf_emit_channels(&bytes, &Position::Source, 1.0, 1.0, EDF_CHANNEL_CAP);
+        assert_eq!(channels.len(), 3);
+        assert!(channels.iter().all(|(c, _)| c.station_code.as_deref() != Some("SpO2")));
+    }
+
+    #[test]
+    fn edf_arm_skips_samples_whose_physical_value_is_absent() {
+        let bytes = synth(&[Sig {
+            label: "overflow",
+            unit: "V",
+            p_min: -1.7e308,
+            p_max: 1.7e308,
+            d_min: 0.0,
+            d_max: 100.0,
+            digital: vec![100],
+        }]);
+        let channels = edf_emit_channels(&bytes, &Position::Source, 1.0, 1.0, EDF_CHANNEL_CAP);
+        assert!(channels.is_empty());
+    }
+
+    #[test]
+    fn edf_arm_caps_channels_per_signal() {
+        let bytes = synth(&[Sig {
+            label: "EEG",
+            unit: "V",
+            p_min: 0.0,
+            p_max: 20.0,
+            d_min: 0.0,
+            d_max: 20.0,
+            digital: (0..20).collect(),
+        }]);
+        let channels = edf_emit_channels(&bytes, &Position::Source, 1.0, 1.0, 8);
+        assert!(channels.len() <= 8);
+        assert_eq!(channels.len(), 7);
     }
 }
