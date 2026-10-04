@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: 20fb65bb783d3fc77994ca57c470900bbcf5928862c3dd20d6510eebf28f3202
+  sha256: 93887f3e8e4c6241d5708c017749522991f1d1ab4ce761bd9fc9dc95b2b21d00
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -74,26 +74,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** TAPVizieR 503
 - **Braucht:** nach Host-Rückkehr `gh workflow run nvss-cdn.yml`, dann `ci_manage log <id>` (die `<errorSummary>`-Zeile); danach Register-Rebind `phi/sources.φ` (`nvss.json`) auf `ssd.jpl.nasa.gov-nvss/`.
 
-### EMM/MBRSC — Refresh-Grant 403, RT unbrauchbar
+### EMM/MBRSC — Secret erneuert, Manifest-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Browser-Gruppe `emm` Session → `localStorage.cognitoTokens.refresh_token`
-- **Lage:** (gemessen 2026-10-03 via `ci_manage log 37155219824`) Refresh-Arm gebaut (`c4694df48`), Repo-Secret `EMM_COGNITO_REFRESH_TOKEN` gesetzt; Live-Grant `POST auth.emiratesmarsmission.ae/oauth2/token` → **403**. Die Browser-Gruppe `emm` ist vorhanden, aber die Bridge-`browser_*`-Tools geben Werte nur **inline** zurück; der Playwright-Browser hat keine `emm`-Session (`about:blank`). Eine Extraktion über diese Tools würde den Token in den Transcript leaken — Secret-Hygiene verbietet es.
-- **Blockade:** kein file-only-Browser-Pfad (Bridge inline; Playwright ohne Session)
-- **Braucht:** `playwright_browser_run_code_unsafe` gegen eine `emm`-Profil-Session (schreibt `localStorage` auf Datei, gibt nur einen Marker zurück) oder ein gleichwertiger file-only-Extraktor; dann `gh secret set < datei`, Scratch löschen, `emm-sdc-cdn` dispatchen.
+- **Trigger:** `emm-sdc-cdn 37175828418` → `ci_manage log`
+- **Lage:** (gemessen 2026-10-04) Der Refresh-Token wurde **file-only** über die Chrome-DevTools-MCP (`chrome-devtools_evaluate_script` mit `filePath`, kein Inline-Wert im Transcript) aus der eingeloggten `sdc.emiratesmarsmission.ae/profile`-Seite extrahiert (1842 Z.), als Repo-Secret `EMM_COGNITO_REFRESH_TOKEN` gesetzt, Scratch gelöscht; `emm-sdc-cdn 37175828418` dispatcht.
+- **Blockade:** keine
+- **Braucht:** Lauf lesen (Grant + Download).
 
 ### M3-Asset — Route geheilt, Manifest-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `pds3-img-cdn.yml`-Lauf (in diesem Atom dispatcht) → `ci_manage log`
-- **Lage:** (gemessen 2026-10-04) `planetarydata.jpl.nasa.gov/img/data/m3/...` liefert `.HDR`/`.IMG` **206** (stage 1 + Proton exit; sha-identisch mit dem JPL-Produkt); `pds3_img_compiler`-Konstanten + Register-`origin` darauf umgestellt (Compiler-Host war hardcodiert).
+- **Trigger:** `pds3-img-cdn 37175806338` → `ci_manage log`
+- **Lage:** (gemessen 2026-10-04) `planetarydata.jpl.nasa.gov/img/data/m3/...` liefert `.HDR`/`.IMG` **206** (stage 1 + Proton exit; sha-identisch mit dem JPL-Produkt); `pds3_img_compiler`-Konstanten + Register-`origin` darauf umgestellt (Compiler-Host war hardcodiert). Der erste Dispatch `37173462536` wurde **gecancelt** (konkurrierender Lauf); neu dispatcht `37175806338`.
 - **Blockade:** keine (Route messbar)
 - **Braucht:** Manifest-Lauf lesen; dann CDN-Präsenz des `pds3_img`-Assets.
-
-### KPLO/KARI KPDS — registriert; Format `ephemeris_binary` — Reader-Route messen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Port-Schritt `docs/SOURCE_PORT.md`
-- **Lage:** (gemessen 2026-10-04) `ephemeris_kplo.bin` auf CDN (22 152 B), in `phi/sources.φ` + `phi/harvest.φ` registriert. Offen: Mountain `format`/`field`-Zuordnung für den neuen Körper `kplo`.
-- **Blockade:** Format-Zuordnung (Mountain)
-- **Braucht:** Mountain prüft `ephemeris_binary`/`at kplo` im Field-Contract.
 
 ### PRADAN — registriert; Reader-Arm fehlt
 - **Status:** wartend | **Bindung:** eigen
@@ -151,12 +144,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Porting / Prozedur nicht live
 - **Braucht:** Port-Schritt; `--playwright "https://limadou.ssdc.asi.it/query.php"` sobald SSDC meldet.
 
-### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` Marker
+### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`
 - **Status:** wartend | **Bindung:** eigen (Meta-Träger)
 - **Trigger:** `register_lookup --orphan-docs` nennt ein neues trägerloses Dokument
-- **Lage:** (gemessen 2026-10-04) `--orphan-docs` = 0. Der `:75`-Marker (voyager/new_horizons-URL-Feder) ist **aufgelöst**: die drei `_long.bin` sind unter `ssd.jpl.nasa.gov-horizons` registriert (`sources.φ:16515/16546/16554`) und sha-rebunden; die Survey-Zeile ist auf den neuen Stand fortgeschrieben. Offen bleibt der `:42`-Marker (archivar_cache→repo/cache-Mapping).
+- **Lage:** (gemessen 2026-10-04) Die Marker `:42` (Cache-Wurzel → kontextabhängig, `fetch.rs:1422`) und `:75` (voyager/new_horizons-sha) sind aufgelöst; es bleibt die `## Offen / Befunde`-Sektion `:96` plus der 976-B-Placeholder-Hinweis `:78`.
 - **Blockade:** keine
-- **Braucht:** `:42`-Marker am heutigen Baum nachmessen; dann schließen.
+- **Braucht:** `:96`/`:78` am Baum nachmessen und schließen.
 
 ### `blocked_sources.φ` mycelium-Portale ohne Arm
 - **Status:** wartend | **Bindung:** eigen
