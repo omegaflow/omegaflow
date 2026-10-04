@@ -5,8 +5,8 @@ use std::process::exit;
 use omegaflow::archivar::witness::{WitnessKind, magic_identity, series_gate};
 use omegaflow::archivar::{
     Extract, FieldConfig, SourceConfig, embedded_lsk, extract_series, fetch_raw_bytes_headers,
-    geo_series_component_name, geo_series_parse_bin, load_sources, series_component_name,
-    series_rows,
+    geo_series_component_name, geo_series_parse_bin, live_markers, load_sources,
+    series_component_name, series_rows,
 };
 use omegaflow::lsk::days_from_civil;
 use omegaflow::mathematikerin::wy_max_t::{
@@ -102,7 +102,7 @@ struct Descriptor {
     pair: Option<String>,
     driver: Arm,
     target: Arm,
-    cond: Option<Arm>,
+    conds: Vec<Arm>,
     events: Vec<(String, String)>,
     gates: Vec<(String, String)>,
     seasonal: Seasonal,
@@ -145,7 +145,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut pair = None;
     let mut driver: Option<Arm> = None;
     let mut target: Option<Arm> = None;
-    let mut cond: Option<Arm> = None;
+    let mut conds: Vec<Arm> = Vec::new();
     let mut events = Vec::new();
     let mut gates = Vec::new();
     let mut cadence = false;
@@ -195,7 +195,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 match head {
                     "driver" => driver = Some(arm),
                     "target" => target = Some(arm),
-                    _ => cond = Some(arm),
+                    _ => conds.push(arm),
                 }
             }
             "witness" => {
@@ -328,7 +328,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         pair,
         driver,
         target,
-        cond,
+        conds,
         events,
         gates,
         seasonal,
@@ -350,10 +350,23 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
     let target = arg_after(args, "--target")
         .or(arg_after(args, "--field"))
         .ok_or("--target/--field absent")?;
-    let cond = arg_after(args, "--cond").map(|n| Arm {
-        name: n.to_string(),
-        state: State::Built,
-    });
+    let conds: Vec<Arm> = {
+        let mut out = Vec::new();
+        let mut i = 0usize;
+        while i < args.len() {
+            if args[i] == "--cond" {
+                if let Some(n) = args.get(i + 1) {
+                    out.push(Arm {
+                        name: n.to_string(),
+                        state: State::Built,
+                    });
+                    i += 1;
+                }
+            }
+            i += 1;
+        }
+        out
+    };
     let seasonal = match arg_after(args, "--seasonal") {
         Some(s) => s,
         None => "none",
@@ -407,7 +420,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
             name: target.to_string(),
             state: State::Built,
         },
-        cond,
+        conds,
         events: Vec::new(),
         gates: Vec::new(),
         seasonal,
@@ -1268,19 +1281,28 @@ fn first_url_template_slot(url: &str) -> Option<&str> {
     Some(&after[..close])
 }
 
+fn resolve_time_markers(url: &str) -> String {
+    let mut resolved = url.to_string();
+    for (marker, value) in live_markers() {
+        resolved = resolved.replace(&marker, &value);
+    }
+    resolved
+}
+
 fn guard_url_template_resolved(url: &str) -> Result<(), String> {
     match first_url_template_slot(url) {
         Some(slot) => Err(format!(
-            "url carries the unresolved template slot '{{{slot}}}' — load_field holds no clock/coordinate context to fill it; resolve the slot (epoch, station lat/lon) before the fetch, or the source stays unmeasured"
+            "url carries the unresolved template slot '{{{slot}}}' — the epoch markers ({{now}}/{{week_ago}}/{{hour_ago}}) are filled from the running clock, but this slot needs a query anchor (station lat/lon, source selector) that load_field does not hold; resolve it before the fetch, or the source stays unmeasured"
         )),
         None => Ok(()),
     }
 }
 
 fn load_field(src: &SourceConfig, fc: &FieldConfig) -> Result<Vec<(f64, f64)>, String> {
-    guard_url_template_resolved(&src.url)?;
-    let Some(bytes) = fetch_raw_bytes_headers(&src.url, &src.headers) else {
-        return Err(format!("{} fetch void", src.url));
+    let url = resolve_time_markers(&src.url);
+    guard_url_template_resolved(&url)?;
+    let Some(bytes) = fetch_raw_bytes_headers(&url, &src.headers) else {
+        return Err(format!("{url} fetch void"));
     };
     if let Some(rows) = series_rows(&src.format, &bytes) {
         let mut out = Vec::new();
@@ -2062,7 +2084,7 @@ fn print_result(result: &QueryResult, desc: &Descriptor) {
             println!("cTE(target -> driver | cond) = {te:.4e} | threshold {thr:.4e} | {word}");
         }
         None => {
-            if desc.cond.is_some() {
+            if !desc.conds.is_empty() {
                 println!("cTE pending — the conditioning arm carries no aligned series");
             }
         }
@@ -2086,15 +2108,23 @@ fn execute(
         desc.surrogate
     );
 
+    let cond_arm = if desc.conds.len() == 1 {
+        desc.conds.first()
+    } else {
+        None
+    };
+    if desc.conds.len() > 1 {
+        println!(
+            "cTE pending — {} confounders named; the aligned triple carries one arm (the multi-confounder path stays a named pending)",
+            desc.conds.len()
+        );
+    }
     let driver_load = load_arm(sources, witnesses, &desc.driver, desc.register);
     let target_load = load_arm(sources, witnesses, &desc.target, desc.register);
-    let cond_load = desc
-        .cond
-        .as_ref()
-        .map(|a| load_arm(sources, witnesses, a, desc.register));
+    let cond_load = cond_arm.map(|a| load_arm(sources, witnesses, a, desc.register));
     print_arm("driver", &desc.driver, &driver_load);
     print_arm("target", &desc.target, &target_load);
-    if let (Some(arm), Some(load)) = (&desc.cond, &cond_load) {
+    if let (Some(arm), Some(load)) = (cond_arm, &cond_load) {
         print_arm("cond", arm, load);
     }
     if !desc.events.is_empty() || !desc.gates.is_empty() {
@@ -2239,10 +2269,10 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
             name: "ersstv5_nino34_ssta".into(),
             state: State::Built,
         },
-        cond: Some(Arm {
+        conds: vec![Arm {
             name: "tao_wnd_zonal_m_s".into(),
             state: State::Built,
-        }),
+        }],
         events: Vec::new(),
         gates: Vec::new(),
         seasonal: Seasonal::Climatology,
@@ -2610,7 +2640,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target|cond <field> [built|pending|probe] | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | modes --direction <witness> | --spectral <witness> | --parity-witness <witness> [--driver <field>]"
+        "grammar: pair <label> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | modes --direction <witness> | --spectral <witness> | --parity-witness <witness> [--driver <field>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -2813,6 +2843,80 @@ mod tests {
             first_url_template_slot("https://x.example/data"),
             None,
             "a url without a slot carries none"
+        );
+    }
+
+    #[test]
+    fn time_markers_resolve_a_temporal_only_template() {
+        let resolved = resolve_time_markers(
+            "https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&format=json",
+        );
+        assert!(
+            !resolved.contains('{'),
+            "every clock slot is filled, none left: {resolved}"
+        );
+        assert!(
+            resolved.contains("time.min=20") && resolved.contains("time.max=20"),
+            "the epoch markers carry a date: {resolved}"
+        );
+        assert!(
+            guard_url_template_resolved(&resolved).is_ok(),
+            "a resolved temporal url passes the guard"
+        );
+    }
+
+    #[test]
+    fn time_markers_leave_a_coordinate_slot_for_the_guard() {
+        let resolved = resolve_time_markers(
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime={hour_ago}&latitude={lat}&longitude={lon}",
+        );
+        assert!(
+            !resolved.contains("{hour_ago}"),
+            "the clock slot is filled: {resolved}"
+        );
+        assert!(
+            resolved.contains("{lat}") && resolved.contains("{lon}"),
+            "the coordinate slots survive — no anchor in this query: {resolved}"
+        );
+        let err = guard_url_template_resolved(&resolved)
+            .expect_err("a coordinate template stays unresolved");
+        assert!(err.contains("{lat}"), "the refusal names the slot: {err}");
+    }
+
+    #[test]
+    fn conditional_descriptor_carries_a_confounder_list() {
+        let text = "\
+pair corona-conditional
+register sources
+driver aia_304_dn
+target aia_131_dn
+cond goes_xrsb_flux
+cond aia_171_dn probe
+cadence live
+bin 24
+seasonal none
+";
+        let desc =
+            parse_descriptor(text).expect("a conditional descriptor with two confounders parses");
+        assert_eq!(desc.conds.len(), 2, "both confounders are carried");
+        assert_eq!(desc.conds[0].name, "goes_xrsb_flux");
+        assert_eq!(desc.conds[1].state, State::Probe);
+    }
+
+    #[test]
+    fn conditional_descriptor_refuses_an_unknown_confounder_state() {
+        let text = "\
+driver aia_304_dn
+target aia_131_dn
+cond aia_171_dn maybe
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("an unknown confounder state is refused");
+        assert!(
+            err.contains("aia_171_dn") || err.contains("maybe"),
+            "the refusal names the confounder: {err}"
         );
     }
 }
