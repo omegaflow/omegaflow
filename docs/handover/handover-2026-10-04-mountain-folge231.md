@@ -3,7 +3,7 @@
   session: Mountain-Folge 231
   class: handover
   date: 2026-10-04
-  sha256: b2e6483a03fd2242a90aef03a698fb44b137dfd5e8d13b23774e499854cf61ee
+  sha256: c6348a8a03a40d7e6b04c2530de640cb6e44c8786409a82a0dbe9c6764651dab
   status: live
 -->
 # Handover — Mountain-Folge 231 (2026-10-04)
@@ -82,7 +82,7 @@ Wort | Datum | Quelle
 ### Medizinische/Life-Science — disponiert; TUH pending, Future führt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort aus der Future-Operator-Queue zum TUH-Zugang.
-- **Lage:** (gemessen 2026-10-04 this atom) **Disposition vollständig** in `f995dbed3` (Mountain 230): 103 Survey-Einträge (~90 Quellen) alle getragen — 92 Declines (`molecular` 38, `health-stats` 12, `registry` 12, `no-physical-force` 7, `imagery` 7, …) + 3 pending; OpenNeuro + PhysioNet admitted (`sources.φ:2471`/`:3409`). Dieser Pass verifiziert, ergänzt **BioStudies** und entfernt ein **WHO-GHO-Duplikat**; `register_sort` heilt **52 url-order-Verletzungen** (`97d6f194b`). Die 3 Gewollten (`ieeg.org`, `TUH EEG`, `NSRR`) tragen EDF-Arme (`ieeg_edf`/`tuh_eeg`/`nsrr_psg`, `src/archivar/edf.rs`, `9d416e57b`). Operator-Wort 2026-10-04: TUH **`pending`**, warten auf Antwort, **Future führt**. **Ungemessen:** MOUS (`mousdataset.org`, Survey `[pending]` → keine Messung, kein Verdikt — 0-Kanon).
+- **Lage:** (gemessen 2026-10-04 this atom) **Disposition vollständig** in `f995dbed3` (Mountain 230): 103 Survey-Einträge (~90 Quellen) alle getragen — 92 Declines (`molecular` 38, `health-stats` 12, `registry` 12, `no-physical-force` 7, `imagery` 7, …) + 3 pending; OpenNeuro + PhysioNet admitted (`sources.φ:2471`/`:3409`). Dieser Pass verifiziert, ergänzt **BioStudies** und entfernt ein **WHO-GHO-Duplikat**; `register_sort` heilt **52 url-order-Verletzungen** (`97d6f194b`). Die 3 Gewollten (`ieeg.org`, `TUH EEG`, `NSRR`) tragen EDF-Arme (`ieeg_edf`/`tuh_eeg`/`nsrr_psg`, `src/archivar/edf.rs`, `9d416e57b`). Operator-Wort 2026-10-04: TUH **`pending`**, warten auf Antwort, **Future führt**. **MOUS gemessen** (`archive_search --verdict` void direct/Proton, kein Wayback-Snapshot; Identität via `--exa` = Mother of Unification Studies, 204-Subjekt-Neuroimaging MPI Nijmegen auf OpenNeuro `ds003432`) → `decline imagery` (`declined_sources.φ`).
 - **Blockade:** TUH-Zugangsantwort; ieeg/NSRR-Registrierung/DUA (Operator-Hand).
 - **Braucht:** `## An future` (gesendet); Antwort abwarten.
 
