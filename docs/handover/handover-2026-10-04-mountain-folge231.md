@@ -3,7 +3,7 @@
   session: Mountain-Folge 231
   class: handover
   date: 2026-10-04
-  sha256: c62d6cb09bc98050aaeb55e6b9cd45d32e48836207d918540cc25a2499e1e23c
+  sha256: 09b3edb5cd9d542efbd859ea4571235d8e884a4abdac976793b15e921dab7e22
   status: live
 -->
 # Handover — Mountain-Folge 231 (2026-10-04)
@@ -65,12 +65,12 @@ Wort | Datum | Quelle
 - **Blockade:** `gl30` (COG-GeoTIFF) und `SRTM15+` (NetCDF) tragen **keinen** nativen Text-Endpunkt — kein zweiter Epochen-Block möglich (nur die eine gestalt-Zeile steht).
 - **Braucht:** `gl30`/`SRTM15+` aus dem Epochen-Arm **descopen** (oder abgeleitete `axis value`-Serie auf eigenem CDN manifestieren); `bz_blatt`/`gic_storm` rechnen in-process (kein Register-Feld nötig).
 
-### Schwarm-Ernte gras_2c — führende Stimmen geerntet; Fan-out läuft noch
+### Schwarm-Ernte gras_2c — Online-Chat + API-Stimmen bestätigen den Rat
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der detached Lauf `state/stimmen/voice-all-2026-10-04_154008/` (PID 18384) endet.
-- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt steht** (Vakuum-Einweg, ε-unabhängig; 42 `range 0.0 0.01722`; Spec `e9952d96…`). **Schwarm-Ernte 17/29:** 1 kohärente Synthese (`google/gemini-3.1-flash-lite`): planetare GPR-Produkte (SHARAD/MARSIS/Chang'e LPR) führen die **ε-unabhängige Rohachse** (Zeitverzögerung); Tiefe = Interpretation mit ε-Annahme; ein missionsweiter CH2-Elektronik-Offset ist **nicht public** (PDS-DUG, `unbelegt`) — deckt sich mit dem Rat, **kein Register-Change**. Die übrigen Stimmen liefen in die Suchschleife (`tpm-limit`), keine widersprechende Messung.
+- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt steht** (Vakuum-Einweg, ε-unabhängig; 42 `range 0.0 0.01722`; Spec `e9952d96…`). **Online-Chat (Web-UI, kein Login):** `tryingopen.com` Modell **Kimi K3** (Moonshot, Thinking=Deep) — dessen Reasoning bestätigt wörtlich: „the range axis is almost universally expressed as **free-space (vacuum) two-way time delay converted to apparent range using c**, NOT corrected for dielectric. The dielectric correction is left to the interpreter because eps_r is unknown a priori — that's the thing you're trying to measure"; die FMCW-Rechnung `c·T_p·f_s/(2·B·N) = 0.0172 m` prüft er nach; der CH2-Elektronik-Offset ist nicht public. **API-Schwarm 17/29:** 1 kohärente Synthese (`google/gemini-3.1-flash-lite`) deckt sich (SHARAD/MARSIS/LPR = ε-unabhängige Rohachse). **Kein Register-Change.**
 - **Blockade:** keine.
-- **Braucht:** Rest-Ausgaben lesen (`jaq -r 'select(.type=="text") | .part.text'` je Datei); eine neue Quelle am Baum `archive_search --verdict` gegenverifizieren.
+- **Braucht:** Kimi-K3-Antwortprosa auslesen (`tryingopen.com` Chat offen) + Rest-API-Ausgaben lesen; eine neue Quelle am Baum `archive_search --verdict` gegenverifizieren.
 
 ### CSES — EFD+HPM/SCM-Arme + Workflows stehen; Manifestation offen
 - **Status:** blockiert | **Bindung:** eigen
