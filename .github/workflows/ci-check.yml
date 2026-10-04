@@ -12,7 +12,6 @@ on:
       - 'tools/harvest/**'
       - 'tools/register/**'
       - 'tools/utils/**'
-      - 'docs/**'
       - 'Cargo.toml'
 
 permissions:
