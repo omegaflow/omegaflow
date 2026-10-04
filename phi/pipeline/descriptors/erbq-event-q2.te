@@ -1,0 +1,15 @@
+# erbq-event-q2.te — the point-event#1 count panel at the measured q.
+# The pre-registered law (largest power of two with n/q >= 20) evaluated at the measured
+# population: the OMNI_HRO_1MIN span carries only ~60 of the 198 Tohoku stamps
+# (artifact field-te-count, run 37201862389: floor(n/q)=7 for q=8; the compiler carries
+# no cap — omni_hro_compiler.rs harvests the full HAPI window). The q=8 seal
+# `erbq-event.te` stays untouched; this is a separate, separately registered instance.
+# Population named: Tohoku events within the OMNI_HRO_1MIN span, not the century.
+pair erbq-event-q2
+form event-conditional
+witness point-event#1
+driver omni_hro_imf_bz_gsm_nt
+count quantile 2
+cadence live
+bin 3600
+surrogate 1000

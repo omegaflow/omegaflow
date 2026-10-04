@@ -3544,7 +3544,7 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
     }
     if n / q < COUNT_PANEL_FLOOR {
         println!(
-            "count panel block: floor(n/q) = {} < floor {COUNT_PANEL_FLOOR} for q = {q}; the largest power of two with n/q >= {COUNT_PANEL_FLOOR} is {} — the panel is too thin",
+            "count panel block: n = {n} event(s) inside the driver span; floor(n/q) = {} < floor {COUNT_PANEL_FLOOR} for q = {q}; the largest power of two with n/q >= {COUNT_PANEL_FLOOR} is {} — the panel is too thin",
             n / q,
             largest_pow2_bin(n)
         );

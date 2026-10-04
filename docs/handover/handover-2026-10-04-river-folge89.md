@@ -3,7 +3,7 @@
   session: River-Folge 89
   class: handover
   date: 2026-10-04
-  sha256: 2520300276091545063a62616906ffc3103d27e612eb893d83ab0efef6fb7f0e
+  sha256: 60557b2c019b1f90f4439d9df81b39bd602625ec660d601ed85df474553485c1
   status: live
 -->
 # Handover — River-Folge 89 (2026-10-04)
@@ -172,17 +172,21 @@ Wort | Datum | Quelle
 - **Blockade:** die Zellen entstehen erst mit externen Releases.
 - **Braucht:** kp `def` am GFZ-Release, Δ/σ_recon an der ESA-SPK nachtragen (kein River-Lauf).
 
-### Zeugen im universellen Myzel — Form verdrahtet; Datenseite fehlt
+### Zeugen im universellen Myzel — q=8 blockiert, q=2-Instanz gebaut
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein `--descriptor phi/pipeline/descriptors/erbq-event.te`-Lauf (count panel, q = 8).
-- **Lage:** (gemessen 2026-10-04) Gebaut (`field_te_query.rs`): `form event-conditional` +
-  `count quantile <q>` (Zähl-Panel, exposure-gewichtetes E_b, **empirisches Rang-p** + BH,
-  gemessener Dekorrelations-Guard) + 6 Gate-Tests; Träger `erbq-event.te` (B=1000). Der
-  CI-Job `witness-count` in `.github/workflows/field-te-query.yml` führt den Lauf.
-- **Blockade:** der declustered Mainshock-Set fehlt (Side-Deliverable, An mountain); das
-  count-Panel läuft bereits auf dem vollen Zug (n = 198).
-- **Braucht:** `ci_manage view 37201862389` / Artefakt `field-te-count` lesen (dispatcht 2026-10-04);
-  An mountain — declustered Mainshock-Set (magnitude-local-maxima) für die ETA-Form.
+- **Trigger:** Lauf-Ende `field-te-query` (q=2-Instanz `erbq-event-q2.te`).
+- **Lage:** (gemessen 2026-10-04, Run `37201862389`, success) Der q=8-Lauf **blockierte** benannt:
+  von den 198 Tohoku-Stempeln fallen nur **~60** in die OMNI_HRO_1MIN-Spanne → `floor(n/q)=7 < 20`.
+  Kein Compiler-Cap (gemessen `omni_hro_compiler.rs`: volles HAPI-Fenster). Der Rat 2026-10-04:
+  Weg (a) legitim — das vorregistrierte Gesetz (größte Zweierpotenz mit n/q ≥ 20) am gemessenen n
+  ergibt **q=2**; kein HARKing (vor dem Gate existiert kein Ergebnis). Neue, **separat
+  vorregistrierte Instanz `erbq-event-q2.te`** (q=8-Siegel `erbq-event.te` unberührt); der
+  CI-Job `witness-count` läuft jetzt q=2.
+- **Blockade:** die Population ist „Tohoku-Events **innerhalb der OMNI-Spanne**", nicht das
+  Jahrhundert; q=2 ist ein Median-Split — schwach, aber auflösbar (B+1=1001 ≥ q/α=40).
+- **Braucht:** neuen Run dispatchen, `ci_manage view` / Artefakt `field-te-count` lesen. Der
+  Jahrhundert-Arm (breitere Bz-Quelle + Compiler + eigener Deskriptor) ist eine **separate**
+  Mountain/Mycelium-Duty (pending); der declustered Mainshock-Set bleibt Side-Deliverable (An mountain).
 
 ### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen
@@ -276,6 +280,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `tools/measure/src/bin/field_te_query.rs`
 - `phi/pipeline/descriptors/erbq-event.te`
+- `phi/pipeline/descriptors/erbq-event-q2.te`
 - `phi/pipeline/descriptors/erbq-solar.te`
 - `.github/workflows/field-te-query.yml`
 - `docs/handover/handover-2026-10-04-river-folge89.md`
