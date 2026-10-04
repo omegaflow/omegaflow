@@ -1,9 +1,15 @@
+use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdf::{CdfFile, value_present};
+use omegaflow::cdn::upload_release;
+use omegaflow::inflate::zip_members;
 use std::collections::HashMap;
 
 const MAGIC: &[u8; 4] = b"SCTE";
 const FIELDS: usize = 5;
+const NETLOC: &str = "swarm-diss.eo.esa.int";
+const DEFAULT_OUT: &str = "swarm_tec.bin";
+const COMPILER: &str = "tools/harvest/src/bin/swarm_tec_compiler.rs";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -139,15 +145,12 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<[f64; FIELDS]>> {
     Some(out)
 }
 
-fn compile(path: &str, out: &str) {
-    let Ok(bytes) = std::fs::read(path) else {
-        eprintln!("{path}: the file stays unread");
-        std::process::exit(1);
-    };
-    let file = match CdfFile::parse(&bytes) {
+fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
+    let label = source.unwrap_or(out);
+    let file = match CdfFile::parse(bytes) {
         Ok(f) => f,
         Err(note) => {
-            eprintln!("{path}: {:?}", note);
+            eprintln!("{label}: {:?}", note);
             std::process::exit(1);
         }
     };
@@ -155,26 +158,26 @@ fn compile(path: &str, out: &str) {
         eprintln!("Timestamp absent — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     };
-    let epoch = match file.epoch_map(&bytes, epoch_var) {
+    let epoch = match file.epoch_map(bytes, epoch_var) {
         Ok(m) => m,
         Err(note) => {
             eprintln!("Timestamp: {:?}", note);
             std::process::exit(1);
         }
     };
-    let Some(lat) = scalar_map(&file, &bytes, "Latitude") else {
+    let Some(lat) = scalar_map(&file, bytes, "Latitude") else {
         eprintln!("Latitude absent — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     };
-    let Some(lon) = scalar_map(&file, &bytes, "Longitude") else {
+    let Some(lon) = scalar_map(&file, bytes, "Longitude") else {
         eprintln!("Longitude absent — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     };
-    let Some(radius) = scalar_map(&file, &bytes, "Radius") else {
+    let Some(radius) = scalar_map(&file, bytes, "Radius") else {
         eprintln!("Radius absent — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     };
-    let Some(vtec) = scalar_map(&file, &bytes, "Absolute_VTEC") else {
+    let Some(vtec) = scalar_map(&file, bytes, "Absolute_VTEC") else {
         eprintln!("Absolute_VTEC absent — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     };
@@ -255,6 +258,16 @@ fn compile(path: &str, out: &str) {
         }
     }
 
+    let out_name = match std::path::Path::new(out).file_name() {
+        Some(n) => n.to_string_lossy().into_owned(),
+        None => out.to_string(),
+    };
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{out_name}");
+    if let Some(src) = source {
+        println!("origin {src}");
+    }
+    println!("compiler {COMPILER}");
+    println!("sha256 {}", sha256_hex(&bytes_out));
     println!("format swarm_tec");
     println!("ttl 86400");
     println!("at earth");
@@ -264,22 +277,63 @@ fn compile(path: &str, out: &str) {
     println!("field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0");
 }
 
+fn compile_file(path: &str, out: &str) {
+    let Ok(bytes) = std::fs::read(path) else {
+        eprintln!("{path}: the file stays unread");
+        std::process::exit(1);
+    };
+    emit(&bytes, out, None);
+}
+
+fn compile_url(url: &str, out: &str) {
+    let Some(zip) = fetch_raw_bytes(url) else {
+        eprintln!("{url}: the zip stays unfetched");
+        std::process::exit(1);
+    };
+    let mut cdf: Option<Vec<u8>> = None;
+    let members = zip_members(&zip, |name, data| {
+        if cdf.is_none() && name.to_ascii_lowercase().ends_with(".cdf") {
+            cdf = Some(data.to_vec());
+        }
+    });
+    let Some(cdf) = cdf else {
+        match members {
+            Some(n) => eprintln!(
+                "{url}: no cdf member among {n} zip members — the bin stays unwritten (0 honored)"
+            ),
+            None => eprintln!(
+                "{url}: no cdf member; the member count is void — the bin stays unwritten (0 honored)"
+            ),
+        }
+        std::process::exit(1);
+    };
+    emit(&cdf, out, Some(url));
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--probe") {
         probe(&path);
         return;
     }
-    if let Some(path) = arg_value(&args, "--file") {
-        let Some(out) = arg_value(&args, "--out") else {
-            eprintln!("--out absent — the bin stays unnamed");
-            std::process::exit(2);
-        };
-        compile(&path, &out);
-        return;
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
+    if let Some(url) = arg_value(&args, "--url") {
+        compile_url(&url, &out);
+    } else if let Some(path) = arg_value(&args, "--file") {
+        compile_file(&path, &out);
+    } else {
+        eprintln!(
+            "usage: swarm_tec_compiler --probe <cdf> | --file <cdf> | --url <zip> [--out <bin>] [--ci-mode]"
+        );
+        std::process::exit(2);
     }
-    eprintln!("usage: swarm_tec_compiler --probe <cdf> | --file <cdf> --out <bin>");
-    std::process::exit(2);
+    if ci_mode && !upload_release(NETLOC, &out) {
+        std::process::exit(1);
+    }
 }
 
 #[cfg(test)]
