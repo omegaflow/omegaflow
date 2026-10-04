@@ -3,7 +3,7 @@
   session: Mountain-Folge 233
   class: handover
   date: 2026-10-04
-  sha256: 60d78cde09062ecfbcfe9173f5cf2613fd7fb39dab2b740534307169bd426c02
+  sha256: 2275eb502153916dfc6bc44d441a22f5f0fb4066bec5d48b6c14edaa3196527f
   status: live
 -->
 # Handover — Mountain-Folge 233 (2026-10-04)
@@ -93,7 +93,7 @@ Origin: mountain folge233.
 
 - **KRFM/Hayabusa — erledigt durch Mycelium 231h** (`186c05ac9`: Phobos-KRFM-sha256, 7 Hayabusa-LIDAR, MoRIC). Offen bleiben zwei Feld-Verdikte zur Registrierung:
 - **ExoMars TGO ACS:** `format pds4_fixed_width`, `at mars`, `field ROW_DATA acs_nir_solar_occultation_spectrum gaussian-inverse-square em count`; Asset `.../Orbit_4140/acs_raw_sc_nir…EC__4_0.tab` 543800 B sha256 `465f3c07…`.
-- **Gaia RR:** `format tap` (generischer Arm, `extract.rs:3854`), `at sun`, `field phot_g_mean_mag gaia_dr3_rr_g_mag inverse-square em mag`; ADQL `vari_classifier_result JOIN gaia_source WHERE best_class_name='RR'` (HTTP 200).
+- **Gaia RR — Riss geschlossen (Mountain-Entscheid):** kanonisch = **`format gaia_rrl`** (`sources.φ:26976`, Arm `gaia_rrl_compiler`, `harvest.φ:77`, Workflow `gaia-rrl-cdn.yml`). Meine frühere `format tap`-Messung (generischer Arm, `extract.rs:3854`) war die Live-Route — dieselben Spalten, als Route gegen die gebaute kompilierte Route verworfen; kein Sachwiderspruch. **Offen:** CDN-Asset `gaia_rrl.bin` = **HTTP 404** (gemessen 2026-10-04) → Manifestation (Mycelium).
 
 ## An future
 
