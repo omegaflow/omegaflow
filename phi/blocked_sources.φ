@@ -2,7 +2,7 @@ note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung ech
 note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (18 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png); register-eigen: iaga-text.
 note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
 note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
-note gap-Token konverter — Feld-Einheit falsch als mag; Arm fehlt. (gemessen 2026-10-04: kein `_mag`/`_magnitude`-Feld ist Magnetmessung — alle sind astronomische Magnituden; psp_imf_bmag_nt trägt _nt/nT) → ohne benanntes Feld/Paar nicht baubar.
+note gap-Token konverter — Feld-Einheit falsch als mag; Arm fehlt. (gemessen 2026-10-05: port.rs:2176-2183/2373 routet `_mag_bx/by/bz/bt` + `_nt` → em nT; alle übrigen `mag` sind astronomische Magnituden) → descoped.
 note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten Körpers, kein Skalarfeld; Serien-Arm steht (astrometry_series.rs direction_only_lines + astrometry_series_compiler.rs, 2026-10-04).
 note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); kein Arm-Surface (per-entry-Fix; 15/17 integriert) — 2026-09-25 descoped.
 note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
@@ -15,7 +15,7 @@ note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabell
 note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
 note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin steht (tools/harvest/src/bin/pds4_binary_compiler.rs, c0af97075).
 note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin steht (tools/harvest/src/bin/pds4_fits_compiler.rs, 30d93daf7); Sample fehlt.
-note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, 2048×(R,I) f32 LE); Compiler roper_pds4_compiler.rs → G2CB, Sample 15812343 roundtrip (2026-10-03); `range`-Direktive parst als Metadaten (parse.rs), Wire-Slot fehlt.
+note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, 2048×(R,I) f32 LE); Compiler roper_pds4_compiler.rs → G2CB Sample 15812343 (2026-10-03); `range` parst als Metadaten (parse.rs); kein Wire-Slot (Rat): kein Konsument, Gate im Feldnamen.
 note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
@@ -73,7 +73,7 @@ note Tianwen-1/Zhurong (CNSA) — descoped 2026-10-04 (Operator-Wort, Future 177
 
 pending
 url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM (MBRSC) — 2026-10-04: --verdict 200; emm_sdc_compiler.rs+emm-sdc-cdn.yml gebaut, Lauf 37190567318 rot. Reader-Gap: kein tar-Reader in src/archivar, kein emm_exi_l2.tar (Member-Schema+Einheit ungemessen). Cognito Operator-Hand.
+note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild (256x192 DN), kein Skalarfeld → Bildquelle ohne `field` (analog hips_png). Block: Workflow emm-sdc-cdn.yml stale (--data-level l2, keine Datums-Range); Arm/Manifest Mycelium.
 
 blocked account
 url https://superdarn.ca/data-download
@@ -119,9 +119,9 @@ pending
 url https://limadou.ssdc.asi.it/
 note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn (cses-{lap,efd,hpm,scm}-Compiler + Workflows, sources.φ 27 Z.); limadou-Host ohne Rohdatenpfad → descope-Kandidat. future-folge167.
 
-blocked account
+descoped
 url https://www.leos.ac.cn/
-note LEOS (CSES) — 2026-10-04: /api/admin/data/front/list 40301 登录超时; kein Arm (sgrep leos src=0). Reader-Gap: keine authentifizierte JSON-Antwort/Schema; Konto-Session Operator-Hand (LEOS_USER/PASS in .secrets.local).
+note LEOS (CSES) — 2026-10-05 (gemessen): Captcha-gated login, Katalog-JSON = Metadaten-Dict ohne lat/lon/time; Nutzdaten = CSES-Payloads bereits registriert → phi/sources.φ:17149-17192. Kein eigenes Feld, descoped.
 
 pending
 url https://clpds.bao.ac.cn/
@@ -162,4 +162,12 @@ note TUH EEG (Temple) — 2026-10-04: descoped — Elektroden-Doku rein symbolis
 descoped
 url https://sleepdata.org
 note NSRR — 2026-10-04: descoped (Human-Subjects-/HIPAA-Training Pflicht, absent); Konto bestätigt (mail_ledger.φ:361/:362), NSRR_USER/PASS/EMAIL in .secrets.local; Arm nsrr_psg steht (9d416e57b, edf.rs); Asset-Block fehlt.
+
+pending
+url https://api.sedoo.fr/get-agrav-rest/
+note BGI AGrav (unabhängig von GFZ/IGETS) — 2026-10-05: station/nearto 200 (853714 B JSON), point/byStationUuid.observations[].gravity m/s2; Verdikt inverse-square gravity m/s2; Arm+Manifestation Mycelium. survey-2026-10-02-weberin-zweite-linie.md:146.
+
+pending
+url http://ceein.infp.ro/fdsnws/
+note C9/CEEIN infrasound (IAP Prag, Host RO_NDC) — 2026-10-05: HTTP station 200, dataselect C9/BDF MSEED 200, Archiv endet ~2023-10-30; Verdikt gaussian-inverse-square acoustic Pa; Arm Mycelium. survey-2026-10-02-weberin-zweite-linie.md:133.
 
