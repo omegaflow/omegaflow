@@ -659,6 +659,7 @@ fn format_readable(fmt: &str) -> bool {
             | "votable"
             | "html"
             | "fits"
+            | "pradan_ch2"
             | "tar_gz_yaml"
             | "asu-tsv"
             | "ndk"

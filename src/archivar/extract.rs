@@ -88,6 +88,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_binary" => pds4_binary::parse_table(bytes)
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
         "pds4_fits" => pds4_fits::parse_series(bytes),
+        "pradan_ch2" => pradan_ch2::parse_series(bytes),
         "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
@@ -525,6 +526,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             drs_fits::COMP_GZ => Some("lpf_drs_dg_z_ms2"),
             _ => None,
         },
+        "pradan_ch2" => pradan_ch2::component_name(comp),
         "demeter_isl" => match comp {
             demeter::COMP_ORBIT => Some("demeter_isl_orbit_count"),
             demeter::COMP_NE => Some("demeter_isl_ne_cm3"),

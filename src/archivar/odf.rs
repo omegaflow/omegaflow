@@ -371,32 +371,59 @@ pub fn seq_ranging_ambiguity_resolution_m(first: u8, last: u8, f_exc_hz: f64) ->
     v.is_finite().then_some(v)
 }
 
-fn tnf_seq_ranging_f_exc_hz(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+fn tnf_seq_ranging_exc_scalars(frame: &TnfSfdu, bytes: &[u8]) -> Option<(u32, u32)> {
     match frame.format_code {
         TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
-            tnf_dt2(frame, bytes)?;
-        }
-        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
-            tnf_dt3(frame, bytes)?;
-        }
-        _ => return None,
-    }
-    None
-}
-
-pub fn tnf_ranging_resolution(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
-    let (first, last) = match frame.format_code {
-        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
             let d = tnf_dt2(frame, bytes)?;
-            (d.first_comp_num, d.last_comp_num)
+            Some((d.exc_scalar_num, d.exc_scalar_den))
         }
         TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
             let d = tnf_dt3(frame, bytes)?;
-            (d.first_comp_num, d.last_comp_num)
+            Some((d.exc_scalar_num, d.exc_scalar_den))
         }
-        _ => return None,
-    };
-    seq_ranging_ambiguity_resolution_m(first, last, tnf_seq_ranging_f_exc_hz(frame, bytes)?)
+        _ => None,
+    }
+}
+
+fn tnf_seq_ranging_components(frame: &TnfSfdu, bytes: &[u8]) -> Option<(u8, u8)> {
+    match frame.format_code {
+        TNF_FORMAT_UL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt2(frame, bytes)?;
+            Some((d.first_comp_num, d.last_comp_num))
+        }
+        TNF_FORMAT_DL_SEQ_RANGING_PHASE => {
+            let d = tnf_dt3(frame, bytes)?;
+            Some((d.first_comp_num, d.last_comp_num))
+        }
+        _ => None,
+    }
+}
+
+fn tnf_seq_ranging_f_exc_hz(frame: &TnfSfdu, bytes: &[u8], frq_up_hz: f64) -> Option<f64> {
+    if !frq_up_hz.is_finite() || frq_up_hz <= 0.0 {
+        return None;
+    }
+    let (num, den) = tnf_seq_ranging_exc_scalars(frame, bytes)?;
+    if den == 0 {
+        return None;
+    }
+    let f = frq_up_hz * (num as f64) / (den as f64);
+    (f.is_finite() && f > 0.0).then_some(f)
+}
+
+pub fn tnf_ranging_resolution_with_frq_up(
+    frame: &TnfSfdu,
+    bytes: &[u8],
+    frq_up_hz: f64,
+) -> Option<f64> {
+    let (first, last) = tnf_seq_ranging_components(frame, bytes)?;
+    let f_exc = tnf_seq_ranging_f_exc_hz(frame, bytes, frq_up_hz)?;
+    seq_ranging_ambiguity_resolution_m(first, last, f_exc)
+}
+
+pub fn tnf_ranging_resolution(frame: &TnfSfdu, bytes: &[u8]) -> Option<f64> {
+    let _ = tnf_seq_ranging_components(frame, bytes)?;
+    None
 }
 pub const TNF_FORMAT_DOPPLER_COUNT: u8 = 6;
 pub const TNF_FORMAT_SEQUENTIAL_RANGE: u8 = 7;
@@ -2200,6 +2227,57 @@ mod tests {
         assert_eq!(seq_ranging_ambiguity_resolution_m(24, 4, f_exc), None);
         assert_eq!(seq_ranging_ambiguity_resolution_m(4, 24, 0.0), None);
         assert_eq!(seq_ranging_ambiguity_resolution_m(4, 24, f64::NAN), None);
+    }
+
+    #[test]
+    fn seq_ranging_resolution_uses_frq_up_supplied_from_dt6_dt7() {
+        let f_exc = 66_083_646.784_f64;
+        let frq_up = f_exc * 2.0;
+        let f4 = seq_ranging_component_frequency_hz(4, f_exc).unwrap();
+        let want = 299_792_458.0 / (2.0 * f4);
+
+        let mut dt2 = vec![0u8; 214];
+        sfdu_label(
+            &mut dt2,
+            TNF_FORMAT_UL_SEQ_RANGING_PHASE,
+            2015,
+            100,
+            12345.0,
+        );
+        dt2[164] = 4;
+        dt2[165] = 24;
+        put_u32(&mut dt2, 186, 1);
+        put_u32(&mut dt2, 190, 2);
+        let ul = scan_tnf_sfdus(&dt2).unwrap();
+        assert_eq!(tnf_ranging_resolution(&ul[0], &dt2), None);
+        let r = tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, frq_up).expect("resolves");
+        assert!((r - want).abs() < 1e-6, "UL got {r} want {want}");
+        assert_eq!(tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, 0.0), None);
+        assert_eq!(
+            tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, f64::NAN),
+            None
+        );
+        put_u32(&mut dt2, 190, 0);
+        assert_eq!(
+            tnf_ranging_resolution_with_frq_up(&ul[0], &dt2, frq_up),
+            None
+        );
+
+        let mut dt3 = vec![0u8; 324];
+        sfdu_label(
+            &mut dt3,
+            TNF_FORMAT_DL_SEQ_RANGING_PHASE,
+            2015,
+            100,
+            12345.0,
+        );
+        dt3[262] = 4;
+        dt3[263] = 24;
+        put_u32(&mut dt3, 278, 1);
+        put_u32(&mut dt3, 282, 2);
+        let dl = scan_tnf_sfdus(&dt3).unwrap();
+        let r = tnf_ranging_resolution_with_frq_up(&dl[0], &dt3, frq_up).expect("resolves");
+        assert!((r - want).abs() < 1e-6, "DL got {r} want {want}");
     }
 
     fn example_words() -> [u32; 9] {

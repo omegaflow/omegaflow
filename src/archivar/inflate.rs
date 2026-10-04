@@ -348,6 +348,59 @@ pub fn unzip(data: &[u8]) -> Option<Vec<u8>> {
     None
 }
 
+pub fn zip_members<F: FnMut(&str, &[u8])>(data: &[u8], mut sink: F) -> Option<usize> {
+    let mut eocd = None;
+    let floor = data.len().saturating_sub(22 + 65535);
+    let mut i = data.len().saturating_sub(22);
+    while i >= floor {
+        if data.get(i..i + 4) == Some(b"PK\x05\x06") {
+            eocd = Some(i);
+            break;
+        }
+        if i == floor {
+            break;
+        }
+        i -= 1;
+    }
+    let eocd = eocd?;
+    let entry_count = le16(data, eocd + 10) as usize;
+    let mut off = le32(data, eocd + 16) as usize;
+    let mut seen = 0usize;
+    while seen < entry_count {
+        if data.get(off..off + 4)? != b"PK\x01\x02" {
+            return None;
+        }
+        let method = le16(data, off + 10);
+        let comp_size = le32(data, off + 20) as usize;
+        let name_len = le16(data, off + 28) as usize;
+        let extra_len = le16(data, off + 30) as usize;
+        let comment_len = le16(data, off + 32) as usize;
+        let local_off = le32(data, off + 42) as usize;
+        let name_start = off + 46;
+        let name_end = name_start + name_len;
+        let name = std::str::from_utf8(data.get(name_start..name_end)?).ok()?;
+        if data.get(local_off..local_off + 4)? != b"PK\x03\x04" {
+            return None;
+        }
+        let local_name_len = le16(data, local_off + 26) as usize;
+        let local_extra_len = le16(data, local_off + 28) as usize;
+        let start = local_off + 30 + local_name_len + local_extra_len;
+        let end = start.checked_add(comp_size)?;
+        let payload = data.get(start..end)?;
+        match method {
+            0 => sink(name, payload),
+            8 => {
+                let inflated = inflate(payload)?;
+                sink(name, &inflated);
+            }
+            _ => {}
+        }
+        off = name_end + extra_len + comment_len;
+        seen += 1;
+    }
+    Some(seen)
+}
+
 pub struct TarMember {
     pub name: String,
     pub start: usize,

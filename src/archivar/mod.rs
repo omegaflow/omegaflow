@@ -138,6 +138,7 @@ pub mod pds4_binary;
 pub mod pds4_fits;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
+pub mod pradan_ch2;
 pub mod quake_event;
 pub mod quakeml;
 pub mod quaoar_occlt;
