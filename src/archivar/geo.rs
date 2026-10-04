@@ -47,6 +47,7 @@ pub const MAGIC_CSES_LAP: [u8; 4] = *b"CSL1";
 pub const MAGIC_CSES_EFD: [u8; 4] = *b"CSE1";
 pub const MAGIC_CSES_HPM: [u8; 4] = *b"CSH1";
 pub const MAGIC_CSES_SCM: [u8; 4] = *b"CSC1";
+pub const MAGIC_CEIN: [u8; 4] = *b"CEI1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -65,6 +66,9 @@ pub const COMP_SDARN_POWER: u32 = 2;
 
 pub const COMP_FDSN_BHZ: u32 = 1;
 pub const COMP_FDSN_MAX: u32 = 1;
+
+pub const COMP_CEIN_BDF: u32 = 1;
+pub const COMP_CEIN_MAX: u32 = 1;
 
 pub const COMP_GIC_A: u32 = 1;
 pub const COMP_GIC_MAX: u32 = 1;
@@ -269,6 +273,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "superdarn_rawacf" => Some(MAGIC_SDRAW),
         "argo_bgc" => Some(MAGIC_ARGO),
         "fdsn_waveform" => Some(MAGIC_FDSN),
+        "ceein_infrasound" => Some(MAGIC_CEIN),
         "fmi_gic" => Some(MAGIC_GIC),
         "igets" => Some(MAGIC_IGETS),
         "hinet" => Some(MAGIC_HINET),
@@ -321,6 +326,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "superdarn_rawacf" => Some(COMP_SDARN_POWER),
         "argo_bgc" => Some(COMP_ARGO_MAX),
         "fdsn_waveform" => Some(COMP_FDSN_MAX),
+        "ceein_infrasound" => Some(COMP_CEIN_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
         "igets" => Some(COMP_IGETS_MAX),
         "hinet" => Some(COMP_HINET_MAX),
