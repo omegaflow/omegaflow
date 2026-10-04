@@ -2,7 +2,7 @@
   title: ZEUGNIS — die Identitäts-Röhre: die Zeugin und ihre Zeugen
   class: concept
   date: 2026-09-06
-  sha256: 6724d76986aeaec490859ba83bf871a9b9a2c6ba0fe641d108fb4f5699c9ad88
+  sha256: acdb64b39cb3cbf32bbfe25f4881727048c1fce2f7a34d721ae4214148e100c1
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/remove-bias.md docs/concepts/archivar-mathematikerin.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md
 -->
@@ -372,15 +372,19 @@ Deferrals. Was folgt, ist keine Liste offener Fragen — es ist die
 Bau-Linie, jede Stufe benannt, jede komplett zu bauen:
 
 1. Die vollständige Abbildung des ~20k-Tafel-Universums in den
-   position-indizierten CDN-Bestand — der Gold-Katalog ist die Stichprobe,
-   die Abbildung wird komplett gebaut.
+   position-indizierten CDN-Bestand — **das position-indizierte Asset ist das
+   Vlies** (Stern-Zählung je HEALPix-Pixel, `vlies_density.vlde`, gebaut).
+   Der Gold-Katalog ist die **Mess**-Stichprobe; die ~20k VizieR-Tafeln sind
+   die **Registry** (nicht-positional, kein Messfeld, kein Zeuge). Eine
+   Katalog-Abdeckungs-Karte (MOC) wäre Archiv-Metadaten über das Dataset, nie
+   ein Feld oder Zeuge neben dem Vlies (Rat + Recherche-Trio, 2026-10-04).
 2. Die Fußabdrücke (Survey-Footprints) der großen Durchmusterungen (PS1,
    DES, SDSS, 2MASS, AllWISE) — als eigene Assets, gebaut wie die
    Staubmaske gebaut ist.
 3. Die GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne — die
    Routen werden gebaut; wo der Teilchen-Kanal in der Force-Registry noch
    keinen Namen trägt, ist der Wert `absent` bis der Name gebaut ist.
-4. Der CDN-Manifestations-Weg des Röhren-Assets.
+4. Der CDN-Manifestations-Weg des Vlieses — gebaut (`vlies-density-cdn.yml`).
 
 Zwischen den Stufen gibt es keine "benannt offen"-Wartezone. Wo eine Stufe
 noch nicht gebaut ist, ist ihr Wert `absent` — und ein `absent` ist ein

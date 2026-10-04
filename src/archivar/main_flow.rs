@@ -2903,6 +2903,10 @@ pub fn main_flow() {
                     | "drs_fits"
                     | "demeter_isl"
                     | "kcdc_kascade"
+                    | "kasi"
+                    | "jaxa_gportal"
+                    | "wqp_result"
+                    | "eea_noise"
                     | "juno_odf"
                     | "juno_ocru_odf"
                     | "magellan_odf"
@@ -3057,7 +3061,7 @@ pub fn main_flow() {
                             }
                             continue;
                         };
-                        let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                        let Some(fc) = fields.iter().find(|fc| field_line_matches(fc, name)) else {
                             if unjoined.insert(row.comp) {
                                 eprintln!(
                                     "{} {}: column {} ({}) carries no field line",
@@ -5818,8 +5822,12 @@ pub fn main_flow() {
     }
 }
 
-fn series_field_name<'a>(format: &str, comp: u32, names: &'a [String]) -> Option<&'a str> {
+pub fn series_field_name<'a>(format: &str, comp: u32, names: &'a [String]) -> Option<&'a str> {
     series_component_name(format, comp).or_else(|| names.get(comp as usize).map(String::as_str))
+}
+
+pub fn field_line_matches(fc: &FieldConfig, name: &str) -> bool {
+    fc.name == name || fc.key == name
 }
 
 fn series_channel_name(field_name: &str, station_code: Option<&str>) -> String {
