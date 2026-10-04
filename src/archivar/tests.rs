@@ -79,6 +79,54 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
     }
 }
 
+#[test]
+fn pds3_label_column_joins_the_field_line_by_source_key() {
+    use crate::archivar::extract::series_named;
+    use crate::archivar::main_flow::{field_line_matches, series_field_name};
+    use crate::archivar::pds3_table::{self, Pds3Table, TableColumn, TableRow};
+
+    let column = |name: &str| TableColumn {
+        name: name.to_string(),
+        unit: None,
+        data_type: Some("ASCII_REAL".to_string()),
+        missing_constant: None,
+        sampling_name: String::new(),
+        sampling_unit: String::new(),
+        sampling_min: None,
+        sampling_max: None,
+        start_byte: 0,
+        bytes: 0,
+    };
+    let table = Pds3Table {
+        columns: vec![column("TIME_OFFSET"), column("BX PSSO")],
+        rows: vec![TableRow {
+            values: vec![Some(1.0), Some(-2.5)],
+        }],
+    };
+    let bin = pds3_table::pack(&table);
+    let named = series_named("pds3_fixed_width", &bin).expect("named series parses");
+    let row = named.rows[0];
+    let name = series_field_name("pds3_fixed_width", row.comp, &named.names)
+        .expect("packed label column name");
+    assert_eq!(name, "BX PSSO");
+
+    let fc = FieldConfig {
+        key: "BX PSSO".into(),
+        name: "pds3_mischa_bx_pso".into(),
+        kernel: 0,
+        force: 0,
+        tau: 604800.0,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: "nT".into(),
+        freq: 0.0,
+        bin_width: 0.0,
+        fold: None,
+    };
+    assert_ne!(fc.name, name);
+    assert!(field_line_matches(&fc, name));
+}
+
 fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
     SourceConfig {
         ttl: 3600,
