@@ -3,7 +3,7 @@
   session: River-Folge 88
   class: handover
   date: 2026-10-04
-  sha256: 80e476296aee7630cdf137d777e21969549ebebc6f1aaef3214334c90431a1c9
+  sha256: 0edcebfb1b440a69353464d6b634abad949f2d74d84ea9ccb8bb4b6236da7444
   status: live
 -->
 # Handover — River-Folge 88 (2026-10-04)
@@ -158,39 +158,43 @@ Wort | Datum | Quelle
 - **Braucht:** Anker-Variante in der Register-Quelle (An mountain) **oder** `--lat/--lon`-Flag
   (River); Secret-Slots als eigene Duty.
 
-### Probes-Wanderung — re-skopiert: 20 Bins brauchen einen Deskriptor
+### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Probe die Paritätsbrücke `GLEICH`.
 - **Lage:** (gemessen 2026-10-04 via Taucher) 62 TE-Bins; **36 brauchen keinen**
-  Quellen-Paar-Deskriptor (synthetisch/Datei-Input/Population/Null-Kalibrierung). **20
-  brauchen einen und haben keinen:** 17 schlichte Paare (`bigbang_echo`, `bison_basu`,
-  `bison_cycle`, `bz_blatt`, `gic_storm`, `gong_cycle`, `hmi_cycle`, `long_window`, `laic`,
-  `nobel_probe_corona`, `solar_3year_matrix`, `solar_causal_graph`, `solar_cycle`,
-  `solar_hourly_event`, `signal_cone_audit`, `trishuli_gauge`, `wso_cycle`) + 3
-  Konditional/Matrix-Gap (`corona_conditional`, `corona_confound_matrix`, `dispersion_solar`).
-  **Gebaut:** `cond` ist jetzt wiederholbar (Konfounder-Liste, 2 Gate-Tests, Committed
-  `7aa70cf75`) — `corona_conditional` trägt damit seine Form. Von den 17 sind 12 zusätzlich
-  feld-blockiert.
-- **Blockade:** 12 Bins fehlt ein registriertes Feld; die Matrix-Form-Grammatik fehlt noch
-  (`corona_confound_matrix`, `dispersion_solar`).
-- **Braucht:** Deskriptoren für die feld-tragenden Bins schreiben; Matrix-Grammatik
-  entscheiden; Felder (An mountain, Liste unten).
+  Quellen-Paar-Deskriptor. **9 Deskriptoren bestehen** (`aia_ladder`, `aia_three_year`,
+  `bz_retro`, `corona_ladder`, `enso_blatt`, `solar_seconds_matrix`, + neu
+  `nobel_probe_corona`, `solar_hourly_event`; `erbq-solar.te` bedient den Zeugen-Arm —
+  Committed `8581d7ac2`). `nobel_probe_corona.te` zieht beide Arme real
+  (`noaa_goes_xray_flux_w_m2` → `solar_euv_flux_304_wm2`, n = 10060/9437).
+  `solar_hourly_event.te` ist grammatikrein, aber der registrierte CDN-Pfad
+  `ncei.noaa.gov/goes_xrs.bin` (`phi/sources.φ:826`) antwortet **404** (die Probe nutzt
+  `ssd.jpl.nasa.gov/goes_xrs.bin`) — der Arm bleibt pending. **Gebaut:** `cond` repeatable
+  (Committed `7aa70cf75`). **Verbleibend:** 4 Kandidaten sind am Baum nicht tragfähig
+  (`laic`/`trishuli_gauge` kein Register-Paar, `solar_causal_graph`/`signal_cone_audit`
+  brauchen `f107_penticton` + Lya1216, unregistriert); 3 Konditional/Matrix-Gap
+  (`corona_confound_matrix`, `dispersion_solar`) brauchen die Matrix-Grammatik.
+- **Blockade:** die Feld-blockierten Bins (f107_penticton u. a.) + Matrix-Grammatik.
+- **Braucht:** Matrix-Grammatik entscheiden; Felder (An mountain, Liste unten).
 
-### Nicht-point-event-Zeugen — nur `--spectral`, Epochen-Fächer fehlt
+### Nicht-point-event-Zeugen — Epochen-Fächer gebaut, Register-Einträge fehlen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Arm eine getragene Messung (`witnesses.φ`).
 - **Lage:** (gemessen 2026-10-04 via Taucher) alle vier getragenen Arme sind
-  `substance`/`gestalt`, `--direction` verweigert sie ausnahmslos (nur `s2-direction`).
-  `--spectral` liest heute nur Magic/force/url und **fächert die ≥2 Epochen nicht auf** —
-  genau die im Refusal benannte fehlende Seite. Wiederholte Proben gefunden: `rixs`
-  (Zenodo 6535323, 3 Versionen), `gbco` (GEBCO-Jahresgitter), Ersatz `SRTM15+` für `gmrt`
-  (5 Releases), `gl30`-Kandidat; `rixc`/`srd6`/`eels` absent. Die `witness`-Eintragstexte
-  sind vorbereitet (An mountain). `magic_identity` (`src/archivar/witness.rs:24`) trägt
-  `srtm` noch nicht.
-- **Blockade:** `--spectral` Epochen-Fächer + `magic_identity`-Einträge sind Code-Akte;
-  die Einträge sind Register-Akte.
-- **Braucht:** den `--spectral`-Epochen-Fächer bauen (River) + `magic_identity` erweitern;
-  die vorbereiteten `witness`-Einträge registrieren (Owner-Linie).
+  `substance`/`gestalt`; `--direction` verweigert sie, `--spectral` ist der Weg.
+  **Gebaut** (`8581d7ac2`): `--spectral a,b` nimmt eine Liste von Epochen-Blöcken
+  (ein `witness`-Block je Epoche, gleicher `kind`+`record`), resolviert jede, prüft
+  Ein-Probe-Identität, alignet auf die gemeinsame Achse und trägt beide Epochen
+  **getrennt** (n, mean|Δ|, max|Δ|, Vorzeichen, Pearson-r) — **nie gemittelt**; eine
+  gerichtete TE bleibt benannt `pending` (keine Zeitachse). Die SRTM-Gestalt-Magic ist
+  ergänzt (`witness.rs`: `SRTM` → Gestalt, Committed `8581d7ac2`). Wiederholte Proben
+  gefunden: `rixs` (Zenodo 6535323, 3 Versionen), `gbco` (GEBCO-Jahresgitter), Ersatz
+  `SRTM15+` für `gmrt` (5 Releases), `gl30`; `rixc`/`srd6`/`eels` absent.
+- **Blockade:** die `witnesses.φ`-Einträge fehlen (je Probe zwei Blöcke mit Serien-URLs);
+  die vier Quellen liefern zudem teils keine Serien-Endpunkte (rixs = Zip, gl30 trägt
+  `{lat}_{lon}`-Slot, gbco/GMRT literal), d. h. die Daten-Seite ist Registratur-Pflicht.
+- **Braucht:** je Probe zwei `witness`-Blöcke registrieren (Owner-Linie); die
+  Serien-Endpunkte klären (Zip entpacken → eigener CDN-Endpunkt; gl30-Slot auflösen).
 
 ### GPD-Tail-Fit in `wy_max_t` — descoped
 - **Status:** descoped | **Bindung:** eigen
@@ -219,15 +223,24 @@ Origin: river folge88.
 - **Reader-Arme `twomass_psc` + `swarm_tec` — gebaut, Register-Zeile fehlt.** Gemessen
   2026-10-04: `main_flow.rs:4622`/`:4680` tragen die Branches; `src/archivar/twomass.rs` liegt.
   Es fehlt allein die Register-Zeile (`format`/`cmap`/`field`) in `phi/sources.φ`.
-- **Fehlende Felder für 12 der 17 Probe-Deskriptor-Bins.** `bz_blatt` (per-Minute-|dB/dt|;
-  registriert nur 1-h `intermagnet_dbdt`), `gic_storm` (Kp), `f107_penticton` für `bison_basu`/
-  `bison_cycle`/`gong_cycle`/`hmi_cycle`/`wso_cycle`/`long_window`/`solar_cycle`/
-  `solar_3year_matrix`, Galaxien-Dichte für `bigbang_echo`.
+- **Fehlende Felder für die feld-blockierten Probe-Deskriptor-Bins.** `bz_blatt`
+  (per-Minute-|dB/dt|; registriert nur 1-h `intermagnet_dbdt`), `gic_storm` (Kp),
+  `f107_penticton` für `bison_basu`/`bison_cycle`/`gong_cycle`/`hmi_cycle`/`wso_cycle`/
+  `long_window`/`solar_cycle`/`solar_3year_matrix` **und** `solar_causal_graph`/
+  `signal_cone_audit` (beide laden `f107_penticton.bin` + `goes_euvs.bin` Lya1216,
+  unregistriert), Galaxien-Dichte für `bigbang_echo`.
 - **Vorbereitete `witness`-Einträge für die nicht-point-event-Arme** (Register = deine Zeile):
   `rixs` (Zenodo-Konzept 6535323), `gbco` (GEBCO-Jahresgitter), `srtm` (SRTM15+ für `gmrt`),
   `gl30`-Kandidat. Die vollen Eintragstexte liegen im Taucher-Bericht dieser Session; die
-  `url`s sind `--verdict`-geprüft (200/206). `magic_identity` (`src/archivar/witness.rs:24`)
-  muss `srtm` noch bekommen (River-Code-Akt).
+  `url`s sind `--verdict`-geprüft (200/206). `magic_identity` trägt `srtm` jetzt (`8581d7ac2`).
+- **`record gmrt` vs `GMR1`.** Gemessen 2026-10-04: `phi/witnesses.φ:106` trägt
+  `record gmrt` → `witness_magic` macht `GMRT`, `magic_identity` kennt nur `GMR1` →
+  `--spectral gmrt` stünde `Pending`. Bitte den Token im Register auf `gmr1` angleichen
+  (oder den Arm auf SRTM15+ umstellen; der Ersatz-Eintrag ist vorbereitet).
+- **`goes_xrs.bin` — CDN-Pfad 404.** Gemessen 2026-10-04: die registrierte URL
+  `…/releases/download/ncei.noaa.gov/goes_xrs.bin` (`phi/sources.φ:826`) antwortet **404**,
+  während die Probe `…/ssd.jpl.nasa.gov/goes_xrs.bin` nutzt (`solar_hourly_event_probe.rs:8-9`).
+  Der `solar_hourly_event`-Arm bleibt dadurch `pending`; bitte den CDN-Pfad korrigieren.
 
 ## An mycelium
 
@@ -261,5 +274,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `phi/pipeline/descriptors/corona_ladder.te`
 - `phi/pipeline/descriptors/enso_blatt.te`
 - `phi/pipeline/descriptors/solar_seconds_matrix.te`
+- `phi/pipeline/descriptors/nobel_probe_corona.te`
+- `phi/pipeline/descriptors/solar_hourly_event.te`
+- `src/archivar/witness.rs`
 
-## Burn: open 0.0000 · close 0.1113 (Line-Session; Taucher im Fenster zusätzlich) · cap 0.50 — Grund: River-88 (Taucher-Welle + frische Messung: Flyby-Restore grün + postflight dispatcht; max-T-Timeouts bei 1000–1111 Perms gemessen, Timeout auf 350 min + neu dispatcht; `te.rs`-lag-Panik geheilt; JMA-Parität gemessen)
+## Burn: open 0.0000 · close 0.1113 (Line-Session; Taucher im Fenster zusätzlich) · cap 0.50 — Grund: River-88 (Taucher-Welle + frische Messung: Flyby-Restore grün + postflight dispatcht; max-T-Timeouts bei 1000–1111 Perms gemessen, Timeout auf 350 min; `te.rs`-lag-Panik + 6 weitere Unterlauf-Stellen geheilt; `--spectral`-Epochen-Fächer gebaut; SRTM-Magic; 5 Deskriptoren; JMA-Parität gemessen; 4 Läufe dispatcht)
