@@ -3,7 +3,7 @@
   session: Mountain-Folge 231
   class: handover
   date: 2026-10-04
-  sha256: 61e9df5fe3505c3abdfe8b4503f456dad89a7ef4876492780e4c292363c681bb
+  sha256: 1903a21b323b7c33f81f1277752c1d4ddaabf3db61317965959c1e9b25819beb
   status: live
 -->
 # Handover — Mountain-Folge 231 (2026-10-04)
@@ -51,19 +51,19 @@ Wort | Datum | Quelle
 - **Blockade:** Lizenz ungeklärt.
 - **Braucht:** Antwort abwarten; bei Lizenz Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern.
 
-### Weberin zweite Linie — 6 AST1-Serien stehen; occultations-Host + DirectionOnly-Konsument offen
+### Weberin zweite Linie — 7 AST1-Serien stehen; DirectionOnly-Konsument offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 this atom) `tools/harvest/src/bin/astrometry_series_compiler.rs` gebaut (ASU-TSV → AST1, `--selftest` grün). **6 Serien gelaufen:** ariel 1710 · miran 584 · umbri 1987 · obero 2928 · titan 2588 · uranu 3516 (AST1 68 436–140 676 B); 6 Register-Blöcke in `phi/sources.φ` (`format astrometry_series`, sha256 je Asset, `at sun`, ttl 31536000); `.github/workflows/astrometry-witness-cdn.yml` dispatcht `37197979156`. Der cfa-Host bricht 3 große Tabellen bei exakt 65083 B ab → CDS-Mirror (`vizier.cds.unistra.fr`) trägt sie; die kleinen voll auf cfa. Der Richtungs-Zeuge steht (`src/mathematikerin/s2.rs direction_witness_window`, `omega.rs sky_reload`), aber `astrometry_series::direction_only_lines` (→ `DirectionOnly`) hat **keinen** live-Aufrufer.
-- **Blockade:** `occultations.ct.utfpr.edu.br` (SOSB/Lucky-Star-DB, UTFPR) ist **live** (HTTP 200, FastAPI), liefert aber **JSON** (`/api/events`, 568 Events; Positionen per `/api/events/{id}` mit `ra_deg`/`dec_deg`), kein ASU-TSV — der Konverter hat nur `parse_asu_tsv`. Zusätzlich: Fehler-Einheit **unlabeled** (mas vs arcsec = 1000×) und ein **RA-Riss** (150.000005°-Sprung, fallende führende „1" von `11 h`, gegen `lesia.obspm.fr`). `DirectionOnly` hat keinen live-Aufrufer.
-- **Braucht:** `parse_events_json`-Arm im Konverter (`position_date`/`ra_deg`/`dec_deg`/`*_error`); Fehler-Einheit an der Quelle messen; RA-Riss gegen `lesia.obspm.fr` klären; `direction_only_lines` verdrahten.
+- **Lage:** (gemessen 2026-10-04 this atom) Konverter + 6 VizieR-Serien + Register + Workflow (`37197979156`). **Neu:** `parse_events_json`-Arm (`astrometry_series_compiler.rs`) + `sosb_lucky_star` gelaufen: 568 Events → **67 Samples / 2724 B** (474 void, 23 absent error, **4 riss**: dec-Fehler-Skala um ×1000 verfälscht; 1 RA aus dem `lesia`-Link korrigiert, da der Host die führende „11 h"-Ziffer droppt); **Einheit mas** gegen die Quellpapiere (Pereira+2023 A&A 673 L4; Morgado+2021 A&A 652 A141) gemessen. Register-Block `sha256 6d848b99…` + `.github/workflows/astrometry-witness-cdn.yml` dispatcht `37201656010`. `astrometry_series::direction_only_lines` (→ `DirectionOnly`) hat **keinen** live-Aufrufer.
+- **Blockade:** `DirectionOnly` nicht verdrahtet; 4 dec-error-Riss-Zeilen übersprungen (Reparatur um ×1000 wäre Inferenz).
+- **Braucht:** `direction_only_lines` an einen Konsumenten binden; Entscheid, ob die 4 Riss-Zeilen per Quellpapier repariert werden dürfen.
 
 ### Witness/Solar — euvs erledigt; Witness-Epochen-Endpunkte offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 this atom) **Gebaut:** `format goes_euvs`-Reader (`src/archivar/euvs.rs`, Feld `goes_euvs_lya1216`) + Register-Block `phi/sources.φ:19913` (url `ssd.jpl.nasa.gov/goes_euvs.bin`). f107-/quake-Reader stehen (Register `25a3a46bd`). `record gmrt`→`gmr1`, `goes_xrs`-CDN, `srtm` geheilt. **Riss/offen:** der Witness-Epochen-Arm liest Text, nicht das `.bin` (`spectral_epoch_series`, `field_te_query.rs`) — die Serien-Endpunkte für rixs/gbco/gmrt/gl30 sind unaufgelöst (der `grind-pro`-Auftrag wurde vom Operator abgelehnt → auf `grind-flash` umzustellen). `bz_blatt`/`gic_storm` rechnen in-process (kein Register-Feld nötig, zu messen).
-- **Blockade:** `spectral_epoch_series` (`field_te_query.rs:1355-1376`) braucht **zwei Blöcke gleicher `kind`+`record`**, deren `url` UTF-8-**Text** mit einer `axis value`-Serie liefert (rixs: `Eloss weight err`). Gemessen: `rixs`-Quelle ist ein **Zip** (19 `sw_spin.txt` im Archiv; `media-files` disabled) → kein Text-Endpunkt; `gbco` ist eine **Punkt-Abfrage** (`opentopodata` `{lat},{lon}`, 1 Zahl) → 0 Paare; `gmr1`/`gl30` ebenso keine native Text-Serie.
-- **Braucht:** je Probe eine **abgeleitete `axis value`-Text-Serie** auf einen CDN-Endpunkt manifestieren (Zip-Entpack-Arm fehlt), oder die Probe aus dem Epochen-Arm descopen.
+- **Lage:** (gemessen 2026-10-04 this atom) **Gebaut:** `format goes_euvs`-Reader (`src/archivar/euvs.rs`, Feld `goes_euvs_lya1216`) + Register-Block `phi/sources.φ:19913`. **Neu:** `rixs_series_compiler.rs` (Zenodo-Zip → 19 `Eloss/weight/err`-Textassets) + **zwei `record rixs`-Witness-Blöcke** (`substance#4` UD/`#5` OD1); Arm offline verifiziert (`--spectral substance#4,substance#5` → 2 Epochen, n=80, r=0.9909); `.github/workflows/cuprate-cdn.yml` dispatcht `37201658046`. `record gmrt`→`gmr1`, `goes_xrs`-CDN, `srtm` geheilt.
+- **Blockade:** `spectral_epoch_series` (`field_te_query.rs:1355-1376`) braucht **zwei Blöcke gleicher `kind`+`record`** mit UTF-8-**Text**-Serie (`axis value`; rixs `Eloss weight err`) — rixs ist gebaut, aber `gbco` (Punkt-Abfrage), `gmr1`/`gl30` (Raster) tragen **keinen** arm-lesbaren Text-Endpunkt.
+- **Braucht:** für `gbco`/`gmr1`/`gl30` entscheiden (abgeleitete Textserie manifestieren oder aus dem Epochen-Arm descopen); `bz_blatt`/`gic_storm` rechnen in-process (kein Register-Feld nötig, zu messen).
 
 ### gras_2c — `range` aus dem RoPeR-Spec gesetzt; Tiefen-Konvention + Elektronik-Offset offen
 - **Status:** blockiert | **Bindung:** eigen
@@ -75,9 +75,9 @@ Wort | Datum | Quelle
 ### CSES — EFD+HPM/SCM-Arme + Workflows stehen; Manifestation offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 this atom) EFD-Arm (`760c6df8c`); **HPM/SCM-Arme** (`CSH1`/`CSC1`) + **Register-Blöcke** (`format cses_hpm`/`cses_scm`, `at earth`, Felder `cses_hpm_fg2_{x,y,z}_nt`/`cses_scm_ulf_{x,y,z}_nt`, `phi/sources.φ`, `2f51327ef`). **Läufe gemessen** (`ci_manage`): `cses-efd-cdn 37196088057`, `cses-hpm-cdn 37197980845`, `cses-scm-cdn 37197982509` — alle **queued** (Runner-Backlog). CDN-Assets `scidb.cn/cses_{efd,hpm,scm}.bin` alle **404**.
-- **Blockade:** Runner-Backlog; ohne abgeschlossenen Lauf fehlen die Bytes → kein `sha256`.
-- **Braucht:** Trigger = die drei Läufe enden; dann `archive_search --sniff` der 3 Assets und `sha256` in `sources.φ` setzen (`cses_efd` fehlt es noch).
+- **Lage:** (gemessen 2026-10-04 this atom) **HPM/SCM-Läufe success** (`37197980845`/`37197982509`); Assets gemessen: `cses_hpm.bin` 22 445 648 B sha256 `a6870b12…`, `cses_scm.bin` 79 452 008 B sha256 `c1fed9fa…` → `sha256` in `phi/sources.φ` (`d1e9abce4`). **EFD:** `cses-efd-cdn 37196088057` noch **queued**, `cses_efd.bin` 404.
+- **Blockade:** EFD-Lauf im Runner-Backlog.
+- **Braucht:** Trigger = `cses-efd-cdn` endet; dann `--sniff` + `sha256` in `sources.φ` (`cses_efd`).
 
 ### Medizinische/Life-Science — disponiert; TUH pending, Future führt
 - **Status:** wartend | **Bindung:** eigen
