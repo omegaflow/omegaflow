@@ -21,6 +21,9 @@ members = [
 ]
 default-members = ["."]
 
+[lib]
+crate-type = ["rlib", "cdylib"]
+
 [features]
 browser_relay = []
 commit_gate = []
@@ -29,6 +32,9 @@ commit_gate = []
 wgpu = "24"
 pollster = "0.4"
 serialport = { version = "4", default-features = false }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
 
 [dev-dependencies]
 naga = "24"
