@@ -5314,3 +5314,12 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
+
+decline superseded-by-catalog
+url https://datadc.ihep.ac.cn/resource/astro/lhaaso
+note LHAASO (gemessen 2026-10-03): API 200 (18 Datensätze), Rohklassen IHEP/CSTNET-gegated; der Katalog ist als `lhaaso_sky1` registriert (`phi/sources.φ`); Roh nicht nötig → descoped.
+
+decline not-eligible
+url https://catalogue.dataspace.copernicus.eu/stac/collections
+reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
+note CDSE-CCM (2026-10-03; Operator-Wort un-nutzbar): Download 401, Lizenzrolle U-R-P/N-P-A, Eligibility verfehlt; Ersatzwege leben (`copernicus-dem-30m.s3.amazonaws.com` 200, Sentinel) → descoped.
