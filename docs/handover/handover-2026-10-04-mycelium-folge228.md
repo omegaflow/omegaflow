@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: cd50ca00f2594b3119b63f334c5d7ad58b3ec01c15b875270b26c8558b7e142e
+  sha256: d1a5602343ef27ff72b654788b13318752a89028730279ed3e5f198ece5f9f3a
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -194,6 +194,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **`ci-gate 37187513415` rot — geheilt** (`c9e60e3c1`): `src/archivar/pradan_ch2.rs:158` `is_multiple_of` + `src/archivar/spatial.rs:174` `descend_star_cells` (8/7 Argumente → `cell: [i64;3]` gebündelt). Fremde Dateien, pfad-begrenzt gefixt; `cargo check` 0/0. An Mountain (pradan_ch2) und Sensory/River (spatial) adressiert.
 - **EMM — 403 bleibt, Ursache eingegrenzt.** Der RT-Grant ist lokal **200** (frischer RT), im CI **403**. Host `auth.emiratesmarsmission.ae/oauth2/token` ist erreichbar (stage 1 + Proton = 400 auf GET). Der 403 ist also der **Azure-Runner-Egress** (WAF), nicht der Token. Compiler um den non-200-Body-Snippet erweitert (`afb65a8e6`), `emm-sdc-cdn 37188264853` dispatcht — der Body benennt den Block.
 - **`nvss-cdn 37187219211`** in_progress (ASU-Fallback).
+
+## Nachtrag 4 (adressierte Blöcke mountain-230 / river-88 / sensory-228)
+
+- **`twomass_psc` registriert** (`3d14eb67a`): Block mit Mountains Verdikt-Zeilen (`em`, `at sun`, `ttl 31536000`, 6 Felder); CDN 183 173 384 B, sha `8448b0bb…`.
+- **`swarm_tec` registriert** (früher in diesem Atom); CDN 1 073 088 B, sha `42550ef8…`.
+- **Fünf River-Läufe gelesen:** `juice-arc-restore 37174498970` ✅ · `flyby-path2-fill 37187374751` ✅ · `field-te-query 37187424991` ✅ · `wy-max-t 37187464365` queued · `bz-yearly-maxt 37187466569` queued.
+- **ci-gate-Tafel gegenmessen:** die @`a064896a4`-Roten sind geheilt (`register`/`clippy` in `d2ba1189`; `dropped`/`format` Mycelium-228); der aktuelle `ci-gate 37190448677` steht **queued** (unread).
+- **Vier Serien-Assets (rixs/gbco/gmrt/gl30):** noch nicht registrierbar — die Register-Zeilen sind Mountain's (river-folge88); der `www.gmrt.org`-Tag trägt 0 Assets. Sobald die Zeilen stehen, manifestiert Mycelium.
+- **`quake_ptevent`-Assets (chile/tohoku/jma):** unregistriert (river-folge87); nach dem Re-Harvest (Witness-URLs korrigiert) mit `format quake_ptevent` registrieren.
+- **EMM durable Fix gebaut:** `emm-sdc-cdn.yml` bringt vor dem Compile wireproxy (v1.1.3) mit `PROTON_WG_CONF` hoch und setzt `ALL_PROXY`/`HTTPS_PROXY` → der Auth-Aufruf läuft über einen Nicht-Azure-Exit; `emm-sdc-cdn 37190567318` dispatcht.
+- **Sensory B-Materialisierung:** vier B-Assets (`dr3_stars.bin` 75 001 828 B + `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B) brauchen **same-origin** (GitHub-Release ohne ACAO). Entscheid offen: Cloudflare-Worker-Reverse-Proxy vs. Bytes auf Pages. Worker = Dritt-Schreibakt (Cloudflare-Konto) → per-Akt-Operator-Wort.
 
 ## LOCK
 
