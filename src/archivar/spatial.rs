@@ -547,8 +547,15 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
         eph,
     } = ctx;
     let riss: HashSet<String> = current_riss_names(Some(t2));
+    let star_rho = C_LIGHT * ((t2 - hash.star_epoch_min).abs() + delta_t_cache) + pad;
     let mut emit_star = |samples: &Vec<Arc<Sample>>| {
         for sample in samples {
+            let ax = sample.anchor_p0[0] - center[0];
+            let ay = sample.anchor_p0[1] - center[1];
+            let az = sample.anchor_p0[2] - center[2];
+            if ax * ax + ay * ay + az * az > star_rho * star_rho {
+                continue;
+            }
             if riss.contains(&sample.name) {
                 continue;
             }
@@ -668,8 +675,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
     };
     if !hash.star_cells.is_empty() {
         let qf = center;
-        let dt_star = (t2 - hash.star_epoch_min).abs() + delta_t_cache;
-        let rho_star = C_LIGHT * dt_star + pad;
+        let rho_star = star_rho;
         let s = hash.cell_size_star;
         let qlo = star_cell_of([qf[0] - rho_star, qf[1] - rho_star, qf[2] - rho_star], s).0;
         let qhi = star_cell_of([qf[0] + rho_star, qf[1] + rho_star, qf[2] + rho_star], s).0;
