@@ -9,7 +9,7 @@ on:
     inputs:
       dataset:
         description: OpenNeuro dataset ID
-        required: true
+        required: false
         default: ds005034
 permissions:
   contents: write
