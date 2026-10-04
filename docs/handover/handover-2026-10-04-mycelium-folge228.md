@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: 298ec54c56acf4136da513f58f481d2b85e5e1ed8537a9c8bb7502166cca4b64
+  sha256: 3ece33b6ab79e8b6f0bd5fbfb49d4dfcd5155bddd2eb12fb97965f0bbc373109
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -143,7 +143,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Porting / Prozedur nicht live
 - **Braucht:** Port-Schritt; `--playwright "https://limadou.ssdc.asi.it/query.php"` sobald SSDC meldet.
 
-### Träger (Meta) — `daten-holdings-inventur.md` Marker
+### Träger (Meta) — `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` Marker
 - **Status:** wartend | **Bindung:** eigen (Meta-Träger)
 - **Trigger:** `register_lookup --orphan-docs` nennt ein neues trägerloses Dokument
 - **Lage:** (gemessen 2026-10-03) `--orphan-docs` = 0. **Riss:** die Marker-Zeile nennt `phi/sources.φ:15747/15950/15957` für voyager/new_horizons-Placeholder-URLs — diese Zeilen tragen heute fremden Inhalt (Datei verschoben).
@@ -171,7 +171,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Producer fehlt
 - **Braucht:** kein Schritt zur Kante — erst ein Bau-Auftrag ändert den Zustand.
 
-### Weberin-Eignung — zweite Linie + Archiv-Route
+### Weberin-Eignung — zweite Linie + Archiv-Route (`docs/surveys/survey-2026-10-02-weberin-zweite-linie.md`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Done-Marker `state/stimmen/2026-10-02_weberin-archiv.done`
 - **Lage:** (gemessen 2026-10-03) **kein** `.done` (`register_lookup --fired` meldet den Trigger, die Dateimessung widerlegt das: `unread`-Fire). Synthesen liegen vor.
