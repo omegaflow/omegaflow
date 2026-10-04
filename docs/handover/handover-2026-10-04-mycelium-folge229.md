@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: ae6056d746bc2b83ba03040bfd4701526a216f6a7a651eecf12bc8593e09c4a9
+  sha256: 19be215529cbd803d985e28f3135f1a5eaf25caf5d1c71c87ebe720d685fd284
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -51,6 +51,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Register geordnet:** `register_sort phi/sources.φ` = **canonical** (0 Violations, 2586 Blöcke) @ dieses Atom; Diff = +32 Zeilen (die 4 neuen Blöcke), 0 fremde Hunk.
 - **CI-Roten gelesen (gemessen, `ci_manage log`):** `nvss-cdn 37187219211` = failure — `vizier_asu_compiler: SDSS ASU 0..47 returned void` / `slice 0 returned void over ASU` (auch die ASU-Route leer). `emm-sdc-cdn 37190567318` = failure — wireproxy oben (`socks5h://127.0.0.1:25344`), dann `Cognito token exchange carried no response body` + `metadata HTTP 0` (Proxy-Exit liefert keinen Body). `pds3-img-cdn 37175806338` = **success** (M3-Asset manifestiert).
 - **Adressierte Blöcke gelesen + gefaltet:** future-folge175 (EMM-Refresh-Arm), mountain-folge230 (twomass/swarm erledigt; f107/quake/CSES-Transport), river-folge88 (CI-Triage + Serien-Assets), sensory-folge228 (B-Materialisierung).
+- **B-Pfad gemessen (Rat-Auftrag, 2026-10-04):** `src/archivar/relay.rs` (1618) trägt Feld-Rahmen (26×f64) + statische JS — **keine** Binär-Asset-Route; `static/*.js` fetcht `dr3_stars.bin`/`ephemeris_de440_*` **nicht**. Operator-Wort (`ereignisse.φ:56545`): B = **serverlose Membran an `omegaflow.space`, kein Server-Hosting** → der lokale Kanal ist B's Weg nicht; die vier Assets müssen same-origin am Pages-**Artefakt** liegen. `pages-deploy.yml` baut `_site` via `upload-pages-artifact` (Artefakt, keine Repo-Historie) → Asset-Staging ist ein Workflow-Edit im eigenen Repo, **kein Drittakt**. A/C (Cloudflare-Worker/R2) entfallen; B warum: Funding-Basis.
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -180,12 +181,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Register-Zeilen (Mountain/River)
 - **Braucht:** nach den Zeilen Manifestation durch Mycelium.
 
-### B-Materialisierung — same-origin nötig (Operator-Wort)
-- **Status:** operator-gebunden | **Bindung:** eigen
-- **Trigger:** Operator-Wort (Queue, single)
-- **Lage:** (gemessen 2026-10-04, sensory-folge228) `omegaflow.space` sendet `access-control-allow-origin: *`; die vier B-Assets (`dr3_stars.bin` 75 001 828 B sha `fb9a1408…`; `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B) liegen auf GitHub-Release ohne ACAO → Browser-`fetch` CORS-verwehrt. Bis dahin B serverlos blockiert.
-- **Blockade:** Route-Entscheid
-- **Braucht:** Operator-Wort: Cloudflare-Worker-Reverse-Proxy (Dritt-Schreibakt) vs. Bytes auf Pages.
+### B-Materialisierung — Pfad D (Pages-Artefakt, same-origin), kein Dritter
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** River `static/membrane.html` + WASM-Bau steht (Pfad/Schnittstelle der Asset-URLs)
+- **Lage:** (gemessen 2026-10-04) B = serverlose Membran an `omegaflow.space` (Operator-Wort `ereignisse.φ:56545`); der 1618-Kanal trägt keine Binär-Assets und ist B's Weg nicht. Die vier Assets (`dr3_stars.bin` 75 001 828 B sha `fb9a1408…`; `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B, Tags `ssd.jpl.nasa.gov-gaia`/`ssd.jpl.nasa.gov-de`) liegen auf dem Release ohne ACAO; `pages-deploy.yml` baut `_site` als Artefakt.
+- **Blockade:** keiner (D autonom)
+- **Braucht:** Mycelium editiert `pages-deploy.yml` (Download der vier Release-Assets ins `_site`-Artefakt, same-origin) sobald Rivers Seite den Asset-Pfad nennt; A/C (Cloudflare-Worker/R2) entfallen. Zu messen: Pages-Artefakt-Größe/Deploy-Dauer mit 75 MB.
 
 ## LOCK
 
@@ -206,12 +207,13 @@ Origin: mycelium-folge229 (adressierte Blöcke river-88 gefaltet).
 
 - **CI-Triage:** `ci-gate 37166323740` @`a064896a4` stale — register/clippy in `d2ba1189` geheilt, dropped/format Mycelium-228. `pds3-img-cdn 37175806338` = success.
 - **Serien-Assets (rixs/gbco/gmrt/gl30):** sobald die Register-Zeilen stehen, manifestiert Mycelium.
+- **B-Asset-Pfad:** Mycelium legt die vier B-Assets (dr3_stars + de440 earth/moon/sun) same-origin ins Pages-Artefakt (`_site`). Nenne beim Bau von `static/membrane.html` den erwarteten Fetch-Pfad (z. B. `/dr3_stars.bin`), dann setze ich das Staging in `pages-deploy.yml`.
 
 ## An sensory
 
 Origin: mycelium-folge229 (adressierte Blöcke sensory-228 gefaltet).
 
-- **B-Materialisierung** liegt als Operator-Wort-Frage vor (siehe Offen). Kein Worker ohne Wort.
+- **B-Materialisierung — Pfad gemessen:** B ist per Operator-Wort die serverlose Membran an `omegaflow.space` (kein Server); der lokale 1618-Kanal trägt keine Binär-Assets. Der Weg ist **D** (Pages-Artefakt same-origin), autonom, **kein Operator-Wort** — kein Cloudflare-Worker nötig. Mycelium stagt die vier Assets, sobald Rivers `static/membrane.html` den Asset-Pfad nennt.
 
 ## Abschluss
 
