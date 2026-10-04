@@ -1,7 +1,7 @@
 
 descoped 0 pipeline/queue/master.φ
-verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored)
-verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored)
+verifiziert 825 pipeline/queue/sources_potential_pre-cdn_9k_richest.φ (am Datenträger vorhanden, gitignored; Merge blockiert — Queue-Grammatik korrupt, 0/729 ohne Fabrikation konvertierbar, handover-2026-09-22-mycelium-folge140.md:112)
+verifiziert 63 pipeline/queue/sources_potential_pre-cdn_params.φ (am Datenträger vorhanden, gitignored; Join-Paar zu _9k_richest, Merge an derselben korrupten Queue-Grammatik blockiert)
 
 descoped 0 pipeline/catalog/tap_index.φ
 index 0 pipeline/catalog/tap_index_ari.φ
@@ -19,16 +19,16 @@ descoped 0 pipeline/catalog/dataverse_harvard.φ
 descoped 0 pipeline/catalog/dataverse_borealis.φ
 index 0 pipeline/catalog/oai_arxiv.φ
 descoped 0 pipeline/catalog/b2find_catalogs_index.φ
-verifiziert 0 pipeline/catalog/b2find_intermagnet_catalog.φ
+erledigt 0 pipeline/catalog/b2find_intermagnet_catalog.φ (Korpus decline korpora_heim.φ:9; BGS-HAPI-Kandidat gemergt — sources.φ:6666ff 158 Blöcke; Stationsliste GINServices 2026-09-30)
 index 0 pipeline/catalog/grind_eogateway_index.φ
 erledigt 8 pipeline/catalog/grind_vires_catalog.φ
 erledigt 17 pipeline/catalog/grind_arcgis_index.φ
 descoped 0 pipeline/catalog/heliocloud_catalog.φ
 erledigt 0 pipeline/catalog/terrapulse_catalog.φ
 erledigt 0 pipeline/catalog/esa_geomagnetic_catalog.φ
-verifiziert 0 pipeline/catalog/archeology_gaps_index.φ
+verifiziert 0 pipeline/catalog/archeology_gaps_index.φ (Probe 2026-09-22: 35 live/18 dead; Nachmessung 2026-09-30: 11 absent/7 pending; Disposition in sources/dead ausstehend — Fremdregister)
 descoped 0 pipeline/catalog/arcgis_catalog.φ
-verifiziert 0 pipeline/catalog/copernicus_catalog.φ
+erledigt 0 pipeline/catalog/copernicus_catalog.φ (3 Kandidaten disponiert: declined_sources.φ:1211, :1271, :1844; ads.atmosphere decline :262)
 index 0 pipeline/catalog/gaia_swpc_esa_vokabular.φ
 index 0 pipeline/catalog/gaia_swpc_pd_vokabular.φ
 index 0 pipeline/catalog/provider_links.φ
