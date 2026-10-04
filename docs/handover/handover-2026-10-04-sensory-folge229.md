@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: 7c9d5329fc13713a6417ecf95190c9b01dadfc70fe44bb1c7c010e647a2c484a
+  sha256: 7392a1850a4d4b2901573268c1c44e67618f1ed2da6f3bb7501e51e751663d00
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -292,6 +292,16 @@ breiter messen.
 - **Wort:** „nein du darfst einmalig für den commit overriden" | 2026-10-04 | Operator (Session) — einmalige Erlaubnis, den `burn-over-cap`-Block (Session-Verbrauch $0.5126 > Hard-Ceiling $0.50) für **diesen einen** Handover-Commit zu übergehen (`git commit --no-verify`); die Burn-Zeile bleibt bei der gemessenen Zahl 0.5126; Sensory-Folge 228.
 
 ## Offen (aufgeschlüsselt)
+
+Nur `Bindung: eigen` — jede Zeile ist Sensorys eigene Arbeit; operator-/dritt-gebundene
+Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hier
+(Operator-Wort 2026-09-28, `:189`).
+
+### Weberin zweite Linie — eigene Messschritte des Surveys
+- **Status:** autonom | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-04 F229) Träger `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (Header-sha `0171eeb3…`); der GIC-ASCII-Marker ist am Baum gemessen und geschlossen (`gicdata/`+`gasum/{jahr}/`+`gasum/prel/` = nur Plots, kein Daten-Download, Rohserie request-only). Offen bleiben die **eigenen** Messschritte: (a) die restlichen Klassen des Re-Runs (`survey-2026-09-14-weberin-quellen-rerun.md`: Gravimeter, Seismik, Lightning, HF-Radar …) mit derselben „zweite Linie"-Spalte fortschreiben; (b) `data.epa.ie`-Aktualität + C9-Pa-Kalibrierung tiefer messen (`--sniff`/Inhalt).
+- **Blockade:** keine (die request-only-/Mountain-/Mycelium-Marker des Surveys sind getragen, nicht Teil dieses Schritts).
+- **Braucht:** je Klasse `archive_search --verdict` + `--sniff` auf die zweite Linie; die Ergebnisse in den Survey, Header-sha (`omega_sh sha`) neu.
 
 ### B — serverlose lebendige Membran an `omegaflow.space`
 - **Status:** wartend | **Bindung:** eigen (Mycelium-Antwort gefaltet: Weg D autonom) — Architektur **WASM entschieden und gebaut** (`044afbe42`/`ede41905e`/`42268d146`, Bundle 128 753 B, Paritäts-Toleranz `f7fa71940`/`815d7df43`/`80417fd53`); `static/membrane.html` liegt (river-90); WASM-Web-Target + Staging in `pages-deploy.yml` (mycelium-230).
