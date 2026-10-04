@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: fbd5e0d5f774a88f132f5d904ab23def37dbbdad4c7b8b1ccfbfaa123d60791d
+  sha256: 7c9d5329fc13713a6417ecf95190c9b01dadfc70fe44bb1c7c010e647a2c484a
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -294,11 +294,12 @@ breiter messen.
 ## Offen (aufgeschlüsselt)
 
 ### B — serverlose lebendige Membran an `omegaflow.space`
-- **Status:** wartend | **Bindung:** eigen (Mycelium-Antwort gefaltet: Weg D autonom) — Architektur **WASM entschieden und gebaut** (Rat + externe Stimmen 2026-10-04 F228: `044afbe42`/`ede41905e`/`42268d146`, Bundle 128 753 B, Paritäts-Toleranz `f7fa71940`/`815d7df43`/`80417fd53`); offen allein Rivers `static/membrane.html`-Asset-Pfad.
-- **Trigger:** Operator-Wort 2026-10-03 (B bauen, als Erlebnis und Funding-Basis); serverloses Erlebnis bevorzugt, Server-Hosting ausgeschlossen.
+- **Status:** wartend | **Bindung:** eigen (Mycelium-Antwort gefaltet: Weg D autonom) — Architektur **WASM entschieden und gebaut** (`044afbe42`/`ede41905e`/`42268d146`, Bundle 128 753 B, Paritäts-Toleranz `f7fa71940`/`815d7df43`/`80417fd53`); `static/membrane.html` liegt (river-90); WASM-Web-Target + Staging in `pages-deploy.yml` (mycelium-230).
+- **Trigger:** `pages-deploy`-Lauf (nach Push) completed → Artefakt/Deploy lesen; danach Browser-Verifikation (River/Sensory).
 - **Lage:** (gemessen 2026-10-03 F227, Archäologie) der WebGPU-Browser-Client ist **kein Neuland**: Legacy **S33 „browser-membran"** (Operator-Wort 2026-08-23: „der Browser wird die eine Membran, das native winit/wgpu-Fenster fällt; ω-Schleife headless, Browser-Diode, eine Shader-Quelle in `static/index.html`", Umbau Schritte 1–4 erledigt; `omegaflow-legacy/docs/TODO.md:161-175`, `vanilla-dateidocs/status/leitstelle-2026-08-23.md:95`); heutiger Neubau `b226c1fe2` (2026-09-12), Landing `4174579b2` (restored from legacy). Die Feld-Auswertung ist WGSL-`@compute` (`src/mathematikerin/shaders.rs:1`, `:355`) → browser-portabel. **Neu ist allein der serverlose öffentliche Live-Pfad** (WASM/`serverless` = 0 Treffer über `archive-root`; der heutige und der Legacy-Client hängen je am lokalen Relay `127.0.0.1:1618`). **Riss:** `docs/handover/archiv/handover-2026-09-08-atom-c-offene-pflichten.md:63-65` behauptet, der Browser-Render-Zweig habe „in keinem Commit existiert" — der gemessene Baum widerlegt das.
-- **Blockade:** Rivers `static/membrane.html` nennt den Asset-Pfad noch nicht; sonst keine — der CORS-Punkt ist durch Weg D (same-origin) gelöst.
-- **Braucht:** Rivers `static/membrane.html` mit den Asset-Pfaden (`/dr3_stars.bin`, `/ephemeris_de440_{earth,moon,sun}.bin`); danach stagt Mycelium die vier Assets same-origin (Weg D, autonom). **Keine Operator-Kante.**
+- **Lage (Front-Door, gemessen 2026-10-04 F229-Fortsetzung):** `https://omegaflow.space/` ist live (HTTP 206, 5 609 B), trägt aber die **Binär-Landing** (φ/Φ-Download-Buttons; keine `membrane.html`/`omegaflow.js`/wasm-Referenz) — die Membran ist dort **nicht** verdrahtet. `pages-deploy 37218848775` = **queued** (17:00:15Z); `pkg/omegaflow.js` war nodejs-Target, `static/membrane.html` ruft `await import("./omegaflow.js"); await mod.default()` (web). `## An sensory` aus `mycelium-folge230`/`river-folge90` ist hier **gefaltet**.
+- **Blockade:** das neue `pages-deploy` ist noch nicht durch; der Front-Door-Link auf die Membran fehlt.
+- **Braucht:** `ci_manage view/jobs/log 37218848775`; bei Grün die Front-Door/Membran im Browser verifizieren (WebGPU/WASM braucht den Operator-Browser; headless rendert WebGPU nicht). **Keine Operator-Kante** (außer der Browser selbst).
 - **Rat, korrigiert (2026-10-03):** freie Bewegung ist das Wesen, kein Frame; der kleinste Beweis ist **zwei Koordinaten → zwei Felder → ein Weg**, derselbe Punkt zweimal → dasselbe Feld. Der **Lookup-Kern** (Binär-Parser + Enclosure-Lemma + Bewegungsgesetze + `lsk`) muss in den Browser — **nicht** die 100+ Ernte-Parser, **nicht** `fetch.rs`/`relay.rs`; **WASM trägt denselben Rust-Code** (kein JS-Port = keine zweite Implementierung/Drift); Paritäts-Gate (WASM-Lookup ≡ nativ, byte-identische Enclosure auf Fixtures) neben dem Kalibrier-Gate. Konsens: kein Server, kein Rückkanal, ehrliches Schwarz ohne WebGPU; Konsens lokal. Mountain↔Future bleiben uneinig (wofür B), baut aber nichts um. **Erste Handlung ist ein Mess-Atom, drei Zahlen:** (1) `cargo check --target wasm32-unknown-unknown` des Lookup-Kerns → Artefakt-Bytes; (2) HEAD auf `ephemeris_de440_{earth,moon,sun}.bin`, `dr3_stars.bin` → Bytes + sha256; OPTIONS/HEAD auf die CORS-Header der Release-URLs; (3) Schnitt-Schwelle der hellen Teilmenge nach Speicherbudget (eigener Bestand/`phi/sources.φ`-Zeile/sha256, kein stilles Abschneiden). Danach River `static/membrane.html` (fetch → wasm-Lookup → `FIELD_WGSL` → Render, Pfeile als Schub, `s` hält), Mycelium `pages-deploy.yml` + wasm32-CI.
 - **Enclosure-Zahlen (2026-10-03 F227, `membrane_hull_probe`, realer `dr3_stars.bin` 75 001 828 B):** am ruhenden Presence-Slot (SSB-Ursprung, TDB 8.443e8) — Enclosure-Radius `rho_star 2.53e17 m` (≈ 8,2 pc, C·Alter); **`records 32 361`** Kandidaten (Frame 6 731 088 B = 32 361 × 26 × 8); **`query_ms 263.9`** (ein Lookup, CPU f64), **`build_ms 974.7`** (Hash-Aufbau, einmal); `star_cells 1 704 587`, `bounded_cells 0`. Befund: der **Lookup**, nicht die Feld-Auswertung, ist der Engpass — 264 ms/Query ist 16× über dem 16-ms-Frame-Budget, die CPU trägt den Lookup bei 32 361 Kandidaten nicht im 60-fps-Takt. Kaveat: eine Koordinate (ruhend, Voller Katalog, 8,2-pc-Radius); die Feld-Auswertung `val_eff_at` ist darin nicht gemessen. Diese Zahl geht an Rat + Chats (Kimi K3/GLM 5.3/Claude).
 - 2026-10-04, `membrane_hull_probe` mit Timing (`tools/measure/src/bin/membrane_hull_probe.rs`): `LINEAR | samples 1 704 587 | admitted 101 | scan_ms 361.662 | per_sample_ns 212.170`; `QUERY | records 32 361 | query_ms 306.310`. Befund: der reine f64-Linearsweep über 1,7 Mio mit exaktem Kegel-Test dauert **361,7 ms** (212 ns/Stern, speichergebunden an die verstreuten `Arc<Sample>`) — die Schätzung „einstellige ms" der vier Stimmen ist damit **widerlegt**; der Index-Query kostet 9,5 µs/Kandidat (45× der lineare Wert). Fällt der Kegel-Test die 32 361 auf die wahren **101**, kostet die Query ~101 × (212 ns…9,5 µs) ≈ **0,02–1 ms** — weit unter 16 ms. Architektur nicht widerlegt; die Leistung ist erst mit dem Kegel-Test bewiesen. Nächstes Atom: Kegel-Test in `emit_star` + Zelle ≈ Radius, `membrane-hull-probe` neu messen (Ziel `query_ms ≲ 2 ms`).
@@ -394,7 +395,12 @@ werden getragen, nie geglättet (0 honored).
   `docs/surveys/survey-2026-09-13-weberin-quellen-treffer.md` (5; **neu gemessen
   2026-09-27**: LSST-Fink antwortet HTTP 200 direct; HAWC `phi/sources.φ:11880-11894`,
   LHAASO `:11787-11793`, TNS `:1153-1164` vollständig registriert; Marker-Text per
-  Operator-Wort C unverändert, 0 honored).
+  Operator-Wort C unverändert, 0 honored),
+  `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (2 Marker; **neu gemessen
+  2026-10-04 F229**: die GIC-ASCII-Frage ist widerlegt — `space.fmi.fi/gic/gicdata/` +
+  `gasum/{1998…2023}/` + `gasum/prel/` tragen nur Plots, kein Daten-Download, Rohserie
+  request-only; getragen bleiben die GIC-Harvest-, EPA-Aktualitäts- und C9-Kalibrier-Marker;
+  Header-sha `0171eeb3…`).
 - **Browser (getragen F202, STT-Route geschlossen F209):**
   `docs/surveys/survey-2026-09-20-browser-anbindung.md` (2 Marker) — Sensor-Marker
   STT-Route (`:89-90`) **geschlossen 2026-09-29** (Messnachtrag; Web Speech = Online-
@@ -478,7 +484,8 @@ Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-04-sensory-folge229.md` (Vorwärtsschreibung),
 - `docs/handover/archiv/handover-2026-10-04-sensory-folge228.md` (Move der konsumierten F228),
 - `.github/workflows/hyperscanning-te.yml` (Screen-Splittung je Task-Bedingung, `f69fd6496`),
-- `docs/paper/hyperscanning-te-preregistration.md` (Ergebnis-Abschnitt + Header-sha `dc1bb0b8…`).
+- `docs/paper/hyperscanning-te-preregistration.md` (Ergebnis-Abschnitt + Header-sha `dc1bb0b8…`),
+- `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (GIC-ASCII-Marker gemessen + Header-sha `0171eeb3…`).
 
 Dieses Atom maß und faltete den `## An sensory`-Block aus `river-folge88` (die zwei TE-Arme),
 remass die hyperscanning-te-Lage (zwei tote joint-family-Läufe, 360-min-Cap) und baute die
@@ -488,7 +495,12 @@ wurde auf die offene same-origin-Materialisierung geschärft. Die drei flash-Tau
 
 **Zweite Fortsetzung (dieses Atom):** die am Log verifizierten FP-/H1-/H2-Zahlen wurden in
 `docs/paper/hyperscanning-te-preregistration.md` als eigener Abschnitt `### Ergebnisse / Results`
-getragen (Header-sha `dc1bb0b8…`); die n-Skalierung wurde dispatcht (`37217425078`). Kein
+getragen (Header-sha `dc1bb0b8…`); die n-Skalierung wurde dispatcht (`37217425078`). Der
+Orphan-Doc `survey-2026-10-02-weberin-zweite-linie.md` ist jetzt getragen (im Träger-Abschnitt)
+und sein GIC-ASCII-Marker am Baum gemessen (`gicdata/`+`gasum/{jahr}/`+`gasum/prel/` = nur Plots,
+kein Daten-Download, Rohserie request-only — Z.ai-Claim widerlegt). Die Front-Door
+`https://omegaflow.space/` ist live, trägt aber noch die Binär-Landing (keine Membran); das
+neue `pages-deploy 37218848775` ist queued — der B-Punkt ist darauf getriggert. Kein
 pro/max-Dispatch.
 
 `state/operator-gespraeche/2026-10-04-sensory.md` und `state/zustand/` sind
