@@ -24,6 +24,7 @@ pub mod bison_basu;
 pub mod bison_shift;
 pub mod bison_velocity;
 pub mod bl_narrowband;
+#[cfg(unix)]
 pub mod ble;
 pub mod bpc;
 pub mod brainvision;
@@ -206,6 +207,7 @@ pub mod uvfits;
 pub mod uws;
 
 pub use astrometry::*;
+#[cfg(unix)]
 pub use ble::*;
 pub use channels::*;
 pub use extract::*;
