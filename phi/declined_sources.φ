@@ -242,9 +242,17 @@ decline computation
 url https://aa.usno.navy.mil/api/rstt/oneday?date=2026-08-07&coords=34.201,-118.171&tz=0
 note Auf-/Untergangszeiten — astronomische Berechnung.
 
+decline imagery
+url https://abcdstudy.org
+note Longitudinale Bildgebung (~11 900) — DUC; 200 (2026-10-03).
+
 decline registry/katalog
 url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/
 note NASA GES DISC OPeNDAP-Root (HTTP 200 26799 B) — Archiv-/Discovery-Einstieg, kein Messwert am Punkt.
+
+decline health-stats
+url https://addhealth.cpc.unc.edu
+note Longitudinale Kohorte — DUA/Kosten; 206 (2026-10-03).
 
 decline model-forecast
 url https://ads.atmosphere.copernicus.eu/api/retrieve/v1/
@@ -329,6 +337,10 @@ note ALMA NA TAP (ivo://jao.alma/tap_na) — Spiegel von ALMA EU. tap_index_alma
 decline redistribution
 url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+200+s_ra,s_dec,target_name,proposal_id+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
 note ALMA TAP obscore — © ALMA (ESO/NAOJ/NRAO), keine Weitergabe-Erlaubnis, kein CC-Statement (korpora_heim.φ:92-96). s_ra,s_dec,target_name,proposal_id 200; ra,dec,source_name,project_code 400 validateColumnNonAlias [ra]. → decline redistribution.
+
+decline model
+url https://alphafold.ebi.ac.uk/
+note AlphaFold DB — vorhergesagte Strukturen; 200 (2026-10-03).
 
 decline aggregated-index
 url https://ams02.space/
@@ -790,6 +802,10 @@ decline registry
 url https://api.openbrewerydb.org/v1/breweries?per_page=200
 note Brauerei-Registry.
 
+decline aggregate-index
+url https://api.opengwas.io/api/
+note IEU OpenGWAS — Summary-Statistik, Token; 200 (2026-10-03).
+
 decline terrain
 url https://api.opentopodata.org/v1/eudem25m?locations=
 note Recheck 2026-09-07: live HTTP 200 mit ?locations=<lat,lng> — echte Höhe (51.2,10.4 → 286,25 m). Terrain als Oszillator declined; Gestalt-Zeugen-Kandidat (die-weberin), Halteart Binding, nie Kraft-Feld.
@@ -1138,6 +1154,10 @@ decline registry/katalog
 url https://bhuvan.nrsc.gov.in/geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities&format=json
 note Bhuvan CSW GetCapabilities: geospatial dataset registry, no measurement field.
 
+decline health-stats
+url https://biolincc.nhlbi.nih.gov
+note Kohorten-Repo (Framingham/ARIC) — DUA; 200 (2026-10-03).
+
 decline no-input-signal
 url https://birdnet.cornell.edu/api/
 note Analyse-Service (Audio-Einsendung) — der Archivar hat keine Audiodaten zum Einsenden.
@@ -1146,9 +1166,17 @@ decline infra
 url https://blockchain.info/
 note Bitcoin-Ledger-Explorer — Infrastruktur (Force-Gate 2026-09-23).
 
+decline molecular
+url https://bmrb.io/
+note BMRB — NMR-Spektren; 200 (2026-10-03).
+
 decline registry
 url https://borealisdata.ca/dataverse/oceannetworkscanada
 note Borealis-ONC-Dataverse. Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline imagery
+url https://camcan-archive.mrc-cbu.cam.ac.uk
+note Lebensspannen-MEG/MRI — Data Share Agreement; 200 (2026-10-03).
 
 decline aggregate-index
 url https://carbonintensity.org.uk/
@@ -1173,6 +1201,11 @@ note Sentinel-Produktkatalog (OData-Metadata).
 decline catalog
 url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?...`
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+
+decline not-eligible
+url https://catalogue.dataspace.copernicus.eu/stac/collections
+reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
+note CDSE-CCM (2026-10-03; Operator-Wort un-nutzbar): Download 401, Lizenzrolle U-R-P/N-P-A, Eligibility verfehlt; Ersatzwege leben (`copernicus-dem-30m.s3.amazonaws.com` 200, Sentinel) → descoped.
 
 decline registry/katalog
 url https://catalogue.marine.copernicus.eu/api/records
@@ -1261,6 +1294,10 @@ note CelesTrak TLE ISS/Tiangong — Bahnelemente = Orbit-Fit, keine Messung; kon
 decline superseded-by-integrated
 url https://celestrak.org/SpaceData/EOP-All.csv
 note CelesTrak EOP — als celestrak_eop.bin integriert (origin celestrak.org); HTTP 200 2026-09-20.
+
+decline molecular
+url https://cellxgene.cziscience.com
+note CZ CELLxGENE — Single-Cell H5AD; 206 (2026-10-03).
 
 decline catalog
 url https://chime-frb.ca/
@@ -1394,6 +1431,10 @@ decline aggregate
 url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
 note Globales Temperaturmittel (modellgemischt, positionslos) — Aggregate-Index.
 
+decline molecular
+url https://data.humancellatlas.org
+note Human Cell Atlas — Einzelzell-Transkriptomik; 206 (2026-10-03).
+
 decline catalog
 url https://data.humdata.org/api/
 note HXL/Katalog-Index.
@@ -1470,6 +1511,18 @@ decline duplicate-eop
 url https://datacenter.iers.org/data/csv/finals2000A.data.csv
 note IERS EOP (finals2000A CSV) — decline duplicate-eop.
 
+decline molecular
+url https://datacommons.cancer.gov/repository/proteomic-data-commons
+note PDC — Proteomik; URL nicht per verdict gemessen (2026-10-03).
+
+decline superseded-by-catalog
+url https://datadc.ihep.ac.cn/resource/astro/lhaaso
+note LHAASO (gemessen 2026-10-03): API 200 (18 Datensätze), Rohklassen IHEP/CSTNET-gegated; der Katalog ist als `lhaaso_sky1` registriert (`phi/sources.φ`); Roh nicht nötig → descoped.
+
+decline registry/katalog
+url https://datadryad.org
+note Generisches Repo; 200 (2026-10-04).
+
 decline superseded-by-integrated
 url https://datalab.noirlab.edu/
 note NOIRLab Astro Data Lab — TAP integriert (datalab.noirlab.edu); Portal-Root HTTP 200.
@@ -1493,6 +1546,10 @@ note grind: grind_b2find.φ
 decline presence-catalog
 url https://datasetsearch.research.google.com/
 note Weberin-Re-Run 2026-09-14: Google Dataset Search — kein offener maschinenlesbarer Weg (Client-SPA, schema.org-Crawl, bezahlte Dritt-Scraper). ABSENT.
+
+decline registry/katalog
+url https://dataverse.harvard.edu
+note Generisches Repo, kein Feld am Punkt; 202 (2026-10-03).
 
 decline no-physical-force
 url https://dataverse.harvard.edu/api/access/datafile/7502710
@@ -1763,6 +1820,10 @@ decline no-physical-force
 url https://ebolaintel.com/api/
 note Lagebild-Dienst.
 
+decline health-stats
+url https://ec.europa.eu/eurostat
+note SDMX-Gesundheitsstatistik; 200 (2026-10-03).
+
 decline stats
 url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan
 note Statistik-Aggregat.
@@ -1770,6 +1831,14 @@ note Statistik-Aggregat.
 decline stats
 url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
 note Statistik-Aggregat.
+
+decline registry
+url https://ec.europa.eu/tools/eudamed
+note EUDAMED — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
+
+decline molecular
+url https://ega-archive.org
+note EGA — Genomik, Rohdaten DUA; 200 (2026-10-03).
 
 decline registry/katalog
 url https://emergency.copernicus.eu
@@ -1935,6 +2004,10 @@ decline model-forecast
 url https://flood-api.open-meteo.com/v1/flood?latitude=
 note Flutmodell.
 
+decline molecular
+url https://flybase.org/
+note FlyBase — Drosophila-Genomdatenbank; 206 (2026-10-03).
+
 decline no-physical-force
 url https://fpma.fao.org/giews/fpmat4/api/v1/
 note Monitoring-Dashboard.
@@ -2047,6 +2120,10 @@ decline no-physical-force
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+phot_g_mean_mag+<+12
 note Gaia DR3: field parallax_mas/bp_rp — Astrometrie/Farbindex; cmap plx 3, phot_g_mean_mag=em mag. DROP, kein 9-Kraft-Kanal.
 
+decline reference
+url https://geneontology.org
+note Gene Ontology — Ontologie; 206 (2026-10-03).
+
 decline infrastructure
 url https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
 note grind: grind_terrapulse_a.φ
@@ -2086,6 +2163,10 @@ note IGRAC GGIS — Geonode-Datenkatalog (573 Datasets), keine Zeitreihen, kein 
 decline catalog
 url https://ggis.un-igrac.org/api/
 note IGRAC-GGIS-Datensatz-Index (Katalog); Grundwasser-Zeitreihen hinter /api/datasets/ — Recheck.
+
+decline health-stats
+url https://ghdx.healthdata.org
+note Global-Burden-of-Disease-Aggregate; 200 (2026-10-03).
 
 decline health-stats
 url https://ghoapi.azureedge.net/api/
@@ -2263,6 +2344,14 @@ decline aggregate-index
 url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
 note CO2-Wachstumsrate (global) — positionsloser Skalar-Index.
 
+decline molecular
+url https://gnomad.broadinstitute.org/
+note gnomAD — Allelfrequenz-Aggregat; 206 (2026-10-03).
+
+decline commercial
+url https://go.drugbank.com/
+note DrugBank — kommerziell lizenziert; 403 direkt (Wayback, 2026-10-03).
+
 decline product-file-index
 url https://gong2.nso.edu/HA/hag/
 note GONG-hag/zqs-Synoptik (hag.json/zqs.json CDN-Captures): Verzeichnis-Index von FITS-Bildprodukten (H-alpha/Magnetogramm), kein Skalar-Punkt-Feed; die GONG-p-Moden-Messung ist via ssd.jpl.nasa.gov (gong_modes.bin) registriert.
@@ -2287,6 +2376,14 @@ decline presence-catalog
 url https://gsaweb.ast.cam.ac.uk/alerts
 note Weberin-Re-Run 2026-09-14: Gaia Alerts HTML-Portal (kein maschinenlesbarer Kanal).
 
+decline no-physical-force
+url https://gss.norc.org
+note US-Sozial-/Einstellungsdaten — kein propagierendes Feld; 206 (2026-10-03).
+
+decline molecular
+url https://gtexportal.org
+note GTEx — Expression; Portal 206, Rohsequenz DUA (2026-10-03).
+
 decline schedule
 url https://gtfsrt.api.translink.com.au/api/realtime/SEQ/VehiclePositions
 note GTFS-RT (protobuf) — Fahrplandaten.
@@ -2298,6 +2395,10 @@ note grind: grind_terrapulse_a.φ
 decline no-physical-force
 url https://gwosc.org/eventapi/jsonfull/allevents/
 note 671 Events; events=Objekt (kein Array). SNR/chi_eff/p_astro/redshift dimensionslos; Massen M_sun, luminosity_distance Mpc, far 1/yr = positionslose Quellparameter. Kein ra/dec. GW-Skymap via GraceDB gw250207_115645.sky1 (gracedb.ligo.org).
+
+decline health-stats
+url https://healthdata.gov
+note Public-Health-/Medicare-Statistik; 200 (2026-10-03).
 
 decline text-warning
 url https://healthmap.org/ai.php?v=2.0&limit=50&striphtml=0
@@ -2326,6 +2427,10 @@ note IERS EOP C04: geosphere_earth_orientation_raw = Komposit (x/y_pole, UT1-UTC
 decline registry/katalog
 url https://hreda.esac.esa.int/hreda-sl-tap/tap
 note experiment/mission/team/affiliation/v_* — reine Archiv-/Organisations-Metadaten, kein Messwert.
+
+decline health-stats
+url https://hrs.isr.umich.edu
+note Kohorte >50 — DUA; 403 direkt (Wayback, 2026-10-03).
 
 decline registry/katalog
 url https://hst.esac.esa.int/tap-server/tap
@@ -2363,6 +2468,10 @@ decline no-physical-force
 url https://huggingface.co/api/models?sort=downloads&search=llama`
 note Modell-Registry.
 
+decline imagery
+url https://humanconnectome.org
+note MRI/MEG-Kohorte — Bild ist kein Feld; 200 (2026-10-03).
+
 decline model-forecast
 url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate=
 note GLDAS = Landmodell-Ausgabe.
@@ -2378,6 +2487,10 @@ note grind: grind_b2find.φ
 decline registry/katalog
 url https://idoc-dachs.ias.u-psud.fr/tap
 note eit_syn/synopticmaps/omega_*/currents_epn/gaia_dem — lauter epn_core, Discovery-Metadaten.
+
+decline imagery
+url https://idr.openmicroscopy.org
+note Mikroskopie-Bilder (OME-Zarr/TIFF) — Bild ist kein Feld; 200 (2026-10-03).
 
 decline registry
 url https://ies-ows.jrc.ec.europa.eu/
@@ -2579,6 +2692,10 @@ decline no-physical-force
 url https://marinecadastre.gov/ais/api/v1/locations?bbox=
 note Recheck 2026-08-17: kein Live-API — AIS als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS pausiert (MARINECADASTRE_KEY entfernt). Schiffspositionen hergestellt, kein natürlicher Feldwert → decline no-physical-force.
 
+decline molecular
+url https://massbank.eu/
+note MassBank — Referenz-Massenspektren; 200 (2026-10-03).
+
 decline superseded-by-integrated
 url https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Bereits integriert; dead war Duplikat/URL-Fragment.
@@ -2654,6 +2771,10 @@ note CMEMS MOTU service listing: service/dataset registry, no measurement field.
 decline no-physical-force
 url https://naif.jpl.nasa.gov/pub/naif/cosmographia/doc/templates/body_TEMPLATE_globe.json
 note Cosmographia-Template-Datei.
+
+decline registry/katalog
+url https://nda.nih.gov
+note Archiv/Registry psychiatrischer Kohorten; 200 (2026-10-03).
 
 decline superseded-by-integrated
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&query=SELECT+TOP+500+prefname,ra,dec,z+FROM+NEDTAP.objdir+WHERE+CONTAINS(POINT(%27J2000%27,ra,dec),CIRCLE(%27J2000%27,187.7,12.4,3.0))%3D1
@@ -2799,6 +2920,10 @@ decline no-te-path
 url https://openneuro.org/datasets/ds004103
 note OpenNeuro hyperscanning-fMRI (Opening Treasure Chest), 33 Dyaden, CC0; BOLD-fMRI-Zeitauflösung → kein TE-Pfad.
 
+decline no-physical-force
+url https://openpsychometrics.org
+note Psychometrische Selbstberichte — kein Feld; 206 (2026-10-03).
+
 decline superseded
 url https://opensky-network.org/api/states/all
 note OpenSky = zweiter ADSB-Anbieter; api.adsb.lol ist Accept-Kandidat (TODO).
@@ -2814,6 +2939,10 @@ note OpenSky Flugzeug-Telemetrie (active object) — Aktuator-Kinematik, kein pr
 decline metadata-portal
 url https://orfeus-eu.org/submachine/
 note SubMachine/ORFEUS-Portal (HTTP 200, Beta): Web-Oberflaeche für 3D-Tomographie-Modelle, kein direkter Grid-Download (2026-09-13); Inhalte als format reference in sources.φ (EMC-NetCDF + tom-new-Mirror) — keine eigene Messwert-Route.
+
+decline registry/katalog
+url https://osf.io
+note Präregistrierungs-/Repo-Plattform; 200 (2026-10-04).
 
 decline registry
 url https://ourairports.com/data/airports.csv
@@ -2895,6 +3024,10 @@ decline registry/katalog
 url https://planetarycomputer.microsoft.com/api/stac/v1/collections
 note Planetary Computer STAC collections: dataset catalog, no measurement field.
 
+decline aggregate-index
+url https://platform.opentargets.org
+note Open Targets — Target-Disease-Associationen; 206 (2026-10-03).
+
 decline no-measurement
 url https://polarwatch.noaa.gov/erddap/index.json
 note Weberin-Re-Run 2026-09-14: kein BGC-Argo-Kanal (0 Argo-Treffer).
@@ -2902,6 +3035,10 @@ note Weberin-Re-Run 2026-09-14: kein BGC-Argo-Kanal (0 Argo-Treffer).
 decline no-physical-force
 url https://portal.boldsystems.org/api/docs
 note DNA-Barcodes — Sequenzdaten, kein physikalisches Feld.
+
+decline molecular
+url https://portal.gdc.cancer.gov
+note GDC/TCGA — Genomik; 200 (2026-10-03).
 
 decline commercial
 url https://portal.opentopography.org/
@@ -3046,6 +3183,10 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host
 decline registry
 url https://re3data.org/api/v1/repositories
 note re3data-Repository-Registry (XML). Registry. Gemessen 2026-09-14 HTTP 200.
+
+decline reference
+url https://reactome.org
+note Reactome — Pfad-Wissensbasis; 206 (2026-10-03).
 
 decline schedule
 url https://realtime.hsl.fi/realtime/service-alerts/v2/hsl
@@ -4279,9 +4420,17 @@ decline schedule
 url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
 note Fahrplan.
 
+decline molecular
+url https://tripod.nih.gov/tox21/
+note Tox21 — Toxikologie; 404 direkt, Daten via PubChem (2026-10-03).
+
 decline superseded-by-integrated
 url https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json
 note tsunamigene Erdbeben (13/90 Tage, MAGNITUDE/LAT/LON/DEPTH je Event, gemessen 2026-09-11), superseded by USGS fdsnws (live in sources.φ); Zeuge fünfte Art point-event (Mapping v3 2026-10-01): Wellenhöhe an Ort+Zeit.
+
+decline no-physical-force
+url https://ukdataservice.ac.uk
+note Sozialsurvey — kein Feld; 200 (2026-10-03).
 
 decline no-physical-force
 url https://unhcr.org/
@@ -4403,6 +4552,10 @@ decline registry/katalog
 url https://web-api.tp.entsoe.eu/api?documentType=A44&in_Domain=DE_LU&period.start={today}0000&period.end={today}2300&securityToken={entsoe_key}
 note ENTSO-E A44 day-ahead prices: wholesale market registry, no propagating field.
 
+decline molecular
+url https://webbook.nist.gov/
+note NIST WebBook — Referenzspektren; URL nicht per verdict gemessen (2026-10-03).
+
 decline reference
 url https://webbook.nist.gov/cgi/cbook.cgi?Name=
 note 2026-09-20: ?Name=/?Formula=/?ID= 200 text/html, Registry (Molmasse/InChI/CAS), positionslos, kein Feld. JCAMP ?JCAMP=<id>&Index=&Type=IR|Mass 200 chemical/x-jcamp-dx: statisches Referenzspektrum per bekannter ID. Kein JSON/TSV/API/Dump.
@@ -4454,6 +4607,10 @@ note Wikimedia Text/Knowledge — Registry (Force-Gate 2026-09-23).
 decline no-physical-force
 url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
 note Wikipedia pageviews aggregate: social metric, no physical field.
+
+decline molecular
+url https://wormbase.org/
+note WormBase — Nematoden-Genomdatenbank; 403 (2026-10-03).
 
 decline superseded-by-api.woudc.org
 url https://woudc.org/api/
@@ -4507,6 +4664,10 @@ decline archive-only
 url https://www.aoml.noaa.gov/hrd/data_sub/hurr.html
 note NOAA AOML Hurricane-Hunter-Daten — statisches Jahresarchiv (2000-2021+), kein Live-Feed. Welle 2026-08-19.
 
+decline molecular
+url https://www.arabidopsis.org/
+note TAIR — Pflanzengenom, Registrierung/lizenzpflichtig; 403 (2026-10-03).
+
 decline registry/katalog
 url https://www.arcgis.com/sharing/rest/search?q=*&f=json&num=100&start=0
 note ArcGIS sharing/rest/search (HTTP 200) — Crawl-Einstieg/Katalog, kein Messwert.
@@ -4514,6 +4675,14 @@ note ArcGIS sharing/rest/search (HTTP 200) — Crawl-Einstieg/Katalog, kein Mess
 decline catalog
 url https://www.astrouw.edu.pl/~jskowron/OGLE/
 note Recheck b4 2026-08-18: 404 HTML — OGLE-Pfad absent. Katalog via VizieR (tap_index) vorhanden. Verschoben aus blocked_sources.φ 2026-08-19. Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+
+decline registry
+url https://www.bfarm.de
+note BfArM — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
+
+decline molecular
+url https://www.bindingdb.org/
+note BindingDB — Bindungsaffinitäten; 206 (2026-10-03).
 
 decline geographic-infrastructure
 url https://www.boem.gov/oil-gas-energy/mapping-and-data
@@ -4523,9 +4692,17 @@ decline aggregate-index
 url https://www.bom.gov.au/climate/mjo/
 note MJO-RMM-Index (rmm.74toRealtime.json CDN-Capture): Madden-Julian-Oszillations-Phasenindex, aggregiert und positionslos.
 
+decline imagery
+url https://www.broadinstitute.org/cell-painting
+note Zell-Bild-Assay; 404 direkt — Daten via PubChem/registry.opendata.aws (2026-10-03).
+
 decline geographic-infrastructure
 url https://www.bsee.gov/offshore-data-tools
 note BSEE Offshore Data & Tools (US DOI) 2026-10-02 HTTP 200; Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium, kein Zeuge (keine Messlinie).
+
+decline commercial
+url https://www.ccdc.cam.ac.uk/
+note CCDC/CSD — lizenzpflichtig (akademische Lizenz); 206 (2026-10-03).
 
 decline aggregate-index
 url https://www.cpc.ncep.noaa.gov/data/indices/
@@ -4560,6 +4737,10 @@ url https://www.cpom.ucl.ac.uk/csopr/seaice.html
 note CPOM/UCL Sea-Ice (HTTP 200 92 B) — abgeleitetes Kryosphaeren-Produkt, kein Sensor am Ort.
 
 decline molecular
+url https://www.crystallography.net/
+note COD — Kristallstrukturen (CIF); 200 (2026-10-03).
+
+decline molecular
 url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
 note Kristallstruktur-Daten.
 
@@ -4575,6 +4756,10 @@ decline literature
 url https://www.dimensions.ai/products/free
 note Dimensions (Digital Science) — freie Metrics-API (metricssignup), Antwort = Zitations-/Altmetrics-Zählwerte (citations, field citation ratio), kein physikalischer Messwert. Kein Konsument. decline literature (Präzedenz OpenAlex registry, Scopus).
 
+decline health-stats
+url https://www.diw.de/soep
+note Sozio-oekonomisches Panel — DUA; 200 (2026-10-03).
+
 decline redistribution
 url https://www.dxpredictor.com/api/v1/ionosonde/fof2
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
@@ -4583,9 +4768,69 @@ decline commercial
 url https://www.earthnetworks.com/
 note Earth Networks (Wetter-/Blitz-Messnetz) — kommerziell/paid, kein Redistributionsrecht. Descope 2026-09-12. Party-Messung 2026-09-14: frei via NOAA GLM — noaa-goes16.s3.amazonaws.com GLM-L2-LCFA (Blitz), NCEI lightning-products.
 
+decline molecular
+url https://www.ebi.ac.uk/arrayexpress/
+note ArrayExpress — Transkriptomik; 200 (2026-10-03).
+
+decline model
+url https://www.ebi.ac.uk/biomodels
+note BioModels — SBML-Modelle; 206 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/biostudies/
+note BioStudies (EBI) — Life-Science-Repo, ArrayExpress-Eltern; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/chembl/
+note ChEMBL — Bioaktivitäts-Datenbank; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/ena/browser/
+note ENA — Rohsequenz; 206 (2026-10-03).
+
 decline station-registry
 url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
 note ENA-Bio-Sample-Suche — Registry, kein physikalischer Messwert.
+
+decline literature
+url https://www.ebi.ac.uk/europepmc/webservices/rest/search
+note Europe PMC — Literaturindex; 200 (2026-10-03).
+
+decline aggregate-index
+url https://www.ebi.ac.uk/gwas/
+note GWAS Catalog — kuratierte Assoziationen; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/gxa/
+note Expression Atlas — differentielle Expression; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/interpro
+note InterPro — Proteinfamilien; 206 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/metabolights/
+note MetaboLights — Metabolomik; 206 (2026-10-03).
+
+decline reference
+url https://www.ebi.ac.uk/ols4
+note EBI OLS4 — Ontologien (HPO/DOID/MONDO); 206 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/pdbe/emdb/
+note EMDB — Kryo-EM-Dichtekarten; 200 (2026-10-03).
+
+decline molecular
+url https://www.ebi.ac.uk/pride/
+note PRIDE — Proteomik/mzML; 206 (2026-10-03).
+
+decline registry/katalog
+url https://www.ebrains.eu
+note Atlanten+Modelle+Plattform — Registry; 200 (2026-10-03).
+
+decline registry
+url https://www.ema.europa.eu
+note EMA — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
 
 decline registry
 url https://www.emodnet-humanactivities.eu/search-results.php?dataname=Seafloor+Litter&format=json&limit=200&bbox=
@@ -4594,6 +4839,14 @@ note Human-Activities-Registry.
 decline registry/katalog
 url https://www.emsc-csem.org/Earthquake/
 note EMSC-CSEM Erdbeben (HTML, HTTP 200) — HTML-Katalog ohne Feed; USGS/ISC-Katalog integriert.
+
+decline molecular
+url https://www.encodeproject.org
+note ENCODE — funktionelle Genomik; 200 (2026-10-03).
+
+decline molecular
+url https://www.ensembl.org/
+note Ensembl — Genomsequenz/-annotation; 206 (2026-10-03).
 
 decline ckan-catalog
 url https://www.envidat.ch/api/3/action/package_search?rows=100
@@ -4615,6 +4868,10 @@ decline registry/katalog
 url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
 note FAO AQUASTAT water withdrawal statistics: country statistics, no field at a point.
 
+decline molecular
+url https://www.finngen.fi
+note FinnGen — Genomik, individual-level DUA; 206 (2026-10-03).
+
 decline superseded-by-integrated
 url https://www.frdr-dfdr.ca/repo/collection/superdarn
 note SuperDARN-RAWACF via FRDR (Repository-Sammlung); die SuperDARN-Los-Geschwindigkeit ist via superdarn_fitacf.bin in sources.φ. Gemessen 2026-09-14 HTTP 200.
@@ -4630,6 +4887,10 @@ note GDACS RSS disaster alerts: title/description/date text warnings, no scalar 
 decline superseded-by-integrated
 url https://www.gebco.net/data_and_products/gebco_web_services/web_map_service/wms
 note GEBCO-Bathymetrie integriert via binding bathymetrie-gebco (api.opentopodata.org GEBCO2020, gestalt nicht Kraftfeld); WMS-GetCapabilities 404 gemessen 2026-09-23.
+
+decline no-physical-force
+url https://www.gesis.org
+note Sozialwissenschaft — kein Feld; 403 direkt (Wayback, 2026-10-03).
 
 decline model
 url https://www.gi.alaska.edu/monitors/aurora-forecast
@@ -4667,6 +4928,10 @@ decline aggregate-indices
 url https://www.hamqsl.com/solarxml.php
 note N0NBH-solarxml (solarxml.json/solarxml.php.json CDN-Captures, HTTP 200): Zusammenfassung von solarflux/sunspots/xray/a-k/protonflux — aggregierte Indizes bereits registrierter Primaerquellen (SWPC-GOES-JSON, SIDC-Sonnenfleckenzahl).
 
+decline no-physical-force
+url https://www.icpsr.umich.edu
+note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
+
 decline simulation
 url https://www.illustris-project.org/data/docs/api/
 note Simulationsdaten.
@@ -4679,9 +4944,21 @@ decline infrastructure
 url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
 note INEX IXP traffic grapher: network infrastructure counter, no physical field.
 
+decline molecular
+url https://www.informatics.jax.org/
+note MGI — Maus-Genomdatenbank; 200 (2026-10-03).
+
+decline molecular
+url https://www.internationalgenome.org/
+note IGSR/1000 Genomes — Sequenz; 206 (2026-10-03).
+
 decline superseded-by-integrated
 url https://www.isc.ac.uk/iscbulletin/search/catalogue/
 note ISC-Bulletin — als isc_bulletin.iscb integriert (origin fdsnws/event/1/query, www.isc.ac.uk); HTTP 200.
+
+decline registry
+url https://www.isrctn.com
+note ISRCTN — Studien-Registry; 200 (2026-10-03).
 
 decline superseded-by-integrated
 url https://www.lamost.org/dr10/v2.0/voservice/tap
@@ -4699,6 +4976,18 @@ decline literature
 url https://www.mathworks.com/help/thingspeak/readdata.html
 note Weberin-Re-Run 2026-09-14: ThingSpeak-Doku (die Datenroute ist api.thingspeak.com, öffentliche Channels).
 
+decline molecular
+url https://www.med.unc.edu/pgc/
+note PGC — psychiatrische GWAS-Summaries; 200 (2026-10-03).
+
+decline literature
+url https://www.medrxiv.org
+note medRxiv — Preprints; 206 (2026-10-03).
+
+decline molecular
+url https://www.metabolomicsworkbench.org/
+note Metabolomics Workbench — Spektren; 200 (2026-10-03).
+
 decline no-physical-force
 url https://www.minorplanetcenter.net/cgi-bin/feedback.cgi
 note Support-Portal.
@@ -4711,9 +5000,29 @@ decline position-only
 url https://www.movebank.org/movebank/service/direct-read?entity_type=event&study_id=1099562&format=json
 note Tier-Telemetrie-Positionen (Position-only, §3.9) — kein Feldwert — decline position-only (401 real).
 
+decline literature
+url https://www.nber.org
+note NBER — Working Papers; 200 (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/
+note NCBI GenBank/Entrez — Sequenz-/Expressionsdatenbank; kein Kraft-Kanal; 200 (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/clinvar
+note ClinVar — Variantenklassifikation; 200 (2026-10-03).
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/gap/
+note dbGaP — Sequenz+Phänotyp, DUA; kein Kraft-Kanal; 200 (2026-10-03).
+
 decline molecular
 url https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE1&targy=0&view=json
 note Genexpressions-Daten.
+
+decline molecular
+url https://www.ncbi.nlm.nih.gov/sra
+note SRA — Rohsequenz; 200 (2026-10-03).
 
 decline aggregate
 url https://www.ncei.noaa.gov/access/land-based-station-data/land-based-in-situ/climate-normals/
@@ -5043,6 +5352,10 @@ decline superseded
 url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
 note NHC-CurrentStorms ist bereits Accept-Kandidat (Batch 1) — basin-Variante.
 
+decline registry/katalog
+url https://www.nitrc.org
+note Dataset-Registry (ABIDE/ADHD-200/NKI) — kein Messwert-Feld am Punkt; 200 (2026-10-03).
+
 decline registry
 url https://www.nmdb.eu/nest/
 note grind: grind_terrapulse_a.φ
@@ -5071,13 +5384,29 @@ decline model-reanalysis
 url https://www.nohrsc.noaa.gov/snowfall/
 note SNODAS = Schnee-Daten-Assimilation-Reanalyse/abgeleitetes Produkt, kein Punkt-Live-Feed; 200.
 
+decline imagery
+url https://www.oasis-brains.org
+note Altern/Demenz MRI/PET — DUA; 200 (2026-10-03).
+
 decline no-physical-force
 url https://www.ocearch.org/tracker/
 note OCEARCH Shark-Tracker (HTTP 200) — Telemetrie aktiver Objekte (Akteur traegt Kinematik), kein propagierendes Feld.
 
+decline health-stats
+url https://www.oecd.org
+note Gesundheitsstatistik; 403 direkt (Wayback, 2026-10-03).
+
 decline redistributed-synop
 url https://www.ogimet.com/cgi-bin/getsynop
 note OGIMET-SYNOP (getsynop.json CDN-Capture, HTTP 200, CSV-AAXX-Zeilen): WMO-SYNOP-Rebroadcast, Stationen nur per Block-Nummer ohne Daten-Position — keine neue Messung gegenueber den registrierten Meteorologie-Kanaelen.
+
+decline commercial
+url https://www.omim.org
+note OMIM — Mendelsche Gene, Registrierung/Subskription; 403 direkt (Wayback, 2026-10-03).
+
+decline no-physical-force
+url https://www.openicpsr.org
+note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
 
 decline registry
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=json&starttime=2020-01-01
@@ -5119,9 +5448,25 @@ decline registry/katalog
 url https://www.plate-archive.org/tap
 note Photoplatten-Archiv — Metadaten digitalisierter Platten, kein Messwert am Punkt.
 
+decline imagery
+url https://www.ppmi-info.org
+note Parkinson-Längsschnitt MRI — DUA; 200 (2026-10-03).
+
+decline molecular
+url https://www.proteinatlas.org/
+note Human Protein Atlas — Expressions-/Bilddatenbank; 200 (2026-10-03).
+
+decline no-physical-force
+url https://www.psychdata.de
+note Psychologische Umfragedaten — kein Feld; 200 (2026-10-03).
+
 decline redistribution
 url https://www.reddit.com/dev/api/
 note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
+
+decline health-stats
+url https://www.researchallofus.org
+note Kohorte Workbench+DUA; 200 (2026-10-03).
 
 decline catalog
 url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
@@ -5142,6 +5487,10 @@ note Variante der live-seismicportal-Quelle (live: minmagnitude=2.5, Probe-Befun
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
 note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15).
+
+decline health-stats
+url https://www.share-project.org
+note Kohorte 28 Länder — DUA; 200 (2026-10-03).
 
 decline aggregate-index
 url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
@@ -5179,6 +5528,10 @@ decline infrastructure
 url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
 note Seekabel-Verläufe — Infrastruktur.
 
+decline registry/katalog
+url https://www.synapse.org
+note Projekt-Registry (AD Knowledge Portal/PsychENCODE); 200 (2026-10-03).
+
 decline simulation
 url https://www.tng-project.org/api/...?limit=500&offset=500
 note Illustris-TNG-Simulationsoutput.
@@ -5194,6 +5547,10 @@ note Tsunami-Bulletins (Alerts per Gate declined).
 decline alerts
 url https://www.tsunami.gov/events/xml/PHEBAtom.xml
 note Tsunami-Bulletins.
+
+decline health-stats
+url https://www.ukbiobank.ac.uk
+note Kohorte (Genomik/MRI/Wearable) — DUA; 403 direkt (Wayback, 2026-10-03).
 
 decline imagery
 url https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-high-resolution-orthoimagery-hro
@@ -5211,6 +5568,10 @@ decline alerts
 url https://www.who.int/api/news/diseaseoutbreaknews
 note Krankheitsausbruch-Meldungen (Text-Alerts).
 
+decline registry
+url https://www.who.int/clinical-trials-registry-platform
+note WHO ICTRP — Meta-Registry; 200 (2026-10-03).
+
 decline no-physical-force
 url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
 note Wissensgraph.
@@ -5227,9 +5588,17 @@ decline model
 url https://www.worldpop.org/rest/data/pop/wpgp?iso3=BRA,CHN,IND,USA,NGA,IDN,PAK&year=2024&format=json
 note WorldPop = Modell/Populationsschätzung, kein Live-Feed (wpgp 500, /rest/data/pop 200).
 
+decline molecular
+url https://www.yeastgenome.org/
+note SGD — Hefe-Genomdatenbank; 200 (2026-10-03).
+
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
 note MBARI LOBO ohne öffentlichen Zugang (403, 2026-08-19); Küstenmessungen (LOBO, M1, OA1/2, Wave Glider, ISUS) in CeNCOOS (data.cencoos.org ERDDAP 200) → grind_cencoos.φ. Tiefsee/AUV/ROV in STOQS (stoqs.mbari.org REST 200) → grind_stoqs.φ.
+
+decline health-stats
+url https://wwwn.cdc.gov/nchs/nhanes/
+note Bevölkerungs-/Laborsurvey — Aggregatstatistik, kein Feld; 206 (2026-10-03).
 
 decline no-physical-force
 url https://xeno-canto.org/api/2/recordings?query=grp:birds
@@ -5295,6 +5664,14 @@ decline event-record
 url https://zenodo.org/records/8427755
 note Telescope Array — Amaterasu (10.5281/zenodo.8427755, Fujii+ 2023, Science): Einzel-Ereignis-Detektordaten eines Schauers — ein Record, kein kontinuierliches Feld am Punkt → decline. Zenodo 2026-09-16 HTTP 0/Timeout direkt + Proton; Record lebt.
 
+decline molecular
+url https://zfin.org/
+note ZFIN — Zebrafisch-Genomdatenbank; 200 (2026-10-03).
+
+decline model
+url https://zinc.docking.org/
+note ZINC — Docking-Vorhersagen; 200 (2026-10-03).
+
 decline redistribution
 url pending
 note Vaisala GLD360 — global lightning location network (proprietary subscription), no public data endpoint. Verdict 2026-09-15: decline redistribution (commercial; open lightning via free networks, not GLD360).
@@ -5314,380 +5691,3 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
-
-decline registry/katalog
-url https://www.nitrc.org
-note Dataset-Registry (ABIDE/ADHD-200/NKI) — kein Messwert-Feld am Punkt; 200 (2026-10-03).
-
-decline registry/katalog
-url https://www.ebrains.eu
-note Atlanten+Modelle+Plattform — Registry; 200 (2026-10-03).
-
-decline registry/katalog
-url https://www.synapse.org
-note Projekt-Registry (AD Knowledge Portal/PsychENCODE); 200 (2026-10-03).
-
-decline registry/katalog
-url https://dataverse.harvard.edu
-note Generisches Repo, kein Feld am Punkt; 202 (2026-10-03).
-
-decline registry/katalog
-url https://osf.io
-note Präregistrierungs-/Repo-Plattform; 200 (2026-10-04).
-
-decline registry/katalog
-url https://nda.nih.gov
-note Archiv/Registry psychiatrischer Kohorten; 200 (2026-10-03).
-
-decline registry/katalog
-url https://datadryad.org
-note Generisches Repo; 200 (2026-10-04).
-
-decline health-stats
-url https://wwwn.cdc.gov/nchs/nhanes/
-note Bevölkerungs-/Laborsurvey — Aggregatstatistik, kein Feld; 206 (2026-10-03).
-
-decline health-stats
-url https://www.ukbiobank.ac.uk
-note Kohorte (Genomik/MRI/Wearable) — DUA; 403 direkt (Wayback, 2026-10-03).
-
-decline health-stats
-url https://www.researchallofus.org
-note Kohorte Workbench+DUA; 200 (2026-10-03).
-
-decline health-stats
-url https://biolincc.nhlbi.nih.gov
-note Kohorten-Repo (Framingham/ARIC) — DUA; 200 (2026-10-03).
-
-decline health-stats
-url https://ghoapi.azureedge.net/api/
-note Mortalitäts-/Morbiditätsstatistik; 200 (2026-10-03).
-
-decline health-stats
-url https://ec.europa.eu/eurostat
-note SDMX-Gesundheitsstatistik; 200 (2026-10-03).
-
-decline health-stats
-url https://healthdata.gov
-note Public-Health-/Medicare-Statistik; 200 (2026-10-03).
-
-decline health-stats
-url https://ghdx.healthdata.org
-note Global-Burden-of-Disease-Aggregate; 200 (2026-10-03).
-
-decline health-stats
-url https://www.oecd.org
-note Gesundheitsstatistik; 403 direkt (Wayback, 2026-10-03).
-
-decline health-stats
-url https://addhealth.cpc.unc.edu
-note Longitudinale Kohorte — DUA/Kosten; 206 (2026-10-03).
-
-decline health-stats
-url https://hrs.isr.umich.edu
-note Kohorte >50 — DUA; 403 direkt (Wayback, 2026-10-03).
-
-decline health-stats
-url https://www.share-project.org
-note Kohorte 28 Länder — DUA; 200 (2026-10-03).
-
-decline health-stats
-url https://www.diw.de/soep
-note Sozio-oekonomisches Panel — DUA; 200 (2026-10-03).
-
-decline no-physical-force
-url https://gss.norc.org
-note US-Sozial-/Einstellungsdaten — kein propagierendes Feld; 206 (2026-10-03).
-
-decline no-physical-force
-url https://ukdataservice.ac.uk
-note Sozialsurvey — kein Feld; 200 (2026-10-03).
-
-decline no-physical-force
-url https://openpsychometrics.org
-note Psychometrische Selbstberichte — kein Feld; 206 (2026-10-03).
-
-decline no-physical-force
-url https://www.psychdata.de
-note Psychologische Umfragedaten — kein Feld; 200 (2026-10-03).
-
-decline no-physical-force
-url https://www.gesis.org
-note Sozialwissenschaft — kein Feld; 403 direkt (Wayback, 2026-10-03).
-
-decline no-physical-force
-url https://www.icpsr.umich.edu
-note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
-
-decline no-physical-force
-url https://www.openicpsr.org
-note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
-
-decline imagery
-url https://humanconnectome.org
-note MRI/MEG-Kohorte — Bild ist kein Feld; 200 (2026-10-03).
-
-decline imagery
-url https://abcdstudy.org
-note Longitudinale Bildgebung (~11 900) — DUC; 200 (2026-10-03).
-
-decline imagery
-url https://www.oasis-brains.org
-note Altern/Demenz MRI/PET — DUA; 200 (2026-10-03).
-
-decline imagery
-url https://www.ppmi-info.org
-note Parkinson-Längsschnitt MRI — DUA; 200 (2026-10-03).
-
-decline imagery
-url https://camcan-archive.mrc-cbu.cam.ac.uk
-note Lebensspannen-MEG/MRI — Data Share Agreement; 200 (2026-10-03).
-
-decline imagery
-url https://idr.openmicroscopy.org
-note Mikroskopie-Bilder (OME-Zarr/TIFF) — Bild ist kein Feld; 200 (2026-10-03).
-
-decline imagery
-url https://www.broadinstitute.org/cell-painting
-note Zell-Bild-Assay; 404 direkt — Daten via PubChem/registry.opendata.aws (2026-10-03).
-
-decline molecular
-url https://www.ncbi.nlm.nih.gov/gap/
-note dbGaP — Sequenz+Phänotyp, DUA; kein Kraft-Kanal; 200 (2026-10-03).
-
-decline molecular
-url https://portal.gdc.cancer.gov
-note GDC/TCGA — Genomik; 200 (2026-10-03).
-
-decline molecular
-url https://ega-archive.org
-note EGA — Genomik, Rohdaten DUA; 200 (2026-10-03).
-
-decline molecular
-url https://www.encodeproject.org
-note ENCODE — funktionelle Genomik; 200 (2026-10-03).
-
-decline molecular
-url https://gtexportal.org
-note GTEx — Expression; Portal 206, Rohsequenz DUA (2026-10-03).
-
-decline molecular
-url https://www.finngen.fi
-note FinnGen — Genomik, individual-level DUA; 206 (2026-10-03).
-
-decline molecular
-url https://www.ncbi.nlm.nih.gov/clinvar
-note ClinVar — Variantenklassifikation; 200 (2026-10-03).
-
-decline molecular
-url https://www.ncbi.nlm.nih.gov/sra
-note SRA — Rohsequenz; 200 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/ena/browser/
-note ENA — Rohsequenz; 206 (2026-10-03).
-
-decline molecular
-url https://data.humancellatlas.org
-note Human Cell Atlas — Einzelzell-Transkriptomik; 206 (2026-10-03).
-
-decline molecular
-url https://cellxgene.cziscience.com
-note CZ CELLxGENE — Single-Cell H5AD; 206 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/gxa/
-note Expression Atlas — differentielle Expression; 200 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/arrayexpress/
-note ArrayExpress — Transkriptomik; 200 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/pride/
-note PRIDE — Proteomik/mzML; 206 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/metabolights/
-note MetaboLights — Metabolomik; 206 (2026-10-03).
-
-decline molecular
-url https://www.ncbi.nlm.nih.gov/
-note NCBI GenBank/Entrez — Sequenz-/Expressionsdatenbank; kein Kraft-Kanal; 200 (2026-10-03).
-
-decline molecular
-url https://www.ensembl.org/
-note Ensembl — Genomsequenz/-annotation; 206 (2026-10-03).
-
-decline molecular
-url https://www.internationalgenome.org/
-note IGSR/1000 Genomes — Sequenz; 206 (2026-10-03).
-
-decline molecular
-url https://gnomad.broadinstitute.org/
-note gnomAD — Allelfrequenz-Aggregat; 206 (2026-10-03).
-
-decline molecular
-url https://datacommons.cancer.gov/repository/proteomic-data-commons
-note PDC — Proteomik; URL nicht per verdict gemessen (2026-10-03).
-
-decline molecular
-url https://www.proteinatlas.org/
-note Human Protein Atlas — Expressions-/Bilddatenbank; 200 (2026-10-03).
-
-decline molecular
-url https://www.metabolomicsworkbench.org/
-note Metabolomics Workbench — Spektren; 200 (2026-10-03).
-
-decline molecular
-url https://massbank.eu/
-note MassBank — Referenz-Massenspektren; 200 (2026-10-03).
-
-decline molecular
-url https://bmrb.io/
-note BMRB — NMR-Spektren; 200 (2026-10-03).
-
-decline molecular
-url https://www.informatics.jax.org/
-note MGI — Maus-Genomdatenbank; 200 (2026-10-03).
-
-decline molecular
-url https://zfin.org/
-note ZFIN — Zebrafisch-Genomdatenbank; 200 (2026-10-03).
-
-decline molecular
-url https://flybase.org/
-note FlyBase — Drosophila-Genomdatenbank; 206 (2026-10-03).
-
-decline molecular
-url https://wormbase.org/
-note WormBase — Nematoden-Genomdatenbank; 403 (2026-10-03).
-
-decline molecular
-url https://www.yeastgenome.org/
-note SGD — Hefe-Genomdatenbank; 200 (2026-10-03).
-
-decline molecular
-url https://www.arabidopsis.org/
-note TAIR — Pflanzengenom, Registrierung/lizenzpflichtig; 403 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/chembl/
-note ChEMBL — Bioaktivitäts-Datenbank; 200 (2026-10-03).
-
-decline molecular
-url https://www.crystallography.net/
-note COD — Kristallstrukturen (CIF); 200 (2026-10-03).
-
-decline molecular
-url https://webbook.nist.gov/
-note NIST WebBook — Referenzspektren; URL nicht per verdict gemessen (2026-10-03).
-
-decline molecular
-url https://www.bindingdb.org/
-note BindingDB — Bindungsaffinitäten; 206 (2026-10-03).
-
-decline molecular
-url https://tripod.nih.gov/tox21/
-note Tox21 — Toxikologie; 404 direkt, Daten via PubChem (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/pdbe/emdb/
-note EMDB — Kryo-EM-Dichtekarten; 200 (2026-10-03).
-
-decline molecular
-url https://www.ebi.ac.uk/interpro
-note InterPro — Proteinfamilien; 206 (2026-10-03).
-
-decline molecular
-url https://www.med.unc.edu/pgc/
-note PGC — psychiatrische GWAS-Summaries; 200 (2026-10-03).
-
-decline aggregate-index
-url https://www.ebi.ac.uk/gwas/
-note GWAS Catalog — kuratierte Assoziationen; 200 (2026-10-03).
-
-decline aggregate-index
-url https://api.opengwas.io/api/
-note IEU OpenGWAS — Summary-Statistik, Token; 200 (2026-10-03).
-
-decline aggregate-index
-url https://platform.opentargets.org
-note Open Targets — Target-Disease-Associationen; 206 (2026-10-03).
-
-decline reference
-url https://www.ebi.ac.uk/ols4
-note EBI OLS4 — Ontologien (HPO/DOID/MONDO); 206 (2026-10-03).
-
-decline reference
-url https://reactome.org
-note Reactome — Pfad-Wissensbasis; 206 (2026-10-03).
-
-decline reference
-url https://geneontology.org
-note Gene Ontology — Ontologie; 206 (2026-10-03).
-
-decline model
-url https://zinc.docking.org/
-note ZINC — Docking-Vorhersagen; 200 (2026-10-03).
-
-decline model
-url https://alphafold.ebi.ac.uk/
-note AlphaFold DB — vorhergesagte Strukturen; 200 (2026-10-03).
-
-decline model
-url https://www.ebi.ac.uk/biomodels
-note BioModels — SBML-Modelle; 206 (2026-10-03).
-
-decline commercial
-url https://www.ccdc.cam.ac.uk/
-note CCDC/CSD — lizenzpflichtig (akademische Lizenz); 206 (2026-10-03).
-
-decline commercial
-url https://go.drugbank.com/
-note DrugBank — kommerziell lizenziert; 403 direkt (Wayback, 2026-10-03).
-
-decline commercial
-url https://www.omim.org
-note OMIM — Mendelsche Gene, Registrierung/Subskription; 403 direkt (Wayback, 2026-10-03).
-
-decline registry
-url https://www.isrctn.com
-note ISRCTN — Studien-Registry; 200 (2026-10-03).
-
-decline registry
-url https://www.who.int/clinical-trials-registry-platform
-note WHO ICTRP — Meta-Registry; 200 (2026-10-03).
-
-decline registry
-url https://www.bfarm.de
-note BfArM — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
-
-decline registry
-url https://ec.europa.eu/tools/eudamed
-note EUDAMED — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
-
-decline registry
-url https://www.ema.europa.eu
-note EMA — Regulatorik; URL nicht per verdict gemessen (2026-10-03).
-
-decline literature
-url https://www.nber.org
-note NBER — Working Papers; 200 (2026-10-03).
-
-decline literature
-url https://www.medrxiv.org
-note medRxiv — Preprints; 206 (2026-10-03).
-
-decline literature
-url https://www.ebi.ac.uk/europepmc/webservices/rest/search
-note Europe PMC — Literaturindex; 200 (2026-10-03).
-
-decline superseded-by-catalog
-url https://datadc.ihep.ac.cn/resource/astro/lhaaso
-note LHAASO (gemessen 2026-10-03): API 200 (18 Datensätze), Rohklassen IHEP/CSTNET-gegated; der Katalog ist als `lhaaso_sky1` registriert (`phi/sources.φ`); Roh nicht nötig → descoped.
-
-decline not-eligible
-url https://catalogue.dataspace.copernicus.eu/stac/collections
-reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
-note CDSE-CCM (2026-10-03; Operator-Wort un-nutzbar): Download 401, Lizenzrolle U-R-P/N-P-A, Eligibility verfehlt; Ersatzwege leben (`copernicus-dem-30m.s3.amazonaws.com` 200, Sentinel) → descoped.
