@@ -78,7 +78,7 @@ impl Seasonal {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Register {
     Sources,
     Witnesses,
