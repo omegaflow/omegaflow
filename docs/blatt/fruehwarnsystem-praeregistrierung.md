@@ -2,7 +2,7 @@
   title: FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
   class: sheet
   date: 2026-10-01
-  sha256: e0d2f1810398b34cb11a7391c2d6d1fd41d35ecf5b89060e6711bf2e3926a711
+  sha256: c679d62089425c00ebacc587f5a808cfb28c8a23d3a10cffd4a7c5560e304a7e
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/specs/broken-null-control.md
 -->
@@ -64,29 +64,46 @@ trägt, Z fällt) wird als solcher benannt, nie zu einem Treffer geglättet.
 
 ## Status: unsealed
 
-Die α-Ebene bleibt `pending`, bis die kalibrierte Westfall–Young-max-T-Null
-(`wy-max-t`, CI-Lauf `36867148250`, laufend) gelandet ist. **Gegen eine
-unkontrollierte Familien-Schranke zu siegeln ist verboten** — ein Verschluss
-auf Ordnung 10⁻¹ wäre verdeckte Fabrication. Die Zelle wartet, sie wird nicht
-vorzeitig geschlossen.
+Die kalibrierte Westfall–Young-max-T-Null ist **gelandet** (CI-Lauf
+`37187464365`, success auf `ba9c640479`; neun Shards à 1111 Replikate, B = 9999,
+K = 6 distinkte Statistiken, gemeinsame saisonale Block-Bootstrap-Resample,
+α = 0.05, Seed je Station/Jahr). Der gemessene Stand ist **stationsabhängig**:
+
+- **Sodankylä 2024** (`wy-max-t-sod-2024-combined`): gepooltes (1−α)-Quantil der
+  studentisierten Maxima = **2.4831**, beobachtetes Familien-Maximum = **10.18** —
+  die Familie durchlässt; Bz→dB/dt, dB/dt→Bz, dB/dt→Speed, dB/dt→Density sind
+  familien-durchlassend (p_adj 1.0e-4, 1.0e-4, 1.1e-3, 1.9e-3), Speed→dB/dt und
+  Density→dB/dt liegen an der Familien-Schranke. n_eff ≈ **44.5** je Member; der
+  Lag-0/1-Identitätscheck ist 0.
+- **Abisko 2024 und 2025** (`wy-max-t-abk-2024/2025-combined`): `null-*.bin reads
+  void — no measurement` — der gepoolte Null bleibt unvollständig, **keine**
+  Abisko-Schranke wird behauptet (0 honored: die Absenz ist die Messung).
+
+Die α-Ebene ist damit für **Sodankylä 2024** aus der kalibrierten Null lesbar
+(α = 0.05). Für **Abisko** bleibt sie `pending` — gegen eine unvollständige
+gepoolte Null zu siegeln ist verboten. **Gegen eine unkontrollierte
+Familien-Schranke (Ordnung 10⁻¹) zu siegeln bleibt verboten.** Die
+BCa-Intervallkonstruktion ist benannt `pending` (der joint-stationary Jackknife
+ist nicht billig), nie fallengelassen.
 
 Offene Slots bis zur Versiegelung:
 
 | Feld | Zustand |
 |---|---|
-| α-Ebene | `pending` (braucht `wy-max-t`) |
-| Station X | `pending` (benannter Slot) |
+| α-Ebene | Sodankylä 2024: **gelesen** (α = 0.05, Quantil 2.4831); Abisko: `pending` (Null void) |
+| Station X | `pending` (benannter Slot; das Papier trägt Abisko und Sodankylä) |
 | Verzögerung Z | `pending` (benannter Slot; Rand-Bin unauflösbar) |
-| Bz-Schwellenwert | `pending` (braucht α) |
+| Bz-Schwellenwert | `pending` (braucht X und α) |
 | Sturm-Trigger | extern `wartend` (erster Sturm nach dem Siegel) |
 | Verdikt | `unsealed` |
-| Riss | keiner benannt |
+| Riss | benannt: Sodankylä-Null trägt, Abisko-Null void — kein stiller Mittelwert |
 
 ## Der Weg zur Versiegelung
 
-1. **Trigger:** Lauf-Ende der kalibrierten Null (`wy-max-t 36867148250`).
-2. Danach: α-Ebene aus der kalibrierten Null lesen, dann X, Z und die
-   Bz-Schwelle benennen.
+1. **Trigger:** Lauf-Ende der kalibrierten Null (`wy-max-t 37187464365`) —
+   **eingetroffen** (2026-10-04).
+2. Danach: α-Ebene aus der kalibrierten Null lesen (Sodankylä 2024: α = 0.05),
+   dann X, Z und die Bz-Schwelle benennen.
 3. **Das Siegel setzt der Operator** — kein Siegel ohne Operator-Wort; die
    Maschine bereitet bis zur Kante vor und trägt die Form, sie schließt nicht.
 

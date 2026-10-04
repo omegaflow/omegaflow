@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: b0953a126ab0a55d1d8497352772ea12a7b23558b80acd6b68cc04a724fd8c84
+  sha256: 09af946a3859e98b96bf89218271ab132842124c9c827bb63f3b06b6ed36280b
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -670,6 +670,24 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   explicit small-sample correction is applied and every reported TE value
   carries this negative bias; the correction (a subsample/`n_eff` bound) is an
   open construction.
+- **The calibrated round-maximum null is measured at Sodankylä 2024; the Abisko
+  pooled null stays incomplete.** The studentized Westfall–Young max-T
+  construction named at §3.2 now runs end-to-end
+  (`tools/measure/src/bin/wy_max_t_probe.rs`, `.github/workflows/wy-max-t.yml`,
+  CI run 37187464365, success on `ba9c640479`; nine shards of 1111 replicates
+  pooled into B = 9999, K = 6 distinct statistics, shared seasonal
+  block-bootstrap resample, α = 0.05, per-station/year seed). At Sodankylä 2024
+  the pooled (1−α) quantile of the studentized maxima is 2.4831 and the observed
+  family maximum is 10.18 — the family clears, with Bz→dB/dt, dB/dt→Bz,
+  dB/dt→Speed and dB/dt→Density family-clearing (p_adj 1.0e-4, 1.0e-4, 1.1e-3,
+  1.9e-3) and Speed→dB/dt, Density→dB/dt at the family bound; the operating
+  n_eff reads ≈ 44.5 for every member and the lag-0/1 identity check is 0. Both
+  Abisko points read `null-*.bin reads void — no measurement`: the pooled null
+  stays incomplete and no Abisko calibrated bound is claimed. The BCa
+  per-statistic interval is named `pending` (the joint-stationary jackknife is
+  not cheap). This replaces the plug-in `fam` bound (order 10⁻¹) for the
+  Sodankylä 2024 yearly round with a calibrated bound at α = 0.05; the plug-in
+  rows of §4 remain the historical record.
 - **Storm-only sub-analysis is measured and stays `pending` on the Kp channel.**
   The storm-selective round is built (`tools/measure/src/bin/gic_storm_probe.rs`,
   `.github/workflows/gic-storm.yml`, CI run 37118664799, success) and runs the

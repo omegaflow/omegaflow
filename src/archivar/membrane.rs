@@ -325,6 +325,99 @@ pub fn kernel_extent(
     0.0
 }
 
+pub fn granule_span_seconds(e: &BodyEphemeris) -> Option<f64> {
+    let mut lo = f64::INFINITY;
+    let mut hi = f64::NEG_INFINITY;
+    for g in &e.granules {
+        if !(g.t0_jd.is_finite() && g.dt_jd.is_finite() && g.dt_jd > 0.0) {
+            continue;
+        }
+        lo = lo.min(g.t0_jd - g.dt_jd);
+        hi = hi.max(g.t0_jd + g.dt_jd);
+    }
+    let span = (hi - lo) * 86400.0;
+    (span.is_finite() && span > 0.0).then_some(span)
+}
+
+pub fn body_anchor_samples(
+    name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+    epoch: f64,
+) -> Vec<Sample> {
+    let mut out = Vec::new();
+    let Some(be) = eph.get(name) else {
+        return out;
+    };
+    let Some(props) = be.props.as_ref() else {
+        eprintln!("body {name}: the ephemeris carries no props — no anchor");
+        return out;
+    };
+    let radius = props.radius_m;
+    if !(radius.is_finite() && radius > 0.0) {
+        eprintln!("body {name}: props carry no finite radius — no anchor");
+        return out;
+    }
+    let Some(ttl) = granule_span_seconds(be) else {
+        eprintln!("body {name}: granules carry no finite span — no anchor");
+        return out;
+    };
+    let motion = Motion::Barycenter {
+        body_name: name.to_string(),
+        scale: 1.0,
+    };
+    let Some((anchor_vmax, anchor_amax, anchor_p0)) = law_bounds(&motion, epoch, 0.0, eph) else {
+        return out;
+    };
+    let mut push = |val: f64, tau: f64, freq: f64, bin_width: f64, suffix: &str| {
+        out.push(Sample {
+            source: SampleSource::Ephemeris,
+            epoch,
+            ttl,
+            extent: radius,
+            tau,
+            kernel_id: 0.0,
+            force_type: 1.0,
+            absorption: absorption_for_force(1, 0.0),
+            advection: 0.0,
+            anchor_vmax,
+            anchor_amax,
+            anchor_p0,
+            motion: motion.clone(),
+            val,
+            name: format!("{name}.{suffix}"),
+            z: 0.0,
+            freq,
+            bin_width,
+            color_index: 0.0,
+            phase: None,
+        });
+    };
+    if let Some(gm) = props.gm.filter(|v| v.is_finite() && *v > 0.0) {
+        push(gm, f64::INFINITY, 0.0, 0.0, "mass");
+    } else {
+        eprintln!("body {name}: props carry no finite gm — the mass channel stays absent");
+    }
+    if let Some((omega_g, sigma)) = props
+        .omega_g
+        .filter(|(w, s)| w.is_finite() && *w > 0.0 && s.is_finite())
+    {
+        push(omega_g, 1.0 / omega_g, omega_g, sigma, "omega_g");
+    } else {
+        eprintln!("body {name}: props carry no omega_g — the rotation channel stays absent");
+    }
+    out
+}
+
+pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>, epoch: f64) -> Vec<Sample> {
+    let mut names: Vec<&String> = eph.keys().collect();
+    names.sort();
+    let mut out = Vec::new();
+    for name in names {
+        out.extend(body_anchor_samples(name, eph, epoch));
+    }
+    out
+}
+
 pub const AUDIO_SPEED_AIR: f64 = 343.0;
 pub const SEISMIC_BODY_SPEED: f64 = 6000.0;
 pub const SEISMIC_SURFACE_SPEED: f64 = 3000.0;
