@@ -39,6 +39,7 @@ jobs:
         run: |
           cargo run --release -p omegaflow-harvest --bin clpds_compiler -- \
             --out . \
+            --with-annex \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "clpds-cdn: CLPDS catalogue returned void" \
