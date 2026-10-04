@@ -9883,8 +9883,8 @@ field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-imaging.jpl.nasa.gov/pds3_img_m3g20081118t222604_v03_loc.bin
 format pds3_img
-origin https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.HDR
-origin https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.IMG
+origin https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.HDR
+origin https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.IMG
 compiler tools/harvest/src/bin/pds3_img_compiler.rs
 sha256 5771de9891015b2ee50c436fbbfe7e87f6c5a15332d7d0505e3792505d1851c4
 at moon
@@ -16516,7 +16516,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-hori
 format ephemeris_binary
 origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 cca3d4cd47b9b1b94b18c2a01682ff71764aa99dcc35939420f05002a6d41312
+sha256 28568e3cadc1a864ac54c5b06cdc9267eeded9b45b9452f0be3bd369d63e9e16
 at new_horizons
 no-cadence
 
@@ -16547,7 +16547,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-hori
 format ephemeris_binary
 origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 185f2c188115598aef5e56000b392e14d40935025a809bfda9ffd7e86dd1afd9
+sha256 459a3912612ae43c7bdbb453c638375c25f09a08a14810133424e0982ae8b7bf
 at voyager1
 no-cadence
 
@@ -16555,7 +16555,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-hori
 format ephemeris_binary
 origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
 compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 dfaa08fc76b1fba7aed4c8a26a659c9f0187bd3f4d46bf2843be7996763c6b10
+sha256 8d716add977f245f207f2467962b5c55d86566858855adef37995f7f5d9a9682
 at voyager2
 no-cadence
 

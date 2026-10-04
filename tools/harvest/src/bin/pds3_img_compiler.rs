@@ -10,8 +10,8 @@ const MINIRF_NETLOC: &str = "pds-geosciences.wustl.edu";
 const M3_NETLOC: &str = "pds-imaging.jpl.nasa.gov";
 const MINIRF_SAMPLE_LABEL: &str = "https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/data/sar/00700_00799/level1/fsb_00720_1cd_xhu_84n209_v1.lbl";
 const MINIRF_SAMPLE_IMG: &str = "https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/data/sar/00700_00799/level1/fsb_00720_1cd_xhu_84n209_v1.img";
-const M3_SAMPLE_HDR: &str = "https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.HDR";
-const M3_SAMPLE_IMG: &str = "https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.IMG";
+const M3_SAMPLE_HDR: &str = "https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.HDR";
+const M3_SAMPLE_IMG: &str = "https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.IMG";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
