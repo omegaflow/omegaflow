@@ -3,7 +3,7 @@
   session: Mountain-Folge 231
   class: handover
   date: 2026-10-04
-  sha256: de41e0a12b12e714f3eab2032017c92c68d4c94864b0941f2a41095960a70fa2
+  sha256: 7f0346bbc2ad0a70970c374dfa9130c3a6a9687b54997d48e3f4d151beee6e0d
   status: live
 -->
 # Handover — Mountain-Folge 231 (2026-10-04)
@@ -68,7 +68,7 @@ Wort | Datum | Quelle
 ### Schwarm-Ernte gras_2c — Online-Chat + API-Stimmen bestätigen den Rat
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der detached Lauf `state/stimmen/voice-all-2026-10-04_154008/` (PID 18384) endet.
-- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt steht** (Vakuum-Einweg, ε-unabhängig; 42 `range 0.0 0.01722`; Spec `e9952d96…`). **Online-Chats (Web-UI):** **Kimi K3** (tryingopen, Deep) — Reasoning bestätigt wörtlich „free-space (vacuum) two-way time delay converted to apparent range using c, NOT corrected for dielectric… eps_r is unknown a priori"; rechnet `c·T_p·f_s/(2·B·N)=0.0172 m` nach; CH2-Offset nicht public. **Claude** (claude.ai, Sonnet 5.5) — schärfste Antwort (Chat-Claims, **am Baum noch unverifiziert**): Achse = Zweiweg-Zeit `τ_k = k·0.11489 ns` (k=0..2047) ohne Instrumenten-Korrektur; abgeleitetes Feld = freie-Einweg-Range `k·0.01722 m`; Tiefe nur mit benanntem ε. **CH2-Offset nicht publiziert** — CE-4 LPR hat 28.203 ns (Lai+2021), CH2 empirisch 10–20 ns (Chen+2023 ~18 ns, Zou+2024 Oberflächen-Echo ~19 ns); ε(CH2) ≈ 3 (Chen) bzw. 3.29±0.24 (Zou) → ε=4 wäre ~9 % zu flach. Quellen: Zhou+2020 `10.26464/epp2020054`, Liu+2023 `mdpi 15/4/966`, Tan+2021 `10.1007/s11214-021-00843-6`, Lai+2021 `mdpi 13/20/4056`. **GLM** (z.ai-UI sandte nicht; tryingopen-GLM 5.3 „run out of API credit") → Route kontingent-blockiert. **API-Schwarm 17/29:** `gemini-3.1-flash-lite` deckt sich. **Kein Register-Change.**
+- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt steht** (Vakuum-Einweg, ε-unabhängig; 42 `range 0.0 0.01722`; Spec `e9952d96…`). **Online-Chats (Web-UI):** **Kimi K3** (tryingopen, Deep) — Reasoning bestätigt wörtlich „free-space (vacuum) two-way time delay converted to apparent range using c, NOT corrected for dielectric… eps_r is unknown a priori"; rechnet `c·T_p·f_s/(2·B·N)=0.0172 m` nach; CH2-Offset nicht public. **Claude** (claude.ai, Sonnet 5.5) — schärfste Antwort (Chat-Claims, **am Baum noch unverifiziert**): Achse = Zweiweg-Zeit `τ_k = k·0.11489 ns` (k=0..2047) ohne Instrumenten-Korrektur; abgeleitetes Feld = freie-Einweg-Range `k·0.01722 m`; Tiefe nur mit benanntem ε. **CH2-Offset nicht publiziert** — CE-4 LPR hat 28.203 ns (Lai+2021), CH2 empirisch 10–20 ns (Chen+2023 ~18 ns, Zou+2024 Oberflächen-Echo ~19 ns); ε(CH2) ≈ 3 (Chen) bzw. 3.29±0.24 (Zou) → ε=4 wäre ~9 % zu flach. Quellen: Zhou+2020 `10.26464/epp2020054`, Liu+2023 `mdpi 15/4/966`, Tan+2021 `10.1007/s11214-021-00843-6`, Lai+2021 `mdpi 13/20/4056`. **GLM:** z.ai GLM-5.3 (Deep Think) — eine Anfrage ging durch, blieb aber >20 min auf „Thinking" ohne Antwort; der frische Re-Versuch lädt unter Automation einen alten Chat; tryingopen-GLM 5.3 meldet „run out of API credit" → **unter Automation kein GLM-Ergebnis** (Tab offen; Operator-Hand oder später). **API-Schwarm 17/29:** `gemini-3.1-flash-lite` deckt sich. **Kein Register-Change.**
 - **Blockade:** keine (gras entschieden); GLM-Route kontingent-blockiert.
 - **Braucht:** Claude-Claims (CE-4 28.203 ns, ε≈3, CH2-Offset ~10–20 ns) am Baum `archive_search --verdict`/PDF gegenverifizieren, bevor sie als Verdikt zählen; Rest-API-Ausgaben lesen.
 
