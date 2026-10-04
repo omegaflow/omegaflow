@@ -11,7 +11,13 @@ const STAR_OCCUPANCY_TARGET: f64 = 5.0;
 type StarFields = (f64, f64, f64, f64, f64, f64, f64, f64, f64);
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
-pub struct StarCellKey(pub (i64, i64, i64));
+pub struct StarCellKey {
+    pub level: u8,
+    pub cell: (i64, i64, i64),
+}
+
+const STAR_LEAF_TARGET: usize = 32;
+const STAR_MAX_LEVEL: u8 = 40;
 
 pub struct SpatialHash {
     pub cell_size: f64,
@@ -92,12 +98,98 @@ pub fn cell_of(p: [f64; 3], s: f64) -> CellKey {
     )
 }
 
+fn star_cell_at(p: [f64; 3], s: f64, level: u8) -> StarCellKey {
+    StarCellKey {
+        level,
+        cell: (
+            (p[0] / s).floor() as i64,
+            (p[1] / s).floor() as i64,
+            (p[2] / s).floor() as i64,
+        ),
+    }
+}
+
 pub fn star_cell_of(p: [f64; 3], s: f64) -> StarCellKey {
-    StarCellKey((
-        (p[0] / s).floor() as i64,
-        (p[1] / s).floor() as i64,
-        (p[2] / s).floor() as i64,
-    ))
+    star_cell_at(p, s, 0)
+}
+
+fn star_cell_key(p: [f64; 3], base: f64, level: u8) -> StarCellKey {
+    star_cell_at(p, base / (1u64 << level.min(40)) as f64, level)
+}
+
+fn star_cell_bounds(ci: i64, base: f64, level: u8) -> (f64, f64) {
+    let s = base / (1u64 << level.min(40)) as f64;
+    (ci as f64 * s, (ci as f64 + 1.0) * s)
+}
+
+fn build_star_leaves(
+    stars: Vec<Arc<Sample>>,
+    base: f64,
+    level: u8,
+    out: &mut HashMap<StarCellKey, Vec<Arc<Sample>>>,
+) {
+    if stars.is_empty() {
+        return;
+    }
+    let mut by_cell: HashMap<StarCellKey, Vec<Arc<Sample>>> = HashMap::new();
+    for s in stars {
+        by_cell
+            .entry(star_cell_key(s.anchor_p0, base, level))
+            .or_default()
+            .push(s);
+    }
+    for (key, group) in by_cell {
+        if group.len() <= STAR_LEAF_TARGET || level >= STAR_MAX_LEVEL {
+            out.insert(key, group);
+        } else {
+            build_star_leaves(group, base, level + 1, out);
+        }
+    }
+}
+
+fn descend_star_cells<F: FnMut(&Vec<Arc<Sample>>)>(
+    hash: &SpatialHash,
+    level: u8,
+    ci: i64,
+    cj: i64,
+    ck: i64,
+    qlo: [f64; 3],
+    qhi: [f64; 3],
+    emit: &mut F,
+) {
+    let key = StarCellKey {
+        level,
+        cell: (ci, cj, ck),
+    };
+    if let Some(v) = hash.star_cells.get(&key) {
+        emit(v);
+        return;
+    }
+    if level >= STAR_MAX_LEVEL {
+        return;
+    }
+    let base = hash.cell_size_star;
+    let child = level + 1;
+    for di in 0..2i64 {
+        for dj in 0..2i64 {
+            for dk in 0..2i64 {
+                let (ci2, cj2, ck2) = (2 * ci + di, 2 * cj + dj, 2 * ck + dk);
+                let (xlo, xhi) = star_cell_bounds(ci2, base, child);
+                if xhi < qlo[0] || xlo > qhi[0] {
+                    continue;
+                }
+                let (ylo, yhi) = star_cell_bounds(cj2, base, child);
+                if yhi < qlo[1] || ylo > qhi[1] {
+                    continue;
+                }
+                let (zlo, zhi) = star_cell_bounds(ck2, base, child);
+                if zhi < qlo[2] || zlo > qhi[2] {
+                    continue;
+                }
+                descend_star_cells(hash, child, ci2, cj2, ck2, qlo, qhi, emit);
+            }
+        }
+    }
 }
 
 pub fn star_cell_size(stars: &[Arc<Sample>]) -> f64 {
@@ -208,19 +300,19 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         star_epoch_min = star_epoch_min.min(s.epoch);
     }
     let cell_size_star = star_cell_size(&stars);
-    let mut star_cells: HashMap<StarCellKey, Vec<Arc<Sample>>> = HashMap::new();
     let mut star_lo = (i64::MAX, i64::MAX, i64::MAX);
     let mut star_hi = (i64::MIN, i64::MIN, i64::MIN);
-    for s in stars {
-        let c = star_cell_of(s.anchor_p0, cell_size_star).0;
+    for s in &stars {
+        let c = star_cell_of(s.anchor_p0, cell_size_star).cell;
         star_lo.0 = star_lo.0.min(c.0);
         star_lo.1 = star_lo.1.min(c.1);
         star_lo.2 = star_lo.2.min(c.2);
         star_hi.0 = star_hi.0.max(c.0);
         star_hi.1 = star_hi.1.max(c.1);
         star_hi.2 = star_hi.2.max(c.2);
-        star_cells.entry(StarCellKey(c)).or_default().push(s);
     }
+    let mut star_cells: HashMap<StarCellKey, Vec<Arc<Sample>>> = HashMap::new();
+    build_star_leaves(stars, cell_size_star, 0, &mut star_cells);
     SpatialHash {
         cell_size,
         anchor_vmax,
@@ -235,8 +327,14 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         cells,
         cell_size_star,
         star_cells,
-        star_lo: StarCellKey(star_lo),
-        star_hi: StarCellKey(star_hi),
+        star_lo: StarCellKey {
+            level: 0,
+            cell: star_lo,
+        },
+        star_hi: StarCellKey {
+            level: 0,
+            cell: star_hi,
+        },
         star_epoch_min,
     }
 }
@@ -674,50 +772,32 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
         }
     };
     if !hash.star_cells.is_empty() {
-        let qf = center;
-        let rho_star = star_rho;
         let s = hash.cell_size_star;
-        let qlo = star_cell_of([qf[0] - rho_star, qf[1] - rho_star, qf[2] - rho_star], s).0;
-        let qhi = star_cell_of([qf[0] + rho_star, qf[1] + rho_star, qf[2] + rho_star], s).0;
-        let star_lo = hash.star_lo.0;
-        let star_hi = hash.star_hi.0;
+        let qlo = [
+            center[0] - star_rho,
+            center[1] - star_rho,
+            center[2] - star_rho,
+        ];
+        let qhi = [
+            center[0] + star_rho,
+            center[1] + star_rho,
+            center[2] + star_rho,
+        ];
         let lo = (
-            qlo.0.max(star_lo.0),
-            qlo.1.max(star_lo.1),
-            qlo.2.max(star_lo.2),
+            ((qlo[0] / s).floor() as i64).max(hash.star_lo.cell.0),
+            ((qlo[1] / s).floor() as i64).max(hash.star_lo.cell.1),
+            ((qlo[2] / s).floor() as i64).max(hash.star_lo.cell.2),
         );
         let hi = (
-            qhi.0.min(star_hi.0),
-            qhi.1.min(star_hi.1),
-            qhi.2.min(star_hi.2),
+            ((qhi[0] / s).floor() as i64).min(hash.star_hi.cell.0),
+            ((qhi[1] / s).floor() as i64).min(hash.star_hi.cell.1),
+            ((qhi[2] / s).floor() as i64).min(hash.star_hi.cell.2),
         );
         if lo.0 <= hi.0 && lo.1 <= hi.1 && lo.2 <= hi.2 {
-            let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
-                .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
-                .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
-            let in_box = |ck: &StarCellKey| {
-                let c = ck.0;
-                c.0 >= lo.0
-                    && c.0 <= hi.0
-                    && c.1 >= lo.1
-                    && c.1 <= hi.1
-                    && c.2 >= lo.2
-                    && c.2 <= hi.2
-            };
-            if span > hash.star_cells.len() as u64 * 4 {
-                for (ck, v) in &hash.star_cells {
-                    if in_box(ck) {
-                        emit_star(v);
-                    }
-                }
-            } else {
-                for cx in lo.0..=hi.0 {
-                    for cy in lo.1..=hi.1 {
-                        for cz in lo.2..=hi.2 {
-                            if let Some(v) = hash.star_cells.get(&StarCellKey((cx, cy, cz))) {
-                                emit_star(v);
-                            }
-                        }
+            for ci in lo.0..=hi.0 {
+                for cj in lo.1..=hi.1 {
+                    for ck in lo.2..=hi.2 {
+                        descend_star_cells(hash, 0, ci, cj, ck, qlo, qhi, &mut emit_star);
                     }
                 }
             }
