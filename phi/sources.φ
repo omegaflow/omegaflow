@@ -12283,6 +12283,7 @@ compiler tools/harvest/src/bin/pradan_ch2_compiler.rs
 sha256 f0fd23d680eadae2d8a7317a32aa41deac8e57cf18dee7393a079b6bc016db1f
 at moon
 ttl 604800
+field pradan_ch2_cla_l1_counts pradan_ch2_cla_l1_counts inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 format gosat_tanso3

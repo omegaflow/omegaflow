@@ -3,7 +3,7 @@
   session: Mountain-Folge 230
   class: handover
   date: 2026-10-04
-  sha256: 59a38e9198b865345a9a156c20b7d23e6ff7d4d89777f56af6319cc36e469b4f
+  sha256: f163a24bb02aa11c9a297541c3bf5bd893b237dd8bfdecb785da761978dbf215
   status: live
 -->
 # Handover — Mountain-Folge 230 (2026-10-04)
@@ -76,20 +76,12 @@ Wort | Datum | Quelle
 - **Blockade:** kein `AstroSample`/Richtungs-Slot — weder das 26×f64-Wire noch der `SeriesRow`-Strom trägt eine bewegte (ra,dec)-Serie; AST1 wird geparst + für das Register gehalten, nie zu einem Skalar flachgeklopft. Die 2 Gaia-ADQL: `vari_classifier_result` korrigiert HTTP 200, `cluster_ka` HTTP 400 (Cluster-Tabelle außerhalb Gaia-TAP).
 - **Braucht:** einen Richtungs-/`AstroSample`-Wire-Slot definieren; bis dahin `format astrometry_series` (ohne `cmap`/`field`) registrierbar (`url`/`origin`/`compiler` = Transport). **Contract-Entwurf liegt** (2026-10-04, read-only): der ankerlose Kanal (EEG) + die Richtungs-Serie (AST1) brauchen denselben fehlenden Slot — `station_code`/`name` tragen das Label, der ICRS-Rahmen bleibt absent (0 honored). Entscheid offen. Träger: `phi/blocked_sources.φ::gap:astrometry-reader ×7`, `::gap:curation ×2`.
 
-### pradan_ch2-Reader — gebaut (ZIP+FITS), `field`-Zeile offen
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) Reader gebaut: `src/archivar/pradan_ch2.rs` + std-only `zip_members` (`src/archivar/inflate.rs`), Format in `series_parse_bin`/`series_component_name`/`main_flow` verdrahtet. Inner shape: FITS `SPECTRUM`-BINTABLE `CHANNEL`(I2)/`COUNTS`(E, count) + leere Primary; Wert = Σ`COUNTS`, t = Beobachtungsstart TDB. **Member-Korrektur:** 27 237 `.fits` + 27 237 `.xml` (nicht 54 474 Paare — die frühere Zahl war doppelt). `cargo check`/build 0/0.
-- **Blockade:** die `field`-Zeile fehlt; `phi/sources.φ` ist geteilt (fremder bidsleep-Hunk), die Zeile liegt uncommittet im Baum.
-- **Braucht:** `field pradan_ch2_cla_l1_counts pradan_ch2_cla_l1_counts inverse-square em count 604800 0.0 0.0` in den pradan-Block (`phi/sources.φ`) → beim Freigeben der Datei committen.
-
 ### Medizinische/Life-Science-Datenquellen — disponiert (3 gewollte als pending)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt die Decline-Zeilen (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org`, `TUH EEG`, `NSRR`. **Weberin-Eignung (`SOURCE_PORT.md §8`, vier Punkte) nachgetragen:** die Declines scheitern an Punkt 1 (kein Kraft-/Zeugen-Träger → Oszillator-Gate, Punkte 2–4 damit gegenstandslos); die 3 gewollten tragen (1) `electric` ✓ (2) Zeitreihe ✓ (3) 4D-Anker **fehlt** (kein ICRS/Körper-Ort je Elektrode) (4) zweite Linie ✓ (OpenNeuro/PhysioNet-EEG). **Korrigiert:** kein bidsleep-Riss — `sources.φ:3415` `advective m/s²` ist Accelerometrie (`G_STANDARD`, `bidsleep_compiler.rs:14`) und korrekt; echte Lücke: OpenNeuro (`openneuro_pd_eeg`, 99 Blöcke) parst, emittiert aber **0 Kanäle** (`main_flow.rs:3175` „electrode positions carry no body frame").
+- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt die Decline-Zeilen (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org`, `TUH EEG`, `NSRR`. **Weberin-Eignung (`SOURCE_PORT.md §8`, vier Punkte) nachgetragen:** die Declines scheitern an Punkt 1 (kein Kraft-/Zeugen-Träger → Oszillator-Gate, Punkte 2–4 damit gegenstandslos); die 3 gewollten tragen (1) `electric` ✓ (2) Zeitreihe ✓ (3) 4D-Anker **fehlt** (kein ICRS/Körper-Ort je Elektrode) (4) zweite Linie ✓. **Korrigiert:** kein bidsleep-Riss — `advective m/s²` ist Accelerometrie (`G_STANDARD`). OpenNeuro (`openneuro_pd_eeg`, 99 Blöcke) emittiert jetzt `electric`-V-Kanäle je Elektrode am Anker (`openneuro_eeg.rs`, ohne ICRS-/Kopf-Rahmen); der std-only EDF/EDF+-Parser (`src/archivar/edf.rs`) liegt bereit.
 - **Blockade:** für die 3 gewollten fehlt Arm+Asset; der Zugang ist Registrierung/DUA (operator-gebunden).
-- **Braucht:** iEEG-/TUH-/NSRR-Zugang + Arm/Compiler/Asset; EDF-Parser liegt bereit, sobald ein Asset da ist.
-- **Gebaut (2026-10-04):** OpenNeuro-EEG-Kanal-Slot — der Arm emittiert jetzt gedecimierte `electric`-V-Kanäle je Elektrode am Anker (`station_code`, ohne ICRS-/Kopf-Rahmen, kein Fabrikat; `main_flow.rs`/`openneuro_eeg.rs`, Test); die 99 `openneuro_pd_eeg`-Blöcke strahlen damit. Plus std-only EDF/EDF+-Parser (`src/archivar/edf.rs`, Header+Signale+physikalische Konversion, 4 Tests).
+- **Braucht:** iEEG-/TUH-/NSRR-Zugang + Arm/Compiler/Asset (EDF-Parser steht).
 
 ## Träger (Prosa, eigene)
 
