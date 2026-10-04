@@ -2,7 +2,7 @@
   title: FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
   class: sheet
   date: 2026-10-01
-  sha256: c679d62089425c00ebacc587f5a808cfb28c8a23d3a10cffd4a7c5560e304a7e
+  sha256: 71a33ffd6fc92b04624203c6182a30ed213eae07a9698cf8726e73013124ace5
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/specs/broken-null-control.md
 -->
@@ -23,8 +23,10 @@ kalibrierte Null gelandet ist.
   sub-daily-Treiber (`docs/paper/gic-causal-driver.md:17`, Abstract). Der
   Schwellenwert selbst ist `pending` — die kalibrierte Familien-Schranke
   existiert noch nicht, und ein Wert ohne sie wäre fabriziert.
-- **dB/dt an Station X** — der gemessene Boden-Proxy (stündliche bzw. tägliche
-  Maxima des Bodennagnetfelds). **X ist ein benannter, offener Slot.** Die
+- **dB/dt an Station X** — der gemessene Boden-Proxy (**1-min-dB/dt an X**;
+  stündliche/tägliche Maxima bleiben der Ausgangszeuge — der Lag-0/1-Rand-Bin
+  trägt die Verzögerung nicht, `docs/paper/gic-causal-driver.md` §3.1/§5).
+  **X ist ein benannter, offener Slot.** Die
   gemessenen Stationen des Papiers sind Abisko (68.36° N) und Sodankylä; welche
   Station die Zelle führt, wird vor der Versiegelung benannt, nicht gesetzt.
 - **Verzögerung Z** — die Zeit zwischen Bz-Schwellenübertritt und dB/dt-Übertritt
@@ -92,7 +94,7 @@ Offene Slots bis zur Versiegelung:
 |---|---|
 | α-Ebene | Sodankylä 2024: **gelesen** (α = 0.05, Quantil 2.4831); Abisko: `pending` (Null void) |
 | Station X | `pending` (benannter Slot; das Papier trägt Abisko und Sodankylä) |
-| Verzögerung Z | `pending` (benannter Slot; Rand-Bin unauflösbar) |
+| Verzögerung Z | `pending` (benannter Slot; am 1-min-Korn auflösbar — Rats-Verdikt 2026-10-05: zulässige Präzisierung (b), kein neues α, kein neues Fehlschlag-Kriterium) |
 | Bz-Schwellenwert | `pending` (braucht X und α) |
 | Sturm-Trigger | extern `wartend` (erster Sturm nach dem Siegel) |
 | Verdikt | `unsealed` |
