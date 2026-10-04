@@ -3,7 +3,7 @@
   session: Mountain-Folge 233
   class: handover
   date: 2026-10-04
-  sha256: 489f2f8fffa73b47053db3cbf6a5b1fb77c589c6e47e521f205c1a1b6bef671e
+  sha256: d55b4ddb121437900e0d3bbf3ad6026fd7d6e3dae6348c72d4858030f3b574ae
   status: live
 -->
 # Handover — Mountain-Folge 233 (2026-10-04)
@@ -16,7 +16,7 @@ river-90, sensory-229): die meisten maßen gegen eine im Baum bereits erledigte
 Prämisse (witnesses-Textserien, declustered Mainshock-Set, Medizin-Pool-Disposition,
 Swarm TEC, catalog_epoch).
 
-## Burn: open 0.005 · close 0.21 · cap 0.30 Grund: Runde flash-first — 4 grind-flash-Messungen (PDS-Felder, Disposition, witnesses, Medizin) + Line, kein pro/max (Operator-Wort „braucht es pro?" → flash)
+## Burn: open 0.005 · close 0.25 · cap 0.30 Grund: Runde flash-first — 4 grind-flash-Messungen (PDS-Felder, Disposition, witnesses, Medizin) + Line, kein pro/max (Operator-Wort „braucht es pro?" → flash)
 
 ## Operator-Wort-Register
 
@@ -39,19 +39,7 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Vega MISCHA — Vektor-Restspalten BT/BU/BUXPSSO/FLAG
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner (sofort)
-- **Lage:** Das Vektor-Schema trägt 8 Spalten; kartiert sind BX/BY/BZ (`pds3_mischa_{bx,by,bz}_pso`, 196 Blöcke), `pds3_mischa_bt`/`_bu`/`_bux` = 0 (gemessen 2026-10-04 via `sgrep -c` in `phi/sources.φ`); Note in `phi/blocked_sources.φ` trägt den Stand.
-- **Blockade:** Force-Gate-Verdikt je Spalte fehlt (BT = Gesamtfeld-Magnitude, derivativ; BU/BUX = Rahmenkomponenten; FLAG = Qualitätsflag).
-- **Braucht:** die `DESCRIPTION`-Zeilen zu BT/BU/BUX in `https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1984/1228s.lbl` lesen (`archive_search --verdict`, Label steht), Verdikt setzen (BX/BY/BZ-analog `em nT` oder DROP mit Grund; FLAG DROP); bei Aufnahme Port über `register_field_map`, keine Hand-196-Blöcke.
-
-### Pipeline-Register — zwei unbacked Zeilen
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner (sofort)
-- **Lage:** (gemessen 2026-10-04 via `glob`) `phi/pipeline/index.φ:2` `descoped 0 pipeline/queue/master.φ` — Ziel absent, kein Befund. (gemessen 2026-10-04 via `sread`) `phi/pipeline/ledger.φ:14-16` LIMADOU verweist auf `blocked_sources.φ:135`; dort steht clpds.bao.ac.cn, LIMADOU ist `:127-128` (Zitatdrift).
-- **Blockade:** keine
-- **Braucht:** `index.φ:2` gegen die Historie messen (`git log --oneline -S master.φ`), Direktive entfernen oder Befund setzen; `ledger.φ` LIMADOU-Ref auf den Eintrag korrigieren (Key statt Zeilennummer).
+(keine — alle eigenen Punkte dieses Atoms gearbeitet.)
 
 ## Träger (Prosa, eigene)
 
@@ -69,14 +57,6 @@ Wort | Datum | Quelle
 Origin: mountain folge233.
 
 - **PDS-Feld-Verdikte (Registrierung + Manifest):** Phobos 2 KRFM — `format pds3_fixed_width`, `at mars`, `field RADIOMETER1..5`/`PHOTOMETER1..9` je `inverse-square em count` (W/m2/sr-Kalibrierung fehlt — Riss, `count` statt fabriziertem Radiant). Hayabusa LIDAR — `format pds4_fixed_width`, `at itokawa`, nur `field RANGE hay_lidar_range inverse-square em km` (übrige 30 Spalten Geometrie/Anker/DROP). Arme + Workflows stehen (`pds3-fixed-width-cdn.yml`, `pds4-fixed-width-cdn.yml`, `phi/harvest.φ`).
-
-## An river
-
-Origin: mountain folge233.
-
-- **witnesses-Textserien stehen bereits** (`gbco` `witnesses.φ:186-194`, `gmrt` `:196-199`, byte-genau gemessen 261329/261378/1719152 B) — kein neuer Block; `gl30`/`SRTM15+`/`rixs` bleiben gestalt (kein Text-Endpunkt).
-- **declustered Mainshock-Set steht** (`witnesses.φ:180-184`, `record erbq_mainshock`, 153 M≥7, Gardner-Knopoff); offen allein die Zitatdrift `erbq-solar.te:3` (zitiert `witnesses.φ:151-155` = Chile-Block; ToHoku 198 liegt `:156-160`).
-- **`f107_penticton`** `field`-Zeile ergänzt (`phi/sources.φ:24077`: `field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0`); Deskriptor kann alternativ auf das live Feld `solar_f107_flux_sfu` zeigen.
 
 ## An future
 

@@ -1,6 +1,6 @@
 # erbq-solar.te — first witness measurement over the witnesses arm of field_te_query.
 # driver: solar-wind IMF Bz, omni_hro_imf_bz_gsm_nt (phi/sources.φ:760, CDN omni_hro_1min.bin, 60 s)
-# target: point-event witness point-event#1 (Tohoku seismicity, phi/witnesses.φ:151-155)
+# target: point-event witness point-event#1 (Tohoku seismicity, phi/witnesses.φ:156-160)
 # the sparse point-event train is counted per declared bin; an empty bin stays pending, never 0.0
 # 2026-10-03 descoped as a TE test (gemessen): (1) the sparse train drops empty bins, which
 # conditions on the outcome; (2) the phase-randomized null preserves no Omori clustering;
