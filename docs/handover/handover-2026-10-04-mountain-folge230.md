@@ -3,7 +3,7 @@
   session: Mountain-Folge 230
   class: handover
   date: 2026-10-04
-  sha256: b1398069e71850011d2ac4ec337f78b1685eee56ef07e2ef835d547a93beb55c
+  sha256: 140d22b16d3689f9427cb1a95922c37076ea1672eb4fabc12c9f8c662849b9a8
   status: live
 -->
 # Handover — Mountain-Folge 230 (2026-10-04)
@@ -86,9 +86,10 @@ Wort | Datum | Quelle
 ### Medizinische/Life-Science-Datenquellen — disponiert (3 gewollte als pending)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt die Decline-Zeilen (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org`, `TUH EEG`, `NSRR`. **Weberin-Eignung (`SOURCE_PORT.md §8`, vier Punkte) nachgetragen:** die Declines scheitern an Punkt 1 (kein Kraft-/Zeugen-Träger → Oszillator-Gate, Punkte 2–4 damit gegenstandslos); die 3 gewollten tragen (1) `electric` ✓ (2) Zeitreihe ✓ (3) 4D-Anker **fehlt** (kein ICRS/Körper-Ort je Elektrode) (4) zweite Linie ✓ (OpenNeuro/PhysioNet-EEG). Riss benannt: `sources.φ:3415` (bidsleep) deklariert `advective m/s²`, physikalisch Elektrodenpotential.
-- **Blockade:** für die 3 gewollten fehlt Arm+Asset; der Zugang ist Registrierung/DUA (operator-gebunden); der 4D-Anker fehlt.
-- **Braucht:** iEEG-/TUH-/NSRR-Zugang + Arm/Compiler/Asset; 4D-Anker je Elektrode (oder bewusst `on earth` ohne Ort) entscheiden; Riss-Entscheid `advective m/s²` vs `electric V`.
+- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt die Decline-Zeilen (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org`, `TUH EEG`, `NSRR`. **Weberin-Eignung (`SOURCE_PORT.md §8`, vier Punkte) nachgetragen:** die Declines scheitern an Punkt 1 (kein Kraft-/Zeugen-Träger → Oszillator-Gate, Punkte 2–4 damit gegenstandslos); die 3 gewollten tragen (1) `electric` ✓ (2) Zeitreihe ✓ (3) 4D-Anker **fehlt** (kein ICRS/Körper-Ort je Elektrode) (4) zweite Linie ✓ (OpenNeuro/PhysioNet-EEG). **Korrigiert:** kein bidsleep-Riss — `sources.φ:3415` `advective m/s²` ist Accelerometrie (`G_STANDARD`, `bidsleep_compiler.rs:14`) und korrekt; echte Lücke: OpenNeuro (`openneuro_pd_eeg`, 99 Blöcke) parst, emittiert aber **0 Kanäle** (`main_flow.rs:3175` „electrode positions carry no body frame").
+- **Blockade:** für die 3 gewollten fehlt Arm+Asset; der Zugang ist Registrierung/DUA (operator-gebunden).
+- **Braucht:** iEEG-/TUH-/NSRR-Zugang + Arm/Compiler/Asset; EDF-Parser liegt bereit, sobald ein Asset da ist.
+- **Gebaut (2026-10-04):** OpenNeuro-EEG-Kanal-Slot — der Arm emittiert jetzt gedecimierte `electric`-V-Kanäle je Elektrode am Anker (`station_code`, ohne ICRS-/Kopf-Rahmen, kein Fabrikat; `main_flow.rs`/`openneuro_eeg.rs`, Test); die 99 `openneuro_pd_eeg`-Blöcke strahlen damit. Plus std-only EDF/EDF+-Parser (`src/archivar/edf.rs`, Header+Signale+physikalische Konversion, 4 Tests).
 
 ## Träger (Prosa, eigene)
 

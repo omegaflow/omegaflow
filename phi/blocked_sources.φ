@@ -230,7 +230,7 @@ note Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR
 
 pending
 url https://www.ieeg.org
-note ieeg.org (UPenn) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (kein ICRS je Elektrode) (4) zweite Linie OpenNeuro/PhysioNet-EEG. Zugang Registrierung+User Agreement; Arm+Asset fehlen. Riss: sources.φ:3415 advective m/s².
+note ieeg.org (UPenn) — Weberin §8: (1) electric ✓ (2) Zeitreihe ✓ (3) 4D-Anker fehlt (kein ICRS je Elektrode) (4) zweite Linie OpenNeuro/PhysioNet-EEG. Zugang Registrierung+User Agreement; Arm+Asset fehlen.
 
 pending
 url https://isip.piconepress.com/projects/tuh_eeg/
