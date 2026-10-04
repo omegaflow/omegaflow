@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss/CLPDS/iEEG-Fixes, goes_euvs-Alignment, Exposom-Arme, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: 0b104bcfa4111e6d243223b5dc04b77f3b0bf4a5b1f9c15fdca9213d91e9c4a9
+  sha256: 703b70683508effcde4e0201a24475c7b8cf2a581561ef2621384eb654eafeb2
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -79,26 +79,26 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** der Port-Runner (Working-Tree-Bin) ist verloren — nicht im getrackten Baum.
 - **Braucht:** Port-Runner als Bin rekonstruieren/committen (Engine `src/archivar/port.rs`; Konverter-Spec = Mountain), dann Lauf `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ`; Register-Zeilen.
 
-### `phi/blocked_sources.φ` — Mycelium-`pending`-Klasse (15), gemessen `register_lookup --open`
+### `phi/blocked_sources.φ` — Mycelium-`pending`-Klasse (15): Batch-Stand (gemessen 2026-10-05, 2 flash-Taucher)
 - **Status:** je eigen | **Bindung:** eigen
-- **Lage:** (gemessen 2026-10-04) diese 15 Einträge tragen Owner `[mycelium]` und waren **nicht** ins Handover gefaltet (nachgeholt). Je Eintrag der Schritt aus dem `note`:
-  - `:102` Phobos 2 KRFM — Arm steht (pds3); Schritt: `sources.φ`-Block (`pds3_krfm_radiometer1..5`/`photometer1..9`, em) + CDN; W/m²/sr-Kalibrierung = Riss (Mountain).
-  - `:106` Hayabusa LIDAR `hay_lidar_range` — Arm+Workflow stehen (`pds4.rs`, `harvest.φ`); Schritt: CDN-Lauf + `sources.φ`-Block.
-  - `:110` Tianwen-1 MoRIC — hips-Arm (`hips_png_compiler`); Schritt: Tree-Ernte + CDN + Sample.
-  - `:114` Danuri ShadowCam `pds4-fits` at moon — PDS4-Arm; Sample-Download = Operator-Hand.
-  - `:118` JAXA G-Portal — `sha256` steht (dieses Atom); offen: Record-Download (`add_download.json`/SFTP).
-  - `:122` CSES/LIMADOU — CSES materialisiert (`cses-{lap,efd,hpm,scm}`, `sources.φ` 27 Z.); limadou ohne Rohdatenpfad → **descope-Kandidat** (Mountain).
-  - `:130` CLPDS — Annex gefixt, Lauf `37233584228` (dieses Atom).
-  - `:134` Viking Mars gravity — kein Daten-Endpoint/Arm gemessen.
-  - `:138` Cassini titanNotebook — Log-Baum, kein ODF-Einzelendpunkt.
-  - `:142` Juno Gravity CSV — kein CSV-Reader.
-  - `:146` PDS-PPI (UCLA) — EPN-TAP 200; `tap_compiler` passt; Quelle/Query noch offen.
-  - `:150` KASI — materialisiert (`kasi_compiler`+Workflow+Reader, `sources.φ` 12 Z.); Disposition = Mountain.
-  - `:154` Gaia `cluster_ka` — Tabelle im TAP absent; Korrektur offen.
-  - `:158` Gaia `vari_classifier_result` — Query 200, **Reader-Arm offen** (bauen).
-  - `:162` ieeg.org — Arm steht; Lauf `37235356150` (503) + Fix; `sources.φ`-Block + 4D-Anker fehlen.
-- **Blockade:** je Eintrag (fehlender Arm / Endpoint / Operator-Hand / Mountain-Disposition).
-- **Braucht:** je Eintrag den genannten Schritt; die materialisierten (`:122` CSES, `:150` KASI, `:130` CLPDS, `:118` JAXA) brauchen die **Mountain-Disposition** (Eintrag entfernen/umsetzen).
+- **Lage:** (gemessen 2026-10-05 via `register_lookup --open` + 2 flash-Taucher) je Eintrag der gemessene Ausgang:
+  - `:102` Phobos 2 KRFM — **materialisiert**: Asset `pds3_fixed_width_krfm.bin` 430 104 B sha256 `69e20d26…`; Block `sources.φ:16962` (+ `compiler`/`sha256`). **Riss → Mountain:** Block trägt 3 Felder (RADIOMETER1/4, PHOTOMETER1), das Verdikt nennt 14.
+  - `:106` Hayabusa LIDAR — **materialisiert**: 7 `cdr_*.tab`-Assets auf `sbnarchive.psi.edu`, 7 Blöcke `sources.φ:17076-17138`. **Riss → Mountain:** Verdikt `gravity` (folge201/202) vs `em` (folge233).
+  - `:110` Tianwen-1 MoRIC — Harvest-Block (`harvest.φ:118-125`) + Block (`sources.φ:9012`); Lauf `37238917474` (Sample-Tile `hips_png_7_0.bin`) dispatcht; `sha256` nach Grün. Gap: das `hips-png-cdn.yml` erntet Manifeste, nicht das Reader-`.bin`.
+  - `:114` Danuri ShadowCam — **Riss → Mountain/River:** `/derived/` trägt `.cub`/COG-GeoTIFF, **kein FITS**; `pds4_fits_compiler` ist Chang'e-hardcoded → kein Arm, kein Block; Format-Verdikt `pds4-fits` widerlegt.
+  - `:118` JAXA G-Portal — `sha256` steht; offen: Record-Download (`add_download.json`/SFTP).
+  - `:122` CSES/LIMADOU — CSES materialisiert; limadou ohne Rohdatenpfad → **Mountain-descope**.
+  - `:130` CLPDS — Annex gefixt, Lauf `37233584228`.
+  - `:134` Viking Mars gravity — **Endpoint gemessen**: `pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat` (PDS3 ASCII, 4 Spalten, 22 569 Zeilen, 42 B); Thin-Bin `viking_grav_compiler` fehlt → **bauen**.
+  - `:138` Cassini titanNotebook — Host `*.nmsu.edu` **heute down** (Ladder pending, Wayback nichts); Inhalt SPASS-`.txt`-Logs, kein ODF → **wartend (extern)**.
+  - `:142` Juno Gravity CSV — derselbe Host down; Format ungemessen → **wartend (extern)**.
+  - `:146` PDS-PPI (UCLA) — EPN-TAP `vo-pds-ppi.igpp.ucla.edu/tap/sync` 200, `tap_compiler` passt (schema-qualifiziert `<schema>.epn_core`); **Dataset-Kuration offen**.
+  - `:150` KASI — materialisiert → **Mountain-Disposition**.
+  - `:154` Gaia `cluster_ka` — Spalte im Gaia-TAP **absent** (TAP_SCHEMA leer) → externer Katalog; **Mountain**.
+  - `:158` Gaia `vari_classifier_result` — Compiler `gaia_rrl_compiler.rs` gebaut + verifiziert (500 Records, `186c05ac9`); **Reader-Format-Arm `gaia_rrl` offen** → bauen.
+  - `:162` ieeg.org — Lauf `37235356150` (503) + Fix; `sources.φ`-Block + 4D-Anker fehlen.
+- **Blockade:** je Eintrag (Mountain-Disposition / fehlender Arm / externer Host).
+- **Braucht:** `:134` Viking-Bin + `:158` Gaia-Reader-Arm bauen; `:110`/`:162` Läufe lesen; `:102`/`:106`/`:122`/`:150`/`:154` = Mountain-Disposition; `:114` = Mountain/River-Format-Entscheid; `:138`/`:142` = Host-Rückkehr.
 
 ## CI-Lage (fact level, gemessen 2026-10-04)
 
