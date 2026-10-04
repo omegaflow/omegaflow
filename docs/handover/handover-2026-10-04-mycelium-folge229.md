@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: 437bdad723779952777b4cdcb02bd1cdb486e6198e789a21af1ea1314a7196f8
+  sha256: c62cec432f3fdc619902e9cec7e97a8c44fffc2ea6c5ad5915c356c9bfe302a2
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -147,7 +147,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### `blocked_sources.φ` mycelium-Portale (KASI gebaut; CLPDS offen; LEOS/JAXA)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `kasi-cdn.yml`-Lauf; `clpds_compiler.rs`; JAXA-Konto (Operator)
-- **Lage:** (gemessen 2026-10-04) **KASI_DALO** `:163` — API public (`/api/{MIRIS,KMTNet,KVN}/search` 200: 11/1000/100 Sätze), **Compiler `kasi_compiler.rs` + `kasi-cdn.yml` gebaut** (kein Key). **CLPDS** `:143` — Dateien **öffentlich** (`clpds.bao.ac.cn/PUBDATA/…A.0A` 200, 534 450 B; Login-Annahme widerlegt); **Compiler `clpds_compiler.rs` + `clpds-cdn.yml` gebaut** (catalogue 98 + files 568 396; `dataAnnex`-URL nur im Detail → separates Annex-Arm). **LEOS** `:139` — **keine Absenz**: SPA-„暂无数据" = Pre-Login-Zustand, dahinter auth-gated Katalog-API `/api/admin/data/front/*` (`40301` ohne Login). **JAXA_GPORTAL** `:131` — **Zugang gemessen offen** (`POST /gpr/auth/authenticate.json` 200 mit den Secrets; `catalog_records.json` 15 949 Records; Download-Quota voll); Parser + Download-Endpunkt offen. **Shandong** — nicht in `phi/` (Handover `:444` stale → Riss).
+- **Lage:** (gemessen 2026-10-04) **KASI_DALO** `:163` — API public (`/api/{MIRIS,KMTNet,KVN}/search` 200: 11/1000/100 Sätze), **Compiler `kasi_compiler.rs` + `kasi-cdn.yml` gebaut** (kein Key). **CLPDS** `:143` — Dateien **öffentlich** (`clpds.bao.ac.cn/PUBDATA/…A.0A` 200, 534 450 B; Login-Annahme widerlegt); **Compiler `clpds_compiler.rs` + `clpds-cdn.yml` gebaut** (catalogue 98 + files 568 396; `dataAnnex`-URL nur im Detail → separates Annex-Arm). **LEOS** `:139` — **keine Absenz**: SPA-„暂无数据" = Pre-Login-Zustand, dahinter auth-gated Katalog-API `/api/admin/data/front/*` (`40301` ohne Login). **JAXA_GPORTAL** `:131` — **Zugang gemessen offen** (`POST /gpr/auth/authenticate.json` 200 mit den Secrets; `catalog_records.json` 15 949 Records; Download-Quota voll); **Compiler `jaxa_gportal_compiler.rs` + `jaxa-gportal-cdn.yml` gebaut** (live 45/5 Records); Download-Arm `add_download.json` offen. **Shandong** — nicht in `phi/` (Handover `:444` stale → Riss).
 - **Blockade:** KASI/CLPDS = CI-Dispatch/Registrierung; JAXA = Parser/Download-Arm; LEOS = Login-Gate
 - **Braucht:** KASI + CLPDS dispatchten (sha + `sources.φ`-Block Mountain); JAXA-Parser (Search/Quota/Download); LEOS `blocked account` (Mountain-Register).
 

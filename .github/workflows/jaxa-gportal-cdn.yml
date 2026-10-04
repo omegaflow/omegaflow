@@ -1,0 +1,89 @@
+name: jaxa-gportal-cdn
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: 'G-Portal dataset id (e.g. 12001000 = GPM/DPR KuPR L1B)'
+        required: false
+        type: string
+        default: '12001000'
+      from:
+        description: 'observation window start (YYYY/MM/DD)'
+        required: false
+        type: string
+        default: '2015/01/01'
+      to:
+        description: 'observation window end (YYYY/MM/DD)'
+        required: false
+        type: string
+        default: '2015/01/01'
+      count:
+        description: 'page size (records returned)'
+        required: false
+        type: string
+        default: '100'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/jaxa_gportal_compiler.rs'
+      - '.github/workflows/jaxa-gportal-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  JAXA_GPORTAL_USER: ${{ secrets.JAXA_GPORTAL_USER }}
+  JAXA_GPORTAL_PASS: ${{ secrets.JAXA_GPORTAL_PASS }}
+  RUSTFLAGS: -D warnings
+jobs:
+  jaxa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compute the asset name and test idempotence
+        id: idempotence
+        run: |
+          set -euo pipefail
+          DATASET="${{ inputs.dataset }}"
+          FROM="${{ inputs.from }}"
+          TO="${{ inputs.to }}"
+          if [ -z "$DATASET" ]; then DATASET="12001000"; fi
+          if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
+          if [ -z "$TO" ]; then TO="2015/01/01"; fi
+          SLUG="jaxa_gportal_${DATASET}_$(printf '%s' "$FROM" | tr '/' '-')_$(printf '%s' "$TO" | tr '/' '-').json"
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          assets=$(gh release view gportal.jaxa.jp --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if printf '%s\n' "$assets" | grep -qx "$SLUG"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "$SLUG already manifested — skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "$SLUG missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the G-Portal catalogue page
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          DATASET="${{ inputs.dataset }}"
+          FROM="${{ inputs.from }}"
+          TO="${{ inputs.to }}"
+          COUNT="${{ inputs.count }}"
+          if [ -z "$DATASET" ]; then DATASET="12001000"; fi
+          if [ -z "$FROM" ]; then FROM="2015/01/01"; fi
+          if [ -z "$TO" ]; then TO="2015/01/01"; fi
+          if [ -z "$COUNT" ]; then COUNT="100"; fi
+          cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
+            --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" \
+            --manifest "${{ steps.idempotence.outputs.slug }}" \
+            --quota \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: G-Portal catalogue returned void" \
+                 "jaxa_gportal_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
