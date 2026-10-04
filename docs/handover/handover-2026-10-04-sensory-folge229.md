@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: 69fbec957d0c20e9bfe3f5591e2a853555d4b8f4024a98d04bc7c07e963d4ee1
+  sha256: 929e476060c643e770f00c0d2d4b4131c77b496e0744411ce987f710f3203d61
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -49,12 +49,18 @@ Eigener Register-Pass: `register_lookup --fired sensory` = 3
   `{lat}_{lon}`-Slot. Die Form ist daher: je Epoche eine **abgeleitete** `axis value`-Textserie
   auf einem eigenen CDN-Endpunkt (gleiche Achse/Sampling über beide Epochen), das Rohbinär
   bleibt das Asset. Die Daten-/Registerausführung ist eine Träger-Pflicht (Mountain/Mycelium).
-- **hyperscanning-te: der Lauf `37156315929` wurde extern gecancelt** (gemessen `ci_manage log
-  screen`: letzter Fortschritt `pdfeedback 02:59:52` → `04:03:06 ##[error] The operation was
-  canceled`, **kein** Timeout/Shutdown-Signal). Der Watchdog war es nicht (kein Median).
-  **Neuer gültiger Lauf: `37175843252`** (gestartet 2026-10-04T04:02:55Z, head `4e0b99aa`,
-  `screen` in_progress, `ci_manage view`) — derselbe Workflow, Config tragfähig (~265 min <
-  360-min-Cap); kein Re-Dispatch (der laufende Lauf belegt die Concurrency-Gruppe).
+- **hyperscanning-te: beide joint-family-Läufe sind tot, das ist jetzt ein Config-Befund.**
+  `37156315929` wurde extern gecancelt (gemessen `ci_manage log screen`: `pdfeedback 02:59:52Z`
+  → `04:03:06 ##[error] The operation was canceled`, kein Shutdown-Signal; Watchdog ohne Median
+  → keine Aktion). Der Nachfolger **`37175843252`** lief nach 47 min Queue an (Runner-Start
+  `04:50:29Z`) und wurde **`10:50:42Z` bei genau 360 min gecancelt** — das `screen`-Job-Cap
+  (`timeout-minutes: 360`, `.github/workflows/hyperscanning-te.yml:51`); Log-Ende
+  `##[error] The operation was canceled.` + Terminierung von `hyperscanning_group_te`. Kein
+  Artefakt. **Kein neuer hyperscanning-te-Lauf** in Liste/Watchdog; der Watchdog hat nicht
+  gecancelt. **Befund:** der joint-family-Screen (3 Task-Bedingungen à ~2 h) übersteigt sein
+  eigenes 6-h-Cap — dieselbe Config kann nicht fertig werden. Der Punkt braucht eine **kürzere
+  Screen-Config** (`surrogates`/`percentile`/`max_points` senken oder je Bedingung trennen),
+  dann neu dispatchen. Kein Re-Dispatch der laufenden Config.
 - **B-Architektur steht:** WASM entschieden und gebaut (`044afbe42` wasm-Gate, `ede41905e`
   Dep-Schlankheit, `42268d146` wasm-bindgen-Einstieg, Bundle 128 753 B); die Paritäts-Toleranz
   ist gesetzt (`f7fa71940`/`815d7df43`/`80417fd53`). Offen ist allein die **Materialisierung**
@@ -275,20 +281,20 @@ breiter messen.
 - **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakt `hyperscanning-te-report`.
 - **Lage:** (gemessen 2026-10-03 F227) Entwurf steht: `docs/paper/hyperscanning-te-preregistration.md`, sha256 `11ccdb90…`; Zweck, Daten, Estimator, Schwellen, die Gate-Namen und die Entscheidungsregel sind mit `file:line` belegt, die zweite Kohorte trägt jetzt die gemessene 64-Kanal-`_L`/`_R`-Form und den gebauten Arm (`1226e9082`); FP/FN-/Skalierungszahlen bleiben `pending` benannt.
 - **Blockade:** Validierungsartefakt.
-- **Braucht:** `ci_manage view/log 37175843252` des joint-Laufs; danach den Entwurf um die gemessenen FP/FN + n-Skalierung fortschreiben, Header-sha via `omega_sh sha` neu.
+- **Braucht:** zuerst den joint-family-Lauf unter das 360-min-Cap bringen (Config kürzen), dann das Artefakt lesen; danach den Entwurf um die gemessenen FP/FN + n-Skalierung fortschreiben, Header-sha via `omega_sh sha` neu.
 
 ### Hyperscanning-TE — Validierung der neuen Läufe (joint family + gates)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Abschluss eines `hyperscanning-te`-Laufs am joint-family-Stand; Artefakt `hyperscanning-te-report`.
-- **Lage:** (gemessen 2026-10-04 F229 via `ci_manage view`/`jobs`/`log`) der Lauf **`37156315929`** (HEAD `570045064b`) wurde **extern gecancelt** — `screen`/`confirm` = `completed`/`cancelled`; der Log zeigt letzten Fortschritt `pdfeedback 02:59:52Z` → `04:03:06 ##[error] The operation was canceled` (**kein** Timeout/Shutdown-Signal; der Watchdog hatte keinen Median → keine Aktion). Der Cancel fiel 11 s nach dem frischen Dispatch des **neuen gültigen Laufs `37175843252`** (head `4e0b99aa`, gestartet 2026-10-04T04:02:55Z) — die Concurrency-Gruppe hatte `cancel-in-progress: false`, der alte Lauf wurde also bewusst freigegeben. Der neue Lauf läuft: `screen` in_progress am selben Step „Run the joint family-wise TE screen …". Config tragfähig (gemessen ~265 min < 360-min-`timeout-minutes`). Der joint-family-Bin ist gebaut inkl. Test `joint_channel_family_gate`.
-- **Blockade:** der neue Lauf `37175843252` läuft noch — das Artefakt entsteht erst am Jobende (kein Polling).
-- **Braucht:** `ci_manage view 37175843252` + Artefakt `hyperscanning-te-report` auswerten, sobald `screen` endet (joint family-max, Nominees, Bestätigung, Skalierungskurve).**Kein Re-Dispatch** — der laufende Lauf belegt die Concurrency-Gruppe.
+- **Lage:** (gemessen 2026-10-04 F229 via `ci_manage view`/`jobs`/`log`) **beide joint-family-Läufe sind tot, kein Artefakt.** `37156315929` extern gecancelt (`pdfeedback 02:59:52Z` → `04:03:06 ##[error] The operation was canceled`; Watchdog ohne Median). Nachfolger **`37175843252`** (head `4e0b99aa`): Runner-Start `04:50:29Z` (47 min Queue), **`10:50:42Z` bei genau 360 min gecancelt** — das `screen`-Cap (`timeout-minutes: 360`, `.github/workflows/hyperscanning-te.yml:51`), Log-Ende `##[error] The operation was canceled.` + Terminierung von `hyperscanning_group_te`. Der joint-family-Bin ist gebaut inkl. Test `joint_channel_family_gate`.
+- **Blockade:** der Screen übersteigt sein 6-h-Cap (3 Task-Bedingungen à ~2 h) — dieselbe Config wird nie fertig.
+- **Braucht:** **Config kürzen** (`surrogates`/`percentile`/`max_points` senken oder je Task-Bedingung trennen; Owner = diese Linie, `.github/workflows/hyperscanning-te.yml`), dann `gh workflow run hyperscanning-te.yml` neu dispatchen und `ci_manage view <id>` + Artefakt `hyperscanning-te-report` auswerten. **Kein Re-Dispatch der laufenden Config.**
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Artefakt `hyperscanning-te-report` zu Lauf `37175843252`.
+- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Artefakt `hyperscanning-te-report` zu einem erfolgreichen joint-family-Lauf (Config unter dem 360-min-Cap).
 - **Lage:** (gemessen 2026-10-03 F227) Arm **gebaut** (`1226e9082`): `brainvision_compiler --participant L|R` trennt die gemessenen **64 Kanäle** eines Dyaden-Files (Ch1–32 `_R`, Ch33–64 `_L`, 1000 Hz; ein File pro `sub-01`..`sub-32` = 32 Dyaden) in je ein Teilnehmer-Bin `<…>_eeg_L.bin`/`_R.bin` (point-major, passend zu `channel_series`); Workflow-Input `cohort` (ds007822|ds007471) baut den `manifest.txt` aus `jointaction pair-<NN> {L,R}`. `cargo check`/`--tests -p omegaflow-harvest` 0 Fehler/0 Warnungen; die zwei Pfade sind committet. Riss zum Präreg: dort stand „32-Kanal", gemessen sind es 64 (2×32) in einem File — die Dyade ist `_L`/`_R` im selben File, kein Subjekt-Subjekt-Join.
-- **Blockade:** der Validierungs-Trigger (Lauf `37175843252`) ist noch nicht ausgewertet; der `concurrency`-Slot der Workflow-Gruppe ist durch denselben Lauf belegt.
+- **Blockade:** der Validierungs-Trigger (joint-family-Lauf) ist noch nicht ausgewertet; der Lauf scheitert derzeit am 360-min-Cap.
 - **Braucht:** nach dem Validierungsartefakt `gh workflow run hyperscanning-te.yml -f cohort=ds007471 -f channel=Cz`, dann `ci_manage view <id>` + Artefakt auswerten.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
