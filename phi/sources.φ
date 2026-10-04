@@ -18529,3 +18529,3453 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck89361a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck89361a_rtr.bc
+sha256 9bd5ab501d5948f0ef88c601ad2f273ca8ef8e59a40a7319161ec6ef493d2eb3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck89362a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck89362a_rtr.bc
+sha256 7948e803ffd5477ffae205023d4a993d0b15798d6a15cc6c2590adc542352557
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck89363a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck89363a_rtr.bc
+sha256 43123701f3f56ae323ad845ce3fdfe99d64f17c51c2b82ff96aacc3130d2e0b4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90180a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90180a_rtr.bc
+sha256 d8b13e6bf1a17ea0fb0107e37588ebf8b40c40738090b8c409b938e9ee5fa7c0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90187a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90187a_rtr.bc
+sha256 7b2f8bafa6875db634b0f657637715b5afa76b5dc1f69d474a0de64ddd0800fb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90194a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90194a_rtr.bc
+sha256 01b6c30e08c7b0ef54e122be488cf18ba721d1c39bddce12977391685def1900
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90200a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90200a_rtr.bc
+sha256 7fa2f512f163129b48c74087a1724e61344bc01f0087e1f4b76054211d2969fb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90306a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90306a_rtr.bc
+sha256 d71de38444c3c6ce7c42d2b93933a5844fe5961f33873ce380f0517e9c27972d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90308a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90308a_rtr.bc
+sha256 793960b0593e5cbebd4e1a0631555a9817716a944a0c68e50c41b472e4687f43
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90309a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90309a_rtr.bc
+sha256 913ca22e4865c5d3977c9b545f060b1c9c2b55ef30141369bdcb283e0240c3e4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90309b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90309b_rtr.bc
+sha256 4f022c5b61f03e224d2dd5700d8263d6653da676824dcdfe69be39c058edcc8b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90310a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90310a_rtr.bc
+sha256 d5e6e0151eb71558d86ef86d72b9d5ffbed5170f3f6718a8f56bdcc40b492e14
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90311a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90311a_rtr.bc
+sha256 8a4fa96349cfe1dd3da1c4e120191a939477ec09cf0ca468ba536fb85cfff23e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90312a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90312a_rtr.bc
+sha256 313ab4eb4c05b0da5637646e6c173e624a32634f54004ba6d3767c65fead0b1c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90312b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90312b_rtr.bc
+sha256 63408c8a3c83b3dfebf200d1b3914d8a79ec7eb1e5ba62eadb66a5672ada91f3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90312c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90312c_rtr.bc
+sha256 6d4e0ec92dd6df3dee38cd27ea035073ed6ff70846c0777bba70cf2307a94126
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90313a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90313a_rtr.bc
+sha256 f5cf37bc5571fb55d7edf6b33ba374ee712d0027cd243199ea3d880089c02cc0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90313b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90313b_rtr.bc
+sha256 ada614808735a8f2712f092b416a96ffdd47fbb7a78cd086e2900ce4d3e435de
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90313c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90313c_rtr.bc
+sha256 0b92675d91860e7cd225b7a47c9a5e50f4a0dd7bb845fc6328d96ce3cb01325e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90313d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90313d_rtr.bc
+sha256 96ccb0e8638545ac188811e9f10bff87132066c738bf0b293fb1de4b0a763164
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90314a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90314a_rtr.bc
+sha256 0867eedf9972d6e51774e5a2decac9a2bc0550cb3d44390f840cfa252bc2c90c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90314b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90314b_rtr.bc
+sha256 0367e41a005e674171c9f49965ffbdce29e3dc24abe89958c86386d1dc05aca0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90314c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90314c_rtr.bc
+sha256 c89958d441394fe81870b1115fd66d8ff6470d09fbc8d251d939d80ea9c53d73
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90315a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90315a_rtr.bc
+sha256 16d4baab73a944c9ad6416427cf5c3d0838ed7d60d31bad64e573556f3db0a3d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90315b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90315b_rtr.bc
+sha256 2267d120b2d76aa0d93112bc2669af77312a44be6c4ff64c3113a9751ff0d285
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90316a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90316a_rtr.bc
+sha256 d25f7c7f9ff70711006fb144175763d6d5c349d829b1c75fc293c915002e15e3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90317a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90317a_rtr.bc
+sha256 408a6af364fbe97900829e36dc05d9d8c7b818c4e286b4a7d81ae4a12004da82
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90317b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90317b_rtr.bc
+sha256 5bef7e019df7388085623c7b6157eb12cb8f887a653658c4fde9ededbb3fbd30
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90317c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90317c_rtr.bc
+sha256 4a8a39341e550eb18905707bfd715c6ffa009d6f9952d8b4b9e2604648fede4a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90318a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90318a_rtr.bc
+sha256 6163b33e543365a05c3c2c869794d06c8aaacd4fa7ed9daf9730d6ff8613921d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90318b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90318b_rtr.bc
+sha256 f71a9ddbcc4f9671ea11365ef717ee9cf4dff765cd9e9599761626ce048efe00
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90319a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90319a_rtr.bc
+sha256 b5af707fff8ddb3b636e52105ed982e842b0326a8bde87cd97104d9b40b26d1c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90319b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90319b_rtr.bc
+sha256 4eed9eca4aeba58e7fd6abedc6ac4d16793c40646fd8b414fcdf44e2229b5525
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90319c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90319c_rtr.bc
+sha256 1d4bf0b29dd5e0493cee1e59e7daf9cee13f019e197871411d78c090f07fb277
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90320a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90320a_rtr.bc
+sha256 3f8e1915b4bc97e9154d70b82b6d6f05763f0a3b0c3789675f6d111b8f307c33
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90320b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90320b_rtr.bc
+sha256 9741d9692ad6edd88c84e5857d138281157d6458a9571ee59137dc7d1481d099
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90320c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90320c_rtr.bc
+sha256 096a7798748f3eadd3ee5e5f6e82ab9eaadb5d549b9de3eae507d01abd93e89c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90321a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90321a_rtr.bc
+sha256 9d34b2c2fc481f4c2c61a7cfb8975c7c8278ffb471132723daf667a00c9bb380
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90321b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90321b_rtr.bc
+sha256 a58c0b77c56b755ec81a6c0bf6c4121feb687abfe1e74a2ac8437c2aa3dde43d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90322a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90322a_rtr.bc
+sha256 80c713f2dc7592742420be232c6d6918598fe97e6a194afb7c912ba753f4a559
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90322b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90322b_rtr.bc
+sha256 01915d651e03d23ab7cf343138d7d36447c57c7cf254035c53f8654bf39af9c7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90322c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90322c_rtr.bc
+sha256 10e527d1e427d6e5c7fd4d94f9ac22f47d9f2673f8ce34028441ce6b4290a35f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90323a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90323a_rtr.bc
+sha256 bb2d42be1c926b9479c47337a48626f85071874e757061e9fe1db1eb5e9605ca
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90323b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90323b_rtr.bc
+sha256 9b02503c38be704d0d00980a0fbc4505922906d5892afa900eb1f7e8d2972484
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90324a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90324a_rtr.bc
+sha256 8b1986d50344c05d0bc5c9af0f8cf518db91670b82aadd66b7d7dafdadd91a49
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90324b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90324b_rtr.bc
+sha256 d6460a1eef9db8ef9d709508b7dfcf412e187c40cf1e5bc63d0bffb248e889f1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90325a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90325a_rtr.bc
+sha256 93bc5c7d51abe01aa873f64069e10f2d8b69c77b09eaf828401252d0318b21a7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90325b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90325b_rtr.bc
+sha256 40c268d60f34d7b1e3a1e851adf18441c2727758846a74fd263a652d936a9eb9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90326a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90326a_rtr.bc
+sha256 5590f4c0242103eff4cc1af198fcc9b5c3394a5da2aed32a04af60cc2a57d246
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90326b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90326b_rtr.bc
+sha256 40001c879331b51c11cff7d2c219ac00a838db9ad29a99f56dd25dd6eb5c5f46
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90326c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90326c_rtr.bc
+sha256 eb162f0b631f39de1e63263472141faa9f81457e7f852e06a6678541a2e97f89
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90327a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90327a_rtr.bc
+sha256 2c98c18aca521ba3cb30bf463f7f5f002ece604c4329c8e6aaa8c77adb1af46c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90327b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90327b_rtr.bc
+sha256 d7533771bdf1f0388d6e9c1845dbb2eba0bd525f1c2d166fedad430cb90b3ff6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90328a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90328a_rtr.bc
+sha256 444c4d737a7c1be93692c9b338914deca5ac4aa310f9f3802a8c08e966596dd0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90328b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90328b_rtr.bc
+sha256 a23b18b0a6d4ac31e24b04870e307305d0f970c427d49e498e05be5f8341eb99
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90329a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90329a_rtr.bc
+sha256 46206110a15e34216ad39421631d6e70480654386a86e63fc3254d031026370f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90329b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90329b_rtr.bc
+sha256 94ca7aeed3c1a3db8e5c384e88320cd7ee0cfa0dc7e56c109b7cf359b1aa7a17
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90330a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90330a_rtr.bc
+sha256 6757590f09051ae19c402da13a8c1f3a12540375fcac519c899d871ce1fbce70
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90330b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90330b_rtr.bc
+sha256 e709056be307b10d7e74c462f5112e94f64aea2b4b53db0b03f64539fb3a9d4e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90331a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90331a_rtr.bc
+sha256 5a87745b13c1c697dbc4007952e64453a1c9f27f8a4d8c4d29a4fefbfaaa33f6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90331b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90331b_rtr.bc
+sha256 d2e41b94a96a33bbb40e73a51974e144e1a7e7a5900420a9f3a71cad1143a4b5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90332a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90332a_rtr.bc
+sha256 e83575f215c18016b8eac7c54a0b6a1684ec0f586c14fca04bd7c945edb7dd10
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90332b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90332b_rtr.bc
+sha256 96093b377013e4480a6b2693cf578318c07e6c59d6f899bee2f700dd16f79ba6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90333a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90333a_rtr.bc
+sha256 e994198a12a1d134ca15922e1213e3718fdda314e1f4b37e85809184559cfc15
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90333b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90333b_rtr.bc
+sha256 8950961bc3fac93618ba2e255a5a078ac6e676fcd5c67e62c0ad7c866a6af7a2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90334a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90334a_rtr.bc
+sha256 2e227f5e1bd69b71d13d9c99f46df334270ffcf4bfae3c2b4b2a37e9c5604d79
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90334b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90334b_rtr.bc
+sha256 83d26f509058e0f8c4d24d3bbb8738780edde8c4022630c79f54286aa44f3c15
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90335a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90335a_rtr.bc
+sha256 0228118a83828902a822a3bdb9b484206efd055bd76a0c5774e4f14eb6bad1e5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90335b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90335b_rtr.bc
+sha256 98eaeb1e0fb8f3eaf6b46c1d7255afbfac9311a330ef169adf3298a776468c16
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90336a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90336a_rtr.bc
+sha256 0655e3ffb6c68ca1eab11ba8c76601af57d34c15e4313abd80179a5cb163d395
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90336b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90336b_rtr.bc
+sha256 375820f91c05b3b710f46cf82adcdf6595bdc865450741c0e5fb911f7ce6b371
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90337a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90337a_rtr.bc
+sha256 dc482763b545cf28710e01e223ba2e8bcd684be9f6d704c80566ef1a1a500e72
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90337b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90337b_rtr.bc
+sha256 e29a0d688cebd86f9fc27f8b9b52b48977b4e4aa554c03832368b990352e5607
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90338a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90338a_rtr.bc
+sha256 1848f7774d600d997f04c896db3e6e0b920d92529b18ad0e3bb90f785277701b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90338b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90338b_rtr.bc
+sha256 17166f44969fafcf4b8fdb2b50739befb9403c6d679a1a067c7e2edbd77f6ee1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90338c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90338c_rtr.bc
+sha256 f94867246f4ca492eca8350e4f760fbaab753887ad745a6e6e2c7d3dc845f6c1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90339a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90339a_rtr.bc
+sha256 5ef9aa133ec1bb5c1e0f3b1e374b6c532f10fbae82fbd3365351d74634df7bc8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90339b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90339b_rtr.bc
+sha256 ace9af0c9efc96e7214a7156c76c76e6c9a0f3cb3fa701ebd00b827c061eaae7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90340a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90340a_rtr.bc
+sha256 3592a70b19768ab35e3ec46085a0c78f874cb2a98ad1f347a7534608eab0707c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90340b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90340b_rtr.bc
+sha256 2c7745df7eeb894fde7119365e212db88d2bc1557d4502944d6b59cdf0df2ae2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90340c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90340c_rtr.bc
+sha256 953af1c5e74ff7a78cb815dba2fbbc911a384340645ff1c9c411cff75f593843
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90341a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90341a_rtr.bc
+sha256 2bf5551a477c7daa7b14b10303af7a5ec4b2075e4e288db073d12d14f6a84170
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90341b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90341b_rtr.bc
+sha256 3e114bb29450edbf25026136fb24f7d047a397ab852a4883a8c0e6f3cee682ab
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90342a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90342a_rtr.bc
+sha256 144932da96feb982cf9b632ded86eb274558e22b38f06fcb8a6d1f1f6757d091
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90342b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90342b_rtr.bc
+sha256 1b2104481179e1832dca19a4567b6f194b0d87fc2b91008de26b596310738f97
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90343a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90343a_rtr.bc
+sha256 c668cd394e0fcdf612170d7ad83172bfc43e07a6aa42a96637ed4a49bd485073
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90343b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90343b_rtr.bc
+sha256 08df296410bd1d10932b372b6d2d9426b83b8de3bdc4d6d356c57019a1089922
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90344a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90344a_rtr.bc
+sha256 a1c5ebfb213a720cd8967a1e66b8c70c6664ee54168c25acdddc403a63a88f0c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90344b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90344b_rtr.bc
+sha256 2ebd138a58a4456f9ff04fc0d10779d4de3c025fb34a3edb6d9304d68ba64a27
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90345a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90345a_rtr.bc
+sha256 656ba5d590cbd0f63acba2407fbf29cd13426eb6a3ae02450ef44ca0de8f3a00
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90345b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90345b_rtr.bc
+sha256 db1b0af4a2182bf234fb2a6cdecddd0418cc5ae8ee72d47fca9897b929d18cd3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90346a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90346a_rtr.bc
+sha256 8360e4295d74cd92a5a3260224fe9e8a5a497c6097ec9ca2f74397a67b7e6e8f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90346b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90346b_rtr.bc
+sha256 a95e6ce3e2656a53bb2bd7f9584d30a8a1c11622b14970fe945c83e8381c6097
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90347a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90347a_rtr.bc
+sha256 b9880f3bf227547c71a918e0090fe9d59be87f793ebf713b79cfd1325e22116a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90347b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90347b_rtr.bc
+sha256 f84430d2e885d5114fb3667ed356e10bdfc26ae24ec008dea3fe3703ab436d5c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90348a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90348a_rtr.bc
+sha256 9ac148b4f246b048038a030720ac3ce42cfff6ac4f68118d2a78dc2f3ea1d882
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90348b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90348b_rtr.bc
+sha256 a2f76c97db9cbc33d1f9429cfce0330d2971dd205839e7ced4a76d3909715451
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90349a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90349a_rtr.bc
+sha256 d84e5db91a515e40cc44446f44f641829df61093836ff1c030f6480b23dc40f2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90349b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90349b_rtr.bc
+sha256 c44939390c2fdc244a85d5121333141b99673c92ca3d23b140077b9f9302229d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90350a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90350a_rtr.bc
+sha256 ad8d1ecc207211f9586ef47835f7012c9b6ebfe5ef1518f257989876f2745d1e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90350b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90350b_rtr.bc
+sha256 2f2f0323b4211238c0f3995219a88a6af7646b87b889335c0a4a39d8b36402bc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90351b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90351b_rtr.bc
+sha256 3f2f2549d62eaaff754a3837c32d3d3b52450354f0db4111969da232ffa77e61
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90352a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90352a_rtr.bc
+sha256 0ab193e4c799fdfae76e9c0c0f91455a11b42e9e80faebafa360517fffbd4ae0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90352b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90352b_rtr.bc
+sha256 6bebaea26ba13e2247eb5545a8ef3c63d828bd6d6d206bf90e0611eaf7a14058
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90353a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90353a_rtr.bc
+sha256 9b9a52ea25dab5f2e393bffd4a1d528b36ce512e19ca9b3bb922683e1fa3591b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90353b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90353b_rtr.bc
+sha256 15ea4af8e710ca7ab20ceee19f2a0bb79c9f3205c6939360a8a4589502801253
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90353c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90353c_rtr.bc
+sha256 950a57f8e3997265531d4d8a3003115ab2118c9663ffb4dde3807498f2c50876
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90354c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90354c_rtr.bc
+sha256 cf457d10017ceaa06e0edd558b8759096e258961ac2959a88a1f6b09d7290f10
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90360a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90360a_rtr.bc
+sha256 223014419b04fbc24c19f9b2aaa70bda2519ea38fac296fa431ba8b5f1e7d129
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90361a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90361a_rtr.bc
+sha256 0c5da9e2e0b1628fa8a84de5833d9e25b0f9ae3cac6acb2cdcf60ab08b003e71
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck90365a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck90365a_rtr.bc
+sha256 981ba993ea4810a0bcda0fc1ed33e19ad9b1bcff0065e2d60f95774099f1ea02
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91003a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91003a_rtr.bc
+sha256 c6f10fd1c97633e4e72f34706a3a50a7cc26513786de56c1b24a09273b377630
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91007a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91007a_rtr.bc
+sha256 f115a70d4fd700199f8200028e5b0e19a70f9224b6a8870dae18bfe6268224c8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91010a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91010a_rtr.bc
+sha256 f57f45e89d90f399dcca143970a8b98d6bae013adfca6d299d8ecd18227849b7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91014a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91014a_rtr.bc
+sha256 e9ae3acbc01c3ed489017d50d8adfa1ece53933db4124f4d8377f6131d8c4b2a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91056a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91056a_rtr.bc
+sha256 379a09b26ba3630b4c4f823bd3795824c4bfca083ccca270548f41f9f213345e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91057a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91057a_rtr.bc
+sha256 1fcb9e048a4d7c1fb8b5260e3a97862de27091c0b9a9ba2ef6d3beb7276f6ac0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91059a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91059a_rtr.bc
+sha256 40ed68de116cb071dd70435bf055e2bd638971bba49fab4f54fbafa2b4dcaba6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91061a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91061a_rtr.bc
+sha256 71b069dae39e87de6c75936e5dc1b23d29f83efc877753ea3c44f525f1600e21
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91063a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91063a_rtr.bc
+sha256 077628cea005272e0ae9e3edf4318077dbfcfad4a800b415ac03e80467c12252
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91064a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91064a_rtr.bc
+sha256 8fffd39b992ec8559f458c17cdbbf16876edb94e2a484f5d2b6b19622286cc88
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91065a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91065a_rtr.bc
+sha256 032d0823cfa76fa6162bfe06ff6e7e3cd179230a63727102d4b211283c015ac2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91066a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91066a_rtr.bc
+sha256 ad1dfc9cdc4d0865a7fbce8074562947b6412a7902d55cf0ef1d83f1c137cfcb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91067a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91067a_rtr.bc
+sha256 652ea221a2e7a8514a684360f834c2fcc119f61632ac7bf1afc7d9c857524f15
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91068a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91068a_rtr.bc
+sha256 6b57e439e4c466286ac8bd0fe068499f60282fd68d1a3b101de113a5596f8ae9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91072a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91072a_rtr.bc
+sha256 8ebd81bd00fec0dbd608e160dc8da84855f808a1623b033aed84d149df4c8f1c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91074a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91074a_rtr.bc
+sha256 514de7d2dd87d0d8c9a83aa2fddb8a60b7cadf024516d92289d13f518690b9e6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91075a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91075a_rtr.bc
+sha256 5056c22646a1097fdbb163d8ab2660a141ecbf61e42f1e3d8435333dad865bb7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91077a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91077a_rtr.bc
+sha256 35bd9d078ec1f45d8d374762553dee7508da9b3224937d4380e8a34613afe1bc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91078a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91078a_rtr.bc
+sha256 0ed7ecfd79ad26a3b505ed012d1e6f2906f2c706db42d10a6b7ee0d6aa297130
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91079a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91079a_rtr.bc
+sha256 ca09bc1969ddae7deba8c2a2ee430f3cbf1ed00597784b9d07f94877af5eaaba
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91080a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91080a_rtr.bc
+sha256 3296c46239acfee42330db3faaaa8506ad43a66e8f8a83dc4b0fe6845312e3c3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91081a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91081a_rtr.bc
+sha256 f0a1168a6f0954520905b92c3708f6d8f6c3f929f7273250d6127bdf0f6b6521
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91100a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91100a_rtr.bc
+sha256 8686f26d3495aaf28cb5a49fda9d52d8298e6d33cc9f661bb9fe81576779b8ce
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91101a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91101a_rtr.bc
+sha256 2e649bc0da59301de5ee5448ead00dadd703dc1375a2645345b8476928d798af
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91102a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91102a_rtr.bc
+sha256 422947b4380ac6ee884350dbe5de7ceb50658635999c9d2fe1dae7560e0b515d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91103a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91103a_rtr.bc
+sha256 5d6474297dfb7922aae981f802508c6189564807c35e1be20502b54a5f143826
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91104a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91104a_rtr.bc
+sha256 ae2dbfdcd58792ed8d2b53560bc29ff89f648e3e0fd0da471b53510b8b415c16
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91105a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91105a_rtr.bc
+sha256 bd9704abe35ec8939fac53eb43b8d8f731ddb10952e32c92302d1049e79816f1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91106a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91106a_rtr.bc
+sha256 e6e673f3dd05ed8fd9fc313d9f1c990d783bdf85ad903b054c4e703417439219
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91108a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91108a_rtr.bc
+sha256 295277f31a221ae9231a218f07d3f6ed82f62eed2a9b6b691f25c92f8a6c7b47
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91109a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91109a_rtr.bc
+sha256 3a8815356c7dc67d5d9d5ba0da62730bdcbf4947912395f85eea0f0820fe6078
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91135a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91135a_rtr.bc
+sha256 b7707f1ad76a4296ee16c64a2b76276cd51b3c332dd65b56aa6493d9eae401cd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91137a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91137a_rtr.bc
+sha256 24504721cd6fb67eb05d077df0d00498573dc41ac94d5708b82dca5389ee886c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91141a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91141a_rtr.bc
+sha256 8c843b8b33f27e7a02665f55dbf9f67c16fab9124c980806c20e6e4cc5b1fca6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91141b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91141b_rtr.bc
+sha256 30379a29bc6fa3d96f0af58d5df3a96d79cce8b954e605081cd5b8825e199458
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91142a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91142a_rtr.bc
+sha256 37e6b107694a1e4bbf28c8ba4b7a153f6028883885d123455119d5eccb601d47
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91143a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91143a_rtr.bc
+sha256 9b540a020b35abae49841c9ba80cd5de2b756c2834a4e6a2cf0b4b88af0aef9e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91144a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91144a_rtr.bc
+sha256 43156c95250744f1637d490adae3ed315cccd6127fdafdd58709b9d2436f4688
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91149a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91149a_rtr.bc
+sha256 a27458cec48decaa3ec10ec5fb143bb2280c28c71be7116da5a7dfdfc916e657
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91151a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91151a_rtr.bc
+sha256 b54ec1ed0b3eec1e38842cea627518a73d88470a76859e3b14923bedd3f9a84f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91153a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91153a_rtr.bc
+sha256 9704088916e889fbdd9b8c92acc8a6172c527461ef113b9e85da3df4d5aa766f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91156a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91156a_rtr.bc
+sha256 a80a2132ff9f61905f1b0cd3017af559edc14b9c41033ae9eb6f62d84663131c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91160a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91160a_rtr.bc
+sha256 3857723f11706122b73d187534f8fafcc393580202157a68aa47815815d2cd0a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91172a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91172a_rtr.bc
+sha256 c58e0d481c244473ecd8aaa92af7a50a3b4a4bb54199c7d9e0755adc32705510
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91175a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91175a_rtr.bc
+sha256 d10e7beab9c100d87de0b8062e90c163d3eed5a5194232f73651c71187442de3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91182a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91182a_rtr.bc
+sha256 e8c3a0a6cc421d3c74cbd92e1440a7446961bf74819988a8ca834cc711b6eded
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91185a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91185a_rtr.bc
+sha256 2f14f1593d5c801f5fed2738ff04bd7051ea145ba903ce818bbc31636576497a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91189a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91189a_rtr.bc
+sha256 64320b0f915500a162ac82c46603fc5d181f42cdf2564bbd266936163369ed7b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91191a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91191a_rtr.bc
+sha256 2380e020219fe1faf62f77d350d9f2c3096f18b10452c723d4adad688f7fb72b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91192a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91192a_rtr.bc
+sha256 ada513878eb1016a05806317609ae5b338a1aa537ac6508a0fde53b5f6e08688
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91196a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91196a_rtr.bc
+sha256 d4f92504dd96e5d80ccb51959970195d86935eab0ca40354a8f102a6f0af3384
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91198a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91198a_rtr.bc
+sha256 5255273388c72e2f2917bae482734872ea3dc79dad407b3494d3d8ff03d51a58
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91210a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91210a_rtr.bc
+sha256 71ec81bc234456dfedc489980999dd8ba82ef67daf5513a0e0d7e11d38ce06e8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91217a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91217a_rtr.bc
+sha256 3a1c84f6c176e4669a3b8f2eeb96aa39ae13291ecd49866c54d159a48c64b8c3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91221a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91221a_rtr.bc
+sha256 d388b6b3c162becc24cb628ba5d39213e6d0ab87ed4ebaf8d794cabe9919320d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91227a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91227a_rtr.bc
+sha256 2c2af486c45065454951b86e7705852649ea5972654822047d14bea6f19c06f1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91228a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91228a_rtr.bc
+sha256 7bf60926cd226a64045147de62b94be7e512889e077059e305322bd4546d6df6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91242a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91242a_rtr.bc
+sha256 a2f5d75b1578dfd7b69ea3a98ab495146542f6153441012f4725273ec7840124
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91249a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91249a_rtr.bc
+sha256 139185e0434ae13f344862225cae17356070487667529a946899c27c3aae16cb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91253a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91253a_rtr.bc
+sha256 3a6f8488b2c5ab49c90be29e924c4264f5e0cb51aba56f6f1cfc49636051e5c3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91255a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91255a_rtr.bc
+sha256 d30e7738bd21af00f548f6fe9c9c27032f9362caf4655e55643c567a1dc81b20
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91257a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91257a_rtr.bc
+sha256 b172da6c04b09a0085d9090c0b8ce12d706b6eaeb6f68df9cf1b92e1ea28d174
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91261a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91261a_rtr.bc
+sha256 37b6654f0bd6bf501e380d33cf1101f95909eadb5349c12faaf843c72a9a6b89
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91266a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91266a_rtr.bc
+sha256 5ab1772c5c195c03e90c9bd9f2986c462a1fcf5d4519e8f367f7e5cc60c55301
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91268a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91268a_rtr.bc
+sha256 7152e3c85e393c4318a76854ff34f49974b776ba27c89a67132da00e5ea26c4c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91273a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91273a_rtr.bc
+sha256 eb1afaaf537a8cd3bd8cdbc55ad45f7283b838cd368ea16d06aa061fa27f3692
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91280a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91280a_rtr.bc
+sha256 185713012241c29c88d9d849aeb958fcbdd4481db4b1957c3832b8d0a4522171
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91283a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91283a_rtr.bc
+sha256 150e66af81051fdc5fe11013a06e40412073892486b3778c579ff9f601115347
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91286a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91286a_rtr.bc
+sha256 b38227617b68996eb36cfe83d0458c495773d43e842135dddab86b0ef3710664
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91288a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91288a_rtr.bc
+sha256 e2bb01c72ed6969314ea5880b9511af6e18a0020ab0e9666409be4e03220f373
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91290a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91290a_rtr.bc
+sha256 be8765106bbed4a862eb3e0fbaddf4e2440d859153cf284b5bec57e9248bf348
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91294a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91294a_rtr.bc
+sha256 25763a4f4c7d5f4ca47b106d0795cf235e9dbc30519fedf77ea5427a29c7d1cb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91298a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91298a_rtr.bc
+sha256 09700dccb68449e914fcf39dea754275b7d8a8d87a177633c6ff62994523cc61
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91299a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91299a_rtr.bc
+sha256 3c98ec6824a6782baf2023ba1971021061780f5fc1ec7d1fa29e751eb2529015
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91300a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91300a_rtr.bc
+sha256 888d0ee8b01e70a4e7b716f89dfb56aaf6441131e30bd58331f0fc0ec8331e31
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91302a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91302a_rtr.bc
+sha256 6095db4fbaba08564634f5fbf3fe0551a9568ecfe22a6a94dc1bbab53052d8ed
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91302z_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91302z_rtr.bc
+sha256 90ae64172dab1804a55fc21c15b0a9209635edce75ffbd0fd399f340d6eb3bb2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91310a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91310a_rtr.bc
+sha256 1bf006322d5aa32addb866af5beb9340168c82b9a232ad7d62d1f92b71597d22
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91313a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91313a_rtr.bc
+sha256 04cc96df94c0ddf316e6e0a76be265bdf192d19ee82ed039543c0815a871fd18
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck91315a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck91315a_rtr.bc
+sha256 b22661588c7da76667773d400c7d0e5ced244415c2ec46bd3d9cbaf13c796485
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92122a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92122a_rtr.bc
+sha256 95efa47c4ef81cdb486e6cb930092596915e083acde36ec917fc29f728912fc4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92133a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92133a_rtr.bc
+sha256 719438b01a0ef871449c8891b9c4d89e4a73d7d10747f2cc96451a6e241ab2f8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92139a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92139a_rtr.bc
+sha256 0e080136cd6876ad905ae60d976dc35e5389e36924e2eb6b41b20d0dfeb600de
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92141a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92141a_rtr.bc
+sha256 12b441fc45e910aa7f22a3cdaff30f1712a5ee27c6b0d2637d5fb51cf0409cbc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92142a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92142a_rtr.bc
+sha256 6470a9ccae5a60b59edaf6598ca5ba8b77d881447cad895088efdb465f745a09
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92143a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92143a_rtr.bc
+sha256 ca342906c9cafb033d5f84a1431f587419ebc9f0e0f55a3688bdf40e049d3765
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92147a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92147a_rtr.bc
+sha256 1d11a8e53f6169a6bb2a3f87ba3ee601d9468960dd58359dc3d2f6a3d5086f1d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92149a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92149a_rtr.bc
+sha256 b16015284e13bbe6ed8dd891a05769bdf988946f53cc937b5a787550065b85a0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92153a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92153a_rtr.bc
+sha256 31319855d5f69d6d960257f76138dff638066c74bba2acd537b6c07c568d70b1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92154a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92154a_rtr.bc
+sha256 9d39de58155ecef5040944f1ae66ad9a7699cb51840bd9fae82ae8ef0219d9e8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92155a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92155a_rtr.bc
+sha256 8c917a618e14eebe76561956d4518fbadcc4afcd8f48a96342f9da6f930b0a0d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92156a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92156a_rtr.bc
+sha256 ad0e98e68ec0c054df227d35cc223673d13805ff4863b18273bfcbfac9815786
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92157a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92157a_rtr.bc
+sha256 a508444abb966b1a2caad4be27a58536fd28fae2351c997176c60bacdc559fdd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92160a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92160a_rtr.bc
+sha256 998cf1eb2dda86057bf0f18e81d134febab9e853ed588a0c65105f10b0eb4c70
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92162a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92162a_rtr.bc
+sha256 8e2eb569560652b5ccef74682d29d0eafac603300aba52fe7db20aca69b5010e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92164a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92164a_rtr.bc
+sha256 b9f93faeddaca14f75490d974047f7973c8a5be27f7b6737045f2efb2b0a6ffa
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92168a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92168a_rtr.bc
+sha256 0c709b6c7754893e71fb282ab8aaf0a47c61d46a77fea8cea4e18849d99b6c33
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92170a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92170a_rtr.bc
+sha256 386cdbbbfdbda4ea1922db480ee988177c36e471b9d2c17aab3a8aba537d8f05
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92172a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92172a_rtr.bc
+sha256 88f6d3c9439b22403fcafe652ad25201f4d4ef798028ce45f42ac987889de2e3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92175a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92175a_rtr.bc
+sha256 edd05cfd6759c4a18be6f7042a1eab854a127395eb21b54c842564cec7bbe6d0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92177a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92177a_rtr.bc
+sha256 8b952dd0a18484467e27a2702eb1a1ab26ba26f9a8bd974038507f425dfd1842
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92184a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92184a_rtr.bc
+sha256 df80e2345573d0995a89a34080a9b7c1731f1a2f7fa5295004fde44fa50e5b64
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92190a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92190a_rtr.bc
+sha256 1ee1afd85c20b503f851a93b7b27ae729f524b96125793c9e8676fdd7929f71a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92195a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92195a_rtr.bc
+sha256 a1caeb933a891fa1e99e7abbe2994528c4235a802c42b22ddd51507f3242472d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92197a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92197a_rtr.bc
+sha256 5af3872add9b61348aefc55bf72309f17323adeb517ac96ad519208b4144823a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92199a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92199a_rtr.bc
+sha256 8adf0054447885e26faa9ee362e5c71996e5a421c7de1d98dba894bb769414ce
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92203a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92203a_rtr.bc
+sha256 d0b9feb66ac58f996a0e1051332a5c415a47560b6ec1bc4a6d237b5c230639e0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92205a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92205a_rtr.bc
+sha256 ad276a8652d56a5b1a5deca3ffb2ba3f45dc07a740fff034bceac6b71ffb0bda
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92209a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92209a_rtr.bc
+sha256 3e3cd5ced5a0e3d2fa1a91a9cc633035a60ed4492a2fd9fb0f61c9f7d4132d63
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92215a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92215a_rtr.bc
+sha256 bb12452cd6ea5c0a312e94ed2ed1ead179907cd226867d03c569f17d053063bc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92216a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92216a_rtr.bc
+sha256 ff7bb4b2e0155fe2a4c8618a2060bf8f40bb5af99f2ca734be641f2bac08ce1d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92217a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92217a_rtr.bc
+sha256 76d9032b713cdf1d870cb29d9e7bf86e90a92cfff53bbf93c4ce63897854b493
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92218a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92218a_rtr.bc
+sha256 ef6218f61903971cc3849ffe7e9da54739ab68897e4dfd4642ea9339fd5e93f1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92219a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92219a_rtr.bc
+sha256 1c96c4241359b45b85ee314ce68a96fc9395469034a4f6407da6f3340dd32a09
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92220a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92220a_rtr.bc
+sha256 46eb24122c985e63cf73114269b246a157a89560bd22ace3b7a154ae4ce38272
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92221a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92221a_rtr.bc
+sha256 88873ac6a6bccae961c81e36c14d6c87212597d8574897fdf723e4ebc7130b4b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92223a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92223a_rtr.bc
+sha256 a294d30b8e65b6a85c177e21e81e26ee7de439d711b558a77399041a2e529a1a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92225a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92225a_rtr.bc
+sha256 489156f35642982cbbbb32eb307f9c11bade22aa0d2607b9ef4e539a103d6bac
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92230a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92230a_rtr.bc
+sha256 c295aee5bd9c7c4fb917c0ea374f52e25063b0eec7689f91d12fe8e9233870ae
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92231a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92231a_rtr.bc
+sha256 31a23dcf8d608fb903ef9c1c5abdc6cf22afff64d8377420dfc625e292f1fe16
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92234a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92234a_rtr.bc
+sha256 bfdd6640d4620aad590b7e122e8e5d4a080b29701c66e87ba31317954b87108c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92239a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92239a_rtr.bc
+sha256 00572c00c4835343311219497dc099c13d9c395547b1842371c98bfb246c8ad2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92240a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92240a_rtr.bc
+sha256 da44d844ab10870ec11f1dcaef6de4e1356af27d67e21c73fba64caf827123b3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92244a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92244a_rtr.bc
+sha256 028bced4695bd1e3ce80931210d5065d3958b6e84ee96659985286b4f3bdf5a8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92246a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92246a_rtr.bc
+sha256 d03098268a94ba0df36a62ee069a037a5433ac6cf151f4bdeda43dfd334196c5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92248a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92248a_rtr.bc
+sha256 83f85ea74f245b3808796884390a78690417192d115899e54414c91b2a2e9962
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92251a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92251a_rtr.bc
+sha256 2ac8dfe8f54296581e11f695720e5b1d59e7f366805eb6116e23cf094ef47f12
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92258a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92258a_rtr.bc
+sha256 1c5a2a502c8d2e29b4f5e780e257ff1f4491d5d9f93926d57da088787c254faa
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92260a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92260a_rtr.bc
+sha256 8fdea858169b405851034a1fe6f7f784c413b1a7419d9daeda2b64ca99696d31
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92264a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92264a_rtr.bc
+sha256 0f48259a7b7aba7b1b3058dda34509bcdc4b5d2b3ec9a5988f4d9274b5c26c8e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92266a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92266a_rtr.bc
+sha256 c45ce73c3fdd97aabb29a152d9724a68b59b24106826355fc403811282dd686d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92268a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92268a_rtr.bc
+sha256 8602482a40d72e3be87dad8743ded05edfb87cf8ec41534cc4bf353898df0b92
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92274a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92274a_rtr.bc
+sha256 c6e85eb7b40f8cd4bf57e9d73ff74b1204fc3548ac2d838a3be6dcd1f684a7fb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92276a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92276a_rtr.bc
+sha256 a2364e60d448b88a90f42f742be0372b176509fa09e057f4728de95306f736d6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92278a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92278a_rtr.bc
+sha256 0ab2b0030ac14fd2b6a30a39cbfce8cfb087e215722d18c2798771b45df2bbac
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92278b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92278b_rtr.bc
+sha256 c45e9fdc75d68264cb52a4ee8314cbc1087135284b88109fd6796785d5673ef5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92279a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92279a_rtr.bc
+sha256 bfad05b1cf2ac0c93210d872a622959211983884b408e6e8b67549b7ab55d38d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92282a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92282a_rtr.bc
+sha256 7bc74d4b0dbfc6e8269de66ebf5b6740678c08fad3ddae90b0d711b8c31c678a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92283a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92283a_rtr.bc
+sha256 fc3ca16a8679edb932784a81bb0bd31b040f76d20f68e6fc8cf9af151e5daabe
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92289a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92289a_rtr.bc
+sha256 e5a87012960908eb4b1eeb601189d334d8ed1fc0b6d90f34c567fc702fbcbc5b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92291a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92291a_rtr.bc
+sha256 7d797460aaa45c866b42c1c3e4f6db73cbea3587481be2abd919e575ef4de68f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92293a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92293a_rtr.bc
+sha256 30aef3ce1bc6a20fd79dd469f6a1b5ff3ae8dbafad3f88e706c8b7ce90c001fe
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92295a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92295a_rtr.bc
+sha256 9658c89467f880c5412eca39b701d1dfcc636f42ba0aa20659bd203607635282
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92300a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92300a_rtr.bc
+sha256 0451901d81081cd839070b582f5d3b49485b5ea07fea18c6ba140c11029dac00
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92302a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92302a_rtr.bc
+sha256 281472b8ba9c02d36b9a86444d0df6c4d0959a2e6b3c878aa4f2815c463580c4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92304a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92304a_rtr.bc
+sha256 37d28fac86f73c6f29ec9acb02ab7216d0e6e8ff2535a9fff723d8665cf41d74
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92310a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92310a_rtr.bc
+sha256 c8269a65136c5e9e24b27b9f7da2ace8ba518a0ddd32cdd487d6b3239cbf379a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92310b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92310b_rtr.bc
+sha256 d6e7bdb5beda59d6b15937824b834c428bde43769e71d762926576e78f7e8197
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92311a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92311a_rtr.bc
+sha256 9a7ee58531fab5773cc332735e787ad27e698884bb714b8185791a97503f0ca4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92311b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92311b_rtr.bc
+sha256 6300aba9b12ebb94306ca5ed47b21cfce5d259b0e2d8aeb192ee5330127847c5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92312a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92312a_rtr.bc
+sha256 01705cb588da85e9c1b7219d4c4a63be03d3585efb2cec8f14669a97b79ecd61
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92312b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92312b_rtr.bc
+sha256 4290d817de4819237c1821161a72b56adcf64831cab7da8bfb78143d666f268e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92313a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92313a_rtr.bc
+sha256 653e4ce6a4c5e1476f59a1e6d78dc9993d85969f0838d98c4f4c056369ef19e1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92313b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92313b_rtr.bc
+sha256 94290d67b571bb6a2b8fd8ded7317e37c105d522a5ad39320ec05784791474eb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92314a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92314a_rtr.bc
+sha256 e7d27b2e3aedd0dc530e21eb7e253104369f27c27646b706721b04016a99fb78
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92314b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92314b_rtr.bc
+sha256 76f0bf098cee62cb1dd4105cd5288490e34fa6949d50bf4bd659232a50c85a96
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92315a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92315a_rtr.bc
+sha256 b0e4477fdefcc6f372b31f6bd7a4e1c8ea1752f12041ca9a51fd298529755d8d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92315b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92315b_rtr.bc
+sha256 06281442987e8763c9764769764cea9c11e63de251b9467305898d95efb31342
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92316a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92316a_rtr.bc
+sha256 5e6cfb53f67d8e205769d38df690ba131b2ac7cd04932f139311941f827a4776
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92316b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92316b_rtr.bc
+sha256 65f3ad49e020e93afb98ae128f0ae73a51bd49c8b4562f677ebb4cfca6f20801
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92317a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92317a_rtr.bc
+sha256 828986ce45a7fcbc080842b20988f3507ff3f26e03b19e38e79fdbfa1f5d6305
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92317b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92317b_rtr.bc
+sha256 a357663eacf8bb64c9b70242e778a838df5d37a6317600ecd1fadf7dac701a8d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92318a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92318a_rtr.bc
+sha256 da1f2ca082fdf0145b98701c57b42e536bfc64df2f6cae03acd0f6481df2069e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92318b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92318b_rtr.bc
+sha256 62d54911a2ed438004dd497a68537a5901cfeed8362db1e33b71fbfd30a3899b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92318d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92318d_rtr.bc
+sha256 286e81aadb4bbf05a49428528e80e6f18dc8b8bfb9f91622d2a4a6731f1ba89a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92319a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92319a_rtr.bc
+sha256 689addd57ecc847f6519504c330800bc8c64e28612385b73c437e77812612d68
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92319b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92319b_rtr.bc
+sha256 876fb2db8773f3c08519f60750361c3165f18d2325c215e6f5398196f77b8c51
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92320a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92320a_rtr.bc
+sha256 481aa5151dd6122c03f352d67a148047cdd058699304eff44c8ba01c92bbf6bb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92320b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92320b_rtr.bc
+sha256 51533c2160bdc282c2fc11b19bd320a26373dad9dd1a81da20086ff71c8d134d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92321a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92321a_rtr.bc
+sha256 58937c5465718b50a3060b7b1488c2fb52614628e17312b2787f4c1ea6ade5d8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92321b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92321b_rtr.bc
+sha256 03c05c8d9d907870fc81418a11c3e5ee4109aed01551c85ad52018e68a021048
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92322a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92322a_rtr.bc
+sha256 f1f79e72bd6bc5bf0cf6e5a1656152252edaecdf3ed542eab1f0063264dfa0fb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92322b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92322b_rtr.bc
+sha256 fc0512e33abd221a828a66aef953ffdb207e3bad8039455a1accf6029da2ce70
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92323a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92323a_rtr.bc
+sha256 4d08ada4e2c54b490c43b68e9cf7b6184fb1eb6af1bf83528721dc85152b4c7f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92323b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92323b_rtr.bc
+sha256 61abf577624304dbe307b43fba7121146a486ac53407d00e13defcbdea5c61e1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92324a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92324a_rtr.bc
+sha256 6947fea5d20d698ac7d6422b4b200920964b7f4b77611a0d48d55daada48cb08
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92324b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92324b_rtr.bc
+sha256 f69437f1f8db51d46ba565469509c4b61588eaa4f321464306c1a3f5c2fe5a1c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92325a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92325a_rtr.bc
+sha256 57fbb5c266a49bc396da7664e4dbc07149bf70153e59ba6749ed17052b8aa4cb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92325b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92325b_rtr.bc
+sha256 7d0c507b4370e084d0f0883f06d95ae2d4408ce4ec2d6a2d196ce924f730a769
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92326a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92326a_rtr.bc
+sha256 d46781278e2ce352f16af5b604490e5d1e4833da8a66b136f22e823e662d9143
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92326b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92326b_rtr.bc
+sha256 2e6ec3395102550503226d2c3b1360bc9750627eb0c93c5ea9f47f7959bd15db
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92327a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92327a_rtr.bc
+sha256 9e990f6fd32fa80c361b587de615fce2fd535f03c3f61ebd4a4107a102cb81b3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92327b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92327b_rtr.bc
+sha256 5d3b3ebf2c3d63f6fe51e5d4f0523cf71b478745a5d74c3f6d2b8f8ebca50e91
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92328a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92328a_rtr.bc
+sha256 efe4c2f95f6ae528ca66d38cb2a5f63c57c90e73ca2cc516e6978b3eb979398a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92328b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92328b_rtr.bc
+sha256 0d3a8be09c0fcd6ab8811f4d153baa7002e638f7ca2c9d7419ccedcebdbbc1da
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92329a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92329a_rtr.bc
+sha256 23fa352424b560dd2d2aa720d2d6e83a9188909cac0e906f13c4ac24bfd70248
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92329b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92329b_rtr.bc
+sha256 28d3868aa9a5332def83fbee30349d140b58ba4a2d10ed7095ba65108a8d926b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92330a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92330a_rtr.bc
+sha256 48b63c22557d16deb9b3dce471cdc380fcadc4e121f3042c8edc6ad71e4c45d4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92330b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92330b_rtr.bc
+sha256 4553b1ae76f79f5dd482ce96e35dc3729f1e7de87a3dee46e1bf6d2eefd93c4c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92331a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92331a_rtr.bc
+sha256 b9f5c1150a656ba8edc4eebc7c2abe622a444b28c45b718cca60e83e992c7706
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92331b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92331b_rtr.bc
+sha256 ec3087b12969b46c6cd41c7cf0342b38d6e7985cc4297a76547dca245df23020
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92331e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92331e_rtr.bc
+sha256 ea3c6221357f9092787379cbd0927662285e17988bf781ecb43c69863d4bc29a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92332a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92332a_rtr.bc
+sha256 d1ed4bc96eaef9492b1b31ec9d5ac428e636ccea46a263eaf0f97116f50e29bf
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92332b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92332b_rtr.bc
+sha256 3ff44ea100abcb66def375114713cf64961c73d3f7f860fa2924b030984b149d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92333a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92333a_rtr.bc
+sha256 c89f588c8496d4c37ca06bcb402a563d2b66d99a73d8c36b719ce74d37367199
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92333b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92333b_rtr.bc
+sha256 3eed76269556aed414a4ca7838446cdec040aa0f742b061a12b751bdebb7bf63
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92334a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92334a_rtr.bc
+sha256 fe26a4ff8aca7a84ad1ffb146921b55bf573b7145d44c6ea552ed0a3ef017a5a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92334b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92334b_rtr.bc
+sha256 e245ce588b543b5ba6b4de493285647e83c7d2414643a597a083ca2f9893d486
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92335a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92335a_rtr.bc
+sha256 6aea6fdd53b2de45e0cfca88edb9b937de155529090a6da25045beb7aef83b69
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92335b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92335b_rtr.bc
+sha256 efa32600157c188e4e33af63fa4b979839373ef699585221f14694cacdaf624d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92336a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92336a_rtr.bc
+sha256 1f22702c564f042d0a7013a8d90be00079a5e5356399b45dbb89390f32a9372b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92336b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92336b_rtr.bc
+sha256 cf0ba6437cf46f465dee768eea351a8d8aa59a15fa99e04b9061f15765c719f8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92337a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92337a_rtr.bc
+sha256 6734663339cc0413bee72dba1985eb4c62d2088819938f665f1834746c1981bb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92337b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92337b_rtr.bc
+sha256 0f18c24e71c1ce8bf0176344b6f0b39e5ab3056476682b40987ee8d27e317a44
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92338a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92338a_rtr.bc
+sha256 1c8e5b17a449584a076192e5e27447543ddfb84b21ee3eae7158c17f6605f19c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92338b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92338b_rtr.bc
+sha256 46d6c9e3028ab5e69cf2c4cb9de15c32e2159ad49eb71fe80e04bbc2fed7e2d6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92339a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92339a_rtr.bc
+sha256 c935eb1d72cc154442529a2132f4c0045c3ca17334c7a6d113596079bbc0a65a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92339b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92339b_rtr.bc
+sha256 eea91bad56a4e813dfaf74653baaff752ee3f354785898e8cd7347eaf016308d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92339e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92339e_rtr.bc
+sha256 1762d5206a2f9c2e1a3a0b9f3823c5d4f11b29c9781cd90665d412f30cf363be
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92340a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92340a_rtr.bc
+sha256 0530e04969a5f874911ba50363c67164e86cdd05292ab9fd715f37f57550faa1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92340b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92340b_rtr.bc
+sha256 ff7baa7046fd7fa7e57a7cc26fbc999bf70c8f5e4ffaafe155d389ec97c4357c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92341a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92341a_rtr.bc
+sha256 2c62948af1a9af94119545d488be975de65b48175a80684d5bccc66c5165b076
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92341b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92341b_rtr.bc
+sha256 5f628b4128abc6b3946ba542cd7b7bfe762c4bde6826bec1aca8574480d90d5d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92342a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92342a_rtr.bc
+sha256 a3498ee95f667bd226ebfe51994a487dd1f4411760b9861997ef212f387c1230
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92342b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92342b_rtr.bc
+sha256 22bec394ea263d04cb7b1ee96536c0ffafc10c813817b4a8fda978c387679ff8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92343a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92343a_rtr.bc
+sha256 ffafbb752fd820aa33335e7142431f037d09aaed743fd6cc00fb875a965c6e5f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92343b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92343b_rtr.bc
+sha256 98c2adbe52669339a6b4f21e91f0ff2a7bd62fef7c5058c3938d7ad7725c9f8d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92343e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92343e_rtr.bc
+sha256 9e887248090edbcee272fa37971c91a386e771d49033248cda17db4a1f1e40d3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92344a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92344a_rtr.bc
+sha256 ab3b6d3349343428ecdd0d534945d90cac312fa3e2e9f2c72d5404d893a63fe0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92344b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92344b_rtr.bc
+sha256 30b1a45725c3bc5f7d9fba5f47e98ad697a79d1a8b3e178bcac8189cdfa9a6b4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92345a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92345a_rtr.bc
+sha256 29b5e92d384154dc9d49f52832d399a074fe7daa56def225761cf6d12ea5f1f0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92345b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92345b_rtr.bc
+sha256 467800f0174440b3947dbe4ab423cd810eb0e4456ec1e7213d3956becbcc70b4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92345d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92345d_rtr.bc
+sha256 ad41208bc07ad686bbe82edf51a247071826012136bf7d351c49dc65da05a070
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92346a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92346a_rtr.bc
+sha256 a6a4d0ecc0ba87d99a41ae0a0687b855982531efd7c920ee5e441e0b90305ae2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92346b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92346b_rtr.bc
+sha256 d4f760fe6a42274d6b617e4822113f2dc69e390ed8f639b687a6113d33c4c02b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92346c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92346c_rtr.bc
+sha256 413351065c6a0e0a1ff29d99599e8e67dab100f3ebb0d2a7ac2e1090f172df33
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92346e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92346e_rtr.bc
+sha256 ea2ad6943079a657538739e8cf3d3654b7298a06f0ff19462d04318636186190
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92347a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92347a_rtr.bc
+sha256 3f90c4716ea7e3394bec4b44a255d036adaeb8415fcc3d8a4e217bd9470ef692
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92347b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92347b_rtr.bc
+sha256 f48cf2b240b63ef5dfd39e572f4b00349e1345796647f5a76ef9f24fbae657f9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92348a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92348a_rtr.bc
+sha256 74401f4a185e4f16661bbe55f6b039ce8098093f021438cf7154bf3e4cc3753a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92348b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92348b_rtr.bc
+sha256 e6e0819c98709be3df228d610c3c1c8fa4647a265e8b52e7a1e21b8f0f7d6350
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92348c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92348c_rtr.bc
+sha256 6a697e2414091864bde74293726b8a08a9daa66720ab9004da20422d74a45888
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92349a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92349a_rtr.bc
+sha256 d2ebdef786677368a856de4192453e23209e8c89785be37b819bbd1d0a1b5e7c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92349b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92349b_rtr.bc
+sha256 fa048978c48adce07e8a18dfc610ce37ce10d3b83f5eaf38e8800c20c7a27384
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92350a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92350a_rtr.bc
+sha256 426654138ec8e934e93e6069613db3cffd3714df4cc19103691c2998c29b187f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92350b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92350b_rtr.bc
+sha256 bf52c91973cc162346f886e45312ededc7dc7ee7333b50465c71af75964e8bd0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92350c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92350c_rtr.bc
+sha256 fa801c9373615c6e2533af5418f7ad584e80fdd5f936af7eeb4527634a482c68
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92350d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92350d_rtr.bc
+sha256 8f0373b95a6dbbc03d4e6087dfd1b6a23823f6480bc327dea5f4f75653d2643c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92350e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92350e_rtr.bc
+sha256 df975c2e4d67685f6912f7d269d61bce69883285b61fde2e6daaf87b06d7a783
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92351a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92351a_rtr.bc
+sha256 078df85ab579f86bd3c31fb7cce890913cf83af77ef3270e8ee791ab24c9c6bb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92351b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92351b_rtr.bc
+sha256 b8e1d3f9fdafb56a9bb3ba4af208e1b901f0dae548e35d29c7141e7173f89dad
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92351c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92351c_rtr.bc
+sha256 89a987a2dd7abee4f965f321538dbfaa5cd8c41d0db5adf93cbebd027615ed34
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92351d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92351d_rtr.bc
+sha256 f574b0ce2d9ea07a53b327dc5793e2c8b3131aba32fab6af77e8dc6fbe5a1b12
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92352a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92352a_rtr.bc
+sha256 8e017ac3bfd4e77c1a1790b4f7b2d0131b797d5d3c28c6dfe026acf66f6f648c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92352c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92352c_rtr.bc
+sha256 3aa3cc950022c3699e1185f619c53fb34d65e7dfc86700a112fa4aeb4e03af18
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92352d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92352d_rtr.bc
+sha256 7aa8e650541038e333d228a3d799d741f95dfffa30f34e9186d9a15fd561fef0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92353b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92353b_rtr.bc
+sha256 dda1c50e6202cdb2fc132ea43f4393dba673ef6cdb196fa5add0a88124ce6e90
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92353c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92353c_rtr.bc
+sha256 a46457bc3acfc63fb9924b7fd6959e52189038071759054f5aa5ceed8b52c62b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92353d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92353d_rtr.bc
+sha256 705eb5b9cfb18beeea4dda5c34e59b5b6e4ab9bd997c022ed9a84feb47a84542
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92354a_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92354a_rtr.bc
+sha256 6e049d384c1af661a638f3df136e666c3624c467f2778ea38096a732ee9a42fc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92354c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92354c_rtr.bc
+sha256 d8f0077c9ce19fd7a8b4d241978d0bc0f626bd1bbb4ced000e2958c021e56ff2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92354d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92354d_rtr.bc
+sha256 6070591c98b7a2f40fce79d4d3c7696e137b3dedb3760e1c5830f59f9ff08513
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92355d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92355d_rtr.bc
+sha256 11e7ce9aba41eb3d28603ad55cd6faa27d7f64fd02584da8c5dae5e9b22ba44e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92356c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92356c_rtr.bc
+sha256 01192d8d74c37cdb821ca0f5977305aabcf7f55db0addacc1cd7480671a9730d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92356d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92356d_rtr.bc
+sha256 9c76f8420ab26b7d68311a5999a491720e17a28d9fd36622e43ec6b9ca9c6eb3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92357c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92357c_rtr.bc
+sha256 b34908d30b25467c67ba18e94fd9a4d41a254d0dcb300c6ae63dba7906875af7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92357d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92357d_rtr.bc
+sha256 1264d6bf70cd28319c5bb2606c23e0c2b94bed903324b0958de5cf95896fe940
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92358c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92358c_rtr.bc
+sha256 ddf16c872e9577a449c35a73620ad97d1c726f1c4406e1ca5a90dc080800e193
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92358d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92358d_rtr.bc
+sha256 3741b4cb31f5683d41bf52daf38a1f5f6f4085fef4084ee0b059123a809a3610
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92359c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92359c_rtr.bc
+sha256 4b88b45f6359926c58ebd48fed13758995a5e28cba46a61c909741e26c9e949d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92359d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92359d_rtr.bc
+sha256 3cbdf31c2de347864e5dce18e3c72b81f6ed43885fb5212a683afbb56c944293
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92361d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92361d_rtr.bc
+sha256 03cd2b67da81c84507597c3e3144793708c82539cad20cbaebcc9f32c315d581
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92363d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92363d_rtr.bc
+sha256 75ce2cd221a91b4fb8e562760d8fcd846cc54dd437081c3378b1a302a3dbafa3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92363e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92363e_rtr.bc
+sha256 45c43036eaa2c30a03ed9b36fd418e8533ec1976d3ea15b411858ec641188bdd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92365d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92365d_rtr.bc
+sha256 ed87183ac22d11edc6b9fa7bcb056b08adc263fe467c04b02102e9446a9f01ad
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck92366d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck92366d_rtr.bc
+sha256 13d53cc48579e33a5d5dfa1a62e2f8cbe45019d5d5c1c5b9e54cac775d7eb6f6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93001c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93001c_rtr.bc
+sha256 bced436a0d3a5d0100b00ffb42c13478736d9da0e20820bb4c85bdd9fdada5ca
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93002d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93002d_rtr.bc
+sha256 752d25c65a7d065cfb532406f482e2f2249cb33890694dfd2e6ae616f1f3ab24
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93003d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93003d_rtr.bc
+sha256 e2fd9dc5a5a614be33fd249ebc84e3f51680f2efce445272ffba1758917eb066
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93004d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93004d_rtr.bc
+sha256 dea2db08a7a42322a406f25e644a08e40ba2f2deb6e443201119fc296416aa44
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93005c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93005c_rtr.bc
+sha256 ac4080d979dc780d34d2a84a6f29018c5243ea350b0cb795d91c8ba381256d7e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93005d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93005d_rtr.bc
+sha256 ba00a02007a7d9c851e9afab18459b823ce1858e93adfe20814840a5c761bc78
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93006c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93006c_rtr.bc
+sha256 f4ca7c7af23cdaf4096c155c3e5dc9e4628cf697d09de268f474bb3187961a4d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93006d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93006d_rtr.bc
+sha256 67b7d652560772d848224e88b39fa28304b460108b94f4dbfab9e476af67b2ee
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93007c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93007c_rtr.bc
+sha256 140f88436bd25942fa0736ac553d89d05babffa1a5e19c4916430c2c5d946ae7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93007d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93007d_rtr.bc
+sha256 d2f5e1c30c64cd83e921022532230257c6a250c14798635a1f4153c26857d2e1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93008c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93008c_rtr.bc
+sha256 492c90458f349527f2c1df24817226f8316e9bf682e301abeebd551cf4d297f7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93008d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93008d_rtr.bc
+sha256 cbd93fc88d874fa81470d1f8f7c954b9113a53900d369b8ea445a706512a61c1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93009c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93009c_rtr.bc
+sha256 dbcd63b1630a90f3dc5b99fc453c532d53612caec3a46414eb82b3a1336286af
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93009d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93009d_rtr.bc
+sha256 3a0b5127f3d695bb676f5812b1a671ac835ce0cf56b6aad55b5ed8b94263cf39
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93010c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93010c_rtr.bc
+sha256 90a11aa2a4d708c99f8bdd069605a70308b37bc23c0464f9cde17eb01073b13a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93010d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93010d_rtr.bc
+sha256 eb8d1fb6053ab8e97e0cbdfe68e26d8b7eb27f10731fb1e4e991ce7c7e9d62e4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93011c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93011c_rtr.bc
+sha256 8f322f7079ce51aece89cad37408e83195010d0495e07dcde71747fc86d98e04
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93011d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93011d_rtr.bc
+sha256 0f518946bcff1179f0cbe3c84f00265cffaa6b9eb916e7c9d12986d73c0de1d3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93011e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93011e_rtr.bc
+sha256 c2a0f0106999aa441c41a4e4c9fb3e0e8e1c0a72026db0d982f767de4d9913be
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93013d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93013d_rtr.bc
+sha256 0e5c8164ae31f97d7670ed9c16dd84f06702ad3d34403a06d33d26b6e0545b0d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93014c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93014c_rtr.bc
+sha256 3e00412663624ff8996e246d90b54e59e2574879fa51f24b823b4217b5dc1b45
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93014d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93014d_rtr.bc
+sha256 83428276a354faa447359b36a7cead82ade8114c49e205e1f9cece42356fc3e7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93015c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93015c_rtr.bc
+sha256 91280b695411a14e2f4588a10be89f3b7cc785826dee4474774c2f62401f75bc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93015d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93015d_rtr.bc
+sha256 6254965ec43d2ddc2f58b8d9ba2f7ac03e0452cb03db2954954db2cc65d91965
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93016d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93016d_rtr.bc
+sha256 c73a29ee4841f74d186298c3fb87334d3b4a34fdcd752e328fc05646fdf0924c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93017d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93017d_rtr.bc
+sha256 57e4cda56b7a56a280efa9f2516cfbb6b81265e26617412780837bbd949961af
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93018d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93018d_rtr.bc
+sha256 e0c0ee0ed849feaf45b01e97f76ac697f983fef342c9602b7e4ed8659a17a4d8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93019d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93019d_rtr.bc
+sha256 937769886ad9a35b515387268b8845f59e794ed28aff31b5131cc42aeb1b4295
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93020c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93020c_rtr.bc
+sha256 cb8d961aae12da31e7dd017fa9cd131a336437bf8fa00f6b634c4e298a2f9e99
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93020d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93020d_rtr.bc
+sha256 3ceb4cf8183ad5852176f44dc6928e7ad223ae40ba3e3ce7284f081b239c6179
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93021c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93021c_rtr.bc
+sha256 70076e6328512577f7a16b049fa7f9531e4db20651df477d06670ad6788caf16
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93021d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93021d_rtr.bc
+sha256 6e257d63ea4aca1c6884b88170a13d49ace8d2995ce7311f3220c730b66922eb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93022d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93022d_rtr.bc
+sha256 a5d4e5ff9586e50a0777c0d1b62bd802e4fa8ef82897d2b9b9d4a783f3f5543f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93025c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93025c_rtr.bc
+sha256 9002996cbbb7021ad8fb251df4527963d2b109d911185ecebb8ba364b614ffb8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93025d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93025d_rtr.bc
+sha256 1866a890ffb32053aebdc8c05cd09189c3dba02ae1b85a743abd93c9b64ec2fc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93026c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93026c_rtr.bc
+sha256 d25991e47f10a4eeedd65830a9fdda1d4f481b4051461ad9ec5fa67061052cf0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93030d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93030d_rtr.bc
+sha256 38ac15fd7f2d6822f1d987daf61f6c6de946030c789386657a409e69fcca3632
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93031c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93031c_rtr.bc
+sha256 2cc335ec2ba55e95366dd685fd7dfd0499a82df35794e4609b9bb0086bda3cb3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93031d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93031d_rtr.bc
+sha256 ba3625a39ea3dec1902199e4b9e2156aa5b26c4a7e4ae50862edcaf63d43dbd1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93032c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93032c_rtr.bc
+sha256 f54a3155f9ed6341f684d12771c0d7d6d6e65a58bf4fab103fe73c0bc4713149
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93032d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93032d_rtr.bc
+sha256 318d7cfa9f0408ed9b52191723f94fdf658e056768063b586351126140f053b1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93033c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93033c_rtr.bc
+sha256 cee57fc3142ab1e63e16ee1b2f7f91fcbf836e828df608496b7128a06b16800d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93033d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93033d_rtr.bc
+sha256 024512d767c0d050d0055cc49b6397dd1c57c9893a6fe0a7c2f7d9f1e571ac3e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93034c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93034c_rtr.bc
+sha256 d32b90ef0963e73167a0bb95ff3f3eeabd8cad4e906efdc0846a7be6c07b3b2d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93034d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93034d_rtr.bc
+sha256 df8517d4020e609dd5bca6e3d587411ec91c005f5f0a1a3b44e3b6dd8c44347d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93035c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93035c_rtr.bc
+sha256 e06f81eb0ddc44b6512c0d88c575fe00c337eafb11e88cb8fb159c18054b0f0b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93035d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93035d_rtr.bc
+sha256 efc99f0f79efdcca20c7b7a2a74c13e42d40f0d9f467fd77f03d9a2ef2bdeece
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93036c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93036c_rtr.bc
+sha256 d27b565feecaa9bd4044d609a4ba87ce49ffefb60fa7d3b7711550a9c1a25510
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93036d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93036d_rtr.bc
+sha256 8614976df827c1ee9d796596ad6a14bd220d2c4b5af5dce00458f20945186173
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93037c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93037c_rtr.bc
+sha256 a4b1d4e0c9ebf28b33abb1c5ac65352ecdd728b74567863fd1c0ff91349c543a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93037d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93037d_rtr.bc
+sha256 1f54f07587e9360951d564bddca7691f66fdcc9c929c44c7335f267c52794bf6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93039c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93039c_rtr.bc
+sha256 63fd32f1aa32d9913eef70f9302de0770772aa8ce2d9f94363650abd9a1bd253
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93039d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93039d_rtr.bc
+sha256 c6108c3aa3852181b5ee8105dc57c438e3e78a24e23f5d84770a7bc1b466df5e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93040c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93040c_rtr.bc
+sha256 b5ed191a6ebf68839ab83cf8801ba4be7359a7f92fff163977bcf39793342432
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93041c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93041c_rtr.bc
+sha256 e9b784d3c0946197815c92b094fe38eb45d86616d6f8e500ce5aca17f6d2ef49
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93041d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93041d_rtr.bc
+sha256 e4ce772f6fc4b51be99328dd8057770f376c8ce4dff9d4e3653cca303ca85ba6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93042c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93042c_rtr.bc
+sha256 6e682cc39f412f7879ad50769cba703974b6308ab17a241df6967d9c74e8c1e9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93042d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93042d_rtr.bc
+sha256 e0188194ea29dee5e75a8e667724c6c3a6fb2e724c2bd182999251891a6fcadd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93043d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93043d_rtr.bc
+sha256 ac8cd3a33a2d161d4f507904d6c138df3502bc875765dfda0e6fc01399d01b2f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93044d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93044d_rtr.bc
+sha256 f0fac1b2e50695a657965f3e05a461c535dc4178bbea1209c0ae366797bc783f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93046c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93046c_rtr.bc
+sha256 e7edd98392c55cc37d11a805ddab48a0bd0de976eb8b1211bf89cd943b376dc1
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93046d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93046d_rtr.bc
+sha256 24487bb146e2d73e155efcb4b9ff53a8ae8506defc9c5db65e7858e76e0dfd55
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93047c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93047c_rtr.bc
+sha256 faa1451e33b7858df24f7be18f7498ef758fc4f6ca6440b51dd5f36d0ecb1434
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93047d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93047d_rtr.bc
+sha256 689d45579a88124ba22c6d986634e39e4655b4368caf16f616caf34f87c917f4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93048c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93048c_rtr.bc
+sha256 1515c1ed97a7b01e40423bac5dbcb0665167e8d208f6624632843d62280eaaca
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93048d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93048d_rtr.bc
+sha256 207075a99ff31a98a26d715f28e1b939be144facd34de45b005a21758ba9f5c0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93049c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93049c_rtr.bc
+sha256 2f8030cca9533b52d773e2a83aac08acb9d13fbf5fbacbbf93d284d120595c7a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93049d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93049d_rtr.bc
+sha256 f8fa79c5004e8f06d59a0da3b88aecdb791db6cf15f90bc08d54be7314a9c719
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93050c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93050c_rtr.bc
+sha256 a6368ed13426e7fa4b0fdbbb913ba2a526ea20670e7de13df9958ffb37aaa6e6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93050d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93050d_rtr.bc
+sha256 6c3eee4818a6e84550bb1fbd0acb2f039647a28cc5b21ca7cf622ba11fcce209
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93051d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93051d_rtr.bc
+sha256 874350d4b9372d59de334c9f2b027c9332759f910b7a72907d88cab31a09d151
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93052c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93052c_rtr.bc
+sha256 b25e9d8b701c6e49ddbf7d9865242adabe5cc7195b1eb3bc5fdecd166a4b51a3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93052d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93052d_rtr.bc
+sha256 fc793352bac4175d0ca6c0471a019c98f7e949f5ffd3bc33ce8e072faf794166
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93053c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93053c_rtr.bc
+sha256 bbb70557a1a038b34faf05844bb914c96e523e4345f5dac2c904698fde072caf
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93053d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93053d_rtr.bc
+sha256 6e2b2c038babfa762423286f048df9365a703901053f98af904999152f1318b9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93054c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93054c_rtr.bc
+sha256 d1b6d4ead171fce5a62dadb6d0ff5a5ac1af37c4ed311f647ba0983081dd079c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93054d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93054d_rtr.bc
+sha256 235929eb278dd4332a14d47ff661268eebf7c971ecaf8f215b742927bf42eb6a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93055c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93055c_rtr.bc
+sha256 9092e49cf160420a33964f97430578380d4787c2f841b0ba56b7a4af5d3e0cfa
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93055d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93055d_rtr.bc
+sha256 94a2a5fbcb2aa02df9252812ec4ceb047e7e8a2f27994e87c383df8d2f6801b3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93056d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93056d_rtr.bc
+sha256 e95e9bfe75cdafc85367a966fc7cf3f9096431a38d7860615f2c4bd5b6d4a49a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93057c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93057c_rtr.bc
+sha256 0a1260b9299901cda492ca45c7f7be042c2d2a5599eb998dc49cb882a9dabc24
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93057d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93057d_rtr.bc
+sha256 7713d9d5dba3ef301d8fd991a250b0e285bc028b6ceae15f37c16fab6904d47a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93058c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93058c_rtr.bc
+sha256 814bc704a1199e704e751d088fa0ebdbddb30d1b1fef6f511dc231a0643bd227
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93060d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93060d_rtr.bc
+sha256 1ccf0524764adc391b7cc739419d4815c191d010160defb98260f7795285e43e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93061c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93061c_rtr.bc
+sha256 e5f61ab7bb8d435e0a8c07ffb3a6af89af10ab57f051e1763df9ced985b0100a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93062d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93062d_rtr.bc
+sha256 358e74dc4b6a2fbbf016ac9f45d743a7f54b80226a36ec4e0b0a1eee34efa170
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93063c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93063c_rtr.bc
+sha256 e0f9d9ffdd9e82370eb6f95b1a3661793c46209257cc7bf69ffce342c47605ec
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93063d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93063d_rtr.bc
+sha256 1d4479fe898e510991f2b40469713e744cd424859765585069db02316d5fd4a2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93063e_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93063e_rtr.bc
+sha256 fb95f366b97fad6e10f1ff6a8a22d5fe6fe5b35959f44d08e8214ffef090a53f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93064c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93064c_rtr.bc
+sha256 e873278d88c8793609170eafe48cfb18dba5b09063c9714d076d21f30eb41c20
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93066d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93066d_rtr.bc
+sha256 3cf336332d20d2849392dbfd86a682b6024a85b3e2117245e27d989a33329f02
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93067c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93067c_rtr.bc
+sha256 44deda6b15f1b7289e74f2928df8f88f8a0bf046f9e313f17bf0f7ef64cfa680
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93067d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93067d_rtr.bc
+sha256 a2cd0eea247ca07b4de34327dc901fae3e0ca506f319f45ff5112892adeb1291
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93068c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93068c_rtr.bc
+sha256 027e7cbc4b87a202a6e4447da3dc5a44bff6570402883ef09cdcdbe473d89ee5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93068d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93068d_rtr.bc
+sha256 6d4aea414a8a90ec44303bfa72f3bfb7a7f79f9fbba3ac0cd9de697431a7e172
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93069c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93069c_rtr.bc
+sha256 0c12e9bac609e12b961bd393ff5321e4238824a93cfa83e9546bfa04de26dff8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93069d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93069d_rtr.bc
+sha256 b90fcf26450ad32bd5657a6cd0b25512d93fac53192d72289e7f7c6a8dc2986a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93071d_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93071d_rtr.bc
+sha256 bb3dd679040f07758845d7a396aecac40592981eca5e8395f716fdb47a355ceb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93072c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93072c_rtr.bc
+sha256 cb414a08c40ca76a176e2b493f060bf2c555fbd3eb4c5119a186fc293f7f2fab
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93073c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93073c_rtr.bc
+sha256 6f0acb143ccae8130180e6ee01203e2b1e54a160c1564aa8b0650c6a7c907b55
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93074c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93074c_rtr.bc
+sha256 050aea826faf7b06e2fd40978a062903e26628683959aae7690150b8b495fb34
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93082c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93082c_rtr.bc
+sha256 fdf524d6ba8bd5f3b468cc657b24663d643e1820e60b081b35cf792ddcd1dbbe
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93086c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93086c_rtr.bc
+sha256 54693037e100e62c0b598ea9ebb329d6a00e0877ebc155f6dfff630a60fa18f8
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93091c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93091c_rtr.bc
+sha256 01a4b5499e4d9bb45e361640bfd961bba0256f4a0844b461dd6fd802436626cb
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93095c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93095c_rtr.bc
+sha256 296f004faad9ac713faa3b72a02c6c41eb830e30a6b138c40d55af7f0f1027f4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93102c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93102c_rtr.bc
+sha256 7de815d0543b856a63343de0d2248e016b652fe539e728f37ac830f27679bc4e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93104c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93104c_rtr.bc
+sha256 f0084fb961775835851d20ff5a5e65e053fb3538d3c81abbdea4c40fc3383a74
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93110c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93110c_rtr.bc
+sha256 9bd053db757338cbc70ed47c07c12b965d2a62774d213f9fd8630688e49b1da5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93122c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93122c_rtr.bc
+sha256 a3fcd1a283a682ff56b8d7f5ee1b98995de9fbf8193d5791ba1ae7a064fa750e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93132c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93132c_rtr.bc
+sha256 b47dd61e36dc8afbfef8589ce8ba555977899322d8cec3fdc4bdd75ab7950d9d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93158c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93158c_rtr.bc
+sha256 5d66f503481618844c1de735de9e9f983d2f930cbdfc355ee29bd7f4d924e60a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93172c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93172c_rtr.bc
+sha256 d679e0af010299d202e7acb104de8f9944f1a8df4a19e6110effb2d84d184f57
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93187c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93187c_rtr.bc
+sha256 8f80856794e64eb2df6b6ef8cc0aa3f8ae15a27247c3a847595032b180472ecc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93202c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93202c_rtr.bc
+sha256 b11296e0ac4a7e8806372a3c18f80bf7e99045cda494df1727d89ad4e3014a23
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93218c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93218c_rtr.bc
+sha256 0a75a452f123227bcf2a2f9856ae0bb3abee07583af631a156d7fc8aacc68fce
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93236c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93236c_rtr.bc
+sha256 6773b659b8275541b4fe2fa7521fab8f31e46bed3b89dcaf965193e93a2ffd98
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93240b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93240b_rtr.bc
+sha256 f851342074eecca9a1b2ade184bac2dfcee56126f04a7481f532d9f392219842
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93244c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93244c_rtr.bc
+sha256 dba5b1970e095e61434256fcf06670d6e5028f0eabc793498f6020ab5c5a05d3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93258c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93258c_rtr.bc
+sha256 e8aa009fe9497c658f1eabb031b6fef226f670701e951a0e2c879aeda6e1a74d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93288c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93288c_rtr.bc
+sha256 ae72e2a92f345faac7796b1c2508a1e6fb1170c61c987863d353cc9514d06c65
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93292c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93292c_rtr.bc
+sha256 cefbb37b0cb11b8b27b9ca8c1f0593ee0befd3d53e0907aa19ea50a91a44ab3a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93321c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93321c_rtr.bc
+sha256 5969c671532a8084821e4f278a3d21e8c39f338fd5a75a63d1378cba7074b299
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck93344c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck93344c_rtr.bc
+sha256 83cc85ba47fe3b88b02223009cf3ce19855441f7f4c8e8a00da673f48ad99177
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94002c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94002c_rtr.bc
+sha256 3cff878f2d8f8e502dbc2cf9fbf779045c2c0624745ef4e0a5657799591102d4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94039c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94039c_rtr.bc
+sha256 2eebe3d753653f58695b0d01440c7ea0373e122c092bf23ae2f4563c9b7c315a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94063c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94063c_rtr.bc
+sha256 f989e364f035e8b1224a900b42d1396dfc7a824a0b2f0fec68cd97d91784855a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94080c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94080c_rtr.bc
+sha256 cca29bbb78adf52c4cadb7149f5a768d870b6d9cfc5fbd9c7be6f70c4390ffd9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94099c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94099c_rtr.bc
+sha256 213b73e283b517bf311a708b108c6f0cd1ae3756f2c0188f4b4e565f78329ed7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94118c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94118c_rtr.bc
+sha256 0064183bf42d2579d98245d4d0bdc16f8449fd62dd50bf4ca82d8dfdd9d33548
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94145c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94145c_rtr.bc
+sha256 d6abeed27368775ed6cd22a32784046bfbc21412d486d835572690f614be898c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94173c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94173c_rtr.bc
+sha256 f02ad944eb8dcd0f939abc49dcf34e9733f73f7242bc12335e18c93a933657a4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94195j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94195j_rtr.bc
+sha256 b98625c0440565d0f58ae3d01b7d498dc6bd3e6b3d504f477bc4d0ee4b7046f9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94201c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94201c_rtr.bc
+sha256 40ba73481eb24948fe70f312a23a0bf66cc1e7ca22a20bba41410fe30427ff3d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94217c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94217c_rtr.bc
+sha256 35b0785f516c9a62e7ec3b5cce89affd904285059b72d7dd1e7f5ab67ee5dada
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94258c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94258c_rtr.bc
+sha256 c875d5c9b7b1ba01c99173ea6063188f0006dd3c42f5208fbbe5c2befb3420b7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94292c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94292c_rtr.bc
+sha256 62d15aadc700d6f6f4115761f9965d2a6ea4b102db83507952fc796f067bb11d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94320c_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94320c_rtr.bc
+sha256 ae295881da351f89bb3a849970a770a8e86500189b92b9c1b01714bc3ce550a6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck94342j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck94342j_rtr.bc
+sha256 0881204e60e3702c6b32d290e7b9b4c13d7940e61170865226411b611ac0ae62
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95024j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95024j_rtr.bc
+sha256 00f3b9756c0cc0a5ebe258691761b3da222d6b175aaf787eb4b63e61cb68cc3e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95037j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95037j_rtr.bc
+sha256 5d96e0bb5ae1d31e3a02be0611062f54e9de98beb5ba59ae8fe164a39de3799f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95051j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95051j_rtr.bc
+sha256 ad5495f00e2d071274805535a5fac9cf57a76ef76f33864664640aa21db50c05
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95065j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95065j_rtr.bc
+sha256 87ac54c00e5814341e58da509f65e4e9e3bb2abcc4b74b01a1afcc0f46f745cd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95089j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95089j_rtr.bc
+sha256 5ce6b98a18d92e2cd3cd6369ec3e16479c947830f25d0eccb26aa33872952e72
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95103j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95103j_rtr.bc
+sha256 6d308b26117e3fc7ea43efac3d5ce7651a7b079a53343a149d0699293de3df7e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95118j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95118j_rtr.bc
+sha256 e9bdb3ab884ed92ea7244e285902b8634fb0225760ed6018d39941bde5ad6c48
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95132j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95132j_rtr.bc
+sha256 53c57ca0a785b32a6be9bd62ea51220d084fb452a23ad4be9c2205c7bbfd7064
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95155j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95155j_rtr.bc
+sha256 181f487e4b227d4119cbec856ee048786be35cb665010fed8a8c02e7ea6e33c3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95170j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95170j_rtr.bc
+sha256 ed534a3c2df274a05be91738b3dd59bdbfab896cfbc27410b7b18194272a6c32
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95184j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95184j_rtr.bc
+sha256 eff41867a287c7feae5800aa6df1c781a6817b12a83faa19ea5967268017bfa0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95198j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95198j_rtr.bc
+sha256 34eb708b93e3a771655972176a2b1d360c43ce218ea244250f4901fd4bbb28b0
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95212j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95212j_rtr.bc
+sha256 a8f61c3f45299aab3d6b30cad9389344822495b62459e18402227d41c199ead4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95226j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95226j_rtr.bc
+sha256 9545591411870003068b1614d4d6bb0a01a1b7eeed7a431e96a7ee7bea3397b2
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95240j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95240j_rtr.bc
+sha256 b597c16a25abf1e051314389a2817a07ac14dfb3d517a389088466b2bf27d033
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95254j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95254j_rtr.bc
+sha256 0ab1e99b0ec4f064948b944e4be6d6d75546b9d91ad13a846df124d4e4867fb3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95268j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95268j_rtr.bc
+sha256 dabd1aed404e34434dfb223b021c76bdf4a15217d146da6479406f517e025fb3
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95284j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95284j_rtr.bc
+sha256 2a784f86f46f34a6f957f2b7a156d86ed3acfaecd7cea9c64ced46be49a59fce
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95307j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95307j_rtr.bc
+sha256 ed7a4f373924d3e7e27f46bc0fdb20d0b80aa5802cbef2b9e3915bcdfae45505
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95317j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95317j_rtr.bc
+sha256 c1e50e158655f3cd553fed56635cb393d125475207084156bb043495a31faf5e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck95332j_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck95332j_rtr.bc
+sha256 b0da4d02df5565797a44381740c7d646a5f49911448acdc9e634b7335f30348f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc03b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc03b_rtr.bc
+sha256 adb7592243da40a9471e107fc2a80d39d2150a64fc4a789bf19695457d2cea8d
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc03pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc03pbq_rtr.bc
+sha256 0925c0301829619f60c39104977cac3068f2553cab793fed6986ef27fbb68321
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc03rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc03rtq_rtr.bc
+sha256 21ab84c8ac0a5b08bd33ec72d77afcdb4ffc433c4f065301c9e1c05d86cd8a3a
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc09b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc09b_rtr.bc
+sha256 7ef910bfcf972848f1f3a5660c38a7e9c2cd0d615464a318628ff936707ca293
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc09pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc09pbq_rtr.bc
+sha256 68531d2b788e5031bf08d9647856d65400ba51a3224290b7d87a5171b2c77fac
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc09rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc09rtq_rtr.bc
+sha256 cdd7571749ece8a45b6d22b52b8f6e9210bb9474a56960cb8226bfbbb41d7f36
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc10b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc10b_rtr.bc
+sha256 f53b3e3ee4ff5754aaf2cb51f858f8c977c6cdd57fb2b6c271751255647deb36
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc10pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc10pbq_rtr.bc
+sha256 dc7996406bdcef70a2f6a781b6b7e930f7a75db4646cf00a1520a070be6b9ca4
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc10q_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc10q_rtr.bc
+sha256 92dc3322f7844560596add1babf5ade6ffde77caf71382cc85e8862525e713cd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckc10rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckc10rtq_rtr.bc
+sha256 a17e269b8e631121b3d228f181130a312528232bca1a053cf406eb70fb8b279e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke04b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke04b_rtr.bc
+sha256 3996c962bbcec7077b31488314090e4e110049fbd9ae109bd825eeb4eec00548
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke04pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke04pbq_rtr.bc
+sha256 04ffbaaec44e25bcb5f5fc71b11203bbcdeb0e2c6a8c97d07ea57836ef31a485
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke04rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke04rtq_rtr.bc
+sha256 bb197c8a7354a58ecf52cf4f444e4e8242b8b868e8ccec328d8bdfcf209af4f5
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke06b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke06b_rtr.bc
+sha256 676ce2192c8cc2aab64f823a7677b818c30dd56d9cc407e6f1fcc084237de662
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke06pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke06pbq_rtr.bc
+sha256 14c4d7fb1dc2e47ed0440e8ab698f98b4e3d0c7109d1c80e9b59e9f7c24881e6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke06rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke06rtq_rtr.bc
+sha256 116f1f4ef38334597fa5ce6626522e91616b4e7aa74f672c574350f9664d4b03
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke11b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke11b_rtr.bc
+sha256 b0055cc348e6970f178e22eb1d76273e86911b2de224f96bf2eb4292cd0a4ab9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke11pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke11pbq_rtr.bc
+sha256 07a47cae09691519bbaeb8f8ad56690eb33be683da6739df6ffdbbce817718cf
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke11q_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke11q_rtr.bc
+sha256 ca8126eb71d2ed27a1ca6ddd30084ab29c97ccefeafe7ecb1191e4ba99780db9
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/cke11rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/cke11rtq_rtr.bc
+sha256 22d45a1d763cdac29e9d23ad65b9c63d92bcda47d3253272e3f5ebee35b36c36
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg01b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg01b_rtr.bc
+sha256 1968a56121b6799b24da024f081ca9c5374ade87a2b38ef9cdb725ed0c326762
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg01pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg01pbq_rtr.bc
+sha256 83f5c4c8c7584c396fccac38c1778e4c85ef50babe2e758d36a789533928807b
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg01rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg01rtq_rtr.bc
+sha256 973ab1d4dfeb4f1f8f32aa4e3e1c2634515c70d321dee92a36746fe759a87687
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg02b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg02b_rtr.bc
+sha256 275280b4b6be70ec1e2beeea2e0ef452dd97f41f3aa6ec8559fea5387fe5c474
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg02pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg02pbq_rtr.bc
+sha256 453a66f39c2c9723ad2d4dcd069c3f1f50d1d8a7638e22f186d82500e4d49d3e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg02rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg02rtq_rtr.bc
+sha256 21e72d1056140d1b552e58eba74981de2bab5e17e20ef9bc38e9a73aafe2419e
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg07b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg07b_rtr.bc
+sha256 f81e724f830e9e47d66fcc67da87071a59ea2d324bed0dd4e220c956a5250148
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg07pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg07pbq_rtr.bc
+sha256 72ca84ca27565abf3ce7bb73083bf67b6368005753c76d948c263bdbaa292280
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg07rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg07rtq_rtr.bc
+sha256 05f1ce9a331830d9237bb7891c397a7e8b13d3c0e67f4fd5abc20ad6f68d77e7
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg08b_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg08b_rtr.bc
+sha256 d0c91f5ef2cf91d4acd29a2ae9ff3612e9db6533773bd811c95759c56d74dfaf
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg08pbq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg08pbq_rtr.bc
+sha256 708ff2059cb1d02c30744609c525aa8a6065224e6d3d6a39c8f6ca2334812ac6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckg08rtq_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckg08rtq_rtr.bc
+sha256 eb310a34aed384d970884b026ee16a5180fde531e8340f809b8fbeffc57ab522
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ckvenus_rtr.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ckvenus_rtr.bc
+sha256 d8a66ec5e8082356f31122b1ac65b320d9909321451f08fc64217510d27070d6
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/gll_plt_rec_1990_tav_v00.bc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/gll_plt_rec_1990_tav_v00.bc
+sha256 c1765fd4baad6e32a98de3a333a62ddd9627e541dd3ef6e2c115f491af3666bd
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/juice_crema_5_2_v01.bsp
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_crema_5_2_v01.bsp
+sha256 cd4bab15b8ac4ecb1257627ce42ce7738947ed79ccb27b29ebc32283335e3b7f
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/mk00062a.tsc
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/sclk/mk00062a.tsc
+sha256 cea5234f9769f83aa6da65f360c6940a70b72461ed2c577cb531448e7498295c
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ura111.bsp
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura111.bsp
+sha256 384647ab7fdc085eb573926a8db6326748518d4ad600d5ca6bdaa06f9c0d7bdc
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ura117.bsp
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura117.bsp
+sha256 86ff648d828911fd4f201e3cf81d72c5c3d3eed4b5753b7cf6f85a1c736dc2ed
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ura184_part-3.bsp
+format reference
+origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp
+sha256 273cd4ccc470d1098562cd4e94fa48fc2b4c6b1c2896308e473c949b87937c53
+ttl 31536000
+
