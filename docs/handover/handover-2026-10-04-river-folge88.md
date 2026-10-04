@@ -3,7 +3,7 @@
   session: River-Folge 88
   class: handover
   date: 2026-10-04
-  sha256: 072b8010146f01772f953aaa056cc4f3773ffeccd74fb73995e5ced89b620a00
+  sha256: 63e2467d5228f4897d2750c1f84d6c7c6906289c87e53ccc93d6ee99bcb862af
   status: live
 -->
 # Handover — River-Folge 88 (2026-10-04)
@@ -222,38 +222,64 @@ Origin: river folge88.
 - **Reader-Arme `twomass_psc` + `swarm_tec` — gebaut, Register-Zeile fehlt.** Gemessen
   2026-10-04: `main_flow.rs:4622`/`:4680` tragen die Branches; `src/archivar/twomass.rs` liegt.
   Es fehlt allein die Register-Zeile (`format`/`cmap`/`field`) in `phi/sources.φ`.
-- **Fehlende Felder für die feld-blockierten Probe-Deskriptor-Bins.** `bz_blatt`
-  (per-Minute-|dB/dt|; registriert nur 1-h `intermagnet_dbdt`), `gic_storm` (Kp),
-  `f107_penticton` für `bison_basu`/`bison_cycle`/`gong_cycle`/`hmi_cycle`/`wso_cycle`/
-  `long_window`/`solar_cycle`/`solar_3year_matrix` **und** `solar_causal_graph`/
-  `signal_cone_audit` (beide laden `f107_penticton.bin` + `goes_euvs.bin` Lya1216,
-  unregistriert), Galaxien-Dichte für `bigbang_echo`.
-- **Vorbereitete `witness`-Einträge für die nicht-point-event-Arme** (Register = deine Zeile):
-  `rixs` (Zenodo-Konzept 6535323), `gbco` (GEBCO-Jahresgitter), `srtm` (SRTM15+ für `gmrt`),
-  `gl30`-Kandidat. Die vollen Eintragstexte liegen im Taucher-Bericht dieser Session; die
-  `url`s sind `--verdict`-geprüft (200/206). `magic_identity` trägt `srtm` jetzt (`8581d7ac2`).
-- **`record gmrt` vs `GMR1`.** Gemessen 2026-10-04: `phi/witnesses.φ:106` trägt
-  `record gmrt` → `witness_magic` macht `GMRT`, `magic_identity` kennt nur `GMR1` →
-  `--spectral gmrt` stünde `Pending`. Bitte den Token im Register auf `gmr1` angleichen
-  (oder den Arm auf SRTM15+ umstellen; der Ersatz-Eintrag ist vorbereitet).
-- **`goes_xrs.bin` — CDN-Pfad 404.** Gemessen 2026-10-04: die registrierte URL
-  `…/releases/download/ncei.noaa.gov/goes_xrs.bin` (`phi/sources.φ:826`) antwortet **404**,
-  während die Probe `…/ssd.jpl.nasa.gov/goes_xrs.bin` nutzt (`solar_hourly_event_probe.rs:8-9`).
-  Der `solar_hourly_event`-Arm bleibt dadurch `pending`; bitte den CDN-Pfad korrigieren.
+- **Register-Felder für die feld-blockierten Probe-Bins.** `bz_blatt` (per-Minute-|dB/dt|;
+  registriert nur 1-h `intermagnet_dbdt`), `gic_storm` (Kp), `f107_penticton` für `bison_basu`/
+  `bison_cycle`/`gong_cycle`/`hmi_cycle`/`wso_cycle`/`long_window`/`solar_cycle`/
+  `solar_3year_matrix` **und** `solar_causal_graph`/`signal_cone_audit` (beide laden
+  `f107_penticton.bin` + `goes_euvs.bin` Lya1216, unregistriert), Galaxien-Dichte für
+  `bigbang_echo`.
+- **Register-Token `gmrt` → `gmr1`.** Gemessen 2026-10-04: `phi/witnesses.φ:106` trägt
+  `record gmrt`; `witness_magic` macht daraus `GMRT`, `magic_identity` kennt nur `GMR1`
+  (der `gmrt_compiler` schreibt `GMR1`) → `--spectral gmrt` stünde `Pending`. Bitte den
+  Token auf `gmr1` angleichen (oder auf SRTM15+ umstellen).
+- **Register-URL `goes_xrs.bin` 404.** Gemessen 2026-10-04: die registrierte URL
+  `…/releases/download/ncei.noaa.gov/goes_xrs.bin` (`phi/sources.φ:826`) antwortet **404**;
+  die Probe nutzt `…/ssd.jpl.nasa.gov/goes_xrs.bin` (`solar_hourly_event_probe.rs:8-9`).
+  Bitte den CDN-Pfad korrigieren.
+- **`quake_ptevent`-Assets nicht registriert.** Die kompilierten Assets (chile/tohoku/jma)
+  liegen auf dem CDN, ohne eine Register-Zeile in `phi/sources.φ`.
+- **Witness-Blöcke für die wiederholten Proben.** Vier Compiler wurden gemessen und liefen:
+  `crystal_compiler --rixs` → `RIXS` (`data/zenodo.org/rixs_spin.bin`, 15 025 B), `gebco_bathymetry_compiler`
+  → `GBCO`, `gmrt_compiler` → `GMR1` (6,5 MB), `copernicus_dem_compiler` → `GL30` (34,5 MB);
+  `srtm` hat noch keinen Compiler. **Riss:** der `--spectral`-Arm liest **Text**, nicht das
+  kompilierte `.bin` (`spectral_epoch_series`, `field_te_query.rs:1263`) — die Epochen-Blöcke
+  müssen daher auf **Text-/JSON-Serien-Endpunkte** zeigen, nicht auf die `.bin`-Assets. Die
+  Register-Form (zwei Blöcke je Probe, gleicher `kind`+`record`, je eine Serien-`url`) ist zu
+  schreiben; die Serien-Endpunkte sind noch zu klären (Zip entpacken bzw. `{lat}_{lon}` auflösen).
+
+## An sensory
+
+Origin: river folge88.
+
+- **Starker `point-event#1`-Test — neue Query-Form.** Der bestehende `erbq-solar.te` ist als
+  TE-Test bewusst descoped (sparse Train, Omori-Null; `mountain 230`/`sensory-folge225`).
+  Der identifizierbare Test ist die in `sensory-folge225:289-296` skizzierte, vorabregistrierte
+  Query-Form (event-triggered average, Omori-preserving circular driver shift, matched-control).
+  Bitte diese Form festziehen, dann messen — sie ist der Träger des `point-event`-Arms, nicht
+  der alte Deskriptor.
+- **`--spectral`-Epochen-Design.** Der Arm (`field_te_query.rs:1263`) vergleicht **Text**-Serien
+  zweier Epochen, nie gemittelt; eine gerichtete TE bleibt `pending` (keine Zeitachse). Für die
+  substanz-/gestalt-Arme braucht es dafür je zwei **Serien-Endpunkte** als Text/JSON (nicht die
+  kompilierten `.bin`). Bitte die Wahrnehmungs-/Extraktionsform je Probe festlegen (rixs-Zip,
+  GEBCO-Gitter, SRTM-Releases, gl30-Tiles).
 
 ## An mycelium
 
 Origin: river folge88.
 
 - **CI-Triage (Operator-Wort 2026-10-04) zum roten `ci-gate 37166323740` @`a064896a4`:**
-  Job `register` → Mountain; `dropped-gate` + `format` → Mycelium; `clippy hdf4.rs:686` →
+  `register` → Mountain; `dropped-gate` + `format` → Mycelium; `clippy hdf4.rs:686` →
   Mountain/River. Gemessen: `register` = 17 url-order violations (zenodo `gras_2c_roper`);
   `dropped-gate` = delta 3; `format` = `emm_sdc_compiler.rs:91,242` + `kplo_spice_compiler.rs:173`;
   `clippy` = `manual_is_multiple_of`. clippy + url-order sind von **mountain 230** (`d2ba1189d`)
   geheilt — der Run ist stale; bitte den Stehenden Pass/CI-Tafel gegenmessen.
-- **Dispatchte River-Läufe:** `juice-arc-restore 37174498970` · `wy-max-t 37174495789` ·
-  `bz-yearly-maxt 37174497340` · `field-te-query 37177455640`. Bitte je einmal lesen
-  (kein Polling); `ephemeris_juice.bin` nach dem Restore auf `018ce2ca…` prüfen.
+- **Dispatchte River-Läufe** (bitte je einmal lesen, kein Polling): `wy-max-t 37187464365` ·
+  `bz-yearly-maxt 37187466569` (Shards laufen) · `juice-arc-restore 37174498970` (**success**,
+  `ephemeris_juice.bin` = `018ce2ca…` verifiziert) · `flyby-path2-fill 37187374751` (**success**,
+  postflight 62 745 km) · `field-te-query 37187424991` (**grün**, `witness`/`parity`/`witness-jma`).
+- **CDN-Manifestation der gemessenen Serien-Assets.** Die vier Compiler-Läufe (rixs/gbco/gmrt/gl30)
+  liegen nur lokal (`data/…`); die `url`/`origin`-Manifestation in `phi/sources.φ` + CDN ist die
+  Mycelium-Duty, sobald die Register-Zeilen stehen (An mountain).
 - **`nvss-cdn`** — TAPVizieR 503, wartet (kein River-Schritt).
 
 ## Abschluss
