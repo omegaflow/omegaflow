@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: a39fae365a2145f03b88fa1f6ab935eec3df4fd5496974e2ec0b7b210753035d
+  sha256: 8113b7f202c0c50dce91d783481bd423b73f6f254a6f1dfaf49b6a18df6cf844
   status: live
   see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
@@ -222,3 +222,20 @@ wo der Anbieter `graphics` injiziert. Freie Notebook-Container (Kaggle, Colab, M
 sind **compute-only** und fallen aus. Wirklich frei mit Vulkan ist nur die **lokale XPS-iGPU**;
 sonst **volle VM** (GCP-Trial, Lambda, Oracle) oder **Vast.ai/RunPod** (bezahlt, Container mit
 `graphics`).
+
+## K. Bedarf und Frequenz (2026-10-04) — reicht der XPS 13?
+
+Gemessen am Baum:
+
+- **Kein einziger CI-Workflow nutzt GPU-Hardware oder einen self-hosted Runner.** Die GPU-Pfade
+  laufen auf dem Software-Adapter **lavapipe** (`ci-check.yml`, `matrix-rotor.yml`).
+- **Nur eine Bin** nutzt die GPU-Kern-Sonde `ScalarTeGpu`:
+  `tools/measure/src/bin/solar_seconds_matrix_probe.rs` — und fällt ohne Adapter auf die CPU zurück.
+- Der GPU-hungrige „30-Jahres-Lauf" (~80–90 min) wurde **nie** gefahren; er stand seit 2026-09-09
+  in ~10 Übergaben als „Desktop-Fork" und ist jetzt descoped (kein Desktop).
+- Die XPS-iGPU trägt **Vulkan 1.4** (§J) — die Membran/Feldevaluation läuft lokal.
+
+**Antwort:** Für die **tatsächliche Frequenz reicht der XPS 13.** GPU ist kein Dauerbedarf: die
+Richtigkeit läuft auf lavapipe/CPU, die Anzeige auf der iGPU, die wenigen echten GPU-Läufe sind
+selten. Ein Cloud-GPU lohnt nur, wenn ein **konkreter langer Batch** ansteht (großer TE-Sweep
+o. ä.) — dann gezielt (Vast.ai, §J), nicht spekulativ.
