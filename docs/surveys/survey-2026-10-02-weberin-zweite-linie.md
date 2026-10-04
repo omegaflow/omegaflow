@@ -2,7 +2,7 @@
   title: Survey — Weberin-Eignung: die zweite unabhängige Linie je Messgröße (2026-10-02)
   class: survey
   date: 2026-10-04
-  sha256: 56244e45b5a4c6cfc7598967daddc1ba4a861ddce21787fef13de97cc0924741
+  sha256: 0e76613cc7efa8a70001b9a7ba53617d7d9c1424f9ebe775dbadea13e259ee94
   status: live
   see-also: docs/concepts/die-weberin.md docs/SOURCE_PORT.md docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md
 -->
@@ -108,7 +108,7 @@ Hier die zweite unabhängige Linie der restlichen Klassen, mit dem Re-Run-Stand
 
 | Größe (Klasse) | zweite Linie(n) | Beleg |
 |---|---|---|
-| Boden-Gravimeter (gravity) | IGETS Stationsliste `isdc.gfz.de/igets-data-base` **200** (162 937 B) ↔ IGETS DOI-OAI `doidb.wdc-terra.org/oaip/oai` **200** (462 B) | rerun 1.1/1.2 — **gleiche Quelle**, keine echte zweite Linie |
+| Boden-Gravimeter (gravity) | **BGI AGrav** `api.sedoo.fr/get-agrav-rest/station/nearto` **200** (853 714 B, JSON, ~1518 Stationen; Punkt-`gravity` in m/s²) ↔ IGETS `isdc.gfz.de/igets-data-base` **200** (162 937 B) | **frisch 2026-10-04** — BGI/GET-OMP Toulouse + BKG/SEDOO, unabhängig von GFZ/IGETS |
 | Seismik (seismic) | EarthScope IU **200** (10 345 B) ↔ GEOFON GE **200** (14 820 B) ↔ RaspberryShake AM **200** (3 775 512 B) | rerun 4.1/4.2/4.3 |
 | Lightning (lightning) | WWLLN Thunder-Hour **200** (48 685 822 B) ↔ GLM S3 `noaa-goes16.s3.amazonaws.com` **200** (302 468 B) | rerun 6.1; **frisch 2026-10-04** |
 | HF-Radar (hf_radar) | IOOS `hfradar.ioos.us/…/allDatasets.json` **200** (19 924 B) ↔ EMODnet `erddap.emodnet-physics.eu/erddap/index.json` **200** (766 B) | rerun 8.1; **frisch 2026-10-04** |
@@ -122,5 +122,25 @@ Hier die zweite unabhängige Linie der restlichen Klassen, mit dem Re-Run-Stand
 Seite 1; die jüngsten Werte liegen am Reihenende (9,45 M Records). Als zweite
 Linie nur über den jüngsten Filter/letzte Seite brauchbar.
 
-**C9-Pa-Kalibrierung (gemessen 2026-10-04):** `ceein.infp.ro/fdsnws/` **Timeout**
-(curl 40 s, `archive_search` 60 s) → **`unread`** (nicht `absent`); Wiedervorlage.
+**C9 / CEEIN (gemessen 2026-10-04, flash-Taucher + Session-Verifikation):** **HTTPS**
+`ceein.infp.ro/fdsnws/` = **Timeout** (curl 40 s, `archive_search` 60 s); **HTTP**
+`http://ceein.infp.ro/fdsnws/station/1/query?level=network` = **200** (849 B),
+`level=station` 200 (15 198 B), `level=channel` 200 (402 337 B);
+`dataselect … net=C9 sta=PVCI2 cha=BDF` = **200** (MSEED) — die Zeile ist **live über HTTP**.
+**Pa belegt** (StationXML): C9 = **Czech microbarograph network** (IAP Prague, Panska Ves),
+Kanal `BDF` = `<InputUnits><Name>Pa</Name>`, Sensor `ISGM03` differential microbarometer.
+**Riss (nicht geglättet):** der Survey-Eintrag „CEEIN/NIEP Rumänien, C9" verwechselt Host und
+Netz — der Host ist rumänisch (`RO_NDC`), aber **C9 ist das tschechische Netz** (IAP Prag);
+Rumäniens eigenes Netz ist RO/R1 (R1 `BDF` = `PA`/Pascals, Chapparal-Mikrofon). EIDA-Nodes
+führen C9 nicht (204), IRIS-FedCatalog nicht (404). Der Marker „C9: Pa-Kalibrierung nicht
+getestet" ist damit **aufgelöst** (Pa dokumentiert).
+
+**Zweite Gravimeter-Linie (gemessen 2026-10-04, flash-Taucher + Session-Verifikation):**
+**BGI Absolute Gravity Database (AGrav)** — anonyme REST-API `https://api.sedoo.fr/get-agrav-rest/`
+(Station-Liste **200**/853 714 B JSON, ~1518 Stationen; `point/byStationUuid` liefert `gravity`
+in **m/s²**, `meterUuid`/`laser`/`operator` — BGI/GET-OMP Toulouse + BKG/SEDOO, **unabhängig
+von GFZ/IGETS**). Harvest: `curl -s "https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=" -o data/api.sedoo.fr/agrav_all_stations.json`.
+Verdikt Mountain (`phi/sources.φ`), Compiler/Manifestation Mycelium. GFZ-Seiten
+(`icgem.gfz-potsdam.de`, `ggp.gfz-potsdam.de`) bleiben **nicht** unabhängig.
+**Chat-UI-Zweitstimme:** Z.ai/GLM-5.3 (Deep Think Max) gefragt 2026-10-04 — Antwort nach
+mehreren Minuten noch `pending` (Chat `chat.z.ai/c/a0366dde-…`), nicht abgewartet.
