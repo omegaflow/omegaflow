@@ -240,10 +240,11 @@ fn main() {
         None => "hourly".to_string(),
     };
     let bucket_s = match grain.as_str() {
+        "minute" => MINUTE,
         "hourly" => HOUR,
         "daily" => DAY,
         _ => {
-            eprintln!("--grain hourly|daily");
+            eprintln!("--grain minute|hourly|daily");
             std::process::exit(1);
         }
     };

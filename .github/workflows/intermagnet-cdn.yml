@@ -13,11 +13,12 @@ on:
         type: string
         default: ABK
       grain:
-        description: hourly | daily
+        description: minute | hourly | daily
         required: false
         type: choice
         default: hourly
         options:
+          - minute
           - hourly
           - daily
       start:
