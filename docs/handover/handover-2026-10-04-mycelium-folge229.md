@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: ed584df0a8e98e8768395d8679a7dc1671ce037c53993992f9850e33e7b693f1
+  sha256: 437bdad723779952777b4cdcb02bd1cdb486e6198e789a21af1ea1314a7196f8
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -56,6 +56,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **nvss-Härtung (Operator-Wort „umsetzen", 2026-10-04):** `tools/harvest/src/bin/vizier_asu_compiler.rs` um Mirror-Fallback + 3 Retry-Runden erweitert (`ASU_MIRRORS`: cds.unistra.fr / cfa.harvard.edu / u-strasbg.fr; `asu_fetch_mirrors`); `cargo build --bin vizier_asu_compiler` grün. Gemessen: ASU lebt (SDSS 0..47 → HTTP 200, 12,5 MB), TAPVizieR weiter 503; der CI-Fehlschlag war ein ungehärteter Einzelversuch, keine tote Route.
 - **D5 geklärt (Rat + Schwarm, 2026-10-04):** „Röhren-Asset" ohne Körper (`zeugnis.md:383`); Riss Rat (`wartend`, Bau Mountain/River) vs Schwarm (Vlies = §10-Feld → `descoped`-Kandidat). Status von `blockiert` auf `wartend` gesetzt, an Mountain/River geroutet.
 - **Port-Schritt (Taucher, 2026-10-04):** `kasi_compiler.rs` + `.github/workflows/kasi-cdn.yml` gebaut (KASI_DALO public, live 11/1000/100 Sätze); `clpds_compiler.rs` + `clpds-cdn.yml` gebaut (CLPDS-Dateien **öffentlich** gemessen, catalogue 98 + files 568 396, Annex-Arm offen); LEOS = Daten-Absenz; JAXA_GPORTAL = Account; Shandong-Zeile `:444` stale (nicht in `phi/`). `ledger.φ:6` SSDC → `disponiert` (query.php CAS-Login, TAPSSDC 69 Tabellen / 0 CSES → `blocked_sources.φ:135`); `index.φ` 5 offen.
+- **Port-Nachtrag (Taucher, 2026-10-04):** **CLPDS-Annex-Arm gebaut** (`clpds_compiler.rs --with-annex`, Cap 100, live 2 IDs). **JAXA_GPORTAL gegen die Secrets gemessen: Zugang offen** (`POST /gpr/auth/authenticate.json` 200, `catalog_records.json` 15 949, Quota voll) → nächster Bau: Parser + `add_download.json`. **LEOS keine Absenz**: `/api/admin/data/front/*` auth-gated (`40301`). **`index.φ` 5→3 offen** (`:22`/`:31` `erledigt`).
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -132,7 +133,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Register-Träger — `phi/pipeline/index.φ` + `ledger.φ`
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Port-Schritt `index.φ`; `blocked_sources.φ:135` (Mountain)
-- **Lage:** (gemessen 2026-10-04) `index.φ` = 5 offen (`:3`/`:4`/`:22`/`:29`/`:31`, `verifiziert`); `ledger.φ:6` SSDC → **`disponiert`** gesetzt (query.php = CAS-Login, TAPSSDC 69 Tabellen / 0 CSES), verweist auf `blocked_sources.φ:135`. Riss: `wartend.φ:10` zitiert `ledger.φ:15-16` (Zeilen verschoben).
+- **Lage:** (gemessen 2026-10-04) `index.φ` = **3 offen** (`:3`/`:4` korrupte Queue; `:29` undisponierte Live-Kandidaten); `:22` b2find + `:31` copernicus → **`erledigt`**; `ledger.φ:6` SSDC → **`disponiert`** gesetzt (query.php = CAS-Login, TAPSSDC 69 Tabellen / 0 CSES), verweist auf `blocked_sources.φ:135`. Riss: `wartend.φ:10` zitiert `ledger.φ:15-16` (Zeilen verschoben).
 - **Blockade:** `blocked_sources.φ:134-136` noch `pending` ohne `reg` (Mountain → `blocked account`)
 - **Braucht:** Mountain setzt `:135` `blocked account` + `reg`; dann Operator/PI via Future. Die 5 `index.φ`-Einträge: Merge-/Void-Port.
 
@@ -146,9 +147,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### `blocked_sources.φ` mycelium-Portale (KASI gebaut; CLPDS offen; LEOS/JAXA)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `kasi-cdn.yml`-Lauf; `clpds_compiler.rs`; JAXA-Konto (Operator)
-- **Lage:** (gemessen 2026-10-04) **KASI_DALO** `:163` — API public (`/api/{MIRIS,KMTNet,KVN}/search` 200: 11/1000/100 Sätze), **Compiler `kasi_compiler.rs` + `kasi-cdn.yml` gebaut** (kein Key). **CLPDS** `:143` — Dateien **öffentlich** (`clpds.bao.ac.cn/PUBDATA/…A.0A` 200, 534 450 B; Login-Annahme widerlegt); **Compiler `clpds_compiler.rs` + `clpds-cdn.yml` gebaut** (catalogue 98 + files 568 396; `dataAnnex`-URL nur im Detail → separates Annex-Arm). **LEOS** `:139` — SPA „暂无数据" = Absenz. **JAXA_GPORTAL** `:131` — Login/SFTP → `blocked account`. **Shandong** — in `phi/` nicht vorhanden (Handover `:444` stale → Riss).
-- **Blockade:** KASI = CI-Dispatch; CLPDS = Compiler; JAXA = Konto (Operator)
-- **Braucht:** KASI dispatchten (sha + `sources.φ`-Block Mountain); `clpds_compiler.rs` bauen; JAXA-Konto in Operator-Queue.
+- **Lage:** (gemessen 2026-10-04) **KASI_DALO** `:163` — API public (`/api/{MIRIS,KMTNet,KVN}/search` 200: 11/1000/100 Sätze), **Compiler `kasi_compiler.rs` + `kasi-cdn.yml` gebaut** (kein Key). **CLPDS** `:143` — Dateien **öffentlich** (`clpds.bao.ac.cn/PUBDATA/…A.0A` 200, 534 450 B; Login-Annahme widerlegt); **Compiler `clpds_compiler.rs` + `clpds-cdn.yml` gebaut** (catalogue 98 + files 568 396; `dataAnnex`-URL nur im Detail → separates Annex-Arm). **LEOS** `:139` — **keine Absenz**: SPA-„暂无数据" = Pre-Login-Zustand, dahinter auth-gated Katalog-API `/api/admin/data/front/*` (`40301` ohne Login). **JAXA_GPORTAL** `:131` — **Zugang gemessen offen** (`POST /gpr/auth/authenticate.json` 200 mit den Secrets; `catalog_records.json` 15 949 Records; Download-Quota voll); Parser + Download-Endpunkt offen. **Shandong** — nicht in `phi/` (Handover `:444` stale → Riss).
+- **Blockade:** KASI/CLPDS = CI-Dispatch/Registrierung; JAXA = Parser/Download-Arm; LEOS = Login-Gate
+- **Braucht:** KASI + CLPDS dispatchten (sha + `sources.φ`-Block Mountain); JAXA-Parser (Search/Quota/Download); LEOS `blocked account` (Mountain-Register).
 
 ### `blocked_sources.φ` — 3 mycelium-EEG-Portale (`:231/:235/:239`)
 - **Status:** wartend | **Bindung:** eigen
