@@ -1,6 +1,33 @@
+use crate::archivar::FieldConfig;
+
 pub const MAGIC: [u8; 4] = *b"G2CB";
 pub const HEADER_BYTES: usize = 8;
 pub const REC_BYTES: usize = 24;
+
+pub const GATE_UNIT: &str = "none";
+
+pub fn gate_name(comp: u32) -> String {
+    format!("gras_2c_gate_{comp:04}")
+}
+
+pub fn gate_field(comp: u32, tau: f64) -> Option<FieldConfig> {
+    let force = crate::force::force_id_of("em")?;
+    let kernel = crate::force::kernel_id_for_force(force)?;
+    let name = gate_name(comp);
+    Some(FieldConfig {
+        key: name.clone(),
+        name,
+        kernel,
+        force,
+        tau,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: GATE_UNIT.to_string(),
+        freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
+        bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
+        fold: None,
+    })
+}
 
 fn le_f64(data: &[u8], offset: usize) -> Option<f64> {
     Some(f64::from_le_bytes(

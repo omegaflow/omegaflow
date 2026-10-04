@@ -45,16 +45,6 @@ fn main() {
             *row_hist.entry(r[odf::TNF_ROW_FORMAT] as i64).or_insert(0) += 1;
         }
         if args.iter().any(|a| a == "--ranging") {
-            let frq_up: Option<f64> = frames.iter().find_map(|f| {
-                let end = f.offset + f.total_len;
-                let slice = bytes.get(f.offset..end)?;
-                let v = match f.format_code {
-                    odf::TNF_FORMAT_DOPPLER_COUNT => odf::tnf_dt6(f, slice).map(|d| d.ul_freq),
-                    odf::TNF_FORMAT_SEQUENTIAL_RANGE => odf::tnf_dt7(f, slice).map(|d| d.ul_freq),
-                    _ => None,
-                }?;
-                (v.is_finite() && v > 0.0).then_some(v)
-            });
             let mut ranging: BTreeMap<u8, usize> = BTreeMap::new();
             let mut printed = 0usize;
             for f in &frames {
@@ -80,6 +70,7 @@ fn main() {
                 };
                 *ranging.entry(f.format_code).or_insert(0) += 1;
                 if printed < 5 {
+                    let frq_up = odf::tnf_pair_ul_freq(&frames, &bytes, f);
                     let res = match frq_up {
                         Some(v) => odf::tnf_ranging_resolution_with_frq_up(f, slice, v),
                         None => odf::tnf_ranging_resolution(f, slice),
