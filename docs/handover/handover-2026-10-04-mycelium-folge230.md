@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: 48141d35251f1a65569c1b7b022a1e6d960a5ad361f9a94cdfef7c8f826d7da9
+  sha256: fc63fd2963a2603dadb8521ac269ac453095a4dfa0d80b0246a931b6edf49281
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -73,9 +73,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### iEEG-Ernte-Arm bauen (Mycelium) — Zugang: Riss, nicht „offen"
 - **Status:** wartend | **Bindung:** eigen (Arm) / Zugang Operator
 - **Trigger:** Zugangsweg gemessen — `blocked_sources.φ:180` (keyless-Endpunkt oder iEEG-Creds)
-- **Lage:** (gemessen 2026-10-04) Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF `src/archivar/extract.rs`, `9d416e57b`). **Zugang über LONI IDA:** `IDA_USER`/`IDA_PASS`/`IDA_EMAIL` liegen in `.secrets.local`; `ida_fetch --login` **scheitert gemessen am Cloudflare Turnstile** (`no session (http 200, no redirect)`); Cookie-Jar `~/.cache/omegaflow/ida-cookies.txt` (361 B) existiert, Gültigkeit offen. Das iEEG-Portal (GWT-App; Daten via `POST /mefview/eeg`, **kein** REST) ist im Operator-Chrome als `omegaflow` eingeloggt (Zugang bestätigt).
+- **Lage:** (gemessen 2026-10-04) Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF `src/archivar/extract.rs`, `9d416e57b`). **Zugang gefixt per Wrapper:** `ida_fetch --get <url>` nutzt den **gültigen IDA-Cookie-Jar** (`~/.cache/omegaflow/ida-cookies.txt`, Operator-Wort 2026-10-04 „IDA-Cookie: login ok — Jar-Seite trägt ‚Sign Out'"); nur `--login` (Neu-Auth) ist Turnstile-gated. iEEG.org hat ein **eigenes** Konto (`omegaflow`), Bridge-Tab eingeloggt, „Find Datasets" funktioniert; das Portal ist GWT (`POST /mefview/eeg`), für curl zusätzlich die `www.ieeg.org`-Cookies.
 - **Blockade:** kein gemessener keyless Zugang; keine iEEG-Creds in `secrets` für CI
-- **Braucht:** gültige LONI-IDA-Session (Cookie-Jar aus Browser-Login) **oder** browser-getragene Ernte → EDF nach `data/ieeg.org/` → Packer-Compiler + `sources.φ`-Block + CDN. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
+- **Braucht:** `ida_fetch --get <iEEG-Daten-URL>` (Jar + `www.ieeg.org`-Cookies) → EDF nach `data/ieeg.org/` → Packer-Compiler + `sources.φ`-Block + CDN. Die iEEG-Daten-URL aus dem Portal-Download (im eingeloggten Bridge-Tab) ablesen. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
 - **Status:** wartend | **Bindung:** eigen
