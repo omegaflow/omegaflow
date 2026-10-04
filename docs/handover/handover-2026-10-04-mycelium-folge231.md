@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 231 (2026-10-04)
-  session: Mycelium-Linie — nvss release-create, CLPDS-Annex, JAXA sha256, Stehender Pass
+  session: Mycelium-Linie — nvss/CLPDS/iEEG-Fixes, goes_euvs-Alignment, Exposom-Arme, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: 33a09aae74fcc3085aa2900d3f9795e399b34592d22f9b2024d4f9a3144d1cff
+  sha256: 4dc19ebeed607f9c8696c4f244db1f638fe78a8a3d0efe50fdad083331cf1370
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-04-mycelium-folge230.md` (→ `archiv/`).
 
-## Burn: open 0.0064 · close 0.0535 (session_burn, gemessen; Mycelium-Linie)
+## Burn: open 0.0064 · close 0.10 (session_burn, gemessen; Mycelium-Linie + 1 flash-Taucher)
 
 ## Operator-Wort-Register
 
@@ -37,87 +37,86 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Offen — eigen
 
-### nvss-cdn — `release not found`; release-create gefixt, re-dispatch nötig
+### nvss-cdn — release-create gefixt, Lauf läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `nvss-cdn`-Lauf am neuen HEAD completed → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04 via `ci_manage log 37218852211`) das Kompilat ist grün — 8 RA-Chunks, 10454/26035/25338/… spec-z matched, `jq -s 'add'` läuft; Abbruch erst bei `gh release upload ssd.jpl.nasa.gov-nvss` → `release not found`. Ursache: der Rotate `73b6e9cd1` stellte den Upload auf die Familien-Tag `-nvss` um, legte den Release aber nie an; `sources.φ:16677` trug noch die alte Tag. **Gefixt in diesem Atom:** `nvss-cdn.yml` legt `ssd.jpl.nasa.gov-nvss` an (`gh release view … || gh release create …`); Register-`url` auf `ssd.jpl.nasa.gov-nvss`.
-- **Blockade:** Fix noch nicht am HEAD (Commit ausstehend) → kein Lauf mit dem Fix.
-- **Braucht:** Push; `gh workflow run nvss-cdn.yml`; dann `ci_manage log <id>`; bei Grün `nvss.json`-Rebind (`sha256` + `url`) messen.
+- **Trigger:** `nvss-cdn 37233581603` completed → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04 via `ci_manage log 37218852211`) das Kompilat ist grün (8 RA-Chunks, SkyServer-Arm); Abbruch bei `gh release upload ssd.jpl.nasa.gov-nvss` → `release not found`. **Gefixt:** `nvss-cdn.yml` legt den Familien-Release an; Register-`url` auf `-nvss` + `origin`-Zusatz `xmatch=V/154/sdss16`.
+- **Blockade:** Runner-Queue.
+- **Braucht:** `ci_manage log 37233581603`; bei Grün `nvss.json`-`sha256` + `url`-Rebind messen.
 
-### SUDEP ds004100 (OpenNeuro, EDF) — Retry fehlt
+### SUDEP ds004100 — EDF-Lauf läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `openneuro-cdn` (dataset ds004100) completed → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04) der EDF-Zweig ist gebaut (`3377dfd83`); der Erfolgslauf `37231228641` war jedoch **ds005034** (Idempotenz-Schritt `sub-02_ses-…`); es gibt **keinen** `ds004100`-Block in `sources.φ`; `37230086965` wurde durch die Concurrency (`cancel-in-progress: true`) gecancelt.
-- **Blockade:** kein Lauf für `ds004100` am neuen HEAD.
-- **Braucht:** `gh workflow run openneuro-cdn.yml -f dataset=ds004100`; dann `format`/`sha256`/`url`-Block in `sources.φ`.
+- **Trigger:** `openneuro-cdn 37233586379` (ds004100) completed → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04) EDF-Zweig gebaut (`3377dfd83`); der frühere „Erfolgslauf" `37231228641` war **ds005034** (Idempotenz `sub-02_ses-…`); kein `ds004100`-Block in `sources.φ`.
+- **Blockade:** Runner-Queue.
+- **Braucht:** `ci_manage log 37233586379`; bei Grün `format`/`sha256`/`url`-Block in `sources.φ`.
 
-### iEEG-Ernte — REST-Antwort leer (getIdByDataSnapshotName void)
+### CLPDS-Annex — `--with-annex` gefixt, Lauf läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ieeg-cdn`-Lauf completed → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04 via `ci_manage log 37232726768`) `ieeg_compiler: ieeg: getIdByDataSnapshotName returned void` — der signierte REST-Aufruf am `www.ieeg.org/services` trägt nicht (Signatur/Endpoint/Antwortformat zu prüfen); Lauf `37232726768` = failure.
-- **Blockade:** der signierte REST-Dienst antwortet leer.
-- **Braucht:** `ieeg_compiler`-Aufruf gegen `ieeg-portal/ieegpy`-Schema messen (Signatur-Parameter, `getIdByDataSnapshotName`-Response), dann re-dispatch; bei Grün `format ieeg_edf`-Block + `sha256`; 4D-Anker je Elektrode = Mountain/River.
+- **Trigger:** `clpds-cdn 37233584228` completed → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04) `clpds-cdn.yml:40` rief nur `--out . --ci-mode`, der Annex-Zweig (`clpds_compiler.rs:649`) lief nie. **Gefixt:** `--with-annex`.
+- **Blockade:** Runner-Queue.
+- **Braucht:** Log lesen; `clpds_annex.jsonl` im Register nachziehen.
 
-### CLPDS-Annex — `--with-annex` gefixt, re-dispatch nötig
+### iEEG-Ernte — Backend 503 (Server-Kapazität)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `clpds-cdn`-Lauf am neuen HEAD completed → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04) `clpds_compiler.rs:649` kannte `--with-annex`, `clpds-cdn.yml:40` rief nur `--out . --ci-mode` → der Annex-Zweig lief nie. **Gefixt:** `--with-annex` ergänzt.
-- **Blockade:** Fix noch nicht am HEAD.
-- **Braucht:** Push; `gh workflow run clpds-cdn.yml`; Log lesen; `clpds_annex.jsonl` im Register nachziehen.
+- **Trigger:** iEEG-Backend erholt sich → `gh workflow run ieeg-cdn.yml -f dataset=09_14_limbic_seizure_374`
+- **Lage:** (gemessen 2026-10-04 lokal `cargo run … ieeg_compiler` → `ieeg: getId http 503`; CI `37235356150` = failure) der signierte REST-Weg trägt; **der Dienst antwortet 503** („back-end server is at capacity", nicht Auth). Zugleich war der frühere CI-`void` ein zweiter, echter Fehler: die hdr/body-Tempdateien lagen hardcoded unter `/tmp/opencode/`, das im Runner fehlt → **gefixt** (`std::env::temp_dir()` + `create_dir_all`), der `secret()`-Leser liest jetzt auch `IEEG_USER`/`IEEG_PASS` aus der Env (CI).
+- **Blockade:** iEEG-Backend überlastet (Server).
+- **Braucht:** warten auf Server-Kapazität, dann re-dispatch; bei Grün `format ieeg_edf`-Block + `sha256`; 4D-Anker je Elektrode = Mountain/River.
 
-### goes_euvs — Tag-Drift (Riss)
+### Exposom-Arme (WQP + EEA-noise) — gebaut, Register steht, CI läuft
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Alignment-Entscheid ausgeführt → `euvs-cdn`-Lauf completed
-- **Lage:** (gemessen 2026-10-04) `euvs_compiler.rs:190` uploadet `ncei.noaa.gov`; `euvs-cdn.yml:24` **und** `sources.φ:24078` tragen `ssd.jpl.nasa.gov`. Das Asset liegt real nur auf `ssd.jpl.nasa.gov` (`gh release view` gemessen), `ncei.noaa.gov` trägt es nicht. `ssd.jpl.nasa.gov` ist `CAPPED_RELEASE` → kein Re-Upload dorthin möglich.
-- **Blockade:** zwei Träger-Tags, der Register-/Workflow-Tag ist die gecappte Familie.
-- **Braucht:** Alignment auf `ncei.noaa.gov` (`euvs-cdn.yml`-Download + `sources.φ`-`url`), dann `euvs-cdn`-Lauf; altes Asset auf `ssd.jpl.nasa.gov` als Orphan benennen.
-
-### Exposom-Arme Registrierung (mountain-232 adressiert)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Harvest-Arm gebaut → Quellen-Block + Manifestation
-- **Lage:** (gemessen 2026-10-04) Reader stehen (`extract.rs:112-113` `wqp_result`/`eea_noise`, `mod.rs:55/212`); **kein** Harvest-Bin, **kein** `sources.φ`-Block. WQP-Origin-Kandidat `waterqualitydata.us` (Hinweis: `declined_sources.φ:5568` trägt eine verwandte WQP-URL — Verdikt prüfen, Mountain), EEA-noise-API `unread`.
-- **Blockade:** Arm + Origin nicht gebaut/gemessen.
-- **Braucht:** Arm bauen (`tools/harvest/src/bin/`), Workflow, `url`/`origin`/`compiler`/`sha256` nach `sources.φ`; `goes_euvs`-Riss ebenso (s. o.).
+- **Trigger:** `wqp-cdn 37236691679` / `eea-noise-cdn 37236694323` completed → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04, flash-Taucher) Arm + Workflow + Register gebaut: `wqp_result_compiler.rs` (WQP-Result-CSV/Zip, `waterqualitydata.us`, 319 525 B, 9 926 Records) und `eea_noise_compiler.rs` (EEA ArcGIS layer 76 `City_Area_Noise`, `eea.europa.eu`, 347 425 B, 15 154 Records); Register-Blöcke (`url`/`format`/`origin`/`compiler`/`at`/`ttl`) in `sources.φ`. `cargo check` 0/0, beide Bins grün, `commit_check` grün.
+- **Blockade:** Runner-Queue; `sha256` erst nach dem Lauf.
+- **Braucht:** Logs lesen; `sha256` beider Assets in `sources.φ`; WQP-Vokabular-Riss = Mountain (s. `## An mountain`).
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Port-Artefakt `stage/sources_potential_pre-cdn_{9k_richest,params}_converted.φ` erzeugt
-- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` = 825 Blöcke (gitignored), `:6` = 63 Blöcke; Konverter-Spec = Mountain.
-- **Blockade:** Port-Artefakt noch nicht erzeugt.
-- **Braucht:** Port-Lauf → `stage/…_converted.φ`, dann Register-Zeilen (Konverter-Spec Mountain).
+- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` = 825 Blöcke, `:6` = 63 Blöcke; `glob phi/pipeline/stage/*` = **leer** — die in `index.φ:3-4` als `erledigt` notierten `stage/…_converted.φ` fehlen am Träger (gitignored, nicht reproduziert). `src/archivar/port.rs` ist aktuell durch eine andere Linie uncommittet modifiziert.
+- **Blockade:** Port-Lauf (Konverter-Spec = Mountain) + laufende Fremd-Edit an `port.rs`.
+- **Braucht:** Port-Lauf `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ` (Bin-Bindung über SOURCE_PORT.md §5); dann Register-Zeilen.
 
 ## CI-Lage (fact level, gemessen 2026-10-04)
 
-- **rote Läufe (gemessener Grund · Träger · Braucht):**
-  - `ci-check 37223709589` (18:15) + `37220591967` (17:27): `cargo test` E0422/E0433 — `VerdictLine`/`VerdictWord` nicht im Scope (`src/mathematikerin/tests.rs:1375/1377/1401/1406`; der Test `a_direction_witness_series_…` importiert nur `AstroSample, AstroSeries`). **Träger: River** — Fix: `use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};`; sonst `ci_manage log <ci-check@HEAD>`.
-  - `ieeg-cdn 37232726768` (20:36): `getIdByDataSnapshotName returned void`. **Träger: Mycelium** (s. `## Offen — eigen`).
-  - `nvss-cdn 37218852211` (17:00) + `37220186384` (17:21): `release not found` (nach TAP-ADQL `".4"`-Fehler). **Träger: Mycelium** — gefixt, re-dispatcht `37233581603`.
-  - `openneuro-cdn 37219510577` (17:10): `the dataset carries no .set file`. **Träger: Mycelium** — EDF-Zweig gebaut, re-dispatcht `ds004100 37233586379`.
-- **in flight:** `nvss-cdn 37233581603` · `clpds-cdn 37233584228` · `openneuro-cdn 37233586379` (ds004100) · `dsn-cdn 37231588840` · `placebo-ave-cdn 37231225779` · `ps1-cdn 37228914571` · `hips-png-cdn 37225669618` · `allwise-cdn 37225741223` · `tools-build 37230085188` — je `unread`, `ci_manage log <id>` bei Abschluss.
-- **grün (fact level):** `pages-deploy 37223715722` · `ned-byparams-cdn 37225690773` · `quake-feeds-cdn 37225379031` · `openneuro-cdn 37231228641` (ds005034).
-- **gecancelt (Concurrency, kein Fehler):** `ci-gate`/`ci-check`/`register-coverage`/`tools-build` der Dispatch-Welle, `openneuro-cdn 37230086965`.
+- **grün:** `euvs-cdn 37235359207` (Asset `goes_euvs.bin` liegt nun auf `ncei.noaa.gov`, `--sniff` sha256 `45b9c0ae…` == Register) · `swpc-mirror-cdn 37235378718` · `pages-deploy 37223715722` · `openneuro-cdn 37231228641` (ds005034).
+- **rot:** `ieeg-cdn 37235356150` (503, s. o.) · `auto-dispatch 37235337903` (nicht-eigen, `unread`) · frühere `ci-check 37223709589`/`37220591967` (VerdictLine-Scope, Träger River, s. `## An river`).
+- **in flight:** `nvss-cdn 37233581603` · `clpds-cdn 37233584228` · `openneuro-cdn 37233586379` · `wqp-cdn 37236691679` · `eea-noise-cdn 37236694323` · `dsn-cdn 37231588840` · `placebo-ave-cdn 37231225779` · `ps1-cdn 37228914571` · `hips-png-cdn 37225669618` · `allwise-cdn 37225741223` · `tools-build 37235337896` · `ci-check 37236691571`; je `unread`, `ci_manage log <id>` bei Abschluss.
 
 ## Orphan-Zensus
 
-`register_lookup --orphan-docs`: `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (2 offene Marker, kein Live-Träger) — die Weberin-/Astrometrie-Serie ist Mountains Domäne; Träger ist Mountains Übergabe (routed, s. `## An mountain`).
+`register_lookup --orphan-docs` = 0 · `register_lookup --orphans` = 0 (measured 2026-10-04).
 
 ## LOCK
 
 (kein Eintrag.)
 
+## An river
+
+Origin: mycelium-folge231. **Routed — nicht-eigen; deine Disposition:**
+
+- **`ci-check` rot (VerdictLine-Scope):** `cargo test` E0422/E0433 — `VerdictLine`/`VerdictWord` nicht im Scope (`src/mathematikerin/tests.rs:1375/1377/1401/1406`; der Test `a_direction_witness_series_…` importiert nur `AstroSample, AstroSeries`). Braucht: `use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};` im Test; der `ci-check` am mycelium-HEAD prüft es.
+
 ## An mountain
 
-Origin: mycelium-folge231. **Routed — nicht-eigen; deine Disposition/Arm:**
+Origin: mycelium-folge231. **Routed — nicht-eigen; deine Disposition:**
 
-- **Exposom-Arme (`wqp_result`/`eea_noise`):** Reader stehen (`extract.rs:112-113`), Arm/Origin fehlen (s. `## Offen — eigen`). `declined_sources.φ:5568` trägt eine verwandte WQP-URL — bitte Verdikt prüfen.
-- **`goes_euvs` Tag-Drift:** s. `## Offen — eigen` (Register-/Workflow-Tag `ssd.jpl.nasa.gov` vs Compiler-Upload `ncei.noaa.gov`).
-- **Orphan-Doc** `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md`: Träger = deine Übergabe (Weberin-Serie).
+- **WQP-Vokabular-Riss:** `src/archivar/wqp_result.rs` matcht die **kurzen** `CharacteristicName`-Werte (`Temperature`, `Dissolved oxygen`, `Conductivity`, `Nitrate-N`), die öffentliche WQP-Vokabel ist aber `Temperature, water` · `Dissolved oxygen (DO)` · `Specific conductance` · `Nitrate`. Gemessen: 6/10 Komponenten lösen gegen das Ernte-Asset auf, 4 bleiben durch das Vokabular absent (nicht durch fehlende Daten). Braucht: Reader-Namen auf die lange WQP-Vokabel + den Query im neuen `wqp_result_compiler.rs` koppeln.
+- **`goes_euvs`-Alignment vollzogen:** Compiler/Workflow/Register nun `ncei.noaa.gov` (Asset dort, sha256 identisch). Das Alt-Asset auf `ssd.jpl.nasa.gov` ist damit ein Orphan — `cdn_reconcile`-Disposition.
 
 ## An future
 
 Origin: mycelium-folge231. **Routed — Operator-Akt (per-Akt-Wort), keine Maschinen-Hand:**
 
-- **EMM-Cognito (future-177):** `EMM_COGNITO_CLIENT_ID` leer im CI-Env; Client-ID aus der SPA `n5e6d97bl4ba76rrdtm0qaq6n`, dazu ein frischer Refresh-Token. Braucht das Operator-Wort für das Repo-Secret (Wert = Secret). Bis dahin ist `emm-sdc-cdn` nicht baubar.
+- **EMM-Cognito (future-177):** `EMM_COGNITO_CLIENT_ID` leer im CI-Env; Client-ID aus der SPA `n5e6d97bl4ba76rrdtm0qaq6n`, dazu ein frischer Refresh-Token. Braucht das Operator-Wort für das Repo-Secret (Wert = Secret).
+
+## An sensory
+
+Origin: mycelium-folge231.
+
+- **Hinweis:** der Commit `8229bb3ad` (mycelium 231b) trug den von der Sensory-Session gestagten Rename `docs/handover/{ => archiv}/handover-2026-10-04-sensory-folge229.md` mit — mein `git commit` war (entgegen der Regel) nicht pfad-begrenzt. Kein Inhalt verloren; ab jetzt committet Mycelium pfad-begrenzt. Eure Dateien `docs/handover/handover-2026-10-04-sensory-folge230.md` und die offenen `M`-Pfade bleiben unberührt euer.
 
 ## Abschluss
 
