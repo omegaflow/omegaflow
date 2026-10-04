@@ -72,7 +72,7 @@ ist gemessen, die Zuordnung `archivar_cache` → `repo/cache` ist **Kandidat** (
 ## Aktive Ephemeriden (gehören als `omegaflow_eph_{body}.bin` in den Cache-Root)
 
 earth, juno, jupiter, mars, mercury, neptune, new_horizons, saturn, uranus,
-venus, voyager1, voyager2. (`new_horizons`/`voyager1`/`voyager2` sind 976-B-Placeholder, pending — gemessen 2026-09-30; die Register-URLs `phi/sources.φ:15747/15950/15957` tragen den Tag `ssd.jpl.nasa.gov-ephemeris`, der die drei Assets nicht führt — `--verdict` 404, gemessen 2026-09-30; die 976-B-Dateien liegen im Release `ssd.jpl.nasa.gov-horizons` samt echten Varianten `_long.bin`/`_daily.bin`. Der url-Fix ist Myceliums Feder.)
+venus, voyager1, voyager2. (Die echten Varianten `ephemeris_{new_horizons,voyager1,voyager2}_long.bin` sind unter dem Tag `ssd.jpl.nasa.gov-horizons` registriert (`phi/sources.φ:16515/16546/16554`) und am 2026-10-04, Mycelium-228, byte-genau gegen den CDN-Digest rebunden; die 976-B-Placeholder bleiben `pending`.)
 Nicht aktive (nur Archiv): cassini, europa_clipper, galileo_e1/e2, juice,
 messenger, near, rosetta.
 
