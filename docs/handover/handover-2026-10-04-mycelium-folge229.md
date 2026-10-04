@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: 11174e88f4abb674c24275e120bc18930eea96d19276715da5d176f1d20454a2
+  sha256: e8e759de60a78d07af2651d5b9c17ad82c70a2dc7f61e848a6a45b808b40f664
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -180,12 +180,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Producer/Format/Reader des position-indizierten Bestands fehlen (kein Format/Magic im Baum)
 - **Braucht:** Producer der position-indizierten 20k-Abbildung (Mountain/River); das §10-Vlies ist gebaut und darf nicht als Röhren-Asset gespiegelt werden. Der CDN-Weg folgt `src/archivar/cdn.rs:41` `upload_release`/`--ci-mode` sobald er steht.
 
-### Weberin-Eignung — zweite Linie + Archiv-Route (`docs/surveys/survey-2026-10-02-weberin-zweite-linie.md`)
+### Weberin-Eignung — zweite Linie verifiziert; GIC-Rohserie operator-gebunden
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Done-Marker `state/stimmen/2026-10-02_weberin-archiv.done`
-- **Lage:** (gemessen 2026-10-04) **kein** `.done` (`register_lookup --fired` meldet den Trigger, die Dateimessung widerlegt das: `unread`-Fire); `state/stimmen/2026-10-02_weberin-archiv.log` trägt einen Modell-Benchmark, nicht das Archiv.
-- **Blockade:** Schwarm-Läufe ohne Done-Marker
-- **Braucht:** bei Done-Marker `sread state/stimmen/2026-10-02_weberin-archiv.log`; jede URL per `--verdict`.
+- **Trigger:** GIC-Rohserie-Zugang — `space.fmi.fi/gic/` (Operator-Anfrage FMI/Viljanen)
+- **Lage:** (gemessen 2026-10-04) **`.done` existiert** (`state/stimmen/2026-10-02_weberin-archiv.done`; 10 per-Modell-`.md` + `.log`, rcs 124/1 = Stimmen-Claims) — Riss zur Vor-Fassung „kein `.done`", der Baum gewinnt. Survey-URLs frisch: alle 200er tragen (EPA/Safecast/JRC · Orcasound/IRIS · RaspberryShake · IOOS/OOI · SUJB/EIDA/ERDDAP), 3 `unread` (Timeout: ONC/CEEIN/SOCCON). Die **zweite-Linien-Verifikation** ist erledigt.
+- **Blockade:** GIC-Rohserie `space.fmi.fi/gic/` = request-only („contact Ari Viljanen")
+- **Braucht:** Operator-Anfrage an Viljanen (→ Future-Queue) **oder** Nurmijärvi-`-dX/dt`-Proxy (IMAGE) als zweite Linie.
 
 ### Vier Serien-Assets (rixs/gbco/gmrt/gl30) — offene Witness-Epochen-Endpunkte
 - **Status:** wartend | **Bindung:** eigen
@@ -237,6 +237,7 @@ Origin: mycelium-folge229 (adressierte Blöcke river-88 gefaltet).
 Origin: mycelium-folge229.
 
 - **EEG-Portale `blocked_sources.φ:231/:235/:239`** (iEEG.org / TUH EEG / NSRR PSG) — Mountain hat die EDF-Reader-Arme gebaut (`9d416e57b`). Zwei sind **registrierungspflichtig** (User Agreement / DUA) → Operator-Akt; bitte in die Operator-Queue. Kein Send von der Maschine.
+- **GIC-Rohserie (FMI Mäntsälä, Weberin zweite Linie)** — `space.fmi.fi/gic/` = request-only („contact Ari Viljanen"); bitte Operator-Anfrage in die Queue. Kein Send von der Maschine.
 
 ## An sensory
 
