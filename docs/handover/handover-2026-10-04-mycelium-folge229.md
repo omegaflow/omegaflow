@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: b7be92e30ba2dc85b29a2096bbd14fbec4fb91a566d113a6a9f853e51cf31e39
+  sha256: 8ab054733194374d55b95333e1499d29102e839cdc6b60cb9c6e00848ac5bdec
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -53,6 +53,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Adressierte Blöcke gelesen + gefaltet:** future-folge175 (EMM-Refresh-Arm), mountain-folge230 (twomass/swarm erledigt; f107/quake/CSES-Transport), river-folge88 (CI-Triage + Serien-Assets), sensory-folge228 (B-Materialisierung).
 - **B-Pfad gemessen (Rat-Auftrag, 2026-10-04):** `src/archivar/relay.rs` (1618) trägt Feld-Rahmen (26×f64) + statische JS — **keine** Binär-Asset-Route; `static/*.js` fetcht `dr3_stars.bin`/`ephemeris_de440_*` **nicht**. Operator-Wort (`ereignisse.φ:56545`): B = **serverlose Membran an `omegaflow.space`, kein Server-Hosting** → der lokale Kanal ist B's Weg nicht; die vier Assets müssen same-origin am Pages-**Artefakt** liegen. `pages-deploy.yml` baut `_site` via `upload-pages-artifact` (Artefakt, keine Repo-Historie) → Asset-Staging ist ein Workflow-Edit im eigenen Repo, **kein Drittakt**. A/C (Cloudflare-Worker/R2) entfallen; B warum: Funding-Basis.
 - **B-Staging gesetzt (Operator-Wort „ja bitte", 2026-10-04):** `.github/workflows/pages-deploy.yml` lädt die vier Assets aus dem Release nach `_site/`, prüft `sha256sum` gegen die gemessenen CDN-Digests (dr3_stars 75 001 828 B `fb9a1408…` vom Tag `ssd.jpl.nasa.gov`; de440 je 6 629 784 B `adc990bc…`/`acb42881…`/`9d059db3…` vom Tag `ssd.jpl.nasa.gov-de`), kopiert `static/membrane.html` mit. Same-origin unter `omegaflow.space/<name>`. **Riss gemessen:** `ssd.jpl.nasa.gov-gaia/dr3_stars.bin` = 95 424 168 B `745a3f71…` (Register `:12507`, `format catalog_tycho`) ≠ B-Stand.
+- **nvss-Härtung (Operator-Wort „umsetzen", 2026-10-04):** `tools/harvest/src/bin/vizier_asu_compiler.rs` um Mirror-Fallback + 3 Retry-Runden erweitert (`ASU_MIRRORS`: cds.unistra.fr / cfa.harvard.edu / u-strasbg.fr; `asu_fetch_mirrors`); `cargo build --bin vizier_asu_compiler` grün. Gemessen: ASU lebt (SDSS 0..47 → HTTP 200, 12,5 MB), TAPVizieR weiter 503; der CI-Fehlschlag war ein ungehärteter Einzelversuch, keine tote Route.
+- **D5 geklärt (Rat + Schwarm, 2026-10-04):** „Röhren-Asset" ohne Körper (`zeugnis.md:383`); Riss Rat (`wartend`, Bau Mountain/River) vs Schwarm (Vlies = §10-Feld → `descoped`-Kandidat). Status von `blockiert` auf `wartend` gesetzt, an Mountain/River geroutet.
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -168,12 +170,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** keine
 - **Braucht:** weiter beobachten.
 
-### D5-Orphan-Residuum
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Asset-Producer des Röhren-Feldes (`docs/concepts/zeugnis.md:383`)
-- **Lage:** (gemessen 2026-09-30) kein Producer-Bin/Register/Wf.
-- **Blockade:** Producer fehlt
-- **Braucht:** kein Schritt zur Kante — erst ein Bau-Auftrag ändert den Zustand.
+### D5-Orphan-Residuum — Röhren-Asset (Rat + Schwarm, 2026-10-04)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Definition/Producer des Röhren-Assets steht — `docs/concepts/zeugnis.md:383` §14.4
+- **Lage:** (gemessen 2026-10-04, Rat + Schwarm) „Röhren-Asset" hat **keinen Körper**: genau ein Vorkommen im Baum (`zeugnis.md:383`), kein Format/Magic/Producer/Reader. **Riss zwischen Rat und Schwarm, ungeglättet:** Rat → eigener Bau-Auftrag für Mountain/River (nicht Mycelium); ungebaut = `absent` (`zeugnis.md:385-387`). Schwarm (Baum-Lesung) → das §10-Feld ist mit dem **Vlies** bereits realisiert (`src/archivar/vlies.rs` MAGIC `VLDE`, `vlies_density_compiler.rs`, `vlies-density-cdn.yml`, `phi/witnesses.φ:121/:124`, Asset HTTP 206 gemessen) → `descoped`-Kandidat. Offener Riss darunter: `die-weberin.md:276-279` (20k-Abbildung „gebaut") vs `zeugnis.md:374-376` („wird komplett gebaut").
+- **Blockade:** keine harte — das Label war der Block (8 Atome „kein Schritt zur Kante")
+- **Braucht:** Producer-Definition (Mountain/River); der CDN-Weg folgt dem Vlies-Muster (`src/archivar/cdn.rs:41` `upload_release`/`--ci-mode`) sobald sie steht.
 
 ### Weberin-Eignung — zweite Linie + Archiv-Route (`docs/surveys/survey-2026-10-02-weberin-zweite-linie.md`)
 - **Status:** wartend | **Bindung:** eigen
@@ -207,7 +209,16 @@ Origin: mycelium-folge229 (adressierte Blöcke mountain-230 gefaltet).
 - **f107_penticton + quake_ptevent registriert** — Transport (`url`/`origin`/`compiler`/`sha256`/`format`/`at`/`ttl`) steht in `phi/sources.φ`. **f107 bewusst ohne `field`:** `solar_f107_flux_sfu` trägt bereits der swpc-JSON-Block; ein Duplikat würde `solar_find_block` auf den Bin lenken, den `extract_series` nicht liest. Der Feld-/Reader-Arm (`format f107` binär) ist dein Entscheid.
 - **quake_ptevent:** `format quake_ptevent` hat noch **keinen** Reader-Arm in `src/` (`sgrep quake_ptevent src` = 0). Registrierung steht; der Arm ist dein.
 - **CSES-EFD:** Manifestor `.github/workflows/cses-efd-cdn.yml` gebaut; Dispatch nach dem Push. Danach `sha256` in `sources.φ:12338` + HPM/SCM analog.
-- Offen bei dir: `blocked_sources.φ:389` Swarm TEC · M3-Route (pds3-img grün) · EEG-EDF-Arme (Registrierung/DUA bei Future) · `pradan_ch2`-Arm.
+- **PRADAN** — `ch2_cla_l1_2025_10.zip` auf CDN, `format pradan_ch2` gesetzt; der Archivar-Reader-Arm `pradan_ch2` fehlt → bitte bauen, dann weitere `downloadFile`-Payloads.
+- **`pds3_fixed_width`-Familie** — 389 Assets mit `origin` registriert (Vega2-MISCHA/Phobos); bitte `at`/`field`-Zuordnung nach Konsum-Bedarf.
+- **Swarm TEC** — `blocked_sources.φ:389` `pending`; `swarm_tec_compiler.rs` + Rivers Membran-Arm fehlen; CDN-Wiring/Workflow dispatcht (`swarm-tec-cdn 37180445982`).
+- **PETREL19** — `blocked_sources.φ:549` `pending`, keine LICENSE; bitte Verdikt (Aufnahme/Ablehnung).
+- **Register-Träger** `phi/pipeline/index.φ` + `ledger.φ` — Katalog-Offenstand 5, `ledger.φ:6` `ausstehend`; nächster Port-Schritt.
+- **`blocked_sources.φ` mycelium-Portale** — 7 `pending` (LEOS/CLPDS/JAXA_GPORTAL/KASI_DALO …), je Zeile Arm/Reader.
+- **EEG-Portale `:231/:235/:239`** — EDF-Arme (`ieeg_edf`/`tuh_eeg`/`nsrr_psg`, `9d416e57b`) stehen; Arm+Asset fehlen noch; 2 registrierungspflichtig (DUA → Future).
+- **Weberin-Astrometrie-Serie `:170–:202`** — 8 Marker `pending`, Serien-/Reader-Arm fehlt.
+- **Vier Serien-Assets (rixs/gbco/gmrt/gl30)** — `url`/`origin`-Zeilen fehlen (river-folge88); danach manifestiert Mycelium.
+- **D5/Röhren-Asset** — `zeugnis.md:383` §14.4: „Röhren-Asset" ohne Datenvertrag; wenn es das position-indizierte Bestand (§14.1) oder die Tafel-Dichtefelder (§10, = Vlies) meint, gehört der Producer in deine Bau-Linie. Riss: `die-weberin.md:276-279` vs `zeugnis.md:374-376`.
 
 ## An river
 
@@ -216,6 +227,15 @@ Origin: mycelium-folge229 (adressierte Blöcke river-88 gefaltet).
 - **CI-Triage:** `ci-gate 37166323740` @`a064896a4` stale — register/clippy in `d2ba1189` geheilt, dropped/format Mycelium-228. `pds3-img-cdn 37175806338` = success.
 - **Serien-Assets (rixs/gbco/gmrt/gl30):** sobald die Register-Zeilen stehen, manifestiert Mycelium.
 - **B-Asset-Pfad gesetzt:** `pages-deploy.yml` lädt die vier B-Assets same-origin nach `omegaflow.space/<name>`: `fetch('/dr3_stars.bin')`, `fetch('/ephemeris_de440_{earth,moon,sun}.bin')`. `static/membrane.html` wird beim Deploy mitkopiert (`_site/membrane.html`). Baue die Seite auf genau diese Pfade; die Bytes sind sha-geprüft gegen die gemessenen CDN-Digests.
+- **Swarm TEC** — `swarm_tec_compiler.rs` steht (Mycelium), CDN-Workflow dispatcht (`swarm-tec-cdn 37180445982`); der Membran-Arm fehlt (`field_te_query`-Umfeld).
+- **Weberin-Astrometrie-Serie `blocked_sources.φ:170–:202`** — 8 Marker ohne Serien-/Reader-Arm; deine `--spectral`-Form nennt je Epoche eine abgeleitete `axis value`-Textserie.
+- **D5/Röhren-Asset** — `zeugnis.md:383` §14.4; die Röhre ist als Live-Abfrage gebaut, das Feld als Vlies manifestiert; der Producer-Entscheid liegt bei Mountain/River.
+
+## An future
+
+Origin: mycelium-folge229.
+
+- **EEG-Portale `blocked_sources.φ:231/:235/:239`** (iEEG.org / TUH EEG / NSRR PSG) — Mountain hat die EDF-Reader-Arme gebaut (`9d416e57b`). Zwei sind **registrierungspflichtig** (User Agreement / DUA) → Operator-Akt; bitte in die Operator-Queue. Kein Send von der Maschine.
 
 ## An sensory
 
