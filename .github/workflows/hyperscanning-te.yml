@@ -41,19 +41,57 @@ on:
           - ds007822
           - ds007471
         default: ds007822
+      tasks:
+        description: task conditions screened as separate parallel jobs (comma-separated; ds007471 forces jointaction)
+        type: string
+        default: "pddecision,pdfeedback,pdrest"
 permissions:
   contents: read
 env:
   RUSTFLAGS: -D warnings
 jobs:
-  screen:
+  plan:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 60
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Run the family FN/FP gates (the family-max null calibration)
         run: cargo test --release -p omegaflow-measure --bin hyperscanning_group_te -- family_fn_gate family_fp_gate joint_channel_family_gate coherent_null_fp_gate self_null_discriminator fn_gate_sweep nominees_round_trip --nocapture
+      - name: Build the per-task matrix (one screen job per task condition)
+        id: matrix
+        shell: bash
+        run: |
+          if [ "${{ inputs.cohort }}" = "ds007471" ]; then
+            TASKS="jointaction"
+          else
+            TASKS="${{ inputs.tasks }}"
+          fi
+          m='{"task":['
+          first=1
+          IFS=',' read -ra T <<< "$TASKS"
+          for t in "${T[@]}"; do
+            t="${t// /}"
+            [ -z "$t" ] && continue
+            if [ "$first" -eq 0 ]; then m="$m,"; fi
+            m="$m\"$t\""
+            first=0
+          done
+          m="$m]}"
+          echo "matrix=$m" >> "$GITHUB_OUTPUT"
+
+  screen:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Fetch the ds007822 EEG recordings and build the manifest
         if: inputs.cohort == 'ds007822'
         run: |
@@ -70,6 +108,7 @@ jobs:
           mkdir -p data
           : > manifest.txt
           jq -r '.data.dataset.latestSnapshot.files[]? | select(.filename | endswith("_eeg.set")) | [.filename, .urls[0]] | @tsv' tree.json > files.tsv
+          grep "_task-${{ matrix.task }}_eeg.set" files.tsv > files_task.tsv || true
           count=0
           while IFS=$'\t' read -r fn url; do
             sub=$(printf '%s' "$fn" | cut -d/ -f1)
@@ -80,7 +119,7 @@ jobs:
             curl -sSL --retry 2 -o "data/$fn" "$url"
             printf '%s %s %s %s\n' "$task" "$triad" "$sub" "data/$fn" >> manifest.txt
             count=$((count+1))
-          done < files.tsv
+          done < files_task.tsv
           jq -r '.data.dataset.latestSnapshot.files[]? | select(.filename | endswith("_channels.tsv")) | [.filename, .urls[0]] | @tsv' tree.json > channels.tsv
           nch=0
           while IFS=$'\t' read -r fn url; do
@@ -169,7 +208,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: hyperscanning-te-report
+          name: hyperscanning-te-report-${{ matrix.task }}
           path: |
             report.txt
             nominees*.tsv
