@@ -51,10 +51,6 @@ url https://regards.cnes.fr/api/v1/rs-order
 origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml
 note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
 
-blocked account
-url https://datadc.ihep.ac.cn/resource/astro/lhaaso
-note LHAASO — 2026-09-26: API 200 (18 Datensätze), 4 Rohklassen gated (IHEP/CSTNET + Agreement → Future); Roh bleibt gated, offen ist der Katalog `cdsarc.cds.unistra.fr/viz-bin/cat?J/ApJS/271/25` 200 (VizieR).
-
 pending
 url https://www.gosat-gw.nies.go.jp
 note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml (fae4a5081). 36283215548 rot: Leerfenster als Overflow fehlklassifiziert; Empty/Overflow getrennt (2026-09-27); Re-Dispatch offen.
@@ -138,11 +134,6 @@ note Danuri/KPLO KPDS (KARI) — 2026-10-03 un-descoped: `.../published/KPLO/KPL
 pending
 url https://pds.shadowcam.im-ldi.com/derived/
 note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
-
-blocked account
-url https://catalogue.dataspace.copernicus.eu/stac/collections
-reg https://identity.dataspace.copernicus.eu/auth/realms/CDSE/account/#/personal-info
-note CDSE-CCM — STAC/OData-Katalog offen (`/stac/collections` 200; `Products` 200, `@odata.count` 197410), Download 401 (Lizenzrolle U-R-P/N-P-A, Eligibility → Future); offen: Copernicus DEM 30 m `copernicus-dem-30m.s3.amazonaws.com` 200.
 
 pending
 url https://pds-imaging.jpl.nasa.gov/data/m3/CH1M3_0003/

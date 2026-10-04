@@ -603,7 +603,7 @@ fn main() {
     println!(
         "{:<14} | Block {} | {} | 3-h grid",
         "Kp",
-        block_of("magnetosphere_kp_index"),
+        block_of("magnetosphere_kp_3h"),
         KP_URL
     );
 
