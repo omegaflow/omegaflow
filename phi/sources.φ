@@ -12309,6 +12309,30 @@ field bx_nT bc_mpo_mag_bx inverse-square em nT 604800 0.0 0.0
 field by_nT bc_mpo_mag_by inverse-square em nT 604800 0.0 0.0
 field bz_nT bc_mpo_mag_bz inverse-square em nT 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_chile.bin
+format quake_ptevent
+origin https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+compiler tools/harvest/src/bin/quake_ptevent_compiler.rs
+sha256 ff7e2f6771b1c97eccfe144e2395634b9451b758d6c8b4ce3dbc98417e35263d
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_jma.bin
+format quake_ptevent
+origin https://www.jma.go.jp/bosai/quake/data/list.json
+compiler tools/harvest/src/bin/quake_ptevent_compiler.rs
+sha256 28e08148f6022f346f2009977fbeebf3e6c271d08543ee9cb41fe5519ffd7ddc
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_tohoku.bin
+format quake_ptevent
+origin https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+compiler tools/harvest/src/bin/quake_ptevent_compiler.rs
+sha256 cde2a662f732997fcbb37ea5981e32128284d87fdfe6168d5792319d829d9b58
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/rave-survey.org/rave_dr5.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=III/279/rave_dr5
 compiler tools/harvest/src/bin/tap_compiler.rs
@@ -19877,6 +19901,14 @@ format sky1
 at sun
 ttl 31536000
 field icecat_sky1 icecat_sky1 inverse-square em 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/f107_penticton.bin
+format f107
+origin https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/noontime-flux/penticton/
+compiler tools/harvest/src/bin/f107_compiler.rs
+sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
+at sun
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
 format catalog_charm2
