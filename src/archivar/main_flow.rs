@@ -4126,6 +4126,7 @@ pub fn main_flow() {
                     | "gosat_tanso3"
                     | "esacci_sst_l4_cdr3"
                     | "ersstv5_nino34"
+                    | "cses_efd"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

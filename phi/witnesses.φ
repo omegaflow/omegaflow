@@ -102,6 +102,11 @@ record gl30
 note Copernicus GLO-30 Land-DEM (2026-09-12 HTTP 200): COG-GeoTIFF, 1 arcsec. Gestalt (Körperfläche), τ = geologische Stabilität, Raster. Socket gl30 gefällt (2026-09-14, Magic GL30). Deckt S1-Layover-Lücke; Konsument nächstes Atom.
 
 witness gestalt
+url https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.6.nc
+record srtm
+note SRTM15+ V2.6 (2026-10-04 HTTP 206): Topo-/Bathymetrie 15 arcsec, Elevation m, negativ unter dem Meeresspiegel. Gestalt (Körperfläche), τ = geologische Stabilität, SRTM-Records; Geschwister/Ersatz für gmrt (gmr1). Konsument nächstes Atom.
+
+witness gestalt
 url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
 record gmr1
 note GMRT-Bathymetrie (2026-09-23 HTTP 200, 1100202 B sha256 f26f41a3…): Elevation m, negativ unter dem Meeresspiegel. Gestalt (Körperfläche), τ = geologische Stabilität, GMR1-Records, nie Oszillator/Kraftfeld. gmrt_compiler.
