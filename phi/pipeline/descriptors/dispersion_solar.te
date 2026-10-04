@@ -1,0 +1,19 @@
+# dispersion_solar.te — TE-Probes-Wanderung: the dispersion_solar_probe as a conditional TE
+# matrix over one solar source's seven AIA bands + the soft GOES XRS-A channel.
+# channels: aia_94_dn .. aia_335_dn (phi/sources.φ:1830-1836) + goes_xrs_xrsa (:901) —
+#   dispersion_solar_probe.rs:23-42 AIA_BANDS (7) + MEASURED entry XRSA (0.225 nm).
+# cond rest: every ordered pair (d,t) conditioned on the pool minus {d,t} — the probe's
+#   conditional TE with permutation entropy (transfer_entropy_conditional_h, PE order 3,
+#   :14-15 PE_ORDER/PE_DELAY).
+# cadence: 24-s cells (:8 DT 24.0); lags 0,4,8 (:13 LAGS); FDR level 0.05 (:21 FDR_LEVEL).
+matrix dispersion-solar full
+register sources
+channels aia_94_dn,aia_131_dn,aia_171_dn,aia_193_dn,aia_211_dn,aia_304_dn,aia_335_dn,goes_xrs_xrsa
+cond rest
+fdr bh 0.05 over matrix
+expect cells 56
+lags 0,4,8
+surrogate 10
+cadence live
+bin 24
+seasonal none
