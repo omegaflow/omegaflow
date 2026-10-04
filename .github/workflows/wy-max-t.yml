@@ -36,13 +36,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - point: abk-2024
-            args: --station ABK --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
-          - point: abk-2025
-            args: --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31 --block 24 --threads 4
-          - point: sod-2024
-            args: --station SOD --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
+        # The point axis must be a real matrix key; an `include`-only list with a
+        # sibling `shard` axis collapsed every shard onto the last include
+        # (sod-2024) — the abk shards never ran (measured: run 37187464365, nine
+        # wy-shards jobs, no wy-null-abk-* artifact).
+        point: [abk-2024, abk-2025, sod-2024]
         shard:
           - id: 0
             from: 0
@@ -71,6 +69,13 @@ jobs:
           - id: 8
             from: 8888
             to: 9999
+        include:
+          - point: abk-2024
+            args: --station ABK --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
+          - point: abk-2025
+            args: --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31 --block 24 --threads 4
+          - point: sod-2024
+            args: --station SOD --hour-start 2024-01-01 --hour-end 2024-12-31 --block 24 --threads 4
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
