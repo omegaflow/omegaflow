@@ -5,6 +5,9 @@
 # no cap — omni_hro_compiler.rs harvests the full HAPI window). The q=8 seal
 # `erbq-event.te` stays untouched; this is a separate, separately registered instance.
 # Population named: Tohoku events within the OMNI_HRO_1MIN span, not the century.
+# The q=8 plan was abandoned for infeasibility (span-limited n), not for results.
+# Cost named: q=2 is a median split (df=1) — weaker evidence than q=8; any q=8 run
+# on recovered events would be exploratory, not confirmatory.
 pair erbq-event-q2
 form event-conditional
 witness point-event#1
