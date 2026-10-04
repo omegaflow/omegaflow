@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: 1bd5d9f03da7f8a0587d052b60dead00c91877fc4d570048bf1c6fff2cddf631
+  sha256: cd50ca00f2594b3119b63f334c5d7ad58b3ec01c15b875270b26c8558b7e142e
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -188,6 +188,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **`swarm_tec` — CDN-Wiring + Workflow + Dispatch.** `swarm_tec_compiler.rs` um Fetch (`--url` ESA-ZIP → `inflate::zip_members`) + `--ci-mode`-Upload erweitert; neu `.github/workflows/swarm-tec-cdn.yml`; `swarm-tec-cdn 37180445982` dispatcht (26827 Records, sha `42550ef8…`).
 - **`bidsleep`-Kraft geheilt:** 3 Zeilen `advective m/s2` → `gravity m/s2` (Beschleunigung gehört zu gravity, wie die 3 Geschwister-Zeilen).
 - **`pradan_ch2`:** `field pradan_ch2_cla_l1_counts … inverse-square em count` ergänzt (main_flow-Deklaration).
+
+## Nachtrag 3 (Prüfung 2026-10-04)
+
+- **`ci-gate 37187513415` rot — geheilt** (`c9e60e3c1`): `src/archivar/pradan_ch2.rs:158` `is_multiple_of` + `src/archivar/spatial.rs:174` `descend_star_cells` (8/7 Argumente → `cell: [i64;3]` gebündelt). Fremde Dateien, pfad-begrenzt gefixt; `cargo check` 0/0. An Mountain (pradan_ch2) und Sensory/River (spatial) adressiert.
+- **EMM — 403 bleibt, Ursache eingegrenzt.** Der RT-Grant ist lokal **200** (frischer RT), im CI **403**. Host `auth.emiratesmarsmission.ae/oauth2/token` ist erreichbar (stage 1 + Proton = 400 auf GET). Der 403 ist also der **Azure-Runner-Egress** (WAF), nicht der Token. Compiler um den non-200-Body-Snippet erweitert (`afb65a8e6`), `emm-sdc-cdn 37188264853` dispatcht — der Body benennt den Block.
+- **`nvss-cdn 37187219211`** in_progress (ASU-Fallback).
 
 ## LOCK
 
