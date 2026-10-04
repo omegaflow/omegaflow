@@ -11,11 +11,11 @@ const FROM_DEFAULT: &str = "01-01-2020";
 const TO_DEFAULT: &str = "12-31-2020";
 
 const CHARACTERISTICS: [&str; 10] = [
-    "Temperature",
+    "Temperature, water",
     "pH",
-    "Dissolved oxygen",
-    "Conductivity",
-    "Nitrate-N",
+    "Dissolved oxygen (DO)",
+    "Specific conductance",
+    "Nitrate",
     "Ammonia",
     "Orthophosphate",
     "Chloride",
