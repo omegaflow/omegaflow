@@ -648,6 +648,13 @@ post_body {"countries":["DE"],"cities":["Heidelberg"],"pollutants":["PM10"],"dat
 on earth 49.4195 8.6767 114.0
 field Value eea_aq_pm10_hourly_ug_m3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json
+format eea_noise
+origin https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76/query?where=1=1&outFields=SNLD55,SNLD65,SNLD75,SNLN50,SNLN60,SNLN70,NLD5559,NLD6064,NLD6569,NLD7074,NLN5054,NLN5559,NLN6064,NLN6569,N_INHAB&returnGeometry=false&resultRecordCount=2000&f=json
+compiler tools/harvest/src/bin/eea_noise_compiler.rs
+at earth
+ttl 604800
+
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
 ttl 3600
 on earth 0 0 0
@@ -665,6 +672,13 @@ lon 1
 field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
 field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
+format wqp_result
+origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature&characteristicName=pH&characteristicName=Dissolved%20oxygen&characteristicName=Conductivity&characteristicName=Nitrate-N&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
+compiler tools/harvest/src/bin/wqp_result_compiler.rs
+at earth
+ttl 604800
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
 ttl 3600
