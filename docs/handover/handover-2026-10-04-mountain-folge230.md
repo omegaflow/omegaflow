@@ -3,17 +3,16 @@
   session: Mountain-Folge 230
   class: handover
   date: 2026-10-04
-  sha256: d2a83bdb25519dad5c54442abc95e2ef37b898085fddac0b4745731c915e88d5
+  sha256: 8a0602bc09302f06aff4f778060d432324aa1d65e4d39394a600eff0c1022fe9
   status: live
 -->
 # Handover — Mountain-Folge 230 (2026-10-04)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, Stand
-2026-10-03T20:38Z). Diese Session konsumierte `handover-2026-10-03-mountain-folge229.md`
-(→ `archiv/`).
+Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Session konsumierte `handover-2026-10-03-mountain-folge229.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0469 · cap 0.5 Grund: blocked_sources-Verdikte (future-174), Witness-URLs korrigiert, Modul 203 gezogen, Kp-Feld-Fix, twomass/swarm-Register
+## Burn: open 0.0469 · close 0.4327 · cap 0.5 Grund: das Atom trug Register-Disposition (92 declines), 5 Code-Atome (AST1, EDF, CSES EFD, pradan, gras_2c), CI-Heilung und Contract-Entwurf
 
 ## Operator-Wort-Register
 
@@ -24,20 +23,25 @@ Wort | Datum | Quelle
 „vorbestehend ist verboten mein wort" — alle über-256-Zeichen-`note`-Zeilen geheilt | 2026-09-30 | Operator (Mountain 209)
 „braucht es wirklich pro?" — pro nur mit benanntem Hart-Atom oder gemessener flash-Fehllage | 2026-09-30 | Operator (Session, Mountain 211)
 „die url/format-Zeilen sind ohne tragfähigen Arm vorzeitig" — kein url/format ohne deckenden Arm | 2026-09-30 | Operator (Session, Mountain 211)
-„arbeite deine Liste bis zur Kante ab" — jeder eigene Punkt bis zur Kante, nichts Machbares liegen lassen | 2026-09-30 | Operator (Session, Mountain 212)
+„arbeite deine Liste bis zur Kante ab" | 2026-09-30 | Operator (Session, Mountain 212)
 „verschleppen und nicht eigenes ist verboten" — Linienliste nur `eigen`, jeder Punkt im Atom bis zur Kante | 2026-09-30 | Operator (Session, Mountain 213)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-02 | Operator (Session, Mountain 225)
 „Committe und pushe jetzt — nur deine eigene Arbeit, gemessen nicht beteuert … das Commit-Wort" | 2026-10-02 | Operator (Session, Mountain 221)
 „braucht es max?" — pro/max nur mit benanntem Hart-Atom oder gemessener flash-Fehllage; flash-first | 2026-10-02 | Operator (Session, Mountain 222)
-„ich schicke immer an omegaflow im cc damit ihr sie im ledger habt" — jeder Operator-Send trägt `code@omegaflow.space` im Cc | 2026-10-02 | Operator (Session, Mountain 225)
+„ich schicke immer an omegaflow im cc damit ihr sie im ledger habt" | 2026-10-02 | Operator (Session, Mountain 225)
 „Recherche-Trio (chat.z.ai GLM-5.3 Deep Search · claude.ai · Kimi K3 über tryingopen.com; Sonnet-Fallback arena.ai) = erster Kanal für scharfe Recherche" | 2026-10-02 | Operator (Session)
-„1 ja bitte" — den privaten TE-Pfad entlocken (Detrend-along-p + CMI/pTE-mit-p-Kovariate), Lauf lokal/silent, nie CI | 2026-10-02 | Operator (river-folge82)
+„1 ja bitte" — den privaten TE-Pfad entlocken, Lauf lokal/silent, nie CI | 2026-10-02 | Operator (river-folge82)
 „ja voranmelde und dann lauf in ci" — Pioneer-Floor-Voranmelde-Blatt bauen, dann Lauf in CI | 2026-10-02 | Operator (river-folge82)
 „braucht es pro und max?" — Reaffirmation flash-first | 2026-10-03 | Operator (Session, Mountain 227)
 „ja bitte" — `descoped` aus `blocked_sources.φ` auflösen, in `declined`/`dead` migrieren; blocked hält nur Gewolltes | 2026-10-03 | Operator (Session, Mountain 229)
 „kannst du dich bitte darum kümmern? 9 blocked parser-def" — als Weberin-zweite-Linie führen, nicht declinen | 2026-10-03 | Operator (Session, Mountain 229)
 „kannst du dir bitte nochmal die aktuelle blocked sources ansehen?" + „… wir haben alle quellen die ich gar nicht nutzen kann doch gestrichen" | 2026-10-03 | Operator (future-folge174)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes; die Übergabe IST der Stand" | 2026-10-04 | Operator (Session, Mountain 230)
+„fixe die aktuellen Medizinische Datenquellen aber setze den rest auf on hold" | 2026-10-04 | Operator (Session, Mountain 230)
+„sind die auf alle weberinneneignungen getestet?" — die vierte Prüfung (`SOURCE_PORT.md §8`), nicht nur Kraft-Kanal | 2026-10-04 | Operator (Session, Mountain 230)
+„machst du das bitte noch? Zugang der 3 Gewollten; je 1 Arm/Compiler/Asset; der 4D-Anker je Elektrode" | 2026-10-04 | Operator (Session, Mountain 230)
+„Macht EFD/HPM/SCM Sinn? — Ja." — CSES sind propagierende Kraftfelder, CC0, je Datei ein eigener Arm; mit EFD anfangen | 2026-10-04 | Operator (Session, Mountain 230)
+„bitte mach eine detaillierte übergabe und committe" | 2026-10-04 | Operator (Session, Mountain 230)
 
 ## Offen (aufgeschlüsselt)
 
@@ -48,47 +52,40 @@ Wort | Datum | Quelle
 - **Blockade:** Lizenz ungeklärt.
 - **Braucht:** Antwort abwarten; bei Lizenz Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
 
-### Ranging-Decode — Sequential-Arm gebaut; FRQ_UP fehlt in DT2/DT3
+### Weberin zweite Linie — AST1-Richtungszeuge steht; ViZieR→AST1-Konverter offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) Sequential-Arm gebaut; `FRQ_UP` jetzt auflösbar: `ul_freq` liegt in DT6 (`odf.rs:1158`, Bytes 174..182) und DT7 (Bytes 282..290); neu `tnf_ranging_resolution_with_frq_up(frame,bytes,frq_up)` (F_EXC = FRQ_UP·exc_scalar_num/exc_scalar_den, TRK-2-34 note 17), verdrahtet in `tnf_format_probe --ranging`. Der Single-SFDU-`tnf_ranging_resolution` bleibt ein benanntes `None` (DT2/3 tragen kein FRQ_UP). Modul 203 in `docs/reference/810-005-203C-sequential-ranging.txt`. `cargo check`/build 0/0.
-- **Blockade:** kein robuster Paarungs-Schlüssel DT6/7 ↔ DT2/3 (Zeit-Tag/rec_seq/DSS) — der Probe nimmt die erste `ul_freq` der Datei.
-- **Braucht:** Paarung über Zeit-Tag/DSS (falls im ODF vorhanden) oder die Größe bleibt ein benanntes `None` ohne Paar.
-
-### RoPeR `gras_2c` — Arm steht; 42 Quellen ohne `field`-Zeilen (Parser exact-match)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) Der `series_named("gras_2c")`-Arm ist **bereits gebaut + committet** (`extract.rs:317-324` HEAD, Test `gras_2c_named_series_carries_gate_channels_without_a_band`, Commit `9e4d688f8`) — die folge229-Lage war stale, der Baum gewinnt. Der echte 0-Kanal-Grund: `phi/sources.φ` trägt 42 `format gras_2c`-Blöcke, aber **0 `field`-Zeilen** → `main_flow.rs:3024` bricht „field undeclared" ab.
-- **Blockade:** `field`-Parser ist exact-match (`parse.rs:925`, Lookup `main_flow.rs:3050`); `gras_2c_gate_*` ist so nicht ausdrückbar (2048 Gate-Felder × 42 Quellen = 86 016 Literal-Zeilen oder ein Wildcard-Feld-Arm).
-- **Braucht:** Wildcard-Feld-Arm (`gras_2c_gate_*`) **oder** die Quellen-weite `range <start_m> <step_m>`-Direktive (kein Wire-Slot; Chirp 0,45–2,15 GHz wäre sonst `freq`-Fabrikation). `comp` ist der Range-Gate-Index (Zhou 2020, DOI `10.26464/epp2020054`).
-
-### HDF4 — SZIP descoped; NBIT/SKPHUFF lesen
-- **Status:** descoped | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) Verdikt: SZIP (CODER 5) wird **nicht** implementiert (kein std-only Dekoder, keine libaec-Dependency — der std-Stack bleibt); NBIT+SKPHUFF stehen (`src/archivar/hdf4.rs`), MOD11C2/C3 lesen über NONE/RLE/DEFLATE; gap-Token-Note in `phi/blocked_sources.φ` fortgeschrieben.
-- **Blockade:** keine.
-- **Braucht:** nichts — MODIS-Rest über SZIP entfällt.
-
-### Weberin zweite Linie — AST1-Richtungszeuge gebaut; Quellen-Konverter offen
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) AST1 ist jetzt ein **Richtungs-Zeuge** statt gehalten: `s2.rs` `direction_witness_window` (ein `S2Osc` je `AstroSample`, τ aus der Serien-Kadenz, σ aus `e_ra/e_dec`), `omega.rs sky_reload` lädt `state/astrometry_witness` in den live-Pfad, `main_flow.rs` schreibt die AST1-Bytes je Quelle dorthin (nativer AST1-Träger, **kein** neuer Wire-Slot, **kein** Skalar), `astrometry_series::direction_only_lines` → `DirectionOnly`; `cargo check` 0/0.
-- **Blockade:** der **Quellen-Konverter** ViZieR-TSV (`ariel_j`…`uranu_j`) + `occultations.ct.utfpr.edu.br` → AST1 fehlt; die zweiten Linien werden erst dann gespeist. 2 Gaia-ADQL: `vari_classifier_result` HTTP 200, `cluster_ka` HTTP 400 (Tabelle außerhalb Gaia-TAP).
+- **Lage:** (gemessen 2026-10-04) AST1 ist ein **Richtungs-Zeuge** statt gehalten: `src/mathematikerin/s2.rs` `direction_witness_window` (ein `S2Osc` je `AstroSample`, τ aus der Serien-Kadenz, σ aus `e_ra/e_dec`), `omega.rs sky_reload` lädt den Zeugen-Ordner `astrometry_witness` (env-overridable) in den live-Pfad, `main_flow.rs` schreibt die AST1-Bytes je Quelle dorthin (nativer AST1-Träger, **kein** neuer Wire-Slot, **kein** Skalar), `astrometry_series::direction_only_lines` → `DirectionOnly` (`commit 8e4e53257`).
+- **Blockade:** der **Quellen-Konverter** ViZieR-TSV (`J/A+A/582/A8/{ariel,miran,obero,titan,umbri,uranu}_j`) + `occultations.ct.utfpr.edu.br` → AST1 fehlt; die zweiten Linien werden erst dann gespeist. 2 Gaia-ADQL: `vari_classifier_result` HTTP 200, `cluster_ka` HTTP 400 (Tabelle außerhalb Gaia-TAP).
 - **Braucht:** TSV→AST1-Konverter bauen (Weberin); danach die 7 `blocked parser-def astrometry-reader` + gap-Note (`phi/blocked_sources.φ`) heben.
 
-### Solar-/Witness-Risse (river-88) — zwei geheilt, f107 offen
+### Solar-/Witness-Register (river-88) — f107, quake_ptevent, per-Min-|dB/dt|, Galaxien-Dichte offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) `phi/witnesses.φ:106` `record gmrt` → `magic_identity` kennt nur `GMR1`; auf `gmr1` **geheilt**. `goes_xrs.bin` CDN-Pfad `ncei.noaa.gov` 404 → `ssd.jpl.nasa.gov` 206; **geheilt** (`phi/sources.φ`, register_sort kanonisch). `f107_penticton.bin` liegt auf dem CDN (`ssd.jpl.nasa.gov`, 206), Compiler `f107_compiler.rs` + MAGIC `F107`, aber **keine Register-Zeile + kein `f107`-Extract-Arm**; die Probes laden den Bin hart.
-- **Blockade:** `f107`-Quelle unregistriert (Register-Zeile + `f107`-Arm).
-- **Braucht:** `f107_penticton`-Block in `phi/sources.φ` (`format f107`, field `solar_f107_flux_sfu`) + `format f107`-Arm in `extract.rs`/`main_flow.rs` — dann die 10 solar-Probes versorgt.
+- **Lage:** (gemessen 2026-10-04) **Geheilt:** `phi/witnesses.φ` `record gmrt` → `gmr1` (`magic_identity` kennt nur `GMR1`); `goes_xrs.bin` CDN-Pfad `ncei.noaa.gov` 404 → `ssd.jpl.nasa.gov` 206 (register_sort kanonisch). **Ergänzt:** `srtm`-Witness (SRTM15+ V2.6, `topex.ucsd.edu`, 206). **Offen:** `f107_penticton.bin` liegt auf dem CDN (206), Compiler `f107_compiler.rs` + MAGIC `F107` stehen, aber **keine Register-Zeile + kein `format f107`-Arm** (die 10 solar-Probes laden den Bin hart). `quake_ptevent`-Assets (chile/tohoku/jma) auf dem CDN (45/45/7181 B), in `phi/sources.φ` **unregistriert** (`format quake_ptevent`, `quake_ptevent_compiler.rs:312`). `bz_blatt` braucht per-Minute-|dB/dt| (nur 1-h `intermagnet_dbdt`; der Probe rechnet in-process — kein Register-Feld nötig, zu messen); `bigbang_echo` Galaxien-Dichte.
+- **Blockade:** f107-Register+Arm fehlen; quake-Assets unregistriert; per-Min/Galaxien-Bedarf ungemessen.
+- **Braucht:** `f107_penticton`-Block (`format f107`, field `solar_f107_flux_sfu`) + `format f107`-Arm; 3 `quake_ptevent`-Blöcke; per-Min/Galaxien gegen die Probes messen. Transport (`url`/`sha`) an Mycelium.
 
-### Medizinische/Life-Science-Datenquellen — disponiert (3 gewollte als pending)
+### Medizinische/Life-Science-Datenquellen — disponiert; Arme stehen, Zugang offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt die Decline-Zeilen (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org`, `TUH EEG`, `NSRR`. **Weberin-Eignung (`SOURCE_PORT.md §8`, vier Punkte) nachgetragen:** die Declines scheitern an Punkt 1 (kein Kraft-/Zeugen-Träger → Oszillator-Gate, Punkte 2–4 damit gegenstandslos); die 3 gewollten tragen (1) `electric` ✓ (2) Zeitreihe ✓ (3) 4D-Anker **fehlt** (kein ICRS/Körper-Ort je Elektrode) (4) zweite Linie ✓. **Korrigiert:** kein bidsleep-Riss — `advective m/s²` ist Accelerometrie (`G_STANDARD`). OpenNeuro (`openneuro_pd_eeg`, 99 Blöcke) emittiert jetzt `electric`-V-Kanäle je Elektrode am Anker (`openneuro_eeg.rs`, ohne ICRS-/Kopf-Rahmen); der std-only EDF/EDF+-Parser (`src/archivar/edf.rs`) liegt bereit.
-- **Blockade:** für die 3 gewollten fehlt Arm+Asset; der Zugang ist Registrierung/DUA (operator-gebunden).
-- **Braucht:** iEEG-/TUH-/NSRR-Zugang + Arm/Compiler/Asset (EDF-Parser steht).
+- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt **92 Decline-Zeilen** (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org`, `TUH EEG`, `NSRR`. **Weberin-Eignung (`SOURCE_PORT.md §8`) nachgetragen:** Declines scheitern an Punkt 1 (Oszillator-Gate); die 3 gewollten tragen (1) `electric` ✓ (2) Zeitreihe ✓ (3) 4D-Anker **fehlt** (kein ICRS/Körper-Ort je Elektrode) (4) zweite Linie ✓. **Gebaut:** OpenNeuro emittiert `electric`-V-Kanäle je Elektrode am Anker (`openneuro_eeg.rs`); std-only EDF/EDF+-Parser (`src/archivar/edf.rs`); EDF-Arme `ieeg_edf`/`tuh_eeg`/`nsrr_psg` (Header-Einheit→Kraft, self-declared, Anker = Quell-Frame; `commit 9d416e57b`). **Korrigiert:** kein bidsleep-Riss (`advective m/s²` = Accelerometrie, `G_STANDARD`).
+- **Blockade:** die 3 gewollten brauchen **Zugang** (Registrierung/DUA, operator-gebunden) und ein Asset.
+- **Braucht:** iEEG-/TUH-/NSRR-Zugang (Operator) + Compiler/Asset (Arme stehen); 4D-Anker je Elektrode entscheiden.
+
+### CSES — EFD gebaut; HPM/SCM offen
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-04) `format cses_efd` (Compiler `cses_efd_compiler.rs`, MAGIC `CSE1`, `electric` V/m, Orbit-Anker ECEF→geodätisch; Real-Asset-Run 1 335 000 Records, 80 100 008 B) + Reader (`geo.rs`, `extract.rs`, `main_flow.rs`); Register-Block in `phi/sources.φ` (`field cses_efd_ulf_{ex,ey,ez}_v_m`). **Riss:** die CC0-scidb-EFD-Datei ist ein Legacy-Layout (`X_WAVE/Y_WAVE/Z_WAVE`, ECEF, 200 Hz) statt des Docs (Ex/Ey/Ez, GEO); beide werden gelesen. LAP-Präzedenz `phi/sources.φ` (`cses_lap`).
+- **Blockade:** HPM/SCM fehlen; das EFD-CDN-Asset ist noch nicht manifestiert.
+- **Braucht:** HPM/SCM-Arme nach dem EFD-Muster; EFD-Manifestation (Mycelium, `url`/`sha`).
+
+### gras_2c — Gate-Kanäle self-declared; `range`-Direktive offen
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-04) `series_named("gras_2c")` self-declared jetzt seine Gate-`FieldConfig`s in-code (`gras_2c::gate_field`, unit `none` aus dem `.2CL`-Label, force `em`), der „field undeclared"-Abbruch greift nicht mehr — die 42 Quellen liefern Kanäle ohne 86 016 Literal-Zeilen (`commit 1fcf7fd60`).
+- **Blockade:** die physische Gate-Spacing-Achse trägt ohne Wire-Slot; die Quellen-weite `range <start_m> <step_m>`-Direktive fehlt.
+- **Braucht:** `range`-Direktive (Parser + Wire) bauen oder als benannte Lücke führen (Chirp 0,45–2,15 GHz wäre sonst `freq`-Fabrikation).
 
 ## Träger (Prosa, eigene)
 
@@ -103,37 +100,13 @@ Wort | Datum | Quelle
 
 Origin: mountain folge230.
 
-- **`twomass_psc` + `swarm_tec` — Reader-Arme stehen (river 86), Register-Block gehört manifestiert.** `cargo check` 0/0; `main_flow.rs:4622`/`:4680`, `extract.rs:3204`/`:3262`, `fetch.rs:1105-1106`, `src/archivar/twomass.rs`. Bitte den jeweiligen `url`/`origin`/`compiler`/`sha256`-Rahmen setzen; die Verdikt-Zeilen (Mountain) sind:
-  - `twomass_psc` (Zulassung: `em`, `at sun`, `ttl 31536000`, Muster `catalog_allwise_psd`):
-    ```
-    format twomass_psc
-    ttl 31536000
-    at sun
-    cmap .
-    ra ra
-    dec dec
-    field jmag twomass_j_mag inverse-square em mag 31536000 0.0 0.0
-    field e_jmag twomass_e_j_mag inverse-square em mag 31536000 0.0 0.0
-    field hmag twomass_h_mag inverse-square em mag 31536000 0.0 0.0
-    field e_hmag twomass_e_h_mag inverse-square em mag 31536000 0.0 0.0
-    field kmag twomass_k_mag inverse-square em mag 31536000 0.0 0.0
-    field e_kmag twomass_e_k_mag inverse-square em mag 31536000 0.0 0.0
-    ```
-  - `swarm_tec` (Compiler `swarm_tec_compiler.rs:258-262` druckt den Block; `at earth`):
-    ```
-    format swarm_tec
-    ttl 86400
-    at earth
-    cmap .
-    lat Latitude
-    lon Longitude
-    field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
-    ```
-- **`quake_ptevent`-Assets (chile/tohoku/jma) unregistriert.** (gemessen 2026-10-03, river-folge87) Die kompilierten Assets liegen auf dem CDN (chile 45 B, tohoku 45 B, jma 7181 B), aber `phi/sources.φ` trägt sie nicht. Die zwei Witness-URLs sind 2026-10-04 korrigiert (Chile → FeatureServer-Layer 1, Tohoku → Layer 5; `phi/witnesses.φ`); nach dem Re-Harvest die drei Assets mit `format quake_ptevent` registrieren.
+- **`twomass_psc` + `swarm_tec` sind vollständig registriert** (format/cmap/field, `phi/sources.φ`) — der frühere Manifestations-Handoff ist erledigt; nichts zu tun.
+- **`f107_penticton` + `quake_ptevent` (chile/tohoku/jma) — Register-Transport.** Die Assets liegen auf dem CDN (`ssd.jpl.nasa.gov/f107_penticton.bin` 206; quake chile/tohoku/jma), aber `phi/sources.φ` trägt sie nicht. Mountain liefert `format`/`field`; bitte `url`/`origin`/`compiler`/`sha256` setzen (f107: `format f107`, field `solar_f107_flux_sfu`; quake: `format quake_ptevent`).
+- **CSES EFD-Manifestation.** Der Register-Block steht (`phi/sources.φ`, `format cses_efd`, `field cses_efd_ulf_{ex,ey,ez}_v_m`); die Compiler-Ausgabe (`CSE1`) muss auf den CDN-Tag `scidb.cn/cses_efd.bin` + `sha256`. Danach HPM/SCM analog.
 
 ## LOCK
 
-- **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82): `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf lokal/silent, nie CI (NSE-Daten bleiben im Haus). Träger `state/mountain/kuprat-complex-te/`. Beide Arme gebaut, `--selftest` grün; offen: der Sweep. Riss: KDE-CMI verliert Power bei großer Kovariat-Varianz; der Detrend-Arm trägt den steilen, der Conditional-Arm den milden Fall. `no statement`/`pending` bleiben erlaubte Ergebnisse. Der private Wort-Laut nur im privaten `state/operator-gespraeche/`.
+- **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82): `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf lokal/silent, nie CI. Träger `state/mountain/kuprat-complex-te/`. Beide Arme gebaut, `--selftest` grün; offen: der Sweep. Riss: KDE-CMI verliert Power bei großer Kovariat-Varianz. Der private Wort-Laut nur im privaten `state/operator-gespraeche/`.
 
 ## Abschluss
 
