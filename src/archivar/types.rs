@@ -318,6 +318,12 @@ pub enum Frame {
     Manifest,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RangeAxis {
+    pub start_m: f64,
+    pub step_m: f64,
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
@@ -330,6 +336,7 @@ pub struct SourceConfig {
     pub post_body: Option<String>,
     pub target: Option<String>,
     pub catalog: Option<String>,
+    pub range: Option<RangeAxis>,
     pub max_freq: Option<f64>,
     pub min_freq: Option<f64>,
     pub body: Option<String>,

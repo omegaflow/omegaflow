@@ -94,4 +94,11 @@ mod tests {
         nan = write_bin(&[(1.0, f64::INFINITY, 0)]);
         assert!(parse_series(&nan).is_none());
     }
+
+    #[test]
+    fn gate_field_carries_no_spectral_band_until_a_wire_slot_is_earned() {
+        let fc = gate_field(0, 600.0).expect("gate field declares");
+        assert_eq!(fc.freq, crate::archivar::spectral::SPECTRAL_NO_BAND);
+        assert_eq!(fc.bin_width, crate::archivar::spectral::SPECTRAL_NO_BAND);
+    }
 }

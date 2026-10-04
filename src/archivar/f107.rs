@@ -1,5 +1,33 @@
 pub const MAGIC: [u8; 4] = *b"F107";
 
+pub const COMP_FLUX: u32 = 1;
+pub const COMP_MAX: u32 = 1;
+
+pub const SECONDS_PER_DAY: f64 = 86400.0;
+pub const SFU_PER_WM2_HZ: f64 = 1.0e22;
+
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_FLUX => Some("solar_f107_flux_sfu"),
+        _ => None,
+    }
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    parse_bin(bytes).map(|records| {
+        records
+            .into_iter()
+            .map(|(day, flux_wm2_hz)| {
+                (
+                    day as f64 * SECONDS_PER_DAY,
+                    flux_wm2_hz * SFU_PER_WM2_HZ,
+                    COMP_FLUX,
+                )
+            })
+            .collect()
+    })
+}
+
 pub fn write_bin(records: &[(i64, f64)]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * 16);
     buf.extend_from_slice(&MAGIC);

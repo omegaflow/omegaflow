@@ -17,6 +17,51 @@ pub const PRES_DEPTH: u8 = 0x08;
 pub const PRES_TIME: u8 = 0x10;
 pub const PRES_ALL: u8 = 0x1F;
 
+pub const COMP_MAG: u32 = 1;
+pub const COMP_DEPTH: u32 = 2;
+pub const COMP_MAX: u32 = 2;
+
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_MAG => Some("quake_ptevent_magnitude"),
+        COMP_DEPTH => Some("quake_ptevent_depth_km"),
+        _ => None,
+    }
+}
+
+pub fn parse_bin(bytes: &[u8]) -> Option<Vec<QuakeEvent>> {
+    let n = parse_header(bytes)? as usize;
+    let body = bytes.get(HEADER_LEN..)?;
+    if body.len() < n * REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    for i in 0..n {
+        let chunk = body.get(i * REC_BYTES..(i + 1) * REC_BYTES)?;
+        let fixed: [u8; REC_BYTES] = chunk.try_into().ok()?;
+        out.push(decode_rec(&fixed)?);
+    }
+    Some(out)
+}
+
+pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    let events = parse_bin(bytes)?;
+    let mut out = Vec::with_capacity(events.len() * 2);
+    for e in events {
+        let unix = (e.jd_utc - J2000_JD) * SECONDS_PER_DAY + J2000_UNIX_OFFSET;
+        if !unix.is_finite() {
+            continue;
+        }
+        if e.present & PRES_MAG != 0 {
+            out.push((unix, e.mag as f64, COMP_MAG));
+        }
+        if e.present & PRES_DEPTH != 0 {
+            out.push((unix, e.depth_km as f64, COMP_DEPTH));
+        }
+    }
+    Some(out)
+}
+
 #[derive(Clone, Copy)]
 pub struct QuakeEvent {
     pub order: u8,
