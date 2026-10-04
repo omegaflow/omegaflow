@@ -2,7 +2,7 @@
   title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 0275ced7df76a9cab73363f9b7b94c32356fde00d7c84f49e3343ac25261e9f1
+  sha256: c26e246425d6f37e64749e6c8a6999014bb01a91ac2514f1c62f8adf36ef304a
   status: live
   see-also: docs/concepts/exzellenz-konzept.md
 -->
@@ -48,7 +48,7 @@ als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §
 
 | Paper | Stufe | Verstoß (file:line) |
 |---|---|---|
-| `jwst-disequilibrium-survey` | 2.8 | `:7` `see-also:` leer — kein Survey-/Handover-Träger |
+| `jwst-disequilibrium-survey` | 2.8 | `:7` Kopf-Verweis leer — kein Survey-/Handover-Träger |
 | `jwst-disequilibrium-survey` | 2.9 | `:14`/`:39` „cannot reproduce/make it" |
 | `planet-nine-kbo-residue` | 2.8 | Header ohne `see-also` |
 | `planet-nine-kbo-residue` | 2.9 | `:54` `fallback`, `:105`/`:106` `must`, `:194` `expected` |
