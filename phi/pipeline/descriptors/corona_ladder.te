@@ -1,0 +1,23 @@
+# corona_ladder.te — TE-Probes-Wanderung: the corona_ladder_probe pair over registered fields.
+# driver: cool EVE line 584 A, eve_584_line_irradiance (phi/sources.φ:2384-2400, format `eve`,
+#   eve_lines_2011.bin, 10-s records). corona_ladder_probe.rs:9-21 LINES index 0 (584A);
+#   :165-193 reads the line records; the first ladder rung stack_pair(events, 0, 1, lag) :279-281.
+# target: hot EVE line 304 A, eve_304_line_irradiance (phi/sources.φ:2384-2400). LINES index 1
+#   (304A); the probe sweeps every adjacent rung p -> p+1 (:299-322) and prints
+#   D = TE(cool->hot) - TE(hot->cool) per rung; field_te_query carries one driver/target pair,
+#   so this descriptor names the first (coolest) rung, the remaining ten rungs stay the probe's
+#   own ladder sweep, never folded into one arm.
+# cadence: 10-s EVE records; bin 10 s, lags 0..12 (10-s cells, 0..120 s), 10 phase surrogates
+#   (corona_ladder_probe.rs:4 DT 10.0; :279 lag 0..=12; :161-164 n_surr default 10; :4-7
+#   THRESH_FACTOR 1.3, REFRACTORY 180 are the event trigger, not this descriptor's cond arm).
+# cond: none — the events are the quad-diode trigger (idx 100 > 1.3x median, :195-261); the
+#   event-triggered form is the probe's witness path, not a conditioning arm.
+pair corona-ladder
+register sources
+driver eve_584_line_irradiance
+target eve_304_line_irradiance
+cadence live
+bin 10
+seasonal none
+lags 0,1,2,3,4,5,6,7,8,9,10,11,12
+surrogate 10

@@ -1261,7 +1261,24 @@ fn text_source_for_field(src: &SourceConfig, name: &str) -> Option<SourceConfig>
     }
 }
 
+fn first_url_template_slot(url: &str) -> Option<&str> {
+    let open = url.find('{')?;
+    let after = &url[open + 1..];
+    let close = after.find('}')?;
+    Some(&after[..close])
+}
+
+fn guard_url_template_resolved(url: &str) -> Result<(), String> {
+    match first_url_template_slot(url) {
+        Some(slot) => Err(format!(
+            "url carries the unresolved template slot '{{{slot}}}' — load_field holds no clock/coordinate context to fill it; resolve the slot (epoch, station lat/lon) before the fetch, or the source stays unmeasured"
+        )),
+        None => Ok(()),
+    }
+}
+
 fn load_field(src: &SourceConfig, fc: &FieldConfig) -> Result<Vec<(f64, f64)>, String> {
+    guard_url_template_resolved(&src.url)?;
     let Some(bytes) = fetch_raw_bytes_headers(&src.url, &src.headers) else {
         return Err(format!("{} fetch void", src.url));
     };
@@ -2762,6 +2779,40 @@ mod tests {
         assert!(
             null.threshold.is_finite() && null.surrogates >= 2,
             "the Omori-preserving null carries a measured threshold"
+        );
+    }
+
+    #[test]
+    fn url_template_guard_refuses_an_unresolved_slot() {
+        let err =
+            guard_url_template_resolved("https://api.open-meteo.com/v1/forecast?latitude={lat}")
+                .expect_err("a template url stays unresolved");
+        assert!(err.contains("{lat}"), "the refusal names the slot: {err}");
+        assert!(
+            err.contains("unresolved template slot"),
+            "the refusal names the cause: {err}"
+        );
+    }
+
+    #[test]
+    fn url_template_guard_passes_a_resolved_url() {
+        assert!(
+            guard_url_template_resolved("https://example.org/data?start=2026-01-01").is_ok(),
+            "a url without a template slot passes the guard"
+        );
+    }
+
+    #[test]
+    fn first_url_template_slot_names_the_first_slot() {
+        assert_eq!(
+            first_url_template_slot("https://x.example/a?start={week_ago}&stop={now}"),
+            Some("week_ago"),
+            "the first slot is named, not the last"
+        );
+        assert_eq!(
+            first_url_template_slot("https://x.example/data"),
+            None,
+            "a url without a slot carries none"
         );
     }
 }

@@ -130,6 +130,53 @@ fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
         .map(|s| s.as_str())
 }
 
+fn args_after_all(args: &[String], flag: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    if let Some(i) = args.iter().position(|a| a == flag) {
+        for a in &args[i + 1..] {
+            if a.starts_with("--") {
+                break;
+            }
+            out.push(a.clone());
+        }
+    }
+    out
+}
+
+fn write_null_matrix(path: &str, nulls: &[Vec<f64>]) -> bool {
+    let m = nulls.first().map_or(0, |row| row.len());
+    let mut bytes = Vec::with_capacity(nulls.len() * m * 8);
+    for row in nulls {
+        for &v in row.iter() {
+            bytes.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    std::fs::write(path, bytes).is_ok()
+}
+
+fn read_null_matrix(path: &str, m_expected: usize) -> Option<Vec<Vec<f64>>> {
+    let bytes = std::fs::read(path).ok()?;
+    if bytes.len() % 8 != 0 || m_expected == 0 {
+        return None;
+    }
+    let total = bytes.len() / 8;
+    if total % m_expected != 0 {
+        return None;
+    }
+    let b = total / m_expected;
+    let mut out = Vec::with_capacity(b);
+    for r in 0..b {
+        let mut row = Vec::with_capacity(m_expected);
+        for c in 0..m_expected {
+            let i = (r * m_expected + c) * 8;
+            let arr: [u8; 8] = bytes[i..i + 8].try_into().ok()?;
+            row.push(f64::from_le_bytes(arr));
+        }
+        out.push(row);
+    }
+    Some(out)
+}
+
 fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
     if let Ok(bytes) = std::fs::read(path) {
         if let Some(recs) = parse_bin(&bytes) {
@@ -702,6 +749,72 @@ fn family_bound_resumable(
     fam
 }
 
+fn report_max_t(members: &[wy_max_t::Member], nulls: &[Vec<f64>], alpha: f64, n_mt: usize) {
+    let sigma = wy_max_t::sigma_per_statistic(nulls);
+    let null_means = wy_max_t::null_means_per_statistic(nulls);
+    let stud = wy_max_t::studentized_maxima(nulls, &null_means, &sigma);
+    let mut finite: Vec<f64> = stud.iter().copied().filter(|v| v.is_finite()).collect();
+    finite.sort_by(|a, b| a.total_cmp(b));
+    match wy_max_t::quantile(&finite, alpha) {
+        Some(q) => {
+            let observed = wy_max_t::observed_family(members);
+            let obs_stud: Vec<Option<f64>> = observed
+                .iter()
+                .enumerate()
+                .map(|(mi, o)| {
+                    let m = null_means.get(mi).copied().flatten()?;
+                    let s = sigma.get(mi).copied().flatten()?;
+                    Some(((*o)? - m) / s)
+                })
+                .collect();
+            let obs_max = obs_stud
+                .iter()
+                .flatten()
+                .copied()
+                .fold(f64::NEG_INFINITY, f64::max);
+            println!(
+                "max-T (1-alpha) quantile = {q:.4e} | B = {} finite | n = {n_mt} | alpha = {alpha}",
+                finite.len()
+            );
+            if obs_max.is_finite() {
+                println!(
+                    "observed studentized family maximum = {obs_max:.4e} | clears max-T quantile: {}",
+                    obs_max > q
+                );
+            } else {
+                println!(
+                    "observed studentized family maximum: pending — no statistic carries a measured spread"
+                );
+            }
+            for (mi, m) in members.iter().enumerate() {
+                if let Some(s) = sigma.get(mi).copied().flatten() {
+                    println!("MDE {:<18} | lag {} | {}", m.label, m.lag, q * s);
+                }
+            }
+            for (m, o) in members.iter().zip(obs_stud.iter()) {
+                let neff = match kde_n_eff(&m.target, &m.driver, m.lag) {
+                    Some(ne) => format!("{ne:.4e}"),
+                    None => "pending".to_string(),
+                };
+                match o {
+                    Some(t) => println!(
+                        "{:<18} | lag {} | n_eff {neff} | T_stud {t:.4e}",
+                        m.label, m.lag
+                    ),
+                    None => println!(
+                        "{:<18} | lag {} | n_eff {neff} | T_stud pending",
+                        m.label, m.lag
+                    ),
+                }
+            }
+        }
+        None => println!(
+            "max-T (1-alpha) quantile: pending — no finite replicate carries a spread (B = {}, n = {n_mt})",
+            nulls.len()
+        ),
+    }
+}
+
 fn run_hourly(
     station: &str,
     hour_start: &str,
@@ -713,6 +826,10 @@ fn run_hourly(
     null_mode: NullMode,
     n_perm: usize,
     alpha: f64,
+    perm_from: usize,
+    perm_to: usize,
+    out_null: Option<&str>,
+    combine_paths: &[String],
 ) {
     let sy: i64 = hour_start
         .get(..4)
@@ -1019,78 +1136,55 @@ fn run_hourly(
                 } else {
                     let seed = wy_max_t::round_seed(0, station, sy);
                     let phase = wy_max_t::phase_data(&aligned_times);
+                    if !combine_paths.is_empty() {
+                        let mut pooled: Vec<Vec<f64>> = Vec::new();
+                        for path in combine_paths {
+                            match read_null_matrix(path, members.len()) {
+                                Some(rows) => {
+                                    println!("pooled shard {path}: {} replicates", rows.len());
+                                    pooled.extend(rows);
+                                }
+                                None => {
+                                    println!(
+                                        "{path} reads void — the pooled null stays incomplete; no measurement"
+                                    );
+                                    return;
+                                }
+                            }
+                        }
+                        println!(
+                            "combine: pooled B = {} | m = {} | alpha = {alpha} | seed = {seed} (shards carried the same seed and global replicate indices)",
+                            pooled.len(),
+                            members.len()
+                        );
+                        report_max_t(&members, &pooled, alpha, n_mt);
+                        return;
+                    }
                     let nulls = wy_max_t::null_matrix(
                         &members,
-                        0..n_perm,
+                        perm_from..perm_to,
                         24,
                         wy_max_t::ResampleMode::Driver,
                         seed,
                         threads,
                         &phase,
                     );
-                    let sigma = wy_max_t::sigma_per_statistic(&nulls);
-                    let null_means = wy_max_t::null_means_per_statistic(&nulls);
-                    let stud = wy_max_t::studentized_maxima(&nulls, &null_means, &sigma);
-                    let mut finite: Vec<f64> =
-                        stud.iter().copied().filter(|v| v.is_finite()).collect();
-                    finite.sort_by(|a, b| a.total_cmp(b));
-                    match wy_max_t::quantile(&finite, alpha) {
-                        Some(q) => {
-                            let observed = wy_max_t::observed_family(&members);
-                            let obs_stud: Vec<Option<f64>> = observed
-                                .iter()
-                                .enumerate()
-                                .map(|(mi, o)| {
-                                    let m = null_means.get(mi).copied().flatten()?;
-                                    let s = sigma.get(mi).copied().flatten()?;
-                                    Some(((*o)? - m) / s)
-                                })
-                                .collect();
-                            let obs_max = obs_stud
-                                .iter()
-                                .flatten()
-                                .copied()
-                                .fold(f64::NEG_INFINITY, f64::max);
+                    if let Some(path) = out_null {
+                        if write_null_matrix(path, &nulls) {
                             println!(
-                                "max-T (1-alpha) quantile = {q:.4e} | B = {} finite | n = {n_mt} | alpha = {alpha}",
-                                finite.len()
+                                "null matrix written: {path} | rows = {} | m = {} (NaN rows kept)",
+                                nulls.len(),
+                                members.len()
                             );
-                            if obs_max.is_finite() {
-                                println!(
-                                    "observed studentized family maximum = {obs_max:.4e} | clears max-T quantile: {}",
-                                    obs_max > q
-                                );
-                            } else {
-                                println!(
-                                    "observed studentized family maximum: pending — no statistic carries a measured spread"
-                                );
-                            }
-                            for (mi, m) in members.iter().enumerate() {
-                                if let Some(s) = sigma.get(mi).copied().flatten() {
-                                    println!("MDE {:<18} | lag {} | {}", m.label, m.lag, q * s);
-                                }
-                            }
-                            for (m, o) in members.iter().zip(obs_stud.iter()) {
-                                let neff = match kde_n_eff(&m.target, &m.driver, m.lag) {
-                                    Some(ne) => format!("{ne:.4e}"),
-                                    None => "pending".to_string(),
-                                };
-                                match o {
-                                    Some(t) => println!(
-                                        "{:<18} | lag {} | n_eff {neff} | T_stud {t:.4e}",
-                                        m.label, m.lag
-                                    ),
-                                    None => println!(
-                                        "{:<18} | lag {} | n_eff {neff} | T_stud pending",
-                                        m.label, m.lag
-                                    ),
-                                }
-                            }
+                        } else {
+                            println!("{path} writes void — the null matrix stays unwritten");
                         }
-                        None => println!(
-                            "max-T (1-alpha) quantile: pending — no finite replicate carries a spread (B = {n_perm}, n = {n_mt})"
-                        ),
                     }
+                    println!(
+                        "shard: seed = {seed} | global replicates [{perm_from}..{perm_to}) | B = {}",
+                        nulls.len()
+                    );
+                    report_max_t(&members, &nulls, alpha, n_mt);
                 }
             }
         }
@@ -1256,6 +1350,19 @@ fn main() {
         .and_then(|v| v.parse::<usize>().ok())
         .filter(|&v| v > 0)
         .unwrap_or(10_000);
+    let perm_from = match arg_after(&args, "--perm-from").and_then(|v| v.parse::<usize>().ok()) {
+        Some(v) => v,
+        None => 0,
+    };
+    let perm_to = arg_after(&args, "--perm-to")
+        .and_then(|v| v.parse::<usize>().ok())
+        .unwrap_or(n_perm);
+    let out_null = arg_after(&args, "--out-null").map(|s| s.to_string());
+    let combine_paths = args_after_all(&args, "--combine");
+    if combine_paths.is_empty() && perm_to <= perm_from {
+        println!("replicate range [{perm_from}..{perm_to}) is empty — no measurement");
+        return;
+    }
     let Some(now) = now_unix() else {
         return;
     };
@@ -1288,6 +1395,10 @@ fn main() {
             null_mode,
             n_perm,
             alpha,
+            perm_from,
+            perm_to,
+            out_null.as_deref(),
+            &combine_paths,
         );
         return;
     }

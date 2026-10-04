@@ -11,12 +11,14 @@ permissions:
 env:
   RUSTFLAGS: -D warnings
 jobs:
-  yearly-maxt:
+  shard:
     runs-on: ubuntu-latest
-    timeout-minutes: 480
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
+        point: [abk-2024, abk-2025, sod-2024]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         include:
           - point: abk-2024
             args: --hourly --yearly-round --null max-t --alpha 0.01 --n-perm 10000 --station ABK
@@ -27,13 +29,52 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Run the yearly round under the Westfall-Young max-T null (six statistics, lag 0/1 h, B=10000, alpha=0.01, 4 threads)
+      - name: Run shard ${{ matrix.shard }} (1000 replicates) of the Westfall-Young max-T null
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
             echo "POINT ${{ matrix.point }}"
-            cargo run --release -p omegaflow-measure --bin bz_retro_probe -- ${{ matrix.args }} --threads 4
-          } > "bz-yearly-maxt-${{ matrix.point }}.txt"
+            echo "SHARD ${{ matrix.shard }}"
+            from=$(( ${{ matrix.shard }} * 1000 ))
+            to=$(( from + 1000 ))
+            cargo run --release -p omegaflow-measure --bin bz_retro_probe -- ${{ matrix.args }} --threads 4 --perm-from "$from" --perm-to "$to" --out-null "bz-null-${{ matrix.point }}-${{ matrix.shard }}.bin"
+          } > "bz-yearly-maxt-${{ matrix.point }}-${{ matrix.shard }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-null-${{ matrix.point }}-${{ matrix.shard }}
+          path: bz-null-${{ matrix.point }}-${{ matrix.shard }}.bin
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-yearly-maxt-${{ matrix.point }}-${{ matrix.shard }}
+          path: bz-yearly-maxt-${{ matrix.point }}-${{ matrix.shard }}.txt
+
+  combine:
+    needs: shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        point: [abk-2024, abk-2025, sod-2024]
+        include:
+          - point: abk-2024
+            args: --hourly --yearly-round --null max-t --alpha 0.01 --n-perm 10000 --station ABK
+          - point: abk-2025
+            args: --hourly --yearly-round --null max-t --alpha 0.01 --n-perm 10000 --station ABK --hour-start 2025-01-01 --hour-end 2025-12-31
+          - point: sod-2024
+            args: --hourly --yearly-round --null max-t --alpha 0.01 --n-perm 10000 --station SOD
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: bz-null-${{ matrix.point }}-*
+          merge-multiple: true
+      - name: Pool the 10 shards and compute the Westfall-Young max-T family bound
+        run: |
+          cargo run --release -p omegaflow-measure --bin bz_retro_probe -- ${{ matrix.args }} --threads 4 --combine bz-null-${{ matrix.point }}-* > "bz-yearly-maxt-${{ matrix.point }}.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
