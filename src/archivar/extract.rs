@@ -1354,6 +1354,18 @@ pub fn edf_emit_channels(
     tau: f64,
     cap: usize,
 ) -> Vec<(Channel, FieldConfig)> {
+    edf_emit_channels_with_electrodes(bytes, &[], None, position, epoch, tau, cap)
+}
+
+pub fn edf_emit_channels_with_electrodes(
+    bytes: &[u8],
+    electrodes: &[crate::archivar::electrodes::Electrode],
+    coordsystem: Option<&crate::archivar::electrodes::CoordSystem>,
+    position: &Position,
+    epoch: f64,
+    tau: f64,
+    cap: usize,
+) -> Vec<(Channel, FieldConfig)> {
     if cap == 0 {
         return Vec::new();
     }
@@ -1397,6 +1409,19 @@ pub fn edf_emit_channels(
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
             fold: None,
         };
+        let channel_position = match coordsystem {
+            Some(cs) => match electrodes.iter().find(|e| e.name == signal.label) {
+                Some(e) => Position::Electrode {
+                    system: cs.system.clone(),
+                    units: cs.units.clone(),
+                    x: e.x,
+                    y: e.y,
+                    z: e.z,
+                },
+                None => position.clone(),
+            },
+            None => position.clone(),
+        };
         let stride = samples.len().div_ceil(cap);
         for k in (0..samples.len()).step_by(stride) {
             let Some(raw) = samples[k] else {
@@ -1413,7 +1438,7 @@ pub fn edf_emit_channels(
                 Channel {
                     name: name.clone(),
                     value,
-                    position: position.clone(),
+                    position: channel_position.clone(),
                     epoch,
                     z: 0.0,
                     freq: crate::spectral::SPECTRAL_NO_BAND,

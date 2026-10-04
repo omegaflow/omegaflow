@@ -1295,6 +1295,7 @@ pub fn anchor(
             }
         }
         Position::Source => frame_motion(frame?, None, None, channel.epoch, eph)?,
+        Position::Electrode { .. } => return None,
     };
     let abs = motion.at(channel.epoch, channel.epoch, eph)?;
     if !abs[0].is_finite()

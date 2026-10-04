@@ -88,6 +88,13 @@ pub enum Position {
         body_name: String,
         scale: f64,
     },
+    Electrode {
+        system: String,
+        units: String,
+        x: f64,
+        y: f64,
+        z: f64,
+    },
 }
 
 #[derive(Clone, Debug)]

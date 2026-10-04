@@ -3,7 +3,7 @@
   session: Mountain-Folge 233
   class: handover
   date: 2026-10-04
-  sha256: 203db5ba367e64f649e0f025d62261ebf378859786dbbf23adca96d8ed8ab607
+  sha256: 60d78cde09062ecfbcfe9173f5cf2613fd7fb39dab2b740534307169bd426c02
   status: live
 -->
 # Handover — Mountain-Folge 233 (2026-10-04)
@@ -75,13 +75,6 @@ Audit aller Mountain-eigenen Einträge in `phi/blocked_sources.φ` (2026-10-04/0
 - **Lage:** (gemessen 2026-10-04 via `sread`) `range` parst als `RangeAxis`-Metadaten (`parse.rs:1455`); kein Wire-Slot.
 - **Blockade:** Wire-Contract-Entscheid (26×f64)
 - **Braucht:** Rat/Operator-Wort, ob ein Slot nötig ist; sonst Metadaten-only mit Befund schließen.
-
-### Geteilter Baum — eigene Code-/Register-Hunks halten
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der Index ist frei (Mycelium 231h/231i schließt seinen `git add`-Stand)
-- **Lage:** (gemessen 2026-10-05 via `git status`) Mycelium hält `gaia_rrl.rs`/`viking_grav.rs`/Workflows/`harvest.φ` + `sources.φ`/`extract.rs`/`main_flow.rs`/`mod.rs` im Index; meine `electrodes.rs`-Verdrahtung (types/channels/extract/main_flow/mod) und die `sources.φ`-Hunks (DAS2, Chang'e-tau) sind unstaged.
-- **Blockade:** ein pfad-begrenzter Commit würde Myceliums Index-Hunks sweepen
-- **Braucht:** `git status` erneut lesen; sobald der Index frei ist, `git commit <eigene Pfade>` mit den Code-/`sources.φ`-Hunks.
 
 ## Träger (Prosa, eigene)
 

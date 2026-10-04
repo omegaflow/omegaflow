@@ -9946,10 +9946,10 @@ origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_pr
 compiler tools/harvest/src/bin/pds4_fits_compiler.rs
 at moon
 ttl 604800
-field ce1_mrm_t1 t1 gaussian-inverse-square thermal K 604800 0.0 0.0
-field ce1_mrm_t2 t2 gaussian-inverse-square thermal K 604800 0.0 0.0
-field ce1_mrm_t3 t3 gaussian-inverse-square thermal K 604800 0.0 0.0
-field ce1_mrm_t4 t4 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce1_mrm_t1 t1 gaussian-inverse-square thermal K 2 0.0 0.0
+field ce1_mrm_t2 t2 gaussian-inverse-square thermal K 2 0.0 0.0
+field ce1_mrm_t3 t3 gaussian-inverse-square thermal K 2 0.0 0.0
+field ce1_mrm_t4 t4 gaussian-inverse-square thermal K 2 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce2_mrm.fits
 format pds4_fits
@@ -9957,10 +9957,10 @@ origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_pr
 compiler tools/harvest/src/bin/pds4_fits_compiler.rs
 at moon
 ttl 604800
-field ce2_mrm_t1 t1 gaussian-inverse-square thermal K 604800 0.0 0.0
-field ce2_mrm_t2 t2 gaussian-inverse-square thermal K 604800 0.0 0.0
-field ce2_mrm_t3 t3 gaussian-inverse-square thermal K 604800 0.0 0.0
-field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 604800 0.0 0.0
+field ce2_mrm_t1 t1 gaussian-inverse-square thermal K 2 0.0 0.0
+field ce2_mrm_t2 t2 gaussian-inverse-square thermal K 2 0.0 0.0
+field ce2_mrm_t3 t3 gaussian-inverse-square thermal K 2 0.0 0.0
+field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 2 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-imaging.jpl.nasa.gov/pds3_img_m3g20081118t222604_v03_loc.bin
 format pds3_img

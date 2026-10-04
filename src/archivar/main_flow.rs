@@ -1381,6 +1381,7 @@ pub fn main_flow() {
                             Frame::Manifest => false,
                         },
                         Position::StateVector { .. } => false,
+                        Position::Electrode { .. } => false,
                     };
                     if eph_missing {
                         dropped_channels.push((
