@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 57c95f7cfd26e6bc9fdf813ce5f1ffe651bcb8415f78fdccd437e093fd294d98
+  sha256: 14e028e0d33cc74d3b2877daec6bc337b592c3f0378adad2006c87d1b7c3c612
   status: live
   see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
@@ -177,3 +177,22 @@ CUDA-Backend → unser WGSL-Pfad (`te_compute`, Membran) läuft dort **nicht**. 
 die GPU-Arbeit **geschlossen**; es bleibt llvmpipe (CPU, wie die CI — kein Gewinn) oder ein
 **Container-Provider mit Vulkan** (`NVIDIA_DRIVER_CAPABILITIES=graphics` + NVIDIA-ICD, RunPod/Vast;
 bezahlt, §D).
+
+## I2. Colab-Praxisprobe (2026-10-04): dieselbe Klasse — kein Vulkan
+
+Freie **Tesla T4** mit vollem Treiber (**580.82.07, CUDA 13**), `nvidia-smi` läuft. Aber Vulkan:
+
+- eine selbst geschriebene `nvidia_icd.json` auf `libGLX_nvidia.so.0` → der Loader lädt die Lib,
+  bekommt aber **kein `vkCreateInstance` via `vk_icdGetInstanceProcAddr`** — die GL-/Vulkan-Komponente
+  ist ein **Stub** (compute-only-Injektion, wie bei Kaggle).
+- `vulkaninfo` endet `ERROR_INCOMPATIBLE_DRIVER`, „Found no drivers".
+
+**Verdikt:** **Colab trägt ebenfalls kein Vulkan.** Die FAQ bestätigt den Charakter der Ressource:
+GPU-Typen „vary over time", Ressourcen „not guaranteed and not unlimited", Limits unveröffentlicht
+(`research.google.com/colaboratory/faq.html#gpu-availability`, HTTP 206, 2026-10-04).
+
+**Gesamtbefund der freien Wege (gemessen):** Freie Cloud-GPUs sind **compute-only** (CUDA/OpenCL).
+**Kein freier Anbieter liefert Vulkan** — weder Kaggle noch Colab. wgpu hat keinen CUDA-Backend;
+die graphics-Capability gibt es nur dort, wo der Anbieter sie injiziert (bezahlter Container mit
+`NVIDIA_DRIVER_CAPABILITIES=graphics`) oder lokal (XPS-iGPU, Intel/Mesa). Für unseren WGSL-Pfad ist
+der freie Weg damit **erschöpft**.
