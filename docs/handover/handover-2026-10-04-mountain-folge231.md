@@ -3,7 +3,7 @@
   session: Mountain-Folge 231
   class: handover
   date: 2026-10-04
-  sha256: 1903a21b323b7c33f81f1277752c1d4ddaabf3db61317965959c1e9b25819beb
+  sha256: 245bba2855dc7eee0e7257f352339066ac17bc3cd77ff966089ca1660974781a
   status: live
 -->
 # Handover — Mountain-Folge 231 (2026-10-04)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-04-mountain-folge230.md` (→ `archiv/`).
 
-## Burn: open 0.0085 · close 0.45 · cap 0.5 Grund: 5 flash-Taucher + 2 Rat-Sitzungen + Register-Heilung
+## Burn: open 0.0085 · close 0.48 · cap 0.50 Grund: 9+ flash-Taucher + 2 Rat-Sitzungen + Schwarm-Fan-out + Register-Heilung (pds3 389, witnesses, AST1, Portale)
 
 ## Operator-Wort-Register
 
@@ -51,26 +51,26 @@ Wort | Datum | Quelle
 - **Blockade:** Lizenz ungeklärt.
 - **Braucht:** Antwort abwarten; bei Lizenz Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern.
 
-### Weberin zweite Linie — 7 AST1-Serien stehen; DirectionOnly-Konsument offen
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 this atom) Konverter + 6 VizieR-Serien + Register + Workflow (`37197979156`). **Neu:** `parse_events_json`-Arm (`astrometry_series_compiler.rs`) + `sosb_lucky_star` gelaufen: 568 Events → **67 Samples / 2724 B** (474 void, 23 absent error, **4 riss**: dec-Fehler-Skala um ×1000 verfälscht; 1 RA aus dem `lesia`-Link korrigiert, da der Host die führende „11 h"-Ziffer droppt); **Einheit mas** gegen die Quellpapiere (Pereira+2023 A&A 673 L4; Morgado+2021 A&A 652 A141) gemessen. Register-Block `sha256 6d848b99…` + `.github/workflows/astrometry-witness-cdn.yml` dispatcht `37201656010`. `astrometry_series::direction_only_lines` (→ `DirectionOnly`) hat **keinen** live-Aufrufer.
-- **Blockade:** `DirectionOnly` nicht verdrahtet; 4 dec-error-Riss-Zeilen übersprungen (Reparatur um ×1000 wäre Inferenz).
-- **Braucht:** `direction_only_lines` an einen Konsumenten binden; Entscheid, ob die 4 Riss-Zeilen per Quellpapier repariert werden dürfen.
+### Weberin zweite Linie — 7 AST1-Serien stehen; DirectionOnly verdrahtet
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `astrometry-witness-cdn`-Lauf `37201656010` endet (Manifestation der 7 `.ast1`).
+- **Lage:** (gemessen 2026-10-04 this atom) Konverter + 6 VizieR-Serien + Register + Workflow. **Neu:** `parse_events_json` + `sosb_lucky_star`: 568 Events → **67 Samples / 2724 B** (474 void, 23 absent error); **Riss repariert** — die 4 dec-Fehler-Zeilen sind µas (Host droppt das Dezimal), gegen Pereira+2023 A&A 673 L4 (Quaoar 0.230→230), Morgado+2021 A&A 652 A141 (Chariklo 0.227/0.544), Rommel+2020 A&A 644 A40 (2002 VE95 0.064→64) gemessen und auf mas gefaltet (Rest-Riss bleibt Skip); 1 RA aus dem `lesia`-Link korrigiert. **DirectionOnly verdrahtet:** `astrometry_series::merge_direction_only` + `OmegaLoop::verdict_direction_only` (`src/mathematikerin/omega.rs`, gerufen in `sky_reload`) + Test (`tests.rs`); `cargo check` 0/0. Register-Block `sha256 6d848b99…`.
+- **Blockade:** keine.
+- **Braucht:** `37201656010` lesen; Manifestation der 7 `.ast1` prüfen.
 
-### Witness/Solar — euvs erledigt; Witness-Epochen-Endpunkte offen
+### Witness/Solar — euvs + decluster + gbco/gmrt stehen; gl30/SRTM15+ descope-Kandidat
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 this atom) **Gebaut:** `format goes_euvs`-Reader (`src/archivar/euvs.rs`, Feld `goes_euvs_lya1216`) + Register-Block `phi/sources.φ:19913`. **Neu:** `rixs_series_compiler.rs` (Zenodo-Zip → 19 `Eloss/weight/err`-Textassets) + **zwei `record rixs`-Witness-Blöcke** (`substance#4` UD/`#5` OD1); Arm offline verifiziert (`--spectral substance#4,substance#5` → 2 Epochen, n=80, r=0.9909); `.github/workflows/cuprate-cdn.yml` dispatcht `37201658046`. `record gmrt`→`gmr1`, `goes_xrs`-CDN, `srtm` geheilt.
-- **Blockade:** `spectral_epoch_series` (`field_te_query.rs:1355-1376`) braucht **zwei Blöcke gleicher `kind`+`record`** mit UTF-8-**Text**-Serie (`axis value`; rixs `Eloss weight err`) — rixs ist gebaut, aber `gbco` (Punkt-Abfrage), `gmr1`/`gl30` (Raster) tragen **keinen** arm-lesbaren Text-Endpunkt.
-- **Braucht:** für `gbco`/`gmr1`/`gl30` entscheiden (abgeleitete Textserie manifestieren oder aus dem Epochen-Arm descopen); `bz_blatt`/`gic_storm` rechnen in-process (kein Register-Feld nötig, zu messen).
+- **Lage:** (gemessen 2026-10-04 this atom) **Gebaut:** `format goes_euvs`-Reader; `rixs_series_compiler.rs` + 2 `record rixs`-Blöcke (Arm verifiziert r=0.9909, `cuprate-cdn` dispatcht `37201658046`). **Neu:** **declustered Mainshock-Set** `record erbq_mainshock` (Gardner–Knopoff-Fenster, **153/198** Tohoku-M≥7 Mainevents, 45 Aftershocks entfernt; FeatureServer/5-URL 206); **gbco** zwei Epochen (GEBCO_2023/2026 CEDA-OPeNDAP-ASCII, je 200, 261 kB) `gestalt#4/#5`; **gmr1** ein Block (GridServer `format=esriascii`, 200, 1,7 MB). `record gmrt`→`gmr1`.
+- **Blockade:** `gl30` (COG-GeoTIFF) und `SRTM15+` (NetCDF) tragen **keinen** nativen Text-Endpunkt — kein zweiter Epochen-Block möglich (nur die eine gestalt-Zeile steht).
+- **Braucht:** `gl30`/`SRTM15+` aus dem Epochen-Arm **descopen** (oder abgeleitete `axis value`-Serie auf eigenem CDN manifestieren); `bz_blatt`/`gic_storm` rechnen in-process (kein Register-Feld nötig).
 
-### gras_2c — `range` aus dem RoPeR-Spec gesetzt; Tiefen-Konvention + Elektronik-Offset offen
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt:** dauerhaft Register-Metadaten, kein Wire-Slot. **Chirp-Spec gemessen:** Zhou et al. 2020 (EPP 4(4), DOI `10.26464/epp2020054`, Tab. 3) B=1.7 GHz · T_p=4 ms · t_w=235 ns · f_s=200 kHz; Liu et al. 2023 (RS 15(4) 966) N_FFT=4096, 2048 gespeichert. **Abgeleitet:** `step_m = c·T_p·f_s/(2·B·N_FFT) = 0.01722 m` (Vakuum-Einweg; Gegenprobe t_w/2048 → 0.01720 m; 2048 Bins = 35.3 m ≙ 17.63 m bei ε_r=4 = Spec). `start_m = 0.0` (Gate 0 = 0-Hz-Bin, kein Offset gemessen). **Gesetzt:** `range 0.0 0.01722` in allen 42 `gras_2c`-Blöcken (`phi/sources.φ`, `2f51327ef`; kanonisch).
-- **Blockade:** die Achsen-Konvention ist ein Entscheid, nicht aus dem Label messbar — Vakuum-Einweg (gesetzt, ε-unabhängig) vs Tiefe bei ε_r=4 (0.00861 m); ein absoluter erster-Gate-Offset (Elektronik/Antenne) ist im Spec nicht publiziert.
-- **Braucht:** Konvention bestätigen (Vakuum-Einweg) oder Tiefe `ε_r=4` deklarieren; Offset bleibt `pending`.
+### gras_2c — Rat entschieden: Vakuum-Einweg; Spec trägt die Konvention; Schwarm-Ernte offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der detached Schwarm-Lauf `state/stimmen/voice-all-2026-10-04_154008/` (PID 18384) setzt seinen Done-Marker.
+- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt (einstimmig):** `start_m/step_m` trägt die **Vakuum-Einweg-Elektro-Range** (`range(k)=start_m+k·step_m`), ε-unabhängig — die 42 `range 0.0 0.01722`-Zeilen stehen byte-identisch; ε_r=4 (0.00861 m) ist ein benanntes Konsumenten-Modell, nie in die Register-Achse gefaltet; `start_m=0.0` null-echt, der Elektronik-Offset bleibt absent. **Spec dokumentiert:** `docs/specs/sources-v2-spec.md` `range`-Zeile (sha `e9952d96…`). Ableitung `step_m=c·T_p·f_s/(2·B·N_FFT)` (Zhou+2020 EPP 4(4) Tab. 3; Liu+2023 RS 15(4) 966).
+- **Blockade:** keine.
+- **Braucht:** Schwarm-Ernte lesen (`state/stimmen/voice-all-2026-10-04_154008/`), Claims am Baum gegenverifizieren.
 
 ### CSES — EFD+HPM/SCM-Arme + Workflows stehen; Manifestation offen
 - **Status:** blockiert | **Bindung:** eigen
@@ -86,8 +86,23 @@ Wort | Datum | Quelle
 - **Blockade:** TUH-Zugangsantwort; ieeg/NSRR-Registrierung/DUA (Operator-Hand).
 - **Braucht:** `## An future` (gesendet); Antwort abwarten.
 
+### pds3_fixed_width — `at`/`field` gesetzt; 192 Spektralfelder offen
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-04 this atom) Die Familie (389 Blöcke, `phi/sources.φ:10317–12260`) trägt jetzt `at`: 388 × Vega-2/MISCHA → `at halley` (`TARGET_NAME=HALLEY`), 1 × Phobos-2/KRFM → `at mars` (`TARGET_NAME=MARS`). **196 Fluxgate-Blöcke** tragen `BX/BY/BZ PSSO` (nT, em) = 588 `field`-Zeilen; KRFM 3 Felder. `register_sort` kanonisch.
+- **Blockade:** die 192 Spektralblöcke (`f24s`/`f30s`/`f300s`/`f4800s`, Spalten `F00PSSO…F15PSSO`, Einheit `nT/Hz**1/2`) tragen nur `at halley` — die 16 Feld-Ids/Force sind nicht ratifiziert.
+- **Braucht:** Mountain-Direktive für die 16 Spektral-Feld-Ids + Force (Konsumbedarf), dann `field`-Zeilen.
+
+### mycelium-Portale — Notizen gemessen; Arme/Reader fehlen
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-04 this atom) 7 `pending`-Portal-Notizen in `phi/blocked_sources.φ` auf den gemessenen Stand gezogen (LEOS/MOON/NSSDC/EMM/JAXA/KASI/CLPDS): Endpunkt/Quota/Route je gemessen; teils Compiler+Workflow gebaut (EMM/JAXA/KASI/CLPDS), teils kein Arm (LEOS/NSSDC).
+- **Blockade:** Portal-Ernte-Arm bzw. **Reader** fehlt je Zeile; Downloads teils Login-gated.
+- **Braucht:** je Portal den fehlenden Arm/Reader bauen; LEOS Login-Gate.
+
 ## Träger (Prosa, eigene)
 
+- `docs/specs/sources-v2-spec.md` (`class: concept`, Header-sha `e9952d96…`) — Directive-Tabelle; Träger der neuen `range`-Zeile (Vakuum-Einweg-Konvention).
 - `docs/surveys/survey-raetsel-bestand.md` (`class: survey`, Header-sha `524d61dc…`) — stehende Rätsel-Messreihe.
 - `docs/blatt/blatt-pioneer-floor-falsifikation.md` (`class: sheet`, Header-sha `5bb1696b…`) — Voranmelde-Blatt + Lauf-Ergebnis (CI `37111508656` success).
 - `docs/concepts/kybernetische-astrophysik.md` (`class: concept`) — Rätsel-Register; Träger seines offenen Markers.
