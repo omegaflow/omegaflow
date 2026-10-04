@@ -3,7 +3,7 @@
   session: Mountain-Folge 233
   class: handover
   date: 2026-10-04
-  sha256: 3d137b3c0128b41d7ab9dd7e9f928b1e9d3059a1a80804e84a1664c710296720
+  sha256: 203db5ba367e64f649e0f025d62261ebf378859786dbbf23adca96d8ed8ab607
   status: live
 -->
 # Handover — Mountain-Folge 233 (2026-10-04)
@@ -16,7 +16,7 @@ river-90, sensory-229): die meisten maßen gegen eine im Baum bereits erledigte
 Prämisse (witnesses-Textserien, declustered Mainshock-Set, Medizin-Pool-Disposition,
 Swarm TEC, catalog_epoch).
 
-## Burn: open 0.005 · close 0.25 · cap 0.30 Grund: Runde flash-first — 4 grind-flash-Messungen (PDS-Felder, Disposition, witnesses, Medizin) + Line, kein pro/max (Operator-Wort „braucht es pro?" → flash)
+## Burn: open 0.005 · close 0.48 · cap 0.50 Grund: Runde flash-first — Line + 6 grind-flash (PDS-Felder, Disposition, witnesses, Medizin, Measure/close, Gaia-RR, Arm-Bau), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -39,91 +39,49 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-Audit aller Mountain-eigenen Einträge in `phi/blocked_sources.φ` (2026-10-04): die drei `gap-Token`-Risse (pds3-binary/pds4-binary/pds4-fits „Compiler-Bin fehlt") sind geheilt — die Bins stehen (`c0af97075`/`30d93daf7`). Der DAS2-Feldverdikt ist gesetzt (`hapi_csv_{magnitude,x,y,z}_nt`, `em nT`). Offen bleiben die folgenden Arme/Messungen:
+Audit aller Mountain-eigenen Einträge in `phi/blocked_sources.φ` (2026-10-04/05): die drei `gap-Token`-Risse (pds3-binary/pds4-binary/pds4-fits „Compiler-Bin fehlt") sind geheilt; DAS2-Feldverdikt gesetzt; superdarn → `blocked account`, Cassini titanNotebook / Gaia cluster_ka / TUH → `descoped`, Chang'e-Kadenz (`tau 2`) gesetzt, Viking/ExoMars/Gaia-RR-Feldverdikte stehen (Registrierung Mycelium). Offen bleiben:
 
-### Hope/Al-Amal EMM — Reader-Arm
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `glob`) `emm_sdc_compiler.rs` + `emm-sdc-cdn.yml` stehen; `src/archivar/emm*` = 0.
-- **Blockade:** keine
-- **Braucht:** Reader-Arm `src/archivar/emm_sdc.rs` nach `pds4`-Vorbild, `field` aus dem `emm_exi_l2.tar`-Schema.
-
-### superdarn MAP-Grid — RST-Reader
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `glob`) kein `*rst*.rs`; Globus-only, RST-Byte-Offsets ungemessen.
-- **Blockade:** Offsets fehlen
-- **Braucht:** RST-Header-Offsets messen (1 Datensatz), Reader-Arm bauen.
-
-### ExoMars TGO ACS — Occ-Spektrum
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `glob`) `pds4.rs`/`pds4_binary_compiler.rs` stehen; Occ-Spektrum ungemessen, Sample offen.
-- **Blockade:** keine
-- **Braucht:** ein Occ-Spektrum-Asset laden (`archive_search --verdict` auf `archives.esac.esa.int/psa/ftp/ExoMars2016/`), Feld-Verdikt + Sample (Mycelium).
-
-### Chang'e-1/-2 MRM — Kadenz
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `sgrep`) Block `sources.φ` trägt `pds4_fits_ce1/ce2_mrm` + 8 Felder, Assets present; cadence unread.
-- **Blockade:** keine
-- **Braucht:** `cadence` aus dem registrierten Asset messen und der Zeile beisetzen.
-
-### Viking Mars gravity (WUSTL) — Endpunkt
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `archive_search --verdict`) HTTP 206, 1 B — kein Daten-Endpoint/Arm.
-- **Blockade:** Endpoint ungemessen
-- **Braucht:** `pds-geosciences.wustl.edu/missions/viking/gravity.html` Baum mit `sfetch --links` öffnen, Endpunkt/Arm benennen oder `descoped`.
-
-### Cassini titanNotebook — Reader
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `sgrep`) `cassini_odf_compiler.rs` erntet `*.ODF`; der titanNotebook-Log-Baum hat keinen Reader.
-- **Blockade:** keine
-- **Braucht:** Log-Baum-Format messen (`sfetch`), Reader oder `descoped` mit Befund.
-
-### Juno Gravity Raw Orbits CSV — Reader
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `glob`) kein `juno*.rs` CSV-Reader; `juno_odf_compiler.rs` erntet ODF.
-- **Blockade:** keine
-- **Braucht:** CSV-Spalten messen, Reader-Arm oder `descoped`.
-
-### Gaia — cluster_ka ADQL + RR-Reader
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `sgrep`) `cluster_ka` HTTP 400 (kein Table); korrigierte ADQL offen. RR-JOIN HTTP 200, Reader-Arm fehlt.
-- **Blockade:** externe Katalog-Quelle für cluster
-- **Braucht:** korrigierte ADQL gegen `TAP_SCHEMA` messen; RR-Reader via `astrometry_series`-Vorbild.
-
-### iEEG/TUH — 4D-Anker
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `sgrep`) Arme `ieeg_edf`/`tuh_eeg` stehen (`edf.rs`); Elektroden-ICRS fehlt.
-- **Blockade:** MNI/Patient-Koordinaten fehlen
-- **Braucht:** Elektroden-Koordinaten + Kanal-Matrix je Datensatz registrieren (Arm steht).
-
-### konverter — Arm für falsche Feld-Einheit
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `sgrep`) `sgrep -i konverter src/archivar` = 0.
-- **Blockade:** Arm fehlt
-- **Braucht:** Konverter-Arm (mag → nT) nach `unit_from_name_suffix`-Vorbild bauen.
-
-### gras-2c — Wire-Slot für `range`
-- **Status:** autonom | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-04 via `sread`) `range`-Direktive parst als Metadaten (`parse.rs:1455`); Wire-Slot fehlt.
-- **Blockade:** Wire-Contract-Entscheid
-- **Braucht:** `range`-Slot im 26×f64-Record definieren (Architektur) oder als Metadaten-only mit Befund schließen.
-
-### LEOS — Reader-Arm
+### EMM-Reader-Arm — Gap
 - **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Konto-Session (`LEOS_USER/PASS` in `.secrets.local`)
-- **Lage:** (gemessen 2026-10-04 via `sgrep`) `sgrep leos src` = 0; API 40301 Login-Gate.
-- **Blockade:** Konto-Session + Arm
-- **Braucht:** Reader-Arm `leos.rs`; Konto-Session ist Operator-Hand.
+- **Trigger:** ein gefetchtes `emm_exi_l2.tar` (Member-Schema)
+- **Lage:** (gemessen 2026-10-04 via `glob`/`sgrep`) `emm_sdc_compiler.rs` erkennt nur Container-Magic; kein tar-Reader in `src/archivar`; kein `emm_exi_l2.tar` lokal (`gh release view` → not found).
+- **Blockade:** Member-Schema + Einheit ungemessen
+- **Braucht:** ein `emm_exi_l2.tar` fetchen (Cognito = Operator-Hand), Member-Schema + Einheit messen, dann `src/archivar/emm_sdc.rs`.
+
+### LEOS-Reader-Arm — Gap
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** eine authentifizierte LEOS-JSON-Antwort
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) `sgrep leos src` = 0; API `/api/admin/data/front/list` 40301 (Konto-Gate).
+- **Blockade:** Antwortschema ungemessen
+- **Braucht:** LEOS_USER/PASS-Session (Operator-Hand), eine Antwort als Schema-Vorlage (`kasi.rs` gibt das Muster).
+
+### konverter-Arm — Gap
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** ein benanntes Feld mit `_mag`/`_magnitude`, das eine Magnetmessung ist
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) alle `_mag` in `sources.φ` sind astronomische Magnituden; der eine B-Feld-Key `psp_imf_bmag_nt` trägt `_nt`/nT.
+- **Blockade:** kein Feld/Paar messbar → Arm nicht baubar ohne Fabrikation
+- **Braucht:** die Quelle nennen, deren Einheit fälschlich als `mag` gemappt ist.
+
+### iEEG 4D-Anker — BIDS-Sidecar
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `archive_search --verdict https://www.ieeg.org/api` wieder 200 (aktuell 503)
+- **Lage:** (gemessen 2026-10-04) emit-Pfad `src/archivar/electrodes.rs` trägt `Position::Electrode`; REST/`/api`+/services 503; OpenNeuro ds003844 x=y=z=0.
+- **Blockade:** kein Sidecar-Fetch-Feld in `SourceConfig` + kein Datensatz mit belegten x/y/z
+- **Braucht:** `SourceConfig`-Sidecar-URL-Feld + ein Datensatz mit echten MNI-Koordinaten.
+
+### gras-2c `range`-Wire-Slot — Architektur
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sread`) `range` parst als `RangeAxis`-Metadaten (`parse.rs:1455`); kein Wire-Slot.
+- **Blockade:** Wire-Contract-Entscheid (26×f64)
+- **Braucht:** Rat/Operator-Wort, ob ein Slot nötig ist; sonst Metadaten-only mit Befund schließen.
+
+### Geteilter Baum — eigene Code-/Register-Hunks halten
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der Index ist frei (Mycelium 231h/231i schließt seinen `git add`-Stand)
+- **Lage:** (gemessen 2026-10-05 via `git status`) Mycelium hält `gaia_rrl.rs`/`viking_grav.rs`/Workflows/`harvest.φ` + `sources.φ`/`extract.rs`/`main_flow.rs`/`mod.rs` im Index; meine `electrodes.rs`-Verdrahtung (types/channels/extract/main_flow/mod) und die `sources.φ`-Hunks (DAS2, Chang'e-tau) sind unstaged.
+- **Blockade:** ein pfad-begrenzter Commit würde Myceliums Index-Hunks sweepen
+- **Braucht:** `git status` erneut lesen; sobald der Index frei ist, `git commit <eigene Pfade>` mit den Code-/`sources.φ`-Hunks.
 
 ## Träger (Prosa, eigene)
 
@@ -140,14 +98,16 @@ Audit aller Mountain-eigenen Einträge in `phi/blocked_sources.φ` (2026-10-04):
 
 Origin: mountain folge233.
 
-- **PDS-Feld-Verdikte (Registrierung + Manifest):** Phobos 2 KRFM — `format pds3_fixed_width`, `at mars`, `field RADIOMETER1..5`/`PHOTOMETER1..9` je `inverse-square em count` (W/m2/sr-Kalibrierung fehlt — Riss, `count` statt fabriziertem Radiant). Hayabusa LIDAR — `format pds4_fixed_width`, `at itokawa`, nur `field RANGE hay_lidar_range inverse-square em km` (übrige 30 Spalten Geometrie/Anker/DROP). Arme + Workflows stehen (`pds3-fixed-width-cdn.yml`, `pds4-fixed-width-cdn.yml`, `phi/harvest.φ`).
+- **KRFM/Hayabusa — erledigt durch Mycelium 231h** (`186c05ac9`: Phobos-KRFM-sha256, 7 Hayabusa-LIDAR, MoRIC). Offen bleiben zwei Feld-Verdikte zur Registrierung:
+- **ExoMars TGO ACS:** `format pds4_fixed_width`, `at mars`, `field ROW_DATA acs_nir_solar_occultation_spectrum gaussian-inverse-square em count`; Asset `.../Orbit_4140/acs_raw_sc_nir…EC__4_0.tab` 543800 B sha256 `465f3c07…`.
+- **Gaia RR:** `format tap` (generischer Arm, `extract.rs:3854`), `at sun`, `field phot_g_mean_mag gaia_dr3_rr_g_mag inverse-square em mag`; ADQL `vari_classifier_result JOIN gaia_source WHERE best_class_name='RR'` (HTTP 200).
 
 ## An future
 
 Origin: mountain folge233.
 
 - **Medizin-Pool:** der Baum führt ~97 `declined` (2026-10-03/04), nicht `pending`/„on hold". Das Wort „rest auf on hold" ist als Oszillator-Gate-Verdikt (`no-physical-force`/`molecular`/`registry`) umgesetzt; ein Rückverlagern nach `pending` wäre ein Verdikt-Widerruf und braucht ein neues Wort. Kein erneutes Vorlegen (bereits gewortet).
-- **iEEG/TUH/NSRR** `blocked_sources.φ` Notes korrigiert: Arme `ieeg_edf`/`tuh_eeg`/`nsrr_psg` stehen (`9d416e57b`, `edf.rs`); NSRR `descoped`; TUH-Antwort offen (`wartend.φ:39`).
+- **TUH EEG → `descoped`** (Elektroden-Doku rein symbolisch, keine Koordinaten); **NSRR `descoped`**; iEEG bleibt `pending` (BIDS-Sidecar-Bau, 503).
 
 ## LOCK
 
