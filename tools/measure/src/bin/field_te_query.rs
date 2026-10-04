@@ -123,6 +123,88 @@ fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
         .map(|s| s.as_str())
 }
 
+struct QueryAnchor {
+    lat: Option<f64>,
+    lon: Option<f64>,
+    station: Option<String>,
+}
+
+impl QueryAnchor {
+    fn empty() -> QueryAnchor {
+        QueryAnchor {
+            lat: None,
+            lon: None,
+            station: None,
+        }
+    }
+}
+
+fn parse_coord(args: &[String], flag: &str, min: f64, max: f64) -> Result<Option<f64>, String> {
+    match arg_after(args, flag) {
+        Some(t) => {
+            let v: f64 = t
+                .parse()
+                .map_err(|_| format!("{flag} '{t}' carries no number"))?;
+            if !v.is_finite() {
+                return Err(format!("{flag} '{t}' is no finite coordinate"));
+            }
+            if !(min..=max).contains(&v) {
+                return Err(format!("{flag} '{t}' lies outside [{min}, {max}]"));
+            }
+            Ok(Some(v))
+        }
+        None => Ok(None),
+    }
+}
+
+fn one_coordinate(
+    direct: Option<f64>,
+    station: Option<f64>,
+    direct_flag: &str,
+    station_flag: &str,
+) -> Result<Option<f64>, String> {
+    match (direct, station) {
+        (Some(a), Some(b)) if a != b => Err(format!(
+            "{direct_flag} {a} and {station_flag} {b} name two coordinates — one anchor per query, never a silent preference"
+        )),
+        (Some(a), _) => Ok(Some(a)),
+        (None, b) => Ok(b),
+    }
+}
+
+fn anchor_from_args(args: &[String]) -> Result<QueryAnchor, String> {
+    let lat = parse_coord(args, "--lat", -90.0, 90.0)?;
+    let lon = parse_coord(args, "--lon", -180.0, 180.0)?;
+    let station_lat = parse_coord(args, "--station-lat", -90.0, 90.0)?;
+    let station_lon = parse_coord(args, "--station-lon", -180.0, 180.0)?;
+    Ok(QueryAnchor {
+        lat: one_coordinate(lat, station_lat, "--lat", "--station-lat")?,
+        lon: one_coordinate(lon, station_lon, "--lon", "--station-lon")?,
+        station: arg_after(args, "--station").map(|s| s.to_string()),
+    })
+}
+
+fn resolve_query_slots(url: &str, anchor: &QueryAnchor) -> Result<String, String> {
+    let mut resolved = url.to_string();
+    for (slot, value) in [
+        ("{lat}", anchor.lat.map(|v| format!("{v}"))),
+        ("{lon}", anchor.lon.map(|v| format!("{v}"))),
+        ("{station}", anchor.station.clone()),
+    ] {
+        if resolved.contains(slot) {
+            match value {
+                Some(v) => resolved = resolved.replace(slot, &v),
+                None => {
+                    return Err(format!(
+                        "url carries the coordinate/station slot '{slot}' — no matching --lat/--lon/--station(/-lat/-lon) anchor was given; the slot stays unresolved, never a default"
+                    ));
+                }
+            }
+        }
+    }
+    Ok(resolved)
+}
+
 fn parse_lags(token: &str) -> Result<Vec<usize>, String> {
     let mut out = Vec::new();
     for part in token.split(',') {
@@ -1519,14 +1601,19 @@ fn resolve_time_markers(url: &str) -> String {
 fn guard_url_template_resolved(url: &str) -> Result<(), String> {
     match first_url_template_slot(url) {
         Some(slot) => Err(format!(
-            "url carries the unresolved template slot '{{{slot}}}' — the epoch markers ({{now}}/{{week_ago}}/{{hour_ago}}) are filled from the running clock, but this slot needs a query anchor (station lat/lon, source selector) that load_field does not hold; resolve it before the fetch, or the source stays unmeasured"
+            "url carries the unresolved template slot '{{{slot}}}' — the epoch markers ({{now}}/{{week_ago}}/{{hour_ago}}) are filled from the running clock and the lat/lon/station slots from the query anchor, but this slot needs a query anchor that load_field does not hold; resolve it before the fetch, or the source stays unmeasured"
         )),
         None => Ok(()),
     }
 }
 
-fn load_field(src: &SourceConfig, fc: &FieldConfig) -> Result<Vec<(f64, f64)>, String> {
+fn load_field(
+    src: &SourceConfig,
+    fc: &FieldConfig,
+    anchor: &QueryAnchor,
+) -> Result<Vec<(f64, f64)>, String> {
     let url = resolve_time_markers(&src.url);
+    let url = resolve_query_slots(&url, anchor)?;
     guard_url_template_resolved(&url)?;
     let Some(bytes) = fetch_raw_bytes_headers(&url, &src.headers) else {
         return Err(format!("{url} fetch void"));
@@ -1609,14 +1696,16 @@ enum ArmLoad {
     Pending(String),
 }
 
-fn try_source(sources: &[SourceConfig], arm: &Arm) -> Option<ArmLoad> {
-    find_field_source(sources, &arm.name).map(|(source, field)| match load_field(&source, &field) {
-        Ok(series) => ArmLoad::Ready {
-            source,
-            field,
-            series,
-        },
-        Err(reason) => ArmLoad::Pending(reason),
+fn try_source(sources: &[SourceConfig], arm: &Arm, anchor: &QueryAnchor) -> Option<ArmLoad> {
+    find_field_source(sources, &arm.name).map(|(source, field)| {
+        match load_field(&source, &field, anchor) {
+            Ok(series) => ArmLoad::Ready {
+                source,
+                field,
+                series,
+            },
+            Err(reason) => ArmLoad::Pending(reason),
+        }
     })
 }
 
@@ -1653,6 +1742,7 @@ fn load_arm(
     witnesses: &[WitnessRecord],
     arm: &Arm,
     register: Register,
+    anchor: &QueryAnchor,
 ) -> ArmLoad {
     if arm.state == State::Pending {
         return ArmLoad::Pending("descriptor state pending (register duty)".into());
@@ -1664,7 +1754,7 @@ fn load_arm(
     };
     for which in order {
         let attempt = if which == 0 {
-            try_source(sources, arm)
+            try_source(sources, arm, anchor)
         } else {
             try_witness(witnesses, arm)
         };
@@ -2323,6 +2413,7 @@ fn execute(
     sources: &[SourceConfig],
     witnesses: &[WitnessRecord],
     fam_override: Option<f64>,
+    anchor: &QueryAnchor,
 ) -> Option<QueryResult> {
     println!("=== field_te_query — fields by name over the Archivar path, the one TE machine ===");
     if let Some(p) = &desc.pair {
@@ -2346,9 +2437,9 @@ fn execute(
             desc.conds.len()
         );
     }
-    let driver_load = load_arm(sources, witnesses, &desc.driver, desc.register);
-    let target_load = load_arm(sources, witnesses, &desc.target, desc.register);
-    let cond_load = cond_arm.map(|a| load_arm(sources, witnesses, a, desc.register));
+    let driver_load = load_arm(sources, witnesses, &desc.driver, desc.register, anchor);
+    let target_load = load_arm(sources, witnesses, &desc.target, desc.register, anchor);
+    let cond_load = cond_arm.map(|a| load_arm(sources, witnesses, a, desc.register, anchor));
     print_arm("driver", &desc.driver, &driver_load);
     print_arm("target", &desc.target, &target_load);
     if let (Some(arm), Some(load)) = (cond_arm, &cond_load) {
@@ -2508,7 +2599,13 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         register: Register::Sources,
         bin: None,
     };
-    let Some(result) = execute(&desc, sources, witnesses, Some(REC_FAM)) else {
+    let Some(result) = execute(
+        &desc,
+        sources,
+        witnesses,
+        Some(REC_FAM),
+        &QueryAnchor::empty(),
+    ) else {
         println!();
         println!("PARITY: UNMEASURED (an arm or the alignment stays absent)");
         return 0;
@@ -2808,6 +2905,7 @@ fn run_parity_witness(
     witnesses: &[WitnessRecord],
     sources: &[SourceConfig],
     driver_name: Option<&str>,
+    anchor: &QueryAnchor,
 ) -> i32 {
     println!("=== parity bridge — witness register over phi/witnesses.φ ===");
     let Some(w) = find_witness(witnesses, name) else {
@@ -2837,7 +2935,7 @@ fn run_parity_witness(
             if w.kind == Some(WitnessKind::PointEvent) {
                 match driver_name {
                     Some(dn) => match find_field_source(sources, dn) {
-                        Some((source, field)) => match load_field(&source, &field) {
+                        Some((source, field)) => match load_field(&source, &field, anchor) {
                             Ok(driver) => run_event_conditional(&driver, series),
                             Err(reason) => {
                                 println!("event-conditional query pending — driver '{dn}' {reason}")
@@ -2867,10 +2965,17 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
+        "grammar: pair <label> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
+    let anchor = match anchor_from_args(&args) {
+        Ok(a) => a,
+        Err(reason) => {
+            eprintln!("{reason}");
+            exit(2);
+        }
+    };
     if let Some(name) = arg_after(&args, "--direction") {
         exit(run_direction_query(name, &witnesses));
     }
@@ -2883,6 +2988,7 @@ fn main() {
             &witnesses,
             &sources,
             arg_after(&args, "--driver"),
+            &anchor,
         ));
     }
     if sources.is_empty() {
@@ -2919,7 +3025,7 @@ fn main() {
         }
     };
 
-    match execute(&desc, &sources, &witnesses, None) {
+    match execute(&desc, &sources, &witnesses, None, &anchor) {
         Some(_) => {
             println!("Silent lines are findings. Exit 0.");
         }
@@ -3108,6 +3214,111 @@ mod tests {
         let err = guard_url_template_resolved(&resolved)
             .expect_err("a coordinate template stays unresolved");
         assert!(err.contains("{lat}"), "the refusal names the slot: {err}");
+    }
+
+    #[test]
+    fn coordinate_slots_fill_from_a_latitude_longitude_anchor() {
+        let anchor = QueryAnchor {
+            lat: Some(48.5),
+            lon: Some(9.25),
+            station: None,
+        };
+        let resolved = resolve_query_slots(
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?latitude={lat}&longitude={lon}",
+            &anchor,
+        )
+        .expect("a set lat/lon anchor fills both coordinate slots");
+        assert_eq!(
+            resolved,
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?latitude=48.5&longitude=9.25",
+            "the values land in the slots"
+        );
+        assert!(
+            guard_url_template_resolved(&resolved).is_ok(),
+            "the resolved url passes the template guard"
+        );
+    }
+
+    #[test]
+    fn missing_coordinate_anchor_refuses_the_slot_by_name() {
+        let anchor = QueryAnchor::empty();
+        let err = resolve_query_slots(
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?latitude={lat}&longitude={lon}",
+            &anchor,
+        )
+        .expect_err("a missing anchor stays unresolved");
+        assert!(
+            err.contains("{lat}"),
+            "the refusal names the missing slot: {err}"
+        );
+        assert!(
+            err.contains("never a default"),
+            "the refusal carries no fabricated value: {err}"
+        );
+    }
+
+    #[test]
+    fn station_name_and_coordinates_fill_their_own_slots() {
+        let anchor = QueryAnchor {
+            lat: Some(-33.87),
+            lon: Some(151.21),
+            station: Some("SYDNEY".to_string()),
+        };
+        let resolved = resolve_query_slots(
+            "https://x.example/data?station={station}&latitude={lat}&longitude={lon}",
+            &anchor,
+        )
+        .expect("a station bundle fills the station and coordinate slots");
+        assert_eq!(
+            resolved, "https://x.example/data?station=SYDNEY&latitude=-33.87&longitude=151.21",
+            "the station name and its coordinates land in their slots"
+        );
+    }
+
+    #[test]
+    fn anchor_from_args_reads_direct_and_station_coordinates() {
+        let args: Vec<String> = [
+            "--lat",
+            "10.5",
+            "--station-lon",
+            "-20.25",
+            "--station",
+            "P1",
+        ]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+        let anchor = anchor_from_args(&args).expect("direct and station coordinates parse");
+        assert_eq!(anchor.lat, Some(10.5), "the direct latitude is carried");
+        assert_eq!(anchor.lon, Some(-20.25), "the station longitude is carried");
+        assert_eq!(anchor.station.as_deref(), Some("P1"));
+    }
+
+    #[test]
+    fn anchor_from_args_refuses_two_differing_coordinates() {
+        let args: Vec<String> = ["--lat", "10.5", "--station-lat", "11.0"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let err = anchor_from_args(&args)
+            .err()
+            .expect("two coordinates name a riss");
+        assert!(
+            err.contains("--lat") && err.contains("--station-lat"),
+            "the refusal names both coordinates: {err}"
+        );
+    }
+
+    #[test]
+    fn anchor_from_args_refuses_an_out_of_range_coordinate() {
+        let args: Vec<String> = ["--lat", "120.0"].iter().map(|s| s.to_string()).collect();
+        let err = anchor_from_args(&args)
+            .err()
+            .expect("a latitude above 90 is no coordinate");
+        assert!(
+            err.contains("outside") && err.contains("120"),
+            "the refusal names the range: {err}"
+        );
     }
 
     #[test]
