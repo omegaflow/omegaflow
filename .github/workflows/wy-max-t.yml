@@ -46,12 +46,30 @@ jobs:
         shard:
           - id: 0
             from: 0
-            to: 3333
+            to: 1111
           - id: 1
-            from: 3333
-            to: 6666
+            from: 1111
+            to: 2222
           - id: 2
+            from: 2222
+            to: 3333
+          - id: 3
+            from: 3333
+            to: 4444
+          - id: 4
+            from: 4444
+            to: 5555
+          - id: 5
+            from: 5555
+            to: 6666
+          - id: 6
             from: 6666
+            to: 7777
+          - id: 7
+            from: 7777
+            to: 8888
+          - id: 8
+            from: 8888
             to: 9999
     steps:
       - uses: actions/checkout@v7

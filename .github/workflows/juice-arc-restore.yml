@@ -32,7 +32,7 @@ jobs:
         run: |
           cargo run --release -p omegaflow-harvest --bin ephemeris_compiler -- \
             --fetch-from /tmp/sources-index/phi/sources_index.φ \
-            --systems juice \
+            --systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice \
             --dest kernels \
             --ci-mode \
             --omega-g phi/pipeline/catalog/solar_omega_g.φ \
