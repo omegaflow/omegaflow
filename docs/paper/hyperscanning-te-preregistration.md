@@ -1,10 +1,10 @@
 <!--
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
-  date: 2026-10-03
-  sha256: 11ccdb90e8ccfeb8c802a88b80e77b6f556acb68412e1630f44d88dbe442ec53
+  date: 2026-10-04
+  sha256: dc1bb0b8c45fa9a8915908700128f760c39aa0f86d412fc0e6d944280aa5bacc
   status: live
-  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-03-sensory-folge227.md
+  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-04-sensory-folge229.md
 -->
 ## Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
 
@@ -198,14 +198,12 @@ diagnostics `frozen_tau_delay_sweep_stochastic_pair`
 (`hyperscanning_group_te.rs:1918`) and the `phase_null_blind_band` test
 (`.github/workflows/hyperscanning-te.yml:164-170`).
 
-The numeric FP/FN outcomes of the cohort runs are **pending** — Braucht: the CI
-artifact `hyperscanning-te-report`
-(`.github/workflows/hyperscanning-te.yml:143-152`) of the workflow run(s). The
-run in flight measured 2026-10-03 via `ci_manage status` is `37128441536`
-(`in_progress`, job `screen`, step `Run the family-wise TE screen and write the
-per-cell nominees (Takens tau, dim 3, cap 4096)`; its `confirm` job is
-`success`); `37129875260` is `pending`; `37129873384` is `cancelled`. No numeric
-FP/FN value is read into this document.
+The numeric FP outcomes are measured (run `37197710877`, head `f69fd6496`,
+`success` 2026-10-04T13:46:16Z; log read via `ci_manage log 37197710877 --all`):
+the three FP gates of the `plan` job each carried **0 survivors of 20 measurable
+trials** — `coherent-per-cell-FP gate`, `per-cell-FP gate`, `joint per-cell-FP
+gate`. The FN line is the `family_fn_gate` and the joint-family screen reported
+in `### Ergebnisse / Results`.
 
 ### Vorregistrierung / Pre-registration
 
@@ -231,24 +229,50 @@ Hypotheses and decision rule, fixed by the code cited above:
   The family-maximum path stays the FWER carrier; the confirmation replaces
   only the family re-test (`hyperscanning_group_te.rs:46-47`).
 
-No numeric result is reported by this document. Data were fetched and screened
-by the workflow run `37128441536` before this document
-(`ci_manage status`, 2026-10-03); no value of that run is reported here. The
-screen parameters above are the tree's fixed values
+The registered result is the decision rule above; the rule was frozen before
+the cohort runs. The ds007822 feasibility values the rule read are reported in
+`### Ergebnisse / Results` (run `37197710877`, 2026-10-04). The screen
+parameters above are the tree's fixed values
 (`hyperscanning_group_te.rs:12-19`, `.github/workflows/hyperscanning-te.yml:9-36`).
-The registered result is the decision rule; the data value it will read is
-`pending` the artifact `hyperscanning-te-report`
-(`.github/workflows/hyperscanning-te.yml:146`).
+
+### Ergebnisse / Results — ds007822 feasibility screen (2026-10-04)
+
+Measured by run `37197710877` (head `f69fd6496`, `success`
+2026-10-04T13:46:16Z; the `screen` job is split per task condition since
+`f69fd6496`). Parameters: channel `Fz`, `max_points 4096`, `surrogates 200`,
+`percentile 95`, null `phase`, dim 3 (`hyperscanning_group_te.rs:12-19`); the
+per-cell confirmation is a fresh per-cell null at p99 with 1000 surrogates
+(`hyperscanning_group_te.rs:15-18`). The numbers are read from the run log
+(`ci_manage log 37197710877 --all`, lines `=== <task>` and `=== confirmation
+<task>`).
+
+| task | triads | cells | family-max p95 | observed max | family-max survivors | per-cell survivors | confirmed |
+|---|---|---|---|---|---|---|---|
+| `pdrest` | 11 | 66 | 8.3159e-1 | 4.0343e-1 | 0 | 2 | 2/2 |
+| `pdfeedback` | 11 | 66 | 7.9215e-1 | 3.7459e-1 | 0 | 2 | 2/1 |
+| `pddecision` | 11 | 66 | 8.3607e-1 | 4.2518e-1 | 0 | 2 | 2/0 |
+
+`family-max survivors = 0` in every task condition: no cell exceeds its family
+maximum, so **H1 carries no survivor** in the feasibility cohort. The two
+per-cell nominees per task (`H2`) confirm inconsistently across the conditions
+(2/2 · 2/1 · 2/0) — no family-significant correction is found, and the family-max
+silence is the measured finding (`no cell breaks the family maximum — the
+family-max silence is the finding`). The confirmation is reported for
+transparency; the FWER carrier is the family-maximum path alone. This is the
+feasibility cohort `ds007822` — no coupling claim is made (0 honored: the
+absence of a family-significant cell is a measured absence, not a zero).
 
 ### Offene Ergebnisse / Pending results
 
-- **FP/FN numbers** — pending — Braucht: artifact `hyperscanning-te-report`
-  (`.github/workflows/hyperscanning-te.yml:146`) of run `37128441536` or
-  `37129875260` (`ci_manage status`, 2026-10-03).
-- **n-scaling curve** — pending — Braucht: the `scaling.txt` / `scaling_*.txt`
-  members of the same artifact
-  (`.github/workflows/hyperscanning-te.yml:119-142`,
-  `.github/workflows/hyperscanning-te.yml:151`).
+- **FP/FN numbers** — measured (run `37197710877`, 2026-10-04) — see
+  `### Ergebnisse / Results`; the measurement removed this pending.
+- **n-scaling curve** — pending — the workflow accepts `scales`
+  (`.github/workflows/hyperscanning-te.yml:25-28`) and prints the curve per n and
+  channel (`.github/workflows/hyperscanning-te.yml:184-207`); the artifact
+  carries `scaling.txt` / `scaling_*.txt`
+  (`.github/workflows/hyperscanning-te.yml:208-217`). Braucht: run
+  `37217425078` (`scales=512,1024,2048,4096`, dispatched 2026-10-04
+  F229) — read on completion.
 - **Second cohort** — pre-registered candidate (measured 2026-10-03): **`ds007471`**
   (dyads, 64-channel BrainVision `.vhdr` — 32 `_R` + 32 `_L` in one file per
   `sub-01`..`sub-32`, 1000 Hz, CC0) is the primary second cohort; `ds008192` (fNIRS +
@@ -259,13 +283,15 @@ The registered result is the decision rule; the data value it will read is
   split inside one file; the manifest arm is built (commit `1226e9082`):
   `brainvision_compiler --participant L|R` writes one per-participant bin, and the
   workflow input `cohort=ds007471` builds `manifest.txt` with
-  `jointaction pair-<NN> {L,R}`. Braucht: the run (after the ds007822 validation) before
-  analysis.
+  `jointaction pair-<NN> {L,R}`. Braucht: run `37209904312` (`cohort=ds007471`,
+  channel `Cz`, head `4bcd4631`, dispatched 2026-10-04T14:36Z) is in flight;
+  evaluate `hyperscanning-te-report-jointaction` on completion
+  (`ci_manage view/jobs/log 37209904312`).
 
 ### Träger / Carrier
 
 This document's carrier is the Sensory handover
-`docs/handover/handover-2026-10-03-sensory-folge227.md` — the open point
+`docs/handover/handover-2026-10-04-sensory-folge229.md` — the open point
 `### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)`,
 whose `Lage` names this draft and whose `Braucht` names the validation artifact
-that will carry the FP/FN and n-scaling numbers.
+that carries the FP/FN and n-scaling numbers.

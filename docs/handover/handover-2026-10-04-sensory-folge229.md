@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: 2aceaff82c869f7b0e8633b936d806864aaef188342642abdeeab8ee49db7084
+  sha256: fbd5e0d5f774a88f132f5d904ab23def37dbbdad4c7b8b1ccfbfaa123d60791d
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -20,14 +20,15 @@ Akteur steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-10-04-sensory-folge228.md` (nach `archiv/`);
 diese Folge ist 229. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md` (Runde @`6b3b0bb56`, gemessen 2026-10-04T08:58Z).
+`state/zustand/standing-pass.md` (Runde @`9f9eb2c50`, gemessen 2026-10-04T13:0xZ).
 Eigene Messung dieses Atoms (2026-10-04 F229): Start-HEAD `6fdcbcef9` == `origin/main`
 (`git rev-parse`); Arbeitsbaum **sauber** (`git status --short` leer — kein fremder Hunk).
 Eigener Register-Pass (Fortsetzung nach Absturz, 2026-10-04 F229): `register_lookup --fired
 sensory` = 2 (`b`/`ox64-m2c`); `--stale sensory --persist 3` = 0; `--addressed sensory` = 2
 (`## An sensory` aus `river-folge88` und aus `river-folge89`/`mycelium-folge229` — beide in
 diesem Atom gefaltet); `git_safety --snapshot` = Working tree == HEAD (nichts zu sichern).
-HEAD bei der Fortsetzung `57a947412` == `origin/main` (`git rev-parse`).
+HEAD bei der ersten Fortsetzung `57a947412`; HEAD bei der zweiten Fortsetzung (dieses Atom)
+`f289d7c88` == `origin/main`, Arbeitsbaum sauber (gemessen `git rev-parse`/`git status`, 2026-10-04).
 
 **Gefeuert und gemessen (2026-10-04 F229):**
 - **`## An sensory` aus `river-folge88` gefaltet.** Zwei Sachen, gemessen:
@@ -92,6 +93,13 @@ HEAD bei der Fortsetzung `57a947412` == `origin/main` (`git rev-parse`).
   **kein Cloudflare-Worker**; Mycelium stagt die vier Assets, sobald Rivers `static/membrane.html`
   den Asset-Pfad nennt. Offen ist damit allein Rivers `membrane.html` mit dem Pfad
   (`fetch('/dr3_stars.bin')` etc.) — **keine Operator-Kante mehr**.
+- **Präregistrierung fortgeschrieben (Fortsetzung F229):**
+  `docs/paper/hyperscanning-te-preregistration.md` trägt jetzt die gemessenen FP-Zahlen
+  + die H1/H2-Lage als eigenen Abschnitt `### Ergebnisse / Results` (Tabelle; Header-sha
+  `dc1bb0b8…`). Die Werte wurden am Log nochmals verifiziert
+  (`ci_manage log 37197710877 --all`: `family-max survivors = 0` in allen drei
+  Task-Bedingungen, FP-Gates 0/20 je Gate). **n-Skalierung dispatcht:** Lauf
+  `37217425078` (`scales=512,1024,2048,4096`).
 
 **ox64-M2C (2026-10-04 F229):** DHL-Status unverändert — „Freigabe der Sendung im Ursprungsland",
 Zielland Deutschland, letztes Event Mi 23.09.2026 02:40 China VR; kein DE-Event. Keine
@@ -305,17 +313,17 @@ breiter messen.
 
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakte `hyperscanning-te-report-<task>` — **gefeuert** (Lauf `37197710877` success).
-- **Lage:** (gemessen 2026-10-03 F227) `docs/paper/hyperscanning-te-preregistration.md`, sha256 `11ccdb90…`; die Entscheidungsregel H1/H2 steht mit `file:line`. **Geliefert 2026-10-04 F229:** FP-Gates (`plan`) = **0 von 20** messbaren Trials je Gate (coherent-per-cell, per-cell, joint per-cell); Familien-Messung über **alle drei** Task-Bedingungen (s. Kopf) — **H1 trägt in keiner Task-Bedingung** einen Survivor; **H2** je 2 Nominees, Bestätigung inkonsistent **2/2 · 2/1 · 2/0**. Die **n-Skalierung fehlt** (Workflow-Input `scales` war leer).
+- **Trigger:** Abschluss des n-Skalierungslaufs `37217425078` — Beleg: `ci_manage view 37217425078` = completed.
+- **Lage:** (gemessen 2026-10-04 F229-Fortsetzung) `docs/paper/hyperscanning-te-preregistration.md` **fortgeschrieben**, Header-sha `dc1bb0b8…`; die Entscheidungsregel H1/H2 steht mit `file:line`, die gemessenen FP-Zahlen + die H1/H2-Lage stehen im neuen Abschnitt `### Ergebnisse / Results`. Werte am Log verifiziert (`ci_manage log 37197710877 --all`): FP-Gates (`plan`) = **0 von 20** je Gate (coherent-per-cell, per-cell, joint per-cell); über **alle drei** Task-Bedingungen **H1 ohne Survivor**, **H2** je 2 Nominees, Bestätigung inkonsistent **2/2 · 2/1 · 2/0**. n-Skalierung dispatcht (`37217425078`, `scales=512,1024,2048,4096`).
 - **Blockade:** keine.
-- **Braucht:** den Entwurf um die gemessenen FP-Zahlen + die H1/H2-Lage fortschreiben (Header-sha via `omega_sh sha` neu); für die n-Skalierung `gh workflow run hyperscanning-te.yml -f scales=512,1024,2048,4096`.
+- **Braucht:** Lauf `37217425078` nach Laufende lesen (`ci_manage view/jobs/log 37217425078`) und die `scaling.txt`/`scaling_*.txt`-Kurve in den Entwurf tragen (Header-sha neu).
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Lauf `37197710877` (success, 2026-10-04).
+- **Trigger:** Abschluss des zweiten-Kohorten-Laufs `37209904312` — Beleg: `ci_manage view 37209904312` = completed.
 - **Lage:** (gemessen 2026-10-03 F227) Arm **gebaut** (`1226e9082`): `brainvision_compiler --participant L|R` trennt die gemessenen **64 Kanäle** eines Dyaden-Files (Ch1–32 `_R`, Ch33–64 `_L`, 1000 Hz; ein File pro `sub-01`..`sub-32` = 32 Dyaden) in je ein Teilnehmer-Bin `<…>_eeg_L.bin`/`_R.bin` (point-major, passend zu `channel_series`); Workflow-Input `cohort` (ds007822|ds007471) baut den `manifest.txt`; bei ds007471 setzt der `plan`-Job `tasks` automatisch auf `jointaction`. `cargo check`/`--tests -p omegaflow-harvest` 0 Fehler/0 Warnungen. Riss zum Präreg: dort stand „32-Kanal", gemessen sind es 64 (2×32) in einem File — die Dyade ist `_L`/`_R` im selben File, kein Subjekt-Subjekt-Join.
 - **Blockade:** keine.
-- **Braucht:** **Lauf `37209904312` dispatcht** (`cohort=ds007471`, `channel=Cz`, 2026-10-04T14:36Z, head `4bcd4631`) — nach Laufende `ci_manage view/jobs/log 37209904312` + Artefakt `hyperscanning-te-report-jointaction` auswerten.
+- **Braucht:** Lauf `37209904312` (`cohort=ds007471`, `channel=Cz`, head `4bcd4631`, dispatched 2026-10-04T14:36Z; `ci_manage view` 2026-10-04T15:0xZ = **in_progress**) nach Laufende lesen (`ci_manage view/jobs/log 37209904312`) + Artefakt `hyperscanning-te-report-jointaction` auswerten.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -451,7 +459,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0017 · close 0.2800 · cap 0.50 · Grund: F229 — eine Line-Session (Sensory $0.1853) + drei flash-Taucher (`general` point-event-Form, `general` spectral-Endpunkte $0.0471, `grind-flash` hyperscanning-Cancel $0.0230; gemessen `session_burn`, opencode.db, 2026-10-04 F229, deepseek-flash) — unter dem Hard-Ceiling 0.50. Kein pro/max-Dispatch.
+## Burn: open 0.0017 · close 0.3100 · cap 0.50 · Grund: F229 — eine Line-Session (Sensory $0.1853) + drei flash-Taucher (`general` point-event-Form, `general` spectral-Endpunkte $0.0471, `grind-flash` hyperscanning-Cancel $0.0230) + zweite Fortsetzung (Line-Session $0.0297, keine Taucher; gemessen `session_burn`, opencode.db, 2026-10-04 F229/F229-Fortsetzung, deepseek-flash) — unter dem Hard-Ceiling 0.50. Kein pro/max-Dispatch.
 
 ## Abschluss
 
@@ -469,13 +477,19 @@ Pfade>` statt nackt; `git diff --cached` vor jedem Commit bleibt Pflicht.
 Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-04-sensory-folge229.md` (Vorwärtsschreibung),
 - `docs/handover/archiv/handover-2026-10-04-sensory-folge228.md` (Move der konsumierten F228),
-- `.github/workflows/hyperscanning-te.yml` (Screen-Splittung je Task-Bedingung, `f69fd6496`).
+- `.github/workflows/hyperscanning-te.yml` (Screen-Splittung je Task-Bedingung, `f69fd6496`),
+- `docs/paper/hyperscanning-te-preregistration.md` (Ergebnis-Abschnitt + Header-sha `dc1bb0b8…`).
 
 Dieses Atom maß und faltete den `## An sensory`-Block aus `river-folge88` (die zwei TE-Arme),
 remass die hyperscanning-te-Lage (zwei tote joint-family-Läufe, 360-min-Cap) und baute die
 Screen-Splittung je Task-Bedingung (`f69fd6496`) samt Dispatch von `37197710877`; der B-Punkt
 wurde auf die offene same-origin-Materialisierung geschärft. Die drei flash-Taucher (`general`×2,
 `grind-flash`) lieferten die Messungen.
+
+**Zweite Fortsetzung (dieses Atom):** die am Log verifizierten FP-/H1-/H2-Zahlen wurden in
+`docs/paper/hyperscanning-te-preregistration.md` als eigener Abschnitt `### Ergebnisse / Results`
+getragen (Header-sha `dc1bb0b8…`); die n-Skalierung wurde dispatcht (`37217425078`). Kein
+pro/max-Dispatch.
 
 `state/operator-gespraeche/2026-10-04-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
