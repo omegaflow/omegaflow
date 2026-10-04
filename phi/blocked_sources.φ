@@ -104,10 +104,6 @@ url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0
 note Phobos 2 KRFM krfm.dat — 2026-10-04 HTTP 206; 15 Spalten (5 Radiometer + 9 Photometer, 12-bit). Feld-Verdikt: pds3_krfm_radiometer1..5 + photometer1..9, em count (W/m2/sr-Kalibrierung fehlt — Riss). Offen: sources.φ-Block + CDN (Mycelium).
 
 pending
-url https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
-note Vega 1/2 MISCHA PDS3 — 2026-10-04 HTTP 206; 8 ASCII-Sampling-Dirs, 2 Schemata (Vektor 8, Spektren 17), nicht 7; pds3_fixed_width + CDN-Workflow stehen; kartiert: BX/BY/BZ + F00..F15; offen: Verdikt BT/BU/BUXPSSO/FLAG (Vektor-Schema 8 Spalten).
-
-pending
 url https://sbnarchive.psi.edu/pds4/hayabusa/
 note Hayabusa LIDAR cdr_*.tab — 2026-10-04 HTTP 206; 31 Spalten. Arm+Workflow stehen (pds4.rs, harvest.φ). Feld-Verdikt: RANGE hay_lidar_range inverse-square em km; übrige Spalten DROP (Geometrie/Anker). Offen: sources.φ-Block + CDN (Mycelium).
 
