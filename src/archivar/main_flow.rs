@@ -867,8 +867,11 @@ pub fn main_flow() {
         }
         BeatSource::Ble => {
             eprintln!("beat source: BLE — the one beat source; serial and FIT stand silent");
-            let tx = sensor_tx.clone();
-            thread::spawn(move || ble_ingress(tx));
+            #[cfg(unix)]
+            {
+                let tx = sensor_tx.clone();
+                thread::spawn(move || ble_ingress(tx));
+            }
         }
         BeatSource::Fit => {
             eprintln!(
