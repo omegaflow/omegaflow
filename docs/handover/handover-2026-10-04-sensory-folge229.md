@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: 929e476060c643e770f00c0d2d4b4131c77b496e0744411ce987f710f3203d61
+  sha256: 56569a3ce35a6bfab02d05331c1a0a220984c2ce5a77f0203789680571677c38
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -58,9 +58,13 @@ Eigener Register-Pass: `register_lookup --fired sensory` = 3
   `##[error] The operation was canceled.` + Terminierung von `hyperscanning_group_te`. Kein
   Artefakt. **Kein neuer hyperscanning-te-Lauf** in Liste/Watchdog; der Watchdog hat nicht
   gecancelt. **Befund:** der joint-family-Screen (3 Task-Bedingungen à ~2 h) übersteigt sein
-  eigenes 6-h-Cap — dieselbe Config kann nicht fertig werden. Der Punkt braucht eine **kürzere
-  Screen-Config** (`surrogates`/`percentile`/`max_points` senken oder je Bedingung trennen),
-  dann neu dispatchen. Kein Re-Dispatch der laufenden Config.
+  eigenes 6-h-Cap — dieselbe Config kann nicht fertig werden. **Gebaut (`f69fd6496`):** der
+  `screen` ist gesplittet — ein `plan`-Job (Gates + Matrix-Bau) und **je Task-Bedingung ein
+  eigener paralleler `screen`-Job** (`timeout-minutes: 330`, gleiche
+  `surrogates`/`percentile`/`max_points`; das Manifest wird je Task gefiltert — die Binary
+  familisiert ohnehin je Task, `hyperscanning_group_te.rs:740`, also Wissenschaft unverändert).
+  **Dispatched: Lauf `37197710877`** (head `f69fd6496`; `plan`+`confirm` queued, die 3
+  `screen`-Jobs expandieren nach `plan`). Artefaktname jetzt `hyperscanning-te-report-<task>`.
 - **B-Architektur steht:** WASM entschieden und gebaut (`044afbe42` wasm-Gate, `ede41905e`
   Dep-Schlankheit, `42268d146` wasm-bindgen-Einstieg, Bundle 128 753 B); die Paritäts-Toleranz
   ist gesetzt (`f7fa71940`/`815d7df43`/`80417fd53`). Offen ist allein die **Materialisierung**
@@ -278,23 +282,23 @@ breiter messen.
 
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakt `hyperscanning-te-report`.
+- **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakte `hyperscanning-te-report-<task>`.
 - **Lage:** (gemessen 2026-10-03 F227) Entwurf steht: `docs/paper/hyperscanning-te-preregistration.md`, sha256 `11ccdb90…`; Zweck, Daten, Estimator, Schwellen, die Gate-Namen und die Entscheidungsregel sind mit `file:line` belegt, die zweite Kohorte trägt jetzt die gemessene 64-Kanal-`_L`/`_R`-Form und den gebauten Arm (`1226e9082`); FP/FN-/Skalierungszahlen bleiben `pending` benannt.
 - **Blockade:** Validierungsartefakt.
-- **Braucht:** zuerst den joint-family-Lauf unter das 360-min-Cap bringen (Config kürzen), dann das Artefakt lesen; danach den Entwurf um die gemessenen FP/FN + n-Skalierung fortschreiben, Header-sha via `omega_sh sha` neu.
+- **Braucht:** der Splitt ist gebaut (`f69fd6496`) und **Lauf `37197710877` dispatcht**; nach Laufende die drei Artefakte `hyperscanning-te-report-{pddecision,pdfeedback,pdrest}` lesen (`ci_manage view 37197710877`), dann den Entwurf um die gemessenen FP/FN + n-Skalierung fortschreiben, Header-sha via `omega_sh sha` neu.
 
 ### Hyperscanning-TE — Validierung der neuen Läufe (joint family + gates)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss eines `hyperscanning-te`-Laufs am joint-family-Stand; Artefakt `hyperscanning-te-report`.
-- **Lage:** (gemessen 2026-10-04 F229 via `ci_manage view`/`jobs`/`log`) **beide joint-family-Läufe sind tot, kein Artefakt.** `37156315929` extern gecancelt (`pdfeedback 02:59:52Z` → `04:03:06 ##[error] The operation was canceled`; Watchdog ohne Median). Nachfolger **`37175843252`** (head `4e0b99aa`): Runner-Start `04:50:29Z` (47 min Queue), **`10:50:42Z` bei genau 360 min gecancelt** — das `screen`-Cap (`timeout-minutes: 360`, `.github/workflows/hyperscanning-te.yml:51`), Log-Ende `##[error] The operation was canceled.` + Terminierung von `hyperscanning_group_te`. Der joint-family-Bin ist gebaut inkl. Test `joint_channel_family_gate`.
-- **Blockade:** der Screen übersteigt sein 6-h-Cap (3 Task-Bedingungen à ~2 h) — dieselbe Config wird nie fertig.
-- **Braucht:** **Config kürzen** (`surrogates`/`percentile`/`max_points` senken oder je Task-Bedingung trennen; Owner = diese Linie, `.github/workflows/hyperscanning-te.yml`), dann `gh workflow run hyperscanning-te.yml` neu dispatchen und `ci_manage view <id>` + Artefakt `hyperscanning-te-report` auswerten. **Kein Re-Dispatch der laufenden Config.**
+- **Trigger:** Abschluss eines `hyperscanning-te`-Laufs am joint-family-Stand; Artefakte `hyperscanning-te-report-<task>`.
+- **Lage:** (gemessen 2026-10-04 F229 via `ci_manage view`/`jobs`/`log`) **beide alten joint-family-Läufe sind tot, kein Artefakt.** `37156315929` extern gecancelt; Nachfolger **`37175843252`** (head `4e0b99aa`): `10:50:42Z` bei genau 360 min gecancelt — das alte `screen`-Cap. **Splittung gebaut (`f69fd6496`)** und **Lauf `37197710877` dispatcht** (head `f69fd6496`; je Task-Bedingung ein paralleler `screen`-Job, `timeout-minutes: 330`; gleiche `surrogates`/`percentile`/`max_points`). Der joint-family-Bin ist gebaut inkl. Test `joint_channel_family_gate`.
+- **Blockade:** der neue Lauf `37197710877` läuft (`plan` queued, `screen` expandiert danach) — Artefakte entstehen am Jobende (kein Polling).
+- **Braucht:** `ci_manage view/jobs 37197710877` nach Laufende; die drei Artefakte `hyperscanning-te-report-{pddecision,pdfeedback,pdrest}` auswerten (family-max, Nominees, Bestätigung, Skalierungskurve). Config unverändert (Wissenschaft unberührt).
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Artefakt `hyperscanning-te-report` zu einem erfolgreichen joint-family-Lauf (Config unter dem 360-min-Cap).
+- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Artefakte `hyperscanning-te-report-<task>` zu einem erfolgreichen joint-family-Lauf.
 - **Lage:** (gemessen 2026-10-03 F227) Arm **gebaut** (`1226e9082`): `brainvision_compiler --participant L|R` trennt die gemessenen **64 Kanäle** eines Dyaden-Files (Ch1–32 `_R`, Ch33–64 `_L`, 1000 Hz; ein File pro `sub-01`..`sub-32` = 32 Dyaden) in je ein Teilnehmer-Bin `<…>_eeg_L.bin`/`_R.bin` (point-major, passend zu `channel_series`); Workflow-Input `cohort` (ds007822|ds007471) baut den `manifest.txt` aus `jointaction pair-<NN> {L,R}`. `cargo check`/`--tests -p omegaflow-harvest` 0 Fehler/0 Warnungen; die zwei Pfade sind committet. Riss zum Präreg: dort stand „32-Kanal", gemessen sind es 64 (2×32) in einem File — die Dyade ist `_L`/`_R` im selben File, kein Subjekt-Subjekt-Join.
-- **Blockade:** der Validierungs-Trigger (joint-family-Lauf) ist noch nicht ausgewertet; der Lauf scheitert derzeit am 360-min-Cap.
+- **Blockade:** der Validierungs-Trigger (joint-family-Lauf `37197710877`) ist noch nicht ausgewertet.
 - **Braucht:** nach dem Validierungsartefakt `gh workflow run hyperscanning-te.yml -f cohort=ds007471 -f channel=Cz`, dann `ci_manage view <id>` + Artefakt auswerten.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
@@ -467,7 +471,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0017 · close 0.1300 · cap 0.50 · Grund: F229 — eine Line-Session (Sensory $0.0426) + drei flash-Taucher (`general` point-event-Form, `general` spectral-Endpunkte $0.0471, `grind-flash` hyperscanning-Cancel $0.0230; gemessen `session_burn`, opencode.db, 2026-10-04 F229, deepseek-flash) — deutlich unter dem Hard-Ceiling 0.50.
+## Burn: open 0.0017 · close 0.2000 · cap 0.50 · Grund: F229 — eine Line-Session (Sensory $0.1051) + drei flash-Taucher (`general` point-event-Form, `general` spectral-Endpunkte $0.0471, `grind-flash` hyperscanning-Cancel $0.0230; gemessen `session_burn`, opencode.db, 2026-10-04 F229, deepseek-flash) — unter dem Hard-Ceiling 0.50. Kein pro/max-Dispatch.
 
 ## Abschluss
 
@@ -484,12 +488,14 @@ Pfade>` statt nackt; `git diff --cached` vor jedem Commit bleibt Pflicht.
 
 Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-04-sensory-folge229.md` (Vorwärtsschreibung),
-- `docs/handover/archiv/handover-2026-10-04-sensory-folge228.md` (Move der konsumierten F228).
+- `docs/handover/archiv/handover-2026-10-04-sensory-folge228.md` (Move der konsumierten F228),
+- `.github/workflows/hyperscanning-te.yml` (Screen-Splittung je Task-Bedingung, `f69fd6496`).
 
 Dieses Atom maß und faltete den `## An sensory`-Block aus `river-folge88` (die zwei TE-Arme),
-remass die hyperscanning-te-Lage (neuer Lauf `37175843252`) und aktualisierte den B-Punkt
-(Architektur entschieden, Materialisierung offen). Kein Code-Pfad berührt — die drei
-flash-Taucher (`general`×2, `grind-flash`) lieferten die Messungen.
+remass die hyperscanning-te-Lage (zwei tote joint-family-Läufe, 360-min-Cap) und baute die
+Screen-Splittung je Task-Bedingung (`f69fd6496`) samt Dispatch von `37197710877`; der B-Punkt
+wurde auf die offene same-origin-Materialisierung geschärft. Die drei flash-Taucher (`general`×2,
+`grind-flash`) lieferten die Messungen.
 
 `state/operator-gespraeche/2026-10-04-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
