@@ -174,7 +174,11 @@ fn sdss_rows(text: &str) -> Vec<SdssRow> {
         if !ra.is_finite() || !dec.is_finite() || !z.is_finite() {
             continue;
         }
-        out.push(SdssRow { ra, dec, z_raw });
+        out.push(SdssRow {
+            ra,
+            dec,
+            z_raw: z_raw.clone(),
+        });
     }
     out
 }

@@ -3517,6 +3517,18 @@ compiler tools/harvest/src/bin/neptune_ephemeris_compiler.rs
 at neptune
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/swarm-diss.eo.esa.int/swarm_tec.bin
+format swarm_tec
+origin https://swarm-diss.eo.esa.int/?do=download&file=swarm/Level2daily/Entire_mission_data/TEC/TMS/Sat_A/SW_OPER_TECATMS_2F_20131125T000000_20131125T235959_0502.ZIP
+compiler tools/harvest/src/bin/swarm_tec_compiler.rs
+sha256 42550ef8aa8cd1171852cd5263f52ce3e287866753e39c357f1caec4f75e3fad
+at earth
+ttl 86400
+cmap .
+lat Latitude
+lon Longitude
+field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/unidata-nexrad-level2.s3.amazonaws.com/nexrad_level2.bin
 format nexrad_level2
 origin https://unidata-nexrad-level2.s3.amazonaws.com/
