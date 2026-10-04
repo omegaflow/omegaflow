@@ -3,7 +3,7 @@
   session: Sensory-Folge 228
   class: handover
   date: 2026-10-04
-  sha256: a07aa2f9e053eae21555986230caf3d1dcc5687d6040e174ca1599b1825d8820
+  sha256: 1addb68b50ffef5897fd455d3a54a444cc8941fda59b1120ab024e66b3a5f0bd
   status: live
 -->
 # Handover — Sensory-Folge 228 (2026-10-04)
@@ -42,10 +42,22 @@ Lichtkegel-Vorfilter in `query_hash` (star-Pfad) gebaut — `emit_star` verwirft
 `|anchor_p0 − center| > rho_star` vor jeder weiteren Prüfung; das ist der vom Rat und den
 vier externen Stimmen benannte Hebel (die 32 361 sind Zellbelegung, nicht die Kegelmenge).
 `cargo check` 0 Fehler/0 Warnungen, scoped formatiert, committet und gepusht `c09dec9cf`.
-Die Probe läuft in CI (Run `37171298297`) — der Beweis (query_ms ≲ 2 ms, records ≈ 101)
-kommt aus dem Artefakt.
 
-## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-03)
+**Probe-Nachmessung (2026-10-04 F228, `membrane-hull-probe 37171298297`, Artefakt gelesen):**
+`QUERY | records 101 | query_ms 14.673` (vorher 32 361 / 263.9–306.3 ms), `LINEAR | admitted 101 |
+scan_ms 92.926 | per_sample_ns 54.516`; **0 von 4 Pfaden divergieren** (alle `f_excl 0 f_inc 0`).
+Der Kegel-Test hält: records = die wahre Kegelmenge (101), ~20× schneller, unter dem 16-ms-Frame-Budget.
+Das Rat-Ziel `≲ 2 ms` ist **nicht** erreicht — der Rest ist die 8-Zellen-Belegung bei
+`cell_size_star = 834 pc`; der benannte nächste Hebel ist Zelle ≈ Radius/Hierarchie, nicht die CPU.
+
+**Zwei flash-Taucher (2026-10-04 F228, `general`):**
+- **B-CDN-Korpus:** `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B (sha `07af335b…`/`3c49075f…`/`346f5af3…`), `dr3_stars.bin` 75 001 828 B (sha `fb9a1408…`), alle 200. **CORS: `access-control-allow-origin` auf allen vier absolut absent** (OPTIONS → 404). Ein direktes browser-`fetch()` von `omegaflow.space` auf die Release-URLs ist damit CORS-verwehrt — der serverlose Pfad braucht Same-Origin/Proxy. Das ist die harte Randbedingung für B.
+- **CI-Triage:** `hyperscanning-te 37156315929` `screen` in_progress, Timeout 360 min → Deadline 03:48Z; kein gemessener Grund für rerun/cancel. `ci-gate 37166323740 @a064896a4`: `register` 17 `url`-order-Verstöße in `phi/sources.φ` (Mountain), `dropped-gate` 1141→1144 (Mycelium), `format` `tools/harvest/emm_sdc_compiler.rs:242` + `kplo_spice_compiler.rs:173` (Mycelium), `clippy` `src/archivar/hdf4.rs:686` `manual_is_multiple_of` (Mountain/River) — **keine Sensory-Datei**, nicht meine Linie.
+
+**ox64-M2C (2026-10-04 F228, Browser-Bridge):** DHL-Status unverändert — „Freigabe der Sendung im
+Ursprungsland", Zielland Deutschland, letztes Event Mi 23.09.2026 02:40 China VR; kein DE-Event.
+
+## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-04)
 
 Diese Übergabe **ist** das Haus: jeder Sensor-/Hardware-Stand, jede Route, jeder Punkt steht hier
 mit Zustand (Operator-Wort 2026-09-29). Ein Punkt, der nur in `state/` lebt und hier fehlt, ist
@@ -225,6 +237,7 @@ breiter messen.
 - **Wort:** „warum das? eingefrorenes frame in static/membrane.html die presence muss sich frei durchs 4d block universum bewegen können" | 2026-10-03 | Operator (Session) — Korrektur des internen Rat-Verdikts: kein eingefrorenes Präsenz-Frame; die Presence muss frei durch den 4D-Block tunebar sein (jede Koordinate x,y,z,t → Feld neu ausgewertet); Sensory-Folge 227.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." | 2026-10-04 | Operator (Session) — Session-Start-Befehl, Sensory-Folge 228.
 - **Wort:** „Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … LOCK nie vorlegen. Wartend nie vorlegen. Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-04 | Operator (Session) — session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 228.
+- **Wort:** „ich möchte dass du bitte alle punkte bearbeitest nichts verschleppst nutze viele flash taucher" | 2026-10-04 | Operator (Session) — alle eigenen offenen Punkte in diesem Atom bearbeiten, viele flash-Taucher parallel; Sensory-Folge 228.
 
 ## Offen (aufgeschlüsselt)
 
@@ -242,7 +255,7 @@ breiter messen.
 - 2026-10-04, z.ai/GLM-5.3 (UI-Chat, `state/stimmen/2026-10-04_zai-ui_enclosure-lookup.json`): **bestätigt den Rat.** (1) Zellgröße + fehlender Kegel-Test sind die Ursache, **nicht die CPU** — 32 361 f64-Distanztests wären ~0,1–3 ms (gemessen 264 ms ≈ 8 µs/Kandidat, ~3 Größenordnungen darüber; **Hypothese, ungemessen:** degenerierter Vollscan/Units-Mix pc↔m). (2) **CPU/WASM f64**, kein GPU-Lookup (Consumer-GPU drosselt f64 auf 1/32–1/64 der f32-Rate; GPU-Roundtrip sprengt das 16-ms-Budget; der korrigierte Lookup ist ~101 Treffer, speichergebunden — CPU-Territorium). (3) **Architektur bestätigt:** das Feld pro (x,y,z,t) einmal autoritativ in f64 auf der CPU auswerten, die GPU konsumiert nur diesen Zustand für Bild/Klang in f32; Eval-Rate von der Framerate entkoppeln. (4) **Kleinste entscheidende Messung:** ein korrigierter Query (Zellgröße ≈ Radius + radialer Kegel-Test, f64, ein Thread) → erwartet ~101 Kandidaten, deutlich < 1 ms; minimaler zur Ursachen-Isolation: ein reiner f64-Filter über die schon vorliegenden 32 361 Kandidaten (erwartet 0,1–3 ms). Claude/Sonnet 5.5 antwortet noch.
 - 2026-10-04, claude.ai/Sonnet 5.5 Maximal (UI-Chat, `state/stimmen/2026-10-04_claude-ui_enclosure-lookup.json`): **bestätigt CPU/WASM f64, kein GPU-Lookup** (kein natives f64 im Browser-GPU-Pfad, WGSL darf umordnen; Readback teurer als die Rechnung). Neu/scharf: **f32-Auflösung bei 2,53e17 m ≈ 0,11 AU** (absolut bei 834 pc ≈ 15 AU), f64 ≈ 32 m → Positionen **relativ zur Presence** bilden, nie GPU-Werte in die Entscheidung zurückführen; **Klang in einen AudioWorklet** mit denselben f64-Parametern, nicht auf die GPU. 264 ms / 32 361 ≈ **8,2 µs/Kandidat** → der Pfad ist vermutlich **langsamer als Brute Force** (Overhead pro Kandidat; nackter Vollscan über 1,7 Mio = einige ms, Hypothese); Fix: Zelle ≈1–2× Radius oder k-d-Baum, exakter f64-Test **direkt nach dem Zellzugriff**. Kleinste Messung: **A/B-Lauf in WASM im Zielbrowser** (≥1000 zufällige (x,y,z,t), p50/p95): B = exakter f64-Test nach dem Zellzugriff; B ≤ ~4 ms p95 → Architektur steht. **Größte Lücke: die t-Abhängigkeit** — Eigenbewegung driftet den starren Index (30 km/s ≈ 3 pc/100 kyr), die Grobabfrage braucht `R + v_max·|Δt|`; ob die 264 ms bei festem t (und als Release-Build) gemessen wurden, ist ungemessen. Kimi K3 (`tryingopen.com`, 5-Nachrichten-Kontingent) hat geantwortet und bestätigt: Zellgröße + fehlender Kegel-Test sind ein **Algorithmus-Problem, nicht Hardware** (1,7 Mio f64-Distanztests wären in Rust einstellige ms; 264 ms/32 361 ≈ 8 µs/Kandidat passt nicht zu roher CPU-Arbeit); **CPU/WASM f64, kein GPU-Lookup** (WASM rechnet natives f64); pro Tuning-Eingabe **einmal** f64 auf der CPU, Ergebnis (~101) als **kleiner f32-Puffer an GPU/Audio**, die GPU sieht nie f64 noch die 1,7 Mio; kleinste Messung: (a) linearer f64-Scan über 1,7 Mio mit Kegel-Test timen, (b) Traversierung vs. Test im jetzigen Lookup zerlegen; Zellgröße auf ~Radius (8–16 pc) setzen und neu messen.
 - **Aussenantwort (2026-10-03, `nvidia/nemotron-3-ultra` via `opencode run --agent voice`, public-only):** widerspricht — **JS-Port + statischer Grid-/Morton-Index** (`.bin` + `.idx`) sei der pragmatischere Weg; WASM nur für rechenintensive Teilschritte. Fängt zwei Dinge, die der interne Rat **nicht** nannte: (a) **WGSL ist `f32`-only** — ICRS-Koordinaten brauchen `f64` (Origin-Shift relativ zur Presence oder `u64`/`f32`-Paar); (b) **WebGPU-Limits/Support** (`maxStorageBufferBindingSize` ~128–256 MB, Bind-Group-Zahl, **kein stabiles Safari/Firefox-WebGPU**), Speicher-OOM ab ~10⁵–10⁷ Körpern, Startlatenz. **Dissens ungeglättet:** WASM (ein Lookup, keine Drift) ↔ JS-Port+Index (leichter, aber zweite Implementierung); die `f32`-Frage ist in jedem Fall ungemessen und vor dem Bau zu messen. Weitere externe Stimmen (Ensemble) können folgen.
-- 2026-10-04, F228: **der Kegel-Vorfilter ist gebaut** — `query_hash` (`src/archivar/spatial.rs`) verwirft im star-Pfad `emit_star` jeden Stern mit `|anchor_p0 − center| > rho_star` vor jeder weiteren Prüfung; `rho_star = C_LIGHT·(|t2 − star_epoch_min| + delta_t_cache) + pad` wird einmal vor der Closure berechnet und im star-Block wiederverwendet. Committed `c09dec9cf`, `cargo check` 0 Fehler/0 Warnungen, scoped formatiert. Der Hebel ist A=A: ein Stern in Distanz d ist nur sichtbar, solange sein Licht angekommen ist (d ≤ c·Alter), nie zellgetrieben. **Nachmessung dispatcht:** `membrane-hull-probe 37171298297` (queued) — bis das Artefakt `records ≈ 101` und `query_ms ≲ 2 ms` zeigt, bleibt die Leistung unbewiesen; fällt der Test nicht, ist die Zellgröße der nächste Schritt.
+- 2026-10-04, F228: **der Kegel-Vorfilter ist gebaut** — `query_hash` (`src/archivar/spatial.rs`) verwirft im star-Pfad `emit_star` jeden Stern mit `|anchor_p0 − center| > rho_star` vor jeder weiteren Prüfung; `rho_star = C_LIGHT·(|t2 − star_epoch_min| + delta_t_cache) + pad` wird einmal vor der Closure berechnet und im star-Block wiederverwendet. Committed `c09dec9cf`, `cargo check` 0 Fehler/0 Warnungen, scoped formatiert. Der Hebel ist A=A: ein Stern in Distanz d ist nur sichtbar, solange sein Licht angekommen ist (d ≤ c·Alter), nie zellgetrieben. **Nachmessung (Artefakt gelesen):** `membrane-hull-probe 37171298297` → `records 101`, `query_ms 14.673`, `0/4 Pfade divergieren`; das Rat-Ziel `≲ 2 ms` ist **nicht** erreicht, aber das 16-ms-Frame-Budget gehalten. Der nächste Hebel ist Zelle ≈ Radius/Hierarchie (die 8 Zellen à 834 pc), nicht die CPU. **CORS-Randbedingung (Taucher):** die vier CDN-Assets tragen **keinen** `access-control-allow-origin` (OPTIONS 404) — der Browser kann sie nicht direkt cross-origin laden; B braucht Same-Origin/Proxy.
 
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
@@ -391,7 +404,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0488 — session_burn (opencode.db, 2026-10-04 F228, deepseek-flash; „Sensory-Linie in einem Pass abarbeiten" $0.0488; kein pro/max-Dispatch dieses Atoms)
+## Burn: open 0.0000 · close 0.0781 — session_burn (opencode.db, 2026-10-04 F228, deepseek-flash; „Sensory-Linie in einem Pass abarbeiten" $0.0781, zwei `general`-Taucher (B-CDN-Korpus, CI-Triage) im Fenster $0.1756; kein pro/max-Dispatch dieses Atoms)
 
 ## Abschluss
 
