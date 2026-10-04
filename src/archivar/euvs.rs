@@ -3,6 +3,13 @@ pub const MAGIC: [u8; 4] = *b"GEUV";
 pub const COMP_EUV304: u32 = 1;
 pub const COMP_LYA1216: u32 = 2;
 
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    match comp {
+        COMP_LYA1216 => Some("goes_euvs_lya1216"),
+        _ => None,
+    }
+}
+
 pub fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * 20);
     buf.extend_from_slice(&MAGIC);
@@ -60,6 +67,13 @@ mod tests {
     fn rejects_foreign_bytes() {
         assert!(parse_bin(b"X").is_none());
         assert!(parse_bin(b"GEUVabc").is_none());
+    }
+
+    #[test]
+    fn component_name_names_the_lyman_alpha_line() {
+        assert_eq!(component_name(COMP_LYA1216), Some("goes_euvs_lya1216"));
+        assert_eq!(component_name(COMP_EUV304), None);
+        assert_eq!(component_name(9), None);
     }
 
     #[test]

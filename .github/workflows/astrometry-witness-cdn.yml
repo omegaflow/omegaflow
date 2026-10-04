@@ -1,0 +1,40 @@
+name: astrometry-witness-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  astrometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the Weberin astrometry series once and upload each AST1 to CDN
+        run: |
+          mkdir -p data/vizier.cfa.harvard.edu
+          # ariel/miran/umbri arrive complete from the cfa.harvard mirror; obero/titan/uranu
+          # truncate there (curl 18 at 65083 B) and are read from the CDS mirror. The tag stays
+          # vizier.cfa.harvard.edu (astrometry_series_compiler DEFAULT_NETLOC).
+          for entry in \
+            "ariel_j|https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000" \
+            "miran_j|https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000" \
+            "umbri_j|https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000" \
+            "obero_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000" \
+            "titan_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000" \
+            "uranu_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000"; do
+            name="${entry%%|*}"
+            url="${entry#*|}"
+            gh release download vizier.cfa.harvard.edu --repo omegaflow/sources \
+              --pattern "$name.ast1" --clobber 2>/dev/null || \
+              cargo run -p omegaflow-harvest --release --bin astrometry_series_compiler -- \
+                --source "$url" --out "data/vizier.cfa.harvard.edu/$name.ast1" --ci-mode
+          done
