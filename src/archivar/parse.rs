@@ -49,6 +49,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_headers: Vec<(String, String)> = Vec::new();
     let mut cur_target: Option<String> = None;
     let mut cur_catalog: Option<String> = None;
+    let mut cur_range: Option<RangeAxis> = None;
     let mut cur_max_freq: Option<f64> = None;
     let mut cur_min_freq: Option<f64> = None;
     let mut cur_body: Option<String> = None;
@@ -104,6 +105,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             target: cur_target.clone(),
                             origin: cur_origin.clone(),
                             catalog: cur_catalog.clone(),
+                            range: cur_range,
                             max_freq: cur_max_freq,
                             min_freq: cur_min_freq,
                             body: cur_body.clone(),
@@ -152,6 +154,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_ttl = 0;
                 cur_target = None;
                 cur_catalog = None;
+                cur_range = None;
                 cur_max_freq = None;
                 cur_min_freq = None;
                 cur_body = None;
@@ -1449,6 +1452,32 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "post_body" if parts.len() >= 2 => cur_post_body = Some(parts[1].to_string()),
             "target" if parts.len() >= 2 => cur_target = Some(parts[1].to_string()),
             "catalog" if parts.len() >= 2 => cur_catalog = Some(parts[1].to_string()),
+            "range" if parts.len() == 3 => {
+                let start = parts[1].parse::<f64>();
+                let step = parts[2].parse::<f64>();
+                match (start, step) {
+                    (Ok(s), Ok(d)) if s.is_finite() && s >= 0.0 && d.is_finite() && d > 0.0 => {
+                        cur_range = Some(RangeAxis {
+                            start_m: s,
+                            step_m: d,
+                        });
+                    }
+                    _ => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("range void: {}", line),
+                        );
+                    }
+                }
+            }
+            "range" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("range arity {}: {}", parts.len(), line),
+                );
+            }
             "max_freq" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<f64>() {
                     cur_max_freq = Some(v);
@@ -1691,6 +1720,7 @@ mod tests {
             post_body: None,
             target: None,
             catalog: None,
+            range: None,
             max_freq: None,
             min_freq: None,
             body: None,
@@ -1754,6 +1784,47 @@ mod tests {
     fn a_source_without_ttl_or_no_cadence_is_inactive() {
         let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\n";
         assert!(parse_sources(content).is_empty());
+    }
+
+    #[test]
+    fn range_directive_records_start_and_step_metres() {
+        let content =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0.15\nttl 604800\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(
+            sources[0].range,
+            Some(RangeAxis {
+                start_m: 300.0,
+                step_m: 0.15,
+            })
+        );
+    }
+
+    #[test]
+    fn range_directive_with_zero_or_negative_step_stays_unrecorded() {
+        let zero = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nttl 604800\n";
+        let negative =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nttl 604800\n";
+        assert_eq!(parse_sources(zero)[0].range, None);
+        assert_eq!(parse_sources(negative)[0].range, None);
+    }
+
+    #[test]
+    fn range_directive_with_void_arity_stays_unrecorded() {
+        let content = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nttl 604800\n";
+        assert_eq!(parse_sources(content)[0].range, None);
+    }
+
+    #[test]
+    fn range_directive_resets_at_the_next_url() {
+        let content = "url https://example.com/a.bin\nformat gras_2c\nrange 300.0 0.15\nat mars\n\
+                       ttl 604800\nurl https://example.com/b.bin\nformat gras_2c\nat mars\n\
+                       ttl 604800\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 2);
+        assert!(sources[0].range.is_some());
+        assert_eq!(sources[1].range, None);
     }
 
     #[test]

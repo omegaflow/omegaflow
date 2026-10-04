@@ -45,6 +45,8 @@ pub const MAGIC_ERSSTV5: [u8; 4] = *b"ERS1";
 pub const MAGIC_ASCAT: [u8; 4] = *b"ASC1";
 pub const MAGIC_CSES_LAP: [u8; 4] = *b"CSL1";
 pub const MAGIC_CSES_EFD: [u8; 4] = *b"CSE1";
+pub const MAGIC_CSES_HPM: [u8; 4] = *b"CSH1";
+pub const MAGIC_CSES_SCM: [u8; 4] = *b"CSC1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -231,6 +233,16 @@ pub const COMP_CSES_EFD_VLF_EY: u32 = 8;
 pub const COMP_CSES_EFD_VLF_EZ: u32 = 9;
 pub const COMP_CSES_EFD_MAX: u32 = 9;
 
+pub const COMP_CSES_HPM_FG2_X: u32 = 1;
+pub const COMP_CSES_HPM_FG2_Y: u32 = 2;
+pub const COMP_CSES_HPM_FG2_Z: u32 = 3;
+pub const COMP_CSES_HPM_MAX: u32 = 3;
+
+pub const COMP_CSES_SCM_ULF_X: u32 = 1;
+pub const COMP_CSES_SCM_ULF_Y: u32 = 2;
+pub const COMP_CSES_SCM_ULF_Z: u32 = 3;
+pub const COMP_CSES_SCM_MAX: u32 = 3;
+
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
@@ -295,6 +307,8 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "ascat_wind" => Some(MAGIC_ASCAT),
         "cses_lap" => Some(MAGIC_CSES_LAP),
         "cses_efd" => Some(MAGIC_CSES_EFD),
+        "cses_hpm" => Some(MAGIC_CSES_HPM),
+        "cses_scm" => Some(MAGIC_CSES_SCM),
         _ => None,
     }
 }
@@ -345,6 +359,8 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "ascat_wind" => Some(COMP_ASCAT_MAX),
         "cses_lap" => Some(COMP_CSES_MAX),
         "cses_efd" => Some(COMP_CSES_EFD_MAX),
+        "cses_hpm" => Some(COMP_CSES_HPM_MAX),
+        "cses_scm" => Some(COMP_CSES_SCM_MAX),
         _ => None,
     }
 }

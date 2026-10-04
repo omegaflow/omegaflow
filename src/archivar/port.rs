@@ -197,7 +197,7 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
         }
         match parts[0] {
             "url" | "format" | "header" | "target" | "catalog" | "flux_from_mag"
-            | "abs_mag_from" | "catalog_epoch" | "max_freq" | "min_freq" => {
+            | "abs_mag_from" | "catalog_epoch" | "max_freq" | "min_freq" | "range" => {
                 head.push(t.to_string());
             }
             "ttl" => {

@@ -101,6 +101,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "las" => crate::las::las_series::parse_series(bytes),
         "hamqsl_solar" => hamqsl::parse_bin(bytes),
         "usgs_comcat_m45" => usgs_comcat::parse_bin(bytes),
+        "quake_ptevent" => quake_event::parse_series(bytes),
+        "f107" => f107::parse_series(bytes),
         "aia" => aia::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
         "hapi_csv" => hapi_csv::parse_bin(bytes),
@@ -413,6 +415,8 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             _ => None,
         },
         "usgs_comcat_m45" => usgs_comcat::component_name(comp),
+        "quake_ptevent" => quake_event::component_name(comp),
+        "f107" => f107::component_name(comp),
         "mitdb" => match comp {
             mitdb::COMP_MLII => Some("mitdb_mlii"),
             mitdb::COMP_V1 => Some("mitdb_v1"),
@@ -941,6 +945,18 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_CSES_EFD_VLF_EX => Some("cses_efd_vlf_ex_v_m"),
             crate::geo::COMP_CSES_EFD_VLF_EY => Some("cses_efd_vlf_ey_v_m"),
             crate::geo::COMP_CSES_EFD_VLF_EZ => Some("cses_efd_vlf_ez_v_m"),
+            _ => None,
+        },
+        "cses_hpm" => match comp {
+            crate::geo::COMP_CSES_HPM_FG2_X => Some("cses_hpm_fg2_x_nt"),
+            crate::geo::COMP_CSES_HPM_FG2_Y => Some("cses_hpm_fg2_y_nt"),
+            crate::geo::COMP_CSES_HPM_FG2_Z => Some("cses_hpm_fg2_z_nt"),
+            _ => None,
+        },
+        "cses_scm" => match comp {
+            crate::geo::COMP_CSES_SCM_ULF_X => Some("cses_scm_ulf_x_nt"),
+            crate::geo::COMP_CSES_SCM_ULF_Y => Some("cses_scm_ulf_y_nt"),
+            crate::geo::COMP_CSES_SCM_ULF_Z => Some("cses_scm_ulf_z_nt"),
             _ => None,
         },
         _ => None,
@@ -6985,7 +7001,11 @@ mod edf_arm_tests {
         ]);
         let channels = edf_emit_channels(&bytes, &Position::Source, 1.0, 1.0, EDF_CHANNEL_CAP);
         assert_eq!(channels.len(), 3);
-        assert!(channels.iter().all(|(c, _)| c.station_code.as_deref() != Some("SpO2")));
+        assert!(
+            channels
+                .iter()
+                .all(|(c, _)| c.station_code.as_deref() != Some("SpO2"))
+        );
     }
 
     #[test]
