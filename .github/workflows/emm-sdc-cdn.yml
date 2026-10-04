@@ -32,8 +32,23 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "asset emm_exi_l2.tar missing — compiling and manifesting"
           fi
+      - name: Egress via a non-Azure exit (wireproxy/Proton)
+        if: steps.idempotence.outputs.present == 'false'
+        env:
+          WIREPROXY_CONF: ${{ secrets.PROTON_WG_CONF }}
+        run: |
+          curl -fsSL -o /tmp/wireproxy.tgz \
+            https://github.com/pufferffish/wireproxy/releases/download/v1.1.3/wireproxy_linux_amd64.tar.gz
+          tar -xzf /tmp/wireproxy.tgz -C /tmp wireproxy
+          printf '%s\n' "$WIREPROXY_CONF" > /tmp/wireproxy.conf
+          nohup /tmp/wireproxy -c /tmp/wireproxy.conf >/tmp/wireproxy.log 2>&1 &
+          sleep 3
+          echo "wireproxy up on socks5h://127.0.0.1:25344"
       - name: Compile and manifest the EMM SDC EXI L2 science archive to the CDN
         if: steps.idempotence.outputs.present == 'false'
+        env:
+          ALL_PROXY: socks5h://127.0.0.1:25344
+          HTTPS_PROXY: socks5h://127.0.0.1:25344
         run: |
           cargo run --release -p omegaflow-harvest --bin emm_sdc_compiler -- \
             --instrument exi --data-level l2 --ci-mode
