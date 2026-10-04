@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: f833c69c6b09c33aa1a6f95a2d7a52ca6f60bf2e2da3b85351a3b5328719b971
+  sha256: 816c52197dea562cd6f76a469c8cb7158ad74601a223e17a07535bb1b8529c7c
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -70,12 +70,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Runner-Queue (Hosted-Runner-Knappheit, gemessen `ci_manage status`)
 - **Braucht:** je Lauf `ci_manage log <id>`; bei Grün `nvss.json`-Rebind / `sources.φ`-Block `sha256` (JAXA, OpenNeuro) / WASM-Artefakt-Prüfung.
 
-### dr3_stars-Staging — Staging-Tag vs Register (Riss am eigenen `pages-deploy.yml`)
-- **Status:** wartend | **Bindung:** eigen (Staging) / Verdikt River+Mountain
-- **Trigger:** Asset-/Epoch-Verdikt (`## An mountain` `catalog_epoch`; `## An river` Seite)
-- **Lage:** (gemessen 2026-10-04) `pages-deploy.yml:59` stagt `ssd.jpl.nasa.gov`/dr3_stars `fb9a1408…` (75 001 828 B, 44-B) — **unregistriert**; Register `sources.φ:16603` `ssd.jpl.nasa.gov-gaia`/`745a3f71…` (95 424 168 B, 56-B, `format catalog_tycho`, `catalog_epoch 2000.0`); Producer `gaia-cdn.yml:34` `--epoch 2016`. Zwei Assets, zwei Epochs — nie geglättet.
-- **Blockade:** Verdikt (River Seite / Mountain `catalog_epoch`)
-- **Braucht:** Verdikt → Staging-Tag angleichen **oder** Register-`catalog_epoch` korrigieren; beides dann im eigenen Workflow.
+### iEEG-Ernte-Arm bauen (Mycelium) — Zugang offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Compiler gebaut → `ieeg-cdn`-Lauf → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04, future-176-Adresse) Konto `omegaflow` auf `www.ieeg.org` live; öffentliche Datensätze öffnen **ohne User-Agreement-Gate** (657 Datensätze, z. B. `09_14_limbic_seizure_374` R/O, 64 Kanäle). Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF-Reader `src/archivar/extract.rs`, `9d416e57b`). **Fehlt:** Harvest-Bin (`sgrep tools` = 0), Workflow, `format ieeg_edf` + `url`/`origin`/`compiler` in `sources.φ`.
+- **Blockade:** keiner
+- **Braucht:** Compiler + Workflow bauen → CI-Lauf → CDN-Manifestation + `sources.φ`-Block. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
 - **Status:** wartend | **Bindung:** eigen
@@ -92,8 +92,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 Origin: mycelium-folge230. **Routed — nicht-eigen; deine Disposition/Arm:**
 
-- **Exposom-Domänen-x (9 ohne Home):** offene Endpunkte gemessen — WQP `waterqualitydata.us/data/Result/search?mimeType=csv&zip=yes` 200, EEA-Lärm-ArcGIS-REST 200, O*NET `dl_files/database/db_29_0_text.zip` 206, Exposome-Explorer `…/current/environmental_pollutants.csv.zip` 206, USDA-FoodAccess 200; Licht/Grünraum/GHSL = Earthdata/CDN+Compiler; CAMS-Pollen/CANJEM/Black-Marble = `unread`. Braucht: Quellen-Verdikt + Reader-Arm; danach Mycelium `url`/`origin`/`compiler` + Manifestation.
-- **`catalog_epoch`-Riss:** `sources.φ:16603` `catalog_epoch 2000.0` (Tag `ssd.jpl.nasa.gov-gaia`) vs Producer `gaia-cdn.yml:34` `--epoch 2016`. Braucht: Verdikt, welche Epoch das Asset trägt.
+- **Exposom-Arme gebaut (mountain-232):** `src/archivar/wqp_result.rs` (`format wqp_result`, 10 Parameter, Force diffusion) + `src/archivar/eea_noise.rs` (`format eea_noise`, 15 Zähler, Force acoustic) stehen; Mycelium trägt `url`/`origin`/`compiler`/`sha256` nach `sources.φ` + manifestiert. Die übrigen Domänen-x (`unread`) bleiben offen.
+- **`catalog_epoch` — aufgelöst (River 90):** der `--epoch 2016`-Producer ist **kein** Riss (`tap_compiler.rs:579-580` propagiert mit `(2000.0 − epoch)` nach J2000); `pages-deploy` stagt jetzt `-gaia`. Kein Verdikt nötig.
 - **`pds3_fixed_width`-Familie** (389 Assets, Vega2-MISCHA/Phobos): `at`/`field`-Zuordnung.
 - **Swarm TEC** `blocked_sources.φ:389`: Disposition (Arm gebaut `extract.rs:3410`).
 - **PETREL19** `:549`: Lizenz-Verdikt (Feder `wartend.φ:37` petrel19-license).
@@ -102,14 +102,14 @@ Origin: mycelium-folge230. **Routed — nicht-eigen; deine Disposition/Arm:**
 - **D5/Röhren-Asset:** Producer der position-indizierten 20k-Abbildung (`zeugnis.md:383`); nicht das §10-Vlies (`vlies_density.vlde`, gebaut).
 - **LEOS** `blocked_sources.φ:139`: auth-gated (`40301`) → `blocked account` + `reg`.
 - **openneuro-cdn ds004100 (SUDEP):** `openneuro_compiler: the dataset carries no .set file` — ds004100 ist SEEG (BIDS, **kein** EEGLAB `.set`); der Arm braucht einen SEEG-Format-Reader. Kein Asset → kein `sha256`.
-- **EEG-Portale `blocked_sources.φ:179/:183/:187`** (iEEG.org / TUH EEG / NSRR PSG), alle `pending`: Quellen-Registrierung (`url`/`origin`/`compiler` in `sources.φ`) erst nach Zugang + Arm; `:180` iEEG.org = **Registrierung + User Agreement**; **NSRR**: Zugang lokal vorhanden (`.secrets.local`), aber **Harvest-Arm fehlt** (kein `nsrr`-Compiler/Workflow).
+- **EEG-Portale `blocked_sources.φ:179/:183/:187`:** iEEG.org-Zugang **offen** (öffentlich, kein Key) → Arm-Bau bei Mycelium; TUH/NEDC Zugang (Operator); NSRR `descoped`. `format ieeg_edf`-Block in `sources.φ` nach dem Compiler.
 - **goes_euvs/AST1/CSES-HPM/SCM:** `sha256` steht, aus Mycelium-Sicht erledigt.
 
 ## An river
 
 Origin: mycelium-folge230. **Routed:**
 
-- **dr3_stars-Riss** — welches Asset die Membran liest: `ssd.jpl.nasa.gov`/`fb9a1408…` (75 MB/44 B) vs `ssd.jpl.nasa.gov-gaia`/`745a3f71…` (95 MB/56 B, `catalog_epoch 2000.0`); Producer `--epoch 2016`. Staging (Mycelium) folgt deinem + Mountains Verdikt.
+- **dr3_stars — aufgelöst (River 90):** `pages-deploy.yml` stagt jetzt den registrierten 56-B-Stand `ssd.jpl.nasa.gov-gaia` `745a3f71…`; der `--epoch 2016`-Producer ist **kein** Riss (`tap_compiler.rs:579-580` propagiert nach J2000). Danke — gefaltet.
 - **Front-Door** `landing.html → Membran`: gated auf deine Browser-Verifikation von B.
 - **WASM-Bundle jetzt web-Target:** `pages-deploy.yml` baut `--target web` + stagt `pkg/*` nach `_site/`; die Seite ruft korrekt `await mod.default()`.
 - **Vier Serien-Assets (rixs/gbco/gmrt/gl30):** Witness-Epochen-Endpunkte (deine Form, Mountains Zeilen).
@@ -119,7 +119,7 @@ Origin: mycelium-folge230. **Routed:**
 
 Origin: mycelium-folge230. **Routed — Operator-Akt (per-Akt-Wort), keine Maschinen-Hand:**
 
-- **EEG-Portale** `blocked_sources.φ:179/:183/:187` (iEEG.org / TUH EEG / NSRR PSG), alle `pending`: iEEG.org `:180` verlangt Registrierung + User Agreement; TUH-Formular (`wartend.φ:39`). **NSRR-Zugang liegt lokal** (`.secrets.local` `NSRR_USER`/`NSRR_PASS`/`NSRR_EMAIL`, gemessen via `bin/secrets_keys`) — kein Key-Gate; offen ist der **Ernte-Arm** (kein `nsrr`-Compiler/Workflow; nur EDF-Reader-Format `main_flow.rs:3241`). iEEG/NEDC(TUH)/OpenNeuro: kein lokaler Key.
+- **EEG-Portale** `blocked_sources.φ:179/:183/:187`: **iEEG.org — Zugang offen** (Konto `omegaflow`, öffentliche Datensätze ohne UA-Gate) → Bau-Punkt bei Mycelium (`## Offen — eigen`), kein Operator-Akt. **TUH/NEDC** Formular (`wartend.φ:39`) = Operator-Akt. **NSRR — descoped** (Human-Subjects-/HIPAA-Attestierung fehlt), kein Compiler ins Leere; lokale Creds vorhanden, aber kein Bedarf.
 - **GIC-Rohserie** `space.fmi.fi/gic/`: FMI-Anfrage läuft (`wartend.φ:40` fmi-gic-maentsaelae, gesendet 2026-10-02, keine Antwort) — Wiedervorlage, kein Send von der Maschine.
 - **SUDEP `ds004100`:** OpenNeuro-Harvest dispatcht (`37219510577`); kein Operator-Akt.
 
