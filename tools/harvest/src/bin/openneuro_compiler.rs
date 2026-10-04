@@ -1,3 +1,4 @@
+use omegaflow::archivar::edf::{parse_edf, signal_samples};
 use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, jpath_val, jstr, parse_json};
 use omegaflow::matfile::{MatArray, MatData, MatField, parse_mat};
@@ -93,7 +94,7 @@ fn files_from_json(body: &str) -> Option<Vec<(String, String)>> {
             Some(JsonVal::Str(s)) => s.clone(),
             _ => continue,
         };
-        if !filename.ends_with(".set") {
+        if !(filename.ends_with(".set") || filename.ends_with(".edf")) {
             continue;
         }
         let url = match map.get("urls") {
@@ -341,6 +342,55 @@ fn extract_eeg(bytes: &[u8]) -> Option<EegExtract> {
     })
 }
 
+fn extract_edf(bytes: &[u8]) -> Option<EegExtract> {
+    let header = parse_edf(bytes)?;
+    if header.data_records <= 0 {
+        return None;
+    }
+    let nbchan = u32::try_from(header.signals.len()).ok()?;
+    if nbchan == 0 {
+        return None;
+    }
+    let per_record = header.signals[0].samples_per_record as u64;
+    if per_record == 0
+        || header
+            .signals
+            .iter()
+            .any(|s| s.samples_per_record as u64 != per_record)
+    {
+        return None;
+    }
+    let pnts = per_record.checked_mul(header.data_records as u64)?;
+    let labels: Vec<String> = header.signals.iter().map(|s| s.label.clone()).collect();
+    if labels.iter().any(|l| l.len() > 0xFFFF) {
+        return None;
+    }
+    let srate = if header.record_duration_s > 0.0 {
+        Some(per_record as f64 / header.record_duration_s)
+    } else {
+        None
+    };
+    let mut samples: Vec<f64> = Vec::with_capacity((nbchan as u64 * pnts) as usize);
+    for i in 0..header.signals.len() {
+        let channel = signal_samples(bytes, &header, i);
+        if channel.len() as u64 != pnts {
+            return None;
+        }
+        for value in channel {
+            samples.push(value?);
+        }
+    }
+    Some(EegExtract {
+        nbchan,
+        pnts,
+        trials: 1,
+        srate,
+        labels,
+        samples: Samples::Double(samples),
+        events: None,
+    })
+}
+
 fn sha256_bytes(hex: &str) -> Option<[u8; 32]> {
     if hex.len() != 64 {
         return None;
@@ -422,8 +472,12 @@ fn run(args: &[String]) -> Result<(), String> {
     if let Some(local) = arg_value(args, "--local") {
         let bytes =
             std::fs::read(&local).map_err(|e| format!("read {local} returned void: {e}"))?;
-        let extract = extract_eeg(&bytes)
-            .ok_or_else(|| format!("{local}: the .set carries no EEG contract"))?;
+        let parsed = if local.ends_with(".edf") {
+            extract_edf(&bytes)
+        } else {
+            extract_eeg(&bytes)
+        };
+        let extract = parsed.ok_or_else(|| format!("{local}: the EEG file carries no contract"))?;
         eprintln!("{local}:");
         report(&extract);
         return Ok(());
@@ -437,7 +491,9 @@ fn run(args: &[String]) -> Result<(), String> {
         latest_snapshot(&dataset).ok_or("the OpenNeuro snapshot carries no tag or hexsha")?;
     let files = set_files(&hexsha, &dataset).ok_or("the OpenNeuro file tree reads void")?;
     if files.is_empty() {
-        return Err("the dataset carries no .set file — nothing manifestiert (0 honored)".into());
+        return Err(
+            "the dataset carries no .set/.edf EEG file — nothing manifestiert (0 honored)".into(),
+        );
     }
     let filtered: Vec<&(String, String)> = files
         .iter()
@@ -459,7 +515,7 @@ fn run(args: &[String]) -> Result<(), String> {
         .collect();
 
     eprintln!(
-        "{dataset} snapshot {snapshot_tag} ({hexsha}): {} .set file(s), out root {out_root}",
+        "{dataset} snapshot {snapshot_tag} ({hexsha}): {} EEG file(s), out root {out_root}",
         filtered.len()
     );
     let mut staged: Vec<String> = Vec::new();
@@ -477,17 +533,25 @@ fn run(args: &[String]) -> Result<(), String> {
                 continue;
             }
         };
-        let extract = match extract_eeg(&bytes) {
+        let parsed_extract = if rel.ends_with(".edf") {
+            extract_edf(&bytes)
+        } else {
+            extract_eeg(&bytes)
+        };
+        let extract = match parsed_extract {
             Some(ex) => ex,
             None => {
-                eprintln!("{rel}: the .set carries no EEG contract — skipped (0 honored)");
+                eprintln!("{rel}: the EEG file carries no contract — skipped (0 honored)");
                 skipped += 1;
                 continue;
             }
         };
         eprintln!("{rel}:");
         report(&extract);
-        let bin_rel = match rel.strip_suffix(".set") {
+        let bin_rel = match rel
+            .strip_suffix(".set")
+            .or_else(|| rel.strip_suffix(".edf"))
+        {
             Some(s) => format!("{s}.bin"),
             None => format!("{rel}.bin"),
         };
@@ -513,9 +577,7 @@ fn run(args: &[String]) -> Result<(), String> {
         staged.push(bin_path);
     }
     if staged.is_empty() {
-        return Err(
-            "no .set file carries an EEG contract — the harvest stays void (0 honored)".into(),
-        );
+        return Err("no EEG file carries a contract — the harvest stays void (0 honored)".into());
     }
     if !ci_mode {
         eprintln!(

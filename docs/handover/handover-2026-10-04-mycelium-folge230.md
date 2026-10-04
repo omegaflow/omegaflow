@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: fc63fd2963a2603dadb8521ac269ac453095a4dfa0d80b0246a931b6edf49281
+  sha256: 4e05f2ae4281b913074510742a5348a64dd57ce54c81a5a9e14acb5067e78733
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -57,7 +57,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
 - **keine roten Läufe im Fenster**; der frühere `nvss-cdn 37197870103` (ASU-Route leer) ist durch Fix + neuen Lauf abgelöst.
-- **`openneuro-cdn 37219510577` @`7ccc360e8` = failure** (gemessen `ci_manage log`): `openneuro_compiler: the dataset carries no .set file — nothing manifestiert (0 honored)` — ds004100 ist SEEG (kein EEGLAB `.set`); der Arm liest das Format nicht → Mountain-Parser (`## An mountain`).
+- **`openneuro-cdn 37219510577` @`7ccc360e8` = failure** (gemessen `ci_manage log`): `openneuro_compiler: the dataset carries no .set file` — ds004100 ist **EDF** (319 Dateien), der Compiler filterte hart auf `.set`. **Gefixt:** `.edf`-Zweig gebaut (s. u.); Lauf neu dispatcht.
 - **in flight (queued, Runner-Knappheit):** `nvss-cdn 37218852211` · `pages-deploy 37220624724` · `jaxa-gportal-cdn 37220243355` — je `unread`.
 - **success (fact level):** `cses-efd-cdn 37196088057` · `cses-hpm-cdn 37214214253` · `cses-scm-cdn 37214216529` · `emm-sdc-cdn 37195699687` · `cuprate-cdn 37214211680` · `astrometry-witness-cdn 37214209546` · `pages-deploy 37196979821`.
 
@@ -101,7 +101,7 @@ Origin: mycelium-folge230. **Routed — nicht-eigen; deine Disposition/Arm:**
 - **Weberin-Astrometrie-Serie** `:170/:174/:178/:182/:186/:190`: Disposition (Serien-Arm gebaut `extract.rs:210`).
 - **D5/Röhren-Asset:** Producer der position-indizierten 20k-Abbildung (`zeugnis.md:383`); nicht das §10-Vlies (`vlies_density.vlde`, gebaut).
 - **LEOS** `blocked_sources.φ:139`: auth-gated (`40301`) → `blocked account` + `reg`.
-- **openneuro-cdn ds004100 (SUDEP):** `openneuro_compiler: the dataset carries no .set file` — ds004100 ist SEEG (BIDS, **kein** EEGLAB `.set`); der Arm braucht einen SEEG-Format-Reader. Kein Asset → kein `sha256`.
+- **openneuro-cdn ds004100 (SUDEP) — EDF-Zweig gebaut:** ds004100 trägt **319 `.edf`** (OpenNeuro GraphQL `latestSnapshot.files` gemessen: 319 edf / 642 tsv / 378 json); der `openneuro_compiler` akzeptierte nur `.set`. Jetzt: `files_from_json` nimmt `.set` **und** `.edf`; neuer `extract_edf` via `omegaflow::archivar::edf` (`parse_edf`/`signal_samples`, fehlende Samples → Datei skip, 0 honored). `cargo build -p omegaflow-harvest --bin openneuro_compiler` grün; Lauf dispatcht.
 - **EEG-Portale `blocked_sources.φ:179/:183/:187`:** iEEG.org — **Zugang-Riss** (future-176 „Konto live/ohne UA" vs `:180`+Survey „Registration+User Agreement" vs River-90 „Login genügt"); kein iEEG-Key in `secrets`. TUH/NEDC Zugang (Operator); NSRR `descoped`. `format ieeg_edf`-Block in `sources.φ` nach dem Compiler.
 - **goes_euvs/AST1/CSES-HPM/SCM:** `sha256` steht, aus Mycelium-Sicht erledigt.
 
