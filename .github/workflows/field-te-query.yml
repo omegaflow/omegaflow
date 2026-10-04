@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/erbq-event.te | tee field-te-count.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/erbq-event-q2.te | tee field-te-count.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
