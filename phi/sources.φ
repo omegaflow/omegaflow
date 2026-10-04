@@ -24075,9 +24075,9 @@ sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
 at sun
 ttl 31536000
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_euvs.bin
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/goes_euvs.bin
 format goes_euvs
-origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs
+origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs sci_geuv-l2-avg1d_
 compiler tools/harvest/src/bin/euvs_compiler.rs
 sha256 45b9c0ae5e18af3c5347840b47c09484839273de02a31e802e5f387fbd1ff207
 at sun
