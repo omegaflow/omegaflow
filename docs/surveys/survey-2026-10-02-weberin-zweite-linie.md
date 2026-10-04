@@ -1,8 +1,8 @@
 <!--
   title: Survey — Weberin-Eignung: die zweite unabhängige Linie je Messgröße (2026-10-02)
   class: survey
-  date: 2026-10-02
-  sha256: 644ddd8f11908f0512b90072a4d38f4420bed2a9970ad96b1f51f2caf5be6d52
+  date: 2026-10-04
+  sha256: 0171eeb323dd8a3f85dc925260f5d87f978349ea0876699af210bcfd8198a7a8
   status: live
   see-also: docs/concepts/die-weberin.md docs/SOURCE_PORT.md docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md
 -->
@@ -78,11 +78,16 @@ am Baum widerlegt (`gasum_today`). Z.ai bestätigt `absent`.
 - Die restlichen Klassen des Re-Runs (`survey-2026-09-14-weberin-quellen-rerun.md`) mit
   derselben Spalte „zweite Linie" fortschreiben (Gravimeter, Seismik, Lightning, HF-Radar …).
 - **GIC-Archiv harvesten** (Kalibrier-Linie, nicht `absent`): `space.fmi.fi/gic/?page=gasum_prel`
-  + `?page=gasum_final` liefern offen **nur Tages-JPEG** (`…/gicdata/gasum/prel/manYYYYMMDDprel.jpg`);
-  die **Rohserie** ist request-only (`ari.viljanen@fmi.fi`), der Proxy `-dX/dt` kommt aus dem
-  offenen IMAGE-Netz (Nurmijärvi). Verdikt Mountain (`phi/sources.φ`), Compiler/Manifestation
-  Mycelium — Muster wie Erdbeben-Katalog/Ephemeriden.
-- **Prüfen:** Z.ai nennt ein GIC-**ASCII**-Archiv „nur bis Sep 2023" — existiert neben den
-  Tages-JPEGs ein ASCII-Download (`space.fmi.fi/gic/gicdata/…`)? Direkt messen.
+  + `?page=gasum_final` liefern offen **nur Tages-Plots** (`gasum/{jahr}/manYYYYMMDD.png`,
+  `gasum/prel/manYYYYMMDDprel.jpg`); die **Rohserie** ist request-only (`ari.viljanen@fmi.fi`),
+  der Proxy `-dX/dt` kommt aus dem offenen IMAGE-Netz (Nurmijärvi). Verdikt Mountain
+  (`phi/sources.φ`), Compiler/Manifestation Mycelium — Muster wie Erdbeben-Katalog/Ephemeriden.
+- **GIC-ASCII geprüft (gemessen 2026-10-04 F229, `curl`/`archive_search --verdict`):**
+  `space.fmi.fi/gic/gicdata/` (relativer Verzeichnisindex) + `gasum/{1998…2023}/` + `gasum/prel/`
+  tragen **nur Plots** (PNG/JPG) und das alte `cgi-bin/imagecgi/pipegram.cgi`-Formular — **kein**
+  ASCII-/Daten-Download. `gasum_index.html` sagt es selbst: „These plots are only for
+  quick-look purposes. Before presenting the data anywhere … contact Ari Viljanen." Der
+  Z.ai-Claim „GIC-ASCII nur bis Sep 2023" ist damit am Baum **widerlegt**; die Rohserie bleibt
+  request-only (Kalibrier-Linie = der Archiv-Proxy `-dX/dt`, nicht die Rohserie).
 - `data.epa.ie`-Aktualität und C9-Pa-Kalibrierung tiefer messen (`--sniff`/Inhalt).
 - Kandidaten als `url`/`compiler`-Zeilen: Verdikt ist Mountain (`phi/sources.φ`).
