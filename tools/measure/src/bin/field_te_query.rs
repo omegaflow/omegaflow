@@ -110,6 +110,7 @@ struct Descriptor {
     surrogate: usize,
     register: Register,
     bin: Option<f64>,
+    event_conditional: bool,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -237,6 +238,8 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut register = Register::Sources;
     let mut witness_primary = false;
     let mut bin: Option<f64> = None;
+    let mut event_conditional = false;
+    let mut witness_arm: Option<Arm> = None;
 
     for (lineno, raw) in text.lines().enumerate() {
         let line = raw.trim();
@@ -290,17 +293,30 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                     })?,
                     None => State::Built,
                 };
-                if driver.is_some() || witness_primary {
-                    return Err(format!(
-                        "descriptor:{at}: witness and driver name one primary arm — one per round"
-                    ));
+                if event_conditional {
+                    if witness_arm.is_some() {
+                        return Err(format!(
+                            "descriptor:{at}: event-conditional form carries one witness — a second is one too many"
+                        ));
+                    }
+                    witness_arm = Some(Arm {
+                        name: name.to_string(),
+                        state,
+                    });
+                    register = Register::Witnesses;
+                } else {
+                    if driver.is_some() || witness_primary {
+                        return Err(format!(
+                            "descriptor:{at}: witness and driver name one primary arm — one per round"
+                        ));
+                    }
+                    witness_primary = true;
+                    register = Register::Witnesses;
+                    driver = Some(Arm {
+                        name: name.to_string(),
+                        state,
+                    });
                 }
-                witness_primary = true;
-                register = Register::Witnesses;
-                driver = Some(Arm {
-                    name: name.to_string(),
-                    state,
-                });
             }
             "register" => {
                 let token = parts
@@ -392,6 +408,23 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 }
                 bin = Some(seconds);
             }
+            "form" => {
+                let token = parts
+                    .get(1)
+                    .copied()
+                    .ok_or_else(|| format!("descriptor:{at}: form carries no name"))?;
+                if token != "event-conditional" {
+                    return Err(format!(
+                        "descriptor:{at}: form '{token}' names no event-conditional"
+                    ));
+                }
+                if witness_primary || driver.is_some() || target.is_some() {
+                    return Err(format!(
+                        "descriptor:{at}: form event-conditional must be declared before its witness/driver arms"
+                    ));
+                }
+                event_conditional = true;
+            }
             other => {
                 return Err(format!("descriptor:{at}: unknown directive '{other}'"));
             }
@@ -403,6 +436,32 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             "cadence absent — the cadence is measured from the aligned grid, never defaulted"
                 .into(),
         );
+    }
+    if event_conditional {
+        let target = witness_arm
+            .ok_or_else(|| "event-conditional form carries no witness arm".to_string())?;
+        let driver =
+            driver.ok_or_else(|| "event-conditional form carries no driver arm".to_string())?;
+        return Ok(Descriptor {
+            pair,
+            driver,
+            target,
+            conds,
+            events,
+            gates,
+            seasonal,
+            lags: match lags {
+                Some(l) => l,
+                None => default_lags(),
+            },
+            surrogate: match surrogate {
+                Some(s) => s,
+                None => 100,
+            },
+            register: Register::Witnesses,
+            bin,
+            event_conditional: true,
+        });
     }
     let driver = driver.ok_or_else(|| "descriptor carries no driver arm".to_string())?;
     let target = target.ok_or_else(|| "descriptor carries no target arm".to_string())?;
@@ -424,6 +483,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         },
         register,
         bin,
+        event_conditional: false,
     })
 }
 
@@ -510,6 +570,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         surrogate,
         register,
         bin,
+        event_conditional: false,
     })
 }
 
@@ -2598,6 +2659,7 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         surrogate: 100,
         register: Register::Sources,
         bin: None,
+        event_conditional: false,
     };
     let Some(result) = execute(
         &desc,
@@ -2852,12 +2914,17 @@ fn omori_preserving_shift_null(
     })
 }
 
-fn run_event_conditional(driver: &[(f64, f64)], events: &[(f64, f64)]) {
+fn run_event_conditional(
+    driver: &[(f64, f64)],
+    events: &[(f64, f64)],
+    bin_s: f64,
+    surrogates: usize,
+) {
     println!(
         "event-conditional form: window {} s | bin {} s | guard {} s",
-        EVENT_WINDOW_S, EVENT_BIN_S, EVENT_GUARD_S
+        EVENT_WINDOW_S, bin_s, EVENT_GUARD_S
     );
-    let avg = event_triggered_average(driver, events, EVENT_WINDOW_S, EVENT_BIN_S);
+    let avg = event_triggered_average(driver, events, EVENT_WINDOW_S, bin_s);
     println!(
         "event-triggered average: {} event(s) inside the driver span | {} lag cells | observed ETA peak |mean| = {}",
         avg.event_count,
@@ -2875,8 +2942,8 @@ fn run_event_conditional(driver: &[(f64, f64)], events: &[(f64, f64)]) {
         driver,
         events,
         EVENT_WINDOW_S,
-        EVENT_BIN_S,
-        EVENT_SURROGATES,
+        bin_s,
+        surrogates,
         EVENT_GUARD_S,
         SURROGATE_SEED,
     ) {
@@ -2936,7 +3003,12 @@ fn run_parity_witness(
                 match driver_name {
                     Some(dn) => match find_field_source(sources, dn) {
                         Some((source, field)) => match load_field(&source, &field, anchor) {
-                            Ok(driver) => run_event_conditional(&driver, series),
+                            Ok(driver) => run_event_conditional(
+                                &driver,
+                                series,
+                                EVENT_BIN_S,
+                                EVENT_SURROGATES,
+                            ),
                             Err(reason) => {
                                 println!("event-conditional query pending — driver '{dn}' {reason}")
                             }
@@ -2961,11 +3033,64 @@ fn run_parity_witness(
     0
 }
 
+fn run_descriptor_event_conditional(
+    desc: &Descriptor,
+    witnesses: &[WitnessRecord],
+    sources: &[SourceConfig],
+    anchor: &QueryAnchor,
+) -> i32 {
+    println!("=== event-conditional form — descriptor over witness x source ===");
+    let witness_name = desc.target.name.as_str();
+    let Some(w) = find_witness(witnesses, witness_name) else {
+        println!("event-conditional form pending — '{witness_name}' stands in no witness block");
+        return 0;
+    };
+    println!(
+        "witness {} | kind {} | record {} | {}",
+        w.key,
+        w.kind_token,
+        w.records.join("+"),
+        w.url
+    );
+    let load = load_witness_arm(w, State::Built);
+    match &load {
+        ArmLoad::WitnessReady { series, .. } => {
+            let driver_name = desc.driver.name.as_str();
+            let bin_s = desc.bin.unwrap_or(EVENT_BIN_S);
+            match find_field_source(sources, driver_name) {
+                Some((source, field)) => match load_field(&source, &field, anchor) {
+                    Ok(driver) => {
+                        run_event_conditional(&driver, series, bin_s, desc.surrogate);
+                        0
+                    }
+                    Err(reason) => {
+                        println!(
+                            "event-conditional query pending — driver '{driver_name}' {reason}"
+                        );
+                        0
+                    }
+                },
+                None => {
+                    println!(
+                        "event-conditional query pending — driver '{driver_name}' stands in no source block"
+                    );
+                    0
+                }
+            }
+        }
+        ArmLoad::Pending(reason) => {
+            println!("event-conditional witness arm stays pending — {reason}");
+            0
+        }
+        ArmLoad::Ready { .. } => 0,
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
+        "grammar: pair <label> | form event-conditional | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -3024,6 +3149,12 @@ fn main() {
             }
         }
     };
+
+    if desc.event_conditional {
+        exit(run_descriptor_event_conditional(
+            &desc, &witnesses, &sources, &anchor,
+        ));
+    }
 
     match execute(&desc, &sources, &witnesses, None, &anchor) {
         Some(_) => {
@@ -3355,6 +3486,98 @@ cadence live
         assert!(
             err.contains("aia_171_dn") || err.contains("maybe"),
             "the refusal names the confounder: {err}"
+        );
+    }
+
+    #[test]
+    fn event_conditional_descriptor_carries_witness_and_driver() {
+        let text = "\
+pair erbq-event
+form event-conditional
+witness point-event#1
+driver omni_hro_imf_bz_gsm_nt
+cadence live
+bin 3600
+surrogate 100
+";
+        let desc = parse_descriptor(text).expect("an event-conditional descriptor parses");
+        assert!(desc.event_conditional, "the form flag is carried");
+        assert_eq!(
+            desc.target.name, "point-event#1",
+            "the witness is the target"
+        );
+        assert_eq!(
+            desc.driver.name, "omni_hro_imf_bz_gsm_nt",
+            "the field is the driver"
+        );
+        assert_eq!(desc.register, Register::Witnesses);
+        assert_eq!(desc.bin, Some(3600.0));
+        assert_eq!(desc.surrogate, 100);
+    }
+
+    #[test]
+    fn event_conditional_descriptor_refuses_a_missing_driver() {
+        let text = "\
+form event-conditional
+witness point-event#1
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a missing driver arm is refused");
+        assert!(
+            err.contains("event-conditional") && err.contains("driver"),
+            "the refusal names the missing arm: {err}"
+        );
+    }
+
+    #[test]
+    fn event_conditional_descriptor_refuses_a_missing_witness() {
+        let text = "\
+form event-conditional
+driver omni_hro_imf_bz_gsm_nt
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a missing witness arm is refused");
+        assert!(
+            err.contains("event-conditional") && err.contains("witness"),
+            "the refusal names the missing arm: {err}"
+        );
+    }
+
+    #[test]
+    fn event_conditional_form_must_precede_its_arms() {
+        let text = "\
+witness point-event#1
+form event-conditional
+driver omni_hro_imf_bz_gsm_nt
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a late form line is refused");
+        assert!(
+            err.contains("event-conditional") && err.contains("before"),
+            "the refusal names the ordering: {err}"
+        );
+    }
+
+    #[test]
+    fn unknown_descriptor_form_is_refused() {
+        let text = "\
+form something-else
+driver a
+target b
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("an unknown form is refused");
+        assert!(
+            err.contains("something-else"),
+            "the refusal names the form: {err}"
         );
     }
 
