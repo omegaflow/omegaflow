@@ -13,7 +13,7 @@ note 2026-09-27 released in phi/blocked_sources.φ (Backend tot: PG refused, /ta
 
 disponiert
 kandidat https://limadou.ssdc.asi.it/
-note SSDC/LIMADOU: 2026-10-04 query.php 200 = CAS-Login „Login" (reg /UserManager/requestUser.jsp); TAPSSDC 69 Tabellen, 0 CSES/LIMADOU = kein offener Arm; Sotgiu CSES-02-Umbau (mail_ledger.φ:79). → blocked_sources.φ:135.
+note SSDC/LIMADOU: 2026-10-04 query.php 200 = CAS-Login „Login" (reg /UserManager/requestUser.jsp); TAPSSDC 69 Tabellen, 0 CSES/LIMADOU = kein offener Arm; Sotgiu CSES-02-Umbau (mail_ledger.φ:79). → blocked_sources.φ `https://limadou.ssdc.asi.it/`.
 
 disponiert
 kandidat https://babamul.caltech.edu/api/
