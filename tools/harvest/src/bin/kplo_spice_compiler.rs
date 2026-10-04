@@ -173,7 +173,8 @@ fn compile(kernel_paths: &[String], out: &str, ci_mode: bool) -> Result<(), Stri
             let Some(src) = state_ssb_multi(&kernels, target, et) else {
                 continue;
             };
-            let Some(p) = omegaflow::archivar::motion::body_barycenter_position(KPLO_NAME, et, &map)
+            let Some(p) =
+                omegaflow::archivar::motion::body_barycenter_position(KPLO_NAME, et, &map)
             else {
                 continue;
             };

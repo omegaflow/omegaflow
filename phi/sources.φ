@@ -10319,6 +10319,14 @@ sha256 cd2e9d2bd3f822b610c8ec9432cc413cde495b9d8a64f4582a63191018102f62
 at saturn
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/pradan.issdc.gov.in/ch2_cla_l1_2025_10.zip
+format pradan_ch2
+origin https://pradan.issdc.gov.in/ch2/protected/downloadFile/class_holder/ch2_cla_l1_2025_10.zip
+compiler tools/harvest/src/bin/pradan_ch2_compiler.rs
+sha256 f0fd23d680eadae2d8a7317a32aa41deac8e57cf18dee7393a079b6bc016db1f
+at moon
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 format gosat_tanso3
 origin procedure: fetch https://product.gosat-gw.nies.go.jp then gosat_tanso3_compiler (per-month shards gosat_tanso3_<year>-<month>.bin; the manifest lists the shards)
@@ -11418,6 +11426,14 @@ origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
 sha256 1dda1224c13b9297c4b9e5b0c23b0cc2283d67b669b71d5206562a688dac56b4
 at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/iaga_text.bin
+format iaga_text
+origin https://zenodo.org/api/records/10594301/files/Mag_Data.zip/content
+compiler tools/harvest/src/bin/iaga_text_compiler.rs
+sha256 3e7a532f56f92f9d4d126268689486b038bd96f7712852d3c6c6c49250911820
+at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
@@ -16541,6 +16557,13 @@ origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (ht
 compiler tools/harvest/src/bin/horizons_compiler.rs
 sha256 dfaa08fc76b1fba7aed4c8a26a659c9f0187bd3f4d46bf2843be7996763c6b10
 at voyager2
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
+format ephemeris_binary
+origin procedure: SPK/DAF harvest from https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
+compiler tools/harvest/src/bin/kplo_spice_compiler.rs
+at kplo
 no-cadence
 
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
