@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: f8fcfdb983eca3f477b795bc34d942437819bacfd26498d045c8f7e3f400e5c6
+  sha256: 48141d35251f1a65569c1b7b022a1e6d960a5ad361f9a94cdfef7c8f826d7da9
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -73,9 +73,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### iEEG-Ernte-Arm bauen (Mycelium) — Zugang: Riss, nicht „offen"
 - **Status:** wartend | **Bindung:** eigen (Arm) / Zugang Operator
 - **Trigger:** Zugangsweg gemessen — `blocked_sources.φ:180` (keyless-Endpunkt oder iEEG-Creds)
-- **Lage:** (gemessen 2026-10-04) Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF `src/archivar/extract.rs`, `9d416e57b`). **Zugang-Riss:** future-176-Adresse „Konto `omegaflow` live, öffentliche Datensätze ohne UA-Gate (657, z. B. `09_14_limbic_seizure_374`)" vs `blocked_sources.φ:180` + `survey-…medizinische-datenquellen.md:63` „Registrierung + User Agreement" vs `river-folge90:243` „Login genügt". `bin/secrets_keys` (vollständige Liste, 138 Keys): **kein** iEEG-Key; EEG-nah nur `NSRR_*`; `IDA_*` = `ida_fetch.rs` (anderer Dienst).
+- **Lage:** (gemessen 2026-10-04) Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF `src/archivar/extract.rs`, `9d416e57b`). **Zugang über LONI IDA:** `IDA_USER`/`IDA_PASS`/`IDA_EMAIL` liegen in `.secrets.local`; `ida_fetch --login` **scheitert gemessen am Cloudflare Turnstile** (`no session (http 200, no redirect)`); Cookie-Jar `~/.cache/omegaflow/ida-cookies.txt` (361 B) existiert, Gültigkeit offen. Das iEEG-Portal (GWT-App; Daten via `POST /mefview/eeg`, **kein** REST) ist im Operator-Chrome als `omegaflow` eingeloggt (Zugang bestätigt).
 - **Blockade:** kein gemessener keyless Zugang; keine iEEG-Creds in `secrets` für CI
-- **Braucht:** keyless Download-Endpunkt **oder** die `omegaflow`-iEEG-Creds → `secrets-sync` → dann Compiler + `ieeg-cdn.yml` + `sources.φ`-Block. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
+- **Braucht:** gültige LONI-IDA-Session (Cookie-Jar aus Browser-Login) **oder** browser-getragene Ernte → EDF nach `data/ieeg.org/` → Packer-Compiler + `sources.φ`-Block + CDN. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
 - **Status:** wartend | **Bindung:** eigen
