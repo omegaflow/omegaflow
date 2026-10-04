@@ -3,7 +3,7 @@
   session: River-Folge 89
   class: handover
   date: 2026-10-04
-  sha256: 60557b2c019b1f90f4439d9df81b39bd602625ec660d601ed85df474553485c1
+  sha256: 52807153ed2fb37bdf66633c7f2c5e3c372fe0e58be71bd2469638c75db2e7a7
   status: live
 -->
 # Handover — River-Folge 89 (2026-10-04)
@@ -172,21 +172,19 @@ Wort | Datum | Quelle
 - **Blockade:** die Zellen entstehen erst mit externen Releases.
 - **Braucht:** kp `def` am GFZ-Release, Δ/σ_recon an der ESA-SPK nachtragen (kein River-Lauf).
 
-### Zeugen im universellen Myzel — q=8 blockiert, q=2-Instanz gebaut
+### Zeugen im universellen Myzel — count panel gemessen: kein Pfeil
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf-Ende `field-te-query` (q=2-Instanz `erbq-event-q2.te`).
-- **Lage:** (gemessen 2026-10-04, Run `37201862389`, success) Der q=8-Lauf **blockierte** benannt:
-  von den 198 Tohoku-Stempeln fallen nur **~60** in die OMNI_HRO_1MIN-Spanne → `floor(n/q)=7 < 20`.
-  Kein Compiler-Cap (gemessen `omni_hro_compiler.rs`: volles HAPI-Fenster). Der Rat 2026-10-04:
-  Weg (a) legitim — das vorregistrierte Gesetz (größte Zweierpotenz mit n/q ≥ 20) am gemessenen n
-  ergibt **q=2**; kein HARKing (vor dem Gate existiert kein Ergebnis). Neue, **separat
-  vorregistrierte Instanz `erbq-event-q2.te`** (q=8-Siegel `erbq-event.te` unberührt); der
-  CI-Job `witness-count` läuft jetzt q=2.
-- **Blockade:** die Population ist „Tohoku-Events **innerhalb der OMNI-Spanne**", nicht das
-  Jahrhundert; q=2 ist ein Median-Split — schwach, aber auflösbar (B+1=1001 ≥ q/α=40).
-- **Braucht:** neuen Run dispatchen, `ci_manage view` / Artefakt `field-te-count` lesen. Der
-  Jahrhundert-Arm (breitere Bz-Quelle + Compiler + eigener Deskriptor) ist eine **separate**
-  Mountain/Mycelium-Duty (pending); der declustered Mainshock-Set bleibt Side-Deliverable (An mountain).
+- **Trigger:** der Jahrhundert-Arm (breitere Bz-Quelle, neuer Source-Block in `phi/sources.φ`)
+  bzw. der declustered Mainshock-Set (`phi/witnesses.φ`).
+- **Lage:** (gemessen 2026-10-04, q=2-Run `37210855963`, success) Der count panel über
+  „Tohoku-Events innerhalb der OMNI_HRO_1MIN-Spanne" (**n = 62**) ergibt:
+  bin 0 obs 32 / E 31.04 (rank p 0.4406), bin 1 obs 30 / E 30.96 (rank p 0.6543);
+  global χ² = 0.06, **empirisches p = 0.9181** (B=1000), 0 von 2 Bins überstehen BH(α=0.05) →
+  **konsistent mit der Null, kein Pfeil**. Der q=8-Lauf `37201862389` blockierte (n=62 < 160);
+  q=2 ist der regel-konforme Median-Split (Kraftverlust benannt). Artefakt `field-te-count`.
+- **Blockade:** die Population ist die OMNI-Spanne, nicht das Jahrhundert; q=2 ist schwach (df=1).
+- **Braucht:** Jahrhundert-Arm (breitere Bz-Quelle + Compiler + eigener Deskriptor, Mountain/Mycelium);
+  declustered Mainshock-Set für die ETA-Form (An mountain).
 
 ### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen
