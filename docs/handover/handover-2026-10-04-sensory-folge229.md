@@ -3,7 +3,7 @@
   session: Sensory-Folge 229
   class: handover
   date: 2026-10-04
-  sha256: d3b01575c03896a97d4cfce2f5093aeac4ecd93fc2f871f33e957cc4812c2734
+  sha256: 2aceaff82c869f7b0e8633b936d806864aaef188342642abdeeab8ee49db7084
   status: live
 -->
 # Handover — Sensory-Folge 229 (2026-10-04)
@@ -72,15 +72,19 @@ HEAD bei der Fortsetzung `57a947412` == `origin/main` (`git rev-parse`).
   eigener paralleler `screen`-Job** (`timeout-minutes: 330`, gleiche
   `surrogates`/`percentile`/`max_points`; das Manifest wird je Task gefiltert — die Binary
   familisiert ohnehin je Task, `hyperscanning_group_te.rs:740`, also Wissenschaft unverändert).
-  **Lauf `37197710877` bestätigt die Splittung** (head `f69fd6496`, gemessen `ci_manage jobs`/
-  `log`): `plan` success, `confirm` success, **`screen (pdrest)` success, `screen (pdfeedback)`
-  success**, `screen (pddecision)` in_progress. Artefaktname `hyperscanning-te-report-<task>`.
-  **Erste Familien-Messungen (Log, `tee report.txt`):** `pdrest` — 11 triads | 66 cells |
-  fam-max p95 = **8.3159e-1** | observed max = 4.0343e-1 | **family-max survivors = 0** |
-  per-cell survivors = 2; Bestätigung **2/2**. `pdfeedback` — fam-max p95 = **7.9215e-1** |
-  observed max = 3.7459e-1 | **family-max survivors = 0** | per-cell survivors = 2; Bestätigung
-  **2/1**. Die familien-korrigierte Linie trägt in beiden Task-Bedingungen **keinen** Survivor
-  (per-Zelle-Treffer sind nicht familien-signifikant) — pddecision steht noch aus.
+  **Lauf `37197710877` = success** (head `f69fd6496`, gemessen `ci_manage view`/`jobs`/`log`):
+  `plan`, `confirm`, **`screen (pdrest)`, `screen (pdfeedback)`, `screen (pddecision)`** alle success —
+  **die Splittung trägt vollständig.** Artefaktname `hyperscanning-te-report-<task>`.
+  **Familien-Messungen (Log, `tee report.txt`, alle drei Task-Bedingungen):**
+  - `pdrest` — 11 triads | 66 cells | fam-max p95 = **8.3159e-1** | observed max = 4.0343e-1 |
+    **family-max survivors = 0** | per-cell survivors = 2; Bestätigung **2/2**.
+  - `pdfeedback` — fam-max p95 = **7.9215e-1** | observed max = 3.7459e-1 |
+    **family-max survivors = 0** | per-cell survivors = 2; Bestätigung **2/1**.
+  - `pddecision` — fam-max p95 = **8.3607e-1** | observed max = 4.2518e-1 |
+    **family-max survivors = 0** | per-cell survivors = 2; Bestätigung **2/0**.
+  Die familien-korrigierte Linie (H1) trägt in **keiner** Task-Bedingung einen Survivor; die
+  per-Zelle-Nominees (H2) sind je 2 und bestätigen inkonsistent (2/2 · 2/1 · 2/0) — keine
+  familien-signifikante Korrektur. FP-Gates (`plan`): 0 von 20 messbaren Trials je Gate.
 - **B-Architektur steht:** WASM entschieden und gebaut (`044afbe42` wasm-Gate, `ede41905e`
   Dep-Schlankheit, `42268d146` wasm-bindgen-Einstieg, Bundle 128 753 B); die Paritäts-Toleranz
   ist gesetzt (`f7fa71940`/`815d7df43`/`80417fd53`). **Mycelium-Antwort (`mycelium-folge229`,
@@ -301,24 +305,17 @@ breiter messen.
 
 ### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakte `hyperscanning-te-report-<task>`.
-- **Lage:** (gemessen 2026-10-03 F227) Entwurf steht: `docs/paper/hyperscanning-te-preregistration.md`, sha256 `11ccdb90…`; Zweck, Daten, Estimator, Schwellen, die Gate-Namen und die Entscheidungsregel sind mit `file:line` belegt, die zweite Kohorte trägt jetzt die gemessene 64-Kanal-`_L`/`_R`-Form und den gebauten Arm (`1226e9082`); FP/FN-/Skalierungszahlen bleiben `pending` benannt.
-- **Blockade:** Validierungsartefakt.
-- **Braucht:** der Splitt ist gebaut (`f69fd6496`) und **Lauf `37197710877` dispatcht**; nach Laufende die drei Artefakte `hyperscanning-te-report-{pddecision,pdfeedback,pdrest}` lesen (`ci_manage view 37197710877`), dann den Entwurf um die gemessenen FP/FN + n-Skalierung fortschreiben, Header-sha via `omega_sh sha` neu.
-
-### Hyperscanning-TE — Validierung der neuen Läufe (joint family + gates)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss eines `hyperscanning-te`-Laufs am joint-family-Stand; Artefakte `hyperscanning-te-report-<task>`.
-- **Lage:** (gemessen 2026-10-04 F229 via `ci_manage view`/`jobs`/`log`) **die Splittung trägt.** `plan`/`confirm` success; **`screen (pdrest)`** success → 11 triads | 66 cells | fam-max p95 = **8.3159e-1** | observed max = 4.0343e-1 | **family-max survivors = 0** | per-cell survivors = 2 | Bestätigung **2/2**; **`screen (pdfeedback)`** success → fam-max p95 = **7.9215e-1** | observed max = 3.7459e-1 | **family-max survivors = 0** | per-cell survivors = 2 | Bestätigung **2/1**. `screen (pddecision)` in_progress. Config unverändert (Wissenschaft unberührt); der joint-family-Bin ist gebaut inkl. Test `joint_channel_family_gate`.
-- **Blockade:** `screen (pddecision)` läuft noch — dessen Artefakt/Log fehlt.
-- **Braucht:** `ci_manage log 37197710877 --all` für pddecision nach Laufende; die drei Artefakte `hyperscanning-te-report-{pddecision,pdfeedback,pdrest}` auswerten. Bisher trägt die familien-korrigierte Linie in beiden fertigen Task-Bedingungen **keinen** Survivor.
+- **Trigger:** Abschluss des joint-family-`hyperscanning-te`-Laufs; Artefakte `hyperscanning-te-report-<task>` — **gefeuert** (Lauf `37197710877` success).
+- **Lage:** (gemessen 2026-10-03 F227) `docs/paper/hyperscanning-te-preregistration.md`, sha256 `11ccdb90…`; die Entscheidungsregel H1/H2 steht mit `file:line`. **Geliefert 2026-10-04 F229:** FP-Gates (`plan`) = **0 von 20** messbaren Trials je Gate (coherent-per-cell, per-cell, joint per-cell); Familien-Messung über **alle drei** Task-Bedingungen (s. Kopf) — **H1 trägt in keiner Task-Bedingung** einen Survivor; **H2** je 2 Nominees, Bestätigung inkonsistent **2/2 · 2/1 · 2/0**. Die **n-Skalierung fehlt** (Workflow-Input `scales` war leer).
+- **Blockade:** keine.
+- **Braucht:** den Entwurf um die gemessenen FP-Zahlen + die H1/H2-Lage fortschreiben (Header-sha via `omega_sh sha` neu); für die n-Skalierung `gh workflow run hyperscanning-te.yml -f scales=512,1024,2048,4096`.
 
 ### Hyperscanning-TE — zweite Kohorte (Validierung)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Artefakte `hyperscanning-te-report-<task>` zu einem erfolgreichen joint-family-Lauf.
-- **Lage:** (gemessen 2026-10-03 F227) Arm **gebaut** (`1226e9082`): `brainvision_compiler --participant L|R` trennt die gemessenen **64 Kanäle** eines Dyaden-Files (Ch1–32 `_R`, Ch33–64 `_L`, 1000 Hz; ein File pro `sub-01`..`sub-32` = 32 Dyaden) in je ein Teilnehmer-Bin `<…>_eeg_L.bin`/`_R.bin` (point-major, passend zu `channel_series`); Workflow-Input `cohort` (ds007822|ds007471) baut den `manifest.txt` aus `jointaction pair-<NN> {L,R}`. `cargo check`/`--tests -p omegaflow-harvest` 0 Fehler/0 Warnungen; die zwei Pfade sind committet. Riss zum Präreg: dort stand „32-Kanal", gemessen sind es 64 (2×32) in einem File — die Dyade ist `_L`/`_R` im selben File, kein Subjekt-Subjekt-Join.
-- **Blockade:** der Validierungs-Trigger (joint-family-Lauf `37197710877`) ist noch nicht ausgewertet.
-- **Braucht:** nach dem Validierungsartefakt `gh workflow run hyperscanning-te.yml -f cohort=ds007471 -f channel=Cz`, dann `ci_manage view <id>` + Artefakt auswerten.
+- **Trigger:** der erste Validierungslauf ist ausgewertet — Beleg: Lauf `37197710877` (success, 2026-10-04).
+- **Lage:** (gemessen 2026-10-03 F227) Arm **gebaut** (`1226e9082`): `brainvision_compiler --participant L|R` trennt die gemessenen **64 Kanäle** eines Dyaden-Files (Ch1–32 `_R`, Ch33–64 `_L`, 1000 Hz; ein File pro `sub-01`..`sub-32` = 32 Dyaden) in je ein Teilnehmer-Bin `<…>_eeg_L.bin`/`_R.bin` (point-major, passend zu `channel_series`); Workflow-Input `cohort` (ds007822|ds007471) baut den `manifest.txt`; bei ds007471 setzt der `plan`-Job `tasks` automatisch auf `jointaction`. `cargo check`/`--tests -p omegaflow-harvest` 0 Fehler/0 Warnungen. Riss zum Präreg: dort stand „32-Kanal", gemessen sind es 64 (2×32) in einem File — die Dyade ist `_L`/`_R` im selben File, kein Subjekt-Subjekt-Join.
+- **Blockade:** keine.
+- **Braucht:** **Lauf `37209904312` dispatcht** (`cohort=ds007471`, `channel=Cz`, 2026-10-04T14:36Z, head `4bcd4631`) — nach Laufende `ci_manage view/jobs/log 37209904312` + Artefakt `hyperscanning-te-report-jointaction` auswerten.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -454,7 +451,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0017 · close 0.2000 · cap 0.50 · Grund: F229 — eine Line-Session (Sensory $0.1051) + drei flash-Taucher (`general` point-event-Form, `general` spectral-Endpunkte $0.0471, `grind-flash` hyperscanning-Cancel $0.0230; gemessen `session_burn`, opencode.db, 2026-10-04 F229, deepseek-flash) — unter dem Hard-Ceiling 0.50. Kein pro/max-Dispatch.
+## Burn: open 0.0017 · close 0.2800 · cap 0.50 · Grund: F229 — eine Line-Session (Sensory $0.1853) + drei flash-Taucher (`general` point-event-Form, `general` spectral-Endpunkte $0.0471, `grind-flash` hyperscanning-Cancel $0.0230; gemessen `session_burn`, opencode.db, 2026-10-04 F229, deepseek-flash) — unter dem Hard-Ceiling 0.50. Kein pro/max-Dispatch.
 
 ## Abschluss
 
