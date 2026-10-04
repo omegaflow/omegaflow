@@ -3,7 +3,7 @@
   session: Mountain-Folge 230
   class: handover
   date: 2026-10-04
-  sha256: c58e4e326064a6642d8ce9fcb2c86a8893835233d825f19e60f27787ad452844
+  sha256: 55dc1471e767c824e8f12e9dfcb8dce0ea0099947120a4210524f1ea942b7d74
   status: live
 -->
 # Handover — Mountain-Folge 230 (2026-10-04)
@@ -83,12 +83,12 @@ Wort | Datum | Quelle
 - **Blockade:** kein `format pradan_ch2`-Reader in `extract.rs`/`main_flow.rs`.
 - **Braucht:** ein Member entpacken, die HDU-Art (Image vs. BINTABLE) und das XML-Schema fixieren, dann den Arm über `fits.rs` + XML bauen.
 
-### Medizinische/Life-Science-Datenquellen — Disposition offen
+### Medizinische/Life-Science-Datenquellen — disponiert (3 gewollte als pending)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03, sensory-folge227) `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha `4ead2c97…`) trägt ~90 Quellen mit `--verdict`-Stand (Somatik/Neuro/Psyche/Biologie/Chemie/Genomik/Proteomik/Metabolomik/Strukturbiologie/Bildgebung/Register); nur OpenNeuro + PhysioNet registriert, NeuroVault `declined`. DUA-/Kosten-Zugänge an Future geroutet.
-- **Blockade:** Force-Gate/Zulassung je Quelle steht aus (Menge).
-- **Braucht:** Survey gegen `phi/sources.φ` halten, je Quelle Zulassung/`decline`-Grund setzen; Kandidaten vor dem Verdikt messen (`archive_search --verdict`).
+- **Lage:** (gemessen 2026-10-04) ~90 Quellen disponiert: `phi/declined_sources.φ` trägt die Decline-Zeilen (`registry/katalog`, `health-stats`, `no-physical-force`, `imagery`, `molecular`, `aggregate-index`, `reference`, `model`, `commercial`, `registry`, `literature`) mit `--verdict`-Evidenz; `phi/blocked_sources.φ` trägt 3 gewollte Rohdaten-Quellen als `pending` — `ieeg.org` (iEEG, electric V), `TUH EEG`, `NSRR` (PSG). Riss benannt: `sources.φ:3415` (bidsleep) deklariert `advective m/s²`, physikalisch Elektrodenpotential.
+- **Blockade:** für die 3 gewollten fehlt Arm+Asset; der Zugang ist Registrierung/DUA (operator-gebunden).
+- **Braucht:** iEEG-/TUH-/NSRR-Zugang + Arm/Compiler/Asset; Riss-Entscheid `advective m/s²` vs `electric V`.
 
 ## Träger (Prosa, eigene)
 
