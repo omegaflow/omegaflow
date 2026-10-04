@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss release-create, CLPDS-Annex, JAXA sha256, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: f8f4c8fa00fd38ec20613933dcdd7ac7788dc719ee1f1afdc821edd12dc8275e
+  sha256: 33a09aae74fcc3085aa2900d3f9795e399b34592d22f9b2024d4f9a3144d1cff
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -51,12 +51,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** kein Lauf für `ds004100` am neuen HEAD.
 - **Braucht:** `gh workflow run openneuro-cdn.yml -f dataset=ds004100`; dann `format`/`sha256`/`url`-Block in `sources.φ`.
 
-### iEEG-Ernte — Lauf queued
+### iEEG-Ernte — REST-Antwort leer (getIdByDataSnapshotName void)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ieeg-cdn 37232726768` completed → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04) `ieeg_compiler.rs` (signierter REST-Dienst) + `ieeg-cdn.yml` stehen; der Lauf am HEAD `aa90ae932` ist `queued`.
-- **Blockade:** Runner-Queue.
-- **Braucht:** `ci_manage log 37232726768`; bei Grün `format ieeg_edf`-Block + `sha256`; 4D-Anker je Elektrode = Mountain/River.
+- **Trigger:** `ieeg-cdn`-Lauf completed → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04 via `ci_manage log 37232726768`) `ieeg_compiler: ieeg: getIdByDataSnapshotName returned void` — der signierte REST-Aufruf am `www.ieeg.org/services` trägt nicht (Signatur/Endpoint/Antwortformat zu prüfen); Lauf `37232726768` = failure.
+- **Blockade:** der signierte REST-Dienst antwortet leer.
+- **Braucht:** `ieeg_compiler`-Aufruf gegen `ieeg-portal/ieegpy`-Schema messen (Signatur-Parameter, `getIdByDataSnapshotName`-Response), dann re-dispatch; bei Grün `format ieeg_edf`-Block + `sha256`; 4D-Anker je Elektrode = Mountain/River.
 
 ### CLPDS-Annex — `--with-annex` gefixt, re-dispatch nötig
 - **Status:** wartend | **Bindung:** eigen
@@ -88,7 +88,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## CI-Lage (fact level, gemessen 2026-10-04)
 
-- **in flight:** `ieeg-cdn 37232726768` queued · `dsn-cdn 37231588840` queued · `placebo-ave-cdn 37231225779` queued · `ps1-cdn 37228914571` queued · `hips-png-cdn 37225669618` queued · `allwise-cdn 37225741223` in_progress · `tools-build 37230085188` in_progress · `auto-dispatch 37231422712`/`harvest-dispatch 37232190761` queued. Alle `unread` — je `ci_manage log <id>` bei Abschluss.
+- **rote Läufe (gemessener Grund · Träger · Braucht):**
+  - `ci-check 37223709589` (18:15) + `37220591967` (17:27): `cargo test` E0422/E0433 — `VerdictLine`/`VerdictWord` nicht im Scope (`src/mathematikerin/tests.rs:1375/1377/1401/1406`; der Test `a_direction_witness_series_…` importiert nur `AstroSample, AstroSeries`). **Träger: River** — Fix: `use crate::archivar::weberin_verdicts::{VerdictLine, VerdictWord};`; sonst `ci_manage log <ci-check@HEAD>`.
+  - `ieeg-cdn 37232726768` (20:36): `getIdByDataSnapshotName returned void`. **Träger: Mycelium** (s. `## Offen — eigen`).
+  - `nvss-cdn 37218852211` (17:00) + `37220186384` (17:21): `release not found` (nach TAP-ADQL `".4"`-Fehler). **Träger: Mycelium** — gefixt, re-dispatcht `37233581603`.
+  - `openneuro-cdn 37219510577` (17:10): `the dataset carries no .set file`. **Träger: Mycelium** — EDF-Zweig gebaut, re-dispatcht `ds004100 37233586379`.
+- **in flight:** `nvss-cdn 37233581603` · `clpds-cdn 37233584228` · `openneuro-cdn 37233586379` (ds004100) · `dsn-cdn 37231588840` · `placebo-ave-cdn 37231225779` · `ps1-cdn 37228914571` · `hips-png-cdn 37225669618` · `allwise-cdn 37225741223` · `tools-build 37230085188` — je `unread`, `ci_manage log <id>` bei Abschluss.
 - **grün (fact level):** `pages-deploy 37223715722` · `ned-byparams-cdn 37225690773` · `quake-feeds-cdn 37225379031` · `openneuro-cdn 37231228641` (ds005034).
 - **gecancelt (Concurrency, kein Fehler):** `ci-gate`/`ci-check`/`register-coverage`/`tools-build` der Dispatch-Welle, `openneuro-cdn 37230086965`.
 
