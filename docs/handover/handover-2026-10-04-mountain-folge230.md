@@ -3,7 +3,7 @@
   session: Mountain-Folge 230
   class: handover
   date: 2026-10-04
-  sha256: f163a24bb02aa11c9a297541c3bf5bd893b237dd8bfdecb785da761978dbf215
+  sha256: d2a83bdb25519dad5c54442abc95e2ef37b898085fddac0b4745731c915e88d5
   status: live
 -->
 # Handover — Mountain-Folge 230 (2026-10-04)
@@ -69,12 +69,19 @@ Wort | Datum | Quelle
 - **Blockade:** keine.
 - **Braucht:** nichts — MODIS-Rest über SZIP entfällt.
 
-### Weberin zweite Linie — astrometry-reader/curation-Arme (9 parser-def)
+### Weberin zweite Linie — AST1-Richtungszeuge gebaut; Quellen-Konverter offen
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04) 6 VizieR `asu-tsv` `J/A+A/582/A8/{ariel,miran,obero,titan,umbri,uranu}_j` (Uranus-Monde) + `occultations.ct.utfpr.edu.br` = zweite unabhängige Positions-Linie der Weberin. AST1-Modul + Compiler stehen (13 313 Samples, sha `bc21177b…`). Der **Reader-Arm ist jetzt gebaut**: `extract.rs:206` (`verify_records`), `astrometry_series_counts` (`extract.rs:216`), `main_flow.rs:3263` Fetch-Branch, `fetch.rs:1106` Bypass; `cargo check` 0/0.
-- **Blockade:** kein `AstroSample`/Richtungs-Slot — weder das 26×f64-Wire noch der `SeriesRow`-Strom trägt eine bewegte (ra,dec)-Serie; AST1 wird geparst + für das Register gehalten, nie zu einem Skalar flachgeklopft. Die 2 Gaia-ADQL: `vari_classifier_result` korrigiert HTTP 200, `cluster_ka` HTTP 400 (Cluster-Tabelle außerhalb Gaia-TAP).
-- **Braucht:** einen Richtungs-/`AstroSample`-Wire-Slot definieren; bis dahin `format astrometry_series` (ohne `cmap`/`field`) registrierbar (`url`/`origin`/`compiler` = Transport). **Contract-Entwurf liegt** (2026-10-04, read-only): der ankerlose Kanal (EEG) + die Richtungs-Serie (AST1) brauchen denselben fehlenden Slot — `station_code`/`name` tragen das Label, der ICRS-Rahmen bleibt absent (0 honored). Entscheid offen. Träger: `phi/blocked_sources.φ::gap:astrometry-reader ×7`, `::gap:curation ×2`.
+- **Lage:** (gemessen 2026-10-04) AST1 ist jetzt ein **Richtungs-Zeuge** statt gehalten: `s2.rs` `direction_witness_window` (ein `S2Osc` je `AstroSample`, τ aus der Serien-Kadenz, σ aus `e_ra/e_dec`), `omega.rs sky_reload` lädt `state/astrometry_witness` in den live-Pfad, `main_flow.rs` schreibt die AST1-Bytes je Quelle dorthin (nativer AST1-Träger, **kein** neuer Wire-Slot, **kein** Skalar), `astrometry_series::direction_only_lines` → `DirectionOnly`; `cargo check` 0/0.
+- **Blockade:** der **Quellen-Konverter** ViZieR-TSV (`ariel_j`…`uranu_j`) + `occultations.ct.utfpr.edu.br` → AST1 fehlt; die zweiten Linien werden erst dann gespeist. 2 Gaia-ADQL: `vari_classifier_result` HTTP 200, `cluster_ka` HTTP 400 (Tabelle außerhalb Gaia-TAP).
+- **Braucht:** TSV→AST1-Konverter bauen (Weberin); danach die 7 `blocked parser-def astrometry-reader` + gap-Note (`phi/blocked_sources.φ`) heben.
+
+### Solar-/Witness-Risse (river-88) — zwei geheilt, f107 offen
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** keine.
+- **Lage:** (gemessen 2026-10-04) `phi/witnesses.φ:106` `record gmrt` → `magic_identity` kennt nur `GMR1`; auf `gmr1` **geheilt**. `goes_xrs.bin` CDN-Pfad `ncei.noaa.gov` 404 → `ssd.jpl.nasa.gov` 206; **geheilt** (`phi/sources.φ`, register_sort kanonisch). `f107_penticton.bin` liegt auf dem CDN (`ssd.jpl.nasa.gov`, 206), Compiler `f107_compiler.rs` + MAGIC `F107`, aber **keine Register-Zeile + kein `f107`-Extract-Arm**; die Probes laden den Bin hart.
+- **Blockade:** `f107`-Quelle unregistriert (Register-Zeile + `f107`-Arm).
+- **Braucht:** `f107_penticton`-Block in `phi/sources.φ` (`format f107`, field `solar_f107_flux_sfu`) + `format f107`-Arm in `extract.rs`/`main_flow.rs` — dann die 10 solar-Probes versorgt.
 
 ### Medizinische/Life-Science-Datenquellen — disponiert (3 gewollte als pending)
 - **Status:** blockiert | **Bindung:** eigen
