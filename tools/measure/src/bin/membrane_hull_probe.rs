@@ -314,10 +314,18 @@ fn main() {
     }
 
     let mut tycho = PathStats::new();
+    let linear_start = std::time::Instant::now();
     for s in &star_samples {
         let admitted = catalog_sample_in_enclosure(&presences, s, now);
         tycho.record(admitted, s.anchor_p0, center, rho_star);
     }
+    let scan_ms = linear_start.elapsed().as_secs_f64() * 1e3;
+    let per_sample_ns = scan_ms * 1e6 / star_samples.len() as f64;
+    println!(
+        "LINEAR | samples {} | admitted {} | scan_ms {scan_ms:.3} | per_sample_ns {per_sample_ns:.3}",
+        star_samples.len(),
+        tycho.admit
+    );
 
     let anchor_uses = anchor_uses(&sources);
     let mut bootstrap = PathStats::new();
