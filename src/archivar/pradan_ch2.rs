@@ -155,7 +155,7 @@ mod tests {
         out.extend_from_slice(&2.0f32.to_be_bytes());
         out.extend_from_slice(&2i16.to_be_bytes());
         out.extend_from_slice(&3.0f32.to_be_bytes());
-        while out.len() % 2880 != 0 {
+        while !out.len().is_multiple_of(2880) {
             out.push(0);
         }
         out
