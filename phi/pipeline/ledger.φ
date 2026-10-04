@@ -3,9 +3,9 @@ disponiert
 kandidat http://pithia.cbk.waw.pl/tap
 note 2026-09-27 released in phi/blocked_sources.φ (Backend tot: PG refused, /tap/tables 500; Arm epncore-spatial steht parse.rs:319); planeto decline registry/katalog (declined_sources.φ:213).
 
-ausstehend
+disponiert
 kandidat https://limadou.ssdc.asi.it/
-note SSDC: 2026-09-26 query.php → SSDC-CAS-Login (Auth-Redirect), neue CSES-02-Prozedur noch nicht live. Sotgiu 2026-09-16 (mail_ledger.φ:79): Umbau, „wait a few weeks". Warten. SSDC_PASS stale.
+note SSDC/LIMADOU: 2026-10-04 query.php 200 = CAS-Login „Login" (reg /UserManager/requestUser.jsp); TAPSSDC 69 Tabellen, 0 CSES/LIMADOU = kein offener Arm; Sotgiu CSES-02-Umbau (mail_ledger.φ:79). → blocked_sources.φ:135.
 
 disponiert
 kandidat https://babamul.caltech.edu/api/
