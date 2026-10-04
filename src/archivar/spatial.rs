@@ -125,25 +125,49 @@ fn star_cell_bounds(ci: i64, base: f64, level: u8) -> (f64, f64) {
 fn build_star_leaves(
     stars: Vec<Arc<Sample>>,
     base: f64,
-    level: u8,
     out: &mut HashMap<StarCellKey, Vec<Arc<Sample>>>,
 ) {
-    if stars.is_empty() {
-        return;
-    }
     let mut by_cell: HashMap<StarCellKey, Vec<Arc<Sample>>> = HashMap::new();
     for s in stars {
         by_cell
-            .entry(star_cell_key(s.anchor_p0, base, level))
+            .entry(star_cell_key(s.anchor_p0, base, 0))
             .or_default()
             .push(s);
     }
     for (key, group) in by_cell {
-        if group.len() <= STAR_LEAF_TARGET || level >= STAR_MAX_LEVEL {
-            out.insert(key, group);
-        } else {
-            build_star_leaves(group, base, level + 1, out);
+        subdivide_star(group, base, 0, key.cell, out);
+    }
+}
+
+fn subdivide_star(
+    group: Vec<Arc<Sample>>,
+    base: f64,
+    level: u8,
+    cell: (i64, i64, i64),
+    out: &mut HashMap<StarCellKey, Vec<Arc<Sample>>>,
+) {
+    if group.len() <= STAR_LEAF_TARGET || level >= STAR_MAX_LEVEL {
+        out.insert(StarCellKey { level, cell }, group);
+        return;
+    }
+    let mut buckets: [Vec<Arc<Sample>>; 8] = std::array::from_fn(|_| Vec::new());
+    for s in group {
+        let c = star_cell_key(s.anchor_p0, base, level + 1).cell;
+        let di = (c.0 - 2 * cell.0) as usize;
+        let dj = (c.1 - 2 * cell.1) as usize;
+        let dk = (c.2 - 2 * cell.2) as usize;
+        buckets[di + 2 * dj + 4 * dk].push(s);
+    }
+    for (idx, b) in buckets.into_iter().enumerate() {
+        if b.is_empty() {
+            continue;
         }
+        let child = (
+            2 * cell.0 + (idx & 1) as i64,
+            2 * cell.1 + ((idx >> 1) & 1) as i64,
+            2 * cell.2 + ((idx >> 2) & 1) as i64,
+        );
+        subdivide_star(b, base, level + 1, child, out);
     }
 }
 
@@ -312,7 +336,7 @@ pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHas
         star_hi.2 = star_hi.2.max(c.2);
     }
     let mut star_cells: HashMap<StarCellKey, Vec<Arc<Sample>>> = HashMap::new();
-    build_star_leaves(stars, cell_size_star, 0, &mut star_cells);
+    build_star_leaves(stars, cell_size_star, &mut star_cells);
     SpatialHash {
         cell_size,
         anchor_vmax,
