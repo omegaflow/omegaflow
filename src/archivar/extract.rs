@@ -931,6 +931,18 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_CSES_UF => Some("cses_lap_uf_v"),
             _ => None,
         },
+        "cses_efd" => match comp {
+            crate::geo::COMP_CSES_EFD_ULF_EX => Some("cses_efd_ulf_ex_v_m"),
+            crate::geo::COMP_CSES_EFD_ULF_EY => Some("cses_efd_ulf_ey_v_m"),
+            crate::geo::COMP_CSES_EFD_ULF_EZ => Some("cses_efd_ulf_ez_v_m"),
+            crate::geo::COMP_CSES_EFD_ELF_EX => Some("cses_efd_elf_ex_v_m"),
+            crate::geo::COMP_CSES_EFD_ELF_EY => Some("cses_efd_elf_ey_v_m"),
+            crate::geo::COMP_CSES_EFD_ELF_EZ => Some("cses_efd_elf_ez_v_m"),
+            crate::geo::COMP_CSES_EFD_VLF_EX => Some("cses_efd_vlf_ex_v_m"),
+            crate::geo::COMP_CSES_EFD_VLF_EY => Some("cses_efd_vlf_ey_v_m"),
+            crate::geo::COMP_CSES_EFD_VLF_EZ => Some("cses_efd_vlf_ez_v_m"),
+            _ => None,
+        },
         _ => None,
     }
 }
