@@ -10500,6 +10500,15 @@ dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-gaia/dr3_stars.bin
+format catalog_tycho
+origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
+origin https://gea.esac.esa.int/tap-server/tap/sync
+compiler tools/harvest/src/bin/tycho2_compiler.rs
+catalog_epoch 2000.0
+at sun
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/viking_lander_tracking.bin
 format viking_text
 origin https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt ; https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
@@ -10515,15 +10524,6 @@ format weberin_verdicts
 origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
-at sun
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-gaia/dr3_stars.bin
-format catalog_tycho
-origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
-origin https://gea.esac.esa.int/tap-server/tap/sync
-compiler tools/harvest/src/bin/tycho2_compiler.rs
-catalog_epoch 2000.0
 at sun
 ttl 604800
 
@@ -11092,54 +11092,6 @@ lat lat
 lon lon
 field 2 wwlln_thunder_hours_h patch-levy em h 604800.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210630005145_20210630005917_00046_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 d4b7397a17f65a46e107a36e57e0a92300cca74cfed1ed89739fe029b660d6fd
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210609124205_20210609130229_00026_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210609124205_20210609130229_00026_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 a20ff7de6dc9188fabf6ca909f1fa975e70a1426d64f7eb8bc7be90c95fa0874
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210618180500_20210618183135_00035_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210618180500_20210618183135_00035_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 5efec8e8ff63d4f76dd5107c34e188f7376bc478e45944a4b4d23686f25df322
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210614155835_20210614162453_00031_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210614155835_20210614162453_00031_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 4a8de22eb4da9ff1eab4e0df64d219f582959824d0e8391d825f416dfe0c065e
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210610132123_20210610133816_00027_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210610132123_20210610133816_00027_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 0e44e6481f0b5a8f94c47c431222ebc08ef61dcb040255a5b9d2a356cb579d97
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210525042001_20210525043243_00011_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210525042001_20210525043243_00011_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 b298725678f6725dcd6e313ad6628566c8c43bc4b83e2b08f0a4eb1a8e77095f
-at mars
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210525042001_20210525043243_00011_a.bin
 format gras_2c
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210525042001_20210525043243_00011_A.2CL/content
@@ -11148,27 +11100,11 @@ sha256 1ff9af97e73a11b8d5c15a8920d4ea1049ef4b4719ffa50141b3a057515fe21a
 at mars
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210627235846_20210628000439_00044_a.bin
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210528062805_20210528063800_00014_a.bin
 format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210627235846_20210628000439_00044_A.2CL/content
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210528062805_20210528063800_00014_A.2CL/content
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 e20f0f8c8f2d4a9aa9f32b3eb89ff091d678bc1579c084d8ffe558518448fcef
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210625224006_20210625224957_00042_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210625224006_20210625224957_00042_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 3f55ca589da4832f0922f707c2e0c08a6b92255fc25fb8a1e6a57fbac0f52180
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210616171702_20210616172557_00033_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210616171702_20210616172557_00033_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 e5c9afb65533119fbc08020225cc1d9d962b4db0951234724b32940261ae436b
+sha256 7d4113758f82f3db4108394f12cb5392d42bc861a380b97a4ba9e67db70899e6
 at mars
 ttl 604800
 
@@ -11196,19 +11132,43 @@ sha256 004f26a72dc3d1325434c1f1fa29267f382e7bdaa5f2f91bfae0ec24295bf976
 at mars
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210607112519_20210607114327_00024_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210607112519_20210607114327_00024_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 4343d390612a3268a00aee5afb9cf12df378571b8669db9e2cd383c1a96d9d78
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210608120247_20210608122320_00025_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210608120247_20210608122320_00025_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 350d9b3b5418c237b0063032b43c2c74e34a6924f3ca9a516272d7fee4e73767
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210609124205_20210609130229_00026_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210609124205_20210609130229_00026_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 652d6f721237f2e70504a75c652836547b6f7030c8cc76602d54ffa6418e9b0b
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210610132123_20210610133816_00027_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210610132123_20210610133816_00027_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 0e44e6481f0b5a8f94c47c431222ebc08ef61dcb040255a5b9d2a356cb579d97
+at mars
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210611140040_20210611142216_00028_a.bin
 format gras_2c
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210611140040_20210611142216_00028_A.2CL/content
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
 sha256 2419c28a9878e3ba769a8ea6d68ecc7d3262964e5be524a33a07a029399b5bc2
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210528062805_20210528063800_00014_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210528062805_20210528063800_00014_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 1177fabec000cf5760c8eafda6f3d2bcda5b3b79b2008fd94910702a18228b1f
 at mars
 ttl 604800
 
@@ -11228,75 +11188,11 @@ sha256 a4a42406b2b38126237bdfa60b6a83eabd2e19b58a39a177d9d0b16d87264aa2
 at mars
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210605100445_20210605101554_00022_a.bin
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210614155835_20210614162453_00031_a.bin
 format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210605100445_20210605101554_00022_A.2CL/content
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210614155835_20210614162453_00031_A.2CL/content
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 79b1d229edad12849b67a5bea71daa3f671dd40e93e1565304f1a2c0b30c196d
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210617172542_20210617174251_00034_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210617172542_20210617174251_00034_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 861c16e8cdfab646759678c37293c29691d545184c29475b93b0d65c8ef67e85
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210608120247_20210608122320_00025_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210608120247_20210608122320_00025_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 19b71fc8749a630032c53c3a5a40f803ca2b936bca26fcb1a66a76171213fca7
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210610132123_20210610133816_00027_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210610132123_20210610133816_00027_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 d309066ee4a52b77d4c3243df2e81f70c7fdce1d91270991a446e710ef4e132b
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210611140040_20210611142216_00028_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210611140040_20210611142216_00028_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 72490c3e763ebddcdb9065710672bfa8099641ba821fbaaca45c12f437c5e71f
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210614155835_20210614162453_00031_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210614155835_20210614162453_00031_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 2b5f22cb31e67f59f563028e7cae7c1d120e10a2dcc1c8ac16addc8c7f05a783
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210613151917_20210613154608_00030_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210613151917_20210613154608_00030_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 1cbbdf8314ed0a0f8b3fe04781381402df731740ec19238232a71ae1dc5e509b
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210619184419_20210619190603_00036_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210619184419_20210619190603_00036_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 2f6cf23360c8492dc673d0bf462e7343acaef8a57dd22ab139393c07fd935362
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210623212136_20210623214627_00040_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210623212136_20210623214627_00040_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 3b7c3d33021fb4567eb1e5f11d58681dbe5c3639e687771a69cea7a277b4aa1c
+sha256 4a8de22eb4da9ff1eab4e0df64d219f582959824d0e8391d825f416dfe0c065e
 at mars
 ttl 604800
 
@@ -11316,62 +11212,6 @@ sha256 a0a3c7acc43728d94e6cbd085b9293b4799fd44b665e4cc61da2e48c8376f5b3
 at mars
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210619184419_20210619190603_00036_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210619184419_20210619190603_00036_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 d10015bb928e3e6b1d53c714a41ab92668ada39bc1f59deb21739d065fb2e841
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210530073623_20210530074230_00016_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210530073623_20210530074230_00016_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 726a91a2d231c4c27ca36f2db2ea265e114ef4a40600352df3c5480457f6d2ce
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210608120247_20210608122320_00025_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210608120247_20210608122320_00025_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 350d9b3b5418c237b0063032b43c2c74e34a6924f3ca9a516272d7fee4e73767
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210528062805_20210528063800_00014_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210528062805_20210528063800_00014_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 7d4113758f82f3db4108394f12cb5392d42bc861a380b97a4ba9e67db70899e6
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210625224006_20210625224957_00042_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210625224006_20210625224957_00042_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 97b57a40d6be3307ee797c1b670b3a73120a60a40fb87d9afd6966cfda292d0d
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210630005145_20210630005917_00046_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 d80abbdc3a20902bb7ce9cd1f85d0e9cf8d9bfaf091f6801520635accb85efdc
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210607112519_20210607114327_00024_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210607112519_20210607114327_00024_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 4343d390612a3268a00aee5afb9cf12df378571b8669db9e2cd383c1a96d9d78
-at mars
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210618180500_20210618183135_00035_a.bin
 format gras_2c
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210618180500_20210618183135_00035_A.2CL/content
@@ -11380,27 +11220,11 @@ sha256 2d924d5b883e210fbbe28241250d3a47f96b0493113991c024944aa830e0b7b1
 at mars
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210627235846_20210628000439_00044_a.bin
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210619184419_20210619190603_00036_a.bin
 format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210627235846_20210628000439_00044_A.2CL/content
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210619184419_20210619190603_00036_A.2CL/content
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 93579996729f3e2d09c5ef2169fb9913b7a1390c2bc229858841f13e7a9a4392
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210607112519_20210607114327_00024_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210607112519_20210607114327_00024_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 4eacf21ae7cc540fb498de027022f69b3f2ad17994b8084127cc33a717c72c4f
-at mars
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210609124205_20210609130229_00026_a.bin
-format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210609124205_20210609130229_00026_A.2CL/content
-compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 652d6f721237f2e70504a75c652836547b6f7030c8cc76602d54ffa6418e9b0b
+sha256 d10015bb928e3e6b1d53c714a41ab92668ada39bc1f59deb21739d065fb2e841
 at mars
 ttl 604800
 
@@ -11412,11 +11236,59 @@ sha256 9aba588a96f1e6e86145ca501783d98c61f80b4c853fe5e78be1ff912cb4163f
 at mars
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210612143959_20210612150247_00029_a.bin
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210625224006_20210625224957_00042_a.bin
 format gras_2c
-origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210612143959_20210612150247_00029_A.2CL/content
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210625224006_20210625224957_00042_A.2CL/content
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
-sha256 278208da9a7332a490d08654675309b997081e3a05e83305f7bdebb68920587a
+sha256 3f55ca589da4832f0922f707c2e0c08a6b92255fc25fb8a1e6a57fbac0f52180
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210627235846_20210628000439_00044_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210627235846_20210628000439_00044_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 93579996729f3e2d09c5ef2169fb9913b7a1390c2bc229858841f13e7a9a4392
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210630005145_20210630005917_00046_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 d80abbdc3a20902bb7ce9cd1f85d0e9cf8d9bfaf091f6801520635accb85efdc
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210525042001_20210525043243_00011_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210525042001_20210525043243_00011_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 b298725678f6725dcd6e313ad6628566c8c43bc4b83e2b08f0a4eb1a8e77095f
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210528062805_20210528063800_00014_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210528062805_20210528063800_00014_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 1177fabec000cf5760c8eafda6f3d2bcda5b3b79b2008fd94910702a18228b1f
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210530073623_20210530074230_00016_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210530073623_20210530074230_00016_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 726a91a2d231c4c27ca36f2db2ea265e114ef4a40600352df3c5480457f6d2ce
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210605100445_20210605101554_00022_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210605100445_20210605101554_00022_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 79b1d229edad12849b67a5bea71daa3f671dd40e93e1565304f1a2c0b30c196d
 at mars
 ttl 604800
 
@@ -11425,6 +11297,134 @@ format gras_2c
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210606104402_20210606105856_00023_A.2CL/content
 compiler tools/harvest/src/bin/roper_pds4_compiler.rs
 sha256 1dda1224c13b9297c4b9e5b0c23b0cc2283d67b669b71d5206562a688dac56b4
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210607112519_20210607114327_00024_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210607112519_20210607114327_00024_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 4eacf21ae7cc540fb498de027022f69b3f2ad17994b8084127cc33a717c72c4f
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210608120247_20210608122320_00025_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210608120247_20210608122320_00025_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 19b71fc8749a630032c53c3a5a40f803ca2b936bca26fcb1a66a76171213fca7
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210609124205_20210609130229_00026_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210609124205_20210609130229_00026_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 a20ff7de6dc9188fabf6ca909f1fa975e70a1426d64f7eb8bc7be90c95fa0874
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210610132123_20210610133816_00027_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210610132123_20210610133816_00027_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 d309066ee4a52b77d4c3243df2e81f70c7fdce1d91270991a446e710ef4e132b
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210611140040_20210611142216_00028_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210611140040_20210611142216_00028_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 72490c3e763ebddcdb9065710672bfa8099641ba821fbaaca45c12f437c5e71f
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210612143959_20210612150247_00029_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210612143959_20210612150247_00029_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 278208da9a7332a490d08654675309b997081e3a05e83305f7bdebb68920587a
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210613151917_20210613154608_00030_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210613151917_20210613154608_00030_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 1cbbdf8314ed0a0f8b3fe04781381402df731740ec19238232a71ae1dc5e509b
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210614155835_20210614162453_00031_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210614155835_20210614162453_00031_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 2b5f22cb31e67f59f563028e7cae7c1d120e10a2dcc1c8ac16addc8c7f05a783
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210616171702_20210616172557_00033_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210616171702_20210616172557_00033_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 e5c9afb65533119fbc08020225cc1d9d962b4db0951234724b32940261ae436b
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210617172542_20210617174251_00034_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210617172542_20210617174251_00034_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 861c16e8cdfab646759678c37293c29691d545184c29475b93b0d65c8ef67e85
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210618180500_20210618183135_00035_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210618180500_20210618183135_00035_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 5efec8e8ff63d4f76dd5107c34e188f7376bc478e45944a4b4d23686f25df322
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210619184419_20210619190603_00036_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210619184419_20210619190603_00036_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 2f6cf23360c8492dc673d0bf462e7343acaef8a57dd22ab139393c07fd935362
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210623212136_20210623214627_00040_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210623212136_20210623214627_00040_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 3b7c3d33021fb4567eb1e5f11d58681dbe5c3639e687771a69cea7a277b4aa1c
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210625224006_20210625224957_00042_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210625224006_20210625224957_00042_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 97b57a40d6be3307ee797c1b670b3a73120a60a40fb87d9afd6966cfda292d0d
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210627235846_20210628000439_00044_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210627235846_20210628000439_00044_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 e20f0f8c8f2d4a9aa9f32b3eb89ff091d678bc1579c084d8ffe558518448fcef
+at mars
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210630005145_20210630005917_00046_a.bin
+format gras_2c
+origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
+compiler tools/harvest/src/bin/roper_pds4_compiler.rs
+sha256 d4b7397a17f65a46e107a36e57e0a92300cca74cfed1ed89739fe029b660d6fd
 at mars
 ttl 604800
 

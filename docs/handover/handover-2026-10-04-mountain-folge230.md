@@ -3,7 +3,7 @@
   session: Mountain-Folge 230
   class: handover
   date: 2026-10-04
-  sha256: 05919f8ad02f31d8e1995d5b56d6770ff03865e24ed65eb1ea3b3ee7bba45da2
+  sha256: c58e4e326064a6642d8ce9fcb2c86a8893835233d825f19e60f27787ad452844
   status: live
 -->
 # Handover — Mountain-Folge 230 (2026-10-04)
@@ -48,19 +48,19 @@ Wort | Datum | Quelle
 - **Blockade:** Lizenz ungeklärt.
 - **Braucht:** Antwort abwarten; bei Lizenz Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
 
-### Ranging-Decode — Modul 203 liegt, Sequential-Port offen
+### Ranging-Decode — Sequential-Arm gebaut; FRQ_UP fehlt in DT2/DT3
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-04 via `archive_search --pdf-text`) DT2/DT3-Offsets verifiziert; der reale MRO-MAGr-Frame ist legales **Sequential-Ranging**, `ranging_composite_period` implementiert die PN-Tabelle. **Modul-Blockade gelöst:** `docs/reference/810-005-203C-sequential-ranging.txt` liegt (sha `e218be615f36…`; 203E-PDF direkt 429, 203C per Proxy textrein). Doku-Formeln (203C §2.2.1): `f_0 = f_S/2^7` (S-Band) bzw. `(221/749)·f_X/2^7` (X-Band), `f_n = f_0·2^-n`; äquivalent zur notierten Form mit **`F_EXC = FRQ_UP/32`** (S-Band; X-Band zusätzlich ×221/749). Komponenten 4–24, jede halb so tief wie die Vorgängerin; Ambiguität der tiefsten Komponente.
-- **Blockade:** der Sequential-Zweig in `tnf_ranging_resolution` (`src/archivar/odf.rs:351`) fehlt — Codes 2/3 rufen die PN-`ranging_composite_period`.
-- **Braucht:** Sequential-Arm in `odf.rs`: `f_first = F_EXC·2^-(first+2)`, Auflösung `c/(2·f_first)`; `FRQ_UP`/`exc_scalar` aus dem TNF-Record (DT2/DT3-Felder prüfen); Test gegen Modul 203 Table 1 (Kanal 18, Komponente 4 = 1 032 556.981 Hz). Bis dahin für Codes 2/3 ein benanntes `None`.
+- **Lage:** (gemessen 2026-10-04) Sequential-Arm gebaut (`src/archivar/odf.rs`): `seq_ranging_component_frequency_hz`, `seq_ranging_ambiguity_resolution_m` (`f_first = F_EXC·2^-(first+2)`, `c/(2·f_first)`), `tnf_seq_ranging_f_exc_hz`; Test gegen Modul 203 Table 1 (Kanal 18, Komponente 4 = 1 032 556.981 Hz). **Gemessen:** DT2/DT3 tragen `exc_scalar_num/den` und `ul_cal_freq`, aber **kein `ul_freq`/FRQ_UP**; das steht nur in Data Type 6/7. Modul 203 liegt als `docs/reference/810-005-203C-sequential-ranging.txt` (sha `e218be61…`). `cargo check` 0/0.
+- **Blockade:** der Sequential-Record (Codes 2/3) trägt die Uplink-Frequenz nicht — `F_EXC` ist aus DT2/DT3 nicht bildbar; Codes 2/3 liefern daher ein benanntes `None`.
+- **Braucht:** `ul_freq` aus dem DT6/DT7-Record derselben SFDU-Kette beziehen (oder im ODF-Frame suchen) und `tnf_ranging_resolution` damit speisen; bis dahin Codes 2/3 `None`.
 
-### RoPeR `gras_2c` — Mapper-Arm fehlt, field-Zuordnung blockiert
+### RoPeR `gras_2c` — Arm steht; 42 Quellen ohne `field`-Zeilen (Parser exact-match)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03) gap-Token `gras-2c` (`phi/blocked_sources.φ`): `.2C+.2CL`, `Table_Binary`, Record 16453 × 52, `Group_Field_Binary` 2048 × (R,I) f32 LE; Compiler `roper_pds4_compiler.rs` → G2CB `(t, amp, comp)`. `series_component_name` hat keinen `gras_2c`-Arm (`extract.rs:342+`) → `series_named` → `None` → 0 Kanäle. 42 `.2C`-Paare meint 42 **Datei**-Paare.
-- **Blockade:** band-tragender Reader-Arm ausstehend (`gras_2c::parse_series` setzt hart `SPECTRAL_NO_BAND`, `extract.rs:244`); die Range-Achse trägt ohne Wire-Slot.
-- **Braucht:** `series_named("gras_2c")`-Arm bauen; offen (a) quellen-weite `range <start_m> <step_m>`-Direktive (Chirp 0,45–2,15 GHz ist Quellen-Eigenschaft; `freq` wäre Fabrikation), (b) `field`-Zeilen `gras_2c_gate_*` in `phi/sources.φ`. `comp` ist der Range-Gate-Index, kein Polarisationspaar (Zhou 2020, DOI `10.26464/epp2020054`).
+- **Lage:** (gemessen 2026-10-04) Der `series_named("gras_2c")`-Arm ist **bereits gebaut + committet** (`extract.rs:317-324` HEAD, Test `gras_2c_named_series_carries_gate_channels_without_a_band`, Commit `9e4d688f8`) — die folge229-Lage war stale, der Baum gewinnt. Der echte 0-Kanal-Grund: `phi/sources.φ` trägt 42 `format gras_2c`-Blöcke, aber **0 `field`-Zeilen** → `main_flow.rs:3024` bricht „field undeclared" ab.
+- **Blockade:** `field`-Parser ist exact-match (`parse.rs:925`, Lookup `main_flow.rs:3050`); `gras_2c_gate_*` ist so nicht ausdrückbar (2048 Gate-Felder × 42 Quellen = 86 016 Literal-Zeilen oder ein Wildcard-Feld-Arm).
+- **Braucht:** Wildcard-Feld-Arm (`gras_2c_gate_*`) **oder** die Quellen-weite `range <start_m> <step_m>`-Direktive (kein Wire-Slot; Chirp 0,45–2,15 GHz wäre sonst `freq`-Fabrikation). `comp` ist der Range-Gate-Index (Zhou 2020, DOI `10.26464/epp2020054`).
 
 ### HDF4 — MODIS CMG: Granulen lesen; SZIP-Codec fehlt
 - **Status:** blockiert | **Bindung:** eigen
@@ -72,16 +72,16 @@ Wort | Datum | Quelle
 ### Weberin zweite Linie — astrometry-reader/curation-Arme (9 parser-def)
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-03) 6 VizieR `asu-tsv` `J/A+A/582/A8/{ariel,miran,obero,titan,umbri,uranu}_j` (Uranus-Monde) + `occultations.ct.utfpr.edu.br` = zweite unabhängige Positions-Linie der Weberin; 2 Gaia-ADQL (`vari_classifier_result` HTTP 200 korrigiert, `cluster_ka` HTTP 400 — keine Cluster-Tabelle in Gaia-TAP). Alle 9 `blocked parser-def` (`astrometry-reader` ×7, `curation` ×2). **AST1-Modul gebaut** (`src/archivar/astrometry_series.rs`, `MAGIC b"AST1"`) + **Compiler gebaut** (`tools/harvest/src/bin/vizier_astrometry_compiler.rs`, 13 313 Samples über 6 Tabellen, sha `bc21177b…`).
-- **Blockade:** der `format astrometry_series`-Reader-Arm ausstehend (`extract.rs`/`main_flow.rs` ohne Zweig; `sgrep astrometry phi/sources.φ` = 0); `Sat` trägt ohne `AstroSample`-Slot. Serien-Arm teils uncommittet in einer anderen Linie.
-- **Braucht:** Reader-Arm + Registrierung; `Sat`-`AstroSample`-Slot. Träger: `phi/blocked_sources.φ::gap:astrometry-reader ×7`, `::gap:curation ×2`.
+- **Lage:** (gemessen 2026-10-04) 6 VizieR `asu-tsv` `J/A+A/582/A8/{ariel,miran,obero,titan,umbri,uranu}_j` (Uranus-Monde) + `occultations.ct.utfpr.edu.br` = zweite unabhängige Positions-Linie der Weberin. AST1-Modul + Compiler stehen (13 313 Samples, sha `bc21177b…`). Der **Reader-Arm ist jetzt gebaut**: `extract.rs:206` (`verify_records`), `astrometry_series_counts` (`extract.rs:216`), `main_flow.rs:3263` Fetch-Branch, `fetch.rs:1106` Bypass; `cargo check` 0/0.
+- **Blockade:** kein `AstroSample`/Richtungs-Slot — weder das 26×f64-Wire noch der `SeriesRow`-Strom trägt eine bewegte (ra,dec)-Serie; AST1 wird geparst + für das Register gehalten, nie zu einem Skalar flachgeklopft. Die 2 Gaia-ADQL: `vari_classifier_result` korrigiert HTTP 200, `cluster_ka` HTTP 400 (Cluster-Tabelle außerhalb Gaia-TAP).
+- **Braucht:** einen Richtungs-/`AstroSample`-Wire-Slot definieren; bis dahin `format astrometry_series` (ohne `cmap`/`field`) registrierbar (`url`/`origin`/`compiler` = Transport). Träger: `phi/blocked_sources.φ::gap:astrometry-reader ×7`, `::gap:curation ×2`.
 
 ### pradan_ch2-Reader-Arm — roher ISRO-Zip ohne `format`
 - **Status:** blockiert | **Bindung:** eigen
 - **Trigger:** CI-Lauf `pradan-cdn.yml` mit konkretem `ch2_*.zip` (liefert ein Sample).
-- **Lage:** (gemessen 2026-10-03) `pradan_ch2_compiler.rs` lädt den rohen Zip (Magic `PK`/`SIMPLE`), aber kein `format pradan_ch2`-Reader in `extract.rs`/`main_flow.rs` und keine Registrierung; ein Sample fehlt.
-- **Blockade:** das innere Produkt-Format (PDS4/GeoTIFF/CSV je Payload) ist ungemessen.
-- **Braucht:** ein `ch2_*.zip`-Sample über `pradan-cdn.yml` ziehen, innere Dateien sniffen, dann den `format pradan_ch2`-Arm bauen.
+- **Lage:** (gemessen 2026-10-04) Inneres Format **gemessen**: der CDN-Asset-Zip `ch2_cla_l1_2025_10.zip` (254 320 207 B, sha `f0fd23d6…`) trägt **108 948 Member = 54 474 Paare** `cla/data/calibrated/<YYYY>/<MM>/<DD>/ch2_cla_l1_<START>_<END>.{fits,xml}` — FITS + XML-Sidecar je Beobachtung (kein PDS4/GeoTIFF/CSV). Basis `src/archivar/fits.rs` steht.
+- **Blockade:** kein `format pradan_ch2`-Reader in `extract.rs`/`main_flow.rs`.
+- **Braucht:** ein Member entpacken, die HDU-Art (Image vs. BINTABLE) und das XML-Schema fixieren, dann den Arm über `fits.rs` + XML bauen.
 
 ### Medizinische/Life-Science-Datenquellen — Disposition offen
 - **Status:** blockiert | **Bindung:** eigen
