@@ -65,15 +65,15 @@ note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs (HCV1, 12 B Header + 20 B/Reco
 
 pending
 url https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) — 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict 206 (1 B); Download end-to-end offen (Harvest-Duty, Mycelium).
+note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206 (1 B); Konto Operator-Hand 2026-09-28. Produkt-Arme pds3_img/pds4_fits/gras_2c stehen, Portal-Ernte-Arm + Reader fehlen → Blocker Download/Compiler. future-folge149.
 
 pending
 url https://www.nssdc.ac.cn/
-note Tianwen-1/Zhurong (CNSA) — 2026-09-29: Konto Operator-Hand 2026-09-28 (future-folge149), --verdict 206 (1 B); Download end-to-end offen (Harvest-Duty, Mycelium).
+note Tianwen-1/Zhurong (CNSA) — 2026-10-04: --verdict 206 (1 B); Konto Operator-Hand 2026-09-28. Kein nssdc-Arm (sgrep src+tools = 0); clpds_compiler.rs trägt nur Tianwen-2-Katalog → Blocker Ernte-Arm + Reader. future-folge149.
 
 pending
 url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM (MBRSC VAE) — 2026-09-29: Cognito-Signup+Login Operator-Hand 2026-09-28 (future-folge149), --verdict 200 (2789 B); Download end-to-end offen (Harvest-Duty, Mycelium).
+note Hope/Al-Amal EMM (MBRSC VAE) — 2026-10-04: --verdict 200 (2 789 B); Cognito-Login Operator-Hand; emm_sdc_compiler.rs + emm-sdc-cdn.yml gebaut (emm_exi_l2.tar), Lauf 37190567318 rot (Proxy ohne Body). Reader fehlt. future-folge149.
 
 pending
 url https://superdarn.ca/data-download
@@ -129,7 +129,7 @@ note Chandrayaan-1 M3 (ENVI-Cube) — 2026-10-03: Asset pds3_img_m3g20081118t222
 
 pending
 url https://gportal.jaxa.jp/
-note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-03: Konto registriert (gportal.jaxa.jp/gpr/user/regist1); Suche offen, Download/SFTP nach Login. future-folge226.
+note JAXA G-Portal (GOSAT/ALOS-2 etc.) — 2026-10-04: Konto; auth 200, catalog_records 15 949, Quota voll; Port-Arm jaxa_gportal_compiler.rs + jaxa-gportal-cdn.yml gebaut. Blocker: Record-Download (add_download.json/SFTP), Reader fehlt. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
@@ -137,11 +137,11 @@ note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200 (60809 B); kein CSES-Rohdat
 
 pending
 url https://www.leos.ac.cn/
-note LEOS = Notfallministerium/National Inst. of Natural Hazards (CSES 张衡一号), nicht CAS — 2026-10-03: Konto registriert; SPA leos.ac.cn/#/ Daten-/Modellservice, aktuell „暂无数据". future-folge226.
+note LEOS (CSES 张衡一号), nicht CAS — 2026-10-04: Konto; /api/admin/data/front/list 200 = status 40301 登录超时 (Login-Gate). Kein Arm (sgrep leos src = 0) → Blocker Login + Reader. future-folge226.
 
 pending
 url https://clpds.bao.ac.cn/
-note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-03: Konto registriert (clpds.bao.ac.cn/register); SPA-API /moon-admin/client/science/{catalogue,dataInfoList} 200, PDS3-Einzelprodukte; Download nach Login. future-folge226.
+note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13 207 B); clpds_compiler.rs + clpds-cdn.yml gebaut (catalogue 98 + files 568 396); Annex-Arm --with-annex gebaut, Workflow ruft ihn noch ohne. PDS3-Reader steht. future-folge226.
 
 pending
 url https://pds-geosciences.wustl.edu/missions/viking/gravity.html
@@ -161,7 +161,7 @@ note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabi
 
 pending
 url https://data.kasi.re.kr/
-note KASI Science Data Portal — 2026-10-02 HTTP 200; Data-APIs api/{KMTNet,KVN,MIRIS}/search (JSON; MIRIS: metadata + DATAURL archive.kasi.re.kr/*.fits); Arm offen; pda.kasi.re.kr-Konto descoped, Weg KARI/KPDS. future-folge168.
+note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (6 276 B), public (kein Key); kasi_compiler.rs + kasi-cdn.yml gebaut (kasi_{miris,kmtnet,kvn}.json, name/ra/dec/jd/dataurl); Reader-Arm fehlt (sgrep kasi src = 0). future-folge168.
 
 pending
 url https://github.com/TIAN-we/petrel19

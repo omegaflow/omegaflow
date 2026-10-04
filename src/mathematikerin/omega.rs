@@ -465,6 +465,21 @@ impl OmegaLoop {
         }
     }
 
+    pub fn verdict_direction_only(&mut self) -> usize {
+        match self.verdicts.write() {
+            Ok(mut verdicts) => crate::archivar::astrometry_series::merge_direction_only(
+                &mut verdicts,
+                &self.sky.witnesses,
+                self.t_presence,
+            ),
+            Err(poisoned) => crate::archivar::astrometry_series::merge_direction_only(
+                &mut poisoned.into_inner(),
+                &self.sky.witnesses,
+                self.t_presence,
+            ),
+        }
+    }
+
     pub fn te_probe(
         &mut self,
         xs: &[f32],
@@ -982,8 +997,9 @@ impl OmegaLoop {
             self.sky.witnesses = load_witnesses(&witness_dir);
             let samples: usize = self.sky.witnesses.iter().map(|s| s.samples.len()).sum();
             if samples > 0 {
+                let held = self.verdict_direction_only();
                 self.sky_say(&format!(
-                    "{samples} astrometry direction sample(s) held as S² direction witness (moving direction, no scalar channel)"
+                    "{samples} astrometry direction sample(s) held as S² direction witness (moving direction, no scalar channel); {held} series held as DirectionOnly in the verdict register"
                 ));
             }
         }

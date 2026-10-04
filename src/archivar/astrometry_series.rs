@@ -120,6 +120,25 @@ pub fn direction_only_lines(series: &[AstroSeries], weave_epoch: f64) -> Vec<Ver
         .collect()
 }
 
+pub fn merge_direction_only(
+    verdicts: &mut Vec<VerdictLine>,
+    series: &[AstroSeries],
+    weave_epoch: f64,
+) -> usize {
+    let mut held = 0usize;
+    for line in direction_only_lines(series, weave_epoch) {
+        if line.name.is_empty() {
+            continue;
+        }
+        if verdicts.iter().any(|existing| existing.name == line.name) {
+            continue;
+        }
+        verdicts.push(line);
+        held += 1;
+    }
+    held
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -206,6 +225,32 @@ mod tests {
         assert_eq!(lines[0].knot, [None, None]);
         assert_eq!(lines[0].sep, None);
         assert_eq!(lines[0].weave_epoch, 3.2e8);
+    }
+
+    #[test]
+    fn a_direction_only_line_never_displaces_a_held_word() {
+        let weave = 3.2e8;
+        let mut held = vec![VerdictLine {
+            name: "Camargo+2015 Uranu".to_string(),
+            word: VerdictWord::Riss,
+            knot: [None, None],
+            sep: Some(1.0),
+            weave_epoch: weave,
+        }];
+        let added = merge_direction_only(&mut held, &[sample_series()], weave);
+        assert_eq!(added, 0);
+        assert_eq!(held.len(), 1);
+        assert_eq!(held[0].word, VerdictWord::Riss);
+
+        let mut empty: Vec<VerdictLine> = Vec::new();
+        let added = merge_direction_only(&mut empty, &[sample_series()], weave);
+        assert_eq!(added, 1);
+        assert_eq!(empty.len(), 1);
+        assert_eq!(empty[0].name, "Camargo+2015 Uranu");
+        assert_eq!(empty[0].word, VerdictWord::DirectionOnly);
+        assert_eq!(empty[0].knot, [None, None]);
+        assert_eq!(empty[0].sep, None);
+        assert_eq!(empty[0].weave_epoch, weave);
     }
 
     #[test]
