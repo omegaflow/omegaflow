@@ -19910,6 +19910,14 @@ sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
 at sun
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_euvs.bin
+format goes_euvs
+origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs
+compiler tools/harvest/src/bin/euvs_compiler.rs
+at sun
+ttl 31536000
+field goes_euvs_lya1216 goes_euvs_lya1216 inverse-square em wm2_1au 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
 format catalog_charm2
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/charm2 JOIN I/355/gaiadr3, DISTANCE < 2")
@@ -19918,6 +19926,54 @@ at sun
 ttl 31536000
 field UD charm2_ud_mas inverse-square gravity mas 31536000 0.0 0.0
 field LD charm2_ld_mas inverse-square gravity mas 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/ariel_j.ast1
+format astrometry_series
+origin https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 e5d97292df6a12203d7bb3eb808bead682682381696c67ebc687bfab81a95643
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/miran_j.ast1
+format astrometry_series
+origin https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 fcb1824d80b296a606fae75b2d7cb4e94ef954f65579e6c5d7671e2ef946901a
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/obero_j.ast1
+format astrometry_series
+origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 56ba6e71183967134f1fc45d4fc0fab0f73094aa5e450ab3723f2762a18c70ef
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/titan_j.ast1
+format astrometry_series
+origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 591e8f8a7201c585c8642a489d277f35f058444721ecfcfebfd006f0646d193b
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/umbri_j.ast1
+format astrometry_series
+origin https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 8c6fc17428dbf7803a9165b32fb3077dcfd47541bca0c1ba7cb6ac9f8fbcb2ac
+at sun
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/uranu_j.ast1
+format astrometry_series
+origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
+compiler tools/harvest/src/bin/astrometry_series_compiler.rs
+sha256 2d1a8d9942bae59cb177ff6e0194757339cdc7aad69edfe1733117abd1ccec4f
+at sun
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vo.km3net.de/antares_events_2007_2017.sky1
 origin https://vo.km3net.de/ant20_01/nu/cone/form
