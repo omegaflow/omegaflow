@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: 4e05f2ae4281b913074510742a5348a64dd57ce54c81a5a9e14acb5067e78733
+  sha256: 585c54b13d89f7788b604bddef513d7b8aead1d8c80c236e87bb2f7250a3369c
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -70,17 +70,17 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Runner-Queue (Hosted-Runner-Knappheit, gemessen `ci_manage status`)
 - **Braucht:** je Lauf `ci_manage log <id>`; bei Grün `nvss.json`-Rebind / `sources.φ`-Block `sha256` (JAXA, OpenNeuro) / WASM-Artefakt-Prüfung.
 
-### iEEG-Ernte-Arm bauen (Mycelium) — Zugang: Riss, nicht „offen"
-- **Status:** wartend | **Bindung:** eigen (Arm) / Zugang Operator
-- **Trigger:** Zugangsweg gemessen — `blocked_sources.φ:180` (keyless-Endpunkt oder iEEG-Creds)
-- **Lage:** (gemessen 2026-10-04) Reader-Format steht (`main_flow.rs:3241` `"ieeg_edf"`; EDF `src/archivar/extract.rs`, `9d416e57b`). **Zugang gefixt per Wrapper:** `ida_fetch --get <url>` nutzt den **gültigen IDA-Cookie-Jar** (`~/.cache/omegaflow/ida-cookies.txt`, Operator-Wort 2026-10-04 „IDA-Cookie: login ok — Jar-Seite trägt ‚Sign Out'"); nur `--login` (Neu-Auth) ist Turnstile-gated. iEEG.org hat ein **eigenes** Konto (`omegaflow`), Bridge-Tab eingeloggt, „Find Datasets" funktioniert; das Portal ist GWT (`POST /mefview/eeg`), für curl zusätzlich die `www.ieeg.org`-Cookies.
-- **Blockade:** kein gemessener keyless Zugang; keine iEEG-Creds in `secrets` für CI
-- **Braucht:** `ida_fetch --get <iEEG-Daten-URL>` (Jar + `www.ieeg.org`-Cookies) → EDF nach `data/ieeg.org/` → Packer-Compiler + `sources.φ`-Block + CDN. Die iEEG-Daten-URL aus dem Portal-Download (im eingeloggten Bridge-Tab) ablesen. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
+### iEEG-Ernte-Arm bauen (Mycelium) — REST-API gefunden
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `ieeg_compiler` gebaut → `ieeg-cdn.yml`-Lauf → `ci_manage log <id>`
+- **Lage:** (gemessen 2026-10-04) **REST-API** (aus dem offiziellen Client `github.com/ieeg-portal/ieegpy`): Base `https://www.ieeg.org/services`; `GET /timeseries/getIdByDataSnapshotName/<name>` → snapshot_id; `GET /timeseries/getDataSnapshotTimeSeriesDetails/<id>` → XML; `POST /timeseries/getUnscaledTimeSeriesSetBinaryRaw/<id>?start=&duration=` (XML-Body) → Binär. Auth-Header `username`/`timestamp`(ISO-UTC)/`signature` = base64(sha256(`user`+`\n`+`md5(pass)`+`\n`+METHOD+`\n`+host+`\n`+path+`\n`+query+`\n`+timestamp+`\n`+base64(sha256(body)))). Keys `IEEG_USER`/`IEEG_PASS` **in `.secrets.local`** (gemessen, 148 Keys). Endpunkt gibt ohne Signatur 503. Reader `main_flow.rs:3241` `"ieeg_edf"` steht; das Web-Portal ist nur GWT-UI (`POST /mefview/eeg`).
+- **Blockade:** Compiler fehlt (`sgrep tools` = 0)
+- **Braucht:** `ieeg_compiler.rs` (Auth-Signatur + getId/getDetails/getData) + `ieeg-cdn.yml` + `format ieeg_edf`-Block + Manifestation. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Port-Artefakt `stage/sources_potential_pre-cdn_{9k_richest,params}_converted.φ` erzeugt
-- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` note: `825 Blöcke (gitignored); Port 2026-10-04 via target/debug/omegaflow, Working Tree mit Register-Name-Index-Fix (src/archivar/port.rs, uncommitted) → stage/sources_potential_pre-cdn_9k_richest_converted.φ`; `:6` note: `63 Blöcke (gitignored); Port 2026-10-04 (derselbe Working-Tree-Bin) → stage/sources_potential_pre-cdn_params_converted.φ`.
+- **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` note: 825 Blöcke (gitignored); Port 2026-10-04 Force-Gate-Batch (field_or_review Feld-Autorität statt Block-`force`; port_drop_key; Heuristiken _pc/_kpc/_mjup/_rjup/frp/proton_flux/clear_sky/position_angle/elevation/mass_anomaly/magnetometer; units gt/m_jup/r_jup/kpc/mmh/g/deg) → stage/sources_potential_pre-cdn_9k_richest_converted.φ; `:6` note: `63 Blöcke (gitignored); Port 2026-10-04 (derselbe Working-Tree-Bin) → stage/sources_potential_pre-cdn_params_converted.φ`.
 - **Blockade:** Port-Artefakt noch nicht erzeugt
 - **Braucht:** Port-Lauf → `stage/…_converted.φ`, dann Register-Zeilen (Konverter-Spec = Mountain).
 
