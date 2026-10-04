@@ -465,6 +465,18 @@ impl Motion {
         }
     }
 
+    pub fn velocity_at(&self, t: f64) -> Option<[f64; 3]> {
+        match self {
+            Motion::Linear { v, .. } => Some(*v),
+            Motion::Spherical { rec } => Some(star_position_at(rec, t).1),
+            Motion::Kepler { rec } => {
+                let t_jd = t / 86400.0 + J2000_EPOCH;
+                state_at(rec, t_jd).map(|(_, v)| v)
+            }
+            Motion::Surface { .. } | Motion::Barycenter { .. } => None,
+        }
+    }
+
     pub fn anchor_body(&self) -> Option<&str> {
         match self {
             Motion::Surface { body_name, .. } | Motion::Barycenter { body_name, .. } => {
