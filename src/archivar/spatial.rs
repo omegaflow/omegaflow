@@ -744,18 +744,19 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if val_eff.abs() / (transverse2 + scale2) < floor_ft {
                 continue;
             }
-            let v = if let Motion::Linear { v, .. } = &sample.motion {
-                [v[0], v[1], v[2]]
-            } else {
-                let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
-                    Some(pd) => pd,
-                    None => continue,
-                };
-                [
-                    (p_dt[0] - p[0]) / 1e-3,
-                    (p_dt[1] - p[1]) / 1e-3,
-                    (p_dt[2] - p[2]) / 1e-3,
-                ]
+            let v = match sample.motion.velocity_at(t2) {
+                Some(v) => v,
+                None => {
+                    let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
+                        Some(pd) => pd,
+                        None => continue,
+                    };
+                    [
+                        (p_dt[0] - p[0]) / 1e-3,
+                        (p_dt[1] - p[1]) / 1e-3,
+                        (p_dt[2] - p[2]) / 1e-3,
+                    ]
+                }
             };
             records.push((
                 p[0],
@@ -896,18 +897,19 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if dist2 > exact * exact {
                 continue;
             }
-            let v = if let Motion::Linear { v, .. } = &sample.motion {
-                [v[0], v[1], v[2]]
-            } else {
-                let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
-                    Some(pd) => pd,
-                    None => continue,
-                };
-                [
-                    (p_dt[0] - p[0]) / 1e-3,
-                    (p_dt[1] - p[1]) / 1e-3,
-                    (p_dt[2] - p[2]) / 1e-3,
-                ]
+            let v = match sample.motion.velocity_at(t2) {
+                Some(v) => v,
+                None => {
+                    let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
+                        Some(pd) => pd,
+                        None => continue,
+                    };
+                    [
+                        (p_dt[0] - p[0]) / 1e-3,
+                        (p_dt[1] - p[1]) / 1e-3,
+                        (p_dt[2] - p[2]) / 1e-3,
+                    ]
+                }
             };
             records.push((
                 p[0],
