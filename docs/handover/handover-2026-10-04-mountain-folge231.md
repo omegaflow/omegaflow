@@ -3,7 +3,7 @@
   session: Mountain-Folge 231
   class: handover
   date: 2026-10-04
-  sha256: 245bba2855dc7eee0e7257f352339066ac17bc3cd77ff966089ca1660974781a
+  sha256: c62d6cb09bc98050aaeb55e6b9cd45d32e48836207d918540cc25a2499e1e23c
   status: live
 -->
 # Handover — Mountain-Folge 231 (2026-10-04)
@@ -65,12 +65,12 @@ Wort | Datum | Quelle
 - **Blockade:** `gl30` (COG-GeoTIFF) und `SRTM15+` (NetCDF) tragen **keinen** nativen Text-Endpunkt — kein zweiter Epochen-Block möglich (nur die eine gestalt-Zeile steht).
 - **Braucht:** `gl30`/`SRTM15+` aus dem Epochen-Arm **descopen** (oder abgeleitete `axis value`-Serie auf eigenem CDN manifestieren); `bz_blatt`/`gic_storm` rechnen in-process (kein Register-Feld nötig).
 
-### gras_2c — Rat entschieden: Vakuum-Einweg; Spec trägt die Konvention; Schwarm-Ernte offen
+### Schwarm-Ernte gras_2c — führende Stimmen geerntet; Fan-out läuft noch
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der detached Schwarm-Lauf `state/stimmen/voice-all-2026-10-04_154008/` (PID 18384) setzt seinen Done-Marker.
-- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt (einstimmig):** `start_m/step_m` trägt die **Vakuum-Einweg-Elektro-Range** (`range(k)=start_m+k·step_m`), ε-unabhängig — die 42 `range 0.0 0.01722`-Zeilen stehen byte-identisch; ε_r=4 (0.00861 m) ist ein benanntes Konsumenten-Modell, nie in die Register-Achse gefaltet; `start_m=0.0` null-echt, der Elektronik-Offset bleibt absent. **Spec dokumentiert:** `docs/specs/sources-v2-spec.md` `range`-Zeile (sha `e9952d96…`). Ableitung `step_m=c·T_p·f_s/(2·B·N_FFT)` (Zhou+2020 EPP 4(4) Tab. 3; Liu+2023 RS 15(4) 966).
+- **Trigger:** der detached Lauf `state/stimmen/voice-all-2026-10-04_154008/` (PID 18384) endet.
+- **Lage:** (gemessen 2026-10-04 this atom) **Rat-Verdikt steht** (Vakuum-Einweg, ε-unabhängig; 42 `range 0.0 0.01722`; Spec `e9952d96…`). **Schwarm-Ernte 17/29:** 1 kohärente Synthese (`google/gemini-3.1-flash-lite`): planetare GPR-Produkte (SHARAD/MARSIS/Chang'e LPR) führen die **ε-unabhängige Rohachse** (Zeitverzögerung); Tiefe = Interpretation mit ε-Annahme; ein missionsweiter CH2-Elektronik-Offset ist **nicht public** (PDS-DUG, `unbelegt`) — deckt sich mit dem Rat, **kein Register-Change**. Die übrigen Stimmen liefen in die Suchschleife (`tpm-limit`), keine widersprechende Messung.
 - **Blockade:** keine.
-- **Braucht:** Schwarm-Ernte lesen (`state/stimmen/voice-all-2026-10-04_154008/`), Claims am Baum gegenverifizieren.
+- **Braucht:** Rest-Ausgaben lesen (`jaq -r 'select(.type=="text") | .part.text'` je Datei); eine neue Quelle am Baum `archive_search --verdict` gegenverifizieren.
 
 ### CSES — EFD+HPM/SCM-Arme + Workflows stehen; Manifestation offen
 - **Status:** blockiert | **Bindung:** eigen
