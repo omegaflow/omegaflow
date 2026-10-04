@@ -1,10 +1,14 @@
 fn main() {
-    if let Ok(path) = std::env::var("OMEGAFLOW_FIT_SAMPLE") {
-        fit_sample_dump(&path);
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        if let Ok(path) = std::env::var("OMEGAFLOW_FIT_SAMPLE") {
+            fit_sample_dump(&path);
+        }
+        omegaflow::archivar::main_flow()
     }
-    omegaflow::archivar::main_flow()
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn fit_sample_dump(path: &str) -> ! {
     let bytes = match std::fs::read(path) {
         Ok(bytes) => bytes,

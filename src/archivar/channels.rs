@@ -1,4 +1,5 @@
 use super::*;
+use crate::archivar::fetch::PresenceSample;
 
 pub struct StationEntry {
     pub id: String,
