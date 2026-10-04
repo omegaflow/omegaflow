@@ -2354,6 +2354,59 @@ field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0\n";
 }
 
 #[test]
+fn test_swarm_tec_reader_positions_and_values() {
+    let records: [[f64; 5]; 3] = [
+        [50.0, 10.0, 6800.0, 1_700_000_000.0, 12.5],
+        [-30.0, 200.0, 6900.0, 1_700_000_060.0, 3.25],
+        [0.0, 0.0, 0.0, 1_700_000_120.0, 9.0],
+    ];
+    let mut buf = Vec::new();
+    buf.extend_from_slice(b"SCTE");
+    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in &records {
+        for v in r {
+            buf.extend_from_slice(&v.to_le_bytes());
+        }
+    }
+    let path = std::env::temp_dir().join("omegaflow_swarm_tec_reader_test.bin");
+    std::fs::write(&path, &buf).unwrap();
+    let src = source_fixture(
+        "swarm_tec",
+        vec![Extract::Field(field_fixture("absolute_vtec_tecu", 86400.0))],
+    );
+    let lsk = fixture_lsk();
+    let body = path.to_string_lossy().into_owned();
+    match extract(&src, &body, 0.0, &lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2, "the radius<=0 row stays unbound");
+            let first = &channels[0].0;
+            assert_eq!(first.name, "absolute_vtec_tecu");
+            assert_eq!(first.value, 12.5);
+            assert_eq!(first.epoch, lsk.unix_to_tdb(1_700_000_000.0).unwrap());
+            let lat = 50.0_f64.to_radians();
+            let lon = 10.0_f64.to_radians();
+            let r = 6_800_000.0_f64;
+            let expect = [
+                lat.cos() * lon.cos() * r,
+                lat.cos() * lon.sin() * r,
+                lat.sin() * r,
+            ];
+            match &first.position {
+                Position::StateVector { p, .. } => {
+                    assert!((p[0] - expect[0]).abs() < 1e-6);
+                    assert!((p[1] - expect[1]).abs() < 1e-6);
+                    assert!((p[2] - expect[2]).abs() < 1e-6);
+                }
+                other => panic!("the swarm TEC position is a state vector, found {other:?}"),
+            }
+            assert_eq!(channels[1].0.value, 3.25);
+        }
+        ExtractResult::WithEphemeris(_, _) => panic!("swarm TEC yields no ephemeris"),
+    }
+    let _ = std::fs::remove_file(&path);
+}
+
+#[test]
 fn test_extract_cmap_csv_dist_scale_mpc() {
     let csv = "AGCNr,Name,RAdeg_HI,Decdeg_HI,RAdeg_OC,DECdeg_OC,Vhelio,W50,errW50,HIflux,errflux,SNR,RMS,Dist,logMsun,HIcode,OCcode,NoteFlag\n\
 331061,456-013,0.01042,15.87222,0.00875,15.88167,6007,260,45,1.13,0.09,6.5,2.40,85.2,9.29,1,I,\"\"\n\

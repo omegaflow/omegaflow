@@ -16346,2189 +16346,6 @@ at earth
 sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
 ttl 31536000
 
-url https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
-format reference
-origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
-sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
-at earth
-ttl 31536000
-
-url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
-origin MAGIC per-project FITS URL (operator input; portal carries no single TAR)
-compiler tools/harvest/src/bin/dl3_skymap_compiler.rs
-format sky1
-at sun
-ttl 31536000
-field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin
-format slab2_depth
-origin https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
-compiler tools/harvest/src/bin/slab2_compiler.rs
-at earth
-ttl 31536000
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-icecat/icecat_sky1.sky1
-origin https://dataverse.harvard.edu/api/access/datafile/7502710
-compiler tools/harvest/src/bin/icecat_compiler.rs
-format sky1
-at sun
-ttl 31536000
-field icecat_sky1 icecat_sky1 inverse-square em 1 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
-format catalog_charm2
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/charm2 JOIN I/355/gaiadr3, DISTANCE < 2")
-compiler tools/harvest/src/bin/charm2_compiler.rs
-at sun
-ttl 31536000
-field UD charm2_ud_mas inverse-square gravity mas 31536000 0.0 0.0
-field LD charm2_ld_mas inverse-square gravity mas 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/vo.km3net.de/antares_events_2007_2017.sky1
-origin https://vo.km3net.de/ant20_01/nu/cone/form
-compiler tools/harvest/src/bin/antares_vo_compiler.rs
-format sky1
-at sun
-ttl 31536000
-field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
-
-url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-Earth3D.5.4.3.jar
-format reference
-sha256 e9e26fd79ef1399003035ecdcc58db0465c2cf6bf8558257bb0167bf7f4b53ed
-ttl 31536000
-
-url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-G3D-JPS.e3d.binary
-format reference
-sha256 7c6e8fd3ccbba4329abe37de44711dec0554884a9bbb316f97c8aa73231b2b4f
-ttl 31536000
-
-url https://gs.llnl.gov/sites/gs/files/2021-09/llnl-g3d-jps_tomofilt_1.zip
-format reference
-sha256 76aa5860791855d7c52bfab3724ad11ec4af7595741f7243f262e77bdda67908
-ttl 31536000
-
-url https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
-format reference
-sha256 3bb043779efd1c4e4cb7e99547ad7c2fa12f7477922bb3cb22dd9ea67450edc8
-ttl 31536000
-
-url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
-format tap
-ttl 31536000
-at sun
-cmap .
-ra ra
-dec dec
-field fnu_12 iras_psc_fnu_12_jy inverse-square em Jy 31536000 0.0 0.0
-field fnu_25 iras_psc_fnu_25_jy inverse-square em Jy 31536000 0.0 0.0
-field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 0.0 0.0
-field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 0.0 0.0
-
-url https://userquery.linea.org.br/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_auto_g+FROM+des_dr2.main+WHERE+mag_auto_g+IS+NOT+NULL
-format tap
-ttl 31536000
-at sun
-cmap .
-ra ra
-dec dec
-field mag_auto_g des_dr2_auto_mag_g inverse-square em mag 31536000 0.0 0.0
-
-url https://vdatum.noaa.gov/download/data/
-format reference
-ttl 31536000
-
-url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
-ttl 31536000
-on earth 48.977 178.199 0
-rows
-epoch YY MM DD hh mm
-bin 900
-prefix ndbc_dart_21414
-gate T 1 2
-gate HEIGHT 0 9999
-field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
-ttl 31536000
-on earth 34.7 -72.4 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
-ttl 31536000
-on earth 31.743 -74.955 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
-ttl 31536000
-on earth 28.86 -78.478 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41010
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
-ttl 31536000
-on earth 21.09 -64.864 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41043
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
-ttl 31536000
-on earth 27.505 -62.271 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41049
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
-ttl 31536000
-on earth 25.90 -89.67 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
-ttl 31536000
-on earth 25.16 -94.42 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
-ttl 31536000
-on earth 28.50 -84.52 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42036
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
-ttl 31536000
-on earth 22.14 -91.39 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42055
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
-ttl 31536000
-on earth 38.46 -74.70 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_44009
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
-ttl 31536000
-on earth 42.35 -70.69 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_44013
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
-ttl 31536000
-on earth 48.061 -87.793 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
-ttl 31536000
-on earth 43.185 -86.354 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45161
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
-ttl 31536000
-on earth 44.603 -73.394 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45178
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
-ttl 31536000
-on earth 42.368 -87.795 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45186
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
-ttl 31536000
-on earth 41.731 -81.367 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45207
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
-ttl 31536000
-on earth 56.30 -148.17 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
-ttl 31536000
-on earth 42.67 -124.82 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
-ttl 31536000
-on earth 46.06 -124.96 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46005
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
-ttl 31536000
-on earth 37.36 -122.88 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46012
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
-ttl 31536000
-on earth 40.74 -124.54 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46022
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
-ttl 31536000
-on earth 33.75 -119.20 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46025
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
-ttl 31536000
-on earth 37.75 -122.84 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46026
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
-ttl 31536000
-on earth 46.12 -124.51 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46029
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
-ttl 31536000
-on earth 57.034 -177.468 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46035
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
-ttl 31536000
-on earth 32.42 -119.53 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46047
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
-ttl 31536000
-on earth 34.26 -119.86 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46053
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
-ttl 31536000
-on earth 34.27 -120.68 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46054
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
-ttl 31536000
-on earth 38.07 -124.03 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46059
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
-ttl 31536000
-on earth 33.66 -120.20 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46069
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
-ttl 31536000
-on earth 51.035 179.808 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46071
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
-ttl 31536000
-on earth 53.93 -160.763 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46075
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
-ttl 31536000
-on earth 32.49 -118.02 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46086
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
-ttl 31536000
-on earth 23.52 -153.82 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51000
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
-ttl 31536000
-on earth 24.44 -162.00 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
-ttl 31536000
-on earth 17.56 -152.39 0
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51004
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
-
-url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
-format pds4_fixed_width
-origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
-compiler tools/harvest/src/bin/pds4_binary_compiler.rs
-at venus
-no-cadence
-field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
-field vco_rs_observed_xband_frequency "OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_predicted_xband_frequency "PREDICTED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_residual_calibrated_xband_shift "RESIDUAL CALIBRATED X-BAND FREQUENCY SHIFT" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_differential_doppler "DIFFERENTIAL_DOPPLER" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_earth_atmosphere_correction "CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
-field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
-field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
-origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
-compiler tools/harvest/src/bin/s1_sar_compiler.rs
-format s1_sar
-at earth
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at adrastea
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at amalthea
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at apophis
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ariel
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at atlas
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at atlas_3i
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at bennu
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at callisto
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_cassini.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/spk/990807A_SCEPH_EM52_EP13.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at cassini
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ceres
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at charon
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at deimos
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at despina
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at dione
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at earth
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at enceladus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at encke
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at epimetheus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at eris
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at europa
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at galatea
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galileo.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/spk/s970311a.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at galileo
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at ganymede
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at haumea
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at helene
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at himalia
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at hydra
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at hyperion
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at iapetus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at io
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at iss
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at janus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juice
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juice_cog
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juno
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at juno_asteroid
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at jupiter
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at jwst
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at kerberos
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at larissa
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at makemake
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mariner10.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
-compiler tools/harvest/src/bin/ephemeris_mariner10_compiler.rs
-sha256 7ad8b8bf4d5447f54d8712112c7eda23597924574a359fd5d43d56fb7644ef9d
-at mariner10
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mars
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mercury
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_messenger.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/messsp_1000/data/spk/msgr_040803_120516_140823_od268sc_0.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at messenger
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at metis
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at mimas
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at miranda
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at moon
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at naiad
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_near.bin
-format ephemeris_binary
-origin https://naif.jpl.nasa.gov/pub/naif/nearsp_1000/data/spk/near_cruise_nav_v1.bsp
-compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
-at near
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at neptune
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at neptune_c
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at nereid
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at nix
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at oberon
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pallas
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pandora
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at parker_solar_probe
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at phobos
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at phoebe
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at pluto
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at prometheus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at proteus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at rhea
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at saturn
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at solar_orbiter
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at styx
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at sun
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at tethys
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at thalassa
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at thebe
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at titan
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at titania
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at triton
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at umbriel
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at uranus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at uranus_c
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at venus
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
-format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
-compiler tools/harvest/src/bin/ephemeris_compiler.rs
-at vesta
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1999-08-18)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at cassini
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2026-12-03)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at europa_clipper
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1990-12-08)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at galileo
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e2.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1992-12-08)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at galileo
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at halley
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_itokawa.bin
-format ephemeris_binary
-origin procedure: JPL Horizons stable-arc vectors via horizons_compiler (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at itokawa
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-08-02)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at messenger
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_near.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1998-01-23)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at near
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
-format ephemeris_binary
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 28568e3cadc1a864ac54c5b06cdc9267eeded9b45b9452f0be3bd369d63e9e16
-at new_horizons
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin
-format ephemeris_binary
-origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 bd86242fe2d4bd1f7d4ab3a8e9a7a9ccbd43db82b01ef46a3325d16c5dc768a4
-at pioneer10_daily
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer11_daily.bin
-format ephemeris_binary
-origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 7ea383fda24450d8f490e15c3e6aa37a38626f01b118bd8cfd0cfa13d7506063
-at pioneer11_daily
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
-format ephemeris_binary
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-03-04)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-at rosetta
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
-format ephemeris_binary
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 459a3912612ae43c7bdbb453c638375c25f09a08a14810133424e0982ae8b7bf
-at voyager1
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
-format ephemeris_binary
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
-compiler tools/harvest/src/bin/horizons_compiler.rs
-sha256 8d716add977f245f207f2467962b5c55d86566858855adef37995f7f5d9a9682
-at voyager2
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
-format ephemeris_binary
-origin procedure: SPK/DAF harvest from https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
-compiler tools/harvest/src/bin/kplo_spice_compiler.rs
-at kplo
-no-cadence
-
-url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
-no-cadence
-format text
-at venus
-rows .
-lat 6
-lon 5
-field 7 venera15_16_brightness_temp_v_k exponential-decay thermal K 33554432.0 0.0 0.0
-field 8 venera15_16_brightness_temp_h_k exponential-decay thermal K 33554432.0 0.0 0.0
-
-url https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
-no-cadence
-format text
-at venus
-rows .
-lat 0
-lon 1
-field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck89361a_rtr.bc
 format reference
 origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/ck/prime_mission/unvalidated/rtr/ck89361a_rtr.bc
@@ -21979,3 +19796,2186 @@ origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_
 sha256 273cd4ccc470d1098562cd4e94fa48fc2b4c6b1c2896308e473c949b87937c53
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
+format reference
+origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
+sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
+at earth
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
+origin MAGIC per-project FITS URL (operator input; portal carries no single TAR)
+compiler tools/harvest/src/bin/dl3_skymap_compiler.rs
+format sky1
+at sun
+ttl 31536000
+field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin
+format slab2_depth
+origin https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
+compiler tools/harvest/src/bin/slab2_compiler.rs
+at earth
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-icecat/icecat_sky1.sky1
+origin https://dataverse.harvard.edu/api/access/datafile/7502710
+compiler tools/harvest/src/bin/icecat_compiler.rs
+format sky1
+at sun
+ttl 31536000
+field icecat_sky1 icecat_sky1 inverse-square em 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
+format catalog_charm2
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/charm2 JOIN I/355/gaiadr3, DISTANCE < 2")
+compiler tools/harvest/src/bin/charm2_compiler.rs
+at sun
+ttl 31536000
+field UD charm2_ud_mas inverse-square gravity mas 31536000 0.0 0.0
+field LD charm2_ld_mas inverse-square gravity mas 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/vo.km3net.de/antares_events_2007_2017.sky1
+origin https://vo.km3net.de/ant20_01/nu/cone/form
+compiler tools/harvest/src/bin/antares_vo_compiler.rs
+format sky1
+at sun
+ttl 31536000
+field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-Earth3D.5.4.3.jar
+format reference
+sha256 e9e26fd79ef1399003035ecdcc58db0465c2cf6bf8558257bb0167bf7f4b53ed
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-G3D-JPS.e3d.binary
+format reference
+sha256 7c6e8fd3ccbba4329abe37de44711dec0554884a9bbb316f97c8aa73231b2b4f
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/llnl-g3d-jps_tomofilt_1.zip
+format reference
+sha256 76aa5860791855d7c52bfab3724ad11ec4af7595741f7243f262e77bdda67908
+ttl 31536000
+
+url https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
+format reference
+sha256 3bb043779efd1c4e4cb7e99547ad7c2fa12f7477922bb3cb22dd9ea67450edc8
+ttl 31536000
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field fnu_12 iras_psc_fnu_12_jy inverse-square em Jy 31536000 0.0 0.0
+field fnu_25 iras_psc_fnu_25_jy inverse-square em Jy 31536000 0.0 0.0
+field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 0.0 0.0
+field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 0.0 0.0
+
+url https://userquery.linea.org.br/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_auto_g+FROM+des_dr2.main+WHERE+mag_auto_g+IS+NOT+NULL
+format tap
+ttl 31536000
+at sun
+cmap .
+ra ra
+dec dec
+field mag_auto_g des_dr2_auto_mag_g inverse-square em mag 31536000 0.0 0.0
+
+url https://vdatum.noaa.gov/download/data/
+format reference
+ttl 31536000
+
+url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
+ttl 31536000
+on earth 48.977 178.199 0
+rows
+epoch YY MM DD hh mm
+bin 900
+prefix ndbc_dart_21414
+gate T 1 2
+gate HEIGHT 0 9999
+field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
+ttl 31536000
+on earth 34.7 -72.4 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
+ttl 31536000
+on earth 31.743 -74.955 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
+ttl 31536000
+on earth 28.86 -78.478 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41010
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
+ttl 31536000
+on earth 21.09 -64.864 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41043
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
+ttl 31536000
+on earth 27.505 -62.271 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_41049
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
+ttl 31536000
+on earth 25.90 -89.67 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
+ttl 31536000
+on earth 25.16 -94.42 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
+ttl 31536000
+on earth 28.50 -84.52 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42036
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
+ttl 31536000
+on earth 22.14 -91.39 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_42055
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
+ttl 31536000
+on earth 38.46 -74.70 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_44009
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
+ttl 31536000
+on earth 42.35 -70.69 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_44013
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
+ttl 31536000
+on earth 48.061 -87.793 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
+ttl 31536000
+on earth 43.185 -86.354 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45161
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
+ttl 31536000
+on earth 44.603 -73.394 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45178
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
+ttl 31536000
+on earth 42.368 -87.795 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45186
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
+ttl 31536000
+on earth 41.731 -81.367 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_45207
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
+ttl 31536000
+on earth 56.30 -148.17 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
+ttl 31536000
+on earth 42.67 -124.82 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46002
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
+ttl 31536000
+on earth 46.06 -124.96 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46005
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
+ttl 31536000
+on earth 37.36 -122.88 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46012
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
+ttl 31536000
+on earth 40.74 -124.54 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46022
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
+ttl 31536000
+on earth 33.75 -119.20 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46025
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
+ttl 31536000
+on earth 37.75 -122.84 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46026
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
+ttl 31536000
+on earth 46.12 -124.51 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46029
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
+ttl 31536000
+on earth 57.034 -177.468 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46035
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
+ttl 31536000
+on earth 32.42 -119.53 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46047
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
+ttl 31536000
+on earth 34.26 -119.86 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46053
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
+ttl 31536000
+on earth 34.27 -120.68 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46054
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
+ttl 31536000
+on earth 38.07 -124.03 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46059
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
+ttl 31536000
+on earth 33.66 -120.20 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46069
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
+ttl 31536000
+on earth 51.035 179.808 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46071
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
+ttl 31536000
+on earth 53.93 -160.763 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46075
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
+ttl 31536000
+on earth 32.49 -118.02 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_46086
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
+ttl 31536000
+on earth 23.52 -153.82 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51000
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
+ttl 31536000
+on earth 24.44 -162.00 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51001
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
+ttl 31536000
+on earth 17.56 -152.39 0
+rows
+epoch YY MM DD hh mm
+bin 21600
+prefix ndbc_51004
+gate WSPD 0 99
+gate GST 0 99
+gate WVHT 0 99
+gate DPD 0 99
+gate APD 0 99
+gate PRES 0 9999
+gate PTDY -99 99
+gate ATMP -100 900
+gate WTMP -100 900
+gate DEWP -100 900
+gate TIDE -99 99
+gate VIS 0 99
+gate WDIR -1.0001 1.0001
+gate MWD -1.0001 1.0001
+field WSPD wspd_m_s inverse-square advective m/s 21600 0.0 0.0
+field GST gst_m_s inverse-square advective m/s 21600 0.0 0.0
+field WVHT wvht_m inverse-square acoustic m 21600 0.0 0.0
+field DPD dpd_s inverse-square acoustic s 21600 0.0 0.0
+field APD apd_s inverse-square acoustic s 21600 0.0 0.0
+field PRES pres_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
+field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
+field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
+field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
+field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+fold sin_deg WDIR WDIR inverse-square advective 1 21600
+fold cos_deg WDIR WDIR inverse-square advective 1 21600
+fold sin_deg MWD MWD inverse-square advective 1 21600
+fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
+format pds4_fixed_width
+origin https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
+compiler tools/harvest/src/bin/pds4_binary_compiler.rs
+at venus
+no-cadence
+field vco_rs_impact_parameter "DISTANCE" inverse-square em km 33554432.0 0.0 0.0
+field vco_rs_observed_xband_frequency "OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_predicted_xband_frequency "PREDICTED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_residual_calibrated_xband_shift "RESIDUAL CALIBRATED X-BAND FREQUENCY SHIFT" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_differential_doppler "DIFFERENTIAL_DOPPLER" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_earth_atmosphere_correction "CORRECTION_OF_EARTH_ATMOSPHERE_PROPAGATION" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQUENCY" inverse-square em hz 33554432.0 0.0 0.0
+field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
+field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
+origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
+compiler tools/harvest/src/bin/s1_sar_compiler.rs
+format s1_sar
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at adrastea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at amalthea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at apophis
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at ariel
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at atlas
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at atlas_3i
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at bennu
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at callisto
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_cassini.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/spk/990807A_SCEPH_EM52_EP13.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at cassini
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at ceres
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at charon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at deimos
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at despina
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at dione
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at enceladus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at encke
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at epimetheus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at eris
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at europa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at galatea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galileo.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/spk/s970311a.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at galileo
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at ganymede
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at haumea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at helene
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at himalia
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at hydra
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at hyperion
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at iapetus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at io
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at iss
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at janus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juice
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juice_cog
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juno
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at juno_asteroid
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at jupiter
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at jwst
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at kerberos
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at larissa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at makemake
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mariner10.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/M10/kernels/spk/M10_archive_1.bsp
+compiler tools/harvest/src/bin/ephemeris_mariner10_compiler.rs
+sha256 7ad8b8bf4d5447f54d8712112c7eda23597924574a359fd5d43d56fb7644ef9d
+at mariner10
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at mars
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at mercury
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_messenger.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/messsp_1000/data/spk/msgr_040803_120516_140823_od268sc_0.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at messenger
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at metis
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at mimas
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at miranda
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at moon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at naiad
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_near.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/nearsp_1000/data/spk/near_cruise_nav_v1.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at near
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at neptune
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at neptune_c
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at nereid
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at nix
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at oberon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pallas
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pandora
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at parker_solar_probe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at phobos
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at phoebe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at pluto
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at prometheus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at proteus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at rhea
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at saturn
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at solar_orbiter
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at styx
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at sun
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at tethys
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at thalassa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at thebe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at titan
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at titania
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at triton
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at umbriel
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at uranus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at uranus_c
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at venus
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at vesta
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1999-08-18)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at cassini
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2026-12-03)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at europa_clipper
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1990-12-08)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at galileo
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e2.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1992-12-08)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at galileo
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at halley
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_itokawa.bin
+format ephemeris_binary
+origin procedure: JPL Horizons stable-arc vectors via horizons_compiler (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at itokawa
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-08-02)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at messenger
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_near.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1998-01-23)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at near
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
+format ephemeris_binary
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 28568e3cadc1a864ac54c5b06cdc9267eeded9b45b9452f0be3bd369d63e9e16
+at new_horizons
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin
+format ephemeris_binary
+origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 bd86242fe2d4bd1f7d4ab3a8e9a7a9ccbd43db82b01ef46a3325d16c5dc768a4
+at pioneer10_daily
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer11_daily.bin
+format ephemeris_binary
+origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 7ea383fda24450d8f490e15c3e6aa37a38626f01b118bd8cfd0cfa13d7506063
+at pioneer11_daily
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
+format ephemeris_binary
+origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-03-04)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+at rosetta
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
+format ephemeris_binary
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 459a3912612ae43c7bdbb453c638375c25f09a08a14810133424e0982ae8b7bf
+at voyager1
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
+format ephemeris_binary
+origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+compiler tools/harvest/src/bin/horizons_compiler.rs
+sha256 8d716add977f245f207f2467962b5c55d86566858855adef37995f7f5d9a9682
+at voyager2
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
+format ephemeris_binary
+origin procedure: SPK/DAF harvest from https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
+compiler tools/harvest/src/bin/kplo_spice_compiler.rs
+at kplo
+no-cadence
+
+url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
+no-cadence
+format text
+at venus
+rows .
+lat 6
+lon 5
+field 7 venera15_16_brightness_temp_v_k exponential-decay thermal K 33554432.0 0.0 0.0
+field 8 venera15_16_brightness_temp_h_k exponential-decay thermal K 33554432.0 0.0 0.0
+
+url https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
+no-cadence
+format text
+at venus
+rows .
+lat 0
+lon 1
+field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
