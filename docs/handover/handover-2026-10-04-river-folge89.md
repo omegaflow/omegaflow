@@ -3,7 +3,7 @@
   session: River-Folge 89
   class: handover
   date: 2026-10-04
-  sha256: 28b4810e2b0894900fcea189a90fe1b15dc12e7a59f766f95041e8112b9249f0
+  sha256: 2520300276091545063a62616906ffc3103d27e612eb893d83ab0efef6fb7f0e
   status: live
 -->
 # Handover — River-Folge 89 (2026-10-04)
@@ -94,12 +94,12 @@ Wort | Datum | Quelle
   sparse bins einen **positiven Bias**, die reduzierte TE ist der finite-data-Ausweg; bei n=198
   bleiben die Bins dünn → Surrogat-Rang-p ist der ehrliche Weg, **ETAS bleibt gesperrt**.
   **Cochran 1954** (`10.2307/3001616`): kein erwarteter Zellwert < 1, ≤ 20 % < 5 — q=8 (E≈25) im Standard.
-- **Matrix-Grammatik — Frontier-Verdikt (zu bauen).** z.ai GLM-5.3 + Claude Sonnet 5.5 + Kimi K3
-  einhellig: `matrix rect|full|upper`; `drivers`/`targets` (rect) bzw. `channels` (full/upper);
-  `cond rest` → `cond(d,t) = pool ∖ {d,t}` **auf Identität**, Driver UND Target raus; `cond none`;
-  `fdr bh|by <q> over matrix|row|col` Pflicht, `expect cells <n>` als Lint; Underpowered-Guard
-  B+1 ≥ m/q (m=21 → B ≥ 419). Riss zum Rat-Token (`form pair-matrix`/`cond complement`/`pairing …`):
-  beide Sets benannt, noch nicht gebaut.
+- **Matrix-Grammatik — Frontier-Token-Set, gebaut.** `matrix rect|full|upper`; `drivers`/`targets`
+  (rect) bzw. `channels` (full/upper); `cond rest` → `cond(d,t) = pool ∖ {d,t}` **auf Identität**,
+  Driver UND Target raus; `cond none`; `fdr bh|by <q> over matrix|row|col` Pflicht, `expect cells <n>`
+  als Lint; Underpowered-Guard B+1 ≥ m/q. Runner `run_pair_matrix` (konditionierte TE pro Zelle,
+  Surrogat-Rang-p, FDR über die Familie, n-floor → p=1 + Flag), 12 Gate-Tests, Build 0/0. Der
+  Rat-Token-Satz (`form pair-matrix`/`cond complement`/`pairing …`) bleibt als Riss benannt.
 - **Grammatik `form event-conditional`** (Rat + gebaut, Atom 1). Das Token erlaubt
   `witness <name>` **und** `driver <field>` gemeinsam; der Zeuge löst im Witness-Register,
   das Feld im Quellen-Register (Form-deklarierter Split); fehlt ein Arm, verweigert der

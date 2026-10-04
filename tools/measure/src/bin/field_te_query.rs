@@ -14,8 +14,9 @@ use omegaflow::mathematikerin::wy_max_t::{
     quantile, sigma_per_statistic, studentized_maxima,
 };
 use omegaflow::te::{
-    benjamini_hochberg_pass, conditional_embedded_te_phase, kde_n_eff, surrogate_max_phase_n,
-    surrogate_stats_phase_n,
+    LaggedCond, TeEstimator, TeNull, TeSurrogateParams, benjamini_hochberg_pass,
+    conditional_embedded_te_phase, conditional_te_surrogates_n, kde_n_eff, surrogate_max_phase_n,
+    surrogate_rank_p_value, surrogate_stats_phase_n, transfer_entropy_conditional_binned_n,
 };
 
 const MONTH_S: f64 = 2_592_000.0;
@@ -99,10 +100,151 @@ struct Arm {
     state: State,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum MatrixShape {
+    Rect,
+    Full,
+    Upper,
+}
+
+impl MatrixShape {
+    fn parse(token: &str) -> Option<MatrixShape> {
+        match token {
+            "rect" => Some(MatrixShape::Rect),
+            "full" => Some(MatrixShape::Full),
+            "upper" => Some(MatrixShape::Upper),
+            _ => None,
+        }
+    }
+
+    fn name(self) -> &'static str {
+        match self {
+            MatrixShape::Rect => "rect",
+            MatrixShape::Full => "full",
+            MatrixShape::Upper => "upper",
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum MatrixCond {
+    Rest,
+    Uncond,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum FdrMethod {
+    Bh,
+    By,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum FdrScope {
+    Matrix,
+    Row,
+    Col,
+}
+
+impl FdrScope {
+    fn name(self) -> &'static str {
+        match self {
+            FdrScope::Matrix => "matrix",
+            FdrScope::Row => "row",
+            FdrScope::Col => "col",
+        }
+    }
+}
+
+#[derive(Clone)]
+struct MatrixSpec {
+    label: String,
+    shape: MatrixShape,
+    drivers: Vec<String>,
+    targets: Vec<String>,
+    channels: Vec<String>,
+    cond: MatrixCond,
+    fdr: (FdrMethod, f64, FdrScope),
+    expect_cells: Option<usize>,
+}
+
+impl MatrixSpec {
+    fn pool(&self) -> Vec<String> {
+        if self.shape != MatrixShape::Rect {
+            return self.channels.clone();
+        }
+        let mut out = self.drivers.clone();
+        for t in &self.targets {
+            if !out.iter().any(|n| n == t) {
+                out.push(t.clone());
+            }
+        }
+        out
+    }
+
+    fn cells(&self) -> Vec<(String, String)> {
+        let mut out = Vec::new();
+        match self.shape {
+            MatrixShape::Rect => {
+                for d in &self.drivers {
+                    for t in &self.targets {
+                        if d == t {
+                            continue;
+                        }
+                        out.push((d.clone(), t.clone()));
+                    }
+                }
+            }
+            MatrixShape::Full => {
+                for i in 0..self.channels.len() {
+                    for j in 0..self.channels.len() {
+                        if i == j {
+                            continue;
+                        }
+                        out.push((self.channels[i].clone(), self.channels[j].clone()));
+                    }
+                }
+            }
+            MatrixShape::Upper => {
+                for i in 0..self.channels.len() {
+                    for j in (i + 1)..self.channels.len() {
+                        out.push((self.channels[i].clone(), self.channels[j].clone()));
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    fn dropped_cells(&self) -> usize {
+        if self.shape != MatrixShape::Rect {
+            return 0;
+        }
+        self.drivers
+            .iter()
+            .filter(|d| self.targets.iter().any(|t| t == *d))
+            .count()
+    }
+
+    fn declared_cells(&self) -> usize {
+        self.cells().len()
+    }
+
+    fn cond_names(&self, driver: &str, target: &str) -> Vec<String> {
+        match self.cond {
+            MatrixCond::Uncond => Vec::new(),
+            MatrixCond::Rest => self
+                .pool()
+                .into_iter()
+                .filter(|n| n != driver && n != target)
+                .collect(),
+        }
+    }
+}
+
 struct Descriptor {
     pair: Option<String>,
-    driver: Arm,
-    target: Arm,
+    driver: Option<Arm>,
+    target: Option<Arm>,
     conds: Vec<Arm>,
     events: Vec<(String, String)>,
     gates: Vec<(String, String)>,
@@ -113,6 +255,7 @@ struct Descriptor {
     bin: Option<f64>,
     event_conditional: bool,
     count_quantiles: Option<usize>,
+    matrix: Option<MatrixSpec>,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -226,6 +369,116 @@ fn parse_lags(token: &str) -> Result<Vec<usize>, String> {
     Ok(out)
 }
 
+fn parse_name_list(token: &str) -> Result<Vec<String>, String> {
+    let mut out: Vec<String> = Vec::new();
+    for part in token.split(',') {
+        let part = part.trim();
+        if part.is_empty() {
+            return Err("arm list carries an empty name".into());
+        }
+        if out.iter().any(|n| n == part) {
+            return Err(format!(
+                "arm name '{part}' appears twice — a duplicate arm is no family"
+            ));
+        }
+        out.push(part.to_string());
+    }
+    if out.is_empty() {
+        return Err("arm list carries no name".into());
+    }
+    Ok(out)
+}
+
+fn build_matrix_spec(
+    head: Option<(String, MatrixShape)>,
+    drivers: Option<Vec<String>>,
+    targets: Option<Vec<String>>,
+    channels: Option<Vec<String>>,
+    cond: Option<MatrixCond>,
+    fdr: Option<(FdrMethod, f64, FdrScope)>,
+    expect: Option<usize>,
+    conds: &[Arm],
+) -> Result<Option<MatrixSpec>, String> {
+    let (label, shape) = match head {
+        Some(h) => h,
+        None => {
+            if let Some(c) = cond {
+                let word = match c {
+                    MatrixCond::Rest => "rest",
+                    MatrixCond::Uncond => "none",
+                };
+                return Err(format!(
+                    "cond {word} without matrix — the conditioning belongs to a matrix head"
+                ));
+            }
+            if drivers.is_some() || targets.is_some() || channels.is_some() {
+                return Err(
+                    "matrix arm list without a matrix head — the arms belong to matrix <label> rect|full|upper"
+                        .into(),
+                );
+            }
+            if fdr.is_some() {
+                return Err("fdr without matrix — the correction belongs to a matrix head".into());
+            }
+            if expect.is_some() {
+                return Err(
+                    "expect cells without matrix — the lint belongs to a matrix head".into(),
+                );
+            }
+            return Ok(None);
+        }
+    };
+    if !conds.is_empty() {
+        return Err(format!(
+            "matrix refuses the fixed cond '{}' — the matrix carries cond rest|none only",
+            conds[0].name
+        ));
+    }
+    let cond =
+        cond.ok_or("matrix carries no cond — cond rest|none is mandatory, never a silent default")?;
+    let fdr = fdr.ok_or(
+        "matrix carries no fdr — fdr bh|by <q> over matrix|row|col is mandatory, never a silent default",
+    )?;
+    let (drivers, targets, channels) = match shape {
+        MatrixShape::Rect => {
+            if channels.is_some() {
+                return Err("matrix rect carries channels — rect uses drivers + targets".into());
+            }
+            let d = drivers.ok_or("matrix rect carries no drivers")?;
+            let t = targets.ok_or("matrix rect carries no targets")?;
+            (d, t, Vec::new())
+        }
+        MatrixShape::Full | MatrixShape::Upper => {
+            if drivers.is_some() || targets.is_some() {
+                return Err(
+                    "matrix full|upper carries drivers/targets — full|upper uses channels".into(),
+                );
+            }
+            let c = channels.ok_or("matrix full|upper carries no channels")?;
+            (Vec::new(), Vec::new(), c)
+        }
+    };
+    let spec = MatrixSpec {
+        label,
+        shape,
+        drivers,
+        targets,
+        channels,
+        cond,
+        fdr,
+        expect_cells: expect,
+    };
+    if let Some(n) = spec.expect_cells {
+        let declared = spec.declared_cells();
+        if n != declared {
+            return Err(format!(
+                "expect cells {n} differs from the declared {declared} cells"
+            ));
+        }
+    }
+    Ok(Some(spec))
+}
+
 fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut pair = None;
     let mut driver: Option<Arm> = None;
@@ -243,6 +496,13 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut event_conditional = false;
     let mut witness_arm: Option<Arm> = None;
     let mut count_quantiles: Option<usize> = None;
+    let mut matrix_head: Option<(String, MatrixShape)> = None;
+    let mut matrix_drivers: Option<Vec<String>> = None;
+    let mut matrix_targets: Option<Vec<String>> = None;
+    let mut matrix_channels: Option<Vec<String>> = None;
+    let mut matrix_cond: Option<MatrixCond> = None;
+    let mut matrix_fdr: Option<(FdrMethod, f64, FdrScope)> = None;
+    let mut matrix_expect: Option<usize> = None;
 
     for (lineno, raw) in text.lines().enumerate() {
         let line = raw.trim();
@@ -261,7 +521,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                     .ok_or_else(|| format!("descriptor:{at}: pair carries no label"))?;
                 pair = Some(name.to_string());
             }
-            "driver" | "target" | "cond" => {
+            "driver" | "target" => {
                 let name = parts
                     .get(1)
                     .ok_or_else(|| format!("descriptor:{at}: {head} carries no field name"))?;
@@ -280,11 +540,146 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                     name: name.to_string(),
                     state,
                 };
-                match head {
-                    "driver" => driver = Some(arm),
-                    "target" => target = Some(arm),
-                    _ => conds.push(arm),
+                if head == "driver" {
+                    driver = Some(arm);
+                } else {
+                    target = Some(arm);
                 }
+            }
+            "cond" => {
+                let token = *parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: cond carries no token"))?;
+                if token == "rest" || token == "none" {
+                    if matrix_cond.is_some() {
+                        return Err(format!(
+                            "descriptor:{at}: cond declared twice — one conditioning arm per matrix"
+                        ));
+                    }
+                    matrix_cond = Some(if token == "rest" {
+                        MatrixCond::Rest
+                    } else {
+                        MatrixCond::Uncond
+                    });
+                } else {
+                    let state = match parts.get(2).copied() {
+                        Some(t) => State::parse(t).ok_or_else(|| {
+                            format!(
+                                "descriptor:{at}: cond state '{t}' names no built|pending|probe"
+                            )
+                        })?,
+                        None => State::Built,
+                    };
+                    conds.push(Arm {
+                        name: token.to_string(),
+                        state,
+                    });
+                }
+            }
+            "matrix" => {
+                let label = parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: matrix carries no label"))?;
+                let shape_token = parts
+                    .get(2)
+                    .ok_or_else(|| format!("descriptor:{at}: matrix carries no rect|full|upper"))?;
+                let shape = MatrixShape::parse(shape_token).ok_or_else(|| {
+                    format!(
+                        "descriptor:{at}: matrix shape '{shape_token}' names no rect|full|upper"
+                    )
+                })?;
+                if matrix_head.is_some() {
+                    return Err(format!("descriptor:{at}: matrix declared twice"));
+                }
+                matrix_head = Some((label.to_string(), shape));
+            }
+            "drivers" | "targets" | "channels" => {
+                let token = parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: {head} carries no list"))?;
+                let list = parse_name_list(token)?;
+                match head {
+                    "drivers" => {
+                        if matrix_drivers.is_some() {
+                            return Err(format!("descriptor:{at}: drivers declared twice"));
+                        }
+                        matrix_drivers = Some(list);
+                    }
+                    "targets" => {
+                        if matrix_targets.is_some() {
+                            return Err(format!("descriptor:{at}: targets declared twice"));
+                        }
+                        matrix_targets = Some(list);
+                    }
+                    _ => {
+                        if matrix_channels.is_some() {
+                            return Err(format!("descriptor:{at}: channels declared twice"));
+                        }
+                        matrix_channels = Some(list);
+                    }
+                }
+            }
+            "fdr" => {
+                let method = match parts.get(1).copied() {
+                    Some("bh") => FdrMethod::Bh,
+                    Some("by") => FdrMethod::By,
+                    Some(other) => {
+                        return Err(format!(
+                            "descriptor:{at}: fdr method '{other}' names no bh|by"
+                        ));
+                    }
+                    None => {
+                        return Err(format!("descriptor:{at}: fdr carries no bh|by method"));
+                    }
+                };
+                let q_token = parts
+                    .get(2)
+                    .ok_or_else(|| format!("descriptor:{at}: fdr carries no q level"))?;
+                let q: f64 = q_token
+                    .parse()
+                    .map_err(|_| format!("descriptor:{at}: fdr q '{q_token}' carries no number"))?;
+                if !(q.is_finite() && q > 0.0 && q <= 1.0) {
+                    return Err(format!(
+                        "descriptor:{at}: fdr q '{q_token}' lies outside (0, 1]"
+                    ));
+                }
+                if parts.get(3).copied() != Some("over") {
+                    return Err(format!(
+                        "descriptor:{at}: fdr carries no 'over matrix|row|col' scope"
+                    ));
+                }
+                let scope = match parts.get(4).copied() {
+                    Some("matrix") => FdrScope::Matrix,
+                    Some("row") => FdrScope::Row,
+                    Some("col") => FdrScope::Col,
+                    Some(other) => {
+                        return Err(format!(
+                            "descriptor:{at}: fdr scope '{other}' names no matrix|row|col"
+                        ));
+                    }
+                    None => {
+                        return Err(format!("descriptor:{at}: fdr carries no scope"));
+                    }
+                };
+                if matrix_fdr.is_some() {
+                    return Err(format!("descriptor:{at}: fdr declared twice"));
+                }
+                matrix_fdr = Some((method, q, scope));
+            }
+            "expect" => {
+                if parts.get(1).copied() != Some("cells") {
+                    return Err(format!("descriptor:{at}: expect names no 'cells <n>'"));
+                }
+                let n_token = parts
+                    .get(2)
+                    .ok_or_else(|| format!("descriptor:{at}: expect cells carries no count"))?;
+                let n: usize = n_token.parse().map_err(|_| {
+                    format!("descriptor:{at}: expect cells '{n_token}' carries no count")
+                })?;
+                if matrix_expect.is_some() {
+                    return Err(format!("descriptor:{at}: expect declared twice"));
+                }
+                matrix_expect = Some(n);
             }
             "witness" => {
                 let name = parts
@@ -466,6 +861,44 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 .into(),
         );
     }
+    let matrix = build_matrix_spec(
+        matrix_head,
+        matrix_drivers,
+        matrix_targets,
+        matrix_channels,
+        matrix_cond,
+        matrix_fdr,
+        matrix_expect,
+        &conds,
+    )?;
+    if matrix.is_some() && event_conditional {
+        return Err(
+            "descriptor carries both a matrix and the event-conditional form — one round, one form"
+                .into(),
+        );
+    }
+    if matrix.is_some() {
+        if lags.is_none() {
+            return Err(
+                "matrix carries no lags — lags is mandatory in the matrix, never a silent default"
+                    .into(),
+            );
+        }
+        if surrogate.is_none() {
+            return Err(
+                "matrix carries no surrogate — surrogate is mandatory in the matrix, never a silent default"
+                    .into(),
+            );
+        }
+    }
+    let lags = match lags {
+        Some(l) => l,
+        None => default_lags(),
+    };
+    let surrogate = match surrogate {
+        Some(s) => s,
+        None => 100,
+    };
     if event_conditional {
         let target = witness_arm
             .ok_or_else(|| "event-conditional form carries no witness arm".to_string())?;
@@ -473,28 +906,29 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             driver.ok_or_else(|| "event-conditional form carries no driver arm".to_string())?;
         return Ok(Descriptor {
             pair,
-            driver,
-            target,
+            driver: Some(driver),
+            target: Some(target),
             conds,
             events,
             gates,
             seasonal,
-            lags: match lags {
-                Some(l) => l,
-                None => default_lags(),
-            },
-            surrogate: match surrogate {
-                Some(s) => s,
-                None => 100,
-            },
+            lags,
+            surrogate,
             register: Register::Witnesses,
             bin,
             event_conditional: true,
             count_quantiles,
+            matrix: None,
         });
     }
-    let driver = driver.ok_or_else(|| "descriptor carries no driver arm".to_string())?;
-    let target = target.ok_or_else(|| "descriptor carries no target arm".to_string())?;
+    if matrix.is_none() {
+        if driver.is_none() {
+            return Err("descriptor carries no driver arm".to_string());
+        }
+        if target.is_none() {
+            return Err("descriptor carries no target arm".to_string());
+        }
+    }
     Ok(Descriptor {
         pair,
         driver,
@@ -503,18 +937,13 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         events,
         gates,
         seasonal,
-        lags: match lags {
-            Some(l) => l,
-            None => default_lags(),
-        },
-        surrogate: match surrogate {
-            Some(s) => s,
-            None => 100,
-        },
+        lags,
+        surrogate,
         register,
         bin,
         event_conditional: false,
         count_quantiles: None,
+        matrix,
     })
 }
 
@@ -585,14 +1014,14 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
     };
     Ok(Descriptor {
         pair: None,
-        driver: Arm {
+        driver: Some(Arm {
             name: driver.to_string(),
             state: State::Built,
-        },
-        target: Arm {
+        }),
+        target: Some(Arm {
             name: target.to_string(),
             state: State::Built,
-        },
+        }),
         conds,
         events: Vec::new(),
         gates: Vec::new(),
@@ -603,6 +1032,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         bin,
         event_conditional: false,
         count_quantiles: None,
+        matrix: None,
     })
 }
 
@@ -2530,11 +2960,23 @@ fn execute(
             desc.conds.len()
         );
     }
-    let driver_load = load_arm(sources, witnesses, &desc.driver, desc.register, anchor);
-    let target_load = load_arm(sources, witnesses, &desc.target, desc.register, anchor);
+    let Some(driver_arm) = desc.driver.as_ref() else {
+        println!(
+            "driver arm absent — a pair query needs a driver; the matrix form is dispatched separately"
+        );
+        return None;
+    };
+    let Some(target_arm) = desc.target.as_ref() else {
+        println!(
+            "target arm absent — a pair query needs a target; the matrix form is dispatched separately"
+        );
+        return None;
+    };
+    let driver_load = load_arm(sources, witnesses, driver_arm, desc.register, anchor);
+    let target_load = load_arm(sources, witnesses, target_arm, desc.register, anchor);
     let cond_load = cond_arm.map(|a| load_arm(sources, witnesses, a, desc.register, anchor));
-    print_arm("driver", &desc.driver, &driver_load);
-    print_arm("target", &desc.target, &target_load);
+    print_arm("driver", driver_arm, &driver_load);
+    print_arm("target", target_arm, &target_load);
     if let (Some(arm), Some(load)) = (cond_arm, &cond_load) {
         print_arm("cond", arm, load);
     }
@@ -2672,14 +3114,14 @@ fn is_arrow(word: &str) -> bool {
 fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
     let desc = Descriptor {
         pair: Some("enso-bz-sst (Blatt I)".into()),
-        driver: Arm {
+        driver: Some(Arm {
             name: "omni_hro_imf_bz_gsm_nt".into(),
             state: State::Built,
-        },
-        target: Arm {
+        }),
+        target: Some(Arm {
             name: "ersstv5_nino34_ssta".into(),
             state: State::Built,
-        },
+        }),
         conds: vec![Arm {
             name: "tao_wnd_zonal_m_s".into(),
             state: State::Built,
@@ -2693,6 +3135,7 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         bin: None,
         event_conditional: false,
         count_quantiles: None,
+        matrix: None,
     };
     let Some(result) = execute(
         &desc,
@@ -3400,7 +3843,11 @@ fn run_descriptor_event_conditional(
     anchor: &QueryAnchor,
 ) -> i32 {
     println!("=== event-conditional form — descriptor over witness x source ===");
-    let witness_name = desc.target.name.as_str();
+    let Some(target_arm) = desc.target.as_ref() else {
+        println!("event-conditional form pending — the descriptor carries no witness/target arm");
+        return 0;
+    };
+    let witness_name = target_arm.name.as_str();
     let Some(w) = find_witness(witnesses, witness_name) else {
         println!("event-conditional form pending — '{witness_name}' stands in no witness block");
         return 0;
@@ -3415,7 +3862,11 @@ fn run_descriptor_event_conditional(
     let load = load_witness_arm(w, State::Built);
     match &load {
         ArmLoad::WitnessReady { series, .. } => {
-            let driver_name = desc.driver.name.as_str();
+            let Some(driver_arm) = desc.driver.as_ref() else {
+                println!("event-conditional form pending — the descriptor carries no driver arm");
+                return 0;
+            };
+            let driver_name = driver_arm.name.as_str();
             let bin_s = desc.bin.unwrap_or(EVENT_BIN_S);
             match find_field_source(sources, driver_name) {
                 Some((source, field)) => match load_field(&source, &field, anchor) {
@@ -3449,11 +3900,499 @@ fn run_descriptor_event_conditional(
     }
 }
 
+const MATRIX_BINS: usize = 4;
+
+struct MatrixCellOutcome {
+    id: String,
+    cond_n: usize,
+    n: usize,
+    te: Option<f64>,
+    p: f64,
+    floor: bool,
+    pass: bool,
+}
+
+fn benjamini_yekutieli_pass(p_values: &[f64], level: f64) -> Vec<bool> {
+    if p_values.is_empty() || !(level > 0.0 && level <= 1.0) {
+        return vec![false; p_values.len()];
+    }
+    let m = p_values.len() as f64;
+    let harmonic: f64 = (1..=p_values.len()).map(|k| 1.0 / k as f64).sum();
+    let denom = m * harmonic;
+    let mut sorted: Vec<f64> = p_values.to_vec();
+    sorted.sort_by(|a, b| a.total_cmp(b));
+    let mut cutoff = 0.0f64;
+    let mut found = false;
+    for (k, &p) in sorted.iter().enumerate() {
+        let rank = (k + 1) as f64;
+        if p <= rank / denom * level {
+            cutoff = p;
+            found = true;
+        }
+    }
+    if !found {
+        return vec![false; p_values.len()];
+    }
+    p_values.iter().map(|&p| p <= cutoff).collect()
+}
+
+fn align_many(
+    arms: &[&[(f64, f64)]],
+    seasonal: Seasonal,
+    bin_seconds: Option<f64>,
+) -> Result<(Vec<Vec<Option<f64>>>, Vec<f64>, f64), String> {
+    if arms.is_empty() {
+        return Err("matrix carries no arm series".into());
+    }
+    let monthly = matches!(seasonal, Seasonal::Climatology);
+    let (grid, grid_dt) = match bin_seconds {
+        Some(step) => {
+            if !(step.is_finite() && step > 0.0) {
+                return Err(format!("bin {step} is no positive finite width"));
+            }
+            let mut start = f64::NEG_INFINITY;
+            let mut end = f64::INFINITY;
+            for a in arms {
+                let a0 = a
+                    .first()
+                    .map(|p| p.0)
+                    .ok_or("an arm carries no stamped sample")?;
+                let a1 = a
+                    .last()
+                    .map(|p| p.0)
+                    .ok_or("an arm carries no stamped sample")?;
+                start = start.max(a0);
+                end = end.min(a1);
+            }
+            if !(end > start) {
+                return Err("bin window carries no overlap between the arms".into());
+            }
+            let n = ((end - start) / step).ceil() as usize;
+            if n == 0 {
+                return Err("bin window carries no cell".into());
+            }
+            let grid: Vec<f64> = (0..n).map(|i| start + i as f64 * step).collect();
+            (grid, step)
+        }
+        None => {
+            let mut best_idx = 0usize;
+            let mut best_dt = f64::NEG_INFINITY;
+            for (i, a) in arms.iter().enumerate() {
+                if let Some(dt) = median_dt(a) {
+                    if dt > best_dt {
+                        best_dt = dt;
+                        best_idx = i;
+                    }
+                }
+            }
+            if !best_dt.is_finite() {
+                return Err("no arm cadence was measurable".into());
+            }
+            let grid: Vec<f64> = arms[best_idx].iter().map(|p| p.0).collect();
+            (grid, best_dt)
+        }
+    };
+    if monthly && !(25.0 * 86_400.0..=32.0 * 86_400.0).contains(&grid_dt) {
+        return Err(format!(
+            "climatology+standardize needs a monthly grid arm (slowest cadence {grid_dt:.0} s); the deseasonalization lives on grid index mod {CAL_MONTHS}"
+        ));
+    }
+    let last_step = if monthly { MONTH_S } else { grid_dt };
+    let mut cells: Vec<Vec<Option<f64>>> = arms
+        .iter()
+        .map(|a| bin_to_grid(a, &grid, last_step))
+        .collect();
+    if monthly {
+        for c in cells.iter_mut() {
+            *c = deseasonalize(c);
+        }
+    }
+    Ok((cells, grid, grid_dt))
+}
+
+fn joint_columns(cols: &[&[Option<f64>]]) -> Vec<Vec<f32>> {
+    let mut out: Vec<Vec<f32>> = (0..cols.len()).map(|_| Vec::new()).collect();
+    if cols.is_empty() {
+        return out;
+    }
+    for i in 0..cols[0].len() {
+        let mut row_ok = true;
+        for c in cols {
+            match c.get(i) {
+                Some(Some(v)) if v.is_finite() => {}
+                _ => {
+                    row_ok = false;
+                    break;
+                }
+            }
+        }
+        if !row_ok {
+            continue;
+        }
+        for (ci, c) in cols.iter().enumerate() {
+            if let Some(Some(v)) = c.get(i) {
+                out[ci].push(*v as f32);
+            }
+        }
+    }
+    out
+}
+
+fn cell_te_and_surrogates(
+    driver: &[f32],
+    target: &[f32],
+    conds: &[LaggedCond],
+    lags: &[usize],
+    bins: usize,
+    n_surr: usize,
+    seed: u64,
+) -> Option<(f64, Vec<f64>)> {
+    let mut obs_best: Option<f64> = None;
+    let mut surr_max: Option<Vec<f64>> = None;
+    for &lag in lags {
+        let te = transfer_entropy_conditional_binned_n(driver, target, conds, lag, bins)?;
+        let surr = conditional_te_surrogates_n(
+            driver,
+            target,
+            conds,
+            TeSurrogateParams {
+                lag,
+                max_lag: lag,
+                bins,
+                seed,
+                n_surr,
+                null: TeNull::Phase,
+                block: 0,
+                est: TeEstimator::Binned,
+                k: 4,
+            },
+        )?;
+        obs_best = Some(obs_best.map_or(te, |o| o.max(te)));
+        surr_max = Some(match surr_max {
+            Some(prev) => prev.into_iter().zip(surr).map(|(a, b)| a.max(b)).collect(),
+            None => surr,
+        });
+    }
+    Some((obs_best?, surr_max?))
+}
+
+fn load_matrix_arm(
+    name: &str,
+    sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
+    anchor: &QueryAnchor,
+) -> Result<Vec<(f64, f64)>, String> {
+    if let Some((source, field)) = find_field_source(sources, name) {
+        return load_field(&source, &field, anchor);
+    }
+    if let Some(w) = find_witness(witnesses, name) {
+        match load_witness_arm(w, State::Built) {
+            ArmLoad::WitnessReady { series, .. } => return Ok(series),
+            ArmLoad::Ready { series, .. } => return Ok(series),
+            ArmLoad::Pending(reason) => return Err(reason),
+        }
+    }
+    Err(format!(
+        "'{name}' stands in no source block and no witness block"
+    ))
+}
+
+fn run_pair_matrix(
+    desc: &Descriptor,
+    sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
+    anchor: &QueryAnchor,
+) -> i32 {
+    let Some(spec) = &desc.matrix else {
+        println!("matrix form: the descriptor carries no matrix spec");
+        return 0;
+    };
+    println!(
+        "=== pair matrix — {} [{}] ===",
+        spec.label,
+        spec.shape.name()
+    );
+    let cells = spec.cells();
+    let pool = spec.pool();
+    let dropped = spec.dropped_cells();
+    let cond_word = match spec.cond {
+        MatrixCond::Rest => "rest",
+        MatrixCond::Uncond => "none",
+    };
+    let fdr_word = match spec.fdr.0 {
+        FdrMethod::Bh => "bh",
+        FdrMethod::By => "by",
+    };
+    println!(
+        "cells {} | dropped (driver==target) {} | pool {} | cond {} | fdr {} q {} over {} | bins {} | surrogate {} | lags {:?}",
+        cells.len(),
+        dropped,
+        pool.len(),
+        cond_word,
+        fdr_word,
+        spec.fdr.1,
+        spec.fdr.2.name(),
+        MATRIX_BINS,
+        desc.surrogate,
+        desc.lags
+    );
+    if let Some(n) = spec.expect_cells {
+        println!(
+            "expect cells {n} matched the declared {} cells",
+            spec.declared_cells()
+        );
+    }
+    if cells.is_empty() {
+        println!("matrix pending — the declared arms carry no cell");
+        return 0;
+    }
+
+    let loaded: Vec<Option<Vec<(f64, f64)>>> = pool
+        .iter()
+        .map(
+            |name| match load_matrix_arm(name, sources, witnesses, anchor) {
+                Ok(series) => Some(series),
+                Err(reason) => {
+                    println!("arm '{name}' stays pending — {reason}");
+                    None
+                }
+            },
+        )
+        .collect();
+    let mut pos: Vec<Option<usize>> = Vec::with_capacity(pool.len());
+    let mut avail: Vec<&[(f64, f64)]> = Vec::new();
+    for l in &loaded {
+        match l {
+            Some(s) => {
+                pos.push(Some(avail.len()));
+                avail.push(s.as_slice());
+            }
+            None => pos.push(None),
+        }
+    }
+    let (columns, _grid, cadence) = match align_many(&avail, desc.seasonal, desc.bin) {
+        Ok(a) => a,
+        Err(reason) => {
+            println!("matrix alignment absent: {reason}");
+            return 0;
+        }
+    };
+    let cell_count = match columns.first() {
+        Some(c) => c.len().to_string(),
+        None => "absent".to_string(),
+    };
+    println!(
+        "aligned grid: cells {} | cadence {} s | arms measured {} of {}",
+        cell_count,
+        fmt_opt(Some(cadence)),
+        avail.len(),
+        pool.len()
+    );
+    println!();
+
+    let idx_of = |name: &str| pool.iter().position(|p| p == name);
+    let mut outcomes: Vec<MatrixCellOutcome> = Vec::with_capacity(cells.len());
+    for (d, t) in &cells {
+        let id = format!("{d}->{t}");
+        let Some(di) = idx_of(d) else {
+            outcomes.push(MatrixCellOutcome {
+                id,
+                cond_n: 0,
+                n: 0,
+                te: None,
+                p: 1.0,
+                floor: true,
+                pass: false,
+            });
+            continue;
+        };
+        let Some(ti) = idx_of(t) else {
+            outcomes.push(MatrixCellOutcome {
+                id,
+                cond_n: 0,
+                n: 0,
+                te: None,
+                p: 1.0,
+                floor: true,
+                pass: false,
+            });
+            continue;
+        };
+        let cond_idx: Vec<usize> = spec
+            .cond_names(d, t)
+            .iter()
+            .filter_map(|n| idx_of(n))
+            .collect();
+        let cond_n = cond_idx.len();
+        let required: Vec<usize> = std::iter::once(di)
+            .chain(std::iter::once(ti))
+            .chain(cond_idx.iter().copied())
+            .collect();
+        if required.iter().any(|&k| pos[k].is_none()) {
+            outcomes.push(MatrixCellOutcome {
+                id,
+                cond_n,
+                n: 0,
+                te: None,
+                p: 1.0,
+                floor: true,
+                pass: false,
+            });
+            continue;
+        }
+        let cols: Vec<&[Option<f64>]> = required
+            .iter()
+            .map(|&k| columns[pos[k].expect("the required arm was measured")].as_slice())
+            .collect();
+        let joint = joint_columns(&cols);
+        let Some(n) = joint.first().map(|c| c.len()) else {
+            outcomes.push(MatrixCellOutcome {
+                id,
+                cond_n,
+                n: 0,
+                te: None,
+                p: 1.0,
+                floor: true,
+                pass: false,
+            });
+            continue;
+        };
+        if n < TE_FLOOR {
+            outcomes.push(MatrixCellOutcome {
+                id,
+                cond_n,
+                n,
+                te: None,
+                p: 1.0,
+                floor: true,
+                pass: false,
+            });
+            continue;
+        }
+        let driver = &joint[0];
+        let target = &joint[1];
+        let conds: Vec<LaggedCond> = joint[2..]
+            .iter()
+            .map(|s| LaggedCond {
+                series: s.as_slice(),
+                lag: 0,
+            })
+            .collect();
+        match cell_te_and_surrogates(
+            driver,
+            target,
+            &conds,
+            &desc.lags,
+            MATRIX_BINS,
+            desc.surrogate,
+            SURROGATE_SEED,
+        ) {
+            Some((te, surr)) => {
+                let p = surrogate_rank_p_value(te, &surr).unwrap_or(1.0);
+                outcomes.push(MatrixCellOutcome {
+                    id,
+                    cond_n,
+                    n,
+                    te: Some(te),
+                    p,
+                    floor: false,
+                    pass: false,
+                });
+            }
+            None => {
+                outcomes.push(MatrixCellOutcome {
+                    id,
+                    cond_n,
+                    n,
+                    te: None,
+                    p: 1.0,
+                    floor: true,
+                    pass: false,
+                });
+            }
+        }
+    }
+
+    let mut group_keys: Vec<String> = Vec::new();
+    let mut group_members: Vec<Vec<usize>> = Vec::new();
+    for (i, (d, t)) in cells.iter().enumerate() {
+        let key = match spec.fdr.2 {
+            FdrScope::Row => d.clone(),
+            FdrScope::Col => t.clone(),
+            FdrScope::Matrix => String::new(),
+        };
+        if spec.fdr.2 == FdrScope::Matrix {
+            if group_members.is_empty() {
+                group_keys.push(String::new());
+                group_members.push(Vec::new());
+            }
+            group_members[0].push(i);
+            continue;
+        }
+        match group_keys.iter().position(|k| k == &key) {
+            Some(g) => group_members[g].push(i),
+            None => {
+                group_keys.push(key);
+                group_members.push(vec![i]);
+            }
+        }
+    }
+    for members in &group_members {
+        let pvals: Vec<f64> = members.iter().map(|&i| outcomes[i].p).collect();
+        let passes = match spec.fdr.0 {
+            FdrMethod::Bh => benjamini_hochberg_pass(&pvals, spec.fdr.1),
+            FdrMethod::By => benjamini_yekutieli_pass(&pvals, spec.fdr.1),
+        };
+        for (mi, &i) in members.iter().enumerate() {
+            if let (Some(pass), Some(outcome)) = (passes.get(mi), outcomes.get_mut(i)) {
+                outcome.pass = *pass;
+            }
+        }
+    }
+
+    println!(
+        "{:<28} | {:>4} | {:>5} | {:>12} | {:>8} | {}",
+        "cell", "cond", "n", "TE", "p", "verdict"
+    );
+    for o in &outcomes {
+        let te = match o.te {
+            Some(v) => format!("{v:.4e}"),
+            None => "absent".to_string(),
+        };
+        let word = if o.floor {
+            "floor (p = 1)"
+        } else if o.pass {
+            "arrow (fdr pass)"
+        } else {
+            "silent"
+        };
+        println!(
+            "{:<28} | {:>4} | {:>5} | {:>12} | {:>8} | {}",
+            o.id,
+            o.cond_n,
+            o.n,
+            te,
+            format!("{:.4}", o.p),
+            word
+        );
+    }
+    let passed = outcomes.iter().filter(|o| o.pass).count();
+    println!(
+        "fdr {} q {} over {}: {} of {} cells pass",
+        fdr_word,
+        spec.fdr.1,
+        spec.fdr.2.name(),
+        passed,
+        outcomes.len()
+    );
+    0
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
+        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n>"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -3512,6 +4451,10 @@ fn main() {
             }
         }
     };
+
+    if desc.matrix.is_some() {
+        exit(run_pair_matrix(&desc, &sources, &witnesses, &anchor));
+    }
 
     if desc.event_conditional {
         exit(run_descriptor_event_conditional(
@@ -3866,11 +4809,13 @@ surrogate 100
         let desc = parse_descriptor(text).expect("an event-conditional descriptor parses");
         assert!(desc.event_conditional, "the form flag is carried");
         assert_eq!(
-            desc.target.name, "point-event#1",
+            desc.target.as_ref().map(|a| a.name.as_str()),
+            Some("point-event#1"),
             "the witness is the target"
         );
         assert_eq!(
-            desc.driver.name, "omni_hro_imf_bz_gsm_nt",
+            desc.driver.as_ref().map(|a| a.name.as_str()),
+            Some("omni_hro_imf_bz_gsm_nt"),
             "the field is the driver"
         );
         assert_eq!(desc.register, Register::Witnesses);
@@ -4084,6 +5029,245 @@ cadence live
         assert!(
             compare_spectral_epochs(&aligned[..1]).is_none(),
             "one aligned point carries no comparison"
+        );
+    }
+
+    fn matrix_rect_text() -> &'static str {
+        "matrix m rect\n\
+         drivers a,b,c\n\
+         targets b,c,d\n\
+         cond rest\n\
+         fdr bh 0.05 over matrix\n\
+         lags 1,2\n\
+         surrogate 20\n\
+         cadence live\n"
+    }
+
+    #[test]
+    fn matrix_rect_parses_with_drivers_and_targets() {
+        let desc = parse_descriptor(matrix_rect_text()).expect("a rect matrix parses");
+        let spec = desc.matrix.expect("the matrix spec is carried");
+        assert_eq!(spec.shape, MatrixShape::Rect);
+        assert_eq!(
+            spec.declared_cells(),
+            7,
+            "targets x drivers drops the d==t cells"
+        );
+        assert_eq!(
+            spec.dropped_cells(),
+            2,
+            "the two shared names are dropped and counted"
+        );
+        assert_eq!(
+            spec.pool().len(),
+            4,
+            "the rect pool is drivers union targets"
+        );
+        assert_eq!(spec.fdr.0, FdrMethod::Bh);
+        assert_eq!(spec.fdr.1, 0.05);
+        assert_eq!(spec.fdr.2, FdrScope::Matrix);
+    }
+
+    #[test]
+    fn matrix_full_parses_with_channels() {
+        let text = "matrix m full\n\
+                    channels a,b,c\n\
+                    cond none\n\
+                    fdr by 0.1 over col\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let desc = parse_descriptor(text).expect("a full matrix parses");
+        let spec = desc.matrix.expect("the matrix spec is carried");
+        assert_eq!(spec.shape, MatrixShape::Full);
+        assert_eq!(spec.declared_cells(), 6, "full ordered N(N-1) cells");
+        assert_eq!(spec.fdr.0, FdrMethod::By);
+        assert_eq!(spec.fdr.2, FdrScope::Col);
+    }
+
+    #[test]
+    fn matrix_upper_parses_with_channels() {
+        let text = "matrix m upper\n\
+                    channels a,b,c,d\n\
+                    cond rest\n\
+                    fdr bh 0.05 over row\n\
+                    lags 3\n\
+                    surrogate 30\n\
+                    cadence live\n";
+        let desc = parse_descriptor(text).expect("an upper matrix parses");
+        let spec = desc.matrix.expect("the matrix spec is carried");
+        assert_eq!(spec.shape, MatrixShape::Upper);
+        assert_eq!(spec.declared_cells(), 6, "upper i<j carries N(N-1)/2 cells");
+        assert_eq!(spec.fdr.2, FdrScope::Row);
+    }
+
+    #[test]
+    fn matrix_cond_rest_removes_driver_and_target_from_the_pool() {
+        let desc = parse_descriptor(matrix_rect_text()).expect("a rect matrix parses");
+        let spec = desc.matrix.expect("the matrix spec is carried");
+        let mut cond = spec.cond_names("a", "b");
+        cond.sort();
+        assert_eq!(
+            cond,
+            vec!["c".to_string(), "d".to_string()],
+            "cond rest is the pool minus the driver and the target"
+        );
+        assert!(
+            spec.cond_names("b", "c")
+                .iter()
+                .all(|n| n == "a" || n == "d"),
+            "the target and the driver are both excluded"
+        );
+    }
+
+    #[test]
+    fn matrix_refuses_a_fixed_cond_arm() {
+        let text = "matrix m rect\n\
+                    drivers a,b\n\
+                    targets c,d\n\
+                    cond xrsb\n\
+                    fdr bh 0.05 over matrix\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a fixed cond is refused in the matrix");
+        assert!(
+            err.contains("xrsb") && err.contains("matrix"),
+            "the refusal names the fixed confounder: {err}"
+        );
+    }
+
+    #[test]
+    fn matrix_requires_an_fdr_arm() {
+        let text = "matrix m rect\n\
+                    drivers a,b\n\
+                    targets c,d\n\
+                    cond rest\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a matrix without fdr is refused");
+        assert!(
+            err.contains("fdr"),
+            "the refusal names the missing fdr: {err}"
+        );
+    }
+
+    #[test]
+    fn matrix_expect_cells_mismatch_names_both_counts() {
+        let text = "matrix m rect\n\
+                    drivers a,b,c\n\
+                    targets b,c,d\n\
+                    cond rest\n\
+                    fdr bh 0.05 over matrix\n\
+                    expect cells 5\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a mismatching expect cells is refused");
+        assert!(
+            err.contains('5') && err.contains('7'),
+            "the refusal names both counts: {err}"
+        );
+    }
+
+    #[test]
+    fn matrix_requires_lags_and_surrogate() {
+        let no_lags = "matrix m rect\n\
+                       drivers a,b\n\
+                       targets c,d\n\
+                       cond rest\n\
+                       fdr bh 0.05 over matrix\n\
+                       surrogate 20\n\
+                       cadence live\n";
+        let err = parse_descriptor(no_lags)
+            .err()
+            .expect("a matrix without lags is refused");
+        assert!(
+            err.contains("lags"),
+            "the refusal names the missing lags: {err}"
+        );
+
+        let no_surr = "matrix m rect\n\
+                       drivers a,b\n\
+                       targets c,d\n\
+                       cond rest\n\
+                       fdr bh 0.05 over matrix\n\
+                       lags 1\n\
+                       cadence live\n";
+        let err = parse_descriptor(no_surr)
+            .err()
+            .expect("a matrix without surrogate is refused");
+        assert!(
+            err.contains("surrogate"),
+            "the refusal names the missing surrogate: {err}"
+        );
+    }
+
+    #[test]
+    fn matrix_refuses_a_duplicate_arm() {
+        let text = "matrix m full\n\
+                    channels a,a,b\n\
+                    cond none\n\
+                    fdr bh 0.05 over matrix\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a duplicate arm is refused");
+        assert!(
+            err.contains('a') && err.contains("twice"),
+            "the refusal names the duplicate: {err}"
+        );
+    }
+
+    #[test]
+    fn cond_rest_without_matrix_is_refused() {
+        let text = "driver a\n\
+                    target b\n\
+                    cond rest\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("cond rest without a matrix is refused");
+        assert!(
+            err.contains("rest") || err.contains("matrix"),
+            "the refusal names the orphan conditioning: {err}"
+        );
+    }
+
+    #[test]
+    fn matrix_rect_refuses_channels() {
+        let text = "matrix m rect\n\
+                    drivers a,b\n\
+                    targets c,d\n\
+                    channels e,f\n\
+                    cond rest\n\
+                    fdr bh 0.05 over matrix\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("rect with channels is refused");
+        assert!(err.contains("channels"), "the refusal names the arm: {err}");
+    }
+
+    #[test]
+    fn benjamini_yekutieli_is_stricter_than_benjamini_hochberg() {
+        let p = vec![0.001, 0.01, 0.02, 0.04, 0.5];
+        let bh = benjamini_hochberg_pass(&p, 0.05);
+        let by = benjamini_yekutieli_pass(&p, 0.05);
+        assert!(
+            by.iter().filter(|x| **x).count() <= bh.iter().filter(|x| **x).count(),
+            "the Yekutieli correction is never weaker than BH"
         );
     }
 }
