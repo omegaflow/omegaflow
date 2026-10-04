@@ -65,3 +65,42 @@ jobs:
             --limit 10000 \
             --out data/alasky.cds.unistra.fr/hips_png_CDS_P_Mars_Tianwen1-MoRIC_Norder${{ matrix.order }}_Dir${{ matrix.dir }}.manifest \
             --ci-mode
+  hips-png-reader-bin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: hips-png-reader-bin
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Read the registered HiPS arm and gate on the reader record
+        id: gate
+        run: |
+          cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup hips_png > block.txt \
+            || { echo "no measured hips_png block in phi/harvest.φ — register duty"; exit 1; }
+          tag=$(sed -n 's/^tag //p' block.txt)
+          pattern=$(sed -n 's/^pattern //p' block.txt)
+          arm=$(sed -n 's/^arm //p' block.txt)
+          args=$(sed -n 's/^args //p' block.txt)
+          if [ -z "$tag" ] || [ -z "$pattern" ] || [ -z "$arm" ] || [ -z "$args" ]; then
+            echo "hips_png block incomplete (tag/pattern/arm/args) — register duty"; exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "arm=$arm" >> "$GITHUB_OUTPUT"
+          echo "args=$args" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "schedule" ] \
+             && gh release view "$tag" --repo omegaflow/sources \
+                --json assets --jq '.assets[]?.name' 2>/dev/null | grep -Eq "$pattern"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "reader record matching $pattern present and no compiler dispatch — compile skipped"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "reader record missing or a compiler dispatch — compiling the registered arm"
+          fi
+      - name: Compile the reader record and manifest it to the CDN
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          read -r -a argv <<< "${{ steps.gate.outputs.args }}"
+          cargo build --release -p omegaflow-harvest --bin "${{ steps.gate.outputs.arm }}"
+          ./target/release/"${{ steps.gate.outputs.arm }}" "${argv[@]}" --ci-mode

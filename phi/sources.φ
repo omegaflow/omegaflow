@@ -27003,3 +27003,19 @@ field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
 field LONGITUDE viking_grav_longitude_deg inverse-square em deg 604800 0.0 0.0
 field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square em mm/s2 604800 0.0 0.0
 field ALTITUDE viking_grav_altitude_km inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin
+format agrav
+origin https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
+compiler tools/harvest/src/bin/agrav_compiler.rs
+at earth
+field gravity agrav_gravity_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
+format ceein_infrasound
+origin http://ceein.infp.ro/fdsnws/dataselect/1/query
+compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
+at earth
+field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
+ttl 604800

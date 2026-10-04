@@ -1,4 +1,13 @@
 asset present
+format agrav
+tag api.sedoo.fr
+arm agrav_compiler
+workflow agrav-cdn.yml
+pattern ^agrav\.bin$
+idempotent true
+timeout 240
+
+asset present
 format bc_mpo_mag
 tag psa.esa.int
 arm bc_mpo_mag_compiler
@@ -40,6 +49,15 @@ tag gea.esac.esa.int
 arm gaia_sso_compiler
 pattern ^gaia_sso_tno\.bin$
 idempotent true
+
+asset present
+format ceein_infrasound
+tag ceein.infp.ro
+arm ceein_infrasound_compiler
+workflow ceein-infrasound-cdn.yml
+pattern ^ceein_infrasound\.bin$
+idempotent true
+timeout 240
 
 asset present
 format ephemeris_binary

@@ -2965,6 +2965,7 @@ pub fn main_flow() {
                     | "goes_euvs"
                     | "aia"
                     | "eve"
+                    | "agrav"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -4110,6 +4111,7 @@ pub fn main_flow() {
                     | "superdarn_rawacf"
                     | "argo_bgc"
                     | "fdsn_waveform"
+                    | "ceein_infrasound"
                     | "fmi_gic"
                     | "igets"
                     | "hinet"

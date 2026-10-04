@@ -113,6 +113,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "eea_noise" => eea_noise::parse_series(bytes),
         "gaia_rrl" => gaia_rrl::parse_series(bytes),
         "viking_grav" => viking_grav::parse_series(bytes),
+        "agrav" => agrav::parse_series(bytes),
         _ => None,
     }
 }
@@ -369,6 +370,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "eea_noise" => eea_noise::declared_fields(tau),
         "gaia_rrl" => gaia_rrl::declared_fields(tau),
         "viking_grav" => viking_grav::declared_fields(tau),
+        "agrav" => agrav::declared_fields(tau),
         _ => Vec::new(),
     }
 }
@@ -746,6 +748,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "eea_noise" => eea_noise::component_name(comp),
         "gaia_rrl" => gaia_rrl::component_name(comp),
         "viking_grav" => viking_grav::component_name(comp),
+        "agrav" => agrav::component_name(comp),
         _ => None,
     }
 }
@@ -790,6 +793,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "fdsn_waveform" => match comp {
             crate::geo::COMP_FDSN_BHZ => Some("fdsn_waveform_bhz_ms"),
+            _ => None,
+        },
+        "ceein_infrasound" => match comp {
+            crate::geo::COMP_CEIN_BDF => Some("ceein_infrasound_pressure_pa"),
             _ => None,
         },
         "fmi_gic" => match comp {
