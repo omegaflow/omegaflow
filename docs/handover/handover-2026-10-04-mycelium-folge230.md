@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: cd2061b36fb1eafdd045fc53f48c20492137e9cbf5d260405de6aa8155179397
+  sha256: f833c69c6b09c33aa1a6f95a2d7a52ca6f60bf2e2da3b85351a3b5328719b971
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -102,7 +102,7 @@ Origin: mycelium-folge230. **Routed — nicht-eigen; deine Disposition/Arm:**
 - **D5/Röhren-Asset:** Producer der position-indizierten 20k-Abbildung (`zeugnis.md:383`); nicht das §10-Vlies (`vlies_density.vlde`, gebaut).
 - **LEOS** `blocked_sources.φ:139`: auth-gated (`40301`) → `blocked account` + `reg`.
 - **openneuro-cdn ds004100 (SUDEP):** `openneuro_compiler: the dataset carries no .set file` — ds004100 ist SEEG (BIDS, **kein** EEGLAB `.set`); der Arm braucht einen SEEG-Format-Reader. Kein Asset → kein `sha256`.
-- **EEG-Portale `blocked_sources.φ:179/:183/:187`** (iEEG.org / TUH EEG / NSRR PSG), alle `pending`: Quellen-Registrierung (`url`/`origin`/`compiler` in `sources.φ`) erst nach dem jeweiligen Zugang; `:180` iEEG.org = **Registrierung + User Agreement** (kein gate-freier Zugang).
+- **EEG-Portale `blocked_sources.φ:179/:183/:187`** (iEEG.org / TUH EEG / NSRR PSG), alle `pending`: Quellen-Registrierung (`url`/`origin`/`compiler` in `sources.φ`) erst nach Zugang + Arm; `:180` iEEG.org = **Registrierung + User Agreement**; **NSRR**: Zugang lokal vorhanden (`.secrets.local`), aber **Harvest-Arm fehlt** (kein `nsrr`-Compiler/Workflow).
 - **goes_euvs/AST1/CSES-HPM/SCM:** `sha256` steht, aus Mycelium-Sicht erledigt.
 
 ## An river
@@ -119,7 +119,7 @@ Origin: mycelium-folge230. **Routed:**
 
 Origin: mycelium-folge230. **Routed — Operator-Akt (per-Akt-Wort), keine Maschinen-Hand:**
 
-- **EEG-Portale** `blocked_sources.φ:179/:183/:187` (iEEG.org / TUH EEG / NSRR PSG), alle `pending`: **iEEG.org `:180` verlangt Registrierung + User Agreement** (kein gate-freier Zugang); TUH läuft (`wartend.φ:39` tuh-eeg-access; `:38` eligibility resolved); NSRR Access pending. Nach dem Zugang: Ernte + CDN = Mycelium (Arm `edf.rs` steht für `tuh_eeg`/`nsrr_psg`).
+- **EEG-Portale** `blocked_sources.φ:179/:183/:187` (iEEG.org / TUH EEG / NSRR PSG), alle `pending`: iEEG.org `:180` verlangt Registrierung + User Agreement; TUH-Formular (`wartend.φ:39`). **NSRR-Zugang liegt lokal** (`.secrets.local` `NSRR_USER`/`NSRR_PASS`/`NSRR_EMAIL`, gemessen via `bin/secrets_keys`) — kein Key-Gate; offen ist der **Ernte-Arm** (kein `nsrr`-Compiler/Workflow; nur EDF-Reader-Format `main_flow.rs:3241`). iEEG/NEDC(TUH)/OpenNeuro: kein lokaler Key.
 - **GIC-Rohserie** `space.fmi.fi/gic/`: FMI-Anfrage läuft (`wartend.φ:40` fmi-gic-maentsaelae, gesendet 2026-10-02, keine Antwort) — Wiedervorlage, kein Send von der Maschine.
 - **SUDEP `ds004100`:** OpenNeuro-Harvest dispatcht (`37219510577`); kein Operator-Akt.
 
