@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: eadac33b4350869a498aa94a02f7442bd18eb469fe7c56d43027ae4e7a69430f
+  sha256: f931d2acdebaaa92cda611ac9fed58d208c0fa98bac56ffe900c4f2ea91302d5
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -110,9 +110,9 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### fruehwarnsystem α-Ebene — Sodankylä gelesen, Abisko void; 1-min-Zeuge im Baum
+### fruehwarnsystem α-Ebene — Sodankylä gelesen; 1-min-Zeuge präzisiert (Rat), Bau offen
 - **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** ein ABK-spezifisches 1-min-`dB/dt`-Korn im Baum; dann ist Z auflösbar.
+- **Trigger:** der ABK-1-min-`dB/dt`-Bau steht (Compiler-Arm + Derivat + Probe-Ladearm); dann ist Z auflösbar.
 - **Lage:** (gemessen 2026-10-04 River 91; ergänzt 2026-10-05 River 92) `wy-max-t
   37187464365` success auf `ba9c640479`; SOD 2024 gepooltes Quantil 2.4831,
   Familien-Maximum 10.18, family clears (vier Member `family-clearing`), n_eff ≈ 44.5;
@@ -126,17 +126,23 @@ Wort | Datum | Quelle
   ABK-spezifische 1-min-`dB/dt`-Korn: `intermagnet_dbdt_compiler.rs` kennt nur
   `--grain hourly|daily`, das registrierte ABK-Asset ist `abk_dbdt_1h.bin`
   (`phi/sources.φ:1820-1827`), und `wy_max_t_probe.rs:156-171` lädt nur
-  `{station}_dbdt_1h.bin` + OMNI2.
-- **Blockade:** der Bz→dB/dt-Pfeil sitzt am Lag-0/1-Rand-Bin; am stündlichen Korn ist
-  Z nicht auflösbar; X ist nicht benannt (Abisko-Null void). Zudem ist das Blatt auf
-  stündliche/tägliche Maxima vor-versiegelt
-  (`docs/blatt/fruehwarnsystem-praeregistrierung.md:26`) — eine Minute-Kadenz ändert
-  das Instrument der vorversiegelten Zelle (kein stiller Edit).
-- **Braucht:** (a) ein ABK-1-min-`dB/dt`-Korn bauen — `intermagnet_dbdt_compiler` um
-  `--grain minute` erweitern (Mountain) oder `wy_max_t_probe` auf `supermag_1m`
-  umhängen (River; Rohdaten stehen bereit); (b) die Kadenz-Amendment-Frage an den Rat
-  (Instrument der vorversiegelten Zelle); (c) den Abisko-Null-Arm konstruieren. Danach
-  re-run; das Siegel setzt der Operator.
+  `{station}_dbdt_1h.bin` + OMNI2. **River 92 (Rat, fünf Stimmen):** Verdikt **(b)
+  zulässige instrumentelle Präzisierung** — kein neues α, kein neues
+  Fehlschlag-Kriterium; Zellenstruktur, Richtung und Schwelle bleiben wörtlich,
+  Bedingung: `unsealed` + vor Sicht des 1-min-Derivats + sichtbare Text-Änderung.
+  Angewandt: `docs/blatt/fruehwarnsystem-praeregistrierung.md:26` präzisiert
+  („1-min-dB/dt an X; hourly/daily-Maxima bleiben Ausgangszeuge") + Slots-Tabelle
+  Z.95 (sha `71a33ffd…`).
+- **Blockade:** der fehlende ABK-1-min-`dB/dt`-Bau (Compiler-Arm + Derivat +
+  Probe-Ladearm); Z ist am stündlichen Lag-0/1-Rand-Bin nicht auflösbar; X bleibt ein
+  eigener Slot (Abisko-Null void). Das Instrument ist präzisiert, nicht das Ergebnis.
+- **Braucht:** (1) Mountain — `intermagnet_dbdt_compiler.rs:238-246` um `--grain
+  minute` erweitern (HAPI `PT1M` ist die Quelle; Roh-Korn `supermag_1m` liegt schon);
+  (2) Mycelium — Derivat `abk_dbdt_1m.bin` harvesten + als Register-Zeile in
+  `phi/sources.φ` und CDN manifestieren; (3) River — `wy_max_t_probe.rs:156-171` um den
+  `{station}_dbdt_1m.bin`-Ladearm erweitern; (4) re-run der Zelle am 1-min-Korn;
+  (5) Abisko-Null-Arm (X-Slot) konstruieren. Das Siegel setzt der Operator; sein Wort
+  gilt dem präzisierten Wortlaut.
 
 ### GIC kalibrierte Null (bz-yearly-maxt) — läuft
 - **Status:** wartend | **Bindung:** eigen
@@ -181,6 +187,10 @@ Origin: river folge91.
   Declustering-Flag; die ETA-Form (`EVENT_FLOOR=2`) braucht ≥ 2 alignierte Mainevents.
 - **iEEG-Elektroden:** der Harvest-Arm `ieeg_edf` steht; Elektroden-Koordinaten +
   Kanal-Matrix registrieren/ableiten (Rivers 4D-Anker je Elektrode hängt daran).
+- **1-min-`dB/dt`-Compiler-Arm (Rats-Verdikt b, River 92).**
+  `intermagnet_dbdt_compiler.rs:238-246` um `--grain minute` erweitern (HAPI `PT1M`
+  ist die Quelle); Grundlage `docs/blatt/fruehwarnsystem-praeregistrierung.md:26`
+  (präzisiert) + `docs/paper/gic-causal-driver.md` §3.1/§5.
 
 ## An mycelium
 
@@ -199,6 +209,10 @@ Origin: river folge92.
   Mountains Zeilen); gl30/SRTM15+/GHSL sind descoped.
 - **`ephemeris_juice`:** aktueller CDN-Stand Tag `ssd.jpl.nasa.gov-ephemeris` =
   `018ce2ca…` (538 696 B); drei Zeugen, nie gemittelt.
+- **`abk_dbdt_1m`-Derivat — harvesten + manifestieren (River 92).** Nach Mountains
+  `--grain minute`-Arm: `abk_dbdt_1m.bin` ernten und als Register-Zeile in
+  `phi/sources.φ` schließen + CDN (Register-Duty). Roh-Korn `supermag_1m`
+  (`:17375-17399`) liegt bereit.
 
 ## An sensory
 
@@ -214,7 +228,8 @@ Origin: river folge91 (Antwort auf `## An river` sensory-folge229).
 Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/mathematikerin/tests.rs`
+- `docs/blatt/fruehwarnsystem-praeregistrierung.md`
 - `docs/handover/handover-2026-10-05-river-folge92.md`
 - `docs/handover/archiv/handover-2026-10-04-river-folge91.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0023 · close 0.0528 · cap 0.25 — Grund: `ci-check`-VerdictLine-Scope-Fix + Taucher-Messung des 1-min-Zeugen (flash-first, kein pro/max)
+## Burn: open 0.0023 · close 0.1322 · cap 0.25 — Grund: `ci-check`-VerdictLine-Scope-Fix + Taucher-Messung des 1-min-Zeugen + Rat-Verdikt zur Kadenz-Präzisierung
