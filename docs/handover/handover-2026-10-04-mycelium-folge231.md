@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss/CLPDS/iEEG-Fixes, goes_euvs-Alignment, Exposom-Arme, Stehender Pass
   class: handover
   date: 2026-10-04
-  sha256: 816274f157f4f6f3e135c268832eb849aa9d65e280be39995293da5955442cbb
+  sha256: 0b104bcfa4111e6d243223b5dc04b77f3b0bf4a5b1f9c15fdca9213d91e9c4a9
   status: live
 -->
 # Handover — Mycelium-Folge 231 (2026-10-04)
@@ -78,6 +78,27 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-10-04) `phi/pipeline/ledger.φ:2` = 825 Blöcke, `:6` = 63 Blöcke; `glob phi/pipeline/stage/*` = **leer**. Der im `ledger.φ`-Note genannte Ausführer war laut Note **„derselbe Working-Tree-Bin"** — ein nie committeter Bin; im Baum existiert er nicht (`--port`/`--probe` stehen in keinem Bin; `glob tools/**/bin/*port*` = leer), nur der Motor `src/archivar/port.rs`. `src/archivar/port.rs` ist zusätzlich durch eine andere Linie uncommittet modifiziert.
 - **Blockade:** der Port-Runner (Working-Tree-Bin) ist verloren — nicht im getrackten Baum.
 - **Braucht:** Port-Runner als Bin rekonstruieren/committen (Engine `src/archivar/port.rs`; Konverter-Spec = Mountain), dann Lauf `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ`; Register-Zeilen.
+
+### `phi/blocked_sources.φ` — Mycelium-`pending`-Klasse (15), gemessen `register_lookup --open`
+- **Status:** je eigen | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-04) diese 15 Einträge tragen Owner `[mycelium]` und waren **nicht** ins Handover gefaltet (nachgeholt). Je Eintrag der Schritt aus dem `note`:
+  - `:102` Phobos 2 KRFM — Arm steht (pds3); Schritt: `sources.φ`-Block (`pds3_krfm_radiometer1..5`/`photometer1..9`, em) + CDN; W/m²/sr-Kalibrierung = Riss (Mountain).
+  - `:106` Hayabusa LIDAR `hay_lidar_range` — Arm+Workflow stehen (`pds4.rs`, `harvest.φ`); Schritt: CDN-Lauf + `sources.φ`-Block.
+  - `:110` Tianwen-1 MoRIC — hips-Arm (`hips_png_compiler`); Schritt: Tree-Ernte + CDN + Sample.
+  - `:114` Danuri ShadowCam `pds4-fits` at moon — PDS4-Arm; Sample-Download = Operator-Hand.
+  - `:118` JAXA G-Portal — `sha256` steht (dieses Atom); offen: Record-Download (`add_download.json`/SFTP).
+  - `:122` CSES/LIMADOU — CSES materialisiert (`cses-{lap,efd,hpm,scm}`, `sources.φ` 27 Z.); limadou ohne Rohdatenpfad → **descope-Kandidat** (Mountain).
+  - `:130` CLPDS — Annex gefixt, Lauf `37233584228` (dieses Atom).
+  - `:134` Viking Mars gravity — kein Daten-Endpoint/Arm gemessen.
+  - `:138` Cassini titanNotebook — Log-Baum, kein ODF-Einzelendpunkt.
+  - `:142` Juno Gravity CSV — kein CSV-Reader.
+  - `:146` PDS-PPI (UCLA) — EPN-TAP 200; `tap_compiler` passt; Quelle/Query noch offen.
+  - `:150` KASI — materialisiert (`kasi_compiler`+Workflow+Reader, `sources.φ` 12 Z.); Disposition = Mountain.
+  - `:154` Gaia `cluster_ka` — Tabelle im TAP absent; Korrektur offen.
+  - `:158` Gaia `vari_classifier_result` — Query 200, **Reader-Arm offen** (bauen).
+  - `:162` ieeg.org — Arm steht; Lauf `37235356150` (503) + Fix; `sources.φ`-Block + 4D-Anker fehlen.
+- **Blockade:** je Eintrag (fehlender Arm / Endpoint / Operator-Hand / Mountain-Disposition).
+- **Braucht:** je Eintrag den genannten Schritt; die materialisierten (`:122` CSES, `:150` KASI, `:130` CLPDS, `:118` JAXA) brauchen die **Mountain-Disposition** (Eintrag entfernen/umsetzen).
 
 ## CI-Lage (fact level, gemessen 2026-10-04)
 
