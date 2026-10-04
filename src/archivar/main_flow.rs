@@ -2955,6 +2955,7 @@ pub fn main_flow() {
                     | "usgs_comcat_m45"
                     | "quake_ptevent"
                     | "f107"
+                    | "goes_euvs"
                     | "aia"
                     | "eve"
             ) {

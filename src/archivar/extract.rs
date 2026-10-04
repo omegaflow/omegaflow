@@ -103,6 +103,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "usgs_comcat_m45" => usgs_comcat::parse_bin(bytes),
         "quake_ptevent" => quake_event::parse_series(bytes),
         "f107" => f107::parse_series(bytes),
+        "goes_euvs" => euvs::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
         "hapi_csv" => hapi_csv::parse_bin(bytes),
@@ -417,6 +418,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "usgs_comcat_m45" => usgs_comcat::component_name(comp),
         "quake_ptevent" => quake_event::component_name(comp),
         "f107" => f107::component_name(comp),
+        "goes_euvs" => euvs::component_name(comp),
         "mitdb" => match comp {
             mitdb::COMP_MLII => Some("mitdb_mlii"),
             mitdb::COMP_V1 => Some("mitdb_v1"),
