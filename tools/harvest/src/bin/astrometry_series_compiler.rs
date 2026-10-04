@@ -145,6 +145,8 @@ struct Parsed {
     rows_in: usize,
     skipped_void: usize,
     skipped_error: usize,
+    skipped_riss: usize,
+    ra_corrected: usize,
 }
 
 fn parse_asu_tsv(
@@ -282,6 +284,8 @@ fn parse_asu_tsv(
         rows_in: 0,
         skipped_void: 0,
         skipped_error: 0,
+        skipped_riss: 0,
+        ra_corrected: 0,
     };
 
     for line in &lines[data_start.min(lines.len())..] {
@@ -334,6 +338,371 @@ fn parse_asu_tsv(
             e_ra_mas,
             e_dec_mas,
         });
+    }
+
+    Ok(parsed)
+}
+
+#[derive(Clone, Debug)]
+enum Json {
+    Num(f64),
+    Str(String),
+    Arr(Vec<Json>),
+    Obj(Vec<(String, Json)>),
+    Other,
+}
+
+impl Json {
+    fn get(&self, key: &str) -> Option<&Json> {
+        match self {
+            Json::Obj(m) => m.iter().find(|(k, _)| k == key).map(|(_, v)| v),
+            _ => None,
+        }
+    }
+
+    fn as_str(&self) -> Option<&str> {
+        match self {
+            Json::Str(s) => Some(s),
+            _ => None,
+        }
+    }
+
+    fn as_array(&self) -> Option<&[Json]> {
+        match self {
+            Json::Arr(a) => Some(a),
+            _ => None,
+        }
+    }
+}
+
+fn json_starts(b: &[char], i: usize, lit: &str) -> bool {
+    lit.chars()
+        .enumerate()
+        .all(|(k, c)| b.get(i + k) == Some(&c))
+}
+
+fn json_ws(b: &[char], i: &mut usize) {
+    while *i < b.len() && matches!(b[*i], ' ' | '\t' | '\n' | '\r') {
+        *i += 1;
+    }
+}
+
+fn json_hex4(b: &[char], i: &mut usize) -> Option<char> {
+    let mut v = 0u32;
+    for _ in 0..4 {
+        let c = *b.get(*i)?;
+        let d = c.to_digit(16)?;
+        v = v * 16 + d;
+        *i += 1;
+    }
+    char::from_u32(v)
+}
+
+fn json_string(b: &[char], i: &mut usize) -> Option<String> {
+    if *b.get(*i)? != '"' {
+        return None;
+    }
+    *i += 1;
+    let mut s = String::new();
+    loop {
+        let c = *b.get(*i)?;
+        *i += 1;
+        match c {
+            '"' => return Some(s),
+            '\\' => {
+                let e = *b.get(*i)?;
+                *i += 1;
+                match e {
+                    '"' => s.push('"'),
+                    '\\' => s.push('\\'),
+                    '/' => s.push('/'),
+                    'b' => s.push('\u{8}'),
+                    'f' => s.push('\u{c}'),
+                    'n' => s.push('\n'),
+                    'r' => s.push('\r'),
+                    't' => s.push('\t'),
+                    'u' => s.push(json_hex4(b, i)?),
+                    _ => return None,
+                }
+            }
+            _ => s.push(c),
+        }
+    }
+}
+
+fn json_number(b: &[char], i: &mut usize) -> Option<f64> {
+    let start = *i;
+    while *i < b.len() && matches!(b[*i], '0'..='9' | '-' | '+' | '.' | 'e' | 'E') {
+        *i += 1;
+    }
+    if *i == start {
+        return None;
+    }
+    b[start..*i].iter().collect::<String>().parse().ok()
+}
+
+fn json_value(b: &[char], i: &mut usize) -> Option<Json> {
+    json_ws(b, i);
+    match *b.get(*i)? {
+        '{' => {
+            *i += 1;
+            let mut m = Vec::new();
+            json_ws(b, i);
+            if *b.get(*i)? == '}' {
+                *i += 1;
+                return Some(Json::Obj(m));
+            }
+            loop {
+                json_ws(b, i);
+                let k = json_string(b, i)?;
+                json_ws(b, i);
+                if *b.get(*i)? != ':' {
+                    return None;
+                }
+                *i += 1;
+                let v = json_value(b, i)?;
+                m.push((k, v));
+                json_ws(b, i);
+                match *b.get(*i)? {
+                    ',' => *i += 1,
+                    '}' => {
+                        *i += 1;
+                        return Some(Json::Obj(m));
+                    }
+                    _ => return None,
+                }
+            }
+        }
+        '[' => {
+            *i += 1;
+            let mut a = Vec::new();
+            json_ws(b, i);
+            if *b.get(*i)? == ']' {
+                *i += 1;
+                return Some(Json::Arr(a));
+            }
+            loop {
+                a.push(json_value(b, i)?);
+                json_ws(b, i);
+                match *b.get(*i)? {
+                    ',' => *i += 1,
+                    ']' => {
+                        *i += 1;
+                        return Some(Json::Arr(a));
+                    }
+                    _ => return None,
+                }
+            }
+        }
+        '"' => Some(Json::Str(json_string(b, i)?)),
+        't' => {
+            if json_starts(b, *i, "true") {
+                *i += 4;
+                Some(Json::Other)
+            } else {
+                None
+            }
+        }
+        'f' => {
+            if json_starts(b, *i, "false") {
+                *i += 5;
+                Some(Json::Other)
+            } else {
+                None
+            }
+        }
+        'n' => {
+            if json_starts(b, *i, "null") {
+                *i += 4;
+                Some(Json::Other)
+            } else {
+                None
+            }
+        }
+        _ => json_number(b, i).map(Json::Num),
+    }
+}
+
+fn json_parse(text: &str) -> Option<Json> {
+    let b: Vec<char> = text.chars().collect();
+    let mut i = 0usize;
+    let v = json_value(&b, &mut i)?;
+    json_ws(&b, &mut i);
+    if i != b.len() {
+        return None;
+    }
+    Some(v)
+}
+
+fn collect_event_rows<'a>(node: &'a Json, out: &mut Vec<&'a Json>) {
+    if let Some(rows) = node.get("rows").and_then(Json::as_array) {
+        out.extend(rows.iter());
+    } else if node.get("ra_position").is_some() || node.get("position_date").is_some() {
+        out.push(node);
+    }
+}
+
+fn ra_hour_token_is_single_digit(raw: &str) -> bool {
+    raw.trim()
+        .split([' ', ':'])
+        .find(|t| !t.is_empty())
+        .map(|t| t.chars().count() == 1)
+        .unwrap_or(false)
+}
+
+fn rewrite_page(url: &str, page: usize) -> String {
+    if let Some(i) = url.find("page=") {
+        let after = i + 5;
+        let end = url[after..]
+            .find('&')
+            .map(|j| after + j)
+            .unwrap_or(url.len());
+        format!("{}{}{}", &url[..after], page, &url[end..])
+    } else if url.contains('?') {
+        format!("{url}&page={page}")
+    } else {
+        format!("{url}?page={page}")
+    }
+}
+
+fn source_host(url: &str) -> Option<String> {
+    let rest = url.split("://").nth(1).unwrap_or(url);
+    let host = rest.split(['/', '?']).next().unwrap_or("");
+    if host.is_empty() {
+        None
+    } else {
+        Some(host.to_string())
+    }
+}
+
+fn lesia_object_ra(html: &str) -> Option<f64> {
+    let i = html.find("Object astrometric position")?;
+    let rest = &html[i..];
+    let a = rest.find("<td>")? + 4;
+    let b = rest[a..].find("</td>")? + a;
+    let cleaned: String = rest[a..b]
+        .chars()
+        .map(|c| match c {
+            '\n' | '\t' | '\r' => ' ',
+            _ => c,
+        })
+        .collect();
+    let toks: Vec<&str> = cleaned.split_whitespace().collect();
+    if toks.len() < 3 {
+        return None;
+    }
+    let ra_raw = format!("{} {} {}", toks[0], toks[1], toks[2]);
+    parse_angle(&ra_raw, true).filter(|v| v.is_finite())
+}
+
+fn lesia_reference_ra(link: &str) -> Option<f64> {
+    if !link.contains("lesia.obspm.fr") {
+        return None;
+    }
+    let bytes = fetch_raw_bytes(link)?;
+    let html = String::from_utf8_lossy(&bytes);
+    lesia_object_ra(&html)
+}
+
+fn parse_events_json(
+    bodies: &[String],
+    lsk: &LeapSeconds,
+    name: &str,
+    lesia_ra_of: &dyn Fn(&str) -> Option<f64>,
+) -> Result<Parsed, String> {
+    let mut parsed = Parsed {
+        name: name.to_string(),
+        samples: Vec::new(),
+        rows_in: 0,
+        skipped_void: 0,
+        skipped_error: 0,
+        skipped_riss: 0,
+        ra_corrected: 0,
+    };
+
+    for body in bodies {
+        let root = json_parse(body).ok_or_else(|| {
+            "the events body does not parse as JSON — the series stays unwritten".to_string()
+        })?;
+        let mut rows: Vec<&Json> = Vec::new();
+        collect_event_rows(&root, &mut rows);
+        for row in rows {
+            parsed.rows_in += 1;
+            let field = |k: &str| {
+                row.get(k)
+                    .and_then(Json::as_str)
+                    .map(|s| s.trim().to_string())
+            };
+            let Some(jd) = field("position_date")
+                .and_then(|t| t.parse::<f64>().ok())
+                .filter(|v| v.is_finite())
+            else {
+                parsed.skipped_void += 1;
+                continue;
+            };
+            let (Some(ra_raw), Some(dec_raw)) = (field("ra_position"), field("dec_position"))
+            else {
+                parsed.skipped_void += 1;
+                continue;
+            };
+            let Some(mut ra) =
+                parse_angle(&ra_raw, true).filter(|v| v.is_finite() && *v >= 0.0 && *v < 360.0)
+            else {
+                parsed.skipped_void += 1;
+                continue;
+            };
+            let Some(dec) =
+                parse_angle(&dec_raw, false).filter(|v| v.is_finite() && *v >= -90.0 && *v <= 90.0)
+            else {
+                parsed.skipped_void += 1;
+                continue;
+            };
+
+            if ra_hour_token_is_single_digit(&ra_raw) {
+                let link = match field("link") {
+                    Some(v) => v,
+                    None => String::new(),
+                };
+                match lesia_ra_of(&link) {
+                    Some(ref_ra)
+                        if (ref_ra - ra).abs() >= 100.0 && (ref_ra - ra).abs() <= 200.0 =>
+                    {
+                        ra = ref_ra;
+                        parsed.ra_corrected += 1;
+                    }
+                    Some(ref_ra) if (ref_ra - ra).abs() < 0.01 => {}
+                    _ => {
+                        parsed.skipped_riss += 1;
+                        continue;
+                    }
+                }
+            }
+
+            let (Some(e_ra_mas), Some(e_dec_mas)) = (
+                field("ra_position_error").and_then(|t| positive_mas(&t)),
+                field("dec_position_error").and_then(|t| positive_mas(&t)),
+            ) else {
+                parsed.skipped_error += 1;
+                continue;
+            };
+
+            if e_dec_mas / e_ra_mas > 100.0 {
+                parsed.skipped_riss += 1;
+                continue;
+            }
+
+            let Some(tdb) = jd_utc_to_tdb(lsk, jd) else {
+                parsed.skipped_void += 1;
+                continue;
+            };
+            parsed.samples.push(AstroSample {
+                tdb,
+                ra_deg: ra,
+                dec_deg: dec,
+                e_ra_mas,
+                e_dec_mas,
+            });
+        }
     }
 
     Ok(parsed)
@@ -432,8 +801,78 @@ fn selftest() {
             std::process::exit(1);
         }
     }
-    eprintln!("astrometry_series_compiler: selftest passes (ASU-TSV fold + AST1 roundtrip)");
+    let js = match parse_events_json(
+        &[JSON_FIXTURE.to_string()],
+        &lsk,
+        "sosb_lucky_star",
+        &|link| {
+            if link.contains("173384") {
+                Some(169.0234575817)
+            } else {
+                None
+            }
+        },
+    ) {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("selftest JSON parse void: {e}");
+            std::process::exit(1);
+        }
+    };
+    if js.samples.len() != 2 || js.rows_in != 4 || js.skipped_riss != 2 || js.ra_corrected != 1 {
+        eprintln!(
+            "selftest: JSON {} samples of {} rows, {} riss, {} corrected (2/4/2/1 expected)",
+            js.samples.len(),
+            js.rows_in,
+            js.skipped_riss,
+            js.ra_corrected
+        );
+        std::process::exit(1);
+    }
+    let j0 = &js.samples[0];
+    let ra0 = (18.0 + 21.0 / 60.0 + 42.8677703 / 3600.0) * 15.0;
+    let dec0 = -(15.0 + 12.0 / 60.0 + 45.829691 / 3600.0);
+    if (j0.ra_deg - ra0).abs() > 1e-9 || (j0.dec_deg - dec0).abs() > 1e-9 {
+        eprintln!(
+            "selftest JSON: RA/Dec {} / {} is not the sexagesimal fold {} / {}",
+            j0.ra_deg, j0.dec_deg, ra0, dec0
+        );
+        std::process::exit(1);
+    }
+    if j0.e_ra_mas != 0.249 || j0.e_dec_mas != 0.230 {
+        eprintln!(
+            "selftest JSON: e_ra/e_dec {} / {} is not the measured mas 0.249 / 0.230 (unit is mas)",
+            j0.e_ra_mas, j0.e_dec_mas
+        );
+        std::process::exit(1);
+    }
+    let j1 = &js.samples[1];
+    if (j1.ra_deg - 169.0234575817).abs() > 1e-9 || j1.e_dec_mas != 0.18 {
+        eprintln!(
+            "selftest JSON: corrected RA {} / e_dec {} is not the lesia-repaired 169.0234575817 / 0.18",
+            j1.ra_deg, j1.e_dec_mas
+        );
+        std::process::exit(1);
+    }
+    let single = r#"{"id":5,"position_date":"2459800.7736523","ra_position":"18 21 42.8677703","ra_position_error":"0.249","dec_position":"-15 12 45.829691","dec_position_error":"0.230","link":""}"#;
+    match parse_events_json(&[single.to_string()], &lsk, "one", &|_| None) {
+        Ok(p) if p.rows_in == 1 && p.samples.len() == 1 => {}
+        _ => {
+            eprintln!("selftest JSON: a single event object does not fold to one sample");
+            std::process::exit(1);
+        }
+    }
+    eprintln!(
+        "astrometry_series_compiler: selftest passes (ASU-TSV fold + JSON events fold + AST1 roundtrip)"
+    );
 }
+
+const JSON_FIXTURE: &str = r#"{"total":4,"rows":[
+ {"id":1,"position_date":"2459800.7736523","ra_position":"18 21 42.8677703","ra_position_error":"0.249","dec_position":"-15 12 45.829691","dec_position_error":"0.230","link":""},
+ {"id":2,"position_date":"2461174.648913426","ra_position":"1 16 05.6286153","ra_position_error":"0.14","dec_position":"-6 23 13.031160","dec_position_error":"0.18","link":"https://lesia.obspm.fr/lucky-star/occ.php?p=173384"},
+ {"id":3,"position_date":"2459800.7736523","ra_position":"18 21 42.8677703","ra_position_error":"0.249","dec_position":"-15 12 45.829691","dec_position_error":"230","link":""},
+ {"id":4,"position_date":"2461174.648913426","ra_position":"1 16 05.6286153","ra_position_error":"0.14","dec_position":"-6 23 13.031160","dec_position_error":"0.18","link":"https://example.org/not-lesia"}
+]}"#;
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -448,6 +887,8 @@ fn main() {
         std::process::exit(1);
     };
 
+    let source_url = arg_value(&args, "--source");
+
     let text: String = if let Some(path) = arg_value(&args, "--in") {
         match std::fs::read_to_string(&path) {
             Ok(t) => t,
@@ -456,21 +897,71 @@ fn main() {
                 std::process::exit(1);
             }
         }
-    } else if let Some(url) = arg_value(&args, "--source") {
-        let Some(bytes) = fetch_raw_bytes(&url) else {
+    } else if let Some(url) = source_url.as_deref() {
+        let Some(bytes) = fetch_raw_bytes(url) else {
             eprintln!("{url}: fetch void — the series stays unwritten");
             std::process::exit(1);
         };
         String::from_utf8_lossy(&bytes).into_owned()
     } else {
         eprintln!(
-            "usage: astrometry_series_compiler (--in <path> | --source <url>) [--out <path>] [--name <name>] [--ci-mode] | --selftest"
+            "usage: astrometry_series_compiler (--in <path> | --source <url>) [--out <path>] [--name <name>] [--pages <n>] [--ci-mode] | --selftest"
         );
         std::process::exit(2);
     };
 
     let name_override = arg_value(&args, "--name");
-    let parsed = match parse_asu_tsv(&text, &lsk, name_override.as_deref()) {
+    let trimmed = text.trim_start();
+    let is_json = trimmed.starts_with('{') || trimmed.starts_with('[');
+    let parsed = if is_json {
+        let mut bodies = vec![text.clone()];
+        if let Some(url) = source_url.as_deref() {
+            let pages = if let Some(v) = arg_value(&args, "--pages") {
+                match v.parse::<usize>() {
+                    Ok(n) => n,
+                    Err(_) => 1,
+                }
+            } else {
+                match json_parse(&text) {
+                    Some(root) => {
+                        let total = match root.get("total") {
+                            Some(Json::Num(n)) if *n >= 0.0 => Some(*n as usize),
+                            Some(_) => None,
+                            None => None,
+                        };
+                        let first = match root.get("rows").and_then(Json::as_array) {
+                            Some(a) => Some(a.len()),
+                            None => None,
+                        };
+                        match (total, first) {
+                            (Some(t), Some(f)) if t > 0 && f > 0 => ((t + f - 1) / f).min(64),
+                            _ => 1,
+                        }
+                    }
+                    None => 1,
+                }
+            };
+            for page in 2..=pages {
+                let page_url = rewrite_page(url, page);
+                match fetch_raw_bytes(&page_url) {
+                    Some(bytes) => bodies.push(String::from_utf8_lossy(&bytes).into_owned()),
+                    None => {
+                        eprintln!("{page_url}: page fetch void — the whole series stays unwritten");
+                        std::process::exit(1);
+                    }
+                }
+            }
+        }
+        let default_name = match source_url.as_deref().and_then(source_host) {
+            Some(h) => h,
+            None => "events_json".to_string(),
+        };
+        let series_name = name_override.clone().unwrap_or(default_name);
+        parse_events_json(&bodies, &lsk, &series_name, &lesia_reference_ra)
+    } else {
+        parse_asu_tsv(&text, &lsk, name_override.as_deref())
+    };
+    let parsed = match parsed {
         Ok(p) => p,
         Err(e) => {
             eprintln!("{e}");
@@ -509,7 +1000,7 @@ fn main() {
     match parse_bin(&bytes) {
         Some(back) if back.len() == 1 && back[0].samples.len() == series.samples.len() => {
             eprintln!(
-                "astrometry_series_compiler: {} — {} samples of {} rows → {} ({} B), {} void, {} absent error, roundtrip parses",
+                "astrometry_series_compiler: {} — {} samples of {} rows → {} ({} B), {} void, {} absent error, {} riss ({} RA corrected), roundtrip parses",
                 series.name,
                 series.samples.len(),
                 parsed.rows_in,
@@ -517,6 +1008,8 @@ fn main() {
                 bytes.len(),
                 parsed.skipped_void,
                 parsed.skipped_error,
+                parsed.skipped_riss,
+                parsed.ra_corrected,
             );
         }
         _ => {

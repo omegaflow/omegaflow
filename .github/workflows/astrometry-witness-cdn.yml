@@ -24,13 +24,17 @@ jobs:
           # ariel/miran/umbri arrive complete from the cfa.harvard mirror; obero/titan/uranu
           # truncate there (curl 18 at 65083 B) and are read from the CDS mirror. The tag stays
           # vizier.cfa.harvard.edu (astrometry_series_compiler DEFAULT_NETLOC).
+          # sosb_lucky_star is the UTFPR/Lucky-Star events API (JSON): the compiler auto-paginates
+          # via `total`, repairs the dropped-leading-digit RA from the row's lesia link, and carries
+          # the host's dec-error scale riss as a skip (never smoothed).
           for entry in \
             "ariel_j|https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000" \
             "miran_j|https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000" \
             "umbri_j|https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000" \
             "obero_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000" \
             "titan_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000" \
-            "uranu_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000"; do
+            "uranu_j|https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000" \
+            "sosb_lucky_star|https://occultations.ct.utfpr.edu.br/api/events?pageSize=100&page=1"; do
             name="${entry%%|*}"
             url="${entry#*|}"
             gh release download vizier.cfa.harvard.edu --repo omegaflow/sources \
