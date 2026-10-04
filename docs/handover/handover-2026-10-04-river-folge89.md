@@ -3,7 +3,7 @@
   session: River-Folge 89
   class: handover
   date: 2026-10-04
-  sha256: a150ed5309009a198a939d9c4e2acf14bfd39f4fb7d39b6fe9000b936ee95935
+  sha256: 28b4810e2b0894900fcea189a90fe1b15dc12e7a59f766f95041e8112b9249f0
   status: live
 -->
 # Handover — River-Folge 89 (2026-10-04)
@@ -181,8 +181,8 @@ Wort | Datum | Quelle
   CI-Job `witness-count` in `.github/workflows/field-te-query.yml` führt den Lauf.
 - **Blockade:** der declustered Mainshock-Set fehlt (Side-Deliverable, An mountain); das
   count-Panel läuft bereits auf dem vollen Zug (n = 198).
-- **Braucht:** `gh workflow run field-te-query.yml` (dispatcht), Artefakt `field-te-count`
-  lesen; An mountain — declustered Mainshock-Set (magnitude-local-maxima) für die ETA-Form.
+- **Braucht:** `ci_manage view 37201862389` / Artefakt `field-te-count` lesen (dispatcht 2026-10-04);
+  An mountain — declustered Mainshock-Set (magnitude-local-maxima) für die ETA-Form.
 
 ### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen
