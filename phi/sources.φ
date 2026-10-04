@@ -675,7 +675,7 @@ field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
 format wqp_result
-origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature&characteristicName=pH&characteristicName=Dissolved%20oxygen&characteristicName=Conductivity&characteristicName=Nitrate-N&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
+origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20(DO)&characteristicName=Specific%20conductance&characteristicName=Nitrate&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
 compiler tools/harvest/src/bin/wqp_result_compiler.rs
 at earth
 ttl 604800

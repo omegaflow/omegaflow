@@ -15,23 +15,23 @@ const COLUMNS: &[(u32, &str, &str, &str)] = &[
     (
         WQP_WATER_TEMPERATURE,
         "wqp_water_temperature_degc",
-        "Temperature",
+        "Temperature, water",
         "deg C",
     ),
     (WQP_PH, "wqp_ph", "pH", "None"),
     (
         WQP_DISSOLVED_OXYGEN,
         "wqp_dissolved_oxygen_mgl",
-        "Dissolved oxygen",
+        "Dissolved oxygen (DO)",
         "mg/L",
     ),
     (
         WQP_CONDUCTIVITY,
         "wqp_conductivity_uscm",
-        "Conductivity",
+        "Specific conductance",
         "uS/cm",
     ),
-    (WQP_NITRATE_N, "wqp_nitrate_n_mgl", "Nitrate-N", "mg/L"),
+    (WQP_NITRATE_N, "wqp_nitrate_n_mgl", "Nitrate", "mg/L"),
     (WQP_AMMONIA, "wqp_ammonia_mgl", "Ammonia", "mg/L"),
     (
         WQP_ORTHOPHOSPHATE,
@@ -135,11 +135,22 @@ fn epoch_tdb(date: &str, time: &str, tz: &str, lsk: &crate::archivar::LeapSecond
     lsk.unix_to_tdb(unix)
 }
 
-fn unit_matches(recorded: &str, declared: &str) -> bool {
+type Conversion = fn(f64) -> f64;
+
+fn normalize(recorded: &str, declared: &str) -> Option<Conversion> {
     if recorded == declared {
-        return true;
+        return Some(|v| v);
     }
-    declared == "None" && (recorded.is_empty() || recorded.eq_ignore_ascii_case("none"))
+    match (recorded, declared) {
+        ("deg F", "deg C") => Some(|f| (f - 32.0) * 5.0 / 9.0),
+        ("uS/cm @25C" | "umho/cm", "uS/cm") => Some(|v| v),
+        _ if declared == "None"
+            && (recorded.is_empty() || recorded.eq_ignore_ascii_case("none")) =>
+        {
+            Some(|v| v)
+        }
+        _ => None,
+    }
 }
 
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
@@ -176,15 +187,17 @@ pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         else {
             continue;
         };
-        let Some(value) = at(val_i).and_then(|s| s.trim().parse::<f64>().ok()) else {
+        let Some(raw) = at(val_i).and_then(|s| s.trim().parse::<f64>().ok()) else {
             continue;
         };
+        let value = match unit_i.and_then(at) {
+            Some(recorded_unit) => match normalize(recorded_unit, declared_unit) {
+                Some(convert) => convert(raw),
+                None => continue,
+            },
+            None => raw,
+        };
         if !plausible(comp, value) {
-            continue;
-        }
-        if let Some(recorded_unit) = unit_i.and_then(at)
-            && !unit_matches(recorded_unit, declared_unit)
-        {
             continue;
         }
         let Some(date) = at(date_i) else {
@@ -208,7 +221,7 @@ mod tests {
     #[test]
     fn a_matching_row_folds_onto_its_epoch_and_component() {
         let body = format!(
-            "{HEADER}\nARS,1983-01-03,00:00:00,EST,Temperature,5.5,deg C\nARS,1983-01-03,00:00:00,EST,Nitrate-N,1.2,mg/L\n"
+            "{HEADER}\nARS,1983-01-03,00:00:00,EST,\"Temperature, water\",5.5,deg C\nARS,1983-01-03,00:00:00,EST,Nitrate,1.2,mg/L\n"
         );
         let rows = parse_series(body.as_bytes()).expect("the csv parses");
         assert_eq!(rows.len(), 2);
@@ -225,14 +238,15 @@ mod tests {
     #[test]
     fn a_foreign_or_implausible_row_stays_absent() {
         let body = format!(
-            "{HEADER}\nARS,1983-01-03,00:00:00,EST,Alachlor,2.0,ug/L\nARS,1983-01-03,00:00:00,EST,pH,21.0,None\nARS,1983-01-03,00:00:00,EST,Nitrate-N,1.0,ug/L\n"
+            "{HEADER}\nARS,1983-01-03,00:00:00,EST,Alachlor,2.0,ug/L\nARS,1983-01-03,00:00:00,EST,pH,21.0,None\nARS,1983-01-03,00:00:00,EST,Nitrate,1.0,ug/L\n"
         );
         assert_eq!(parse_series(body.as_bytes()), Some(Vec::new()));
     }
 
     #[test]
     fn an_unrecorded_zone_leaves_the_epoch_absent() {
-        let body = format!("{HEADER}\nARS,1983-01-03,00:00:00,XYZ,Temperature,5.5,deg C\n");
+        let body =
+            format!("{HEADER}\nARS,1983-01-03,00:00:00,XYZ,\"Temperature, water\",5.5,deg C\n");
         assert_eq!(parse_series(body.as_bytes()), Some(Vec::new()));
     }
 
@@ -243,5 +257,44 @@ mod tests {
         assert_eq!(fields[0].name, "wqp_water_temperature_degc");
         assert_eq!(fields[0].unit, "deg C");
         assert_eq!(fields[8].unit, "ug/L");
+    }
+
+    #[test]
+    fn a_fahrenheit_row_folds_onto_its_celsius_value() {
+        let body =
+            format!("{HEADER}\nARS,1983-01-03,00:00:00,EST,\"Temperature, water\",50.0,deg F\n");
+        let rows = parse_series(body.as_bytes()).expect("the csv parses");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, 10.0);
+        assert_eq!(rows[0].2, WQP_WATER_TEMPERATURE);
+    }
+
+    #[test]
+    fn a_specific_conductance_at_25c_row_survives() {
+        let body = format!(
+            "{HEADER}\nARS,1983-01-03,00:00:00,EST,\"Specific conductance\",412.0,uS/cm @25C\n"
+        );
+        let rows = parse_series(body.as_bytes()).expect("the csv parses");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, 412.0);
+        assert_eq!(rows[0].2, WQP_CONDUCTIVITY);
+    }
+
+    #[test]
+    fn a_umho_row_survives() {
+        let body = format!(
+            "{HEADER}\nARS,1983-01-03,00:00:00,EST,\"Specific conductance\",318.0,umho/cm\n"
+        );
+        let rows = parse_series(body.as_bytes()).expect("the csv parses");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, 318.0);
+        assert_eq!(rows[0].2, WQP_CONDUCTIVITY);
+    }
+
+    #[test]
+    fn a_foreign_temperature_unit_drops() {
+        let body =
+            format!("{HEADER}\nARS,1983-01-03,00:00:00,EST,\"Temperature, water\",50.0,deg K\n");
+        assert_eq!(parse_series(body.as_bytes()), Some(Vec::new()));
     }
 }
