@@ -3,7 +3,7 @@
   session: Mycelium-Linie — nvss-SkyServer-Route, WASM-Web-Build, KASI/CLPDS registriert, JAXA-Secrets, Routing
   class: handover
   date: 2026-10-04
-  sha256: 585c54b13d89f7788b604bddef513d7b8aead1d8c80c236e87bb2f7250a3369c
+  sha256: 80831181bbafa91cafc8e5770f8958041f251c66fe955d6e09686361dc701d92
   status: live
 -->
 # Handover — Mycelium-Folge 230 (2026-10-04)
@@ -73,9 +73,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### iEEG-Ernte-Arm bauen (Mycelium) — REST-API gefunden
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `ieeg_compiler` gebaut → `ieeg-cdn.yml`-Lauf → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-04) **REST-API** (aus dem offiziellen Client `github.com/ieeg-portal/ieegpy`): Base `https://www.ieeg.org/services`; `GET /timeseries/getIdByDataSnapshotName/<name>` → snapshot_id; `GET /timeseries/getDataSnapshotTimeSeriesDetails/<id>` → XML; `POST /timeseries/getUnscaledTimeSeriesSetBinaryRaw/<id>?start=&duration=` (XML-Body) → Binär. Auth-Header `username`/`timestamp`(ISO-UTC)/`signature` = base64(sha256(`user`+`\n`+`md5(pass)`+`\n`+METHOD+`\n`+host+`\n`+path+`\n`+query+`\n`+timestamp+`\n`+base64(sha256(body)))). Keys `IEEG_USER`/`IEEG_PASS` **in `.secrets.local`** (gemessen, 148 Keys). Endpunkt gibt ohne Signatur 503. Reader `main_flow.rs:3241` `"ieeg_edf"` steht; das Web-Portal ist nur GWT-UI (`POST /mefview/eeg`).
-- **Blockade:** Compiler fehlt (`sgrep tools` = 0)
-- **Braucht:** `ieeg_compiler.rs` (Auth-Signatur + getId/getDetails/getData) + `ieeg-cdn.yml` + `format ieeg_edf`-Block + Manifestation. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
+- **Lage:** (gemessen 2026-10-04) **REST-API** (aus `github.com/ieeg-portal/ieegpy`): Base `https://www.ieeg.org/services`; `getIdByDataSnapshotName` → snapshot_id; `getDataSnapshotTimeSeriesDetails` → XML; `getUnscaledTimeSeriesSetBinaryRaw` → big-endian `i32` × `voltage-conversion-factors-mv` (channel-major). Auth-Header `username`/`timestamp`/`signature` (md5-Pass + sha256-Signatur). **Gebaut:** `tools/harvest/src/bin/ieeg_compiler.rs` (Auth + getId/getDetails/getData + `>i4`→`openneuro_eeg`-Bin) + `.github/workflows/ieeg-cdn.yml`; `cargo build` grün (0 Warnungen). Repo-Secrets `IEEG_USER`/`IEEG_PASS` gesetzt (`bin/secrets-sync.sh --set`).
+- **Blockade:** iEEG-Backend aktuell überlastet — Live-Test `--dataset 09_14_limbic_seizure_374` → **503 „Back-end server is at capacity"** (Server, nicht Auth).
+- **Braucht:** `ieeg-cdn`-Lauf erneut bei Server-Kapazität; dann `format`/`sha256`-Block in `sources.φ`. (4D-Anker je Elektrode = Mountain/River, blockiert den Basis-Harvest nicht.)
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte (mycelium-eigen)
 - **Status:** wartend | **Bindung:** eigen
