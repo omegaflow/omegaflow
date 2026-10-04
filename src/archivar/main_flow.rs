@@ -3017,7 +3017,7 @@ pub fn main_flow() {
                             }
                         },
                     };
-                    let fields: Vec<FieldConfig> = src
+                    let mut fields: Vec<FieldConfig> = src
                         .extracts
                         .iter()
                         .filter_map(|e| match e {
@@ -3025,6 +3025,9 @@ pub fn main_flow() {
                             _ => None,
                         })
                         .collect();
+                    if fields.is_empty() {
+                        fields = series_declared_fields(&fmt, &names, src_ttl as f64);
+                    }
                     if fields.is_empty() {
                         eprintln!(
                             "{} {}: field undeclared — the block carries no field line",
