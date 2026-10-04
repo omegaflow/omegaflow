@@ -2,7 +2,7 @@
   title: Survey — Weberin-Eignung: die zweite unabhängige Linie je Messgröße (2026-10-02)
   class: survey
   date: 2026-10-04
-  sha256: a8c3afb0cdbf9ae6b0db99aa4067e66897381b2fa07569e03d12148323768fe2
+  sha256: a8d28d5d024cf34895f1ddd482191ef6b7a03932db0ed8acce1d5850da1273d7
   status: live
   see-also: docs/concepts/die-weberin.md docs/SOURCE_PORT.md docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md
 -->
@@ -78,8 +78,10 @@ am Baum widerlegt (`gasum_today`). Z.ai bestätigt `absent`.
 > **Nachtrag gemessen 2026-10-04 (Future 177).** GIC-ASCII: `space.fmi.fi/gic/man_ascii` liefert
 > `man1999.zip`…`man2022.zip` + `man202301-09.zip` (200), `man2023.zip`/`man2024.zip` = **404**
 > → kein ASCII nach 2023-09 (Stop 2023-10-23); Compiler steht (`fmi_gic_compiler.rs`,
-> `phi/sources.φ:16506`). EPA `data.epa.ie/radmon/api/v1/measurements` = **STALE** (200; jüngste
-> `samp_time` 2013-02-20, `last_updated` 2015-07-15) → keine Live-Zweitlinie. C9-Infraschall:
+> `phi/sources.φ:16506`). EPA `data.epa.ie/radmon/api/v1/measurements` = **aufsteigendes
+> Bulk-API**; Seite 1 trägt `samp_time` 2013-02-20 (+`last_updated` 2015-07-15) — ein
+> **Seite-1-Artefakt**, nicht „stale"; die jüngsten Werte liegen am Reihenende (9,45 M Records,
+> siehe unten). C9-Infraschall:
 > `http://ceein.infp.ro/fdsnws/station/1/query?level=channel&format=text` = 200 (39 Stationen),
 > Kanal **BDF** trägt Einheit **Pa** + Sensitivität. Träger: Future-Folge 177.
 
@@ -90,13 +92,19 @@ am Baum widerlegt (`gasum_today`). Z.ai bestätigt `absent`.
   `gasum/prel/manYYYYMMDDprel.jpg`); die **Rohserie** ist request-only (`ari.viljanen@fmi.fi`),
   der Proxy `-dX/dt` kommt aus dem offenen IMAGE-Netz (Nurmijärvi). Verdikt Mountain
   (`phi/sources.φ`), Compiler/Manifestation Mycelium — Muster wie Erdbeben-Katalog/Ephemeriden.
-- **GIC-ASCII geprüft (gemessen 2026-10-04 F229, `curl`/`archive_search --verdict`):**
-  `space.fmi.fi/gic/gicdata/` (relativer Verzeichnisindex) + `gasum/{1998…2023}/` + `gasum/prel/`
-  tragen **nur Plots** (PNG/JPG) und das alte `cgi-bin/imagecgi/pipegram.cgi`-Formular — **kein**
-  ASCII-/Daten-Download. `gasum_index.html` sagt es selbst: „These plots are only for
-  quick-look purposes. Before presenting the data anywhere … contact Ari Viljanen." Der
-  Z.ai-Claim „GIC-ASCII nur bis Sep 2023" ist damit am Baum **widerlegt**; die Rohserie bleibt
-  request-only (Kalibrier-Linie = der Archiv-Proxy `-dX/dt`, nicht die Rohserie).
+- **GIC-ASCII geprüft (gemessen 2026-10-04, F229 + F229-Fortsetzung):** `space.fmi.fi/gic/gicdata/`
+  (relativer Verzeichnisindex) + `gasum/{1998…2023}/` + `gasum/prel/` tragen **nur Plots**
+  (PNG/JPG) und das alte `cgi-bin/imagecgi/pipegram.cgi`-Formular; `gasum_index.html` sagt es
+  selbst: „These plots are only for quick-look purposes …." **Riss aufgelöst (selbst gemessen
+  2026-10-04, `archive_search --verdict` + `curl`):** der **separate** Pfad
+  `space.fmi.fi/gic/man_ascii/` = **200** trägt die **Rohserie als ASCII-Zips**
+  `man1999.zip`…`man2022.zip` + `man202301-09.zip` (Header: „Final data are available here as
+  ASCII files", **CC BY 4.0**, Updated 1 Nov 2023); `man2022.zip`/`man202301-09.zip` = 206
+  (reachable). F229s „Rohserie request-only" war ein **Suchfehler** (nur `gasum/` geprüft,
+  `man_ascii/` nicht). Der Pfad ist genau `fmi_gic_compiler.rs:8 BASE`
+  (`https://space.fmi.fi/gic/man_ascii`) und in `phi/sources.φ:16507-16513` als `fmi_gic`
+  registriert (`origin https://space.fmi.fi/gic/man_ascii`, Release-Asset
+  `space.fmi.fi/fmi_gic.bin`); die Kalibrier-Linie `-dX/dt` (Nurmijärvi) bleibt der Proxy.
 - `data.epa.ie`-Aktualität und C9-Pa-Kalibrierung tiefer messen (`--sniff`/Inhalt).
 - Kandidaten als `url`/`compiler`-Zeilen: Verdikt ist Mountain (`phi/sources.φ`).
 
