@@ -16977,6 +16977,10 @@ compiler tools/harvest/src/bin/das2_iowa_compiler.rs
 sha256 cd2e9d2bd3f822b610c8ec9432cc413cde495b9d8a64f4582a63191018102f62
 at saturn
 ttl 604800
+field hapi_csv_magnitude_nt hapi_csv_magnitude_nt inverse-square em nT 604800 0.0 0.0
+field hapi_csv_x_nt hapi_csv_x_nt inverse-square em nT 604800 0.0 0.0
+field hapi_csv_y_nt hapi_csv_y_nt inverse-square em nT 604800 0.0 0.0
+field hapi_csv_z_nt hapi_csv_z_nt inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pradan.issdc.gov.in/ch2_cla_l1_2025_10.zip
 format pradan_ch2

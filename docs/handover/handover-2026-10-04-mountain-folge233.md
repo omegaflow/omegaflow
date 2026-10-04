@@ -3,7 +3,7 @@
   session: Mountain-Folge 233
   class: handover
   date: 2026-10-04
-  sha256: d55b4ddb121437900e0d3bbf3ad6026fd7d6e3dae6348c72d4858030f3b574ae
+  sha256: 3d137b3c0128b41d7ab9dd7e9f928b1e9d3059a1a80804e84a1664c710296720
   status: live
 -->
 # Handover — Mountain-Folge 233 (2026-10-04)
@@ -39,7 +39,91 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-(keine — alle eigenen Punkte dieses Atoms gearbeitet.)
+Audit aller Mountain-eigenen Einträge in `phi/blocked_sources.φ` (2026-10-04): die drei `gap-Token`-Risse (pds3-binary/pds4-binary/pds4-fits „Compiler-Bin fehlt") sind geheilt — die Bins stehen (`c0af97075`/`30d93daf7`). Der DAS2-Feldverdikt ist gesetzt (`hapi_csv_{magnitude,x,y,z}_nt`, `em nT`). Offen bleiben die folgenden Arme/Messungen:
+
+### Hope/Al-Amal EMM — Reader-Arm
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `glob`) `emm_sdc_compiler.rs` + `emm-sdc-cdn.yml` stehen; `src/archivar/emm*` = 0.
+- **Blockade:** keine
+- **Braucht:** Reader-Arm `src/archivar/emm_sdc.rs` nach `pds4`-Vorbild, `field` aus dem `emm_exi_l2.tar`-Schema.
+
+### superdarn MAP-Grid — RST-Reader
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `glob`) kein `*rst*.rs`; Globus-only, RST-Byte-Offsets ungemessen.
+- **Blockade:** Offsets fehlen
+- **Braucht:** RST-Header-Offsets messen (1 Datensatz), Reader-Arm bauen.
+
+### ExoMars TGO ACS — Occ-Spektrum
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `glob`) `pds4.rs`/`pds4_binary_compiler.rs` stehen; Occ-Spektrum ungemessen, Sample offen.
+- **Blockade:** keine
+- **Braucht:** ein Occ-Spektrum-Asset laden (`archive_search --verdict` auf `archives.esac.esa.int/psa/ftp/ExoMars2016/`), Feld-Verdikt + Sample (Mycelium).
+
+### Chang'e-1/-2 MRM — Kadenz
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) Block `sources.φ` trägt `pds4_fits_ce1/ce2_mrm` + 8 Felder, Assets present; cadence unread.
+- **Blockade:** keine
+- **Braucht:** `cadence` aus dem registrierten Asset messen und der Zeile beisetzen.
+
+### Viking Mars gravity (WUSTL) — Endpunkt
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `archive_search --verdict`) HTTP 206, 1 B — kein Daten-Endpoint/Arm.
+- **Blockade:** Endpoint ungemessen
+- **Braucht:** `pds-geosciences.wustl.edu/missions/viking/gravity.html` Baum mit `sfetch --links` öffnen, Endpunkt/Arm benennen oder `descoped`.
+
+### Cassini titanNotebook — Reader
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) `cassini_odf_compiler.rs` erntet `*.ODF`; der titanNotebook-Log-Baum hat keinen Reader.
+- **Blockade:** keine
+- **Braucht:** Log-Baum-Format messen (`sfetch`), Reader oder `descoped` mit Befund.
+
+### Juno Gravity Raw Orbits CSV — Reader
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `glob`) kein `juno*.rs` CSV-Reader; `juno_odf_compiler.rs` erntet ODF.
+- **Blockade:** keine
+- **Braucht:** CSV-Spalten messen, Reader-Arm oder `descoped`.
+
+### Gaia — cluster_ka ADQL + RR-Reader
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) `cluster_ka` HTTP 400 (kein Table); korrigierte ADQL offen. RR-JOIN HTTP 200, Reader-Arm fehlt.
+- **Blockade:** externe Katalog-Quelle für cluster
+- **Braucht:** korrigierte ADQL gegen `TAP_SCHEMA` messen; RR-Reader via `astrometry_series`-Vorbild.
+
+### iEEG/TUH — 4D-Anker
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) Arme `ieeg_edf`/`tuh_eeg` stehen (`edf.rs`); Elektroden-ICRS fehlt.
+- **Blockade:** MNI/Patient-Koordinaten fehlen
+- **Braucht:** Elektroden-Koordinaten + Kanal-Matrix je Datensatz registrieren (Arm steht).
+
+### konverter — Arm für falsche Feld-Einheit
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) `sgrep -i konverter src/archivar` = 0.
+- **Blockade:** Arm fehlt
+- **Braucht:** Konverter-Arm (mag → nT) nach `unit_from_name_suffix`-Vorbild bauen.
+
+### gras-2c — Wire-Slot für `range`
+- **Status:** autonom | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-04 via `sread`) `range`-Direktive parst als Metadaten (`parse.rs:1455`); Wire-Slot fehlt.
+- **Blockade:** Wire-Contract-Entscheid
+- **Braucht:** `range`-Slot im 26×f64-Record definieren (Architektur) oder als Metadaten-only mit Befund schließen.
+
+### LEOS — Reader-Arm
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Konto-Session (`LEOS_USER/PASS` in `.secrets.local`)
+- **Lage:** (gemessen 2026-10-04 via `sgrep`) `sgrep leos src` = 0; API 40301 Login-Gate.
+- **Blockade:** Konto-Session + Arm
+- **Braucht:** Reader-Arm `leos.rs`; Konto-Session ist Operator-Hand.
 
 ## Träger (Prosa, eigene)
 
