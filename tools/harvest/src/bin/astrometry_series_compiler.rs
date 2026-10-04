@@ -147,6 +147,7 @@ struct Parsed {
     skipped_error: usize,
     skipped_riss: usize,
     ra_corrected: usize,
+    dec_scale_repaired: usize,
 }
 
 fn parse_asu_tsv(
@@ -286,6 +287,7 @@ fn parse_asu_tsv(
         skipped_error: 0,
         skipped_riss: 0,
         ra_corrected: 0,
+        dec_scale_repaired: 0,
     };
 
     for line in &lines[data_start.min(lines.len())..] {
@@ -618,6 +620,7 @@ fn parse_events_json(
         skipped_error: 0,
         skipped_riss: 0,
         ra_corrected: 0,
+        dec_scale_repaired: 0,
     };
 
     for body in bodies {
@@ -678,7 +681,7 @@ fn parse_events_json(
                 }
             }
 
-            let (Some(e_ra_mas), Some(e_dec_mas)) = (
+            let (Some(e_ra_mas), Some(e_dec_raw)) = (
                 field("ra_position_error").and_then(|t| positive_mas(&t)),
                 field("dec_position_error").and_then(|t| positive_mas(&t)),
             ) else {
@@ -686,10 +689,17 @@ fn parse_events_json(
                 continue;
             };
 
-            if e_dec_mas / e_ra_mas > 100.0 {
-                parsed.skipped_riss += 1;
-                continue;
-            }
+            let e_dec_mas = if e_dec_raw / e_ra_mas > 100.0 {
+                let repaired = e_dec_raw / 1000.0;
+                if !(repaired.is_finite() && repaired > 0.0) || repaired / e_ra_mas > 100.0 {
+                    parsed.skipped_riss += 1;
+                    continue;
+                }
+                parsed.dec_scale_repaired += 1;
+                repaired
+            } else {
+                e_dec_raw
+            };
 
             let Some(tdb) = jd_utc_to_tdb(lsk, jd) else {
                 parsed.skipped_void += 1;
@@ -819,13 +829,19 @@ fn selftest() {
             std::process::exit(1);
         }
     };
-    if js.samples.len() != 2 || js.rows_in != 4 || js.skipped_riss != 2 || js.ra_corrected != 1 {
+    if js.samples.len() != 3
+        || js.rows_in != 4
+        || js.skipped_riss != 1
+        || js.ra_corrected != 1
+        || js.dec_scale_repaired != 1
+    {
         eprintln!(
-            "selftest: JSON {} samples of {} rows, {} riss, {} corrected (2/4/2/1 expected)",
+            "selftest: JSON {} samples of {} rows, {} riss, {} corrected, {} dec-scale (3/4/1/1/1 expected)",
             js.samples.len(),
             js.rows_in,
             js.skipped_riss,
-            js.ra_corrected
+            js.ra_corrected,
+            js.dec_scale_repaired
         );
         std::process::exit(1);
     }
@@ -851,6 +867,14 @@ fn selftest() {
         eprintln!(
             "selftest JSON: corrected RA {} / e_dec {} is not the lesia-repaired 169.0234575817 / 0.18",
             j1.ra_deg, j1.e_dec_mas
+        );
+        std::process::exit(1);
+    }
+    let j2 = &js.samples[2];
+    if j2.e_ra_mas != 0.249 || (j2.e_dec_mas - 0.230).abs() > 1e-12 {
+        eprintln!(
+            "selftest JSON: the microarcsecond dec error is not folded to mas: e_ra/e_dec {} / {} (0.249/0.230 expected)",
+            j2.e_ra_mas, j2.e_dec_mas
         );
         std::process::exit(1);
     }
@@ -1000,7 +1024,7 @@ fn main() {
     match parse_bin(&bytes) {
         Some(back) if back.len() == 1 && back[0].samples.len() == series.samples.len() => {
             eprintln!(
-                "astrometry_series_compiler: {} — {} samples of {} rows → {} ({} B), {} void, {} absent error, {} riss ({} RA corrected), roundtrip parses",
+                "astrometry_series_compiler: {} — {} samples of {} rows → {} ({} B), {} void, {} absent error, {} riss ({} RA corrected), {} dec-scale folded from µas, roundtrip parses",
                 series.name,
                 series.samples.len(),
                 parsed.rows_in,
@@ -1010,6 +1034,7 @@ fn main() {
                 parsed.skipped_error,
                 parsed.skipped_riss,
                 parsed.ra_corrected,
+                parsed.dec_scale_repaired,
             );
         }
         _ => {
