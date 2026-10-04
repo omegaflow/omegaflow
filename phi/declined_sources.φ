@@ -5695,3 +5695,15 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
+
+decline no-physical-force
+url https://www.ers.usda.gov/data-products/food-access-research-atlas/download-the-data
+note USDA Food Access Research Atlas — sozioökonomischer Zugangs-Index (Einkommen/Distanz), kein physikalisches Feld; Exposom-Domäne Ernährungsumfeld.
+
+decline registry/katalog
+url https://www.onetcenter.org/dl_files/database/db_29_0_text.zip
+note O*NET-Datenbank — Berufs-Registry (Tasks/Skills), kein Messwert-Feld; Exposom-Domäne Arbeitsumfeld.
+
+decline registry/katalog
+url https://exposome-explorer.iarc.fr/system/downloads/current/environmental_pollutants.csv.zip
+note Exposome-Explorer environmental_pollutants — 313-Zeilen-Chemikalien-Katalog (CAS/SMILES/Masse), keine gemessene Konzentration/Zeitachse; Exposom-Domäne Chemikalien.

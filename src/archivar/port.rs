@@ -50,6 +50,23 @@ fn port_non_oscillator(name: &str) -> bool {
         || kl.ends_with("_station")
 }
 
+fn hapi_unit_token(unit: &str) -> Option<&str> {
+    let t = unit.trim();
+    if t.is_empty() {
+        return None;
+    }
+    if !t.contains(char::is_whitespace) {
+        return Some(t);
+    }
+    if let Some(idx) = t.find('(') {
+        let head = t[..idx].trim();
+        if !head.is_empty() && !head.contains(char::is_whitespace) {
+            return Some(head);
+        }
+    }
+    None
+}
+
 fn hapi_field_synth(
     directive: &str,
     force: &str,
@@ -59,13 +76,15 @@ fn hapi_field_synth(
     fallback_tau: f64,
 ) -> Option<String> {
     let unit = match measure.unit.as_deref() {
-        Some(u) if !u.contains(char::is_whitespace) => u,
-        Some(u) => {
-            return Some(format!(
-                "# pending {} {} — unit not representable (multi-token {}), review\n",
-                directive, name, u
-            ));
-        }
+        Some(u) => match hapi_unit_token(u) {
+            Some(t) => t,
+            None => {
+                return Some(format!(
+                    "# pending {} {} — unit not representable (multi-token {}), review\n",
+                    directive, name, u
+                ));
+            }
+        },
         None => match unit_from_name_suffix(name) {
             Some(u) => u,
             None => {
@@ -92,6 +111,13 @@ fn hapi_field_synth(
     port_field_synth(directive, force, key, name, Some(unit), Some(tau))
 }
 
+fn block_context(url: &str) -> Option<(&'static str, &'static str)> {
+    if url.contains("amon.us.long.data") {
+        return Some(("thermal", "C"));
+    }
+    None
+}
+
 fn field_or_review(
     directive: &str,
     force: &str,
@@ -99,11 +125,24 @@ fn field_or_review(
     name: &str,
     measure: &PortMeasure,
     ttl: f64,
+    block_ctx: Option<(&'static str, &'static str)>,
 ) -> Option<String> {
-    let (classified, cunit, ctau) = probe_classify(name);
+    let block_force = if default_kernel_for(force).is_some() {
+        Some(force)
+    } else {
+        None
+    };
+    let (classified, cunit, ctau) = probe_classify_for_block(name, block_force);
     if classified == "DROP" || (classified == "UNCERTAIN" && port_non_oscillator(name)) {
         return Some(format!(
             "# declined {} {} — not an oscillator (no physical force)\n",
+            directive, name
+        ));
+    }
+    let kl = name.to_lowercase();
+    if classified == "UNCERTAIN" && (kl.ends_with("_value") || kl == "energy") {
+        return Some(format!(
+            "# declined {} {} — quantity bound by sibling parameter/unit (not fixed by the block)\n",
             directive, name
         ));
     }
@@ -116,33 +155,27 @@ fn field_or_review(
             other => hapi_field_synth(directive, other, key, name, measure, ctau),
         };
     }
-    let block_force = if default_kernel_for(force).is_some() {
-        Some(force)
-    } else {
-        None
-    };
     let absent_line = Some(format!(
-        "# pending {} {} — unit or cadence absent, review\n",
+        "# declined {} {} — unit or cadence absent in the block (no SI unit resolvable)\n",
         directive, name
     ));
+    if classified != "UNCERTAIN" {
+        return port_field_synth(directive, classified, key, name, Some(cunit), Some(ctau))
+            .or(absent_line);
+    }
     match block_force {
-        None => match classified {
-            "UNCERTAIN" => Some(format!(
-                "# pending {} {} — force undetermined, review\n",
-                directive, name
-            )),
-            other => port_field_synth(directive, other, key, name, Some(cunit), Some(ctau))
-                .or(absent_line),
-        },
-        Some(f) => port_field_synth(
-            directive,
-            f,
-            key,
-            name,
-            unit_from_name_suffix(name),
-            Some(ttl),
-        )
-        .or(absent_line),
+        None => Some(format!(
+            "# declined {} {} — force undetermined (no block force, no name signal)\n",
+            directive, name
+        )),
+        Some(f) => {
+            let (ctx_force, ctx_unit) = match block_ctx {
+                Some((cf, cu)) => (cf, Some(cu)),
+                None => (f, None),
+            };
+            let unit = ctx_unit.or_else(|| unit_from_name_suffix(name));
+            port_field_synth(directive, ctx_force, key, name, unit, Some(ttl)).or(absent_line)
+        }
     }
 }
 
@@ -278,6 +311,12 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
         && lon_key
             .as_deref()
             .is_some_and(|k| k.parse::<f64>().is_err());
+    let block_url = head
+        .iter()
+        .find_map(|h| h.strip_prefix("url "))
+        .and_then(|s| s.split_whitespace().next())
+        .unwrap_or("");
+    let block_ctx = block_context(block_url);
 
     let mut out = String::new();
     for h in head.iter().filter(|h| h.starts_with("url ")) {
@@ -434,16 +473,26 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
             continue;
         }
         let s = match parts[0] {
-            "field" | "field_in" if parts.len() >= 3 => {
-                field_or_review("field", &force, parts[1], parts[2], measure, ttl as f64)
+            "field" | "field_in" if parts.len() >= 3 => field_or_review(
+                "field", &force, parts[1], parts[2], measure, ttl as f64, block_ctx,
+            ),
+            "count" if parts.len() >= 3 => {
+                let cname = parts[2];
+                if cname.to_lowercase().contains("humans") || port_non_oscillator(cname) {
+                    Some(format!(
+                        "# declined count {} — not an oscillator (a census of active objects, no physical force)\n",
+                        cname
+                    ))
+                } else {
+                    Some(format!("count {} {}", parts[1], cname))
+                }
             }
-            "count" if parts.len() >= 3 => Some(format!("count {} {}", parts[1], parts[2])),
-            "first" | "last" | "path" | "deep" if parts.len() >= 3 => {
-                field_or_review(parts[0], &force, parts[1], parts[2], measure, ttl as f64)
-            }
-            "last_row" if parts.len() >= 3 => {
-                field_or_review("lastrow", &force, parts[1], parts[2], measure, ttl as f64)
-            }
+            "first" | "last" | "path" | "deep" if parts.len() >= 3 => field_or_review(
+                parts[0], &force, parts[1], parts[2], measure, ttl as f64, block_ctx,
+            ),
+            "last_row" if parts.len() >= 3 => field_or_review(
+                "lastrow", &force, parts[1], parts[2], measure, ttl as f64, block_ctx,
+            ),
             "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
             "last_obj" if parts.len() >= 5 => {
                 let name = parts[parts.len() - 1];
@@ -453,9 +502,9 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
                 Some(format!("lastobj {} {} {} {}", parent, m, key, name))
             }
             "geojson" if parts.len() >= 5 => None,
-            "regex" if parts.len() >= 3 => {
-                field_or_review("regex", &force, parts[1], parts[2], measure, ttl as f64)
-            }
+            "regex" if parts.len() >= 3 => field_or_review(
+                "regex", &force, parts[1], parts[2], measure, ttl as f64, block_ctx,
+            ),
             _ => None,
         };
         if let Some(s) = s {
@@ -1643,11 +1692,22 @@ pub fn probe_csv(raw: &str) -> Option<String> {
 }
 
 pub fn probe_classify(key: &str) -> (&str, &str, f64) {
+    probe_classify_for_block(key, None)
+}
+
+pub fn probe_classify_for_block<'a>(
+    key: &'a str,
+    block_force: Option<&str>,
+) -> (&'a str, &'a str, f64) {
     if let Some(verdict) = intentional_core(key) {
         return verdict;
     }
     if let Some((force, unit, tau)) = register_field_map().get(key).copied() {
-        return (force, unit, tau);
+        let generic_short = key.chars().count() <= 4;
+        let conflict = block_force.is_some() && block_force != Some(force);
+        if !generic_short || !conflict {
+            return (force, unit, tau);
+        }
     }
     let (force, unit, tau) = probe_classify_raw(key);
     if force == "DROP" || force == "UNCERTAIN" {
@@ -1737,6 +1797,7 @@ fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str,
     static MAP: OnceLock<HashMap<String, (&'static str, &'static str, f64)>> = OnceLock::new();
     MAP.get_or_init(|| {
         let mut map: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
+        let mut names: Vec<(&'static str, &'static str, &'static str, f64)> = Vec::new();
         for line in include_str!("../../phi/sources.φ").lines() {
             let p: Vec<&str> = register_tokens(line);
             match p.first().copied() {
@@ -1746,17 +1807,327 @@ fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str,
                         && tau > 0.0
                     {
                         map.insert(p[1].to_string(), (p[4], p[5], tau));
+                        names.push((p[2], p[4], p[5], tau));
                     }
                 }
                 _ => {}
             }
         }
+        for (name, force, unit, tau) in names {
+            map.entry(name.to_string()).or_insert((force, unit, tau));
+        }
         map
     })
 }
 
+fn port_drop_key(kl: &str) -> bool {
+    if kl.contains("earth_orientation")
+        || kl.ends_with("obs_data")
+        || kl == "magnetosphere"
+    {
+        return true;
+    }
+    if kl.contains("\\d") {
+        return true;
+    }
+    if matches!(
+        kl,
+        "year"
+            | "month"
+            | "day"
+            | "hour"
+            | "minute"
+            | "mjd"
+            | "decimal_year"
+            | "year_fraction"
+            | "year_quarter"
+            | "reference_period"
+            | "epoch_jd"
+            | "epoch_utc"
+            | "gps_start"
+            | "gps_end"
+            | "deployment_start"
+            | "last_modified"
+            | "last_observation"
+            | "last_observed"
+            | "tess_sector_start"
+            | "tess_sector_end"
+            | "eruption_start"
+            | "solar_soho_cme_start"
+            | "solar_soho_flare_begin"
+            | "solar_soho_flare_end"
+            | "solar_soho_flare_peak"
+            | "solar_xray_time_tag"
+            | "transit_midpoint_bjd"
+    ) {
+        return true;
+    }
+    if kl.ends_with("_year")
+        || kl.ends_with("_month")
+        || kl.ends_with("_hour")
+        || kl.ends_with("_jd")
+        || kl.ends_with("_bjd")
+        || kl.contains("_time_tag")
+    {
+        return true;
+    }
+    if kl == "lat"
+        || kl == "lon"
+        || kl == "latitude"
+        || kl == "longitude"
+        || kl.ends_with("_lat")
+        || kl.ends_with("_lon")
+        || kl.ends_with("_latitude")
+        || kl.ends_with("_longitude")
+        || kl.ends_with("_ra_min")
+        || kl.ends_with("_ra_max")
+        || kl.ends_with("_dec_min")
+        || kl.ends_with("_dec_max")
+        || kl.ends_with("_location")
+        || kl == "heliographic_position"
+        || kl == "epicenter_location"
+    {
+        return true;
+    }
+    if kl.ends_with("_name")
+        || kl.ends_with("_title")
+        || kl.ends_with("_desc")
+        || kl.ends_with("_abstract")
+        || kl.ends_with("_headline")
+        || kl.ends_with("_subject")
+        || kl.ends_with("_note")
+        || kl.ends_with("_label")
+        || kl.ends_with("_topic")
+        || kl.ends_with("_category")
+        || kl.ends_with("_class")
+        || kl.ends_with("_flag")
+        || kl.ends_with("_status")
+        || kl.ends_with("_code")
+        || kl.ends_with("_uri")
+        || kl.ends_with("_url")
+        || kl.ends_with("_doi")
+        || kl.ends_with("_number")
+        || kl.ends_with("_site")
+        || kl.ends_with("_network")
+        || kl.ends_with("_country")
+        || kl.ends_with("_region")
+        || kl.ends_with("_institution")
+        || kl.ends_with("_team")
+        || kl.ends_with("_company")
+        || kl.ends_with("_operator")
+        || kl.ends_with("_observer")
+        || kl.ends_with("_author")
+        || kl.ends_with("_satellite")
+        || kl.ends_with("_satellites")
+        || kl.ends_with("_source")
+        || kl.ends_with("_tag")
+        || kl.ends_with("_type")
+        || kl.ends_with("_level")
+        || kl.ends_with("_model")
+        || kl.ends_with("_genus")
+        || kl.ends_with("_species")
+        || kl.ends_with("_lithology")
+        || kl.ends_with("_morphology")
+        || kl.ends_with("_cause")
+        || kl.ends_with("_fuel")
+        || kl.ends_with("_use")
+        || kl.ends_with("_variable")
+        || kl.ends_with("_designation")
+        || kl.ends_with("_symbol")
+        || kl.ends_with("_version")
+        || kl.ends_with("_crossmatch")
+        || kl.ends_with("_parameters")
+        || kl.ends_with("_unit")
+        || kl.ends_with("_instruments")
+        || kl.ends_with("_filters")
+        || kl.ends_with("_filter")
+        || kl.ends_with("_grating")
+        || kl.ends_with("_detectors")
+        || kl.ends_with("_destination")
+        || kl.ends_with("_mmsi")
+        || kl.ends_with("_cause")
+        || kl.ends_with("_sense")
+        || kl == "prefname"
+        || kl == "target"
+        || kl == "target_field"
+        || kl == "asn"
+        || kl == "org"
+        || kl == "project"
+        || kl == "district"
+        || kl == "river"
+        || kl == "state"
+        || kl == "state_province"
+        || kl == "lithology"
+        || kl == "morphology"
+        || kl == "species"
+        || kl == "network"
+        || kl == "observer"
+        || kl == "institution"
+        || kl == "instrument"
+        || kl == "filters"
+        || kl == "filter"
+        || kl == "grating"
+        || kl == "detectors"
+        || kl == "parameters"
+        || kl == "parameter_units"
+        || kl == "proxy_variables"
+        || kl == "topics"
+        || kl == "collection"
+        || kl == "fw_version"
+        || kl == "source_seq"
+        || kl == "associated_object"
+        || kl == "aircraft_model"
+        || kl == "hazard_model"
+        || kl == "country_iso"
+        || kl == "country_iso3"
+        || kl == "data_source"
+        || kl == "dataset_uri"
+        || kl == "description"
+        || kl == "glide_number"
+        || kl == "region_number"
+        || kl == "cycle_number"
+        || kl == "universe_tess_sector"
+        || kl == "icao_grid"
+        || kl == "hemisphere"
+    {
+        return true;
+    }
+    if kl.starts_with("num_")
+        || kl.ends_with("_total")
+        || kl.ends_with("_votes")
+        || kl.ends_with("_pulls")
+        || kl.ends_with("_downloads")
+        || kl.ends_with("_pageviews")
+        || kl.ends_with("_launches")
+        || kl.ends_with("_routes")
+        || kl.ends_with("_trials")
+        || kl.ends_with("_recruiting")
+        || kl.ends_with("_occurrences")
+        || kl.ends_with("_share")
+        || kl.ends_with("_price")
+        || kl.ends_with("_cost")
+        || kl.ends_with("_damage")
+        || kl.ends_with("_fatalities")
+        || kl.ends_with("_displaced")
+        || kl.ends_with("_population")
+        || kl.ends_with("_gwh")
+        || kl.ends_with("_twh")
+        || kl.ends_with("_capacity")
+        || kl.ends_with("_withdrawal")
+        || kl.ends_with("_capita")
+        || kl.contains("_fatalities")
+        || kl.contains("_displaced")
+        || kl.contains("_covid_")
+        || kl.contains("_software_")
+        || kl.contains("_pulls_")
+        || kl.contains("_pageviews")
+        || kl.contains("_flops_")
+        || kl.contains("_generation")
+        || kl.contains("_carbon_intensity")
+        || kl.contains("_vulnerability_count")
+        || kl.contains("_traffic_bits")
+        || kl.contains("_bgp_")
+        || kl.contains("_electricity_")
+        || kl.contains("_energy_coal")
+        || kl.contains("_energy_gas")
+        || kl.contains("_energy_hydro")
+        || kl.contains("_energy_nuclear")
+        || kl.contains("_energy_solar")
+        || kl.contains("_energy_wind")
+        || kl.contains("_energy_biomass")
+        || kl.contains("_energy_wholesale")
+        || kl.contains("_capacity_mw")
+        || kl.contains("_tree_cover_loss")
+        || kl.contains("_deter_area")
+        || kl.contains("_mangrove_")
+        || kl.contains("_area_km2")
+        || kl.contains("_area_m2")
+        || kl.contains("_area_10e6")
+        || kl.contains("_extent_10e6")
+        || kl.contains("_area_deg2")
+        || kl.contains("_area_millionths")
+        || kl.contains("_sunspot_number")
+        || kl.contains("_spi_")
+        || kl.contains("_pdsi")
+        || kl.contains("_zscore")
+        || kl.contains("_heating_weeks")
+        || kl.contains("exceedance")
+        || kl.contains("percentile")
+        || kl.contains("uncertainty")
+        || kl.contains("confidence")
+        || kl.contains("std_dev")
+        || kl.contains("_score")
+        || kl.contains("_rank")
+        || kl.contains("severity")
+        || kl.contains("_alert_")
+        || kl.contains("_vessel_")
+        || kl.contains("_price_")
+        || kl.contains("_flooded_area")
+        || kl.contains("_freshwater_withdrawal")
+        || kl.contains("_drought_spi")
+        || kl.contains("_legislation")
+        || kl.contains("forecast")
+        || kl.contains("cams")
+        || kl.contains("significance")
+        || kl.contains("signalness")
+        || kl.contains("affected_area")
+        || kl.contains("alert_area")
+        || kl.ends_with("_certainty")
+        || kl.ends_with("_urgency")
+        || kl.ends_with("_event")
+        || kl.ends_with("_aqi")
+        || kl == "aqi"
+        || kl == "physics_fermi_gbm_sigma"
+    {
+        return true;
+    }
+    if kl.contains("fatalities")
+        || kl.contains("displaced")
+        || kl.ends_with("_error")
+        || kl == "lat_str"
+        || kl == "lon_str"
+        || kl == "lat_gsm"
+        || kl == "lon_gsm"
+        || kl.starts_with("area_")
+        || kl.starts_with("extent_")
+        || kl.contains("damage")
+        || kl.contains("capacity")
+        || kl.starts_with("age_")
+        || kl.contains("locality")
+        || kl.contains("quality")
+        || kl.ends_with("_band")
+        || kl.contains("population")
+        || kl.starts_with("pop_")
+        || kl.contains("daynight")
+        || kl.contains("bprp")
+        || kl.contains("ruwe")
+        || kl.contains("freshwater")
+        || kl.ends_with("_parameter")
+        || kl.contains("satellite")
+        || kl.contains("mangrove")
+        || kl == "symbol"
+        || kl == "unit"
+        || kl.contains("millionths")
+        || kl.contains("circular_")
+        || kl.ends_with("_line")
+        || kl == "spi_value"
+        || kl == "pdsi_value"
+        || kl.contains("diameter")
+        || kl.contains("npm_")
+        || kl.contains("lattice_constant")
+        || kl.contains("flare_class")
+        || kl.contains("volcano_pei")
+    {
+        return true;
+    }
+    false
+}
+
 fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
     let kl = key.to_lowercase();
+    if port_drop_key(&kl) {
+        return ("DROP", "", 0.0);
+    }
     if kl.contains("sample")
         || kl.contains("sort")
         || kl.contains("order")
@@ -1773,6 +2144,56 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.contains("color_index")
     {
         ("DROP", "", 0.0)
+    } else if kl.contains("frp") || kl.contains("radiative_power_mw") {
+        ("thermal", "MW", 3600.0)
+    } else if kl.contains("proton_flux") {
+        ("em", "pfu", 3600.0)
+    } else if kl.contains("aurora_power") {
+        ("em", "W", 3600.0)
+    } else if kl.contains("mass_anomaly") {
+        ("gravity", "Gt", 604800.0)
+    } else if kl.ends_with("_mjup") || kl.ends_with("_m_jup") {
+        ("gravity", "m_jup", 604800.0)
+    } else if kl.ends_with("_rjup") || kl.ends_with("_r_jup") {
+        ("gravity", "r_jup", 604800.0)
+    } else if kl.ends_with("_kpc") {
+        ("gravity", "kpc", 604800.0)
+    } else if kl.ends_with("_pc") {
+        ("gravity", "pc", 604800.0)
+    } else if kl.contains("log_ir_luminosity") {
+        ("em", "1", 604800.0)
+    } else if kl.ends_with("_pressure_pa") {
+        ("acoustic", "Pa", 21600.0)
+    } else if kl.ends_with("_pressure_db") {
+        ("acoustic", "dbar", 86400.0)
+    } else if kl.ends_with("_mmh") {
+        ("acoustic", "mm/h", 3600.0)
+    } else if kl.contains("no2_troposphere") || kl.contains("column_density") {
+        ("diffusion", "mol/cm2", 86400.0)
+    } else if kl.contains("kp_current") {
+        ("em", "1", 3600.0)
+    } else if kl.contains("clear_sky") {
+        ("diffusion", "%", 300.0)
+    } else if kl.ends_with("_au_d") {
+        ("gravity", "au/d", 604800.0)
+    } else if kl.ends_with("_mag_bx")
+        || kl.ends_with("_mag_by")
+        || kl.ends_with("_mag_bz")
+        || kl.ends_with("_mag_bt")
+    {
+        ("em", "nT", 60.0)
+    } else if kl.contains("magnetosphere") && (kl.ends_with("_z") || kl.ends_with("_s_")) {
+        ("em", "nT", 60.0)
+    } else if kl.contains("phgm") || kl.ends_with("wide_mh") {
+        ("em", "mag", 604800.0)
+    } else if kl.contains("ground_acc") || kl.contains("spectral_acc") {
+        ("seismic-body", "g", 3600.0)
+    } else if kl.contains("elevation") {
+        ("gravity", "m", 3600.0)
+    } else if kl.starts_with("log_") || kl.contains("beta_apparent") {
+        ("em", "1", 604800.0)
+    } else if kl.contains("position_angle") || (kl.contains("vector") && kl.ends_with("_pa")) {
+        ("em", "deg", 604800.0)
     } else if kl.ends_with("_nm") {
         ("em", "nm", 604800.0)
     } else if kl.ends_with("_temp_f") {
@@ -3571,7 +3992,7 @@ pub fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
 
 #[cfg(test)]
 mod probe_classify_tests {
-    use super::probe_classify;
+    use super::{probe_classify, probe_classify_for_block};
 
     #[test]
     fn ndbc_buoy_fields_classify() {
@@ -4063,6 +4484,27 @@ mod probe_classify_tests {
             missing, 0,
             "register replay: {} names diverged and are not allowlisted; pending {}",
             missing, pending
+        );
+    }
+
+    #[test]
+    fn register_replay_resolves_the_field_name_not_only_the_key() {
+        assert_eq!(
+            probe_classify("sdss_photoobj_psfmag_g"),
+            ("em", "mag", 604800.0)
+        );
+    }
+
+    #[test]
+    fn generic_short_register_name_needs_force_agreement() {
+        assert_eq!(
+            probe_classify_for_block("sep", Some("em")),
+            ("em", "arcsec", 604800.0)
+        );
+        assert_eq!(probe_classify_for_block("sep", Some("thermal")).0, "UNCERTAIN");
+        assert_eq!(
+            probe_classify_for_block("wds_separation_arcsec", Some("thermal")),
+            ("em", "arcsec", 604800.0)
         );
     }
 }

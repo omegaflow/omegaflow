@@ -27,6 +27,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "nt" => Some(value * 1e-9),
         "gal" => Some(value * 1e-2),
         "mgal" => Some(value * 1e-5),
+        "g" => Some(value * 9.80665),
         "km/h" | "kmh" => Some(value / 3.6),
         "knot" | "kt" => Some(value * 0.514444),
         "c" | "°c" | "degc" | "degree_c" => Some(value + 273.15),
@@ -42,6 +43,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "millionths" => Some(value * 2.0 * std::f64::consts::PI * 6.957e8 * 6.957e8 * 1e-6),
         "au" => Some(value * 1.495978707e11),
         "pc" => Some(value * 3.085677581e16),
+        "kpc" => Some(value * 3.085677581e19),
         "mpc" => Some(value * 3.085677581e22),
         "pc/cm3" => Some(value * 3.085677581e22),
         "ev" => Some(value * 1.602176634e-19),
@@ -56,7 +58,9 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "arcmin" => Some(value * 2.9088820866572e-4),
         "m_sun" => Some(value * 1.98847e30),
         "m_earth" => Some(value * 5.9722e24),
+        "m_jup" => Some(value * 1.89813e27),
         "r_earth" => Some(value * 6.371e6),
+        "r_jup" => Some(value * 7.1492e7),
         "mg/m3" | "mg/m³" | "mg/kg" => Some(value * 1e-6),
         "ug/m3" | "ug/m³" | "µg/m3" | "µg/m³" => Some(value * 1e-9),
         "ua/m2" | "ua/m²" | "µa/m2" | "µa/m²" => Some(value * 1e-6),
@@ -84,11 +88,13 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mol/cm2" => Some(value * 1e4),
         "mm/yr" => Some(value * 3.16881e-11),
         "cm/yr" => Some(value * 3.16881e-10),
+        "mm/h" => Some(value * 2.7777778e-7),
         "yr" => Some(value * 3.15576e7),
         "mw/m2" => Some(value * 1e-3),
         "e10j" => Some(value * 1.0e10),
         "kt_tnt" => Some(value * 4.184e12),
         "kt_mass" => Some(value * 1e6),
+        "gt" => Some(value * 1e12),
         "kg/m3" | "kg/m³" => Some(value),
         "1/m3" => Some(value),
         "bq/l" => Some(value * 1e3),
@@ -184,7 +190,31 @@ pub fn normalize_unit(unit: &str) -> String {
 
 pub fn unit_from_name_suffix(name: &str) -> Option<&'static str> {
     let kl = name.to_lowercase();
-    if kl.ends_with("_umol_kg") || kl.ends_with("_umolkg") {
+    if kl.contains("magnetosphere") {
+        Some("nT")
+    } else if kl.ends_with("_mass_kt") {
+        Some("kt_mass")
+    } else if kl.ends_with("_km_s") {
+        Some("km/s")
+    } else if kl.ends_with("_kt") {
+        Some("kt")
+    } else if kl.ends_with("_knots") {
+        Some("knot")
+    } else if kl.ends_with("_kmh") {
+        Some("km/h")
+    } else if kl.ends_with("_inches") || kl.ends_with("_inch") {
+        Some("inch")
+    } else if kl.ends_with("_miles") {
+        Some("mile")
+    } else if kl.ends_with("_degrees") {
+        Some("deg")
+    } else if kl.ends_with("_celsius") {
+        Some("C")
+    } else if kl.ends_with("_f") {
+        Some("f")
+    } else if kl.ends_with("_count") {
+        Some("count")
+    } else if kl.ends_with("_umol_kg") || kl.ends_with("_umolkg") {
         Some("micromole/kg")
     } else if kl.ends_with("_mg_m3") || kl.ends_with("_mgm3") {
         Some("mg/m3")
@@ -320,6 +350,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "w/m2",
             "t",
             "nt",
+            "nt/hz**1/2",
             "ev",
             "gev",
             "gv",
@@ -358,6 +389,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "w/m^2/nm",
             "micromolequanta/m^2/sec",
             "rad",
+            "deg",
             "cycle",
             "m-2.s-1.tev-1",
             "tev",
@@ -379,15 +411,16 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "mw/m2",
         ],
         1 => &[
-            "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "mpc", "t", "nt",
-            "m", "ft", "r_earth", "logg", "deg", "arcsec", "mas", "ms", "s", "au/d", "cm/yr", "1",
+            "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "m_jup", "au", "pc", "kpc",
+            "mpc", "t", "nt", "m", "ft", "r_earth", "r_jup", "gt", "logg", "deg", "arcsec", "mas",
+            "ms", "s", "au/d", "cm/yr", "1",
         ],
         2 => &[
             "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count", "dbar",
-            "inch", "mm/yr",
+            "inch", "mm/yr", "mm/h",
         ],
         3 => &[
-            "m", "mm", "km", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count",
+            "m", "mm", "km", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count", "g",
         ],
         4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
         5 => &[

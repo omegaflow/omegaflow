@@ -107,6 +107,10 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "aia" => aia::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
         "hapi_csv" => hapi_csv::parse_bin(bytes),
+        "kasi" => kasi::parse_series(bytes),
+        "jaxa_gportal" => jaxa_gportal::parse_series(bytes),
+        "wqp_result" => wqp_result::parse_series(bytes),
+        "eea_noise" => eea_noise::parse_series(bytes),
         _ => None,
     }
 }
@@ -356,6 +360,10 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
             .enumerate()
             .filter_map(|(comp, _)| gras_2c::gate_field(comp as u32, tau))
             .collect(),
+        "kasi" => kasi::declared_fields(tau),
+        "jaxa_gportal" => jaxa_gportal::declared_fields(tau),
+        "wqp_result" => wqp_result::declared_fields(tau),
+        "eea_noise" => eea_noise::declared_fields(tau),
         _ => Vec::new(),
     }
 }
@@ -727,6 +735,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             crate::geo::COMP_LAS_CLASSIFICATION => Some("las_classification"),
             _ => None,
         },
+        "kasi" => kasi::component_name(comp),
+        "jaxa_gportal" => jaxa_gportal::component_name(comp),
+        "wqp_result" => wqp_result::component_name(comp),
+        "eea_noise" => eea_noise::component_name(comp),
         _ => None,
     }
 }

@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::archivar::{
     BodyEphemeris, MembraneCtx, SampleRecord, SpatialHash, build_spatial_hash, build_star_samples,
-    query_hash,
+    parse_ephemeris_binary, query_hash,
 };
 
 #[wasm_bindgen]
@@ -36,6 +36,16 @@ impl MembraneLookup {
         MembraneLookup {
             hash,
             eph: HashMap::new(),
+        }
+    }
+
+    pub fn load_ephemeris(&mut self, name: &str, bytes: &[u8]) -> bool {
+        match parse_ephemeris_binary(bytes) {
+            Some(eph) => {
+                self.eph.insert(name.to_string(), eph);
+                true
+            }
+            None => false,
         }
     }
 

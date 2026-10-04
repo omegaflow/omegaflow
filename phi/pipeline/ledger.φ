@@ -1,11 +1,11 @@
 
-ausstehend
+disponiert
 queue phi/pipeline/queue/sources_potential_pre-cdn_9k_richest.φ
-note 825 Blöcke am Datenträger (gitignored); 1387 3-Token-field-Direktiven ohne Force/Einheit/τ, 826 source ohne Parser-Arm; Konverter-Spec (per-Feld-Registry) fehlt → 0/729 ohne Fabrikation konvertierbar (folge140.md:112).
+note Force-Gate 2026-10-04 (Block-Kontext, Drops, `sep`-Riss geschlossen) → converted 824/711 parse/0 pending/66 declined; 843 field; 0 # pending.
 
-ausstehend
+disponiert
 queue phi/pipeline/queue/sources_potential_pre-cdn_params.φ
-note 63 Blöcke am Datenträger (gitignored); 19 field, 59 source, 14 count; Join-Paar zu _9k_richest, dieselbe Wurzel: 3-Token-Felder ohne Force/Einheit/τ, source ohne Parser-Arm.
+note Force-Gate 2026-10-04 → converted 63/53 parse/0 pending/10 declined; 2 field; 0 # pending. Join-Paar zu _9k_richest.
 
 disponiert
 kandidat http://pithia.cbk.waw.pl/tap

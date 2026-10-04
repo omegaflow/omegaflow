@@ -52,6 +52,7 @@ pub mod drs_fits;
 pub mod dsn;
 pub mod edf;
 pub mod eea;
+pub mod eea_noise;
 pub mod eels;
 pub mod emc;
 pub mod emodnet_hfr;
@@ -98,9 +99,11 @@ pub mod intermagnet;
 pub mod ionex;
 pub mod ionocal;
 pub mod ir;
+pub mod jaxa_gportal;
 pub mod json;
 pub mod jwst;
 pub mod jwst_equilibrium;
+pub mod kasi;
 pub mod kbo;
 pub mod kcdc;
 pub mod kepler;
@@ -206,6 +209,7 @@ pub mod types;
 pub mod units;
 pub mod uvfits;
 pub mod uws;
+pub mod wqp_result;
 
 pub use astrometry::*;
 #[cfg(unix)]
