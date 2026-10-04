@@ -33,6 +33,12 @@ fn secrets_path() -> Option<PathBuf> {
 }
 
 fn secret(name: &str) -> Option<String> {
+    if let Ok(v) = env::var(name) {
+        let v = v.trim();
+        if !v.is_empty() {
+            return Some(v.to_string());
+        }
+    }
     let text = fs::read_to_string(secrets_path()?).ok()?;
     for line in text.lines() {
         let line = line.trim();
