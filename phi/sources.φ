@@ -823,15 +823,6 @@ field hamqsl_solarflux_sfu hamqsl_solarflux_sfu inverse-square em sfu 3600 0.0 0
 field hamqsl_solarwind_kms hamqsl_solarwind_kms patch-levy advective km/s 3600 0.0 0.0
 field hamqsl_magneticfield_nt hamqsl_magneticfield_nt inverse-square em nT 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/goes_xrs.bin
-format goes_xrs
-origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
-compiler tools/harvest/src/bin/goes_xrs_compiler.rs
-at sun
-ttl 3600
-field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
-field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/uscrn_hourly.bin
 format us_crn_hourly
 origin https://www.ncei.noaa.gov/pub/data/uscrn/products
@@ -900,6 +891,15 @@ at solar_orbiter
 ttl 3600
 field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
+format goes_xrs
+origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
+compiler tools/harvest/src/bin/goes_xrs_compiler.rs
+at sun
+ttl 3600
+field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
+field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.csv
 origin https://transmission.bpa.gov/business/operations/gic/gic.txt
