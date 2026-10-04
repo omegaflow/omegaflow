@@ -3,7 +3,7 @@
   session: River-Folge 89
   class: handover
   date: 2026-10-04
-  sha256: fad91683af0d4581828b00c314d18dcab0f2b10622be86a57203f73d96e94789
+  sha256: ef2ce200ab18ed39985f0351dc0d5f47d7ae3ca95c0d31b098841cc6a0edb10a
   status: live
 -->
 # Handover — River-Folge 89 (2026-10-04)
@@ -78,19 +78,33 @@ Wort | Datum | Quelle
   (Nemotron, `state/stimmen/2026-09-30_laic-design-frage_nemotron.txt:9`) erhält Omori
   nur in Distribution und ändert das Sampling-Design. Sie reist als **abgelehnte
   Alternative mit gemessenem Grund**, nie als Riss geglättet.
-- **compensated-score/ETAS = `pending`** (Rat). Minimale ehrliche Form beim Bau:
-  Zählstatistik pro Driver-Quantil-Bin, konstante Hintergrundrate n/span (Live-Daten),
-  **derselbe** Driver-Shift als Null. Ein ETAS-MLE ist die benannte Eskalation erst
-  nach einer gemessenen Abweichung. **Kein Token, solange keine Implementierung steht**
-  (0-Kanon: ungebaut ≠ Token). `matched-control` ist bereits die Null; es fehlt allein
-  der **declustered Mainshock-Set** — eine Datenseiten-Pflicht (An mountain).
-- **Grammatik `form event-conditional`** (Rat + gebaut, dieses Atom). Das Token erlaubt
+- **Zähl-Panel + Grammatik (Rat + Schwarm 2026-10-04).** Neues Token `count quantile <q>`
+  in der `form event-conditional`-Form: Zählung pro Driver-Quantil-Bin gegen die
+  **Shift-Null-Verteilung pro Bin** (mean ± 2 sd über B Verschiebungen; `n/span` nur
+  gedruckte diagnostische Baseline, nie der Test), Guard = **gemessene
+  Driver-Dekorrelationszeit** (1/e-Autokorrelation; absent → benanntes `pending`, nie
+  still 6 h), kompensierter z-Score `(O − null_mean)/√null_mean` je Bin als Diagnostik.
+  Gebaut in `field_te_query.rs` (`run_count_panel`, `driver_decorrelation_s`,
+  `largest_pow2_bin`, `quantile_sorted`) + 6 Gate-Tests; Träger
+  `phi/pipeline/descriptors/erbq-event.te`. **Magnituden-gewichtete (kompensierte) Zählung
+  descoped** für das Primär-Panel; **matched-control ist die Shift-Null**; der
+  **declustered Mainshock-Set** bleibt ableitbarer Side-Deliverable (An mountain). Schwarm
+  gemessen: gemini bestätigt die `(O−E)/√E`-Kompensation; zai http 000, mistral 429.
+- **Grammatik `form event-conditional`** (Rat + gebaut, Atom 1). Das Token erlaubt
   `witness <name>` **und** `driver <field>` gemeinsam; der Zeuge löst im Witness-Register,
   das Feld im Quellen-Register (Form-deklarierter Split); fehlt ein Arm, verweigert der
   Parser benannt — kein stiller Default. Der `--descriptor`-Pfad dispatcht in
-  `run_event_conditional` mit den Descriptor-Armen (`bin`/`surrogate` wiederverwendet);
-  `window`/`guard`/`floor` bleiben Code-Konstanten. Der CLI-Pfad
+  `run_event_conditional`/`run_count_panel` mit den Descriptor-Armen. Der CLI-Pfad
   `--parity-witness X [--driver F]` bleibt unverändert.
+- **Dangling Zitat korrigiert.** `erbq-solar.te` zitierte `sensory-folge225:289-296`
+  (löst auf den Weberin-Survey auf); jetzt
+  `docs/handover/archiv/handover-2026-10-03-river-folge85.md:216-220` +
+  `state/stimmen/2026-09-30_laic-design-frage_nemotron.txt`.
+- **RIXS-Textserie gemessen (Taucher 2026-10-04).** Das Zenodo-Zip (7286412) trägt
+  **19** `sw_spin.txt` (je `exp_data/azimuthal_analysis/<sample>/`), alle 80 Datenzeilen
+  × 3 Spalten `Eloss weight err` (Format `parse_sw_spin` erfüllt); extrahiert nach
+  `data/zenodo.org/rixs_spin_v3/`; Repräsentant `OD1_0p13_0p13` sha `a85bcb3c…`. Die
+  CDN-Manifestation der abgeleiteten Serie ist Mycelium (An mycelium).
 
 ## Offen (aufgeschlüsselt)
 
@@ -150,17 +164,16 @@ Wort | Datum | Quelle
 
 ### Zeugen im universellen Myzel — Form verdrahtet; Datenseite fehlt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein `--descriptor <event-conditional>.te`-Lauf über einen declustered Event-Zug.
+- **Trigger:** ein `--descriptor phi/pipeline/descriptors/erbq-event.te`-Lauf (count panel, q = 8).
 - **Lage:** (gemessen 2026-10-04) Der Ratsverdikt ist gefaltet (Entscheidungen oben).
-  Die Descriptor-Grammatik `form event-conditional` ist **gebaut** (`field_te_query.rs`;
-  Parser-Arm + `run_descriptor_event_conditional` + 5 Gate-Tests). `phi/pipeline/descriptors/erbq-solar.te`
-  bleibt als TE-Test descoped; der starke Test ist `witness point-event#1` + `driver
-  omni_hro_imf_bz_gsm_nt`. Der CLI-Pfad `--parity-witness` bleibt.
-- **Blockade:** `point-event#1` (Tohoku) trägt **kein Declustering-Flag**; der volle Zug
-  (198 Events) ist nicht der declusterte Mainshock-Set, `EVENT_FLOOR=2` verlangt ≥ 2
-  alignierte Mainevents. Der erste `erbq-solar`-Lauf meldete `n = 1`.
+  Gebaut (`field_te_query.rs`): `form event-conditional` + `count quantile <q>` (Zähl-Panel
+  pro Driver-Quantil-Bin, Shift-Null pro Bin, gemessener Dekorrelations-Guard, kompensierter
+  z-Score) + 6 Gate-Tests; Träger `erbq-event.te`. `erbq-solar.te` bleibt als TE-Test descoped;
+  der CLI-Pfad `--parity-witness` bleibt.
+- **Blockade:** der declustered Mainshock-Set fehlt (Side-Deliverable, An mountain); das
+  count-Panel läuft bereits auf dem vollen Zug (n = 198), die ETA-Form braucht ≥ 2 Mainevents.
 - **Braucht:** An mountain — declustered Mainshock-Set ableiten (magnitude-local-maxima)
-  oder als neue Record-Zeile in `phi/witnesses.φ`; dann die Form messen.
+  oder als neue Record-Zeile in `phi/witnesses.φ`; dann `--descriptor erbq-event.te` messen.
 
 ### Probes-Wanderung — 9 Deskriptoren, Rest feld-/grammatik-blockiert
 - **Status:** wartend | **Bindung:** eigen
@@ -253,7 +266,9 @@ Origin: river folge89.
 Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `tools/measure/src/bin/field_te_query.rs`
+- `phi/pipeline/descriptors/erbq-event.te`
+- `phi/pipeline/descriptors/erbq-solar.te`
 - `docs/handover/handover-2026-10-04-river-folge89.md`
 - `docs/handover/archiv/handover-2026-10-04-river-folge88.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0000 · close 0.0530 (Line-Session; Taucher im Fenster zusätzlich: council $0.0534, general $0.0549) · cap 0.50 — Grund: River-89 (Ratsverdikt point-event#1-Null + Grammatik; `form event-conditional` gebaut + 5 Gate-Tests; Taucher: vier Proben auf Text-Endpunkte gemessen; Mycelium-B-Asset-Pfad + CDN-Stand `018ce2ca` gemessen)
+## Burn: open 0.0000 · close 0.1341 (Line-Session; Taucher im Fenster zusätzlich: council $0.1142, RIXS-Taucher) · cap 0.50 — Grund: River-89 (Ratsverdikt point-event#1-Null + Grammatik; `form event-conditional` + `count quantile`-Zähl-Panel + 6 Gate-Tests; dangling Zitat geheilt; RIXS-Textserie gemessen (19 × `sw_spin.txt`); Mycelium-B-Asset-Pfad + CDN-Stand `018ce2ca` gemessen; Schwarm: gemini 200, zai http 000 / mistral 429)
