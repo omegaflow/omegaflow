@@ -3,7 +3,7 @@
   session: River-Folge 91
   class: handover
   date: 2026-10-04
-  sha256: 12e7039d9d67a0840bc3cc0869b199d99b1afd291a1efd901a48258efea681fa
+  sha256: 82ad47fbf0e365c2eeadf8260449f42b76144d5ca00af88d17da1b07c297216f
   status: live
 -->
 # Handover — River-Folge 91 (2026-10-04)
@@ -119,17 +119,18 @@ Wort | Datum | Quelle
   am SSB ehrlich schwarz).
 
 ### fruehwarnsystem α-Ebene — Sodankylä-Null gelesen, Abisko void
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** die Auflösung der Verzögerung Z am Rand-Bin (`docs/paper/gic-causal-driver.md` §3.1, §5).
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** ein sub-stündliches Zeugen-Korn (neuer Harvest); am aktuellen Korn ist Z nicht auflösbar.
 - **Lage:** (gemessen 2026-10-04 River 91) `wy-max-t 37187464365` success auf
   `ba9c640479`; SOD 2024 gepooltes Quantil 2.4831, Familien-Maximum 10.18, family
   clears (vier Member `family-clearing`), n_eff ≈ 44.5; Abisko 2024/2025
   `null-*.bin reads void — no measurement`. Die α-Ebene Sodankylä 2024 ist mit
   α = 0.05 gelesen (`docs/blatt/fruehwarnsystem-praeregistrierung.md`).
-- **Blockade:** Z (Verzögerung) liegt am Lag-0/1-Rand-Bin, unauflösbar; X nicht
-  benannt (Abisko-Null void) → kein Siegel.
-- **Braucht:** ein feineres Lag-Korn am Zeugen (Rand-Bin aufgelöst); das Siegel
-  setzt danach der Operator.
+- **Blockade:** das vorhandene Zeugen-Korn ist stündlich (OMNI2 1 h, dB/dt
+  stündlich); der Bz→dB/dt-Pfeil sitzt am Lag-0/1-Rand-Bin — Z ist am aktuellen
+  Korn nicht auflösbar. Zudem ist X nicht benannt (Abisko-Null void).
+- **Braucht:** ein sub-stündliches Zeugen-Korn (neuer Harvest) oder ein benanntes
+  Descope der Z-Zelle; das Siegel setzt danach der Operator.
 
 ### GIC kalibrierte Null (bz-yearly-maxt) — läuft
 - **Status:** wartend | **Bindung:** eigen
@@ -142,7 +143,7 @@ Wort | Datum | Quelle
 
 ### ABK-Null — Matrix-Kollaps behoben, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `wy-max-t`-Lauf auf dem Matrix-Fix (`.github/workflows/wy-max-t.yml`).
+- **Trigger:** Lauf-Ende `wy-max-t 37235150270` (dispatcht auf dem Matrix-Fix).
 - **Lage:** (gemessen 2026-10-04 River 91) Run `37187464365` trug **nur neun**
   `wy-shards`-Jobs (alle sod-2024) und **kein** `wy-null-abk-*`-Artefakt; die
   abk-Combines lasen `null-*.bin reads void`. Ursache am Baum: die
@@ -150,7 +151,7 @@ Wort | Datum | Quelle
   letzten Eintrag (sod-2024) kollabieren. Behoben: `point` ist jetzt ein echter
   Matrix-Key, `args` je `point` im `include`.
 - **Blockade:** der Runner-Stau.
-- **Braucht:** den `wy-max-t`-Lauf auf dem Fix dispatchten und lesen; dann die
+- **Braucht:** `ci_manage log 37235150270 --all` nach Lauf-Ende; dann die
   ABK-Combines prüfen.
 
 ### n_eff-Gate / TE-Estimator-Bias — n_eff-Druck gebaut, Lauf offen
