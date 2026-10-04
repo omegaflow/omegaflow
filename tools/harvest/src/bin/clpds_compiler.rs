@@ -6,8 +6,11 @@ const CDN_TAG: &str = "clpds.bao.ac.cn";
 const HOST: &str = "https://clpds.bao.ac.cn";
 const CATALOGUE_PATH: &str = "/moon-admin/client/science/catalogue";
 const LIST_PATH: &str = "/moon-admin/client/science/dataInfoList";
+const DETAIL_PATH: &str = "/moon-admin/client/science/dataInfo";
 const CATALOGUE_PAGE_SIZE: usize = 100;
 const PAGE_SIZE: usize = 5000;
+const ANNEX_DEFAULT_LIMIT: usize = 16;
+const ANNEX_HARD_CAP: usize = 100;
 
 struct Page {
     total: usize,
@@ -19,6 +22,20 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .position(|a| a == name)
         .and_then(|i| args.get(i + 1))
         .cloned()
+}
+
+fn arg_values(args: &[String], name: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut i = 0usize;
+    while i < args.len() {
+        if args[i] == name {
+            if let Some(v) = args.get(i + 1) {
+                out.push(v.clone());
+            }
+        }
+        i += 1;
+    }
+    out
 }
 
 fn json_escape(s: &str) -> String {
@@ -114,6 +131,100 @@ fn annex_of(row: &JsonVal) -> Option<String> {
         }
     }
     None
+}
+
+fn annex_absolute(path: &str) -> Option<String> {
+    if path.starts_with("http://") || path.starts_with("https://") {
+        return Some(path.to_string());
+    }
+    if path.starts_with('/') {
+        return Some(format!("{}{}", HOST, path));
+    }
+    None
+}
+
+fn resolve_annex(id: &str) -> Option<String> {
+    let url = format!("{}{}/{}", HOST, DETAIL_PATH, id);
+    let bytes = fetch_raw_bytes(&url)?;
+    let text = std::str::from_utf8(&bytes).ok()?;
+    let JsonVal::Obj(map) = parse_json(text)? else {
+        return None;
+    };
+    let data = map.get("data")?;
+    let path = annex_of(data)?;
+    annex_absolute(&path)
+}
+
+fn annex_size(url: &str) -> Option<u64> {
+    let out = std::process::Command::new("curl")
+        .arg("-sI")
+        .arg("-L")
+        .arg("--connect-timeout")
+        .arg("8")
+        .arg("-m")
+        .arg("20")
+        .arg(url)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let text = String::from_utf8_lossy(&out.stdout);
+    for line in text.lines() {
+        let lower = line.to_ascii_lowercase();
+        if let Some(rest) = lower.strip_prefix("content-length:") {
+            return rest.trim().parse::<u64>().ok();
+        }
+    }
+    None
+}
+
+fn annex_record(id: &str, url: &str, size: Option<u64>) -> String {
+    let mut out = String::with_capacity(id.len() + url.len() + 48);
+    out.push('{');
+    let mut first = true;
+    push_str_field(&mut out, "id", id, &mut first);
+    push_str_field(&mut out, "url", url, &mut first);
+    if let Some(n) = size {
+        push_sep(&mut out, &mut first);
+        out.push_str("\"size\":");
+        out.push_str(&format!("{}", n));
+    }
+    out.push('}');
+    out
+}
+
+fn annex_ids(args: &[String], limit: usize) -> Vec<String> {
+    let explicit = arg_values(args, "--id");
+    if !explicit.is_empty() {
+        let mut seen: Vec<String> = Vec::new();
+        for id in explicit {
+            if id.is_empty() || seen.iter().any(|s| s == &id) {
+                continue;
+            }
+            seen.push(id);
+            if seen.len() >= limit {
+                break;
+            }
+        }
+        return seen;
+    }
+    let url = format!("{}{}?pageNum=1&pageSize={}", HOST, LIST_PATH, limit);
+    let Some(p) = fetch_page(&url) else {
+        return Vec::new();
+    };
+    let mut out: Vec<String> = Vec::new();
+    for row in &p.rows {
+        if let Some(id) = jstr(row, "dataInfoId") {
+            if !id.is_empty() {
+                out.push(id);
+                if out.len() >= limit {
+                    break;
+                }
+            }
+        }
+    }
+    out
 }
 
 fn catalogue_record(row: &JsonVal) -> Option<(f64, String)> {
@@ -355,8 +466,94 @@ fn roundtrip_files(path: &str, count: usize) -> bool {
     seen == count
 }
 
+fn roundtrip_annex(path: &str, count: usize) -> bool {
+    let Ok(text) = std::fs::read_to_string(path) else {
+        return false;
+    };
+    let mut seen = 0usize;
+    for line in text.lines() {
+        if line.trim().is_empty() {
+            continue;
+        }
+        match parse_json(line) {
+            Some(JsonVal::Obj(map)) => match (map.get("id"), map.get("url")) {
+                (Some(JsonVal::Str(i)), Some(JsonVal::Str(u)))
+                    if !i.is_empty() && !u.is_empty() =>
+                {
+                    seen += 1
+                }
+                _ => return false,
+            },
+            _ => return false,
+        }
+    }
+    seen == count
+}
+
+fn run_annex(args: &[String], out_dir: &str, ci_mode: bool) {
+    let limit = match arg_value(args, "--limit") {
+        Some(v) => match v.parse::<usize>() {
+            Ok(n) if n > 0 => n.min(ANNEX_HARD_CAP),
+            _ => ANNEX_DEFAULT_LIMIT,
+        },
+        None => ANNEX_DEFAULT_LIMIT,
+    }
+    .min(ANNEX_HARD_CAP);
+    let ids = annex_ids(args, limit);
+    if ids.is_empty() {
+        eprintln!("clpds: no id resolved for the annex arm — nothing fabricated");
+        std::process::exit(1);
+    }
+    let mut lines: Vec<String> = Vec::new();
+    let mut without_size = 0usize;
+    for (i, id) in ids.iter().enumerate() {
+        if i > 0 {
+            std::thread::sleep(std::time::Duration::from_millis(150));
+        }
+        let Some(url) = resolve_annex(id) else {
+            eprintln!(
+                "clpds: detail for {} carried no dataAnnex — absent, not fabricated",
+                id
+            );
+            continue;
+        };
+        let size = annex_size(&url);
+        if size.is_none() {
+            without_size += 1;
+        }
+        lines.push(annex_record(id, &url, size));
+    }
+    if lines.is_empty() {
+        eprintln!("clpds: no dataAnnex resolved in the limited id set — nothing fabricated");
+        std::process::exit(1);
+    }
+    let body = format!("{}\n", lines.join("\n"));
+    let Some(path) = write_asset(out_dir, "clpds_annex.jsonl", &body) else {
+        eprintln!("clpds: annex manifest write returned void");
+        std::process::exit(1);
+    };
+    if !roundtrip_annex(&path, lines.len()) {
+        eprintln!("clpds: annex manifest roundtrip lost records — the asset stays unverified");
+        std::process::exit(1);
+    }
+    eprintln!(
+        "{}: {} files resolved ({} without Content-Length), {} B",
+        path,
+        lines.len(),
+        without_size,
+        body.len()
+    );
+    if ci_mode && !upload_release(CDN_TAG, &path) {
+        eprintln!("clpds_annex.jsonl: CDN upload returned void");
+        std::process::exit(1);
+    }
+}
+
 const FIXTURE_CATALOGUE: &str = r#"{"total":2,"code":200,"rows":[{"id":673,"name":"2016 HO3_CNSA_OEM","taskName":"Tianwen-2","dataSize":"48 KB","dataFormat":"ephemeris"},{"id":485,"name":"MARS ION","dataSize":"463.8GB"}]}"#;
 const FIXTURE_LIST: &str = r#"{"total":3,"code":200,"rows":[{"dataInfoId":"250530123647582066","name":"a.dat","dataSize":"49152.0","orbitalNumber":1.0,"longitudeStart":0.0,"longitudeEnd":0.0,"latitudeStart":0.0,"latitudeEnd":0.0},{"dataInfoId":"250530123647582078","name":"b.dat","longitudeStart":10.0,"longitudeEnd":12.0,"latitudeStart":-5.0,"latitudeEnd":-4.0},{"name":"no id"}]}"#;
+const FIXTURE_DETAIL: &str = r#"{"code":200,"msg":"ok","data":{"dataInfoId":"1","annexes":[{"annexId":7,"dataAnnex":"/WEBDATA/x.dat"}]}}"#;
+const FIXTURE_DETAIL_ABSENT: &str =
+    r#"{"code":200,"msg":"ok","data":{"dataInfoId":"2","annexes":null}}"#;
 
 fn rows_of(fixture: &str) -> Vec<JsonVal> {
     match parse_json(fixture) {
@@ -400,7 +597,31 @@ fn selftest() {
         eprintln!("selftest: a non-JSON body is read as rows");
         std::process::exit(1);
     }
-    eprintln!("clpds_compiler: selftest passes (catalogue + file fold, plausibility gate)");
+    let detail = match parse_json(FIXTURE_DETAIL) {
+        Some(JsonVal::Obj(map)) => map.get("data").and_then(annex_of),
+        _ => None,
+    };
+    match detail {
+        Some(p) if p == "/WEBDATA/x.dat" => {}
+        _ => {
+            eprintln!("selftest: the annex path was not folded out of data.annexes[]");
+            std::process::exit(1);
+        }
+    }
+    if annex_absolute("/WEBDATA/x.dat").as_deref() != Some("https://clpds.bao.ac.cn/WEBDATA/x.dat")
+    {
+        eprintln!("selftest: the annex path was not resolved against the host");
+        std::process::exit(1);
+    }
+    let absent = match parse_json(FIXTURE_DETAIL_ABSENT) {
+        Some(JsonVal::Obj(map)) => map.get("data").and_then(annex_of),
+        _ => Some(String::from("leak")),
+    };
+    if absent.is_some() {
+        eprintln!("selftest: an absent annex was fabricated");
+        std::process::exit(1);
+    }
+    eprintln!("clpds_compiler: selftest passes (catalogue + file fold, plausibility gate, annex)");
 }
 
 fn main() {
@@ -424,6 +645,11 @@ fn main() {
         None => PAGE_SIZE,
     };
     let max_pages = arg_value(&args, "--max-pages").and_then(|v| v.parse::<usize>().ok());
+
+    if args.iter().any(|a| a == "--with-annex") {
+        run_annex(&args, &out_dir, ci_mode);
+        return;
+    }
 
     let cat = fetch_catalogue();
     if cat.is_empty() {
