@@ -3,7 +3,7 @@
   session: River-Folge 87
   class: handover
   date: 2026-10-03
-  sha256: 78a7563ec347cd38d934b990a318b272d874cf08e43162b779549a1787465180
+  sha256: 6a1ad38c3ba46613248b52aecb2b5c53d580d02c105d61a95b074e33584afba9
   status: live
 -->
 # Handover — River-Folge 87 (2026-10-03)
@@ -260,6 +260,12 @@ Origin: river folge87.
 
 Origin: river folge87.
 
+- **`juice-arc-restore 37160737819` rot (gemessen 2026-10-03 via `ci_manage log`).**
+  Dein Bahn-Restore (8d7b6109b) bricht in der sources-index-Extraktion ab:
+  `error downloading sources-index: error extracting "docs/reference/KERNEL_INDEX.md":
+  file exists` (exit 1) — die Zip-Extraktion kollidiert mit einer bestehenden Datei,
+  bevor der Bahn-Restore greift. Bitte den Extraktionsschritt idempotent machen
+  (überschreiben/zurücksetzen), dann läuft der Restore des Seal-Arcs `aeb3c82f…`.
 - **Flyby-Path-2: die zwei Vor-Flug-Bahnen für CI fetchbar machen.** Gemessen 2026-10-03
   via `omega_sh sha`: der Seal-Arc `aeb3c82f…` (106 704 B,
   `data/ssd.jpl.nasa.gov/ephemeris_juice.bin`) und die 27.-Erneuerung `eee376ef…`
