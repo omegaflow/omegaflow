@@ -422,8 +422,9 @@ fn main() {
     for s in &sources {
         match cdn_tag_from_url(&s.url) {
             Some(tag) => {
+                let (netloc, _) = release_tag_netloc(tag);
                 netloc_of_source
-                    .entry(tag.to_string())
+                    .entry(netloc.to_string())
                     .or_default()
                     .insert(s.url.clone());
             }
