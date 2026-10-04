@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Register-Wiring iaga/kplo/pradan geschrieben, CI-format geheilt, dropped-Baseline 1144, juice-CDN gemessen
   class: handover
   date: 2026-10-04
-  sha256: 6a86eefb9536de53063c3286c3f0863dc6e35fcb7cfaf8f8f90dcd6066232fd0
+  sha256: 1bd5d9f03da7f8a0587d052b60dead00c91877fc4d570048bf1c6fff2cddf631
   status: live
 -->
 # Handover — Mycelium-Folge 228 (2026-10-04)
@@ -74,12 +74,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** keine (ASU-Route)
 - **Braucht:** Lauf lesen; bei Grün Register-Rebind `nvss.json`.
 
-### EMM/MBRSC — Secret erneuert, Manifest-Lauf offen
+### EMM/MBRSC — RT-Grant verifiziert (200), Manifest-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `emm-sdc-cdn 37175828418` → `ci_manage log`
-- **Lage:** (gemessen 2026-10-04) Der Refresh-Token wurde **file-only** über die Chrome-DevTools-MCP (`chrome-devtools_evaluate_script` mit `filePath`, kein Inline-Wert im Transcript) aus der eingeloggten `sdc.emiratesmarsmission.ae/profile`-Seite extrahiert (1842 Z.), als Repo-Secret `EMM_COGNITO_REFRESH_TOKEN` gesetzt, Scratch gelöscht; `emm-sdc-cdn 37175828418` dispatcht.
-- **Blockade:** keine
+- **Trigger:** `emm-sdc-cdn 37187432800` → `ci_manage log`
+- **Lage:** (gemessen 2026-10-04) SPA-Config gemessen (`main.js`): `appClientId n5e6d97bl4ba76rrdtm0qaq6n`, `loginPage https://auth.emiratesmarsmission.ae` — **identisch** mit dem Compiler. Der frühere 403 kam vom **ersten, inzwischen veralteten RT**; ein direkter `curl`-Grant mit dem **frisch** extrahierten RT liefert **HTTP 200** + access_token. Frischer RT file-only gesetzt (`EMM_COGNITO_REFRESH_TOKEN`), Scratch gelöscht, `emm-sdc-cdn 37187432800` dispatcht.
+- **Blockade:** keine (Grant verifiziert)
 - **Braucht:** Lauf lesen (Grant + Download).
+- **Incident (gemessen):** der `curl`-Response-Body lief einmal **inline** in den Transcript (access_token + id_token, `exp` ≈ 1 h; das **refresh_token** steht **nicht** im Response). Die beiden Kurzlebtoken sind als exponiert behandelt; der langlebige RT ist intakt. Lehre: den Response-Body nie direkt lesen — nur `-w '%{http_code}'` und, bei Fehlern, das Fehlerfeld.
 
 ### M3-Asset — Route geheilt, Manifest-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
