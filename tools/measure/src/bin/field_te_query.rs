@@ -14,7 +14,8 @@ use omegaflow::mathematikerin::wy_max_t::{
     quantile, sigma_per_statistic, studentized_maxima,
 };
 use omegaflow::te::{
-    conditional_embedded_te_phase, kde_n_eff, surrogate_max_phase_n, surrogate_stats_phase_n,
+    benjamini_hochberg_pass, conditional_embedded_te_phase, kde_n_eff, surrogate_max_phase_n,
+    surrogate_stats_phase_n,
 };
 
 const MONTH_S: f64 = 2_592_000.0;
@@ -3032,38 +3033,40 @@ fn driver_decorrelation_s(driver: &[(f64, f64)]) -> Option<f64> {
     None
 }
 
+fn print_count_panel_raw(observed: &[usize], expected: &[f64], q: usize, n: usize) {
+    println!(
+        "count panel: n = {n} event(s) | q = {q} driver-quantile bins | exposure-weighted expectation"
+    );
+    for b in 0..q {
+        println!(
+            "  bin {b}: observed {} | expected {:.2}",
+            observed[b], expected[b]
+        );
+    }
+}
+
 fn print_count_panel(
     observed: &[usize],
+    expected: &[f64],
+    null_mean: &[f64],
+    p_bin: &[f64],
+    adj: &[bool],
     q: usize,
     n: usize,
-    span: f64,
-    null: Option<&[(f64, f64, f64)]>,
 ) {
-    let baseline_per_bin = n as f64 / q as f64;
     println!(
-        "count panel: n = {n} event(s) | q = {q} driver-quantile bins | constant-rate baseline = {baseline_per_bin:.2} event(s)/bin ({:.4e} event(s)/s)",
-        n as f64 / span
+        "count panel: n = {n} event(s) | q = {q} driver-quantile bins | exposure-weighted expectation"
     );
-    for (b, obs) in observed.iter().enumerate() {
-        match null {
-            Some(stats) => {
-                let (mean, sd, threshold) = stats[b];
-                let word = if *obs as f64 > threshold {
-                    "above the null"
-                } else {
-                    "consistent with the null"
-                };
-                let z = if mean > 0.0 {
-                    (*obs as f64 - mean) / mean.sqrt()
-                } else {
-                    f64::NAN
-                };
-                println!(
-                    "  bin {b}: observed {obs} | null mean {mean:.2} ± {sd:.2} | threshold (mean + 2 sd) {threshold:.2} | compensated z {z:.3} | {word}"
-                );
-            }
-            None => println!("  bin {b}: observed {obs} | null absent"),
-        }
+    for b in 0..q {
+        let word = if adj[b] {
+            "above the null (BH)"
+        } else {
+            "consistent with the null"
+        };
+        println!(
+            "  bin {b}: observed {} | expected {:.2} | null mean {:.2} | rank p {:.4} | {word}",
+            observed[b], expected[b], null_mean[b], p_bin[b]
+        );
     }
 }
 
@@ -3128,6 +3131,43 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
         }
         Some(b)
     };
+    let mut dts: Vec<f64> = driver
+        .windows(2)
+        .map(|w| w[1].0 - w[0].0)
+        .filter(|d| d.is_finite() && *d > 0.0)
+        .collect();
+    if dts.len() < 4 {
+        println!("count panel pending — the driver carries fewer than four valid gaps");
+        return;
+    }
+    dts.sort_by(|a, b| a.total_cmp(b));
+    let dt = dts[dts.len() / 2];
+    let mut occupancy = vec![0usize; q];
+    let mut n_valid = 0usize;
+    for (_, v) in driver.iter() {
+        if v.is_finite() {
+            n_valid += 1;
+            if let Some(b) = bin_of(*v) {
+                occupancy[b] += 1;
+            }
+        }
+    }
+    if n_valid < q {
+        println!("count panel pending — the driver carries fewer than {q} valid samples");
+        return;
+    }
+    let t_exposure = n_valid as f64 * dt;
+    let lambda0 = n as f64 / t_exposure;
+    let expected: Vec<f64> = occupancy
+        .iter()
+        .map(|c| lambda0 * (*c as f64) * dt)
+        .collect();
+    if expected.iter().any(|e| !(*e > 0.0)) {
+        println!(
+            "count panel block: at least one quantile bin carries zero exposure — the quantile edges collapse; q = {q} is too fine for the driver's distinct values"
+        );
+        return;
+    }
     let mut observed = vec![0usize; q];
     for &(t, _) in &inside {
         if let Some(v) = sample_nearest(driver, t) {
@@ -3136,13 +3176,24 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
             }
         }
     }
+    let chi2 = |counts: &[usize]| -> f64 {
+        counts
+            .iter()
+            .zip(expected.iter())
+            .map(|(c, e)| {
+                let d = *c as f64 - e;
+                d * d / e
+            })
+            .sum()
+    };
+    let obs_chi2 = chi2(&observed);
     let guard_s = match driver_decorrelation_s(driver) {
         Some(g) if g > 0.0 => g,
         _ => {
             println!(
                 "count panel null pending — the driver decorrelation time is absent (the autocorrelation carries no 1/e crossing); no silent guard"
             );
-            print_count_panel(&observed, q, n, span, None);
+            print_count_panel_raw(&observed, &expected, q, n);
             return;
         }
     };
@@ -3150,11 +3201,19 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
         println!(
             "count panel null pending — the driver span is too short for the measured guard band {guard_s:.1} s"
         );
-        print_count_panel(&observed, q, n, span, None);
+        print_count_panel_raw(&observed, &expected, q, n);
         return;
     }
+    let resolution_needed = (q as f64 / MAXT_ALPHA).ceil() as usize;
+    if surrogates + 1 < resolution_needed {
+        println!(
+            "count panel resolution: B + 1 = {} < q/alpha = {resolution_needed} (q = {q}, alpha = {MAXT_ALPHA}) — the surrogate ensemble cannot resolve a BH-corrected per-bin p; the empirical p stays a lower bound (Phipson & Smyth 2010)",
+            surrogates + 1
+        );
+    }
     let mut state = SURROGATE_SEED;
-    let mut null_counts: Vec<Vec<f64>> = vec![Vec::new(); q];
+    let mut null_counts: Vec<Vec<usize>> = vec![Vec::new(); q];
+    let mut null_chi2: Vec<f64> = Vec::with_capacity(surrogates);
     for _ in 0..surrogates {
         let magnitude = guard_s + uniform_unit(&mut state) * (span - 2.0 * guard_s);
         let offset = if uniform_unit(&mut state) < 0.5 {
@@ -3176,35 +3235,42 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
             }
         }
         for (b, c) in counts.iter().enumerate() {
-            null_counts[b].push(*c as f64);
+            null_counts[b].push(*c);
         }
+        null_chi2.push(chi2(&counts));
     }
-    let mut stats: Vec<(f64, f64, f64)> = Vec::with_capacity(q);
-    for counts in &null_counts {
-        if counts.len() < 2 {
-            println!("count panel null pending — fewer than two surrogate draws landed");
-            print_count_panel(&observed, q, n, span, None);
-            return;
-        }
-        let mean = counts.iter().sum::<f64>() / counts.len() as f64;
-        let var =
-            counts.iter().map(|x| (x - mean) * (x - mean)).sum::<f64>() / (counts.len() - 1) as f64;
-        let sd = var.sqrt();
-        stats.push((mean, sd, mean + 2.0 * sd));
+    if null_chi2.len() < 2 {
+        println!("count panel null pending — fewer than two surrogate draws landed");
+        print_count_panel_raw(&observed, &expected, q, n);
+        return;
     }
-    print_count_panel(&observed, q, n, span, Some(&stats));
-    let above = observed
-        .iter()
-        .enumerate()
-        .filter(|(b, obs)| **obs as f64 > stats[*b].2)
-        .count();
-    let word = if above > 0 {
+    let b_total = null_chi2.len() as f64;
+    let ge = null_chi2.iter().filter(|x| **x >= obs_chi2).count();
+    let p_global = (1.0 + ge as f64) / (b_total + 1.0);
+    let mut null_mean = vec![0.0f64; q];
+    let mut p_bin = vec![0.0f64; q];
+    for b in 0..q {
+        let c = &null_counts[b];
+        let mean = c.iter().map(|x| *x as f64).sum::<f64>() / c.len() as f64;
+        null_mean[b] = mean;
+        let ge_b = c.iter().filter(|x| **x >= observed[b]).count();
+        p_bin[b] = (1.0 + ge_b as f64) / (c.len() as f64 + 1.0);
+    }
+    let adj = benjamini_hochberg_pass(&p_bin, MAXT_ALPHA);
+    print_count_panel(&observed, &expected, &null_mean, &p_bin, &adj, q, n);
+    println!(
+        "count panel global: chi2 = {obs_chi2:.2} | B = {} | empirical p = {p_global:.4} (rank p, (1+#{{>=obs}})/(B+1)) | mean+2sd is screening only",
+        null_chi2.len()
+    );
+    let pass = adj.iter().filter(|a| **a).count();
+    let word = if p_global <= MAXT_ALPHA || pass > 0 {
         "above the null"
     } else {
         "consistent with the null"
     };
     println!(
-        "count panel verdict: {word} — {above} of {q} quantile bins exceed the shift-null threshold; the event times stay fixed, only the driver alignment is broken, so the event clustering is part of the null."
+        "count panel verdict: {word} — global empirical p {p_global:.4}; {pass} of {q} quantile bins survive the Benjamini-Hochberg step at alpha {MAXT_ALPHA}; exposure-weighted expectation {:.2} event(s)/panel. The event times stay fixed, only the driver alignment is broken, so the event clustering is part of the null.",
+        expected.iter().sum::<f64>()
     );
 }
 
