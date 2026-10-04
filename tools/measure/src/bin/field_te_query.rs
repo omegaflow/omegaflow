@@ -111,6 +111,7 @@ struct Descriptor {
     register: Register,
     bin: Option<f64>,
     event_conditional: bool,
+    count_quantiles: Option<usize>,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -240,6 +241,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut bin: Option<f64> = None;
     let mut event_conditional = false;
     let mut witness_arm: Option<Arm> = None;
+    let mut count_quantiles: Option<usize> = None;
 
     for (lineno, raw) in text.lines().enumerate() {
         let line = raw.trim();
@@ -408,6 +410,32 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 }
                 bin = Some(seconds);
             }
+            "count" => {
+                let law = parts
+                    .get(1)
+                    .copied()
+                    .ok_or_else(|| format!("descriptor:{at}: count carries no law"))?;
+                if law != "quantile" {
+                    return Err(format!("descriptor:{at}: count '{law}' names no quantile"));
+                }
+                let token = parts.get(2).ok_or_else(|| {
+                    format!("descriptor:{at}: count quantile carries no bin count")
+                })?;
+                let q: usize = token.parse().map_err(|_| {
+                    format!("descriptor:{at}: count quantile '{token}' carries no count")
+                })?;
+                if !q.is_power_of_two() || q < 2 {
+                    return Err(format!(
+                        "descriptor:{at}: count quantile {q} is no power of two >= 2"
+                    ));
+                }
+                if !event_conditional {
+                    return Err(format!(
+                        "descriptor:{at}: count quantile belongs to form event-conditional"
+                    ));
+                }
+                count_quantiles = Some(q);
+            }
             "form" => {
                 let token = parts
                     .get(1)
@@ -461,6 +489,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             register: Register::Witnesses,
             bin,
             event_conditional: true,
+            count_quantiles,
         });
     }
     let driver = driver.ok_or_else(|| "descriptor carries no driver arm".to_string())?;
@@ -484,6 +513,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         register,
         bin,
         event_conditional: false,
+        count_quantiles: None,
     })
 }
 
@@ -571,6 +601,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         register,
         bin,
         event_conditional: false,
+        count_quantiles: None,
     })
 }
 
@@ -2660,6 +2691,7 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         register: Register::Sources,
         bin: None,
         event_conditional: false,
+        count_quantiles: None,
     };
     let Some(result) = execute(
         &desc,
@@ -2914,6 +2946,268 @@ fn omori_preserving_shift_null(
     })
 }
 
+const COUNT_PANEL_FLOOR: usize = 20;
+
+fn largest_pow2_bin(n: usize) -> usize {
+    let mut q = 1usize;
+    while q * 2 <= n && n / (q * 2) >= COUNT_PANEL_FLOOR {
+        q *= 2;
+    }
+    q
+}
+
+fn quantile_sorted(sorted: &[f64], p: f64) -> f64 {
+    if sorted.is_empty() {
+        return f64::NAN;
+    }
+    if sorted.len() == 1 {
+        return sorted[0];
+    }
+    let pos = p.clamp(0.0, 1.0) * (sorted.len() - 1) as f64;
+    let lo = pos.floor() as usize;
+    let hi = pos.ceil() as usize;
+    if lo == hi {
+        return sorted[lo];
+    }
+    let frac = pos - lo as f64;
+    sorted[lo] * (1.0 - frac) + sorted[hi] * frac
+}
+
+fn driver_decorrelation_s(driver: &[(f64, f64)]) -> Option<f64> {
+    if driver.len() < 8 {
+        return None;
+    }
+    let mut dts: Vec<f64> = driver
+        .windows(2)
+        .map(|w| w[1].0 - w[0].0)
+        .filter(|d| d.is_finite() && *d > 0.0)
+        .collect();
+    if dts.len() < 4 {
+        return None;
+    }
+    dts.sort_by(|a, b| a.total_cmp(b));
+    let dt = dts[dts.len() / 2];
+    if !(dt.is_finite() && dt > 0.0) {
+        return None;
+    }
+    let t0 = driver.first()?.0;
+    let t1 = driver.last()?.0;
+    let n = ((t1 - t0) / dt).floor() as usize + 1;
+    if n < 8 {
+        return None;
+    }
+    let grid: Vec<f64> = (0..n)
+        .map(|k| sample_nearest(driver, t0 + k as f64 * dt).unwrap_or(f64::NAN))
+        .collect();
+    let finite: Vec<f64> = grid.iter().copied().filter(|v| v.is_finite()).collect();
+    if finite.len() * 2 < n {
+        return None;
+    }
+    let mean = finite.iter().sum::<f64>() / finite.len() as f64;
+    let var = finite.iter().map(|v| (v - mean) * (v - mean)).sum::<f64>() / finite.len() as f64;
+    if !(var > 0.0) {
+        return None;
+    }
+    let threshold = 1.0 / std::f64::consts::E;
+    let max_lag = (n / 4).max(2).min(n.saturating_sub(1));
+    for lag in 1..=max_lag {
+        let mut num = 0.0f64;
+        let mut cnt = 0usize;
+        for i in 0..(n - lag) {
+            let a = grid[i];
+            let b = grid[i + lag];
+            if a.is_finite() && b.is_finite() {
+                num += (a - mean) * (b - mean);
+                cnt += 1;
+            }
+        }
+        if cnt == 0 {
+            continue;
+        }
+        let acf = (num / cnt as f64) / var;
+        if acf <= threshold {
+            return Some(lag as f64 * dt);
+        }
+    }
+    None
+}
+
+fn print_count_panel(
+    observed: &[usize],
+    q: usize,
+    n: usize,
+    span: f64,
+    null: Option<&[(f64, f64, f64)]>,
+) {
+    let baseline_per_bin = n as f64 / q as f64;
+    println!(
+        "count panel: n = {n} event(s) | q = {q} driver-quantile bins | constant-rate baseline = {baseline_per_bin:.2} event(s)/bin ({:.4e} event(s)/s)",
+        n as f64 / span
+    );
+    for (b, obs) in observed.iter().enumerate() {
+        match null {
+            Some(stats) => {
+                let (mean, sd, threshold) = stats[b];
+                let word = if *obs as f64 > threshold {
+                    "above the null"
+                } else {
+                    "consistent with the null"
+                };
+                let z = if mean > 0.0 {
+                    (*obs as f64 - mean) / mean.sqrt()
+                } else {
+                    f64::NAN
+                };
+                println!(
+                    "  bin {b}: observed {obs} | null mean {mean:.2} ± {sd:.2} | threshold (mean + 2 sd) {threshold:.2} | compensated z {z:.3} | {word}"
+                );
+            }
+            None => println!("  bin {b}: observed {obs} | null absent"),
+        }
+    }
+}
+
+fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surrogates: usize) {
+    println!("count panel form: quantile bins = {q} | surrogates = {surrogates}");
+    let (Some(&(d0, _)), Some(&(d1, _))) = (driver.first(), driver.last()) else {
+        println!("count panel pending — the driver carries no span");
+        return;
+    };
+    let span = d1 - d0;
+    if !(span > 0.0) {
+        println!("count panel pending — the driver span is not positive");
+        return;
+    }
+    let inside: Vec<(f64, f64)> = events
+        .iter()
+        .copied()
+        .filter(|(t, _)| *t >= d0 && *t <= d1)
+        .collect();
+    let n = inside.len();
+    if n < COUNT_PANEL_FLOOR {
+        println!(
+            "count panel block: n = {n} event(s) inside the driver span < floor {COUNT_PANEL_FLOOR}; a count panel needs >= {COUNT_PANEL_FLOOR} events. Missing data side: a longer event train."
+        );
+        return;
+    }
+    if !q.is_power_of_two() || q < 2 {
+        println!(
+            "count panel block: quantile count {q} is no power of two >= 2 — the bin law stays unnamed"
+        );
+        return;
+    }
+    if n / q < COUNT_PANEL_FLOOR {
+        println!(
+            "count panel block: floor(n/q) = {} < floor {COUNT_PANEL_FLOOR} for q = {q}; the largest power of two with n/q >= {COUNT_PANEL_FLOOR} is {} — the panel is too thin",
+            n / q,
+            largest_pow2_bin(n)
+        );
+        return;
+    }
+    let mut values: Vec<f64> = driver
+        .iter()
+        .map(|(_, v)| *v)
+        .filter(|v| v.is_finite())
+        .collect();
+    if values.len() < q {
+        println!("count panel pending — the driver carries fewer than {q} finite values");
+        return;
+    }
+    values.sort_by(|a, b| a.total_cmp(b));
+    let mut edges: Vec<f64> = Vec::with_capacity(q + 1);
+    for k in 0..=q {
+        edges.push(quantile_sorted(&values, k as f64 / q as f64));
+    }
+    let bin_of = |v: f64| -> Option<usize> {
+        if !v.is_finite() {
+            return None;
+        }
+        let mut b = 0usize;
+        while b + 1 < q && v > edges[b + 1] {
+            b += 1;
+        }
+        Some(b)
+    };
+    let mut observed = vec![0usize; q];
+    for &(t, _) in &inside {
+        if let Some(v) = sample_nearest(driver, t) {
+            if let Some(b) = bin_of(v) {
+                observed[b] += 1;
+            }
+        }
+    }
+    let guard_s = match driver_decorrelation_s(driver) {
+        Some(g) if g > 0.0 => g,
+        _ => {
+            println!(
+                "count panel null pending — the driver decorrelation time is absent (the autocorrelation carries no 1/e crossing); no silent guard"
+            );
+            print_count_panel(&observed, q, n, span, None);
+            return;
+        }
+    };
+    if !(span > 2.0 * guard_s) {
+        println!(
+            "count panel null pending — the driver span is too short for the measured guard band {guard_s:.1} s"
+        );
+        print_count_panel(&observed, q, n, span, None);
+        return;
+    }
+    let mut state = SURROGATE_SEED;
+    let mut null_counts: Vec<Vec<f64>> = vec![Vec::new(); q];
+    for _ in 0..surrogates {
+        let magnitude = guard_s + uniform_unit(&mut state) * (span - 2.0 * guard_s);
+        let offset = if uniform_unit(&mut state) < 0.5 {
+            magnitude
+        } else {
+            magnitude - span
+        };
+        let mut shifted: Vec<(f64, f64)> = driver
+            .iter()
+            .map(|&(t, v)| (wrap_time(t + offset, d0, span), v))
+            .collect();
+        shifted.sort_by(|a, b| a.0.total_cmp(&b.0));
+        let mut counts = vec![0usize; q];
+        for &(t, _) in &inside {
+            if let Some(v) = sample_nearest(&shifted, t) {
+                if let Some(b) = bin_of(v) {
+                    counts[b] += 1;
+                }
+            }
+        }
+        for (b, c) in counts.iter().enumerate() {
+            null_counts[b].push(*c as f64);
+        }
+    }
+    let mut stats: Vec<(f64, f64, f64)> = Vec::with_capacity(q);
+    for counts in &null_counts {
+        if counts.len() < 2 {
+            println!("count panel null pending — fewer than two surrogate draws landed");
+            print_count_panel(&observed, q, n, span, None);
+            return;
+        }
+        let mean = counts.iter().sum::<f64>() / counts.len() as f64;
+        let var =
+            counts.iter().map(|x| (x - mean) * (x - mean)).sum::<f64>() / (counts.len() - 1) as f64;
+        let sd = var.sqrt();
+        stats.push((mean, sd, mean + 2.0 * sd));
+    }
+    print_count_panel(&observed, q, n, span, Some(&stats));
+    let above = observed
+        .iter()
+        .enumerate()
+        .filter(|(b, obs)| **obs as f64 > stats[*b].2)
+        .count();
+    let word = if above > 0 {
+        "above the null"
+    } else {
+        "consistent with the null"
+    };
+    println!(
+        "count panel verdict: {word} — {above} of {q} quantile bins exceed the shift-null threshold; the event times stay fixed, only the driver alignment is broken, so the event clustering is part of the null."
+    );
+}
+
 fn run_event_conditional(
     driver: &[(f64, f64)],
     events: &[(f64, f64)],
@@ -3060,7 +3354,10 @@ fn run_descriptor_event_conditional(
             match find_field_source(sources, driver_name) {
                 Some((source, field)) => match load_field(&source, &field, anchor) {
                     Ok(driver) => {
-                        run_event_conditional(&driver, series, bin_s, desc.surrogate);
+                        match desc.count_quantiles {
+                            Some(q) => run_count_panel(&driver, series, q, desc.surrogate),
+                            None => run_event_conditional(&driver, series, bin_s, desc.surrogate),
+                        }
                         0
                     }
                     Err(reason) => {
@@ -3090,7 +3387,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | form event-conditional | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
+        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -3579,6 +3876,78 @@ cadence live
             err.contains("something-else"),
             "the refusal names the form: {err}"
         );
+    }
+
+    #[test]
+    fn count_quantile_panel_parses_in_event_conditional_form() {
+        let text = "\
+form event-conditional
+witness point-event#1
+driver omni_hro_imf_bz_gsm_nt
+count quantile 8
+cadence live
+surrogate 100
+";
+        let desc = parse_descriptor(text).expect("a count panel parses");
+        assert_eq!(desc.count_quantiles, Some(8));
+        assert!(desc.event_conditional);
+    }
+
+    #[test]
+    fn count_quantile_refuses_a_non_power_of_two() {
+        let text = "\
+form event-conditional
+witness point-event#1
+driver omni_hro_imf_bz_gsm_nt
+count quantile 7
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a non-power-of-two bin count is refused");
+        assert!(
+            err.contains("power of two"),
+            "the refusal names the bin law: {err}"
+        );
+    }
+
+    #[test]
+    fn count_quantile_without_the_form_is_refused() {
+        let text = "\
+witness point-event#1
+driver omni_hro_imf_bz_gsm_nt
+count quantile 8
+cadence live
+";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a count panel without the form is refused");
+        assert!(
+            err.contains("event-conditional"),
+            "the refusal names the form: {err}"
+        );
+    }
+
+    #[test]
+    fn largest_pow2_bin_follows_the_floor() {
+        assert_eq!(largest_pow2_bin(198), 8, "198/8 = 24 >= 20, 198/16 < 20");
+        assert_eq!(largest_pow2_bin(100), 4, "100/4 = 25 >= 20, 100/8 < 20");
+        assert_eq!(largest_pow2_bin(20), 1, "20/2 = 10 < 20");
+    }
+
+    #[test]
+    fn quantile_sorted_interpolates() {
+        let v = [0.0, 1.0, 2.0, 3.0];
+        assert!((quantile_sorted(&v, 0.0) - 0.0).abs() < 1e-12);
+        assert!((quantile_sorted(&v, 1.0) - 3.0).abs() < 1e-12);
+        assert!((quantile_sorted(&v, 0.5) - 1.5).abs() < 1e-12);
+    }
+
+    #[test]
+    fn driver_decorrelation_reads_a_decaying_series() {
+        let driver: Vec<(f64, f64)> = (0..64).map(|k| (k as f64, 0.9f64.powi(k))).collect();
+        let guard = driver_decorrelation_s(&driver).expect("an AR(1)-like series crosses 1/e");
+        assert!(guard > 0.0, "the guard is a positive time");
     }
 
     #[test]
