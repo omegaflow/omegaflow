@@ -4996,6 +4996,10 @@ decline station-registry
 url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
 note MPC-NEO-Confirmation-Page — Objekt-Katalog, kein Messwert.
 
+decline imagery
+url https://www.mousdataset.org
+note MOUS (Mother of Unification Studies) — 204-Subjekt multimodales Neuroimaging (Sprache, MPI Nijmegen); Host ohne Antwort (direct/Proton void, kein Wayback); Daten auf OpenNeuro ds003432 + MPI-Repo; kein Kraft-Feld.
+
 decline position-only
 url https://www.movebank.org/movebank/service/direct-read?entity_type=event&study_id=1099562&format=json
 note Tier-Telemetrie-Positionen (Position-only, §3.9) — kein Feldwert — decline position-only (401 real).
