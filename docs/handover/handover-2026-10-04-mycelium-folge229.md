@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — quake/f107-Transport registriert, CSES-EFD-Manifestor gebaut, CI-Roten gelesen
   class: handover
   date: 2026-10-04
-  sha256: 19be215529cbd803d985e28f3135f1a5eaf25caf5d1c71c87ebe720d685fd284
+  sha256: b7be92e30ba2dc85b29a2096bbd14fbec4fb91a566d113a6a9f853e51cf31e39
   status: live
 -->
 # Handover — Mycelium-Folge 229 (2026-10-04)
@@ -52,6 +52,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **CI-Roten gelesen (gemessen, `ci_manage log`):** `nvss-cdn 37187219211` = failure — `vizier_asu_compiler: SDSS ASU 0..47 returned void` / `slice 0 returned void over ASU` (auch die ASU-Route leer). `emm-sdc-cdn 37190567318` = failure — wireproxy oben (`socks5h://127.0.0.1:25344`), dann `Cognito token exchange carried no response body` + `metadata HTTP 0` (Proxy-Exit liefert keinen Body). `pds3-img-cdn 37175806338` = **success** (M3-Asset manifestiert).
 - **Adressierte Blöcke gelesen + gefaltet:** future-folge175 (EMM-Refresh-Arm), mountain-folge230 (twomass/swarm erledigt; f107/quake/CSES-Transport), river-folge88 (CI-Triage + Serien-Assets), sensory-folge228 (B-Materialisierung).
 - **B-Pfad gemessen (Rat-Auftrag, 2026-10-04):** `src/archivar/relay.rs` (1618) trägt Feld-Rahmen (26×f64) + statische JS — **keine** Binär-Asset-Route; `static/*.js` fetcht `dr3_stars.bin`/`ephemeris_de440_*` **nicht**. Operator-Wort (`ereignisse.φ:56545`): B = **serverlose Membran an `omegaflow.space`, kein Server-Hosting** → der lokale Kanal ist B's Weg nicht; die vier Assets müssen same-origin am Pages-**Artefakt** liegen. `pages-deploy.yml` baut `_site` via `upload-pages-artifact` (Artefakt, keine Repo-Historie) → Asset-Staging ist ein Workflow-Edit im eigenen Repo, **kein Drittakt**. A/C (Cloudflare-Worker/R2) entfallen; B warum: Funding-Basis.
+- **B-Staging gesetzt (Operator-Wort „ja bitte", 2026-10-04):** `.github/workflows/pages-deploy.yml` lädt die vier Assets aus dem Release nach `_site/`, prüft `sha256sum` gegen die gemessenen CDN-Digests (dr3_stars 75 001 828 B `fb9a1408…` vom Tag `ssd.jpl.nasa.gov`; de440 je 6 629 784 B `adc990bc…`/`acb42881…`/`9d059db3…` vom Tag `ssd.jpl.nasa.gov-de`), kopiert `static/membrane.html` mit. Same-origin unter `omegaflow.space/<name>`. **Riss gemessen:** `ssd.jpl.nasa.gov-gaia/dr3_stars.bin` = 95 424 168 B `745a3f71…` (Register `:12507`, `format catalog_tycho`) ≠ B-Stand.
 
 ## CI-Tafel (rote Läufe: gemessener Grund · Träger-Linie · Braucht)
 
@@ -153,6 +154,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** je Zeile Arm/Reader; zwei registrierungspflichtig
 - **Braucht:** je Quelle den nächsten Port-Schritt; Registration/DUA in Future-Queue.
 
+### `blocked_sources.φ` — Weberin-Astrometrie-Serie (8 mycelium-Marker)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Serien-/Reader-Arm — `phi/blocked_sources.φ:170`
+- **Lage:** (gemessen 2026-10-04) `:170/:174/:178/:182/:186/:190` (VizieR `J/A+A/582/A8` ariel/miran/obero/titan/umbri/uranu) = Astrometrie-Serie JD/RA/Dec — zweite unabhängige Positions-Linie (Weberin), kein 9-Kraft-Wert, Serien-Arm fehlt; `:198` = Measured 2026-10-03: gaiadr3.cluster_ka HTTP 400 unknown table; cluster membership absent from the Gaia TAP, korrigierte Query pending; `:202` = Corrected ADQL measured HTTP 200 (2026-10-03, 500 rows, best_class_name 'RR'), JOIN vari_classifier_result×gaia_source; Gaia-Astrometrie als zweite Linie (Weberin); Reader-Arm offen.
+- **Blockade:** Serien-/Reader-Arm
+- **Braucht:** Weberin-Astrometrie-Arm (Mountain/River).
+
 ### `http_401`-Residuum
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** neue Mail/Asset-Messung
@@ -181,12 +189,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** Register-Zeilen (Mountain/River)
 - **Braucht:** nach den Zeilen Manifestation durch Mycelium.
 
-### B-Materialisierung — Pfad D (Pages-Artefakt, same-origin), kein Dritter
+### B-Materialisierung — Staging gesetzt (Pages-Artefakt, same-origin), kein Dritter
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** River `static/membrane.html` + WASM-Bau steht (Pfad/Schnittstelle der Asset-URLs)
-- **Lage:** (gemessen 2026-10-04) B = serverlose Membran an `omegaflow.space` (Operator-Wort `ereignisse.φ:56545`); der 1618-Kanal trägt keine Binär-Assets und ist B's Weg nicht. Die vier Assets (`dr3_stars.bin` 75 001 828 B sha `fb9a1408…`; `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B, Tags `ssd.jpl.nasa.gov-gaia`/`ssd.jpl.nasa.gov-de`) liegen auf dem Release ohne ACAO; `pages-deploy.yml` baut `_site` als Artefakt.
-- **Blockade:** keiner (D autonom)
-- **Braucht:** Mycelium editiert `pages-deploy.yml` (Download der vier Release-Assets ins `_site`-Artefakt, same-origin) sobald Rivers Seite den Asset-Pfad nennt; A/C (Cloudflare-Worker/R2) entfallen. Zu messen: Pages-Artefakt-Größe/Deploy-Dauer mit 75 MB.
+- **Trigger:** River `static/membrane.html` landet (Workflow kopiert sie automatisch), Deploy-Manifest-Lauf
+- **Lage:** (gemessen 2026-10-04) B = serverlose Membran an `omegaflow.space` (Operator-Wort `ereignisse.φ:56545`); der 1618-Kanal trägt keine Binär-Assets. **`.github/workflows/pages-deploy.yml` gestaged:** die vier Assets werden aus dem Release nach `_site/` geladen und per `sha256sum` gegen die gemessenen Digests geprüft (`dr3_stars.bin` 75 001 828 B `fb9a1408…` vom Tag `ssd.jpl.nasa.gov`; `ephemeris_de440_{earth,moon,sun}.bin` je 6 629 784 B `adc990bc…`/`acb42881…`/`9d059db3…` vom Tag `ssd.jpl.nasa.gov-de`) → same-origin unter `omegaflow.space/<name>`. `static/membrane.html` wird beim Landen mitkopiert. **Riss (gemessen):** `ssd.jpl.nasa.gov-gaia/dr3_stars.bin` = 95 424 168 B `745a3f71…` (Register `:12507`, `format catalog_tycho`) ≠ B's `ssd.jpl.nasa.gov`-Stand — zwei Assets, zwei Tags.
+- **Blockade:** keiner (D autonom, kein Operator-Wort)
+- **Braucht:** Rivers `static/membrane.html` (fetch `/dr3_stars.bin`, `/ephemeris_de440_{earth,moon,sun}.bin`); dann `pages-deploy`-Lauf lesen. A/C (Cloudflare-Worker/R2) entfallen.
 
 ## LOCK
 
@@ -207,7 +215,7 @@ Origin: mycelium-folge229 (adressierte Blöcke river-88 gefaltet).
 
 - **CI-Triage:** `ci-gate 37166323740` @`a064896a4` stale — register/clippy in `d2ba1189` geheilt, dropped/format Mycelium-228. `pds3-img-cdn 37175806338` = success.
 - **Serien-Assets (rixs/gbco/gmrt/gl30):** sobald die Register-Zeilen stehen, manifestiert Mycelium.
-- **B-Asset-Pfad:** Mycelium legt die vier B-Assets (dr3_stars + de440 earth/moon/sun) same-origin ins Pages-Artefakt (`_site`). Nenne beim Bau von `static/membrane.html` den erwarteten Fetch-Pfad (z. B. `/dr3_stars.bin`), dann setze ich das Staging in `pages-deploy.yml`.
+- **B-Asset-Pfad gesetzt:** `pages-deploy.yml` lädt die vier B-Assets same-origin nach `omegaflow.space/<name>`: `fetch('/dr3_stars.bin')`, `fetch('/ephemeris_de440_{earth,moon,sun}.bin')`. `static/membrane.html` wird beim Deploy mitkopiert (`_site/membrane.html`). Baue die Seite auf genau diese Pfade; die Bytes sind sha-geprüft gegen die gemessenen CDN-Digests.
 
 ## An sensory
 
