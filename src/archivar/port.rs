@@ -1629,7 +1629,6 @@ fn kernel_name_of(id: u8) -> Option<&'static str> {
     match id {
         0 => Some("inverse-square"),
         1 => Some("gaussian-inverse-square"),
-        2 => Some("gaussian-inverse"),
         3 => Some("erfc"),
         4 => Some("exponential-decay"),
         5 => Some("patch-levy"),
