@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: d7a5799b43d517e6952af19ba21436473dc400e44d0907f421fe0d5a437f1915
+  sha256: bd581733e98c11ebccc371faba68febe84172a958b9af07297427566fd87f49d
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -91,7 +91,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### `phi/blocked_sources.φ` — Mycelium-Klasse (Träger; Stand gemessen 2026-10-05)
 - **Status:** je eigen | **Bindung:** eigen
-- **Lage** (gemessen 2026-10-05), je Eintrag ausgang:
+- **Trigger:** Arm-Bau/Manifestation je Eintrag (externer Host-Rückkehr oder Mountain-Disposition)
+- **Lage:** (gemessen 2026-10-05), je Eintrag ausgang:
   - `:166` BGI AGrav — station/nearto 200 (853 714 B JSON), `point/byStationUuid.observations[].gravity m/s2`; Verdikt inverse-square gravity; **Arm + Manifestation offen**.
   - `:170` C9/CEEIN Infraschall — station 200, dataselect `C9/BDF` MSEED 200, Archiv ~2023-10-30; Verdikt gaussian-inverse-square acoustic Pa; **Arm + Manifestation offen**.
   - `:82` ExoMars TGO ACS — Arm steht; Asset 543 800 B `sha256 465f3c07…`; **Registrierung + Manifestation** (s. ExoMars-Punkt).
