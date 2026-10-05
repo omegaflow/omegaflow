@@ -1,0 +1,48 @@
+name: acs-nir-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the asset is present
+        type: boolean
+        default: false
+  schedule:
+    - cron: "53 5 * * 4"
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  acs-nir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view archives.esac.esa.int --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^acs_raw_sc_nir_.*\.tab$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset acs_raw_sc_nir .tab already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset acs_raw_sc_nir .tab missing — compiling and manifesting"
+          fi
+      - name: Manifest the ExoMars TGO ACS NIR raw EC .tab to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin acs_nir_compiler -- --ci-mode

@@ -294,6 +294,15 @@ idempotent true
 timeout 240
 
 asset present
+format pds4_acs_nir
+tag archives.esac.esa.int
+arm acs_nir_compiler
+workflow acs-nir-cdn.yml
+pattern ^acs_raw_sc_nir_.+\.tab$
+idempotent true
+timeout 240
+
+asset present
 format pds4_fits
 tag pds-geosciences.wustl.edu
 arm pds4_fits_compiler
