@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: 1114be87a0df9e06d7d550fa80714f3f3e196099081c828c8a2e0e46ba2b9394
+  sha256: d6324c13fd5c7d9e6d2038fd3b9a882583c0584a0baa48af9ea23f0afd1f2dc7
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -102,12 +102,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** je Eintrag (Arm-Bau / Mountain-Disposition / externe Hosts).
 - **Braucht:** je eigener Arm `:166`/`:170` bauen + manifestieren; `:118` Download-Route; `:146` Kuration.
 
-### EMM EXI L2a — Workflow trägt Default-Datumsränge; Loader-Arm + Register offen (mountain-234/235)
-- **Status:** eigen | **Bindung:** gemischt (s. `## An river` / `## An mountain`)
-- **Trigger:** Frame-Bundle-Arm (River) → Lauf
-- **Lage:** (gemessen 2026-10-05) `emm-sdc-cdn.yml` steht (`--instrument exi --data-level l2a --ci-mode`, Asset `emm_exi_l2a.tar`); der Compiler führt Default-Ranges (2021–2025) — kein Datums-Arg nötig. Compiler-rustfmt-Hunk in 232c committet. Kein `emm_exi_l2a`-Register-Block.
+### EMM EXI L2a — Proxy-Riss geheilt; Loader-Arm + Register offen (mountain-234/235)
+- **Status:** eigen | **Bindung:** gemischt (s. `## An River` / `## An mountain`)
+- **Trigger:** Re-Dispatch nach dem Proxy-Fix → Lauf
+- **Lage:** (gemessen 2026-10-05, `ci_manage log 37308675343`) `emm-sdc-cdn 37308675343` **failure**: `ensure release sdc.emiratesmarsmission.ae: gh returned void: error connecting to socks5h` — der `gh`-CDN-Upload erbte den Azure-Bypass-Proxy (`ALL_PROXY`/`HTTPS_PROXY`) des Compile-Steps. **Gefixt:** `NO_PROXY`/`no_proxy` für `github.com,api.github.com,uploads.github.com,objects.githubusercontent.com` im Step. Der Compile selbst läuft durch (kein Datums-Arg nötig, Default-Ranges).
 - **Blockade:** Loader-Arm (Membrane, River) + Register-Block (`format emm_exi_l2a`, `at mars`, ttl; Mountain).
-- **Braucht:** s. adressierte Blöcke.
+- **Braucht:** `emm-sdc-cdn` nach Push re-dispatchen; bei Grün `sha256`/`url`; s. adressierte Blöcke.
 
 ### `abk_dbdt_1m`-Derivat — harvesten + manifestieren (river-92)
 - **Status:** wartend
@@ -118,10 +118,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### self-hosted Runner `t420` — CI-Routing (sensory-233, Operator-Wort 2026-10-05)
 - **Status:** eigen
-- **Trigger:** Test-Lauf grün → Restwelle routen
-- **Lage:** (gemessen 2026-10-05) Runner `t420` online/idle, Labels `self-hosted, Linux, X64` (`gh api .../actions/runners`); zweiter Runner `demeter-residential` (eigenes Label). Erste Welle geroutet: `superdarn-fitacf-cdn`, `clpds-cdn`, `fmi-gic-cdn`, `openneuro-cdn`, `supermag-magstid-cdn`, `emm-sdc-cdn`, `wqp-cdn`, `eea-noise-cdn`, `acs-nir-cdn`, `nvss-cdn` → `runs-on: [self-hosted, Linux]`. Erster Test-Dispatch: `superdarn-fitacf-cdn` (Idempotenz-Skip, minimal).
+- **Trigger:** Register-Nachtrag der grünen Assets → Restwelle routen
+- **Lage:** (gemessen 2026-10-05, `gh api .../actions/runners` + `ci_manage list`) Runner `t420` online/idle, Labels `self-hosted, Linux, X64`; zweiter Runner `demeter-residential` (eigenes Label). Erste Welle auf `[self-hosted, Linux]` geroutet: `superdarn-fitacf-cdn`, `clpds-cdn`, `fmi-gic-cdn`, `openneuro-cdn`, `supermag-magstid-cdn`, `emm-sdc-cdn`, `wqp-cdn`, `eea-noise-cdn`, `acs-nir-cdn`, `nvss-cdn`. Re-Dispatch-Welle: **9 grün** (`superdarn-fitacf 37308653525`, `clpds 37308657967`, `fmi-gic 37308662286`, `openneuro 37308666588`, `supermag-magstid 37308670688`, `wqp 37308679629`, `eea-noise 37308684399`, `acs-nir 37308689319`, `nvss 37308693722`), **1 rot** (`emm-sdc 37308675343` → s. EMM-Punkt). Der erste Test-Lauf `37307154587` war an fehlendem `gh` gescheitert (`ensure release … gh absent`); Sensory hat `gh`/`jq`/`git`/`git-lfs` installiert.
 - **Blockade:** keine.
-- **Braucht:** Test-Log lesen (`ci_manage log <id>`); fehlende Host-Tools (z. B. `jq`, `gh`) benennen → ggf. nachinstallieren lassen; danach die übrige `*-cdn`-Klasse routen (Multi-Job-Riesen wie `volume-cdn` ausgenommen; `ci-check` bleibt `ubuntu-latest`).
+- **Braucht:** die grünen Logs lesen → `sha256`/`url` nachtragen; dann die übrige `*-cdn`-Klasse routen (Multi-Job-Riesen wie `volume-cdn` ausgenommen; `ci-check` bleibt `ubuntu-latest`).
 
 ### FMI-IMAGE-Magnetometer image-cdn (mountain-236)
 - **Status:** wartend
@@ -190,6 +190,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **`goes_euvs`-„Alt-Asset-Orphan" ist widerlegt** (gemessen 2026-10-05, `gh release view ssd.jpl.nasa.gov ... select(goes_euvs)` = 0 Assets). Der echte Riss waren zwei stale Workflow-Referenzen: `solar-probes.yml:35-37` (`--pattern goes_euvs.bin` auf `ssd` → `gh release download` bricht, `&&`-Kette tot) und `signal-cone-audit-cdn.yml:45-46` (Loop zog alle sechs aus `ssd`, still degradiert). Beide in dieser Session auf den kanonischen Tag gefixt (`ncei.noaa.gov` für euvs, `cdaweb.gsfc.nasa.gov` für omni2, `ssd.jpl.nasa.gov-ephemeris` für die Ephemeriden).
 - **SuperDARN-Globus-Route gemessen, aber durch Operator-Wort blockiert:** Collection „SuperDARN Mirror" (`8e844226…`, volle UUID auth-gebunden), Pfad `{root}/{type}/{YYYY}/{MM}/{file}`, Auth Globus-OAuth, HTTPS ohne Token 401, kein Rust-Globus-Arm (`sgrep globus tools/` = 0). Der Bau eines Transfer-REST-Arms widerspricht dem Wort 2026-09-29 — kein Akt.
 - **stale Zitat:** `external-state.md:47` / `future-folge147:95` zitieren `blocked_sources.φ:381-383`; live steht der Eintrag `:78-80` (Datei 173 Zeilen). Nicht geglättet, hier benannt.
+
+## An future
+
+Origin: mycelium-folge233. **Routed — nicht-eigen (Korrektur):**
+
+- **Kimi K3 Gratis-Route (aus future-181):** kein Mycelium-`eigen`. Der Account-/Key-Akt (NVIDIA-NIM Developer Program, Telefon-Code) ist operator-gebunden → **deine Operator-Queue**. Gemessener Stand (`state/future/kimi-k3-gratis-routen-2026-10-05.md`): `nvidia/moonshotai/kimi-k3` hängt (3 Versuche, exit 124) → nicht nutzbar (Credential selbst gültig, `nemotron` → NV-OK); AIHubMix-K3 per Operator-Wort 2026-10-05 („nein ich lade nichts auf dafür reicht tryingopen") **raus**; K3-Route derzeit `tryingopen.com` (5 Nachrichten, ohne Konto) = Operator-Hand. Offen ist nur eine **Re-Messung** von NVIDIA-K3, kein Bau. Mycelium hält keinen Punkt; die Provider-Verdrahtung wäre erst nach einem funktionierenden Key ein Mycelium-Akt.
 
 ## An river
 
