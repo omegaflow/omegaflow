@@ -51,7 +51,6 @@ jobs:
           ALL_PROXY: socks5h://127.0.0.1:25344
           HTTPS_PROXY: socks5h://127.0.0.1:25344
           NO_PROXY: github.com,api.github.com,uploads.github.com,objects.githubusercontent.com
-          no_proxy: github.com,api.github.com,uploads.github.com,objects.githubusercontent.com
         run: |
           cargo run --release -p omegaflow-harvest --bin emm_sdc_compiler -- \
             --instrument exi --data-level l2a --ci-mode
