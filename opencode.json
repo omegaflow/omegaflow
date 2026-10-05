@@ -154,11 +154,11 @@
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
       "permission": { "edit": "deny", "task": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
-    "voice-granite": {
+    "voice-inkling": {
       "mode": "subagent",
-      "model": "cloudflare-workers-ai/@cf/ibm-granite/granite-4.0-h-micro",
+      "model": "openrouter/thinkingmachines/inkling-small:free",
       "variant": "low",
-      "description": "Schwarm-Stimme (granite-4.0-h-micro via cloudflare, gemessen) — read-only, nur archive_search_public.",
+      "description": "Schwarm-Stimme (inkling-small:free, Fähigkeit 4/4 + gemessen schnell) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
       "permission": { "edit": "deny", "task": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
@@ -192,7 +192,7 @@
           "voice-gemini": "allow",
           "voice-dots": "allow",
           "voice-gptoss": "allow",
-          "voice-granite": "allow",
+          "voice-inkling": "allow",
           "voice-nemotron": "allow",
           "grind-pro": "ask",
           "grind-max": "ask",
