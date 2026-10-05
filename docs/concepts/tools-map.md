@@ -408,6 +408,10 @@ Werkzeug-Zeiten, identisch über alle Profile: `--root --count` 0,026–0,035 s;
 | council | pro | $0.0117 | 28k | 27 s |
 | grind-pro | pro | $0.0119 | 28k | 26 s |
 
+Anmerkung 2026-10-05 (Operator-Wort): der `council`-Agent läuft **flash/low** — die fünf
+Stimmen sind eine Prompt-Struktur, keine Modell-Stufe; der pro-Wert oben bleibt die
+historische Messung. Die Politik steht in `AGENTS.md` (cost ladder + Modell-/Thinking-Politik).
+
 Pro/max kostet 4–15× flash bei identischem Ergebnis — flash-first bestätigt,
 Sieger flash (`general` $0.0008). **Reibung gemessen:** Lauf 2 (vor der Grenze)
 hatte 1–2 verweigerte Werkzeug-Versuche je Profil (plan/general/research-max);

@@ -433,7 +433,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 }
             }
-            "first" if parts.len() >= 9 => {
+            "first" if parts.len() >= 7 => {
                 let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
                     Some(v) => v,
                     None => continue,
@@ -457,7 +457,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 cur_extracts.push(Extract::First(fc, filter));
             }
-            "last" if parts.len() >= 9 => {
+            "last" if parts.len() >= 7 => {
                 let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
                     Some(v) => v,
                     None => continue,
@@ -500,7 +500,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     fold: None,
                 }));
             }
-            "lastrow" if parts.len() >= 9 => {
+            "lastrow" if parts.len() >= 7 => {
                 let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
                     Some(v) => v,
                     None => continue,
@@ -531,7 +531,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "lastline" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::LastLine(parts[1].to_string()));
             }
-            "objlast" if parts.len() >= 9 => {
+            "objlast" if parts.len() >= 7 => {
                 let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
                     Some(v) => v,
                     None => continue,
@@ -925,7 +925,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     parts[1]
                 );
             }
-            "field" if parts.len() >= 9 => {
+            "field" if parts.len() >= 7 => {
                 if parts.len() >= 10 && parts[9] == "where" {
                     eprintln!(
                         "where refused at {}: the row filter lives on first/last, not on field",
@@ -1607,13 +1607,21 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
         Ok(v) if v > 0.0 => v,
         _ => return None,
     };
-    let absorption: f64 = match parts[7].parse() {
-        Ok(v) => v,
-        Err(_) => return None,
+    let absorption: f64 = if parts.len() > 7 {
+        match parts[7].parse() {
+            Ok(v) => v,
+            Err(_) => return None,
+        }
+    } else {
+        SLOT_ABSENT
     };
-    let advection: f64 = match parts[8].parse() {
-        Ok(v) => v,
-        Err(_) => return None,
+    let advection: f64 = if parts.len() > 8 {
+        match parts[8].parse() {
+            Ok(v) => v,
+            Err(_) => return None,
+        }
+    } else {
+        SLOT_ABSENT
     };
     Some((kernel, force, tau, absorption, advection))
 }
@@ -1913,5 +1921,25 @@ mod tests {
             missing.is_empty(),
             "CDN sources without origin/compiler: {missing:?}"
         );
+    }
+
+    #[test]
+    fn field_without_absorption_advection_declares_absent_not_zero() {
+        let short = split_directive("field x y inverse-square em nT 3600");
+        let (_, _, tau, absorption, advection) = parse_field_config(&short).unwrap();
+        assert_eq!(tau, 3600.0);
+        assert_eq!(
+            absorption, SLOT_ABSENT,
+            "absent absorption must not read as 0.0"
+        );
+        assert_eq!(
+            advection, SLOT_ABSENT,
+            "absent advection must not read as 0.0"
+        );
+
+        let full = split_directive("field x y inverse-square em nT 3600 0.0 0.0");
+        let (_, _, _, absorption, advection) = parse_field_config(&full).unwrap();
+        assert_eq!(absorption, 0.0, "a declared 0.0 stays the measured value");
+        assert_eq!(advection, 0.0, "a declared 0.0 stays the measured value");
     }
 }

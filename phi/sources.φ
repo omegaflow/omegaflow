@@ -27038,3 +27038,19 @@ compiler tools/harvest/src/bin/acs_nir_compiler.rs
 at mars
 sha256 465f3c07c4a04053895046cb8853ce96f1c38fe7038d23d7cd05d91ce87419c1
 ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_image_mag_nur.bin
+format fmi_image_mag
+origin https://space.fmi.fi/image/www/data_download.php
+compiler tools/harvest/src/bin/image_mag_compiler.rs
+on earth 60.50 24.65 0
+ttl 604800
+field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/datacenter.iers.org/iers_eop_c04_lod.bin
+format iers_eop_c04_lod
+origin https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
+compiler tools/harvest/src/bin/iers_eop_c04_compiler.rs
+at earth
+ttl 604800
+field iers_eop_lod_s iers_eop_lod_s inverse-square gravity s 86400 0.0 0.0

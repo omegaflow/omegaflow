@@ -871,6 +871,102 @@ pub fn decode(dds_text: &str, das_text: &str, dods_bytes: &[u8]) -> Result<DapFi
     })
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct AsciiVar {
+    pub name: String,
+    pub shape: Vec<usize>,
+    pub values: Vec<f64>,
+}
+
+fn ascii_header(line: &str) -> Option<(String, Vec<usize>)> {
+    let open = line.find('[')?;
+    let name = line[..open].trim();
+    if name.is_empty() || !name.chars().any(|c| c.is_ascii_alphabetic()) {
+        return None;
+    }
+    let mut shape = Vec::new();
+    let mut rest = &line[open..];
+    while let Some(after) = rest.strip_prefix('[') {
+        let close = after.find(']')?;
+        let n: usize = after[..close].trim().parse().ok()?;
+        shape.push(n);
+        rest = after[close + 1..].trim_start_matches(|c: char| c == ',' || c.is_whitespace());
+    }
+    if rest.is_empty() && !shape.is_empty() {
+        Some((name.to_string(), shape))
+    } else {
+        None
+    }
+}
+
+fn ascii_line_values(line: &str) -> Vec<f64> {
+    line.split(|c: char| c == ',' || c.is_whitespace())
+        .filter_map(|t| t.trim().parse::<f64>().ok())
+        .filter(|v| v.is_finite())
+        .collect()
+}
+
+pub fn parse_ascii(text: &str) -> Result<Vec<AsciiVar>, DapNote> {
+    let mut found_sep = false;
+    let mut body: Vec<&str> = Vec::new();
+    for line in text.lines() {
+        let t = line.trim();
+        if !found_sep {
+            if !t.is_empty() && t.len() >= 3 && t.chars().all(|c| c == '-') {
+                found_sep = true;
+            }
+            continue;
+        }
+        body.push(line);
+    }
+    if !found_sep {
+        return Err(DapNote::Keyword {
+            word: "-----".to_string(),
+        });
+    }
+    let mut vars: Vec<AsciiVar> = Vec::new();
+    let mut cur: Option<AsciiVar> = None;
+    for line in body {
+        let t = line.trim();
+        if t.is_empty() {
+            if let Some(v) = cur.take() {
+                vars.push(v);
+            }
+            continue;
+        }
+        if let Some((name, shape)) = ascii_header(t) {
+            if let Some(v) = cur.take() {
+                vars.push(v);
+            }
+            cur = Some(AsciiVar {
+                name,
+                shape,
+                values: Vec::new(),
+            });
+        } else if let Some(v) = cur.as_mut() {
+            v.values.extend(ascii_line_values(t));
+        } else {
+            return Err(DapNote::Keyword {
+                word: t.to_string(),
+            });
+        }
+    }
+    if let Some(v) = cur.take() {
+        vars.push(v);
+    }
+    for v in &vars {
+        let want: usize = v.shape.iter().product();
+        if v.values.len() != want {
+            return Err(DapNote::CountMismatch {
+                var: v.name.clone(),
+                want: want as u64,
+                got: v.values.len() as u32,
+            });
+        }
+    }
+    Ok(vars)
+}
+
 impl DapFile {
     pub fn var(&self, name: &str) -> Option<&DapVar> {
         self.vars.iter().find(|v| v.name == name)
@@ -1171,5 +1267,28 @@ mod tests {
         let s = parse_dds(dds).unwrap();
         assert_eq!(s.name, "demo");
         assert_eq!(s.vars[0].name, "lat");
+    }
+
+    #[test]
+    fn parses_dap2_ascii_grid_and_maps() {
+        let ascii = "Dataset {\n    Grid {\n     ARRAY:\n        Int16 elevation[lat = 2][lon = 2];\n     MAPS:\n        Float64 lat[lat = 2];\n        Float64 lon[lon = 2];\n    } elevation;\n} bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc;\n---------------------------------------------\nelevation.elevation[2][2]\n[0], 2829, 2829\n[1], 2830, 2830\n\nelevation.lat[2]\n-89.99791666666667, -89.99375\n\nelevation.lon[2]\n-179.99791666666667, -179.99375\n\n";
+        let vars = parse_ascii(ascii).unwrap();
+        assert_eq!(vars.len(), 3);
+        assert_eq!(vars[0].name, "elevation.elevation");
+        assert_eq!(vars[0].shape, vec![2, 2]);
+        assert_eq!(vars[0].values, vec![2829.0, 2829.0, 2830.0, 2830.0]);
+        assert_eq!(vars[1].name, "elevation.lat");
+        assert_eq!(vars[1].shape, vec![2]);
+        assert_eq!(vars[1].values, vec![-89.99791666666667, -89.99375]);
+        assert_eq!(vars[2].name, "elevation.lon");
+    }
+
+    #[test]
+    fn ascii_shape_mismatch_is_named() {
+        let ascii = "Dataset {\n    Float32 v[n = 3];\n} demo;\n---\nv[3]\n1.0, 2.0\n\n";
+        assert!(matches!(
+            parse_ascii(ascii),
+            Err(DapNote::CountMismatch { .. })
+        ));
     }
 }

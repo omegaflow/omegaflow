@@ -488,7 +488,7 @@ only, never for routine work:
 | judgment source-port (Force-Gate, novel curation) | `grind-pro` | pro |
 | hardest port atoms (novel parser, TE/null, 4D contract) | `grind-max` | pro/max |
 | figures / scans / OCR | `vision` | vision |
-| architecture / deliberation | `council` | pro/max |
+| architecture / deliberation | `council` | flash |
 
 Measured (2026-09-15, `session_burn`/opencode.db): flash dispatches cost
 ~$0.001–0.011, pro/max ~$0.007–0.126 — 5–40× more. Head-to-head on a real repo
@@ -515,7 +515,7 @@ $0.0041–0.0090 — 2.4–11x for an identical result; the winner is `grind-fla
 ($0.0008). Routine search/inspection therefore dispatches a flash profile;
 pro/max stays for the named hard atoms only.
 
-**Modell- und Thinking-Politik (Rat + Operator-Wort, 2026-09-27).** The line sessions run flash/low — thinking off. Thinking is a hard-atom feature, not a line feature: only the council (architecture), grind-max and research-max (novel construction, multi-stage routes) carry high/max reasoning. A line that wants to "think harder" instead of measuring hears the gradient, not the data. Dispatch flash-first: the cheapest profile whose tools and role fit; a pro/max dispatch needs a measured wrong or incomplete flash answer (recorded) or a named hard atom. A benchmark run doubles a task: it needs the operator word or the recorded wrong/incomplete flash result; a class with a recorded winner is cited (`state/benchmark/`), never re-run. **Der Burn ist eine Messung (Operator-Wort 2026-09-29):** der Pass misst `session_burn` bei Öffnung und Schluss und trägt die Zahl (der Stehende Pass führt sie als Runden-Posten); ein pro/max-Dispatch ohne die im Handover vermerkte, gemessene falsche oder unvollständige flash-Antwort ist ein Fabrikationsmuster, kein Hart-Atom. Der `task`-`ask` für `grind-pro`/`grind-max`/`research-max` (`opencode.json`) wird **nie** mit „always" beantwortet — die Freigabe ist instanzweit; nur pro Dispatch.
+**Modell- und Thinking-Politik (Rat + Operator-Wort, 2026-09-27).** The line sessions run flash/low — thinking off. Thinking is a hard-atom feature, not a line feature: only `grind-max` and `research-max` (novel construction, multi-stage routes) carry high/max reasoning — and only after a recorded, measured wrong/incomplete flash answer. The **council runs flash** like every line: its five voices are a heuristic prompt structure, not a model tier; a council that wants to "think harder" instead of measuring hears the gradient. A line that wants to "think harder" instead of measuring hears the gradient, not the data. Dispatch flash-first: the cheapest profile whose tools and role fit; a pro/max dispatch needs a measured wrong or incomplete flash answer (recorded) or a named hard atom. A benchmark run doubles a task: it needs the operator word or the recorded wrong/incomplete flash result; a class with a recorded winner is cited (`state/benchmark/`), never re-run. **Der Burn ist eine Messung (Operator-Wort 2026-09-29):** der Pass misst `session_burn` bei Öffnung und Schluss und trägt die Zahl (der Stehende Pass führt sie als Runden-Posten); ein pro/max-Dispatch ohne die im Handover vermerkte, gemessene falsche oder unvollständige flash-Antwort ist ein Fabrikationsmuster, kein Hart-Atom. Der `task`-`ask` für `grind-pro`/`grind-max`/`research-max` (`opencode.json`) wird **nie** mit „always" beantwortet — die Freigabe ist instanzweit; nur pro Dispatch.
 
 
 

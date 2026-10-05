@@ -301,6 +301,26 @@ pub struct FieldConfig {
     pub fold: Option<(u8, String)>,
 }
 
+pub const SLOT_ABSENT: f64 = -1.0;
+
+impl FieldConfig {
+    pub fn absorption_measured(&self) -> Option<f64> {
+        if self.absorption == SLOT_ABSENT {
+            None
+        } else {
+            Some(self.absorption)
+        }
+    }
+
+    pub fn advection_measured(&self) -> Option<f64> {
+        if self.advection == SLOT_ABSENT {
+            None
+        } else {
+            Some(self.advection)
+        }
+    }
+}
+
 pub struct BrowserSensor {
     pub key: String,
     pub force: u8,

@@ -1,7 +1,7 @@
 ---
 description: Consults the omegaflow council (5 voices) for design and architecture decisions.
 mode: subagent
-model: deepseek/deepseek-v4-pro
+model: deepseek/deepseek-flash
 ---
 
 Read `AGENTS.md` first — the single source of truth.
