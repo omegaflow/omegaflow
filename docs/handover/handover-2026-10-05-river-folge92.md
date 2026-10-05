@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: 904ed5dbd9bbdb3e9b080251ff5690f054c19cf82caa5a8e4fa5de4037f2d67b
+  sha256: e4da1704a2998b80eda39f42e628e9ffbfbd3eebe5898773b14f040def3a4e46
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -45,6 +45,7 @@ Wort | Datum | Quelle
 „River besitzt die Membran-Pfade (`main_flow`, `omega.rs`-Feld, Window/Gaze). Architektur-/Ethik-Entscheidungen gehen an den Rat, nie in Pro-Solo; kein Fenster-Edit ohne Operator-Wort." | 2026-10-04 | Operator (River 90) — Linienverfassung
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** …" | 2026-10-04 | Operator (Session, River 91) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** …" | 2026-10-05 | Operator (Session, River 92) — session-weiter Delegations-Consent, nicht das Commit-Wort
+„Physik-Review des Archivar-Datenlayers" — „ich würde dich gerne 1-5 umsetzen lassen" | 2026-10-05 | Operator (Session) — C3/C4-Verdikt + Formel-Fix; Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
 
 ## Träger (Prosa, eigene)
 
@@ -68,7 +69,16 @@ Wort | Datum | Quelle
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (`class: survey`) — Anwendung
   des Maßstabs; Offen: keiner aus diesem Gate.
 
+## An mountain
+
+Origin: river folge92.
+
+- **Enclosure-Hülle — Konservativität (Riss, offen).** `law_bounds` (`src/archivar/spatial.rs:243-274`) liefert je Sample `Φ·(v_instant + resid_ema)` — bei Ephemeriden eine 1 s/2 s-Finite-Difference am Epoche (`:268-273`), bei Sternen die instantane Raumgeschwindigkeit (`:257`), mit Φ = goldener Schnitt (`types.rs:7`) inflationiert. Der einzige „Max" ist der über Samples (`:290-291`). Kein Ort tastet das Gesetz über die volle `age`/`ttl`-Spanne ab — die Hülle ist keine bewiesene Obergrenze; für exzentrische Bahnen übersteigt die Periapsis-Geschwindigkeit die Epoche-Rate um bis zu (1+e)/(1−e), Φ≈1,618 deckt e≲0,24, der Test (`tests.rs:3321`) prüft nur den Kreis. **Braucht:** eine Probe je Bahnkörper über die Ephemeriden-Spanne gegen `Φ·(v_epoch+resid_ema)`; bricht einer, wandert das Bound auf ein Per-Body-Spannenmaximum.
+- **absorption-/advection-Slots — alle 0.0 (offen).** Alle 7485 `field`-Deklarationen in `phi/sources.φ` tragen `absorption = 0.0` **und** `advection = 0.0` (auch `advective`-Felder, z. B. `WSPD wspd_m_s advective m/s 21600 0.0 0.0`, `phi/sources.φ:26217`); `flat_propagation_speed` (force 7, `membrane.rs:487-493`) fällt daher auf `ADVECTIVE_BASE_SPEED = 1.0` (`membrane.rs:424`). **Braucht:** Entscheidung — ist der `1.0`-Platzhalter gewollt (die Messgröße ist selbst eine Geschwindigkeit), oder soll die gemessene Strömung deklariert werden?
+
 ## Entscheidungen (kein Offen)
+
+- **Physik-Review des Archivar-Datenlayers (Session 2026-10-05, Operator-Auftrag).** Rat + Recherche-Trio + Baum-Messung zu fünf Thesen. C3 (z→Distanz über H0) = offener Modell-Riss (Planck 67,36±0,54 vs Leiter 73,04±1,04 ≈ 4,9σ; die Route H0-allein vs voll-ΛCDM wird am Konversionsort benannt, nie gemittelt). C4 (Blockuniversum) = Interpretation; die Frame-Mathematik ICRS/TDB ist Standard (`axioms.rs:39`, `membrane.rs:5`, 19 `SystemTime::now()` klassifiziert — keines treibt `Sample.epoch`). Der Fold-Formel-Drift wurde geheilt: `docs/concepts/archivar-mathematikerin.md:69` und `docs/concepts/pfeiler-der-architektur.md:86` führten die Kurzform `e^(−|Δt|/ttl)` bzw. `τ` statt `ttl`; beide auf die Baumform `e^(−max(0,|Δt|−d/c)/ttl)` (`spatial.rs:743`) gebracht (Header-sha fortgeschrieben). Die Lehre (einhellige Stimmen-Zustimmung ohne Baum-Bindung) liegt in `state/stimmen/reviewer-roster-2026-10-01.md`.
 
 - **Körper-Anker-Vertrag der Membran (Rat, fünf Stimmen, 2026-10-04).** Der Körper ist
   ein `Motion::Barycenter { body_name, scale: 1.0 }`-Sample im allgemeinen Hash (finite
