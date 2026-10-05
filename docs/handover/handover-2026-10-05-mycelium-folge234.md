@@ -3,7 +3,7 @@
   session: Mycelium-Linie — 257 single-job CDN compilers to the self-hosted runner, dropped-baseline bump, emm-sdc green, CDN re-dispatch wave
   class: handover
   date: 2026-10-05
-  sha256: 0ba2f40c848e492947da3971991ffce1b5cf7946123f57fe43a052d29b26356a
+  sha256: 574205a2362c01a723da5ead717d122229af1deeb3e2460c44bc30050232b586
   status: live
 -->
 # Handover — Mycelium-Folge 234 (2026-10-05)
@@ -139,7 +139,7 @@ Origin: mycelium-folge234. **Routed — nicht-eigen:**
 Origin: mycelium-folge234. **Operator-Queue — bis zur Kante bereitet:**
 
 - **NEDC TUH EEG — Public-Key-Antwort (Send).**
-  - **Vorbereitung (eigen, erledigt):** `ssh-keygen -t ed25519 -f ~/.ssh/nedc_tuh_ed25519 -N "" -C "code@omegaflow.space"`; Public-Key-Zeile bereit in `~/.ssh/nedc_tuh_ed25519.pub`, Fingerprint `SHA256:XfdLQ5mmlHT3TE/LS4rB54mWHgNSBbMIGRCMwXYUI70`.
+  - **Vorbereitung (eigen, erledigt):** `ssh-keygen -t ed25519 -f ~/.ssh/nedc_tuh_ed25519 -N "" -C "johannes.tyroller@proton.me"` (die Adresse aus dem signierten Formular, Feld „Email Address", gemessen via `pdftotext -layout`); Public-Key-Zeile bereit in `~/.ssh/nedc_tuh_ed25519.pub`, Fingerprint `SHA256:PCGl2NpNlnlsYy9e5CLAepw5AT2Y05oEe0Hqxnl2iJM`; Entwurf `state/mail/nedc-tuh-eeg-key-reply-2026-10-05.body.txt`.
   - **Akt (operator-gebunden):** die Public-Key-Zeile als Plain-Text an Joe Picone (NEDC) senden — ein Send, die Hand des Operators; danach ist der TUH-Zugang freigeschaltet.
   - **Braucht:** dein Wort; die Public-Key-Zeile liegt bereit.
 
