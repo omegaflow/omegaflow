@@ -37,3 +37,22 @@ jobs:
             https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
           cargo run -p omegaflow-harvest --release --bin fmi_gic_compiler -- \
             --out-bin fmi_gic.bin --lsk kernels/naif0012.tls --bucket-min 60 --ci-mode
+      - name: Idempotence — skip if the 1-minute asset already exists on the CDN
+        id: idempotence-1min
+        run: |
+          if gh release view space.fmi.fi --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "fmi_gic_1min.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset fmi_gic_1min.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset fmi_gic_1min.bin missing — compiling and manifesting"
+          fi
+      - name: Compile the FMI Mäntsälä GIC 1-minute series and upload to CDN
+        if: steps.idempotence-1min.outputs.present == 'false'
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          cargo run -p omegaflow-harvest --release --bin fmi_gic_compiler -- \
+            --out-bin fmi_gic_1min.bin --lsk kernels/naif0012.tls --grain minute --ci-mode
