@@ -3,7 +3,7 @@
   session: Sensory-Folge 233
   class: handover
   date: 2026-10-05
-  sha256: 2f32b3a5b11122c42dfa43a632bc20156cf03a7b0ddb16cd119073e14c7b812c
+  sha256: 27ec5f6d8b794309d36835265cc79d9a61318edf1f7af1b4f68c2ad9cd49d84c
   status: live
 -->
 # Handover — Sensory-Folge 233 (2026-10-05)
@@ -271,51 +271,6 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 - **Blockade:** Termin.
 - **Braucht:** nach dem Flyby `gh workflow run kernel-flatten.yml` (`horizons_compiler --flyby --ci-mode`, Eintrag `tools/harvest/src/bin/horizons_compiler.rs:22` `-159/europa_clipper`) + `archive_search --sniff "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin"` gegen `dae553fb…`.
 
-## An future
-
-Origin: sensory-folge225.
-
-**Priorität (Sensory-Folge 229, 2026-10-04):** bitte `rr-brustgurt` in die Operator-Queue
-aufnehmen (einmal vorlegen, Hardware-LOCK bleibt bestehen) — es ist eine Geld-/Beschaffungs-Sache
-und gehört zu Future, nicht zu Sensory.
-
-- **`rr-brustgurt` — Operator-gebunden, gehört in Futures Operator-Queue.** Der Kauf eines
-  Brustgurts ist eine Operator-Sache (Geld/Beschaffung) und wurde bisher in **zwei** Linien
-  geführt (sensory-LOCK + `handover-2026-10-03-mycelium-folge225.md:217`) — ein Träger-Fehler.
-  Deshalb hier abgegeben. **Frage** (einfache Sprache): neuen Brustgurt beschaffen — Garmin
-  HRM-200 (63,50 €, günstigster gleichwertiger) oder Polar H10 (75,63 €)? **Stand:** Live-BLE HR
-  `NotSupported`, FIT `nn=0` (2026-09-26); Hardware-LOCK (Operator-Wort 2026-09-27 „erst bei
-  Förderung"). **Angebotslage** (gemessen 2026-10-03): gebraucht 45–70 €; neu Polar H10 ab
-  75,63 €, Garmin HRM-200 ab 63,50 €, Coospo H808S ab 29,99 € (Geizhals). **Operator-Vorliebe
-  2026-10-03:** neu mit Hygiene + Garantie (nicht gebraucht). Kein ANT+-Stick nötig
-  (`src/archivar/ble.rs`: BLE-GATT `2A37` inkl. RR). **Gleichwertig:** Garmin HRM-Dual/Pro/
-  HRM-Fit; die alten Garmin HRM-Run/Tri/Swim broadcasten kein Live-RR. Kauf = Operator-Hand.
-
-## An mountain
-
-Origin: sensory-folge227.
-
-**Priorität (Sensory-Folge 229, 2026-10-04):** bitte die ~90 medizinischen/life-science Quellen
-nach deinem Verdikt (Force-Gate/Zulassung) disponieren — es ist eine Registratur-Schuld an
-`phi/sources.φ`, Sensory hält nur die gemessene Landschaft.
-
-- **Medizinische/Life-Science-Datenquellen — Kandidaten-Pool für den Register.**
-  Operator-Wort 2026-10-03; die gemessene Landschaft liegt in
-  `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (sha256 `4ead2c97…`).
-  ~90 Quellen (Somatik/Neuro/Psyche/Biologie/Chemie/Genomik/Proteomik/Metabolomik/
-  Strukturbiologie/Bildgebung/Register), jede mit `archive_search --verdict`-Stand
-  (2026-10-03); nur OpenNeuro + PhysioNet registriert, NeuroVault `declined`. Bitte
-  die Quellen nach deinem Verdikt (Force-Gate/Zulassung) in `phi/sources.φ`
-  disponieren. Die DUA-/Kosten-Zugänge sind an Future geroutet.
-
-- **Weberin-Survey-Verdikte (Origin: sensory-folge230).** Die gemessenen zweiten Linien warten
-  auf dein Verdikt in `phi/sources.φ`: **BGI AGrav** (`api.sedoo.fr/get-agrav-rest/`, `gravity`
-  in m/s², unabhängig von GFZ/IGETS), **C9-Infraschall** (`ceein.infp.ro`, Kanal `BDF` in Pa,
-  tschechisches Netz), **FMI-GIC-Rohserie** (`space.fmi.fi/gic/man_ascii/`, ASCII-Zips,
-  CC BY 4.0, = `fmi_gic_compiler.rs:8` BASE; in `phi/sources.φ:16507-16513` als `fmi_gic` schon
-  registriert). Träger: `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md`
-  (Header-sha `a8d28d5d…`).
-
 ## Träger (Orphan-Faltung)
 
 Der Dateiname in dieser Übergabe ist der Träger. Je Zeile ein zuletzt trägerloses
@@ -437,6 +392,13 @@ dispatcht (HEAD `632b164ba`, queued) — Log beim nächsten Pass lesen, dann Zah
 Kein pro/max-Dispatch, keine Taucher nötig; kein neuer Operator-Punkt.
 (c) `state/operator-gespraeche/2026-10-05-sensory.md` um den F233-Session-Start-Schnitt ergänzt
 (lokal, gitignored).
+(d) Die zwei gefalteten Sender-Blöcke aus der Übergabe entfernt — der Owner hat übernommen, die
+Sender-Zeile fällt (Sender removes the block at its next pass): `## An future` (`rr-brustgurt`,
+von Future in die Operator-Queue gefaltet, gemessen `state/zustand/ereignisse.φ:64795`,
+2026-10-04; Future-Archiv folge174–177) und `## An mountain` (Medizin-Pool disponiert,
+`docs/handover/handover-2026-10-05-mountain-folge235.md:152`; BGI AGrav `phi/sources.φ:27017`
++ C9/CEEIN `:27025` registriert). Der Punkt lebt jetzt in der Übergabe des Owners, nicht mehr
+doppelt in Sensorys.
 
 `state/operator-gespraeche/2026-10-05-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
