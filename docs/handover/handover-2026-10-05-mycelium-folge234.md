@@ -3,7 +3,7 @@
   session: Mycelium-Linie — 257 single-job CDN compilers to the self-hosted runner, dropped-baseline bump, emm-sdc green, CDN re-dispatch wave
   class: handover
   date: 2026-10-05
-  sha256: 4cc0fc8a27bc0e60b05caee8d438e8ed1a6cea24eeb4118674ffe55cd936448e
+  sha256: 0ba2f40c848e492947da3971991ffce1b5cf7946123f57fe43a052d29b26356a
   status: live
 -->
 # Handover — Mycelium-Folge 234 (2026-10-05)
@@ -18,6 +18,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ## Operator-Wort-Register
 
 - Wort | 2026-10-05 | „du bist mycellium" | Quelle: Operator (Session 2026-10-05) — der Commit-Prefix `mountain` war falsch.
+- Wort | 2026-10-05 | „ja die zwei" (FMI + TUH EEG) | Quelle: Operator (Session 2026-10-05) — die zwei neuen Mails bestätigt; die TUH-EEG-Public-Key-Antwort ist der Operator-Akt.
 - Wort | 2026-10-05 | „die kostenlose variante" | Quelle: Sensory-233 — der self-hosted Runner `t420` wird für die CDN-Compiler genutzt.
 - Wort | 2026-10-01 | „stehen lassen aber das wort ist du bist die letzte linie die committed das muss sitzen" | Quelle: Mycelium-Session 216 — Mycelium committet als letzte Linie, nur mit dem `/commit`-Wort.
 - Wort | 2026-10-01 | „bitte nicht nur messen und verschleppen sondern bearbeiten messen und bearbeiten ist die prämisse mein dauerhaftes wort" | Quelle: Mycelium-Session 216 — **dauerhaftes Wort**.
@@ -79,6 +80,8 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
   - `:170` C9/CEEIN Infraschall — station 200, dataselect `C9/BDF` MSEED; Verdikt gaussian-inverse-square acoustic Pa; **Arm + Manifestation offen**.
   - `:118` JAXA G-Portal — `sha256` steht; Record-Download (`add_download.json`/SFTP) offen.
   - `:146` PDS-PPI Kuration offen; `:138`/`:142` externe Hosts down (wartend).
+  - `:189` EUMETSAT MTG-LI (`https://data.eumetsat.int`) — Landung HTTP 206 (2 745 B), `EUMETSAT_KEY`/`SECRET` in `.secrets.local`; API-Route/kein eumetsat-Arm offen.
+  - `:193` GOES-18 ABI — Bucket-Root 200 (486 709 B), `ABI-L1b-RadC/` 404; kein goes18-Compiler (goes_abi nur goes16/19); Riss: goes16-Block zeigt auf goes19.
 - **Blockade:** je Eintrag (Arm-Bau / Mountain-Disposition / externe Hosts).
 - **Braucht:** `:166`/`:170` Arm bauen + manifestieren; `:118` Download-Route; `:146` Kuration.
 
@@ -129,6 +132,16 @@ Origin: mycelium-folge234. **Routed — nicht-eigen:**
 
 - **EMM Frame-Bundle-Arm:** der Loader-Arm für `emm_exi_l2a` gehört in `main_flow.rs` (Membrane, dein Recht).
 - **`s2.rs:183`/`:202` clippy (collapsible_if):** Teil des roten `ci-gate 37327990225`; mathematikerin = dein Feld.
+- **FMI GIC/NUR-Ernte frei (gemessen 2026-10-05, `mail_ledger.φ` record 235):** Ari Viljanen (FMI) — `space.fmi.fi/gic/man_ascii` und das NUR-Magnetometer unter **CC BY 4.0**, keine Erlaubnis-Anfrage nötig; FMI als Quelle nennen. Stützt `fmi-gic-cdn`/NUR-Harvest.
+
+## An future
+
+Origin: mycelium-folge234. **Operator-Queue — bis zur Kante bereitet:**
+
+- **NEDC TUH EEG — Public-Key-Antwort (Send).**
+  - **Vorbereitung (eigen, erledigt):** `ssh-keygen -t ed25519 -f ~/.ssh/nedc_tuh_ed25519 -N "" -C "code@omegaflow.space"`; Public-Key-Zeile bereit in `~/.ssh/nedc_tuh_ed25519.pub`, Fingerprint `SHA256:XfdLQ5mmlHT3TE/LS4rB54mWHgNSBbMIGRCMwXYUI70`.
+  - **Akt (operator-gebunden):** die Public-Key-Zeile als Plain-Text an Joe Picone (NEDC) senden — ein Send, die Hand des Operators; danach ist der TUH-Zugang freigeschaltet.
+  - **Braucht:** dein Wort; die Public-Key-Zeile liegt bereit.
 
 ## LOCK
 
