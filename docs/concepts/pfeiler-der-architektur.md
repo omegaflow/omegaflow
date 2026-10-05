@@ -2,7 +2,7 @@
   title: Dreizehn Pfeiler — die Architektur als System
   class: concept
   date: 2026-09-01
-  sha256: 3e4454273a75d61f07dd563bac4918621222a8fc8edc97311f27f33dca65e18c
+  sha256: 766cdea9ed67c48192a28c135865fe43f3bae437a3d86f059305317a14ae3ffd
   status: live
 -->
 
@@ -78,12 +78,14 @@ arbeiten, wenn sich der Beobachter durch den Block bewegt.
 
 ## 7. Die Faltung der Zeit
 
-`src/archivar/spatial.rs:408-413` — die zeitliche Faltung (retardierte Zeit)
+`src/archivar/spatial.rs:738-743` — die zeitliche Faltung (retardierte Zeit)
 
 Zeit ist keine Linie, sondern eine Koordinate. In `build_spatial_hash`
-implementiert der `retarded`-Block (`src/archivar/spatial.rs:408`) die
+implementiert der `retarded`-Block (`src/archivar/spatial.rs:738`) die
 Licht-Laufzeit (`retarded = (age - d/v_prop).max(0.0)`) und die zeitliche
-Dämpfung (`val_eff = val · e^(-retarded/τ) · tolman`, `spatial.rs:413`).
+Dämpfung (`val_eff = val · e^(-retarded/ttl) · tolman`, `spatial.rs:743`) — die
+Gewissheit atmet durch `ttl` (die Quellen-Retention), nicht durch `τ` (den
+deklarierten Prozess-Zerfall des Feldes).
 Die Vergangenheit wird in den gegenwärtigen Zustand der Membran gefaltet.
 Ein Stern in 10 Lichtjahren Entfernung wird gerendert, wie er vor 10
 Jahren aussah — pure Relativitätstheorie auf der GPU.
