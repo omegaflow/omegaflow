@@ -75,9 +75,9 @@ pending
 url https://sdc.emiratesmarsmission.ae/
 note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild, kein Skalarfeld → Bildquelle ohne `field` (Rat, analog hips_png). Compiler gefixt (deterministisch, --id/--limit, Refresh, Aggregat-Refusal). Block: Workflow + Loader-Arm + Frame-Bundle (Mycelium).
 
-blocked account
+pending
 url https://superdarn.ca/data-download
-note MAP-Grid RST (DMap) — gemessen 2026-10-04: MAP nur als Globus-/BAS-/NSSC-Konto-Mirror, kein plain RST-URL; ascii-download nur FITACF → Zugang = Konto, RST-Offsets gegenstandslos.
+note MAP-Grid RST (DMap) — 2026-10-05: Zugang via Globus (`GLOBUS_ID_USER/PASS`, `wartend.φ:8 superdarn-af68c4f1`, Aufnehmer mycelium) vorhanden → Maschinen-Schritt, kein Operator-Akt. ascii nur FITACF; MAP-RST nur Globus/BAS-Mirror (2026-10-04 gemessen).
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
