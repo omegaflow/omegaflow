@@ -2,7 +2,7 @@
   title: Auftrag — Das universelle Vlies (alles gegen alles)
   class: auftrag
   date: 2026-10-05
-  sha256: 7036a326d9ad26dd2054a202909da5c32c63d5e8d6d1ca6064dbb6d423309986
+  sha256: dd133266b34f7f90de9023c34ac4241be96ab5ebcb9488e8c3ab593a5f34e3e0
   status: live
   see-also: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/specs/negativ-fuzzy-index.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -29,6 +29,33 @@ mächtige Gleichungsmaschine?*
 2. **Das vollständige Diagramm (Ziel):** das gekoppelte Diagramm — welche Kanäle, welche
    Richtung, welche Zeitskala — als **Messung**, nicht als Modell.
 3. **Die Vorhersage (Zukunft):** präregistriert, benotet, wiederholt — das Frühwarnsystem.
+
+## Die Astrologie-Prüfung (eigener Teil der Vision)
+
+Die uralte Behauptung — *„der Himmel beeinflußt die Erde"* — wurde verlacht, aber nie
+vollständig gemessen. Der Operator will sie **messen, nicht spotten**: die Himmelskörper
+gegen die irdischen Kanäle, mit Familien-Schwellen, Phasen-Nullen, Präregistrierung.
+Das ist ein **benannter Teil** des universellen Vlieses (nicht das Ganze — „Himmel gegen
+Erde" ist der erdbias-behaftete Ausschnitt; das Vlies weitet ihn auf „alles gegen alles").
+
+Die Behauptungen, die auf dem Prüfstand stehen: Mond → Gezeiten (**gemessen**, gravitativ)
+· Mond → Verhalten · Planeten → Erdbeben · Planeten → Wetter · Sternbilder → Charakter ·
+Himmel → Krankheit · kosmische Strahlung → Leben. Die Maschine trägt bereits beide Seiten
+(Himmelskörper: DE/INPOP/EPM + Gaia DR3 + 2MRS; irdische Kanäle: Erdbeben, Wetter, Magnet,
+Ozean, GIC, EEG, Blitz).
+
+**Ehrliche Grenze:** die Astrologie behauptete **Kausalität**; das Vlies mißt **gerichteten
+Informationsfluß** (schwächer als Kausalität, stärker als Korrelation). **Zwei Ausgänge,
+beide Ergebnis:** überwiegend Stille → die Astrologie ist **mit Messung** beerdigt (das
+größte Negativ-Ergebnis); ein verbleibender Pfeil → neue Physik.
+
+## Gleichungsmaschine oder Instrument
+
+Der Operator fragte: *ist das System dafür gebaut — oder nur eine sehr mächtige
+Gleichungsmaschine?* **Beides, und das ist die Architektur.** Die Gleichung ist das
+Werkzeug, die Frage das Ziel: der Rahmen (ICRS/TDB), die Grammatik (26×f64), die 9
+Kraftmedien und der Sucher (`field_te_query`) sind für die Frage „was hängt zusammen?"
+geboren — was fehlt, ist nicht der Rahmen, sondern die Ernte und der Motor (`ozzy`).
 
 ## Was schon steht (gemessen/gebaut)
 
