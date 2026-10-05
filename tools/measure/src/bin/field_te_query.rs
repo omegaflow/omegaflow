@@ -14,9 +14,10 @@ use omegaflow::mathematikerin::wy_max_t::{
     quantile, sigma_per_statistic, studentized_maxima,
 };
 use omegaflow::te::{
-    LaggedCond, TeEstimator, TeNull, TeSurrogateParams, benjamini_hochberg_pass,
+    LaggedCond, TE_NEFF_THRESHOLD, TeEstimator, TeNull, TeSurrogateParams, benjamini_hochberg_pass,
     conditional_embedded_te_phase, conditional_te_surrogates_n, kde_n_eff, surrogate_max_phase_n,
-    surrogate_rank_p_value, surrogate_stats_phase_n, transfer_entropy_conditional_binned_n,
+    surrogate_rank_p_value, surrogate_stats_phase_n, te_bias_m_k, transfer_entropy_bias_adjusted,
+    transfer_entropy_conditional_binned_n,
 };
 
 const MONTH_S: f64 = 2_592_000.0;
@@ -2609,6 +2610,29 @@ struct LagRow {
     thr_d2t: Option<f64>,
     te_t2d: Option<f64>,
     thr_t2d: Option<f64>,
+    bias_d2t: Option<f64>,
+    bias_state_d2t: &'static str,
+    bias_t2d: Option<f64>,
+    bias_state_t2d: &'static str,
+}
+
+fn bias_column(te: Option<f64>, n: usize, n_eff: Option<f64>) -> (Option<f64>, &'static str) {
+    let Some(te) = te else {
+        return (None, "absent");
+    };
+    let Some(floor) = TE_NEFF_THRESHOLD else {
+        return (None, "floor_unmeasured");
+    };
+    let ne = n_eff.unwrap_or(f64::NAN);
+    if !(ne.is_finite() && ne >= floor) {
+        return (None, "unadjusted_below_floor");
+    }
+    match te_bias_m_k(n) {
+        Some(mk) if te.is_finite() && mk.is_finite() => {
+            (Some(transfer_entropy_bias_adjusted(te, mk)), "adjusted")
+        }
+        _ => (None, "off_table"),
+    }
 }
 
 struct Direction {
@@ -2784,6 +2808,10 @@ fn analyze(
             thr_d2t,
             te_t2d: None,
             thr_t2d,
+            bias_d2t: None,
+            bias_state_d2t: "absent",
+            bias_t2d: None,
+            bias_state_t2d: "absent",
         });
     }
     for (mi, (lag, d2t)) in meta.iter().enumerate() {
@@ -2793,8 +2821,22 @@ fn analyze(
         if let Some(row) = rows.iter_mut().find(|r| r.lag == *lag) {
             if *d2t {
                 row.te_d2t = Some(te);
+                let (adj, state) = bias_column(
+                    Some(te),
+                    target_s.len(),
+                    kde_n_eff(target_s, driver_s, *lag),
+                );
+                row.bias_d2t = adj;
+                row.bias_state_d2t = state;
             } else {
                 row.te_t2d = Some(te);
+                let (adj, state) = bias_column(
+                    Some(te),
+                    driver_s.len(),
+                    kde_n_eff(driver_s, target_s, *lag),
+                );
+                row.bias_t2d = adj;
+                row.bias_state_t2d = state;
             }
         }
     }
@@ -2867,6 +2909,35 @@ fn print_result(result: &QueryResult, desc: &Descriptor) {
             "core family bound over the declared arms = {}",
             fmt_opt(result.fam_core)
         );
+    }
+    let mut bias_printed = false;
+    for r in &result.rows {
+        for (dir, te, adj, state) in [
+            ("driver->target", r.te_d2t, r.bias_d2t, r.bias_state_d2t),
+            ("target->driver", r.te_t2d, r.bias_t2d, r.bias_state_t2d),
+        ] {
+            if state == "absent" {
+                continue;
+            }
+            if !bias_printed {
+                println!();
+                println!(
+                    "bias (report site only; raw TE untouched; gate n_eff >= {}):",
+                    fmt_opt(TE_NEFF_THRESHOLD)
+                );
+                bias_printed = true;
+            }
+            println!(
+                "bias | lag {} | {} | TE_raw {} | adjusted {}",
+                r.lag,
+                dir,
+                fmt_opt(te),
+                match adj {
+                    Some(v) => format!("{v:.4e}"),
+                    None => state.to_string(),
+                }
+            );
+        }
     }
     match &result.maxt {
         Some(mt) => {
@@ -4475,6 +4546,36 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn bias_column_gates_on_n_eff_and_exact_n() {
+        let te = 5.0e-1;
+        let (adj, state) = bias_column(Some(te), 800, Some(1.8166e1));
+        assert_eq!(state, "adjusted");
+        let adj = adj.expect("a measured n at the floor carries the measured bias");
+        assert!(
+            (adj - (te - 8.866e-2)).abs() < 1e-12,
+            "m_k is the measured table entry, never interpolated"
+        );
+
+        let (adj, state) = bias_column(Some(te), 800, Some(1.0));
+        assert_eq!(state, "unadjusted_below_floor");
+        assert!(
+            adj.is_none(),
+            "below the n_eff floor nothing is manufactured"
+        );
+
+        let (adj, state) = bias_column(Some(te), 8546, Some(44.5));
+        assert_eq!(state, "off_table");
+        assert!(
+            adj.is_none(),
+            "an unmeasured n is off-table, never interpolated"
+        );
+
+        let (adj, state) = bias_column(None, 800, Some(44.5));
+        assert_eq!(state, "absent");
+        assert!(adj.is_none());
+    }
 
     #[test]
     fn maxt_wiring_carries_a_finite_quantile_on_a_synthetic_month() {

@@ -2,7 +2,7 @@
   title: Auftrag — Das universelle Vlies (alles gegen alles)
   class: auftrag
   date: 2026-10-05
-  sha256: 8ae666ad6297ec1ba070aa76b9996cabc8d2d85ae8288a2f2257344a0bf5dca9
+  sha256: 7036a326d9ad26dd2054a202909da5c32c63d5e8d6d1ca6064dbb6d423309986
   status: live
   see-also: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/specs/negativ-fuzzy-index.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -48,6 +48,12 @@ mächtige Gleichungsmaschine?*
 - **`ozzy` ist nicht gebaut.** Die Bibliothek des negativen Fuzzy-Index existiert nur als
   Spec (`sgrep -i ozzy` findet keine Quelldatei; `fd ozzy` = leer). Die Vision stützt ihre
   Triangulation auf dieses Instrument — es fehlt der Motor.
+- **Die Bias-Kurve über n ist nicht gemessen.** `TE_BIAS_MK` trägt sechs Benchmark-Punkte
+  (800…10000); produktive Paar-n (z. B. 8546) fallen dazwischen. Das n-Floor-Gate + der
+  exakte Lookup sind verdrahtet (`bias_column` in `field_te_query.rs`, Rat 2026-10-05;
+  `adjusted`/`unadjusted_below_floor`/`off_table`, Roh-TE unberührt, keine Interpolation).
+  Offen: `te_bias_n_probe` über den produktiven n-Bereich erweitern + `TE_BIAS_MK_EMBEDDED`
+  messen — Register-Pflicht.
 - **Der Flaschenhals ist die Ernte, nicht der Rahmen.** Die Maschine kann jede Frage
   formulieren, aber nur antworten, wenn **beide** Kanäle Daten tragen (das Sirius-Wetter
   hat kein Thermometer). Die Beschaffungsroute liegt in der Survey §2/§5.
@@ -81,8 +87,9 @@ benannte CI-Pflicht, kein Default. Die Form existiert am Baum (`field_te_query`-
 mit Pflicht-FDR, `te.rs`-BH/BY, pro-Familien-WY, Bias-Gate) — **fahren und verdrahten**,
 nicht neu entwerfen.
 
-**Wer / Reihenfolge:** (1) Bias-Wiring in jeden Matrix-Zellenpfad (River; Zelle unter
-Floor → `pending`) → (2) die 8 probe-gelesenen Kanäle an den Draht + 15×15-Lauf
+**Wer / Reihenfolge:** (1) Bias-Wiring (River, **n-Floor + exakter Lookup gebaut 2026-10-05**;
+Bias-Kurve über n + `TE_BIAS_MK_EMBEDDED` als Register-Pflicht offen) → (2) die 8
+probe-gelesenen Kanäle an den Draht + 15×15-Lauf
 (River; `matrix full`, `fdr bh 0.05 over matrix`, Lag-0/1 geflaggt, pro Zelle
 Auflösungspaar) → (3) `ozzy` bauen (River) → (4) Netz-Null als CI-Batterie (River/Mycelium,
 B ≥ 1/α). **Parallel, unabhängig:** die Ernte der fehlenden Netze — Quellen-Zeilen/Verdikte
