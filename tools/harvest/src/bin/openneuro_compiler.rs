@@ -347,21 +347,30 @@ fn extract_edf(bytes: &[u8]) -> Option<EegExtract> {
     if header.data_records <= 0 {
         return None;
     }
-    let nbchan = u32::try_from(header.signals.len()).ok()?;
+    let signal_indices: Vec<usize> = header
+        .signals
+        .iter()
+        .enumerate()
+        .filter(|(_, s)| s.label != "EDF Annotations")
+        .map(|(i, _)| i)
+        .collect();
+    let nbchan = u32::try_from(signal_indices.len()).ok()?;
     if nbchan == 0 {
         return None;
     }
-    let per_record = header.signals[0].samples_per_record as u64;
+    let per_record = header.signals[*signal_indices.first()?].samples_per_record as u64;
     if per_record == 0
-        || header
-            .signals
+        || signal_indices
             .iter()
-            .any(|s| s.samples_per_record as u64 != per_record)
+            .any(|&i| header.signals[i].samples_per_record as u64 != per_record)
     {
         return None;
     }
     let pnts = per_record.checked_mul(header.data_records as u64)?;
-    let labels: Vec<String> = header.signals.iter().map(|s| s.label.clone()).collect();
+    let labels: Vec<String> = signal_indices
+        .iter()
+        .map(|&i| header.signals[i].label.clone())
+        .collect();
     if labels.iter().any(|l| l.len() > 0xFFFF) {
         return None;
     }
@@ -371,7 +380,7 @@ fn extract_edf(bytes: &[u8]) -> Option<EegExtract> {
         None
     };
     let mut samples: Vec<f64> = Vec::with_capacity((nbchan as u64 * pnts) as usize);
-    for i in 0..header.signals.len() {
+    for &i in &signal_indices {
         let channel = signal_samples(bytes, &header, i);
         if channel.len() as u64 != pnts {
             return None;
