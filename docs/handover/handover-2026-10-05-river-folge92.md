@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: e4da1704a2998b80eda39f42e628e9ffbfbd3eebe5898773b14f040def3a4e46
+  sha256: a816a17d1992688a4906fb8b2cc89546c04dbcb49943ba16cfc29b9e4fea95be
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -46,6 +46,8 @@ Wort | Datum | Quelle
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** …" | 2026-10-04 | Operator (Session, River 91) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** …" | 2026-10-05 | Operator (Session, River 92) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „Physik-Review des Archivar-Datenlayers" — „ich würde dich gerne 1-5 umsetzen lassen" | 2026-10-05 | Operator (Session) — C3/C4-Verdikt + Formel-Fix; Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
+„Membran-Review" — „kannst du die membran nochmal mit der gleichen intensität analysieren?" / „kannst du bitte alles fixen?" | 2026-10-05 | Operator (Session) — Doku-Risse geheilt, Urteilsfälle (Overflow, Tolman, Waisen-Kernels) registriert; Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
+„Overflow-Erreichbarkeit messen" — „kannst du das bitte messen?" | 2026-10-05 | Operator (Session) — Ergebnis: Retention-Gate cappt `age ≤ ttl·64` → kein f32-Overflow, Punkt geschlossen (Entscheidungen); Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
 
 ## Träger (Prosa, eigene)
 
@@ -74,11 +76,29 @@ Wort | Datum | Quelle
 Origin: river folge92.
 
 - **Enclosure-Hülle — Konservativität (Riss, offen).** `law_bounds` (`src/archivar/spatial.rs:243-274`) liefert je Sample `Φ·(v_instant + resid_ema)` — bei Ephemeriden eine 1 s/2 s-Finite-Difference am Epoche (`:268-273`), bei Sternen die instantane Raumgeschwindigkeit (`:257`), mit Φ = goldener Schnitt (`types.rs:7`) inflationiert. Der einzige „Max" ist der über Samples (`:290-291`). Kein Ort tastet das Gesetz über die volle `age`/`ttl`-Spanne ab — die Hülle ist keine bewiesene Obergrenze; für exzentrische Bahnen übersteigt die Periapsis-Geschwindigkeit die Epoche-Rate um bis zu (1+e)/(1−e), Φ≈1,618 deckt e≲0,24, der Test (`tests.rs:3321`) prüft nur den Kreis. **Braucht:** eine Probe je Bahnkörper über die Ephemeriden-Spanne gegen `Φ·(v_epoch+resid_ema)`; bricht einer, wandert das Bound auf ein Per-Body-Spannenmaximum.
-- **absorption-/advection-Slots — alle 0.0 (offen).** Alle 7485 `field`-Deklarationen in `phi/sources.φ` tragen `absorption = 0.0` **und** `advection = 0.0` (auch `advective`-Felder, z. B. `WSPD wspd_m_s advective m/s 21600 0.0 0.0`, `phi/sources.φ:26217`); `flat_propagation_speed` (force 7, `membrane.rs:487-493`) fällt daher auf `ADVECTIVE_BASE_SPEED = 1.0` (`membrane.rs:424`). **Braucht:** Entscheidung — ist der `1.0`-Platzhalter gewollt (die Messgröße ist selbst eine Geschwindigkeit), oder soll die gemessene Strömung deklariert werden?
+- **absorption-/advection-Slots (offen, korrigiert 2026-10-05).** Die 7485 `field`-Zeilen tragen `absorption = 0.0`; **`advection` ist dagegen lebendig** — die `first`-Direktive `phi/sources.φ:181` (Sonnenwind) trägt `advection = 400000.0` (400 km/s, SI). `absorption = 0.0` bei **allen 9059** field-erzeugenden Direktiven (`field`/`first`/`last`/`lastrow`) → Beer-Lambert (`force_absorption`) ist inaktiv, der patch-levy-Tail (kernel_id 5, α=0) unerreichbar. **Braucht:** Entscheidung — bleibt `absorption` überall 0.0 (dann ist der Kernel-Tail tot), und ist `ADVECTIVE_BASE_SPEED = 1.0` (`membrane.rs:424`) für advektive `field`-Zeilen ohne deklarierte Advektion gewollt?
+
+## Offen (eigene)
+
+### Tolman-Exponent für Punktquellen (offen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-05, GLM + Claude) `(1+z)⁻⁴` (`shaders.rs:188-191`) ist die **bolometrische Flächenhelligkeit** (extendierte Quelle); für den Fluss einer **Punktquelle** (force_type 0, z>0) ist der Exponent anders (−2 über die Leuchtkraftdistanz).
+- **Blockade:** keine
+- **Braucht:** Entscheidung — sind die Omegaflow-em-Quellen mit z>0 Punkt- oder Flächenquellen? Danach den Exponenten je Klasse setzen.
+
+### Waisen-Kernels 2 und 6 (offen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-05, `general`) `kernel_id 2` (gaussian-inverse) und `6` (inverse-linear) haben kein zugeordnetes Feld (`src/mathematikerin/force.rs`) und keine physikalische Standard-Entsprechung.
+- **Blockade:** keine
+- **Braucht:** entfernen oder einem Feld zuordnen.
 
 ## Entscheidungen (kein Offen)
 
-- **Physik-Review des Archivar-Datenlayers (Session 2026-10-05, Operator-Auftrag).** Rat + Recherche-Trio + Baum-Messung zu fünf Thesen. C3 (z→Distanz über H0) = offener Modell-Riss (Planck 67,36±0,54 vs Leiter 73,04±1,04 ≈ 4,9σ; die Route H0-allein vs voll-ΛCDM wird am Konversionsort benannt, nie gemittelt). C4 (Blockuniversum) = Interpretation; die Frame-Mathematik ICRS/TDB ist Standard (`axioms.rs:39`, `membrane.rs:5`, 19 `SystemTime::now()` klassifiziert — keines treibt `Sample.epoch`). Der Fold-Formel-Drift wurde geheilt: `docs/concepts/archivar-mathematikerin.md:69` und `docs/concepts/pfeiler-der-architektur.md:86` führten die Kurzform `e^(−|Δt|/ttl)` bzw. `τ` statt `ttl`; beide auf die Baumform `e^(−max(0,|Δt|−d/c)/ttl)` (`spatial.rs:743`) gebracht (Header-sha fortgeschrieben). Die Lehre (einhellige Stimmen-Zustimmung ohne Baum-Bindung) liegt in `state/stimmen/reviewer-roster-2026-10-01.md`.
+- **Zeit-Faltung-Overflow — nicht erreichbar (gemessen 2026-10-05).** Das Retention-Gate weist jede Probe mit `age > ttl·64` ab (`fetch.rs:540`, `spatial.rs:684/864`, `main_flow.rs:5732`); admittierte Proben erfüllen also `corr = min(temporal, d/v) ≤ temporal ≤ 64·ttl`, mithin `corr/ttl ≤ 64 < 88,7` → `exp(+corr/ttl) ≤ e⁶⁴ ≈ 6,2e27 < f32-max (3,4e38)`. Die Sternklasse trägt `ttl = rec.tau = 1e10 yr · lum^(−5/7)` (`spatial.rs:613,624`): Sonne ≈ 3,2e17 s, heller Stern (lum 1e6) ≈ 1,6e13 s — gegen `temporal = |now − J2016-Epoch| ≈ 3,2e8 s`, also `temporal/ttl ~ 5e-5`. Der Zwischen-Exponent (`shaders.rs:116`) überläuft **nicht**; der `retarded_decay`-Refactor ist nicht zur Korrektheit nötig. Die zwei Schritte heben sich netto korrekt auf (`= val·exp(−retarded/ttl)`, = Rust `spatial.rs:743`); die Doc-Seite (`wgsl-shader.md:501`) war die falsche Seite und ist geheilt.
+
+- **Physik-Review des Archivar-Datenlayers (Session 2026-10-05, Operator-Auftrag).** Rat + Recherche-Trio + Baum-Messung zu fünf Thesen. C3 (z→Distanz über H0) = offener Modell-Riss (Planck 67,36±0,54 vs Leiter 73,04±1,04 ≈ 4,9σ; die Route H0-allein vs voll-ΛCDM wird am Konversionsort benannt, nie gemittelt). C4 (Blockuniversum) = Interpretation; die Frame-Mathematik ICRS/TDB ist Standard (`axioms.rs:39`, `membrane.rs:5`, 19 `SystemTime::now()` klassifiziert — keines treibt `Sample.epoch`). Der Fold-Formel-Drift wurde geheilt: `docs/concepts/archivar-mathematikerin.md:69` und `docs/concepts/pfeiler-der-architektur.md:86` führten die Kurzform `e^(−|Δt|/ttl)` bzw. `τ` statt `ttl`; beide auf die Baumform `e^(−max(0,|Δt|−d/c)/ttl)` (`spatial.rs:743`) gebracht (Header-sha fortgeschrieben). Die Lehre (einhellige Stimmen-Zustimmung ohne Baum-Bindung) liegt in `state/stimmen/reviewer-roster-2026-10-01.md`. **Membran-Review (gleicher Auftrag, 2026-10-05):** die „Nicht-Kamera"-These korrigiert (`4d-membrane.md` — Aberration/Doppler/Beaming sind gemessene Physik, nicht Kamera-Artefakt; haltbar nur als SSB-Ruherahmen-Aussage), die WGSL-Fold-Spec geheilt (`wgsl-shader.md:501`), `glossar.md` presenceWeight berichtigt (zeitliche Relaxation, nicht Minkowski), die Akustik-Aussage in `archivar-mathematikerin.md` korrigiert; Overflow, Tolman-Punktquellen und Waisen-Kernels 2/6 als offene Punkte oben.
 
 - **Körper-Anker-Vertrag der Membran (Rat, fünf Stimmen, 2026-10-04).** Der Körper ist
   ein `Motion::Barycenter { body_name, scale: 1.0 }`-Sample im allgemeinen Hash (finite
