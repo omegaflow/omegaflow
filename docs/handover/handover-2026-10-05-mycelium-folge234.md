@@ -3,7 +3,7 @@
   session: Mycelium-Linie — 257 single-job CDN compilers to the self-hosted runner, dropped-baseline bump, emm-sdc green, CDN re-dispatch wave
   class: handover
   date: 2026-10-05
-  sha256: 424ee6282139dbb16fbcd448882ff03b6f4839ed5ee0a9f9572c2378da683e3a
+  sha256: 861ff07878bc8ac070bf693076f1aff7222a4ce400d620ddbefb4d8164fc649d
   status: live
 -->
 # Handover — Mycelium-Folge 234 (2026-10-05)
@@ -133,16 +133,11 @@ Origin: mycelium-folge234. **Routed — nicht-eigen:**
 
 - **EMM Frame-Bundle-Arm:** der Loader-Arm für `emm_exi_l2a` gehört in `main_flow.rs` (Membrane, dein Recht).
 - **`s2.rs:183`/`:202` clippy (collapsible_if):** Teil des roten `ci-gate 37327990225`; mathematikerin = dein Feld.
-- **FMI GIC/NUR-Ernte frei (gemessen 2026-10-05, `mail_ledger.φ` record 235):** Ari Viljanen (FMI) — `space.fmi.fi/gic/man_ascii` und das NUR-Magnetometer unter **CC BY 4.0**, keine Erlaubnis-Anfrage nötig; FMI als Quelle nennen. Stützt `fmi-gic-cdn`/NUR-Harvest.
+- **FMI GIC/NUR-Ernte frei (gemessen 2026-10-05, `mail_ledger.φ` record 235):** Ari Viljanen (FMI) — `space.fmi.fi/gic/man_ascii` und das NUR-Magnetometer unter **CC BY 4.0**, keine Erlaubnis-Anfrage nötig; FMI als Quelle nennen. Danke-Reply 2026-10-05 gesendet (Operator-Hand). Stützt `fmi-gic-cdn`/NUR-Harvest; dB/dt–GIC flacher Fit = `doi:10.5194/angeo-43-271-2025` (Eq. 43, Table 1).
 
 ## An future
 
-Origin: mycelium-folge234. **Operator-Queue — bis zur Kante bereitet:**
-
-- **NEDC TUH EEG — Public-Key-Antwort (Send).**
-  - **Vorbereitung (eigen, erledigt):** `ssh-keygen -t ed25519 -f ~/.ssh/nedc_tuh_ed25519 -N "" -C "johannes.tyroller@proton.me"` (die Adresse aus dem signierten Formular, Feld „Email Address", gemessen via `pdftotext -layout`); Public-Key-Zeile bereit in `~/.ssh/nedc_tuh_ed25519.pub`, Fingerprint `SHA256:PCGl2NpNlnlsYy9e5CLAepw5AT2Y05oEe0Hqxnl2iJM`; Entwurf `state/mail/nedc-tuh-eeg-key-reply-2026-10-05.body.txt`.
-  - **Akt (operator-gebunden):** die Public-Key-Zeile als Plain-Text an Joe Picone (NEDC) senden — ein Send, die Hand des Operators; danach ist der TUH-Zugang freigeschaltet.
-  - **Braucht:** dein Wort; die Public-Key-Zeile liegt bereit.
+Origin: mycelium-folge234. **Erledigt:** NEDC TUH EEG — Genehmigung 2026-10-05 (`mail_ledger.φ:237`); die Public-Key-Zeile (`johannes.tyroller@proton.me`, Key `~/.ssh/nedc_tuh_ed25519`) wurde am 2026-10-05 von der Operator-Hand an Joe Picone gesendet. Der Rest ist ein Warten auf NEDC (`state/zustand/wartend.φ` `tuh-eeg-access`).
 
 ## LOCK
 
