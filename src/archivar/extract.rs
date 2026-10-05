@@ -115,6 +115,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "gaia_rrl" => gaia_rrl::parse_series(bytes),
         "viking_grav" => viking_grav::parse_series(bytes),
         "agrav" => agrav::parse_series(bytes),
+        "emm_exi_l2a" => emm_exi::parse_series(bytes),
         _ => None,
     }
 }
@@ -512,6 +513,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "gk2a_ami" => gk2a_ami::component_name(comp),
         "hips_png" => hips::component_name(comp),
         "goes_abi" => goes_abi::component_name(comp),
+        "emm_exi_l2a" => emm_exi::component_name(comp),
         "atdf" => atdf::component_name(comp),
         "ulysses_atdf" => atdf::uly_component_name(comp),
         "ulysses_atdf_x" => atdf::uly_component_name(comp),

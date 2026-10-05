@@ -58,6 +58,7 @@ pub mod eea_noise;
 pub mod eels;
 pub mod electrodes;
 pub mod emc;
+pub mod emm_exi;
 pub mod emodnet_hfr;
 pub mod ephemeris;
 pub mod euvs;
