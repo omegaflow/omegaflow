@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: a7e04ede6395bce595ee81c8ed843c7299f421f6d5598a773b2f2ed2c37eb34d
+  sha256: 8fb2c79567a09255796fe4340519d552732108481c9f5748931f35f79e145deb
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -53,7 +53,7 @@ Wort | Datum | Quelle
 „aber das möchte ich erreichen ich möche an jedem punkt einen stein ins wasser fallen lassen und schauen was passiert" | 2026-10-05 | Operator (River 94) — Störungs-Experiment (der Stein = `field_te_query`)
 „ich habe glm nochmal mit websuche gestartet" | 2026-10-05 | Operator (River 94) — GLM-Nachfrage; gemessen: GLM-5.3-Chat **kein Web-Tool** (ungeprüfte Trainings-Tabelle), neue Endpunkte live verifiziert
 „ich habe glm nochmal mit websuche laufen lassen" | 2026-10-05 | Operator (River 94) — GLM Runde 3 mit Live-Tools; Korrekturen verifiziert (EUMETSAT 0691 ✅, EarthScope .org ✅, DART-realtime2 404 ❌)
-„lies dir mein vision dokument auf dem deskto durch und arbeite es ein" — Vision `/home/johannes/Schreibtisch/visionen`: „wie alles zusammenhängt" · universal statt Sonne-Erde · **die Astrologie messen, nicht spotten** · kein Erdbias (Sonne→Sirius-Wetter) · Lücken sind Zielangaben, nur weil etwas nicht gemessen wurde ist es nicht nichttriangulierbar · Gleichungsmaschine oder Instrument? | 2026-10-05 | Operator (River 94) — Auftrag `docs/auftrag/auftrag-universelles-vlies.md`
+„lies dir mein vision dokument auf dem deskto durch und arbeite es ein" — Vision `/home/johannes/Schreibtisch/visionen`: „wie alles zusammenhängt" · universal statt Sonne-Erde · **die Kräfte, die wirken können, und ihre noch unvermessenen Wirkungen** (Astrologie = ein Fall, zu eng) · kein Erdbias (Sonne→Sirius-Wetter) · Lücken sind Zielangaben, nicht nichttriangulierbar · Gleichungsmaschine oder Instrument? | 2026-10-05 | Operator (River 94) — Auftrag `docs/auftrag/auftrag-universelles-vlies.md`
 
 ## Träger (Prosa, eigene)
 

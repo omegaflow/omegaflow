@@ -2,7 +2,7 @@
   title: Auftrag — Das universelle Vlies (alles gegen alles)
   class: auftrag
   date: 2026-10-05
-  sha256: dd133266b34f7f90de9023c34ac4241be96ab5ebcb9488e8c3ab593a5f34e3e0
+  sha256: dbaf8884531124a1630d8c5cfed0cfad652a9b9c49c41910c8ef8e10e73b1df2
   status: live
   see-also: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/specs/negativ-fuzzy-index.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -30,24 +30,28 @@ mächtige Gleichungsmaschine?*
    Richtung, welche Zeitskala — als **Messung**, nicht als Modell.
 3. **Die Vorhersage (Zukunft):** präregistriert, benotet, wiederholt — das Frühwarnsystem.
 
-## Die Astrologie-Prüfung (eigener Teil der Vision)
+## Die unvermessenen Kräfte und ihre Wirkungen
 
-Die uralte Behauptung — *„der Himmel beeinflußt die Erde"* — wurde verlacht, aber nie
-vollständig gemessen. Der Operator will sie **messen, nicht spotten**: die Himmelskörper
-gegen die irdischen Kanäle, mit Familien-Schwellen, Phasen-Nullen, Präregistrierung.
-Das ist ein **benannter Teil** des universellen Vlieses (nicht das Ganze — „Himmel gegen
-Erde" ist der erdbias-behaftete Ausschnitt; das Vlies weitet ihn auf „alles gegen alles").
+Der Kern (Operator-Wort: *„mich interessieren einfach die Kräfte, die wirken (können), und
+deren Wirkungen, aber bislang einfach noch nicht vermessen wurden"*): **welche Kräfte
+können wirken — und welche ihrer Wirkungen sind noch nicht gemessen?** Kein Erdbias, keine
+Richtungsvorgabe (nicht „Himmel → Erde"), keine Disziplingrenze: jede Kraft, an jedem Ort,
+auf jeden Kanal. Die **Astrologie ist ein historischer Fall** dieser Klasse (Himmelskörper
+→ irdische Kanäle), nie ihr Rahmen — „zu eng" ist genau der Fehler, den der Operator
+zurückweist.
 
-Die Behauptungen, die auf dem Prüfstand stehen: Mond → Gezeiten (**gemessen**, gravitativ)
-· Mond → Verhalten · Planeten → Erdbeben · Planeten → Wetter · Sternbilder → Charakter ·
-Himmel → Krankheit · kosmische Strahlung → Leben. Die Maschine trägt bereits beide Seiten
-(Himmelskörper: DE/INPOP/EPM + Gaia DR3 + 2MRS; irdische Kanäle: Erdbeben, Wetter, Magnet,
-Ozean, GIC, EEG, Blitz).
+Der Zensus ist die Landkarte: die Maschine trägt die Kraftmedien (9), den Rahmen (ICRS/TDB),
+den Sucher (`field_te_query`) — aber die Wirkungen, die noch niemand gemessen hat, sind
+**Zielangaben** (negativer Fuzzy-Index / `ozzy`), keine Nullen. Eine ungemessene Wirkung ist
+`pending`, nie „keine Wirkung".
 
-**Ehrliche Grenze:** die Astrologie behauptete **Kausalität**; das Vlies mißt **gerichteten
-Informationsfluß** (schwächer als Kausalität, stärker als Korrelation). **Zwei Ausgänge,
-beide Ergebnis:** überwiegend Stille → die Astrologie ist **mit Messung** beerdigt (das
-größte Negativ-Ergebnis); ein verbleibender Pfeil → neue Physik.
+**Ehrliche Grenze:** TE mißt gerichteten Informationsfluß — schwächer als Kausalität,
+stärker als Korrelation; ohne Daten bleibt der Kanal benannt (kein Thermometer auf Sirius).
+**Zwei Ausgänge, beide Ergebnis:** Stille (die Behauptung fällt — mit Messung, nicht mit
+Spott) oder ein Pfeil (neue Physik). Die klassischen Fälle (Mond → Gezeiten **gemessen**;
+Mond → Verhalten, Planeten → Erdbeben/Wetter, Sternbilder → Charakter, Himmel → Krankheit,
+kosmische Strahlung → Leben **ungemessen**) sind die bekanntesten Einträge dieses Zensus —
+nicht seine Grenze.
 
 ## Gleichungsmaschine oder Instrument
 
