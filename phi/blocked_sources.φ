@@ -81,7 +81,7 @@ note MAP-Grid RST (DMap) — gemessen 2026-10-04: MAP nur als Globus-/BAS-/NSSC-
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO ACS — 2026-10-05: Arm steht (pds4.rs base16 Group_Field_Character + parse_label_for_file). Asset ...4140....tab 543800 B sha256 465f3c07…; EC-ROW_DATA = 1280 u16 counts, keine Geom.-Spalten. Feld ROW_DATA em count; Reg. Mycelium.
+note ExoMars TGO ACS — 2026-10-05: Arm steht (pds4.rs base16 Group_Field_Character; 1280 Rep. → indizierte ROW_DATA_0000..1279; End-to-End 200 rows). Asset 543800 B sha256 465f3c07…; keine Geom.-Spalten. Feld ROW_DATA_{i} em count; Reg. Mycelium.
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
