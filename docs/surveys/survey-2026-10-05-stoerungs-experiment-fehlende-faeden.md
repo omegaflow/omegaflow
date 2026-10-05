@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: ae7ba8d8a1a0952f22f2a3426c86b31332385e2581c43d7a63c3875ba54b1c63
+  sha256: 2970011ca407f7838e47fd4d2451ff09d0036e35dd89524a156e36edf7a7963d
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/handover-2026-10-05-river-folge93.md
 -->
@@ -61,7 +61,7 @@ Taucher-gemessen am 2026-10-05 (`archive_search --verdict/--sniff`, Register via
 | Gravimetrie IGETS/BGI | `sources.φ:9528` / `blocked:166` | `isdc.gfz.de` / `api.sedoo.fr/get-agrav-rest/` | sftp-Account / frei | ASCII/JSON | IGETS gebaut; BGI Mycelium-Arm |
 | Wetter ERA5 / GFS | descoped (`declined:1279`, `noaa_nodd_disposition:254`) | `cds.climate.copernicus.eu` / `nomads.ncep.noaa.gov` | Key / frei | GRIB/NetCDF | **Modellprodukt** — kein Messfaden (§3) |
 | Blitze GLM (GOES) | `sources.φ:9732` (nur 18) | `noaa-goes{16,18,19}.s3.amazonaws.com/GLM-L2-LCFA/` | frei (S3) | NetCDF, ~20 s | 16/17/19 ergänzen |
-| Blitze MTG-LI (Europa) | nein | `data.eumetsat.int` / `api.eumetsat.int` | EUMETSAT-Account | NetCDF, 10 min | Kandidat |
+| Blitze MTG-LI (Europa) | nein | `data.eumetsat.int` / `api.eumetsat.int` | EUMETSAT-Account | NetCDF, 10 min; L2-ID **`EO:EUM:DAT:0687`** (LI Accumulated Flash Area; gemessen 2026-10-05) | Kandidat |
 | Blitz Asien/Pazifik | nein | keine offene Quelle gemessen | — | — | benannte Lücke |
 | Aerosol/Radiosonden IGRA2 | nein | `ncei.noaa.gov/products/.../integrated-global-radiosonde-archive` | frei | CSV/NetCDF | Bonus, in-situ |
 
@@ -105,6 +105,13 @@ Kopplung** und sind als Stör-Treiber, nie als unabhängiger Zeuge zu behandeln.
 - Taucher A–E (flash, gemessen 2026-10-05): Register + `archive_search --verdict/--sniff`.
 - UI z.ai GLM-5.3 Deep Think Max, claude.ai Sonnet 5.5 Extra hoch: vollständige Tabellen +
   Ranking; **Claude ohne Live-Requests** („aus dem Gedächtnis"/„ungeprüft" markiert).
+- GLM-Nachfrage „mit echter websuche" = **gemessene Nicht-Suche:** GLM-5.3 erklärt in diesem
+  Chat, es habe **kein Web-Tool** und verweigert simulierte Suchergebnisse; die Nachlieferung
+  ist ungeprüftes Trainingswissen mit ✅/⚠️/▲-Marken. Ihre neuen Endpunkt-Hinweise wurden
+  live verifiziert (2026-10-05, `archive_search --verdict`): INTERMAGNET-GitHub lebt
+  (neben `imag-data.bgs.ac.uk`), GFZ `isdc` + `dataservices` beide 200, CDDIS-IONEX 200,
+  EUMETSAT LI-L2 = `EO:EUM:DAT:0687`. **Widerlegt:** `registry.opendata.aws/era5/` = HTTP 404
+  (kein key-freier ERA5-Datensatz dort); CODE/AIUB `ftp`+`https` kein Response (pending/tot).
 - Kimi K3 via `tryingopen.com`: **`This site has run out of API credit`** — kein Ergebnis.
 - API-Flotte: `zai glm-4.5-flash` + `gemini-2.5-flash` (Breite, halluzinationsanfällig:
   erfundene GeoNet-/NRCan-APIs — am Baum widerlegt).

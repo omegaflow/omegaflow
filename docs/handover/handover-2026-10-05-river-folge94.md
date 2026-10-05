@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: 31e8a78caa7b485b1626f901212961c84371ac54eaf26570241a1119cb3fa524
+  sha256: 7ebb0bea2214dcff6146452764e47e7ed0e39645cca4e41d9c80abfcc2178ec1
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -51,6 +51,7 @@ Wort | Datum | Quelle
 „Erste Handlung: `sread docs/concepts/tool-forms.md` …" | 2026-10-05 | Operator (Session, River 93) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „ich habe eine vision: … recherche und auswertung mit flash tauchern und funktionierenden freien tauchern und den drei UI Chat stimmen … wie wir die fehlenden fäden bekommen" | 2026-10-05 | Operator (River 94) — Wort für UI-Trio (per-Akt) + freie Taucher; Quelle `state/operator-gespraeche/2026-10-05-river.md`
 „aber das möchte ich erreichen ich möche an jedem punkt einen stein ins wasser fallen lassen und schauen was passiert" | 2026-10-05 | Operator (River 94) — Störungs-Experiment (der Stein = `field_te_query`)
+„ich habe glm nochmal mit websuche gestartet" | 2026-10-05 | Operator (River 94) — GLM-Nachfrage; gemessen: GLM-5.3-Chat **kein Web-Tool** (ungeprüfte Trainings-Tabelle), neue Endpunkte live verifiziert
 
 ## Träger (Prosa, eigene)
 
