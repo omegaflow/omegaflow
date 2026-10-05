@@ -1,7 +1,7 @@
 <!--
   title: Architecture concept: "agnostic membrane" — continuous 4D field on a 2D membrane
   class: concept
-  sha256: 9fad3c16721b4cba3ac38992e983f1ae0f4bb1d8e6d16c9dd5026c32a1a69a54
+  sha256: 5c6dc0a438b0837b36770e7863a98ef25b5f9512e0a961c017ca668fdbb25eb5
 -->
 Deepseek Chat v4
 # Architecture concept: "agnostic membrane" — continuous 4D field on a 2D membrane
@@ -449,7 +449,7 @@ struct FieldSource {
     epoch: f32,           // relative to a reference epoch (precision!)
     tau: f32,
     extent: f32,
-    kernel_id: u32,       // 0-6
+    kernel_id: u32,       // 0,1,3,4,5,6 (id 2 retired)
     force_type: u32,      // 0-8 → channel index
     velocity: vec3<f32>,
     pole: vec3<f32>,
@@ -509,7 +509,7 @@ for i in 0..source_count:
 textureStore(field_tex, grid_pos, vec4(Ω, gradient_mag, channel, 1.0))
 ```
 
-**Kernel dispatch:** a `switch(kernel_id)` with 7 cases. No dynamic-branching nightmare, because within a workgroup typically **all sources take the same path** (the loop iterates over sources, not over kernel types). The divergence is **per loop iteration**, not per pixel.
+**Kernel dispatch:** a `switch(kernel_id)` with 6 cases (id 2 retired). No dynamic-branching nightmare, because within a workgroup typically **all sources take the same path** (the loop iterates over sources, not over kernel types). The divergence is **per loop iteration**, not per pixel.
 
 **Optimization: tiling.** With >50 sources: the workgroup loads 8-16 sources into `var<workgroup>` shared memory, evaluates all pixels against this batch, then the next batch. Reduces storage-buffer reads by a factor of 8.
 

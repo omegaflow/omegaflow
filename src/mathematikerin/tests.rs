@@ -2408,7 +2408,6 @@ fn kernel_omega(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorptio
     match kernel_id {
         0 => 1.0 / (d2 + e2),
         1 => (-d2 / (2.0 * e2)).exp() / (d2 + e2),
-        2 => (-d2 / (2.0 * e2.max(s2))).exp() / (d + s2.sqrt()),
         3 => erfc_approx(d / (perceptual_extent * std::f64::consts::SQRT_2).max(global_scale)),
         4 => (-d / perceptual_extent.max(global_scale)).exp(),
         5 => {
@@ -2446,11 +2445,6 @@ fn kernel_omega_grad(
         1 => {
             let denom = d2 + e2;
             -(-d2 / (2.0 * e2)).exp() * d * (denom / e2 + 2.0) / (denom * denom)
-        }
-        2 => {
-            let e = e2.max(s2);
-            let denom = d + s2.sqrt();
-            -(-d2 / (2.0 * e)).exp() * (d / e * denom + 1.0) / (denom * denom)
         }
         3 => {
             let scale = (perceptual_extent * std::f64::consts::SQRT_2).max(global_scale);
@@ -2495,7 +2489,7 @@ fn r_struct_is_finite_and_positive_for_every_kernel_form() {
     let extent = 1.0;
     let global_scale = 1e-2;
     let absorption = 0.5;
-    for kernel_id in 0..=6u8 {
+    for kernel_id in [0u8, 1, 3, 4, 5, 6] {
         for d in [2.0_f64, 4.0, 8.0] {
             let r = r_struct(kernel_id, d, extent, global_scale, absorption)
                 .expect("R_struct is defined for d > 0");

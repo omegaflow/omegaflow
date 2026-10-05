@@ -3,7 +3,7 @@
   session: River-Folge 92
   class: handover
   date: 2026-10-05
-  sha256: a816a17d1992688a4906fb8b2cc89546c04dbcb49943ba16cfc29b9e4fea95be
+  sha256: d155f727992e5dad105859f634ede15cb4e7d2a0031b1937dd9b3353311c6493
   status: live
 -->
 # Handover — River-Folge 92 (2026-10-05)
@@ -48,6 +48,7 @@ Wort | Datum | Quelle
 „Physik-Review des Archivar-Datenlayers" — „ich würde dich gerne 1-5 umsetzen lassen" | 2026-10-05 | Operator (Session) — C3/C4-Verdikt + Formel-Fix; Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
 „Membran-Review" — „kannst du die membran nochmal mit der gleichen intensität analysieren?" / „kannst du bitte alles fixen?" | 2026-10-05 | Operator (Session) — Doku-Risse geheilt, Urteilsfälle (Overflow, Tolman, Waisen-Kernels) registriert; Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
 „Overflow-Erreichbarkeit messen" — „kannst du das bitte messen?" | 2026-10-05 | Operator (Session) — Ergebnis: Retention-Gate cappt `age ≤ ttl·64` → kein f32-Overflow, Punkt geschlossen (Entscheidungen); Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
+„Kernel 2 entfernen" — „dann entfernen" | 2026-10-05 | Operator (Session) — toter Kernel 2 (`gaussian-inverse`) aus WGSL + Parser + Tests entfernt; Quelle `state/operator-gespraeche/2026-10-05-review-physik.md`
 
 ## Träger (Prosa, eigene)
 
@@ -87,14 +88,9 @@ Origin: river folge92.
 - **Blockade:** keine
 - **Braucht:** Entscheidung — sind die Omegaflow-em-Quellen mit z>0 Punkt- oder Flächenquellen? Danach den Exponenten je Klasse setzen.
 
-### Waisen-Kernels 2 und 6 (offen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keiner
-- **Lage:** (gemessen 2026-10-05, `general`) `kernel_id 2` (gaussian-inverse) und `6` (inverse-linear) haben kein zugeordnetes Feld (`src/mathematikerin/force.rs`) und keine physikalische Standard-Entsprechung.
-- **Blockade:** keine
-- **Braucht:** entfernen oder einem Feld zuordnen.
-
 ## Entscheidungen (kein Offen)
+
+- **Kernel 2 (`gaussian-inverse`) entfernt; Kernel 6 (`inverse-linear`) lebt (gemessen 2026-10-05).** `gaussian-inverse` war ein toter Zweig — kein Feld, kein Compiler, keine Kraft benutzte ihn (nur Parser-Map + ein Test) — und zugleich eine Fußangel: die Ein-Wort-Nähe zu `gaussian-inverse-square` hätte einen Tippfehler **still** auf ein anderes Gesetz (1/r statt 1/r²) gemappt. Entfernt: die Name→ID- und ID→Name-Mappings (`extract.rs:1331-1341`, `port.rs:1628-1638`), beide WGSL-Branches (`shaders.rs` `field_spatial` + `field_spatial_grad`), die Test-Zeile (`archivar/tests.rs:4719`) und die Rust-Spiegel-Äste; die IDs 3–6 bleiben unverändert (Lücke bei 2) — eine künftige `gaussian-inverse`-Deklaration wird jetzt **namentlich abgewiesen**. Kernel 6 lebt: `phi/sources.φ:17762-17764` deklariert ihn für drei LAS-Koordinatenfelder (1/r-Punkt-Streuung für Koordinaten, kein Feldgesetz). `cargo check` 0/0; Test-/Shader-Lauf über CI.
 
 - **Zeit-Faltung-Overflow — nicht erreichbar (gemessen 2026-10-05).** Das Retention-Gate weist jede Probe mit `age > ttl·64` ab (`fetch.rs:540`, `spatial.rs:684/864`, `main_flow.rs:5732`); admittierte Proben erfüllen also `corr = min(temporal, d/v) ≤ temporal ≤ 64·ttl`, mithin `corr/ttl ≤ 64 < 88,7` → `exp(+corr/ttl) ≤ e⁶⁴ ≈ 6,2e27 < f32-max (3,4e38)`. Die Sternklasse trägt `ttl = rec.tau = 1e10 yr · lum^(−5/7)` (`spatial.rs:613,624`): Sonne ≈ 3,2e17 s, heller Stern (lum 1e6) ≈ 1,6e13 s — gegen `temporal = |now − J2016-Epoch| ≈ 3,2e8 s`, also `temporal/ttl ~ 5e-5`. Der Zwischen-Exponent (`shaders.rs:116`) überläuft **nicht**; der `retarded_decay`-Refactor ist nicht zur Korrektheit nötig. Die zwei Schritte heben sich netto korrekt auf (`= val·exp(−retarded/ttl)`, = Rust `spatial.rs:743`); die Doc-Seite (`wgsl-shader.md:501`) war die falsche Seite und ist geheilt.
 
