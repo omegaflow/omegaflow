@@ -1,7 +1,7 @@
 <!--
   title: Architecture concept: "agnostic membrane" — continuous 4D field on a 2D membrane
   class: concept
-  sha256: 5c6dc0a438b0837b36770e7863a98ef25b5f9512e0a961c017ca668fdbb25eb5
+  sha256: 255719b95123288b6c48623e26cc6b3d21679b91dc64db1ab93fc83be4d766f8
 -->
 Deepseek Chat v4
 # Architecture concept: "agnostic membrane" — continuous 4D field on a 2D membrane
@@ -502,6 +502,11 @@ for i in 0..source_count:
     
     // kernel dispatch (switch instead of function pointer)
     contribution = evaluate_kernel(src.kernel_id, d, src) * decay * src.val
+    
+    // em aperture (force_type 0, z>0): the point-source law (1+z)⁻² — bolometric photon rate × energy;
+    // the surface-brightness class (1+z)⁻⁴ has no admitted flux field (Council 2026-10-05)
+    if src.force_type == 0 and src.z > 0:
+        contribution *= 1.0 / ((1.0 + src.z) * (1.0 + src.z))
     
     // additive superposition
     Ω += contribution

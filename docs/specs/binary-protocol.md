@@ -1,7 +1,7 @@
 <!--
   title: Binary Protocol — v9
   class: concept
-  sha256: 223b00e7003aad2f6b5fe021724796828822571ccbaabb54c2bbbf8ae9b1fa3f
+  sha256: 23a2d39a422ae662d8450f2892d420bcec4ad424c2e4fa054358b49947a4995e
   status: live
 -->
 # Binary Protocol — v9
@@ -40,7 +40,7 @@ Header total: 19 bytes.
 | 12 | vx | oscillator velocity X (m/s) |
 | 13 | vy | oscillator velocity Y (m/s) |
 | 14 | vz | oscillator velocity Z (m/s) |
-| 15 | pole_x | pad (Atom 7: always 0.0 for gravity — the form belongs to the anchor, not the measurement; 0 honored); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as Tolman dimming (1+z)⁻⁴ |
+| 15 | pole_x | pad (Atom 7: always 0.0 for gravity — the form belongs to the anchor, not the measurement; 0 honored); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as the em point-source aperture (1+z)⁻² (bolometric photon rate × energy); the surface-brightness class (1+z)⁻⁴ has no admitted flux field (Council 2026-10-05) |
 | 16 | pole_y | pad (always 0.0 — Atom 7) |
 | 17 | pole_z | pad (always 0.0 — Atom 7) |
 | 18 | j2 | pad (always 0.0 — Atom 7: no multipole moments on the wire) |
@@ -152,7 +152,7 @@ No magic/version bytes in the query frame.
 - `field`: Float32Array(oscCount × 12) = `[x_rel, y_rel, z_rel, val, t, ttl, force_type, absorption, advection, vx, vy, vz]`
 - `meta`: Float32Array(oscCount × 16) = `[extent, tau, kernel_id, z|0, pole_x, pole_y, pole_z, j2, j4, r_eq, color_index, freq, bin_width, phase, presence, 0]`
 
-`meta[3]` carries the Tolman redshift z when force_type == 0 (from slot 15), else 0.0 — identical on the Rust side (`pack_window`) and the JS side. `meta[13]` = phase, `meta[14]` = presence (from slots 24/25); `meta[15]` is stride padding.
+`meta[3]` carries the em-source redshift z when force_type == 0 (from slot 15), else 0.0 — identical on the Rust side (`pack_window`) and the JS side. `meta[13]` = phase, `meta[14]` = presence (from slots 24/25); `meta[15]` is stride padding.
 
 Version checks (both must be `9`): `constants.js` record parse (`bytes[2] !== 9 → throw`) and `index.html` WS onmessage (`buf[2] !== 9 → return`). No legacy read mode — both sides grow in the same commit.
 
