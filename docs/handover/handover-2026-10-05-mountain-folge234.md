@@ -3,7 +3,7 @@
   session: Mountain-Folge 234
   class: handover
   date: 2026-10-05
-  sha256: fa18d275ee43a98353f8dd699753b1806daaceac4035ef4d8d807080ff673e65
+  sha256: 662828ff2e3d632831a5d3d8dd496712b493056e7284f62deb749260b711fea9
   status: live
 -->
 # Handover — Mountain-Folge 234 (2026-10-05)
@@ -19,9 +19,9 @@ declustered Mainshock-Set maßen gegen eine im Baum erledigte Prämisse; der
 Medizin-Pool war disponiert. **Korrektur der eigenen Übergabe (Operator-Frage zu
 `.secrets.local`):** EMM und LEOS waren als „Operator-Hand" geerbt — die Keys
 sind da; EMM ist gemessen und gefixt, LEOS gemessen + descoped, iEEG wartet auf
-Server-Kapazität, konverter bleibt ein echter Format-Gap.
+Server-Kapazität, konverter bleibt ein echter Format-Gap. Mountain 235: EMM-Feld-Verdikt per Rat (Bildquelle ohne `field`), ExoMars-base16-Arm gebaut, drei EMM-Compiler-Risiken geheilt.
 
-## Burn: open 0.005 · close 0.44 · cap 0.48 Grund: Runde flash-first — Line + 1 Rat (gras-2c) + 7 grind-flash/general (WQP×2, Probes, Weberin, EMM, LEOS, konverter), kein pro/max
+## Burn: open 0.005 · close 0.20 · cap 0.25 Grund: Runde flash-first — Line + 2 Rat (gras-2c, EMM) + 8 grind-flash/general (WQP×2, Probes, Weberin, EMM, LEOS, konverter, ExoMars), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -43,6 +43,8 @@ Wort | Datum | Quelle
 „kannst du bitte deine punkte erledigen?" | 2026-10-04 | Operator (future-177)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-05 | Operator (Session, Mountain 234)
 „was fehlt hast du in die secrets local geschaut?" — vorhandene Keys nutzen; kein „Operator-Hand" ohne Messung | 2026-10-05 | Operator (Session, Mountain 234)
+„braucht es max?" — flash-first erneut bestätigt; ExoMars-Parser per grind-flash gebaut | 2026-10-05 | Operator (Session, Mountain 235)
+„ExoMars ROW_DATA base16 … EMM DN-Bild ≠ Skalarserie" — Parser bauen, Feld-Verdikt per Rat, drei Compiler-Risiken heilen | 2026-10-05 | Operator (Session, Mountain 235)
 
 ## Offen (aufgeschlüsselt)
 
@@ -68,11 +70,14 @@ Wort | Datum | Quelle
 
 Origin: mountain folge234.
 
-- **EMM (Verdikt: Bildquelle ohne `field`):** L2a = Bild (256×192 DN), kein Skalarfeld → analog `hips_png` als Bildquelle ohne `field`-Zeilen führen. Arm gefixt (fremde Hand, Grenze benannt): `emm_sdc_compiler.rs` las den **abwesenden** Key `EMM_COGNITO_REFRESH_TOKEN`; korrekt ist `EMM_COGNITO_REFRESH` (Grant 200); moderne API `/v1/science/files`, exi/l2a, Zip-aus-FITS-Member. **Block:** `emm-sdc-cdn.yml` ist stale — ruft `--data-level l2` (nicht `l2a`), keine Datums-Range, Idempotenz-Asset `emm_exi_l2.tar`, alter Keyname. Bitte Workflow angleichen, dann `format emm_exi` (`at mars`, ttl 604800) + Manifestation.
+- **EMM (Rat-Verdikt: Bildquelle ohne `field`):** L2a = Bild (256×192, DN), kein Skalarfeld → `hips_png`-Form, kein `field`. Compiler-Risiken geheilt: deterministische Auswahl (sortiert), `--id`/`--limit`, Aggregat-Refusal, Token-Refresh auch im Asset-URL-Pfad. **Block für dich:** `emm-sdc-cdn.yml` angleichen (l2a, Datums-Range, Keyname, Asset), Frame-Bundle-Arm bauen (das Format-Token braucht einen Loader-Arm wie `hips_png` in `main_flow.rs`), dann `format emm_exi_l2a`-Block (`at mars`, ttl) + Manifestation.
 - **WQP-Re-Harvest:** `src/archivar/wqp_result.rs` liest die lange WQP-Vokabel und normalisiert `deg F`→`deg C`, `uS/cm @25C`/`umho/cm`→`uS/cm`; `wqp_result_compiler.rs` fragt dieselben langen Namen; die `origin`-Zeile (`sources.φ:678`) wurde mitgekoppelt (Mycelium-Direktive, fremde Hand in diesem Atom — Grenze benannt). Offen: `wqp_result.csv.zip` mit der alten Query re-harvesten (das alte Asset trägt die 4 langen Komponenten nicht) + manifestieren.
 - **`goes_euvs`-Alt-Asset** auf `ssd.jpl.nasa.gov` ist nach dem `ncei.noaa.gov`-Alignment ein Orphan — `cdn_reconcile`-Disposition.
 - **BGI AGrav** (`phi/blocked_sources.φ:168`, Verdikt `inverse-square gravity m/s2`) und **C9/CEEIN-Infraschall** (`:172`, Verdikt `gaussian-inverse-square acoustic Pa`) warten auf Arm + Manifestation; C9 HTTP-only, Archiv endet ~2023-10-30.
 - **Tianwen-1 MoRIC** (CDS HiPS, `blocked_sources.φ:107`) — Tree-Ernte + CDN offen.
+- **ExoMars TGO ACS — Arm steht:** base16-`Group_Field_Character`-Decoder in `pds4.rs` gebaut (flash); Asset `acs_raw_sc_nir_…4140….tab` 543800 B sha256 `465f3c07…`; EC-ROW_DATA = 1280×u16 counts, keine Geometrie-Spalten im Label. Feld-Verdikt `ROW_DATA em count`. Registrierung (`format pds4_fixed_width`, url/compiler, `at mars`) + Manifestation.
+- **1-min-`dB/dt`-Arm (river-92):** `intermagnet_dbdt_compiler.rs:238-246` um `--grain minute` erweitern; Quelle HAPI `PT1M`; Grundlage `docs/blatt/fruehwarnsystem-praeregistrierung.md:26` + `docs/paper/gic-causal-driver.md` §3.1/§5.
+- **superdarn Re-Tag (future-179):** `blocked_sources.φ:78` trägt `blocked account [future]`, der Zugang liegt via `GLOBUS_ID_USER/PASS` vor (`wartend.φ:8`) → Mycelium-Schritt, Tag korrigieren.
 
 ### Aus folge233 noch offen
 
