@@ -366,7 +366,10 @@ fn expand_group(group: &XElem, parent_base: usize, out: &mut Vec<Pds4Column>) {
     for i in 0..repetitions {
         let repetition_base = base + i * stride;
         for field in &fields {
-            if let Some(column) = group_column(field, repetition_base) {
+            if let Some(mut column) = group_column(field, repetition_base) {
+                if repetitions > 1 {
+                    column.name = format!("{}_{i:04}", column.name);
+                }
                 out.push(column);
             }
         }
@@ -1373,15 +1376,15 @@ mod tests {
         assert_eq!(meta.columns[0].name, "FRAME");
         assert_eq!(meta.columns[0].start_byte, Some(1));
         assert_eq!(meta.columns[0].bytes, Some(2));
-        assert_eq!(meta.columns[1].name, "SPEC");
+        assert_eq!(meta.columns[1].name, "SPEC_0000");
         assert_eq!(meta.columns[1].start_byte, Some(3));
         assert_eq!(meta.columns[1].bytes, Some(2));
-        assert_eq!(meta.columns[2].name, "COUNT");
+        assert_eq!(meta.columns[2].name, "COUNT_0000");
         assert_eq!(meta.columns[2].start_byte, Some(5));
         assert_eq!(meta.columns[2].bytes, Some(1));
-        assert_eq!(meta.columns[3].name, "SPEC");
+        assert_eq!(meta.columns[3].name, "SPEC_0001");
         assert_eq!(meta.columns[3].start_byte, Some(7));
-        assert_eq!(meta.columns[4].name, "COUNT");
+        assert_eq!(meta.columns[4].name, "COUNT_0001");
         assert_eq!(meta.columns[4].start_byte, Some(9));
         let (rows, skipped, trailing) = decode_rows(b"12A100B210", &meta).expect("rows");
         assert_eq!(rows.len(), 1);
@@ -1405,7 +1408,7 @@ mod tests {
         assert_eq!(meta.columns.len(), 1295);
         assert_eq!(meta.columns[0].name, "INSTRUMENT");
         assert_eq!(meta.columns[12].name, "SIZE");
-        assert_eq!(meta.columns[13].name, "ROW_DATA");
+        assert_eq!(meta.columns[13].name, "ROW_DATA_0000");
         assert_eq!(
             meta.columns[13].data_type.as_deref(),
             Some("ASCII_Numeric_Base16")
@@ -1413,7 +1416,7 @@ mod tests {
         assert_eq!(meta.columns[13].start_byte, Some(136));
         assert_eq!(meta.columns[13].bytes, Some(2));
         assert_eq!(meta.columns[13].unit, None);
-        assert_eq!(meta.columns[1292].name, "ROW_DATA");
+        assert_eq!(meta.columns[1292].name, "ROW_DATA_1279");
         assert_eq!(meta.columns[1292].start_byte, Some(2694));
         assert_eq!(meta.columns[1293].name, "STATUS");
         assert_eq!(meta.columns[1294].name, "CRC");
