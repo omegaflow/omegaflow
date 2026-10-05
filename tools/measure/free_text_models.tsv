@@ -20,3 +20,6 @@ groq	whisper-large-v3	https://api.groq.com/openai/v1	GROQ_API_KEY	http	eligible
 groq	whisper-large-v3-turbo	https://api.groq.com/openai/v1	GROQ_API_KEY	http	eligible
 kilo	z-ai/glm-5.2:free	https://api.kilo.ai/api/gateway	KILO_API_KEY	http	eligible
 openrouter	z-ai/glm-5.2:free	https://openrouter.ai/api/v1	OPENROUTER_API_KEY	http	eligible
+zai	glm-4.5-flash	https://api.z.ai/api/paas/v4	ZAI_API_KEY	http	eligible
+zai	glm-4.6v-flash	https://api.z.ai/api/paas/v4	ZAI_API_KEY	http	eligible
+zai	glm-4.7-flash	https://api.z.ai/api/paas/v4	ZAI_API_KEY	http	eligible
