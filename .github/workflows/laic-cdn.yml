@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   laic-harvest-compile-upload:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 720
     env:
       GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}

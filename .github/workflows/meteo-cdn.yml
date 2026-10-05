@@ -20,7 +20,7 @@ env:
 
 jobs:
   meteo-harvest-upload:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v7

@@ -16,7 +16,7 @@ env:
 
 jobs:
   planeto-epncore:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7

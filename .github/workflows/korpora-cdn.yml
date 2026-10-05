@@ -12,7 +12,7 @@ env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
 jobs:
   korpora:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     steps:
       - uses: actions/checkout@v7
       - name: Manifest the redistribution-cleared catalog corpora to the CDN
