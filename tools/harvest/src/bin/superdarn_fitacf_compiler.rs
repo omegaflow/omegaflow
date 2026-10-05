@@ -11,7 +11,7 @@ use std::fs;
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-const NETLOC: &str = "zenodo.org";
+const NETLOC: &str = "sdc-serv.usask.ca";
 
 const FITACF_ZENODO: &str = "18525142";
 const FITACF_DAY: &str = "20191113";
