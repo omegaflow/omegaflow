@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: 3cf4cf4db21d397e753d999b94364ec845fb3963da85f166518f71794d9f71b4
+  sha256: d7a5799b43d517e6952af19ba21436473dc400e44d0907f421fe0d5a437f1915
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -141,6 +141,13 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Lage:** (gemessen 2026-10-05) `state/future/exposom-matrix-2026-10-04.md` (16 Klassen); WQP+EEA-noise-Arme gebaut; übrige Domänen-x ohne `sources.φ`-Zeile; Matrix-Lauf (Workflow + `.te` je Klasse) `pending`.
 - **Blockade:** keine.
 - **Braucht:** s. `## An mountain`.
+
+### Orphan-Docs — Survey-Träger (future-179)
+- **Status:** eigen
+- **Trigger:** Klassen-Zensus über die 315 Workflows
+- **Lage:** (gemessen 2026-10-05) `register_lookup --orphan-docs` = 2 (`docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`, `docs/surveys/survey-2026-09-03-orphan-verdicts.md`); offen laut Survey: Klassen-Zensus über die 315 Workflows + Step 5 (CDN-kanonisch, `orphan-verdicts.md:100-101`).
+- **Blockade:** keine
+- **Braucht:** Klassen-Zensus + Step 5 als nächster Schritt; die zwei Surveys tragen ihren offenen Marker bis dahin.
 
 ## Adressierte Blöcke — gefaltet (2026-10-05)
 
