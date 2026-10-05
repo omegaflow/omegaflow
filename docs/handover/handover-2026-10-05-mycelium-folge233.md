@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: 3bb9c1ccf832b1777aa39b067941e2287fb0758f5aeedbeff7bc5a47010e6c3f
+  sha256: 1114be87a0df9e06d7d550fa80714f3f3e196099081c828c8a2e0e46ba2b9394
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -116,6 +116,41 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** `--grain minute`-Arm (Mountain).
 - **Braucht:** nach dem Arm `abk_dbdt_1m.bin` ernten + Register-Zeile + CDN.
 
+### self-hosted Runner `t420` — CI-Routing (sensory-233, Operator-Wort 2026-10-05)
+- **Status:** eigen
+- **Trigger:** Test-Lauf grün → Restwelle routen
+- **Lage:** (gemessen 2026-10-05) Runner `t420` online/idle, Labels `self-hosted, Linux, X64` (`gh api .../actions/runners`); zweiter Runner `demeter-residential` (eigenes Label). Erste Welle geroutet: `superdarn-fitacf-cdn`, `clpds-cdn`, `fmi-gic-cdn`, `openneuro-cdn`, `supermag-magstid-cdn`, `emm-sdc-cdn`, `wqp-cdn`, `eea-noise-cdn`, `acs-nir-cdn`, `nvss-cdn` → `runs-on: [self-hosted, Linux]`. Erster Test-Dispatch: `superdarn-fitacf-cdn` (Idempotenz-Skip, minimal).
+- **Blockade:** keine.
+- **Braucht:** Test-Log lesen (`ci_manage log <id>`); fehlende Host-Tools (z. B. `jq`, `gh`) benennen → ggf. nachinstallieren lassen; danach die übrige `*-cdn`-Klasse routen (Multi-Job-Riesen wie `volume-cdn` ausgenommen; `ci-check` bleibt `ubuntu-latest`).
+
+### FMI-IMAGE-Magnetometer image-cdn (mountain-236)
+- **Status:** wartend
+- **Trigger:** Mountains `image_mag_compiler.rs` + `sources.φ:27042-27048` committet
+- **Lage:** (gemessen 2026-10-05) Arm + Register gebaut, aber **uncommittet** im Working Tree (fremde Hand); Asset-Ziel `fmi_image_mag_nur.bin` auf Release `space.fmi.fi`.
+- **Blockade:** Compiler/Register nicht im getrackten Baum.
+- **Braucht:** nach Mountains Commit `image-cdn.yml` (Muster `fmi-gic-cdn.yml`) schreiben + dispatchen.
+
+### IERS EOP C04 LOD — Manifestation (mountain-236)
+- **Status:** wartend
+- **Trigger:** `iers_eop_c04_compiler.rs` + `sources.φ:27050-27053` committet
+- **Lage:** (gemessen 2026-10-05) Arm + Register gebaut, **uncommittet** im Working Tree.
+- **Blockade:** Compiler/Register nicht getrackt.
+- **Braucht:** nach Commit CDN-Workflow + Dispatch.
+
+### gbco axis-value Serie — Manifestation (mountain-236)
+- **Status:** wartend
+- **Trigger:** `gbco_series_compiler.rs` committet
+- **Lage:** (gemessen 2026-10-05) Compiler gebaut, **uncommittet** (`?? tools/harvest/src/bin/gbco_series_compiler.rs`); Ziel `gbco_elevation_gebco_{2023,2026}.txt` auf `data.ceda.ac.uk-gebco`.
+- **Blockade:** Compiler nicht getrackt.
+- **Braucht:** nach Commit Workflow + Dispatch.
+
+### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*` (future-181)
+- **Status:** eigen
+- **Trigger:** Assets am CDN erreichbar → `archive_search --sniff <url>`
+- **Lage:** (gemessen 2026-10-05, future) `membrane.html` hängt bei „anchoring bodies…"; `/dr3_stars.bin` und `/ephemeris_de440_*.bin` kommen nicht durch. Die Membran ist der Operator-Türöffner vor jeder Bewerbung.
+- **Blockade:** keine (Ursache offen).
+- **Braucht:** die Asset-URLs am CDN prüfen (`gh release view`, `archive_search --verdict`/`--sniff`); Route/Origin gegen `sources.φ` und `pages-deploy.yml` abgleichen.
+
 ### FMI-GIC NUR-Harvest (river-93) — SuperMAG-Kette mit Station NUR
 - **Status:** eigen
 - **Trigger:** `gh workflow run supermag-magstid-cdn.yml` mit `start=1999-01-01T00:00:00`, `--station NUR`, Budget genug für die Live-Stationsliste
@@ -139,9 +174,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Adressierte Blöcke — gefaltet (2026-10-05)
 
-- **future-180:** Exposom-Matrix (eigener Punkt); Matrix-Lauf `pending`; Tavily-Quota 80 % (Fallback `--mwmbl`/`--marginalia`); Orphan-Docs = 0 (aufgelöst).
-- **mountain-235:** EMM-`emm-sdc-cdn.yml` (Workflow steht, Loader-Arm → River); WQP-Re-Harvest (Registrierung = Mountain, Ernte = Mycelium); `goes_euvs`-Alt-Asset-Orphan (widerlegt, s. Risiken); BGI AGrav `:166`/C9 `:170` (eigener Punkt); ExoMars ACS (eigener Punkt); FMI-GIC 1-min (eigener Punkt); superdarn (LOCK, s. dort); Tianwen-1 MoRIC (Riss = Mountain).
-- **river-93:** B-Membran `continue-on-error` (Verdikt: bleibt, sichtbar-nicht-blockierend — `## An river`); vier Serien-Assets (Routen: Witness-Epochen = River, gl30/SRTM15+/GHSL descoped); FMI-GIC 1-min (eigener Punkt); NUR-Harvest (eigener Punkt).
+- **future-181:** Exposom-Matrix (eigener Punkt); Matrix-Lauf `pending`; Tavily-Quota 80 % (Fallback `--mwmbl`/`--marginalia`); Membran-Assets (eigener Punkt).
+- **mountain-236:** FMI-IMAGE `image-cdn` (eigener Punkt, wartend auf Commit); IERS EOP C04 (eigener Punkt); gbco-Serie (eigener Punkt); EMM (eigener Punkt); superdarn (LOCK, s. dort).
+- **mountain-235:** EMM-`emm-sdc-cdn.yml` (Workflow steht, Loader-Arm → River); WQP-Re-Harvest (Registrierung = Mountain, Ernte = Mycelium); `goes_euvs`-Alt-Asset-Orphan (widerlegt, s. Risiken); BGI AGrav `:166`/C9 `:170` (eigener Punkt); ExoMars ACS (eigener Punkt); FMI-GIC 1-min (eigener Punkt); superdarn (LOCK); Tianwen-1 MoRIC (Riss = Mountain).
+- **river-94:** B-Membran `continue-on-error` (Verdikt: bleibt — `## An river`); FMI-GIC fine-grain + NUR (eigene Punkte); BGI/C9/nordische GIC-DB manifestieren + GOES-18-Bucket 16/19 (im `blocked_sources`-Träger); vier Serien-Assets (Witness-Epochen = River, gl30/SRTM15+/GHSL descoped).
+- **river-93:** B-Membran `continue-on-error` (Verdikt: bleibt); vier Serien-Assets; FMI-GIC 1-min; NUR-Harvest.
+- **sensory-233:** Runner `t420` online (Operator-Wort „die kostenlose variante") → CI-Routing als eigener Punkt, in diesem Atom erste Welle + Test-Dispatch.
 
 ## Risiken / offene Risse (gemessen, nicht geglättet)
 
