@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: b11eaf2338129488e15666a2718ce7632d8a30705222cc6ac8648650c407b213
+  sha256: 43fb7fe75fddd0ef70255d98348e6c98d48609b3d35c9209115d719e566092c3
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -596,13 +596,29 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   differs slightly between the annual and the n_surr = 100 runs (ABK 2024
   0.10557 vs 0.10746; ABK 2025 0.12136 vs 0.12802) — a run-to-run fam spread of
   the same round definition, named, not averaged.
-- **dB/dt is the induction driver, not the network current.** The FMI
-  Mäntsälä GIC series exists as a CDN asset (`fmi_gic.bin`,
-  `phi/sources.φ:8590`, parsed as `MAGIC_GIC`/`COMP_GIC_A` in
-  `src/archivar/geo.rs:7,56`), but it is hourly peak-magnitude buckets over
-  1999–2023 at 60.6° N, 25.2° E, and no co-located magnetogram (Mäntsälä
-  dB/dt) is in the stack; the paper measures the excitation at ABK/SOD, not
-  the current at Mäntsälä.
+- **dB/dt is the induction driver; the co-located magnetogram and the GIC
+  current are now available over 1999–2023.** The FMI Mäntsälä GIC series is a
+  CDN asset (`fmi_gic.bin`, `phi/sources.φ:17194`, parsed as
+  `MAGIC_GIC`/`COMP_GIC_A` in `src/archivar/geo.rs:7,277`); it currently carries
+  hourly peak-magnitude buckets. FMI publishes the same recordings as daily
+  ASCII files (`https://space.fmi.fi/gic/man_ascii/`, CC BY 4.0, confirmed by
+  Ari Viljanen 2026-10-05) over 1999–2023 at 60.6° N, 25.2° E; recording
+  stopped 2023-10-23, so the GIC current side cannot be matched to the paper's
+  2024/2025 solar-wind windows and must be measured on its own window. The FMI
+  page explicitly recommends comparing GIC with dB/dt at the closest
+  observatory **Nurmijärvi (NUR)**; NUR is carried by the IMAGE magnetometer
+  network (`https://space.fmi.fi/image/www/data_download.php`, 10 s, CC BY 4.0)
+  and is already a SuperMAG station (`phi/supermag_stations.φ:368`, 60.5° N
+  24.65° E), so a co-located magnetogram is obtainable through the existing
+  SuperMAG chain — the earlier "no co-located magnetogram" no longer holds. The
+  source carries its own caveats: the archive is non-uniform (pipeline
+  reconfigurations, a 2005 site shift), gap- and spike-laden, with best quality
+  1999–April 2005, and daily linear-trend subtraction is recommended. The
+  sub-daily dB/dt–GIC relation is therefore a named pending measurement, not yet
+  run; the empirical linear relation is quantified in Viljanen et al. (2025,
+  `https://doi.org/10.5194/angeo-43-271-2025`, Eq. 43/Table 1). The paper still
+  measures the excitation at ABK/SOD; the GIC-current side at Mäntsälä is now a
+  wired next step.
 - **Minute grain is a single 22-h window.** A storm-ensemble at minute
   resolution would require a minute-resolution retro solar-wind archive,
   which the stack does not carry (RTSW live holds ~1 day; the SWPC mirror
@@ -671,8 +687,9 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   carries this negative bias; the correction's floor is measured and stands
   (`TE_NEFF_THRESHOLD = 18.166` = the `kde_n_eff` at n = 800, `te-bias-n` run
   37234616152), but no reported value applies it yet — the wiring stays open.
-- **The calibrated round-maximum null is measured at Sodankylä 2024; the Abisko
-  pooled null stays incomplete.** The studentized Westfall–Young max-T
+- **The calibrated round-maximum null is measured at Sodankylä 2024 (α = 0.05)
+  and at all three station-years at α = 0.01; the Abisko void is closed.** The
+  studentized Westfall–Young max-T
   construction named at §3.2 now runs end-to-end
   (`tools/measure/src/bin/wy_max_t_probe.rs`, `.github/workflows/wy-max-t.yml`,
   CI run 37187464365, success on `ba9c640479`; nine shards of 1111 replicates
@@ -682,11 +699,21 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   family maximum is 10.18 — the family clears, with Bz→dB/dt, dB/dt→Bz,
   dB/dt→Speed and dB/dt→Density family-clearing (p_adj 1.0e-4, 1.0e-4, 1.1e-3,
   1.9e-3) and Speed→dB/dt, Density→dB/dt at the family bound; the operating
-  n_eff reads ≈ 44.5 for every member and the lag-0/1 identity check is 0. Both
-  Abisko points read `null-*.bin reads void — no measurement`: the pooled null
-  stays incomplete and no Abisko calibrated bound is claimed. The BCa
+  n_eff reads ≈ 44.5 for every member and the lag-0/1 identity check is 0. The
+  α = 0.01 calibrated round-maximum null (`bz-yearly-maxt.yml`, CI run
+  37187466569, success on `ba9c640479`; ten shards of 1000 replicates pooled
+  into B = 10000, m = 6 statistics, block = 24 h) completes the family at every
+  point: the pooled (1−α) quantile of the studentized maxima is 3.0964
+  (SOD 2024), 3.0490 (ABK 2024) and 3.0036 (ABK 2025), and the observed family
+  maxima are 10.181, 12.698 and 10.864 — the family clears at all three, with
+  the Bz→dB/dt statistic the family maximum (T_stud 10.181, 12.698, 10.864) and
+  the reverse dB/dt→Bz statistic smaller (6.091, 5.684, 2.324). The earlier
+  `null-*.bin reads void — no measurement` at Abisko was a missing pooled null,
+  not a station void: the pooled null is now complete. The BCa
   per-statistic interval is named `pending` (the joint-stationary jackknife is
-  not cheap). This replaces the plug-in `fam` bound (order 10⁻¹) for the
+  not cheap). The α = 0.05 Sodankylä round stays the calibration named for §3.2;
+  the two α levels are distinct and are not averaged. This replaces the plug-in
+  `fam` bound (order 10⁻¹) for the
   Sodankylä 2024 yearly round with a calibrated bound at α = 0.05; the plug-in
   rows of §4 remain the historical record.
 - **Storm-only sub-analysis is measured and stays `pending` on the Kp channel.**

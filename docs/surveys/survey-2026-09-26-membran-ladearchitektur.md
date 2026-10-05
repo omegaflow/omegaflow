@@ -2,7 +2,7 @@
   title: Survey — Membran-Ladearchitektur: Enclosure, Lichtkegel, Presence-Ausschnitt (Stand 2026-09-26)
   class: survey
   date: 2026-09-30
-  sha256: ea7246113faef565e7cc0172843e53048e5c23f66586f24999c77f0a854d9ad1
+  sha256: 888083a4c4756929cacfe347a4add5ba8e4df7e67845f04fa904da06a5ef791a
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/4d-membrane.md docs/handover/archiv/handover-2026-09-26-river-folge36.md docs/specs/causality-prefilter.md docs/specs/force-system.md
 -->
@@ -48,7 +48,7 @@ Kanon: alle Behauptungen mit `file:line` oder Quelle; nichts spekuliert.
   — ~1,7 Mio Sterne, jeden Frame. Das ist „die Membran lädt alles statt nur die
   Presence". Der O(N)-Treiber ist die **Iteration**, nicht die Gate-Reihenfolge.
 - Der Loop, gemessen: `ttl·64`-Gate (`:395`) → `signal_reach.is_none()` (`:398-408`)
-  → `propagation_speed` (`:409-417`) → floor-Gate (`:418-422`) → Tolman `(1+z)⁻⁴`
+  → `propagation_speed` (`:409-417`) → floor-Gate (`:418-422`) → em-Apertur `(1+z)⁻²`
   (`:423-428`) → **val-Gate VOR `motion.at`** (`:431`) → `motion.at` (`:434`) →
   Quergate `val_eff/(transverse²+scale²) < floor` (`:453-456`).
 - **Bounded** (endlicher extent): Asteroiden/Kometen `radius_km·1000`
@@ -83,7 +83,7 @@ Kanon: alle Behauptungen mit `file:line` oder Quelle; nichts spekuliert.
 ### 1.6 Kräfte und Dispersion
 - 9 Medien em 0 … electric 8 (`force.rs:3-31`); WGSL **kein `switch(force_type)`**:
   `PROPAGATION_SPEED[9]` (`shaders.rs:5-15`), Beer-Lambert-Absorption (gravity bypass
-  `:158-170`), Tolman nur em (`:188-191`); Kernel über `kernel_id`, nicht force.
+  `:158-170`), em-Apertur nur em (`:182-185`); Kernel über `kernel_id`, nicht force.
 - Dispersion = **gemessene Tabelle**, keine Formel: `v_freq_shelf.dat` (8 em-Zeilen
   v=c, 11 force-4-Rayleigh-Zeilen 2,90–3,74 km/s), CPU+GPU verdrahtet, Parity
   (`membrane.rs:693-711`). em-Verdikt `quell-seitig`; Rayleigh gebaut.
@@ -112,7 +112,7 @@ leitet abgeleitete ω()-Terme ab:**
 ## 3. Die Legacy-Funde — entscheidend
 
 - **`omegaflow-legacy/docs/TODO.md:2812-2850` (Atom 8, 2026-08-20):** die Sterne-
-  Diode. Stufe 1 val-Gate **vor** `motion.at` (`|val|·(1+z)⁻⁴ < ft_ref·2^(−expose_offset)`)
+  Diode. Stufe 1 val-Gate **vor** `motion.at` (`|val|·(1+z)⁻² < ft_ref·2^(−expose_offset)`)
   → `ft_ref==0` = dunkle Diode; Stufe 2 Quergate **nach** `motion.at`
   (`t² = d² − (fwd·(p−center))²`; `val_eff/(t²+scale²) < ft_ref·2^(−off)/scale²`).
   **Wörtlich:** *„die radiale d²-Formel des Auftrags war ein Physikfehler (kein
