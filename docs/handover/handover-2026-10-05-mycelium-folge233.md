@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: fab9df3ad9557c8ecbebbe959f3ac0c165d0444df409c1c0d4764efd5b9ca791
+  sha256: 673b311603084ce7f19bd11be6eac5da5806a0fed13303caffd2664e08f8ddf6
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -121,7 +121,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Trigger:** Register-Nachtrag der grünen Assets → Restwelle routen
 - **Lage:** (gemessen 2026-10-05, `gh api .../actions/runners` + `ci_manage list`) Runner `t420` online/idle, Labels `self-hosted, Linux, X64`; zweiter Runner `demeter-residential` (eigenes Label). Erste Welle auf `[self-hosted, Linux]` geroutet: `superdarn-fitacf-cdn`, `clpds-cdn`, `fmi-gic-cdn`, `openneuro-cdn`, `supermag-magstid-cdn`, `emm-sdc-cdn`, `wqp-cdn`, `eea-noise-cdn`, `acs-nir-cdn`, `nvss-cdn`. Re-Dispatch-Welle: **9 grün** (`superdarn-fitacf 37308653525`, `clpds 37308657967`, `fmi-gic 37308662286`, `openneuro 37308666588`, `supermag-magstid 37308670688`, `wqp 37308679629`, `eea-noise 37308684399`, `acs-nir 37308689319`, `nvss 37308693722`), **1 rot** (`emm-sdc 37308675343` → s. EMM-Punkt). Der erste Test-Lauf `37307154587` war an fehlendem `gh` gescheitert (`ensure release … gh absent`); Sensory hat `gh`/`jq`/`git`/`git-lfs` installiert.
 - **Blockade:** keine.
-- **Braucht:** die grünen Logs lesen → `sha256`/`url` nachtragen; dann die übrige `*-cdn`-Klasse routen (Multi-Job-Riesen wie `volume-cdn` ausgenommen; `ci-check` bleibt `ubuntu-latest`).
+- **Braucht:** Register-`sha256` der grünen Assets (WQP `97b6707b…`, EEA `30607524…`, `fmi_gic_1min.bin` `a30a846d…` in dieser Session nachgetragen; `clpds_annex.jsonl` + supermag-1999 + openneuro ds004100 = neue Blöcke → Mountain); dann die übrige `*-cdn`-Klasse routen (Multi-Job-Riesen wie `volume-cdn` ausgenommen; `ci-check` bleibt `ubuntu-latest`).
 
 ### FMI-IMAGE-Magnetometer image-cdn (mountain-236)
 - **Status:** wartend
@@ -210,6 +210,7 @@ Origin: mycelium-folge233. **Routed — nicht-eigen:**
 
 - **EMM `emm_exi_l2a`-Register-Block:** `format emm_exi_l2a`, `at mars`, ttl + `field`-Zeilen (Quellen-Identität) — deine Disposition; Manifestation (`url`/`compiler`) ziehe ich nach.
 - **Exposom-Quellenmatrix:** die Domänen ohne Home als `sources.φ`-Zeilen (Zulassung/Format/ttl) — deine Disposition; Manifestation danach Mycelium.
+- **Neue CDN-Assets ohne Register-Block (Welle 2026-10-05, `sha256`/`url` gemessen):** `clpds_annex.jsonl` (`clpds.bao.ac.cn`, `c7ddec83aa231f58e7138472d20d6a4c61f5b995e1183568826ab5516acef7c6`, 2 782 B) · supermag-1999-Serie `supermag_*_1999-01-01_31d.bin` auf `supermag.jhuapl.edu` (NUR u. a., ~500 Stationen, River-Feedstock) · openneuro ds004100-iEEG-Assets auf `openneuro.org`. Zulassung/Format/ttl/field = deine Disposition; `url`/`sha256`/`compiler` ziehe ich nach.
 
 ## LOCK
 
