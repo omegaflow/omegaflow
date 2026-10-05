@@ -709,13 +709,13 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if !(floor_ft.is_finite() && floor_ft > 0.0) {
                 continue;
             }
-            let tolman = if sample.force_type == 0.0 && sample.z > 0.0 {
+            let z_aperture = if sample.force_type == 0.0 && sample.z > 0.0 {
                 let z1 = 1.0 + sample.z;
-                1.0 / (z1 * z1 * z1 * z1)
+                1.0 / (z1 * z1)
             } else {
                 1.0
             };
-            let val_max = sample.val.abs() * tolman;
+            let val_max = sample.val.abs() * z_aperture;
             let scale2 = softening * softening;
             let plausible = val_max >= 0.0;
             if !plausible || val_max < floor_ft * scale2 {
@@ -740,7 +740,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             } else {
                 age
             };
-            let val_eff = sample.val * (-retarded / sample.ttl).exp() * tolman;
+            let val_eff = sample.val * (-retarded / sample.ttl).exp() * z_aperture;
             if val_eff.abs() / (transverse2 + scale2) < floor_ft {
                 continue;
             }

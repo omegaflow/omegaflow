@@ -2,7 +2,7 @@
   title: FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
   class: sheet
   date: 2026-10-01
-  sha256: 71a33ffd6fc92b04624203c6182a30ed213eae07a9698cf8726e73013124ace5
+  sha256: d8d406848fa7780ef520965ae45de2befea63c30238055d2406721e5bc17d3f0
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/specs/broken-null-control.md
 -->
@@ -77,13 +77,20 @@ K = 6 distinkte Statistiken, gemeinsame saisonale Block-Bootstrap-Resample,
   familien-durchlassend (p_adj 1.0e-4, 1.0e-4, 1.1e-3, 1.9e-3), Speed→dB/dt und
   Density→dB/dt liegen an der Familien-Schranke. n_eff ≈ **44.5** je Member; der
   Lag-0/1-Identitätscheck ist 0.
-- **Abisko 2024 und 2025** (`wy-max-t-abk-2024/2025-combined`): `null-*.bin reads
-  void — no measurement` — der gepoolte Null bleibt unvollständig, **keine**
-  Abisko-Schranke wird behauptet (0 honored: die Absenz ist die Messung).
+- **Abisko 2024 und 2025** — die `wy-max-t`-Kombines lasen `null-*.bin reads
+  void — no measurement`; die Lücke ist mit dem α = 0.01-Lauf geschlossen
+  (`bz-yearly-maxt`, CI-Lauf `37187466569`, success auf `ba9c640479`; zehn Shards
+  à 1000 Replikate, B = 10000, m = 6, block = 24 h): gepooltes
+  (1−α)-Quantil der studentisierten Maxima = **3.0490** (ABK 2024) und
+  **3.0036** (ABK 2025), beobachtetes Familien-Maximum = **12.698** / **10.864** —
+  die Familie durchlässt an beiden Punkten; Bz→dB/dt ist das Familien-Maximum,
+  der Rückkanal dB/dt→Bz liegt tiefer (5.684 / 2.324). Der `wy-max-t`-Lauf bleibt
+  der α = 0.05-Zeuge für Sodankylä 2024.
 
-Die α-Ebene ist damit für **Sodankylä 2024** aus der kalibrierten Null lesbar
-(α = 0.05). Für **Abisko** bleibt sie `pending` — gegen eine unvollständige
-gepoolte Null zu siegeln ist verboten. **Gegen eine unkontrollierte
+Die α-Ebene ist damit für **Sodankylä 2024** bei α = 0.05 und für **Abisko
+2024/2025** bei α = 0.01 aus der kalibrierten Null lesbar. Die zwei Ebenen sind
+distinkt und werden nicht gemittelt; welche Ebene das Siegel trägt, benennt das
+Operator-Wort. **Gegen eine unkontrollierte
 Familien-Schranke (Ordnung 10⁻¹) zu siegeln bleibt verboten.** Die
 BCa-Intervallkonstruktion ist benannt `pending` (der joint-stationary Jackknife
 ist nicht billig), nie fallengelassen.
@@ -92,24 +99,26 @@ Offene Slots bis zur Versiegelung:
 
 | Feld | Zustand |
 |---|---|
-| α-Ebene | Sodankylä 2024: **gelesen** (α = 0.05, Quantil 2.4831); Abisko: `pending` (Null void) |
+| α-Ebene | Sodankylä 2024: **gelesen** (α = 0.05, Quantil 2.4831); Abisko 2024/2025: **gelesen** (α = 0.01, Quantile 3.0490/3.0036); welche Ebene siegelt: Operator-Wort |
 | Station X | `pending` (benannter Slot; das Papier trägt Abisko und Sodankylä) |
-| Verzögerung Z | `pending` (benannter Slot; am 1-min-Korn auflösbar — Rats-Verdikt 2026-10-05: zulässige Präzisierung (b), kein neues α, kein neues Fehlschlag-Kriterium) |
+| Verzögerung Z | `pending` (benannter Slot; am 1-min-Korn auflösbar — Rats-Verdikt 2026-10-05: zulässige Präzisierung (b), kein neues α, kein neues Fehlschlag-Kriterium). Deskriptiv gemessen 2026-10-05 (`bz_dbdt_delay_probe`, ABK 2024): Z = 142 min, r = 0.0223, n = 251048 — ohne kalibrierte Minute-Null, nicht gesiegelt |
 | Bz-Schwellenwert | `pending` (braucht X und α) |
 | Sturm-Trigger | extern `wartend` (erster Sturm nach dem Siegel) |
 | Verdikt | `unsealed` |
-| Riss | benannt: Sodankylä-Null trägt, Abisko-Null void — kein stiller Mittelwert |
+| Riss | geschlossen: beide Stationen tragen eine kalibrierte Null (Sodankylä α = 0.05, Abisko α = 0.01) — die Ebenen bleiben getrennt, kein stiller Mittelwert |
 
 ## Der Weg zur Versiegelung
 
-1. **Trigger:** Lauf-Ende der kalibrierten Null (`wy-max-t 37187464365`) —
-   **eingetroffen** (2026-10-04).
-2. Danach: α-Ebene aus der kalibrierten Null lesen (Sodankylä 2024: α = 0.05),
-   dann X, Z und die Bz-Schwelle benennen.
+1. **Trigger:** Lauf-Ende der kalibrierten Null (`wy-max-t 37187464365` und
+   `bz-yearly-maxt 37187466569`) — **eingetroffen** (2026-10-04/05).
+2. Danach: α-Ebene aus der kalibrierten Null lesen (Sodankylä 2024: α = 0.05;
+   Abisko 2024/2025: α = 0.01), dann X, Z und die Bz-Schwelle benennen.
 3. **Das Siegel setzt der Operator** — kein Siegel ohne Operator-Wort; die
    Maschine bereitet bis zur Kante vor und trägt die Form, sie schließt nicht.
 
 ---
 
-*Nicht versiegelt 2026-10-01. Die Zelle ist eine Form; die Zahlen fehlen, weil
-die Null fehlt — nicht weil sie Null sind (0 honored).*
+*Nicht versiegelt 2026-10-01. Die kalibrierte Null liegt für Sodankylä
+(α = 0.05) und Abisko (α = 0.01); X, Z und die Bz-Schwelle bleiben benannte
+offene Slots — der Schwellenwert ohne versiegelte α-Ebene wäre fabriziert
+(0 honored).*

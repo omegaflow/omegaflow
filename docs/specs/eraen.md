@@ -1,7 +1,7 @@
 <!--
   title: Die Ären von Omegaflow — Grabungs-Protokoll
   class: concept
-  sha256: c98c0ecda1c66b203d03a0946d9e0a6a815516fb3c2966026aa9c65d546f788c
+  sha256: 790b17a97a1bb13112e7763a40147eb74807b81569fb711d90ec8a26e595f6b6
 -->
 # Die Ären von Omegaflow — Grabungs-Protokoll
 
@@ -91,8 +91,9 @@ des Lemma — bleibt als offene Erinnerung der Kybernautin.)
    **Gelöscht** (`34d7d3a`): die Relativität des Beobachters ist
    Observer-Bias, keine Messung.
 2. **Quellen-z** (`11eb850`): das z der Quelle (Katalog), als
-   Tolman-Dämpfung `(1+z)⁻⁴` für em — steht im Rekord (pole_x-Slot),
-   meta[3]. **Überlebt** — 0 honored, die kosmologische Wahrheit.
+    em-Apertur `(1+z)⁻²` (Punktquellen-Gesetz; Rat 2026-10-05, zuvor die
+    Flächenhelligkeits-Form `(1+z)⁻⁴`) für em — steht im Rekord (pole_x-Slot),
+    meta[3]. **Überlebt** — 0 honored, die kosmologische Wahrheit.
 
 ## Der verlorene Lichtkegel (Kausalitäts-Vorfilter)
 

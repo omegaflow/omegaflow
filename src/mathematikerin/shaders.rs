@@ -181,7 +181,7 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     var val_eff = val_eff_at(pre, tm, ft, v, d_mag);
     if (ft == 0u && mt.w > 0.0) {
         let z1 = 1.0 + mt.w;
-        val_eff = val_eff / (z1 * z1 * z1 * z1);
+        val_eff = val_eff / (z1 * z1);
     }
     var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     sk = sk * force_absorption(ft, f32(tm.w), d_mag);
@@ -200,8 +200,13 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let mt2 = props[j * 4u + 2u];
     let mt3 = props[j * 4u + 3u];
     let v = propagation_v(ft, fm.x, mt2.w, mt3.x);
-    let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
-    let vp_grad = val_eff_grad(pre, tm, v, d_mag);
+    var z_aperture = 1.0;
+    if (ft == 0u && mt.w > 0.0) {
+        let z1 = 1.0 + mt.w;
+        z_aperture = 1.0 / (z1 * z1);
+    }
+    let val_eff = val_eff_at(pre, tm, ft, v, d_mag) * z_aperture;
+    let vp_grad = val_eff_grad(pre, tm, v, d_mag) * z_aperture;
     let k = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     let kp = field_spatial_grad(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     let dhat = delta / max(d_mag, 1e-9);
