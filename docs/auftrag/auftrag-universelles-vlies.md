@@ -2,7 +2,7 @@
   title: Auftrag — Das universelle Vlies (alles gegen alles)
   class: auftrag
   date: 2026-10-05
-  sha256: ca55600ebefc56490f2a60ecba61072894aa765082f62f8b181cfa467d9ad644
+  sha256: 8ae666ad6297ec1ba070aa76b9996cabc8d2d85ae8288a2f2257344a0bf5dca9
   status: live
   see-also: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/specs/negativ-fuzzy-index.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -81,10 +81,15 @@ benannte CI-Pflicht, kein Default. Die Form existiert am Baum (`field_te_query`-
 mit Pflicht-FDR, `te.rs`-BH/BY, pro-Familien-WY, Bias-Gate) — **fahren und verdrahten**,
 nicht neu entwerfen.
 
-**Reihenfolge:** (1) Bias-Verdrahtung in jeden Matrix-Zellenpfad (Zelle unter Floor →
-`pending`); (2) 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`, Lag-0/1 geflaggt,
-pro Zelle Auflösungspaar); (3) `ozzy` bauen; (4) Lücken registrieren (declined als
-Verdikte, Ernte-Arme als Zielangaben); (5) Netz-Null als CI-Batterie (B ≥ 1/α).
+**Wer / Reihenfolge:** (1) Bias-Wiring in jeden Matrix-Zellenpfad (River; Zelle unter
+Floor → `pending`) → (2) die 8 probe-gelesenen Kanäle an den Draht + 15×15-Lauf
+(River; `matrix full`, `fdr bh 0.05 over matrix`, Lag-0/1 geflaggt, pro Zelle
+Auflösungspaar) → (3) `ozzy` bauen (River) → (4) Netz-Null als CI-Batterie (River/Mycelium,
+B ≥ 1/α). **Parallel, unabhängig:** die Ernte der fehlenden Netze — Quellen-Zeilen/Verdikte
+(Mountain), Harvest/Compiler/Manifestation (Mycelium), Anträge/Accounts (Future → Operator).
+**Der Satz:** die Weberin bekommt zuerst Fäden — billigster Zuwachs sind die **schon
+geernteten** probe-Kanäle plus die Bias-Korrektheit; `ozzy` kommt **danach**, er läuft
+**auf** der Matrix (Residuum gegen Boden-Zeugen), nicht davor.
 
 **Offene Risse:** netz-weite strenge Null ungemessen (FDR ist die benannte schwächere
 Garantie) · Matrixdimension = f(Verdrahtung), pro Lauf · Kadenz-Mismatch `pending`
