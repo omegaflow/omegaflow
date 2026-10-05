@@ -83,8 +83,8 @@
     },
     "council": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro",
-      "variant": "max",
+      "model": "deepseek/deepseek-flash",
+      "variant": "low",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "register_lookup *": "allow", "time register_lookup *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },

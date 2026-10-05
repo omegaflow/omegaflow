@@ -26,7 +26,7 @@ Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** 
 nicht neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
 
 **2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
-**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`grind-pro`/`general`/`vision`),
+**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`general`/`vision`),
 gebaut, gemessen. Kein „nächster Dispatch", kein „nächste Session", kein Vorlegen eines bereits
 geworteten Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle
 (`docs/concepts/tools-map.md`); `archive_search`/`sgrep`/`sfetch`/`sread`. Kein Polling.

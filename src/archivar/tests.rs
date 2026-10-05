@@ -3333,6 +3333,175 @@ fn test_motion_kepler_at_anchor_body_and_law_bounds() {
     );
 }
 
+fn kepler_law_span_probe(rec: &AsteroidRec, span_secs: f64, samples: u32) -> Option<(f64, f64)> {
+    let motion = Motion::Kepler {
+        rec: Arc::new(rec.clone()),
+    };
+    let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
+    let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let v_hull = law_bounds(&motion, epoch_secs, 0.0, &eph)?.0;
+    let mut v_span = 0.0_f64;
+    for k in 0..=samples {
+        let frac = k as f64 / samples as f64;
+        for sign in [-1.0_f64, 1.0] {
+            let t = epoch_secs + sign * frac * span_secs;
+            let v = motion.velocity_at(t)?;
+            let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+            if speed.is_finite() && speed > v_span {
+                v_span = speed;
+            }
+        }
+    }
+    Some((v_span, v_hull))
+}
+
+fn dastcom_probe_records() -> Vec<AsteroidRec> {
+    const MEASURED: [(u32, f64, f64, f64, f64, f64, f64, f64); 9] = [
+        (
+            1,
+            2458849.5,
+            2.7692892921434837,
+            0.07687465013145245,
+            10.59127767086216,
+            80.3011901917491,
+            73.80896808746482,
+            130.31596882009862,
+        ),
+        (
+            2,
+            2457870.5,
+            2.773023116113918,
+            0.2306545322740501,
+            34.83970334384021,
+            173.0883296888898,
+            309.9974922427895,
+            263.90409419623876,
+        ),
+        (
+            433,
+            2453311.5,
+            1.4582693155499942,
+            0.2228078944584026,
+            10.8291838260782,
+            304.4010273379536,
+            178.665326776373,
+            326.37047603642,
+        ),
+        (
+            1566,
+            2457819.5,
+            1.078067881570799,
+            0.8268497707599909,
+            22.82520854143954,
+            88.01007802780143,
+            31.38342909898496,
+            232.258429140482,
+        ),
+        (
+            3200,
+            2457598.5,
+            1.2712044760611576,
+            0.8899020944481704,
+            22.24577945123785,
+            265.251151967728,
+            322.1539298475114,
+            344.99650005929686,
+        ),
+        (
+            3753,
+            2457877.5,
+            0.9977202282444615,
+            0.5148859819753648,
+            19.8060292656753,
+            126.2364534010096,
+            43.82942131078093,
+            135.8161596336571,
+        ),
+        (
+            4179,
+            2456751.5,
+            2.533610075118303,
+            0.6298135873306892,
+            0.4471122322650611,
+            124.3530294904659,
+            278.7623432107634,
+            123.27225445068952,
+        ),
+        (
+            2101,
+            2458491.5,
+            1.874069513711126,
+            0.7645834079870462,
+            1.324378965696797,
+            349.5960963914733,
+            43.52459204110054,
+            140.6487257740051,
+        ),
+        (
+            3552,
+            2458484.5,
+            4.258430611812199,
+            0.708798303922753,
+            31.08190766283884,
+            350.010060928695,
+            316.4404675395024,
+            26.739599128314964,
+        ),
+    ];
+    MEASURED
+        .iter()
+        .map(
+            |&(number, epoch_jd, a_au, e, incl_deg, node_deg, peri_deg, ma_deg)| AsteroidRec {
+                number,
+                epoch_jd,
+                a_au,
+                e,
+                incl_deg,
+                node_deg,
+                peri_deg,
+                ma_deg,
+                ..kepler_rec_fixture()
+            },
+        )
+        .collect()
+}
+
+#[test]
+fn test_law_bounds_enclosure_span_breaks_for_periapsis_in_window() {
+    let records = dastcom_probe_records();
+    let span_secs = 64.0 * 86400.0;
+    let mut breaks: Vec<(u32, f64)> = Vec::new();
+    for rec in &records {
+        let (v_span, v_hull) = kepler_law_span_probe(rec, span_secs, 8192)
+            .expect("a DASTCOM Kepler record stays in the Kepler domain");
+        assert!(
+            v_span.is_finite() && v_hull.is_finite(),
+            "record {}: span {v_span} hull {v_hull}",
+            rec.number
+        );
+        assert!(
+            v_span >= v_hull / Φ,
+            "record {}: the span maximum cannot fall below the epoch rate",
+            rec.number
+        );
+        if v_span > v_hull {
+            breaks.push((rec.number, v_span / v_hull));
+        }
+    }
+    assert_eq!(
+        breaks.iter().map(|(number, _)| *number).collect::<Vec<_>>(),
+        vec![1566, 3200],
+        "the span-overshoot bodies are Icarus and Phaethon: {breaks:?}"
+    );
+    for (number, factor) in &breaks {
+        let measured_floor = if *number == 1566 { 1.05 } else { 1.50 };
+        assert!(
+            *factor > measured_floor,
+            "record {number}: the span maximum is {factor:.4}× the epoch hull"
+        );
+    }
+}
+
 #[test]
 fn test_build_asteroid_samples_gm_radius_and_query() {
     let mut bin: Vec<u8> = Vec::new();
