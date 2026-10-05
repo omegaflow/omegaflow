@@ -652,6 +652,7 @@ url https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noi
 format eea_noise
 origin https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76/query?where=1=1&outFields=SNLD55,SNLD65,SNLD75,SNLN50,SNLN60,SNLN70,NLD5559,NLD6064,NLD6569,NLD7074,NLN5054,NLN5559,NLN6064,NLN6569,N_INHAB&returnGeometry=false&resultRecordCount=2000&f=json
 compiler tools/harvest/src/bin/eea_noise_compiler.rs
+sha256 30607524467e524acf70ef30a9d06784da000c1dc67b0469d7c01cf119ae7b43
 at earth
 ttl 604800
 
@@ -677,6 +678,7 @@ url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/w
 format wqp_result
 origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20(DO)&characteristicName=Specific%20conductance&characteristicName=Nitrate&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
 compiler tools/harvest/src/bin/wqp_result_compiler.rs
+sha256 97b6707bfc574959c1f40188d9c8045f719e03d554c4d3e196756cf26a496fd6
 at earth
 ttl 604800
 
@@ -17203,6 +17205,7 @@ url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic_
 format fmi_gic_1min
 origin https://space.fmi.fi/gic/man_ascii
 compiler tools/harvest/src/bin/fmi_gic_compiler.rs
+sha256 a30a846d256cc685a298418bd10a34abda512e743c08e3ca4dd984f66c06440f
 on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_1min_a fmi_gic_1min_a inverse-square electric A 60 0.0 0.0
