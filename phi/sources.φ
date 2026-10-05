@@ -27020,3 +27020,12 @@ compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
 at earth
 field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
+format pds4_acs_nir
+origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
+origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1-EC__4_0.tab
+compiler tools/harvest/src/bin/acs_nir_compiler.rs
+at mars
+sha256 465f3c07c4a04053895046cb8853ce96f1c38fe7038d23d7cd05d91ce87419c1
+ttl 604800

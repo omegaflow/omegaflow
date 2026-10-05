@@ -2966,6 +2966,7 @@ pub fn main_flow() {
                     | "aia"
                     | "eve"
                     | "agrav"
+                    | "pds4_acs_nir"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
