@@ -27,7 +27,8 @@ jobs:
           assets=$(gh release view clpds.bao.ac.cn --repo omegaflow/sources \
             --json assets --jq '.assets[]?.name' 2>/dev/null || true)
           if printf '%s\n' "$assets" | grep -qx "clpds_catalogue.json" \
-             && printf '%s\n' "$assets" | grep -qx "clpds_files.jsonl"; then
+             && printf '%s\n' "$assets" | grep -qx "clpds_files.jsonl" \
+             && printf '%s\n' "$assets" | grep -qx "clpds_annex.jsonl"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "assets already present — manifest skipped"
           else

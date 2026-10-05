@@ -21,7 +21,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view zenodo.org --repo omegaflow/sources \
+          if gh release view sdc-serv.usask.ca --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "superdarn_fitacf.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset superdarn_fitacf.bin already present — manifest skipped"
