@@ -415,8 +415,15 @@ async function boot() {
     status("no WebGPU adapter — honest black");
     return;
   }
+  // The frame clock is requestAnimationFrame; an occluded tab suspends it, so the
+  // first field is measured and rendered directly after the handover instead of
+  // waiting for a frame that may not come. The status names the phase before the
+  // first query builds the presence hull, so the slow first light reads as work,
+  // not as a hang. The loop schedules its own next frame.
+  status("measuring the first field…");
+  await new Promise((r) => setTimeout(r, 50));
   last = performance.now();
-  requestAnimationFrame(loop);
+  loop(last);
 }
 
 boot();
