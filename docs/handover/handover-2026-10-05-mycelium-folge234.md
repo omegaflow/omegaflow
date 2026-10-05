@@ -3,7 +3,7 @@
   session: Mycelium-Linie — 257 single-job CDN compilers to the self-hosted runner, dropped-baseline bump, emm-sdc green, CDN re-dispatch wave
   class: handover
   date: 2026-10-05
-  sha256: 574205a2362c01a723da5ead717d122229af1deeb3e2460c44bc30050232b586
+  sha256: 424ee6282139dbb16fbcd448882ff03b6f4839ed5ee0a9f9572c2378da683e3a
   status: live
 -->
 # Handover — Mycelium-Folge 234 (2026-10-05)
@@ -19,6 +19,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 - Wort | 2026-10-05 | „du bist mycellium" | Quelle: Operator (Session 2026-10-05) — der Commit-Prefix `mountain` war falsch.
 - Wort | 2026-10-05 | „ja die zwei" (FMI + TUH EEG) | Quelle: Operator (Session 2026-10-05) — die zwei neuen Mails bestätigt; die TUH-EEG-Public-Key-Antwort ist der Operator-Akt.
+- Wort | 2026-10-05 | „nein johannes.tyroller@proton.me" | Quelle: Operator (Session 2026-10-05) — die TUH-EEG-Public-Key-Antwort trägt die Adresse aus dem signierten Formular (`johannes.tyroller@proton.me`), nicht `code@omegaflow.space`.
 - Wort | 2026-10-05 | „die kostenlose variante" | Quelle: Sensory-233 — der self-hosted Runner `t420` wird für die CDN-Compiler genutzt.
 - Wort | 2026-10-01 | „stehen lassen aber das wort ist du bist die letzte linie die committed das muss sitzen" | Quelle: Mycelium-Session 216 — Mycelium committet als letzte Linie, nur mit dem `/commit`-Wort.
 - Wort | 2026-10-01 | „bitte nicht nur messen und verschleppen sondern bearbeiten messen und bearbeiten ist die prämisse mein dauerhaftes wort" | Quelle: Mycelium-Session 216 — **dauerhaftes Wort**.
