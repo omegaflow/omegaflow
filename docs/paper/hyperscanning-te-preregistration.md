@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: 1645edf8e604045ae55809f45fc91f29c8224b579a1c7ad86e79600adbdaa91f
+  sha256: bf0ef07abd06ac3bf9de0290b4e3d676ba6eedfa74aa2b75a0243581579fbe88
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -322,14 +322,19 @@ not a claim made here.
 - **Second cohort** — measured (run `37235249763`, 2026-10-05) — see
   `### Ergebnisse / Results — second cohort ds007471`; **H1 carries 3 family-max
   survivors** (all three confirmed at p99), 50/51 per-cell nominees confirmed.
-- **Method paper (joint cross-channel family)** — open: the screen is single-channel
-  (`Fz`/`Cz`) and single-family per condition; a joint cross-channel TE family and the
-  publishable method consolidation stay `pending` (operator word 2026-10-03).
+- **Joint cross-channel family** — built (commit `62742649c`): `--channel` accepts a
+  comma-separated label list and pools every channel into ONE joint family maximum over
+  channels × triads × ordered pairs (`hyperscanning_group_te.rs:52-55`), asserted by
+  `joint_channel_family_gate` (`hyperscanning_group_te.rs:1630`). The joint **measurement**
+  over two real channels (`Fz,Cz`, ds007471) was dispatched 2026-10-05 (run `37292154121`);
+  the result is pending until its log is read (0 honored — no value before the log).
+- **Method paper** — the publishable consolidation of this pre-registration stays
+  `pending` (operator word 2026-10-03); it consumes the joint measurement above.
 
 ### Träger / Carrier
 
 This document's carrier is the Sensory handover
-`docs/handover/handover-2026-10-05-sensory-folge232.md` — the open point
+`docs/handover/handover-2026-10-05-sensory-folge233.md` — the open point
 `### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)`,
 whose `Lage` names this draft and whose `Braucht` named the validation artifacts
 that carried the FP/FN, n-scaling and second-cohort numbers (all three measured
