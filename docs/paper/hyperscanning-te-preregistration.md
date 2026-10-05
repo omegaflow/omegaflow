@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: bf0ef07abd06ac3bf9de0290b4e3d676ba6eedfa74aa2b75a0243581579fbe88
+  sha256: 7199518227ce37d0a259c00dbd93def44a45ff6385247de4a32d7ed661f0932e
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -310,8 +310,35 @@ nominees confirm. This is the first **family-significant** finding in the line:
 **H1 carries 3 survivors** in the `jointaction` condition of `ds007471` at `Cz`
 (95 % FWER), where the feasibility cohort `ds007822` carried none. 0 honored: this is
 the measured count at the registered parameters (one cohort, one channel, one
-`max_points`) — the cross-cohort/other-channel repetition is the next measurement,
-not a claim made here.
+`max_points`) — the cross-channel repetition follows in `### Ergebnisse / Results — joint
+cross-channel Fz,Cz` (run `37292154121`); no cross-cohort claim is made here.
+
+### Ergebnisse / Results — joint cross-channel `Fz,Cz` (`ds007471`, run `37292154121`, 2026-10-05)
+
+Measured by run `37292154121` (`hyperscanning-te`, head `632b164ba`, `success`
+2026-10-05T13:39:22Z). Parameters: `cohort=ds007471`, `--channel Fz,Cz`,
+`max_points=2048`, `surrogates 200`, `percentile 95`, null `phase`, dim 3,
+62 triads (= 31 triads × 2 channels), 124 cells. Read from the run log
+(`ci_manage log 37292154121 --all`) and the artifact
+`hyperscanning-te-report-jointaction` (Artifact ID `11349076871`, 6965 B).
+
+| cohort | channels | triads | cells | family-max p95 | observed max | family-max survivors | per-cell survivors | confirmed |
+|---|---|---|---|---|---|---|---|---|
+| `jointaction` (ds007471) | `Fz,Cz` | 62 | 124 | 6.7425e-1 | 7.0851e-1 | **2** | 93 | 88/93 |
+
+**The joint family maximum is broken by `pair-18@Cz` alone.** Pooling `Fz` and `Cz`
+raises the family-max p95 from `6.5144e-1` (single channel `Cz`) to `6.7425e-1`; of
+the three single-channel `Cz` survivors only `pair-18@Cz` survives the stricter joint
+line, in both directions (`FAMILY-MAX SURVIVOR`):
+
+- `pair-18@Cz L→R` `tau 25/25` TE `7.0597e-1` — confirmed (fresh p99 threshold `6.5226e-1`);
+- `pair-18@Cz R→L` `tau 25/25` TE `7.0851e-1` — confirmed (threshold `6.6064e-1`).
+
+The third single-channel survivor `pair-02@Cz R→L` TE `6.5198e-1` falls below the joint
+p95 and is masked to a `PER-CELL SURVIVOR` (confirmed at p99 `4.9826e-1`). 93 per-cell
+nominees, 88 confirmed, 0 pending. 0 honored: the observed max `7.0851e-1` is numerically
+the same line as the single-channel run (`pair-18@Cz`), not an added channel — the joint
+screen's own expression is the raised p95 that drops `pair-02`.
 
 ### Offene Ergebnisse / Pending results
 
@@ -326,8 +353,10 @@ not a claim made here.
   comma-separated label list and pools every channel into ONE joint family maximum over
   channels × triads × ordered pairs (`hyperscanning_group_te.rs:52-55`), asserted by
   `joint_channel_family_gate` (`hyperscanning_group_te.rs:1630`). The joint **measurement**
-  over two real channels (`Fz,Cz`, ds007471) was dispatched 2026-10-05 (run `37292154121`);
-  the result is pending until its log is read (0 honored — no value before the log).
+  over two real channels (`Fz,Cz`, ds007471) is measured (run `37292154121`, 2026-10-05) —
+  see `### Ergebnisse / Results — joint cross-channel Fz,Cz`; **2 family-max survivors**
+  (`pair-18@Cz` both directions, confirmed at p99), 88/93 per-cell nominees confirmed,
+  the single-channel `pair-02@Cz` survivor masked by the raised joint p95.
 - **Method paper** — the publishable consolidation of this pre-registration stays
   `pending` (operator word 2026-10-03); it consumes the joint measurement above.
 
