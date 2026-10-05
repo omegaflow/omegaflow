@@ -17199,6 +17199,14 @@ on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_a fmi_gic_a inverse-square electric A 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic_1min.bin
+format fmi_gic_1min
+origin https://space.fmi.fi/gic/man_ascii
+compiler tools/harvest/src/bin/fmi_gic_compiler.rs
+on earth 60.6 25.2 0
+ttl 604800
+field fmi_gic_1min_a fmi_gic_1min_a inverse-square electric A 60 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/

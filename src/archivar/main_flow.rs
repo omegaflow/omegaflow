@@ -4114,6 +4114,7 @@ pub fn main_flow() {
                     | "fdsn_waveform"
                     | "ceein_infrasound"
                     | "fmi_gic"
+                    | "fmi_gic_1min"
                     | "igets"
                     | "hinet"
                     | "iss_lis"

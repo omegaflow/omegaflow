@@ -73,6 +73,9 @@ pub const COMP_CEIN_MAX: u32 = 1;
 pub const COMP_GIC_A: u32 = 1;
 pub const COMP_GIC_MAX: u32 = 1;
 
+pub const COMP_GIC_1MIN_A: u32 = 1;
+pub const COMP_GIC_1MIN_MAX: u32 = 1;
+
 pub const COMP_IGETS_G: u32 = 1;
 pub const COMP_IGETS_MAX: u32 = 1;
 
@@ -275,6 +278,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "fdsn_waveform" => Some(MAGIC_FDSN),
         "ceein_infrasound" => Some(MAGIC_CEIN),
         "fmi_gic" => Some(MAGIC_GIC),
+        "fmi_gic_1min" => Some(MAGIC_GIC),
         "igets" => Some(MAGIC_IGETS),
         "hinet" => Some(MAGIC_HINET),
         "iss_lis" => Some(MAGIC_ISSLIS),
@@ -328,6 +332,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "fdsn_waveform" => Some(COMP_FDSN_MAX),
         "ceein_infrasound" => Some(COMP_CEIN_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
+        "fmi_gic_1min" => Some(COMP_GIC_1MIN_MAX),
         "igets" => Some(COMP_IGETS_MAX),
         "hinet" => Some(COMP_HINET_MAX),
         "iss_lis" => Some(COMP_ISSLIS_MAX),

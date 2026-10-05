@@ -812,6 +812,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_GIC_A => Some("fmi_gic_a"),
             _ => None,
         },
+        "fmi_gic_1min" => match comp {
+            crate::geo::COMP_GIC_1MIN_A => Some("fmi_gic_1min_a"),
+            _ => None,
+        },
         "igets" => match comp {
             crate::geo::COMP_IGETS_G => Some("igets_gravity_nm_s2"),
             _ => None,
