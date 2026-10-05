@@ -125,8 +125,9 @@ fn shelf_band_hit(ft: f32, freq: f32, bin_width: f32, row: vec4f) -> bool {
     return band_hi >= rlo && band_lo <= rhi;
 }
 
-fn propagation_v(ft: u32, advection: f32, freq: f32, bin_width: f32) -> f32 {
-    let flat = select(PROPAGATION_SPEED[ft], advection, ft == 7u && advection > 0.0);
+fn propagation_v(ft: u32, advection: f32, presence: f32, freq: f32, bin_width: f32) -> f32 {
+    let advection_measured = (u32(presence) & 4u) != 0u;
+    let flat = select(PROPAGATION_SPEED[ft], advection, ft == 7u && advection_measured);
     let fft = f32(ft);
     let rows = arrayLength(&shelf);
     for (var i = 0u; i < rows; i = i + 1u) {
@@ -177,7 +178,10 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let kid = u32(mt.z);
     let mt2 = props[j * 4u + 2u];
     let mt3 = props[j * 4u + 3u];
-    let v = propagation_v(ft, fm.x, mt2.w, mt3.x);
+    if (ft == 7u && (u32(mt3.z) & 4u) == 0u) {
+        return vec2f(0.0, f32(ft));
+    }
+    let v = propagation_v(ft, fm.x, mt3.z, mt2.w, mt3.x);
     var val_eff = val_eff_at(pre, tm, ft, v, d_mag);
     if (ft == 0u && mt.w > 0.0 && (kid == 0u || kid == 1u)) {
         let z1 = 1.0 + mt.w;
@@ -199,7 +203,10 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let kid = u32(mt.z);
     let mt2 = props[j * 4u + 2u];
     let mt3 = props[j * 4u + 3u];
-    let v = propagation_v(ft, fm.x, mt2.w, mt3.x);
+    if (ft == 7u && (u32(mt3.z) & 4u) == 0u) {
+        return vec3f(0.0);
+    }
+    let v = propagation_v(ft, fm.x, mt3.z, mt2.w, mt3.x);
     var z_aperture = 1.0;
     if (ft == 0u && mt.w > 0.0 && (kid == 0u || kid == 1u)) {
         let z1 = 1.0 + mt.w;

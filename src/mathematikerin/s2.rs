@@ -180,10 +180,12 @@ pub fn witness_fingerprint(dir: &std::path::Path) -> Option<(usize, u64)> {
             continue;
         };
         count += 1;
-        if let Ok(modified) = meta.modified() {
-            if let Ok(d) = modified.duration_since(std::time::UNIX_EPOCH) {
-                latest = latest.max(d.as_secs());
-            }
+        if let Some(d) = meta
+            .modified()
+            .ok()
+            .and_then(|m| m.duration_since(std::time::UNIX_EPOCH).ok())
+        {
+            latest = latest.max(d.as_secs());
         }
     }
     Some((count, latest))
@@ -199,10 +201,11 @@ pub fn load_witnesses(dir: &std::path::Path) -> Vec<AstroSeries> {
         if !path.is_file() {
             continue;
         }
-        if let Ok(bytes) = std::fs::read(&path) {
-            if let Some(mut series) = crate::archivar::astrometry_series::parse_bin(&bytes) {
-                out.append(&mut series);
-            }
+        if let Some(mut series) = std::fs::read(&path)
+            .ok()
+            .and_then(|bytes| crate::archivar::astrometry_series::parse_bin(&bytes))
+        {
+            out.append(&mut series);
         }
     }
     out
