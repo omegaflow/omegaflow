@@ -2902,6 +2902,7 @@ pub fn main_flow() {
                     | "voyager_saturn"
                     | "cors_rinex"
                     | "drs_fits"
+                    | "emm_exi_l2a"
                     | "demeter_isl"
                     | "kcdc_kascade"
                     | "kasi"

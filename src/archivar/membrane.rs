@@ -421,7 +421,6 @@ pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>, epoch: f64)
 pub const AUDIO_SPEED_AIR: f64 = 343.0;
 pub const SEISMIC_BODY_SPEED: f64 = 6000.0;
 pub const SEISMIC_SURFACE_SPEED: f64 = 3000.0;
-pub const ADVECTIVE_BASE_SPEED: f64 = 1.0;
 pub const DIFFUSIVITY_THERMAL: f64 = 0.3;
 
 pub const DIFFUSIVITY_MOLECULAR: f64 = 0.05;
@@ -485,10 +484,10 @@ pub fn flat_propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
         5 => Some(DIFFUSIVITY_THERMAL),
         6 => Some(DIFFUSIVITY_MOLECULAR),
         7 => {
-            if advection > 0.0 {
+            if slot_measured(advection) {
                 Some(advection)
             } else {
-                Some(ADVECTIVE_BASE_SPEED)
+                None
             }
         }
         _ => None,
@@ -764,7 +763,13 @@ mod tests {
         );
         assert_eq!(
             propagation_speed(7.0, 0.0, 0.0, 0.0),
-            Some(ADVECTIVE_BASE_SPEED)
+            Some(0.0),
+            "a measured 0.0 advection carries speed 0, never the base"
+        );
+        assert_eq!(
+            propagation_speed(7.0, SLOT_ABSENT, 0.0, 0.0),
+            None,
+            "absent advection has no propagation term"
         );
         assert_eq!(
             signal_reach(4.0, 0.0, 10.0, 0.07, 0.0),
@@ -775,7 +780,7 @@ mod tests {
 
     #[test]
     fn the_f32_wgsl_selection_stays_within_tolerance_of_the_f64_wiring() {
-        let flat = |ft: u8, advection: f32| -> Option<f32> {
+        let flat = |ft: u8, advection: f32, advection_measured: bool| -> Option<f32> {
             match ft {
                 0 | 1 | 8 => Some(C_LIGHT as f32),
                 2 => Some(AUDIO_SPEED_AIR as f32),
@@ -783,32 +788,45 @@ mod tests {
                 4 => Some(SEISMIC_SURFACE_SPEED as f32),
                 5 => Some(DIFFUSIVITY_THERMAL as f32),
                 6 => Some(DIFFUSIVITY_MOLECULAR as f32),
-                7 => Some(if advection > 0.0 {
-                    advection
-                } else {
-                    ADVECTIVE_BASE_SPEED as f32
-                }),
+                7 => {
+                    if advection_measured {
+                        Some(advection)
+                    } else {
+                        None
+                    }
+                }
                 _ => None,
             }
         };
-        let fixtures: [(u8, f64, f64, f64); 6] = [
-            (4, 0.0, 0.05, 0.0166667),
-            (4, 0.0, 0.005, 0.0016667),
-            (4, 0.0, 0.07, 0.0),
-            (0, 0.0, 9.861594e15, 0.0),
-            (0, 0.0, 5.0e14, 0.0),
-            (7, 12.5, 0.0, 0.0),
+        let fixtures: [(u8, f64, f64, f64, bool); 8] = [
+            (4, 0.0, 0.05, 0.0166667, false),
+            (4, 0.0, 0.005, 0.0016667, false),
+            (4, 0.0, 0.07, 0.0, false),
+            (0, 0.0, 9.861594e15, 0.0, false),
+            (0, 0.0, 5.0e14, 0.0, false),
+            (7, 12.5, 0.0, 0.0, true),
+            (7, 0.0, 0.0, 0.0, true),
+            (7, -1.0, 0.0, 0.0, false),
         ];
-        for (ft, adv, freq, bw) in fixtures {
-            let cpu = propagation_speed(ft as f64, adv, freq, bw).expect("the wiring answers");
+        for (ft, adv, freq, bw, present) in fixtures {
+            let cpu = propagation_speed(ft as f64, adv, freq, bw);
             let gpu = crate::mathematikerin::dispersion::v_at_f32(ft, freq as f32, bw as f32)
-                .or_else(|| flat(ft, adv as f32))
-                .expect("the wgsl selection answers");
-            let rel = ((gpu as f64 - cpu) / cpu).abs();
-            assert!(
-                rel < 1e-4,
-                "cpu/wgsl parity: force {ft} at {freq} Hz — wgsl {gpu} cpu {cpu} rel {rel}"
-            );
+                .or_else(|| flat(ft, adv as f32, present));
+            match (cpu, gpu) {
+                (Some(c), Some(g)) => {
+                    if c == 0.0 {
+                        assert_eq!(g, 0.0, "cpu/wgsl agreement at force {ft}: zero speed");
+                    } else {
+                        let rel = ((g as f64 - c) / c).abs();
+                        assert!(
+                            rel < 1e-4,
+                            "cpu/wgsl parity: force {ft} at {freq} Hz — wgsl {g} cpu {c} rel {rel}"
+                        );
+                    }
+                }
+                (None, None) => {}
+                (c, g) => panic!("cpu/wgsl disagreement: force {ft} — wgsl {g:?} cpu {c:?}"),
+            }
         }
     }
 }
