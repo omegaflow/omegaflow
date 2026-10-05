@@ -91,6 +91,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pradan_ch2" => pradan_ch2::parse_series(bytes),
         "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
+        "pds4_acs_nir" => acs_nir::parse_series(bytes),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "galileo_ionocal" => ionocal::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
@@ -339,6 +340,13 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let names: Vec<String> = (0..=max_comp).map(gras_2c::gate_name).collect();
             (names, recs)
         }
+        "pds4_acs_nir" => {
+            let recs = acs_nir::parse_series(bytes)?;
+            let names: Vec<String> = (0..acs_nir::ROW_DATA_COUNT as u32)
+                .map(acs_nir::component_name)
+                .collect();
+            (names, recs)
+        }
         _ => return None,
     };
     let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
@@ -371,6 +379,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "gaia_rrl" => gaia_rrl::declared_fields(tau),
         "viking_grav" => viking_grav::declared_fields(tau),
         "agrav" => agrav::declared_fields(tau),
+        "pds4_acs_nir" => acs_nir::declared_fields(),
         _ => Vec::new(),
     }
 }
@@ -6884,12 +6893,46 @@ mod fixed_width_series_tests {
     }
 
     #[test]
+    fn acs_nir_named_series_carries_raw_bins_without_field_lines() {
+        let raw = include_bytes!("pds4_fixtures/exomars_acs_nir_ec_first1.tab");
+        let named = series_named("pds4_acs_nir", raw).expect("named series parses");
+        assert_eq!(named.names.len(), acs_nir::ROW_DATA_COUNT);
+        assert_eq!(named.names[0], "acs_nir_bin_0000");
+        assert_eq!(named.names[639], "acs_nir_bin_0639");
+        assert_eq!(named.names[1279], "acs_nir_bin_1279");
+        assert_eq!(named.rows.len(), acs_nir::ROW_DATA_COUNT);
+        assert_eq!(named.rows[0].comp, 0);
+        assert_eq!(named.rows[1279].comp, 1279);
+        assert_eq!(named.rows[0].freq, spectral::SPECTRAL_NO_BAND);
+        assert_eq!(named.rows[0].bin_width, spectral::SPECTRAL_NO_BAND);
+        let fields = series_declared_fields("pds4_acs_nir", &named.names, 604800.0);
+        assert_eq!(fields.len(), acs_nir::ROW_DATA_COUNT);
+        assert_eq!(fields[0].name, "acs_nir_bin_0000");
+        assert_eq!(fields[0].unit, acs_nir::UNIT);
+        assert_eq!(fields[0].tau, acs_nir::TAU_INTEGRATION_S);
+        let joined: Vec<&str> = named
+            .rows
+            .iter()
+            .filter_map(|row| {
+                let name = series_component_name("pds4_acs_nir", row.comp)
+                    .or_else(|| named.names.get(row.comp as usize).map(String::as_str))?;
+                fields
+                    .iter()
+                    .find(|fc| fc.name == name)
+                    .map(|fc| fc.name.as_str())
+            })
+            .collect();
+        assert_eq!(joined.len(), named.rows.len());
+    }
+
+    #[test]
     fn named_series_is_none_for_foreign_formats() {
         assert!(series_named("drs_fits", b"XXXX").is_none());
         assert!(series_named("pds3_fixed_width", b"XXXX").is_none());
         assert!(series_named("pds4_binary", b"XXXX").is_none());
         assert!(series_named("pds4_fits", b"XXXX").is_none());
         assert!(series_named("gras_2c", b"XXXX").is_none());
+        assert!(series_named("pds4_acs_nir", b"XXXX").is_none());
     }
 
     #[test]

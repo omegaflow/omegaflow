@@ -7,6 +7,7 @@ pub(crate) use std::collections::{HashMap, HashSet};
 pub(crate) use std::process::Command;
 pub(crate) use std::sync::{Arc, OnceLock};
 
+pub mod acs_nir;
 pub mod agrav;
 pub mod aia;
 pub mod ak135;
