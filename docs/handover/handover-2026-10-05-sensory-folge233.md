@@ -3,7 +3,7 @@
   session: Sensory-Folge 233
   class: handover
   date: 2026-10-05
-  sha256: 27ec5f6d8b794309d36835265cc79d9a61318edf1f7af1b4f68c2ad9cd49d84c
+  sha256: 75abe64cf7296a8d56cb50723b8fa2e23c0bb549127d5e61ac88c97ff7e1d79b
   status: live
 -->
 # Handover — Sensory-Folge 233 (2026-10-05)
@@ -46,9 +46,12 @@ keine neue Messung: dieselbe Sache am selben Tag); `--stale sensory --persist 3`
   (512–4096) und jeder Task-Bedingung; **`ds007471`/`jointaction`** beobachtetes Maximum
   `7.0851e-1` > family-max p95 `6.5144e-1` → **H1 trägt 3 Survivors** (alle p99-bestätigt),
   50/51 Nominees bestätigt — der erste familien-signifikante Fund der Linie.
-- **Ausgangs-Routing unverändert** (`## An future` = `rr-brustgurt`; `## An mountain` =
-  medizinische Quellen + Weberin-Survey-Verdikte) — wartet auf die Faltung durch die
-  Owner-Linien; kein neuer Akt.
+- **Ausgangs-Routing gefaltet (F233, gemessen):** `rr-brustgurt` hat Future in die
+  Operator-Queue gefaltet (`state/zustand/ereignisse.φ:64795`, 2026-10-04; Future-Archiv
+  folge174–177), den Medizin-Pool hat Mountain disponiert
+  (`docs/handover/handover-2026-10-05-mountain-folge235.md:152`; BGI AGrav
+  `phi/sources.φ:27017`, C9/CEEIN `:27025` registriert). Die Sender-Blöcke `## An future` /
+  `## An mountain` sind aus dieser Übergabe entfernt — kein Doppel-Träger, kein neuer Akt.
 
 ## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-05)
 
