@@ -3,7 +3,7 @@
   session: Mycelium-Linie — CI-Triage 2026-10-05, adressierte Blöcke gefaltet, Orphan-Carrier, Stehender Pass
   class: handover
   date: 2026-10-05
-  sha256: 12f5a7d2cec26e9721dc5a40356690a32881f2207c1200b515aa68c746c256f0
+  sha256: 101de874975a5ed882965a4b52ba47de736c258dd50dedbea6d739e227e005e8
   status: live
 -->
 # Handover — Mycelium-Folge 232 (2026-10-05)
@@ -29,6 +29,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - Wort | 2026-09-30 | „du committest immer als letzter also warte" | Quelle: Mycelium-Session 213.
 - Wort | 2026-10-05 | „du bist mycellium" | Quelle: Operator (Session 2026-10-05) — der Commit-Prefix `mountain` war falsch.
 - Wort | 2026-10-05 | „kannst du dir das bitte ansehen?" + zwei Listen (GIC/`field_te_query`) | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — Review-Auftrag; die Listen sind Claims gegen den Baum gemessen (Riss-Befund in der Session).
+- Wort | 2026-10-05 | „ja bitte ablegen" | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — die verifizierte Drei-Zustands-Verdrahtungsliste als adressierte Register-Zeile (§ `## An river`).
 
 ## Offen — eigen
 
@@ -151,7 +152,19 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Risiken / offene Risse (gemessen, nicht geglättet)
 
-- **Runde 2026-10-05 — Betreiber-Listen gegen den Baum:** mehrere Claims sind Risse (Galileo I bereits gesetzt `docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md:28`; `goes_xrs`/`eve_lines` verdrahtet; SOI declined; NSRR/TUH descoped; JUICE-Doppler/NAVIO kein Mycelium-Asset; `aia_fullyear` kein Register-Key; Newell gebaut, nicht „in Bau"). Nicht geglättet — Befund in der Session.
+- **Runde 2026-10-05 (1. Umlauf) — Betreiber-Listen gegen den Baum:** Risse — Galileo I bereits gesetzt (`docs/blatt/blatt-anderson-flyby-ephemeridenhaus.md:28`); `goes_xrs`/`eve_lines` verdrahtet; SOI declined; NSRR/TUH descoped; JUICE-Doppler/NAVIO kein Mycelium-Asset; `aia_fullyear` kein Register-Key; Newell gebaut, nicht „in Bau".
+- **Runde 2026-10-05 (2. Umlauf, GLM-Korrektur) — gegen den Draht gewogen:** 8 der 15 „verdrahtet"-Zeilen der korrigierten Liste sind nur probe-gelesen, nicht in `.te`/`field_te_query` (RTSW-Quelle · EVE 1032/131 · QBO · D20 · Kp · Swarm HAPI · EEG ds007822/ds007471 · Newell). Verifiziert am Draht: 7. Verifizierte Liste → `## An river`; Detail `state/operator-gespraeche/2026-10-05-mycelium.md`.
+
+## An river
+
+Origin: mycelium-folge232. **Routed — nicht-eigen; deine Disposition (Operator-Wort „ja bitte ablegen" 2026-10-05):**
+
+Verifizierte Drei-Zustands-Verdrahtungsliste (gemessen 2026-10-05 gegen `phi/pipeline/descriptors/*.te` + `field_te_query.rs`):
+
+- **Am Draht (7):** GOES XRS (`solar_hourly_event.te:16-17`) · AIA2013 (`aia_three_year.te:17-18`) · ERBQ-Event (`erbq-event.te:10-16`) · ERSST→NINO3.4 (`enso_blatt.te:17`) · TAO-Wind (`field_te_query.rs:3126`) · OMNI2 (`bz_retro.te:12`) · ABK `dbdt` (`bz_retro.te:13`).
+- **Probe-gelesen, nicht am Draht (8):** RTSW/SWPC (`bz_blatt_probe.rs:610`; Bz läuft via OMNI2) · EVE 1032/131 (verdrahtet nur 584/304, `corona_ladder.te:17-18`) · QBO `qbo_30hpa` (`enso_blatt_probe.rs:162`) · D20 `d20_thermocline` (`enso_blatt_probe.rs:193`) · Kp `magnetosphere_kp_3h` (`bz_blatt_probe.rs:606`) · Swarm HAPI (`station_convergence_probe.rs:13`) · EEG ds007822/ds007471 (`hyperscanning_group_te.rs:30`) · Newell `dΦ/dt` (`bz_retro_probe.rs:431`,`:958`).
+- **Declined/descoped (5):** SOI (`declined_sources.φ:4711-4713`) · NSRR (`blocked_sources.φ:164`) · TUH (`:160`) · JUICE-Doppler (keine Quelle; NAVIO = Pioneer) · WWP (kein `wwp` im Baum).
+- **Reihenfolge:** Blitze (WWLLN/GLM/LIS) → Swarm TEC → GIC Mäntsälä → SuperDARN FITACF → Infraschall BGR hf → IGETS → Pioneer-10/11 → Newell-Runde füllen (n=0).
 
 ## LOCK
 
