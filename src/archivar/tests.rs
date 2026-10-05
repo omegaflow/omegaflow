@@ -4716,7 +4716,6 @@ fn test_ymd_days_roundtrip() {
 fn test_kernel_id_of() {
     assert_eq!(super::kernel_id_of("inverse-square"), Some(0));
     assert_eq!(super::kernel_id_of("gaussian-inverse-square"), Some(1));
-    assert_eq!(super::kernel_id_of("gaussian-inverse"), Some(2));
     assert_eq!(super::kernel_id_of("erfc"), Some(3));
     assert_eq!(super::kernel_id_of("exponential-decay"), Some(4));
     assert_eq!(super::kernel_id_of("patch-levy"), Some(5));
