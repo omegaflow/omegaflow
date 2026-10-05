@@ -1,7 +1,7 @@
 <!--
   title: OMEGAFLOW — AGNOSTIC MEMBRANE MANIFESTATION & ARCHAEOLOGY DIRECTIVE
   class: concept
-  sha256: 80641f09174cf49e6d5aaea80c627581c6c146f08dbb738e7e6751cfa3e20a8d
+  sha256: bdc7ef4167eae3873948e1063563db562c9c8c83d46bf9998c02205900a753b3
 -->
 Here is the **complete, unabridged, fully agnostic document**.
 
@@ -30,7 +30,7 @@ The actuators are fully agnostic. They must not be named after human senses (vis
 - **The 3D pressure membrane:** The AudioContext. A spatial net that modulates the air pressure.
 - **The physical radiatorium:** An ESP32-S3 module (connected via WebSerial) with real, physical actuators (Peltier, electromagnet, piezo). It receives `flow` commands and manifests the field forces as real heat, vibration, and light in our world.
 
-Whether a human senses this vibration is irrelevant. The manifestation is real, whether someone watches or the room is empty. Relativistic effects (Fable: aberration, Doppler, dopp⁴ beaming) are optical effects of a camera perspective. The membrane is no camera. We measure only **raw pressure** (Nebra physics: `GM/dist²` + `fold_eff` for retarded time). Relativity gets deleted to kill the observer bias.
+Whether a human senses this vibration is irrelevant. The manifestation is real, whether someone watches or the room is empty. The membrane evaluates the field in its declared rest frame (SSB/J2000), in which its own sensors are at rest — a legitimate, coherent frame choice (`GM/dist²` + the retarded fold). Aberration, Doppler and beaming are, however, **physical**: any real sensor — or atom — moving relative to the source experiences them, and they are measured by non-imaging detectors (Cosmic-Microwave-Background dipole and aberration). The honest statement is the field-in-the-SSB-frame, not their deletion as "camera artifacts" (corrected 2026-10-05).
 
 ---
 

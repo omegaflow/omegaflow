@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 408801659c2e63375a1705278c18447dc7c3eefc854f64a54057a68b01acca94
+  sha256: 2013aafcb2ac2b4d4d8c7888d4ded9eb3c996b9a8befa6b6d349a5233b170ff3
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md
 -->
@@ -83,7 +83,7 @@ fabriziert.
 
 Exklusivitäts-Zensus (gemessen 2026-09-25): lokaler Nachweis plus Netz-Abwesenheit.
 
-- **(i) presenceWeight** — das dynamische Gewicht eines Oszillators im Bewusstseinsfenster, aus der 4D-Minkowski-Distanz zur Präsenz: spacelike (`ds² < 0`) → `0`, sonst fallend mit `ds²` (`scale/(scale + ds²)`, `scale = 1 + g`). · `docs/specs/minkowski-field-permeability.md:43-47`
+- **(i) presenceWeight** — das Gewicht eines Oszillators. Baum-Implementierung (gemessen 2026-10-05): `presence_weight` (`src/mathematikerin/s2.rs:36-52`) ist eine **zeitliche Relaxation** `w = Σ exp(−|t − tdb|/τ)` über die eigenen Richtungs-Samples (τ = Mediantakt, `s2.rs:19-34`). Die **Minkowski-Form** (spacelike `ds² < 0` → `0`) lebt nur in Spec/Probe (`docs/specs/minkowski-field-permeability.md:43-47`, `tools/measure/src/bin/minkowski_ds2_delta_probe.rs:76,117-125`), nicht in `src/` — dieser Eintrag nannte sie zuvor fälschlich als Baum.
 - **(i) EpistemicState** — die Typsystem-Variante auf `ComputationResult<T>` (`Confirmed | Inferred | Extrapolated | Degraded`), die die epistemische Unsicherheit an jeder Crate-Grenze sichtbar macht. · `state/zai-export/api/2026-06-05_135705-117-appeal-config-yaml.md:16095`
 - **(i) ProvenanceMetadata** — die Herkunfts-Metadaten an jedem Output: welches Modell rechnete, welche KI Text erzeugte, welche Unsicherheit und welcher epistemische Zustand; KI-erzeugter Inhalt ist identifizierbar (§18 Transparenz). · `state/zai-export/api/2026-06-05_174921-116-llm-config-appeal.md:15974,15380`
 - **(i) coherenceidx** — der Schreibindex in den `coherenceHistory`-Ringpuffer eines Oszillators; läuft modulo `ringSize` und hält so die jüngste Kohärenz-Historie. · `state/zai-export/api/2026-07-07_103026-065-omegaflow-protocol-overview-1.md:9812-9813`
