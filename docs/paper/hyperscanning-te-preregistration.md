@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: 7199518227ce37d0a259c00dbd93def44a45ff6385247de4a32d7ed661f0932e
+  sha256: 9b18af064adbe24dadfc33f1c0dda499de5f9182a15831c8647398f2aa4f1fbc
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -357,8 +357,10 @@ screen's own expression is the raised p95 that drops `pair-02`.
   see `### Ergebnisse / Results — joint cross-channel Fz,Cz`; **2 family-max survivors**
   (`pair-18@Cz` both directions, confirmed at p99), 88/93 per-cell nominees confirmed,
   the single-channel `pair-02@Cz` survivor masked by the raised joint p95.
-- **Method paper** — the publishable consolidation of this pre-registration stays
-  `pending` (operator word 2026-10-03); it consumes the joint measurement above.
+- **Method paper** — the publishable consolidation of this pre-registration is
+  `docs/paper/hyperscanning-te-method.md` (measured 2026-10-05 F234); it consumes the
+  joint measurement above. Open there: the `coherent-phase` null of the discovery
+  cohort (run `37331134587`, dispatched) and a full `max_points=4096` discovery run.
 
 ### Träger / Carrier
 
