@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: f565d710d0c1804204c9541aa70d14f2891dde09f0aee962701a37eb46898fb9
+  sha256: 0b4d8eeaf17779cfee30987752b07c8385cf9018f68c7cc99dfeb09a2362b14f
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -104,6 +104,12 @@ Wort | Datum | Quelle
 - **Kernel 2 (`gaussian-inverse`) entfernt; Kernel 6 (`inverse-linear`) lebt** (2026-10-05).
 - **Zeit-Faltung-Overflow nicht erreichbar** (`age ≤ ttl·64`; 2026-10-05).
 - **Die corona-confound-/dispersion-solar-Matrizen gemessen** (`field-te-query 37223713088`).
+- **TE-Bias-Wiring (Rat, fünf Stimmen, 2026-10-05).** n-Floor (`TE_NEFF_THRESHOLD = 18.166`)
+  + exakter Tabellen-Lookup am Berichtsort, Roh-TE unberührt: `bias_column` in
+  `field_te_query.rs` liefert `adjusted` / `unadjusted_below_floor` / `off_table`; der
+  max-T trägt die Bias-Kürzung ohnehin. **Interpolation verworfen** (`te_bias_m_k(8546) =
+  None` ist die Wahrheit). Offen (Register-Pflicht): Bias-Kurve über n messen +
+  `TE_BIAS_MK_EMBEDDED`. Gate-Test `bias_column_gates_on_n_eff_and_exact_n` (CI). `cargo check` 0/0.
 - **Universelles Vlies — Matrix-Form (Rat, fünf Stimmen, 2026-10-05).** Zweistufig:
   BH/BY-FDR über das Netz als Entdeckungsebene + kalibrierter WY-max-T pro Zell-Familie
   als strenge Ebene; Bias-Korrektur mit n-Floor in jede Zelle; `ozzy` als negative Engine
@@ -130,10 +136,11 @@ Wort | Datum | Quelle
   Alles-gegen-alles-Matrix; Triangulation ist Konzept. Der universelle Rahmen steht
   (ICRS baryzentrisch, DE/INPOP/EPM, Gaia DR3, 2MRS).
 - **Blockade:** keine (Rat-Verdikt 2026-10-05 liegt; die Matrix-Form steht am Baum).
-- **Braucht (Reihenfolge, gemessen 2026-10-05):** (1) Bias-Wiring
-  (`TE_NEFF_THRESHOLD`/`transfer_entropy_bias_adjusted_above` — in `te.rs` vorhanden,
-  in `tools/` **nirgends benutzt**: `sgrep bias_adjusted tools` = leer) in den
-  `field_te_query`-Zellenpfad → (2) die 8 probe-gelesenen Kanäle an den Draht +
+- **Braucht (Reihenfolge, gemessen 2026-10-05):** (1) Bias-Wiring — **n-Floor + exakter
+  Tabellen-Lookup gebaut** (`bias_column` in `field_te_query.rs`; `adjusted`/
+  `unadjusted_below_floor`/`off_table`, Roh-TE unberührt; Rat 2026-10-05, Interpolation
+  verworfen); offen: Bias-Kurve über n messen (`te_bias_n_probe` erweitern) +
+  `TE_BIAS_MK_EMBEDDED` → (2) die 8 probe-gelesenen Kanäle an den Draht +
   15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`) → (3) `ozzy`-Bibliothek;
   (4) Netz-Null-CI (B ≥ 1/α). **Ernte parallel** (Mountain/Mycelium/Future) — nicht Rivers
   Hand. **Ozzy läuft auf der Matrix, nicht davor.**
@@ -196,6 +203,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/archivar/spatial.rs`
 - `src/mathematikerin/shaders.rs`
+- `tools/measure/src/bin/field_te_query.rs`
 - `docs/specs/binary-protocol.md`
 - `docs/specs/wgsl-shader.md`
 - `docs/specs/eraen.md`
