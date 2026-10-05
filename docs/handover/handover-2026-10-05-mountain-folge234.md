@@ -3,7 +3,7 @@
   session: Mountain-Folge 234
   class: handover
   date: 2026-10-05
-  sha256: 662828ff2e3d632831a5d3d8dd496712b493056e7284f62deb749260b711fea9
+  sha256: 7bdbb6b2bb34dfee84c60cd9c384a156c08ffca9495c84d9e64a61516b6e3cc4
   status: live
 -->
 # Handover — Mountain-Folge 234 (2026-10-05)
@@ -75,7 +75,7 @@ Origin: mountain folge234.
 - **`goes_euvs`-Alt-Asset** auf `ssd.jpl.nasa.gov` ist nach dem `ncei.noaa.gov`-Alignment ein Orphan — `cdn_reconcile`-Disposition.
 - **BGI AGrav** (`phi/blocked_sources.φ:168`, Verdikt `inverse-square gravity m/s2`) und **C9/CEEIN-Infraschall** (`:172`, Verdikt `gaussian-inverse-square acoustic Pa`) warten auf Arm + Manifestation; C9 HTTP-only, Archiv endet ~2023-10-30.
 - **Tianwen-1 MoRIC** (CDS HiPS, `blocked_sources.φ:107`) — Tree-Ernte + CDN offen.
-- **ExoMars TGO ACS — Arm steht:** base16-`Group_Field_Character`-Decoder in `pds4.rs` gebaut (flash); Asset `acs_raw_sc_nir_…4140….tab` 543800 B sha256 `465f3c07…`; EC-ROW_DATA = 1280×u16 counts, keine Geometrie-Spalten im Label. Feld-Verdikt `ROW_DATA em count`. Registrierung (`format pds4_fixed_width`, url/compiler, `at mars`) + Manifestation.
+- **ExoMars TGO ACS — Arm steht (gemessen, frisch):** base16-`Group_Field_Character` in `pds4.rs` (commit `6863bc792`); Re-Indexierung der Group-Wiederholungen → eindeutige `ROW_DATA_0000..1279` (vorher 1280× gleichnamig, Riss geheilt). Frischer End-to-End-Lauf gegen PSA-FTP (Asset 543800 B sha256 `465f3c07…`): **200 rows, 1295 Spalten, roundtrip holds**. Keine Geometrie-Spalten im Label. Registrierung (`format pds4_fixed_width`, url/compiler, `at mars`, `field ROW_DATA_{i} em count`) + Manifestation.
 - **1-min-`dB/dt`-Arm (river-92):** `intermagnet_dbdt_compiler.rs:238-246` um `--grain minute` erweitern; Quelle HAPI `PT1M`; Grundlage `docs/blatt/fruehwarnsystem-praeregistrierung.md:26` + `docs/paper/gic-causal-driver.md` §3.1/§5.
 - **superdarn Re-Tag (future-179):** `blocked_sources.φ:78` trägt `blocked account [future]`, der Zugang liegt via `GLOBUS_ID_USER/PASS` vor (`wartend.φ:8`) → Mycelium-Schritt, Tag korrigieren.
 
