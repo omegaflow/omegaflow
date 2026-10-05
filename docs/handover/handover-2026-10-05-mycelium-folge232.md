@@ -3,7 +3,7 @@
   session: Mycelium-Linie — CI-Triage 2026-10-05, adressierte Blöcke gefaltet, Orphan-Carrier, Stehender Pass
   class: handover
   date: 2026-10-05
-  sha256: 101de874975a5ed882965a4b52ba47de736c258dd50dedbea6d739e227e005e8
+  sha256: fec95fe17e31b295cef4382450e52774192722db45e3ab83454dc330547c4cd6
   status: live
 -->
 # Handover — Mycelium-Folge 232 (2026-10-05)
@@ -13,7 +13,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 (`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-04-mycelium-folge231.md` (→ `archiv/`).
 
-## Burn: open 0.0028 · close 0.0429 (session_burn, gemessen; Linie + 3 Taucher: CI-Triage $0.0324 · Listen-Verifikation $0.0340 · EDF-Diagnose)
+## Burn: open 0.0028 · close 0.0843 (session_burn, gemessen; Linie + 2 general + 2 grind-flash)
 
 ## Operator-Wort-Register
 
@@ -32,13 +32,6 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - Wort | 2026-10-05 | „ja bitte ablegen" | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — die verifizierte Drei-Zustands-Verdrahtungsliste als adressierte Register-Zeile (§ `## An river`).
 
 ## Offen — eigen
-
-### register-coverage — 2 Mycelium-Orphans gefaltet (`:166` BGI AGrav, `:170` C9/CEEIN)
-- **Status:** eigen
-- **Trigger:** nächster `register-coverage`-Lauf auf dem Push-HEAD
-- **Lage:** (gemessen 2026-10-05 `ci_manage log 37251844037` / `37249551259`) `register_lookup --orphans --fail` → exit 2, `2 orphan entries [mycelium 2]`: `phi/blocked_sources.φ:166` (BGI AGrav) und `:170` (C9/CEEIN) trugen keinen Träger in einer Live-Mycelium-Übergabe. Mit dieser Übergabe sind beide Träger (s. `### blocked_sources.φ …`).
-- **Blockade:** keine
-- **Braucht:** Push dieses Handovers; `register_lookup --orphans` muss 0 mycelium zeigen.
 
 ### nvss-cdn — Lauf grün, `sha256`/`url`-Rebind offen
 - **Status:** eigen
@@ -123,12 +116,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** `--grain minute`-Arm (Mountain) fehlt.
 - **Braucht:** nach dem Arm `abk_dbdt_1m.bin` ernten + Register-Zeile + CDN.
 
-### superdarn Re-Tag (future-179)
-- **Status:** eigen
-- **Trigger:** Tag-Korrektur committet
-- **Lage:** (gemessen 2026-10-05) `blocked_sources.φ:78` trägt `blocked account [future]`; der Zugang liegt via `GLOBUS_ID_USER/PASS` vor (`wartend.φ:8`).
-- **Blockade:** keine
-- **Braucht:** den Tag in `blocked_sources.φ:78` korrigieren (Konto liegt vor).
+### superdarn Re-Tag (future-179) — Tag durch Mountain 235 gesetzt
+- **Status:** wartend
+- **Trigger:** `superdarn`-Record-Download-Route (GLOBUS) → CDN-Lauf
+- **Lage:** (gemessen 2026-10-05) `blocked_sources.φ:78` trägt `pending` (Mountain 235 setzte `blocked account [future]` → `pending`); Zugang via `GLOBUS_ID_USER/PASS` (`wartend.φ:8`); `superdarn_fitacf.bin` bereits grün (`37250228895`).
+- **Blockade:** Record-Download-Route unbenannt.
+- **Braucht:** Zugangsweg für den Record-Download nennen. (Carrier für `:78` bleibt dieser Punkt.)
 
 ### Orphan-Docs — 2 Surveys ohne Träger (future-179)
 - **Status:** eigen
