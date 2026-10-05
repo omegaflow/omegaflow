@@ -499,6 +499,20 @@ fn main() {
     };
     let ci = args.iter().any(|a| a == "--ci-mode");
     let metadata_only = args.iter().any(|a| a == "--metadata-only");
+    let mut explicit_ids: Vec<String> = Vec::new();
+    let mut ai = 0;
+    while ai < args.len() {
+        if args[ai] == "--id" {
+            if let Some(id) = args.get(ai + 1) {
+                explicit_ids.push(id.clone());
+            }
+        }
+        ai += 1;
+    }
+    let limit: usize = arg_value(&args, "--limit")
+        .and_then(|v| v.parse().ok())
+        .filter(|n| *n > 0)
+        .unwrap_or(2);
 
     let work = std::env::temp_dir();
     let meta_tmp = work.join(format!("emm_sdc_meta_{}.json", std::process::id()));
@@ -609,6 +623,8 @@ fn main() {
     let mut file_ids: Vec<String> = Vec::new();
     collect_http_urls(&parsed, &mut asset_urls);
     collect_file_ids(&parsed, &mut file_ids);
+    asset_urls.sort();
+    file_ids.sort();
     println!(
         "emm_sdc_compiler: {records} files, {} ids, {} asset url(s)",
         file_ids.len(),
@@ -626,27 +642,60 @@ fn main() {
         println!("emm_sdc_compiler: 0 files for {query} (0 honored)");
         return;
     }
-    if asset_urls.is_empty() && file_ids.is_empty() && records > 3000 {
-        println!(
-            "emm_sdc_compiler: {records} files and no per-file id or url in the metadata — the aggregate download is refused (the query needs a date/orbit narrowing); the asset stays pending"
-        );
-        return;
-    }
 
     let dl_tmp = work.join(format!("emm_sdc_dl_{}.tar", std::process::id()));
     let dl_s = dl_tmp.to_string_lossy().to_string();
     let (final_type, final_effective, mut bytes);
-    if let Some(asset_url) = asset_urls.first() {
-        println!("emm_sdc_compiler: fetching the first asset url named by the metadata");
-        let (acode, atype, aeffective) = match curl_fetch(asset_url, Some(&token), &dl_s, true) {
-            Some(v) => v,
-            None => {
-                eprintln!(
-                    "emm_sdc_compiler: the asset url did not complete — the asset stays unwritten"
-                );
+    if !explicit_ids.is_empty() {
+        let dl_query = explicit_ids
+            .iter()
+            .map(|id| format!("id={id}"))
+            .collect::<Vec<_>>()
+            .join("&");
+        println!(
+            "emm_sdc_compiler: downloading the {} explicitly named id(s)",
+            explicit_ids.len()
+        );
+        let dl_url = format!("{api_root}{DOWNLOAD_PATH}?{dl_query}");
+        let (code, content_type, effective) =
+            match bearer_fetch(&mut token, &refresh_spec, &dl_url, &dl_s, true) {
+                Some(v) => v,
+                None => {
+                    eprintln!(
+                        "emm_sdc_compiler: the explicit download did not complete — the asset stays unwritten"
+                    );
+                    std::process::exit(1);
+                }
+            };
+        if code != 200 {
+            eprintln!(
+                "emm_sdc_compiler: the explicit download returned HTTP {code} ({content_type}) for {dl_query} — the asset stays unwritten"
+            );
+            let _ = std::fs::remove_file(&dl_tmp);
+            std::process::exit(1);
+        }
+        final_type = content_type;
+        final_effective = effective;
+        bytes = match std::fs::read(&dl_tmp) {
+            Ok(b) => b,
+            Err(e) => {
+                eprintln!("emm_sdc_compiler: read the explicit download: {e}");
+                let _ = std::fs::remove_file(&dl_tmp);
                 std::process::exit(1);
             }
         };
+    } else if let Some(asset_url) = asset_urls.first() {
+        println!("emm_sdc_compiler: fetching the deterministic first asset url");
+        let (acode, atype, aeffective) =
+            match bearer_fetch(&mut token, &refresh_spec, asset_url, &dl_s, true) {
+                Some(v) => v,
+                None => {
+                    eprintln!(
+                        "emm_sdc_compiler: the asset url did not complete — the asset stays unwritten"
+                    );
+                    std::process::exit(1);
+                }
+            };
         if acode != 200 {
             eprintln!(
                 "emm_sdc_compiler: the asset url returned HTTP {acode} ({atype}) — the asset stays unwritten"
@@ -664,34 +713,29 @@ fn main() {
                 std::process::exit(1);
             }
         };
-    } else {
-        let dl_query = if file_ids.is_empty() {
-            query.clone()
-        } else {
-            file_ids
-                .iter()
-                .take(2)
-                .map(|id| format!("id={id}"))
-                .collect::<Vec<_>>()
-                .join("&")
-        };
-        println!("emm_sdc_compiler: {records} files — downloading {dl_query}");
+    } else if !file_ids.is_empty() {
+        let selected: Vec<&String> = file_ids.iter().take(limit).collect();
+        let dl_query = selected
+            .iter()
+            .map(|id| format!("id={id}"))
+            .collect::<Vec<_>>()
+            .join("&");
+        println!(
+            "emm_sdc_compiler: {records} files — downloading the first {} of {} sorted id(s) (--limit {limit})",
+            selected.len(),
+            file_ids.len()
+        );
         let dl_url = format!("{api_root}{DOWNLOAD_PATH}?{dl_query}");
-        let (code, content_type, effective) = match bearer_fetch(
-            &mut token,
-            &refresh_spec,
-            &dl_url,
-            &dl_s,
-            true,
-        ) {
-            Some(v) => v,
-            None => {
-                eprintln!(
-                    "emm_sdc_compiler: download query did not complete — the asset stays unwritten"
-                );
-                std::process::exit(1);
-            }
-        };
+        let (code, content_type, effective) =
+            match bearer_fetch(&mut token, &refresh_spec, &dl_url, &dl_s, true) {
+                Some(v) => v,
+                None => {
+                    eprintln!(
+                        "emm_sdc_compiler: download query did not complete — the asset stays unwritten"
+                    );
+                    std::process::exit(1);
+                }
+            };
         if code != 200 {
             eprintln!(
                 "emm_sdc_compiler: download HTTP {code} ({content_type}) for {dl_query} — the asset stays unwritten"
@@ -709,6 +753,11 @@ fn main() {
                 std::process::exit(1);
             }
         };
+    } else {
+        println!(
+            "emm_sdc_compiler: {records} files and no per-file id or url in the metadata — pass --id or narrow the query; the aggregate download is refused (the asset stays pending)"
+        );
+        return;
     }
     let _ = std::fs::remove_file(&dl_tmp);
 

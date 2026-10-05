@@ -73,7 +73,7 @@ note Tianwen-1/Zhurong (CNSA) — descoped 2026-10-04 (Operator-Wort, Future 177
 
 pending
 url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild (256x192 DN), kein Skalarfeld → Bildquelle ohne `field` (analog hips_png). Block: Workflow emm-sdc-cdn.yml stale (--data-level l2, keine Datums-Range); Arm/Manifest Mycelium.
+note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild, kein Skalarfeld → Bildquelle ohne `field` (Rat, analog hips_png). Compiler gefixt (deterministisch, --id/--limit, Refresh, Aggregat-Refusal). Block: Workflow + Loader-Arm + Frame-Bundle (Mycelium).
 
 blocked account
 url https://superdarn.ca/data-download
@@ -81,7 +81,7 @@ note MAP-Grid RST (DMap) — gemessen 2026-10-04: MAP nur als Globus-/BAS-/NSSC-
 
 pending
 url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO ACS — 2026-10-04: .tab Table_Character → pds4_fixed_width; Feld ROW_DATA → acs_nir_solar_occultation_spectrum gaussian-inverse-square em count. Registrierung Mycelium.
+note ExoMars TGO ACS — 2026-10-05: Arm steht (pds4.rs base16 Group_Field_Character + parse_label_for_file). Asset ...4140....tab 543800 B sha256 465f3c07…; EC-ROW_DATA = 1280 u16 counts, keine Geom.-Spalten. Feld ROW_DATA em count; Reg. Mycelium.
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/

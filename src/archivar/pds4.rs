@@ -305,7 +305,82 @@ fn record_delimiter_bytes(name: Option<&str>) -> Option<&'static [u8]> {
     }
 }
 
+fn group_column(field: &XElem, repetition_base: usize) -> Option<Pds4Column> {
+    let name = field.text_of("name")?;
+    let location = field
+        .text_of("field_location")
+        .and_then(|s| s.trim().parse::<usize>().ok())
+        .filter(|v| *v > 0)?;
+    let bytes = field
+        .text_of("field_length")
+        .and_then(|s| s.trim().parse::<usize>().ok())
+        .filter(|v| *v > 0)?;
+    let mut missing_constant = None;
+    if let Some(sc) = field.child("Special_Constants") {
+        missing_constant = sc
+            .text_of("missing_constant")
+            .and_then(|s| parse_number(&s));
+    }
+    Some(Pds4Column {
+        name,
+        unit: field.text_of("unit"),
+        data_type: field.text_of("data_type"),
+        missing_constant,
+        sampling_name: String::new(),
+        sampling_unit: String::new(),
+        sampling_min: None,
+        sampling_max: None,
+        start_byte: Some(repetition_base + location),
+        bytes: Some(bytes),
+    })
+}
+
+fn expand_group(group: &XElem, parent_base: usize, out: &mut Vec<Pds4Column>) {
+    let Some(repetitions) = group
+        .text_of("repetitions")
+        .and_then(|s| s.trim().parse::<usize>().ok())
+        .filter(|v| *v > 0)
+    else {
+        return;
+    };
+    let Some(group_location) = group
+        .text_of("group_location")
+        .and_then(|s| s.trim().parse::<usize>().ok())
+        .filter(|v| *v > 0)
+    else {
+        return;
+    };
+    let stride = match group
+        .text_of("group_length")
+        .and_then(|s| s.trim().parse::<usize>().ok())
+    {
+        Some(len) if len.is_multiple_of(repetitions) => len / repetitions,
+        _ => return,
+    };
+    if stride == 0 {
+        return;
+    }
+    let base = parent_base + group_location - 1;
+    let fields = group.children_named("Field_Character");
+    let subgroups = group.children_named("Group_Field_Character");
+    for i in 0..repetitions {
+        let repetition_base = base + i * stride;
+        for field in &fields {
+            if let Some(column) = group_column(field, repetition_base) {
+                out.push(column);
+            }
+        }
+        for sub in &subgroups {
+            expand_group(sub, repetition_base, out);
+        }
+    }
+}
+
 pub fn parse_label(text: &str) -> Option<Pds4Meta> {
+    parse_label_for_file(text, None)
+}
+
+pub fn parse_label_for_file(text: &str, file_name: Option<&str>) -> Option<Pds4Meta> {
     let doc = parse_xml(text)?;
     let mut meta = Pds4Meta {
         table_class: String::new(),
@@ -358,7 +433,18 @@ pub fn parse_label(text: &str) -> Option<Pds4Meta> {
             meta.target_name = tgt.text_of("name");
         }
     }
-    let fao = doc.child("File_Area_Observational")?;
+    let fao = match file_name {
+        Some(want) => doc
+            .children_named("File_Area_Observational")
+            .into_iter()
+            .find(|fao| {
+                fao.child("File")
+                    .and_then(|f| f.text_of("file_name"))
+                    .as_deref()
+                    == Some(want)
+            })?,
+        None => doc.child("File_Area_Observational")?,
+    };
     if let Some(file) = fao.child("File") {
         meta.file_name = file.text_of("file_name");
         meta.file_size = file
@@ -456,6 +542,11 @@ pub fn parse_label(text: &str) -> Option<Pds4Meta> {
             bytes,
         });
     }
+    if !delimited {
+        for group in record.children_named("Group_Field_Character") {
+            expand_group(group, 0, &mut meta.columns);
+        }
+    }
     meta.columns.sort_by_key(|c| c.start_byte);
     Some(meta)
 }
@@ -520,6 +611,7 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
                 Err(_) => None,
             },
             "ASCII_REAL" => text.parse::<f64>().ok(),
+            "ASCII_NUMERIC_BASE16" => u64::from_str_radix(text, 16).ok().map(|v| v as f64),
             _ => None,
         }
     };
@@ -536,7 +628,7 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
 pub fn is_numeric_type(data_type: &str) -> bool {
     matches!(
         data_type.to_ascii_uppercase().as_str(),
-        "ASCII_INTEGER" | "ASCII_NONNEGATIVE_INTEGER" | "ASCII_REAL"
+        "ASCII_INTEGER" | "ASCII_NONNEGATIVE_INTEGER" | "ASCII_REAL" | "ASCII_NUMERIC_BASE16"
     )
 }
 
@@ -1211,5 +1303,132 @@ mod tests {
             parse_cell(b"2005-10-29T07:54:00.961Z", "ASCII_Date_Time_UTC", None),
             Some(1130572440.961)
         );
+        assert_eq!(parse_cell(b"FF", "ASCII_Numeric_Base16", None), Some(255.0));
+        assert_eq!(parse_cell(b"ff", "ASCII_Numeric_Base16", None), Some(255.0));
+        assert_eq!(parse_cell(b"10", "ASCII_Numeric_Base16", None), Some(16.0));
+        assert_eq!(parse_cell(b"", "ASCII_Numeric_Base16", None), None);
+        assert_eq!(parse_cell(b"zz", "ASCII_Numeric_Base16", None), None);
+        assert!(is_numeric_type("ASCII_Numeric_Base16"));
+        assert!(is_numeric_type("ascii_numeric_base16"));
+    }
+
+    const EXOMARS_ACS_LABEL: &str = include_str!("pds4_fixtures/exomars_acs_nir_ec.xml");
+    const EXOMARS_ACS_FIRST1: &[u8] = include_bytes!("pds4_fixtures/exomars_acs_nir_ec_first1.tab");
+
+    const BASE16_GROUP_LABEL: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1">
+  <File_Area_Observational>
+    <File>
+      <file_name>s.tab</file_name>
+      <records>1</records>
+    </File>
+    <Table_Character>
+      <offset unit="byte">0</offset>
+      <records>1</records>
+      <record_delimiter>Carriage-Return Line-Feed</record_delimiter>
+      <Record_Character>
+        <fields>2</fields>
+        <groups>1</groups>
+        <record_length unit="byte">10</record_length>
+        <Field_Character>
+          <name>FRAME</name>
+          <field_number>1</field_number>
+          <field_location unit="byte">1</field_location>
+          <data_type>ASCII_NonNegative_Integer</data_type>
+          <field_length unit="byte">2</field_length>
+        </Field_Character>
+        <Group_Field_Character>
+          <group_number>1</group_number>
+          <repetitions>2</repetitions>
+          <fields>2</fields>
+          <groups>0</groups>
+          <group_location unit="byte">3</group_location>
+          <group_length unit="byte">8</group_length>
+          <Field_Character>
+            <name>SPEC</name>
+            <field_location unit="byte">1</field_location>
+            <data_type>ASCII_Numeric_Base16</data_type>
+            <field_length unit="byte">2</field_length>
+          </Field_Character>
+          <Field_Character>
+            <name>COUNT</name>
+            <field_location unit="byte">3</field_location>
+            <data_type>ASCII_Numeric_Base16</data_type>
+            <field_length unit="byte">1</field_length>
+          </Field_Character>
+        </Group_Field_Character>
+      </Record_Character>
+    </Table_Character>
+  </File_Area_Observational>
+</Product_Observational>
+"#;
+
+    #[test]
+    fn base16_group_splits_subfields_by_offset_and_length() {
+        let meta = parse_label(BASE16_GROUP_LABEL).expect("label parses");
+        assert_eq!(meta.table_class, "Table_Character");
+        assert_eq!(meta.record_length, Some(10));
+        assert_eq!(meta.groups, Some(1));
+        assert_eq!(meta.columns.len(), 5);
+        assert_eq!(meta.columns[0].name, "FRAME");
+        assert_eq!(meta.columns[0].start_byte, Some(1));
+        assert_eq!(meta.columns[0].bytes, Some(2));
+        assert_eq!(meta.columns[1].name, "SPEC");
+        assert_eq!(meta.columns[1].start_byte, Some(3));
+        assert_eq!(meta.columns[1].bytes, Some(2));
+        assert_eq!(meta.columns[2].name, "COUNT");
+        assert_eq!(meta.columns[2].start_byte, Some(5));
+        assert_eq!(meta.columns[2].bytes, Some(1));
+        assert_eq!(meta.columns[3].name, "SPEC");
+        assert_eq!(meta.columns[3].start_byte, Some(7));
+        assert_eq!(meta.columns[4].name, "COUNT");
+        assert_eq!(meta.columns[4].start_byte, Some(9));
+        let (rows, skipped, trailing) = decode_rows(b"12A100B210", &meta).expect("rows");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(skipped, 0);
+        assert_eq!(trailing, 0);
+        assert_eq!(
+            rows[0],
+            vec![Some(12.0), Some(161.0), Some(0.0), Some(178.0), Some(1.0)]
+        );
+    }
+
+    #[test]
+    fn exomars_acs_base16_group_decodes_the_real_first_record() {
+        let dat_file = "acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1-EC__4_0.tab";
+        let meta = parse_label_for_file(EXOMARS_ACS_LABEL, Some(dat_file)).expect("label parses");
+        assert_eq!(meta.table_class, "Table_Character");
+        assert_eq!(meta.record_length, Some(2719));
+        assert_eq!(meta.rows, Some(200));
+        assert_eq!(meta.file_records, Some(200));
+        assert_eq!(meta.file_size, Some(543800));
+        assert_eq!(meta.columns.len(), 1295);
+        assert_eq!(meta.columns[0].name, "INSTRUMENT");
+        assert_eq!(meta.columns[12].name, "SIZE");
+        assert_eq!(meta.columns[13].name, "ROW_DATA");
+        assert_eq!(
+            meta.columns[13].data_type.as_deref(),
+            Some("ASCII_Numeric_Base16")
+        );
+        assert_eq!(meta.columns[13].start_byte, Some(136));
+        assert_eq!(meta.columns[13].bytes, Some(2));
+        assert_eq!(meta.columns[13].unit, None);
+        assert_eq!(meta.columns[1292].name, "ROW_DATA");
+        assert_eq!(meta.columns[1292].start_byte, Some(2694));
+        assert_eq!(meta.columns[1293].name, "STATUS");
+        assert_eq!(meta.columns[1294].name, "CRC");
+        assert_eq!(record_stride(&meta, 543800), Some(2719));
+        let (rows, skipped, trailing) = decode_rows(EXOMARS_ACS_FIRST1, &meta).expect("rows");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(skipped, 0);
+        assert_eq!(trailing, 0);
+        assert_eq!(rows[0].len(), 1295);
+        assert_eq!(rows[0][0], Some(0.0));
+        assert_eq!(rows[0][1], Some(12582354.0));
+        assert_eq!(rows[0][11], Some(164.0));
+        assert_eq!(rows[0][12], Some(1280.0));
+        assert_eq!(rows[0][13], Some(215.0));
+        assert_eq!(rows[0][14], Some(45.0));
+        assert_eq!(rows[0][15], Some(216.0));
     }
 }

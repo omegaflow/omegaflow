@@ -1,6 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::pds4::{
-    Pds4Meta, Pds4Table, assemble, axis_of, decode_rows, pack, parse_label, parse_table,
+    Pds4Meta, Pds4Table, assemble, axis_of, decode_rows, pack, parse_label_for_file, parse_table,
 };
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
@@ -38,6 +38,11 @@ fn fetch_or_read(spec: &str) -> Option<Vec<u8>> {
     } else {
         std::fs::read(spec).ok()
     }
+}
+
+fn file_basename(spec: &str) -> &str {
+    let base = spec.rsplit('/').next().unwrap_or(spec);
+    base.split_once('?').map(|(head, _)| head).unwrap_or(base)
 }
 
 fn asset_name(dat_spec: &str) -> String {
@@ -106,7 +111,7 @@ fn compile_entry(
         eprintln!("label not utf8 ({label_spec})");
         return None;
     };
-    let Some(meta) = parse_label(label_text) else {
+    let Some(meta) = parse_label_for_file(label_text, Some(file_basename(dat_spec))) else {
         eprintln!("label parse void ({label_spec})");
         return None;
     };
