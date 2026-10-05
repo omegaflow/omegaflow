@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-09-16
-  sha256: d105cd60074f37475056789c83ef6e4b329808c1a9af2202963da95a3478d291
+  sha256: 94c1807f3df016f37126d65dd256a03bc87c20cb1936ca7ebb7fcfa0a74f143c
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
@@ -66,7 +66,7 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **Chebyshev ephemeris evaluation** — polynomial coefficient loading, degree matching (`CHEBYSHEV_N`), granule window coverage, rotation matrix time-derivative interpolation.
 - **Coordinate system consistency** — ICRS throughout; J2000 epoch offset (`UNIX_J2000_OFFSET`), body-fixed vs. inertial frame mixing in motion law evaluation.
 - **WebSocket framing** — `write_ws_binary` header construction, masking, extended payload length encoding.
-- **Temporal decay mathematics** — `e^(−|Δt|/ttl)` fold and light-travel retardation `max(0, |Δt| − d/c)` in both Rust response construction and WGSL `fold_eff` must agree.
+- **Temporal decay mathematics** — the retarded fold `e^(−max(0, |Δt| − d/c) / ttl)` (`ttl`, not `τ`: `ttl` is the source retention directive, `τ` the field's process decay) and light-travel retardation `max(0, |Δt| − d/c)` in both Rust response construction and WGSL `fold_eff` must agree.
 - **Dead code paths** — functions, branches, or modules that compile but have no callers. Only visible as warnings when enabled.
 
 **Manual Verification Protocol.** Rule: After every implementation session, after `cargo check` returns zero errors AND zero warnings, the Kybernaut must perform manual verification:
