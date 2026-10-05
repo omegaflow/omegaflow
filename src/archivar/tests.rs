@@ -3333,13 +3333,18 @@ fn test_motion_kepler_at_anchor_body_and_law_bounds() {
     );
 }
 
-fn kepler_law_span_probe(rec: &AsteroidRec, span_secs: f64, samples: u32) -> Option<(f64, f64)> {
+fn kepler_law_span_probe(
+    rec: &AsteroidRec,
+    span_secs: f64,
+    samples: u32,
+) -> Option<(f64, f64, f64)> {
     let motion = Motion::Kepler {
         rec: Arc::new(rec.clone()),
     };
     let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    let v_hull = law_bounds(&motion, epoch_secs, 0.0, &eph)?.0;
+    let v_epoch = law_bounds(&motion, epoch_secs, 0.0, &eph)?.0;
+    let v_hull = law_bounds_over_span(&motion, epoch_secs, 0.0, span_secs, &eph)?.0;
     let mut v_span = 0.0_f64;
     for k in 0..=samples {
         let frac = k as f64 / samples as f64;
@@ -3352,7 +3357,7 @@ fn kepler_law_span_probe(rec: &AsteroidRec, span_secs: f64, samples: u32) -> Opt
             }
         }
     }
-    Some((v_span, v_hull))
+    Some((v_span, v_hull, v_epoch))
 }
 
 fn dastcom_probe_records() -> Vec<AsteroidRec> {
@@ -3467,12 +3472,12 @@ fn dastcom_probe_records() -> Vec<AsteroidRec> {
 }
 
 #[test]
-fn test_law_bounds_enclosure_span_breaks_for_periapsis_in_window() {
+fn test_law_bounds_enclosure_span_holds_for_periapsis_in_window() {
     let records = dastcom_probe_records();
     let span_secs = 64.0 * 86400.0;
-    let mut breaks: Vec<(u32, f64)> = Vec::new();
+    let mut span_exceeds_epoch: Vec<u32> = Vec::new();
     for rec in &records {
-        let (v_span, v_hull) = kepler_law_span_probe(rec, span_secs, 8192)
+        let (v_span, v_hull, v_epoch) = kepler_law_span_probe(rec, span_secs, 8192)
             .expect("a DASTCOM Kepler record stays in the Kepler domain");
         assert!(
             v_span.is_finite() && v_hull.is_finite(),
@@ -3480,26 +3485,20 @@ fn test_law_bounds_enclosure_span_breaks_for_periapsis_in_window() {
             rec.number
         );
         assert!(
-            v_span >= v_hull / Φ,
-            "record {}: the span maximum cannot fall below the epoch rate",
-            rec.number
+            v_span <= v_hull / Φ,
+            "record {}: the span maximum {v_span} exceeds the span hull {}",
+            rec.number,
+            v_hull / Φ
         );
-        if v_span > v_hull {
-            breaks.push((rec.number, v_span / v_hull));
+        if v_span > v_epoch / Φ {
+            span_exceeds_epoch.push(rec.number);
         }
     }
     assert_eq!(
-        breaks.iter().map(|(number, _)| *number).collect::<Vec<_>>(),
+        span_exceeds_epoch,
         vec![1566, 3200],
-        "the span-overshoot bodies are Icarus and Phaethon: {breaks:?}"
+        "the periapsis-in-window bodies are Icarus and Phaethon: {span_exceeds_epoch:?}"
     );
-    for (number, factor) in &breaks {
-        let measured_floor = if *number == 1566 { 1.05 } else { 1.50 };
-        assert!(
-            *factor > measured_floor,
-            "record {number}: the span maximum is {factor:.4}× the epoch hull"
-        );
-    }
 }
 
 #[test]

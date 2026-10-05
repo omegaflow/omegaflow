@@ -536,3 +536,74 @@ pub fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
     }
     (y, m + 1, d + 1)
 }
+
+pub fn cf_time_unix_seconds(units: &str, value: f64) -> Option<f64> {
+    let (unit, epoch) = units.split_once(" since ")?;
+    let factor = match unit.trim().to_ascii_lowercase().as_str() {
+        "day" | "days" => 86400.0,
+        "hour" | "hours" => 3600.0,
+        "minute" | "minutes" => 60.0,
+        "second" | "seconds" => 1.0,
+        _ => return None,
+    };
+    let mut fields = epoch.trim().split_whitespace();
+    let date = fields.next()?;
+    let mut date_parts = date.split('-');
+    let year = date_parts.next()?.parse::<i64>().ok()?;
+    let month = date_parts.next()?.parse::<i64>().ok()?;
+    let day = date_parts.next()?.parse::<i64>().ok()?;
+    if date_parts.next().is_some() {
+        return None;
+    }
+    let day_seconds = crate::lsk::days_from_civil(year, month, day)? as f64 * 86400.0;
+    let clock = match fields.next() {
+        Some(token) => clock_seconds(token)?,
+        None => 0.0,
+    };
+    Some(day_seconds + clock + value * factor)
+}
+
+fn clock_seconds(token: &str) -> Option<f64> {
+    let parts: Vec<&str> = token.trim_end_matches('Z').split(':').collect();
+    if parts.is_empty() || parts.len() > 3 {
+        return None;
+    }
+    let mut seconds = 0.0;
+    for (i, part) in parts.iter().enumerate() {
+        let unit = match i {
+            0 => 3600.0,
+            1 => 60.0,
+            _ => 1.0,
+        };
+        seconds += part.parse::<f64>().ok()? * unit;
+    }
+    Some(seconds)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn cf_time_seconds_resolves_days_and_clock() {
+        let base = crate::lsk::days_from_civil(1800, 1, 1).unwrap() as f64 * 86400.0;
+        let godas = cf_time_unix_seconds("days since 1800-01-01 00:00:0.0", 81814.0).unwrap();
+        assert_eq!(godas, base + 81814.0 * 86400.0);
+
+        let gbase = crate::lsk::days_from_civil(1850, 1, 1).unwrap() as f64 * 86400.0;
+        let gistemp = cf_time_unix_seconds("days since 1850-01-01 00:00:00", 14.0).unwrap();
+        assert_eq!(gistemp, gbase + 14.0 * 86400.0);
+
+        let hbase =
+            crate::lsk::days_from_civil(2000, 1, 1).unwrap() as f64 * 86400.0 + 6.0 * 3600.0;
+        let hours = cf_time_unix_seconds("hours since 2000-01-01 06:00:00", 2.0).unwrap();
+        assert_eq!(hours, hbase + 2.0 * 3600.0);
+    }
+
+    #[test]
+    fn cf_time_seconds_absent_for_foreign_units_and_dates() {
+        assert_eq!(cf_time_unix_seconds("furlongs since 1800-01-01", 1.0), None);
+        assert_eq!(cf_time_unix_seconds("days", 1.0), None);
+        assert_eq!(cf_time_unix_seconds("days since 1800-13-01", 1.0), None);
+    }
+}

@@ -303,6 +303,10 @@ pub struct FieldConfig {
 
 pub const SLOT_ABSENT: f64 = -1.0;
 
+pub const PRESENCE_FLAG_PHASE: f64 = 1.0;
+pub const PRESENCE_FLAG_ABSORPTION: f64 = 2.0;
+pub const PRESENCE_FLAG_ADVECTION: f64 = 4.0;
+
 impl FieldConfig {
     pub fn absorption_measured(&self) -> Option<f64> {
         if self.absorption == SLOT_ABSENT {
@@ -319,6 +323,28 @@ impl FieldConfig {
             Some(self.advection)
         }
     }
+}
+
+pub fn slot_measured(value: f64) -> bool {
+    value.is_finite() && value != SLOT_ABSENT
+}
+
+pub fn slot_or_pad(value: f64) -> f64 {
+    if slot_measured(value) { value } else { 0.0 }
+}
+
+pub fn presence_flags(phase: Option<f64>, absorption: f64, advection: f64) -> f64 {
+    let mut flags = 0.0;
+    if phase.is_some() {
+        flags += PRESENCE_FLAG_PHASE;
+    }
+    if slot_measured(absorption) {
+        flags += PRESENCE_FLAG_ABSORPTION;
+    }
+    if slot_measured(advection) {
+        flags += PRESENCE_FLAG_ADVECTION;
+    }
+    flags
 }
 
 pub struct BrowserSensor {

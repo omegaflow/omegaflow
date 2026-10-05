@@ -4488,6 +4488,10 @@ decline derived-product
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
 note Swarm TII E-Feld (TCT02/16) — keyless HAPI, aber experimentell, stopDate 2025-12-04, E-Feld ABGELEITET (E=−V×B); direkte Messung ist Ionendrift (Vixh/Viy/Viz m/s). Abgeleitet + Feed beendet → kein Oszillator; live-Swarm-Felder in sources.φ.
 
+decline registry
+url https://www.orfeus-eu.org/eidaws/routing
+note EIDA Routing Service (ORFEUS) — 2026-10-05: HTTP 200 (1084 B HTML Routing-Beschreibung); Routing/Registry für FDSN dataselect/station, kein Messwert; ORFEUS-FDSN-Stationen bereits declined_sources.φ:5420.
+
 decline registry/katalog
 url https://vo-tap.oma.be/tap
 note sidc_flare/sidc_cme/sidc_geomagnetic_*/uset_*/rob_spoca_ch — epn_core-Ereigniskataloge (Klassifikation/Prognose, kein Roh-Messwert-Feld).

@@ -1001,6 +1001,16 @@ impl DapFile {
         }
     }
 
+    pub fn fill_value(&self, name: &str) -> Option<f64> {
+        let v = self.var(name)?;
+        for key in ["_FillValue", "missing_value"] {
+            if let Some(attr) = v.attrs.iter().find(|a| a.name == key) {
+                return self.attr_num(attr);
+            }
+        }
+        None
+    }
+
     pub fn attr_num(&self, attr: &DapAttr) -> Option<f64> {
         match attr.dap_type {
             DapType::Str | DapType::Url => None,
@@ -1290,5 +1300,37 @@ mod tests {
             parse_ascii(ascii),
             Err(DapNote::CountMismatch { .. })
         ));
+    }
+
+    #[test]
+    fn parses_real_godas_ascii_grid() {
+        let ascii = "Dataset {\n    Grid {\n     ARRAY:\n        Float32 pottmp[time = 1][level = 1][lat = 1][lon = 1];\n     MAPS:\n        Float64 time[time = 1];\n        Float32 level[level = 1];\n        Float32 lat[lat = 1];\n        Float32 lon[lon = 1];\n    } pottmp;\n} Datasets/godas/pottmp.2024.nc;\n---------------------------------------------\npottmp.pottmp[1][1][1][1]\n[0][0][0], -9.96921E36\n\npottmp.time[1]\n81814.0\n\npottmp.level[1]\n5.0\n\npottmp.lat[1]\n-74.5\n\npottmp.lon[1]\n0.5\n\n";
+        let vars = parse_ascii(ascii).unwrap();
+        assert_eq!(vars.len(), 5);
+        assert_eq!(vars[0].name, "pottmp.pottmp");
+        assert_eq!(vars[0].shape, vec![1, 1, 1, 1]);
+        assert_eq!(vars[0].values, vec![-9.96921e36]);
+        assert_eq!(vars[1].name, "pottmp.time");
+        assert_eq!(vars[1].values, vec![81814.0]);
+        assert_eq!(vars[2].name, "pottmp.level");
+        assert_eq!(vars[3].name, "pottmp.lat");
+        assert_eq!(vars[4].name, "pottmp.lon");
+    }
+
+    #[test]
+    fn fill_value_reads_missing_or_fill_attr() {
+        let attrs = "Attributes {\n    t {\n        Float32 missing_value -1.0e30;\n    }\n    u {\n        Float32 _FillValue 9.96921E36;\n    }\n}\n";
+        let mut data = Vec::new();
+        data.extend(f32b(1.0));
+        data.extend(f32b(2.0));
+        let file = decode(
+            "Dataset {\n    Float32 t;\n    Float32 u;\n} demo;\n",
+            attrs,
+            &data,
+        )
+        .unwrap();
+        assert_eq!(file.fill_value("t"), Some(-1.0e30));
+        assert_eq!(file.fill_value("u"), Some(9.969_21e36));
+        assert_eq!(file.fill_value("absent"), None);
     }
 }
