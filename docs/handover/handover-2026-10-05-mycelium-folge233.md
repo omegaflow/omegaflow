@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: d6324c13fd5c7d9e6d2038fd3b9a882583c0584a0baa48af9ea23f0afd1f2dc7
+  sha256: fab9df3ad9557c8ecbebbe959f3ac0c165d0444df409c1c0d4764efd5b9ca791
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -105,7 +105,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### EMM EXI L2a — Proxy-Riss geheilt; Loader-Arm + Register offen (mountain-234/235)
 - **Status:** eigen | **Bindung:** gemischt (s. `## An River` / `## An mountain`)
 - **Trigger:** Re-Dispatch nach dem Proxy-Fix → Lauf
-- **Lage:** (gemessen 2026-10-05, `ci_manage log 37308675343`) `emm-sdc-cdn 37308675343` **failure**: `ensure release sdc.emiratesmarsmission.ae: gh returned void: error connecting to socks5h` — der `gh`-CDN-Upload erbte den Azure-Bypass-Proxy (`ALL_PROXY`/`HTTPS_PROXY`) des Compile-Steps. **Gefixt:** `NO_PROXY`/`no_proxy` für `github.com,api.github.com,uploads.github.com,objects.githubusercontent.com` im Step. Der Compile selbst läuft durch (kein Datums-Arg nötig, Default-Ranges).
+- **Lage:** (gemessen 2026-10-05, `ci_manage log 37308675343`) `emm-sdc-cdn 37308675343` **failure**: `ensure release sdc.emiratesmarsmission.ae: gh returned void: error connecting to socks5h` — der `gh`-CDN-Upload erbte den Azure-Bypass-Proxy (`ALL_PROXY`/`HTTPS_PROXY`) des Compile-Steps. **Gefixt:** `NO_PROXY=github.com,api.github.com,uploads.github.com,objects.githubusercontent.com` im Step (GitHub lehnt ein zusätzliches `no_proxy` als doppelten Key ab). Der Compile selbst läuft durch (kein Datums-Arg nötig, Default-Ranges).
 - **Blockade:** Loader-Arm (Membrane, River) + Register-Block (`format emm_exi_l2a`, `at mars`, ttl; Mountain).
 - **Braucht:** `emm-sdc-cdn` nach Push re-dispatchen; bei Grün `sha256`/`url`; s. adressierte Blöcke.
 
