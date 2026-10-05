@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: ced2f19b468a541d7d6b4fc40212e01bc0269273522126964fd0ecc6d6d66ae9
+  sha256: 80cbf9b21c85ea42d2676efd72c8e2e1f3c27619a73ed873254828c6cfe9d128
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -53,6 +53,7 @@ Wort | Datum | Quelle
 „aber das möchte ich erreichen ich möche an jedem punkt einen stein ins wasser fallen lassen und schauen was passiert" | 2026-10-05 | Operator (River 94) — Störungs-Experiment (der Stein = `field_te_query`)
 „ich habe glm nochmal mit websuche gestartet" | 2026-10-05 | Operator (River 94) — GLM-Nachfrage; gemessen: GLM-5.3-Chat **kein Web-Tool** (ungeprüfte Trainings-Tabelle), neue Endpunkte live verifiziert
 „ich habe glm nochmal mit websuche laufen lassen" | 2026-10-05 | Operator (River 94) — GLM Runde 3 mit Live-Tools; Korrekturen verifiziert (EUMETSAT 0691 ✅, EarthScope .org ✅, DART-realtime2 404 ❌)
+„lies dir mein vision dokument auf dem deskto durch und arbeite es ein" — Vision `/home/johannes/Schreibtisch/visionen`: „wie alles zusammenhängt" · universal statt Sonne-Erde · kein Erdbias (Sonne→Sirius-Wetter) · Lücken sind Zielangaben, nur weil etwas nicht gemessen wurde ist es nicht nichttriangulierbar · Gleichungsmaschine oder Instrument? | 2026-10-05 | Operator (River 94) — Auftrag `docs/auftrag/auftrag-universelles-vlies.md`
 
 ## Träger (Prosa, eigene)
 
@@ -67,6 +68,9 @@ Wort | Datum | Quelle
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (`class: survey`) —
   die Auswertung „fehlende Fäden": verifizierte Beschaffungsroute (Taucher-gemessen) +
   Ranking + UI-Stimmen; nächste Schritte §5.
+- `docs/auftrag/auftrag-universelles-vlies.md` (`class: auftrag`) — die Operator-Vision
+  2026-10-05 (alles gegen alles, baryzentrisches ICRS, Lücken als Zielangaben,
+  Triangulation, `ozzy`); Offen: `ozzy`-Bau, Paar-Matrix, Ernte (§Lieferung).
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (`class: survey`) — §7
   geschlossen; em-Apertur `(1+z)⁻²` + Kernel-Gate (Trägerzeile).
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` / `docs/auftrag/auftrag-flyby2-kette.md` —
@@ -112,6 +116,18 @@ Wort | Datum | Quelle
 - **Blockade:** keine.
 - **Braucht:** `awk`-Zensus der 24 Zeilen + Kernel-Prüfung; CI-Test für den Kernel-Gate
   (Fixture: Kernel 6, z=1 → unskaliert; Kernel 1, z=1 → 0.25; CPU/GPU-Parität) — CI, nie lokal.
+
+### Universelles Vlies — `ozzy` + Alles-gegen-alles-Matrix
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner (arbeitbar bis zur Rats-Kante)
+- **Lage:** (gemessen 2026-10-05 via `fd -i ozzy` = leer, `sgrep -i ozzy` nur Spec) `ozzy`
+  ist Spec, keine Quelldatei; `field_te_query` fährt Einzel-Paare, keine
+  Alles-gegen-alles-Matrix; Triangulation ist Konzept. Der universelle Rahmen steht
+  (ICRS baryzentrisch, DE/INPOP/EPM, Gaia DR3, 2MRS).
+- **Blockade:** die Form der Paar-Matrix (Skalierung, Familien-Kontrolle über tausende
+  Paare) ist ein Rats-Entscheid.
+- **Braucht:** Rat-Verdikt zur Matrix-Form; danach `ozzy` als Bibliothek
+  (TE-Unabhängigkeitstest) + Paar-Matrix; Ernte nach Survey §5.
 
 ### dB/dt–GIC-Relation Mäntsälä (offen)
 - **Status:** wartend | **Bindung:** eigen
