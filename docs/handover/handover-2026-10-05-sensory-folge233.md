@@ -3,7 +3,7 @@
   session: Sensory-Folge 233
   class: handover
   date: 2026-10-05
-  sha256: 75abe64cf7296a8d56cb50723b8fa2e23c0bb549127d5e61ac88c97ff7e1d79b
+  sha256: 13230a98e44abadea5061ab722d227b2645f8041f5756a8a8737366485030f30
   status: live
 -->
 # Handover — Sensory-Folge 233 (2026-10-05)
@@ -49,7 +49,7 @@ keine neue Messung: dieselbe Sache am selben Tag); `--stale sensory --persist 3`
 - **Ausgangs-Routing gefaltet (F233, gemessen):** `rr-brustgurt` hat Future in die
   Operator-Queue gefaltet (`state/zustand/ereignisse.φ:64795`, 2026-10-04; Future-Archiv
   folge174–177), den Medizin-Pool hat Mountain disponiert
-  (`docs/handover/handover-2026-10-05-mountain-folge235.md:152`; BGI AGrav
+  (`docs/handover/archiv/handover-2026-10-05-mountain-folge235.md:152`; BGI AGrav
   `phi/sources.φ:27017`, C9/CEEIN `:27025` registriert). Die Sender-Blöcke `## An future` /
   `## An mountain` sind aus dieser Übergabe entfernt — kein Doppel-Träger, kein neuer Akt.
 
@@ -274,6 +274,30 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 - **Blockade:** Termin.
 - **Braucht:** nach dem Flyby `gh workflow run kernel-flatten.yml` (`horizons_compiler --flyby --ci-mode`, Eintrag `tools/harvest/src/bin/horizons_compiler.rs:22` `-159/europa_clipper`) + `archive_search --sniff "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin"` gegen `dae553fb…`.
 
+## An mycelium
+
+Origin: sensory-folge233.
+
+**Freier self-hosted Runner `t420` ist online (2026-10-05).** Operator-Wort 2026-10-05
+(„die kostenlose variante"): statt Larger Runner (kostenpflichtig) ein eigener Rechner,
+aufgesetzt in der Sensory-Session.
+
+- **Lage (gemessen 2026-10-05):** Host `johannes-ThinkPad-T420` (Linux Mint 22.3,
+  i5-2520M 2 Kerne/4 Threads, 7,6 GB, SSD, LAN `192.168.178.50`); Runner `t420`,
+  Labels `self-hosted, Linux, X64`, Status `online` idle
+  (`gh api repos/omegaflow/omegaflow/actions/runners`); Dienst
+  `actions.runner.omegaflow-omegaflow.t420.service` (systemd, enabled), Nutzer `actions`
+  **ohne sudo** (gemessen); Sleep/Suspend/Hibernate maskiert, Lid-close ignoriert;
+  gedrosselt (`Nice=10 CPUWeight=20 IOWeight=20`), damit Netflix-Streaming Vorrang hat.
+  Es gibt bereits einen Runner `demeter-residential`.
+- **Braucht:** in den **CDN-Compiler-Workflows** `runs-on: ubuntu-latest` →
+  `runs-on: [self-hosted, linux]` (leichte Jobs); **nicht** `ci-check` (ganze Crate,
+  620 Bins — der T420 ist dafür zu langsam). Erster Test: einen CDN-Compiler-Workflow
+  dispatchen und den Log lesen (Host-Tools wie `jq` fehlen evtl. → ggf. nachinstallieren).
+- **Blockade:** keine.
+- **Warum Sensory routet:** `runs-on`/CI-Infrastruktur ist Myceliums Recht; Sensory hat
+  nur den Runner aufgesetzt.
+
 ## Träger (Orphan-Faltung)
 
 Der Dateiname in dieser Übergabe ist der Träger. Je Zeile ein zuletzt trägerloses
@@ -399,9 +423,13 @@ Kein pro/max-Dispatch, keine Taucher nötig; kein neuer Operator-Punkt.
 Sender-Zeile fällt (Sender removes the block at its next pass): `## An future` (`rr-brustgurt`,
 von Future in die Operator-Queue gefaltet, gemessen `state/zustand/ereignisse.φ:64795`,
 2026-10-04; Future-Archiv folge174–177) und `## An mountain` (Medizin-Pool disponiert,
-`docs/handover/handover-2026-10-05-mountain-folge235.md:152`; BGI AGrav `phi/sources.φ:27017`
+`docs/handover/archiv/handover-2026-10-05-mountain-folge235.md:152`; BGI AGrav `phi/sources.φ:27017`
 + C9/CEEIN `:27025` registriert). Der Punkt lebt jetzt in der Übergabe des Owners, nicht mehr
 doppelt in Sensorys.
+(e) Auf Operator-Wort („die kostenlose variante") einen **self-hosted Runner** auf dem
+T420 aufgesetzt und einen `## An mycelium`-Punkt (Workflow-`runs-on`) geroutet — Details
+im Block. Der Bau/Test des Hyperscanning-Ergebnisses bleibt unberührt; Lauf `37292154121`
+weiter beobachten.
 
 `state/operator-gespraeche/2026-10-05-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
