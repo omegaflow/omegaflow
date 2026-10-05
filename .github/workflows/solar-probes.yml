@@ -34,7 +34,9 @@ jobs:
         run: |
           gh release download ssd.jpl.nasa.gov --repo omegaflow/sources \
             --pattern goes_xrs.bin --pattern f107_penticton.bin \
-            --pattern omni2_serie.bin --pattern goes_euvs.bin --clobber && \
+            --pattern omni2_serie.bin --clobber && \
+            gh release download ncei.noaa.gov --repo omegaflow/sources \
+            --pattern goes_euvs.bin --clobber && \
             cargo run -p omegaflow-measure --release --bin solar_causal_graph_probe -- \
               --goes-bin goes_xrs.bin --f107-bin f107_penticton.bin \
               --omni2-bin omni2_serie.bin --euvs-bin goes_euvs.bin

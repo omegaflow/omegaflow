@@ -42,8 +42,15 @@ jobs:
           CACHE="$OMEGAFLOW_STATE/archivar_cache"
           mkdir -p "$CACHE"
           mkdir -p /tmp/sac
-          for a in omni2_serie.bin goes_xrs.bin goes_euvs.bin f107_penticton.bin ephemeris_sun.bin ephemeris_earth.bin; do
-            gh release download ssd.jpl.nasa.gov --repo omegaflow/sources --pattern "$a" --clobber --dir /tmp/sac 2>/dev/null \
+          for entry in \
+            "cdaweb.gsfc.nasa.gov|omni2_serie.bin" \
+            "ssd.jpl.nasa.gov|goes_xrs.bin" \
+            "ncei.noaa.gov|goes_euvs.bin" \
+            "ssd.jpl.nasa.gov|f107_penticton.bin" \
+            "ssd.jpl.nasa.gov-ephemeris|ephemeris_sun.bin" \
+            "ssd.jpl.nasa.gov-ephemeris|ephemeris_earth.bin"; do
+            tag="${entry%%|*}"; a="${entry##*|}"
+            gh release download "$tag" --repo omegaflow/sources --pattern "$a" --clobber --dir /tmp/sac 2>/dev/null \
               && mv "/tmp/sac/$a" "$CACHE/omegaflow_series_$a" \
               || echo "$a: CDN download void — the probe fetches it from the CDN itself (omegaflow_series_$a)"
           done

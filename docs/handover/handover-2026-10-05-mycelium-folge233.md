@@ -3,7 +3,7 @@
   session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-05
-  sha256: bd581733e98c11ebccc371faba68febe84172a958b9af07297427566fd87f49d
+  sha256: 3bb9c1ccf832b1777aa39b067941e2287fb0758f5aeedbeff7bc5a47010e6c3f
   status: live
 -->
 # Handover — Mycelium-Folge 233 (2026-10-05)
@@ -30,6 +30,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - Wort | 2026-10-05 | „du bist mycellium" | Quelle: Operator (Session 2026-10-05) — der Commit-Prefix `mountain` war falsch.
 - Wort | 2026-10-05 | „kannst du dir das bitte ansehen?" + zwei Listen (GIC/`field_te_query`) | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — Review-Auftrag; die Listen sind Claims gegen den Baum gemessen (Riss-Befund in der Session).
 - Wort | 2026-10-05 | „ja bitte ablegen" | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — die verifizierte Drei-Zustands-Verdrahtungsliste als adressierte Register-Zeile (§ `## An river` in folge232).
+- Wort | 2026-09-29 | **SuperDARN nicht messen** — „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." | Quelle: `state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25` — der Globus-Task wird nicht neu aufgesetzt; der `.map`-Korpus wartet auf die Glasfaser-Hardware. Kein Register-/Mess-Akt.
 
 ## Offen — eigen
 
@@ -115,26 +116,12 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** `--grain minute`-Arm (Mountain).
 - **Braucht:** nach dem Arm `abk_dbdt_1m.bin` ernten + Register-Zeile + CDN.
 
-### superdarn Re-Tag (future-179) — `:78` pending; Record-Download-Route
-- **Status:** wartend
-- **Trigger:** `superdarn`-Record-Download-Route (GLOBUS) → CDN-Lauf
-- **Lage:** (gemessen 2026-10-05) `blocked_sources.φ:78` trägt `pending` (Mountain 235); Zugang via `GLOBUS_ID_USER/PASS` (`wartend.φ:8`). Der FITACF-Asset ist grün und sein Register-`sha256` in dieser Session korrigiert.
-- **Blockade:** Record-Download-Route unbenannt.
-- **Braucht:** Zugangsweg für den Record-Download nennen. (Carrier für `:78`.)
-
 ### FMI-GIC NUR-Harvest (river-93) — SuperMAG-Kette mit Station NUR
 - **Status:** eigen
 - **Trigger:** `gh workflow run supermag-magstid-cdn.yml` mit `start=1999-01-01T00:00:00`, `--station NUR`, Budget genug für die Live-Stationsliste
 - **Lage:** (gemessen 2026-10-05) `phi/supermag_stations.φ:368` führt NUR (Nurmijärvi); der Compiler kennt `--station NUR`; der Workflow iteriert die Live-Liste.
 - **Blockade:** keine (Push; Rivers dB/dt–GIC-Messung hängt daran).
 - **Braucht:** dispatch nach Push; bei Grün Rivers Messung.
-
-### goes_euvs — Alt-Asset-Orphan auf `ssd.jpl.nasa.gov` (mountain-235)
-- **Status:** eigen
-- **Trigger:** `cdn_reconcile`-Disposition der Alt-Release
-- **Lage:** (gemessen 2026-10-05) Register zeigt `sources.φ:24776` → `ncei.noaa.gov/goes_euvs.bin` (aligned); der Altwriter-Release `ssd.jpl.nasa.gov` führt das Asset noch.
-- **Blockade:** keine.
-- **Braucht:** `gh release view ssd.jpl.nasa.gov --repo omegaflow/sources --json assets` messen; orphanenes Asset löschen/zurücklassen als Disposition.
 
 ### Exposom-Quellenmatrix (future-180) — Domänen ohne Home
 - **Status:** eigen | **Bindung:** Mountain (Zulassung) + Mycelium (Manifestation)
@@ -145,15 +132,15 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ### Orphan-Docs — Survey-Träger (future-179)
 - **Status:** eigen
-- **Trigger:** Klassen-Zensus über die 315 Workflows
-- **Lage:** (gemessen 2026-10-05) `register_lookup --orphan-docs` = 2 (`docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`, `docs/surveys/survey-2026-09-03-orphan-verdicts.md`); offen laut Survey: Klassen-Zensus über die 315 Workflows + Step 5 (CDN-kanonisch, `orphan-verdicts.md:100-101`).
+- **Trigger:** Klassen-Zensus + Step 5 (CDN-kanonisch) als Register-Bindung
+- **Lage:** (gemessen 2026-10-05, general-Taucher) `register_lookup --orphan-docs` = 2 (`docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`, `docs/surveys/survey-2026-09-03-orphan-verdicts.md`); der Baum trägt **386** `*.yml`-Workflows (nicht 315 wie der Auftrag, nicht 325 wie das Blatt — Drift, Baum gewinnt); nur `planetary-odf-cdn.yml:37` liest seine Release-Menge aus `phi/sources.φ`, die übrigen `*-cdn.yml` nicht. Step 5 (destruktive CDN-Kanonisierung) offen; 13 Netlocs aus ≥2 Workflow-Klassen geschrieben.
 - **Blockade:** keine
-- **Braucht:** Klassen-Zensus + Step 5 als nächster Schritt; die zwei Surveys tragen ihren offenen Marker bis dahin.
+- **Braucht:** Klassen-Zensus (386 Workflows) + Step-5-Bindung als nächster Schritt; die zwei Surveys tragen ihren offenen Marker bis dahin.
 
 ## Adressierte Blöcke — gefaltet (2026-10-05)
 
 - **future-180:** Exposom-Matrix (eigener Punkt); Matrix-Lauf `pending`; Tavily-Quota 80 % (Fallback `--mwmbl`/`--marginalia`); Orphan-Docs = 0 (aufgelöst).
-- **mountain-235:** EMM-`emm-sdc-cdn.yml` (Workflow steht, Loader-Arm → River); WQP-Re-Harvest (Registrierung = Mountain, Ernte = Mycelium); `goes_euvs`-Alt-Asset-Orphan (eigener Punkt); BGI AGrav `:166`/C9 `:170` (eigener Punkt); ExoMars ACS (eigener Punkt); FMI-GIC 1-min (eigener Punkt); superdarn (eigener Punkt); Tianwen-1 MoRIC (Riss = Mountain).
+- **mountain-235:** EMM-`emm-sdc-cdn.yml` (Workflow steht, Loader-Arm → River); WQP-Re-Harvest (Registrierung = Mountain, Ernte = Mycelium); `goes_euvs`-Alt-Asset-Orphan (widerlegt, s. Risiken); BGI AGrav `:166`/C9 `:170` (eigener Punkt); ExoMars ACS (eigener Punkt); FMI-GIC 1-min (eigener Punkt); superdarn (LOCK, s. dort); Tianwen-1 MoRIC (Riss = Mountain).
 - **river-93:** B-Membran `continue-on-error` (Verdikt: bleibt, sichtbar-nicht-blockierend — `## An river`); vier Serien-Assets (Routen: Witness-Epochen = River, gl30/SRTM15+/GHSL descoped); FMI-GIC 1-min (eigener Punkt); NUR-Harvest (eigener Punkt).
 
 ## Risiken / offene Risse (gemessen, nicht geglättet)
@@ -162,6 +149,9 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **`clpds-cdn.yml` Idempotenz übersprang den Annex** (`--with-annex`): der Lauf `37233584228` meldete „manifest skipped", `clpds_annex.jsonl` fehlt. Fix in dieser Session.
 - **Register-`sha256` `superdarn_fitacf.bin` war stale** (`fbf48d72…` → `c5e1238a…`, 302 875 148 B, gemessen `gh api`); nvss-`sha256` fehlte, jetzt `e825e736…`.
 - **Tavily-Quota** 80 % der Oktober-Grenze (`mail_ledger.φ`, ts 1791121265); Fallback `--mwmbl`/`--marginalia`.
+- **`goes_euvs`-„Alt-Asset-Orphan" ist widerlegt** (gemessen 2026-10-05, `gh release view ssd.jpl.nasa.gov ... select(goes_euvs)` = 0 Assets). Der echte Riss waren zwei stale Workflow-Referenzen: `solar-probes.yml:35-37` (`--pattern goes_euvs.bin` auf `ssd` → `gh release download` bricht, `&&`-Kette tot) und `signal-cone-audit-cdn.yml:45-46` (Loop zog alle sechs aus `ssd`, still degradiert). Beide in dieser Session auf den kanonischen Tag gefixt (`ncei.noaa.gov` für euvs, `cdaweb.gsfc.nasa.gov` für omni2, `ssd.jpl.nasa.gov-ephemeris` für die Ephemeriden).
+- **SuperDARN-Globus-Route gemessen, aber durch Operator-Wort blockiert:** Collection „SuperDARN Mirror" (`8e844226…`, volle UUID auth-gebunden), Pfad `{root}/{type}/{YYYY}/{MM}/{file}`, Auth Globus-OAuth, HTTPS ohne Token 401, kein Rust-Globus-Arm (`sgrep globus tools/` = 0). Der Bau eines Transfer-REST-Arms widerspricht dem Wort 2026-09-29 — kein Akt.
+- **stale Zitat:** `external-state.md:47` / `future-folge147:95` zitieren `blocked_sources.φ:381-383`; live steht der Eintrag `:78-80` (Datei 173 Zeilen). Nicht geglättet, hier benannt.
 
 ## An river
 
@@ -179,7 +169,7 @@ Origin: mycelium-folge233. **Routed — nicht-eigen:**
 
 ## LOCK
 
-(kein Eintrag.)
+- **SuperDARN Record-Download (`blocked_sources.φ:78`, `:80`)** — Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (future-folge153:25). Der Globus-Task wird nicht neu aufgesetzt; die Maschine misst/registriert nicht. Trigger: neues Operator-Wort bzw. die Glasfaser-Hardware. Carrier: trotzdem hier (der Punkt lebt), aber kein Maschinen-Akt.
 
 ## Abschluss
 
