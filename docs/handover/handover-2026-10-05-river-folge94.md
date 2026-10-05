@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: 0b4d8eeaf17779cfee30987752b07c8385cf9018f68c7cc99dfeb09a2362b14f
+  sha256: 7d9254d31a30138a064a66d0b3654a6695b40e29a67931ce5ec5d01ea478a60b
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -213,4 +213,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-05-river-folge94.md`
 - `docs/handover/archiv/handover-2026-10-05-river-folge93.md` (Move aus `docs/handover/`)
 
-## Burn: open 0.0045 · close 0.2067 · cap 0.25 — River-attribuierbar (`session_burn`: line $0.0995 + Rat $0.1072; dazu 5 flash Taucher `general` + 2 UI-Stimmen + 2 freie API-Stimmen; Gesamt-Tool-Fenster 1.0502 über 25 parallele Sessions). Grund: ABK α=0.05 geschlossen, em-Apertur-Kernel-Gate (Rat) gebaut, Störungs-Experiment-Auswertung
+## Burn: open 0.0045 · close 0.2216 · cap 0.25 — `session_burn` River-Linie $0.2216 (+ em-Apertur-Rat $0.1072, Matrix-Rat, Bias-Rat, 5 flash Taucher `general`, 3 UI-Stimmen, 2 freie API-Stimmen). Grund: ABK α=0.05 geschlossen, em-Apertur-Kernel-Gate (Rat) gebaut, Störungs-Experiment-Auswertung, universelles Vlies (Auftrag + 2 Rats-Verdikte), TE-Bias-Wiring (n-Floor + exakter Lookup)
