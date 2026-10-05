@@ -1,7 +1,7 @@
 <!--
   title: Binary Protocol — v9
   class: concept
-  sha256: 23a2d39a422ae662d8450f2892d420bcec4ad424c2e4fa054358b49947a4995e
+  sha256: 6fa72e7aba7bd9fcdfac582cdffba7ea6852f0d35c6496ad6de7afba592b84c6
   status: live
 -->
 # Binary Protocol — v9
@@ -40,7 +40,7 @@ Header total: 19 bytes.
 | 12 | vx | oscillator velocity X (m/s) |
 | 13 | vy | oscillator velocity Y (m/s) |
 | 14 | vz | oscillator velocity Z (m/s) |
-| 15 | pole_x | pad (Atom 7: always 0.0 for gravity — the form belongs to the anchor, not the measurement; 0 honored); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as the em point-source aperture (1+z)⁻² (bolometric photon rate × energy); the surface-brightness class (1+z)⁻⁴ has no admitted flux field (Council 2026-10-05) |
+| 15 | pole_x | pad (Atom 7: always 0.0 for gravity — the form belongs to the anchor, not the measurement; 0 honored); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as the em point-source aperture (1+z)⁻² (bolometric photon rate × energy) to flux-kernel em fields (kernel_id 0/1); a coordinate-valued em field carries no aperture (Council 2026-10-05); the surface-brightness class (1+z)⁻⁴ has no admitted flux field (Council 2026-10-05) |
 | 16 | pole_y | pad (always 0.0 — Atom 7) |
 | 17 | pole_z | pad (always 0.0 — Atom 7) |
 | 18 | j2 | pad (always 0.0 — Atom 7: no multipole moments on the wire) |

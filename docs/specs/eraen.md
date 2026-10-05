@@ -1,7 +1,7 @@
 <!--
   title: Die Ären von Omegaflow — Grabungs-Protokoll
   class: concept
-  sha256: 790b17a97a1bb13112e7763a40147eb74807b81569fb711d90ec8a26e595f6b6
+  sha256: a8f5df841896abe427040c2786906d167e7e98cc59d31a34a6f28751921d1e9e
 -->
 # Die Ären von Omegaflow — Grabungs-Protokoll
 
@@ -92,7 +92,8 @@ des Lemma — bleibt als offene Erinnerung der Kybernautin.)
    Observer-Bias, keine Messung.
 2. **Quellen-z** (`11eb850`): das z der Quelle (Katalog), als
     em-Apertur `(1+z)⁻²` (Punktquellen-Gesetz; Rat 2026-10-05, zuvor die
-    Flächenhelligkeits-Form `(1+z)⁻⁴`) für em — steht im Rekord (pole_x-Slot),
+    Flächenhelligkeits-Form `(1+z)⁻⁴`) für flusswertige em-Felder (Kernel 0/1) —
+    ein koordinatenwertiges em-Feld trägt keine Apertur; steht im Rekord (pole_x-Slot),
     meta[3]. **Überlebt** — 0 honored, die kosmologische Wahrheit.
 
 ## Der verlorene Lichtkegel (Kausalitäts-Vorfilter)
