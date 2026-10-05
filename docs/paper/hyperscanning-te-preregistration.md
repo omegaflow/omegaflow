@@ -1,10 +1,10 @@
 <!--
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
-  date: 2026-10-04
-  sha256: f3eba3b849a9de43ebe961980ebb0c517dba64073f7d04003ff474a7cfed3db7
+  date: 2026-10-05
+  sha256: 1645edf8e604045ae55809f45fc91f29c8224b579a1c7ad86e79600adbdaa91f
   status: live
-  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-04-sensory-folge230.md
+  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
 ## Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
 
@@ -262,41 +262,75 @@ transparency; the FWER carrier is the family-maximum path alone. This is the
 feasibility cohort `ds007822` — no coupling claim is made (0 honored: the
 absence of a family-significant cell is a measured absence, not a zero).
 
+### Ergebnisse / Results — n-scaling curve (run `37217425078`, 2026-10-05)
+
+Measured by run `37217425078` (`hyperscanning-te`, head `f289d7c88`, `success`
+2026-10-05T02:05:48Z; the `screen` job is split per task condition). Parameters:
+channel `Fz`, `max_points 512, 1024, 2048, 4096`, `surrogates 200`, `percentile 95`,
+null `phase`, dim 3; read from the run log
+(`ci_manage log 37217425078 --all`, the `===== channel Fz n <N> =====` blocks and the
+`=== <task>` summaries). `p95` = family-max p95; `pc` = per-cell survivors.
+
+| task | n=512 | n=1024 | n=2048 | n=4096 |
+|---|---|---|---|---|
+| `pdrest` | p95 5.4861e-1 · pc 1 | p95 6.2251e-1 · pc 2 | p95 6.9468e-1 · pc 3 | p95 8.3159e-1 · pc 2 |
+| `pdfeedback` | p95 5.7863e-1 · pc 1 | p95 6.3788e-1 · pc 4 | p95 7.0519e-1 · pc 4 | p95 7.9215e-1 · pc 2 |
+| `pddecision` | p95 5.1350e-1 · pc 3 | p95 6.3336e-1 · pc 1 | p95 7.3259e-1 · pc 0 | p95 8.3607e-1 · pc 2 |
+
+**`family-max survivors = 0` at every n and every task condition** — the family
+maximum is never broken as n grows; only the per-cell count (the weaker masked
+transfer, H2) varies with n. The n=4096 row reproduces the ds007822 values at
+`max_points 4096`, so the curve is consistent with the feasibility screen. This is
+still `ds007822` — 0 honored.
+
+### Ergebnisse / Results — second cohort `ds007471` (run `37235249763`, 2026-10-05)
+
+Measured by run `37235249763` (`hyperscanning-te`, head `feb7f0e55`, `success`
+2026-10-05T04:39:25Z). Parameters: `cohort=ds007471`, channel `Cz`,
+**`max_points=2048`** (a compute-bounded deviation from the 4096 default, recorded
+here; the full-cap run exceeded the platform job cap), 31 triads, 62 cells,
+`surrogates 200`, `percentile 95`, null `phase`, dim 3. Read from the run log
+(`ci_manage log 37235249763 --all`) and the artifact
+`hyperscanning-te-report-jointaction` (Artifact ID `11325587633`, 4380 B).
+
+| cohort | triads | cells | family-max p95 | observed max | family-max survivors | per-cell survivors | confirmed |
+|---|---|---|---|---|---|---|---|
+| `jointaction` (ds007471) | 31 | 62 | 6.5144e-1 | 7.0851e-1 | **3** | 51 | 50/51 |
+
+**The family maximum is broken here.** Observed max `7.0851e-1` > family-max p95
+`6.5144e-1`; the three family-max survivors (`FAMILY-MAX SURVIVOR`) are:
+
+- `pair-02@Cz R→L` `tau 19/17` TE `6.5198e-1` — confirmed (fresh p99 threshold
+  `4.9826e-1`);
+- `pair-18@Cz L→R` `tau 25/25` TE `7.0597e-1` — confirmed (threshold `6.5226e-1`);
+- `pair-18@Cz R→L` `tau 25/25` TE `7.0851e-1` — confirmed (threshold `6.6064e-1`).
+
+All three survive the fresh per-cell confirmation at p99, and 50 of the 51 per-cell
+nominees confirm. This is the first **family-significant** finding in the line:
+**H1 carries 3 survivors** in the `jointaction` condition of `ds007471` at `Cz`
+(95 % FWER), where the feasibility cohort `ds007822` carried none. 0 honored: this is
+the measured count at the registered parameters (one cohort, one channel, one
+`max_points`) — the cross-cohort/other-channel repetition is the next measurement,
+not a claim made here.
+
 ### Offene Ergebnisse / Pending results
 
 - **FP/FN numbers** — measured (run `37197710877`, 2026-10-04) — see
-  `### Ergebnisse / Results`; the measurement removed this pending.
-- **n-scaling curve** — pending — the workflow accepts `scales`
-  (`.github/workflows/hyperscanning-te.yml:25-28`) and prints the curve per n and
-  channel (`.github/workflows/hyperscanning-te.yml:184-207`); the artifact
-  carries `scaling.txt` / `scaling_*.txt`
-  (`.github/workflows/hyperscanning-te.yml:208-217`). Braucht: run
-  `37217425078` (`scales=512,1024,2048,4096`, dispatched 2026-10-04
-  F229; measured 2026-10-04 F230: still **queued**) — read on completion.
-- **Second cohort** — pre-registered candidate (measured 2026-10-03): **`ds007471`**
-  (dyads, 64-channel BrainVision `.vhdr` — 32 `_R` + 32 `_L` in one file per
-  `sub-01`..`sub-32`, 1000 Hz, CC0) is the primary second cohort; `ds008192` (fNIRS +
-  MoCap) and `ds004103` (fMRI) stay other-modality candidates. The read path is
-  measured: CI probe `openneuro-eeg-probe` run `37127134440` (success) read `ds007471`
-  sub-01 through `brainvision_compiler` and `ds008192` sub-101 through `snirf_compiler`
-  (`ci_manage view 37127134440`, 2026-10-03). The dyad join is the `_L`/`_R` channel
-  split inside one file; the manifest arm is built (commit `1226e9082`):
-  `brainvision_compiler --participant L|R` writes one per-participant bin, and the
-  workflow input `cohort=ds007471` builds `manifest.txt` with
-  `jointaction pair-<NN> {L,R}`. **Measured (2026-10-04 F230):** run `37209904312`
-  (`cohort=ds007471`, channel `Cz`, head `4bcd4631`) — `plan`/`confirm` success; the
-  `screen (jointaction)` job's **screen step succeeded**, the per-cell **confirmation
-  step ran past the 330-min `screen` cap** (`.github/workflows/hyperscanning-te.yml:88`),
-  job cancelled (started 15:10:00Z → cancelled 20:45:00Z), no artifact. Re-dispatched
-  **`37235249763`** (`cohort=ds007471`, channel `Cz`, **`max_points=2048`** — a
-  compute-bounded deviation from the 4096 default, recorded here; the full-cap run
-  exceeded the platform job cap). Braucht: read on completion
-  (`ci_manage view/jobs/log 37235249763`).
+  `### Ergebnisse / Results`.
+- **n-scaling curve** — measured (run `37217425078`, 2026-10-05) — see
+  `### Ergebnisse / Results — n-scaling curve`; `family-max survivors = 0` at every n.
+- **Second cohort** — measured (run `37235249763`, 2026-10-05) — see
+  `### Ergebnisse / Results — second cohort ds007471`; **H1 carries 3 family-max
+  survivors** (all three confirmed at p99), 50/51 per-cell nominees confirmed.
+- **Method paper (joint cross-channel family)** — open: the screen is single-channel
+  (`Fz`/`Cz`) and single-family per condition; a joint cross-channel TE family and the
+  publishable method consolidation stay `pending` (operator word 2026-10-03).
 
 ### Träger / Carrier
 
 This document's carrier is the Sensory handover
-`docs/handover/handover-2026-10-04-sensory-folge229.md` — the open point
+`docs/handover/handover-2026-10-05-sensory-folge232.md` — the open point
 `### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)`,
-whose `Lage` names this draft and whose `Braucht` names the validation artifact
-that carries the FP/FN and n-scaling numbers.
+whose `Lage` names this draft and whose `Braucht` named the validation artifacts
+that carried the FP/FN, n-scaling and second-cohort numbers (all three measured
+2026-10-05).
