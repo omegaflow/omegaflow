@@ -2,7 +2,7 @@
   title: Auftrag — Das universelle Vlies (alles gegen alles)
   class: auftrag
   date: 2026-10-05
-  sha256: 22a251853f03f8e4341cb0fe942c61c85522eb3b141f84c65b6a7a7ea112a20c
+  sha256: ca55600ebefc56490f2a60ecba61072894aa765082f62f8b181cfa467d9ad644
   status: live
   see-also: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/specs/negativ-fuzzy-index.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -72,11 +72,24 @@ Verbundene, und die Lücke genauso laut wie der Pfeil.
 3. **Die fehlenden Fäden ernten** — Survey §5 (Mountain-Zeilen, Mycelium-Harvests).
 4. **Die verdiente Stille registrieren** — jeder negativ-gemessene Faden als Ergebnis.
 
-## Rats-Vorbehalt
+## Rats-Verdikt (2026-10-05, fünf Stimmen)
 
-Die Form der Alles-gegen-alles-Matrix (Skalierung, Familien-Kontrolle über tausende Paare,
-Lag- und Auflösungs-Vereinheitlichung) ist eine Architektur-/Ethik-Entscheidung → Rat, nie
-Pro-Solo. Die verbindliche Doku folgt dem Rats-Verdikt.
+**Zweistufige Matrix:** BH/BY-FDR über das Netz als Entdeckungsebene + kalibrierter
+WY-max-T **pro Zell-Familie** als strenge Ebene; Bias-Korrektur mit n-Floor verdrahtet in
+jede Zelle; `ozzy` als negative Engine **auf** der Matrix; die netz-weite WY-Null ist
+benannte CI-Pflicht, kein Default. Die Form existiert am Baum (`field_te_query`-Matrix-Kopf
+mit Pflicht-FDR, `te.rs`-BH/BY, pro-Familien-WY, Bias-Gate) — **fahren und verdrahten**,
+nicht neu entwerfen.
+
+**Reihenfolge:** (1) Bias-Verdrahtung in jeden Matrix-Zellenpfad (Zelle unter Floor →
+`pending`); (2) 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`, Lag-0/1 geflaggt,
+pro Zelle Auflösungspaar); (3) `ozzy` bauen; (4) Lücken registrieren (declined als
+Verdikte, Ernte-Arme als Zielangaben); (5) Netz-Null als CI-Batterie (B ≥ 1/α).
+
+**Offene Risse:** netz-weite strenge Null ungemessen (FDR ist die benannte schwächere
+Garantie) · Matrixdimension = f(Verdrahtung), pro Lauf · Kadenz-Mismatch `pending`
+(pro-Zelle-Auflösungspaar, kein Ersatz) · Transitivität = eigenes Ledger, nie still in
+`ozzy` · Korrektur ohne BCa-Intervall.
 
 **Nicht gebaut (pending), kein Parking:** die drei Ebenen sind ein Bau-Auftrag; der erste
 Stein ist `ozzy`.

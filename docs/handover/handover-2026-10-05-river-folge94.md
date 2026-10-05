@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: 80cbf9b21c85ea42d2676efd72c8e2e1f3c27619a73ed873254828c6cfe9d128
+  sha256: 89f952ead962f18acc52005d0e845868ebc5500555a42ceb3865c6af956501be
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -104,6 +104,11 @@ Wort | Datum | Quelle
 - **Kernel 2 (`gaussian-inverse`) entfernt; Kernel 6 (`inverse-linear`) lebt** (2026-10-05).
 - **Zeit-Faltung-Overflow nicht erreichbar** (`age ≤ ttl·64`; 2026-10-05).
 - **Die corona-confound-/dispersion-solar-Matrizen gemessen** (`field-te-query 37223713088`).
+- **Universelles Vlies — Matrix-Form (Rat, fünf Stimmen, 2026-10-05).** Zweistufig:
+  BH/BY-FDR über das Netz als Entdeckungsebene + kalibrierter WY-max-T pro Zell-Familie
+  als strenge Ebene; Bias-Korrektur mit n-Floor in jede Zelle; `ozzy` als negative Engine
+  auf der Matrix; netz-weite WY-Null als CI-Pflicht. Die Form steht am Baum — fahren und
+  verdrahten. Reihenfolge: Bias-Wiring → 15×15-Lauf → `ozzy` → Lücken → Netz-Null.
 
 ## Offen (aufgeschlüsselt)
 
@@ -124,10 +129,11 @@ Wort | Datum | Quelle
   ist Spec, keine Quelldatei; `field_te_query` fährt Einzel-Paare, keine
   Alles-gegen-alles-Matrix; Triangulation ist Konzept. Der universelle Rahmen steht
   (ICRS baryzentrisch, DE/INPOP/EPM, Gaia DR3, 2MRS).
-- **Blockade:** die Form der Paar-Matrix (Skalierung, Familien-Kontrolle über tausende
-  Paare) ist ein Rats-Entscheid.
-- **Braucht:** Rat-Verdikt zur Matrix-Form; danach `ozzy` als Bibliothek
-  (TE-Unabhängigkeitstest) + Paar-Matrix; Ernte nach Survey §5.
+- **Blockade:** keine (Rat-Verdikt 2026-10-05 liegt; die Matrix-Form steht am Baum).
+- **Braucht:** (1) Bias-Wiring (`TE_NEFF_THRESHOLD`/`transfer_entropy_bias_adjusted_above`)
+  in den `field_te_query`-Zellenpfad (Zelle unter Floor → `pending`); (2) 15×15-Lauf
+  (`matrix full`, `fdr bh 0.05 over matrix`, Lag-0/1 geflaggt, pro Zelle Auflösungspaar);
+  (3) `ozzy`-Bibliothek; (4) Ernte nach Survey §5; (5) Netz-Null als CI-Batterie (B ≥ 1/α).
 
 ### dB/dt–GIC-Relation Mäntsälä (offen)
 - **Status:** wartend | **Bindung:** eigen
