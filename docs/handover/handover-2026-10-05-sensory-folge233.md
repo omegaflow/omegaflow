@@ -3,7 +3,7 @@
   session: Sensory-Folge 233
   class: handover
   date: 2026-10-05
-  sha256: f114e3671919d5621fe04f1171080f43481fbef2755bc63c22836d03afc4f8e5
+  sha256: 621a0547f76bcd568bbb623a5a7f7e884d2035a0332aeb7e13d3cf6bc0da0e8d
   status: live
 -->
 # Handover — Sensory-Folge 233 (2026-10-05)
@@ -274,6 +274,24 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 - **Blockade:** Termin.
 - **Braucht:** nach dem Flyby `gh workflow run kernel-flatten.yml` (`horizons_compiler --flyby --ci-mode`, Eintrag `tools/harvest/src/bin/horizons_compiler.rs:22` `-159/europa_clipper`) + `archive_search --sniff "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin"` gegen `dae553fb…`.
 
+## An mycelium
+
+Origin: sensory-folge233.
+
+**t420-Testlauf `37307154587` = `failure` — gemessene Ursache: Host ohne `gh`.** Der
+Compile lief durch (`superdarn_fitacf.bin: 5047919 geo records, 302875148 B, roundtrip
+parses`); der Upload scheiterte an `ensure release sdc-serv.usask.ca: gh absent: No such
+file or directory (os error 2)` — der Compiler ruft im `--ci-mode` `gh` auf (auf
+GitHub-Runnern vorinstalliert). **Behoben (Sensory, gemessen):** auf dem T420 `gh` 2.45,
+`jq` 1.7, `git` 2.43, `git-lfs` 3.4 nachinstalliert; Reboot gefahren, Dienst automatisch
+wieder `active` und `√ Connected to GitHub` (`gh api …/actions/runners`: `t420 online`,
+busy false).
+
+- **Braucht:** `superdarn-fitacf-cdn` (oder die erste Welle) **erneut dispatchen** — der
+  Upload sollte jetzt grün durchlaufen. Bei weiteren roten Läufen: den Host-Tool-Bedarf aus
+  dem Log lesen (self-hosted Runner sind nicht vorprovisioniert wie GitHub-Runner).
+- **Blockade:** keine.
+
 ## Träger (Orphan-Faltung)
 
 Der Dateiname in dieser Übergabe ist der Träger. Je Zeile ein zuletzt trägerloses
@@ -407,8 +425,12 @@ aufgesetzt (online, Nutzer `actions` ohne sudo, gedrosselt), den Workflow-`runs-
 an Mycelium geroutet — Mycelium hat ihn gefaltet und die **erste Welle von 10 CDN-Compilern**
 auf `[self-hosted, Linux]` geroutet (`ea6558e2d`, gemessen); der erste Test
 (`superdarn-fitacf-cdn 37307154587`) wurde **vom t420 gezogen** (`busy: true`, gemessen).
-Die Sender-Zeile `## An mycelium` ist damit entfernt (Owner hat übernommen). Der
-Hyperscanning-Lauf `37292154121` bleibt unberührt und offen.
+Die Sender-Zeile `## An mycelium` ist damit entfernt (Owner hat übernommen).
+(f) Der Testlauf `37307154587` endete `failure` — gemessene Ursache: dem T420 fehlte
+`gh` (Upload `gh absent`). Host-Tools `gh`/`jq`/`git`/`git-lfs` nachinstalliert, Reboot
+gefahren, Dienst automatisch wieder `active`/`online`. Den Re-Test als neuen
+`## An mycelium`-Block geroutet. Der Hyperscanning-Lauf `37292154121` bleibt unberührt
+und offen.
 
 `state/operator-gespraeche/2026-10-05-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
