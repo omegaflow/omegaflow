@@ -1,4 +1,6 @@
-use omegaflow::archivar::geo::{COMP_GIC_A, GeoRec, MAGIC_GIC, parse_bin, write_bin};
+use omegaflow::archivar::geo::{
+    COMP_GIC_1MIN_A, COMP_GIC_A, GeoRec, MAGIC_GIC, parse_bin, write_bin,
+};
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
@@ -243,9 +245,22 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let bucket_min: f64 = arg_value(&args, "--bucket-min")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(60.0);
+    let grain = match arg_value(&args, "--grain") {
+        Some(v) => v,
+        None => "hour".to_string(),
+    };
+    let (grain_bucket_min, comp) = match grain.as_str() {
+        "hour" => (60.0, COMP_GIC_A),
+        "minute" => (1.0, COMP_GIC_1MIN_A),
+        other => {
+            eprintln!("--grain {other} names no known grain (hour|minute)");
+            std::process::exit(1);
+        }
+    };
+    let bucket_min: f64 = match arg_value(&args, "--bucket-min").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => grain_bucket_min,
+    };
     if !(bucket_min > 0.0) || !bucket_min.is_finite() {
         eprintln!(
             "--bucket-min {} carries no positive bucket width",
@@ -305,7 +320,7 @@ fn main() {
             freq: 0.0,
             bin_width: bucket_s,
             val,
-            comp: COMP_GIC_A,
+            comp,
             station: 0,
         });
     }

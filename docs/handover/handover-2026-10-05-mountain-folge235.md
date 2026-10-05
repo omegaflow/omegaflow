@@ -3,7 +3,7 @@
   session: Mountain-Folge 235
   class: handover
   date: 2026-10-05
-  sha256: e83b7abffe5de6e641ef4519e8f9e2f96a538f4ae43912bef2a3097669a25c62
+  sha256: 90bb35f03ebf3d62c408f52e33d047eb756a1daa6da84746b723142cf7b255c1
   status: live
 -->
 # Handover — Mountain-Folge 235 (2026-10-05)
@@ -19,9 +19,16 @@ sensory-231, river-92 ×2). Gemessen (2026-10-05): der 1-min-`dB/dt`-Arm ist geb
 LEOS `descoped` (`blocked_sources.φ:122`); der superdarn-Tag ist von
 `blocked account` auf `pending` korrigiert (`blocked_sources.φ:78`). Der
 Operator-Punkt „braucht es pro?" ist gemessen beantwortet: kein pro — flash-first
-(der Enclosure-Riss und die Kanal-Quellen sind mit `grind-flash` messbar).
+(der Enclosure-Riss und die Kanal-Quellen sind mit `grind-flash` messbar). **Atom 2**
+(Operator-Wort „messe nochmal den aktuellen zustand dann commit", 2026-10-05): die
+drei neuen `## An mountain`-Blöcke (river-folge93 §Feld-Gesetz/§Zeugen, sensory-232)
+gefaltet; die **FMI-GIC-fein-grain-Zeile** gebaut (`sources.φ:17202-17208`, `format
+fmi_gic_1min`, Arm `--grain minute`, `cargo check` 0/0) — Asset-Dispatch bei
+Mycelium; die **em-Apertur-Quellen-Identität** gemessen (sieben benannte z-Felder:
+sechs halten, TNS `τ` unverifiziert) und der **Riss** benannt (die Apertur erreicht
+≥25 em-Felder, nicht sieben — `sources.φ:8814-8820` bestätigt).
 
-## Burn: open 0.003 · close 0.046 · cap 0.25 Grund: Runde flash-first — Line + 2 grind-flash (axis-Serien, Enclosure) + 1 general (Listen-Verifikation), kein pro/max
+## Burn: open 0.003 · close 0.062 · cap 0.25 Grund: Runde flash-first — Line + 4 grind-flash (axis-Serien, Enclosure, FMI-GIC, em-Apertur) + 1 general (Listen-Verifikation), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -45,6 +52,7 @@ Wort | Datum | Quelle
 „was fehlt hast du in die secrets local geschaut?" — vorhandene Keys nutzen; kein „Operator-Hand" ohne Messung | 2026-10-05 | Operator (Session, Mountain 234)
 „braucht es max?" — flash-first erneut bestätigt; ExoMars-Parser per grind-flash gebaut | 2026-10-05 | Operator (Session, Mountain 235)
 „braucht es pro und kannst du dir das bitte ansehen?" — flash-first; die zwei Punkte-Listen gegen den Baum messen | 2026-10-05 | Operator (Session, Mountain 235)
+„messe nochmal den aktuellen zustand dann commit" — Atom 2: neue adressierte Blöcke falten, FMI-GIC-fein-grain bauen, em-Apertur messen, committen | 2026-10-05 | Operator (Session, Mountain 235)
 
 ## Offen (aufgeschlüsselt)
 
@@ -110,6 +118,23 @@ Wort | Datum | Quelle
   tot), und ist `ADVECTIVE_BASE_SPEED = 1.0` für advektive `field`-Zeilen ohne
   deklarierte Advektion gewollt?
 
+### em-Apertur `(1+z)⁻²` — Quellen-Identität (Riss)
+- **Status:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-05 via grind-flash) Die sieben genannten z-tragenden
+  em-Felder: `:7088`/`:9681`/`:9692` NED, `:9579` PSZ2, `:1183` TNS, `:17694`
+  sncat, `:17705` swiftgrb — sechs halten (τ = Block-`ttl`, Identität = Quelle).
+  **Riss 1:** `:1183` TNS trägt `τ 3600` bei Block-`ttl 3600` (Regel gäbe
+  `ttl/10 = 360`) und der `tns_compiler` zielt auf die API, nicht auf die
+  statische CSV — unverifiziert. **Riss 2:** die Apertur erreicht **≥25**
+  em-Felder mit `z`, nicht sieben (z. B. `sources.φ:8814-8820` rcsed, bestätigt);
+  river-folge93 §Zeugen und der Baum konvergieren nicht — beide Linien benannt,
+  nicht geglättet. **R2:** das 6. Feld-Token ist `tau` (`parse.rs:952`), nicht `ttl`.
+- **Blockade:** keine (Messung)
+- **Braucht:** für `:1183` die keyed-POST-Annahme der statischen CSV messen oder
+  `τ` aus Prozesswissen setzen; den Riss (≥25 Felder) an River/Rat tragen — die
+  Apertur-Anwendung auf `field z` selbst (`spatial.rs:718`) ist Rats-Entscheid.
+
 ### Field_te_query-Kanalquellen — Ernte-Arme fehlen
 - **Status:** eigen
 - **Trigger:** keiner
@@ -152,6 +177,13 @@ Origin: mountain folge235.
 - **Tianwen-1 MoRIC** (CDS HiPS, `blocked_sources.φ:107`) — Tree-Ernte + CDN offen.
 - **ExoMars TGO ACS** — registriert (`sources.φ:27024-27031`, 231q); offen nur
   `acs-nir-cdn`-Lauf/Manifestation.
+- **FMI-GIC 1-min** — Arm + Register-Zeile gebaut (`sources.φ:17202-17208`,
+  `format fmi_gic_1min`, `--grain minute`). Offen: `.github/workflows/fmi-gic-cdn.yml`
+  um einen zweiten Idempotenz-Check + Step `cargo run -p omegaflow-harvest
+  --release --bin fmi_gic_compiler -- --out-bin fmi_gic_1min.bin --lsk
+  kernels/naif0012.tls --grain minute --ci-mode` erweitern, dann
+  `gh workflow run fmi-gic-cdn.yml` → `fmi_gic_1min.bin` auf Release
+  `space.fmi.fi`.
 - **superdarn-Tag** — auf `pending` korrigiert (Aufnehmer mycelium,
   `wartend.φ:8`); RST-Ernte über Globus offen.
 
@@ -173,6 +205,10 @@ Origin: mountain folge235.
   Per-Body-Spannenmaximum wandert.
 - **absorption/advection:** als Entscheidung vorgelegt (Offen) — trägt die
   Membran.
+- **em-Apertur-Riss:** die Apertur erreicht ≥25 em-Felder mit `z`, nicht die
+  sieben in river-folge93 §Zeugen genannten (`sources.φ:8814-8820` bestätigt);
+  beide Linien benannt, nicht geglättet. Die Anwendung auf `field z` selbst
+  (`spatial.rs:718`) ist Rats-Entscheid.
 
 ## LOCK
 
