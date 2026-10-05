@@ -1,7 +1,7 @@
 <!--
   title: Architecture concept: "agnostic membrane" — continuous 4D field on a 2D membrane
   class: concept
-  sha256: 16264a797a5c25a82a4f5ceda34d6cd9c6c751d33dadbf6d672c6721543a9f52
+  sha256: 9fad3c16721b4cba3ac38992e983f1ae0f4bb1d8e6d16c9dd5026c32a1a69a54
 -->
 Deepseek Chat v4
 # Architecture concept: "agnostic membrane" — continuous 4D field on a 2D membrane
@@ -496,9 +496,9 @@ for i in 0..source_count:
     src = sources[i]
     d = distance(world_pos.xy, src.pos.xy)  // 2D projection onto membrane
     
-    // temporal decay
+    // temporal decay (retarded: the value is held until the signal arrives, then decays by the source ttl; ttl, not tau)
     dt = epoch_now - src.epoch
-    decay = exp(-dt / src.tau)
+    decay = exp(-max(0, abs(dt) - d / v_force) / src.ttl)
     
     // kernel dispatch (switch instead of function pointer)
     contribution = evaluate_kernel(src.kernel_id, d, src) * decay * src.val
