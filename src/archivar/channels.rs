@@ -1227,6 +1227,9 @@ pub fn build_alerce_channels(
 }
 
 pub fn absorption_for_force(force: u8, declared: f64) -> f64 {
+    if declared == SLOT_ABSENT {
+        return SLOT_ABSENT;
+    }
     if force == 1 {
         return 0.0;
     }

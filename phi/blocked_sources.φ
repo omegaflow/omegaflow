@@ -171,3 +171,26 @@ pending
 url http://ceein.infp.ro/fdsnws/
 note C9/CEEIN infrasound (IAP Prag, Host RO_NDC) — 2026-10-05: HTTP station 200, dataselect C9/BDF MSEED 200, Archiv endet ~2023-10-30; Verdikt gaussian-inverse-square acoustic Pa; Arm Mycelium. survey-2026-10-02-weberin-zweite-linie.md:133.
 
+blocked account
+url https://api.ioc-sealevelmonitoring.org/v1
+reg https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist
+note IOC Sea Level Monitoring API v1 — 2026-10-05: HTTP 403 direkt + Proton (239 B); kein IOC-Key in .secrets.local; keyless service.php-Route steht sources.φ:1138. Konto/Token-Klärung offen.
+
+blocked parser-def
+url https://cedar.openmadrigal.org
+gap html-parser-arm
+note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
+
+blocked parser-def
+url https://www.dhm.gov.np/hydrology/river-watch
+gap html-parser-arm
+note DHM Nepal river-watch (Trishuli/Bhotekoshi 4913, Serie 23251) — 2026-10-05: keyless HTML, Pegel m 10-min; kein archivar-Arm; Ad-hoc-Parser tools/gate/src/bin/livefeed_gate.rs:1852 (parse_dhm_stage). Warum-Blatt/Kausalpfeil-Route.
+
+pending
+url https://data.eumetsat.int
+note MTG-LI (EUMETSAT Data Store) — 2026-10-05: HTTP 206 Landing (2745 B); EUMETSAT_KEY/SECRET in .secrets.local; kein eumetsat-Arm/Workflow; Landung + API-Route offen.
+
+pending
+url https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/
+note GOES-18 ABI — 2026-10-05: Bucket-Root 200 (486709 B S3-Listing), ABI-L1b-RadC/ 404 (S3-Prefix); goes_abi-Arm nur für goes16/goes19 (sources.φ:859/867), kein goes18-Compiler. Riss: goes16-Block origin/compiler zeigt auf goes19.
+

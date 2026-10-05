@@ -1942,4 +1942,27 @@ mod tests {
         assert_eq!(absorption, 0.0, "a declared 0.0 stays the measured value");
         assert_eq!(advection, 0.0, "a declared 0.0 stays the measured value");
     }
+
+    #[test]
+    fn presence_flags_carry_the_measured_bits_and_pad_the_slots() {
+        assert_eq!(presence_flags(None, SLOT_ABSENT, SLOT_ABSENT), 0.0);
+        assert_eq!(
+            presence_flags(Some(0.0), SLOT_ABSENT, SLOT_ABSENT),
+            PRESENCE_FLAG_PHASE
+        );
+        assert_eq!(
+            presence_flags(Some(1.5), 0.25, SLOT_ABSENT),
+            PRESENCE_FLAG_PHASE + PRESENCE_FLAG_ABSORPTION
+        );
+        assert_eq!(
+            presence_flags(Some(1.5), 0.25, 3.0),
+            PRESENCE_FLAG_PHASE + PRESENCE_FLAG_ABSORPTION + PRESENCE_FLAG_ADVECTION
+        );
+        assert_eq!(slot_or_pad(SLOT_ABSENT), 0.0);
+        assert_eq!(slot_or_pad(0.0), 0.0, "a measured zero stays the value");
+        assert_eq!(slot_or_pad(0.25), 0.25);
+        assert_eq!(slot_or_pad(f64::NAN), 0.0, "NaN never crosses the wire");
+        assert!(!slot_measured(SLOT_ABSENT));
+        assert!(slot_measured(0.0), "a measured zero is a measurement");
+    }
 }

@@ -273,6 +273,53 @@ pub fn law_bounds(
     Some((Φ * (v + resid_ema), Φ * a, p0))
 }
 
+pub fn law_bounds_over_span(
+    motion: &Motion,
+    epoch: f64,
+    resid_ema: f64,
+    span: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64, [f64; 3])> {
+    let p0 = motion.at(epoch, epoch, eph)?;
+    if let Motion::Spherical { .. } = motion {
+        return law_bounds(motion, epoch, resid_ema, eph);
+    }
+    let Motion::Kepler { rec } = motion else {
+        return law_bounds(motion, epoch, resid_ema, eph);
+    };
+    let a_m = rec.a_au * crate::kepler::AU_M;
+    let e = rec.e;
+    if !(a_m.is_finite() && a_m > 0.0) || !(e.is_finite() && (0.0..1.0).contains(&e)) {
+        return None;
+    }
+    let t = std::f64::consts::TAU;
+    let n = (crate::kepler::GM_SUN_M3_S2 / a_m.powi(3)).sqrt();
+    let period = t / n;
+    let m0 = rec.ma_deg.to_radians().rem_euclid(t);
+    let to_peri = ((t - m0) % t) / n;
+    let d = to_peri.rem_euclid(period);
+    let peri_distance = d.min(period - d);
+    let peri_in_span = span.is_finite() && peri_distance <= span;
+    let mut r_min = if peri_in_span {
+        a_m * (1.0 - e)
+    } else {
+        f64::INFINITY
+    };
+    for t_end in [epoch - span, epoch + span] {
+        let p = motion.at(t_end, epoch, eph)?;
+        let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+        if r.is_finite() && r < r_min {
+            r_min = r;
+        }
+    }
+    if !(r_min.is_finite() && r_min > 0.0) {
+        return None;
+    }
+    let v_span = (crate::kepler::GM_SUN_M3_S2 * (2.0 / r_min - 1.0 / a_m)).sqrt();
+    let a_span = crate::kepler::GM_SUN_M3_S2 / (r_min * r_min);
+    Some((Φ * (v_span + resid_ema), Φ * a_span, p0))
+}
+
 pub fn build_spatial_hash(samples: Vec<Arc<Sample>>, cadence: f64) -> SpatialHash {
     let mut bounded = Vec::new();
     let mut stars = Vec::new();
@@ -399,8 +446,9 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
         let motion = Motion::Kepler {
             rec: Arc::new(rec.clone()),
         };
+        let span = 64.0 * ttl as f64;
         let Some((anchor_vmax, anchor_amax, anchor_p0)) =
-            law_bounds(&motion, epoch_secs, 0.0, &eph)
+            law_bounds_over_span(&motion, epoch_secs, 0.0, span, &eph)
         else {
             continue;
         };
@@ -772,8 +820,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 wire_extent(sample.extent),
                 sample.kernel_id,
                 sample.force_type,
-                sample.absorption,
-                sample.advection,
+                slot_or_pad(sample.absorption),
+                slot_or_pad(sample.advection),
                 v[0],
                 v[1],
                 v[2],
@@ -791,10 +839,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.freq,
                 sample.bin_width,
                 sample.phase.unwrap_or(PHASE_PAD),
-                match sample.phase {
-                    Some(_) => 1.0,
-                    None => 0.0,
-                },
+                presence_flags(sample.phase, sample.absorption, sample.advection),
             ));
         }
     };
@@ -925,8 +970,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 wire_extent(sample.extent),
                 sample.kernel_id,
                 sample.force_type,
-                sample.absorption,
-                sample.advection,
+                slot_or_pad(sample.absorption),
+                slot_or_pad(sample.advection),
                 v[0],
                 v[1],
                 v[2],
@@ -944,10 +989,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.freq,
                 sample.bin_width,
                 sample.phase.unwrap_or(PHASE_PAD),
-                match sample.phase {
-                    Some(_) => 1.0,
-                    None => 0.0,
-                },
+                presence_flags(sample.phase, sample.absorption, sample.advection),
             ));
         }
     };

@@ -109,8 +109,8 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
                 0.0,
                 sh.kernel_id,
                 sh.force_type,
-                sh.absorption,
-                sh.advection,
+                slot_or_pad(sh.absorption),
+                slot_or_pad(sh.advection),
                 vx,
                 vy,
                 vz,
@@ -124,7 +124,7 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
                 freq,
                 bin_width,
                 0.0,
-                0.0,
+                presence_flags(None, sh.absorption, sh.advection),
             ));
         }
     }
