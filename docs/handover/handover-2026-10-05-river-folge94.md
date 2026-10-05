@@ -3,7 +3,7 @@
   session: River-Folge 94
   class: handover
   date: 2026-10-05
-  sha256: 7ebb0bea2214dcff6146452764e47e7ed0e39645cca4e41d9c80abfcc2178ec1
+  sha256: ced2f19b468a541d7d6b4fc40212e01bc0269273522126964fd0ecc6d6d66ae9
   status: live
 -->
 # Handover — River-Folge 94 (2026-10-05)
@@ -52,6 +52,7 @@ Wort | Datum | Quelle
 „ich habe eine vision: … recherche und auswertung mit flash tauchern und funktionierenden freien tauchern und den drei UI Chat stimmen … wie wir die fehlenden fäden bekommen" | 2026-10-05 | Operator (River 94) — Wort für UI-Trio (per-Akt) + freie Taucher; Quelle `state/operator-gespraeche/2026-10-05-river.md`
 „aber das möchte ich erreichen ich möche an jedem punkt einen stein ins wasser fallen lassen und schauen was passiert" | 2026-10-05 | Operator (River 94) — Störungs-Experiment (der Stein = `field_te_query`)
 „ich habe glm nochmal mit websuche gestartet" | 2026-10-05 | Operator (River 94) — GLM-Nachfrage; gemessen: GLM-5.3-Chat **kein Web-Tool** (ungeprüfte Trainings-Tabelle), neue Endpunkte live verifiziert
+„ich habe glm nochmal mit websuche laufen lassen" | 2026-10-05 | Operator (River 94) — GLM Runde 3 mit Live-Tools; Korrekturen verifiziert (EUMETSAT 0691 ✅, EarthScope .org ✅, DART-realtime2 404 ❌)
 
 ## Träger (Prosa, eigene)
 
