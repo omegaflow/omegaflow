@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: 2970011ca407f7838e47fd4d2451ff09d0036e35dd89524a156e36edf7a7963d
+  sha256: 7af38fe2a1b7c37c6dd4608525ba612bfe72b33502cc0c551c5a6b3fedfb169f
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/handover-2026-10-05-river-folge93.md
 -->
@@ -61,7 +61,7 @@ Taucher-gemessen am 2026-10-05 (`archive_search --verdict/--sniff`, Register via
 | Gravimetrie IGETS/BGI | `sources.φ:9528` / `blocked:166` | `isdc.gfz.de` / `api.sedoo.fr/get-agrav-rest/` | sftp-Account / frei | ASCII/JSON | IGETS gebaut; BGI Mycelium-Arm |
 | Wetter ERA5 / GFS | descoped (`declined:1279`, `noaa_nodd_disposition:254`) | `cds.climate.copernicus.eu` / `nomads.ncep.noaa.gov` | Key / frei | GRIB/NetCDF | **Modellprodukt** — kein Messfaden (§3) |
 | Blitze GLM (GOES) | `sources.φ:9732` (nur 18) | `noaa-goes{16,18,19}.s3.amazonaws.com/GLM-L2-LCFA/` | frei (S3) | NetCDF, ~20 s | 16/17/19 ergänzen |
-| Blitze MTG-LI (Europa) | nein | `data.eumetsat.int` / `api.eumetsat.int` | EUMETSAT-Account | NetCDF, 10 min; L2-ID **`EO:EUM:DAT:0687`** (LI Accumulated Flash Area; gemessen 2026-10-05) | Kandidat |
+| Blitze MTG-LI (Europa) | nein | `data.eumetsat.int` / `api.eumetsat.int` | EUMETSAT-Account | NetCDF, 10 min; L2-ID **`EO:EUM:DAT:0691`** = „LI Lightning Flashes" (daneben `0687` = Accumulated Flash Area; gemessen 2026-10-05) | Kandidat |
 | Blitz Asien/Pazifik | nein | keine offene Quelle gemessen | — | — | benannte Lücke |
 | Aerosol/Radiosonden IGRA2 | nein | `ncei.noaa.gov/products/.../integrated-global-radiosonde-archive` | frei | CSV/NetCDF | Bonus, in-situ |
 
@@ -112,6 +112,15 @@ Kopplung** und sind als Stör-Treiber, nie als unabhängiger Zeuge zu behandeln.
   (neben `imag-data.bgs.ac.uk`), GFZ `isdc` + `dataservices` beide 200, CDDIS-IONEX 200,
   EUMETSAT LI-L2 = `EO:EUM:DAT:0687`. **Widerlegt:** `registry.opendata.aws/era5/` = HTTP 404
   (kein key-freier ERA5-Datensatz dort); CODE/AIUB `ftp`+`https` kein Response (pending/tot).
+- GLM dritte Runde (mit Zugriff auf Live-Tools, korrigierte Fassung) — ihre Korrekturen
+  wurden stichprobenweise verifiziert (2026-10-05, `archive_search --verdict`):
+  **bestätigt:** EarthScope-FDSN = `service.earthscope.org` (`.edu` kein Response) ·
+  EUMETSAT LI-L2 = `EO:EUM:DAT:0691` („LI Lightning Flashes"; `0687` = Acc. Flash Area) ·
+  ICGEM `icgem.gfz.de` lebt (identisch zu `icgem.gfz-potsdam.de`) · P2PQuake-API lebt.
+  **widerlegt:** „DART über `/data/realtime2/` = 404" — `realtime2/21414.dart` liefert
+  200 (282968 B); richtig ist nur, dass `/dart.shtml` 404 ist und die Landeseite
+  `/dart/dart.shtml` heißt. GOES-AWS-**Registry-Seite** `registry.opendata.aws/noaa-goes18/`
+  = 404; der Bucket `noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/` ist der Endpunkt.
 - Kimi K3 via `tryingopen.com`: **`This site has run out of API credit`** — kein Ergebnis.
 - API-Flotte: `zai glm-4.5-flash` + `gemini-2.5-flash` (Breite, halluzinationsanfällig:
   erfundene GeoNet-/NRCan-APIs — am Baum widerlegt).
