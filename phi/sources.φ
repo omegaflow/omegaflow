@@ -648,14 +648,6 @@ post_body {"countries":["DE"],"cities":["Heidelberg"],"pollutants":["PM10"],"dat
 on earth 49.4195 8.6767 114.0
 field Value eea_aq_pm10_hourly_ug_m3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json
-format eea_noise
-origin https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76/query?where=1=1&outFields=SNLD55,SNLD65,SNLD75,SNLN50,SNLN60,SNLN70,NLD5559,NLD6064,NLD6569,NLD7074,NLN5054,NLN5559,NLN6064,NLN6569,N_INHAB&returnGeometry=false&resultRecordCount=2000&f=json
-compiler tools/harvest/src/bin/eea_noise_compiler.rs
-sha256 30607524467e524acf70ef30a9d06784da000c1dc67b0469d7c01cf119ae7b43
-at earth
-ttl 604800
-
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
 ttl 3600
 on earth 0 0 0
@@ -673,14 +665,6 @@ lon 1
 field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 0.0
 field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
-format wqp_result
-origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20(DO)&characteristicName=Specific%20conductance&characteristicName=Nitrate&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
-compiler tools/harvest/src/bin/wqp_result_compiler.rs
-sha256 97b6707bfc574959c1f40188d9c8045f719e03d554c4d3e196756cf26a496fd6
-at earth
-ttl 604800
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
 ttl 3600
@@ -1650,6 +1634,16 @@ compiler tools/harvest/src/bin/noe4_compiler.rs
 sha256 cbf771d0cb3693e07ec213cd8d88dcf74f0043cd872d9362ee129d647e938479
 at phobos
 ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_rrl.bin
+origin https://gea.esac.esa.int/tap-server/tap/sync
+format gaia_rrl
+compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
+at sun
+ttl 86400
+field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
+field parallax gaia_rrl_parallax_mas inverse-square em mas 86400 0.0 0.0
+field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
 format catalog_gaia_sso
@@ -7087,7 +7081,7 @@ cmap .
 ra ra
 dec dec
 z z
-field z ned_redshift_z gaussian-inverse-square em 1 86400 0.0 0.0
+field z ned_redshift_z inverse-linear em 1 86400 0.0 0.0
 
 url https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
 format reference
@@ -9044,6 +9038,23 @@ format solar_system_bodies
 at earth
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin
+format agrav
+origin https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
+compiler tools/harvest/src/bin/agrav_compiler.rs
+at earth
+field gravity agrav_gravity_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
+format pds4_acs_nir
+origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
+origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1-EC__4_0.tab
+compiler tools/harvest/src/bin/acs_nir_compiler.rs
+at mars
+sha256 465f3c07c4a04053895046cb8853ce96f1c38fe7038d23d7cd05d91ce87419c1
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/mars_express_odf.bin
 format mars_express_odf
 origin https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF/
@@ -9195,6 +9206,14 @@ field dm frb_chime_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field freq_hz frb_chime_freq_hz inverse-square em Hz 604800 0.0 0.0
 field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
+format ceein_infrasound
+origin http://ceein.infp.ro/fdsnws/dataselect/1/query
+compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
+at earth
+field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/celestrak.org/celestrak_eop.bin
 format celestrak_eop
 origin https://celestrak.org/SpaceData/EOP-All.csv
@@ -9302,6 +9321,14 @@ at earth
 ttl 604800
 field onc_hydrophone_psd_db onc_hydrophone_psd_db gaussian-inverse-square acoustic dB 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/datacenter.iers.org/iers_eop_c04_lod.bin
+format iers_eop_c04_lod
+origin https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
+compiler tools/harvest/src/bin/iers_eop_c04_compiler.rs
+at earth
+ttl 604800
+field iers_eop_lod_s iers_eop_lod_s inverse-square gravity s 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
 origin https://doi.pangaea.de/10.1594/PANGAEA.758961?format=textfile
 compiler tools/harvest/src/bin/pangaea_harvester.rs
@@ -9335,6 +9362,14 @@ field bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg gaussian-i
 field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms gaussian-inverse-square acoustic m/s 300 0.0 0.0
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json
+format eea_noise
+origin https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76/query?where=1=1&outFields=SNLD55,SNLD65,SNLD75,SNLN50,SNLN60,SNLN70,NLD5559,NLD6064,NLD6569,NLD7074,NLN5054,NLN5559,NLN6064,NLN6569,N_INHAB&returnGeometry=false&resultRecordCount=2000&f=json
+compiler tools/harvest/src/bin/eea_noise_compiler.rs
+sha256 30607524467e524acf70ef30a9d06784da000c1dc67b0469d7c01cf119ae7b43
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/magnetar_flat.json
 origin https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
@@ -9680,7 +9715,7 @@ cmap .
 ra ra
 dec dec
 z z
-field z ned_byparams_redshift_z gaussian-inverse-square em 1 604800 0.0 0.0
+field z ned_byparams_redshift_z inverse-linear em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-ned/ned.json
 origin https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
@@ -9691,7 +9726,7 @@ cmap .
 ra ra
 dec dec
 z z
-field z ned_gitter_redshift_z gaussian-inverse-square em 1 604800 0.0 0.0
+field z ned_gitter_redshift_z inverse-linear em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
 format cors_rinex
@@ -9972,6 +10007,18 @@ field ce2_mrm_t1 t1 gaussian-inverse-square thermal K 2 0.0 0.0
 field ce2_mrm_t2 t2 gaussian-inverse-square thermal K 2 0.0 0.0
 field ce2_mrm_t3 t3 gaussian-inverse-square thermal K 2 0.0 0.0
 field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 2 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/viking_grav_vmar001l.bin
+origin https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
+format viking_grav
+compiler tools/harvest/src/bin/viking_grav_compiler.rs
+sha256 5f7c8814f84a1f187c0321b2dc1ada3315ab93be9de42d9a54df958cfcc1f7a4
+at mars
+ttl 604800
+field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
+field LONGITUDE viking_grav_longitude_deg inverse-square em deg 604800 0.0 0.0
+field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square em mm/s2 604800 0.0 0.0
+field ALTITUDE viking_grav_altitude_km inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-imaging.jpl.nasa.gov/pds3_img_m3g20081118t222604_v03_loc.bin
 format pds3_img
@@ -17193,6 +17240,21 @@ field X_WAVE cses_scm_ulf_x_nt inverse-square em nT 86400 0.0 0.0
 field Y_WAVE cses_scm_ulf_y_nt inverse-square em nT 86400 0.0 0.0
 field Z_WAVE cses_scm_ulf_z_nt inverse-square em nT 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/superdarn_fitacf.bin
+format superdarn_fitacf
+origin https://sdc-serv.usask.ca/data/ — fetch {Y}/{M}/{file} then superdarn_fitacf_compiler
+compiler tools/harvest/src/bin/superdarn_fitacf_compiler.rs
+sha256 c5e1238a08c310363545ff94085a95ac1ab5ec44974de2dd70b57aa4b0b1d0b7
+at earth
+ttl 604800
+field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sdc.emiratesmarsmission.ae/emm_exi_l2a.tar
+format emm_exi_l2a
+origin https://api.emiratedatacenter.com/v1/science/files
+at mars
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
 origin https://space.fmi.fi/gic/man_ascii
@@ -17209,6 +17271,14 @@ sha256 a30a846d256cc685a298418bd10a34abda512e743c08e3ca4dd984f66c06440f
 on earth 60.6 25.2 0
 ttl 604800
 field fmi_gic_1min_a fmi_gic_1min_a inverse-square electric A 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_image_mag_nur.bin
+format fmi_image_mag
+origin https://space.fmi.fi/image/www/data_download.php
+compiler tools/harvest/src/bin/image_mag_compiler.rs
+on earth 60.50 24.65 0
+ttl 604800
+field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
@@ -17334,6 +17404,18 @@ catalog_epoch 2016.0
 at sun
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-nvss/nvss.json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss xmatch=V/154/sdss16
+compiler tools/harvest/src/bin/tap_compiler.rs
+sha256 e825e736095e066d3c91ced3ad1b0b90dffe272064a02d3b5173d20e4b5ddec9
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/viking_lander_tracking.bin
 format viking_text
 origin https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt ; https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt
@@ -17372,18 +17454,6 @@ sha256 fb18192418cec56b5ff736f215e7c78572f2124e4f9460bada7e107f0bcc5535
 at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-nvss/nvss.json
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss xmatch=V/154/sdss16
-compiler tools/harvest/src/bin/tap_compiler.rs
-sha256 e825e736095e066d3c91ced3ad1b0b90dffe272064a02d3b5173d20e4b5ddec9
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-z z
-field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
 format flac
@@ -17872,6 +17942,14 @@ ttl 604800
 field CDOD mars_dust_cdod inverse-square em 1 86400 0.0 0.0
 sha256 95cb85094cf4e120452b148977aa7666791ea391ccc6214b1b1f3a222e2d5402
 
+url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
+format wqp_result
+origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20(DO)&characteristicName=Specific%20conductance&characteristicName=Nitrate&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
+compiler tools/harvest/src/bin/wqp_result_compiler.rs
+sha256 97b6707bfc574959c1f40188d9c8045f719e03d554c4d3e196756cf26a496fd6
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/web.corral.tacc.utexas.edu/ceers_spectra.bin
 format jwst_spectra
 origin https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
@@ -18312,15 +18390,6 @@ ttl 604800
 at earth
 sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23
 
-url https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/superdarn_fitacf.bin
-format superdarn_fitacf
-origin https://sdc-serv.usask.ca/data/ — fetch {Y}/{M}/{file} then superdarn_fitacf_compiler
-compiler tools/harvest/src/bin/superdarn_fitacf_compiler.rs
-sha256 c5e1238a08c310363545ff94085a95ac1ab5ec44974de2dd70b57aa4b0b1d0b7
-at earth
-ttl 604800
-field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0
-
 url https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
 format tap
 ttl 604800
@@ -18433,6 +18502,15 @@ cmap .
 ra ra
 dec dec
 field flux bzcat5th_flux inverse-square em mJy 604800 0.0 0.0
+
+url https://uhslc.soest.hawaii.edu/erddap/tabledap/global_hourly_fast.json?time,latitude,longitude,sea_level&time%3E=max(time)-2days
+ttl 604800
+on earth 0 0 0
+map table.rows
+lat 1
+lon 2
+epoch 0
+field 3 uhslc_sea_level_mm inverse-square gravity mm 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
 ttl 604800
@@ -24737,6 +24815,15 @@ origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_
 sha256 273cd4ccc470d1098562cd4e94fa48fc2b4c6b1c2896308e473c949b87937c53
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/goes_euvs.bin
+format goes_euvs
+origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs sci_geuv-l2-avg1d_
+compiler tools/harvest/src/bin/euvs_compiler.rs
+sha256 45b9c0ae5e18af3c5347840b47c09484839273de02a31e802e5f387fbd1ff207
+at sun
+ttl 31536000
+field goes_euvs_lya1216 goes_euvs_lya1216 inverse-square em wm2_1au 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
 format reference
 origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
@@ -24775,15 +24862,6 @@ sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
 at sun
 ttl 31536000
 field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/goes_euvs.bin
-format goes_euvs
-origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/euvs sci_geuv-l2-avg1d_
-compiler tools/harvest/src/bin/euvs_compiler.rs
-sha256 45b9c0ae5e18af3c5347840b47c09484839273de02a31e802e5f387fbd1ff207
-at sun
-ttl 31536000
-field goes_euvs_lya1216 goes_euvs_lya1216 inverse-square em wm2_1au 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
 format catalog_charm2
@@ -26994,66 +27072,3 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_rrl.bin
-origin https://gea.esac.esa.int/tap-server/tap/sync
-format gaia_rrl
-compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
-at sun
-ttl 86400
-field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
-field parallax gaia_rrl_parallax_mas inverse-square em mas 86400 0.0 0.0
-field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/viking_grav_vmar001l.bin
-origin https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
-format viking_grav
-compiler tools/harvest/src/bin/viking_grav_compiler.rs
-sha256 5f7c8814f84a1f187c0321b2dc1ada3315ab93be9de42d9a54df958cfcc1f7a4
-at mars
-ttl 604800
-field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
-field LONGITUDE viking_grav_longitude_deg inverse-square em deg 604800 0.0 0.0
-field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square em mm/s2 604800 0.0 0.0
-field ALTITUDE viking_grav_altitude_km inverse-square em km 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin
-format agrav
-origin https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
-compiler tools/harvest/src/bin/agrav_compiler.rs
-at earth
-field gravity agrav_gravity_ms2 inverse-square gravity m/s2 604800 0.0 0.0
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
-format ceein_infrasound
-origin http://ceein.infp.ro/fdsnws/dataselect/1/query
-compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
-at earth
-field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
-format pds4_acs_nir
-origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
-origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1-EC__4_0.tab
-compiler tools/harvest/src/bin/acs_nir_compiler.rs
-at mars
-sha256 465f3c07c4a04053895046cb8853ce96f1c38fe7038d23d7cd05d91ce87419c1
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_image_mag_nur.bin
-format fmi_image_mag
-origin https://space.fmi.fi/image/www/data_download.php
-compiler tools/harvest/src/bin/image_mag_compiler.rs
-on earth 60.50 24.65 0
-ttl 604800
-field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/datacenter.iers.org/iers_eop_c04_lod.bin
-format iers_eop_c04_lod
-origin https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
-compiler tools/harvest/src/bin/iers_eop_c04_compiler.rs
-at earth
-ttl 604800
-field iers_eop_lod_s iers_eop_lod_s inverse-square gravity s 86400 0.0 0.0

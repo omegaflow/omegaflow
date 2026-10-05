@@ -519,6 +519,70 @@ impl NetcdfFile {
         Some(s.trim_end_matches('\0').to_string())
     }
 
+    pub fn values_numeric(&self, file: &[u8], name: &str) -> Option<Vec<f64>> {
+        let idx = self.var_index(name)?;
+        let nc_type = self.vars.get(idx)?.nc_type;
+        let raw = self.full_slab(file, idx)?;
+        let mut out: Vec<f64> = match nc_type {
+            NetcdfType::Byte => raw.iter().map(|&b| b as i8 as f64).collect(),
+            NetcdfType::Char => return None,
+            NetcdfType::Short => raw
+                .as_chunks::<2>()
+                .0
+                .iter()
+                .map(|c| i16::from_be_bytes([c[0], c[1]]) as f64)
+                .collect(),
+            NetcdfType::Int => raw
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .map(|c| i32::from_be_bytes([c[0], c[1], c[2], c[3]]) as f64)
+                .collect(),
+            NetcdfType::Float => raw
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .map(|c| f32::from_bits(be_u32(c)) as f64)
+                .collect(),
+            NetcdfType::Double => raw
+                .as_chunks::<8>()
+                .0
+                .iter()
+                .map(|c| f64::from_bits(be_u64(c)))
+                .collect(),
+        };
+        let var = self.vars.get(idx)?;
+        if let Some(scale) = var
+            .attrs
+            .iter()
+            .find(|a| a.name == "scale_factor")
+            .and_then(|a| self.attr_num(a))
+        {
+            let offset = var
+                .attrs
+                .iter()
+                .find(|a| a.name == "add_offset")
+                .and_then(|a| self.attr_num(a));
+            for value in out.iter_mut() {
+                *value = match offset {
+                    Some(offset) => *value * scale + offset,
+                    None => *value * scale,
+                };
+            }
+        }
+        Some(out)
+    }
+
+    pub fn fill_value(&self, name: &str) -> Option<f64> {
+        let var = self.var(name)?;
+        for key in ["_FillValue", "missing_value"] {
+            if let Some(attr) = var.attrs.iter().find(|a| a.name == key) {
+                return self.attr_num(attr);
+            }
+        }
+        None
+    }
+
     fn full_slab(&self, file: &[u8], idx: usize) -> Option<Vec<u8>> {
         let v = self.vars.get(idx)?;
         let shape = self.var_shape(v).ok()?;
@@ -767,6 +831,9 @@ mod tests {
     fn f64b(x: f64) -> Vec<u8> {
         x.to_bits().to_be_bytes().to_vec()
     }
+    fn f32b(x: f32) -> Vec<u8> {
+        x.to_bits().to_be_bytes().to_vec()
+    }
     fn name(s: &str) -> Vec<u8> {
         let mut b = u32b(s.len() as u32);
         b.extend_from_slice(s.as_bytes());
@@ -898,6 +965,50 @@ mod tests {
         assert_eq!(a.raw, f64b(9.969_209_968_386_869e36));
         assert_eq!(f.attr_num(a), Some(9.969_209_968_386_869e36));
         assert_eq!(f.values_f64(&b, "v").unwrap(), vec![5.0]);
+    }
+
+    #[test]
+    fn values_numeric_applies_scale_and_reports_fill() {
+        let mut b = Vec::new();
+        b.extend([0x43, 0x44, 0x46, 0x01]);
+        b.extend(u32b(0));
+        b.extend(u32b(0x0A));
+        b.extend(u32b(1));
+        b.extend(name("month"));
+        b.extend(u32b(3));
+        absent(&mut b);
+        b.extend(u32b(0x0B));
+        b.extend(u32b(1));
+        b.extend(name("tau"));
+        b.extend(u32b(1));
+        b.extend(u32b(0));
+        b.extend(u32b(0x0C));
+        b.extend(u32b(3));
+        b.extend(name("scale_factor"));
+        b.extend(u32b(5));
+        b.extend(u32b(1));
+        b.extend(f32b(0.5));
+        b.extend(name("add_offset"));
+        b.extend(u32b(5));
+        b.extend(u32b(1));
+        b.extend(f32b(1.0));
+        b.extend(name("_FillValue"));
+        b.extend(u32b(4));
+        b.extend(u32b(1));
+        b.extend(u32b(9999));
+        b.extend(u32b(4));
+        b.extend(u32b(12));
+        let slot = b.len();
+        b.extend(u32b(0));
+        let begin = b.len() as u64;
+        b[slot..slot + 4].copy_from_slice(&(begin as u32).to_be_bytes());
+        for v in [4i32, 10, 9999] {
+            b.extend(v.to_be_bytes());
+        }
+        let f = NetcdfFile::parse(&b).unwrap();
+        assert_eq!(f.values_numeric(&b, "tau").unwrap(), vec![3.0, 6.0, 5000.5]);
+        assert_eq!(f.fill_value("tau"), Some(9999.0));
+        assert_eq!(f.fill_value("absent"), None);
     }
 
     #[test]
