@@ -709,7 +709,10 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if !(floor_ft.is_finite() && floor_ft > 0.0) {
                 continue;
             }
-            let z_aperture = if sample.force_type == 0.0 && sample.z > 0.0 {
+            let z_aperture = if sample.force_type == 0.0
+                && sample.z > 0.0
+                && (sample.kernel_id == 0.0 || sample.kernel_id == 1.0)
+            {
                 let z1 = 1.0 + sample.z;
                 1.0 / (z1 * z1)
             } else {
