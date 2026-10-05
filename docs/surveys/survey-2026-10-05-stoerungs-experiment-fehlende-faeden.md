@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: 7af38fe2a1b7c37c6dd4608525ba612bfe72b33502cc0c551c5a6b3fedfb169f
+  sha256: b58af0d7fce8716d5aea24a202383d21ff3db867d15cfbf23f49c02765976edb
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/handover-2026-10-05-river-folge93.md
 -->
@@ -17,6 +17,9 @@ UI-Stimmen (z.ai GLM-5.3 Deep Think Max, claude.ai Sonnet 5.5 Extra hoch, Kimi K
 `tryingopen.com`) liegen zugrunde; die API-Flotte (`zai glm-4.5-flash`, `gemini-2.5-flash`)
 als Breite. **Eine Stimme ist nie eine Messung** — jede Tabellenzeile trägt den
 Messwert der Taucher; Stimmen-Aussagen ohne Baum-Beleg sind als solche markiert.
+Der weitere Rahmen — **alles gegen alles** im baryzentrischen ICRS, Lücken als
+Zielangaben, Triangulation, `ozzy` — liegt im Auftrag
+`docs/auftrag/auftrag-universelles-vlies.md` (Operator-Vision 2026-10-05).
 
 ## 1 Der gemessene Stand der Verdrahtung (heute)
 
