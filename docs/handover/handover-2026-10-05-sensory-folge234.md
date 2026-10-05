@@ -3,7 +3,7 @@
   session: Sensory-Folge 234
   class: handover
   date: 2026-10-05
-  sha256: 20a0d815101e281b06175bd374730c2e81aedf696dbf944c74e9155d03595b80
+  sha256: 496adcc38a9ba41d5cb549845517eddd169f20e7937f8acf8dc6b722cdf979d3
   status: live
 -->
 # Handover — Sensory-Folge 234 (2026-10-05)
@@ -222,6 +222,7 @@ breiter messen.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." + „Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-05 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 232.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." + „Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-05 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 233.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch), damit die erlaubte Form am Punkt der Handlung steht." + „Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt." | 2026-10-05 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent, nicht das Commit-Wort, Sensory-Folge 234.
+- **Wort:** „ja bitte Offen bleibt: die publishable Methodenpapier-Konsolidierung (Operator-Wort 2026-10-03) als eigenes Forschungsatom" | 2026-10-05 | Operator (Session) — Ausführung der Methodenpapier-Konsolidierung; Sensory-Folge 234.
 
 ## Offen (aufgeschlüsselt)
 
@@ -229,16 +230,12 @@ Nur `Bindung: eigen` — jede Zeile ist Sensorys eigene Arbeit; operator-/dritt-
 Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hier
 (Operator-Wort 2026-09-28, `:189`).
 
-### Hyperscanning-TE — publishable Methodenpapier-Konsolidierung (ds007822 Machbarkeit + ds007471 Fund)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Operator-Wort 2026-10-03 (Aufstieg (i) Methodenpapier) — alle Messungen sind vollständig, die Konsolidierung ist der nächste Akt.
-- **Lage:** (gemessen 2026-10-05 F234) Alle Messungen stehen im Papier `docs/paper/hyperscanning-te-preregistration.md` (Header-sha `71995182…`):
-  - **n-Skalierung** (Lauf `37217425078`, `success` 2026-10-05T02:05:48Z): `family-max survivors = 0` bei jedem n (512–4096) und jeder Task-Bedingung. Abschnitt `— n-scaling curve`.
-  - **Zweite Kohorte `ds007471`/`jointaction` `Cz`** (Lauf `37235249763`, `success` 2026-10-05T04:39:25Z; `max_points=2048`, 31 Triaden/62 Zellen): beobachtetes Maximum `7.0851e-1` > family-max p95 `6.5144e-1` → **H1 trägt 3 Survivors** (alle p99-bestätigt), 50/51 per-Zelle-Nominees bestätigt. Abschnitt `— second cohort ds007471`; Artefakt-ID `11325587633`.
-  - **Joint cross-channel `Fz,Cz`** (Lauf `37292154121`, `success` 2026-10-05T13:39:22Z; `max_points=2048`, 62 Triaden/124 Zellen): p95 `6.7425e-1`, beobachtetes Maximum `7.0851e-1` → **2 family-max Survivors** (`pair-18@Cz L→R` `7.0597e-1`, `pair-18@Cz R→L` `7.0851e-1`, beide p99-bestätigt); 93 per-cell Nominees / 88 bestätigt. Der Einzelkanal-`Cz`-Survivor `pair-02@Cz R→L` `6.5198e-1` wird von der strengeren joint p95 maskiert. Abschnitt `— joint cross-channel Fz,Cz`; Artefakt-ID `11349076871` (6965 B).
-  - Der joint cross-channel Bau im Baum: Commit `62742649c` (`hyperscanning_group_te.rs:52-55`, Gate `:1630`).
+### Hyperscanning-TE — Methodenpapier, offene Restmessung
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Abschluss des `coherent-phase`-Laufs `37331134587` — Log lesen.
+- **Lage:** (gemessen 2026-10-05 F234) Das publishable Methodenpapier `docs/paper/hyperscanning-te-method.md` ist geschrieben (Header-sha `c20562c8…`); es konsolidiert die vier gemessenen Läufe (FP/FN+Feasibility `37197710877`, n-Skalierung `37217425078`, zweite Kohorte `37235249763` `Cz`, joint `Fz,Cz` `37292154121`) und trägt `docs/paper/hyperscanning-te-preregistration.md` (Header-sha `71995182…`) als Regel-Wurzel. Offen, in §11 benannt: der `coherent-phase`-Null der Discovery-Kohorte — als Lauf `37331134587` dispatcht (`null_model=coherent-phase`, `cohort=ds007471`, `channel=Cz`, `max_points=2048`, HEAD `703890be2`, queued; nicht gepollt). Ein voller `max_points=4096`-Discovery-Lauf ist am Plattform-Job-Cap gescheitert (die Discovery-Läufe liefen deshalb mit `2048`).
 - **Blockade:** keine.
-- **Braucht:** die publishable Methodenpapier-Konsolidierung aus `docs/paper/hyperscanning-te-preregistration.md` heraus (Operator-Wort 2026-10-03, `state/zustand/ereignisse.φ:50133`) — ein eigenes Forschungsatom: Zweck/Daten/Methodik/Ergebnisse/Falsifikation als eigenständiges Manuskript; die Zahlen stehen oben, kein Operator-Akt.
+- **Braucht:** `ci_manage log 37331134587 --all` nach Abschluss — den `coherent-phase`-familien-Screen + Confirm lesen, die Zahlen in `docs/paper/hyperscanning-te-method.md` §9/§11 tragen; der `4096`-Discovery-Lauf bleibt am Job-Cap `pending` (kein neuer Dispatch ohne Cap-Messung).
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -353,7 +350,8 @@ Commit-Anweisung); die fremden uncommitteten Hünke bleiben unberührt.
 Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-05-sensory-folge234.md` (diese Übergabe),
 - `docs/handover/archiv/handover-2026-10-05-sensory-folge233.md` (die konsumierte F233, aus `docs/handover/` hierher verschoben),
-- `docs/paper/hyperscanning-te-preregistration.md` (joint cross-channel Messung `37292154121` eingetragen, Header-sha `71995182…`).
+- `docs/paper/hyperscanning-te-preregistration.md` (joint cross-channel Messung `37292154121` eingetragen, Header-sha `71995182…`),
+- `docs/paper/hyperscanning-te-method.md` (publishable Methodenpapier-Konsolidierung, Header-sha `c20562c8…`).
 
 `state/operator-gespraeche/2026-10-05-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
