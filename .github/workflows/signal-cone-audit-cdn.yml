@@ -18,7 +18,7 @@ env:
 
 jobs:
   signal-cone-audit:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 720
     steps:
       - uses: actions/checkout@v7

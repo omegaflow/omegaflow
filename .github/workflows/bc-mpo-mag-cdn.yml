@@ -14,7 +14,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   bc-mpo-mag:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 720
     steps:
       - uses: actions/checkout@v7
