@@ -3,7 +3,7 @@
   session: Sensory-Folge 232
   class: handover
   date: 2026-10-05
-  sha256: c3fc709925bc09fffd83c10f82b9faf2d3a2d9a12132245149b2ca0e19c1bb46
+  sha256: 860de56ca95be2380720e3dc580eb6c8355ff0f398769f9d2858c16c121e5570
   status: live
 -->
 # Handover — Sensory-Folge 232 (2026-10-05)
@@ -39,12 +39,14 @@ future LSST, mycelium AGrav/C9); `open_points_check` = 0 absent / 0 stale-citati
   Zielland Deutschland, letztes Event `Mi, 23.09.2026, 02:40, China VR`; kein DE-/Zustell-Event
   seit 2026-09-23. Der `--fired`-Alarm ist der verstrichene ETA-Messstempel, nicht der
   Zustell-Trigger (A = A) — keine neue Messung (F231 misst dieselbe Sache am selben Tag).
-- **Die zwei Hyperscanning-Trigger noch nicht gefeuert** (`ci_manage view`, 2026-10-05T~02:00Z):
-  n-Skalierung `37217425078` = `in_progress` — `ci_manage jobs` zeigt `plan`/`confirm`/
-  `screen (pdrest)`/`screen (pdfeedback)` **success**, `screen (pddecision)` **in_progress**
-  (updated 2026-10-04T22:29:38Z); zweite Kohorte `37235249763` = `pending` (created
-  2026-10-04T21:13:58Z, wartet auf den Concurrency-Slot). Beide brauchen den Abschluss als
-  Trigger; kein Artefakt vor Laufende lesbar.
+- **Beide Hyperscanning-Trigger gefeuert — gearbeitet in diesem Atom** (gemessen `ci_manage view`):
+  n-Skalierung `37217425078` = `completed`/`success` (2026-10-05T02:05:48Z); zweite Kohorte
+  `37235249763` = `completed`/`success` (2026-10-05T04:39:25Z). Beide Logs gelesen
+  (`ci_manage log … --all`), die Zahlen in `docs/paper/hyperscanning-te-preregistration.md`
+  getragen (Header-sha `1645edf8…`): **n-Skalierung** `family-max survivors = 0` bei jedem n
+  (512–4096) und jeder Task-Bedingung; **`ds007471`/`jointaction`** beobachtetes Maximum
+  `7.0851e-1` > family-max p95 `6.5144e-1` → **H1 trägt 3 Survivors** (alle p99-bestätigt),
+  50/51 Nominees bestätigt — der erste familien-signifikante Fund der Linie.
 - **Ausgangs-Routing unverändert** (`## An future` = `rr-brustgurt`; `## An mountain` =
   medizinische Quellen + Weberin-Survey-Verdikte) — wartet auf die Faltung durch die
   Owner-Linien; kein neuer Akt.
@@ -245,19 +247,14 @@ Nur `Bindung: eigen` — jede Zeile ist Sensorys eigene Arbeit; operator-/dritt-
 Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hier
 (Operator-Wort 2026-09-28, `:189`).
 
-### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss des n-Skalierungslaufs `37217425078` — Beleg: `ci_manage view 37217425078` = completed.
-- **Lage:** (gemessen 2026-10-04 F229-Fortsetzung) `docs/paper/hyperscanning-te-preregistration.md` **fortgeschrieben**, Header-sha `f3eba3b8…`; die Entscheidungsregel H1/H2 steht mit `file:line`, die gemessenen FP-Zahlen + die H1/H2-Lage stehen im neuen Abschnitt `### Ergebnisse / Results`. Werte am Log verifiziert (`ci_manage log 37197710877 --all`): FP-Gates (`plan`) = **0 von 20** je Gate (coherent-per-cell, per-cell, joint per-cell); über **alle drei** Task-Bedingungen **H1 ohne Survivor**, **H2** je 2 Nominees, Bestätigung inkonsistent **2/2 · 2/1 · 2/0**. n-Skalierung dispatcht (`37217425078`, `scales=512,1024,2048,4096`).
+### Hyperscanning-TE — Methodenpapier / joint cross-channel family (ds007822 Machbarkeit + ds007471 Fund)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** sofort (eigener Bau; `docs/paper/hyperscanning-te-preregistration.md`).
+- **Lage (gemessen 2026-10-05 F232):** `docs/paper/hyperscanning-te-preregistration.md` fortgeschrieben, Header-sha `1645edf8…`; beide Trigger gefeuert und in das Papier getragen:
+  - **n-Skalierung** (Lauf `37217425078`, `success` 2026-10-05T02:05:48Z): `family-max survivors = 0` bei jedem n (512/1024/2048/4096) und jeder Task-Bedingung (`pdrest`/`pdfeedback`/`pddecision`); nur die per-Zelle-Zahl (H2) variiert mit n. n=4096 reproduziert die ds007822-Werte. Abschnitt `### Ergebnisse / Results — n-scaling curve`.
+  - **Zweite Kohorte `ds007471`/`jointaction`** (Lauf `37235249763`, `success` 2026-10-05T04:39:25Z; `Cz`, `max_points=2048`, 31 Triaden/62 Zellen): beobachtetes Maximum `7.0851e-1` > family-max p95 `6.5144e-1` → **H1 trägt 3 Survivors** (`pair-02@Cz R→L` TE `6.5198e-1`; `pair-18@Cz L→R` TE `7.0597e-1`; `pair-18@Cz R→L` TE `7.0851e-1`), alle drei im p99-Confirm bestätigt, **50/51** per-Zelle-Nominees bestätigt. **Erster familien-signifikanter Fund der Linie.** Abschnitt `### Ergebnisse / Results — second cohort ds007471`; Artefakt `hyperscanning-te-report-jointaction` (ID `11325587633`, 4380 B).
 - **Blockade:** keine.
-- **Braucht:** Lauf `37217425078` nach Laufende lesen (`ci_manage view/jobs/log 37217425078`) und die `scaling.txt`/`scaling_*.txt`-Kurve in den Entwurf tragen (Header-sha neu). **F232 gemessen:** `37217425078` = `in_progress` (`ci_manage view`, updated 2026-10-04T22:29:38Z; `ci_manage jobs`: `screen (pddecision)` läuft).
-
-### Hyperscanning-TE — zweite Kohorte (Validierung)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Abschluss des Neu-Laufs `37235249763` — Beleg: `ci_manage view 37235249763` = completed.
-- **Lage:** (gemessen 2026-10-04 F230) `37209904312` (`cohort=ds007471`, channel `Cz`, head `4bcd4631`): `plan`/`confirm` success, der **screen-Schritt success**, der per-Zelle-**Confirmation-Schritt überschritt das 330-min-`screen`-Cap** (`.github/workflows/hyperscanning-te.yml:88`) → Job cancelled (Start 15:10:00Z → Cancel 20:45:00Z), kein Artefakt (Log 404). Grund: `jointaction` (64 Serien) übersteigt das kombinierte screen+confirm-Budget; der Screen selbst trug. Arm gebaut (`1226e9082`); Dyade = `_L`/`_R` im selben File (64 Kanäle, kein Subjekt-Subjekt-Join). Re-dispatcht: **`37235249763`** (`cohort=ds007471`, channel `Cz`, **`max_points=2048`** — compute-bound Deviationsmessung vom 4096-Default; im Präreg vermerkt, Header-sha `f3eba3b8…`).
-- **Blockade:** keine.
-- **Braucht:** `37235249763` nach Laufende lesen (`ci_manage view/jobs/log 37235249763`) + Artefakt `hyperscanning-te-report-jointaction` auswerten. **F232 gemessen:** `37235249763` noch **pending** (`ci_manage view`, created 2026-10-04T21:13:58Z).
+- **Braucht:** Bau der joint cross-channel TE-Familie + Methodenpapier-Konsolidierung (Operator-Wort 2026-10-03); die drei Survivors an einer zweiten Kohorte/zweitem Kanal repetieren.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -405,7 +402,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0352 · cap 0.50 · Grund: F232 — eine Line-Session (deepseek-flash), kein pro/max-Dispatch, keine Taucher (gemessen `session_burn`, opencode.db; Session `Sensory-Linie in einem Pass abarbeiten`).
+## Burn: open 0.0000 · close 0.0777 · cap 0.50 · Grund: F232 — eine Line-Session (deepseek-flash), kein pro/max-Dispatch, keine Taucher (gemessen `session_burn`, opencode.db; Session `Sensory-Linie in einem Pass abarbeiten`).
 
 ## Abschluss
 
@@ -422,16 +419,21 @@ Pfade>` statt nackt; `git diff --cached` vor jedem Commit bleibt Pflicht.
 
 Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-05-sensory-folge232.md` (diese Übergabe),
-- `docs/handover/archiv/handover-2026-10-05-sensory-folge231.md` (die konsumierte F231, aus `docs/handover/` hierher verschoben).
+- `docs/handover/archiv/handover-2026-10-05-sensory-folge231.md` (die konsumierte F231, aus `docs/handover/` hierher verschoben),
+- `docs/paper/hyperscanning-te-preregistration.md` (n-Skalierung + zweite Kohorte eingetragen, Header-sha `1645edf8…`).
 
-**Dieses Atom (Sensory-F232):** ein Verifikations-Pass — alle eigenen offenen Punkte hängen
-an noch nicht gefeuerten Triggern. Neu gemessen: `37217425078` = `in_progress`
-(`screen (pddecision)` läuft, `ci_manage jobs`), `37235249763` = `pending` (beide Trigger noch
-nicht gefeuert); `register_lookup --addressed sensory` = 2 informationale Blöcke
-(`mycelium-folge231`, `river-folge92`), kein neuer Akt; `--fired sensory` = 1 (`ox64-m2c`,
-ETA-Messstempel statt Zustell-Trigger), `--stale` = 0, `--orphans` = 3 (fremd),
-`--descoped-check` = 0. Kein pro/max-Dispatch, keine Taucher nötig; kein neuer
-Operator-Punkt (alles `Wartend`/`Termin`/`LOCK`).
+**Dieses Atom (Sensory-F232):** zwei Träger-Durchläufe.
+(a) Ein Verifikations-Pass (Register/Messung: `--fired sensory` = 1 (`ox64-m2c`,
+ETA-Messstempel statt Zustell-Trigger), `--stale` = 0, `--addressed` = 2 informationale Blöcke
+(`mycelium-folge231`, `river-folge92`), `--orphans` = 3 (fremd), `--descoped-check` = 0,
+`open_points_check` = 0).
+(b) Auf das Operator-Wort „bitte messe nochmal den aktuellen Zustand" beide Hyperscanning-Trigger
+als **gefeuert** gemessen und **gearbeitet**: `37217425078` und `37235249763` beide
+`completed`/`success`; Logs gelesen, die Zahlen in das Präreg getragen — n-Skalierung
+`family-max survivors = 0` bei jedem n; **`ds007471`/`jointaction` H1 mit 3 Survivors**
+(alle p99-bestätigt, 50/51 Nominees). Kein pro/max-Dispatch, keine Taucher nötig; kein neuer
+Operator-Punkt (offen bleibt nur der Bau der joint cross-channel Familie / das Methodenpapier,
+`Bindung: eigen`).
 
 `state/operator-gespraeche/2026-10-05-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
