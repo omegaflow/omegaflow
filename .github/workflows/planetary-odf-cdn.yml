@@ -12,7 +12,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.netloc }}-${{ matrix.asset }}
       cancel-in-progress: false
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: ${{ matrix.timeout || 240 }}
     strategy:
       fail-fast: false

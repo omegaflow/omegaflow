@@ -10,7 +10,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   vires-hapi:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7

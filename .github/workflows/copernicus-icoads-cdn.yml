@@ -40,7 +40,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   copernicus-icoads:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v7

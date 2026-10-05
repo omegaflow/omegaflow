@@ -30,7 +30,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   noaa-cdo:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v7

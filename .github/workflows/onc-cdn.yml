@@ -14,7 +14,7 @@ env:
   OCEANNETWORKS_TOKEN: ${{ secrets.OCEANNETWORKS_TOKEN }}
 jobs:
   onc:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7

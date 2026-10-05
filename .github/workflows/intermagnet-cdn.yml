@@ -43,7 +43,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   intermagnet-dbdt:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v7

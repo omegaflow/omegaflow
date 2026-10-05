@@ -15,7 +15,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   noe4:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 240
     steps:
       - uses: actions/checkout@v7

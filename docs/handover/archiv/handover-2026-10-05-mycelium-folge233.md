@@ -1,0 +1,222 @@
+<!--
+  title: Handover — Mycelium-Folge 233 (2026-10-05)
+  session: Mycelium-Linie — ds004100 EDF-Fix, CDN-Idempotenz-Risse (clpds/superdarn), FMI-GIC 1-min, Register-sha256, adressierte Blöcke gefaltet
+  class: handover
+  date: 2026-10-05
+  sha256: 673b311603084ce7f19bd11be6eac5da5806a0fed13303caffd2664e08f8ddf6
+  status: live
+-->
+# Handover — Mycelium-Folge 233 (2026-10-05)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
+wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
+(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+`handover-2026-10-05-mycelium-folge232.md` (→ `archiv/`).
+
+## Burn: open 0.0012 · close 0.0432 — session_burn, gemessen; Linie flash
+
+## Operator-Wort-Register
+
+- Wort | 2026-10-02 | „ich meine glm 5.3 max mit deep search ist echt gut das sollten wir intensiver nutzen" | Quelle: future-folge169.
+- Wort | 2026-10-02 | „glm claude und kimi im chat liefern die besten recherchergebnisse" | Quelle: future-folge169 — Recherche-Trio.
+- Wort | 2026-10-02 | „nein genug mit den Sondenanfragen. Die Ernte sollten natürlich eingeholt werden." | Quelle: future-folge169.
+- Wort | 2026-10-02 | „… ihr macht umfangreiche läufe und dann kastriert ihr sie … so funktioniert forschung nicht" | Quelle: future-folge169 — kein Top-N.
+- Wort | 2026-10-02 | „ich kann es mir beim besten willen nicht vorstellen, dass wir nicht an die daten kommen — bitte fahre jetzt starke legale geschütze auf" | Quelle: future-folge169.
+- Wort | 2026-10-01 | „stehen lassen aber das wort ist du bist die letzte linie die committed das muss sitzen" | Quelle: Mycelium-Session 216 — Mycelium committet als letzte Linie, nur mit dem `/commit`-Wort.
+- Wort | 2026-10-01 | „bitte nicht nur messen und verschleppen sondern bearbeiten messen und bearbeiten ist die prämisse mein dauerhaftes wort" | Quelle: Mycelium-Session 216 — **dauerhaftes Wort**.
+- Wort | 2026-09-30 | „bitte wirklich bis zur kante umsetzen nicht nur wieder messen und verschleppen" | Quelle: Mycelium-Session 209.
+- Wort | 2026-09-30 | „verschleppen und nicht eigenes ist verboten" | Quelle: Mycelium-Session 213.
+- Wort | 2026-09-30 | „du committest immer als letzter also warte" | Quelle: Mycelium-Session 213.
+- Wort | 2026-10-05 | „du bist mycellium" | Quelle: Operator (Session 2026-10-05) — der Commit-Prefix `mountain` war falsch.
+- Wort | 2026-10-05 | „kannst du dir das bitte ansehen?" + zwei Listen (GIC/`field_te_query`) | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — Review-Auftrag; die Listen sind Claims gegen den Baum gemessen (Riss-Befund in der Session).
+- Wort | 2026-10-05 | „ja bitte ablegen" | Quelle: `state/operator-gespraeche/2026-10-05-mycelium.md` — die verifizierte Drei-Zustands-Verdrahtungsliste als adressierte Register-Zeile (§ `## An river` in folge232).
+- Wort | 2026-09-29 | **SuperDARN nicht messen** — „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." | Quelle: `state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25` — der Globus-Task wird nicht neu aufgesetzt; der `.map`-Korpus wartet auf die Glasfaser-Hardware. Kein Register-/Mess-Akt.
+
+## Offen — eigen
+
+### SUDEP ds004100 — Fix gebaut, Re-Dispatch nach Push
+- **Status:** eigen
+- **Trigger:** Push → `gh workflow run openneuro-cdn.yml -f dataset=ds004100`
+- **Lage:** (gemessen 2026-10-05) `extract_edf` filtert den `EDF Annotations`-Kanal vor der Uniformitätsprüfung (`tools/harvest/src/bin/openneuro_compiler.rs:350-356`); `cargo build -p omegaflow-harvest --bin openneuro_compiler` grün (10.36 s).
+- **Blockade:** keine (der Push fehlt noch).
+- **Braucht:** nach Push dispatchen, `ci_manage log <id>`; bei Grün `format`/`sha256`/`url` in `sources.φ`.
+
+### clpds-cdn Annex — Asset fehlte, Workflow-Idempotenz gefixt
+- **Status:** eigen
+- **Trigger:** Push → `gh workflow run clpds-cdn.yml`
+- **Lage:** (gemessen 2026-10-05 via `gh api`) Release `clpds.bao.ac.cn` trägt nur `clpds_catalogue.json` (77 513 B) + `clpds_files.jsonl` (27 190 604 B), **kein** `clpds_annex.jsonl`; die Idempotenz prüfte nur die zwei und übersprang den `--with-annex`-Schritt. Fix: `clpds-cdn.yml` fordert jetzt alle drei.
+- **Blockade:** keine (Push).
+- **Braucht:** re-dispatch; bei Grün `clpds_annex.jsonl` + `sha256` registrieren.
+
+### FMI-GIC 1-min (mountain-235 / river-93)
+- **Status:** eigen
+- **Trigger:** Push → `gh workflow run fmi-gic-cdn.yml`
+- **Lage:** (gemessen 2026-10-05) `fmi-gic-cdn.yml` um zweiten Idempotenz-Check + Step `--out-bin fmi_gic_1min.bin --grain minute --ci-mode` erweitert; die Register-Zeile `sources.φ:17202-17208` (`format fmi_gic_1min`) steht (Mountain 235b).
+- **Blockade:** keine (Push).
+- **Braucht:** dispatch, Lauf lesen; bei Grün `url`/`sha256` der 1-min-Zeile.
+
+### ExoMars TGO ACS — Lauf cancelled, re-dispatch
+- **Status:** eigen
+- **Trigger:** `gh workflow run acs-nir-cdn.yml`
+- **Lage:** (gemessen 2026-10-05) `37251847669` cancelled (Log 404) auf `d83150fa9`. Register-Block (`format pds4_fixed_width`, `at mars`) gebaut in 231q.
+- **Blockade:** keine (Push).
+- **Braucht:** re-dispatch; bei Grün `sha256`/`url`.
+
+### Exposom-Arme WQP + EEA-noise — cancelled, re-dispatch
+- **Status:** eigen
+- **Trigger:** Push → `gh workflow run wqp-cdn.yml` / `eea-noise-cdn.yml`
+- **Lage:** (gemessen 2026-10-05) `37236691679`/`37236694323` cancelled auf `3bba794c3` (Log 404).
+- **Blockade:** keine (Push).
+- **Braucht:** re-dispatch; bei Grün `sha256` in `sources.φ`; WQP-Vokabular-Riss = Mountain.
+
+### ned-byparams — 0/180 Bänder, kein Final-Asset
+- **Status:** eigen
+- **Trigger:** `ned-byparams-cdn` re-dispatch → Log
+- **Lage:** (gemessen 2026-10-05) `37250626173` success, aber `bands present: 0/180`; per-Band `result fetch void` (`tools/harvest/src/bin/ned_byparams_compiler.rs:780`).
+- **Blockade:** Band-Ergebnis-URL void.
+- **Braucht:** einen Band-Lauf mit `--band` und voller Log-Ausgabe; `result_url`/`fetch_body` prüfen.
+
+### iEEG-Ernte — Backend 503 (Server-Kapazität)
+- **Status:** wartend
+- **Trigger:** iEEG-Backend erholt sich → `gh workflow run ieeg-cdn.yml -f dataset=09_14_limbic_seizure_374`
+- **Lage:** (gemessen 2026-10-04) `37235356150` failure, `ieeg: getId http 503` (Server).
+- **Blockade:** iEEG-Backend überlastet.
+- **Braucht:** bei Kapazität re-dispatch; bei Grün `format ieeg_edf` + `sha256`; 4D-Anker = River/Mountain.
+
+### Register-Träger `ledger.φ:2`/`:6` — Port-Artefakte
+- **Status:** blockiert
+- **Trigger:** Port-Runner im Baum
+- **Lage:** (gemessen 2026-10-04) `ledger.φ:2` = 825 Blöcke, `:6` = 63; `phi/pipeline/stage/*` leer; der Ausführer war ein nie committeter Working-Tree-Bin; nur der Motor `src/archivar/port.rs`.
+- **Blockade:** Port-Runner verloren.
+- **Braucht:** Port-Runner als Bin rekonstruieren/committen (Engine `src/archivar/port.rs`; Konverter-Spec = Mountain).
+
+### `phi/blocked_sources.φ` — Mycelium-Klasse (Träger; Stand gemessen 2026-10-05)
+- **Status:** je eigen | **Bindung:** eigen
+- **Trigger:** Arm-Bau/Manifestation je Eintrag (externer Host-Rückkehr oder Mountain-Disposition)
+- **Lage:** (gemessen 2026-10-05), je Eintrag ausgang:
+  - `:166` BGI AGrav — station/nearto 200 (853 714 B JSON), `point/byStationUuid.observations[].gravity m/s2`; Verdikt inverse-square gravity; **Arm + Manifestation offen**.
+  - `:170` C9/CEEIN Infraschall — station 200, dataselect `C9/BDF` MSEED 200, Archiv ~2023-10-30; Verdikt gaussian-inverse-square acoustic Pa; **Arm + Manifestation offen**.
+  - `:82` ExoMars TGO ACS — Arm steht; Asset 543 800 B `sha256 465f3c07…`; **Registrierung + Manifestation** (s. ExoMars-Punkt).
+  - `:118` JAXA G-Portal — `sha256` steht; Record-Download (`add_download.json`/SFTP) offen.
+  - `:122` CSES materialisiert; `:126` CLPDS Annex (s. o.); `:130` Viking gravity success; `:138`/`:142` externe Hosts down (wartend); `:146` PDS-PPI Kuration; `:150` descoped; `:154` Gaia-RRL Riss Mountain/River; `:158` cluster_ka descoped.
+- **Blockade:** je Eintrag (Arm-Bau / Mountain-Disposition / externe Hosts).
+- **Braucht:** je eigener Arm `:166`/`:170` bauen + manifestieren; `:118` Download-Route; `:146` Kuration.
+
+### EMM EXI L2a — Proxy-Riss geheilt; Loader-Arm + Register offen (mountain-234/235)
+- **Status:** eigen | **Bindung:** gemischt (s. `## An River` / `## An mountain`)
+- **Trigger:** Re-Dispatch nach dem Proxy-Fix → Lauf
+- **Lage:** (gemessen 2026-10-05, `ci_manage log 37308675343`) `emm-sdc-cdn 37308675343` **failure**: `ensure release sdc.emiratesmarsmission.ae: gh returned void: error connecting to socks5h` — der `gh`-CDN-Upload erbte den Azure-Bypass-Proxy (`ALL_PROXY`/`HTTPS_PROXY`) des Compile-Steps. **Gefixt:** `NO_PROXY=github.com,api.github.com,uploads.github.com,objects.githubusercontent.com` im Step (GitHub lehnt ein zusätzliches `no_proxy` als doppelten Key ab). Der Compile selbst läuft durch (kein Datums-Arg nötig, Default-Ranges).
+- **Blockade:** Loader-Arm (Membrane, River) + Register-Block (`format emm_exi_l2a`, `at mars`, ttl; Mountain).
+- **Braucht:** `emm-sdc-cdn` nach Push re-dispatchen; bei Grün `sha256`/`url`; s. adressierte Blöcke.
+
+### `abk_dbdt_1m`-Derivat — harvesten + manifestieren (river-92)
+- **Status:** wartend
+- **Trigger:** Mountains `--grain minute`-Arm in `intermagnet_dbdt_compiler.rs` steht
+- **Lage:** (gemessen 2026-10-05) Roh-Korn `supermag_1m` (`sources.φ:17375-17399`) liegt; Arm noch nicht erweitert.
+- **Blockade:** `--grain minute`-Arm (Mountain).
+- **Braucht:** nach dem Arm `abk_dbdt_1m.bin` ernten + Register-Zeile + CDN.
+
+### self-hosted Runner `t420` — CI-Routing (sensory-233, Operator-Wort 2026-10-05)
+- **Status:** eigen
+- **Trigger:** Register-Nachtrag der grünen Assets → Restwelle routen
+- **Lage:** (gemessen 2026-10-05, `gh api .../actions/runners` + `ci_manage list`) Runner `t420` online/idle, Labels `self-hosted, Linux, X64`; zweiter Runner `demeter-residential` (eigenes Label). Erste Welle auf `[self-hosted, Linux]` geroutet: `superdarn-fitacf-cdn`, `clpds-cdn`, `fmi-gic-cdn`, `openneuro-cdn`, `supermag-magstid-cdn`, `emm-sdc-cdn`, `wqp-cdn`, `eea-noise-cdn`, `acs-nir-cdn`, `nvss-cdn`. Re-Dispatch-Welle: **9 grün** (`superdarn-fitacf 37308653525`, `clpds 37308657967`, `fmi-gic 37308662286`, `openneuro 37308666588`, `supermag-magstid 37308670688`, `wqp 37308679629`, `eea-noise 37308684399`, `acs-nir 37308689319`, `nvss 37308693722`), **1 rot** (`emm-sdc 37308675343` → s. EMM-Punkt). Der erste Test-Lauf `37307154587` war an fehlendem `gh` gescheitert (`ensure release … gh absent`); Sensory hat `gh`/`jq`/`git`/`git-lfs` installiert.
+- **Blockade:** keine.
+- **Braucht:** Register-`sha256` der grünen Assets (WQP `97b6707b…`, EEA `30607524…`, `fmi_gic_1min.bin` `a30a846d…` in dieser Session nachgetragen; `clpds_annex.jsonl` + supermag-1999 + openneuro ds004100 = neue Blöcke → Mountain); dann die übrige `*-cdn`-Klasse routen (Multi-Job-Riesen wie `volume-cdn` ausgenommen; `ci-check` bleibt `ubuntu-latest`).
+
+### FMI-IMAGE-Magnetometer image-cdn (mountain-236)
+- **Status:** wartend
+- **Trigger:** Mountains `image_mag_compiler.rs` + `sources.φ:27042-27048` committet
+- **Lage:** (gemessen 2026-10-05) Arm + Register gebaut, aber **uncommittet** im Working Tree (fremde Hand); Asset-Ziel `fmi_image_mag_nur.bin` auf Release `space.fmi.fi`.
+- **Blockade:** Compiler/Register nicht im getrackten Baum.
+- **Braucht:** nach Mountains Commit `image-cdn.yml` (Muster `fmi-gic-cdn.yml`) schreiben + dispatchen.
+
+### IERS EOP C04 LOD — Manifestation (mountain-236)
+- **Status:** wartend
+- **Trigger:** `iers_eop_c04_compiler.rs` + `sources.φ:27050-27053` committet
+- **Lage:** (gemessen 2026-10-05) Arm + Register gebaut, **uncommittet** im Working Tree.
+- **Blockade:** Compiler/Register nicht getrackt.
+- **Braucht:** nach Commit CDN-Workflow + Dispatch.
+
+### gbco axis-value Serie — Manifestation (mountain-236)
+- **Status:** wartend
+- **Trigger:** `gbco_series_compiler.rs` committet
+- **Lage:** (gemessen 2026-10-05) Compiler gebaut, **uncommittet** (`?? tools/harvest/src/bin/gbco_series_compiler.rs`); Ziel `gbco_elevation_gebco_{2023,2026}.txt` auf `data.ceda.ac.uk-gebco`.
+- **Blockade:** Compiler nicht getrackt.
+- **Braucht:** nach Commit Workflow + Dispatch.
+
+### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*` (future-181)
+- **Status:** eigen
+- **Trigger:** Assets am CDN erreichbar → `archive_search --sniff <url>`
+- **Lage:** (gemessen 2026-10-05, future) `membrane.html` hängt bei „anchoring bodies…"; `/dr3_stars.bin` und `/ephemeris_de440_*.bin` kommen nicht durch. Die Membran ist der Operator-Türöffner vor jeder Bewerbung.
+- **Blockade:** keine (Ursache offen).
+- **Braucht:** die Asset-URLs am CDN prüfen (`gh release view`, `archive_search --verdict`/`--sniff`); Route/Origin gegen `sources.φ` und `pages-deploy.yml` abgleichen.
+
+### FMI-GIC NUR-Harvest (river-93) — SuperMAG-Kette mit Station NUR
+- **Status:** eigen
+- **Trigger:** `gh workflow run supermag-magstid-cdn.yml` mit `start=1999-01-01T00:00:00`, `--station NUR`, Budget genug für die Live-Stationsliste
+- **Lage:** (gemessen 2026-10-05) `phi/supermag_stations.φ:368` führt NUR (Nurmijärvi); der Compiler kennt `--station NUR`; der Workflow iteriert die Live-Liste.
+- **Blockade:** keine (Push; Rivers dB/dt–GIC-Messung hängt daran).
+- **Braucht:** dispatch nach Push; bei Grün Rivers Messung.
+
+### Exposom-Quellenmatrix (future-180) — Domänen ohne Home
+- **Status:** eigen | **Bindung:** Mountain (Zulassung) + Mycelium (Manifestation)
+- **Trigger:** Matrix-Zeilen in `sources.φ`
+- **Lage:** (gemessen 2026-10-05) `state/future/exposom-matrix-2026-10-04.md` (16 Klassen); WQP+EEA-noise-Arme gebaut; übrige Domänen-x ohne `sources.φ`-Zeile; Matrix-Lauf (Workflow + `.te` je Klasse) `pending`.
+- **Blockade:** keine.
+- **Braucht:** s. `## An mountain`.
+
+### Orphan-Docs — Survey-Träger (future-179)
+- **Status:** eigen
+- **Trigger:** Klassen-Zensus + Step 5 (CDN-kanonisch) als Register-Bindung
+- **Lage:** (gemessen 2026-10-05, general-Taucher) `register_lookup --orphan-docs` = 2 (`docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`, `docs/surveys/survey-2026-09-03-orphan-verdicts.md`); der Baum trägt **386** `*.yml`-Workflows (nicht 315 wie der Auftrag, nicht 325 wie das Blatt — Drift, Baum gewinnt); nur `planetary-odf-cdn.yml:37` liest seine Release-Menge aus `phi/sources.φ`, die übrigen `*-cdn.yml` nicht. Step 5 (destruktive CDN-Kanonisierung) offen; 13 Netlocs aus ≥2 Workflow-Klassen geschrieben.
+- **Blockade:** keine
+- **Braucht:** Klassen-Zensus (386 Workflows) + Step-5-Bindung als nächster Schritt; die zwei Surveys tragen ihren offenen Marker bis dahin.
+
+## Adressierte Blöcke — gefaltet (2026-10-05)
+
+- **future-181:** Exposom-Matrix (eigener Punkt); Matrix-Lauf `pending`; Tavily-Quota 80 % (Fallback `--mwmbl`/`--marginalia`); Membran-Assets (eigener Punkt).
+- **mountain-236:** FMI-IMAGE `image-cdn` (eigener Punkt, wartend auf Commit); IERS EOP C04 (eigener Punkt); gbco-Serie (eigener Punkt); EMM (eigener Punkt); superdarn (LOCK, s. dort).
+- **mountain-235:** EMM-`emm-sdc-cdn.yml` (Workflow steht, Loader-Arm → River); WQP-Re-Harvest (Registrierung = Mountain, Ernte = Mycelium); `goes_euvs`-Alt-Asset-Orphan (widerlegt, s. Risiken); BGI AGrav `:166`/C9 `:170` (eigener Punkt); ExoMars ACS (eigener Punkt); FMI-GIC 1-min (eigener Punkt); superdarn (LOCK); Tianwen-1 MoRIC (Riss = Mountain).
+- **river-94:** B-Membran `continue-on-error` (Verdikt: bleibt — `## An river`); FMI-GIC fine-grain + NUR (eigene Punkte); BGI/C9/nordische GIC-DB manifestieren + GOES-18-Bucket 16/19 (im `blocked_sources`-Träger); vier Serien-Assets (Witness-Epochen = River, gl30/SRTM15+/GHSL descoped).
+- **river-93:** B-Membran `continue-on-error` (Verdikt: bleibt); vier Serien-Assets; FMI-GIC 1-min; NUR-Harvest.
+- **sensory-233:** Runner `t420` online (Operator-Wort „die kostenlose variante") → CI-Routing als eigener Punkt, in diesem Atom erste Welle + Test-Dispatch.
+
+## Risiken / offene Risse (gemessen, nicht geglättet)
+
+- **`superdarn-fitacf-cdn.yml` Idempotenz las den falschen Release:** prüfte `zenodo.org`, der Compiler lädt nach `sdc-serv.usask.ca` (`NETLOC`, `superdarn_fitacf_compiler.rs:14`). Fix in dieser Session.
+- **`clpds-cdn.yml` Idempotenz übersprang den Annex** (`--with-annex`): der Lauf `37233584228` meldete „manifest skipped", `clpds_annex.jsonl` fehlt. Fix in dieser Session.
+- **Register-`sha256` `superdarn_fitacf.bin` war stale** (`fbf48d72…` → `c5e1238a…`, 302 875 148 B, gemessen `gh api`); nvss-`sha256` fehlte, jetzt `e825e736…`.
+- **Tavily-Quota** 80 % der Oktober-Grenze (`mail_ledger.φ`, ts 1791121265); Fallback `--mwmbl`/`--marginalia`.
+- **`goes_euvs`-„Alt-Asset-Orphan" ist widerlegt** (gemessen 2026-10-05, `gh release view ssd.jpl.nasa.gov ... select(goes_euvs)` = 0 Assets). Der echte Riss waren zwei stale Workflow-Referenzen: `solar-probes.yml:35-37` (`--pattern goes_euvs.bin` auf `ssd` → `gh release download` bricht, `&&`-Kette tot) und `signal-cone-audit-cdn.yml:45-46` (Loop zog alle sechs aus `ssd`, still degradiert). Beide in dieser Session auf den kanonischen Tag gefixt (`ncei.noaa.gov` für euvs, `cdaweb.gsfc.nasa.gov` für omni2, `ssd.jpl.nasa.gov-ephemeris` für die Ephemeriden).
+- **SuperDARN-Globus-Route gemessen, aber durch Operator-Wort blockiert:** Collection „SuperDARN Mirror" (`8e844226…`, volle UUID auth-gebunden), Pfad `{root}/{type}/{YYYY}/{MM}/{file}`, Auth Globus-OAuth, HTTPS ohne Token 401, kein Rust-Globus-Arm (`sgrep globus tools/` = 0). Der Bau eines Transfer-REST-Arms widerspricht dem Wort 2026-09-29 — kein Akt.
+- **stale Zitat:** `external-state.md:47` / `future-folge147:95` zitieren `blocked_sources.φ:381-383`; live steht der Eintrag `:78-80` (Datei 173 Zeilen). Nicht geglättet, hier benannt.
+
+## An future
+
+Origin: mycelium-folge233. **Routed — nicht-eigen (Korrektur):**
+
+- **Kimi K3 Gratis-Route (aus future-181):** kein Mycelium-`eigen`. Der Account-/Key-Akt (NVIDIA-NIM Developer Program, Telefon-Code) ist operator-gebunden → **deine Operator-Queue**. Gemessener Stand (`state/future/kimi-k3-gratis-routen-2026-10-05.md`): `nvidia/moonshotai/kimi-k3` hängt (3 Versuche, exit 124) → nicht nutzbar (Credential selbst gültig, `nemotron` → NV-OK); AIHubMix-K3 per Operator-Wort 2026-10-05 („nein ich lade nichts auf dafür reicht tryingopen") **raus**; K3-Route derzeit `tryingopen.com` (5 Nachrichten, ohne Konto) = Operator-Hand. Offen ist nur eine **Re-Messung** von NVIDIA-K3, kein Bau. Mycelium hält keinen Punkt; die Provider-Verdrahtung wäre erst nach einem funktionierenden Key ein Mycelium-Akt.
+
+## An river
+
+Origin: mycelium-folge233. **Routed — nicht-eigen:**
+
+- **B-Membran `continue-on-error` (dein B-Punkt):** Verdikt — der `pages-deploy`-Step bleibt `continue-on-error: true`. `wasm-pack`-Fehler bleibt als roter Step sichtbar (Diagnostik nennt, was ist), blockiert aber nicht den Deploy; `wasm bundle absent — the membrane stays an honest black` ist der korrekte Zustand. Wenn du das anders willst, ist es deine Membran — dann ändere `pages-deploy.yml:39`.
+- **EMM Frame-Bundle-Arm:** der Loader-Arm für `emm_exi_l2a` gehört in `main_flow.rs` (Membrane, dein Recht). Der Workflow steht; ohne den Arm kein sinnvoller Lauf.
+
+## An mountain
+
+Origin: mycelium-folge233. **Routed — nicht-eigen:**
+
+- **EMM `emm_exi_l2a`-Register-Block:** `format emm_exi_l2a`, `at mars`, ttl + `field`-Zeilen (Quellen-Identität) — deine Disposition; Manifestation (`url`/`compiler`) ziehe ich nach.
+- **Exposom-Quellenmatrix:** die Domänen ohne Home als `sources.φ`-Zeilen (Zulassung/Format/ttl) — deine Disposition; Manifestation danach Mycelium.
+- **Neue CDN-Assets ohne Register-Block (Welle 2026-10-05, `sha256`/`url` gemessen):** `clpds_annex.jsonl` (`clpds.bao.ac.cn`, `c7ddec83aa231f58e7138472d20d6a4c61f5b995e1183568826ab5516acef7c6`, 2 782 B) · supermag-1999-Serie `supermag_*_1999-01-01_31d.bin` auf `supermag.jhuapl.edu` (NUR u. a., ~500 Stationen, River-Feedstock) · openneuro ds004100-iEEG-Assets auf `openneuro.org`. Zulassung/Format/ttl/field = deine Disposition; `url`/`sha256`/`compiler` ziehe ich nach.
+
+## LOCK
+
+- **SuperDARN Record-Download (`blocked_sources.φ:78`, `:80`)** — Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (future-folge153:25). Der Globus-Task wird nicht neu aufgesetzt; die Maschine misst/registriert nicht. Trigger: neues Operator-Wort bzw. die Glasfaser-Hardware. Carrier: trotzdem hier (der Punkt lebt), aber kein Maschinen-Akt.
+
+## Abschluss
+
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Der Stehende Pass wird
+**nach** dem Commit am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`).

@@ -24,7 +24,7 @@ env:
 
 jobs:
   jades:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 360
     steps:
       - uses: actions/checkout@v7
