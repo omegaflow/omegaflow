@@ -657,16 +657,21 @@ fn main() {
             explicit_ids.len()
         );
         let dl_url = format!("{api_root}{DOWNLOAD_PATH}?{dl_query}");
-        let (code, content_type, effective) =
-            match bearer_fetch(&mut token, &refresh_spec, &dl_url, &dl_s, true) {
-                Some(v) => v,
-                None => {
-                    eprintln!(
-                        "emm_sdc_compiler: the explicit download did not complete — the asset stays unwritten"
-                    );
-                    std::process::exit(1);
-                }
-            };
+        let (code, content_type, effective) = match bearer_fetch(
+            &mut token,
+            &refresh_spec,
+            &dl_url,
+            &dl_s,
+            true,
+        ) {
+            Some(v) => v,
+            None => {
+                eprintln!(
+                    "emm_sdc_compiler: the explicit download did not complete — the asset stays unwritten"
+                );
+                std::process::exit(1);
+            }
+        };
         if code != 200 {
             eprintln!(
                 "emm_sdc_compiler: the explicit download returned HTTP {code} ({content_type}) for {dl_query} — the asset stays unwritten"
@@ -686,16 +691,21 @@ fn main() {
         };
     } else if let Some(asset_url) = asset_urls.first() {
         println!("emm_sdc_compiler: fetching the deterministic first asset url");
-        let (acode, atype, aeffective) =
-            match bearer_fetch(&mut token, &refresh_spec, asset_url, &dl_s, true) {
-                Some(v) => v,
-                None => {
-                    eprintln!(
-                        "emm_sdc_compiler: the asset url did not complete — the asset stays unwritten"
-                    );
-                    std::process::exit(1);
-                }
-            };
+        let (acode, atype, aeffective) = match bearer_fetch(
+            &mut token,
+            &refresh_spec,
+            asset_url,
+            &dl_s,
+            true,
+        ) {
+            Some(v) => v,
+            None => {
+                eprintln!(
+                    "emm_sdc_compiler: the asset url did not complete — the asset stays unwritten"
+                );
+                std::process::exit(1);
+            }
+        };
         if acode != 200 {
             eprintln!(
                 "emm_sdc_compiler: the asset url returned HTTP {acode} ({atype}) — the asset stays unwritten"
@@ -726,16 +736,21 @@ fn main() {
             file_ids.len()
         );
         let dl_url = format!("{api_root}{DOWNLOAD_PATH}?{dl_query}");
-        let (code, content_type, effective) =
-            match bearer_fetch(&mut token, &refresh_spec, &dl_url, &dl_s, true) {
-                Some(v) => v,
-                None => {
-                    eprintln!(
-                        "emm_sdc_compiler: download query did not complete — the asset stays unwritten"
-                    );
-                    std::process::exit(1);
-                }
-            };
+        let (code, content_type, effective) = match bearer_fetch(
+            &mut token,
+            &refresh_spec,
+            &dl_url,
+            &dl_s,
+            true,
+        ) {
+            Some(v) => v,
+            None => {
+                eprintln!(
+                    "emm_sdc_compiler: download query did not complete — the asset stays unwritten"
+                );
+                std::process::exit(1);
+            }
+        };
         if code != 200 {
             eprintln!(
                 "emm_sdc_compiler: download HTTP {code} ({content_type}) for {dl_query} — the asset stays unwritten"
