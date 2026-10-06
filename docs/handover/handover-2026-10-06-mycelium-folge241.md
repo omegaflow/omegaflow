@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: e2438c4b3b4f305b55e62134fe15de33d462a97e6c84d97d228573d79dc45a9f
+  sha256: dec01d384b8facc5a8c066b7c2f9694f7efbd0ca517c4fbd87e1d85e1aa0a8ba
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -22,6 +22,7 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 
 - Wort | 2026-10-06 | „Genau ein Zulassungskriterium (Presence-Hülle) und ein deklarierter Beobachter je Messung; ein Body-Name, den der Code wählt, ist der Bias" | Quelle: Operator-Session 2026-10-06 — als Regel in `AGENTS.md` `## Block Universe Physics`.
 - Wort | 2026-10-06 | JAXA-G-Portal-Bestellungen (`download_limit=1` je, Fenster `2026/01/01`); die Abholung (fetch) ist der Vollzug desselben Worts | Quelle: Operator-Session 2026-10-06.
+- Wort | 2026-10-06 | Holdings-Migration: „1 ja (move) · 2 ja (delete) · 3 ja (create) · 4 messen, dann · 5 ja (delete) · 6 ja (dedup) · 7 ja (dedup)" | Quelle: Operator-Session 2026-10-06.
 
 ## Offen — eigen
 
@@ -55,10 +56,10 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 
 ### Träger `survey-2026-09-03-daten-holdings-inventur` — Ziel-Layout-Migration
 - **Status:** eigen
-- **Trigger:** Move je Datensatz (Operator-Wort Ziel-Layout steht 2026-09-30) → `du`-Nachmessung
-- **Lage:** (gemessen 2026-10-06) Byte-Messung Schritt 2 steht (`:167-183`, 2026-09-30: `archive/knowledge` 29 Gi, `archive-state` 9,7 Gi, Repo-`data` 77 Gi); Registry-first Schritt 3 für die Staging-Kandidaten gemessen erfüllt (Ephemeriden registriert, `omni2_serie.bin` `phi/sources.φ:1420`); auf diesem Host existiert `~/knowledge`/`~/backups` nicht mehr — konsolidiert nach `~/archive/` (2026-10-06 `du`: `archive/knowledge` 29 G, `archive-state` 9,8 G, `archive/archive-root` 974 M).
-- **Blockade:** Move/Löschung braucht das Operator-Wort je Datensatz (`0 honored`: nichts löschen ohne Nachbau-Quelle).
-- **Braucht:** Operator-Wort je Datensatz (Queue: `## An future`) → Schritt 4/5 Unique-Byte-Move je Holding.
+- **Trigger:** weitere Bestände je Move → `du`-Nachmessung
+- **Lage:** (gemessen 2026-10-06 via `du`/`find`/Agenten-Läufe; Operator-Wort je Bestand erteilt, ausgeführt) (1) 6 `omegaflow_series_*.bin` → `cache/` verschoben; (2) die 2 `gea`-`dr3_stars`-Zwillinge (byte-identisch `fb9a1408…`) gelöscht, `gaia_sso_tno.bin` bleibt; (3) `data/ssd.jpl.nasa.gov-nvss/nvss.json` aus dem CDN angelegt — **Riss:** CDN = 12 M/718 069 Zeilen, Scratch-`nvss.json`/`nvss_dl.json` = 104 M (`6f5dfe14…`), verschiedene Fassungen; (4) Scratch `opencode-tmp-2026-09-01/` **behalten** — trägt einen uncommitteten `radio_compiler.rs`+`radio_farbe.rs` (kein reiner Scratch); (5) target-rlibs **übersprungen** — nur ~7 MiB reclaimbar, `firmware/radiatorium` = eigenes Workspace (legitimer Cache); (6) Snapshot-Dedup `~/archive/knowledge/omegaflow` vs Live-Repo: **8 889 Dateien / 270 MiB** identisch entfernt, Unique-Dirs unberührt, Re-Scan = 0 (Agent-Log `/tmp/opencode/dedup-deleted.log`); (7) `~/archive-state/.../undo-snapshot-2026-09-11` per **Hardlink** dedupliziert: 668 Dateien, **~1,21 GiB** frei, Content unverändert, 25 Session-Repos intakt.
+- **Blockade:** keine für die vollzogenen Schritte; offen nur #4 (Radio-Pipeline) und die Doc-Korrektur.
+- **Braucht:** Entscheidung über die Radio-Pipeline (`radio_compiler.rs` ins Repo portieren + `radio_nvss_only.bin` registrieren) oder descope; `state/future/holdings-migration-2026-10-06.md` auf die gemessenen Zahlen korrigieren (0,61 GiB → 270 MiB; LFS 1,25 GiB bestätigt; target-rlibs 7 MiB).
 
 ### `ledger.φ:2`/`:6` — Port-Runner (gemessen: vorhanden)
 - **Status:** wartend
