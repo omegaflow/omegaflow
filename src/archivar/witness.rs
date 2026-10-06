@@ -31,7 +31,9 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
         b"FP01" => Some(FieldIdentity::Footprint),
         b"NRS1" | b"PTLM" => Some(FieldIdentity::Pending),
         b"BGR1" | b"ARG1" | b"FDS1" | b"GIC1" | b"IGT1" | b"SDN1" | b"CSM1" | b"CRX1" | b"MAX1"
-        | b"NXR1" | b"USC1" | b"VSAT" | b"DRSF" | b"OSM1" => Some(FieldIdentity::Oscillator),
+        | b"NXR1" | b"USC1" | b"VSAT" | b"DRSF" | b"OSM1" | b"OSM2" => {
+            Some(FieldIdentity::Oscillator)
+        }
         _ => None,
     }
 }

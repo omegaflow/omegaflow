@@ -138,6 +138,7 @@ pub mod omni2;
 pub mod omni_hro;
 pub mod opendap;
 pub mod openneuro_eeg;
+pub mod osm_pbf;
 pub mod ossos;
 pub mod parquet;
 pub mod pck;

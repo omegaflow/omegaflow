@@ -54,6 +54,7 @@ pub const MAGIC_VNP46A3: [u8; 4] = *b"NTL1";
 pub const MAGIC_GHSL: [u8; 4] = *b"GHS1";
 pub const MAGIC_EPA_AQS: [u8; 4] = *b"EPA1";
 pub const MAGIC_EPA_AQS_VOC: [u8; 4] = *b"EPV1";
+pub const MAGIC_OSM_PBF: [u8; 4] = super::osm_pbf::MAGIC;
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -193,6 +194,9 @@ pub const COMP_USCRN_MAX: u32 = 1;
 
 pub const COMP_OSM_TEMP: u32 = 1;
 pub const COMP_OSM_MAX: u32 = 1;
+
+pub const COMP_OSM_PBF_NODE: u32 = 1;
+pub const COMP_OSM_PBF_MAX: u32 = 1;
 
 pub const COMP_CHAMP_DENS: u32 = 1;
 
@@ -334,6 +338,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "hfrnet_rtv" => Some(MAGIC_HFR),
         "emodnet_hfr" => Some(MAGIC_HFR),
         "opensensemap_temperatur" => Some(MAGIC_OSM),
+        "osm_nodes" => Some(MAGIC_OSM_PBF),
         "toar_surface_o3" => Some(MAGIC_TOAR),
         "ogimet_synop" => Some(MAGIC_OGM),
         "nohrsc_snowfall" => Some(MAGIC_NOHR),
@@ -394,6 +399,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "hfrnet_rtv" => Some(COMP_HFR_MAX),
         "emodnet_hfr" => Some(COMP_HFR_MAX),
         "opensensemap_temperatur" => Some(COMP_OSM_MAX),
+        "osm_nodes" => Some(COMP_OSM_PBF_MAX),
         "toar_surface_o3" => Some(COMP_TOAR_MAX),
         "ogimet_synop" => Some(COMP_OGM_MAX),
         "nohrsc_snowfall" => Some(COMP_NOHR_MAX),
@@ -1315,5 +1321,31 @@ mod tests {
             assert_eq!(a.comp, b.comp);
         }
         assert!(parse_bin(MAGIC_GHSL, &bytes).is_none());
+    }
+
+    #[test]
+    fn osm_nodes_roundtrip() {
+        let magic = magic_of("osm_nodes").expect("the pbf node format has a magic");
+        assert_eq!(magic, MAGIC_OSM_PBF);
+        assert_eq!(comp_max("osm_nodes"), Some(COMP_OSM_PBF_MAX));
+        assert_ne!(magic, MAGIC_OSM);
+        let records = vec![GeoRec {
+            t: 1700000000.0,
+            lat: 43.7384,
+            lon: 7.4246,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val: 1.0,
+            comp: COMP_OSM_PBF_NODE,
+            station: 0,
+        }];
+        let bytes = write_bin(magic, &records);
+        let parsed = parse_bin(magic, &bytes).unwrap();
+        assert_eq!(parsed.len(), records.len());
+        assert_eq!(parsed[0].lat, records[0].lat);
+        assert_eq!(parsed[0].lon, records[0].lon);
+        assert_eq!(parsed[0].comp, COMP_OSM_PBF_NODE);
+        assert!(parse_bin(MAGIC_OSM, &bytes).is_none());
     }
 }
