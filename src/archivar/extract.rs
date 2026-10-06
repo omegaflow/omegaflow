@@ -796,6 +796,13 @@ pub fn geo_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<crate::geo
     crate::geo::parse_bin(magic, bytes)
 }
 
+pub fn geo_series_component_key(format: &str, comp: u32) -> Option<String> {
+    match format {
+        "eionet_cdr" => eionet_cdr::series_name(comp),
+        _ => geo_series_component_name(format, comp).map(str::to_string),
+    }
+}
+
 pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
         "gdp_drifter" => gdp_drifter::component_name(comp),

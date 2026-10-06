@@ -4243,7 +4243,7 @@ pub fn main_flow() {
                         .and_then(|e| e.props.as_ref());
                     let mut channels = Vec::new();
                     for r in records {
-                        let Some(name) = geo_series_component_name(&fmt, r.comp) else {
+                        let Some(name) = geo_series_component_key(&fmt, r.comp) else {
                             continue;
                         };
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {

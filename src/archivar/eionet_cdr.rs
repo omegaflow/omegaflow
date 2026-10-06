@@ -128,6 +128,12 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
         .map(|(_, _, n)| *n)
 }
 
+pub fn series_name(comp: u32) -> Option<String> {
+    let base = component_name(comp)?;
+    let medium = medium_of(comp)?;
+    Some(format!("{base}_{medium}"))
+}
+
 fn find_open(text: &str, tag: &str) -> Option<usize> {
     let needle = format!("<{tag}");
     let mut from = 0usize;
@@ -325,6 +331,23 @@ mod tests {
         assert_eq!(medium_id("AIR"), Some(COMP_AIR));
         assert_eq!(medium_id("MAGMA"), None);
         assert!(COMP_MAX >= (45 << 2) | 3);
+    }
+
+    #[test]
+    fn series_names_carry_the_medium() {
+        assert_eq!(
+            series_name((11 << 2) | COMP_AIR).as_deref(),
+            Some("eionet_cdr_co2_air")
+        );
+        assert_eq!(
+            series_name((40 << 2) | COMP_WATER).as_deref(),
+            Some("eionet_cdr_total_nitrogen_water")
+        );
+        assert_eq!(
+            series_name((31 << 2) | COMP_SOIL).as_deref(),
+            Some("eionet_cdr_nox_soil")
+        );
+        assert_eq!(series_name(11 << 2), None);
     }
 
     #[test]
