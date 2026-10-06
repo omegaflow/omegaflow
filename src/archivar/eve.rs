@@ -11,6 +11,7 @@ pub const COMP_335: u32 = 12;
 pub const COMP_584: u32 = 23;
 pub const COMP_977: u32 = 36;
 pub const COMP_1032: u32 = 38;
+pub const COMP_DIODE: u32 = 100;
 
 pub fn line_name(comp: u32) -> Option<&'static str> {
     match comp {
@@ -46,7 +47,9 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         off += 8;
         let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
         off += 4;
-        line_name(comp)?;
+        if line_name(comp).is_none() && comp != COMP_DIODE {
+            return None;
+        }
         out.push((t, val, comp));
     }
     Some(out)
@@ -86,5 +89,13 @@ mod tests {
     fn rejects_unknown_line() {
         let bytes = bin(&[(10.0, 1.0, 2)]);
         assert!(parse_bin(&bytes).is_none());
+    }
+
+    #[test]
+    fn carries_the_diode_record_the_compiler_writes() {
+        let records = vec![(10.0, 2.5e-9, COMP_94), (10.0, 1.0e-2, COMP_DIODE)];
+        let bytes = bin(&records);
+        let parsed = parse_bin(&bytes).unwrap();
+        assert_eq!(parsed, records);
     }
 }
