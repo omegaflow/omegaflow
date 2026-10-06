@@ -151,7 +151,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Manifest the full Galileo -77000 rotor CK series (570 products + mk00062a.tsc) to the CDN
+      - name: Manifest the full registered Galileo -77000 rotor CK series + mk00062a.tsc to the CDN
         run: |
           cargo run --release -p omegaflow-harvest --bin gll_ck_manifestor -- --ci-mode
       - name: Verify the registered naif.jpl.nasa.gov ck assets are manifested
