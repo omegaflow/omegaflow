@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: e624334cf809d08a3f6ec310128c1d13e23e58355d858c8e9ef2e9236d79e629
+  sha256: 31afb7b81b1c152616481f195f9e740342d9e009e9ee17b85afe0a1689aa2892
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -92,7 +92,12 @@ Wort | Datum | Quelle
   WQP (`data/Result/search`, 200), Zenodo GEMStat (`zenodo.org/records/18459694`). **Nur Exposome-Explorer
   bleibt Nicht-Feld** (nur Land + Publikationsjahr, kein Messort/-zeit) — das ist das einzige Descope.
 - **Blockade:** keine für die 4 aufgenommenen; Rest = CDN-Manifestation (`## An mycelium`) + zwei neue Arme.
-- **Braucht:** OSHA-CEHD-Compiler (Browser-UA + Stadt-ZIP-Geocode) und AQS-VOC-Zweig; die CDN-Workflows.
+- **Braucht:** OSHA-CEHD-Compiler (Browser-UA + Stadt-ZIP-Geocode) und AQS-VOC-Zweig; weitere
+  gemessene Chemikalien-Feldquellen (Claude+GLM 2026-10-06): EMEP/EBAS (`ebas-data.nilu.no`, NetCDF,
+  offen), EEA-Parquet-Dienst, **USGS-Samples-API** (`api.waterdata.usgs.gov`, Token `USGS_WATER_KEY` —
+  WQP-Legacy liefert seit 2024-03 keine neuen USGS-Daten mehr), TOAR (Ozon, `TOAR_TOKEN`); als
+  Ort+Zeit-Brücke zu O*NET das **OEWS** (Staat×SOC×Jahr, beschäftigungsgewichtet). Exposome-Explorer
+  bleibt Nicht-Feld (Population Freitext/Land, nur Publikationsjahr). CDN-Workflows (Mycelium).
 
 ## An mycelium
 
