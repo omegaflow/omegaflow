@@ -3000,7 +3000,9 @@ fn print_result(result: &QueryResult, desc: &Descriptor) {
             } else {
                 "conditioned silent"
             };
-            println!("cTE(target -> driver | cond) = {te:.4e} | threshold {thr:.4e} | {word}");
+            println!(
+                "cTE(target -> driver | cond) = {te:.4e} | threshold {thr:.4e} | {word} | unadjusted_conditional"
+            );
         }
         None => {
             if !desc.conds.is_empty() {
@@ -4176,6 +4178,18 @@ fn load_matrix_arm(
     ))
 }
 
+fn matrix_cell_bias(
+    te: f64,
+    n: usize,
+    cond_n: usize,
+    n_eff: Option<f64>,
+) -> (Option<f64>, &'static str) {
+    if cond_n > 0 {
+        return (None, "unadjusted_conditional");
+    }
+    bias_column(Some(te), n, n_eff, BiasArm::BinnedHistogram)
+}
+
 fn run_pair_matrix(
     desc: &Descriptor,
     sources: &[SourceConfig],
@@ -4430,11 +4444,19 @@ fn run_pair_matrix(
     }
 
     println!(
-        "{:<28} | {:>4} | {:>5} | {:>12} | {:>8} | {}",
-        "cell", "cond", "n", "TE", "p", "verdict"
+        "{:<28} | {:>4} | {:>5} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+        "cell", "cond", "n", "TE", "TE_bias", "bias_state", "p", "verdict"
     );
     for o in &outcomes {
         let te = match o.te {
+            Some(v) => format!("{v:.4e}"),
+            None => "absent".to_string(),
+        };
+        let (bias, bias_state) = match o.te {
+            Some(v) if !o.floor => matrix_cell_bias(v, o.n, o.cond_n, Some(o.n as f64)),
+            _ => (None, "absent"),
+        };
+        let bias_word = match bias {
             Some(v) => format!("{v:.4e}"),
             None => "absent".to_string(),
         };
@@ -4446,11 +4468,13 @@ fn run_pair_matrix(
             "silent"
         };
         println!(
-            "{:<28} | {:>4} | {:>5} | {:>12} | {:>8} | {}",
+            "{:<28} | {:>4} | {:>5} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
             o.id,
             o.cond_n,
             o.n,
             te,
+            bias_word,
+            bias_state,
             format!("{:.4}", o.p),
             word
         );
@@ -4593,6 +4617,38 @@ mod tests {
             adj.is_none(),
             "the scalar socket never sits over a binned value"
         );
+    }
+
+    #[test]
+    fn bias_table_only_on_unconditional_cells() {
+        let te = 5.0e-1;
+        let (adj, state) = matrix_cell_bias(te, 800, 0, Some(44.5));
+        assert_eq!(
+            state, "table_pending",
+            "the unconditional cell reaches its own binned table, which waits for the probe run"
+        );
+        assert!(adj.is_none(), "no scalar socket, no fabricated value");
+
+        let (adj, state) = matrix_cell_bias(te, 800, 2, Some(44.5));
+        assert_eq!(
+            state, "unadjusted_conditional",
+            "a conditional cell is another estimator and never reaches the unconditional table"
+        );
+        assert!(adj.is_none());
+
+        let (adj, state) = matrix_cell_bias(te, 800, 0, Some(1.0));
+        assert_eq!(state, "unadjusted_below_floor");
+        assert!(
+            adj.is_none(),
+            "below the n_eff floor nothing is manufactured"
+        );
+
+        let (adj, state) = matrix_cell_bias(te, 8546, 0, Some(44.5));
+        assert_eq!(
+            state, "table_pending",
+            "an unmeasured n stays pending while the arm's table is empty, never interpolated"
+        );
+        assert!(adj.is_none());
     }
 
     #[test]
