@@ -52,3 +52,19 @@ jobs:
                  "curl on naif.jpl.nasa.gov did not reach a de441 kernel part. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           cargo run -p omegaflow-harvest --release --bin de_compiler -- de441_part-1.bsp de441_part-2.bsp --label de441 --ci-mode
+      - name: Verify every registered ssd.jpl.nasa.gov-de asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh ssd.jpl.nasa.gov-de)
+          if [ -z "$expected" ]; then
+            echo "no ssd.jpl.nasa.gov-de asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view ssd.jpl.nasa.gov-de --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered ssd.jpl.nasa.gov-de assets all present"
