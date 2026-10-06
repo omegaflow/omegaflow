@@ -41,3 +41,19 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run --release -p omegaflow-harvest --bin gll_rss_odr_compiler -- --ci-mode
+      - name: Verify the registered pds-rings.seti.org gll_rss_odr assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh pds-rings.seti.org gll_rss_odr)
+          if [ -z "$expected" ]; then
+            echo "no gll_rss_odr asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view pds-rings.seti.org --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered pds-rings.seti.org gll_rss_odr assets all present"
