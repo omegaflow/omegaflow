@@ -1,0 +1,29 @@
+name: openmeteo-pollen-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 * * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pollen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile and upload the Open-Meteo CAMS birch-pollen series
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin openmeteo_pollen_compiler -- \
+            --lat 52.52 --lon 13.405 --variable birch_pollen \
+            --out data/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt \
+            --ci-mode

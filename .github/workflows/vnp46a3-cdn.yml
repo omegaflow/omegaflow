@@ -1,0 +1,40 @@
+name: vnp46a3-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '29 4 * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  vnp46a3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Resolve the newest VNP46A3 granule (CMR search, no token)
+        id: granule
+        run: |
+          set -euo pipefail
+          url=$(curl -sSfL "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=VNP46A3&version=2&page_size=1&sort_key=-start_date" \
+            | jq -r '.items[0].umm.RelatedUrls[] | select(.URL | startswith("https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/")) | .URL')
+          test -n "$url"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "granule $url"
+      - name: Compile and upload the VNP46A3 nightlight raster
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin vnp46a3_compiler -- \
+            "${{ steps.granule.outputs.url }}" \
+            --label allangle_composite_snow_free \
+            --out data/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin \
+            --ci-mode
