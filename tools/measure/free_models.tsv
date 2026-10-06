@@ -9,7 +9,7 @@ cloudflare-workers-ai	@cf/openai/gpt-oss-20b	https://api.cloudflare.com/client/v
 cloudflare-workers-ai	@cf/qwen/qwen3-30b-a3b-fp8	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http	eligible
 cloudflare-workers-ai	@cf/qwen/qwen3.8-27b	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http	eligible
 cloudflare-workers-ai	@cf/zai-org/glm-4.7-flash	https://api.cloudflare.com/client/v4/accounts/b2891b7064691de2ef3891cfaf17190b/ai/v1	CLOUDFLARE_WORKERS_TOKEN	http	eligible
-google	gemini-2.5-flash	https://generativelanguage.googleapis.com/v1beta/openai	GEMINI_API_KEY	http	eligible
+google	gemini-2.5-flash	https://generativelanguage.googleapis.com/v1beta/openai	GEMINI_API_KEY	http	struck
 google	gemini-3-flash-preview	https://generativelanguage.googleapis.com/v1beta/openai	GEMINI_API_KEY	http	eligible
 google	gemini-3.1-flash-lite	https://generativelanguage.googleapis.com/v1beta/openai	GEMINI_API_KEY	http	eligible
 google	gemini-3.1-pro-preview	https://generativelanguage.googleapis.com/v1beta/openai	GEMINI_API_KEY	http	eligible
@@ -49,7 +49,7 @@ nvidia	google/gemma-4-31b-it	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	
 nvidia	meta/llama-3.2-11b-vision-instruct	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
 nvidia	meta/llama-3.2-90b-vision-instruct	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
 nvidia	meta/muse-glimmer-30b	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
-nvidia	mistralai/mistral-nemotron	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
+nvidia	mistralai/mistral-nemotron	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	struck
 nvidia	moonshotai/kimi-k3	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
 nvidia	nvidia/nemotron-3-nano-omni-30b-a3b-reasoning	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
 nvidia	nvidia/nemotron-3-super-120b-a12b	https://integrate.api.nvidia.com/v1	NVIDIA_API_KEY	http	eligible
@@ -72,7 +72,7 @@ sambanova	gpt-oss-120b	https://api.sambanova.ai/v1	SAMBANOVA_API_KEY	http	blocke
 sambanova	Meta-Llama-3.3-70B-Instruct	https://api.sambanova.ai/v1	SAMBANOVA_API_KEY	http	blocked
 orcarouter	orcarouter/free	https://api.orcarouter.ai/v1	ORCAROUTER_API_KEY	http	blocked
 orcarouter	orcarouter/auto	https://api.orcarouter.ai/v1	ORCAROUTER_API_KEY	http	blocked
-mistral	mistral-large-latest	https://api.mistral.ai/v1	MISTRAL_API_KEY	http	eligible
+mistral	mistral-large-latest	https://api.mistral.ai/v1	MISTRAL_API_KEY	http	blocked
 mistral	mistral-medium-latest	https://api.mistral.ai/v1	MISTRAL_API_KEY	http	eligible
 alibaba	qwen3.8-max	https://dashscope-intl.aliyuncs.com/compatible-mode/v1	DASHSCOPE_API_KEY	http	blocked
 alibaba	deepseek-v4-flash-0731	https://dashscope-intl.aliyuncs.com/compatible-mode/v1	DASHSCOPE_API_KEY	http	blocked
