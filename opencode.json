@@ -126,6 +126,7 @@
       }
     },
     "voice-ling": {
+      "disable": true,
       "mode": "subagent",
       "model": "openrouter/inclusionai/ling-3.0-flash-sante:free",
       "variant": "low",
@@ -142,6 +143,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-dots": {
+      "disable": true,
       "mode": "subagent",
       "model": "openrouter/dots-studio/dots-3-note-preview:free",
       "variant": "low",
@@ -174,6 +176,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-agnes": {
+      "disable": true,
       "mode": "subagent",
       "model": "kenari/agnes-3-0-flash:free",
       "variant": "low",
@@ -182,6 +185,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-kenari": {
+      "disable": true,
       "mode": "subagent",
       "model": "kenari/agnes-2-0-flash:free",
       "variant": "low",
