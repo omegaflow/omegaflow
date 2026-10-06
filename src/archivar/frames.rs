@@ -1,93 +1,21 @@
 use super::*;
 
 pub fn derive_frame(parsed: &JsonVal, coords: &str) -> (String, String) {
-    if coords.contains("lat ") || coords.contains("lon ") {
-        (
-            "on earth 0 0\n".to_string(),
-            "geographic coords".to_string(),
-        )
-    } else if coords.contains("ra ") || coords.contains("dec ") {
-        ("at sun\n".to_string(), "celestial coords".to_string())
-    } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
-        ("at sun\n".to_string(), "celestial ra/dec".to_string())
-    } else {
-        ("".to_string(), "frame pending".to_string())
-    }
+    let _ = (parsed, coords);
+    ("".to_string(), "frame pending".to_string())
 }
-
-pub const CELESTIAL_NETLOCS: &[&str] = &[
-    "tapvizier.cds.unistra.fr",
-    "vizier.cds.unistra.fr",
-    "cds.unistra.fr",
-    "irsa.ipac.caltech.edu",
-    "dc.g-vo.org",
-    "gaia.ari.uni-heidelberg.de",
-    "exoplanetarchive.ipac.caltech.edu",
-    "heasarc.gsfc.nasa.gov",
-    "simbad.u-strasbg.fr",
-    "gea.esac.esa.int",
-    "wis-tns.org",
-    "ssd.jpl.nasa.gov",
-    "ssd-api.jpl.nasa.gov",
-    "naif.jpl.nasa.gov",
-    "archive.stsci.edu",
-    "mast.stsci.edu",
-    "archive.gemini.edu",
-    "archive.nrao.edu",
-    "skyserver.sdss.org",
-    "atnf.csiro.au",
-    "noirlab.edu",
-    "eso.org",
-    "astrocats.space",
-];
 
 pub fn draft_frame_guess(
     url: &str,
     context: &str,
     registry: &HashMap<String, String>,
 ) -> (String, String) {
-    let netloc = extract_netloc(url);
     for key in route_prefix_keys(url) {
         if let Some(f) = registry.get(&key) {
             return (format!("{}\n", f), format!("route-registry: {}", f));
         }
     }
-    if let Some(netloc) = netloc {
-        for n in CELESTIAL_NETLOCS {
-            if netloc == *n || netloc.ends_with(n) {
-                return ("at sun\n".to_string(), "celestial netloc".to_string());
-            }
-        }
-    }
-    let lower = context.to_lowercase();
-    for w in [
-        "station",
-        "buoy",
-        "quake",
-        "earthquake",
-        "weather",
-        "wind",
-        "temperature",
-        "water",
-        "tide",
-        "sea ",
-        "ocean",
-        "snow",
-        "rain",
-        "seismic",
-        "metar",
-        "airport",
-        "pegel",
-        "air quality",
-        "hurricane",
-    ] {
-        if lower.contains(w) {
-            return (
-                "on earth 0 0\n".to_string(),
-                format!("terrestrial vocab: {}", w.trim()),
-            );
-        }
-    }
+    let _ = context;
     ("".to_string(), "frame pending".to_string())
 }
 
@@ -109,13 +37,14 @@ pub fn build_frame_registry() -> HashMap<String, String> {
             if let Some(rest) = t.strip_prefix("url ") {
                 cur_url = Some(rest.trim().to_string());
             } else if let Some(url) = &cur_url {
-                if t.starts_with("on ") {
-                    if let Some(rk) = route_key(url) {
-                        map.entry(rk).or_insert_with(|| "on earth".to_string());
+                if let Some(rest) = t.strip_prefix("on ") {
+                    let body = rest.split_whitespace().next();
+                    if let (Some(rk), Some(body)) = (route_key(url), body) {
+                        map.entry(rk).or_insert_with(|| format!("on {}", body));
                     }
                 } else if let Some(rest) = t.strip_prefix("at ") {
-                    let body = rest.split_whitespace().next().unwrap_or("sun");
-                    if let Some(rk) = route_key(url) {
+                    let body = rest.split_whitespace().next();
+                    if let (Some(rk), Some(body)) = (route_key(url), body) {
                         map.entry(rk).or_insert_with(|| format!("at {}", body));
                     }
                 }

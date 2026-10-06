@@ -2176,9 +2176,8 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         || kl.ends_with("_mag_by")
         || kl.ends_with("_mag_bz")
         || kl.ends_with("_mag_bt")
+        || (kl.contains("magnetosphere") && (kl.ends_with("_z") || kl.ends_with("_s_")))
     {
-        ("em", "nT", 60.0)
-    } else if kl.contains("magnetosphere") && (kl.ends_with("_z") || kl.ends_with("_s_")) {
         ("em", "nT", 60.0)
     } else if kl.contains("phgm") || kl.ends_with("wide_mh") {
         ("em", "mag", 604800.0)

@@ -1437,6 +1437,7 @@ pub fn edf_emit_channels_with_electrodes(
             freq: crate::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
             fold: None,
+            aperture: Aperture::None,
         };
         let channel_position = match coordsystem {
             Some(cs) => match electrodes.iter().find(|e| e.name == signal.label) {
@@ -1525,6 +1526,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: None,
+                    aperture: Aperture::None,
                 },
                 FieldConfig {
                     key: outputs[1].clone(),
@@ -1538,6 +1540,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: None,
+                    aperture: Aperture::None,
                 },
             ]
         }
@@ -1563,6 +1566,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: None,
+                    aperture: Aperture::None,
                 },
                 FieldConfig {
                     key: outputs[1].clone(),
@@ -1576,6 +1580,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: None,
+                    aperture: Aperture::None,
                 },
             ]
         }
@@ -1842,6 +1847,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             });
         }
         if first.contains_key("extent") {
@@ -1857,6 +1863,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             });
         }
         if first.contains_key("tau") {
@@ -1872,6 +1879,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             });
         }
         vec![Extract::CelestialMap {
@@ -1911,6 +1919,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             });
         }
         if first.contains_key("extent") {
@@ -1926,6 +1935,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             });
         }
         vec![Extract::Map {
@@ -3699,6 +3709,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             freq: 0.0,
             bin_width: 0.0,
             fold: None,
+            aperture: Aperture::None,
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         let frame_name = frame_body_name(&src.frame);
@@ -3749,6 +3760,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             })
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
@@ -3818,6 +3830,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             freq: 0.0,
             bin_width: 0.0,
             fold: None,
+            aperture: Aperture::None,
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::with_capacity(pixels.len());
         for p in &pixels {
@@ -3880,6 +3893,88 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     value: m0_nm,
                 },
                 m0_fc.clone(),
+            ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "gistemp_aod550_axis_value_text"
+        || src.format == "godas_pottmp_axis_value_text"
+    {
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for (unix, value) in crate::archivar::geo::parse_axis_value_text(body) {
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat: *lat,
+                        lon: *lon,
+                        alt: *alt,
+                    },
+                    name: fc.name.clone(),
+                    value,
+                },
+                fc.clone(),
+            ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "trishuli_stage" {
+        let Some(station_id) = src
+            .station_code
+            .as_deref()
+            .and_then(|s| s.trim().parse::<u32>().ok())
+        else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Some(station) = crate::archivar::geo::parse_dhm_stage(body, station_id) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let (station_lat, station_lon, station_alt) = match (station.lat, station.lon) {
+            (Some(station_lat), Some(station_lon)) => (station_lat, station_lon, *alt),
+            _ => (*lat, *lon, *alt),
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for (unix, value) in station.series {
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat: station_lat,
+                        lon: station_lon,
+                        alt: station_alt,
+                    },
+                    name: fc.name.clone(),
+                    value,
+                },
+                fc.clone(),
             ));
         }
         return ExtractResult::Measurements(channels);
@@ -5551,6 +5646,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         fold: None,
+                                        aperture: Aperture::None,
                                     },
                                 ));
                                 channels.push((
@@ -5581,6 +5677,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         freq: 0.0,
                                         bin_width: 0.0,
                                         fold: None,
+                                        aperture: Aperture::None,
                                     },
                                 ));
                             }
@@ -5629,6 +5726,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     fold: None,
+                                    aperture: Aperture::None,
                                 },
                             ));
                         }
@@ -5660,6 +5758,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     freq: 0.0,
                                     bin_width: 0.0,
                                     fold: None,
+                                    aperture: Aperture::None,
                                 },
                             ));
                         }

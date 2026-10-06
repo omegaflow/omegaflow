@@ -26,6 +26,7 @@ pub fn gate_field(comp: u32, tau: f64) -> Option<FieldConfig> {
         freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
         bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
         fold: None,
+        aperture: crate::archivar::Aperture::None,
     })
 }
 

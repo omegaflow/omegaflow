@@ -20,6 +20,7 @@ note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); k
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-only Dekoder → SZIP-Granulen descoped (kein libaec, std-stack bleibt); MOD11C2/C3 lesen über NONE/RLE/DEFLATE.
+note gap-Token netcdf-arm — EUMETSAT Data Store MTG-LI: OpenSearch + OAuth2-Bearer gemessen, Arm eumetsat_mtg_li_fetch.rs; fehlt der format/parser (netCDF-Produkt → Archivar-format); als blocked parser-def geführt.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -182,15 +183,7 @@ gap html-parser-arm
 note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
 
 blocked parser-def
-url https://www.dhm.gov.np/hydrology/river-watch
-gap html-parser-arm
-note DHM Nepal river-watch (Trishuli/Bhotekoshi 4913, Serie 23251) — 2026-10-05: keyless HTML, Pegel m 10-min; kein archivar-Arm; Ad-hoc-Parser tools/gate/src/bin/livefeed_gate.rs:1852 (parse_dhm_stage). Warum-Blatt/Kausalpfeil-Route.
-
-pending
-url https://data.eumetsat.int
-note MTG-LI (EUMETSAT Data Store) — 2026-10-05: HTTP 206 Landing (2745 B); EUMETSAT_KEY/SECRET in .secrets.local; kein eumetsat-Arm/Workflow; Landung + API-Route offen.
-
-pending
-url https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/
-note GOES-18 ABI — 2026-10-05: Bucket-Root 200 (486709 B S3-Listing), ABI-L1b-RadC/ 404 (S3-Prefix); goes_abi-Arm nur für goes16/goes19 (sources.φ:859/867), kein goes18-Compiler. Riss: goes16-Block origin/compiler zeigt auf goes19.
+url https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691
+gap netcdf-arm
+note MTG-LI (EUMETSAT Data Store) — 2026-10-06: OpenSearch 200 → newest MTI1 LI-2-LFL, /token Bearer mit {EUMETSAT_KEY}/{EUMETSAT_SECRET}, download 200; Arm eumetsat_mtg_li_fetch.rs; kein mtg_li-format/parser.
 
