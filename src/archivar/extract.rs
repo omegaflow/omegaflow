@@ -839,6 +839,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_USDA_FARA_SHARE => Some("usda_fara_low_access_share"),
             _ => None,
         },
+        "epa_aqs_pm25" => match comp {
+            crate::geo::COMP_EPA_AQS_PM25 => Some("epa_aqs_pm25_ug_m3"),
+            _ => None,
+        },
         "igets" => match comp {
             crate::geo::COMP_IGETS_G => Some("igets_gravity_nm_s2"),
             _ => None,

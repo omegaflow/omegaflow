@@ -4151,6 +4151,7 @@ pub fn main_flow() {
                     | "black_marble_vnp46a3_nightlight"
                     | "ghsl_built_s"
                     | "usda_fara_low_access"
+                    | "epa_aqs_pm25"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

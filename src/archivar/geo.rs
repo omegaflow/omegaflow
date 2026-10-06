@@ -53,6 +53,7 @@ pub const MAGIC_IERS_LOD: [u8; 4] = *b"IRD1";
 pub const MAGIC_VNP46A3: [u8; 4] = *b"NTL1";
 pub const MAGIC_GHSL: [u8; 4] = *b"GHS1";
 pub const MAGIC_USDA_FARA: [u8; 4] = *b"FAR1";
+pub const MAGIC_EPA_AQS: [u8; 4] = *b"EPA1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -86,6 +87,9 @@ pub const COMP_GHSL_MAX: u32 = 1;
 
 pub const COMP_USDA_FARA_SHARE: u32 = 1;
 pub const COMP_USDA_FARA_MAX: u32 = 1;
+
+pub const COMP_EPA_AQS_PM25: u32 = 1;
+pub const COMP_EPA_AQS_MAX: u32 = 1;
 
 pub const COMP_GIC_A: u32 = 1;
 pub const COMP_GIC_MAX: u32 = 1;
@@ -301,6 +305,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "black_marble_vnp46a3_nightlight" => Some(MAGIC_VNP46A3),
         "ghsl_built_s" => Some(MAGIC_GHSL),
         "usda_fara_low_access" => Some(MAGIC_USDA_FARA),
+        "epa_aqs_pm25" => Some(MAGIC_EPA_AQS),
         "fmi_gic" => Some(MAGIC_GIC),
         "fmi_gic_1min" => Some(MAGIC_GIC),
         "fmi_image_mag" => Some(MAGIC_IMAGE),
@@ -360,6 +365,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "black_marble_vnp46a3_nightlight" => Some(COMP_VNP46A3_MAX),
         "ghsl_built_s" => Some(COMP_GHSL_MAX),
         "usda_fara_low_access" => Some(COMP_USDA_FARA_MAX),
+        "epa_aqs_pm25" => Some(COMP_EPA_AQS_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
         "fmi_gic_1min" => Some(COMP_GIC_1MIN_MAX),
         "fmi_image_mag" => Some(COMP_IMAGE_MAX),
@@ -1277,5 +1283,48 @@ mod tests {
             assert_eq!(a.comp, b.comp);
         }
         assert!(parse_bin(MAGIC_GHSL, &bytes).is_none());
+    }
+
+    #[test]
+    fn epa_aqs_pm25_roundtrip() {
+        let magic = magic_of("epa_aqs_pm25").expect("the station-day format has a magic");
+        assert_eq!(magic, MAGIC_EPA_AQS);
+        assert_eq!(comp_max("epa_aqs_pm25"), Some(COMP_EPA_AQS_MAX));
+        assert_ne!(magic, MAGIC_USDA_FARA);
+        let records = vec![
+            GeoRec {
+                t: 1704067200.0,
+                lat: 30.497478,
+                lon: -87.880258,
+                alt: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                val: 3.625,
+                comp: COMP_EPA_AQS_PM25,
+                station: 0,
+            },
+            GeoRec {
+                t: 1704153600.0,
+                lat: 30.497478,
+                lon: -87.880258,
+                alt: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                val: 0.0,
+                comp: COMP_EPA_AQS_PM25,
+                station: 0,
+            },
+        ];
+        let bytes = write_bin(magic, &records);
+        let parsed = parse_bin(magic, &bytes).unwrap();
+        assert_eq!(parsed.len(), records.len());
+        for (a, b) in parsed.iter().zip(records.iter()) {
+            assert_eq!(a.t, b.t);
+            assert_eq!(a.lat, b.lat);
+            assert_eq!(a.lon, b.lon);
+            assert_eq!(a.val, b.val);
+            assert_eq!(a.comp, b.comp);
+        }
+        assert!(parse_bin(MAGIC_USDA_FARA, &bytes).is_none());
     }
 }
