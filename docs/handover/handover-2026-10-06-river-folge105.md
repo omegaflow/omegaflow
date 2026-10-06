@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 41f78a91ccd6e53050b71a02a8dde349dcaa7df6a5b443e108fb7caeb2873241
+  sha256: a4842207c5fbfb385b9cf9dac09ef58f74cf730154bf4437d4b9130efcca888c
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -26,6 +26,7 @@ Wort | Datum | Quelle
 „muss nicht die sonne zuerst sichtbar sein können wir nicht nach helligkeit/sichtbarkeit/erreichbarkeit progressiv laden?" — progressives Laden nach Sichtbarkeit, **Sonne zuerst** (nicht Sterne zuerst) | 2026-10-06 | Operator (Session, River 105)
 „die agenten haben archive search root genutzt und ich habe es aus versehen erlaubt" — ein lokaler `archive_search --root` erreichte eine Schwarm-Stimme über eine Laufzeit-Freigabe; die Schwarm-Antworten dieser Runde sind kontaminiert | 2026-10-06 | Operator (Session, River 105)
 „ich meine browser nutzung wäre schon gut sollen wir eine neue voices chrome instanz anlegen in der keine logins gespeichert sind?" — Browser-Nutzung der Voices bejaht, aber über eine eigene Chrome-Instanz ohne Logins | 2026-10-06 | Operator (Session, River 105)
+„ich glaube, es ist sinnvoll auch dem schwarm die stimmen zu geben, oder zumindest die selben agenten wie grind general council auch nochmal als voices/schwarm agenten zu haben" — Schwarm um die deepseek-Seats (council/grind-flash/general = flash; grind-pro/grind-max/research-max = pro) erweitert | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -265,6 +266,40 @@ Atom-Plan: Dispatch 0 (Epoch-/Ordnungs-Messung) → Dispatch 1 (B, `src/wasm.rs`
 Epoch-Riss (2000.0 vs 2016.0) wird **vor** C gemessen, nie gesetzt. Dispatch 0 + 1 + 2 sind
 gebaut; D und C stehen mit Triggern.
 
+### Claude + GLM (Online, fünf Stimmen) — Architektur A–E (gefaltet 2026-10-06)
+
+Beide unabhängig, weitgehend deckungsgleich mit dem Rat:
+- **A — Brücke, nicht Endform.** Den Stern-Hash vom Körper-Zähler **entkoppeln** (der Rebuild bei
+  Körper-Zuwachs ist der eigentliche Fehler); Insert im Worker, Double-Buffer, Tausch an
+  Frame-Grenzen; kanonisch ordnen; Zellgröße auf das **maximale** ρ dimensionieren. Determinismus
+  über versionierte Snapshots/Layer-Tag, nicht über den Kardinalitäts-Proxy.
+- **B — drei Größen, keine Skala.** Helligkeit = `flux` (G-Band, absteigend; mag = Anzeige);
+  Sichtbarkeit = Frustum ∧ `canRender` (Veto **zuletzt**, nie Ladeordnung — sonst Kamerajitter →
+  Thrashing); Erreichbarkeit = ρ (Filter). Priorität: erreichbar ∧ sichtbar, dann flux. „Sonne
+  zuerst" = **Loader-Priorität** über Asset-Klassen (Sonne → Mond → Erde → Katalog), keine
+  Netz-Reihenfolge; bei Parallaxe ist die Erd-Granule Voraussetzung.
+- **C — nach flux sortiert, in Magnituden-Buckets** (Grenzen 6/9/12/15/18 als Byte-Offsets im
+  Header); ein Asset, viele Schichten; tie-break `source_id`. `tycho2_compiler` umbenennen/trennen,
+  falls er DR3 schreibt.
+- **D — Fenster-Assets vom Compiler**, nicht per Range-Notlösung; Granul-Index gehört in den
+  Ephemeriden-**Header** (heute absent); Manifest Granule → Zeitintervall → Hash; Fensterregel
+  = Akt des Blicks (River).
+- **E — 2016.0 kanonisch** (falls `dr3_stars.bin` Gaia DR3 ist). **Gegentest: Barnards Stern** —
+  ~10,4″/a × 16 a ≈ 166″ Positionsversatz; in ρ ergibt das ≈16 Lj Radiusdifferenz. `epoch` gehört
+  in den **`.bin`-Header** (Compiler schreibt), Register spiegelt, Manifest echo't, die
+  Consumer-Konstante `2000.0` wird **gelöscht** (Konsument liest den Header, verweigert bei
+  Fehlen); `star_epoch_min` nur an **einer** Stelle.
+
+**Vor dem Bauen zu messen:** Herkunft von `dr3_stars.bin` (welcher Compiler), Bandzugehörigkeit
+von `rec.flux`, ob die Ephemeriden-Header schon einen Granul-Index tragen.
+
+### Schwarm-Seats (Operator-Wort 2026-10-06)
+Der Schwarm trägt jetzt die deepseek-Seats: `voice-deepseek` (`deepseek/deepseek-flash`, wie
+council/grind-flash/general) und `voice-deepseek-pro` (`deepseek/deepseek-v4-pro`, wie
+grind-pro/grind-max/research-max; `task: ask`, Kostenkante). Beide read-only, `archive_search_public`
++ `chrome-devtools-voices_*`. **Caveat:** `voice-deepseek` ist **dasselbe Modell wie die Linie** —
+keine unabhängige Stimme; für Unabhängigkeit bleiben die Fremdmodelle + Claude/GLM.
+
 ## Incident 2026-10-06 — lokaler Baum an eine Schwarm-Stimme (gemessen an der DB)
 
 Operator-Wort: „die agenten haben archive search root genutzt und ich habe es aus versehen
@@ -326,4 +361,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.3398 · cap 0.4 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.3398; Runde total 0.5318 → 1.3038; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.3765 · cap 0.45 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome- und Schwarm-Seat-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.3765; Runde total 0.5318 → 1.3804; gemessen 2026-10-06
