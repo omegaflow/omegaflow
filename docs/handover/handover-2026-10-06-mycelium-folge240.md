@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Membran-CDN-Assets gemessen, Träger geschärft, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: c7689706213f919dd5ecc6e635f64ccd067700aeac87293c2c7edb5b30d71229
+  sha256: 27f6b56164841fa730cce108ad2ac7b0640ae28a82bae6170a02e63d31809e51
   status: live
 -->
 # Handover — Mycelium-Folge 240 (2026-10-06)
@@ -45,6 +45,7 @@ Rolling-Fenster (37 Sessions) bei Schluss **$0.4343**.
 - **Lage:** (gemessen 2026-10-06) öffentlich `docs/surveys/survey-2026-10-04-exposom-matrix.md` (12 Domänen); 4 Kern-x-Serien erreichbar/registriert (OpenAQ 206, Open-Meteo 200, NASA POWER 206, OMNIWeb 200); 2 Arme gebaut (WQP + EEA-noise, `mycelium-folge231:70-75`). x-Home-Messung: 3 Domänen netloc-registriert über abweichenden origin (Wasser `waterqualitydata.us` → `phi/sources.φ:18008`; Lärm `noise.eea.europa.eu` → `:9403`; Grünraum `lpdaac.usgs.gov` → `:9337`), 6 **unregistriert** und direkt 200 (Licht `blackmarble.gsfc.nasa.gov`; Pollen `ads.atmosphere.copernicus.eu`; gebaute Umwelt `ghsl.jrc.ec.europa.eu`; Ernährung `ers.usda.gov/data-products/food-access-research-atlas/`; Arbeit `onetonline.org`; Chemikalien `exposome-explorer.iarc.fr`). Descriptor-Form `phi/pipeline/descriptors/solar_seconds_matrix.te`, Parser `field_te_query.rs:580-684`.
 - **Blockade:** die y-Serien der Matrix-Klassen sind unregistriert; eine Aufnahme braucht das Mountain-Verdikt + die Mycelium-Manifestations-Direktive.
 - **Braucht:** je pending Domäne die Sources-Zeile (Verdikt + `url`/`origin`/`compiler`); dann `.te` je Klasse + `.github/workflows/exposom-matrix-te.yml`.
+- **Schwarm-Messung 2026-10-06 (Claims, ungeprüft):** Kandidaten-Endpunkte — Licht `ladsweb.modaps.eosdis.nasa.gov/archive/allData/5000/VNP46A3/` (HDF5, registration), Pollen `ads.atmosphere.copernicus.eu/.../cams-europe-air-quality-forecasts` (NetCDF, registration), GHSL `data.jrc.ec.europa.eu/dataset/jrc-ghsl-10007` (GeoTIFF, open); alle 6 x-Homes erneut `--verdict` HTTP 200. Die freien Schwarm-Routen fielen teils aus (Cloudflare-Tageslimit 10 000 Neuronen; `free tier only within OpenCode`) — Kandidaten sind vor Aufnahme am Baum gegenzumessen.
 
 ### Träger `survey-2026-09-03-orphan-verdicts` — Step 5 CDN-kanonisch
 - **Status:** eigen
@@ -63,9 +64,9 @@ Rolling-Fenster (37 Sessions) bei Schluss **$0.4343**.
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Runner verloren
 - **Status:** blockiert
 - **Trigger:** Port-Runner im Baum
-- **Lage:** (gemessen 2026-10-04) `ledger.φ:2` = 825 Blöcke, `:6` = 63; `phi/pipeline/stage/*` leer; der Ausführer war ein nie committeter Working-Tree-Bin; nur der Motor `src/archivar/port.rs`.
-- **Blockade:** Port-Runner verloren.
-- **Braucht:** Port-Runner als Bin rekonstruieren/committen (Konverter-Spec = Mountain).
+- **Lage:** (gemessen 2026-10-04) `ledger.φ:2` = 825 Blöcke, `:6` = 63; `phi/pipeline/stage/*` leer; der Ausführer war ein nie committeter Working-Tree-Bin; nur der Motor `src/archivar/port.rs`. **Archäologie 2026-10-06:** kein `port*`-Executor in irgendeinem Ref (`git log --all --name-only -- '*port*'`, 1322 Safety-Refs ab 2026-09-15) — nicht aus git rekonstruierbar; Motor `src/archivar/port.rs` (156 KB) + Protokoll `docs/SOURCE_PORT.md` stehen.
+- **Blockade:** Port-Runner verloren (nicht in git).
+- **Braucht:** Bin aus der `port.rs`-API rekonstruieren/committen (Konverter-Spec = Mountain).
 
 ### `phi/blocked_sources.φ` — Mycelium-Klasse
 - **Status:** je eigen
@@ -74,12 +75,12 @@ Rolling-Fenster (37 Sessions) bei Schluss **$0.4343**.
 - **Blockade:** Chandrayaan-`pds3_img`-Arm (Mountain); Sample-/Record-Downloads (Operator/per-act).
 - **Braucht:** `pds3_img`-Feld-Arm (Mountain); Consent für Record-Downloads (Operator/per-act).
 
-### iEEG-Ernte — Backend 503
+### iEEG-Ernte — Dienst antwortet 500
 - **Status:** wartend
-- **Trigger:** iEEG-Backend er erholt sich → `gh workflow run ieeg-cdn.yml -f dataset=09_14_limbic_seizure_374`
-- **Lage:** (gemessen 2026-10-06) `phi/sources.φ:3584` bindet `www.ieeg.org` (Mountain); `ieeg_compiler.rs:12` `NETLOC = "www.ieeg.org"`.
-- **Blockade:** Backend 503.
-- **Braucht:** Re-Dispatch bei Kapazität.
+- **Trigger:** `www.ieeg.org/services` erholt sich → `gh workflow run ieeg-cdn.yml -f dataset=09_14_limbic_seizure_374`
+- **Lage:** (gemessen 2026-10-06) Zugang steht — `IEEG_USER`/`IEEG_PASS` im `.secrets.local` (`bin/secrets_keys`), exportiert `.github/workflows/ieeg-cdn.yml:22-23`, gelesen `ieeg_compiler.rs:211-212`; `phi/sources.φ:3584` bindet `www.ieeg.org` (Mountain). `archive_search --verdict https://www.ieeg.org/services` = **HTTP 500** (Stufe 1+2, 2026-10-06).
+- **Blockade:** Dienst 500 (nicht der Zugang).
+- **Braucht:** Re-Dispatch bei Erholung.
 
 ### Rand ohne Rubin — Fink-Cutout-/FP-Manifestation
 - **Status:** wartend
