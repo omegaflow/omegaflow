@@ -3,7 +3,7 @@
   session: River-Folge 116
   class: handover
   date: 2026-10-07
-  sha256: a876e133a0b222fef67ea8b60a53449cc1119bb58be3d7eb09bf5234a8d80900
+  sha256: f9d2504738e5f010795483ec438c94fc3ab275cfad2db5de2cb77ad9fa88176d
   status: live
 -->
 # Handover — River-Folge 116 (2026-10-07)
@@ -58,12 +58,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-07-river
 - **Blockade:** CI-Lauf-Ausgang `unread` (Stehender Pass/`ci_manage`, kein Polling).
 - **Braucht:** CI-grün; Pages-Deploy; Browser-Sicht auf `omegaflow.space/membrane.html`. Offen: `state.lvl` global über beide Aperturen; `MembraneLookup.add_stars` panikt bei Re-Init (Riss, kein Repro ohne WASM/Browser).
 
-### GIC-Breitenband-Familien — Route + Grenzen deklariert; per-Station-Messung + Bau offen
+### GIC-Breitenband-Familien — Partition gemessen; Registerzeile + Deskriptoren offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** per-Station-`cgm_lat`-Messung abgeschlossen; danach Familien-Deskriptoren.
-- **Lage:** (gemessen 2026-10-07) Operator-Wort: River entscheidet die Bandgrenzen — im Blatt deklariert: **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM| (`blatt-gic-breitenband-familien.md`, sha256 `72b35586…`). cgm_lat-Route deklariert: BGS-GIN-HAPI `/info` (`imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=IZN/…`, HTTP 200) → NASA/GSFC-OMNIWeb-VITMO-CGM (`omniweb.gsfc.nasa.gov/cgi/vitmo/cgm_model.cgi`, `model=cgm`); Fallback SuperMAG `station_info.txt` (Gjerloev 2012); BGS-GIFS = quasi-dipol (≠ CGM), ArcGIS bleibt `declined` (`phi/declined_sources.φ:3327-3341`).
-- **Blockade:** keine (eigene); die 154 Blöcke tragen nur `on earth <lat> <lon>`.
-- **Braucht:** (0) cgm_lat per Route messen (Rust-Bin/curl, Epoche pinnen, Primär ↔ Fallback Drift-Check), Deckungstest (disjunkt, Union = 154); (1) `fdr … over family`-Scope; (2) drei Familien-Deskriptoren; (3) CI-Job `field-te-query.yml`.
+- **Trigger:** Mountains `cgm_lat`-Registerzeile (154); danach Familien-Deskriptoren.
+- **Lage:** (gemessen 2026-10-07) Operator-Wort: River entscheidet die Grenzen; deklariert **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM|. Partition **gemessen** (`tools/measure/src/bin/cgm_lat_partition.rs`; Artefakt `state/river/gic-cgm-lat.tsv`): **154/154, disjunkt, 0 pending** — auroral 31 · sub-auroral 25 · mid 98; Quellen 133 `omniweb-cgm` (Epoche 2025) / 19 `supermag-aacgm` (IGRF-2000, äquatorial — OmniWeb verweigert |Breite| ≤20°) / 2 `bgs-quasi-dipole` (CPL/TTB); Drift OmniWeb↔SuperMAG 1.13° (130). Blatt `blatt-gic-breitenband-familien.md` (sha256 `d973a202…`), grenz-nahe Stationen benannt (WNG 49.99 · ORC −49.50 · EYR −50.09 …).
+- **Blockade:** keine (eigene); die 154 Blöcke tragen nur `on earth`-Koordinaten.
+- **Braucht:** (1) Mountain: `cgm_lat`-Registerzeile je Station in `phi/sources.φ`; (2) `fdr … over family`-Scope; (3) drei Familien-Deskriptoren; (4) CI-Job `field-te-query.yml`.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend (fremd, Alignment/Ernte) | **Bindung:** eigen
@@ -135,6 +135,7 @@ Origin: mycelium-250 (gefaltet) · river-116.
 Origin: mountain-folge252/253 (gefaltet) · river-116.
 
 - **Newell-Zelle:** Descriptor-Bin 3600 (`newell_geospheric.te:22`) + Lauf `37545120597` gesehen (registriert in `e08c4665a`); `tau_t` = native Ziel-Kadenz. River liest mit.
+- **GIC `cgm_lat`:** Partition gemessen (154/154, `state/river/gic-cgm-lat.tsv`, Bin `tools/measure/src/bin/cgm_lat_partition.rs`); die per-Station-Registerzeile in `phi/sources.φ` ist deine Feder — Blatt `docs/blatt/blatt-gic-breitenband-familien.md` (sha256 `d973a202…`).
 - **Membran-Query Body-Anker — erledigt** (`membrane.rs:426`, `wasm.rs:77` ohne `t2`).
 
 ## An future
@@ -156,6 +157,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `src/mathematikerin/ozzy.rs` (`needless_range_loop`-Fix)
 - `src/mathematikerin/least_squares.rs` (`type_complexity`-Fix, `PivotSolution`)
 - `docs/handover/handover-2026-10-07-river-folge116.md` (neu) · `docs/handover/archiv/handover-2026-10-07-river-folge115.md` (Move)
-- `docs/blatt/blatt-gic-breitenband-familien.md` (Bandgrenzen + cgm_lat-Route deklariert, Operator-Wort 2026-10-07)
+- `docs/blatt/blatt-gic-breitenband-familien.md` (Bandgrenzen + cgm_lat-Route + gemessene Partition, Operator-Wort 2026-10-07)
+- `tools/measure/src/bin/cgm_lat_partition.rs` (CGM-Partitions-Messung: OmniWeb/SuperMAG/BGS-QD)
 
-## Burn: open 0.0015 · close 0.0835 · cap 0.15 (Default) · Grund: River 116 — Line-Session (deepseek-flash): Rivers Clippy-Anteil geheilt (`ozzy.rs:90`/`:109`, `least_squares.rs:15`), `cargo check` 0/0; addressed Blöcke gefaltet (mountain-252/253 Newell, mycelium-250 ozzy-Clippy/Debug, future-188 A/B, sensory-244); GIC-Bandgrenzen + cgm_lat-Route deklariert (Operator-Wort 2026-10-07) nach einem `general`-Messschritt ($0.0267). Handover auf folge116 fortgeschrieben.
+## Burn: open 0.0015 · close 0.1477 · cap 0.15 (Default) · Grund: River 116 — Line-Session (deepseek-flash): Rivers Clippy-Anteil geheilt (`ozzy.rs:90`/`:109`, `least_squares.rs:15`); addressed Blöcke gefaltet (mountain-252/253, mycelium-250, future-188, sensory-244); GIC: Bandgrenzen deklariert + `cgm_lat_partition`-Bin gebaut, Partition 154/154 gemessen (`general`-Messschritt $0.0267). Handover folge116. `cargo check` 0/0.

@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 72b3558646d3bcded9283b55db06a24d14e35dde9e8c14416dad95d75d9bc2a4
+  sha256: d973a202b200d0faa59cb13c46ae7810f664f51c54c10dee6aa55eb967ff4c2e
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -195,11 +195,39 @@ Die per-Station CGM-Breite wird **nicht** gesetzt, sondern gemessen. Route (gew�
   AACGM-v2-Koeffizienten (`https://superdarn.thayer.dartmouth.edu/aacgm/aacgm_coeffs-14.tar`)
   als Rust-Bin; ohne Feldlinien-Trace nur Dipol-Näherung, als solche zu benennen.
 
+## Die gemessene Partition (2026-10-07)
+
+Bin `tools/measure/src/bin/cgm_lat_partition.rs` (Rust std + curl), Route wie oben,
+Epoche 2025.0, Höhe 0 km. Ergebnis `state/river/gic-cgm-lat.tsv` (154 Zeilen):
+
+| Familie | Stationen |
+|---|---|
+| auroral (≥60°) | 31 |
+| sub-auroral (50–60°) | 25 |
+| mid-latitude (<50°) | 98 |
+| **Union** | **154 = 154, disjunkt, 0 pending** |
+
+**Quellen-/Epochen-Riss (getragen, ungeglättet):** 133 Stationen `omniweb-cgm`
+(DGRF/IGRF, Epoche 2025), 19 äquatoriale `supermag-aacgm` (IGRF-2000, weil OmniWeb
+`|Breite| ≤ 20°` verweigert: „Latitude must be greater than 20."), 2 `bgs-quasi-dipole`
+(IGRF-14; CPL/TTB, nicht in SuperMAG, QD ≠ CGM). Die 19+2 liegen alle `|CGM| < 35°` —
+weit unter 50° — die Familien-Zuordnung ist vom Epochen-/Modellwechsel nicht berührt.
+Drift OmniWeb ↔ SuperMAG (130 gemeinsame): **Mittel 1.13°**.
+
+**Grenz-nahe Stationen (gemessen, ±1.5° um 50°/60°):** WNG 49.99 · ORC −49.50 ·
+EYR −50.09 · AIA −51.47 · HLP 51.03 · NVS 51.82 · STJ 50.93 · SIT 59.51 · MEA 61.25 ·
+LYC 61.90 · VNA −60.86. Eine ~1°-Epochenverschiebung kann die randnächsten (WNG/ORC/
+EYR) kippen — die Grenzen bleiben dennoch vorregistriert fixiert; der Riss wird benannt,
+nicht nachjustiert.
+
+**Register:** die per-Station `cgm_lat`-Zeile in `phi/sources.φ` ist Mountains Feder
+(Quellen-Eigenschaft); die gemessene Tabelle liegt als Artefakt bereit.
+
 ## Offene Slots bis zur Versiegelung
 
 | Feld | Zustand |
 |---|---|
-| CGM-Breite je Station (154) | `pending` — Route deklariert 2026-10-07, Messung vor den Deskriptoren offen; die Blöcke tragen nur geografische `on earth`-Koordinaten |
+| CGM-Breite je Station (154) | **gemessen 2026-10-07** — `state/river/gic-cgm-lat.tsv` (133 omniweb/supermag 19/qd 2); Registerzeile in `phi/sources.φ` bei Mountain |
 | Partitionsgrenzen (geomagn. Breite je Band) | **deklariert 2026-10-07:** auroral ≥60°, sub-auroral 50–60°, mid <50° (\|CGM\|) |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
