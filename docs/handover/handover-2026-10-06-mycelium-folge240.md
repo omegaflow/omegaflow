@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Membran-CDN-Assets gemessen, Träger geschärft, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 27f6b56164841fa730cce108ad2ac7b0640ae28a82bae6170a02e63d31809e51
+  sha256: 0b7e77502129146e1da2bc8d508de6d0333b608bcdc2bbf2648067cfd72a219f
   status: live
 -->
 # Handover — Mycelium-Folge 240 (2026-10-06)
@@ -38,6 +38,13 @@ Rolling-Fenster (37 Sessions) bei Schluss **$0.4343**.
 - **Lage:** (gemessen 2026-10-06T09:27 via `ci_manage list`) `37441624456` **queued**; Alt-Lauf `37355972362 @410d9f2b` = failure, Grund `unread` (Jobs `cancelled`, `ci_manage log` 404).
 - **Blockade:** Runner-Kapazität.
 - **Braucht:** `ci_manage view 37441624456`.
+
+### DHM-Pegel-CDN — Workflow gebaut, Lauf dispatched
+- **Status:** wartend
+- **Trigger:** `dhm-gauge-cdn`-Lauf-Ausgang → `ci_manage view 37448182944`
+- **Lage:** (gemessen 2026-10-06) `.github/workflows/dhm-gauge-cdn.yml` gebaut (täglich `23 3 * * *`, `ubuntu-latest`, `--station 4657|4661 --period 1 --ci-mode`); dispatched `37448182944 @e920f642f`, queued. Die zwei Quellen `phi/sources.φ:445`/`:453` (Tag `dhm.gov.np`, `format dhm_stage`) sind bis zum Lauf `pending`.
+- **Blockade:** Lauf-Ausgang.
+- **Braucht:** `--sniff` `github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4657_stage.txt` + `…4661…` nach dem Lauf.
 
 ### Exposom-Quellenmatrix — Matrix-Lauf-Workflow
 - **Status:** eigen
