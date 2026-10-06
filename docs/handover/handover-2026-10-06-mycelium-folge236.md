@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: ab6044b43e5a6d204657299f3108b4ff7cb3caaa08ae1e8927568a1cdb1a87e8
+  sha256: 6a83b520ee388fea6faccf7652a4247b863b1690bbe6c440a2230b9a236d5edf
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -81,7 +81,7 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
   Read-only Katalog-Pässe dispatcht: `11003006` `37439238853`, `12002000` `37439243015`,
   `12001000` `37437987631`.
 - **Blockade:** ohne `field`-Zeile ist jede Bestellung ein fabriziertes Feld (IDs jetzt gemessen).
-- **Braucht:** Field-Verdikt je Produkt (Mountain) → dann Operator-Order. **Bestell-Kommando vorbereitet** (nicht gefahren): `gh workflow run jaxa-gportal-cdn.yml -f dataset=<ID> -f from=<YYYY/MM/DD> -f to=<YYYY/MM/DD> -f count=100 -f pages=1 -f download=true -f download_limit=N`.
+- **Braucht:** Field-Verdikt + Reader je Produkt (Mountain; `mountain-240 eff2bb0cb` löschte den footprint-only Reader). **Bestellungen gefahren** (Operator-Wort 2026-10-06, `download_limit=1` je, Fenster `2026/01/01`): `11002004` `37439494675`, `11003006` `37439734786`, `11002005` `37439738985`, `11002008` `37439742873`, `12002000` `37439746867`, `12012000` `37439750750`, `12022000` `37439755231`, `12003000` `37439759516`, `10001003` `37439763585`, `10002002` `37439767395`, `10003027` `37439771296`. **Offen:** die bestellten SFTP-Produkte per `--fetch-file` ziehen (nach dem Order verfügbar) + manifestieren.
 
 ### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*`
 - **Status:** wartend | **Bindung:** River
