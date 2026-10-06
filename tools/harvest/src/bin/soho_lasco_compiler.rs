@@ -65,6 +65,14 @@ fn main() {
         std::process::exit(1);
     }
     let bytes = write_bin(&records);
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        if !parent.as_os_str().is_empty() {
+            if let Err(e) = std::fs::create_dir_all(parent) {
+                eprintln!("create {} void: {e}", parent.display());
+                std::process::exit(1);
+            }
+        }
+    }
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!("write {out} returned void");
         std::process::exit(1);
