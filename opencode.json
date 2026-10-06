@@ -186,6 +186,20 @@
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
+    "ref-deepseek-flash": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-flash",
+      "variant": "low",
+      "description": "Referenz-Stimme (deepseek-flash) — antwortet nur aus dem Prompt, kein Werkzeug.",
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "bash": "deny", "webfetch": "deny", "websearch": "deny" }
+    },
+    "ref-deepseek-pro": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "variant": "low",
+      "description": "Referenz-Stimme (deepseek-v4-pro, paid) — antwortet nur aus dem Prompt, kein Werkzeug.",
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "bash": "deny", "webfetch": "deny", "websearch": "deny" }
+    },
     "line": {
       "mode": "primary",
       "model": "deepseek/deepseek-flash",
