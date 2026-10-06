@@ -42,7 +42,16 @@ pub fn te_bias_m_k(n: usize) -> Option<f64> {
     TE_BIAS_MK.iter().find(|&&(k, _)| k == n).map(|&(_, m)| m)
 }
 
-pub const TE_BIAS_MK_EMBEDDED: &[(usize, f64)] = &[];
+pub const TE_BIAS_MK_EMBEDDED: &[(usize, f64)] = &[
+    (800, -1.892e-1),
+    (1260, -1.556e-1),
+    (1600, -1.447e-1),
+    (2200, -1.253e-1),
+    (4000, -9.130e-2),
+    (6000, -5.353e-2),
+    (8546, -1.700e-2),
+    (10000, 0.000e0),
+];
 
 pub fn te_bias_m_k_embedded(n: usize) -> Option<f64> {
     TE_BIAS_MK_EMBEDDED
@@ -3965,6 +3974,32 @@ mod tests {
         assert!(
             transfer_entropy_bias_adjusted_gated(te, m_k, n_eff_floor).is_some(),
             "at the measured floor the correction applies"
+        );
+    }
+
+    #[test]
+    fn gate_te_bias_embedded_sign_decreasing_and_refusal() {
+        let m_k = te_bias_m_k_embedded(1260)
+            .expect("the embedded operating size carries a measured bias");
+        assert!(
+            m_k < 0.0,
+            "the measured embedded bias is negative, got {m_k}"
+        );
+        let mut previous = f64::INFINITY;
+        for &(_, m) in TE_BIAS_MK_EMBEDDED {
+            assert!(
+                m.abs() < previous,
+                "the embedded bias magnitude must fall as n grows, got {m}"
+            );
+            previous = m.abs();
+        }
+        assert!(
+            te_bias_m_k_embedded(10_000).is_some_and(|m| m.abs() < f64::EPSILON),
+            "the reference size is bias-free"
+        );
+        assert!(
+            te_bias_m_k_embedded(1234).is_none(),
+            "an unmeasured size stays absent, never zero"
         );
     }
 

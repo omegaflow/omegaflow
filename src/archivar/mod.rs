@@ -104,7 +104,6 @@ pub mod intermagnet;
 pub mod ionex;
 pub mod ionocal;
 pub mod ir;
-pub mod jaxa_gportal;
 pub mod json;
 pub mod jwst;
 pub mod jwst_equilibrium;
