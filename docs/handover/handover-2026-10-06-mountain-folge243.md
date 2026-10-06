@@ -3,7 +3,7 @@
   session: Mountain-Folge 243
   class: handover
   date: 2026-10-06
-  sha256: 008103c0ddfcbc352fa1b266b02095d8edb299ab7ff91b343c075fb4fb5246b6
+  sha256: 5eae6b251d3b1b1e8f15d8cfe46e42e00a6bbe4ca7c93fbcd95c992b322c94ee
   status: live
 -->
 # Handover — Mountain-Folge 243 (2026-10-06)
@@ -20,7 +20,7 @@ AQS-VOC-Zerlegung).
 `cargo check` 0/0. Die adressierten Blöcke `future-183` und `mycelium-240` wurden
 gegen den Baum gemessen; fast alle Einträge sind erledigt (s. jeweils Lage).
 
-## Burn: open 0.0000 · close 0.0640 · cap 0.25 · Grund: flash-first — Line-Session $0.0407 + zwei `grind-flash`-Messungen ($0.0122 JAXA, $0.0111 AQS-VOC), kein pro/max
+## Burn: open 0.0000 · close 0.1178 · cap 0.25 · Grund: flash-first — Line-Session $0.0548 + vier `grind-flash`-Messungen ($0.0281 Exposom-Matrix, $0.0122 JAXA, $0.0116 OSHA-CEHD, $0.0111 AQS-VOC), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -66,11 +66,16 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-06) 4 feld-aufgenommen (Licht `black_marble_vnp46a3_nightlight`,
   Pollen `openmeteo_pollen_axis_value_text`, gebaute Umwelt `ghsl_built_s`, Ernährung
   `usda_fara_low_access`); die CDN-Workflows sind committet (`0d74bf29d`, mycelium 241).
-  Nur Exposome-Explorer bleibt Nicht-Feld (nur Land + Publikationsjahr). Arbeit ist mit
-  OSHA-CEHD feld-fähig (Browser-UA, `GET healthsamples.zip` 206), Chemikalien mit AQS-VOC.
-- **Blockade:** keine für die 4; die zwei Arme (OSHA-CEHD, AQS-VOC) sind noch nicht gebaut.
-- **Braucht:** AQS-VOC bounded step 1 (s. u.); OSHA-CEHD-Compiler (Browser-UA +
-  Stadt-ZIP-Geocode). CDN-Manifestation je Arm folgt nach dem Bau (Mycelium).
+  Die Quellenmatrix (`survey-2026-10-04-exposom-matrix.md`, sha256 `4ecbe3fa…`) trägt
+  **12 x-Domänen** (die „16" sind Krankheitsklassen — Riss); **jede bereits arm-deckende
+  Format-Quelle hat ihre `sources.φ`-Zeile** (OpenAQ `:1208`, EPA-PM25 `:17381`, OpenMeteo
+  `:232`, CDAWeb `:1429`, WQP `:18051`, EEA-Noise `:9405`, VNP46A3 `:17348`, Pollen `:17357`,
+  GHSL `:17365`, USDA-FARA `:17373`). Grünraum (NDVI) und Exposome-Explorer sind `declined`
+  (`declined_sources.φ:1363`/`:1984`). Fehlende Arme: **AQS-VOC**, **OSHA-CEHD**, NASA POWER.
+- **Blockade:** keine für die 4; die zwei Arme (OSHA-CEHD, AQS-VOC) sind noch nicht gebaut
+  und berühren `src/archivar/geo.rs` (fremde uncommittete Hunks, gemessen `git status`).
+- **Braucht:** AQS-VOC bounded step 1 (s. u.); OSHA-CEHD bounded step (s. u.); NASA POWER
+  ohne gemessene Route. CDN-Manifestation je Arm folgt nach dem Bau (Mycelium).
 
 ### AQS-VOC-Arm (Exposom Chemikalien)
 - **Status:** eigen | **Bindung:** eigen
@@ -81,7 +86,10 @@ Wort | Datum | Quelle
   die einzige Wire-Identität (60-B-`GeoRec`, `station` nicht serialisiert). PM2.5-Sibling
   `epa_aqs_compiler.rs` (FORMAT `epa_aqs_pm25`, `COMP_EPA_AQS_PM25`, `MAGIC_EPA_AQS`) ist
   gebaut; `geo.rs:308`/`:368` und `extract.rs:842` tragen den PM25-Arm.
-- **Blockade:** keine; die 118-Arten-Feld-Tabelle (Name+Einheit) ist noch nicht generiert.
+- **Blockade:** die 118-Arten-Feld-Tabelle (Name+Einheit) ist noch nicht generiert; **und**
+  step 1 berührt `src/archivar/geo.rs`, das fremde uncommittete Hunks trägt (gemessen
+  2026-10-06 `git status`: `M src/archivar/geo.rs`) — ein pfad-begrenzter Commit würde fremde
+  Arbeit sweepen. Trigger: der Commit der fremden geo.rs-Hunks.
 - **Braucht:** (1) `src/archivar/geo.rs`: `MAGIC_EPA_AQS_VOC` + `magic_of`/`comp_max`-Arm
   (`comp = parameter_code`, u32); (2) `epa_aqs_compiler.rs`: `--parameter <code>`/`--format`/
   `--url` (Filter auf Parameter Code, `comp = code`, Default-URL VOCS); (3) Feld-Tabelle
@@ -105,14 +113,23 @@ Wort | Datum | Quelle
   prüfen; erst danach Feld-/Arm-Verdikt je Familie. Origin-Katalog nur authentifiziert
   erreichbar (`JAXA_GPORTAL_USER`/`PASS`, `service_post`).
 
-### Exposom-Quellenmatrix — Register-Zeilen je Klasse
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06) Matrix committed `docs/surveys/survey-2026-10-04-exposom-matrix.md`
-  (sha256 `4ecbe3fa…`, Origin future-183); `eea_noise` (`sources.φ:651`) und `wqp_result`
-  (`sources.φ:677`) sind gebaut.
-- **Blockade:** mehrere Klassen ohne Register-Zeile.
-- **Braucht:** Register-Zeile je noch fehlender Klasse (gemessen aus der Matrix).
+### OSHA-CEHD-Arm (Exposom Arbeitsumfeld)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der Commit der fremden `src/archivar/geo.rs`-Hunks (gemessen 2026-10-06, `git status`)
+- **Lage:** (gemessen 2026-10-06 via `grind-flash`) `obis.osha.gov/opengov/healthsamples.zip`
+  HTTP 206, `application/zip`, **104,7 MB** (109 785 451 B), PK-Magic; 39 Member, u. a.
+  `sample_data_2014..2019.csv` (2019: 28 788 Zeilen) + `sample_data_1984..2013.xml` + `.accdb`.
+  CSV-Header (24 Spalten): `…CITY,STATE,ZIP_CODE,SIC_CODE,NAICS_CODE,…DATE_SAMPLED,…
+  SAMPLE_RESULT,UNIT_OF_MEASUREMENT,QUALIFIER`. **Kein lat/lon**; Datum `2019-FEB-01`;
+  SIC/NAICS, kein SOC; Wert = Luftkonzentration (mg/m3/µg/ppm/fibers/cc/% → SI-Normalisierung
+  nötig); `SUBSTANCE` quoted+kommahaltig → quote-aware Parser zwingend. Der UA-Split des
+  Handovers (206 Browser / 403 ohne) ist **heute nicht reproduziert** (curl default-UA 206;
+  das 403 = Proton-Exit) — Riss.
+- **Blockade:** der Arm braucht `geo.rs`; das trägt fremde uncommittete Hunks (s. AQS-VOC).
+- **Braucht:** bounded step = `osha_cehd_compiler.rs` (range-Fetch, quote-aware Parser nur
+  `sample_data_2019.csv`, rows ohne lat/lon → `pending` Geocode); danach separat: XML-Arm
+  (1984–2013), City→lon/lat-Geocoder, Unit→SI-Tabelle, SOC↔SIC/NAICS-Crosswalk.
+  Register-Zeile nach dem Arm.
 
 ## An mycelium
 
