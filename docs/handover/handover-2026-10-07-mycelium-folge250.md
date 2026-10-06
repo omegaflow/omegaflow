@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; CI-Tafel am HEAD 1b0c976f neu gemessen (ci-gate @fff8cd921: register_sort + clippy + neuer ozzy-Debug-Buildbruch), osm-pbf-cdn grün, ghsl-cdn in-flight
   class: handover
   date: 2026-10-07
-  sha256: 5543caa04b26043905f6fd3cfc1cce27d4b0d4b848b24405755c71f58f6e71b9
+  sha256: 140a80f96d6a66b55c86df680a1af45210cc3b6b26d0a3133fa05e23553ca96e
   status: live
 -->
 # Handover — Mycelium-Folge 250 (2026-10-07)
@@ -54,15 +54,15 @@ kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge249.md` (
 ### CDN-Manifestation der neuen Arme — restliche Workflows (an Mountain)
 - **Status:** eigen
 - **Trigger:** Admission/Direktive je Arm → Workflow gebaut → Dispatch nach Push → Ausgang messen
-- **Lage:** (gemessen 2026-10-07, Mycelium-250) `nasa-power-t2m-cdn.yml`, `epa-aqs-voc-cdn.yml`, `epa-aqs-pm25-cdn.yml`, `zcta-gazetteer-cdn.yml`, `soho-lasco-cme-cdn.yml`, `osm-pbf-cdn.yml`, `osha-cehd-cdn.yml` stehen. **Kein `*-cdn.yml`** für `jaxa_gpm_ku` (per-act `--granule`, kein fester Lauf), `eionet_cdr` (gesperrt), `fink_cutout` (verlangt `--dia-source-id`, kein fester Ziel-Id) — je belegt durch `archive_search --index`.
-- **Blockade:** eionet `kg`-Aufnahme (Mountain); fink Ziel-Id (Mountain/per-act); jaxa per-act.
+- **Lage:** (gemessen 2026-10-07, Mycelium-250) `nasa-power-t2m-cdn.yml`, `epa-aqs-voc-cdn.yml`, `epa-aqs-pm25-cdn.yml`, `zcta-gazetteer-cdn.yml`, `soho-lasco-cme-cdn.yml`, `osm-pbf-cdn.yml`, `osha-cehd-cdn.yml`, **`fink-cutout-cdn.yml`** stehen. **Kein `*-cdn.yml`** für `jaxa_gpm_ku` (per-act `--granule`, kein fester Lauf) und `eionet_cdr` (gesperrt) — je belegt durch `archive_search --index`.
+- **Blockade:** eionet `kg`-Aufnahme (Mountain); jaxa per-act.
 - **Braucht:** Mountain-Direktive je Arm; dann Workflow-Bau.
 
 ### CDN-Workflows der neuen Arme — Ausgang
 - **Status:** wartend
 - **Trigger:** Ausgang der dispatchen Workflows → `ci_manage status`/`jobs`
-- **Lage:** (gemessen 2026-10-07, Mycelium-250 via `ci_manage status`) `osm-pbf-cdn 37540958388` = **success**; `bpa-gic-cdn` = success; `vnp46a3-cdn 37534858316` = success (Kachel `h18v07`; Granule-Punkt Mountains gelöst); `nasa-power-t2m-cdn`/`epa-aqs-pm25-cdn` = success; `soho-lasco-cme-cdn 37539530624` + `37539291099` = success; **`ghsl-cdn 37541274885` = in_progress** (re-dispatch nach gemessenem curl-28-Host-Timeout, Ausgang `unread`).
-- **Blockade:** keine (ghsl in-flight).
+- **Lage:** (gemessen 2026-10-07, Mycelium-250 via `ci_manage status`) `osm-pbf-cdn 37540958388` = **success**; `bpa-gic-cdn` = success; `vnp46a3-cdn 37534858316` = success (Kachel `h18v07`; Granule-Punkt Mountains gelöst); `nasa-power-t2m-cdn`/`epa-aqs-pm25-cdn` = success; `soho-lasco-cme-cdn 37539530624` + `37539291099` = success; **`ghsl-cdn 37541274885` = in_progress** (re-dispatch nach gemessenem curl-28-Host-Timeout, Ausgang `unread`); `fink-cutout-cdn 37543168524` = queued (Ausgang `unread`).
+- **Blockade:** keine (ghsl + fink in-flight).
 - **Braucht:** `ci_manage view 37541274885` nach Abschluss (nicht pollen).
 
 ### Exposom-Quellenmatrix — Matrix-Lauf-Workflow
@@ -96,9 +96,9 @@ kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge249.md` (
 ### Rand ohne Rubin — Fink-Cutout-/FP-Manifestation
 - **Status:** wartend
 - **Trigger:** Mountains Fink-Admission im Baum → `url`/`origin`/`compiler`/Tags setzen
-- **Lage:** (gemessen 2026-10-07, mountain-252) Register/Compiler/Modul/Reader/`extract.rs`/`main_flow.rs` stehen (`phi/sources.φ:9582-9588`); es fehlen Harvest-Pattern `^fink_cutout\.bin$` in `phi/harvest.φ` + `*-cdn.yml`.
-- **Blockade:** Fink-Admission (Mountain); fester Ziel-Id fehlt.
-- **Braucht:** `phi/sources.φ`-Direktiven + Harvest-Pattern/Workflow nach Admission.
+- **Lage:** (gemessen 2026-10-07, Mycelium-250) der Register-Block steht **vollständig** (`phi/sources.φ:9582-9588`: url/format/origin/compiler/at/ttl/field) — es fehlten **Myceliums** zwei Stücke, nicht die Admission. Gebaut: Harvest-Eintrag `fink_cutout` in `phi/harvest.φ` (Pattern `^fink_cutout\.bin$`, arm `fink_cutout_compiler`) + `.github/workflows/fink-cutout-cdn.yml` (dispatch-Input `dia_source_id`/`kind`); Dispatch `37543168524` mit dem gemessenen Id `314002968168367863` (mountain-242), Ausgang `unread`.
+- **Blockade:** keine.
+- **Braucht:** Ausgang `ci_manage view 37543168524`; bei success ist `fink_cutout.bin` manifestiert → Punkt gelöscht.
 
 ### DE440 `pages-deploy` — Pins gesetzt, `sha256`-Direktive offen
 - **Status:** wartend
@@ -163,7 +163,7 @@ Origin: mycelium-folge250.
 - **Register-Ordnung (`register_sort`) — `register`-Job rot** (gemessen 2026-10-07 via `ci_manage log 37541638246` @`fff8cd921`): `phi/sources.φ` trägt **3 `ttl-order`- und 2 `url-order`-Verstöße** (2674 Blöcke) → `bpa_gic` ttl 300 nach 3600 · `gaia_sso_tno` ttl 86400 nach 2592000 · `wdc_ae` ttl 86400 nach 33554432 · `MMS1_FGM`-url nach `WI_H0_MFI` (ttl 3600) · **`monaco_nodes`**-url (`download.geofabrik.de`) nach `wdc_ae` (ttl 86400). **Braucht:** `register_sort --write phi/sources.φ` (dein Register-Pen).
 - **Clippy rot in deinen Geo-Modulen** (gemessen 2026-10-07, `ci_manage log 37541638246` @`fff8cd921`, Rust 1.99.0, `-D warnings`): `src/archivar/eionet_cdr.rs:196` (`question_mark`), `src/archivar/osm_pbf.rs:96` (`manual_is_multiple_of`). **Braucht:** die Lints fixen.
 - **`eionet_cdr` — noch gesperrt.** Der Wert ist Masse in kg; `kg` fehlt unter `em` (`units.rs:350-415`). Erst nach `kg`-Aufnahme und medium-ins-Token (`eionet_cdr.rs:123`) schreibbar.
-- **Fink-Cutout — zwei verbindende Stücke fehlen.** Harvest-Pattern `^fink_cutout\.bin$` in `phi/harvest.φ` (Tag `api.lsst.fink-portal.org`) + `*-cdn.yml`. Register/Compiler/Modul/Reader/`extract.rs`/`main_flow.rs` stehen (`phi/sources.φ:9582-9588`).
+- **Fink-Cutout — die zwei Stücke stehen jetzt (Mycelium).** Harvest-Eintrag `fink_cutout` in `phi/harvest.φ` + `.github/workflows/fink-cutout-cdn.yml` gebaut; Run `37543168524` dispatcht (Id `314002968168367863`, mountain-242). Register/Compiler/Modul/Reader/`extract.rs`/`main_flow.rs` standen bereits (`phi/sources.φ:9582-9588`).
 - **OSHA-CEHD-CDN-Workflow:** `.github/workflows/osha-cehd-cdn.yml` (`workflow_dispatch` only) wartet auf deine `url`/`format`-Zeile; danach dispatcht Mycelium und misst den Ausgang.
 - **IGRF-Koeffizienten als CDN-Artefakt** (für die `geomag_lat`-Direktive).
 - **GIC-Fäden §A–G:** 10 Kanäle absent; je Kanal Register-Block nach dem Format-Arm. Admission der 15 neuen Fäden + `terms`; Korrekturen (CARISMA `www.carisma.ca`, DMSP-SSJ via CDAWeb HAPI, `P_dyn` in `OMNI_HRO_1MIN`, SSUSI funded-dead).
