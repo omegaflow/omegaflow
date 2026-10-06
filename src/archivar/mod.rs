@@ -28,6 +28,7 @@ pub mod bison_velocity;
 pub mod bl_narrowband;
 #[cfg(unix)]
 pub mod ble;
+pub mod bpa_gic;
 pub mod bpc;
 pub mod brainvision;
 pub mod bsp_reader;
