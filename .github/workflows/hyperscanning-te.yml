@@ -45,6 +45,10 @@ on:
         description: task conditions screened as separate parallel jobs (comma-separated; ds007471 forces jointaction)
         type: string
         default: "pddecision,pdfeedback,pdrest"
+      shards:
+        description: shard count for the family screen (0 or 1 = off)
+        type: string
+        default: "0"
 permissions:
   contents: read
 env:
@@ -55,6 +59,7 @@ jobs:
     timeout-minutes: 60
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+      tasks: ${{ steps.matrix.outputs.tasks }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -69,17 +74,33 @@ jobs:
           else
             TASKS="${{ inputs.tasks }}"
           fi
-          m='{"task":['
+          t='['
           first=1
-          IFS=',' read -ra T <<< "$TASKS"
-          for t in "${T[@]}"; do
-            t="${t// /}"
-            [ -z "$t" ] && continue
-            if [ "$first" -eq 0 ]; then m="$m,"; fi
-            m="$m\"$t\""
+          IFS=',' read -ra TT <<< "$TASKS"
+          for x in "${TT[@]}"; do
+            x="${x// /}"
+            [ -z "$x" ] && continue
+            if [ "$first" -eq 0 ]; then t="$t,"; fi
+            t="$t\"$x\""
             first=0
           done
-          m="$m]}"
+          t="$t]"
+          SHARDS="${{ inputs.shards }}"
+          if [ -z "$SHARDS" ]; then SHARDS=0; fi
+          if [ "$SHARDS" -gt 1 ] 2>/dev/null; then
+            s='['
+            i=0
+            while [ "$i" -lt "$SHARDS" ]; do
+              [ "$i" -gt 0 ] && s="$s,"
+              s="$s$i"
+              i=$((i+1))
+            done
+            s="$s]"
+            m="{\"task\":$t,\"shard\":$s}"
+          else
+            m="{\"task\":$t}"
+          fi
+          echo "tasks=$t" >> "$GITHUB_OUTPUT"
           echo "matrix=$m" >> "$GITHUB_OUTPUT"
 
   screen:
@@ -149,6 +170,7 @@ jobs:
           sort -o manifest.txt manifest.txt
           head -6 manifest.txt
       - name: Run the joint family-wise TE screen across the channel family and write the per-cell nominees (Takens tau, dim 3)
+        if: inputs.shards <= 1
         # The joint family maximum pools every requested channel with every
         # triad and ordered pair into ONE corrected line per task (channels x
         # triads x pairs) — the FWER is the family maximum over the union.
@@ -164,8 +186,23 @@ jobs:
               --null "${{ inputs.null_model }}" \
               --nominees-out nominees.tsv
           } | tee report.txt
+      - name: Run the sharded joint family-wise TE screen (one surrogate shard per job)
+        if: inputs.shards > 1
+        run: |
+          set -o pipefail
+          mp_arg=""
+          if [ "${{ inputs.max_points }}" != "0" ] && [ -n "${{ inputs.max_points }}" ]; then mp_arg="--max-points ${{ inputs.max_points }}"; fi
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --manifest manifest.txt --channel "${{ inputs.channel }}" $mp_arg --surrogates "${{ inputs.surrogates }}" \
+              --percentile "${{ inputs.percentile }}" \
+              --null "${{ inputs.null_model }}" \
+              --shard "${{ matrix.shard }}/${{ inputs.shards }}" \
+              --shard-out "shard-${{ matrix.shard }}.tsv"
+          } | tee report.txt
       - name: Confirm the nominees against their own per-cell nulls (p99, 1000 surrogates, fresh seed)
-        if: always()
+        if: always() && inputs.shards <= 1
         run: |
           set -o pipefail
           mp_arg=""
@@ -182,7 +219,7 @@ jobs:
               --null "${{ inputs.null_model }}"
           } | tee confirmation.txt
       - name: n-scaling run (print-only, per n and channel)
-        if: inputs.scales != ''
+        if: inputs.scales != '' && inputs.shards <= 1
         run: |
           set -o pipefail
           : > scaling.txt
@@ -206,7 +243,7 @@ jobs:
             done
           done
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && inputs.shards <= 1
         with:
           name: hyperscanning-te-report-${{ matrix.task }}
           path: |
@@ -215,6 +252,49 @@ jobs:
             confirmation.txt
             scaling.txt
             scaling_*.txt
+      - name: Upload the shard artifact
+        if: always() && inputs.shards > 1
+        uses: actions/upload-artifact@v4
+        with:
+          name: hyperscanning-te-shard-${{ matrix.task }}-${{ matrix.shard }}
+          path: shard-${{ matrix.shard }}.tsv
+
+  merge:
+    needs: [plan, screen]
+    if: inputs.shards > 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        task: ${{ fromJSON(needs.plan.outputs.tasks) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: hyperscanning-te-shard-${{ matrix.task }}-*
+          merge-multiple: true
+          path: shards
+      - name: Merge the shard artifacts and write the nominees
+        run: |
+          set -o pipefail
+          list=""
+          for i in $(seq 0 $(( ${{ inputs.shards }} - 1 ))); do
+            list="${list:+$list,}shards/shard-$i.tsv"
+          done
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            cargo run --release -p omegaflow-measure --bin hyperscanning_group_te -- \
+              --merge "$list" --nominees-out nominees.tsv
+          } | tee merge.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hyperscanning-te-report-${{ matrix.task }}
+          path: |
+            nominees.tsv
+            merge.txt
 
   confirm:
     runs-on: ubuntu-latest

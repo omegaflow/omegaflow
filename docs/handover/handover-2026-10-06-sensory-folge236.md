@@ -3,7 +3,7 @@
   session: Sensory-Folge 236
   class: handover
   date: 2026-10-06
-  sha256: 434db97d9860e2195769d766e1a9650ad00cfe859ccadfa7334f703ddc1cc862
+  sha256: 43874405accede16c50617e59304b0e2e78c2a21abe721accc6e3441a30c5302
   status: live
 -->
 # Handover — Sensory-Folge 236 (2026-10-06)
@@ -35,8 +35,16 @@ unten); `--stale sensory --persist 3` = 0; `--addressed sensory` = 0;
 Gearbeitet dieses Atoms: (a) der gefeuerte `ox64-m2c`-Trigger über die Browser-Bridge
 remessen — **Statuswechsel** nach Deutschland (siehe Offen); (b) den `4096`-Job-Cap
 gemessen — die Plattform-Grenze ist **360 min**, beide `4096`-Discovery-Versuche
-(`37209904312`/`37175843252`) wurden nach ~6 h abgebrochen (siehe Offen). Ein `4096`-Dispatch
-bräuchte einen cap-schonenden Shard+Merge-Weg; ohne ihn bleibt `2048` die Obergrenze.
+(`37209904312`/`37175843252`) wurden nach ~6 h abgebrochen; (c) die Frage dem Schwarm
+gegeben (`--tavily`/`--openalex`/`--arxiv`: Westfall-Young maxT, assoziative Family-Max,
+gemeinsame Permutation je Surrogat-Index) und **den cap-schonenden Shard+Merge-Weg gebaut**
+(Surrogat-Achse, Tool + Workflow + Identitäts-Test) — der `4096`-Lauf ist jetzt dispatchbar.
+**Struktureller Befund (Operator-Wort 2026-10-06, `AGENTS.md` `c9919033b`):** ein Dispatch =
+**ein begrenzter Schritt**. Drei Ein-Schuss-Versuche (`grind-flash`/`grind-pro`/`grind-max`)
+verbrannten je ~32 000 reasoning-Token und wurden mit `step-finish reason:"length"` (output 0)
+gekappt, ohne eine Datei zu schreiben (~$0.12 je Lauf); dieselbe Arbeit in kleinen Schritten
+lief bei reasoning 1 608–2 390, output ~2 700, ~$0.006/Schritt, Code geschrieben. Die Regel
+steht jetzt in `AGENTS.md`.
 Der F235-Anteil (River-`ReceiverWorldline` aus `river-folge96` gefaltet, `observer` →
 `receiver`, Probe `--receiver`/`--receiver-kind` Pflicht; `hyperscanning-te-method.md`
 §9.5/§11/§12 aus Lauf `37331134587`) ist in den eigenen Pfaden unten mitgetragen.
@@ -245,11 +253,11 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 (Operator-Wort 2026-09-28, `:189`).
 
 ### Hyperscanning-TE — `max_points=4096` Discovery-Lauf (Job-Cap)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Plattform-Job-Cap steigt, oder ein cap-schonender Lauf-Weg (Manifest-Shard + Family-Maximum-Merge) wird gebaut.
-- **Lage:** (gemessen 2026-10-06 F236, `ci_manage view`) Die Läufe `37209904312` (Job `screen (jointaction)`) und `37175843252` (Job `screen`) wurden nach **6 h 08 min** bzw. **6 h 48 min** als `cancelled` beendet — die GitHub-Plattform-Grenze von **360 min** (`.github/workflows/hyperscanning-te.yml` setzt kein `timeout-minutes`, der Default greift). Der `2048`-Discovery-Lauf `37235249763` (ds007471, `Cz`) war success. Der `coherent-phase`-Null `37331134587` ist gemessen und in `docs/paper/hyperscanning-te-method.md` §9.5/§11/§12 getragen.
-- **Blockade:** Plattform-Job-Cap 360 min; der volle Discovery-Screen ist nicht in einen Job shard-bar ohne einen Merge, der das globale Family-Maximum korrekt poolt.
-- **Braucht:** einen cap-schonenden Weg bauen (Job-Matrix über das Manifest + ein Merge des globalen Family-Maximums) oder den Cap steigen lassen; sonst bleibt `2048` die gemessene Obergrenze (`docs/paper/hyperscanning-te-method.md` §11).
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der cap-schonende Weg ist gebaut (2026-10-06 F236) — der `4096`-Lauf ist jetzt dispatchbar.
+- **Lage:** (gemessen 2026-10-06 F236, `ci_manage view`) Die `4096`-Versuche `37209904312` (Job `screen (jointaction)`) und `37175843252` (Job `screen`) wurden nach **6 h 08 min** bzw. **6 h 48 min** als `cancelled` beendet — die GitHub-Plattform-Grenze von **360 min** (kein `timeout-minutes` im Workflow). **Der cap-schonende Weg ist gebaut** (2026-10-06 F236, gemessen `cargo check` grün, 0 Warnungen): `hyperscanning_group_te --shard <i>/<n>` shardn die **Surrogat-Achse** (volle Triaden, Surrogat-Block `[i·s/n,(i+1)·s/n)`), `--shard-out` schreibt `OBS`/`SURR`/`CELL`-TSV, `--merge f0,…,fn` führt per Konkatenation der Family-Max-Null und der per-Cell-Nulls exakt zusammen (Methode aus dem Schwarm: Westfall-Young maxT, gemeinsame Permutation je Surrogat-Index); Test `shard_merge_equals_monolithic` beweist die Identität; Workflow `hyperscanning-te.yml` trägt `shards`-Input (Matrix über `shard` + `merge`-Job).
+- **Blockade:** keine.
+- **Braucht:** `gh workflow run hyperscanning-te.yml -f cohort=ds007471 -f channel=Cz -f max_points=4096 -f tasks=jointaction -f shards=4 -f null_model=phase`, dann den `merge`-Lauf lesen (`ci_manage log <id>`) und die Zahlen in `docs/paper/hyperscanning-te-method.md` §11 tragen.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -365,15 +373,16 @@ Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-06-sensory-folge236.md` (diese Übergabe),
 - `docs/handover/archiv/handover-2026-10-06-sensory-folge235.md` (die konsumierte F235),
 - `docs/handover/archiv/handover-2026-10-05-sensory-folge234.md` (F235s Archivierung der F234),
-- `docs/paper/hyperscanning-te-method.md` (`coherent-phase`-Null §9.5/§11/§12, Header-sha `85851fb5…`),
+- `docs/paper/hyperscanning-te-method.md` (`coherent-phase`-Null §9.5/§11/§12, plus die gemessene 360-min-Cap §9.3/§11),
 - `src/weberin.rs` (`ReceiverWorldline` als deklarierte Weltlinie der Gaia-Reduktion, `observer` → `receiver`, in der Provenienz geechot, Tests),
-- `tools/measure/src/bin/gaia_sso_weave_probe.rs` (`--receiver` + `--receiver-kind` Pflicht, ohne Deklaration refused).
+- `tools/measure/src/bin/gaia_sso_weave_probe.rs` (`--receiver` + `--receiver-kind` Pflicht, ohne Deklaration refused),
+- `tools/measure/src/bin/hyperscanning_group_te.rs` (Surrogat-Shard `--shard <i>/<n>` + `--shard-out`, `--merge`, Test `shard_merge_equals_monolithic`; `cargo check` 0 Fehler/Warnungen),
+- `.github/workflows/hyperscanning-te.yml` (`shards`-Input, Matrix-`screen` über `shard`, `merge`-Job),
+- `AGENTS.md` (Regel „Ein Dispatch = ein begrenzter Schritt", separat committet `c9919033b`).
 
 `state/operator-gespraeche/2026-10-06-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
 
 Fremde uncommittete Hünke (gemessen 2026-10-06 F236, unberührt): `opencode.json`
-(voice-Flotte), `phi/sources.φ`, `src/archivar/emm_exi.rs`, `src/archivar/units.rs`.
-`cargo check` ist im geteilten Baum fremd-rot (`src/archivar/emm_exi.rs:117`,
-in Arbeit einer anderen Linie) — kein eigener Hunk; die F235-Pfade waren zum
-F235-Zeitpunkt grün.
+(voice-Flotte), `src/mathematikerin/te.rs`. Der eigene Bin-Baum ist `cargo check`-grün
+(`cargo check -p omegaflow-measure --bin hyperscanning_group_te --all-targets`).
