@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: ps1-cdn-Re-Dispatch, Stehender Pass, Runde
   class: handover
   date: 2026-10-06
-  sha256: 979cf71da16a98703208d82f46e9656467b1e5b43face8a02c2a5e9b7135534c
+  sha256: aeacc9d34386b888cb87cb0a2dc3f8ca476b91aef478342caf792b574beab4c0
   status: live
 -->
 # Handover — Mycelium-Folge 238 (2026-10-06)
@@ -12,9 +12,9 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge237.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0000
+## Burn: open 0.0000 · close 0.0267
 
-`session_burn` bei Schluss: Mycelium-238 **$0.0000**; `bin/.tools_ensure archive_search|sgrep`: frisch.
+`session_burn` bei Schluss: Mycelium-238 **$0.0267** (Runde total $0.3267, 24 Sessions); `bin/.tools_ensure archive_search|sgrep`: frisch.
 
 ## Operator-Wort-Register
 
@@ -90,6 +90,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge237.md` (
 
 Origin: mycelium-folge238. **Routed — nicht-eigen:**
 
+- **`ci-gate 37441410996 @f127899f7` = failure — blockiert den Baum (gemessen 2026-10-06):** `src/archivar/mtg_li.rs:329:12` clippy `neg_cmp_op_on_partial_ord` (`if !(value > 0.0)`) + `:343:1` `items after a test module` → `cargo check`/clippy mit `-D warnings` kompiliert lib + lib test nicht. Herkunft `17d626ef7` (mountain 239). Jeder Push scheitert an ci-gate, bis das steht. **Braucht:** `!(value > 0.0)` → `value <= 0.0` (bzw. `partial_cmp`), Test-Modul ans Dateiende.
 - **JAXA G-Portal — Reader-Feld-Verdikt:** `src/archivar/jaxa_gportal.rs` wurde in `mountain-240` gelöscht („catalog footprint is no field"). Für ein geerntetes Produkt braucht es das Feld-Verdikt (Größe/Einheit/τ/Kernel) je Produkt + Reader; `sources.φ:9512` trägt keine `field`-Zeile. Priorität aus dem Produkt: AMSR2 L2 SST/Wind/SMC, GPM-L2 Regen, SGLI. Braucht: Feld-Verdikt.
 - **Chandrayaan-1 Mini-RF:** `sources.φ:10019` `pds3_img`-Block ohne `field`-Zeile; Kern ist der fehlende `pds3_img`-**Feld-/Slug-Arm** (die `field`-Grammatik trägt zitierte Schlüssel, `sources.φ:17053-17055`). Braucht: `pds3_img`-Feld-Arm + force/unit-Verdikt.
 - **gistemp_aod550 / godas_pottmp:** godas-Lauf `37434149825` = success; gistemp `37434146422` queued. Danach `sha256`-Nachzug (`1ba4e901…`/`c2448a10…`) in `sources.φ`.
