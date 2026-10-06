@@ -221,6 +221,7 @@ pub mod units;
 pub mod uvfits;
 pub mod uws;
 pub mod viking_grav;
+pub mod wdc_ae;
 pub mod wqp_result;
 pub mod zcta;
 
