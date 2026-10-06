@@ -3,7 +3,7 @@
   session: Mountain-Folge 247
   class: handover
   date: 2026-10-06
-  sha256: 023f208ec5abc7bc1823b18a7e8d459925bb11427893c9878a2b48a88c39be7d
+  sha256: 6d4359d7b5cbfe0227f9a5bb76767453695fae0d6bb6cf29c3d1d759205cbc7e
   status: live
 -->
 # Handover — Mountain-Folge 247 (2026-10-06)
@@ -61,6 +61,7 @@ Wort | Datum | Quelle
 „du kannst claude nochmal versuchen" — Claude (Sonnet 5.5) als letzte Frontier-Stimme einholen | 2026-10-06 | Operator (Session, Mountain 246)
 „bitte umsetzen" — Kp-Entscheidung: kein Peer-Feld/Treiber; Register-Riss binden, Wege benennen | 2026-10-06 | Operator (Session, Mountain 246)
 „bitte setze die drei arme um" — die drei serienlosen Vlies-Arme (`omni_imf_bz_gsm_nt`, `eve_1032_line_irradiance`, `eve_131_line_irradiance`) am `.bin` wiren | 2026-10-06 | Operator (Session, Mountain 247)
+„bitte setze das um:" — die offenen Punkte der eigenen Übergabe (terms, Vlies-Felder, Live-Bias, Membran-Epoche, Newell-Wiring, Exposom §A, OSHA, CI-Träger ghsl/vnp46a3, DE440-sha256) in einem Pass | 2026-10-06 | Operator (Session, Mountain 247)
 
 ## Offen (aufgeschlüsselt)
 
@@ -125,82 +126,45 @@ Wort | Datum | Quelle
 
 ### Exposom-Matrix §A — gegen den Baum korrigiert (future-183/184)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Messung
+- **Trigger:** keine — Bau
 - **Lage:** (gemessen 2026-10-06, Mountain 246) §A von `docs/surveys/survey-2026-10-04-exposom-matrix.md`
   neu gemessen (`archive_search --verdict`; Header-sha jetzt `056ef300…`): Wasser/Lärm/Grünraum/gebaute
   Umwelt sind **live** (`sources.φ:18339/9559/9493/17519`), Ernährungsumfeld (USDA FARA
   `declined_sources.φ:4880`) und Chemikalien (Exposome-Explorer `:1984`) **declined** — die alten
   `pending`-Zeilen waren gegen den Baum veraltet (Riss, benannt).
-- **Blockade:** neue Kandidaten (`cdr.eionet.europa.eu` 206, `download.geofabrik.de` 206,
-  `ads.atmosphere.copernicus.eu` 200/Key, `blackmarble.gsfc.nasa.gov` 200) ohne deckenden Arm.
-- **Braucht:** je neuen Kandidaten Compiler + Arm bauen, dann eine Zeile in `phi/sources.φ`; ohne
-  Arm keine `url`/`format`-Zeile.
-
-### Körperdaten — `terms`-Direktive + Manifestations-Gate (river-110, gefaltet)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau
-- **Lage:** (gemessen 2026-10-06, river-folge107) Jedes CDN-gespiegelte Körpermesswert-Asset trägt
-  eine redistributions-erlaubende Lizenz, aber keine Register-Zeile nennt sie: `openneuro.org`
-  (ds005034/ds007471/ds007822) = **CC0**; `physionet.org` (`bidsleep_mehrnacht.bin`) = **ODC-BY 1.0**;
-  `ieeg.org` bleibt entfernt.
-- **Blockade:** keine.
-- **Braucht:** (1) `terms <license> <url>` je Körperdatenzeile; (2) Parser-Arm für `terms`
-  (`src/archivar/parse.rs`, heute still ignoriert); (3) `unbacked_mirror`
-  (`src/gate/commit_gate.rs:2039`) verschärfen.
-
-### DE440-Register — fehlende `sha256`-Zeilen (river-110, gefaltet)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** `pages-deploy 37489805784` rot (`sha256 mismatch for ephemeris_de440_earth.bin`) |
-  gemessen 2026-10-06, river-folge110
-- **Lage:** (gemessen 2026-10-06, river-folge110) Die drei `ssd.jpl.nasa.gov-de`-Anker-Assets
-  (`phi/sources.φ:3810-3819`) tragen keine `sha256`-Zeile; der `de_compiler`-Output wurde
-  2026-10-06T13:25Z neu hochgeladen (`earth 5554915d…`/`sun 093b3ab5…`/`moon d9b40917…`,
-  `archive_search --sniff`), der Pin in `docs/specs/cdn_reconciliation.json` steht noch auf
-  `adc990bc…`. **Der Pin ist fremd-uncommittet im Baum** (`docs/specs/cdn_reconciliation.json`).
-- **Blockade:** der neue Pin muss die gemessenen sha256 tragen; `docs/specs/cdn_reconciliation.json`
-  liegt fremd-geändert — nicht von Mountain gehalten.
-- **Braucht:** gemessene `sha256`-Direktive je `ssd.jpl.nasa.gov-de`-Zeile, damit `pages-deploy`
-  nicht auf einen Hand-Pin angewiesen ist; Reconcile-Pin durch den Cutter nachziehen (Mycelium).
-
-### Vlies-Matrix — zwei fehlende Register-Felder (river-110, gefaltet)
-- **Status:** eigen | **Bindung:** eigen | parallel, nicht blockierend
-- **Trigger:** keine — Bau
-- **Lage:** (gemessen 2026-10-06, river-folge107) Für `vlies_matrix.te` fehlen als `field`-Zeile:
-  **Newell dΦ/dt** (`bz_retro_probe.rs:431` rechnet es) · **Kp** `magnetosphere_kp_3h` (heute `last`).
-  EEG ds007822/ds007471: Feldname ungemessen (CC0, s.o.).
-- **Blockade:** keine.
-- **Braucht:** je eine `field`-Zeile, dann als Knoten in die Matrix.
-
-### Live-Bias `port.rs` (river-110, gefaltet)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau
-- **Lage:** (gemessen 2026-10-06, river-folge110) `src/archivar/port.rs:348-354` **rät** den Rahmen:
-  `at sun` (349), `on earth 0 0 0` (351), `on earth {lat} {lon} {alt}` (354) — derselbe
-  `on earth`/`at sun`-Default, den `frames.rs` unter `dcc3243f8` verlor (aus `35ff0dfe8`, 2026-09-17).
-  Verstößt gegen Q3 des Agnosis-Verdikts („Inferenz verboten, Deklaration erlaubt").
-- **Blockade:** keine.
-- **Braucht:** den fehlenden Rahmen als `pending`/`refused` materialisieren, nie raten.
-
-### Membran-Sonne-Anker — Epochen-Riss (river-110, gefaltet)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Verdikt
-- **Lage:** (gemessen 2026-10-06, river-folge110) `static/membrane.html:37` trägt
-  `CATALOG_EPOCH_YR = 2000.0`, das Register `catalog_epoch 2016.0` (`phi/sources.φ`). Der Kommentar
-  benennt es als Riss.
-- **Blockade:** keine.
-- **Braucht:** Mountains Verdikt, welcher Epoche der Sternkatalog gilt.
+  **Kandidaten neu gemessen (Mountain 247, `archive_search --verdict`/`--sniff`):** `cdr.eionet.europa.eu`
+  206 (Landing = Repository-Index, konkrete Deliverable-URL nicht aufgelöst; XML, neuer obligations-
+  spezifischer Parser) · `download.geofabrik.de` 206 (`monaco-latest.osm.pbf` 691550 B, **OSM PBF**,
+  kein vorhandener Arm — `sgrep pbf --root src` = 0) · `ads.atmosphere.copernicus.eu/api/retrieve/v1/processes/`
+  200 (prospektiver Nachbar des CDS-Arms `src/archivar/copernicus.rs:228`, Dataset-ID + ADS-Key ungemessen)
+  · `blackmarble.gsfc.nasa.gov` 200.
+- **Blockade:** jeder Kandidat braucht einen **neuen Parser** (Eionet-XML / OSM-PBF / ADS-API), keiner
+  ist aus einem vorhandenen Arm ableitbar.
+- **Braucht:** je Kandidat ein eigener begrenzter Bau (neuer Parser + Compiler + Arm), dann eine Zeile
+  in `phi/sources.φ`; ohne Arm keine `url`/`format`-Zeile.
 
 ### CI-Träger (Stehender Pass, Mycelium-243 — Mountains Zeilen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau
-- **Lage:** (gemessen 2026-10-06, `state/zustand/standing-pass.md`) **`ghsl-cdn 37459107131` =
-  failure** — `0 raster bytes against the 432002x213822x2 grid — the arm reads no common grid`.
-  **`vnp46a3-cdn 37459111673` = failure** — `vnp46a3_compiler` meldet `no measured VNP46A3 cell left
-  the harvest — the bin stays unwritten (0 honored)`. **`openmeteo-pollen-cdn 37459099065` =
-  success**, die `sha256`-Zeile in `phi/sources.φ:17511` offen.
-- **Blockade:** keine.
-- **Braucht:** `ghsl`-Raster-Arm; `format black_marble_vnp46a3_nightlight`-Arm; `sha256`-Zeile für
-  `openmeteo-pollen`.
+- **Trigger:** `ghsl-cdn 37459107131` / `vnp46a3-cdn 37459111673` rot
+- **Lage:** (gemessen 2026-10-06, Mountain 247 — Diagnose aus Log + Baum)
+  **`ghsl`:** `parse_tiff` liefert leere `pixels`, weil Tag 284 (`PlanarConfiguration`) ≠ 1
+  (`src/archivar/tiff.rs:1028`/`1109-1111`); der Raster-Fehler `ghsl_compiler.rs:322-326` ist die Folge.
+  Zusätzlich ist der globale 432002×213822×2-Raster als Ganzes nicht materialisierbar
+  (`decode_strips` `Vec::with_capacity(total)` ≈ 172 GiB, `tiff.rs:191`) — die eigentliche Wand;
+  `--stride 300` kürzt nur den Output, nicht die Allokation. Der `format ghsl_built_s`-Reader existiert
+  (`extract.rs:851-853`).
+  **`vnp46a3`:** der Arm existiert bereits (`geo.rs:53/82`, `extract.rs:847-850`) — die Handover-Zeile
+  `Braucht: format black_marble_vnp46a3_nightlight` war **stale**. Die Ursache war die SDS-Auswahl:
+  `find_value` ignorierte `--label` und nahm das erste `looks_nightlight`-SDS in Sortierordnung
+  (`…Snow_Covered` vor `…Snow_Free`) → alle Zellen fielen durch `keep_value`. **Gebaut (Mountain 247):**
+  `find_value`/`per_cell_records` wählen jetzt das SDS über den normalisierten `--label`
+  (`vnp46a3_compiler.rs`), Qualitäts-/`_Num`-Layer ausgeschlossen; `--label` fließt in die Auswahl.
+  **`openmeteo-pollen`:** `sha256`-Zeile gesetzt (`phi/sources.φ`, `42a7f2f8…`).
+  **`DE440`:** die drei Anker tragen jetzt `sha256` (`earth 5554915d…`/`moon d9b40917…`/`sun 093b3ab5…`).
+- **Blockade:** `ghsl` = die Materialisierung des Ganz-Rasters (Streaming/`tiles/*.zip` nötig);
+  der `PlanarConfiguration`-Fix allein würde die 172-GiB-Allokation freilegen, darum nicht isoliert gesetzt.
+- **Braucht:** `ghsl`-Raster strip-weise sampeln (oder die `…/V1-0/tiles/GHS_BUILT_S_…_R*_C*.zip`-Kacheln
+  mit `--stride` mergen); `vnp46a3`-Lauf erneut dispatchen und lesen.
 
 ## An mycelium
 
@@ -241,21 +205,35 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und
-Push. **Dieser Commit:** die drei serienlosen Vlies-Arme sind am `.bin` verdrahtet (der
-Verifikations-Lauf misst es) —
+Push.
+
+**Atom 1 (Commit `b28115cc3` + Move `7cdaa9fbe`):** die drei serienlosen Vlies-Arme —
 `omni_imf_bz_gsm_nt` aus `omni2_serie.bin` (die live CDDIS-HAPI-Quelle `phi/sources.φ:597`
 lieferte `status 1201 OK - no data for time range`, OMNI-Delay; `try_source` löst jeden Feldnamen
 gegen alle deklarierten Quellen auf), `eve_1032`/`eve_131` aus `eve_lines_2011.bin` (der
 DIODE-Record comp 100 verwarf zuvor die ganze Datei). Handover-Fortschreibung, folge246 → `archiv/`.
-Eigene Pfade: `src/archivar/eve.rs`, `tools/measure/src/bin/field_te_query.rs`,
+
+**Atom 2 (dieser Commit):** `sha256`-Direktiven für die drei DE440-Anker + `openmeteo_birch_pollen`
+(`phi/sources.φ`); Live-Bias `port.rs` — kein synthetisierter Rahmen mehr, der fehlende Rahmen wird
+benannt (`refused`), nie geraten; Membran-Epoche `CATALOG_EPOCH_YR 2000 → 2016` (Gaia DR3, Mountains
+Verdikt); `vnp46a3_compiler` SDS-Auswahl über `--label` (der `format`-Arm existierte bereits — die
+Handover-Zeile war stale).
+
+**Gemessener Riss (river-110 stale):** der Punkt „Körperdaten `terms`-Direktive" war bereits durch
+Mountain 245 (`e8a4699a7`) erledigt — `terms`-Zeilen in `phi/sources.φ` (openneuro CC0 / physionet
+ODC-BY) und der `unbacked_mirror`-Gate stehen. river-folge110 trug eine stale folge107-Zeile; der
+Baum gewinnt (Operator-Wort 2026-09-28).
+
+Eigene Pfade (Atom 1 + 2): `src/archivar/eve.rs`,
+`tools/measure/src/bin/field_te_query.rs`, `src/archivar/port.rs`, `static/membrane.html`,
+`tools/harvest/src/bin/vnp46a3_compiler.rs`, `phi/sources.φ`,
 `docs/handover/handover-2026-10-06-mountain-folge247.md`,
 `docs/handover/archiv/handover-2026-10-06-mountain-folge246.md` (Move). Verifikation:
 `cargo check` 0/0; `cargo build -p omegaflow-measure --bin field_te_query` 0/0;
-`field-te-query.yml 37496266461` dispatcht (in flight; Ausgang `unread` — der nächste Pass liest
-`ci_manage view 37496266461`). Der Wort-Schnitt liegt lokal in
+`cargo build -p omegaflow-harvest --bin vnp46a3_compiler` 0/0. Der Wort-Schnitt liegt lokal in
 `state/operator-gespraeche/2026-10-06-mountain.md` (`/state/` ist gitignored).
 
-**Verifikations-Trigger (nächster Mountain-Pass):** `field-te-query.yml 37496266461` lesen; das
-`matrix-vlies`-Job-Log muss `arms measured 15 of 15` melden (statt 12 of 15) — die zwei `eve`-Arme
-aus `eve_lines_2011.bin`, `omni_imf_bz_gsm_nt` aus `omni2_serie.bin`. Meldet es 12 of 15, ist ein
-Riss gemessen, kein Erfolg behauptet.
+**Verifikations-Trigger (nächster Mountain-Pass):**
+- `field-te-query.yml 37496266461` lesen; das `matrix-vlies`-Job-Log muss `arms measured 15 of 15`
+  melden (statt 12 of 15). Meldet es 12 of 15, ist ein Riss gemessen.
+- `vnp46a3-cdn` + `ghsl-cdn` erneut dispatchen und lesen (siehe CI-Träger-Abschnitt).

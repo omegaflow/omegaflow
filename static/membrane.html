@@ -34,10 +34,12 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
 // with `wasm-pack build --target web --release` and copied next to this page.
 // Loaded dynamically so a missing bundle stays an honest black, not a blank page.
 
-const CATALOG_EPOCH_YR = 2000.0;       // Riss: the register declares catalog_epoch 2016.0
-                                       // (phi/sources.φ:17466); this page carries 2000.0. The
-                                       // value is Mountain's verdict — not silently aligned.
-const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the catalog epoch on UNIX
+const CATALOG_EPOCH_YR = 2016.0;       // Gaia DR3 reference epoch (dr3_stars.bin).
+                                       // The register declares catalog_epoch 2016.0
+                                       // (phi/sources.φ, dr3_stars.bin) — Mountain's
+                                       // verdict, applied 2026-10-06 (was 2000.0).
+const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the query time origin
+                                       // on UNIX (distinct from the catalog epoch)
 // No fixed world span: the receiver's span is what has arrived (the loaded
 // sources' bounding radius). The scale follows the reception, never a constant.
 // The body anchors (phi/sources.φ:3450-3469, `at earth|moon|sun`); each staged
