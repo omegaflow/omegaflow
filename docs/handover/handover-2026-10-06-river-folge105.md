@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 65903c1590ad47c90c96d872c83bd1085e78ab10a29013075dbeb74eac5aa7db
+  sha256: 4eef83fdd828590aff5138625d15437675599e81d48504df9a82b7bd27d4b3da
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -239,20 +239,23 @@ Atom-Plan: Dispatch 0 (Epoch-/Ordnungs-Messung) → Dispatch 1 (B, `src/wasm.rs`
 Epoch-Riss (2000.0 vs 2016.0) wird **vor** C gemessen, nie gesetzt. Dispatch 0 + 1 + 2 sind
 gebaut; D und C stehen mit Triggern.
 
-## Incident 2026-10-06 — lokaler Baum an eine Schwarm-Stimme (gemessen, benannt)
+## Incident 2026-10-06 — lokaler Baum an eine Schwarm-Stimme (gemessen an der DB)
 
-Operator-Wort: ein lokaler `archive_search --root` erreichte eine Schwarm-Stimme; der Operator
-hat die Laufzeit-Freigabe versehentlich erteilt. **Mechanik:** per-Agent-`permission` überschreibt
-top-level (`opencode.json` Doku; die Voice-Profile tragen `bash "*": "deny"` mit nur
-`archive_search_public`/`voice_read_full` erlaubt) — die Freigabe lief also über den
-instanz-weiten `approved`-Satz, der zuletzt evaluiert (AGENTS: „never answer 'always' to a bash
-ask outside the written maps — `approved` is instance-shared and evaluates last, so it would
-cross profiles"). **Guard-Stand:** die Profile + die Wrapper (`bin/archive_search_public`
-verweigert `--root`/`--index`/`--git`/`--leads`/…, `bin/voice_read_full` liest nur den
-`/tmp`-`--all`-Spill) verweigern lokal bereits strukturell; die Lücke ist die Laufzeit-Freigabe,
-kein Config-Defekt. **Folge:** die Schwarm-Antworten dieser Runde (Architektur A–E) sind
-**kontaminiert** — nicht als Messung verwendet; die Fragen bleiben offen. Keine Wiederholung
-ohne sichere Freigabe.
+Operator-Wort: „die agenten haben archive search root genutzt und ich habe es aus versehen
+erlaubt". **DB-Messung** (`/home/johannes/.local/share/opencode/opencode.db`, `part.data` ×
+`session.agent`): **kein** Voice-Agent hat je einen lokalen Read **ausgeführt** — von den
+Voice-`bash`-Calls mit Status `completed` sind **alle** `archive_search_public` (538 Aufrufe,
+netz-only); kein einziges lokales Kommando. Die realen `archive_search … --root` (voice-nemotron
+2026-10-06 10:07:38 + 10:07:43, voice-ling 10:08:01 ×3) = **error** („a rule which prevents …");
+die `_public --root`-Versuche = Wrapper-Refusal oder „command not found"; `ls`/`find`/`fd`/
+`sgrep`/`sread` = denied. **Browser-Lücke (eigener Vektor):** die Voice-Profile verbieten
+`playwright_*`, aber **nicht** `browser_*`; voice-dots/voice-gptoss riefen `browser_open`/
+`browser_eval`/`browser_snapshot` — nur auf öffentlichen URLs (artificialnouveau.com, Wikipedia),
+kein lokaler Abfluss. **Freigaben sind nicht persistiert** (`permission` leer, `event` kennt nur
+`message`/`session`) → „wie oft erlaubt" ist aus der DB nicht messbar; der gemessene Effekt ist
+**0 lokale Reads**. **Guard:** die Regel hielt; **Braucht:** `browser_*` (und jede Tool-Klasse,
+die die Voice-Profile nicht nennen) als `deny` in jedes Voice-Profil (`opencode.json`); greift
+nach opencode-Neustart.
 
 ## An mycelium
 
@@ -292,4 +295,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.2059 · cap 0.3 Grund: zwei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-Behandlung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.2059; Runde total 0.5318 → 1.0916; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.2508 · cap 0.3 Grund: zwei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-DB-Messung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.2508; Runde total 0.5318 → 1.1674; gemessen 2026-10-06
