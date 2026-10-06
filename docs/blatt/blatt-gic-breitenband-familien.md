@@ -1,5 +1,5 @@
 <!--
-  title: BLATT — GIC-Breitenband-Familien: die Vorregistrierung der Kohärenz-Partition
+  title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
   sha256: 5c90b499a1fcd36434f3048beffb6c02b94c357871f42696add8d2629623d1df
