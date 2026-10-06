@@ -1,12 +1,22 @@
 use crate::archivar::fits::{FitsHeader, FitsImage, FitsTable};
 use crate::archivar::inflate;
 
-pub const COMP_RADIANCE: u32 = 0;
+pub const COMP_COUNT: u32 = 0;
 
 pub fn component_name(comp: u32) -> Option<&'static str> {
     match comp {
-        COMP_RADIANCE => Some("emm_exi_radiance"),
+        COMP_COUNT => Some("emm_exi_count"),
         _ => None,
+    }
+}
+
+fn bunit_declares_count(bunit: Option<&str>) -> bool {
+    match bunit {
+        None => true,
+        Some(s) => {
+            let t = s.trim().to_ascii_lowercase();
+            t.contains("dn") || t.contains("count")
+        }
     }
 }
 
@@ -104,6 +114,9 @@ fn sci_mean(doc: &[u8]) -> Option<(f64, f64)> {
             if img.dims[0] == 0 || img.dims[1] == 0 {
                 return None;
             }
+            if !bunit_declares_count(header.str_unescaped("BUNIT").as_deref()) {
+                return None;
+            }
             let (sum, count) = sum_finite(doc, &img);
             if count == 0 {
                 return None;
@@ -122,7 +135,7 @@ pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let mut out = Vec::new();
     for doc in fits_members(bytes)? {
         if let Some((t, mean)) = sci_mean(&doc) {
-            out.push((t, mean, COMP_RADIANCE));
+            out.push((t, mean, COMP_COUNT));
         }
     }
     if out.is_empty() { None } else { Some(out) }
@@ -143,7 +156,7 @@ mod tests {
         card
     }
 
-    fn synth() -> Vec<u8> {
+    fn synth_with_bunit(bunit: Option<&str>) -> Vec<u8> {
         let mut buf: Vec<u8> = Vec::new();
         let mut primary: Vec<u8> = Vec::new();
         primary.extend_from_slice(&card("SIMPLE", "T"));
@@ -163,6 +176,9 @@ mod tests {
         sci.extend_from_slice(&card("NAXIS1", "2"));
         sci.extend_from_slice(&card("NAXIS2", "2"));
         sci.extend_from_slice(&card("EXTNAME", "'SCI'"));
+        if let Some(b) = bunit {
+            sci.extend_from_slice(&card("BUNIT", &format!("'{b}'")));
+        }
         sci.extend_from_slice(&card("END", ""));
         while !sci.len().is_multiple_of(2880) {
             sci.extend_from_slice(&[b' '; 80]);
@@ -179,10 +195,16 @@ mod tests {
 
     #[test]
     fn sci_mean_reads_date_obs_and_pixel_mean() {
-        let doc = synth();
+        let doc = synth_with_bunit(Some("Calibrated DN"));
         let (t, mean) = sci_mean(&doc).unwrap();
         assert_eq!(t, iso8601_unix("2023-01-05T12:21:15").unwrap());
         assert_eq!(mean, 2.5);
+    }
+
+    #[test]
+    fn sci_mean_refuses_a_non_count_bunit() {
+        let doc = synth_with_bunit(Some("W/m2/sr/um"));
+        assert!(sci_mean(&doc).is_none());
     }
 
     #[test]

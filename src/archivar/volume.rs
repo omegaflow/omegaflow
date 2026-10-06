@@ -152,6 +152,7 @@ pub struct Volume {
     pub axes: [Axis; 3],
     pub data: Vec<f32>,
     pub mask: Vec<u8>,
+    pub frame_body: Option<String>,
 }
 
 impl Volume {
@@ -371,6 +372,7 @@ impl Volume {
             ],
             data,
             mask,
+            frame_body: None,
         })
     }
 }
@@ -407,6 +409,7 @@ mod tests {
             axes,
             data,
             mask: vec![0; 2],
+            frame_body: None,
         }
     }
 
@@ -590,6 +593,7 @@ mod tests {
             axes,
             data,
             mask: vec![0; 2],
+            frame_body: None,
         };
         assert_eq!(v.sample_at([100.0, 1.0, 10.0]).unwrap(), v.cell(1, 1, 0));
     }

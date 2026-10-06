@@ -316,6 +316,7 @@ fn main() {
         axes,
         data: out_data,
         mask: vec![0u8; cells.div_ceil(8)],
+        frame_body: None,
     };
     let bin = volume.write_bin();
 
@@ -355,6 +356,7 @@ fn main() {
                 depth_key,
                 depth_scale: 1.0,
                 name: stem.to_string(),
+                frame_body: None,
             }],
             headers: Vec::new(),
             post_body: None,

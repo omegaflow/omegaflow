@@ -869,17 +869,22 @@ impl OmegaLoop {
         let Some(vol_u_buf) = self.vol_u_buf.clone() else {
             return;
         };
-        let p = self.pos();
-        let geo = crate::archivar::icrs_to_body_geodetic(
-            p[0],
-            p[1],
-            p[2],
-            self.t_presence,
-            "earth",
-            &field.eph,
-        );
-        let (depth, lat, lon, valid) = match geo {
-            Some((la, lo, d)) => (d as f32, la as f32, lo as f32, 1.0f32),
+        let body = field.volumes.iter().find_map(|v| v.frame_body.as_deref());
+        let (depth, lat, lon, valid) = match body {
+            Some(body) => {
+                let p = self.pos();
+                match crate::archivar::icrs_to_body_geodetic(
+                    p[0],
+                    p[1],
+                    p[2],
+                    self.t_presence,
+                    body,
+                    &field.eph,
+                ) {
+                    Some((la, lo, d)) => (d as f32, la as f32, lo as f32, 1.0f32),
+                    None => (0.0, 0.0, 0.0, 0.0),
+                }
+            }
             None => (0.0, 0.0, 0.0, 0.0),
         };
         let count = field.volumes.len() as f32;
