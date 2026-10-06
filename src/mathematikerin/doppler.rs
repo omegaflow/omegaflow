@@ -93,13 +93,13 @@ pub fn doppler_dz(gm_m3_s2: f64, b_m: f64) -> Option<f64> {
 
 pub fn impact_parameter(
     asteroid_icrs: [f64; 3],
-    observer_icrs: [f64; 3],
+    receiver_icrs: [f64; 3],
     star_unit: [f64; 3],
 ) -> Option<f64> {
     let d = [
-        asteroid_icrs[0] - observer_icrs[0],
-        asteroid_icrs[1] - observer_icrs[1],
-        asteroid_icrs[2] - observer_icrs[2],
+        asteroid_icrs[0] - receiver_icrs[0],
+        asteroid_icrs[1] - receiver_icrs[1],
+        asteroid_icrs[2] - receiver_icrs[2],
     ];
     let n =
         (star_unit[0] * star_unit[0] + star_unit[1] * star_unit[1] + star_unit[2] * star_unit[2])
@@ -120,12 +120,12 @@ pub fn impact_parameter(
 
 pub fn doppler_residual(
     rec: &AsteroidRec,
-    observer_icrs: [f64; 3],
+    receiver_icrs: [f64; 3],
     star_unit: [f64; 3],
     t_jd: f64,
 ) -> Option<DopplerResidual> {
     let (pos, _vel) = dastcom::state_at(rec, t_jd)?;
-    let b = impact_parameter(pos, observer_icrs, star_unit)?;
+    let b = impact_parameter(pos, receiver_icrs, star_unit)?;
     let gm = rec.gm_km3_s2 as f64 * 1.0e9;
     let dz = doppler_dz(gm, b)?;
     Some(DopplerResidual {
