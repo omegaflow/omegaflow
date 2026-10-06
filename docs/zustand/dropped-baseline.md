@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: 9e25228d1af2949b076eb5fd47c5497b1195f058fc45044ea1df566c759042a9
+  sha256: 65413540cd9514c20cc1b87fc99388fe5fc7ef96386394290e9ec13ac58c553d
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1217
+dropped-baseline 1224
+measured 2026-10-06 (Mycelium-Folge 236, ci-gate 37429979869 @045711091 dropped-gate: baseline 1217 | current 1224 | delta 7. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1217 — die Atom-Abschlüsse/Runden 2026-10-06 (river-98, sensory-235). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-06 (Mycelium-Folge 235, ci-gate 37428430221 @dcc3243f8 dropped-gate: baseline 1195 | current 1217 | delta 22. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1195 — die Atom-Abschlüsse/Runden 2026-10-05/06 (mountain-238, river-97, sensory-234). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-05 (Mycelium-Folge 234, ci-gate 37327990225 @a9b95a057 dropped-gate: baseline 1144 | current 1195 | delta 51. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1144 — die Atom-Abschlüsse/Runden seit 2026-10-04. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-04 (Mycelium-Folge 228, ci-gate 37166323740 @a064896a4 dropped-gate: baseline 1141 | current 1144 | delta 3. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1141 — die Atom-Abschlüsse der Runde 2026-10-03/04 (mycelium-227, river-87, mountain-229, sensory-227). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
