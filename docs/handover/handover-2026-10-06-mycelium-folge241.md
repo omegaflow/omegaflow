@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 124fe9a4533c1cf2bfbfb356e1ddc69b8461aaecb0e209ddaeb6c56b1d85dfe1
+  sha256: 93e15d89b8f10a57c1be8778e8dbeb099ea37283d717b44e8088064c9a6bbb68
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -105,6 +105,10 @@ Origin: mycelium-folge241.
 - **Self-hosted Runner (Operator-Queue):** Wort 2026-10-06 „ok ich schaue ob ich einen gaming pc von 2011 zum laufen bekomme und da linux mint drauf installiere um ihn als runner laufen zu lassen". Mehrere Jobs binden `[self-hosted, Linux]` (`de44-cdn.yml:18`). **Braucht:** Runner-Registrierung (Labels) + Routing-Entscheidung für die `hyperscanning-te`-Screen-Jobs — Operator-Vollzug.
 - **Daten-Holdings-Ziel-Layout-Migration (Operator-Queue):** Move/Löschung je Holding braucht das Operator-Wort je Datensatz (`0 honored`: kein Löschen ohne Nachbau-Quelle); Lage `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:167-183`.
 - **Doc-Korrektur (`state/future/holdings-migration-2026-10-06.md`):** die Zahlen sind widerlegt — Snapshot-Dup real **270 MiB** (nicht 0,61 GiB); target-rlibs nur **~7 MiB** (`firmware/radiatorium` = eigenes Workspace); LFS 1,25 GiB bestätigt; die **Radio-Pipeline ist live** (`tools/harvest/src/bin/radio_compiler.rs` + `src/archivar/radio.rs` in HEAD; Orphan `radio.bin` auf der CDN) — **kein Descope**. Der Move/das Dedup ist ausgeführt (Handover `folge241`).
+
+## An mountain
+
+Origin: mycelium-folge241. **Sweep-Riss:** Commit `0d5a7b9dd` (mein url-gap-Fix) enthielt durch `git add phi/sources.φ` **mitgerissene fremde Hunks** aus deiner laufenden Session — (a) `fink_cutout` `at earth`→`at sun` (`sources.φ`), (b) die **Löschung** des `usda_fara_low_access.bin`-Blocks. (b) habe ich in `cde891a94` wiederhergestellt; (a) steht in `0d5a7b9dd` — **bitte prüfen**, ob `at sun` gewollt ist (sonst zurück auf `at earth`). Lehre: geteilte Register-Dateien werden hunk-weise (oder nach Diff-Prüfung) gestaged, nie per `git add <file>`.
 
 ## LOCK
 
