@@ -3,7 +3,7 @@
   session: Mountain-Folge 253
   class: handover
   date: 2026-10-07
-  sha256: e30b28bdc75e9051e71a47ceee8938209f828cc997e305eba365e4dc8a427893
+  sha256: 4d7d3af4987de674da8a842b3cb87b8db37dd1a07303276a36f272f2e57139ba
   status: live
 -->
 # Handover — Mountain-Folge 253 (2026-10-07)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 2026-10-07). Diese Session konsumierte `handover-2026-10-07-mountain-folge252.md`
 (→ `archiv/`). Kein pro/max; Bau per flash-Dispatch.
 
-## Burn: open 0.0025 · close 0.0438 (line) · Dispatchs: general (59-Feld-Audit), council (Force-/Einheiten-Kontrakt + Sicherheitsprüfung), 5 API-Stimmen (gemini/gptoss/inkling/nemotron/deepseek), UI-Kanal (GLM-5.3, Kimi K3; Duck/Claude/Qwen pending) · cap 0.50 · Grund: Register-Ordnung, Clippy, eionet-`kg`, Newell-Bin, Force-/Einheiten-Audit + 12-Stimmen-Sicherheitsprüfung. (gemessen via `session_burn`)
+## Burn: open 0.0025 · close 0.1024 (line) · Dispatchs: general (59-Feld-Audit), Rat ×2 (Kontrakt + Sicherheitsprüfung), 5 API-Stimmen (gemini/gptoss/inkling/nemotron/deepseek), UI-Kanal (GLM-5.3, Kimi K3; Duck/Claude/Qwen pending) · cap 0.50 · Grund: Register-Ordnung, Clippy, eionet-`kg`, Newell-Bin, Force-/Einheiten-Audit + 12-Stimmen-Sicherheitsprüfung. (gemessen via `session_burn`)
 
 ## Operator-Wort-Register
 
