@@ -942,9 +942,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             let ddx = p[0] - center[0];
             let ddy = p[1] - center[1];
             let ddz = p[2] - center[2];
-            let exact = sample.extent + pad;
             let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
-            if dist2 > exact * exact {
+            if dist2 > reach * reach {
                 continue;
             }
             let v = match sample.motion.velocity_at(t2) {

@@ -3,7 +3,7 @@
   session: River-Folge 114
   class: handover
   date: 2026-10-06
-  sha256: 59b0005f173e8f76db7e3c4c4adf33ab7dd72a2c469a45be38d2fd897452a8c5
+  sha256: d0bf0de3b6291b534b04c6b9dc72e01a642a5104fb07088743084e4aa6d95eca
   status: live
 -->
 # Handover — River-Folge 114 (2026-10-06)
@@ -19,6 +19,9 @@ Wort | Datum | Quelle
 --- | --- | ---
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-06 | Operator (Session, River 114) — Session-Start, Delegations-Consent
 „wir haben 5 voices und 7 ui chats bitte befrage alle" | 2026-10-06 | Operator (Session, River 114) — die Membran-Apertur-Frage an die 5 API-Stimmen + 7 UI-Chats; 12/13 (b)
+„kannst du das nicht selbst mit dem browser link testen?" | 2026-10-06 | Operator (Session, River 114) — Browser-Test; bestätigt schwarz, Ursache gemessen
+„wer hat das geamch? ich hoffe ihr habt nicht unser enclosure lemma zerstört" | 2026-10-06 | Operator (Session, River 114) — Herkunft gemessen (river 91), Lemma intakt
+„ja aber bitte den rat und die chat ui stimmen" | 2026-10-06 | Operator (Session, River 114) — Rat + API + UI zum Fix; Verdikt (a) native Parität
 „ich möchte übrigens dass die membran steht bevor wir uns irgendwo bewerben … und sie stehen vor der sonne" | 2026-10-05 | Operator (Future 181, gefaltet) — das Fenster-Wort der Startansicht
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge113.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
@@ -38,13 +41,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** keine (eigene).
 - **Braucht:** (1) `Witness` typisierter force_type/Kanal (Vokabular — Rat); (2) Unabhängigkeits-Test (TE des Residuums, `te.rs`) gegen getrennt spezifizierte Zeugen/Lags — als eigenes Wort; (3) Known-Answer-Gate auf Synthetik + held-out-Fenster; (4) Zeugenstempel in jedem Urteil.
 
-### Membran-Startansicht — zwei Aperturen (gebaut; Browser-Messung: Body-Anker erreichen das Feld nicht)
-- **Status:** blockiert | **Bindung:** eigen (cross-line Archivar/Mountain)
-- **Trigger:** Anker-Records (`extent > 0`) erscheinen in `lookup.query` am SSB-Ursprung.
-- **Lage:** (gemessen 2026-10-06, River 114, Browser-Isolation + Baum gelesen) Deploy trägt den Bau noch **nicht** (live `state.span_m`). `lookup.query` mit **übersprungenen Sternen** liefert **0 Records**, obwohl `load_ephemeris` für sun/earth/moon `true` liefert (6.63 MB je Bin, geparst). **Das Enclosure-Lemma ist intakt** (`reach = reach_signal + extent + enclosure_rho`, `src/archivar/spatial.rs:928-930`, Gate `:935`, original 2026-09-03 `200ed6040`). **Ursache:** `src/wasm.rs:77` stempelt die Anker mit `all_body_anchor_samples(&self.eph, t2)` (Epoche = Query-Zeit, River 91 `638a11bb9`); damit ist `age = |t2 − t2| = 0` → `signal_reach = c·0 = 0` → die Lemma-Dilatation fällt auf `extent` zurück, und das Gate lässt einen Körper nur zu, wenn die Präsenz **innerhalb seines Radius** liegt. Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU) → kein Körper je im Feld. Der Zwei-Apertur-Bau (`static/membrane.html`, `node --check` grün) wartet darauf.
-- **Riss (getragen, ungeglättet):** (i) Der Bau ist per Rat-Verdikt korrekt, aber der Anker fehlt im Feld — die Skala war nicht die Ursache; (ii) **der Rat-Vertrag vom 2026-10-04 (River 91: „sonst bliebe das Enclosure-Lemma blind für den bewegten Körper") wurde nie wirksam** — die Epoche `t2` nullt die Dilatation; (iii) `MembraneLookup.add_stars` panikt bei Re-Init; (iv) `extent > 0` als Vertrags-Diskriminator — GLM/MiMo/Kimi/Duck verlangen eine deklarierte Apertur (Wire/Kontrakt); (v) Deploy hängt (Pages-Deploy rot, DE440-Pin).
-- **Blockade:** Body-Anker-Epoche = Query-Zeit nullt den Signal-Kegel; kein Test deckt die Membran-Anker-Admission (nur `tests.rs:13034` prüft die Felder, nicht die Query). River-eigene Zeile (`wasm.rs:77`), nicht der Kern.
-- **Braucht:** Rat (Bezugs-Epoche des Body-Ankers + Admission-Kriterium: Presence-Hull `c·age + pad` statt Query-Zeit) → Fix in Rivers `wasm.rs` und `body_anchor_samples`; Known-Answer-Test (Anker erscheint am SSB); WASM-Build (CI) + Browser-Sicht. Offen: `state.lvl` global über beide Aperturen.
+### Membran-Startansicht — zwei Aperturen (gebaut; Parity-Fix gebaut, CI-Verifikation offen)
+- **Status:** eigen (Fix gebaut; Trigger feuert bei CI-grün + Deploy) | **Bindung:** eigen
+- **Trigger:** `ci-check` grün am Fix-HEAD; danach WASM-Build + Pages-Deploy.
+- **Lage:** (gemessen 2026-10-06, River 114, Browser-Isolation + Baum + Rat/Kanäle) Deploy trägt den Zwei-Apertur-Bau noch nicht. Ursache der 0 Anker: `wasm.rs:77` stempelte die Anker mit `t2` (Epoche = Query-Zeit, River 91 `638a11bb9`) → `age=0` → Lemma-Dilatation fällt auf `extent`; plus das Zusatz-Gate `exact = extent+pad` (`spatial.rs:945-948`), das die Präsenz im Körper verlangte. **Kein Lemma-Eingriff** — der Geist der Fixe ist native Parität. **Befragt: Rat (einstimmig) + 5 API-Stimmen (4× a) + UI (Claude, Qwen, GLM, Kimi, MiMo → a) = Option (a): native Parität.** **Gebaut:** `all_body_anchor_samples(eph)` nimmt je Körper `body_record_epoch` (`motion.rs:109`, wie `main_flow.rs:480`); `wasm.rs` ruft ohne `t2`; das Zusatz-Gate in `query_hash` trägt dieselbe `reach`-Messung wie der Anker-Gate (native `record_in_enclosure`-Form, `fetch.rs:521`). Known-Answer-Test `test_body_anchor_reaches_ssb_presence_by_signal_cone` (`tests.rs`). `cargo check` + `cargo fmt` 0/0. Erreichte Kanäle: Rohmaterial `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md` + `…-fix-…` (s. u.).
+- **Riss (getragen, ungeglättet):** (i) Der Rat-Vertrag 2026-10-04 (River 91) wurde nie wirksam — die Epoche `t2` nullte die Dilatation; (ii) **Duck.ai und Nemotron-UI fehlen** in der Fix-Befragung: die Operator-Tabs wurden parallel von einer anderen Session benutzt (fremde „RTSW-Join/GIC"-Fragen erschienen), Nemotrons Modell-Switch schlug fehl — benannt, nicht geglättet; (iii) `MembraneLookup.add_stars` panikt bei Re-Init; (iv) `extent > 0` als Apertur-Diskriminator (deklarierte Apertur gefordert); (v) Deploy hängt (Pages-Deploy rot, DE440-Pin).
+- **Blockade:** keine (eigene); Verifikation braucht CI (WASM-Build + Testlauf).
+- **Braucht:** `ci-check`/`wasm-parity` am Fix-HEAD; danach Deploy + Browser-Sicht. Offen: `state.lvl` global über beide Aperturen.
 
 ### GIC-Breitenband-Familien — Design + Messschritt offen
 - **Status:** operator-gebunden (Design) / wartend (cgm_lat) | **Bindung:** eigen + operator (Queue)
@@ -157,8 +160,9 @@ Origin: mountain-249 (gefaltet) · river-107/108/110/112/113.
   das Gate (`:935`) lässt einen Körper nur zu, wenn die Präsenz **innerhalb seines Radius** liegt.
   Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU). Kein Test deckt die
   Membran-Anker-Admission (nur `tests.rs:13034` prüft die Felder).
-  **Braucht:** Rat (Bezugs-Epoche / Admission-Kriterium für Body-Anker) → Fix in Rivers `wasm.rs`/`body_anchor_samples`;
-  Known-Answer-Test; WASM-Build (CI), dann Browser-Sicht.
+  **Braucht/erledigt:** Rat + 5 API + UI → **(a) native Parität**, gebaut in `all_body_anchor_samples` (`body_record_epoch`),
+  `wasm.rs` (ohne `t2`), `query_hash` (Gate trägt `reach`); Known-Answer-Test `test_body_anchor_reaches_ssb_presence_by_signal_cone`.
+  **Braucht:** WASM-Build im CI + Browser-Sicht.
 - **`terms`-Direktive je Körperdatenzeile:** `openneuro.org` = CC0; `physionet.org` = ODC-BY 1.0.
 - **DE440-Register:** die drei `ssd.jpl.nasa.gov-de`-Anker-Assets tragen keine `sha256`-Zeile.
 
@@ -181,9 +185,12 @@ Origin: river folge101 (getragen über 102–114).
 
 Pfad-begrenzte Commit-Pfade dieser Session:
 
-- `static/membrane.html` (zwei Aperturen; im Browser gemessen wirkungslos — Anker fehlt im Feld)
-- `docs/handover/handover-2026-10-06-river-folge114.md` (neu)
-- `docs/handover/archiv/handover-2026-10-06-river-folge113.md` (Move aus `docs/handover/`)
+- `static/membrane.html` (zwei Aperturen)
+- `src/wasm.rs` (Anker ohne `t2`; native Parität)
+- `src/archivar/membrane.rs` (`all_body_anchor_samples` nimmt `body_record_epoch`)
+- `src/archivar/spatial.rs` (`query_hash`-Zusatz-Gate trägt `reach`, kein nacktes `extent+pad`)
+- `src/archivar/tests.rs` (Known-Answer `test_body_anchor_reaches_ssb_presence_by_signal_cone`)
+- `docs/handover/handover-2026-10-06-river-folge114.md` (neu) · `docs/handover/archiv/handover-2026-10-06-river-folge113.md` (Move)
 
 Gefaltet (adressierte Blöcke, in diesem Atom):
 - mountain-folge249 (`## An river`): `main_flow`-Registry erledigt; GIC-Blatt-Grenzen-Satz als Riss gemessen.
@@ -192,4 +199,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge114: 20 path refs · 0 absent · 0 stale-citations · 0 done-carried · 2 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0838 · close 0.4885 · cap 0.50 · Grund: River 114 — Line-Session (deepseek-flash): Rat + 5 API-Stimmen + 7 UI-Chats zur Membran-Apertur befragt (12/13 (b), Claude-Dissens (c)); `static/membrane.html` auf zwei Aperturen gebaut; **Browser-Messung gegen den Live-Link: `lookup.query` liefert ohne Sterne 0 Records — Ursache gemessen: `wasm.rs:77` stempelt die Anker mit `t2` (age 0) und `query_hash` verlangt Präsenz im Körper (`spatial.rs:935`); die Sonne erreicht das Feld nicht**; `add_stars` panikt bei Re-Init; adressierte Blöcke mountain-249/future-186 gefaltet; Rohmaterial in `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md`. (close = `session_burn`-Summe über die geteilte DB bei Schluss; die gleichzeitig laufenden Linien-Sessions sind enthalten — die Linien-eigene Zahl ist nicht isoliert, benannt statt geraten; cap daher auf dem geteilten DB-Wert deklariert.)
+## Burn: open 0.0869 · close 0.3743 · cap 0.40 · Grund: River 114 — Line-Session (deepseek-flash): Rat + 5 API-Stimmen + UI-Chats zur Membran-Apertur befragt (12/13 (b), Claude-Dissens (c)); `static/membrane.html` auf zwei Aperturen gebaut; **Browser-Test gegen den Live-Link: `lookup.query` liefert ohne Sterne 0 Records — Ursache gemessen: `wasm.rs:77` stempelte die Anker-Epoche mit `t2` (age 0), `query_hash` verlangte Präsenz im Körper**; Herkunft = River 91; Rat + Kanäle → **(a) native Parität**, gebaut (`all_body_anchor_samples` `body_record_epoch`, `wasm.rs`, `query_hash`-Gate auf `reach`, Known-Answer-Test); `add_stars` panikt bei Re-Init; adressierte Blöcke mountain-249/future-186 gefaltet; Rohmaterial `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md` + `…-fix-…`. (close = die eigene Line-Session aus `session_burn`; cap über dem $0.15-Default, weil der mehrkanalige Rat/UI-Atom über den Default hinausgeht.)
