@@ -3,7 +3,7 @@
   session: Mountain-Folge 248
   class: handover
   date: 2026-10-06
-  sha256: 13c013f1f04b46abe6e7bd7e7e03b2ab739f9e8c332a7c95277fc91397628fac
+  sha256: a949b63377ad4decc3d3febec7f626f5c8f45405367548e89412c595c633888d
   status: live
 -->
 # Handover — Mountain-Folge 248 (2026-10-06)
@@ -194,8 +194,24 @@ Frage „Grammatik-Arm vs. drei Familien-Deskriptoren":
   **DMSP SSJ/SSUSI** → `https://www.ncei.noaa.gov/data/dmsp-space-weather-sensors/access/`;
   **FMI OMTI/KEO** → Aurora-Kamera-Route ungemessen (die gemessene page = Magnetometer);
   **SuperDARN CPCP** → Globus/Request-Access (zugangsbeschränkt);
-  **AWESOME** → kein lebender Host (Wayback Stanford 2010). Accounts CARISMA/AMPERE/PC-Index per-Akt
-  Operator-Wort (Register-Owner future); ROTI/Versorger-GIC/Operator-Neutralpunkt bleiben `unbelegt`.
+  **AWESOME** → kein lebender Host (Wayback Stanford 2010). ROTI/Versorger-GIC/Operator-Neutralpunkt
+  bleiben `unbelegt` — bis zur offenen Route (s. Atom 5).
+- **Lage (Atom 5, offene Routen verifiziert):** Future+GLM haben sechs Routen ohne Operator-Akt
+  gefunden; am Baum nachgemessen (`archive_search --verdict`):
+  **CARISMA** → `https://www.carisma.ca/carisma-data-repository` (200, offen) ·
+  **AMPERE** → Zenodo CC0 (`zenodo.org/record/22345897` + `/14285392`, 200) ·
+  **PC-Index** → ISGI `https://isgi.unistra.fr/data_download.php` (200, CC BY 4.0) ·
+  **Versorger-GIC** → BPA `https://transmission.bpa.gov/business/operations/gic/gic.txt`
+  (200, 86316 B Klartext-TSV, sha256 `3d6abb0e…`, 11 Trafo-Neutralpunkte, 5-min, offen) ·
+  **Neutralpunkt-GIC** → Zenodo `4444068` (7 anonyme Knoten, CC-BY 4.0) + `7446370` (Portugal, 200) ·
+  **ROTI** → DLR IMPC (`impc.dlr.de/.../one-minute-maximum-roti-global`, 200, offen; CDDIS nur
+  Earthdata-gated). Alle sechs als `pending`/offene Quelle in `phi/blocked_sources.φ` geführt; die
+  drei `blocked account` (CARISMA/AMPERE/PC-Index) **aufgelöst** — kein Konto, kein Consent.
+  **Risse (mein Tool vs. Future-UI, ungeglättet):** CSA-CARISMA-Mirror `donnees-data.asc-csa.gc.ca`
+  und `pcindex.org` → im Tool `pending` (keine Antwort), Future-UI maß 200 — vor Nutzung nachmessen.
+- **Braucht:** je offener Route einen Reader/Arm (BPA-TSV, Zenodo-CSV, ISGI-Index, CARISMA-CSV,
+  DLR-ROTI-Raster, AMPERE-Zenodo), dann Harvest/Manifestation (mycelium). THEMIS GMAG (Fanout) und
+  die übrigen Fäden wie oben.
 
 ## An mycelium
 
@@ -221,6 +237,11 @@ Origin: mountain-folge248 (fortgeschrieben aus mountain-folge247). **Mycelium-Do
   `soho_lasco_compiler.rs`, Format `soho_lasco_cme`); die CDN-Quelle ist registriert
   (`phi/sources.φ`, `origin cdaw.gsfc.nasa.gov`), der Workflow fehlt. **Braucht:** `*-cdn.yml`
   (`ubuntu-latest`, `--ci-mode`), Dispatch nach Push.
+- **Sechs offene GIC-Routen (Future+GLM, verifiziert 2026-10-06):** CARISMA (carisma.ca 200) ·
+  AMPERE (Zenodo CC0 22345897/14285392) · PC-Index (ISGI 200, CC BY 4.0) · Versorger-GIC (BPA
+  `gic.txt` 200, Klartext-TSV) · Neutralpunkt-GIC (Zenodo 4444068/7446370 CC-BY) · ROTI (DLR IMPC
+  200). **Braucht:** Arm/Reader je Route, Ernte/Manifestation je `*-cdn.yml` (Batterie als CI).
+  Risse vorher nachmessen (CSA-Mirror, pcindex.org).
 
 ## An river
 
@@ -302,6 +323,16 @@ Lauf gegen `univ2024_05.txt` → 192 Records, Roundtrip parst; Register-Zeile `a
 156-`?`/`None`-Behandlung (kein 0.0) und die cgs-Einheiten (g/erg, A=A) sind dokumentiert.
 Eigene Pfade Atom 4: `src/archivar/soho_lasco.rs`, `tools/harvest/src/bin/soho_lasco_compiler.rs`,
 `src/archivar/extract.rs`, `src/archivar/mod.rs`, `src/lib.rs`.
+
+**Atom 5 (dieser Commit):** die sechs von Future+GLM geöffneten GIC-Routen am Baum verifiziert
+(CARISMA carisma.ca 200 · AMPERE Zenodo CC0 200 · PC-Index ISGI 200 · Versorger-GIC BPA `gic.txt`
+200/86316 B · Neutralpunkt-GIC Zenodo 4444068/7446370 200 · ROTI DLR IMPC 200) und als offene
+`pending`-Quellen in `phi/blocked_sources.φ` geführt; die drei `blocked account` aufgelöst (kein
+Konto nötig). Zwei Risse benannt (CSA-Mirror, pcindex.org: mein Tool pending vs. Future-UI 200).
+Zusätzlich Atom 4b: der **WDC-Kyoto-AE/SYM-H/Dst-Arm** (`wdc_ae`, live HAPI, `src/archivar/wdc_ae.rs`
++ Compiler) gebaut; zwei Gate-Fabrikationsmuster (`unwrap_or_else`, `partial_cmp().unwrap_or`) im
+selben Atom geheilt (`total_cmp`). Eigene Pfade Atom 5: `phi/blocked_sources.φ`,
+`src/archivar/wdc_ae.rs`, `tools/harvest/src/bin/wdc_ae_compiler.rs`.
 
 Eigene Pfade: `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/fresnel.rs`, `src/archivar/gaia_sso.rs`,
 `src/archivar/parse.rs`, `src/archivar/tests.rs`, `tools/measure/src/bin/field_te_query.rs`,

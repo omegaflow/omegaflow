@@ -148,17 +148,29 @@ url https://cedar.openmadrigal.org
 gap html-parser-arm
 note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
 
-blocked account
-url https://data.carisma.ca/
-note CARISMA (subauroral Kanada, GIC-Replikation §A) — 2026-10-06: HTTP 403, Registrierung nötig; Arm: Magnetometer.
+pending
+url https://www.carisma.ca/carisma-data-repository
+note CARISMA (subauroral Kanada, GIC-Replikation §A) — 2026-10-06: offene Route carisma.ca/repository 200 (kein Konto); CSA-Mirror donnees-data.asc-csa.gc.ca im Tool pending (Riss, Future-UI 200 — nachmessen). Arm: Magnetometer.
 
-blocked account
-url https://ampere.jhuapl.edu/download/
-note AMPERE/Iridium FAC (GIC-Mediator §B) — 2026-10-06: /download/ 200, /data/ 401; Registrierung nötig.
+pending
+url https://zenodo.org/record/22345897
+note AMPERE/Iridium FAC (GIC-Mediator §B) — 2026-10-06: Zenodo CC0 (Record 22345897/14285392) 200, JHU/APL-Login vermeidbar; Arm: Zenodo-Datei-Reader.
 
-blocked account
-url https://pcindex.org/
-note PC-Index DTU/AFWA (GIC-Driver §C) — 2026-10-06: TLS-Zert. abgelaufen (curl 000, mit -k 200), Download registrierungsgebunden.
+pending
+url https://isgi.unistra.fr/data_download.php
+note PC-Index (GIC-Driver §C) — 2026-10-06: ISGI-Route 200 (CC BY 4.0), kein Konto; pcindex.org + pcindex.space.dtu.dk im Tool pending (Riss). Arm: Index-Parser.
+
+pending
+url https://transmission.bpa.gov/business/operations/gic/gic.txt
+note BPA-Utility-GIC (GIC-Zielkanal §F) — 2026-10-06: HTTP 200, 86316 B Klartext-TSV sha256 3d6abb0e…, 11 Trafo-Neutralpunkte, 5-min, offen (kein Konto); Arm: Text-TSV-Reader.
+
+pending
+url https://zenodo.org/record/4444068
+note Neutralpunkt-GIC (Kellerman 2021, GIC-Zielkanal §F) — 2026-10-06: Zenodo 200, 7 anonyme Knoten, CC-BY 4.0; +7446370 (Portugal) 200; Arm: Zenodo-CSV-Reader.
+
+pending
+url https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
+note ROTI (GIC-unabhängige Observable §D) — 2026-10-06: DLR IMPC 200 (offen); CDDIS nur Earthdata-gated; Arm: ROTI-Raster/Nagoya-Route.
 
 pending
 url https://themis.igpp.ucla.edu/gmag/
