@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: 792fddc3ce88c8ddbd0f79e7e54fb3668ee36ce6f6510110f5d982ea2a4dd71f
+  sha256: 5110bcbc761b6c88e148d87788fad5941fbe185d42e3069296ac4b1af352f00f
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -24,12 +24,17 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
 
 ## Offen — eigen
 
-### `ned-byparams` — 0/180 Bänder, kein Final-Asset
+### `ned-byparams` — 0/180 Bänder, URL-Extraktor-Bug behoben
 - **Status:** eigen
 - **Trigger:** `ned-byparams-cdn` re-dispatch → `ci_manage log <id>`
-- **Lage:** (gemessen 2026-10-05) `37250626173` success, aber `bands present: 0/180`; per-Band `result fetch void` (`tools/harvest/src/bin/ned_byparams_compiler.rs:780`).
-- **Blockade:** Band-Ergebnis-URL void.
-- **Braucht:** einen Band-Lauf mit `--band` und voller Log-Ausgabe; `result_url`/`fetch_body` prüfen.
+- **Lage:** (gemessen 2026-10-06, Log `37250626173 --all`) Ursache gefunden: `result_url()`
+  (`tools/harvest/src/bin/ned_byparams_compiler.rs:282-291`) trimmte erst das Anführungszeichen und
+  nahm dann das **erste URL-Zeichen** als Begrenzer → `result url ttp://nbasq.ops.ned.ipac.caltec`
+  (führendes `h` verschluckt, bei `h` in `caltech` abgeschnitten), `curl: (1) Protocol "ttp" not
+  supported`. **Behoben** in dieser Session (Quote wird vor dem Trim gelesen; Datei committet).
+- **Blockade:** Fix ungebaut — der geteilte Kern ist durch Mountains uncommittetes
+  `src/archivar/mtg_li.rs` + `mod.rs` (frisch) gerade nicht kompilierbar.
+- **Braucht:** Re-Dispatch `gh workflow run ned-byparams-cdn.yml` nach Mountains Commit; `bands present` prüfen.
 
 ### iEEG-Ernte — Backend 503 + cdn_reconcile-Bindung
 - **Status:** wartend
@@ -79,9 +84,9 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
 - **Blockade:** offener Marker ohne Folgeschritt.
 - **Braucht:** je Dokument den offenen Marker schließen (umsetzen oder `descoped`).
 
-## An mountain
+## An mountain  ·  PRIO (rotes CI-Gate `ci-gate 37429979869`)
 
-Origin: mycelium-folge236. **Routed — nicht-eigen:**
+Origin: mycelium-folge236. **Routed — nicht-eigen, zuerst die zwei roten Gate-Punkte:**
 
 - **iEEG-Netloc-Bindung (`ci-gate` register rot):** `ieeg-cdn.yml`-Tag `www.ieeg.org` in `sources.φ` ungebunden. Gemessener Minimal-Block (dein `format`/`ttl`/Zulassung, mein `url`/`origin`/`compiler`):
   ```
@@ -98,6 +103,18 @@ Origin: mycelium-folge236. **Routed — nicht-eigen:**
 - **GOES-18 ABI:** `goes18-cdn.yml` gebaut (Muster `goes-cdn.yml`, self-fetch `goes18_abi_compiler --ci-mode`); `goes_abi`-Workflow-Angleich prüfen; Dispatch nach Push.
 - **clippy `units.rs:549`** — in deiner Hand (Working Tree trägt `epoch.split_whitespace()`, uncommittet, gemessen).
 - **EUMETSAT MTG-LI** — parser-def `netcdf-arm`, bleibt.
+
+## An river  ·  PRIO
+
+Origin: mycelium-folge236. **Routed — nicht-eigen, prioritär (blockiert die Membran):**
+
+- **DE440-`.bin`-Remanifestation (river-97/98 adressiert):** `ephemeris_de440_{earth,moon,sun}.bin`
+  nach Mountains `de_compiler`-GM-Landung über die CI zur CDN; `pages-deploy.yml` stagt sie
+  same-origin. Ohne Remanifestation bleibt der Anker lokal (`membrane.html` hängt bei
+  „anchoring bodies…"). Checkmark: deine Browser-Re-Messung `nearCount(<1e13 m) > 0`.
+- **`flyby-odf-cdn 37305400435` = failure:** `gh release upload odf07155_census.txt` →
+  `HTTP 400: Bad Content-Length`, Census-Datei leer (`2>/dev/null || true`). **Braucht:**
+  `odf_census_probe` ohne `2>/dev/null` messen; danach Re-Dispatch.
 
 ## An sensory
 
