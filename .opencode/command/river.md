@@ -46,7 +46,8 @@ Braucht**; **LOCK nur im `LOCK`-Abschnitt**; Header-sha256 via `omega_sh sha <da
 Übergabe nach `archiv/`.
 
 **River besitzt die Membran-Pfade** (`main_flow`, `omega.rs`-Feld, Window/Gaze). Architektur-/Ethik-
-Entscheidungen gehen an den Rat, nie in Pro-Solo; kein Fenster-Edit ohne Operator-Wort.
+Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo; kein Fenster-Edit
+ohne Operator-Wort. Die starken UI-Modelle sind ein zweiter Kanal nach dem Rat, nie der Rat selbst.
 
 **Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
 **privat** (nur diese Linie) und liegt in `state/river/archive-search-preset.txt` — hier

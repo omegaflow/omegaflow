@@ -5,6 +5,8 @@ agent: council
 
 The human seeks Council guidance on a design decision for omegaflow.
 
+An architecture/design question is held by **all five voices together** — the lens is the true counter-slope; no single voice, and no single (weak) model, decides it.
+
 Question:
 
  $ARGUMENTS
