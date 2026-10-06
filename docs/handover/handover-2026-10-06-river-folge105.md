@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 12c114b0df5bf74a6fa9163b1ac02f61bc6959ffbc456b582e5c40726cdbd3bb
+  sha256: 4c5db2c22f06579f7009e554e28cb4d4461fe0aef59933de99d61b24fa142141
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -22,6 +22,7 @@ Wort | Datum | Quelle
 „die Membran muss stehen, bevor irgendwo eine Förder-Bewerbung abgeschickt wird … bis `/membrane.html` die Punktwolke rendert (die Sonne als Anker sichtbar)" | 2026-10-05 | Operator (future-folge181, gefaltet)
 „earth-wgs84/legacy-assumed können wir den nicht migrieren ich möchte eigentlich kein legacy haben / deklarieren" — der Volume-Frame ist Pflicht-Deklaration je Quelle, kein Legacy-Bucket, keine Migration | 2026-10-06 | Operator (Session, River 99)
 „kannst du die frage bitte noch den voices und glm und claude online chat geben" — die Ratsfrage zusätzlich an die Schwarm-Stimmen, glm und Claude-online | 2026-10-06 | Operator (Session, River 104)
+„bitte lege die fragen dem rat vor und dem schwarm und gib sie mir davor für den online chat mit claude und glm" — die drei Stemm-Fragen (Membran-Hänger, Paper-Riss, Fenster-Kante) | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -158,6 +159,39 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) `flyby_path2_fill`-Lauf (CI) lesen + Addendum-Zellen fortschreiben;
   (2) OMNI2/kp/JUICE-Trigger feuern lassen; (3) Δ/σ_recon post-flyby.
 
+## Rat + Schwarm 2026-10-06 — Stemmen (Membran-Hänger / Paper-Riss / Fenster-Kante)
+
+Operator-Wort 2026-10-06: die drei Fragen dem Rat + Schwarm vorgelegt und dem
+Operator für den Claude/GLM-Chat gegeben. Stemmen (gemessen 2026-10-06 via `task`
+council + Schwarm-Stimmen):
+
+- **Frage 1 (Membran-Hänger):** Rat **(b)** — der eingefrorene Status ist die fehlende
+  Messung, kein Deadlock; drei Labels rasen auf einer Statuszeile → ein **aggregierter**
+  Zähler (Σgot/Σtotal, eine Zeile), ein **Stall-Kriterium** (keine Bytes über ein aus der
+  gemessenen Chunk-Kadenz abgeleitetes Intervall → „noch keine Bytes", nie 0 %
+  fabriziert), und als Wurzel ein **kleineres/gerange-tes Asset**. Stimmen gespalten:
+  voice-gptoss + voice-nemotron `(a)` (Label je Körper genügt); voice-ling `(b)`
+  (Timeout/AbortController).
+- **Frage 2 (Paper-Riss):** Rat **(a)** — Lesart (i), **kein Riss**: `bias_column`
+  (`field_te_query.rs:2619`) liefert bei `n_eff ≥ TE_NEFF_THRESHOLD` eine adjustierte
+  Spalte; der Report nennt sie selbst „report site only; raw TE untouched" (`:2933`);
+  „reported value" = die rohe TE, die unangetastet bleibt → Papier korrekt, höchstens
+  eine präzisierende Formulierung, die die Bias-Spalte beim Namen nennt. Mehrheit `(a)`
+  (voice-nemotron, eine weitere); voice-gemini + voice-gptoss `(b)`.
+- **Frage 3 (Fenster-Kante):** Rat **(b)** — `static/membrane.html` ist eigener
+  Membran-Pfad, **autonom editierbar**: die Kante liegt an der **Wirkung** (ein natives
+  Operator-Rechner-Fenster öffnen/strahlen, oder den Blick ändern: Framing, Exposure,
+  Zoom, Farbe, Blend), nicht am Dateinamen; der Daten-/Status-Pfad ist Rivers Haus.
+  Stimmen gespalten: voice-gemini `(b)`; voice-gptoss + voice-ling `(c)` (Kante anders:
+  Browser-Asset, aber der Membran-Vertrag bleibt Rivers Domain); voice-nemotron `(a)`
+  (operator-gebunden).
+- **Nicht verfügbar (benannt, kein Polster):** voice-zai (Rate-Limit), voice-zen
+  (Free-Tier-Grenze). Zweiter Versuch gescheitert; kein Polling.
+
+Die Stemmen sind eine **zweite Stimme** (Fund ist eine Behauptung bis zum Baumtest): F2
+trägt die Rat-Lesart am gemessenen Report (`raw TE untouched`). F1 und F3 warten auf das
+Operator-Wort.
+
 ## An mycelium
 
 Origin: river folge101 (getragen über folge102/103/104/105).
@@ -190,4 +224,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.0486 — Session-Burn (`session_burn`: eigene Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.0486; Runde total 0.5318 → 0.6641; gemessen 2026-10-06)
+## Burn: open 0.0000 · close 0.0734 — Session-Burn (`session_burn`: eigene Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.0734, inkl. Rat $0.0064 + Schwarm; Runde total 0.5318 → 0.7278; gemessen 2026-10-06)
