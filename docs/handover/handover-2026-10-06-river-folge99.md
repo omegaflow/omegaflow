@@ -3,7 +3,7 @@
   session: River-Folge 99
   class: handover
   date: 2026-10-06
-  sha256: cd7c6575702ae5081958342764553ebac1d92b40732e85e2b57a528b8403e130
+  sha256: bcf6b7376a2a093a3edcbd9c5bf2220668d980752c52f3c94f76b59dbba53555
   status: live
 -->
 # Handover — River-Folge 99 (2026-10-06)
@@ -121,6 +121,11 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   2026-10-06:** kein `legacy`/`earth-wgs84`-Bucket, keine Migration — der Frame ist eine
   **Pflicht-Deklaration je Quelle** (`Extract::Volume`/`phi/sources.φ`); fehlt sie → `refused`.
   Kein Laufzeit-Default, kein Legacy-Label.
+  **Gemessen (2026-10-06):** 10 `format volume`-Quellen, **alle** tragen bereits `at earth`
+  (8 EMC: AFRP20/AFRP22/BBNAP19/CAP22/GYPSUMP/GYPSUMS/GYPSUM_percent/TX2019slab; 2 Tomographie:
+  LLNL_G3D_JPS/S40RTS) — **keine Quellen-Korrektur nötig**; der Fix ist der Code: `Extract::Volume`
+  (`types.rs:232`) trägt kein Body-Feld → das deklarierte `at <body>` aufnehmen (`parse.rs:346`),
+  `omega.rs:878` konsumiert es statt des Literals.
   Offen: (a) `static/membrane.html:43` `const BODIES = ["earth","moon","sun"]` →
   Build-Time-Manifest aus der Hüllen-Pipeline (Kante: kein Fenster-Edit; Mycelium/CI stagt);
   (b) `src/mathematikerin/omega.rs:878` hart `"earth"` → deklarativer Rahmen.
