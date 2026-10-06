@@ -3,7 +3,7 @@
   session: River-Folge 106
   class: handover
   date: 2026-10-06
-  sha256: 9c00d9885fdf4fc178b54438a1851076dc8e60454cb53f60e4db2be4ae8f2e6d
+  sha256: 0b5920ecc26568a8d618e4e1ba66e9f798ce110db73b282c6595c3d1e5c46574
   status: live
 -->
 # Handover — River-Folge 106 (2026-10-06)
@@ -84,12 +84,14 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:**
   (2) **gebaut (River 106):** `binned_n_eff` (`src/mathematikerin/te.rs`) liefert die mittlere
   Besetzung nicht-leerer Joint-Zellen; der binned-Arm des `te_bias_n_probe` emittiert
-  `binned_n_eff mean = …`; Test `gate_binned_n_eff_occupancy`. **Offen:** `te-bias-n` Re-Lauf
-  → Besetzung lesen → binned-Floor `TE_NEFF_THRESHOLD_BINNED` setzen + Gate.
+  `binned_n_eff mean = …`; Test `gate_binned_n_eff_occupancy`. **Offen:** Artefakt des
+  dispatchten `te-bias-n 37460626270` lesen → Besetzung → binned-Floor
+  `TE_NEFF_THRESHOLD_BINNED` setzen + Gate.
   (3) **gebaut (River 106):** `--estimator conditional` im Probe (`transfer_entropy_ksg_conditional_n`,
   dim 3+1, lag 1, k 4, Konditionsreihe = unabhängige AR(1), **kein** Phase-Surrogat);
-  Workflow `te-bias-n.yml` um `POINT te-bias-n-conditional` ergänzt. **Offen:** Re-Lauf → Bias-Tabelle
-  der konditional-eingebetteten Schätzung lesen.
+  Workflow `te-bias-n.yml` um `POINT te-bias-n-conditional` ergänzt. **Offen:** Artefakt des
+  dispatchten `te-bias-n 37460626270` lesen → Bias-Tabelle der konditional-eingebetteten
+  Schätzung.
   (4) 8 probe-Kanäle an den Draht + 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`).
   (5) `ozzy` **auf** der Matrix (`auftrag-universelles-vlies.md` §Lieferung).
 
