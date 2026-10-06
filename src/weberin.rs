@@ -1725,8 +1725,24 @@ impl GaiaFold {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum ReceiverWorldline<'a> {
+    Body(&'a str),
+    ReferencePoint(&'a str),
+}
+
+impl ReceiverWorldline<'_> {
+    pub fn label(&self) -> &str {
+        match self {
+            ReceiverWorldline::Body(name) => name,
+            ReceiverWorldline::ReferencePoint(name) => name,
+        }
+    }
+}
+
 pub struct BodyGaiaVerdict {
     pub name: &'static str,
+    pub receiver: String,
     pub fold: GaiaFold,
 }
 
@@ -1755,6 +1771,7 @@ impl GaiaKepler {
 impl Weberin {
     pub fn weave_gaia_line(
         &self,
+        receiver: ReceiverWorldline,
         dastcom: &[AsteroidRec],
         mpcorb_recs: &[MpcorbRec],
         gaia_bodies: &[GaiaBody],
@@ -1779,12 +1796,14 @@ impl Weberin {
                 (None, None) => {}
                 (None, Some(_)) => verdicts.push(BodyGaiaVerdict {
                     name,
+                    receiver: receiver.label().to_string(),
                     fold: GaiaFold::Absent {
                         line: "mpc-keplerian",
                     },
                 }),
                 (Some(_), None) => verdicts.push(BodyGaiaVerdict {
                     name,
+                    receiver: receiver.label().to_string(),
                     fold: GaiaFold::Absent {
                         line: "gaia-astrometry",
                     },
@@ -1798,12 +1817,18 @@ impl Weberin {
                         let jd = t.tdb / 86400.0 + J2000_EPOCH;
                         let helio = kepler.helio(jd);
                         let sun = body_barycenter_position("sun", t.tdb, sun_map);
-                        let observer = body_barycenter_position("earth", t.tdb, eph);
-                        let (Some(helio), Some(sun), Some(observer)) = (helio, sun, observer)
+                        let receiver_pos = match receiver {
+                            ReceiverWorldline::Body(name) => {
+                                body_barycenter_position(name, t.tdb, eph)
+                            }
+                            ReceiverWorldline::ReferencePoint(_) => Some([0.0; 3]),
+                        };
+                        let (Some(helio), Some(sun), Some(receiver_pos)) =
+                            (helio, sun, receiver_pos)
                         else {
                             continue;
                         };
-                        let Some((pred_ra, pred_dec)) = predicted_radec(helio, sun, observer)
+                        let Some((pred_ra, pred_dec)) = predicted_radec(helio, sun, receiver_pos)
                         else {
                             continue;
                         };
@@ -1821,6 +1846,7 @@ impl Weberin {
                     if seps.is_empty() {
                         verdicts.push(BodyGaiaVerdict {
                             name,
+                            receiver: receiver.label().to_string(),
                             fold: GaiaFold::Unjudgeable {
                                 transits: group.transits.len(),
                             },
@@ -1847,7 +1873,11 @@ impl Weberin {
                             max_sep_arcsec: max_sep,
                         }
                     };
-                    verdicts.push(BodyGaiaVerdict { name, fold });
+                    verdicts.push(BodyGaiaVerdict {
+                        name,
+                        receiver: receiver.label().to_string(),
+                        fold,
+                    });
                 }
             }
         }
@@ -1954,7 +1984,11 @@ mod gaia_tests {
     #[test]
     fn gaia_weave_places_a_kepler_line_within_the_measured_sigma() {
         let (w, rec, bodies) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.0, 0.0), 1.0);
-        let v = w.weave_gaia_line(&[], &[rec], &bodies);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
+        assert_eq!(
+            v[0].receiver, "earth",
+            "the receiver is echoed in the provenance"
+        );
         match fold_of(&v, "quaoar") {
             Some(GaiaFold::Placed {
                 total,
@@ -1973,7 +2007,7 @@ mod gaia_tests {
     #[test]
     fn gaia_weave_risses_when_the_lines_refuse_to_converge_on_sky() {
         let (w, rec, bodies) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.01, 0.0), 1.0);
-        let v = w.weave_gaia_line(&[], &[rec], &bodies);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
         match fold_of(&v, "quaoar") {
             Some(GaiaFold::Riss {
                 total,
@@ -1992,7 +2026,7 @@ mod gaia_tests {
     #[test]
     fn gaia_weave_absent_names_the_gaia_line_when_no_transit_lies_in() {
         let (w, rec, _) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.0, 0.0), 1.0);
-        let v = w.weave_gaia_line(&[], &[rec], &[]);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &[]);
         match fold_of(&v, "quaoar") {
             Some(GaiaFold::Absent { line }) => assert_eq!(line, "gaia-astrometry"),
             other => panic!("the transit-less line reads {other:?}"),
@@ -2002,7 +2036,7 @@ mod gaia_tests {
     #[test]
     fn gaia_weave_absent_names_the_kepler_line_when_no_elements_lie_in() {
         let (w, _, bodies) = weaver_with(&[("earth", [0.0; 3])], [0.0; 3], (0.0, 0.0), 1.0);
-        let v = w.weave_gaia_line(&[], &[], &bodies);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[], &bodies);
         match fold_of(&v, "quaoar") {
             Some(GaiaFold::Absent { line }) => assert_eq!(line, "mpc-keplerian"),
             other => panic!("the element-less line reads {other:?}"),
@@ -2010,21 +2044,37 @@ mod gaia_tests {
     }
 
     #[test]
-    fn gaia_weave_stays_unjudgeable_without_the_observer_ephemeris() {
+    fn gaia_weave_stays_unjudgeable_without_the_receiver_ephemeris() {
         let (w, rec, bodies) = weaver_with(&[], [0.0; 3], (0.0, 0.0), 1.0);
-        let v = w.weave_gaia_line(&[], &[rec], &bodies);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
         match fold_of(&v, "quaoar") {
             Some(GaiaFold::Unjudgeable { transits }) => assert_eq!(transits, 1),
-            other => panic!("the observer-less fold reads {other:?}"),
+            other => panic!("the receiver-less fold reads {other:?}"),
         }
     }
 
     #[test]
-    fn gaia_weave_folds_an_off_axis_observer_position() {
+    fn gaia_weave_reference_point_receiver_needs_no_body_line() {
+        let (w, rec, bodies) = weaver_with(&[], [0.0; 3], (0.0, 0.0), 1.0);
+        let v = w.weave_gaia_line(
+            ReceiverWorldline::ReferencePoint("ssb"),
+            &[],
+            &[rec],
+            &bodies,
+        );
+        assert_eq!(v[0].receiver, "ssb", "the reference point is echoed");
+        match fold_of(&v, "quaoar") {
+            Some(GaiaFold::Placed { .. }) => {}
+            other => panic!("the reference-point fold reads {other:?}"),
+        }
+    }
+
+    #[test]
+    fn gaia_weave_folds_an_off_axis_receiver_position() {
         let sun = [-1.0e11, 0.0, 0.0];
         let (w, rec, bodies) =
             weaver_with(&[("earth", [-1.0e11, 1.0e10, 0.0])], sun, (0.0, 0.0), 1.0);
-        let v = w.weave_gaia_line(&[], &[rec], &bodies);
+        let v = w.weave_gaia_line(ReceiverWorldline::Body("earth"), &[], &[rec], &bodies);
         match fold_of(&v, "quaoar") {
             Some(GaiaFold::Placed {
                 median_sep_arcsec, ..
