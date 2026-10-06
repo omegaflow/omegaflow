@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: cb5afe81486ef130720acf38170276ade1b119975caa836c86349b838abeb4a2
+  sha256: ef130976b10c88440630fd8a5d806333dc392b3ca06f2dcd2b2f2d9d77fd0928
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -49,9 +49,9 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 ### Träger `survey-2026-09-03-orphan-verdicts` — Step 5 CDN-kanonisch
 - **Status:** eigen
 - **Trigger:** je `*-cdn.yml` die Release-Menge aus `phi/sources.φ` lesen
-- **Lage:** (gemessen 2026-09-28/2026-10-06) `docs/surveys/survey-2026-09-03-orphan-verdicts.md:103-151` — 13 Netlocs, deren Release aus ≥2 Workflow-Klassen geschrieben wird; kein `*-cdn.yml` liest seine Release-Menge aus `phi/sources.φ` (einzige gemessene Ausnahme `planetary-odf-cdn.yml:37`).
-- **Blockade:** keine (Schritt ist die Messung/Bindung).
-- **Braucht:** je `*-cdn.yml` die erwartete Release-Menge an `phi/sources.φ` binden (Familien-Identität ins Register; Jahr-/Slab-Menge bleibt Laufzeit-Ableitung).
+- **Lage:** (gemessen 2026-10-06) `:103-151` — 13 Netlocs, deren Release aus ≥2 Workflow-Klassen geschrieben wird. **Erste Bindung umgesetzt:** Helfer `.github/workflows/scripts/register_release_set.sh <netloc>` liest die registrierte Asset-Menge; `de44-cdn.yml` verifiziert damit die 9 registrierten `ssd.jpl.nasa.gov-de`-Assets (`phi/sources.φ:3501-3557`). Übrige 12 Netlocs + probe/register/build-Writer offen (destruktiv).
+- **Blockade:** keine (Schritt ist die Bindung).
+- **Braucht:** je `*-cdn.yml` `register_release_set.sh <netloc>` einbinden; Writer-Angleich (destruktiv) erst nach vollständiger Tag-Prüfung.
 
 ### Träger `survey-2026-09-03-daten-holdings-inventur` — Ziel-Layout-Migration
 - **Status:** eigen
@@ -60,12 +60,12 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 - **Blockade:** Move/Löschung braucht das Operator-Wort je Datensatz (`0 honored`: nichts löschen ohne Nachbau-Quelle).
 - **Braucht:** Operator-Wort je Datensatz (Queue: `## An future`) → Schritt 4/5 Unique-Byte-Move je Holding.
 
-### Register-Träger `ledger.φ:2`/`:6` — Port-Runner verloren
-- **Status:** blockiert
-- **Trigger:** Port-Runner im Baum
-- **Lage:** (gemessen 2026-10-04) `ledger.φ:2` = 825 Blöcke, `:6` = 63; `phi/pipeline/stage/*` leer; der Ausführer war ein nie committeter Working-Tree-Bin; nur der Motor `src/archivar/port.rs`. **Archäologie 2026-10-06:** kein `port*`-Executor in irgendeinem Ref (`git log --all --name-only -- '*port*'`, 1322 Safety-Refs ab 2026-09-15) — nicht aus git rekonstruierbar; Motor `src/archivar/port.rs` (156 KB) + Protokoll `docs/SOURCE_PORT.md` stehen.
-- **Blockade:** Port-Runner verloren (nicht in git).
-- **Braucht:** Bin aus der `port.rs`-API rekonstruieren/committen (Konverter-Spec = Mountain).
+### `ledger.φ:2`/`:6` — Port-Runner (gemessen: vorhanden)
+- **Status:** wartend
+- **Trigger:** Korpus-Input `phi/pipeline/queue/<korpus>.φ` am Datenträger → `omegaflow --port`
+- **Lage:** (gemessen 2026-10-06) Der Runner ist **nicht** verloren: `omegaflow --port <in> <out>` läuft über `port_mode` (`src/archivar/main_flow.rs:732`, `src/archivar/port.rs:625`), dokumentiert (`docs/SOURCE_PORT.md:121`) und in CI benutzt (`port-count.yml:24`). Die frühere Zeile „Port-Runner verloren" war ein **Falschbefund** — die Archäologie suchte einen Dateinamen `port*`; der Runner ist der Core-Bin-Modus. `phi/pipeline/stage/*` leer, aber regenerierbar (`docs/SOURCE_PORT.md:24`).
+- **Blockade:** die Korpus-Eingaben (`phi/pipeline/queue/*.φ`) sind am Datenträger absent (`queue/master.φ` gitignored, `docs/SOURCE_PORT.md:21`).
+- **Braucht:** Korpus-Input wiederherstellen → `omegaflow --port` über die 825/63 Blöcke.
 
 ### `phi/blocked_sources.φ` — Mycelium-Klasse
 - **Status:** je eigen
