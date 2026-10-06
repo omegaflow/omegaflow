@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: die Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 39be3455358b4354ff975e94355984bc3e32cc074ae918440f17f8f0db271b96
+  sha256: 97c60ed103b012d15f068adba452ba94a9ec47b932023852c67d32ebbdccddac
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -135,6 +135,18 @@ Gemeinsamer Nenner: die Partition muss maschinell prüfbar sein (keine `_auroral
 globale Stufe-1-Screen bleibt global. Dissens: **Träger der Partition** (drei Blöcke · Register-Artefakt ·
 Grammatik-Sub-Direktive) und **globales vs. per-Familie-Testen**. **Riss, nicht geglättet** — kein Arm,
 keine Migration ohne Operator-/Rats-Wort; Blatt bleibt `unsealed`.
+
+**Identitäts-Verdikt (Rat, gemessen 2026-10-06) — die Identitätsfrage ist entschieden, der Bau nicht.**
+Der Rat misst im Baum: `family` ist **bereits belegt** (statistische Korrekturfamilie: `TeFamily`/`BH`
+`te.rs`, `acc.fam` `matrix.rs`, `FAMILY_K` `wy_max_t.rs`); die FDR-Scopes sind `matrix|row|col`, kein
+`over family`; eine **gemessene korrigierte geomagnetische Breite je Station existiert nicht**
+(`phi/declined_sources.φ:3328-3340`). **A=A-fest ist Option (c):** das Register trägt die gemessene Breite
+(eigene Größe `cgm_lat`), `family` benennt allein die FDR-Gruppe, die Grammatik trägt nur `fdr … over family`
+(vierter Scope). Drei `matrix gic_auroral full`-Blöcke über verschiedenen Pools sind **drei Messungen**; ein
+`matrix gic full` mit `over family` ist **eine Messung, drei Verdikt-Partitionen** — `gic_auroral` als
+dritter Block ist ein A=A-Bruch. Offen bleiben nur zwei **Design-Entscheidungen des Operators** (Bandgrenzen;
+voller Pool vs. drei Pools) und der **Messschritt**: eine gemessene Breite je Station ins Register (oder
+`pending`).
 
 **Risse (Rat 2026-10-06, ungeglättet):** (1) Stufe 1 globales FDR vs. je-Familie-`fdr`
 — der Blatt-Text konvergiert nicht, beide Linien stehen; (2) globale Kalibrierung (ein
