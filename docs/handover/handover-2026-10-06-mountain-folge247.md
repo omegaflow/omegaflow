@@ -3,7 +3,7 @@
   session: Mountain-Folge 247
   class: handover
   date: 2026-10-06
-  sha256: 775a3bb525e49f9c6f7925a3c117ac254bb680d3f888a73711e0c40bcd5ba209
+  sha256: e7cc91170c10878790c0c7d4c5996e64a484484e8aaa39a34ead1f2adfe8cf7b
   status: live
 -->
 # Handover — Mountain-Folge 247 (2026-10-06)
@@ -159,10 +159,14 @@ Wort | Datum | Quelle
   (`…Snow_Covered` vor `…Snow_Free`) → alle Zellen fielen durch `keep_value`. **Gebaut (Mountain 247):**
   `find_value`/`per_cell_records` wählen jetzt das SDS über den normalisierten `--label`
   (`vnp46a3_compiler.rs`), Qualitäts-/`_Num`-Layer ausgeschlossen; `--label` fließt in die Auswahl.
-  **Verifikationslauf gelesen (`vnp46a3-cdn 37498220129`, 2026-10-06): weiter failure** —
-  `no measured VNP46A3 cell left the harvest` (`VNP46A3.A2026213.h17v01`, h17). Die Label-Auswahl allein
-  war **nicht** die ganze Ursache; welche SDS der Lauf wählt und ob ihre Zellen `_FillValue` tragen, ist
-  **ungemessen** (braucht `--inspect` mit `EARTHDATA_EDL_TOKEN`). Kein Erfolg behauptet.
+  **Verifikationslauf gelesen (`vnp46a3-cdn 37498220129`, 2026-10-06): weiter failure**
+  (`no measured VNP46A3 cell left the harvest`, `VNP46A3.A2026213.h17v01`). **`--inspect` gefahren
+  (Mountain 247, Token):** die SDS-Liste trägt `AllAngle_Composite_Snow_Free` [2400,2400] f32,
+  `_FillValue -999.9`; der normalisierte Label-Match wählt sie korrekt (auch `lat`/`lon` [2400] f64
+  vorhanden) — der Lauf bleibt trotzdem 0 Zellen. Der Granule ist der **CMR-neueste** (`h17v01`,
+  arktische Kachel ≈80°N, DOY 213 = Polartag → keine DNB-Nachtdaten). Die Label-Auswahl ist **richtig**;
+  das **Granule-Auswahl** des Workflows (CMR-newest ohne Nachtdaten) ist der Blocker.
+  Kein Erfolg behauptet.
   **`openmeteo-pollen`:** `sha256`-Zeile gesetzt (`phi/sources.φ`, `42a7f2f8…`).
   **`DE440`:** die drei Anker tragen jetzt `sha256` (`earth 5554915d…`/`moon d9b40917…`/`sun 093b3ab5…`).
   **`pages-deploy 37498181920` = failure, gemessen (Mountain 247):** der Workflow `.github/workflows/pages-deploy.yml:59-62`
@@ -171,10 +175,11 @@ Wort | Datum | Quelle
   `sha256`-Register-Direktiven speisen den Workflow **nicht**; der Pin steht im Workflow (Mycelium).
 - **Blockade:** `ghsl` = die Materialisierung des Ganz-Rasters (Streaming/`tiles/*.zip` nötig);
   der `PlanarConfiguration`-Fix allein würde die 172-GiB-Allokation freilegen, darum nicht isoliert gesetzt.
-  `vnp46a3` = die SDS-/Fill-Messung (`--inspect` + Token) fehlt. `pages-deploy` = der Workflow-Pin.
+  `vnp46a3` = das **Granule-Auswahl** des Workflows (CMR-newest ohne Nachtdaten), nicht der Compiler.
+  `pages-deploy` = der Workflow-Pin.
 - **Braucht:** `ghsl`-Raster strip-weise sampeln (oder die `…/V1-0/tiles/GHS_BUILT_S_…_R*_C*.zip`-Kacheln
-  mit `--stride` mergen); `vnp46a3` `--inspect` fahren (SDS-Liste + `_FillValue`) und die Auswahl danach
-  binden; `pages-deploy.yml:59-62` auf die gemessenen Pins ziehen (Mycelium).
+  mit `--stride` mergen); `vnp46a3-cdn.yml` auf ein Granule mit Nachtdaten ziehen (nicht der CMR-neueste);
+  `pages-deploy.yml:59-62` auf die gemessenen Pins ziehen (Mycelium).
 
 ## An mycelium
 
@@ -187,6 +192,11 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
   einen `*-cdn.yml`-Workflow (`ubuntu-latest`, `--ci-mode`). **Braucht:** Workflow je Arm, Dispatch
   nach Push. (`zcta_gazetteer` blockiert den OSHA-Geocoder im CI-Harvest, wenn das Asset nicht auf
   dem CDN liegt.)
+- **`vnp46a3-cdn.yml` Granule-Auswahl (Mycelium):** der Workflow nimmt den **CMR-neuesten** VNP46A3-
+  Granule (`.github/workflows/vnp46a3-cdn.yml:24-32`); der war `…A2026213.h17v01` (arktisch, Polartag)
+  → `no measured VNP46A3 cell`. Gemessen (Mountain 247, `--inspect`): der Compiler liest/selectet die
+  SDS korrekt; nur das Granule trägt keine DNB-Nachtdaten. **Braucht:** ein Granule mit Nachtdaten
+  wählen (Kachel/Datum), dann `vnp46a3-cdn` dispatchen.
 - **DE440-`pages-deploy`-Pin (Mycelium):** `.github/workflows/pages-deploy.yml:59-62` hard-codet die
   Asset-Pins; sie sind stale. Gemessen (Mountain 247): `ephemeris_de440_earth.bin` want `adc990bc6e1f…`
   → got `5554915dc7c2…`; ebenso moon (`acb42881…` → `d9b40917…`) und sun (`9d059db3…` → `093b3ab5…`).
@@ -248,15 +258,24 @@ Eigene Pfade (Atom 1 + 2): `src/archivar/eve.rs`,
 `cargo build -p omegaflow-harvest --bin vnp46a3_compiler` 0/0. Der Wort-Schnitt liegt lokal in
 `state/operator-gespraeche/2026-10-06-mountain.md` (`/state/` ist gitignored).
 
-**Atom 3 (dieser Commit, Übergabe-Register):** die Verifikationsläufe gelesen und gemessen
+**Atom 3 (Übergabe-Register):** die Verifikationsläufe gelesen und gemessen
 eingetragen — `vnp46a3-cdn 37498220129` weiter **failure** (`no measured VNP46A3 cell left the
 harvest`; Label-Auswahl war nicht die ganze Ursache, SDS-/Fill-Messung offen),
-`pages-deploy 37498181920` **failure** (Workflow-Hard-Pin stale, s. `## An mycelium`),
-`field-te-query 37496266461` in flight.
+`pages-deploy 37498181920` **failure** (Workflow-Hard-Pin stale, s. `## An mycelium`).
+
+**Atom 4 (dieser Commit):** `field-te-query 37496266461` gelesen — **`arms measured 14 of 15`**;
+die zwei `eve`-Arme laden (n = 91), `omni_imf_bz_gsm_nt` blieb pending. **Ursache gemessen:** der
+Matrix-Pfad `load_matrix_arm` nutzte `find_field_source` (nur die **erste** Quelle), nicht die
+Multi-Quellen-Auflösung des `try_source` — darum griff der `omni2_serie.bin`-Kandidat im
+`matrix full`-Lauf nicht, obwohl er im Pair-Pfad lädt. **Gebaut:** `load_field_across_sources`
+auflöst jeden Feldnamen gegen alle deklarierten Quellen; `load_matrix_arm` und die zwei
+Event-Conditional-Driver-Loader laufen darüber. Lokale Probe
+(`matrix probe … channels omni_imf_bz_gsm_nt,intermagnet_dbdt`): **`arms measured 2 of 2`**,
+`cargo build -p omegaflow-measure --bin field_te_query` 0/0.
 
 **Verifikations-Trigger (nächster Mountain-Pass):**
-- `field-te-query.yml 37496266461` lesen; das `matrix-vlies`-Job-Log muss `arms measured 15 of 15`
-  melden (statt 12 of 15). Meldet es 12 of 15, ist ein Riss gemessen.
+- `field-te-query.yml` erneut dispatchen; `matrix-vlies` muss `arms measured 15 of 15` melden
+  (37496266461 maß 14 of 15; der Matrix-Loader-Fix ist in Atom 4).
 - `vnp46a3_compiler --inspect` mit `EARTHDATA_EDL_TOKEN` fahren (SDS-Liste + `_FillValue`), dann die
   SDS-Auswahl binden und `vnp46a3-cdn` erneut dispatchen.
 - `ghsl`-Raster strip-weise sampeln (oder `tiles/*.zip` mergen), dann `ghsl-cdn` dispatchen.
