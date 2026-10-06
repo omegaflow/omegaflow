@@ -3,7 +3,7 @@
   session: River-Folge 109
   class: handover
   date: 2026-10-06
-  sha256: 093ef9dcae189e7ed904ec54f0e0d3120458e5a8b3635cd7e8db5d496e03d669
+  sha256: f5a365669c0b09902e8c830ecc3c91968c7fe4147355ae8737b34a29e839046a
   status: live
 -->
 # Handover — River-Folge 109 (2026-10-06)
@@ -199,6 +199,8 @@ Verifikation: `cargo check` grün; `cargo build -p omegaflow-measure --bin field
 `spectral_epoch_comparison_never_averages` — `sign_agreement` liest jetzt die zentrierten
 Vorzeichen, nicht die Rohvorzeichen) und geheilt; der Kern-Borrow zusätzlich. Die `unit`-Tests
 liefen vor River 108 in keiner CI (der `unit`-Job ist neu). Re-Dispatch `field-te-query.yml`
-nach dem Push (unten), Ausgang unread — nie gepollt.
+nach dem Push: `field-te-query 37483359644 @c07c271fa` (queued), Ausgang unread — nie gepollt.
+Der Push löste zusätzlich `ci-gate 37483354207`, `ci-check 37483354197`, `tools-build 37483354248`
+und `register-coverage 37483354340` am eigenen HEAD aus (Ausgang unread).
 
-## Burn: open 0.0000 · close 0.0000 · cap 0.35 · Grund: Kern-Borrow-Heilung + field-te-query-Re-Dispatch; 1 Dispatch, kein Send
+## Burn: open 0.0000 · close 0.0646 · cap 0.35 · Grund: Kern-Borrow-Heilung + field-te-query-Re-Dispatch; 1 Dispatch, kein Send
