@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: fb03cb36f5510c77df413fa5001bf6f00870e0f11283be1cba10cec87cb1f289
+  sha256: 920bb82b40e027725ecf3e899ae4578160b17eaccfc728826225f82a211316de
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -51,7 +51,7 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 - **Trigger:** Move je Datensatz (Operator-Wort Ziel-Layout steht 2026-09-30) → `du`-Nachmessung
 - **Lage:** (gemessen 2026-10-06) Byte-Messung Schritt 2 steht (`:167-183`, 2026-09-30: `archive/knowledge` 29 Gi, `archive-state` 9,7 Gi, Repo-`data` 77 Gi); Registry-first Schritt 3 für die Staging-Kandidaten gemessen erfüllt (Ephemeriden registriert, `omni2_serie.bin` `phi/sources.φ:1420`); auf diesem Host existiert `~/knowledge`/`~/backups` nicht mehr — konsolidiert nach `~/archive/` (2026-10-06 `du`: `archive/knowledge` 29 G, `archive-state` 9,8 G, `archive/archive-root` 974 M).
 - **Blockade:** Move/Löschung braucht das Operator-Wort je Datensatz (`0 honored`: nichts löschen ohne Nachbau-Quelle).
-- **Braucht:** Schritt 4/5 — Unique-Byte-Move je Holding nach Freigabe.
+- **Braucht:** Operator-Wort je Datensatz (Queue: `## An future`) → Schritt 4/5 Unique-Byte-Move je Holding.
 
 ### Register-Träger `ledger.φ:2`/`:6` — Port-Runner verloren
 - **Status:** blockiert
@@ -88,19 +88,14 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 - **Blockade:** Fink-Admission (Mountain).
 - **Braucht:** `phi/sources.φ`-Direktiven (Mycelium) nach Admission.
 
-### Self-hosted Runner — Operator richtet 2011er PC ein
-- **Status:** operator-gebunden
-- **Trigger:** Wort (Operator richtet den 2011er PC ein, 2026-10-06) → Runner-Registrierung + Routing
-- **Lage:** (gemessen 2026-10-06) Operator-Wort 2026-10-06: „ok ich schaue ob ich einen gaming pc von 2011 zum laufen bekomme und da linux mint drauf installiere um ihn als runner laufen zu lassen". Mehrere Jobs binden `[self-hosted, Linux]` (u. a. `de44-cdn.yml:18`). Präzedenz `t420` (sensory-233 → mycelium-folge233).
-- **Blockade:** Maschine noch nicht registriert (Operator).
-- **Braucht:** Runner-Registrierung (Labels) + Routing-Entscheidung für die `hyperscanning-te`-Screen-Jobs.
-
 ## An future
 
 Origin: mycelium-folge241.
 
 - **Tavily-Quota 80 %** (`mail_ledger.φ`, ts 1791121265) → Fallback `--mwmbl`/`--marginalia`.
 - **Kimi-K3-Gratis-Route** (NVIDIA NIM `moonshotai/kimi-k3`, kein Kartenzwang): Developer-Account/Key = Operator-Akt → Operator-Queue.
+- **Self-hosted Runner (Operator-Queue):** Wort 2026-10-06 „ok ich schaue ob ich einen gaming pc von 2011 zum laufen bekomme und da linux mint drauf installiere um ihn als runner laufen zu lassen". Mehrere Jobs binden `[self-hosted, Linux]` (`de44-cdn.yml:18`). **Braucht:** Runner-Registrierung (Labels) + Routing-Entscheidung für die `hyperscanning-te`-Screen-Jobs — Operator-Vollzug.
+- **Daten-Holdings-Ziel-Layout-Migration (Operator-Queue):** Move/Löschung je Holding braucht das Operator-Wort je Datensatz (`0 honored`: kein Löschen ohne Nachbau-Quelle); Lage `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:167-183`.
 
 ## LOCK
 
