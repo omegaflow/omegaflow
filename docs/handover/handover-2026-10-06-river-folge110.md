@@ -3,7 +3,7 @@
   session: River-Folge 110
   class: handover
   date: 2026-10-06
-  sha256: 8b1e864ef3ca5e24dc531639d3a5a0f78aba58dad43d863289184a37b98ea8c7
+  sha256: 339c46ff127274c7f03d440052671603a939632065f31b01651a4e3cdb85cf8e
   status: live
 -->
 # Handover — River-Folge 110 (2026-10-06)
@@ -29,7 +29,8 @@ Wort | Datum | Quelle
 „bitte alles umsetzen" | 2026-10-06 | Operator (Session, River 109) — Commit- und Bau-Wort für den Receiver-Schnitt
 „es geht nicht nur um die visuelle membran es geht um alle radiatoren" | 2026-10-06 | Operator (Session, River 109) — die Receiver-Apertur gilt für alle fünf Radiatoren (Bild · Ton · Vibration · Serial · HID)
 „warum gibst du die rats fragen nicht dem rat den api mit 5 stimmen und den ui chats mit 5 stimmen?" | 2026-10-06 | Operator (Session, River 110) — stehende Praxis: Rat-Fragen gehen an den **Rat (API, 5 Stimmen)** UND an die **UI-Modelle (5 Stimmen)**, nicht als `Braucht` liegen gelassen
-„bitte halte deine erfahrungen fest es bringt nichts architekturfragen gegen schwache modelle fahren zu lassen" | 2026-10-06 | Operator (Session, River 110) — ins Regelwerk `AGENTS.md` §Architektur-Fragen an starke Modelle gefaltet
+„bitte halte deine erfahrungen fest es bringt nichts architekturfragen gegen schwache modelle fahren zu lassen" | 2026-10-06 | Operator (Session, River 110) — ins Regelwerk `AGENTS.md` §Architektur-Fragen durch die Linse der fünf Stimmen gefaltet
+„ich weiss nicht ob der rat auf eine höhere stufe muss aber die architekturfragen müssen alle durch die linse der 5 stimmen das ist der wahre counter slope" | 2026-10-06 | Operator (Session, River 110) — die **Linse der fünf Stimmen** ist das Gesetz (der wahre Counter-Slope); der Rat-Modelltier bleibt `pending`
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge109.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
