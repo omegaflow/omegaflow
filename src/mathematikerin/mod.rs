@@ -19,6 +19,7 @@ pub mod least_squares;
 pub mod machines;
 pub mod mat;
 pub mod media;
+pub mod newell;
 pub mod omega;
 pub mod orientation;
 pub mod s2;
