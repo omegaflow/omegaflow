@@ -180,6 +180,13 @@ before touching the wire, GPU, or force layers. Core constants that bind every c
 The presence is a free line in ICRS at rest at the SSB origin; arrows thrust, `s`
 halts. No body is privileged — every body is an equal ephemeris source.
 
+Exactly one admission criterion (the presence hull) and one declared observer per
+measurement; a body name the code chooses — default, gate bypass, sort key, closed
+set — is the bias, never a body name the data declares. The loader is agnostic when
+the hull is the only admission criterion and each observer is declared per-record
+data whose absence is refused (Operator-Wort 2026-10-06; verdict:
+`docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md`).
+
 
 
 ## Code Rules
