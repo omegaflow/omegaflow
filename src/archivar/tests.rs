@@ -13106,3 +13106,62 @@ fn test_chandrayaan_minirf_pds3_img_fields_declared() {
         "the quoted band-name keys bridge the spaced PDS3 labels to the field"
     );
 }
+
+#[test]
+fn test_body_anchor_reaches_ssb_presence_by_signal_cone() {
+    use std::collections::HashMap;
+    let now = 8.0e8;
+    let t_r = 5.0e8;
+    let sun_pos = [1.5e11, 0.0, 0.0];
+    let sample = super::Sample {
+        source: super::SampleSource::Ephemeris,
+        epoch: t_r,
+        ttl: 3.5e10,
+        extent: 6.96e8,
+        tau: f64::INFINITY,
+        kernel_id: 0.0,
+        force_type: 1.0,
+        absorption: 0.0,
+        advection: 0.0,
+        anchor_vmax: 0.0,
+        anchor_amax: 0.0,
+        anchor_p0: sun_pos,
+        motion: super::Motion::Linear {
+            p: sun_pos,
+            v: [0.0, 0.0, 0.0],
+        },
+        val: 1.327e20,
+        name: "sun.mass".into(),
+        z_flux: super::SLOT_ABSENT,
+        freq: 0.0,
+        bin_width: 0.0,
+        color_index: 0.0,
+        phase: None,
+    };
+    let hash = super::build_spatial_hash(vec![Arc::new(sample)], 1.0);
+    let eph: HashMap<String, super::BodyEphemeris> = HashMap::new();
+    let mut recs: Vec<super::SampleRecord> = Vec::new();
+    super::query_hash(
+        &hash,
+        super::MembraneCtx {
+            center: [0.0, 0.0, 0.0],
+            t2: now,
+            pad: 1.0,
+            delta_t_cache: 0.0,
+            floor: &[1.0e-300_f64; 9],
+            softening: 1.0,
+            forward: [0.0, 0.0, 0.0],
+            eph: &eph,
+        },
+        &mut recs,
+    );
+    assert!(
+        !recs.is_empty(),
+        "a body anchor at 1 AU from the SSB presence must be admitted by the signal cone, not only when the presence lies within its radius (got {} records)",
+        recs.len()
+    );
+    assert_eq!(
+        recs[0].9, 1.0,
+        "the emitted record carries the body's gravity force_type"
+    );
+}
