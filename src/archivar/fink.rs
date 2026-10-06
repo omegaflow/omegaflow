@@ -29,7 +29,12 @@ const COLUMNS: &[(u32, &str, &str, &str)] = &[
         "nJy",
     ),
     (FINK_SNR, "fink_snr", "r:snr", "1"),
-    (FINK_EXTENDEDNESS, "fink_extendedness", "r:extendedness", "1"),
+    (
+        FINK_EXTENDEDNESS,
+        "fink_extendedness",
+        "r:extendedness",
+        "1",
+    ),
     (FINK_RELIABILITY, "fink_reliability", "r:reliability", "1"),
 ];
 
