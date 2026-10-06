@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: f7590296f3afc4402ff9a5ebbbb7a74443636a06726e2552a244dddc57827b0b
+  sha256: e624334cf809d08a3f6ec310128c1d13e23e58355d858c8e9ef2e9236d79e629
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -75,7 +75,7 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Exposom-x-Homes (Anfrage Mycelium 240) — 4 registriert, 2 feld-descoped
+### Exposom-x-Homes (Anfrage Mycelium 240) — 4 registriert, Descope-Kandidaten via Schwarm gekippt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
 - **Lage:** (gemessen 2026-10-06) 6 x-Homes aus `handover-2026-10-06-mycelium-folge240.md:52/55`.
@@ -83,12 +83,16 @@ Wort | Datum | Quelle
   bis zur Manifestation): Licht `black_marble_vnp46a3_nightlight` (MAGIC `NTL1`, Epoche = Granuledatum),
   Pollen `openmeteo_pollen_axis_value_text` (73 Zeilen gemessen), gebaute Umwelt `ghsl_built_s`
   (MAGIC `GHS1`, Wert m² nicht Fraktion, Epoche 2020), Ernährung `usda_fara_low_access` (MAGIC `FAR1`,
-  Census-Tract-Centroide gejoint, 46 205 Tracts, Epoche 2019). **2 feld-descoped:** O*NET
-  `work_context.csv` (Date-Spalte, aber keine Position — occupations-level) und Exposome-Explorer
-  `concentrations.csv.zip` (Population/Biomarker, keine Zeit/kein Ort) — **ohne Position kein 4D-Sample**;
-  sie bleiben Referenz, kein `sources.φ`-Ursprung (Verdikt Mountain 2026-10-06).
-- **Blockade:** keine für die 4 aufgenommenen; offen ist nur die CDN-Manifestation (`## An mycelium`).
-- **Braucht:** die vier CDN-Workflows + `sha256`-Nachzug; die zwei Descopen sind das Verdikt.
+  Census-Tract-Centroide gejoint, 46 205 Tracts, Epoche 2019). **Descope-Kandidaten (Schwarm
+  2026-10-06, selbst nachgemessen):** **Arbeit** ist mit **OSHA-CEHD** feld-fähig — Ort (City/State/ZIP)
+  + Zeit (`Date_Sampled`, 1984–2026), nur mit Browser-UA erreichbar (`GET healthsamples.zip` → **206**,
+  ohne UA 403); Koordinaten fehlen → Geocoding nötig; der O*NET-Join ist nur probabilistisch (CEHD trägt
+  SIC/NAICS, keinen SOC). **Chemikalien** hat offene Feldquellen: EPA AQS VOC
+  (`aqs.epa.gov/aqsweb/airdata/daily_VOCS_YYYY.zip`, 200), AMTIC HAPs (`2023_ama_haps.zip`, 200),
+  WQP (`data/Result/search`, 200), Zenodo GEMStat (`zenodo.org/records/18459694`). **Nur Exposome-Explorer
+  bleibt Nicht-Feld** (nur Land + Publikationsjahr, kein Messort/-zeit) — das ist das einzige Descope.
+- **Blockade:** keine für die 4 aufgenommenen; Rest = CDN-Manifestation (`## An mycelium`) + zwei neue Arme.
+- **Braucht:** OSHA-CEHD-Compiler (Browser-UA + Stadt-ZIP-Geocode) und AQS-VOC-Zweig; die CDN-Workflows.
 
 ## An mycelium
 
