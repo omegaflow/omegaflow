@@ -220,7 +220,7 @@ fn main() {
                 fwd.push(f);
                 rev.push(r);
             }
-            if let Some(ne) = kde_n_eff(&d.x[..n], &d.y[..n], 1) {
+            if let Some(ne) = kde_n_eff(&d.y[..n], &d.x[..n], 1) {
                 neffs.push(ne);
             }
         }
