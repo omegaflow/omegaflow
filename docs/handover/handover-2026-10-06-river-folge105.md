@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 4eef83fdd828590aff5138625d15437675599e81d48504df9a82b7bd27d4b3da
+  sha256: 0bebbdf953b7dc4c6ef2150790aa73b6eef27d12e9884c48c8b95db0119864f7
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -253,9 +253,14 @@ die `_public --root`-Versuche = Wrapper-Refusal oder „command not found"; `ls`
 `browser_eval`/`browser_snapshot` — nur auf öffentlichen URLs (artificialnouveau.com, Wikipedia),
 kein lokaler Abfluss. **Freigaben sind nicht persistiert** (`permission` leer, `event` kennt nur
 `message`/`session`) → „wie oft erlaubt" ist aus der DB nicht messbar; der gemessene Effekt ist
-**0 lokale Reads**. **Guard:** die Regel hielt; **Braucht:** `browser_*` (und jede Tool-Klasse,
-die die Voice-Profile nicht nennen) als `deny` in jedes Voice-Profil (`opencode.json`); greift
-nach opencode-Neustart.
+**0 lokale Reads**. **Vollständigkeit (Korrektur):** die `part`×`session`-Tabellen decken nur
+2026-10-06 08:54–10:15 (76 Sessions — die DB ist gepruned, Cascade löscht `part` mit); der
+`event`-Log (87 527 Events, 701 `session.created`, bis **2026-10-02**) trägt die volle Spur und
+wurde zusätzlich geminet: die ausgeführten `archive_search --root`-Reads liegen bei `line` +
+`grind-flash` und **13 geprunten Line-Sessions** (deren erster Prompt ist der Line-Prompt, kein
+Voice-Prompt) — **keine** Voice-Session. **Guard:** die Regel hielt; **Braucht:** `browser_*`
+(und jede Tool-Klasse, die die Voice-Profile nicht nennen) als `deny` in jedes Voice-Profil
+(`opencode.json`); greift nach opencode-Neustart.
 
 ## An mycelium
 
@@ -295,4 +300,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.2508 · cap 0.3 Grund: zwei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-DB-Messung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.2508; Runde total 0.5318 → 1.1674; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.2844 · cap 0.35 Grund: zwei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident- und Vollständigkeits-DB-Messung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.2844; Runde total 0.5318 → 1.2116; gemessen 2026-10-06
