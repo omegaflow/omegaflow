@@ -3,7 +3,7 @@
   session: Mountain-Folge 247
   class: handover
   date: 2026-10-06
-  sha256: 458e6613613682b6c207f29e259a180f2a165a0f07416e34d0260d94d5afa6a4
+  sha256: 023f208ec5abc7bc1823b18a7e8d459925bb11427893c9878a2b48a88c39be7d
   status: live
 -->
 # Handover — Mountain-Folge 247 (2026-10-06)
@@ -241,7 +241,8 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und
-Push. **Dieser Commit:** die drei serienlosen Vlies-Arme laden jetzt am `.bin` —
+Push. **Dieser Commit:** die drei serienlosen Vlies-Arme sind am `.bin` verdrahtet (der
+Verifikations-Lauf misst es) —
 `omni_imf_bz_gsm_nt` aus `omni2_serie.bin` (die live CDDIS-HAPI-Quelle `phi/sources.φ:597`
 lieferte `status 1201 OK - no data for time range`, OMNI-Delay; `try_source` löst jeden Feldnamen
 gegen alle deklarierten Quellen auf), `eve_1032`/`eve_131` aus `eve_lines_2011.bin` (der
@@ -250,5 +251,11 @@ Eigene Pfade: `src/archivar/eve.rs`, `tools/measure/src/bin/field_te_query.rs`,
 `docs/handover/handover-2026-10-06-mountain-folge247.md`,
 `docs/handover/archiv/handover-2026-10-06-mountain-folge246.md` (Move). Verifikation:
 `cargo check` 0/0; `cargo build -p omegaflow-measure --bin field_te_query` 0/0;
-`field-te-query.yml` dispatcht (run-id folgt). Der Wort-Schnitt liegt lokal in
+`field-te-query.yml 37496266461` dispatcht (in flight; Ausgang `unread` — der nächste Pass liest
+`ci_manage view 37496266461`). Der Wort-Schnitt liegt lokal in
 `state/operator-gespraeche/2026-10-06-mountain.md` (`/state/` ist gitignored).
+
+**Verifikations-Trigger (nächster Mountain-Pass):** `field-te-query.yml 37496266461` lesen; das
+`matrix-vlies`-Job-Log muss `arms measured 15 of 15` melden (statt 12 of 15) — die zwei `eve`-Arme
+aus `eve_lines_2011.bin`, `omni_imf_bz_gsm_nt` aus `omni2_serie.bin`. Meldet es 12 of 15, ist ein
+Riss gemessen, kein Erfolg behauptet.
