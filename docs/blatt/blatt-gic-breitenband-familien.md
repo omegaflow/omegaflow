@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: die Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 97c60ed103b012d15f068adba452ba94a9ec47b932023852c67d32ebbdccddac
+  sha256: 5c90b499a1fcd36434f3048beffb6c02b94c357871f42696add8d2629623d1df
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -136,17 +136,20 @@ globale Stufe-1-Screen bleibt global. Dissens: **Träger der Partition** (drei B
 Grammatik-Sub-Direktive) und **globales vs. per-Familie-Testen**. **Riss, nicht geglättet** — kein Arm,
 keine Migration ohne Operator-/Rats-Wort; Blatt bleibt `unsealed`.
 
-**Identitäts-Verdikt (Rat, gemessen 2026-10-06) — die Identitätsfrage ist entschieden, der Bau nicht.**
-Der Rat misst im Baum: `family` ist **bereits belegt** (statistische Korrekturfamilie: `TeFamily`/`BH`
-`te.rs`, `acc.fam` `matrix.rs`, `FAMILY_K` `wy_max_t.rs`); die FDR-Scopes sind `matrix|row|col`, kein
-`over family`; eine **gemessene korrigierte geomagnetische Breite je Station existiert nicht**
-(`phi/declined_sources.φ:3328-3340`). **A=A-fest ist Option (c):** das Register trägt die gemessene Breite
-(eigene Größe `cgm_lat`), `family` benennt allein die FDR-Gruppe, die Grammatik trägt nur `fdr … over family`
-(vierter Scope). Drei `matrix gic_auroral full`-Blöcke über verschiedenen Pools sind **drei Messungen**; ein
-`matrix gic full` mit `over family` ist **eine Messung, drei Verdikt-Partitionen** — `gic_auroral` als
-dritter Block ist ein A=A-Bruch. Offen bleiben nur zwei **Design-Entscheidungen des Operators** (Bandgrenzen;
-voller Pool vs. drei Pools) und der **Messschritt**: eine gemessene Breite je Station ins Register (oder
-`pending`).
+**Identitäts-Verdikt (2026-10-06) — sechs Stimmen, ein Verdikt; die Frage ist entschieden, der Bau nicht.**
+Im Baum gemessen: `family` ist **belegt** (FDR-Korrekturfamilie: `TeFamily`/`BH` `te.rs`, `acc.fam`
+`matrix.rs`, `FAMILY_K = 6` `wy_max_t.rs` — eine **Konstante**; `acc.fam` = laufendes family-weises Maximum);
+FDR-Scopes nur `matrix|row|col`; eine **gemessene CGM-Breite je Station existiert nicht**
+(`phi/declined_sources.φ:3328-3340`). **Sechs unabhängige Stimmen** (Rat-API · ChatGPT · qwen · Claude ·
+Kimi/tryingopen · GLM) konvergieren auf **Option (c), geschichtet**: `cgm_lat` als eigene, typisierte,
+epochengepinnte Registergröße (wie `frame`/`span`); `family` behält **allein** seine Bedeutung als
+FDR-Korrekturgruppe; die Grammatik trägt **genau einen** neuen Scope `fdr … over family`; das Band-Label
+(`auroral`/…) ist eine **deklarierte Ableitung** aus `cgm_lat` + Operator-Grenzen zur Abfragezeit, **keine**
+Registerzeile. Drei `matrix gic_auroral full`-Pools sind **drei Messungen** (andere BH-Schwellen, andere
+Surrogat-Maxima, anderes `FAMILY_K`), die Vereinigung ist keine Zerlegung des globalen Ergebnisses → zwei
+Namen. Offen bleiben nur **Design-Entscheidungen des Operators** (Bandgrenzen + Abschließung; voller Pool vs.
+drei Pools; Modell/Epoche/Höhe) und der **Messschritt**: `cgm_lat` je Station **lokal** messen (Services
+`declined`), Modell/Epoch/Höhe als Pflicht-Provenienz, dann Drift-Check.
 
 **Risse (Rat 2026-10-06, ungeglättet):** (1) Stufe 1 globales FDR vs. je-Familie-`fdr`
 — der Blatt-Text konvergiert nicht, beide Linien stehen; (2) globale Kalibrierung (ein
