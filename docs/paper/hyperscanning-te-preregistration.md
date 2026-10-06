@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: 53208524d4cf17c7a6092ea8e320a84fe2e24d1e8f5b3e79e9ae4503c7616360
+  sha256: 90803a4a8831ede1ec479110627b5589d7e9005c196fb00f2b61f7c429f410df
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -359,8 +359,10 @@ screen's own expression is the raised p95 that drops `pair-02`.
   the single-channel `pair-02@Cz` survivor masked by the raised joint p95.
 - **Method paper** — the publishable consolidation of this pre-registration is
   `docs/paper/hyperscanning-te-method.md` (measured 2026-10-05 F234); it consumes the
-  joint measurement above. Open there: the `coherent-phase` null of the discovery
-  cohort (run `37331134587`, dispatched) and a full `max_points=4096` discovery run.
+  joint measurement above. The `coherent-phase` null of the discovery cohort is
+  measured there (run `37331134587`, `success` 2026-10-05T17:03:57Z, §9.5): the same
+  three family-max survivors under the stricter shared-phase null. Open there remains
+  the full `max_points=4096` discovery run (`37438929801`).
 
 ### Träger / Carrier
 
