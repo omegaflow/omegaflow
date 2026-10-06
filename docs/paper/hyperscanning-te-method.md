@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Method with Family-Wise Error Control
   class: paper
   date: 2026-10-05
-  sha256: c20562c8c7aefb9a96b282f7291acfebc035e5e4f9dff07b8a5469c9b5a72cde
+  sha256: 4f01fb124409ca6eabbbeb7c217e879371c84aefeefa92552503cc963b91776d
   status: live
   see-also: docs/paper/hyperscanning-te-preregistration.md, .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge234.md
 -->
@@ -271,7 +271,8 @@ transfer, H2) varies with n. The n=4096 row reproduces the `ds007822` values at
 Measured by run `37235249763` (`hyperscanning-te`, head `feb7f0e55`, `success`
 2026-10-05T04:39:25Z). Parameters: `cohort=ds007471`, channel `Cz`, `max_points=2048`
 (a compute-bounded deviation from the 4096 default, recorded here; the full-cap run
-exceeded the platform job cap), 31 triads, 62 cells, `surrogates 200`, `percentile 95`,
+exceeded the platform job cap of 360 min — measured 2026-10-06, attempts `37209904312`
+and `37175843252` cancelled after 6 h 08 min / 6 h 48 min), 31 triads, 62 cells, `surrogates 200`, `percentile 95`,
 null `phase`, dim 3. Read from the run log (`ci_manage log 37235249763 --all`) and the
 artifact `hyperscanning-te-report-jointaction` (Artifact ID `11325587633`, 4380 B).
 
@@ -320,6 +321,30 @@ nominees, 88 confirmed, 0 pending. 0 honored: the observed max `7.0851e-1` is
 numerically the same line as the single-channel run (`pair-18@Cz`), not an added
 channel — the joint screen's own expression is the raised p95 that drops `pair-02`.
 
+### 9.5 Coherent-phase null (`ds007471`, `Cz`)
+
+Measured by run `37331134587` (`hyperscanning-te`, head `703890be2`, `success`
+2026-10-05T17:03:57Z). Parameters: `cohort=ds007471`, channel `Cz`, `max_points=2048`,
+`surrogates 200`, `percentile 95`, null `coherent-phase`, dim 3; the per-cell confirmation is
+a fresh per-cell null at p99 with 1000 surrogates and a fresh seed. Read from the run log
+(`ci_manage log 37331134587 --all`).
+
+| cohort | triads | cells | family-max p95 | observed max | family-max survivors | per-cell survivors | confirmed |
+|---|---|---|---|---|---|---|---|
+| `jointaction` (ds007471) | 31 | 62 | 6.3126e-1 | 7.0851e-1 | **3** | 53 | 51/53 |
+
+**The coherent-phase null reproduces the single-channel `phase` finding.** The family maximum
+is broken with the same observed max `7.0851e-1` and the same three family-max survivors as
+§9.3 (`pair-02@Cz R→L` `6.5198e-1`, `pair-18@Cz L→R` `7.0597e-1`, `pair-18@Cz R→L`
+`7.0851e-1`). The coherent-phase family-max p95 `6.3126e-1` is **lower** than the `phase` p95
+`6.5144e-1`: the shared-phase null preserves the linear cross-structure and is therefore a
+stricter line, and all three survivors clear it. 53 per-cell nominees, 51 confirmed, 0 pending
+(`pair-26@Cz R→L` and `pair-27@Cz R→L` `NOT-CONFIRMED`). The `coherent-phase` blind-band
+probe reports no bin of 401 outside the surrogate envelope (driver A and target B) and the
+`coherent-per-cell-FP gate` carries 0 of 20 measurable survivors — the null is neither blind
+nor anti-conservative. 0 honored: the finding is the same line under a stricter,
+linear-cross-structure-preserving null, not a second detection.
+
 ## 10. Falsification
 
 The method is falsified as a family-wise detector if a run reports a family-maximum
@@ -336,8 +361,13 @@ runs the FP gates carried 0 survivors of 20 and the `family_fn_gate` passed.
 The result is bounded by its registered parameters: one discovery cohort (`ds007471`),
 one task condition (`jointaction`), one electrode per participant, `max_points 2048`
 for the discovery runs (`4096` for the feasibility cohort), and the `phase` null for the
-screen. The `coherent-phase` null and the `max_points = 4096` full-cap discovery run are
-named and not yet measured at the discovery cohort. The `pair-18@Cz` finding is a
+screen; the `coherent-phase` null is measured for the `Cz` discovery cohort (§9.5). The
+`max_points = 4096` full-cap discovery run is named and not yet measured at the discovery
+cohort: the platform job cap is **360 min** (measured 2026-10-06, `ci_manage view` — no
+`timeout-minutes` in `hyperscanning-te.yml`; the `4096` screen attempts `37209904312` and
+`37175843252` were cancelled after 6 h 08 min and 6 h 48 min, §9.3), and the full discovery
+screen is not shardable into one job without a global family-maximum merge; `2048` remains the
+measured upper bound. The `pair-18@Cz` finding is a
 family-significant statistical detection, not a physiological claim; the feasibility
 cohort carries no family-maximum survivor at any n (0 honored — the measured absence
 is reported as absence, never as a zero).
@@ -350,6 +380,7 @@ is reported as absence, never as a zero).
 | n-scaling (`ds007822`, `Fz`) | `37217425078` | `f289d7c88` | success 2026-10-05T02:05:48Z | — |
 | second cohort (`ds007471`, `Cz`) | `37235249763` | `feb7f0e55` | success 2026-10-05T04:39:25Z | `11325587633` (4380 B) |
 | joint cross-channel (`ds007471`, `Fz,Cz`) | `37292154121` | `632b164ba` | success 2026-10-05T13:39:22Z | `11349076871` (6965 B) |
+| coherent-phase null (`ds007471`, `Cz`) | `37331134587` | `703890be2` | success 2026-10-05T17:03:57Z | `11359509342` (4505 B) |
 
 The workflow is `.github/workflows/hyperscanning-te.yml`; the screen bin is
 `tools/measure/src/bin/hyperscanning_group_te.rs`; the estimator is
