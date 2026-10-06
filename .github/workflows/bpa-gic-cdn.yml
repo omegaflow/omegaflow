@@ -22,12 +22,12 @@ jobs:
         id: idempotence
         run: |
           if gh release view transmission.bpa.gov --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "bpa_gic.csv"; then
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "bpa_gic.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "asset bpa_gic.csv already present — manifest skipped"
+            echo "asset bpa_gic.bin already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "asset bpa_gic.csv missing — compiling and manifesting"
+            echo "asset bpa_gic.bin missing — compiling and manifesting"
           fi
       - name: Harvest the BPA GIC table from the runner (curl)
         if: steps.idempotence.outputs.present == 'false'
@@ -43,7 +43,7 @@ jobs:
           if ! gh release view transmission.bpa.gov --repo omegaflow/sources >/dev/null 2>&1; then
             gh release create transmission.bpa.gov --repo omegaflow/sources \
               --title "transmission.bpa.gov" \
-              --notes "BPA transformer geomagnetically induced current compiled to CSV assets (CDN tag = netloc)"
+              --notes "BPA transformer geomagnetically induced current compiled to a typed bin asset (CDN tag = netloc)"
           fi
       - name: Compile and manifest the BPA GIC series to the CDN
         if: steps.idempotence.outputs.present == 'false'

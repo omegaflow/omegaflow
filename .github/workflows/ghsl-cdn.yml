@@ -29,4 +29,4 @@ jobs:
         run: |
           set -euo pipefail
           cargo run -p omegaflow-harvest --release --bin ghsl_compiler -- \
-            --stride "${{ inputs.stride || '300' }}" --ci-mode
+            --tiles --stride "${{ inputs.stride || '300' }}" --ci-mode

@@ -967,15 +967,23 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.csv
-origin https://transmission.bpa.gov/business/operations/gic/gic.txt
+url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.bin
+format bpa_gic
 compiler tools/harvest/src/bin/bpa_gic_compiler.rs
-sha256 8d0ceaa808b0993156abad66d35c516ede7130e30d7a477772aa1bff4907f2b9
-ttl 3600
-format text
-rows .
-epoch 0
-field 2 bpa_gic_a inverse-square electric A 300.0 0.0 0.0
+at earth
+ttl 300
+field bpa_gic_eugene_or_a bpa_gic_eugene_or_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_spokane_wa_a bpa_gic_spokane_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_the_dalles_or_a bpa_gic_the_dalles_or_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_lewiston_id_a bpa_gic_lewiston_id_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_kalispell_mt_a bpa_gic_kalispell_mt_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_monroe_wa_a bpa_gic_monroe_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_wilsonville_or_a bpa_gic_wilsonville_or_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_vancouver_wa_a bpa_gic_vancouver_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_ellensburg_wa_a bpa_gic_ellensburg_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_bothell_wa_a bpa_gic_bothell_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_moses_lake_wa_a bpa_gic_moses_lake_wa_a inverse-square electric A 300.0 0.0 0.0
+origin https://transmission.bpa.gov/business/operations/gic/gic.txt
 
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
 ttl 3600

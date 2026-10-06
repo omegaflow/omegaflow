@@ -20,7 +20,7 @@ format bpa_gic
 tag transmission.bpa.gov
 arm bpa_gic_compiler
 workflow bpa-gic-cdn.yml
-pattern ^bpa_gic\.csv$
+pattern ^bpa_gic\.bin$
 idempotent true
 timeout 120
 
@@ -355,6 +355,15 @@ arm rosetta_odf_compiler
 pattern ^rosetta_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 idempotent true
 timeout 350
+
+asset present
+format soho_lasco_cme
+tag cdaw.gsfc.nasa.gov
+arm soho_lasco_compiler
+workflow soho-lasco-cme-cdn.yml
+pattern ^soho_lasco_cme\.bin$
+idempotent true
+timeout 120
 
 asset present
 format swot_l2_lr_ssh

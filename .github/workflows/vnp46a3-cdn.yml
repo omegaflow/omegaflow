@@ -6,6 +6,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      tile:
+        description: 'VNP46A3 tile (h<col>v<row>); an equatorial tile carries DNB night data year-round'
+        type: string
+        default: 'h18v07'
   schedule:
     - cron: '29 4 * * *'
 permissions:
@@ -21,12 +26,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Resolve the newest VNP46A3 granule (CMR search, no token)
+      - name: Resolve the newest VNP46A3 granule for the chosen tile (CMR search, no token)
         id: granule
         run: |
           set -euo pipefail
-          url=$(curl -sSfL "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=VNP46A3&version=2&page_size=1&sort_key=-start_date" \
-            | jq -r '.items[0].umm.RelatedUrls[] | select(.URL | startswith("https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/")) | .URL')
+          tile="${{ inputs.tile }}"; [ -n "$tile" ] || tile="h18v07"
+          url=$(curl -sSfL "https://cmr.earthdata.nasa.gov/search/granules.umm_json?short_name=VNP46A3&version=2&page_size=2000&sort_key=-start_date" \
+            | jq -r --arg tile "$tile" '[.items[].umm.RelatedUrls[]? | select(.URL | startswith("https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/")) | select(.URL | contains("." + $tile + ".")) | .URL] | first // empty')
           test -n "$url"
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "granule $url"
