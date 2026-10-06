@@ -2908,7 +2908,6 @@ pub fn main_flow() {
                     | "demeter_isl"
                     | "kcdc_kascade"
                     | "kasi"
-                    | "jaxa_gportal"
                     | "wqp_result"
                     | "eea_noise"
                     | "gaia_rrl"
