@@ -1158,9 +1158,13 @@ mod tests {
 
     #[test]
     fn vnp46a3_nightlight_roundtrip() {
-        let magic = magic_of("black_marble_vnp46a3_nightlight").expect("the raster format has a magic");
+        let magic =
+            magic_of("black_marble_vnp46a3_nightlight").expect("the raster format has a magic");
         assert_eq!(magic, MAGIC_VNP46A3);
-        assert_eq!(comp_max("black_marble_vnp46a3_nightlight"), Some(COMP_VNP46A3_MAX));
+        assert_eq!(
+            comp_max("black_marble_vnp46a3_nightlight"),
+            Some(COMP_VNP46A3_MAX)
+        );
         assert_ne!(magic, MAGIC_IERS_LOD);
         let records = vec![
             GeoRec {
