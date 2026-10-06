@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Fink-Epoche gemessen + re-dispatcht, vnp46a3-Nachtgranule re-dispatcht, adressierte Blöcke gefaltet, Lauf-Ausgänge gemessen
   class: handover
   date: 2026-10-07
-  sha256: 9a15861071f57e162bbbea5ec996c93d8796203688c4e2123f6ce391a35b591a
+  sha256: 10b677fef89c36de938ad62091ee5a6152d40ee845dab763763b698bbe9dc787
   status: live
 -->
 # Handover — Mycelium-Folge 251 (2026-10-07)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge250.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An mountain` / `## An future` — nicht als „eigen".
 
-## Burn: open 0.0000 · close 0.070 · cap 0.5 — Grund: Meta-Pass + zwei Flotten-Dispatches (Fink/vnp46a3) + drei gemessene Lauf-Ausgänge
+## Burn: open 0.0000 · close 0.107 · cap 0.5 — Grund: Meta-Pass + Fink-Epoche gemessen + WCS-Fix + drei Flotten-Dispatches (Fink/vnp46a3) + gemessene Lauf-Ausgänge
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage|register_lookup|git_safety|omega_sh|sread|open_points_check|session_burn`: frisch.
 
@@ -48,19 +48,19 @@ Sender-Zeilen in `## An mountain` / `## An future` — nicht als „eigen".
 
 ## Offen — eigen
 
-### Fink-Cutout-Manifestation — Epoche gemessen, Re-Dispatch läuft
+### Fink-Cutout-Manifestation — Epoche gesetzt, WCS-Extent gefixt, Re-Dispatch läuft
 - **Status:** wartend
-- **Trigger:** Ausgang `fink-cutout-cdn 37544867025`
-- **Lage:** (gemessen 2026-10-07, Mycelium-251) Die Epoche ist nicht mehr ungemessen: `GET https://api.lsst.fink-portal.org/api/v1/sources?diaObjectId=314002968168367863&columns=r:midpointMjdTai,r:diaSourceId&output-format=json` → **HTTP 200**, `r:midpointMjdTai = 61058.0826902019` (MJD TAI) — dasselbe Ziel `dia_source_id 314002968168367863` des gescheiterten Laufs `314002968168367863` (`fink_cutout_compiler.rs:215-221` liest `f64` MJD TAI). Der Endpunkt ist auf `diaObjectId` gekeyed (nicht `diaSourceId`); für ein freies `diaSourceId` via `conesearch` am Cutout-CRVAL auflösen (beide ids in jeder Zeile). `cutouts` liefert **keine** Epoche (swagger: nur diaSourceId/kind/output-format/stretch/colormap/pmin/pmax/convolution_kernel). Re-Dispatch `37544867025` mit `-f dia_source_id=314002968168367863 -f mjd_tai=61058.0826902019`.
+- **Trigger:** Ausgang `fink-cutout-cdn 37545575263`
+- **Lage:** (gemessen 2026-10-07, Mycelium-251) Die Epoche ist gemessen: `GET https://api.lsst.fink-portal.org/api/v1/sources?diaObjectId=314002968168367863&columns=r:midpointMjdTai,r:diaSourceId&output-format=json` → **HTTP 200**, `r:midpointMjdTai = 61058.0826902019` (MJD TAI); der Endpunkt ist auf `diaObjectId` gekeyed (nicht `diaSourceId`), `cutouts` liefert **keine** Epoche (swagger: nur diaSourceId/kind/output-format/…). Re-Dispatch `37544867025` lief **mit** der Epoche, scheiterte aber neu (gemessen via `ci_manage log`): `fink_cutout_compiler: the WCS carries no measurable pixel step — the extent stays absent`. Der echte Cutout-Kopf trägt **kein** `CTYPE1/2`; der Pixelmaßstab lebt in der `PC1_1..PC2_2`-Matrix (≈5.4e-5 °/px), nicht in `CDELT` (=1.0 Platzhalter); `fits.rs:371` verlangt `CTYPE1` → `wcs=None`. Compiler gefixt (`tools/harvest/src/bin/fink_cutout_compiler.rs`, lokaler WCS-Fallback aus CRVAL/CRPIX/CD bzw. CDELT×`PCi_j`), `cargo check -p omegaflow-harvest --bin fink_cutout_compiler` grün. Re-Dispatch nach Push.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage view 37544867025` nach Abschluss (nicht pollen); dann `register_release_set`-Verifikation.
+- **Braucht:** `ci_manage view 37545575263` nach Abschluss (nicht pollen); dann `register_release_set`-Verifikation.
 
-### vnp46a3 — Nachtgranule (Re-Dispatch)
+### vnp46a3 — Nachtgranule (Re-Dispatch nach transientem 502)
 - **Status:** wartend
-- **Trigger:** Ausgang `vnp46a3-cdn 37544860270`
-- **Lage:** (gemessen 2026-10-07, Mycelium-251) Der Workflow kennt nur Input `tile`; er löst den neuesten Granule je Tile (`sort_key=-start_date`). Der Fehlschlag (`no measured VNP46A3 cell`) kam vom hocharktischen `h17v01` (Polartag am 2026-08-01, 0.70 MB DNB-leer); äquatoriales `h18v07` am selben Datum = 53.93 MB (volle DNB-Nacht, CMR HTTP 200). Re-Dispatch `-f tile=h18v07`.
+- **Trigger:** Ausgang `vnp46a3-cdn 37545067547`
+- **Lage:** (gemessen 2026-10-07, Mycelium-251) `tile=h18v07` wirkt: `37544860270` kompilierte **719 635** Records, 43 178 108 B, sha256 `d85ee99b9d967b5565bb79e145d9120ab09205eb41d4188b3f016e8944b94510`, scheiterte nur am CDN-Upload (GitHub-API transientes **HTTP 502**, `gh returned void`). Der frühere Polartag-Fehler (`h17v01`, 0.70 MB DNB-leer) ist behoben. Re-Dispatch `37545067547`.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage view 37544860270` nach Abschluss.
+- **Braucht:** `ci_manage view 37545067547` nach Abschluss.
 
 ### `static/membrane.html` BODIES-Handkopie → Build-Time-Manifest
 - **Status:** eigen
@@ -79,6 +79,7 @@ Origin: mycelium-folge251.
 - **IGRF-Koeffizienten als CDN-Artefakt** — für die `geomag_lat`-Direktive: kein Workflow, keine `phi/sources.φ`-Zeile (gemessen 2026-10-07). **Braucht:** Admission/`format`-Zeile; dann manifestiert Mycelium.
 - **Ungepoolte Register-Blöcke (Riss):** Recovery-Snapshot `sources_recovery_cdn-merged_60k_lost-blocks.φ` (**5 658** `url`-Zeilen) vs. lebende `phi/sources.φ` (**2 658**). **Braucht:** Sichtung/Merge (dein Register).
 - **Generiertes `LICENSE` im `omegaflow/sources`-Repo** — nach deinen `terms`-Zeilen.
+- **Latente `fits.rs`-Bugs (Archivar-Parser):** (gemessen 2026-10-07, Mycelium-251) `src/archivar/fits.rs:371` verlangt `CTYPE1` hart — ein realer Fink-Cutout-Kopf ohne `CTYPE` liefert `FitsWcs::from_header → None`. Zweitens baut `fits.rs:391` den PC-Schlüssel als `format!("PC{i:03}{j:03}")` → `PC001001`, während der Standard `PC1_1`/`PC1_2`/`PC2_1`/`PC2_2` ist; mit `CDELT=1.0` würde so ein ~1°-Extent fabriziert. Der Fink-Compiler umgeht beide lokal; der geteilte Parser ist deine Feder. **Braucht:** `CTYPE` optional, PC-Schlüssel `PC{i}_{j}`.
 
 ## An future
 
