@@ -57,7 +57,7 @@ note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 6
 
 blocked account
 url https://data.lsst.cloud/api/tap/sync
-note Rubin/LSST — data-rights gated, Survey off-sky; SLAC-Petition 2026-10-05 verweigert (mail_ledger.φ:241); Alternativweg LSST In-kind Program (gemessen 200) unter Förder-LOCK; Broker Fink/ALeRCE 200, ANTARES 206; RSP tap 404; Embargo J2/J6.
+note Rubin/LSST — data-rights gated, Survey off-sky; SLAC-Petition 2026-10-05 verweigert (mail_ledger.φ:241); LSST In-kind 2026-10-06: nur Programm-Ebene, Individual-Non-US geschlossen; Broker Fink/ALeRCE 200, ANTARES 206; RSP tap 404.
 
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
