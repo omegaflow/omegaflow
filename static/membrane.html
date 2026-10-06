@@ -34,13 +34,18 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
 // with `wasm-pack build --target web --release` and copied next to this page.
 // Loaded dynamically so a missing bundle stays an honest black, not a blank page.
 
-const CATALOG_EPOCH_YR = 2000.0;       // the register's catalog_epoch (phi/sources.φ)
+const CATALOG_EPOCH_YR = 2000.0;       // Riss: the register declares catalog_epoch 2016.0
+                                       // (phi/sources.φ:17466); this page carries 2000.0. The
+                                       // value is Mountain's verdict — not silently aligned.
 const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the catalog epoch on UNIX
 const VIEW_SPAN_M = 2.53e17;           // the measured star enclosure at the SSB (≈ 8.2 pc, c·age)
 // The body anchors (phi/sources.φ:3450-3469, `at earth|moon|sun`); each staged
 // .bin carries the measured props. The anchor's field ttl is the .bin's own
 // granule span — never the register's ttl 86400, which is the fetch cadence.
-const BODIES = ["earth", "moon", "sun"];
+// The array is the load order, and it is visibility order: the sun (the
+// brightest, the operator gate) is fetched and rendered first, moon and earth
+// follow. The star catalog, the faint layer, streams in last.
+const BODIES = ["sun", "earth", "moon"];
 
 const canvas = document.getElementById("surface");
 const statusEl = document.getElementById("status");
@@ -78,7 +83,7 @@ function pct(got, total) {
 // Stream the body and, when a label is given, paint the measured progress each
 // chunk. The content-length may name the compressed size, so the share is
 // clamped; silence is the honest state when the header is absent.
-async function fetchBytes(path, label, onProgress) {
+async function fetchBytes(path, label) {
   const r = await fetch(path);
   if (!r.ok) {
     return null;
@@ -90,6 +95,17 @@ async function fetchBytes(path, label, onProgress) {
   const reader = r.body.getReader();
   const chunks = [];
   let got = 0;
+  let lastByte = performance.now();
+  // A label drives a live line; the silent seconds name a stalled stream so a
+  // standing percentage can never be mistaken for progress.
+  const draw = () => {
+    if (!label) {
+      return;
+    }
+    const age = Math.round((performance.now() - lastByte) / 1000);
+    status(label + pct(got, total) + (age >= 20 ? " · no bytes for " + age + " s" : ""));
+  };
+  const timer = label ? setInterval(draw, 1000) : null;
   for (;;) {
     const { done, value } = await reader.read();
     if (done) {
@@ -97,11 +113,11 @@ async function fetchBytes(path, label, onProgress) {
     }
     chunks.push(value);
     got += value.length;
-    if (onProgress) {
-      onProgress(got, total);
-    } else if (label) {
-      status(label + pct(got, total));
-    }
+    lastByte = performance.now();
+    draw();
+  }
+  if (timer) {
+    clearInterval(timer);
   }
   const out = new Uint8Array(got);
   let off = 0;
@@ -110,24 +126,6 @@ async function fetchBytes(path, label, onProgress) {
     off += c.length;
   }
   return out;
-}
-
-// The three ephemerides stream in parallel; three labels writing one status node
-// would race. Aggregate the decoded bytes into one line and name a stalled
-// stream by its silent seconds — a standing percentage alone cannot tell a slow
-// download from a hung one. The ticker keeps the age visible between chunks.
-const anchorProgress = new Map();
-let anchorLastByte = performance.now();
-function paintAnchor() {
-  let got = 0;
-  let total = 0;
-  for (const p of anchorProgress.values()) {
-    got += p.got;
-    total += p.total;
-  }
-  const age = Math.round((performance.now() - anchorLastByte) / 1000);
-  const line = "anchoring bodies…" + pct(got, total);
-  status(age >= 20 ? line + " · no bytes for " + age + " s" : line);
 }
 
 // The flat WASM response (26 × f64 per record) into the wire's two GPU planes:
@@ -427,6 +425,19 @@ function integrate(dt) {
   state.pz += vz * dt;
 }
 
+// One field evaluation: the presence's time is the wall clock on the TDB≈UTC
+// approximation; the ~69 s (37 leap + 32.18 TT−UTC) is far below one frame's
+// light-reach (c·69 s = 2.1e10 m ≪ the 8 pc enclosure pad). The exact LSK path
+// stays native/WASM. Used during boot for each arriving layer and by the loop.
+function frame() {
+  state.t = Date.now() / 1000 - J2000_UNIX_S;
+  const flat = lookup.query(state.px, state.py, state.pz, state.t, 0.0, 0.0, 0.0);
+  const record = parseFlat(flat);
+  updateLvl(record);
+  render(record);
+  return record;
+}
+
 let last = performance.now();
 function loop(now) {
   if (!lookup) {
@@ -434,94 +445,65 @@ function loop(now) {
   }
   const dt = (now - last) / 1000;
   last = now;
-  // The presence's time is the wall clock on the TDB≈UTC approximation; the
-  // ~69 s (37 leap + 32.18 TT−UTC) is far below one frame's light-reach (c·69 s
-  // = 2.1e10 m ≪ the 8 pc enclosure pad). The exact LSK path stays native/WASM.
-  state.t = Date.now() / 1000 - J2000_UNIX_S;
   integrate(dt);
-  const flat = lookup.query(state.px, state.py, state.pz, state.t, 0.0, 0.0, 0.0);
-  const record = parseFlat(flat);
-  updateLvl(record);
-  render(record);
+  const record = frame();
   status("stars " + record.count + " · scale " + state.scale.toExponential(2) + " m/px · t " + Math.round(state.t) + " s TDB");
   requestAnimationFrame(loop);
 }
 
 async function boot() {
   resize();
-  status("loading stars…");
-  await paint();
-  const stars = await fetchBytes("/dr3_stars.bin", "loading stars…");
-  if (!stars) {
-    status("stars absent — honest black");
-    return;
-  }
   status("instantiating lookup…");
   await paint();
   let mod;
   try {
     mod = await import("./omegaflow.js");
     await mod.default();
-    status("parsing stars…");
-    await paint();
-    lookup = new mod.MembraneLookup(stars, CATALOG_EPOCH_YR);
   } catch {
     status("lookup absent (omegaflow.js / omegaflow_bg.wasm) — honest black");
     return;
   }
-  status("anchoring bodies…");
-  await paint();
-  // The three ephemerides are independent: fetch them together instead of in a
-  // chain, so the wait is the slowest body, not their sum. Their progress is
-  // aggregated on one line; a stalled stream is named by its silent seconds,
-  // an absent body is named instead of leaving a frozen status.
-  const anchorTimer = setInterval(paintAnchor, 1000);
-  const ephs = await Promise.all(
-    BODIES.map(async (body) => {
-      const p = { got: 0, total: 0 };
-      anchorProgress.set(body, p);
-      try {
-        const eph = await fetchBytes(
-          "/ephemeris_de440_" + body + ".bin",
-          null,
-          (got, total) => {
-            p.got = got;
-            p.total = total;
-            anchorLastByte = performance.now();
-            paintAnchor();
-          }
-        );
-        return eph ? { body, eph } : { body, absent: true };
-      } catch {
-        return { body, failed: true };
-      }
-    })
-  );
-  clearInterval(anchorTimer);
-  for (const e of ephs) {
-    if (e.eph) {
-      lookup.load_ephemeris(e.body, e.eph);
-    }
-  }
-  const missing = ephs.filter((e) => !e.eph).map((e) => e.body);
-  if (missing.length) {
-    console.warn("ephemerides absent: " + missing.join(", "));
-  }
-  status("starting GPU…" + (missing.length ? " (no anchor for " + missing.join(", ") + ")" : ""));
+  // The lookup starts without the catalog: the visible anchors render first and
+  // the fainter stars stream in behind them. The field grows by visibility order,
+  // each arriving layer measured and shown before the next is fetched.
+  lookup = new mod.MembraneLookup(new Uint8Array(0), CATALOG_EPOCH_YR);
+  status("starting GPU…");
   await paint();
   const ok = await initGPU();
   if (!ok) {
     status("no WebGPU adapter — honest black");
     return;
   }
-  // The frame clock is requestAnimationFrame; an occluded tab suspends it, so the
-  // first field is measured and rendered directly after the handover instead of
-  // waiting for a frame that may not come. The status names the phase before the
-  // first query builds the presence hull, so the slow first light reads as work,
-  // not as a hang. The loop schedules its own next frame.
-  status("measuring the first field…");
+
+  const missing = [];
+  for (const body of BODIES) {
+    status("anchoring " + body + "…");
+    await paint();
+    const eph = await fetchBytes("/ephemeris_de440_" + body + ".bin", "anchoring " + body + "…");
+    if (eph) {
+      lookup.load_ephemeris(body, eph);
+      frame();
+    } else {
+      missing.push(body);
+    }
+  }
+
+  status("loading stars…");
   await paint();
-  await new Promise((r) => setTimeout(r, 50));
+  const stars = await fetchBytes("/dr3_stars.bin", "loading stars…");
+  if (stars) {
+    lookup.add_stars(stars, CATALOG_EPOCH_YR);
+  } else {
+    missing.push("stars");
+  }
+
+  if (missing.length) {
+    console.warn("absent: " + missing.join(", "));
+    status("absent: " + missing.join(", ") + " — honest black");
+  } else {
+    status("membrane ready");
+  }
+  await paint();
   last = performance.now();
   loop(last);
 }

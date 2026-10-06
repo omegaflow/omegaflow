@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: be454383374c9eed3b7ffc4b93ce3ae1cf052f17c9285194e59879c047d97019
+  sha256: d6e6fa54825abbfbb7ce8cabfeaa7f40692eb9913c4668436fc360759ba56d80
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -23,6 +23,7 @@ Wort | Datum | Quelle
 „earth-wgs84/legacy-assumed können wir den nicht migrieren ich möchte eigentlich kein legacy haben / deklarieren" — der Volume-Frame ist Pflicht-Deklaration je Quelle, kein Legacy-Bucket, keine Migration | 2026-10-06 | Operator (Session, River 99)
 „kannst du die frage bitte noch den voices und glm und claude online chat geben" — die Ratsfrage zusätzlich an die Schwarm-Stimmen, glm und Claude-online | 2026-10-06 | Operator (Session, River 104)
 „bitte lege die fragen dem rat vor und dem schwarm und gib sie mir davor für den online chat mit claude und glm" — die drei Stemm-Fragen (Membran-Hänger, Paper-Riss, Fenster-Kante) | 2026-10-06 | Operator (Session, River 105)
+„muss nicht die sonne zuerst sichtbar sein können wir nicht nach helligkeit/sichtbarkeit/erreichbarkeit progressiv laden?" — progressives Laden nach Sichtbarkeit, **Sonne zuerst** (nicht Sterne zuerst) | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -121,22 +122,35 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** Mountain setzt slot `f(11)`/Maske Bit 11; Mycelium baut + manifestiert;
   Rivers Checkmark ist `nearCount(<1e13 m) > 0`.
 
-### Membran — Boot-Instrumentierung (Fix gebaut) + progressives Laden (operator-gebunden)
-- **Status:** eigen (Fix gebaut) | **Bindung:** eigen (Membran-Pfad)
-- **Trigger:** — (Fix in diesem Atom).
-- **Lage:** (gemessen 2026-10-06, River 105) `boot()` fetcht die drei
-  `ephemeris_de440_<body>.bin` über `BODIES.map(async …)`; `fetchBytes` malt Fortschritt nur
-  mit Label. Die `.bin` sind groß (Survey: `cache/omegaflow_eph_sun.bin` 193.7 MB).
-  **Gebaut** (Rat (b) + Claude + GLM): aggregierter Fortschritt Σgot/Σtotal auf einer Zeile,
-  Stall-Kriterium („no bytes for N s" aus dem Byte-Alter), sichtbarer Fehler-/Absent-Pfad
-  (`static/membrane.html` `paintAnchor` + `boot()`) — die drei Labels rasen nicht mehr.
-- **Blockade:** Rest — progressives Laden (Sterne zuerst rendern, Sonne nachladen) und jede
-  Änderung der Daten-Lieferung (Dezimierung/Range/Format) sind operator-gebunden (Claude: was
-  den Operator-Blick verschiebt, braucht Wort); der Gate-Pass („Sonne sichtbar") bleibt
-  Operator-Urteil.
-- **Braucht:** Operator-Wort für progressives Laden; ein Playwright-Lauf mit langem Timeout
-  bis zur gerenderten Wolke (Ready-Flag / Canvas nicht schwarz) ist die noch fehlende Messung
-  (Claude: die zwei Läufe endeten in der Stars-Phase).
+### Membran — progressives Laden nach Sichtbarkeit (gebaut) + Folgeatome D/C
+- **Status:** eigen (gebaut) | **Bindung:** eigen (Membran-Pfad)
+- **Trigger:** — (in diesem Atom; Wort 2026-10-06).
+- **Lage:** (gemessen 2026-10-06, River 105)
+  - **Operator-Wort:** progressiv laden nach Helligkeit/Sichtbarkeit/Erreichbarkeit, **Sonne
+    zuerst** (nicht Sterne zuerst). Rat 2026-10-06: (B) `add_stars` ist der Schlussstein, (A)
+    allein verfehlt das Wort (der 95-MB-Sternfile gated weiter den ersten Pixel), (D) ist der
+    notwendige Begleiter, (C) ein Folgeatom.
+  - **Gebaut (B):** `src/wasm.rs` `MembraneLookup::new` startet ohne Katalog (leerer Slice
+    legal) + `pub fn add_stars(&mut self, bytes, epoch)` (extend + `hash = None`); der nächste
+    `query` rebuildet den Hash aus dem gewachsenen Set. `cargo check` grün (native; das
+    wasm-Modul baut im `pages-deploy`-CI, `wasm-pack --target web`).
+  - **Gebaut (A):** `static/membrane.html` `boot()` öffnet `new MembraneLookup(new
+    Uint8Array(0), epoch)`, startet die GPU, lädt die Körper **sequenziell in
+    Sichtbarkeitsreihenfolge** (`BODIES = ["sun","earth","moon"]`), rendert nach jedem
+    (`frame()`), dann die Sterne via `add_stars`. `fetchBytes` trägt das Byte-Alter-Stall
+    („no bytes for N s").
+  - **Riss (Epoch):** `static/membrane.html` `CATALOG_EPOCH_YR = 2000.0` gegen
+    `phi/sources.φ:17466 catalog_epoch 2016.0`; der Compiler `tycho2_compiler.rs` trägt keinen
+    Epoch, das `.bin` auch nicht. Owner des Wertes: **Mountain** (Verdikt/Register); der
+    Consumer-Kommentar (River) trägt beide Zeugen, wird **nicht** still gesetzt.
+- **Blockade:** der erste Pixel wartet weiter auf den 193-MB-Sonnen-`.bin` (A+B ohne D).
+- **Braucht:**
+  (D) Mycelium + River — Range/Fenster der erreichbaren Ephemeriden-Granule, damit die Sonne
+  klein wird (gated: Layout-Messung des `.bin`; ohne Granule-Index → Compiler emittiert ein
+  windowed Asset, Trigger);
+  (C) Mountain + Mycelium — Katalog nach Helligkeit ordnen (Trigger: Dateiordnung ≠ Helligkeit);
+  ein Playwright-Lauf mit langem Timeout bis zur gerenderten Wolke (Ready-Flag / Canvas nicht
+  schwarz) ist die noch fehlende Messung.
 
 ### Agnosis — Membran-Trio (Rest (a))
 - **Status:** wartend (fremd) | **Bindung:** eigen (cross-line: Mycelium, CI)
@@ -211,8 +225,18 @@ council + Schwarm-Stimmen):
 
 Die Stemmen sind eine **zweite Stimme** (Fund ist eine Behauptung bis zum Baumtest): F2
 trägt die Rat-Lesart am gemessenen Report (`raw TE untouched`). F1 ist nach der
-übereinstimmenden (b)-Lesart **gebaut** (Instrumentierung); der progressive Render und der
-Gate-Pass warten auf das Operator-Wort.
+übereinstimmenden (b)-Lesart **gebaut** (Instrumentierung).
+
+### Rat 2026-10-06 (zweite Sitzung) — progressives Laden nach Sichtbarkeit
+
+Operator-Wort: progressive Ladung nach Helligkeit/Sichtbarkeit/Erreichbarkeit, Sonne zuerst.
+Rat-Verdikt: **(B) `add_stars` ist der Schlussstein**; **(A)** allein verfehlt das Wort (der
+95-MB-Sternfile gated weiter den ersten Pixel); **(D)** ist der notwendige Begleiter (sonst
+ist „Sonne zuerst" noch 193 MB); **(C)** ist ein Folgeatom (Helligkeits-Ordnung, Compiler).
+Atom-Plan: Dispatch 0 (Epoch-/Ordnungs-Messung) → Dispatch 1 (B, `src/wasm.rs`) → Dispatch 2
+(A, `static/membrane.html`) → Dispatch 3 (D, gated auf `.bin`-Layout) → C als Folgeatom. Der
+Epoch-Riss (2000.0 vs 2016.0) wird **vor** C gemessen, nie gesetzt. Dispatch 0 + 1 + 2 sind
+gebaut; D und C stehen mit Triggern.
 
 ## An mycelium
 
@@ -237,15 +261,19 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `docs/handover/handover-2026-10-06-river-folge105.md`
 - `docs/handover/archiv/handover-2026-10-06-river-folge104.md` (Move aus `docs/handover/`)
-- `static/membrane.html` (Boot-Instrumentierung: aggregierter Fortschritt + Stall-Alter +
-  Absent/Fehler-Pfad; Vanilla JS, kein Szenen-Pixel)
+- `static/membrane.html` (progressives Laden nach Sichtbarkeit: leerer Lookup, Körper
+  sequenziell Sonne zuerst, Sterne via `add_stars`, `fetchBytes`-Stall; Vanilla JS)
+- `src/wasm.rs` (`MembraneLookup::new` ohne Katalog + `add_stars`; unter
+  `#[cfg(target_arch = "wasm32")]`)
 
-Verifikation/Dispatches: kein Rust-Eingriff; `static/membrane.html` gelesen und editiert
-(Vanilla JS). `register_lookup --fired river` = `em-apertur` FIRED_UNGEMESSEN
+Verifikation/Dispatches: `cargo check` grün (native; `src/wasm.rs` liegt unter
+`#[cfg(target_arch = "wasm32")]` und wird vom `pages-deploy`-CI via `wasm-pack` gebaut —
+dieser Push stößt ihn an, `static/**`-Pfad). `static/membrane.html` gelesen und editiert.
+`register_lookup --fired river` = `em-apertur` FIRED_UNGEMESSEN
 (Trigger `ci-check` pending, nicht gefeuert); `--stale river --persist 3` = 0;
 `--addressed river` = 2 (future-183, mycelium-240), gefaltet; `open_points_check
 docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-citations;
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.0935 — Session-Burn (`session_burn`: eigene Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.0935, inkl. Rat $0.0064 + Schwarm; Runde total 0.5318 → 0.7825; gemessen 2026-10-06)
+## Burn: open 0.0000 · close 0.1599 · cap 0.2 Grund: zwei Rat-Sitzungen + Schwarm + progressive-Loading-Atom (A+B) überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.1599; Runde total 0.5318 → 0.8925; gemessen 2026-10-06
