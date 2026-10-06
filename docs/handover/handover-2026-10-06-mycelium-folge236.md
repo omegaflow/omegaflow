@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: 4ac5390a33bb47f227f93a62231bf386452d564e7b848eab630f26304fb6860e
+  sha256: 64751e71a806a04ad2c8d5c3dc5e216c2532f1a2e59cce4777836355a41530c4
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -81,7 +81,7 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
   Read-only Katalog-Pässe dispatcht: `11003006` `37439238853`, `12002000` `37439243015`,
   `12001000` `37437987631`.
 - **Blockade:** ohne `field`-Zeile ist jede Bestellung ein fabriziertes Feld (IDs jetzt gemessen).
-- **Braucht:** Field-Verdikt + Reader je Produkt (Mountain; `mountain-240 eff2bb0cb` löschte den footprint-only Reader). **Bestellungen gefahren** (Operator-Wort 2026-10-06, `download_limit=1` je, Fenster `2026/01/01`): `11002004` `37439494675`, `11003006` `37439734786`, `11002005` `37439738985`, `11002008` `37439742873`, `12002000` `37439746867`, `12012000` `37439750750`, `12022000` `37439755231`, `12003000` `37439759516`, `10001003` `37439763585`, `10002002` `37439767395`, `10003027` `37439771296`. **Abholung:** Workflow um `fetch`-Input + `--fetch-file` + Payload-Upload erweitert (`.github/workflows/jaxa-gportal-cdn.yml`, diese Session) und 11 Abhol-Läufe dispatcht (`37440039330`–`37440081279`, je `download=true fetch=true download_limit=1`). **Riss-Kandidat:** der Arm fetcht per HTTP-GET mit Session-Cookie **direkt nach dem Order** — falls JAXA die Datei noch nicht staged, gehen die Läufe rot; dann SFTP `ftp.gportal.jaxa.jp:2051` oder Retry.
+- **Braucht:** Field-Verdikt + Reader je Produkt (Mountain; `mountain-240 eff2bb0cb` löschte den footprint-only Reader). **Bestellungen gefahren** (Operator-Wort 2026-10-06, `download_limit=1` je, Fenster `2026/01/01`): `11002004` `37439494675`, `11003006` `37439734786`, `11002005` `37439738985`, `11002008` `37439742873`, `12002000` `37439746867`, `12012000` `37439750750`, `12022000` `37439755231`, `12003000` `37439759516`, `10001003` `37439763585`, `10002002` `37439767395`, `10003027` `37439771296`. **Abholung:** Workflow um `fetch`-Input + `--fetch-file` + Payload-Upload erweitert (`.github/workflows/jaxa-gportal-cdn.yml`, diese Session) und 11 Abhol-Läufe dispatcht (`37440039330`–`37440081279`, je `download=true fetch=true download_limit=1`). **Resilient gemacht:** der Order/Fetch-Schritt trägt jetzt einen Retry (5 Versuche × 120 s) gegen den JAXA-Staging-Lag (Workflow committet `033137dfc`); die 11 Läufe neu dispatcht (`37440358636`–`37440399851`). Fallback bleibt SFTP `ftp.gportal.jaxa.jp:2051`.
 
 ### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*`
 - **Status:** wartend | **Bindung:** River
