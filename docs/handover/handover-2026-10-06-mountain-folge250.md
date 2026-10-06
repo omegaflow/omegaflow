@@ -3,7 +3,7 @@
   session: Mountain-Folge 250
   class: handover
   date: 2026-10-06
-  sha256: 0c6e89713e111b14d32bccd266abf747aac474cdbc9ee552240326f381edf916
+  sha256: 4513955ad82ec188f19c8b620a31dc1db5b686e36cb4e73ca4daf6d9e4fddff6
   status: live
 -->
 # Handover — Mountain-Folge 250 (2026-10-06)
@@ -58,7 +58,7 @@ Wort | Datum | Quelle
 
 ### Newell dΦ/dt als `rect`-Treiber — CI-Ausgang (Rat entschieden, Arm gebaut)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Lauf `field-te-query.yml` Job `matrix-newell`
+- **Trigger:** CI-Lauf `field-te-query.yml` Job `matrix-newell` — dispatcht, Lauf `37535246655` (2026-10-06)
 - **Lage:** (gemessen 2026-10-06, Mountain 250) Der `from <name> <träger,liste>`-Parser-Member
   und `derive_matrix_arm` sind gebaut (`tools/measure/src/bin/field_te_query.rs`);
   `derive_matrix_arm` löst `newell_dphi_dt` über `src/mathematikerin/newell.rs` auf;
