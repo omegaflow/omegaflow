@@ -386,10 +386,6 @@ decline redistribution
 url https://api.blitzortung.org/
 note Blitzortung-Lightning (em, Community-Netz): api.blitzortung.org 000 (Key noetig) gemessen 2026-09-23; Community-Lizenz, Redistribution ausgeschlossen (wie data.blitzortung.org).
 
-decline redistribution
-url https://github.com/TIAN-we/petrel19
-note PETREL19 unlicensed — LICENSE main+master 404, GitHub license-API 404 (2026-10-04); GitHub-Default all-rights-reserved, CDN-Redistribution ausgeschlossen. Arm ephemeris_compiler.rs steht; Coverage 1799-10-13..2106-05-05.
-
 decline registry/katalog
 url https://api.boldsystems.org/v4/public/data/geo?format=json&limit=250
 note BOLD systems specimen geo records: presence catalog, no measured field.
@@ -1451,6 +1447,10 @@ decline redistribution
 url https://data.lsst.cloud/api/tap
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — proprietäre Frist — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
+decline data-rights
+url https://data.lsst.cloud/api/tap/sync
+note RSP TAP — data-rights gated; SLAC-Petition 2026-10-05 verweigert (mail_ledger.φ:241); In-kind 2026-10-06 nur Programm-Ebene, Individual-Non-US geschlossen; RSP tap 404; Broker Fink/ALeRCE 200 (offen).
+
 decline molecular
 url https://data.mendeley.com/datasets/75tsccprd2/1
 note GNIP — δ18O/δ2H-Niederschlags-Isotopie ist ein geochemischer Tracer (‰), kein Kraft-Feld (molecular-Präzedenz: BOLD/RCSB).
@@ -1980,6 +1980,10 @@ decline presence-catalog
 url https://explore.globalmeteornetwork.org/gmn_data_store
 note grind: grind_terrapulse_a.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
+decline registry/katalog
+url https://exposome-explorer.iarc.fr/system/downloads/current/environmental_pollutants.csv.zip
+note Exposome-Explorer environmental_pollutants — 313-Zeilen-Chemikalien-Katalog (CAS/SMILES/Masse), keine gemessene Konzentration/Zeitachse; Exposom-Domäne Chemikalien.
+
 decline position-only
 url https://eyes.nasa.gov/dsn/data/dsn.json?t=1786939200
 note grind: grind_host.φ
@@ -2239,6 +2243,10 @@ note world_volcanoes gist: static volcano location registry, no measurement fiel
 decline catalog-register
 url https://github.com/FreeCodeCamp/ProjectReferenceData
 note NASA-Meteoriten-Landungen — statischer Katalog, kein Live-Messwert.
+
+decline redistribution
+url https://github.com/TIAN-we/petrel19
+note PETREL19 unlicensed — LICENSE main+master 404, GitHub license-API 404 (2026-10-04); GitHub-Default all-rights-reserved, CDN-Redistribution ausgeschlossen. Arm ephemeris_compiler.rs steht; Coverage 1799-10-13..2106-05-05.
 
 decline infrastructure
 url https://github.com/arijguest/3D-meteorite-viewer
@@ -4488,10 +4496,6 @@ decline derived-product
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
 note Swarm TII E-Feld (TCT02/16) — keyless HAPI, aber experimentell, stopDate 2025-12-04, E-Feld ABGELEITET (E=−V×B); direkte Messung ist Ionendrift (Vixh/Viy/Viz m/s). Abgeleitet + Feed beendet → kein Oszillator; live-Swarm-Felder in sources.φ.
 
-decline registry
-url https://www.orfeus-eu.org/eidaws/routing
-note EIDA Routing Service (ORFEUS) — 2026-10-05: HTTP 200 (1084 B HTML Routing-Beschreibung); Routing/Registry für FDSN dataselect/station, kein Messwert; ORFEUS-FDSN-Stationen bereits declined_sources.φ:5420.
-
 decline registry/katalog
 url https://vo-tap.oma.be/tap
 note sidc_flare/sidc_cme/sidc_geomagnetic_*/uset_*/rob_spoca_ch — epn_core-Ereigniskataloge (Klassifikation/Prognose, kein Roh-Messwert-Feld).
@@ -4871,6 +4875,10 @@ note PALSAR-Wald/Nichtwald (abgeleitet).
 decline infrastructure
 url https://www.epa.gov/waterdata/get-nhdplus-national-hydrography-dataset-plus-data
 note grind: grind_terrapulse_a.φ
+
+decline no-physical-force
+url https://www.ers.usda.gov/data-products/food-access-research-atlas/download-the-data
+note USDA Food Access Research Atlas — sozioökonomischer Zugangs-Index (Einkommen/Distanz), kein physikalisches Feld; Exposom-Domäne Ernährungsumfeld.
 
 decline registry/katalog
 url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
@@ -5416,9 +5424,17 @@ decline commercial
 url https://www.omim.org
 note OMIM — Mendelsche Gene, Registrierung/Subskription; 403 direkt (Wayback, 2026-10-03).
 
+decline registry/katalog
+url https://www.onetcenter.org/dl_files/database/db_29_0_text.zip
+note O*NET-Datenbank — Berufs-Registry (Tasks/Skills), kein Messwert-Feld; Exposom-Domäne Arbeitsumfeld.
+
 decline no-physical-force
 url https://www.openicpsr.org
 note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
+
+decline registry
+url https://www.orfeus-eu.org/eidaws/routing
+note EIDA Routing Service (ORFEUS) — 2026-10-05: HTTP 200 (1084 B HTML Routing-Beschreibung); Routing/Registry für FDSN dataselect/station, kein Messwert; ORFEUS-FDSN-Stationen bereits declined_sources.φ:5420.
 
 decline registry
 url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=json&starttime=2020-01-01
@@ -5703,15 +5719,3 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
-
-decline no-physical-force
-url https://www.ers.usda.gov/data-products/food-access-research-atlas/download-the-data
-note USDA Food Access Research Atlas — sozioökonomischer Zugangs-Index (Einkommen/Distanz), kein physikalisches Feld; Exposom-Domäne Ernährungsumfeld.
-
-decline registry/katalog
-url https://www.onetcenter.org/dl_files/database/db_29_0_text.zip
-note O*NET-Datenbank — Berufs-Registry (Tasks/Skills), kein Messwert-Feld; Exposom-Domäne Arbeitsumfeld.
-
-decline registry/katalog
-url https://exposome-explorer.iarc.fr/system/downloads/current/environmental_pollutants.csv.zip
-note Exposome-Explorer environmental_pollutants — 313-Zeilen-Chemikalien-Katalog (CAS/SMILES/Masse), keine gemessene Konzentration/Zeitachse; Exposom-Domäne Chemikalien.

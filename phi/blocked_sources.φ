@@ -55,10 +55,6 @@ pending
 url https://www.gosat-gw.nies.go.jp
 note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml (fae4a5081). 36283215548 rot: Leerfenster als Overflow fehlklassifiziert; Empty/Overflow getrennt (2026-09-27); Re-Dispatch offen.
 
-blocked account
-url https://data.lsst.cloud/api/tap/sync
-note Rubin/LSST — data-rights gated, Survey off-sky; SLAC-Petition 2026-10-05 verweigert (mail_ledger.φ:241); LSST In-kind 2026-10-06: nur Programm-Ebene, Individual-Non-US geschlossen; Broker Fink/ALeRCE 200, ANTARES 206; RSP tap 404.
-
 pending
 url https://planet.physics.uiowa.edu/das/das2Server/hapi
 note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs + das2_iowa_compiler.rs registriert (sources.φ:16370), Workflow das2-iowa-cdn.yml steht (2026-09-30). Offen: Feld-Verdikt (kein field im Block).
@@ -143,10 +139,9 @@ descoped
 url https://sleepdata.org
 note NSRR — 2026-10-04: descoped (Human-Subjects-/HIPAA-Training Pflicht, absent); Konto bestätigt (mail_ledger.φ:361/:362), NSRR_USER/PASS/EMAIL in .secrets.local; Arm nsrr_psg steht (9d416e57b, edf.rs); Asset-Block fehlt.
 
-blocked account
+descoped
 url https://api.ioc-sealevelmonitoring.org/v1
-reg https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist
-note IOC Sea Level Monitoring API v1 — 2026-10-05: HTTP 403 direkt + Proton (239 B); kein IOC-Key in .secrets.local; keyless service.php-Route steht sources.φ:1138. Konto/Token-Klärung offen.
+note IOC Sea Level v1 — 2026-10-06 gemessen: keyless service.php-Route HTTP 200 (1 997 376 B) deckt die Stationen (sources.φ:1145); v1 ohne Key 403 → descoped.
 
 blocked parser-def
 url https://cedar.openmadrigal.org
