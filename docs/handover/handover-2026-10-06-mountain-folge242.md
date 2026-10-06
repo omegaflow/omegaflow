@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: 31afb7b81b1c152616481f195f9e740342d9e009e9ee17b85afe0a1689aa2892
+  sha256: dc20afd2b90eda1191f9bda5625c5974df415af462bb9754578103ba5bf2e1bc
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -96,8 +96,11 @@ Wort | Datum | Quelle
   gemessene Chemikalien-Feldquellen (Claude+GLM 2026-10-06): EMEP/EBAS (`ebas-data.nilu.no`, NetCDF,
   offen), EEA-Parquet-Dienst, **USGS-Samples-API** (`api.waterdata.usgs.gov`, Token `USGS_WATER_KEY` —
   WQP-Legacy liefert seit 2024-03 keine neuen USGS-Daten mehr), TOAR (Ozon, `TOAR_TOKEN`); als
-  Ort+Zeit-Brücke zu O*NET das **OEWS** (Staat×SOC×Jahr, beschäftigungsgewichtet). Exposome-Explorer
-  bleibt Nicht-Feld (Population Freitext/Land, nur Publikationsjahr). CDN-Workflows (Mycelium).
+  Ort+Zeit-Brücke zu O*NET das **OEWS** (Staat×SOC×Jahr, beschäftigungsgewichtet); ferner gemessen:
+  **USGS NWIS** (`waterservices.usgs.gov/nwis/iv`, 200, offen), **NOAA GML HATS**
+  (`gml.noaa.gov/aftp/data/hats/`, 200, offen), AirNow (`airnowapi.org`, Token `AIRNOW_KEY`), CEDA
+  (`CEDA_TOKEN`), EUMETSAT; OSHA-Vollasset auch `obis.osha.gov/opengov/healthsamples.zip` (200).
+  Exposome-Explorer bleibt Nicht-Feld (Population Freitext/Land, nur Publikationsjahr). CDN-Workflows (Mycelium).
 
 ## An mycelium
 
