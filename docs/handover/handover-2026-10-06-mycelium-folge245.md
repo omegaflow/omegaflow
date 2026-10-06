@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; GIC-Faden-API-Reachability-Test
   class: handover
   date: 2026-10-06
-  sha256: f9c1f26ca3374a99fb8d69c9ef005b666a1dc36f31af7b237aa605e02a0b425c
+  sha256: b7fcee682becedf898747e14e9bbb49940eb6c283b0bff83699ed6ed11145983
   status: live
 -->
 # Handover — Mycelium-Folge 245 (2026-10-06)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0230 (Line) · cap 0.5 — Grund: meta-pass, GIC-Faden-API-Test (§A–G; 4 flash-Dispatchs getrennt)
+## Burn: open 0.0000 · close 0.0230 (Line, +LLM-Validierung) · cap 0.5 — Grund: meta-pass, GIC-Faden-API-Test (§A–G; 4 flash-Dispatchs + 3 Stimmen getrennt)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
@@ -34,6 +34,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
 - Wort | 2026-10-06 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | Quelle: Operator (Session, Mycelium 243).
 - Wort | 2026-10-06 | Own-CDN-Junk-Bereinigung: „ich folge deiner Empfehlung" — die Messung korrigierte: nur 1 stale Blatt gelöscht | Quelle: Operator (Session, Mycelium 243).
 - Wort | 2026-10-06 | „ich möchte dass du den API test der vorhandenen APIs gegen diese wunschliste fährst" (volle Wunschliste §A Replikationslinien · B Mediator-Zeugen · C Driver+Konditionierer · D Unabhängige Observablen · E Kalibrier-Zeuge · F Zielkanal · G Placebo-Null) — API-Reachability-Test der GIC-Faden-Wunschliste gegen das Register | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „eigentlich wollte ich dass du die llm apis nutzt um die APIs zu validieren" — die Daten-APIs über die LLM-Stimmen (zweiter Kanal) validieren; kilo vom Operator gestoppt (zu langsam) | Quelle: Operator (Session, Mycelium 245).
 
 ## Offen — eigen
 
@@ -49,9 +50,29 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
   PC-Index (TLS-Zert. abgelaufen) · AL/AU/SYM-H (aeasy 404) · ROTI · EarthScope MT.
   **blockiert/unbelegt (7):** CARISMA (403) · Versorger-GIC · USGS E-Feld · DSCOVR (retired) ·
   Madrigal (kein Reader) · AWESOME (Host tot) · Operator-Neutralpunkt (kein Endpunkt).
+  **Zweiter Kanal (LLM-Stimmen, Operator-Wort 2026-10-06):** 3 Backbones (deepseek · gemini ·
+  nvidia-nemotron; kilo gestoppt) über die öffentliche Endpunkt-Tafel — **4 tragende Korrekturen**
+  (CARISMA-Host `www.carisma.ca` 200 · DMSP-SSJ via CDAWeb HAPI 200 · `P_dyn` im `OMNI_HRO_1MIN`,
+  nicht hourly · SSUSI-Seite „funded-dead" trotz HTTP 200) und **2 live widerlegte Fehlkorrekturen**
+  (`pcindex.cph.space` DNS tot, `vlf.stanford.edu` Redirect). Tafel §Zweiter Kanal in
+  `state/mycelium/gic-api-reachability-2026-10-06.md`.
 - **Blockade:** die Admission der neuen Fäden ist Mountain (Register-Verdikt/Zugang); der Arm-Bau folgt.
 - **Braucht:** Mountain-Admission je Faden (Register-Zeile + `terms`); Accounts/Keys (CARISMA, AMPERE,
   PC-Index, CDDIS-Earthdata) per-Akt Operator-Wort.
+
+### `phi/blocked_sources.φ` — GIC-Fäden pending (mountain-248, owner mycelium)
+- **Status:** eigen
+- **Trigger:** Arm-Bau/Manifestation je Eintrag
+- **Lage:** (gemessen 2026-10-06, mountain-248) 14 `pending`-Einträge `[mycelium]` tragen die neuen Fäden ein;
+  Träger-URLs: https://themis.igpp.ucla.edu/gmag/ · https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE ·
+  http://themis.ssl.berkeley.edu/data/themis/ · https://lasp.colorado.edu/mms/sdc/public/ ·
+  https://www.ncei.noaa.gov/data/poes-metop-space-environment-monitor/ · https://ssusi.jhuapl.edu/ ·
+  https://space.fmi.fi/image/ · https://supermag.jhuapl.edu/products/ · https://cdaw.gsfc.nasa.gov/CME_list/ ·
+  https://wdc.kugi.kyoto-u.ac.jp/ · https://superdarn.usask.ca/convection-maps ·
+  https://ds.iris.edu/ds/products/emtf/ · https://geomag.usgs.gov/ws/data/ · http://awesome.ucsd.edu/
+  (`phi/blocked_sources.φ:163–217`).
+- **Blockade:** Arm je Faden (Reader/Format) fehlt; `pcindex.org` liegt als `blocked account` (future).
+- **Braucht:** je Faden ein Arm; Zugang/`terms` je Faden aus Mountains Admission.
 
 ### CDN-Manifestation der neuen Arme (mountain-248)
 - **Status:** eigen
@@ -207,6 +228,11 @@ Origin: mycelium-folge245.
   **blockiert/unbelegt (7):** CARISMA (403) · Versorger-GIC · USGS E-Feld · DSCOVR (retired) ·
   Madrigal · AWESOME · Operator-Neutralpunkt. **Braucht:** Admission der neuen Fäden
   (Register-Zeile/Verdikt + Zugang/`terms`); der Arm-Bau/Manifestation folgt Mycelium.
+- **Zweiter Kanal (LLM-Stimmen 2026-10-06) — Korrekturen für die Admission:** CARISMA kanonischer
+  Host `www.carisma.ca` (200), nicht `data.carisma.ca` (403); DMSP-SSJ via CDAWeb HAPI
+  `DMSP-F18_SSJ_PRECIPITATING-ELECTRONS-IONS` (200); `P_dyn` in `OMNI_HRO_1MIN`, nicht hourly OMNI2;
+  SSUSI-Seite HTTP 200 aber „funded-dead". Live widerlegt: `pcindex.cph.space` (DNS tot),
+  `vlf.stanford.edu` (Redirect). Tafel §Zweiter Kanal (a.a.O.).
 - **Offen bei dir (aus future-186/183, mountain-248):** Fink-Cutout-Reader (`fink` registrieren +
   Cutout-FITS-Reader); Exposom-Sources-Zeilen je Klasse.
 
