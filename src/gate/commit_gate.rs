@@ -994,6 +994,15 @@ impl Gate {
                 if tokens.len() >= 6 {
                     let force = tokens[4];
                     let unit = normalize_unit(tokens[5]);
+                    if force_id_of(force).is_some() && unit == "1" && force != "em" {
+                        return Some(Verdict {
+                            severity: Severity::Hard,
+                            rule: "dimensionless-force".to_string(),
+                            line: line_idx + 1,
+                            feedback: feedback("dimensionless-force").to_string(),
+                            quote: clip(t, 90),
+                        });
+                    }
                     if force_id_of(force).is_some()
                         && !unit.is_empty()
                         && unit != "1"
@@ -1007,15 +1016,6 @@ impl Gate {
                                 "field line: the force \"{}\" with the unit \"{}\" is not in the registry",
                                 force, tokens[5]
                             ),
-                            quote: clip(t, 90),
-                        });
-                    }
-                    if force_id_of(force).is_some() && unit == "1" && force != "em" {
-                        return Some(Verdict {
-                            severity: Severity::Hard,
-                            rule: "dimensionless-force".to_string(),
-                            line: line_idx + 1,
-                            feedback: feedback("dimensionless-force").to_string(),
                             quote: clip(t, 90),
                         });
                     }
