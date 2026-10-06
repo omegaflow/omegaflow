@@ -1,13 +1,33 @@
 use crate::mathematikerin::least_squares::solve_normal_equations_with_pivot_ratio;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum Kanal {
+    StaerkeKanal,
+    ReferenzTreppe,
+    NoccFeld,
+    NachbarStation,
+    AndereSonde,
+    Zeit,
+}
+
 pub struct Witness<'a> {
     pub name: &'a str,
     pub series: &'a [f64],
+    pub force_type: u8,
+    pub kanal: Kanal,
+    pub origin: &'a str,
+}
+
+pub struct WitnessStamp {
+    pub name: String,
+    pub force_type: u8,
+    pub kanal: Kanal,
+    pub origin: String,
 }
 
 pub struct Residual {
     pub series: Vec<f64>,
-    pub witnesses_used: Vec<String>,
+    pub witnesses_used: Vec<WitnessStamp>,
     pub n: usize,
     pub lag: usize,
     pub rank: usize,
@@ -89,7 +109,12 @@ pub fn residual_against_witnesses(
             series,
             witnesses_used: used_all
                 .iter()
-                .map(|&i| witnesses[i].name.to_string())
+                .map(|&i| WitnessStamp {
+                    name: witnesses[i].name.to_string(),
+                    force_type: witnesses[i].force_type,
+                    kanal: witnesses[i].kanal,
+                    origin: witnesses[i].origin.to_string(),
+                })
                 .collect(),
             n,
             lag,
@@ -144,6 +169,16 @@ mod tests {
         series.iter().map(|v| (v - mean) * (v - mean)).sum::<f64>() / n as f64
     }
 
+    fn zeuge<'a>(name: &'a str, series: &'a [f64]) -> Witness<'a> {
+        Witness {
+            name,
+            series,
+            force_type: 0,
+            kanal: Kanal::StaerkeKanal,
+            origin: "test",
+        }
+    }
+
     #[test]
     fn residual_removes_the_witness_prediction() {
         let n = 256;
@@ -159,16 +194,7 @@ mod tests {
             .map(|t| 0.5 * w0[t] + 0.3 * w1[t] + 0.01 * rng.next_noise())
             .collect();
 
-        let witnesses = [
-            Witness {
-                name: "w0",
-                series: &w0,
-            },
-            Witness {
-                name: "w1",
-                series: &w1,
-            },
-        ];
+        let witnesses = [zeuge("w0", &w0), zeuge("w1", &w1)];
         let r = match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::Measured(r) => r,
             _ => panic!("the target against its witnesses reads outside Measured"),
@@ -176,6 +202,9 @@ mod tests {
         assert_eq!(r.n, target.len());
         assert_eq!(r.series.len(), target.len());
         assert_eq!(r.witnesses_used.len(), 2);
+        assert_eq!(r.witnesses_used[0].force_type, 0);
+        assert_eq!(r.witnesses_used[0].kanal, Kanal::StaerkeKanal);
+        assert_eq!(r.witnesses_used[0].origin, "test");
         assert_eq!(r.lag, 0);
         assert_eq!(r.rank, 3);
         assert_eq!(r.df, r.n - r.rank);
@@ -188,10 +217,7 @@ mod tests {
             ResidualOutcome::NFlloor
         ));
 
-        let kept_nothing = [Witness {
-            name: "empty",
-            series: &[],
-        }];
+        let kept_nothing = [zeuge("empty", &[])];
         assert!(matches!(
             residual_against_witnesses(&target, &kept_nothing, &[0]),
             ResidualOutcome::NFlloor
@@ -214,30 +240,12 @@ mod tests {
         let w4 = [0.4, 0.9, 1.4, 1.9, 2.4];
         let w5 = [0.5, 1.0, 1.5, 2.0, 2.5];
         let witnesses = [
-            Witness {
-                name: "w0",
-                series: &w0,
-            },
-            Witness {
-                name: "w1",
-                series: &w1,
-            },
-            Witness {
-                name: "w2",
-                series: &w2,
-            },
-            Witness {
-                name: "w3",
-                series: &w3,
-            },
-            Witness {
-                name: "w4",
-                series: &w4,
-            },
-            Witness {
-                name: "w5",
-                series: &w5,
-            },
+            zeuge("w0", &w0),
+            zeuge("w1", &w1),
+            zeuge("w2", &w2),
+            zeuge("w3", &w3),
+            zeuge("w4", &w4),
+            zeuge("w5", &w5),
         ];
         match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::RangDefizit => {}
@@ -248,10 +256,7 @@ mod tests {
     #[test]
     fn target_among_witnesses_is_named() {
         let target = [0.0, 1.0, 2.0, 3.0];
-        let witnesses = [Witness {
-            name: "self",
-            series: &target,
-        }];
+        let witnesses = [zeuge("self", &target)];
         match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::ZielUnterZeugen => {}
             _ => panic!("the target among witnesses reads outside ZielUnterZeugen"),
@@ -261,10 +266,7 @@ mod tests {
     #[test]
     fn no_witness_series_is_n_floor() {
         let target = [0.0, 1.0, 2.0, 3.0];
-        let witnesses = [Witness {
-            name: "empty",
-            series: &[],
-        }];
+        let witnesses = [zeuge("empty", &[])];
         match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::NFlloor => {}
             _ => panic!("the empty-witness case reads outside NFlloor"),
