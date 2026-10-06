@@ -3,7 +3,7 @@
   session: Mountain-Folge 250
   class: handover
   date: 2026-10-06
-  sha256: 9fbe5e2242a2c5da4c9716a23944186f5f9d0a303d92d5e6b8c0427177778a26
+  sha256: 12fedfb04c6da49575b4b59895238d73aa93653c9cfd9390a645c173f6790215
   status: live
 -->
 # Handover — Mountain-Folge 250 (2026-10-06)
@@ -14,8 +14,8 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-06-mountain-folge249.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0000 · close 0.40 · cap 0.50 · Grund: Operator-Wort („in einem Pass" + „befrage die 5 voices und die 7 ui chats" + „hol die stimmen ab") — Newell-Arm + Verifikationsarm, GIC-HAPI-Recon, Rat + 5 API-Stimmen + vier UI-Seats (Duck/Claude/Qwen/Kimi); gemessen via `session_burn`.
-Dispatchs getrennt (line ≈$0.178 + grind-flash $0.0428 + explore $0.0408 + council $0.0197 + API-/UI-Stimmen ≈$0.12, 2026-10-06).
+## Burn: open 0.0000 · close 0.44 · cap 0.50 · Grund: Operator-Wort („in einem Pass" + „befrage die 5 voices und die 7 ui chats" + „hol die stimmen ab") — Newell-Arm + Verifikationsarm, GIC-HAPI-Recon, Rat + 5 API-Stimmen + fünf UI-Seats (Duck/Claude/Qwen/Kimi/z.ai); gemessen via `session_burn`.
+Dispatchs getrennt (line ≈$0.20 + grind-flash $0.0428 + explore $0.0408 + council $0.0197 + API-/UI-Stimmen ≈$0.14, 2026-10-06).
 
 ## Operator-Wort-Register
 
@@ -86,7 +86,17 @@ Messung; nur Parser und Fanout machen sie lebendig." Claude: „RTSW (mag_1m ⨝
 zum Tripel gefügt und fächert `THG_L2_MAG_<station>` auf, OMNI bleibt Gegenprobe." Qwen: „RTSW-Join
 für den Treiber, gemischter Fanout für GIC — Register öffnet, Adapter misst." Kimi: „jeder Knoten
 trägt Vorzeichen, Einheit und Zeitstempel seiner eigenen Quelle." **z.ai (GLM-5.3 Deep Think Max)**
-rechnete über das Fenster nicht zu Ende → `pending`; **arena.ai** (Claude-Backup) brach mit
+— der Deep-Think-Lauf war lang, nicht hängend (Antwort über den SSE-Body des
+`chat/completions`-Requests abgeholt): *Gewählt: Befund 1 → RTSW-Join, Befund 2 → kompilierter
+Fanout-Arm.* Mountain: der Join gehört an **eine** Stelle, nicht in jeden Empfänger. River:
+`rtsw_mag_1m`/`rtsw_wind_1m` kommen beide im 1-Min-Takt; RTSW ist der einzige Echtzeitpfad.
+Mycelium: Live-HAPI bleibt Quelle, erst der kompilierte Fanout-Arm verdrahtet
+(`THG_L2_MAG_<4LETTER>`-Templates, lebendes `WI_H1_SWE` statt `WI_H0_SWE`). Sensory: 1-Min ist
+Signaltreue, OMNI-1h ist geshiftet und verwischt Substurm-Anstiege; `ATHA` misst H/D/Z direkt.
+*Tragende Zeile: der RTSW-Join ist Kanal-Vereinheitlichung im 1-Min-Takt, der Fanout-Arm ist
+Template-Instanziierung zur Compile-Zeit — beides Messung im Fluss, keins Regal.* **Riss:** z.ai
+nennt 86 GMAG-Stationen; der CDAWeb-Katalog trägt 190 `THG_L2_MAG_*`-IDs (gemessen 2026-10-06) —
+die 86 ungemessen, nicht übernommen. **arena.ai** (Claude-Backup) brach mit
 „Something went wrong while generating" ab → `pending`. Damit stützt der zweite Kanal den
 **RTSW-Join** stärker als der Rat (der „kein Mittel über zwei Empfänger" sagte) — der Riss bleibt
 getragen; die Messung (1-min-Raster, ~2 s Versatz `21:40:02` vs `21:40:00`) entscheidet: der Join
