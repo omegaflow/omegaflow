@@ -73,6 +73,31 @@ fn origin_netlocs(raw: &str) -> Vec<String> {
     out
 }
 
+fn register_hosts_raw(content: &str) -> BTreeSet<String> {
+    let mut hosts: BTreeSet<String> = BTreeSet::new();
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        if let Some(rest) = line.strip_prefix("url ") {
+            let url = rest.trim();
+            if let Some(tag) = cdn_tag_from_url(url) {
+                hosts.insert(tag.to_string());
+            }
+            if let Some(nl) = extract_netloc(url) {
+                hosts.insert(nl.to_string());
+            }
+        }
+        if let Some(rest) = line.strip_prefix("origin ") {
+            for nl in origin_netlocs(rest.trim()) {
+                hosts.insert(nl);
+            }
+        }
+    }
+    hosts
+}
+
 fn gh_api_releases() -> Option<String> {
     let out = Command::new("gh")
         .arg("api")
@@ -356,21 +381,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        let sources: Vec<SourceConfig> = load_sources_from(&content);
-        let mut hosts: BTreeSet<String> = BTreeSet::new();
-        for s in &sources {
-            if let Some(tag) = cdn_tag_from_url(&s.url) {
-                hosts.insert(tag.to_string());
-            }
-            if let Some(nl) = extract_netloc(&s.url) {
-                hosts.insert(nl.to_string());
-            }
-            if let Some(origin) = &s.origin {
-                for nl in origin_netlocs(origin) {
-                    hosts.insert(nl);
-                }
-            }
-        }
+        let hosts = register_hosts_raw(&content);
         let drift = contract(&root, &hosts, &tag_baseline(&root));
         if drift.is_empty() {
             eprintln!(
@@ -706,6 +717,19 @@ mod tests {
             cdn_tag_from_url("https://github.com/omegaflow/sources/releases/download//x.bin"),
             None
         );
+    }
+
+    #[test]
+    fn register_hosts_raw_binds_ttl_less_cdn_blocks() {
+        let content = "\
+url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
+origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
+compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
+format zcta_gazetteer
+no-cadence
+";
+        let hosts = register_hosts_raw(content);
+        assert!(host_known("www2.census.gov", &hosts), "{hosts:?}");
     }
 
     #[test]

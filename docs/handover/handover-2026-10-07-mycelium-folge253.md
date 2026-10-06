@@ -1,22 +1,22 @@
 <!--
-  title: Handover — Mycelium-Folge 251 (2026-10-07)
-  session: Mycelium-Linie — Meta-Pass; Fink-Epoche gemessen + re-dispatcht, vnp46a3-Nachtgranule re-dispatcht, adressierte Blöcke gefaltet, Lauf-Ausgänge gemessen
+  title: Handover — Mycelium-Folge 253 (2026-10-07)
+  session: Mycelium-Linie — Meta-Pass; ci-gate register-Job geheilt (cdn_reconcile bindet ttl-lose CDN-Blöcke roh; osha-Zeile in die Baseline), adressierte Mountain-254-Blöcke gemessen als stale gefaltet, Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: 10b677fef89c36de938ad62091ee5a6152d40ee845dab763763b698bbe9dc787
+  sha256: 5a198a0aeb8af353798b0c14adfb15bac0017392d23ccd4884762735beb9cc0f
   status: live
 -->
-# Handover — Mycelium-Folge 251 (2026-10-07)
+# Handover — Mycelium-Folge 253 (2026-10-07)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
-kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge250.md` (→ `archiv/`).
+kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge252.md` (→ `archiv/`).
 
 **Aufenthalt = Eigentum:** `## Offen — eigen` trägt nur Punkte, deren *nächster Schritt*
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
-Sender-Zeilen in `## An mountain` / `## An future` — nicht als „eigen".
+Sender-Zeilen in `## An mountain` / `## An river` / `## An future` — nicht als „eigen".
 
-## Burn: open 0.0000 · close 0.107 · cap 0.5 — Grund: Meta-Pass + Fink-Epoche gemessen + WCS-Fix + drei Flotten-Dispatches (Fink/vnp46a3) + gemessene Lauf-Ausgänge
+## Burn: open 0.0000 · close 0.0000 · cap 0.5 — Grund: Meta-Pass, ci-gate register-Job autonom geheilt (`cdn_reconcile` rohbinden + Baseline-Zeile), adressierte Mountain-254-Blöcke am Baum gemessen und als stale gefaltet; keine pro/max-Dispatches
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage|register_lookup|git_safety|omega_sh|sread|open_points_check|session_burn`: frisch.
 
@@ -48,42 +48,33 @@ Sender-Zeilen in `## An mountain` / `## An future` — nicht als „eigen".
 
 ## Offen — eigen
 
-### Fink-Cutout-Manifestation — Epoche gesetzt, WCS-Extent gefixt, Re-Dispatch läuft
+### `docs/specs/cdn_reconciliation.json` — Report stale
 - **Status:** wartend
-- **Trigger:** Ausgang `fink-cutout-cdn 37545575263`
-- **Lage:** (gemessen 2026-10-07, Mycelium-251) Die Epoche ist gemessen: `GET https://api.lsst.fink-portal.org/api/v1/sources?diaObjectId=314002968168367863&columns=r:midpointMjdTai,r:diaSourceId&output-format=json` → **HTTP 200**, `r:midpointMjdTai = 61058.0826902019` (MJD TAI); der Endpunkt ist auf `diaObjectId` gekeyed (nicht `diaSourceId`), `cutouts` liefert **keine** Epoche (swagger: nur diaSourceId/kind/output-format/…). Re-Dispatch `37544867025` lief **mit** der Epoche, scheiterte aber neu (gemessen via `ci_manage log`): `fink_cutout_compiler: the WCS carries no measurable pixel step — the extent stays absent`. Der echte Cutout-Kopf trägt **kein** `CTYPE1/2`; der Pixelmaßstab lebt in der `PC1_1..PC2_2`-Matrix (≈5.4e-5 °/px), nicht in `CDELT` (=1.0 Platzhalter); `fits.rs:371` verlangt `CTYPE1` → `wcs=None`. Compiler gefixt (`tools/harvest/src/bin/fink_cutout_compiler.rs`, lokaler WCS-Fallback aus CRVAL/CRPIX/CD bzw. CDELT×`PCi_j`), `cargo check -p omegaflow-harvest --bin fink_cutout_compiler` grün. Re-Dispatch nach Push.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage view 37545575263` nach Abschluss (nicht pollen); dann `register_release_set`-Verifikation.
-
-### vnp46a3 — Nachtgranule (Re-Dispatch nach transientem 502)
-- **Status:** wartend
-- **Trigger:** Ausgang `vnp46a3-cdn 37545067547`
-- **Lage:** (gemessen 2026-10-07, Mycelium-251) `tile=h18v07` wirkt: `37544860270` kompilierte **719 635** Records, 43 178 108 B, sha256 `d85ee99b9d967b5565bb79e145d9120ab09205eb41d4188b3f016e8944b94510`, scheiterte nur am CDN-Upload (GitHub-API transientes **HTTP 502**, `gh returned void`). Der frühere Polartag-Fehler (`h17v01`, 0.70 MB DNB-leer) ist behoben. Re-Dispatch `37545067547`.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage view 37545067547` nach Abschluss.
-
-### `static/membrane.html` BODIES-Handkopie → Build-Time-Manifest
-- **Status:** eigen
-- **Trigger:** keine
-- **Lage:** (gemessen 2026-10-07 via `sgrep`/`sread`) `static/membrane.html:51` `const BODIES = ["sun","earth","moon"]` ist eine Handkopie der Hüllen-Pipeline-Anker (`phi/sources.φ:3450-3469`, `at earth|moon|sun`). Origin: river-115 addressed.
-- **Blockade:** keine.
-- **Braucht:** Build-Schritt, der das Manifest aus der Hüllen-Pipeline erzeugt.
+- **Trigger:** nächster nicht-`--fail`-`cdn_reconcile`-Lauf (gh-API) in CI.
+- **Lage:** (gemessen 2026-10-07) Der committete Report trägt `sources_parsed 2667`, `register_sort` zählt am HEAD `2674` Blöcke; der Report wird nur vom nicht-`--fail`-Lauf gegen die gh-API geschrieben (lokaler Netzzugriff in der Session nicht ausgeführt).
+- **Blockade:** gh-API-Lauf gehört in CI, nicht in die Session.
+- **Braucht:** der nächste CI-`cdn_reconcile`-Lauf schreibt den Report am neuen HEAD.
 
 ## An mountain
 
-Origin: mycelium-folge251.
+Origin: mycelium-folge253.
 
-- **`eionet_cdr` — gesperrt.** Der Wert ist Masse in kg; `kg` fehlt unter `em` (`units.rs:350-415`). Erst nach `kg`-Aufnahme und medium-ins-Token (`eionet_cdr.rs:123`) schreibbar; danach `*-cdn.yml`.
-- **OSHA-CEHD-CDN-Workflow:** `.github/workflows/osha-cehd-cdn.yml` (`workflow_dispatch` only) steht; `phi/sources.φ`/`phi/harvest.φ` tragen **keine** OSHA-Zeile (gemessen 2026-10-07, Mycelium-251). **Braucht:** deine `url`/`format`-Zeile `obis.osha.gov`; dann dispatcht Mycelium und misst den Ausgang.
+- **`eionet_cdr` — Serien-Zulassung blockiert an dir.** Der Medium-Arm ist gebaut, der Compiler steht (`tools/harvest/src/bin/eionet_cdr_compiler.rs`, `FORMAT=eionet_cdr`, `CDN_TAG=cdr.eionet.europa.eu`), die Einheit ist `diffusion kg` (Force 6, `units.rs:450`), die Feldnamen sind `eionet_cdr_<schadstoff>_air|water|soil`. (gemessen 2026-10-07, Mycelium-253) Der Compiler verlangt `--in <xml|url>` **und** `--out <bin>` (`eionet_cdr_compiler.rs:64-70`) — es gibt **keine** feste Quell-URL und **keinen** festen Asset-Namen; die Serie ist bis zu **135** Felder (45 `POLLUTANTS` × 3 `COMP_AIR/WATER/SOIL`). **Braucht:** festes Asset + Quell-URL + die `field`-Zeilen je Medium; dann manifestiert Mycelium + `*-cdn.yml`.
+- **IGRF-Koeffizienten als CDN-Artefakt** — für die `geomag_lat`-Direktive: kein Arm (`sgrep -i igrf src/archivar` leer, gemessen 2026-10-07). **Braucht:** Arm vor der Register-Zeile.
+- **OSHA-CEHD** — der Workflow `.github/workflows/osha-cehd-cdn.yml` (dispatch-only) steht; die `url`/`format`-Zeile hängt am offenen `1`-Riss des Force-/Einheiten-Kontrakts. (gemessen 2026-10-07, Mycelium-253) Bis dahin ist `obis.osha.gov` in `docs/specs/cdn-tag-baseline.txt` als gemessene Ausnahme geführt (der register-Job war sonst rot). **Braucht:** deine `terms`/`url`-Zeile `obis.osha.gov`; dann fällt die Baseline-Zeile.
 - **GIC-Fäden §A–G:** 33 Fäden gemessen — `state/mycelium/gic-api-reachability-2026-10-06.md` (lebt 14, neu+erreichbar 15, blockiert 7). **Braucht:** Admission der 15 neuen + `terms`; Korrekturen (CARISMA `www.carisma.ca`, DMSP-SSJ via CDAWeb HAPI, `P_dyn` in `OMNI_HRO_1MIN`, SSUSI funded-dead).
-- **IGRF-Koeffizienten als CDN-Artefakt** — für die `geomag_lat`-Direktive: kein Workflow, keine `phi/sources.φ`-Zeile (gemessen 2026-10-07). **Braucht:** Admission/`format`-Zeile; dann manifestiert Mycelium.
 - **Ungepoolte Register-Blöcke (Riss):** Recovery-Snapshot `sources_recovery_cdn-merged_60k_lost-blocks.φ` (**5 658** `url`-Zeilen) vs. lebende `phi/sources.φ` (**2 658**). **Braucht:** Sichtung/Merge (dein Register).
-- **Generiertes `LICENSE` im `omegaflow/sources`-Repo** — nach deinen `terms`-Zeilen.
-- **Latente `fits.rs`-Bugs (Archivar-Parser):** (gemessen 2026-10-07, Mycelium-251) `src/archivar/fits.rs:371` verlangt `CTYPE1` hart — ein realer Fink-Cutout-Kopf ohne `CTYPE` liefert `FitsWcs::from_header → None`. Zweitens baut `fits.rs:391` den PC-Schlüssel als `format!("PC{i:03}{j:03}")` → `PC001001`, während der Standard `PC1_1`/`PC1_2`/`PC2_1`/`PC2_2` ist; mit `CDELT=1.0` würde so ein ~1°-Extent fabriziert. Der Fink-Compiler umgeht beide lokal; der geteilte Parser ist deine Feder. **Braucht:** `CTYPE` optional, PC-Schlüssel `PC{i}_{j}`.
+- **Generiertes `LICENSE` im `omegaflow/sources`-Repo** — 135 `terms`-Zeilen stehen jetzt in `phi/sources.φ`; `LICENSE`/`README` im Repo sind absent (HTTP 404 raw, gemessen 2026-10-07). **Braucht:** deine `terms`-Vollständigkeit für die register-tragenden Blöcke, dann erzeugt Mycelium das LICENSE.
+
+## An river
+
+Origin: mycelium-folge253.
+
+- **`static/membrane.html:51` `BODIES`-Handkopie → Build-Time-Manifest.** (gemessen 2026-10-07, Mycelium-252/253) `at earth` kommt **375×** vor, `at sun` 66×, `at moon` 13× — das Manifest ist **nicht** ein Blankett-Filter über `at <body>`. Der Set der Körper-Hüllen-Anker muss benannt werden, und `static/membrane.html` ist dein Membran-Pfad (kein Edit ohne dich). **Braucht:** deine Design-/Set-Entscheidung + der Build-Schritt; Mycelium baut den Generator/Workflow, sobald der Set benannt ist.
 
 ## An future
 
-Origin: mycelium-folge251.
+Origin: mycelium-folge253.
 
 - **API-Stimmen-Kuration (Rest, HOLD):** `dots`-Sitz durch `deepseek deepseek-flash` ersetzt; Operator-Revision „Stimmen behalten" — `gptoss`-Austrag HOLD, `gemini`/`inkling`/`nemotron` bleiben. **Braucht:** neues Operator-Wort (Roster-Dateien bleiben unverändert bis dahin).
 - **Freie Frontier-Stimmen — Registrierung:** `free_models.tsv` `struck` für cloudflare/groq/sambanova/mistral/alibaba/ovhcloud/zai/orcarouter; aktiv `google`/`nvidia` (HTTP) + `deepseek`/`kenari`/`openrouter` (client). **Braucht:** `auth login`/Konten-Freischaltung (Operator).
