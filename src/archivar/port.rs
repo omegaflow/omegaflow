@@ -345,17 +345,20 @@ pub fn port_block_measured(block: &str, measure: &PortMeasure) -> String {
     if let Some(f) = &frame_line {
         out.push_str(f);
         out.push('\n');
-    } else if celestial && map_line.is_some() {
-        out.push_str("at sun\n");
-    } else if named_keys && map_line.is_some() {
-        out.push_str("on earth 0 0 0\n");
-    } else if let (Some(lat), Some(lon)) = (lat, lon) {
-        match alt {
-            Some(a) => out.push_str(&format!("on earth {} {} {}\n", lat, lon, a)),
-            None => eprintln!(
-                "port: block refused 'on' — lat/lon without alt (declare alt); the alt-less frame is not representable"
-            ),
-        }
+    } else if map_line.is_some() && (celestial || named_keys || lat.is_some() || lon.is_some()) {
+        let carried = if named_keys {
+            "named lat/lon keys".to_string()
+        } else {
+            match (lat, lon, alt) {
+                (Some(la), Some(lo), Some(a)) => format!("lat {la}, lon {lo}, alt {a}"),
+                (Some(la), Some(lo), None) => format!("lat {la}, lon {lo}, no alt"),
+                _ => "no lat/lon".to_string(),
+            }
+        };
+        eprintln!(
+            "port: block '{}' refused a frame — carries {carried} but no declared at|on; the frame is data, never inferred",
+            block_url
+        );
     }
     if let Some(m) = &map_line {
         if celestial {

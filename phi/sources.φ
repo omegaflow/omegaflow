@@ -732,6 +732,7 @@ url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-
 format openmeteo_pollen_axis_value_text
 origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=52.52&longitude=13.405&hourly=birch_pollen&timezone=UTC
 compiler tools/harvest/src/bin/openmeteo_pollen_compiler.rs
+sha256 42a7f2f8199f84cdb13a55c56265edf4766b97a9e36ca00052b7b06d00bdc2a7
 on earth 52.52 13.405 0
 ttl 3600
 field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
@@ -3811,6 +3812,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/e
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 5554915dc7c2c753b13ede0e478d4fe735023a839620582a3335ef01077ce016
 at earth
 ttl 86400
 
@@ -3818,6 +3820,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/e
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 d9b4091731f16912b73c544e95411ec8c99660aa2376c5e8507a71b27b0563a5
 at moon
 ttl 86400
 
@@ -3825,6 +3828,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/e
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 093b3ab5ee368e9b3834fe6520cc9c3ea491f9c30761ce44cf378425df66c226
 at sun
 ttl 86400
 

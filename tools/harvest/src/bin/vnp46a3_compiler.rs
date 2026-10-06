@@ -259,11 +259,28 @@ fn find_lon(paths: &[String]) -> Option<String> {
     paths.iter().find(|p| is_lon_name(last_seg(p))).cloned()
 }
 
-fn find_value(file: &Hdf5File<'_>, paths: &[String]) -> Option<String> {
+fn normalized_token(s: &str) -> String {
+    s.chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
+fn is_quality_seg(seg: &str) -> bool {
+    let s = seg.to_lowercase();
+    s.ends_with("_num") || s.contains("quality") || s.contains("count")
+}
+
+fn find_value(file: &Hdf5File<'_>, paths: &[String], label: Option<&str>) -> Option<String> {
+    let want = label.map(normalized_token);
+    let mut nightlight: Option<String> = None;
     let mut fallback: Option<String> = None;
     for p in paths {
         let seg = last_seg(p);
         if is_lat_name(seg) || is_lon_name(seg) || seg.to_lowercase().contains("time") {
+            continue;
+        }
+        if is_quality_seg(seg) {
             continue;
         }
         let Some(dims) = file.dims(p) else {
@@ -272,14 +289,19 @@ fn find_value(file: &Hdf5File<'_>, paths: &[String]) -> Option<String> {
         if dims.len() < 2 {
             continue;
         }
-        if looks_nightlight(seg) {
-            return Some(p.clone());
+        if let Some(w) = &want {
+            if normalized_token(seg).contains(w.as_str()) {
+                return Some(p.clone());
+            }
+        }
+        if looks_nightlight(seg) && nightlight.is_none() {
+            nightlight = Some(p.clone());
         }
         if fallback.is_none() {
             fallback = Some(p.clone());
         }
     }
-    fallback
+    nightlight.or(fallback)
 }
 
 fn find_time_axis(file: &Hdf5File<'_>, paths: &[String]) -> Option<(String, Vec<f64>)> {
@@ -540,8 +562,9 @@ fn per_cell_records(
     paths: &[String],
     stride: usize,
     t: f64,
+    label: Option<&str>,
 ) -> Result<Vec<GeoRec>, String> {
-    let val_path = find_value(file, paths).ok_or_else(|| {
+    let val_path = find_value(file, paths, label).ok_or_else(|| {
         "no 2-D SDS among the datasets — the per-cell grid stays unwritten".to_string()
     })?;
     let lat_path = find_lat(paths)
@@ -707,8 +730,9 @@ fn run(args: &[String]) -> Result<(), String> {
         ));
     }
 
-    let mut records = per_cell_records(&file, &paths, stride, t)?;
-    let val_path = find_value(&file, &paths).ok_or_else(|| "value SDS vanished".to_string())?;
+    let mut records = per_cell_records(&file, &paths, stride, t, Some(label.as_str()))?;
+    let val_path = find_value(&file, &paths, Some(label.as_str()))
+        .ok_or_else(|| "value SDS vanished".to_string())?;
     let val_dims = match file.dims(&val_path) {
         Some(d) => d,
         None => return Err(format!("{val_path}: dims absent")),
