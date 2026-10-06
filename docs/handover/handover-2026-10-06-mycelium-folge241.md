@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: dec01d384b8facc5a8c066b7c2f9694f7efbd0ca517c4fbd87e1d85e1aa0a8ba
+  sha256: 724ca7aa0211f2494bc9ff140977b60da4c21c2974f299b8f2e8b57d331acfeb
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -57,9 +57,9 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 ### Träger `survey-2026-09-03-daten-holdings-inventur` — Ziel-Layout-Migration
 - **Status:** eigen
 - **Trigger:** weitere Bestände je Move → `du`-Nachmessung
-- **Lage:** (gemessen 2026-10-06 via `du`/`find`/Agenten-Läufe; Operator-Wort je Bestand erteilt, ausgeführt) (1) 6 `omegaflow_series_*.bin` → `cache/` verschoben; (2) die 2 `gea`-`dr3_stars`-Zwillinge (byte-identisch `fb9a1408…`) gelöscht, `gaia_sso_tno.bin` bleibt; (3) `data/ssd.jpl.nasa.gov-nvss/nvss.json` aus dem CDN angelegt — **Riss:** CDN = 12 M/718 069 Zeilen, Scratch-`nvss.json`/`nvss_dl.json` = 104 M (`6f5dfe14…`), verschiedene Fassungen; (4) Scratch `opencode-tmp-2026-09-01/` **behalten** — trägt einen uncommitteten `radio_compiler.rs`+`radio_farbe.rs` (kein reiner Scratch); (5) target-rlibs **übersprungen** — nur ~7 MiB reclaimbar, `firmware/radiatorium` = eigenes Workspace (legitimer Cache); (6) Snapshot-Dedup `~/archive/knowledge/omegaflow` vs Live-Repo: **8 889 Dateien / 270 MiB** identisch entfernt, Unique-Dirs unberührt, Re-Scan = 0 (Agent-Log `/tmp/opencode/dedup-deleted.log`); (7) `~/archive-state/.../undo-snapshot-2026-09-11` per **Hardlink** dedupliziert: 668 Dateien, **~1,21 GiB** frei, Content unverändert, 25 Session-Repos intakt.
+- **Lage:** (gemessen 2026-10-06 via `du`/`find`/Agenten-Läufe; Operator-Wort je Bestand erteilt, ausgeführt) (1) 6 `omegaflow_series_*.bin` → `cache/` verschoben; (2) die 2 `gea`-`dr3_stars`-Zwillinge (byte-identisch `fb9a1408…`) gelöscht, `gaia_sso_tno.bin` bleibt; (3) `data/ssd.jpl.nasa.gov-nvss/nvss.json` aus dem CDN angelegt — **Riss:** CDN = 12 M/718 069 Zeilen, Scratch-`nvss.json`/`nvss_dl.json` = 104 M (`6f5dfe14…`), verschiedene Fassungen; (4) Scratch `opencode-tmp-2026-09-01/` geprüft: **superseded** — der `radio_compiler.rs` dort ist die pre-migration Fassung (alte `upload_asset`-API, `/tmp/opencode/…`); der Live-Compiler `tools/harvest/src/bin/radio_compiler.rs` (164 Z., `upload_release`), `src/archivar/radio.rs` (MAGIC `RAD1`) und `radio-cdn-watch.yml` stehen in HEAD; `radio.bin` liegt als **Orphan** auf der CDN (`ssd.jpl.nasa.gov`), **nicht** in `sources.φ` registriert; (5) target-rlibs **übersprungen** — nur ~7 MiB reclaimbar, `firmware/radiatorium` = eigenes Workspace (legitimer Cache); (6) Snapshot-Dedup `~/archive/knowledge/omegaflow` vs Live-Repo: **8 889 Dateien / 270 MiB** identisch entfernt, Unique-Dirs unberührt, Re-Scan = 0 (Agent-Log `/tmp/opencode/dedup-deleted.log`); (7) `~/archive-state/.../undo-snapshot-2026-09-11` per **Hardlink** dedupliziert: 668 Dateien, **~1,21 GiB** frei, Content unverändert, 25 Session-Repos intakt.
 - **Blockade:** keine für die vollzogenen Schritte; offen nur #4 (Radio-Pipeline) und die Doc-Korrektur.
-- **Braucht:** Entscheidung über die Radio-Pipeline (`radio_compiler.rs` ins Repo portieren + `radio_nvss_only.bin` registrieren) oder descope; `state/future/holdings-migration-2026-10-06.md` auf die gemessenen Zahlen korrigieren (0,61 GiB → 270 MiB; LFS 1,25 GiB bestätigt; target-rlibs 7 MiB).
+- **Braucht:** `radio.bin` (CDN-Orphan, live produziert von `radio_compiler`+`radio.rs`) als Quelle registrieren (Feld-Verdikt = Mountain); Scratch `opencode-tmp-2026-09-01/` ist superseded → bereinigbar; `state/future/holdings-migration-2026-10-06.md` korrigieren (0,61 GiB → 270 MiB; LFS 1,25 GiB bestätigt; target-rlibs nur 7 MiB; `radio` ist **live**, kein Descope).
 
 ### `ledger.φ:2`/`:6` — Port-Runner (gemessen: vorhanden)
 - **Status:** wartend
@@ -104,6 +104,7 @@ Origin: mycelium-folge241.
 - **Kimi-K3-Gratis-Route** (NVIDIA NIM `moonshotai/kimi-k3`, kein Kartenzwang): Developer-Account/Key = Operator-Akt → Operator-Queue.
 - **Self-hosted Runner (Operator-Queue):** Wort 2026-10-06 „ok ich schaue ob ich einen gaming pc von 2011 zum laufen bekomme und da linux mint drauf installiere um ihn als runner laufen zu lassen". Mehrere Jobs binden `[self-hosted, Linux]` (`de44-cdn.yml:18`). **Braucht:** Runner-Registrierung (Labels) + Routing-Entscheidung für die `hyperscanning-te`-Screen-Jobs — Operator-Vollzug.
 - **Daten-Holdings-Ziel-Layout-Migration (Operator-Queue):** Move/Löschung je Holding braucht das Operator-Wort je Datensatz (`0 honored`: kein Löschen ohne Nachbau-Quelle); Lage `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:167-183`.
+- **Doc-Korrektur (`state/future/holdings-migration-2026-10-06.md`):** die Zahlen sind widerlegt — Snapshot-Dup real **270 MiB** (nicht 0,61 GiB); target-rlibs nur **~7 MiB** (`firmware/radiatorium` = eigenes Workspace); LFS 1,25 GiB bestätigt; die **Radio-Pipeline ist live** (`tools/harvest/src/bin/radio_compiler.rs` + `src/archivar/radio.rs` in HEAD; Orphan `radio.bin` auf der CDN) — **kein Descope**. Der Move/das Dedup ist ausgeführt (Handover `folge241`).
 
 ## LOCK
 
