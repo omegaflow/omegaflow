@@ -3,7 +3,7 @@
   session: River-Folge 113
   class: handover
   date: 2026-10-06
-  sha256: d843900f386a2fa28a1caa0e70f811e914b07a2682ff88bfbf86f644575fd102
+  sha256: 1a8ed78e6f8cba57745fa8777fc3a4e080097124a04dc41b3aaa59a679a9d3f7
   status: live
 -->
 # Handover — River-Folge 113 (2026-10-06)
@@ -66,9 +66,9 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) Solar-/Magnetosphären-Zellen alignment-fähig ernten (Mountain/Mycelium, s. `## An mountain`);
   (2) `ozzy` (oben); (3) Netz-Null als CI-Batterie (B ≥ 1/α). Rat-Reihenfolge: Draht → Matrix → `ozzy` → Netz-Null.
 
-### GIC-Breitenband-Familien — drei Linien, Operator-/Rats-Wort zur Linienwahl offen
+### GIC-Breitenband-Familien — Rat-Identitätsverdikt (gemessen); Design + Messschritt offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-/Rats-Wort zur Linienwahl (Linie 1/2/3) — kein Arm, keine Migration ohne dieses Wort.
+- **Trigger:** Operator-Wort zu zwei Design-Entscheidungen (Bandgrenzen; voller Pool vs. drei Pools) + die CGM-Messung je Station.
 - **Lage:** (gemessen 2026-10-06, River 113) Der Mountain-Trigger ist gefeuert: `2117476be` setzt auf allen 154
   Blöcken die `station <code>`-Direktive (`phi/sources.φ:6616…7474`) und macht den Matrix-Arm station-aware
   (Test `field_sources_resolves_station_qualified_channel_to_its_block`, `field_te_query.rs:4762`); Verdikt
@@ -80,12 +80,18 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   `matrix full`-Block. **Riss, nicht geglättet**; kein Arm, keine Migration ohne Operator-/Rats-Wort; Blatt
   `unsealed`. Offen (0): CGM-Breite je Station — die Blöcke tragen nur die geografische `on earth <lat> <lon>`-
   Koordinate (`phi/sources.φ:6621,6632,6643`).
-- **Blockade:** die Trägerform der Familienpartition ist eine Architektur-Frage — drei Linien konvergieren nicht.
-- **Braucht:** das Wort zur Linienwahl. Danach allen Linien gemeinsam: (0) CGM-Breite je Station ableiten
-  (std Rust IGRF/CGM oder gemessene CGM-Tabelle), feste Bandgrenzen deklarieren, Kanal-Listen + Deckungstest
-  (disjunkt, Union = 154). Dann je Wort: Linie 1 → drei Deskriptor-Dateien (`--descriptor`, `:4657`);
-  Linie 2 → `family`-Scope + Register-Artefakt (Stufe 2 liest es); Linie 3 → Grammatik-Sub-Direktive
-  (`family … stations`, `wymaxt … over family`). CI: ein `field-te-query.yml`-Job (nie lokal).
+- **Lage (Fortsetzung — Rat-Identitätsverdikt, gemessen 2026-10-06):** `family` ist im Baum belegt
+  (Korrekturfamilie `TeFamily`/`BH` `te.rs`, `acc.fam` `matrix.rs`, `FAMILY_K` `wy_max_t.rs`); FDR-Scopes nur
+  `matrix|row|col`. **A=A-fest ist Option (c):** Register trägt die gemessene Breite (`cgm_lat`), `family`
+  benennt die FDR-Gruppe, Grammatik nur `fdr … over family`; drei `matrix gic_auroral full`-Blöcke sind drei
+  Messungen (A=A-Bruch). Die Identitätsfrage ist damit **entschieden** — der schärfere Rat-Lauf (Stimmen +
+  Axiome) lief; der UI-Zweite-Kanal-Lauf mit Stimmen **und** Axiomen ist gestartet.
+- **Blockade:** keine gemessene CGM-Breite je Station im Register (die Geomagnetic-Latitudes-Services stehen
+  `declined`, `phi/declined_sources.φ:3328-3340`); die zwei Design-Entscheidungen sind Operator-gebunden.
+- **Braucht:** (0) CGM-Breite je Station messen/registrieren (oder `pending`) — Quelle `declined`, neue Route
+  suchen; (1) `cgm_lat` als Registergröße (wie `frame`/`span`) + `family` = FDR-Gruppe; Grammatik: vierter
+  FDR-Scope `over family` (neben `matrix|row|col`), **kein** dritter `matrix`-Block; (2) Operator-Wort:
+  Bandgrenzen + voller Pool vs. drei getrennte Pools; (3) ein CI-Job `field-te-query.yml` (nie lokal).
 
 ### Receiver-Apertur — Sub-Pixel für ALLE Radiatoren (nicht nur die visuelle Membran)
 - **Status:** wartend | **Bindung:** eigen (Membran-/Aktor-Pfad)
@@ -223,4 +229,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge113: 34 path refs · 0 absent · 0 stale-citations · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0000 · close 0.1891 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`); die GIC-Familien-Arm-Frage an den Rat (API) UND die UI-Chats vorgelegt — drei Linien (drei Deskriptoren / globales Stufe-1 + Register-Artefakt / Grammatik-Arm als Partition in einem Block) als Riss eingetragen (Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`); `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
+## Burn: open 0.0000 · close 0.2579 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`); GIC-Familien-Arm-Frage an den Rat (API) UND die UI-Chats vorgelegt; zweiter, schärferer Rat-Lauf (Stimmen + Axiome) liefert das **gemessene Identitätsverdikt**: `family` im Baum belegt (Korrekturfamilie), keine CGM-Breite im Register → A=A-fest Option (c) (Register trägt `cgm_lat`, `family` = FDR-Gruppe, Grammatik `fdr … over family`); drei `gic_auroral`-Blöcke = A=A-Bruch. UI-Zweite-Kanal-Lauf mit Stimmen **und** Axiomen gestartet. Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`. `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
