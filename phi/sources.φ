@@ -18697,10 +18697,11 @@ ra ra
 dec dec
 field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
 
-url https://zenodo.org/records/8098323/files/data.zip
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/kyoto_pressure.bin
 format kyoto_pressure
-at earth
 ttl 604800
+origin https://zenodo.org/records/8098323/files/data.zip
+at earth
 field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_8day.manifest
