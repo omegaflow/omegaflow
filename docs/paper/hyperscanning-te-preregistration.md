@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: 90803a4a8831ede1ec479110627b5589d7e9005c196fb00f2b61f7c429f410df
+  sha256: 3413de0b14be97c10a541c3b891c505f880d65fe91a079f87eb10309384fba70
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -361,16 +361,15 @@ screen's own expression is the raised p95 that drops `pair-02`.
   `docs/paper/hyperscanning-te-method.md` (measured 2026-10-05 F234); it consumes the
   joint measurement above. The `coherent-phase` null of the discovery cohort is
   measured there (run `37331134587`, `success` 2026-10-05T17:03:57Z, §9.5): the same
-  three family-max survivors under the stricter shared-phase null. Open there remains
-  the full `max_points=4096` discovery run (`37438929801`).
+  three family-max survivors under the stricter shared-phase null. The full
+  `max_points=4096` discovery run is **measured** (run `37438929801`, `shards=4`,
+  `success` 2026-10-06T11:09:29Z, §9.6): the family maximum is broken with two
+  survivors (`pair-02@Cz R→L` TE `7.6521e-1`, `pair-18@Cz L→R` TE `7.0130e-1`), 55
+  per-cell nominees.
 
 ### Träger / Carrier
 
-This document's carrier is the Sensory handover
-`docs/handover/handover-2026-10-06-sensory-folge237.md` — the open point
-`### Hyperscanning-TE — max_points=4096 Discovery-Lauf (Job-Cap)`, whose `Lage`
-names this draft's last open validation artifact (the full `max_points=4096`
-discovery run, `37438929801`) and whose `Braucht` carries its `merge`-job result.
-The FP/FN, n-scaling and second-cohort numbers were carried by folge233's point
-(all three measured 2026-10-05); the `coherent-phase` null is measured in
-`docs/paper/hyperscanning-te-method.md` (run `37331134587`).
+All pre-registered validation artifacts are measured; the last open marker — the full
+`max_points=4096` discovery run `37438929801` — is closed by its `merge`-job result
+(§9.6). No open marker remains; the former carrier point in the Sensory handover is
+resolved.
