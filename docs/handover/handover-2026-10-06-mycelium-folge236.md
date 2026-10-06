@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: af828b1f44d8b2eaedc0205ed03e4ef913a4355d29b3c732e54a774af3d7783b
+  sha256: ab6044b43e5a6d204657299f3108b4ff7cb3caaa08ae1e8927568a1cdb1a87e8
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -73,10 +73,15 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
   `force_id_of("em")`; `sources.φ:9512` trägt **keine** `field`-Zeile. Ein Footprint ist keine
   Messung. Prioritätsliste (Kraft aus dem Produkt): 1 AMSR2 L2/L3 (thermal/advective/diffusion),
   2 GPM-L2/L3 Regen (advective; der Default `12001000` ist L1B=em), 3 GCOM-C/SGLI (em),
-  4 GOSAT (em; Dedup `blocked_sources.φ:56`), 5 ALOS-2/PALSAR-2 (em). IDs **unverifiziert**
-  (nur der G-Portal-Katalogsuche zugänglich).
-- **Blockade:** ohne `field`-Zeile ist jede Bestellung ein fabriziertes Feld; IDs unverifiziert.
-- **Braucht:** Field-Verdikt je Produkt (Mountain) → dann Operator-Order; Katalog-Pass (read-only) autonom.
+  4 GOSAT (em; Dedup `blocked_sources.φ:56`), 5 ALOS-2/PALSAR-2 (em). **IDs gemessen 2026-10-06**
+  (keyless `satsensor.json` + CSW `datasetId=…`): AMSR2 L2 SST `11002004` / Wind `11002005` /
+  SMC `11002008`, L3 SST `11003006` (0,25° `11003036`); GPM DPR-KuPR L2 Regen `12002000`, GMI L2
+  `12012000`, DPR+GMI comb `12022000`, L3 `12003000`; SGLI L1B VNR `10001003`, L2 SST `10002002`,
+  L3 SST `10003027`. **GOSAT absent auf G-Portal** (liegt bei NIES/GES DISC) → **nicht bestellen**.
+  Read-only Katalog-Pässe dispatcht: `11003006` `37439238853`, `12002000` `37439243015`,
+  `12001000` `37437987631`.
+- **Blockade:** ohne `field`-Zeile ist jede Bestellung ein fabriziertes Feld (IDs jetzt gemessen).
+- **Braucht:** Field-Verdikt je Produkt (Mountain) → dann Operator-Order. **Bestell-Kommando vorbereitet** (nicht gefahren): `gh workflow run jaxa-gportal-cdn.yml -f dataset=<ID> -f from=<YYYY/MM/DD> -f to=<YYYY/MM/DD> -f count=100 -f pages=1 -f download=true -f download_limit=N`.
 
 ### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*`
 - **Status:** wartend | **Bindung:** River
