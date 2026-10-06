@@ -4579,8 +4579,12 @@ fn test_walk_celestial_cmap() {
     assert!(coords.contains("dec "));
     assert_eq!(map_path.as_deref(), Some("results"));
     assert!(fields.contains("field"));
-    let (frame, _) = super::derive_frame(&j, &coords);
-    assert!(frame.starts_with("at sun"));
+    let (frame, reason) = super::derive_frame(&j, &coords);
+    assert!(
+        frame.is_empty(),
+        "no body is inferred from a bodyless catalog"
+    );
+    assert_eq!(reason, "frame pending");
 }
 
 #[test]
@@ -4605,8 +4609,12 @@ fn test_tap_to_json_rows() {
     assert!(coords.contains("ra RAJ2000"));
     assert!(coords.contains("dec DEJ2000"));
     assert_eq!(map_path.as_deref(), Some("."));
-    let (frame, _) = super::derive_frame(&flat, &coords);
-    assert!(frame.starts_with("at sun"));
+    let (frame, reason) = super::derive_frame(&flat, &coords);
+    assert!(
+        frame.is_empty(),
+        "no body is inferred from a bodyless catalog"
+    );
+    assert_eq!(reason, "frame pending");
 }
 
 #[test]

@@ -1825,6 +1825,82 @@ fn volume_probe_parity_masked_corner_and_plain() {
     );
 }
 
+#[test]
+fn em_aperture_flux_bit_scales_and_kernel_proxy_does_not() {
+    let mut app = OmegaLoop {
+        ..OmegaLoop::new(
+            mpsc::channel().1,
+            mpsc::sync_channel(1).0,
+            mpsc::sync_channel(2).1,
+            Arc::new(AtomicBool::new(false)),
+            LoopCtx {
+                time: Arc::new(Mutex::new(None)),
+                consent: Arc::new(AtomicBool::new(false)),
+                tone_code: Arc::new(std::sync::atomic::AtomicU8::new(
+                    crate::archivar::hrv::TONE_ABSENT,
+                )),
+                acoustic_tx: mpsc::channel().0,
+                seismic_tx: mpsc::channel().0,
+                relay_tx: None,
+                solar_rx: mpsc::channel().1,
+                machine_rx: mpsc::channel().1,
+                presence: Arc::new(RwLock::new(PresenceState::rest())),
+                diode: Arc::new(RwLock::new(DiodeState {
+                    force_ref: [0.0; 9],
+                    expose_offset: EXPOSE_OFFSET_BASE,
+                    em_color: [0.0; 4],
+                })),
+                verdicts: Arc::new(RwLock::new(Vec::new())),
+            },
+        )
+    };
+    app.init_gpu();
+    if app.device.is_none() {
+        eprintln!("em aperture parity skipped: no adapter");
+        return;
+    }
+    let t = 8.4e8;
+    app.t_presence = t;
+
+    let record = |z_flux: f64, presence: f64| -> Record {
+        (
+            0.0, 0.0, 0.0, 1.0, t, 1.0e9, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, z_flux, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, presence,
+        )
+    };
+
+    let probe_em = |app: &mut OmegaLoop, z_flux: f64, presence: f64| -> f32 {
+        let packed = pack_window(&[record(z_flux, presence)], [0.0, 0.0, 0.0]);
+        app.packed_field = packed.field;
+        app.packed_meta = packed.meta;
+        app.packed_count = packed.count;
+        app.packed_gen += 1;
+        app.probe();
+        app.probe_readback();
+        app.probe_omega[0]
+    };
+
+    let flux_bit = crate::archivar::PRESENCE_FLAG_FLUX;
+    let scaled = probe_em(&mut app, 1.0, flux_bit); // bit set, z = 1 -> 1/(1+1)^2
+    let proxy_riss = probe_em(&mut app, 1.0, 0.0); // bit clear, kernel_id 1, z = 1
+    let plain = probe_em(&mut app, 0.0, 0.0); // bit clear, no redshift
+
+    assert!(
+        scaled > 0.0 && proxy_riss > 0.0,
+        "the em aperture probe returned void: {scaled} / {proxy_riss}"
+    );
+    let ratio = (scaled / proxy_riss) as f64;
+    assert!(
+        (ratio - 0.25).abs() < 0.02,
+        "flux bit + z=1 must scale the em value by 1/(1+z)^2 = 0.25, measured {ratio}"
+    );
+    let drift = ((proxy_riss - plain) as f64).abs() / (plain as f64).abs().max(1e-6);
+    assert!(
+        drift < 1e-4,
+        "kernel_id=1 without the flux bit must stay unscaled (Riss regression), drift {drift}"
+    );
+}
+
 const SCALAR_PARITY_TOL: f64 = 1e-3;
 
 fn sg_gate_rng(rng: &mut u64) -> f64 {

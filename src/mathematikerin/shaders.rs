@@ -183,7 +183,7 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     }
     let v = propagation_v(ft, fm.x, mt3.z, mt2.w, mt3.x);
     var val_eff = val_eff_at(pre, tm, ft, v, d_mag);
-    if (ft == 0u && mt.w > 0.0 && (kid == 0u || kid == 1u)) {
+    if (ft == 0u && (u32(mt3.z) & 8u) != 0u) {
         let z1 = 1.0 + mt.w;
         val_eff = val_eff / (z1 * z1);
     }
@@ -208,7 +208,7 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     }
     let v = propagation_v(ft, fm.x, mt3.z, mt2.w, mt3.x);
     var z_aperture = 1.0;
-    if (ft == 0u && mt.w > 0.0 && (kid == 0u || kid == 1u)) {
+    if (ft == 0u && (u32(mt3.z) & 8u) != 0u) {
         let z1 = 1.0 + mt.w;
         z_aperture = 1.0 / (z1 * z1);
     }

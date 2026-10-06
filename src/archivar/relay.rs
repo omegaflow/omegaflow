@@ -8,7 +8,7 @@ use std::sync::{Arc, Mutex, RwLock, mpsc};
 use std::thread;
 pub const PORT_CONST: u16 = 1618;
 pub const RELAY_BIND_ENV: &str = "OMEGAFLOW_RELAY_BIND";
-pub const RELAY_BIND_DEFAULT: &str = "0.0.0.0";
+pub const RELAY_BIND_DEFAULT: &str = "127.0.0.1";
 const KINETIC_TAG: u8 = 10;
 
 fn bind_from(raw: Option<String>) -> String {
@@ -1123,8 +1123,8 @@ mod tests {
 
     #[test]
     fn the_bind_reaches_the_ether_when_unset() {
-        assert_eq!(bind_from(None), "0.0.0.0");
-        assert_eq!(bind_from(Some("   ".to_string())), "0.0.0.0");
+        assert_eq!(bind_from(None), "127.0.0.1");
+        assert_eq!(bind_from(Some("   ".to_string())), "127.0.0.1");
     }
 
     #[test]
