@@ -350,8 +350,8 @@ impl FitsTable {
 
 #[derive(Debug, Clone)]
 pub struct FitsWcs {
-    ctype1: String,
-    ctype2: String,
+    ctype1: Option<String>,
+    ctype2: Option<String>,
     crval1: f64,
     crval2: f64,
     crpix1: f64,
@@ -368,8 +368,8 @@ pub enum WcsProjection {
 
 impl FitsWcs {
     pub fn from_header(h: &FitsHeader, naxis1: usize, naxis2: usize) -> Option<Self> {
-        let ctype1 = h.str_unescaped("CTYPE1")?;
-        let ctype2 = h.str_unescaped("CTYPE2")?;
+        let ctype1 = h.str_unescaped("CTYPE1");
+        let ctype2 = h.str_unescaped("CTYPE2");
         let crval1 = h.f64("CRVAL1")?;
         let crval2 = h.f64("CRVAL2")?;
         let crpix1 = h.f64("CRPIX1").unwrap_or((naxis1 + 1) as f64 / 2.0);
@@ -388,8 +388,9 @@ impl FitsWcs {
                 let mut pc_found = false;
                 for i in 1..=2 {
                     for j in 1..=2 {
-                        let key = format!("PC{i:03}{j:03}");
-                        if let Some(v) = h.f64(&key) {
+                        let standard = format!("PC{i}_{j}");
+                        let legacy = format!("PC{i:03}{j:03}");
+                        if let Some(v) = h.f64(&standard).or_else(|| h.f64(&legacy)) {
                             pc[i - 1][j - 1] = v;
                             pc_found = true;
                         }
@@ -418,8 +419,8 @@ impl FitsWcs {
 
     pub fn tan(crval1: f64, crval2: f64, crpix1: f64, crpix2: f64, cd: [[f64; 2]; 2]) -> Self {
         Self {
-            ctype1: "RA---TAN".into(),
-            ctype2: "DEC--TAN".into(),
+            ctype1: Some("RA---TAN".into()),
+            ctype2: Some("DEC--TAN".into()),
             crval1,
             crval2,
             crpix1,
@@ -430,8 +431,8 @@ impl FitsWcs {
 
     pub fn sin(crval1: f64, crval2: f64, crpix1: f64, crpix2: f64, cd: [[f64; 2]; 2]) -> Self {
         Self {
-            ctype1: "RA---SIN".into(),
-            ctype2: "DEC--SIN".into(),
+            ctype1: Some("RA---SIN".into()),
+            ctype2: Some("DEC--SIN".into()),
             crval1,
             crval2,
             crpix1,
@@ -441,12 +442,10 @@ impl FitsWcs {
     }
 
     pub fn projection(&self) -> WcsProjection {
-        if self.ctype1.contains("TAN") && self.ctype2.contains("TAN") {
-            WcsProjection::Tan
-        } else if self.ctype1.contains("SIN") && self.ctype2.contains("SIN") {
-            WcsProjection::Sin
-        } else {
-            WcsProjection::Linear
+        match (self.ctype1.as_deref(), self.ctype2.as_deref()) {
+            (Some(a), Some(b)) if a.contains("TAN") && b.contains("TAN") => WcsProjection::Tan,
+            (Some(a), Some(b)) if a.contains("SIN") && b.contains("SIN") => WcsProjection::Sin,
+            _ => WcsProjection::Linear,
         }
     }
 
@@ -1511,6 +1510,62 @@ mod tests {
         let (ra0, dec0) = img.world(-22800.0, 242.0).unwrap();
         assert!((ra0 - 152.0).abs() < 1e-9);
         assert!((dec0 - 2.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn wcs_standard_pc_keys_are_read() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "100"),
+                ("NAXIS2", "100"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "152.0"),
+                ("CRVAL2", "2.0"),
+                ("CRPIX1", "-22800.0"),
+                ("CRPIX2", "242.0"),
+                ("CDELT1", "6.94444461259988E-05"),
+                ("CDELT2", "6.94444461259988E-05"),
+                ("PC1_1", "-1.0"),
+                ("PC1_2", "0.0"),
+                ("PC2_1", "0.0"),
+                ("PC2_2", "1.0"),
+            ],
+            &[0u8; 40000],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(150.5, 242.0).unwrap();
+        assert!(
+            (150.3..150.6).contains(&ra),
+            "ra {ra} reflects the standard PC axis"
+        );
+        assert!(
+            (dec - 2.0).abs() < 0.02,
+            "dec {dec} stays near the reference"
+        );
+    }
+
+    #[test]
+    fn wcs_without_ctype_stays_linear() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "8"),
+                ("NAXIS2", "8"),
+                ("CRVAL1", "100.0"),
+                ("CRVAL2", "2000.0"),
+                ("CRPIX1", "1.0"),
+                ("CRPIX2", "1.0"),
+                ("CDELT1", "2.0"),
+                ("CDELT2", "-0.5"),
+            ],
+            &[0u8; 256],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.world(3.0, 1.0).unwrap(), (104.0, 2000.0));
     }
 
     #[test]

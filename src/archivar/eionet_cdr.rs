@@ -330,7 +330,19 @@ mod tests {
         assert_eq!(pollutant_id("PCDD+PCDF (DIOXINS+FURANS)"), Some(34));
         assert_eq!(medium_id("AIR"), Some(COMP_AIR));
         assert_eq!(medium_id("MAGMA"), None);
-        assert!(COMP_MAX >= (45 << 2) | 3);
+    }
+
+    #[test]
+    fn component_key_space_covers_every_pollutant_and_medium() {
+        let max_id = POLLUTANTS
+            .iter()
+            .map(|(id, _, _)| *id)
+            .max()
+            .expect("the pollutant table is not empty");
+        assert_eq!(max_id, 45);
+        for medium in [COMP_AIR, COMP_WATER, COMP_SOIL] {
+            assert!((max_id << 2) | medium <= COMP_MAX);
+        }
     }
 
     #[test]
