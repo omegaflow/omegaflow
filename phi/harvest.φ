@@ -267,6 +267,15 @@ idempotent true
 timeout 120
 
 asset present
+format osm_nodes
+tag download.geofabrik.de
+arm osm_pbf_compiler
+workflow osm-pbf-cdn.yml
+pattern ^monaco_nodes\.bin$
+idempotent true
+timeout 240
+
+asset present
 format pds3_binary
 tag data.darts.isas.jaxa.jp
 arm pds3_binary_compiler
