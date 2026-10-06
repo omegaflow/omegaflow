@@ -3,7 +3,7 @@
   session: Mountain-Folge 250
   class: handover
   date: 2026-10-06
-  sha256: 4513955ad82ec188f19c8b620a31dc1db5b686e36cb4e73ca4daf6d9e4fddff6
+  sha256: b28dfe3c241510abe75372fb7a2e41c4640ae9c547d3b1d842a8e9170c819ab5
   status: live
 -->
 # Handover — Mountain-Folge 250 (2026-10-06)
@@ -14,7 +14,8 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-06-mountain-folge249.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0000 · close 0.0000 · cap 0.50 · Grund: Newell-`from`-Arm + Derivation (1 grind-flash) + GIC-HAPI-Recon (1 explore) + Register/Grammatik; Dispatchs getrennt (gemessen via `session_burn`, 2026-10-06).
+## Burn: open 0.0000 · close 0.1582 · cap 0.50 · Grund: der Operator trug die Linie in einem Pass; zwei benannte Dispatchs (Newell-`from`-Arm, GIC-HAPI-Recon) + Register/Grammatik — gemessen via `session_burn`.
+Dispatchs getrennt (line $0.0746 + grind-flash $0.0428 + explore $0.0408, 2026-10-06).
 
 ## Operator-Wort-Register
 
