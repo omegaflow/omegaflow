@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: f07e744a29ad46df42ad208cc2109e2631864b7d1d733285f5f37b990e0d1e1f
+  sha256: c82498bde8b998f21ed022ec673b5d06e956d08db0d2ebe162a694bf481efeda
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -58,12 +58,12 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
   - ExoMars TGO ACS / Viking gravity — `sources.φ`-Blöcke + Workflows `acs-nir-cdn.yml` / `viking-grav-cdn.yml` stehen; Dispatch (idempotent) in dieser Session.
   - Hayabusa LIDAR — 7 Blöcke `pds4_fixed_width`; Workflow `.github/workflows/hayabusa-lidar-cdn.yml` gebaut + dispatcht.
   - Phobos-2 KRFM — Block auf 14 Felder ergänzt (Mountain); Workflow `.github/workflows/krfm-cdn.yml` gebaut + dispatcht (`krfm.lbl` HTTP 206, gemessen).
-  - EUMETSAT MTG-LI — Workflow `.github/workflows/mtg-li-cdn.yml` gebaut; **blockiert**: GitHub-Secrets `EUMETSAT_KEY`/`EUMETSAT_SECRET` fehlen (`gh secret list` = leer; `.secrets.local` trägt keine EUMETSAT-Schlüssel) → Konto/Key = Operator.
+  - EUMETSAT MTG-LI — **erledigt** (diese Session): `EUMETSAT_KEY`/`EUMETSAT_SECRET` stehen in `.secrets.local` (Namensliste Zeilen 36-37), via `bin/secrets-sync.sh --set` als GitHub-Secrets gesetzt; Workflow `.github/workflows/mtg-li-cdn.yml` dispatcht (`37437023048`).
   - Chandrayaan-1 Mini-RF — **blockiert**: `pds3_img` ohne Feld-Arm (Leerzeichen-Labels `"H RECEIVE INTENSITY"` …) → neuer `pds3_img`-Slug-Arm nötig (Mountain).
   - Tianwen-1 MoRIC / ShadowCam / JAXA G-Portal — Sample/Record-Download = Operator-Hand; GOES-18-ABI-Workflow (`goes18-cdn.yml`) in dieser Session dispatcht.
   - `:78` SuperDARN — LOCK (s. u.).
 - **Blockade:** MTG-LI-Secrets (Operator); Chandrayaan-`pds3_img`-Arm (Mountain); Sample-/Record-Downloads (Operator/per-act).
-- **Braucht:** `EUMETSAT_KEY`/`EUMETSAT_SECRET` als GitHub-Secrets (Operator); `pds3_img`-Feld-Arm (Mountain); Consent für Record-Downloads.
+- **Braucht:** `pds3_img`-Feld-Arm (Mountain); Consent für Record-Downloads (Operator/per-act).
 
 ### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*`
 - **Status:** wartend | **Bindung:** River
@@ -104,7 +104,8 @@ Origin: mycelium-folge236. **Routed — nicht-eigen, zuerst die zwei roten Gate-
 - **gistemp_aod550 / godas_pottmp:** Manifestation gebaut (`gistemp-aod-cdn.yml`, `godas-pottmp-cdn.yml`), Dispatch nach Push; `sha256`-Nachzug (`1ba4e901…`/`c2448a10…`) in `sources.φ`.
 - **GOES-18 ABI:** `goes18-cdn.yml` gebaut (Muster `goes-cdn.yml`, self-fetch `goes18_abi_compiler --ci-mode`); `goes_abi`-Workflow-Angleich prüfen; Dispatch nach Push.
 - **clippy `units.rs:549`** — in deiner Hand (Working Tree trägt `epoch.split_whitespace()`, uncommittet, gemessen).
-- **EUMETSAT MTG-LI** — parser-def `netcdf-arm`, bleibt.
+- **EUMETSAT MTG-LI** — erledigt (diese Session): Secrets `EUMETSAT_KEY`/`EUMETSAT_SECRET` via `bin/secrets-sync.sh --set` gesetzt, `mtg-li-cdn.yml` dispatcht (`37437023048`). Dein Register-Block `sources.φ:426+` trägt.
+- **Chandrayaan-1 Mini-RF — blockiert:** `sources.φ:10019` `pds3_img`-Block steht ohne `field`-Zeile; `pds3_img` hat keinen Feld-Arm → „field undeclared" (`main_flow.rs:3046`). Die Labels tragen Feldnamen **mit Leerzeichen** (`"H RECEIVE INTENSITY"` / `"V RECEIVE INTENSITY"` / `"CROSS POWER INTENSITY (…)"`, 4 Bänder). **Riss (gemessen):** die `field`-Grammatik trägt bereits **zitierte** Schlüssel (`sources.φ:17053-17055` `field "F13PSSO" …`) — der Kern ist der fehlende `pds3_img`-**Feld-/Slug-Arm** (force/unit-Verdikt), nicht allein das Leerzeichen. `blocked_sources.φ` trägt den Eintrag mit Begründung. **Braucht:** `pds3_img`-Feld-Arm + force/unit-Verdikt.
 
 ## An river  ·  PRIO
 
