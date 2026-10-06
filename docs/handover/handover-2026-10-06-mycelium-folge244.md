@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 15f9074ec841428497c78ad26cdf702ba10555eb2d16056c4c52416f6a8aa281
+  sha256: 4d9a0813dbdb6214c852daae3ab46892dd5f6fd0613961ec8ca94ece1bbc070b
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.2714 · cap 0.4 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, UI-/API-Stimmen-Adressierung)
+## Burn: open 0.0000 · close 0.3124 · cap 0.45 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, Stimmen-Adressierung, DE440-Pin)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
@@ -117,16 +117,25 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
 - **Blockade:** Fink-Admission (Mountain).
 - **Braucht:** `phi/sources.φ`-Direktiven nach Admission.
 
-### DE440-Remanifest vs. Pin — `pages-deploy` rot (Riss)
-- **Status:** blockiert
-- **Trigger:** Mountains DE440-Autoritäts-Verdikt → Pins + `sha256`-Direktive oder Remanifest
-- **Lage:** (gemessen 2026-10-06, river-110) `pages-deploy 37489805784 @3eac2e119` = failure:
-  `sha256 mismatch for ephemeris_de440_earth.bin: got 5554915d… want adc990bc…`; Release
-  `ssd.jpl.nasa.gov-de` trägt neu `earth 5554915d…`/`sun 093b3ab5…`/`moon d9b40917…` (2026-10-06T13:25Z);
-  `pages-deploy.yml:60-62` pinnt die alten shas; `phi/sources.φ` trägt keine `sha256`-Zeile für die DE440-Linie.
-- **Blockade:** Autoritäts-Entscheid (Mountain) — neuer `de_compiler`-Output oder Remanifest.
-- **Braucht:** Pins auf die gemessenen shas **und** `sha256`-Direktive je DE440-Zeile,
-  dann `pages-deploy` neu auslösen; Checkmark `nearCount(<1e13 m) > 0` (River).
+### DE440 `pages-deploy` — Pin gesetzt, Lauf offen
+- **Status:** wartend
+- **Trigger:** Ausgang `pages-deploy 37508187212` → `ci_manage view 37508187212`
+- **Lage:** (gemessen 2026-10-06, Mycelium-244) die drei Pins in `pages-deploy.yml:60-62` auf die
+  gemessenen Release-Bytes gezogen (`archive_search --sniff`: earth `5554915dc7c2…`, moon
+  `d9b4091731f1…`, sun `093b3ab5ee36…`); `pages-deploy 37508187212` dispatcht. `phi/sources.φ`
+  trägt weiter keine `sha256`-Zeile für die DE440-Linie.
+- **Blockade:** keine (Pins gesetzt); die `sha256`-Register-Direktive ist Mountains Verdikt-Zeile.
+- **Braucht:** Lauf-Ausgang lesen; `sha256`-Direktive je DE440-Zeile (Mountain); Checkmark
+  `nearCount(<1e13 m) > 0` (River).
+
+### vnp46a3-cdn — Granule mit Nachtdaten wählen
+- **Status:** eigen
+- **Trigger:** Granule mit DNB-Nachtdaten gewählt → `vnp46a3-cdn` dispatchen
+- **Lage:** (gemessen 2026-10-06, mountain-247) `vnp46a3-cdn.yml:24-32` nimmt den CMR-neuesten
+  Granule; der war `…A2026213.h17v01` (arktisch, Polartag) → `no measured VNP46A3 cell` (0 honored).
+  Der Compiler liest/selectet die SDS korrekt (Mountain `--inspect`); nur das Granule trägt keine DNB-Nachtdaten.
+- **Blockade:** keine.
+- **Braucht:** ein Granule mit Nachtdaten (Kachel/Datum) in `vnp46a3-cdn.yml` wählen, dann dispatchen.
 
 ### `omegaflow/sources` — LICENSE-Generator + Drift-Tor
 - **Status:** wartend
