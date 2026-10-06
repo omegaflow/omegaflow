@@ -1,0 +1,51 @@
+name: mtg-li-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  EUMETSAT_KEY: ${{ secrets.EUMETSAT_KEY }}
+  EUMETSAT_SECRET: ${{ secrets.EUMETSAT_SECRET }}
+
+jobs:
+  mtg-li:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the api.eumetsat.int release exists on the CDN
+        run: |
+          gh release view api.eumetsat.int --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create api.eumetsat.int --repo omegaflow/sources \
+                 --title "api.eumetsat.int" --notes "EUMETSAT MTG LI netCDF products"
+      - name: Fetch the MTG LI BODY netCDF (signed EUMETSAT OpenSearch)
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-harvest --bin eumetsat_mtg_li_fetch -- \
+            --collection "EO:EUM:DAT:0691" \
+            --count 1
+      - name: Upload the BODY netCDF to the CDN
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          body=(data/api.eumetsat.int/EO%3AEUM%3ADAT%3A0691/*BODY*.nc)
+          [ ${#body[@]} -gt 0 ] \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mtg_li: BODY netCDF returned void" \
+                 "eumetsat_mtg_li_fetch wrote no *BODY*.nc member. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          gh release upload api.eumetsat.int "${body[@]}" --clobber --repo omegaflow/sources \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mtg_li: BODY netCDF upload returned void" \
+                 "gh release upload api.eumetsat.int returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

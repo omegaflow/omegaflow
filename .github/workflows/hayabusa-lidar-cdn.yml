@@ -1,0 +1,48 @@
+name: hayabusa-lidar-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  hayabusa-lidar:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the sbnarchive.psi.edu release exists on the CDN
+        run: |
+          if ! gh release view sbnarchive.psi.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create sbnarchive.psi.edu --repo omegaflow/sources \
+              --title "sbnarchive.psi.edu" \
+              --notes "Hayabusa (Itokawa) LIDAR calibrated fixed-width tables (PDS4 Table_Character) compiled per granule. Record stride per packed table, little-endian; label derived from the PDS4 .xml, rows from the .tab."
+          fi
+      - name: Compile and manifest the Hayabusa LIDAR granules to the CDN
+        run: |
+          base="https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated"
+          for granule in \
+            cdr_f_20051029_20051118 \
+            cdr_opt_20050911_20050929 \
+            cdr_opt_20050930_20051028 \
+            cdr_opt_20051029_20051118 \
+            cdr_uf_20050911_20050929 \
+            cdr_uf_20050930_20051028 \
+            cdr_uf_20051029_20051118
+          do
+            cargo run --release -p omegaflow-harvest --bin pds4_fixed_width_compiler -- \
+              --dat "${base}/${granule}.tab" \
+              --label "${base}/${granule}.xml" \
+              --ci-mode \
+              || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                   "hayabusa-lidar-cdn: ${granule} returned void" \
+                   "pds4_fixed_width compile/upload for ${granule} returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                   health; exit 1; }
+          done
