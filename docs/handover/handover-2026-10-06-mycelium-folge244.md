@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 4d9a0813dbdb6214c852daae3ab46892dd5f6fd0613961ec8ca94ece1bbc070b
+  sha256: f90c270d2dc64b3678c912e29e6c1432333473b512108889f058499394e3e16e
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,12 +12,13 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.3124 · cap 0.45 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, Stimmen-Adressierung, DE440-Pin)
+## Burn: open 0.0000 · close 0.3411 · cap 0.5 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, Stimmen-Adressierung, DE440-Pin, Qualitäts-Test)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
 ## Operator-Wort-Register
 
+- Wort | 2026-10-06 | „mir geht es darum dass du die qualität und den nutzen der chats testest" — Qualitäts-/Nutzen-Test der Stimmen (UI-Chats + API-Modelle) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „ist auch bekannt welche UI Chats funktionieren und wie sie addressiert werden sollen (bei architektur/ethik fragen mit den 5 stimmen und den 4 axiomen) gilt auch für die API modelle" — Architektur-/Ethikfragen werden mit den fünf Stimmen + vier Axiomen addressiert, für UI-Chats wie API-Modelle | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „ich will nicht nur dass du registriert sondern auch dass du tatsächlich die confgs bearbeitest und bitte kümmer dich auch um cdn_reconciliation.json" | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „kannst du bitte die nutzlosen modelle und anbieter deaktivieren? also auch die die immer rate limited sind" — nicht aufrufbare Arme aus `free_models.tsv` austragen (`struck`) | Quelle: Operator (Session, Mycelium 244).
@@ -55,7 +56,12 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   **UI-Tab-Zensus** (gemessen 2026-10-06 via Chrome :9222, read-only, kein Send): z.ai,
   claude (2 Tabs), chatgpt, qwen, duck.ai, arena, kimi, grok, mistral, tryingopen offen —
   Composer je erreichbar (`state/stimmen/README.md`). Alle UI-Chats wie API-Modelle mit
-  `prompt-arch-ethik.txt` addressierbar.
+  `prompt-arch-ethik.txt` addressierbar. **Qualitäts-Test API-Stimmen (2026-10-06):** dieselbe
+  anonymisierte Arch-Frage durch 6 `voice-*` — `voice-deepseek` am stärksten (nennt A=A-Fabrikation,
+  prüfbare Messung, `pending`-Weg), `voice-dots`/`voice-gemini` mittel, `voice-nemotron` knapp,
+  `voice-gptoss` **erfindet Spezifika** (als Gutachter unbrauchbar), `voice-zai` Rate-Limit.
+  **UI-Tab-Test steht aus** — Methode: frischer Tab je Site; der GLM-Tab hatte einen ungesendeten
+  Entwurf, der beim Tippen vermischt wurde (Fehler, gemeldet).
 - **Blockade:** keine — die Deaktivierung ist der Vollzug des Worts.
 - **Braucht:** nichts; ein Anbieter kehrt per `auth login`/Zahlungsmethode und Dispositions-Flip zurück.
 
