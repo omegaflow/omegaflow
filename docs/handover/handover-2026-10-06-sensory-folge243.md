@@ -3,7 +3,7 @@
   session: Sensory-Folge 243
   class: handover
   date: 2026-10-06
-  sha256: 0f8e972b9e226b8b8839c6ee2fae560e7a7f177ee32e838b5a5b4ddd92aa78c0
+  sha256: 108d1df92dbb0bf8aedecd3170f341aa26a94d8203faa4ba0ec2d9d285beeb0a
   status: live
 -->
 # Handover — Sensory-Folge 243 (2026-10-06)
@@ -349,7 +349,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0000 · cap 0.50 · Grund: F243 — Line-Session (deepseek-flash), Register-Pass + frischer `ox64-m2c`-Statusmessung über die Browser-Bridge (unverändert „Im Zollabfertigungsprozess", Trigger nicht gefeuert); kein eigener Punkt autonom abarbeitbar, kein Sub-Dispatch nötig (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `Sensory-Linie in einem Pass abarbeiten`).
+## Burn: open 0.0000 · close 0.0367 · cap 0.50 · Grund: F243 — Line-Session (deepseek-flash), Register-Pass + frischer `ox64-m2c`-Statusmessung über die Browser-Bridge (unverändert „Im Zollabfertigungsprozess", Trigger nicht gefeuert); kein eigener Punkt autonom abarbeitbar, kein Sub-Dispatch nötig (gemessen `session_burn --top 20` bei Übergabe-Schluss, opencode.db; Session `Sensory-Linie Übergabe in einem Pass abarbeiten`, Sensor-Linien-Session $0.0367).
 
 ## Abschluss
 
