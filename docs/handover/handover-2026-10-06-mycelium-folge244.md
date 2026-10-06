@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 6ca7012fe16155cdb65d2189cba1d3d971c8fd888ab4f42c74f613f901234402
+  sha256: 15f9074ec841428497c78ad26cdf702ba10555eb2d16056c4c52416f6a8aa281
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.2361 · cap 0.3 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, Stimmen-Adressierung)
+## Burn: open 0.0000 · close 0.2714 · cap 0.4 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, UI-/API-Stimmen-Adressierung)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
@@ -51,8 +51,11 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   wegen Reasoning-Budget) — kein toter Arm, Whitelist bleibt. **Arch-Adressierung:** fünf Stimmen
   + vier Axiome jetzt im Basis-`voice`-Rollenprompt (`opencode.json`), im `--mode arch`-PROLOG von
   `state/mycelium/voice-swarm.sh` und in `state/stimmen/prompt-arch-ethik.txt` (UI-Chats);
-  arbeitende UIs (z.ai, deepseek, kimi, claude, arena) in `state/stimmen/README.md`; Konzept
-  `docs/concepts/free-voices.md`.
+  arbeitende UIs in `state/stimmen/README.md`; Konzept `docs/concepts/free-voices.md`.
+  **UI-Tab-Zensus** (gemessen 2026-10-06 via Chrome :9222, read-only, kein Send): z.ai,
+  claude (2 Tabs), chatgpt, qwen, duck.ai, arena, kimi, grok, mistral, tryingopen offen —
+  Composer je erreichbar (`state/stimmen/README.md`). Alle UI-Chats wie API-Modelle mit
+  `prompt-arch-ethik.txt` addressierbar.
 - **Blockade:** keine — die Deaktivierung ist der Vollzug des Worts.
 - **Braucht:** nichts; ein Anbieter kehrt per `auth login`/Zahlungsmethode und Dispositions-Flip zurück.
 
