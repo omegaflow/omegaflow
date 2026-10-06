@@ -3,7 +3,7 @@
   session: Mountain-Folge 250
   class: handover
   date: 2026-10-06
-  sha256: 65670b1ebaa0bdadb38614dbd9ae4d3dbec7fcb38ea58e1ce5c9ec433056ec79
+  sha256: 9fbe5e2242a2c5da4c9716a23944186f5f9d0a303d92d5e6b8c0427177778a26
   status: live
 -->
 # Handover — Mountain-Folge 250 (2026-10-06)
@@ -14,8 +14,8 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-06-mountain-folge249.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0000 · close 0.33 · cap 0.50 · Grund: Operator-Wort („in einem Pass" + „befrage die 5 voices und die 7 ui chats") — Newell-`from`-Arm + Derivation + zwei Descriptoren/CI-Jobs, GIC-HAPI-Recon, Rat + 5 API-Stimmen + Kimi-K3 (zweiter Kanal); gemessen via `session_burn`.
-Dispatchs getrennt (line ≈$0.136 + grind-flash $0.0428 + explore $0.0408 + council $0.0197 + API-Stimmen ≈$0.09, 2026-10-06).
+## Burn: open 0.0000 · close 0.40 · cap 0.50 · Grund: Operator-Wort („in einem Pass" + „befrage die 5 voices und die 7 ui chats" + „hol die stimmen ab") — Newell-Arm + Verifikationsarm, GIC-HAPI-Recon, Rat + 5 API-Stimmen + vier UI-Seats (Duck/Claude/Qwen/Kimi); gemessen via `session_burn`.
+Dispatchs getrennt (line ≈$0.178 + grind-flash $0.0428 + explore $0.0408 + council $0.0197 + API-/UI-Stimmen ≈$0.12, 2026-10-06).
 
 ## Operator-Wort-Register
 
@@ -55,6 +55,7 @@ Wort | Datum | Quelle
 „welche dieser quellen fehlen jetzt noch? … Mountain prüft die Fäden A–G gegen das Register (lebt vs. neu, Zugang/Lizenz messen)" | 2026-10-06 | Operator (Session, Mountain 248)
 „Starte die Mountain-Linie in einem Pass" | 2026-10-06 | Operator (Session, Mountain 250)
 „wie kannst du die schliessen? bitte befrage die 5 voices und die 7 ui chats" | 2026-10-06 | Operator (Session, Mountain 250)
+„hol die stimmen ab das ist keine ausrede" | 2026-10-06 | Operator (Session, Mountain 250)
 
 ## Architektur-Verdikt (Rat + zweiter Kanal, 2026-10-06) — Newell-Provenienz + GIC-Route
 
@@ -76,6 +77,20 @@ die UI-Stimmen nicht.
   `WI_H1_SWE` trägt ein Live-Register. THEMIS GMAG `THG_L2_MAG_<4LETTER>` je Station als
   Empfänger; ein code-gewählter geschlossener Stationsset wäre Bias. Ein Register ohne
   Messfluss muss beim Build sichtbar werden, nicht still Katalog bleiben (Future-Stimme).
+
+**Zweiter Kanal (UI-Chats, 2026-10-06, abgeholt):** Duck.ai (GPT-6 Luna) · Claude (Sonnet 5.5
+Extra) · Qwen (zwei Antworten) · Kimi K3 (tryingopen) — **alle vier konvergieren:** RTSW-Join
+(`rtsw_mag_1m ⨝ rtsw_wind_1m` über `time_tag`) als Live-Treiber, OMNI-1h als Gegenprobe; GIC als
+kompilierter Fanout/Parser plus Live-Register nur für lebende Quellen. Duck: „Register findet die
+Messung; nur Parser und Fanout machen sie lebendig." Claude: „RTSW (mag_1m ⨝ wind_1m) wird einmal
+zum Tripel gefügt und fächert `THG_L2_MAG_<station>` auf, OMNI bleibt Gegenprobe." Qwen: „RTSW-Join
+für den Treiber, gemischter Fanout für GIC — Register öffnet, Adapter misst." Kimi: „jeder Knoten
+trägt Vorzeichen, Einheit und Zeitstempel seiner eigenen Quelle." **z.ai (GLM-5.3 Deep Think Max)**
+rechnete über das Fenster nicht zu Ende → `pending`; **arena.ai** (Claude-Backup) brach mit
+„Something went wrong while generating" ab → `pending`. Damit stützt der zweite Kanal den
+**RTSW-Join** stärker als der Rat (der „kein Mittel über zwei Empfänger" sagte) — der Riss bleibt
+getragen; die Messung (1-min-Raster, ~2 s Versatz `21:40:02` vs `21:40:00`) entscheidet: der Join
+läuft über die Bin-Stufe, OMNI bleibt Gegenprobe.
 
 ## Offen (aufgeschlüsselt)
 
