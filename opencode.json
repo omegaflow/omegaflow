@@ -190,6 +190,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-kilo": {
+      "disable": true,
       "mode": "subagent",
       "model": "kilo/kilo-auto/free",
       "variant": "low",
@@ -198,6 +199,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-zen": {
+      "disable": true,
       "mode": "subagent",
       "model": "opencode/nemotron-3.5-lightning-free",
       "variant": "low",
@@ -255,8 +257,6 @@
           "voice-nemotron": "allow",
           "voice-agnes": "allow",
           "voice-kenari": "allow",
-          "voice-kilo": "allow",
-          "voice-zen": "allow",
           "voice-zai": "allow",
           "voice-deepseek": "allow",
           "grind-pro": "ask",

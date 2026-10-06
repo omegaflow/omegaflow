@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; GIC-Faden-API-Reachability-Test
   class: handover
   date: 2026-10-06
-  sha256: fcb3641af353395ec64503119f1b34962fc60546b5be0679590d86eac98c313d
+  sha256: 8b9ab79a945f842f4cac2d727beb0adb584cbc8b2e0651eaae3c9a5a60f6f85c
   status: live
 -->
 # Handover — Mycelium-Folge 245 (2026-10-06)
@@ -38,6 +38,8 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
 - Wort | 2026-10-06 | „nein" (auf die Frage, ob die API-Erkenntnisse an die UI-Chats gehen) — keine UI-Chats für gemessene Fakten-Endpunkte | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „mir ist nur wichtig dass wir immer besser werden und die richtigen modelle für den jeweiligen zweck nutzen" — Modell-Fit je Aufgabenklasse messen und registrieren; die passende Stufe, nicht die stärkste | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „sollen wir gemini und kilo entfernen? ich möchte wirklich nur modelle die auch etwas taugen" — Roster-Leanheit; Entfernung nur per gemessener Fähigkeit, nicht per Gefühl | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „ja dann bitte entfernen" — kilo (Latenz) und zen (Nichtantwort) aus dem Roster | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „was machen wir mit zen; zen kann nicht als agent genutzt werden aber vielleicht ist es für andere dinge nützlich" — zen als Session-Modell-Fallback prüfen, nicht als Stimme | Quelle: Operator (Session, Mycelium 245).
 
 ## Offen — eigen
 
@@ -116,10 +118,19 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
   Regel: Faktisch-Endpunkte → `deepseek`-Klasse; UI-Chats nur für Architektur-/Designfragen nach dem Rat.
 - **Blockade:** keine.
 - **Braucht:** `voice-gptoss` aus der Arch-/Grind-Route streichen; Roster auf die gemessenen
-  schnell+ehrlich setzen (`deepseek-flash`, `kilo-auto`, `nvidia/nemotron-3-super-120b`,
-  `google/gemini-3.5-flash-lite`); `voice-kilo`/`voice-ling`/`voice-agnes` in den API-Arch-Test;
-  **Offen (Operator-Wort 2026-10-06):** den LLM-`free_model_bench`-T1–T7-Lauf über die schnellen Arme
-  → neue Tempo-/Qualitätstafel → Roster fixieren. `voice-zen` (opencode client-Kanal) entfällt.
+  schnell+ehrlich setzen (`deepseek-flash`, `nvidia/nemotron-3-super-120b`,
+  `google/gemini-3.5-flash-lite`); **Offen (Operator-Wort 2026-10-06):** den LLM-`free_model_bench`-T1–T7-Lauf
+  über die schnellen Arme → neue Tempo-/Qualitätstafel → Roster fixieren.
+- **Vollzogen (Operator-Wort 2026-10-06 „dann bitte entfernen"):** `voice-kilo` und `voice-zen` in
+  `opencode.json` auf `disable: true` + aus der `line`-Dispatch-Allowlist entfernt (JSON validiert
+  `jaq`); **Capability-Gate** in `AGENTS.md` (Dispatch-/Stimmen-Roster nur mit gemessener Fähigkeit
+  ≥ 4/4 UND Tempo unter Schwelle; ungemessen/Timeout/5xx = `pending`). **kilo:** 4/4, aber ~50 s →
+  Latenz-Grund (die Routen bleiben in `tools/measure/free_models.tsv` `eligible` — erreichbar, nur
+  nicht dispatch-tauglich). **zen:** `opencode/nemotron-3.5-lightning-free` Timeout (90 s),
+  `big-pickle` Timeout (60 s), `mimo-v2.6-flash-free` UnknownError (gemessen) — Credential
+  „OpenCode Zen" vorhanden, die freien Zen-Modelle antworten nicht; möglicher Nutzen
+  (Session-Modell-Fallback bei Zen-Plan) = `pending`, kein Roster-Mitglied. `gemini` bleibt
+  (4/4 schnell), nur nicht für die Endpunkt-Klasse.
 
 ### Daten-Holdings — `opencode-tmp`-Dump CDN-Bedarf/Uniqueness
 - **Status:** eigen
