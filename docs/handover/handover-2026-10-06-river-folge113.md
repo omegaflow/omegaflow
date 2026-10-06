@@ -3,7 +3,7 @@
   session: River-Folge 113
   class: handover
   date: 2026-10-06
-  sha256: fd0155fe847896483508cff0fefb05920ef76f03601034839564f837ec47420a
+  sha256: b50a01b82e3e0edc6ffbac340b2b6ba5e7b4922035b9cf175659cf100528b1aa
   status: live
 -->
 # Handover — River-Folge 113 (2026-10-06)
@@ -73,10 +73,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   Blöcken die `station <code>`-Direktive (`phi/sources.φ:6616…7474`) und macht den Matrix-Arm station-aware
   (Test `field_sources_resolves_station_qualified_channel_to_its_block`, `field_te_query.rs:4762`); Verdikt
   „Station = Identität, kein Feld-Rename". `docs/blatt/blatt-gic-breitenband-familien.md` auf die Verdikt-Form
-  gezogen. **Rat-Verdikt (2026-10-06, fünf Stimmen, einstimmig):** drei getrennte Familien-Deskriptoren
-  (`matrix gic_auroral full` / `_subauroral` / `_midlat`), **kein** neuer Drei-Familien-Grammatik-Arm. Blatt
-  trägt Verdikt + vier benannte Risse. Offen (0): CGM-Breite je Station — die Blöcke tragen nur die
-  geografische `on earth <lat> <lon>`-Koordinate (`phi/sources.φ:6621,6632,6643`).
+  gezogen. **Zwei Kanäle (2026-10-06):** API-Rat einstimmig für drei getrennte Familien-Deskriptoren, kein
+  neuer Drei-Familien-Grammatik-Arm; UI-Chats geteilt — ChatGPT zustimmend, Claude (Sonnet 5.5) dagegen
+  (allgemeiner Familien-Scope `family`/`over family` statt drei Deskriptoren). **Riss, nicht geglättet**
+  (Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`); Blatt `unsealed`. Offen (0):
+  CGM-Breite je Station — die Blöcke tragen nur die geografische `on earth <lat> <lon>`-Koordinate
+  (`phi/sources.φ:6621,6632,6643`).
 - **Blockade:** keine (eigene).
 - **Braucht:** (0) CGM-Breite je Station ableiten (std Rust IGRF/CGM oder eine gemessene CGM-Tabelle), feste
   Bandgrenzen vor dem Lauf deklarieren, drei Kanal-Listen + Deckungstest (disjunkt, Union = 154);
@@ -217,6 +219,6 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
   Label geschlossen (`:111`).
 - future-folge186 (`## An river`): Riss×154-Vorregistrierung — Blatt jetzt verdikt-konform; Rest-Punkte bei ihren Adressaten.
 
-`open_points_check` am folge113: 31 path refs · 0 absent · 0 stale-citations · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
+`open_points_check` am folge113: 34 path refs · 0 absent · 0 stale-citations · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0000 · close 0.0728 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`) + Rat-Verdikt (drei Deskriptoren, Partition messen) eingetragen; `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
+## Burn: open 0.0000 · close 0.1140 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`) + Rat-Verdikt (API: drei Deskriptoren; UI-Chats geteilt — Claude dissent, ChatGPT zustimmend) als Riss eingetragen (Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`); `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
