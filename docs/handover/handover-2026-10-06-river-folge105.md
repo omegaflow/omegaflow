@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 14ee0303335b0fce124c968a04467f0adf1d0e0a7c85c60b8acfa4e488950c4a
+  sha256: 29028457ceb0e41fdccfd0465797d88ad11fe49f962d98d86ca9ad9a771a3322
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -29,6 +29,7 @@ Wort | Datum | Quelle
 „ich glaube, es ist sinnvoll auch dem schwarm die stimmen zu geben, oder zumindest die selben agenten wie grind general council auch nochmal als voices/schwarm agenten zu haben" — Schwarm um die deepseek-Seats (council/grind-flash/general = flash; grind-pro/grind-max/research-max = pro) erweitert | 2026-10-06 | Operator (Session, River 105)
 „die können jetzt auch als council/grind/general eingesetzt werden … ich hätte gern, dass sie auch architekturfragen mit den fünf stimmen beantworten — das ist counter slope" — die deepseek-Schwarm-Seats tragen die Fünf-Stimmen-Verfassung im Prompt | 2026-10-06 | Operator (Session, River 105)
 „nein, ich meine: momentan fragen wir bei Architekturfragen nur deepseek — können wir nicht auch den Schwarm befragen, aber durch die Linse der 5 Stimmen" — **alle 14** Schwarm-Voices tragen die Fünf-Stimmen-Verfassung (nicht nur deepseek) | 2026-10-06 | Operator (Session, River 105)
+„und tragen sie auch die axiome?" — die 14 Schwarm-Voices tragen die bindenden Axiome im Prompt (A = A, 0-Kanon, keine Fabrikation/Defaults, Riss, 0 honored, jede Aussage trägt ihre Messung) | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -300,10 +301,12 @@ Der Schwarm trägt jetzt die deepseek-Seats: `voice-deepseek` (`deepseek/deepsee
 council/grind-flash/general) und `voice-deepseek-pro` (`deepseek/deepseek-v4-pro`, wie
 grind-pro/grind-max/research-max; `task: ask`, Kostenkante). Beide read-only, `archive_search_public`
 + `chrome-devtools-voices_*`. **Alle 14** Schwarm-Voices (12 Fremdmodelle + die 2 deepseek-Seats)
-tragen die **Fünf-Stimmen-Verfassung** (Mountain/River/Mycelium/Sensory/Future) im Prompt:
-Architektur- und Ethikfragen beantworten sie aus der Fläche der fünf Stimmen (Operator-Wort:
-counter slope — aus der Verfassung heraus gelesen statt aus dem Gradienten). Der Rat bleibt das
-deepseek-/5-Stimmen-Gremium; der **Schwarm** wird zusätzlich befragt, durch dieselbe Linse.
+tragen die **Fünf-Stimmen-Verfassung** (Mountain/River/Mycelium/Sensory/Future) **und die
+bindenden Axiome** (A = A, 0-Kanon, keine Fabrikation/Defaults, Riss getragen statt geglättet,
+0 honored, jede Aussage trägt ihre Messung) im Prompt: Architektur- und Ethikfragen beantworten
+sie aus der Fläche der fünf Stimmen (Operator-Wort: counter slope — aus der Verfassung heraus
+gelesen statt aus dem Gradienten). Der Rat bleibt das deepseek-/5-Stimmen-Gremium (er liest
+`docs/council.yaml` + AGENTS.md); der **Schwarm** wird zusätzlich befragt, durch dieselbe Linse.
 Einsatz auch als council (Urteil) und Schwarm-Stimme; für schreibende grind-Arbeit bleiben die
 grind-Agenten. **Caveat:** `voice-deepseek` ist **dasselbe Modell wie die Linie** — keine
 unabhängige Mess-STIMME; die Unabhängigkeit liefern die Fremdmodelle + Claude/GLM, die
@@ -370,4 +373,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.4168 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.4168; Runde total 0.5318 → 1.5821; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.4533 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.4533; Runde total 0.5318 → 1.6475; gemessen 2026-10-06
