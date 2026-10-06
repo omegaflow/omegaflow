@@ -3,7 +3,7 @@
   session: River-Folge 109
   class: handover
   date: 2026-10-06
-  sha256: e866203fb087988390ea999158b2d7dac84862d318cad2b55fb9be98efa2392b
+  sha256: 00803ede6250af0cba96bcc4049e903508a53c2d0abebd2739c970c95576c0c2
   status: live
 -->
 # Handover — River-Folge 109 (2026-10-06)
@@ -27,6 +27,7 @@ Wort | Datum | Quelle
 „es gibt keine kamera und zoom … die präsenz ist das trommelfell im 4d block auf das die punktwolke trifft" | 2026-10-06 | Operator (Session, River 109) — Empfänger-Modell, gegen die GPT-Kamera-Lesart
 „das wort receiver [haben wir] extra eingeführt" | 2026-10-06 | Operator (Session, River 109) — kanonischer Term `Receiver` (Worldline), `Observer` (Vantage) verboten
 „bitte alles umsetzen" | 2026-10-06 | Operator (Session, River 109) — Commit- und Bau-Wort für den Receiver-Schnitt
+„es geht nicht nur um die visuelle membran es geht um alle radiatoren" | 2026-10-06 | Operator (Session, River 109) — die Receiver-Apertur gilt für alle fünf Radiatoren (Bild · Ton · Vibration · Serial · HID)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge108.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -46,6 +47,26 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - `docs/concepts/exzellenz-konzept.md` (`class: concept`, `version: 1`) — Prüfmaßstab.
 
 ## Offen (aufgeschlüsselt)
+
+### Receiver-Apertur — Sub-Pixel für ALLE Radiatoren (nicht nur die visuelle Membran)
+- **Status:** eigen | **Bindung:** eigen (Membran-/Aktor-Pfad)
+- **Trigger:** frisches Atom (dieser ist am Burn-Cap geschlossen).
+- **Lage:** (gemessen 2026-10-06, River 109) Der sichtbare Pfad ist halb geheilt (`static/membrane.html`:
+  Boden + `VIEW_SPAN_M/400` raus, Skala aus dem Empfang, schwarzer Start) — er **malt aber weiter
+  Quadrate** (Object-Sprite `quad[vid]*point_size_px`) statt an der Receiver-Apertur zu messen. **Das
+  ist die visuelle Membran nur EINES von fünf Radiatoren** — dasselbe Gesetz gilt für Ton (9 Partialtöne
+  je Kraft), Vibration, Serial/USB/BT/HID (Legacy „Ein Gesetz, fünf Medien"; Atom 8 „Die Vereinheitlichung
+  des Sensoriums — der Schall entscheidet, nicht das Trommelfell", `e918bda1`). Die Legacy-Membran maß
+  **pro Messpunkt** die volle Superposition (softening = Pixel-Skala/Punktquelle ohne Ausdehnung):
+  `omegaflow-legacy:src/mathematikerin.rs:284 source_contrib(j, pixel_rel)`; Sub-Pixel-Raster 3 Spalten/
+  Pixel (`eb96d1ff`); 1-px-Quad an exakter Sub-Pixel-Position (`da43f02a`). Zurückgerollt nur wegen Tempo
+  (567 ms = 3×, nicht Unwahrheit): `docs/surveys/entwicklungslinie.md:137` „Subpixel-Explosion | E8 |
+  Rückroll (Messung lebt) | wartet"; Ground Truth `docs/surveys/survey-messpunkt-verteilung.md:19-26`.
+- **Blockade:** großer Umbau (per-Fragment-`source_contrib` ist O(Pixel×Quellen)) — eigenes Atom; Vorlage
+  im separaten Repo `archive-root/omegaflow-legacy`.
+- **Braucht:** Auswertung an der **Receiver-Apertur** für alle Radiatoren portieren (Bild + Ton + Vibration
+  + Serial) — kein gemaltes Quadrat/kein erfundener Radius; Vorlagen `e918bda1`, `eb96d1ff`, `da43f02a`,
+  Register `entwicklungslinie.md:137`. Danach Messung im Operator-Browser (headless ohne WebGPU = schwarze Null).
 
 ### Universelles Vlies — `ozzy` + Conditional-Tabelle
 - **Status:** wartend | **Bindung:** eigen
@@ -247,7 +268,12 @@ und `register-coverage 37483354340` am eigenen HEAD aus (Ausgang unread).
 schwarz. Kein `cargo`-Gate für JS/WGSL — die Render-Messung ist operator-browser-gebunden (headless ohne
 WebGPU-Adapter = ehrliche schwarze Null); die vier Zuschnitte wurden am Text geprüft. Externe Chat-Verdikte
 (einstimmig Fabrikation): ChatGPT, HF-Kimi-K3, HF-GLM-5.3, HF-Qwen3.8-27B, HF-Llama-3.3-70B, DeepSeek-R1,
-Qwen, Mistral, Duck.ai — gegen den in-house Schwarm (verteidigte den Boden). Der `Receiver`-Term ist
-`survey-2026-10-06-agnostik-llm-verdikt.md:82`.
+Qwen, Mistral, Duck.ai — gegen den in-house Schwarm (verteidigte den Boden). **GLM-5.3 (Deep Think Max,
+z.ai)** schärfte: der 2-px-Marker ist „ein Observer-Artefakt durch die Hintertür"; wahrer Maßstab `SPAN/N`
+(Apertur; SPAN als Receiver-Eigenschaft im Register); Sichtbarkeit von 10⁻¹² durch **Integration/Belichtung
+über die Empfangsdauer**, nie durch Ausdehnung. Regel: **Sichtbarmachung durch Integration entlang der
+Worldline, nie durch Injectieren von Ausdehnung.** Der `Receiver`-Term ist
+`survey-2026-10-06-agnostik-llm-verdikt.md:82`. Die per-Fragment-/Sub-Pixel-Portierung für **alle
+Radiatoren** steht als oberster offener Punkt (Legacy-Vorlagen `e918bda1`/`eb96d1ff`/`da43f02a`).
 
 ## Burn: open 0.0000 · close 0.3024 · cap 0.35 · Grund: Kern-Borrow-Heilung + field-te-query-Re-Dispatch + Receiver-Schnitt + Rat/Schwarm/Chat-Verdikt; 1 Dispatch, kein Send
