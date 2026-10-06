@@ -92,6 +92,15 @@ idempotent true
 timeout 120
 
 asset present
+format fink_cutout
+tag api.lsst.fink-portal.org
+arm fink_cutout_compiler
+workflow fink-cutout-cdn.yml
+pattern ^fink_cutout\.bin$
+idempotent true
+timeout 120
+
+asset present
 format gaia_rrl
 tag gea.esac.esa.int
 arm gaia_rrl_compiler
