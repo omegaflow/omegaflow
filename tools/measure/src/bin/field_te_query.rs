@@ -1859,6 +1859,8 @@ fn compare_spectral_epochs(aligned: &[(f64, f64, f64)]) -> Option<SpectralEpochC
         return None;
     }
     let n = aligned.len() as f64;
+    let mean_a = aligned.iter().map(|&(_, a, _)| a).sum::<f64>() / n;
+    let mean_b = aligned.iter().map(|&(_, _, b)| b).sum::<f64>() / n;
     let mean_abs_delta = aligned.iter().map(|&(_, a, b)| (a - b).abs()).sum::<f64>() / n;
     let max_abs_delta = aligned
         .iter()
@@ -1866,11 +1868,9 @@ fn compare_spectral_epochs(aligned: &[(f64, f64, f64)]) -> Option<SpectralEpochC
         .fold(0.0_f64, f64::max);
     let agree = aligned
         .iter()
-        .filter(|&&(_, a, b)| a.signum() == b.signum())
+        .filter(|&&(_, a, b)| (a - mean_a).signum() == (b - mean_b).signum())
         .count();
     let sign_agreement = agree as f64 / n;
-    let mean_a = aligned.iter().map(|&(_, a, _)| a).sum::<f64>() / n;
-    let mean_b = aligned.iter().map(|&(_, _, b)| b).sum::<f64>() / n;
     let mut cov = 0.0;
     let mut var_a = 0.0;
     let mut var_b = 0.0;
@@ -4720,7 +4720,7 @@ mod tests {
             "below the n_eff floor nothing is manufactured"
         );
 
-        let (adj, state) = bias_column(Some(te), 8546, Some(44.5), BiasArm::ScalarKde);
+        let (adj, state) = bias_column(Some(te), 8547, Some(44.5), BiasArm::ScalarKde);
         assert_eq!(state, "off_table");
         assert!(
             adj.is_none(),
@@ -5294,7 +5294,6 @@ cadence live
     fn count_quantile_without_the_form_is_refused() {
         let text = "\
 witness point-event#1
-driver omni_hro_imf_bz_gsm_nt
 count quantile 8
 cadence live
 ";
