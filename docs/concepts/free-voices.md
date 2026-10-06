@@ -74,6 +74,16 @@ Stimmen auf **eine** Frage, dann ein Synthese-Gate. Kanon und Details:
   (`voice-<name>`), ein Schwarm = eine Nachricht mit N `task`-Calls — kein
   `opencode run`-Prozess-Fan-out (schont die Maschine).
 
+## Architektur-/Ethik-Adressierung (Operator-Wort 2026-10-06)
+
+Architektur-/Ethikfragen werden mit **den fünf Stimmen und den vier Axiomen** addressiert —
+gleichermaßen für **UI-Chats** (`state/stimmen/ui-stimme.js`, Prompt
+`state/stimmen/prompt-arch-ethik.txt`; die fünf arbeitenden UIs stehen in `state/stimmen/README.md`)
+und **API-Modelle** (die `voice-*`-Subagenten, das Basis-`voice`-Rollenprompt in `opencode.json`
+und der arch-PROLOG von `state/mycelium/voice-swarm.sh --mode arch`). Die Stimmen liefern je Frage
+ein Verdikt aus den fünf Stimmen und tragen die vier Axiome; das Verdikt/Register trägt allein die
+Session.
+
 ## Dateien
 
 - `state/mycelium/voice-run-all.sh` — Roster-Fan-out (ein Lauf je Stimme, Erreichbarkeit
