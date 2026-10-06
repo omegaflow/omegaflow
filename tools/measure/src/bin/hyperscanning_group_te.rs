@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::env;
 use std::process::exit;
 
@@ -38,7 +39,10 @@ fn usage() {
          maximum masks):\n\
          \x20 hyperscanning_group_te --manifest <file> [--channel <label>[,<label>...]]\n\
          \x20     [--surrogates <n>] [--seed <n>] [--max-points <n>] [--percentile <p>]\n\
-         \x20     [--null phase|coherent-phase] [--nominees-out <file>] [--nominees <file>]\n\
+         \x20     [--null phase|coherent-phase] [--shard <idx>/<count>] [--shard-out <file>] [--nominees-out <file>] [--nominees <file>]\n\
+         \x20 --shard <idx>/<count> computes only that surrogate slice of the family null.\n\
+         \x20 --shard-out <file> writes the per-shard observed cell and surrogate slice as a TSV artifact.\n\
+         \x20 --merge <f0,f1,...> merges shard artifacts into the one screen output (no --manifest).\n\
          \x20 --nominees-out <file> writes the per-cell survivors of the screen (the nominees:\n\
          \x20 task, triad, driver, target, slot, TE, own per-cell threshold) as a TSV artifact.\n\
          \x20 --nominees <file> is the confirmation run: it reads that artifact and tests each\n\
@@ -156,6 +160,183 @@ fn write_nominees(path: &str, nominees: &[Nominee]) -> bool {
         Err(_) => {
             eprintln!("hyperscanning_group_te: the nominee list at {path} is not writable");
             false
+        }
+    }
+}
+
+fn write_shard(path: &str, lines: &[String]) -> bool {
+    match std::fs::write(path, lines.join("\n")) {
+        Ok(()) => true,
+        Err(_) => {
+            eprintln!("hyperscanning_group_te: the shard artifact at {path} is not writable");
+            false
+        }
+    }
+}
+
+fn run_merge(paths: &[String], pct: f64, nominees_out: Option<&str>) {
+    let mut obs: BTreeMap<String, (Option<f64>, usize, usize)> = BTreeMap::new();
+    let mut surr: BTreeMap<String, Vec<f64>> = BTreeMap::new();
+    let mut cells: BTreeMap<(String, String, String, String), (usize, usize, f64, Vec<f64>)> =
+        BTreeMap::new();
+    for path in paths {
+        let text = match std::fs::read_to_string(path) {
+            Ok(t) => t,
+            Err(_) => {
+                eprintln!("hyperscanning_group_te: the shard artifact at {path} is not readable");
+                exit(2);
+            }
+        };
+        for raw in text.lines() {
+            let line = raw.trim();
+            if line.is_empty() {
+                continue;
+            }
+            let fields: Vec<&str> = line.split('\t').collect();
+            match fields.first() {
+                Some(&"OBS") if fields.len() >= 5 => {
+                    let observed = match fields[2] {
+                        "absent" => None,
+                        v => v.parse::<f64>().ok(),
+                    };
+                    let (Ok(n_triads), Ok(n_cells)) =
+                        (fields[3].parse::<usize>(), fields[4].parse::<usize>())
+                    else {
+                        continue;
+                    };
+                    obs.insert(fields[1].to_string(), (observed, n_triads, n_cells));
+                }
+                Some(&"SURR") if fields.len() >= 3 => {
+                    if let Ok(v) = fields[2].parse::<f64>() {
+                        surr.entry(fields[1].to_string()).or_default().push(v);
+                    }
+                }
+                Some(&"CELL") if fields.len() >= 9 => {
+                    let (Ok(tau_x), Ok(tau_y), Ok(te)) = (
+                        fields[5].parse::<usize>(),
+                        fields[6].parse::<usize>(),
+                        fields[7].parse::<f64>(),
+                    ) else {
+                        continue;
+                    };
+                    let nulls: Vec<f64> = fields[8]
+                        .split(',')
+                        .filter_map(|s| s.trim().parse::<f64>().ok())
+                        .collect();
+                    let key = (
+                        fields[1].to_string(),
+                        fields[2].to_string(),
+                        fields[3].to_string(),
+                        fields[4].to_string(),
+                    );
+                    match cells.get_mut(&key) {
+                        Some(entry) => entry.3.extend(nulls.iter().copied()),
+                        None => {
+                            cells.insert(key, (tau_x, tau_y, te, nulls));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    let mut nominees: Vec<Nominee> = Vec::new();
+    for (task, (observed, n_triads, n_cells)) in &obs {
+        let mut maxima = match surr.get(task) {
+            Some(m) => m.clone(),
+            None => Vec::new(),
+        };
+        maxima.sort_by(f64::total_cmp);
+        let Some(threshold) = percentile(&maxima, pct) else {
+            println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
+            continue;
+        };
+        let observed_max = match observed {
+            Some(v) => format!("{v:.4e}"),
+            None => "absent".to_string(),
+        };
+        let task_cells: Vec<(
+            &(String, String, String, String),
+            &(usize, usize, f64, Vec<f64>),
+        )> = cells.iter().filter(|(k, _)| &k.0 == task).collect();
+        let family_survivors: Vec<(
+            &(String, String, String, String),
+            &(usize, usize, f64, Vec<f64>),
+        )> = task_cells
+            .iter()
+            .filter(|(_, v)| v.2 > threshold)
+            .cloned()
+            .collect();
+        let cell_survivors: Vec<(&(String, String, String, String), usize, usize, f64, f64)> =
+            task_cells
+                .iter()
+                .filter_map(|(k, v)| {
+                    let mut sorted = v.3.clone();
+                    sorted.sort_by(f64::total_cmp);
+                    percentile(&sorted, pct).and_then(|t| {
+                        if v.2 > t {
+                            Some((*k, v.0, v.1, v.2, t))
+                        } else {
+                            None
+                        }
+                    })
+                })
+                .collect();
+        println!(
+            "=== {task}: {} triad(s) | {} cell(s) | fam-max p{pct} = {threshold:.4e} | observed max = {observed_max} | family-max survivors = {} | per-cell survivors = {}",
+            n_triads,
+            n_cells,
+            family_survivors.len(),
+            cell_survivors.len()
+        );
+        for (k, v) in &family_survivors {
+            println!(
+                "    FAMILY-MAX SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                k.1, k.2, k.3, v.0, v.1, v.2
+            );
+        }
+        for (k, tau_x, tau_y, te, t) in &cell_survivors {
+            let masked = !family_survivors
+                .iter()
+                .any(|(fk, _)| fk.1 == k.1 && fk.2 == k.2 && fk.3 == k.3);
+            if masked {
+                println!(
+                    "    PER-CELL SURVIVOR (masked by the family maximum) {} {}→{} tau {}/{} TE {:.4e}",
+                    k.1, k.2, k.3, tau_x, tau_y, te
+                );
+            } else {
+                println!(
+                    "    PER-CELL SURVIVOR {} {}→{} tau {}/{} TE {:.4e}",
+                    k.1, k.2, k.3, tau_x, tau_y, te
+                );
+            }
+            nominees.push(Nominee {
+                task: task.clone(),
+                triad: k.1.clone(),
+                driver: k.2.clone(),
+                target: k.3.clone(),
+                slot: 0,
+                te: *te,
+                threshold: *t,
+                channel: String::new(),
+            });
+        }
+        if family_survivors.is_empty() {
+            println!(
+                "    no cell breaks the family maximum — the family-max silence is the finding"
+            );
+        }
+        if cell_survivors.is_empty() {
+            println!(
+                "    no cell breaks its own surrogate distribution — the cell-level silence is the finding"
+            );
+        }
+    }
+
+    if let Some(path) = nominees_out {
+        if !write_nominees(path, &nominees) {
+            exit(2);
         }
     }
 }
@@ -335,6 +516,19 @@ fn surrogate_family_maxima(
     seed: u64,
     coherent: bool,
 ) -> SurrogateFamily {
+    surrogate_family_maxima_range(triads, dim, n_surr, seed, coherent, 0, n_surr)
+}
+
+fn surrogate_family_maxima_range(
+    triads: &[(String, Vec<(String, Vec<f32>)>)],
+    dim: usize,
+    n_surr: usize,
+    seed: u64,
+    coherent: bool,
+    s_start: usize,
+    s_end: usize,
+) -> SurrogateFamily {
+    let s_end = s_end.min(n_surr);
     let mut offsets = Vec::with_capacity(triads.len());
     let mut total_cells = 0usize;
     for (_, series) in triads {
@@ -343,8 +537,8 @@ fn surrogate_family_maxima(
     }
     let frozen: Vec<Vec<Option<usize>>> = triads.iter().map(|(_, s)| member_taus(s)).collect();
     let mut cell_distributions: Vec<Vec<f64>> = vec![Vec::new(); total_cells];
-    let mut out = Vec::with_capacity(n_surr);
-    for s in 0..n_surr {
+    let mut out = Vec::with_capacity(s_end.saturating_sub(s_start));
+    for s in s_start..s_end {
         let mut family: Option<f64> = None;
         for (t, (_, series)) in triads.iter().enumerate() {
             let members = series.len();
@@ -561,6 +755,20 @@ fn main() {
         usage();
         return;
     }
+    if let Some(merge) = arg_value(&args, "--merge") {
+        let paths: Vec<String> = merge
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect();
+        let pct = match arg_value(&args, "--percentile").and_then(|v| v.parse().ok()) {
+            Some(v) => v,
+            None => DEFAULT_PERCENTILE,
+        };
+        let nominees_out = arg_value(&args, "--nominees-out");
+        run_merge(&paths, pct, nominees_out.as_deref());
+        return;
+    }
     let Some(manifest_path) = arg_value(&args, "--manifest") else {
         eprintln!("hyperscanning_group_te: --manifest <file> required");
         exit(2);
@@ -602,6 +810,33 @@ fn main() {
         }
     };
     let max_points: Option<usize> = arg_value(&args, "--max-points").and_then(|v| v.parse().ok());
+    let shard: Option<(usize, usize)> = match arg_value(&args, "--shard") {
+        Some(v) => {
+            let parsed = match v.split('/').collect::<Vec<&str>>().as_slice() {
+                [i, c] => i.parse::<usize>().ok().zip(c.parse::<usize>().ok()),
+                _ => None,
+            };
+            match parsed {
+                Some((idx, count)) if count > 0 && idx < count => Some((idx, count)),
+                _ => {
+                    eprintln!(
+                        "hyperscanning_group_te: --shard {v} is not <idx>/<count> with 0 <= idx < count"
+                    );
+                    exit(2);
+                }
+            }
+        }
+        None => None,
+    };
+    let (s_start, s_end) = match shard {
+        Some((idx, count)) => (idx * n_surr / count, (idx + 1) * n_surr / count),
+        None => (0, n_surr),
+    };
+    let shard_out = arg_value(&args, "--shard-out");
+    if shard_out.is_some() && shard.is_none() {
+        eprintln!("hyperscanning_group_te: --shard-out requires --shard <idx>/<count>");
+        exit(2);
+    }
     let pct: f64 = match arg_value(&args, "--percentile").and_then(|v| v.parse().ok()) {
         Some(v) => v,
         None => {
@@ -660,6 +895,7 @@ fn main() {
     tasks.dedup();
     let mut triads_per_task: Vec<usize> = Vec::new();
     let mut nominees: Vec<Nominee> = Vec::new();
+    let mut shard_lines: Vec<String> = Vec::new();
 
     println!(
         "hyperscanning group TE screen | channels [{channel_list}] | dim {DIM} | surrogates {n_surr} | percentile {pct} | null {}",
@@ -713,7 +949,47 @@ fn main() {
         }
 
         let cells = observed_cells(&triads, &triad_channels, DIM);
-        let family = surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent);
+        let family = match shard {
+            Some((_, _)) => {
+                surrogate_family_maxima_range(&triads, DIM, n_surr, seed, coherent, s_start, s_end)
+            }
+            None => surrogate_family_maxima(&triads, DIM, n_surr, seed, coherent),
+        };
+        if shard.is_some() {
+            if let Some(_) = shard_out.as_ref() {
+                let observed_max = cells.iter().map(|c| c.te).fold(f64::NEG_INFINITY, f64::max);
+                let obs = if cells.is_empty() {
+                    "absent".to_string()
+                } else {
+                    format!("{observed_max:.9e}")
+                };
+                shard_lines.push(format!(
+                    "OBS\t{task}\t{obs}\t{}\t{}",
+                    triads.len(),
+                    cells.len()
+                ));
+                for v in &family.maxima {
+                    shard_lines.push(format!("SURR\t{task}\t{v:.9e}"));
+                }
+                for c in &cells {
+                    let nulls: Vec<String> = family.cell_distributions[c.slot]
+                        .iter()
+                        .map(|v| format!("{v:.9e}"))
+                        .collect();
+                    shard_lines.push(format!(
+                        "CELL\t{task}\t{}\t{}\t{}\t{}\t{}\t{:.9e}\t{}",
+                        c.triad,
+                        c.driver,
+                        c.target,
+                        c.tau_x,
+                        c.tau_y,
+                        c.te,
+                        nulls.join(",")
+                    ));
+                }
+            }
+            continue;
+        }
         let Some(threshold) = percentile(&family.maxima, pct) else {
             println!("=== {task}: the surrogate family carries no maximum — pending (0 honored)");
             continue;
@@ -779,6 +1055,15 @@ fn main() {
             "hyperscanning_group_te: no task carried a complete triad — the screen ran on no readable series; the run carries no measurement"
         );
         exit(2);
+    }
+    if let Some(path) = &shard_out {
+        if !write_shard(path, &shard_lines) {
+            exit(2);
+        }
+        println!(
+            "hyperscanning group TE screen: {} shard line(s) written to {path}",
+            shard_lines.len()
+        );
     }
     if let Some(path) = &nominees_out {
         if !write_nominees(path, &nominees) {
@@ -1919,6 +2204,104 @@ mod tests {
             fmt_value(Some(observed)),
             fmt_value(p99),
             p99.map_or("pending", |thr| if observed > thr { "yes" } else { "no" })
+        );
+    }
+
+    #[test]
+    fn shard_merge_equals_monolithic() {
+        let mut rng = SEED ^ 0x5A17_6E12;
+        let n = 400usize;
+        let (ga, gb) = deterministic_pair_fixture(n, 8, &mut rng);
+        let (fa, fb, fc, fd) = fn_gate_fixture(&mut rng);
+        let ra = rich_series(n, &mut rng);
+        let rb = rich_series(n, &mut rng);
+        let rc = ar1_sine(n, 0.6, 51.0, 2.3, 0.05, &mut rng);
+        let rd = ar1_sine(n, 0.6, 36.0, 0.0, 0.02, &mut rng);
+        let triads = vec![
+            (
+                "G01".to_string(),
+                vec![
+                    ("S01".to_string(), rd),
+                    ("S02".to_string(), ga),
+                    ("S03".to_string(), gb),
+                ],
+            ),
+            (
+                "G02".to_string(),
+                vec![
+                    ("A".to_string(), fa),
+                    ("B".to_string(), fb),
+                    ("C".to_string(), fc),
+                    ("D".to_string(), fd),
+                ],
+            ),
+            (
+                "G03".to_string(),
+                vec![
+                    ("P".to_string(), ra),
+                    ("Q".to_string(), rb),
+                    ("R".to_string(), rc),
+                ],
+            ),
+        ];
+        let channels = vec!["Fz".to_string(), "Cz".to_string(), "Pz".to_string()];
+        let n_surr = 40usize;
+
+        let monolithic = surrogate_family_maxima(&triads, DIM, n_surr, SEED, false);
+        let cells = observed_cells(&triads, &channels, DIM);
+
+        let count = 3usize;
+        let mut sharded_maxima: Vec<f64> = Vec::new();
+        let mut sharded_cell_dists: Vec<Vec<f64>> =
+            vec![Vec::new(); monolithic.cell_distributions.len()];
+        for idx in 0..count {
+            let s_start = idx * n_surr / count;
+            let s_end = (idx + 1) * n_surr / count;
+            let part =
+                surrogate_family_maxima_range(&triads, DIM, n_surr, SEED, false, s_start, s_end);
+            sharded_maxima.extend(part.maxima.iter().copied());
+            for (slot, d) in part.cell_distributions.iter().enumerate() {
+                sharded_cell_dists[slot].extend(d.iter().copied());
+            }
+        }
+
+        let mut a = monolithic.maxima.clone();
+        let mut b = sharded_maxima.clone();
+        a.sort_by(f64::total_cmp);
+        b.sort_by(f64::total_cmp);
+        assert_eq!(
+            a, b,
+            "the sharded family-maximum vector equals the monolithic one"
+        );
+        for slot in 0..monolithic.cell_distributions.len() {
+            let mut m = monolithic.cell_distributions[slot].clone();
+            let mut s = sharded_cell_dists[slot].clone();
+            m.sort_by(f64::total_cmp);
+            s.sort_by(f64::total_cmp);
+            assert_eq!(
+                m, s,
+                "cell slot {slot} null distribution equals the monolithic one"
+            );
+        }
+        let fam = SurrogateFamily {
+            maxima: b,
+            cell_distributions: sharded_cell_dists,
+        };
+        let mono_family = SurrogateFamily {
+            maxima: a,
+            cell_distributions: monolithic.cell_distributions,
+        };
+        let survivors_mono: Vec<usize> = per_cell_survivors(&cells, &mono_family, 95.0)
+            .iter()
+            .map(|c| c.slot)
+            .collect();
+        let survivors_shard: Vec<usize> = per_cell_survivors(&cells, &fam, 95.0)
+            .iter()
+            .map(|c| c.slot)
+            .collect();
+        assert_eq!(
+            survivors_mono, survivors_shard,
+            "the per-cell survivor set is identical"
         );
     }
 }
