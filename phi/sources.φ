@@ -1408,8 +1408,9 @@ epoch 0
 field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.0 0.0
 field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
 
-url https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
+url https://github.com/omegaflow/sources/releases/download/fits.gsfc.nasa.gov/WFPC2u5780205r_c0fx.fits
 format reference
+origin https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
 sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
 ttl 86400
 
@@ -7251,8 +7252,9 @@ dec dec
 z z
 field z ned_redshift_z inverse-linear em 1 86400 0.0 0.0 aperture:none
 
-url https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
+url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
 format reference
+origin https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
 sha256 66892fad7075c91ac2ea8bc4e129119b0cd55f796835c990fec88e840f554ae5
 ttl 86400
 
@@ -9210,7 +9212,7 @@ url https://github.com/omegaflow/sources/releases/download/api.lsst.fink-portal.
 format fink_cutout
 origin https://api.lsst.fink-portal.org/api/v1/cutouts
 compiler tools/harvest/src/bin/fink_cutout_compiler.rs
-at earth
+at sun
 ttl 604800
 field fink_cutout_flux_njy fink_cutout_flux_njy inverse-square em nJy 604800 0.0 0.0
 
@@ -17513,14 +17515,6 @@ compiler tools/harvest/src/bin/ghsl_compiler.rs
 on earth 0 0 0
 ttl 31536000
 field ghsl_built_surface_m2 ghsl_built_surface_m2 gaussian-inverse-square diffusion m2 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ers.usda.gov/usda_fara_low_access.bin
-format usda_fara_low_access
-origin https://www.ers.usda.gov/media/5627/2019-large-retailer-access-map-lram-formerly-known-as-the-food-access-research-atlas-fara-data.zip
-compiler tools/harvest/src/bin/usda_fara_compiler.rs
-on earth 0 0 0
-ttl 31536000
-field usda_fara_low_access_share usda_fara_low_access_share gaussian-inverse-square diffusion 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
 format epa_aqs_pm25
