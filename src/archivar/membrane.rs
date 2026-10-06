@@ -124,7 +124,16 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
                 freq,
                 bin_width,
                 0.0,
-                presence_flags(None, sh.absorption, sh.advection),
+                presence_flags(
+                    None,
+                    sh.absorption,
+                    sh.advection,
+                    if sh.redshift > 0.0 {
+                        sh.redshift
+                    } else {
+                        SLOT_ABSENT
+                    },
+                ),
             ));
         }
     }
@@ -385,7 +394,7 @@ pub fn body_anchor_samples(
             motion: motion.clone(),
             val,
             name: format!("{name}.{suffix}"),
-            z: 0.0,
+            z_flux: SLOT_ABSENT,
             freq,
             bin_width,
             color_index: 0.0,

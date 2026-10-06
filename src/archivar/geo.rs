@@ -738,6 +738,92 @@ pub fn parse_ocs(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     Some(out)
 }
 
+pub struct DhmStage {
+    pub name: Option<String>,
+    pub lat: Option<f64>,
+    pub lon: Option<f64>,
+    pub series: Vec<(f64, f64)>,
+}
+
+fn number_after(seg: &str, key: &str) -> Option<f64> {
+    seg.split(key)
+        .nth(1)?
+        .split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
+        .find(|s| !s.is_empty())?
+        .parse::<f64>()
+        .ok()
+}
+
+pub fn parse_dhm_stage(body: &str, station_id: u32) -> Option<DhmStage> {
+    let start = body.find("const data = [")?;
+    let end = body[start..]
+        .find(" || [];")
+        .map(|e| start + e)
+        .or_else(|| body[start..].find("];").map(|e| start + e))?;
+    let blob = &body[start + "const data = [".len()..end];
+    for seg in blob.split("\"id\":").skip(1) {
+        let id: u32 = seg
+            .split(|c: char| !c.is_ascii_digit())
+            .next()?
+            .parse()
+            .ok()?;
+        if id != station_id {
+            continue;
+        }
+        let name = seg
+            .split("\"name\":\"")
+            .nth(1)
+            .and_then(|n| n.split('"').next())
+            .map(|s| s.to_string());
+        let lat = number_after(seg, "\"latitude\":");
+        let lon = number_after(seg, "\"longitude\":");
+        let ts = seg.split("\"timeSeries\":[").nth(1)?;
+        let mut series = Vec::new();
+        for m in ts.split(",[") {
+            let nums: Vec<f64> = m
+                .split(|c: char| !c.is_ascii_digit() && c != '.' && c != '-')
+                .filter(|s| !s.is_empty())
+                .take(2)
+                .filter_map(|s| s.parse::<f64>().ok())
+                .collect();
+            if nums.len() >= 2 && nums[0].is_finite() && nums[1].is_finite() {
+                series.push((nums[0] / 1000.0, nums[1]));
+            }
+        }
+        if series.is_empty() {
+            return None;
+        }
+        return Some(DhmStage {
+            name,
+            lat,
+            lon,
+            series,
+        });
+    }
+    None
+}
+
+pub fn parse_axis_value_text(text: &str) -> Vec<(f64, f64)> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+        let mut tokens = trimmed.split_whitespace();
+        let (Some(t), Some(v)) = (tokens.next(), tokens.next()) else {
+            continue;
+        };
+        let (Ok(t), Ok(v)) = (t.parse::<f64>(), v.parse::<f64>()) else {
+            continue;
+        };
+        if t.is_finite() && v.is_finite() {
+            out.push((t, v));
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

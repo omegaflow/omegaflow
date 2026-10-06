@@ -677,6 +677,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                 freq: crate::spectral::SPECTRAL_NO_BAND,
                                 bin_width: crate::spectral::SPECTRAL_NO_BAND,
                                 fold: None,
+                                aperture: Aperture::None,
                             };
                             if value.is_finite() {
                                 channels.push((
@@ -737,6 +738,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             freq: crate::spectral::SPECTRAL_NO_BAND,
                             bin_width: crate::spectral::SPECTRAL_NO_BAND,
                             fold: None,
+                            aperture: Aperture::None,
                         };
                         if value.is_finite() {
                             channels.push((

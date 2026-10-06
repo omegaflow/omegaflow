@@ -1374,7 +1374,11 @@ pub fn anchor(
             }
         },
         name: channel.name.clone(),
-        z: channel.z,
+        z_flux: if sensor.aperture == Aperture::Flux {
+            channel.z
+        } else {
+            SLOT_ABSENT
+        },
         freq: channel.freq,
         bin_width: channel.bin_width,
         color_index: 0.0,
@@ -1408,6 +1412,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             },
         ));
     }
@@ -1436,6 +1441,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: Aperture::None,
             },
         ));
     }

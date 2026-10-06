@@ -38,6 +38,7 @@ pub fn declared_fields() -> Vec<FieldConfig> {
             freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
             fold: None,
+            aperture: crate::archivar::Aperture::None,
         });
     }
     out

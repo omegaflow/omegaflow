@@ -434,6 +434,13 @@ at sun
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
+url https://www.dhm.gov.np/hydrology/river-watch
+format trishuli_stage
+station 4913
+on earth 28.271297 85.377649 0
+ttl 600
+field trishuli_stage trishuli_stage_m inverse-square gravity m 600.0 0.0 0.0
+
 url https://www.jma.go.jp/bosai/quake/data/list.json
 ttl 600
 on earth 35.68 139.69 0
@@ -842,8 +849,16 @@ field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes16.s3.amazonaws.com/goes16_abi.bin
 format goes_abi
-origin procedure: fetch https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/ then goes_abi_compiler
-compiler tools/harvest/src/bin/goes_abi_compiler.rs
+origin procedure: fetch https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/ then goes16_abi_compiler
+compiler tools/harvest/src/bin/goes16_abi_compiler.rs
+on earth 0 0 0
+ttl 3600
+field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-goes18.s3.amazonaws.com/goes18_abi.bin
+format goes_abi
+origin procedure: fetch https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/ then goes18_abi_compiler
+compiler tools/harvest/src/bin/goes18_abi_compiler.rs
 on earth 0 0 0
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -1166,7 +1181,7 @@ cmap .
 ra ra
 dec declination
 z redshift
-field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
+field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0 aperture:none
 
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 ttl 10800
@@ -7081,7 +7096,7 @@ cmap .
 ra ra
 dec dec
 z z
-field z ned_redshift_z inverse-linear em 1 86400 0.0 0.0
+field z ned_redshift_z inverse-linear em 1 86400 0.0 0.0 aperture:none
 
 url https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
 format reference
@@ -8811,9 +8826,9 @@ cmap .
 ra ra
 dec dec
 z z
-field corrfibmag_u rcsed_u_fiber_mag inverse-square em mag 604800 0.0 0.0
-field corrfibmag_g rcsed_g_fiber_mag inverse-square em mag 604800 0.0 0.0
-field corrfibmag_r rcsed_r_fiber_mag inverse-square em mag 604800 0.0 0.0
+field corrfibmag_u rcsed_u_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
+field corrfibmag_g rcsed_g_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
+field corrfibmag_r rcsed_r_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
 
 url http://tap.roe.ac.uk/osa/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+5000+ra,dec,uAperMag3,gAperMag3,rAperMag3,iAperMag3+FROM+ATLASDR4.atlasSource
 format tap
@@ -9382,7 +9397,7 @@ dec dec
 dist dist
 dist_scale 3.085677581e19
 z z
-field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0
+field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync (pscomppars) ; https://mast.stsci.edu/api/v0/invoke
@@ -9402,7 +9417,7 @@ dec dec
 dist dist
 dist_scale 3.085677581e19
 z z
-field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
+field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
 format jwst_spectra
@@ -9613,7 +9628,7 @@ cmap .
 ra ra
 dec dec
 z z
-field snr planck_psz2_snr inverse-square em 1 604800 0.0 0.0
+field snr planck_psz2_snr inverse-square em 1 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves.bin
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves (Katalog dr3_stars.bin)
@@ -9715,7 +9730,7 @@ cmap .
 ra ra
 dec dec
 z z
-field z ned_byparams_redshift_z inverse-linear em 1 604800 0.0 0.0
+field z ned_byparams_redshift_z inverse-linear em 1 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-ned/ned.json
 origin https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
@@ -9726,7 +9741,7 @@ cmap .
 ra ra
 dec dec
 z z
-field z ned_gitter_redshift_z inverse-linear em 1 604800 0.0 0.0
+field z ned_gitter_redshift_z inverse-linear em 1 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
 format cors_rinex
@@ -17082,6 +17097,15 @@ field bx_nT bc_mpo_mag_bx inverse-square em nT 604800 0.0 0.0
 field by_nT bc_mpo_mag_by inverse-square em nT 604800 0.0 0.0
 field bz_nT bc_mpo_mag_bz inverse-square em nT 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/psl.noaa.gov/godas_pottmp_2024_cell.txt
+format godas_pottmp_axis_value_text
+origin https://psl.noaa.gov/thredds/dodsC/Datasets/godas/pottmp.2024.nc
+compiler tools/harvest/src/bin/godas_pottmp_compiler.rs
+sha256 c2448a108014c088a7a56e522dd801e3f628eab55e5a233d276d640e7faf2845
+on earth 0.4994604 180.5 0
+ttl 604800
+field godas_pottmp godas_pottmp_k exponential-decay thermal K 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_chile.bin
 format quake_ptevent
 origin https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
@@ -17254,6 +17278,7 @@ format emm_exi_l2a
 origin https://api.emiratedatacenter.com/v1/science/files
 at mars
 ttl 604800
+field emm_exi_radiance emm_exi_radiance inverse-square em count 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
@@ -17414,7 +17439,7 @@ cmap .
 ra ra
 dec dec
 z z
-field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0 aperture:flux
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/viking_lander_tracking.bin
 format viking_text
@@ -17443,8 +17468,8 @@ cmap .
 ra ra
 dec dec
 z z
-field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0 aperture:flux
+field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0 aperture:flux
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst_spectra.bin
 format jwst_spectra
@@ -17508,7 +17533,7 @@ cmap .
 ra ra
 dec dec
 z z
-field flux avo_vflux gaussian-inverse-square em Jy 604800 0.0 0.0
+field flux avo_vflux gaussian-inverse-square em Jy 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/bzcat5.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VII/274/bzcat5
@@ -17519,7 +17544,7 @@ cmap .
 ra ra
 dec dec
 z z
-field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0 aperture:flux
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cbdata.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/cb/cbdata
@@ -17549,7 +17574,7 @@ cmap .
 ra ra
 dec dec
 z z
-field flux chandra_csc_flux_ergcm2_s gaussian-inverse-square em erg/cm2/s 604800 0.0 0.0
+field flux chandra_csc_flux_ergcm2_s gaussian-inverse-square em erg/cm2/s 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/corot.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/corot/Bright_star
@@ -17605,8 +17630,8 @@ cmap .
 ra ra
 dec dec
 z z
-field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0
-field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0
+field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0 aperture:none
+field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frbcat_flat.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
@@ -17617,8 +17642,8 @@ cmap .
 ra ra
 dec dec
 z z
-field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
-field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
+field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0 aperture:none
+field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/gcvs_cat.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/gcvs/gcvs_cat
@@ -17773,7 +17798,7 @@ flux_from_mag mag
 ra ra
 dec dec
 z z
-field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/swiftgrb.json
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync table=swiftgrb
@@ -17784,7 +17809,7 @@ cmap .
 ra ra
 dec dec
 z z
-field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0
+field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0 aperture:flux
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/twomrs.bin
 format twomrs
@@ -18453,9 +18478,9 @@ cmap 0.Rows
 ra ra
 dec dec
 z z
-field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 0.0 0.0
-field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 0.0
-field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
+field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
+field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
 ttl 604800
@@ -18799,6 +18824,15 @@ origin https://data.earthscope.org/archive/seismology/products/emc/data/
 compiler tools/harvest/src/bin/emc_compiler.rs
 at earth
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/data.giss.nasa.gov/gistemp_aod550_global_mean.txt
+format gistemp_aod550_axis_value_text
+origin https://data.giss.nasa.gov/modelforce/strataer/data/tau_reff_Sato-Lacis.nc
+compiler tools/harvest/src/bin/gistemp_aod_compiler.rs
+sha256 1ba4e901a84731edd543d6de6a5f30920ddb746652e5f8fa05efed557036bde6
+on earth 0 0 0
+ttl 31536000
+field gistemp_aod550 gistemp_aod550_aod550 exponential-decay em 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.hawc-observatory.org/hawc_2hwc.sky1
 origin https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml

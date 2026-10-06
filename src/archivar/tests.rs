@@ -76,6 +76,7 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     }
 }
 
@@ -122,6 +123,7 @@ fn pds3_label_column_joins_the_field_line_by_source_key() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     assert_ne!(fc.name, name);
     assert!(field_line_matches(&fc, name));
@@ -1337,6 +1339,7 @@ fn test_celestial_map_redshift_distance() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -1435,6 +1438,7 @@ fn test_extract_csv_zip_end_to_end() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -1730,6 +1734,7 @@ fn test_extract_cmap_dist_scale_kpc() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -1821,6 +1826,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -1907,6 +1913,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -1990,6 +1997,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -2081,6 +2089,7 @@ fn test_extract_cmap_pm_radvel_plx() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -2204,6 +2213,7 @@ fn test_extract_cmap_no_distance_skipped() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -2284,6 +2294,7 @@ fn test_extract_cmap_null_dist_skipped() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -2507,6 +2518,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -3361,7 +3373,8 @@ fn kepler_law_span_probe(
 }
 
 fn dastcom_probe_records() -> Vec<AsteroidRec> {
-    const MEASURED: [(u32, f64, f64, f64, f64, f64, f64, f64); 9] = [
+    type MeasuredOrbit = (u32, f64, f64, f64, f64, f64, f64, f64);
+    const MEASURED: [MeasuredOrbit; 9] = [
         (
             1,
             2458849.5,
@@ -4065,6 +4078,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let now = 8.0e8;
     let near: Vec<PresenceSample> = vec![(now, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0)];
@@ -4341,6 +4355,7 @@ fn test_wind_waves_loader_respects_load_gate() {
         freq: 1075.0e3,
         bin_width: 3.0e3,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let body_radius = 6378136.6;
     let loader_keep = |presences: &[PresenceSample],
@@ -4776,6 +4791,7 @@ fn test_erddap_argo_map_extract() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             lat_sign: None,
             lon_sign: None,
@@ -5524,6 +5540,7 @@ fn test_anchor_body_agnostic() {
             freq: 0.0,
             bin_width: 0.0,
             fold: None,
+            aperture: super::Aperture::None,
         })],
         headers: vec![],
         post_body: None,
@@ -5579,6 +5596,7 @@ fn test_anchor_body_agnostic() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
     cx[0] = 1.5e9;
@@ -5726,6 +5744,7 @@ fn test_anchor_applies_declared_unit() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
     cx[0] = 1.5e9;
@@ -5859,7 +5878,7 @@ fn test_temporal_ring_never_trims_static_under_overflow() {
         },
         val: 1.0,
         name: "temporal_ring_test".into(),
-        z: 0.0,
+        z_flux: 0.0,
         freq: 0.0,
         bin_width: 0.0,
         color_index: 0.0,
@@ -5913,7 +5932,7 @@ fn test_temporal_ring_under_cap_keeps_everything() {
         },
         val: 1.0,
         name: "temporal_ring_test".into(),
-        z: 0.0,
+        z_flux: 0.0,
         freq: 0.0,
         bin_width: 0.0,
         color_index: 0.0,
@@ -5951,7 +5970,7 @@ fn test_temporal_ring_shared_matches_owned_ring() {
         },
         val: 1.0,
         name: "temporal_ring_shared_test".into(),
-        z: 0.0,
+        z_flux: 0.0,
         freq: 0.0,
         bin_width: 0.0,
         color_index: 0.0,
@@ -6015,7 +6034,7 @@ fn test_rebuild_retains_shared_sample_identity() {
         },
         val: 1.0,
         name: "rebuild_shared_test".into(),
-        z: 0.0,
+        z_flux: 0.0,
         freq: 0.0,
         bin_width: 0.0,
         color_index: 0.0,
@@ -6060,7 +6079,7 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
         },
         val: 4.0e16,
         name: "sun_xray".into(),
-        z: 0.0,
+        z_flux: 0.0,
         freq: 0.0,
         bin_width: 0.0,
         color_index: 0.0,
@@ -6313,6 +6332,7 @@ fn test_fetch_dispatch_gate_admits_em_source() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("em carries a propagation law");
     assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
@@ -6352,6 +6372,7 @@ fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
     assert_eq!(reach, (2.0 * DIFFUSIVITY_THERMAL * 60.0 * 64.0).sqrt());
@@ -6615,6 +6636,7 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     assert!(
         super::dispatch_reach(&[fc], 60.0).is_none(),
@@ -7063,6 +7085,7 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let reach = super::dispatch_reach(&[fc], 60.0).expect("advective carries a propagation law");
     assert_eq!(reach, 400000.0 * 60.0 * 64.0);
@@ -7624,6 +7647,7 @@ fn test_query_admits_surface_sample_within_window() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let frame = Frame::Surface {
         body_name: "earth".into(),
@@ -8131,6 +8155,7 @@ fn test_diagnose_no_samples() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             lat_sign: None,
             lon_sign: None,
@@ -8270,6 +8295,7 @@ fn test_ci_body_verdict() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     })];
     let ndk = " MLI  1976/01/01 01:29:39.6 -28.61 -177.64  59.0 6.2 0.0 KERMADEC ISLANDS REGION\n";
     assert!(matches!(
@@ -8431,6 +8457,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             lat_sign: None,
             lon_sign: None,
@@ -8528,6 +8555,7 @@ fn test_map_vel_unit_and_tau_key_override() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             lat_sign: None,
             lon_sign: None,
@@ -8787,6 +8815,7 @@ fn test_fold_directive_parse_and_extract() {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: Some((1, "sh".into())),
+                    aperture: super::Aperture::None,
                 },
                 FieldConfig {
                     key: "nh".into(),
@@ -8800,6 +8829,7 @@ fn test_fold_directive_parse_and_extract() {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: Some((2, "sh".into())),
+                    aperture: super::Aperture::None,
                 },
             ],
             lat_sign: None,
@@ -8921,6 +8951,7 @@ fn test_keplermap_elements_to_icrs() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
         }],
         headers: vec![],
@@ -9245,6 +9276,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
         }],
         headers: vec![],
@@ -9340,6 +9372,7 @@ fn test_flux_from_mag_manifests() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             tau_key: String::new(),
         }],
@@ -9424,6 +9457,7 @@ fn test_map_lat_sign_lon_sign() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             lat_sign: Some("4".into()),
             lon_sign: Some("6".into()),
@@ -9534,6 +9568,7 @@ fn test_mag_type_gating() {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: super::Aperture::None,
             }],
             lat_sign: None,
             lon_sign: None,
@@ -11126,6 +11161,7 @@ fn fits_format_extracts_last_row() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let src = SourceConfig {
         ttl: 604800,
@@ -11234,6 +11270,7 @@ fn tar_gz_yaml_format_extracts_member_last_row() {
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: super::Aperture::None,
     };
     let mut src = source_fixture("tar_gz_yaml", vec![Extract::Last(fc, None)]);
     src.frame = Frame::Manifest;

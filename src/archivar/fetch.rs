@@ -580,6 +580,7 @@ pub fn catalog_sample_in_enclosure(
         freq: sample.freq,
         bin_width: sample.bin_width,
         fold: None,
+        aperture: Aperture::None,
     };
     record_in_enclosure(
         presences,
@@ -619,6 +620,7 @@ pub fn body_in_enclosure(
         freq: 0.0,
         bin_width: 0.0,
         fold: None,
+        aperture: Aperture::None,
     };
     record_in_enclosure(
         presences,

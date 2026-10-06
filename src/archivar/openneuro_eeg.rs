@@ -343,6 +343,7 @@ pub fn emit_channels(
             freq: crate::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
             fold: None,
+            aperture: crate::archivar::Aperture::None,
         };
         for k in (0..points).step_by(stride) {
             let Some(value) = sample_at(&eeg.samples, k * nbchan + idx) else {
