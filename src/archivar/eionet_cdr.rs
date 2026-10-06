@@ -5,86 +5,201 @@ pub const COMP_WATER: u32 = 2;
 pub const COMP_SOIL: u32 = 3;
 
 pub const POLLUTANTS: &[(u32, &str, &str)] = &[
-    (1, "ANTHRACENE", "eionet_cdr_anthracene"),
-    (2, "AS AND COMPOUNDS", "eionet_cdr_as_and_compounds"),
-    (3, "BENZENE", "eionet_cdr_benzene"),
-    (4, "BENZO(G,H,I)PERYLENE", "eionet_cdr_benzo_g_h_i_perylene"),
-    (5, "CD AND COMPOUNDS", "eionet_cdr_cd_and_compounds"),
-    (6, "CH4", "eionet_cdr_ch4"),
-    (7, "CHLORIDES", "eionet_cdr_chlorides"),
+    (1, "ALACHLOR", "eionet_cdr_alachlor"),
+    (2, "ALDRIN", "eionet_cdr_aldrin"),
+    (3, "ANTHRACENE", "eionet_cdr_anthracene"),
+    (4, "AS AND COMPOUNDS", "eionet_cdr_as_and_compounds"),
+    (5, "ASBESTOS", "eionet_cdr_asbestos"),
+    (6, "ATRAZINE", "eionet_cdr_atrazine"),
+    (7, "BENZENE", "eionet_cdr_benzene"),
+    (8, "BENZO(G,H,I)PERYLENE", "eionet_cdr_benzo_g_h_i_perylene"),
     (
-        8,
+        9,
+        "BROMINATED DIPHENYLETHER",
+        "eionet_cdr_brominated_diphenylether",
+    ),
+    (10, "CD AND COMPOUNDS", "eionet_cdr_cd_and_compounds"),
+    (11, "CFCS", "eionet_cdr_cfcs"),
+    (12, "CH4", "eionet_cdr_ch4"),
+    (13, "CHLORDECONE", "eionet_cdr_chlordecone"),
+    (14, "CHLORFENVINPHOS", "eionet_cdr_chlorfenvinphos"),
+    (15, "CHLORIDES", "eionet_cdr_chlorides"),
+    (
+        16,
         "CHLORINE AND INORGANIC COMPOUNDS",
         "eionet_cdr_chlorine_and_inorganic_compounds",
     ),
     (
-        9,
+        17,
         "CHLORO-ALKANES (C10-13)",
         "eionet_cdr_chloro_alkanes_c10_13",
     ),
-    (10, "CO", "eionet_cdr_co"),
-    (11, "CO2", "eionet_cdr_co2"),
-    (12, "CU AND COMPOUNDS", "eionet_cdr_cu_and_compounds"),
-    (13, "CYANIDES", "eionet_cdr_cyanides"),
-    (14, "DEHP", "eionet_cdr_dehp"),
+    (18, "CHLORPYRIFOS", "eionet_cdr_chlorpyrifos"),
+    (19, "CLORDANE", "eionet_cdr_clordane"),
+    (20, "CO", "eionet_cdr_co"),
+    (21, "CO2", "eionet_cdr_co2"),
+    (22, "CO2 EXCL BIOMASS", "eionet_cdr_co2_excl_biomass"),
+    (23, "CR AND COMPOUNDS", "eionet_cdr_cr_and_compounds"),
+    (24, "CU AND COMPOUNDS", "eionet_cdr_cu_and_compounds"),
+    (25, "CYANIDES", "eionet_cdr_cyanides"),
+    (26, "DDT", "eionet_cdr_ddt"),
+    (27, "DEHP", "eionet_cdr_dehp"),
     (
-        15,
+        28,
         "DICHLOROETHANE-1,2 (DCE)",
         "eionet_cdr_dichloroethane_1_2_dce",
     ),
     (
-        16,
+        29,
         "DICHLOROMETHANE (DCM)",
         "eionet_cdr_dichloromethane_dcm",
     ),
-    (17, "DIURON", "eionet_cdr_diuron"),
-    (18, "ETHYLBENZENE", "eionet_cdr_ethylbenzene"),
-    (19, "FLUORANTHENE", "eionet_cdr_fluoranthene"),
-    (20, "FLUORIDES", "eionet_cdr_fluorides"),
+    (30, "DIELDRIN", "eionet_cdr_dieldrin"),
+    (31, "DIURON", "eionet_cdr_diuron"),
+    (32, "ENDOSULPHAN", "eionet_cdr_endosulphan"),
+    (33, "ENDRIN", "eionet_cdr_endrin"),
+    (34, "ETHYLBENZENE", "eionet_cdr_ethylbenzene"),
+    (35, "ETHYLENE OXIDE", "eionet_cdr_ethylene_oxide"),
+    (36, "FLUORANTHENE", "eionet_cdr_fluoranthene"),
+    (37, "FLUORIDES", "eionet_cdr_fluorides"),
     (
-        21,
+        38,
+        "FLUORINE AND INORGANIC COMPOUNDS",
+        "eionet_cdr_fluorine_and_inorganic_compounds",
+    ),
+    (
+        39,
         "HALOGENATED ORGANIC COMPOUNDS",
         "eionet_cdr_halogenated_organic_compounds",
     ),
-    (22, "HCN", "eionet_cdr_hcn"),
-    (23, "HFCS", "eionet_cdr_hfcs"),
-    (24, "HG AND COMPOUNDS", "eionet_cdr_hg_and_compounds"),
-    (25, "ISOPROTURON", "eionet_cdr_isoproturon"),
-    (26, "N2O", "eionet_cdr_n2o"),
-    (27, "NAPHTHALENE", "eionet_cdr_naphthalene"),
-    (28, "NH3", "eionet_cdr_nh3"),
-    (29, "NI AND COMPOUNDS", "eionet_cdr_ni_and_compounds"),
-    (30, "NMVOC", "eionet_cdr_nmvoc"),
-    (31, "NOX", "eionet_cdr_nox"),
-    (32, "NP/NPES", "eionet_cdr_np_npes"),
-    (33, "PB AND COMPOUNDS", "eionet_cdr_pb_and_compounds"),
+    (40, "HALONS", "eionet_cdr_halons"),
+    (41, "HCFCS", "eionet_cdr_hcfcs"),
+    (42, "HCN", "eionet_cdr_hcn"),
+    (43, "HEPTACHLOR", "eionet_cdr_heptachlor"),
+    (44, "HEXABROMOBIPHENYL", "eionet_cdr_hexabromobiphenyl"),
     (
-        34,
+        45,
+        "HEXACHLOROBENZENE (HCB)",
+        "eionet_cdr_hexachlorobenzene_hcb",
+    ),
+    (
+        46,
+        "HEXACHLOROBUTADIENE (HCBD)",
+        "eionet_cdr_hexachlorobutadiene_hcbd",
+    ),
+    (
+        47,
+        "HEXACHLOROCYCLOHEXANE(HCH)",
+        "eionet_cdr_hexachlorocyclohexane_hch",
+    ),
+    (48, "HFCS", "eionet_cdr_hfcs"),
+    (49, "HG AND COMPOUNDS", "eionet_cdr_hg_and_compounds"),
+    (50, "ISODRIN", "eionet_cdr_isodrin"),
+    (51, "ISOPROTURON", "eionet_cdr_isoproturon"),
+    (52, "LINDANE", "eionet_cdr_lindane"),
+    (53, "MIREX", "eionet_cdr_mirex"),
+    (54, "N2O", "eionet_cdr_n2o"),
+    (55, "NAPHTHALENE", "eionet_cdr_naphthalene"),
+    (56, "NH3", "eionet_cdr_nh3"),
+    (57, "NI AND COMPOUNDS", "eionet_cdr_ni_and_compounds"),
+    (58, "NMVOC", "eionet_cdr_nmvoc"),
+    (59, "NOX", "eionet_cdr_nox"),
+    (60, "NP/NPES", "eionet_cdr_np_npes"),
+    (
+        61,
+        "OCTYLPHENOLS AND OCTYLPHENOL ETHOXYLATES",
+        "eionet_cdr_octylphenols_and_octylphenol_ethoxylates",
+    ),
+    (
+        62,
+        "ORGANOTIN - COMPOUNDS",
+        "eionet_cdr_organotin_compounds",
+    ),
+    (63, "PB AND COMPOUNDS", "eionet_cdr_pb_and_compounds"),
+    (
+        64,
         "PCDD+PCDF (DIOXINS+FURANS)",
         "eionet_cdr_pcdd_pcdf_dioxins_furans",
     ),
+    (65, "PENTACHLOROBENZENE", "eionet_cdr_pentachlorobenzene"),
     (
-        35,
+        66,
         "PENTACHLOROPHENOL (PCP)",
         "eionet_cdr_pentachlorophenol_pcp",
     ),
-    (36, "PHENOLS", "eionet_cdr_phenols"),
-    (37, "PM10", "eionet_cdr_pm10"),
-    (38, "SOX", "eionet_cdr_sox"),
-    (39, "TOLUENE", "eionet_cdr_toluene"),
-    (40, "TOTAL - NITROGEN", "eionet_cdr_total_nitrogen"),
+    (67, "PFCS", "eionet_cdr_pfcs"),
+    (68, "PHENOLS", "eionet_cdr_phenols"),
+    (69, "PM10", "eionet_cdr_pm10"),
     (
-        41,
+        70,
+        "POLYCHLORINATED BIPHENYLS (PCBS)",
+        "eionet_cdr_polychlorinated_biphenyls_pcbs",
+    ),
+    (
+        71,
+        "POLYCYCLIC AROMATIC HYDROCARBONS",
+        "eionet_cdr_polycyclic_aromatic_hydrocarbons",
+    ),
+    (72, "SF6", "eionet_cdr_sf6"),
+    (73, "SIMAZINE", "eionet_cdr_simazine"),
+    (74, "SOX", "eionet_cdr_sox"),
+    (
+        75,
+        "TETRACHLOROETHANE-1,1,2,2",
+        "eionet_cdr_tetrachloroethane_1_1_2_2",
+    ),
+    (
+        76,
+        "TETRACHLOROETHYLENE (PER)",
+        "eionet_cdr_tetrachloroethylene_per",
+    ),
+    (
+        77,
+        "TETRACHLOROMETHANE (TCM)",
+        "eionet_cdr_tetrachloromethane_tcm",
+    ),
+    (78, "TOLUENE", "eionet_cdr_toluene"),
+    (79, "TOTAL - NITROGEN", "eionet_cdr_total_nitrogen"),
+    (
+        80,
         "TOTAL ORGANIC CARBON (TOC)",
         "eionet_cdr_total_organic_carbon_toc",
     ),
-    (42, "TOTAL - PHOSPHORUS", "eionet_cdr_total_phosphorus"),
-    (43, "TRICHLOROMETHANE", "eionet_cdr_trichloromethane"),
-    (44, "XYLENES", "eionet_cdr_xylenes"),
-    (45, "ZN AND COMPOUNDS", "eionet_cdr_zn_and_compounds"),
+    (81, "TOTAL - PHOSPHORUS", "eionet_cdr_total_phosphorus"),
+    (82, "TOXAPHENE", "eionet_cdr_toxaphene"),
+    (
+        83,
+        "TRIBUTYLTIN AND COMPOUNDS",
+        "eionet_cdr_tributyltin_and_compounds",
+    ),
+    (
+        84,
+        "TRICHLOROBENZENES (TCB)",
+        "eionet_cdr_trichlorobenzenes_tcb",
+    ),
+    (
+        85,
+        "TRICHLOROETHANE-1,1,1 (TCE)",
+        "eionet_cdr_trichloroethane_1_1_1_tce",
+    ),
+    (
+        86,
+        "TRICHLOROETHYLENE (TRI)",
+        "eionet_cdr_trichloroethylene_tri",
+    ),
+    (87, "TRICHLOROMETHANE", "eionet_cdr_trichloromethane"),
+    (88, "TRIFLURALIN", "eionet_cdr_trifluralin"),
+    (
+        89,
+        "TRIPHENYLTIN AND COMPOUNDS",
+        "eionet_cdr_triphenyltin_and_compounds",
+    ),
+    (90, "VINYL CHLORIDE", "eionet_cdr_vinyl_chloride"),
+    (91, "XYLENES", "eionet_cdr_xylenes"),
+    (92, "ZN AND COMPOUNDS", "eionet_cdr_zn_and_compounds"),
 ];
 
-pub const COMP_MAX: u32 = (45 << 2) | 3;
+pub const COMP_MAX: u32 = (92 << 2) | 3;
 
 pub fn medium_id(name: &str) -> Option<u32> {
     match name.trim() {
@@ -196,29 +311,41 @@ fn coord(body: &str) -> Option<(f64, f64)> {
     Some((lon, lat))
 }
 
-pub fn parse_report(bytes: &[u8]) -> Option<Vec<GeoRec>> {
-    let text = std::str::from_utf8(bytes).ok()?;
+pub fn parse_report(bytes: &[u8]) -> Result<Vec<GeoRec>, String> {
+    let text = std::str::from_utf8(bytes).map_err(|e| format!("report is not UTF-8: {e}"))?;
     let text = text.trim_start_matches('\u{feff}');
-    find_open(text, "PollutantReleaseAndTransferReport")?;
-    let year = tag_body(text, "ReportingYear")?
-        .trim()
-        .parse::<i64>()
-        .ok()?;
-    let days = crate::lsk::days_from_civil(year, 1, 1)?;
-    let lsk = crate::archivar::embedded_lsk()?;
-    let t = lsk.unix_to_tdb(days as f64 * 86400.0)?;
+    if find_open(text, "PollutantReleaseAndTransferReport").is_none() {
+        return Err("carries no E-PRTR/LCP report root".to_string());
+    }
+    let year = tag_body(text, "ReportingYear")
+        .and_then(|b| b.trim().parse::<i64>().ok())
+        .ok_or_else(|| "ReportingYear absent".to_string())?;
+    let days = crate::lsk::days_from_civil(year, 1, 1)
+        .ok_or_else(|| format!("ReportingYear {year} is not a civil date"))?;
+    let lsk = crate::archivar::embedded_lsk()
+        .ok_or_else(|| "embedded leap-second table absent".to_string())?;
+    let t = lsk
+        .unix_to_tdb(days as f64 * 86400.0)
+        .ok_or_else(|| format!("ReportingYear {year} does not map to TDB"))?;
     let mut out = Vec::new();
     for facility in segments(text, "FacilityReport") {
         let Some((lon, lat)) = coord(facility) else {
             continue;
         };
         for release in segments(facility, "PollutantRelease") {
-            let Some(medium) = tag_body(release, "MediumCode").and_then(medium_id) else {
-                continue;
-            };
-            let Some(id) = tag_body(release, "PollutantCode").and_then(pollutant_id) else {
-                continue;
-            };
+            let raw_medium = tag_body(release, "MediumCode").map(str::trim);
+            let medium = raw_medium.and_then(medium_id).ok_or_else(|| {
+                format!(
+                    "MediumCode '{}' is not in the E-PRTR medium set",
+                    raw_medium.unwrap_or("<absent>")
+                )
+            })?;
+            let code = tag_body(release, "PollutantCode")
+                .map(str::trim)
+                .ok_or_else(|| "PollutantRelease carries no PollutantCode".to_string())?;
+            let id = pollutant_id(code).ok_or_else(|| {
+                format!("PollutantCode '{code}' is not in the E-PRTR pollutant table")
+            })?;
             let Some(val) =
                 tag_body(release, "TotalQuantity").and_then(|b| b.trim().parse::<f64>().ok())
             else {
@@ -240,7 +367,12 @@ pub fn parse_report(bytes: &[u8]) -> Option<Vec<GeoRec>> {
             });
         }
     }
-    if out.is_empty() { None } else { Some(out) }
+    if out.is_empty() {
+        return Err(format!(
+            "the {year} report carries no E-PRTR release with coordinate and quantity"
+        ));
+    }
+    Ok(out)
 }
 
 #[cfg(test)]
@@ -295,6 +427,10 @@ mod tests {
   </FacilityReport>
 </PollutantReleaseAndTransferReport>";
 
+    fn comp(code: &str, medium: u32) -> u32 {
+        (pollutant_id(code).expect("code in table") << 2) | medium
+    }
+
     #[test]
     fn reads_the_measured_shape_and_skips_absent_fields() {
         let records = parse_report(FIXTURE.as_bytes()).expect("the report parses");
@@ -303,7 +439,7 @@ mod tests {
             .iter()
             .find(|r| pollutant_of(r.comp) == Some("CO2"))
             .expect("CO2 present");
-        assert_eq!(co2.comp, (11 << 2) | COMP_AIR);
+        assert_eq!(co2.comp, comp("CO2", COMP_AIR));
         assert_eq!(co2.val, 355000000.0);
         assert_eq!(co2.lat, 47.283943);
         assert_eq!(co2.lon, 12.788444);
@@ -312,22 +448,58 @@ mod tests {
             .iter()
             .find(|r| pollutant_of(r.comp) == Some("TOTAL - NITROGEN"))
             .expect("TOTAL - NITROGEN present");
-        assert_eq!(n.comp, (40 << 2) | COMP_WATER);
+        assert_eq!(n.comp, comp("TOTAL - NITROGEN", COMP_WATER));
         assert_eq!(medium_of(n.comp), Some("water"));
     }
 
     #[test]
     fn a_foreign_body_is_void() {
-        assert!(parse_report(b"not xml").is_none());
-        assert!(parse_report(b"<ReportData></ReportData>").is_none());
+        assert!(parse_report(b"not xml").is_err());
+        assert!(parse_report(b"<ReportData></ReportData>").is_err());
+    }
+
+    #[test]
+    fn the_table_is_the_authoritative_codelist() {
+        assert_eq!(POLLUTANTS.len(), 92);
+        for (i, (id, code, slug)) in POLLUTANTS.iter().enumerate() {
+            assert_eq!(*id as usize, i + 1, "{code}: id must be the table position");
+            assert!(code.chars().all(|c| !c.is_ascii_lowercase()), "{code}");
+            assert!(slug.starts_with("eionet_cdr_"), "{code}");
+        }
+        for code in [
+            "CR AND COMPOUNDS",
+            "CO2 EXCL BIOMASS",
+            "SF6",
+            "POLYCHLORINATED BIPHENYLS (PCBS)",
+            "VINYL CHLORIDE",
+        ] {
+            assert!(pollutant_id(code).is_some(), "{code} must be in the table");
+        }
+    }
+
+    #[test]
+    fn an_unmapped_pollutant_code_is_named() {
+        let report = FIXTURE.replace(
+            "<PollutantCode>CO2</PollutantCode>",
+            "<PollutantCode>KRYPTONITE</PollutantCode>",
+        );
+        let msg = parse_report(report.as_bytes()).expect_err("unmapped code must abort");
+        assert!(msg.contains("KRYPTONITE"), "{msg}");
     }
 
     #[test]
     fn component_names_come_from_the_pollutant_table() {
-        assert_eq!(component_name((11 << 2) | COMP_AIR), Some("eionet_cdr_co2"));
-        assert_eq!(component_name((31 << 2) | COMP_AIR), Some("eionet_cdr_nox"));
+        assert_eq!(
+            component_name(comp("CO2", COMP_AIR)),
+            Some("eionet_cdr_co2")
+        );
+        assert_eq!(
+            component_name(comp("NOX", COMP_AIR)),
+            Some("eionet_cdr_nox")
+        );
         assert_eq!(component_name(999), None);
-        assert_eq!(pollutant_id("PCDD+PCDF (DIOXINS+FURANS)"), Some(34));
+        assert_eq!(pollutant_id("PCDD+PCDF (DIOXINS+FURANS)"), Some(64));
+        assert_eq!(pollutant_id("CR AND COMPOUNDS"), Some(23));
         assert_eq!(medium_id("AIR"), Some(COMP_AIR));
         assert_eq!(medium_id("MAGMA"), None);
     }
@@ -339,7 +511,7 @@ mod tests {
             .map(|(id, _, _)| *id)
             .max()
             .expect("the pollutant table is not empty");
-        assert_eq!(max_id, 45);
+        assert_eq!(max_id, 92);
         for medium in [COMP_AIR, COMP_WATER, COMP_SOIL] {
             assert!((max_id << 2) | medium <= COMP_MAX);
         }
@@ -348,18 +520,18 @@ mod tests {
     #[test]
     fn series_names_carry_the_medium() {
         assert_eq!(
-            series_name((11 << 2) | COMP_AIR).as_deref(),
+            series_name(comp("CO2", COMP_AIR)).as_deref(),
             Some("eionet_cdr_co2_air")
         );
         assert_eq!(
-            series_name((40 << 2) | COMP_WATER).as_deref(),
+            series_name(comp("TOTAL - NITROGEN", COMP_WATER)).as_deref(),
             Some("eionet_cdr_total_nitrogen_water")
         );
         assert_eq!(
-            series_name((31 << 2) | COMP_SOIL).as_deref(),
+            series_name(comp("NOX", COMP_SOIL)).as_deref(),
             Some("eionet_cdr_nox_soil")
         );
-        assert_eq!(series_name(11 << 2), None);
+        assert_eq!(series_name(comp("CO2", COMP_AIR) & !0x3), None);
     }
 
     #[test]
