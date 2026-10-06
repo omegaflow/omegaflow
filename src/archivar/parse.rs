@@ -1822,7 +1822,7 @@ mod tests {
     const URL_C: &str = "https://cdn.example/x/odyssey_odf_t900000000_1000000000.bin";
 
     #[test]
-    fn volume_observer_declared_and_refused_when_absent() {
+    fn volume_frame_body_declared_and_refused_when_absent() {
         let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n";
         let with = parse_sources(declared);
         let body = with[0].extracts.iter().find_map(|e| match e {

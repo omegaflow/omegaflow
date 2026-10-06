@@ -20,13 +20,13 @@ pub struct FresnelLine {
 pub fn fresnel_line(
     rec: &AsteroidRec,
     bp_rp: f64,
-    observer_icrs: [f64; 3],
+    receiver_icrs: [f64; 3],
     t_jd: f64,
 ) -> Option<FresnelLine> {
     let (pos, _vel) = dastcom::state_at(rec, t_jd)?;
-    let dx = pos[0] - observer_icrs[0];
-    let dy = pos[1] - observer_icrs[1];
-    let dz = pos[2] - observer_icrs[2];
+    let dx = pos[0] - receiver_icrs[0];
+    let dy = pos[1] - receiver_icrs[1];
+    let dz = pos[2] - receiver_icrs[2];
     let d = (dx * dx + dy * dy + dz * dz).sqrt();
     if !d.is_finite() || d <= 0.0 {
         return None;
@@ -203,7 +203,7 @@ mod tests {
     }
 
     #[test]
-    fn fresnel_line_refuses_the_observer_inside_the_asteroid() {
+    fn fresnel_line_refuses_the_receiver_inside_the_asteroid() {
         let rec = ceres();
         let (pos, _) = dastcom::state_at(&rec, rec.epoch_jd).unwrap();
         assert!(fresnel_line(&rec, 0.82, pos, rec.epoch_jd).is_none());
@@ -218,7 +218,7 @@ mod tests {
         let far = fresnel_line(&rec, 0.82, antipode, rec.epoch_jd).unwrap();
         assert!(
             far.d_m > near.d_m && far.theta_rad < near.theta_rad,
-            "a farther observer sees a smaller disk"
+            "a farther receiver sees a smaller disk"
         );
         assert!(far.fresnel < near.fresnel, "F falls with distance");
     }
