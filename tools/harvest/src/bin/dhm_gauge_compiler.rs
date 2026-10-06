@@ -252,7 +252,9 @@ fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let station = arg_value(args, "--station").ok_or("--station <id> required")?;
     let period = match arg_value(args, "--period") {
-        Some(v) => v.parse::<u32>().map_err(|_| format!("--period '{v}' is not 1..4"))?,
+        Some(v) => v
+            .parse::<u32>()
+            .map_err(|_| format!("--period '{v}' is not 1..4"))?,
         None => 1,
     };
     if !(1..=4).contains(&period) {
@@ -295,13 +297,13 @@ fn run(args: &[String]) -> Result<(), String> {
         "X-Requested-With: XMLHttpRequest".to_string(),
         format!("Referer: {page_url}"),
     ];
-    let response =
-        curl(&jar, &series_url, Some(&body), &headers).ok_or_else(|| format!("{series_url}: POST void"))?;
+    let response = curl(&jar, &series_url, Some(&body), &headers)
+        .ok_or_else(|| format!("{series_url}: POST void"))?;
     let _ = std::fs::remove_file(&jar);
 
     let root = parse_json(&response).ok_or_else(|| format!("{series_url}: response parse void"))?;
-    let chart = jstr(&root, "data.chart")
-        .ok_or_else(|| format!("{series_url}: data.chart absent"))?;
+    let chart =
+        jstr(&root, "data.chart").ok_or_else(|| format!("{series_url}: data.chart absent"))?;
     let inner = js_string(&chart, "var river = '")
         .ok_or_else(|| format!("{series_url}: chart carries no var river"))?;
     let payload = parse_json(&decode_js_escapes(&inner))
