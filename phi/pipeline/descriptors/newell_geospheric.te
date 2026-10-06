@@ -19,5 +19,5 @@ expect cells 1
 lags 0,1
 surrogate 10
 cadence live
-bin 300
+bin 3600
 seasonal none

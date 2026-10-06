@@ -193,9 +193,7 @@ fn coord(body: &str) -> Option<(f64, f64)> {
 pub fn parse_report(bytes: &[u8]) -> Option<Vec<GeoRec>> {
     let text = std::str::from_utf8(bytes).ok()?;
     let text = text.trim_start_matches('\u{feff}');
-    if find_open(text, "PollutantReleaseAndTransferReport").is_none() {
-        return None;
-    }
+    find_open(text, "PollutantReleaseAndTransferReport")?;
     let year = tag_body(text, "ReportingYear")?
         .trim()
         .parse::<i64>()

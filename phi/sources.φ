@@ -289,6 +289,24 @@ lon geometry.coordinates.0
 field properties.Temperature sensor_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
 field properties.Reading h2s_ppm erfc diffusion ppm 6.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.bin
+format bpa_gic
+compiler tools/harvest/src/bin/bpa_gic_compiler.rs
+at earth
+ttl 300
+field bpa_gic_eugene_or_a bpa_gic_eugene_or_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_spokane_wa_a bpa_gic_spokane_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_the_dalles_or_a bpa_gic_the_dalles_or_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_lewiston_id_a bpa_gic_lewiston_id_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_kalispell_mt_a bpa_gic_kalispell_mt_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_monroe_wa_a bpa_gic_monroe_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_wilsonville_or_a bpa_gic_wilsonville_or_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_vancouver_wa_a bpa_gic_vancouver_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_ellensburg_wa_a bpa_gic_ellensburg_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_bothell_wa_a bpa_gic_bothell_wa_a inverse-square electric A 300.0 0.0 0.0
+field bpa_gic_moses_lake_wa_a bpa_gic_moses_lake_wa_a inverse-square electric A 300.0 0.0 0.0
+origin https://transmission.bpa.gov/business/operations/gic/gic.txt
+
 url https://gracedb.ligo.org/api/superevents/?limit=10
 ttl 300
 at earth
@@ -595,6 +613,14 @@ field temp pirep_air_temp_c exponential-decay thermal C 360 0.0 0.0
 field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
 field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
+ttl 3600
+at earth
+hapi mms1_fgm_b_gse_srvy_l2_clean.0=mms1_fgm_bx_gse_nt mms1_fgm_b_gse_srvy_l2_clean.1=mms1_fgm_by_gse_nt mms1_fgm_b_gse_srvy_l2_clean.2=mms1_fgm_bz_gse_nt
+field mms1_fgm_bx_gse_nt mms1_fgm_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field mms1_fgm_by_gse_nt mms1_fgm_by_gse_nt inverse-square em nT 3600 0.0 0.0
+field mms1_fgm_bz_gse_nt mms1_fgm_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
 ttl 3600
 at sun
@@ -640,22 +666,6 @@ at solar_orbiter
 hapi SN_RMS_E=solo_rpw_e_rms_vm
 field solo_rpw_e_rms_vm solo_rpw_e_rms_vm inverse-square electric V/m 3600 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
-ttl 3600
-at sun
-hapi BGSE.0=wind_mfi_bx_gse_nt BGSE.1=wind_mfi_by_gse_nt BGSE.2=wind_mfi_bz_gse_nt
-field wind_mfi_bx_gse_nt wind_mfi_bx_gse_nt inverse-square em nT 3600 0.0 0.0
-field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
-field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
-
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
-ttl 3600
-at earth
-hapi mms1_fgm_b_gse_srvy_l2_clean.0=mms1_fgm_bx_gse_nt mms1_fgm_b_gse_srvy_l2_clean.1=mms1_fgm_by_gse_nt mms1_fgm_b_gse_srvy_l2_clean.2=mms1_fgm_bz_gse_nt
-field mms1_fgm_bx_gse_nt mms1_fgm_bx_gse_nt inverse-square em nT 3600 0.0 0.0
-field mms1_fgm_by_gse_nt mms1_fgm_by_gse_nt inverse-square em nT 3600 0.0 0.0
-field mms1_fgm_bz_gse_nt mms1_fgm_bz_gse_nt inverse-square em nT 3600 0.0 0.0
-
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_fgs_btotal,tha_fgs_gse&format=json
 ttl 3600
 at earth
@@ -664,6 +674,14 @@ field tha_fgs_btotal_nt tha_fgs_btotal_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_bx_gse_nt tha_fgs_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_by_gse_nt tha_fgs_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_bz_gse_nt tha_fgs_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
+ttl 3600
+at sun
+hapi BGSE.0=wind_mfi_bx_gse_nt BGSE.1=wind_mfi_by_gse_nt BGSE.2=wind_mfi_bz_gse_nt
+field wind_mfi_bx_gse_nt wind_mfi_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
+field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
 ttl 3600
@@ -967,24 +985,6 @@ at sun
 ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.bin
-format bpa_gic
-compiler tools/harvest/src/bin/bpa_gic_compiler.rs
-at earth
-ttl 300
-field bpa_gic_eugene_or_a bpa_gic_eugene_or_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_spokane_wa_a bpa_gic_spokane_wa_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_the_dalles_or_a bpa_gic_the_dalles_or_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_lewiston_id_a bpa_gic_lewiston_id_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_kalispell_mt_a bpa_gic_kalispell_mt_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_monroe_wa_a bpa_gic_monroe_wa_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_wilsonville_or_a bpa_gic_wilsonville_or_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_vancouver_wa_a bpa_gic_vancouver_wa_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_ellensburg_wa_a bpa_gic_ellensburg_wa_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_bothell_wa_a bpa_gic_bothell_wa_a inverse-square electric A 300.0 0.0 0.0
-field bpa_gic_moses_lake_wa_a bpa_gic_moses_lake_wa_a inverse-square electric A 300.0 0.0 0.0
-origin https://transmission.bpa.gov/business/operations/gic/gic.txt
 
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
 ttl 3600
@@ -1675,6 +1675,14 @@ on earth 0 0 0
 ttl 86400
 field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/download.geofabrik.de/monaco_nodes.bin
+format osm_nodes
+origin https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+compiler tools/harvest/src/bin/osm_pbf_compiler.rs
+at earth
+ttl 86400
+field osm_node osm_node inverse-square em 1 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
 format emodnet_hfr
 origin https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
@@ -1863,19 +1871,6 @@ ttl 86400
 field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
 field parallax gaia_rrl_parallax_mas inverse-square em mas 86400 0.0 0.0
 field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
-origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
-format soho_lasco_cme
-compiler tools/harvest/src/bin/soho_lasco_compiler.rs
-at sun
-ttl 2592000
-field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/s 2592000 0.0 0.0
-field soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy advective deg 2592000 0.0 0.0
-field soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy advective deg 2592000 0.0 0.0
-field soho_lasco_cme_accel_m_s2 soho_lasco_cme_accel_m_s2 patch-levy advective m/s2 2592000 0.0 0.0
-field soho_lasco_cme_mass_g soho_lasco_cme_mass_g patch-levy advective g 2592000 0.0 0.0
-field soho_lasco_cme_ke_erg soho_lasco_cme_ke_erg patch-levy advective erg 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
 format catalog_gaia_sso
@@ -3948,7 +3943,20 @@ at earth
 ttl 86400
 field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
-field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
+field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin
+format wdc_ae
+origin https://wdc.kugi.kyoto-u.ac.jp/hapi
+compiler tools/harvest/src/bin/wdc_ae_compiler.rs
+at earth
+ttl 86400
+field wdc_ae_al_nt wdc_ae_al_nt inverse-square em nT 60 0.0 0.0
+field wdc_ae_au_nt wdc_ae_au_nt inverse-square em nT 60 0.0 0.0
+field wdc_ae_ae_nt wdc_ae_ae_nt inverse-square em nT 60 0.0 0.0
+field wdc_sym_d_nt wdc_sym_d_nt inverse-square em nT 60 0.0 0.0
+field wdc_sym_h_nt wdc_sym_h_nt inverse-square em nT 60 0.0 0.0
+field wdc_dst_nt wdc_dst_nt inverse-square em nT 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
 format reference
@@ -19206,6 +19214,19 @@ at earth
 last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square gravity m/s 86400 0.0 0.0
 last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
+origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
+format soho_lasco_cme
+compiler tools/harvest/src/bin/soho_lasco_compiler.rs
+at sun
+ttl 2592000
+field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/s 2592000 0.0 0.0
+field soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy advective deg 2592000 0.0 0.0
+field soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy advective deg 2592000 0.0 0.0
+field soho_lasco_cme_accel_m_s2 soho_lasco_cme_accel_m_s2 patch-levy advective m/s2 2592000 0.0 0.0
+field soho_lasco_cme_mass_g soho_lasco_cme_mass_g patch-levy advective g 2592000 0.0 0.0
+field soho_lasco_cme_ke_erg soho_lasco_cme_ke_erg patch-levy advective erg 2592000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin
 format ersstv5_nino34
 origin https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5
@@ -27827,24 +27848,3 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin
-format wdc_ae
-origin https://wdc.kugi.kyoto-u.ac.jp/hapi
-compiler tools/harvest/src/bin/wdc_ae_compiler.rs
-at earth
-ttl 86400
-field wdc_ae_al_nt wdc_ae_al_nt inverse-square em nT 60 0.0 0.0
-field wdc_ae_au_nt wdc_ae_au_nt inverse-square em nT 60 0.0 0.0
-field wdc_ae_ae_nt wdc_ae_ae_nt inverse-square em nT 60 0.0 0.0
-field wdc_sym_d_nt wdc_sym_d_nt inverse-square em nT 60 0.0 0.0
-field wdc_sym_h_nt wdc_sym_h_nt inverse-square em nT 60 0.0 0.0
-field wdc_dst_nt wdc_dst_nt inverse-square em nT 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/download.geofabrik.de/monaco_nodes.bin
-format osm_nodes
-origin https://download.geofabrik.de/europe/monaco-latest.osm.pbf
-compiler tools/harvest/src/bin/osm_pbf_compiler.rs
-at earth
-ttl 86400
-field osm_node osm_node inverse-square em 1 86400 0.0 0.0

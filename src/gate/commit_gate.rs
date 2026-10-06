@@ -287,6 +287,7 @@ pub struct RegisterValue {
 
 pub struct Gate {
     pub force_unit_pairs: HashSet<(String, String)>,
+    pub noncanonical_pairs: Vec<(String, String)>,
     pub register: Vec<RegisterValue>,
     pub learned_rules: Vec<String>,
     pub ledger_path: String,
@@ -298,6 +299,7 @@ impl Gate {
     pub fn new(session: &str, ledger_path: &str) -> Gate {
         let mut g = Gate {
             force_unit_pairs: HashSet::new(),
+            noncanonical_pairs: Vec::new(),
             register: Vec::new(),
             learned_rules: Vec::new(),
             ledger_path: ledger_path.to_string(),
@@ -330,7 +332,13 @@ impl Gate {
             if nu.is_empty() || nu == "1" {
                 continue;
             }
-            self.force_unit_pairs.insert((force.to_string(), nu));
+            let pair = (force.to_string(), nu);
+            if self.force_unit_pairs.contains(&pair) {
+                continue;
+            }
+            if !self.noncanonical_pairs.contains(&pair) {
+                self.noncanonical_pairs.push(pair);
+            }
         }
     }
 
@@ -4008,6 +4016,29 @@ mod tests {
         let mut g = test_gate();
         let args = r#"{"filePath":"phi/sources.φ","newString":"field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0\n"}"#;
         assert!(g.check_tool_call("write", args).is_none());
+    }
+
+    #[test]
+    fn learn_sources_does_not_legitimize_noncanonical_pair() {
+        let mut g = test_gate();
+        g.learn_sources("field wind speed inverse-square diffusion m/s\n");
+        assert!(
+            !g.force_unit_pairs
+                .contains(&("diffusion".to_string(), "m/s".to_string()))
+        );
+        assert!(
+            g.noncanonical_pairs
+                .contains(&("diffusion".to_string(), "m/s".to_string()))
+        );
+        let args = r#"{"filePath":"phi/x.φ","newString":"field wind speed inverse-square diffusion m/s\n"}"#;
+        let v = g.check_tool_call("write", args).unwrap();
+        assert_eq!(v.rule, "force-unit-gate");
+    }
+
+    #[test]
+    fn diffusion_owns_mass_kg() {
+        assert!(allowed_units_for_force(6).contains(&"kg"));
+        assert!(!allowed_units_for_force(6).contains(&"m/s"));
     }
 
     #[test]
