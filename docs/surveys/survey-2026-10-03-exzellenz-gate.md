@@ -2,7 +2,7 @@
   title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: c26e246425d6f37e64749e6c8a6999014bb01a91ac2514f1c62f8adf36ef304a
+  sha256: d055d9a16dbfd3b1ec4b872af2ca1f0927f4bf385dbada9e406b5ff7e6276681
   status: live
   see-also: docs/concepts/exzellenz-konzept.md
 -->
@@ -108,5 +108,5 @@ Mountain die seinen (`solar-cycle-dynamo`, `twenty-second-band-ground-chain`,
 `cannot`/`failed`/`expected`/`should`/`must` nicht mehr; verbleibende `error`-Treffer sind
 Messgrößen (`error bars`, `digitization error`). Alle Header-`sha256` sind nachgezogen.
 
-**Offen:** keiner aus diesem Gate. Jedes neue Paper läuft vor Veröffentlichung erneut
+Kein offener Punkt aus diesem Gate. Jedes neue Paper läuft vor Veröffentlichung erneut
 durch §2–§3 — der Maßstab bleibt lebend.
