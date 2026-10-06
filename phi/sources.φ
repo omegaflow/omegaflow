@@ -17838,6 +17838,15 @@ at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/radio.bin
+format radio
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/65/nvss xmatch=V/154/sdss16
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VIII/92/first14
+compiler tools/harvest/src/bin/radio_compiler.rs
+at sun
+ttl 604800
+field flux nvss_1_4ghz_flux_wm2hz gaussian-inverse-square em W/m2/Hz 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
 format flac
 origin https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
