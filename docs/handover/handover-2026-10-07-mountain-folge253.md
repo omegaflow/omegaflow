@@ -3,7 +3,7 @@
   session: Mountain-Folge 253
   class: handover
   date: 2026-10-07
-  sha256: bd60080fa68443f03458365133bbaa47c8ebb8c901041ec3e97f0dbb52516507
+  sha256: e30b28bdc75e9051e71a47ceee8938209f828cc997e305eba365e4dc8a427893
   status: live
 -->
 # Handover — Mountain-Folge 253 (2026-10-07)
@@ -59,7 +59,7 @@ Wort | Datum | Quelle
 - **Trigger:** nächster `field-te-query.yml`-Lauf (`matrix-newell` / `matrix-newell-omni`)
 - **Lage:** (gemessen 2026-10-07 via `sread`) Lauf `37535246655` = success; Job `matrix-newell` 2/2, Zelle `newell_dphi_dt->intermagnet_dbdt` n=0, `res(tau_d x tau_t)=58x3600`, Gate `resolution_representable` (`tools/measure/src/bin/field_te_query.rs:4066`). Der Live-Descriptor `phi/pipeline/descriptors/newell_geospheric.te:22` trug `bin 300`; jetzt `bin 3600` (der OMNI-Arm `newell_geospheric_omni.te:21` trug 3600). `tau_t` wird als native Ziel-Kadenz aus dem aligned pool gelesen (`field_te_query.rs:4495-4496`); `intermagnet_dbdt` = 3600 s.
 - **Blockade:** der erneute Lauf ist der Beweis; ohne ihn bleibt der Ausgang unread.
-- **Braucht:** `gh workflow run field-te-query.yml`, danach `ci_manage jobs <id>` / `ci_manage log <id>` (Job `matrix-newell` + `matrix-newell-omni`).
+- **Braucht:** `gh workflow run field-te-query.yml` (dispatched 2026-10-07: Lauf **`37545120597`**), danach `ci_manage jobs 37545120597` / `ci_manage log 37545120597` (Job `matrix-newell` + `matrix-newell-omni`).
 
 ### Force-/Einheiten-Kontrakt (GLM-Fund) — 59 nicht-kanonische Feld-Zeilen
 - **Status:** eigen | **Bindung:** eigen
