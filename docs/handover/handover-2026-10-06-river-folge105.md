@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 4c5db2c22f06579f7009e554e28cb4d4461fe0aef59933de99d61b24fa142141
+  sha256: be454383374c9eed3b7ffc4b93ce3ae1cf052f17c9285194e59879c047d97019
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -28,13 +28,14 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 ## Träger (Prosa, eigene)
 
 - `docs/paper/gic-causal-driver.md` (`class: paper`) — §6 `:689` („no reported value
-  applies it yet — the wiring stays open") gegen den Baum: `bias_column`
-  (`tools/measure/src/bin/field_te_query.rs:2619`) liefert eine
-  **Report-Site-Spalte**; der Report druckt selbst `bias (report site only; raw TE
-  untouched; gate n_eff >= …)` (`:2933`). Zwei Lesarten — (i) „reported value" = die
-  TE-Tabelle, die roh bleibt → das Papier stimmt; (ii) „reported value" = jede
-  Ausgabe inkl. der Bias-Spalte → das Papier ist stale. **Riss**, beide Zeugen
-  benannt, nicht geglättet. Offen: BCa-Intervalle, vollständiger Kp-Kanal.
+  applies it yet — the wiring stays open") gegen den Baum geprüft: `bias_column`
+  (`tools/measure/src/bin/field_te_query.rs:2619`) liefert bei `n_eff ≥
+  TE_NEFF_THRESHOLD` eine **Report-Site-Spalte**; der Report liest das Gate selbst
+  (`fmt_opt(TE_NEFF_THRESHOLD)`, `:2934`) und druckt `bias (report site only; raw TE
+  untouched)` (`:2933`). **Kein Riss** (Rat + GLM): „reported value" = die rohe TE, die
+  unangetastet bleibt → das Papier stimmt; Claude: Satz unscharf, eine präzisierende
+  Formulierung („außer der Report-Site-Bias-Spalte, rohe TE unverändert") ist optional.
+  Kein Code-Akt. Offen: BCa-Intervalle, vollständiger Kp-Kanal.
 - `docs/blatt/fruehwarnsystem-praeregistrierung.md` (`class: sheet`, `status: unsealed`) —
   offen bis zum Siegel: X, Z-Fenster, Bz-Schwelle; α-Ebene + Siegel = Operator-Wort.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (`class: survey`) — §5.
@@ -106,9 +107,11 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Lage:** (gemessen 2026-10-06, River 105)
   - **CDN-Assets erfüllt** (mycelium-240, gefaltet): `ephemeris_de440_{earth,moon,sun}.bin`
     same-origin HTTP 206, sha256 == `pages-deploy.yml:60-62`; `dr3_stars.bin` `745a3f71…`.
-  - **Client-Pfad bootet** (River 105, `archive_search --playwright
+  - **Client-Pfad bootet bis zur Stars-Phase** (River 105, `archive_search --playwright
     https://omegaflow.space/membrane.html`, 2 Läufe): Titel „omegaflow — membrane", HTTP 200,
-    Status fortschreitend `loading stars… 27%`/`40%` — **kein** Hänger am Boot-Pfad.
+    Status fortschreitend `loading stars… 27%`/`40%`. Die Ephemeriden-Phase wurde **nicht
+    erreicht** — „kein Hänger am Boot-Pfad" ist eine Inferenz aus dem Code, kein Befund
+    (Claude-Stemme 2026-10-06).
   - Der Sonne/Erde/Mond-Anker fehlt weiter: `body_anchor_samples`
     (`src/archivar/membrane.rs:404`) emittiert nur bei `props.omega_g` (stype7) oder `props.gm`;
     die deployte `ephemeris_de440_earth.bin` trägt Maske bits 0–8, Bit 11 klar. Rat 2026-10-06:
@@ -118,19 +121,22 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** Mountain setzt slot `f(11)`/Maske Bit 11; Mycelium baut + manifestiert;
   Rivers Checkmark ist `nearCount(<1e13 m) > 0`.
 
-### Membran — Ephemeriden-Fetch ohne Fortschritt (window edit → Operator-Wort)
-- **Status:** operator-gebunden | **Bindung:** eigen (Membran-Pfad)
-- **Trigger:** Operator-Wort für den `static/membrane.html`-Edit.
-- **Lage:** (gemessen 2026-10-06, River 105 via `sread static/membrane.html:456-461`) `boot()`
-  fetcht die drei `ephemeris_de440_<body>.bin` über `BODIES.map(async …)` **ohne Label**
-  (`fetchBytes(path)`), während der Stars-Fetch ein Label trägt (`:434`). Der Status bleibt
-  deshalb auf `anchoring bodies…` (`:452`) stehen, solange die drei Fetches laufen — derselbe
-  eingefrorene Text, den der Operator als Hänger las. `fetchBytes` malt nur mit Label Fortschritt
-  (`:100`). Die `.bin` sind groß (Survey: `cache/omegaflow_eph_sun.bin` 193.7 MB) → langer
-  Fetch ohne sichtbare Aktivität.
-- **Blockade:** `static/membrane.html` ist Membran-/Fenster-Pfad — kein Edit ohne Operator-Wort.
-- **Braucht:** Operator-Wort; Edge liegt bereit: `fetchBytes("/ephemeris_de440_" + body + ".bin",
-  "anchoring " + body + "…")` (Fortschritt je Körper).
+### Membran — Boot-Instrumentierung (Fix gebaut) + progressives Laden (operator-gebunden)
+- **Status:** eigen (Fix gebaut) | **Bindung:** eigen (Membran-Pfad)
+- **Trigger:** — (Fix in diesem Atom).
+- **Lage:** (gemessen 2026-10-06, River 105) `boot()` fetcht die drei
+  `ephemeris_de440_<body>.bin` über `BODIES.map(async …)`; `fetchBytes` malt Fortschritt nur
+  mit Label. Die `.bin` sind groß (Survey: `cache/omegaflow_eph_sun.bin` 193.7 MB).
+  **Gebaut** (Rat (b) + Claude + GLM): aggregierter Fortschritt Σgot/Σtotal auf einer Zeile,
+  Stall-Kriterium („no bytes for N s" aus dem Byte-Alter), sichtbarer Fehler-/Absent-Pfad
+  (`static/membrane.html` `paintAnchor` + `boot()`) — die drei Labels rasen nicht mehr.
+- **Blockade:** Rest — progressives Laden (Sterne zuerst rendern, Sonne nachladen) und jede
+  Änderung der Daten-Lieferung (Dezimierung/Range/Format) sind operator-gebunden (Claude: was
+  den Operator-Blick verschiebt, braucht Wort); der Gate-Pass („Sonne sichtbar") bleibt
+  Operator-Urteil.
+- **Braucht:** Operator-Wort für progressives Laden; ein Playwright-Lauf mit langem Timeout
+  bis zur gerenderten Wolke (Ready-Flag / Canvas nicht schwarz) ist die noch fehlende Messung
+  (Claude: die zwei Läufe endeten in der Stars-Phase).
 
 ### Agnosis — Membran-Trio (Rest (a))
 - **Status:** wartend (fremd) | **Bindung:** eigen (cross-line: Mycelium, CI)
@@ -187,10 +193,26 @@ council + Schwarm-Stimmen):
   (operator-gebunden).
 - **Nicht verfügbar (benannt, kein Polster):** voice-zai (Rate-Limit), voice-zen
   (Free-Tier-Grenze). Zweiter Versuch gescheitert; kein Polling.
+- **Claude + GLM (Operator-Online-Chat, 2026-10-06, gefaltet):**
+  - F1 beide **(b)**: Label je Körper genügt nicht; aggregierter Fortschritt + Byte-Alter
+    (Stall) + sichtbarer Fehlerpfad (404/Abort darf nicht als Standbild enden); Content-Length
+    kann die komprimierte Länge nennen (Prozent-Caveat). Claude scharf: die zwei
+    Playwright-Läufe endeten in der Stars-Phase → die Diagnose ist **Inferenz, kein Befund**;
+    das Gate gilt erst, wenn ein Lauf die gerenderte Wolke samt Sonne erreicht; ~580 MB vor
+    dem ersten Pixel sind das strukturelle Problem (Sterne zuerst, Sonne nachladen =
+    operator-gebunden).
+  - F2: GLM **(a)** kein Riss (die Bias-Spalte wendet die Korrektur auf nichts an, sie zeigt
+    sie nur); Claude **(c)** Lesart (i) kanonisch, aber der Satz ist unscharf — da `:2934`
+    `TE_NEFF_THRESHOLD` liest, genügt der Doku-Zusatz „außer der Report-Site-Bias-Spalte, rohe
+    TE unverändert" (optional).
+  - F3 beide **(c)**: Kante nach **Wirkung**. Autonom: Boot-Instrumentierung (ändert keinen
+    Szenen-Pixel, rücknehmbar); operator-gebunden: Darstellung/Gaze/Kamera/Fenster und
+    progressives Laden/Data-Lieferung.
 
 Die Stemmen sind eine **zweite Stimme** (Fund ist eine Behauptung bis zum Baumtest): F2
-trägt die Rat-Lesart am gemessenen Report (`raw TE untouched`). F1 und F3 warten auf das
-Operator-Wort.
+trägt die Rat-Lesart am gemessenen Report (`raw TE untouched`). F1 ist nach der
+übereinstimmenden (b)-Lesart **gebaut** (Instrumentierung); der progressive Render und der
+Gate-Pass warten auf das Operator-Wort.
 
 ## An mycelium
 
@@ -215,13 +237,15 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `docs/handover/handover-2026-10-06-river-folge105.md`
 - `docs/handover/archiv/handover-2026-10-06-river-folge104.md` (Move aus `docs/handover/`)
+- `static/membrane.html` (Boot-Instrumentierung: aggregierter Fortschritt + Stall-Alter +
+  Absent/Fehler-Pfad; Vanilla JS, kein Szenen-Pixel)
 
-Verifikation/Dispatches: kein Rust-Eingriff in diesem Atom (alle eigenen Punkte
-trigger-gebunden). `register_lookup --fired river` = `em-apertur` FIRED_UNGEMESSEN
+Verifikation/Dispatches: kein Rust-Eingriff; `static/membrane.html` gelesen und editiert
+(Vanilla JS). `register_lookup --fired river` = `em-apertur` FIRED_UNGEMESSEN
 (Trigger `ci-check` pending, nicht gefeuert); `--stale river --persist 3` = 0;
 `--addressed river` = 2 (future-183, mycelium-240), gefaltet; `open_points_check
 docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-citations;
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.0734 — Session-Burn (`session_burn`: eigene Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.0734, inkl. Rat $0.0064 + Schwarm; Runde total 0.5318 → 0.7278; gemessen 2026-10-06)
+## Burn: open 0.0000 · close 0.0935 — Session-Burn (`session_burn`: eigene Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.0935, inkl. Rat $0.0064 + Schwarm; Runde total 0.5318 → 0.7825; gemessen 2026-10-06)

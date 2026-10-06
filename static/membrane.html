@@ -78,7 +78,7 @@ function pct(got, total) {
 // Stream the body and, when a label is given, paint the measured progress each
 // chunk. The content-length may name the compressed size, so the share is
 // clamped; silence is the honest state when the header is absent.
-async function fetchBytes(path, label) {
+async function fetchBytes(path, label, onProgress) {
   const r = await fetch(path);
   if (!r.ok) {
     return null;
@@ -97,7 +97,9 @@ async function fetchBytes(path, label) {
     }
     chunks.push(value);
     got += value.length;
-    if (label) {
+    if (onProgress) {
+      onProgress(got, total);
+    } else if (label) {
       status(label + pct(got, total));
     }
   }
@@ -108,6 +110,24 @@ async function fetchBytes(path, label) {
     off += c.length;
   }
   return out;
+}
+
+// The three ephemerides stream in parallel; three labels writing one status node
+// would race. Aggregate the decoded bytes into one line and name a stalled
+// stream by its silent seconds — a standing percentage alone cannot tell a slow
+// download from a hung one. The ticker keeps the age visible between chunks.
+const anchorProgress = new Map();
+let anchorLastByte = performance.now();
+function paintAnchor() {
+  let got = 0;
+  let total = 0;
+  for (const p of anchorProgress.values()) {
+    got += p.got;
+    total += p.total;
+  }
+  const age = Math.round((performance.now() - anchorLastByte) / 1000);
+  const line = "anchoring bodies…" + pct(got, total);
+  status(age >= 20 ? line + " · no bytes for " + age + " s" : line);
 }
 
 // The flat WASM response (26 × f64 per record) into the wire's two GPU planes:
@@ -452,19 +472,42 @@ async function boot() {
   status("anchoring bodies…");
   await paint();
   // The three ephemerides are independent: fetch them together instead of in a
-  // chain, so the wait is the slowest body, not their sum.
+  // chain, so the wait is the slowest body, not their sum. Their progress is
+  // aggregated on one line; a stalled stream is named by its silent seconds,
+  // an absent body is named instead of leaving a frozen status.
+  const anchorTimer = setInterval(paintAnchor, 1000);
   const ephs = await Promise.all(
     BODIES.map(async (body) => {
-      const eph = await fetchBytes("/ephemeris_de440_" + body + ".bin");
-      return eph ? { body, eph } : null;
+      const p = { got: 0, total: 0 };
+      anchorProgress.set(body, p);
+      try {
+        const eph = await fetchBytes(
+          "/ephemeris_de440_" + body + ".bin",
+          null,
+          (got, total) => {
+            p.got = got;
+            p.total = total;
+            anchorLastByte = performance.now();
+            paintAnchor();
+          }
+        );
+        return eph ? { body, eph } : { body, absent: true };
+      } catch {
+        return { body, failed: true };
+      }
     })
   );
+  clearInterval(anchorTimer);
   for (const e of ephs) {
-    if (e) {
+    if (e.eph) {
       lookup.load_ephemeris(e.body, e.eph);
     }
   }
-  status("starting GPU…");
+  const missing = ephs.filter((e) => !e.eph).map((e) => e.body);
+  if (missing.length) {
+    console.warn("ephemerides absent: " + missing.join(", "));
+  }
+  status("starting GPU…" + (missing.length ? " (no anchor for " + missing.join(", ") + ")" : ""));
   await paint();
   const ok = await initGPU();
   if (!ok) {
