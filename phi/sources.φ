@@ -442,22 +442,6 @@ at sun
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
-url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4657_stage.txt
-format dhm_stage
-origin https://dhm.gov.np/hydrology/hms-Single/4657
-compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
-on earth 28.098163 85.318589 0
-ttl 3600
-field dhm_4657_stage dhm_4657_stage_m inverse-square gravity m 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4661_stage.txt
-format dhm_stage
-origin https://dhm.gov.np/hydrology/hms-Single/4661
-compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
-on earth 27.82 84.45 0
-ttl 3600
-field dhm_4661_stage dhm_4661_stage_m inverse-square gravity m 3600 0.0 0.0
-
 url https://www.jma.go.jp/bosai/quake/data/list.json
 ttl 600
 on earth 35.68 139.69 0
@@ -744,6 +728,14 @@ stations_lon geometry.coordinates.0
 fanout 40
 first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
+format openmeteo_pollen_axis_value_text
+origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=52.52&longitude=13.405&hourly=birch_pollen&timezone=UTC
+compiler tools/harvest/src/bin/openmeteo_pollen_compiler.rs
+on earth 52.52 13.405 0
+ttl 3600
+field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/amda.irap.omp.eu/rpw_efield.bin
 format rpw_efield
 origin https://amda.irap.omp.eu/service/hapi
@@ -822,6 +814,22 @@ lat 3
 lon 2
 gate wu_422 -50.0 50.0
 field 4 tao_wnd_zonal_m_s patch-levy advective m/s 86400.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4657_stage.txt
+format dhm_stage
+origin https://dhm.gov.np/hydrology/hms-Single/4657
+compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
+on earth 28.098163 85.318589 0
+ttl 3600
+field dhm_4657_stage dhm_4657_stage_m inverse-square gravity m 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4661_stage.txt
+format dhm_stage
+origin https://dhm.gov.np/hydrology/hms-Single/4661
+compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
+on earth 27.82 84.45 0
+ttl 3600
+field dhm_4661_stage dhm_4661_stage_m inverse-square gravity m 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
 origin https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
@@ -1310,14 +1318,6 @@ header Authorization {EARTHDATA_EDL_TOKEN}
 at earth
 field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_tec_gim.bin
-ttl 86400
-format ionex
-header Authorization {EARTHDATA_EDL_TOKEN}
-origin https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
-at earth
-field tec ionex_tec inverse-square em tecu 7200 0.0 0.0
-
 url https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
 ttl 86400
 on earth 0 0 0
@@ -1408,17 +1408,144 @@ epoch 0
 field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.0 0.0
 field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/fits.gsfc.nasa.gov/WFPC2u5780205r_c0fx.fits
-format reference
-origin https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
-sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
-ttl 86400
-
 url https://github.com/omegaflow/sources/releases/download/anderson-residuals/anderson_residuals.tsv
 format reference
 origin https://arxiv.org/abs/0806.4159 + https://web.archive.org/web/20081016172147/http://www2.phys.canterbury.ac.nz/editorial/Anderson2008.pdf
 sha256 093e9e47b2d5f12fcccd9387ecc925512013af7398f188360fccfb5e029ddfb6
 ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
+format epa_aqs_pm25
+origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
+compiler tools/harvest/src/bin/epa_aqs_compiler.rs
+on earth 0 0 0
+ttl 86400
+field epa_aqs_pm25_ug_m3 epa_aqs_pm25_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_voc.bin
+format epa_aqs_voc
+origin https://aqs.epa.gov/aqsweb/airdata/daily_VOCS_2024.zip
+compiler tools/harvest/src/bin/epa_aqs_compiler.rs
+on earth 0 0 0
+ttl 86400
+field epa_aqs_voc_42153 epa_aqs_voc_42153 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43000 epa_aqs_voc_43000 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43102 epa_aqs_voc_43102 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43202 epa_aqs_voc_43202 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43203 epa_aqs_voc_43203 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43204 epa_aqs_voc_43204 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43205 epa_aqs_voc_43205 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43206 epa_aqs_voc_43206 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43207 epa_aqs_voc_43207 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43208 epa_aqs_voc_43208 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43209 epa_aqs_voc_43209 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43212 epa_aqs_voc_43212 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43214 epa_aqs_voc_43214 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43216 epa_aqs_voc_43216 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43217 epa_aqs_voc_43217 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43218 epa_aqs_voc_43218 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43220 epa_aqs_voc_43220 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43221 epa_aqs_voc_43221 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43224 epa_aqs_voc_43224 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43226 epa_aqs_voc_43226 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43227 epa_aqs_voc_43227 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43230 epa_aqs_voc_43230 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43231 epa_aqs_voc_43231 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43232 epa_aqs_voc_43232 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43233 epa_aqs_voc_43233 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43235 epa_aqs_voc_43235 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43238 epa_aqs_voc_43238 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43242 epa_aqs_voc_43242 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43243 epa_aqs_voc_43243 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43244 epa_aqs_voc_43244 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43247 epa_aqs_voc_43247 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43248 epa_aqs_voc_43248 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43249 epa_aqs_voc_43249 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43250 epa_aqs_voc_43250 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43252 epa_aqs_voc_43252 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43253 epa_aqs_voc_43253 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43256 epa_aqs_voc_43256 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43257 epa_aqs_voc_43257 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43261 epa_aqs_voc_43261 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43262 epa_aqs_voc_43262 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43263 epa_aqs_voc_43263 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43280 epa_aqs_voc_43280 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43284 epa_aqs_voc_43284 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43285 epa_aqs_voc_43285 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43291 epa_aqs_voc_43291 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43335 epa_aqs_voc_43335 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43372 epa_aqs_voc_43372 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43373 epa_aqs_voc_43373 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43396 epa_aqs_voc_43396 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43438 epa_aqs_voc_43438 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43441 epa_aqs_voc_43441 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43447 epa_aqs_voc_43447 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43502 epa_aqs_voc_43502 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43503 epa_aqs_voc_43503 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43505 epa_aqs_voc_43505 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43509 epa_aqs_voc_43509 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43551 epa_aqs_voc_43551 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43552 epa_aqs_voc_43552 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43560 epa_aqs_voc_43560 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43702 epa_aqs_voc_43702 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43704 epa_aqs_voc_43704 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43801 epa_aqs_voc_43801 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43802 epa_aqs_voc_43802 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43803 epa_aqs_voc_43803 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43804 epa_aqs_voc_43804 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43806 epa_aqs_voc_43806 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43811 epa_aqs_voc_43811 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43812 epa_aqs_voc_43812 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43813 epa_aqs_voc_43813 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43814 epa_aqs_voc_43814 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43815 epa_aqs_voc_43815 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43817 epa_aqs_voc_43817 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43818 epa_aqs_voc_43818 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43819 epa_aqs_voc_43819 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43820 epa_aqs_voc_43820 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43821 epa_aqs_voc_43821 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43823 epa_aqs_voc_43823 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43824 epa_aqs_voc_43824 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43826 epa_aqs_voc_43826 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43828 epa_aqs_voc_43828 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43829 epa_aqs_voc_43829 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43830 epa_aqs_voc_43830 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43831 epa_aqs_voc_43831 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43832 epa_aqs_voc_43832 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43835 epa_aqs_voc_43835 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43836 epa_aqs_voc_43836 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43838 epa_aqs_voc_43838 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43839 epa_aqs_voc_43839 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43843 epa_aqs_voc_43843 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43844 epa_aqs_voc_43844 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43852 epa_aqs_voc_43852 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43860 epa_aqs_voc_43860 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43861 epa_aqs_voc_43861 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43954 epa_aqs_voc_43954 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_43960 epa_aqs_voc_43960 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45109 epa_aqs_voc_45109 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45201 epa_aqs_voc_45201 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45202 epa_aqs_voc_45202 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45203 epa_aqs_voc_45203 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45204 epa_aqs_voc_45204 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45207 epa_aqs_voc_45207 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45208 epa_aqs_voc_45208 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45209 epa_aqs_voc_45209 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45210 epa_aqs_voc_45210 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45211 epa_aqs_voc_45211 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45212 epa_aqs_voc_45212 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45213 epa_aqs_voc_45213 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45218 epa_aqs_voc_45218 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45219 epa_aqs_voc_45219 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45220 epa_aqs_voc_45220 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45225 epa_aqs_voc_45225 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45801 epa_aqs_voc_45801 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45805 epa_aqs_voc_45805 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45806 epa_aqs_voc_45806 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45807 epa_aqs_voc_45807 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45809 epa_aqs_voc_45809 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_45810 epa_aqs_voc_45810 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
+field epa_aqs_voc_46201 epa_aqs_voc_46201 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin
 format swot_l2_lr_ssh
@@ -1455,6 +1582,14 @@ field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_tec_gim.bin
+ttl 86400
+format ionex
+header Authorization {EARTHDATA_EDL_TOKEN}
+origin https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
+at earth
+field tec ionex_tec inverse-square em tecu 7200 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 format catalog_des_y6
@@ -1496,6 +1631,15 @@ at earth
 ttl 86400
 field result_in_si radnet_activity_bq_l inverse-square em Bq/L 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin
+format black_marble_vnp46a3_nightlight
+origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
+compiler tools/harvest/src/bin/vnp46a3_compiler.rs
+header Authorization {EARTHDATA_EDL_TOKEN}
+on earth 0 0 0
+ttl 86400
+field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
 format emodnet_hfr
 origin https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
@@ -1512,6 +1656,12 @@ compiler tools/harvest/src/bin/exofop_compiler.rs
 at sun
 ttl 86400
 field depth_ppm exofop_toi_transit_depth_ppm inverse-square em ppm 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/fits.gsfc.nasa.gov/WFPC2u5780205r_c0fx.fits
+format reference
+origin https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
+sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
+ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
 format ephemeris_epm
@@ -1846,6 +1996,14 @@ origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
 compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gpm_ku.bin
+format jaxa_gpm_ku
+origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
+compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
+at earth
+ttl 86400
+field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w inverse-square em W 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
 format intermagnet_dbdt
@@ -3603,6 +3761,20 @@ ttl 86400
 field bidsleep_mx_ms2 bidsleep_mx_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 field bidsleep_my_ms2 bidsleep_my_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 field bidsleep_mz_ms2 bidsleep_mz_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/power.larc.nasa.gov/nasa_power_t2m.txt
+format nasa_power_t2m_axis_value_text
+origin https://power.larc.nasa.gov/api/temporal/daily/point
+compiler tools/harvest/src/bin/nasa_power_compiler.rs
+on earth 52.5 13.4 0
+ttl 86400
+field nasa_power_t2m nasa_power_t2m_k exponential-decay thermal K 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
+format reference
+origin https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
+sha256 66892fad7075c91ac2ea8bc4e129119b0cd55f796835c990fec88e840f554ae5
+ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_orbit.bin
 format orbit_bin
@@ -7252,12 +7424,6 @@ dec dec
 z z
 field z ned_redshift_z inverse-linear em 1 86400 0.0 0.0 aperture:none
 
-url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
-format reference
-origin https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
-sha256 66892fad7075c91ac2ea8bc4e129119b0cd55f796835c990fec88e840f554ae5
-ttl 86400
-
 url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat
 format reference
 sha256 1cb0fc379ef066afdc2ffd1857681cc478024570d8a3eba284fb645775198cf8
@@ -9215,14 +9381,6 @@ compiler tools/harvest/src/bin/fink_cutout_compiler.rs
 at sun
 ttl 604800
 field fink_cutout_flux_njy fink_cutout_flux_njy inverse-square em nJy 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gpm_ku.bin
-format jaxa_gpm_ku
-origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
-compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
-at earth
-ttl 86400
-field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w inverse-square em W 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin
 format agrav
@@ -17499,172 +17657,6 @@ on earth 60.50 24.65 0
 ttl 604800
 field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin
-format black_marble_vnp46a3_nightlight
-origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
-compiler tools/harvest/src/bin/vnp46a3_compiler.rs
-header Authorization {EARTHDATA_EDL_TOKEN}
-on earth 0 0 0
-ttl 86400
-field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
-format openmeteo_pollen_axis_value_text
-origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=52.52&longitude=13.405&hourly=birch_pollen&timezone=UTC
-compiler tools/harvest/src/bin/openmeteo_pollen_compiler.rs
-on earth 52.52 13.405 0
-ttl 3600
-field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
-format ghsl_built_s
-origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
-compiler tools/harvest/src/bin/ghsl_compiler.rs
-on earth 0 0 0
-ttl 31536000
-field ghsl_built_surface_m2 ghsl_built_surface_m2 gaussian-inverse-square diffusion m2 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
-format epa_aqs_pm25
-origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
-compiler tools/harvest/src/bin/epa_aqs_compiler.rs
-on earth 0 0 0
-ttl 86400
-field epa_aqs_pm25_ug_m3 epa_aqs_pm25_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_voc.bin
-format epa_aqs_voc
-origin https://aqs.epa.gov/aqsweb/airdata/daily_VOCS_2024.zip
-compiler tools/harvest/src/bin/epa_aqs_compiler.rs
-on earth 0 0 0
-ttl 86400
-field epa_aqs_voc_42153 epa_aqs_voc_42153 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43000 epa_aqs_voc_43000 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43102 epa_aqs_voc_43102 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43202 epa_aqs_voc_43202 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43203 epa_aqs_voc_43203 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43204 epa_aqs_voc_43204 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43205 epa_aqs_voc_43205 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43206 epa_aqs_voc_43206 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43207 epa_aqs_voc_43207 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43208 epa_aqs_voc_43208 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43209 epa_aqs_voc_43209 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43212 epa_aqs_voc_43212 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43214 epa_aqs_voc_43214 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43216 epa_aqs_voc_43216 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43217 epa_aqs_voc_43217 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43218 epa_aqs_voc_43218 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43220 epa_aqs_voc_43220 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43221 epa_aqs_voc_43221 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43224 epa_aqs_voc_43224 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43226 epa_aqs_voc_43226 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43227 epa_aqs_voc_43227 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43230 epa_aqs_voc_43230 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43231 epa_aqs_voc_43231 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43232 epa_aqs_voc_43232 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43233 epa_aqs_voc_43233 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43235 epa_aqs_voc_43235 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43238 epa_aqs_voc_43238 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43242 epa_aqs_voc_43242 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43243 epa_aqs_voc_43243 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43244 epa_aqs_voc_43244 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43247 epa_aqs_voc_43247 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43248 epa_aqs_voc_43248 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43249 epa_aqs_voc_43249 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43250 epa_aqs_voc_43250 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43252 epa_aqs_voc_43252 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43253 epa_aqs_voc_43253 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43256 epa_aqs_voc_43256 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43257 epa_aqs_voc_43257 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43261 epa_aqs_voc_43261 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43262 epa_aqs_voc_43262 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43263 epa_aqs_voc_43263 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43280 epa_aqs_voc_43280 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43284 epa_aqs_voc_43284 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43285 epa_aqs_voc_43285 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43291 epa_aqs_voc_43291 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43335 epa_aqs_voc_43335 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43372 epa_aqs_voc_43372 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43373 epa_aqs_voc_43373 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43396 epa_aqs_voc_43396 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43438 epa_aqs_voc_43438 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43441 epa_aqs_voc_43441 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43447 epa_aqs_voc_43447 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43502 epa_aqs_voc_43502 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43503 epa_aqs_voc_43503 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43505 epa_aqs_voc_43505 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43509 epa_aqs_voc_43509 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43551 epa_aqs_voc_43551 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43552 epa_aqs_voc_43552 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43560 epa_aqs_voc_43560 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43702 epa_aqs_voc_43702 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43704 epa_aqs_voc_43704 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43801 epa_aqs_voc_43801 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43802 epa_aqs_voc_43802 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43803 epa_aqs_voc_43803 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43804 epa_aqs_voc_43804 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43806 epa_aqs_voc_43806 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43811 epa_aqs_voc_43811 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43812 epa_aqs_voc_43812 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43813 epa_aqs_voc_43813 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43814 epa_aqs_voc_43814 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43815 epa_aqs_voc_43815 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43817 epa_aqs_voc_43817 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43818 epa_aqs_voc_43818 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43819 epa_aqs_voc_43819 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43820 epa_aqs_voc_43820 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43821 epa_aqs_voc_43821 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43823 epa_aqs_voc_43823 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43824 epa_aqs_voc_43824 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43826 epa_aqs_voc_43826 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43828 epa_aqs_voc_43828 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43829 epa_aqs_voc_43829 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43830 epa_aqs_voc_43830 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43831 epa_aqs_voc_43831 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43832 epa_aqs_voc_43832 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43835 epa_aqs_voc_43835 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43836 epa_aqs_voc_43836 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43838 epa_aqs_voc_43838 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43839 epa_aqs_voc_43839 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43843 epa_aqs_voc_43843 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43844 epa_aqs_voc_43844 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43852 epa_aqs_voc_43852 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43860 epa_aqs_voc_43860 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43861 epa_aqs_voc_43861 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43954 epa_aqs_voc_43954 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_43960 epa_aqs_voc_43960 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45109 epa_aqs_voc_45109 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45201 epa_aqs_voc_45201 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45202 epa_aqs_voc_45202 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45203 epa_aqs_voc_45203 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45204 epa_aqs_voc_45204 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45207 epa_aqs_voc_45207 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45208 epa_aqs_voc_45208 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45209 epa_aqs_voc_45209 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45210 epa_aqs_voc_45210 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45211 epa_aqs_voc_45211 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45212 epa_aqs_voc_45212 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45213 epa_aqs_voc_45213 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45218 epa_aqs_voc_45218 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45219 epa_aqs_voc_45219 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45220 epa_aqs_voc_45220 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45225 epa_aqs_voc_45225 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45801 epa_aqs_voc_45801 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45805 epa_aqs_voc_45805 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45806 epa_aqs_voc_45806 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45807 epa_aqs_voc_45807 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45809 epa_aqs_voc_45809 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_45810 epa_aqs_voc_45810 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-field epa_aqs_voc_46201 epa_aqs_voc_46201 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/power.larc.nasa.gov/nasa_power_t2m.txt
-format nasa_power_t2m_axis_value_text
-origin https://power.larc.nasa.gov/api/temporal/daily/point
-compiler tools/harvest/src/bin/nasa_power_compiler.rs
-on earth 52.5 13.4 0
-ttl 86400
-field nasa_power_t2m nasa_power_t2m_k exponential-decay thermal K 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
@@ -18776,6 +18768,13 @@ sha256 3e7a532f56f92f9d4d126268689486b038bd96f7712852d3c6c6c49250911820
 at earth
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/kyoto_pressure.bin
+format kyoto_pressure
+ttl 604800
+origin https://zenodo.org/records/8098323/files/data.zip
+at earth
+field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
 compiler tools/harvest/src/bin/quaoar_occlt_compiler.rs
@@ -18984,13 +18983,6 @@ cmap .
 ra ra
 dec dec
 field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/kyoto_pressure.bin
-format kyoto_pressure
-ttl 604800
-origin https://zenodo.org/records/8098323/files/data.zip
-at earth
-field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_8day.manifest
 format modis_lst_cmg
@@ -19397,6 +19389,14 @@ url https://github.com/omegaflow/sources/releases/download/isla.esac.esa.int/tap
 format reference
 origin https://isla.esac.esa.int
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
+format ghsl_built_s
+origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
+compiler tools/harvest/src/bin/ghsl_compiler.rs
+on earth 0 0 0
+ttl 31536000
+field ghsl_built_surface_m2 ghsl_built_surface_m2 gaussian-inverse-square diffusion m2 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
 origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
@@ -27598,6 +27598,12 @@ compiler tools/harvest/src/bin/kplo_spice_compiler.rs
 at kplo
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
+origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
+compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
+format zcta_gazetteer
+no-cadence
+
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
 no-cadence
 format text
@@ -27616,9 +27622,3 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
-origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
-compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
-format zcta_gazetteer
-no-cadence
