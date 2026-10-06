@@ -1,0 +1,49 @@
+name: pds3-ring-occ-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 5 6 * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pds3-ring-occ:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the pds-rings.seti.org release exists on the CDN
+        run: |
+          if ! gh release view pds-rings.seti.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-rings.seti.org --repo omegaflow/sources \
+              --title "pds-rings.seti.org" \
+              --notes "Voyager ring-occultation EDITDATA series compiled for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Compile the Voyager ring-occultation bins and upload
+        run: |
+          cargo run -p omegaflow-harvest --release --bin pds3_ring_occ_compiler -- \
+            --out data/pds-rings.seti.org/pds3_ring_occ.bin --ci-mode
+      - name: Verify the registered pds-rings.seti.org pds3_ring_occ assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh pds-rings.seti.org pds3_ring_occ)
+          if [ -z "$expected" ]; then
+            echo "no pds3_ring_occ asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view pds-rings.seti.org --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered pds-rings.seti.org pds3_ring_occ assets all present"

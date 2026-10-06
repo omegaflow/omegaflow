@@ -1310,10 +1310,11 @@ header Authorization {EARTHDATA_EDL_TOKEN}
 at earth
 field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
 
-url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
+url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_tec_gim.bin
 ttl 86400
 format ionex
 header Authorization {EARTHDATA_EDL_TOKEN}
+origin https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{yday}/IGS0OPSRAP_{year}{yday}0000_01D_02H_GIM.INX.gz
 at earth
 field tec ionex_tec inverse-square em tecu 7200 0.0 0.0
 
