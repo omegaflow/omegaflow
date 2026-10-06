@@ -1,5 +1,6 @@
 use omegaflow::archivar::quaoar_occlt::{ZipEntry, zip_entries, zip_extract};
 use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::archivar::zcta;
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use std::process::Command;
@@ -16,6 +17,8 @@ const QUALIFIER_FIELD: &str = "QUALIFIER";
 const SUBSTANCE_FIELD: &str = "SUBSTANCE";
 const SIC_FIELD: &str = "SIC_CODE";
 const NAICS_FIELD: &str = "NAICS_CODE";
+const ZIP_FIELD: &str = "ZIP_CODE";
+const GAZETTEER_ASSET: &str = "zcta_gazetteer.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -206,6 +209,7 @@ struct Sample {
     unix: f64,
     value: f64,
     quantity: SiQuantity,
+    pos: Option<(f64, f64)>,
 }
 
 struct ParseCounts {
@@ -215,12 +219,15 @@ struct ParseCounts {
     result_absent: usize,
     censored_absent: usize,
     unit_absent: usize,
+    geocoded: usize,
+    zip_absent: usize,
 }
 
 fn parse_cehd(
     text: &str,
     stride: usize,
     limit: usize,
+    gaz: &[zcta::Zcta],
 ) -> Result<(Vec<Sample>, ParseCounts), String> {
     let mut lines = text.lines().filter(|l| !l.trim().is_empty());
     let header = lines
@@ -238,6 +245,7 @@ fn parse_cehd(
     require_field(&fields, SUBSTANCE_FIELD)?;
     require_field(&fields, SIC_FIELD)?;
     require_field(&fields, NAICS_FIELD)?;
+    let zip_idx = field_index(&fields, ZIP_FIELD);
 
     let mut samples: Vec<Sample> = Vec::new();
     let mut counts = ParseCounts {
@@ -247,6 +255,8 @@ fn parse_cehd(
         result_absent: 0,
         censored_absent: 0,
         unit_absent: 0,
+        geocoded: 0,
+        zip_absent: 0,
     };
     for (row, line) in lines.enumerate() {
         counts.rows += 1;
@@ -274,10 +284,19 @@ fn parse_cehd(
             counts.result_absent += 1;
             continue;
         };
+        let pos = zip_idx
+            .and_then(|i| cells.get(i))
+            .and_then(|z| zcta::lookup(gaz, z));
+        if pos.is_some() {
+            counts.geocoded += 1;
+        } else {
+            counts.zip_absent += 1;
+        }
         samples.push(Sample {
             unix,
             value: to_si(result, &unit),
             quantity: unit.quantity,
+            pos,
         });
         counts.carried += 1;
         if samples.len() >= limit {
@@ -337,6 +356,30 @@ fn zip_source(args: &[String]) -> String {
     }
 }
 
+fn load_gazetteer(args: &[String]) -> Vec<zcta::Zcta> {
+    let path = match arg_value(args, "--gazetteer") {
+        Some(p) if !p.is_empty() => p,
+        _ => format!("data/{}/{GAZETTEER_ASSET}", zcta::NETLOC),
+    };
+    match std::fs::read(&path) {
+        Ok(bytes) => match zcta::parse_bin(&bytes) {
+            Some(rows) => rows,
+            None => {
+                eprintln!(
+                    "osha_cehd_compiler: {path} parses void — every position stays pending (no geocode)"
+                );
+                Vec::new()
+            }
+        },
+        Err(_) => {
+            eprintln!(
+                "osha_cehd_compiler: {path} stays unread — every position stays pending (no geocode)"
+            );
+            Vec::new()
+        }
+    }
+}
+
 fn inspect(source: &str, bytes: &[u8]) -> Result<(), String> {
     let entries = zip_entries(bytes)
         .ok_or_else(|| format!("{source}: central directory void — the zip stays unread"))?;
@@ -372,7 +415,8 @@ fn run(args: &[String]) -> Result<(), String> {
     let raw = zip_extract(&bytes, member)
         .ok_or_else(|| format!("{}: entry extract void", member.name))?;
     let table = String::from_utf8_lossy(&raw);
-    let (samples, counts) = parse_cehd(&table, stride, limit)?;
+    let gaz = load_gazetteer(args);
+    let (samples, counts) = parse_cehd(&table, stride, limit, &gaz)?;
     if samples.is_empty() {
         return Err(format!(
             "{source}: no row with a measured date, uncensored {RESULT_FIELD} and a measured {UNIT_FIELD} — the artifact stays unwritten (0 honored)"
@@ -389,9 +433,23 @@ fn run(args: &[String]) -> Result<(), String> {
     );
     text.push_str("#   P = ppm (vol) -> amount fraction (1); F = fibers/cc -> number density (1/m3); % -> fraction (1);\n");
     text.push_str("# unit codes N, BM/S, AAAAA and E carry no measured definition in the source -> absent (pending unit->SI);\n");
-    text.push_str("# positions are absent in the source: the geocode stays pending, never 0.0\n");
+    text.push_str("#   position = 2020 ZCTA centroid resolved from ZIP_CODE via the Census gazetteer (INTPTLAT/INTPTLONG);\n");
+    text.push_str("#   an unresolved ZIP carries `-`, never 0.0\n");
     for s in &samples {
-        text.push_str(&format!("{} {} {}\n", s.unix, s.value, s.quantity.label()));
+        match s.pos {
+            Some((lat, lon)) => text.push_str(&format!(
+                "{} {} {} {lat} {lon}\n",
+                s.unix,
+                s.value,
+                s.quantity.label()
+            )),
+            None => text.push_str(&format!(
+                "{} {} {} - -\n",
+                s.unix,
+                s.value,
+                s.quantity.label()
+            )),
+        }
     }
 
     let netloc = match arg_value(args, "--netloc") {
@@ -414,13 +472,15 @@ fn run(args: &[String]) -> Result<(), String> {
     println!("format {format}");
     println!("sha256 {}", sha256_hex(text.as_bytes()));
     eprintln!(
-        "{out}: {} carried of {} rows ({} date-absent, {} result-absent, {} censored, {} unit-absent), {} B",
+        "{out}: {} carried of {} rows ({} date-absent, {} result-absent, {} censored, {} unit-absent, {} geocoded, {} zip-absent), {} B",
         counts.carried,
         counts.rows,
         counts.date_absent,
         counts.result_absent,
         counts.censored_absent,
         counts.unit_absent,
+        counts.geocoded,
+        counts.zip_absent,
         text.len()
     );
     if ci_mode && !upload_release(&netloc, &out) {
@@ -435,7 +495,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: osha_cehd_compiler [--input <zip-path>] [--url <zip-url>] [--inspect] [--member <name>] [--netloc <netloc>] [--stride N] [--limit N] [--out <path>] [--ci-mode]"
+            "usage: osha_cehd_compiler [--input <zip-path>] [--url <zip-url>] [--inspect] [--member <name>] [--netloc <netloc>] [--stride N] [--limit N] [--gazetteer <bin>] [--out <path>] [--ci-mode]"
         );
         eprintln!(
             "  reads the US OSHA CEHD health-samples zip; only the member sample_data_2019.csv is extracted"
@@ -452,7 +512,7 @@ fn main() {
             "    N/BM/S/AAAAA/E carry no measured definition in the source -> absent (pending unit->SI)"
         );
         eprintln!(
-            "  rows without lat/lon: the geocode stays pending, never written as 0.0 (source carries no coordinates)"
+            "  position = 2020 ZCTA centroid resolved from ZIP_CODE via --gazetteer; an unresolved ZIP carries `-`, never 0.0"
         );
         eprintln!("  --limit bounds the emitted samples; --stride samples every Nth data row");
         eprintln!("  --ci-mode uploads the verified asset to the <netloc> CDN release");
@@ -549,7 +609,7 @@ mod tests {
 
     #[test]
     fn parse_cehd_carries_measured_units_with_their_si_scale() {
-        let (samples, counts) = parse_cehd(fixture(), 1, usize::MAX).unwrap();
+        let (samples, counts) = parse_cehd(fixture(), 1, usize::MAX, &[]).unwrap();
         assert_eq!(counts.rows, 5);
         assert_eq!(samples.len(), 4);
         assert_eq!(counts.censored_absent, 1);
@@ -562,19 +622,40 @@ mod tests {
 
     #[test]
     fn parse_cehd_does_not_fabricate_a_position() {
-        let (samples, _) = parse_cehd(fixture(), 1, usize::MAX).unwrap();
+        let (samples, _) = parse_cehd(fixture(), 1, usize::MAX, &[]).unwrap();
         assert!(
             samples
                 .iter()
-                .all(|s| s.unix.is_finite() && s.value.is_finite())
+                .all(|s| s.unix.is_finite() && s.value.is_finite() && s.pos.is_none())
         );
+    }
+
+    fn zip_fixture() -> &'static str {
+        "ZIP_CODE,DATE_SAMPLED,SAMPLE_RESULT,UNIT_OF_MEASUREMENT,QUALIFIER,SUBSTANCE,SIC_CODE,NAICS_CODE\n\
+21093,2019-FEB-01,0.5,M,,Lead,562910,562910\n\
+99999,2019-FEB-01,0.5,M,,Lead,562910,562910\n"
+    }
+
+    #[test]
+    fn a_zip_resolves_to_its_zcta_centroid_and_an_unmapped_zip_stays_absent() {
+        let gaz = vec![zcta::Zcta {
+            geoid: 21093,
+            lat: 39.4,
+            lon: -76.7,
+        }];
+        let (samples, counts) = parse_cehd(zip_fixture(), 1, usize::MAX, &gaz).unwrap();
+        assert_eq!(samples.len(), 2);
+        assert_eq!(samples[0].pos, Some((39.4, -76.7)));
+        assert_eq!(samples[1].pos, None);
+        assert_eq!(counts.geocoded, 1);
+        assert_eq!(counts.zip_absent, 1);
     }
 
     #[test]
     fn parse_cehd_honours_stride_and_limit() {
-        let (strided, _) = parse_cehd(fixture(), 2, usize::MAX).unwrap();
+        let (strided, _) = parse_cehd(fixture(), 2, usize::MAX, &[]).unwrap();
         assert!(strided.len() <= 2);
-        let (limited, _) = parse_cehd(fixture(), 1, 1).unwrap();
+        let (limited, _) = parse_cehd(fixture(), 1, 1, &[]).unwrap();
         assert_eq!(limited.len(), 1);
     }
 

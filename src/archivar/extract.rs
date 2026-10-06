@@ -180,6 +180,7 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
             )
         }
         "catalog_gaia_sso" => crate::gaia_sso::parse_bin(bytes).map(|bodies| bodies.len()),
+        "zcta_gazetteer" => crate::archivar::zcta::parse_bin(bytes).map(|rows| rows.len()),
         "mpcobs" => {
             if !bytes.len().is_multiple_of(MPCOBS_RECORD_STRIDE) {
                 return None;
