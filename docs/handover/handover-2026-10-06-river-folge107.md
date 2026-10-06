@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: c98763c60dff6d806771bf3cef3a5a39c1dc7b045b891f6dc2f68fc5caf042e1
+  sha256: 3791d4c533ccca6efb1b63a9016fe67f2fff34801a43d82f76b75fde6e240645
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)
@@ -277,8 +277,19 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   `anderson-residuals` = own-work; `almascience.org` / `amda.irap.omp.eu` / `api.sedoo.fr` =
   `pending` (keine Lizenz genannt).
 - **Blockade:** keine.
-- **Braucht:** die restlichen 159 Netlocs messen (flash-Batches in
-  `state/river/license-census.tsv`); das Ergebnis als `terms`-Zeilen an Mountain; Generator +
+- **Schwarm-Sonde (gemessen 2026-10-06):** der Census wurde an 14 `voice-*`-Subagenten verteilt.
+  **Ausgefallen:** `voice-qwen`/`voice-zai`/`voice-agnes`/`voice-kenari` = Cloudflare-Tageslimit
+  (10 000 Neurons, Too Many Requests); `voice-zen` = „free tier can only be used from within
+  OpenCode" → als Agent ungeeignet; `voice-dots` zu langsam. **Brauchbar (8):** gemini, inkling,
+  ling, nemotron, gptoss, kilo, deepseek, deepseek-pro. **Befund:** die Stimmen sind als
+  **Lead-Generator** brauchbar (Terms-URLs), aber **nicht als Messung** — sie raten plausibel
+  (z. B. `CC-BY-4.0` mit bloßer Domain-URL), wo sie nicht gemessen haben; mehrere kollidieren mit
+  der grind-flash-Messung (`alasky` ODbL vs. CC-BY; `le-systeme-solaire` CC-BY-NC-SA vs. CC-BY;
+  `opensensemap` PDDL vs. ODbL). Leads: `state/river/license-census-voice.tsv`. **Kosten
+  gemessen:** der Schwarm ist nicht kostenlos — voice-gemini $0.089, voice-nemotron $0.059,
+  voice-deepseek-pro $0.057, voice-deepseek $0.047 (deepseek-flash-Session `session_burn`).
+- **Braucht:** die Leads aus `state/river/license-census-voice.tsv` als `terms`-Zeilen von
+  Mountain messen lassen (die Stimme liefert die Terms-URL, nicht die Klasse); Generator +
   Drift-Tor an Mycelium (`## An mycelium`).
 
 ## An mycelium
@@ -348,4 +359,4 @@ Census gestartet (`state/river/license-census.tsv`, 169 Netlocs, Batch 1 = 7 gem
 Übergabe; `git_safety`; `git status` vor dem Commit; fremde uncommittete Hunks
 (`src/archivar/geo.rs`, `tools/harvest/...`) nicht berührt.
 
-## Burn: open 0.0000 · close 0.1017
+## Burn: open 0.0000 · close 0.1267
