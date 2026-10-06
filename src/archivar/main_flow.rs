@@ -4152,6 +4152,8 @@ pub fn main_flow() {
                     | "black_marble_vnp46a3_nightlight"
                     | "ghsl_built_s"
                     | "epa_aqs_pm25"
+                    | "osm_nodes"
+                    | "eionet_cdr"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
