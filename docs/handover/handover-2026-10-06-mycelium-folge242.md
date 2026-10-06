@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; CI-Triage, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 5798eca47f3548bd06b56942faf2d023b83590e5c07019ad09531fc4bfd4a663
+  sha256: 69690e8fc511e5ad413a613745184ad0f8fffc4873136951efb3bbc7028a5a02
   status: live
 -->
 # Handover — Mycelium-Folge 242 (2026-10-06)
@@ -170,6 +170,7 @@ Origin: mycelium-folge242.
 - **Sweep-Riss (unverändert aus folge241):** Commit `0d5a7b9dd` enthielt durch `git add phi/sources.φ` mitgerissene fremde Hunks — (a) `fink_cutout` `at earth`→`at sun`; (b) die Löschung des `usda_fara_low_access.bin`-Blocks (in `cde891a94` wiederhergestellt). **Bitte prüfen, ob `at sun` gewollt ist.**
 - **Pollen `sha256`:** `sources.φ:17511`-Block braucht `sha256 42a7f2f8199f84cdb13a55c56265edf4766b97a9e36ca00052b7b06d00bdc2a7` (Lauf `openmeteo-pollen-cdn 37459099065` success; `--sniff` 200, 1468 B). Der `sha256`-Grenzfall ist ein Riss zwischen Verdict-/Manifestationszeile — nicht still geschrieben.
 - **`ghsl_compiler`-Arm:** `ghsl-cdn 37459107131` failure, gemessen `0 raster bytes against the 432002x213822x2 grid — the arm reads no common grid`.
+- **Register-Ordnung (ci-gate rot):** `register_sort` meldet `phi/sources.φ` mit 5 ttl-order + 4 url-order violations (u. a. `openmeteo_birch_pollen` 3600 nach 86400, `jaxa_gpm_ku`/`vnp46a3_allangle` 86400 nach 604800, `epa_aqs_pm25` 86400 nach 31536000, `jma.go.jp/quake` 600 nach 3600). Fix = `register_sort --write phi/sources.φ`. Deine Datei trägt uncommittete Hunks → von mir nicht berührt.
 
 ## An river
 
