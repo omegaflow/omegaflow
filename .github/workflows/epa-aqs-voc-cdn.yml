@@ -1,0 +1,64 @@
+name: epa-aqs-voc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      stride:
+        description: 'row sampling stride over the AQS table (1 = every station-day)'
+        type: string
+        default: '1'
+      limit:
+        description: 'max measured station-days to carry (empty = all)'
+        type: string
+        default: ''
+  push:
+    paths:
+      - 'tools/harvest/src/bin/epa_aqs_compiler.rs'
+      - '.github/workflows/epa-aqs-voc-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  epa-aqs-voc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the aqs.epa.gov release exists on the CDN
+        run: |
+          if ! gh release view aqs.epa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create aqs.epa.gov --repo omegaflow/sources \
+              --title "aqs.epa.gov" \
+              --notes "EPA Air Quality System station-day series compiled for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Compile the EPA AQS VOC station-day bin and upload
+        run: |
+          set -euo pipefail
+          extra=""
+          [ -n "${{ inputs.limit }}" ] && extra="--limit ${{ inputs.limit }}"
+          cargo run -p omegaflow-harvest --release --bin epa_aqs_compiler -- \
+            --format epa_aqs_voc --stride "${{ inputs.stride || '1' }}" $extra \
+            --out data/aqs.epa.gov/epa_aqs_voc.bin --ci-mode
+      - name: Verify the registered aqs.epa.gov epa_aqs_voc asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh aqs.epa.gov epa_aqs_voc)
+          if [ -z "$expected" ]; then
+            echo "no epa_aqs_voc asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view aqs.epa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered aqs.epa.gov epa_aqs_voc assets all present"
