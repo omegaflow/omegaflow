@@ -610,4 +610,17 @@ mod tests {
         assert_eq!(cf_time_unix_seconds("days", 1.0), None);
         assert_eq!(cf_time_unix_seconds("days since 1800-13-01", 1.0), None);
     }
+
+    #[test]
+    fn kt_is_knots_and_kt_mass_is_the_mass_unit() {
+        assert_eq!(convert_to_si(1.0, "kt"), Some(0.514444));
+        assert_eq!(convert_to_si(1.0, "kt_mass"), Some(1e6));
+        assert_eq!(
+            unit_from_name_suffix("so2_emission_mass_kt"),
+            Some("kt_mass")
+        );
+        assert_eq!(unit_from_name_suffix("so2_emission_kt"), Some("kt"));
+        assert!(!allowed_units_for_force(6).contains(&normalize_unit("kt").as_str()));
+        assert!(allowed_units_for_force(6).contains(&normalize_unit("kt_mass").as_str()));
+    }
 }

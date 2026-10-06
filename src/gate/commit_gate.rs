@@ -3996,6 +3996,21 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_kt_is_knots_not_kilotons() {
+        let mut g = test_gate();
+        let args = r#"{"filePath":"phi/sources.φ","newString":"field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0\n"}"#;
+        let v = g.check_tool_call("write", args).unwrap();
+        assert_eq!(v.rule, "force-unit-gate");
+    }
+
+    #[test]
+    fn fp_tool_kt_mass_is_the_mass_unit() {
+        let mut g = test_gate();
+        let args = r#"{"filePath":"phi/sources.φ","newString":"field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0\n"}"#;
+        assert!(g.check_tool_call("write", args).is_none());
+    }
+
+    #[test]
     fn fp_tool_dimensionless_force_line() {
         let mut g = test_gate();
         let args = r#"{"filePath":"phi/x.φ","newString":"field share share gaussian-inverse-square diffusion 1 86400 0.0 0.0\n"}"#;
