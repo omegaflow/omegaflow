@@ -3,7 +3,7 @@
   session: River-Folge 114
   class: handover
   date: 2026-10-06
-  sha256: 80f5d8e3dac3db9a81489698c90ddcc3137e38dbc65181a2799672e84e66e398
+  sha256: 7e02359be6ed4f08f6b367acfb560514b9755444b32954f1110671e84c92a456
   status: live
 -->
 # Handover — River-Folge 114 (2026-10-06)
@@ -44,7 +44,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Lage:** (gemessen 2026-10-06, River 114) `static/membrane.html`: `scale`/`scale_star` + `span_anchor`/`span_star`; der Vertex-Shader wählt per `extent > 0` die Anker-Skala, sonst die Stern-Skala; Start gerahmt auf den größten Anker (Sonne). `node --check` grün (Syntax-Gate); WebGPU-Sicht = Operator/CI. Rat + 12 Kanäle: 12/13 für (b), Claude-Dissens (c)+Start.
 - **Riss (getragen, ungeglättet):** Der Diskriminator ist heute `extent > 0` (Vertrag: Anker endlich, Sterne `wire_extent` 0.0); GLM/MiMo/Kimi/Duck verlangen eine **deklarierte** Apertur pro Quelle — ein Wire-/Kontrakt-Akt (Mountain), sobald eine zweite endliche Klasse (Planeten) oder ein Sternradius kommt. Die metrische Konsistenz zwischen Anker- und Sky-Apertur ist bewusst aufgegeben (Sky = Kulisse) — als Invariante dokumentiert.
 - **Blockade:** keine.
-- **Braucht:** Operator-Sicht (`omegaflow.space/membrane.html`); ggf. Apertur-Bit im Wire (Mountain).
+- **Braucht:** Operator-Sicht (`omegaflow.space/membrane.html`); ggf. Apertur-Bit im Wire (Mountain). Offen: `state.lvl` (Exposure) ist ein **globales** max über beide Aperturen — ob die helle Sonne den Sternhintergrund unterdrückt, ist `pending` (Operator-/CI-Sicht), dann ggf. eigene Exposition je Apertur.
 
 ### GIC-Breitenband-Familien — Design + Messschritt offen
 - **Status:** operator-gebunden (Design) / wartend (cgm_lat) | **Bindung:** eigen + operator (Queue)
