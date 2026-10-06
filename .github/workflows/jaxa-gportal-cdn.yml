@@ -42,6 +42,11 @@ on:
         required: false
         type: string
         default: '1'
+      fetch:
+        description: 'fetch the ordered products and upload them to the CDN (implies download)'
+        required: false
+        type: boolean
+        default: false
   push:
     paths:
       - 'tools/harvest/src/bin/jaxa_gportal_compiler.rs'
@@ -120,11 +125,30 @@ jobs:
           if [ -z "$COUNT" ]; then COUNT="100"; fi
           if [ -z "$PAGES" ]; then PAGES="1"; fi
           if [ -z "$DL" ]; then DL="1"; fi
+          mkdir -p data/gportal.jaxa.jp
           cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
             --dataset "$DATASET" --from "$FROM" --to "$TO" --count "$COUNT" --pages "$PAGES" \
             --manifest "${{ steps.idempotence.outputs.slug }}" \
+            --out data/gportal.jaxa.jp \
             --download --download-limit "$DL" \
+            ${{ inputs.fetch && '--fetch-file' || '' }} \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "jaxa-gportal-cdn: G-Portal download order returned void" \
                  "jaxa_gportal_compiler --download returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Upload the fetched products to the CDN
+        if: github.event_name == 'workflow_dispatch' && inputs.download && inputs.fetch
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(data/gportal.jaxa.jp/jaxa_gportal_*.bin)
+          [ ${#files[@]} -gt 0 ] \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: fetched payload returned void" \
+                 "no jaxa_gportal_*.bin fetched. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          gh release upload gportal.jaxa.jp "${files[@]}" --clobber --repo omegaflow/sources \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: payload upload returned void" \
+                 "gh release upload gportal.jaxa.jp returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
