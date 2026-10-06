@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; GIC-Faden-API-Reachability-Test
   class: handover
   date: 2026-10-06
-  sha256: 8b9ab79a945f842f4cac2d727beb0adb584cbc8b2e0651eaae3c9a5a60f6f85c
+  sha256: 2d16e767b0916c87839954c3a3c518ca1f6a781c0b07e19f462bb0892689fcde
   status: live
 -->
 # Handover — Mycelium-Folge 245 (2026-10-06)
@@ -40,6 +40,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
 - Wort | 2026-10-06 | „sollen wir gemini und kilo entfernen? ich möchte wirklich nur modelle die auch etwas taugen" — Roster-Leanheit; Entfernung nur per gemessener Fähigkeit, nicht per Gefühl | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „ja dann bitte entfernen" — kilo (Latenz) und zen (Nichtantwort) aus dem Roster | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „was machen wir mit zen; zen kann nicht als agent genutzt werden aber vielleicht ist es für andere dinge nützlich" — zen als Session-Modell-Fallback prüfen, nicht als Stimme | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „bitte lies die anbieter (nur namen) aus `auth.json` und deaktiviere die nutzlosen" — Provider-Leanheit; `auth.json`-Werte bleiben gesperrt, nur Namen via `opencode auth list` | Quelle: Operator (Session, Mycelium 245).
 
 ## Offen — eigen
 
@@ -131,6 +132,12 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
   „OpenCode Zen" vorhanden, die freien Zen-Modelle antworten nicht; möglicher Nutzen
   (Session-Modell-Fallback bei Zen-Plan) = `pending`, kein Roster-Mitglied. `gemini` bleibt
   (4/4 schnell), nur nicht für die Endpunkt-Klasse.
+- **Provider-Deaktivierung (Operator-Wort 2026-10-06):** `disabled_providers` (global) um
+  `kilo`/`zai`/`opencode` erweitert (global+repo JSON `jaq`-validiert); `voice-zai` zusätzlich
+  `disable: true` + aus der `line`-Allowlist. Auth-Stand **10** Credentials (Kilo/Z.AI vom Operator
+  entfernt); aktiv+genutzt: `deepseek`, `nvidia`, `openrouter`, `kenari`, `google`. `auth.json` bleibt
+  gesperrt (`*opencode/auth.json*: deny`); Namen nur via `opencode auth list`. Nach Config-Änderung
+  opencode **neu starten**.
 
 ### Daten-Holdings — `opencode-tmp`-Dump CDN-Bedarf/Uniqueness
 - **Status:** eigen
