@@ -3,7 +3,7 @@
   session: Mountain-Folge 244
   class: handover
   date: 2026-10-06
-  sha256: 1e2a8c402477a8ab669a3207f85ce8d7cb0ccf162fbb9ea59993d1295931f81c
+  sha256: 8093bafb9cc28c98e54182d6f7aa6935b0fa0ed753ebacd65ce0c84860944b53
   status: live
 -->
 # Handover — Mountain-Folge 244 (2026-10-06)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 2026-10-06). Diese Session konsumierte `handover-2026-10-06-mountain-folge243.md`
 (→ `archiv/`). Kein pro/max-Dispatch; der NASA-POWER-Arm per Bau geschlossen.
 
-## Burn: open 0.0000 · close 0.049 · cap 0.25 · Grund: flash-first — Line-Session (kein Sub-Dispatch)
+## Burn: open 0.0000 · close 0.126 · cap 0.25 · Grund: flash-first — Line-Session, ein AQS-VOC-Schritt-1-Bau (kein Sub-Dispatch)
 
 ## Operator-Wort-Register
 
@@ -57,16 +57,19 @@ Wort | Datum | Quelle
 ### AQS-VOC-Arm (Exposom Chemikalien)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06 via `git status`) `src/archivar/geo.rs` ist clean — die
-  rustfmt-Hunks (mtime 13:47:45–52, im Fenster der Mountain-243-Session) sind in `e52ca13da`
-  committet; sie waren Mountain-243-Eigen-Arbeit, im Stehenden Pass als „fremd" fehletikettiert.
-  `daily_VOCS_2024.zip` HTTP 200, 7 385 523 B; ein CSV-Member 265 339 729 B, Header mit 118
-  Parameter Codes; PM2.5-Sibling `epa_aqs_compiler.rs` gebaut (`geo.rs:308`/`:368`, `extract.rs:842`).
+- **Lage:** (gemessen 2026-10-06) `src/archivar/geo.rs` clean (die rustfmt-Hunks in `e52ca13da`).
+  Schritt 1 gebaut (`cd7b294eb`): `MAGIC_EPA_AQS_VOC` (`EPV1`) + `comp_max=46201` in
+  `src/archivar/geo.rs`; `epa_aqs_compiler.rs` parameter-fähig (`--format epa_aqs_voc`,
+  `--parameter <code>`, `--url`; `comp = Parameter Code` je Zeile). `daily_VOCS_2024.zip` HTTP 200,
+  7 385 523 B; CSV-Member 265 339 729 B; am Live-CSV gemessen: 118 Parameter Codes, Einheit
+  einheitlich `Parts per billion Carbon` (ppbC).
 - **Blockade:** keine.
-- **Braucht:** (1) `src/archivar/geo.rs`: `MAGIC_EPA_AQS_VOC` + `magic_of`/`comp_max`-Arm (`comp = parameter_code`, u32);
-  (2) `epa_aqs_compiler.rs`: `--parameter <code>`/`--format`/`--url` (Default-URL VOCS);
-  (3) Feld-Tabelle Code→Name+Einheit aus dem Live-CSV; (4) Register-Block `epa_aqs_voc` nach `phi/sources.φ:17388`.
-  Bounded step 1 = (1)+(2) mit `cargo build -p omegaflow-harvest --bin epa_aqs_compiler`-Gate.
+- **Braucht:** (Schritt 2) (1) Extrakt-Arm `"epa_aqs_voc" => match comp { … }` (118 Codes) in
+  `src/archivar/extract.rs` nach dem `epa_aqs_pm25`-Arm; (2) Register-Block `epa_aqs_voc`
+  (url/format/origin/compiler + 118 `field … ppbC`-Zeilen) nach dem `epa_aqs_pm25`-Block;
+  (3) `ppbc` in `src/archivar/units.rs` (`allowed_units_for_force(6)` + `convert_to_si`);
+  (4) CDN-Workflow (Mycelium). Tabelle reproduzierbar aus `daily_VOCS_2024.zip`:
+  `unzip -p … daily_VOCS_2024.csv | awk '<quoted-CSV>' | sort -u -k1,1n` (Code→Name→Einheit).
 
 ### OSHA-CEHD-Arm (Exposom Arbeitsumfeld)
 - **Status:** eigen | **Bindung:** eigen
