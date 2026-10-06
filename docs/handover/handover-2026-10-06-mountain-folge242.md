@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: 75b920fd9077d55b52972ede5c612258a84a1ee97421aabc021fc7e7ae949367
+  sha256: 6b873b1b6e4e1c53e0d474bb20eb2dffa79e3241dd9c65ecb5338dcfda143b7a
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -31,7 +31,7 @@ trishuli: Live-Route gemessen — `POST /site/getRiverWatchBySeriesId_Single`
 (csrf + `seriesid=23251`) → `status:success` mit **leerer** Serie (`river=[]`) über
 Perioden 1–4; kein `timeSeries` ⇒ Trigger nicht gefeuert, `wartend` bleibt.
 
-## Burn: open 0.0000 · close 0.1723 · cap 0.25 (Operator eröffnete das Atom erneut) · Grund: flash-first — Line-Session $0.1216 + zwei `grind-flash`-Dispatches ($0.0325 fink-Arm, $0.0182 cutout-Reader), kein pro/max
+## Burn: open 0.0000 · close 0.1894 · cap 0.25 (Operator eröffnete das Atom erneut: Fink+trishuli, dann Schwarm) · Grund: flash-first — Line-Session $0.1387 + zwei `grind-flash`-Dispatches ($0.0325 fink-Arm, $0.0182 cutout-Reader) + Schwarm (12 Stimmen, frei), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -67,18 +67,21 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### trishuli (DHM Nepal) — wartend
+### trishuli (DHM Nepal) — Station 4913 zerstört, Nachfolger offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** DHM-Schema liefert für Station 4913 einen `timeSeries`
-- **Lage:** (gemessen 2026-10-06) Arm + `format trishuli_stage` + Register-Zeile
-  stehen (`phi/sources.φ:446`); Ereignisfenster-Route über Wayback
-  (`.github/workflows/trishuli-pfeil.yml:33-50`). **Live-Route gefunden:**
-  `POST https://dhm.gov.np/site/getRiverWatchBySeriesId_Single`
-  (csrf + `seriesid=23251`) → `status:success` mit **leerer** Serie (`river=[]`,
-  `<td>` 0) über Perioden 1/2/3/4; Stationsseite `hms-Single/4913` trägt
-  `waterLevel:null`, `series_id:23251`.
-- **Blockade:** Live-Schema trägt die Serie nicht stabil.
-- **Braucht:** Wayback-Route als Primärweg bestätigen oder auf DHM-Schema-Wechsel warten.
+- **Trigger:** Nachfolge-Pegel meldet — Prüfung via `POST dhm.gov.np/site/riverWatchTableViewData` (4913 dann nicht mehr `" "`)
+- **Lage:** (gemessen 2026-10-06) 4913 „Bhotekoshi at Rasuwagadi" meldet nicht:
+  `POST dhm.gov.np/site/riverWatchTableViewData` (ohne Auth; 195 Stationen melden)
+  trägt `waterLevel: " "` für 4913; die Serie `getRiverWatchBySeriesId_Single`
+  (`seriesid=23251`) ist leer (`river=[]`) auch für Vor-Flood-Daten (2026-08-25).
+  Schwarm + GLM/Claude (Zeugen, nicht Verdikt): Station am 26.08.2026-Flood physisch
+  zerstört (CHWRR Assessment Report II, letzter Wert 3.8 m, Senderstopp 08:40; ICIMOD;
+  Presse); Betrawati `52`/`4783` ebenso leer. **Live-Nachbarn (Bulk):** Trishuli
+  Dhunche `4657` (2.16 m), Bhorle `4661` (3.80 m), Galchi `5705`, Kali Khola `4781`
+  (4.33 m); Narayani Devghat `265` (4.12 m).
+- **Blockade:** Die Experiment-Station existiert nicht mehr.
+- **Braucht:** Entscheidung — `descoped` für 4913 (zerstört, gemessen) und die
+  Trishuli-Serie auf einen Live-Nachbarn umhängen (Dhunche/Bhorle), oder ruhen.
 
 ## Träger (Prosa, eigene)
 
