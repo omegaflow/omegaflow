@@ -6,7 +6,7 @@ use std::process::Command;
 
 const NETLOC: &str = "obis.osha.gov";
 const ZIP_URL: &str = "https://obis.osha.gov/opengov/healthsamples.zip";
-const FORMAT: &str = "osha_cehd_air_mass_axis_value_text";
+const FORMAT: &str = "osha_cehd_si_axis_value_text";
 const MEMBER: &str = "healthsamples/sample_data_2019.csv";
 
 const DATE_FIELD: &str = "DATE_SAMPLED";
@@ -137,29 +137,75 @@ fn censored(qualifier: &str) -> bool {
     q == "ND" || q == "BLK"
 }
 
-enum MassUnit {
-    MgPerM3,
-    UgPerM3,
+#[derive(Clone, Copy)]
+enum SiQuantity {
+    MassConcentration,
+    Mass,
+    AmountFraction,
+    NumberDensity,
+    Fraction,
 }
 
-fn mass_unit(s: &str) -> Option<MassUnit> {
+impl SiQuantity {
+    fn label(self) -> &'static str {
+        match self {
+            SiQuantity::MassConcentration => "kg/m3",
+            SiQuantity::Mass => "kg",
+            SiQuantity::AmountFraction => "1",
+            SiQuantity::NumberDensity => "1/m3",
+            SiQuantity::Fraction => "1",
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+struct SiUnit {
+    quantity: SiQuantity,
+    factor: f64,
+}
+
+fn si_unit(s: &str) -> Option<SiUnit> {
     match s.trim().to_ascii_uppercase().as_str() {
-        "M" => Some(MassUnit::MgPerM3),
-        "MCG/M3" => Some(MassUnit::UgPerM3),
+        "M" => Some(SiUnit {
+            quantity: SiQuantity::MassConcentration,
+            factor: 1e-6,
+        }),
+        "MCG/M3" => Some(SiUnit {
+            quantity: SiQuantity::MassConcentration,
+            factor: 1e-9,
+        }),
+        "X" => Some(SiUnit {
+            quantity: SiQuantity::Mass,
+            factor: 1e-9,
+        }),
+        "Y" => Some(SiUnit {
+            quantity: SiQuantity::Mass,
+            factor: 1e-6,
+        }),
+        "P" => Some(SiUnit {
+            quantity: SiQuantity::AmountFraction,
+            factor: 1e-6,
+        }),
+        "F" => Some(SiUnit {
+            quantity: SiQuantity::NumberDensity,
+            factor: 1e6,
+        }),
+        "%" => Some(SiUnit {
+            quantity: SiQuantity::Fraction,
+            factor: 1e-2,
+        }),
         _ => None,
     }
 }
 
-fn to_kg_m3(value: f64, unit: &MassUnit) -> f64 {
-    match unit {
-        MassUnit::MgPerM3 => value * 1e-6,
-        MassUnit::UgPerM3 => value * 1e-9,
-    }
+fn to_si(value: f64, unit: &SiUnit) -> f64 {
+    value * unit.factor
 }
 
 struct Sample {
     unix: f64,
-    conc_kg_m3: f64,
+    value: f64,
+    quantity: SiQuantity,
 }
 
 struct ParseCounts {
@@ -220,7 +266,7 @@ fn parse_cehd(
             counts.censored_absent += 1;
             continue;
         }
-        let Some(unit) = cells.get(unit_idx).and_then(|s| mass_unit(s)) else {
+        let Some(unit) = cells.get(unit_idx).and_then(|s| si_unit(s)) else {
             counts.unit_absent += 1;
             continue;
         };
@@ -230,7 +276,8 @@ fn parse_cehd(
         };
         samples.push(Sample {
             unix,
-            conc_kg_m3: to_kg_m3(result, &unit),
+            value: to_si(result, &unit),
+            quantity: unit.quantity,
         });
         counts.carried += 1;
         if samples.len() >= limit {
@@ -241,10 +288,11 @@ fn parse_cehd(
 }
 
 fn find_member<'a>(entries: &'a [ZipEntry], member: &str) -> Option<&'a ZipEntry> {
-    entries
-        .iter()
-        .find(|e| e.name == member)
-        .or_else(|| entries.iter().find(|e| e.name.ends_with("/sample_data_2019.csv")))
+    entries.iter().find(|e| e.name == member).or_else(|| {
+        entries
+            .iter()
+            .find(|e| e.name.ends_with("/sample_data_2019.csv"))
+    })
 }
 
 fn parse_step(args: &[String], name: &str, default: usize) -> Result<usize, String> {
@@ -319,33 +367,31 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     let entries = zip_entries(&bytes)
         .ok_or_else(|| format!("{source}: central directory void — the zip stays unread"))?;
-    let member = find_member(&entries, &member_name).ok_or_else(|| {
-        format!("{source}: no {member_name} member — the table stays unread")
-    })?;
+    let member = find_member(&entries, &member_name)
+        .ok_or_else(|| format!("{source}: no {member_name} member — the table stays unread"))?;
     let raw = zip_extract(&bytes, member)
         .ok_or_else(|| format!("{}: entry extract void", member.name))?;
     let table = String::from_utf8_lossy(&raw);
     let (samples, counts) = parse_cehd(&table, stride, limit)?;
     if samples.is_empty() {
         return Err(format!(
-            "{source}: no row with a measured date, uncensored {RESULT_FIELD} and a mass-per-volume {UNIT_FIELD} — the artifact stays unwritten (0 honored)"
+            "{source}: no row with a measured date, uncensored {RESULT_FIELD} and a measured {UNIT_FIELD} — the artifact stays unwritten (0 honored)"
         ));
     }
 
     let mut text = String::new();
     text.push_str(&format!(
-        "# OSHA CEHD air mass concentration | SI unit kg/m3 | source {source} | member {}\n",
+        "# OSHA CEHD sample value | SI unit per line | source {source} | member {}\n",
         member.name
     ));
     text.push_str(
-        "# value = sample concentration in kg/m3 from mg/m3 (M) and ug/m3 (mcg/m3);\n",
+        "# unit table: M = mg/m3 -> kg/m3; mcg/m3 = ug/m3 -> kg/m3; X = ug -> kg; Y = mg -> kg;\n",
     );
-    text.push_str(
-        "# rows without a mass-per-volume unit (X, Y, P, F, %, unknown) stay absent (pending unit->SI);\n",
-    );
+    text.push_str("#   P = ppm (vol) -> amount fraction (1); F = fibers/cc -> number density (1/m3); % -> fraction (1);\n");
+    text.push_str("# unit codes N, BM/S, AAAAA and E carry no measured definition in the source -> absent (pending unit->SI);\n");
     text.push_str("# positions are absent in the source: the geocode stays pending, never 0.0\n");
     for s in &samples {
-        text.push_str(&format!("{} {}\n", s.unix, s.conc_kg_m3));
+        text.push_str(&format!("{} {} {}\n", s.unix, s.value, s.quantity.label()));
     }
 
     let netloc = match arg_value(args, "--netloc") {
@@ -354,7 +400,7 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     let out = match arg_value(args, "--out") {
         Some(p) if !p.is_empty() => p,
-        _ => format!("data/{netloc}/osha_cehd_air_mass.txt"),
+        _ => format!("data/{netloc}/osha_cehd_si.txt"),
     };
     ensure_parent(&out)?;
     std::fs::write(&out, text.as_bytes()).map_err(|e| format!("write {out} void: {e}"))?;
@@ -378,7 +424,9 @@ fn run(args: &[String]) -> Result<(), String> {
         text.len()
     );
     if ci_mode && !upload_release(&netloc, &out) {
-        return Err(format!("{out}: CDN upload did not reach the {netloc} release"));
+        return Err(format!(
+            "{out}: CDN upload did not reach the {netloc} release"
+        ));
     }
     Ok(())
 }
@@ -393,11 +441,15 @@ fn main() {
             "  reads the US OSHA CEHD health-samples zip; only the member sample_data_2019.csv is extracted"
         );
         eprintln!("  --inspect lists the zip central directory and stops");
+        eprintln!("  emits one text record per sample: <unix_seconds> <value> <si_unit>");
         eprintln!(
-            "  emits one text record per sample: <unix_seconds> <mass_concentration_kg_per_m3>"
+            "  unit table: M = mg/m3 -> kg/m3; mcg/m3 = ug/m3 -> kg/m3; X = ug -> kg; Y = mg -> kg;"
         );
         eprintln!(
-            "  unit table: M = mg/m3, mcg/m3 = ug/m3 -> kg/m3; X/Y/P/F/%/unknown stay absent (pending unit->SI)"
+            "    P = ppm (vol) -> amount fraction (1); F = fibers/cc -> number density (1/m3); % -> fraction (1)"
+        );
+        eprintln!(
+            "    N/BM/S/AAAAA/E carry no measured definition in the source -> absent (pending unit->SI)"
         );
         eprintln!(
             "  rows without lat/lon: the geocode stays pending, never written as 0.0 (source carries no coordinates)"
@@ -432,21 +484,42 @@ mod tests {
     }
 
     #[test]
-    fn mass_unit_maps_only_mass_per_volume() {
-        assert!(matches!(mass_unit("M"), Some(MassUnit::MgPerM3)));
-        assert!(matches!(mass_unit("mcg/m3"), Some(MassUnit::UgPerM3)));
-        assert!(matches!(mass_unit(" mcg/m3 "), Some(MassUnit::UgPerM3)));
-        assert!(mass_unit("X").is_none());
-        assert!(mass_unit("P").is_none());
-        assert!(mass_unit("F").is_none());
-        assert!(mass_unit("%").is_none());
-        assert!(mass_unit("AAAAA").is_none());
+    fn si_unit_maps_measured_units_to_their_si_scale() {
+        let m = si_unit("M").unwrap();
+        assert!(matches!(m.quantity, SiQuantity::MassConcentration));
+        assert!((m.factor - 1e-6).abs() < 1e-18);
+        let ug = si_unit(" mcg/m3 ").unwrap();
+        assert!(matches!(ug.quantity, SiQuantity::MassConcentration));
+        assert!((ug.factor - 1e-9).abs() < 1e-18);
+        let x = si_unit("X").unwrap();
+        assert!(matches!(x.quantity, SiQuantity::Mass));
+        assert!((x.factor - 1e-9).abs() < 1e-18);
+        let y = si_unit("Y").unwrap();
+        assert!(matches!(y.quantity, SiQuantity::Mass));
+        assert!((y.factor - 1e-6).abs() < 1e-18);
+        let p = si_unit("P").unwrap();
+        assert!(matches!(p.quantity, SiQuantity::AmountFraction));
+        assert!((p.factor - 1e-6).abs() < 1e-18);
+        let f = si_unit("F").unwrap();
+        assert!(matches!(f.quantity, SiQuantity::NumberDensity));
+        assert!((f.factor - 1e6).abs() < 1e-6);
+        let pct = si_unit("%").unwrap();
+        assert!(matches!(pct.quantity, SiQuantity::Fraction));
+        assert!((pct.factor - 1e-2).abs() < 1e-18);
     }
 
     #[test]
-    fn to_kg_m3_uses_the_si_scale() {
-        assert!((to_kg_m3(1.0, &MassUnit::MgPerM3) - 1e-6).abs() < 1e-15);
-        assert!((to_kg_m3(1.0, &MassUnit::UgPerM3) - 1e-9).abs() < 1e-18);
+    fn si_unit_leaves_unmeasured_codes_absent() {
+        for code in ["N", "BM/S", "AAAAA", "E", "unknown"] {
+            assert!(si_unit(code).is_none(), "code {code} is unmeasured");
+        }
+    }
+
+    #[test]
+    fn to_si_applies_the_unit_scale() {
+        assert!((to_si(1.0, &si_unit("M").unwrap()) - 1e-6).abs() < 1e-15);
+        assert!((to_si(1.0, &si_unit("X").unwrap()) - 1e-9).abs() < 1e-18);
+        assert!((to_si(2.0, &si_unit("F").unwrap()) - 2e6).abs() < 1e-6);
     }
 
     #[test]
@@ -462,7 +535,7 @@ mod tests {
         assert!(censored("ND"));
         assert!(censored("blk"));
         assert!(!censored(""));
-        assert!(!censored("@")); 
+        assert!(!censored("@"));
     }
 
     fn fixture() -> &'static str {
@@ -475,20 +548,26 @@ mod tests {
     }
 
     #[test]
-    fn parse_cehd_carries_mass_per_volume_and_marks_pending() {
+    fn parse_cehd_carries_measured_units_with_their_si_scale() {
         let (samples, counts) = parse_cehd(fixture(), 1, usize::MAX).unwrap();
         assert_eq!(counts.rows, 5);
-        assert_eq!(samples.len(), 2);
+        assert_eq!(samples.len(), 4);
         assert_eq!(counts.censored_absent, 1);
-        assert_eq!(counts.unit_absent, 2);
-        assert!((samples[0].conc_kg_m3 - 0.5e-6).abs() < 1e-15);
-        assert!((samples[1].conc_kg_m3 - 0.5179e-9).abs() < 1e-18);
+        assert_eq!(counts.unit_absent, 0);
+        assert!((samples[0].value - 0.5e-6).abs() < 1e-15);
+        assert!((samples[1].value - 0.5179e-9).abs() < 1e-18);
+        assert!((samples[2].value - 0.2e-9).abs() < 1e-18);
+        assert!((samples[3].value - 80e6).abs() < 1e-6);
     }
 
     #[test]
     fn parse_cehd_does_not_fabricate_a_position() {
         let (samples, _) = parse_cehd(fixture(), 1, usize::MAX).unwrap();
-        assert!(samples.iter().all(|s| s.unix.is_finite() && s.conc_kg_m3.is_finite()));
+        assert!(
+            samples
+                .iter()
+                .all(|s| s.unix.is_finite() && s.value.is_finite())
+        );
     }
 
     #[test]

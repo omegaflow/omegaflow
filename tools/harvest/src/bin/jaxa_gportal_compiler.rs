@@ -1,4 +1,9 @@
+use omegaflow::archivar::jaxa_gpm_ku::{
+    FORCE_EM, KERNEL_INVERSE_SQUARE, TAU_S, TTL_S, parse_bin, write_bin,
+};
 use omegaflow::archivar::json::{JsonVal, jnum, jpath_val, json_num, jstr, parse_json, scalar_of};
+use omegaflow::archivar::lsk::days_from_civil;
+use omegaflow::archivar::{LeapSeconds, embedded_lsk};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::Hdf5File;
 use std::collections::HashSet;
@@ -31,6 +36,20 @@ const GPM_KU_FIELD_EM: u32 = 0;
 const GPM_KU_CODE_MISSING: i64 = -30000;
 const GPM_KU_ECHO_POWER: &str = "NS/Receiver/echoPower";
 const GPM_KU_DEFAULT_NSCAN: u64 = 32;
+const GPM_KU_ASSET: &str = "jaxa_gpm_ku.bin";
+const GPM_KU_SC_LAT: &str = "NS/navigation/scLat";
+const GPM_KU_SC_LON: &str = "NS/navigation/scLon";
+const GPM_KU_SC_ALT: &str = "NS/navigation/scAlt";
+const GPM_KU_RANGE_BIN_SIZE: &str = "NS/VertLocate/rangeBinSize";
+const GPM_KU_YEAR: &str = "NS/ScanTime/Year";
+const GPM_KU_MONTH: &str = "NS/ScanTime/Month";
+const GPM_KU_DAY: &str = "NS/ScanTime/DayOfMonth";
+const GPM_KU_SECOND_OF_DAY: &str = "NS/ScanTime/SecondOfDay";
+const GPM_KU_HOUR: &str = "NS/ScanTime/Hour";
+const GPM_KU_MINUTE: &str = "NS/ScanTime/Minute";
+const GPM_KU_SECOND: &str = "NS/ScanTime/Second";
+const GPM_KU_NRAY: u64 = 49;
+const GPM_KU_NBIN: u64 = 260;
 
 fn echo_power_si(raw: f64) -> Option<f64> {
     if raw as i64 == GPM_KU_CODE_MISSING {
@@ -44,11 +63,150 @@ fn echo_power_si(raw: f64) -> Option<f64> {
     }
 }
 
-fn read_echo_power(path: &str, nscan: u64) -> Option<Vec<Option<f64>>> {
-    let bytes = fs::read(path).ok()?;
-    let file = Hdf5File::parse(&bytes).ok()?;
-    let raw = file.read_range(GPM_KU_ECHO_POWER, 0, nscan).ok()?;
-    Some(raw.into_iter().map(echo_power_si).collect())
+fn read_rows(file: &Hdf5File<'_>, dataset: &str, count: u64) -> Option<Vec<f64>> {
+    file.read_range(dataset, 0, count).ok()
+}
+
+fn unit_vector(lat_deg: f64, lon_deg: f64) -> [f64; 3] {
+    let lat = lat_deg.to_radians();
+    let lon = lon_deg.to_radians();
+    let (sl, cl) = lat.sin_cos();
+    let (so, co) = lon.sin_cos();
+    [cl * co, cl * so, sl]
+}
+
+fn scan_epoch_tdb(
+    lsk: &LeapSeconds,
+    year: f64,
+    month: f64,
+    day: f64,
+    second_of_day: f64,
+    hour: f64,
+    minute: f64,
+    second: f64,
+) -> Option<f64> {
+    let days = days_from_civil(year as i64, month as i64, day as i64)?;
+    let sod = if (0.0..86400.0).contains(&second_of_day) {
+        second_of_day
+    } else if (0.0..24.0).contains(&hour)
+        && (0.0..60.0).contains(&minute)
+        && (0.0..61.0).contains(&second)
+    {
+        hour * 3600.0 + minute * 60.0 + second
+    } else {
+        return None;
+    };
+    let unix = days as f64 * 86400.0 + sod;
+    lsk.unix_to_tdb(unix)
+}
+
+fn gpm_record(pos: [f64; 3], val: f64, epoch: f64, extent: f64, presence: f64) -> [f64; 26] {
+    let mut r = [0.0f64; 26];
+    r[0] = pos[0];
+    r[1] = pos[1];
+    r[2] = pos[2];
+    r[3] = val;
+    r[4] = epoch;
+    r[5] = TTL_S;
+    r[6] = TAU_S;
+    r[7] = extent;
+    r[8] = KERNEL_INVERSE_SQUARE;
+    r[9] = FORCE_EM;
+    r[25] = presence;
+    r
+}
+
+fn compile_granule(path: &str, nscan: u64, lsk: &LeapSeconds) -> Result<Vec<[f64; 26]>, String> {
+    let bytes = fs::read(path).map_err(|e| format!("read {path}: {e}"))?;
+    let file =
+        Hdf5File::parse(&bytes).map_err(|_| format!("{path}: the granule stays unparsed"))?;
+    let sc_lat = read_rows(&file, GPM_KU_SC_LAT, nscan)
+        .ok_or_else(|| format!("{GPM_KU_SC_LAT} stays unread"))?;
+    let sc_lon = read_rows(&file, GPM_KU_SC_LON, nscan)
+        .ok_or_else(|| format!("{GPM_KU_SC_LON} stays unread"))?;
+    let sc_alt = read_rows(&file, GPM_KU_SC_ALT, nscan)
+        .ok_or_else(|| format!("{GPM_KU_SC_ALT} stays unread"))?;
+    let n = sc_lat.len().min(sc_lon.len()).min(sc_alt.len());
+    if n == 0 {
+        return Err(format!("{path}: no scan carries a navigation vector"));
+    }
+    let row = GPM_KU_NRAY as usize * GPM_KU_NBIN as usize;
+    let echo = read_rows(&file, GPM_KU_ECHO_POWER, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_ECHO_POWER} stays unread"))?;
+    if echo.len() != n * row {
+        return Err(format!(
+            "{GPM_KU_ECHO_POWER} carries {} values, {} expected for {n} scan(s)",
+            echo.len(),
+            n * row
+        ));
+    }
+    let extent = read_rows(&file, GPM_KU_RANGE_BIN_SIZE, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_RANGE_BIN_SIZE} stays unread"))?;
+    let year = read_rows(&file, GPM_KU_YEAR, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_YEAR} stays unread"))?;
+    let month = read_rows(&file, GPM_KU_MONTH, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_MONTH} stays unread"))?;
+    let day = read_rows(&file, GPM_KU_DAY, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_DAY} stays unread"))?;
+    let sod = read_rows(&file, GPM_KU_SECOND_OF_DAY, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_SECOND_OF_DAY} stays unread"))?;
+    let hour = read_rows(&file, GPM_KU_HOUR, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_HOUR} stays unread"))?;
+    let minute = read_rows(&file, GPM_KU_MINUTE, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_MINUTE} stays unread"))?;
+    let second = read_rows(&file, GPM_KU_SECOND, n as u64)
+        .ok_or_else(|| format!("{GPM_KU_SECOND} stays unread"))?;
+
+    let mut records = Vec::with_capacity(n * GPM_KU_NBIN as usize);
+    let (mut unplaced, mut unepoched, mut no_extent, mut absent) = (0usize, 0usize, 0usize, 0usize);
+    for s in 0..n {
+        let (lat, lon, alt) = (sc_lat[s], sc_lon[s], sc_alt[s]);
+        if !(lat.is_finite() && lon.is_finite() && alt.is_finite())
+            || !(-90.0..=90.0).contains(&lat)
+            || !(-360.0..=360.0).contains(&lon)
+        {
+            unplaced += 1;
+            continue;
+        }
+        let Some(ext) = extent.get(s).copied().filter(|e| e.is_finite() && *e > 0.0) else {
+            no_extent += 1;
+            continue;
+        };
+        let Some(epoch) = scan_epoch_tdb(
+            lsk, year[s], month[s], day[s], sod[s], hour[s], minute[s], second[s],
+        ) else {
+            unepoched += 1;
+            continue;
+        };
+        let pos = unit_vector(lat, lon);
+        for b in 0..GPM_KU_NBIN as usize {
+            let mut sum = 0.0f64;
+            let mut count = 0usize;
+            for r in 0..GPM_KU_NRAY as usize {
+                let idx = s * row + r * GPM_KU_NBIN as usize + b;
+                if let Some(w) = echo_power_si(echo[idx]) {
+                    sum += w;
+                    count += 1;
+                }
+            }
+            if count > 0 {
+                records.push(gpm_record(pos, sum / count as f64, epoch, ext, 1.0));
+            } else {
+                records.push(gpm_record(pos, 0.0, epoch, ext, 0.0));
+                absent += 1;
+            }
+        }
+    }
+    if records.is_empty() {
+        return Err(format!(
+            "{path}: no record left the granule — {unplaced} unplaced, {unepoched} outside the leap table, {no_extent} without a bin step"
+        ));
+    }
+    eprintln!(
+        "jaxa_gpm_ku {path}: {n} scan(s) x {GPM_KU_NBIN} bin(s), {} record(s), {absent} absent, {unplaced} unplaced, {unepoched} outside the leap table, {no_extent} without a bin step; mean echoPower over {GPM_KU_NRAY} rays",
+        records.len()
+    );
+    Ok(records)
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -1019,29 +1177,69 @@ fn main() {
             },
             None => GPM_KU_DEFAULT_NSCAN,
         };
-        let Some(values) = read_echo_power(&path, nscan) else {
+        let Some(lsk) = embedded_lsk() else {
             eprintln!(
-                "jaxa_gpm_ku: {} stays unread — the granule reads void (0 honored)",
-                path
+                "jaxa_gpm_ku: the embedded naif0012.tls stays unread — the UTC→TDB step is absent"
             );
             std::process::exit(1);
         };
-        let present = values.iter().filter(|v| v.is_some()).count();
-        let absent = values.len() - present;
+        let records = match compile_granule(&path, nscan, &lsk) {
+            Ok(r) => r,
+            Err(msg) => {
+                eprintln!("jaxa_gpm_ku: {msg}");
+                std::process::exit(1);
+            }
+        };
+        let bin = write_bin(&records);
+        let out = match arg_value(&args, "--bin") {
+            Some(v) => v,
+            None => format!("data/{NETLOC}/{GPM_KU_ASSET}"),
+        };
+        if let Some(parent) = Path::new(&out).parent() {
+            let _ = fs::create_dir_all(parent);
+        }
+        if fs::write(&out, &bin).is_err() {
+            eprintln!("jaxa_gpm_ku: write {out} returned void");
+            std::process::exit(1);
+        }
+        let read = match fs::read(&out) {
+            Ok(v) => v,
+            Err(_) => {
+                eprintln!("jaxa_gpm_ku: {out} stays unread — the asset stays unverified");
+                std::process::exit(1);
+            }
+        };
+        if read != bin {
+            eprintln!("jaxa_gpm_ku: {out}: read-back differs — the asset stays unverified");
+            std::process::exit(1);
+        }
+        let present = match parse_bin(&read) {
+            Some(rs) => rs.iter().filter(|r| r[25] == 1.0).count(),
+            None => {
+                eprintln!(
+                    "jaxa_gpm_ku: {out}: roundtrip parse void — the asset stays unverified"
+                );
+                std::process::exit(1);
+            }
+        };
         eprintln!(
-            "jaxa_gpm_ku: format {GPM_KU_FORMAT} magic {:02X}{:02X} field em({GPM_KU_FIELD_EM}) — {nscan} scan(s), {present} present, {absent} absent",
-            GPM_KU_MAGIC[0], GPM_KU_MAGIC[1]
+            "jaxa_gpm_ku: {out}: {} record(s), {present} present, {} B, format {GPM_KU_FORMAT} magic {:02X}{:02X} field em({GPM_KU_FIELD_EM})",
+            records.len(),
+            bin.len(),
+            GPM_KU_MAGIC[0],
+            GPM_KU_MAGIC[1]
         );
-        let watts: Vec<f64> = values.into_iter().flatten().collect();
-        if let (Some(min), Some(max)) = (
-            watts.iter().copied().reduce(f64::min),
-            watts.iter().copied().reduce(f64::max),
-        ) {
-            eprintln!("jaxa_gpm_ku: echoPower {min:.6e}..{max:.6e} W (0.01 dBm → SI)");
-        } else {
-            eprintln!(
-                "jaxa_gpm_ku: echoPower carries no present value — the field stays absent (0 honored)"
-            );
+        println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{GPM_KU_ASSET}");
+        println!("format {GPM_KU_FORMAT}");
+        println!("origin {CATALOG_URL}");
+        println!("ttl {}", TTL_S as u64);
+        println!(
+            "field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w inverse-square em W {} 0.0 0.0",
+            TTL_S as u64
+        );
+        if args.iter().any(|a| a == "--ci-mode") && !upload_release(NETLOC, &out) {
+            eprintln!("jaxa_gpm_ku: CDN upload returned void");
+            std::process::exit(1);
         }
         return;
     }

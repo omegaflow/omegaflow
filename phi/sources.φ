@@ -9216,6 +9216,14 @@ at sun
 ttl 604800
 field fink_cutout_flux_njy fink_cutout_flux_njy inverse-square em nJy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gpm_ku.bin
+format jaxa_gpm_ku
+origin https://gportal.jaxa.jp/gpr/search/catalog_records.json
+compiler tools/harvest/src/bin/jaxa_gportal_compiler.rs
+at earth
+ttl 86400
+field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w inverse-square em W 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin
 format agrav
 origin https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
