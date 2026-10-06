@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; GIC-Faden-API-Reachability-Test
   class: handover
   date: 2026-10-06
-  sha256: b7fcee682becedf898747e14e9bbb49940eb6c283b0bff83699ed6ed11145983
+  sha256: 3f456a01cf4a37bec0a2d7283a42bcf3567502277731c8408ab7c755e907e9c2
   status: live
 -->
 # Handover — Mycelium-Folge 245 (2026-10-06)
@@ -35,6 +35,8 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
 - Wort | 2026-10-06 | Own-CDN-Junk-Bereinigung: „ich folge deiner Empfehlung" — die Messung korrigierte: nur 1 stale Blatt gelöscht | Quelle: Operator (Session, Mycelium 243).
 - Wort | 2026-10-06 | „ich möchte dass du den API test der vorhandenen APIs gegen diese wunschliste fährst" (volle Wunschliste §A Replikationslinien · B Mediator-Zeugen · C Driver+Konditionierer · D Unabhängige Observablen · E Kalibrier-Zeuge · F Zielkanal · G Placebo-Null) — API-Reachability-Test der GIC-Faden-Wunschliste gegen das Register | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „eigentlich wollte ich dass du die llm apis nutzt um die APIs zu validieren" — die Daten-APIs über die LLM-Stimmen (zweiter Kanal) validieren; kilo vom Operator gestoppt (zu langsam) | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „nein" (auf die Frage, ob die API-Erkenntnisse an die UI-Chats gehen) — keine UI-Chats für gemessene Fakten-Endpunkte | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „mir ist nur wichtig dass wir immer besser werden und die richtigen modelle für den jeweiligen zweck nutzen" — Modell-Fit je Aufgabenklasse messen und registrieren; die passende Stufe, nicht die stärkste | Quelle: Operator (Session, Mycelium 245).
 
 ## Offen — eigen
 
@@ -102,6 +104,12 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
   `gpt-oss-20b` (3057 ms, fabriziert), `llama-3.2-11b`/`-90b`; tot/timeout: `deepseek-v4.1-flash`,
   `gemma-4-31b`, `kimi-k3`, `glm-5.3`/`-flash`, `nemotron-3.5-lightning`. Ehrlich+stark:
   `deepseek/deepseek-flash`. UI-Chats (frontier) alle hoch.
+  **Modell-Fit-Endpunkt-Validierung (gemessen 2026-10-06, Klasse „öffentliche Endpunkte validieren"):**
+  `deepseek` = produktiv (3 tragende Korrekturen: CARISMA-Host, DMSP-SSJ-Route, SSUSI funded-dead);
+  `nemotron` = konservativ, keine Fehlkorrektur, kein Unique; `gemini` = 2 live widerlegte
+  Fehlkorrekturen (`pcindex.cph.space`, `vlf.stanford.edu`) + 1 Refinement (OMNI_HRO); `kilo` =
+  zu langsam (Operator-Stopp). Regel: Faktisch-Endpunkte → `deepseek`-Klasse; UI-Chats nur für
+  Architektur-/Designfragen nach dem Rat.
 - **Blockade:** keine.
 - **Braucht:** `voice-gptoss` aus der Arch-/Grind-Route streichen; Roster auf die gemessenen
   schnell+ehrlich setzen (`deepseek-flash`, `kilo-auto`, `nvidia/nemotron-3-super-120b`,
