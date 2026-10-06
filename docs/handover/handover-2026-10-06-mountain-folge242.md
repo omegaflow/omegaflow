@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: 8ca6db43131d588d98b872c69f5e64d4737b5a5ef9f8035a63d91e9bcea85171
+  sha256: f7590296f3afc4402ff9a5ebbbb7a74443636a06726e2552a244dddc57827b0b
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -75,21 +75,20 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Exposom-x-Homes (Anfrage Mycelium 240) — Licht registriert, 5 Domänen offen
+### Exposom-x-Homes (Anfrage Mycelium 240) — 4 registriert, 2 feld-descoped
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06) 6 x-Homes aus `handover-2026-10-06-mycelium-folge240.md:52/55`,
-  alle selbst nachgemessen. 5 Compiler gebaut — `tools/harvest/src/bin/{onet,exposome_explorer,ghsl,usda_fara,vnp46a3}_compiler.rs`
-  (`cargo build` 0/0, je ein begrenzter Agenten-Schritt). **Licht VNP46A3 arm-gedeckt + registriert:**
-  per-Zelle-Geo-Arm (`format black_marble_vnp46a3_nightlight`, `MAGIC NTL1` in `geo.rs`/`extract.rs`/`main_flow.rs`),
-  `phi/sources.φ`-Block (noch ohne `sha256` — Asset pending). Die übrigen 5 stoppen an der
-  **Form für statische Exposition**: GHSL (E2020-Raster, deflate-Zip, kein COG), USDA (tract-keyed,
-  kein lat/lon), O*NET/Exposome (Stamm- bzw. Konzentrationstabelle ohne Geo) — kein erfundener Anker.
-- **Blockade:** die zeilen-/zellenweise Exposition → Sample/Anker ist je Domäne noch ungebaut
-  (Epoche = eigenes Datum, nicht erfunden).
-- **Braucht:** korrigierte Endpunkte sind gemessen — O*NET `work_context.csv`/`work_styles.csv`/`abilities.csv`
-  (200, Date-Spalte), Exposome `concentrations.csv.zip` (200, Population/Biomarker, keine Zeit); je
-  Domäne ein weiterer begrenzter Arm/Compiler-Schritt.
+- **Lage:** (gemessen 2026-10-06) 6 x-Homes aus `handover-2026-10-06-mycelium-folge240.md:52/55`.
+  **4 feld-aufgenommen** (per-Zelle-Geo-Arm + `phi/sources.φ`-Block, Asset pending, kein `sha256`
+  bis zur Manifestation): Licht `black_marble_vnp46a3_nightlight` (MAGIC `NTL1`, Epoche = Granuledatum),
+  Pollen `openmeteo_pollen_axis_value_text` (73 Zeilen gemessen), gebaute Umwelt `ghsl_built_s`
+  (MAGIC `GHS1`, Wert m² nicht Fraktion, Epoche 2020), Ernährung `usda_fara_low_access` (MAGIC `FAR1`,
+  Census-Tract-Centroide gejoint, 46 205 Tracts, Epoche 2019). **2 feld-descoped:** O*NET
+  `work_context.csv` (Date-Spalte, aber keine Position — occupations-level) und Exposome-Explorer
+  `concentrations.csv.zip` (Population/Biomarker, keine Zeit/kein Ort) — **ohne Position kein 4D-Sample**;
+  sie bleiben Referenz, kein `sources.φ`-Ursprung (Verdikt Mountain 2026-10-06).
+- **Blockade:** keine für die 4 aufgenommenen; offen ist nur die CDN-Manifestation (`## An mycelium`).
+- **Braucht:** die vier CDN-Workflows + `sha256`-Nachzug; die zwei Descopen sind das Verdikt.
 
 ## An mycelium
 
@@ -105,6 +104,14 @@ gebaut (`tools/harvest/src/bin/dhm_gauge_compiler.rs`), Lauf station 4657 → 60
 VNP46A3-Granule mit `EARTHDATA_EDL_TOKEN` holt und `vnp46a3_compiler --label
 allangle_composite_snow_free --ci-mode` fährt (Tag `data.laadsdaac.earthdatacloud.nasa.gov`).
 Der `sha256`- und `url`-Nachzug in `phi/sources.φ` folgt nach dem ersten `--ci-mode`-Lauf.
+
+**Drei weitere Exposom-CDN-Workflows:** `openmeteo-pollen-cdn.yml`
+(`openmeteo_pollen_compiler --lat 52.52 --lon 13.405 --variable birch_pollen --ci-mode`,
+Tag `air-quality-api.open-meteo.com`, stündlich), `ghsl-cdn.yml`
+(`ghsl_compiler --stride <N> --ci-mode`, Tag `jeodpp.jrc.ec.europa.eu`; Achtung: das
+GeoTIFF ist ein 2.14 GB deflate-Member → einmaliger Jahreslauf), `usda-fara-cdn.yml`
+(`usda_fara_compiler --ci-mode`, Tag `ers.usda.gov`). Die `sources.φ`-Blöcke stehen;
+`sha256` folgt je nach erstem Lauf.
 
 ## Träger (Prosa, eigene)
 
