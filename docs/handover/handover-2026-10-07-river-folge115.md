@@ -3,7 +3,7 @@
   session: River-Folge 115
   class: handover
   date: 2026-10-07
-  sha256: 6e799bf1aef55a563a41b40a6b2c4349fdb3561c6dc1f3283866a748964ebc92
+  sha256: 73eb6006489d9c4e61fc9566a52ab41a58753929d06d131a6e2d20c90e07679c
   status: live
 -->
 # Handover — River-Folge 115 (2026-10-07)
@@ -21,6 +21,8 @@ Wort | Datum | Quelle
 „bitte befrage die vioces und die ui chats" | 2026-10-07 | Operator (Session, River 115) — zweiter Kanal nach dem Rat zum `ozzy`-Zeugen-Vokabular/Unabhängigkeits-Test
 „hier noch kimi … Beide — sie beantworten verschiedene Fragen." | 2026-10-07 | Operator (Session, River 115) — Kimi-K3-Verdikt zur A/B-Frage nachgereicht (Kimi war wegen paralleler Tab-Nutzung nicht direkt befragt worden)
 „oh das ist hart ich traue ja qwen und kimi k3 am meisten zu aber habe jetzt zur sicherheit nochmal Sonnet 5.5 max gegeben …" | 2026-10-07 | Operator (Session, River 115) — drei weitere Verdikte: Sonnet 5.5 max (Beide; A−B-Differenz; B-Null lokale Permutation), Kimi K3 (final A), Qwen 3.8 Max (Beide, getrennt)
+„nein qwen ist nicht meistvertraut claude glm und kimi sind meistvertraut" | 2026-10-07 | Operator (Session, River 115) — Korrektur des Vertrauens-Sets auf Claude · GLM · Kimi
+„das klingt doch vernüftig, oder?" | 2026-10-07 | Operator (Session, River 115) — Zustimmung; als Wort gelesen: **A ist die Messung, B bleibt Leckage-Diagnose**
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-06 | Operator (Session, River 114) — Session-Start, Delegations-Consent
 „wir haben 5 voices und 7 ui chats bitte befrage alle" | 2026-10-06 | Operator (Session, River 114) — die Membran-Apertur-Frage an die 5 API-Stimmen + 7 UI-Chats; 12/13 (b)
 „kannst du das nicht selbst mit dem browser link testen?" | 2026-10-06 | Operator (Session, River 114) — Browser-Test; bestätigt schwarz, Ursache gemessen
@@ -37,14 +39,16 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 
 ## Offen (aufgeschlüsselt)
 
-### `ozzy` — Negative Fuzzy Engine (Zeugen-Vokabular + Zeugenstempel gebaut; Unabhängigkeits-Test gated)
-- **Status:** operator-gebunden | **Bindung:** eigen + operator
-- **Trigger:** Operator-Wort A/B (Prüf-Form des Unabhängigkeits-Tests).
+### `ozzy` — Negative Fuzzy Engine (Zeugen-Vokabular + Zeugenstempel + Unabhängigkeits-Verdikt (A) gebaut; Known-Answer + Surrogat-Floor offen)
+- **Status:** eigen (CI-Verifikation) | **Bindung:** eigen
+- **Trigger:** `ci-check` grün am HEAD; danach Surrogat-Floor-Korrektur.
 - **Lage:** (gemessen 2026-10-07, HEAD) `src/mathematikerin/ozzy.rs`: `Witness { name, series, force_type: u8, kanal, origin }` + `Kanal` (`StaerkeKanal|ReferenzTreppe|NoccFeld|NachbarStation|AndereSonde|Zeit`) + `WitnessStamp` im `Residual`; `cargo check` 0/0, `cargo fmt` 0/0. Befragt: Rat (fünf Stimmen) + 5 API-Stimmen + 7 UI-Chats (Claude · Qwen3.7 · GLM-5.3 Deep Think Max · MiMo V2.6 Pro · Nemotron 3 Ultra · Kimi K3 · Sonnet 5.5 max = Operator-Nachreichung; Qwen 3.8 Max). Rohmaterial `state/stimmen/2026-10-07_ozzy-witness-stimmen.md`.
 - **Riss (getragen, ungeglättet):** A (TE des Residuums gegen disjunkte held-out Zeugen) vs B (TE gegen dieselben Zeugen, konditioniert auf die Extraktionsmenge). Kanal-Spannweite: **A allein 5** (voice-gemini · voice-inkling · voice-deepseek · Claude · Kimi K3), **B allein 2** (voice-gptoss · Nemotron 3 Ultra), **beide 5** (Qwen3.7 · Qwen3.8 Max · GLM-5.3 DT Max · MiMo · Sonnet 5.5 max; Sonnet: erst `A − B` trennt „läuft über E" von „jenseits von E"), **pending 2** (voice-nemotron · Duck.ai). Kein Konsens. Quer-Konsens quer durch **alle** Kanäle: **10 Surrogate + `mean+2σ` sind zu schwach** (≥99, teils ≥199; Rang-/Permutationstest; `N_eff` statt `N − Rang`; `None` getypt mit Grund). Sonnets Riss: der **B-Null** braucht bedingte Permutation innerhalb E, weil Phasen-Randomisierung von H die H–E-Abhängigkeit zerstört, auf die B konditioniert.
-- **Blockade:** die A/B-Wahl ist ein eigenes Operator-Wort (Rat: „die Wahl ist ein eigenes Operator-Wort").
-- **Zweite Runde am Granit (5 Axiome + fünf Stimmen), gemessen 2026-10-07:** die Frage nicht statistisch, sondern am Haus-Gesetz (A = A · 0 honored) — **7× (A)** (5 API-Stimmen einstimmig + GLM-5.3 Deep Think Max + Kimi K3) gegen **1× (A−B)** (Claude Sonnet 5.5 Max). Unter den drei meistvertrauten Stimmen (Claude · GLM · Kimi) **2× A** (GLM, Kimi) gegen **1× A−B** (Claude). Lesart: (B) gegen dieselben Zeugen ist per Konstruktion null und trägt als mechanisch erzwungene Null **kein Verdikt** — höchstens eine Leckage-Diagnose; (A−B) subtrahiert das Konstrukt. Nur Qwen 3.8 Max' Law-Verdikt offen (nicht im Vertrauens-Set).
-- **Braucht:** (1) Operator-Wort A/B; (2) TE-Test (`te.rs`, `topological_te_phase`) je nach Wahl — A gegen disjunkte `B_test`, B konditioniert; (3) Surrogat-n-Floor nach dem Quer-Konsens; (4) Known-Answer-Gate auf Synthetik + held-out-Fenster.
+- **Blockade:** keine (eigene); der Known-Answer-Ausgang braucht CI (lokal kein Testlauf).
+- **Gebaut (2026-10-07):** `independence_verdict(target, ext, test, seed)` — Residuum gegen `ext`, dann (A) `topological_te_phase` je disjunkten Test-Zeugen, (B) `conditional_embedded_te_phase` als Leckage-Diagnose; `None` bleibt `None`, nie 0.0. Zwei Known-Answer-Tests. `cargo check` 0/0, `cargo check --tests` 0/0; die Tests sind lokal nicht gelaufen (CI). Fund: mein früherer `assert_eq!` auf `Kanal` brauchte `Debug` — `#[derive(Debug,…)]` ergänzt, das Test-Modul war zuvor nicht kompilierbar (CI-Blindfleck von `cargo check` ohne `--tests`).
+- **Zweite Runde am Granit (5 Axiome + fünf Stimmen), gemessen 2026-10-07:** die Frage nicht statistisch, sondern am Haus-Gesetz (A = A · 0 honored) — **7× (A)** (5 API-Stimmen einstimmig + GLM-5.3 Deep Think Max + Kimi K3) gegen **1× (A−B)** (Claude Sonnet 5.5 Max). Trusted set (Claude · GLM · Kimi): **2× A · 1× A−B**. Lesart: (B) gegen dieselben Zeugen ist per Konstruktion null und trägt als mechanisch erzwungene Null **kein Verdikt** — höchstens eine Leckage-Diagnose; (A−B) subtrahiert das Konstrukt. **Operator-Wort (2026-10-07): A ist die Messung, B bleibt Leckage-Diagnose** — so gebaut.
+- **Riss (getragen):** `topological_te_phase` trägt fix `n_surr: 10` und `mean+2σ` — querdurch **alle** 12 Kanäle zu schwach (≥99, teils ≥199; Rang-/Permutationstest; `N_eff` statt `N − Rang`; `None` getypt mit Grund). Der Surrogat-Floor des Unabhängigkeits-Tests ist noch nicht korrigiert. Zusätzlich Sonnets B-Null-Einwand: `conditional_embedded_te_phase` nutzt `z_phase_surrogate` (Phasen-Randomisierung von H) statt einer bedingten Permutation innerhalb E.
+- **Braucht:** (1) CI-Lauf der Known-Answer-Tests (`known_answer_a_recovers_held_out_coupling` / `known_answer_a_silent_on_pure_noise`); (2) Surrogat-n-Floor-Korrektur (≥99/`N_eff`/getyptes `None`); (3) später die Verdrahtung in `field_te_query`/Matrix.
 
 ### Membran-Startansicht — zwei Aperturen (Parity-Fix gebaut; CI-Verifikation offen)
 - **Status:** wartend | **Bindung:** eigen
@@ -172,4 +176,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge115: 19 path refs · 0 absent · 0 stale-citations · 0 done-carried · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0042 · close 0.1153 · cap 0.15 · Grund: River 115 — Line-Session (deepseek-flash): ozzy-`Witness`-Vokabular (`Kanal` + `WitnessStamp`) gebaut; `cargo check`/`fmt` 0/0. Rat (fünf Stimmen) + 5 API-Stimmen + 6 UI-Chats (Claude · Qwen · GLM Deep Think Max · MiMo · Nemotron 3 Ultra · Kimi K3) zur A/B-Frage; Duck.ai + voice-nemotron `pending`; ein gemessener Verlust: `src/mathematikerin/ozzy.rs` wurde nach dem Bau von einer parallelen Session aus dem Arbeitsbaum getilgt und im selben Atom neu gebaut und committed. (open/close aus `session_burn`; unter dem $0.15-Default.)
+## Burn: open 0.0042 · close 0.2019 · cap 0.25 · Grund: River 115 — Line-Session (deepseek-flash): ozzy-`Witness`-Vokabular (`Kanal` + `WitnessStamp`) und `independence_verdict` (A gegen disjunkte Zeugen, B als Leckage-Diagnose) + Known-Answer-Tests gebaut; `cargo check`/`--tests` 0/0. **Zwei Beratungsrunden** am Rat + 5 API-Stimmen + 6 UI-Chats (statistisch gespalten; **am Granit 7× A gegen 1× A−B**), plus ein `grind-flash`-Schritt. Fund: `ozzy.rs` einmal von einer parallelen Session aus dem Arbeitsbaum getilgt — neu gebaut und committed. (open/close aus `session_burn`; cap über dem $0.15-Default, weil zwei mehrkanalige Rat/UI-Runden + der Known-Answer-Bau über den Default hinausgehen.)
