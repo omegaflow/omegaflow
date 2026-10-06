@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: f436083a880818cc8529adcb32f9fee7407d8137ed32c32e409158f32f5310ec
+  sha256: 5a4b26b59f815b3c2b8358b2b4f3d45af504b941f6e8cbf4e4c705394c2b668b
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,44 +12,36 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0675
+## Burn: open 0.0000 · close 0.1086
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
-## Freie Stimmen — API-Modell-Test (Operator-Frage 2026-10-06 „hast du die api modelle getestet?")
+## Operator-Wort-Register
 
-- **Der CI-Lauf testete die 5 neuen Anbieter nicht:** `free-model-bench 37487436436`
-  (`sambanova,orcarouter,alibaba,ovhcloud,mistral`) = success, aber das Artefakt
-  `free-model-bench.tsv` trägt für **alle 11 Modelle** `pending_no_key` — der
-  `FREE_MODEL_KEYS`-Secret führt keinen der neuen Provider-Keys
-  (gemessen 2026-10-06 via `gh api …/artifacts/11425169303/zip`).
-- **Lokal real getestet** (`free_model_bench --task T5`, 12 Worker, gemessen
-  2026-10-06; Ergebnis `state/mycelium/free-model-bench-2026-10-06.tsv`): die
-  Provider mit lokalem Key (auth.json/`.secrets.local`) antworten. **Pass 3/3:**
-  `kilo dots-3-note-preview`, `kilo kilo-auto/free`, `kilo nvidia/nemotron-3-super-120b`,
-  `nvidia meta/llama-3.2-11b/90b-vision`, `nvidia nvidia/nemotron-3-super-120b`,
-  `nvidia openai/gpt-oss-20b`, `google gemini-3.1-flash-lite`, `google gemini-3.5-flash-lite`.
-  **2/3:** `kilo openrouter/free`, `kilo ling-3.0-flash-sante`, `nvidia nemotron-3-ultra-550b`,
-  `google gemini-3.8-flash`. **Tote Arme (registriert):** `nvidia mistralai/mistral-nemotron`
-  = http_410 „end of life 2026-09-28" → `struck`; `google gemini-2.5-flash` = http_404
-  „no longer available to new users" → `struck`; `mistral mistral-large-latest` = http_403
-  `tier_not_allowed` auf dem Free-Key → `blocked`. **Transient:** `cloudflare-workers-ai`
-  alle 11 = `pending_rate_limited` („daily free allocation of 10,000 neurons" verbraucht,
-  Tagesquote); `mistral-medium-latest` = 429.
-- **Per `auth login` (Operator-Hinweis 2026-10-06) nachgemessen:** `opencode auth list`
-  führt 12 Credentials — DeepSeek, Nvidia, OpenRouter, Kilo, Kenari, OpenCode Zen, Google,
-  Cloudflare Workers AI, Z.AI, OrcaRouter, Mistral, sambanova. **Alibaba und OVHcloud fehlen**
-  (kein Credential) — ihr `pending_no_key` ist echt. Die vorhandenen Keys rufen aber nicht:
-  **sambanova** = `http_402` „PAYMENT_METHOD_REQUIRED / balance_units: 0"; **OrcaRouter** =
-  `free_rate_limited` „Free models are not available to this account yet" (Workspace-Owner
-  muss ein GitHub-Konto verknüpfen); **Z.AI** = `1113 Insufficient balance` für `glm-5.3-flash*`
-  (die 4.x-Flash-Tier läuft, s. `voice-zai`). Die `free_models.tsv`-Disposition `blocked` ist
-  damit die gemessene Wahrheit, nicht ein Key-Mangel.
-- **Offen (Operator/per-act):** Konten freischalten — SambaNova Zahlungsmethode, OrcaRouter
-  GitHub-Verknüpfung, Alibaba/OVHcloud Credential (`auth login`), Z.AI-Guthaben für 5.3;
-  CI-seitig die Keys in `FREE_MODEL_KEYS`. Erst dann sind diese `voice-*`-Agenten baubar.
+- Wort | 2026-10-06 | „kannst du bitte die nutzlosen modelle und anbieter deaktivieren? also auch die die immer rate limited sind" — nicht aufrufbare Arme aus `free_models.tsv` austragen (`struck`) | Quelle: Operator (Session, Mycelium 244).
+- Wort | 2026-10-06 | „nein wir haben glm max über ui chat" — OrcaRouter nicht verfolgen (GLM-Route läuft über den UI-Chat) | Quelle: Operator (Session, Mycelium 244).
+- Wort | 2026-10-06 | „Genau ein Zulassungskriterium (Presence-Hülle) und ein deklarierter Beobachter je Messung; ein Body-Name, den der Code wählt, ist der Bias" | Quelle: Operator-Session 2026-10-06 — als Regel in `AGENTS.md` `## Block Universe Physics`.
+- Wort | 2026-10-06 | JAXA-G-Portal-Bestellungen (`download_limit=1` je, Fenster `2026/01/01`); die Abholung (fetch) ist der Vollzug desselben Worts | Quelle: Operator-Session 2026-10-06.
+- Wort | 2026-10-06 | Holdings-Migration: „1 ja (move) · 2 ja (delete) · 3 ja (create) · 4 messen, dann · 5 ja (delete) · 6 ja (dedup) · 7 ja (dedup)" | Quelle: Operator-Session 2026-10-06.
+- Wort | 2026-10-06 | Daten-Holdings CDN-Bedarf/Ort: „ich gebe es mycelieum" — Kriterium nicht „regenerierbar", sondern was auf den CDN muss und am richtigen Ort liegt | Quelle: future-185 addressed.
+- Wort | 2026-10-06 | „Ein Dispatch = ein begrenzter Schritt" — ein Agent plant im Output-Budget; ein über-großer Auftrag wird als Sequenz begrenzter Schritte gebaut | Quelle: Operator-Session 2026-10-06, als Regel in `AGENTS.md`.
+- Wort | 2026-10-06 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | Quelle: Operator (Session, Mycelium 243).
+- Wort | 2026-10-06 | Own-CDN-Junk-Bereinigung: „ich folge deiner Empfehlung" — die Messung korrigierte: nur 1 stale Blatt gelöscht | Quelle: Operator (Session, Mycelium 243).
 
 ## Offen — eigen
+
+### Freie Frontier-Stimmen — Registrierung (deaktiviert per Operator-Wort 2026-10-06)
+- **Status:** eigen
+- **Trigger:** `auth login`/Konten-Freischaltung eines gestrichenen Anbieters → `free_model_bench --provider <p>`
+- **Lage:** (gemessen 2026-10-06) `free_models.tsv` bereinigt — **`struck` gesetzt** für:
+  `cloudflare-workers-ai` (11, Tagesquote 10 000 Neuronen immer verbraucht), `groq` (4, kein
+  Credential), `sambanova` (3, `http_402 PAYMENT_METHOD_REQUIRED`), `mistral` large (403 tier) +
+  medium (429), `alibaba` (2, kein Credential), `ovhcloud` (2, kein Credential), `zai` (2,
+  `1113 Insufficient balance`), `orcarouter` (2, descoped), plus `gemini-2.5-flash` (404) und
+  `nvidia/mistral-nemotron` (410 EOL). **Aktiv bleiben** `google`, `kilo`, `nvidia` (HTTP) und
+  `opencode` (client). Test: `state/mycelium/free-model-bench-2026-10-06.tsv`.
+- **Blockade:** keine — die Deaktivierung ist der Vollzug des Worts.
+- **Braucht:** nichts; ein Anbieter kehrt per `auth login`/Zahlungsmethode und Dispositions-Flip zurück.
 
 ### Daten-Holdings — `opencode-tmp`-Dump CDN-Bedarf/Uniqueness
 - **Status:** eigen
@@ -140,13 +132,9 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
 
 Origin: mycelium-folge244.
 
-- **Freie Frontier-Stimmen — Konten statt Keys (Operator/per-act):** `opencode auth list`
-  führt OrcaRouter, sambanova und Z.AI bereits als `api`-Credential; ihre Keys rufen aber
-  nicht (SambaNova 402 „PAYMENT_METHOD_REQUIRED", OrcaRouter `free_rate_limited`/GitHub-Link,
-  Z.AI `1113 Insufficient balance` für 5.3). Alibaba und OVHcloud haben **kein** Credential.
-  Vorbereitung (Test `state/mycelium/free-model-bench-2026-10-06.tsv`, IDs, Disposition
-  `blocked`) liegt; der Akt ist Konten-Freischaltung (Zahlungsmethode / GitHub-Verknüpfung /
-  `auth login` / Guthaben) — Operator-Hand. Danach `FREE_MODEL_KEYS` für CI + `voice-*`.
+- **Freie Frontier-Stimmen:** die nicht aufrufbaren Arme sind per Operator-Wort 2026-10-06 in
+  `free_models.tsv` `struck` (s. eigener Punkt oben) — kein Operator-Akt mehr offen; reaktivierbar
+  per `auth login`/Zahlungsmethode.
 - **Orphan-Doc `docs/surveys/survey-2026-10-03-exzellenz-gate.md`** (1 offener Marker,
   kein Live-Handover-Träger): bitte Träger nennen oder gemessen `descoped`.
 
