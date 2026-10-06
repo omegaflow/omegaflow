@@ -3590,13 +3590,6 @@ field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/www.ieeg.org/09_14_limbic_seizure_374.bin
-format openneuro_eeg
-origin https://www.ieeg.org/services
-compiler tools/harvest/src/bin/ieeg_compiler.rs
-at earth
-ttl 86400
-
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
 format reference
 ttl 86400

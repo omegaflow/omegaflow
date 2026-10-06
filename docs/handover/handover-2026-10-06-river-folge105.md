@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 740d4df0debf3ddd5dbcdafa2d5365d5ad77e96ad83f95bbba03c348852c3b3c
+  sha256: 8bda48fa057bd7e579e57814531abee504bd40e534d3a85a6e1e422598c78761
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -30,6 +30,8 @@ Wort | Datum | Quelle
 „die können jetzt auch als council/grind/general eingesetzt werden … ich hätte gern, dass sie auch architekturfragen mit den fünf stimmen beantworten — das ist counter slope" — die deepseek-Schwarm-Seats tragen die Fünf-Stimmen-Verfassung im Prompt | 2026-10-06 | Operator (Session, River 105)
 „nein, ich meine: momentan fragen wir bei Architekturfragen nur deepseek — können wir nicht auch den Schwarm befragen, aber durch die Linse der 5 Stimmen" — **alle 14** Schwarm-Voices tragen die Fünf-Stimmen-Verfassung (nicht nur deepseek) | 2026-10-06 | Operator (Session, River 105)
 „und tragen sie auch die axiome?" — die 14 Schwarm-Voices tragen die bindenden Axiome im Prompt (A = A, 0-Kanon, keine Fabrikation/Defaults, Riss, 0 honored, jede Aussage trägt ihre Messung) | 2026-10-06 | Operator (Session, River 105)
+„bitte entfernen iEEG sofort" — iEEG.org aus Register und Manifest-Workflow entfernen (Lizenz ungeklärt) | 2026-10-06 | Operator (Session, River 105)
+„ja bitte dringend in die übergabe … du darfst committen" — Lizenz-Audit in die Übergabe + Commit-Freigabe | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -122,6 +124,32 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) `image-cdn.yml` (Mycelium) für `fmi_image_mag_nur.bin` + sha ins Register;
   (2) ggf. Tages-Detrend im Compiler (Mountain); (3) Probe dB/dt(NUR)–GIC(Mäntsälä) + Zahl in
   Paper §4/§6.
+
+### Körpermesswerte — Lizenz-Audit (Körperdaten auf CDN)
+- **Status:** wartend | **Bindung:** eigen (cross-line Mountain/Mycelium)
+- **Trigger:** Operator-Wort 2026-10-06 („… lizenztechnisch sauber … nur die auf CDN legen, die wir auch dürfen") + Gate-Akt.
+- **Lage:** (gemessen 2026-10-06, River 105) Auf dem CDN liegen drei Körpermesswert-Gruppen:
+  - `physionet.org/bidsleep_mehrnacht.bin` (format `bidsleep`, origin
+    `physionet.org/files/bidsleep-dataset/1.0.0/`) — PhysioNet **gemischt** (Survey `:32`:
+    MIT-BIH/Sleep-EDF/CHB-MIT offen, MIMIC-IV/eICU Credentialing+DUA); **BIDSleep-Lizenz
+    unverifiziert**.
+  - ~77 `openneuro.org/sub-G*S*_task-pd*_eeg.bin` (format `openneuro_pd_eeg`, origin
+    `openneuro.org/crn/graphql`, ds005034) — Survey `:31` „offen (anonym), CC0/CC-BY"
+    (Plattform); **Dataset-Lizenz je Set unverifiziert**.
+  - ✅ **iEEG.org wurde entfernt (Operator-Wort 2026-10-06, „bitte entfernen iEEG sofort"):**
+    Register-Zeile `phi/sources.φ` (url/format/origin/compiler) **gelöscht**, der Manifest-Workflow
+    `ieeg-cdn.yml` (gelöscht). Das Asset war **nie auf dem CDN**
+    (`gh release view www.ieeg.org` = „release not found"; das Backend hing an 503), keine lokale
+    Kopie. Lizenz ungeklärt (Survey `:63` „Registrierung + User Agreement").
+  - **Kein `license`/`terms`-Feld** im Register (`phi/sources.φ`) oder `SourceConfig`
+    (`src/archivar`); **kein Gate** blockt eine CDN-Manifestation ohne redistributions-erlaubende
+    Lizenz. Das repo-eigene `LICENSE` deckt Code/Docs (PolyForm NC / CC BY-NC-SA), **nicht** die
+    Dritt-Daten.
+- **Blockade:** keine Lizenzmessung je Dataset; kein Gate.
+- **Braucht:** (1) `license`/`terms`-Direktive je Körperdatenzeile (Mountain) + Gate „keine
+  CDN-Manifestation ohne Lizenz" (Mountain/Mycelium); (2) `THIRD_PARTY_LICENSES`/NOTICE im Repo mit
+  Attribution je Dataset; (3) je Dataset messen (PhysioNet BIDSleep-Lizenz, OpenNeuro ds005034
+  GraphQL `license`). iEEG ist erledigt (entfernt); offen bleiben PhysioNet/OpenNeuro.
 
 ### Membran-Sonne-Anker (Operator-Wort future-181; cross-line Mountain/Mycelium)
 - **Status:** blockiert | **Bindung:** eigen (cross-line: Mountain, Mycelium)
@@ -389,4 +417,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.4887 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config + Viljanen-Umsetzungsmessung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.4887; Runde total 0.5318 → 1.8407; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.5 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config + Viljanen-/Lizenz-Messung + iEEG-Entfernung — die Session-Zeile „River-Linie starten und Übergabe abarbeiten" misst **$0.5349** (über dem Hard-Cap 0.5); Operator-Wort 2026-10-06 „du darfst committen"; `close 0.5` ist der Cap-Grenzwert, die gemessene Zahl steht benannt; Runde total 0.5318 → 1.7685; gemessen 2026-10-06
