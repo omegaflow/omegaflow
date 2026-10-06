@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: 6c48eff4bbd96b24cf3b5311787b5ca9fd903ace585c589444d94a81e0f26899
+  sha256: c98763c60dff6d806771bf3cef3a5a39c1dc7b045b891f6dc2f68fc5caf042e1
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)
@@ -34,6 +34,7 @@ Wort | Datum | Quelle
 „ja bitte dringend in die übergabe … du darfst committen" — Lizenz-Audit in die Übergabe + Commit-Freigabe | 2026-10-06 | Operator (Session, River 105)
 „aber können wir es nicht so machen wie bei [redacted], dass wir die als private experimente laufen lassen?" — Daten ohne geklärte Redistribution laufen privat (lokal, kein CDN, keine `sources.φ`) | 2026-10-06 | Operator (Session, River 105)
 „hast du eigentlich die lizensfrage schon bearbeitet?" — Frage/Trigger: Lizenz-Audit-Stand messen und schließen | 2026-10-06 | Operator (Session, River 107)
+„ich wollte aber nicht nur OpenNeuro ich möchte dass wir unsere lizenzen repoweit sauber haben wollen wir nicht einfach ein license file im sources repo wo alle lizenzen drin stehen?" — repo-weite Lizenz-Sauberkeit; ein `LICENSE` im `sources`-Repo mit allen Lizenzen | 2026-10-06 | Operator (Session, River 107)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge106.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -262,9 +263,35 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** Neustart; dann Voice-Test: öffentliche https-Seite via `chrome-devtools-voices_*`
   lädt, `browser_open`/`chrome-devtools_*` = denied, `http://127.0.0.1:1618` blockiert.
 
+### Repo-weiter Lizenz-Census + `sources`-LICENSE (Operator-Wort 2026-10-06)
+- **Status:** eigen (Audit) | **Bindung:** eigen
+- **Trigger:** Operator-Wort 2026-10-06 („lizenzen repoweit sauber … license file im sources repo").
+- **Lage:** (gemessen 2026-10-06, River 107) `phi/sources.φ` trägt **1945** Spiegel-URLs über
+  **169 distinct Netlocs**; **keine** Lizenz-Direktive, kein `LICENSE`/`README` im
+  `omegaflow/sources`-Repo. Rat 2026-10-06: die Wahrheit ist die `terms`-Zeile je Quelle
+  (Mountain); das sources-`LICENSE` wird **generiert** (Mycelium, CI-Drift-Tor), nicht authored;
+  der Census ist Rivers. Census gestartet: `state/river/license-census.tsv` (169 Zeilen; Batch 1 =
+  10 Netlocs, 7 gemessen). Befund Batch 1: `api.le-systeme-solaire.net` = **CC-BY-NC-SA-4.0**,
+  `alasky.cds.unistra.fr` = **ODbL-1.0** (share-alike), `air-quality-api.open-meteo.com` =
+  CC-BY-4.0, `api.eumetsat.int` = free-open, `aqs.epa.gov` = PD, `api.opensensemap.org` = PDDL-1.0,
+  `anderson-residuals` = own-work; `almascience.org` / `amda.irap.omp.eu` / `api.sedoo.fr` =
+  `pending` (keine Lizenz genannt).
+- **Blockade:** keine.
+- **Braucht:** die restlichen 159 Netlocs messen (flash-Batches in
+  `state/river/license-census.tsv`); das Ergebnis als `terms`-Zeilen an Mountain; Generator +
+  Drift-Tor an Mycelium (`## An mycelium`).
+
 ## An mycelium
 
 Origin: river folge101 (getragen über folge102/103/104/105/106).
+
+- **Generiertes `LICENSE` im `omegaflow/sources`-Repo (Rat 2026-10-06, Operator-Wort).** Das Root
+  trägt heute kein `LICENSE`/`README`. Ein Compiler liest die `terms`-Zeilen aus `phi/sources.φ`
+  und emittiert ein nach **Lizenzklassen gruppiertes** `LICENSE` (PD / CC0 / CC-BY-4.0 /
+  CC-BY-SA-3.0-IGO / ODC-BY / ODbL / PDDL / CC-BY-NC-SA / free-open / own-work / pending — `pending`
+  namentlich, nie geglättet); ein CI-Tor prüft die committete Datei byte-identisch gegen die
+  Neu-Erzeugung. Kein Hand-Edit, keine zweite Wahrheit. **Braucht:** Generator + Drift-Tor, nachdem
+  Mountains `terms`-Zeilen landen.
 
 - **DE440-`.bin` remanifestieren.** Nach Mountains `de_compiler`-GM-Landung die
   `ephemeris_de440_{earth,moon,sun}.bin` (und die Geschwister) neu bauen und über die CI zur
@@ -314,9 +341,11 @@ committet).
 
 Verifikation: Lizenz-Audit geschlossen (river 107, `curl` der `dataset_description.json`:
 ds005034/ds007471/ds007822 = CC0; PhysioNet BIDSleep = ODC-BY 1.0); iEEG bleibt entfernt/privat;
-die strukturelle Erzwingung (`terms`-Zeile + Parser-Arm + `unbacked_mirror`-Verschärfung) als
-`## An mountain` getragen; `NOTICE` trägt die ODC-BY-Attribution. `omega_sh sha` der Übergabe;
-`git_safety --close`; `git status` vor dem Commit; fremde uncommittete Hunks im Baum
-(`phi/sources.φ`, `src/archivar/geo.rs`, `tools/harvest/...`, sensory-Handover-Move) nicht berührt.
+`NOTICE` trägt die ODC-BY-Attribution. Rat 2026-10-06 (repo-weite Lizenzen): Wahrheit = `terms` je
+Quelle (Mountain), sources-`LICENSE` **generiert** + CI-Drift-Tor (Mycelium), Census = River;
+Census gestartet (`state/river/license-census.tsv`, 169 Netlocs, Batch 1 = 7 gemessen). Getragen:
+`## An mountain` (`terms`+Gate), `## An mycelium` (Generator+`LICENSE`). `omega_sh sha` der
+Übergabe; `git_safety`; `git status` vor dem Commit; fremde uncommittete Hunks
+(`src/archivar/geo.rs`, `tools/harvest/...`) nicht berührt.
 
-## Burn: open 0.0000 · close 0.0631
+## Burn: open 0.0000 · close 0.1017
