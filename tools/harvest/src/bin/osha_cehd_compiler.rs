@@ -306,6 +306,144 @@ fn parse_cehd(
     Ok((samples, counts))
 }
 
+fn leaf_text<'a>(s: &'a str, tag: &str) -> Option<&'a str> {
+    let open = format!("<{}>", tag);
+    let close = format!("</{}>", tag);
+    let start = s.find(&open)? + open.len();
+    let end = s[start..].find(&close)? + start;
+    Some(s[start..end].trim())
+}
+
+fn is_open(rest: &str) -> bool {
+    matches!(
+        rest.as_bytes().first(),
+        Some(b'>') | Some(b' ') | Some(b'\t') | Some(b'\n') | Some(b'\r')
+    )
+}
+
+fn decode_entity(entity: &str) -> Option<char> {
+    if let Some(num) = entity.strip_prefix('#') {
+        let code = match num.strip_prefix(['x', 'X']) {
+            Some(hex) => u32::from_str_radix(hex, 16).ok()?,
+            None => num.parse::<u32>().ok()?,
+        };
+        char::from_u32(code)
+    } else {
+        match entity {
+            "amp" => Some('&'),
+            "lt" => Some('<'),
+            "gt" => Some('>'),
+            "quot" => Some('"'),
+            "apos" => Some('\''),
+            _ => None,
+        }
+    }
+}
+
+fn decode_entities(s: &str) -> String {
+    if !s.contains('&') {
+        return s.to_string();
+    }
+    let mut out = String::with_capacity(s.len());
+    let mut rest = s;
+    while let Some(amp) = rest.find('&') {
+        out.push_str(&rest[..amp]);
+        rest = &rest[amp..];
+        let semi = rest.find(';');
+        match semi {
+            Some(semi) => match decode_entity(&rest[1..semi]) {
+                Some(c) => {
+                    out.push(c);
+                    rest = &rest[semi + 1..];
+                }
+                None => {
+                    out.push('&');
+                    rest = &rest[1..];
+                }
+            },
+            None => {
+                out.push('&');
+                rest = &rest[1..];
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
+
+fn xml_field(record: &str, tag: &str) -> Option<String> {
+    leaf_text(record, tag).map(decode_entities)
+}
+
+fn parse_cehd_xml(
+    text: &str,
+    stride: usize,
+    limit: usize,
+    gaz: &[zcta::Zcta],
+) -> Result<(Vec<Sample>, ParseCounts), String> {
+    let mut samples: Vec<Sample> = Vec::new();
+    let mut counts = ParseCounts {
+        rows: 0,
+        carried: 0,
+        date_absent: 0,
+        result_absent: 0,
+        censored_absent: 0,
+        unit_absent: 0,
+        geocoded: 0,
+        zip_absent: 0,
+    };
+    for record in text.split("<DATA_RECORD").skip(1) {
+        if !is_open(record) {
+            continue;
+        }
+        let body = match record.find("</DATA_RECORD>") {
+            Some(end) => &record[..end],
+            None => continue,
+        };
+        counts.rows += 1;
+        if (counts.rows - 1) % stride != 0 {
+            continue;
+        }
+        let Some(unix) = xml_field(body, "date_sampled").and_then(|s| epoch_of_date(&s)) else {
+            counts.date_absent += 1;
+            continue;
+        };
+        let qualifier = match xml_field(body, "qualifier") {
+            Some(q) => q,
+            None => String::new(),
+        };
+        if censored(&qualifier) {
+            counts.censored_absent += 1;
+            continue;
+        }
+        let Some(unit) = xml_field(body, "unit_of_measurement").and_then(|s| si_unit(&s)) else {
+            counts.unit_absent += 1;
+            continue;
+        };
+        let Some(result) = xml_field(body, "sample_result").and_then(|s| finite_result(&s)) else {
+            counts.result_absent += 1;
+            continue;
+        };
+        let pos = xml_field(body, "ZIP_CODE").and_then(|z| zcta::lookup(gaz, &z));
+        if pos.is_some() {
+            counts.geocoded += 1;
+        } else {
+            counts.zip_absent += 1;
+        }
+        samples.push(Sample {
+            unix,
+            value: to_si(result, &unit),
+            quantity: unit.quantity,
+            pos,
+        });
+        counts.carried += 1;
+        if samples.len() >= limit {
+            break;
+        }
+    }
+    Ok((samples, counts))
+}
+
 fn find_member<'a>(entries: &'a [ZipEntry], member: &str) -> Option<&'a ZipEntry> {
     entries.iter().find(|e| e.name == member).or_else(|| {
         entries
@@ -416,7 +554,11 @@ fn run(args: &[String]) -> Result<(), String> {
         .ok_or_else(|| format!("{}: entry extract void", member.name))?;
     let table = String::from_utf8_lossy(&raw);
     let gaz = load_gazetteer(args);
-    let (samples, counts) = parse_cehd(&table, stride, limit, &gaz)?;
+    let (samples, counts) = if member.name.ends_with(".xml") {
+        parse_cehd_xml(&table, stride, limit, &gaz)?
+    } else {
+        parse_cehd(&table, stride, limit, &gaz)?
+    };
     if samples.is_empty() {
         return Err(format!(
             "{source}: no row with a measured date, uncensored {RESULT_FIELD} and a measured {UNIT_FIELD} — the artifact stays unwritten (0 honored)"
@@ -498,7 +640,7 @@ fn main() {
             "usage: osha_cehd_compiler [--input <zip-path>] [--url <zip-url>] [--inspect] [--member <name>] [--netloc <netloc>] [--stride N] [--limit N] [--gazetteer <bin>] [--out <path>] [--ci-mode]"
         );
         eprintln!(
-            "  reads the US OSHA CEHD health-samples zip; only the member sample_data_2019.csv is extracted"
+            "  reads the US OSHA CEHD health-samples zip; the CSV arm reads sample_data_2014.csv..2019.csv, the XML arm sample_data_1984.xml..2013.xml"
         );
         eprintln!("  --inspect lists the zip central directory and stops");
         eprintln!("  emits one text record per sample: <unix_seconds> <value> <si_unit>");
@@ -628,6 +770,75 @@ mod tests {
                 .iter()
                 .all(|s| s.unix.is_finite() && s.value.is_finite() && s.pos.is_none())
         );
+    }
+
+    fn xml_fixture() -> &'static str {
+        "<main xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n\
+<main>\n\
+<DATA_RECORD>\n\
+<inspection_number>111</inspection_number>\n\
+<ESTABLISHMENT_NAME>ACME &#40;A&#41;</ESTABLISHMENT_NAME>\n\
+<ZIP_CODE>21093</ZIP_CODE>\n\
+<inspection_number>111</inspection_number>\n\
+<date_sampled>2013-JAN-25</date_sampled>\n\
+<sample_result>0.5179</sample_result>\n\
+<unit_of_measurement>mcg/m3</unit_of_measurement>\n\
+<qualifier></qualifier>\n\
+<substance>Lead</substance>\n\
+</DATA_RECORD>\n\
+<DATA_RECORD>\n\
+<inspection_number>222</inspection_number>\n\
+<ZIP_CODE>99999</ZIP_CODE>\n\
+<date_sampled>2013-JAN-26</date_sampled>\n\
+<sample_result>0.2</sample_result>\n\
+<unit_of_measurement>M</unit_of_measurement>\n\
+<qualifier>ND</qualifier>\n\
+<substance>Cadmium</substance>\n\
+</DATA_RECORD>\n\
+<DATA_RECORD>\n\
+<inspection_number>333</inspection_number>\n\
+<ZIP_CODE>99999</ZIP_CODE>\n\
+<date_sampled>2013-JAN-27</date_sampled>\n\
+<sample_result>80</sample_result>\n\
+<unit_of_measurement>&#37;</unit_of_measurement>\n\
+<qualifier></qualifier>\n\
+<substance>Quartz</substance>\n\
+</DATA_RECORD>\n\
+</main>\n\
+</main>\n"
+    }
+
+    #[test]
+    fn decode_entities_reads_numeric_and_named_references() {
+        assert_eq!(decode_entities("ACME &#40;A&#41;"), "ACME (A)");
+        assert_eq!(decode_entities("100&#37;"), "100%");
+        assert_eq!(decode_entities("&amp;&lt;&gt;"), "&<>");
+        assert_eq!(decode_entities("no entity"), "no entity");
+    }
+
+    #[test]
+    fn parse_cehd_xml_carries_measured_units_with_their_si_scale() {
+        let gaz = vec![zcta::Zcta {
+            geoid: 21093,
+            lat: 39.4,
+            lon: -76.7,
+        }];
+        let (samples, counts) = parse_cehd_xml(xml_fixture(), 1, usize::MAX, &gaz).unwrap();
+        assert_eq!(counts.rows, 3);
+        assert_eq!(samples.len(), 2);
+        assert_eq!(counts.censored_absent, 1);
+        assert_eq!(counts.geocoded, 1);
+        assert!((samples[0].value - 0.5179e-9).abs() < 1e-18);
+        assert_eq!(samples[0].pos, Some((39.4, -76.7)));
+        assert!((samples[1].value - 80e-2).abs() < 1e-18);
+    }
+
+    #[test]
+    fn parse_cehd_xml_honours_stride_and_limit() {
+        let (strided, _) = parse_cehd_xml(xml_fixture(), 2, usize::MAX, &[]).unwrap();
+        assert_eq!(strided.len(), 2);
+        let (limited, _) = parse_cehd_xml(xml_fixture(), 1, 1, &[]).unwrap();
+        assert_eq!(limited.len(), 1);
     }
 
     fn zip_fixture() -> &'static str {

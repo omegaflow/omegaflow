@@ -3,7 +3,7 @@
   session: Mountain-Folge 246
   class: handover
   date: 2026-10-06
-  sha256: 570daa53c296d6c1119e9ae547099855c5e230ac264b43692ea26c2ed6f99356
+  sha256: 9aa76e11ae42642438214105af24625ff6f3c46436af843445cecd6f9353d259
   status: live
 -->
 # Handover — Mountain-Folge 246 (2026-10-06)
@@ -14,7 +14,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-06-mountain-folge245.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0116 · close 0.1674 · cap 0.20 · Grund: der Operator-Wort-Auftrag (OSHA-Geocoder + JAXA-Granule verifizieren + Register) brauchte 6 Dispatches und einen echten 152-MB-Granule-Lauf; der Cap ist für dieses Atom auf 0.20 gehoben (close = Top-linie-Session, gemessen 2026-10-06 via `session_burn`).
+## Burn: open 0.0116 · close 0.4983 · cap 0.50 · Grund: der Operator-Auftrag „bitte umsetzen" (4 Punkte) + die Kp-Operatorfrage über Rat, 11 API-Stimmen und 9 offene Browser-Chat-Tabs + mehrere begrenzte Dispatches; der Cap ist für dieses Atom auf 0.50 gehoben (close = Top-linie-Session, gemessen 2026-10-06 via `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -57,6 +57,9 @@ Wort | Datum | Quelle
 „kannst du das noch machen?" — OSHA/JAXA/Fink-sky1 fertig bauen (Unit-Tabelle, JAXA-Arm, sky1-Messung) | 2026-10-06 | Operator (Session, Mountain 245)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 246)
 „bitte umsetzen" — OSHA-Geocoder (ZCTA) bauen · JAXA-Granule verifizieren · Vlies-Felder · Exposom-Register | 2026-10-06 | Operator (Session, Mountain 246)
+„da sind doch viel mehr stimmen offen" — die Kp-Operatorfrage dem Rat UND den offenen Browser-Chat-Stimmen vorlegen, nach Modellfähigkeit gewichten | 2026-10-06 | Operator (Session, Mountain 246)
+„du kannst claude nochmal versuchen" — Claude (Sonnet 5.5) als letzte Frontier-Stimme einholen | 2026-10-06 | Operator (Session, Mountain 246)
+„bitte umsetzen" — Kp-Entscheidung: kein Peer-Feld/Treiber; Register-Riss binden, Wege benennen | 2026-10-06 | Operator (Session, Mountain 246)
 
 ## Offen (aufgeschlüsselt)
 
@@ -70,11 +73,17 @@ Wort | Datum | Quelle
   Register-Zeile in `phi/sources.φ` + `extract.rs`-Arm (`zcta_gazetteer`) gesetzt. Der OSHA-Compiler
   liest `ZIP_CODE` und geokodiert via ZCTA (Lauf gegen `sample_data_2019.csv`: **5/5 getragen
   geokodiert**, 0 zip-absent; Position als Spalten 4/5 in `osha_cehd_si.txt`, nie 0.0). `cargo check` 0/0.
-- **Blockade:** keine für den Geocoder; der OSHA-`url`/`format`-Eintrag fehlt, weil der Archivar noch
+  **XML-Arm gebaut** (1984–2013): `parse_cehd_xml` + `leaf_text`/`decode_entity` (aus `quakeml.rs`
+  kopiert) in `osha_cehd_compiler.rs`; `<DATA_RECORD>`-Scanner, dieselben SI-/ZCTA-Wege; Build grün.
+  Ein Lauf gegen eine echte 59-MB-XML (63 833 Records) ist nicht gelaufen (CI-Schritt).
+- **Blockade:** keine für die Arme; der OSHA-`url`/`format`-Eintrag fehlt, weil der Archivar noch
   keinen positions-führenden `axis_value_text`-Arm hat (der generische Parser liest nur t,v; Position
   kommt aus `on earth`).
-- **Braucht:** BLS SOC↔SIC/NAICS-Crosswalk messen; OSHA-XML-Arm 1984–2013 (`sample_data_*.xml`);
-  einen positions-führenden Consumer-Arm, dann eine Zeile in `phi/sources.φ` für OSHA.
+- **Braucht:** einen Lauf gegen eine echte XML-Granule (CI); BLS SOC↔SIC/NAICS-Crosswalk: gemessen —
+  Census SIC↔NAICS-Concordance `…/2002_NAICS_to_1987_SIC.xls` (200, sha256 `5377749f…`) erreichbar,
+  BLS `bls.gov/soc/` 403 (wayback 200, nur SOC↔SOC); die CEHD-CSV trägt SIC/NAICS direkt, ein
+  Crosswalk ist für den Arm nicht nötig (Befund, kein Bau); einen positions-führenden Consumer-Arm,
+  dann eine Zeile in `phi/sources.φ` für OSHA.
 
 ### JAXA GPM Ku — verifiziert
 - **Status:** eigen | **Bindung:** eigen
@@ -91,19 +100,25 @@ Wort | Datum | Quelle
 - **Braucht:** CDN-Workflow `jaxa-gpm-ku-cdn.yml` → mycelium (siehe `## An mycelium`); erster
   Manifest-Lauf.
 
-### Vlies-Matrix — Kp + Newell
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine — Design-Messung
+### Vlies-Matrix — Newell (offen) + Kp (entschieden)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keine — Bau
 - **Lage:** (gemessen 2026-10-06, Mountain 246) **Newell dΦ/dt:** Rat-Verdikt (Option 2) — deklarierter
   **abgeleiteter** Feldknoten, aufgelöst über `newell_from_cells` (`bz_retro_probe.rs:431`), getragen
-  von OMNI-Bz/Bt + solar_wind; er trägt seine Provenienz (`from …`), kein quellenloses `field`.
-  In `phi/pipeline/descriptors/vlies_matrix.te` dokumentiert; Wiring in den Matrix-Lauf offen.
-  **Kp** `phi/sources.φ:1206` bleibt `last` (Wahrheit der Ein-Tages-Quelle); GFZ-`kp.gfz.de` JSON kann
-  beliebige Fenster, aber das GFZ-Kp-Aggregat ist `declined_sources.φ:2608-2621` (positionsloser
-  Index) — **Riss**, nicht glätten.
-- **Blockade:** Newell-Wiring (Mathematikerin-Funktion) + Kp-Verdikt-Widerspruch.
+  von OMNI-Bz/Bt + solar_wind; Provenienz `from …`, kein quellenloses `field`; in `vlies_matrix.te`
+  dokumentiert; Wiring in den Matrix-Lauf offen.
+  **Kp — entschieden (Operator-Wort „bitte umsetzen" 2026-10-06):** Kp tritt **nicht** als Peer-Feld/
+  Treiber ein. Schwarm (11 Frontier-/starke Stimmen, nach Fähigkeit gewichtet) + Rat einig: Kp ist ein
+  globaler 13-Stationen-Response ohne Worldline; die starken Reasoner wollen ihn nicht als peers Feld
+  (GLM/Qwen/ChatGPT „draußen"; Claude/GPT-5.6/Mistral/DeepSeek-Pro nur als deklarierter Response-/
+  Referenzknoten; GLM zusätzlich lokale K-Indizes). **Register-Riss, benannt, nicht geglättet:**
+  `phi/sources.φ:1211` admittiert den GFZ-JSON als `last` :1214, `declined_sources.φ:2607-2609`
+  verweigert dasselbe Aggregat als positionsloses Feld. Kein `field`-Knoten gesetzt; die zwei
+  konstruktiven Wege im Descriptor benannt.
+- **Blockade:** Newell-Wiring (Mathematikerin-Funktion) — `field_te_query.rs` liegt fremd-geändert im Baum.
 - **Braucht:** Newell-Knoten in `tools/measure/src/bin/field_te_query.rs` verdrahten (Funktion nach
-  `src/mathematikerin/`); Kp: Rat/Operator-Wort zum Decline-Widerspruch.
+  `src/mathematikerin/`); Kp-Response-Weg (falls gewählt): GFZ-Hp30-30-min als deklarierter
+  Referenzknoten; Kp-Local-Weg: stationsauflösende lokale K-Indizes als Quelle.
 
 ### Exposom-Matrix §A — gegen den Baum korrigiert (future-183/184)
 - **Status:** eigen | **Bindung:** eigen
@@ -154,16 +169,11 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und
-Push. **Commit zurückgestellt (gemessen 2026-10-06):** HEAD wechselte während dieser
-Session mehrfach (`3ebe6a85b`→`919e7eec3`→`c07c271fa`→`4c7d86d2`), fremde uncommittete
-Hunks liegen im Baum (`src/archivar/hdf5.rs`, `src/archivar/jaxa_gpm_ku.rs`,
+Push. **Atom 1 (`794e3d408`, gepusht):** ZCTA-Geocoder, OSHA-Geokodierung,
+JAXA-Granule-Verifikation, Exposom-§A. **Atom 2 (dieser Commit, Operator-Wort „bitte
+umsetzen"):** OSHA-XML-Arm + Kp-Entscheidung + Register-Riss-Bindung. Fremde
+uncommittete Hunks (`src/archivar/hdf5.rs`, `src/archivar/jaxa_gpm_ku.rs`,
 `tools/harvest/src/bin/epa_aqs_compiler.rs`, `tools/harvest/src/bin/fink_cutout_compiler.rs`,
-`tools/measure/free_models.tsv`,
-`tools/utils/src/bin/hdf5_reader.rs`) — kein Commit in einen aktiv geteilten Baum
-(Commit-als-Letzter). Eigene Pfade der Session: `docs/handover/handover-2026-10-06-mountain-folge246.md`,
-`docs/handover/archiv/handover-2026-10-06-mountain-folge245.md` (Move),
-`src/archivar/zcta.rs` (neu), `src/archivar/mod.rs`, `src/archivar/extract.rs`,
-`tools/harvest/src/bin/zcta_gazetteer_compiler.rs` (neu),
-`tools/harvest/src/bin/osha_cehd_compiler.rs`, `tools/harvest/src/bin/jaxa_gportal_compiler.rs`,
-`phi/sources.φ` (`zcta_gazetteer`-Zeile), `phi/pipeline/descriptors/vlies_matrix.te`,
-`docs/surveys/survey-2026-10-04-exposom-matrix.md`.
+`tools/measure/free_models.tsv`, `tools/utils/src/bin/hdf5_reader.rs`) bleiben unberührt.
+Eigene Pfade Atom 2: `tools/harvest/src/bin/osha_cehd_compiler.rs`,
+`phi/pipeline/descriptors/vlies_matrix.te`, `docs/handover/handover-2026-10-06-mountain-folge246.md`.
