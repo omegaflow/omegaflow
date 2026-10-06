@@ -3,7 +3,7 @@
   session: Mountain-Folge 244
   class: handover
   date: 2026-10-06
-  sha256: 09c569beaa717b67549c64260840ec70305b7188c9f08a88981346f84829f029
+  sha256: 1e2a8c402477a8ab669a3207f85ce8d7cb0ccf162fbb9ea59993d1295931f81c
   status: live
 -->
 # Handover — Mountain-Folge 244 (2026-10-06)
@@ -55,32 +55,34 @@ Wort | Datum | Quelle
 ## Offen (aufgeschlüsselt)
 
 ### AQS-VOC-Arm (Exposom Chemikalien)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** der Commit der fremden Hunks in `src/archivar/geo.rs`
-- **Lage:** (gemessen 2026-10-06 via `git status`) `src/archivar/geo.rs` trägt weiterhin fremde
-  uncommittete Hunks (rustfmt am `vnp46a3_nightlight_roundtrip`-Test, `git diff --numstat` 6/2).
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keine — Bau (autonom)
+- **Lage:** (gemessen 2026-10-06 via `git status`) `src/archivar/geo.rs` ist clean — die
+  rustfmt-Hunks (mtime 13:47:45–52, im Fenster der Mountain-243-Session) sind in `e52ca13da`
+  committet; sie waren Mountain-243-Eigen-Arbeit, im Stehenden Pass als „fremd" fehletikettiert.
   `daily_VOCS_2024.zip` HTTP 200, 7 385 523 B; ein CSV-Member 265 339 729 B, Header mit 118
   Parameter Codes; PM2.5-Sibling `epa_aqs_compiler.rs` gebaut (`geo.rs:308`/`:368`, `extract.rs:842`).
-- **Blockade:** step 1 berührt `src/archivar/geo.rs` — ein pfad-begrenzter Commit würde fremde Arbeit sweepen.
+- **Blockade:** keine.
 - **Braucht:** (1) `src/archivar/geo.rs`: `MAGIC_EPA_AQS_VOC` + `magic_of`/`comp_max`-Arm (`comp = parameter_code`, u32);
   (2) `epa_aqs_compiler.rs`: `--parameter <code>`/`--format`/`--url` (Default-URL VOCS);
   (3) Feld-Tabelle Code→Name+Einheit aus dem Live-CSV; (4) Register-Block `epa_aqs_voc` nach `phi/sources.φ:17388`.
   Bounded step 1 = (1)+(2) mit `cargo build -p omegaflow-harvest --bin epa_aqs_compiler`-Gate.
 
 ### OSHA-CEHD-Arm (Exposom Arbeitsumfeld)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der Commit der fremden Hunks in `src/archivar/geo.rs`
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keine — Bau (autonom)
 - **Lage:** (gemessen 2026-10-06) `obis.osha.gov/opengov/healthsamples.zip` HTTP 206,
   `application/zip`, 104,7 MB; 39 Member, u. a. `sample_data_2019.csv` (28 788 Zeilen) + XML 1984–2013.
   CSV 24 Spalten, **kein lat/lon**, Datum `2019-FEB-01`, SIC/NAICS, Wert = Luftkonzentration
   (Einheiten mg/m3/µg/ppm/fibers/cc/% → SI nötig); `SUBSTANCE` quoted+kommahaltig.
-- **Blockade:** der Arm braucht `geo.rs`; das trägt fremde uncommittete Hunks (s. AQS-VOC).
+- **Blockade:** keine (`src/archivar/geo.rs` clean, s. AQS-VOC).
 - **Braucht:** `osha_cehd_compiler.rs` (range-Fetch, quote-aware Parser nur `sample_data_2019.csv`,
   rows ohne lat/lon → `pending` Geocode); danach separat: XML-Arm, City→lon/lat-Geocoder,
   Unit→SI-Tabelle, SOC↔SIC/NAICS-Crosswalk; Register-Zeile nach dem Arm.
-- **Riss:** `register_lookup --fired mountain` meldet diesen Punkt als FIRED, während sein Trigger
-  (Commit der Fremd-Hunks) gemessen UNERFÜLLT ist (`git status` zeigt `M src/archivar/geo.rs`) —
-  die Trigger-Erkennung feuert ohne erfüllte Bedingung.
+- **Riss (geschlossen):** `register_lookup --fired` hatte diesen `wartend`-Punkt als FIRED gemeldet,
+  weil der Trigger-Text den Messstempel `(gemessen 2026-10-06, git status)` trug und `fired_points`
+  (`tools/register/src/bin/register_lookup.rs:3122`) jede ISO-Datumsangabe im Trigger-Feld als
+  Fälligkeitsdatum liest. Konvention: der Messstempel gehört in `Lage`, nie in `Trigger`.
 
 ### JAXA G-Portal — Granule-Arm (GPM 1B.Ku)
 - **Status:** blockiert | **Bindung:** eigen
