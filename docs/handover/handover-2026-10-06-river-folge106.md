@@ -3,7 +3,7 @@
   session: River-Folge 106
   class: handover
   date: 2026-10-06
-  sha256: c6629ec61a9a8fd47f01b4612d58ef0e47624b731ee8d3046fe9fac6297435f4
+  sha256: 4e3025d425b2ac77da9aeb6feb182d5d67c9447717d28455238758acf90f2128
   status: live
 -->
 # Handover — River-Folge 106 (2026-10-06)
@@ -178,6 +178,9 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     die deployte `ephemeris_de440_earth.bin` trägt Maske bits 0–8, Bit 11 klar. Rat 2026-10-06:
     Mechanismus (a) — `val` = gemessener GM, `force_type = 1.0`; Riss „Maske sagt absent, Quelle
     trägt gm", `pending`. `omega.rs:872` konsumiert bereits `v.frame_body` (mountain-239).
+  - **Deployte Maske gemessen (River 106, HTTP-Range der CDN-`.bin`):** Props-Sektion direkt
+    nach den Granulen; Maske `0x01FF` (Bits 0–8), **Bit 11 (GM) klar** → bestätigt am Asset:
+    der GM fehlt in der Sonne-`.bin`. Körper-`.bin` je **6 629 784 B**, `accept-ranges: bytes`.
 - **Blockade:** der gemessene GM fehlt in der `.bin` — Mountains Parser-/`de_compiler`-Akt.
 - **Braucht:** Mountain setzt slot `f(11)`/Maske Bit 11; Mycelium baut + manifestiert;
   Rivers Checkmark ist `nearCount(<1e13 m) > 0`.
@@ -205,6 +208,17 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     `2·dt` (32-Tage-`GRANULE_DAYS`). **Ein separater Granule-Index im Header existiert nicht** —
     aber die Geometrie ist aus Header (degree, gcount) + erster Granule (t0, dt an Byte 24)
     berechenbar; ein Client-**Range-Fetch** des Fensters ist damit ohne Compiler-Index möglich.
+  - **Reale Assets gemessen (River 106, HTTP-Range/HEAD der CDN):** jede Körper-`.bin`
+    (`sun`/`earth`/`moon`) = **6 629 784 B** (12 556 Granulen × 448 B + übrige Sektionen),
+    `accept-ranges: bytes`, degree 17; `dr3_stars.bin` = **95 424 168 B**. Die Übergabe-Zahl
+    „193-MB-Sonnen-`.bin`" ist **widerlegt**: die drei Körper zusammen ≈ 19,9 MB, der
+    Sternkatalog ist 83 % der Ladung → der erste Pixel hängt am **95-MB-Sternfile**, nicht an
+    den Ephemeriden.
+  - **Render-Messung (C) headless nicht möglich (River 106, `archive_search --playwright`):**
+    `https://omegaflow.space/membrane.html` lädt (Titel „omegaflow — membrane", HTTP 200), der
+    Text ist aber `no WebGPU adapter — honest black ...` — der headless-Chrome hat keinen
+    WebGPU-Adapter (die ehrliche schwarze Null, kein Hänger). Die Wolken-Render-Messung ist
+    damit **an den Operator-Browser (GPU) gebunden**, nicht über `--playwright` zu führen.
   - **Epoch-Riss (E) gemessen:** `dr3_stars.bin` wird von `tap_compiler`
     (`.github/workflows/gaia-cdn.yml:28-37`) mit `--epoch 2016` erzeugt (nicht von
     `tycho2_compiler`, der nur `bright_stars.json` liefert); Register `phi/sources.φ:17466
@@ -212,15 +226,16 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     damit **stale**; das `.bin` trägt den Epoch nicht als Feld. Owner des Werts: **Mountain**
     (Verdikt/Register/Header); der Consumer-Kommentar (River) trägt beide Zeugen, wird **nicht**
     still gesetzt.
-- **Blockade:** der erste Pixel wartet weiter auf den großen Sonnen-`.bin` (A+B ohne D).
+- **Blockade:** der erste Pixel hängt am 95-MB-Sternkatalog (Katalog-Lieferung), nicht an den
+  6,6-MB-Ephemeriden.
 - **Braucht:**
-  (D) windowed Asset **oder** Client-Range: Compiler (Mountain/Mycelium) emittiert ein
-  Fenster-Asset, **oder** River baut in `static/membrane.html`/`src/wasm.rs` den Range-Fetch
-  (Header 24 B + erste Granule 16 B → Index → `Range`-Bytes) mit einem Parser, der eine
-  partielle Granule-Sektion akzeptiert. Der Layout-Trigger ist damit **gefeuert**.
-  (C) Mountain + Mycelium — Katalog nach Helligkeit ordnen (Trigger: Dateiordnung ≠ Helligkeit);
-  ein Playwright-Lauf mit langem Timeout bis zur gerenderten Wolke (Ready-Flag / Canvas nicht
-  schwarz) ist die noch fehlende Messung.
+  (D) **descoped (gemessen 2026-10-06):** ein windowed/Range-Ephemeriden-Asset ist **unnötig** —
+  die Körper-`.bin` sind je 6,6 MB, `accept-ranges` steht ohnehin; der Rat-Premise „sonst ist
+  Sonne zuerst noch 193 MB" ist widerlegt. Kein Compiler-Akt, kein Client-Range.
+  (C) Mountain + Mycelium — den 95-MB-Katalog nach Helligkeit ordnen (Trigger: Dateiordnung ≠
+  Helligkeit), damit der erste Pixel nicht am ganzen Katalog hängt; die Render-Messung
+  (Canvas nicht schwarz / Ready-Flag) ist **operator-browser-gebunden** (headless ohne
+  WebGPU-Adapter, gemessen).
 
 ### Agnosis — Membran-Trio (Rest (a))
 - **Status:** wartend (fremd) | **Bindung:** eigen (cross-line: Mycelium, CI)
@@ -285,9 +300,10 @@ Origin: river folge101 (getragen über folge102/103/104/105/106).
 - **`static/membrane.html:43` BODIES-Handkopie** (`["earth","moon","sun"]`) → Build-Time-Manifest
   aus der Hüllen-Pipeline. Kein River-Fenster-Edit (Kante); Rivers Agnosis-Rest (a).
 - **Measured (river 106):** `dr3_stars.bin` stammt aus `tap_compiler` (`gaia-cdn.yml:28-37`,
-  `--epoch 2016`), nicht aus `tycho2_compiler`; die Ephemeriden-`.bin`-Granule-Sektion ist
-  uniform (Byte 24, 448 B/Granule) — ein windowed Asset ist als Compiler-Ausgabe trivial
-  schneidbar (Trigger für D).
+  `--epoch 2016`), nicht aus `tycho2_compiler`. Die Körper-`.bin` sind je **6 629 784 B**
+  (nicht 193 MB), `accept-ranges: bytes` → **(D) descoped** (kein windowed Asset nötig); der
+  erste Pixel hängt am **95 424 168 B** großen `dr3_stars.bin`. Die Granule-Sektion ist uniform
+  (Byte 24, 448 B/Granule, 12 556 Granulen).
 
 ## LOCK
 
@@ -311,4 +327,9 @@ HEAD `45c017d1` == `origin/main`; fremde uncommittete Hunks im Baum: `src/archiv
 `src/archivar/mtg_li.rs`, `tools/harvest/src/bin/ghsl_compiler.rs`,
 `tools/harvest/src/bin/usda_fara_compiler.rs` + 4 untracked Workflows (nicht berührt).
 
-## Burn: open 0.0000 · close 0.0367
+Zusatzmessungen River 106 (HTTP-Range/HEAD am CDN + `--playwright`): Körper-`.bin` je
+**6 629 784 B**, `dr3_stars.bin` **95 424 168 B**, `accept-ranges: bytes`; deployte Props-Maske
+`0x01FF` (GM Bit 11 klar); Membran-`--playwright` = `no WebGPU adapter` (headless ohne GPU →
+Render nur operator-browser-gebunden). **(D) damit descoped.**
+
+## Burn: open 0.0000 · close 0.0692
