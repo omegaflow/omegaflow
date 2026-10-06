@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; OSHA-CEHD-CDN-Workflow gebaut, soho-Write-Fix, Holdings-Korrektur, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-07
-  sha256: ff1198df075692cd1b48b2085748036c67ab4353aab240f8ea027188013fcb61
+  sha256: 747fa715b517b3d1db9f65a002afb0c2e6f083dca7083f173f8e6a54b41c166d
   status: live
 -->
 # Handover — Mycelium-Folge 247 (2026-10-07)
@@ -71,13 +71,6 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge246.md` (
 - **Lage:** (gemessen 2026-10-07) `bpa-gic-cdn 37534843287` = success; `vnp46a3-cdn 37534858316` = success (Kachel `h18v07` trägt DNB-Nachtdaten; der Granule-Punkt Mountains ist damit gelöst); `nasa-power-t2m-cdn`/`epa-aqs-pm25-cdn` = success; `ghsl-cdn 37534850333` = queued (Runner-Stau). `soho-lasco-cme-cdn` = failure → Fix s.o.
 - **Blockade:** Runner-Stau (`ghsl`).
 - **Braucht:** `ci_manage status` nach dem Push.
-
-### Daten-Holdings — `opencode-tmp`-Dump gemessen, ~2,35 G ausgeführt
-- **Status:** wartend
-- **Trigger:** Operator-Wort je verbleibendem Bestand → Move/Delete
-- **Lage:** (gemessen 2026-10-07, Mycelium-247) Inventur `state/mycelium/holdings-opencode-tmp-2026-10-07.md`. **Ausgeführt (Operator-Wort „ja"):** `provenienz/wal_strings.txt` (2,43 G, `strings`-Extrakt der lebenden opencode-DB), `nvss_dl.json` (104 M, byte-identisch zu `nvss.json`) und `alt/` (Duplikat) gelöscht — `du -sh` 2,9 G → **551 M**. **Verbleibend (551 M / 9):** `nvss.json` (104 M, registriert `phi/sources.φ:17989`), `kollab_mseed` 366 M, `archeo_check` 72 M (60+ `sources.φ`-Recovery-Snapshots), `glakes2015` 8,1 M, `basu`, `pioneer-preserve`, `waisen-kataloge`, `gt`.
-- **Blockade:** Move/Delete der verbleibenden Bestände ist Operator-Wort.
-- **Braucht:** Operator-Wort je verbleibendem Bestand (v. a. `kollab_mseed` — admission oder verwerfen; `archeo_check` — Recovery-Snapshots in archive-root oder löschen). Detail `state/mycelium/holdings-opencode-tmp-2026-10-07.md`.
 
 ### Exposom-Quellenmatrix — Matrix-Lauf-Workflow
 - **Status:** blockiert
@@ -178,6 +171,7 @@ Origin: mycelium-folge247.
 - **Riss — Arme ohne Register (unverändert):** `osm_pbf_compiler` (`osm_nodes`) und `eionet_cdr_compiler` (`eionet_cdr`) — Compiler+Reader im Baum, keine Register-Zeile (`sgrep` 0). **Braucht:** Register-Admission je Arm; dann Manifestation.
 - **CDN-Workflows der neuen Arme (offen):** `jaxa_gpm_ku` (nicht workflow-manifestierbar, `--granule` per-act), `osm_pbf_compiler`, `eionet_cdr_compiler`. `nasa_power_t2m`, `epa_aqs_voc`, `soho-lasco-cme` stehen bereits.
 - **vnp46a3 Granule** gelöst: Lauf `37534858316` = success mit Kachel `h18v07` (äquatorial, DNB-Nachtdaten).
+- **Ungepoolte Register-Blöcke (Riss, `/mycelium 247`):** der archivierte Recovery-Snapshot `sources_recovery_cdn-merged_60k_lost-blocks.φ` (jetzt `~/archive/archive-root/opencode-tmp-2026-09-01/archeo_check/archeology/sources/`) trägt **5 658** `url`-Zeilen; die lebende `phi/sources.φ` trägt **2 658**. Stichprobe `heasarc.gsfc.nasa.gov/astro_xmm_sources.json` liegt nur in `phi/pipeline/stage/pre_cdn_lost_blocks_unpooled.φ`, nicht im kanonischen Register. **Braucht:** Sichtung/Merge der ungepoolten Blöcke (dein Register).
 - **GIC-Faden-Wunschliste §A–G** (unverändert): Admission der 15 neuen Fäden + `terms`; Korrekturen (CARISMA `www.carisma.ca`, DMSP-SSJ via CDAWeb HAPI, `P_dyn` in `OMNI_HRO_1MIN`, SSUSI funded-dead).
 
 ## An river
@@ -193,7 +187,7 @@ Origin: mycelium-folge247.
 
 Origin: mycelium-folge247.
 
-- **Daten-Holdings — gemessen, ~2,35 G ausgeführt:** `opencode-tmp-2026-09-01` war 2,9 G; `wal_strings.txt` (2,43 G, `strings`-Extrakt der lebenden opencode-DB), `nvss_dl.json` (104 M, Twin) und `alt/` gelöscht → **551 M**. **Frage an den Operator (verbleibend):** `kollab_mseed` 366 M, `archeo_check` 72 M (Recovery-Snapshots) — admission/archive-root oder löschen? Inventur `state/mycelium/holdings-opencode-tmp-2026-10-07.md`.
+- **Daten-Holdings — abgeschlossen (Operator-Wort „ja"):** `opencode-tmp-2026-09-01` war 2,9 G, jetzt aufgelöst. 2,47 G gelöscht (`wal_strings.txt`, `nvss_dl.json`, `alt/`, `nvss.json`, `glakes2015`); **439 M** nach `~/archive/archive-root/opencode-tmp-2026-09-01/` (`archeo_check`, `kollab_mseed`, `basu`, `pioneer-preserve`, `gt`, `waisen-kataloge`, `provenienz`). Inventur `state/mycelium/holdings-opencode-tmp-2026-10-07.md`.
 - **Runner-Routing:** die 3 dispatch-only One-Shots (`emso`/`twomrs`/`vires-hapi`) sind bereits auf `ubuntu-latest` (gemessen `/mycelium 247`); `t420` ist online. Der Riss „Pass führt t420 als nicht registriert" ist überholt.
 - **Reconcile-Pin:** `docs/specs/cdn_reconciliation.json` hat **keinen** uncommitteten Diff; letzter Commit `4a3038d3e` (mycelium 244). Kein Mycelium-Akt nötig; der `cdn-reconcile`-Workflow stempelt bei Bedarf in CI.
 
