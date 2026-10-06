@@ -120,7 +120,11 @@ fn finite_share(s: &str) -> Option<f64> {
         return None;
     }
     let v = t.parse::<f64>().ok()?;
-    if v.is_finite() && v >= 0.0 { Some(v) } else { None }
+    if v.is_finite() && v >= 0.0 {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn pad_fips(s: &str, width: usize) -> String {
@@ -300,8 +304,8 @@ fn run(args: &[String]) -> Result<(), String> {
         .ok_or_else(|| format!("{zip_source}: central directory void — the zip stays unread"))?;
     let member = find_data_member(&entries)
         .ok_or_else(|| format!("{zip_source}: no .csv member — the table stays unread"))?;
-    let raw = zip_extract(&zip, member)
-        .ok_or_else(|| format!("{}: entry extract void", member.name))?;
+    let raw =
+        zip_extract(&zip, member).ok_or_else(|| format!("{}: entry extract void", member.name))?;
     let fara = String::from_utf8_lossy(&raw);
     let center_bytes = read_bytes(&centers_source)?;
     let center_text = String::from_utf8_lossy(&center_bytes);
@@ -313,8 +317,9 @@ fn run(args: &[String]) -> Result<(), String> {
             "{zip_source}: no matched tract centre with a measured {VALUE_FIELD} — the bin stays unwritten (0 honored)"
         ));
     }
-    let magic = magic_of(FORMAT)
-        .ok_or_else(|| format!("{FORMAT} carries no geo magic — the per-cell arm stays unwritten"))?;
+    let magic = magic_of(FORMAT).ok_or_else(|| {
+        format!("{FORMAT} carries no geo magic — the per-cell arm stays unwritten")
+    })?;
     let netloc = netloc_of(args);
     let out = out_path(args, &netloc);
     ensure_parent(&out)?;

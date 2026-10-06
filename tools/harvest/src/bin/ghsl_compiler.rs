@@ -147,8 +147,7 @@ fn inflate_member(member: &ZipMember, payload: &[u8]) -> Result<Vec<u8>, String>
         8 => inflate(payload).ok_or_else(|| {
             format!(
                 "{}: the deflate member ({} B compressed) stays unread",
-                member.name,
-                member.compressed
+                member.name, member.compressed
             )
         })?,
         other => {
@@ -193,7 +192,9 @@ fn read_remote_tif(url: &str) -> Result<(Vec<u8>, String), String> {
 fn read_local_zip(path: &str) -> Result<(Vec<u8>, String), String> {
     let bytes = std::fs::read(path).map_err(|e| format!("read {path} returned void: {e}"))?;
     let tail_start = bytes.len().saturating_sub(65557);
-    let tail = bytes.get(tail_start..).ok_or("the archive is shorter than its tail")?;
+    let tail = bytes
+        .get(tail_start..)
+        .ok_or("the archive is shorter than its tail")?;
     let (entries, cd_off, cd_size) = eocd(tail)?;
     let cd_end = cd_off.saturating_add(cd_size);
     let cd = bytes
@@ -209,7 +210,9 @@ fn read_local_zip(path: &str) -> Result<(Vec<u8>, String), String> {
     let end = start
         .checked_add(member.compressed as usize)
         .ok_or("the member length overflows")?;
-    let payload = bytes.get(start..end).ok_or("the member ends beyond the archive")?;
+    let payload = bytes
+        .get(start..end)
+        .ok_or("the member ends beyond the archive")?;
     let tif = inflate_member(member, payload)?;
     Ok((tif, member.name.clone()))
 }
@@ -290,9 +293,10 @@ fn build_records(
             "{source}: the TIFF arm reads no raster (internal compression or tiling outside its domain) — the per-cell grid stays unwritten"
         )
     })?;
-    let geo = img.geo.as_ref().ok_or_else(|| {
-        format!("{source}: carries no geotransform — no cell centre")
-    })?;
+    let geo = img
+        .geo
+        .as_ref()
+        .ok_or_else(|| format!("{source}: carries no geotransform — no cell centre"))?;
     if img.samples_per_pixel != 1 {
         return Err(format!(
             "{source}: {} bands per pixel — a single-band raster is expected",
@@ -375,10 +379,7 @@ fn inspect(tif: &[u8]) {
                 img.width, img.height, img.bits_per_sample, img.samples_per_pixel, img.compression
             );
             match &img.geo {
-                Some(g) => eprintln!(
-                    "geo x0={} y0={} dx={} dy={}",
-                    g.x0, g.y0, g.dx, g.dy
-                ),
+                Some(g) => eprintln!("geo x0={} y0={} dx={} dy={}", g.x0, g.y0, g.dx, g.dy),
                 None => eprintln!("the raster carries no geotransform"),
             }
         }
@@ -446,9 +447,7 @@ fn run(args: &[String]) -> Result<(), String> {
         ));
     }
     let magic = magic_of(FORMAT).ok_or_else(|| {
-        format!(
-            "{source}: {FORMAT} carries no geo magic — the per-cell arm stays unwritten"
-        )
+        format!("{source}: {FORMAT} carries no geo magic — the per-cell arm stays unwritten")
     })?;
     let netloc = netloc_of(args, &source);
     let out = out_path(args, &netloc);
