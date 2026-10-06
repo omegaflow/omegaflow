@@ -17387,6 +17387,14 @@ on earth 0 0 0
 ttl 86400
 field epa_aqs_pm25_ug_m3 epa_aqs_pm25_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/power.larc.nasa.gov/nasa_power_t2m.txt
+format nasa_power_t2m_axis_value_text
+origin https://power.larc.nasa.gov/api/temporal/daily/point
+compiler tools/harvest/src/bin/nasa_power_compiler.rs
+on earth 52.5 13.4 0
+ttl 86400
+field nasa_power_t2m nasa_power_t2m_k exponential-decay thermal K 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
