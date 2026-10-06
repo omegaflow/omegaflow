@@ -65,7 +65,7 @@ pub fn fetch_range(
         eprintln!(
             "\r\x1b[Krange returned ({}): {} {}",
             output.status,
-            url,
+            redact_secret(url),
             stderr.trim()
         );
         None
@@ -359,7 +359,7 @@ fn fetch_whole(url: &str, headers: &[(String, String)]) -> Option<Vec<u8>> {
         eprintln!(
             "\r\x1b[Ks3 returned ({}): {} {}",
             output.status,
-            url,
+            redact_secret(url),
             stderr.trim()
         );
         None

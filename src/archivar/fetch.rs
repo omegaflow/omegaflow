@@ -88,7 +88,7 @@ pub fn fetch_raw_with(
         eprintln!(
             "\r\x1b[Kfetch returned ({}): {} {}",
             output.status,
-            url,
+            redact_secret(url),
             stderr.trim()
         );
         None
@@ -139,7 +139,7 @@ pub fn fetch_raw_bytes_with(
         eprintln!(
             "\r\x1b[Kfetch_bytes returned ({}): {} {}",
             output.status,
-            url,
+            redact_secret(url),
             stderr.trim()
         );
         None
@@ -172,7 +172,7 @@ pub fn fetch_raw_bytes_headers_with(
         eprintln!(
             "\r\x1b[Kfetch_bytes_headers returned ({}): {} {}",
             output.status,
-            url,
+            redact_secret(url),
             stderr.trim()
         );
         None
@@ -321,7 +321,7 @@ pub fn fetch_raw_bytes_post_with(
         eprintln!(
             "fetch_bytes_post returned ({}): {} {}",
             output.status,
-            url,
+            redact_secret(url),
             stderr.trim()
         );
         None
@@ -1571,6 +1571,38 @@ pub fn resolve_secret(url: &str, env: &HashMap<String, String>) -> String {
     }
     result.push_str(rest);
     result
+}
+
+pub fn redact_secret(url: &str) -> String {
+    const SECRET_PARAMS: &[&str] = &[
+        "token",
+        "key",
+        "apikey",
+        "api_key",
+        "access_token",
+        "password",
+        "secret",
+    ];
+    let Some(q) = url.find('?') else {
+        return url.to_string();
+    };
+    let (head, query) = url.split_at(q + 1);
+    let mut out = String::from(head);
+    let mut first = true;
+    for pair in query.split('&') {
+        if !first {
+            out.push('&');
+        }
+        first = false;
+        match pair.split_once('=') {
+            Some((name, _)) if SECRET_PARAMS.iter().any(|s| name.eq_ignore_ascii_case(s)) => {
+                out.push_str(name);
+                out.push_str("=***");
+            }
+            _ => out.push_str(pair),
+        }
+    }
+    out
 }
 
 pub fn secret_resolves_void(template: &str, env: &HashMap<String, String>) -> bool {
