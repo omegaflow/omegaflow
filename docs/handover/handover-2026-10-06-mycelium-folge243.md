@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; CI-Triage, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 1dc20a681fcaa530430ec113d88ef930f71708b8c3ec6e58efe135dbf80d4aca
+  sha256: c437062e6c079647c3af5b75ed176e0b36e5abf2a2392809f66f8b69bd7d1e4e
   status: live
 -->
 # Handover — Mycelium-Folge 243 (2026-10-06)
@@ -12,9 +12,9 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge242.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0525
+## Burn: open 0.0000 · close 0.0608
 
-`session_burn` (Line „Mycelium-Linie in einem Pass abarbeiten"): diese Session ~**$0.0525**.
+`session_burn` (Line „Mycelium-Linie in einem Pass abarbeiten"): diese Session ~**$0.0608**.
 `.tools_ensure`: frisch.
 
 ## Operator-Wort-Register
@@ -39,7 +39,9 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge242.md` (
   `kollab_mseed` 366 M).
 - **Blockade:** Umfang (11 603 Dateien) — je Posten Einzelmessung.
 - **Braucht:** je Top-Dir `du`-Größe + Uniqueness vs Register/`archive_search` messen; Detail
-  `state/future/holdings-migration-2026-10-06.md:26`.
+  `state/future/holdings-migration-2026-10-06.md:26`. **Träger** für
+  `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (dessen offener Marker keine
+  andere Live-Übergabe hält).
 
 ### Exposom-Quellenmatrix — Matrix-Lauf-Workflow
 - **Status:** blockiert
