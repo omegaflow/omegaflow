@@ -912,7 +912,7 @@ fn test_render_source_url_substitutions() {
 }
 
 #[test]
-fn test_render_source_url_carries_observer_epoch() {
+fn test_render_source_url_carries_receiver_epoch() {
     let mut src = source_fixture("json", vec![]);
     src.url = "https://example.com/field?start={week_ago}&end={today}".into();
     let fixture_lsk = super::LeapSeconds {
@@ -971,7 +971,7 @@ fn test_render_source_url_carries_observer_epoch() {
     );
     assert_ne!(
         past, present,
-        "the rendered URL must follow the observer epoch, not the machine now"
+        "the rendered URL must follow the receiver epoch, not the machine now"
     );
 }
 
@@ -999,12 +999,12 @@ fn test_render_source_url_pre_2000_epoch() {
     let (ty, tm, td) = super::days_to_ymd(unix / 86400);
     assert!(
         url.contains(&format!("end={}-{:02}-{:02}", ty, tm, td)),
-        "a pre-2000 observer epoch (negative TDB-J2000) must render its own dates: {}",
+        "a pre-2000 receiver epoch (negative TDB-J2000) must render its own dates: {}",
         url
     );
     assert!(
         !url.contains("2026"),
-        "a pre-2000 observer epoch must not render machine-now dates: {}",
+        "a pre-2000 receiver epoch must not render machine-now dates: {}",
         url
     );
 }
@@ -1054,7 +1054,7 @@ fn test_temporal_urls_carry_distinct_cache_identity() {
 }
 
 #[test]
-fn test_extract_default_epoch_is_observer_epoch() {
+fn test_extract_default_epoch_is_receiver_epoch() {
     let mut fc = field_fixture("temp_c", 60.0);
     fc.key = "temp_c".into();
     let src = source_fixture(
@@ -1086,7 +1086,7 @@ fn test_extract_default_epoch_is_observer_epoch() {
             assert_eq!(channels.len(), 1);
             assert!(
                 (channels[0].0.epoch - scrolled).abs() < 1e-6,
-                "an epoch-less row carries the observer's epoch, not the machine now"
+                "an epoch-less row carries the receiver's epoch, not the machine now"
             );
         }
         _ => panic!("extract is not Measurements"),
@@ -1094,7 +1094,7 @@ fn test_extract_default_epoch_is_observer_epoch() {
 }
 
 #[test]
-fn test_epoch_stamp_gate_is_observer_time() {
+fn test_epoch_stamp_gate_is_receiver_time() {
     let ttl = 3600u64;
     let path = "/tmp/opencode/omegaflow_epoch_stamp_gate_test.json";
     let stamp_path = format!("{}.epoch", path);
