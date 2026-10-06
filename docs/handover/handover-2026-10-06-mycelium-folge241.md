@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 920bb82b40e027725ecf3e899ae4578160b17eaccfc728826225f82a211316de
+  sha256: cb5afe81486ef130720acf38170276ade1b119975caa836c86349b838abeb4a2
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -25,12 +25,19 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 
 ## Offen — eigen
 
-### Exposom-CDN-Workflows — erster Lauf + sha256-Nachzug
-- **Status:** wartend
-- **Trigger:** erster erfolgreicher Lauf je Workflow → `ci_manage list`
-- **Lage:** (gemessen 2026-10-06) vier Workflows gebaut (mountain-folge242 addressed): `vnp46a3-cdn.yml` (täglich; CMR-Resolver liefert die neueste Granule-URL, `EARTHDATA_EDL_TOKEN` im env, `--out` = registrierter Name), `openmeteo-pollen-cdn.yml` (stündlich; `--out` = registrierter Name), `ghsl-cdn.yml` (jährlich; `--stride 300` = 0,25°-Weltgitter, als dispatch-Input überschreibbar), `usda-fara-cdn.yml` (jährlich); alle `ubuntu-latest` (Runner-Enge). Die `sources.φ`-Blöcke stehen: `phi/sources.φ:17348` (VNP46A3), `:17357` (Pollen), `:17365` (GHSL), `:17373` (FARA).
-- **Blockade:** keiner (Läufe dispatchen).
-- **Braucht:** Lauf-Ausgang je Workflow; danach `sha256` je Zeile in `phi/sources.φ` (Mountain-Verdiktzeile für die Quelle, Mycelium-Manifestations-Nachzug für `url`).
+### Exposom-CDN-Workflows — sha256-Nachzug (Pollen, FARA, GHSL)
+- **Status:** eigen
+- **Trigger:** grüner Lauf + `sha256` aus dem Release → `phi/sources.φ`
+- **Lage:** (gemessen 2026-10-06 11:52 via `ci_manage list`) vier Workflows gebaut (mountain-folge242 addressed): `openmeteo-pollen-cdn.yml` (stündlich), `usda-fara-cdn.yml` (jährlich), `ghsl-cdn.yml` (jährlich, `--stride 300`), `vnp46a3-cdn.yml` (täglich). **Läufe:** `openmeteo-pollen-cdn 37459099065` = **success**, `usda-fara-cdn 37459103439` = **success**, `ghsl-cdn 37459107131` in_progress (Ausgang offen). `sources.φ`-Blöcke `:17357` (Pollen), `:17373` (FARA), `:17365` (GHSL).
+- **Blockade:** keine.
+- **Braucht:** `sha256` je Zeile in `phi/sources.φ` (Mountain-Verdiktzeile) nach dem Lauf.
+
+### VNP46A3-CDN — Lauf leer, per-Zelle-Arm messen
+- **Status:** blockiert
+- **Trigger:** per-Zelle-Arm/Verdikt (Mountain) → Re-Dispatch
+- **Lage:** (gemessen 2026-10-06 via `ci_manage log 37459111673`) `vnp46a3-cdn 37459111673` = **failure**; der CMR-Resolver liefert die Granule (`VNP46A3.A2026213.h17v01.002.2026252141443.h5`), aber `vnp46a3_compiler` meldet `no measured VNP46A3 cell left the harvest — the bin stays unwritten (0 honored)`.
+- **Blockade:** der per-Zelle-Pfad liefert auf der Granule 0 Zellen — `format black_marble_vnp46a3_nightlight`-Arm (Mountain).
+- **Braucht:** `vnp46a3_compiler <granule-url> --inspect` im CI (SDS-Liste) → Arm/Verdikt Mountain; ggf. andere Granule/Stride wirksam.
 
 ### Exposom-Quellenmatrix — Matrix-Lauf-Workflow
 - **Status:** eigen
