@@ -27840,3 +27840,11 @@ field wdc_ae_ae_nt wdc_ae_ae_nt inverse-square em nT 60 0.0 0.0
 field wdc_sym_d_nt wdc_sym_d_nt inverse-square em nT 60 0.0 0.0
 field wdc_sym_h_nt wdc_sym_h_nt inverse-square em nT 60 0.0 0.0
 field wdc_dst_nt wdc_dst_nt inverse-square em nT 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/download.geofabrik.de/monaco_nodes.bin
+format osm_nodes
+origin https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+compiler tools/harvest/src/bin/osm_pbf_compiler.rs
+at earth
+ttl 86400
+field osm_node osm_node inverse-square em 1 86400 0.0 0.0
