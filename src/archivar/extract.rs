@@ -3900,6 +3900,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     }
     if src.format == "gistemp_aod550_axis_value_text"
         || src.format == "godas_pottmp_axis_value_text"
+        || src.format == "dhm_stage"
     {
         let Some(Extract::Field(fc)) = src.extracts.first() else {
             return ExtractResult::Measurements(vec![]);
