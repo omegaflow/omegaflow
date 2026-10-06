@@ -23,9 +23,13 @@
 #   getragen von omni_imf_bz_gsm_nt/bt + solar_wind_speed/density; er trägt seine Provenienz
 #   (`from …`) sichtbar, kein quellenloses `field` (ein derived ist kein Akteur). Treiber gegen
 #   eine geosphärische Antwort, nicht Peer seiner Erzeuger. Die Wiring in den Matrix-Lauf ist offen.
-# Kp magnetosphere_kp_3h: `last` über Ein-Tages-URL (sources.φ:1203/1206) — ein `field`-Knoten
-#   braucht eine historische Serie; das GFZ-Kp-Aggregat ist `declined_sources.φ:2608-2621` (Riss,
-#   positionsloser Index) — Entscheidung offen (Operator/Rat), kein stiller Wechsel.
+# Kp magnetosphere_kp_3h: NICHT als Peer-Feld/Treiber (Schwarm 2026-10-06 + Rat: ein globaler
+#   13-Stationen-Response ohne Worldline). Register-Riss, benannt, nicht geglättet: `sources.φ:1211`
+#   admittiert den GFZ-JSON als `last` :1214, `declined_sources.φ:2607-2609` verweigert dasselbe
+#   Aggregat als positionsloses Feld. Träte Kp ein, dann nur als deklarierter Response-/Referenzknoten
+#   (Claude, GPT-5.6, Mistral, DeepSeek-Pro) oder als stationsauflösende lokale K-Indizes statt des
+#   Aggregats (GLM, Qwen) — beide Wege offen, nicht dieses Laufs. GFZ Hp30 (30-min) wäre die feinere
+#   Reihe, wenn der Response-Weg gewählt wird.
 # EEG ds007822/ds007471: Feldname ungemessen.
 # Ein dokumentierter Bin 86400 s (1 Tag); jede Zelle trägt ihr Auflösungspaar, ein nicht
 #   darstellbares Paar (QBO-Monat × 6 s) geht als `pending` aus, nie still gebinnt (Rats-Riss).
