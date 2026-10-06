@@ -1,0 +1,59 @@
+name: osha-cehd-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  # workflow_dispatch only: the register line for obis.osha.gov/osha_cehd_si is not
+  # yet in phi/sources.φ (Mountain's admission). A push trigger would fire the
+  # verify step against an unregistered asset and leave a red run; dispatch after
+  # the register line lands (Mountain: "danach die OSHA url/format-Zeile und den Ausgang messen").
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  osha-cehd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the obis.osha.gov release exists on the CDN
+        run: |
+          if ! gh release view obis.osha.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create obis.osha.gov --repo omegaflow/sources \
+              --title "obis.osha.gov" \
+              --notes "OSHA CEHD sample results compiled to the ZCTA-geocoded axis_value_text record (CDN tag = netloc)"
+          fi
+      - name: Fetch the ZCTA gazetteer the geocoder binds positions against
+        run: |
+          mkdir -p data/www2.census.gov
+          gh release download www2.census.gov --repo omegaflow/sources \
+            --pattern zcta_gazetteer.bin --dir data/www2.census.gov --clobber
+      - name: Compile and manifest the OSHA CEHD sample results
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin osha_cehd_compiler -- \
+            --url https://obis.osha.gov/opengov/healthsamples.zip \
+            --gazetteer data/www2.census.gov/zcta_gazetteer.bin \
+            --out data/obis.osha.gov/osha_cehd_si.txt --ci-mode
+      - name: Verify the registered obis.osha.gov osha_cehd_si asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh obis.osha.gov osha_cehd_si)
+          if [ -z "$expected" ]; then
+            echo "no osha_cehd_si asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view obis.osha.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered obis.osha.gov osha_cehd_si assets all present"
