@@ -3,7 +3,7 @@
   session: Sensory-Folge 236
   class: handover
   date: 2026-10-06
-  sha256: 43874405accede16c50617e59304b0e2e78c2a21abe721accc6e3441a30c5302
+  sha256: 3379ebc04ad893fe36e74a1edf4d30dcb399b59f63b630843349ba61e3dbbb71
   status: live
 -->
 # Handover — Sensory-Folge 236 (2026-10-06)
@@ -253,11 +253,11 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 (Operator-Wort 2026-09-28, `:189`).
 
 ### Hyperscanning-TE — `max_points=4096` Discovery-Lauf (Job-Cap)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der cap-schonende Weg ist gebaut (2026-10-06 F236) — der `4096`-Lauf ist jetzt dispatchbar.
-- **Lage:** (gemessen 2026-10-06 F236, `ci_manage view`) Die `4096`-Versuche `37209904312` (Job `screen (jointaction)`) und `37175843252` (Job `screen`) wurden nach **6 h 08 min** bzw. **6 h 48 min** als `cancelled` beendet — die GitHub-Plattform-Grenze von **360 min** (kein `timeout-minutes` im Workflow). **Der cap-schonende Weg ist gebaut** (2026-10-06 F236, gemessen `cargo check` grün, 0 Warnungen): `hyperscanning_group_te --shard <i>/<n>` shardn die **Surrogat-Achse** (volle Triaden, Surrogat-Block `[i·s/n,(i+1)·s/n)`), `--shard-out` schreibt `OBS`/`SURR`/`CELL`-TSV, `--merge f0,…,fn` führt per Konkatenation der Family-Max-Null und der per-Cell-Nulls exakt zusammen (Methode aus dem Schwarm: Westfall-Young maxT, gemeinsame Permutation je Surrogat-Index); Test `shard_merge_equals_monolithic` beweist die Identität; Workflow `hyperscanning-te.yml` trägt `shards`-Input (Matrix über `shard` + `merge`-Job).
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** CI-Lauf `37438929801` (dispatcht 2026-10-06 F236) — sein `merge`-Job-Ergebnis ist das Ereignis.
+- **Lage:** (gemessen 2026-10-06 F236) Die `4096`-Versuche `37209904312`/`37175843252` wurden nach **6 h 08 min** / **6 h 48 min** `cancelled` (Plattform-Grenze **360 min**, kein `timeout-minutes` im Workflow). **Der cap-schonende Weg ist gebaut und dispatcht:** `hyperscanning_group_te --shard <i>/<n>` shardn die **Surrogat-Achse** (volle Triaden, Block `[i·s/n,(i+1)·s/n)`), `--shard-out` schreibt `OBS`/`SURR`/`CELL`-TSV, `--merge f0,…,fn` führt per Konkatenation exakt zusammen (Westfall-Young maxT, gemeinsame Permutation je Surrogat-Index); Test `shard_merge_equals_monolithic`; Workflow `hyperscanning-te.yml` mit `shards`-Input + `merge`-Job. `cargo check` grün. Dispatch: `hyperscanning-te.yml`, cohort `ds007471`, channel `Cz`, `max_points=4096`, `tasks=jointaction`, `shards=4`, null `phase`.
 - **Blockade:** keine.
-- **Braucht:** `gh workflow run hyperscanning-te.yml -f cohort=ds007471 -f channel=Cz -f max_points=4096 -f tasks=jointaction -f shards=4 -f null_model=phase`, dann den `merge`-Lauf lesen (`ci_manage log <id>`) und die Zahlen in `docs/paper/hyperscanning-te-method.md` §11 tragen.
+- **Braucht:** `ci_manage log 37438929801` (den `merge`-Job lesen, nicht pollen) und die Zahlen in `docs/paper/hyperscanning-te-method.md` §11 tragen.
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
@@ -360,7 +360,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0425 · cap 0.50 · Grund: F236 — eine Line-Session (deepseek-flash), kein pro/max-Dispatch, keine Taucher (gemessen `session_burn`, opencode.db; Session `Sensory-Übergabe in einem Pass abarbeiten`).
+## Burn: open 0.0000 · close 0.1872 · cap 0.50 · Grund: F236 — Line-Session (deepseek-flash) + kleine `grind-flash`-Schritte + drei leere Ein-Schuss-Versuche (~$0.36, siehe struktureller Befund), Schwarm-Stimmen teils gratis (gemessen `session_burn`, opencode.db; Session `Sensory-Übergabe in einem Pass abarbeiten`).
 
 ## Abschluss
 
