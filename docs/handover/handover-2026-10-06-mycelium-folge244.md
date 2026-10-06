@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 72ad1d0e7e0c24d453e74342b4b575ab2731a3ad32cb636ef09eb49af55e8d36
+  sha256: f436083a880818cc8529adcb32f9fee7407d8137ed32c32e409158f32f5310ec
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0406
+## Burn: open 0.0000 · close 0.0675
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
@@ -36,9 +36,18 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   `tier_not_allowed` auf dem Free-Key → `blocked`. **Transient:** `cloudflare-workers-ai`
   alle 11 = `pending_rate_limited` („daily free allocation of 10,000 neurons" verbraucht,
   Tagesquote); `mistral-medium-latest` = 429.
-- **Offen (Operator/per-act):** Keys für SambaNova, OrcaRouter, Alibaba Model Studio,
-  OVHcloud, Mistral-Free in CI (`FREE_MODEL_KEYS`) — erst dann sind ihre `voice-*`-Agenten
-  baubar; die `free_models.tsv`-Dispositionen sind auf Messung korrigiert.
+- **Per `auth login` (Operator-Hinweis 2026-10-06) nachgemessen:** `opencode auth list`
+  führt 12 Credentials — DeepSeek, Nvidia, OpenRouter, Kilo, Kenari, OpenCode Zen, Google,
+  Cloudflare Workers AI, Z.AI, OrcaRouter, Mistral, sambanova. **Alibaba und OVHcloud fehlen**
+  (kein Credential) — ihr `pending_no_key` ist echt. Die vorhandenen Keys rufen aber nicht:
+  **sambanova** = `http_402` „PAYMENT_METHOD_REQUIRED / balance_units: 0"; **OrcaRouter** =
+  `free_rate_limited` „Free models are not available to this account yet" (Workspace-Owner
+  muss ein GitHub-Konto verknüpfen); **Z.AI** = `1113 Insufficient balance` für `glm-5.3-flash*`
+  (die 4.x-Flash-Tier läuft, s. `voice-zai`). Die `free_models.tsv`-Disposition `blocked` ist
+  damit die gemessene Wahrheit, nicht ein Key-Mangel.
+- **Offen (Operator/per-act):** Konten freischalten — SambaNova Zahlungsmethode, OrcaRouter
+  GitHub-Verknüpfung, Alibaba/OVHcloud Credential (`auth login`), Z.AI-Guthaben für 5.3;
+  CI-seitig die Keys in `FREE_MODEL_KEYS`. Erst dann sind diese `voice-*`-Agenten baubar.
 
 ## Offen — eigen
 
@@ -131,11 +140,13 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
 
 Origin: mycelium-folge244.
 
-- **Freie Frontier-Stimmen — Keys (Operator/per-act):** `free-model-bench 37487436436`
-  ergab `pending_no_key` für SambaNova/OrcaRouter/Alibaba/OVHcloud/Mistral-Free
-  (Artefakt `gh api …/artifacts/11425169303/zip`); die `voice-*`-Agenten dieser 5
-  Provider warten auf `FREE_MODEL_KEYS`-Einträge. Vorbereitung (Test, IDs, Disposition)
-  liegt; nur der Key-Akt ist Operator-Hand.
+- **Freie Frontier-Stimmen — Konten statt Keys (Operator/per-act):** `opencode auth list`
+  führt OrcaRouter, sambanova und Z.AI bereits als `api`-Credential; ihre Keys rufen aber
+  nicht (SambaNova 402 „PAYMENT_METHOD_REQUIRED", OrcaRouter `free_rate_limited`/GitHub-Link,
+  Z.AI `1113 Insufficient balance` für 5.3). Alibaba und OVHcloud haben **kein** Credential.
+  Vorbereitung (Test `state/mycelium/free-model-bench-2026-10-06.tsv`, IDs, Disposition
+  `blocked`) liegt; der Akt ist Konten-Freischaltung (Zahlungsmethode / GitHub-Verknüpfung /
+  `auth login` / Guthaben) — Operator-Hand. Danach `FREE_MODEL_KEYS` für CI + `voice-*`.
 - **Orphan-Doc `docs/surveys/survey-2026-10-03-exzellenz-gate.md`** (1 offener Marker,
   kein Live-Handover-Träger): bitte Träger nennen oder gemessen `descoped`.
 
