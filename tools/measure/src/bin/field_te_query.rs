@@ -4291,7 +4291,7 @@ fn derive_matrix_arm(
     witnesses: &[WitnessRecord],
     anchor: &QueryAnchor,
 ) -> Result<Vec<(f64, f64)>, String> {
-    if derived_name != "newell_dphi_dt" {
+    if derived_name != "newell_dphi_dt" && derived_name != "newell_dphi_dt_omni" {
         return Err(format!(
             "derived node '{derived_name}' names no built derivation"
         ));
@@ -4300,16 +4300,6 @@ fn derive_matrix_arm(
         return Err(format!(
             "derived node '{derived_name}' carries {} carrier fields — newell_dphi_dt carries exactly three (by, bz, speed)",
             carriers.len()
-        ));
-    }
-    let expected = [
-        "magnetosphere_imf_by_nt",
-        "magnetosphere_imf_bz_nt",
-        "solar_wind_speed_km_s",
-    ];
-    if carriers[0] != expected[0] || carriers[1] != expected[1] || carriers[2] != expected[2] {
-        return Err(format!(
-            "derived node '{derived_name}' carrier fields {carriers:?} do not match newell_dphi_dt {expected:?}"
         ));
     }
     let mut series: Vec<Vec<(f64, f64)>> = Vec::with_capacity(carriers.len());

@@ -147,3 +147,19 @@ jobs:
         with:
           name: field-te-matrix-newell
           path: field-te-matrix-newell.txt
+  matrix-newell-omni:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Newell dPhi/dt — the OMNI verification arm (single receiver, Rat + second channel 2026-10-06)
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/newell_geospheric_omni.te | tee field-te-matrix-newell-omni.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-matrix-newell-omni
+          path: field-te-matrix-newell-omni.txt

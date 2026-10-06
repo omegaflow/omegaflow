@@ -1,0 +1,22 @@
+# newell_geospheric_omni.te — Newell dΦ/dt, Verifikationsarm (Rat + zweiter Kanal 2026-10-06).
+# Getrennt vom Live-Treiber `newell_geospheric.te`: OMNI trägt by_gsm/bz_gsm/flow_speed in
+#   EINEM HAPI-Datensatz (ein Empfänger, co-temporal, 1 h) — der Validierungsarm.
+# Riss (gemessen 2026-10-06): der RTSW-Live-Treiber joint rtsw_mag (by/bz) und rtsw_wind
+#   (speed) aus zwei Dateien; ihre Zeitstempel teilen das 1-min-Raster, weichen aber ~2 s ab
+#   (mag 21:40:02, wind 21:40:00) — der Join läuft über die Bin-Stufe, nicht über exakte
+#   Gleichheit. Kimi K3 (zweiter Kanal): RTSW-Join als Live-Treiber, OMNI als Verifikation;
+#   der Rat/die Stimmen: getrennte Knoten je Empfänger, nie ein Mittel.
+# Lauf: `.github/workflows/field-te-query.yml` Job `matrix-newell-omni` (CI), nie lokal.
+matrix newell_geospheric_omni rect
+register sources
+drivers newell_dphi_dt_omni
+targets intermagnet_dbdt
+from newell_dphi_dt_omni omni_imf_by_gsm_nt,omni_imf_bz_gsm_nt,omni_solarwind_flow_speed_kms
+cond rest
+fdr bh 0.05 over matrix
+expect cells 1
+lags 0,1
+surrogate 10
+cadence live
+bin 3600
+seasonal none
