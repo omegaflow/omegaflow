@@ -404,6 +404,7 @@ pub struct SourceConfig {
     pub ttl: u64,
     pub url: String,
     pub origin: Option<String>,
+    pub terms: Option<String>,
     pub frame: Frame,
     pub format: String,
     pub extracts: Vec<Extract>,

@@ -347,6 +347,7 @@ fn main() {
             ttl: 0,
             url: path.clone(),
             origin: None,
+            terms: None,
             frame: Frame::Manifest,
             format: "volume_netcdf".to_string(),
             extracts: vec![Extract::Volume {

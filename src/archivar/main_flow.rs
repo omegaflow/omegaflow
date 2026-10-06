@@ -2938,6 +2938,7 @@ pub fn main_flow() {
                     | "pds3_binary"
                     | "pds4_binary"
                     | "pds4_fits"
+                    | "fink_cutout"
                     | "pradan_ch2"
                     | "pds3_img"
                     | "hapi_csv"

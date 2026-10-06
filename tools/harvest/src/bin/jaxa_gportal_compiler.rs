@@ -1,5 +1,6 @@
 use omegaflow::archivar::json::{JsonVal, jnum, jpath_val, json_num, jstr, parse_json, scalar_of};
 use omegaflow::cdn::upload_release;
+use omegaflow::hdf5::Hdf5File;
 use std::collections::HashSet;
 use std::env;
 use std::fs;
@@ -23,6 +24,32 @@ const CSRF_COOKIE: &str = "fuel_csrf_token";
 const CONNECT_BOUND_S: u64 = 1 << 5;
 const HTTP_BOUND_S: u64 = 1 << 6;
 const CATALOG_BOUND_S: u64 = 1 << 7;
+
+const GPM_KU_FORMAT: &str = "jaxa_gpm_ku";
+const GPM_KU_MAGIC: [u8; 2] = [0xCF, 0x86];
+const GPM_KU_FIELD_EM: u32 = 0;
+const GPM_KU_CODE_MISSING: i64 = -30000;
+const GPM_KU_ECHO_POWER: &str = "NS/Receiver/echoPower";
+const GPM_KU_DEFAULT_NSCAN: u64 = 32;
+
+fn echo_power_si(raw: f64) -> Option<f64> {
+    if raw as i64 == GPM_KU_CODE_MISSING {
+        return None;
+    }
+    let watts = 10f64.powf(raw * 0.01 / 10.0) * 1.0e-3;
+    if watts.is_finite() && watts > 0.0 {
+        Some(watts)
+    } else {
+        None
+    }
+}
+
+fn read_echo_power(path: &str, nscan: u64) -> Option<Vec<Option<f64>>> {
+    let bytes = fs::read(path).ok()?;
+    let file = Hdf5File::parse(&bytes).ok()?;
+    let raw = file.read_range(GPM_KU_ECHO_POWER, 0, nscan).ok()?;
+    Some(raw.into_iter().map(echo_power_si).collect())
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -979,6 +1006,43 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--selftest") {
         selftest();
+        return;
+    }
+    if let Some(path) = arg_value(&args, "--granule") {
+        let nscan = match arg_value(&args, "--nscan") {
+            Some(v) => match v.parse::<u64>() {
+                Ok(n) if n >= 1 => n,
+                _ => {
+                    eprintln!("jaxa_gpm_ku: --nscan carries no count >= 1 — refused");
+                    std::process::exit(2);
+                }
+            },
+            None => GPM_KU_DEFAULT_NSCAN,
+        };
+        let Some(values) = read_echo_power(&path, nscan) else {
+            eprintln!(
+                "jaxa_gpm_ku: {} stays unread — the granule reads void (0 honored)",
+                path
+            );
+            std::process::exit(1);
+        };
+        let present = values.iter().filter(|v| v.is_some()).count();
+        let absent = values.len() - present;
+        eprintln!(
+            "jaxa_gpm_ku: format {GPM_KU_FORMAT} magic {:02X}{:02X} field em({GPM_KU_FIELD_EM}) — {nscan} scan(s), {present} present, {absent} absent",
+            GPM_KU_MAGIC[0], GPM_KU_MAGIC[1]
+        );
+        let watts: Vec<f64> = values.into_iter().flatten().collect();
+        if let (Some(min), Some(max)) = (
+            watts.iter().copied().reduce(f64::min),
+            watts.iter().copied().reduce(f64::max),
+        ) {
+            eprintln!("jaxa_gpm_ku: echoPower {min:.6e}..{max:.6e} W (0.01 dBm → SI)");
+        } else {
+            eprintln!(
+                "jaxa_gpm_ku: echoPower carries no present value — the field stays absent (0 honored)"
+            );
+        }
         return;
     }
     let out_dir = match arg_value(&args, "--out") {

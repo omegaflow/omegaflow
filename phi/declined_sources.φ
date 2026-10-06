@@ -5428,6 +5428,10 @@ decline registry/katalog
 url https://www.onetcenter.org/dl_files/database/db_29_0_text.zip
 note O*NET-Datenbank — Berufs-Registry (Tasks/Skills), kein Messwert-Feld; Exposom-Domäne Arbeitsumfeld.
 
+decline registry/katalog
+url https://expostats.ca/canjem/
+note CANJEM (Canadian Job-Exposure Matrix, re3data r3d100013957) — Beruf×Zeitfenster-Matrix (258 Agenten, Experten-P/F/I-Schaetzung 1930-2005), kein Messwert/Ort; Bulk nur per Web-App. Exposom-Arbeitsumfeld, analog O*NET 5427.
+
 decline no-physical-force
 url https://www.openicpsr.org
 note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).

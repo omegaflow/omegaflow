@@ -66,6 +66,7 @@ pub mod eve;
 pub mod exclude;
 pub mod f107;
 pub mod fink;
+pub mod fink_cutout;
 pub mod fit;
 pub mod fits;
 pub mod fk;
