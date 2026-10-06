@@ -3,7 +3,7 @@
   session: River-Folge 110
   class: handover
   date: 2026-10-06
-  sha256: 94f1f0a06f3c384109504f56b98b2ce77bb27264d8e97ed5ffa1469d2b4213ae
+  sha256: 29f6b15f586945d4ddbd989d5d90be7ba63a53bf56960603357586e236ac8f67
   status: live
 -->
 # Handover — River-Folge 110 (2026-10-06)
@@ -88,13 +88,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   (Vorlagen `e918bda1`/`eb96d1ff`/`da43f02a`). (4) Operator-Browser-Messung (headless ohne WebGPU =
   schwarze Null).
 
-**Architektur-Verdikt (Rat + 5 UI-Modelle, 2026-10-06):**
+**Architektur-Verdikt (Rat + 6 UI-Modelle, 2026-10-06):**
 - **Rat (API):** SPAN ist Receiver-Eigenschaft — deklariert (`span` auf der `at <body>`-Zeile)
   **und** aus der Anker-Hülle verankert, Sterne nie; Sichtbarkeit durch Integration (additiver Blend +
   EMA), nie durch Ausdehnung; ein Apertur-Gesetz für fünf Empfänger. Erster Schritt: bounded Brücke in
   `static/membrane.html` (`receiverSpan` über die Anker-Records). Risse: `SPAN/N`-N ungemessen; 8 pc vs.
   `STAR_SPAN_M`; Wortkollision `Aperture`.
-- **UI-Modelle (ChatGPT, Duck.ai/GPT-5.6, Mistral, Qwen, Sonnet 5.5):** einstimmig SPAN **deklariert** auf der
+- **UI-Modelle (ChatGPT, Duck.ai/GPT-5.6, Mistral, Qwen, Sonnet 5.5, GLM-5.3 Deep-Think-Max):** einstimmig SPAN **deklariert** auf der
   `at`-Zeile, **nicht** aus Records abgeleitet; Sichtbarkeit durch **Integration/Fluss**, nie Geometrie;
   **per-Radiator-Wert**, nicht ein numerischer Maßstab (Qwen sagt „einheitlich" — Riss); erster Schritt
   **Register zuerst, nicht Membran** (ChatGPT/Mistral/Sonnet 5.5) gegen den Rat (Brücke zuerst) — Riss.
@@ -105,14 +105,28 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   werden **gezählt, nicht gezeichnet**; Float-Akkumulation (RGBA16F bzw. RGBA32F), `lvl` aus dem
   integrierten Puffer, nie aus der Record-Liste; Tonemap dahinter = Anzeigeseite; Abnahme = **Invarianztest**
   (`scale` identisch mit und ohne 8-pc-Katalog).
+- **GLM-5.3 (Deep Think Max, schärfste Verdichtung):** Verdikt bestätigt, Ränder geschärft. SPAN + N
+  = Receiver-Anatomie, beide konstant, **deklariert** (Ableitung = „Max-Distanz mit Whitelist", derselbe
+  Fehler kuratiert); die Anker dienen der **Energiebuchhaltung** (Sonne = Referenz-Radiator 0 dB), nicht
+  dem Maßstab. Sonne zuerst über drei Empfänger-Werkzeuge, null Ausdehnung: (a) sub-Rezeptor-Radiator
+  deponiert den **vollen Fluss** im enthaltenden Rezeptor (Size = 1 Rezeptor, als Quantisierungsboden
+  deklariert); (b) `one,one` in einen **HDR-Akkumulator** (16F/32F — ein 8-bit-Canvas klippt die ≥10¹⁰
+  Dynamik), EMA-Decay `exp(−dt/τ)`, Sonne sättigt in Sekunden, 8-pc-Sterne in Minuten; (c) **log/µ-law
+  Tone-Map**, absolut auf den Anker geeicht (Weber–Fechner) — **verboten** ist eine aufs Maximum normierte
+  Belichtung (der Katalog darf die Sonne nicht dimmen). **Erster Schritt: Maßstab einfrieren — löschen,
+  nicht flaggen** (ein Flag ist die Rückkehrtür); Akzeptanz = Ankunftspermutationen ergeben identische
+  Rezeptor-Geometrie, der 8-pc-Load bewegt kein Pixel der Sonne. Riss: nach dem Freeze allein ist die
+  Startansicht fast schwarz — der wahre Zustand vor Integration; das ist eine Anforderung an die
+  Belichtungskurve (Schritt 2), nicht an den Maßstab — **nicht rückwärts verhandeln**.
 - **Braucht (revidiert, Register zuerst):** (1) `span` (Einheit Pflicht, Startwert ~2–4 AU) auf der
   `at <body>`-Receiver-Zeile; `scale = span ÷ receptors` aus dem Register; Fallback = feste Konstante mit
   lautem Log, **nie** aus Records; Records außerhalb werden gezählt, nicht gezeichnet; Lint „Sonne
   außerhalb". (2) Invarianztest. (3) dann Energieerhaltung + Float-Akkumulation. (4) getrennte
   Belichtungs-/Tonemap-Regel (nie Geometrie). (5) danach Portierung für alle fünf Radiatoren, **je
   eigener Wert**. Die bounded Brücke (Rat-Q4) bleibt als Zwischenschritt möglich, aber **nach** der
-  Register-Direktive — der Rat hält die Register-Seite, die UI-Modelle/Sonnet 5.5 die Membran-Seite; der Riss
-  „Register zuerst vs. Brücke zuerst" steht, nicht geglättet.
+  Register-Direktive — der Rat hält die Register+Brücke-Seite, die 6 UI-Modelle (zuletzt GLM: „einfrieren,
+  löschen, nicht flaggen") die reine Register-Seite; der Riss „Register zuerst vs. Brücke zuerst" steht,
+  nicht geglättet — die Gewichtung kippt zu **Register zuerst, Max-Distanz-Pfad löschen**.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend | **Bindung:** eigen
@@ -317,4 +331,4 @@ sensory-folge244 (exzellenz-gate-Label, oben erledigt).
 `open_points_check` am folge109: 1 ABSENT (das Legacy-Register `entwicklungslinie.md`, nicht im Baum;
 in folge110 auf `docs/surveys/survey-fortschritt.md` korrigiert).
 
-## Burn: open 0.0000 · close 0.1775 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Architektur-Verdikt Receiver-Apertur-SPAN** (Rat API + 5 UI-Modelle: einstimmig SPAN deklariert, Integration/Fluss statt Ausdehnung; Riss Register-zuerst vs. Brücke-zuerst) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.1775)
+## Burn: open 0.0000 · close 0.2073 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Architektur-Verdikt Receiver-Apertur-SPAN** (Rat API + 6 UI-Modelle, u.a. GLM-5.3 Deep Think Max: einstimmig SPAN deklariert, Integration/Fluss statt Ausdehnung; Riss Register-zuerst vs. Brücke-zuerst) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.2073)
