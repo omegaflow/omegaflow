@@ -3,7 +3,7 @@
   session: Mountain-Folge 244
   class: handover
   date: 2026-10-06
-  sha256: 8093bafb9cc28c98e54182d6f7aa6935b0fa0ed753ebacd65ce0c84860944b53
+  sha256: 8b01acc799866e0cfd2793343318693aec2c8e2992a70b3ccce211d13bdf8f05
   status: live
 -->
 # Handover — Mountain-Folge 244 (2026-10-06)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 2026-10-06). Diese Session konsumierte `handover-2026-10-06-mountain-folge243.md`
 (→ `archiv/`). Kein pro/max-Dispatch; der NASA-POWER-Arm per Bau geschlossen.
 
-## Burn: open 0.0000 · close 0.126 · cap 0.25 · Grund: flash-first — Line-Session, ein AQS-VOC-Schritt-1-Bau (kein Sub-Dispatch)
+## Burn: open 0.0000 · close 0.147 · cap 0.25 · Grund: flash-first — Line-Session, AQS-VOC Schritt 1 + 2 (ein grind-flash-Insert)
 
 ## Operator-Wort-Register
 
@@ -53,23 +53,6 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 244)
 
 ## Offen (aufgeschlüsselt)
-
-### AQS-VOC-Arm (Exposom Chemikalien)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06) `src/archivar/geo.rs` clean (die rustfmt-Hunks in `e52ca13da`).
-  Schritt 1 gebaut (`cd7b294eb`): `MAGIC_EPA_AQS_VOC` (`EPV1`) + `comp_max=46201` in
-  `src/archivar/geo.rs`; `epa_aqs_compiler.rs` parameter-fähig (`--format epa_aqs_voc`,
-  `--parameter <code>`, `--url`; `comp = Parameter Code` je Zeile). `daily_VOCS_2024.zip` HTTP 200,
-  7 385 523 B; CSV-Member 265 339 729 B; am Live-CSV gemessen: 118 Parameter Codes, Einheit
-  einheitlich `Parts per billion Carbon` (ppbC).
-- **Blockade:** keine.
-- **Braucht:** (Schritt 2) (1) Extrakt-Arm `"epa_aqs_voc" => match comp { … }` (118 Codes) in
-  `src/archivar/extract.rs` nach dem `epa_aqs_pm25`-Arm; (2) Register-Block `epa_aqs_voc`
-  (url/format/origin/compiler + 118 `field … ppbC`-Zeilen) nach dem `epa_aqs_pm25`-Block;
-  (3) `ppbc` in `src/archivar/units.rs` (`allowed_units_for_force(6)` + `convert_to_si`);
-  (4) CDN-Workflow (Mycelium). Tabelle reproduzierbar aus `daily_VOCS_2024.zip`:
-  `unzip -p … daily_VOCS_2024.csv | awk '<quoted-CSV>' | sort -u -k1,1n` (Code→Name→Einheit).
 
 ### OSHA-CEHD-Arm (Exposom Arbeitsumfeld)
 - **Status:** eigen | **Bindung:** eigen
@@ -138,8 +121,8 @@ Wort | Datum | Quelle
 
 Origin: mountain-folge244. **Geroutet — Mycelium-Domäne:**
 
-- **CDN-Manifestation der neuen Exposom-Arme:** `nasa_power_t2m` (Arm gebaut, s. u.) sowie nach
-  dem Bau `epa_aqs_voc`, `osha_cehd`, `jaxa_gpm_ku` brauchen je einen `*-cdn.yml`-Workflow
+- **CDN-Manifestation der neuen Exposom-Arme:** `nasa_power_t2m` und `epa_aqs_voc` (Arme gebaut)
+  sowie nach dem Bau `osha_cehd`, `jaxa_gpm_ku` brauchen je einen `*-cdn.yml`-Workflow
   (`ubuntu-latest`, `--ci-mode`), sobald die Arme stehen.
 - **GOES-18 ABI — Workflow-Angleich:** `.github/workflows/goes18-cdn.yml:16`
   `runs-on: [self-hosted, Linux]`; der eigene Runner ist nicht registriert → Lauf `37434142761` queued.
