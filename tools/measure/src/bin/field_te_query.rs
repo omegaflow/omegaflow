@@ -1069,15 +1069,20 @@ fn source_fields(s: &SourceConfig) -> Vec<FieldConfig> {
     out
 }
 
-fn find_field_source(sources: &[SourceConfig], name: &str) -> Option<(SourceConfig, FieldConfig)> {
+fn field_sources(sources: &[SourceConfig], name: &str) -> Vec<(SourceConfig, FieldConfig)> {
+    let mut out = Vec::new();
     for s in sources {
         for fc in source_fields(s) {
             if field_matches(&fc, name) {
-                return Some((s.clone(), fc));
+                out.push((s.clone(), fc));
             }
         }
     }
-    None
+    out
+}
+
+fn find_field_source(sources: &[SourceConfig], name: &str) -> Option<(SourceConfig, FieldConfig)> {
+    field_sources(sources, name).into_iter().next()
 }
 
 fn witness_kind_token(token: &str) -> Option<WitnessKind> {
@@ -2221,16 +2226,25 @@ enum ArmLoad {
 }
 
 fn try_source(sources: &[SourceConfig], arm: &Arm, anchor: &QueryAnchor) -> Option<ArmLoad> {
-    find_field_source(sources, &arm.name).map(|(source, field)| {
+    let candidates = field_sources(sources, &arm.name);
+    if candidates.is_empty() {
+        return None;
+    }
+    let mut reason: Option<String> = None;
+    for (source, field) in candidates {
         match load_field(&source, &field, anchor) {
-            Ok(series) => ArmLoad::Ready {
-                source,
-                field,
-                series,
-            },
-            Err(reason) => ArmLoad::Pending(reason),
+            Ok(series) => {
+                return Some(ArmLoad::Ready {
+                    source,
+                    field,
+                    series,
+                });
+            }
+            Err(first) if reason.is_none() => reason = Some(first),
+            Err(_) => {}
         }
-    })
+    }
+    reason.map(ArmLoad::Pending)
 }
 
 fn try_witness(witnesses: &[WitnessRecord], arm: &Arm) -> Option<ArmLoad> {
