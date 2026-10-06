@@ -3,7 +3,7 @@
   session: Mountain-Folge 248
   class: handover
   date: 2026-10-06
-  sha256: 88c591cee6f07a4bf1a004a78893bf537467bb5d68d30befb48fb429951755f9
+  sha256: b468c41c827b4416338bdba6ab72bc2a9fbaf846135dea19543369b27bf95d5a
   status: live
 -->
 # Handover — Mountain-Folge 248 (2026-10-06)
@@ -172,11 +172,26 @@ Frage „Grammatik-Arm vs. drei Familien-Deskriptoren":
   **Admission gesetzt (`phi/blocked_sources.φ`):** 3× `blocked account` (CARISMA, AMPERE, PC-Index)
   + 14× `pending` (THEMIS GMAG, Wind SWE/MFI, THEMIS Tail, MMS, POES/MetOp, DMSP, OMTI/KEO,
   Substorm-Onsets, SOHO/LASCO, AL/AU/SYM-H, SuperDARN CPCP, EarthScope MT, USGS-E-Feld, AWESOME).
-- **Blockade:** die `pending`-Fäden brauchen je einen Arm (HAPI-Reuse bei THEMIS GMAG / Wind SWE/MFI /
-  MMS; neuer Arm bei den übrigen); die `blocked account`-Fäden einen Account (Operator).
-- **Braucht:** (1) Arm-Bau je `pending`-Faden → mycelium-Ernte/CDN; (2) Accounts CARISMA / AMPERE /
-  PC-Index per-Akt Operator-Wort (Register-Owner future); (3) die drei ohne Endpunkt (ROTI,
-  Versorger-GIC, Operator-Neutralpunkt) bleiben `unbelegt` — erste Messung: Endpunkt suchen.
+- **Blockade:** die übrigen 11 brauchen neue Reader (Endpunkte gemessen, s. Braucht); die
+  `blocked account` (CARISMA, AMPERE, PC-Index) einen Account (Operator).
+- **Lage (Atom 3, gebaut):** 3 der 14 `pending` liegen jetzt als **live HAPI-Quellen** in
+  `phi/sources.φ` (CDAWeb HAPI, Arm existiert, kein neuer Parser): **Wind MFI** (`WI_H0_MFI@0`,
+  `at sun`) · **MMS1 FGM** (`MMS1_FGM_SRVY_L2@0`, `at earth`) · **THEMIS Tail THA FGM**
+  (`THA_L2_FGM@0`, `at earth`); je `hapi Param.N=<field>` + `field`-Zeilen, `cargo check` 0/0.
+  Riss geheilt: der HAPI-Name ist `mms1_fgm_b_gse_srvy_l2_clean` (nicht `…srv…`; die Vorgabe → 400).
+- **Braucht (gemessene Endpunkte je Faden):** **THEMIS GMAG** → CDAWeb-HAPI-Katalog
+  `THG_L2_MAG_<STATION>` (~120) fanouten (`https://cdaweb.gsfc.nasa.gov/hapi/catalog`);
+  **SOHO/LASCO CME** → ASCII-Monatstabelle `…/CME_list/UNIVERSAL_ver2/text_ver/univ<YYYY>_<MM>.txt`;
+  **AL/AU/SYM-H** → `https://wdc.kugi.kyoto-u.ac.jp/aeasy/` + `cgi-bin/aeasy-cgi` (Text);
+  **USGS E-Feld** → `https://geomag.usgs.gov/ws/data/?id=<IMO>&format=json` (JSON Timeseries);
+  **POES/MetOp MEPED** → `…/poes-metop-space-environment-monitor/access/` (CDF+txt);
+  **Substorm-Onsets** → `https://supermag.jhuapl.edu/products/?tab=view` (CSV-Formular);
+  **EarthScope MT** → `data.earthscope.org/app/products/portal/viewer.html?key=emtf` (`--playwright`);
+  **DMSP SSJ/SSUSI** → `https://www.ncei.noaa.gov/data/dmsp-space-weather-sensors/access/`;
+  **FMI OMTI/KEO** → Aurora-Kamera-Route ungemessen (die gemessene page = Magnetometer);
+  **SuperDARN CPCP** → Globus/Request-Access (zugangsbeschränkt);
+  **AWESOME** → kein lebender Host (Wayback Stanford 2010). Accounts CARISMA/AMPERE/PC-Index per-Akt
+  Operator-Wort (Register-Owner future); ROTI/Versorger-GIC/Operator-Neutralpunkt bleiben `unbelegt`.
 
 ## An mycelium
 
@@ -266,6 +281,12 @@ mitgenommen: `docs/handover/handover-2026-10-06-river-folge112.md` und
 trägt weitere River-Hunks; River committet seine neueren Änderungen darüber. Lehre: künftig
 **pfad-begrenzt** committen (`git commit <eigene Pfade>`), nie nackt über den geteilten Index.
 Adressiert an River (`## An river`).
+
+**Atom 3 (dieser Commit):** die 14 `pending`-Fäden der GIC-Wunschliste bearbeitet — 3 als live
+HAPI-Quellen gebaut (Wind MFI, MMS1 FGM, THEMIS Tail THA FGM; `phi/sources.φ`, kein neuer Parser);
+die 11 übrigen mit gemessenem Endpunkt + Reader-Bedarf in der Übergabe aufgeschlüsselt (kein
+Verschieben — je Faden der nächste Schritt). Riss geheilt: der MMS-FGM-HAPI-Parameter ist
+`mms1_fgm_b_gse_srvy_l2_clean` (`srv` → 400). `cargo check` 0/0.
 
 Eigene Pfade: `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/fresnel.rs`, `src/archivar/gaia_sso.rs`,
 `src/archivar/parse.rs`, `src/archivar/tests.rs`, `tools/measure/src/bin/field_te_query.rs`,
