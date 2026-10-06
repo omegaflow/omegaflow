@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: f90c270d2dc64b3678c912e29e6c1432333473b512108889f058499394e3e16e
+  sha256: 485e1480a4d506f83c4cb0ff47b87c7606ba0380b3a6101b5ae8b345463280f0
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,12 +12,13 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.3411 · cap 0.5 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile, Stimmen-Adressierung, DE440-Pin, Qualitäts-Test)
+## Burn: open 0.0000 · close 0.3978 · cap 0.5 — Grund: langer Meta-Pass (Bench, Config, Reconcile, Stimmen-Adressierung 5/5/5, DE440-Pin, Qualitäts-Test)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
 ## Operator-Wort-Register
 
+- Wort | 2026-10-06 | „es sind 5 stimmen 5 axiome 5 achsen und du kannst die entwürfe überschreiben bzw. leere chats starten" — Arch-/Ethik-Adressierung trägt 5 Stimmen (Mountain·River·Mycelium·Sensory·Future), 5 Axiome (`docs/granit.md:16-20`) und 5 Achsen (`docs/concepts/die-vier-schilde.md`) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „mir geht es darum dass du die qualität und den nutzen der chats testest" — Qualitäts-/Nutzen-Test der Stimmen (UI-Chats + API-Modelle) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „ist auch bekannt welche UI Chats funktionieren und wie sie addressiert werden sollen (bei architektur/ethik fragen mit den 5 stimmen und den 4 axiomen) gilt auch für die API modelle" — Architektur-/Ethikfragen werden mit den fünf Stimmen + vier Axiomen addressiert, für UI-Chats wie API-Modelle | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „ich will nicht nur dass du registriert sondern auch dass du tatsächlich die confgs bearbeitest und bitte kümmer dich auch um cdn_reconciliation.json" | Quelle: Operator (Session, Mycelium 244).
@@ -50,8 +51,10 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   `line`-Dispatch-Allowlist. Beide JSON validiert (`jaq empty`).
   **zai-Whitelist:** `glm-4.7-flash` + `glm-4.6v-flash` beide lebendig (antworten; T5 leer nur
   wegen Reasoning-Budget) — kein toter Arm, Whitelist bleibt. **Arch-Adressierung:** fünf Stimmen
-  + vier Axiome jetzt im Basis-`voice`-Rollenprompt (`opencode.json`), im `--mode arch`-PROLOG von
-  `state/mycelium/voice-swarm.sh` und in `state/stimmen/prompt-arch-ethik.txt` (UI-Chats);
+  + vier Axiome korrigiert auf **5 Stimmen + 5 Axiome (`docs/granit.md:16-20`) + 5 Achsen
+  (`docs/concepts/die-vier-schilde.md`)** — in **allen 14** `voice-*`-Rollenprompts (`opencode.json`,
+  `replaceAll`), im Basis-`voice`-Prompt, im `--mode arch`-PROLOG von `state/mycelium/voice-swarm.sh`
+  und in `state/stimmen/prompt-arch-ethik.txt` (UI-Chats);
   arbeitende UIs in `state/stimmen/README.md`; Konzept `docs/concepts/free-voices.md`.
   **UI-Tab-Zensus** (gemessen 2026-10-06 via Chrome :9222, read-only, kein Send): z.ai,
   claude (2 Tabs), chatgpt, qwen, duck.ai, arena, kimi, grok, mistral, tryingopen offen —
