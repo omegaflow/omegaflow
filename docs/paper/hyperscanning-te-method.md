@@ -1,12 +1,12 @@
 <!--
-  title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Method with Family-Wise Error Control
+  title: Hyperscanning EEG Triads — Two-Level Transfer-Entropy with FWER Control
   class: paper
   date: 2026-10-05
-  sha256: 15567769bdb1030328acb6757447af844b4acebc67c4c1fbc026af64dfa39b48
+  sha256: 4f713df43616568d432d362b49b31de12d4436efedc9c5c63284f3f005f75720
   status: live
   see-also: docs/paper/hyperscanning-te-preregistration.md, .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge234.md
 -->
-# Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Method with Family-Wise Error Control
+# Hyperscanning EEG Triads — Two-Level Transfer-Entropy with FWER Control
 
 ## Abstract
 
