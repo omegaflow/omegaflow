@@ -52,6 +52,8 @@ konsumierte Übergabe nach `archiv/`.
 privat je Linie — nutze `state/<line>/archive-search-preset.txt` der erkannten Linie, wenn es
 existiert; sonst nur `archive_search <kw> --root <dir>` mit den Wurzelverzeichnissen der Linie.
 
+Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
+
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
 Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
