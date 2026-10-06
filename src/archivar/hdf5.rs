@@ -2934,6 +2934,176 @@ impl<'a> Hdf5File<'a> {
         read_chunk_resolved(self.buf, obj, ds, dt, coords, fetch)
     }
 
+    pub fn read_range(
+        &self,
+        dataset: &str,
+        start: u64,
+        count: u64,
+    ) -> Result<Vec<f64>, Hdf5Note> {
+        let (obj, ds, dt) = self.dataset(dataset)?;
+        if dt.class == 9 {
+            return Err(Hdf5Note::VlenNotRead);
+        }
+        let rank = ds.dims.len();
+        if rank == 0 || count == 0 {
+            return Ok(Vec::new());
+        }
+        let rows = *ds.dims.first().ok_or(Hdf5Note::Dataspace { off: 0 })?;
+        let end = start.saturating_add(count).min(rows);
+        if start >= end {
+            return Ok(Vec::new());
+        }
+        let actual = (end - start) as usize;
+        let row_elems: usize = ds.dims[1..].iter().fold(1usize, |a, d| a * (*d as usize));
+        let elem_size = dt.size;
+        let mut out = vec![0.0f64; actual * row_elems];
+        match obj.layout.as_ref() {
+            Some(Hdf5Layout::Compact { data }) => {
+                let first = start as usize * row_elems;
+                for (i, v) in out.iter_mut().enumerate() {
+                    *v = decode_numeric(data, first + i, dt)?;
+                }
+            }
+            Some(Hdf5Layout::Contiguous { addr, size }) => {
+                if *addr == UNDEF {
+                    return Err(Hdf5Note::AbsentAtByte {
+                        off: start as usize,
+                    });
+                }
+                let full = rows as usize * row_elems * elem_size;
+                if *size > 0 && *size as usize != full {
+                    return Err(Hdf5Note::Chunk { off: *addr as usize });
+                }
+                let off = *addr as usize + start as usize * row_elems * elem_size;
+                let len = out.len() * elem_size;
+                let endb = off.checked_add(len).ok_or(Hdf5Note::EndAtByte { off })?;
+                if endb > self.buf.len() {
+                    return Err(Hdf5Note::EndAtByte {
+                        off: self.buf.len(),
+                    });
+                }
+                let bytes = &self.buf[off..endb];
+                for (i, v) in out.iter_mut().enumerate() {
+                    *v = decode_numeric(bytes, i, dt)?;
+                }
+            }
+            Some(Hdf5Layout::Chunked {
+                chunk_dims,
+                elem_size: declared,
+                ..
+            }) => {
+                if *declared as usize != elem_size {
+                    return Err(Hdf5Note::Chunk { off: 0 });
+                }
+                let crow = *chunk_dims.first().ok_or(Hdf5Note::Chunk { off: 0 })? as u64;
+                if crow == 0 {
+                    return Err(Hdf5Note::Chunk { off: 0 });
+                }
+                let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
+                let first_row_chunk = start / crow;
+                let last_row_chunk = (end - 1) / crow;
+                let (recs, v1_index) = self.chunk_records_of(
+                    obj,
+                    rank,
+                    &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
+                )?;
+                let mut covered = false;
+                let mut idx = vec![0usize; rank];
+                let mut global = vec![0usize; rank];
+                for rec in &recs {
+                    let Some(coords) = scaled_to_coords(&rec.scaled, chunk_dims, v1_index) else {
+                        continue;
+                    };
+                    let c0 = match coords.first() {
+                        Some(c) => *c,
+                        None => continue,
+                    };
+                    if c0 < first_row_chunk || c0 > last_row_chunk {
+                        continue;
+                    }
+                    covered = true;
+                    let stored = if rec.size > 0 {
+                        rec.size
+                    } else {
+                        chunk_elems * elem_size
+                    };
+                    let off = rec.addr as usize;
+                    let endb = off.checked_add(stored).ok_or(Hdf5Note::EndAtByte { off })?;
+                    if endb > self.buf.len() {
+                        return Err(Hdf5Note::EndAtByte {
+                            off: self.buf.len(),
+                        });
+                    }
+                    let mut raw = self.buf[off..endb].to_vec();
+                    if !obj.filters.is_empty() {
+                        apply_filters(&mut raw, &obj.filters, elem_size, rec.filter_mask)?;
+                    }
+                    for flat in 0..chunk_elems {
+                        let mut rem = flat;
+                        for d in (0..rank).rev() {
+                            idx[d] = rem % chunk_dims[d] as usize;
+                            rem /= chunk_dims[d] as usize;
+                        }
+                        let mut outside = false;
+                        for d in 0..rank {
+                            global[d] = coords[d] as usize * chunk_dims[d] as usize + idx[d];
+                            if global[d] >= ds.dims[d] as usize {
+                                outside = true;
+                                break;
+                            }
+                        }
+                        if outside {
+                            continue;
+                        }
+                        if (global[0] as u64) < start || (global[0] as u64) >= end {
+                            continue;
+                        }
+                        let mut dst = 0usize;
+                        let mut stride = 1usize;
+                        for d in (0..rank).rev() {
+                            if d == 0 {
+                                dst += (global[0] - start as usize) * stride;
+                            } else {
+                                dst += global[d] * stride;
+                            }
+                            stride *= if d == 0 { actual } else { ds.dims[d] as usize };
+                        }
+                        out[dst] = decode_numeric(&raw, flat, dt)?;
+                    }
+                }
+                if !covered {
+                    return Err(Hdf5Note::AbsentAtByte {
+                        off: start as usize,
+                    });
+                }
+            }
+            None => {
+                return Err(Hdf5Note::AbsentObject {
+                    name: dataset.to_string(),
+                });
+            }
+        }
+        let scale = obj
+            .attrs
+            .iter()
+            .find(|a| a.name == "scale_factor")
+            .and_then(attr_number);
+        if let Some(scale) = scale {
+            let offset = obj
+                .attrs
+                .iter()
+                .find(|a| a.name == "add_offset")
+                .and_then(attr_number);
+            for v in out.iter_mut() {
+                *v = match offset {
+                    Some(o) => *v * scale + o,
+                    None => *v * scale,
+                };
+            }
+        }
+        Ok(out)
+    }
+
     pub fn geostationary_projection(&self) -> Result<GeostationaryProjection, Hdf5Note> {
         if let Ok(proj) = self.resolve("goes_imager_projection") {
             let sub_lon = proj
@@ -3646,6 +3816,30 @@ mod tests {
         let data = file.read_f64_dataset("d").unwrap();
         assert_eq!(data.len(), 3, "every chunk reaches its own coordinate");
         assert_eq!(data, vec![10.0, 20.0, 30.0]);
+    }
+
+    #[test]
+    fn read_range_reads_only_the_covering_chunks() {
+        let (buf, _btree) = synthetic_chunked_image();
+        let file = Hdf5File::parse(&buf).unwrap();
+        assert_eq!(file.read_range("d", 0, 4).unwrap(), vec![1.0, 2.0, 3.0, 4.0]);
+        assert_eq!(
+            file.read_range("d", 1, 2).unwrap(),
+            vec![2.0, 3.0],
+            "a range crossing the chunk boundary keeps its order"
+        );
+        assert_eq!(file.read_range("d", 0, 2).unwrap(), vec![1.0, 2.0]);
+        assert_eq!(file.read_range("d", 2, 1).unwrap(), vec![3.0]);
+        assert!(file.read_range("d", 4, 2).unwrap().is_empty());
+        assert!(file.read_range("d", 0, 0).unwrap().is_empty());
+    }
+
+    #[test]
+    fn read_range_v2_single_element_chunks() {
+        let buf = synthetic_chunked_image_v2_single_element_chunks();
+        let file = Hdf5File::parse(&buf).unwrap();
+        assert_eq!(file.read_range("d", 1, 2).unwrap(), vec![20.0, 30.0]);
+        assert_eq!(file.read_range("d", 0, 3).unwrap(), vec![10.0, 20.0, 30.0]);
     }
 
     fn btree_header_v2_full(

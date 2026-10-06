@@ -2036,6 +2036,8 @@ pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
     prose_violation(line)
 }
 
+const BODY_DATA_NETLOCS: [&str; 3] = ["openneuro.org", "physionet.org", "ieeg.org"];
+
 pub fn unbacked_mirror_violations(added: &[&str]) -> Vec<(usize, String)> {
     let mut out = Vec::new();
     let mut i = 0;
@@ -2046,20 +2048,25 @@ pub fn unbacked_mirror_violations(added: &[&str]) -> Vec<(usize, String)> {
             i += 1;
             continue;
         }
+        let body_data = BODY_DATA_NETLOCS.iter().any(|n| added[i].contains(n));
         let mut has_basis = false;
+        let mut has_terms = false;
         let mut j = i + 1;
         while j < added.len() {
             let line = added[j];
             if line.is_empty() || line.starts_with("url ") {
                 break;
             }
-            if line.starts_with("origin ") || line.starts_with("terms ") {
+            if line.starts_with("origin ") {
                 has_basis = true;
-                break;
+            }
+            if line.starts_with("terms ") {
+                has_basis = true;
+                has_terms = true;
             }
             j += 1;
         }
-        if !has_basis {
+        if !has_basis || (body_data && !has_terms) {
             out.push((i + 1, feedback("unbacked_mirror").to_string()));
         }
         i += 1;
@@ -4483,6 +4490,17 @@ mod tests {
             "terms CC BY-NC-SA",
         ];
         assert!(unbacked_mirror_violations(&terms).is_empty());
+        let body_bare = [
+            "url https://github.com/omegaflow/sources/releases/download/openneuro.org/x.bin",
+            "origin https://openneuro.org/crn/graphql",
+        ];
+        assert_eq!(unbacked_mirror_violations(&body_bare).len(), 1);
+        let body_ok = [
+            "url https://github.com/omegaflow/sources/releases/download/openneuro.org/x.bin",
+            "origin https://openneuro.org/crn/graphql",
+            "terms CC0 https://openneuro.org/datasets/ds005034",
+        ];
+        assert!(unbacked_mirror_violations(&body_ok).is_empty());
     }
 
     #[test]

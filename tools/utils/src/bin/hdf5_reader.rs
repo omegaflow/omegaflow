@@ -109,7 +109,7 @@ fn attr_value(a: &omegaflow::hdf5::Hdf5Attribute) -> String {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(path) = args.first() else {
-        eprintln!("usage: hdf5_reader <file.h5> [--var <name>]");
+        eprintln!("usage: hdf5_reader <file.h5> [--var <name>] [--range <start[,count]>] [--chunk <c0[,c1,...]>]");
         return;
     };
     let bytes = match std::fs::read(path) {
@@ -170,13 +170,61 @@ fn main() {
                             .join(",")
                     );
                 }
-                match file.read_dataset(var) {
-                    Ok(data) => println!("data: {} B read", data.len()),
-                    Err(note) => eprintln!("data: {}", note_text(&note)),
+                let chunk_flag = args
+                    .iter()
+                    .position(|a| a == "--chunk")
+                    .and_then(|i| args.get(i + 1))
+                    .map(|s| {
+                        s.split(',')
+                            .filter_map(|t| t.trim().parse::<u64>().ok())
+                            .collect::<Vec<u64>>()
+                    });
+                let range_flag = args
+                    .iter()
+                    .position(|a| a == "--range")
+                    .and_then(|i| args.get(i + 1))
+                    .and_then(|s| {
+                        let mut it = s.split(',').filter_map(|t| t.trim().parse::<u64>().ok());
+                        let start = it.next()?;
+                        let count = it.next().unwrap_or(1);
+                        Some((start, count))
+                    });
+                let chunked = matches!(obj.layout, Some(Hdf5Layout::Chunked { .. }));
+                if let (Some(c), true) = (chunk_flag, chunked) {
+                    match file.read_chunk(var, &c, |_o: u64, _l: u64| -> Option<Vec<u8>> { None }) {
+                        Some(vals) => println!("data: {} values (chunk {:?})", vals.len(), c),
+                        None => eprintln!("data: chunk {:?} stays absent", c),
+                    }
+                } else if let Some((start, count)) = range_flag {
+                    match file.read_range(var, start, count) {
+                        Ok(vals) => println!(
+                            "data: {} values (range {}..{})",
+                            vals.len(),
+                            start,
+                            start + count
+                        ),
+                        Err(note) => eprintln!("data: {}", note_text(&note)),
+                    }
+                } else if chunked {
+                    let coords = vec![0u64; ds.dims.len()];
+                    match file.read_chunk(var, &coords, |_o: u64, _l: u64| -> Option<Vec<u8>> {
+                        None
+                    }) {
+                        Some(vals) => println!(
+                            "data: {} values (bounded first chunk {:?}; --chunk/--range for a subset)",
+                            vals.len(),
+                            coords
+                        ),
+                        None => eprintln!("data: the first chunk stays absent"),
+                    }
+                } else {
+                    match file.read_dataset(var) {
+                        Ok(data) => println!("data: {} B read", data.len()),
+                        Err(note) => eprintln!("data: {}", note_text(&note)),
+                    }
                 }
             }
-            Err(note) => eprintln!("{}", note_text(&note)),
-        },
+            Err(note) => eprintln!("{}", note_text(&note)),        },
         None => struktur(&file),
     }
 }
