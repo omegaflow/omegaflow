@@ -50,6 +50,7 @@ pub const MAGIC_CSES_HPM: [u8; 4] = *b"CSH1";
 pub const MAGIC_CSES_SCM: [u8; 4] = *b"CSC1";
 pub const MAGIC_CEIN: [u8; 4] = *b"CEI1";
 pub const MAGIC_IERS_LOD: [u8; 4] = *b"IRD1";
+pub const MAGIC_VNP46A3: [u8; 4] = *b"NTL1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -74,6 +75,9 @@ pub const COMP_CEIN_MAX: u32 = 1;
 
 pub const COMP_IERS_LOD: u32 = 1;
 pub const COMP_IERS_LOD_MAX: u32 = 1;
+
+pub const COMP_VNP46A3_NIGHTLIGHT: u32 = 1;
+pub const COMP_VNP46A3_MAX: u32 = 1;
 
 pub const COMP_GIC_A: u32 = 1;
 pub const COMP_GIC_MAX: u32 = 1;
@@ -286,6 +290,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "fdsn_waveform" => Some(MAGIC_FDSN),
         "ceein_infrasound" => Some(MAGIC_CEIN),
         "iers_eop_c04_lod" => Some(MAGIC_IERS_LOD),
+        "black_marble_vnp46a3_nightlight" => Some(MAGIC_VNP46A3),
         "fmi_gic" => Some(MAGIC_GIC),
         "fmi_gic_1min" => Some(MAGIC_GIC),
         "fmi_image_mag" => Some(MAGIC_IMAGE),
@@ -342,6 +347,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "fdsn_waveform" => Some(COMP_FDSN_MAX),
         "ceein_infrasound" => Some(COMP_CEIN_MAX),
         "iers_eop_c04_lod" => Some(COMP_IERS_LOD_MAX),
+        "black_marble_vnp46a3_nightlight" => Some(COMP_VNP46A3_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
         "fmi_gic_1min" => Some(COMP_GIC_1MIN_MAX),
         "fmi_image_mag" => Some(COMP_IMAGE_MAX),
@@ -1130,5 +1136,48 @@ mod tests {
         records[0].t = 1.0;
         records[0].val = f64::INFINITY;
         assert!(verify_bin(MAGIC_IGETS, &write_bin(MAGIC_IGETS, &records)).is_none());
+    }
+
+    #[test]
+    fn vnp46a3_nightlight_roundtrip() {
+        let magic = magic_of("black_marble_vnp46a3_nightlight").expect("the raster format has a magic");
+        assert_eq!(magic, MAGIC_VNP46A3);
+        assert_eq!(comp_max("black_marble_vnp46a3_nightlight"), Some(COMP_VNP46A3_MAX));
+        assert_ne!(magic, MAGIC_IERS_LOD);
+        let records = vec![
+            GeoRec {
+                t: 1325376600.0,
+                lat: 51.5,
+                lon: 7.0,
+                alt: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                val: 12.5,
+                comp: COMP_VNP46A3_NIGHTLIGHT,
+                station: 0,
+            },
+            GeoRec {
+                t: 1325376600.0,
+                lat: -33.87,
+                lon: 151.21,
+                alt: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                val: 0.0,
+                comp: COMP_VNP46A3_NIGHTLIGHT,
+                station: 0,
+            },
+        ];
+        let bytes = write_bin(magic, &records);
+        let parsed = parse_bin(magic, &bytes).unwrap();
+        assert_eq!(parsed.len(), records.len());
+        for (a, b) in parsed.iter().zip(records.iter()) {
+            assert_eq!(a.t, b.t);
+            assert_eq!(a.lat, b.lat);
+            assert_eq!(a.lon, b.lon);
+            assert_eq!(a.val, b.val);
+            assert_eq!(a.comp, b.comp);
+        }
+        assert!(parse_bin(MAGIC_IERS_LOD, &bytes).is_none());
     }
 }

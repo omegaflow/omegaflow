@@ -827,6 +827,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_IERS_LOD => Some("iers_eop_lod_s"),
             _ => None,
         },
+        "black_marble_vnp46a3_nightlight" => match comp {
+            crate::geo::COMP_VNP46A3_NIGHTLIGHT => Some("vnp46a3_nightlight_nw_cm2_sr"),
+            _ => None,
+        },
         "igets" => match comp {
             crate::geo::COMP_IGETS_G => Some("igets_gravity_nm_s2"),
             _ => None,

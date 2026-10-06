@@ -4148,6 +4148,7 @@ pub fn main_flow() {
                     | "cses_efd"
                     | "cses_hpm"
                     | "cses_scm"
+                    | "black_marble_vnp46a3_nightlight"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

@@ -17352,6 +17352,15 @@ on earth 60.50 24.65 0
 ttl 604800
 field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin
+format black_marble_vnp46a3_nightlight
+origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
+compiler tools/harvest/src/bin/vnp46a3_compiler.rs
+header Authorization {EARTHDATA_EDL_TOKEN}
+on earth 0 0 0
+ttl 86400
+field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
