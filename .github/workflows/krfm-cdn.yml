@@ -1,0 +1,37 @@
+name: krfm-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  krfm:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the pds-smallbodies.astro.umd.edu release exists on the CDN
+        run: |
+          if ! gh release view pds-smallbodies.astro.umd.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-smallbodies.astro.umd.edu --repo omegaflow/sources \
+              --title "pds-smallbodies.astro.umd.edu" \
+              --notes "Phobos-2 KRFM fixed-width photometry (14 fields: RADIOMETER1-5 + PHOTOMETER1-9) compiled to pds3_fixed_width_krfm.bin."
+          fi
+      - name: Compile the KRFM fixed-width table and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin pds3_fixed_width_compiler -- \
+            --dat https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/krfm.dat \
+            --label https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/krfm.lbl \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "krfm-cdn: pds3_fixed_width_krfm.bin returned void" \
+                 "pds3_fixed_width_compiler returned void on the KRFM PDS3 pair. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

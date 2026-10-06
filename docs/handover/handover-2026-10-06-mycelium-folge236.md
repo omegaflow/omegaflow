@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: 5110bcbc761b6c88e148d87788fad5941fbe185d42e3069296ac4b1af352f00f
+  sha256: f07e744a29ad46df42ad208cc2109e2631864b7d1d733285f5f37b990e0d1e1f
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -50,18 +50,20 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
 - **Blockade:** Port-Runner verloren.
 - **Braucht:** Port-Runner als Bin rekonstruieren/committen (Konverter-Spec = Mountain).
 
-### `phi/blocked_sources.φ` — Mycelium-Klasse (Stand gemessen 2026-10-06)
+### `phi/blocked_sources.φ` — Mycelium-Klasse (Stand gemessen 2026-10-06; Mountain-239-Backlog gefaltet)
 - **Status:** je eigen
 - **Trigger:** Arm-Bau/Manifestation je Eintrag
 - **Lage:** (gemessen 2026-10-06)
-  - `:168` BGI AGrav — Workflow `agrav-cdn.yml` + Bin `agrav_compiler.rs` + `sources.φ:9056-9062` vorhanden; `harvest.φ` = `asset present` → Note „Arm+Manifestation Mycelium" **stale**, Entry kann released werden.
-  - `:172` C9/CEEIN — Workflow `ceein-infrasound-cdn.yml` + Bin + `sources.φ:9224-9230` vorhanden; `asset present` → dito.
-  - `:118` JAXA G-Portal — `sha256` steht; Record-Download (`add_download.json`/SFTP) offen.
+  - AGrav/CEEIN — Arms + `sources.φ`-Blöcke + `asset present` → **erledigt** (Mountain hat die Entries entfernt).
+  - ExoMars TGO ACS / Viking gravity — `sources.φ`-Blöcke + Workflows `acs-nir-cdn.yml` / `viking-grav-cdn.yml` stehen; Dispatch (idempotent) in dieser Session.
+  - Hayabusa LIDAR — 7 Blöcke `pds4_fixed_width`; Workflow `.github/workflows/hayabusa-lidar-cdn.yml` gebaut + dispatcht.
+  - Phobos-2 KRFM — Block auf 14 Felder ergänzt (Mountain); Workflow `.github/workflows/krfm-cdn.yml` gebaut + dispatcht (`krfm.lbl` HTTP 206, gemessen).
+  - EUMETSAT MTG-LI — Workflow `.github/workflows/mtg-li-cdn.yml` gebaut; **blockiert**: GitHub-Secrets `EUMETSAT_KEY`/`EUMETSAT_SECRET` fehlen (`gh secret list` = leer; `.secrets.local` trägt keine EUMETSAT-Schlüssel) → Konto/Key = Operator.
+  - Chandrayaan-1 Mini-RF — **blockiert**: `pds3_img` ohne Feld-Arm (Leerzeichen-Labels `"H RECEIVE INTENSITY"` …) → neuer `pds3_img`-Slug-Arm nötig (Mountain).
+  - Tianwen-1 MoRIC / ShadowCam / JAXA G-Portal — Sample/Record-Download = Operator-Hand; GOES-18-ABI-Workflow (`goes18-cdn.yml`) in dieser Session dispatcht.
   - `:78` SuperDARN — LOCK (s. u.).
-  - `:189` EUMETSAT MTG-LI — parser-def `netcdf-arm` (Mountain).
-  - `:193` GOES-18 ABI — Workflow `.github/workflows/goes18-cdn.yml` gebaut (diese Session); Dispatch nach Push.
-- **Blockade:** je Eintrag.
-- **Braucht:** AGrav/CEEIN-Entry release (Mountain); GOES-18-Dispatch (nach Push).
+- **Blockade:** MTG-LI-Secrets (Operator); Chandrayaan-`pds3_img`-Arm (Mountain); Sample-/Record-Downloads (Operator/per-act).
+- **Braucht:** `EUMETSAT_KEY`/`EUMETSAT_SECRET` als GitHub-Secrets (Operator); `pds3_img`-Feld-Arm (Mountain); Consent für Record-Downloads.
 
 ### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*`
 - **Status:** wartend | **Bindung:** River
