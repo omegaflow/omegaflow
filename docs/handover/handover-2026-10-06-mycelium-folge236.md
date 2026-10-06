@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: 7b09b4686d1b9b47651464ea7a21d1501de9b30e9c898ff67b4fe1dbd54afd88
+  sha256: 792fddc3ce88c8ddbd0f79e7e54fb3668ee36ce6f6510110f5d982ea2a4dd71f
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -72,12 +72,12 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
 - **Blockade:** keine (Workflow-YAML + `.te`-Descriptor je Klasse).
 - **Braucht:** Workflow-YAML unter `.github/workflows/` + Descriptor je X-Klasse; die übrigen Domänen-x bleiben `pending` (`:202-204`).
 
-### Orphan-Docs — 2 ohne Träger
-- **Status:** eigen | **Bindung:** eigen (Meta) → Route
-- **Trigger:** Owner-Zuordnung
-- **Lage:** (gemessen 2026-10-06, `register_lookup --orphan-docs`) `docs/paper/hyperscanning-te-preregistration.md` (2 Marker; see-also sensory-232), `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (1 Marker).
-- **Blockade:** Träger-Zuordnung.
-- **Braucht:** Namenträger in Sensory-/Future-Übergabe (geroutet) oder gemessenes `descoped`.
+### Orphan-Docs — 2 ohne Träger (gemessen 2026-10-06, nach dem Commit)
+- **Status:** eigen | **Bindung:** eigen (Mycelium-Domäne: CDN/Datenbestand)
+- **Trigger:** Marker-Schließung / descope-Messung
+- **Lage:** (gemessen 2026-10-06, `register_lookup --orphan-docs`) `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (1 Marker) und `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1 Marker) — beide 2026-09-03-Surveys über Datenbestand/CDN-Orphans. Der Zensus ist HEAD-abhängig (jede Live-Übergabe, die das Dokument nennt, trägt es; die früher gelisteten `hyperscanning-te-preregistration.md`/`survey-2026-10-03-exzellenz-gate.md` sind durch Nennung getragen).
+- **Blockade:** offener Marker ohne Folgeschritt.
+- **Braucht:** je Dokument den offenen Marker schließen (umsetzen oder `descoped`).
 
 ## An mountain
 
