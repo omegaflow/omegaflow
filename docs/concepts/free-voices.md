@@ -21,8 +21,9 @@ opencode run --pure -m <provider/model> --agent voice "<frage>"
 ```
 
 `--pure` (ohne externe Plugins) + `--agent voice`; die Rolle bringt die
-`archive_search_public`-Allowlist mit. Für die Web-UI-Stimmen (claude, z.ai, deepseek,
-kimi, arena, together, tryingopen) das Rezept in `state/stimmen/ui-stimme.js` +
+`archive_search_public`-Allowlist mit. Für die Web-UI-Stimmen (claude, z.ai, chatgpt,
+qwen, deepseek, kimi, arena, grok, mistral, duck, together, tryingopen — Composer +
+Send-Trigger in `state/stimmen/README.md`) das Rezept in `state/stimmen/ui-stimme.js` +
 `state/stimmen/2026-10-01_frontier-kanaele-ohne-login.md`; für rohe API-Stimmen ohne
 Tools `state/stimmen/stimme.sh`.
 
