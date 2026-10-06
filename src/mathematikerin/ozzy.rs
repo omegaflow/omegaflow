@@ -167,7 +167,7 @@ mod tests {
         ];
         let r = match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::Measured(r) => r,
-            _ => panic!("target against its witnesses must be measured"),
+            _ => panic!("the target against its witnesses reads outside Measured"),
         };
         assert_eq!(r.n, target.len());
         assert_eq!(r.series.len(), target.len());
@@ -236,7 +236,7 @@ mod tests {
         ];
         match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::RangDefizit => {}
-            _ => panic!("rank collapse must be named RangDefizit"),
+            _ => panic!("the rank collapse reads outside RangDefizit"),
         }
     }
 
@@ -249,7 +249,7 @@ mod tests {
         }];
         match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::ZielUnterZeugen => {}
-            _ => panic!("target among witnesses must be named ZielUnterZeugen"),
+            _ => panic!("the target among witnesses reads outside ZielUnterZeugen"),
         }
     }
 
@@ -262,7 +262,7 @@ mod tests {
         }];
         match residual_against_witnesses(&target, &witnesses, &[0]) {
             ResidualOutcome::NFlloor => {}
-            _ => panic!("no contributing witness must be named NFlloor"),
+            _ => panic!("the empty-witness case reads outside NFlloor"),
         }
     }
 }
