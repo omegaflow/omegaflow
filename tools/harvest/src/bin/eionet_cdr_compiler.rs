@@ -72,9 +72,9 @@ fn run(args: &[String]) -> Result<(), String> {
     })?;
 
     let bytes = read_source(&source)?;
-    let mut records = parse_report(&bytes).ok_or_else(|| {
+    let mut records = parse_report(&bytes).map_err(|e| {
         format!(
-            "{source}: carries no E-PRTR/LCP report structure ({} B) — the bin stays unwritten (0 honored)",
+            "{source}: {e} ({} B) — the bin stays unwritten (0 honored)",
             bytes.len()
         )
     })?;
@@ -171,6 +171,6 @@ mod tests {
 
     #[test]
     fn a_body_without_the_report_root_is_void() {
-        assert!(parse_report(b"<html></html>").is_none());
+        assert!(parse_report(b"<html></html>").is_err());
     }
 }
