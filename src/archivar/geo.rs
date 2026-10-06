@@ -55,6 +55,7 @@ pub const MAGIC_GHSL: [u8; 4] = *b"GHS1";
 pub const MAGIC_EPA_AQS: [u8; 4] = *b"EPA1";
 pub const MAGIC_EPA_AQS_VOC: [u8; 4] = *b"EPV1";
 pub const MAGIC_OSM_PBF: [u8; 4] = super::osm_pbf::MAGIC;
+pub const MAGIC_EIONET_CDR: [u8; 4] = *b"ECD1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -351,6 +352,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "cses_efd" => Some(MAGIC_CSES_EFD),
         "cses_hpm" => Some(MAGIC_CSES_HPM),
         "cses_scm" => Some(MAGIC_CSES_SCM),
+        "eionet_cdr" => Some(MAGIC_EIONET_CDR),
         _ => None,
     }
 }
@@ -412,6 +414,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "cses_efd" => Some(COMP_CSES_EFD_MAX),
         "cses_hpm" => Some(COMP_CSES_HPM_MAX),
         "cses_scm" => Some(COMP_CSES_SCM_MAX),
+        "eionet_cdr" => Some(crate::archivar::eionet_cdr::COMP_MAX),
         _ => None,
     }
 }

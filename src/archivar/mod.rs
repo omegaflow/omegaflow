@@ -56,6 +56,7 @@ pub mod edf;
 pub mod eea;
 pub mod eea_noise;
 pub mod eels;
+pub mod eionet_cdr;
 pub mod electrodes;
 pub mod emc;
 pub mod emm_exi;
