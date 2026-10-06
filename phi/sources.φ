@@ -19100,6 +19100,21 @@ field mean_mag_r decaps_dr2_r_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_i decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_z decaps_dr2_z_mag inverse-square em mag 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/archive.eso.org/tap_cat-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RA2000_AS_ra_DEC2000_AS_dec_KSPETROMAG_AS_ksmag_FROM_VHS_CAT_V3_WHERE_KSPETROMAG_IS_NOT_NULL.json
+format reference
+origin https://archive.eso.org
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/archive.eso.org/tap_cat-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RA2000_AS_ra_DEC2000_AS_dec_KSPETROMAG_AS_ksmag_FROM_safcat.viking_er5_zyjj_1j_2hks_catMetaData_fits_V4_WHERE_KSPETROMAG_IS_NOT_NULL.json
+format reference
+origin https://archive.eso.org
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/hsa-whsa-tap-server-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_flux_FROM_hsa.pacs_point_source_070_WHERE_flux_IS_NOT_NULL.json
+format reference
+origin https://archives.esac.esa.int
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/casdc.china-vo.org/lhaaso_sky1.sky1
 origin https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
@@ -19240,6 +19255,16 @@ field decaps_dr2_extinction_mag decaps_dr2_extinction_mag inverse-square em mag 
 field decaps_dr2_rv_km_s decaps_dr2_rv_km_s gaussian-inverse-square advective km/s 31536000 0.0 0.0
 field decaps_dr2_g_mag decaps_dr2_g_mag inverse-square em mag 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_raj2000_dej2000_flux_dens_blue_flux_dens_red_FROM_ohmaser.masers_WHERE_flux_dens_red_IS_NOT_NULL.json
+format reference
+origin https://dc.g-vo.org
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_raj2000_dej2000_rv_teff_k_Jmag_parallax_FROM_rave.main_WHERE_parallax_IS_NOT_NULL.json
+format reference
+origin https://dc.g-vo.org
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/download.isc.ac.uk/isc_ehb.bin
 format isc_ehb
 origin http://download.isc.ac.uk/isc-ehb/
@@ -19247,9 +19272,19 @@ compiler tools/harvest/src/bin/isc_ehb_compiler.rs
 at earth
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/eas.esac.esa.int/tap-server-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_right_ascension_declination_flux_detection_total_FROM_catalogue.mer_catalogue_WHERE_flux_detection_total_IS_NOT_NULL.json
+format reference
+origin https://eas.esac.esa.int
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_ra_dec_sy_dist_st_teff_FROM_stellarhosts_WHERE_ra_IS_NOT_NULL_AND_st_teff_IS_NOT_NULL.json
 format reference
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/gavo.aip.de/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RAdeg_DEdeg_HRV_Teff_K_FROM_ravedr4.rave_dr4_WHERE_HRV_IS_NOT_NULL.json
+format reference
+origin https://gavo.aip.de
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
@@ -19355,6 +19390,11 @@ field hmag twomass_h_mag inverse-square em mag 31536000 0.0 0.0
 field e_hmag twomass_e_h_mag inverse-square em mag 31536000 0.0 0.0
 field kmag twomass_k_mag inverse-square em mag 31536000 0.0 0.0
 field e_kmag twomass_e_k_mag inverse-square em mag 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/isla.esac.esa.int/tap-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_flux_FROM_ila.cat_source_WHERE_flux_IS_NOT_NULL.json
+format reference
+origin https://isla.esac.esa.int
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
 origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
@@ -25261,6 +25301,11 @@ at sun
 ttl 31536000
 field goes_euvs_lya1216 goes_euvs_lya1216 inverse-square em wm2_1au 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_ra_dec_z_prefname_type_key_n_spectra_FROM_NEDTAP.objdir_WHERE_z__3E_0.json
+format reference
+origin https://ned.ipac.caltech.edu
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
 format reference
 origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
@@ -25276,11 +25321,21 @@ at sun
 ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/padc-tap-rcsed.obspm.fr/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_r.ra_r.dec_r.z_f.objid_f.corrfibmag_u_f.corrfibmag_g_f.corrfibmag_r_FROM_specphot.rcsed_AS_r_JOIN_specphot.rcsed_fibermags_AS_f_ON_r.objid-f.objid_WHERE_f.corrfibmag_g_IS_NOT_NULL.json
+format reference
+origin https://padc-tap-rcsed.obspm.fr
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin
 format slab2_depth
 origin https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
 compiler tools/harvest/src/bin/slab2_compiler.rs
 at earth
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/skvo.science.upjs.sk/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_o.raj2000_o.dej2000_l.object_id_l.passband_l.obs_time_l.magnitude_FROM_ogle.lightcurves_AS_l_JOIN_ogle.objects_all_AS_o_ON_l.object_id-o.object_id.json
+format reference
+origin https://skvo.science.upjs.sk
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-icecat/icecat_sky1.sky1
@@ -25405,6 +25460,11 @@ sha256 2d1a8d9942bae59cb177ff6e0194757339cdc7aad69edfe1733117abd1ccec4f
 at sun
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/vo.astron.nl/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_total_flux_peak_flux_FROM_lotss_dr2.main_sources_WHERE_total_flux_IS_NOT_NULL.json
+format reference
+origin https://vo.astron.nl
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/vo.km3net.de/antares_events_2007_2017.sky1
 origin https://vo.km3net.de/ant20_01/nu/cone/form
 compiler tools/harvest/src/bin/antares_vo_compiler.rs
@@ -25412,6 +25472,11 @@ format sky1
 at sun
 ttl 31536000
 field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/voparis-tap-astro-m.obspm.fr/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_mag_vr_FROM_hyperleda.galaxies_WHERE_vr_IS_NOT_NULL.json
+format reference
+origin https://voparis-tap-astro-m.obspm.fr
+ttl 31536000
 
 url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-Earth3D.5.4.3.jar
 format reference
