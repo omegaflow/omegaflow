@@ -60,7 +60,16 @@ pub fn te_bias_m_k_embedded(n: usize) -> Option<f64> {
         .map(|&(_, m)| m)
 }
 
-pub const TE_BIAS_MK_BINNED: &[(usize, f64)] = &[];
+pub const TE_BIAS_MK_BINNED: &[(usize, f64)] = &[
+    (800, 2.715e-3),
+    (1260, 2.393e-3),
+    (1600, 1.507e-3),
+    (2200, -5.634e-4),
+    (4000, 1.762e-3),
+    (6000, 7.967e-4),
+    (8546, -4.494e-4),
+    (10000, 0.000e0),
+];
 
 pub fn te_bias_m_k_binned(n: usize) -> Option<f64> {
     TE_BIAS_MK_BINNED
@@ -4049,14 +4058,35 @@ mod tests {
             (scalar - embedded).abs() > 1e-6,
             "the arms carry distinct measured tables, got scalar {scalar} embedded {embedded}"
         );
+        let binned = BiasArm::BinnedHistogram
+            .table_lookup(1260)
+            .expect("the binned arm carries its own measured bias at the operating size");
         assert!(
-            BiasArm::BinnedHistogram.table_lookup(1260).is_none(),
-            "the binned arm carries no scalar socket: its table stays absent until its own measurement lands"
+            (binned - scalar).abs() > 1e-6,
+            "the binned arm carries its own table distinct from the scalar socket, got binned {binned} scalar {scalar}"
         );
         assert_eq!(
             BiasArm::BinnedHistogram.table_len(),
-            0,
-            "the binned bias table waits for the binned probe run"
+            TE_BIAS_MK_BINNED.len(),
+            "the binned arm's table is the measured binned curve"
+        );
+    }
+
+    #[test]
+    fn gate_te_bias_binned_near_unbiased_reference_and_refusal() {
+        let m_k =
+            te_bias_m_k_binned(1260).expect("the binned operating size carries a measured bias");
+        assert!(
+            m_k.abs() < 1e-2,
+            "the binned histogram is nearly unbiased at the operating size, got {m_k}"
+        );
+        assert!(
+            te_bias_m_k_binned(10_000).is_some_and(|m| m.abs() < f64::EPSILON),
+            "the reference size is bias-free"
+        );
+        assert!(
+            te_bias_m_k_binned(1234).is_none(),
+            "an unmeasured size stays absent, never zero"
         );
     }
 
