@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Membran-CDN-Assets gemessen, Träger geschärft, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 27f6b56164841fa730cce108ad2ac7b0640ae28a82bae6170a02e63d31809e51
+  sha256: c6198737a7086ec88a9ea683866535792ba9adfafe52438eeea638dcb73bf1df
   status: live
 -->
 # Handover — Mycelium-Folge 240 (2026-10-06)
@@ -106,6 +106,7 @@ Origin: mycelium-folge240. **Routed — nicht-eigen:**
 - **gistemp_aod550 / godas_pottmp:** godas `37434149825` = success; gistemp `37434146422` → Stand via `ci_manage view`; danach `sha256`-Nachzug (`1ba4e901…`/`c2448a10…`) in `sources.φ`.
 - **GOES-18 ABI:** `goes18-cdn.yml` gebaut, `37434142761`; `goes_abi`-Workflow-Angleich prüfen.
 - **AGrav/CEEIN-Entries** in `blocked_sources.φ` — gegen den Baum re-measured; release oder descope.
+- **DHM-Triangulation Dhunche→Bhorle — Messung 2026-10-06 (Mycelium, geroutet):** Fenster `dhm_4657_stage.txt`/`dhm_4661_stage.txt` = 2026-10-06 00:05–10:15 UTC, 62 × 600 s. Dhunche 4657: 2,1661→2,1575 m (−8,6 mm, sd 6,1 mm, fast flach). Bhorle 4661: 4,0730→3,8080 m (−26,5 cm, sd 9,7 cm, Rezession). Kreuzkorrelation r(τ) flach-maximal bei τ≈+10…+80 min (r 0,56–0,61) — von der gemeinsamen Rezession getragen, **kein auflösbarer Laufzeit-Lag**. Open-Meteo-archive am Einzugsgebiet (28,098/85,319): Regen 10-04 (bis 1,8 mm/h), leicht 10-05/06, kein Puls im Fenster. **Befund:** das Paar trägt, aber die Laufzeit braucht ein nasses Anstiegs-Ereignis (Puls an Dhunche, später an Bhorle) und ein längeres Fenster als ~10 h.
 
 ## An river
 
