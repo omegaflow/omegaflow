@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Voice-Swarm-Doku, CDN-Workflows (GOES-18/GISTEMP/GODAS), dropped-Baseline, Runner-Restart
   class: handover
   date: 2026-10-06
-  sha256: c82498bde8b998f21ed022ec673b5d06e956d08db0d2ebe162a694bf481efeda
+  sha256: af828b1f44d8b2eaedc0205ed03e4ef913a4355d29b3c732e54a774af3d7783b
   status: live
 -->
 # Handover — Mycelium-Folge 236 (2026-10-06)
@@ -65,6 +65,19 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
 - **Blockade:** MTG-LI-Secrets (Operator); Chandrayaan-`pds3_img`-Arm (Mountain); Sample-/Record-Downloads (Operator/per-act).
 - **Braucht:** `pds3_img`-Feld-Arm (Mountain); Consent für Record-Downloads (Operator/per-act).
 
+### JAXA G-Portal — Datensatz-Auswahl (Rat + Schwarm befragt, 2026-10-06)
+- **Status:** LOCK (Bestellakt) | **Bindung:** Operator (per-act)
+- **Trigger:** Operator-Wort „bestelle <Datensatz>"
+- **Lage:** (gemessen 2026-10-06 via Rat+voice-Swarm, Code `src/archivar/jaxa_gportal.rs:15-43`, `phi/sources.φ:9512`) Der G-Portal-Arm trägt **kein Feld** —
+  `src/archivar/jaxa_gportal.rs:15-43` deklariert `jaxa_gportal_lon_deg`/`lat_deg` mit
+  `force_id_of("em")`; `sources.φ:9512` trägt **keine** `field`-Zeile. Ein Footprint ist keine
+  Messung. Prioritätsliste (Kraft aus dem Produkt): 1 AMSR2 L2/L3 (thermal/advective/diffusion),
+  2 GPM-L2/L3 Regen (advective; der Default `12001000` ist L1B=em), 3 GCOM-C/SGLI (em),
+  4 GOSAT (em; Dedup `blocked_sources.φ:56`), 5 ALOS-2/PALSAR-2 (em). IDs **unverifiziert**
+  (nur der G-Portal-Katalogsuche zugänglich).
+- **Blockade:** ohne `field`-Zeile ist jede Bestellung ein fabriziertes Feld; IDs unverifiziert.
+- **Braucht:** Field-Verdikt je Produkt (Mountain) → dann Operator-Order; Katalog-Pass (read-only) autonom.
+
 ### Membran-Assets — `dr3_stars.bin` / `ephemeris_de440_*`
 - **Status:** wartend | **Bindung:** River
 - **Trigger:** `ephemeris_de440_*.bin` am CDN → `archive_search --sniff <url>`
@@ -106,6 +119,7 @@ Origin: mycelium-folge236. **Routed — nicht-eigen, zuerst die zwei roten Gate-
 - **clippy `units.rs:549`** — in deiner Hand (Working Tree trägt `epoch.split_whitespace()`, uncommittet, gemessen).
 - **EUMETSAT MTG-LI** — erledigt (diese Session): Secrets `EUMETSAT_KEY`/`EUMETSAT_SECRET` via `bin/secrets-sync.sh --set` gesetzt, `mtg-li-cdn.yml` dispatcht (`37437023048`). Dein Register-Block `sources.φ:426+` trägt.
 - **Chandrayaan-1 Mini-RF — blockiert:** `sources.φ:10019` `pds3_img`-Block steht ohne `field`-Zeile; `pds3_img` hat keinen Feld-Arm → „field undeclared" (`main_flow.rs:3046`). Die Labels tragen Feldnamen **mit Leerzeichen** (`"H RECEIVE INTENSITY"` / `"V RECEIVE INTENSITY"` / `"CROSS POWER INTENSITY (…)"`, 4 Bänder). **Riss (gemessen):** die `field`-Grammatik trägt bereits **zitierte** Schlüssel (`sources.φ:17053-17055` `field "F13PSSO" …`) — der Kern ist der fehlende `pds3_img`-**Feld-/Slug-Arm** (force/unit-Verdikt), nicht allein das Leerzeichen. `blocked_sources.φ` trägt den Eintrag mit Begründung. **Braucht:** `pds3_img`-Feld-Arm + force/unit-Verdikt.
+- **JAXA G-Portal — Reader-Riss + stale Zitat (Rat-Konsens 2026-10-06):** `src/archivar/jaxa_gportal.rs:15-43` deklariert `jaxa_gportal_lon_deg`/`lat_deg` mit `force_id_of("em")` — ein Footprint-Zentrum ist kein elektromagnetischer Messwert („ein Adressbuch ist kein Oszillator"). `sources.φ:9512` trägt keine `field`-Zeile. Zudem stale: `blocked_sources.φ:104` zitiert `sources.φ:9408` (heute EEA-Noise), der G-Portal-Block steht auf `:9512`. **Braucht:** Feld-Verdikt je zu erntendem Produkt (Größe/Einheit/τ/Kernel), Zitat-Korrektur.
 
 ## An river  ·  PRIO
 
