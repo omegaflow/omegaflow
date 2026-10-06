@@ -34,6 +34,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "f" | "°f" => Some((value - 32.0) * 5.0 / 9.0 + 273.15),
         "ppm" => Some(value * 1e-6),
         "ppb" => Some(value * 1e-9),
+        "ppbc" => Some(value * 1e-9),
         "pct" | "%" => Some(value * 1e-2),
         "psu" => Some(value * 1e-3),
         "jy" => Some(value * 1e-26),
@@ -431,6 +432,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         6 => &[
             "ppm",
             "ppb",
+            "ppbc",
             "ppmv",
             "mg/m3",
             "ug/m3",
