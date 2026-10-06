@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: 736c3a5935112af93114eb7527001927593ddcb197fd9ebd00a6fa396ff279c1
+  sha256: 9e25228d1af2949b076eb5fd47c5497b1195f058fc45044ea1df566c759042a9
   status: live
   see-also: AGENTS.md
 -->
@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1195
+dropped-baseline 1217
+measured 2026-10-06 (Mycelium-Folge 235, ci-gate 37428430221 @dcc3243f8 dropped-gate: baseline 1195 | current 1217 | delta 22. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1195 — die Atom-Abschlüsse/Runden 2026-10-05/06 (mountain-238, river-97, sensory-234). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-05 (Mycelium-Folge 234, ci-gate 37327990225 @a9b95a057 dropped-gate: baseline 1144 | current 1195 | delta 51. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1144 — die Atom-Abschlüsse/Runden seit 2026-10-04. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-04 (Mycelium-Folge 228, ci-gate 37166323740 @a064896a4 dropped-gate: baseline 1141 | current 1144 | delta 3. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1141 — die Atom-Abschlüsse der Runde 2026-10-03/04 (mycelium-227, river-87, mountain-229, sensory-227). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-03 (Mycelium-Folge 227, ci-gate 37143781597 @5ea91ac76 dropped-gate: baseline 1131 | current 1141 | delta 10. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1131 — die Atom-Abschlüsse mountain-225…229, river-86, sensory-226 und mycelium-226; die `review`-Pässe dieser Runde. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
