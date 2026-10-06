@@ -3,7 +3,7 @@
   session: Mountain-Folge 245
   class: handover
   date: 2026-10-06
-  sha256: b2e79b48b43e950bcff6a5ab67908720ba3a5dface46ca86f47ff87b22708fd0
+  sha256: f8c7dc0cbdb7a1832fadd2d4808c2590205e3aa86f97d703ec73d231ed353acb
   status: live
 -->
 # Handover — Mountain-Folge 245 (2026-10-06)
@@ -52,6 +52,7 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 243)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 244)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 245)
+„go" — Fink=Quellen-Ursprung (A), FARA=Index (B): FARA streichen, Anker `at sun`, Gate-Fixture | 2026-10-06 | Operator (Session, Mountain 245)
 
 ## Offen (aufgeschlüsselt)
 
@@ -84,37 +85,17 @@ Wort | Datum | Quelle
 - **Braucht:** Messung von `NS/Scan`/`ScanTime` (Positions-/Epochen-Slot) an einer Granule; danach
   `format jaxa_gpm_ku` + `field` em + `extract.rs`-Registrierung + `phi/sources.φ`-Zeile.
 
-### Exposom-Matrix — fehlende Domänen / Risse
+### Fink-Cutout — sky1-Wiederverwendung (Konfounder)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06, Mountain 245) Die Matrix `state/future/exposom-matrix-2026-10-04.md`
-  §A markiert 9 Domänen als „x-Home pending"; **6 davon tragen bereits `sources.φ`-Zeilen mit Compiler**
-  (Luft/Wasser/Lärm/Licht/Wetter/Geomagnetik/Pollen/Gebaute Umwelt) — die Matrix-Zeile ist überholt,
-  der Baum gewinnt. **CANJEM** (Arbeitsumfeld) war die einzige registerlose Quelle: gemessen
-  (`--playwright` expostats.ca, re3data r3d100013957) = Beruf×Zeitfenster-Matrix ohne Messwert/Ort →
-  `decline registry/katalog` in `phi/declined_sources.φ` (analog O*NET).
-- **Riss (neu, gemessen):** **USDA FARA** — `phi/sources.φ` Block `usda_fara_low_access` (Compiler
-  `tools/harvest/src/bin/usda_fara_compiler.rs:11-18`, `ers.usda.gov`, Feld `lapophalfshare`) **vs**
-  `phi/declined_sources.φ:4879-4881` (`no-physical-force`, „Food Access Research Atlas, kein
-  physikalisches Feld") — gemessen dasselbe Produkt (das ZIP trägt „formerly known as the Food
-  Access Research Atlas"). Beide Zeilen bleiben stehen.
+- **Lage:** (gemessen 2026-10-06, Mountain 245) Rat (einstimmig) + GLM + Schwarm: Fink-Cutout =
+  **Quellen-Ursprung** (A), FARA = sozioökonomischer Index (B). Umgesetzt (Operator-Wort „go"):
+  Anker `at earth` → `at sun`; FARA-Block + Format-Arm + Compiler `usda_fara_compiler.rs` gestrichen;
+  `phi/declined_sources.φ:4879` trägt den LRAM-Namen; Gate-Fixture `dimensionless-force`
+  (Statistik ↔ Kraft) + Test in `commit_gate.rs`. `cargo check` 0/0.
 - **Blockade:** keine.
-- **Braucht:** Rat/Operator-Verdikt zum FARA-Riss (Feld oder nicht) — danach eine Linie. (OMNIWeb ist
-  kein Riss: die registrierte Route ist SPDF-HAPI, `declined_sources.φ:2867` = duplicate-omni.)
-
-### Fink-Cutout — Riss
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06, Mountain 245) `phi/sources.φ`-Block `fink_cutout`, neuer Bin
-  `tools/harvest/src/bin/fink_cutout_compiler.rs` (352 Z.), Modul `src/archivar/fink_cutout.rs` (142 Z.),
-  4 `extract.rs`-Arme, `main_flow.rs`-Ingest; `cargo build` grün. Cutout = 30×30 float32 (nJy) mit WCS,
-  `POST /api/v1/cutouts`.
-- **Riss:** `phi/witnesses.φ:10-14` + folge242 (gemessen 2026-10-06) klassifiziert Fink als
-  Skydirection-**Zeugen** (`s2-direction`, `skydirection_compiler` FINK_CONE), „kein sources.φ-Block
-  nötig"; dieser Atom registriert `fink_cutout` dennoch als `sources.φ`-Ursprung (Cutout = Bild-Kanal).
-  Beide Zeilen stehen; nicht geglättet.
-- **Blockade:** keine.
-- **Braucht:** Rat/Operator-Wort, ob ein Fink-Cutout ein Quellen-Ursprung oder ein Zeuge ist.
+- **Braucht:** messen, ob der `sky1`-Arm (FUGIN/IceCat-Präzedenz) den per-Pixel-`fink_cutout`-Record
+  trägt — dann Format `fink_cutout` auf `sky1` falten statt besonderem Arm (Rat-Konfounder 2).
 
 ### An mycelium
 
@@ -126,6 +107,9 @@ Origin: mountain-folge245. **Geroutet — Mycelium-Domäne:**
 - **GOES-18 ABI — Workflow-Angleich:** `.github/workflows/goes18-cdn.yml:16`
   `runs-on: [self-hosted, Linux]`; der eigene Runner ist nicht registriert → Lauf `37434142761` queued.
   **Braucht:** `goes18-cdn.yml:16` auf `ubuntu-latest` umstellen; Re-Dispatch.
+- **`usda-fara-cdn.yml` streichen:** der Compiler `usda_fara_compiler` fällt mit dem decline-Verdikt
+  (Mountain 245, Operator-Wort „go") — `.github/workflows/usda-fara-cdn.yml` ruft
+  `--bin usda_fara_compiler` auf und ist tot. **Braucht:** Workflow entfernen.
 
 ## Träger (Prosa, eigene)
 

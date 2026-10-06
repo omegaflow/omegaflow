@@ -4878,7 +4878,7 @@ note grind: grind_terrapulse_a.φ
 
 decline no-physical-force
 url https://www.ers.usda.gov/data-products/food-access-research-atlas/download-the-data
-note USDA Food Access Research Atlas — sozioökonomischer Zugangs-Index (Einkommen/Distanz), kein physikalisches Feld; Exposom-Domäne Ernährungsumfeld.
+note USDA Food Access Research Atlas (auch „2019 LRAM", media/5627 zip, „formerly known as FARA") — sozioökonomischer Zugangs-Index (Einkommen/Distanz), kein physikalisches Feld; Exposom-Domäne Ernährungsumfeld.
 
 decline registry/katalog
 url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
