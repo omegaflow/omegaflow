@@ -2,7 +2,7 @@
   title: Free-Voices — der kostenlose Recherche-Schwarm
   class: concept
   date: 2026-10-02
-  sha256: f7797e1d5ebf6687810dd9b6351277694512cd36755bc27684d57b68d8d74288
+  sha256: 4fa2e75a03fb947c77d40baa6dc41e24892eb1afd5d587723bc88ad8a66311b8
   status: live
   see-also: docs/concepts/tools-map.md docs/concepts/tool-forms.md state/stimmen/reviewer-roster-2026-10-01.md
 -->
@@ -50,6 +50,29 @@ Tools `state/stimmen/stimme.sh`.
 - **Read-only:** die Stimme kann keine lokalen Dateien/Register/Secrets lesen, kein
   Playwright — eingeloggte/Key-Routen bleiben bei einem DeepSeek-Agenten bzw. Operator.
 - **Kein Verdikt:** jede Stimme liefert Rohmaterial (like a witness), nie die Messung.
+
+## Voice-Swarm — `arch`-Modus, Synthese-Gate, Kern-Roster
+
+Das **dritte Bein** neben den flash-Tauchern und dem Council: N unabhängige freie
+Stimmen auf **eine** Frage, dann ein Synthese-Gate. Kanon und Details:
+`state/mycelium/voice-swarm.md`; Wrapper `state/mycelium/voice-swarm.sh`.
+
+- **`--mode research`** — die `voice`-Rolle misst über `./bin/archive_search_public`
+  (`--verdict/--sniff/--wayback/…`); 1 Frage je Lauf (8 überfordern).
+- **`--mode arch`** — dieselbe Rolle **ohne Tool-Zwang**: die Frage ist ein
+  Design-/Kritik-Prompt; die nötigen Fakten stehen **im Prompt eingebettet** (die
+  Stimmen lesen den Baum nicht). Ausgabe: Design-Positionen, kein Routen-Claim.
+- **Kern-Roster** — `state/mycelium/voice-roster-core.tsv`: **24 deduplizierte
+  Stimmen**, **eine Route je Modell** (unkorreliert; die 85 Dropdown-Modelle tragen
+  viele Spiegel desselben Modells über kenari/kilo/openrouter). Quelle
+  `tools/measure/free_models.tsv`.
+- **Synthese-Gate:** (1) nur belegte Zeilen (research) bzw. Design-Positionen (arch)
+  sammeln; (2) Top-Claims am Baum gegenmessen (`archive_search --verdict/--sniff`,
+  `git`/Register); (3) `@council` oder ein starkes Modell wägt ab — Riss benennen,
+  nie glätten; (4) Verdikt/Register trägt allein die Session.
+- **Agent-Route:** die gemessenen Stimmen sind als read-only Subagenten definiert
+  (`voice-<name>`), ein Schwarm = eine Nachricht mit N `task`-Calls — kein
+  `opencode run`-Prozess-Fan-out (schont die Maschine).
 
 ## Dateien
 

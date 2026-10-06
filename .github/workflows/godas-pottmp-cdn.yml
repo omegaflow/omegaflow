@@ -1,0 +1,35 @@
+name: godas-pottmp-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  godas-pottmp:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the psl.noaa.gov release exists on the CDN
+        run: |
+          if ! gh release view psl.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create psl.noaa.gov --repo omegaflow/sources \
+              --title "psl.noaa.gov" \
+              --notes "GODAS monthly potential temperature at one grid cell, reduced to a time/value series. Asset godas_pottmp_2024_cell.txt: one comment line then rows 't v', t = Unix seconds, v = potential temperature (K)."
+          fi
+      - name: Compile the potential-temperature cell record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin godas_pottmp_compiler -- \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "godas-pottmp-cdn: godas_pottmp_2024_cell.txt returned void" \
+                 "godas_pottmp_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
