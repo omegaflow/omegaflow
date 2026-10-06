@@ -55,3 +55,19 @@ jobs:
         run: |
           gh release upload naif.jpl.nasa.gov ura117.bsp \
             --clobber --repo omegaflow/sources
+      - name: Verify the registered naif.jpl.nasa.gov ura117 assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh naif.jpl.nasa.gov ura117)
+          if [ -z "$expected" ]; then
+            echo "no ura117 asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered naif.jpl.nasa.gov ura117 assets all present"
