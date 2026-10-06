@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; GIC-Faden-API-Reachability-Test
   class: handover
   date: 2026-10-06
-  sha256: 3f456a01cf4a37bec0a2d7283a42bcf3567502277731c8408ab7c755e907e9c2
+  sha256: fcb3641af353395ec64503119f1b34962fc60546b5be0679590d86eac98c313d
   status: live
 -->
 # Handover — Mycelium-Folge 245 (2026-10-06)
@@ -37,6 +37,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
 - Wort | 2026-10-06 | „eigentlich wollte ich dass du die llm apis nutzt um die APIs zu validieren" — die Daten-APIs über die LLM-Stimmen (zweiter Kanal) validieren; kilo vom Operator gestoppt (zu langsam) | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „nein" (auf die Frage, ob die API-Erkenntnisse an die UI-Chats gehen) — keine UI-Chats für gemessene Fakten-Endpunkte | Quelle: Operator (Session, Mycelium 245).
 - Wort | 2026-10-06 | „mir ist nur wichtig dass wir immer besser werden und die richtigen modelle für den jeweiligen zweck nutzen" — Modell-Fit je Aufgabenklasse messen und registrieren; die passende Stufe, nicht die stärkste | Quelle: Operator (Session, Mycelium 245).
+- Wort | 2026-10-06 | „sollen wir gemini und kilo entfernen? ich möchte wirklich nur modelle die auch etwas taugen" — Roster-Leanheit; Entfernung nur per gemessener Fähigkeit, nicht per Gefühl | Quelle: Operator (Session, Mycelium 245).
 
 ## Offen — eigen
 
@@ -106,10 +107,13 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
   `deepseek/deepseek-flash`. UI-Chats (frontier) alle hoch.
   **Modell-Fit-Endpunkt-Validierung (gemessen 2026-10-06, Klasse „öffentliche Endpunkte validieren"):**
   `deepseek` = produktiv (3 tragende Korrekturen: CARISMA-Host, DMSP-SSJ-Route, SSUSI funded-dead);
-  `nemotron` = konservativ, keine Fehlkorrektur, kein Unique; `gemini` = 2 live widerlegte
+  `nemotron` = konservativ, keine Fehlkorrektur, kein Unique;   `gemini` = 2 live widerlegte
   Fehlkorrekturen (`pcindex.cph.space`, `vlf.stanford.edu`) + 1 Refinement (OMNI_HRO); `kilo` =
-  zu langsam (Operator-Stopp). Regel: Faktisch-Endpunkte → `deepseek`-Klasse; UI-Chats nur für
-  Architektur-/Designfragen nach dem Rat.
+  zu langsam (Operator-Stopp). **Gemessene Fähigkeit (2026-10-05, `voice-capability-all`):**
+  `gemini-3.5-flash-lite` 4/4 @12–16 s; `kilo/kilo-auto:free` 4/4 @50,6 s (mehrere kilo-Routen 4/4,
+  aber 17–54 s). Verdikt: gemini **taugt** (schnell+korrekt) — nur nicht für die Endpunkt-/Link-Klasse;
+  kilo **taugt inhaltlich, ist aber zu langsam** für den Dispatch (Latenz-Verdikt, kein Qualitäts-Verdikt).
+  Regel: Faktisch-Endpunkte → `deepseek`-Klasse; UI-Chats nur für Architektur-/Designfragen nach dem Rat.
 - **Blockade:** keine.
 - **Braucht:** `voice-gptoss` aus der Arch-/Grind-Route streichen; Roster auf die gemessenen
   schnell+ehrlich setzen (`deepseek-flash`, `kilo-auto`, `nvidia/nemotron-3-super-120b`,
