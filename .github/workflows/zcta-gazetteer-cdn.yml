@@ -1,0 +1,51 @@
+name: zcta-gazetteer-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/zcta_gazetteer_compiler.rs'
+      - '.github/workflows/zcta-gazetteer-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  zcta-gazetteer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the www2.census.gov release exists on the CDN
+        run: |
+          if ! gh release view www2.census.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create www2.census.gov --repo omegaflow/sources \
+              --title "www2.census.gov" \
+              --notes "US Census 2020 ZCTA gazetteer centroid lookup compiled for the OSHA geocoder (CDN tag = netloc)"
+          fi
+      - name: Compile the ZCTA gazetteer bin and upload
+        run: |
+          cargo run -p omegaflow-harvest --release --bin zcta_gazetteer_compiler -- \
+            --out data/www2.census.gov/zcta_gazetteer.bin --ci-mode
+      - name: Verify the registered www2.census.gov zcta_gazetteer asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh www2.census.gov zcta_gazetteer)
+          if [ -z "$expected" ]; then
+            echo "no zcta_gazetteer asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view www2.census.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered www2.census.gov zcta_gazetteer assets all present"

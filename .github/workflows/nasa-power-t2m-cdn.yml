@@ -1,0 +1,81 @@
+name: nasa-power-t2m-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      lat:
+        description: 'site latitude (deg)'
+        type: string
+        default: '52.5'
+      lon:
+        description: 'site longitude (deg)'
+        type: string
+        default: '13.4'
+      start:
+        description: 'window start (YYYYMMDD)'
+        type: string
+        default: '20240101'
+      end:
+        description: 'window end (YYYYMMDD)'
+        type: string
+        default: '20241231'
+      parameter:
+        description: 'NASA POWER parameter code'
+        type: string
+        default: 'T2M'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/nasa_power_compiler.rs'
+      - '.github/workflows/nasa-power-t2m-cdn.yml'
+  schedule:
+    - cron: '29 4 * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  nasa-power-t2m:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the power.larc.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view power.larc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create power.larc.nasa.gov --repo omegaflow/sources \
+              --title "power.larc.nasa.gov" \
+              --notes "NASA POWER daily point series compiled for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Compile the NASA POWER T2M series and upload
+        run: |
+          set -euo pipefail
+          LAT="${{ inputs.lat }}"; [ -n "$LAT" ] || LAT="52.5"
+          LON="${{ inputs.lon }}"; [ -n "$LON" ] || LON="13.4"
+          START="${{ inputs.start }}"; [ -n "$START" ] || START="20240101"
+          END="${{ inputs.end }}"; [ -n "$END" ] || END="20241231"
+          PARAM="${{ inputs.parameter }}"; [ -n "$PARAM" ] || PARAM="T2M"
+          cargo run -p omegaflow-harvest --release --bin nasa_power_compiler -- \
+            --lat "$LAT" --lon "$LON" --parameter "$PARAM" --start "$START" --end "$END" \
+            --out data/power.larc.nasa.gov/nasa_power_t2m.txt --ci-mode
+      - name: Verify the registered power.larc.nasa.gov nasa_power_t2m asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh power.larc.nasa.gov nasa_power_t2m)
+          if [ -z "$expected" ]; then
+            echo "no nasa_power_t2m asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view power.larc.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered power.larc.nasa.gov nasa_power_t2m assets all present"
