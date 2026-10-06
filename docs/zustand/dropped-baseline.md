@@ -13,7 +13,8 @@ aktuelle dropped-Zahl die Baseline **übersteigt** (Delta > 0), nie bei einem
 Absolutwert. Die Baseline wird in dem Commit aktualisiert, der einen legitimen
 Drop trägt — nie stillschweigend, nie als Fabrikation.
 
-dropped-baseline 1224
+dropped-baseline 1267
+measured 2026-10-06 (Mycelium-Folge 246, ci-gate 37525196851 @c9b8139fd dropped-gate: baseline 1224 | current 1267 | delta 43. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1224 (Mycelium-236) — die Atom-Abschlüsse/Runden 2026-10-06. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-06 (Mycelium-Folge 236, ci-gate 37429979869 @045711091 dropped-gate: baseline 1217 | current 1224 | delta 7. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1217 — die Atom-Abschlüsse/Runden 2026-10-06 (river-98, sensory-235). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-06 (Mycelium-Folge 235, ci-gate 37428430221 @dcc3243f8 dropped-gate: baseline 1195 | current 1217 | delta 22. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1195 — die Atom-Abschlüsse/Runden 2026-10-05/06 (mountain-238, river-97, sensory-234). Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
 measured 2026-10-05 (Mycelium-Folge 234, ci-gate 37327990225 @a9b95a057 dropped-gate: baseline 1144 | current 1195 | delta 51. Der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1144 — die Atom-Abschlüsse/Runden seit 2026-10-04. Absorbiert durch diesen Bump im annehmenden Commit. Lokal nicht nachgemessen — die Gate-Zahl ist CI-only.)
