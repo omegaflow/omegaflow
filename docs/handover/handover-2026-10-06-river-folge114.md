@@ -3,7 +3,7 @@
   session: River-Folge 114
   class: handover
   date: 2026-10-06
-  sha256: fb44485ecf2e5cf417fb145f83300859577b77362730ab02dacfb742847d97cb
+  sha256: 59b0005f173e8f76db7e3c4c4adf33ab7dd72a2c469a45be38d2fd897452a8c5
   status: live
 -->
 # Handover — River-Folge 114 (2026-10-06)
@@ -41,10 +41,10 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 ### Membran-Startansicht — zwei Aperturen (gebaut; Browser-Messung: Body-Anker erreichen das Feld nicht)
 - **Status:** blockiert | **Bindung:** eigen (cross-line Archivar/Mountain)
 - **Trigger:** Anker-Records (`extent > 0`) erscheinen in `lookup.query` am SSB-Ursprung.
-- **Lage:** (gemessen 2026-10-06, River 114, Browser-Isolation + Baum gelesen) Deploy trägt den Bau noch **nicht** (live `state.span_m`). `lookup.query` mit **übersprungenen Sternen** liefert **0 Records**, obwohl `load_ephemeris` für sun/earth/moon `true` liefert (6.63 MB je Bin, geparst). **Ursache im Baum:** `src/wasm.rs:77` stempelt die Anker mit `all_body_anchor_samples(&self.eph, t2)` — Epoche = Query-Zeit; in `query_hash` ist darum `age = |t2 − t2| = 0`, `signal_reach = c·0 = 0` und `reach = extent + pad` (`src/archivar/spatial.rs:913,928-930`); das Gate `dist2_anchor_p0 > reach²` (`:935`) lässt einen Körper nur zu, wenn die Präsenz **innerhalb seines Radius** liegt. Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU) → kein Körper je im Feld. Der Zwei-Apertur-Bau (`static/membrane.html`, `node --check` grün) wartet darauf.
-- **Riss (getragen, ungeglättet):** (i) Der Bau ist per Rat-Verdikt korrekt, aber der Anker fehlt im Feld — die Skala war nicht die Ursache; (ii) Anker-Epoche = Query-Zeit kollabiert den Signal-Kegel (wasm.rs:77); (iii) `MembraneLookup.add_stars` panikt bei Re-Init; (iv) `extent > 0` als Vertrags-Diskriminator — GLM/MiMo/Kimi/Duck verlangen eine deklarierte Apertur (Wire/Kontrakt); (v) Deploy hängt (Pages-Deploy rot, DE440-Pin).
-- **Blockade:** Body-Anker-Admission verlangt Präsenz im Körper (Epoche-Kollaps); Archivar-/Query-Seite.
-- **Braucht:** Rat (Admission-Kriterium für Body-Anker: Presence-Hull `c·age + pad` mit sinnvoller Bezugs-Epoche statt Query-Zeit) + Mountain (`wasm.rs:77` / `query_hash`); danach WASM-Build (CI) + Browser-Sicht. Offen: `state.lvl` global über beide Aperturen.
+- **Lage:** (gemessen 2026-10-06, River 114, Browser-Isolation + Baum gelesen) Deploy trägt den Bau noch **nicht** (live `state.span_m`). `lookup.query` mit **übersprungenen Sternen** liefert **0 Records**, obwohl `load_ephemeris` für sun/earth/moon `true` liefert (6.63 MB je Bin, geparst). **Das Enclosure-Lemma ist intakt** (`reach = reach_signal + extent + enclosure_rho`, `src/archivar/spatial.rs:928-930`, Gate `:935`, original 2026-09-03 `200ed6040`). **Ursache:** `src/wasm.rs:77` stempelt die Anker mit `all_body_anchor_samples(&self.eph, t2)` (Epoche = Query-Zeit, River 91 `638a11bb9`); damit ist `age = |t2 − t2| = 0` → `signal_reach = c·0 = 0` → die Lemma-Dilatation fällt auf `extent` zurück, und das Gate lässt einen Körper nur zu, wenn die Präsenz **innerhalb seines Radius** liegt. Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU) → kein Körper je im Feld. Der Zwei-Apertur-Bau (`static/membrane.html`, `node --check` grün) wartet darauf.
+- **Riss (getragen, ungeglättet):** (i) Der Bau ist per Rat-Verdikt korrekt, aber der Anker fehlt im Feld — die Skala war nicht die Ursache; (ii) **der Rat-Vertrag vom 2026-10-04 (River 91: „sonst bliebe das Enclosure-Lemma blind für den bewegten Körper") wurde nie wirksam** — die Epoche `t2` nullt die Dilatation; (iii) `MembraneLookup.add_stars` panikt bei Re-Init; (iv) `extent > 0` als Vertrags-Diskriminator — GLM/MiMo/Kimi/Duck verlangen eine deklarierte Apertur (Wire/Kontrakt); (v) Deploy hängt (Pages-Deploy rot, DE440-Pin).
+- **Blockade:** Body-Anker-Epoche = Query-Zeit nullt den Signal-Kegel; kein Test deckt die Membran-Anker-Admission (nur `tests.rs:13034` prüft die Felder, nicht die Query). River-eigene Zeile (`wasm.rs:77`), nicht der Kern.
+- **Braucht:** Rat (Bezugs-Epoche des Body-Ankers + Admission-Kriterium: Presence-Hull `c·age + pad` statt Query-Zeit) → Fix in Rivers `wasm.rs` und `body_anchor_samples`; Known-Answer-Test (Anker erscheint am SSB); WASM-Build (CI) + Browser-Sicht. Offen: `state.lvl` global über beide Aperturen.
 
 ### GIC-Breitenband-Familien — Design + Messschritt offen
 - **Status:** operator-gebunden (Design) / wartend (cgm_lat) | **Bindung:** eigen + operator (Queue)
@@ -151,12 +151,14 @@ Origin: mountain-249 (gefaltet) · river-107/108/110/112/113.
 - **Vlies-`matrix full` — alignment pending** (s. `## Offen`): Format-/Compiler-Arm.
 - **Membran-Query: Body-Anker erreichen das Feld nicht — Ursache gemessen (2026-10-06, River 114).**
   `lookup.query` mit übersprungenen Sternen liefert **0 Records**, obwohl `load_ephemeris` für
-  sun/earth/moon `true` liefert. Ursache: `src/wasm.rs:77` übergibt `t2` als Anker-Epoche →
-  `age = 0` → `signal_reach = c·0 = 0` → `reach = extent + pad` (`src/archivar/spatial.rs:913,928-930`);
-  das Gate `dist2_anchor_p0 > reach²` (`:935`) lässt einen Körper nur zu, wenn die Präsenz **innerhalb
-  seines Radius** liegt. Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU).
-  **Braucht:** Admission-Kriterium für Body-Anker (Presence-Hull `c·age + pad` mit Bezugs-Epoche statt
-  Query-Zeit) — Rat + Mountain (`wasm.rs:77` / `query_hash`); WASM-Build (CI), dann Browser-Sicht.
+  sun/earth/moon `true` liefert. **Herkunft: River 91 (`638a11bb9`, 2026-10-04, `wasm.rs:77`).**
+  Das Enclosure-Lemma selbst ist intakt (`reach_signal + extent + enclosure_rho`, `spatial.rs:928-930`).
+  Die Anker-Epoche `t2` nullt die Dilatation: `age = 0` → `signal_reach = c·0 = 0` → `reach = extent + pad`;
+  das Gate (`:935`) lässt einen Körper nur zu, wenn die Präsenz **innerhalb seines Radius** liegt.
+  Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU). Kein Test deckt die
+  Membran-Anker-Admission (nur `tests.rs:13034` prüft die Felder).
+  **Braucht:** Rat (Bezugs-Epoche / Admission-Kriterium für Body-Anker) → Fix in Rivers `wasm.rs`/`body_anchor_samples`;
+  Known-Answer-Test; WASM-Build (CI), dann Browser-Sicht.
 - **`terms`-Direktive je Körperdatenzeile:** `openneuro.org` = CC0; `physionet.org` = ODC-BY 1.0.
 - **DE440-Register:** die drei `ssd.jpl.nasa.gov-de`-Anker-Assets tragen keine `sha256`-Zeile.
 
