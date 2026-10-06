@@ -11,6 +11,14 @@ permissions:
 env:
   RUSTFLAGS: -D warnings
 jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Unit gates — the resolution-pair and estimator-fest bias-column gates
+        run: cargo test --release -p omegaflow-measure --bin field_te_query
   parity:
     runs-on: ubuntu-latest
     timeout-minutes: 180
