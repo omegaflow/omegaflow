@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; GIC-Faden-API-Reachability-Test
   class: handover
   date: 2026-10-06
-  sha256: 2d16e767b0916c87839954c3a3c518ca1f6a781c0b07e19f462bb0892689fcde
+  sha256: 8bfd65ca32b54fbb68d57f9b5e4b7a05304cda7e040994ad7297ee2b3332195c
   status: live
 -->
 # Handover — Mycelium-Folge 245 (2026-10-06)
@@ -137,7 +137,11 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge244.md` (
   `disable: true` + aus der `line`-Allowlist. Auth-Stand **10** Credentials (Kilo/Z.AI vom Operator
   entfernt); aktiv+genutzt: `deepseek`, `nvidia`, `openrouter`, `kenari`, `google`. `auth.json` bleibt
   gesperrt (`*opencode/auth.json*: deny`); Namen nur via `opencode auth list`. Nach Config-Änderung
-  opencode **neu starten**.
+  opencode **neu starten**. **Verifiziert (gemessen 2026-10-06 via frischem `opencode models`):**
+  23 Modelle über **5** Provider (`deepseek`/`google`/`kenari`/`nvidia`/`openrouter`); `kilo`/`zai`/
+  `opencode` fehlen — die Deaktivierung greift, nur die laufende Instanz hält die alte Config bis zum
+  Neustart. `opencode auth list` zeigt weiter alle 10 Credentials (Provider deaktiviert ≠ Credential
+  gelöscht).
 
 ### Daten-Holdings — `opencode-tmp`-Dump CDN-Bedarf/Uniqueness
 - **Status:** eigen
