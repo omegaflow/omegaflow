@@ -3,7 +3,7 @@
   session: Mountain-Folge 247
   class: handover
   date: 2026-10-06
-  sha256: 6d4359d7b5cbfe0227f9a5bb76767453695fae0d6bb6cf29c3d1d759205cbc7e
+  sha256: 775a3bb525e49f9c6f7925a3c117ac254bb680d3f888a73711e0c40bcd5ba209
   status: live
 -->
 # Handover — Mountain-Folge 247 (2026-10-06)
@@ -159,12 +159,22 @@ Wort | Datum | Quelle
   (`…Snow_Covered` vor `…Snow_Free`) → alle Zellen fielen durch `keep_value`. **Gebaut (Mountain 247):**
   `find_value`/`per_cell_records` wählen jetzt das SDS über den normalisierten `--label`
   (`vnp46a3_compiler.rs`), Qualitäts-/`_Num`-Layer ausgeschlossen; `--label` fließt in die Auswahl.
+  **Verifikationslauf gelesen (`vnp46a3-cdn 37498220129`, 2026-10-06): weiter failure** —
+  `no measured VNP46A3 cell left the harvest` (`VNP46A3.A2026213.h17v01`, h17). Die Label-Auswahl allein
+  war **nicht** die ganze Ursache; welche SDS der Lauf wählt und ob ihre Zellen `_FillValue` tragen, ist
+  **ungemessen** (braucht `--inspect` mit `EARTHDATA_EDL_TOKEN`). Kein Erfolg behauptet.
   **`openmeteo-pollen`:** `sha256`-Zeile gesetzt (`phi/sources.φ`, `42a7f2f8…`).
   **`DE440`:** die drei Anker tragen jetzt `sha256` (`earth 5554915d…`/`moon d9b40917…`/`sun 093b3ab5…`).
+  **`pages-deploy 37498181920` = failure, gemessen (Mountain 247):** der Workflow `.github/workflows/pages-deploy.yml:59-62`
+  **hard-codet** die Pins (`earth adc990bc…`/`moon acb42881…`/`sun 9d059db3…`), die Assets tragen
+  `5554915d…`/`d9b40917…`/`093b3ab5…` — der Log: `got 5554915dc7c2… want adc990bc6e1f…`. Die neuen
+  `sha256`-Register-Direktiven speisen den Workflow **nicht**; der Pin steht im Workflow (Mycelium).
 - **Blockade:** `ghsl` = die Materialisierung des Ganz-Rasters (Streaming/`tiles/*.zip` nötig);
   der `PlanarConfiguration`-Fix allein würde die 172-GiB-Allokation freilegen, darum nicht isoliert gesetzt.
+  `vnp46a3` = die SDS-/Fill-Messung (`--inspect` + Token) fehlt. `pages-deploy` = der Workflow-Pin.
 - **Braucht:** `ghsl`-Raster strip-weise sampeln (oder die `…/V1-0/tiles/GHS_BUILT_S_…_R*_C*.zip`-Kacheln
-  mit `--stride` mergen); `vnp46a3`-Lauf erneut dispatchen und lesen.
+  mit `--stride` mergen); `vnp46a3` `--inspect` fahren (SDS-Liste + `_FillValue`) und die Auswahl danach
+  binden; `pages-deploy.yml:59-62` auf die gemessenen Pins ziehen (Mycelium).
 
 ## An mycelium
 
@@ -177,9 +187,14 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
   einen `*-cdn.yml`-Workflow (`ubuntu-latest`, `--ci-mode`). **Braucht:** Workflow je Arm, Dispatch
   nach Push. (`zcta_gazetteer` blockiert den OSHA-Geocoder im CI-Harvest, wenn das Asset nicht auf
   dem CDN liegt.)
-- **DE440-Reconcile-Pin:** `docs/specs/cdn_reconciliation.json` auf die gemessenen sha256
-  (`earth 5554915d…`/`sun 093b3ab5…`/`moon d9b40917…`) ziehen, sobald die `sha256`-Direktiven in
-  `phi/sources.φ:3810-3819` stehen; `pages-deploy 37489805784` rot.
+- **DE440-`pages-deploy`-Pin (Mycelium):** `.github/workflows/pages-deploy.yml:59-62` hard-codet die
+  Asset-Pins; sie sind stale. Gemessen (Mountain 247): `ephemeris_de440_earth.bin` want `adc990bc6e1f…`
+  → got `5554915dc7c2…`; ebenso moon (`acb42881…` → `d9b40917…`) und sun (`9d059db3…` → `093b3ab5…`).
+  **Braucht:** die drei Workflow-Zeilen auf die gemessenen Werte ziehen (oder den Pin aus dem Register
+  lesen), dann `pages-deploy` dispatchen. `pages-deploy 37498181920` rot.
+- **Reconcile-Pin:** `docs/specs/cdn_reconciliation.json` trägt denselben Pin — ein frischer
+  `cdn_reconcile`-Lauf liegt uncommittet im Baum (Mycelium-244, `sources_parsed 2667`); die
+  Mycelium-Session committet ihn selbst (Aufenthalt = Eigentum).
 
 ## Träger (Prosa, eigene)
 
@@ -233,7 +248,16 @@ Eigene Pfade (Atom 1 + 2): `src/archivar/eve.rs`,
 `cargo build -p omegaflow-harvest --bin vnp46a3_compiler` 0/0. Der Wort-Schnitt liegt lokal in
 `state/operator-gespraeche/2026-10-06-mountain.md` (`/state/` ist gitignored).
 
+**Atom 3 (dieser Commit, Übergabe-Register):** die Verifikationsläufe gelesen und gemessen
+eingetragen — `vnp46a3-cdn 37498220129` weiter **failure** (`no measured VNP46A3 cell left the
+harvest`; Label-Auswahl war nicht die ganze Ursache, SDS-/Fill-Messung offen),
+`pages-deploy 37498181920` **failure** (Workflow-Hard-Pin stale, s. `## An mycelium`),
+`field-te-query 37496266461` in flight.
+
 **Verifikations-Trigger (nächster Mountain-Pass):**
 - `field-te-query.yml 37496266461` lesen; das `matrix-vlies`-Job-Log muss `arms measured 15 of 15`
   melden (statt 12 of 15). Meldet es 12 of 15, ist ein Riss gemessen.
-- `vnp46a3-cdn` + `ghsl-cdn` erneut dispatchen und lesen (siehe CI-Träger-Abschnitt).
+- `vnp46a3_compiler --inspect` mit `EARTHDATA_EDL_TOKEN` fahren (SDS-Liste + `_FillValue`), dann die
+  SDS-Auswahl binden und `vnp46a3-cdn` erneut dispatchen.
+- `ghsl`-Raster strip-weise sampeln (oder `tiles/*.zip` mergen), dann `ghsl-cdn` dispatchen.
+- `pages-deploy.yml:59-62`-Pin (Mycelium) prüfen.
