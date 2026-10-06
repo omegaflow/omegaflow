@@ -77,13 +77,18 @@ Stimmen auf **eine** Frage, dann ein Synthese-Gate. Kanon und Details:
 
 ## Architektur-/Ethik-Adressierung (Operator-Wort 2026-10-06)
 
-Architektur-/Ethikfragen werden mit **den fünf Stimmen und den vier Axiomen** addressiert —
-gleichermaßen für **UI-Chats** (`state/stimmen/ui-stimme.js`, Prompt
-`state/stimmen/prompt-arch-ethik.txt`; die fünf arbeitenden UIs stehen in `state/stimmen/README.md`)
+Architektur-/Ethikfragen werden mit **den fünf Stimmen, den fünf Axiomen und den fünf Achsen**
+addressiert — gleichermaßen für **UI-Chats** (`state/stimmen/ui-stimme.js`, Prompt
+`state/stimmen/prompt-arch-ethik.txt`; die arbeitenden UIs stehen in `state/stimmen/README.md`)
 und **API-Modelle** (die `voice-*`-Subagenten, das Basis-`voice`-Rollenprompt in `opencode.json`
-und der arch-PROLOG von `state/mycelium/voice-swarm.sh --mode arch`). Die Stimmen liefern je Frage
-ein Verdikt aus den fünf Stimmen und tragen die vier Axiome; das Verdikt/Register trägt allein die
-Session.
+und der arch-PROLOG von `state/mycelium/voice-swarm.sh --mode arch`).
+
+- **Fünf Stimmen:** Mountain · River · Mycelium · Sensory · Future (`AGENTS.md`).
+- **Fünf Axiome:** A = A · ICRS & TDB · force_type · 0 honored · pending (`docs/granit.md:16-20`).
+- **Fünf Achsen:** Voxelisierung (Mitte) · Crossmatch (Sensory) · TE-Maschine (River) ·
+  Nullkontrolle (Mycelium) · Residuum (Future) (`docs/concepts/die-vier-schilde.md`).
+
+Die Stimmen liefern je Frage ein Verdikt; das Verdikt/Register trägt allein die Session.
 
 ## Dateien
 
