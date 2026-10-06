@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: 3791d4c533ccca6efb1b63a9016fe67f2fff34801a43d82f76b75fde6e240645
+  sha256: 3b5a374b0d1a67287ae8b3b6245f4e51b18eee384f14cf453ba08b82eb13c0ef
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)
@@ -285,9 +285,14 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   **Lead-Generator** brauchbar (Terms-URLs), aber **nicht als Messung** — sie raten plausibel
   (z. B. `CC-BY-4.0` mit bloßer Domain-URL), wo sie nicht gemessen haben; mehrere kollidieren mit
   der grind-flash-Messung (`alasky` ODbL vs. CC-BY; `le-systeme-solaire` CC-BY-NC-SA vs. CC-BY;
-  `opensensemap` PDDL vs. ODbL). Leads: `state/river/license-census-voice.tsv`. **Kosten
-  gemessen:** der Schwarm ist nicht kostenlos — voice-gemini $0.089, voice-nemotron $0.059,
-  voice-deepseek-pro $0.057, voice-deepseek $0.047 (deepseek-flash-Session `session_burn`).
+  `opensensemap` PDDL vs. ODbL). Leads: `state/river/license-census-voice.tsv`. **Kosten — Riss
+  (Operator-Wort 2026-10-06 „das kann nicht sein ich habe aktuell nur deepseek guthaben"):**
+  `session_burn` liest die `cost`-Spalte aus opencode.db — das ist opencodes **Preis-Tabelle**,
+  nicht die Abrechnung. Die Nicht-DeepSeek-Routen (gemini `google/…`, nemotron/gptoss `nvidia/…`,
+  inkling/dots `openrouter/…:free`, kilo `kilo/…:free`, agnes/kenari `kenari/…:free`) laufen auf
+  Free-Tiers; ihre `cost`-Werte ($0.089/$0.059) sind **nominal, nicht ausgegeben**. Echt ist allein
+  der DeepSeek-Seat: voice-deepseek ~$0.047, voice-deepseek-pro ~$0.057. Der frühere Satz „der
+  Schwarm ist nicht kostenlos" war eine Fehl-Lesung der Spalte und ist damit gestrichen.
 - **Braucht:** die Leads aus `state/river/license-census-voice.tsv` als `terms`-Zeilen von
   Mountain messen lassen (die Stimme liefert die Terms-URL, nicht die Klasse); Generator +
   Drift-Tor an Mycelium (`## An mycelium`).
