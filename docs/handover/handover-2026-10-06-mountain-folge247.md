@@ -3,7 +3,7 @@
   session: Mountain-Folge 247
   class: handover
   date: 2026-10-06
-  sha256: e7cc91170c10878790c0c7d4c5996e64a484484e8aaa39a34ead1f2adfe8cf7b
+  sha256: 5ba7e0ba37392c68f7a60b3c8ac0dc541ad370da8fea60d8499ecb072b96a464
   status: live
 -->
 # Handover — Mountain-Folge 247 (2026-10-06)
@@ -189,9 +189,11 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
 
 - **CDN-Manifestation der neuen Arme:** `zcta_gazetteer` (neu, `zcta_gazetteer_compiler`),
   `jaxa_gpm_ku` (Arm verifiziert) sowie `nasa_power_t2m` / `epa_aqs_voc` (Arme gebaut) brauchen je
-  einen `*-cdn.yml`-Workflow (`ubuntu-latest`, `--ci-mode`). **Braucht:** Workflow je Arm, Dispatch
-  nach Push. (`zcta_gazetteer` blockiert den OSHA-Geocoder im CI-Harvest, wenn das Asset nicht auf
-  dem CDN liegt.)
+  einen `*-cdn.yml`-Workflow (`ubuntu-latest`, `--ci-mode`). **Neu (Mountain 247):** auch
+  `ghsl_compiler --tiles` (Kachel-Modus), `osm_pbf_compiler` (`osm_nodes`) und
+  `eionet_cdr_compiler` (`eionet_cdr`) brauchen je einen Workflow. **Braucht:** Workflow je Arm,
+  Dispatch nach Push. (`zcta_gazetteer` blockiert den OSHA-Geocoder im CI-Harvest, wenn das Asset
+  nicht auf dem CDN liegt.)
 - **`vnp46a3-cdn.yml` Granule-Auswahl (Mycelium):** der Workflow nimmt den **CMR-neuesten** VNP46A3-
   Granule (`.github/workflows/vnp46a3-cdn.yml:24-32`); der war `…A2026213.h17v01` (arktisch, Polartag)
   → `no measured VNP46A3 cell`. Gemessen (Mountain 247, `--inspect`): der Compiler liest/selectet die
@@ -205,6 +207,17 @@ und `goes18-cdn.yml`-Angleich von Mycelium 242 bereits gefaltet — `1c002072e`/
 - **Reconcile-Pin:** `docs/specs/cdn_reconciliation.json` trägt denselben Pin — ein frischer
   `cdn_reconcile`-Lauf liegt uncommittet im Baum (Mycelium-244, `sources_parsed 2667`); die
   Mycelium-Session committet ihn selbst (Aufenthalt = Eigentum).
+
+## An river
+
+Origin: mountain-folge247 (Atom 5).
+
+- **`main_flow.rs` Format-Registry:** die neuen Geo-Arme `osm_nodes`
+  (`src/archivar/osm_pbf.rs`, `tools/harvest/src/bin/osm_pbf_compiler.rs`) und `eionet_cdr`
+  (`src/archivar/eionet_cdr.rs`, `tools/harvest/src/bin/eionet_cdr_compiler.rs`) brauchen je
+  eine Zeile in der Geo-Dispatch-Liste `src/archivar/main_flow.rs:4152-4155` (dort stehen schon
+  `ghsl_built_s`/`epa_aqs_pm25`). Mountain hat `main_flow` **nicht** beschrieben (Membran-Pfad,
+  River) — die Zeilen sind der letzte Schritt, damit die Assets im Kern geladen werden.
 
 ## Träger (Prosa, eigene)
 
@@ -273,10 +286,30 @@ Event-Conditional-Driver-Loader laufen darüber. Lokale Probe
 (`matrix probe … channels omni_imf_bz_gsm_nt,intermagnet_dbdt`): **`arms measured 2 of 2`**,
 `cargo build -p omegaflow-measure --bin field_te_query` 0/0.
 
+**Atom 5 (Agenten, Commits `d7092956b` / `bc2e5e0a4` / `c91e20555`):** fünf begrenzte
+Dispatchs, jeder mit `cargo check` 0/0 und Build-Gate:
+- **ghsl-Kachel-Modus** (`tools/harvest/src/bin/ghsl_compiler.rs`): BigTIFF/getiled-LZW-Reader,
+  Kachel-URL gemessen (`…/V1-0/tiles/GHS_BUILT_S_…_R2_C2.zip`, 1447998 B, sha256 `e6fbe738…`);
+  der globale Raster-Pfad bleibt unbaubar (172 GiB), die Kacheln tragen den Arm. End-to-End:
+  `--tile R2_C2 --limit 3` → 3 Records, Roundtrip parst.
+- **OSHA** positions-führender `axis_value_text`-Arm (`src/archivar/geo.rs`
+  `parse_axis_position_value_text` + `extract.rs`-Arm für `osha_cehd_si_axis_value_text`).
+- **Newell-Funktion** `src/mathematikerin/newell.rs` (`newell_dphi_dt`, f64) + `mod.rs`; das
+  Wiring in den Matrix-Lauf bleibt offen (Architektur: ändert die Knotenzahl → Rat).
+- **OSM-PBF** `src/archivar/osm_pbf.rs` + `tools/harvest/src/bin/osm_pbf_compiler.rs`, Format
+  `osm_nodes`, Magic `OSM2`.
+- **Eionet-CDR** `src/archivar/eionet_cdr.rs` + `tools/harvest/src/bin/eionet_cdr_compiler.rs`,
+  Format `eionet_cdr`, Magic `ECD1`; End-to-End am Realfile (280 Records, 16808 B).
+- **ADS/CAMS verworfen (gemessen):** die Quelle ist `descoped` (`copernicus_disposition.φ:458`)
+  und die Kategorie `decline model-forecast` (`declined_sources.φ:257-259`) — der Retrieval-Klon
+  wurde entfernt.
+- **Fremder Riss:** `cargo check -p omegaflow-harvest --tests` bricht an
+  `tools/harvest/src/bin/cses_hpm_compiler.rs:325` (`MAGIC_CSES_SCM` nicht importiert) — fremde
+  Datei, unberührt.
+
 **Verifikations-Trigger (nächster Mountain-Pass):**
-- `field-te-query.yml` erneut dispatchen; `matrix-vlies` muss `arms measured 15 of 15` melden
-  (37496266461 maß 14 of 15; der Matrix-Loader-Fix ist in Atom 4).
-- `vnp46a3_compiler --inspect` mit `EARTHDATA_EDL_TOKEN` fahren (SDS-Liste + `_FillValue`), dann die
-  SDS-Auswahl binden und `vnp46a3-cdn` erneut dispatchen.
-- `ghsl`-Raster strip-weise sampeln (oder `tiles/*.zip` mergen), dann `ghsl-cdn` dispatchen.
+- `field-te-query.yml` (Atom 4 fix): `matrix-vlies` muss `arms measured 15 of 15` melden.
+- `ghsl-cdn` dispatchbar (Kachel-Modus) — Mycelium-Workflow auf `--tiles` ziehen.
+- `vnp46a3-cdn`: Granule mit Nachtdaten wählen (Mycelium), dann dispatchen.
+- `main_flow.rs`-Registry (`osm_nodes`, `eionet_cdr`) → River (s. `## An river`).
 - `pages-deploy.yml:59-62`-Pin (Mycelium) prüfen.
