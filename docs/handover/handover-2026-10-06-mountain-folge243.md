@@ -3,7 +3,7 @@
   session: Mountain-Folge 243
   class: handover
   date: 2026-10-06
-  sha256: d4008408783a6d2d45ccc504cdc41b4753d601b5298235e9851e69f949744139
+  sha256: 008103c0ddfcbc352fa1b266b02095d8edb299ab7ff91b343c075fb4fb5246b6
   status: live
 -->
 # Handover — Mountain-Folge 243 (2026-10-06)
@@ -20,7 +20,7 @@ AQS-VOC-Zerlegung).
 `cargo check` 0/0. Die adressierten Blöcke `future-183` und `mycelium-240` wurden
 gegen den Baum gemessen; fast alle Einträge sind erledigt (s. jeweils Lage).
 
-## Burn: open 0.0000 · close 0.0578 · cap 0.25 · Grund: flash-first — Line-Session $0.0345 + zwei `grind-flash`-Messungen ($0.0122 JAXA, $0.0111 AQS-VOC), kein pro/max
+## Burn: open 0.0000 · close 0.0640 · cap 0.25 · Grund: flash-first — Line-Session $0.0407 + zwei `grind-flash`-Messungen ($0.0122 JAXA, $0.0111 AQS-VOC), kein pro/max
 
 ## Operator-Wort-Register
 
