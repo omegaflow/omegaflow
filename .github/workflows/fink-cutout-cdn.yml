@@ -11,6 +11,10 @@ on:
         description: Fink diaSourceId (e.g. 314002968168367863)
         required: true
         type: string
+      mjd_tai:
+        description: Observation epoch MJD (TAI) — the cutout FITS carries no MJD-OBS, the epoch comes from the alert metadata
+        required: true
+        type: string
       kind:
         description: cutout kind
         required: false
@@ -43,6 +47,7 @@ jobs:
         run: |
           cargo run --release -p omegaflow-harvest --bin fink_cutout_compiler -- \
             --dia-source-id "${{ inputs.dia_source_id }}" \
+            --mjd-tai "${{ inputs.mjd_tai }}" \
             --kind "${{ inputs.kind }}" \
             --out data/api.lsst.fink-portal.org/fink_cutout.bin \
             --ci-mode \
