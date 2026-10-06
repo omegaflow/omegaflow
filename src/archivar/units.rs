@@ -447,6 +447,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "cm-3",
             "1/cm3",
             "kg/m3",
+            "kg",
             "micromole/kg",
             "m-1",
             "cm",

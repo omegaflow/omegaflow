@@ -93,7 +93,8 @@ fn zlib_inflate(data: &[u8]) -> Option<Vec<u8>> {
     if cmf & 0x0f != 8 {
         return None;
     }
-    if ((cmf as u16) << 8 | flg as u16) % 31 != 0 {
+    let header = ((cmf as u16) << 8) | (flg as u16);
+    if !header.is_multiple_of(31) {
         return None;
     }
     let mut start = 2usize;
