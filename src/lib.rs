@@ -104,6 +104,7 @@ pub use archivar::twomrs;
 pub use archivar::uvfits;
 pub use archivar::vlies;
 pub use archivar::volume;
+pub use archivar::wdc_ae;
 pub use archivar::wind;
 pub use archivar::wind_orbit;
 pub use archivar::witness;
