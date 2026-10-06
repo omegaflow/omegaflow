@@ -1,0 +1,37 @@
+# vlies_matrix.te — Das Universelle Vlies, erster Lauf (Rats-Verdikt 2026-10-05
+#   Schritt 2; Rat 2026-10-06: Matrix-Knoten = FELDER, nicht Akteure).
+# Die 15 deklarierten Felder (je Feld eine `field`/`last`/`first`-Zeile in phi/sources.φ):
+#   goes_xrs_xrsa            GOES XRS-A          :933
+#   aia_304_dn               AIA 304 A           :1887
+#   ersstv5_nino34           ERSSTv5 NINO3.4     :19007
+#   tao_wnd_zonal_m_s        TAO zonal wind      (field_te_query.rs:3207)
+#   omni_imf_bz_gsm_nt       OMNI2 IMF Bz        :622
+#   intermagnet_dbdt         ABK |dB/dt|         :1856
+#   magnetosphere_imf_bz_nt  RTSW/SWPC Bz        :176
+#   magnetosphere_imf_bt_nt  RTSW/SWPC Bt        :175
+#   solar_wind_speed_km_s    RTSW/SWPC speed     :181
+#   solar_wind_density_cm3   RTSW/SWPC density   :182
+#   qbo_30hpa_ms             QBO 30 hPa          :799
+#   d20_thermocline_depth_m  D20 Thermokline     :810
+#   swarm_absolute_vertical_tec_tecu  Swarm VTEC  :7476
+#   eve_1032_line_irradiance EVE 1032          :2452
+#   eve_131_line_irradiance  EVE 131           :2443
+# ERBQ-Event bleibt draußen — `form event-conditional` (Witness point-event#1), kein
+#   Serienknoten; es läuft als eigener `pair`-Descriptor.
+# NICHT Knoten dieses Laufs (Register-Pflicht Mountain, `## An mountain`): Newell dΦ/dt
+#   (kein Feld; nur `newell_from_cells` in bz_retro_probe.rs:431) · Kp magnetosphere_kp_3h
+#   (`last`, kein `field`) · EEG ds007822/ds007471 (Feldname ungemessen).
+# Ein dokumentierter Bin 86400 s (1 Tag); jede Zelle trägt ihr Auflösungspaar, ein nicht
+#   darstellbares Paar (QBO-Monat × 6 s) geht als `pending` aus, nie still gebinnt (Rats-Riss).
+# Lauf: `.github/workflows/field-te-query.yml` Job `matrix-vlies` (CI), nie lokal.
+matrix vlies full
+register sources
+channels goes_xrs_xrsa,aia_304_dn,ersstv5_nino34,tao_wnd_zonal_m_s,omni_imf_bz_gsm_nt,intermagnet_dbdt,magnetosphere_imf_bz_nt,magnetosphere_imf_bt_nt,solar_wind_speed_km_s,solar_wind_density_cm3,qbo_30hpa_ms,d20_thermocline_depth_m,swarm_absolute_vertical_tec_tecu,eve_1032_line_irradiance,eve_131_line_irradiance
+cond none
+fdr bh 0.05 over matrix
+expect cells 210
+lags 0,1
+surrogate 10
+cadence live
+bin 86400
+seasonal none
