@@ -18970,6 +18970,11 @@ compiler tools/harvest/src/bin/isc_ehb_compiler.rs
 at earth
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_ra_dec_sy_dist_st_teff_FROM_stellarhosts_WHERE_ra_IS_NOT_NULL_AND_st_teff_IS_NOT_NULL.json
+format reference
+origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
 origin https://api.github.com/repos/VERITAS-Observatory/VERITAS-VTSCat/git/trees/main?recursive=1 ; https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/
 compiler tools/harvest/src/bin/vtscat_compiler.rs
@@ -19011,6 +19016,21 @@ at sun
 ttl 31536000
 field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_name_ra_dec_b1_b2_a_c_d_e_FROM_msxc6_WHERE_a_IS_NOT_NULL.json
+format reference
+origin https://irsa.ipac.caltech.edu/TAP/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_objname_ra_dec_flux65_flux90_flux140_flux160_FROM_akari_fis_WHERE_flux90_IS_NOT_NULL.json
+format reference
+origin https://irsa.ipac.caltech.edu/TAP/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_ra_dec_fnu_12_fnu_25_fnu_60_fnu_100_FROM_irasfsc_WHERE_fnu_60_IS_NOT_NULL.json
+format reference
+origin https://irsa.ipac.caltech.edu/TAP/sync
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_psd.bin
 format catalog_allwise_psd
 origin https://irsa.ipac.caltech.edu/TAP/async (ADQL allsky_4band_p3as_psd, TOP 5000)
@@ -19026,6 +19046,21 @@ field w3mpro allwise_w3_mag inverse-square em mag 31536000 0.0 0.0
 field w4mpro allwise_w4_mag inverse-square em mag 31536000 0.0 0.0
 field w3snr allwise_w3_snr inverse-square em 1 31536000 0.0 0.0
 field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/nph-dust.json
+format reference
+origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/nph-query.json
+format reference
+origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/sync.json
+format reference
+origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/twomass_psc.bin
 format twomass_psc
@@ -24987,6 +25022,46 @@ sha256 55e2ad1d70944fab972b727ee60d3957663543fd65b89a44ace31588de7b3df6
 at sun
 ttl 31536000
 field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_MPC_massINPOP25c_sigmaINPOP25c_FROM__22J-A_2BA-705-A189-tablea1_22.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_RAJ2000_DEJ2000_UD_LD_Plx_FROM__22J-A_2BA-431-773-charm2_22_WHERE_Method-_27LO_27.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+RAJ2000,DEJ2000,UD,LD,Plx+FROM+%22J/A%2BA/431/773/charm2%22+WHERE+Method=%27LO%27
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_Name_RAJ2000_DEJ2000_Dist_S1400_FROM__J-ApJS-208-17-psrcat__WHERE_RAJ2000_IS_NOT_NULL_ORDER_BY_S1400_DESC.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_Name_RAJ2000_DEJ2000_Speak_Sint_FROM__J-ApJS-205-1-catalog__WHERE_RAJ2000_IS_NOT_NULL_AND_Speak_1_ORDER_BY_Speak_DESC.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_Fpeak_Fint_FROM__VIII-92-first14__WHERE_RAJ2000_IS_NOT_NULL.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_HRV_D_W1mag_W2mag_FROM__J-MNRAS-506-1896-hecate__WHERE_RAJ2000_IS_NOT_NULL.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_VarType_magMax_Min1_FROM__B-gcvs-gcvs_cat__WHERE_RAJ2000_IS_NOT_NULL.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_RAJ2000_DEJ2000_Teff_Jmag_Hmag_Ksmag_FROM__22III-286-catalog_22.json
+format reference
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
+ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
 format catalog_charm2
