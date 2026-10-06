@@ -3,7 +3,7 @@
   session: River-Folge 114
   class: handover
   date: 2026-10-06
-  sha256: a58c61721a2ff7f665994c3b786633d092521a580c46b60f0ba343c04e885f4a
+  sha256: a36ddd4ab45ea0f1e861bea2f1cad232f2f6882524820290b76311003da6f632
   status: live
 -->
 # Handover — River-Folge 114 (2026-10-06)
@@ -149,6 +149,12 @@ Origin: mountain-249 (gefaltet) · river-107/108/110/112/113.
   nennt die Grenzen ausdrücklich einen **offenen Slot** (Operator-Design, s. `:150`); der Framename
   `geomag_lat` ist eine Entscheidung der sechs Stimmen, kein gemessener Wert. Blatt bleibt `unsealed`.
 - **Vlies-`matrix full` — alignment pending** (s. `## Offen`): Format-/Compiler-Arm.
+- **Membran-Query liefert keine Body-Anker (gemessen 2026-10-06, River 114, Browser-Test).**
+  `lookup.query` am SSB liefert 8 Records, alle `extent == 0` → Sonne/Erde/Mond erscheinen
+  **nicht** mit finitem `extent`; die Membran bleibt schwarz. Der Bau der zwei Aperturen in
+  `static/membrane.html` kann die Sonne erst zeigen, wenn die Anker im Feld stehen. Zusätzlich:
+  `MembraneLookup.add_stars` (`omegaflow_bg.wasm`) panikt (`RuntimeError: unreachable`).
+  **Braucht:** messen, warum die Body-Anker nicht in die Query gelangen (Archivar-Lookup / WASM).
 - **`terms`-Direktive je Körperdatenzeile:** `openneuro.org` = CC0; `physionet.org` = ODC-BY 1.0.
 - **DE440-Register:** die drei `ssd.jpl.nasa.gov-de`-Anker-Assets tragen keine `sha256`-Zeile.
 
