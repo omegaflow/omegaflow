@@ -639,6 +639,31 @@ at solar_orbiter
 hapi SN_RMS_E=solo_rpw_e_rms_vm
 field solo_rpw_e_rms_vm solo_rpw_e_rms_vm inverse-square electric V/m 3600 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
+ttl 3600
+at sun
+hapi BGSE.0=wind_mfi_bx_gse_nt BGSE.1=wind_mfi_by_gse_nt BGSE.2=wind_mfi_bz_gse_nt
+field wind_mfi_bx_gse_nt wind_mfi_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
+field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
+ttl 3600
+at earth
+hapi mms1_fgm_b_gse_srvy_l2_clean.0=mms1_fgm_bx_gse_nt mms1_fgm_b_gse_srvy_l2_clean.1=mms1_fgm_by_gse_nt mms1_fgm_b_gse_srvy_l2_clean.2=mms1_fgm_bz_gse_nt
+field mms1_fgm_bx_gse_nt mms1_fgm_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field mms1_fgm_by_gse_nt mms1_fgm_by_gse_nt inverse-square em nT 3600 0.0 0.0
+field mms1_fgm_bz_gse_nt mms1_fgm_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_fgs_btotal,tha_fgs_gse&format=json
+ttl 3600
+at earth
+hapi tha_fgs_btotal=tha_fgs_btotal_nt tha_fgs_gse.0=tha_fgs_bx_gse_nt tha_fgs_gse.1=tha_fgs_by_gse_nt tha_fgs_gse.2=tha_fgs_bz_gse_nt
+field tha_fgs_btotal_nt tha_fgs_btotal_nt inverse-square em nT 3600 0.0 0.0
+field tha_fgs_bx_gse_nt tha_fgs_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field tha_fgs_by_gse_nt tha_fgs_by_gse_nt inverse-square em nT 3600 0.0 0.0
+field tha_fgs_bz_gse_nt tha_fgs_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
 ttl 3600
 on earth 0 0 0
