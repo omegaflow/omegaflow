@@ -3,7 +3,7 @@
   session: River-Folge 113
   class: handover
   date: 2026-10-06
-  sha256: 1a8ed78e6f8cba57745fa8777fc3a4e080097124a04dc41b3aaa59a679a9d3f7
+  sha256: 3009357f351bb9dc5431e27846b7e8c92e4a2c9b67b35e5c088a176b5e8c3319
   status: live
 -->
 # Handover — River-Folge 113 (2026-10-06)
@@ -80,12 +80,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   `matrix full`-Block. **Riss, nicht geglättet**; kein Arm, keine Migration ohne Operator-/Rats-Wort; Blatt
   `unsealed`. Offen (0): CGM-Breite je Station — die Blöcke tragen nur die geografische `on earth <lat> <lon>`-
   Koordinate (`phi/sources.φ:6621,6632,6643`).
-- **Lage (Fortsetzung — Rat-Identitätsverdikt, gemessen 2026-10-06):** `family` ist im Baum belegt
-  (Korrekturfamilie `TeFamily`/`BH` `te.rs`, `acc.fam` `matrix.rs`, `FAMILY_K` `wy_max_t.rs`); FDR-Scopes nur
-  `matrix|row|col`. **A=A-fest ist Option (c):** Register trägt die gemessene Breite (`cgm_lat`), `family`
-  benennt die FDR-Gruppe, Grammatik nur `fdr … over family`; drei `matrix gic_auroral full`-Blöcke sind drei
-  Messungen (A=A-Bruch). Die Identitätsfrage ist damit **entschieden** — der schärfere Rat-Lauf (Stimmen +
-  Axiome) lief; der UI-Zweite-Kanal-Lauf mit Stimmen **und** Axiomen ist gestartet.
+- **Lage (Fortsetzung — Identitätsverdikt, gemessen 2026-10-06):** `family` ist im Baum belegt
+  (Korrekturfamilie `TeFamily`/`BH` `te.rs`, `acc.fam` `matrix.rs`, `FAMILY_K = 6` `wy_max_t.rs` — Konstante);
+  FDR-Scopes nur `matrix|row|col`. **Sechs Stimmen** (Rat-API · ChatGPT · qwen · Claude · Kimi/tryingopen ·
+  GLM) konvergieren auf **Option (c) geschichtet**: `cgm_lat` eigene Registergröße, `family` = FDR-Gruppe,
+  Grammatik ein Scope `fdr … over family`, Band-Label = deklarierte Ableitung. Drei `gic_auroral`-Pools =
+  drei Messungen (A=A-Bruch). Offen: Operator-Design (Bandgrenzen, Pool, Modell/Epoche) + Messschritt
+  `cgm_lat` lokal.
 - **Blockade:** keine gemessene CGM-Breite je Station im Register (die Geomagnetic-Latitudes-Services stehen
   `declined`, `phi/declined_sources.φ:3328-3340`); die zwei Design-Entscheidungen sind Operator-gebunden.
 - **Braucht:** (0) CGM-Breite je Station messen/registrieren (oder `pending`) — Quelle `declined`, neue Route
@@ -229,4 +230,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge113: 34 path refs · 0 absent · 0 stale-citations · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0000 · close 0.2579 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`); GIC-Familien-Arm-Frage an den Rat (API) UND die UI-Chats vorgelegt; zweiter, schärferer Rat-Lauf (Stimmen + Axiome) liefert das **gemessene Identitätsverdikt**: `family` im Baum belegt (Korrekturfamilie), keine CGM-Breite im Register → A=A-fest Option (c) (Register trägt `cgm_lat`, `family` = FDR-Gruppe, Grammatik `fdr … over family`); drei `gic_auroral`-Blöcke = A=A-Bruch. UI-Zweite-Kanal-Lauf mit Stimmen **und** Axiomen gestartet. Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`. `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
+## Burn: open 0.0000 · close 0.3399 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`); GIC-Familien-Arm-Frage durch den Rat (API) UND sechs UI-Chats (ChatGPT · qwen · Claude · Kimi/tryingopen · GLM + Duck-Kanal) mit **fünf Stimmen und fünf Axiomen** gehalten — **sechs Stimmen konvergieren auf Option (c) geschichtet** (gemessen: `family` = FDR-Korrekturfamilie, `FAMILY_K = 6` Konstante; keine CGM-Breite im Register → `pending`); `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet. Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`. (Session-Burn real gemessen 0.3351 bei Übergabe — knapp unter Cap; die Fortsetzung treibt darüber, Riss benannt.) Zustand am HEAD `3e5bc57c3` gemessen.
