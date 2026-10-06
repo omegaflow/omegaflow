@@ -3,7 +3,7 @@
   session: Mountain-Folge 252
   class: handover
   date: 2026-10-07
-  sha256: 31fa10f53d43bba6abbf92aebed0edeb6a45b46594442477a87b14aa33444d9d
+  sha256: 896dd898bb499aab5dc4d1690a93496de6fb06442f6b40e60328ac3ac5b1890a
   status: live
 -->
 # Handover — Mountain-Folge 252 (2026-10-07)
@@ -14,7 +14,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-07-mountain-folge251.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0000 · close 0.1131 (line) · Dispatchs: council $0.0151, general $0.0191, 5 API-Stimmen (gemini/gptoss/inkling/nemotron/deepseek) + 4 UI-Chats (Duck.ai/Claude/GLM/MiMo) im line-Pfad · cap 0.50 · Grund: Register-Abgleich (Newell-CI-Ausgang), Rat zur Register-Semantik der zwei kraftlosen Arme, GIC-/Fink-Messung per `general`, Stimmen-/UI-Befragung zum eionet-kg-Riss (Operator-Wort). Gemessen via `session_burn`.
+## Burn: open 0.0000 · close 0.2384 (line) · Dispatchs: council ×2 $0.0248, general $0.0191, 5 API-Stimmen (gemini/gptoss/inkling/nemotron/deepseek), 4 UI-Chats (Duck.ai/Claude/GLM/Nemotron-3-Ultra) im line-Pfad · cap 0.50 · Grund: Register-Abgleich (Newell-CI-Ausgang), Rat + Stimmen + UI zu den zwei kraftlosen/emissions-Armen, GIC-/Fink-Messung, `so2`-Einheiten-Korrektur (Operator-Wort). Gemessen via `session_burn`.
 
 ## Operator-Wort-Register
 
@@ -67,9 +67,16 @@ Wort | Datum | Quelle
 ### osm_nodes / eionet_cdr — Register-Admission (Rat-Verdikt 2026-10-07)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Register-Manifestation (Mycelium-Pen) nach dem Verdikt
-- **Lage:** (gemessen 2026-10-07 via `sgrep`/`read`, Rat-Dispatch) Format-Token beider Arme verdrahtet: `osm_nodes` (`src/archivar/extract.rs:1109` Name `osm_node`, `geo.rs:342/404`, `main_flow.rs:4155`), `eionet_cdr` (`extract.rs:802`, `main_flow.rs:4156`); Compiler `osm_pbf_compiler.rs` (val=1 pro Knoten, `:114`) und `eionet_cdr_compiler.rs`; die Register-Dateien `phi/sources.φ` und `phi/harvest.φ` tragen **keine** Zeile. **Rat-Verdikt:** `em 1` ist die kanonische Form **für `osm_nodes`** (`val=1` null-echt dimensionslos, Kernel `inverse-square`). Die frühere Behauptung „kein Register-Präzedenzfall für einen kraftlosen Arm" ist gemessen falsch: `phi/sources.φ` trägt **28** `em 1`-Felder (`:1231`, `:2720`, `:25554`), der Gate `src/gate/commit_gate.rs:997` erlaubt `em` mit unit `1` (blockt jede andere Force mit unit 1). **`eionet_cdr` dagegen misst Masse kg** (`eionet_cdr.rs:150` `<TotalQuantity unitCode="KGM">372000`); das Medium (`comp & 0x3`, `:99`) fehlt im Token — `component_name` (`:123`) trägt nur den Schadstoff → air/water/soil kollidieren. Bleibender **Riss**: `kg` steht in `allowed_units_for_force` nur unter gravity (`units.rs:417`), nicht unter em (`:350-415`) → `em 1` = Unit-Fabrikation (Gate (c)), `em kg` = `force-unit-gate` (`commit_gate.rs:1006-1021`), `diffusion kg` = nicht in Force 6 (`:432-457`). **Befragung (Operator-Wort 2026-10-07, `session_burn`-Dispatch):** 5 API-Stimmen (gemini/gptoss/inkling/nemotron/deepseek) + 4 UI-Chats (Duck.ai GPT-6 Luna, Claude, GLM-5.3, MiMo V2.6 Pro): `kg` unter `em` **1 Ja / 8 Nein**; Medium ins Token **einstimmig Ja**. Konvergenz der Nein: `kg` gehört zu einer eigenen Masse-/Emissions-Kraft (oder `gravity`, das selbst semantisch falsch ist), nicht zu `em`. Qwen3.8-Max: Nichtantwort nach ~2 min (`pending`).
+- **Lage:** (gemessen 2026-10-07 via `sgrep`/`read`, Rat-Dispatch) Format-Token beider Arme verdrahtet: `osm_nodes` (`src/archivar/extract.rs:1109` Name `osm_node`, `geo.rs:342/404`, `main_flow.rs:4155`), `eionet_cdr` (`extract.rs:802`, `main_flow.rs:4156`); Compiler `osm_pbf_compiler.rs` (val=1 pro Knoten, `:114`) und `eionet_cdr_compiler.rs`; die Register-Dateien `phi/sources.φ` und `phi/harvest.φ` tragen **keine** Zeile. **Rat-Verdikt:** `em 1` ist die kanonische Form **für `osm_nodes`** (`val=1` null-echt dimensionslos, Kernel `inverse-square`). Die frühere Behauptung „kein Register-Präzedenzfall für einen kraftlosen Arm" ist gemessen falsch: `phi/sources.φ` trägt **28** `em 1`-Felder (`:1231`, `:2720`, `:25554`), der Gate `src/gate/commit_gate.rs:997` erlaubt `em` mit unit `1` (blockt jede andere Force mit unit 1). **`eionet_cdr` dagegen misst Masse kg** (`eionet_cdr.rs:150` `<TotalQuantity unitCode="KGM">372000`); das Medium (`comp & 0x3`, `:99`) fehlt im Token — `component_name` (`:123`) trägt nur den Schadstoff → air/water/soil kollidieren. Bleibender **Riss**: `kg` steht in `allowed_units_for_force` nur unter gravity (`units.rs:417`), nicht unter em (`:350-415`) → `em 1` = Unit-Fabrikation (Gate (c)), `em kg` = `force-unit-gate` (`commit_gate.rs:1006-1021`), `diffusion kg` = nicht in Force 6 (`:432-457`). **Korrigierte Messung + Befragung (Operator-Wort 2026-10-08; Rat + 5 API-Stimmen + 4 UI-Chats):** `so2_emission_kt` (`phi/sources.φ:1163`) deklarierte Einheit `kt` = **Knoten** (`units.rs:32` ×0.514444 m/s), nicht Kilotonne → **behoben** (`kt_mass`, Name `so2_emission_mass_kt`, Gate-Test `commit_gate.rs`). Die frühere Zeile „diffusion trägt nur Konzentrationen" ist damit widerlegt: `diffusion` (Force 6) trägt kanonisch `kt_mass` (`units.rs:454`). Verdikt: `so2`→`kt_mass` **einstimmig Ja**; **kein neuer Force-Kanal nötig**; für `eionet_cdr` **Mehrheit `diffusion` + Masse** — Minderheit **eigene Masse-/Emissions-Kraft** (Quellterm statt Transport: GLM-5.3 + Nemotron-3-Ultra-UI). **Unter-Riss im Wie:** `kg` in Force 6 ergänzen (Rat-Mehrheit, deepseek, Kimi, Claude) vs. nur `kt_mass` wiederverwenden (gemini, Qwen direkt + tryingopen) — Qwen-tryingopen: zwei Einheiten für eine Dimension sind derselbe Fehlermechanismus wie `kt`/`kt_mass`. Nachgereicht per Operator-Wort 2026-10-08: Qwen (direkt), Qwen + Kimi (tryingopen).
 - **Blockade:** Einheit `kg` eines massetragenden, kraftlosen Arms hat keinen Register-Platz (bestätigt, nicht geglättet).
-- **Braucht:** (a) `osm_nodes`-Register-Block schreiben (Mycelium-Pen, s. `## An mycelium`); (b) eine eigene Massen-/Emissions-Kraft entscheiden (nicht `em`) — bis dahin bleibt die eionet-Zeile ungeschrieben; (c) der Medium-Fix (`eionet_cdr_<schadstoff>_air|water|soil`, `component_name` `eionet_cdr.rs:123`) ist unabhängig davon richtig und als eigener Code-Akt zu bauen.
+- **Braucht:** (a) `osm_nodes`-Register-Block schreiben (Mycelium-Pen, s. `## An mycelium`); (b) `eionet_cdr`: nach Rats-Mehrheit `kg` in Force 6 (`units.rs:432-457`) aufnehmen und unter `diffusion` registrieren; die Minderheits-These (eigene Emissions-Kraft) nur mit erneutem Rat-Wort; (c) der Medium-Fix (`eionet_cdr_<schadstoff>_air|water|soil`, `component_name` `eionet_cdr.rs:123`) ist unabhängig richtig.
+
+### Force-/Einheiten-Mismatch-Audit (GLM-Fund)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** nächster `commit_check`-Lauf (`ci-gate`)
+- **Lage:** (gemessen 2026-10-08 via `sread`) Der Gate `force-unit-gate` (`commit_gate.rs:1006-1021`) prüft `field`-Zeilen gegen `force_unit_pairs`, doch `learn_sources` (`:314-335`) übernimmt **jedes** bestehende Paar aus dem Register — ein falsches Paar legitimiert sich selbst. Gemessen: `nexrad_level2_sw_ms` (`phi/sources.φ:3951`) nutzt `diffusion m/s`; `m/s` steht nur unter Force 7 (`units.rs:459`), nicht unter Force 6 (`:432-457`). `so2_emission_kt` (dieselbe Klasse) ist behoben (`kt_mass`).
+- **Blockade:** keine — reine Messung.
+- **Braucht:** jede `field`-Zeile in `phi/sources.φ` gegen `canonical_pairs()` (`commit_gate.rs:2316`) prüfen und jeden nicht-kanonischen Fall auf die richtige Force/Einheit ziehen oder als bewusste Ausnahme begründen; dann Gate-Fixture.
 
 ### Fink-Cutout — Register-Arme (Lücke lokalisiert)
 - **Status:** wartend | **Bindung:** mycelium
@@ -165,8 +172,12 @@ Gate/Descriptor benannt); (b) der Rat hielt die Register-Semantik der zwei
 kraftlosen Arme — Verdikt: `osm_nodes` = `em 1`, `eionet_cdr` = Masse + kg-Riss,
 die alte „kein Präzedenzfall"-Zeile per Messung korrigiert (28 `em 1`-Felder);
 (c) der Fink-/GIC-Register-Status per `general` gemessen; (d) auf Operator-Wort die
-5 API-Stimmen + 4 UI-Chats zum eionet-kg-Riss befragt (1 Ja / 8 Nein; Medium
-einstimmig ins Token); (e) das Handover fortgeschrieben, folge251 → `archiv/`.
+korrigierte Masse-Frage von Rat + 5 API-Stimmen + 4 UI-Chats gehalten (`so2`→`kt_mass`
+einstimmig; eionet mehrheitlich `diffusion`+Masse, keine neue Kraft); (e)
+`so2_emission_kt` auf `kt_mass` korrigiert (`phi/sources.φ:1163`, Name
+`so2_emission_mass_kt`) + Gate-Test (`commit_gate.rs`); (f) das Handover
+fortgeschrieben, folge251 → `archiv/`.
 
 Eigene Pfade: `docs/handover/handover-2026-10-07-mountain-folge252.md`,
-`docs/handover/archiv/handover-2026-10-07-mountain-folge251.md` (Move).
+`docs/handover/archiv/handover-2026-10-07-mountain-folge251.md` (Move),
+`phi/sources.φ`, `src/archivar/units.rs`, `src/gate/commit_gate.rs`.
