@@ -3987,6 +3987,7 @@ struct MatrixCellOutcome {
     id: String,
     cond_n: usize,
     n: usize,
+    n_eff: Option<f64>,
     te: Option<f64>,
     p: f64,
     floor: bool,
@@ -4119,22 +4120,28 @@ fn joint_columns(cols: &[&[Option<f64>]]) -> Vec<Vec<f32>> {
     out
 }
 
+struct CellTe {
+    te: f64,
+    n_eff: Option<f64>,
+    surrogates: Vec<f64>,
+}
+
 fn cell_te_and_surrogates(
-    driver: &[f32],
     target: &[f32],
+    driver: &[f32],
     conds: &[LaggedCond],
     lags: &[usize],
     bins: usize,
     n_surr: usize,
     seed: u64,
-) -> Option<(f64, Vec<f64>)> {
-    let mut obs_best: Option<f64> = None;
+) -> Option<CellTe> {
+    let mut obs_best: Option<(f64, usize)> = None;
     let mut surr_max: Option<Vec<f64>> = None;
     for &lag in lags {
-        let te = transfer_entropy_conditional_binned_n(driver, target, conds, lag, bins)?;
+        let te = transfer_entropy_conditional_binned_n(target, driver, conds, lag, bins)?;
         let surr = conditional_te_surrogates_n(
-            driver,
             target,
+            driver,
             conds,
             TeSurrogateParams {
                 lag,
@@ -4148,13 +4155,21 @@ fn cell_te_and_surrogates(
                 k: 4,
             },
         )?;
-        obs_best = Some(obs_best.map_or(te, |o| o.max(te)));
+        obs_best = Some(match obs_best {
+            Some((best, best_lag)) if best >= te => (best, best_lag),
+            _ => (te, lag),
+        });
         surr_max = Some(match surr_max {
             Some(prev) => prev.into_iter().zip(surr).map(|(a, b)| a.max(b)).collect(),
             None => surr,
         });
     }
-    Some((obs_best?, surr_max?))
+    let (te, lag) = obs_best?;
+    Some(CellTe {
+        te,
+        n_eff: kde_n_eff(target, driver, lag),
+        surrogates: surr_max?,
+    })
 }
 
 fn load_matrix_arm(
@@ -4292,6 +4307,7 @@ fn run_pair_matrix(
                 id,
                 cond_n: 0,
                 n: 0,
+                n_eff: None,
                 te: None,
                 p: 1.0,
                 floor: true,
@@ -4304,6 +4320,7 @@ fn run_pair_matrix(
                 id,
                 cond_n: 0,
                 n: 0,
+                n_eff: None,
                 te: None,
                 p: 1.0,
                 floor: true,
@@ -4326,6 +4343,7 @@ fn run_pair_matrix(
                 id,
                 cond_n,
                 n: 0,
+                n_eff: None,
                 te: None,
                 p: 1.0,
                 floor: true,
@@ -4343,6 +4361,7 @@ fn run_pair_matrix(
                 id,
                 cond_n,
                 n: 0,
+                n_eff: None,
                 te: None,
                 p: 1.0,
                 floor: true,
@@ -4355,6 +4374,7 @@ fn run_pair_matrix(
                 id,
                 cond_n,
                 n,
+                n_eff: None,
                 te: None,
                 p: 1.0,
                 floor: true,
@@ -4372,21 +4392,22 @@ fn run_pair_matrix(
             })
             .collect();
         match cell_te_and_surrogates(
-            driver,
             target,
+            driver,
             &conds,
             &desc.lags,
             MATRIX_BINS,
             desc.surrogate,
             SURROGATE_SEED,
         ) {
-            Some((te, surr)) => {
-                let p = surrogate_rank_p_value(te, &surr).unwrap_or(1.0);
+            Some(cell) => {
+                let p = surrogate_rank_p_value(cell.te, &cell.surrogates).unwrap_or(1.0);
                 outcomes.push(MatrixCellOutcome {
                     id,
                     cond_n,
                     n,
-                    te: Some(te),
+                    n_eff: cell.n_eff,
+                    te: Some(cell.te),
                     p,
                     floor: false,
                     pass: false,
@@ -4397,6 +4418,7 @@ fn run_pair_matrix(
                     id,
                     cond_n,
                     n,
+                    n_eff: None,
                     te: None,
                     p: 1.0,
                     floor: true,
@@ -4444,8 +4466,8 @@ fn run_pair_matrix(
     }
 
     println!(
-        "{:<28} | {:>4} | {:>5} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
-        "cell", "cond", "n", "TE", "TE_bias", "bias_state", "p", "verdict"
+        "{:<28} | {:>4} | {:>5} | {:>9} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+        "cell", "cond", "n", "n_eff", "TE", "TE_bias", "bias_state", "p", "verdict"
     );
     for o in &outcomes {
         let te = match o.te {
@@ -4453,7 +4475,7 @@ fn run_pair_matrix(
             None => "absent".to_string(),
         };
         let (bias, bias_state) = match o.te {
-            Some(v) if !o.floor => matrix_cell_bias(v, o.n, o.cond_n, Some(o.n as f64)),
+            Some(v) if !o.floor => matrix_cell_bias(v, o.n, o.cond_n, o.n_eff),
             _ => (None, "absent"),
         };
         let bias_word = match bias {
@@ -4468,10 +4490,11 @@ fn run_pair_matrix(
             "silent"
         };
         println!(
-            "{:<28} | {:>4} | {:>5} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+            "{:<28} | {:>4} | {:>5} | {:>9} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
             o.id,
             o.cond_n,
             o.n,
+            fmt_opt(o.n_eff),
             te,
             bias_word,
             bias_state,
@@ -4610,13 +4633,21 @@ mod tests {
 
         let (adj, state) = bias_column(Some(te), 800, Some(44.5), BiasArm::BinnedHistogram);
         assert_eq!(
-            state, "table_pending",
-            "the binned arm's table waits for its own probe run"
+            state, "adjusted",
+            "the binned arm now carries its own measured table"
         );
+        let adj = adj.expect("the binned table entry applies at the operating size");
         assert!(
-            adj.is_none(),
-            "the scalar socket never sits over a binned value"
+            (adj - (te - 2.715e-3)).abs() < 1e-12,
+            "m_k is the measured binned entry, never the scalar socket"
         );
+
+        let (adj, state) = bias_column(Some(te), 5000, Some(44.5), BiasArm::BinnedHistogram);
+        assert_eq!(
+            state, "off_table",
+            "an unmeasured n is off-table, never interpolated"
+        );
+        assert!(adj.is_none());
     }
 
     #[test]
@@ -4624,10 +4655,14 @@ mod tests {
         let te = 5.0e-1;
         let (adj, state) = matrix_cell_bias(te, 800, 0, Some(44.5));
         assert_eq!(
-            state, "table_pending",
-            "the unconditional cell reaches its own binned table, which waits for the probe run"
+            state, "adjusted",
+            "the unconditional cell reaches its own measured binned table"
         );
-        assert!(adj.is_none(), "no scalar socket, no fabricated value");
+        let adj = adj.expect("the binned entry applies above the floor");
+        assert!(
+            (adj - (te - 2.715e-3)).abs() < 1e-12,
+            "no scalar socket, the binned measured entry applies"
+        );
 
         let (adj, state) = matrix_cell_bias(te, 800, 2, Some(44.5));
         assert_eq!(
@@ -4645,10 +4680,55 @@ mod tests {
 
         let (adj, state) = matrix_cell_bias(te, 8546, 0, Some(44.5));
         assert_eq!(
-            state, "table_pending",
-            "an unmeasured n stays pending while the arm's table is empty, never interpolated"
+            state, "adjusted",
+            "8546 is a measured binned size since the binned probe landed"
+        );
+        assert!(adj.is_some());
+
+        let (adj, state) = matrix_cell_bias(te, 5000, 0, Some(44.5));
+        assert_eq!(
+            state, "off_table",
+            "an unmeasured n is off-table, never interpolated"
         );
         assert!(adj.is_none());
+    }
+
+    #[test]
+    fn matrix_cell_measures_the_arrow_of_its_target_driver_order() {
+        let n = 400usize;
+        let mut state = SURROGATE_SEED;
+        let mut gauss = || loop {
+            let u1 = uniform_unit(&mut state) * 2.0 - 1.0;
+            let u2 = uniform_unit(&mut state) * 2.0 - 1.0;
+            let s = u1 * u1 + u2 * u2;
+            if s > 0.0 && s < 1.0 {
+                break (u1 * (-2.0 * s.ln() / s).sqrt()) as f32;
+            }
+        };
+        let mut driver = vec![0f32; n];
+        for t in 1..n {
+            driver[t] = 0.7 * driver[t - 1] + 0.1 * gauss();
+        }
+        let mut target = vec![0f32; n];
+        for t in 1..n {
+            target[t] = 0.5 * target[t - 1] + 0.6 * driver[t - 1] + 0.1 * gauss();
+        }
+        let fwd =
+            cell_te_and_surrogates(&target, &driver, &[], &[1], MATRIX_BINS, 20, SURROGATE_SEED)
+                .expect("the coupled forward cell is measurable");
+        let rev =
+            cell_te_and_surrogates(&driver, &target, &[], &[1], MATRIX_BINS, 20, SURROGATE_SEED)
+                .expect("the reverse cell is measurable");
+        assert!(
+            fwd.te > rev.te,
+            "the cell measures the arrow of its target/driver order, got forward {} reverse {}",
+            fwd.te,
+            rev.te
+        );
+        assert!(
+            fwd.n_eff.is_some(),
+            "the winning window carries its KDE n_eff"
+        );
     }
 
     #[test]
