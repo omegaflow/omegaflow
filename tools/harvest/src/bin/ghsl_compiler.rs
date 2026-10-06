@@ -2,7 +2,7 @@ use omegaflow::archivar::LeapSeconds;
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::geo::{COMP_GHSL_BUILT, GeoRec, magic_of, parse_bin, write_bin};
 use omegaflow::archivar::sha256::sha256_hex;
-use omegaflow::archivar::tiff::{TiffImage, parse_tiff};
+use omegaflow::archivar::tiff::{GeoTransform, TiffImage, parse_tiff};
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::inflate;
 use omegaflow::lsk::days_from_civil;
@@ -10,6 +10,8 @@ use std::process::Command;
 
 const NETLOC: &str = "jeodpp.jrc.ec.europa.eu";
 const URL: &str = "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip";
+const TILES_DIR: &str = "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/tiles/";
+const TILE_PREFIX: &str = "GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0_";
 const FORMAT: &str = "ghsl_built_s";
 const DEFAULT_STRIDE: usize = 1;
 const EPOCH_YEAR: i64 = 2020;
@@ -371,6 +373,536 @@ fn build_records(
     Ok(records)
 }
 
+fn bt_u16(b: &[u8], off: usize, little: bool) -> Option<u16> {
+    let s = b.get(off..off + 2)?;
+    Some(if little {
+        u16::from_le_bytes([s[0], s[1]])
+    } else {
+        u16::from_be_bytes([s[0], s[1]])
+    })
+}
+
+fn bt_u32(b: &[u8], off: usize, little: bool) -> Option<u32> {
+    let s = b.get(off..off + 4)?;
+    Some(if little {
+        u32::from_le_bytes([s[0], s[1], s[2], s[3]])
+    } else {
+        u32::from_be_bytes([s[0], s[1], s[2], s[3]])
+    })
+}
+
+fn bt_u64(b: &[u8], off: usize, little: bool) -> Option<u64> {
+    let s = b.get(off..off + 8)?;
+    let mut a = [0u8; 8];
+    a.copy_from_slice(s);
+    Some(if little {
+        u64::from_le_bytes(a)
+    } else {
+        u64::from_be_bytes(a)
+    })
+}
+
+fn bt_f64(b: &[u8], off: usize, little: bool) -> Option<f64> {
+    let s = b.get(off..off + 8)?;
+    let mut a = [0u8; 8];
+    a.copy_from_slice(s);
+    Some(if little {
+        f64::from_le_bytes(a)
+    } else {
+        f64::from_be_bytes(a)
+    })
+}
+
+struct BigTiff {
+    little: bool,
+    width: u64,
+    height: u64,
+    bits: u16,
+    compression: u16,
+    samples: u16,
+    planar: u16,
+    tile_w: u64,
+    tile_h: u64,
+    tile_offsets: Vec<u64>,
+    tile_counts: Vec<u64>,
+    geo: Option<GeoTransform>,
+}
+
+fn bt_scalar(tif: &[u8], p: usize, ftype: u16, little: bool) -> Option<u64> {
+    match ftype {
+        3 => bt_u16(tif, p + 12, little).map(u64::from),
+        4 => bt_u32(tif, p + 12, little).map(u64::from),
+        16 | 18 => bt_u64(tif, p + 12, little),
+        _ => None,
+    }
+}
+
+fn bt_offset_array(tif: &[u8], p: usize, ftype: u16, count: u64, little: bool) -> Option<Vec<u64>> {
+    let size = match ftype {
+        4 => 4usize,
+        16 | 18 => 8,
+        _ => return None,
+    };
+    let total = size.checked_mul(count as usize)?;
+    let mut out = Vec::with_capacity(count as usize);
+    if total <= 8 {
+        for i in 0..count as usize {
+            out.push(bt_scalar(tif, p + i * size, ftype, little)?);
+        }
+        return Some(out);
+    }
+    let base = bt_u64(tif, p + 12, little)? as usize;
+    for i in 0..count as usize {
+        out.push(bt_scalar(tif, base + i * size - 12, ftype, little)?);
+    }
+    Some(out)
+}
+
+fn bt_double_vec(tif: &[u8], p: usize, count: u64, little: bool) -> Option<Vec<f64>> {
+    let base = bt_u64(tif, p + 12, little)? as usize;
+    let mut out = Vec::with_capacity(count as usize);
+    for i in 0..count as usize {
+        out.push(bt_f64(tif, base + i * 8, little)?);
+    }
+    Some(out)
+}
+
+fn parse_bigtiff(tif: &[u8]) -> Option<BigTiff> {
+    let little = match tif.get(0..2)? {
+        b"II" => true,
+        b"MM" => false,
+        _ => return None,
+    };
+    if bt_u16(tif, 2, little)? != 43 {
+        return None;
+    }
+    let ifd = bt_u64(tif, 8, little)? as usize;
+    let count = bt_u64(tif, ifd, little)?;
+    let mut width = None;
+    let mut height = None;
+    let mut bits = None;
+    let mut compression = None;
+    let mut samples = None;
+    let mut planar = None;
+    let mut tile_w = None;
+    let mut tile_h = None;
+    let mut tile_offsets = None;
+    let mut tile_counts = None;
+    let mut scale = None;
+    let mut tie = None;
+    for i in 0..count as usize {
+        let p = ifd + 8 + i * 20;
+        let tag = bt_u16(tif, p, little)?;
+        let ftype = bt_u16(tif, p + 2, little)?;
+        let cnt = bt_u64(tif, p + 4, little)?;
+        match tag {
+            256 => width = bt_scalar(tif, p, ftype, little),
+            257 => height = bt_scalar(tif, p, ftype, little),
+            258 => bits = bt_scalar(tif, p, ftype, little).map(|v| v as u16),
+            259 => compression = bt_scalar(tif, p, ftype, little).map(|v| v as u16),
+            277 => samples = bt_scalar(tif, p, ftype, little).map(|v| v as u16),
+            284 => planar = bt_scalar(tif, p, ftype, little).map(|v| v as u16),
+            322 => tile_w = bt_scalar(tif, p, ftype, little),
+            323 => tile_h = bt_scalar(tif, p, ftype, little),
+            324 => tile_offsets = bt_offset_array(tif, p, ftype, cnt, little),
+            325 => tile_counts = bt_offset_array(tif, p, ftype, cnt, little),
+            33550 => scale = bt_double_vec(tif, p, cnt, little),
+            33922 => tie = bt_double_vec(tif, p, cnt, little),
+            _ => {}
+        }
+    }
+    let (sx, sy) = {
+        let s = scale?;
+        (s[0], *s.get(1)?)
+    };
+    let geo = tie.as_ref().and_then(|t| {
+        if t.len() < 6 {
+            return None;
+        }
+        Some(GeoTransform {
+            x0: t[3] - t[0] * sx,
+            y0: t[4] + t[1] * sy,
+            dx: sx,
+            dy: -sy,
+        })
+    });
+    Some(BigTiff {
+        little,
+        width: width?,
+        height: height?,
+        bits: bits?,
+        compression: compression.unwrap_or(1),
+        samples: samples.unwrap_or(1),
+        planar: planar.unwrap_or(1),
+        tile_w: tile_w?,
+        tile_h: tile_h?,
+        tile_offsets: tile_offsets?,
+        tile_counts: tile_counts?,
+        geo,
+    })
+}
+
+const LZW_TABLE_MAX: usize = 4096;
+const LZW_CLEAR: u16 = 256;
+const LZW_EOI: u16 = 257;
+const LZW_FIRST: u16 = 258;
+
+fn lzw_code(data: &[u8], bit_pos: &mut usize, width: u32) -> Option<u16> {
+    let mut code = 0u32;
+    for _ in 0..width {
+        let byte = *data.get(*bit_pos >> 3)?;
+        let bit = (byte >> (7 - (*bit_pos & 7))) & 1;
+        code = (code << 1) | (bit as u32);
+        *bit_pos += 1;
+    }
+    Some(code as u16)
+}
+
+fn lzw_decode(data: &[u8], expected: usize) -> Option<Vec<u8>> {
+    let mut prefix = vec![0u16; LZW_TABLE_MAX];
+    let mut suffix = vec![0u8; LZW_TABLE_MAX];
+    for i in 0..256usize {
+        suffix[i] = i as u8;
+    }
+    let mut out = Vec::with_capacity(expected);
+    let mut bit_pos = 0usize;
+    let mut width = 9u32;
+    let mut free = LZW_FIRST;
+    let mut prev: Option<u16> = None;
+    let mut prev_str: Vec<u8> = Vec::new();
+    loop {
+        let code = lzw_code(data, &mut bit_pos, width)?;
+        if code == LZW_EOI {
+            break;
+        }
+        if code == LZW_CLEAR {
+            width = 9;
+            free = LZW_FIRST;
+            prev = None;
+            prev_str.clear();
+            continue;
+        }
+        let entry: Vec<u8> = if code < free {
+            let mut chain: Vec<u8> = Vec::new();
+            let mut c = code;
+            while c >= 256 {
+                if (c as usize) >= free as usize {
+                    return None;
+                }
+                chain.push(suffix[c as usize]);
+                c = prefix[c as usize];
+            }
+            chain.push(c as u8);
+            chain.reverse();
+            chain
+        } else if code == free {
+            match prev {
+                Some(_) => {
+                    let mut s = prev_str.clone();
+                    let first = *s.first()?;
+                    s.push(first);
+                    s
+                }
+                None => return None,
+            }
+        } else {
+            return None;
+        };
+        out.extend_from_slice(&entry);
+        if let Some(p) = prev
+            && (free as usize) < LZW_TABLE_MAX
+        {
+            prefix[free as usize] = p;
+            suffix[free as usize] = entry[0];
+            free += 1;
+            if free == (1u16 << width) - 1 && width < 12 {
+                width += 1;
+            }
+        }
+        prev = Some(code);
+        prev_str = entry;
+    }
+    if out.len() != expected {
+        return None;
+    }
+    Some(out)
+}
+
+fn sample_tile_value(block: &[u8], off: usize, bits: u16, little: bool) -> Option<f64> {
+    match bits {
+        8 => block.get(off).map(|&b| b as f64),
+        16 => {
+            let s = block.get(off..off + 2)?;
+            Some(if little {
+                u16::from_le_bytes([s[0], s[1]]) as f64
+            } else {
+                u16::from_be_bytes([s[0], s[1]]) as f64
+            })
+        }
+        32 => {
+            let s = block.get(off..off + 4)?;
+            Some(if little {
+                u32::from_le_bytes([s[0], s[1], s[2], s[3]]) as f64
+            } else {
+                u32::from_be_bytes([s[0], s[1], s[2], s[3]]) as f64
+            })
+        }
+        _ => None,
+    }
+}
+
+fn records_from_tile(
+    tif: &[u8],
+    source: &str,
+    t: f64,
+    stride: usize,
+    limit: usize,
+) -> Result<Vec<GeoRec>, String> {
+    let bt = parse_bigtiff(tif).ok_or_else(|| {
+        format!(
+            "{source}: the tile arm reads no BigTIFF raster — the per-cell grid stays unwritten"
+        )
+    })?;
+    if bt.samples != 1 || bt.planar != 1 {
+        return Err(format!(
+            "{source}: {} bands, planar {} — a single-band chunky raster is expected",
+            bt.samples, bt.planar
+        ));
+    }
+    if bt.compression != 5 {
+        return Err(format!(
+            "{source}: compression {} carries no tile decoder (LZW 5 is the measured arm)",
+            bt.compression
+        ));
+    }
+    if bt.bits != 8 && bt.bits != 16 && bt.bits != 32 {
+        return Err(format!(
+            "{source}: {} bits per sample carries no integer decoder",
+            bt.bits
+        ));
+    }
+    let geo = bt
+        .geo
+        .as_ref()
+        .ok_or_else(|| format!("{source}: carries no geotransform — no cell centre"))?;
+    let bps = (bt.bits / 8) as usize;
+    let across = (bt.width + bt.tile_w - 1) / bt.tile_w;
+    let down = (bt.height + bt.tile_h - 1) / bt.tile_h;
+    let tiles = (across * down) as usize;
+    if bt.tile_offsets.len() < tiles {
+        return Err(format!(
+            "{source}: {} tile offsets against the {tiles} tile grid",
+            bt.tile_offsets.len()
+        ));
+    }
+    let block_bytes = (bt.tile_w as usize)
+        .checked_mul(bt.tile_h as usize)
+        .and_then(|n| n.checked_mul(bps))
+        .ok_or_else(|| format!("{source}: the {}x{} tile overflows", bt.tile_w, bt.tile_h))?;
+    let nodata = match bt.bits {
+        8 => 255.0,
+        16 => 65535.0,
+        _ => 4294967295.0,
+    };
+    let mut records = Vec::new();
+    for k in 0..tiles {
+        let count = *bt
+            .tile_counts
+            .get(k)
+            .ok_or_else(|| format!("{source}: tile {k} carries no byte count"))?
+            as usize;
+        let start = bt.tile_offsets[k] as usize;
+        let end = start
+            .checked_add(count)
+            .ok_or_else(|| format!("{source}: tile {k} overflows"))?;
+        let strip = tif
+            .get(start..end)
+            .ok_or_else(|| format!("{source}: tile {k} ends beyond the raster"))?;
+        let block = lzw_decode(strip, block_bytes)
+            .ok_or_else(|| format!("{source}: tile {k} stays undecoded"))?;
+        let tx = (k as u64 % across) * bt.tile_w;
+        let ty = (k as u64 / across) * bt.tile_h;
+        let gy0 = ty;
+        let gy1 = (ty + bt.tile_h).min(bt.height);
+        let gx0 = tx;
+        let gx1 = (tx + bt.tile_w).min(bt.width);
+        let mut gy = gy0.div_ceil(stride as u64) * stride as u64;
+        while gy < gy1 {
+            let row = (gy - ty) as usize;
+            let mut gx = gx0.div_ceil(stride as u64) * stride as u64;
+            while gx < gx1 {
+                let col = (gx - tx) as usize;
+                let off = (row * bt.tile_w as usize + col) * bps;
+                let val = sample_tile_value(&block, off, bt.bits, bt.little)
+                    .ok_or_else(|| format!("{source}: tile {k} cell {gx},{gy} stays unread"))?;
+                if val != nodata {
+                    let lat = geo.y0 + (gy as f64 + 0.5) * geo.dy;
+                    let lon = geo.x0 + (gx as f64 + 0.5) * geo.dx;
+                    if lat.is_finite()
+                        && lon.is_finite()
+                        && (-90.0..=90.0).contains(&lat)
+                        && (-360.0..=360.0).contains(&lon)
+                    {
+                        records.push(GeoRec {
+                            t,
+                            lat,
+                            lon,
+                            alt: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            val,
+                            comp: COMP_GHSL_BUILT,
+                            station: 0,
+                        });
+                        if records.len() >= limit {
+                            return Ok(records);
+                        }
+                    }
+                }
+                gx += stride as u64;
+            }
+            gy += stride as u64;
+        }
+    }
+    Ok(records)
+}
+
+fn curl_get(url: &str, max_time: u32) -> Result<Vec<u8>, String> {
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("--max-time")
+        .arg(max_time.to_string())
+        .arg(url)
+        .output()
+        .map_err(|e| format!("curl {url} returned void: {e}"))?;
+    if !out.status.success() {
+        return Err(format!(
+            "{url}: reads no bytes — {}",
+            String::from_utf8_lossy(&out.stderr).trim()
+        ));
+    }
+    if out.stdout.is_empty() {
+        return Err(format!("{url}: carries no bytes"));
+    }
+    Ok(out.stdout)
+}
+
+fn tile_url_from_rc(spec: &str) -> Option<String> {
+    let nums: Vec<u32> = spec
+        .split(|c: char| !c.is_ascii_digit())
+        .filter(|s| !s.is_empty())
+        .filter_map(|s| s.parse().ok())
+        .collect();
+    if nums.len() >= 2 {
+        Some(format!(
+            "{TILES_DIR}{TILE_PREFIX}R{}_C{}.zip",
+            nums[0], nums[1]
+        ))
+    } else {
+        None
+    }
+}
+
+fn tile_sources(args: &[String]) -> Result<Vec<String>, String> {
+    let mut urls: Vec<String> = Vec::new();
+    let mut i = 0usize;
+    while i < args.len() {
+        if args[i] == "--tile" {
+            match args.get(i + 1).and_then(|v| tile_url_from_rc(v)) {
+                Some(u) => urls.push(u),
+                None => return Err("--tile carries no R<row>_C<col> cell".to_string()),
+            }
+            i += 2;
+            continue;
+        }
+        i += 1;
+    }
+    if let Some(path) = arg_value(args, "--tile-list") {
+        let text = std::fs::read_to_string(&path)
+            .map_err(|e| format!("read {path} returned void: {e}"))?;
+        for line in text.lines() {
+            let l = line.trim();
+            if l.is_empty() || l.starts_with('#') {
+                continue;
+            }
+            if l.starts_with("http") {
+                urls.push(l.to_string());
+            } else if l.ends_with(".zip") && std::path::Path::new(l).exists() {
+                urls.push(l.to_string());
+            } else if let Some(u) = tile_url_from_rc(l) {
+                urls.push(u);
+            } else {
+                return Err(format!("{path}: {l} carries no tile cell or URL"));
+            }
+        }
+    }
+    if let Some(dir) = arg_value(args, "--tiles-dir") {
+        let dir = if dir.ends_with('/') {
+            dir
+        } else {
+            format!("{dir}/")
+        };
+        let html = curl_get(&dir, 120)?;
+        let text = String::from_utf8_lossy(&html);
+        for tok in text
+            .split(|c: char| matches!(c, '"' | '\'' | '<' | '>' | ' ' | '\n' | '\r' | '\t' | '='))
+        {
+            if let Some(idx) = tok.find(TILE_PREFIX) {
+                let name = &tok[idx..];
+                if name.ends_with(".zip") {
+                    urls.push(format!("{dir}{name}"));
+                }
+            }
+        }
+    }
+    if urls.is_empty() {
+        let html = curl_get(TILES_DIR, 120)?;
+        let text = String::from_utf8_lossy(&html);
+        for tok in text
+            .split(|c: char| matches!(c, '"' | '\'' | '<' | '>' | ' ' | '\n' | '\r' | '\t' | '='))
+        {
+            if let Some(idx) = tok.find(TILE_PREFIX) {
+                let name = &tok[idx..];
+                if name.ends_with(".zip") {
+                    urls.push(format!("{TILES_DIR}{name}"));
+                }
+            }
+        }
+    }
+    let mut seen = std::collections::HashSet::new();
+    urls.retain(|u| seen.insert(u.clone()));
+    if urls.is_empty() {
+        return Err(
+            "the tiles directory carries no tile name — the harvest stays unwritten".to_string(),
+        );
+    }
+    Ok(urls)
+}
+
+fn harvest_tiles(
+    args: &[String],
+    t: f64,
+    stride: usize,
+    limit: usize,
+) -> Result<Vec<GeoRec>, String> {
+    let sources = tile_sources(args)?;
+    let mut records = Vec::new();
+    for src in &sources {
+        let (tif, name) = if src.starts_with("http") {
+            read_remote_tif(src)?
+        } else {
+            read_local_zip(src)?
+        };
+        let remaining = limit.saturating_sub(records.len());
+        let mut tile_records = records_from_tile(&tif, &name, t, stride, remaining)?;
+        records.append(&mut tile_records);
+        if records.len() >= limit {
+            break;
+        }
+    }
+    Ok(records)
+}
+
 fn inspect(tif: &[u8]) {
     match parse_tiff(tif) {
         Some(img) => {
@@ -432,27 +964,42 @@ fn parse_step(args: &[String], name: &str, default: usize) -> Result<usize, Stri
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let inspect_mode = args.iter().any(|a| a == "--inspect");
+    let tiles_mode = args.iter().any(|a| a == "--tiles");
     let stride = parse_step(args, "--stride", DEFAULT_STRIDE)?;
     let limit = parse_step(args, "--limit", usize::MAX)?;
+    let t = epoch_tdb()?;
+    if tiles_mode {
+        let records = harvest_tiles(args, t, stride, limit)?;
+        if records.is_empty() {
+            return Err(
+                "the tile harvest carried no measured GHSL built-up cell — the bin stays unwritten (0 honored)"
+                    .to_string(),
+            );
+        }
+        return emit(args, &records, TILES_DIR, ci_mode);
+    }
     let (tif, source) = read_source(args)?;
     if inspect_mode {
         inspect(&tif);
         return Ok(());
     }
-    let t = epoch_tdb()?;
     let records = build_records(&tif, &source, t, stride, limit)?;
     if records.is_empty() {
         return Err(format!(
             "{source}: no measured GHSL built-up cell left the harvest — the bin stays unwritten (0 honored)"
         ));
     }
+    emit(args, &records, &source, ci_mode)
+}
+
+fn emit(args: &[String], records: &[GeoRec], source: &str, ci_mode: bool) -> Result<(), String> {
     let magic = magic_of(FORMAT).ok_or_else(|| {
         format!("{source}: {FORMAT} carries no geo magic — the per-cell arm stays unwritten")
     })?;
-    let netloc = netloc_of(args, &source);
+    let netloc = netloc_of(args, source);
     let out = out_path(args, &netloc);
     ensure_parent(&out)?;
-    let bytes = write_bin(magic, &records);
+    let bytes = write_bin(magic, records);
     std::fs::write(&out, &bytes).map_err(|e| format!("write {out} void: {e}"))?;
     match parse_bin(magic, &bytes) {
         Some(parsed) if parsed.len() == records.len() => {
@@ -504,7 +1051,14 @@ fn positional_source(args: &[String]) -> Option<String> {
         let a = &args[i];
         if matches!(
             a.as_str(),
-            "--tif" | "--netloc" | "--stride" | "--limit" | "--out"
+            "--tif"
+                | "--netloc"
+                | "--stride"
+                | "--limit"
+                | "--out"
+                | "--tile"
+                | "--tile-list"
+                | "--tiles-dir"
         ) {
             i += 2;
             continue;
@@ -522,12 +1076,18 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: ghsl_compiler [<zip-url|zip-path>] [--tif <path>] [--netloc <netloc>] [--stride N] [--limit N] [--out <path>] [--ci-mode] [--inspect]"
+            "usage: ghsl_compiler [<zip-url|zip-path>] [--tif <path>] [--tiles] [--tile R_C] [--tile-list <path>] [--tiles-dir <url>] [--netloc <netloc>] [--stride N] [--limit N] [--out <path>] [--ci-mode] [--inspect]"
         );
         eprintln!("  reads the JRC GHSL GHS-BUILT-S E2020 GLOBE R2023A 4326 3ss GeoTIFF");
         eprintln!("  unit: built square metres in the grid cell (GHSL Data Package 2023)");
         eprintln!("  epoch: the dataset's own year, 2020-01-01 TDB");
         eprintln!("  --inspect prints the raster's shape and geotransform and stops");
+        eprintln!(
+            "  --tiles harvests the per-10-degree BigTIFF tile archives instead of the global raster"
+        );
+        eprintln!(
+            "    (--tile R2_C2 repeats, --tile-list <path> or the tiles directory by default)"
+        );
         eprintln!("  --limit bounds the emitted cells; --stride samples every Nth cell");
         eprintln!("  --ci-mode uploads the verified asset to the <netloc> CDN release");
         std::process::exit(1);
@@ -664,6 +1224,19 @@ mod tests {
         assert_eq!(sample_at(&[0x01, 0x00], 0, 16, false), Some(256.0));
         assert_eq!(sample_at(&[3], 0, 8, true), Some(3.0));
         assert_eq!(sample_at(&[0], 0, 16, true), None);
+    }
+
+    #[test]
+    fn tile_url_from_rc_reads_the_cell() {
+        assert_eq!(
+            tile_url_from_rc("R2_C2").unwrap(),
+            format!("{TILES_DIR}{TILE_PREFIX}R2_C2.zip")
+        );
+        assert_eq!(
+            tile_url_from_rc("15 34").unwrap(),
+            format!("{TILES_DIR}{TILE_PREFIX}R15_C34.zip")
+        );
+        assert!(tile_url_from_rc("junk").is_none());
     }
 
     #[test]

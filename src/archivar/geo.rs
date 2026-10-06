@@ -846,6 +846,36 @@ pub fn parse_axis_value_text(text: &str) -> Vec<(f64, f64)> {
     out
 }
 
+pub fn parse_axis_position_value_text(text: &str) -> Vec<(f64, f64, f64, f64)> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+        let mut tokens = trimmed.split_whitespace();
+        let (Some(t), Some(v), Some(_unit), Some(lat), Some(lon)) = (
+            tokens.next(),
+            tokens.next(),
+            tokens.next(),
+            tokens.next(),
+            tokens.next(),
+        ) else {
+            continue;
+        };
+        let (Ok(t), Ok(v)) = (t.parse::<f64>(), v.parse::<f64>()) else {
+            continue;
+        };
+        let (Ok(lat), Ok(lon)) = (lat.parse::<f64>(), lon.parse::<f64>()) else {
+            continue;
+        };
+        if t.is_finite() && v.is_finite() && lat.is_finite() && lon.is_finite() {
+            out.push((t, lat, lon, v));
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -4086,6 +4086,36 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "osha_cehd_si_axis_value_text" {
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for (unix, lat, lon, value) in crate::archivar::geo::parse_axis_position_value_text(body) {
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat,
+                        lon,
+                        alt: 0.0,
+                    },
+                    name: fc.name.clone(),
+                    value,
+                },
+                fc.clone(),
+            ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
     if src.format == "trishuli_stage" {
         let Some(station_id) = src
             .station_code
