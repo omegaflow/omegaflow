@@ -14,10 +14,10 @@ use omegaflow::mathematikerin::wy_max_t::{
     quantile, sigma_per_statistic, studentized_maxima,
 };
 use omegaflow::te::{
-    LaggedCond, TE_NEFF_THRESHOLD, TeEstimator, TeNull, TeSurrogateParams, benjamini_hochberg_pass,
-    conditional_embedded_te_phase, conditional_te_surrogates_n, kde_n_eff, surrogate_max_phase_n,
-    surrogate_rank_p_value, surrogate_stats_phase_n, te_bias_m_k, transfer_entropy_bias_adjusted,
-    transfer_entropy_conditional_binned_n,
+    BiasArm, LaggedCond, TE_NEFF_THRESHOLD, TeEstimator, TeNull, TeSurrogateParams,
+    benjamini_hochberg_pass, conditional_embedded_te_phase, conditional_te_surrogates_n, kde_n_eff,
+    surrogate_max_phase_n, surrogate_rank_p_value, surrogate_stats_phase_n,
+    transfer_entropy_bias_adjusted, transfer_entropy_conditional_binned_n,
 };
 
 const MONTH_S: f64 = 2_592_000.0;
@@ -2616,7 +2616,12 @@ struct LagRow {
     bias_state_t2d: &'static str,
 }
 
-fn bias_column(te: Option<f64>, n: usize, n_eff: Option<f64>) -> (Option<f64>, &'static str) {
+fn bias_column(
+    te: Option<f64>,
+    n: usize,
+    n_eff: Option<f64>,
+    arm: BiasArm,
+) -> (Option<f64>, &'static str) {
     let Some(te) = te else {
         return (None, "absent");
     };
@@ -2627,10 +2632,11 @@ fn bias_column(te: Option<f64>, n: usize, n_eff: Option<f64>) -> (Option<f64>, &
     if !(ne.is_finite() && ne >= floor) {
         return (None, "unadjusted_below_floor");
     }
-    match te_bias_m_k(n) {
+    match arm.table_lookup(n) {
         Some(mk) if te.is_finite() && mk.is_finite() => {
             (Some(transfer_entropy_bias_adjusted(te, mk)), "adjusted")
         }
+        _ if arm.table_len() == 0 => (None, "table_pending"),
         _ => (None, "off_table"),
     }
 }
@@ -2825,6 +2831,7 @@ fn analyze(
                     Some(te),
                     target_s.len(),
                     kde_n_eff(target_s, driver_s, *lag),
+                    BiasArm::ScalarKde,
                 );
                 row.bias_d2t = adj;
                 row.bias_state_d2t = state;
@@ -2834,6 +2841,7 @@ fn analyze(
                     Some(te),
                     driver_s.len(),
                     kde_n_eff(driver_s, target_s, *lag),
+                    BiasArm::ScalarKde,
                 );
                 row.bias_t2d = adj;
                 row.bias_state_t2d = state;
@@ -4550,7 +4558,7 @@ mod tests {
     #[test]
     fn bias_column_gates_on_n_eff_and_exact_n() {
         let te = 5.0e-1;
-        let (adj, state) = bias_column(Some(te), 800, Some(1.8166e1));
+        let (adj, state) = bias_column(Some(te), 800, Some(1.8166e1), BiasArm::ScalarKde);
         assert_eq!(state, "adjusted");
         let adj = adj.expect("a measured n at the floor carries the measured bias");
         assert!(
@@ -4558,23 +4566,33 @@ mod tests {
             "m_k is the measured table entry, never interpolated"
         );
 
-        let (adj, state) = bias_column(Some(te), 800, Some(1.0));
+        let (adj, state) = bias_column(Some(te), 800, Some(1.0), BiasArm::ScalarKde);
         assert_eq!(state, "unadjusted_below_floor");
         assert!(
             adj.is_none(),
             "below the n_eff floor nothing is manufactured"
         );
 
-        let (adj, state) = bias_column(Some(te), 8546, Some(44.5));
+        let (adj, state) = bias_column(Some(te), 8546, Some(44.5), BiasArm::ScalarKde);
         assert_eq!(state, "off_table");
         assert!(
             adj.is_none(),
             "an unmeasured n is off-table, never interpolated"
         );
 
-        let (adj, state) = bias_column(None, 800, Some(44.5));
+        let (adj, state) = bias_column(None, 800, Some(44.5), BiasArm::ScalarKde);
         assert_eq!(state, "absent");
         assert!(adj.is_none());
+
+        let (adj, state) = bias_column(Some(te), 800, Some(44.5), BiasArm::BinnedHistogram);
+        assert_eq!(
+            state, "table_pending",
+            "the binned arm's table waits for its own probe run"
+        );
+        assert!(
+            adj.is_none(),
+            "the scalar socket never sits over a binned value"
+        );
     }
 
     #[test]

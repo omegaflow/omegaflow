@@ -60,6 +60,40 @@ pub fn te_bias_m_k_embedded(n: usize) -> Option<f64> {
         .map(|&(_, m)| m)
 }
 
+pub const TE_BIAS_MK_BINNED: &[(usize, f64)] = &[];
+
+pub fn te_bias_m_k_binned(n: usize) -> Option<f64> {
+    TE_BIAS_MK_BINNED
+        .iter()
+        .find(|&&(k, _)| k == n)
+        .map(|&(_, m)| m)
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum BiasArm {
+    ScalarKde,
+    EmbeddedKsg,
+    BinnedHistogram,
+}
+
+impl BiasArm {
+    pub fn table_lookup(self, n: usize) -> Option<f64> {
+        match self {
+            BiasArm::ScalarKde => te_bias_m_k(n),
+            BiasArm::EmbeddedKsg => te_bias_m_k_embedded(n),
+            BiasArm::BinnedHistogram => te_bias_m_k_binned(n),
+        }
+    }
+
+    pub fn table_len(self) -> usize {
+        match self {
+            BiasArm::ScalarKde => TE_BIAS_MK.len(),
+            BiasArm::EmbeddedKsg => TE_BIAS_MK_EMBEDDED.len(),
+            BiasArm::BinnedHistogram => TE_BIAS_MK_BINNED.len(),
+        }
+    }
+}
+
 pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
     te - m_k
 }
@@ -4000,6 +4034,29 @@ mod tests {
         assert!(
             te_bias_m_k_embedded(1234).is_none(),
             "an unmeasured size stays absent, never zero"
+        );
+    }
+
+    #[test]
+    fn gate_bias_arm_carries_its_own_table_never_the_scalar_socket() {
+        let scalar = BiasArm::ScalarKde
+            .table_lookup(1260)
+            .expect("the scalar arm carries a measured bias at the operating size");
+        let embedded = BiasArm::EmbeddedKsg
+            .table_lookup(1260)
+            .expect("the embedded arm carries its own measured bias");
+        assert!(
+            (scalar - embedded).abs() > 1e-6,
+            "the arms carry distinct measured tables, got scalar {scalar} embedded {embedded}"
+        );
+        assert!(
+            BiasArm::BinnedHistogram.table_lookup(1260).is_none(),
+            "the binned arm carries no scalar socket: its table stays absent until its own measurement lands"
+        );
+        assert_eq!(
+            BiasArm::BinnedHistogram.table_len(),
+            0,
+            "the binned bias table waits for the binned probe run"
         );
     }
 
