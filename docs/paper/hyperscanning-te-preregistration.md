@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: 9b18af064adbe24dadfc33f1c0dda499de5f9182a15831c8647398f2aa4f1fbc
+  sha256: 53208524d4cf17c7a6092ea8e320a84fe2e24d1e8f5b3e79e9ae4503c7616360
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -365,8 +365,10 @@ screen's own expression is the raised p95 that drops `pair-02`.
 ### Träger / Carrier
 
 This document's carrier is the Sensory handover
-`docs/handover/handover-2026-10-05-sensory-folge233.md` — the open point
-`### Hyperscanning-TE — Präregistrierung/Methodenpapier (ds007822 = Machbarkeit)`,
-whose `Lage` names this draft and whose `Braucht` named the validation artifacts
-that carried the FP/FN, n-scaling and second-cohort numbers (all three measured
-2026-10-05).
+`docs/handover/handover-2026-10-06-sensory-folge237.md` — the open point
+`### Hyperscanning-TE — max_points=4096 Discovery-Lauf (Job-Cap)`, whose `Lage`
+names this draft's last open validation artifact (the full `max_points=4096`
+discovery run, `37438929801`) and whose `Braucht` carries its `merge`-job result.
+The FP/FN, n-scaling and second-cohort numbers were carried by folge233's point
+(all three measured 2026-10-05); the `coherent-phase` null is measured in
+`docs/paper/hyperscanning-te-method.md` (run `37331134587`).
