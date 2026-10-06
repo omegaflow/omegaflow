@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 444c1751da23292ef75f0b2c0f17f4174a2ff4a74dbb443996e3c56ad1511d55
+  sha256: 2af8970fd158bf85cbc6025c323c34a9b3e55e274bedb2151da991e400b9fa1f
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -49,9 +49,9 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 ### Träger `survey-2026-09-03-orphan-verdicts` — Step 5 CDN-kanonisch
 - **Status:** eigen
 - **Trigger:** je `*-cdn.yml` die Release-Menge aus `phi/sources.φ` lesen
-- **Lage:** (gemessen 2026-10-06) `:103-151` — 13 Netlocs. **Bindung umgesetzt:** Helfer `.github/workflows/scripts/register_release_set.sh <netloc>`; `de44-cdn.yml` verifiziert `ssd.jpl.nasa.gov-de` (9 registriert == 9 im Release, `sources.φ:3501-3557`). **Reg==Release (mechanisch bindbar):** `ssd.jpl.nasa.gov-de` 9/9, `pds-rings.seti.org` 19/19, `naif.jpl.nasa.gov` 575/575, `ftp.imcce.fr` 12/12. **Reg<Release (Register unvollständig — Release trägt unregistrierte Assets):** `zenodo.org` 44/82, `ssd.jpl.nasa.gov` 4/999, `tapvizier.cds.unistra.fr` 25/36, `irsa.ipac.caltech.edu` 7/18, `spdf.gsfc.nasa.gov` 11/17, `data.pmel.noaa.gov` 2/7, `pds-ppi.igpp.ucla.edu` 23/26, `vizier.cds.unistra.fr` 5/6, `minorplanetcenter.net` 5/6. **Familien-Tag (nicht als feste Menge bindbar):** `modis_lst_cmg` (`sources.φ:18706` url = `data.lpdaac…-modis_lst_cmg/…manifest`; Jahr-Tags dynamisch, `releases/download/modis` = 0).
-- **Blockade:** für 9 Netlocs ist der Register-Eintrag unvollständig; die Bindung „registriert ⊆ Release" verifiziert dann untreu (die Orphans bleiben unbenannt). Nachtragen = Mountain-Verdikt; Entfernen = destruktiv.
-- **Braucht:** (a) die drei weiteren reg==Release-Workflows (`pds-rings`/`naif`/`ftp.imcce`) mechanisch binden; (b) je mismatch-Netloc die Orphan-Menge disponieren (Register nachtragen ODER Release-Assets entfernen — destruktiv, erst nach vollständiger Tag-Prüfung); (c) `modis_lst_cmg` als Familien-Anker, Jahr-Menge bleibt Laufzeit-Ableitung. **(d) Zuordnung messen:** eine workflow-weite Release-Verifikation ist nur zulässig, wo der Workflow **alleiniger Writer** des Releases ist (`ssd.jpl.nasa.gov-de` = de44); sonst muss die Bindung auf die eigenen registrierten Assets beschränkt werden.
+- **Lage:** (gemessen 2026-10-06) `:103-151` — 13 Netlocs. **Bindung umgesetzt:** Helfer `.github/workflows/scripts/register_release_set.sh <netloc>`; `de44-cdn.yml` verifiziert `ssd.jpl.nasa.gov-de` (9 registriert == 9 im Release, `sources.φ:3501-3557`). **Reg==Release (bindbar):** `ssd.jpl.nasa.gov-de` 9/9, `pds-rings.seti.org` 19/19, `naif.jpl.nasa.gov` 575/575, `ftp.imcce.fr` 12/12. **Mismatch-Ursache gemessen — Roh-/Probe-/Tag-Hygiene, nicht fehlende Zulassung:** (1) **Roh-/Intermediär-Uploads** — `zenodo.org` trägt `data.zip`, `Proudfoot23_TNBFits.zip.000-013`, `rixs_spin_*.txt`, ein PDF; Produzenten `kyoto-pressure-cdn.yml`/`tnbfits-cdn.yml` (Compiler-Uploads). (2) **Probe-Junk** — `TAP-sync-REQUEST-*`, `TAPVizieR-tap-sync-REQUEST-*`, `nph-query.json`, `sync.json`, `.sha256`-Sidecars: **0 in `sources.φ`** und **kein Workflow-Literal** → Compiler-/Probe-Uploads. (3) **Tag-Divergenz** — das Release `ssd.jpl.nasa.gov` trägt 999 Assets aus vielen Workflows, das Register dort nur 4 (`f107_penticton.bin`, `first14.json`, `goes_xrs.bin`, `jwst_spectra.bin`) — geteiltes Misc-Release.
+- **Blockade:** Bindung je Workflow nur scoped möglich (Compiler→Asset); Own-CDN-Löschung des Junk braucht vorher den `sgrep`-Konsumenten-Check. Zulassung fehlt nur bei den echten Neuen (`pioneer10/11_navio`, `galileo_receiver`, `allwise_part_*` sharded/dynamisch) — Mountains Zeile.
+- **Braucht:** (a) die drei weiteren reg==Release-Workflows binden (scoped); (b) Compiler-Hygiene — nur kanonische Assets hochladen, Roh-Intermediäre nicht auf die CDN; (c) Mischtag entwirren (jeder Workflow schreibt sein eigenes Netloc); (d) Own-CDN-Junk nach Konsumenten-Check entfernen; (e) Bindung auf die je Workflow eigenen registrierten Assets scopen, wo kein Allein-Writer (de44).
 
 ### Träger `survey-2026-09-03-daten-holdings-inventur` — Ziel-Layout-Migration
 - **Status:** eigen
