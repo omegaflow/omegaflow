@@ -4150,6 +4150,7 @@ pub fn main_flow() {
                     | "cses_scm"
                     | "black_marble_vnp46a3_nightlight"
                     | "ghsl_built_s"
+                    | "usda_fara_low_access"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

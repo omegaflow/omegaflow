@@ -1,18 +1,32 @@
+use omegaflow::archivar::LeapSeconds;
+use omegaflow::archivar::embedded_lsk;
+use omegaflow::archivar::geo::{COMP_USDA_FARA_SHARE, GeoRec, magic_of, parse_bin, write_bin};
 use omegaflow::archivar::quaoar_occlt::{ZipEntry, zip_entries, zip_extract};
+use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::cdn::upload_release;
+use omegaflow::lsk::days_from_civil;
+use std::collections::HashMap;
 use std::process::Command;
 
 const NETLOC: &str = "ers.usda.gov";
 const ZIP_URL: &str = "https://www.ers.usda.gov/media/5627/2019-large-retailer-access-map-lram-formerly-known-as-the-food-access-research-atlas-fara-data.zip";
-const KEY_FIELDS: [&str; 4] = ["CensusTract", "State", "County", "Urban"];
+const CENTERS_URL: &str =
+    "https://www2.census.gov/geo/docs/reference/cenpop2020/tract/CenPop2020_Mean_TR.txt";
+const FORMAT: &str = "usda_fara_low_access";
+const FIPS_FIELD: &str = "CensusTract";
+const VALUE_FIELD: &str = "lapophalfshare";
+const EPOCH_YEAR: i64 = 2019;
+const EPOCH_MONTH: i64 = 1;
+const EPOCH_DAY: i64 = 1;
 
-fn arg_value(args: &[String], key: &str) -> Option<String> {
+fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
-        .position(|a| a == key)
+        .position(|a| a == name)
         .and_then(|i| args.get(i + 1))
         .cloned()
 }
 
-fn fetch(url: &str) -> Option<Vec<u8>> {
+fn fetch(url: &str) -> Result<Vec<u8>, String> {
     let out = Command::new("curl")
         .arg("-sSf")
         .arg("--retry")
@@ -21,16 +35,24 @@ fn fetch(url: &str) -> Option<Vec<u8>> {
         .arg("900")
         .arg(url)
         .output()
-        .ok()?;
-    if out.status.success() {
-        Some(out.stdout)
-    } else {
-        eprintln!(
-            "fetch http {}: {}",
-            out.status,
+        .map_err(|e| format!("curl {url} returned void: {e}"))?;
+    if !out.status.success() {
+        return Err(format!(
+            "{url}: reads no bytes — {}",
             String::from_utf8_lossy(&out.stderr).trim()
-        );
-        None
+        ));
+    }
+    if out.stdout.is_empty() {
+        return Err(format!("{url}: carries no bytes"));
+    }
+    Ok(out.stdout)
+}
+
+fn read_bytes(source: &str) -> Result<Vec<u8>, String> {
+    if source.starts_with("http://") || source.starts_with("https://") {
+        fetch(source)
+    } else {
+        std::fs::read(source).map_err(|e| format!("read {source} returned void: {e}"))
     }
 }
 
@@ -53,15 +75,16 @@ fn split_csv(line: &str) -> Vec<String> {
     fields
 }
 
-fn cell_kind(cell: &str) -> &'static str {
-    let t = cell.trim();
-    if t.is_empty() || t.eq_ignore_ascii_case("null") {
-        "null"
-    } else if t.parse::<f64>().is_ok() {
-        "numeric"
-    } else {
-        "text"
-    }
+fn header_fields(header: &str) -> Vec<String> {
+    let line = match header.strip_prefix('\u{feff}') {
+        Some(s) => s,
+        None => header,
+    };
+    split_csv(line)
+}
+
+fn field_index(fields: &[String], name: &str) -> Option<usize> {
+    fields.iter().position(|f| f == name)
 }
 
 fn find_data_member(entries: &[ZipEntry]) -> Option<&ZipEntry> {
@@ -71,228 +94,292 @@ fn find_data_member(entries: &[ZipEntry]) -> Option<&ZipEntry> {
         .max_by_key(|e| e.comp_size)
 }
 
-struct Schema {
-    fields: Vec<String>,
-    sample: Vec<String>,
-    rows: usize,
-    numeric_cells: usize,
-    null_cells: usize,
-    text_cells: usize,
+fn parse_step(args: &[String], name: &str, default: usize) -> Result<usize, String> {
+    match arg_value(args, name) {
+        Some(v) => {
+            let n = v
+                .parse::<usize>()
+                .map_err(|_| format!("{name} {v} carries no step"))?;
+            if n == 0 {
+                return Err(format!("{name} carries no positive step"));
+            }
+            Ok(n)
+        }
+        None => Ok(default),
+    }
 }
 
-fn parse_schema(body: &str) -> Option<Schema> {
-    let mut lines = body.lines();
-    let header = lines.find(|l| !l.trim().is_empty())?;
-    let fields = split_csv(header);
-    if fields.is_empty() {
+fn parse_coord(s: &str) -> Option<f64> {
+    let v = s.trim().parse::<f64>().ok()?;
+    if v.is_finite() { Some(v) } else { None }
+}
+
+fn finite_share(s: &str) -> Option<f64> {
+    let t = s.trim();
+    if t.is_empty() || t.eq_ignore_ascii_case("null") || t.eq_ignore_ascii_case("na") {
         return None;
     }
-    let mut sample: Vec<String> = Vec::new();
-    let mut rows = 0usize;
-    let mut numeric_cells = 0usize;
-    let mut null_cells = 0usize;
-    let mut text_cells = 0usize;
+    let v = t.parse::<f64>().ok()?;
+    if v.is_finite() && v >= 0.0 { Some(v) } else { None }
+}
+
+fn pad_fips(s: &str, width: usize) -> String {
+    let t = s.trim();
+    if t.len() >= width {
+        return t.to_string();
+    }
+    let mut out = String::with_capacity(width);
+    for _ in t.len()..width {
+        out.push('0');
+    }
+    out.push_str(t);
+    out
+}
+
+fn parse_centers(text: &str) -> Result<HashMap<String, (f64, f64)>, String> {
+    let mut lines = text.lines().filter(|l| !l.trim().is_empty());
+    let header = lines
+        .next()
+        .ok_or_else(|| "the census centre file carries no header".to_string())?;
+    let fields = header_fields(header);
+    let state_idx = field_index(&fields, "STATEFP")
+        .ok_or_else(|| "the census centre file carries no STATEFP".to_string())?;
+    let county_idx = field_index(&fields, "COUNTYFP")
+        .ok_or_else(|| "the census centre file carries no COUNTYFP".to_string())?;
+    let tract_idx = field_index(&fields, "TRACTCE")
+        .ok_or_else(|| "the census centre file carries no TRACTCE".to_string())?;
+    let lat_idx = field_index(&fields, "LATITUDE")
+        .ok_or_else(|| "the census centre file carries no LATITUDE".to_string())?;
+    let lon_idx = field_index(&fields, "LONGITUDE")
+        .ok_or_else(|| "the census centre file carries no LONGITUDE".to_string())?;
+    let mut out: HashMap<String, (f64, f64)> = HashMap::new();
     for line in lines {
-        if line.trim().is_empty() {
+        let cells = split_csv(line);
+        let Some(state) = cells.get(state_idx) else {
+            continue;
+        };
+        let Some(county) = cells.get(county_idx) else {
+            continue;
+        };
+        let Some(tract) = cells.get(tract_idx) else {
+            continue;
+        };
+        let Some(lat) = cells.get(lat_idx).and_then(|s| parse_coord(s)) else {
+            continue;
+        };
+        let Some(lon) = cells.get(lon_idx).and_then(|s| parse_coord(s)) else {
+            continue;
+        };
+        if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) {
+            continue;
+        }
+        let key = format!(
+            "{}{}{}",
+            pad_fips(state, 2),
+            pad_fips(county, 3),
+            pad_fips(tract, 6)
+        );
+        out.insert(key, (lat, lon));
+    }
+    if out.is_empty() {
+        return Err("the census centre file carries no usable tract centre".to_string());
+    }
+    Ok(out)
+}
+
+fn epoch_tdb() -> Result<f64, String> {
+    let lsk: LeapSeconds = embedded_lsk()
+        .ok_or_else(|| "the embedded naif0012.tls stays unread — no epoch".to_string())?;
+    let days = days_from_civil(EPOCH_YEAR, EPOCH_MONTH, EPOCH_DAY)
+        .ok_or_else(|| "the 2019-01-01 epoch stays uncompiled".to_string())?;
+    let unix = days as f64 * 86400.0;
+    lsk.unix_to_tdb(unix)
+        .ok_or_else(|| "the 2019-01-01 epoch stays untranslated".to_string())
+}
+
+fn parse_fara(
+    text: &str,
+    centers: &HashMap<String, (f64, f64)>,
+    t: f64,
+    stride: usize,
+    limit: usize,
+) -> Result<Vec<GeoRec>, String> {
+    let mut lines = text.lines().filter(|l| !l.trim().is_empty());
+    let header = lines
+        .next()
+        .ok_or_else(|| "the FARA table carries no header".to_string())?;
+    let fields = header_fields(header);
+    let fips_idx = field_index(&fields, FIPS_FIELD)
+        .ok_or_else(|| format!("the FARA table carries no {FIPS_FIELD} column"))?;
+    let value_idx = field_index(&fields, VALUE_FIELD)
+        .ok_or_else(|| format!("the FARA table carries no {VALUE_FIELD} column"))?;
+    let mut records: Vec<GeoRec> = Vec::new();
+    let mut row = 0usize;
+    for line in lines {
+        let take = row % stride == 0;
+        row += 1;
+        if !take {
             continue;
         }
         let cells = split_csv(line);
-        if sample.is_empty() {
-            sample = cells.clone();
-        }
-        rows += 1;
-        for cell in &cells {
-            match cell_kind(cell) {
-                "numeric" => numeric_cells += 1,
-                "null" => null_cells += 1,
-                _ => text_cells += 1,
-            }
-        }
-    }
-    Some(Schema {
-        fields,
-        sample,
-        rows,
-        numeric_cells,
-        null_cells,
-        text_cells,
-    })
-}
-
-fn name_tokens(name: &str) -> Vec<String> {
-    let mut tokens: Vec<String> = Vec::new();
-    let mut token = String::new();
-    let mut prev_lower = false;
-    for c in name.chars() {
-        if c.is_ascii_alphanumeric() {
-            if prev_lower && c.is_ascii_uppercase() && !token.is_empty() {
-                tokens.push(token.to_ascii_lowercase());
-                token.clear();
-            }
-            prev_lower = c.is_ascii_lowercase();
-            token.push(c);
-        } else {
-            if !token.is_empty() {
-                tokens.push(token.to_ascii_lowercase());
-                token.clear();
-            }
-            prev_lower = false;
+        let Some(fips) = cells.get(fips_idx) else {
+            continue;
+        };
+        let Some(val) = cells.get(value_idx).and_then(|s| finite_share(s)) else {
+            continue;
+        };
+        let Some(&(lat, lon)) = centers.get(fips.trim()) else {
+            continue;
+        };
+        records.push(GeoRec {
+            t,
+            lat,
+            lon,
+            alt: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            val,
+            comp: COMP_USDA_FARA_SHARE,
+            station: 0,
+        });
+        if records.len() >= limit {
+            break;
         }
     }
-    if !token.is_empty() {
-        tokens.push(token.to_ascii_lowercase());
+    Ok(records)
+}
+
+fn out_path(args: &[String], netloc: &str) -> String {
+    match arg_value(args, "--out") {
+        Some(p) if !p.is_empty() => p,
+        _ => format!("data/{netloc}/{FORMAT}.bin"),
     }
-    tokens
 }
 
-fn has_coordinate_field(fields: &[String]) -> bool {
-    fields.iter().any(|f| {
-        name_tokens(f)
-            .iter()
-            .any(|t| matches!(t.as_str(), "lat" | "latitude" | "lon" | "longitude"))
-    })
+fn netloc_of(args: &[String]) -> String {
+    match arg_value(args, "--netloc") {
+        Some(n) if !n.is_empty() => n,
+        _ => NETLOC.to_string(),
+    }
 }
 
-fn has_time_field(fields: &[String]) -> bool {
-    fields.iter().any(|f| {
-        name_tokens(f).iter().any(|t| {
-            matches!(
-                t.as_str(),
-                "year" | "date" | "epoch" | "time" | "month" | "day"
-            )
-        })
-    })
+fn ensure_parent(out: &str) -> Result<(), String> {
+    if let Some(parent) = std::path::Path::new(out).parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent)
+                .map_err(|e| format!("create {} void: {e}", parent.display()))?;
+        }
+    }
+    Ok(())
 }
 
-fn field_index(fields: &[String], name: &str) -> Option<usize> {
-    fields.iter().position(|f| f == name)
+fn last_seg(path: &str) -> &str {
+    match path.rsplit('/').next() {
+        Some(s) => s,
+        None => path,
+    }
+}
+
+fn run(args: &[String]) -> Result<(), String> {
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let stride = parse_step(args, "--stride", 1)?;
+    let limit = parse_step(args, "--limit", usize::MAX)?;
+    let zip_source = match arg_value(args, "--input") {
+        Some(p) => p,
+        None => match arg_value(args, "--url") {
+            Some(u) => u,
+            None => ZIP_URL.to_string(),
+        },
+    };
+    let centers_source = match arg_value(args, "--centers") {
+        Some(c) => c,
+        None => CENTERS_URL.to_string(),
+    };
+    let zip = read_bytes(&zip_source)?;
+    let entries = zip_entries(&zip)
+        .ok_or_else(|| format!("{zip_source}: central directory void — the zip stays unread"))?;
+    let member = find_data_member(&entries)
+        .ok_or_else(|| format!("{zip_source}: no .csv member — the table stays unread"))?;
+    let raw = zip_extract(&zip, member)
+        .ok_or_else(|| format!("{}: entry extract void", member.name))?;
+    let fara = String::from_utf8_lossy(&raw);
+    let center_bytes = read_bytes(&centers_source)?;
+    let center_text = String::from_utf8_lossy(&center_bytes);
+    let centers = parse_centers(&center_text)?;
+    let t = epoch_tdb()?;
+    let records = parse_fara(&fara, &centers, t, stride, limit)?;
+    if records.is_empty() {
+        return Err(format!(
+            "{zip_source}: no matched tract centre with a measured {VALUE_FIELD} — the bin stays unwritten (0 honored)"
+        ));
+    }
+    let magic = magic_of(FORMAT)
+        .ok_or_else(|| format!("{FORMAT} carries no geo magic — the per-cell arm stays unwritten"))?;
+    let netloc = netloc_of(args);
+    let out = out_path(args, &netloc);
+    ensure_parent(&out)?;
+    let bytes = write_bin(magic, &records);
+    std::fs::write(&out, &bytes).map_err(|e| format!("write {out} void: {e}"))?;
+    match parse_bin(magic, &bytes) {
+        Some(parsed) if parsed.len() == records.len() => {
+            println!(
+                "url https://github.com/omegaflow/sources/releases/download/{netloc}/{}",
+                last_seg(&out)
+            );
+            println!("origin {zip_source}");
+            println!("origin {centers_source}");
+            println!("compiler tools/harvest/src/bin/usda_fara_compiler.rs");
+            println!("format {FORMAT}");
+            println!("sha256 {}", sha256_hex(&bytes));
+            eprintln!(
+                "{out}: {} matched tracts, {} B, roundtrip parses",
+                parsed.len(),
+                bytes.len()
+            );
+        }
+        Some(parsed) => {
+            return Err(format!(
+                "{out}: {} parsed vs {} written — the asset stays unverified",
+                parsed.len(),
+                records.len()
+            ));
+        }
+        None => {
+            return Err(format!(
+                "{out}: roundtrip parse void — the asset stays unverified"
+            ));
+        }
+    }
+    if ci_mode && !upload_release(&netloc, &out) {
+        return Err(format!(
+            "{out}: CDN upload did not reach the {netloc} release"
+        ));
+    }
+    Ok(())
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let (zip, source) = match arg_value(&args, "--input") {
-        Some(path) => match std::fs::read(&path) {
-            Ok(b) => (b, path),
-            Err(e) => {
-                eprintln!("read {path} returned void: {e}");
-                std::process::exit(1);
-            }
-        },
-        None => {
-            let url = match arg_value(&args, "--url") {
-                Some(u) => u,
-                None => ZIP_URL.to_string(),
-            };
-            match fetch(&url) {
-                Some(b) => (b, url),
-                None => {
-                    eprintln!("{url}: fetch void");
-                    std::process::exit(1);
-                }
-            }
-        }
-    };
-    let entries = match zip_entries(&zip) {
-        Some(e) => e,
-        None => {
-            eprintln!("{source}: central directory void — the zip stays unread (0 honored)");
-            std::process::exit(1);
-        }
-    };
-    let member = match find_data_member(&entries) {
-        Some(m) => m,
-        None => {
-            eprintln!("{source}: no .csv member in the zip — the table stays unread (0 honored)");
-            std::process::exit(1);
-        }
-    };
-    let raw = match zip_extract(&zip, member) {
-        Some(r) => r,
-        None => {
-            eprintln!("{}: entry extract void (0 honored)", member.name);
-            std::process::exit(1);
-        }
-    };
-    let text = String::from_utf8_lossy(&raw);
-    let schema = match parse_schema(&text) {
-        Some(s) => s,
-        None => {
-            eprintln!(
-                "{}: header void — the table stays unread (0 honored)",
-                member.name
-            );
-            std::process::exit(1);
-        }
-    };
-    if schema.rows == 0 {
+    if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "{}: header only, no data rows — the table stays unread (0 honored)",
-            member.name
+            "usage: usda_fara_compiler [--input <zip-path>] [--url <zip-url>] [--centers <path|url>] [--netloc <netloc>] [--stride N] [--limit N] [--out <path>] [--ci-mode]"
         );
+        eprintln!("  joins the USDA FARA tract table with the 2020 census tract centres");
+        eprintln!("  unit: low-access population share at 1/2 mile (lapophalfshare)");
+        eprintln!("  epoch: the dataset's own year, 2019-01-01 TDB");
+        eprintln!("  --limit bounds the emitted tracts; --stride samples every Nth tract row");
+        eprintln!("  --ci-mode uploads the verified asset to the <netloc> CDN release");
         std::process::exit(1);
     }
-
-    eprintln!("{source} -> {} ({} B)", member.name, raw.len());
-    eprintln!(
-        "{} fields, {} data rows ({} numeric cells, {} null cells, {} text cells)",
-        schema.fields.len(),
-        schema.rows,
-        schema.numeric_cells,
-        schema.null_cells,
-        schema.text_cells
-    );
-    eprintln!("key fields:");
-    for key in KEY_FIELDS {
-        match field_index(&schema.fields, key) {
-            Some(i) => {
-                let cell = match schema.sample.get(i) {
-                    Some(v) => v.as_str(),
-                    None => "<absent>",
-                };
-                eprintln!("  [{i}] {key} = {cell}");
-            }
-            None => eprintln!("  {key}: absent"),
-        }
-    }
-    eprintln!("fields:");
-    for (i, field) in schema.fields.iter().enumerate() {
-        let cell = match schema.sample.get(i) {
-            Some(v) => v.as_str(),
-            None => "",
-        };
-        eprintln!("  [{i}] {field}: {cell} ({})", cell_kind(cell));
-    }
-    eprintln!(
-        "coordinate field present: {} | time field present: {}",
-        has_coordinate_field(&schema.fields),
-        has_time_field(&schema.fields)
-    );
-    eprintln!(
-        "STOP — static geography table: the geography key is CensusTract (11-digit FIPS) with State/County/Urban; no latitude/longitude column and no year/date/epoch column are present."
-    );
-    eprintln!(
-        "missing design: no epoch value stream can be emitted (the ReadMe names a single April 2021 release, no time axis), and no (lat, lon, value) catalog can be emitted without a registered census-tract centroid catalog arm (none exists). No epoch is invented. 0 honored — the schema dump is the deliverable of this atom."
-    );
-    if ci_mode {
-        eprintln!(
-            "{NETLOC}: --ci-mode set, but there is no epoch value stream to manifest; no upload_release (0 honored)."
-        );
+    if let Err(msg) = run(&args) {
+        eprintln!("usda_fara_compiler: {msg}");
+        std::process::exit(1);
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn entry(name: &str, comp_size: u64) -> ZipEntry {
-        ZipEntry {
-            name: name.to_string(),
-            method: 0,
-            comp_size,
-            local_offset: 0,
-        }
-    }
 
     #[test]
     fn split_csv_keeps_quoted_commas() {
@@ -301,32 +388,35 @@ mod tests {
     }
 
     #[test]
-    fn cell_kind_reads_numeric_null_and_text() {
-        assert_eq!(cell_kind("11.3"), "numeric");
-        assert_eq!(cell_kind("NULL"), "null");
-        assert_eq!(cell_kind(""), "null");
-        assert_eq!(cell_kind("Alabama"), "text");
+    fn header_fields_strip_a_bom() {
+        let fields = header_fields("\u{feff}CensusTract,lapophalfshare");
+        assert_eq!(fields, vec!["CensusTract", "lapophalfshare"]);
     }
 
     #[test]
-    fn parse_schema_reads_header_sample_and_counts() {
-        let body = "CensusTract,State,Urban,lapophalfshare\n\
- 1001020100,Alabama,1,24.42\n\
- 1001020200,Alabama,1,NULL\n";
-        let s = parse_schema(body).unwrap();
-        assert_eq!(s.fields.len(), 4);
-        assert_eq!(s.rows, 2);
-        assert_eq!(s.sample[0], "1001020100");
-        assert_eq!(s.numeric_cells, 5);
-        assert_eq!(s.null_cells, 1);
-        assert_eq!(s.text_cells, 2);
-        assert_eq!(field_index(&s.fields, "lapophalfshare"), Some(3));
+    fn finite_share_reads_measured_and_refuses_absent() {
+        assert_eq!(finite_share("0.1442"), Some(0.1442));
+        assert_eq!(finite_share("0"), Some(0.0));
+        assert_eq!(finite_share("NULL"), None);
+        assert_eq!(finite_share("NA"), None);
+        assert_eq!(finite_share(""), None);
+        assert_eq!(finite_share("-1"), None);
     }
 
     #[test]
-    fn parse_schema_refuses_an_empty_body() {
-        assert!(parse_schema("").is_none());
-        assert!(parse_schema("\n\n").is_none());
+    fn pad_fips_keeps_leading_zeros() {
+        assert_eq!(pad_fips("1", 2), "01");
+        assert_eq!(pad_fips("100", 6), "000100");
+        assert_eq!(pad_fips("010", 2), "010");
+    }
+
+    fn entry(name: &str, comp_size: u64) -> ZipEntry {
+        ZipEntry {
+            name: name.to_string(),
+            method: 0,
+            comp_size,
+            local_offset: 0,
+        }
     }
 
     #[test]
@@ -347,34 +437,51 @@ mod tests {
     }
 
     #[test]
-    fn coordinate_and_time_names_are_measured() {
-        let fields: Vec<String> = [
-            "LILATracts_1And10",
-            "CensusTract",
-            "State",
-            "PovertyRate",
-            "Update",
-        ]
-        .iter()
-        .map(|s| s.to_string())
-        .collect();
-        assert!(!has_coordinate_field(&fields));
-        assert!(!has_time_field(&fields));
-        let with_coord: Vec<String> = ["Latitude", "lon"].iter().map(|s| s.to_string()).collect();
-        assert!(has_coordinate_field(&with_coord));
-        let with_time: Vec<String> = ["Year", "ObservationDate"]
-            .iter()
-            .map(|s| s.to_string())
-            .collect();
-        assert!(has_time_field(&with_time));
+    fn parse_centers_keys_the_11_digit_fips() {
+        let text = "STATEFP,COUNTYFP,TRACTCE,POPULATION,LATITUDE,LONGITUDE\n\
+01,001,000100,4820,32.318,-86.902\n\
+02,020,000200,1000,61.37,-152.4\n";
+        let centers = parse_centers(text).unwrap();
+        assert_eq!(centers.len(), 2);
+        assert_eq!(centers.get("01001000100"), Some(&(32.318, -86.902)));
+        assert_eq!(centers.get("02020000200"), Some(&(61.37, -152.4)));
     }
 
     #[test]
-    fn name_tokens_split_on_camel_and_separator() {
-        assert_eq!(
-            name_tokens("LILATracts_1And10"),
-            vec!["lilatracts", "1and10"]
-        );
-        assert_eq!(name_tokens("ObservationDate"), vec!["observation", "date"]);
+    fn parse_fara_joins_centres_and_skips_absent() {
+        let text = "CensusTract,State,lapophalfshare\n\
+01001000100,Alabama,0.1442\n\
+01001000200,Alabama,NULL\n\
+99999999999,Nowhere,0.5\n";
+        let mut centers: HashMap<String, (f64, f64)> = HashMap::new();
+        centers.insert("01001000100".to_string(), (32.318, -86.902));
+        let records = parse_fara(text, &centers, 1546300800.0, 1, usize::MAX).unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].lat, 32.318);
+        assert_eq!(records[0].lon, -86.902);
+        assert_eq!(records[0].val, 0.1442);
+        assert_eq!(records[0].t, 1546300800.0);
+        assert_eq!(records[0].comp, COMP_USDA_FARA_SHARE);
+    }
+
+    #[test]
+    fn parse_fara_honours_stride_and_limit() {
+        let text = "CensusTract,State,lapophalfshare\n\
+01001000100,A,0.1\n\
+01001000100,A,0.2\n\
+01001000100,A,0.3\n";
+        let mut centers: HashMap<String, (f64, f64)> = HashMap::new();
+        centers.insert("01001000100".to_string(), (32.318, -86.902));
+        let strided = parse_fara(text, &centers, 1.0, 2, usize::MAX).unwrap();
+        assert_eq!(strided.len(), 2);
+        let limited = parse_fara(text, &centers, 1.0, 1, 1).unwrap();
+        assert_eq!(limited.len(), 1);
+    }
+
+    #[test]
+    fn epoch_is_the_dataset_year() {
+        let t = epoch_tdb().unwrap();
+        assert!(t > 1546300800.0);
+        assert!(t < 1546300800.0 + 86400.0);
     }
 }
