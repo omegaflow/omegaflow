@@ -3,7 +3,7 @@
   session: River-Folge 115
   class: handover
   date: 2026-10-07
-  sha256: 5f9e132e163cd5ebd97c85daef2c3f76db800cd92d24b6fcf43b5b1a6b3962f0
+  sha256: 21b1b37f8aeeaab637ae30c6c991157a773cc3743a462d89a0d8244e53534c13
   status: live
 -->
 # Handover — River-Folge 115 (2026-10-07)
@@ -43,6 +43,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Lage:** (gemessen 2026-10-07, HEAD) `src/mathematikerin/ozzy.rs`: `Witness { name, series, force_type: u8, kanal, origin }` + `Kanal` (`StaerkeKanal|ReferenzTreppe|NoccFeld|NachbarStation|AndereSonde|Zeit`) + `WitnessStamp` im `Residual`; `cargo check` 0/0, `cargo fmt` 0/0. Befragt: Rat (fünf Stimmen) + 5 API-Stimmen + 7 UI-Chats (Claude · Qwen3.7 · GLM-5.3 Deep Think Max · MiMo V2.6 Pro · Nemotron 3 Ultra · Kimi K3 · Sonnet 5.5 max = Operator-Nachreichung; Qwen 3.8 Max). Rohmaterial `state/stimmen/2026-10-07_ozzy-witness-stimmen.md`.
 - **Riss (getragen, ungeglättet):** A (TE des Residuums gegen disjunkte held-out Zeugen) vs B (TE gegen dieselben Zeugen, konditioniert auf die Extraktionsmenge). Kanal-Spannweite: **A allein 5** (voice-gemini · voice-inkling · voice-deepseek · Claude · Kimi K3), **B allein 2** (voice-gptoss · Nemotron 3 Ultra), **beide 5** (Qwen3.7 · Qwen3.8 Max · GLM-5.3 DT Max · MiMo · Sonnet 5.5 max; Sonnet: erst `A − B` trennt „läuft über E" von „jenseits von E"), **pending 2** (voice-nemotron · Duck.ai). Kein Konsens. Quer-Konsens quer durch **alle** Kanäle: **10 Surrogate + `mean+2σ` sind zu schwach** (≥99, teils ≥199; Rang-/Permutationstest; `N_eff` statt `N − Rang`; `None` getypt mit Grund). Sonnets Riss: der **B-Null** braucht bedingte Permutation innerhalb E, weil Phasen-Randomisierung von H die H–E-Abhängigkeit zerstört, auf die B konditioniert.
 - **Blockade:** die A/B-Wahl ist ein eigenes Operator-Wort (Rat: „die Wahl ist ein eigenes Operator-Wort").
+- **Zweite Runde am Granit (5 Axiome + fünf Stimmen), gemessen 2026-10-07:** die Frage nicht statistisch, sondern am Haus-Gesetz (A = A · 0 honored) — **6× (A)** (5 API-Stimmen einstimmig + GLM-5.3 Deep Think Max) gegen **1× (A−B)** (Claude Sonnet 5.5 Max). Lesart: (B) gegen dieselben Zeugen ist per Konstruktion null und trägt als mechanisch erzwungene Null **kein Verdikt** — höchstens eine Leckage-Diagnose; (A−B) subtrahiert das Konstrukt. Offen: Qwen 3.8 Max / Kimi K3 (Operator-Nachreichung).
 - **Braucht:** (1) Operator-Wort A/B; (2) TE-Test (`te.rs`, `topological_te_phase`) je nach Wahl — A gegen disjunkte `B_test`, B konditioniert; (3) Surrogat-n-Floor nach dem Quer-Konsens; (4) Known-Answer-Gate auf Synthetik + held-out-Fenster.
 
 ### Membran-Startansicht — zwei Aperturen (Parity-Fix gebaut; CI-Verifikation offen)
