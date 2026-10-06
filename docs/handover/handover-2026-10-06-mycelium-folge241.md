@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass: Exposition-CDN-Workflows gebaut, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: ef130976b10c88440630fd8a5d806333dc392b3ca06f2dcd2b2f2d9d77fd0928
+  sha256: 444c1751da23292ef75f0b2c0f17f4174a2ff4a74dbb443996e3c56ad1511d55
   status: live
 -->
 # Handover — Mycelium-Folge 241 (2026-10-06)
@@ -49,9 +49,9 @@ Rolling-Fenster (7 Sessions) bei Schluss **$0.1562**.
 ### Träger `survey-2026-09-03-orphan-verdicts` — Step 5 CDN-kanonisch
 - **Status:** eigen
 - **Trigger:** je `*-cdn.yml` die Release-Menge aus `phi/sources.φ` lesen
-- **Lage:** (gemessen 2026-10-06) `:103-151` — 13 Netlocs, deren Release aus ≥2 Workflow-Klassen geschrieben wird. **Erste Bindung umgesetzt:** Helfer `.github/workflows/scripts/register_release_set.sh <netloc>` liest die registrierte Asset-Menge; `de44-cdn.yml` verifiziert damit die 9 registrierten `ssd.jpl.nasa.gov-de`-Assets (`phi/sources.φ:3501-3557`). Übrige 12 Netlocs + probe/register/build-Writer offen (destruktiv).
-- **Blockade:** keine (Schritt ist die Bindung).
-- **Braucht:** je `*-cdn.yml` `register_release_set.sh <netloc>` einbinden; Writer-Angleich (destruktiv) erst nach vollständiger Tag-Prüfung.
+- **Lage:** (gemessen 2026-10-06) `:103-151` — 13 Netlocs. **Bindung umgesetzt:** Helfer `.github/workflows/scripts/register_release_set.sh <netloc>`; `de44-cdn.yml` verifiziert `ssd.jpl.nasa.gov-de` (9 registriert == 9 im Release, `sources.φ:3501-3557`). **Reg==Release (mechanisch bindbar):** `ssd.jpl.nasa.gov-de` 9/9, `pds-rings.seti.org` 19/19, `naif.jpl.nasa.gov` 575/575, `ftp.imcce.fr` 12/12. **Reg<Release (Register unvollständig — Release trägt unregistrierte Assets):** `zenodo.org` 44/82, `ssd.jpl.nasa.gov` 4/999, `tapvizier.cds.unistra.fr` 25/36, `irsa.ipac.caltech.edu` 7/18, `spdf.gsfc.nasa.gov` 11/17, `data.pmel.noaa.gov` 2/7, `pds-ppi.igpp.ucla.edu` 23/26, `vizier.cds.unistra.fr` 5/6, `minorplanetcenter.net` 5/6. **Familien-Tag (nicht als feste Menge bindbar):** `modis_lst_cmg` (`sources.φ:18706` url = `data.lpdaac…-modis_lst_cmg/…manifest`; Jahr-Tags dynamisch, `releases/download/modis` = 0).
+- **Blockade:** für 9 Netlocs ist der Register-Eintrag unvollständig; die Bindung „registriert ⊆ Release" verifiziert dann untreu (die Orphans bleiben unbenannt). Nachtragen = Mountain-Verdikt; Entfernen = destruktiv.
+- **Braucht:** (a) die drei weiteren reg==Release-Workflows (`pds-rings`/`naif`/`ftp.imcce`) mechanisch binden; (b) je mismatch-Netloc die Orphan-Menge disponieren (Register nachtragen ODER Release-Assets entfernen — destruktiv, erst nach vollständiger Tag-Prüfung); (c) `modis_lst_cmg` als Familien-Anker, Jahr-Menge bleibt Laufzeit-Ableitung. **(d) Zuordnung messen:** eine workflow-weite Release-Verifikation ist nur zulässig, wo der Workflow **alleiniger Writer** des Releases ist (`ssd.jpl.nasa.gov-de` = de44); sonst muss die Bindung auf die eigenen registrierten Assets beschränkt werden.
 
 ### Träger `survey-2026-09-03-daten-holdings-inventur` — Ziel-Layout-Migration
 - **Status:** eigen
