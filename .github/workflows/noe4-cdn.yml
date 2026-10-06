@@ -51,3 +51,19 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin noe4_compiler -- \
             NOE-4-2020.bsp --gm NOE-4-2020.tpc --chain de440s.bsp --ci-mode
+      - name: Verify the registered ftp.imcce.fr noe4 assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh ftp.imcce.fr ephemeris_noe4)
+          if [ -z "$expected" ]; then
+            echo "no ephemeris_noe4 asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view ftp.imcce.fr --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered ftp.imcce.fr noe4 assets all present"
