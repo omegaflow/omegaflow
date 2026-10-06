@@ -8395,6 +8395,24 @@ fn test_carries_coord_marker_flags_frame_urls_only() {
 }
 
 #[test]
+fn test_redact_secret_hides_query_values() {
+    assert_eq!(
+        super::redact_secret(
+            "https://data.oceannetworks.ca/api/scalardata?token=abc123&locationCode=CTD"
+        ),
+        "https://data.oceannetworks.ca/api/scalardata?token=***&locationCode=CTD"
+    );
+    assert_eq!(
+        super::redact_secret("https://example.org/data?station=42"),
+        "https://example.org/data?station=42"
+    );
+    assert_eq!(
+        super::redact_secret("https://example.org/data"),
+        "https://example.org/data"
+    );
+}
+
+#[test]
 fn test_refusal_ledger_dedup_and_reload() {
     let path =
         std::env::temp_dir().join(format!("omegaflow_refusal_ledger_{}.φ", std::process::id()));
