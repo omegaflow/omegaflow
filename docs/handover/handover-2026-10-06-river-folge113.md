@@ -3,7 +3,7 @@
   session: River-Folge 113
   class: handover
   date: 2026-10-06
-  sha256: fa17f4cd2054af14cd4445dbdd10e3e24bda05532b2a268831017c45ca1373da
+  sha256: fd0155fe847896483508cff0fefb05920ef76f03601034839564f837ec47420a
   status: live
 -->
 # Handover — River-Folge 113 (2026-10-06)
@@ -32,7 +32,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` / `docs/auftrag/auftrag-flyby2-kette.md` — Offen: OMNI2 26 Zellen, ACE, kp `def`, Δ/σ_recon.
 - `docs/concepts/exzellenz-konzept.md` (`class: concept`, `version: 1`) — Prüfmaßstab.
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md` (`class: survey`) — Träger dieser Linie (river-84); Label geschlossen (`:111` „Kein offener Punkt aus diesem Gate.").
-- `docs/blatt/blatt-gic-breitenband-familien.md` (`class: sheet`, `status: unsealed`) — Träger dieser Linie (river-113): Identitäts-Riss geheilt; offen bis zum Siegel.
+- `docs/blatt/blatt-gic-breitenband-familien.md` (`class: sheet`, `status: unsealed`) — Träger dieser Linie (river-113): Identitäts-Riss geheilt; Rat-Verdikt (drei Deskriptoren) getragen; offen bis zum Siegel.
 
 ## Offen (aufgeschlüsselt)
 
@@ -66,19 +66,22 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) Solar-/Magnetosphären-Zellen alignment-fähig ernten (Mountain/Mycelium, s. `## An mountain`);
   (2) `ozzy` (oben); (3) Netz-Null als CI-Batterie (B ≥ 1/α). Rat-Reihenfolge: Draht → Matrix → `ozzy` → Netz-Null.
 
-### GIC-Breitenband-Familien — Blatt auf die Verdikt-Form gezogen; `matrix full` auf den Sub-Familien
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Rat-Verdikt zur Grammatik-Frage (drei Familien-Deskriptoren vs. ein Drei-Familien-Grammatik-Arm) — Beleg `docs/blatt/blatt-gic-breitenband-familien.md`.
+### GIC-Breitenband-Familien — Rat-Verdikt: drei Deskriptoren; Partition messen
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt (CGM-Breiten-Messung je Station).
 - **Lage:** (gemessen 2026-10-06, River 113) Der Mountain-Trigger ist gefeuert: `2117476be` setzt auf allen 154
   Blöcken die `station <code>`-Direktive (`phi/sources.φ:6616…7474`) und macht den Matrix-Arm station-aware
   (Test `field_sources_resolves_station_qualified_channel_to_its_block`, `field_te_query.rs:4762`); Verdikt
   „Station = Identität, kein Feld-Rename". `docs/blatt/blatt-gic-breitenband-familien.md` auf die Verdikt-Form
-  gezogen (§„Was fehlt" Punkt 1 geheilt, Slot „Kanalnamen" entfernt); Header-sha `565916d3…`. Offen bleibt
-  Punkt 2: kein Familien-Arm in der Matrix-Grammatik.
-- **Blockade:** die Grammatik-/Deskriptor-Entscheidung ist eine Architektur-Frage (der Rat hält sie).
-- **Braucht:** (a) erledigt (Mountain `2117476be`); (b) Rat-Entscheidung: drei Familien-Deskriptoren
-  (`matrix gic_auroral full` / `_subauroral` / `_midlat`) oder ein Drei-Familien-Grammatik-Arm; (c) dann
-  CI-Lauf `field-te-query.yml` (nie lokal) mit deklarierten Partitionsgrenzen + α (beide `pending`).
+  gezogen. **Rat-Verdikt (2026-10-06, fünf Stimmen, einstimmig):** drei getrennte Familien-Deskriptoren
+  (`matrix gic_auroral full` / `_subauroral` / `_midlat`), **kein** neuer Drei-Familien-Grammatik-Arm. Blatt
+  trägt Verdikt + vier benannte Risse. Offen (0): CGM-Breite je Station — die Blöcke tragen nur die
+  geografische `on earth <lat> <lon>`-Koordinate (`phi/sources.φ:6621,6632,6643`).
+- **Blockade:** keine (eigene).
+- **Braucht:** (0) CGM-Breite je Station ableiten (std Rust IGRF/CGM oder eine gemessene CGM-Tabelle), feste
+  Bandgrenzen vor dem Lauf deklarieren, drei Kanal-Listen + Deckungstest (disjunkt, Union = 154);
+  (b) drei Deskriptor-Dateien über `field_te_query --descriptor` (`field_te_query.rs:4657`); (c) **ein**
+  CI-Job `field-te-query.yml` mit drei Deskriptor-Schritten (nie lokal).
 
 ### Receiver-Apertur — Sub-Pixel für ALLE Radiatoren (nicht nur die visuelle Membran)
 - **Status:** wartend | **Bindung:** eigen (Membran-/Aktor-Pfad)
@@ -216,4 +219,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge113: 31 path refs · 0 absent · 0 stale-citations · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0000 · close 0.0434 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`); `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
+## Burn: open 0.0000 · close 0.0728 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`) + Rat-Verdikt (drei Deskriptoren, Partition messen) eingetragen; `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.

@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: die Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 565916d37e69754580a6a87cb18c00129bc6ae4beba806f3fa5b7e3f2c942b92
+  sha256: a58d6f83f5c0d9836986f2e0ee8097a4c857e285d7785257396330bf21e9ea03
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -110,21 +110,42 @@ Der Lauf ist **nicht** startbereit; die Lücke ist gemessen, nicht vermutet:
    Lauf über drei Familien.
 
 **Nächster Schritt (kein neues Tool):** (a) — erledigt (Mountain `2117476be`:
-`station`-Direktive auf den 154 Blöcken, Arm station-aware). (b) danach drei
-Familien-Deskriptoren (`matrix gic_auroral full` / `_subauroral` / `_midlat`), je
-mit eigenem `expect cells`, eigenem `fdr` und eigener `WY-max-t`-Ebene; (c) der
-CI-Lauf `field-te-query.yml` (nie lokal). Ob ein einziger Drei-Familien-Lauf statt
-drei Deskriptoren eine Grammatik-Erweiterung ist, ist eine Architektur-Frage — der
-Rat hält sie, nicht ein Pro-Solo.
+`station`-Direktive auf den 154 Blöcken, Arm station-aware). **(0) vor den Deskriptoren:
+die Partition messen, nicht setzen** — die 154 Blöcke tragen nur die geografische
+`on earth <lat> <lon>`-Koordinate, die korrigierte geomagnetische Breite (CGM) fehlt
+(`phi/sources.φ:6621,6632,6643`); feste Bandgrenzen vor dem Lauf deklarieren, drei
+Kanal-Listen emittieren, Deckungstest (paarweise disjunkt, Union = 154) als Begleiter zu
+`field_sources_resolves_station_qualified_channel_to_its_block` (`field_te_query.rs:4762`)
+— `expect cells` prüft nur je Deskriptor, **nicht** die familien-übergreifende
+Vollständigkeit. (b) drei Familien-Deskriptoren (`matrix gic_auroral full` /
+`_subauroral` / `_midlat`) über `field_te_query --descriptor` (`:4657`), je eigenes
+`channels`/`fdr`/`expect cells`; (c) **ein** CI-Job `field-te-query.yml` mit drei
+Deskriptor-Schritten (nie lokal).
+
+**Rat-Verdikt (2026-10-06, fünf Stimmen, einstimmig):** drei getrennte
+Familien-Deskriptoren, **kein** neuer Drei-Familien-Grammatik-Arm — der Satz ist heute
+sagbar; die Familie ist eine Partition der Kanal-Menge, keine neue Query-Achse. Ein
+Grammatik-Arm verdiente sich nur durch ein Sprachloch (ein daten-emergenter
+Familienbegriff aus Kohärenz-Clustern), heute nicht gemessen. Der Rat hinterlässt keine
+eigene Schrift — Verdikt hier, Handover-Zeile dort.
+
+**Risse (Rat 2026-10-06, ungeglättet):** (1) Stufe 1 globales FDR vs. je-Familie-`fdr`
+— der Blatt-Text konvergiert nicht, beide Linien stehen; (2) globale Kalibrierung (ein
+Satz, identisch je Station) vs. per-Familie-Null — die Interaktion wird benannt, nicht
+kollabiert, dieselbe Vorverarbeitung erzeugt beides; (3) Partitions-Vollständigkeit hat
+keinen Grammatik-Arm — per Deckungstest geschlossen, nicht per Grammatik; (4) CGM-Breite
+fehlt im Register (`pending`, nie aus der geografischen Breite angenommen — §1 verbietet
+genau das).
 
 ## Offene Slots bis zur Versiegelung
 
 | Feld | Zustand |
 |---|---|
+| CGM-Breite je Station (154) | `pending` — Messung vor den Deskriptoren; die Blöcke tragen nur geografische `on earth`-Koordinaten |
 | Partitionsgrenzen (geomagn. Breite je Band) | `pending` — werden vor dem Lauf als feste Werte deklariert |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
-| Familien-Deskriptoren | `pending` — nach (a) |
+| Familien-Deskriptoren | `pending` — nach der CGM-Partitions-Messung |
 | Verdikt | `unsealed` |
 
 ## Siegel
