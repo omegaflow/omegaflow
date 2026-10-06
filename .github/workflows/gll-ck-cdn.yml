@@ -55,6 +55,22 @@ jobs:
         run: |
           gh release upload naif.jpl.nasa.gov gll_plt_rec_1990_tav_v00.bc \
             --clobber --repo omegaflow/sources
+      - name: Verify the registered naif.jpl.nasa.gov gll_plt_rec assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh naif.jpl.nasa.gov gll_plt_rec)
+          if [ -z "$expected" ]; then
+            echo "no gll_plt_rec asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered naif.jpl.nasa.gov gll_plt_rec assets all present"
 
   gll-1990-rtr-ck:
     runs-on: ubuntu-latest
@@ -138,3 +154,35 @@ jobs:
       - name: Manifest the full Galileo -77000 rotor CK series (570 products + mk00062a.tsc) to the CDN
         run: |
           cargo run --release -p omegaflow-harvest --bin gll_ck_manifestor -- --ci-mode
+      - name: Verify the registered naif.jpl.nasa.gov ck assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh naif.jpl.nasa.gov ck)
+          if [ -z "$expected" ]; then
+            echo "no ck asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered naif.jpl.nasa.gov ck assets all present"
+      - name: Verify the registered naif.jpl.nasa.gov mk assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh naif.jpl.nasa.gov mk)
+          if [ -z "$expected" ]; then
+            echo "no mk asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view naif.jpl.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered naif.jpl.nasa.gov mk assets all present"
