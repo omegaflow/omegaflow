@@ -1037,8 +1037,17 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
     })
 }
 
-fn field_matches(fc: &FieldConfig, name: &str) -> bool {
-    fc.name == name || fc.key == name
+fn field_matches(fc: &FieldConfig, station: Option<&str>, name: &str) -> bool {
+    if fc.name == name || fc.key == name {
+        return true;
+    }
+    match station {
+        Some(code) => {
+            let lower = code.to_ascii_lowercase();
+            name == format!("{}_{}", fc.name, lower) || name == format!("{}_{}", fc.key, lower)
+        }
+        None => false,
+    }
 }
 
 fn source_fields(s: &SourceConfig) -> Vec<FieldConfig> {
@@ -1073,7 +1082,7 @@ fn field_sources(sources: &[SourceConfig], name: &str) -> Vec<(SourceConfig, Fie
     let mut out = Vec::new();
     for s in sources {
         for fc in source_fields(s) {
-            if field_matches(&fc, name) {
+            if field_matches(&fc, s.station_code.as_deref(), name) {
                 out.push((s.clone(), fc));
             }
         }
@@ -2056,7 +2065,7 @@ fn load_text_rows(src: &SourceConfig, fc: &FieldConfig, bytes: &[u8]) -> Option<
     let (epoch_col, field_key) = src.extracts.iter().find_map(|e| match e {
         Extract::Rows {
             fields, epoch_cols, ..
-        } if fields.iter().any(|f| field_matches(f, &fc.name)) => {
+        } if fields.iter().any(|f| field_matches(f, None, &fc.name)) => {
             let epoch = match epoch_cols
                 .first()
                 .and_then(|c| c.trim().parse::<usize>().ok())
@@ -2105,13 +2114,13 @@ fn text_source_for_field(src: &SourceConfig, name: &str) -> Option<SourceConfig>
     let mut kept = Vec::new();
     for e in &src.extracts {
         match e {
-            Extract::Field(fc) if field_matches(fc, name) => kept.push(e.clone()),
+            Extract::Field(fc) if field_matches(fc, None, name) => kept.push(e.clone()),
             Extract::First(fc, _)
             | Extract::Last(fc, _)
             | Extract::Path(fc)
             | Extract::Deep(fc)
             | Extract::Regex(fc)
-                if field_matches(fc, name) =>
+                if field_matches(fc, None, name) =>
             {
                 kept.push(e.clone());
             }
@@ -4693,6 +4702,100 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn field_cfg(name: &str) -> FieldConfig {
+        FieldConfig {
+            key: name.to_string(),
+            name: name.to_string(),
+            kernel: 0,
+            force: 0,
+            tau: 0.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: String::new(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+            aperture: omegaflow::archivar::Aperture::None,
+        }
+    }
+
+    fn source_cfg(field: FieldConfig, station: Option<&str>) -> SourceConfig {
+        SourceConfig {
+            ttl: 3600,
+            url: "https://example.com/x".into(),
+            origin: None,
+            terms: None,
+            frame: omegaflow::archivar::Frame::Manifest,
+            format: "text".into(),
+            extracts: vec![Extract::Field(field)],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            range: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            hapi_fill: std::collections::HashMap::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+            sha256: None,
+            window: None,
+            live_only: false,
+            station_code: station.map(|c| c.to_string()),
+        }
+    }
+
+    #[test]
+    fn field_sources_resolves_station_qualified_channel_to_its_block() {
+        let aae = source_cfg(field_cfg("intermagnet_xyz_x_nt"), Some("AAE"));
+        let abg = source_cfg(field_cfg("intermagnet_xyz_x_nt"), Some("ABG"));
+
+        let qualified = field_sources(std::slice::from_ref(&aae), "intermagnet_xyz_x_nt_aae");
+        assert_eq!(
+            qualified.len(),
+            1,
+            "the station channel names exactly its own block"
+        );
+        assert_eq!(
+            qualified[0].0.station_code.as_deref(),
+            Some("AAE"),
+            "the resolved block carries the station of the request"
+        );
+
+        let bare = field_sources(std::slice::from_ref(&aae), "intermagnet_xyz_x_nt");
+        assert_eq!(
+            bare.len(),
+            1,
+            "the bare field name still finds the same block"
+        );
+        assert_eq!(bare[0].0.station_code.as_deref(), Some("AAE"));
+
+        let both = [aae, abg];
+        let abg_only = field_sources(&both, "intermagnet_xyz_x_nt_abg");
+        assert_eq!(
+            abg_only.len(),
+            1,
+            "the ABG channel addresses only the ABG block"
+        );
+        assert_eq!(abg_only[0].0.station_code.as_deref(), Some("ABG"));
+        assert!(
+            field_sources(&both, "intermagnet_xyz_x_aae").is_empty(),
+            "an unqualified/unknown channel resolves nothing, never the first hit"
+        );
+    }
 
     #[test]
     fn matrix_resolution_gate_flags_the_coarser_pair_never_bins_silently() {

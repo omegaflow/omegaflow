@@ -335,11 +335,11 @@ pub fn ang_sep_arcsec(ra1_deg: f64, dec1_deg: f64, ra2_deg: f64, dec2_deg: f64) 
 pub fn predicted_radec(
     kepler_helio: [f64; 3],
     sun: [f64; 3],
-    observer: [f64; 3],
+    receiver: [f64; 3],
 ) -> Option<(f64, f64)> {
-    let dx = kepler_helio[0] + sun[0] - observer[0];
-    let dy = kepler_helio[1] + sun[1] - observer[1];
-    let dz = kepler_helio[2] + sun[2] - observer[2];
+    let dx = kepler_helio[0] + sun[0] - receiver[0];
+    let dy = kepler_helio[1] + sun[1] - receiver[1];
+    let dz = kepler_helio[2] + sun[2] - receiver[2];
     direction_to_radec(&[dx, dy, dz])
 }
 
@@ -488,7 +488,7 @@ mod tests {
     }
 
     #[test]
-    fn predicted_radec_folds_heliocentric_to_the_observer() {
+    fn predicted_radec_folds_heliocentric_to_the_receiver() {
         let helio = [40.0 * crate::archivar::kepler::AU_M, 0.0, 0.0];
         let sun = [-crate::archivar::kepler::AU_M, 0.0, 0.0];
         let obs = [-crate::archivar::kepler::AU_M, 0.0, 0.0];
