@@ -326,7 +326,7 @@ pub fn parse_flashes(bytes: &[u8], value_key: &str) -> Option<Vec<MtgFlash>> {
         let Some(value) = gated_value(&value_v, &value_gate, j) else {
             continue;
         };
-        if !(value > 0.0) {
+        if value <= 0.0 {
             continue;
         }
         out.push(MtgFlash {
@@ -337,34 +337,6 @@ pub fn parse_flashes(bytes: &[u8], value_key: &str) -> Option<Vec<MtgFlash>> {
         });
     }
     if out.is_empty() { None } else { Some(out) }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn units_epoch_reads_the_measured_mtg_time_base() {
-        assert_eq!(
-            units_epoch_unix("seconds since 2000-01-01 00:00:00.0"),
-            Some(946_684_800.0)
-        );
-    }
-
-    #[test]
-    fn units_epoch_refuses_a_foreign_base() {
-        assert!(units_epoch_unix("days since 2000-01-01").is_none());
-        assert!(units_epoch_unix("seconds since").is_none());
-    }
-
-    #[test]
-    fn component_name_maps_the_flash_radiance() {
-        assert_eq!(
-            component_name(COMP_RADIANCE),
-            Some("mtg_li_flash_radiance_mw_m2_sr")
-        );
-        assert_eq!(component_name(7), None);
-    }
 }
 
 pub fn build_channels(
@@ -446,4 +418,32 @@ pub fn build_channels(
         }
     }
     channels
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn units_epoch_reads_the_measured_mtg_time_base() {
+        assert_eq!(
+            units_epoch_unix("seconds since 2000-01-01 00:00:00.0"),
+            Some(946_684_800.0)
+        );
+    }
+
+    #[test]
+    fn units_epoch_refuses_a_foreign_base() {
+        assert!(units_epoch_unix("days since 2000-01-01").is_none());
+        assert!(units_epoch_unix("seconds since").is_none());
+    }
+
+    #[test]
+    fn component_name_maps_the_flash_radiance() {
+        assert_eq!(
+            component_name(COMP_RADIANCE),
+            Some("mtg_li_flash_radiance_mw_m2_sr")
+        );
+        assert_eq!(component_name(7), None);
+    }
 }
