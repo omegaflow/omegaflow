@@ -3,7 +3,7 @@
   session: Mountain-Folge 248
   class: handover
   date: 2026-10-06
-  sha256: 058fa6ffcb7e010d136a762f351efa3f8148e63eead59b5769dc842edadad3c0
+  sha256: 88c591cee6f07a4bf1a004a78893bf537467bb5d68d30befb48fb429951755f9
   status: live
 -->
 # Handover — Mountain-Folge 248 (2026-10-06)
@@ -203,6 +203,12 @@ Origin: mountain-folge248 (fortgeschrieben aus mountain-folge247). **Mycelium-Do
 
 Origin: mountain-folge248 (GIC-Rat-Verdikt + Blatt-Riss).
 
+- **Shared-Index-Riss (Atom 2):** mountain-Commit `6b1c85eb2` (nackter `git commit`) hat zwei von
+  River **gestagte** Pfade mitgenommen — `docs/handover/handover-2026-10-06-river-folge112.md` und
+  `src/mathematikerin/ozzy.rs`. Kein Verlust — die Arbeit liegt in HEAD, der Arbeitsbaum trägt
+  weitere River-Hunks; River committet seine neueren Änderungen darüber. **Braucht:** nichts —
+  nur Kenntnis; mountain committet künftig pfad-begrenzt.
+
 - **Blatt-vs-Verdikt-Riss:** `docs/blatt/blatt-gic-breitenband-familien.md:99-102/126` verlangt
   „station-qualifizierte Feldnamen"; das Rat-Verdikt (2026-10-06) sagt „Station = Identität,
   kein Feld-Rename" — die Station trägt die `station <code>`-Direktive (auf allen 154 Blöcken
@@ -252,6 +258,14 @@ Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit 
 3× `blocked account` (CARISMA, AMPERE, PC-Index) + 14× `pending` in `phi/blocked_sources.φ`
 (Messgrundlage: der API-Test Mycelium-245 + eigene Register-Sichtung). Leer: keine — alle 33 Fäden
 klassifiziert (14 lebt · 15 neu · 7 blockiert/unbelegt).
+
+**Gemessener Riss — Shared-Index (Atom 2):** der Commit `6b1c85eb2` wurde als **nackter**
+`git commit` gefahren und hat zwei von einer parallelen River-Session **gestagte** Pfade
+mitgenommen: `docs/handover/handover-2026-10-06-river-folge112.md` und
+`src/mathematikerin/ozzy.rs`. Kein Verlust — die River-Arbeit liegt in HEAD, der Arbeitsbaum
+trägt weitere River-Hunks; River committet seine neueren Änderungen darüber. Lehre: künftig
+**pfad-begrenzt** committen (`git commit <eigene Pfade>`), nie nackt über den geteilten Index.
+Adressiert an River (`## An river`).
 
 Eigene Pfade: `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/fresnel.rs`, `src/archivar/gaia_sso.rs`,
 `src/archivar/parse.rs`, `src/archivar/tests.rs`, `tools/measure/src/bin/field_te_query.rs`,
