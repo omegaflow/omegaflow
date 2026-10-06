@@ -88,6 +88,10 @@ url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%
 note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
 
 pending
+url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
+note Chandrayaan-1 Mini-RF — 2026-10-06: sources.φ:10019 pds3_img ohne field-Zeile; kein Feld-Arm → Serienpfad verwirft (main_flow.rs:3046); BAND_NAME mit Leerzeichen → Feld-Verdikt+Slug nötig; Sample+Asset Mycelium
+
+pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
 
@@ -97,7 +101,7 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 
 pending
 url https://gportal.jaxa.jp/
-note JAXA G-Portal — sources.φ:9512; compiler + jaxa-gportal-cdn.yml stehen; Katalog-Record trägt nur Footprint-Zentren (lon/lat), kein Messwert → Reader descoped (Rat 2026-10-06). Offen: Record-Download, Quota. future-folge226.
+note JAXA G-Portal — sources.φ:9408; jaxa_gportal_compiler.rs + jaxa-gportal-cdn.yml + Reader jaxa_gportal.rs stehen. Offen: Record-Download (add_download.json/SFTP), Quota. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
@@ -142,6 +146,14 @@ note TUH EEG (Temple) — 2026-10-04: descoped — Elektroden-Doku rein symbolis
 descoped
 url https://sleepdata.org
 note NSRR — 2026-10-04: descoped (Human-Subjects-/HIPAA-Training Pflicht, absent); Konto bestätigt (mail_ledger.φ:361/:362), NSRR_USER/PASS/EMAIL in .secrets.local; Arm nsrr_psg steht (9d416e57b, edf.rs); Asset-Block fehlt.
+
+pending
+url https://api.sedoo.fr/get-agrav-rest/
+note BGI AGrav (unabhängig von GFZ/IGETS) — 2026-10-05: station/nearto 200 (853714 B JSON), point/byStationUuid.observations[].gravity m/s2; Verdikt inverse-square gravity m/s2; Arm+Manifestation Mycelium. survey-2026-10-02-weberin-zweite-linie.md:146.
+
+pending
+url http://ceein.infp.ro/fdsnws/
+note C9/CEEIN infrasound (IAP Prag, Host RO_NDC) — 2026-10-05: HTTP station 200, dataselect C9/BDF MSEED 200, Archiv endet ~2023-10-30; Verdikt gaussian-inverse-square acoustic Pa; Arm Mycelium. survey-2026-10-02-weberin-zweite-linie.md:133.
 
 blocked account
 url https://api.ioc-sealevelmonitoring.org/v1
