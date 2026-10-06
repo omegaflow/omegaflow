@@ -4,7 +4,7 @@ use omegaflow::archivar::fink_cutout::{
     FORCE_EM, KERNEL_INVERSE_SQUARE, MAGIC, REC_BYTES, SLOT_EPOCH, SLOT_PRESENCE, SLOT_VAL, TAU_S,
     TTL_S, write_bin,
 };
-use omegaflow::archivar::fits::{FitsHeader, FitsImage};
+use omegaflow::archivar::fits::{FitsHeader, FitsImage, FitsWcs};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use std::process::Command;
@@ -73,9 +73,45 @@ fn unit_vector(ra_deg: f64, dec_deg: f64) -> [f64; 3] {
     [cd * cr, cd * sr, sd]
 }
 
-fn angular_step(image: &FitsImage, x: usize, y: usize) -> Option<f64> {
-    let (ra0, dec0) = image.world(x as f64 + 1.0, y as f64 + 1.0)?;
-    let (ra1, dec1) = image.world(x as f64 + 2.0, y as f64 + 1.0)?;
+fn wcs_from_header(h: &FitsHeader, naxis1: usize, naxis2: usize) -> Option<FitsWcs> {
+    let crval1 = h.f64("CRVAL1")?;
+    let crval2 = h.f64("CRVAL2")?;
+    if !(crval1.is_finite() && crval2.is_finite()) {
+        return None;
+    }
+    let crpix1 = h.f64("CRPIX1").unwrap_or((naxis1 + 1) as f64 / 2.0);
+    let crpix2 = h.f64("CRPIX2").unwrap_or((naxis2 + 1) as f64 / 2.0);
+    let cd = match (h.f64("CD1_1"), h.f64("CD1_2"), h.f64("CD2_1"), h.f64("CD2_2")) {
+        (Some(a), Some(b), Some(c), Some(d)) => [[a, b], [c, d]],
+        _ => {
+            let cdelt1 = h.f64("CDELT1").unwrap_or(1.0);
+            let cdelt2 = h.f64("CDELT2").unwrap_or(1.0);
+            let mut pc = [[1.0, 0.0], [0.0, 1.0]];
+            let mut pc_found = false;
+            for i in 1..=2 {
+                for j in 1..=2 {
+                    if let Some(v) = h.f64(&format!("PC{i}_{j}")) {
+                        pc[i - 1][j - 1] = v;
+                        pc_found = true;
+                    }
+                }
+            }
+            if pc_found {
+                [
+                    [pc[0][0] * cdelt1, pc[0][1] * cdelt2],
+                    [pc[1][0] * cdelt1, pc[1][1] * cdelt2],
+                ]
+            } else {
+                [[cdelt1, 0.0], [0.0, cdelt2]]
+            }
+        }
+    };
+    Some(FitsWcs::tan(crval1, crval2, crpix1, crpix2, cd))
+}
+
+fn angular_step(world: &impl Fn(f64, f64) -> Option<(f64, f64)>, x: usize, y: usize) -> Option<f64> {
+    let (ra0, dec0) = world(x as f64 + 1.0, y as f64 + 1.0)?;
+    let (ra1, dec1) = world(x as f64 + 2.0, y as f64 + 1.0)?;
     if !(ra0.is_finite() && dec0.is_finite() && ra1.is_finite() && dec1.is_finite()) {
         return None;
     }
@@ -138,8 +174,14 @@ fn compile(
     };
     let epoch = mjd_tai_to_tdb(lsk, mjd)
         .ok_or_else(|| format!("MJD {mjd} lies outside the embedded leap table"))?;
-    let extent = angular_step(&image, dims[0] / 2, dims[1] / 2)
-        .or_else(|| angular_step(&image, 0, 0))
+    let local_wcs = wcs_from_header(&header, dims[0], dims[1]);
+    let world = |x: f64, y: f64| -> Option<(f64, f64)> {
+        image
+            .world(x, y)
+            .or_else(|| local_wcs.as_ref().and_then(|w| w.world(x, y)))
+    };
+    let extent = angular_step(&world, dims[0] / 2, dims[1] / 2)
+        .or_else(|| angular_step(&world, 0, 0))
         .ok_or_else(|| {
             "the WCS carries no measurable pixel step — the extent stays absent".to_string()
         })?;
@@ -148,7 +190,7 @@ fn compile(
     let mut unplaced = 0usize;
     for j in 0..dims[1] {
         for i in 0..dims[0] {
-            let Some((ra, dec)) = image.world(i as f64 + 1.0, j as f64 + 1.0) else {
+            let Some((ra, dec)) = world(i as f64 + 1.0, j as f64 + 1.0) else {
                 unplaced += 1;
                 continue;
             };
