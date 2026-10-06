@@ -17361,6 +17361,22 @@ on earth 0 0 0
 ttl 86400
 field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
+format openmeteo_pollen_axis_value_text
+origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=52.52&longitude=13.405&hourly=birch_pollen&timezone=UTC
+compiler tools/harvest/src/bin/openmeteo_pollen_compiler.rs
+on earth 52.52 13.405 0
+ttl 3600
+field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
+format ghsl_built_s
+origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
+compiler tools/harvest/src/bin/ghsl_compiler.rs
+on earth 0 0 0
+ttl 31536000
+field ghsl_built_surface_m2 ghsl_built_surface_m2 gaussian-inverse-square diffusion m2 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
