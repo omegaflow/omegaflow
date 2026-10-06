@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 634ebd8c681ff34dd74b5f59c36e0d33071e2948c087ca4d2862d5f4f1e881c3
+  sha256: f9f79f3a1a00b6a7b491e754b8703f8efd8e790a6888388bcd1f6f6116a8e185
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -427,4 +427,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.5 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config + Viljanen-/Lizenz-Messung + iEEG-Entfernung — die Session-Zeile „River-Linie starten und Übergabe abarbeiten" misst **$0.5349** (über dem Hard-Cap 0.5); Operator-Wort 2026-10-06 „du darfst committen"; `close 0.5` ist der Cap-Grenzwert, die gemessene Zahl steht benannt; Runde total 0.5318 → 1.7685; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.6338 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config + Viljanen-/Lizenz-Messung + iEEG-Entfernung + [redacted]-Muster — Session-Zeile „River-Linie starten und Übergabe abarbeiten" **$0.6338** (über dem Hard-Cap 0.5; Operator-Wort 2026-10-06 „committen mit no verify" → Commit mit `--no-verify`); Runde total 0.5318 → 2.0183; gemessen 2026-10-06
