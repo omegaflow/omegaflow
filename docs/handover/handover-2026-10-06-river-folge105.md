@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: a4842207c5fbfb385b9cf9dac09ef58f74cf730154bf4437d4b9130efcca888c
+  sha256: 43f1f81ddd4e21b3e6f30236a19b16a4dc94c4d8216ef90cdcda825999c349de
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -27,6 +27,7 @@ Wort | Datum | Quelle
 „die agenten haben archive search root genutzt und ich habe es aus versehen erlaubt" — ein lokaler `archive_search --root` erreichte eine Schwarm-Stimme über eine Laufzeit-Freigabe; die Schwarm-Antworten dieser Runde sind kontaminiert | 2026-10-06 | Operator (Session, River 105)
 „ich meine browser nutzung wäre schon gut sollen wir eine neue voices chrome instanz anlegen in der keine logins gespeichert sind?" — Browser-Nutzung der Voices bejaht, aber über eine eigene Chrome-Instanz ohne Logins | 2026-10-06 | Operator (Session, River 105)
 „ich glaube, es ist sinnvoll auch dem schwarm die stimmen zu geben, oder zumindest die selben agenten wie grind general council auch nochmal als voices/schwarm agenten zu haben" — Schwarm um die deepseek-Seats (council/grind-flash/general = flash; grind-pro/grind-max/research-max = pro) erweitert | 2026-10-06 | Operator (Session, River 105)
+„die können jetzt auch als council/grind/general eingesetzt werden … ich hätte gern, dass sie auch architekturfragen mit den fünf stimmen beantworten — das ist counter slope" — die deepseek-Schwarm-Seats tragen die Fünf-Stimmen-Verfassung im Prompt | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -297,8 +298,13 @@ von `rec.flux`, ob die Ephemeriden-Header schon einen Granul-Index tragen.
 Der Schwarm trägt jetzt die deepseek-Seats: `voice-deepseek` (`deepseek/deepseek-flash`, wie
 council/grind-flash/general) und `voice-deepseek-pro` (`deepseek/deepseek-v4-pro`, wie
 grind-pro/grind-max/research-max; `task: ask`, Kostenkante). Beide read-only, `archive_search_public`
-+ `chrome-devtools-voices_*`. **Caveat:** `voice-deepseek` ist **dasselbe Modell wie die Linie** —
-keine unabhängige Stimme; für Unabhängigkeit bleiben die Fremdmodelle + Claude/GLM.
++ `chrome-devtools-voices_*`. Ihr Prompt trägt die **Fünf-Stimmen-Verfassung** (Mountain/River/
+Mycelium/Sensory/Future): Architektur- und Ethikfragen beantworten sie aus der Fläche der fünf
+Stimmen (Operator-Wort: counter slope — dasselbe Modell, aus der Verfassung heraus gelesen, statt
+aus dem Gradienten). Einsatz als council (Urteil) und als Schwarm-Stimme; für schreibende
+grind-Arbeit bleiben die grind-Agenten. **Caveat:** `voice-deepseek` ist **dasselbe Modell wie die
+Linie** — keine unabhängige Mess-STIMME; die Unabhängigkeit liefern weiter die Fremdmodelle +
+Claude/GLM, die Fünf-Stimmen-Form liefert den counter-slope statt der Unabhängigkeit.
 
 ## Incident 2026-10-06 — lokaler Baum an eine Schwarm-Stimme (gemessen an der DB)
 
@@ -361,4 +367,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.3765 · cap 0.45 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome- und Schwarm-Seat-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.3765; Runde total 0.5318 → 1.3804; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.3965 · cap 0.45 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome- und Schwarm-Seat-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.3965; Runde total 0.5318 → 1.5351; gemessen 2026-10-06
