@@ -27818,3 +27818,16 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin
+format wdc_ae
+origin https://wdc.kugi.kyoto-u.ac.jp/hapi
+compiler tools/harvest/src/bin/wdc_ae_compiler.rs
+at earth
+ttl 86400
+field wdc_ae_al_nt wdc_ae_al_nt inverse-square em nT 60 0.0 0.0
+field wdc_ae_au_nt wdc_ae_au_nt inverse-square em nT 60 0.0 0.0
+field wdc_ae_ae_nt wdc_ae_ae_nt inverse-square em nT 60 0.0 0.0
+field wdc_sym_d_nt wdc_sym_d_nt inverse-square em nT 60 0.0 0.0
+field wdc_sym_h_nt wdc_sym_h_nt inverse-square em nT 60 0.0 0.0
+field wdc_dst_nt wdc_dst_nt inverse-square em nT 3600 0.0 0.0
