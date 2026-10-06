@@ -70,7 +70,8 @@
     ["(lon_sum_normalized / n, lat_sum / n)", "an STC-S polygon centroid returned without rem_euclid(360) fabricates a 360° longitude — a polygon crossing the 0/360 seam must wrap its mean into [0,360) (measured: the gmap epn_core polygon anchors at 331.5°, a seam-crossing polygon lands at 360); the raw mean places the sample half a world away"],
     ["format == \"vlde\"", "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"],
     ["Deckel **hart**", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
-    ["Tool-Aufrufe/Session", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"]
+    ["Tool-Aufrufe/Session", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
+    ["url,\n            stderr.trim()", "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
