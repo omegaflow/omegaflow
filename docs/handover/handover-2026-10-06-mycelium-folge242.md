@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; CI-Triage, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: c3c5473604ee7d26d0de313ee371661a6233514e22314eb8243596f41d864841
+  sha256: 773cc84276f5183c591f281c6afd86793b137ed43280fb484b64b70bf29ca09d
   status: live
 -->
 # Handover — Mycelium-Folge 242 (2026-10-06)
@@ -62,7 +62,7 @@ Rolling-Fenster (6 Sessions) bei Schluss **$0.1595**.
 ### Daten-Holdings — Ziel-Layout/CDN-Ort (Operator-Wort „ich gebe es mycelieum")
 - **Status:** eigen
 - **Trigger:** weitere Bestände je Move → `du`-Nachmessung
-- **Lage:** (gemessen 2026-10-06) Move/Dedup ausgeführt (folge241). Offen: CDN-Ort je Bestand — `omegaflow_series_wind_orbit.bin` → `cache/`; zwei byte-identische `dr3_stars`-Kopien (`data/gea.esac.esa.int/`); `nvss.json` fehlt an `data/ssd.jpl.nasa.gov/` (registriert `sources.φ:17522`, z-Crossmap 102 581 Quellen; Scratch = voller NVSS 1 773 484). Detail `state/future/holdings-migration-2026-10-06.md`.
+- **Lage:** (gemessen 2026-10-06) Move/Dedup ausgeführt (folge241). Offen: CDN-Ort je Bestand — `omegaflow_series_wind_orbit.bin` → `cache/`; zwei byte-identische `dr3_stars`-Kopien (`data/gea.esac.esa.int/`); `nvss.json` fehlt an `data/ssd.jpl.nasa.gov/` (registriert `sources.φ:17522`, z-Crossmap 102 581 Quellen; Scratch = voller NVSS 1 773 484). Träger-Inventur: `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:167-183`; Detail `state/future/holdings-migration-2026-10-06.md`.
 - **Blockade:** keiner für die Ort-Korrektur; vorheriger Byte-/sha-Abgleich nötig.
 - **Braucht:** Ort-Korrektur/Dedup je Bestand (Byte-/sha-Abgleich).
 
