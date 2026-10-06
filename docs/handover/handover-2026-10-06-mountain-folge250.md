@@ -3,7 +3,7 @@
   session: Mountain-Folge 250
   class: handover
   date: 2026-10-06
-  sha256: b28dfe3c241510abe75372fb7a2e41c4640ae9c547d3b1d842a8e9170c819ab5
+  sha256: 65670b1ebaa0bdadb38614dbd9ae4d3dbec7fcb38ea58e1ce5c9ec433056ec79
   status: live
 -->
 # Handover — Mountain-Folge 250 (2026-10-06)
@@ -14,8 +14,8 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-06-mountain-folge249.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0000 · close 0.1582 · cap 0.50 · Grund: der Operator trug die Linie in einem Pass; zwei benannte Dispatchs (Newell-`from`-Arm, GIC-HAPI-Recon) + Register/Grammatik — gemessen via `session_burn`.
-Dispatchs getrennt (line $0.0746 + grind-flash $0.0428 + explore $0.0408, 2026-10-06).
+## Burn: open 0.0000 · close 0.33 · cap 0.50 · Grund: Operator-Wort („in einem Pass" + „befrage die 5 voices und die 7 ui chats") — Newell-`from`-Arm + Derivation + zwei Descriptoren/CI-Jobs, GIC-HAPI-Recon, Rat + 5 API-Stimmen + Kimi-K3 (zweiter Kanal); gemessen via `session_burn`.
+Dispatchs getrennt (line ≈$0.136 + grind-flash $0.0428 + explore $0.0408 + council $0.0197 + API-Stimmen ≈$0.09, 2026-10-06).
 
 ## Operator-Wort-Register
 
@@ -54,24 +54,45 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 248)
 „welche dieser quellen fehlen jetzt noch? … Mountain prüft die Fäden A–G gegen das Register (lebt vs. neu, Zugang/Lizenz messen)" | 2026-10-06 | Operator (Session, Mountain 248)
 „Starte die Mountain-Linie in einem Pass" | 2026-10-06 | Operator (Session, Mountain 250)
+„wie kannst du die schliessen? bitte befrage die 5 voices und die 7 ui chats" | 2026-10-06 | Operator (Session, Mountain 250)
+
+## Architektur-Verdikt (Rat + zweiter Kanal, 2026-10-06) — Newell-Provenienz + GIC-Route
+
+Gehalten vom Rat (fünf Stimmen) und dem zweiten Kanal (fünf API-Stimmen: gemini · gptoss ·
+nemotron · deepseek — inkling leer; UI: Kimi K3 über tryingopen). Der Rat liest den Baum,
+die UI-Stimmen nicht.
+
+- **Newell dΦ/dt — getrennte Knoten je Empfänger, nie ein Mittel (Rat, 5 API-Stimmen, Kimi).**
+  RTSW trägt das vorzeichenbehaftete Live-Tripel, OMNI das korrigierte Tripel; ein Knoten aus
+  beiden wäre ein dritter Sensor, den es nicht gibt. **Riss (gemessen 2026-10-06):** der
+  RTSW-Join verbindet zwei Dateien — `rtsw_mag_1m` (by/bz) und `rtsw_wind_1m` (speed); ihre
+  Zeitstempel teilen das 1-min-Raster, weichen aber ~2 s ab (mag `21:40:02`, wind `21:40:00`,
+  via `jaq` gemessen). Der Join läuft über die Bin-Stufe, nicht über exakte Gleichheit.
+  Kimi K3: RTSW-Join = Live-Treiber, OMNI = Verifikation. Verdikt: **zwei deklarierte Knoten**
+  — `newell_geospheric.te` (RTSW, live) und `newell_geospheric_omni.te` (OMNI, Verifikation).
+- **GIC-Fäden A–G — gemischt (Rat, Mycelium-Stimme, Kimi).** Lebende Datasets → Live-HAPI-
+  Register-Block (kein Parser); tote/feste Fenster (`WI_H0_SWE`, bis 2001) → einmaliger
+  kompilierter Fanout-Arm; `WI_H0_SWE` wird als **beendet** registriert (0 honored), nur
+  `WI_H1_SWE` trägt ein Live-Register. THEMIS GMAG `THG_L2_MAG_<4LETTER>` je Station als
+  Empfänger; ein code-gewählter geschlossener Stationsset wäre Bias. Ein Register ohne
+  Messfluss muss beim Build sichtbar werden, nicht still Katalog bleiben (Future-Stimme).
 
 ## Offen (aufgeschlüsselt)
 
 ### Newell dΦ/dt als `rect`-Treiber — CI-Ausgang (Rat entschieden, Arm gebaut)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Lauf `field-te-query.yml` Job `matrix-newell` — dispatcht, Lauf `37535246655` (2026-10-06)
-- **Lage:** (gemessen 2026-10-06, Mountain 250) Der `from <name> <träger,liste>`-Parser-Member
+- **Trigger:** CI-Läufe `field-te-query.yml` Job `matrix-newell` (Lauf `37535246655`) und Job `matrix-newell-omni`
+- **Lage:** (gemessen 2026-10-06, Mountain 250) Der `from <name> <carrier,carrier,…>`-Parser-Member
   und `derive_matrix_arm` sind gebaut (`tools/measure/src/bin/field_te_query.rs`);
-  `derive_matrix_arm` löst `newell_dphi_dt` über `src/mathematikerin/newell.rs` auf;
-  `cargo build -p omegaflow-measure --bin field_te_query` 0/0. Neuer Descriptor
-  `phi/pipeline/descriptors/newell_geospheric.te`; Job `matrix-newell` in
-  `.github/workflows/field-te-query.yml`. Provenienz `from newell_dphi_dt
-  magnetosphere_imf_by_nt,magnetosphere_imf_bz_nt,solar_wind_speed_km_s`. **Riss
-  (gemessen via `jaq` auf `rtsw_mag_1m.json`):** das Rats-Wort nannte
-  `magnetosphere_imf_bt_nt`; |Bt| trägt das Vorzeichen von By nicht. Die `first
-  by_gsm magnetosphere_imf_by_nt`-Zeile ist gesetzt (`phi/sources.φ:176`).
+  `derive_matrix_arm` löst `newell_dphi_dt`/`newell_dphi_dt_omni` über `src/mathematikerin/newell.rs`
+  auf; `cargo build -p omegaflow-measure --bin field_te_query` 0/0. Zwei Descriptoren:
+  `phi/pipeline/descriptors/newell_geospheric.te` (RTSW: `magnetosphere_imf_by_nt,bz,speed`) und
+  `newell_geospheric_omni.te` (OMNI: `omni_imf_by_gsm_nt,bz,flow_speed`, ein Empfänger).
+  **Riss (gemessen via `jaq`):** das Rats-Wort nannte `magnetosphere_imf_bt_nt`; |Bt| trägt kein
+  Vorzeichen-By — die `first by_gsm magnetosphere_imf_by_nt`-Zeile ist gesetzt (`phi/sources.φ:176`).
+  Der RTSW-Join kreuzt zwei Dateien (mag/wind, ~2 s Versatz) — die Bin-Stufe trägt ihn.
 - **Blockade:** keine.
-- **Braucht:** den Ausgang lesen (`ci_manage view <id>`); bei `alignment pending` den
+- **Braucht:** beide Ausgänge lesen (`ci_manage view <id>`); bei `alignment pending` den
   Zeitachsen-Arm nachziehen (s. Vlies-Punkt).
 
 ### GIC-Faden §A–G — Arm je offener Route
@@ -173,17 +194,21 @@ Origin: mountain-folge250.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push.
 
-**Dieser Commit (Atome):** (a) der `from <name> <träger,liste>`-Parser-Member und der
-`derive_matrix_arm`-Ableitungszweig für `newell_dphi_dt` (`tools/measure/src/bin/field_te_query.rs`,
-`cargo build -p omegaflow-measure --bin field_te_query` 0/0), der Descriptor
-`phi/pipeline/descriptors/newell_geospheric.te` und der Job `matrix-newell`
+**Dieser Commit (Atome):** (a) der `from <name> <carrier,carrier,…>`-Parser-Member und der
+`derive_matrix_arm`-Ableitungszweig für `newell_dphi_dt`/`newell_dphi_dt_omni`
+(`tools/measure/src/bin/field_te_query.rs`, `cargo build -p omegaflow-measure --bin field_te_query`
+0/0), die Descriptoren `phi/pipeline/descriptors/newell_geospheric.te` (RTSW, live) und
+`newell_geospheric_omni.te` (OMNI, Verifikation) und die Jobs `matrix-newell`/`matrix-newell-omni`
 (`.github/workflows/field-te-query.yml`) — das Rats-Verdikt vom 2026-10-06 ist verdrahtet;
 (b) die `first by_gsm magnetosphere_imf_by_nt`-Zeile (`phi/sources.φ:176`) — der gemessene
-Riss, dass |Bt| kein By trägt; (c) der GIC-Arm-Rezept gemessen: Live-HAPI ist ein reiner
-Register-Block, `WI_H0_SWE` endet 2001, THEMIS-IDs `THG_L2_MAG_<4LETTER>`.
+Riss, dass |Bt| kein By trägt; (c) der Rat + der zweite Kanal (5 API-Stimmen + Kimi K3)
+wurden zur Newell-Provenienz und zur GIC-Route befragt; das Verdikt steht oben; (d) die
+RTSW-1-min-Messung und der GIC-Arm-Rezept (Live-HAPI = reiner Register-Block, `WI_H0_SWE` bis
+2001 beendet).
 
 Eigene Pfade: `tools/measure/src/bin/field_te_query.rs`,
 `phi/pipeline/descriptors/newell_geospheric.te`,
+`phi/pipeline/descriptors/newell_geospheric_omni.te`,
 `.github/workflows/field-te-query.yml`, `phi/sources.φ` (nur die by_gsm-Zeile),
 `docs/handover/handover-2026-10-06-mountain-folge250.md`,
 `docs/handover/archiv/handover-2026-10-06-mountain-folge249.md` (Move).
