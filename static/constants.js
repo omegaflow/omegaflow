@@ -7,7 +7,7 @@ export const FRAME_HEADER = 19;
 const enc = new TextEncoder();
 
 export function syncFrame(id, inputs, queries, presence) {
-  let size = 8 + inputs.length * 17 + queries.length * 32 + 11 * 8;
+  let size = 8 + inputs.length * 17 + 4 + queries.length * 32 + 11 * 8;
   const inputNames = [];
   for (const inp of inputs) {
     const name = enc.encode(inp.name);
