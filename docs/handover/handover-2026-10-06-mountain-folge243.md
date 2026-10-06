@@ -3,7 +3,7 @@
   session: Mountain-Folge 243
   class: handover
   date: 2026-10-06
-  sha256: 5eae6b251d3b1b1e8f15d8cfe46e42e00a6bbe4ca7c93fbcd95c992b322c94ee
+  sha256: ac82d85405e3c38077e8ce62e8fc5f1b312cac1464ac77d6fae50c0b99fe9891
   status: live
 -->
 # Handover — Mountain-Folge 243 (2026-10-06)
@@ -20,7 +20,7 @@ AQS-VOC-Zerlegung).
 `cargo check` 0/0. Die adressierten Blöcke `future-183` und `mycelium-240` wurden
 gegen den Baum gemessen; fast alle Einträge sind erledigt (s. jeweils Lage).
 
-## Burn: open 0.0000 · close 0.1178 · cap 0.25 · Grund: flash-first — Line-Session $0.0548 + vier `grind-flash`-Messungen ($0.0281 Exposom-Matrix, $0.0122 JAXA, $0.0116 OSHA-CEHD, $0.0111 AQS-VOC), kein pro/max
+## Burn: open 0.0000 · close 0.165 · cap 0.25 · Grund: flash-first — Line-Session $0.0723 + sechs `grind-flash`-Messungen (Exposom-Matrix $0.0281, AQS-VOC $0.0122, OSHA-CEHD $0.0116, JAXA-Verdikt $0.0111, 2× JAXA-Granule ~$0.03; Einzelposten nur teilweise listbar), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -98,20 +98,38 @@ Wort | Datum | Quelle
   `phi/sources.φ:17387`. Bounded step 1 = (1)+(2) in einem Atom mit
   `cargo build -p omegaflow-harvest --bin epa_aqs_compiler`-Gate.
 
-### JAXA G-Portal — Feld-Verdikt
+### JAXA G-Portal — Granule-Arm (GPM 1B.Ku)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06 via `grind-flash`) `jaxa_gportal` (`sources.φ:9514-9520`)
-  schreibt ein **Katalog-Manifest** (position+size+file-url), keine GeoRec; `sgrep -i 'jaxa'
-  src` = **0** → kein Reader-/Parse-Arm in der Core-Crate. Registriertes Asset
-  (sha256 `ec7bfbf3…`) = `sources.φ:9518`, `.json`, `--sniff` magic unrecognized. **Verdikt:
-  catalog-only → keine `field`-Zeile aus diesem Compiler/Asset möglich.**
-- **Blockade:** die physischen Granule (AMSR2 L2 SST/Wind/SMC, GPM-L2 Regen, SGLI) sind
-  nicht gemessen — kein HDF5/EOS-Arm.
-- **Braucht:** je Produktfamilie eine Granule-Messung: `jaxa_gportal_compiler --download
-  --fetch-file --probe-bytes <n>` → `archive_search --sniff <app_url>`, HDF5/HDF-EOS-Magic
-  prüfen; erst danach Feld-/Arm-Verdikt je Familie. Origin-Katalog nur authentifiziert
-  erreichbar (`JAXA_GPORTAL_USER`/`PASS`, `service_post`).
+- **Lage:** (gemessen 2026-10-06 via `grind-flash`) Login mit `JAXA_GPORTAL_USER/PASS`
+  (Keys vorhanden, `bin/secrets_keys`) funktioniert — `--selftest` grün, `session open
+  (login status 1)`. Dataset `12001000` = **GPM Core Obs / DPR / Level-1B Ku (`GPMCOR_KUR`
+  05A)**, Granule ~153,8 MB, **plain HDF5** (magic `\x89HDF\r\n\x1a\n`; kein `HDFEOS`/
+  `StructMetadata`). Observabler: `NS/Receiver/echoPower` (rank 3 `[7932,49,260]`, int16,
+  `Units=0.01 dBm`, `CodeMissingValue=-30000`) — echte Ku-Echo-Leistung, EM-Kanal; Begleiter
+  `NS/Receiver/noisePower` (`0.01 dBm`). Kein präkalibriertes `zFactor`/dBZ-Dataset. Der
+  registrierte `sources.φ:9514-9520`-Block bleibt **catalog-only** (Manifest, keine GeoRec);
+  das Granule braucht eine eigene `field`-Zeile.
+- **Blockade:** der Wert-Arm ist **nicht bounded** mit dem vorhandenen Reader — `echoPower`
+  ist chunked+deflated (292 434 Chunks `[32,49,260]`), `hdf5_reader --var` liest über 180 s
+  nicht fertig (gemessen, Timeout). Zusätzlich: Compiler-Download `CATALOG_BOUND_S = 1<<7`
+  (128 s, `jaxa_gportal_compiler.rs:25`) ohne Resume → 64,8-MB-Teilfile, nur per manuellem
+  `curl -C -` vollendet (Riss: 153,8-MB-Granule > 128-s-Bound).
+- **Braucht:** bounded chunk-reader (ein `[32,49,260]`-Chunk bzw. `nscan`-Bereich) für
+  `NS/Receiver/echoPower`; dann Arm `jaxa_gpm_ku` (`format`/`MAGIC`/`field` em, 0.01 dBm)
+  + Register-Zeile. Optional: `CATALOG_BOUND_S` anheben/Resume für große Granule. Weitere
+  Produktfamilien (AMSR2 L2, GPM-L2, SGLI) ungemessen.
+
+### NASA POWER — neue Exposom-Quelle (Wetter/Klima)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keine — Bau (autonom)
+- **Lage:** (gemessen 2026-10-06) `power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M
+  &community=RE&longitude=13.4&latitude=52.5&start=20240101&end=20240102&format=JSON` →
+  **HTTP 200, keyless** (kein Token); `sgrep -i 'larc'` und `'nasa_power'` in `phi/sources.φ`
+  = 0; kein Compiler im Baum. (Widerruf der früheren Annahme „keine gemessene Route".)
+- **Blockade:** keine.
+- **Braucht:** `nasa_power_compiler.rs` (temporal/daily/point, JSON) + Register-Block
+  (`field` Temperatur thermal K) + CDN-Workflow (Mycelium).
 
 ### OSHA-CEHD-Arm (Exposom Arbeitsumfeld)
 - **Status:** wartend | **Bindung:** eigen
@@ -140,9 +158,9 @@ Origin: mountain-folge243. **Geroutet — Mycelium-Domäne:**
   Pass 2026-10-06) → Lauf `37434142761` queued. Leichtgewichtige Ernten laufen auf
   `ubuntu-latest` (`dhm-gauge-cdn.yml:16`). **Braucht:** `goes18-cdn.yml:16` auf
   `ubuntu-latest` umstellen; Re-Dispatch.
-- **CDN-Manifestation der zwei neuen Arme (nach dem Bau):** `epa_aqs_voc` (AQS VOC) und
-  OSHA-CEHD brauchen je einen `*-cdn.yml`-Workflow (`ubuntu-latest`), sobald die Arme
-  stehen (Mountain baut die Arme, `## Offen`).
+- **CDN-Manifestation der neuen Arme (nach dem Bau):** `epa_aqs_voc` (AQS VOC),
+  OSHA-CEHD, `nasa_power` und `jaxa_gpm_ku` brauchen je einen `*-cdn.yml`-Workflow
+  (`ubuntu-latest`), sobald die Arme stehen (Mountain baut die Arme, `## Offen`).
 
 ## Träger (Prosa, eigene)
 
