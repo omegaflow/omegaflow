@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: 6b873b1b6e4e1c53e0d474bb20eb2dffa79e3241dd9c65ecb5338dcfda143b7a
+  sha256: dd481a33aca22597a26c53ac53abb7ebf16457ae7b238fb1556dd47155602aeb
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -78,7 +78,10 @@ Wort | Datum | Quelle
   zerstört (CHWRR Assessment Report II, letzter Wert 3.8 m, Senderstopp 08:40; ICIMOD;
   Presse); Betrawati `52`/`4783` ebenso leer. **Live-Nachbarn (Bulk):** Trishuli
   Dhunche `4657` (2.16 m), Bhorle `4661` (3.80 m), Galchi `5705`, Kali Khola `4781`
-  (4.33 m); Narayani Devghat `265` (4.12 m).
+  (4.33 m); Narayani Devghat `265` (4.12 m). **Kontrolltest (gemessen 2026-10-06):**
+  derselbe `getRiverWatchBySeriesId_Single`-POST mit Devghat `seriesid=4140`, `period=2`
+  → 24 Stundenzeilen (4.14–4.19 m) ⇒ Abfrage-Mechanik valid, 4913/`23251` leer ist
+  stationsspezifisch (nicht Query-Fehler).
 - **Blockade:** Die Experiment-Station existiert nicht mehr.
 - **Braucht:** Entscheidung — `descoped` für 4913 (zerstört, gemessen) und die
   Trishuli-Serie auf einen Live-Nachbarn umhängen (Dhunche/Bhorle), oder ruhen.
