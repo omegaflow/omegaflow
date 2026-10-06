@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 485e1480a4d506f83c4cb0ff47b87c7606ba0380b3a6101b5ae8b345463280f0
+  sha256: 099cd0cd04fe82808078ed1097e0ec78d4eed48d4ba5f1895b296cbd0fe05c79
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,12 +12,13 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.3978 · cap 0.5 — Grund: langer Meta-Pass (Bench, Config, Reconcile, Stimmen-Adressierung 5/5/5, DE440-Pin, Qualitäts-Test)
+## Burn: open 0.0000 · close 0.4730 · cap 0.5 — Grund: langer Meta-Pass (Bench, Config, Reconcile, Stimmen-Adressierung 5/5/5, DE440-Pin, UI-/API-Qualitäts-Test)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
 ## Operator-Wort-Register
 
+- Wort | 2026-10-06 | „weiter ich habe glm und trying open /kimi gestartet" — UI-Test fortsetzen | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „es sind 5 stimmen 5 axiome 5 achsen und du kannst die entwürfe überschreiben bzw. leere chats starten" — Arch-/Ethik-Adressierung trägt 5 Stimmen (Mountain·River·Mycelium·Sensory·Future), 5 Axiome (`docs/granit.md:16-20`) und 5 Achsen (`docs/concepts/die-vier-schilde.md`) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „mir geht es darum dass du die qualität und den nutzen der chats testest" — Qualitäts-/Nutzen-Test der Stimmen (UI-Chats + API-Modelle) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „ist auch bekannt welche UI Chats funktionieren und wie sie addressiert werden sollen (bei architektur/ethik fragen mit den 5 stimmen und den 4 axiomen) gilt auch für die API modelle" — Architektur-/Ethikfragen werden mit den fünf Stimmen + vier Axiomen addressiert, für UI-Chats wie API-Modelle | Quelle: Operator (Session, Mycelium 244).
@@ -63,8 +64,13 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   anonymisierte Arch-Frage durch 6 `voice-*` — `voice-deepseek` am stärksten (nennt A=A-Fabrikation,
   prüfbare Messung, `pending`-Weg), `voice-dots`/`voice-gemini` mittel, `voice-nemotron` knapp,
   `voice-gptoss` **erfindet Spezifika** (als Gutachter unbrauchbar), `voice-zai` Rate-Limit.
-  **UI-Tab-Test steht aus** — Methode: frischer Tab je Site; der GLM-Tab hatte einen ungesendeten
-  Entwurf, der beim Tippen vermischt wurde (Fehler, gemeldet).
+  **UI-Tab-Test (2026-10-06, dieselbe anonymisierte Arch-Frage):** **7 von 9 hochwertig** —
+  `chat.z.ai` (GLM-5.3 Deep Think), `claude.ai` (Sonnet 5.5), `chatgpt.com`, `chat.qwen.ai`,
+  `duck.ai`, `chat.mistral.ai`, `tryingopen` (Kimi K3) folgten alle der 5-Stimmen/5-Axiome-Linse
+  (Annahmen → je Stimme ein Axiom → Verdikt A → tragende Messung, teils `unbelegt` benannt).
+  **Blockiert:** `kimi.ai` („kostenloses Kontingent aufgebraucht, 10-25"), `grok.com` (`#subscribe`,
+  Upgrade-Seite). Fehler beim ersten z.ai-Tippen (Entwurf vermischt) gemeldet; danach leerer
+  Composer/`chrome-devtools_type_text`.
 - **Blockade:** keine — die Deaktivierung ist der Vollzug des Worts.
 - **Braucht:** nichts; ein Anbieter kehrt per `auth login`/Zahlungsmethode und Dispositions-Flip zurück.
 
