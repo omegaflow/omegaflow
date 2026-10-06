@@ -67,8 +67,16 @@ opencode	muse-spark-1.2-contributor-free	https://opencode.ai/zen/v1	OPENCODE_API
 opencode	muse-spark-1.3-contributor-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client	eligible
 opencode	nemotron-3-ultra-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client	eligible
 opencode	nemotron-3.5-lightning-free	https://opencode.ai/zen/v1	OPENCODE_API_KEY	client	eligible
-sambanova	DeepSeek-V3.1	https://api.sambanova.ai/v1	SAMBANOVA_API_KEY	http	blocked
+sambanova	DeepSeek-V3.2	https://api.sambanova.ai/v1	SAMBANOVA_API_KEY	http	blocked
 sambanova	gpt-oss-120b	https://api.sambanova.ai/v1	SAMBANOVA_API_KEY	http	blocked
 sambanova	Meta-Llama-3.3-70B-Instruct	https://api.sambanova.ai/v1	SAMBANOVA_API_KEY	http	blocked
+orcarouter	orcarouter/free	https://api.orcarouter.ai/v1	ORCAROUTER_API_KEY	http	blocked
+orcarouter	orcarouter/auto	https://api.orcarouter.ai/v1	ORCAROUTER_API_KEY	http	blocked
+mistral	mistral-large-latest	https://api.mistral.ai/v1	MISTRAL_API_KEY	http	eligible
+mistral	mistral-medium-latest	https://api.mistral.ai/v1	MISTRAL_API_KEY	http	eligible
+alibaba	qwen3.8-max	https://dashscope-intl.aliyuncs.com/compatible-mode/v1	DASHSCOPE_API_KEY	http	blocked
+alibaba	deepseek-v4-flash-0731	https://dashscope-intl.aliyuncs.com/compatible-mode/v1	DASHSCOPE_API_KEY	http	blocked
+ovhcloud	gpt-oss-120b	https://oai.endpoints.kepler.ai.cloud.ovh.net/v1	OVHCLOUD_API_KEY	http	blocked
+ovhcloud	qwen3.8-27b	https://oai.endpoints.kepler.ai.cloud.ovh.net/v1	OVHCLOUD_API_KEY	http	blocked
 zai	glm-5.3-flash	https://api.z.ai/api/paas/v4	ZAI_API_KEY	http	blocked
 zai	glm-5.3-flashx	https://api.z.ai/api/paas/v4	ZAI_API_KEY	http	blocked

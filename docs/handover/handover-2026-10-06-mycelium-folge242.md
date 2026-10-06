@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; CI-Triage, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: c9c493db9cd34feb322bcd18347bb3018dc5221dc4f476ba3179c61a79d6a8da
+  sha256: 5798eca47f3548bd06b56942faf2d023b83590e5c07019ad09531fc4bfd4a663
   status: live
 -->
 # Handover — Mycelium-Folge 242 (2026-10-06)
@@ -34,23 +34,32 @@ Rolling-Fenster (6 Sessions) bei Schluss **$0.1595**.
   Ausgang `unread`.
 - **Register-`url`-Lücken (tap/reference) gemessen: 0.** `phi/sources.φ` trägt 2667 Blöcke,
   2667 `url`-Zeilen; jeder `tap`- (34) und `reference`-Block (642) hat eine `url`. Kein offener Akt.
-- **Freie Frontier-Stimmen:** Basis-URLs gemessen (`--verdict`, 404/405 = API-Root erreichbar):
-  `https://api.orcarouter.ai/v1` (404), `https://api.sambanova.ai/v1` (405),
-  `https://api.mistral.ai/v1` (404), `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` (404),
-  `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1` (404, nicht doc-verifiziert). `free_models.tsv`
-  trägt 3 verifizierte SambaNova-Modelle (`DeepSeek-V3.1`, `gpt-oss-120b`, `Meta-Llama-3.3-70B-Instruct`),
-  Status `blocked` (Free-Plan verlangt Karte) — Key/Account = Operator-Akt. Model-IDs für OrcaRouter/
-  Mistral/Alibaba bleiben `unverified` → nicht als Zeile erfunden.
-- **Daten-Holdings CDN-Ort (gemessen 2026-10-06 via `fd`):** `data/spdf.gsfc.nasa.gov/` ist leer
-  (`wind_orbit.bin` + `omegaflow_series_wind_orbit.bin` nicht mehr am Ort; im CDN registriert
-  `sources.φ:3471`); `data/gea.esac.esa.int/` leer (dr3-Zwillinge bereits weg); `data/ssd.jpl.nasa.gov/`
-  trägt `ephemeris_earth.bin.cdn`/`gaia_dr3_vlies.vlde`; `nvss.json` liegt unter dem Register-Tag
-  `data/ssd.jpl.nasa.gov-nvss/nvss.json` (`sources.φ:17522`). **Riss:** die Survey-Tabelle nennt
-  `data/ssd.jpl.nasa.gov/nvss.json` (ohne `-nvss`), das Register `-nvss`. Kein Move ohne
-  Operator-Wort; Layout in Fremd-Bewegung (uncommittet).
-- **Exposom-Quellenmatrix: blockiert.** Die y-Serien der 12 Domänen sind unregistriert (Survey
-  `survey-2026-10-04-exposom-matrix.md`: „feedbare y-Serie: keine" für respiratorisch/renal/onkologisch).
-  Ein `.te`/Workflow ohne Driver/Target-Feld wäre eine leere Hülle — nicht gebaut.
+- **Freie Frontier-Stimmen — Model-IDs sind NICHT unverified.** Quelle: `~/.cache/opencode/models.json`
+  (models.dev, 226 Provider) + `~/.config/opencode/opencode.jsonc`. Gemessen:
+  - `orcarouter` api `https://api.orcarouter.ai/v1`, env `ORCAROUTER_API_KEY`, Freimodelle `orcarouter/free` (0/0), `orcarouter/auto` (0/0).
+  - `mistral` env `MISTRAL_API_KEY` (im Baum vorhanden) → `eligible`; Modelle `mistral-large-latest`, `mistral-medium-latest`.
+  - `alibaba` api `https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, env `DASHSCOPE_API_KEY`, Modelle `qwen3.8-max`, `deepseek-v4-flash-0731`.
+  - `ovhcloud` api `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1`, env `OVHCLOUD_API_KEY`, Modelle `gpt-oss-120b`, `qwen3.8-27b`.
+  - `sambanova` (`opencode.jsonc:172`) Modelle `DeepSeek-V3.2`, `gpt-oss-120b`, `Meta-Llama-3.3-70B-Instruct`.
+  `free_models.tsv` korrigiert: SambaNova `V3.1`→`V3.2`, 10 neue Zeilen (orcarouter/mistral/alibaba/ovhcloud);
+  Status `blocked` außer mistral (Key vorhanden). Die frühere Angabe „unverified" war falsch — die IDs stehen in opencode.
+- **Daten-Holdings CDN-Ort (gemessen via `fd -I`/`sha256sum`/`wc`):** `nvss.json` liegt korrekt unter dem
+  Register-Tag `data/ssd.jpl.nasa.gov-nvss/nvss.json` (12 212 131 B, 718 069 Zeilen, sha `e825e736…`) —
+  deckungsgleich mit `sources.φ:17522`. Der Scratch `~/archive/knowledge/data/opencode-tmp-2026-09-01/nvss.json`
+  ist die volle NVSS (108 446 035 B, sha `6f5dfe14…`) — zwei verschiedene Assets, kein Riss mehr.
+  `data/ssd.jpl.nasa.gov/` trägt ~70 `ephemeris_*.bin` + `gaia_dr3_vlies.vlde`; `wind_orbit.bin` und
+  `dr3_stars.bin` sind lokal absent, im CDN registriert (`sources.φ:3471`/`:17513`) → aus dem CDN nachbaubar,
+  kein Move offen (die zwei `gea`-Zwillinge wurden folge241 gelöscht).
+- **Exposom-Quellenmatrix — wer macht das:** die y-Serie braucht Mountains Zulassung (Verdikt) + Mycelium-
+  Manifestation + Compiler-Arm. Offene kollokierbare y-Serien (Survey §H): TOLIFE `10.5281/zenodo.16642439`,
+  AAMOS-00 `10.7488/ds/3775`, Wearable+PRO `10.5281/zenodo.8018238`, ADARP `10.5281/zenodo.6640290`,
+  CrossCheck (Kaggle), Labbaf `10.7280/D1WH6T`. Nächster Schritt: Mountain-Admission je Quelle → dann `.te` +
+  Workflow. Keine eigene Hülle ohne Driver/Target-Feld.
+- **CI-Befund (gemessen via `ci_manage log`):** `ci-gate 37483461784` = failure — `register_sort` meldet
+  `phi/sources.φ` mit 5 ttl-order + 4 url-order violations (0 duplicates). Fix =
+  `register_sort --write phi/sources.φ` — **Mountain** (Register-Ordnung; die Datei trägt Mountains
+  uncommittete Hunks → nicht berührt). `paper-check 37483118503` = failure war derselbe E0382
+  (`commit_gate.rs:1013`) am alten Commit; jetzt geheilt → nächster Lauf grün.
 - **Exposom-CDN-Workflows: nichts mehr eigen.** FARA-Descope erledigt; `sha256` pollen +
   `ghsl_compiler`-Arm sind Mountain-Teile (adressiert). Nur Nachhalten.
 
