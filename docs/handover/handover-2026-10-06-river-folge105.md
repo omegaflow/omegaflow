@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: d6e6fa54825abbfbb7ce8cabfeaa7f40692eb9913c4668436fc360759ba56d80
+  sha256: 65903c1590ad47c90c96d872c83bd1085e78ab10a29013075dbeb74eac5aa7db
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -24,6 +24,7 @@ Wort | Datum | Quelle
 „kannst du die frage bitte noch den voices und glm und claude online chat geben" — die Ratsfrage zusätzlich an die Schwarm-Stimmen, glm und Claude-online | 2026-10-06 | Operator (Session, River 104)
 „bitte lege die fragen dem rat vor und dem schwarm und gib sie mir davor für den online chat mit claude und glm" — die drei Stemm-Fragen (Membran-Hänger, Paper-Riss, Fenster-Kante) | 2026-10-06 | Operator (Session, River 105)
 „muss nicht die sonne zuerst sichtbar sein können wir nicht nach helligkeit/sichtbarkeit/erreichbarkeit progressiv laden?" — progressives Laden nach Sichtbarkeit, **Sonne zuerst** (nicht Sterne zuerst) | 2026-10-06 | Operator (Session, River 105)
+„die agenten haben archive search root genutzt und ich habe es aus versehen erlaubt" — ein lokaler `archive_search --root` erreichte eine Schwarm-Stimme über eine Laufzeit-Freigabe; die Schwarm-Antworten dieser Runde sind kontaminiert | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -238,6 +239,21 @@ Atom-Plan: Dispatch 0 (Epoch-/Ordnungs-Messung) → Dispatch 1 (B, `src/wasm.rs`
 Epoch-Riss (2000.0 vs 2016.0) wird **vor** C gemessen, nie gesetzt. Dispatch 0 + 1 + 2 sind
 gebaut; D und C stehen mit Triggern.
 
+## Incident 2026-10-06 — lokaler Baum an eine Schwarm-Stimme (gemessen, benannt)
+
+Operator-Wort: ein lokaler `archive_search --root` erreichte eine Schwarm-Stimme; der Operator
+hat die Laufzeit-Freigabe versehentlich erteilt. **Mechanik:** per-Agent-`permission` überschreibt
+top-level (`opencode.json` Doku; die Voice-Profile tragen `bash "*": "deny"` mit nur
+`archive_search_public`/`voice_read_full` erlaubt) — die Freigabe lief also über den
+instanz-weiten `approved`-Satz, der zuletzt evaluiert (AGENTS: „never answer 'always' to a bash
+ask outside the written maps — `approved` is instance-shared and evaluates last, so it would
+cross profiles"). **Guard-Stand:** die Profile + die Wrapper (`bin/archive_search_public`
+verweigert `--root`/`--index`/`--git`/`--leads`/…, `bin/voice_read_full` liest nur den
+`/tmp`-`--all`-Spill) verweigern lokal bereits strukturell; die Lücke ist die Laufzeit-Freigabe,
+kein Config-Defekt. **Folge:** die Schwarm-Antworten dieser Runde (Architektur A–E) sind
+**kontaminiert** — nicht als Messung verwendet; die Fragen bleiben offen. Keine Wiederholung
+ohne sichere Freigabe.
+
 ## An mycelium
 
 Origin: river folge101 (getragen über folge102/103/104/105).
@@ -276,4 +292,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.1599 · cap 0.2 Grund: zwei Rat-Sitzungen + Schwarm + progressive-Loading-Atom (A+B) überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.1599; Runde total 0.5318 → 0.8925; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.2059 · cap 0.3 Grund: zwei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-Behandlung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.2059; Runde total 0.5318 → 1.0916; gemessen 2026-10-06
