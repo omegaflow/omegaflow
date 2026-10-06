@@ -1855,6 +1855,19 @@ field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
 field parallax gaia_rrl_parallax_mas inverse-square em mas 86400 0.0 0.0
 field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
+origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
+format soho_lasco_cme
+compiler tools/harvest/src/bin/soho_lasco_compiler.rs
+at sun
+ttl 2592000
+field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/s 2592000 0.0 0.0
+field soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy advective deg 2592000 0.0 0.0
+field soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy advective deg 2592000 0.0 0.0
+field soho_lasco_cme_accel_m_s2 soho_lasco_cme_accel_m_s2 patch-levy advective m/s2 2592000 0.0 0.0
+field soho_lasco_cme_mass_g soho_lasco_cme_mass_g patch-levy advective g 2592000 0.0 0.0
+field soho_lasco_cme_ke_erg soho_lasco_cme_ke_erg patch-levy advective erg 2592000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
 format catalog_gaia_sso
 origin https://gea.esac.esa.int/tap-server/tap/sync
