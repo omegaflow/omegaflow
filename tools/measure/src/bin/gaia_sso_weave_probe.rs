@@ -4,7 +4,7 @@ use std::sync::Arc;
 use omegaflow::archivar::{BodyEphemeris, parse_ephemeris_binary};
 use omegaflow::dastcom::{AsteroidRec, RECORD_STRIDE, parse_record};
 use omegaflow::gaia_sso::{GaiaBody, parse_bin};
-use omegaflow::weberin::{GaiaFold, Weberin};
+use omegaflow::weberin::{GaiaFold, ReceiverWorldline, Weberin};
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -15,7 +15,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     println!(
-        "usage: gaia_sso_weave_probe [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--gaia <gaia_sso_tno.bin>]"
+        "usage: gaia_sso_weave_probe --receiver <name> --receiver-kind <body|reference-point> [--eph-dir <data-root>] [--dastcom <dastcom_asteroids.bin>] [--gaia <gaia_sso_tno.bin>]"
     );
 }
 
@@ -53,6 +53,28 @@ fn main() {
         Some(d) => d,
         None => "data/gea.esac.esa.int/gaia_sso_tno.bin".to_string(),
     };
+    let Some(receiver_name) = arg_value(&args, "--receiver") else {
+        println!(
+            "gaia_sso weave: no receiver worldline declared — the reduction is refused (pass --receiver <name> --receiver-kind <body|reference-point>)"
+        );
+        return;
+    };
+    let receiver = match arg_value(&args, "--receiver-kind").as_deref() {
+        Some("body") => ReceiverWorldline::Body(&receiver_name),
+        Some("reference-point") => ReceiverWorldline::ReferencePoint(&receiver_name),
+        Some(other) => {
+            println!(
+                "gaia_sso weave: receiver kind `{other}` is not declared — pass body or reference-point"
+            );
+            return;
+        }
+        None => {
+            println!(
+                "gaia_sso weave: the receiver kind is undeclared — the reduction is refused (pass --receiver-kind <body|reference-point>)"
+            );
+            return;
+        }
+    };
 
     let recs = match read_recs(&dastcom_path) {
         Some(r) if !r.is_empty() => r,
@@ -79,13 +101,16 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
-    let Some(earth) = read_eph(&eph_dir, "earth") else {
-        println!(
-            "gaia_sso weave: the earth ephemeris bin is void — the observer frame stays unread"
-        );
-        return;
-    };
-    eph.insert("earth".to_string(), earth);
+    if matches!(receiver, ReceiverWorldline::Body(_)) {
+        let Some(receiver_eph) = read_eph(&eph_dir, receiver.label()) else {
+            println!(
+                "gaia_sso weave: the {} ephemeris bin is void — the receiver worldline stays undeclared; the reduction is refused",
+                receiver.label()
+            );
+            return;
+        };
+        eph.insert(receiver.label().to_string(), receiver_eph);
+    }
     let Some(sun) = read_eph(&eph_dir, "sun") else {
         println!(
             "gaia_sso weave: the sun ephemeris bin is void — the heliocentric fold stays unread"
@@ -97,7 +122,7 @@ fn main() {
     let mut w = Weberin::new();
     w.eph = Some(Arc::new(eph));
     w.sun = Some(Arc::new(sun_map));
-    let verdicts = w.weave_gaia_line(&recs, &[], &gaia_bodies);
+    let verdicts = w.weave_gaia_line(receiver, &recs, &[], &gaia_bodies);
     if verdicts.is_empty() {
         println!("gaia_sso weave: no body carries both lines — the fold stays closed");
         return;
@@ -105,6 +130,14 @@ fn main() {
     let transits_all: usize = gaia_bodies.iter().map(|b| b.transits.len()).sum();
     println!(
         "=== the second body line — MPC Kepler (dastcom elements) against the Gaia DR3 SSO measured astrometry (angular, no distance fabricated) ==="
+    );
+    let receiver_kind = match receiver {
+        ReceiverWorldline::Body(_) => "body",
+        ReceiverWorldline::ReferencePoint(_) => "reference-point",
+    };
+    println!(
+        "=== receiver worldline: {} ({receiver_kind}, declared, echoed in every verdict) ===",
+        receiver.label()
     );
     let mut placed = 0usize;
     let mut riss = 0usize;
