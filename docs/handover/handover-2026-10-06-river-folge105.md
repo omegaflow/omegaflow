@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 0bebbdf953b7dc4c6ef2150790aa73b6eef27d12e9884c48c8b95db0119864f7
+  sha256: 6c731598ebf2f0581b615c93bed08d3fbf466650bd4ddbb23063adc67964da6d
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -25,6 +25,7 @@ Wort | Datum | Quelle
 „bitte lege die fragen dem rat vor und dem schwarm und gib sie mir davor für den online chat mit claude und glm" — die drei Stemm-Fragen (Membran-Hänger, Paper-Riss, Fenster-Kante) | 2026-10-06 | Operator (Session, River 105)
 „muss nicht die sonne zuerst sichtbar sein können wir nicht nach helligkeit/sichtbarkeit/erreichbarkeit progressiv laden?" — progressives Laden nach Sichtbarkeit, **Sonne zuerst** (nicht Sterne zuerst) | 2026-10-06 | Operator (Session, River 105)
 „die agenten haben archive search root genutzt und ich habe es aus versehen erlaubt" — ein lokaler `archive_search --root` erreichte eine Schwarm-Stimme über eine Laufzeit-Freigabe; die Schwarm-Antworten dieser Runde sind kontaminiert | 2026-10-06 | Operator (Session, River 105)
+„ich meine browser nutzung wäre schon gut sollen wir eine neue voices chrome instanz anlegen in der keine logins gespeichert sind?" — Browser-Nutzung der Voices bejaht, aber über eine eigene Chrome-Instanz ohne Logins | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -179,6 +180,23 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** externe Kanäle; kein Polling.
 - **Braucht:** (1) `flyby_path2_fill`-Lauf (CI) lesen + Addendum-Zellen fortschreiben;
   (2) OMNI2/kp/JUICE-Trigger feuern lassen; (3) Δ/σ_recon post-flyby.
+
+### Voices-Chrome — eigene Instanz ohne Logins
+- **Status:** operator-gebunden (Wort) | **Bindung:** eigen (Config) + operator (Chrome-Start)
+- **Trigger:** Operator-Wort für Config + Chrome-Start.
+- **Lage:** (gemessen 2026-10-06) Die Browser-Brücke der Voices ist das `chrome-devtools`-MCP mit
+  `--autoConnect` (`opencode.json:360`) → hängt am **Operator-Chrome mit Profil** (Logins/Cookies).
+  `archive_search --playwright` trägt schon ein eigenes persistentes Profil
+  (`~/.cache/omegaflow/playwright-profile`, `playwright_fetch.cjs:64`). Vorarbeit: river-35
+  `:179-180` — Fallback `--browserUrl` + separater Chrome (`--user-data-dir`,
+  `--remote-debugging-port`), `<PORT>` = pending.
+- **Blockade:** Config-Änderung (global + repo `opencode.json`, opencode-Neustart) + separater
+  Chrome-Start; Cloudflare-/gated-Seiten brauchen weiter den Operator-Profil-Chrome.
+- **Braucht:** eigenen Chrome (`--user-data-dir=~/.cache/omegaflow/voices-chrome
+  --remote-debugging-port=<PORT> --no-first-run`), ein voices-`chrome-devtools`-MCP via
+  `--browserUrl`; die Voice-Profile nur auf dieses Target (Operator-Chrome via `browser_targets`
+  gesperrt); lokale-Host-/LAN-Sperre für den Voices-Chrome (SSRF, wie `archive_search_public`).
+  Operator-Wort + Neustart.
 
 ## Rat + Schwarm 2026-10-06 — Stemmen (Membran-Hänger / Paper-Riss / Fenster-Kante)
 
