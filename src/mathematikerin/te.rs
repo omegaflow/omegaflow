@@ -103,6 +103,14 @@ impl BiasArm {
             BiasArm::BinnedHistogram => TE_BIAS_MK_BINNED.len(),
         }
     }
+
+    pub fn neff_floor(self) -> Option<f64> {
+        match self {
+            BiasArm::ScalarKde => TE_NEFF_THRESHOLD,
+            BiasArm::EmbeddedKsg => TE_NEFF_THRESHOLD,
+            BiasArm::BinnedHistogram => TE_NEFF_THRESHOLD_BINNED,
+        }
+    }
 }
 
 pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
@@ -110,6 +118,8 @@ pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
 }
 
 pub const TE_NEFF_THRESHOLD: Option<f64> = Some(1.8485e1);
+
+pub const TE_NEFF_THRESHOLD_BINNED: Option<f64> = Some(1.9311e1);
 
 pub fn transfer_entropy_bias_adjusted_above(
     te: f64,
@@ -4098,6 +4108,26 @@ mod tests {
             "the floor is the n=800 kde_n_eff mean (18.485) in the corrected (target,driver) \
              order from te-bias-n 37443829535 @2b7acb4d4, got {floor}"
         );
+    }
+
+    #[test]
+    fn gate_te_neff_threshold_binned_is_the_measured_n800_binned_floor() {
+        let floor = TE_NEFF_THRESHOLD_BINNED.expect("the measured binned n_eff floor stands");
+        assert!(
+            (floor - 1.9311e1).abs() < 1e-12,
+            "the binned floor is the n=800 binned_n_eff mean (19.311) from te-bias-n \
+             37460626270 @693bfdace, got {floor}"
+        );
+        assert_ne!(
+            TE_NEFF_THRESHOLD_BINNED, TE_NEFF_THRESHOLD,
+            "the histogram arm never reads the KDE socket"
+        );
+        assert_eq!(
+            BiasArm::BinnedHistogram.neff_floor(),
+            TE_NEFF_THRESHOLD_BINNED
+        );
+        assert_eq!(BiasArm::ScalarKde.neff_floor(), TE_NEFF_THRESHOLD);
+        assert_eq!(BiasArm::EmbeddedKsg.neff_floor(), TE_NEFF_THRESHOLD);
     }
 
     #[test]

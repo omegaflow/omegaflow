@@ -15,9 +15,9 @@ use omegaflow::mathematikerin::wy_max_t::{
 };
 use omegaflow::te::{
     BiasArm, LaggedCond, TE_NEFF_THRESHOLD, TeEstimator, TeNull, TeSurrogateParams,
-    benjamini_hochberg_pass, conditional_embedded_te_phase, conditional_te_surrogates_n, kde_n_eff,
-    surrogate_max_phase_n, surrogate_rank_p_value, surrogate_stats_phase_n,
-    transfer_entropy_bias_adjusted, transfer_entropy_conditional_binned_n,
+    benjamini_hochberg_pass, binned_n_eff, conditional_embedded_te_phase,
+    conditional_te_surrogates_n, kde_n_eff, surrogate_max_phase_n, surrogate_rank_p_value,
+    surrogate_stats_phase_n, transfer_entropy_bias_adjusted, transfer_entropy_conditional_binned_n,
 };
 
 const MONTH_S: f64 = 2_592_000.0;
@@ -2625,7 +2625,7 @@ fn bias_column(
     let Some(te) = te else {
         return (None, "absent");
     };
-    let Some(floor) = TE_NEFF_THRESHOLD else {
+    let Some(floor) = arm.neff_floor() else {
         return (None, "floor_unmeasured");
     };
     let ne = n_eff.unwrap_or(f64::NAN);
@@ -3993,6 +3993,7 @@ struct MatrixCellOutcome {
     floor: bool,
     pass: bool,
     res_pair: Option<(f64, f64)>,
+    alignment_absent: bool,
 }
 
 fn resolution_representable(grid_dt: f64, tau_d: f64, tau_t: f64) -> bool {
@@ -4175,7 +4176,7 @@ fn cell_te_and_surrogates(
     let (te, lag) = obs_best?;
     Some(CellTe {
         te,
-        n_eff: kde_n_eff(target, driver, lag),
+        n_eff: binned_n_eff(target, driver, lag, bins),
         surrogates: surr_max?,
     })
 }
@@ -4275,17 +4276,7 @@ fn run_pair_matrix(
             },
         )
         .collect();
-    let mut pos: Vec<Option<usize>> = Vec::with_capacity(pool.len());
-    let mut avail: Vec<&[(f64, f64)]> = Vec::new();
-    for l in &loaded {
-        match l {
-            Some(s) => {
-                pos.push(Some(avail.len()));
-                avail.push(s.as_slice());
-            }
-            None => pos.push(None),
-        }
-    }
+    let pos: Vec<bool> = loaded.iter().map(|l| l.is_some()).collect();
     let native: Vec<Option<f64>> = pool
         .iter()
         .enumerate()
@@ -4294,22 +4285,9 @@ fn run_pair_matrix(
             None => None,
         })
         .collect();
-    let (columns, _grid, cadence) = match align_many(&avail, desc.seasonal, desc.bin) {
-        Ok(a) => a,
-        Err(reason) => {
-            println!("matrix alignment absent: {reason}");
-            return 0;
-        }
-    };
-    let cell_count = match columns.first() {
-        Some(c) => c.len().to_string(),
-        None => "absent".to_string(),
-    };
     println!(
-        "aligned grid: cells {} | cadence {} s | arms measured {} of {}",
-        cell_count,
-        fmt_opt(Some(cadence)),
-        avail.len(),
+        "arms measured {} of {} | per-cell alignment, every cell carries its own (tau_d x tau_t)",
+        loaded.iter().filter(|l| l.is_some()).count(),
         pool.len()
     );
     println!();
@@ -4328,6 +4306,7 @@ fn run_pair_matrix(
                 p: 1.0,
                 floor: true,
                 res_pair: None,
+                alignment_absent: false,
                 pass: false,
             });
             continue;
@@ -4342,28 +4321,11 @@ fn run_pair_matrix(
                 p: 1.0,
                 floor: true,
                 res_pair: None,
+                alignment_absent: false,
                 pass: false,
             });
             continue;
         };
-        let tau_d = native.get(di).copied().flatten();
-        let tau_t = native.get(ti).copied().flatten();
-        if let (Some(td), Some(tt)) = (tau_d, tau_t) {
-            if !resolution_representable(cadence, td, tt) {
-                outcomes.push(MatrixCellOutcome {
-                    id,
-                    cond_n: 0,
-                    n: 0,
-                    n_eff: None,
-                    te: None,
-                    p: 1.0,
-                    floor: true,
-                    res_pair: Some((td, tt)),
-                    pass: false,
-                });
-                continue;
-            }
-        }
         let cond_idx: Vec<usize> = spec
             .cond_names(d, t)
             .iter()
@@ -4374,7 +4336,7 @@ fn run_pair_matrix(
             .chain(std::iter::once(ti))
             .chain(cond_idx.iter().copied())
             .collect();
-        if required.iter().any(|&k| pos[k].is_none()) {
+        if required.iter().any(|&k| !pos[k]) {
             outcomes.push(MatrixCellOutcome {
                 id,
                 cond_n,
@@ -4384,14 +4346,58 @@ fn run_pair_matrix(
                 p: 1.0,
                 floor: true,
                 res_pair: None,
+                alignment_absent: false,
                 pass: false,
             });
             continue;
         }
-        let cols: Vec<&[Option<f64>]> = required
+        let req_arms: Vec<&[(f64, f64)]> = required
             .iter()
-            .map(|&k| columns[pos[k].expect("the required arm was measured")].as_slice())
+            .map(|&k| {
+                loaded[k]
+                    .as_ref()
+                    .expect("the required arm was measured")
+                    .as_slice()
+            })
             .collect();
+        let (cell_columns, _, grid_dt) = match align_many(&req_arms, desc.seasonal, desc.bin) {
+            Ok(a) => a,
+            Err(_reason) => {
+                outcomes.push(MatrixCellOutcome {
+                    id,
+                    cond_n,
+                    n: 0,
+                    n_eff: None,
+                    te: None,
+                    p: 1.0,
+                    floor: true,
+                    res_pair: None,
+                    alignment_absent: true,
+                    pass: false,
+                });
+                continue;
+            }
+        };
+        let tau_d = native.get(di).copied().flatten();
+        let tau_t = native.get(ti).copied().flatten();
+        if let (Some(td), Some(tt)) = (tau_d, tau_t) {
+            if !resolution_representable(grid_dt, td, tt) {
+                outcomes.push(MatrixCellOutcome {
+                    id,
+                    cond_n,
+                    n: 0,
+                    n_eff: None,
+                    te: None,
+                    p: 1.0,
+                    floor: true,
+                    res_pair: Some((td, tt)),
+                    alignment_absent: false,
+                    pass: false,
+                });
+                continue;
+            }
+        }
+        let cols: Vec<&[Option<f64>]> = cell_columns.iter().map(|c| c.as_slice()).collect();
         let joint = joint_columns(&cols);
         let Some(n) = joint.first().map(|c| c.len()) else {
             outcomes.push(MatrixCellOutcome {
@@ -4403,6 +4409,7 @@ fn run_pair_matrix(
                 p: 1.0,
                 floor: true,
                 res_pair: None,
+                alignment_absent: false,
                 pass: false,
             });
             continue;
@@ -4417,6 +4424,7 @@ fn run_pair_matrix(
                 p: 1.0,
                 floor: true,
                 res_pair: None,
+                alignment_absent: false,
                 pass: false,
             });
             continue;
@@ -4450,6 +4458,7 @@ fn run_pair_matrix(
                     p,
                     floor: false,
                     res_pair: None,
+                    alignment_absent: false,
                     pass: false,
                 });
             }
@@ -4463,6 +4472,7 @@ fn run_pair_matrix(
                     p: 1.0,
                     floor: true,
                     res_pair: None,
+                    alignment_absent: false,
                     pass: false,
                 });
             }
@@ -4532,7 +4542,9 @@ fn run_pair_matrix(
             Some(v) => format!("{v:.4e}"),
             None => "absent".to_string(),
         };
-        let word = if o.res_pair.is_some() {
+        let word = if o.alignment_absent {
+            "alignment pending"
+        } else if o.res_pair.is_some() {
             "resolution pending"
         } else if o.floor {
             "floor (p = 1)"
@@ -4670,14 +4682,35 @@ mod tests {
     }
 
     #[test]
+    fn matrix_cell_alignment_is_per_pair_not_global() {
+        let coarse = vec![(0.0, 1.0), (2_592_000.0, 2.0), (5_184_000.0, 3.0)];
+        let fast = vec![(0.0, 1.0), (86_400.0, 2.0), (172_800.0, 3.0)];
+        let far = vec![
+            (1.0e9, 1.0),
+            (1.0e9 + 86_400.0, 2.0),
+            (1.0e9 + 172_800.0, 3.0),
+        ];
+        let all = vec![coarse.as_slice(), fast.as_slice(), far.as_slice()];
+        assert!(
+            align_many(&all, Seasonal::None, Some(86_400.0)).is_err(),
+            "a global alignment over all three arms carries no common window"
+        );
+        let pair = vec![coarse.as_slice(), fast.as_slice()];
+        assert!(
+            align_many(&pair, Seasonal::None, Some(86_400.0)).is_ok(),
+            "the overlapping pair aligns on its own, per cell, never gated by a far arm"
+        );
+    }
+
+    #[test]
     fn bias_column_gates_on_n_eff_and_exact_n() {
         let te = 5.0e-1;
-        let (adj, state) = bias_column(Some(te), 800, Some(1.8166e1), BiasArm::ScalarKde);
+        let (adj, state) = bias_column(Some(te), 800, Some(1.8485e1), BiasArm::ScalarKde);
         assert_eq!(state, "adjusted");
         let adj = adj.expect("a measured n at the floor carries the measured bias");
         assert!(
-            (adj - (te - 8.866e-2)).abs() < 1e-12,
-            "m_k is the measured table entry, never interpolated"
+            (adj - (te + 8.866e-2)).abs() < 1e-12,
+            "the negative small-sample bias is added back: adjusted = te - m_k, m_k = -8.866e-2"
         );
 
         let (adj, state) = bias_column(Some(te), 800, Some(1.0), BiasArm::ScalarKde);
@@ -4715,6 +4748,19 @@ mod tests {
             "an unmeasured n is off-table, never interpolated"
         );
         assert!(adj.is_none());
+
+        let (adj, state) = bias_column(Some(te), 800, Some(1.9e1), BiasArm::BinnedHistogram);
+        assert_eq!(
+            state, "unadjusted_below_floor",
+            "the histogram arm reads its own floor, never the KDE socket"
+        );
+        assert!(adj.is_none());
+        let (adj, state) = bias_column(Some(te), 800, Some(1.9e1), BiasArm::ScalarKde);
+        assert_eq!(
+            state, "adjusted",
+            "the same n_eff clears the KDE floor — the two arms are not interchangeable"
+        );
+        assert!(adj.is_some());
     }
 
     #[test]
