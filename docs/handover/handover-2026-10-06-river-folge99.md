@@ -3,7 +3,7 @@
   session: River-Folge 99
   class: handover
   date: 2026-10-06
-  sha256: 2bf4a94594c1d54a9d76ebe8cd2a9d18278f17162f701c1db9e11ded14f5c2bb
+  sha256: d573af716970be40bca076851e698dbb73d824145a9ea3445ee695f477a05f64
   status: live
 -->
 # Handover — River-Folge 99 (2026-10-06)
@@ -87,12 +87,17 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 ### Universelles Vlies — Bias-Kurve, `ozzy` + Alles-gegen-alles-Matrix
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keiner (arbeitbar bis zur Rats-Kante).
-- **Lage:** (gemessen 2026-10-06) **Rat + Schwarm entschieden** (Rat 2026-10-06; Schwarm 6/12
-  einig — gemini, dots, ling, nemotron, inkling, kilo; die übrigen Routen rate-limitiert):
+- **Lage:** (gemessen 2026-10-06) **Rat + Schwarm 6/12 + Claude + GLM einig** (Rat 2026-10-06;
+  Schwarm: gemini, dots, ling, nemotron, inkling, kilo; die übrigen Routen rate-limitiert;
+  Claude + z.ai GLM via UI):
   `TE_BIAS_MK_EMBEDDED` wird eine **n-Tabelle** (analog `TE_BIAS_MK`/`te_bias_m_k`), exakter
   Lookup, keine Interpolation; gemessen mit dem **eingebetteten KSG-Estimator**
   (`topological_te_estimate`, dim 3, auto-MI-τ, K=4 — der Produktionsarm `omega.rs:489`), nicht
-  mit dem KDE-Arm. Die τ-Abhängigkeit ist ein benannter Riss. **Gebaut:** `te.rs:45` jetzt
+  mit dem KDE-Arm. Die τ-Abhängigkeit ist ein benannter Riss. **Refinement (Claude/GLM):**
+  auto-τ läuft *innerhalb* der Messung (pro Realisation neu), sonst kalibriert man eine andere
+  Pipeline als die produktive; n außerhalb der Tabelle → `refused`, **kein Rückfall auf den
+  Skalar**; die Tabelle ist an (dim, K, τ-Politik) gebunden — Konfigurationswechsel = Neumessung.
+  **Gebaut:** `te.rs:45` jetzt
   `TE_BIAS_MK_EMBEDDED: &[(usize,f64)] = &[]` + `te_bias_m_k_embedded`; `te_bias_n_probe` um
   `--estimator embedded --dim` erweitert; `.github/workflows/te-bias-n.yml` fährt den scalaren +
   den eingebetteten Arm über `800…10000` inkl. produktiver n `6000,8546`.
@@ -106,9 +111,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Status:** eigen | **Bindung:** eigen (cross-line: Mountain, Sensory)
 - **Trigger:** keiner (arbeitbar bis zur Rats-Kante).
 - **Lage:** (gemessen 2026-10-06) Verdikt `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md`.
-  **Rat 2026-10-06 (bestätigt vom Schwarm 6/12):** der korrekte Rahmen ist SSB/baryzentrisch als
-  Invarianter der Presence **plus** ein je Volume **deklarierter Observer**; der feste
-  `"earth"`-Rahmen ist der Bias; fehlt die Deklaration → `refused`/`absent`, nie Default.
+  **Rat 2026-10-06 (bestätigt vom Schwarm 6/12 + Claude + GLM):** der korrekte Rahmen ist
+  SSB/ICRS(+TDB) als kanonischer Elternrahmen **plus** ein je Volume **deklarierter Observer**
+  als Kind; der feste `"earth"`-Rahmen ist der Bias (körperfest, zeitabhängig, erdperiodisch —
+  für Sonne/Mars plausibel aussehende Fehlwerte); fehlt die Deklaration → `refused`, nie Default.
+  **Schema (Claude/GLM):** `frame = {Körper, Figur, Achsenkonvention, vertikaler Bezug, Epoche
+  (TDB), Rotations-/Ephemeridenmodell}` + Transformationskette zu ICRS/SSB; Altbestand einmalig
+  als `earth-wgs84`/`legacy-assumed` **deklarieren** (Migration, kein Laufzeit-Default).
   Offen: (a) `static/membrane.html:43` `const BODIES = ["earth","moon","sun"]` →
   Build-Time-Manifest aus der Hüllen-Pipeline (Kante: kein Fenster-Edit; Mycelium/CI stagt);
   (b) `src/mathematikerin/omega.rs:878` hart `"earth"` → deklarativer Rahmen.
@@ -173,7 +182,8 @@ Verifikation/Dispatches: `cargo check` clean, `cargo build -p omegaflow-measure 
 clean, `cargo fmt --` auf die zwei Quelldateien; `./target/debug/odf_census_probe` lief lokal
 (2228 valide Records, silent). Rat gelaufen (`council`, 2026-10-06) + Schwarm 6/12
 (gemini/dots/ling/nemotron/inkling/kilo einig; qwen/zai/zen rate-limitiert, gptoss/agnes/kenari
-abgebrochen). `register_lookup --fired river` = em-Apertur (FIRED_UNGEMESSEN) → gemessen;
+abgebrochen) + Claude + z.ai GLM (UI, Operator-vermittelt) — alle einig.
+`register_lookup --fired river` = em-Apertur (FIRED_UNGEMESSEN) → gemessen;
 `--addressed river` = 3 (future-181, mountain-238, mycelium-235) — gefaltet.
 
 ## Burn: open 0.0000 · close 0.1036 — `session_burn` River-Linie (top session „River-Linie Übergabe in einem Pass abarbeiten", gemessen 2026-10-06)
