@@ -508,6 +508,51 @@ pub fn transfer_entropy_binned(x: &[f32], y: &[f32], lag: usize, bins: usize) ->
     transfer_entropy_conditional_binned_n(x, y, &[], lag, bins)
 }
 
+pub fn binned_n_eff(x: &[f32], y: &[f32], lag: usize, bins: usize) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || bins < 2 || y.len() < n {
+        return None;
+    }
+    if x.iter().chain(y.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let lo = 0usize;
+    if lo >= n {
+        return None;
+    }
+    let shift = if lag == 0 { 1usize } else { lag };
+    let m = n.checked_sub(shift)?;
+    if m.checked_sub(lo)? < 8 {
+        return None;
+    }
+    let (mn_x, mx_x) = bin_edges(x)?;
+    let range_x = mx_x - mn_x;
+    let (mn_y, mx_y) = bin_edges(y)?;
+    let range_y = mx_y - mn_y;
+    let bx: Vec<usize> = x
+        .iter()
+        .map(|&v| bin_index(v, mn_x, range_x, bins))
+        .collect();
+    let by: Vec<usize> = y
+        .iter()
+        .map(|&v| bin_index(v, mn_y, range_y, bins))
+        .collect();
+    let mut keybuf: Vec<usize> = Vec::with_capacity(3);
+    let mut map: std::collections::HashMap<u64, usize> = std::collections::HashMap::new();
+    for s in lo..m {
+        keybuf.clear();
+        keybuf.push(bx[s + shift]);
+        keybuf.push(bx[s]);
+        keybuf.push(by[s]);
+        *map.entry(joint_key(&keybuf, bins)).or_insert(0) += 1;
+    }
+    if map.is_empty() {
+        return None;
+    }
+    let total: usize = map.values().sum();
+    Some(total as f64 / map.len() as f64)
+}
+
 fn digamma(x: f64) -> f64 {
     let mut v = x;
     let mut acc = 0.0;
@@ -3969,6 +4014,29 @@ mod tests {
         assert!(
             kde_n_eff(&constant, &y[..64], 0).is_none(),
             "a constant series carries no bandwidth, so n_eff stays absent"
+        );
+    }
+
+    #[test]
+    fn gate_binned_n_eff_occupancy() {
+        let n = 240;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let v = binned_n_eff(&x, &y, 1, 4).expect("the coupled pair occupies joint cells");
+        assert!(
+            v.is_finite() && v > 0.0,
+            "the mean occupancy is a positive raw count, got {v}"
+        );
+        let constant = vec![1.0f32; n];
+        assert!(
+            binned_n_eff(&constant, &y, 1, 4).is_none(),
+            "a constant target carries no bin edges, so the occupancy stays absent"
         );
     }
 
