@@ -1,0 +1,35 @@
+name: gistemp-aod-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gistemp-aod:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.giss.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view data.giss.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.giss.nasa.gov --repo omegaflow/sources \
+              --title "data.giss.nasa.gov" \
+              --notes "GISS stratospheric volcanic aerosol (Sato/Lacis tau_reff) reduced to a monthly global-mean AOD550 record. Asset gistemp_aod550_global_mean.txt: one comment line then rows 't v', t = Unix seconds, v = cos(lat)-weighted AOD550 (dimensionless)."
+          fi
+      - name: Compile the volcanic AOD550 record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin gistemp_aod_compiler -- \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gistemp-aod-cdn: gistemp_aod550_global_mean.txt returned void" \
+                 "gistemp_aod_compiler returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
