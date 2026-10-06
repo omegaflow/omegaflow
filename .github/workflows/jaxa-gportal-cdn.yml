@@ -1,7 +1,7 @@
 name: jaxa-gportal-cdn
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.dataset }}
   cancel-in-progress: false
 
 on:
