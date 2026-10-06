@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 29028457ceb0e41fdccfd0465797d88ad11fe49f962d98d86ca9ad9a771a3322
+  sha256: 740d4df0debf3ddd5dbcdafa2d5365d5ad77e96ad83f95bbba03c348852c3b3c
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -97,15 +97,31 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** `ci-check 37444174960` abwarten (Stehender Pass; kein Polling); grün → Punkt fällt,
   rot → `ci_manage log 37444174960`.
 
-### dB/dt–GIC-Relation Mäntsälä
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** fine-grain `fmi_gic`-Asset + NUR-Asset im CDN.
-- **Lage:** (gemessen 2026-10-05) FMI-GIC CC BY 4.0, 1999–2023, Halt 2023-10-23, nicht-uniform;
-  NUR nur als SuperMAG-Station. FMI/NUR-Ernte frei (`mail_ledger.φ` record 235, Ari Viljanen);
-  flacher Fit = `doi:10.5194/angeo-43-271-2025` (Eq. 43, Table 1).
-- **Blockade:** die zwei Harvests (Mountain/Mycelium) + neuer Probe-Bin.
-- **Braucht:** (1) `fmi_gic` fine-grain registriert+manifestiert; (2) NUR im CDN; (3) Probe
-  dB/dt(NUR)–GIC(Mäntsälä) + Zahl in Paper §4/§6.
+### dB/dt–GIC-Relation Mäntsälä (Viljanen-Empfehlungen)
+- **Status:** wartend | **Bindung:** eigen (cross-line Mountain/Mycelium)
+- **Trigger:** NUR-Asset `fmi_image_mag_nur.bin` im CDN (fine-grain GIC ist erfüllt).
+- **Lage:** (gemessen 2026-10-06, River 105) Viljanens Empfehlungen (2026-10-05, `mail_ledger.φ:235`)
+  sind **weitgehend umgesetzt**:
+  - ✅ **Fine-grain FMI-GIC:** `fmi_gic_1min.bin` registriert (`phi/sources.φ:17338-17345`, `format
+    fmi_gic_1min`, `origin …/gic/man_ascii`, `compiler fmi_gic_compiler.rs`, `on earth 60.6 25.2 0`),
+    Formate-Arm `extract.rs:818`/`geo.rs:295`/`main_flow.rs:4121`, Workflow `fmi-gic-cdn.yml`
+    (`--grain minute`), **manifestiert** (sha256 `a30a846d…`).
+  - ✅ **IMAGE/NUR-Zeile** registriert (`phi/sources.φ:17347-17353`, `fmi_image_mag_nur.bin`,
+    `image_mag_compiler.rs`, `field fmi_image_mag_dxdt`).
+  - ✅ **Paper §4** (`docs/paper/gic-causal-driver.md:599-621`) trägt CC BY 4.0 (Ari Viljanen
+    2026-10-05), die NUR-Empfehlung, die Caveats (nicht-uniform, beste Qualität 1999–April 2005,
+    Tages-Lineartrend-Subtraktion) und Viljanen et al. 2025 (`angeo-43-271-2025`, Eq. 43/Table 1).
+  - ⬜ **NUR nicht im CDN:** `fmi_image_mag_nur.bin` hat **keinen sha** und **keinen
+    Manifest-Workflow** (`image-cdn.yml` existiert nicht; kein `.github`-Treffer für `image_mag`) —
+    der Compiler steht, die Manifestation fehlt.
+  - ⬜ **Tages-Lineartrend-Subtraktion** (Viljanens Caveat) ist **nicht** implementiert (kein
+    `trend`/`detrend` in `fmi_gic_compiler.rs`/`image_mag_compiler.rs`).
+  - ⬜ **Relation noch nicht gemessen:** Paper `:617` nennt sie „named pending measurement, not yet
+    run"; `gic_storm_probe.rs` ist der storm-selective ABK/SOD-Arm, nicht der dB/dt(NUR)–GIC-Paar-Test.
+- **Blockade:** NUR-Manifestation (kein Workflow) + Probe.
+- **Braucht:** (1) `image-cdn.yml` (Mycelium) für `fmi_image_mag_nur.bin` + sha ins Register;
+  (2) ggf. Tages-Detrend im Compiler (Mountain); (3) Probe dB/dt(NUR)–GIC(Mäntsälä) + Zahl in
+  Paper §4/§6.
 
 ### Membran-Sonne-Anker (Operator-Wort future-181; cross-line Mountain/Mycelium)
 - **Status:** blockiert | **Bindung:** eigen (cross-line: Mountain, Mycelium)
@@ -373,4 +389,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.4533 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.4533; Runde total 0.5318 → 1.6475; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.4887 · cap 0.5 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-/Schwarm-Seat-/5-Stimmen-/Axiom-Config + Viljanen-Umsetzungsmessung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.4887; Runde total 0.5318 → 1.8407; gemessen 2026-10-06
