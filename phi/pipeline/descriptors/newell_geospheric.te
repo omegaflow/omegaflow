@@ -1,0 +1,23 @@
+# newell_geospheric.te — Newell dΦ/dt gegen die geosphärische Antwort.
+# Rats-Verdikt 2026-10-06: Newell tritt als deklarierter abgeleiteter Feldknoten ein
+#   (`from …`), nicht als Peer seiner Erzeuger. Treiber gegen eine geosphärische
+#   Antwort; eine Zelle `Newell × Bz` wäre deterministisch kollinear.
+# Provenienz: magnetosphere_imf_by_nt + magnetosphere_imf_bz_nt + solar_wind_speed_km_s
+#   (die drei Größen, die `newell_dphi_dt(by, bz, speed)` trägt). Riss (gemessen
+#   2026-10-06): der Rat nannte `magnetosphere_imf_bt_nt`; |Bt| trägt das Vorzeichen
+#   von By nicht. Die SWPC-rtsw-Quelle trägt `by_gsm` (gemessen via jaq auf
+#   rtsw_mag_1m.json), die `first by_gsm magnetosphere_imf_by_nt`-Zeile ist gesetzt.
+# Lauf: `.github/workflows/field-te-query.yml` Job `matrix-newell` (CI), nie lokal.
+matrix newell_geospheric rect
+register sources
+drivers newell_dphi_dt
+targets intermagnet_dbdt
+from newell_dphi_dt magnetosphere_imf_by_nt,magnetosphere_imf_bz_nt,solar_wind_speed_km_s
+cond rest
+fdr bh 0.05 over matrix
+expect cells 1
+lags 0,1
+surrogate 10
+cadence live
+bin 300
+seasonal none

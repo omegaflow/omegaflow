@@ -173,6 +173,7 @@ url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 ttl 60
 at sun
 first bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
+first by_gsm magnetosphere_imf_by_nt inverse-square em nT 6.0 0.0 0.0
 first bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json

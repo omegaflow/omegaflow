@@ -9,6 +9,7 @@ use omegaflow::archivar::{
     series_component_name, series_rows,
 };
 use omegaflow::lsk::days_from_civil;
+use omegaflow::mathematikerin::newell::newell_dphi_dt;
 use omegaflow::mathematikerin::wy_max_t::{
     Member, ResampleMode, null_matrix, null_means_per_statistic, observed_family, phase_data,
     quantile, sigma_per_statistic, studentized_maxima,
@@ -257,6 +258,7 @@ struct Descriptor {
     event_conditional: bool,
     count_quantiles: Option<usize>,
     matrix: Option<MatrixSpec>,
+    derived: Vec<(String, Vec<String>)>,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -399,6 +401,7 @@ fn build_matrix_spec(
     fdr: Option<(FdrMethod, f64, FdrScope)>,
     expect: Option<usize>,
     conds: &[Arm],
+    derived: &[(String, Vec<String>)],
 ) -> Result<Option<MatrixSpec>, String> {
     let (label, shape) = match head {
         Some(h) => h,
@@ -417,6 +420,12 @@ fn build_matrix_spec(
                     "matrix arm list without a matrix head — the arms belong to matrix <label> rect|full|upper"
                         .into(),
                 );
+            }
+            if !derived.is_empty() {
+                return Err(format!(
+                    "from derived node '{}' without a matrix head — the derivation belongs to a declared matrix driver, target or channel",
+                    derived[0].0
+                ));
             }
             if fdr.is_some() {
                 return Err("fdr without matrix — the correction belongs to a matrix head".into());
@@ -477,6 +486,14 @@ fn build_matrix_spec(
             ));
         }
     }
+    let pool = spec.pool();
+    for (name, _) in derived {
+        if !pool.iter().any(|p| p == name) {
+            return Err(format!(
+                "from derived node '{name}' is missing from the matrix pool — the derived node belongs in drivers, targets or channels"
+            ));
+        }
+    }
     Ok(Some(spec))
 }
 
@@ -504,6 +521,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut matrix_cond: Option<MatrixCond> = None;
     let mut matrix_fdr: Option<(FdrMethod, f64, FdrScope)> = None;
     let mut matrix_expect: Option<usize> = None;
+    let mut derived: Vec<(String, Vec<String>)> = Vec::new();
 
     for (lineno, raw) in text.lines().enumerate() {
         let line = raw.trim();
@@ -619,6 +637,20 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                         matrix_channels = Some(list);
                     }
                 }
+            }
+            "from" => {
+                let derived_name = parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: from carries no derived name"))?;
+                let token = parts.get(2).ok_or_else(|| {
+                    format!("descriptor:{at}: from '{derived_name}' carries no carrier list")
+                })?;
+                if derived.iter().any(|(n, _)| n == derived_name) {
+                    return Err(format!(
+                        "descriptor:{at}: from '{derived_name}' declared twice — a duplicate derived node is no family"
+                    ));
+                }
+                derived.push((derived_name.to_string(), parse_name_list(token)?));
             }
             "fdr" => {
                 let method = match parts.get(1).copied() {
@@ -871,6 +903,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         matrix_fdr,
         matrix_expect,
         &conds,
+        &derived,
     )?;
     if matrix.is_some() && event_conditional {
         return Err(
@@ -920,6 +953,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             event_conditional: true,
             count_quantiles,
             matrix: None,
+            derived: Vec::new(),
         });
     }
     if matrix.is_none() {
@@ -945,6 +979,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         event_conditional: false,
         count_quantiles: None,
         matrix,
+        derived,
     })
 }
 
@@ -1034,6 +1069,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         event_conditional: false,
         count_quantiles: None,
         matrix: None,
+        derived: Vec::new(),
     })
 }
 
@@ -3256,6 +3292,7 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         event_conditional: false,
         count_quantiles: None,
         matrix: None,
+        derived: Vec::new(),
     };
     let Some(result) = execute(
         &desc,
@@ -4216,6 +4253,19 @@ fn load_matrix_arm(
     sources: &[SourceConfig],
     witnesses: &[WitnessRecord],
     anchor: &QueryAnchor,
+    derived: &[(String, Vec<String>)],
+) -> Result<Vec<(f64, f64)>, String> {
+    if let Some((_, carriers)) = derived.iter().find(|(n, _)| n == name) {
+        return derive_matrix_arm(name, carriers, sources, witnesses, anchor);
+    }
+    load_raw_matrix_arm(name, sources, witnesses, anchor)
+}
+
+fn load_raw_matrix_arm(
+    name: &str,
+    sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
+    anchor: &QueryAnchor,
 ) -> Result<Vec<(f64, f64)>, String> {
     match load_field_across_sources(sources, name, anchor) {
         Ok(Some(series)) => return Ok(series),
@@ -4232,6 +4282,48 @@ fn load_matrix_arm(
     Err(format!(
         "'{name}' stands in no source block and no witness block"
     ))
+}
+
+fn derive_matrix_arm(
+    derived_name: &str,
+    carriers: &[String],
+    sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
+    anchor: &QueryAnchor,
+) -> Result<Vec<(f64, f64)>, String> {
+    if derived_name != "newell_dphi_dt" {
+        return Err(format!(
+            "derived node '{derived_name}' names no built derivation"
+        ));
+    }
+    if carriers.len() != 3 {
+        return Err(format!(
+            "derived node '{derived_name}' carries {} carrier fields — newell_dphi_dt carries exactly three (by, bz, speed)",
+            carriers.len()
+        ));
+    }
+    let expected = [
+        "magnetosphere_imf_by_nt",
+        "magnetosphere_imf_bz_nt",
+        "solar_wind_speed_km_s",
+    ];
+    if carriers[0] != expected[0] || carriers[1] != expected[1] || carriers[2] != expected[2] {
+        return Err(format!(
+            "derived node '{derived_name}' carrier fields {carriers:?} do not match newell_dphi_dt {expected:?}"
+        ));
+    }
+    let mut series: Vec<Vec<(f64, f64)>> = Vec::with_capacity(carriers.len());
+    for name in carriers {
+        series.push(load_raw_matrix_arm(name, sources, witnesses, anchor)?);
+    }
+    let refs: Vec<&[(f64, f64)]> = series.iter().map(|s| s.as_slice()).collect();
+    let (cells, grid, _) = align_many(&refs, Seasonal::None, None)?;
+    let values = newell_dphi_dt(&cells[0], &cells[1], &cells[2]);
+    Ok(grid
+        .iter()
+        .zip(values.iter())
+        .filter_map(|(t, v)| v.map(|val| (*t, val)))
+        .collect())
 }
 
 fn matrix_cell_bias(
@@ -4299,7 +4391,7 @@ fn run_pair_matrix(
     let loaded: Vec<Option<Vec<(f64, f64)>>> = pool
         .iter()
         .map(
-            |name| match load_matrix_arm(name, sources, witnesses, anchor) {
+            |name| match load_matrix_arm(name, sources, witnesses, anchor, &desc.derived) {
                 Ok(series) => Some(series),
                 Err(reason) => {
                     println!("arm '{name}' stays pending — {reason}");
@@ -4619,7 +4711,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n>"
+        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n>"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -5761,6 +5853,66 @@ cadence live
         assert!(
             by.iter().filter(|x| **x).count() <= bh.iter().filter(|x| **x).count(),
             "the Yekutieli correction is never weaker than BH"
+        );
+    }
+
+    #[test]
+    fn matrix_from_derived_node_is_carried() {
+        let text = "matrix m rect\n\
+                    drivers a,newell_dphi_dt\n\
+                    targets b\n\
+                    from newell_dphi_dt magnetosphere_imf_by_nt,magnetosphere_imf_bz_nt,solar_wind_speed_km_s\n\
+                    cond none\n\
+                    fdr bh 0.05 over matrix\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let desc = parse_descriptor(text).expect("a descriptor with a from line parses");
+        assert_eq!(
+            desc.derived,
+            vec![(
+                "newell_dphi_dt".to_string(),
+                vec![
+                    "magnetosphere_imf_by_nt".to_string(),
+                    "magnetosphere_imf_bz_nt".to_string(),
+                    "solar_wind_speed_km_s".to_string(),
+                ],
+            )]
+        );
+    }
+
+    #[test]
+    fn matrix_from_derived_node_absent_from_pool_is_refused() {
+        let text = "matrix m rect\n\
+                    drivers a,b\n\
+                    targets c,d\n\
+                    from newell_dphi_dt x,y,z\n\
+                    cond none\n\
+                    fdr bh 0.05 over matrix\n\
+                    lags 1\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a derived node absent from the pool is refused");
+        assert!(
+            err.contains("newell_dphi_dt") && err.contains("pool"),
+            "the refusal names the missing derived node: {err}"
+        );
+    }
+
+    #[test]
+    fn from_without_matrix_head_is_refused() {
+        let text = "driver a\n\
+                    target b\n\
+                    from newell_dphi_dt x,y,z\n\
+                    cadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("from without a matrix head is refused");
+        assert!(
+            err.contains("matrix"),
+            "the refusal names the missing matrix head: {err}"
         );
     }
 }
