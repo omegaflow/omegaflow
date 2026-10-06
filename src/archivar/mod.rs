@@ -219,6 +219,7 @@ pub mod uvfits;
 pub mod uws;
 pub mod viking_grav;
 pub mod wqp_result;
+pub mod zcta;
 
 pub use astrometry::*;
 #[cfg(unix)]
