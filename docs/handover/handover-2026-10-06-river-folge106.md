@@ -3,7 +3,7 @@
   session: River-Folge 106
   class: handover
   date: 2026-10-06
-  sha256: 4e3025d425b2ac77da9aeb6feb182d5d67c9447717d28455238758acf90f2128
+  sha256: 9c00d9885fdf4fc178b54438a1851076dc8e60454cb53f60e4db2be4ae8f2e6d
   status: live
 -->
 # Handover — River-Folge 106 (2026-10-06)
@@ -82,9 +82,14 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     `cell_te_and_surrogates(target, driver, …)` `field_te_query.rs:4122`); Report führt `n_eff`.
 - **Blockade:** die 8 probe-Kanäle sind nicht am Draht.
 - **Braucht:**
-  (2) binned-spezifischen Floor aus der Probe ableiten (Histogramm-Besetzung, nicht KDE-Bandbreite).
-  (3) conditional-embedded Probe `pending`: `conditional_embedded_te_estimate` über coupled
-  Hénon mit Konditionsreihe, nicht Phase-Surrogat.
+  (2) **gebaut (River 106):** `binned_n_eff` (`src/mathematikerin/te.rs`) liefert die mittlere
+  Besetzung nicht-leerer Joint-Zellen; der binned-Arm des `te_bias_n_probe` emittiert
+  `binned_n_eff mean = …`; Test `gate_binned_n_eff_occupancy`. **Offen:** `te-bias-n` Re-Lauf
+  → Besetzung lesen → binned-Floor `TE_NEFF_THRESHOLD_BINNED` setzen + Gate.
+  (3) **gebaut (River 106):** `--estimator conditional` im Probe (`transfer_entropy_ksg_conditional_n`,
+  dim 3+1, lag 1, k 4, Konditionsreihe = unabhängige AR(1), **kein** Phase-Surrogat);
+  Workflow `te-bias-n.yml` um `POINT te-bias-n-conditional` ergänzt. **Offen:** Re-Lauf → Bias-Tabelle
+  der konditional-eingebetteten Schätzung lesen.
   (4) 8 probe-Kanäle an den Draht + 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`).
   (5) `ozzy` **auf** der Matrix (`auftrag-universelles-vlies.md` §Lieferung).
 
@@ -316,7 +321,11 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-06-river-folge106.md`
 - `docs/handover/archiv/handover-2026-10-06-river-folge105.md` (Move aus `docs/handover/`)
 - `src/mathematikerin/te.rs` (TE_NEFF_THRESHOLD auf das gemessene n=800-`kde_n_eff`-Mittel
-  1.8485e1; zwei Skalar-Tabellenzeilen aus `te-bias-n 37443829535`; Gate)
+  1.8485e1; zwei Skalar-Tabellenzeilen aus `te-bias-n 37443829535`; `binned_n_eff` + Test
+  `gate_binned_n_eff_occupancy`)
+- `tools/measure/src/bin/te_bias_n_probe.rs` (`binned_n_eff`-Zeile im binned-Arm;
+  `--estimator conditional` = konditional-eingebettete KSG-Schätzung mit AR(1)-Konditionsreihe)
+- `.github/workflows/te-bias-n.yml` (`POINT te-bias-n-conditional`)
 
 Verifikation/Dispatches: `cargo check` grün (native). `register_lookup --fired river` =
 `em-apertur` FIRED_UNGEMESSEN (Trigger `ci-check` pending, nicht gefeuert), `körpermesswerte`
@@ -332,4 +341,4 @@ Zusatzmessungen River 106 (HTTP-Range/HEAD am CDN + `--playwright`): Körper-`.b
 `0x01FF` (GM Bit 11 klar); Membran-`--playwright` = `no WebGPU adapter` (headless ohne GPU →
 Render nur operator-browser-gebunden). **(D) damit descoped.**
 
-## Burn: open 0.0000 · close 0.0692
+## Burn: open 0.0000 · close 0.0887
