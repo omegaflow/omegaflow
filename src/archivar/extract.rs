@@ -790,6 +790,7 @@ pub fn geo_series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<crate::geo
 pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str> {
     match format {
         "gdp_drifter" => gdp_drifter::component_name(comp),
+        "eionet_cdr" => eionet_cdr::component_name(comp),
         "hfrnet_rtv" => hfrnet_rtv::component_name(comp),
         "emodnet_hfr" => emodnet_hfr::component_name(comp),
         "decaps_dr2_stars" => crate::decaps::component_name(comp),
