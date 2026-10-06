@@ -3992,6 +3992,14 @@ struct MatrixCellOutcome {
     p: f64,
     floor: bool,
     pass: bool,
+    res_pair: Option<(f64, f64)>,
+}
+
+fn resolution_representable(grid_dt: f64, tau_d: f64, tau_t: f64) -> bool {
+    if !(grid_dt.is_finite() && grid_dt > 0.0 && tau_d.is_finite() && tau_t.is_finite()) {
+        return false;
+    }
+    grid_dt + 1.0 >= tau_d.max(tau_t)
 }
 
 fn benjamini_yekutieli_pass(p_values: &[f64], level: f64) -> Vec<bool> {
@@ -4278,6 +4286,14 @@ fn run_pair_matrix(
             None => pos.push(None),
         }
     }
+    let native: Vec<Option<f64>> = pool
+        .iter()
+        .enumerate()
+        .map(|(i, _)| match loaded.get(i).and_then(|l| l.as_ref()) {
+            Some(s) => median_dt(s),
+            None => None,
+        })
+        .collect();
     let (columns, _grid, cadence) = match align_many(&avail, desc.seasonal, desc.bin) {
         Ok(a) => a,
         Err(reason) => {
@@ -4311,6 +4327,7 @@ fn run_pair_matrix(
                 te: None,
                 p: 1.0,
                 floor: true,
+                res_pair: None,
                 pass: false,
             });
             continue;
@@ -4324,10 +4341,29 @@ fn run_pair_matrix(
                 te: None,
                 p: 1.0,
                 floor: true,
+                res_pair: None,
                 pass: false,
             });
             continue;
         };
+        let tau_d = native.get(di).copied().flatten();
+        let tau_t = native.get(ti).copied().flatten();
+        if let (Some(td), Some(tt)) = (tau_d, tau_t) {
+            if !resolution_representable(cadence, td, tt) {
+                outcomes.push(MatrixCellOutcome {
+                    id,
+                    cond_n: 0,
+                    n: 0,
+                    n_eff: None,
+                    te: None,
+                    p: 1.0,
+                    floor: true,
+                    res_pair: Some((td, tt)),
+                    pass: false,
+                });
+                continue;
+            }
+        }
         let cond_idx: Vec<usize> = spec
             .cond_names(d, t)
             .iter()
@@ -4347,6 +4383,7 @@ fn run_pair_matrix(
                 te: None,
                 p: 1.0,
                 floor: true,
+                res_pair: None,
                 pass: false,
             });
             continue;
@@ -4365,6 +4402,7 @@ fn run_pair_matrix(
                 te: None,
                 p: 1.0,
                 floor: true,
+                res_pair: None,
                 pass: false,
             });
             continue;
@@ -4378,6 +4416,7 @@ fn run_pair_matrix(
                 te: None,
                 p: 1.0,
                 floor: true,
+                res_pair: None,
                 pass: false,
             });
             continue;
@@ -4410,6 +4449,7 @@ fn run_pair_matrix(
                     te: Some(cell.te),
                     p,
                     floor: false,
+                    res_pair: None,
                     pass: false,
                 });
             }
@@ -4422,6 +4462,7 @@ fn run_pair_matrix(
                     te: None,
                     p: 1.0,
                     floor: true,
+                    res_pair: None,
                     pass: false,
                 });
             }
@@ -4466,8 +4507,17 @@ fn run_pair_matrix(
     }
 
     println!(
-        "{:<28} | {:>4} | {:>5} | {:>9} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
-        "cell", "cond", "n", "n_eff", "TE", "TE_bias", "bias_state", "p", "verdict"
+        "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+        "cell",
+        "cond",
+        "n",
+        "res(tau_d x tau_t)",
+        "n_eff",
+        "TE",
+        "TE_bias",
+        "bias_state",
+        "p",
+        "verdict"
     );
     for o in &outcomes {
         let te = match o.te {
@@ -4482,18 +4532,25 @@ fn run_pair_matrix(
             Some(v) => format!("{v:.4e}"),
             None => "absent".to_string(),
         };
-        let word = if o.floor {
+        let word = if o.res_pair.is_some() {
+            "resolution pending"
+        } else if o.floor {
             "floor (p = 1)"
         } else if o.pass {
             "arrow (fdr pass)"
         } else {
             "silent"
         };
+        let res = match o.res_pair {
+            Some((a, b)) => format!("{a:.0}x{b:.0}"),
+            None => "-".to_string(),
+        };
         println!(
-            "{:<28} | {:>4} | {:>5} | {:>9} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+            "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
             o.id,
             o.cond_n,
             o.n,
+            res,
             fmt_opt(o.n_eff),
             te,
             bias_word,
@@ -4601,6 +4658,16 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn matrix_resolution_gate_flags_the_coarser_pair_never_bins_silently() {
+        assert!(resolution_representable(86_400.0, 3_600.0, 3_600.0));
+        assert!(resolution_representable(86_400.0, 86_400.0, 3_600.0));
+        assert!(!resolution_representable(86_400.0, 2_592_000.0, 6.0));
+        assert!(!resolution_representable(86_400.0, 6.0, 2_592_000.0));
+        assert!(!resolution_representable(86_400.0, f64::NAN, 6.0));
+        assert!(!resolution_representable(0.0, 6.0, 6.0));
+    }
 
     #[test]
     fn bias_column_gates_on_n_eff_and_exact_n() {
