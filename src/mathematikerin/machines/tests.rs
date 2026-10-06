@@ -178,6 +178,7 @@ mod matrix_record_tests {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: crate::archivar::Aperture::None,
             },
         )
     }
@@ -390,6 +391,7 @@ mod matrix_rebuild_tests {
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
+                aperture: crate::archivar::Aperture::None,
             },
         )
     }

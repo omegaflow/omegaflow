@@ -454,6 +454,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::First(fc, filter));
             }
@@ -478,6 +479,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::Last(fc, filter));
             }
@@ -498,6 +500,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 }));
             }
             "lastrow" if parts.len() >= 7 => {
@@ -517,6 +520,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::LastRow(fc));
             }
@@ -548,6 +552,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::ObjLast(fc));
             }
@@ -620,6 +625,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::Path(fc));
             }
@@ -640,6 +646,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::Deep(fc));
             }
@@ -660,6 +667,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 cur_extracts.push(Extract::Regex(fc));
             }
@@ -823,6 +831,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 if let Some(ext) = cur_extracts.last_mut() {
                     let fields: Option<&mut Vec<FieldConfig>> = match ext {
@@ -884,6 +893,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 if let Some(ext) = cur_extracts.last_mut() {
                     let fields: Option<&mut Vec<FieldConfig>> = match ext {
@@ -968,20 +978,56 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Err(_) => continue,
                 };
                 let mut freq = crate::spectral::SPECTRAL_NO_BAND;
-                if let Some(s) = parts.get(9)
-                    && let Ok(v) = s.parse::<f64>()
-                    && v.is_finite()
-                    && v > 0.0
-                {
-                    freq = v;
-                }
                 let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
-                if let Some(s) = parts.get(10)
-                    && let Ok(v) = s.parse::<f64>()
-                    && v.is_finite()
-                    && v > 0.0
-                {
-                    bin_width = v;
+                let aperture_idx = parts.iter().position(|p| p.starts_with("aperture:"));
+                let declared_aperture = match aperture_idx {
+                    Some(i) => {
+                        match Aperture::of_class(parts[i].strip_prefix("aperture:").unwrap_or("")) {
+                            Some(a) => Some(a),
+                            None => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!("unknown aperture class \"{}\": {}", parts[i], line),
+                                );
+                                continue;
+                            }
+                        }
+                    }
+                    None => None,
+                };
+                let block_has_z = matches!(
+                    cur_extracts.last(),
+                    Some(Extract::CelestialMap { z_key, .. }) if !z_key.is_empty()
+                );
+                let aperture_mandatory = block_has_z && f == 0;
+                let aperture = match (declared_aperture, aperture_mandatory) {
+                    (Some(a), _) => a,
+                    (None, false) => Aperture::None,
+                    (None, true) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries no aperture token in a z-block (mandatory)",
+                                parts[1]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let extras: Vec<f64> = parts
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| *i >= 9 && Some(*i) != aperture_idx)
+                    .filter_map(|(_, s)| s.parse::<f64>().ok())
+                    .filter(|v| v.is_finite() && *v > 0.0)
+                    .collect();
+                if let Some(v) = extras.first() {
+                    freq = *v;
+                }
+                if let Some(v) = extras.get(1) {
+                    bin_width = *v;
                 }
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
@@ -996,6 +1042,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq,
                     bin_width,
                     fold: None,
+                    aperture,
                 };
                 if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
                     fields.push(fc);
@@ -1333,6 +1380,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
                     fold: Some((op, parts[3].to_string())),
+                    aperture: Aperture::None,
                 };
                 let holder = match cur_extracts.last_mut() {
                     Some(Extract::Map { fields, .. })
@@ -1945,17 +1993,20 @@ mod tests {
 
     #[test]
     fn presence_flags_carry_the_measured_bits_and_pad_the_slots() {
-        assert_eq!(presence_flags(None, SLOT_ABSENT, SLOT_ABSENT), 0.0);
         assert_eq!(
-            presence_flags(Some(0.0), SLOT_ABSENT, SLOT_ABSENT),
+            presence_flags(None, SLOT_ABSENT, SLOT_ABSENT, SLOT_ABSENT),
+            0.0
+        );
+        assert_eq!(
+            presence_flags(Some(0.0), SLOT_ABSENT, SLOT_ABSENT, SLOT_ABSENT),
             PRESENCE_FLAG_PHASE
         );
         assert_eq!(
-            presence_flags(Some(1.5), 0.25, SLOT_ABSENT),
+            presence_flags(Some(1.5), 0.25, SLOT_ABSENT, SLOT_ABSENT),
             PRESENCE_FLAG_PHASE + PRESENCE_FLAG_ABSORPTION
         );
         assert_eq!(
-            presence_flags(Some(1.5), 0.25, 3.0),
+            presence_flags(Some(1.5), 0.25, 3.0, SLOT_ABSENT),
             PRESENCE_FLAG_PHASE + PRESENCE_FLAG_ABSORPTION + PRESENCE_FLAG_ADVECTION
         );
         assert_eq!(slot_or_pad(SLOT_ABSENT), 0.0);

@@ -54,7 +54,7 @@ pub struct Sample {
     pub motion: Motion,
     pub val: f64,
     pub name: String,
-    pub z: f64,
+    pub z_flux: f64,
     pub freq: f64,
     pub bin_width: f64,
     pub color_index: f64,
@@ -286,6 +286,22 @@ pub enum Extract {
     XmlCount(String, String),
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Aperture {
+    None,
+    Flux,
+}
+
+impl Aperture {
+    pub fn of_class(class: &str) -> Option<Self> {
+        match class {
+            "none" => Some(Aperture::None),
+            "flux" => Some(Aperture::Flux),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct FieldConfig {
     pub key: String,
@@ -299,6 +315,7 @@ pub struct FieldConfig {
     pub freq: f64,
     pub bin_width: f64,
     pub fold: Option<(u8, String)>,
+    pub aperture: Aperture,
 }
 
 pub const SLOT_ABSENT: f64 = -1.0;
@@ -306,6 +323,7 @@ pub const SLOT_ABSENT: f64 = -1.0;
 pub const PRESENCE_FLAG_PHASE: f64 = 1.0;
 pub const PRESENCE_FLAG_ABSORPTION: f64 = 2.0;
 pub const PRESENCE_FLAG_ADVECTION: f64 = 4.0;
+pub const PRESENCE_FLAG_FLUX: f64 = 8.0;
 
 impl FieldConfig {
     pub fn absorption_measured(&self) -> Option<f64> {
@@ -333,7 +351,7 @@ pub fn slot_or_pad(value: f64) -> f64 {
     if slot_measured(value) { value } else { 0.0 }
 }
 
-pub fn presence_flags(phase: Option<f64>, absorption: f64, advection: f64) -> f64 {
+pub fn presence_flags(phase: Option<f64>, absorption: f64, advection: f64, z_flux: f64) -> f64 {
     let mut flags = 0.0;
     if phase.is_some() {
         flags += PRESENCE_FLAG_PHASE;
@@ -343,6 +361,9 @@ pub fn presence_flags(phase: Option<f64>, absorption: f64, advection: f64) -> f6
     }
     if slot_measured(advection) {
         flags += PRESENCE_FLAG_ADVECTION;
+    }
+    if slot_measured(z_flux) {
+        flags += PRESENCE_FLAG_FLUX;
     }
     flags
 }

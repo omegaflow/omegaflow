@@ -450,12 +450,7 @@ pub fn spawn_ephemeris_bootstrap(
     if guard.swap(true, std::sync::atomic::Ordering::SeqCst) {
         return;
     }
-    let anchor_uses = anchor_uses(sources);
-    let anchor_order = |s: &SourceConfig| {
-        std::cmp::Reverse(s.body.as_deref().and_then(|k| anchor_uses.get(k).copied()))
-    };
     let mut fresh_items: Vec<(usize, SourceConfig, String)> = Vec::new();
-    let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let now_gate = system_now(&time);
     for (i, s) in sources.iter().enumerate() {
@@ -468,10 +463,6 @@ pub fn spawn_ephemeris_bootstrap(
         let tmp_path = content_cache(&format!("omegaflow_eph_{body}.bin"));
         if cache_fresh_cdn(&tmp_path, s.ttl, &s.url) {
             fresh_items.push((i, s.clone(), tmp_path));
-            continue;
-        }
-        if anchor_uses.contains_key(body) {
-            anchor_items.push((i, s.clone(), tmp_path));
             continue;
         }
         let (Some(now), Some(eph)) = (now_gate, body_ephemerides.get(body)) else {
@@ -491,9 +482,7 @@ pub fn spawn_ephemeris_bootstrap(
         }
         rest_items.push((i, s.clone(), tmp_path));
     }
-    fresh_items.sort_by_key(|(_, s, _)| anchor_order(s));
-    anchor_items.sort_by_key(|(_, s, _)| anchor_order(s));
-    if fresh_items.is_empty() && anchor_items.is_empty() && rest_items.is_empty() {
+    if fresh_items.is_empty() && rest_items.is_empty() {
         guard.store(false, std::sync::atomic::Ordering::SeqCst);
         return;
     }
@@ -516,8 +505,7 @@ pub fn spawn_ephemeris_bootstrap(
         for (i, s, p) in fresh_items {
             load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk);
         }
-        let mut stale = anchor_items;
-        stale.extend(rest_items);
+        let stale = rest_items;
         let mut present: Vec<(usize, SourceConfig, String)> = Vec::new();
         let mut missing: Vec<(usize, SourceConfig, String)> = Vec::new();
         for (i, s, p) in stale {
@@ -1443,6 +1431,7 @@ pub fn main_flow() {
                     freq: 0.0,
                     bin_width: 0.0,
                     fold: None,
+                    aperture: Aperture::None,
                 };
                 let channel = Channel {
                     z: 0.0,

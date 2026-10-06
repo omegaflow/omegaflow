@@ -470,7 +470,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
             motion: motion.clone(),
             val: gm,
             name: "dastcom.mass".to_string(),
-            z: 0.0,
+            z_flux: SLOT_ABSENT,
             freq: crate::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
             color_index: 0.0,
@@ -493,7 +493,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 motion,
                 val: body_radius_m,
                 name: "dastcom.radius".to_string(),
-                z: 0.0,
+                z_flux: SLOT_ABSENT,
                 freq: crate::spectral::SPECTRAL_NO_BAND,
                 bin_width: crate::spectral::SPECTRAL_NO_BAND,
                 color_index: 0.0,
@@ -682,7 +682,7 @@ pub fn build_star_samples(bytes: &[u8], catalog_epoch_yr: Option<f64>) -> Vec<Sa
             motion,
             val: rec.flux,
             name: "dr3_stars.flux".to_string(),
-            z: 0.0,
+            z_flux: SLOT_ABSENT,
             freq: crate::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
             color_index: rec.color_index,
@@ -757,11 +757,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if !(floor_ft.is_finite() && floor_ft > 0.0) {
                 continue;
             }
-            let z_aperture = if sample.force_type == 0.0
-                && sample.z > 0.0
-                && (sample.kernel_id == 0.0 || sample.kernel_id == 1.0)
-            {
-                let z1 = 1.0 + sample.z;
+            let z_aperture = if sample.force_type == 0.0 && slot_measured(sample.z_flux) {
+                let z1 = 1.0 + sample.z_flux;
                 1.0 / (z1 * z1)
             } else {
                 1.0
@@ -825,8 +822,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 v[0],
                 v[1],
                 v[2],
-                if sample.force_type == 0.0 {
-                    sample.z
+                if sample.force_type == 0.0 && slot_measured(sample.z_flux) {
+                    sample.z_flux
                 } else {
                     0.0
                 },
@@ -839,7 +836,12 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.freq,
                 sample.bin_width,
                 sample.phase.unwrap_or(PHASE_PAD),
-                presence_flags(sample.phase, sample.absorption, sample.advection),
+                presence_flags(
+                    sample.phase,
+                    sample.absorption,
+                    sample.advection,
+                    sample.z_flux,
+                ),
             ));
         }
     };
@@ -975,8 +977,8 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 v[0],
                 v[1],
                 v[2],
-                if sample.force_type == 0.0 {
-                    sample.z
+                if sample.force_type == 0.0 && slot_measured(sample.z_flux) {
+                    sample.z_flux
                 } else {
                     0.0
                 },
@@ -989,7 +991,12 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.freq,
                 sample.bin_width,
                 sample.phase.unwrap_or(PHASE_PAD),
-                presence_flags(sample.phase, sample.absorption, sample.advection),
+                presence_flags(
+                    sample.phase,
+                    sample.absorption,
+                    sample.advection,
+                    sample.z_flux,
+                ),
             ));
         }
     };
