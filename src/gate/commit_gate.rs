@@ -1010,6 +1010,15 @@ impl Gate {
                             quote: clip(t, 90),
                         });
                     }
+                    if force_id_of(force).is_some() && unit == "1" && force != "em" {
+                        return Some(Verdict {
+                            severity: Severity::Hard,
+                            rule: "dimensionless-force".to_string(),
+                            line: line_idx + 1,
+                            feedback: feedback("dimensionless-force").to_string(),
+                            quote: clip(t, 90),
+                        });
+                    }
                 }
             }
         }
@@ -3984,6 +3993,14 @@ mod tests {
             r#"{"filePath":"phi/x.φ","newString":"field wind speed inverse-square em km/s\n"}"#;
         let v = g.check_tool_call("write", args).unwrap();
         assert_eq!(v.rule, "force-unit-gate");
+    }
+
+    #[test]
+    fn fp_tool_dimensionless_force_line() {
+        let mut g = test_gate();
+        let args = r#"{"filePath":"phi/x.φ","newString":"field share share gaussian-inverse-square diffusion 1 86400 0.0 0.0\n"}"#;
+        let v = g.check_tool_call("write", args).unwrap();
+        assert_eq!(v.rule, "dimensionless-force");
     }
 
     #[test]
