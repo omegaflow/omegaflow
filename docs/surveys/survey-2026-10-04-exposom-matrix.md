@@ -2,7 +2,7 @@
   title: Exposom-Quellenmatrix — somatisch + psychosomatisch (Stand 2026-10-04)
   class: survey
   date: 2026-10-04
-  sha256: 4ecbe3fa927b93a997e0cf5e4e99f44c5549e51ba4af6af56a44d82a9303d0ac
+  sha256: 056ef3005e3220551507ade548896517758c98d64a23cca8870be885899462b0
   status: live
   see-also: docs/concepts/kybernaut-native-methodology.md
 -->
@@ -29,23 +29,30 @@ nicht die Quelle) · `404` = pending. Jede Zeile nennt den HTTP-Stand.
 
 ## A. Exposom-Domänen (Spalten) und offene x-Serien
 
-| Domäne | offene x-Serie (URL) | --verdict | Access |
-|---|---|---|---|
-| Luft (PM2.5/PM10/O3/NO2) | OpenAQ — https://openaq.org/ | 206 | offen |
-| Wasser | WQP/USGS — (x-Home pending gemessen) | pending | offen (US) |
-| Lärm | nationale Lärmkarten — (x-Home pending) | pending | offen |
-| Licht | NASA Black Marble / VIIRS — (x-Home pending) | pending | offen |
-| Wetter/Klima (T/p/Feuchte) | Open-Meteo — https://open-meteo.com/ | 200 | offen; NASA POWER — https://power.larc.nasa.gov/ | 206 | offen |
-| Geomagnetik/Raumwetter (Kp/Bz/GIC) | OMNIWeb — https://omniweb.gsfc.nasa.gov/ | 200 | offen |
-| Pollen | CAMS-Pollen / Pollen.com — (x-Home pending) | pending | offen/Registrierung |
-| Grünraum | MODIS/Sentinel-2 NDVI — (x-Home pending) | pending | offen |
-| gebaute Umwelt | OSM / GHSL — (x-Home pending) | pending | offen |
-| Ernährungsumfeld | USDA Food Access / OSM-POI — (x-Home pending) | pending | offen |
-| Arbeitsumfeld | CANJEM / O*NET — (x-Home pending) | pending | offen/Registrierung |
-| Chemikalien | Exposome-Explorer (re3data r3d100012153) | pending | offen |
+| Domäne | offene x-Serie (URL) | --verdict | Access | Register-Stand (gemessen 2026-10-06) |
+|---|---|---|---|---|
+| Luft (PM2.5/PM10/O3/NO2) | OpenAQ — https://openaq.org/ | 206 | offen | live `phi/sources.φ:1208` |
+| Wasser | WQP/USGS — https://www.waterqualitydata.us/ | 200 | offen (US) | live `phi/sources.φ:18339` |
+| Lärm | EEA/EIONET — https://www.eea.europa.eu/en/datahub · https://cdr.eionet.europa.eu/ | 206 | offen | EEA-Noise live `phi/sources.φ:9559`; `cdr.eionet` neu, kein Arm |
+| Licht | Black Marble — https://blackmarble.gsfc.nasa.gov/ · VIIRS/LADS — https://ladsweb.modaps.eosdis.nasa.gov/ | 200 | offen | Host 200 (397 B Stub); LADS-API declined `phi/declined_sources.φ:2624` |
+| Wetter/Klima (T/p/Feuchte) | Open-Meteo — https://open-meteo.com/ · NASA POWER — https://power.larc.nasa.gov/ | 200/206 | offen | live (`nasa_power_t2m_axis_value_text` `phi/sources.φ:17660`) |
+| Geomagnetik/Raumwetter (Kp/Bz/GIC) | OMNIWeb — https://omniweb.gsfc.nasa.gov/ | 200 | offen | live (OMNI2 `phi/sources.φ:613`) |
+| Pollen | CAMS/ADS — https://ads.atmosphere.copernicus.eu/ | 200 | Key/Registrierung | ADS = Key; `pollen.copernicus.eu` antwortet nicht → pending |
+| Grünraum | MODIS/Sentinel-2 NDVI — https://lpdaac.usgs.gov/ · https://dataspace.copernicus.eu/ | 200 | offen | LPDAAC live (GEDI/MOD11); Copernicus-Katalog declined `phi/declined_sources.φ:1198` |
+| gebaute Umwelt | OSM — https://download.geofabrik.de/ · GHSL — https://ghsl.jrc.ec.europa.eu/download.php | 206/200 | offen | GHSL live `phi/sources.φ:17519`; `geofabrik` neu, kein Arm |
+| Ernährungsumfeld | USDA Food Access — https://www.ers.usda.gov/data-products/food-access-research-atlas/ | 200 | — | declined `phi/declined_sources.φ:4880` (sozioök. Index, kein physik. Messwert) |
+| Arbeitsumfeld | CANJEM / O*NET — (x-Home pending) | pending | offen/Registrierung | OSHA CEHD gebaut (ZCTA-Geocoder, 2026-10-06) |
+| Chemikalien | Exposome-Explorer — https://exposome-explorer.iarc.fr/ | 200 | — | declined `phi/declined_sources.φ:1984` (Katalog, keine Konzentration) |
 
 Kern-x-Serie (im Bestand): OpenAQ · Open-Meteo · NASA POWER · OMNIWeb — alle
 vier am 2026-10-04 mit HTTP 200/206 gemessen.
+
+**§A-Neumessung 2026-10-06** (`archive_search --verdict`): Wasser/Lärm/Grünraum/gebaute
+Umwelt sind bereits live; Ernährungsumfeld und Chemikalien sind bereits declined — die
+früheren `pending`-Zeilen waren gegen den Baum veraltet (Riss, benannt). Echt neue,
+unregistrierte Kandidaten ohne deckenden Arm (daher keine `phi/sources.φ`-Zeile):
+`cdr.eionet.europa.eu`, `download.geofabrik.de`, `ads.atmosphere.copernicus.eu` (Key),
+`blackmarble.gsfc.nasa.gov`.
 
 ---
 

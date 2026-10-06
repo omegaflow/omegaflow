@@ -27616,3 +27616,9 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
+origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
+compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
+format zcta_gazetteer
+no-cadence

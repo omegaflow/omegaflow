@@ -18,9 +18,15 @@
 #   eve_131_line_irradiance  EVE 131           :2443
 # ERBQ-Event bleibt draußen — `form event-conditional` (Witness point-event#1), kein
 #   Serienknoten; es läuft als eigener `pair`-Descriptor.
-# NICHT Knoten dieses Laufs (Register-Pflicht Mountain, `## An mountain`): Newell dΦ/dt
-#   (kein Feld; nur `newell_from_cells` in bz_retro_probe.rs:431) · Kp magnetosphere_kp_3h
-#   (`last`, kein `field`) · EEG ds007822/ds007471 (Feldname ungemessen).
+# Abgeleiteter Knoten (Rat 2026-10-06, Option 2): Newell dΦ/dt tritt als deklarierter
+#   abgeleiteter Feldknoten ein, aufgelöst über `newell_from_cells` (bz_retro_probe.rs:431),
+#   getragen von omni_imf_bz_gsm_nt/bt + solar_wind_speed/density; er trägt seine Provenienz
+#   (`from …`) sichtbar, kein quellenloses `field` (ein derived ist kein Akteur). Treiber gegen
+#   eine geosphärische Antwort, nicht Peer seiner Erzeuger. Die Wiring in den Matrix-Lauf ist offen.
+# Kp magnetosphere_kp_3h: `last` über Ein-Tages-URL (sources.φ:1203/1206) — ein `field`-Knoten
+#   braucht eine historische Serie; das GFZ-Kp-Aggregat ist `declined_sources.φ:2608-2621` (Riss,
+#   positionsloser Index) — Entscheidung offen (Operator/Rat), kein stiller Wechsel.
+# EEG ds007822/ds007471: Feldname ungemessen.
 # Ein dokumentierter Bin 86400 s (1 Tag); jede Zelle trägt ihr Auflösungspaar, ein nicht
 #   darstellbares Paar (QBO-Monat × 6 s) geht als `pending` aus, nie still gebinnt (Rats-Riss).
 # Lauf: `.github/workflows/field-te-query.yml` Job `matrix-vlies` (CI), nie lokal.

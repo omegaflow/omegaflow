@@ -29,25 +29,26 @@ const CSRF_COOKIE: &str = "fuel_csrf_token";
 const CONNECT_BOUND_S: u64 = 1 << 5;
 const HTTP_BOUND_S: u64 = 1 << 6;
 const CATALOG_BOUND_S: u64 = 1 << 7;
+const GRANULE_BOUND_S: u64 = 1 << 10;
 
 const GPM_KU_FORMAT: &str = "jaxa_gpm_ku";
 const GPM_KU_MAGIC: [u8; 2] = [0xCF, 0x86];
 const GPM_KU_FIELD_EM: u32 = 0;
 const GPM_KU_CODE_MISSING: i64 = -30000;
-const GPM_KU_ECHO_POWER: &str = "NS/Receiver/echoPower";
+const GPM_KU_ECHO_POWER: &str = "FS/Receiver/echoPower";
 const GPM_KU_DEFAULT_NSCAN: u64 = 32;
 const GPM_KU_ASSET: &str = "jaxa_gpm_ku.bin";
-const GPM_KU_SC_LAT: &str = "NS/navigation/scLat";
-const GPM_KU_SC_LON: &str = "NS/navigation/scLon";
-const GPM_KU_SC_ALT: &str = "NS/navigation/scAlt";
-const GPM_KU_RANGE_BIN_SIZE: &str = "NS/VertLocate/rangeBinSize";
-const GPM_KU_YEAR: &str = "NS/ScanTime/Year";
-const GPM_KU_MONTH: &str = "NS/ScanTime/Month";
-const GPM_KU_DAY: &str = "NS/ScanTime/DayOfMonth";
-const GPM_KU_SECOND_OF_DAY: &str = "NS/ScanTime/SecondOfDay";
-const GPM_KU_HOUR: &str = "NS/ScanTime/Hour";
-const GPM_KU_MINUTE: &str = "NS/ScanTime/Minute";
-const GPM_KU_SECOND: &str = "NS/ScanTime/Second";
+const GPM_KU_SC_LAT: &str = "FS/navigation/scLat";
+const GPM_KU_SC_LON: &str = "FS/navigation/scLon";
+const GPM_KU_SC_ALT: &str = "FS/navigation/scAlt";
+const GPM_KU_RANGE_BIN_SIZE: &str = "FS/VertLocate/rangeBinSize";
+const GPM_KU_YEAR: &str = "FS/ScanTime/Year";
+const GPM_KU_MONTH: &str = "FS/ScanTime/Month";
+const GPM_KU_DAY: &str = "FS/ScanTime/DayOfMonth";
+const GPM_KU_SECOND_OF_DAY: &str = "FS/ScanTime/SecondOfDay";
+const GPM_KU_HOUR: &str = "FS/ScanTime/Hour";
+const GPM_KU_MINUTE: &str = "FS/ScanTime/Minute";
+const GPM_KU_SECOND: &str = "FS/ScanTime/Second";
 const GPM_KU_NRAY: u64 = 49;
 const GPM_KU_NBIN: u64 = 260;
 
@@ -410,7 +411,7 @@ fn fetch_file(jar: &Jar, url: &str, out_path: &Path, max_bytes: Option<u64>) -> 
         .arg("-g")
         .arg("-L")
         .arg("-m")
-        .arg(CATALOG_BOUND_S.to_string())
+        .arg(GRANULE_BOUND_S.to_string())
         .arg("--connect-timeout")
         .arg(CONNECT_BOUND_S.to_string())
         .arg("-b")
@@ -1216,9 +1217,7 @@ fn main() {
         let present = match parse_bin(&read) {
             Some(rs) => rs.iter().filter(|r| r[25] == 1.0).count(),
             None => {
-                eprintln!(
-                    "jaxa_gpm_ku: {out}: roundtrip parse void — the asset stays unverified"
-                );
+                eprintln!("jaxa_gpm_ku: {out}: roundtrip parse void — the asset stays unverified");
                 std::process::exit(1);
             }
         };
@@ -1229,7 +1228,9 @@ fn main() {
             GPM_KU_MAGIC[0],
             GPM_KU_MAGIC[1]
         );
-        println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{GPM_KU_ASSET}");
+        println!(
+            "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{GPM_KU_ASSET}"
+        );
         println!("format {GPM_KU_FORMAT}");
         println!("origin {CATALOG_URL}");
         println!("ttl {}", TTL_S as u64);
