@@ -3,7 +3,7 @@
   session: River-Folge 110
   class: handover
   date: 2026-10-06
-  sha256: 29f6b15f586945d4ddbd989d5d90be7ba63a53bf56960603357586e236ac8f67
+  sha256: 8b1e864ef3ca5e24dc531639d3a5a0f78aba58dad43d863289184a37b98ea8c7
   status: live
 -->
 # Handover — River-Folge 110 (2026-10-06)
@@ -29,6 +29,7 @@ Wort | Datum | Quelle
 „bitte alles umsetzen" | 2026-10-06 | Operator (Session, River 109) — Commit- und Bau-Wort für den Receiver-Schnitt
 „es geht nicht nur um die visuelle membran es geht um alle radiatoren" | 2026-10-06 | Operator (Session, River 109) — die Receiver-Apertur gilt für alle fünf Radiatoren (Bild · Ton · Vibration · Serial · HID)
 „warum gibst du die rats fragen nicht dem rat den api mit 5 stimmen und den ui chats mit 5 stimmen?" | 2026-10-06 | Operator (Session, River 110) — stehende Praxis: Rat-Fragen gehen an den **Rat (API, 5 Stimmen)** UND an die **UI-Modelle (5 Stimmen)**, nicht als `Braucht` liegen gelassen
+„bitte halte deine erfahrungen fest es bringt nichts architekturfragen gegen schwache modelle fahren zu lassen" | 2026-10-06 | Operator (Session, River 110) — ins Regelwerk `AGENTS.md` §Architektur-Fragen an starke Modelle gefaltet
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge109.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -331,4 +332,4 @@ sensory-folge244 (exzellenz-gate-Label, oben erledigt).
 `open_points_check` am folge109: 1 ABSENT (das Legacy-Register `entwicklungslinie.md`, nicht im Baum;
 in folge110 auf `docs/surveys/survey-fortschritt.md` korrigiert).
 
-## Burn: open 0.0000 · close 0.2073 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Architektur-Verdikt Receiver-Apertur-SPAN** (Rat API + 6 UI-Modelle, u.a. GLM-5.3 Deep Think Max: einstimmig SPAN deklariert, Integration/Fluss statt Ausdehnung; Riss Register-zuerst vs. Brücke-zuerst) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.2073)
+## Burn: open 0.0000 · close 0.2744 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Architektur-Verdikt Receiver-Apertur-SPAN** (Rat API + 6 UI-Modelle, u.a. GLM-5.3 Deep Think Max) + **Lehre ins Regelwerk** (`AGENTS.md` §Architektur-Fragen an starke Modelle) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.2744)
