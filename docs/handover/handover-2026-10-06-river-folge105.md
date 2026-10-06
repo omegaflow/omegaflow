@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 3e26b3789d0490eb33167b5709d71118e3e65843723130e261d6b639d2118357
+  sha256: 634ebd8c681ff34dd74b5f59c36e0d33071e2948c087ca4d2862d5f4f1e881c3
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -32,6 +32,7 @@ Wort | Datum | Quelle
 „und tragen sie auch die axiome?" — die 14 Schwarm-Voices tragen die bindenden Axiome im Prompt (A = A, 0-Kanon, keine Fabrikation/Defaults, Riss, 0 honored, jede Aussage trägt ihre Messung) | 2026-10-06 | Operator (Session, River 105)
 „bitte entfernen iEEG sofort" — iEEG.org aus Register und Manifest-Workflow entfernen (Lizenz ungeklärt) | 2026-10-06 | Operator (Session, River 105)
 „ja bitte dringend in die übergabe … du darfst committen" — Lizenz-Audit in die Übergabe + Commit-Freigabe | 2026-10-06 | Operator (Session, River 105)
+„aber können wir es nicht so machen wie bei [redacted], dass wir die als private experimente laufen lassen?" — Daten ohne geklärte Redistribution laufen privat (lokal, kein CDN, keine `sources.φ`) | 2026-10-06 | Operator (Session, River 105)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge104.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -138,11 +139,16 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     `s3.amazonaws.com/openneuro.org/ds005034/dataset_description.json` trägt `"License": "CC0"`
     („The effect of theta tACS on working memory", DOI `10.18112/openneuro.ds005034.v1.0.1`) → frei
     redistribuierbar.
-  - ✅ **iEEG.org wurde entfernt (Operator-Wort 2026-10-06, „bitte entfernen iEEG sofort"):**
-    Register-Zeile `phi/sources.φ` (url/format/origin/compiler) **gelöscht**, der Manifest-Workflow
-    `ieeg-cdn.yml` (gelöscht). Das Asset war **nie auf dem CDN**
-    (`gh release view www.ieeg.org` = „release not found"; das Backend hing an 503), keine lokale
-    Kopie. Lizenz ungeklärt (Survey `:63` „Registrierung + User Agreement").
+  - ✅ **iEEG.org vom Publikationspfad entfernt (Operator-Wort 2026-10-06 „bitte entfernen iEEG
+    sofort"):** Register-Zeile `phi/sources.φ` gelöscht, Manifest-Workflow `ieeg-cdn.yml` gelöscht.
+    Das Asset war **nie auf dem CDN** (`gh release view www.ieeg.org` = „release not found";
+    Backend 503), keine lokale Kopie. Lizenz ungeklärt (User Agreement).
+  - ✅ **iEEG läuft als privates Experiment nach dem [redacted]-Muster (Operator-Wort 2026-10-06):**
+    Daten lokal unter `data/` (gitignored, `www.ieeg.org`), Reader/Compiler `ieeg_compiler.rs`
+    bleibt für lokale Läufe — **kein CDN, keine `sources.φ`, kein `--ci-mode`**. Präzedenz:
+    `[redacted]-[redacted]` (`state/zustand/wartend.φ:7`, Operator-Wort 2026-10-01 „nichts was die von
+    [redacted] zugesandten daten betrifft verlässt das haus"). **Das ist die allgemeine Route für
+    DUA-/ungeklärte Körperdaten: privat, nie veröffentlicht.**
   - **Kein `license`/`terms`-Feld** im Register (`phi/sources.φ`) oder `SourceConfig`
     (`src/archivar`); **kein Gate** blockt eine CDN-Manifestation ohne redistributions-erlaubende
     Lizenz. Das repo-eigene `LICENSE` deckt Code/Docs (PolyForm NC / CC BY-NC-SA), **nicht** die
@@ -150,8 +156,10 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** keine Lizenzmessung je Dataset; kein Gate.
 - **Braucht:** (1) `license`/`terms`-Direktive je Körperdatenzeile (Mountain) + Gate „keine
   CDN-Manifestation ohne Lizenz" (Mountain/Mycelium); (2) `THIRD_PARTY_LICENSES`/NOTICE im Repo mit
-  der Attribution + Quelle/DOI je Dataset (ODC-BY verlangt die Attribution, CC0 nicht). **Messung
-  abgeschlossen:** PhysioNet BIDSleep = ODC-BY 1.0, OpenNeuro ds005034 = CC0, iEEG entfernt.
+  der Attribution + Quelle/DOI je Dataset (ODC-BY verlangt die Attribution, CC0 nicht);
+  (3) Daten ohne redistributions-erlaubende Lizenz laufen **privat** nach dem [redacted]-Muster
+  (lokal, kein CDN, keine `sources.φ`). **Messung abgeschlossen:** PhysioNet BIDSleep = ODC-BY 1.0,
+  OpenNeuro ds005034 = CC0, iEEG → privat (entfernt vom Publikationspfad).
 
 ### Membran-Sonne-Anker (Operator-Wort future-181; cross-line Mountain/Mycelium)
 - **Status:** blockiert | **Bindung:** eigen (cross-line: Mountain, Mycelium)
