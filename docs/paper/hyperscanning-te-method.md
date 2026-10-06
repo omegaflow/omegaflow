@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Method with Family-Wise Error Control
   class: paper
   date: 2026-10-05
-  sha256: 4f01fb124409ca6eabbbeb7c217e879371c84aefeefa92552503cc963b91776d
+  sha256: 15567769bdb1030328acb6757447af844b4acebc67c4c1fbc026af64dfa39b48
   status: live
   see-also: docs/paper/hyperscanning-te-preregistration.md, .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge234.md
 -->
@@ -362,12 +362,16 @@ The result is bounded by its registered parameters: one discovery cohort (`ds007
 one task condition (`jointaction`), one electrode per participant, `max_points 2048`
 for the discovery runs (`4096` for the feasibility cohort), and the `phase` null for the
 screen; the `coherent-phase` null is measured for the `Cz` discovery cohort (§9.5). The
-`max_points = 4096` full-cap discovery run is named and not yet measured at the discovery
-cohort: the platform job cap is **360 min** (measured 2026-10-06, `ci_manage view` — no
-`timeout-minutes` in `hyperscanning-te.yml`; the `4096` screen attempts `37209904312` and
-`37175843252` were cancelled after 6 h 08 min and 6 h 48 min, §9.3), and the full discovery
-screen is not shardable into one job without a global family-maximum merge; `2048` remains the
-measured upper bound. The `pair-18@Cz` finding is a
+`max_points = 4096` full-cap discovery run is **dispatched and in flight** (`37438929801`,
+`shards=4`, dispatched 2026-10-06; result not yet read): the platform job cap is **360 min**
+(measured 2026-10-06, `ci_manage view` — no `timeout-minutes` in `hyperscanning-te.yml`; the
+monolithic `4096` screen attempts `37209904312` and `37175843252` were cancelled after 6 h 08 min
+and 6 h 48 min, §9.3), and the shard path that fits the full run under the cap is built —
+`hyperscanning_group_te --shard <i>/<n>` slices the surrogate axis and `--merge f0,…,fn`
+recombines it through the global family-maximum (Westfall-Young maxT, shared permutation per
+surrogate index; `.github/workflows/hyperscanning-te.yml:48/190/264`, asserted by
+`shard_merge_equals_monolithic`, `hyperscanning_group_te.rs:2211`); `2048` was the monolithic
+upper bound before the shard path. The `pair-18@Cz` finding is a
 family-significant statistical detection, not a physiological claim; the feasibility
 cohort carries no family-maximum survivor at any n (0 honored — the measured absence
 is reported as absence, never as a zero).

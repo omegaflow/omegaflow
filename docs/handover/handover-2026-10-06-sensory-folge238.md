@@ -3,7 +3,7 @@
   session: Sensory-Folge 238
   class: handover
   date: 2026-10-06
-  sha256: 0930e4bf389a3dfa8b754c0d31e226580a9587ea42af4d155288a3054a98fb0e
+  sha256: 7b172543df64a5dbc96efa654c5d23cbbbcd476482e4aeea4197df6a050d3a6d
   status: live
 -->
 # Handover — Sensory-Folge 238 (2026-10-06)
@@ -43,6 +43,12 @@ korrigiert: die `coherent-phase`-Null stand unter „Offene Ergebnisse" noch als
 sie ist gemessen (§9.5) und wurde als solche eingetragen; offen bleibt dort nur der volle
 `max_points=4096`-Lauf (`37438929801`). Header-sha `90803a4a…`. Damit trägt die
 Präregistrierung **1 offenen Marker** (der `max_points=4096`-Lauf), nicht mehr 2.
+(c) `docs/paper/hyperscanning-te-method.md` §11 korrigiert: die Zeile „the full discovery
+screen is not shardable into one job without a global family-maximum merge; `2048` remains
+the measured upper bound" war nach dem Shard-Bau (F236) stale — der 4096-Lauf `37438929801`
+ist mit `shards=4` dispatcht und in Flug (Ergebnis noch nicht gelesen); §11 nennt jetzt den
+gebauten Shard-/Merge-Pfad (`hyperscanning_group_te.rs:2211` `shard_merge_equals_monolithic`,
+Workflow `.github/workflows/hyperscanning-te.yml:48/190/264`). Header-sha `15567769…`.
 **Struktureller Befund (Operator-Wort 2026-10-06, `AGENTS.md` `c9919033b`):** ein Dispatch =
 **ein begrenzter Schritt** — steht in `AGENTS.md`, Regel bleibt.
 Der F236-Anteil (Surrogat-Shard+Merge `hyperscanning_group_te.rs`, Workflow `hyperscanning-te.yml`,
@@ -379,7 +385,9 @@ Eigene Pfade dieses Atoms:
 - `docs/handover/handover-2026-10-06-sensory-folge238.md` (diese Übergabe),
 - `docs/handover/archiv/handover-2026-10-06-sensory-folge237.md` (die konsumierte F237),
 - `docs/paper/hyperscanning-te-preregistration.md` (coherent-phase-Null als gemessen
-  eingetragen, offener Marker 2→1; Header-sha `90803a4a…`).
+  eingetragen, offener Marker 2→1; Header-sha `90803a4a…`),
+- `docs/paper/hyperscanning-te-method.md` (stale „not shardable / 2048 upper bound"-Zeile
+  §11 korrigiert; Header-sha `15567769…`).
 
 `state/operator-gespraeche/2026-10-06-sensory.md` und `state/zustand/` sind
 gitignored (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
