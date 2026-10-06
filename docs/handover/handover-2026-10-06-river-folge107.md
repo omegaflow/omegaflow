@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: 70bd5bf3cefa5f4ae5c37006099e7c663298bceeb528ebb129b3aed68ca2ad33
+  sha256: 6c48eff4bbd96b24cf3b5311787b5ca9fd903ace585c589444d94a81e0f26899
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)
@@ -319,4 +319,4 @@ die strukturelle Erzwingung (`terms`-Zeile + Parser-Arm + `unbacked_mirror`-Vers
 `git_safety --close`; `git status` vor dem Commit; fremde uncommittete Hunks im Baum
 (`phi/sources.φ`, `src/archivar/geo.rs`, `tools/harvest/...`, sensory-Handover-Move) nicht berührt.
 
-## Burn: open 0.0000 · close 0.0000
+## Burn: open 0.0000 · close 0.0631
