@@ -87,7 +87,7 @@ pub fn residual_against_witnesses(
         }
         let mut ata = vec![vec![0.0f64; params]; params];
         let mut atx = vec![0.0f64; params];
-        for t in lag..target.len() {
+        for (t, target_t) in target.iter().enumerate().skip(lag) {
             let mut row = Vec::with_capacity(params);
             row.push(1.0);
             for &wi in &used_all {
@@ -97,7 +97,7 @@ pub fn residual_against_witnesses(
                 for b in 0..params {
                     ata[a][b] += row[a] * row[b];
                 }
-                atx[a] += row[a] * target[t];
+                atx[a] += row[a] * *target_t;
             }
         }
         let Some((coeffs, _, _, pivot_ratio)) =
@@ -106,12 +106,12 @@ pub fn residual_against_witnesses(
             continue;
         };
         let mut series = Vec::with_capacity(n);
-        for t in lag..target.len() {
+        for (t, target_t) in target.iter().enumerate().skip(lag) {
             let mut prediction = coeffs[0];
             for (k, &wi) in used_all.iter().enumerate() {
                 prediction += coeffs[k + 1] * witnesses[wi].series[t - lag];
             }
-            series.push(target[t] - prediction);
+            series.push(*target_t - prediction);
         }
         let variance = residual_variance(&series);
         let residual = Residual {
