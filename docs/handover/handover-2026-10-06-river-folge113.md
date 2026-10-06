@@ -3,7 +3,7 @@
   session: River-Folge 113
   class: handover
   date: 2026-10-06
-  sha256: b50a01b82e3e0edc6ffbac340b2b6ba5e7b4922035b9cf175659cf100528b1aa
+  sha256: d843900f386a2fa28a1caa0e70f811e914b07a2682ff88bfbf86f644575fd102
   status: live
 -->
 # Handover — River-Folge 113 (2026-10-06)
@@ -66,24 +66,26 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) Solar-/Magnetosphären-Zellen alignment-fähig ernten (Mountain/Mycelium, s. `## An mountain`);
   (2) `ozzy` (oben); (3) Netz-Null als CI-Batterie (B ≥ 1/α). Rat-Reihenfolge: Draht → Matrix → `ozzy` → Netz-Null.
 
-### GIC-Breitenband-Familien — Rat-Verdikt: drei Deskriptoren; Partition messen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** nächster begrenzter Schritt (CGM-Breiten-Messung je Station).
+### GIC-Breitenband-Familien — drei Linien, Operator-/Rats-Wort zur Linienwahl offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-/Rats-Wort zur Linienwahl (Linie 1/2/3) — kein Arm, keine Migration ohne dieses Wort.
 - **Lage:** (gemessen 2026-10-06, River 113) Der Mountain-Trigger ist gefeuert: `2117476be` setzt auf allen 154
   Blöcken die `station <code>`-Direktive (`phi/sources.φ:6616…7474`) und macht den Matrix-Arm station-aware
   (Test `field_sources_resolves_station_qualified_channel_to_its_block`, `field_te_query.rs:4762`); Verdikt
   „Station = Identität, kein Feld-Rename". `docs/blatt/blatt-gic-breitenband-familien.md` auf die Verdikt-Form
-  gezogen. **Zwei Kanäle (2026-10-06):** API-Rat einstimmig für drei getrennte Familien-Deskriptoren, kein
-  neuer Drei-Familien-Grammatik-Arm; UI-Chats geteilt — ChatGPT zustimmend, Claude (Sonnet 5.5) dagegen
-  (allgemeiner Familien-Scope `family`/`over family` statt drei Deskriptoren). **Riss, nicht geglättet**
-  (Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`); Blatt `unsealed`. Offen (0):
-  CGM-Breite je Station — die Blöcke tragen nur die geografische `on earth <lat> <lon>`-Koordinate
-  (`phi/sources.φ:6621,6632,6643`).
-- **Blockade:** keine (eigene).
-- **Braucht:** (0) CGM-Breite je Station ableiten (std Rust IGRF/CGM oder eine gemessene CGM-Tabelle), feste
-  Bandgrenzen vor dem Lauf deklarieren, drei Kanal-Listen + Deckungstest (disjunkt, Union = 154);
-  (b) drei Deskriptor-Dateien über `field_te_query --descriptor` (`field_te_query.rs:4657`); (c) **ein**
-  CI-Job `field-te-query.yml` mit drei Deskriptor-Schritten (nie lokal).
+  gezogen. **Drei Linien (2026-10-06, Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`):**
+  (1) API-Rat einstimmig · ChatGPT · qwen 3.8 Max — drei getrennte Familien-Deskriptoren, kein Grammatik-Arm;
+  (2) Claude Sonnet 5.5 · GLM-5.3 Deep Think Max — Stufe 1 global, Familien als Register-Artefakt/`family`-Scope
+  (Stufe-2 liest); (3) Kimi/tryingopen (vom Operator abgeholt) — neuer Grammatik-Arm als Partition in EINEM
+  `matrix full`-Block. **Riss, nicht geglättet**; kein Arm, keine Migration ohne Operator-/Rats-Wort; Blatt
+  `unsealed`. Offen (0): CGM-Breite je Station — die Blöcke tragen nur die geografische `on earth <lat> <lon>`-
+  Koordinate (`phi/sources.φ:6621,6632,6643`).
+- **Blockade:** die Trägerform der Familienpartition ist eine Architektur-Frage — drei Linien konvergieren nicht.
+- **Braucht:** das Wort zur Linienwahl. Danach allen Linien gemeinsam: (0) CGM-Breite je Station ableiten
+  (std Rust IGRF/CGM oder gemessene CGM-Tabelle), feste Bandgrenzen deklarieren, Kanal-Listen + Deckungstest
+  (disjunkt, Union = 154). Dann je Wort: Linie 1 → drei Deskriptor-Dateien (`--descriptor`, `:4657`);
+  Linie 2 → `family`-Scope + Register-Artefakt (Stufe 2 liest es); Linie 3 → Grammatik-Sub-Direktive
+  (`family … stations`, `wymaxt … over family`). CI: ein `field-te-query.yml`-Job (nie lokal).
 
 ### Receiver-Apertur — Sub-Pixel für ALLE Radiatoren (nicht nur die visuelle Membran)
 - **Status:** wartend | **Bindung:** eigen (Membran-/Aktor-Pfad)
@@ -221,4 +223,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge113: 34 path refs · 0 absent · 0 stale-citations · 1 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0000 · close 0.1140 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`) + Rat-Verdikt (API: drei Deskriptoren; UI-Chats geteilt — Claude dissent, ChatGPT zustimmend) als Riss eingetragen (Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`); `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
+## Burn: open 0.0000 · close 0.1891 · cap 0.35 · Grund: River 113 — Line-Session (deepseek-flash): GIC-Blatt auf die Verdikt-Form gezogen (station-qualifiziert, `2117476be`); die GIC-Familien-Arm-Frage an den Rat (API) UND die UI-Chats vorgelegt — drei Linien (drei Deskriptoren / globales Stufe-1 + Register-Artefakt / Grammatik-Arm als Partition in einem Block) als Riss eingetragen (Rohmaterial `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`); `ozzy`-Schritt 3 — Eliminations-Pivot-Ratio in `least_squares`/`Residual` + Known-Answer-Test; mountain-248/sensory-244/future-186 adressierte Blöcke gefaltet; Zustand am HEAD `3e5bc57c3` gemessen.
