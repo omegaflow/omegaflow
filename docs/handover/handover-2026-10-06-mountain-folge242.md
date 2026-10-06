@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: 436d1a6c7997d14ee33cfd9a6902cd54e686cb2bd5449cfb9243dfa5d2b737b0
+  sha256: 75b920fd9077d55b52972ede5c612258a84a1ee97421aabc021fc7e7ae949367
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -16,9 +16,22 @@ Baum: **alle erledigt** (iEEG-Bindung `sources.φ:3584-3589`; AGrav/CEEIN regist
 `sources.φ:9071`/`:9239`; gistemp/godas `sha256` `sources.φ:18870`/`:17141`;
 Chandrayaan-Felder `sources.φ:10025-10027`; JAXA-Reader descoped
 `blocked_sources.φ:96`; clippy `units.rs` committet) — nichts zu falten, die Sender
-können die Blöcke streichen. Ein `grind-flash`-Dispatch (fink-Arm), kein pro/max.
+können die Blöcke streichen. Zwei `grind-flash`-Dispatches, kein pro/max.
 
-## Burn: open 0.0000 · close 0.0974 · Grund: flash-first — Line-Session $0.0649 + ein `grind-flash`-Dispatch (fink-Format-Arm, $0.0325), kein pro/max
+**Nachtrag (Operator: „kannst du das bitte fixen?").** Der Fink-`blockiert`-Stand war ein
+**Messfehler** (falscher Host `api.fink-portal.org`); `api.lsst.fink-portal.org` antwortet
+2026-10-06 HTTP 200 für `/`, `/schema`, `/sources`, `/objects`, `/cutouts`, `/conesearch`.
+Die allgemeine Query ist `/api/v1/conesearch` (nicht `/objects` — das ist `diaObjectId`-
+gebunden) und wird schon von `skydirection_compiler` (`FINK_CONE`) geerntet, als Zeuge
+`s2-direction` (`witnesses.φ:11`) registriert — **kein `sources.φ`-Block nötig** (Fink ist
+ein Skydirection-Zeuge, kein `sources.φ`-Ursprung). **Cutout-FITS-Reader gebaut:**
+`tools/measure/src/bin/fink_cutout_probe.rs`, live gemessen (`POST /api/v1/cutouts`,
+`diaSourceId=314002968168367863` → 34560 B FITS, NAXIS 30×30, BITPIX −32, Apertur-Summe).
+trishuli: Live-Route gemessen — `POST /site/getRiverWatchBySeriesId_Single`
+(csrf + `seriesid=23251`) → `status:success` mit **leerer** Serie (`river=[]`) über
+Perioden 1–4; kein `timeSeries` ⇒ Trigger nicht gefeuert, `wartend` bleibt.
+
+## Burn: open 0.0000 · close 0.1723 · cap 0.25 (Operator eröffnete das Atom erneut) · Grund: flash-first — Line-Session $0.1216 + zwei `grind-flash`-Dispatches ($0.0325 fink-Arm, $0.0182 cutout-Reader), kein pro/max
 
 ## Operator-Wort-Register
 
@@ -54,31 +67,16 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Fink-Broker (LSST) — Format-Arm gebaut, Reader + allgemeine Query offen
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06) `fink`-Format-Arm gebaut — `src/archivar/fink.rs`
-  (Feldschema aus `tools/measure/src/weberin/fink_alerce.rs` + Fixture
-  `fink_object_sources.json`: ra/dec/psfFlux/psfFluxErr/apFlux/scienceFlux/snr/
-  extendedness/reliability; `midpointMjdTai` MJD-TAI → TDB), Dispatch in
-  `extract.rs` (parse_series/declared_fields/component_name), `cargo check` 0/0.
-  Route (gemessen 2026-10-06): `api.lsst.fink-portal.org` direct pending, Proton
-  socks5h pending, Wayback 200 ohne Snapshot.
-- **Blockade:** allgemeine Query (Klasse/Zeitfenster, `/api/v1/objects`) ungemessen;
-  Cutout-FITS-Reader offen; `fink`-Quellenblock in `phi/sources.φ` + CDN-Workflow
-  (Mycelium) fehlen; die Route antwortet derzeit nicht.
-- **Braucht:** Route messen → `fink_compiler.rs` + `sources.φ`-Block
-  (url/format/origin/compiler, Arm `fink` deckt) + `cutouts`-FITS-Reader; per-Objekt
-  `/cutouts`-Body messen. Kein RSP, keine data rights.
-
 ### trishuli (DHM Nepal) — wartend
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** DHM-Schema liefert für Station 4913 einen `timeSeries`
 - **Lage:** (gemessen 2026-10-06) Arm + `format trishuli_stage` + Register-Zeile
-  stehen (`phi/sources.φ:446`); Live-Seite `dhm.gov.np/hydrology/river-watch`
-  JS-gerendert, kein `4913`/`timeSeries` im HTML → `Measurements([])` (absent,
-  0 honored); Ereignisfenster-Route über Wayback
-  (`.github/workflows/trishuli-pfeil.yml:33-50`).
+  stehen (`phi/sources.φ:446`); Ereignisfenster-Route über Wayback
+  (`.github/workflows/trishuli-pfeil.yml:33-50`). **Live-Route gefunden:**
+  `POST https://dhm.gov.np/site/getRiverWatchBySeriesId_Single`
+  (csrf + `seriesid=23251`) → `status:success` mit **leerer** Serie (`river=[]`,
+  `<td>` 0) über Perioden 1/2/3/4; Stationsseite `hms-Single/4913` trägt
+  `waterLevel:null`, `series_id:23251`.
 - **Blockade:** Live-Schema trägt die Serie nicht stabil.
 - **Braucht:** Wayback-Route als Primärweg bestätigen oder auf DHM-Schema-Wechsel warten.
 
