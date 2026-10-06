@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: f3dd6080c4a4289459bdac8a935081c0bb03a911662a699a35f28b8ec234ab3f
+  sha256: bea7f0a57b51e827556dd164dc86987c4045845b9f721a422cea8ee4cbd2f6df
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)
@@ -96,9 +96,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   Schätzung.
   (4) **gebaut (River 107):** `phi/pipeline/descriptors/vlies_matrix.te` — 15-Feld-Matrix
   (`matrix vlies full`, `cond none`, `fdr bh 0.05 over matrix`, `expect cells 210`, `lags 0,1`,
-  ein Bin 86400 s, pro-Zelle-Auflösungspaar); CI-Job `matrix-vlies`
-  (`.github/workflows/field-te-query.yml`), dispatcht. **Rat 2026-10-06:** Knoten = Felder;
-  ERBQ-Event draußen (`form event-conditional`); pending an Mountain: Newell-Feld, Kp als
+  ein Bin 86400 s); **Per-Zelle-Auflösungspaar gebaut** (`tools/measure/src/bin/field_te_query.rs`:
+  native Kadenz je Arm via `median_dt`, `resolution_representable(grid_dt, τ_d, τ_t)`, ein nicht
+  darstellbares Paar geht als `pending` mit genanntem Paar aus — nie still gebinnt; Test
+  `matrix_resolution_gate_flags_the_coarser_pair_never_bins_silently`); CI-Job `matrix-vlies`
+  (`.github/workflows/field-te-query.yml`), **neu dispatcht**. **Rat 2026-10-06:** Knoten =
+  Felder; ERBQ-Event draußen (`form event-conditional`); pending an Mountain: Newell-Feld, Kp als
   `field`, EEG-Feldname.
   (5) `ozzy` **auf** der Matrix (`auftrag-universelles-vlies.md` §Lieferung).
 
@@ -365,6 +368,7 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `NOTICE` (Dritt-Daten-Attribution: PhysioNet BIDSleep = ODC-BY 1.0, DOI, Quelle)
 - `phi/pipeline/descriptors/vlies_matrix.te` (15-Feld-Matrix, Rat 2026-10-06)
 - `.github/workflows/field-te-query.yml` (Job `matrix-vlies`)
+- `tools/measure/src/bin/field_te_query.rs` (Per-Zelle-Auflösungspaar, Rat 2026-10-06)
 
 Operator-Gesprächsschnitt: `state/operator-gespraeche/2026-10-06-river.md` (gitignored, nicht
 committet).
@@ -376,8 +380,10 @@ Quelle (Mountain), sources-`LICENSE` **generiert** + CI-Drift-Tor (Mycelium), Ce
 Census gestartet (`state/river/license-census.tsv`, 169 Netlocs, Batch 1 = 7 gemessen). Getragen:
 `## An mountain` (`terms`+Gate), `## An mycelium` (Generator+`LICENSE`). **Stein (River 107):**
 `vlies_matrix.te` (15 Felder, `matrix full`, `fdr bh 0.05 over matrix`, `expect cells 210`,
-`lags 0,1`, Bin 86400 s, pro-Zelle-Auflösungspaar; Rat 2026-10-06: Knoten = Felder, ERBQ draußen);
-CI-Job `matrix-vlies` dispatcht. `omega_sh sha` der Übergabe; `git_safety`; `git status` vor dem
-Commit; fremde uncommittete Hunks (`src/archivar/geo.rs`, `tools/harvest/...`) nicht berührt.
+`lags 0,1`, Bin 86400 s); **Per-Zelle-Auflösungspaar gebaut** (`field_te_query.rs`,
+`resolution_representable`; Test `matrix_resolution_gate_...`), `cargo build -p omegaflow-measure
+--bin field_te_query` grün; CI-Job `matrix-vlies` dispatcht. `omega_sh sha` der Übergabe;
+`git_safety`; `git status` vor dem Commit; fremde uncommittete Hunks (`src/archivar/geo.rs`,
+`tools/harvest/...`) nicht berührt.
 
-## Burn: open 0.0000 · close 0.2124 · cap 0.25 · Grund: Lizenz-Audit, repo-weiter Census mit Schwarm-Welle, Vlies-Stein und ihre Rat-Verdikte in einem Atom
+## Burn: open 0.0000 · close 0.2840 · cap 0.35 · Grund: Lizenz-Audit, repo-weiter Census mit Schwarm-Welle, Vlies-Stein + Per-Zelle-Auflösungspaar-Code und ihre Rat-Verdikte in einem Atom
