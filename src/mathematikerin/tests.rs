@@ -1785,6 +1785,7 @@ fn volume_probe_parity_masked_corner_and_plain() {
             axes: axes.clone(),
             data,
             mask,
+            frame_body: Some("earth".to_string()),
         }
     };
     let plain = volume_of(false);

@@ -20,7 +20,6 @@ note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); k
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-only Dekoder → SZIP-Granulen descoped (kein libaec, std-stack bleibt); MOD11C2/C3 lesen über NONE/RLE/DEFLATE.
-note gap-Token netcdf-arm — EUMETSAT Data Store MTG-LI: OpenSearch + OAuth2-Bearer gemessen, Arm eumetsat_mtg_li_fetch.rs; fehlt der format/parser (netCDF-Produkt → Archivar-format); als blocked parser-def geführt.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -81,10 +80,6 @@ url https://superdarn.ca/data-download
 note MAP-Grid RST (DMap) — 2026-10-05: Zugang via Globus (`GLOBUS_ID_USER/PASS`, `wartend.φ:8 superdarn-af68c4f1`, Aufnehmer mycelium) vorhanden → Maschinen-Schritt, kein Operator-Akt. ascii nur FITACF; MAP-RST nur Globus/BAS-Mirror (2026-10-04 gemessen).
 
 pending
-url https://archives.esac.esa.int/psa/ftp/ExoMars2016/
-note ExoMars TGO ACS — 2026-10-05: Arm steht (pds4.rs base16 Group_Field_Character; 1280 Rep. → indizierte ROW_DATA_0000..1279; End-to-End 200 rows). Asset 543800 B sha256 465f3c07…; keine Geom.-Spalten. Feld ROW_DATA_{i} em count; Reg. Mycelium.
-
-pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
 note Akatsuki VCO-rs (JAXA/ISAS) — sources.φ:25583 (format pds4_fixed_width, compiler pds4_binary_compiler); Workflow vco-rs-cdn.yml steht. Die frühere Note nannte falschen Arm/Workflow (Riss). 2026-10-04.
 
@@ -94,15 +89,7 @@ note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten
 
 pending
 url https://pds-geosciences.wustl.edu/missions/chandrayaan1/
-note Chandrayaan-1 Mini-RF (ISRO, PDS Geosciences) — Arm+Compiler stehen (49b18dd6f); Endpunkt 2026-09-30: pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/.../level1/*.img + raw/*.dat (206). Sample+Asset Mycelium.
-
-pending
-url https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
-note Phobos 2 KRFM krfm.dat — 2026-10-04 HTTP 206; 15 Spalten (5 Radiometer + 9 Photometer, 12-bit). Feld-Verdikt: pds3_krfm_radiometer1..5 + photometer1..9, em count (W/m2/sr-Kalibrierung fehlt — Riss). Offen: sources.φ-Block + CDN (Mycelium).
-
-pending
-url https://sbnarchive.psi.edu/pds4/hayabusa/
-note Hayabusa LIDAR cdr_*.tab — 2026-10-04 HTTP 206; 31 Spalten. Arm+Workflow stehen (pds4.rs, harvest.φ). Feld-Verdikt: RANGE hay_lidar_range inverse-square em km; übrige Spalten DROP (Geometrie/Anker). Offen: sources.φ-Block + CDN (Mycelium).
+note Chandrayaan-1 Mini-RF — 2026-10-06: sources.φ:10019 pds3_img ohne field-Zeile; kein Feld-Arm → Serienpfad verwirft (main_flow.rs:3046); BAND_NAME mit Leerzeichen → Feld-Verdikt+Slug nötig; Sample+Asset Mycelium
 
 pending
 url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
@@ -127,10 +114,6 @@ note LEOS (CSES) — 2026-10-05 (gemessen): Captcha-gated login, Katalog-JSON = 
 pending
 url https://clpds.bao.ac.cn/
 note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13 207 B); clpds_compiler.rs + clpds-cdn.yml gebaut (catalogue 98 + files 568 396); Annex-Arm --with-annex gebaut, Workflow ruft ihn noch ohne. PDS3-Reader steht. future-folge226.
-
-pending
-url https://pds-geosciences.wustl.edu/missions/viking/gravity.html
-note Viking Mars gravity — 2026-10-04: Endpunkt `.../mg_1001/vikgrav/` (vmar001l.dat 22569 Rows/42 B); Arm pds3_fixed_width steht; ACCELERATION → viking_orbiter2_los_accel inverse-square gravity mm/s**2 (achsenlos). Registrierung Mycelium.
 
 descoped
 url https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/
@@ -181,9 +164,4 @@ blocked parser-def
 url https://cedar.openmadrigal.org
 gap html-parser-arm
 note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
-
-blocked parser-def
-url https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691
-gap netcdf-arm
-note MTG-LI (EUMETSAT Data Store) — 2026-10-06: OpenSearch 200 → newest MTI1 LI-2-LFL, /token Bearer mit {EUMETSAT_KEY}/{EUMETSAT_SECRET}, download 200; Arm eumetsat_mtg_li_fetch.rs; kein mtg_li-format/parser.
 

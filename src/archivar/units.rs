@@ -91,6 +91,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mm/h" => Some(value * 2.7777778e-7),
         "yr" => Some(value * 3.15576e7),
         "mw/m2" => Some(value * 1e-3),
+        "mw/m2/sr" => Some(value * 1e-3),
         "e10j" => Some(value * 1.0e10),
         "kt_tnt" => Some(value * 4.184e12),
         "kt_mass" => Some(value * 1e6),
@@ -348,6 +349,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         0 => &[
             "w",
             "w/m2",
+            "mw/m2/sr",
             "t",
             "nt",
             "nt/hz**1/2",
@@ -546,7 +548,7 @@ pub fn cf_time_unix_seconds(units: &str, value: f64) -> Option<f64> {
         "second" | "seconds" => 1.0,
         _ => return None,
     };
-    let mut fields = epoch.trim().split_whitespace();
+    let mut fields = epoch.split_whitespace();
     let date = fields.next()?;
     let mut date_parts = date.split('-');
     let year = date_parts.next()?.parse::<i64>().ok()?;
