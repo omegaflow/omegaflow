@@ -1,0 +1,59 @@
+name: soho-lasco-cme-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'CME catalog month (YYYY_MM)'
+        type: string
+        default: '2024_01'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/soho_lasco_compiler.rs'
+      - '.github/workflows/soho-lasco-cme-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  soho-lasco-cme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the cdaw.gsfc.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view cdaw.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cdaw.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "cdaw.gsfc.nasa.gov" \
+              --notes "SOHO/LASCO CME catalog compiled for omegaflow (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the SOHO/LASCO CME catalog
+        run: |
+          set -euo pipefail
+          month="${{ inputs.month }}"; [ -n "$month" ] || month="2024_01"
+          cargo run -p omegaflow-harvest --release --bin soho_lasco_compiler -- \
+            --month "$month" \
+            --out data/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin --ci-mode
+      - name: Verify the registered cdaw.gsfc.nasa.gov soho_lasco_cme asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh cdaw.gsfc.nasa.gov soho_lasco_cme)
+          if [ -z "$expected" ]; then
+            echo "no soho_lasco_cme asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view cdaw.gsfc.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered cdaw.gsfc.nasa.gov soho_lasco_cme assets all present"
