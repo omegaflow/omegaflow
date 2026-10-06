@@ -17516,6 +17516,14 @@ on earth 0 0 0
 ttl 31536000
 field ghsl_built_surface_m2 ghsl_built_surface_m2 gaussian-inverse-square diffusion m2 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ers.usda.gov/usda_fara_low_access.bin
+format usda_fara_low_access
+origin https://www.ers.usda.gov/media/5627/2019-large-retailer-access-map-lram-formerly-known-as-the-food-access-research-atlas-fara-data.zip
+compiler tools/harvest/src/bin/usda_fara_compiler.rs
+on earth 0 0 0
+ttl 31536000
+field usda_fara_low_access_share usda_fara_low_access_share gaussian-inverse-square diffusion 1 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
 format epa_aqs_pm25
 origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
