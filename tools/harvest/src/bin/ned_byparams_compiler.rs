@@ -284,10 +284,10 @@ fn result_url(html: &str) -> Option<String> {
         let seg = &html[p..];
         if let Some(dv) = seg.find("data-value=") {
             let rest = &seg[dv + "data-value=".len()..];
-            let rest = rest.trim_start_matches('"').trim_start_matches('\'');
             let quote = rest.chars().next()?;
-            let end = rest[quote.len_utf8()..].find(quote)?;
-            return Some(rest[quote.len_utf8()..quote.len_utf8() + end].to_string());
+            let inner = &rest[quote.len_utf8()..];
+            let end = inner.find(quote)?;
+            return Some(inner[..end].to_string());
         }
     }
     let mut best: Option<String> = None;
