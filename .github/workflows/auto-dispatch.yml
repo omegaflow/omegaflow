@@ -37,6 +37,10 @@ jobs:
               continue
             fi
             for wf in "${wfs[@]}"; do
+              if grep -q 'auto-dispatch: manual' ".github/workflows/$wf"; then
+                echo "compiler $stem changed — $wf is manual, not auto-dispatched"
+                continue
+              fi
               echo "compiler $stem changed — dispatch $wf"
               gh workflow run "$wf" --repo '${{ github.repository }}' || { echo "DISPATCH FAILED $wf"; fail=1; }
             done

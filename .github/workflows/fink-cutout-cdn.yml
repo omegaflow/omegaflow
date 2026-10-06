@@ -1,3 +1,4 @@
+# auto-dispatch: manual — the cutout target dia_source_id/mjd_tai are per-act inputs; auto-dispatch cannot supply them
 name: fink-cutout-cdn
 
 concurrency:
