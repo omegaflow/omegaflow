@@ -1,3 +1,5 @@
+pub type PivotSolution = (Vec<f64>, Vec<f64>, Vec<f64>, f64);
+
 pub fn solve_normal_equations(
     ata: &[Vec<f64>],
     atx: &[f64],
@@ -12,7 +14,7 @@ pub fn solve_normal_equations_with_pivot_ratio(
     atx: &[f64],
     aty: &[f64],
     atz: &[f64],
-) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>, f64)> {
+) -> Option<PivotSolution> {
     let n = ata.len();
     let mut a = ata.to_vec();
     let mut bx = atx.to_vec();
