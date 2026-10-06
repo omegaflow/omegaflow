@@ -33,13 +33,23 @@ impl MembraneLookup {
 impl MembraneLookup {
     #[wasm_bindgen(constructor)]
     pub fn new(stars: &[u8], catalog_epoch_yr: f64) -> MembraneLookup {
-        let samples = build_star_samples(stars, Some(catalog_epoch_yr));
-        MembraneLookup {
-            stars: samples,
+        let mut lookup = MembraneLookup {
+            stars: Vec::new(),
             hash: None,
             eph: HashMap::new(),
             bodies_sealed: usize::MAX,
+        };
+        lookup.add_stars(stars, catalog_epoch_yr);
+        lookup
+    }
+
+    pub fn add_stars(&mut self, bytes: &[u8], catalog_epoch_yr: f64) {
+        if bytes.is_empty() {
+            return;
         }
+        self.stars
+            .extend(build_star_samples(bytes, Some(catalog_epoch_yr)));
+        self.hash = None;
     }
 
     pub fn load_ephemeris(&mut self, name: &str, bytes: &[u8]) -> bool {
