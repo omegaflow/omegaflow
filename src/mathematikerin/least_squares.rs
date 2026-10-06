@@ -4,11 +4,22 @@ pub fn solve_normal_equations(
     aty: &[f64],
     atz: &[f64],
 ) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
+    solve_normal_equations_with_pivot_ratio(ata, atx, aty, atz).map(|(x, y, z, _)| (x, y, z))
+}
+
+pub fn solve_normal_equations_with_pivot_ratio(
+    ata: &[Vec<f64>],
+    atx: &[f64],
+    aty: &[f64],
+    atz: &[f64],
+) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>, f64)> {
     let n = ata.len();
     let mut a = ata.to_vec();
     let mut bx = atx.to_vec();
     let mut by = aty.to_vec();
     let mut bz = atz.to_vec();
+    let mut min_pivot = f64::INFINITY;
+    let mut max_pivot = 0.0f64;
     for i in 0..n {
         let mut pivot = i;
         for j in i + 1..n {
@@ -16,8 +27,15 @@ pub fn solve_normal_equations(
                 pivot = j;
             }
         }
-        if a[pivot][i].abs() < 1e-15 {
+        let magnitude = a[pivot][i].abs();
+        if magnitude < 1e-15 {
             return None;
+        }
+        if magnitude < min_pivot {
+            min_pivot = magnitude;
+        }
+        if magnitude > max_pivot {
+            max_pivot = magnitude;
         }
         a.swap(i, pivot);
         bx.swap(i, pivot);
@@ -39,7 +57,12 @@ pub fn solve_normal_equations(
     let x = back_substitute(&a, &bx);
     let y = back_substitute(&a, &by);
     let z = back_substitute(&a, &bz);
-    Some((x, y, z))
+    let pivot_ratio = if min_pivot.is_finite() {
+        max_pivot / min_pivot
+    } else {
+        1.0
+    };
+    Some((x, y, z, pivot_ratio))
 }
 
 pub fn back_substitute(a: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
@@ -76,6 +99,48 @@ mod tests {
                 &[0.0, 0.0]
             )
             .is_none()
+        );
+    }
+
+    #[test]
+    fn pivot_ratio_reads_the_elimination_pivots() {
+        let identity = vec![vec![1.0, 0.0], vec![0.0, 1.0]];
+        let (_, _, _, ratio) = solve_normal_equations_with_pivot_ratio(
+            &identity,
+            &[1.0, 1.0],
+            &[0.0, 0.0],
+            &[0.0, 0.0],
+        )
+        .expect("the identity solves");
+        assert!(
+            (ratio - 1.0).abs() < 1e-12,
+            "an identity carries pivot ratio 1"
+        );
+
+        let stretched = vec![vec![1.0, 0.0], vec![0.0, 1000.0]];
+        let (_, _, _, ratio) = solve_normal_equations_with_pivot_ratio(
+            &stretched,
+            &[1.0, 1.0],
+            &[0.0, 0.0],
+            &[0.0, 0.0],
+        )
+        .expect("the stretched diagonal solves");
+        assert!(
+            (ratio - 1000.0).abs() < 1e-9,
+            "the pivot ratio is max|pivot| / min|pivot|, not a 2-norm condition"
+        );
+
+        let near_singular = vec![vec![1.0, 0.0], vec![0.0, 1e-10]];
+        let (_, _, _, ratio) = solve_normal_equations_with_pivot_ratio(
+            &near_singular,
+            &[1.0, 1.0],
+            &[0.0, 0.0],
+            &[0.0, 0.0],
+        )
+        .expect("the near-singular diagonal still solves above the floor");
+        assert!(
+            (ratio - 1e10).abs() / 1e10 < 1e-6,
+            "a near-singular witness system names its degradation"
         );
     }
 }

@@ -1,4 +1,4 @@
-use crate::mathematikerin::least_squares::solve_normal_equations;
+use crate::mathematikerin::least_squares::solve_normal_equations_with_pivot_ratio;
 
 pub struct Witness<'a> {
     pub name: &'a str,
@@ -12,6 +12,7 @@ pub struct Residual {
     pub lag: usize,
     pub rank: usize,
     pub df: usize,
+    pub pivot_ratio: f64,
 }
 
 pub enum ResidualOutcome {
@@ -70,7 +71,9 @@ pub fn residual_against_witnesses(
                 atx[a] += row[a] * target[t];
             }
         }
-        let Some((coeffs, _, _)) = solve_normal_equations(&ata, &atx, &atx, &atx) else {
+        let Some((coeffs, _, _, pivot_ratio)) =
+            solve_normal_equations_with_pivot_ratio(&ata, &atx, &atx, &atx)
+        else {
             continue;
         };
         let mut series = Vec::with_capacity(n);
@@ -92,6 +95,7 @@ pub fn residual_against_witnesses(
             lag,
             rank: params,
             df: n - params,
+            pivot_ratio,
         };
         match &best {
             Some((v, _)) if *v <= variance => {}
@@ -175,6 +179,7 @@ mod tests {
         assert_eq!(r.lag, 0);
         assert_eq!(r.rank, 3);
         assert_eq!(r.df, r.n - r.rank);
+        assert!(r.pivot_ratio.is_finite() && r.pivot_ratio >= 1.0);
         assert!(variance(&r.series) < 0.1 * variance(&target));
 
         let empty: [Witness<'_>; 0] = [];

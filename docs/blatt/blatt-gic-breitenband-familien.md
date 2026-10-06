@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: die Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: f75222de26b98d63933b9d92ab86a9eddec0f50a4f09207d6e499d7e98df1c4e
+  sha256: 565916d37e69754580a6a87cb18c00129bc6ae4beba806f3fa5b7e3f2c942b92
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -94,22 +94,23 @@ Nach der Messung ist keine Grenze, keine α-Ebene und kein Band mehr verhandelba
 
 Der Lauf ist **nicht** startbereit; die Lücke ist gemessen, nicht vermutet:
 
-1. **Die 154 sind keine 154 Matrix-Kanäle.** Sie liegen als einzelne BGS-GIN-HAPI-
-   `url`-Blöcke (`on earth <lat> <lon>`, `phi/sources.φ:5790…`), die **denselben**
-   Feldnamen tragen (`intermagnet_xyz_x_nt` etc., `:5795-5797`). Der Matrix-Kanal
-   ist ein **Feldname** — 154 Stationen mit einem Namen sind kein 154-Kanal-Netz.
-   Für eine station-aufgelöste TE braucht jeder Station-Messwert einen **eigenen
-   Kanalnamen** (station-qualifiziertes Feld/Serie).
+1. **Die 154 tragen je ihren station-qualifizierten Kanal — der Identitäts-Riss ist
+   geheilt (gemessen 2026-10-06, Mountain `2117476be`).** Die 154 BGS-GIN-HAPI-
+   Blöcke tragen die `station <code>`-Direktive (`phi/sources.φ:6616…7474`, z. B.
+   `station NUR`); das Verdikt (Rat 2026-10-06) ist **Station = Identität, kein
+   Feld-Rename** — der Arm adressiert `<feld>_<station>` und löst den
+   station-qualifizierten Kanal auf genau seinen Block auf (Test
+   `field_sources_resolves_station_qualified_channel_to_its_block`,
+   `tools/measure/src/bin/field_te_query.rs:4762`). 154 Kanäle, kein Ein-Feld-Netz.
 2. **Die Matrix-Grammatik trägt keinen Familien-Arm.** `field_te_query` kennt
    `matrix <label> rect|full|upper`, `channels`, `fdr … over matrix|row|col`,
    `expect cells` — aber keine Breitenband-Partition
-   (`tools/measure/src/bin/field_te_query.rs:4613`, `:518-668`). „Sub-Familie“
+   (`tools/measure/src/bin/field_te_query.rs:4622`). „Sub-Familie“
    ist heute nur als **je ein Descriptor pro Band** ausdrückbar, nicht als ein
    Lauf über drei Familien.
 
-**Nächster Schritt (kein neues Tool):** (a) Mountain: die 154 Stationen als
-station-qualifizierte Matrix-Kanäle registrieren (Feldnamen/Verdikt —
-`weberin-thread-matrix:35` trägt die 154 als `fanout 154`); (b) danach drei
+**Nächster Schritt (kein neues Tool):** (a) — erledigt (Mountain `2117476be`:
+`station`-Direktive auf den 154 Blöcken, Arm station-aware). (b) danach drei
 Familien-Deskriptoren (`matrix gic_auroral full` / `_subauroral` / `_midlat`), je
 mit eigenem `expect cells`, eigenem `fdr` und eigener `WY-max-t`-Ebene; (c) der
 CI-Lauf `field-te-query.yml` (nie lokal). Ob ein einziger Drei-Familien-Lauf statt
@@ -123,7 +124,6 @@ Rat hält sie, nicht ein Pro-Solo.
 | Partitionsgrenzen (geomagn. Breite je Band) | `pending` — werden vor dem Lauf als feste Werte deklariert |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
-| Kanalnamen der 154 Stationen | `pending` — Mountain (station-qualifizierte Felder) |
 | Familien-Deskriptoren | `pending` — nach (a) |
 | Verdikt | `unsealed` |
 
