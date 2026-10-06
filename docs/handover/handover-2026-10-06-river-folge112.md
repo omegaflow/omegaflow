@@ -3,7 +3,7 @@
   session: River-Folge 112
   class: handover
   date: 2026-10-06
-  sha256: db94f23430918682e99792fee4bef99750cd2bd585cacf07d579064639efac0e
+  sha256: fd8eaf9753f13373c42314e0c0d8a34790ab1960b191f7af4dcb2b15f7fd9ede
   status: live
 -->
 # Handover — River-Folge 112 (2026-10-06)
@@ -61,8 +61,8 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   Zeugen über `least_squares::solve_normal_equations`; n-Floor → `None`, nie 0.0; Test
   `residual_removes_the_witness_prediction`), `pub mod ozzy` in `mod.rs`. `cargo check` 0/0, Bin-Build 0/0.
   Der Rat (API 5 Stimmen) hat den Bau entschieden; die **UI-Chats** (Operator-Wort „befrage die UI chats"):
-  z.ai/GLM-5.3-DTM · claude.ai/Sonnet-5.5 · duck.ai/GPT-5.6 · mistral · chatgpt — Rohmaterial
-  `state/stimmen/2026-10-06_ozzy-arch-stimmen.md`.
+  z.ai/GLM-5.3-DTM · claude.ai/Sonnet-5.5 · duck.ai/GPT-5.6 · mistral · chatgpt · tryingopen/Kimi-K3 ·
+  arena.ai/Direct-Max (kimi.ai selbst quota-tot) — Rohmaterial `state/stimmen/2026-10-06_ozzy-arch-stimmen.md`.
 - **Riss (getragen, ungeglättet):** Die Extraktion macht das Residuum **per Konstruktion orthogonal** zu den
   Zeugen; ein TE-Test gegen **dieselben** Zeugen misst dann nur Nichtlineares / die nicht regredierten Lags —
   „unabhängig-möglich" ist **nicht** durch das Residuum-TE getragen, ehrlich ist „nicht-getragen". Der n-Floor
