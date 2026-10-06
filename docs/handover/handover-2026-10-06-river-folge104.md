@@ -3,7 +3,7 @@
   session: River-Folge 104
   class: handover
   date: 2026-10-06
-  sha256: a019867a3da7204d808c170df6e6f3b14b7bd582087bfde1fef135811812accc
+  sha256: 60cc94e55517c9517c1b423b8ab2d6dad90a1207d6e7d28337700d5571e62ed5
   status: live
 -->
 # Handover — River-Folge 104 (2026-10-06)
@@ -48,7 +48,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 
 ### Universelles Vlies — Bias-Kurve, `ozzy` + Alles-gegen-alles-Matrix
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** `te-bias-n` Re-Lauf `37443567797` (queued) grün.
+- **Trigger:** `te-bias-n` Re-Lauf `37443829535` (queued) grün.
 - **Lage:** (gemessen 2026-10-06, River 104)
   - **Binned-Kurve gelandet:** `TE_BIAS_MK_BINNED` (`src/mathematikerin/te.rs:63`) trägt die
     8 gemessenen Punkte aus `te-bias-n 37440043700 @72c9348ce` — (800, 2.715e-3) ·
@@ -75,7 +75,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     `bias_table_only_on_unconditional_cells`.
 - **Blockade:** die 8 probe-Kanäle sind nicht am Draht.
 - **Braucht:**
-  (1) `te-bias-n 37443567797` grün lesen → das n=800-`kde_n_eff`-Mittel im korrigierten
+  (1) `te-bias-n 37443829535` grün lesen → das n=800-`kde_n_eff`-Mittel im korrigierten
   `(target, driver)`-Auftrag in `TE_NEFF_THRESHOLD` (`src/mathematikerin/te.rs:101`) setzen + Gate.
   (2) **Binned-Floor geliehen:** 18.166 ist scalar-KDE-kalibriert; für die
   binned-Histogramm-Zelle ist der geeignete `n_eff` (Histogramm-Besetzung, nicht KDE-Bandbreite)
@@ -168,7 +168,7 @@ field_te_query` und `--bin te_bias_n_probe` grün, ohne Warning; `cargo fmt -- <
 sauber. Rat (Council) 2026-10-06 zum `n_eff`-Riss: Verdikt (a), zudem die Pfeil-Inversion und der
 Kalibrier-Order-Riss benannt — am Baum gemessen (`te.rs:6421`, `transfer_entropy_lag`) und
 umgesetzt. Stimmen `voice-gemini`/`gptoss`/`nemotron`/`dots`/`ling`/`agnes`/`zen`/`kenari`/`zai`
-sowie glm und claude: alle (a), target-first. `te-bias-n 37443567797` dispatcht. `register_lookup
+sowie glm und claude: alle (a), target-first. `te-bias-n 37443829535` dispatcht. `register_lookup
 --fired river` = em-apertur (Trigger `ci-check 37440906455` pending) → bleibt wartend; `--stale
 river --persist 3` = 0; `--addressed river` = 2 (future-183, mycelium-238), gefaltet;
 `open_points_check folge103` = 0 format-gaps. `git_safety --snapshot` s. u.
