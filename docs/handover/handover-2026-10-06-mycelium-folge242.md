@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; CI-Triage, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 773cc84276f5183c591f281c6afd86793b137ed43280fb484b64b70bf29ca09d
+  sha256: c9c493db9cd34feb322bcd18347bb3018dc5221dc4f476ba3179c61a79d6a8da
   status: live
 -->
 # Handover — Mycelium-Folge 242 (2026-10-06)
@@ -24,6 +24,35 @@ Rolling-Fenster (6 Sessions) bei Schluss **$0.1595**.
 - Wort | 2026-10-06 | JAXA-G-Portal-Bestellungen (`download_limit=1` je, Fenster `2026/01/01`); die Abholung (fetch) ist der Vollzug desselben Worts | Quelle: Operator-Session 2026-10-06.
 - Wort | 2026-10-06 | Holdings-Migration: „1 ja (move) · 2 ja (delete) · 3 ja (create) · 4 messen, dann · 5 ja (delete) · 6 ja (dedup) · 7 ja (dedup)" | Quelle: Operator-Session 2026-10-06.
 - Wort | 2026-10-06 | Daten-Holdings CDN-Bedarf/Ort: „ich gebe es mycelieum" — Kriterium nicht „regenerierbar", sondern **was muss auf den CDN und liegt es am richtigen Ort** | Quelle: future-185 addressed.
+
+## Umsetzung (Operator-Auftrag 2026-10-06, „bitte umsetzen")
+
+- **Runner-Routing erledigt:** `emso-cdn.yml`, `twomrs-cdn.yml`, `vires-hapi-cdn.yml` von
+  `runs-on: [self-hosted, Linux]` auf `ubuntu-latest` (dispatch-only One-Shots; `t420` bleibt für
+  die übrigen `[self-hosted, Linux]`-Jobs).
+- **`pds3-ring-occ-cdn.yml` dispatcht:** Lauf `37483538590` (2026-10-06 via `gh workflow run`).
+  Ausgang `unread`.
+- **Register-`url`-Lücken (tap/reference) gemessen: 0.** `phi/sources.φ` trägt 2667 Blöcke,
+  2667 `url`-Zeilen; jeder `tap`- (34) und `reference`-Block (642) hat eine `url`. Kein offener Akt.
+- **Freie Frontier-Stimmen:** Basis-URLs gemessen (`--verdict`, 404/405 = API-Root erreichbar):
+  `https://api.orcarouter.ai/v1` (404), `https://api.sambanova.ai/v1` (405),
+  `https://api.mistral.ai/v1` (404), `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` (404),
+  `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1` (404, nicht doc-verifiziert). `free_models.tsv`
+  trägt 3 verifizierte SambaNova-Modelle (`DeepSeek-V3.1`, `gpt-oss-120b`, `Meta-Llama-3.3-70B-Instruct`),
+  Status `blocked` (Free-Plan verlangt Karte) — Key/Account = Operator-Akt. Model-IDs für OrcaRouter/
+  Mistral/Alibaba bleiben `unverified` → nicht als Zeile erfunden.
+- **Daten-Holdings CDN-Ort (gemessen 2026-10-06 via `fd`):** `data/spdf.gsfc.nasa.gov/` ist leer
+  (`wind_orbit.bin` + `omegaflow_series_wind_orbit.bin` nicht mehr am Ort; im CDN registriert
+  `sources.φ:3471`); `data/gea.esac.esa.int/` leer (dr3-Zwillinge bereits weg); `data/ssd.jpl.nasa.gov/`
+  trägt `ephemeris_earth.bin.cdn`/`gaia_dr3_vlies.vlde`; `nvss.json` liegt unter dem Register-Tag
+  `data/ssd.jpl.nasa.gov-nvss/nvss.json` (`sources.φ:17522`). **Riss:** die Survey-Tabelle nennt
+  `data/ssd.jpl.nasa.gov/nvss.json` (ohne `-nvss`), das Register `-nvss`. Kein Move ohne
+  Operator-Wort; Layout in Fremd-Bewegung (uncommittet).
+- **Exposom-Quellenmatrix: blockiert.** Die y-Serien der 12 Domänen sind unregistriert (Survey
+  `survey-2026-10-04-exposom-matrix.md`: „feedbare y-Serie: keine" für respiratorisch/renal/onkologisch).
+  Ein `.te`/Workflow ohne Driver/Target-Feld wäre eine leere Hülle — nicht gebaut.
+- **Exposom-CDN-Workflows: nichts mehr eigen.** FARA-Descope erledigt; `sha256` pollen +
+  `ghsl_compiler`-Arm sind Mountain-Teile (adressiert). Nur Nachhalten.
 
 ## Offen — eigen
 
