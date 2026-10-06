@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: die Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: a58d6f83f5c0d9836986f2e0ee8097a4c857e285d7785257396330bf21e9ea03
+  sha256: a97f16153ef07c71a8a6841bfd5cfe2f59024fa39de3af75a47d70004d0ca7f0
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -122,12 +122,17 @@ Vollständigkeit. (b) drei Familien-Deskriptoren (`matrix gic_auroral full` /
 `channels`/`fdr`/`expect cells`; (c) **ein** CI-Job `field-te-query.yml` mit drei
 Deskriptor-Schritten (nie lokal).
 
-**Rat-Verdikt (2026-10-06, fünf Stimmen, einstimmig):** drei getrennte
-Familien-Deskriptoren, **kein** neuer Drei-Familien-Grammatik-Arm — der Satz ist heute
-sagbar; die Familie ist eine Partition der Kanal-Menge, keine neue Query-Achse. Ein
-Grammatik-Arm verdiente sich nur durch ein Sprachloch (ein daten-emergenter
-Familienbegriff aus Kohärenz-Clustern), heute nicht gemessen. Der Rat hinterlässt keine
-eigene Schrift — Verdikt hier, Handover-Zeile dort.
+**Rat-Verdikt (2026-10-06, API-Rat fünf Stimmen einstimmig; zweiter Kanal UI-Chats geteilt).**
+Der API-Rat: drei getrennte Familien-Deskriptoren, **kein** neuer Drei-Familien-Grammatik-Arm —
+der Satz ist heute sagbar; die Familie ist eine Partition der Kanal-Menge, keine neue Query-Achse.
+Ein Grammatik-Arm verdiente sich nur durch ein Sprachloch (ein daten-emergenter Familienbegriff aus
+Kohärenz-Clustern), heute nicht gemessen. Der **zweite Kanal** (UI-Chats, Rohmaterial
+`state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`) ist geteilt: ChatGPT stimmt zu (drei
+Deskriptoren); Claude (Sonnet 5.5) widerspricht — Stufe 1 global lassen, Stufe 2 über einen
+**allgemeinen Familien-Scope** (`family`-Deklaration + `over family`) statt drei Deskriptoren. Einig
+nur gegen den **Drei**-Familien-Arm; der Dissens sitzt an der Trägerform von Stufe 1/2. **Riss,
+nicht geglättet** — der Blatt bleibt `unsealed`, bis der Riss gemessen oder durch Operator-/Rats-Wort
+geschlossen ist.
 
 **Risse (Rat 2026-10-06, ungeglättet):** (1) Stufe 1 globales FDR vs. je-Familie-`fdr`
 — der Blatt-Text konvergiert nicht, beide Linien stehen; (2) globale Kalibrierung (ein
