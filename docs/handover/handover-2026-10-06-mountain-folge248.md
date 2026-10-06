@@ -3,7 +3,7 @@
   session: Mountain-Folge 248
   class: handover
   date: 2026-10-06
-  sha256: 8f35ff02a1218ffe8de812515f372f0ec84b1ea9865af94f966adbed6e45cab6
+  sha256: 058fa6ffcb7e010d136a762f351efa3f8148e63eead59b5769dc842edadad3c0
   status: live
 -->
 # Handover — Mountain-Folge 248 (2026-10-06)
@@ -14,7 +14,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-06-mountain-folge247.md` (→ `archiv/`). Kein pro/max; aller Bau
 per flash-Dispatch.
 
-## Burn: open 0.0354 · close 0.1080 · cap 0.50 · Grund: das river-111-`## An mountain` (GIC-Familien-Kanäle + observer→receiver-Residuum) in einem Pass; Mountain-Linie $0.0505 + Rat $0.0245 + 3× grind-flash ~$0.033 (gemessen via `session_burn`).
+## Burn: open 0.0354 · close 0.1500 · cap 0.50 · Grund: das river-111-`## An mountain` (GIC-Familien-Kanäle + observer→receiver-Residuum) + die GIC-Faden-Admission §A–G in einem Pass; Mountain-Linie $0.0942 + Rat $0.0245 + 3× grind-flash ~$0.033 (gemessen via `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -51,6 +51,7 @@ Wort | Datum | Quelle
 „bitte setze die drei arme um" — die drei serienlosen Vlies-Arme am `.bin` wiren | 2026-10-06 | Operator (Session, Mountain 247)
 „bitte setze das um:" — die offenen Punkte der eigenen Übergabe in einem Pass | 2026-10-06 | Operator (Session, Mountain 247)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 248)
+„welche dieser quellen fehlen jetzt noch? … Mountain prüft die Fäden A–G gegen das Register (lebt vs. neu, Zugang/Lizenz messen)" | 2026-10-06 | Operator (Session, Mountain 248)
 
 ## Architektur-Verdikt (Rat, 2026-10-06) — GIC-Breitenband-Familien
 
@@ -157,16 +158,25 @@ Frage „Grammatik-Arm vs. drei Familien-Deskriptoren":
 - **Blockade:** keine gemessen.
 - **Braucht:** `fink` als Quelle registrieren (`phi/sources.φ`) + Cutout-FITS-Reader.
 
-### Faden-Wunschliste §A–G (future-186)
+### GIC-Faden-Wunschliste §A–G — Register-Admission (future-186/river)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Messung
-- **Lage:** (gemessen 2026-10-06) `state/future/gic-riss-154-wunschliste-2026-10-06.md` §A–G;
-  Kandidaten IMAGE-Kette · THEMIS GMAG · CARISMA · Versorger-GIC · USGS-Geoelektrik · SuperDARN
-  CPCP · GOES MAG · AMPERE/Iridium · POES/MetOp · DMSP SSJ · Aurora-Kamera · SDO/AIA+EVE ·
-  SOHO/LASCO · GNSS-TEC/ROTI · AL/AU/SYM-H · VLF · Swarm L2 FAC · EarthScope MT · FMI GIC ·
-  Placebo-Null.
-- **Blockade:** keine.
-- **Braucht:** jeden Faden gegen das Register messen — was lebt vs. neu, Zugang/Lizenz je Faden.
+- **Trigger:** Arm-Bau je Faden → CDN-Manifestation
+- **Lage:** (gemessen 2026-10-06, Mountain 248; API-Test Mycelium-245) alle 33 Fäden gegen das Register
+  geprüft — **lebt/registriert (14):** IMAGE · SuperMAG · OMNI · INTERMAGNET · GOES MAG · GOES
+  XRS/SEISS · SDO/AIA+HMI · SDO/EVE · OMNI P_dyn · GNSS-TEC IONEX (key-needed) · Swarm L2 FAC ·
+  FMI GIC · WWLLN · Seismik · HFRNet_rtv. **neu+erreichbar (15):** THEMIS GMAG · Wind SWE/MFI ·
+  SuperDARN CPCP · AMPERE · THEMIS Tail · MMS · POES/MetOp · DMSP SSJ/SSUSI · OMTI/KEO ·
+  Substorm-Onsets · SOHO/LASCO · PC-Index · AL/AU/SYM-H · ROTI · EarthScope MT.
+  **blockiert/unbelegt (7):** CARISMA (403) · Versorger-GIC · USGS E-Feld · DSCOVR (retired) ·
+  Madrigal (kein Reader) · AWESOME (Host tot) · Operator-Neutralpunkt (kein Endpunkt).
+  **Admission gesetzt (`phi/blocked_sources.φ`):** 3× `blocked account` (CARISMA, AMPERE, PC-Index)
+  + 14× `pending` (THEMIS GMAG, Wind SWE/MFI, THEMIS Tail, MMS, POES/MetOp, DMSP, OMTI/KEO,
+  Substorm-Onsets, SOHO/LASCO, AL/AU/SYM-H, SuperDARN CPCP, EarthScope MT, USGS-E-Feld, AWESOME).
+- **Blockade:** die `pending`-Fäden brauchen je einen Arm (HAPI-Reuse bei THEMIS GMAG / Wind SWE/MFI /
+  MMS; neuer Arm bei den übrigen); die `blocked account`-Fäden einen Account (Operator).
+- **Braucht:** (1) Arm-Bau je `pending`-Faden → mycelium-Ernte/CDN; (2) Accounts CARISMA / AMPERE /
+  PC-Index per-Akt Operator-Wort (Register-Owner future); (3) die drei ohne Endpunkt (ROTI,
+  Versorger-GIC, Operator-Neutralpunkt) bleiben `unbelegt` — erste Messung: Endpunkt suchen.
 
 ## An mycelium
 
@@ -184,6 +194,10 @@ Origin: mountain-folge248 (fortgeschrieben aus mountain-folge247). **Mycelium-Do
 - **Reconcile-Pin:** `docs/specs/cdn_reconciliation.json` — ein frischer `cdn_reconcile`-Lauf
   liegt uncommittet im Baum (Mycelium-244); die Mycelium-Session committet ihn selbst
   (Aufenthalt = Eigentum).
+- **GIC-Faden-Netze (pending, `phi/blocked_sources.φ`):** 14 neue erreichbare Fäden als `pending`
+  registriert (THEMIS GMAG · Wind SWE/MFI · THEMIS Tail · MMS · POES/MetOp · DMSP · OMTI/KEO ·
+  Substorm-Onsets · SOHO/LASCO · AL/AU/SYM-H · SuperDARN CPCP · EarthScope MT · USGS-E-Feld ·
+  AWESOME). **Braucht:** Arm-Bau je Faden + Ernte/Manifestation (Batterie als CI).
 
 ## An river
 
@@ -234,7 +248,12 @@ Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit 
 `cargo build -p omegaflow-measure --bin field_te_query` 0/0; `cargo build -p omegaflow-utils
 --bin hapi_station_tag` 0/0.
 
-Eigene Pfade: `phi/sources.φ`, `src/archivar/fresnel.rs`, `src/archivar/gaia_sso.rs`,
+**Atom 2 (dieser Commit):** die GIC-Faden-Wunschliste §A–G gegen das Register geprüft und admittiert —
+3× `blocked account` (CARISMA, AMPERE, PC-Index) + 14× `pending` in `phi/blocked_sources.φ`
+(Messgrundlage: der API-Test Mycelium-245 + eigene Register-Sichtung). Leer: keine — alle 33 Fäden
+klassifiziert (14 lebt · 15 neu · 7 blockiert/unbelegt).
+
+Eigene Pfade: `phi/sources.φ`, `phi/blocked_sources.φ`, `src/archivar/fresnel.rs`, `src/archivar/gaia_sso.rs`,
 `src/archivar/parse.rs`, `src/archivar/tests.rs`, `tools/measure/src/bin/field_te_query.rs`,
 `tools/utils/src/bin/hapi_station_tag.rs`,
 `docs/handover/handover-2026-10-06-mountain-folge248.md`,

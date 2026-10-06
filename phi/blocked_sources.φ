@@ -148,3 +148,71 @@ url https://cedar.openmadrigal.org
 gap html-parser-arm
 note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
 
+blocked account
+url https://data.carisma.ca/
+note CARISMA (subauroral Kanada, GIC-Replikation §A) — 2026-10-06: HTTP 403, Registrierung nötig; Arm: Magnetometer.
+
+blocked account
+url https://ampere.jhuapl.edu/download/
+note AMPERE/Iridium FAC (GIC-Mediator §B) — 2026-10-06: /download/ 200, /data/ 401; Registrierung nötig.
+
+blocked account
+url https://pcindex.org/
+note PC-Index DTU/AFWA (GIC-Driver §C) — 2026-10-06: TLS-Zert. abgelaufen (curl 000, mit -k 200), Download registrierungsgebunden.
+
+pending
+url https://themis.igpp.ucla.edu/gmag/
+note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200 (http→https 301); HAPI-Arm steht (INTERMAGNET), Dataset-ID/Parameter ungemessen.
+
+pending
+url https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE
+note Wind SWE/MFI (GIC-Replikation §A) — 2026-10-06: 200; HAPI-Arm steht, Dataset-ID ungemessen.
+
+pending
+url http://themis.ssl.berkeley.edu/data/themis/
+note THEMIS Tail (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
+
+pending
+url https://lasp.colorado.edu/mms/sdc/public/
+note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
+
+pending
+url https://www.ncei.noaa.gov/data/poes-metop-space-environment-monitor/
+note POES/MetOp MEPED (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
+
+pending
+url https://ssusi.jhuapl.edu/
+note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
+
+pending
+url https://space.fmi.fi/image/
+note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-06: 200, CC BY 4.0; Bild-/Keogramm-Arm fehlt.
+
+pending
+url https://supermag.jhuapl.edu/products/
+note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18010–18021), Onset-Produkt neu.
+
+pending
+url https://cdaw.gsfc.nasa.gov/CME_list/
+note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-06: 200; ASCII-Katalog, kein Arm.
+
+pending
+url https://wdc.kugi.kyoto-u.ac.jp/
+note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-06: Host 200, aeasy.cgi 404; Host nur dead:832/declined:4552.
+
+pending
+url https://superdarn.usask.ca/convection-maps
+note SuperDARN CPCP/Konvektion (GIC-Mediator §B) — 2026-10-06: 200; fitacf lebt (sources.φ:17777), CPCP/Konvektionskarte neu.
+
+pending
+url https://ds.iris.edu/ds/products/emtf/
+note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-10-06: 206; kein Arm.
+
+pending
+url https://geomag.usgs.gov/ws/data/
+note USGS-Geoelektrik E-Feld mV/km (GIC-Replikation §A) — 2026-10-06: 307→400; Magnetik ist declined_sources.φ:2160 (INTERMAGNET-Dup.), E-Feld neu.
+
+pending
+url http://awesome.ucsd.edu/
+note Sub-ionosphärische VLF AWESOME (GIC-unabhängige Observable §D) — 2026-10-06: DNS tot (000), Wayback 503; unbelegt.
+

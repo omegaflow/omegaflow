@@ -3,7 +3,7 @@
   session: River-Folge 112
   class: handover
   date: 2026-10-06
-  sha256: fd8eaf9753f13373c42314e0c0d8a34790ab1960b191f7af4dcb2b15f7fd9ede
+  sha256: d0c5999c9cf4f9ec221eac3c2ed3c61dd0e3d06f17cbe505d5520028a5af2eea
   status: live
 -->
 # Handover — River-Folge 112 (2026-10-06)
@@ -57,9 +57,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Status:** eigen | **Bindung:** eigen (Mathematikerin/TE-Pfad)
 - **Trigger:** nächster begrenzter Schritt (Rang/df-Ausweis + getrennt spezifizierter Test).
 - **Lage:** (gemessen 2026-10-06, River 112) `src/mathematikerin/ozzy.rs` trägt die **Extraktionsfunktion**
-  `residual_against_witnesses(target, witnesses, lags) -> Option<Residual>` (Residuum der Ziel-Reihe gegen die
-  Zeugen über `least_squares::solve_normal_equations`; n-Floor → `None`, nie 0.0; Test
-  `residual_removes_the_witness_prediction`), `pub mod ozzy` in `mod.rs`. `cargo check` 0/0, Bin-Build 0/0.
+  `residual_against_witnesses(target, witnesses, lags) -> ResidualOutcome` (Residuum der Ziel-Reihe gegen die
+  Zeugen über `least_squares::solve_normal_equations`). Typisierte Zustände: `Measured(Residual)` (mit `rank`,
+  `df = n − rank`) · `ZielUnterZeugen` (Ziel identisch mit einem Zeugen) · `RangDefizit` (Kollaps/kein gültiger
+  Solve) · `NFlloor` (kein langengleicher Zeuge) — nie 0.0, nie „unabhängig". Tests:
+  `residual_removes_the_witness_prediction` · `collapse_of_witness_rank_is_named` · `target_among_witnesses_is_named`
+  · `no_witness_series_is_n_floor`; `pub mod ozzy` in `mod.rs`. `cargo check` 0/0, Bin-Build 0/0.
   Der Rat (API 5 Stimmen) hat den Bau entschieden; die **UI-Chats** (Operator-Wort „befrage die UI chats"):
   z.ai/GLM-5.3-DTM · claude.ai/Sonnet-5.5 · duck.ai/GPT-5.6 · mistral · chatgpt · tryingopen/Kimi-K3 ·
   arena.ai/Direct-Max (kimi.ai selbst quota-tot) — Rohmaterial `state/stimmen/2026-10-06_ozzy-arch-stimmen.md`.
@@ -70,9 +73,11 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   claude/mistral bestreiten die Auszeichnung „TE≈0" (der Index trägt einen Zustand, keinen Preis).
   Die Zeugenmenge muss **vor** der Entscheidung fixiert und nicht-zirkulär sein.
 - **Blockade:** keine (eigene); der TE-Test hängt am `te.rs`-Binned-Arm (vorhanden).
-- **Braucht:** (1) Extraktion um **Rang/Konditionszahl/df** + typisierte Fehler (Ziel-unter-Zeugen, Rangdefizit,
-  Lücken, n-Floor) erweitern; (2) den Unabhängigkeits-Test (TE des Residuums, `te.rs`) gegen **getrennt
-  spezifizierte** Zeugen/Lags — als eigenes Wort, nie als „Unabhängigkeit"; (3) Known-answer-Gate auf Synthetik;
+- **Braucht:** (1) `Witness` um einen typisierten **force_type/Kanal** erweitern (arena: force_type für „Zeuge"
+  fehlt; die Signatur soll die Typisierung erzwingen) und eine **Konditionszahl** (nur als ehrliche
+  Eliminations-Pivot-Ratio, nie als 2-Norm-Cond benannt); (2) den Unabhängigkeits-Test (TE des Residuums,
+  `te.rs`) gegen **getrennt spezifizierte** Zeugen/Lags — als eigenes Wort, nie als „Unabhängigkeit";
+  (3) Known-answer-Gate auf Synthetik + **held-out-Fenster** (getrennte Regressions-/Test-Fenster);
   (4) Zeugenstempel (Menge, Lag, Schätzerversion, TDB-Intervall) in jedem Urteil.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
@@ -254,4 +259,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge112: 0 absent · 0 stale-citations · 3 word-carried · 0 format-gaps.
 
-## Burn: open 0.0000 · close 0.0924 · cap 0.35 · Grund: River 112 — Line-Session (deepseek-flash): `main_flow`-Registry (`osm_nodes`/`eionet_cdr`) verdrahtet; `ozzy`-Extraktion gebaut (`src/mathematikerin/ozzy.rs`); Vlies-Lauf `37500311359` gelesen (15/15 Arme, 0/210 Zellen); Rat + 5 UI-Chats zu ozzy (getragener Riss: Residuum-Orthogonalität); `## An river` mountain-247 gefaltet (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session „River-Linie: Dispatchs und Übergabe", $0.0924)
+## Burn: open 0.0000 · close 0.1388 · cap 0.35 · Grund: River 112 — Line-Session (deepseek-flash): `main_flow`-Registry (`osm_nodes`/`eionet_cdr`) verdrahtet; `ozzy`-Extraktion gebaut (`src/mathematikerin/ozzy.rs`, 2. Stufe: `ResidualOutcome` mit Rang/df/typisierten Zuständen); Vlies-Lauf `37500311359` gelesen (15/15 Arme, 0/210 Zellen); Rat + 7 UI-Chats zu ozzy (getragener Riss: Residuum-Orthogonalität); `## An river` mountain-247 gefaltet (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session „River-Linie: Dispatchs und Übergabe", $0.1388)

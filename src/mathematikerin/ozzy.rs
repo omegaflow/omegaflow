@@ -10,35 +10,57 @@ pub struct Residual {
     pub witnesses_used: Vec<String>,
     pub n: usize,
     pub lag: usize,
+    pub rank: usize,
+    pub df: usize,
+}
+
+pub enum ResidualOutcome {
+    Measured(Residual),
+    ZielUnterZeugen,
+    RangDefizit,
+    NFlloor,
 }
 
 pub fn residual_against_witnesses(
     target: &[f64],
     witnesses: &[Witness<'_>],
     lags: &[usize],
-) -> Option<Residual> {
+) -> ResidualOutcome {
+    let used_all: Vec<usize> = witnesses
+        .iter()
+        .enumerate()
+        .filter(|(_, w)| w.series.len() == target.len())
+        .map(|(i, _)| i)
+        .collect();
+    if used_all.is_empty() {
+        return ResidualOutcome::NFlloor;
+    }
+    for &wi in &used_all {
+        if target
+            .iter()
+            .zip(witnesses[wi].series.iter())
+            .all(|(a, b)| (a - b).abs() < 1e-12)
+        {
+            return ResidualOutcome::ZielUnterZeugen;
+        }
+    }
+
     let mut best: Option<(f64, Residual)> = None;
     for &lag in lags {
         if lag >= target.len() {
             continue;
         }
-        let used: Vec<usize> = witnesses
-            .iter()
-            .enumerate()
-            .filter(|(_, w)| w.series.len() == target.len())
-            .map(|(i, _)| i)
-            .collect();
-        if used.is_empty() {
+        let n = target.len() - lag;
+        let params = 1 + used_all.len();
+        if params >= n {
             continue;
         }
-        let n = target.len() - lag;
-        let params = 1 + used.len();
         let mut ata = vec![vec![0.0f64; params]; params];
         let mut atx = vec![0.0f64; params];
         for t in lag..target.len() {
             let mut row = Vec::with_capacity(params);
             row.push(1.0);
-            for &wi in &used {
+            for &wi in &used_all {
                 row.push(witnesses[wi].series[t - lag]);
             }
             for a in 0..params {
@@ -54,7 +76,7 @@ pub fn residual_against_witnesses(
         let mut series = Vec::with_capacity(n);
         for t in lag..target.len() {
             let mut prediction = coeffs[0];
-            for (k, &wi) in used.iter().enumerate() {
+            for (k, &wi) in used_all.iter().enumerate() {
                 prediction += coeffs[k + 1] * witnesses[wi].series[t - lag];
             }
             series.push(target[t] - prediction);
@@ -62,19 +84,25 @@ pub fn residual_against_witnesses(
         let variance = residual_variance(&series);
         let residual = Residual {
             series,
-            witnesses_used: used
+            witnesses_used: used_all
                 .iter()
                 .map(|&i| witnesses[i].name.to_string())
                 .collect(),
             n,
             lag,
+            rank: params,
+            df: n - params,
         };
         match &best {
             Some((v, _)) if *v <= variance => {}
             _ => best = Some((variance, residual)),
         }
     }
-    best.map(|(_, residual)| residual)
+
+    match best {
+        Some((_, residual)) => ResidualOutcome::Measured(residual),
+        None => ResidualOutcome::RangDefizit,
+    }
 }
 
 fn residual_variance(series: &[f64]) -> f64 {
@@ -137,23 +165,104 @@ mod tests {
                 series: &w1,
             },
         ];
-        let r = residual_against_witnesses(&target, &witnesses, &[0]).expect("residual");
+        let r = match residual_against_witnesses(&target, &witnesses, &[0]) {
+            ResidualOutcome::Measured(r) => r,
+            _ => panic!("target against its witnesses must be measured"),
+        };
         assert_eq!(r.n, target.len());
         assert_eq!(r.series.len(), target.len());
         assert_eq!(r.witnesses_used.len(), 2);
         assert_eq!(r.lag, 0);
+        assert_eq!(r.rank, 3);
+        assert_eq!(r.df, r.n - r.rank);
         assert!(variance(&r.series) < 0.1 * variance(&target));
 
         let empty: [Witness<'_>; 0] = [];
-        assert!(residual_against_witnesses(&target, &empty, &[0]).is_none());
+        assert!(matches!(
+            residual_against_witnesses(&target, &empty, &[0]),
+            ResidualOutcome::NFlloor
+        ));
 
         let kept_nothing = [Witness {
             name: "empty",
             series: &[],
         }];
-        assert!(residual_against_witnesses(&target, &kept_nothing, &[0]).is_none());
+        assert!(matches!(
+            residual_against_witnesses(&target, &kept_nothing, &[0]),
+            ResidualOutcome::NFlloor
+        ));
 
         let short = &target[..4];
-        assert!(residual_against_witnesses(short, &witnesses, &[10]).is_none());
+        assert!(matches!(
+            residual_against_witnesses(short, &witnesses, &[10]),
+            ResidualOutcome::NFlloor
+        ));
+    }
+
+    #[test]
+    fn collapse_of_witness_rank_is_named() {
+        let target = [0.0, 1.0, 2.0, 3.0, 4.0];
+        let w0 = [0.0, 0.5, 1.0, 1.5, 2.0];
+        let w1 = [0.1, 0.6, 1.1, 1.6, 2.1];
+        let w2 = [0.2, 0.7, 1.2, 1.7, 2.2];
+        let w3 = [0.3, 0.8, 1.3, 1.8, 2.3];
+        let w4 = [0.4, 0.9, 1.4, 1.9, 2.4];
+        let w5 = [0.5, 1.0, 1.5, 2.0, 2.5];
+        let witnesses = [
+            Witness {
+                name: "w0",
+                series: &w0,
+            },
+            Witness {
+                name: "w1",
+                series: &w1,
+            },
+            Witness {
+                name: "w2",
+                series: &w2,
+            },
+            Witness {
+                name: "w3",
+                series: &w3,
+            },
+            Witness {
+                name: "w4",
+                series: &w4,
+            },
+            Witness {
+                name: "w5",
+                series: &w5,
+            },
+        ];
+        match residual_against_witnesses(&target, &witnesses, &[0]) {
+            ResidualOutcome::RangDefizit => {}
+            _ => panic!("rank collapse must be named RangDefizit"),
+        }
+    }
+
+    #[test]
+    fn target_among_witnesses_is_named() {
+        let target = [0.0, 1.0, 2.0, 3.0];
+        let witnesses = [Witness {
+            name: "self",
+            series: &target,
+        }];
+        match residual_against_witnesses(&target, &witnesses, &[0]) {
+            ResidualOutcome::ZielUnterZeugen => {}
+            _ => panic!("target among witnesses must be named ZielUnterZeugen"),
+        }
+    }
+
+    #[test]
+    fn no_witness_series_is_n_floor() {
+        let target = [0.0, 1.0, 2.0, 3.0];
+        let witnesses = [Witness {
+            name: "empty",
+            series: &[],
+        }];
+        match residual_against_witnesses(&target, &witnesses, &[0]) {
+            ResidualOutcome::NFlloor => {}
+            _ => panic!("no contributing witness must be named NFlloor"),
+        }
     }
 }
