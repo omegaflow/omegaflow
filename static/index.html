@@ -103,7 +103,7 @@ async function fetchColorLut() {
     if (!r.ok) {
       return null;
     }
-    return parseColorLut(await r.arrayBuffer());
+    return parseColorLut(new Uint8Array(await r.arrayBuffer()));
   } catch {
     return null;
   }
@@ -426,11 +426,11 @@ function connect() {
   ws = new WebSocket("ws://" + location.host);
   ws.binaryType = "arraybuffer";
   ws.onmessage = (ev) => {
-    const bytes = ev.data;
+    const bytes = new Uint8Array(ev.data);
     if (bytes.byteLength < 3) {
       return;
     }
-    const tag = new DataView(bytes).getUint8(2);
+    const tag = bytes[2];
     if (tag === KINETIC_TAG) {
       const k = parseKinetic(bytes);
       if (radiator) {

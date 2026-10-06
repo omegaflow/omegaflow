@@ -3,7 +3,7 @@
   session: River-Folge 96
   class: handover
   date: 2026-10-05
-  sha256: 764322818f2d12bb2dae40a7029e9324d4e47ac5f202f75a8df482df7c897f6d
+  sha256: 57b4d797f53ca8cc87be574069afa4d136de992bb28672dd21309fa1420645c6
   status: live
 -->
 # Handover — River-Folge 96 (2026-10-05)
@@ -33,6 +33,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-05-river
 - `docs/auftrag/auftrag-universelles-vlies.md` (`class: auftrag`) — Offen: `ozzy`-Bau,
   Paar-Matrix, Ernte (§Lieferung).
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (`class: survey`) — §7 geschlossen.
+- `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` (`class: survey`) — Archäologie + Dreifach-Verdikt (Kimi K3 / z.ai GLM 5.3 / Claude); Läufer für die Code-Punkte an Mountain/River/Sensory.
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` / `docs/auftrag/auftrag-flyby2-kette.md` —
   Offen: OMNI2 26 Zellen, ACE 3/14/16, kp `def`, Δ/σ_recon.
 - `docs/concepts/exzellenz-konzept.md` (`class: concept`, `version: 1`) — Prüfmaßstab.
@@ -90,6 +91,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-05-river
   (4) Netz-Null-CI (B ≥ 1/α). Ernte parallel (Mountain/Mycelium/Future) — nicht Rivers
   Hand. **Ozzy läuft auf der Matrix, nicht davor.**
 
+### Agnosis — Membran-Trio & Presence-Volume (River-Hand)
+- **Status:** eigen | **Bindung:** eigen (cross-line: Mountain, Sensory)
+- **Trigger:** keiner (arbeitbar bis zur Rats-Kante).
+- **Lage:** (gemessen 2026-10-06) `static/membrane.html:43` `const BODIES = ["earth","moon","sun"]` — der serverlose Pfad rendert nur diese drei; `omega.rs:878` bindet den Presence-Volume-Bin hart an „earth"-geodätisch; `/jump/<body>` kennt zur Laufzeit nur `earth`. Dreifach-Verdikt: `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md`.
+- **Blockade:** keine.
+- **Braucht:** Trio → Build-Time-Manifest aus der Hüllen-Pipeline (kein Body-Name im File); `omega.rs:878` → SSB-Rahmen oder deklarierter Rahmen.
+
 ## An mountain (Feld-Gesetz + Register)
 
 Origin: river folge96.
@@ -109,6 +117,26 @@ Origin: river folge96.
   `spatial.rs:760-768` auf die Wertklasse, und die 25 `phi/sources.φ`-Zeilen deklariert
   (`flux` für `_mjy`-Flussdichten + `bat_fluence_erg_cm2`, `none` für die übrigen).
   Rivers Hand (WGSL-Gate-Flip + GPU-Paritätstest) folgt in demselben Atom.
+
+- **Agnosis — Anchor-Bypass + `frames.rs`-Defaults.** (gemessen 2026-10-06)
+  `spawn_ephemeris_bootstrap` lässt Anker-Körper `body_in_enclosure` umgehen
+  (`main_flow.rs:473-495`) und ordnet per `anchor_uses` (`:403-427`, Earth zuerst
+  → Erdbias-Reihenfolge); `frames.rs:6,86,114,117` defaulten terrestrisch →
+  „on earth", zöliakal → „at sun". Dreifach-Verdikt
+  (`docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` §3): Bypass entfernen
+  (Zulassung nur Hülle); Inferenz verweigern, nur Deklaration erlauben.
+  **Braucht:** Mountain (Loader/Register) baut den Bypass aus und materialisiert
+  die Defaults als Per-Source-Deklaration.
+
+## An sensory (Weberin)
+
+Origin: river folge96.
+
+- **Gaia-Reduktions-Observer hart „earth".** (gemessen 2026-10-06) `weberin.rs:1801`
+  `body_barycenter_position("earth", t.tdb, eph)` als astrometrischer Observer;
+  Gaia ist baryzentrisch → Observer = SSB-Presence, nicht „earth". **Braucht:**
+  Observer als Pflicht-Parameter + `observer=<…>`-Deklaration, in der Provenienz
+  echoed (`docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` §3 Q2).
 
 ## Abschluss
 
