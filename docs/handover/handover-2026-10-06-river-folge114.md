@@ -3,7 +3,7 @@
   session: River-Folge 114
   class: handover
   date: 2026-10-06
-  sha256: a36ddd4ab45ea0f1e861bea2f1cad232f2f6882524820290b76311003da6f632
+  sha256: fb44485ecf2e5cf417fb145f83300859577b77362730ab02dacfb742847d97cb
   status: live
 -->
 # Handover — River-Folge 114 (2026-10-06)
@@ -38,13 +38,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** keine (eigene).
 - **Braucht:** (1) `Witness` typisierter force_type/Kanal (Vokabular — Rat); (2) Unabhängigkeits-Test (TE des Residuums, `te.rs`) gegen getrennt spezifizierte Zeugen/Lags — als eigenes Wort; (3) Known-Answer-Gate auf Synthetik + held-out-Fenster; (4) Zeugenstempel in jedem Urteil.
 
-### Membran-Startansicht — zwei Aperturen (gebaut, im Browser gemessen: Anker fehlt im Feld)
+### Membran-Startansicht — zwei Aperturen (gebaut; Browser-Messung: Body-Anker erreichen das Feld nicht)
 - **Status:** blockiert | **Bindung:** eigen (cross-line Archivar/Mountain)
 - **Trigger:** Anker-Records (`extent > 0`) erscheinen in `lookup.query` am SSB-Ursprung.
-- **Lage:** (gemessen 2026-10-06, River 114, Browser-Test auf `omegaflow.space/membrane.html`) Der Deploy trägt den Bau noch **nicht** (live: `state.span_m`, kein `scale_star`). Wird der gepushte Code in die laufende Seite gesetzt (rAF-Shim, `window.__dbg`), liefert `lookup.query` **8 Records, alle `extent == 0`** → `span_anchor = 0` → schwarz. Der Sonnen-Anker erreicht das Feld nicht; **die Skalen-Apertur war nicht die Ursache**. `static/membrane.html` (zwei Aperturen) `node --check` grün; Rat + 12 Kanäle 12/13 (b), Claude-Dissens (c)+Start.
-- **Riss (getragen, ungeglättet):** (i) Der Bau ist per Verdikt korrekt, aber ohne Anker-Record im Feld wirkungslos; (ii) der Deploy hängt (Pages-Deploy rot, DE440-Pin); (iii) `MembraneLookup.add_stars` (`omegaflow_bg.wasm`) panikt (`RuntimeError: unreachable`) bei wiederholtem Re-Init; (iv) `extent > 0` ist ein Vertrags-Diskriminator, GLM/MiMo/Kimi/Duck verlangen eine deklarierte Apertur (Wire/Kontrakt, Mountain).
-- **Blockade:** die Body-Anker (Sonne/Erde/Mond) erscheinen nicht mit finitem `extent` in der Membran-Query — Archivar-/Lookup-Seite.
-- **Braucht:** messen, warum `lookup.query` beim SSB keine Anker-Records mit `extent > 0` liefert (Archivar-Lookup, Mountain); `add_stars`-Panik messen; danach Deploy + Operator-Sicht. Offen: `state.lvl` ist ein globales max über beide Aperturen.
+- **Lage:** (gemessen 2026-10-06, River 114, Browser-Isolation + Baum gelesen) Deploy trägt den Bau noch **nicht** (live `state.span_m`). `lookup.query` mit **übersprungenen Sternen** liefert **0 Records**, obwohl `load_ephemeris` für sun/earth/moon `true` liefert (6.63 MB je Bin, geparst). **Ursache im Baum:** `src/wasm.rs:77` stempelt die Anker mit `all_body_anchor_samples(&self.eph, t2)` — Epoche = Query-Zeit; in `query_hash` ist darum `age = |t2 − t2| = 0`, `signal_reach = c·0 = 0` und `reach = extent + pad` (`src/archivar/spatial.rs:913,928-930`); das Gate `dist2_anchor_p0 > reach²` (`:935`) lässt einen Körper nur zu, wenn die Präsenz **innerhalb seines Radius** liegt. Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU) → kein Körper je im Feld. Der Zwei-Apertur-Bau (`static/membrane.html`, `node --check` grün) wartet darauf.
+- **Riss (getragen, ungeglättet):** (i) Der Bau ist per Rat-Verdikt korrekt, aber der Anker fehlt im Feld — die Skala war nicht die Ursache; (ii) Anker-Epoche = Query-Zeit kollabiert den Signal-Kegel (wasm.rs:77); (iii) `MembraneLookup.add_stars` panikt bei Re-Init; (iv) `extent > 0` als Vertrags-Diskriminator — GLM/MiMo/Kimi/Duck verlangen eine deklarierte Apertur (Wire/Kontrakt); (v) Deploy hängt (Pages-Deploy rot, DE440-Pin).
+- **Blockade:** Body-Anker-Admission verlangt Präsenz im Körper (Epoche-Kollaps); Archivar-/Query-Seite.
+- **Braucht:** Rat (Admission-Kriterium für Body-Anker: Presence-Hull `c·age + pad` mit sinnvoller Bezugs-Epoche statt Query-Zeit) + Mountain (`wasm.rs:77` / `query_hash`); danach WASM-Build (CI) + Browser-Sicht. Offen: `state.lvl` global über beide Aperturen.
 
 ### GIC-Breitenband-Familien — Design + Messschritt offen
 - **Status:** operator-gebunden (Design) / wartend (cgm_lat) | **Bindung:** eigen + operator (Queue)
@@ -149,12 +149,14 @@ Origin: mountain-249 (gefaltet) · river-107/108/110/112/113.
   nennt die Grenzen ausdrücklich einen **offenen Slot** (Operator-Design, s. `:150`); der Framename
   `geomag_lat` ist eine Entscheidung der sechs Stimmen, kein gemessener Wert. Blatt bleibt `unsealed`.
 - **Vlies-`matrix full` — alignment pending** (s. `## Offen`): Format-/Compiler-Arm.
-- **Membran-Query liefert keine Body-Anker (gemessen 2026-10-06, River 114, Browser-Test).**
-  `lookup.query` am SSB liefert 8 Records, alle `extent == 0` → Sonne/Erde/Mond erscheinen
-  **nicht** mit finitem `extent`; die Membran bleibt schwarz. Der Bau der zwei Aperturen in
-  `static/membrane.html` kann die Sonne erst zeigen, wenn die Anker im Feld stehen. Zusätzlich:
-  `MembraneLookup.add_stars` (`omegaflow_bg.wasm`) panikt (`RuntimeError: unreachable`).
-  **Braucht:** messen, warum die Body-Anker nicht in die Query gelangen (Archivar-Lookup / WASM).
+- **Membran-Query: Body-Anker erreichen das Feld nicht — Ursache gemessen (2026-10-06, River 114).**
+  `lookup.query` mit übersprungenen Sternen liefert **0 Records**, obwohl `load_ephemeris` für
+  sun/earth/moon `true` liefert. Ursache: `src/wasm.rs:77` übergibt `t2` als Anker-Epoche →
+  `age = 0` → `signal_reach = c·0 = 0` → `reach = extent + pad` (`src/archivar/spatial.rs:913,928-930`);
+  das Gate `dist2_anchor_p0 > reach²` (`:935`) lässt einen Körper nur zu, wenn die Präsenz **innerhalb
+  seines Radius** liegt. Am SSB liegt die Sonne ~0.005 AU von ihrem Zentrum (Radius 0.00465 AU).
+  **Braucht:** Admission-Kriterium für Body-Anker (Presence-Hull `c·age + pad` mit Bezugs-Epoche statt
+  Query-Zeit) — Rat + Mountain (`wasm.rs:77` / `query_hash`); WASM-Build (CI), dann Browser-Sicht.
 - **`terms`-Direktive je Körperdatenzeile:** `openneuro.org` = CC0; `physionet.org` = ODC-BY 1.0.
 - **DE440-Register:** die drei `ssd.jpl.nasa.gov-de`-Anker-Assets tragen keine `sha256`-Zeile.
 
@@ -188,4 +190,4 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 
 `open_points_check` am folge114: 20 path refs · 0 absent · 0 stale-citations · 0 done-carried · 2 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0838 · close 0.4885 · cap 0.50 · Grund: River 114 — Line-Session (deepseek-flash): Rat + 5 API-Stimmen + 7 UI-Chats zur Membran-Apertur befragt (12/13 (b), Claude-Dissens (c)); `static/membrane.html` auf zwei Aperturen gebaut, **im Browser gegen den Live-Link gemessen: `lookup.query` liefert 8 Records, alle `extent == 0` → keine Sonne im Feld, schwarz** (der Blocker liegt bei der Anker-Sichtbarkeit, nicht der Skala); `add_stars` panikt bei Re-Init; adressierte Blöcke mountain-249/future-186 gefaltet; Rohmaterial in `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md`. (close = `session_burn`-Summe über die geteilte DB bei Schluss; die gleichzeitig laufenden Linien-Sessions sind enthalten — die Linien-eigene Zahl ist nicht isoliert, benannt statt geraten; cap daher auf dem geteilten DB-Wert deklariert.)
+## Burn: open 0.0838 · close 0.4885 · cap 0.50 · Grund: River 114 — Line-Session (deepseek-flash): Rat + 5 API-Stimmen + 7 UI-Chats zur Membran-Apertur befragt (12/13 (b), Claude-Dissens (c)); `static/membrane.html` auf zwei Aperturen gebaut; **Browser-Messung gegen den Live-Link: `lookup.query` liefert ohne Sterne 0 Records — Ursache gemessen: `wasm.rs:77` stempelt die Anker mit `t2` (age 0) und `query_hash` verlangt Präsenz im Körper (`spatial.rs:935`); die Sonne erreicht das Feld nicht**; `add_stars` panikt bei Re-Init; adressierte Blöcke mountain-249/future-186 gefaltet; Rohmaterial in `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md`. (close = `session_burn`-Summe über die geteilte DB bei Schluss; die gleichzeitig laufenden Linien-Sessions sind enthalten — die Linien-eigene Zahl ist nicht isoliert, benannt statt geraten; cap daher auf dem geteilten DB-Wert deklariert.)
