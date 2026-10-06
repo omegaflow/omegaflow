@@ -1081,8 +1081,24 @@ fn field_sources(sources: &[SourceConfig], name: &str) -> Vec<(SourceConfig, Fie
     out
 }
 
-fn find_field_source(sources: &[SourceConfig], name: &str) -> Option<(SourceConfig, FieldConfig)> {
-    field_sources(sources, name).into_iter().next()
+fn load_field_across_sources(
+    sources: &[SourceConfig],
+    name: &str,
+    anchor: &QueryAnchor,
+) -> Result<Option<Vec<(f64, f64)>>, String> {
+    let candidates = field_sources(sources, name);
+    if candidates.is_empty() {
+        return Ok(None);
+    }
+    let mut reason = String::new();
+    for (source, field) in candidates {
+        match load_field(&source, &field, anchor) {
+            Ok(series) => return Ok(Some(series)),
+            Err(first) if reason.is_empty() => reason = first,
+            Err(_) => {}
+        }
+    }
+    Err(reason)
 }
 
 fn witness_kind_token(token: &str) -> Option<WitnessKind> {
@@ -3899,21 +3915,16 @@ fn run_parity_witness(
             );
             if w.kind == Some(WitnessKind::PointEvent) {
                 match driver_name {
-                    Some(dn) => match find_field_source(sources, dn) {
-                        Some((source, field)) => match load_field(&source, &field, anchor) {
-                            Ok(driver) => run_event_conditional(
-                                &driver,
-                                series,
-                                EVENT_BIN_S,
-                                EVENT_SURROGATES,
-                            ),
-                            Err(reason) => {
-                                println!("event-conditional query pending — driver '{dn}' {reason}")
-                            }
-                        },
-                        None => println!(
+                    Some(dn) => match load_field_across_sources(sources, dn, anchor) {
+                        Ok(Some(driver)) => {
+                            run_event_conditional(&driver, series, EVENT_BIN_S, EVENT_SURROGATES)
+                        }
+                        Ok(None) => println!(
                             "event-conditional query pending — driver '{dn}' stands in no source block"
                         ),
+                        Err(reason) => {
+                            println!("event-conditional query pending — driver '{dn}' {reason}")
+                        }
                     },
                     None => println!(
                         "event-conditional block: the point-event train carries n = {} event(s); the event-triggered average (event_triggered_average) and the Omori-preserving circular driver shift null (omori_preserving_shift_null) are built, but no aligned driver series was named (--driver <field>). Missing data side: a driver series; then the form needs >= {EVENT_FLOOR} events.",
@@ -3963,26 +3974,22 @@ fn run_descriptor_event_conditional(
             };
             let driver_name = driver_arm.name.as_str();
             let bin_s = desc.bin.unwrap_or(EVENT_BIN_S);
-            match find_field_source(sources, driver_name) {
-                Some((source, field)) => match load_field(&source, &field, anchor) {
-                    Ok(driver) => {
-                        match desc.count_quantiles {
-                            Some(q) => run_count_panel(&driver, series, q, desc.surrogate),
-                            None => run_event_conditional(&driver, series, bin_s, desc.surrogate),
-                        }
-                        0
+            match load_field_across_sources(sources, driver_name, anchor) {
+                Ok(Some(driver)) => {
+                    match desc.count_quantiles {
+                        Some(q) => run_count_panel(&driver, series, q, desc.surrogate),
+                        None => run_event_conditional(&driver, series, bin_s, desc.surrogate),
                     }
-                    Err(reason) => {
-                        println!(
-                            "event-conditional query pending — driver '{driver_name}' {reason}"
-                        );
-                        0
-                    }
-                },
-                None => {
+                    0
+                }
+                Ok(None) => {
                     println!(
                         "event-conditional query pending — driver '{driver_name}' stands in no source block"
                     );
+                    0
+                }
+                Err(reason) => {
+                    println!("event-conditional query pending — driver '{driver_name}' {reason}");
                     0
                 }
             }
@@ -4201,8 +4208,10 @@ fn load_matrix_arm(
     witnesses: &[WitnessRecord],
     anchor: &QueryAnchor,
 ) -> Result<Vec<(f64, f64)>, String> {
-    if let Some((source, field)) = find_field_source(sources, name) {
-        return load_field(&source, &field, anchor);
+    match load_field_across_sources(sources, name, anchor) {
+        Ok(Some(series)) => return Ok(series),
+        Ok(None) => {}
+        Err(reason) => return Err(reason),
     }
     if let Some(w) = find_witness(witnesses, name) {
         match load_witness_arm(w, State::Built) {
