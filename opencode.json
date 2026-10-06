@@ -6,6 +6,9 @@
   "model": "deepseek/deepseek-flash",
   "small_model": "deepseek/deepseek-flash",
   "default_agent": "plan",
+  "provider": {
+    "zai": { "options": { "headerTimeout": 60000, "chunkTimeout": 60000 } }
+  },
   "agent": {
     "build": {
       "mode": "primary",
@@ -128,7 +131,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (ling-3.0-flash-sante:free, gemessen schnell+zuverlässig) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>` (`--help` listet die Modi; `--verdict`/`--sniff`/`--wayback*`/`--mwmbl`/`--marginalia`/`--github`). Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini": {
       "mode": "subagent",
@@ -136,7 +139,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (gemini-3.5-flash-lite, gemessen schnell+zuverlässig) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>` (`--help` listet die Modi). Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-dots": {
       "mode": "subagent",
@@ -144,7 +147,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (dots-3-note-preview:free, gemessen schnell+zuverlässig) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gptoss": {
       "mode": "subagent",
@@ -152,7 +155,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (gpt-oss-20b via nvidia, gemessen) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-inkling": {
       "mode": "subagent",
@@ -160,7 +163,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (inkling-small:free, Fähigkeit 4/4 + gemessen schnell) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-nemotron": {
       "mode": "subagent",
@@ -168,7 +171,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (nemotron-3-super-120b:free, gemessen) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-agnes": {
       "mode": "subagent",
@@ -176,7 +179,7 @@
       "variant": "low",
       "description": "Schwarm-Stimme (agnes-3-0-flash:free, Fähigkeit 4/4, schnellste ~14s) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-qwen": {
       "mode": "subagent",
@@ -184,7 +187,39 @@
       "variant": "low",
       "description": "Schwarm-Stimme (@cf/qwen3.8-27b, Fähigkeit 4/4) — read-only, nur archive_search_public.",
       "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
-      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+    },
+    "voice-kenari": {
+      "mode": "subagent",
+      "model": "kenari/agnes-2-0-flash:free",
+      "variant": "low",
+      "description": "Schwarm-Stimme (agnes-2-0-flash:free, Fähigkeit 4/4, ~16s) — zweite kenari-Route (Provider-Failover gegen die Cloudflare-Tagesgrenze), read-only, nur archive_search_public.",
+      "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+    },
+    "voice-kilo": {
+      "mode": "subagent",
+      "model": "kilo/kilo-auto/free",
+      "variant": "low",
+      "description": "Schwarm-Stimme (kilo-auto/free, Fähigkeit 4/4, ~50s) — kilo-Aggregator-Route, read-only, nur archive_search_public.",
+      "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+    },
+    "voice-zen": {
+      "mode": "subagent",
+      "model": "opencode/nemotron-3.5-lightning-free",
+      "variant": "low",
+      "description": "Schwarm-Stimme (nemotron-3.5-lightning-free, Fähigkeit 4/4, ~38s) — OpenCode-Zen-Route, read-only, nur archive_search_public.",
+      "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
+    },
+    "voice-zai": {
+      "mode": "subagent",
+      "model": "zai/glm-4.7-flash",
+      "variant": "low",
+      "description": "Schwarm-Stimme (glm-4.7-flash, Fähigkeit 4/4, ~47s) — zai/free-Route (GLM-Analog zur UI-Stimme), read-only, nur archive_search_public.",
+      "prompt": "Du bist eine externe Mess-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Antworte knapp auf Deutsch.",
+      "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "line": {
       "mode": "primary",
@@ -212,6 +247,10 @@
           "voice-nemotron": "allow",
           "voice-agnes": "allow",
           "voice-qwen": "allow",
+          "voice-kenari": "allow",
+          "voice-kilo": "allow",
+          "voice-zen": "allow",
+          "voice-zai": "allow",
           "grind-pro": "ask",
           "grind-max": "ask",
           "research-max": "ask"
@@ -319,6 +358,12 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@1.9.0", "--no-usage-statistics", "--no-performance-crux", "--autoConnect"],
+      "enabled": true,
+      "timeout": 180000
+    },
+    "chrome-devtools-voices": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@1.9.0", "--headless", "--isolated", "--executablePath", "/usr/bin/google-chrome", "--allowedUrlPattern", "https://*", "--no-usage-statistics", "--no-performance-crux"],
       "enabled": true,
       "timeout": 180000
     }
