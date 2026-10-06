@@ -10,3 +10,11 @@
 # gsaweb.ast.cam.ac.uk, ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca als §1-Compiler-Netlocs
 # in COMPILER_NETLOCS geführt; atnf.csiro.au (echter Orphan) in psr-cdn.yml auf
 # tapvizier.cds.unistra.fr umgebunden.
+#
+# 2026-10-07 (Mycelium 253): obis.osha.gov — der dispatch-only osha-cehd-cdn.yml
+# schreibt den Release, die url/format-Zeile hängt am offenen `1`-Riss des
+# Force-/Einheiten-Kontrakts (Mountain-Admission pending). Gemessen via
+# `ci_manage log 37547718075` (cdn_reconcile --fail). Zeile fällt, sobald
+# Mountain die url/format-Zeile zulässt.
+obis.osha.gov
+
