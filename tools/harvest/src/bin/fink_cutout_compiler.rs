@@ -1,10 +1,10 @@
+use omegaflow::archivar::LeapSeconds;
+use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::fink_cutout::{
     FORCE_EM, KERNEL_INVERSE_SQUARE, MAGIC, REC_BYTES, SLOT_EPOCH, SLOT_PRESENCE, SLOT_VAL, TAU_S,
     TTL_S, write_bin,
 };
 use omegaflow::archivar::fits::{FitsHeader, FitsImage};
-use omegaflow::archivar::LeapSeconds;
-use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use std::process::Command;
@@ -76,11 +76,7 @@ fn unit_vector(ra_deg: f64, dec_deg: f64) -> [f64; 3] {
 fn angular_step(image: &FitsImage, x: usize, y: usize) -> Option<f64> {
     let (ra0, dec0) = image.world(x as f64 + 1.0, y as f64 + 1.0)?;
     let (ra1, dec1) = image.world(x as f64 + 2.0, y as f64 + 1.0)?;
-    if !(ra0.is_finite()
-        && dec0.is_finite()
-        && ra1.is_finite()
-        && dec1.is_finite())
-    {
+    if !(ra0.is_finite() && dec0.is_finite() && ra1.is_finite() && dec1.is_finite()) {
         return None;
     }
     let d0 = dec0.to_radians();
@@ -116,11 +112,16 @@ fn pixel_record(pos: [f64; 3], val: Option<f64>, epoch: f64, extent: f64) -> [f6
     r
 }
 
-fn compile(buf: &[u8], epoch_mjd: Option<f64>, lsk: &LeapSeconds) -> Result<Vec<[f64; 26]>, String> {
-    let (header, _) = FitsHeader::parse(buf, 0)
-        .ok_or_else(|| "the primary header stays unread".to_string())?;
-    let (image, _) = FitsImage::parse(buf, 0)
-        .ok_or_else(|| "the primary image stays unread (BITPIX/NAXIS outside the gate)".to_string())?;
+fn compile(
+    buf: &[u8],
+    epoch_mjd: Option<f64>,
+    lsk: &LeapSeconds,
+) -> Result<Vec<[f64; 26]>, String> {
+    let (header, _) =
+        FitsHeader::parse(buf, 0).ok_or_else(|| "the primary header stays unread".to_string())?;
+    let (image, _) = FitsImage::parse(buf, 0).ok_or_else(|| {
+        "the primary image stays unread (BITPIX/NAXIS outside the gate)".to_string()
+    })?;
     let dims = image.dims;
     if dims[0] == 0 || dims[1] == 0 {
         return Err("the cutout carries an empty spatial axis".into());
@@ -139,7 +140,9 @@ fn compile(buf: &[u8], epoch_mjd: Option<f64>, lsk: &LeapSeconds) -> Result<Vec<
         .ok_or_else(|| format!("MJD {mjd} lies outside the embedded leap table"))?;
     let extent = angular_step(&image, dims[0] / 2, dims[1] / 2)
         .or_else(|| angular_step(&image, 0, 0))
-        .ok_or_else(|| "the WCS carries no measurable pixel step — the extent stays absent".to_string())?;
+        .ok_or_else(|| {
+            "the WCS carries no measurable pixel step — the extent stays absent".to_string()
+        })?;
     let mut records: Vec<[f64; 26]> = Vec::with_capacity(dims[0] * dims[1]);
     let mut absent = 0usize;
     let mut unplaced = 0usize;
@@ -153,9 +156,7 @@ fn compile(buf: &[u8], epoch_mjd: Option<f64>, lsk: &LeapSeconds) -> Result<Vec<
                 unplaced += 1;
                 continue;
             }
-            let val = image
-                .value_f64(buf, [i, j, 0])
-                .filter(|v| v.is_finite());
+            let val = image.value_f64(buf, [i, j, 0]).filter(|v| v.is_finite());
             if val.is_none() {
                 absent += 1;
             }
@@ -226,13 +227,12 @@ fn run(args: &[String]) -> Result<(), String> {
         (None, Some(id)) => fetch_cutout(&id, &kind)
             .ok_or_else(|| format!("cutout fetch void for diaSourceId {id}"))?,
         (None, None) => {
-            return Err(
-                "--dia-source-id <id> or --input <fits> absent — refused".into(),
-            );
+            return Err("--dia-source-id <id> or --input <fits> absent — refused".into());
         }
     };
-    let lsk = embedded_lsk()
-        .ok_or_else(|| "the embedded naif0012.tls stays unread — the TAI→TDB step is absent".to_string())?;
+    let lsk = embedded_lsk().ok_or_else(|| {
+        "the embedded naif0012.tls stays unread — the TAI→TDB step is absent".to_string()
+    })?;
     let records = compile(&buf, epoch_mjd, &lsk)?;
     let bin = write_bin(&records);
     if let Some(parent) = std::path::Path::new(&out).parent() {
@@ -241,7 +241,9 @@ fn run(args: &[String]) -> Result<(), String> {
     std::fs::write(&out, &bin).map_err(|e| format!("write {out}: {e}"))?;
     let read = std::fs::read(&out).map_err(|e| format!("read {out}: {e}"))?;
     if read != bin {
-        return Err(format!("{out}: read-back differs — the asset stays unverified"));
+        return Err(format!(
+            "{out}: read-back differs — the asset stays unverified"
+        ));
     }
     let present = read_back(&read)
         .ok_or_else(|| format!("{out}: roundtrip parse void — the asset stays unverified"))?;
@@ -252,9 +254,7 @@ fn run(args: &[String]) -> Result<(), String> {
         bin.len(),
         sha256_hex(&bin),
     );
-    println!(
-        "url https://github.com/omegaflow/sources/releases/download/{CDN_TAG}/{ASSET}"
-    );
+    println!("url https://github.com/omegaflow/sources/releases/download/{CDN_TAG}/{ASSET}");
     println!("format fink_cutout");
     println!("origin {CUTOUT_ENDPOINT}");
     println!("ttl {}", TTL_S as u64);

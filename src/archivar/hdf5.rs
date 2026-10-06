@@ -2934,12 +2934,7 @@ impl<'a> Hdf5File<'a> {
         read_chunk_resolved(self.buf, obj, ds, dt, coords, fetch)
     }
 
-    pub fn read_range(
-        &self,
-        dataset: &str,
-        start: u64,
-        count: u64,
-    ) -> Result<Vec<f64>, Hdf5Note> {
+    pub fn read_range(&self, dataset: &str, start: u64, count: u64) -> Result<Vec<f64>, Hdf5Note> {
         let (obj, ds, dt) = self.dataset(dataset)?;
         if dt.class == 9 {
             return Err(Hdf5Note::VlenNotRead);
@@ -2972,7 +2967,9 @@ impl<'a> Hdf5File<'a> {
                 }
                 let full = rows as usize * row_elems * elem_size;
                 if *size > 0 && *size as usize != full {
-                    return Err(Hdf5Note::Chunk { off: *addr as usize });
+                    return Err(Hdf5Note::Chunk {
+                        off: *addr as usize,
+                    });
                 }
                 let off = *addr as usize + start as usize * row_elems * elem_size;
                 let len = out.len() * elem_size;
@@ -3002,11 +2999,12 @@ impl<'a> Hdf5File<'a> {
                 let chunk_elems: usize = chunk_dims.iter().fold(1usize, |a, d| a * (*d as usize));
                 let first_row_chunk = start / crow;
                 let last_row_chunk = (end - 1) / crow;
-                let (recs, v1_index) = self.chunk_records_of(
-                    obj,
-                    rank,
-                    &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
-                )?;
+                let (recs, v1_index) =
+                    self.chunk_records_of(
+                        obj,
+                        rank,
+                        &mut |_off: u64, _len: u64| -> Option<Vec<u8>> { None },
+                    )?;
                 let mut covered = false;
                 let mut idx = vec![0usize; rank];
                 let mut global = vec![0usize; rank];
@@ -3822,7 +3820,10 @@ mod tests {
     fn read_range_reads_only_the_covering_chunks() {
         let (buf, _btree) = synthetic_chunked_image();
         let file = Hdf5File::parse(&buf).unwrap();
-        assert_eq!(file.read_range("d", 0, 4).unwrap(), vec![1.0, 2.0, 3.0, 4.0]);
+        assert_eq!(
+            file.read_range("d", 0, 4).unwrap(),
+            vec![1.0, 2.0, 3.0, 4.0]
+        );
         assert_eq!(
             file.read_range("d", 1, 2).unwrap(),
             vec![2.0, 3.0],

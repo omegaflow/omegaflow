@@ -137,7 +137,10 @@ mod tests {
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].name, "jaxa_gpm_ku_echo_power_w");
         assert_eq!(fields[0].unit, "W");
-        assert_eq!(component_name(COMP_ECHO_POWER), Some("jaxa_gpm_ku_echo_power_w"));
+        assert_eq!(
+            component_name(COMP_ECHO_POWER),
+            Some("jaxa_gpm_ku_echo_power_w")
+        );
         assert_eq!(component_name(99), None);
     }
 }

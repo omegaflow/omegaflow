@@ -109,7 +109,9 @@ fn attr_value(a: &omegaflow::hdf5::Hdf5Attribute) -> String {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(path) = args.first() else {
-        eprintln!("usage: hdf5_reader <file.h5> [--var <name>] [--range <start[,count]>] [--chunk <c0[,c1,...]>]");
+        eprintln!(
+            "usage: hdf5_reader <file.h5> [--var <name>] [--range <start[,count]>] [--chunk <c0[,c1,...]>]"
+        );
         return;
     };
     let bytes = match std::fs::read(path) {
@@ -207,9 +209,9 @@ fn main() {
                     }
                 } else if chunked {
                     let coords = vec![0u64; ds.dims.len()];
-                    match file.read_chunk(var, &coords, |_o: u64, _l: u64| -> Option<Vec<u8>> {
-                        None
-                    }) {
+                    match file
+                        .read_chunk(var, &coords, |_o: u64, _l: u64| -> Option<Vec<u8>> { None })
+                    {
                         Some(vals) => println!(
                             "data: {} values (bounded first chunk {:?}; --chunk/--range for a subset)",
                             vals.len(),
@@ -224,7 +226,8 @@ fn main() {
                     }
                 }
             }
-            Err(note) => eprintln!("{}", note_text(&note)),        },
+            Err(note) => eprintln!("{}", note_text(&note)),
+        },
         None => struktur(&file),
     }
 }

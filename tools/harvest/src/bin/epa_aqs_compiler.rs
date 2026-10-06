@@ -350,7 +350,9 @@ fn main() {
         eprintln!(
             "  reads the US EPA AQS/AirData daily table: PM2.5 (parameter 88101, default) or VOCS via --format epa_aqs_voc"
         );
-        eprintln!("  --parameter <code> filters one Parameter Code and carries it as the wire comp");
+        eprintln!(
+            "  --parameter <code> filters one Parameter Code and carries it as the wire comp"
+        );
         eprintln!("  emits one geo bin record per station-day");
         eprintln!("  unit: ug/m3 (Arithmetic Mean)");
         eprintln!("  epoch: the row's own Date Local, to TDB via the embedded leap table");
