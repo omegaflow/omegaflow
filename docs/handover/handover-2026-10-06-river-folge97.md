@@ -3,7 +3,7 @@
   session: River-Folge 97
   class: handover
   date: 2026-10-06
-  sha256: f1dd04e91982fa208d7aaab4d2c779884fffbb2fad9ab69e58f27c374dda7760
+  sha256: 8194e017bf72a161784a5a3132551ccfa9350f7a725e48aeb3dd5c302978c2d5
   status: live
 -->
 # Handover — River-Folge 97 (2026-10-06)
@@ -147,6 +147,12 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `.github/workflows/flyby-odf-cdn.yml`
 - `docs/handover/handover-2026-10-06-river-folge97.md`
 - `docs/handover/archiv/handover-2026-10-05-river-folge96.md` (Move aus `docs/handover/`)
+
+Verifikation/Dispatches: `static/membrane.html` lokal e2e gemessen (lokaler Proxy
+auf die echten CDN-Assets) — die Seite läuft durch die sichtbaren Phasen und
+rendert 101 Sterne; deployter Re-Check offen (`pages-deploy` auf `2f44a6092`).
+`flyby-odf-cdn` neu dispatcht: run `37427673360` (Asset-Upload-Fix, Census-Probe
+mit `--file`). Kein Polling — Ergebnis aus dem Stehenden Pass / einmaligem `ci_manage view`.
 
 ## Burn: open 0.0000 · close 0.0880 — `session_burn` River-Linie
 (Session „River-Linie in einem Pass abarbeiten", `line`-Agent $0.0880; + 1 Rat
