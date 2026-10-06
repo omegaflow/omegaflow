@@ -831,6 +831,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_VNP46A3_NIGHTLIGHT => Some("vnp46a3_nightlight_nw_cm2_sr"),
             _ => None,
         },
+        "ghsl_built_s" => match comp {
+            crate::geo::COMP_GHSL_BUILT => Some("ghsl_built_surface_m2"),
+            _ => None,
+        },
         "igets" => match comp {
             crate::geo::COMP_IGETS_G => Some("igets_gravity_nm_s2"),
             _ => None,
@@ -3904,6 +3908,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     }
     if src.format == "gistemp_aod550_axis_value_text"
         || src.format == "godas_pottmp_axis_value_text"
+        || src.format == "openmeteo_pollen_axis_value_text"
         || src.format == "dhm_stage"
     {
         let Some(Extract::Field(fc)) = src.extracts.first() else {
