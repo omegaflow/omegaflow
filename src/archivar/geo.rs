@@ -54,6 +54,7 @@ pub const MAGIC_VNP46A3: [u8; 4] = *b"NTL1";
 pub const MAGIC_GHSL: [u8; 4] = *b"GHS1";
 pub const MAGIC_USDA_FARA: [u8; 4] = *b"FAR1";
 pub const MAGIC_EPA_AQS: [u8; 4] = *b"EPA1";
+pub const MAGIC_EPA_AQS_VOC: [u8; 4] = *b"EPV1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -90,6 +91,7 @@ pub const COMP_USDA_FARA_MAX: u32 = 1;
 
 pub const COMP_EPA_AQS_PM25: u32 = 1;
 pub const COMP_EPA_AQS_MAX: u32 = 1;
+pub const COMP_EPA_AQS_VOC_MAX: u32 = 46201;
 
 pub const COMP_GIC_A: u32 = 1;
 pub const COMP_GIC_MAX: u32 = 1;
@@ -306,6 +308,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "ghsl_built_s" => Some(MAGIC_GHSL),
         "usda_fara_low_access" => Some(MAGIC_USDA_FARA),
         "epa_aqs_pm25" => Some(MAGIC_EPA_AQS),
+        "epa_aqs_voc" => Some(MAGIC_EPA_AQS_VOC),
         "fmi_gic" => Some(MAGIC_GIC),
         "fmi_gic_1min" => Some(MAGIC_GIC),
         "fmi_image_mag" => Some(MAGIC_IMAGE),
@@ -366,6 +369,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "ghsl_built_s" => Some(COMP_GHSL_MAX),
         "usda_fara_low_access" => Some(COMP_USDA_FARA_MAX),
         "epa_aqs_pm25" => Some(COMP_EPA_AQS_MAX),
+        "epa_aqs_voc" => Some(COMP_EPA_AQS_VOC_MAX),
         "fmi_gic" => Some(COMP_GIC_MAX),
         "fmi_gic_1min" => Some(COMP_GIC_1MIN_MAX),
         "fmi_image_mag" => Some(COMP_IMAGE_MAX),

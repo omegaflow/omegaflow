@@ -10,10 +10,13 @@ use std::process::Command;
 const NETLOC: &str = "aqs.epa.gov";
 const ZIP_URL: &str = "https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip";
 const FORMAT: &str = "epa_aqs_pm25";
+const VOC_FORMAT: &str = "epa_aqs_voc";
+const VOC_ZIP_URL: &str = "https://aqs.epa.gov/aqsweb/airdata/daily_VOCS_2024.zip";
 const LAT_FIELD: &str = "Latitude";
 const LON_FIELD: &str = "Longitude";
 const DATE_FIELD: &str = "Date Local";
 const VALUE_FIELD: &str = "Arithmetic Mean";
+const PARAMETER_CODE_FIELD: &str = "Parameter Code";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -137,6 +140,8 @@ fn parse_aqs(
     lsk: &LeapSeconds,
     stride: usize,
     limit: usize,
+    parameter: Option<u32>,
+    carry_code: bool,
 ) -> Result<Vec<GeoRec>, String> {
     let mut lines = text.lines().filter(|l| !l.trim().is_empty());
     let header = lines
@@ -151,6 +156,13 @@ fn parse_aqs(
         .ok_or_else(|| format!("the AQS table carries no {DATE_FIELD} column"))?;
     let value_idx = field_index(&fields, VALUE_FIELD)
         .ok_or_else(|| format!("the AQS table carries no {VALUE_FIELD} column"))?;
+    let parameter_idx = match (carry_code, parameter) {
+        (false, None) => None,
+        _ => Some(
+            field_index(&fields, PARAMETER_CODE_FIELD)
+                .ok_or_else(|| format!("the AQS table carries no {PARAMETER_CODE_FIELD} column"))?,
+        ),
+    };
     let mut records: Vec<GeoRec> = Vec::new();
     let mut row = 0usize;
     for line in lines {
@@ -175,6 +187,21 @@ fn parse_aqs(
         let Some(val) = cells.get(value_idx).and_then(|s| finite_pm25(s)) else {
             continue;
         };
+        let comp = match parameter_idx {
+            Some(idx) => {
+                let Some(row_code) = cells.get(idx).and_then(|s| s.trim().parse::<u32>().ok())
+                else {
+                    continue;
+                };
+                if let Some(code) = parameter {
+                    if row_code != code {
+                        continue;
+                    }
+                }
+                row_code
+            }
+            None => COMP_EPA_AQS_PM25,
+        };
         records.push(GeoRec {
             t,
             lat,
@@ -183,7 +210,7 @@ fn parse_aqs(
             freq: 0.0,
             bin_width: 0.0,
             val,
-            comp: COMP_EPA_AQS_PM25,
+            comp,
             station: 0,
         });
         if records.len() >= limit {
@@ -193,10 +220,10 @@ fn parse_aqs(
     Ok(records)
 }
 
-fn out_path(args: &[String], netloc: &str) -> String {
+fn out_path(args: &[String], netloc: &str, format: &str) -> String {
     match arg_value(args, "--out") {
         Some(p) if !p.is_empty() => p,
-        _ => format!("data/{netloc}/{FORMAT}.bin"),
+        _ => format!("data/{netloc}/{format}.bin"),
     }
 }
 
@@ -228,11 +255,29 @@ fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let stride = parse_step(args, "--stride", 1)?;
     let limit = parse_step(args, "--limit", usize::MAX)?;
+    let format = match arg_value(args, "--format") {
+        Some(f) if !f.is_empty() => f,
+        _ => FORMAT.to_string(),
+    };
+    let parameter = match arg_value(args, "--parameter") {
+        Some(v) => Some(
+            v.trim()
+                .parse::<u32>()
+                .map_err(|_| format!("--parameter {v} carries no code"))?,
+        ),
+        None => None,
+    };
     let zip_source = match arg_value(args, "--input") {
         Some(p) => p,
         None => match arg_value(args, "--url") {
             Some(u) => u,
-            None => ZIP_URL.to_string(),
+            None => {
+                if format == VOC_FORMAT {
+                    VOC_ZIP_URL.to_string()
+                } else {
+                    ZIP_URL.to_string()
+                }
+            }
         },
     };
     let zip = read_bytes(&zip_source)?;
@@ -245,17 +290,17 @@ fn run(args: &[String]) -> Result<(), String> {
     let table = String::from_utf8_lossy(&raw);
     let lsk: LeapSeconds = embedded_lsk()
         .ok_or_else(|| "the embedded naif0012.tls stays unread — no epoch".to_string())?;
-    let records = parse_aqs(&table, &lsk, stride, limit)?;
+    let records = parse_aqs(&table, &lsk, stride, limit, parameter, format == VOC_FORMAT)?;
     if records.is_empty() {
         return Err(format!(
             "{zip_source}: no station-day with a measured lat, lon, {DATE_FIELD} and {VALUE_FIELD} — the bin stays unwritten (0 honored)"
         ));
     }
-    let magic = magic_of(FORMAT).ok_or_else(|| {
-        format!("{FORMAT} carries no geo magic — the per-cell arm stays unwritten")
+    let magic = magic_of(&format).ok_or_else(|| {
+        format!("{format} carries no geo magic — the per-cell arm stays unwritten")
     })?;
     let netloc = netloc_of(args);
-    let out = out_path(args, &netloc);
+    let out = out_path(args, &netloc, &format);
     ensure_parent(&out)?;
     let bytes = write_bin(magic, &records);
     std::fs::write(&out, &bytes).map_err(|e| format!("write {out} void: {e}"))?;
@@ -267,7 +312,7 @@ fn run(args: &[String]) -> Result<(), String> {
             );
             println!("origin {zip_source}");
             println!("compiler tools/harvest/src/bin/epa_aqs_compiler.rs");
-            println!("format {FORMAT}");
+            println!("format {format}");
             println!("sha256 {}", sha256_hex(&bytes));
             eprintln!(
                 "{out}: {} station-days, {} B, roundtrip parses",
@@ -300,11 +345,12 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: epa_aqs_compiler [--input <zip-path>] [--url <zip-url>] [--netloc <netloc>] [--stride N] [--limit N] [--out <path>] [--ci-mode]"
+            "usage: epa_aqs_compiler [--input <zip-path>] [--url <zip-url>] [--format <epa_aqs_pm25|epa_aqs_voc>] [--parameter <code>] [--netloc <netloc>] [--stride N] [--limit N] [--out <path>] [--ci-mode]"
         );
         eprintln!(
-            "  reads the US EPA AQS/AirData daily PM2.5 FRM/FEM mass table (parameter 88101)"
+            "  reads the US EPA AQS/AirData daily table: PM2.5 (parameter 88101, default) or VOCS via --format epa_aqs_voc"
         );
+        eprintln!("  --parameter <code> filters one Parameter Code and carries it as the wire comp");
         eprintln!("  emits one geo bin record per station-day");
         eprintln!("  unit: ug/m3 (Arithmetic Mean)");
         eprintln!("  epoch: the row's own Date Local, to TDB via the embedded leap table");
@@ -389,7 +435,7 @@ mod tests {
         let text = "State Code,County Code,Site Num,Parameter Code,POC,Latitude,Longitude,Datum,Parameter Name,Date Local,Units of Measure,Arithmetic Mean\n\
 01,003,0010,88101,3,30.497478,-87.880258,NAD83,PM2.5,2024-01-01,ug/m3,3.625\n\
 01,003,0010,88101,3,30.497478,-87.880258,NAD83,PM2.5,2024-01-02,ug/m3,6.791667\n";
-        let records = parse_aqs(text, &lsk, 1, usize::MAX).unwrap();
+        let records = parse_aqs(text, &lsk, 1, usize::MAX, None, false).unwrap();
         assert_eq!(records.len(), 2);
         assert_eq!(records[0].lat, 30.497478);
         assert_eq!(records[0].lon, -87.880258);
@@ -407,7 +453,7 @@ mod tests {
 01,003,0010,88101,3,30.5,-87.8,NAD83,PM2.5,,ug/m3,3.625\n\
 01,003,0010,88101,3,30.5,-87.8,NAD83,PM2.5,2024-01-01,ug/m3,\n\
 01,003,0010,88101,3,30.5,-87.8,NAD83,PM2.5,2024-01-01,ug/m3,1.5\n";
-        let records = parse_aqs(text, &lsk, 1, usize::MAX).unwrap();
+        let records = parse_aqs(text, &lsk, 1, usize::MAX, None, false).unwrap();
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].val, 1.5);
     }
@@ -419,9 +465,25 @@ mod tests {
 30.5,-87.8,2024-01-01,1.0\n\
 30.5,-87.8,2024-01-02,2.0\n\
 30.5,-87.8,2024-01-03,3.0\n";
-        let strided = parse_aqs(text, &lsk, 2, usize::MAX).unwrap();
+        let strided = parse_aqs(text, &lsk, 2, usize::MAX, None, false).unwrap();
         assert_eq!(strided.len(), 2);
-        let limited = parse_aqs(text, &lsk, 1, 1).unwrap();
+        let limited = parse_aqs(text, &lsk, 1, 1, None, false).unwrap();
         assert_eq!(limited.len(), 1);
+    }
+
+    #[test]
+    fn parse_aqs_filters_one_parameter_code_and_carries_it_as_comp() {
+        let lsk = test_lsk();
+        let text = "State Code,County Code,Site Num,Parameter Code,POC,Latitude,Longitude,Datum,Parameter Name,Date Local,Units of Measure,Arithmetic Mean\n\
+01,073,0023,43502,8,33.55,-86.81,WGS84,Formaldehyde,2024-06-05,Parts per billion Carbon,23\n\
+01,073,0023,45201,8,33.55,-86.81,WGS84,Benzene,2024-06-05,Parts per billion Carbon,1.2\n";
+        let filtered = parse_aqs(text, &lsk, 1, usize::MAX, Some(43502), true).unwrap();
+        assert_eq!(filtered.len(), 1);
+        assert_eq!(filtered[0].comp, 43502);
+        assert_eq!(filtered[0].val, 23.0);
+        let all = parse_aqs(text, &lsk, 1, usize::MAX, None, true).unwrap();
+        assert_eq!(all.len(), 2);
+        assert_eq!(all[0].comp, 43502);
+        assert_eq!(all[1].comp, 45201);
     }
 }
