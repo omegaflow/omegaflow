@@ -1,0 +1,32 @@
+name: dhm-gauge-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  gauge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile and upload the Dhunche gauge stage (4657, upstream)
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin dhm_gauge_compiler -- \
+            --station 4657 --period 1 --ci-mode
+      - name: Compile and upload the Bhorle gauge stage (4661, downstream)
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin dhm_gauge_compiler -- \
+            --station 4661 --period 1 --ci-mode
