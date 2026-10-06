@@ -3,7 +3,7 @@
   session: River-Folge 116
   class: handover
   date: 2026-10-07
-  sha256: a89e2dd07c3d4632dce97526407a6dc18e8492ef1bd43a14b8c839c18c59476e
+  sha256: a876e133a0b222fef67ea8b60a53449cc1119bb58be3d7eb09bf5234a8d80900
   status: live
 -->
 # Handover — River-Folge 116 (2026-10-07)
@@ -18,6 +18,7 @@ steht und `origin/main` Vorfahr von HEAD ist.
 Wort | Datum | Quelle
 --- | --- | ---
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-07 | Operator (Session, River 116) — Session-Start, Delegations-Consent
+„Ja (River entscheidet): ich messe zunächst eine neue cgm_lat-Route und deklariere dann die Grenzen vor dem Lauf." | 2026-10-07 | Operator (Session, River 116) — GIC-Bandgrenzen sind River-eigen, kein Operator-Wort
 „river klärt es selbst" | 2026-10-07 | future-188 (gefaltet) — die ozzy-A/B-Form ist River-eigen, kein Operator-Wort; bleibt als „A ist die Messung, B bleibt Leckage-Diagnose" gebaut
 „das klingt doch vernüftig, oder?" | 2026-10-07 | Operator (Session, River 115) — A ist die Messung, B bleibt Leckage-Diagnose
 „nein qwen ist nicht meistvertraut claude glm und kimi sind meistvertraut" | 2026-10-07 | Operator (Session, River 115) — Vertrauens-Set Claude · GLM · Kimi
@@ -57,12 +58,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-07-river
 - **Blockade:** CI-Lauf-Ausgang `unread` (Stehender Pass/`ci_manage`, kein Polling).
 - **Braucht:** CI-grün; Pages-Deploy; Browser-Sicht auf `omegaflow.space/membrane.html`. Offen: `state.lvl` global über beide Aperturen; `MembraneLookup.add_stars` panikt bei Re-Init (Riss, kein Repro ohne WASM/Browser).
 
-### GIC-Breitenband-Familien — Design + Messschritt offen
-- **Status:** wartend (cgm_lat) / Design offen | **Bindung:** eigen
-- **Trigger:** CGM-Messung je Station (bzw. Operator-Wort zu den Bandgrenzen).
-- **Lage:** (gemessen 2026-10-06) `station <code>` auf 154 Blöcken (`2117476be`); Identitätsverdikt „Station = Identität"; sechs Stimmen → Option (c) geschichtet (`family` = FDR-Gruppe, `cgm_lat` eigene Registergröße, Scope `fdr … over family`). Blatt `unsealed`; der Bandgrenzen-Slot ist **offen** (`blatt-gic-breitenband-familien.md:50`).
-- **Blockade:** keine gemessene CGM-Breite im Register (Geomagnetic-Latitudes-Services `declined`, `phi/declined_sources.φ:3328-3340`).
-- **Braucht:** (0) neue CGM-Route + `cgm_lat` lokal messen; (1) `fdr … over family`-Scope; (2) Bandgrenzen (Design); (3) CI-Job `field-te-query.yml`.
+### GIC-Breitenband-Familien — Route + Grenzen deklariert; per-Station-Messung + Bau offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** per-Station-`cgm_lat`-Messung abgeschlossen; danach Familien-Deskriptoren.
+- **Lage:** (gemessen 2026-10-07) Operator-Wort: River entscheidet die Bandgrenzen — im Blatt deklariert: **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM| (`blatt-gic-breitenband-familien.md`, sha256 `72b35586…`). cgm_lat-Route deklariert: BGS-GIN-HAPI `/info` (`imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=IZN/…`, HTTP 200) → NASA/GSFC-OMNIWeb-VITMO-CGM (`omniweb.gsfc.nasa.gov/cgi/vitmo/cgm_model.cgi`, `model=cgm`); Fallback SuperMAG `station_info.txt` (Gjerloev 2012); BGS-GIFS = quasi-dipol (≠ CGM), ArcGIS bleibt `declined` (`phi/declined_sources.φ:3327-3341`).
+- **Blockade:** keine (eigene); die 154 Blöcke tragen nur `on earth <lat> <lon>`.
+- **Braucht:** (0) cgm_lat per Route messen (Rust-Bin/curl, Epoche pinnen, Primär ↔ Fallback Drift-Check), Deckungstest (disjunkt, Union = 154); (1) `fdr … over family`-Scope; (2) drei Familien-Deskriptoren; (3) CI-Job `field-te-query.yml`.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend (fremd, Alignment/Ernte) | **Bindung:** eigen
@@ -155,5 +156,6 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `src/mathematikerin/ozzy.rs` (`needless_range_loop`-Fix)
 - `src/mathematikerin/least_squares.rs` (`type_complexity`-Fix, `PivotSolution`)
 - `docs/handover/handover-2026-10-07-river-folge116.md` (neu) · `docs/handover/archiv/handover-2026-10-07-river-folge115.md` (Move)
+- `docs/blatt/blatt-gic-breitenband-familien.md` (Bandgrenzen + cgm_lat-Route deklariert, Operator-Wort 2026-10-07)
 
-## Burn: open 0.0015 · close 0.0501 · cap 0.15 (Default) · Grund: River 116 — Line-Session (deepseek-flash): Rivers Clippy-Anteil geheilt (`ozzy.rs:90`/`:109`, `least_squares.rs:15`), `cargo check` 0/0; addressed Blöcke gefaltet (mountain-252/253 Newell, mycelium-250 ozzy-Clippy/Debug, future-188 A/B, sensory-244); Handover auf folge116 fortgeschrieben. Keine Sub-Dispatchs.
+## Burn: open 0.0015 · close 0.0835 · cap 0.15 (Default) · Grund: River 116 — Line-Session (deepseek-flash): Rivers Clippy-Anteil geheilt (`ozzy.rs:90`/`:109`, `least_squares.rs:15`), `cargo check` 0/0; addressed Blöcke gefaltet (mountain-252/253 Newell, mycelium-250 ozzy-Clippy/Debug, future-188 A/B, sensory-244); GIC-Bandgrenzen + cgm_lat-Route deklariert (Operator-Wort 2026-10-07) nach einem `general`-Messschritt ($0.0267). Handover auf folge116 fortgeschrieben.

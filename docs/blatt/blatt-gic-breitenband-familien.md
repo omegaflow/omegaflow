@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 5c90b499a1fcd36434f3048beffb6c02b94c357871f42696add8d2629623d1df
+  sha256: 72b3558646d3bcded9283b55db06a24d14e35dde9e8c14416dad95d75d9bc2a4
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -47,9 +47,21 @@ gewählten Station-Set):
 - **mid-latitude**
 
 Die Partitionsgrenzen werden **vor** dem Lauf als feste Breitenwert-Grenzen
-deklariert (die konkreten Grenzen sind ein benannter offener Slot, s. unten); jede
-Station fällt nach ihrer deklarierten geomagnetischen Breite in genau eine Familie.
-Keine Nachjustierung nach der Messung.
+deklariert (Operator-Wort 2026-10-07: River entscheidet sie); jede Station fällt nach
+ihrer deklarierten korrigierten geomagnetischen Breite (CGM) in genau eine Familie.
+Keine Nachjustierung nach der Messung. Deklariert (|CGM-Breite|, beide Hemisphären
+symmetrisch):
+
+| Familie | \|CGM-Breite\| |
+|---|---|
+| auroral | ≥ 60° |
+| sub-auroral | 50° ≤ · < 60° |
+| mid-latitude | < 50° |
+
+Konvention: die in GIC-Arbeiten gebräuchliche Dreiteilung (SpaceWeatherLive-Tripel;
+gestützt auf die 50–60°-„danger zone", Nature Sci. Rep. 2022 `s41598-022-25704-2`,
+und Tozzi et al., Ann. Geophys. ~50–55°). Kein offizieller Einzelstandard — die Werte
+sind hier vor dem Lauf fixiert und danach nicht verhandelbar.
 
 ### 2. Kohärenz-Hypothese
 
@@ -159,12 +171,36 @@ keinen Grammatik-Arm — per Deckungstest geschlossen, nicht per Grammatik; (4) 
 fehlt im Register (`pending`, nie aus der geografischen Breite angenommen — §1 verbietet
 genau das).
 
+## cgm_lat — die Route (deklariert 2026-10-07)
+
+Die per-Station CGM-Breite wird **nicht** gesetzt, sondern gemessen. Route (gewählt,
+2026-10-07 gemessen erreichbar):
+
+- **Primär:** BGS-GIN-HAPI `/info?id=<code>/best-avail/PT1M/xyzf`
+  (`https://imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=IZN/best-avail/PT1M/xyzf`, HTTP 200)
+  liefert die geodätische `x_latitude`/`x_longitude`/`x_elevation` je Code; daraus die
+  CGM-Breite über den NASA/GSFC-OMNIWeb-VITMO-CGM-Endpunkt
+  `https://omniweb.gsfc.nasa.gov/cgi/vitmo/cgm_model.cgi` (`model=cgm`, `vars=04`=CGM-Lat,
+  `vars=05`=CGM-Lon; IGRF/DGRF 1900–2025). Beispiel IZN (Jahr 2000, h=0): CGM-Lat 34.89°.
+- **Fallback (maschinenlesbar):** `https://raw.githubusercontent.com/spacecataz/supermag/master/station_info.txt`
+  (SuperMAG, Gjerloev 2012, doi:10.1029/2012JA017683) trägt publiziertes `AACGMLAT`
+  für die meisten GIN-Codes; die von SuperMAG nicht geführten Codes (u. a. CPL MZL REU STT TTB)
+  über die Primär-Route (AACGM auf IGRF-2000 fixiert).
+- **Provenienz (Pflicht):** Modell `cgm`/AACGM, Epoche (zu pinnen), Höhe 0 km; Drift-Check
+  Primär ↔ Fallback.
+- **Nicht CGM:** der BGS-GIFS-Rechner liefert *quasi-dipol* (QD ≠ CGM); die ArcGIS-
+  `Geomagnetic_Latitudes`-Services bleiben `declined` (`phi/declined_sources.φ:3327-3341`).
+- **Lokaler Weg (offen):** IGRF-14-Koeffizienten
+  (`https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf14coeffs.txt`, sha256 `8f8d8840…`) +
+  AACGM-v2-Koeffizienten (`https://superdarn.thayer.dartmouth.edu/aacgm/aacgm_coeffs-14.tar`)
+  als Rust-Bin; ohne Feldlinien-Trace nur Dipol-Näherung, als solche zu benennen.
+
 ## Offene Slots bis zur Versiegelung
 
 | Feld | Zustand |
 |---|---|
-| CGM-Breite je Station (154) | `pending` — Messung vor den Deskriptoren; die Blöcke tragen nur geografische `on earth`-Koordinaten |
-| Partitionsgrenzen (geomagn. Breite je Band) | `pending` — werden vor dem Lauf als feste Werte deklariert |
+| CGM-Breite je Station (154) | `pending` — Route deklariert 2026-10-07, Messung vor den Deskriptoren offen; die Blöcke tragen nur geografische `on earth`-Koordinaten |
+| Partitionsgrenzen (geomagn. Breite je Band) | **deklariert 2026-10-07:** auroral ≥60°, sub-auroral 50–60°, mid <50° (\|CGM\|) |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
 | Familien-Deskriptoren | `pending` — nach der CGM-Partitions-Messung |
