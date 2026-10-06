@@ -3,7 +3,7 @@
   session: River-Folge 99
   class: handover
   date: 2026-10-06
-  sha256: d573af716970be40bca076851e698dbb73d824145a9ea3445ee695f477a05f64
+  sha256: cd7c6575702ae5081958342764553ebac1d92b40732e85e2b57a528b8403e130
   status: live
 -->
 # Handover — River-Folge 99 (2026-10-06)
@@ -20,6 +20,7 @@ Wort | Datum | Quelle
 --- | --- | ---
 „Starte die River-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes … River besitzt die Membran-Pfade (`main_flow`, `omega.rs`-Feld, Window/Gaze)." | 2026-10-06 | Operator (Session, River 98/99) — session-weiter Delegations-Consent, nicht das Commit-Wort
 „die Membran muss stehen, bevor irgendwo eine Förder-Bewerbung abgeschickt wird … bis `/membrane.html` die Punktwolke rendert (die Sonne als Anker sichtbar)" | 2026-10-05 | Operator (future-folge181, gefaltet)
+„earth-wgs84/legacy-assumed können wir den nicht migrieren ich möchte eigentlich kein legacy haben / deklarieren" — der Volume-Frame ist Pflicht-Deklaration je Quelle, kein Legacy-Bucket, keine Migration | 2026-10-06 | Operator (Session, River 99)
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge98.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -116,8 +117,10 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   als Kind; der feste `"earth"`-Rahmen ist der Bias (körperfest, zeitabhängig, erdperiodisch —
   für Sonne/Mars plausibel aussehende Fehlwerte); fehlt die Deklaration → `refused`, nie Default.
   **Schema (Claude/GLM):** `frame = {Körper, Figur, Achsenkonvention, vertikaler Bezug, Epoche
-  (TDB), Rotations-/Ephemeridenmodell}` + Transformationskette zu ICRS/SSB; Altbestand einmalig
-  als `earth-wgs84`/`legacy-assumed` **deklarieren** (Migration, kein Laufzeit-Default).
+  (TDB), Rotations-/Ephemeridenmodell}` + Transformationskette zu ICRS/SSB. **Operator-Wort
+  2026-10-06:** kein `legacy`/`earth-wgs84`-Bucket, keine Migration — der Frame ist eine
+  **Pflicht-Deklaration je Quelle** (`Extract::Volume`/`phi/sources.φ`); fehlt sie → `refused`.
+  Kein Laufzeit-Default, kein Legacy-Label.
   Offen: (a) `static/membrane.html:43` `const BODIES = ["earth","moon","sun"]` →
   Build-Time-Manifest aus der Hüllen-Pipeline (Kante: kein Fenster-Edit; Mycelium/CI stagt);
   (b) `src/mathematikerin/omega.rs:878` hart `"earth"` → deklarativer Rahmen.
