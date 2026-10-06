@@ -835,6 +835,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_GHSL_BUILT => Some("ghsl_built_surface_m2"),
             _ => None,
         },
+        "usda_fara_low_access" => match comp {
+            crate::geo::COMP_USDA_FARA_SHARE => Some("usda_fara_low_access_share"),
+            _ => None,
+        },
         "igets" => match comp {
             crate::geo::COMP_IGETS_G => Some("igets_gravity_nm_s2"),
             _ => None,
