@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 8bda48fa057bd7e579e57814531abee504bd40e534d3a85a6e1e422598c78761
+  sha256: 3e26b3789d0490eb33167b5709d71118e3e65843723130e261d6b639d2118357
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -129,13 +129,15 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Status:** wartend | **Bindung:** eigen (cross-line Mountain/Mycelium)
 - **Trigger:** Operator-Wort 2026-10-06 („… lizenztechnisch sauber … nur die auf CDN legen, die wir auch dürfen") + Gate-Akt.
 - **Lage:** (gemessen 2026-10-06, River 105) Auf dem CDN liegen drei Körpermesswert-Gruppen:
-  - `physionet.org/bidsleep_mehrnacht.bin` (format `bidsleep`, origin
-    `physionet.org/files/bidsleep-dataset/1.0.0/`) — PhysioNet **gemischt** (Survey `:32`:
-    MIT-BIH/Sleep-EDF/CHB-MIT offen, MIMIC-IV/eICU Credentialing+DUA); **BIDSleep-Lizenz
-    unverifiziert**.
-  - ~77 `openneuro.org/sub-G*S*_task-pd*_eeg.bin` (format `openneuro_pd_eeg`, origin
-    `openneuro.org/crn/graphql`, ds005034) — Survey `:31` „offen (anonym), CC0/CC-BY"
-    (Plattform); **Dataset-Lizenz je Set unverifiziert**.
+  - ✅ **PhysioNet BIDSleep — ODC-BY 1.0 (gemessen 2026-10-06, `--playwright`):** `bidsleep-dataset`
+    (Tzu-An Song, „A Multi-Night Instantaneous Heart Rate and Accelerometry Dataset with EEG Sleep
+    Stage Labels", DOI `10.13026/a0sy-7t69`) trägt die **Open Data Commons Attribution License
+    v1.0** (`physionet.org/content/bidsleep-dataset/view-license/1.0.0/`) → Redistribution **mit
+    Attribution** erlaubt.
+  - ✅ **OpenNeuro ds005034 — CC0 (gemessen 2026-10-06, `curl`):**
+    `s3.amazonaws.com/openneuro.org/ds005034/dataset_description.json` trägt `"License": "CC0"`
+    („The effect of theta tACS on working memory", DOI `10.18112/openneuro.ds005034.v1.0.1`) → frei
+    redistribuierbar.
   - ✅ **iEEG.org wurde entfernt (Operator-Wort 2026-10-06, „bitte entfernen iEEG sofort"):**
     Register-Zeile `phi/sources.φ` (url/format/origin/compiler) **gelöscht**, der Manifest-Workflow
     `ieeg-cdn.yml` (gelöscht). Das Asset war **nie auf dem CDN**
@@ -148,8 +150,8 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** keine Lizenzmessung je Dataset; kein Gate.
 - **Braucht:** (1) `license`/`terms`-Direktive je Körperdatenzeile (Mountain) + Gate „keine
   CDN-Manifestation ohne Lizenz" (Mountain/Mycelium); (2) `THIRD_PARTY_LICENSES`/NOTICE im Repo mit
-  Attribution je Dataset; (3) je Dataset messen (PhysioNet BIDSleep-Lizenz, OpenNeuro ds005034
-  GraphQL `license`). iEEG ist erledigt (entfernt); offen bleiben PhysioNet/OpenNeuro.
+  der Attribution + Quelle/DOI je Dataset (ODC-BY verlangt die Attribution, CC0 nicht). **Messung
+  abgeschlossen:** PhysioNet BIDSleep = ODC-BY 1.0, OpenNeuro ds005034 = CC0, iEEG entfernt.
 
 ### Membran-Sonne-Anker (Operator-Wort future-181; cross-line Mountain/Mycelium)
 - **Status:** blockiert | **Bindung:** eigen (cross-line: Mountain, Mycelium)
