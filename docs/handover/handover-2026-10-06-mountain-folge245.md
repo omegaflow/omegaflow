@@ -3,7 +3,7 @@
   session: Mountain-Folge 245
   class: handover
   date: 2026-10-06
-  sha256: f8c7dc0cbdb7a1832fadd2d4808c2590205e3aa86f97d703ec73d231ed353acb
+  sha256: e6934d13e2fdf8c245b6c4036541b116ee90ba74e5534cc081a75143f34bc2a5
   status: live
 -->
 # Handover — Mountain-Folge 245 (2026-10-06)
@@ -53,49 +53,37 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 244)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 245)
 „go" — Fink=Quellen-Ursprung (A), FARA=Index (B): FARA streichen, Anker `at sun`, Gate-Fixture | 2026-10-06 | Operator (Session, Mountain 245)
+„kannst du das noch machen?" — OSHA/JAXA/Fink-sky1 fertig bauen (Unit-Tabelle, JAXA-Arm, sky1-Messung) | 2026-10-06 | Operator (Session, Mountain 245)
 
 ## Offen (aufgeschlüsselt)
 
 ### OSHA-CEHD-Arm (Exposom Arbeitsumfeld)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06, Mountain 245) `tools/harvest/src/bin/osha_cehd_compiler.rs`
-  gebaut (518 Zeilen): `--inspect` liest das zip central directory (39 Member), Parser streamt nur
-  `healthsamples/sample_data_2019.csv`, quote-aware (`SUBSTANCE` kommahaltig), Datum
-  `YYYY-MON-DD`→Unix; Lauf gegen lokales Abbild (`/tmp/opencode/osha_healthsamples.zip`,
-  109 785 451 B): **6101/28788** Zeilen getragen, 18139 ND/BLK zensiert, 4548 Unit-absent
-  (X/Y/P/F/%…). `cargo build -p omegaflow-harvest --bin osha_cehd_compiler` grün. Quelle trägt
-  **keine Koordinaten**.
-- **Blockade:** keine — kein `url`/`format` ohne deckenden Consumer-Arm (Operator-Wort 2026-09-30);
-  ohne Position ist der Frame offen.
-- **Braucht:** Unit→SI-Tabelle (X/Y/P/F/%/N/BM), City→lon/lat-Geocoder, XML-Arm 1984–2013,
-  SOC↔SIC/NAICS-Crosswalk; danach Consumer-Arm + `phi/sources.φ`-Zeile.
+- **Lage:** (gemessen 2026-10-06, Mountain 245) Compiler `osha_cehd_compiler.rs` gebaut (zip `--inspect` +
+  quote-aware CSV `sample_data_2019.csv`). **Unit→SI-Tabelle gebaut:** M/mcg/m3→kg/m3, X→kg (µg),
+  Y→kg (mg), P→„1" (ppm Molenbruch), F→1/m3 (fibers/cc), %→„1" (Anteil); unbelegt→`None` (N, BM/S,
+  AAAAA, E). Ausgabe `osha_cehd_si_axis_value_text` mit SI-Einheit je Zeile. Lauf: **9930/28788**
+  getragen (6101 kg/m3, 2372 kg, 1445 „1", 12 1/m3), 18139 ND/BLK zensiert, 719 Unit-absent.
+  `cargo build` grün. Quelle trägt **keine Koordinaten** (City/State/Zip, kein lat/lon).
+- **Blockade:** keine — ohne Position (Geocoder) ist der Frame offen; kein `url`/`format` ohne
+  deckenden Consumer-Arm (Operator-Wort 2026-09-30).
+- **Braucht:** City/Zip→lon/lat-Geocoder (ZCTA o.ä. — Quelle messen/registrieren), SOC↔SIC/NAICS-Crosswalk
+  (BLS-Tabelle messen), XML-Arm 1984–2013; danach Consumer-Arm + `phi/sources.φ`-Zeile.
 
-### JAXA GPM Ku — Granule-Arm (GPM 1B.Ku)
+### JAXA GPM Ku — Granule-Download-Bound
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06, Mountain 245) `Hdf5File::read_range` (Achse-0-Bereich, nur
-  überdeckende Chunks inflaten) in `src/archivar/hdf5.rs`; `hdf5_reader --var` bounded
-  (`--chunk`/`--range`, Default erster Chunk) in `tools/utils/src/bin/hdf5_reader.rs`;
-  `jaxa_gpm_ku`-Konstanten + `echo_power_si` (`CodeMissingValue=-30000`→None) + `--granule`-Pfad
-  in `tools/harvest/src/bin/jaxa_gportal_compiler.rs`. `cargo build`/`cargo check`/`--tests` grün.
-  Der Baum trug den Chunk-Pfad (`read_chunk`/`chunk_index`) bereits — gebaut wurde der Achse-0-Bereich.
-- **Blockade:** der volle 26×f64-Arm braucht Position je Bin (`NS/Scan` + `ScanTime`) und Epoche je
-  Scan — nicht gemessen; keine lokale Granule (153,8 MB) zur Decode-Verifikation.
-- **Braucht:** Messung von `NS/Scan`/`ScanTime` (Positions-/Epochen-Slot) an einer Granule; danach
-  `format jaxa_gpm_ku` + `field` em + `extract.rs`-Registrierung + `phi/sources.φ`-Zeile.
-
-### Fink-Cutout — sky1-Wiederverwendung (Konfounder)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keine — Bau (autonom)
-- **Lage:** (gemessen 2026-10-06, Mountain 245) Rat (einstimmig) + GLM + Schwarm: Fink-Cutout =
-  **Quellen-Ursprung** (A), FARA = sozioökonomischer Index (B). Umgesetzt (Operator-Wort „go"):
-  Anker `at earth` → `at sun`; FARA-Block + Format-Arm + Compiler `usda_fara_compiler.rs` gestrichen;
-  `phi/declined_sources.φ:4879` trägt den LRAM-Namen; Gate-Fixture `dimensionless-force`
-  (Statistik ↔ Kraft) + Test in `commit_gate.rs`. `cargo check` 0/0.
-- **Blockade:** keine.
-- **Braucht:** messen, ob der `sky1`-Arm (FUGIN/IceCat-Präzedenz) den per-Pixel-`fink_cutout`-Record
-  trägt — dann Format `fink_cutout` auf `sky1` falten statt besonderem Arm (Rat-Konfounder 2).
+- **Lage:** (gemessen 2026-10-06, Mountain 245) Position je Scan = `NS/navigation/scLat`/`scLon`/`scAlt`
+  (f32, rank1 `[7932]`), je Ray `NS/Latitude`/`Longitude`; Epoche = `NS/ScanTime/*` (UTC)→TDB;
+  nscan-Achse 0 = Scan-Index 1:1. **Arm gebaut:** `src/archivar/jaxa_gpm_ku.rs` (MAGIC `GPMK`,
+  REC 26×8), `format jaxa_gpm_ku` + `field` em W + `extract.rs`/`mod.rs`-Arme + `phi/sources.φ`-Zeile +
+  Compiler `--granule`/`--bin`/`--ci-mode` (je Scan aggregiert, `-30000`→None, presence 0/1).
+  `cargo build` grün.
+- **Blockade:** Granule-Download 153,8 MB @ ~0,5 MB/s = **308 s** > `CATALOG_BOUND_S` (128 s) —
+  `fetch_file` (`-m 128`) bricht ab; kein Lauf gegen eine echte Granule verifiziert.
+- **Braucht:** `CATALOG_BOUND_S` anheben oder Range/Resume für große Granule; ein Lauf gegen eine echte
+  Granule zur Decode-Verifikation. CDN-Workflow → mycelium (geroutet).
 
 ### An mycelium
 
