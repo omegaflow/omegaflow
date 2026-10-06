@@ -9,4 +9,16 @@ Documentation, concepts, prose (docs/):
 Root prose and working data (AGENTS.md, phi/):
   Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International — see docs/LICENSE.
 
+Third-party data mirrored on the CDN (unmodified source data, hosted for reachability; the
+owners' licenses govern it, not this repository's license):
+
+  PhysioNet BIDSleep — "A Multi-Night Instantaneous Heart Rate and Accelerometry Dataset
+  with EEG Sleep Stage Labels", Tzu-An Song et al., DOI 10.13026/a0sy-7t69.
+  Open Data Commons Attribution License v1.0 (ODC-BY 1.0) — attribution required.
+  Source: https://physionet.org/content/bidsleep-dataset/1.0.0/
+
+  OpenNeuro ds005034 / ds007471 / ds007822 (DOIs 10.18112/openneuro.ds005034.v1.0.1,
+  10.18112/openneuro.ds007471.v1.0.0, 10.18112/openneuro.ds007822.v1.0.0) — CC0
+  (public-domain dedication; no attribution required).
+
 Required Notice: Copyright omegaflow (https://omegaflow.space)
