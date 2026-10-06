@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: 3b5a374b0d1a67287ae8b3b6245f4e51b18eee384f14cf453ba08b82eb13c0ef
+  sha256: f3dd6080c4a4289459bdac8a935081c0bb03a911662a699a35f28b8ec234ab3f
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)
@@ -94,7 +94,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   Workflow `te-bias-n.yml` um `POINT te-bias-n-conditional` ergänzt. **Offen:** Artefakt des
   dispatchten `te-bias-n 37460626270` lesen → Bias-Tabelle der konditional-eingebetteten
   Schätzung.
-  (4) 8 probe-Kanäle an den Draht + 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`).
+  (4) **gebaut (River 107):** `phi/pipeline/descriptors/vlies_matrix.te` — 15-Feld-Matrix
+  (`matrix vlies full`, `cond none`, `fdr bh 0.05 over matrix`, `expect cells 210`, `lags 0,1`,
+  ein Bin 86400 s, pro-Zelle-Auflösungspaar); CI-Job `matrix-vlies`
+  (`.github/workflows/field-te-query.yml`), dispatcht. **Rat 2026-10-06:** Knoten = Felder;
+  ERBQ-Event draußen (`form event-conditional`); pending an Mountain: Newell-Feld, Kp als
+  `field`, EEG-Feldname.
   (5) `ozzy` **auf** der Matrix (`auftrag-universelles-vlies.md` §Lieferung).
 
 ### em-Apertur — Kanal-Identität statt Kernel-Proxy (Rat 2026-10-05; zwei Hände)
@@ -340,6 +345,13 @@ Origin: river folge107 (Lizenz-Audit, dieser Atom).
   Körperdaten-Netlocs (`openneuro.org`/`physionet.org`/`ieeg.org`) verlangt eine `terms`-Zeile,
   nicht nur `origin` — damit ist „keine CDN-Manifestation ohne Lizenz" strukturell erzwungen.
 
+- **Vlies-Matrix — drei fehlende Register-Felder (Rat 2026-10-06).** Für
+  `phi/pipeline/descriptors/vlies_matrix.te` (15-Feld-Matrix, River 107) fehlen drei Knoten als
+  `field`-Zeile: **Newell dΦ/dt** (`bz_retro_probe.rs:431` rechnet es, keine Register-Zeile) ·
+  **Kp** `magnetosphere_kp_3h` (heute `last`, kein `field`) · **EEG** ds007822/ds007471
+  (`url`/`format` vorhanden, Feldname ungemessen). **Braucht:** je eine `field`-Zeile in
+  `phi/sources.φ`, dann als Knoten in die Matrix; parallel, nicht blockierend.
+
 ## LOCK
 
 - keine.
@@ -351,6 +363,8 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-06-river-folge107.md`
 - `docs/handover/archiv/handover-2026-10-06-river-folge106.md` (Move aus `docs/handover/`)
 - `NOTICE` (Dritt-Daten-Attribution: PhysioNet BIDSleep = ODC-BY 1.0, DOI, Quelle)
+- `phi/pipeline/descriptors/vlies_matrix.te` (15-Feld-Matrix, Rat 2026-10-06)
+- `.github/workflows/field-te-query.yml` (Job `matrix-vlies`)
 
 Operator-Gesprächsschnitt: `state/operator-gespraeche/2026-10-06-river.md` (gitignored, nicht
 committet).
@@ -360,8 +374,10 @@ ds005034/ds007471/ds007822 = CC0; PhysioNet BIDSleep = ODC-BY 1.0); iEEG bleibt 
 `NOTICE` trägt die ODC-BY-Attribution. Rat 2026-10-06 (repo-weite Lizenzen): Wahrheit = `terms` je
 Quelle (Mountain), sources-`LICENSE` **generiert** + CI-Drift-Tor (Mycelium), Census = River;
 Census gestartet (`state/river/license-census.tsv`, 169 Netlocs, Batch 1 = 7 gemessen). Getragen:
-`## An mountain` (`terms`+Gate), `## An mycelium` (Generator+`LICENSE`). `omega_sh sha` der
-Übergabe; `git_safety`; `git status` vor dem Commit; fremde uncommittete Hunks
-(`src/archivar/geo.rs`, `tools/harvest/...`) nicht berührt.
+`## An mountain` (`terms`+Gate), `## An mycelium` (Generator+`LICENSE`). **Stein (River 107):**
+`vlies_matrix.te` (15 Felder, `matrix full`, `fdr bh 0.05 over matrix`, `expect cells 210`,
+`lags 0,1`, Bin 86400 s, pro-Zelle-Auflösungspaar; Rat 2026-10-06: Knoten = Felder, ERBQ draußen);
+CI-Job `matrix-vlies` dispatcht. `omega_sh sha` der Übergabe; `git_safety`; `git status` vor dem
+Commit; fremde uncommittete Hunks (`src/archivar/geo.rs`, `tools/harvest/...`) nicht berührt.
 
-## Burn: open 0.0000 · close 0.1267
+## Burn: open 0.0000 · close 0.2124 · cap 0.25 · Grund: Lizenz-Audit, repo-weiter Census mit Schwarm-Welle, Vlies-Stein und ihre Rat-Verdikte in einem Atom
