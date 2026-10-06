@@ -1746,7 +1746,7 @@ pub fn main_flow() {
                 });
                 continue;
             }
-            if archive.sources[i].format == "netcdf" {
+            if archive.sources[i].format == "netcdf" || archive.sources[i].format == "mtg_li" {
                 let Some((x, y, z)) = raw_presence_gate(
                     i,
                     &archive.sources,
@@ -1782,6 +1782,7 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
+                let fmt_c = src_clone.format.clone();
                 let lsk_c = lsk.clone();
                 let body_radius = archive
                     .body_ephemerides
@@ -1797,7 +1798,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url) {
                             Some(b) => b,
                             None => {
-                                eprintln!("netcdf {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt_c, url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -1813,7 +1814,7 @@ pub fn main_flow() {
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("netcdf {}: write void — retry in ttl/Φ", url);
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt_c, url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1831,7 +1832,7 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("netcdf {}: read void — retry in ttl/Φ", url);
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt_c, url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -1846,16 +1847,28 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let channels = build_netcdf_channels(
-                        &src_clone,
-                        &bytes,
-                        &lsk_c,
-                        now,
-                        &presences,
-                        body_radius,
-                        &eph_arc,
-                    );
-                    eprintln!("\r\x1b[Knetcdf {}: {} samples", name, channels.len());
+                    let channels = if src_clone.format == "mtg_li" {
+                        mtg_li::build_channels(
+                            &src_clone,
+                            &bytes,
+                            &lsk_c,
+                            now,
+                            &presences,
+                            body_radius,
+                            &eph_arc,
+                        )
+                    } else {
+                        build_netcdf_channels(
+                            &src_clone,
+                            &bytes,
+                            &lsk_c,
+                            now,
+                            &presences,
+                            body_radius,
+                            &eph_arc,
+                        )
+                    };
+                    eprintln!("\r\x1b[K{} {}: {} samples", fmt_c, name, channels.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels,
@@ -3963,6 +3976,7 @@ pub fn main_flow() {
                 let src = archive.sources[i].clone();
                 let fmt = archive.sources[i].format.clone();
                 let held = archive.volumes.clone();
+                let vol_frame_body = Some(frame_body_name(&src.frame)).filter(|s| !s.is_empty());
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
@@ -4005,7 +4019,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let Some(volume) = crate::archivar::volume::Volume::read_bin(&bytes) else {
+                    let Some(mut volume) = crate::archivar::volume::Volume::read_bin(&bytes) else {
                         eprintln!(
                             "{} {}: volume-bin reads void — {} B carry no grid contract",
                             fmt,
@@ -4015,6 +4029,7 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(false));
                         return;
                     };
+                    volume.frame_body = vol_frame_body;
                     if let Ok(mut held) = held.lock() {
                         held.retain(|(n, _)| n != &name);
                         held.push((name, volume));

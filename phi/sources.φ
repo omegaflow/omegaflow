@@ -423,6 +423,14 @@ field temp atmosphere_pirep_temp_c gaussian-inverse-square thermal C 600.0 0.0 0
 field wspd atmosphere_pirep_wind_speed_kt gaussian-inverse-square advective kt 600.0 0.0 0.0
 field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective deg 600.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/api.eumetsat.int/W_XX-EUMETSAT-Darmstadt,IMG+SAT,MTI1+LI-2-LFL--FD--CHK-BODY--ARC-NC4E_C_EUMT_20261006080024_L2PF_OPE_20261006075009_20261006080009_N__O_0048_0001.nc
+format mtg_li
+origin https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691
+compiler tools/harvest/src/bin/eumetsat_mtg_li_fetch.rs
+at earth
+ttl 600
+field radiance mtg_li_flash_radiance_mw_m2_sr inverse-square em mW/m2/sr 600 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/f107_cm_flux.json
 ttl 600
 at sun
@@ -3572,6 +3580,13 @@ ttl 86400
 field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square diffusion m/s 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/www.ieeg.org/09_14_limbic_seizure_374.bin
+format openneuro_eeg
+origin https://www.ieeg.org/services
+compiler tools/harvest/src/bin/ieeg_compiler.rs
+at earth
+ttl 86400
 
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
 format reference
@@ -9238,6 +9253,13 @@ ttl 604800
 field eop_iers_ut1_utc_s eop_iers_ut1_utc_s inverse-square gravity s 86400 0.0 0.0
 field eop_iers_polar_motion_x_arcsec eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0 0.0
 field eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_annex.jsonl
+format clpds
+origin https://clpds.bao.ac.cn/moon-admin/client/science/dataInfoList
+compiler tools/harvest/src/bin/clpds_compiler.rs
+at moon
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_catalogue.json
 format clpds
@@ -17040,8 +17062,19 @@ sha256 69e20d261157fc2a74c48de8fec6b774a948d33930ca782c19dc261ed228fd54
 at mars
 ttl 604800
 field RADIOMETER1 pds3_krfm_radiometer1 inverse-square em count 604800 0.0 0.0
+field RADIOMETER2 pds3_krfm_radiometer2 inverse-square em count 604800 0.0 0.0
+field RADIOMETER3 pds3_krfm_radiometer3 inverse-square em count 604800 0.0 0.0
 field RADIOMETER4 pds3_krfm_radiometer4 inverse-square em count 604800 0.0 0.0
+field RADIOMETER5 pds3_krfm_radiometer5 inverse-square em count 604800 0.0 0.0
 field PHOTOMETER1 pds3_krfm_photometer1 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER2 pds3_krfm_photometer2 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER3 pds3_krfm_photometer3 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER4 pds3_krfm_photometer4 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER5 pds3_krfm_photometer5 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER6 pds3_krfm_photometer6 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER7 pds3_krfm_photometer7 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER8 pds3_krfm_photometer8 inverse-square em count 604800 0.0 0.0
+field PHOTOMETER9 pds3_krfm_photometer9 inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pdssbn.astro.umd.edu/dart_tnf.bin
 format dart_tnf
@@ -17276,9 +17309,10 @@ field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-
 url https://github.com/omegaflow/sources/releases/download/sdc.emiratesmarsmission.ae/emm_exi_l2a.tar
 format emm_exi_l2a
 origin https://api.emiratedatacenter.com/v1/science/files
+compiler tools/harvest/src/bin/emm_sdc_compiler.rs
 at mars
 ttl 604800
-field emm_exi_radiance emm_exi_radiance inverse-square em count 604800 0.0 0.0 aperture:none
+field emm_exi_count emm_exi_count inverse-square em count 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 format fmi_gic
@@ -17809,7 +17843,7 @@ cmap .
 ra ra
 dec dec
 z z
-field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0 aperture:flux
+field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/twomrs.bin
 format twomrs

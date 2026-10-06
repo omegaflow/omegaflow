@@ -236,6 +236,7 @@ pub enum Extract {
         depth_key: String,
         depth_scale: f64,
         name: String,
+        frame_body: Option<String>,
     },
     Rows {
         last_line: bool,

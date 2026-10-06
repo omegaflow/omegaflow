@@ -591,7 +591,7 @@ pub fn build_netcdf4_volume(
             return None;
         }
     };
-    let Some((value_key, lat_key, lon_key, depth_key, depth_scale, name)) =
+    let Some((value_key, lat_key, lon_key, depth_key, depth_scale, name, frame_body)) =
         src.extracts.iter().find_map(|e| match e {
             Extract::Volume {
                 value_key,
@@ -600,6 +600,7 @@ pub fn build_netcdf4_volume(
                 depth_key,
                 depth_scale,
                 name,
+                frame_body,
             } => Some((
                 value_key.clone(),
                 lat_key.clone(),
@@ -607,6 +608,7 @@ pub fn build_netcdf4_volume(
                 depth_key.clone(),
                 *depth_scale,
                 name.clone(),
+                frame_body.clone(),
             )),
             _ => None,
         })
@@ -779,6 +781,7 @@ pub fn build_netcdf4_volume(
             axes,
             data,
             mask,
+            frame_body,
         },
     ))
 }

@@ -513,6 +513,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "gk2a_ami" => gk2a_ami::component_name(comp),
         "hips_png" => hips::component_name(comp),
         "goes_abi" => goes_abi::component_name(comp),
+        "mtg_li" => mtg_li::component_name(comp),
         "emm_exi_l2a" => emm_exi::component_name(comp),
         "atdf" => atdf::component_name(comp),
         "ulysses_atdf" => atdf::uly_component_name(comp),

@@ -350,6 +350,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     depth_key: String::new(),
                     depth_scale: 1.0,
                     name: parts[1].to_string(),
+                    frame_body: cur_frame
+                        .as_ref()
+                        .map(frame_body_name)
+                        .filter(|s| !s.is_empty()),
                 });
             }
             "rows" => {
@@ -1804,6 +1808,26 @@ mod tests {
     const URL_A: &str = "https://cdn.example/x/odyssey_odf_t700000000_800000000.bin";
     const URL_B: &str = "https://cdn.example/x/odyssey_odf_t800000000_900000000.bin";
     const URL_C: &str = "https://cdn.example/x/odyssey_odf_t900000000_1000000000.bin";
+
+    #[test]
+    fn volume_observer_declared_and_refused_when_absent() {
+        let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n";
+        let with = parse_sources(declared);
+        let body = with[0].extracts.iter().find_map(|e| match e {
+            Extract::Volume { frame_body, .. } => Some(frame_body.clone()),
+            _ => None,
+        });
+        assert_eq!(body, Some(Some("earth".to_string())));
+
+        let absent =
+            "url https://cdn.example/x/x.volume.bin\nformat volume\nttl 604800\nvolume v v\n";
+        let without = parse_sources(absent);
+        let body2 = without[0].extracts.iter().find_map(|e| match e {
+            Extract::Volume { frame_body, .. } => Some(frame_body.clone()),
+            _ => None,
+        });
+        assert_eq!(body2, Some(None), "no `at` → absent, never a default body");
+    }
 
     #[test]
     fn shard_overlap_is_refused() {
