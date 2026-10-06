@@ -3,7 +3,7 @@
   session: River-Folge 105
   class: handover
   date: 2026-10-06
-  sha256: 6c731598ebf2f0581b615c93bed08d3fbf466650bd4ddbb23063adc67964da6d
+  sha256: 41f78a91ccd6e53050b71a02a8dde349dcaa7df6a5b443e108fb7caeb2873241
   status: live
 -->
 # Handover — River-Folge 105 (2026-10-06)
@@ -181,22 +181,30 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) `flyby_path2_fill`-Lauf (CI) lesen + Addendum-Zellen fortschreiben;
   (2) OMNI2/kp/JUICE-Trigger feuern lassen; (3) Δ/σ_recon post-flyby.
 
-### Voices-Chrome — eigene Instanz ohne Logins
-- **Status:** operator-gebunden (Wort) | **Bindung:** eigen (Config) + operator (Chrome-Start)
-- **Trigger:** Operator-Wort für Config + Chrome-Start.
-- **Lage:** (gemessen 2026-10-06) Die Browser-Brücke der Voices ist das `chrome-devtools`-MCP mit
-  `--autoConnect` (`opencode.json:360`) → hängt am **Operator-Chrome mit Profil** (Logins/Cookies).
-  `archive_search --playwright` trägt schon ein eigenes persistentes Profil
-  (`~/.cache/omegaflow/playwright-profile`, `playwright_fetch.cjs:64`). Vorarbeit: river-35
-  `:179-180` — Fallback `--browserUrl` + separater Chrome (`--user-data-dir`,
-  `--remote-debugging-port`), `<PORT>` = pending.
-- **Blockade:** Config-Änderung (global + repo `opencode.json`, opencode-Neustart) + separater
-  Chrome-Start; Cloudflare-/gated-Seiten brauchen weiter den Operator-Profil-Chrome.
-- **Braucht:** eigenen Chrome (`--user-data-dir=~/.cache/omegaflow/voices-chrome
-  --remote-debugging-port=<PORT> --no-first-run`), ein voices-`chrome-devtools`-MCP via
-  `--browserUrl`; die Voice-Profile nur auf dieses Target (Operator-Chrome via `browser_targets`
-  gesperrt); lokale-Host-/LAN-Sperre für den Voices-Chrome (SSRF, wie `archive_search_public`).
-  Operator-Wort + Neustart.
+### Voices-Chrome — eigene login-freie CDP-Instanz (Config gebaut)
+- **Status:** eigen (Config gebaut; Verifikation nach Neustart) | **Bindung:** eigen
+- **Trigger:** opencode-Neustart + Voice-Test.
+- **Lage:** (gemessen 2026-10-06, River 105)
+  - **Rat (2026-10-06):** `browser_*` (Operator-Chrome-Bridge) für Voices sperren; die saubere
+    CDP-Instanz gewinnt; `--browserUrl`-Signatur ungemessen → Dispatch 0.
+  - **Dispatch 0 (gemessen):** `chrome-devtools-mcp@1.9.0 --help` zeigt: das MCP **startet
+    selbst** einen Chrome — `--headless`, `--isolated` (temporäres Profil, autogereinigt →
+    dauerhaft keine Logins), `--userDataDir`, `--executablePath`, `--allowedUrlPattern`
+    (Chrome 149+), `--blockedUrlPattern`, `--proxyServer`. System-Chrome **154.0.8037.97**,
+    `/usr/bin/google-chrome` vorhanden.
+  - **Gebaut:** `opencode.json`-MCP `chrome-devtools-voices` =
+    `npx chrome-devtools-mcp@1.9.0 --headless --isolated --executablePath /usr/bin/google-chrome
+    --allowedUrlPattern "https://*" --no-usage-statistics --no-performance-crux`; in **allen 12**
+    Voice-Profilen `"browser_*": "deny"`, `"chrome-devtools_*": "deny"` (Operator-Chrome),
+    `"chrome-devtools-voices_*": "allow"`. Der Rat-Plan (Launcher + PAC + `--browserUrl`) ist
+    damit **abgelöst** — das MCP kann es selbst (gemessen).
+  - **Grenzen:** nur `https://*` (default-deny) → `http`-only-Seiten und Cloudflare/gated bleiben
+    Operator-Route; `--isolated` → nichts persistiert. Restrisiko: der CDP-gebundene
+    Chrome-Prozess und DNS-Rebinding sind browser-seitig nicht gelöst.
+- **Blockade:** opencode-Neustart nötig (Config nicht hot-reloaded); `opencode.json` trägt fremde
+  uncommittete Voice-Definitionen — mit-committet, benannt.
+- **Braucht:** Neustart; dann Voice-Test: öffentliche https-Seite via `chrome-devtools-voices_*`
+  lädt, `browser_open`/`chrome-devtools_*` = denied, `http://127.0.0.1:1618` blockiert.
 
 ## Rat + Schwarm 2026-10-06 — Stemmen (Membran-Hänger / Paper-Riss / Fenster-Kante)
 
@@ -318,4 +326,4 @@ docs/handover/archiv/handover-2026-10-06-river-folge104.md` = 0 absent, 0 stale-
 `git_safety --snapshot` s. u. HEAD `b71658f` == `origin/main`; nur fremder
 uncommitteter Hunk `opencode.json` im Baum (nicht berührt).
 
-## Burn: open 0.0000 · close 0.2844 · cap 0.35 Grund: zwei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident- und Vollständigkeits-DB-Messung überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.2844; Runde total 0.5318 → 1.2116; gemessen 2026-10-06
+## Burn: open 0.0000 · close 0.3398 · cap 0.4 Grund: drei Rat-Sitzungen + Schwarm-Fünf-Stimmen-Runde + progressive-Loading-Atom (A+B) + Incident-/Vollständigkeits-DB-Messung + Voices-Chrome-Config überschreiten den Default-Cap 0.15 — Session-Zeile „River-Linie starten und Übergabe abarbeiten" $0.3398; Runde total 0.5318 → 1.3038; gemessen 2026-10-06
