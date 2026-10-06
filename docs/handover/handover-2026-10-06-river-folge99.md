@@ -3,7 +3,7 @@
   session: River-Folge 99
   class: handover
   date: 2026-10-06
-  sha256: d735632a5421afa643ee02b1f31f8d8565398a582908be2a7ed9f6dda3c51111
+  sha256: ad9aea85b6cbe4a49d0b455a29f0648e5dacd92b16dcbc747b74f021c16eca59
   status: live
 -->
 # Handover — River-Folge 99 (2026-10-06)
@@ -105,8 +105,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Status:** eigen | **Bindung:** eigen (cross-line: Mountain, Sensory)
 - **Trigger:** keiner (arbeitbar bis zur Rats-Kante; `omega.rs:878` ist eine Architektur-Frage → Rat).
 - **Lage:** (gemessen 2026-10-06) Verdikt `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md`.
-  **Erledigt:** `src/archivar/relay.rs:11` `RELAY_BIND_DEFAULT` `0.0.0.0` → `127.0.0.1`
-  (Exposition geschlossen). Offen: (a) `static/membrane.html:43`
+  Offen: (a) `static/membrane.html:43`
   `const BODIES = ["earth","moon","sun"]` → Build-Time-Manifest aus der Hüllen-Pipeline;
   (b) `src/mathematikerin/omega.rs:878` Presence-Volume hart „earth"-geodätisch →
   SSB-/deklarativer Rahmen.
