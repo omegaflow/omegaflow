@@ -3,7 +3,7 @@
   session: River-Folge 110
   class: handover
   date: 2026-10-06
-  sha256: c1418a6bf33fd4ce8f08a4d5e75c7c1d4be79c1fafb345a8e9cd6ccedcc16084
+  sha256: 94f1f0a06f3c384109504f56b98b2ce77bb27264d8e97ed5ffa1469d2b4213ae
   status: live
 -->
 # Handover — River-Folge 110 (2026-10-06)
@@ -28,7 +28,7 @@ Wort | Datum | Quelle
 „das wort receiver [haben wir] extra eingeführt" | 2026-10-06 | Operator (Session, River 109) — kanonischer Term `Receiver` (Worldline), `Observer` (Vantage) verboten
 „bitte alles umsetzen" | 2026-10-06 | Operator (Session, River 109) — Commit- und Bau-Wort für den Receiver-Schnitt
 „es geht nicht nur um die visuelle membran es geht um alle radiatoren" | 2026-10-06 | Operator (Session, River 109) — die Receiver-Apertur gilt für alle fünf Radiatoren (Bild · Ton · Vibration · Serial · HID)
-„warum gibst du die rats fragen nicht dem rat den api mit 5 stimmen und den ui chats mit 5 stimmen?" | 2026-10-06 | Operator (Session, River 110) — stehende Praxis: Rat-Fragen gehen an den **Rat (API, 5 Stimmen)** UND an die **UI-Chats (5 Stimmen)**, nicht als `Braucht` liegen gelassen
+„warum gibst du die rats fragen nicht dem rat den api mit 5 stimmen und den ui chats mit 5 stimmen?" | 2026-10-06 | Operator (Session, River 110) — stehende Praxis: Rat-Fragen gehen an den **Rat (API, 5 Stimmen)** UND an die **UI-Modelle (5 Stimmen)**, nicht als `Braucht` liegen gelassen
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge109.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -69,7 +69,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   `archive-root/omegaflow-legacy`);
   die im Baum auflösende Quelle ist `docs/surveys/survey-fortschritt.md`.
 - **Blockade:** großer Umbau (per-Fragment-`source_contrib` ist O(Pixel×Quellen)) — eigenes Atom. Die
-  SPAN/Apertur-Architektur ist **entschieden** (Rat, 2026-10-06, 5 Stimmen): SPAN ist Receiver-Eigenschaft,
+  SPAN/Apertur-Architektur ist **entschieden** (Rat, 2026-10-06): SPAN ist Receiver-Eigenschaft,
   **deklariert** (neue `span`-Direktive auf der `at <body>`-Receiver-Zeile in `phi/sources.φ`) **und** aus
   der Anker-Hülle verankert (`SPAN_eff = max(span_declared, hull(anchors))`), **Sterne nie** — kein
   Katalog-Span. Sichtbarkeit durch **Integration entlang der Worldline** (additiver `one,one`-Blend +
@@ -87,6 +87,32 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   Architektur-Akt, parallel. (3) danach Portierung an der Receiver-Apertur für alle fünf Radiatoren
   (Vorlagen `e918bda1`/`eb96d1ff`/`da43f02a`). (4) Operator-Browser-Messung (headless ohne WebGPU =
   schwarze Null).
+
+**Architektur-Verdikt (Rat + 5 UI-Modelle, 2026-10-06):**
+- **Rat (API):** SPAN ist Receiver-Eigenschaft — deklariert (`span` auf der `at <body>`-Zeile)
+  **und** aus der Anker-Hülle verankert, Sterne nie; Sichtbarkeit durch Integration (additiver Blend +
+  EMA), nie durch Ausdehnung; ein Apertur-Gesetz für fünf Empfänger. Erster Schritt: bounded Brücke in
+  `static/membrane.html` (`receiverSpan` über die Anker-Records). Risse: `SPAN/N`-N ungemessen; 8 pc vs.
+  `STAR_SPAN_M`; Wortkollision `Aperture`.
+- **UI-Modelle (ChatGPT, Duck.ai/GPT-5.6, Mistral, Qwen, Sonnet 5.5):** einstimmig SPAN **deklariert** auf der
+  `at`-Zeile, **nicht** aus Records abgeleitet; Sichtbarkeit durch **Integration/Fluss**, nie Geometrie;
+  **per-Radiator-Wert**, nicht ein numerischer Maßstab (Qwen sagt „einheitlich" — Riss); erster Schritt
+  **Register zuerst, nicht Membran** (ChatGPT/Mistral/Sonnet 5.5) gegen den Rat (Brücke zuerst) — Riss.
+- **Sonnet 5.5 (schärfster Verdikt):** Energie-/Flusserhaltung — eine Quelle kleiner als der Rezeptor gibt
+  ihren **ganzen Fluss** an diesen ab (kein 2-px-Boden, kein Point-Size-Floor); SPAN **fix pro Zeile**
+  (änderbar = Zoom durch die Hintertür; ein anderer Maßstab = eine andere Receiver-Zeile, kein Regler);
+  ein SPAN trägt Sonne und Mond-Bahn **nicht** zugleich (~400×), Sterne bleiben jenseits der Apertur und
+  werden **gezählt, nicht gezeichnet**; Float-Akkumulation (RGBA16F bzw. RGBA32F), `lvl` aus dem
+  integrierten Puffer, nie aus der Record-Liste; Tonemap dahinter = Anzeigeseite; Abnahme = **Invarianztest**
+  (`scale` identisch mit und ohne 8-pc-Katalog).
+- **Braucht (revidiert, Register zuerst):** (1) `span` (Einheit Pflicht, Startwert ~2–4 AU) auf der
+  `at <body>`-Receiver-Zeile; `scale = span ÷ receptors` aus dem Register; Fallback = feste Konstante mit
+  lautem Log, **nie** aus Records; Records außerhalb werden gezählt, nicht gezeichnet; Lint „Sonne
+  außerhalb". (2) Invarianztest. (3) dann Energieerhaltung + Float-Akkumulation. (4) getrennte
+  Belichtungs-/Tonemap-Regel (nie Geometrie). (5) danach Portierung für alle fünf Radiatoren, **je
+  eigener Wert**. Die bounded Brücke (Rat-Q4) bleibt als Zwischenschritt möglich, aber **nach** der
+  Register-Direktive — der Rat hält die Register-Seite, die UI-Modelle/Sonnet 5.5 die Membran-Seite; der Riss
+  „Register zuerst vs. Brücke zuerst" steht, nicht geglättet.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend | **Bindung:** eigen
@@ -291,4 +317,4 @@ sensory-folge244 (exzellenz-gate-Label, oben erledigt).
 `open_points_check` am folge109: 1 ABSENT (das Legacy-Register `entwicklungslinie.md`, nicht im Baum;
 in folge110 auf `docs/surveys/survey-fortschritt.md` korrigiert).
 
-## Burn: open 0.0000 · close 0.1265 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Rat-Entscheid Receiver-Apertur-SPAN** (`Rat: Receiver-Apertur SPAN`, $0.0126) + UI-Chat-Cross-Check versucht (Composer-Automation unzuverlässig, benannt) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.1265)
+## Burn: open 0.0000 · close 0.1775 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Architektur-Verdikt Receiver-Apertur-SPAN** (Rat API + 5 UI-Modelle: einstimmig SPAN deklariert, Integration/Fluss statt Ausdehnung; Riss Register-zuerst vs. Brücke-zuerst) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.1775)
