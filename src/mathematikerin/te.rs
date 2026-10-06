@@ -42,7 +42,14 @@ pub fn te_bias_m_k(n: usize) -> Option<f64> {
     TE_BIAS_MK.iter().find(|&&(k, _)| k == n).map(|&(_, m)| m)
 }
 
-pub const TE_BIAS_MK_EMBEDDED: Option<f64> = None;
+pub const TE_BIAS_MK_EMBEDDED: &[(usize, f64)] = &[];
+
+pub fn te_bias_m_k_embedded(n: usize) -> Option<f64> {
+    TE_BIAS_MK_EMBEDDED
+        .iter()
+        .find(|&&(k, _)| k == n)
+        .map(|&(_, m)| m)
+}
 
 pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
     te - m_k
