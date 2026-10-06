@@ -56,8 +56,15 @@ const statusEl = document.getElementById("status");
 const state = {
   px: 0, py: 0, pz: 0,
   vx: 0, vy: 0, vz: 0,
-  scale: 0.0,          // m per receptor texel; 0 until a span has arrived
-  span_m: 0.0,         // the received bounding span; the scale follows it
+  // Two apertures, two natures: the body anchors carry their measured finite
+  // extent (the sun's disc is the operator's first view), the star catalog
+  // carries its own derived reach. Each scale follows its own arrival — a
+  // single global span would max a finite body against an infinite class and
+  // fabricate a number that belongs to neither (Rat 2026-10-06, option b).
+  scale: 0.0,          // m per receptor texel for the body anchors; 0 until an anchor has arrived
+  scale_star: 0.0,     // m per receptor texel for the star catalog; its own arrival
+  span_anchor: 0.0,    // the framed anchor's distance + extent (the sun); the anchor scale follows it
+  span_star: 0.0,      // the stars' received bounding span; the star scale follows it
   receptors: 1,        // the receptor raster's minor axis (texels)
   lastCount: -1,
   lvl: 1.0,
@@ -208,7 +215,9 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @loca
     let extent = props[id * 4].x;
     let w = vp.surface.x;
     let h = vp.surface.y;
-    let scale = vp.surface.w;
+    // The body anchors (finite extent) use the anchor aperture; the star class
+    // (wire extent 0) uses its own reach. vp.right.w carries scale_star.
+    let scale = select(vp.right.w, vp.surface.w, extent > 0.0);
     let x = dot(d, vp.right.xyz);
     let y = dot(d, vp.up.xyz);
     var clip = vec2f(x / (w * scale * 0.5), y / (h * scale * 0.5));
@@ -344,7 +353,7 @@ function render(record) {
   vpData[1] = h;
   vpData[2] = record.count;
   vpData[3] = state.scale;
-  vpData[4] = 1; vpData[5] = 0; vpData[6] = 0; vpData[7] = 0;
+  vpData[4] = 1; vpData[5] = 0; vpData[6] = 0; vpData[7] = state.scale_star;
   vpData[8] = 0; vpData[9] = 1; vpData[10] = 0; vpData[11] = 0;
   vpData[12] = state.lvl;
   vpData[13] = 0;
@@ -386,11 +395,14 @@ function resize() {
   const dpr = window.devicePixelRatio || 1;
   canvas.width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
   canvas.height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
-  // The receptor raster's minor axis fits the received span; the scale is the
+  // Each aperture's minor axis fits its own received span; the scale is the
   // reception's, not a viewport constant.
   state.receptors = Math.min(canvas.width, canvas.height);
-  if (state.span_m > 0.0) {
-    state.scale = state.span_m / state.receptors;
+  if (state.span_anchor > 0.0) {
+    state.scale = (2.0 * state.span_anchor) / state.receptors;
+  }
+  if (state.span_star > 0.0) {
+    state.scale_star = state.span_star / state.receptors;
   }
 }
 window.addEventListener("resize", resize);
@@ -406,10 +418,12 @@ window.addEventListener("keydown", (e) => {
   }
   if (e.key === "=" || e.key === "+") {
     state.scale *= 0.5;
+    state.scale_star *= 0.5;
     return;
   }
   if (e.key === "-" || e.key === "_") {
     state.scale *= 2.0;
+    state.scale_star *= 2.0;
     return;
   }
   state.held.add(e.key);
@@ -420,7 +434,9 @@ window.addEventListener("keyup", (e) => {
 });
 
 window.addEventListener("wheel", (e) => {
-  state.scale *= Math.pow(2, e.deltaY * 0.001);
+  const f = Math.pow(2, e.deltaY * 0.001);
+  state.scale *= f;
+  state.scale_star *= f;
 });
 
 function integrate(dt) {
@@ -450,23 +466,41 @@ function frame() {
   state.t = Date.now() / 1000 - J2000_UNIX_S;
   const flat = lookup.query(state.px, state.py, state.pz, state.t, 0.0, 0.0, 0.0);
   const record = parseFlat(flat);
-  // The received span defines the image: when the arrived set changes, the
-  // receiver's scale follows it. Before any arrival the span is 0 — black.
+  // Two apertures, two natures (Rat + 12 channels, 2026-10-06, option b). The
+  // body anchors carry a finite extent; the largest (the sun) frames the
+  // operator's first view. The star class carries its own derived reach. A
+  // single global max would set a finite body against the infinite star class
+  // and erase the sun (the start view read black). The discriminator is the
+  // wire's extent (anchors finite, stars' wire_extent 0.0); when a second
+  // finite class (planets) or a star radius ever arrives, this becomes a
+  // declared aperture bit on the record — a wire/contract act, not a sniff.
   if (record.count !== state.lastCount) {
     state.lastCount = record.count;
-    let maxR2 = 0.0;
+    let anchorExtent = 0.0;
+    let anchorSpan = 0.0;
+    let starR2 = 0.0;
     for (let j = 0; j < record.count; j++) {
       const x = record.field[j * 12] - state.px;
       const y = record.field[j * 12 + 1] - state.py;
       const z = record.field[j * 12 + 2] - state.pz;
       const r2 = x * x + y * y + z * z;
-      if (r2 > maxR2) {
-        maxR2 = r2;
+      const extent = record.meta[j * 16];
+      if (extent > 0.0) {
+        if (extent > anchorExtent) {
+          anchorExtent = extent;
+          anchorSpan = Math.sqrt(r2) + extent;
+        }
+      } else if (r2 > starR2) {
+        starR2 = r2;
       }
     }
-    if (maxR2 > 0.0) {
-      state.span_m = Math.sqrt(maxR2);
-      state.scale = state.span_m / state.receptors;
+    if (anchorSpan > 0.0) {
+      state.span_anchor = anchorSpan;
+      state.scale = (2.0 * state.span_anchor) / state.receptors;
+    }
+    if (starR2 > 0.0) {
+      state.span_star = Math.sqrt(starR2);
+      state.scale_star = state.span_star / state.receptors;
     }
   }
   updateLvl(record);
