@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; OSHA-CEHD-CDN-Workflow gebaut, soho-Write-Fix, Holdings-Korrektur, adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-07
-  sha256: 0e6fb829d9d377c8dc88850a2e8cda0bc7457f74ed7a3214a15a4d42237cbe5a
+  sha256: 1448eb31cc793905c21c52a9354ba74b214caae8edc5068488fbf72315564d07
   status: live
 -->
 # Handover — Mycelium-Folge 247 (2026-10-07)
@@ -72,12 +72,12 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge246.md` (
 - **Blockade:** Runner-Stau (`ghsl`).
 - **Braucht:** `ci_manage status` nach dem Push.
 
-### Daten-Holdings — `opencode-tmp`-Dump korrigierte Messung
-- **Status:** eigen
+### Daten-Holdings — `opencode-tmp`-Dump gemessen (Inventur)
+- **Status:** wartend
 - **Trigger:** Operator-Wort je Bestand → Move/Delete
-- **Lage:** (gemessen 2026-10-07, Mycelium-247) `~/archive/knowledge/data/opencode-tmp-2026-09-01/` = **2,9 G / 370 Dateien** (nicht 13 G / 11 603 — Futures Messung ist überholt). Dominant: `provenienz/` 2,3 G, davon allein `wal_strings.txt` **2,43 G** (WAL-Strings-Dump, keine Register-Zeile, kein CDN-Bedarf); dann `kollab_mseed/` 366 M (12 JSON + `mseed_point.json`), `archeo_check/` 72 M, `glakes2015/` 8,1 M, `basu/` 536 K. **Kein** Top-Dir trägt eine `phi/sources.φ`-Zeile (gemessen `sgrep`).
-- **Blockade:** Move/Delete der Bestände ist Operator-Wort (Operator-Wort 2026-10-06 „4 messen, dann").
-- **Braucht:** Operator-Wort je Bestand (move/delete). Träger `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md`.
+- **Lage:** (gemessen 2026-10-07, Mycelium-247) `~/archive/knowledge/data/opencode-tmp-2026-09-01/` = **2,9 G / 370 Dateien** (Futures 13 G / 11 603 überholt). Vollständige Inventur `state/mycelium/holdings-opencode-tmp-2026-10-07.md`. Dominant `provenienz/wal_strings.txt` **2,43 G** = `strings`-Extrakt der **lebenden** opencode-DB (`~/.local/share/opencode/opencode.db` 362 M + `-wal` 259 M vorhanden) — Ableitung, kein Dataset, kein CDN. `nvss_dl.json` 104 M byte-identisch zu `nvss.json` (`cmp`); kanonisch `data/ssd.jpl.nasa.gov-nvss/nvss.json` (12 M, registriert `phi/sources.φ:17989`). Unregistriert und zu halten: `kollab_mseed` 366 M, `archeo_check` 72 M (60+ `sources.φ`-Recovery-Snapshots), `glakes2015` 8,1 M, `basu` 536 K, `pioneer-preserve` 312 K.
+- **Blockade:** Lösch-/Move-Akt je Bestand ist Operator-Wort (Operator-Wort 2026-10-06 „4 messen, dann").
+- **Braucht:** Operator-Wort: sofort löschbar ~2,5 G (`provenienz/wal_strings.txt`, `nvss_dl.json`, `alt/`); der Rest (~0,6 G) je Bestand entscheiden. Detail `state/mycelium/holdings-opencode-tmp-2026-10-07.md`.
 
 ### Exposom-Quellenmatrix — Matrix-Lauf-Workflow
 - **Status:** blockiert
@@ -193,7 +193,7 @@ Origin: mycelium-folge247.
 
 Origin: mycelium-folge247.
 
-- **Daten-Holdings — korrigierte Messung (Operator-Frage, neue Lage):** `~/archive/knowledge/data/opencode-tmp-2026-09-01/` = **2,9 G / 370 Dateien** (Futures 13 G / 11 603 ist überholt). Dominant `provenienz/wal_strings.txt` 2,43 G (WAL-Strings-Dump, keine Register-Zeile); dann `kollab_mseed/` 366 M, `archeo_check/` 72 M. Kein Top-Dir trägt eine `phi/sources.φ`-Zeile. **Frage an den Operator:** löschen oder halten? (Lage · Frage · Folge bei Ja/Nein geht über deine Queue.) Messreihe: `/mycelium 247`.
+- **Daten-Holdings — gemessen (Operator-Frage, neue Lage):** `~/archive/knowledge/data/opencode-tmp-2026-09-01/` = **2,9 G / 370 Dateien** (Futures 13 G / 11 603 überholt). Dominant `provenienz/wal_strings.txt` **2,43 G** = `strings`-Extrakt der **lebenden** opencode-DB (`opencode.db` + `-wal` vorhanden) → Ableitung, kein CDN; `nvss_dl.json` 104 M byte-identisch zu `nvss.json`. **Frage an den Operator:** sofort löschen ~2,5 G (`wal_strings.txt`, `nvss_dl.json`, `alt/`); Rest (~0,6 G, u. a. `kollab_mseed`, `archeo_check`-Recovery-Snapshots) je Bestand entscheiden? Inventur `state/mycelium/holdings-opencode-tmp-2026-10-07.md`.
 - **Runner-Routing:** die 3 dispatch-only One-Shots (`emso`/`twomrs`/`vires-hapi`) sind bereits auf `ubuntu-latest` (gemessen `/mycelium 247`); `t420` ist online. Der Riss „Pass führt t420 als nicht registriert" ist überholt.
 - **Reconcile-Pin:** `docs/specs/cdn_reconciliation.json` hat **keinen** uncommitteten Diff; letzter Commit `4a3038d3e` (mycelium 244). Kein Mycelium-Akt nötig; der `cdn-reconcile`-Workflow stempelt bei Bedarf in CI.
 
