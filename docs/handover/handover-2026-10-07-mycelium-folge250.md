@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Fink-Cutout gebaut + dispatcht (Register-Block stand, es fehlten Myceliums zwei Stücke), fremd-gebundene Punkte an die Owner-Linien ausgelagert
   class: handover
   date: 2026-10-07
-  sha256: a0e86f58175fd24ddc488a71c1761dd091604add46404790309f97cf8cc009cc
+  sha256: 94428398d7ffdb75009ccd5bff06046b65605493defae73827e87427aacc6747
   status: live
 -->
 # Handover — Mycelium-Folge 250 (2026-10-07)
@@ -48,12 +48,12 @@ Sender-Zeilen in `## An mountain` / `## An river` / `## An future` — nicht als
 
 ## Offen — eigen
 
-### Fink-Cutout-Manifestation — im Vollzug
-- **Status:** eigen
-- **Trigger:** Run-Ausgang `37543168524`
-- **Lage:** (gemessen 2026-10-07, Mycelium-250) Harvest-Eintrag `phi/harvest.φ` + `.github/workflows/fink-cutout-cdn.yml` gebaut; Dispatch `37543168524` mit dem gemessenen Id `314002968168367863` (mountain-242), Step `Compile the Fink cutout and upload` in_progress.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage view 37543168524`; bei success ist `fink_cutout.bin` manifestiert → Punkt gelöscht.
+### Fink-Cutout-Manifestation — Workflow korrigiert, Epoche fehlt als Input
+- **Status:** wartend
+- **Trigger:** Fink-Alert-Epoche (`midpointMjdTai`) für einen diaSourceId → Re-Dispatch → Ausgang messen
+- **Lage:** (gemessen 2026-10-07, Mycelium-250) Harvest-Eintrag `phi/harvest.φ` + `.github/workflows/fink-cutout-cdn.yml` gebaut. Dispatch `37543168524` (Id `314002968168367863`) = **failure** (`ci_manage log`): `fink_cutout_compiler: MJD-OBS absent and no --mjd-tai given — no fabricated epoch`. Gemessen: **kein Cutout-Kind (Science/Template/Difference) trägt eine Epoche** (FITS-Header nur `MJDREF = 0.0`, kein `MJD-OBS`); der Compiler lehnt die Fabrikation korrekt ab. Workflow korrigiert: `mjd_tai` ist jetzt **Pflicht-Input** (`--mjd-tai`); die Epoche kommt aus der Alert-Metadaten, nicht aus dem Bild.
+- **Blockade:** die Alert-Epoche (`midpointMjdTai`) je diaSourceId ist ungemessen/unbezogen.
+- **Braucht:** Fink-Alert-Epoche je Ziel (endpoint/`resolver`-Schema ungemessen) → Re-Dispatch mit `mjd_tai`; dann Ausgang + `register_release_set`-Verifikation.
 
 ### CDN-/Harvest-Runs in-flight — Ausgang
 - **Status:** eigen
