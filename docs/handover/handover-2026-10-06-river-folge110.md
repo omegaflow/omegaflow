@@ -3,7 +3,7 @@
   session: River-Folge 110
   class: handover
   date: 2026-10-06
-  sha256: 4be8895cbd0368a4c0c2c46677da475bc26eed29e35d7144b69207dd3672460a
+  sha256: c1418a6bf33fd4ce8f08a4d5e75c7c1d4be79c1fafb345a8e9cd6ccedcc16084
   status: live
 -->
 # Handover — River-Folge 110 (2026-10-06)
@@ -28,12 +28,13 @@ Wort | Datum | Quelle
 „das wort receiver [haben wir] extra eingeführt" | 2026-10-06 | Operator (Session, River 109) — kanonischer Term `Receiver` (Worldline), `Observer` (Vantage) verboten
 „bitte alles umsetzen" | 2026-10-06 | Operator (Session, River 109) — Commit- und Bau-Wort für den Receiver-Schnitt
 „es geht nicht nur um die visuelle membran es geht um alle radiatoren" | 2026-10-06 | Operator (Session, River 109) — die Receiver-Apertur gilt für alle fünf Radiatoren (Bild · Ton · Vibration · Serial · HID)
+„warum gibst du die rats fragen nicht dem rat den api mit 5 stimmen und den ui chats mit 5 stimmen?" | 2026-10-06 | Operator (Session, River 110) — stehende Praxis: Rat-Fragen gehen an den **Rat (API, 5 Stimmen)** UND an die **UI-Chats (5 Stimmen)**, nicht als `Braucht` liegen gelassen
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge109.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
 
-- `docs/auftrag/auftrag-universelles-vlies.md` (`class: auftrag`) — Offen: `ozzy`-Bau,
-  Paar-Matrix, Ernte (§Lieferung); Bias-Kurve estimator-fest (gebaut).
+- `docs/auftrag/auftrag-universelles-vlies.md` (`class: auftrag`) — Offen: der `matrix full`-Lauf
+  (nicht `ozzy`-Bau, future-Korrektur 2026-10-06), Ernte (§Lieferung); Bias-Kurve estimator-fest (gebaut).
 - `docs/paper/gic-causal-driver.md` (`class: paper`) — §6 offen: BCa-Intervalle,
   vollständiger Kp-Kanal; der Report-Site-Bias-Satz stimmt (kein Riss).
 - `docs/blatt/fruehwarnsystem-praeregistrierung.md` (`class: sheet`, `status: unsealed`) —
@@ -52,7 +53,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 
 ### Receiver-Apertur — Sub-Pixel für ALLE Radiatoren (nicht nur die visuelle Membran)
 - **Status:** eigen | **Bindung:** eigen (Membran-/Aktor-Pfad)
-- **Trigger:** eigenes Atom (der SPAN-Mechanismus ist vorher zu entscheiden — Architektur).
+- **Trigger:** frisches Atom (SPAN-Architektur entschieden 2026-10-06; der bounded Brücken-Schritt steht).
 - **Lage:** (gemessen 2026-10-06, River 109/110) Der sichtbare Pfad ist halb geheilt: in
   `static/membrane.html` ist der 2.0-Shader-Boden entfernt (`true_px = extent/scale`; Punktquelle
   `extent 0` → 1-px-voller-Fluss), die unbelegte `VIEW_SPAN_M/400`-Konstante gestrichen, der Start
@@ -67,15 +68,25 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   unter `docs/surveys/` war ein Pfad-Riss: dieses Register lebt **nicht** im Baum (Legacy-Repo
   `archive-root/omegaflow-legacy`);
   die im Baum auflösende Quelle ist `docs/surveys/survey-fortschritt.md`.
-- **Blockade:** großer Umbau (per-Fragment-`source_contrib` ist O(Pixel×Quellen)) — eigenes Atom; **und**
-  der SPAN/Apertur-Mechanismus ist unentschieden (Architektur → Rat): GLM-5.3 schärfte „wahrer Maßstab
-  `SPAN/N` (Apertur), SPAN als Receiver-Eigenschaft im Register"; Sichtbarkeit durch **Integration entlang
-  der Worldline**, nie durch injizierte Ausdehnung.
-- **Braucht:** (1) Rat-Entscheidung: SPAN als deklarierte Receiver-Eigenschaft (Register) oder aus den
-  Anker-Körpern abgeleitet (Sterne ausgeschlossen) — und wie die Sonne zuerst sichtbar bleibt, ohne
-  Extension zu injizieren. (2) danach Portierung der Auswertung an der Receiver-Apertur für alle
-  Radiatoren (Vorlagen `e918bda1`/`eb96d1ff`/`da43f02a`). (3) Operator-Browser-Messung (headless ohne
-  WebGPU = schwarze Null).
+- **Blockade:** großer Umbau (per-Fragment-`source_contrib` ist O(Pixel×Quellen)) — eigenes Atom. Die
+  SPAN/Apertur-Architektur ist **entschieden** (Rat, 2026-10-06, 5 Stimmen): SPAN ist Receiver-Eigenschaft,
+  **deklariert** (neue `span`-Direktive auf der `at <body>`-Receiver-Zeile in `phi/sources.φ`) **und** aus
+  der Anker-Hülle verankert (`SPAN_eff = max(span_declared, hull(anchors))`), **Sterne nie** — kein
+  Katalog-Span. Sichtbarkeit durch **Integration entlang der Worldline** (additiver `one,one`-Blend +
+  EMA-`lvl` über das **Anker**-Niveau), nie durch injizierte Ausdehnung; kein `scale`-Boden. Ein
+  Apertur-Gesetz, fünf Empfänger (`aperture = field_permeability · tone_scale`, `omega.rs:361`;
+  `acoustic_amplitude`, `actuators.rs:73`). Risse (ungeglättet): `SPAN/N`-N ungemessen (`receptors` bleibt
+  die Raster-Minorachse; Sub-pixel ist erwartet); Sternen-Reichweite 8 pc (Operator) vs. `STAR_SPAN_M`
+  1,798e21 m ≈ 58 000 pc (committed, `src/archivar/spatial.rs`) — vor der Ableitung messen; Wortkollision
+  `Aperture` (drei Bedeutungen) → der neue heißt `span_m`, nie `Aperture`.
+- **Braucht:** (1) **bounded Brücke** in `static/membrane.html` (eine Datei/ein Feld/eine Funktion):
+  `state.anchorCount` (gemessen, nach der `BODIES`-Schleife, kein Literal `3`) + `receiverSpan(record)`
+  über die Anker-Records, ersetzt den Inline-Span-Block (`:455-468`); `updateLvl` (`:369-381`) nimmt das
+  Anker-Niveau als `lvl_ref`; `render` (`:323-367`) unverändert (Sterne addieren, bewegen Span/`lvl`
+  nicht). (2) **Register-Direktive** `span` auf der `at`-Zeile (Mountain; Parser-Arm + Test) — der
+  Architektur-Akt, parallel. (3) danach Portierung an der Receiver-Apertur für alle fünf Radiatoren
+  (Vorlagen `e918bda1`/`eb96d1ff`/`da43f02a`). (4) Operator-Browser-Messung (headless ohne WebGPU =
+  schwarze Null).
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend | **Bindung:** eigen
@@ -280,4 +291,4 @@ sensory-folge244 (exzellenz-gate-Label, oben erledigt).
 `open_points_check` am folge109: 1 ABSENT (das Legacy-Register `entwicklungslinie.md`, nicht im Baum;
 in folge110 auf `docs/surveys/survey-fortschritt.md` korrigiert).
 
-## Burn: open 0.0000 · close 0.0698 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss gemessen und geroutet; kein Sub-Dispatch (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.0698)
+## Burn: open 0.0000 · close 0.1265 · cap 0.35 · Grund: River 110 — Line-Session (deepseek-flash), Register-/Falt-Pass (3 adressierte Blöcke) + exzellenz-gate-Label geschlossen + `matrix full`-Lauf `37483359644` gelesen (12/15 Arme, 0/210 Zellen) + DE440-`pages-deploy`-Riss geroutet + **Rat-Entscheid Receiver-Apertur-SPAN** (`Rat: Receiver-Apertur SPAN`, $0.0126) + UI-Chat-Cross-Check versucht (Composer-Automation unzuverlässig, benannt) (gemessen `session_burn` bei Übergabe-Schluss, opencode.db; Session `River-Linie Übergabe in einem Pass abarbeiten`, $0.1265)
