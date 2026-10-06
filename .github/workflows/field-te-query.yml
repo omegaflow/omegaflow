@@ -131,3 +131,19 @@ jobs:
         with:
           name: field-te-matrix-vlies
           path: field-te-matrix-vlies.txt
+  matrix-newell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Newell dPhi/dt — the declared derived node against intermagnet dB/dt (Rat 2026-10-06)
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/newell_geospheric.te | tee field-te-matrix-newell.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-matrix-newell
+          path: field-te-matrix-newell.txt
