@@ -86,9 +86,16 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   Ehrlich+stark: `deepseek/deepseek-flash` (Arch-Test stärkste Stimme). UI-Chats (frontier) alle hoch.
 - **Blockade:** keine.
 - **Braucht:** `voice-gptoss` (nvidia gpt-oss-20b, fabriziert) aus der Arch-/Grind-Route streichen;
-  `voice-kilo`/`voice-zen`/`voice-ling`/`voice-agnes` in den API-Arch-Test; Roster auf die gemessenen
+  `voice-kilo`/`voice-ling`/`voice-agnes` in den API-Arch-Test; Roster auf die gemessenen
   **schnell+ehrlich** setzen (`deepseek-flash`, `kilo-auto`, `nvidia/nemotron-3-super-120b`,
   `google/gemini-3.5-flash-lite`).
+- **Nächste Mycelium (Operator-Wort 2026-10-06):** einen **API-Test** laufen lassen (voller
+  `free_model_bench` T1–T7 bzw. `--task`-Reihe über die gemessenen schnellen Arme) → neue
+  Qualitäts-/Tempo-Tafel → Roster fixieren.
+- **opencode zen kann NICHT als Agent laufen (Operator-Wort 2026-10-06):** die `opencode`-Provider-
+  Modelle sind `client`-Kanal (die Bench überspringt sie, `is_http=false`) — `voice-zen`
+  (`opencode/nemotron-3.5-lightning-free`) ist als Subagent nicht lauffähig und **entfällt** aus der
+  Stimmen-Route; opencode-zen bleibt nur der direkte Client-Kanal.
 
 ### Daten-Holdings — `opencode-tmp`-Dump CDN-Bedarf/Uniqueness
 - **Status:** eigen
