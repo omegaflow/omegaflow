@@ -224,7 +224,10 @@ fn main() {
             println!("source: dia-source-id absent and no --file given");
             std::process::exit(2);
         };
-        println!("source: {CUTOUT_ENDPOINT} diaSourceId={id} kind={}", args.kind);
+        println!(
+            "source: {CUTOUT_ENDPOINT} diaSourceId={id} kind={}",
+            args.kind
+        );
         let Some((code, body)) = fetch_cutout(id, &args.kind) else {
             println!("source: curl returned no response");
             std::process::exit(2);
