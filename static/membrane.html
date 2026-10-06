@@ -60,12 +60,54 @@ function status(text) {
   statusEl.textContent = text;
 }
 
-async function fetchBytes(path) {
+// Yield to the event loop so a status line is actually drawn before the next
+// heavy step. Without it the synchronous star parse and the 95 MB body download
+// leave the operator on a stale line (a black field read as a hang) even though
+// the work is progressing.
+function paint() {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
+
+function pct(got, total) {
+  if (!total) {
+    return "";
+  }
+  return " " + Math.min(100, Math.round((got / total) * 100)) + "%";
+}
+
+// Stream the body and, when a label is given, paint the measured progress each
+// chunk. The content-length may name the compressed size, so the share is
+// clamped; silence is the honest state when the header is absent.
+async function fetchBytes(path, label) {
   const r = await fetch(path);
   if (!r.ok) {
     return null;
   }
-  return new Uint8Array(await r.arrayBuffer());
+  const total = Number(r.headers.get("content-length")) || 0;
+  if (!r.body) {
+    return new Uint8Array(await r.arrayBuffer());
+  }
+  const reader = r.body.getReader();
+  const chunks = [];
+  let got = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+    chunks.push(value);
+    got += value.length;
+    if (label) {
+      status(label + pct(got, total));
+    }
+  }
+  const out = new Uint8Array(got);
+  let off = 0;
+  for (const c of chunks) {
+    out.set(c, off);
+    off += c.length;
+  }
+  return out;
 }
 
 // The flat WASM response (26 × f64 per record) into the wire's two GPU planes:
@@ -388,28 +430,42 @@ function loop(now) {
 async function boot() {
   resize();
   status("loading stars…");
-  const stars = await fetchBytes("/dr3_stars.bin");
+  await paint();
+  const stars = await fetchBytes("/dr3_stars.bin", "loading stars…");
   if (!stars) {
     status("stars absent — honest black");
     return;
   }
   status("instantiating lookup…");
+  await paint();
   let mod;
   try {
     mod = await import("./omegaflow.js");
     await mod.default();
+    status("parsing stars…");
+    await paint();
     lookup = new mod.MembraneLookup(stars, CATALOG_EPOCH_YR);
   } catch {
     status("lookup absent (omegaflow.js / omegaflow_bg.wasm) — honest black");
     return;
   }
   status("anchoring bodies…");
-  for (const body of BODIES) {
-    const eph = await fetchBytes("/ephemeris_de440_" + body + ".bin");
-    if (eph) {
-      lookup.load_ephemeris(body, eph);
+  await paint();
+  // The three ephemerides are independent: fetch them together instead of in a
+  // chain, so the wait is the slowest body, not their sum.
+  const ephs = await Promise.all(
+    BODIES.map(async (body) => {
+      const eph = await fetchBytes("/ephemeris_de440_" + body + ".bin");
+      return eph ? { body, eph } : null;
+    })
+  );
+  for (const e of ephs) {
+    if (e) {
+      lookup.load_ephemeris(e.body, e.eph);
     }
   }
+  status("starting GPU…");
+  await paint();
   const ok = await initGPU();
   if (!ok) {
     status("no WebGPU adapter — honest black");
@@ -421,6 +477,7 @@ async function boot() {
   // first query builds the presence hull, so the slow first light reads as work,
   // not as a hang. The loop schedules its own next frame.
   status("measuring the first field…");
+  await paint();
   await new Promise((r) => setTimeout(r, 50));
   last = performance.now();
   loop(last);
