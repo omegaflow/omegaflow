@@ -167,6 +167,7 @@ pub mod session;
 pub mod sexagesimal;
 pub mod sha256;
 pub mod skydirection;
+pub mod soho_lasco;
 pub mod suprastrom;
 pub mod tdat;
 pub mod thermochem;
