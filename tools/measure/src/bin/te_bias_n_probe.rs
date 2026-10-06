@@ -1,4 +1,6 @@
-use omegaflow::te::{kde_n_eff, topological_te_estimate, transfer_entropy_lag};
+use omegaflow::te::{
+    kde_n_eff, topological_te_estimate, transfer_entropy_binned, transfer_entropy_lag,
+};
 
 const TRANSIENT: usize = 1000;
 const COUPLING: f64 = 0.2;
@@ -84,10 +86,10 @@ fn sample_std(xs: &[f64]) -> Option<f64> {
 
 fn usage() {
     println!(
-        "usage: te_bias_n_probe [--replicates N] [--ns a,b,c] [--estimator scalar|embedded] [--dim N] [--out <path>]"
+        "usage: te_bias_n_probe [--replicates N] [--ns a,b,c] [--estimator scalar|embedded|binned] [--dim N] [--bins N] [--out <path>]"
     );
     println!(
-        "runs the scalar Silverman-KDE TE estimator (transfer_entropy_lag, lag 1) by default, or the embedded KSG estimator (topological_te_estimate, Takens dim N) with --estimator embedded, on coupled Hénon maps (Schreiber 2000, true direction X→Y) at several n with fixed-seed replicates."
+        "runs the scalar Silverman-KDE TE estimator (transfer_entropy_lag, lag 1) by default, the embedded KSG estimator (topological_te_estimate, Takens dim N) with --estimator embedded, or the binned histogram estimator (transfer_entropy_binned, lag 1, --bins N, default 4 = the matrix cell width) with --estimator binned, on coupled Hénon maps (Schreiber 2000, true direction X→Y) at several n with fixed-seed replicates."
     );
     println!(
         "reports mean TE(X→Y), its bias against the n = {REF_N} reference, its dispersion across replicates, the reverse mean and the direction accuracy; writes the sheet to --out when given (stdout always)."
@@ -114,15 +116,22 @@ fn main() {
     }
     let out = arg_after(&args, "--out").map(|s| s.to_string());
     let estimator = arg_after(&args, "--estimator").unwrap_or("scalar");
-    if estimator != "scalar" && estimator != "embedded" {
-        eprintln!("--estimator names no measurable arm (scalar | embedded) — no measurement");
+    if estimator != "scalar" && estimator != "embedded" && estimator != "binned" {
+        eprintln!(
+            "--estimator names no measurable arm (scalar | embedded | binned) — no measurement"
+        );
         return;
     }
     let embedded = estimator == "embedded";
+    let binned = estimator == "binned";
     let dim = arg_after(&args, "--dim")
         .and_then(|v| v.parse::<usize>().ok())
         .filter(|&v| v >= 2)
         .unwrap_or(3);
+    let bins = arg_after(&args, "--bins")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|&v| v >= 2)
+        .unwrap_or(4);
     let Some(max_n) = ns.iter().copied().max() else {
         return;
     };
@@ -137,6 +146,8 @@ fn main() {
 
     let estimator_label = if embedded {
         format!("embedded KSG (topological_te_estimate, Takens dim {dim})")
+    } else if binned {
+        format!("binned histogram (transfer_entropy_binned, lag 1, {bins} bins)")
     } else {
         "scalar Silverman-KDE (transfer_entropy_lag, lag 1)".to_string()
     };
@@ -164,6 +175,8 @@ fn main() {
     let te_fwd = |d: &Rep, n: usize| {
         if embedded {
             topological_te_estimate(&d.y[..n], &d.x[..n], dim).map(|e| e.te)
+        } else if binned {
+            transfer_entropy_binned(&d.y[..n], &d.x[..n], 1, bins)
         } else {
             transfer_entropy_lag(&d.y[..n], &d.x[..n], 1)
         }
@@ -171,6 +184,8 @@ fn main() {
     let te_rev = |d: &Rep, n: usize| {
         if embedded {
             topological_te_estimate(&d.x[..n], &d.y[..n], dim).map(|e| e.te)
+        } else if binned {
+            transfer_entropy_binned(&d.x[..n], &d.y[..n], 1, bins)
         } else {
             transfer_entropy_lag(&d.x[..n], &d.y[..n], 1)
         }
