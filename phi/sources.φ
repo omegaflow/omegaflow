@@ -442,12 +442,21 @@ at sun
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
-url https://www.dhm.gov.np/hydrology/river-watch
-format trishuli_stage
-station 4913
-on earth 28.271297 85.377649 0
-ttl 600
-field trishuli_stage trishuli_stage_m inverse-square gravity m 600.0 0.0 0.0
+url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4657_stage.txt
+format dhm_stage
+origin https://dhm.gov.np/hydrology/hms-Single/4657
+compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
+on earth 28.098163 85.318589 0
+ttl 3600
+field dhm_4657_stage dhm_4657_stage_m inverse-square gravity m 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4661_stage.txt
+format dhm_stage
+origin https://dhm.gov.np/hydrology/hms-Single/4661
+compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
+on earth 27.82 84.45 0
+ttl 3600
+field dhm_4661_stage dhm_4661_stage_m inverse-square gravity m 3600 0.0 0.0
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
 ttl 600

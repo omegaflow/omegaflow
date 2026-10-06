@@ -3,7 +3,7 @@
   session: Mountain-Folge 242
   class: handover
   date: 2026-10-06
-  sha256: dd481a33aca22597a26c53ac53abb7ebf16457ae7b238fb1556dd47155602aeb
+  sha256: 1e9cc08020703b64d17ed3984d9dc702d58bdedb5bfc374e6b08be28e914a26a
   status: live
 -->
 # Handover — Mountain-Folge 242 (2026-10-06)
@@ -29,7 +29,12 @@ ein Skydirection-Zeuge, kein `sources.φ`-Ursprung). **Cutout-FITS-Reader gebaut
 `diaSourceId=314002968168367863` → 34560 B FITS, NAXIS 30×30, BITPIX −32, Apertur-Summe).
 trishuli: Live-Route gemessen — `POST /site/getRiverWatchBySeriesId_Single`
 (csrf + `seriesid=23251`) → `status:success` mit **leerer** Serie (`river=[]`) über
-Perioden 1–4; kein `timeSeries` ⇒ Trigger nicht gefeuert, `wartend` bleibt.
+Perioden 1–4; Kontrolltest Devghat 265 (`seriesid=4140`) → 24 Zeilen ⇒ Abfrage valid,
+4913 stationstod (Flood 26.08.2026). **Operator-Wort danach: die zwei Live-Nachbarn als
+Triangulation.** Gebaut: `dhm_gauge_compiler.rs` (gemessen station 4657 → 60 Zeilen,
+`cargo build` 0/0), Arm `dhm_stage` (`extract.rs`), zwei `phi/sources.φ`-Blöcke
+(Dhunche `4657` 2.16 m / Bhorle `4661` 3.80 m); die tote 4913-Quelle entfernt. Der
+CDN-Workflow für die zwei Assets steht adressiert unter `## An mycelium`.
 
 ## Burn: open 0.0000 · close 0.1894 · cap 0.25 (Operator eröffnete das Atom erneut: Fink+trishuli, dann Schwarm) · Grund: flash-first — Line-Session $0.1387 + zwei `grind-flash`-Dispatches ($0.0325 fink-Arm, $0.0182 cutout-Reader) + Schwarm (12 Stimmen, frei), kein pro/max
 
@@ -64,27 +69,20 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 240)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 241)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-06 | Operator (Session, Mountain 242)
+„kannst du das bitte fixen? Fink … trishuli …" — Fink-Route (Messfehler) + trishuli klären | 2026-10-06 | Operator (Session, Mountain 242)
+„bitte lasse darauf nochmal den schwarm los und gib mir die frage für glm und claude" | 2026-10-06 | Operator (Session, Mountain 242)
+„die beiden live nachbarn wären doch als triangulierung gut?" — Dhunche 4657 + Bhorle 4661 als Trishuli-Ingestion | 2026-10-06 | Operator (Session, Mountain 242)
 
 ## Offen (aufgeschlüsselt)
 
-### trishuli (DHM Nepal) — Station 4913 zerstört, Nachfolger offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Nachfolge-Pegel meldet — Prüfung via `POST dhm.gov.np/site/riverWatchTableViewData` (4913 dann nicht mehr `" "`)
-- **Lage:** (gemessen 2026-10-06) 4913 „Bhotekoshi at Rasuwagadi" meldet nicht:
-  `POST dhm.gov.np/site/riverWatchTableViewData` (ohne Auth; 195 Stationen melden)
-  trägt `waterLevel: " "` für 4913; die Serie `getRiverWatchBySeriesId_Single`
-  (`seriesid=23251`) ist leer (`river=[]`) auch für Vor-Flood-Daten (2026-08-25).
-  Schwarm + GLM/Claude (Zeugen, nicht Verdikt): Station am 26.08.2026-Flood physisch
-  zerstört (CHWRR Assessment Report II, letzter Wert 3.8 m, Senderstopp 08:40; ICIMOD;
-  Presse); Betrawati `52`/`4783` ebenso leer. **Live-Nachbarn (Bulk):** Trishuli
-  Dhunche `4657` (2.16 m), Bhorle `4661` (3.80 m), Galchi `5705`, Kali Khola `4781`
-  (4.33 m); Narayani Devghat `265` (4.12 m). **Kontrolltest (gemessen 2026-10-06):**
-  derselbe `getRiverWatchBySeriesId_Single`-POST mit Devghat `seriesid=4140`, `period=2`
-  → 24 Stundenzeilen (4.14–4.19 m) ⇒ Abfrage-Mechanik valid, 4913/`23251` leer ist
-  stationsspezifisch (nicht Query-Fehler).
-- **Blockade:** Die Experiment-Station existiert nicht mehr.
-- **Braucht:** Entscheidung — `descoped` für 4913 (zerstört, gemessen) und die
-  Trishuli-Serie auf einen Live-Nachbarn umhängen (Dhunche/Bhorle), oder ruhen.
+## An mycelium
+
+Origin: mountain-folge242. **DHM-Pegel-CDN (die zwei Trishuli-Nachbarn):** die neuen
+Quellen `dhm_4657_stage.txt`/`dhm_4661_stage.txt` (Tag `dhm.gov.np`) brauchen einen
+Workflow `dhm-gauge-cdn.yml`, der `dhm_gauge_compiler --station 4657|4661 --period 1
+--ci-mode` **täglich** fährt (curl-Cookie-Jar + csrf-freier POST intern). Compiler
+gebaut (`tools/harvest/src/bin/dhm_gauge_compiler.rs`), Lauf station 4657 → 60 Zeilen,
+`cargo build -p omegaflow-harvest --bin dhm_gauge_compiler` 0/0; Arm `dhm_stage` deckt.
 
 ## Träger (Prosa, eigene)
 
