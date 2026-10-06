@@ -3,7 +3,7 @@
   session: River-Folge 114
   class: handover
   date: 2026-10-06
-  sha256: 7e02359be6ed4f08f6b367acfb560514b9755444b32954f1110671e84c92a456
+  sha256: a58c61721a2ff7f665994c3b786633d092521a580c46b60f0ba343c04e885f4a
   status: live
 -->
 # Handover — River-Folge 114 (2026-10-06)
@@ -38,13 +38,13 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** keine (eigene).
 - **Braucht:** (1) `Witness` typisierter force_type/Kanal (Vokabular — Rat); (2) Unabhängigkeits-Test (TE des Residuums, `te.rs`) gegen getrennt spezifizierte Zeugen/Lags — als eigenes Wort; (3) Known-Answer-Gate auf Synthetik + held-out-Fenster; (4) Zeugenstempel in jedem Urteil.
 
-### Membran-Startansicht — zwei Aperturen (gebaut; Operator-Sicht offen)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator sieht die Membran (`omegaflow.space/membrane.html`, Startansicht zeigt die Sonne).
-- **Lage:** (gemessen 2026-10-06, River 114) `static/membrane.html`: `scale`/`scale_star` + `span_anchor`/`span_star`; der Vertex-Shader wählt per `extent > 0` die Anker-Skala, sonst die Stern-Skala; Start gerahmt auf den größten Anker (Sonne). `node --check` grün (Syntax-Gate); WebGPU-Sicht = Operator/CI. Rat + 12 Kanäle: 12/13 für (b), Claude-Dissens (c)+Start.
-- **Riss (getragen, ungeglättet):** Der Diskriminator ist heute `extent > 0` (Vertrag: Anker endlich, Sterne `wire_extent` 0.0); GLM/MiMo/Kimi/Duck verlangen eine **deklarierte** Apertur pro Quelle — ein Wire-/Kontrakt-Akt (Mountain), sobald eine zweite endliche Klasse (Planeten) oder ein Sternradius kommt. Die metrische Konsistenz zwischen Anker- und Sky-Apertur ist bewusst aufgegeben (Sky = Kulisse) — als Invariante dokumentiert.
-- **Blockade:** keine.
-- **Braucht:** Operator-Sicht (`omegaflow.space/membrane.html`); ggf. Apertur-Bit im Wire (Mountain). Offen: `state.lvl` (Exposure) ist ein **globales** max über beide Aperturen — ob die helle Sonne den Sternhintergrund unterdrückt, ist `pending` (Operator-/CI-Sicht), dann ggf. eigene Exposition je Apertur.
+### Membran-Startansicht — zwei Aperturen (gebaut, im Browser gemessen: Anker fehlt im Feld)
+- **Status:** blockiert | **Bindung:** eigen (cross-line Archivar/Mountain)
+- **Trigger:** Anker-Records (`extent > 0`) erscheinen in `lookup.query` am SSB-Ursprung.
+- **Lage:** (gemessen 2026-10-06, River 114, Browser-Test auf `omegaflow.space/membrane.html`) Der Deploy trägt den Bau noch **nicht** (live: `state.span_m`, kein `scale_star`). Wird der gepushte Code in die laufende Seite gesetzt (rAF-Shim, `window.__dbg`), liefert `lookup.query` **8 Records, alle `extent == 0`** → `span_anchor = 0` → schwarz. Der Sonnen-Anker erreicht das Feld nicht; **die Skalen-Apertur war nicht die Ursache**. `static/membrane.html` (zwei Aperturen) `node --check` grün; Rat + 12 Kanäle 12/13 (b), Claude-Dissens (c)+Start.
+- **Riss (getragen, ungeglättet):** (i) Der Bau ist per Verdikt korrekt, aber ohne Anker-Record im Feld wirkungslos; (ii) der Deploy hängt (Pages-Deploy rot, DE440-Pin); (iii) `MembraneLookup.add_stars` (`omegaflow_bg.wasm`) panikt (`RuntimeError: unreachable`) bei wiederholtem Re-Init; (iv) `extent > 0` ist ein Vertrags-Diskriminator, GLM/MiMo/Kimi/Duck verlangen eine deklarierte Apertur (Wire/Kontrakt, Mountain).
+- **Blockade:** die Body-Anker (Sonne/Erde/Mond) erscheinen nicht mit finitem `extent` in der Membran-Query — Archivar-/Lookup-Seite.
+- **Braucht:** messen, warum `lookup.query` beim SSB keine Anker-Records mit `extent > 0` liefert (Archivar-Lookup, Mountain); `add_stars`-Panik messen; danach Deploy + Operator-Sicht. Offen: `state.lvl` ist ein globales max über beide Aperturen.
 
 ### GIC-Breitenband-Familien — Design + Messschritt offen
 - **Status:** operator-gebunden (Design) / wartend (cgm_lat) | **Bindung:** eigen + operator (Queue)
@@ -127,8 +127,12 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 
 Origin: future-186 (gefaltet) · river-114.
 
-- **Membran-Startansicht gebaut.** `static/membrane.html`: zwei Aperturen (Körper-Anker vs. Stern-Katalog),
-  Start gerahmt auf die Sonne — der LOCK-Trigger „Startansicht zeigt die Sonne" kann feuern.
+- **Membran-Startansicht: Bau steht, im Browser gemessen aber wirkungslos.** `static/membrane.html` trägt
+  die zwei Aperturen (Körper-Anker vs. Stern-Katalog); der Browser-Test zeigt jedoch, dass `lookup.query`
+  am SSB **keine Anker-Records mit `extent > 0`** liefert (8 Records, alle `extent == 0`) → schwarz.
+  Der LOCK-Trigger „Startansicht zeigt die Sonne" **kann noch nicht feuern**; der Blocker ist die
+  Anker-Sichtbarkeit im Feld (Archivar/Lookup), nicht die Skala. Zudem ist der Live-Deploy veraltet
+  (Pages-Deploy hängt) und `add_stars` panikt bei Re-Init.
   Verifikation = Operator-Sicht auf `omegaflow.space/membrane.html`.
 - **`omega.rs:878` (Volume-Bin „earth" hart) gemessen:** kein `"earth"`-Literal in `src/mathematikerin/omega.rs`
   (gemessen 2026-10-06, River 114 via `sgrep '"earth"' src/mathematikerin/omega.rs`) — der adressierte Punkt ist veraltet.
@@ -167,7 +171,7 @@ Origin: river folge101 (getragen über 102–114).
 
 Pfad-begrenzte Commit-Pfade dieser Session:
 
-- `static/membrane.html` (zwei Aperturen, Start auf der Sonne)
+- `static/membrane.html` (zwei Aperturen; im Browser gemessen wirkungslos — Anker fehlt im Feld)
 - `docs/handover/handover-2026-10-06-river-folge114.md` (neu)
 - `docs/handover/archiv/handover-2026-10-06-river-folge113.md` (Move aus `docs/handover/`)
 
@@ -176,6 +180,6 @@ Gefaltet (adressierte Blöcke, in diesem Atom):
 - future-folge186 (`## An river`): Membran-Startansicht gebaut; `omega.rs:878`/`membrane.html:43` veraltet.
 - sensory-folge244 (`## An river`): exzellenz-gate-Label in folge113 geschlossen.
 
-`open_points_check` am folge114: offen (Lauf bei Übergabe gefüllt).
+`open_points_check` am folge114: 20 path refs · 0 absent · 0 stale-citations · 0 done-carried · 2 word-carried · 0 guardians · 0 format-gaps · 0 owner-drift · 0 post-md.
 
-## Burn: open 0.0838 · close 0.4885 · cap 0.50 · Grund: River 114 — Line-Session (deepseek-flash): Rat + 5 API-Stimmen + 7 UI-Chats zur Membran-Apertur befragt (12/13 (b), Claude-Dissens (c)); `static/membrane.html` auf zwei Aperturen gebaut (Start auf der Sonne), `node --check` grün; adressierte Blöcke mountain-249/future-186 gefaltet; Rohmaterial in `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md`. (close = `session_burn`-Summe über die geteilte DB bei Schluss; die gleichzeitig laufenden Linien-Sessions sind enthalten — die Linien-eigene Zahl ist nicht isoliert, benannt statt geraten; cap daher auf dem geteilten DB-Wert deklariert.)
+## Burn: open 0.0838 · close 0.4885 · cap 0.50 · Grund: River 114 — Line-Session (deepseek-flash): Rat + 5 API-Stimmen + 7 UI-Chats zur Membran-Apertur befragt (12/13 (b), Claude-Dissens (c)); `static/membrane.html` auf zwei Aperturen gebaut, **im Browser gegen den Live-Link gemessen: `lookup.query` liefert 8 Records, alle `extent == 0` → keine Sonne im Feld, schwarz** (der Blocker liegt bei der Anker-Sichtbarkeit, nicht der Skala); `add_stars` panikt bei Re-Init; adressierte Blöcke mountain-249/future-186 gefaltet; Rohmaterial in `state/stimmen/2026-10-06_membran-apertur-alle-stimmen.md`. (close = `session_burn`-Summe über die geteilte DB bei Schluss; die gleichzeitig laufenden Linien-Sessions sind enthalten — die Linien-eigene Zahl ist nicht isoliert, benannt statt geraten; cap daher auf dem geteilten DB-Wert deklariert.)
