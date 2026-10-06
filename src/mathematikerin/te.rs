@@ -35,6 +35,8 @@ pub const TE_BIAS_MK: &[(usize, f64)] = &[
     (1600, -7.136e-2),
     (2200, -6.095e-2),
     (4000, -4.161e-2),
+    (6000, -2.541e-2),
+    (8546, -8.470e-3),
     (10000, 0.000e0),
 ];
 
@@ -107,7 +109,7 @@ pub fn transfer_entropy_bias_adjusted(te: f64, m_k: f64) -> f64 {
     te - m_k
 }
 
-pub const TE_NEFF_THRESHOLD: Option<f64> = Some(1.8166e1);
+pub const TE_NEFF_THRESHOLD: Option<f64> = Some(1.8485e1);
 
 pub fn transfer_entropy_bias_adjusted_above(
     te: f64,
@@ -4017,6 +4019,16 @@ mod tests {
         assert!(
             transfer_entropy_bias_adjusted_gated(te, m_k, n_eff_floor).is_some(),
             "at the measured floor the correction applies"
+        );
+    }
+
+    #[test]
+    fn gate_te_neff_threshold_is_the_measured_n800_kde_floor() {
+        let floor = TE_NEFF_THRESHOLD.expect("the measured n_eff floor stands");
+        assert!(
+            (floor - 1.8485e1).abs() < 1e-12,
+            "the floor is the n=800 kde_n_eff mean (18.485) in the corrected (target,driver) \
+             order from te-bias-n 37443829535 @2b7acb4d4, got {floor}"
         );
     }
 
