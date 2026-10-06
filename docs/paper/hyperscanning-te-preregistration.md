@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: 3413de0b14be97c10a541c3b891c505f880d65fe91a079f87eb10309384fba70
+  sha256: fd354d4064ce380044be458591e060d00721f37f52aa32999e50ae9445c9d35c
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
 -->
@@ -68,8 +68,8 @@ An absent recording drops its triad from the family, never a fabricated 0
 `MIN_N` is not loaded (`hyperscanning_group_te.rs:183-186`), the missing member
 prints `absent — no readable […] series (0 honored)`
 (`hyperscanning_group_te.rs:696-700`), a triad with fewer than two members is
-not pushed (`hyperscanning_group_te.rs:702-706`), an empty task prints `no
-complete triad carries a series — pending (0 honored)`
+not pushed (`hyperscanning_group_te.rs:702-706`), an empty task prints
+`no complete triad carries a series — pending (0 honored)`
 (`hyperscanning_group_te.rs:710-712`), and a run on no readable series exits
 `2` with no measurement (`hyperscanning_group_te.rs:554-556`,
 `hyperscanning_group_te.rs:777-782`).
@@ -340,7 +340,7 @@ nominees, 88 confirmed, 0 pending. 0 honored: the observed max `7.0851e-1` is nu
 the same line as the single-channel run (`pair-18@Cz`), not an added channel — the joint
 screen's own expression is the raised p95 that drops `pair-02`.
 
-### Offene Ergebnisse / Pending results
+### Ergebnisse / Results — Nachweise
 
 - **FP/FN numbers** — measured (run `37197710877`, 2026-10-04) — see
   `### Ergebnisse / Results`.
