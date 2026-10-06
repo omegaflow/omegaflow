@@ -57,9 +57,9 @@ jobs:
           ls -l "_site/$name"
         }
         stage ssd.jpl.nasa.gov-gaia dr3_stars.bin 745a3f7167ecaa8a9272651e18b09b4fd683900b8626d61bc08869bfb7781aa0
-        stage ssd.jpl.nasa.gov-de ephemeris_de440_earth.bin adc990bc6e1f80fa5befb91197c3e937c625529a3dd7a125a46dc4f23b36efe1
-        stage ssd.jpl.nasa.gov-de ephemeris_de440_moon.bin acb42881d50c8b381eda877b68b46dc60a4db14eafc60f05d62ba35db564d048
-        stage ssd.jpl.nasa.gov-de ephemeris_de440_sun.bin 9d059db300c042058f726667e7d29e4303597fc4481e34969f44686e5a4b90f9
+        stage ssd.jpl.nasa.gov-de ephemeris_de440_earth.bin 5554915dc7c2c753b13ede0e478d4fe735023a839620582a3335ef01077ce016
+        stage ssd.jpl.nasa.gov-de ephemeris_de440_moon.bin d9b4091731f16912b73c544e95411ec8c99660aa2376c5e8507a71b27b0563a5
+        stage ssd.jpl.nasa.gov-de ephemeris_de440_sun.bin 093b3ab5ee368e9b3834fe6520cc9c3ea491f9c30761ce44cf378425df66c226
     - uses: actions/configure-pages@v4
     - uses: actions/upload-pages-artifact@v3
       with:
