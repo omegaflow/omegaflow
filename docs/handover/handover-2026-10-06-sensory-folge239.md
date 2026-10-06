@@ -3,7 +3,7 @@
   session: Sensory-Folge 239
   class: handover
   date: 2026-10-06
-  sha256: 125af86914d7cf70f913cc8be31287f487439b9668a9eed8c075b0a223d70bc7
+  sha256: 82cd3166d24813d92f1c928a95aa8769b6263c667bc4d71c804600866c98ec81
   status: live
 -->
 # Handover — Sensory-Folge 239 (2026-10-06)
@@ -25,8 +25,8 @@ Eigene Messung dieses Atoms (2026-10-06 F239): HEAD `bfb010ead` (`sensory 238`);
 Baum ist aktiv geteilt — fremd uncommittet (gemessen, unberührt):
 `.github/workflows/jaxa-gportal-cdn.yml` (`M`), `opencode.json` (`M`),
 `src/mathematikerin/te.rs` (`MM`), `tools/measure/src/bin/field_te_query.rs` (`M`, im Index),
-river folge101 → `docs/handover/archiv/handover-2026-10-06-river-folge101.md` (`R`) und
-`docs/handover/handover-2026-10-06-river-folge102.md` (`AM`).Eigener Register-Pass (2026-10-06 F239): `register_lookup --fired sensory` = 1
+dazu bewegte River parallel eigene Handover-Pfade (der fremde Stand wechselt laufend; die
+verbleibenden fremden Hünke werden beim Commit erneut gemessen, nie berührt).Eigener Register-Pass (2026-10-06 F239): `register_lookup --fired sensory` = 1
 (`hyperscanning-te max points 4096` — der CI-Lauf `37438929801` ist das Ereignis, unten
 gemessen); `--stale sensory --persist 3` = 0; `--addressed sensory` = 1
 (mycelium-folge236 — vom Vorgänger F237 gefaltet, Träger
@@ -240,6 +240,7 @@ breiter messen.
 - **Wort:** „Nur eigene Arbeit … `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist." | 2026-10-06 | Operator (Session) — Abschluss-Disziplin, Sensory-Folge 235.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. Nur eigene Arbeit: pfad-begrenzt committen, `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist." | 2026-10-06 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 237.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. Nur eigene Arbeit: pfad-begrenzt committen, `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist." | 2026-10-06 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 239.
+- **Wort:** „ok ich schaue ob ich einen gaming pc von 2011 zum laufen bekomme und da linux mint drauf installiere um ihn als runner laufen zu lassen" | 2026-10-06 | Operator (Session) — neuer self-hosted Runner geplant (2011er Gaming-PC, Linux Mint); Registrierung/Routing als `## An mycelium` geroutet; Sensory-Folge 239.
 
 ## Offen (aufgeschlüsselt)
 
@@ -267,6 +268,16 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 - **Lage:** (gemessen 2026-09-28) Asset `ephemeris_europa_clipper.bin` 200 / 103 120 B, Siegel `dae553fb…`; in `phi/sources.φ` **nicht** registriert (Messung 2026-09-29 F206; der Register-Schritt ist als `## An Mycelium` geroutet — die Geschwister-Flyby-Einträge `:15912-15952` tragen keine `ttl`/Verdikt-Zeile, nur `no-cadence`, daher keine Mountain-Feder). NOW < Termin.
 - **Blockade:** Termin.
 - **Braucht:** nach dem Flyby `gh workflow run kernel-flatten.yml` (`horizons_compiler --flyby --ci-mode`, Eintrag `tools/harvest/src/bin/horizons_compiler.rs:22` `-159/europa_clipper`) + `archive_search --sniff "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin"` gegen `dae553fb…`.
+
+## An mycelium
+
+Origin: sensory-folge239. **Neuer self-hosted Runner — Operator richtet einen 2011er
+Gaming-PC mit Linux Mint ein.** Operator-Wort 2026-10-06: „ok ich schaue ob ich einen
+gaming pc von 2011 zum laufen bekomme und da linux mint drauf installiere um ihn als
+runner laufen zu lassen". Folge, sobald die Maschine läuft: Runner-Registrierung (Labels)
+und Routing-Entscheidung, ob die rechenlangen `hyperscanning-te`-Screen-Jobs (`max_points=4096`,
+`shards=4`, gemessen ~1 h auf GitHub-hosted, $0) zusätzlich auf eigene Runner gezogen werden.
+Präzedenz: `t420` (sensory-233 → mycelium-folge233).
 
 ## Träger (Orphan-Faltung)
 
