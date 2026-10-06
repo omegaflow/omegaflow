@@ -1002,14 +1002,16 @@ impl Gate {
                 if tokens.len() >= 6 {
                     let force = tokens[4];
                     let unit = normalize_unit(tokens[5]);
-                    if force_id_of(force).is_some() && unit == "1" && force != "em" {
-                        return Some(Verdict {
-                            severity: Severity::Hard,
-                            rule: "dimensionless-force".to_string(),
-                            line: line_idx + 1,
-                            feedback: feedback("dimensionless-force").to_string(),
-                            quote: clip(t, 90),
-                        });
+                    if let Some(id) = force_id_of(force) {
+                        if unit == "1" && !allowed_units_for_force(id).contains(&"1") {
+                            return Some(Verdict {
+                                severity: Severity::Hard,
+                                rule: "dimensionless-force".to_string(),
+                                line: line_idx + 1,
+                                feedback: feedback("dimensionless-force").to_string(),
+                                quote: clip(t, 90),
+                            });
+                        }
                     }
                     if force_id_of(force).is_some()
                         && !unit.is_empty()
@@ -4044,9 +4046,16 @@ mod tests {
     #[test]
     fn fp_tool_dimensionless_force_line() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"phi/x.φ","newString":"field share share gaussian-inverse-square diffusion 1 86400 0.0 0.0\n"}"#;
+        let args = r#"{"filePath":"phi/x.φ","newString":"field share share gaussian-inverse-square thermal 1 86400 0.0 0.0\n"}"#;
         let v = g.check_tool_call("write", args).unwrap();
         assert_eq!(v.rule, "dimensionless-force");
+    }
+
+    #[test]
+    fn dimensionless_one_follows_the_force_registry() {
+        let mut g = test_gate();
+        let args = r#"{"filePath":"phi/x.φ","newString":"field share share gaussian-inverse-square diffusion 1 86400 0.0 0.0\n"}"#;
+        assert!(g.check_tool_call("write", args).is_none());
     }
 
     #[test]
