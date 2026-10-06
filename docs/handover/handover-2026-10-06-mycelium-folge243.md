@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; CI-Triage, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: c437062e6c079647c3af5b75ed176e0b36e5abf2a2392809f66f8b69bd7d1e4e
+  sha256: 620fbdc46417d8cd95393d4c931677314b6244464e1da0892cb5f9348ab144e5
   status: live
 -->
 # Handover — Mycelium-Folge 243 (2026-10-06)
@@ -25,6 +25,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge242.md` (
 - Wort | 2026-10-06 | Daten-Holdings CDN-Bedarf/Ort: „ich gebe es mycelieum" — Kriterium nicht „regenerierbar", sondern **was muss auf den CDN und liegt es am richtigen Ort** | Quelle: future-185 addressed.
 - Wort | 2026-10-06 | „Ein Dispatch = ein begrenzter Schritt" — ein Agent plant im Output-Budget; ein über-großer Auftrag wird als Sequenz begrenzter Schritte gebaut | Quelle: Operator-Session 2026-10-06, als Regel in `AGENTS.md`.
 - Wort | 2026-10-06 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | Quelle: Operator (Session, Mycelium 243).
+- Wort | 2026-10-06 | Own-CDN-Junk-Bereinigung: „ich folge deiner Empfehlung" — die Messung korrigierte die Empfehlung: die „33 Junk-Assets" sind fast alle registriert oder haben Konsumenten (`rixs_spin_*` → `phi/witnesses.φ:169,175`; `Proudfoot23_TNBFits.zip.00N` → `tnbfits-cdn.yml`; `data.zip` → `kyoto_pressure_compiler.rs:11`; TAP-sync/TAPVizieR/nph/sync → `reference`-Blöcke). Nur 1 stale Blatt gelöscht: `irsa.ipac.caltech.edu/dl07_av.fits.sha256` (Basis-Asset absent, 0 Register-Referenzen) | Quelle: Operator (Session, Mycelium 243).
 
 ## Offen — eigen
 
@@ -53,14 +54,6 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge242.md` (
 - **Blockade:** Mountain-Verdikt (Admission) je y-Quelle.
 - **Braucht:** je pending Domäne die Sources-Zeile (Mountain, `## An mountain`); dann `.te` je Klasse
   + `.github/workflows/exposom-matrix-te.yml`.
-
-### Registry↔CDN-Reconciliation Step 5 — Löschung der Junk-Assets
-- **Status:** operator-gebunden
-- **Trigger:** Operator-/Council-Wort zur Löschung
-- **Lage:** (gemessen 2026-10-06) Bindungen scoped umgesetzt; Reg==Release offen: keiner;
-  Mismatches klassifiziert; Junk-Liste ~~33~~ (vorbereitet, `docs/surveys/survey-2026-09-03-orphan-verdicts.md:103-151`).
-- **Blockade:** Own-CDN-Löschung ist destruktiv — Operator-/Council-Wort.
-- **Braucht:** Operator-Wort (über Future-Queue vorgelegt, `## An future`).
 
 ### `phi/blocked_sources.φ` — Mycelium-Klasse
 - **Status:** je eigen
@@ -125,7 +118,7 @@ Origin: mycelium-folge243.
 
 Origin: mycelium-folge243.
 
-- **Operator-Frage (Own-CDN-Löschung, operator-gebunden):** die vorbereitete Junk-Liste der CDN-Reconciliation (Step 5, `docs/surveys/survey-2026-09-03-orphan-verdicts.md:103-151`) wartet auf ein Wort. Lage: 13 Netlocs, Bindungen scoped umgesetzt, Reg==Release offen: keiner. Frage: dürfen die klassifizierten Junk-Assets aus dem eigenen CDN-Release gelöscht werden? Bei Ja: je Asset `gh release delete-asset` (nie die letzte Kopie); bei Nein: Liste bleibt als `verwahrt` liegen. (Löschung = destruktiv → Operator-Wort.)
+- **Own-CDN-Bereinigung (erledigt):** die „33 Junk-Assets" der CDN-Reconciliation (Step 5) sind gemessen fast alle registriert (`reference`) oder haben Konsumenten; nur 1 stale `.sha256`-Blatt (`irsa.ipac.caltech.edu/dl07_av.fits.sha256`) blieb und ist gelöscht. Kein offener Akt.
 - **Self-hosted Runner:** `t420` ist **online** und bedient `[self-hosted, Linux]` (gemessen `gh api …/actions/runners`). Runner-Routing der 3 dispatch-only One-Shots (`emso`/`twomrs`/`vires-hapi`) auf `ubuntu-latest` **in dieser Session erledigt**.
 - **Doc-Korrektur `state/future/holdings-migration-2026-10-06.md`:** Zeile `nvss.json` ist widerlegt — das Asset liegt korrekt unter `data/ssd.jpl.nasa.gov-nvss/nvss.json` (Register-Tag `ssd.jpl.nasa.gov-nvss`, nicht `ssd.jpl.nasa.gov`). Die Zahlen-Snapshot-Risse (270 MiB, 1,21 GiB) sind ausgeführt; die Riss-Zeile zum `opencode-tmp`-Dump (13 GB/11 603 Dateien) bleibt gültig.
 - **Orphan-Doc `docs/surveys/survey-2026-10-03-exzellenz-gate.md`** (1 offener Marker, kein Live-Handover-Träger): bitte als Träger im eigenen Handover nennen oder gemessen `descoped`.
