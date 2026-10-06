@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 099cd0cd04fe82808078ed1097e0ec78d4eed48d4ba5f1895b296cbd0fe05c79
+  sha256: 29fa35b21e26feec54092f63898d1f2defda6e5b4fd3af76c6e6505bf2b22841
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,12 +12,13 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.4730 · cap 0.5 — Grund: langer Meta-Pass (Bench, Config, Reconcile, Stimmen-Adressierung 5/5/5, DE440-Pin, UI-/API-Qualitäts-Test)
+## Burn: open 0.0000 · close 0.4944 · cap 0.5 — Grund: langer Meta-Pass (Bench, Config, Reconcile, Stimmen-Adressierung 5/5/5, DE440-Pin, UI-/API-Qualitäts-Test, nvidia-Kuration)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
 ## Operator-Wort-Register
 
+- Wort | 2026-10-06 | „für die apis brauche ich zuverlässige ehrliche und schnelle stimmen, insbesondere zum grinden … die ui chats müssen stark sein" — API-Stimmen kuratieren (zuverlässig/ehrlich/schnell), UI-Chats = frontier | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „weiter ich habe glm und trying open /kimi gestartet" — UI-Test fortsetzen | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „es sind 5 stimmen 5 axiome 5 achsen und du kannst die entwürfe überschreiben bzw. leere chats starten" — Arch-/Ethik-Adressierung trägt 5 Stimmen (Mountain·River·Mycelium·Sensory·Future), 5 Axiome (`docs/granit.md:16-20`) und 5 Achsen (`docs/concepts/die-vier-schilde.md`) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „mir geht es darum dass du die qualität und den nutzen der chats testest" — Qualitäts-/Nutzen-Test der Stimmen (UI-Chats + API-Modelle) | Quelle: Operator (Session, Mycelium 244).
@@ -73,6 +74,21 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   Composer/`chrome-devtools_type_text`.
 - **Blockade:** keine — die Deaktivierung ist der Vollzug des Worts.
 - **Braucht:** nichts; ein Anbieter kehrt per `auth login`/Zahlungsmethode und Dispositions-Flip zurück.
+
+### API-Stimmen für den Grind — Kuration
+- **Status:** eigen
+- **Trigger:** gemessene Kuration → Rollen/Provider anpassen
+- **Lage:** (gemessen 2026-10-06, T5-Bench + Arch-Test) **nvidia:** schnell+3/3
+  `nvidia/nemotron-3-super-120b-a12b` (p50 2741 ms), `nvidia/openai/gpt-oss-20b` (3057 ms, **aber
+  fabriziert** im Arch-Test), `meta/llama-3.2-11b` (4746), `meta/llama-3.2-90b` (9989);
+  **timeout/tot:** `deepseek-v4.1-flash`, `google/gemma-4-31b-it`, `moonshotai/kimi-k3`,
+  `z-ai/glm-5.3`/`-flash`, `nemotron-3.5-lightning`; `mistralai/mistral-nemotron` 410 (gestrichen).
+  Ehrlich+stark: `deepseek/deepseek-flash` (Arch-Test stärkste Stimme). UI-Chats (frontier) alle hoch.
+- **Blockade:** keine.
+- **Braucht:** `voice-gptoss` (nvidia gpt-oss-20b, fabriziert) aus der Arch-/Grind-Route streichen;
+  `voice-kilo`/`voice-zen`/`voice-ling`/`voice-agnes` in den API-Arch-Test; Roster auf die gemessenen
+  **schnell+ehrlich** setzen (`deepseek-flash`, `kilo-auto`, `nvidia/nemotron-3-super-120b`,
+  `google/gemini-3.5-flash-lite`).
 
 ### Daten-Holdings — `opencode-tmp`-Dump CDN-Bedarf/Uniqueness
 - **Status:** eigen
