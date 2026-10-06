@@ -79,12 +79,16 @@ geboren — was fehlt, ist nicht der Rahmen, sondern die Ernte und der Motor (`o
 - **`ozzy` ist nicht gebaut.** Die Bibliothek des negativen Fuzzy-Index existiert nur als
   Spec (`sgrep -i ozzy` findet keine Quelldatei; `fd ozzy` = leer). Die Vision stützt ihre
   Triangulation auf dieses Instrument — es fehlt der Motor.
-- **Die Bias-Kurve über n ist nicht gemessen.** `TE_BIAS_MK` trägt sechs Benchmark-Punkte
-  (800…10000); produktive Paar-n (z. B. 8546) fallen dazwischen. Das n-Floor-Gate + der
+- **Die Bias-Kurve über n ist gemessen.** `TE_BIAS_MK` trägt sechs Benchmark-Punkte
+  (800…10000); `TE_BIAS_MK_EMBEDDED` trägt die produktiven n 800…10000 inkl. 6000/8546
+  (KSG, Takens dim 3, K=4, auto-τ; gemessen CI `te-bias-n 37435199338`, SHA `9d4dacf5`;
+  Gate `gate_te_bias_embedded_sign_decreasing_and_refusal`). Das n-Floor-Gate + der
   exakte Lookup sind verdrahtet (`bias_column` in `field_te_query.rs`, Rat 2026-10-05;
   `adjusted`/`unadjusted_below_floor`/`off_table`, Roh-TE unberührt, keine Interpolation).
-  Offen: `te_bias_n_probe` über den produktiven n-Bereich erweitern + `TE_BIAS_MK_EMBEDDED`
-  messen — Register-Pflicht.
+  Offen: `bias_column` estimator-fest — der Zell-Estimator ist `TeEstimator::Binned`
+  (`transfer_entropy_conditional_binned_n`, `cell_te_and_surrogates`), die Korrektur
+  zieht aber die KDE-Tabelle `te_bias_m_k`; welche Tabelle mit dem Binned-Arm paart
+  (Neumessung) ist zu entscheiden, der KDE-Sockel nie über einen KSG-Wert.
 - **Der Flaschenhals ist die Ernte, nicht der Rahmen.** Die Maschine kann jede Frage
   formulieren, aber nur antworten, wenn **beide** Kanäle Daten tragen (das Sirius-Wetter
   hat kein Thermometer). Die Beschaffungsroute liegt in der Survey §2/§5.

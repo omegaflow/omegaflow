@@ -10022,6 +10022,10 @@ origin https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0
 compiler tools/harvest/src/bin/pds3_img_compiler.rs
 at moon
 ttl 604800
+field "H RECEIVE INTENSITY" minirf_h_intensity inverse-square em 1 604800 0.0 0.0
+field "V RECEIVE INTENSITY" minirf_v_intensity inverse-square em 1 604800 0.0 0.0
+field "CROSS POWER INTENSITY (REAL)" minirf_cross_real inverse-square em 1 604800 0.0 0.0
+field "CROSS POWER INTENSITY (IMAGINARY)" minirf_cross_imag inverse-square em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce1_mrm.fits
 format pds4_fits
