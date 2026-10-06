@@ -93,6 +93,7 @@ pub use archivar::sha256;
 pub use archivar::skydirection;
 pub use archivar::skymap;
 pub use archivar::snirf;
+pub use archivar::soho_lasco;
 pub use archivar::spectral;
 pub use archivar::stac;
 pub use archivar::suprastrom;
