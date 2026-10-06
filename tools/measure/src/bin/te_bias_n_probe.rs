@@ -1,4 +1,4 @@
-use omegaflow::te::{kde_n_eff, transfer_entropy_lag};
+use omegaflow::te::{kde_n_eff, topological_te_estimate, transfer_entropy_lag};
 
 const TRANSIENT: usize = 1000;
 const COUPLING: f64 = 0.2;
@@ -83,9 +83,11 @@ fn sample_std(xs: &[f64]) -> Option<f64> {
 }
 
 fn usage() {
-    println!("usage: te_bias_n_probe [--replicates N] [--ns a,b,c] [--out <path>]");
     println!(
-        "runs the scalar Silverman-KDE TE estimator (transfer_entropy_lag, lag 1) on coupled Hénon maps (Schreiber 2000, true direction X→Y) at several n with fixed-seed replicates."
+        "usage: te_bias_n_probe [--replicates N] [--ns a,b,c] [--estimator scalar|embedded] [--dim N] [--out <path>]"
+    );
+    println!(
+        "runs the scalar Silverman-KDE TE estimator (transfer_entropy_lag, lag 1) by default, or the embedded KSG estimator (topological_te_estimate, Takens dim N) with --estimator embedded, on coupled Hénon maps (Schreiber 2000, true direction X→Y) at several n with fixed-seed replicates."
     );
     println!(
         "reports mean TE(X→Y), its bias against the n = {REF_N} reference, its dispersion across replicates, the reverse mean and the direction accuracy; writes the sheet to --out when given (stdout always)."
@@ -111,6 +113,16 @@ fn main() {
         return;
     }
     let out = arg_after(&args, "--out").map(|s| s.to_string());
+    let estimator = arg_after(&args, "--estimator").unwrap_or("scalar");
+    if estimator != "scalar" && estimator != "embedded" {
+        eprintln!("--estimator names no measurable arm (scalar | embedded) — no measurement");
+        return;
+    }
+    let embedded = estimator == "embedded";
+    let dim = arg_after(&args, "--dim")
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|&v| v >= 2)
+        .unwrap_or(3);
     let Some(max_n) = ns.iter().copied().max() else {
         return;
     };
@@ -123,14 +135,19 @@ fn main() {
         sheet.push('\n');
     };
 
-    line(
-        "=== TE estimator bias vs n — coupled Hénon (Schreiber 2000), scalar Silverman-KDE estimator ===",
-    );
+    let estimator_label = if embedded {
+        format!("embedded KSG (topological_te_estimate, Takens dim {dim})")
+    } else {
+        "scalar Silverman-KDE (transfer_entropy_lag, lag 1)".to_string()
+    };
+    line(&format!(
+        "=== TE estimator bias vs n — coupled Hénon (Schreiber 2000), {estimator_label} ==="
+    ));
     line(
         "system: x_{n+1} = 1.4 − x_n² + 0.3 x_{n−1};  y_{n+1} = 1.4 − (c·x_n·y_n + (1−c)·y_n²) + 0.3 y_{n−1}",
     );
     line(&format!(
-        "coupling c = {COUPLING:.2} (known direction X → Y); transient {TRANSIENT} steps discarded per replicate; estimator = transfer_entropy_lag (Silverman-KDE, lag 1) — the KDE/Silverman estimator the paper names at docs/paper/gic-causal-driver.md:655-660"
+        "coupling c = {COUPLING:.2} (known direction X → Y); transient {TRANSIENT} steps discarded per replicate; estimator = {estimator_label}; the scalar arm is the KDE/Silverman estimator the paper names at docs/paper/gic-causal-driver.md:655-660, the embedded arm the KSG estimator the production flux runs (omega.rs:489)"
     ));
     line(&format!(
         "replicates = {reps} (fixed splitmix64 seeds, base {BASE_SEED:#018x}); reference n = {REF_N} (the validated benchmark size)"
@@ -144,8 +161,20 @@ fn main() {
         })
         .collect();
 
-    let te_fwd = |d: &Rep, n: usize| transfer_entropy_lag(&d.y[..n], &d.x[..n], 1);
-    let te_rev = |d: &Rep, n: usize| transfer_entropy_lag(&d.x[..n], &d.y[..n], 1);
+    let te_fwd = |d: &Rep, n: usize| {
+        if embedded {
+            topological_te_estimate(&d.y[..n], &d.x[..n], dim).map(|e| e.te)
+        } else {
+            transfer_entropy_lag(&d.y[..n], &d.x[..n], 1)
+        }
+    };
+    let te_rev = |d: &Rep, n: usize| {
+        if embedded {
+            topological_te_estimate(&d.x[..n], &d.y[..n], dim).map(|e| e.te)
+        } else {
+            transfer_entropy_lag(&d.x[..n], &d.y[..n], 1)
+        }
+    };
 
     let ref_fwd: Vec<f64> = reps_data.iter().filter_map(|d| te_fwd(d, REF_N)).collect();
     let ref_rev: Vec<f64> = reps_data.iter().filter_map(|d| te_rev(d, REF_N)).collect();

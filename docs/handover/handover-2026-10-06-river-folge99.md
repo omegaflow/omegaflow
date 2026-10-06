@@ -3,7 +3,7 @@
   session: River-Folge 99
   class: handover
   date: 2026-10-06
-  sha256: ad9aea85b6cbe4a49d0b455a29f0648e5dacd92b16dcbc747b74f021c16eca59
+  sha256: 2bf4a94594c1d54a9d76ebe8cd2a9d18278f17162f701c1db9e11ded14f5c2bb
   status: live
 -->
 # Handover — River-Folge 99 (2026-10-06)
@@ -87,60 +87,62 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 ### Universelles Vlies — Bias-Kurve, `ozzy` + Alles-gegen-alles-Matrix
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keiner (arbeitbar bis zur Rats-Kante).
-- **Lage:** (gemessen 2026-10-06) `TE_BIAS_MK_EMBEDDED: Option<f64> = None`
-  (`src/mathematikerin/te.rs:45`) hat **keinen Leser**; `bias_column`
-  (`field_te_query.rs:2619`) nutzt allein die skalare n-Tabelle `TE_BIAS_MK`
-  (`te.rs:32-43`). Der skalare Weg ist eine **n-Tabelle**, der eingebettete Sockel ein
-  **Einzel-Skalar** — die Identität der eingebetteten Korrektur ist der offene Design-Punkt.
-  Der eingebettete Estimator-Lauf (`te_bias_n_probe` über den produktiven n-Bereich) ist
-  CI-Compute, nie lokal.
-- **Blockade:** (a) Rats-Entscheid zur Identität von `TE_BIAS_MK_EMBEDDED` (Skalar vs.
-  n-Tabelle); (b) der Lauf ist CI.
-- **Braucht:** (1) Rat: Skalar vs. n-Tabelle für `TE_BIAS_MK_EMBEDDED`; (2) `te_bias_n_probe`
-  um produktive n + embedded-Estimator erweitern; (3) CI-Lauf; (4) 8 probe-Kanäle an den Draht
-  + 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`); (5) `ozzy` **auf** der Matrix.
+- **Lage:** (gemessen 2026-10-06) **Rat + Schwarm entschieden** (Rat 2026-10-06; Schwarm 6/12
+  einig — gemini, dots, ling, nemotron, inkling, kilo; die übrigen Routen rate-limitiert):
+  `TE_BIAS_MK_EMBEDDED` wird eine **n-Tabelle** (analog `TE_BIAS_MK`/`te_bias_m_k`), exakter
+  Lookup, keine Interpolation; gemessen mit dem **eingebetteten KSG-Estimator**
+  (`topological_te_estimate`, dim 3, auto-MI-τ, K=4 — der Produktionsarm `omega.rs:489`), nicht
+  mit dem KDE-Arm. Die τ-Abhängigkeit ist ein benannter Riss. **Gebaut:** `te.rs:45` jetzt
+  `TE_BIAS_MK_EMBEDDED: &[(usize,f64)] = &[]` + `te_bias_m_k_embedded`; `te_bias_n_probe` um
+  `--estimator embedded --dim` erweitert; `.github/workflows/te-bias-n.yml` fährt den scalaren +
+  den eingebetteten Arm über `800…10000` inkl. produktiver n `6000,8546`.
+- **Blockade:** keine (Bau steht); die Zahlen kommen aus CI, nie lokal.
+- **Braucht:** (1) `te-bias-n`-Lauf lesen, Tabelle in `te.rs` eintragen; (2) `bias_column`
+  (`field_te_query.rs:2619`) estimator-fest machen (KDE-Sockel nie über KSG-Wert); (3) 8 probe-Kanäle
+  an den Draht + 15×15-Lauf (`matrix full`, `fdr bh 0.05 over matrix`); (4) `ozzy` **auf** der Matrix.
   **Ozzy läuft auf der Matrix, nicht davor.**
 
 ### Agnosis — Membran-Trio & Presence-Volume (River-Hand)
 - **Status:** eigen | **Bindung:** eigen (cross-line: Mountain, Sensory)
-- **Trigger:** keiner (arbeitbar bis zur Rats-Kante; `omega.rs:878` ist eine Architektur-Frage → Rat).
+- **Trigger:** keiner (arbeitbar bis zur Rats-Kante).
 - **Lage:** (gemessen 2026-10-06) Verdikt `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md`.
-  Offen: (a) `static/membrane.html:43`
-  `const BODIES = ["earth","moon","sun"]` → Build-Time-Manifest aus der Hüllen-Pipeline;
-  (b) `src/mathematikerin/omega.rs:878` Presence-Volume hart „earth"-geodätisch →
-  SSB-/deklarativer Rahmen.
-- **Blockade:** (a) Kante = kein Fenster-Edit; (b) braucht ein Rats-Verdikt zur Rahmen-Identität
-  der Volume-Achsen (`sample_volume` erwartet geodätische Achsen, kein Einzeiler).
-- **Braucht:** (a) Build-Time-Manifest (Mycelium/CI stagt die Dateinamen; River konsumiert);
-  (b) Rats-Sitzung.
+  **Rat 2026-10-06 (bestätigt vom Schwarm 6/12):** der korrekte Rahmen ist SSB/baryzentrisch als
+  Invarianter der Presence **plus** ein je Volume **deklarierter Observer**; der feste
+  `"earth"`-Rahmen ist der Bias; fehlt die Deklaration → `refused`/`absent`, nie Default.
+  Offen: (a) `static/membrane.html:43` `const BODIES = ["earth","moon","sun"]` →
+  Build-Time-Manifest aus der Hüllen-Pipeline (Kante: kein Fenster-Edit; Mycelium/CI stagt);
+  (b) `src/mathematikerin/omega.rs:878` hart `"earth"` → deklarativer Rahmen.
+- **Blockade:** keine (Rat liegt); (b) ist mehrzeilig (Volume-Record/Kontrakt).
+- **Braucht:** (b) vier Berührpunkte, ein Atom — (1) `src/archivar/volume.rs` `Volume.frame_body:
+  Option<String>`; (2) `Extract::Volume`/`types.rs`/`parse.rs` tragen den Frame-Body,
+  `main_flow.rs:3982` von URL-Name auf den deklarierten Body; (3) `omega.rs:776-830`+`:861-892`
+  `ensure_volumes`/`upload_volumes` — `"earth"`-Literal durch `vol.frame_body` ersetzen,
+  `icrs_to_body_geodetic` (`motion.rs:402`); (4) Test `volume_observer_declared_and_refused_when_absent`
+  + ADR. `shaders.rs` bleibt unberührt (null Body-Namen).
 
 ### flyby-odf-Census — Probe-Stream vs. Workflow
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `flyby-odf-cdn` 37427673360 Ergebnis.
 - **Lage:** (gemessen 2026-10-06) Fixture `src/archivar/kernels/odf07155.dat` = 88704 B;
-  `odf_census_probe` schreibt den Census nach **stdout** (`tools/measure/src/bin/odf_census_probe.rs:87-96`),
-  nur den Diagnostik-Kopf nach stderr (`:66`); der Workflow `.github/workflows/flyby-odf-cdn.yml:29-30`
-  leitet stdout → `odf07155_census.txt` + `test -s`-Guard, kein `2>/dev/null` mehr — die
-  Leer-Datei-Ursache (`HTTP 400: Bad Content-Length`) ist geheilt. Lokale Re-Messung liegt am
-  Compile-Bruch der fremden WIP.
-- **Blockade:** der Baum kompiliert gerade nicht (fremde uncommittete WIP, s. `## An mountain`).
-- **Braucht:** `cargo build -p omegaflow-measure --bin odf_census_probe && ./target/debug/odf_census_probe src/archivar/kernels/odf07155.dat` (sobald der Baum kompiliert) — dann Run 37427673360 aus dem Pass.
+  `./target/debug/odf_census_probe` liefert **2228 valide TRK-2-34-Records** (scid 236,
+  data_type 11/12/13/37, dss_rx 14/43/63); Census auf **stdout** (`odf_census_probe.rs:87-96`) —
+  die Datei ist nicht mehr leer; der Workflow `.github/workflows/flyby-odf-cdn.yml:29-30` leitet
+  stdout + `test -s`-Guard, kein `2>/dev/null` mehr. Verdict bleibt `pending` (kein signed
+  range-rate-Residuum ohne Doppler-Modell).
+- **Blockade:** keine.
+- **Braucht:** Run 37427673360 aus dem Stehenden Pass; grün → Punkt fällt.
 
 ## An mountain
 
 Origin: river folge99.
 
-- **Compile-Block (gemessen 2026-10-06):** `src/archivar/emm_exi.rs:117`
-  `bunit_declares_count(header.str_unescaped("BUNIT"))` — `Option<String>` statt `Option<&str>`;
-  die uncommittete WIP bricht `cargo build` (HEAD selbst kompiliert, `ci-gate` build grün).
-  **Braucht:** `.as_deref()`.
 - **clippy `trim_split_whitespace`** (`src/archivar/units.rs:549`,
   `epoch.trim().split_whitespace()`, gemessen via `ci_manage log 37429979869` @`045711091`):
   der rote `ci-gate`. **Braucht:** `.trim()` entfernen (`split_whitespace` ignoriert
   Rand-Weißraum bereits).
-- **EMM `emm_exi_l2a` Unit-Riss** (`phi/sources.φ:17281`): Einheit `count`; die WIP oben
-  (`bunit_declares_count`, `COMP_COUNT`) scheint genau diesen Riss zu schließen —
-  **Braucht:** Einheiten-Entscheid am Register + die WIP kompilierbar machen.
+- **EMM `emm_exi_l2a` Unit-Riss** (`phi/sources.φ:17281`): Einheit `count`; der uncommittete Arm
+  (`bunit_declares_count`, `COMP_COUNT` in `src/archivar/emm_exi.rs`) schließt den Riss und
+  kompiliert. **Braucht:** Einheiten-Entscheid am Register.
 - **`bat_fluence_erg_cm2`-Apertur-Riss** (`phi/sources.φ:17812`): als `aperture:flux`
   deklariert, während die River-Zeile es als nicht-Fluss führt. **Braucht:** Mountain-Verdikt
   (eine Zeile).
@@ -161,14 +163,17 @@ Origin: river folge99.
 
 Pfad-begrenzte Commit-Pfade dieser Session:
 
+- `src/mathematikerin/te.rs`
+- `tools/measure/src/bin/te_bias_n_probe.rs`
+- `.github/workflows/te-bias-n.yml`
 - `docs/handover/handover-2026-10-06-river-folge99.md`
 - `docs/handover/archiv/handover-2026-10-06-river-folge98.md` (Move aus `docs/handover/`)
 
-Verifikation/Dispatches: keine lokale Test-/Bau-Messung möglich — der Baum trägt fremde
-uncommittete WIP (`src/archivar/emm_exi.rs:117`) und kompiliert daher gerade nicht; HEAD
-`045711091` selbst ist CI-grün (build). `register_lookup --fired river` = em-Apertur
-(FIRED_UNGEMESSEN) → gemessen; `--addressed river` = 3 (future-181, mountain-238,
-mycelium-235) — gefaltet; `open_points_check` folge98 = 1 absent (Parse-Artefakt), 0
-stale-citations. Kein Sub-Agent-Dispatch (flash-first; der Pass war mit eigenem Kontext arbeitbar).
+Verifikation/Dispatches: `cargo check` clean, `cargo build -p omegaflow-measure --bin te_bias_n_probe`
+clean, `cargo fmt --` auf die zwei Quelldateien; `./target/debug/odf_census_probe` lief lokal
+(2228 valide Records, silent). Rat gelaufen (`council`, 2026-10-06) + Schwarm 6/12
+(gemini/dots/ling/nemotron/inkling/kilo einig; qwen/zai/zen rate-limitiert, gptoss/agnes/kenari
+abgebrochen). `register_lookup --fired river` = em-Apertur (FIRED_UNGEMESSEN) → gemessen;
+`--addressed river` = 3 (future-181, mountain-238, mycelium-235) — gefaltet.
 
-## Burn: open 0.0000 · close 0.0489 — `session_burn` River-Linie (top session „River-Linie Übergabe in einem Pass abarbeiten", gemessen 2026-10-06)
+## Burn: open 0.0000 · close 0.1036 — `session_burn` River-Linie (top session „River-Linie Übergabe in einem Pass abarbeiten", gemessen 2026-10-06)

@@ -28,7 +28,12 @@ jobs:
             echo "POINT te-bias-n"
             cargo run --release -p omegaflow-measure --bin te_bias_n_probe -- \
               --replicates ${{ github.event.inputs.replicates }} \
-              --ns 800,1260,1600,2200,4000,10000
+              --ns 800,1260,1600,2200,4000,6000,8546,10000
+            echo "POINT te-bias-n-embedded"
+            cargo run --release -p omegaflow-measure --bin te_bias_n_probe -- \
+              --replicates ${{ github.event.inputs.replicates }} \
+              --estimator embedded --dim 3 \
+              --ns 800,1260,1600,2200,4000,6000,8546,10000
           } > "te-bias-n.txt"
       - uses: actions/upload-artifact@v4
         if: always()
