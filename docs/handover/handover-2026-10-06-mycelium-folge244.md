@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 5a4b26b59f815b3c2b8358b2b4f3d45af504b941f6e8cbf4e4c705394c2b668b
+  sha256: d795f55ca52f0e15066aadd1a8bc6c14a97cff9d18019340125c80ddb7a31d12
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)
@@ -12,12 +12,13 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.1086
+## Burn: open 0.0000 · close 0.2021 · cap 0.25 — Grund: langer Meta-Pass (Bench-Läufe, Config-Edit, Reconcile)
 
 `session_burn`; `.tools_ensure archive_search|sgrep|sfetch|smail|ci_manage`: frisch.
 
 ## Operator-Wort-Register
 
+- Wort | 2026-10-06 | „ich will nicht nur dass du registriert sondern auch dass du tatsächlich die confgs bearbeitest und bitte kümmer dich auch um cdn_reconciliation.json" | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „kannst du bitte die nutzlosen modelle und anbieter deaktivieren? also auch die die immer rate limited sind" — nicht aufrufbare Arme aus `free_models.tsv` austragen (`struck`) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „nein wir haben glm max über ui chat" — OrcaRouter nicht verfolgen (GLM-Route läuft über den UI-Chat) | Quelle: Operator (Session, Mycelium 244).
 - Wort | 2026-10-06 | „Genau ein Zulassungskriterium (Presence-Hülle) und ein deklarierter Beobachter je Messung; ein Body-Name, den der Code wählt, ist der Bias" | Quelle: Operator-Session 2026-10-06 — als Regel in `AGENTS.md` `## Block Universe Physics`.
@@ -40,6 +41,11 @@ kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge243.md` (
   `1113 Insufficient balance`), `orcarouter` (2, descoped), plus `gemini-2.5-flash` (404) und
   `nvidia/mistral-nemotron` (410 EOL). **Aktiv bleiben** `google`, `kilo`, `nvidia` (HTTP) und
   `opencode` (client). Test: `state/mycelium/free-model-bench-2026-10-06.tsv`.
+  **Configs bearbeitet (Operator-Wort):** `~/.config/opencode/opencode.jsonc` — `disabled_providers`
+  um `cloudflare-workers-ai`, `groq`, `sambanova`, `mistral`, `alibaba`, `ovhcloud`, `orcarouter`
+  erweitert; tote Provider-Blöcke (cloudflare, sambanova) entfernt; `cohere/north-mini-code:free`
+  aus der kilo-Whitelist. `opencode.json` — Agent `voice-qwen` (cloudflare) entfernt + aus der
+  `line`-Dispatch-Allowlist. Beide JSON validiert (`jaq empty`).
 - **Blockade:** keine — die Deaktivierung ist der Vollzug des Worts.
 - **Braucht:** nichts; ein Anbieter kehrt per `auth login`/Zahlungsmethode und Dispositions-Flip zurück.
 
