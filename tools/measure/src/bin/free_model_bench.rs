@@ -586,6 +586,7 @@ fn main() {
     let mut out = "free_model_bench.tsv".to_string();
     let mut filter: Option<String> = None;
     let mut task_filter: Option<String> = None;
+    let mut provider_filter: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -604,6 +605,12 @@ fn main() {
             "--task" => {
                 if i + 1 < args.len() {
                     task_filter = Some(args[i + 1].clone());
+                    i += 1;
+                }
+            }
+            "--provider" => {
+                if i + 1 < args.len() {
+                    provider_filter = Some(args[i + 1].clone());
                     i += 1;
                 }
             }
@@ -629,7 +636,10 @@ fn main() {
     ];
     let selected: Vec<&Model> = models
         .iter()
-        .filter(|m| is_eligible(m))
+        .filter(|m| match provider_filter.as_ref() {
+            Some(pf) => pf.split(',').any(|p| m.provider == p.trim()),
+            None => is_eligible(m),
+        })
         .filter(|m| filter.as_ref().map_or(true, |f| m.id.contains(f.as_str())))
         .collect();
     let workers: usize = env::var("BENCH_WORKERS")
