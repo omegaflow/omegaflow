@@ -52,3 +52,19 @@ jobs:
           echo "epm2021.bsp sha256: $(sha256sum epm2021.bsp | cut -d' ' -f1)"
           echo "epm2021.bsp bytes: $(stat -c%s epm2021.bsp)"
           cargo run -p omegaflow-harvest --release --bin epm_compiler -- epm2021.bsp --ci-mode
+      - name: Verify the registered ftp.imcce.fr inpop assets are manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh ftp.imcce.fr ephemeris_inpop)
+          if [ -z "$expected" ]; then
+            echo "no ephemeris_inpop asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view ftp.imcce.fr --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered ftp.imcce.fr inpop assets all present"
