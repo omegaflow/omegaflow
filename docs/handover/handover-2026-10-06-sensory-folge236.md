@@ -3,7 +3,7 @@
   session: Sensory-Folge 236
   class: handover
   date: 2026-10-06
-  sha256: 7be84735a6e6a28a89bed3b741fba92ef307737f95df8b3c997e890dd6eee083
+  sha256: 434db97d9860e2195769d766e1a9650ad00cfe859ccadfa7334f703ddc1cc862
   status: live
 -->
 # Handover — Sensory-Folge 236 (2026-10-06)
@@ -23,7 +23,7 @@ Dieses Register konsumiert `docs/handover/archiv/handover-2026-10-06-sensory-fol
 `state/zustand/standing-pass.md` (Mycelium-235, refresh 1, HEAD `4014874d6`, gemessen 2026-10-06).
 Eigene Messung dieses Atoms (2026-10-06 F236): Start-HEAD `045711091c` == `origin/main`
 (`git rev-parse`); der Baum ist aktiv geteilt — fremd uncommittet (gemessen 07:3x–07:4xZ):
-`opencode.json` (voice-Flotte), `phi/sources.φ`, `src/archivar/{emm_exi,units}.rs` — unberührt.
+`opencode.json` (voice-Flotte), `phi/sources.φ`, `src/archivar/emm_exi.rs`, `src/archivar/units.rs` — unberührt.
 Der F235-Anteil dieses Atoms lag beim Sessionwechsel noch uncommittet vor (die F235-Übergabe,
 die F234-Archivierung, `docs/paper/hyperscanning-te-method.md`, `src/weberin.rs`,
 `tools/measure/src/bin/gaia_sso_weave_probe.rs`) und wird hier mitcommittet.
