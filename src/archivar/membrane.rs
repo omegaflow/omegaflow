@@ -417,11 +417,15 @@ pub fn body_anchor_samples(
     out
 }
 
-pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>, epoch: f64) -> Vec<Sample> {
+pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>) -> Vec<Sample> {
     let mut names: Vec<&String> = eph.keys().collect();
     names.sort();
     let mut out = Vec::new();
     for name in names {
+        let Some(be) = eph.get(name) else { continue };
+        let Some(epoch) = body_record_epoch(be) else {
+            continue;
+        };
         out.extend(body_anchor_samples(name, eph, epoch));
     }
     out

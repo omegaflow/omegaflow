@@ -74,7 +74,7 @@ impl MembraneLookup {
     ) -> Vec<f64> {
         if self.hash.is_none() || self.bodies_sealed != self.eph.len() {
             let mut all: Vec<Arc<Sample>> = self.stars.iter().cloned().map(Arc::new).collect();
-            for s in all_body_anchor_samples(&self.eph, t2) {
+            for s in all_body_anchor_samples(&self.eph) {
                 all.push(Arc::new(s));
             }
             self.hash = Some(build_spatial_hash(all, 1.0));
