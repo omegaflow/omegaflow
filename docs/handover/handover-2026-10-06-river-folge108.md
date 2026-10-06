@@ -3,7 +3,7 @@
   session: River-Folge 108
   class: handover
   date: 2026-10-06
-  sha256: a4a8e009ec51c27297d89862645e15060ed552d3c776e98b19e2e3fd285bd8b3
+  sha256: eb5c78f1b8d5158f6dabdbf2ebd9ce1e7b8291214e2e0d7a72342dfcd211266f
   status: live
 -->
 # Handover — River-Folge 108 (2026-10-06)
@@ -224,7 +224,8 @@ Operator-Gesprächsschnitt: `state/operator-gespraeche/2026-10-06-river.md` (git
 
 Verifikation: `cargo check` grün; `cargo build -p omegaflow-measure --bin field_te_query` grün;
 `cargo fmt -- <eigene Pfade>`. Der rote Skalar-Test aus river 106 geheilt; die Bin-Tests laufen
-jetzt im Job `unit`. Die konsumierte Übergabe folge107 nach `archiv/`. Commit/Push warten das
-Commit-Wort des Operators (`/commit`).
+jetzt im Job `unit`. Die konsumierte Übergabe folge107 nach `archiv/`. Commit `290e14601` gepusht
+(`git rev-parse HEAD` == `origin/main`); `.github/workflows/field-te-query.yml` dispatcht
+(`37480365699`, head `290e14601`), Ausgang unread — nie gepollt.
 
-## Burn: open 0.0000 · close 0.1006 · cap 0.35 · Grund: Per-Zelle-Matrix-Riegel (Punkt 1 vollendet) + estimator-feste Bias-Korrektur; kein Dispatch, kein Send
+## Burn: open 0.0000 · close 0.1006 · cap 0.35 · Grund: Per-Zelle-Matrix-Riegel (Punkt 1 vollendet) + estimator-feste Bias-Korrektur; 1 Dispatch (field-te-query 37480365699), kein Send
