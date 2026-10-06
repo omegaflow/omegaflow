@@ -3,7 +3,7 @@
   session: River-Folge 109
   class: handover
   date: 2026-10-06
-  sha256: f5a365669c0b09902e8c830ecc3c91968c7fe4147355ae8737b34a29e839046a
+  sha256: e866203fb087988390ea999158b2d7dac84862d318cad2b55fb9be98efa2392b
   status: live
 -->
 # Handover — River-Folge 109 (2026-10-06)
@@ -24,6 +24,9 @@ Wort | Datum | Quelle
 „können wir es nicht so machen wie bei [redacted], dass wir die als private experimente laufen lassen?" — Daten ohne geklärte Redistribution laufen privat | 2026-10-06 | Operator (Session, River 105)
 „ich möchte dass wir unsere lizenzen repoweit sauber haben … license file im sources repo" | 2026-10-06 | Operator (Session, River 107)
 „Starte die River-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes … River besitzt die Membran-Pfade" | 2026-10-06 | Operator (Session, River 109) — session-weiter Delegations-Consent, nicht das Commit-Wort
+„es gibt keine kamera und zoom … die präsenz ist das trommelfell im 4d block auf das die punktwolke trifft" | 2026-10-06 | Operator (Session, River 109) — Empfänger-Modell, gegen die GPT-Kamera-Lesart
+„das wort receiver [haben wir] extra eingeführt" | 2026-10-06 | Operator (Session, River 109) — kanonischer Term `Receiver` (Worldline), `Observer` (Vantage) verboten
+„bitte alles umsetzen" | 2026-10-06 | Operator (Session, River 109) — Commit- und Bau-Wort für den Receiver-Schnitt
 Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river-folge108.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -88,19 +91,20 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** Mountain setzt slot `f(11)`/Bit 11; Mycelium baut + manifestiert; Rivers Checkmark ist
   `nearCount(<1e13 m) > 0`.
 
-### Membran — progressives Laden + Startansicht auf die Sonne
-- **Status:** wartend | **Bindung:** eigen (Membran-Pfad)
-- **Trigger:** Katalog-Lieferung nach Helligkeit (C); Rat-/Operator-Wort zum initialen Blick.
-- **Lage:** (gemessen 2026-10-06, River 109) future-folge185 meldet: alle vier Assets laden,
-  Hänger weg; die Startansicht ist fast schwarz, die Sonne ~2 px. `static/membrane.html:48`
-  lädt `BODIES = ["sun","earth","moon"]` (Sonne zuerst); die Start-Kamera (`:53-56`) steht am
-  SSB-Ursprung mit `scale = VIEW_SPAN_M/400` (2.53e17 m ≈ 8.2 pc). Der gemeldete Rest-Punkt
-  `omega.rs:878 (Volume-Bin „earth" hart)` ist gemessen veraltet: `omega.rs:872` liest
-  `field.volumes.iter().find_map(|v| v.frame_body.as_deref())` — kein harter Body-Name.
-- **Blockade:** (C) hängt am 95-MB-Sternkatalog (Mountain + Mycelium); die Startansicht berührt
-  das Gaze-Axiom (der initiale Blick ist Operator-/Rat-Entscheidung, kein Pro-Solo-Fenster-Edit).
-- **Braucht:** (C) Mountain + Mycelium — Katalog nach Helligkeit ordnen; Startansicht: Operator-Wort
-  oder Rat-Entwurf (initialer Blick auf die Sonne), danach Render-Messung im Operator-Browser.
+### Membran — Receiver-Schnitt gebaut; progressives Laden nach Helligkeit (C)
+- **Status:** eigen (C wartend) | **Bindung:** eigen (Membran-Pfad)
+- **Trigger:** Katalog-Lieferung nach Helligkeit (C); Trio-Manifest (Mycelium/CI).
+- **Lage:** (gemessen 2026-10-06, River 109) Der **Receiver-Schnitt ist gebaut** (`static/membrane.html`):
+  der Shader-Boden `2.0` ist entfernt (`true_px = extent/scale`; Punktquelle `extent 0` → 1-px-voller-Fluss,
+  ausgedehnter Körper → `coverage = min(1, true_px²)`); die unbelegte `VIEW_SPAN_M`/`400`-Konstante ist
+  gestrichen — die Skala folgt dem **empfangenen** Span (`span_m / receptors`, `frame()`); vor dem ersten
+  Eintreffen ist der Span 0 → schwarz. Die additive Blending (`one,one`) trug den integrierenden Empfang
+  bereits. Verbleibend (C): `BODIES = ["sun","earth","moon"]` (`:48`) ist eine geschlossene Menge →
+  Build-Time-Manifest (Mycelium/CI). Der gemeldete `omega.rs:878`-Rest ist gemessen veraltet (s. 108).
+- **Blockade:** (C) hängt am 95-MB-Sternkatalog + dem Trio-Manifest (Mycelium/CI).
+- **Braucht:** (C) Mountain + Mycelium — Katalog nach Helligkeit ordnen; Trio → Manifest. **Riss notiert:**
+  die Zoom-Tasten/Wheel (`:390-407`) sind eine Kamera-Reminiszenz gegen die Trommelfell-Doktrin —
+  Entscheidung offen. Render-Messung im Operator-Browser (headless ohne WebGPU-Adapter = ehrliche schwarze Null).
   (D) **descoped** (Körper-`.bin` je 6,6 MB, `accept-ranges` steht).
 
 ### Agnosis — Membran-Trio (Rest (a))
@@ -175,6 +179,37 @@ Origin: river folge107 (Lizenz-Audit) · folge108 (Vlies) · folge109 (Kern-Borr
   bewegende zuletzt); die Prüfungen sind unabhängig (unit=="1" vs unit!="1"), die Reihenfolge
   verhaltensgleich. Kein stiller Fremd-Eingriff — benannt, weil der rote Kern Rivers eigenes
   `field-te-query` blockte.
+- **Live-Bias `src/archivar/port.rs:348-354` (stärkste offene Rückfallstelle).** Der Rahmen-
+  Normalisierer **rät**: `at sun` (349), `on earth 0 0 0` (351), `on earth {lat} {lon} {alt}` (354) —
+  derselbe `on earth`/`at sun`-Default, den `frames.rs` unter `dcc3243f8` verlor (aus `35ff0dfe8`,
+  2026-09-17). Verstößt gegen Q3 des Agnosis-Verdikts („Inferenz verboten, Deklaration erlaubt").
+  **Braucht:** den fehlenden Rahmen als `pending`/`refused` materialisieren, nie raten.
+
+## Receiver — Bias-Archäologie (River 109)
+
+Der Receiver ist gebaut: `src/weberin.rs:1729` `enum ReceiverWorldline { Body, ReferencePoint }`;
+`observer`→`receiver` umbenannt (`sensory-folge235:374`). Kanonisch ist **`Receiver`** (Worldline);
+`Observer` (Vantage) ist verboten (`docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md:82`).
+`AGENTS.md:183-188` ist in diesem Atom auf `Receiver` aligniert.
+
+**Runden (Versuch → Rückfall):** reines Feld (Legacy) → agnostische Oszillatoren (07-22) → Observer
+gebaut, dann gelöscht (08-11) → Trommelfell-Doktrin (08-12) → De-Zentrierung (08-19) → `port.rs`-Inferenz
+(`35ff0dfe8`, 09-17) → `observer_icrs` (`9936018bb`, 09-26) → Bootstrap-Revert (`e1f1baa65`, 09-27) →
+serverloses `BODIES`-Trio (`45e1c2b7f`/`638a11bb9`, 10-04) → Aberration/Doppler als Receiver-Relationen
+(`630bcd3f3`, 10-05) → Survey (`742a6dbbb`, 10-06) → Anchor-Bypass + `frames.rs`-Defaults + `omega.rs`-Literal
++ `weberin.rs`-Receiver (`dcc3243f8`/`17d626ef7`, 10-06).
+
+**Mechanismus der Wiederkehr:** Der Bias kam wieder, weil jede Entfernung den Bequemlichkeits-Default an
+der **nächsten Datengrenze** stehen ließ, an der ein Record auch ohne deklarierte Worldline vollständig
+sein musste — und statt `pending`/`refused` füllte der kürzeste Code-Pfad die Lücke mit der plausibelsten
+Vokabel (Erde für terrestrisch, Sonne für zölibat, das sichtbare Trio für den serverlosen Pfad): ein
+0-Kanon-Verstoß, den der Gradient mit „earth"/„sun"/„observer" als Default-Wort stützt. **Konsequenz:**
+Der Kampf ist pro Grenze, nicht einmalig; die Grenze muss `pending`/`refused` zulassen.
+
+**Rest offen:** `src/archivar/port.rs:348-354` (s. `## An mountain`); `static/membrane.html:48` BODIES
+(Mycelium/CI); `src/weberin.rs:442,579,1819` `body_barycenter_position("sun")` (benennen, nicht wählen).
+**Naming-Residuum:** `doppler.rs:96,123 observer_icrs`, `tests.rs` „observer epoch" (Gate-Fixtures in
+`friction.rs:70-71` sind intendiert). **subject/object:** in `src/` kein Treffer → `pending`.
 
 ## LOCK
 
@@ -189,6 +224,9 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/archiv/handover-2026-10-06-river-folge108.md` (Move aus `docs/handover/`)
 - `src/gate/commit_gate.rs` (Kern-Borrow-Heilung: `dimensionless-force` vor `force-unit-gate`)
 - `tools/measure/src/bin/field_te_query.rs` (3 rote Tests geheilt)
+- `static/membrane.html` (Receiver-Schnitt: Shader-Boden raus, `VIEW_SPAN_M`/`400` gestrichen,
+  Skala aus dem empfangenen Span, schwarzer Start)
+- `AGENTS.md` (`observer` → `Receiver`-Worldline, `## Block Universe Physics`)
 
 Operator-Gesprächsschnitt: `state/operator-gespraeche/2026-10-06-river.md` (gitignored).
 
@@ -203,4 +241,13 @@ nach dem Push: `field-te-query 37483359644 @c07c271fa` (queued), Ausgang unread 
 Der Push löste zusätzlich `ci-gate 37483354207`, `ci-check 37483354197`, `tools-build 37483354248`
 und `register-coverage 37483354340` am eigenen HEAD aus (Ausgang unread).
 
-## Burn: open 0.0000 · close 0.0646 · cap 0.35 · Grund: Kern-Borrow-Heilung + field-te-query-Re-Dispatch; 1 Dispatch, kein Send
+**Receiver-Schnitt (River 109, 2. Atom):** `static/membrane.html` — der 2-px-Shader-Boden entfernt
+(`true_px = extent/scale`; Punktquelle → 1-px-voller-Fluss, ausgedehnter Körper → `coverage = min(1,true_px²)`);
+`VIEW_SPAN_M/400` durch den empfangenen Span (`span_m/receptors`) ersetzt; vor dem ersten Eintreffen 0 →
+schwarz. Kein `cargo`-Gate für JS/WGSL — die Render-Messung ist operator-browser-gebunden (headless ohne
+WebGPU-Adapter = ehrliche schwarze Null); die vier Zuschnitte wurden am Text geprüft. Externe Chat-Verdikte
+(einstimmig Fabrikation): ChatGPT, HF-Kimi-K3, HF-GLM-5.3, HF-Qwen3.8-27B, HF-Llama-3.3-70B, DeepSeek-R1,
+Qwen, Mistral, Duck.ai — gegen den in-house Schwarm (verteidigte den Boden). Der `Receiver`-Term ist
+`survey-2026-10-06-agnostik-llm-verdikt.md:82`.
+
+## Burn: open 0.0000 · close 0.3024 · cap 0.35 · Grund: Kern-Borrow-Heilung + field-te-query-Re-Dispatch + Receiver-Schnitt + Rat/Schwarm/Chat-Verdikt; 1 Dispatch, kein Send
