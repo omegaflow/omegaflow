@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-262, river-122) am Baum gemessen gefaltet; eionet-cdr-cdn.yml gebaut; Lizenz-Census-Join auf Netloc-Ebene; dropped-gate Roster-Baseline gebunden; Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: e4634c71b7a730976076284f4cd472645199f0e54fae0ea12c0092e6c4a3a2ed
+  sha256: e99bd7f3715c91729b752a728ef3211c201527b2e07607d9bf61b124971526d4
   status: live
 -->
 # Handover — Mycelium-Folge 259 (2026-10-07)
@@ -56,9 +56,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### dropped-gate — Roster-Emission + Baseline binden gebaut; pending-legacy-Snapshot + Gate offen
 - **Status:** eigen
 - **Trigger:** — (autonom; Bau als flash-Sequenz)
-- **Lage:** (gemessen 2026-10-07, Mycelium 259) Ratifiziertes Design (Rat + 5 API + 14 UI): 20/20 Register-/Carrier-Frage; Q1 hybrid (ID = Identität, Token nur `match_hint`), Q2 Roster, Q3 hart bei stillem/ungetyptem Move, Q4 `pending-legacy` einfrieren; Reihenfolge Nullkontrolle → ID-Feld → Snapshot → Vokabular → Roster-Gate → hartes Rot. Schnitt 1 committet (`1d3832197`, `canonical_point_key`), Schnitt 2 `--dropped-roster` (258). **Schnitt 3 (dieses Atom):** `--dropped-roster --baseline <datei> [--count]` gebaut (`roster_diff` in `tools/register/src/bin/register_lookup.rs`, Test `roster_diff_names_lost_and_new_keys`; `cargo build` grün); Baseline-Artefakt `docs/zustand/dropped-roster-baseline.txt` am HEAD `f10316975` (45 lebende kanonische Schlüssel, `--baseline … --count` = **0**). Emission `--dropped-roster` = 45 (258: 46).
-- **Blockade:** `pending-legacy`-Einfrierliste + getyptes Ereignis-Vokabular + Zwei-Stufen-Gate (Hook + CI) fehlen; berührt `commit_gate`/`ci-gate.yml`.
-- **Braucht:** `pending-legacy`-Snapshot (voller dropped-Scan, CI-only, >30 min) einfrieren + Ereignis-Vokabular; dann `--dropped-roster --baseline docs/zustand/dropped-roster-baseline.txt --count` als `ci-gate`-Schritt verdrahten. Verdikt: `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md` §Schnitt.
+- **Lage:** (gemessen 2026-10-07, Mycelium 259) Ratifiziertes Design (Rat + 5 API + 14 UI): 20/20 Register-/Carrier-Frage; Q1 hybrid (ID = Identität, Token nur `match_hint`), Q2 Roster, Q3 hart bei stillem/ungetyptem Move, Q4 `pending-legacy` einfrieren; Reihenfolge Nullkontrolle → ID-Feld → Snapshot → Vokabular → Roster-Gate → hartes Rot. Schnitt 1 committet (`1d3832197`, `canonical_point_key`), Schnitt 2 `--dropped-roster` (258). **Schnitt 3 (dieses Atom):** `--dropped-roster [--public-only] [--baseline <datei>] [--count]` gebaut (`roster_diff` in `tools/register/src/bin/register_lookup.rs`, Test `roster_diff_names_lost_and_new_keys`; `cargo build` grün). Baseline-Artefakt `docs/zustand/dropped-roster-baseline.txt` **public-only** am HEAD (41 öffentliche Schlüssel, CI-identisch; `--public-only --baseline … --count` = **0**). Emission `--dropped-roster` = 46 (41 öffentlich + 5 privat).
+- **Blockade:** `pending-legacy`-Einfrierliste + getyptes Ereignis-Vokabular + Zwei-Stufen-Gate (Hook + CI) fehlen; berührt `commit_gate`/`ci-gate.yml`. Die public-only-Baseline löst die frühere CI-Asymmetrie (private `future`-Handover, die CI nicht sieht).
+- **Braucht:** `pending-legacy`-Snapshot (voller dropped-Scan, CI-only, >30 min) einfrieren + Ereignis-Vokabular; dann `--dropped-roster --public-only --baseline docs/zustand/dropped-roster-baseline.txt --count` als `ci-gate`-Schritt verdrahten. Verdikt: `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md` §Schnitt.
 
 ### Lizenz-Census Drift-Tor (Join auf Netloc-Ebene gebaut; Gate-Verdrahtung offen)
 - **Status:** eigen
@@ -72,6 +72,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 Origin: mycelium-folge258.
 
 - **NUR-Asset `fmi_image_mag_nur.bin` — sha steht.** `image-cdn.yml`-Lauf `37595578337` @`84dc4de08` success; Asset 15 551 948 B, sha `9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e` — in `phi/sources.φ:18033` (Block `format fmi_image_mag`) eingetragen. **Braucht:** deine Probe + Zahl in Paper §4/§6; kein neuer Ask.
+- **Lizenz-Census-Tor — Census-Heimat entscheidet die CI-Verdrahtung.** Der Generator `license_census.rs` (mein Pen) joint jetzt netloc-genau gegen deinen `state/river/license-census.tsv` (gemessen 164 = 2 UNMEASURED + 162 STALE, meist Census-`pending`). Aber `state/` ist gitignored → `ci-gate` kann den Census **nicht** lesen; ein CI-Tor ist so nicht baubar. **Braucht:** dein Wort zur Census-Heimat — tracked (z. B. `docs/…`/`phi/…`) vs. lokaler Pregate; danach verdrahte ich Ratchet + Tor (und adressiere den 162-Stale-Riss Census↔`terms`).
 
 ## An future
 
