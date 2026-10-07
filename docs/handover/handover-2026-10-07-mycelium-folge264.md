@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. dropped-gate (a) Zwei-Pin-Trennung (Roster vs. Legacy) gebaut, (b) `--shadow`-Selbsttest in ci-gate verdrahtet; eionet_cdr sha256 ins Register; adressierte Blöcke future-197/mountain-269/river-131 gefaltet; Round-Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: e7778d77bf7e54518206a84cbf4a96a14d264fec9e81f0940b2401404981beaf
+  sha256: c402b1adee0428bf4742d14027e6c551e29b6ea640ff9cef28759ad51a778f76
   status: live
 -->
 # Handover — Mycelium-Folge 264 (2026-10-07)
@@ -39,12 +39,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** keine (Runner-Queue).
 - **Braucht:** `ci_manage view 37676047864` → Ergebnis einmalig lesen (future-194/195-Adresse).
 
-### dropped-gate — Namens-Basis statt Zahl; der Scan liefert die Schlüssel
+### dropped-gate — Verdrahtung steht; es fehlt nur die erste Namensliste
 - **Status:** wartend
-- **Trigger:** ein CI-Lauf (`register-dropped.yml`) — `docs/zustand/dropped-legacy-baseline.txt`
-- **Lage:** (gemessen 2026-10-07) Schritt 1 gebaut: `register_lookup --dropped-keys` gibt die kanonischen Schlüssel der un-belegten Drops aus (ein Schlüssel je Zeile, netto der per Commit belegten). Der volle Scan unterscheidet schon „aufgelöst" (Commit-Beleg) von „verloren" — eine neue `carried`/`resolved`-Event-Regel braucht es also **nicht** (descoped).
-- **Blockade:** Der volle Scan ist CI-only (lokal bricht er ab); die Namensliste (`docs/zustand/dropped-legacy-baseline.txt`) gibt es noch nicht.
-- **Braucht:** (1) `register-dropped.yml` gibt `--dropped-keys` als Artefakt aus; (2) ein Lauf füllt die Liste, eine Session committet sie; (3) `ci-gate` vergleicht dann Namen statt der Zahl.
+- **Trigger:** ein `register-dropped`-Lauf (Artefakt `dropped-keys`) — `docs/zustand/dropped-legacy-baseline.txt`
+- **Lage:** (gemessen 2026-10-07) Verdrahtung gebaut: `register_lookup --dropped-keys` gibt die kanonischen Schlüssel der un-belegten Drops aus; `register-dropped.yml` gibt sie als Artefakt `dropped-keys` aus; `ci-gate` vergleicht die aktuelle Menge gegen `docs/zustand/dropped-legacy-baseline.txt` und rotet nur bei **neuen** Namen (fehlt die Datei → `pending`, kein stiller Null-Durchlauf). Die Event-Regel ist descoped (der Scan belegt „aufgelöst" per Commit selbst).
+- **Blockade:** nur der erste Lauf: die Liste muss einmal aus dem CI-Artefakt geholt und committet werden (lokal nicht erzeugbar, Scan >30 min).
+- **Braucht:** den `register-dropped`-Lauf abwarten → Artefakt `dropped-keys` → `docs/zustand/dropped-legacy-baseline.txt` committen; danach ist der Gate scharf (jeder neue Namens-Drop rot).
 
 ### KC2G `prop.kc2g.com` — Manifestation wartet Mountains Reader-Arm
 - **Status:** wartend
