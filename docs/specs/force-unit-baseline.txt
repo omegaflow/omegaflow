@@ -33,6 +33,12 @@
 # accelerometry; soho_lasco_cme_accel_m_s2 :19392 — kinematics; advective owns m/s).
 # Measured 37 / 21. `advective g` stays pending: `g` is overloaded (gram-mass vs
 # standard gravity) and no force table carries a gram token.
+# Resolved 2026-10-07 (Mountain 264): `diffusion m2` removed. `ghsl_built_surface_m2`
+# (:19791) is a static built-up surface (JRC GHSL GHS_BUILT_S_E2020), not a diffusion
+# quantity — Rat (5 voices) + flash research + 17 UI voices: a static area is a
+# covariate, no physical force. The field is carried as `# pending field …`
+# (tree precedent `tests.rs:9135`) until a covariate/quantity carrier (axis outside Ω)
+# is built. Measured 36 / 20.
 #
 # The production commit gate (commit_check) scans .rs only; this file is the
 # ratchet that closes the gap: a staged phi/sources.φ may not introduce a
@@ -44,7 +50,6 @@ advective erg
 advective g
 diffusion grains/m3
 diffusion kg/kg
-diffusion m2
 diffusion ml/l
 em dbz
 em erg/cm2/s
