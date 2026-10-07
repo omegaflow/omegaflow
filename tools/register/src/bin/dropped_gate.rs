@@ -150,7 +150,8 @@ fn fold_events(log: &str, pin: &BTreeSet<String>) -> Outcome {
 }
 
 fn read_pin(path: &str) -> Result<BTreeSet<String>, String> {
-    let text = std::fs::read_to_string(path).map_err(|e| format!("pin `{path}` unreadable: {e}"))?;
+    let text =
+        std::fs::read_to_string(path).map_err(|e| format!("pin `{path}` unreadable: {e}"))?;
     let mut set = BTreeSet::new();
     for line in text.lines() {
         let line = line.trim();
