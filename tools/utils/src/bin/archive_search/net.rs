@@ -1882,6 +1882,36 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
                 )],
             }
         }
+        "alphaxiv-tools" => {
+            let token = resolve_key(
+                env.get("ALPHAXIV_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::alphaxiv::alphaxiv_tools_lines(&t),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("ALPHAXIV_API_KEY", marker)
+                )],
+            }
+        }
+        "alphaxiv-call" => {
+            let token = resolve_key(
+                env.get("ALPHAXIV_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::alphaxiv::alphaxiv_call_lines(query, &t, 5),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("ALPHAXIV_API_KEY", marker)
+                )],
+            }
+        }
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
