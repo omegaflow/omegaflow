@@ -3,7 +3,7 @@
   session: River-Folge 129
   class: handover
   date: 2026-10-07
-  sha256: f1d6de7b5b5094a9c0cbd6683f999ce352b34967c2360097144da3b22f3d06e2
+  sha256: 9d5ac1117fd9a0d92c72c7234d9d359eb6caf80b36295e7b790fef426f01a640
   status: live
 -->
 # Handover — River-Folge 129 (2026-10-07)
@@ -52,9 +52,9 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 ### Bias-Audit Archivar/Mathematikerin — der Gift-Rückfall; die Legacy-Untersuchung
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-07, River 127/129) Die Untersuchung existiert: `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13). **Geheilt (River 129):** `channels.rs:1423` τ=0.0 → `f64::INFINITY` (ω=0 heißt keine Schwingung, τ unendlich — Haus-Konvention, s. `:1411`). **Noch offen — ein unausgeführter Plan:** `src/mathematikerin/media.rs:29-54` Body→Medium-Tabelle, live benutzt in `src/archivar/ephemeris.rs:504` (`medium_params_of(body_name).map_or([0.0; 5], …)`); `src/mathematikerin/shaders.rs:5-15` `PROPAGATION_SPEED`-Konstanten (WP11-Ziel: Absorption im Record). `src/mathematikerin/machines/matrix.rs:786` `23.4392911°` Erd-Schiefe für **jeden** Body. `src/archivar/odp.rs:9 const EARTH` + `rinex.rs:5,58` `6378137.0`/`"earth"` + `nexrad.rs:188 EARTH_RADIUS_KM`. `src/archivar/motion.rs:77` `(0.0,0.0,0.0)`-Nutations-Fallback → Option. Geheilt zuvor: `main_flow.rs:3519/3522` SPK-Gate liest `src.body`; `main_flow.rs:209` `None=>0.0` → verweigern (`f1fc9fda3`); `main_flow.rs:207` clippy `question_mark` (River 129).
+- **Lage:** (gemessen 2026-10-07, River 127/129) Die Untersuchung existiert: `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13). **Geheilt (River 129):** `channels.rs:1423` τ=0.0 → `f64::INFINITY` (ω=0 heißt keine Schwingung, τ unendlich — Haus-Konvention, s. `:1411`). **Noch offen — ein unausgeführter Plan:** `src/mathematikerin/media.rs:29-54` Body→Medium-Tabelle, live benutzt in `src/archivar/ephemeris.rs:504` (`medium_params_of(body_name).map_or([0.0; 5], …)`); `src/mathematikerin/shaders.rs:5-15` `PROPAGATION_SPEED`-Konstanten (WP11-Ziel: Absorption im Record). `src/mathematikerin/machines/matrix.rs:786` `23.4392911°` Erd-Schiefe für **jeden** Body. `src/archivar/odp.rs:9 const EARTH` + `rinex.rs:5,58` `6378137.0`/`"earth"` + `nexrad.rs:188 EARTH_RADIUS_KM` (**geheilt River 129:** `nexrad_gate_position`/`great_circle_destination` nehmen `host_radius_km` als Parameter — 3 von 10 `clean_tree`-Treffern weg, `cargo check` grün). `src/archivar/motion.rs:77` `(0.0,0.0,0.0)`-Nutations-Fallback → Option. Geheilt zuvor: `main_flow.rs:3519/3522` SPK-Gate liest `src.body`; `main_flow.rs:209` `None=>0.0` → verweigern (`f1fc9fda3`); `main_flow.rs:207` clippy `question_mark` (River 129).
 - **Blockade:** Riss C (`kernel_extent`-Konflation, `membrane.rs:302-335` liest die fünf Medium-Werte als Kernel-Reichweiten) vor dem Umbenennen entscheiden; Riss A (Herkunft/Provenienz der sechs Medium-Werte) + Riss B (per-field `Option` vs. atomarer Block).
-- **Braucht:** die `src`-Bias-Arbeit nach Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07: „Tor zuerst, Abnahme-Messung, dann Arbeit"; Träger `src` = River; Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md`, 162 Funde). Offene `src`-Punkte: (1) `media.rs:29-54` + `shaders.rs:4-15` → `BodyProperties` (WP8/9/11), `media.rs` löschen, `map_or([0.0;5])` → verweigern — **Riss C** vor dem Umbenennen; (2) `odp.rs:9`, `rinex.rs:5,58`, `nexrad.rs:188` raus (WP13); (3) `matrix.rs:786` Erd-Schiefe → per-Körper; (4) `motion.rs:77` → Option.
+- **Braucht:** die `src`-Bias-Arbeit nach Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07; Träger `src` = River; Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md`, 162 Funde). **`clean_tree --fail`-Abnahme (gemessen 2026-10-07): 10 → 7 Treffer.** Die 7 restlichen sind **nicht** River-bounded (Gegenüber gemessen): `media.rs:33` + MEDIA-TABLE → **Rat** (Riss A/B/C; `BodyProperties`-Kernel-Felder sind `f64`, nicht `Option` → Wire-Kontrakt-Akt); `odp.rs:9` → die `pioneer_*`-Tools konsumieren `downlink_rate`/`station_velocity` (**Mountain/Mycelium**); `weberin.rs:254,258` → die Consts sind die Fetch-Listen der `weberin_*`-Tools (**Mountain/Mycelium**, Daten-Manifest); `rinex.rs:5,58` → braucht `BodyProperties`-Plumbing in `build_rinex_channels` (River; nächster bounded Schritt: `src.body` als Empfänger + Ellipsoid aus `radius_m`/`flattening`). Eigene offene: `media.rs` (Rat), `matrix.rs:786`, `motion.rs:77`, `rinex.rs`. **Fünf Bias-Klassen — kein eigener Code-Token (gemessen 2026-10-07):** `Observer-as-vantage`/`Station-privilege` kollabieren auf die Körper-Namen-Literale (schon tokenisiert); `Now-default`/`Client-Server`/`Camera-default` haben **keinen** Produktions-Token im Baum (`Instant::now()` = Timeouts, `client`/`server` nur in Relay-Tests) — ein Marker wäre ein leeres Tor. Ehrlich `pending` bis Schritt 3 je Klasse den konkreten Token nennt.
 
 ### GIC-Stufe-2 — dB/dt abgeleitet; der Familien-Pool ist ein eigener Bau (Explore folge129)
 - **Status:** eigen | **Bindung:** eigen
@@ -101,9 +101,10 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/archivar/main_flow.rs` (clippy `question_mark`, eigener Hunk)
 - `src/archivar/channels.rs` (τ=∞ statt 0.0, Bias)
+- `src/archivar/nexrad.rs` (EARTH_RADIUS_KM → `host_radius_km`-Parameter, clean-tree 10→7)
 - `static/membrane.html` (agnostisch: Manifest-Fetch, gemessene Farbe via `/color_lut`)
 - `.github/workflows/scripts/gen_bodies.sh` + `.github/workflows/pages-deploy.yml` (Manifest-Schreibpfad)
 - `docs/handover/handover-2026-10-07-river-folge129.md` (neu)
 - `docs/handover/archiv/handover-2026-10-07-river-folge128.md` (Move)
 
-## Burn: open 0.0000 · close 0.1247 (line $0.0899 + explore $0.0348, deepseek-flash, `session_burn`, gemessen 2026-10-07) · kein pro/max · Dispatches: `explore` (1, read-only: GIC-Familien-Pool-Pfad)
+## Burn: open 0.0000 · close 0.1805 (line $0.1457 + explore $0.0348, deepseek-flash, `session_burn`, gemessen 2026-10-07) · cap 0.20 Grund: ein Mehr-Schritt-Atom — Operator trug in laufender Sitzung die agnostische Membran und danach die src-Bias-Abnahme nach, kein Ein-Schritt-Auftrag · kein pro/max · Dispatches: `explore` (1, read-only: GIC-Familien-Pool-Pfad)

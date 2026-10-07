@@ -185,7 +185,6 @@ pub fn parse_nexrad(data: &[u8]) -> Option<NexradVolume> {
     })
 }
 
-const EARTH_RADIUS_KM: f64 = 6371.0;
 const REFRACTION_KE: f64 = 4.0 / 3.0;
 const FEET_PER_M: f64 = 0.3048;
 
@@ -367,6 +366,7 @@ fn great_circle_destination(
     lon0_deg: f64,
     bearing_deg: f64,
     dist_km: f64,
+    host_radius_km: f64,
 ) -> Option<(f64, f64)> {
     if !lat0_deg.is_finite()
         || !lon0_deg.is_finite()
@@ -379,7 +379,7 @@ fn great_circle_destination(
     let lat1 = lat0_deg.to_radians();
     let lon1 = lon0_deg.to_radians();
     let bearing = bearing_deg.to_radians();
-    let delta = dist_km / EARTH_RADIUS_KM;
+    let delta = dist_km / host_radius_km;
     let lat2 = (lat1.sin() * delta.cos() + lat1.cos() * delta.sin() * bearing.cos()).asin();
     let lon2 = lon1
         + (bearing.sin() * delta.sin() * lat1.cos()).atan2(delta.cos() - lat1.sin() * lat2.sin());
@@ -391,11 +391,12 @@ pub fn nexrad_gate_position(
     az_deg: f64,
     el_deg: f64,
     slant_km: f64,
+    host_radius_km: f64,
 ) -> Option<(f64, f64, f64)> {
     if !az_deg.is_finite() || !el_deg.is_finite() || !slant_km.is_finite() || slant_km <= 0.0 {
         return None;
     }
-    let re = EARTH_RADIUS_KM * REFRACTION_KE;
+    let re = host_radius_km * REFRACTION_KE;
     let el = el_deg.to_radians();
     let r = slant_km;
     let height_km = (r * r + re * re + 2.0 * r * re * el.sin()).sqrt() - re;
@@ -406,7 +407,7 @@ pub fn nexrad_gate_position(
     if !ground_km.is_finite() || ground_km < 0.0 {
         return None;
     }
-    let (lat, lon) = great_circle_destination(site.lat_deg, site.lon_deg, az_deg, ground_km)?;
+    let (lat, lon) = great_circle_destination(site.lat_deg, site.lon_deg, az_deg, ground_km, host_radius_km)?;
     Some((lat, lon, site.alt_m + height_km * 1000.0))
 }
 
@@ -507,11 +508,11 @@ mod tests {
     #[test]
     fn gate_position_walks_north_at_zero_elevation() {
         let site = nexrad_site(b"KTLX").unwrap();
-        let (lat, lon, alt) = nexrad_gate_position(&site, 0.0, 0.0, 111.195).unwrap();
+        let (lat, lon, alt) = nexrad_gate_position(&site, 0.0, 0.0, 111.195, 6371.0).unwrap();
         assert!((lat - site.lat_deg - 1.0).abs() < 0.05, "north lat {lat}");
         assert!((lon - site.lon_deg).abs() < 0.05);
         assert!(alt > site.alt_m, "beam rises above the site, alt {alt}");
-        assert!(nexrad_gate_position(&site, 0.0, 0.0, -1.0).is_none());
-        assert!(nexrad_gate_position(&site, f64::NAN, 0.0, 10.0).is_none());
+        assert!(nexrad_gate_position(&site, 0.0, 0.0, -1.0, 6371.0).is_none());
+        assert!(nexrad_gate_position(&site, f64::NAN, 0.0, 10.0, 6371.0).is_none());
     }
 }
