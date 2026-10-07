@@ -249,6 +249,10 @@ mod tests {
             violations
         );
         assert_eq!(violations[0].0, 19, "{:?}", violations);
-        assert_eq!(terms_entries(src).len(), 13, "nine accepted plus four refused");
+        assert_eq!(
+            terms_entries(src).len(),
+            13,
+            "nine accepted plus four refused"
+        );
     }
 }
