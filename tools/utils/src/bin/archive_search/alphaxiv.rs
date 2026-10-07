@@ -33,7 +33,9 @@ fn call(body: &str, key: &str, session: Option<&str>) -> Option<Call> {
     cmd.arg("--data")
         .arg(body)
         .arg("-w")
-        .arg(format!("{TAIL_MARK}%{{http_code}}|%header{{mcp-session-id}}"))
+        .arg(format!(
+            "{TAIL_MARK}%{{http_code}}|%header{{mcp-session-id}}"
+        ))
         .arg(MCP_URL);
     let out = cmd.output().ok()?;
     let stdout = String::from_utf8_lossy(&out.stdout).to_string();
@@ -165,7 +167,14 @@ fn entry_line(o: &Json) -> Option<String> {
     let title = str_field(o, &["title", "name"]).unwrap_or("");
     let snippet = str_field(
         o,
-        &["abstract", "snippet", "summary", "description", "text", "content"],
+        &[
+            "abstract",
+            "snippet",
+            "summary",
+            "description",
+            "text",
+            "content",
+        ],
     )
     .unwrap_or("");
     Some(format!(
@@ -253,14 +262,7 @@ fn collect(v: &Json, out: &mut Vec<String>, max: usize) {
                 return;
             }
             for key in [
-                "results",
-                "papers",
-                "items",
-                "entries",
-                "hits",
-                "data",
-                "content",
-                "text",
+                "results", "papers", "items", "entries", "hits", "data", "content", "text",
             ] {
                 if let Some(child) = v.get(key) {
                     collect(child, out, max);
@@ -404,7 +406,8 @@ mod tests {
 
     #[test]
     fn entry_line_requires_a_url_and_skips_blanks() {
-        let with_url = json::parse(r#"{"title":"T","url":"https://example.org/p","abstract":"A"}"#).unwrap();
+        let with_url =
+            json::parse(r#"{"title":"T","url":"https://example.org/p","abstract":"A"}"#).unwrap();
         assert_eq!(
             entry_line(&with_url).as_deref(),
             Some("https://example.org/p | T | A")
@@ -428,7 +431,9 @@ mod tests {
     fn error_text_reads_json_rpc_error_and_is_error() {
         let err = json::parse(r#"{"error":{"code":-32000,"message":"bad request"}}"#).unwrap();
         assert_eq!(error_text(&err).as_deref(), Some("bad request"));
-        let tool = json::parse(r#"{"result":{"isError":true,"content":[{"type":"text","text":"boom"}]}}"#).unwrap();
+        let tool =
+            json::parse(r#"{"result":{"isError":true,"content":[{"type":"text","text":"boom"}]}}"#)
+                .unwrap();
         assert_eq!(error_text(&tool).as_deref(), Some("boom"));
         let ok = json::parse(r#"{"result":{"content":[]}}"#).unwrap();
         assert_eq!(error_text(&ok), None);

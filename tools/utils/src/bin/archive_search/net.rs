@@ -1854,7 +1854,9 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
         }
         "alphaxiv" => {
             let token = resolve_key(
-                env.get("ALPHAXIV_API_KEY").map(String::as_str).unwrap_or(""),
+                env.get("ALPHAXIV_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
                 env,
             );
             match token {
