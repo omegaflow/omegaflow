@@ -3,7 +3,7 @@
   session: Mountain-Folge 258
   class: handover
   date: 2026-10-07
-  sha256: 5b419cb519c4375e11bdcebd6858425aa727e1aa4d00f248d9435f0df08ab5c3
+  sha256: 9698bc272acdee86e7088a6f7a3fbe9d2d8d2106e265b70d7e91cea072b1d326
   status: live
 -->
 # Handover — Mountain-Folge 258 (2026-10-07)
@@ -14,7 +14,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-07-mountain-folge257.md` (→ `archiv/`). Kein pro/max; Bau per
 flash-Disziplin, keine Dispatchs nötig.
 
-## Burn: open 0.0018 · close 0.0358 (line) · keine Dispatchs · kein pro/max · Grund: die gerissene `ci-gate`-Klippe (clippy `GeoRec: Debug`) geheilt, adressierte Blöcke gefaltet, Recovery-Snapshot gegen das lebende Register gemessen. (gemessen via `session_burn`, Mountain-Eintrag)
+## Burn: open 0.0018 · close 0.0495 (line) · keine Dispatchs · kein pro/max · Grund: die gerissene `ci-gate`-Klippe (clippy `GeoRec: Debug`) geheilt, adressierte Blöcke gefaltet, Recovery-Snapshot gegen das lebende Register gemessen. (gemessen via `session_burn`, Mountain-Eintrag)
 
 ## Operator-Wort-Register
 
