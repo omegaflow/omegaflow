@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: 7d747a468b1ed6492809048feb1ffdf8d647c620a0f22d0f867652510a7f38d6
+  sha256: a99bf10e7842422bf770b99cfc22209dd6ec8739a873d3ebb85cd1e92678d126
   status: live
   see-also: AGENTS.md
 -->
@@ -260,6 +260,7 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `register_lookup --orphans` | — | owner-getaggte offene Register-Einträge, die keine lebende Übergabe des Owners hält: `ORPHAN_COMMITTED` (in HEAD) / `ORPHAN_UNCOMMITTED` (nur Arbeitsbaum); Klassen-Träger `φ/<register>::gap:<token> ×N` hält die Klasse, Count-Drift wird als `CARRIER_DRIFT` gemeldet; `NO_GAP` = parser-Block ohne erklärte Klasse (lauter Einzel-Orphan). Getrennt von `--dropped` (kein Aufenthalt vs. abgerissener Aufenthalt) |
 | `register_lookup --orphan-docs` | — | lebende Prosadokumente (`docs/{surveys,specs,auftrag,blatt,concepts,paper}`) mit offenen Markern, die keine lebende Übergabe nennt: `ORPHAN_DOC <path> <marker>`; der Commit-Gate `commit_check` (doc-carrier) blockt neue trägerlose Dokumente |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
+| `register_lookup --compilers [--no-directive]` | — | je φ/sources.φ-Block mit `compiler`-Direktive `<binary> | <format> | <source-url> | at <anchor>` + Domain-Zusammenfassung über das Format-Präfix; `--no-directive` = Baum-Compiler (`tools/*/src/bin/*_compiler.rs`) ohne Direktive, klassifiziert `workflow`/`register:<datei>`/`variant`/`pending`/`unregistered` |
 | `ci_manage status [--limit N]` | — | Live-Übersicht + aktueller Schritt je laufendem Run (ein Listen-Call + je laufendem Run ein Jobs-Call) |
 | `ci_manage jobs <run-id>...` | — | Job-Status + aktueller Schritt je Run (GH-API `/runs/<id>/jobs`); der `updated_at` von `list` ist grob |
 | `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
