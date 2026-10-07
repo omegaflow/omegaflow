@@ -359,6 +359,208 @@ pub fn alphaxiv_lines(query: &str, key: &str, max: usize) -> Vec<String> {
     out
 }
 
+fn researchers_call_body(query: &str, limit: usize) -> String {
+    let limit = limit.clamp(1, 100);
+    format!(
+        "{{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{{\"name\":\"find_researchers\",\"arguments\":{{\"query\":\"{}\",\"limit\":{}}}}}}}",
+        json_escape(query),
+        limit
+    )
+}
+
+fn researcher_line(o: &Json) -> Option<String> {
+    let slug = str_field(o, &["slug", "handle", "researcher_slug", "researcherSlug"]);
+    let url = str_field(
+        o,
+        &["url", "profile_url", "profileUrl", "alphaxiv_url", "href"],
+    )
+    .map(str::to_string)
+    .or_else(|| slug.map(|s| format!("https://www.alphaxiv.org/@{s}")))?;
+    let name = str_field(
+        o,
+        &[
+            "name",
+            "display_name",
+            "displayName",
+            "full_name",
+            "fullName",
+            "title",
+        ],
+    )?;
+    let position = str_field(
+        o,
+        &[
+            "current_position",
+            "currentPosition",
+            "position",
+            "affiliation",
+            "current_affiliation",
+            "institution",
+            "organization",
+        ],
+    );
+    let citations = o
+        .get("citations")
+        .or_else(|| o.get("citation_count"))
+        .or_else(|| o.get("citationCount"))
+        .and_then(Json::as_scalar_string);
+    let mut parts: Vec<String> = Vec::new();
+    if let Some(p) = position {
+        if !p.is_empty() {
+            parts.push(flat(p));
+        }
+    }
+    if let Some(c) = citations {
+        parts.push(format!("citations {c}"));
+    }
+    Some(format!(
+        "{} | {} | {}",
+        url,
+        flat(name),
+        truncate(&parts.join(" · "), 300)
+    ))
+}
+
+fn researcher_md_entries(text: &str, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if out.len() >= max {
+            break;
+        }
+        let t = line.trim();
+        if t.is_empty() {
+            continue;
+        }
+        let slug = between(t, "SLUG=", "]").or_else(|| between(t, "SLUG=", " "));
+        let Some(slug) = slug else {
+            out.push(truncate(&flat(t), 300));
+            continue;
+        };
+        let url = format!("https://www.alphaxiv.org/@{slug}");
+        let cleaned = match (t.find("[SLUG="), t.find(']')) {
+            (Some(a), Some(b)) if b > a => format!("{}{}", &t[..a], &t[b + 1..]),
+            _ => t.to_string(),
+        };
+        out.push(format!(
+            "{} | {}",
+            url,
+            truncate(&flat(cleaned.trim()), 300)
+        ));
+    }
+    out
+}
+
+fn collect_researchers(v: &Json, out: &mut Vec<String>, max: usize) {
+    if out.len() >= max {
+        return;
+    }
+    match v {
+        Json::Arr(items) => {
+            for item in items {
+                if out.len() >= max {
+                    break;
+                }
+                collect_researchers(item, out, max);
+            }
+        }
+        Json::Obj(_) => {
+            if let Some(line) = researcher_line(v) {
+                out.push(line);
+                return;
+            }
+            for key in [
+                "results",
+                "researchers",
+                "items",
+                "entries",
+                "hits",
+                "data",
+                "content",
+                "text",
+            ] {
+                if let Some(child) = v.get(key) {
+                    collect_researchers(child, out, max);
+                    if out.len() >= max {
+                        return;
+                    }
+                }
+            }
+        }
+        Json::Str(s) => {
+            if let Some(inner) = json::parse(s.trim()) {
+                collect_researchers(&inner, out, max);
+            } else {
+                for line in researcher_md_entries(s, max - out.len()) {
+                    out.push(line);
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
+pub fn alphaxiv_researchers_lines(query: &str, key: &str, max: usize) -> Vec<String> {
+    if key.is_empty() {
+        return vec!["pending — ALPHAXIV_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let init = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"archive_search\",\"version\":\"1\"}}}";
+    let Some(init_resp) = call(init, key, None) else {
+        return vec!["pending — no network".to_string()];
+    };
+    if !init_resp.status.starts_with('2') {
+        let detail = flat(&init_resp.body);
+        return vec![format!(
+            "pending — alphaxiv initialize HTTP {}: {}",
+            init_resp.status,
+            truncate(&detail, 300)
+        )];
+    }
+    for p in &payloads(&init_resp.body) {
+        if let Some(err) = error_text(p) {
+            return vec![format!("alphaxiv error: {}", flat(&err))];
+        }
+    }
+    let session = init_resp.session;
+    let note = "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}";
+    let _ = call(note, key, session.as_deref());
+    let body = researchers_call_body(query, max);
+    let Some(call_resp) = call(&body, key, session.as_deref()) else {
+        return vec!["pending — no network".to_string()];
+    };
+    if !call_resp.status.starts_with('2') {
+        let detail = flat(&call_resp.body);
+        return vec![format!(
+            "pending — alphaxiv HTTP {}: {}",
+            call_resp.status,
+            truncate(&detail, 300)
+        )];
+    }
+    let parsed = payloads(&call_resp.body);
+    for p in &parsed {
+        if let Some(err) = error_text(p) {
+            return vec![format!("alphaxiv error: {}", flat(&err))];
+        }
+    }
+    let mut out = Vec::new();
+    for p in &parsed {
+        if let Some(result) = p.get("result") {
+            collect_researchers(result, &mut out, max);
+        }
+        if out.len() >= max {
+            break;
+        }
+    }
+    if out.is_empty() {
+        let raw = flat(&call_resp.body);
+        return vec![format!(
+            "pending — the alphaxiv response carries no parseable researcher: {}",
+            truncate(&raw, 400)
+        )];
+    }
+    out.truncate(max);
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -437,5 +639,46 @@ mod tests {
         assert_eq!(error_text(&tool).as_deref(), Some("boom"));
         let ok = json::parse(r#"{"result":{"content":[]}}"#).unwrap();
         assert_eq!(error_text(&ok), None);
+    }
+
+    #[test]
+    fn researchers_call_body_names_find_researchers() {
+        let body = researchers_call_body("transfer entropy", 12);
+        assert!(body.contains("\"name\":\"find_researchers\""));
+        assert!(body.contains("\"query\":\"transfer entropy\""));
+        assert!(body.contains("\"limit\":12"));
+    }
+
+    #[test]
+    fn researcher_line_builds_a_profile_url_from_slug() {
+        let o = json::parse(
+            r#"{"slug":"jane-doe","name":"Jane Doe","current_position":"ETH Zurich","citations":42}"#,
+        )
+        .unwrap();
+        assert_eq!(
+            researcher_line(&o).as_deref(),
+            Some("https://www.alphaxiv.org/@jane-doe | Jane Doe | ETH Zurich · citations 42")
+        );
+    }
+
+    #[test]
+    fn collect_researchers_reads_mcp_content_text_json() {
+        let body = r#"{"content":[{"type":"text","text":"[{\"slug\":\"jane-doe\",\"name\":\"Jane Doe\"}]"}]}"#;
+        let v = json::parse(body).unwrap();
+        let mut out = Vec::new();
+        collect_researchers(&v, &mut out, 5);
+        assert_eq!(
+            out,
+            vec!["https://www.alphaxiv.org/@jane-doe | Jane Doe | ".to_string()]
+        );
+    }
+
+    #[test]
+    fn researcher_md_entries_read_the_slug_shape() {
+        let text = "1. [SLUG=jane-doe] Jane Doe (ETH Zurich) · 42 citations";
+        let lines = researcher_md_entries(text, 5);
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("https://www.alphaxiv.org/@jane-doe | "));
+        assert!(lines[0].contains("Jane Doe (ETH Zurich)"));
     }
 }

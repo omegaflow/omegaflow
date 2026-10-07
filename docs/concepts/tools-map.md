@@ -158,7 +158,10 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   (`api.alphaxiv.org/mcp/v1`, `ALPHAXIV_API_KEY`); `url https://www.alphaxiv.org/abs/<id>`
   + Titel/Abstract. Gemessen 2026-10-07 (River 127): für die GIC-Stufe-2-Frage direkt
   einschlägig (`2605.27664` BOOST block-structured strong FWER, `2509.02376`
-  multi-resolution maxT, `1106.2068` Westfall-Young).
+  multi-resolution maxT, `1106.2068` Westfall-Young). **Verdrahtet 2026-10-07:**
+  `archive_search --alphaxiv-researchers <query>` — alphaXiv MCP `find_researchers`
+  (derselbe Endpoint/Key); `url https://www.alphaxiv.org/@<slug>` + Name/Position/
+  Zitationen/Affiliation (gemessen: liefert reale Profile, z. B. `@michael-wibral`).
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
