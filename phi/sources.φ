@@ -18152,7 +18152,7 @@ url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_imag
 format fmi_image_mag
 origin https://space.fmi.fi/image/www/data_download.php
 compiler tools/harvest/src/bin/image_mag_compiler.rs
-sha256 9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e
+sha256 93f17d0a6b75a48cc71a5b09f8ecfbf209f9381c692cdb15db0e5f658db6a139
 on earth 60.50 24.65 0
 ttl 604800
 field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
