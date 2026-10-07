@@ -6534,7 +6534,7 @@ fn test_fetch_dispatch_gate_window_range_does_not_fetch() {
 }
 
 #[test]
-fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
+fn test_fetch_dispatch_gate_thermal_without_body_medium_is_absent() {
     let fc = FieldConfig {
         key: "temp".into(),
         name: "temp".into(),
@@ -6549,16 +6549,9 @@ fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
         fold: None,
         aperture: super::Aperture::None,
     };
-    let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
-    assert_eq!(reach, (2.0 * DIFFUSIVITY_THERMAL * 60.0 * 64.0).sqrt());
-    let presences: Vec<PresenceSample> = vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0)];
     assert!(
-        super::presence_gate(&presences, (10.0, 0.0, 0.0), reach, 0.0, None, None),
-        "the thermal front over the sample lifetime reaches 10 m"
-    );
-    assert!(
-        !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), reach, 0.0, None, None),
-        "a thermal anchor 1000 km away is out of physical reach"
+        super::dispatch_reach(&[fc], 60.0).is_none(),
+        "a thermal field without a body medium carries no flat earth carrier"
     );
 }
 
@@ -6823,7 +6816,8 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
 
 #[test]
 fn test_extract_fields_reads_profile_map() {
-    let fc = field_fixture("temp", 60.0);
+    let mut fc = field_fixture("temp", 60.0);
+    fc.force = 5;
     let ext = Extract::ProfileMap {
         arr_path: ".".into(),
         lat_key: "lat".into(),
@@ -6836,8 +6830,10 @@ fn test_extract_fields_reads_profile_map() {
     let fields = super::extract_fields(&ext);
     assert_eq!(fields.len(), 1);
     assert_eq!(fields[0].key, "temp");
-    let reach = super::dispatch_reach(&fields, 60.0).expect("the profile field gates");
-    assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
+    assert!(
+        super::dispatch_reach(&fields, 60.0).is_none(),
+        "a profile field without a body medium carries no flat earth carrier"
+    );
 }
 
 #[test]
@@ -6856,8 +6852,10 @@ fn test_extract_fields_reads_geojson_events() {
     assert_eq!(fields[0].name, "seismic_magnitude_mw");
     assert_eq!(fields[0].force, 3);
     assert_eq!(fields[1].name, "seismic_depth_km");
-    let reach = super::dispatch_reach(&fields, 60.0).expect("the geojson fields gate");
-    assert_eq!(reach, SEISMIC_BODY_SPEED * 60.0 * 64.0);
+    assert!(
+        super::dispatch_reach(&fields, 60.0).is_none(),
+        "a geojson seismic field without a body medium carries no flat earth carrier"
+    );
     let single = Extract::GeojsonEvents {
         mag_key: "mag".into(),
         min_mag: 0.0,
@@ -6891,8 +6889,10 @@ fn test_extract_fields_reads_quakeml_events() {
     assert_eq!(fields[1].kernel, 3);
     assert_eq!(fields[1].force, 4);
     assert_eq!(fields[1].unit, "Mw");
-    let reach = super::dispatch_reach(&fields, 60.0).expect("the quakeml fields gate");
-    assert_eq!(reach, SEISMIC_BODY_SPEED * 60.0 * 64.0);
+    assert!(
+        super::dispatch_reach(&fields, 60.0).is_none(),
+        "a quakeml seismic field without a body medium carries no flat earth carrier"
+    );
     let single = Extract::QuakeMlEvents {
         outputs: vec!["usgs_mt_m0_nm".into()],
         tau: 6.0,

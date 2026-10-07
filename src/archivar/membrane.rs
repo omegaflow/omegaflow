@@ -417,13 +417,6 @@ pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>) -> Vec<Samp
     out
 }
 
-pub const AIR_SOUND_SPEED_M_S: f64 = 343.0;
-pub const SEISMIC_BODY_SPEED: f64 = 6000.0;
-pub const SEISMIC_SURFACE_SPEED: f64 = 3000.0;
-pub const DIFFUSIVITY_THERMAL: f64 = 0.3;
-
-pub const DIFFUSIVITY_MOLECULAR: f64 = 0.05;
-
 pub fn signal_reach(
     force_type: f64,
     advection: f64,
@@ -431,14 +424,7 @@ pub fn signal_reach(
     freq: f64,
     bin_width: f64,
 ) -> Option<f64> {
-    match force_type as u8 {
-        0 | 1 | 2 | 3 | 4 | 7 | 8 => {
-            Some(propagation_speed(force_type, advection, freq, bin_width)? * age)
-        }
-        5 => Some((2.0 * DIFFUSIVITY_THERMAL * age).sqrt()),
-        6 => Some((2.0 * DIFFUSIVITY_MOLECULAR * age).sqrt()),
-        _ => None,
-    }
+    propagation_speed(force_type, advection, freq, bin_width).map(|v| v * age)
 }
 
 pub fn enclosure_rho(vmax: f64, amax: f64, dt: f64, pad: f64) -> f64 {
@@ -477,18 +463,7 @@ pub fn anchor_velocity(
 pub fn flat_propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     match force_type as u8 {
         0 | 1 | 8 => Some(C_LIGHT),
-        2 => Some(AIR_SOUND_SPEED_M_S),
-        3 => Some(SEISMIC_BODY_SPEED),
-        4 => Some(SEISMIC_SURFACE_SPEED),
-        5 => Some(DIFFUSIVITY_THERMAL),
-        6 => Some(DIFFUSIVITY_MOLECULAR),
-        7 => {
-            if slot_measured(advection) {
-                Some(advection)
-            } else {
-                None
-            }
-        }
+        7 => slot_measured(advection).then_some(advection),
         _ => None,
     }
 }
@@ -499,11 +474,10 @@ pub fn propagation_speed(
     freq: f64,
     bin_width: f64,
 ) -> Option<f64> {
-    let flat = flat_propagation_speed(force_type, advection)?;
     if let Some(v) = crate::mathematikerin::dispersion::v_at(force_type as u8, freq, bin_width) {
         return Some(v);
     }
-    Some(flat)
+    flat_propagation_speed(force_type, advection)
 }
 
 pub fn wire_extent(extent: f64) -> f64 {
@@ -740,11 +714,11 @@ mod tests {
     }
 
     #[test]
-    fn an_uncovered_band_falls_back_to_the_flat_constant() {
+    fn an_uncovered_earth_band_carries_no_flat_fallback() {
         assert_eq!(
             propagation_speed(4.0, 0.0, 0.07, 0.0),
-            Some(SEISMIC_SURFACE_SPEED),
-            "0.07 Hz lies above the Rayleigh rows — the measured flat 3000 m/s carries"
+            None,
+            "0.07 Hz lies above the Rayleigh rows — no earth speed is invented"
         );
         assert_eq!(
             propagation_speed(0.0, 0.0, 5.0e14, 0.0),
@@ -753,7 +727,8 @@ mod tests {
         );
         assert_eq!(
             propagation_speed(2.0, 0.0, 440.0, 0.0),
-            Some(AIR_SOUND_SPEED_M_S)
+            None,
+            "acoustic carries no flat carrier without a body medium"
         );
         assert_eq!(
             propagation_speed(7.0, 12.5, 0.0, 0.0),
@@ -772,8 +747,8 @@ mod tests {
         );
         assert_eq!(
             signal_reach(4.0, 0.0, 10.0, 0.07, 0.0),
-            Some(SEISMIC_SURFACE_SPEED * 10.0),
-            "an uncovered band keeps the flat cone"
+            None,
+            "an uncovered earth band carries no flat cone"
         );
     }
 
@@ -782,11 +757,6 @@ mod tests {
         let flat = |ft: u8, advection: f32, advection_measured: bool| -> Option<f32> {
             match ft {
                 0 | 1 | 8 => Some(C_LIGHT as f32),
-                2 => Some(AIR_SOUND_SPEED_M_S as f32),
-                3 => Some(SEISMIC_BODY_SPEED as f32),
-                4 => Some(SEISMIC_SURFACE_SPEED as f32),
-                5 => Some(DIFFUSIVITY_THERMAL as f32),
-                6 => Some(DIFFUSIVITY_MOLECULAR as f32),
                 7 => {
                     if advection_measured {
                         Some(advection)
