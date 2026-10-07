@@ -2,7 +2,7 @@
   title: FMHY für die Forschungsschicht — Messung 2026-10-07
   class: survey
   date: 2026-10-07
-  sha256: b784e3b357b855f8da5a006af2cb8dc1e3df7f0d2cb2ceede1e0125914df3ad5
+  sha256: 5c432af6308640ca036b3fa11d988c0db9958dd048f2624f6b35441ca7b52e7d
   status: live
   see-also: docs/concepts/tools-map.md state/future/research-chatbots-2026-10-07.md
 -->
@@ -66,6 +66,30 @@ Werkzeugseitig (LaTeX/PDF-Kette, registerleer): **Typst** (`typst.app`, Rust), *
 WorldWide Telescope (`worldwidetelescope.org`), In-The-Sky (`in-the-sky.org`). CelesTrack
 `pending` (keine Stufe antwortet). Nicht-neu: Earthdata/FIRMS/SWPC/Exoplanet Archive/ESAsky/
 NTRS gehalten; Sentinel Hub/CDSE/`api.nasa.gov`/Macrostrat declined/dead.
+
+## Rest der Wiki — vollständig vermessen (2026-10-07)
+
+Der bislang offene „Rest der FMHY-Wiki" ist gemessen (`fmhy/edit` `docs/`, 33 Seiten; Rohquellen
+via `curl`, Kandidaten via `archive_search --verdict`, Taucher `general`). Relevante, zuvor noch
+nicht vermessene Seiten: `developer-tools`, `internet-tools`, `linux-macos`, `privacy`, `storage`,
+`system-tools`, `downloading`, `file-tools`. Als nicht relevant benannt: `audio`, `video`,
+`video-tools`, `gaming`, `gaming-tools`, `mobile`, `non-english`, `torrenting`,
+`social-media-tools`, `image-tools` sowie die Meta-Stubs.
+
+**Negativbefund (die Antwort):** die restlichen Seiten tragen **keine** neue astrophysik-/
+space-weather-/GIC-/geomagnetische Open-Data-Quelle. Der einzige Raumfahrt-Eintrag ist
+`api.nasa.gov` — bereits als `declined/dead` geführt (Abschnitt oben). Die realen
+Space-Wetter-/GIC-Landschaften (NASA Earthdata, NOAA SWPC, INTERMAGNET) liegen in **keiner**
+FMHY-Seite; sie werden direkt vermessen, nicht über FMHY. FMHY als Quellen-Discovery für
+omegaflow ist damit erschöpft.
+
+**Werkzeug-Kandidaten** (`--verdict` HTTP 206, 2026-10-07; Registers status ungeprüft, allgemeines
+Dev-/Research-Tooling, nicht `sources.φ`): `pueue` (Rust-Job-Queue) · `Meilisearch` · `monolith`
+(Rust, Seite→HTML) · `Crawl4AI` · `Docling`/`OCRmyPDF` (PDF→Text/OCR) · `NVTOP` (GPU-Monitor) ·
+`ThingsBoard` (Sensor-Daten) · `CaribouLite` (SDR) · `SearXNG` (überlappt `archive_search`) ·
+`datahoarding.org/resources` · `public-apis/public-apis`. **Consent-Kante (kein stiller Bypass):**
+`FlareSolverr`/`Byparr` (Cloudflare-Challenge-Proxies) — der Geo-/CF-Umweg ist eine Frage an den
+Operator, kein Werkzeug-Selbstlauf.
 
 ## Förderung (gemessen 2026-10-07)
 
