@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 46121087b7227d07194662117e2b29b0fdd8be355549331fb15470abe7dc1293
+  sha256: 7c048e59deb2d0cd8963bdf41fcb21a6a8926d6f921c30b5c8cf1a757ea6a697
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -194,6 +194,14 @@ Die per-Station CGM-Breite wird **nicht** gesetzt, sondern gemessen. Route (gew�
   (`https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf14coeffs.txt`, sha256 `8f8d8840…`) +
   AACGM-v2-Koeffizienten (`https://superdarn.thayer.dartmouth.edu/aacgm/aacgm_coeffs-14.tar`)
   als Rust-Bin; ohne Feldlinien-Trace nur Dipol-Näherung, als solche zu benennen.
+- **Grenze der Primär-Route (gemessen 2026-10-07, River 122):** der OMNIWeb-VITMO-CGM-
+  Endpunkt weist `latitude` mit |lat| < 20° ab (`Latitude must be greater than 20. or
+  less than -20`, HTTP 200); die zwei low-lat GIN-Stationen **CPL** (geodätisch 17.29°)
+  und **TTB** (−1.21°) sind nicht in SuperMAG geführt → sie tragen den `bgs-quasi-dipole`-
+  Fallback (`cgm_lat_partition.rs:165`), **QD ≠ CGM**. Aus den deklarierten Routen
+  existiert kein CGM-Wert für sie (Primär strukturell gesperrt, Fallback lückenhaft);
+  beide bleiben mid-latitude — der Riss ist die Provenienz, nicht die Familie.
+  **Braucht:** lokales AACGM/IGRF-Bin (»Lokaler Weg«) oder eine benannte Low-Lat-CGM-Quelle.
 
 ## Die gemessene Partition (2026-10-07)
 
@@ -272,7 +280,7 @@ kein `over family`, `cgm_lat` nie gelesen):
 
 | Feld | Zustand |
 |---|---|
-| CGM-Breite je Station (154) | **gemessen 2026-10-07** — `state/river/gic-cgm-lat.tsv` (133 omniweb/supermag 19/qd 2); Registerzeile in `phi/sources.φ` bei Mountain |
+| CGM-Breite je Station (154) | **152 gemessen 2026-10-07** — `state/river/gic-cgm-lat.tsv` (133 omniweb + 19 supermag-aacgm) · **2 nur QD** (CPL, TTB: Primär-Route weist \|lat\| < 20° ab, SuperMAG fehlt) — QD ≠ CGM; Registerzeile `cgm_lat` bei Mountain (`c164ba54b`) |
 | Partitionsgrenzen (geomagn. Breite je Band) | **deklariert 2026-10-07:** auroral ≥60°, sub-auroral 50–60°, mid <50° (\|CGM\|) |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
