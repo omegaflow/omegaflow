@@ -507,7 +507,6 @@ pub fn presence_gate(
 
 pub struct EnclosureField<'a> {
     pub config: &'a FieldConfig,
-    pub body_props: Option<&'a BodyProperties>,
     pub medium: Option<&'a crate::media::MediumParams>,
     pub body_radius: Option<f64>,
 }
@@ -589,7 +588,6 @@ pub fn catalog_sample_in_enclosure(
         now,
         EnclosureField {
             config: &fc,
-            body_props: None,
             medium: None,
             body_radius: None,
         },
@@ -630,7 +628,6 @@ pub fn body_in_enclosure(
         now,
         EnclosureField {
             config: &fc,
-            body_props: Some(props),
             medium: None,
             body_radius: Some(props.radius_m),
         },
