@@ -750,12 +750,9 @@ impl MatrixMachine {
                 + (p[1] - presence[1]).powi(2)
                 + (p[2] - presence[2]).powi(2);
             let age = (t_presence - meta.epoch).abs();
-            let Some(extent) = crate::archivar::medium_reach(
-                meta.force,
-                age,
-                body_medium,
-                meta.advection,
-            ) else {
+            let Some(extent) =
+                crate::archivar::medium_reach(meta.force, age, body_medium, meta.advection)
+            else {
                 continue;
             };
             if d2 > (extent + MATRIX_PAD_M).powi(2) {

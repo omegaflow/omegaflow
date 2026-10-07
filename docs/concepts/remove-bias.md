@@ -4,7 +4,7 @@
   date: 2026-10-07
   sha256: f83ee3a3ffb0962fa56877ed1a4c3b6f5995dd50105f1b228427fa25b9b1a942
   status: live
-  see-also: docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md docs/handover/handover-2026-10-07-river-folge127.md
+  see-also: docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md docs/handover/archiv/handover-2026-10-07-river-folge127.md
 -->
 
 Aus `omegaflow-legacy/docs/concepts/remove-bias.md` geholt (Legacy-HEAD `15e5c0d0`, 2026-10-07, River 127). Der Plan wurde im Legacy nie ausgeführt: sein Ziel-Grep (`src/main.rs`) veraltete mit der Monolith→archivar/mathematikerin-Teilung, die Fundstellen wanderten nach `src/mathematikerin/media.rs` und `src/mathematikerin/shaders.rs`. Lebender Träger: River. Die Zielgreps (`"earth"`=0, `EARTH_RADIUS`=0, `V_SOUND_288`/`ALPHA_AIR`/`force_constants`) sind als `commit_gate`-Fixtures zu bauen.
