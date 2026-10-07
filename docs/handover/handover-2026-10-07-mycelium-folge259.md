@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 259 (2026-10-07)
-  session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-262, river-122) am Baum gemessen gefaltet; eionet-cdr-cdn.yml gebaut; Lizenz-Census-Join auf Netloc-Ebene; dropped-gate Roster-Baseline gebunden; Stehender Pass am neuen HEAD
+  session: Mycelium-Linie — Meta-Pass; adressierte Blöcke gefaltet; eionet-cdr-cdn.yml; Lizenz-Census-Netloc-Join; dropped-gate Roster-Baseline; dropped-gate-Stimmen-Runde (15 Kanäle, konvergentes Verdikt); UI-Seat-Roster (MiniMax M3 · Google AI Studio/Gemini 3.1 Pro · DeepSeek Chat · Mistral, Gretchenfrage 4/4 + Tempo); FMHY-`/ai`-Survey; Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: 08b2eb3823e79d8383b892176043e4b486fbfe5792c388a0b5adc48562affcec
+  sha256: 56d2d066ad45e00b4cc5e2b1a55f4cd343d29ad0d19eab0dffd9d16e8c272fe1
   status: live
 -->
 # Handover — Mycelium-Folge 259 (2026-10-07)
@@ -21,6 +21,7 @@ Sender-Zeilen in `## An river`.
 ## Operator-Wort-Register
 
 - Wort | 2026-10-07 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | Quelle: Operator (Session, Mycelium 259) — Session-Start, Delegations-Consent.
+- Wort | 2026-10-07 | „ja /commit" (Commit-Wort); „ich glaube wir haben jetzt erstmal genug stimmen"; „du kannst die stimmen befragen" | Quelle: Operator (Session, Mycelium 259) — Stimmen-Runde + Roster-Aufnahmen, Commit.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge258.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -58,7 +59,14 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Trigger:** — (autonom; Bau als flash-Sequenz)
 - **Lage:** (gemessen 2026-10-07, Mycelium 259) Ratifiziertes Design (Rat + 5 API + 14 UI): 20/20 Register-/Carrier-Frage; Q1 hybrid (ID = Identität, Token nur `match_hint`), Q2 Roster, Q3 hart bei stillem/ungetyptem Move, Q4 `pending-legacy` einfrieren; Reihenfolge Nullkontrolle → ID-Feld → Snapshot → Vokabular → Roster-Gate → hartes Rot. Schnitt 1 committet (`1d3832197`), Schnitt 2 `--dropped-roster` (258). **Schnitt 3 (dieses Atom):** `--dropped-roster [--public-only] [--baseline <datei>] [--count]` gebaut (`roster_diff`, Test `roster_diff_names_lost_and_new_keys`). **Emission-Fehler gefunden + geheilt:** `extract_open_points` zählte jede `## `-Überschrift mit Statuswort als Punkt — die `## Burn:`-Zeile wurde zur Riesenkette (215 Tokens), `## Offen (aufgeschlüsselt)` zu `aufgeschlüsselt`; Fix `CONTAINER_HEADS` (`is_container_heading` prüft das erste Wort: `offen`/`burn`/`abschluss`/`lock`/…), Test `dropped_roster_skips_burn_and_container_headings`. Baseline `docs/zustand/dropped-roster-baseline.txt` **public-only, emission-geheilt** am HEAD (37 öffentliche Schlüssel; `--public-only --baseline … --count` = **0**); vor dem Fix 41 (4 Container-/Burn-Scheinschlüssel).
 - **Blockade:** **kein einschaltbares Tor.** Die public-only-Baseline löst die CI-Asymmetrie (private `future`-Handover), der Emission-Fix die Scheinschlüssel — aber die Menge ändert sich mit jeder legitimen Übergabe/lösung; ohne den `pending-legacy`-Einfrierschritt (Q4) und das getypte Ereignis-Vokabular (Q3) würde das Gate jede geschlossene Punktzeile als LOST rot färben. `commit_gate`/`ci-gate.yml` unberührt.
-- **Braucht:** `pending-legacy`-Snapshot (voller dropped-Scan, CI-only, >30 min) einfrieren + getyptes Ereignis-Vokabular; dann `--dropped-roster --public-only --baseline docs/zustand/dropped-roster-baseline.txt --count` als `ci-gate`-Schritt verdrahten. Verdikt: `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md` §Schnitt.
+- **Braucht:** `pending-legacy`-Snapshot (voller dropped-Scan, CI-only, >30 min) einfrieren + getyptes Ereignis-Vokabular; dann `--dropped-roster --public-only --baseline docs/zustand/dropped-roster-baseline.txt --count` als `ci-gate`-Schritt verdrahten. **Verdikt (Rat + 15 Stimmen, 2026-10-07):** Register + append-only typisiertes Ereignis-Log (`minted`/`carried`/`resolved`/`dropped`) + Entity Resolution als Identitätsanker + Merkle-Pin (CI, RFC 6962) + Shadow-Nullkontrolle; `carried` = einzige legitime old→new-Kante; `dropped` mit Beleg + Zweitzeichner ≠ Autor; `dropped-ack` = gepinnte monotone Obergrenze; scharf erst bei 0 falsch-rot UND 0 falsch-grün. Risse: Pin-Rollen-Autorität · Identität ≠ Substanz (Laundering) · Split/Merge 1:n · Kanonisierungs-Drift. Rohmaterial: `state/stimmen/2026-10-07_dropped-gate-stimmen-runde.md` + `-runde-2.md`. Design-Verdikt: `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md` §Schnitt.
+
+### UI-Seat-Roster — Gretchenfrage-Rest
+- **Status:** eigen (Retry + Leads autonom)
+- **Trigger:** — (autonom)
+- **Lage:** (gemessen 2026-10-07, Mycelium 259) Gretchenfrage (4/4 + Tempo gemessen) bestanden und aufgenommen: MiniMax M3 (30 s) · Google AI Studio/Gemini 3.1 Pro (≤60 s) · DeepSeek Chat (6 s) · Mistral (24 s). Offen: `chat.together.ai` **Serverfehler** → Retry; `aistudio.xiaomimimo.com` **Ladefehler** → unreachable.
+- **Blockade:** Together + Xiaomi site-seitig.
+- **Braucht:** Together-Retry; FMHY-Leads (`state/stimmen/2026-10-07_fmhy-ai-survey.md`: LMArena, Meta.ai, LongCat, Tencent AI Studio, Ai2, Upstage, Arcee, Sarvam, Poolside, Inception, NVIDIA build, Proton Lumo, Ecosia, PublicAI) — je Gretchenfrage. Kandidatenakte: `state/stimmen/2026-10-07_ui-seat-kandidaten.md`.
 
 ### Lizenz-Census Drift-Tor (Join auf Netloc-Ebene gebaut; Gate-Verdrahtung offen)
 - **Status:** eigen
