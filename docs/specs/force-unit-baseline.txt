@@ -11,6 +11,15 @@
 # viking_lander_range_rate_km_s (phi/sources.φ:18174) — a Doppler range-rate is a
 # velocity, and the register carries speed as `advective km/s` (22 lines); em has no
 # velocity unit. The pair is deleted here. Measured 54 / 33.
+# Healed 2026-10-07 (Mountain 262): six pairs closed. `em n/cc` → `em 1/cm3`
+# (exosphere_ace_dens_ncc, :1070 — cm-3/1/cm3/n/cc aliases, convert_to_si = 1e6);
+# `em kA` → `electric kA` (lightning_peak_current_ka, :192 — a current, SI ampere,
+# 1 kA = 1e3 A); `em mas` → `gravity mas` (gaia_rrl_parallax_mas, :1878 — an
+# astrometric angle, gravity already carries mas/arcsec/deg, SI 4.84813681109536e-9
+# rad); `em kW` kept, `kw` admitted to em (dsn_*_up_power, :120-121 — RF power,
+# 1 kW = 1e3 W); `km`/`mm` admitted to gravity (venera surface radius :28015, uhslc
+# sea level :19284 — lengths, gravity already carries m/ft, SI 1e3 / 1e-3 m).
+# Measured 47 / 27.
 #
 # The production commit gate (commit_check) scans .rs only; this file is the
 # ratchet that closes the gap: a staged phi/sources.φ may not introduce a
@@ -30,14 +39,10 @@ em db
 em dbz
 em erg/cm2/s
 em hpa
-em ka
-em kw
-em mas
 em mcrab
 em millionths
 em mm/s2
 em n-units
-em n/cc
 em njy
 em nmgy
 em nw/cm2/sr
@@ -47,7 +52,5 @@ em uj/sr/m2/um
 em w/m2/hz
 em w/m2/sr
 em w/m2/sr/um
-gravity km
-gravity mm
 gravity nm/s2
 thermal m

@@ -17,7 +17,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "pfu/mev" => Some(value * 6.241509074e16),
         "w/m^2/nm" => Some(value * 1.0e9),
         "micromolequanta/m^2/sec" => Some(value * 1.0e-6),
-        "km" | "km/s" => Some(value * 1e3),
+        "km" | "km/s" | "kw" | "ka" => Some(value * 1e3),
         "cm" => Some(value * 1e-2),
         "mm" | "ms" => Some(value * 1e-3),
         "d" => Some(value * 86400.0),
@@ -350,6 +350,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         0 => &[
             "w",
             "w/m2",
+            "kw",
             "mw/m2/sr",
             "t",
             "nt",
@@ -415,8 +416,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         ],
         1 => &[
             "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "m_jup", "au", "pc", "kpc",
-            "mpc", "t", "nt", "m", "ft", "r_earth", "r_jup", "gt", "logg", "deg", "arcsec", "mas",
-            "ms", "s", "au/d", "cm/yr", "1",
+            "mpc", "t", "nt", "m", "km", "mm", "ft", "r_earth", "r_jup", "gt", "logg", "deg",
+            "arcsec", "mas", "ms", "s", "au/d", "cm/yr", "1",
         ],
         2 => &[
             "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count", "dbar",
@@ -461,7 +462,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "decibar", "npa", "deg",
         ],
         8 => &[
-            "v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1", "%",
+            "v/m", "v", "a", "ka", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1", "%",
         ],
         _ => &[],
     }
