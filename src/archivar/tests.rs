@@ -4275,7 +4275,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &fc,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4296,7 +4295,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &fc,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4321,7 +4319,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &no_law,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4342,7 +4339,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &fc,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4376,7 +4372,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &fc,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4397,7 +4392,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &fc,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4423,7 +4417,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &thermal,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4444,7 +4437,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &thermal,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4465,7 +4457,6 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &fc,
-                body_props: None,
                 medium: None,
                 body_radius: None,
             },
@@ -4563,7 +4554,6 @@ fn test_wind_waves_loader_respects_load_gate() {
                     now,
                     EnclosureField {
                         config: &fc,
-                        body_props: eph_map.get("earth").and_then(|e| e.props.as_ref()),
                         medium: None,
                         body_radius: Some(body_radius),
                     },
