@@ -91,6 +91,10 @@ jobs:
           echo "dropped-gate: delta $((current - baseline)) > 0 — open points dropped without a resolving commit; carry them forward or bump the baseline in the accepting commit" >&2
           exit 1
         fi
+    - name: Gate self-test — shadow null-control is sharp
+      run: |
+        cargo build --release -p omegaflow-register --bin dropped_gate
+        target/release/dropped_gate --shadow
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
