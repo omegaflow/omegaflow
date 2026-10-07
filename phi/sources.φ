@@ -1076,7 +1076,7 @@ at sun
 map .
 lat latitude
 lon carrington_longitude
-field area swpc_solar_region_area_millionths inverse-square em millionths 86400 0.0 0.0
+quantity area swpc_solar_region_area_millionths inverse-square area millionths 86400 0.0 0.0
 field extent swpc_solar_region_extent_deg inverse-square em deg 86400 0.0 0.0
 
 url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
@@ -3950,7 +3950,7 @@ origin https://unidata-nexrad-level2.s3.amazonaws.com/
 compiler tools/harvest/src/bin/nexrad_level2_compiler.rs
 at earth
 ttl 86400
-field nexrad_level2_ref nexrad_level2_ref_dbz inverse-square em dBZ 86400 0.0 0.0
+quantity nexrad_level2_ref nexrad_level2_ref_dbz inverse-square scale dbz 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
 
@@ -9989,7 +9989,7 @@ compiler tools/harvest/src/bin/cosmic_ro_compiler.rs
 sha256 94ad682adbd08edd10a2a127a050fea2287b557a98e74a334cc222c1dcbbe98b
 at earth
 ttl 604800
-field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square em N-units 604800 0.0 0.0
+quantity cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square scale n-units 604800 0.0 0.0
 field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square thermal K 604800 0.0 0.0
 field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
 
@@ -10182,7 +10182,7 @@ origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/
 compiler tools/harvest/src/bin/lis_otd_compiler.rs
 on earth 0 0 0
 ttl 604800
-field rad lis_otd_flash_radiance_uj_sr inverse-square em uJ/sr 3600 0.0 0.0
+quantity rad lis_otd_flash_radiance_uj_sr inverse-square intensity uj/sr 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/trmm_lis.bin
 format trmm_lis
@@ -19390,8 +19390,8 @@ field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/
 field soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy advective deg 2592000 0.0 0.0
 field soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy advective deg 2592000 0.0 0.0
 field soho_lasco_cme_accel_m_s2 soho_lasco_cme_accel_m_s2 patch-levy advective m/s2 2592000 0.0 0.0
-field soho_lasco_cme_mass_g soho_lasco_cme_mass_g patch-levy advective g 2592000 0.0 0.0
-field soho_lasco_cme_ke_erg soho_lasco_cme_ke_erg patch-levy advective erg 2592000 0.0 0.0
+quantity soho_lasco_cme_mass_g soho_lasco_cme_mass_g patch-levy mass g_mass 2592000 0.0 0.0
+quantity soho_lasco_cme_ke_erg soho_lasco_cme_ke_erg patch-levy energy erg 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/coastwatch.pfeg.noaa.gov/ersstv5_nino34.bin
 format ersstv5_nino34
@@ -19471,7 +19471,7 @@ at sun
 cmap .
 ra ra
 dec dec
-field flux_g noirlab_ls_dr10_g_flux inverse-square em nMgy 31536000 0.0 0.0
+quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0
 
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
 format tap

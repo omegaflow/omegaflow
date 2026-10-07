@@ -1,4 +1,5 @@
 use super::*;
+use crate::force::{quantity_kind_id, quantity_kind_of};
 
 fn split_directive(line: &str) -> Vec<&str> {
     let bytes = line.as_bytes();
@@ -952,6 +953,91 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     "field_in refused at {}: legacy directive — the --gold port migrates field_in to field (τ-Gate)",
                     parts[1]
                 );
+            }
+            "quantity" if parts.len() >= 9 => {
+                let k = match kernel_id_of(parts[3]) {
+                    Some(k) => k,
+                    None => continue,
+                };
+                let kind = match quantity_kind_of(parts[4]) {
+                    Some(k) => k,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("unknown quantity kind \"{}\": {}", parts[4], line),
+                        );
+                        continue;
+                    }
+                };
+                if !allowed_units_for_quantity(quantity_kind_id(kind))
+                    .contains(&normalize_unit(parts[5]).as_str())
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "unknown quantity unit \"{}\" for kind \"{}\": {}",
+                            parts[5], parts[4], line
+                        ),
+                    );
+                    continue;
+                }
+                let tau: f64 = match parts[6].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => {
+                        eprintln!(
+                            "field refused at {}: tau absent or not positive (τ-Gate)",
+                            parts[1]
+                        );
+                        continue;
+                    }
+                };
+                let absorption: f64 = match parts[7].parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let advection: f64 = match parts[8].parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    kernel: k,
+                    force: FORCE_TYPE_QUANTITY,
+                    tau,
+                    absorption,
+                    advection,
+                    unit: parts[5].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::Flatten { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CmrPolygon { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::CelestialPolygon { fields, .. }) =
+                    cur_extracts.last_mut()
+                {
+                    fields.push(fc);
+                } else if let Some(Extract::KeplerMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else if let Some(Extract::EpnCore { fields, .. }) = cur_extracts.last_mut() {
+                    fields.push(fc);
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
             }
             "field" if parts.len() >= 7 => {
                 if parts.len() >= 10 && parts[9] == "where" {

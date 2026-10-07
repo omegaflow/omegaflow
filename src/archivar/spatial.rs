@@ -841,7 +841,11 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                     sample.absorption,
                     sample.advection,
                     sample.z_flux,
-                ),
+                ) + if sample.force_type == FORCE_TYPE_QUANTITY as f64 {
+                    PRESENCE_FLAG_QUANTITY
+                } else {
+                    0.0
+                },
             ));
         }
     };
@@ -995,7 +999,11 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                     sample.absorption,
                     sample.advection,
                     sample.z_flux,
-                ),
+                ) + if sample.force_type == FORCE_TYPE_QUANTITY as f64 {
+                    PRESENCE_FLAG_QUANTITY
+                } else {
+                    0.0
+                },
             ));
         }
     };
