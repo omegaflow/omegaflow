@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 3ca13fd69d91a443009719cedede3c6b8677bd70e8309c46e3004918107f48a3
+  sha256: b6da3df57b4a194f63dde825d9983bc80feafec8dfcc1773c2d7de4e1b9f8a6e
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -20,7 +20,7 @@ Sender-Zeilen in `## An <line>`.
 
 ## Operator-Wort-Register
 
-In 267 wurde kein neues Operator-Wort gegeben.
+- 2026-10-07 | „bitte gib das dem rat, einem taucher mit archive search und den ui chat stimmen" (der ci-check-Verdrängungs-Riss) | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -53,12 +53,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** Mountains Zulassung.
 - **Braucht:** Mountains Dispositions-Verdikt; dann Ernte-Verdrahtung.
 
-### `ci-check` verdrängt den Lauf (Riss, aus mountain-270 gefaltet)
-- **Status:** blockiert | **Bindung:** eigen (CI-Config) → Rat
-- **Trigger:** Rat-Verdikt (per-SHA-Verdikt vs. Runner-Last)
-- **Lage:** (gemessen 2026-10-07T21:5xZ via `ci_manage list`) `.github/workflows/ci-check.yml:20-27` behauptet `cancel-in-progress: false` („a per-SHA verdict forms"), gemessen werden Pushes verdrängt: `37687975359`/`37686830138`/`37686451935` **cancelled**, `37689127382` in_progress seit 21:30Z, `37692096923` pending — der schwere `cargo test --release` läuft selten durch. Gesetzt von `60f7ffcc3` (ci-gate cancel-in-progress true, ci-check false).
-- **Blockade:** Design-Entscheidung — per-Push-Verdikt (viele 120-min-Läufe) vs. Nachtlauf-Deckung (workflow_dispatch + schedule, ci-gate trägt das schnelle per-SHA-Gate).
-- **Braucht:** Rat-Verdikt; dann minimaler Config-Fix (z. B. `push:` aus ci-check entfernen, `schedule`/`workflow_dispatch` behalten).
+### `ci-gate` trägt ein leichtes Testsubset (Bedingung des ci-check-Beschlusses)
+- **Status:** wartend | **Bindung:** eigen (CI-Config)
+- **Trigger:** der erste `ci-gate`-Lauf mit dem neuen Test-Job (`ci_manage log`)
+- **Lage:** (gemessen 2026-10-07) Rat (5 Stimmen) + Z.ai/GLM-5.3 + Qwen konvergieren: ci-check ist die schwere Nacht-/Dispatch-Messung (push-Trigger entfernt, `3db5a3ad4`), der per-SHA-Blocker ist ci-gate. **Beide UI-Stimmen binden das Verdikt an eine Bedingung:** ci-gate muss ein leichtes Testsubset (`cargo test --lib` / Unit-Tests, < ~10 min) als harten Blocker tragen und als **required status check** (Ruleset/Branch-Protection) stehen, sonst ist „Gate" Deklaration. `queue:max` verworfen (legalisiert Backlog, Verdicts kommen stale an). Duck.ai (Tageslimit) und Claude (5-h-Nachrichtenlimit) waren gemessen nicht erreichbar.
+- **Blockade:** die grüne/schnelle Subset-Messung — ein lokaler Testlauf ist CI-Job, kein lokaler Nachweis.
+- **Braucht:** `cargo test --lib`-Subset-Job in `ci-gate.yml` ergänzen; Branch-Protection auf ci-gate setzen (Mycelium/Operator); den ersten Lauf per `ci_manage log` messen.
 
 ## An river
 
