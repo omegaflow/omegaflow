@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 78104d649988126559e5dc58c417eacdef4bed1795a6b8db69f94b8eccb583c7
+  sha256: 39316f269f97cf9ca7f1f3303687496e284b2e6be8669670fd73b922e099b7a5
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -460,23 +460,26 @@ a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t (a_x = −1.69 ± 0.01, a
 a_z = −0.23 ± 0.02 A per nT/s; a second fit from 00:00 UT gives −1.70/−2.71/−0.21),
 validated only on the preceding 2-h window 06:00–07:59:50 UT (CC = 0.80,
 R² = 0.64), so the 0.80 → 0.945 gap measures the aggregation gain, not a stronger
-coupling. The named limits, held by the strong-seat review (2026-10-07): on the UI channel
-**Claude Sonnet 5.5**, **Qwen3.8-Max**, **Duck.ai/GPT-6 Luna**, and via tryingopen the
-open models **DeepSeek V4 Pro**, **Kimi K3**, **Inkling**, **Qwen3.8 2.4T** and
-**GPT-OSS 120B**; plus the flash `archive_search` cascade on the full text.
-**Authorship is unanimous** — Juusola first, Viljanen last — and the paper is a
-3-D geoelectric-field (SECS) work. **What Eq. 43 is stays a riss:** the flash
-cascade and Claude place the coefficient set a_x = −1.69, a_y = −2.73,
-a_z = −0.23 A per nT/s in it as a GIC regression over the storm, while
-Qwen3.8-Max reads those coefficients as a three-component **geoelectric-field**
-regression, and Qwen3.8 2.4T and DeepSeek V4 Pro warn the paper contains no GIC
-regression (its equations link dB/dt to E-field components); a direct full-text
-read of Eq. 43 is the open step. A second, convergent point: Kimi K3, Inkling and
-Qwen3.8 2.4T all note that the classical GIC relation is the **two-component
-horizontal** form (a·∂B_x/∂t + b·∂B_y/∂t) and that a ∂B_z/∂t term is atypical.
-All seats agree that the scalar hourly-peak form is a descriptive extreme-value
-proxy, not the sign-bearing transfer regression (Qwen: aggregation on maxima
-inflates r; Kimi: the hourly values are autocorrelated, n_eff < 72). Concretely:
+coupling. The named limits, held by the strong-seat review (2026-10-07): **Claude Sonnet 5.5**,
+**Qwen3.8-Max**, **Duck.ai/GPT-6 Luna**, and via tryingopen **DeepSeek V4 Pro**,
+**Kimi K3**, **Inkling**, **Qwen3.8 2.4T**, **GPT-OSS 120B** and **Nemotron 3 Ultra**;
+plus the flash `archive_search` cascade. Authorship is unanimous (Juusola first,
+Viljanen last). **The Eq. 43 riss is resolved by the primary source:** the
+Copernicus full text and the official Table 1 spreadsheet
+(`angeo-43-271-2025-t01.xlsx`) give Eq. (43) as the **GIC** regression
+GIC(t) = a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t with a_x = −1.69 ± 0.01,
+a_y = −2.73 ± 0.02, a_z = −0.23 ± 0.02 A per nT/s (a second fit from 00:00 UT:
+−1.70/−2.71/−0.21), fit 2003-10-29T08:00–31T23:59:50 UT and validated CC = 0.80,
+R² = 0.64 on the preceding 2-h window — exactly the values the flash cascade and
+Claude reported. The abstract-level seats (DeepSeek V4 Pro, Kimi K3) could not
+reproduce them without the full text, and **Nemotron 3 Ultra reported different
+coefficients (−0.92/−1.48/−0.05) that Table 1 refutes — a measured fabrication**.
+The convergent methodological note stands: the classical GIC relation is the
+**two-component horizontal** form (Kimi, Inkling, Qwen3.8 2.4T), and this paper's
+Eq. 43 is a three-component fit including ∂B_z/∂t (the vertical term is small in
+1-D/2-D models). All seats agree that the scalar hourly-peak form is a descriptive
+extreme-value proxy, not the sign-bearing transfer regression (Qwen: aggregation
+on maxima inflates r; Kimi: n_eff < 72 through autocorrelation). Concretely:
 
 - **Direction is lost**: the coefficient set implies |GIC|/|dH/dt| between 0 and
   ≈3.2 A per nT/s depending on field orientation (maximal at ≈58° east of north,
@@ -683,13 +686,11 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   correlation (r = 0.9448, n = 72 aligned hours, §4.7); the component
   regression is quantified in **Juusola et al. (2025,
   `https://doi.org/10.5194/angeo-43-271-2025`, Eq. 43/Table 1)** — a
-  three-component least-squares over a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t at
-  native 10 s (a_x = −1.69, a_y = −2.73, a_z = −0.23 A per nT/s; validation
-  CC = 0.80 on a 2-h hold-out), **not** a scalar peak. Whether that regression
-  targets the **GIC** or the **geoelectric field** is a riss — the full-text
-  readings disagree (§4.7) — so it is cited as the component-regression anchor,
-  not as a settled GIC equation; §4.7's hourly-peak scalar r is a different
-  reduction and is not directly comparable. The paper
+  three-component **GIC** regression fit to NUR ∂B/∂t (Table 1: a_x = −1.69 ± 0.01,
+  a_y = −2.73 ± 0.02, a_z = −0.23 ± 0.02 A per nT/s; validation CC = 0.80,
+  R² = 0.64 on a 2-h hold-out; measured against the source 2026-10-07), **not** a
+  scalar peak — so §4.7's hourly-peak scalar r is a different reduction and is
+  not directly comparable. The paper
   still measures the excitation at ABK/SOD; the GIC-current side at Mäntsälä is
   now a wired next step. *(Citation corrected 2026-10-07: the anchor is Juusola
   et al., Ann. Geophys. 43, 271–301, 2025 — Viljanen is the fifth author.)*
