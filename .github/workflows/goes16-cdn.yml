@@ -1,0 +1,35 @@
+name: goes16-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  goes16:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the noaa-goes16.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view noaa-goes16.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create noaa-goes16.s3.amazonaws.com --repo omegaflow/sources \
+              --title "noaa-goes16.s3.amazonaws.com" \
+              --notes "GOES-16 ABI L1b Rad (CONUS, bands 1-16) compiled to a per-granule radiance record. Record stride 56 B LE: t (f64, J2000 s), band_id (u8), calib (u8, 1 = L1b operational radiance, 2 = GSICS-harmonized), pad (2), band_wavelength (f32, um), esun (f32, W m-2 um-1), kappa0 (f32, (W m-2 um-1)-1), sub_lon (f32, deg), persp_h (f32, m), rad_mean (f32), rad_std (f32), rad_min (f32), rad_max (f32, W m-2 sr-1 um-1), valid (u32), total (u32)."
+          fi
+      - name: Compile the ABI radiance record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin goes16_abi_compiler -- \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "goes16-cdn: goes16_abi.bin returned void" \
+                 "goes16_abi compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

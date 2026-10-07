@@ -1,0 +1,52 @@
+name: icesat2-atl03-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'granule civil day (YYYY.MM.DD); empty = UTC yesterday'
+        required: false
+        type: string
+        default: ''
+      version:
+        description: 'ATL03 version'
+        required: false
+        type: string
+        default: '007'
+      limit:
+        description: 'granules to harvest (1..8)'
+        required: false
+        type: string
+        default: '2'
+      skip:
+        description: 'granules to skip'
+        required: false
+        type: string
+        default: '0'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  icesat2-atl03:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the ICESat-2 ATL03 photon series and upload to CDN
+        run: |
+          set -euo pipefail
+          DAY="${{ inputs.day }}"; [ -n "$DAY" ] || DAY="$(date -u -d 'yesterday' +%Y.%m.%d)"
+          LIMIT="${{ inputs.limit }}"; [ -n "$LIMIT" ] || LIMIT="2"
+          SKIP="${{ inputs.skip }}"; [ -n "$SKIP" ] || SKIP="0"
+          cargo run -p omegaflow-harvest --release --bin icesat2_atl03_compiler -- \
+            --cmr --day "$DAY" --version "${{ inputs.version }}" --limit "$LIMIT" --skip "$SKIP" \
+            --out data/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin \
+            --ci-mode
