@@ -1,0 +1,53 @@
+name: goes16-mag-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: CDAWeb GOES-16 MAG L2 NetCDF file URL (dn_magn-l2-hires_g16_d<YYYYMMDD>_v*.nc)
+        required: true
+        type: string
+        default: https://cdaweb.gsfc.nasa.gov/pub/data/goes/goes16/mag_l2_netcdf/2025/dn_magn-l2-hires_g16_d20250101_v1-0-1.nc
+      frame:
+        description: geocentric frame of the ambient field vector
+        required: false
+        type: choice
+        default: gsm
+        options:
+          - gsm
+          - gse
+          - eci
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  goes16-mag:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the cdaweb.gsfc.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "cdaweb.gsfc.nasa.gov" \
+              --notes "CDAWeb sources. GOES-16 MAG L2 (dn_magn-l2-hires) compiled to a per-sample ambient-field vector. Record stride 20 B LE: t (f64, TDB J2000 s), bx (f32, nT), by (f32, nT), bz (f32, nT); a row whose time or any component carries the _FillValue (-9999) is absent and skipped."
+          fi
+      - name: Compile the GOES-16 MAG vector series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin goes16_mag_compiler -- \
+            --url "${{ inputs.url }}" \
+            --frame "${{ inputs.frame }}" \
+            --out data/cdaweb.gsfc.nasa.gov/goes16_mag.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "goes16-mag-cdn: goes16_mag.bin returned void" \
+                 "goes16_mag compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

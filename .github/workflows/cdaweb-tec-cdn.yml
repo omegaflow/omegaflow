@@ -1,0 +1,59 @@
+name: cdaweb-tec-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'CDAWeb GNSS-TEC daily CDF URL'
+        type: string
+        default: 'https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/2020/gps_tec15min_igs_20201014_v01.cdf'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/cdaweb_tec_compiler.rs'
+      - '.github/workflows/cdaweb-tec-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cdaweb-tec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the cdaweb.gsfc.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "cdaweb.gsfc.nasa.gov" \
+              --notes "CDAWeb GNSS 15-minute TEC (UPC tecUQR) compiled to omegaflow CTEC binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the CDAWeb GNSS-TEC daily map
+        run: |
+          set -euo pipefail
+          url="${{ inputs.url }}"; [ -n "$url" ] || url="https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/2020/gps_tec15min_igs_20201014_v01.cdf"
+          cargo run -p omegaflow-harvest --release --bin cdaweb_tec_compiler -- \
+            --url "$url" \
+            --out data/cdaweb.gsfc.nasa.gov/cdaweb_tec.bin --ci-mode
+      - name: Verify the registered cdaweb.gsfc.nasa.gov cdaweb_tec asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh cdaweb.gsfc.nasa.gov cdaweb_tec)
+          if [ -z "$expected" ]; then
+            echo "no cdaweb_tec asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered cdaweb.gsfc.nasa.gov cdaweb_tec assets all present"

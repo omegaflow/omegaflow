@@ -438,6 +438,7 @@ pub struct SourceConfig {
     pub station_code: Option<String>,
     pub cgm_lat: Option<f64>,
     pub cgm_source: Option<String>,
+    pub geomag_lat: Option<f64>,
     pub span: Option<f64>,
 }
 

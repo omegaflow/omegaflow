@@ -3,7 +3,7 @@
   session: Mountain-Folge 268
   class: handover
   date: 2026-10-07
-  sha256: a5674457c9301f5f22c803e5aa7e9d32b221fcd8c84b8e99b6521fcd8f937f17
+  sha256: 92b132b83c30da5c733a1493ca9b6a2eb0daca4c8e96a4f3391198f140871e2a
   status: live
 -->
 # Handover — Mountain-Folge 268 (2026-10-07)
@@ -19,7 +19,11 @@ pro/max. Gefaltet: die drei adressierten Blöcke — river-125 (CGM-Provenienz �
 GIC-Band-Deskriptoren + Coverage-Test, dropped-gate Träger-Ableitung, Sonne-GM
 Bit 11 (`de_compiler`); Wave 2 — `span`-Direktive (Rat: `extent` reusen, kein 27.
 Wire-Feld), `eionet_cdr`-Block (276 Felder, register canonical), obis.osha als
-`pending parser-gap` registriert. Riss: Mycelium hat zwei Taucher-Dateien unter
+`pending parser-gap` registriert. Wave 3 — 4 GIC-/CDAWeb-Compiler (`cdaweb_tec`,
+`cdaweb_roti`, `goes16_mag`, `poes19_meped`) + `*-cdn.yml`, IGRF-Modul
+`src/archivar/igrf.rs` mit `geomag_lat`-Arm (Grad-1-Dipol gegen Beggan 2026
+verifiziert), **13 Klassen-(a)-Baseline-Zeilen gelöscht** (Release `tools-latest`
+@ `6d33a91da` gemessen fresh). Riss: Mycelium hat zwei Taucher-Dateien unter
 eigener Botschaft mitgenommen (`0fc491b7e`, kc2g_stations.rs + dropped_gate.rs).
 
 **Burn** (`session_burn`): Mountain-Linie-Session $0.0558 (`line`, deepseek-flash) + general ×1 (KCG2/SDO-Messung); kein pro/max (Aggregat deepseek-flash $0.8412/24 Sessions).
@@ -108,12 +112,12 @@ Wort | Datum | Quelle
 - **Blockade:** der OMNI-Arm hat noch keine deckungsgleiche Zeitachse (n=0).
 - **Braucht:** OMNI-Alignment (`ci_manage log <neuer field-te-query-Lauf>`).
 
-### GIC-Faden §A–G — Compiler/Harvest je Kanal (Parser-Arm steht)
-- **Status:** eigen | **Bindung:** eigen (Compiler/Harvest) · mycelium (Manifestation)
-- **Trigger:** Compiler + Harvest-Block je Kanal erreicht
-- **Lage:** (gemessen 2026-10-07 via `sgrep`/`general`+`archive_search --verdict`) **Der generische NetCDF/CDF-Format-Arm steht bereits** — `channels.rs:246` `build_netcdf_channels`, `main_flow.rs:1749` (`format == "netcdf"`), `fetch.rs:1099`, `netcdf.rs` (Magic `CDF`). **2 live** (`fink_cutout`, `intermagnet_dbdt`, `goes16` ABI), **10 absent**: ROTI Nagoya, CDAWeb `tec15min_igs`/`roti15min_jpl`, `goes16` MAG L2, THEMIS `THG_L2_MAG`, CARISMA, AMPERE Zenodo, PCN, DMSP SSJ, POES `sem2_fluxes`; Disposition `phi/blocked_sources.φ:151/155/159/187/191`; Detail `state/future/gic-unblock-routen-2026-10-06.md`.
-- **Blockade:** je Kanal fehlt der produkt-spezifische Compiler + der Harvest-Block in `phi/harvest.φ` (`format`/`tag`/`arm`/`workflow`/`pattern`); der Parser-Arm ist nicht der Engpass.
-- **Braucht:** je Kanal ein Compiler in `tools/harvest/src/bin/` + Harvest-Block + `*-cdn.yml` + `terms`; dann Register-Block.
+### GIC-Faden §A–G — Compiler/Reader je Kanal
+- **Status:** eigen | **Bindung:** eigen (Compiler/Reader) · mycelium (Manifestation)
+- **Trigger:** Core-Consumer-Reader je Kanal erreicht
+- **Lage:** (gemessen 2026-10-07, Mountain 268) **4 Kanäle vorbereitet** — `cdaweb_tec`, `cdaweb_roti`, `goes16_mag`, `poes19_meped`: Compiler in `tools/harvest/src/bin/` + `*-cdn.yml` gebaut (CDF-3- bzw. NetCDF-4/HDF5-Arm), `cargo build` 0/0; Register-/Harvest-Block präpariert. Bestehende Kanäle live: `fink_cutout`, `intermagnet_dbdt`, `goes16_abi`. **Riss (Route):** `state/future/gic-unblock-routen-2026-10-06.md:65` nennt `tec15min_igs` „IONEX", gemessen ist es **CDF3** (`.cdf`). **Riss (Maß):** ein ROTI-Jahres-Asset ≈ 5.4 GiB > 2-GiB-Release-Grenze (per-day vs. Dezimation offen). DMSP-SSJ teilt den CDF-Arm, braucht einen eigenen Compiler.
+- **Blockade:** je Kanal fehlt der **Core-Consumer-Reader** — `src/archivar/extract.rs` dispatcht `parse_series` nach `format` (`:118/399/785`), `main_flow.rs` braucht den Kanal-Loop (wie `swarm_tec:4950`); ohne ihn lösen die `field`-Zeilen nicht auf und das kompilierte `.bin` erreicht den Wire nicht.
+- **Braucht:** je Kanal ein `src/archivar/<channel>.rs`-Reader + `extract.rs`/`fetch.rs`/`main_flow.rs`-Dispatch (nächster Atom); dann `phi/harvest.φ`-Block + `phi/sources.φ`-Felder + Manifestation. Offen bleiben: THEMIS GMAG (CDF, anonym), Swarm L2 FAC (CDF, GFZ-Mirror CC-BY-4.0), VLF AWESOME (`.mat`), PCN, CARISMA, AMPERE, DMSP-16 SSJ.
 
 ### GIC-Faden-Wunschliste §A–G — Admission der 15 neuen
 - **Status:** eigen | **Bindung:** eigen
@@ -173,10 +177,10 @@ Wort | Datum | Quelle
 
 ### IGRF-Koeffizienten-Arm (für `geomag_lat`)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Arm gebaut
-- **Lage:** (gemessen 2026-10-07 via `sgrep -i igrf src/archivar` leer) kein IGRF-Arm im Baum; die `geomag_lat`-Direktive braucht ihn vor der Register-Zeile.
-- **Blockade:** Arm ungebaut.
-- **Braucht:** IGRF-Koeffizienten als CDN-Artefakt + Arm in `src/archivar` + `pattern` in `phi/harvest.φ`; dann Register-Zeile.
+- **Trigger:** verifizierte Grad-13-Referenz (Testwerte)
+- **Lage:** (gemessen 2026-10-07, Mountain 268) `src/archivar/igrf.rs` gebaut — parst `igrf14coeffs.txt` (NOAA, sha `8f8d8840…`), Grad-1-Dipol + geomagnetischer Pol, verifiziert gegen Beggan 2026 Tab. 3 (2020.0: 80.65°N/72.68°W); `geomag_lat <deg>`-Parser-Arm + `SourceConfig.geomag_lat`; `cargo check` 0/0, Tests in CI. **Riss (Naming):** Rat-Verdikt-Form ist `geomag_lat_<frame> <deg> igrf-<edition>` (`archiv/handover-2026-10-06-mountain-folge249.md:61-66`); gebaut ist `geomag_lat <deg>`.
+- **Blockade:** die volle Grad-13-Synthese (X/Y/Z) ist ungebaut — kein unabhängiger Referenz-Testwert im Baum (`igrf14testvalues.txt` überall 404); ohne ihn wäre die Rekursion eine unbelegte Behauptung.
+- **Braucht:** eine gemessene Grad-13-Referenz (IAGA-Testwerte oder der Fortran-`igrf14.f`-Port als Zeuge) → dann Synthese + Register-Zeile; optional `geomag_lat_<frame>`-Form.
 
 ### Exposom-Matrix §A — Register-Zeilen je Klasse
 - **Status:** eigen | **Bindung:** eigen (Format) · mycelium (Register)
@@ -246,10 +250,18 @@ Origin: mountain-folge267.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push.
 
-Eigene Pfade: `src/archivar/types.rs`, `src/archivar/parse.rs`,
-`src/archivar/tests.rs`, `phi/sources.φ`, `phi/blocked_sources.φ`,
-`phi/declined_sources.φ`, `tools/utils/src/bin/volume_builder.rs`,
-`tools/measure/src/bin/field_te_query.rs`,
+Eigene Pfade: `src/archivar/mod.rs`, `src/archivar/igrf.rs`,
+`src/archivar/parse.rs`, `src/archivar/tests.rs`, `src/archivar/types.rs`,
+`tools/utils/src/bin/volume_builder.rs`, `tools/measure/src/bin/field_te_query.rs`,
+`tools/harvest/src/bin/cdaweb_tec_compiler.rs`,
+`tools/harvest/src/bin/cdaweb_roti_compiler.rs`,
+`tools/harvest/src/bin/goes16_mag_compiler.rs`,
+`tools/harvest/src/bin/poes19_meped_compiler.rs`,
+`.github/workflows/cdaweb-tec-cdn.yml`,
+`.github/workflows/cdaweb-roti-cdn.yml`,
+`.github/workflows/goes16-mag-cdn.yml`,
+`.github/workflows/poes19-meped-cdn.yml`,
+`docs/specs/force-unit-baseline.txt`,
 `docs/handover/handover-2026-10-07-mountain-folge268.md`,
 `docs/handover/archiv/handover-2026-10-07-mountain-folge267.md` (Move),
 `state/operator-gespraeche/2026-10-07-mountain.md`.

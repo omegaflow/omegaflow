@@ -4839,6 +4839,7 @@ mod tests {
             station_code: station.map(|c| c.to_string()),
             cgm_lat: None,
             cgm_source: None,
+            geomag_lat: None,
             span: None,
         }
     }

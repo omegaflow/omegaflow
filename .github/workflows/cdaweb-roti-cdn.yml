@@ -1,0 +1,40 @@
+name: cdaweb-roti-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  cdaweb-roti:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the cdaweb.gsfc.nasa.gov release exists on the CDN
+        run: |
+          if ! gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "cdaweb.gsfc.nasa.gov" \
+              --notes "CDAWeb anonymous channels compiled to typed bin assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the JPL ROTI 15-min maps to the CDN
+        run: |
+          for year in 2012 2013 2014; do
+            out="cdaweb_roti_${year}.bin"
+            if gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$out"; then
+              echo "asset $out already present — manifest skipped"
+              continue
+            fi
+            cargo run --release -p omegaflow-harvest --bin cdaweb_roti_compiler -- \
+              --year "$year" --out "$out" --ci-mode
+          done

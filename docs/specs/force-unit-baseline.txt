@@ -60,21 +60,8 @@
 # rewrite — see the Force-/Einheiten-Kontrakt in the Mountain handover.
 advective erg
 advective g
-diffusion grains/m3
-diffusion kg/kg
-diffusion ml/l
 em dbz
-em erg/cm2/s
-em mcrab
 em millionths
 em n-units
-em njy
 em nmgy
-em nw/cm2/sr
 em uj/sr
-em uj/sr/m2/um
-em w/m2/hz
-em w/m2/sr
-em w/m2/sr/um
-gravity mm/s2
-gravity nm/s2
