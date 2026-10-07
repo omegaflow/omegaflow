@@ -2734,7 +2734,7 @@ field nohrsc_snowfall_mm nohrsc_snowfall_mm gaussian-inverse-square acoustic mm 
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-01_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2742,7 +2742,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-sham_task-rest_eeg.bin
 format openneuro_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds005034
+terms CC0-1.0 https://openneuro.org/datasets/ds005034
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -2750,7 +2750,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_ses-verum_task-rest_eeg.bin
 format openneuro_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds005034
+terms CC0-1.0 https://openneuro.org/datasets/ds005034
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -2758,7 +2758,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-02_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2766,7 +2766,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-03_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2774,7 +2774,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-04_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2782,7 +2782,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-05_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2790,7 +2790,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-06_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2798,7 +2798,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-07_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2806,7 +2806,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-08_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2814,7 +2814,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-09_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2822,7 +2822,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-101_ses-02_task-drawing_acq-dyad1001_run-01_nirs.bin
 format openneuro_snirf
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds008192
+terms CC0-1.0 https://openneuro.org/datasets/ds008192
 compiler tools/harvest/src/bin/snirf_compiler.rs
 at earth
 ttl 86400
@@ -2830,7 +2830,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-10_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2838,7 +2838,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-11_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2846,7 +2846,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-12_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2854,7 +2854,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-13_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2862,7 +2862,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-14_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2870,7 +2870,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-15_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2878,7 +2878,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-16_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2886,7 +2886,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-17_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2894,7 +2894,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-18_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2902,7 +2902,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-19_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2910,7 +2910,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-20_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2918,7 +2918,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-21_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2926,7 +2926,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-22_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2934,7 +2934,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-23_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2942,7 +2942,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-24_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2950,7 +2950,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-25_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2958,7 +2958,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-26_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2966,7 +2966,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-27_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2974,7 +2974,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-28_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2982,7 +2982,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-29_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2990,7 +2990,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-30_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -2998,7 +2998,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-31_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -3006,7 +3006,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-32_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007471
+terms CC0-1.0 https://openneuro.org/datasets/ds007471
 compiler tools/harvest/src/bin/brainvision_compiler.rs
 at earth
 ttl 86400
@@ -3014,7 +3014,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3022,7 +3022,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3030,7 +3030,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3038,7 +3038,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3046,7 +3046,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3054,7 +3054,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3062,7 +3062,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3070,7 +3070,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3078,7 +3078,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G01S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3086,7 +3086,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3094,7 +3094,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3102,7 +3102,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3110,7 +3110,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3118,7 +3118,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3126,7 +3126,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3134,7 +3134,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3142,7 +3142,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3150,7 +3150,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G02S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3158,7 +3158,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3166,7 +3166,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3174,7 +3174,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3182,7 +3182,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3190,7 +3190,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3198,7 +3198,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3206,7 +3206,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3214,7 +3214,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3222,7 +3222,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G03S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3230,7 +3230,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3238,7 +3238,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3246,7 +3246,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3254,7 +3254,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3262,7 +3262,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3270,7 +3270,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3278,7 +3278,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3286,7 +3286,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3294,7 +3294,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G04S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3302,7 +3302,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3310,7 +3310,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3318,7 +3318,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3326,7 +3326,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3334,7 +3334,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3342,7 +3342,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3350,7 +3350,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3358,7 +3358,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3366,7 +3366,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G05S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3374,7 +3374,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3382,7 +3382,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3390,7 +3390,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3398,7 +3398,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3406,7 +3406,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3414,7 +3414,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3422,7 +3422,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3430,7 +3430,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3438,7 +3438,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G06S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3446,7 +3446,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3454,7 +3454,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3462,7 +3462,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3470,7 +3470,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3478,7 +3478,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3486,7 +3486,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3494,7 +3494,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3502,7 +3502,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3510,7 +3510,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G07S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3518,7 +3518,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3526,7 +3526,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3534,7 +3534,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3542,7 +3542,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3550,7 +3550,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3558,7 +3558,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3566,7 +3566,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3574,7 +3574,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3582,7 +3582,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G08S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3590,7 +3590,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3598,7 +3598,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3606,7 +3606,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3614,7 +3614,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3622,7 +3622,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3630,7 +3630,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3638,7 +3638,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3646,7 +3646,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3654,7 +3654,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G09S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3662,7 +3662,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3670,7 +3670,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3678,7 +3678,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3686,7 +3686,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3694,7 +3694,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3702,7 +3702,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3710,7 +3710,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3718,7 +3718,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3726,7 +3726,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G10S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3734,7 +3734,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3742,7 +3742,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3750,7 +3750,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S01_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3758,7 +3758,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3766,7 +3766,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3774,7 +3774,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S02_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3782,7 +3782,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pddecision_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3790,7 +3790,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pdfeedback_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3798,7 +3798,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-G11S03_task-pdrest_eeg.bin
 format openneuro_pd_eeg
 origin https://openneuro.org/crn/graphql
-terms CC0 https://openneuro.org/datasets/ds007822
+terms CC0-1.0 https://openneuro.org/datasets/ds007822
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 at earth
 ttl 86400
@@ -3806,7 +3806,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/physionet.org/bidsleep_mehrnacht.bin
 format bidsleep
 origin https://physionet.org/files/bidsleep-dataset/1.0.0/
-terms ODC-BY-1.0 https://physionet.org/content/bidsleep-dataset/1.0.0/
+terms ODC-By-1.0 https://physionet.org/content/bidsleep-dataset/1.0.0/
 compiler tools/harvest/src/bin/bidsleep_compiler.rs
 on earth 42.6334 -71.3162 0
 ttl 86400
@@ -6202,6 +6202,7 @@ field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square e
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=cpl/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
 station CPL
 cgm_lat 11.23
+cgm_source bgs-quasi-dipole
 ttl 86400
 on earth 17.294 78.9192 360
 hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
@@ -7546,6 +7547,7 @@ field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square e
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ttb/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
 station TTB
 cgm_lat -2.62
+cgm_source bgs-quasi-dipole
 ttl 86400
 on earth -1.205 -48.513 10
 hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
