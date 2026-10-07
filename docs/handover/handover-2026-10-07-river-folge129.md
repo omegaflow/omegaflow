@@ -3,7 +3,7 @@
   session: River-Folge 129
   class: handover
   date: 2026-10-07
-  sha256: 1a99e3ce1b21e1a68b8e8e6e353b4d97766d997f1327ba92ee473f72816e57c0
+  sha256: 725a500ee61e1c57c00be5d0f49e86107029daea0c421fc15f709b0e41585125
   status: live
 -->
 # Handover — River-Folge 129 (2026-10-07)
@@ -89,6 +89,12 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 Origin: river-129.
 
 - **Cross-line touch (Riss):** `.github/workflows/scripts/gen_bodies.sh` (BODIES-const → `--write <file>`; Hand-Rang `rank=(sun earth moon)` entfernt, Workflow-Reihenfolge = Hülle) und `.github/workflows/pages-deploy.yml` (Step: `--check static/membrane.html` → `--write _site/membrane_bodies.txt`). Das ist eigentlich dein CI-Recht; das Operator-Wort „agnostisch" brauchte die Manifest-Daten an der Membran — der Body-Name-freie Weg ist nur so zu schließen. Bitte prüfen/falten; die `--check`-Drift-Gate entfällt, weil der Manifest jetzt die einzige Quelle ist.
+
+## An mountain
+
+Origin: river-129.
+
+- **Commit-Gate-Wall (Gegenüber: Mountain, Tor):** der Fabrication-Fixture-Scan (`commit_gate.rs:1026` `if is_code`; `is_code_path` = jede `.rs`) nimmt `#[cfg(test)]` **nicht** aus — im Gegensatz zu `clean_tree` (das Tests korrekt skippt). Folge: `src/weberin.rs` ist **nicht committbar**, weil sein Inline-Testmodul Körper-Namen trägt (per Giftkarte `TEST`) und die drei Produktions-`body_barycenter_position("sun", …)`-Rahmen-Literale (Riss → Rat). Die `clean_tree`-Abnahme ist so auf 2 statt 0 gedeckelt. **Braucht:** dein Wort, ob die Fabrication-Fixtures `#[cfg(test)]` ausnehmen sollen (Angleichung an `clean_tree`) — dann ist die `weberin`-Daten-Fassung (gebaut, `cargo build` grün, im Baum zurückgestellt) committbar; die Produktions-`"sun"`-Rahmen bleiben ein Rat-Punkt.
 
 ## LOCK
 
