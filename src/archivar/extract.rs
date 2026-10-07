@@ -131,6 +131,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "viking_grav" => viking_grav::parse_series(bytes),
         "agrav" => agrav::parse_series(bytes),
         "emm_exi_l2a" => emm_exi::parse_series(bytes),
+        "vlf_awesome" => vlf_awesome::parse_series(bytes),
         _ => None,
     }
 }
@@ -421,6 +422,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "pcn" => pcn::declared_fields(tau),
         "viking_grav" => viking_grav::declared_fields(tau),
         "agrav" => agrav::declared_fields(tau),
+        "vlf_awesome" => vlf_awesome::declared_fields(tau),
         "pds4_acs_nir" => acs_nir::declared_fields(),
         _ => Vec::new(),
     }
@@ -817,6 +819,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "pcn" => pcn::component_name(comp),
         "viking_grav" => viking_grav::component_name(comp),
         "agrav" => agrav::component_name(comp),
+        "vlf_awesome" => vlf_awesome::component_name(comp),
         _ => None,
     }
 }
@@ -7398,7 +7401,7 @@ mod edf_arm_tests {
             digital: vec![0, 50, 100],
         }]);
         let position = Position::Barycenter {
-            body_name: "earth".to_string(),
+            body_name: "receiver-a".to_string(),
             scale: 1.0,
         };
         let channels = edf_emit_channels(&bytes, &position, 100.0, 60.0, EDF_CHANNEL_CAP);
@@ -7414,7 +7417,7 @@ mod edf_arm_tests {
         assert!((ch.value - 1.0e-4).abs() < 1.0e-12);
         match &ch.position {
             Position::Barycenter { body_name, scale } => {
-                assert_eq!(body_name, "earth");
+                assert_eq!(body_name, "receiver-a");
                 assert_eq!(*scale, 1.0);
             }
             _ => panic!("anchor is not the source frame"),
