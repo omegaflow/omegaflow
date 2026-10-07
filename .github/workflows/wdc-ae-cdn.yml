@@ -1,0 +1,40 @@
+name: wdc-ae-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: 'window start (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC yesterday 00:00'
+        required: false
+        type: string
+        default: ''
+      stop:
+        description: 'window stop (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC today 00:00'
+        required: false
+        type: string
+        default: ''
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  wdc-ae:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the WDC Kyoto AE/Dst series and upload to CDN
+        run: |
+          set -euo pipefail
+          START="${{ inputs.start }}"; [ -n "$START" ] || START="$(date -u -d 'yesterday 00:00:00' +%Y-%m-%dT%H:%M:%SZ)"
+          STOP="${{ inputs.stop }}"; [ -n "$STOP" ] || STOP="$(date -u -d 'today 00:00:00' +%Y-%m-%dT%H:%M:%SZ)"
+          cargo run -p omegaflow-harvest --release --bin wdc_ae_compiler -- \
+            --start "$START" --stop "$STOP" \
+            --out data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin \
+            --ci-mode
