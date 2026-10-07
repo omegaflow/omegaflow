@@ -194,12 +194,7 @@ fn family_channels(partition: &BTreeMap<String, String>, family: &str) -> Vec<St
     let mut out: Vec<String> = partition
         .iter()
         .filter(|(_, fam)| fam.as_str() == family)
-        .map(|(code, _)| {
-            format!(
-                "{FAMILY_CHANNEL_FIELD}_{}",
-                code.to_ascii_lowercase()
-            )
-        })
+        .map(|(code, _)| format!("{FAMILY_CHANNEL_FIELD}_{}", code.to_ascii_lowercase()))
         .collect();
     out.sort();
     out
@@ -235,7 +230,10 @@ fn emit_families(tsv_path: &str, dir: &str) {
         unassigned.len()
     );
     if total != partition.len() || seen.len() != partition.len() || !unassigned.is_empty() {
-        eprintln!("coverage: union {total} != partition {} — not complete", partition.len());
+        eprintln!(
+            "coverage: union {total} != partition {} — not complete",
+            partition.len()
+        );
         std::process::exit(2);
     }
 }
@@ -459,4 +457,3 @@ mod tests {
         assert_eq!(unassigned, 1);
     }
 }
-

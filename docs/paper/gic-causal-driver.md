@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: b1868cff12e666faff0e63587af72567a2541dc865c47b82625edc8453f8f1fd
+  sha256: e8915d298ada06d7f414a74da37d51191c28fd658c911d9d11eeb43b206663f9
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -610,7 +610,12 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   network (`https://space.fmi.fi/image/www/data_download.php`, 10 s, CC BY 4.0)
   and is already a SuperMAG station (`phi/supermag_stations.φ:368`, 60.5° N
   24.65° E), so a co-located magnetogram is obtainable through the existing
-  SuperMAG chain — the earlier "no co-located magnetogram" no longer holds. The
+  SuperMAG chain — the earlier "no co-located magnetogram" no longer holds. As
+  of 2026-10-07 the NUR 10 s dB/dt series is a manifested CDN asset
+  (`fmi_image_mag_nur.bin`, `phi/sources.φ:18030`; 15,551,948 B; sha256
+  9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e, reachable
+  HTTP 206, measured 2026-10-07), so the co-located channel is wired; the
+  sub-daily dB/dt–GIC relation itself remains the named measurement below. The
   source carries its own caveats: the archive is non-uniform (pipeline
   reconfigurations, a 2005 site shift), gap- and spike-laden, with best quality
   1999–April 2005, and daily linear-trend subtraction is recommended. The
