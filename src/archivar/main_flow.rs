@@ -4253,9 +4253,6 @@ pub fn main_flow() {
                         return;
                     }
                     let body_name = frame_body_name(&src.frame);
-                    let body_props = eph_arc
-                        .get(body_name.as_str())
-                        .and_then(|e| e.props.as_ref());
                     let body_medium = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.medium.as_ref());
@@ -4284,7 +4281,6 @@ pub fn main_flow() {
                                 now,
                                 EnclosureField {
                                     config: fc,
-                                    body_props,
                                     medium: body_medium,
                                     body_radius,
                                 },
@@ -4420,9 +4416,6 @@ pub fn main_flow() {
                         return;
                     }
                     let body_name = frame_body_name(&src.frame);
-                    let body_props = eph_arc
-                        .get(body_name.as_str())
-                        .and_then(|e| e.props.as_ref());
                     let body_medium = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.medium.as_ref());
@@ -4447,7 +4440,6 @@ pub fn main_flow() {
                                 now,
                                 EnclosureField {
                                     config: fc,
-                                    body_props,
                                     medium: body_medium,
                                     body_radius,
                                 },
