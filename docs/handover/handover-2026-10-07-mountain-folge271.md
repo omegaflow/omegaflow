@@ -3,7 +3,7 @@
   session: Mountain-Folge 271
   class: handover
   date: 2026-10-07
-  sha256: 4a40bb951b1a25946fe8843766a8f591164a524b8ab096af20b6d2f3162fab26
+  sha256: a0cfcbf0ff844be158c7dca8fc6b47785c0e6f337eebf99840034743617657a0
   status: live
 -->
 # Handover — Mountain-Folge 271 (2026-10-07)
@@ -26,7 +26,10 @@ Gate `v != fill && is_finite && -3.0 < v < 45.0`, Eis null-echt; roundtrip;
 bleibt gemessen `unbestimmt`). **kepler.rs PROD-POISON → `descoped`** im Inventar
 (`state/future/giftkarte-klassifiziert-src-2026-10-07.md:133`; river-132-Befund:
 `ECLIPTIC_J2000_OBLIQUITY_DEG` trägt den Standort-Namen, fünf Caller verifiziert).
-**14× `terms CC0-1.0` SPDF** (der 270-Charge) committet. **cgm_lat CPL/TTB:** gegen den
+**14× `terms CC0-1.0` SPDF** (der 270-Charge) committet. **PCN gegen den Baum gemessen:**
+der GIC-Kanal ist bereits gebaut (`pcn_compiler.rs`/`pcn.rs`/`sources.φ:1955-1962`/`harvest.φ:369-373`/
+`pcn-cdn.yml`, mountain 268) — die 270-Zeile „Parser-Arm fehlt" ist widerlegt; eine ungefragte
+Wire-Migration wurde verworfen (der publizierte `pcn_2015.bin` bleibt unberührt). **cgm_lat CPL/TTB:** gegen den
 Baum gemessen bereits gesetzt (`sources.φ:6328` CPL `11.23`, `:7673` TTB `-2.62`,
 `cgm_source bgs-quasi-dipole`) — river-132-Anfrage gegenstandslos (Riss: die Anfrage
 war gegen den Stand vor dem 270-Bau).
@@ -105,9 +108,9 @@ Wort | Datum | Quelle
 ### GIC-Faden §A–G — Admission gemessen, nur `blocked parser-def` offen
 - **Status:** eigen | **Bindung:** eigen (Parser-Arm) · mycelium (Transport)
 - **Trigger:** Reachability-Datei ändert sich
-- **Lage:** (gemessen 2026-10-07 270) Admission gemessen; die **admit-Kanäle sind bereits gebaut** (belegt: `phi/harvest.φ` AMPERE `:11`, ROTI `:72`, DMSP SSJ `:99`, POES/MetOp `:442`, SOHO/LASCO `:468`, THEMIS `:504`, plus MMS/WDC AE/Wind SWE über den generischen HAPI-Arm). **decline:** DMSP SSUSI (funded-dead).
-- **Blockade:** die sechs Einträge stehen in `phi/blocked_sources.φ:166-208` als `pending` (**nicht** `blocked parser-def` — Namens-Riss); die Datenendpunkte sind gemessen, nur die Parser-Arme fehlen.
-- **Braucht:** je Kanal den Parser-Arm bauen — gemessene Endpunkte 2026-10-07: THEMIS GMAG `themis.ssl.berkeley.edu/.../thg_l2_mag_*.cdf` (CDF, 200); SuperDARN `.map2` (DMap, Zenodo 200); PCN `ftp.space.dtu.dk/WDC/indices/pcn/PCN_definitive/*.dat` (ASCII, 200); EarthScope MT `data.earthscope.org/.../emtf/...xml` (EMTF-XML, 200). Offen: OMTI/Abisko (Keogramm PNG), Substorm-Onsets (Onset-Endpoint ungemessen). Korrektur CARISMA `www.carisma.ca`; Riss `carisma_mag` erntet den ASC-Spiegel.
+- **Lage:** (gemessen 2026-10-07 271, gegen den Baum) Admission gemessen; die **admit-Kanäle sind bereits gebaut** — belegt: `phi/harvest.φ` AMPERE `:11`, ROTI `:72`, DMSP SSJ `:99`, POES/MetOp `:442`, SOHO/LASCO `:468`, THEMIS `:504`, **PCN `:369-373`** (`pcn_compiler.rs`, `src/archivar/pcn.rs`, `sources.φ:1955-1962`, `pcn-cdn.yml` — mountain 268), plus MMS/WDC AE/Wind SWE über den generischen HAPI-Arm. **decline:** DMSP SSUSI (funded-dead). **Riss (271):** die 270-Zeile führte PCN als „Parser-Arm fehlt" — der Baum widerlegt sie; 271 misst und korrigiert.
+- **Blockade:** die Einträge stehen in `phi/blocked_sources.φ:166-208` als `pending` (**nicht** `blocked parser-def` — Namens-Riss); die Datenendpunkte sind gemessen, die Parser-Arme fehlen (PCN ausgenommen, gebaut).
+- **Braucht:** je offenem Kanal den Parser-Arm bauen — gemessene Endpunkte 2026-10-07: THEMIS GMAG `themis.ssl.berkeley.edu/.../thg_l2_mag_*.cdf` (CDF, 200); SuperDARN `.map2` (DMap, Zenodo 200); EarthScope MT `data.earthscope.org/.../emtf/...xml` (EMTF-XML, 200). Offen: OMTI/Abisko (Keogramm PNG), Substorm-Onsets (Onset-Endpoint ungemessen). Korrektur CARISMA `www.carisma.ca`; Riss `carisma_mag` erntet den ASC-Spiegel.
 
 ### GIC-Breitenband-Familien — Deskriptoren (Blatt-Slot) + CGM-Provenienz-Riss
 - **Status:** eigen | **Bindung:** eigen (Format/Descriptor) · river (`field_te_query`)
