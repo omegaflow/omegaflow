@@ -3,7 +3,7 @@
   session: Mountain-Folge 267
   class: handover
   date: 2026-10-07
-  sha256: 5bb6aec08d51a3d9ed06aa9bd7b3190ecd24b4b44e78415b471bce1a043f6391
+  sha256: f0f19e3797adc50f6b492312d02c2119517feeab4379ec9c82dbb5a2ffc08fe5
   status: live
 -->
 # Handover — Mountain-Folge 267 (2026-10-07)
@@ -201,11 +201,11 @@ Wort | Datum | Quelle
 - **Braucht:** `terms`/`url`-Zeile nach dem `1`-Ausgang; dann fällt die `cdn-tag-baseline.txt`-Ausnahme + LICENSE-Erzeugung.
 
 ### Lizenz-Disposition — `terms`-Feld (`unbestimmt`/`ohne-lizenz`); 159 abgeleitet, nicht persistiert
-- **Status:** wartend | **Bindung:** eigen (Format)
-- **Trigger:** Harvest-Bit `rights_read` erreicht
-- **Lage:** (gemessen 2026-10-07, Mountain 267 via `cargo run -p omegaflow-register --bin license_census`) **Struktur entschieden** (Rat über zwei Runden, Recherche-Schicht via `archive_search`, sechs Frontier-UI-Chats — Claude, Duck, Qwen, z.ai, DeepSeek, Gemini). Verdikt: `terms` ist ein **eigenes Feld** im B-Block (nicht Kopf-Token; der Kopf trägt genau einen Infra-Zustand, Lizenz ist orthogonal). Token **`terms unbestimmt`** (SPDX `NOASSERTION`) und **`terms ohne-lizenz`** (SPDX `NONE`); `terms keine` gestrichen (Fehllese „keine Einschränkungen" = frei). Die Abwesenheiten werden **nicht** als Registerzeilen persistiert (Fabrikation; abgeleitetes Query-Komplement) — nur gemessene Zustände stehen im Register. **Gebaut:** `register_lookup.rs:408,433` (Owner mountain), `scan_dispositions_text`/`collect_orphan_candidates_in` lesen das orthogonale `terms`-Feld (Test `scan_dispositions_reads_the_terms_field_orthogonal_to_the_head`); `license_census.rs` meldet die abgeleitete `NO-TERMS`-Liste + Zählzeile — `blocks 2673 | terms 143 | distinct 9 | no-terms 2249 | pending 2530 | terms-vocab 0 violation(s)`. **Riss 1 (bleibt):** Baum 159 Netlocs ohne `terms` vs. Census 162 (`UNMEASURED`/`STALE`) — zwei unabhängige Linien, nie gemittelt. **Riss 2 (bleibt):** `ohne-lizenz` kann mit `PD` verwechselt werden (PD ist Vokabel-Wert, „keine Lizenz" restriktiv).
-- **Blockade:** die CNE/UND-Zwei-Stufe (nicht-versucht vs. versucht-ergebnislos) braucht ein `rights_read`-Bit am Harvest-Gate (ungebaut); bis dahin ehrlich eine Stufe `unbestimmt`.
-- **Braucht:** `rights_read`-Bit am Harvest-Gate für die Zwei-Stufe. **Wohnort entschieden** (Rat + UI, 267: keine Operator-Frage — lokaler gitignored Zustand, kein Gegenüber/Geld/Key/Drittschreibakt): die Census-TSV ist umgezogen nach `state/mountain/license-census.tsv`, `license_census.rs:7` zeigt dorthin (gemessen: genau ein Konsument im Baum); `.gitignore:/state/` deckt sie. Jedes `terms`-Feld im B-Block trägt Datum+URL in `note` (Beleg, da die Tabelle gitignored ist). Transport an River: `## An river`.
+- **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
+- **Trigger:** `rights_read`-Datenkontrakt entworfen
+- **Lage:** (gemessen 2026-10-07, Mountain 267 via `cargo run -p omegaflow-register --bin license_census`) **Struktur entschieden** (Rat über zwei Runden, Recherche-Schicht via `archive_search`, sechs Frontier-UI-Chats — Claude, Duck, Qwen, z.ai, DeepSeek, Gemini). Verdikt: `terms` ist ein **eigenes Feld** im B-Block (nicht Kopf-Token; der Kopf trägt genau einen Infra-Zustand, Lizenz ist orthogonal). Token **`terms unbestimmt`** (SPDX `NOASSERTION`) und **`terms ohne-lizenz`** (SPDX `NONE`); `terms keine` gestrichen (Fehllese „keine Einschränkungen" = frei). Die Abwesenheiten werden **nicht** als Registerzeilen persistiert (Fabrikation; abgeleitetes Query-Komplement) — nur gemessene Zustände stehen im Register. **Gebaut:** `register_lookup.rs:408,433` (Owner mountain), `scan_dispositions_text`/`collect_orphan_candidates_in` lesen das orthogonale `terms`-Feld (Test `scan_dispositions_reads_the_terms_field_orthogonal_to_the_head`); `license_census.rs` meldet die abgeleitete `NO-TERMS`-Liste + Zählzeile — `blocks 2673 | terms 143 | distinct 9 | no-terms 2249 | pending 2530 | terms-vocab 0 violation(s)`. **Wohnort:** Census-TSV umgezogen nach `state/mountain/license-census.tsv` (genau ein Konsument; keine Operator-Frage). **Riss 1 (bleibt):** Baum 159 Netlocs ohne `terms` vs. Census 162 (`UNMEASURED`/`STALE`) — zwei unabhängige Linien, nie gemittelt. **Riss 2 (bleibt):** `ohne-lizenz` kann mit `PD` verwechselt werden (PD ist Vokabel-Wert, „keine Lizenz" restriktiv).
+- **Blockade:** der `rights_read`-Arm braucht zuerst einen Datenkontrakt-Entwurf (wo das Bit lebt — Wire-Slot vs. separater Harvest-Zustand), kein Einzeiler; bis dahin ehrlich eine Stufe `unbestimmt`.
+- **Braucht:** Rat/Datenkontrakt-Entwurf für `rights_read` → Arm am Harvest-Gate (OAI-PMH `<rights>`/DataCite `rightsList`). Beleg-Regel: jedes `terms`-Feld im B-Block trägt Datum+URL in `note` (die Tabelle ist gitignored). Transport an River: `## An river`.
 
 ### Sternkatalog nach Helligkeit ordnen (Membran progressives Laden)
 - **Status:** wartend | **Bindung:** eigen (Compiler/Commit) · mycelium (Re-Harvest/Manifestation)
