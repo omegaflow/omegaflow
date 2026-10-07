@@ -7,6 +7,10 @@
 # mountain-folge256 under the Force-/Einheiten-Kontrakt.
 # Healed 2026-10-07 (Mountain 260): `em v` → `electric v` at three wind_waves
 # field lines (rad1/rad2/tnr); the pair is deleted here. Measured 55 / 34.
+# Healed 2026-10-07 (Mountain 261): `em km/s` → `advective km/s` at
+# viking_lander_range_rate_km_s (phi/sources.φ:18174) — a Doppler range-rate is a
+# velocity, and the register carries speed as `advective km/s` (22 lines); em has no
+# velocity unit. The pair is deleted here. Measured 54 / 33.
 #
 # The production commit gate (commit_check) scans .rs only; this file is the
 # ratchet that closes the gap: a staged phi/sources.φ may not introduce a
@@ -27,7 +31,6 @@ em dbz
 em erg/cm2/s
 em hpa
 em ka
-em km/s
 em kw
 em mas
 em mcrab

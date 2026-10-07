@@ -445,6 +445,7 @@ field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective
 url https://github.com/omegaflow/sources/releases/download/api.eumetsat.int/W_XX-EUMETSAT-Darmstadt,IMG+SAT,MTI1+LI-2-LFL--FD--CHK-BODY--ARC-NC4E_C_EUMT_20261006080024_L2PF_OPE_20261006075009_20261006080009_N__O_0048_0001.nc
 format mtg_li
 origin https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691
+terms free-open https://www.eumetsat.int/legal-framework/data-policy
 compiler tools/harvest/src/bin/eumetsat_mtg_li_fetch.rs
 at earth
 ttl 600
@@ -775,6 +776,7 @@ first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square adve
 url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
 format openmeteo_pollen_axis_value_text
 origin https://air-quality-api.open-meteo.com/v1/air-quality?latitude=52.52&longitude=13.405&hourly=birch_pollen&timezone=UTC
+terms CC-BY-4.0 https://open-meteo.com/en/licence
 compiler tools/harvest/src/bin/openmeteo_pollen_compiler.rs
 sha256 42a7f2f8199f84cdb13a55c56265edf4766b97a9e36ca00052b7b06d00bdc2a7
 on earth 52.52 13.405 0
@@ -793,6 +795,7 @@ field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
 format opensensemap_temperatur
 origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
+terms PDDL-1.0 https://sensebox.de/de/opensensemap.html
 compiler tools/harvest/src/bin/opensensemap_compiler.rs
 sha256 f5a043b1a9c53461b00d55aea7b357416ad647c1931621981cbca6717767cfbe
 on earth 0 0 0
@@ -1446,12 +1449,14 @@ field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0
 url https://github.com/omegaflow/sources/releases/download/anderson-residuals/anderson_residuals.tsv
 format reference
 origin https://arxiv.org/abs/0806.4159 + https://web.archive.org/web/20081016172147/http://www2.phys.canterbury.ac.nz/editorial/Anderson2008.pdf
+terms own-work
 sha256 093e9e47b2d5f12fcccd9387ecc925512013af7398f188360fccfb5e029ddfb6
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
 format epa_aqs_pm25
 origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
+terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 compiler tools/harvest/src/bin/epa_aqs_compiler.rs
 on earth 0 0 0
 ttl 86400
@@ -1460,6 +1465,7 @@ field epa_aqs_pm25_ug_m3 epa_aqs_pm25_ug_m3 gaussian-inverse-square diffusion ug
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_voc.bin
 format epa_aqs_voc
 origin https://aqs.epa.gov/aqsweb/airdata/daily_VOCS_2024.zip
+terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 compiler tools/harvest/src/bin/epa_aqs_compiler.rs
 on earth 0 0 0
 ttl 86400
@@ -9723,6 +9729,7 @@ field phot_g_mean_mag gaia_dr3_g_mag inverse-square em mag 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/alasky.cds.unistra.fr/hips_png_7_0.bin
 format hips_png
 origin https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/Norder7/Dir0/Npix0.png
+terms ODbL-1.0 https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/properties
 compiler tools/harvest/src/bin/hips_png_compiler.rs
 at mars
 ttl 604800
@@ -9739,6 +9746,7 @@ field apex_ap_phase eht_uvfits_apex_ap_phase inverse-square em cycle 604800 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/api.le-systeme-solaire.net/solar_system_bodies.bin
 origin https://api.le-systeme-solaire.net/rest/bodies/
+terms CC-BY-NC-SA-4.0 https://www.le-systeme-solaire.net/legal.html
 compiler tools/harvest/src/bin/solar_system_open_data_compiler.rs
 format solar_system_bodies
 at earth
@@ -18171,7 +18179,7 @@ sha256 da0e55ff5a4858e2174b932582c02f69a00c744ccf1d05334e58d4d019620f9c
 at earth
 ttl 604800
 field viking_lander_range_km viking_lander_range_km inverse-square em km 604800 0.0 0.0
-field viking_lander_range_rate_km_s viking_lander_range_rate_km_s inverse-square em km/s 604800 0.0 0.0
+field viking_lander_range_rate_km_s viking_lander_range_rate_km_s inverse-square advective km/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts.bin
 format weberin_verdicts
