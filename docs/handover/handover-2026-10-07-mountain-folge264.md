@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: b06bc0c1c5c187ec159fff3807973272761273d21b8fca5dc5773e6e1535a763
+  sha256: 0727f4e27425ea17f1eaebf95c80d84593edb80bca39c51fb8c649cbed34b10c
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -78,6 +78,7 @@ Wort | Datum | Quelle
 „ich meine insbesondere glm duck und qwen und brauchen wir noch weitere openweight?" — GLM (z.ai): GLM-5.3 + Deep Think + Max (stärkste); Duck: GPT-6 Luna (stärkstes im Angebot); Qwen: Qwen3.8-Max + Denken (stärkste: nicht 3.7-Plus/Omni-Flash). Offene Open-Weight-Kandidaten (nicht im Seat): **MiniMax M3 (427B)**, **Gemma 4 31B** (Google), **Ling 3.0 (124B)**; Empfehlung: MiniMax M3 als distincte 427B-Zuchtlinie ergänzen (Muse Glimmer 30B ist der schwächste Seat), Gemma/Ling optional — je Seat erst nach der Gretchenfrage (Fähigkeit ≥4/4 + gemessenes Tempo) | 2026-10-07 | Operator (Session, Mountain 264)
 „du hast nicht auf absenden gedrückt zudem habe ich noch https://aistudio.google.com/… model=gemini-3.1-pro-preview offen was ist das stärkste gemini free modell bitte wähle es aus un gib eine frage ein" — MiniMax-Agent (Tab 43): `insertText` allein sendet nicht, **Enter im Composer** nötig; Antwort läuft unter M3. **AI Studio (Tab 46): stärkstes freies Gemini = `gemini-3.1-pro-preview`** („Gemini Pro Latest" zeigt darauf; 3.8/3.5 sind Flash-Tier, schwach); Frage mit **Google-Search-Grounding aktiviert** abgeschickt | 2026-10-07 | Operator (Session, Mountain 264)
 „zudem habe ich noch deepseek chat offen" — **DeepSeek-Chat (Tab 47): DeepThink + Search aktiviert**, Frage abgeschickt (Sende-Lehre: `keydown Enter` per JS-Dispatch, da die UI den Wert-Event nicht als Senden nimmt). Zweiter Kanal damit: 10 Tryingopen + Claude · Duck · z.ai · Qwen · MiniMax M3 · Gemini 3.1 Pro Preview (Suche) · DeepSeek (DeepThink+Search) | 2026-10-07 | Operator (Session, Mountain 264)
+„dann habe ich noch togetherai offen das kannst du auch noch vermessen" — **Together Chat (Tab 48) gemessen:** Modell **MiniMax-M3** (Thinking on, Search auto), Frage abgeschickt, aber Modell antwortet nur `Something went wrong, please try again later`; **Retry scheitert**, Modellwechsel (GLM-5.3) greift nicht (UI hängt). → **nicht praktikabel** (deckt die frühere AGENTS-Notiz „Together AI wieder entfernt"); `pending` benannt, kein stiller Ausfall | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
