@@ -3,7 +3,7 @@
   session: River-Folge 121
   class: handover
   date: 2026-10-07
-  sha256: b2f7d09e6eeb5518de1b9b4ff1a4ae1e2d10998050ad7bcdb354f46a6f902a25
+  sha256: dc237d55c72603e7942b09326a5b3d320dee5e71315845ed48f475d972bb333f
   status: live
 -->
 # Handover — River-Folge 121 (2026-10-07)
@@ -151,4 +151,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-07-river-folge121.md` (neu)
 - `docs/handover/archiv/handover-2026-10-07-river-folge120.md` (Move)
 
-## Burn: open 0.0032 · close 0.1198 · cap 0.15 · Grund: River 121 — Line-Session (deepseek-flash): `--fired river` 1 Punkt (`em-apertur`, Trigger nicht gefeuert); `--stale` 0; `--addressed river` 1 Block (mountain-259, gefaltet); `open_points_check` 1 ABSENT (Brace-Pfad `:162` in folge120, mit dem Archiv-Move getilgt). **Rat (fünf Stimmen) zur GIC-Route** ($~0.02): Route A `pending` (senkt `M_eff` nicht, Token `family` belegt), Route B verworfen (11 036 Zellen), **Route C gewählt** (Familie allein in Stufe 2, `compute_max_t`; Paar-Band-Schlüssel). **Gebaut:** `cgm_lat_partition.rs` Offline-Familien-Emission (`--from-tsv`/`--emit-dir`) + drei Kanal-Listen + Deckungstest; `cargo build` grün. Blatt-Verdikt-Zeile eingetragen. **12-Stimmen-Rat (Operator-Wort 2026-10-07):** Adressierung 5 Stimmen + 5 Axiome + 5 Achsen; 5 API-`voice-*` + Claude + Kimi geantwortet (7/12), Route C einstimmig; zwei Risse getragen (Gruppierung Paar- vs Target-Band; `M_eff`-Senkung abgeleitet, nicht gemessen); GLM/Qwen/Duck `pending` (noch generierend). Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
+## Burn: open 0.0032 · close 0.1454 · cap 0.15 (erreicht) · Grund: River 121 — Line-Session (deepseek-flash): `--fired river` 1 Punkt (`em-apertur`, Trigger nicht gefeuert); `--stale` 0; `--addressed river` 1 Block (mountain-259, gefaltet); `open_points_check` 1 ABSENT (Brace-Pfad `:162` in folge120, mit dem Archiv-Move getilgt). **Rat (fünf Stimmen) zur GIC-Route** ($~0.02): Route A `pending` (senkt `M_eff` nicht, Token `family` belegt), Route B verworfen (11 036 Zellen), **Route C gewählt** (Familie allein in Stufe 2, `compute_max_t`; Paar-Band-Schlüssel). **Gebaut:** `cgm_lat_partition.rs` Offline-Familien-Emission (`--from-tsv`/`--emit-dir`) + drei Kanal-Listen + Deckungstest; `cargo build` grün. Blatt-Verdikt-Zeile eingetragen. **12-Stimmen-Rat (Operator-Wort 2026-10-07):** Adressierung 5 Stimmen + 5 Axiome + 5 Achsen; 5 API-`voice-*` + Claude + Kimi geantwortet (7/12), Route C einstimmig; zwei Risse getragen (Gruppierung Paar- vs Target-Band; `M_eff`-Senkung abgeleitet, nicht gemessen); GLM/Qwen/Duck `pending` (noch generierend). Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
