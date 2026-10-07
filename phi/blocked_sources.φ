@@ -1,5 +1,5 @@
 note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
-note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (18 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png); register-eigen: iaga-text.
+note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (19 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png, covariate-carrier); register-eigen: iaga-text.
 note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
 note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
 note gap-Token konverter — Feld-Einheit falsch als mag; Arm fehlt. (gemessen 2026-10-05: port.rs:2176-2183/2373 routet `_mag_bx/by/bz/bt` + `_nt` → em nT; alle übrigen `mag` sind astronomische Magnituden) → descoped.
@@ -21,6 +21,7 @@ note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.pn
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-only Dekoder → SZIP-Granulen descoped (kein libaec, std-stack bleibt); MOD11C2/C3 lesen über NONE/RLE/DEFLATE.
 note gap-Token point-source-kernel — Punkt-/Identitäts-Kernel ohne räumlichen Gradienten (Slot 2, kernel_id 2); Träger für punkt-/medienunabhängige Quellen (eionet_cdr); Arm steht (extract.rs:1530 "point" => Some(2); shaders.rs:49/:87).
+note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²) ohne physikalische Kraft; braucht einen quantity_type-/Kovariat-Träger außerhalb Ω (kein 10. force_type); Arm fehlt.
 
 pending
 url https://psa.esa.int/psa-tap/tap/
@@ -148,6 +149,11 @@ blocked parser-def
 url https://cedar.openmadrigal.org
 gap html-parser-arm
 note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
+
+blocked parser-def
+url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
+gap covariate-carrier
+note ghsl_built_surface_m2 (JRC GHSL GHS_BUILT_S_E2020) — statische built-up surface (m²), keine der 9 Kräfte → kein Kraft-Heim; aus sources.φ in die Disposition umgezogen; braucht den quantity_type-Träger (CRS+Epoche, 0 m² honored).
 
 pending
 url https://www.carisma.ca/carisma-data-repository
