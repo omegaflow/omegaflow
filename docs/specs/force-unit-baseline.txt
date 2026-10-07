@@ -1,0 +1,50 @@
+# force-unit-baseline — frozen (force, unit) pairs outside allowed_units_for_force
+#
+# Measured 2026-10-07 (Mountain 257) via
+#   register_unit_audit --file phi/sources.φ --pairs
+# over the register field lines parsed by the gate's own tokenizer
+# (field_line_force_unit, quote-aware). 58 field lines carry a pair outside the
+# force registry (advective/em/diffusion/gravity/thermal), 35 distinct pairs —
+# the debt named in handover mountain-folge256 under the Force-/Einheiten-Kontrakt.
+#
+# The production commit gate (commit_check) scans .rs only; this file is the
+# ratchet that closes the gap: a staged phi/sources.φ may not introduce a
+# (force, unit) pair absent here. A line is deleted when its register line is
+# healed; the file may only shrink (Council 2026-10-07: freeze the old debt,
+# block the new). Healing is a per-line source-identity verdict, never a class
+# rewrite — see the Force-/Einheiten-Kontrakt in the Mountain handover.
+advective erg
+advective g
+advective m/s2
+advective mm
+diffusion grains/m3
+diffusion kg/kg
+diffusion m2
+diffusion ml/l
+em db
+em dbz
+em erg/cm2/s
+em hpa
+em ka
+em km/s
+em kw
+em mas
+em mcrab
+em millionths
+em mm/s2
+em n-units
+em n/cc
+em njy
+em nmgy
+em nw/cm2/sr
+em ppm
+em uj/sr
+em uj/sr/m2/um
+em v
+em w/m2/hz
+em w/m2/sr
+em w/m2/sr/um
+gravity km
+gravity mm
+gravity nm/s2
+thermal m

@@ -316,23 +316,16 @@ impl Gate {
     pub fn learn_sources(&mut self, content: &str) {
         for line in content.lines() {
             let t = line.trim();
-            if !t.starts_with("field ") {
+            if !t.starts_with("field") {
                 continue;
             }
-            let tokens: Vec<&str> = t.split_whitespace().collect();
-            if tokens.len() < 6 {
+            let Some((force, nu)) = field_line_force_unit(t) else {
                 continue;
-            }
-            let force = tokens[4];
-            let unit = tokens[5];
-            if force_id_of(force).is_none() {
-                continue;
-            }
-            let nu = normalize_unit(unit);
+            };
             if nu.is_empty() || nu == "1" {
                 continue;
             }
-            let pair = (force.to_string(), nu);
+            let pair = (force, nu);
             if self.force_unit_pairs.contains(&pair) {
                 continue;
             }
@@ -997,12 +990,9 @@ impl Gate {
                     quote: clip(t, 80),
                 });
             }
-            if t.starts_with("field ") {
-                let tokens: Vec<&str> = t.split_whitespace().collect();
-                if tokens.len() >= 6 {
-                    let force = tokens[4];
-                    let unit = normalize_unit(tokens[5]);
-                    if let Some(id) = force_id_of(force) {
+            if t.starts_with("field") {
+                if let Some((force, unit)) = field_line_force_unit(t) {
+                    if let Some(id) = force_id_of(&force) {
                         if unit == "1" && !allowed_units_for_force(id).contains(&"1") {
                             return Some(Verdict {
                                 severity: Severity::Hard,
@@ -1013,10 +1003,11 @@ impl Gate {
                             });
                         }
                     }
-                    if force_id_of(force).is_some()
-                        && !unit.is_empty()
+                    if !unit.is_empty()
                         && unit != "1"
-                        && !self.force_unit_pairs.contains(&(force.to_string(), unit))
+                        && !self
+                            .force_unit_pairs
+                            .contains(&(force.clone(), unit.clone()))
                     {
                         return Some(Verdict {
                             severity: Severity::Hard,
@@ -1024,7 +1015,7 @@ impl Gate {
                             line: line_idx + 1,
                             feedback: format!(
                                 "field line: the force \"{}\" with the unit \"{}\" is not in the registry",
-                                force, tokens[5]
+                                force, unit
                             ),
                             quote: clip(t, 90),
                         });
@@ -2338,6 +2329,86 @@ fn canonical_pairs() -> Vec<(String, String)> {
         }
     }
     pairs
+}
+
+pub fn field_tokens(rest: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut cur = String::new();
+    let mut in_quote = false;
+    for ch in rest.chars() {
+        if ch == '"' {
+            in_quote = !in_quote;
+            cur.push(ch);
+        } else if ch.is_whitespace() && !in_quote {
+            if !cur.is_empty() {
+                out.push(std::mem::take(&mut cur));
+            }
+        } else {
+            cur.push(ch);
+        }
+    }
+    if !cur.is_empty() {
+        out.push(cur);
+    }
+    out
+}
+
+pub fn field_line_force_unit(line: &str) -> Option<(String, String)> {
+    let rest = line.trim().strip_prefix("field")?;
+    if rest.is_empty() || !rest.starts_with(char::is_whitespace) {
+        return None;
+    }
+    let toks = field_tokens(rest.trim_start());
+    let idx = toks.iter().enumerate().position(|(i, t)| {
+        i > 0 && force_id_of(t).is_some() && crate::archivar::kernel_id_of(&toks[i - 1]).is_some()
+    })?;
+    let unit = toks.get(idx + 1)?;
+    Some((toks[idx].clone(), normalize_unit(unit)))
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FieldUnitIssue {
+    pub line: usize,
+    pub force: String,
+    pub unit: String,
+    pub kind: &'static str,
+}
+
+pub fn register_field_unit_issues(content: &str) -> Vec<FieldUnitIssue> {
+    let canonical: HashSet<(String, String)> = canonical_pairs().into_iter().collect();
+    let mut out = Vec::new();
+    for (i, line) in content.lines().enumerate() {
+        let Some((force, unit)) = field_line_force_unit(line) else {
+            continue;
+        };
+        if unit.is_empty() {
+            continue;
+        }
+        if unit == "1" {
+            let id = match force_id_of(&force) {
+                Some(id) => id,
+                None => continue,
+            };
+            if !allowed_units_for_force(id).contains(&"1") {
+                out.push(FieldUnitIssue {
+                    line: i + 1,
+                    force,
+                    unit,
+                    kind: "dimensionless",
+                });
+            }
+            continue;
+        }
+        if !canonical.contains(&(force.clone(), unit.clone())) {
+            out.push(FieldUnitIssue {
+                line: i + 1,
+                force,
+                unit,
+                kind: "pair",
+            });
+        }
+    }
+    out
 }
 
 fn word_present(lower: &str, word: &str) -> bool {
@@ -4041,6 +4112,38 @@ mod tests {
     fn diffusion_owns_mass_kg() {
         assert!(allowed_units_for_force(6).contains(&"kg"));
         assert!(!allowed_units_for_force(6).contains(&"m/s"));
+    }
+
+    #[test]
+    fn quoted_field_name_is_parsed_not_skipped() {
+        let mut g = test_gate();
+        let args = r#"{"filePath":"phi/x.φ","newString":"field \"F01PSSO\" pds3_mischa_f01_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0\n"}"#;
+        assert!(g.check_tool_call("write", args).is_none());
+        let bad = r#"{"filePath":"phi/x.φ","newString":"field \"F01PSSO\" bad_key inverse-square diffusion m/s 604800 0.0 0.0\n"}"#;
+        let v = g.check_tool_call("write", bad).unwrap();
+        assert_eq!(v.rule, "force-unit-gate");
+    }
+
+    #[test]
+    fn quoted_description_after_name_does_not_shift_columns() {
+        let mut g = test_gate();
+        let good = r#"{"filePath":"phi/x.φ","newString":"field vco_rs_observed_xband_frequency \"OBSERVED X-BAND ANTENNA FREQUENCY\" inverse-square em hz 4 0.0 0.0\n"}"#;
+        assert!(g.check_tool_call("write", good).is_none());
+        let bad = r#"{"filePath":"phi/x.φ","newString":"field vco_rs_freq \"OBSERVED X-BAND ANTENNA FREQUENCY\" inverse-square diffusion hz 4 0.0 0.0\n"}"#;
+        let v = g.check_tool_call("write", bad).unwrap();
+        assert_eq!(v.rule, "force-unit-gate");
+    }
+
+    #[test]
+    fn register_field_unit_issues_enumerates_pairs_and_dimensionless() {
+        let text = "field a a inverse-square em nT 4 0.0 0.0\nfield \"F01PSSO\" b inverse-square em NT 4 0.0 0.0\nfield c c inverse-square diffusion m/s 4 0.0 0.0\nfield share share gaussian-inverse-square thermal 1 86400 0.0 0.0\n";
+        let issues = register_field_unit_issues(text);
+        assert_eq!(issues.len(), 2);
+        assert_eq!(issues[0].kind, "pair");
+        assert_eq!(issues[0].force, "diffusion");
+        assert_eq!(issues[0].unit, "m/s");
+        assert_eq!(issues[1].kind, "dimensionless");
+        assert_eq!(issues[1].force, "thermal");
     }
 
     #[test]

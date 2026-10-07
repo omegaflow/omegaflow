@@ -1,8 +1,8 @@
 use omegaflow::commit_gate::{
     Gate, addressed_origin_violations, canon_diff, canon_format_violations, check_handover_burn,
     declared_canon, doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
-    integrated_twin, json_write, prose_violation_for, status_proof_violations,
-    unbacked_mirror_violations, word_register_origin_violations,
+    integrated_twin, json_write, prose_violation_for, register_field_unit_issues,
+    status_proof_violations, unbacked_mirror_violations, word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -166,6 +166,41 @@ fn main() {
             };
             eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
             fail = true;
+        }
+    }
+    if staged.contains(&"phi/sources.φ") {
+        match std::fs::read_to_string("docs/specs/force-unit-baseline.txt") {
+            Ok(baseline) => {
+                let known: std::collections::HashSet<(String, String)> = baseline
+                    .lines()
+                    .map(str::trim)
+                    .filter(|l| !l.is_empty() && !l.starts_with('#'))
+                    .filter_map(|l| {
+                        let mut it = l.split_whitespace();
+                        Some((it.next()?.to_string(), it.next()?.to_string()))
+                    })
+                    .collect();
+                let out = Command::new("git")
+                    .args(["show", ":phi/sources.φ"])
+                    .output()
+                    .expect("git");
+                let register = String::from_utf8_lossy(&out.stdout).to_string();
+                for issue in register_field_unit_issues(&register) {
+                    if !known.contains(&(issue.force.clone(), issue.unit.clone())) {
+                        eprintln!(
+                            "commit_check: phi/sources.φ:{}: force-unit-ratchet - the pair \"{}\" / \"{}\" is outside the registry and not in docs/specs/force-unit-baseline.txt",
+                            issue.line, issue.force, issue.unit
+                        );
+                        fail = true;
+                    }
+                }
+            }
+            Err(_) => {
+                eprintln!(
+                    "commit_check: docs/specs/force-unit-baseline.txt absent - the force-unit ratchet did not run for phi/sources.φ"
+                );
+                fail = true;
+            }
         }
     }
     let session = std::env::var("OMEGAFLOW_SESSION")
