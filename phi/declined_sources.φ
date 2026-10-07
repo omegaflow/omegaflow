@@ -5723,3 +5723,7 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
+
+decline imagery
+url https://sdo.gsfc.nasa.gov/data/dashboard/
+note SDO Dashboard (AIA EUV-Livefeed) — 2026-10-07: 200; JPEG-Produkt, das Bild ist kein Feld (NOAA-ERI-Präzedenz); SPDF deckt Space-Physics, nicht das Dashboard.
