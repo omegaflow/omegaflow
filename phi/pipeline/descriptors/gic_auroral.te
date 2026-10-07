@@ -1,0 +1,18 @@
+# gic_auroral.te — GIC-Breitenband-Familie auroral (|CGM| >= 60 Grad): der Stufe-1-Screen
+#   ueber die 31 Stationen des Bandes. Die Bandzugehoerigkeit ist eine deklarierte Ableitung
+#   aus `cgm_lat` (phi/sources.φ, per Station) und den fixierten Grenzen — kein `family`-Token.
+#   Partition gemessen 2026-10-07: 154 = 31 auroral + 25 sub-auroral + 98 mid-latitude
+#   (Artefakt state/river/gic-cgm-lat.tsv). Kanalkanal `intermagnet_xyz_x_nt_<code>` loest
+#   ueber `field_sources` auf den station-qualifizierten Block auf.
+#   Lauf: .github/workflows/field-te-query.yml Job `matrix-gic-auroral` (CI), nie lokal.
+matrix gic_auroral full
+register sources
+channels intermagnet_xyz_x_nt_abk,intermagnet_xyz_x_nt_ale,intermagnet_xyz_x_nt_blc,intermagnet_xyz_x_nt_brw,intermagnet_xyz_x_nt_cbb,intermagnet_xyz_x_nt_cmo,intermagnet_xyz_x_nt_csy,intermagnet_xyz_x_nt_ded,intermagnet_xyz_x_nt_dmc,intermagnet_xyz_x_nt_drv,intermagnet_xyz_x_nt_fcc,intermagnet_xyz_x_nt_gdh,intermagnet_xyz_x_nt_hrn,intermagnet_xyz_x_nt_iqa,intermagnet_xyz_x_nt_jco,intermagnet_xyz_x_nt_kir,intermagnet_xyz_x_nt_lyc,intermagnet_xyz_x_nt_maw,intermagnet_xyz_x_nt_mbc,intermagnet_xyz_x_nt_mcq,intermagnet_xyz_x_nt_mea,intermagnet_xyz_x_nt_naq,intermagnet_xyz_x_nt_pbq,intermagnet_xyz_x_nt_res,intermagnet_xyz_x_nt_sba,intermagnet_xyz_x_nt_sod,intermagnet_xyz_x_nt_thl,intermagnet_xyz_x_nt_tik,intermagnet_xyz_x_nt_vna,intermagnet_xyz_x_nt_vos,intermagnet_xyz_x_nt_ykc
+cond none
+fdr bh 0.05 over matrix
+expect cells 930
+lags 0,1
+surrogate 10
+cadence live
+bin 86400
+seasonal none

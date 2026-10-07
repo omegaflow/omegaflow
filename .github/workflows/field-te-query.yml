@@ -163,3 +163,51 @@ jobs:
         with:
           name: field-te-matrix-newell-omni
           path: field-te-matrix-newell-omni.txt
+  matrix-gic-auroral:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: GIC latitude-band auroral — stage-1 full screen over the 31 auroral station channels
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/gic_auroral.te | tee field-te-matrix-gic-auroral.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-matrix-gic-auroral
+          path: field-te-matrix-gic-auroral.txt
+  matrix-gic-subauroral:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: GIC latitude-band sub-auroral — stage-1 full screen over the 25 sub-auroral station channels
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/gic_subauroral.te | tee field-te-matrix-gic-subauroral.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-matrix-gic-subauroral
+          path: field-te-matrix-gic-subauroral.txt
+  matrix-gic-midlat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: GIC latitude-band mid-latitude — stage-1 full screen over the 98 mid-latitude station channels
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/gic_midlat.te | tee field-te-matrix-gic-midlat.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-matrix-gic-midlat
+          path: field-te-matrix-gic-midlat.txt

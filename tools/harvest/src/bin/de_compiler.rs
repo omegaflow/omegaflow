@@ -57,6 +57,35 @@ fn body_pck_text(local: &[String]) -> Option<String> {
     if text.is_empty() { None } else { Some(text) }
 }
 
+fn gm_kernel_url(label: &str) -> String {
+    format!("https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_{label}.tpc")
+}
+
+fn gm_pck_text(local: &[String], label: &str) -> Option<String> {
+    let mut text = String::new();
+    if local.is_empty() {
+        let url = gm_kernel_url(label);
+        match fetch_text(&url) {
+            Some(t) => {
+                text.push_str(&t);
+                text.push('\n');
+            }
+            None => eprintln!("de: gm fetch of {} returned void", url),
+        }
+    } else {
+        for p in local {
+            match std::fs::read_to_string(p) {
+                Ok(t) => {
+                    text.push_str(&t);
+                    text.push('\n');
+                }
+                Err(e) => eprintln!("de: gm read {}: {}", p, e),
+            }
+        }
+    }
+    if text.is_empty() { None } else { Some(text) }
+}
+
 fn resolved_bodies(bsps: &[PathBuf]) -> BTreeMap<i32, String> {
     let table = omegaflow::ephemeris::body_table();
     let mut by_id: BTreeMap<i32, String> = BTreeMap::new();
@@ -86,7 +115,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--ci-mode]"
+            "usage: de_compiler <de.bsp>... --label <edition> [--netloc <netloc>] [--pck <body.tpc>]... [--gm <gm.tpc>]... [--ci-mode]"
         );
         eprintln!(
             "  emits data/<netloc>/ephemeris_<edition>_sun.bin, ephemeris_<edition>_moon.bin, ephemeris_<edition>_earth.bin"
@@ -94,6 +123,9 @@ fn main() {
         eprintln!("  --label is the JPL DE edition word (the data lineage), e.g. de440");
         eprintln!("  --netloc is the CDN release tag, default ssd.jpl.nasa.gov-de");
         eprintln!("  --pck passes a NAIF body PCK text; absent, pck00010+pck00011 are fetched");
+        eprintln!(
+            "  --gm passes a NAIF GM kernel text; absent, gm_<label>.tpc is fetched for mask bit 11"
+        );
         eprintln!("  --ci-mode uploads each asset to the <netloc> CDN release");
         std::process::exit(1);
     }
@@ -111,6 +143,7 @@ fn main() {
     };
     let out_dir = format!("data/{netloc}");
     let mut pck_local: Vec<String> = Vec::new();
+    let mut gm_local: Vec<String> = Vec::new();
     let mut rest: Vec<String> = Vec::new();
     let mut skip_next = false;
     for (i, a) in args.iter().enumerate() {
@@ -125,6 +158,13 @@ fn main() {
         if a == "--pck" {
             if let Some(f) = args.get(i + 1) {
                 pck_local.push(f.clone());
+                skip_next = true;
+            }
+            continue;
+        }
+        if a == "--gm" {
+            if let Some(f) = args.get(i + 1) {
+                gm_local.push(f.clone());
                 skip_next = true;
             }
             continue;
@@ -173,8 +213,10 @@ fn main() {
             );
         }
     }
-    let pck_bodies: std::collections::HashMap<i32, PckBody> =
-        pck::parse(None, body_pck_text(&pck_local).as_deref());
+    let pck_bodies: std::collections::HashMap<i32, PckBody> = pck::parse(
+        gm_pck_text(&gm_local, &label).as_deref(),
+        body_pck_text(&pck_local).as_deref(),
+    );
     let in_scope = |name: &str| DE_BODIES.contains(&name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
@@ -272,5 +314,23 @@ mod tests {
         let paths = vec![PathBuf::from("/nonexistent/de440.bsp")];
         let map = resolved_bodies(&paths);
         assert!(map.is_empty());
+    }
+
+    #[test]
+    fn gm_kernel_url_follows_the_de_edition_label() {
+        assert_eq!(
+            gm_kernel_url("de440"),
+            "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc"
+        );
+    }
+
+    #[test]
+    fn gm_pck_text_carries_sun_gm_into_slot_11() {
+        let path = std::env::temp_dir().join("omegaflow_de_gm_test.tpc");
+        std::fs::write(&path, "BODY10_GM = ( 1.32712440018e11 )\n").expect("write gm kernel");
+        let text = gm_pck_text(&[path.to_string_lossy().into_owned()], "de440");
+        let bodies = pck::parse(text.as_deref(), None);
+        assert_eq!(bodies[&10].gm_m3_s2, Some(1.32712440018e20));
+        let _ = std::fs::remove_file(&path);
     }
 }
