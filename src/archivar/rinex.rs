@@ -60,19 +60,20 @@ pub fn build_rinex_channels(
                 .and_then(|p| {
                     let a = p.radius_m;
                     let f = p.flattening?;
-                    if !(a > 0.0) {
-                        return None;
+                    if a > 0.0 {
+                        let e2 = 2.0 * f - f * f;
+                        header
+                            .approx_pos_xyz
+                            .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z, a, e2))
+                            .map(|(lat, lon, alt)| Position::Surface {
+                                body_name: body_name.clone(),
+                                lat,
+                                lon,
+                                alt,
+                            })
+                    } else {
+                        None
                     }
-                    let e2 = 2.0 * f - f * f;
-                    header
-                        .approx_pos_xyz
-                        .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z, a, e2))
-                        .map(|(lat, lon, alt)| Position::Surface {
-                            body_name: body_name.clone(),
-                            lat,
-                            lon,
-                            alt,
-                        })
                 })
                 .unwrap_or(Position::Source);
             let n_obs = header.obs_types.len();

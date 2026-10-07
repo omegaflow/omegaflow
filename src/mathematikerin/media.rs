@@ -7,7 +7,7 @@ pub struct MediumParams {
 }
 
 impl MediumParams {
-    pub fn wire(self) -> [f64; 5] {
+    pub fn wire(&self) -> [f64; 5] {
         [
             self.sound_speed_m_s,
             self.p_wave_m_s,
