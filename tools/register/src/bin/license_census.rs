@@ -205,6 +205,26 @@ fn counts(content: &str) -> Counts {
     }
 }
 
+fn no_terms_identities(content: &str) -> Vec<String> {
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut out: Vec<String> = Vec::new();
+    for block in blocks(content) {
+        if block_token(&block, "terms").is_some() {
+            continue;
+        }
+        if block_token(&block, "compiler").is_none() && block_token(&block, "url").is_none() {
+            continue;
+        }
+        if let Some(identity) = block_identity(&block) {
+            if seen.insert(identity.clone()) {
+                out.push(identity);
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
 fn main() {
     let count_only = env::args().any(|a| a == "--count");
 
@@ -246,12 +266,19 @@ fn main() {
     for (line, value) in &violations {
         println!("terms-vocab VIOLATION {} {}", line, value);
     }
+    let no_terms = no_terms_identities(&sources);
+    if !count_only {
+        for identity in &no_terms {
+            println!("NO-TERMS {}", identity);
+        }
+    }
     let census_counts = counts(&sources);
     println!(
-        "license_census: blocks {} | terms {} | distinct {} | pending {} | terms-vocab {} violation(s)",
+        "license_census: blocks {} | terms {} | distinct {} | no-terms {} | pending {} | terms-vocab {} violation(s)",
         census_counts.blocks,
         census_counts.with_terms,
         census_counts.distinct_terms,
+        no_terms.len(),
         census_counts.pending,
         violations.len()
     );
@@ -330,7 +357,7 @@ mod tests {
                    terms free-open\n\n\
                    terms own-work\n\n\
                    terms unbestimmt\n\n\
-                   terms keine\n\n\
+                   terms ohne-lizenz\n\n\
                    terms unknown\n\n\
                    terms cc0\n\n\
                    url https://example.org/x.bin\n";
@@ -338,7 +365,7 @@ mod tests {
         let values: Vec<&str> = violations.iter().map(|(_, v)| v.as_str()).collect();
         assert_eq!(
             values,
-            vec!["unbestimmt", "keine", "unknown", "cc0"],
+            vec!["unbestimmt", "ohne-lizenz", "unknown", "cc0"],
             "{:?}",
             violations
         );
