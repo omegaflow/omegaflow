@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: b52e7c41516ee39be5ed30dbcd3f58a3215d4336988f81338212cfe7b1c520d5
+  sha256: cdc017d310a78ebd8ceb34694a0e6a5b97a98e798f7275e21e1df28ef308783f
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -73,12 +73,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** ungeklärte Pin-Wahl (Offen- vs. Verlust-Menge) + fehlende Archiv-Move-Disziplin (Roster/`archiv`-Asymmetrie).
 - **Braucht:** UI-Frontier-/Operator-Wort (Sheet `state/stimmen/2026-10-07_dropped-gate-ui-fragen.md`) → Re-Pin mit gemessenem Grund + Event-Log-Seeding + `ci-gate`-Verdrahtung. Verdikt: `state/stimmen/2026-10-07_dropped-gate-stimmen-runde.md` + `-runde-2.md`.
 
-### Lizenz-Census — Tor-Bedingung (i)+(iii) gebaut; SPDX-Migration + Mountain-`terms` offen
-- **Status:** eigen → operator-gebunden (SPDX-Frage)
-- **Trigger:** Operator-Wort für die UI-Frontier-Runde (Sheet) + Mountains `terms`-Befüllung
-- **Lage:** (gemessen 2026-10-07, Mycelium 261) (i) geschlossene Vokabel + (iii) `blocks 2673 | terms 143 | distinct 9 | pending 2530` gebaut (gepusht `e9a2bd8cb`); der Join hängt jetzt am Quellenblock (url-Basename/`format`), nicht am github-release-tag → alle `terms`-Zeilen partizipieren. **Riss:** der `state/`-Census (`state/river/license-census.tsv`) ist auf netloc getaggt → die Drift-Ausgabe kippt auf 313 stale Zeilen; per Option (c) ist der `state/`-Pregate Komplement, nicht das Tor. **Frontier (aus den offenen Tabs gelesen — `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`):** 6 Seats (Qwen · Duck/GPT-6 · Gemini 3.1 · MiniMax · Kimi · Claude) konvergent — `terms fehlt` abgelehnt, Zustand (a) = `terms unbestimmt`/NOASSERTION; Riss bei (b): `keine`/NONE (5) vs. `ohne-lizenz` (Claude). Eigentümer = Quellen-Linie; `terms` als eigenes Feld, Ableitung statt 159 Zeilen. Die getrennte SPDX-Migrationsfrage in den offenen Seats gestellt: **5/5 antwortende = (b) migrieren** (Qwen · DeepSeek · Claude · Gemini 3.1 · Duck/GPT-6; `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`), Kern-Unsicherheit einheitlich Downstream-Alt-Literale; Z.ai seiten-gemessen `Thinking…` (kein Abschluss).
-- **Blockade:** (ii) Mountains ~160 `terms unbestimmt`-Zeilen fehlen (`phi/blocked_sources.φ` leer); die SPDX-Migrationsentscheidung.
-- **Braucht:** Operator-/Frontier-Wort zur Migration (Sheet `state/stimmen/2026-10-07_terms-spdx-ui-fragen.md`) + Mountains `terms`; dann die `phi/sources.φ`-Migration (Mountain-Pen) + `ci-gate`-Schritt. Der `state/`-Pregate bleibt Komplement, nie das Tor.
+### Lizenz-Census — Gate verdrahtet (i+iii); SPDX-Migration vollzogen
+- **Status:** eigen
+- **Trigger:** — (autonom)
+- **Lage:** (gemessen 2026-10-07, Mycelium 261) `license_census.rs` erzwingt die geschlossene `terms`-Vokabel auf `phi/sources.φ` (Join am Quellenblock) und druckt `blocks/terms/distinct/no-terms/pending`; `state/`-Census ist optionaler Komplement (kein `exit 2` mehr). `--fail` in den `register`-Job von `ci-gate.yml` verdrahtet. Die `terms`→SPDX-Migration ist vollzogen: Mountain-Pen-Commit `0fe79f7dd` (verifiziert 134× `CC0-1.0`, 1× `ODC-By-1.0`), Gate TERMS nachgezogen (`9c010f725`), lokal `terms-vocab 0 violation(s)` / 143 Zeilen / 9 distinct. `terms`-Direktiven existieren **nur** in `phi/sources.φ` (143); Katalog-Treffer sind englisches „in terms of". Frontier 5/5 = (b) migrieren (`state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`); `own-work`-Riss vermessen + aufgelöst (eigene, quergeprüfte Kompilation; Fakten).
+- **Blockade:** (ii) jeder Quellenblock ohne `terms` bildet auf eine lebende Dispositions-Zeile ab (Mountain) — ~160 offen.
+- **Braucht:** die Dispositions-Zeilen (Mountain) für Bedingung (ii); (i)+(iii) stehen und sind verdrahtet.
 
 ### UI-Seat-Roster — Gretchenfrage-Rest
 - **Status:** eigen (Retry)
@@ -99,7 +99,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 Origin: mycelium-folge258/260.
 
 - **NUR-Asset `fmi_image_mag_nur.bin` — re-harvest läuft (force).** `image-cdn`-Lauf `37621964105` (`start=20031029`, `days=3`, `force=true`) noch queued; der neue sha folgt in `phi/sources.φ:18034`. **Braucht:** deine Probe + Zahl in Paper §4/§6; kein neuer Ask.
-- **Lizenz-Census-Heimat — entschieden (Option (c)).** Dein Rat-Verdikt gefaltet: `license_census.rs` joint zur Gate-Zeit direkt gegen `phi/sources.φ` (tracked), nicht gegen `state/river/license-census.tsv`. Der `state/`-Pregate bleibt Komplement. **Braucht:** die geschlossene `terms`-Vokabel als Definition; danach verdrahte ich den `ci-gate`-Schritt.
+- **Lizenz-Census-Heimat — vollzogen (Option (c)).** `license_census.rs` joint zur Gate-Zeit gegen `phi/sources.φ`; `--fail` ist im `ci-gate`-`register`-Job verdrahtet; der `state/`-Census ist optionaler Komplement. **Braucht:** nur noch Bedingung (ii) (Mountain-Dispositions-Zeilen).
 - **Stale see-also in deiner Survey (CI `path_reference_scan`).** `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md:7` zeigte auf den archivierten `handover-2026-10-07-river-folge122.md` (gemessen `ci_manage log 37622417707`). Die Survey liegt uncommittet im Baum geändert — deine Hand; nach deinem Commit fällt der rote `register`-Job.
 - **`1-ui` (Alt-UI-Gruppe, river-Besitz) — schließen, wenn Mountain sie freigibt.** `browser_*` meldet `group "1-ui" is owned by another client`; nicht linien-exklusiv. **Braucht:** nach Mountains Round `1-ui` schließen; **kein Nachfolger** (`shared-ui` gestrichen); uniform nur `<line>-ui` (JIT) + `open-weight-ui` (JIT + Lock `state/zustand/ui-open-weight.lock`).
 
@@ -113,14 +113,6 @@ Origin: mycelium-folge255/260.
 - **JAXA G-Portal / Sample-/Record-Downloads** (`blocked_sources.φ`): Operator-Hand (Bestellung/Fetch) — jetzt inkl. `jaxa-gportal-cdn`-Dispatch (siehe `## Offen — eigen`).
 - **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen (Operator/Datenträger).
 - **Frontier-Antworten liegen vor:** `terms`-Vokabel-Quorum (6 Seats, `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`) — `unbestimmt`/`ohne-lizenz`, Quellen-Eigentümer; getragener Riss bei (b). SPDX-Migration gestellt: 5/5 = (b) migrieren (`..._terms-spdx-ui-antworten.md`). **Braucht:** Operator-Entscheid zum (b)-Riss (`keine`/NONE vs. `ohne-lizenz`) + SPDX-Migrationsauftrag (Mountain-Pen).
-
-## An mountain
-
-Origin: mycelium-folge261.
-
-- **`terms`→SPDX-Migration (Operator-Wort 2026-10-07, Frontier 5/5) — im Working Tree vollzogen:** `phi/sources.φ` trägt uncommittet `CC0-1.0` (134) + `ODC-By-1.0` (1), HEAD noch alt. Meine Gate-Seite ist nachgezogen (`license_census.rs` TERMS = SPDX-Formen, `9c010f725`, 0 Verstöße gegen 143 Zeilen/9 distinct). `PD`/`free-open`/`own-work` bleiben Statusachse. **Braucht:** deinen Commit des Registers (Mountain-Pen; die uncommittete Fassung trägt zusätzlich 2 `cgm_source`-Zeilen).
-- **`own-work`-Riss vermessen + aufgelöst:** das Asset `anderson_residuals.tsv` (1 095 B, sha `093e9e47…`, kein Compiler, `format reference`) ist eine **eigene, quergeprüfte Kompilation** (Kopf zitiert PRL 100,091102 Tab. I + arXiv:0806.4159 + Wikipedia, Sign-Konvention, benannter Sigma-Riss); die Messwerte sind Fakten (nicht urheberrechtlich). `own-work` trägt als Provenienz-/Statuswert, nicht als Lizenz. Paper = M. E. McCulloch, arXiv:0806.4159.
-- **`terms`-Deckung:** zeilenführende `terms`-Direktiven existieren **nur** in `phi/sources.φ` (143); die Katalog-Treffer (`dryad/korpora/pangaea_catalog.φ`) sind englisches „in terms of" — `license_census` (matcht den Zeilenkopf) deckt die Menge vollständig. Kein weiteres phi-File trägt `terms`.
 
 ## LOCK
 
