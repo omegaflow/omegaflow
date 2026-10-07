@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. dropped-gate (a) Zwei-Pin-Trennung (Roster vs. Legacy) gebaut, (b) `--shadow`-Selbsttest in ci-gate verdrahtet; eionet_cdr sha256 ins Register; adressierte Blöcke future-197/mountain-269/river-131 gefaltet; Round-Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 6603b64d4c2a0e67bb40d5da4991d7d4ebf6b93e3541af40e6cb61457b55a0a4
+  sha256: e7778d77bf7e54518206a84cbf4a96a14d264fec9e81f0940b2401404981beaf
   status: live
 -->
 # Handover — Mycelium-Folge 264 (2026-10-07)
@@ -39,12 +39,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** keine (Runner-Queue).
 - **Braucht:** `ci_manage view 37676047864` → Ergebnis einmalig lesen (future-194/195-Adresse).
 
-### dropped-gate — der Selbsttest läuft; der scharfe Gate fehlt noch
+### dropped-gate — Namens-Basis statt Zahl; der Scan liefert die Schlüssel
 - **Status:** wartend
-- **Trigger:** der nächste Mycelium-Pass (Verlust-Liste + Archiv-Ereignis) — `state/stimmen/2026-10-07_dropped-gate-stimmen-runde-2.md`
-- **Lage:** (gemessen 2026-10-07) Der Selbsttest (`--shadow`, `--selftest`) ist grün und läuft in CI. Der Pin liegt in zwei getrennten Dateien: Offen-Roster (`docs/zustand/dropped-roster-baseline.txt`) und Verlust-Liste (`docs/zustand/dropped-legacy-baseline.txt`). Die Verlust-Liste gibt es noch nicht.
-- **Blockade:** Die Verlust-Liste entsteht nur im CI (der volle Scan dauert >30 min). Und der scharfe Roster-Gate würde sofort rot: die Offen-Roster-Baseline ist veraltet (17 Schlüssel fehlen), und wenn eine Linie Punkte ins Archiv verschiebt, meldet sie das heute nicht.
-- **Braucht:** (1) die Verlust-Liste im CI-Job erzeugen; (2) beim Archiv-Verschieben je Punkt ein Ereignis (`carried`/`resolved`) melden; dann den Roster-Gate neu pinnen und scharf schalten.
+- **Trigger:** ein CI-Lauf (`register-dropped.yml`) — `docs/zustand/dropped-legacy-baseline.txt`
+- **Lage:** (gemessen 2026-10-07) Schritt 1 gebaut: `register_lookup --dropped-keys` gibt die kanonischen Schlüssel der un-belegten Drops aus (ein Schlüssel je Zeile, netto der per Commit belegten). Der volle Scan unterscheidet schon „aufgelöst" (Commit-Beleg) von „verloren" — eine neue `carried`/`resolved`-Event-Regel braucht es also **nicht** (descoped).
+- **Blockade:** Der volle Scan ist CI-only (lokal bricht er ab); die Namensliste (`docs/zustand/dropped-legacy-baseline.txt`) gibt es noch nicht.
+- **Braucht:** (1) `register-dropped.yml` gibt `--dropped-keys` als Artefakt aus; (2) ein Lauf füllt die Liste, eine Session committet sie; (3) `ci-gate` vergleicht dann Namen statt der Zahl.
 
 ### KC2G `prop.kc2g.com` — Manifestation wartet Mountains Reader-Arm
 - **Status:** wartend
