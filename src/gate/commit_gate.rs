@@ -297,6 +297,27 @@ fn brace_delta(line: &str) -> i32 {
     depth
 }
 
+fn opens_test_region(line: &str) -> bool {
+    let t = code_before_comment(line).trim();
+    if t == "#[cfg(test)]" {
+        return true;
+    }
+    let Some(rest) = t.strip_prefix("#[cfg(test)] ") else {
+        return false;
+    };
+    let rest = rest.trim();
+    if rest.contains('"') || rest.contains("r#") {
+        return false;
+    }
+    rest.starts_with('{')
+        || rest
+            .strip_prefix("mod")
+            .or_else(|| rest.strip_prefix("fn"))
+            .is_some_and(|h| {
+                h.is_empty() || h.starts_with(' ') || h.starts_with('\t') || h.starts_with('{')
+            })
+}
+
 fn test_regions_stripped(content: &str) -> String {
     let mut out = String::with_capacity(content.len());
     let mut in_test = false;
@@ -338,10 +359,7 @@ fn test_regions_stripped(content: &str) -> String {
             out.push('\n');
             continue;
         }
-        if code_before_comment(raw)
-            .trim_start()
-            .starts_with("#[cfg(test)]")
-        {
+        if opens_test_region(raw) {
             if raw.contains('{') {
                 depth = brace_delta(raw);
                 if depth > 0 {
@@ -361,7 +379,7 @@ fn test_regions_stripped(content: &str) -> String {
     out
 }
 
-fn is_test_file_path(path: &str) -> bool {
+pub fn is_test_file_path(path: &str) -> bool {
     if path.split('/').any(|seg| seg == "tests") {
         return true;
     }
@@ -3310,6 +3328,16 @@ mod tests {
         let src = "fn body() {\n    let x = \"earth\";\n}\n";
         let args = tool_args("src/foo/tests.rs", src);
         assert!(g.check_tool_call("edit", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_fabrication_raw_string_cfg_is_not_a_test_region() {
+        let mut g = test_gate();
+        let src = "fn prod() -> &'static str {\n    let s = r#\"\n#[cfg(test)]\"#;\n    if true { let x = \"pluto\"; }\n    \"ok\"\n}\n";
+        let args = tool_args("src/x.rs", src);
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
     }
 
     #[test]
