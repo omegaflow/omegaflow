@@ -1596,6 +1596,35 @@ on earth 0 0 0
 ttl 86400
 field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_roti_2012.bin
+format cdaweb_roti
+origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/roti15min_jpl/
+terms unbestimmt
+compiler tools/harvest/src/bin/cdaweb_roti_compiler.rs
+at earth
+ttl 86400
+quantity cdaweb_roti_tecu_min cdaweb_roti_tecu_min inverse-square scale TECU/min 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_tec.bin
+format cdaweb_tec
+origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/
+terms unbestimmt
+compiler tools/harvest/src/bin/cdaweb_tec_compiler.rs
+at earth
+ttl 86400
+field cdaweb_tec_tecu cdaweb_tec_tecu inverse-square em TECU 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/goes16_mag.bin
+format goes16_mag
+origin https://cdaweb.gsfc.nasa.gov/pub/data/goes/goes16/mag_l2_netcdf/
+terms unbestimmt
+compiler tools/harvest/src/bin/goes16_mag_compiler.rs
+at earth
+ttl 86400
+field goes16_mag_bx_nt goes16_mag_bx_nt inverse-square em nT 86400 0.0 0.0
+field goes16_mag_by_nt goes16_mag_by_nt inverse-square em nT 86400 0.0 0.0
+field goes16_mag_bz_nt goes16_mag_bz_nt inverse-square em nT 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
@@ -1623,6 +1652,16 @@ field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/poes19_meped.bin
+format poes19_meped
+origin https://cdaweb.gsfc.nasa.gov/pub/data/noaa/noaa19/sem2_fluxes-2sec/
+terms unbestimmt
+compiler tools/harvest/src/bin/poes19_meped_compiler.rs
+at earth
+ttl 86400
+field poes19_meped_ele_flux poes19_meped_ele_flux inverse-square em pfu 86400 0.0 0.0
+field poes19_meped_pro_p6_flux poes19_meped_pro_p6_flux inverse-square em pfu 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_tec_gim.bin
 ttl 86400
