@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. clean-tree Abnahme-Job (Schritt 2 der Bias-Tilgung) gebaut; CI-Rot gemessen (ci-gate clippy 2, register license_census 7); Handover-sha-Riss geheilt; adressierte Blöcke future-194/mountain-268 gefaltet; tools-build + gaia-cdn dispatcht; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: ea58700d6352d854d26403809fb47ab12ec308525e818fff6ded9b3df0d013b5
+  sha256: 7d93656062f0fcc33785bfd08a2b98820707432b7023ed8d2e505951fbce984d
   status: live
 -->
 # Handover — Mycelium-Folge 263 (2026-10-07)
@@ -71,9 +71,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### KC2G `prop.kc2g.com` — JSON-Reader-Arm (`blocked_sources.φ:236`)
 - **Status:** wartend (Mountain-`terms`)
 - **Trigger:** Mountains `terms`-Verdikt für `prop.kc2g.com`
-- **Lage:** (gemessen 2026-10-07, Mycelium 262) JSON-Reader-Arm gebaut und committet (`tools/harvest/src/bin/kc2g_stations.rs`; 2 Tests). `pattern` in `phi/harvest.φ` + CDN-Workflow + `url`/`origin`/`compiler`/`format`-Block stehen nach Mountains `terms`.
+- **Lage:** (gemessen 2026-10-07, Mycelium 262/263) JSON-Reader-Arm gebaut und committet (`tools/harvest/src/bin/kc2g_stations.rs`; 2 Tests). **CDN-Workflow `kc2g-cdn.yml` gebaut** (dispatch-only, idempotent, Tag `prop.kc2g.com`, Asset `kc2g_stations.csv`). `pattern` in `phi/harvest.φ` + `url`/`origin`/`compiler`/`format`-Block stehen nach Mountains `terms`.
 - **Blockade:** `terms unbestimmt` (Mountain-Pen).
-- **Braucht:** Mountains `terms`-Zeile; dann `pattern ^kc2g_stations\.csv$` + `kc2g-cdn.yml` + Register-Block + Dispatch.
+- **Braucht:** Mountains `terms`-Zeile; dann `pattern ^kc2g_stations\.csv$` + Register-Block + Dispatch (`kc2g-cdn.yml` steht).
 
 ### clean-tree Abnahme-Messung — Job gebaut, rot (Bias-Tilgung Schritt 2)
 - **Status:** wartend (River/Mountain — Bias-Arbeit)
