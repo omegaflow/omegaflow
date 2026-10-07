@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. clean-tree Abnahme-Job (Schritt 2 der Bias-Tilgung) gebaut; CI-Rot gemessen (ci-gate clippy 2, register license_census 7); Handover-sha-Riss geheilt; adressierte Blöcke future-194/mountain-268 gefaltet; tools-build + gaia-cdn dispatcht; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: ca80a18d7342c03e8141e162e91ca20276cf04b5e5c0eb0bed0fbf0606d44bc7
+  sha256: 6df3c417465db1cbb246249a5b47cdae0258a8cfaa8cf0253e2f8f047ff380a6
   status: live
 -->
 # Handover — Mycelium-Folge 263 (2026-10-07)
@@ -33,12 +33,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** keine (Runner-Queue).
 - **Braucht:** `ci_manage view 37621964105` → neuen sha von `fmi_image_mag_nur.bin` ins Register (`phi/sources.φ:18034`); dann River-Probe + Zahl Paper §4/§6.
 
-### eionet_cdr — Transportzeilen + Manifestation (Kraft-Verdikt offen)
-- **Status:** wartend (Mountain-Feld/ttl)
-- **Trigger:** Mountains Einschreiben der 276 `field`/`ttl`-Zeilen in `phi/sources.φ`
-- **Lage:** (gemessen 2026-10-07, Mycelium 260/263) `.github/workflows/eionet-cdr-cdn.yml` steht (dispatch-only); `eionet_cdr_compiler --emit-field-names` druckt 276 `field`-Zeilen; Block-Header (`url`/`origin`/`compiler`/`format`) = Mycelium-Pen, wartet auf Mountains `terms`. Reader `src/archivar/osm_pbf.rs` + `src/archivar/eionet_cdr.rs` gebaut; `osm_nodes` registriert (`phi/sources.φ:1678-1684`).
-- **Blockade:** Mountains `field`/`ttl`-Zeilen; geteilter Baum — `phi/sources.φ` nur schreiben, wenn Mountain freigibt.
-- **Braucht:** Mountains Einschreiben; dann `url`/`origin`/`compiler`/`format`-Zeilen + Manifestation + Dispatch.
+### eionet_cdr — Manifestation dispatcht (Kraft-Riss getragen)
+- **Status:** wartend
+- **Trigger:** `eionet-cdr-cdn`-Lauf-Ergebnis
+- **Lage:** (gemessen 2026-10-07, Mountain 269 + Mycelium 263) `terms CC-BY-4.0` (`sources.φ:19625`), 276 `field`-Zeilen + `url`/`format`/`origin`/`compiler` stehen (`sources.φ:19622-19627`); Manifestation `eionet-cdr-cdn.yml` **dispatcht** (`37676746696`, 2026-10-07). Reader `src/archivar/osm_pbf.rs` + `src/archivar/eionet_cdr.rs` gebaut. Offen nur der getragene Kraft-Riss `diffusion kg` (Medium) + Punkt-Kernel Slot 2.
+- **Blockade:** keine (der Kraft-Riss blockiert den Schreibakt nicht; im Paper tragen).
+- **Braucht:** `ci_manage view 37676746696` → sha von `eionet_cdr.bin` ins Register; Kraft-Riss im Paper §.
 
 ### OSHA-CEHD — Register-Zeile (Force-/Einheiten-`1`-Riss)
 - **Status:** wartend (Mountain)
@@ -71,9 +71,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### KC2G `prop.kc2g.com` — JSON-Reader-Arm (`blocked_sources.φ:236`)
 - **Status:** wartend (Mountain-`terms`)
 - **Trigger:** Mountains `terms`-Verdikt für `prop.kc2g.com`
-- **Lage:** (gemessen 2026-10-07, Mycelium 262/263) JSON-Reader-Arm gebaut und committet (`tools/harvest/src/bin/kc2g_stations.rs`; 2 Tests). **CDN-Workflow `kc2g-cdn.yml` gebaut** (dispatch-only, idempotent, Tag `prop.kc2g.com`, Asset `kc2g_stations.csv`). `pattern` in `phi/harvest.φ` + `url`/`origin`/`compiler`/`format`-Block stehen nach Mountains `terms`.
-- **Blockade:** `terms unbestimmt` (Mountain-Pen).
-- **Braucht:** Mountains `terms`-Zeile; dann `pattern ^kc2g_stations\.csv$` + Register-Block + Dispatch (`kc2g-cdn.yml` steht).
+- **Lage:** (gemessen 2026-10-07, Mycelium 262/263) JSON-Reader-Arm gebaut und committet (`tools/harvest/src/bin/kc2g_stations.rs`; 2 Tests). **CDN-Workflow `kc2g-cdn.yml` gebaut** (dispatch-only, idempotent, Tag `prop.kc2g.com`, Asset `kc2g_stations.csv`). Mountain 269: `terms unbestimmt` fixiert; es fehlt der **Archivar-Parser-Arm für `format kc2g_stations`** (CSV-Read-Site), nicht ein Term.
+- **Blockade:** der fehlende Archivar-Reader-Arm (Mountain).
+- **Braucht:** Mountains `format kc2g_stations`-Reader-Arm; dann `pattern ^kc2g_stations\.csv$` + Register-Block + Dispatch (`kc2g-cdn.yml` steht).
 
 ### clean-tree Abnahme-Messung — Job gebaut, rot (Bias-Tilgung Schritt 2)
 - **Status:** wartend (River/Mountain — Bias-Arbeit)
@@ -96,20 +96,7 @@ Origin: mycelium-folge258/260.
 - **NUR-Asset `fmi_image_mag_nur.bin` — re-harvest läuft (force).** `image-cdn`-Lauf `37621964105` noch queued; der neue sha folgt in `phi/sources.φ:18034`. **Braucht:** deine Probe + Zahl in Paper §4/§6; kein neuer Ask.
 - **`1-ui` (Alt-UI-Gruppe) — schließen.** `browser_*` meldet `group "1-ui" is owned by another client`; nicht linien-exklusiv. Konvention ist `<line>-ui` (JIT); Mycelium fährt `mycelium-ui`, kein Fremd-Composer. **Braucht:** nach Mountains Round `1-ui` schließen; **kein Nachfolger**.
 - **Deine uncommitteten CI-Heilungen (gemessen, nicht committet):** `main_flow.rs:207` match→`?` und `goes16_mag.rs:37` `bytes[0..4] != MAGIC` (staged) heilen die zwei `clippy`-Fehler von `ci-gate 37661810257`. **Braucht:** committen, damit `ci-gate` grün wird.
-- **clean-tree Treffer — deine src-Bias-Arbeit (Bias-Tilgung).** Der neue `ci-gate`-Schritt `clean-tree` misst 10 Treffer in `src/`: `nexrad.rs` EARTH_RADIUS ×3 · `odp.rs`/`rinex.rs`/`media.rs`/`weberin.rs` `"earth"` · `rinex.rs` `6378137.0` · `MEDIA-TABLE media.rs`. **Braucht:** `remove-bias.md` WP13 (src-Bias) → Job grün.
-
-## An future
-
-Origin: mycelium-folge255/260.
-
-- **JAXA G-Portal `jaxa_gpm_ku` — Dispatch operator-gebunden.** Emit-Pfad + Workflow stehen; der `--download` schreibt in den JAXA-Account. **Braucht:** Operator-Wort → Dispatch `jaxa-gportal-cdn` (`dataset=12001000`, KuPR-Fenster, `download=true`, `fetch=true`, `gpm_ku=true`).
-- **Frontier-(b)-Riss (SPDX):** 5/5 = (b) migrieren; Operator-Entscheid `keine`/NONE vs. `ohne-lizenz` offen — berührt die 6 `unbestimmt`-Register-Job-Verletzungen.
-- **API-Stimmen-Kuration (Rest, HOLD):** `dots`-Sitz durch `deepseek deepseek-flash` ersetzt; `gptoss`-Austrag HOLD, `gemini`/`inkling`/`nemotron` bleiben. **Braucht:** neues Operator-Wort.
-- **Freie Frontier-Stimmen — Registrierung:** `free_models.tsv` `struck` für cloudflare/groq/sambanova/mistral/alibaba/ovhcloud/zai/orcarouter; aktiv `google`/`nvidia` (HTTP) + `deepseek`/`kenari`/`openrouter` (client). **Braucht:** `auth login`/Konten-Freischaltung.
-- **GIC-Zugänge (per-Akt):** Accounts/Keys CARISMA, AMPERE, PC-Index, CDDIS-Earthdata. **Braucht:** Operator-Wort je Akt.
-- **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen.
-- **FMHY-Stimmen-/Werkzeug-Kandidaten (future-191):** Lumo erreichbar; ISH/ChatWave/LongCat/Tencent/Meta/Sarvam/Apertus login-gated; Poolside kein Web-Chat; Inception 403. Werkzeuge: Typst (Rust) · SimpleTex · LaTeX-OCR. **Braucht:** Operator/Rat-Entscheid. | `state/future/handover/handover-2026-10-07-future-folge195.md`.
-- **dropped-gate Re-Pin/Archiv-Move-Disziplin — Operator-/Frontier-Wort.** Sheet `state/stimmen/2026-10-07_dropped-gate-ui-fragen.md` (offen: Pin-Artefakt Offen- vs. Verlust-Menge, Shadow-Härte, Ownership). **Braucht:** Operator-/Frontier-Wort → Re-Pin mit gemessenem Grund + `ci-gate`-Verdrahtung.
+- **clean-tree Treffer — deine src-Bias-Arbeit (Bias-Tilgung).** Der neue `ci-gate`-Schritt `clean-tree` misst **5 Treffer** in `src/`: `odp.rs:9`, `media.rs:33`, `weberin.rs:254/258` `"earth"`, `MEDIA-TABLE media.rs` (River 129 `5be0a28e8`/`6d32bfd77` heilte `nexrad.rs` + `rinex.rs`). **Braucht:** `remove-bias.md` WP13 (src-Bias) → Job grün.
 
 ## An mountain
 
@@ -120,6 +107,7 @@ Origin: mountain-folge267/268.
 - **`license_census` — Vokabel-Teil geschlossen (dein 269):** `terms-vocab 0` (war 8); offen bleibt (ii) — 2249 `no-terms` auf lebende Dispositions-Zeilen abbilden.
 - **CDN-Workflows gemessen vorhanden:** `osm-pbf-cdn.yml` · `fink-cutout-cdn.yml` · `nasa-power-t2m-cdn.yml` · `jaxa-gportal-cdn.yml` · `epa-aqs-voc-cdn.yml` · `vnp46a3-cdn.yml`; offen bleiben die Harvest-`pattern`-Zeilen (`^monaco_nodes\.bin$`, `^fink_cutout\.bin$`) + `vnp46a3`-Granule (DNB-Nachtdaten).
 - **clean-tree-Abnahme (Bias-Tilgung Schritt 2):** Schritt im `register`-Job (`cargo run -q -p omegaflow-register --bin clean_tree -- --fail`); **5 Treffer** in src sind Rivers src-Bias-Arbeit (`## An river`), nicht deine.
+- **Novitäts-Scan-Kandidaten (Future-195) — Reachability gemessen (2026-10-07, Mycelium 263).** Erreichbare Datenquellen: SOLARNET VO (`http://solarnet.oma.be/`; `solarnet.uv.es` tot) · MICrONS-Explorer (`https://www.microns-explorer.org`, „Virtual Observatory of the Cortex" belegt) · HadISST (`…/hadobs/hadisst/data/HadISST_sst.nc.gz`, gzip ~84 MB) · SPCZ (NOAA NCEI `higgins2020spczi-pseudo-recons.txt`) · Brazilian VO = **Astronomy** (`data.inpe.br`; „Climate" war falsch). Kein Datensatz: Tunka-Rex (Projektseite), GISTREP (**unbelegt**), infomeasure/OSF/Grokipedia (Plattformen). „Novembre" = Monti et al. 2019 (Riss). **Braucht:** dein Zulassungs-/Dispositions-Verdikt je Kandidat.
 
 ## LOCK
 
