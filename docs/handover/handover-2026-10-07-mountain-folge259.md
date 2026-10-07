@@ -3,7 +3,7 @@
   session: Mountain-Folge 259
   class: handover
   date: 2026-10-07
-  sha256: 1a451e35511a4f6475221a5d8e87529a512fde24d02ff0a6f5ca8a12253286af
+  sha256: e4a10ee8bba1060859bf3628eba8efe5104cac6232666e925ba01eab48016433
   status: live
 -->
 # Handover — Mountain-Folge 259 (2026-10-07)
@@ -58,6 +58,7 @@ Wort | Datum | Quelle
 „glm ist fertig" — die GLM/z.ai-Antwort ist eingetroffen und wird nachgelesen | 2026-10-07 | Operator (Session, Mountain 259)
 „nein ich meinte claude sonnet 5.5 max ich habe es abgeschickt" — der Operator hat die Frage selbst an Claude Sonnet 5.5 Max gesendet | 2026-10-07 | Operator (Session, Mountain 259)
 „immer noch <url>" — der neutrale umgeformte Prompt wird weiterhin `[bio]`-markiert; die Schadstoff-/Masse-Rahmung wird vollständig neutralisiert, die Fassung passiert den Klassifikator | 2026-10-07 | Operator (Session, Mountain 259)
+„qwen und duck sind da und nemotron habe ich in tryingopen nochmal laufen lassen" — die drei dropped-gate/Carrier-Antworten sind da | 2026-10-07 | Operator (Session, Mountain 259)
 
 ## Offen (aufgeschlüsselt)
 
@@ -116,6 +117,13 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-07 via `general`) Recovery-Snapshot `~/archive/archive-root/opencode-tmp-2026-09-01/archeo_check/archeology/sources/sources_recovery_cdn-merged_60k_lost-blocks.φ` (60132 Zeilen) nutzt das Port-Draft-Schema: `ra_key`/`dec_key`/`z_key` (kein Arm in `src/archivar/parse.rs`) und 3-Token-`field srcid <name>` — der Parser refused 3-Token-field (`parse.rs:941`); das lebende Register nutzt `ra ra`/`dec declination`/`z redshift` + 6-Token-field. Kein Superset: tote Generation → `archive-root`-Verdikt, kein Merge; eine blockweise Übernahme würde jedes `*_key` still droppen und jedes Field refuse (`parse.rs:941`/`1434`).
 - **Blockade:** keine — die Messung hat entschieden.
 - **Braucht:** kein Merge; der Snapshot bleibt in `archive-root`.
+
+### dropped-gate — Carrier-Architektur (Register, nicht Baseline-Zahl)
+- **Status:** eigen | **Bindung:** eigen (Gate/Register) · mycelium (CI)
+- **Trigger:** Sichtung der 1300 + deklarierte Rebaseline
+- **Lage:** (gemessen 2026-10-07 via `register_lookup --dropped`/`ci_manage log 37553361521`) `dropped-gate` (`.github/workflows/ci-gate.yml:70`) zählt Punkte aus archivierten Übergaben ohne lebenden Träger/Commit; Baseline `docs/zustand/dropped-baseline.md` 1297, current 1282; der Archive-Move hebt den Netto, die Baseline wird je Runde gebumpt (1295→1297→1300). **Drei externe Stimmen (qwen, duck/Gemma 4 31B, nemotron-3-ultra, 2026-10-07) konvergieren:** `archiv = Ort, kein Träger` · Auto-Bump und Archiv-als-Träger verworfen (0 honored) · Carrier-Ledger nur als **abgeleitete** Sicht (gespeichert = zweite Wahrheit) · **explizites Carrying je Move** ist die Architektur. Nemotron-Formel: `dropped := punkt ohne träger in (lebend ∪ commits ∪ register) · move ohne disposition = rot · baseline frozen`.
+- **Blockade:** Träger-Ableitung im Gate ungebaut; Punkt-Identität über den Move (ID/Hash) unbelegt → `pending`; Pauschal-Transfers („alle an Linie X") sind Fabrikation, wo Xs nächster Schritt die Natur nicht berührt.
+- **Braucht:** Gate auf Träger-Ableitung (lebend ∪ commits ∪ register) umstellen, `move ohne disposition = rot`; danach **einmalige** deklarierte Rebaseline mit Sichtungsliste; die 1300 je Träger/Commit/`pending` sichten.
 
 ### DE441/DE442-Anker ohne sha256
 - **Status:** wartend | **Bindung:** eigen
