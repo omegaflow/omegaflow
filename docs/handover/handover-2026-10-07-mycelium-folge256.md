@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; cdn-reconcile-Lauf gelandet (stale-Report-Punkt geschlossen), ci-gate dropped-gate @af7dc14e8 (delta 2) am CI-Log gemessen und per Baseline-Bump geheilt, adressierten Mountain-258-Block am Baum gemessen gefaltet, Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: e0b784badb8ec02f3d040070618b3874321a4237b2e3a9a107485a5712ef21ed
+  sha256: 92a9037560595632048a6fee5900ff7a075158b0d70e7b2a295b7a02be19c62c
   status: live
 -->
 # Handover — Mycelium-Folge 256 (2026-10-07)
@@ -68,13 +68,13 @@ Sender-Zeilen in `## An future`.
 - **Blockade:** die `terms`-Zeilen (Mountain-Pen) sind noch nicht vollständig.
 - **Braucht:** die `terms`-Zeilen; dann erzeugt Mycelium `LICENSE`/`README`.
 
-### dropped-gate — Prädikat statt Delta (Rat + 5 API-Stimmen, 2026-10-07)
+### dropped-gate — Träger statt Delta (Bau läuft; Rat + 5 API + 14 UI = 20 Quellen, 2026-10-07)
 - **Status:** eigen
-- **Trigger:** Operator-Wort zur Gate-Änderung, dann Bau
-- **Lage:** (gemessen 2026-10-07, Rat + 5 API-Stimmen: gemini/gptoss/inkling/nemotron/deepseek) einstimmig **Register-/Carrier-Frage, keine Baseline-Zahl**. Das Gate zählt `origin(P)` (Ort = archiviert), nicht `carrier(P)` (Träger); der Bump ist eine Fabrikation (ein Grün, das nicht gemessen ist). Empfehlung des Rats: (1) **Prädikat `carrier(P)`** statt Delta — Träger ist (a) eine lebende Übergabe, (b) eine `## An <line>`-Zeile mit Origin, (c) ein auflösender Commit (drop/descoped mit Befund), (d) ein expliziter `carried:`-Verweis; kein benannter Ort → Verlust → rot. (2) `git: none` = **`pending`**, nie `carried` (0 honored). (3) Baseline als **benannte Menge**, nicht Skalar. (4) Archive-Move **atomar mit Trägernennung**. (5) **Kein Auto-Bump.**
-- **Blockade:** die Änderung berührt `ci-gate.yml` (Job `dropped-gate`), `register_lookup --dropped` und den `commit_gate`; sie braucht ein Architektur-/Code-Wort.
-- **Braucht:** Operator-Wort, dann Bau (Prädikat im Resolver + Gate-Umbau).
-- **Riss (offen):** die UI-/Open-Weight-Stimmen (zweiter Kanal, 5 UI + 2 Seats) wurden adressiert, ihr Verdikt steht aus (z.ai Deep Think rechnend, Claude Queue, duck/qwen/tryingopen unbestätigt) — `pending`, nicht still.
+- **Trigger:** Operatives „los" (2026-10-07); Bau als flash-Sequenz
+- **Lage:** (gemessen 2026-10-07) **20/20 konvergent:** Register-/Carrier-Frage, keine Baseline-Zahl. **Design ratifiziert:** Q1 **hybrid** — ID ist die Identität, ein Token-Treffer ist nur `match_hint`/Fallback (Qwen/Muse Glimmer: explizite ID; Ausreißer: GPT-OSS 120B will (a)); Q2 **Roster** (Menge point-IDs), Mutation nur per benanntem Ereignis, kein Auto-Bump; Q3 **hartes Gate** bei stillem/ungetyptem Move (benanntes Ereignis passiert), durchgesetzte Schranke (Hook + CI); Q4 **`pending-legacy` einfrieren**. Reihenfolge (Claude, stärkste Bindung): Nullkontrolle → ID-Feld → Snapshot → Ereignis-Vokabular → Roster-Gate → hartes Rot. **Schnitt 1 gebaut** (grind-flash, `register_lookup.rs`): `explicit_point_id` (:2329) + `canonical_point_key` (:2354, sortierte Token-Menge) + `carries`-Closure im `run_dropped`-Träger-Abgleich; 4 Tests; `cargo check`/`build -p omegaflow-register --bin register_lookup` grün, 0 Warnungen; der inert-guard (tokenlos → pending) bleibt.
+- **Blockade:** Schnitt 1 uncommittet; Schnitte 2/3 hängen an der Entscheidung über die durchgesetzte Schranke (Hook) — berührt `commit_gate`/CI.
+- **Braucht:** `/commit` (Schnitt 1), dann Schnitt 2 (Roster-Baseline + `pending-legacy`-Einfrieren) und Schnitt 3 (Zwei-Stufen-Gate).
+- **Modell-Vergleich notiert:** `state/benchmark/2026-10-07-dropped-gate-modellvergleich.md`; Sieger **Claude Sonnet 5.5**, Ausreißer **GPT-OSS 120B**; 14 Antworten in `state/stimmen/2026-10-07_dropped-gate-design-14-ui-antworten.md`.
 
 ## An mountain
 

@@ -2326,6 +2326,50 @@ fn match_prefix(tokens: &[String]) -> Option<String> {
     Some(tokens[..take].join(" "))
 }
 
+fn explicit_point_id(text: &str) -> Option<String> {
+    let bytes = text.as_bytes();
+    let mut i = 0usize;
+    while i + 2 < bytes.len() {
+        let is_id = (bytes[i] | 0x20) == b'i'
+            && (bytes[i + 1] | 0x20) == b'd'
+            && bytes[i + 2] == b':';
+        if is_id {
+            let boundary = i == 0 || !bytes[i - 1].is_ascii_alphanumeric();
+            if boundary {
+                let slug: String = text[i + 3..]
+                    .trim_start_matches([' ', '\t', '*', '`'])
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_' || *c == '.')
+                    .collect();
+                if !slug.is_empty() {
+                    return Some(slug.to_lowercase());
+                }
+            }
+        }
+        i += 1;
+    }
+    None
+}
+
+fn canonical_point_key(text: &str) -> Option<String> {
+    if let Some(slug) = explicit_point_id(text) {
+        return Some(slug);
+    }
+    let mut tokens = point_key_tokens(text);
+    if tokens.is_empty() {
+        return None;
+    }
+    tokens.sort();
+    tokens.dedup();
+    Some(tokens.join(" "))
+}
+
+fn canonical_key_in_carrier(carrier: &str, key: &str) -> bool {
+    key.split(' ')
+        .filter(|t| !t.is_empty())
+        .all(|needle| carrier.split_whitespace().any(|word| word == needle))
+}
+
 fn distinctive_token(tokens: &[String]) -> Option<String> {
     let mut best: Option<&String> = None;
     for word in tokens {
@@ -2732,7 +2776,14 @@ fn run_dropped(args: &[String]) {
                 seen_keys.push(key.clone());
                 candidates += 1;
                 let needle = format!(" {} ", key);
-                if next_padded.contains(&needle) {
+                let canonical = canonical_point_key(&point.text);
+                let carries = |carrier: &str| {
+                    carrier.contains(&needle)
+                        || canonical
+                            .as_deref()
+                            .map_or(false, |c| canonical_key_in_carrier(carrier, c))
+                };
+                if carries(next_padded) {
                     continue;
                 }
                 let mut persist = 1usize;
@@ -2748,13 +2799,11 @@ fn run_dropped(args: &[String]) {
                 if persist < threshold {
                     continue;
                 }
-                let carried_forward = padded[index + 2..]
-                    .iter()
-                    .any(|later| later.contains(&needle));
+                let carried_forward = padded[index + 2..].iter().any(|later| carries(later));
                 let carried_foreign = live_by_line
                     .iter()
-                    .any(|(other, text)| other != line && text.contains(&needle));
-                if carried_forward || carried_foreign || live_docs.contains(&needle) {
+                    .any(|(other, text)| other != line && carries(text));
+                if carried_forward || carried_foreign || carries(&live_docs) {
                     continue;
                 }
                 dropped += 1;
@@ -2789,6 +2838,7 @@ fn run_dropped(args: &[String]) {
     let content_index = load_commit_content_index(&token_set);
     let register_index = load_register_content_index(&token_set);
     let mut resolved = 0usize;
+    let mut pending = 0usize;
     for p in &points {
         let git_status = match &p.token {
             Some(token) => {
@@ -2802,7 +2852,10 @@ fn run_dropped(args: &[String]) {
                 }
                 status
             }
-            None => "none",
+            None => {
+                pending += 1;
+                "pending"
+            }
         };
         if !count_only {
             println!(
@@ -2818,7 +2871,7 @@ fn run_dropped(args: &[String]) {
         }
     }
     if count_only {
-        println!("{}", dropped - resolved);
+        println!("{}", dropped - resolved - pending);
         return;
     }
     let scope = match filter {
@@ -2826,8 +2879,8 @@ fn run_dropped(args: &[String]) {
         None => String::new(),
     };
     println!(
-        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved, persist >= {}",
-        scope, pairs, candidates, dropped, resolved, threshold
+        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved, {} pending/unmeasured, persist >= {}",
+        scope, pairs, candidates, dropped, resolved, pending, threshold
     );
 }
 
@@ -4729,5 +4782,48 @@ mod tests {
         );
         assert!(!mountain.iter().any(|l| l.contains("the HUD line")));
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn canonical_point_key_absorbs_reformulation() {
+        let first = canonical_point_key("1. GIC Breitenband Deskriptoren bauen (wartend)");
+        let second = canonical_point_key("bauen Deskriptoren Breitenband GIC blockiert");
+        assert_eq!(first, second);
+        assert_eq!(
+            first.as_deref(),
+            Some("bauen breitenband deskriptoren gic")
+        );
+    }
+
+    #[test]
+    fn explicit_id_marker_beats_token_set() {
+        let marked = canonical_point_key("**ID:** gic-breitenband this is the point");
+        assert_eq!(marked.as_deref(), Some("gic-breitenband"));
+        let unmarked = canonical_point_key("gic-breitenband this is the point");
+        assert_ne!(marked, unmarked);
+        assert_eq!(
+            canonical_point_key("ID: alpha-1 some later text").as_deref(),
+            Some("alpha-1")
+        );
+    }
+
+    #[test]
+    fn canonical_point_key_keeps_distinct_points_apart() {
+        let a = canonical_point_key("GIC Breitenband Deskriptoren bauen");
+        let b = canonical_point_key("GIC Breitenband Coverage Begleiter bauen");
+        assert_ne!(a, b);
+    }
+
+    #[test]
+    fn canonical_key_matches_a_carrier_token_set() {
+        let key = canonical_point_key("GIC Breitenband Deskriptoren bauen").unwrap();
+        assert!(canonical_key_in_carrier(
+            " some other words gic and bauen and deskriptoren and breitenband here ",
+            &key
+        ));
+        assert!(!canonical_key_in_carrier(
+            " gic bauen deskriptoren only ",
+            &key
+        ));
     }
 }
