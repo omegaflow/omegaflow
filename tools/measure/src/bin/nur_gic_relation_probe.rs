@@ -225,12 +225,11 @@ fn main() {
     }
     let nur_hour = hourly_peak_from_samples(&dbdt);
 
-    let gic_recs = match cached_bytes(GIC_HOURLY_URL, "fmi_gic.bin")
-        .and_then(|b| parse_bin(MAGIC_GIC, &b))
-    {
-        Some(r) => r,
-        None => Vec::new(),
-    };
+    let gic_recs =
+        match cached_bytes(GIC_HOURLY_URL, "fmi_gic.bin").and_then(|b| parse_bin(MAGIC_GIC, &b)) {
+            Some(r) => r,
+            None => Vec::new(),
+        };
     let gic_hour = hourly_peak_from_geo(&gic_recs);
 
     let nur_lo = match dbdt.first() {
