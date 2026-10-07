@@ -3,7 +3,7 @@
   session: Sensory-Folge 246
   class: handover
   date: 2026-10-07
-  sha256: ed8b934ffcae3397e4afe610991f52996937aa41443c65228e299e322073a8be
+  sha256: ea4e391b658d9b4b44f849f86f6611f44c282fb16ca657bb4e46551b3e011483
   status: live
 -->
 # Handover — Sensory-Folge 246 (2026-10-07)
@@ -18,7 +18,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der
 Akteur steht pro Punkt in `Bindung`.
 
-Dieses Register konsumiert `docs/handover/handover-2026-10-07-sensory-folge245.md`
+Dieses Register konsumiert `docs/handover/archiv/handover-2026-10-07-sensory-folge245.md`
 (die F245-Übergabe, aus `docs/handover/` nach `archiv/` verschoben); diese Folge ist 246.
 Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md` (gelesen
 2026-10-07 F246; die Mycelium-255-Zahlen sind mit dem Fortschritt überholt — zitiert,
@@ -30,9 +30,7 @@ Eigener Register-Pass (2026-10-07 F246): `register_lookup --fired sensory` = 0;
 `--stale sensory --persist 3` = 0; `--addressed sensory` = 0 (kein zu faltender Block);
 `register_lookup --orphan-docs` = 13 (keiner sensorisch — der medizinische-datenquellen-Survey
 trägt an Mountain/Future, `survey-2026-10-04-exposom-matrix.md` wurde von Mycelium/Mountain
-geführt); `open_points_check` = 164 path refs / 2 absent (die `D`-Zeile
-`.github/workflows/usda-fara-cdn.yml` aus Mountains 245-Messung + der selbst benannte
-`state/operator-gespraeche/2026-10-07-sensory.md`-Pfad) / 0 stale-citations / 0
+geführt); `open_points_check` = 0 absent / 0 stale-citations / 0
 done-carried / 0 word-carried / 0 guardians / 0 format-gaps / 0 owner-drift / 0 post-md.
 Die Form-Karte `docs/concepts/tool-forms.md` wurde als erste Handlung gelesen.
 Gefaltet: nichts — `register_lookup --addressed sensory` = 0.
