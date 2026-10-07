@@ -3,7 +3,7 @@
   session: River-Folge 125
   class: handover
   date: 2026-10-07
-  sha256: 2f32c362aad587d3f150a94159718b7ac0e0872a598b94db9a05d80874e8b708
+  sha256: e24c26c6da1986a7a73cc10d59c0cfd36df4fa60c859319d69ab9f30124294a8
   status: live
 -->
 # Handover — River-Folge 125 (2026-10-07)
@@ -18,6 +18,7 @@ steht und `origin/main` Vorfahr von HEAD ist.
 Wort | Datum | Quelle
 --- | --- | ---
 „bitte delegiere für die arbeit, recherche, und UI chats" | 2026-10-07 | Operator (Session, River 125) — Dispatch-/Delegations-Consent
+„warum nur ein ui seat? hast du gesehen wie viele tabs offen sind?" | 2026-10-07 | Operator (Session, River 125) — **alle** offenen UI-Seats nutzen, nicht einen
 „…das ist wichtig wir haben mächtige stimmen 1-ui gehört niemandem" | 2026-10-07 | Operator (Session, River 123) — `1-ui` ist **nicht** linien-fremd
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge124.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
