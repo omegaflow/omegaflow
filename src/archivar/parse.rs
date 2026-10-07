@@ -2164,4 +2164,36 @@ mod tests {
         assert!(!slot_measured(SLOT_ABSENT));
         assert!(slot_measured(0.0), "a measured zero is a measurement");
     }
+
+    #[test]
+    fn field_and_quantity_are_disjoint_taxonomies() {
+        let field_of = |content: &str| -> Option<u8> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.force),
+                    _ => None,
+                })
+            })
+        };
+
+        let valid = "url https://example.com/q.bin\nttl 604800\n\
+                     quantity qkey qname inverse-square mass kg 3600 0.0 0.0\n";
+        assert_eq!(field_of(valid), Some(FORCE_TYPE_QUANTITY));
+
+        let force_as_kind = "url https://example.com/q.bin\nttl 604800\n\
+                             quantity qkey qname inverse-square em kg 3600 0.0 0.0\n";
+        assert_eq!(
+            field_of(force_as_kind),
+            None,
+            "quantity with a force name in the kind slot must not become a field"
+        );
+
+        let kind_as_force = "url https://example.com/q.bin\nttl 604800\n\
+                             field qkey qname inverse-square mass kg 3600 0.0 0.0\n";
+        assert_eq!(
+            field_of(kind_as_force),
+            None,
+            "field with a quantity kind in the force slot must not become a field"
+        );
+    }
 }
