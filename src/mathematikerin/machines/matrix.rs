@@ -173,6 +173,8 @@ pub struct NameMeta {
     pub force: u8,
     pub kernel: u8,
     pub tau: f64,
+    pub epoch: f64,
+    pub advection: f64,
     pub station_code: Option<String>,
 }
 
@@ -282,6 +284,8 @@ impl MatrixMachine {
             buf.push(meta.force);
             buf.push(meta.kernel);
             buf.extend_from_slice(&meta.tau.to_le_bytes());
+            buf.extend_from_slice(&meta.epoch.to_le_bytes());
+            buf.extend_from_slice(&meta.advection.to_le_bytes());
             buf.push(if meta.station_code.is_some() { 1 } else { 0 });
             if let Some(code) = &meta.station_code {
                 wr_name(&mut buf, code);
@@ -378,6 +382,8 @@ impl MatrixMachine {
             let kernel = *bytes.get(p)?;
             p += 1;
             let tau = rd_f64(&bytes, &mut p)?;
+            let epoch = rd_f64(&bytes, &mut p)?;
+            let advection = rd_f64(&bytes, &mut p)?;
             let station_code = if carries_station_code && *bytes.get(p)? == 1 {
                 p += 1;
                 Some(rd_name(&bytes, &mut p)?)
@@ -419,6 +425,8 @@ impl MatrixMachine {
                     force,
                     kernel,
                     tau,
+                    epoch,
+                    advection,
                     station_code,
                 },
             );
@@ -674,6 +682,8 @@ impl MatrixMachine {
                 force: sensor.force,
                 kernel: sensor.kernel,
                 tau: sensor.tau,
+                epoch: channel.epoch,
+                advection: sensor.advection,
                 station_code: channel.station_code.clone(),
             };
             self.metas.insert(channel.name.clone(), meta);
@@ -739,11 +749,12 @@ impl MatrixMachine {
             let d2 = (p[0] - presence[0]).powi(2)
                 + (p[1] - presence[1]).powi(2)
                 + (p[2] - presence[2]).powi(2);
+            let age = (t_presence - meta.epoch).abs();
             let Some(extent) = crate::archivar::medium_reach(
                 meta.force,
-                meta.tau,
+                age,
                 body_medium,
-                crate::archivar::SLOT_ABSENT,
+                meta.advection,
             ) else {
                 continue;
             };

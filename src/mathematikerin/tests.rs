@@ -1504,6 +1504,8 @@ fn sky_tick_folds_bodies_by_name_and_stations_last() {
                 force: 0,
                 kernel: 0,
                 tau: 0.0,
+                epoch: t,
+                advection: 0.0,
                 station_code: None,
             },
         );
@@ -1634,6 +1636,8 @@ fn sky_tick_keeps_a_riss_worldline_out_of_the_oscillators() {
             force: 0,
             kernel: 0,
             tau: 0.0,
+            epoch: t,
+            advection: 0.0,
             station_code: Some("ABK".to_string()),
         },
     );
