@@ -814,6 +814,7 @@ field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni_hro_1min.bin
 format omni_hro
 origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni_hro_compiler.rs
 sha256 d8ced5fb5b7980121285eac7c080aa541e15ac0dbd9b94aa78d7f793ed269705
 at sun
@@ -1650,6 +1651,7 @@ field goes16_mag_bz_nt goes16_mag_bz_nt inverse-square em nT 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni2_compiler.rs
 at sun
 ttl 86400
@@ -1664,6 +1666,7 @@ field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advecti
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin
 format omni2_serie
 origin https://cdaweb.gsfc.nasa.gov/hapi
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni2_compiler.rs
 at sun
 ttl 86400
@@ -3930,6 +3933,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_orbit.bin
 format orbit_bin
 origin https://spdf.gsfc.nasa.gov/pub/data/wind/orbit/pre_or/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/wind_orbit_compiler.rs
 at wind
 ttl 86400
@@ -3937,6 +3941,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_waves.bin
 format wind_waves
 origin https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/wind_waves_compiler.rs
 at wind
 ttl 86400
@@ -18160,6 +18165,7 @@ field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/mariner_occlt_compiler.rs
 sha256 4aa487cb7ba2e1ac2258c9ace16dd6adc0d502352a4a6c3be9a1ea8f5e10eda0
 at earth
@@ -18171,6 +18177,7 @@ field amp_mean mariner10_occlt_amp_mean inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin
 format pioneer10_odf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/DOPPLER
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/pioneer10_odf_compiler.rs
 at earth
 ttl 604800
@@ -18179,6 +18186,7 @@ field observable_hz pioneer10_odf_observable_hz inverse-square em Hz 604800 0.0 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin
 format atdf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Data/ATDF_Data-Files_CMarkwardt_Readable/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/pioneer_atdf_compiler.rs
 at earth
 ttl 604800
@@ -18187,6 +18195,7 @@ field skyfreq pioneer_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin
 format pioneer10_telemetry
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer10/radio/Turyshev20170327_Pioneer-10/TELEMETRY
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/pioneer_telemetry_compiler.rs
 sha256 8745cd971e0808cba9b97dedb08d73b0a991bdbc00385207f182d1570939fb05
 at earth
@@ -18195,6 +18204,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/pioneer11_odf.bin
 format pioneer11_odf
 origin https://spdf.gsfc.nasa.gov/pub/data/pioneer/pioneer11/radio/Turyshev20170327_Pioneer-11/DOPPLER
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/pioneer11_odf_compiler.rs
 sha256 3ecfa9a1804e3297841533c4c29671c807c27d3403d5a0e2b93a428460aa191e
 at earth
@@ -18204,6 +18214,7 @@ field observable_hz pioneer11_odf_observable_hz inverse-square em Hz 604800 0.0 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager1_merged.bin
 format voyager1_merged
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_merged_compiler.rs
 at earth
 ttl 604800
@@ -18215,6 +18226,7 @@ field voyager1_temp_k voyager1_temp_k exponential-decay thermal K 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager2_merged.bin
 format voyager2_merged
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_merged_compiler.rs
 at earth
 ttl 604800
@@ -18226,6 +18238,7 @@ field voyager2_temp_k voyager2_temp_k exponential-decay thermal K 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_occlt.bin
 format voyager_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_occultation_narrow_band/ ; https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/titan_occultation_medium_band/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_occlt_compiler.rs
 sha256 860f692727413ee57c75299b72e1b2c6e52c282707461124d0b15c3a9a01cfd9
 at earth
@@ -18237,6 +18250,7 @@ field amp_mean voyager_occlt_amp_mean inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
 format voyager_saturn
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_saturn_compiler.rs
 at earth
 ttl 604800
@@ -19522,6 +19536,14 @@ compiler tools/harvest/src/bin/ersstv5_compiler.rs
 on earth 0 0 0
 ttl 2592000
 field ersstv5_nino34 ersstv5_nino34_ssta exponential-decay thermal C 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
+format hadisst_sst
+origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
+compiler tools/harvest/src/bin/hadisst_compiler.rs
+on earth 0 0 0
+ttl 2592000
+field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_monthly.manifest
 format modis_lst_cmg
@@ -26109,7 +26131,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/obis.osha.gov/osha_cehd_si.txt
 format osha_cehd_si_axis_value_text
 origin https://www.osha.gov/sites/default/files/healthsamples.zip
-terms unbestimmt https://obis.osha.gov/
+terms unbestimmt https://www.osha.gov/opengov/health-samples
 compiler tools/harvest/src/bin/osha_cehd_compiler.rs
 on earth 0 0 0
 ttl 31536000

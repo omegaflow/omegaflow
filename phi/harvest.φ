@@ -128,6 +128,15 @@ pattern ^ersstv5_nino34\.bin$
 idempotent true
 
 asset present
+format hadisst_sst
+tag metoffice.gov.uk
+arm hadisst_compiler
+workflow hadisst-cdn.yml
+pattern ^hadisst_sst\.bin$
+idempotent true
+timeout 600
+
+asset present
 format exofop_toi
 tag exofop.ipac.caltech.edu
 arm exofop_compiler
