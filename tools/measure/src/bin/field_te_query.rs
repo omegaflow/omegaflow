@@ -1133,7 +1133,7 @@ fn load_field_across_sources(
 ) -> Result<Option<Vec<(f64, f64)>>, String> {
     let candidates = field_sources(sources, name);
     if candidates.is_empty() {
-        return Ok(None);
+        return load_dbdt_across_sources(sources, name, anchor);
     }
     let mut reason = String::new();
     for (source, field) in candidates {
@@ -1144,6 +1144,46 @@ fn load_field_across_sources(
         }
     }
     Err(reason)
+}
+
+fn align_xyz(xs: &[(f64, f64)], ys: &[(f64, f64)], zs: &[(f64, f64)]) -> Vec<(f64, [f64; 3])> {
+    let ymap: std::collections::HashMap<u64, f64> =
+        ys.iter().map(|(t, v)| (t.to_bits(), *v)).collect();
+    let zmap: std::collections::HashMap<u64, f64> =
+        zs.iter().map(|(t, v)| (t.to_bits(), *v)).collect();
+    let mut out = Vec::new();
+    for (t, x) in xs {
+        if let (Some(y), Some(z)) = (ymap.get(&t.to_bits()), zmap.get(&t.to_bits())) {
+            out.push((*t, [*x, *y, *z]));
+        }
+    }
+    out
+}
+
+fn load_dbdt_across_sources(
+    sources: &[SourceConfig],
+    name: &str,
+    anchor: &QueryAnchor,
+) -> Result<Option<Vec<(f64, f64)>>, String> {
+    let Some(station) = name.strip_prefix("intermagnet_dbdt_") else {
+        return Ok(None);
+    };
+    let axis = |a: &str| format!("intermagnet_xyz_{a}_nt_{station}");
+    let xs = load_field_across_sources(sources, &axis("x"), anchor)?;
+    let ys = load_field_across_sources(sources, &axis("y"), anchor)?;
+    let zs = load_field_across_sources(sources, &axis("z"), anchor)?;
+    let (Some(xs), Some(ys), Some(zs)) = (xs, ys, zs) else {
+        return Ok(None);
+    };
+    let samples = align_xyz(&xs, &ys, &zs);
+    if samples.is_empty() {
+        return Ok(None);
+    }
+    let peaks = omegaflow::archivar::main_flow::series_dbdt(&samples, 60.0);
+    if peaks.is_empty() {
+        return Ok(None);
+    }
+    Ok(Some(peaks))
 }
 
 fn witness_kind_token(token: &str) -> Option<WitnessKind> {
@@ -4880,6 +4920,17 @@ mod tests {
         assert!(
             field_sources(&both, "intermagnet_xyz_x_aae").is_empty(),
             "an unqualified/unknown channel resolves nothing, never the first hit"
+        );
+    }
+
+    #[test]
+    fn align_xyz_keeps_only_common_epochs_and_carries_the_vector() {
+        let xs = [(0.0, 1.0), (60.0, 2.0), (120.0, 3.0)];
+        let ys = [(0.0, 4.0), (120.0, 6.0)];
+        let zs = [(0.0, 7.0), (60.0, 8.0), (120.0, 9.0)];
+        assert_eq!(
+            align_xyz(&xs, &ys, &zs),
+            vec![(0.0, [1.0, 4.0, 7.0]), (120.0, [3.0, 6.0, 9.0])]
         );
     }
 
