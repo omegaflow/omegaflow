@@ -1,0 +1,60 @@
+name: carisma-mag-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: 'CARISMA station code (CSA mirror)'
+        type: string
+        default: 'DAWS'
+      date:
+        description: 'CARISMA day (YYYYMMDD)'
+        type: string
+        default: '20090105'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/carisma_mag_compiler.rs'
+      - '.github/workflows/carisma-mag-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  carisma-mag:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view donnees-data.asc-csa.gc.ca --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "carisma_mag.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset carisma_mag.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset carisma_mag.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the donnees-data.asc-csa.gc.ca release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view donnees-data.asc-csa.gc.ca --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create donnees-data.asc-csa.gc.ca --repo omegaflow/sources \
+              --title "donnees-data.asc-csa.gc.ca" \
+              --notes "CARISMA fluxgate magnetometer daily ASCII (X,Y,Z nT, 1 Hz; Open Government Licence – Canada) compiled to omegaflow CRSM binary assets (CDN tag = netloc). The CSA mirror presents an incomplete TLS chain (leaf asc-csa.gc.ca issued by Entrust OV TLS Issuing RSA CA 2, intermediate not sent); the runner needs the Entrust intermediate in OMEGAFLOW_CA_BUNDLE."
+          fi
+      - name: Compile the CARISMA MAG day and manifest the CRSM bin to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          station="${{ inputs.station }}"; [ -n "$station" ] || station="DAWS"
+          date="${{ inputs.date }}"; [ -n "$date" ] || date="20090105"
+          cargo run --release -p omegaflow-harvest --bin carisma_mag_compiler -- \
+            --station "$station" --date "$date" --out carisma_mag.bin --ci-mode
