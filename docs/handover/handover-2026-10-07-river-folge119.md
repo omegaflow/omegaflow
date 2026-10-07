@@ -3,7 +3,7 @@
   session: River-Folge 119
   class: handover
   date: 2026-10-07
-  sha256: a11e8e29ac717d1bb4e57b7fd7c3308a4b50d0d0f4d6ec08042b76b7863e15e0
+  sha256: 37678f3f3826f038dde684f11670371e3df6675594fdfa5ae8b6a5b7dbdbd106
   status: live
 -->
 # Handover — River-Folge 119 (2026-10-07)
@@ -39,7 +39,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 ### `ozzy` — Negative Fuzzy Engine (A + Zeugen-Vokabular gebaut; Surrogat-Floor-Design entschieden; CI-Verifikation offen)
 - **Status:** wartend (CI) | **Bindung:** eigen
 - **Trigger:** `ci-check`/`ci-gate` grün am jeweiligen HEAD.
-- **Lage:** (gemessen 2026-07-10 via `ci_manage view`/`jobs` 37550438724) `independence_verdict` (`src/mathematikerin/ozzy.rs:146`) trägt den A-Test (held-out Zeugen) + B-Diagnose + die zwei Known-Answer-Gates. Rivers Clippy-Anteil geheilt (`ozzy.rs:90`/`:109`, `least_squares.rs:15`); `cargo check` 0/0. `register_lookup --fired river` meldet `ozzy` als gefeuert — **Lesung dieser Session widerlegt es:** `ci-gate 37550438724` @`53a11198b` `failure` (Jobs `clippy` + `format`), `ci-check 37550405491` `pending`; Trigger **nicht** gefeuert (kein Polling).
+- **Lage:** (gemessen 2026-10-07 via `ci_manage view`/`jobs` 37550438724) `independence_verdict` (`src/mathematikerin/ozzy.rs:146`) trägt den A-Test (held-out Zeugen) + B-Diagnose + die zwei Known-Answer-Gates. Rivers Clippy-Anteil geheilt (`ozzy.rs:90`/`:109`, `least_squares.rs:15`); `cargo check` 0/0. `register_lookup --fired river` meldet `ozzy` als gefeuert — **Lesung dieser Session widerlegt es:** `ci-gate 37550438724` @`53a11198b` `failure` (Jobs `clippy` + `format`), `ci-check 37550405491` `pending`; Trigger **nicht** gefeuert (kein Polling).
 - **Rat-Entscheid (2026-10-07, Session 119, fünf Stimmen über den `council`-Agenten) — der Floor-Riss ist aufgelöst:**
   1. **Rang-Form:** `p = (1 + #{TE_surr ≥ TE_obs}) / (n_surr+1)`; bei `n_surr = 99` ist `p_min = 0.01` und die Regel fällt mit dem Maximum der Null zusammen: Kopplung ⇔ `TE_obs > max(TE_surr)`. α an `1/(n_surr+1)` gebunden, nicht frei gewählt (A = A, kein interpolierter Zwischenwert).
   2. **`N_eff`:** `τ_int = 1 + 2·Σ_{k=1}^{K} ρ_k`, `K` = erster `k` mit `ρ_k ≤ 0` (erster Nulldurchgang), `N_eff = N / τ_int` — std-only (Eigenmittel/-varianz/-autokovarianz), **pro Messung getrennt** für A und B. Zweites Tor: `df = N_eff − (dim·τ_max + 1) − rank(E)` (B zusätzlich `rank(E)`, A ohne); unter dem Boden → getypte Absenz, kein Verdikt. Zwei Tore (`N_eff`, dann `df`), nie zu einem Wert vermischt.
