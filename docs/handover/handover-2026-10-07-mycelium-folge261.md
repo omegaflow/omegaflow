@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: 2e03f7f1caad22eb9cbee9618ad990accc447a5dbac346ad90e9c431d56badc0
+  sha256: 06ddf2e994427c02f974668da74f121d932742f80fb15c1bcd46afea2c697aa5
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -74,7 +74,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### Lizenz-Census — Tor-Bedingung (i)+(iii) gebaut; SPDX-Migration + Mountain-`terms` offen
 - **Status:** eigen → operator-gebunden (SPDX-Frage)
 - **Trigger:** Operator-Wort für die UI-Frontier-Runde (Sheet) + Mountains `terms`-Befüllung
-- **Lage:** (gemessen 2026-10-07, Mycelium 261) (i) geschlossene Vokabel + (iii) `blocks 2673 | terms 143 | distinct 9 | pending 2530` gebaut (gepusht `e9a2bd8cb`); der Join hängt jetzt am Quellenblock (url-Basename/`format`), nicht am github-release-tag → alle `terms`-Zeilen partizipieren. **Riss:** der `state/`-Census (`state/river/license-census.tsv`) ist auf netloc getaggt → die Drift-Ausgabe kippt auf 313 stale Zeilen; per Option (c) ist der `state/`-Pregate Komplement, nicht das Tor. **Frontier (aus den offenen Tabs gelesen — `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`):** 6 Seats (Qwen · Duck/GPT-6 · Gemini 3.1 · MiniMax · Kimi · Claude) konvergent — `terms fehlt` abgelehnt, Zustand (a) = `terms unbestimmt`/NOASSERTION; Riss bei (b): `keine`/NONE (5) vs. `ohne-lizenz` (Claude). Eigentümer = Quellen-Linie; `terms` als eigenes Feld, Ableitung statt 159 Zeilen. Die getrennte SPDX-Migrationsfrage in den offenen Seats gestellt: **3/3 antwortende = (b) migrieren** (Qwen, DeepSeek, Claude; `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`), Kern-Unsicherheit Downstream-Alt-Literale; Z.ai/Duck/Gemini pending.
+- **Lage:** (gemessen 2026-10-07, Mycelium 261) (i) geschlossene Vokabel + (iii) `blocks 2673 | terms 143 | distinct 9 | pending 2530` gebaut (gepusht `e9a2bd8cb`); der Join hängt jetzt am Quellenblock (url-Basename/`format`), nicht am github-release-tag → alle `terms`-Zeilen partizipieren. **Riss:** der `state/`-Census (`state/river/license-census.tsv`) ist auf netloc getaggt → die Drift-Ausgabe kippt auf 313 stale Zeilen; per Option (c) ist der `state/`-Pregate Komplement, nicht das Tor. **Frontier (aus den offenen Tabs gelesen — `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`):** 6 Seats (Qwen · Duck/GPT-6 · Gemini 3.1 · MiniMax · Kimi · Claude) konvergent — `terms fehlt` abgelehnt, Zustand (a) = `terms unbestimmt`/NOASSERTION; Riss bei (b): `keine`/NONE (5) vs. `ohne-lizenz` (Claude). Eigentümer = Quellen-Linie; `terms` als eigenes Feld, Ableitung statt 159 Zeilen. Die getrennte SPDX-Migrationsfrage in den offenen Seats gestellt: **5/5 antwortende = (b) migrieren** (Qwen · DeepSeek · Claude · Gemini 3.1 · Duck/GPT-6; `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`), Kern-Unsicherheit einheitlich Downstream-Alt-Literale; Z.ai seiten-gemessen `Thinking…` (kein Abschluss).
 - **Blockade:** (ii) Mountains ~160 `terms unbestimmt`-Zeilen fehlen (`phi/blocked_sources.φ` leer); die SPDX-Migrationsentscheidung.
 - **Braucht:** Operator-/Frontier-Wort zur Migration (Sheet `state/stimmen/2026-10-07_terms-spdx-ui-fragen.md`) + Mountains `terms`; dann die `phi/sources.φ`-Migration (Mountain-Pen) + `ci-gate`-Schritt. Der `state/`-Pregate bleibt Komplement, nie das Tor.
 
@@ -103,7 +103,7 @@ Origin: mycelium-folge255/260.
 - **GIC-Zugänge (per-Akt):** Accounts/Keys CARISMA, AMPERE, PC-Index, CDDIS-Earthdata. **Braucht:** Operator-Wort je Akt.
 - **JAXA G-Portal / Sample-/Record-Downloads** (`blocked_sources.φ`): Operator-Hand (Bestellung/Fetch) — jetzt inkl. `jaxa-gportal-cdn`-Dispatch (siehe `## Offen — eigen`).
 - **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen (Operator/Datenträger).
-- **Frontier-Antworten liegen vor:** `terms`-Vokabel-Quorum (6 Seats, `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`) — `unbestimmt`/`ohne-lizenz`, Quellen-Eigentümer; getragener Riss bei (b). SPDX-Migration gestellt: 3/3 = (b) migrieren (`..._terms-spdx-ui-antworten.md`). **Braucht:** Operator-Entscheid zum (b)-Riss (`keine`/NONE vs. `ohne-lizenz`) + SPDX-Migrationsauftrag (Mountain-Pen).
+- **Frontier-Antworten liegen vor:** `terms`-Vokabel-Quorum (6 Seats, `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`) — `unbestimmt`/`ohne-lizenz`, Quellen-Eigentümer; getragener Riss bei (b). SPDX-Migration gestellt: 5/5 = (b) migrieren (`..._terms-spdx-ui-antworten.md`). **Braucht:** Operator-Entscheid zum (b)-Riss (`keine`/NONE vs. `ohne-lizenz`) + SPDX-Migrationsauftrag (Mountain-Pen).
 
 ## LOCK
 
