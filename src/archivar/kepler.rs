@@ -1,6 +1,6 @@
 pub const GM_SUN_M3_S2: f64 = 1.32712440018e20;
 pub const AU_M: f64 = 1.495978707e11;
-const OBLIQUITY_DEG: f64 = 23.4392911;
+const ECLIPTIC_J2000_OBLIQUITY_DEG: f64 = 23.4392911;
 const TAU: f64 = 2.0 * std::f64::consts::PI;
 
 pub fn solve_kepler_ecc(mean_anomaly_rad: f64, e: f64) -> f64 {
@@ -81,7 +81,7 @@ pub fn elements_to_icrs_state(el: &KeplerElements) -> Option<([f64; 3], [f64; 3]
     let vxe = r11 * vx_orb + r12 * vy_orb;
     let vye = r21 * vx_orb + r22 * vy_orb;
     let vze = r31 * vx_orb + r32 * vy_orb;
-    let (se, ce) = OBLIQUITY_DEG.to_radians().sin_cos();
+    let (se, ce) = ECLIPTIC_J2000_OBLIQUITY_DEG.to_radians().sin_cos();
     Some((
         [xe, ye * ce - ze * se, ye * se + ze * ce],
         [vxe, vye * ce - vze * se, vye * se + vze * ce],

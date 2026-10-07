@@ -1,16 +1,15 @@
 pub const FIELD_WGSL: &str = r#"
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_ex: vec4f, presence: vec4f };
 const C_VACUUM: f32 = 299792458.0;
-const AUDIO_SPEED_AIR: f32 = 343.0;
 const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
     C_VACUUM,
     C_VACUUM,
-    AUDIO_SPEED_AIR,
-    6000.0,
-    3000.0,
-    0.3,
-    0.05,
-    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
     C_VACUUM,
 );
 const TWO_PI: f32 = 6.283185307179586;

@@ -663,8 +663,6 @@ mod tests {
             j4: None,
             radii_b: None,
             radii_c: None,
-            nut_ra: None,
-            nut_dec: None,
             nutation: None,
             omega_g: None,
         }
