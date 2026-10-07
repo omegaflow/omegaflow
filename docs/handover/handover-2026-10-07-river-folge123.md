@@ -3,7 +3,7 @@
   session: River-Folge 123
   class: handover
   date: 2026-10-07
-  sha256: 364c3d8ef659bd232465438d71cfb13979777196c4de637a1d285a52adc2473c
+  sha256: e373eeee353e6d5f1598bf8fa46a98fa539a38cdae0dd3d2512a4402074ea538
   status: live
 -->
 # Handover — River-Folge 123 (2026-10-07)
@@ -31,16 +31,16 @@ DeepSeek-flash** (`opencode.json`: alle nicht-DeepSeek-Agenten + alle pro/max de
 
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`class: sheet`, `status: unsealed`) — Träger dieser Linie; Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-03-exzellenz-gate.md` — Label geschlossen (`:111`, gemessen 2026-10-07).
-- `docs/paper/gic-causal-driver.md` — NUR-Asset-Zeile eingetragen (2026-10-07, sha `e8915d29…`).
+- `docs/paper/gic-causal-driver.md` — NUR-Asset-Fakten §6, neue §4.7 (dB/dt–GIC-Relation, r = 0.9448), Zitat-Korrektur Viljanen→Juusola (2026-10-07).
 
 ## Offen (aufgeschlüsselt)
 
-### NUR-dB/dt–GIC-Relation — Datenkanal manifestert; Relation der nächste Bau-Atom
-- **Status:** autonom (eigener Bau) | **Bindung:** eigen
-- **Trigger:** keiner — eigener Schritt; nächster Bau-Atom nach dem Format-Fix.
-- **Lage:** (gemessen 2026-10-07, River 123 via `archive_search --sniff`/`--verdict`) NUR 10 s dB/dt ist CDN-Asset `fmi_image_mag_nur.bin` (`phi/sources.φ:18030`): 15 551 948 B, sha256 `9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e`, HTTP 206 (stage-1 direct). Paper §6 (`docs/paper/gic-causal-driver.md:613-618`) trägt die Asset-Fakten; die sub-daily Relation selbst ist ungemessen.
-- **Blockade:** kein Reader/Probe-Bin für `fmi_image_mag_dxdt` × `fmi_gic` (GIC stündliche Buckets, NUR 10 s) — kein vorhandener Probe konsumiert das NUR-Asset (gemessen: `sgrep image_mag tools/measure` = 0).
-- **Braucht:** neuer bounded Bau: Probe-Bin, der NUR-dx/dt lädt + stündlich aggregiert, gegen `fmi_gic`-Buckets (1999–2023) korreliert (Viljanen 2025 Eq. 43), Zahl → Paper §4; `cargo run -p omegaflow-measure --bin <name>`.
+### NUR-Asset — 30-Tage-Fenster überlappt die GIC-Reihe nicht (Re-Harvest)
+- **Status:** wartend (Mycelium) | **Bindung:** eigen (cross-line mycelium)
+- **Trigger:** neuer `image-cdn.yml`-Lauf mit einem Fenster in 1999–2023.
+- **Lage:** (gemessen 2026-10-07 via `nur_gic_relation_probe`) das Asset `fmi_image_mag_nur.bin` trägt 30 Tage **2023-12-31…2024-01-30 UTC** (259 199 Sätze, 10 s); `fmi_gic.bin` endet **2023-10-01 UTC** → **0 überlappende Stunden**. Die Relation selbst wurde daher auf dem Halloween-Sturm `2003-10-29…31` gemessen (NUR 10 s × GIC stündlich): 72 alignierte Stunden, Peak-Stunde 2003-10-29T06:00Z |ΔX/10s| = 240.9 nT/10s / |I| = 57.05 A, **Pearson r = 0.9448**, OLS |GIC| = 0.2118·|ΔX/10s| + 1.755 A — eingetragen in Paper §4.7.
+- **Blockade:** das manifestierte Asset-Fenster (Mycelium-Ernte).
+- **Braucht:** `image-cdn.yml`-Lauf mit `--start` in 1999–2023 (z. B. `20031029`, `--days ≥ 3`) + sha zurück ins Register (`phi/sources.φ:18030`); danach die Relation auf dem Asset selbst reproduzierbar.
 
 ### GIC-Familien — Rat-Verdikt Route C (Stufe 2); Generator + Familien-Kanal-Listen gebaut; Stufe-2-Pool wartet auf dB/dt-Bestand
 - **Status:** wartend (Mountain-dB/dt) | **Bindung:** eigen (cross-line mountain)
@@ -101,7 +101,8 @@ Origin: river-123.
 
 Origin: river-123.
 
-- **Lizenz-Census-Generator umhängen (Rat-Verdikt, 2026-10-07, Option (c)):** `license_census.rs` joint zur Gate-Zeit **direkt gegen `phi/sources.φ`** (nicht gegen `state/river/license-census.tsv`; `state/` ist gitignored → CI-Tor strukturell unbaubar). **CI-Drift-Tor:** (i) jeder `terms`-Wert ∈ geschlossener Vokabel; (ii) jeder Quellenblock ohne `terms` bildet auf eine lebende `pending`-Dispositions-Zeile ab (Mountains Teil); (iii) Tree-Count − `terms`-Count = Zahl der `pending`-Lizenz-Zeilen. Alles aus getrackten Dateien — keine zweite Wahrheit. Der `state/`-Pregate bleibt Komplement/Stehender-Pass-Prüfung, nie das Tor. **Riss benannt:** Census 162 vs Baum 160 ist der eingetretene Snapshot-Drift; kein Snapshot mehr.
+- **Lizenz-Census-Generator umhängen (Rat-Verdikt, 2026-10-07, Option (c)):** `license_census.rs` joint zur Gate-Zeit **direkt gegen `phi/sources.φ`** (nicht gegen `state/river/license-census.tsv`; `state/` ist gitignored → CI-Tor strukturell unbaubar). **CI-Drift-Tor:** (i) jeder `terms`-Wert ∈ geschlossener Vokabel; (ii) jeder Quellenblock ohne `terms` bildet auf eine lebende `pending`-Dispositions-Zeile ab (Mountains Teil); (iii) Tree-Count − `terms`-Count = Zahl der `pending`-Lizenz-Zeilen. Alles aus getrackten Dateien — keine zweite Wahrheit. Der `state/`-Pregate bleibt Komplement/Stehender-Pass-Prüfung, nie das Tor. **Riss benannt:** Census 162 vs Baum 160 ist der eingetretene Snapshot-Drift; kein Snapshot mehr. *(Deckung: `archive_search`-Recherche 2026-10-07 — W3C PROV, Buneman et al. ICDT 2001, Event Sourcing, dbt compute-from-source; Option (c) ist der Lehrbuchpfad gegen Update-Anomalien.)*
+- **NUR-Asset re-harvest (dB/dt–GIC-Kette):** `fmi_image_mag_nur.bin` trägt nur 30 Tage **2023-12-31…2024-01-30 UTC**, `fmi_gic.bin` endet **2023-10-01 UTC** → kein Überlapp. **Braucht:** `image-cdn.yml`-Lauf mit `--start` in 1999–2023 (z. B. `20031029`, `--days ≥ 3`, `--stations NUR`, `--sample-rate 10`) + sha zurück ins Register (`phi/sources.φ:18030`); die Relation ist auf dem Halloween-Sturm bereits gemessen (Paper §4.7, r = 0.9448).
 
 ## LOCK
 
@@ -113,8 +114,9 @@ Origin: river-123.
 Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `tools/measure/src/bin/cgm_lat_partition.rs` (Format-Fix, schließt Stehender-Pass-`format`-Zeile)
-- `docs/paper/gic-causal-driver.md` (NUR-Asset-Fakten §6 + header-sha)
+- `tools/measure/src/bin/nur_gic_relation_probe.rs` (neu — dB/dt–GIC-Relation, §4.7)
+- `docs/paper/gic-causal-driver.md` (NUR-Asset §6, neue §4.7, Zitat-Korrektur)
 - `docs/handover/handover-2026-10-07-river-folge123.md` (neu)
 - `docs/handover/archiv/handover-2026-10-07-river-folge122.md` (Move)
 
-## Burn: open 0.0000 · close 0.0250 · cap 0.20 (Operator-Wort 2026-10-07) · Grund: River 123 — Line-Session (deepseek-flash), ein Pass. **Erster Pass:** `--fired river` 2 Punkte (`ozzy` FIRED_UNGEMESSEN, `em-apertur` FIRED), CI am HEAD `queued` (`ci_manage`) — kein grüner Lauf; `--stale` 0; `--addressed river` 2 Blöcke (mountain-264, mycelium-259) gefaltet; `open_points_check` clean (1 word-carried `:62` = known). **Gemessen/gebaut:** `cargo fmt` setzt `cgm_lat_partition.rs` auf die fmt-Form (die 3 format-Diff-Sites :194/:230/:457 geheilt) — `cargo build -p omegaflow-measure --bin cgm_lat_partition` grün; ein versehentlicher rustfmt-Zusatz am fremden `register_lookup.rs` rückgängig gemacht (nur eigene Pfade). `archive_search --sniff`/`--verdict` am NUR-Asset: HTTP 206, 15 551 948 B, sha `9c76f881…` == Register. **Rat (flash, 2026-10-07):** Lizenz-Census-Heimat = Option (c), `phi/sources.φ` als einzige Quelle, 162-pending je Netloc (Mountain), CI-Tor aus getrackten Registern; Verdikt in Handover + `## An mountain`/`## An mycelium`. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send. **Nicht gebaut:** NUR-dB/dt–GIC-Probe (nächster Bau-Atom); `src/archivar/units.rs` + Tree von fremder Session berührt — nicht angefasst.
+## Burn: open 0.0000 · close 0.1109 · cap 0.20 (Operator-Wort 2026-10-07) · Grund: River 123 — Line-Session (deepseek-flash), ein Pass. **Erster Pass:** `--fired river` 2 Punkte (`ozzy`/`em-apertur`, CI `queued`/`unread`); `--stale` 0; `--addressed river` 2 Blöcke gefaltet; `open_points_check` clean (1 word-carried). **Format-Fix:** `cargo fmt` auf `cgm_lat_partition.rs` (3 Diff-Sites :194/:230/:457), Build grün; fremder rustfmt-Zusatz `register_lookup.rs` 2× rückgängig gemacht. **Gebaut/gemessen:** `nur_gic_relation_probe.rs` (neuer Bin) — Asset-Probe: NUR 30 Tage 2023-12-31…2024-01-30 UTC, GIC-Ende 2023-10-01 UTC → **0 Überlapp** (Riss); Relation auf Halloween-Sturm 2003-10-29…31 gemessen: 72 h, Peak 240.9 nT/10s / 57.05 A, **r = 0.9448**, OLS 0.2118·|ΔX/10s| + 1.755 → Paper §4.7. **Recherche-Schicht (Operator-Wort):** `general`-Flash-Recherche (2) — (1) Zitat-Riss: der Anker ist **Juusola et al. 2025** (nicht Viljanen), Eq. 43 ist 3-Komponenten-Regression @10 s (CC 0.80) ≠ unser Skalar-Peak; Paper korrigiert; (2) Register-Einzige-Quelle: Option (c) gedeckt durch W3C PROV/Buneman/dbt/Event-Sourcing. **Rat (flash):** Lizenz-Census Option (c). **UI-Kanal (Operator-Wort):** `river-ui` → Duck.ai (GPT-6 Luna) bestätigt den Zitat-Riss (erster Autor Juusola; Eq. 43 = 3-Komponenten-Fit MAN-GIC vs NUR ∂Bx/∂t,∂By/∂t,∂Bz/∂t) und: Stunden-Peak-Skalar ist eine gültige deskriptive Assoziation, aber **keine** vorzeichen-tragende Transfer-Funktion; ein seitenspezifischer Fit behält üblicherweise Vorzeichen + Komponenten bei der Mess-Kadenz. Die starken UI-Seats (Claude/GLM) liegen in der Gruppe `1-ui`, die die Brücke als „owned by another client" verweigert (gemessen). **Gegengelesen (Operator-Kritik):** danach die **Arbeit gebaut**, nicht nur Dokument. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send. Fremde Baum-Hunks (`units.rs`, `phi/sources.φ`, `commit_gate*`, `AGENTS.md`, `intermagnet_dbdt_compiler.rs`) nicht angefasst.
