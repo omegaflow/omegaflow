@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: 7bcbf7f025e80cfcec8135e6992515992996eb0470adc65e8a006994f4a12902
+  sha256: 8b3c1639330a49cc12f529f7c14ad1dfc0f0da355e4124847b5f0ab030f8d8eb
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -70,6 +70,9 @@ Wort | Datum | Quelle
 „und dann nimm die ui chats dazu (die tabs sind alle offen)" — den zweiten Kanal (UI-Frontier) je Tab als eigene Stimme mitnehmen | 2026-10-07 | Operator (Session, Mountain 264)
 „hast du wirklich alle stimmen? ich sehe z.b. kimi nicht · bitte weiter" — Kimi K3 fehlte (Header-Abbruch beim Senden), nachreichen | 2026-10-07 | Operator (Session, Mountain 264)
 „bitte frage die fehlenden tabs noch ab und finde einen weg das zu klären unbelegt: … evtl musst du nochmal einen flash taucher mit harten bandagen losschicken" — die vier `unbelegt`-Einheiten klären (flash-Taucher) + fehlende Tabs nachfassen | 2026-10-07 | Operator (Session, Mountain 264)
+„bitte lade die tabs neu und gib die fragen ein" — Reload + Erneut-Eingeben | 2026-10-07 | Operator (Session, Mountain 264)
+„du hast nicht umgestellt / du hast die trying open modelle nicht umgestellt" — der Reload setzt die Tryingopen-Modelle auf den Default; der Wähler muss den `<button>` im `<li>` treffen und der Modellname danach gegengelesen werden | 2026-10-07 | Operator (Session, Mountain 264)
+„und ihr müsst das auch bei den chat uis berücksichtigen ihr nutzt sonst leider immer standard anstatt max thinkin deep search (falls die frage search erfordert)" — bei UI-Chats vor dem Senden **max thinking / deep search** wählen (Claude Effort „Extra hoch", z.ai Deep Think, Qwen Max+Denken, Duck Begründung+Werkzeuge), nicht Standard | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
