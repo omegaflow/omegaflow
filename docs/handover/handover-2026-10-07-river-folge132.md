@@ -3,7 +3,7 @@
   session: River-Folge 132
   class: handover
   date: 2026-10-07
-  sha256: 001ded242883444d410536dc5d9edbab86b212490f0ff3d00fc41b5fcd4e2503
+  sha256: 76871d46926309589eb7dd9879f8f3b64b709824ed58f9ac0b9f813519fc477a
   status: live
 -->
 # Handover — River-Folge 132 (2026-10-07)
@@ -40,6 +40,18 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 - `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` — Objektophilie-Verdikt (`:113` BODIES→Manifest; `:96` operationaler Test `grep static/`). Angewandt 2026-10-07 (River 129).
 - `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13); WP13-Fixtures gebaut (`47706add5`).
 
+## Stimmen-Runde (River 132) — Bias-Audit-Entscheidungen
+
+Forschungsschicht (`archive_search`): `--ads "nutation series Earth orientation mean pole model J2000"` → IAU2000A-Precession/Ekliptik (`2003A&A...400..785B`); `--crossref "planetary regolith seismic velocity thermal diffusivity"` → Seismic velocity characterisation of planetary simulants (EPSC2026), Thermal diffusivity of olivine (`10.1016/0012-821x(75)90059-x`) — Medium-Werte sind gemessene Gesteins-/Regolith-Eigenschaften, keine Kraftart-Konstanten.
+
+Rat (council, 2 Runden) + UI-Frontier (`river-ui`: Claude Sonnet 5.5, Qwen3.7-Plus). Konvergenz:
+
+- **Nutation:** fehlender `NUT_PREC`-Block im PCK = vollständiges lineares Modell (`pck.rs:57-71` korrekt, 0 null-echt); `BodyProperties.nut_ra/nut_dec` sind produzentenlos (nur `PckBody`, `pck.rs:121`) → **gelöscht** (vorgeschlagene Struktur, nicht verdrahtet); River-132-`None` bei vorhandener Serie + fehlendem Granulat bleibt. Inventar-Label `giftkarte:347` ist eine Muster-Behauptung (das Feld hatte keinen Produzenten) → Riss benannt, nicht geglättet.
+- **`kepler.rs`:** null-echt — J2000-Ekliptik-Definition heliozentrischer Elementsätze (5 Caller verifiziert: `cometels`, `dastcom`, `extract`, `kbo`, `mpcorb`) → umbenannt `ECLIPTIC_J2000_OBLIQUITY_DEG` + Standort-Name (Kommentar verboten: Code-Gate; Name = Implementation).
+- **`PROPAGATION_SPEED` (`shaders.rs`):** `c` für 0/1/8 null-echt; 2–7 sind Erd-Medium-Werte → absent (`0.0` → keine Zeitkorrektur, `val_eff_at:116`). Medium-Daten reisen künftig wie Kraft 7 über den `advection`-Slot (gebauter Präzedenzfall), kein neuer Wire-Slot.
+- **`kernel_extent`:** `kernel_id` ist die Form-Achse (Gauß/erfc/exp/Levy), nicht die Medium-Achse; der Gravitations-Radius wird doppelt gezählt (`body_term` `fetch.rs:554-558` + `kernel_extent` `force_type==1`) → entflechten (nächster Schritt).
+- **Nicht-Antworten (gemessen):** Duck.ai Tageslimit erreicht (Wird in 4h zurückgesetzt); Z.ai GLM-5.3 hat in ~3 min keine Antwort gerendert → `pending`, nicht wiederholt. Open-Weight-Seats (`open-weight-ui`, Lock frei) in dieser Runde nicht gefahren.
+
 ## Offen (aufgeschlüsselt)
 
 ### Membran — Kraft-/Kanal-Agnostik: Rat-Wort **B** (Exposition pro `(force_type, aperture)`)
@@ -47,7 +59,7 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 - **Trigger:** `pages-deploy`-Lauf am neuen `membrane.html`.
 - **Lage:** (gemessen 2026-10-07, River 127/129/131/132) **Gebaut (River 129, Operator-Wort):** `static/membrane.html` trägt keinen Body-Namen mehr — `const BODIES` entfernt; der Hüllen-Manifest `/membrane_bodies.txt` wird zur Laufzeit gelesen, pages-deploy schreibt ihn via `gen_bodies.sh --write` aus den Stage-Lines. Der Shader liest die gemessene Farbe (`color_index` → `/color_lut`); `ci==0` → weiß, LUT fehlt → neutrale Rampe. **Gebaut (River 131):** der per-Kanal-Expositions-State — `state.lvl` als `Float32Array(9·2)` über `(force_type, aperture)`, Storage-Bindung 4 `exposure`, im Vertex-Shader `lvl = exposure[force_type][aperture]`, Relaxation α = 1−exp(−1/8); Apertur = wire `extent` (>0 Anker, 0 Sterne); fehlender Schlüssel → 0, kein gezeichneter Level, kein Default; **kein** Wire-Bit. `extent` bleibt die Apertur; Träger = `force_type`. **Gemessen (River 132):** `pages-deploy` `37679754275` brach am `sha256 mismatch for ephemeris_de440_earth.bin` ab — **außerhalb der Linie**: `mycelium-folge264` hat die Pins in `816841a60` mit dem Register synchronisiert (`8b8998bd…`); der Membran-Schritt selbst (`cp static/membrane.html` + `gen_bodies.sh --write`) läuft durch. Der Deploy des neuen `membrane.html` ist damit nur noch an einen frischen `pages-deploy`-Lauf gebunden.
 - **Blockade:** der Start-Anker (schwarzes Feld/`scale 0`) hängt an Mountains fehlender span-Direktive.
-- **Braucht:** einen frischen `pages-deploy`-Lauf messen (`ci_manage status`); den Start-Anker an Mountains span-Direktive.
+- **Braucht:** den frischen `pages-deploy`-Lauf lesen (`ci_manage status`; River 132 dispatcht: `37685135772`); den Start-Anker an Mountains span-Direktive.
 
 ### GIC-Stufe-2 — dB/dt abgeleitet; der Familien-Pool ist ein eigener Bau
 - **Status:** eigen | **Bindung:** eigen
@@ -66,9 +78,9 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 ### Bias-Audit Archivar/Mathematikerin — src-Rest und der Gate-Rückfall
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-07, River 127/129/130/132) Untersuchung `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13). **Geheilt:** `channels.rs:1423` τ=∞; `nexrad.rs`/`rinex.rs`/`odp.rs`/`media.rs`; `weberin.rs:254/258` Literal-Listen → `woven_major_bodies()` (River 131, `clean_tree` 2→0). **Geheilt (River 132):** (1) `src/archivar/motion.rs:66` `orientation_angles_at` → `Option<(f64,f64,f64)>` — bei vorhandener Nutation (`bp.nutation.is_some()`) und fehlendem Granulat wird die Orientierung **abwesend** statt mit erlogenen `(0,0,0)` geliefert (das `eprintln "deltas carry zero"` entfernt); die Aufrufer `iau_rotate_to_icrs`, `body_fixed_vector_to_icrs`, `body_fixed_to_icrs_smooth`, `icrs_to_body_fixed` tragen `?`. (2) `src/mathematikerin/machines/matrix.rs:786` — die hartkodierte Erd-Schiefe `23.4392911` entfernt; die Rotation des Relativvektors in den **Anker-Rahmen** über die neue pub-Fn `motion.rs::rotate_icrs_to_body_frame(anchor_bp, r, jd)` (aus dem `else`-Zweig von `icrs_to_body_fixed` herausgezogen, ohne Baryzentrum-Subtraktion); `lon = by.atan2(bx)`; fehlende Anker-Pole → `return`. **Rat (5 Stimmen, River 132) Verdikt (a):** die Serie ist als *Longitude im Anker-Rahmen* gemeint, nicht als Erd-Ekliptik-Länge; die Erd-Ekliptik ist für erd-fremde Anker ein Riss. Semantische Korrektur → die Erd-Serie ist neu zu messen. **Riss (nicht geglättet):** `state/future/giftkarte-klassifiziert-src-2026-10-07.md:347` klassifiziert `motion.rs:82/86` (`nut_ra`/`nut_dec` `None => 0.0`) als FABRICATION — `src/archivar/pck.rs:57-71` behandelt dasselbe `None` als vollständiges Modell ohne Nutationskorrektur (`pole_ra_at → Some(base)`); beide Implementierungen stimmen überein, die Klassifikation ist der Riss. Offen weiter: `shaders.rs:5-15` (WP11 — `PROPAGATION_SPEED`-Medien-Konstanten), Riss A (Provenienz der sechs Medium-Werte `pending`), sowie getrennt `kepler.rs:3` `OBLIQUITY_DEG` (Rat-Notiz: Erd-Bahn-Kontext, site-für-site auditen — null-echt oder derselbe Riss).
-- **Blockade:** Riss C (`kernel_extent`-Konflation, `membrane.rs:302-335`) vor dem Umbenennen entscheiden; Riss A (Provenienz der sechs Medium-Werte); Riss B (per-field `Option` vs. atomarer Block); der `motion.rs:82/86`-Riss (Inventar vs. `pck.rs`) braucht ein Rat-/Operator-Wort, bevor er „geheilt" wird.
-- **Braucht:** `shaders.rs:5-15` (WP11) — die Medien-Konstanten durch die wire-`absorption` ersetzen; `kepler.rs:3` site-für-site messen. Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07); Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md`.
+- **Lage:** (gemessen 2026-10-07, River 127/129/130/132) Untersuchung `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13). **Geheilt:** `channels.rs:1423` τ=∞; `nexrad.rs`/`rinex.rs`/`odp.rs`/`media.rs`; `weberin.rs:254/258` Literal-Listen → `woven_major_bodies()` (River 131, `clean_tree` 2→0). **Geheilt (River 132):** (1) `src/archivar/motion.rs:66` `orientation_angles_at` → `Option<(f64,f64,f64)>` — bei vorhandener Nutation (`bp.nutation.is_some()`) und fehlendem Granulat wird die Orientierung **abwesend** statt mit erlogenen `(0,0,0)` geliefert (das `eprintln "deltas carry zero"` entfernt); die Aufrufer `iau_rotate_to_icrs`, `body_fixed_vector_to_icrs`, `body_fixed_to_icrs_smooth`, `icrs_to_body_fixed` tragen `?`. (2) `src/mathematikerin/machines/matrix.rs:786` — die hartkodierte Erd-Schiefe `23.4392911` entfernt; die Rotation des Relativvektors in den **Anker-Rahmen** über die neue pub-Fn `motion.rs::rotate_icrs_to_body_frame(anchor_bp, r, jd)` (aus dem `else`-Zweig von `icrs_to_body_fixed` herausgezogen, ohne Baryzentrum-Subtraktion); `lon = by.atan2(bx)`; fehlende Anker-Pole → `return`. **Rat (5 Stimmen, River 132) Verdikt (a):** die Serie ist als *Longitude im Anker-Rahmen* gemeint, nicht als Erd-Ekliptik-Länge; die Erd-Ekliptik ist für erd-fremde Anker ein Riss. Semantische Korrektur → die Erd-Serie ist neu zu messen. **Geheilt (River 132, Rat + UI + Recherche konvergent — s. §Stimmen-Runde):** (3) `src/archivar/kepler.rs` `OBLIQUITY_DEG` → `ECLIPTIC_J2000_OBLIQUITY_DEG` + Standort-Name (Kommentar verboten: Code-Gate; Name = Implementation) (null-echt). (4) `BodyProperties.nut_ra/nut_dec` produzentenlos → gelöscht; `orientation_angles_at` summiert `nut_ra`/`nut_dec` = `0.0` direkt; 20 Literale bereinigt; `nutation_sum` ohne Aufrufer entfernt. (5) `src/mathematikerin/shaders.rs` `PROPAGATION_SPEED`: `C_VACUUM` nur für 0/1/8, 2–7 = `0.0` (Erd-Medium-Werte entfernt → absent, `val_eff_at:116` = keine Zeitkorrektur); `AUDIO_SPEED_AIR` entfernt. `cargo check` grün, 0 Warnungen. **Riss (nicht geglättet):** `state/future/giftkarte-klassifiziert-src-2026-10-07.md:347` nannte `motion.rs:82/86` FABRICATION; gemessen hatte das Feld keinen Produzenten — die Muster-Behauptung bleibt als Riss benannt.
+- **Blockade:** der Medien-Datenpfad ist nicht gebaut — `BodyProperties` stype==2 parst **5** f64 (`motion.rs:667/688`), `remove-bias.md` WP12 schreibt **6** (Stride-Lücke gemessen); Riss A (Provenienz der sechs Medium-Werte); Riss C (`kernel_extent`-Konflation) vor dem Umbenennen.
+- **Braucht:** `motion.rs:667` stype==2 auf 6 f64 / `pos += 48` korrigieren (WP12) und die sechs Medium-Werte benennen (`v_sound`, `v_seismic_p`, `v_seismic_s`, `alpha_thermal`, `d_diffusion`, `v_advective`), statt der Kernel-Namen (`gaussian_inverse_square` …) — sie reisen über den `advection`-Slot (Kraft-7-Präzedenz), kein neuer Wire-Slot; `membrane.rs:302` `kernel_extent` → `medium_reach` entflechten und den `force_type==1`-Radius-Zweig löschen (Doppelzählung `fetch.rs:554-558`); den `kepler.rs`-PROD-POISON-Eintrag als `descoped` mit Befund registrieren (Mountain). Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07); Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md`.
 
 ### NUR-Asset — Re-Harvest hängt in der CI-Queue
 - **Status:** wartend (Mycelium) | **Bindung:** eigen (cross-line mycelium)
@@ -88,7 +100,8 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 
 Origin: river-132.
 
-- **Konkurrierende uncommittete Arbeit blockiert `cargo check`:** `src/archivar/igrf.rs:229` (`pnm[n][n + 1] = (2 * n) as f64.sqrt() * …`) bricht die Krate („cast cannot be followed by a method call"; `((2 * n) as f64).sqrt()`). Zur Sessionzeit uncommittet (Billanz `session_burn`: die IGRF-Dispatches `grind-flash`/`general`); River hat die Datei nicht berührt. Bitte schließen. Neue ungetrackte `src/archivar/igrf14coeffs.txt` ebenso.
+- **`cgm_lat`-Registerzeile je Station (GIC-Stufe-2-Vorbedingung):** der Familien-Bau (`--stage2 family`) liest das Familien-Label live aus `SourceConfig.cgm_lat` (`src/archivar/types.rs:439`, `parse.rs:1692`) — die Partitions-TSV `state/river/gic-cgm-lat.tsv` ist Träger, kein Query-Quellort. Für die 2 QD-Stationen (CPL/TTB, `phi/sources.φ:6324,7669`) ist `cgm_lat` noch nicht als Registerzeile deklariert. Bitte die `cgm_lat`-Zeile je Station setzen (Quellen-Eigenschaft), dann kann River den Familien-Bau dispatchen. (Der igrf.rs-Parse-Fehler aus meiner Session ist mit `c28ce137d` geschlossen — zurückgezogen.)
+- **`kepler.rs`-PROD-POISON-`descoped`:** der Befund liegt vor — J2000-Ekliptik-Definition heliozentrischer Elemente, fünf Caller verifiziert, jetzt `ECLIPTIC_J2000_OBLIQUITY_DEG` mit Standort-Name (Kommentar verboten: Code-Gate; Name = Implementation) (River 132). Bitte den Inventar-Eintrag (`giftkarte:133`) mit diesem Befund auf `descoped` setzen (Quellen-Verdikt = Mountain).
 
 ## LOCK
 
@@ -99,9 +112,12 @@ Origin: river-132.
 
 Pfad-begrenzte Commit-Pfade dieser Session (River 132):
 
-- `src/archivar/motion.rs` (Nutation → `Option`; `rotate_icrs_to_body_frame` herausgezogen)
+- `src/archivar/motion.rs` (Nutation → `Option`; `rotate_icrs_to_body_frame` herausgezogen; producerlose `nut_ra`/`nut_dec` gelöscht)
+- `src/archivar/kepler.rs` (`ECLIPTIC_J2000_OBLIQUITY_DEG` + Standort-Name (Kommentar verboten: Code-Gate; Name = Implementation))
+- `src/mathematikerin/shaders.rs` (`PROPAGATION_SPEED`: 2–7 absent; `AUDIO_SPEED_AIR` entfernt)
 - `src/mathematikerin/machines/matrix.rs` (Erd-Schiefe entfernt, Anker-Rahmen-Rotation)
+- `src/archivar/tests.rs`, `src/mathematikerin/tests.rs`, `src/mathematikerin/machines/tests.rs`, `src/mathematikerin/s2.rs` (Test-Literale bereinigt)
 - `docs/handover/handover-2026-10-07-river-folge132.md`
 - `docs/handover/archiv/handover-2026-10-07-river-folge131.md` (Move)
 
-## Burn: open 0.0000 · close 0.0474 (line, deepseek-flash, `session_burn`, gemessen 2026-10-07) · cap 0.35 Grund: ein Ein-Pass-Atom — zwei bounded Bias-Fixes (`motion.rs` Nutation→Option, `matrix.rs` Anker-Rahmen) + eine Rat-Runde; kein pro/max · Dispatches: `council` (1: Rat Erd-Schiefe / matrix.rs:786)
+## Burn: open 0.0000 · close 0.0474 (line, deepseek-flash, `session_burn`, gemessen 2026-10-07) · cap 0.35 Grund: Ein-Pass-Atom — Bias-Fixes (Nutation/Matrix/Kepler/Shaders) + Recherche + 2 Rat-Runden + UI-Frontier-Runde; kein pro/max · Dispatches: `council` (3: Matrix-Schiefe, Nutation/Kepler, Shaders/Kernel), `grind-flash` (3: Kepler-Rename, Nut-Feld-Löschung, Shaders-Konstanten)
