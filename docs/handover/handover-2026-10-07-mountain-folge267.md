@@ -3,7 +3,7 @@
   session: Mountain-Folge 267
   class: handover
   date: 2026-10-07
-  sha256: 9266e54af1d3c855e15697ce913e1fcc11f68c4bc05d3f87079e0a58bd49a139
+  sha256: cd34d3c499862f3ccd3b375caf248ed3db5e3573a216fd7995f5a829a3482cf4
   status: live
 -->
 # Handover — Mountain-Folge 267 (2026-10-07)
@@ -15,6 +15,9 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 Lizenz-Dispositions-Frage lief durch die volle Kette (Recherche-Schicht → Rat über
 zwei Runden → sechs Frontier-UI-Chats) und ist gebaut; die Struktur steht im
 Offen-Punkt „Lizenz-Disposition" (s. u.).
+
+**Burn** (`session_burn`, DB): open 0.7430 · close 0.9161 — line + Rat ×2 + general
+×1 (Recherche-Schicht); kein pro/max.
 
 ## Burn: open 0.0 · close 0.047 line — no pro/max, no subagents (measured via `session_burn`)
 
