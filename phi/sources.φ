@@ -3835,9 +3835,9 @@ origin https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
 compiler tools/harvest/src/bin/wind_waves_compiler.rs
 at wind
 ttl 86400
-field wind_waves_rad1 wind_waves_rad1 gaussian-inverse-square em V 86400 0.0 0.0
-field wind_waves_rad2 wind_waves_rad2 gaussian-inverse-square em V 86400 0.0 0.0
-field wind_waves_tnr wind_waves_tnr gaussian-inverse-square em V 86400 0.0 0.0
+field wind_waves_rad1 wind_waves_rad1 gaussian-inverse-square electric V 86400 0.0 0.0
+field wind_waves_rad2 wind_waves_rad2 gaussian-inverse-square electric V 86400 0.0 0.0
+field wind_waves_tnr wind_waves_tnr gaussian-inverse-square electric V 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-dastcom/dastcom_asteroids.bin
 format catalog_dastcom
