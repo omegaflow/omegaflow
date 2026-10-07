@@ -3,7 +3,7 @@
   session: River-Folge 132
   class: handover
   date: 2026-10-07
-  sha256: c000017f8a8b5417971449ebec9607e8c5c9c91fe1da2fd8c02428aae1e6d4d3
+  sha256: 3ca154164488b1d955c5eeade23ce49315c15dbc00c5a2d23af27134ca299698
   status: live
 -->
 # Handover — River-Folge 132 (2026-10-07)
@@ -93,7 +93,7 @@ Rat (council, 2 Runden) + UI-Frontier (`river-ui`: Claude Sonnet 5.5, Qwen3.7-Pl
 ### CI-Gate-Rot auf `9f582918b` — drei geheilt, einer Mountain's
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** neuer `ci-gate`-Lauf am HEAD `ab5fd7511`.
-- **Lage:** (gemessen 2026-10-07 via `ci_manage log 37691117550`) vier Ursachen: (1) clippy `src/weberin.rs:473/482` `map_or(false, …)` → `is_some_and`; (2) format `src/mathematikerin/machines/matrix.rs:750`; (3) path_reference_scan `docs/concepts/remove-bias.md:7` see-also → `docs/handover/handover-...-river-folge127.md` (nach `archiv/` gewandert). **Geheilt und committet** (`ab5fd7511`). Der vierte, `dropped-set-gate` (neuer Schlüssel `auftrag auftrag-bias-tilgung bias-tor docs gegated klassen-token körper-namen md`), ist **Mountain's Bias-Tor-Punkt** (`docs/handover/handover-2026-10-07-mountain-folge270.md:131`) — nicht River.
+- **Lage:** (gemessen 2026-10-07 via `ci_manage log 37691117550`) vier Ursachen: (1) clippy `src/weberin.rs:473/482` `map_or(false, …)` → `is_some_and`; (2) format `src/mathematikerin/machines/matrix.rs:750`; (3) path_reference_scan `docs/concepts/remove-bias.md:7` see-also → `docs/handover/archiv/handover-2026-10-07-river-folge127.md` (in `archiv/` gewandert). **Geheilt und committet** (`ab5fd7511`). Der vierte, `dropped-set-gate` (neuer Schlüssel `auftrag auftrag-bias-tilgung bias-tor docs gegated klassen-token körper-namen md`), ist **Mountain's Bias-Tor-Punkt** (`docs/handover/handover-2026-10-07-mountain-folge270.md:131`) — nicht River.
 - **Blockade:** die Dropped-Set-Baseline/der Bias-Tor gehört Mountain.
 - **Braucht:** `ci_manage log 37692096955` (neuer Lauf) lesen; Mountain's Teil bleibt dessen.
 
