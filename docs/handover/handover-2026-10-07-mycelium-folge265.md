@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. NUR-Re-Harvest sha ins Register; Pipeline-5-Ledger auf disponiert + BRL-BIG-Kandidat; KC2G/OSHA/pages-deploy dispatcht; format-Drift register_lookup.rs geheilt; adressierte Blöcke future-199/mountain-270 gefaltet; Round-Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: a78cff24759b96e20e9f998914cbc731be86ebc5a629016f81a07c4634a606b3
+  sha256: 74f0af8e2c355792e22bc3744701f4370e65bddfb0ada71360b2a20efe2bd763
   status: live
 -->
 # Handover — Mycelium-Folge 265 (2026-10-07)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge264.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.000 · close 0.033 · cap 0.5 — Grund: Meta-Pass, NUR-sha + Pipeline-Ledger + 3 Dispatches + format-Heilung; kein pro/max; gemessen `session_burn` (line, deepseek-flash; Eintrag „Mycelium-Linie in einem Pass starten")
+## Burn: open 0.000 · close 0.046 · cap 0.5 — Grund: Meta-Pass, NUR-sha + Pipeline-Ledger + 3 Dispatches + format-Heilung; kein pro/max; gemessen `session_burn` (line, deepseek-flash; Eintrag „Mycelium-Linie in einem Pass starten")
 
 ## Operator-Wort-Register
 
