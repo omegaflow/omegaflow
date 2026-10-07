@@ -3,7 +3,7 @@
   session: River-Folge 122
   class: handover
   date: 2026-10-07
-  sha256: a30c2c0734c4e1d4f96557235202165fe7bcbb1863a4dad14305c591024c0743
+  sha256: 030a7bb3799b02e638e13bd3dbc02cdcb7b08575adb46db78fbf13ad93b351d5
   status: live
 -->
 # Handover — River-Folge 122 (2026-10-07)
@@ -43,7 +43,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 Recherche (Wissenschafts-/Forschungslandschaft, Netz) trägt **`voice-deepseek`** (zuverlässig, nicht fabrizierend, Herkunft offengelegt); **`voice-gemini`** nur mit Verifikationspflicht (eine DOI fehlzu-geordnet, gemessen); **`voice-inkling`/`voice-gptoss`/`voice-nemotron`** tragen die Recherche-Klasse nicht. Denken/Urteil = UI-Frontier-Modelle. Der **Rat** bleibt als Form/Linse (fünf exklusive Perspektiven). Benchmark: `state/benchmark/2026-10-07-recherche-stimmen.md`.
 **Roster-Revision (umgesetzt 2026-10-07):** `opencode.json` setzt `"disable": true` für `voice-gptoss` (Geraune, keine Liste), `voice-inkling` (`archive_search_public` leer), `voice-nemotron` (extrem langsam + 2× `unbelegt`). Aktiv bleiben `voice-deepseek` (Kern-Recherche + Messung) und `voice-gemini` (sekundär, Verifikationspflicht). Wirkt nach opencode-Neustart. Der Rat bleibt Struktur; das Urteil trägt die UI-Frontier.
 **Recherche-Ergebnis (2026-10-07):** `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md` — vier Schichten, jede Referenz am Baum gemessen: (1) max-t/Stepdown FWER bei Korrelation (Romano-Wolf, Meinshausen, cluster-depth, Winkler); (2) Gatekeeping/zweistufig; (3) Post-Selection/Selective Inference (= Auswahl-Riss); (4) TE finite data (Kirkley u. a. = unvollständiger Pool). Deckt die gewählte `--stage2 family`-Methode und beide Risse.
-**Gemini-Mess-Seats (angelegt 2026-10-07):** `voice-gemini-3-flash`, `-3-1-flash-lite`, `-3-1-pro`, `-3-5-flash`, `-3-6-flash`, `-3-7-flash`, `-3-8-flash` in `opencode.json` (read-only Voice-Prompt, im Task-Allow). Bewertung nach Dispatch-Messung (gleiche Recherche-Aufgabe je Seat); Wirkung nach opencode-Neustart. Der `free_model_bench`-Lauf über die Google-Modelle hing >15 min → `pending` (Free-Endpoint langsam/rate-limited), nicht wiederholt.
+**Gemini-Mess-Seats (angelegt 2026-10-07):** `voice-gemini-3-flash`, `-3-1-flash-lite`, `-3-1-pro`, `-3-5-flash`, `-3-6-flash`, `-3-7-flash`, `-3-8-flash` in `opencode.json` (read-only Voice-Prompt, im Task-Allow). **Gemessen (`free_model_bench --task T7`, 2026-10-07):** der Free-Endpoint ist erschöpft — 6/9 Gemini-Modelle nur `429`/`503`/Timeout (Gemma immer Timeout); die drei antwortenden (`gemini-3.5-flash-lite` = aktueller `voice-gemini`, `3.1-flash-lite`, `3.7-flash`) **fabrizieren die T7-Status-Spalte** — kein Modell besteht. Agenten-Dispatch erst nach opencode-Neustart (die laufende Session kennt die neuen Agenten nicht, Dispatch verweigert) + Quota-Reset → `pending`. Rohdaten `state/benchmark/2026-10-07-gemini-free-endpoint.md`, `/tmp/opencode/gemini-t7.tsv`.
 
 ## Träger (Prosa, eigene)
 
