@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-262, river-122) am Baum gemessen gefaltet; eionet-cdr-cdn.yml gebaut; Lizenz-Census-Join auf Netloc-Ebene; dropped-gate Roster-Baseline gebunden; Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: e99bd7f3715c91729b752a728ef3211c201527b2e07607d9bf61b124971526d4
+  sha256: d6072ccc346775efe552807a730c4f49ecd121a379f83299ab79a30474591452
   status: live
 -->
 # Handover — Mycelium-Folge 259 (2026-10-07)
@@ -25,12 +25,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 
 ## Offen — eigen
 
-### eionet_cdr — Transportzeilen + Manifestation (Kraft-Verdikt offen)
-- **Status:** wartend
-- **Trigger:** Mountains `field`/`ttl`-Zeilen nach dem Punkt-Kernel (`phi/blocked_sources.φ:23` `point-source-kernel`)
-- **Lage:** (gemessen 2026-10-07, Mycelium 259) adressierter mountain-262-Block gefaltet. Festquelle `EU_Report_2017_27Aug19.xml` closed; `eionet_cdr_compiler.rs` am Baum (format `eionet_cdr`, CDN-Tag `cdr.eionet.europa.eu`, CLI `<xml|url> --in --out --ci-mode`). **Neu gebaut:** `.github/workflows/eionet-cdr-cdn.yml` (dispatch-only, Release + Compile + Verify via `register_release_set.sh cdr.eionet.europa.eu eionet_cdr`; rot bis die Register-Zeile steht — wie `osha-cehd-cdn.yml`). Der Register-Block (276) hängt am Punkt-Kernel Slot 2.
-- **Blockade:** Kraft-Riss (Punkt-Kernel, Mountain) — nicht `diffusion`-Jahresmasse.
-- **Braucht:** Mountains `field`/`ttl`-Zeilen; dann meine `url`/`origin`/`compiler`-Zeilen + Manifestation + `eionet-cdr-cdn.yml`-Dispatch.
+### eionet_cdr — Transportzeilen + Manifestation (Kraft-Verdikt + Block-Grenzfall offen)
+- **Status:** eigen (Block-Header) · wartend (Kraft-Verdikt)
+- **Trigger:** Mountain-263 folded (2026-10-07): der 276-`field`-Block ist via `eionet_cdr_compiler --emit-field-names` reproduzierbar erzeugt; Block-Header ist mein Pen
+- **Lage:** (gemessen 2026-10-07, Mycelium 259) adressierter mountain-262/263-Block gefaltet. Festquelle `EU_Report_2017_27Aug19.xml` closed; `eionet_cdr_compiler.rs` am Baum (format `eionet_cdr`, CDN-Tag `cdr.eionet.europa.eu`; `--emit-field-names` druckt 276 `field`-Zeilen). `.github/workflows/eionet-cdr-cdn.yml` gebaut (dispatch-only, Release + Compile + Verify via `register_release_set.sh`). Register-Block in `phi/sources.φ` noch `0` Treffer.
+- **Blockade:** **Grenzfall** — der Block ist Zwei-Feder (Mountain: `field`/`ttl`; Mycelium: `url`/`origin`/`compiler`), das ist laut Verfassung ein Riss, kein stiller Schreibakt; dazu der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2, Minderheit `gravity kg`/`pending`).
+- **Braucht:** die Block-Schreib-Entscheidung (Rat: eine Feder oder zwei getrennte Blöcke) + Mountains `field`/`ttl`; dann meine `url`/`origin`/`compiler`/`format`-Zeilen + Manifestation + `eionet-cdr-cdn.yml`-Dispatch.
 
 ### OSHA-CEHD — Register-Zeile (Force-/Einheiten-`1`-Riss)
 - **Status:** wartend
@@ -47,11 +47,11 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Braucht:** die `terms`-Zeilen; dann erzeugt Mycelium `LICENSE`/`README`.
 
 ### Sternkatalog nach Helligkeit ordnen (Membran progressives Laden (C))
-- **Status:** wartend
-- **Trigger:** Mountains sortierter `tycho2_compiler` + Re-Harvest des `ssd.jpl.nasa.gov-gaia/dr3_stars.bin` landet
-- **Lage:** (gemessen 2026-10-07, Mycelium 258) `tycho2_compiler.rs` ruft `encode` in Zeilen-Reihenfolge (:565 tgas / :898 tycho), **keine** Magnitude-Sortierung — das 75-MB-`dr3_stars.bin` (`phi/sources.φ:18153`, sha `745a3f71…`) ist damit nicht nach Helligkeit geordnet. Der `BODIES`-Manifest-Teil + `sun,earth,moon`-Ordnung steht (Mycelium 254); der Katalog ist in `pages-deploy.yml:61` zuletzt gestaged.
-- **Blockade:** der Compiler-Sort ist Mountain-Natur (Katalog/Compiler); Manifestation ist danach meine.
-- **Braucht:** Mountains `tycho2_compiler`-Sort (Magnitude aufsteigend) + Re-Harvest; dann meine Re-Manifestation (neuer sha ins Register).
+- **Status:** wartend (auf den gaia-cdn-Lauf)
+- **Trigger:** `gaia-cdn`-Lauf `37599077973` (dispatch 2026-10-07) landet mit sortiertem `dr3_stars.bin`
+- **Lage:** (gemessen 2026-10-07, Mycelium 259) mountain-263 folded: der Sort ist gebaut — `tap_compiler --star-bin` sortiert 56-B-weise nach Magnitude aufsteigend (non-finite ans Ende), `tycho2_compiler --source tgas`/`tycho` ebenso (`cargo build` grün). **Dispatched:** `gh workflow run gaia-cdn.yml` → Run `37599077973` (baut `dr3_stars.bin` neu, Release-Tag `ssd.jpl.nasa.gov-gaia`).
+- **Blockade:** kein — wartet auf den Lauf; danach der neue sha.
+- **Braucht:** `ci_manage view 37599077973` (Ergebnis) → neuen sha ins Register + `pages-deploy.yml`-Stage, Sichtbarkeits-Reihenfolge `sun, earth, moon, katalog`.
 
 ### dropped-gate — Roster-Emission + Baseline binden gebaut; pending-legacy-Snapshot + Gate offen
 - **Status:** eigen
