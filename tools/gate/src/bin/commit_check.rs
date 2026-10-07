@@ -1,8 +1,9 @@
 use omegaflow::commit_gate::{
     Gate, addressed_origin_violations, canon_diff, canon_format_violations, check_handover_burn,
     declared_canon, doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
-    integrated_twin, json_write, prose_violation_for, register_field_unit_issues,
-    status_proof_violations, unbacked_mirror_violations, word_register_origin_violations,
+    integrated_twin, is_test_file_path, json_write, prose_violation_for,
+    register_field_unit_issues, status_proof_violations, unbacked_mirror_violations,
+    word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -122,9 +123,16 @@ fn main() {
     let files = String::from_utf8_lossy(&out.stdout).to_string();
     let mut gate = Gate::new("commit", "");
     let mut fail = false;
+    let mut test_file_exempt = 0usize;
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
         if !path.ends_with(".rs") {
             continue;
+        }
+        if is_test_file_path(path) {
+            eprintln!(
+                "commit_check: test-file-exempt {path} (name-based; production markers are never exempt)"
+            );
+            test_file_exempt += 1;
         }
         let content = match std::fs::read_to_string(path) {
             Ok(c) => c,
@@ -387,6 +395,7 @@ fn main() {
         }
         fail = true;
     }
+    eprintln!("commit_check: {test_file_exempt} test-file(s) exempted by path");
     if fail {
         std::process::exit(1);
     }
