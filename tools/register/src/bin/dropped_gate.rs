@@ -2,7 +2,8 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::path::Path;
 
-const DEFAULT_PIN: &str = "docs/zustand/dropped-roster-baseline.txt";
+const DEFAULT_ROSTER_PIN: &str = "docs/zustand/dropped-roster-baseline.txt";
+const DEFAULT_LEGACY_PIN: &str = "docs/zustand/dropped-legacy-baseline.txt";
 const HEADER_PREFIX: &str = "# dropped-events v1 pin=";
 const LIVE_HANDOVER_DIR: &str = "docs/handover";
 const REGISTER_DIR: &str = "phi";
@@ -451,7 +452,8 @@ where
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut log_path: Option<String> = None;
-    let mut pin_path = DEFAULT_PIN.to_string();
+    let mut pin_path = DEFAULT_ROSTER_PIN.to_string();
+    let mut legacy_path = DEFAULT_LEGACY_PIN.to_string();
     let mut roster_path: Option<String> = None;
     let mut selftest = false;
     let mut shadow = false;
@@ -477,6 +479,16 @@ fn main() {
                     Some(v) => pin_path = v.clone(),
                     None => {
                         eprintln!("dropped_gate: --pin needs a path");
+                        std::process::exit(1);
+                    }
+                }
+            }
+            "--legacy-pin" => {
+                i += 1;
+                match args.get(i) {
+                    Some(v) => legacy_path = v.clone(),
+                    None => {
+                        eprintln!("dropped_gate: --legacy-pin needs a path");
                         std::process::exit(1);
                     }
                 }
@@ -531,7 +543,15 @@ fn main() {
     }
 
     if carrier {
-        let points = match read_keys(&pin_path, "points") {
+        if !Path::new(&legacy_path).exists() {
+            eprintln!(
+                "dropped_gate: pending — legacy pin `{legacy_path}` absent: the frozen \
+                 pending-legacy loss set is CI-only (`register_lookup --dropped`, full history); \
+                 it is written by the dispatch job, never fabriziert locally"
+            );
+            std::process::exit(2);
+        }
+        let points = match read_keys(&legacy_path, "legacy pin") {
             Ok(p) => p,
             Err(e) => {
                 eprintln!("dropped_gate: {e}");

@@ -19636,6 +19636,7 @@ format eionet_cdr
 origin https://cdr.eionet.europa.eu/at/eu/eprtrdat/envxwzhwa/EU_Report_2017_27Aug19.xml
 terms CC-BY-4.0 https://cdr.eionet.europa.eu/legalnotice
 compiler tools/harvest/src/bin/eionet_cdr_compiler.rs
+sha256 4ac92594eef4749ae52763950a6e164b5a0d34a27ab815a9b44a6e78f875a4f7
 at earth
 ttl 31536000
 field eionet_cdr_alachlor_air eionet_cdr_alachlor_air point diffusion kg 31536000 0.0 0.0
