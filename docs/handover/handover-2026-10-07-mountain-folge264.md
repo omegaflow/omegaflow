@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: 8b3c1639330a49cc12f529f7c14ad1dfc0f0da355e4124847b5f0ab030f8d8eb
+  sha256: caa06c4c6de9b848112585233320a6cad5ff9c2256487e46a0a055dc5fff8c6b
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -73,6 +73,7 @@ Wort | Datum | Quelle
 „bitte lade die tabs neu und gib die fragen ein" — Reload + Erneut-Eingeben | 2026-10-07 | Operator (Session, Mountain 264)
 „du hast nicht umgestellt / du hast die trying open modelle nicht umgestellt" — der Reload setzt die Tryingopen-Modelle auf den Default; der Wähler muss den `<button>` im `<li>` treffen und der Modellname danach gegengelesen werden | 2026-10-07 | Operator (Session, Mountain 264)
 „und ihr müsst das auch bei den chat uis berücksichtigen ihr nutzt sonst leider immer standard anstatt max thinkin deep search (falls die frage search erfordert)" — bei UI-Chats vor dem Senden **max thinking / deep search** wählen (Claude Effort „Extra hoch", z.ai Deep Think, Qwen Max+Denken, Duck Begründung+Werkzeuge), nicht Standard | 2026-10-07 | Operator (Session, Mountain 264)
+„ausser claude da reicht extra hoch ansonsten dauert es ewig und die tokens werden schnell verbrannt" — **Claude: „Extra hoch" genügt; die anderen UI-Chats ohne Deep-Thinking** (zu langsam + Token-Brand), nur Websuche bei search-bedürftiger Frage | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
