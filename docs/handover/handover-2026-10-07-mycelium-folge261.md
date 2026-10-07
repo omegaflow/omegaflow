@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: 06ddf2e994427c02f974668da74f121d932742f80fb15c1bcd46afea2c697aa5
+  sha256: 85bea0ed9ede556f5871750071ca6626bf5fcffcf7a37ab9a10705384d8d2ab5
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -25,6 +25,7 @@ Sender-Zeilen in `## An river` / `## An future`.
 - Wort | 2026-10-07 | „ja bitte" → Recherche-Schicht für `terms`-SPDX + dropped-gate-Thresholds starten und die UI-Frontier-Fragen-Sheets bereitlegen. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „fängst du jetzt bitte an zu arbeiten?" → Direktive: weiterarbeiten ohne Rückfrage. Gebaut: echtes dropped-gate (`--roster` + Tombstones/Generationen, nicht-vakuoser Shadow), Lizenz-Census (iii) + Join am Quellenblock. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „das ist einfach nur quatsch … schau dir bitte an welche tabs offen sind" → Korrektur: die Frontier-Seats sind offen/eingeloggt; die Antworten werden aus den offenen Tabs gelesen (nicht aus neuen, unangemeldeten Tabs). | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „ok würdest du dann bitte migrieren?" → **Migrations-Auftrag `terms`→SPDX** (134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` bleiben). `phi/sources.φ` ist Mountains Pen **und** dirty (2 fremde `cgm_source`-Zeilen) → Ausführung blockiert, bis der Register-Baum sauber ist. | Quelle: Operator (Session, Mycelium 261).
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge260.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -104,6 +105,12 @@ Origin: mycelium-folge255/260.
 - **JAXA G-Portal / Sample-/Record-Downloads** (`blocked_sources.φ`): Operator-Hand (Bestellung/Fetch) — jetzt inkl. `jaxa-gportal-cdn`-Dispatch (siehe `## Offen — eigen`).
 - **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen (Operator/Datenträger).
 - **Frontier-Antworten liegen vor:** `terms`-Vokabel-Quorum (6 Seats, `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`) — `unbestimmt`/`ohne-lizenz`, Quellen-Eigentümer; getragener Riss bei (b). SPDX-Migration gestellt: 5/5 = (b) migrieren (`..._terms-spdx-ui-antworten.md`). **Braucht:** Operator-Entscheid zum (b)-Riss (`keine`/NONE vs. `ohne-lizenz`) + SPDX-Migrationsauftrag (Mountain-Pen).
+
+## An mountain
+
+Origin: mycelium-folge261.
+
+- **`terms`→SPDX-Migration (Operator-Wort 2026-10-07, Frontier 5/5):** `phi/sources.φ` migrieren — **134× `terms CC0`→`terms CC0-1.0`**, **1× `terms ODC-BY-1.0`→`terms ODC-By-1.0`**; `PD`/`free-open`/`own-work` bleiben (Statusachse, nie aliast). Quelle belegt: `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md` (Qwen · DeepSeek · Claude · Gemini · Duck/GPT-6) + Recherche (DataCite/SPDX). **Braucht:** dein Vollzug im Register (Mountain-Pen); danach ziehe ich `license_census.rs` TERMS nach und verdrahte `ci-gate`. **Blockade jetzt:** `phi/sources.φ` ist dirty (2 fremde `cgm_source`-Zeilen) — dein Commit macht den Baum frei.
 
 ## LOCK
 
