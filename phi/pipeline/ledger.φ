@@ -63,22 +63,26 @@ disponiert
 kandidat https://pda.kasi.re.kr/
 note Danuri/KPLO (KARI/KASI): KASI-DALO pda.kasi.re.kr (Login-Wall) → blocked_sources.φ blocked account; KARI KPDS kari.re.kr/kpds (HTML) → pending; ShadowCam pds.shadowcam.im-ldi.com/derived (PDS4) → pending. KMTNet-MOC → descoped. 2026-09-29.
 
-ausstehend
+disponiert
 kandidat http://solarnet.oma.be/
-note SOLARNET VO (Solar-Datensatz-Suche/Cross-Search, Paper 10.1007/s11207-025-02424-0) — 2026-10-07 sidc.be/SVO 200 (42489 B); solarnet.uv.es tot. Portal, kein Einzel-Asset; Explore offen.
+note SOLARNET VO (Solar-Datensatz-Suche/Cross-Search, Paper 10.1007/s11207-025-02424-0) — 2026-10-07 sidc.be/SVO 200 (42489 B); solarnet.uv.es tot. Portal, kein Einzel-Asset. Rat 2026-10-07 decline registry/katalog (declined_sources.φ:4096).
 
-ausstehend
+disponiert
 kandidat https://www.microns-explorer.org
-note MICrONS Explorer „Virtual Observatory of the Cortex" (U24, Kortex-Datenportal) — 2026-10-07 HTTP 200/206, sha256 70364993c3167f4d. Portal, kein Einzel-Asset; Explore offen.
+note MICrONS Explorer „Virtual Observatory of the Cortex" (U24, Kortex-Datenportal) — 2026-10-07 HTTP 200/206, sha256 70364993c3167f4d. Portal, kein Einzel-Asset; Explore offen. Rat 2026-10-07 decline no-physical-force (declined_sources.φ:5024).
 
-ausstehend
+disponiert
 kandidat https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
-note HadISST SST (Met Office Hadley) — 2026-10-07 HTTP 200, 83913410 B gzip; HadISST_ice.nc.gz ebenso. NetCDF; Parser offen.
+note HadISST SST (Met Office Hadley) — 2026-10-07 HTTP 200, 83913410 B gzip; HadISST_ice.nc.gz ebenso. NetCDF; Parser offen. Rat 2026-10-07 admit thermal (SOURCE_PORT, Mountain).
 
-ausstehend
+disponiert
 kandidat https://www.ncei.noaa.gov/pub/data/paleo/treering/reconstructions/higgins2020spczi-pseudo-recons.txt
-note SPCZ-Index-Rekonstruktion (NOAA NCEI, Higgins et al., 1300 J) — 2026-10-07 HTTP 200, 2170897 B, sha256 f18b1088651f11ec; ASCII. Parser offen.
+note SPCZ-Index-Rekonstruktion (NOAA NCEI, Higgins et al., 1300 J) — 2026-10-07 HTTP 200, 2170897 B, sha256 f18b1088651f11ec; ASCII. Parser offen. Rat 2026-10-07 decline paleo-catalog (declined_sources.φ:5328).
+
+disponiert
+kandidat https://data.inpe.br/
+note Brazilian VO = Astronomy (Paper 10.1109/eScience.2014.11) — 2026-10-07 data.inpe.br (BIG) HTTP 200; „Climate" im Novitäts-Scan war falsch. Rat 2026-10-07 decline registry/katalog, Riss benannter VO ≠ live BIG (declined_sources.φ:1443).
 
 ausstehend
-kandidat https://data.inpe.br/
-note Brazilian VO = Astronomy (Paper 10.1109/eScience.2014.11) — Live-Datenzugang data.inpe.br (BIG), 2026-10-07 HTTP 200 (192329 B). Portal; „Climate" im Novitäts-Scan war falsch.
+kandidat https://data.inpe.br/big/
+note Brazilian live INPE BIG — STAC/GeoTIFF, em; 2026-10-07 HTTP 200 (192329 B), Portal/SPA, kein Einzel-Asset; eigener Kandidat getrennt vom declined benannten-VO-Riss (declined_sources.φ:1443).
