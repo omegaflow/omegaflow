@@ -14,6 +14,8 @@ const DEFAULT_OUT: &str = "state/river/gic-cgm-lat.tsv";
 const DEFAULT_PAUSE_MS: u64 = 150;
 const AURORAL_MIN: f64 = 60.0;
 const SUBAURORAL_MIN: f64 = 50.0;
+const FAMILY_NAMES: [&str; 3] = ["auroral", "sub-auroral", "mid-latitude"];
+const FAMILY_CHANNEL_FIELD: &str = "intermagnet_xyz_x_nt";
 
 struct Station {
     code: String,
@@ -173,6 +175,71 @@ fn family_of(abs_cgm: f64) -> &'static str {
     }
 }
 
+fn read_partition(tsv_path: &str) -> BTreeMap<String, String> {
+    let text = fs::read_to_string(tsv_path).expect("the partition TSV reads");
+    let mut out = BTreeMap::new();
+    for (i, line) in text.lines().enumerate() {
+        if i == 0 || line.trim().is_empty() {
+            continue;
+        }
+        let f: Vec<&str> = line.split('\t').collect();
+        if f.len() >= 4 && !f[0].trim().is_empty() {
+            out.insert(f[0].trim().to_string(), f[3].trim().to_string());
+        }
+    }
+    out
+}
+
+fn family_channels(partition: &BTreeMap<String, String>, family: &str) -> Vec<String> {
+    let mut out: Vec<String> = partition
+        .iter()
+        .filter(|(_, fam)| fam.as_str() == family)
+        .map(|(code, _)| {
+            format!(
+                "{FAMILY_CHANNEL_FIELD}_{}",
+                code.to_ascii_lowercase()
+            )
+        })
+        .collect();
+    out.sort();
+    out
+}
+
+fn emit_families(tsv_path: &str, dir: &str) {
+    let partition = read_partition(tsv_path);
+    fs::create_dir_all(dir).ok();
+    let mut seen: BTreeMap<String, &'static str> = BTreeMap::new();
+    let mut total = 0usize;
+    for family in FAMILY_NAMES {
+        let channels = family_channels(&partition, family);
+        total += channels.len();
+        for c in &channels {
+            if let Some(other) = seen.insert(c.clone(), family) {
+                eprintln!("coverage: channel {c} in {other} and {family} — not pairwise disjoint");
+                std::process::exit(2);
+            }
+        }
+        let path = format!("{dir}/gic-family-{family}.txt");
+        fs::write(&path, format!("{}\n", channels.join("\n"))).expect("the channel list writes");
+        println!("family {family}: {} channels -> {path}", channels.len());
+    }
+    let unassigned: Vec<&String> = partition
+        .iter()
+        .filter(|(_, fam)| !FAMILY_NAMES.contains(&fam.as_str()))
+        .map(|(code, _)| code)
+        .collect();
+    println!(
+        "coverage: union {total} = partition {} · distinct {} · unassigned {}",
+        partition.len(),
+        seen.len(),
+        unassigned.len()
+    );
+    if total != partition.len() || seen.len() != partition.len() || !unassigned.is_empty() {
+        eprintln!("coverage: union {total} != partition {} — not complete", partition.len());
+        std::process::exit(2);
+    }
+}
+
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
         .position(|a| a == key)
@@ -211,6 +278,15 @@ fn main() {
         None => DEFAULT_PAUSE_MS,
     };
     let supermag_path = arg_value(&args, "--supermag");
+
+    if let Some(tsv) = arg_value(&args, "--from-tsv") {
+        let dir = match arg_value(&args, "--emit-dir") {
+            Some(v) => v,
+            None => "state/river".to_string(),
+        };
+        emit_families(&tsv, &dir);
+        return;
+    }
 
     let src = format!("{}/phi/sources.φ", repo_root());
     let text = fs::read_to_string(&src).expect("phi/sources.φ reads");
@@ -328,3 +404,59 @@ fn main() {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn partition(rows: &[(&str, &str)]) -> BTreeMap<String, String> {
+        rows.iter()
+            .map(|(c, f)| (c.to_string(), f.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn family_of_holds_the_declared_boundaries() {
+        assert_eq!(family_of(60.0), "auroral");
+        assert_eq!(family_of(59.99), "sub-auroral");
+        assert_eq!(family_of(50.0), "sub-auroral");
+        assert_eq!(family_of(49.99), "mid-latitude");
+        assert_eq!(family_of(0.0), "mid-latitude");
+    }
+
+    #[test]
+    fn family_channels_are_pairwise_disjoint_and_cover_the_pool() {
+        let p = partition(&[
+            ("AAA", "auroral"),
+            ("BBB", "auroral"),
+            ("CCC", "sub-auroral"),
+            ("DDD", "mid-latitude"),
+        ]);
+        let auroral = family_channels(&p, "auroral");
+        let sub = family_channels(&p, "sub-auroral");
+        let mid = family_channels(&p, "mid-latitude");
+        assert_eq!(
+            auroral,
+            vec!["intermagnet_xyz_x_nt_aaa", "intermagnet_xyz_x_nt_bbb"]
+        );
+        assert_eq!(sub, vec!["intermagnet_xyz_x_nt_ccc"]);
+        assert_eq!(mid, vec!["intermagnet_xyz_x_nt_ddd"]);
+        let mut all: Vec<String> = auroral.into_iter().chain(sub).chain(mid).collect();
+        all.sort();
+        let union = all.len();
+        all.dedup();
+        assert_eq!(union, p.len());
+        assert_eq!(all.len(), p.len());
+    }
+
+    #[test]
+    fn a_pending_family_is_a_named_riss_not_a_zero() {
+        let p = partition(&[("AAA", "auroral"), ("BBB", "pending")]);
+        let unassigned = p
+            .values()
+            .filter(|fam| !FAMILY_NAMES.contains(&fam.as_str()))
+            .count();
+        assert_eq!(unassigned, 1);
+    }
+}
+

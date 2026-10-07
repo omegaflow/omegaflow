@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: d973a202b200d0faa59cb13c46ae7810f664f51c54c10dee6aa55eb967ff4c2e
+  sha256: 761ed681f947a1a6f5ad5b21408e83c875819a9f1da99b2b82477af66669524e
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -223,6 +223,32 @@ nicht nachjustiert.
 **Register:** die per-Station `cgm_lat`-Zeile in `phi/sources.φ` ist Mountains Feder
 (Quellen-Eigenschaft); die gemessene Tabelle liegt als Artefakt bereit.
 
+## Rat-Verdikt 2026-10-07 (River 121) — Route C
+
+Die Linse der fünf Stimmen hält die Route nach der Scope-Messung (`field_te_query` kennt
+kein `over family`, `cgm_lat` nie gelesen):
+
+- **Route A (`FdrScope::Family` + Parser-Arm) `pending`, nicht gebaut:** ein `over
+  family`-FDR ändert allein die BH/BY-Gruppierung (`field_te_query.rs:4596-4631`) — er senkt
+  `M_eff` nicht und belegt den Token `family`, der bereits die FDR-Korrekturgruppe trägt
+  (`TeFamily`, `FAMILY_K = 6`). Der Bau ist durch den Hebel nicht gerechtfertigt.
+- **Route C (gewählt):** Stufe 1 bleibt unverändert global (`matrix full` + `fdr bh over
+  matrix`). Die Familie lebt **allein in Stufe 2** als Member-Pool des `compute_max_t`
+  (`field_te_query.rs:2784`), abgeleitet zur Abfragezeit aus `cgm_lat` + den fixierten
+  Grenzen. Der Stufe-2-Bau über das 154-Netz wartet auf den per-Station-dB/dt-Bestand
+  (Mountain): nur ABK 1h/1m + SOD 1h tragen `field intermagnet_dbdt`
+  (`phi/sources.φ:2051-2079`); die 154 tragen `intermagnet_xyz_x/y/z_nt` (je 154).
+- **Route B (drei per-Band-`full`-Deskriptoren) verworfen als Träger:** 31·30 + 25·24 +
+  98·97 = 11 036 Zellen > der globalen Obergrenze — keine `M_eff`-Reduktion; nur als
+  benannte Vergleichsmessung erlaubt, nie als Zerlegung des globalen Ergebnisses.
+- **Gruppierungs-Schlüssel (Riss #2):** Paar-Band — eine Zelle `d→t` gehört zu F nur, wenn
+  beide Endpunkte in F liegen; gemischte Endpunkte sind die benannte Familie `cross`, nie
+  still über einen Target-Pool gezogen.
+- **Gebaut (River 121):** `tools/measure/src/bin/cgm_lat_partition.rs` emittiert offline
+  (`--from-tsv … --emit-dir …`) aus der gemessenen Partition die drei Kanal-Listen
+  `gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, paarweise disjunkt,
+  union = 154) + Deckungstest.
+
 ## Offene Slots bis zur Versiegelung
 
 | Feld | Zustand |
@@ -231,7 +257,8 @@ nicht nachjustiert.
 | Partitionsgrenzen (geomagn. Breite je Band) | **deklariert 2026-10-07:** auroral ≥60°, sub-auroral 50–60°, mid <50° (\|CGM\|) |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
-| Familien-Deskriptoren | `pending` — nach der CGM-Partitions-Messung |
+| Familien-Deskriptoren | `pending` — Route C (Rat 2026-10-07): als Stufe-2-Member-Pool des `compute_max_t`, nicht als per-Band-`full`-Deskriptoren; wartet auf den per-Station-dB/dt-Bestand (Mountain) |
+| Familien-Kanal-Listen | **gebaut 2026-10-07** — `state/river/gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, disjunkt) aus `cgm_lat_partition.rs --from-tsv` |
 | Verdikt | `unsealed` |
 
 ## Siegel
