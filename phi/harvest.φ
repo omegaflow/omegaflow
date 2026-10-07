@@ -55,7 +55,7 @@ format cdaweb_roti
 tag cdaweb.gsfc.nasa.gov
 arm cdaweb_roti_compiler
 workflow cdaweb-roti-cdn.yml
-pattern ^cdaweb_roti_[0-9]+\.bin$
+pattern ^cdaweb_roti_[0-9]{8}\.bin$
 idempotent true
 timeout 360
 
@@ -76,6 +76,15 @@ workflow ceein-infrasound-cdn.yml
 pattern ^ceein_infrasound\.bin$
 idempotent true
 timeout 240
+
+asset present
+format dmsp16_ssj
+tag cdaweb.gsfc.nasa.gov
+arm dmsp16_ssj_compiler
+workflow dmsp16-ssj-cdn.yml
+pattern ^dmsp16_ssj\.bin$
+idempotent true
+timeout 120
 
 asset present
 format ephemeris_binary
@@ -312,6 +321,15 @@ idempotent true
 timeout 240
 
 asset present
+format pcn
+tag ftp.space.dtu.dk
+arm pcn_compiler
+workflow pcn-cdn.yml
+pattern ^pcn_[0-9]+\.bin$
+idempotent true
+timeout 120
+
+asset present
 format pds3_binary
 tag data.darts.isas.jaxa.jp
 arm pds3_binary_compiler
@@ -420,6 +438,15 @@ idempotent true
 timeout 120
 
 asset present
+format swarm_fac
+tag isdc-data.gfz.de
+arm swarm_fac_compiler
+workflow swarm-fac-cdn.yml
+pattern ^swarm_fac\.bin$
+idempotent true
+timeout 120
+
+asset present
 format swot_l2_lr_ssh
 tag archive.podaac.earthdata.nasa.gov
 arm swot_l2_lr_ssh_compiler
@@ -434,6 +461,15 @@ tag data.pmel.noaa.gov
 arm tao_wnd_compiler
 workflow tao-wnd-cdn.yml
 pattern ^tao_wnd_zonal\.csv$
+idempotent true
+timeout 120
+
+asset present
+format themis_mag
+tag themis.ssl.berkeley.edu
+arm themis_mag_compiler
+workflow themis-mag-cdn.yml
+pattern ^themis_mag\.bin$
 idempotent true
 timeout 120
 
