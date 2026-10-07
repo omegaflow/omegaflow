@@ -103,6 +103,7 @@ pub mod ia2_tap;
 pub mod iaga;
 pub mod ifms_agc;
 pub mod igra;
+pub mod igrf;
 pub mod inflate;
 pub mod intermagnet;
 pub mod ionex;
