@@ -777,13 +777,19 @@ impl MatrixMachine {
             alt,
         }) = point_anchor
         {
+            let Some(anchor_bp) = field
+                .eph
+                .get(body_name.as_str())
+                .and_then(|e| e.props.as_ref())
+            else {
+                return;
+            };
             let motion = crate::archivar::Motion::Surface {
                 body_name,
                 lat,
                 lon,
                 alt,
             };
-            let (ob_cos, ob_sin) = 23.4392911_f64.to_radians().sin_cos();
             for (body, eph) in field.eph.iter() {
                 let mut series: Vec<(f64, f32)> = Vec::new();
                 let mut lon_sin: Vec<(f64, f32)> = Vec::new();
@@ -809,8 +815,13 @@ impl MatrixMachine {
                     {
                         series.push((t, (gm / r2) as f32));
                     }
-                    let y_ecl = ry * ob_cos + rz * ob_sin;
-                    let lon = y_ecl.atan2(rx);
+                    let t_jd = t / 86400.0 + crate::archivar::J2000_EPOCH;
+                    let Some([bx, by, ..]) =
+                        crate::archivar::rotate_icrs_to_body_frame(anchor_bp, [rx, ry, rz], t_jd)
+                    else {
+                        continue;
+                    };
+                    let lon = by.atan2(bx);
                     lon_sin.push((t, lon.sin() as f32));
                     lon_cos.push((t, lon.cos() as f32));
                 }
