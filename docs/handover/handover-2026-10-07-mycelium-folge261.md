@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: cdc017d310a78ebd8ceb34694a0e6a5b97a98e798f7275e21e1df28ef308783f
+  sha256: c2694d04ec1d707111838a17624c13e002c129e071d49c3c64e782a036b0be32
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -27,6 +27,7 @@ Sender-Zeilen in `## An river` / `## An future`.
 - Wort | 2026-10-07 | „das ist einfach nur quatsch … schau dir bitte an welche tabs offen sind" → Korrektur: die Frontier-Seats sind offen/eingeloggt; die Antworten werden aus den offenen Tabs gelesen (nicht aus neuen, unangemeldeten Tabs). | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „ok würdest du dann bitte migrieren?" → **Migrations-Auftrag `terms`→SPDX** (134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` bleiben). Im Working Tree bereits vollzogen (uncommittet); Gate nachgezogen `9c010f725`. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „was ist own-work?" · „bitte messen und ihr berücksichtigt schon alle phi files?" → `own-work`-Riss vermessen (eigene Kompilation, Fakten) + `terms`-Deckung nur `phi/sources.φ`. | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „hast du dich darum gekümmert?" (Force-/Einheiten-13-Baseline · obis.osha.gov · Exposom-Matrix · Sternkatalog) → tools-build dispatcht (`37631266911`), Sternkatalog verifiziert erledigt, Exposom-`eionet`-Register an Mountains ttl/field, obis.osha.gov an den `1`-Riss. | Quelle: Operator (Session, Mycelium 261).
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge260.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -48,7 +49,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### eionet_cdr — Transportzeilen + Manifestation (Kraft-Verdikt offen)
 - **Status:** wartend (Mountain-Feld/ttl)
 - **Trigger:** Mountains Einschreiben der 276 `field`/`ttl`-Zeilen in `phi/sources.φ`
-- **Lage:** (gemessen 2026-10-07, Mycelium 260) adressierter mountain-266-Block gefaltet; `.github/workflows/eionet-cdr-cdn.yml` gebaut (dispatch-only); `eionet_cdr_compiler --emit-field-names` druckt 276 `field`-Zeilen; Register-Block in `phi/sources.φ` noch **0** Treffer (`sgrep eionet` leer). Der `cdn_reconcile --fail`-Register-Job, der seit dem Workflow-Commit auf `eionet-cdr-cdn.yml:34` rot lief (`ci_manage log 37621486821`), ist geheilt: `cdr.eionet.europa.eu` als gemessene Ausnahme in `docs/specs/cdn-tag-baseline.txt` (OSHA-Präzedenz), fällt mit Mountains Block. `cdn_reconcile --fail` lokal grün (291 Hosts). Der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2; Minderheit `gravity kg`/`pending`) blockiert den Schreibakt nicht.
+- **Lage:** (gemessen 2026-10-07, Mycelium 260) adressierter mountain-266-Block gefaltet; `.github/workflows/eionet-cdr-cdn.yml` gebaut (dispatch-only); `eionet_cdr_compiler --emit-field-names` druckt 276 `field`-Zeilen; Register-Block in `phi/sources.φ` noch **0** Treffer (`sgrep eionet` leer). Der `cdn_reconcile --fail`-Register-Job, der seit dem Workflow-Commit auf `eionet-cdr-cdn.yml:34` rot lief (`ci_manage log 37621486821`), ist geheilt: `cdr.eionet.europa.eu` als gemessene Ausnahme in `docs/specs/cdn-tag-baseline.txt` (OSHA-Präzedenz), fällt mit Mountains Block. `cdn_reconcile --fail` lokal grün (291 Hosts). Der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2; Minderheit `gravity kg`/`pending`) blockiert den Schreibakt nicht. **Exposom-Matrix §A (Mountain 248 „Register-Zeilen je Klasse"):** Reader `src/archivar/{osm_pbf,eionet_cdr}.rs` gebaut; `osm_nodes` ist registriert (`phi/sources.φ:1684-1687`, origin geofabrik; `em 1` laut Rat); der `eionet_cdr`-Register-Block fehlt weiterhin — ein Block ohne `ttl` bricht `register_sort` (`ci-gate`), und die 276 `field`/`ttl`-Zeilen sind Mountains Pen. `format osm_nodes` in `main_flow.rs:4155`. **tools-build:** dispatcht (`gh workflow run tools-build.yml` → `37631266911`), damit `tools-latest` frisch ist und Mountain die 13 Klasse-(a)-Baseline-Zeilen löschen kann. **Sternkatalog:** erledigt — `phi/sources.φ:18156-18161` (`dr3_stars.bin`, sha `49ea7595…`) + `pages-deploy.yml:61` staged; `gaia-cdn 37599077973` success.
 - **Blockade:** Mountains `field`/`ttl`-Zeilen; geteilter Baum — `phi/sources.φ` nur schreiben, wenn Mountain freigibt.
 - **Braucht:** Mountains Einschreiben; dann meine `url`/`origin`/`compiler`/`format`-Zeilen + Manifestation + Dispatch.
 
@@ -113,6 +114,7 @@ Origin: mycelium-folge255/260.
 - **JAXA G-Portal / Sample-/Record-Downloads** (`blocked_sources.φ`): Operator-Hand (Bestellung/Fetch) — jetzt inkl. `jaxa-gportal-cdn`-Dispatch (siehe `## Offen — eigen`).
 - **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen (Operator/Datenträger).
 - **Frontier-Antworten liegen vor:** `terms`-Vokabel-Quorum (6 Seats, `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`) — `unbestimmt`/`ohne-lizenz`, Quellen-Eigentümer; getragener Riss bei (b). SPDX-Migration gestellt: 5/5 = (b) migrieren (`..._terms-spdx-ui-antworten.md`). **Braucht:** Operator-Entscheid zum (b)-Riss (`keine`/NONE vs. `ohne-lizenz`) + SPDX-Migrationsauftrag (Mountain-Pen).
+- **FMHY-Stimmen-/Werkzeug-Kandidaten (future-191 gefaltet):** Lumo (Proton, Gast-Login optional) als einziger erreichbar; ISH/ChatWave/LongCat/Tencent/Meta/Sarvam/Apertus login-gated; Poolside kein Web-Chat; Inception 403. Werkzeug-Kandidaten: Typst (Rust) · SimpleTex · LaTeX-OCR. **Braucht:** Operator/Rat-Entscheid, ob ein Seat aufgenommen wird; meine Roster-Registrierung dann. | `state/future/handover/handover-2026-10-07-future-folge191.md`.
 
 ## LOCK
 
