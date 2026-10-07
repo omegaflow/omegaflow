@@ -71,7 +71,8 @@
     ["format == \"vlde\"", "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"],
     ["Deckel **hart**", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
     ["Tool-Aufrufe/Session", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
-    ["url,\n            stderr.trim()", "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"]
+    ["url,\n            stderr.trim()", "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"],
+    ["unwrap_or(1994)", "a CLI measurement window defaulted to a literal constant (start year 1994) fabricates the window — the window is named by the operator/CI input and a missing value is a usage error (exit 2), never a default"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -447,6 +448,7 @@
     "consent_get": "curl https://api.example.org/v1/series",
     "fabrication_default_tuple": "let a = match f { Some(x) => x, _ => (0.0, 0.0) };",
     "fabrication_else_zero": "color_index: if color.is_finite() { color } else { 0.0 },",
+    "fabrication_unwrap_or_constant": "let sy: i64 = arg_value(&args, \"--start\").and_then(|v| v.parse().ok()).unwrap_or(1994);",
     "fabrication_absent_anchor": "let site = match stid { Some(s) => s, _ => (0.0, 0.0, 0.0) };",
     "arx_null_raw_series": "TeNull::Arx => y.to_vec(),",
     "wkt_first_id_find": "let pos = wkt.find(\"ID[\\\"EPSG\\\",\")?;",
