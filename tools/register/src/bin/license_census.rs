@@ -227,13 +227,10 @@ fn no_terms_identities(content: &str) -> Vec<String> {
 
 fn main() {
     let count_only = env::args().any(|a| a == "--count");
+    let fail = env::args().any(|a| a == "--fail");
 
     if !Path::new(SOURCES).exists() {
         println!("license_census: {} absent", SOURCES);
-        exit(2);
-    }
-    if !Path::new(CENSUS).exists() {
-        println!("license_census: {} absent", CENSUS);
         exit(2);
     }
 
@@ -244,22 +241,22 @@ fn main() {
             exit(2);
         }
     };
-    let census = match std::fs::read_to_string(CENSUS) {
-        Ok(text) => text,
-        Err(_) => {
-            println!("license_census: {} absent", CENSUS);
-            exit(2);
-        }
-    };
 
-    let lines = drift(&parse_terms(&sources), &parse_census(&census));
-
-    if count_only {
-        println!("{}", lines.len());
-    } else {
-        for line in &lines {
-            println!("{}", line);
+    match std::fs::read_to_string(CENSUS) {
+        Ok(census) => {
+            let lines = drift(&parse_terms(&sources), &parse_census(&census));
+            if count_only {
+                println!("{}", lines.len());
+            } else {
+                for line in &lines {
+                    println!("{}", line);
+                }
+            }
         }
+        Err(_) => println!(
+            "license_census: {} absent — state-census complement skipped (tracked gate stands)",
+            CENSUS
+        ),
     }
 
     let violations = closed_vocab_violations(&sources);
@@ -282,6 +279,9 @@ fn main() {
         census_counts.pending,
         violations.len()
     );
+    if fail && !violations.is_empty() {
+        exit(1);
+    }
 }
 
 #[cfg(test)]
