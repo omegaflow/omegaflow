@@ -3,7 +3,7 @@
   session: Mountain-Folge 270
   class: handover
   date: 2026-10-07
-  sha256: 33d928f4c9679b05cd3ae2da8bf599c28fc54b9a3d52953cd90416b5fcd43f98
+  sha256: b07354d76ca1bd5fe8b7b098c07c168b59451db52005858c37c9972f8db26a5b
   status: live
 -->
 # Handover — Mountain-Folge 270 (2026-10-07)
@@ -27,7 +27,7 @@ geschlossen:** Archivar-Reader + unit-Routing standen; die fehlenden `phi/harves
 ergänzt. **IGRF Grad-13-Synthese** gebaut + pyIGRF-Witness-Test (`grind-flash`),
 `cargo check` 0/0.
 
-**270-Folge (Operator-Wort: mit Agenten umsetzen + dem Rat, einem `archive_search`-Taucher und den Frontier-UI-Chats vorlegen):** Recherche-Schicht (`general`-Taucher) + **Rat** (5 Stimmen) + **UI-Runde** über die vier Architektur-/Ethikfragen. **Rat-Verdikte:** (1) GIC-Breitenband = **Member-Pool ist der Träger**, drei Band-Deskriptoren nur abgeleitete Query (Route C hält); (2) dropped-gate = Träger abgeleitet (lebend ∪ commits ∪ register), `move ohne disposition = rot`, einmalige deklarierte Rebaseline, danach frozen; (3) `rights_read` = **B-Block-Register**, kein Wire-Slot, DataCite-Triple `rights_identifier`+`rights_scheme`+`rights_uri`; (4) Bias-Token = **Review-Marker, kein Hart-Block** (nur das gemessene Ersatzmuster wäre ein Fixture; keines gemessen). **UI-Runde (gemessen):** Antworten gelesen bei Qwen · Z.ai · DeepSeek · MiniMax · Lumo (Member-Pool primär; Risse: Baseline-Freeze vs. Verwerfen, Rechte Record vs. Register, Defaults legitim vs. Bias); Claude generierte beim Lesen (`claude.ai/chat/8a93ac04…`); Mistral + AI Studio gesendet, Antwort nicht gelesen; **Duck.ai Tageslimit** (gemessener Nichtantwort-Grund); Open-Weight-Gruppe (`open-weight-ui`) beim Öffnen geschlossen = `pending`. **Gebaut:** `rights`-Parse-Arm (`rights <id> <scheme> <uri>` → `SourceConfig`, `parse.rs`/`types.rs`/`tests.rs`, additiv, kein Wire-Edit) + `DSN_STATION_COORD_SOURCE` (`odp.rs`; Quelle `pending` — kein Einzelbeleg gemessen). **Commit offen:** der geteilte Baum wird von einer fremden Session gehalten (`motion::BodyProperties`-Refactor, 14+ Dateien; `cargo check --tests` 148 Fremd-Fehler); `src/archivar/tests.rs` trägt fremde Hunks → kein pfad-sauberer Commit. Die eigenen src-Hunks (`types.rs`/`parse.rs`/`tests.rs`/`odp.rs`) sind per `git_safety --snapshot refs/safety/1791407421` geschützt; beim nächsten freien Baum pfad-scoped committen. **eigen-Pass (Operator-Wort 2026-10-07, „ihr solltet nur eigene arbeit tragen"):** sechs Warte-auf-andere-Punkte (Newell-OMNI, `span`→River, dropped-gate→Mycelium, DE441/442→Mycelium, Exposom→Mycelium, Vlies→River) sind nach `state/zustand/wartend.φ` mit Aufnehmer-Linie verschoben; diese Übergabe trägt nur noch `eigen`-Punkte (7) + LOCK.
+**270-Folge (Operator-Wort: mit Agenten umsetzen + dem Rat, einem `archive_search`-Taucher und den Frontier-UI-Chats vorlegen):** Recherche-Schicht (`general`-Taucher) + **Rat** (5 Stimmen) + **UI-Runde** über die vier Architektur-/Ethikfragen. **Rat-Verdikte:** (1) GIC-Breitenband = **Member-Pool ist der Träger**, drei Band-Deskriptoren nur abgeleitete Query (Route C hält); (2) dropped-gate = Träger abgeleitet (lebend ∪ commits ∪ register), `move ohne disposition = rot`, einmalige deklarierte Rebaseline, danach frozen; (3) `rights_read` = **B-Block-Register**, kein Wire-Slot, DataCite-Triple `rights_identifier`+`rights_scheme`+`rights_uri`; (4) Bias-Token = **Review-Marker, kein Hart-Block** (nur das gemessene Ersatzmuster wäre ein Fixture; keines gemessen). **UI-Runde (gemessen):** Antworten gelesen bei Qwen · Z.ai · DeepSeek · MiniMax · Lumo (Member-Pool primär; Risse: Baseline-Freeze vs. Verwerfen, Rechte Record vs. Register, Defaults legitim vs. Bias); Claude generierte beim Lesen (`claude.ai/chat/8a93ac04…`); Mistral + AI Studio gesendet, Antwort nicht gelesen; **Duck.ai Tageslimit** (gemessener Nichtantwort-Grund); Open-Weight-Gruppe (`open-weight-ui`) beim Öffnen geschlossen = `pending`. **Gebaut:** `rights`-Parse-Arm (`rights <id> <scheme> <uri>` → `SourceConfig`, `parse.rs`/`types.rs`/`tests.rs`, additiv, kein Wire-Edit) + `DSN_STATION_COORD_SOURCE` (`odp.rs`; Quelle `pending` — kein Einzelbeleg gemessen). **Commit offen:** der geteilte Baum wird von einer fremden Session gehalten (`motion::BodyProperties`-Refactor, 14+ Dateien; `cargo check --tests` 148 Fremd-Fehler); `src/archivar/tests.rs` trägt fremde Hunks → kein pfad-sauberer Commit. Die eigenen src-Hunks (`types.rs`/`parse.rs`/`tests.rs`/`odp.rs`) sind per `git_safety --snapshot refs/safety/1791407421` geschützt; beim nächsten freien Baum pfad-scoped committen. **eigen-Pass (Operator-Wort 2026-10-07, „ihr solltet nur eigene arbeit tragen"):** sechs Warte-auf-andere-Punkte (Newell-OMNI, `span`→River, dropped-gate→Mycelium, DE441/442→Mycelium, Exposom→Mycelium, Vlies→River) sind nach `state/zustand/wartend.φ` mit Aufnehmer-Linie verschoben; diese Übergabe trägt nur noch `eigen`-Punkte (7) + LOCK. **Delegations-Runde (5/7 an Agenten):** Standblatt nachgeführt (`survey-2026-10-07-kompilierbare-quellen.md`, 2687 Records/1000 compiler/255 Binaries/62 ohne Direktive); GIC-Endpunkte gemessen (4 offen); Bias-Inventar **existiert** (nicht absent — Riss korrigiert); HadISST-Parser **existiert** (`netcdf.rs` CDF-1); IGRF-CI = `cancelled`-Riss (Mycelium). Die zwei schweren (`rights_read`-Register-Sweep, GIC-Breitenband-Wire) sind je eine Sequenz begrenzter Schritte.
 
 ## Burn: open 0.0015 · close 0.1678 · cap 0.20 — Grund: Operator-Dispatch (beide Runden: Rat×3 · general×5 · grind-flash×4 · UI-Runde); kein pro/max.
 
@@ -100,19 +100,12 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### ref-kompilierbare-quellen — Träger des Standblatts
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** `register_lookup --compilers`-Zahl ändert sich (Register wächst)
-- **Lage:** (gemessen 2026-10-07 270) das Register trägt 2687 Blöcke; `register_lookup --compilers` = **1172** Zeilen — das Standblatt `docs/surveys/survey-2026-10-07-kompilierbare-quellen.md` (sha `10ae5c6d…`) trägt 2684 Records / 997 mit `compiler`.
-- **Blockade:** keine.
-- **Braucht:** `register_lookup --compilers` neu messen und das Blatt nachführen (Records / mit compiler / Binaries / ohne Direktive).
-
 ### GIC-Faden §A–G — Admission gemessen, nur `blocked parser-def` offen
 - **Status:** eigen | **Bindung:** eigen (Parser-Arm) · mycelium (Transport)
 - **Trigger:** Reachability-Datei ändert sich
 - **Lage:** (gemessen 2026-10-07 270) Admission gemessen; die **admit-Kanäle sind bereits gebaut** (belegt: `phi/harvest.φ` AMPERE `:11`, ROTI `:72`, DMSP SSJ `:99`, POES/MetOp `:442`, SOHO/LASCO `:468`, THEMIS `:504`, plus MMS/WDC AE/Wind SWE über den generischen HAPI-Arm). **decline:** DMSP SSUSI (funded-dead).
-- **Blockade:** die verbleibenden Kanäle sind `blocked parser-def` (kein Datenarm).
-- **Braucht:** je `blocked parser-def`-Kanal (THEMIS GMAG Dataset-ID, SuperDARN, OMTI/Abisko, Substorm-Onsets, PC-Index TLS, EarthScope MT) den Parser-Arm bauen oder den Gap erklären; Korrektur CARISMA `www.carisma.ca` (Riss: `carisma_mag` erntet den ASC-Spiegel).
+- **Blockade:** die sechs Einträge stehen in `phi/blocked_sources.φ:166-208` als `pending` (**nicht** `blocked parser-def` — Namens-Riss); die Datenendpunkte sind gemessen, nur die Parser-Arme fehlen.
+- **Braucht:** je Kanal den Parser-Arm bauen — gemessene Endpunkte 2026-10-07: THEMIS GMAG `themis.ssl.berkeley.edu/.../thg_l2_mag_*.cdf` (CDF, 200); SuperDARN `.map2` (DMap, Zenodo 200); PCN `ftp.space.dtu.dk/WDC/indices/pcn/PCN_definitive/*.dat` (ASCII, 200); EarthScope MT `data.earthscope.org/.../emtf/...xml` (EMTF-XML, 200). Offen: OMTI/Abisko (Keogramm PNG), Substorm-Onsets (Onset-Endpoint ungemessen). Korrektur CARISMA `www.carisma.ca`; Riss `carisma_mag` erntet den ASC-Spiegel.
 
 ### GIC-Breitenband-Familien — Deskriptoren (Blatt-Slot) + CGM-Provenienz-Riss
 - **Status:** eigen | **Bindung:** eigen (Format/Descriptor) · river (`field_te_query`)
@@ -126,7 +119,7 @@ Wort | Datum | Quelle
 - **Trigger:** CI-Test `synthesis_matches_pyigrf14_witness_points` grün
 - **Lage:** (gemessen 2026-10-07 270) **Grad-13-Synthese gebaut** — `IgrfCoeffs::synthesize` (`src/archivar/igrf.rs`; geozentrisch, Schmidt-halbnormiert, Rückgabe `[-Btheta, Bphi, -Br]` nT; `coefficient()`-SV-Bug für `date ≥ 2025` geheilt); NOAA-Fixture `src/archivar/igrf14coeffs.txt` (199 Zeilen, sha `8f8d8840…`); Test gegen 3 pyIGRF-14-Witness-Punkte (`atol/rtol 1e-2` nT); `cargo check` 0/0. Witness-Quelle `ciaranbe/pyIGRF tests/tests_igrf14.py` (IAGA-VMOD/BGS; 2026-10-07 gemessen). `igrf14testvalues.txt` = gemessen absent (404, kein Snapshot).
 - **Blockade:** der Test lief lokal nicht (`cargo test` = CI); die Synthese ist noch nicht an die Wire-/Config-API gebunden.
-- **Braucht:** `ci-check`-Lauf (Test grün) + optional die `geomag_lat_<frame>`-Form aus dem Rat (`archiv/handover-2026-10-06-mountain-folge249.md:61-66`).
+- **Braucht:** ein **nicht-cancelled** `ci-check`-Lauf (Test grün) — Riss: der Lauf zu `c28ce137d` ist `cancelled` (0 Jobs), obwohl `ci-check.yml:20-27` `cancel-in-progress: false` behauptet → kein Per-SHA-Verdikt (Mycelium); optional `geomag_lat_<frame>`-Form (Rat, `archiv/handover-2026-10-06-mountain-folge249.md:61-66`).
 
 ### Lizenz-Disposition — `terms`-Feld (SPDX); `rights_read` offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
@@ -137,17 +130,17 @@ Wort | Datum | Quelle
 
 ### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`) — Klassen-Token gemessen
 - **Status:** eigen | **Bindung:** eigen (Gate/Fixture)
-- **Trigger:** Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md` gebaut (heute absent)
-- **Lage:** (gemessen 2026-10-07 270, `general`) die Körper-Namen sind gegated (269). Klassen-Token: **Station-privilege** `dsn_station`/`station_coords` (`odp.rs:11`, `arpansa.rs:67`), **Now-default** `system_now_tdb`/`machine_now_tdb` (`lsk.rs:59`, `fetch.rs:1526`) — beide auch legitime Produktionsnutzung; **Observer-as-vantage**/`camera`/`Client-Server` haben **keinen** Produktions-Token (nur Testcode/Klassifikator). Das Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md` ist im Baum absent.
-- **Blockade:** welcher gemessene Token ist Fabrikations-Marker (Hart-Block) vs. legitime Nutzung (Review-Marker)? = Ethik-/Identitätsfrage.
-- **Braucht:** **kein** Hart-Block-Fixture für die vier Token (Rat 2026-10-07: Review-Marker, das Tor trifft das gemessene Ersatzmuster, nicht den Zugriffsnamen; keines gemessen); Inventar bauen; `*_SOURCE`-Riss geschlossen (`DSN_STATION_COORD_SOURCE`, `odp.rs` = `pending`).
+- **Trigger:** Ersatzmuster (`unwrap_or`/Default-Fill einer physikalischen Größe) in Produktion gemessen
+- **Lage:** (gemessen 2026-10-07 270, `general`) das Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md` **existiert** (361 Zeilen, gitignored; nicht absent — Riss zur früheren Aussage) und ist **veraltet** (mehrere PROD-POISON-Zeilen geheilt: `media.rs` daten-deklariert, `main_flow.rs` `body_props?`, `rinex.rs` Parameter). Gemessene Ersatzmuster heute: `astrometry.rs:10,336` (`EARTH_ROT_RAD_S` als Default-Rahmen), `odp.rs:9,48` (`EARTH`-Konstante als code-gewählter Empfänger), Stationstabellen `odp.rs:13-24`/`arpansa.rs:67-91`/`nexrad.rs:198`; legitime Zugriffe: `system_now_tdb`/`machine_now_tdb` (Uhr), `dsn_station`-Absenz (`_ => None`). Observer/Camera/Client-Server: kein Produktions-Token.
+- **Blockade:** welches Ersatzmuster ist Hart-Block (Fixture) vs. Review-Marker? = Rat (2026-10-07: das Tor trifft das gemessene Ersatzmuster, nie den Zugriffsnamen).
+- **Braucht:** das Inventar auf den heutigen Baum nachführen; die gemessenen Ersatzmuster als Fixture-Kandidaten in `commit_gate_vocab.json` prüfen; `*_SOURCE`-Riss geschlossen (`DSN_STATION_COORD_SOURCE`, `odp.rs` = `pending`).
 
 ### HadISST SST — Admission → SOURCE_PORT
 - **Status:** eigen | **Bindung:** eigen (Parser/Format) · mycelium (CDN)
 - **Trigger:** Rat-Verdikt 2026-10-07 (admit `thermal`)
 - **Lage:** (gemessen 2026-10-07, Rat + `general`) `https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz` HTTP 200, gzip, ~79 MB (Ledger nennt 83 913 410 B — Größen-Riss tragen); NetCDF(CF), SST in K; Research-Use („without charge for private study and scientific research"). Rat: **admit**, Kraft `thermal` (5), Kernel `exponential-decay` (Präzedenz `ersstv5_nino34`).
-- **Blockade:** kein CF/NetCDF-Parser im Archivar; noch kein `sources.φ`-Block.
-- **Braucht:** CF/NetCDF-Parser (`src/archivar`, std) → `url`/`format`/`compiler`/`field`-Block in `phi/sources.φ` + `arm`/`workflow hadisst-cdn.yml` in `phi/harvest.φ` → CDN (Mycelium).
+- **Blockade:** der CDF-1-Parser **existiert** — `src/archivar/netcdf.rs` (`NetcdfFile::parse`, CDF-1/2, Record-Interleave) + `inflate::gunzip`; Format gemessen **CDF-1** (`CDF\x01`), `sst` float (time,lat,lon), fill −1e30, units `C`, CF-1.0; nur der HadISST-Compiler + Register-Block fehlen.
+- **Braucht:** `hadisst_compiler.rs` auf `omegaflow::netcdf::NetcdfFile` (Vorbild `esacci_sst_compiler.rs`; Gate `v != fill && v.is_finite() && -3.0 < v < 45.0` — Eis ist null-echt, nicht absent) → `url`/`format`/`compiler`/`field`-Block in `phi/sources.φ` + `arm`/`workflow hadisst-cdn.yml` in `phi/harvest.φ` → CDN (Mycelium).
 
 ## An river
 
@@ -159,6 +152,8 @@ Origin: mountain-folge270.
 ## An mycelium
 
 Origin: mountain-folge270.
+
+- **`ci-check` verdrängt jeden Lauf (Riss, gemessen 2026-10-07):** `.github/workflows/ci-check.yml:20-27` behauptet `cancel-in-progress: false` („a per-SHA verdict forms"), gemessen wird aber jeder `ci-check` nach ~5 min als `cancelled` mit **0 Jobs** verdrängt — der Lauf zu `c28ce137d` (`37684730152`) und neun weitere nach 19:51Z; der IGRF-Test lief in **keinem** Lauf. Ohne Fix entsteht kein Per-SHA-Verdikt.
 
 - **Membran-Sonne-Anker — `de44-cdn 37634706117` completed/success.** Die drei DE440-`sha256` sind nachgezogen (`sources.φ` earth `8b8998bd…`, moon `64ad003b…`, sun `7700832e…`). **Braucht:** `pages-deploy` neu, damit die GM-tragende Sonne-`.bin` deployt ist.
 - **KC2G geschlossen:** Archivar-Reader (`geo.rs:896` + `extract.rs:4144`) + `sources.φ:974-984` + `kc2g-cdn.yml` standen; der fehlende `phi/harvest.φ`-Block (`format kc2g_stations`/`arm kc2g_stations`/`pattern ^kc2g_stations\.csv$`) ist ergänzt. **Braucht:** `gh workflow run kc2g-cdn.yml` (Harvest/Manifestation).

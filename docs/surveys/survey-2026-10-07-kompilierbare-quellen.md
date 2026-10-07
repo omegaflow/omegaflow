@@ -2,7 +2,7 @@
   title: Kompilierbare Quellen — Direktive-lose Compiler
   class: survey
   date: 2026-10-07
-  sha256: 10ae5c6d1cec6a1294ea80c0ef65f522ca39e6e3c7c26f0b0d0ed7b3b5780864
+  sha256: 2662fa47878d4a342d0548e6454a2916a9e0ef0cfcf8307fa44c4cf5bf1eca2c
   status: live
   see-also: docs/concepts/tools-map.md
 -->
@@ -12,13 +12,14 @@
 `phi/sources.φ`; `--compilers --no-directive` isoliert die Compiler-Binaries, die
 keine `compiler`-Direktive im Register tragen. Beide Läufe am Baum, 2026-10-07.
 
-**Zahlen (gemessen 2026-10-07, `./target/debug/register_lookup`).**
+**Zahlen (gemessen 2026-10-07T21:18Z, `register_lookup`).**
 
-- `--compilers`: 2684 records, 997 with compiler, 252 distinct binaries, 0 tagged, 168 domains.
-- `--compilers --no-directive`: 311 tree compilers, 252 wired, 64 without directive —
-  unregistered 13, variant 10, workflow 41.
+- `phi/sources.φ` (Records/Blöcke, aus `--compilers`): 2687.
+- `--compilers`: 2687 records, 1000 with compiler, 255 distinct binaries, 0 tagged, 171 domains.
+- `--compilers --no-directive`: 311 tree compilers, 255 wired, 62 without directive —
+  unregistered 13, variant 10, workflow 39.
 
-Die 64 Direktive-losen Compiler sind keine leeren Zellen: jede hier genannte
+Die 62 Direktive-losen Compiler sind keine leeren Zellen: jede hier genannte
 Klasse trägt einen gemessenen Anker im Baum (Witness, Binding, Reader-Arm,
 Workflow, Schwestern-Direktive).
 
