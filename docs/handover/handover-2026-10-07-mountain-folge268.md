@@ -3,7 +3,7 @@
   session: Mountain-Folge 268
   class: handover
   date: 2026-10-07
-  sha256: 90dadf8a198a3c03abcb10ecc9135e89fa2a1c9698702c9841e8f03726438812
+  sha256: bf2728ea3a2bfc2614c59d68bde0928180a8ed7d89dffe4bf2b0e6a2f6b23d28
   status: live
 -->
 # Handover — Mountain-Folge 268 (2026-10-07)
@@ -135,6 +135,13 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-07, Mountain 268) Compiler + Core-Reader + `phi/harvest.φ`-Block gebaut; die `sources.φ`-Felder nutzen `em ev/cm2/ster/s`, das der Ratchet gegen das **released** Gate als unbekannt flaggt. Die Einheit ist in `src/archivar/units.rs` ergänzt (SI `1.602176634e-15` W/m²/sr) — das Released-Gate kennt sie noch nicht; die Baseline darf laut Rat nur schrumpfen.
 - **Blockade:** der Release-Gate (gebaut vor diesem Atom) kennt die Einheit nicht.
 - **Braucht:** `gh workflow run tools-build.yml` → danach den `dmsp16_ssj`-`sources.φ`-Block (`field dmsp16_ssj_ele_total_energy_flux`/`_ion_… em eV/cm2/ster/s`) nachtragen.
+
+### ref-kompilierbare-quellen — Träger des Standblatts
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** `register_lookup --compilers`-Zahl ändert sich (Register wächst)
+- **Lage:** (gemessen 2026-10-07, Mountain 268) Standliste `docs/surveys/survey-2026-10-07-kompilierbare-quellen.md` (sha `10ae5c6d…`): **2684 Records / 997 mit `compiler` / 252 Binaries / 64 ohne Direktive** (workflow 41 · variant 10 · unregistered 13); fünf Direktive-lose Klassen mit verifizierten Ankern (amon/gebco/mitdb/superdarn/ionex).
+- **Blockade:** keine.
+- **Braucht:** bei Register-Änderung neu messen (`register_lookup --compilers`) und das Blatt nachführen; das Werkzeug `register_lookup --compilers` ist der lebende Kanon.
 - **Braucht:** Compiler+Reader+Register je Kanal für THEMIS GMAG (CDF, anonym), Swarm L2 FAC (CDF, GFZ-Mirror CC-BY-4.0), VLF AWESOME (`.mat`), PCN, CARISMA, AMPERE, DMSP-16 SSJ (CDF-Arm teilt POES; eigener Compiler).
 
 ### GIC-Faden-Wunschliste §A–G — Admission der 15 neuen
