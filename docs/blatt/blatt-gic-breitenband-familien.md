@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: a479b0547012cbb3e21192ed20a75b709127ee1438a4a6b4d922873dcd36d80a
+  sha256: 9f598e5dfae4539c853b6b083ff8449e6bfab7e2d90f280e5c0fb098bb5b04b2
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -250,13 +250,14 @@ kein `over family`, `cgm_lat` nie gelesen):
   Linien stehen ungeglättet — Paar-Band ist das volle Objekt, Target-Band seine Projektion bei
   band-degeneriertem Treiber.
 - **12-Stimmen-Rat (Operator-Wort 2026-10-07):** Adressierung mit 5 Stimmen + 5 Axiomen +
-  5 Achsen an 5 API-`voice-*` + die UI-Chats; **9/11 erreichbar geantwortet** (gemini·gptoss·
-  inkling·nemotron·deepseek + Claude·Kimi·Qwen·GLM), einstimmig **Route C**; arena
-  Generierungsfehler, Duck keine Antwort — `pending`. Gruppierungs-Tally: Rat + `gptoss`·
-  `inkling`·`nemotron` = Paar-Band; `gemini` = Driver-Band; `deepseek` + Claude + Kimi + Qwen +
-  GLM = Target-Band. Riss (b): die `M_eff`-Senkung ist abgeleitet, nicht gemessen; gemeinsame
+  5 Achsen an 5 API-`voice-*` + die UI-Chats; **10/10 geantwortet** (gemini·gptoss·
+  inkling·nemotron·deepseek + Claude·Kimi·Qwen·GLM + Duck/GPT-6 Luna), einstimmig **Route C**;
+  arena vom Operator fallengelassen. Gruppierungs-Tally: Rat + `gptoss`·`inkling`·`nemotron` =
+  Paar-Band; `gemini` = Driver-Band; `deepseek` + Claude + Kimi + Qwen + GLM + Duck = Target-Band.
+  Riss (b): die `M_eff`-Senkung ist abgeleitet, nicht gemessen; gemeinsame
   Surrogat-Ziehungen + α-Aufteilung über 3 Familien nötig; GLM: „gemessener Member-Pool im
-  GIC-Sinne = 2 Mitglieder, nicht 154". xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**,
+  GIC-Sinne = 2 Mitglieder, nicht 154"; Duck: formale Gültigkeit von C bei datenabhängiger
+  Stufe 1 + Familienkorrektur `pending`. xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**,
   nicht als dB/dt-Aussage; dB/dt-152 = abgeleitete Serie (Operator/Kadenz/Filter), an ABK/SOD
   validiert → `pending`.
 - **Gebaut (River 121):** `tools/measure/src/bin/cgm_lat_partition.rs` emittiert offline
