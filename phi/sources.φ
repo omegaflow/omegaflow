@@ -1720,6 +1720,17 @@ on earth 0 0 0
 ttl 86400
 field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/donnees-data.asc-csa.gc.ca/carisma_mag.bin
+format carisma_mag
+origin https://donnees-data.asc-csa.gc.ca/users/OpenData_DonneesOuvertes/pub/CARISMA/carisma_csv/mag/daily/2009/DAWS/20090105DAWS.MAG.csv
+terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
+compiler tools/harvest/src/bin/carisma_mag_compiler.rs
+at earth
+ttl 86400
+field carisma_mag_x_nt carisma_mag_x_nt inverse-square em nT 1 0.0 0.0
+field carisma_mag_y_nt carisma_mag_y_nt inverse-square em nT 1 0.0 0.0
+field carisma_mag_z_nt carisma_mag_z_nt inverse-square em nT 1 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/download.geofabrik.de/monaco_nodes.bin
 format osm_nodes
 origin https://download.geofabrik.de/europe/monaco-latest.osm.pbf
@@ -4034,6 +4045,15 @@ field wdc_ae_ae_nt wdc_ae_ae_nt inverse-square em nT 60 0.0 0.0
 field wdc_sym_d_nt wdc_sym_d_nt inverse-square em nT 60 0.0 0.0
 field wdc_sym_h_nt wdc_sym_h_nt inverse-square em nT 60 0.0 0.0
 field wdc_dst_nt wdc_dst_nt inverse-square em nT 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/ampere_fac.bin
+format ampere_fac
+origin https://zenodo.org/api/records/22345897/files/ampere.202309.v2.k060_m08.north.grd.zip/content
+terms CC0-1.0 https://zenodo.org/records/22345897
+compiler tools/harvest/src/bin/ampere_fac_compiler.rs
+at earth
+ttl 86400
+field ampere_fac_uam2 ampere_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
 format reference
