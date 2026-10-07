@@ -3,7 +3,7 @@
   session: Mountain-Folge 257
   class: handover
   date: 2026-10-07
-  sha256: 65a48863038fd8a85804ab93c72d2fd1e4ac7ef044ce40f66e150b53575993a1
+  sha256: e0da1ffa8b74821dfc605bebfffee500dae3ebadc6d2ea4d6e6268b4c68f0a7d
   status: live
 -->
 # Handover — Mountain-Folge 257 (2026-10-07)
@@ -14,7 +14,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-07-mountain-folge256.md` (→ `archiv/`). Kein pro/max; Bau per
 flash-Disziplin, keine Dispatchs nötig.
 
-## Burn: open 0.0007 · close 0.0 (line) · keine Dispatchs · kein pro/max · Grund: Force-/Einheiten-Kontrakt Schritt (1)+(5) direkt gebaut — quote-aware Register-Parser, Baseline eingefroren, Produktions-Gate-Riss geschlossen. (gemessen via `session_burn`)
+## Burn: open 0.0007 · close 0.0693 (line) · keine Dispatchs · kein pro/max · Grund: Force-/Einheiten-Kontrakt Schritt (1)+(5) direkt gebaut — quote-aware Register-Parser, Baseline eingefroren, Produktions-Gate-Riss geschlossen. (gemessen via `session_burn`, Mountain-Eintrag)
 
 ## Operator-Wort-Register
 
