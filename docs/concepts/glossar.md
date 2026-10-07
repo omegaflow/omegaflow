@@ -2,9 +2,9 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 2013aafcb2ac2b4d4d8c7888d4ded9eb3c996b9a8befa6b6d349a5233b170ff3
+  sha256: 7d919963a73d4c3a2505aacab6073ee6cdac91a4bdf21b9cbbfaddb4b0de669a
   status: live
-  see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md
+  see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md docs/concepts/free-voices.md docs/concepts/die-vier-schilde.md
 -->
 # Glossar der Gegenströmung
 
@@ -50,6 +50,7 @@ fabriziert.
 - **Enclosure-Lemma** — räumliche Abfragen dilatieren um `rmax + v·Δt + ½a·Δt² + extent`; jede Teilwahrheit ist wahr, `pending` für das Ganze. · `docs/concepts/system-directive.md:25`, `AGENTS.md`
 - **TE-Maschine** — Takens-eingebettete Transferentropie gegen phasenrandomisierte Surrogate, beidseitig; WGSL mit kanonischer CPU-Referenz. · `docs/concepts/der-kausalpfeil.md:19-24`
 - **Der Kausalpfeil / ein Blatt Papier** — ein Ergebnis, das auf ein Blatt passt, ist ein Axiom; die Richtung des kausalen Pfeils ist eine Messung. · `docs/concepts/der-kausalpfeil.md:15-24`
+- **Ein-Blatt-Axiom** — ein Ergebnis, das auf ein Blatt passt, ist ein Axiom: Richtung, Lag, n, Schwelle, Verdikt — mehr nicht; fünf Dateien. · `docs/concepts/ein-blatt-axiom.md:19`, `ein-blatt-papier.md:17-22`
 - **Die Session ist das Atom** — Planung und Umsetzung vollenden sich im selben Kontextfenster. · `docs/concepts/system-directive.md:21`
 - **Name = Implementation** — Verhalten emergiert aus abgefragten Eigenschaften; der Name ist das Handwerk, nicht das Marketing. · `docs/concepts/system-directive.md:21,25`, `docs/concepts/die-weberin.md:16`
 - **fieldPermeability** — exponentielles Relaxieren; erst den eigenen Zustand messen, dann empfangen. · `docs/concepts/the-counter-slope.md:27,43`
@@ -77,7 +78,36 @@ fabriziert.
 - **Mathematikerin** — „she who does mathematics" (GPU/WebGPU, die ω()-Schleife). · `docs/concepts/zeugnis.md:331-334`
 - **Weberin** — das dritte Handwerk; der Name ist das Handwerk. · `docs/concepts/die-weberin.md:16`
 - **Kybernautin** — die Session als Architektin; hält die fünf Stimmen zugleich. · `docs/concepts/system-directive.md:27`
-- **Der Rat / fünf Stimmen** — Mountain · Sensory · River · Mycelium · Future; fehlt einer, bricht der Kreis. · `docs/concepts/die-vier-schilde.md:12-42`
+
+## Kybernautik — Rollen, Stimmen, Raumzeit
+
+- **Granit** — die eine Grundsatz-Quelle (7 Sätze: A = A · ICRS & TDB · force_type · 0 honored · pending · Der Operator schließt · manifestiert, nicht nur lokal); das Gate liest genau diese Datei. · `docs/granit.md:10-22`
+- **Die fünf Axiome** — A = A · ICRS & TDB · force_type · 0 honored · pending; jede Architektur-/Ethikfrage trägt sie. · `docs/concepts/free-voices.md:87`, `docs/granit.md:16-20`
+- **Die fünf Achsen** — Voxelisierung (Mitte) · Crossmatch (Sensory) · TE-Maschine (River) · Nullkontrolle (Mycelium) · Residuum (Future). · `docs/concepts/free-voices.md:88-89`
+- **Die vier Schilde + die Mitte (4+1)** — Mitte = Voxelisierung (Mountain); Schilde = Crossmatch · TE-Maschine · Nullkontrolle · Residuum; **4 Schilde + Mitte = 5 Stimmen/Achsen**. · `docs/concepts/die-vier-schilde.md:12-40`
+- **Linie** — eine der fünf Rollen (Mountain · River · Mycelium · Sensory · Future), je ein `.opencode/command/<line>.md`; trägt eine eigene Übergabe. · `AGENTS.md`, `.opencode/command/`
+- **Session** — das Atom: eine Linie in einem Kontextfenster; Planung und Umsetzung im selben Fenster. · `docs/concepts/glossar.md:53`, `docs/concepts/kybernaut-native-methodology.md`
+- **Taucher** (Port) — die `grind-*`-Sub-Agenten (Quellen-Port, Harvest, Recheck); edit-first, keine Force-Gate-Urteile. · `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md:11`, `AGENTS.md`
+- **Forscher** (Recherche) — die read-only Recherche-Agenten (`general`, `research-max`); liefern Claims, keine Verdikte. · `AGENTS.md` (Cost ladder), `docs/concepts/free-voices.md:53`
+- **Der Rat / `council`** — der Rat ist die fünfstimmige Linse **Mountain · River · Mycelium · Sensory · Future** (fehlt einer, bricht der Kreis); `council` ist der Agent, der sie fährt; der Rat trägt die Struktur, nicht das Urteil allein. · `docs/concepts/die-vier-schilde.md:6,42`, `docs/concepts/free-voices.md:72`
+- **UI-Chat · Frontier · Open-Weight · Seat** — UI-Chat = zweiter Kanal (Web-UI); Frontier = starke geschlossene Modelle; Open-Weight = offene Modelle (tryingopen); Seat = ein Modell-Sitz. · `docs/concepts/free-voices.md:24-28,80-89`, `AGENTS.md:529-533`
+- **Gretchenfrage** — der Aufnahmetest für einen Seat (Fähigkeit ≥ 4/4 + gemessenes Tempo); ungemessen/Timeout → `pending`, kein Roster-Mitglied. · `AGENTS.md:533`
+- **Weltlinie** — die Linie der Presence im Block; sie gehört dem Operator, er stimmt sie; die Presence ruht, sie bewegt sich nie selbst. · `AGENTS.md`, `docs/concepts/glossar.md:30`
+- **4D-Block** — Raumzeit als Block: Zeit ist eine Koordinate, kein Fluss; ICRS + TDB; alle Körper gleich. · `AGENTS.md` (Block Universe Physics), `docs/concepts/glossar.md:29`
+- **Receiver** — die deklarierte Empfänger-Weltlinie je Messung (nie „Observer" als Vantage); Zulassungskriterium der Agnostik. · `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md:82`, `AGENTS.md`
+- **omegaflow (Projektname, extern besetzt)** — das kybernetische Feldsystem; der Name kollidiert mit `omry/OmegaFlow` (OSS, PyPI/omegaflow.dev) und dem Undertale-„Omega Flowey"-Cluster, Wikipedia absent (gemessen 2026-10-07 via `archive_search --github/--wiki/--verdict`). Die Identität trägt das Rollenvokabular, nicht der Projektname. · `docs/concepts/glossar.md:75`
+- **omegaflow-legacy** — das privat-archivierte Vorgänger-Repo (2114 Commits, archiviert 2026-09-03); Träger der verlorenen Konzepte (Silence Map, Certainty, TDA/Betti-0, …); kein Netz-Fußabdruck (GitHub 404, Wayback leer). · `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md:11-14`
+
+## Register & Gate
+
+- **Kanon-Schlüssel** — der kanonische Schlüssel eines offenen Punkts (sortierte, deduplizierte Token-Menge oder explizite ID); Identitätsträger im Roster. · `tools/register/src/bin/register_lookup.rs:2886`, `AGENTS.md`
+- **Roster** — die Menge kanonischer Offen-Punkt-Schlüssel der lebenden Übergaben; die Mengenform des Skalars (`--dropped`). · `AGENTS.md`, `docs/zustand/dropped-roster-baseline.txt`
+- **Pin** — die auf einen Commit/SHA fixierte Baseline-Liste; das lokale Gate liest nur den Pin, nie den Vollscan. · `docs/zustand/dropped-roster-baseline.txt`, `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md`
+- **pending-legacy** — der eingefrorene Altbestand unbezeugter Drops; wächst nie (kein Auto-Bump), schrumpft nur durch belegte Auflösung. · `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md`
+- **Träger** — die Instanz (Owner-Linie), die eine offene Sache in einer lebenden Übergabe hält; ohne Träger: `orphan`. · `AGENTS.md`, `tools/register/src/bin/register_lookup.rs` (`--orphans`)
+- **Aufenthalt = Eigentum** — ein Punkt lebt in der Übergabe der Linie, deren nächster Schritt seine Natur berührt. · `AGENTS.md`
+- **Adressat** — eine `## An <line>`-Senderzeile: der wandernde Punkt reist als committete Register-Zeile im eigenen Handover, der Owner faltet sie. · `AGENTS.md`
+- **docs-naming** — die Spec-Klasse wurde 2026-09 in `concepts` überführt (`docs/specs/docs-naming-versioning.md` → `docs/concepts/docs-naming.md`); Header-Pflicht + sha256 über den Body ohne Header. · `docs/concepts/docs-naming.md`
 
 ## Omegaflow-exklusiv (Tiers i–iii)
 
