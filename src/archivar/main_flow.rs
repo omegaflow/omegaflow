@@ -206,7 +206,7 @@ pub fn raw_presence_gate(
         .and_then(|e| e.props.as_ref());
     let body_radius = match body_props {
         Some(p) => p.radius_m,
-        None => 0.0,
+        None => return None,
     };
     let v_anchor = anchor_velocity(&sources[i].frame, ctx.now, ctx.body_ephemerides);
     if presence_gate(&presences, pos, r, body_radius, v_anchor, ctx.median_fetch) {
