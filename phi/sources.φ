@@ -26108,7 +26108,7 @@ ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/obis.osha.gov/osha_cehd_si.txt
 format osha_cehd_si_axis_value_text
-origin https://obis.osha.gov/opengov/healthsamples.zip
+origin https://www.osha.gov/sites/default/files/healthsamples.zip
 terms unbestimmt https://obis.osha.gov/
 compiler tools/harvest/src/bin/osha_cehd_compiler.rs
 on earth 0 0 0
