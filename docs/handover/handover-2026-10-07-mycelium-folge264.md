@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. dropped-gate (a) Zwei-Pin-Trennung (Roster vs. Legacy) gebaut, (b) `--shadow`-Selbsttest in ci-gate verdrahtet; eionet_cdr sha256 ins Register; adressierte Blöcke future-197/mountain-269/river-131 gefaltet; Round-Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 75d085b94fbd9fb5549d5c48c1cd032d70798a65014aa115b7ff6f496d002f7a
+  sha256: 3e609581b31c5b00ffa4bc70ba44cd4cf447e5babbd09decbcb499ea9478694a
   status: live
 -->
 # Handover — Mycelium-Folge 264 (2026-10-07)
@@ -38,13 +38,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-07 via `ci_manage view`) seit 19:38Z **queued** (head `ef5ac7e1e`).
 - **Blockade:** keine (Runner-Queue).
 - **Braucht:** `ci_manage view 37676047864` → Ergebnis einmalig lesen (future-194/195-Adresse).
-
-### dropped-gate — Verdrahtung steht; es fehlt nur die erste Namensliste
-- **Status:** wartend
-- **Trigger:** ein `register-dropped`-Lauf (Artefakt `dropped-keys`) — `docs/zustand/dropped-legacy-baseline.txt`
-- **Lage:** (gemessen 2026-10-07) Verdrahtung gebaut: `register_lookup --dropped-keys` gibt die kanonischen Schlüssel der un-belegten Drops aus; `register-dropped.yml` gibt sie als Artefakt `dropped-keys` aus; `ci-gate` vergleicht die aktuelle Menge gegen `docs/zustand/dropped-legacy-baseline.txt` und rotet nur bei **neuen** Namen (fehlt die Datei → `pending`, kein stiller Null-Durchlauf). Die Event-Regel ist descoped (der Scan belegt „aufgelöst" per Commit selbst). Der erste Seed-Lauf lieferte 0 Schlüssel, weil `--dropped-keys` allein `run_dropped` nicht erreichte — Dispatch gefixt (`1f0ce67f6`).
-- **Blockade:** nur der erste Lauf: die Liste muss einmal aus dem CI-Artefakt geholt und committet werden (lokal nicht erzeugbar, Scan >30 min).
-- **Braucht:** den `register-dropped`-Lauf abwarten → Artefakt `dropped-keys` → `docs/zustand/dropped-legacy-baseline.txt` committen; danach ist der Gate scharf (jeder neue Namens-Drop rot).
 
 ### KC2G `prop.kc2g.com` — Manifestation wartet Mountains Reader-Arm
 - **Status:** wartend
