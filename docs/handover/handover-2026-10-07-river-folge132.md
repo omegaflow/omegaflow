@@ -3,7 +3,7 @@
   session: River-Folge 132
   class: handover
   date: 2026-10-07
-  sha256: 35fe0eed69d430cc503804641343ec4af4f50f3ded202b8f763f6b325f4c341e
+  sha256: 77c195b2f75d18963c5500d1d94a1ce61a5b40ccb55458ace7e11bd6a8719cd8
   status: live
 -->
 # Handover — River-Folge 132 (2026-10-07)
@@ -83,12 +83,12 @@ Rat (council, 2 Runden) + UI-Frontier (`river-ui`: Claude Sonnet 5.5, Qwen3.7-Pl
 - **Blockade:** der Medien-Datenpfad ist nicht gebaut — `BodyProperties` stype==2 parst **5** f64 (`motion.rs:667/688`), `remove-bias.md` WP12 schreibt **6** (Stride-Lücke gemessen); Riss A (Provenienz der sechs Medium-Werte); Riss C (`kernel_extent`-Konflation) vor dem Umbenennen.
 - **Braucht:** `motion.rs:667` stype==2 auf 6 f64 / `pos += 48` korrigieren (WP12) und die sechs Medium-Werte benennen (`v_sound`, `v_seismic_p`, `v_seismic_s`, `alpha_thermal`, `d_diffusion`, `v_advective`), statt der Kernel-Namen (`gaussian_inverse_square` …) — sie reisen über den `advection`-Slot (Kraft-7-Präzedenz), kein neuer Wire-Slot; `membrane.rs:302` `kernel_extent` → `medium_reach` entflechten und den `force_type==1`-Radius-Zweig löschen (Doppelzählung `fetch.rs:554-558`); den `kepler.rs`-PROD-POISON-Eintrag als `descoped` mit Befund registrieren (Mountain). Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07); Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md`.
 
-### `medium_reach`-Reste (nach Commit `b3dd7fb4c`)
+### `medium_reach`-Reste (nach `b3dd7fb4c` + `0bc9af118`)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-07, River 132; Rat 5 Stimmen + `general`-Recherche + UI konvergent) **Gebaut und committet** (`b3dd7fb4c`, 14 eigene Pfade, keine fremden Hunks): `MediumParams` → `BodyEphemeris.medium` (die 5 kernel-falsch-benannten `BodyProperties`-Felder entfernt); `kernel_extent` → `medium_reach(force_type, age, medium, advection) -> Option<f64>` — `force_type` = Medium-Achse, `kernel_id`-Tail = 1.0 (pending), **Gravitations-Radius-Zweig gefallen** (Radius allein in `body_term`); Front genau einmal in `record_in_enclosure` (`medium_reach(...).or_else(signal_reach)`). **Der „5→6-Stride" war ein Falschbefund:** Writer `ephemeris.rs`/Parser = **5** f64, `media_params.tsv` = **5** Spalten; `v_advective` reist im `advection`-Slot. **Gate-Funde geheilt:** die zwei `unwrap_or(0.0)` (`channels.rs` → `?`, `matrix.rs` → `let Some … else continue`) und `AUDIO_SPEED_AIR` → `AIR_SOUND_SPEED_M_S` (Substring-False-Positive des Fixtures `D_AIR`). `cargo check --tests` grün. **Fremd:** mountain-270s `rights`-Code (`parse.rs`/`types.rs`/`tests.rs`/`odp.rs`/`igrf.rs`) bleibt uncommittet im Baum — per Backup/Restore aus dem eigenen Commit herausgehalten (nur eigene Hunks).
-- **Blockade:** mountain-270s `rights`-Commit ist offen (dessen nächster Pass) — nicht Rivers.
-- **Braucht:** matrix-`age`-Quelle ist `meta.tau` (echtes `age = t_presence − epoch` fehlt in `NameMeta`); `NameMeta.advection` fehlt (Kraft 7 → `0.0`); der CPU-Zwilling `flat_propagation_speed` (`SEISMIC_BODY_SPEED`/`SEISMIC_SURFACE_SPEED`/`DIFFUSIVITY_THERMAL`/`DIFFUSIVITY_MOLECULAR`) site-für-site gegen den GPU-Schnitt (`shaders.rs` hat 2–7 bereits absent); `EnclosureField.body_props` ist nach der Umstellung write-only (Test-Literale).
+- **Trigger:** mountain-270s `rights`-Commit (gibt `src/archivar/tests.rs` frei).
+- **Lage:** (gemessen 2026-10-07, River 132; Rat + `general`-Recherche + UI konvergent) **Gebaut und committet** (`b3dd7fb4c`): `MediumParams` → `BodyEphemeris.medium`; `kernel_extent` → `medium_reach(force_type, age, medium, advection) -> Option<f64>` (Gravitations-Radius-Zweig gefallen); Front einmal in `record_in_enclosure`; `AUDIO_SPEED_AIR` → `AIR_SOUND_SPEED_M_S`; die zwei `unwrap_or(0.0)` geheilt. **Gebaut und committet (`0bc9af118`, `grind-flash`):** das Matrix-Enclosure-Gate trägt `age = |t_presence − meta.epoch|` und `meta.advection` — `NameMeta` um `epoch`/`advection` erweitert, im State mitgeschrieben/-gelesen; `meta.tau` wandert nicht mehr in den Gate. **Der „5→6-Stride" war ein Falschbefund** (Writer/Parser/TSV = 5; `v_advective` im `advection`-Slot). `cargo check --tests` grün.
+- **Blockade:** `src/archivar/tests.rs` trägt mountain-270s uncommittete `rights`-Hunks. **Zwei eigene Schritte hängen daran** (von `grind-flash` gemessen, korrekt gestoppt): (a) `flat_propagation_speed`-Erd-Konstanten entfernen — `SEISMIC_BODY_SPEED`/`DIFFUSIVITY_THERMAL` haben Nutzer in `tests.rs:6553/6860/6895`, vier Dispositions-Tests encodieren den alten Erd-Default-Fall und müssen mit umgestellt werden; (b) `EnclosureField.body_props` (write-only) entfernen — die Test-Literale liegen in `tests.rs`.
+- **Braucht:** freier `tests.rs` (nach mountain-270s Commit), dann die zwei Schritte als je ein `grind-flash`-bounded-Step. **Riss (nicht geglättet):** `0bc9af118` erweiterte die State-Magic `OMX3` um `epoch`/`advection`, ohne auf `OMX4` zu bumpen (die Assertion `machines/tests.rs:296 assert saved.starts_with(b"OMX3")` lag außerhalb des Dispatch-Scopes); die State-Datei ist lokal/gitignored und der Loader best-effort — ein `OMX4`-Bump wäre der saubere Abschluß.
 
 ### NUR-Asset — Re-Harvest hängt in der CI-Queue
 - **Status:** wartend (Mycelium) | **Bindung:** eigen (cross-line mycelium)
