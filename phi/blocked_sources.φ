@@ -20,6 +20,7 @@ note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); k
 note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-only Dekoder → SZIP-Granulen descoped (kein libaec, std-stack bleibt); MOD11C2/C3 lesen über NONE/RLE/DEFLATE.
+note gap-Token point-source-kernel — Punkt-/Identitäts-Kernel ohne räumlichen Gradienten (Slot 2, kernel_id 2); Träger für punkt-/medienunabhängige Quellen (eionet_cdr); Arm steht (extract.rs:1530 "point" => Some(2); shaders.rs:49/:87).
 
 pending
 url https://psa.esa.int/psa-tap/tap/
