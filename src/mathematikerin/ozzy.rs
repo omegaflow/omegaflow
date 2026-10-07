@@ -1,5 +1,7 @@
 use crate::mathematikerin::least_squares::solve_normal_equations_with_pivot_ratio;
-use crate::mathematikerin::te::{conditional_embedded_te_phase, topological_te_phase};
+use crate::mathematikerin::te::{
+    TE_SURR_FLOOR, conditional_embedded_te_phase, topological_te_phase,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Kanal {
@@ -43,9 +45,24 @@ pub enum ResidualOutcome {
     NFlloor,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum VerdictWord {
+    Coupled,
+    Independent,
+    Leakage,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TeAbsence {
+    InsufficientSurrogates,
+    InsufficientEffectiveSample,
+    ZeroVariance,
+    NotTestable,
+}
+
 pub struct IndependenceVerdict {
-    pub a: Vec<(String, Option<f64>)>,
-    pub b_diagnostic: Option<f64>,
+    pub a: Vec<(String, Result<VerdictWord, TeAbsence>)>,
+    pub b_diagnostic: Result<VerdictWord, TeAbsence>,
     pub witnesses: Vec<WitnessStamp>,
     pub n: usize,
     pub lag: usize,
@@ -157,21 +174,49 @@ pub fn independence_verdict(
     };
     let n = r.n;
     let lag = r.lag;
+    let rank_e = r.rank;
     let res_f32: Vec<f32> = r.series.iter().map(|&v| v as f32).collect();
+
     let mut a = Vec::with_capacity(test.len());
     for w in test {
         let test_f32: Vec<f32> = w.series.iter().map(|&v| v as f32).collect();
-        let te = topological_te_phase(&res_f32, &test_f32, 3, 3, seed).map(|v| v.te);
-        a.push((w.name.to_string(), te));
+        let word = match topological_te_phase(&res_f32, &test_f32, EMBEDDING_DIM, 3, seed) {
+            None => Err(TeAbsence::NotTestable),
+            Some(v) => {
+                let participants: [&[f64]; 2] = [&r.series, w.series];
+                let tau_max = v.tau_c.max(v.tau_y);
+                match measurement_effective_sample(&participants)
+                    .and_then(|n_eff| gate_effective_sample(n_eff, tau_max, 0).map(|()| n_eff))
+                {
+                    Err(absence) => Err(absence),
+                    Ok(_) => word_from_te(v.te, v.threshold, v.surrogates_used),
+                }
+            }
+        };
+        a.push((w.name.to_string(), word));
     }
+
     let b_diagnostic = match (test.first(), ext.first()) {
         (Some(t), Some(e)) => {
             let t_f32: Vec<f32> = t.series.iter().map(|&v| v as f32).collect();
             let e_f32: Vec<f32> = e.series.iter().map(|&v| v as f32).collect();
-            conditional_embedded_te_phase(&res_f32, &t_f32, &e_f32, 3, seed).map(|v| v.te)
+            match conditional_embedded_te_phase(&res_f32, &t_f32, &e_f32, EMBEDDING_DIM, seed) {
+                None => Err(TeAbsence::NotTestable),
+                Some(v) => {
+                    let participants: [&[f64]; 3] = [&r.series, t.series, e.series];
+                    let tau_max = v.tau_x.max(v.tau_y).max(v.tau_z);
+                    match measurement_effective_sample(&participants).and_then(|n_eff| {
+                        gate_effective_sample(n_eff, tau_max, rank_e).map(|()| n_eff)
+                    }) {
+                        Err(absence) => Err(absence),
+                        Ok(_) => leakage_word(v.te, v.threshold, v.surrogates_used),
+                    }
+                }
+            }
         }
-        _ => None,
+        _ => Err(TeAbsence::NotTestable),
     };
+
     Some(IndependenceVerdict {
         a,
         b_diagnostic,
@@ -179,6 +224,97 @@ pub fn independence_verdict(
         n,
         lag,
     })
+}
+
+const EMBEDDING_DIM: usize = 3;
+
+fn autocorrelation_time(series: &[f64]) -> Result<f64, TeAbsence> {
+    let n = series.len();
+    if n < 3 {
+        return Err(TeAbsence::NotTestable);
+    }
+    let mean = series.iter().sum::<f64>() / n as f64;
+    let variance = series.iter().map(|v| (v - mean) * (v - mean)).sum::<f64>() / n as f64;
+    if !variance.is_finite() || variance <= 0.0 {
+        return Err(TeAbsence::ZeroVariance);
+    }
+    let mut accumulated = 0.0;
+    for k in 1..n {
+        let mut covariance = 0.0;
+        for t in 0..n - k {
+            covariance += (series[t] - mean) * (series[t + k] - mean);
+        }
+        covariance /= n as f64;
+        let rho = covariance / variance;
+        if !rho.is_finite() {
+            return Err(TeAbsence::NotTestable);
+        }
+        if rho <= 0.0 {
+            return Ok(1.0 + 2.0 * accumulated);
+        }
+        accumulated += rho;
+    }
+    Err(TeAbsence::InsufficientEffectiveSample)
+}
+
+fn effective_sample_size(series: &[f64]) -> Result<f64, TeAbsence> {
+    let tau_int = autocorrelation_time(series)?;
+    Ok(series.len() as f64 / tau_int)
+}
+
+fn measurement_effective_sample(participants: &[&[f64]]) -> Result<f64, TeAbsence> {
+    let mut effective = f64::INFINITY;
+    for series in participants {
+        let n_eff = effective_sample_size(series)?;
+        if n_eff < effective {
+            effective = n_eff;
+        }
+    }
+    if effective.is_finite() {
+        Ok(effective)
+    } else {
+        Err(TeAbsence::NotTestable)
+    }
+}
+
+fn gate_effective_sample(n_eff: f64, tau_max: usize, rank_e: usize) -> Result<(), TeAbsence> {
+    let embedding_cost = (EMBEDDING_DIM * tau_max + 1) as f64;
+    if n_eff < embedding_cost {
+        return Err(TeAbsence::InsufficientEffectiveSample);
+    }
+    let df = n_eff - embedding_cost - rank_e as f64;
+    if df < 1.0 {
+        return Err(TeAbsence::InsufficientEffectiveSample);
+    }
+    Ok(())
+}
+
+fn word_from_te(te: f64, threshold: f64, surrogates_used: usize) -> Result<VerdictWord, TeAbsence> {
+    if surrogates_used < TE_SURR_FLOOR {
+        return Err(TeAbsence::InsufficientSurrogates);
+    }
+    if !te.is_finite() || !threshold.is_finite() {
+        return Err(TeAbsence::NotTestable);
+    }
+    if te > threshold {
+        Ok(VerdictWord::Coupled)
+    } else {
+        Ok(VerdictWord::Independent)
+    }
+}
+
+fn leakage_word(te: f64, threshold: f64, surrogates_used: usize) -> Result<VerdictWord, TeAbsence> {
+    if surrogates_used < TE_SURR_FLOOR {
+        return Err(TeAbsence::InsufficientSurrogates);
+    }
+    if !te.is_finite() || !threshold.is_finite() {
+        return Err(TeAbsence::NotTestable);
+    }
+    if te > threshold {
+        Ok(VerdictWord::Coupled)
+    } else {
+        Ok(VerdictWord::Leakage)
+    }
 }
 
 fn residual_variance(series: &[f64]) -> f64 {
@@ -349,10 +485,15 @@ mod tests {
         let independent = verdict.a[1]
             .1
             .expect("the disjoint noise test witness carries a TE verdict");
-        assert!(coupled.is_finite());
-        assert!(
-            coupled > independent,
-            "the held-out coupling {coupled} must exceed the disjoint noise {independent}"
+        assert_eq!(
+            coupled,
+            VerdictWord::Coupled,
+            "the held-out coupling must read Coupled"
+        );
+        assert_eq!(
+            independent,
+            VerdictWord::Independent,
+            "the disjoint noise must read Independent"
         );
     }
 
@@ -370,13 +511,11 @@ mod tests {
         let test = [zeuge("t0", &test0), zeuge("t1", &test1)];
         let verdict = independence_verdict(&target, &ext, &test, 0x9E37_79B9_7F4A_7C15)
             .expect("the residual against the extraction witnesses reads Measured");
-        for (name, te) in &verdict.a {
-            if let Some(v) = te {
-                assert!(
-                    v.is_finite() && *v <= 0.05,
-                    "the disjoint test witness {name} carries no positive verdict, got {v}"
-                );
-            }
+        for (name, word) in &verdict.a {
+            assert!(
+                !matches!(word, Ok(VerdictWord::Coupled)),
+                "the disjoint test witness {name} carries no positive verdict, got {word:?}"
+            );
         }
     }
 }
