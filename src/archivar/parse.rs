@@ -73,6 +73,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_stations_filter: Option<(String, String)> = None;
     let mut cur_station_code: Option<String> = None;
     let mut cur_cgm_lat: Option<f64> = None;
+    let mut cur_cgm_source: Option<String> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut cur_sha256: Option<String> = None;
@@ -132,6 +133,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             window: cur_window,
                             live_only: cur_live_only,
                             cgm_lat: cur_cgm_lat,
+                            cgm_source: cur_cgm_source.clone(),
                         });
                     }
                 }
@@ -181,6 +183,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_stations_filter = None;
                 cur_station_code = None;
                 cur_cgm_lat = None;
+                cur_cgm_source = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
                 cur_sha256 = None;
@@ -1681,6 +1684,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 cur_cgm_lat = Some(v);
             }
+            "cgm_source" if parts.len() >= 2 => {
+                cur_cgm_source = Some(parts[1].to_string());
+            }
             "repeat" if parts.len() >= 2 => {
                 if parts[1] == "ra" && parts.len() >= 5 {
                     if let Ok(v) = parts[4].parse::<u32>() {
@@ -1918,6 +1924,7 @@ mod tests {
             window: None,
             live_only: false,
             cgm_lat: None,
+            cgm_source: None,
         }
     }
 
@@ -1951,6 +1958,15 @@ mod tests {
             "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 40.5\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(40.5));
+        assert_eq!(with[0].cgm_source, None);
+    }
+
+    #[test]
+    fn cgm_source_directive_is_carried_and_orthogonal_to_cgm_lat() {
+        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 11.23\ncgm_source bgs-quasi-dipole\n";
+        let with = parse_sources(declared);
+        assert_eq!(with[0].cgm_lat, Some(11.23));
+        assert_eq!(with[0].cgm_source.as_deref(), Some("bgs-quasi-dipole"));
     }
 
     #[test]

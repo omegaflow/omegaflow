@@ -231,3 +231,7 @@ pending
 url http://awesome.ucsd.edu/
 note Sub-ionosphärische VLF AWESOME (GIC-unabhängige Observable §D) — 2026-10-06: DNS tot (000), Wayback 503; unbelegt.
 
+pending
+url https://prop.kc2g.com/api/stations.json
+note KC2G (prop.kc2g.com, Ionosphäre/GIC-nah) — 2026-10-07 gemessen: JSON 200 (42482 B; mufd/fof2/tec/cs); terms unbestimmt; Arm: JSON-Reader.
+

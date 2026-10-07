@@ -4838,6 +4838,7 @@ mod tests {
             live_only: false,
             station_code: station.map(|c| c.to_string()),
             cgm_lat: None,
+            cgm_source: None,
         }
     }
 
