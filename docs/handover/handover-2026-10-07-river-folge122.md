@@ -3,7 +3,7 @@
   session: River-Folge 122
   class: handover
   date: 2026-10-07
-  sha256: a171b27b1260dc7500fc21ec765f415cd7e4d858bdd2a5b8c31c660284275b34
+  sha256: a30c2c0734c4e1d4f96557235202165fe7bcbb1863a4dad14305c591024c0743
   status: live
 -->
 # Handover — River-Folge 122 (2026-10-07)
@@ -20,6 +20,8 @@ Wort | Datum | Quelle
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-07 | Operator (Session, River 122) — Session-Start, Delegations-Consent
 „nutzt du eigentlich für architekturfragen auch immer archive search … mit archive search können wir doch die komplette wissenschafts- und forschungslandschaft befragen" | 2026-10-07 | Operator (Session, River 122) — `archive_search` gehört zur Architektur-Linse (nicht nur die Stimmen)
 „also insbesondere die recherche die wir gerade gemacht haben interessiert mich" | 2026-10-07 | Operator (Session, River 122) — die Literaturlandschaft zur GIC-Stufe-2 als Survey tragen
+„bitte als separate agenten testen" | 2026-10-07 | Operator (Session, River 122) — die Gemini-Varianten als eigene `voice-gemini-*`-Agenten anlegen (statt Standalone-Bench)
+„und müssen wir jetzt nicht immer so forschen?" | 2026-10-07 | Operator (Session, River 122) — die Recherche-Schicht (archive_search + schwache Stimmen) gehört **immer** vor jede Architektur-Frage
 „warte du sollst nicht innerhalb des chats umstellen die anderen modelle sind als tabs offen … nutze alle tryingopentabs" | 2026-10-07 | Operator (Session, River 122) — alle tryingopen-Seats je als eigener Tab befragen
 „die schwachen voice stimmen können wir doch nutzen um die wissenschafts- und forschungslandschaft und das internet abzugrasen … das denken überlassen wir den ui chat frontier modellen … befrage nemotron nochmal" | 2026-10-07 | Operator (Session, River 122) — Recherche-Rolle der schwachen Stimmen; Denken bei den UI-Frontier-Modellen
 „gmini ist gerade überlastet wir brauchen zuverlässige schnelle modelle die nicht fabrizieren für die recherche" | 2026-10-07 | Operator (Session, River 122) — Kriterium der Recherche-Rolle (zuverlässig · schnell · nicht fabrizierend)
@@ -41,6 +43,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 Recherche (Wissenschafts-/Forschungslandschaft, Netz) trägt **`voice-deepseek`** (zuverlässig, nicht fabrizierend, Herkunft offengelegt); **`voice-gemini`** nur mit Verifikationspflicht (eine DOI fehlzu-geordnet, gemessen); **`voice-inkling`/`voice-gptoss`/`voice-nemotron`** tragen die Recherche-Klasse nicht. Denken/Urteil = UI-Frontier-Modelle. Der **Rat** bleibt als Form/Linse (fünf exklusive Perspektiven). Benchmark: `state/benchmark/2026-10-07-recherche-stimmen.md`.
 **Roster-Revision (umgesetzt 2026-10-07):** `opencode.json` setzt `"disable": true` für `voice-gptoss` (Geraune, keine Liste), `voice-inkling` (`archive_search_public` leer), `voice-nemotron` (extrem langsam + 2× `unbelegt`). Aktiv bleiben `voice-deepseek` (Kern-Recherche + Messung) und `voice-gemini` (sekundär, Verifikationspflicht). Wirkt nach opencode-Neustart. Der Rat bleibt Struktur; das Urteil trägt die UI-Frontier.
 **Recherche-Ergebnis (2026-10-07):** `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md` — vier Schichten, jede Referenz am Baum gemessen: (1) max-t/Stepdown FWER bei Korrelation (Romano-Wolf, Meinshausen, cluster-depth, Winkler); (2) Gatekeeping/zweistufig; (3) Post-Selection/Selective Inference (= Auswahl-Riss); (4) TE finite data (Kirkley u. a. = unvollständiger Pool). Deckt die gewählte `--stage2 family`-Methode und beide Risse.
+**Gemini-Mess-Seats (angelegt 2026-10-07):** `voice-gemini-3-flash`, `-3-1-flash-lite`, `-3-1-pro`, `-3-5-flash`, `-3-6-flash`, `-3-7-flash`, `-3-8-flash` in `opencode.json` (read-only Voice-Prompt, im Task-Allow). Bewertung nach Dispatch-Messung (gleiche Recherche-Aufgabe je Seat); Wirkung nach opencode-Neustart. Der `free_model_bench`-Lauf über die Google-Modelle hing >15 min → `pending` (Free-Endpoint langsam/rate-limited), nicht wiederholt.
 
 ## Träger (Prosa, eigene)
 
