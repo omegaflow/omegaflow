@@ -4,7 +4,7 @@ use std::path::Path;
 use std::process::exit;
 
 const SOURCES: &str = "phi/sources.φ";
-const CENSUS: &str = "state/river/license-census.tsv";
+const CENSUS: &str = "state/mountain/license-census.tsv";
 
 const TERMS: &[&str] = &[
     "CC-BY-4.0",
