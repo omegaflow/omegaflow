@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 39316f269f97cf9ca7f1f3303687496e284b2e6be8669670fd73b922e099b7a5
+  sha256: 80aaec97dadb6b79fb49cad2c1884a31cf8c9fd5f464269f641aece8cac9cdce
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -439,10 +439,12 @@ one of the four whose per-lag excess is uniform across the 15 quarters, and it
 
 ### 4.7 Sub-daily NUR dB/dt–GIC relation (measured 2026-10-07)
 
-The manifested NUR 10 s asset (`fmi_image_mag_nur.bin`, `phi/sources.φ:18030`)
-carries a 30-day window 2023-12-31…2024-01-30 UTC that does **not** overlap the
-GIC series (`fmi_gic.bin`, 1999-01-01…2023-10-01 UTC). The relation is therefore
-measured on the 2003 Halloween storm, where the IMAGE NUR 10 s series overlaps
+The manifested NUR 10 s asset (`fmi_image_mag_nur.bin`, `phi/sources.φ:18156`;
+1,555,148 B; sha256 `93f17d0a6b75a48cc71a5b09f8ecfbf209f9381c692cdb15db0e5f658db6a139`,
+re-harvested 2026-10-07, `image-cdn 37621964105`) carries the 3-day window
+2003-10-29…2003-11-01 UTC (measured 2026-10-07), which overlaps the GIC series
+(`fmi_gic.bin`, 1999-01-01…2023-10-01 UTC). The relation is measured on that
+2003 Halloween-storm window, where the IMAGE NUR 10 s series overlaps
 the hourly GIC asset. Reducing both channels to hourly peaks
 (`tools/measure/src/bin/nur_gic_relation_probe.rs`, n = 72 aligned hours across
 2003-10-29…31 UTC) gives a peak hour 2003-10-29T06:00Z with |ΔX/10s| = 240.9
@@ -672,13 +674,13 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   and is already a SuperMAG station (`phi/supermag_stations.φ:368`, 60.5° N
   24.65° E), so a co-located magnetogram is obtainable through the existing
   SuperMAG chain — the earlier "no co-located magnetogram" no longer holds. As
-  of 2026-10-07 the NUR 10 s dB/dt series is a manifested CDN asset
-  (`fmi_image_mag_nur.bin`, `phi/sources.φ:18030`; 15,551,948 B; sha256
-  9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e, reachable
-  HTTP 206, measured 2026-10-07), so the co-located channel is wired. The
-  manifested asset's window is 2023-12-31…2024-01-30 UTC (measured 2026-10-07),
-  which does not overlap the GIC series; the relation is therefore measured on
-  the 2003 Halloween storm (§4.7). The
+   of 2026-10-07 the NUR 10 s dB/dt series is a manifested CDN asset
+  (`fmi_image_mag_nur.bin`, `phi/sources.φ:18156`; 1,555,148 B; sha256
+  93f17d0a6b75a48cc71a5b09f8ecfbf209f9381c692cdb15db0e5f658db6a139, reachable
+  HTTP 200, measured 2026-10-07), so the co-located channel is wired. The
+  re-harvested asset's window is 2003-10-29…2003-11-01 UTC (measured 2026-10-07),
+  which overlaps the GIC series; the relation is measured on that
+  2003 Halloween-storm window (§4.7). The
   source carries its own caveats: the archive is non-uniform (pipeline
   reconfigurations, a 2005 site shift), gap- and spike-laden, with best quality
   1999–April 2005, and daily linear-trend subtraction is recommended. The
