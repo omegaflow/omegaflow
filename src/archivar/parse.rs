@@ -74,6 +74,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_station_code: Option<String> = None;
     let mut cur_cgm_lat: Option<f64> = None;
     let mut cur_cgm_source: Option<String> = None;
+    let mut cur_span: Option<f64> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut cur_sha256: Option<String> = None;
@@ -134,6 +135,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             live_only: cur_live_only,
                             cgm_lat: cur_cgm_lat,
                             cgm_source: cur_cgm_source.clone(),
+                            span: cur_span,
                         });
                     }
                 }
@@ -184,6 +186,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_station_code = None;
                 cur_cgm_lat = None;
                 cur_cgm_source = None;
+                cur_span = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
                 cur_sha256 = None;
@@ -232,6 +235,19 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     scale: 1.0,
                 });
             }
+            "span" if parts.len() >= 2 => match parts[1].parse::<f64>() {
+                Ok(v) if v.is_finite() && v > 0.0 => cur_span = Some(v),
+                Ok(_) => report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("span not a positive finite aperture: {}", line),
+                ),
+                Err(_) => report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("span non-numeric: {}", line),
+                ),
+            },
             "on" if parts.len() >= 4 => {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());
@@ -1925,6 +1941,7 @@ mod tests {
             live_only: false,
             cgm_lat: None,
             cgm_source: None,
+            span: None,
         }
     }
 
@@ -1967,6 +1984,25 @@ mod tests {
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(11.23));
         assert_eq!(with[0].cgm_source.as_deref(), Some("bgs-quasi-dipole"));
+    }
+
+    #[test]
+    fn span_directive_carries_a_positive_finite_aperture_else_absent() {
+        let declared =
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nspan 1.0e13\n";
+        let with = parse_sources(declared);
+        assert_eq!(with[0].span, Some(1.0e13));
+        let absent =
+            parse_sources("url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n");
+        assert_eq!(absent[0].span, None);
+        let zero = parse_sources(
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nspan 0.0\n",
+        );
+        assert_eq!(zero[0].span, None);
+        let negative = parse_sources(
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nspan -5.0\n",
+        );
+        assert_eq!(negative[0].span, None);
     }
 
     #[test]
