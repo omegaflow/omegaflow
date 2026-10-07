@@ -5913,3 +5913,64 @@ mod acoustic_sink_tests {
         assert!(parse_sink_names("only-one-field\n").is_empty());
     }
 }
+
+pub fn series_dbdt(series: &[(f64, [f64; 3])], bucket_s: f64) -> Vec<(f64, f64)> {
+    let mut ordered: Vec<(f64, [f64; 3])> = series.to_vec();
+    ordered.sort_by(|a, b| a.0.total_cmp(&b.0));
+    let mut peaks: Vec<(f64, f64)> = Vec::new();
+    let mut bucket_epoch = 0.0f64;
+    let mut bucket_peak = f64::NEG_INFINITY;
+    let mut prev: Option<(f64, [f64; 3])> = None;
+    for (t, [vx, vy, vz]) in ordered {
+        if let Some((pt, [px, py, pz])) = prev {
+            let dt = t - pt;
+            if (58.0..=62.0).contains(&dt) {
+                let dx = vx - px;
+                let dy = vy - py;
+                let dz = vz - pz;
+                let dbdt = (dx * dx + dy * dy + dz * dz).sqrt();
+                let this_bucket = (t / bucket_s).floor() * bucket_s;
+                if this_bucket != bucket_epoch {
+                    if bucket_peak.is_finite() {
+                        peaks.push((bucket_epoch, bucket_peak));
+                    }
+                    bucket_epoch = this_bucket;
+                    bucket_peak = f64::NEG_INFINITY;
+                }
+                if dbdt > bucket_peak {
+                    bucket_peak = dbdt;
+                }
+            }
+        }
+        prev = Some((t, [vx, vy, vz]));
+    }
+    if bucket_peak.is_finite() {
+        peaks.push((bucket_epoch, bucket_peak));
+    }
+    peaks
+}
+
+#[cfg(test)]
+mod dbdt_tests {
+    use super::series_dbdt;
+
+    #[test]
+    fn series_dbdt_holds_the_peak_per_bucket() {
+        let series = [
+            (0.0, [0.0, 0.0, 0.0]),
+            (60.0, [1.0, 0.0, 0.0]),
+            (120.0, [1.0, 3.0, 0.0]),
+            (180.0, [1.0, 3.0, 4.0]),
+        ];
+        assert_eq!(
+            series_dbdt(&series, 60.0),
+            vec![(60.0, 1.0), (120.0, 3.0), (180.0, 4.0)]
+        );
+    }
+
+    #[test]
+    fn series_dbdt_yields_no_record_across_a_long_gap() {
+        let series = [(0.0, [0.0, 0.0, 0.0]), (120.0, [1.0, 0.0, 0.0])];
+        assert!(series_dbdt(&series, 60.0).is_empty());
+    }
+}

@@ -154,6 +154,11 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   Pseudo-URL vor dem JSON → kein Parse. Fix `post_args()` setzt `-H` vor jeden
   Header (Gate-Test `post_args_prefix_every_header_with_dash_h`); im
   `tools-latest`-Binär (gemessen 2026-09-25: `--tavily` liefert Treffer).
+- `archive_search --alphaxiv <query>` — alphaXiv MCP `discover_papers`
+  (`api.alphaxiv.org/mcp/v1`, `ALPHAXIV_API_KEY`); `url https://www.alphaxiv.org/abs/<id>`
+  + Titel/Abstract. Gemessen 2026-10-07 (River 127): für die GIC-Stufe-2-Frage direkt
+  einschlägig (`2605.27664` BOOST block-structured strong FWER, `2509.02376`
+  multi-resolution maxT, `1106.2068` Westfall-Young).
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
