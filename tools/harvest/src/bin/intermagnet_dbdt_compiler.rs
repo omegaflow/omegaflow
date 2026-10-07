@@ -248,9 +248,15 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let sy: i64 = arg_value(&args, "--start")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(1994);
+    let sy: i64 = match arg_value(&args, "--start").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => {
+            eprintln!(
+                "--start (first year of the measurement window) required — the window is named, never defaulted"
+            );
+            std::process::exit(2);
+        }
+    };
     let ey: i64 = match arg_value(&args, "--end").and_then(|v| v.parse().ok()) {
         Some(v) => v,
         None => {

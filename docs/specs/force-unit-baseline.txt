@@ -40,6 +40,18 @@
 # (tree precedent `tests.rs:9135`) until a covariate/quantity carrier (axis outside Ω)
 # is built. Measured 36 / 20.
 #
+# Healed 2026-10-07 (Mountain 265): thirteen class-(a) pairs closed — each a
+# scaled alias of a unit the force already carries (same dimension, same
+# quantity/domain). The registry additions are committed in
+# src/archivar/units.rs: em `w/m2/sr`/`w/m2/sr/um`/`w/m2/hz`/`nw/cm2/sr`/`njy`/
+# `erg/cm2/s`/`mcrab`/`uj/sr/m2/um`, gravity `nm/s2`, diffusion `kg/kg`/`ml/l`/
+# `grains/m3`; `em mm/s2` moved to gravity `mm/s2` (viking_grav_acceleration,
+# :10753). The thirteen pair lines stay frozen here until the tools-latest
+# commit_check carries the additions — the ratchet compares against the released
+# gate, not the working-tree registry (the installed gate sha e110416d… predates
+# Mountain 264); a later atom deletes them once tools-build republishes. Measured
+# with the local fresh gate (target/debug/commit_check): 7 / 7 live pairs.
+#
 # The production commit gate (commit_check) scans .rs only; this file is the
 # ratchet that closes the gap: a staged phi/sources.φ may not introduce a
 # (force, unit) pair absent here. A line is deleted when its register line is
@@ -55,7 +67,6 @@ em dbz
 em erg/cm2/s
 em mcrab
 em millionths
-em mm/s2
 em n-units
 em njy
 em nmgy
@@ -65,4 +76,5 @@ em uj/sr/m2/um
 em w/m2/hz
 em w/m2/sr
 em w/m2/sr/um
+gravity mm/s2
 gravity nm/s2
