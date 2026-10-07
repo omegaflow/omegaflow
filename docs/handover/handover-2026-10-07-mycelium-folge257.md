@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-260, river-122) am Baum gemessen gefaltet; `image-cdn.yml` für das NUR-Asset `fmi_image_mag_nur.bin` gebaut; dropped-gate-Schnitt 1 als committet gemessen; Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: ed7198c7b042ee7ce4e451de74d0585c97fd8ca1b98215c01ac93cf5292bd9ff
+  sha256: 8c5e69d1a72494661128428de92ac3760b956558c859d8b33093eee89e97cc02
   status: live
 -->
 # Handover — Mycelium-Folge 257 (2026-10-07)
@@ -49,7 +49,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### `fmi_image_mag_nur.bin` — NUR-Asset manifestieren (River braucht es für die Probe)
 - **Status:** wartend
 - **Trigger:** `image-cdn.yml`-Lauf landet (sha in der Release)
-- **Lage:** (gemessen 2026-10-07, Mycelium 257) Register-Zeile `phi/sources.φ:18022-18028` (`format fmi_image_mag`, Compiler `image_mag_compiler.rs`) trägt **keinen** `sha256`; das Asset war nicht im CDN. Neu gebaut: `.github/workflows/image-cdn.yml` (self-hosted, `--start`/`--days`-Inputs, `image_mag_compiler --stations NUR --sample-rate 10 --ci-mode` → `space.fmi.fi/fmi_image_mag_nur.bin`), am HEAD noch nicht gepusht.
+- **Lage:** (gemessen 2026-10-07, Mycelium 257) Register-Zeile `phi/sources.φ:18022-18028` (`format fmi_image_mag`, Compiler `image_mag_compiler.rs`) trägt **keinen** `sha256`; das Asset war nicht im CDN. Neu gebaut: `.github/workflows/image-cdn.yml` (self-hosted, `--start`/`--days`-Inputs, `image_mag_compiler --stations NUR --sample-rate 10 --ci-mode` → `space.fmi.fi/fmi_image_mag_nur.bin`), committet in `84dc4de08` und dispatcht (Lauf `37595578337`).
 - **Blockade:** kein `sha256` bis der Lauf landet.
 - **Braucht:** `image-cdn.yml` dispatchen + Lauf-Ergebnis lesen → `sha256` in `phi/sources.φ:18022`; dann River-Probe + Zahl in Paper §4/§6.
 
