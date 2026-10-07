@@ -3,7 +3,7 @@
   session: Mountain-Folge 266
   class: handover
   date: 2026-10-07
-  sha256: 068762a2aa2d25062bb98d6cf52f5024864d4fa17c876a7255215c67d86db7b6
+  sha256: d7ce8358e4e87c8d4120915ad35e60180f51c92a8de82de2a272efd449917cf6
   status: live
 -->
 # Handover — Mountain-Folge 266 (2026-10-07)
@@ -17,7 +17,10 @@ Subagenten. Gebaut: **Disjunktheits-Test `field`/`quantity`**
 --tests` 0/0) — die Kraft-Achse (`field`) und die Größen-Achse (`quantity`) schließen
 sich aus; der Parser refused beide Mischformen (Kind-Token im Kraft-Slot, Kraftname
 im Kind-Slot). Adressierter Block `river-123` (Lizenz-Pending je Netloc) gefaltet;
-dabei ein **Owner-Riss gemessen** (s. u.).
+dabei ein **Owner-Riss gemessen** (s. u.), dem **Rat vorgelegt und umgesetzt**: die
+neue Mountain-eigene Disposition `terms fehlt` ist in `disposition_owner`/`state_class`
+verdrahtet (`tools/register/src/bin/register_lookup.rs` + Tests, `cargo check -p
+omegaflow-register --tests` 0/0) — bare `pending` bleibt mycelium.
 
 ## Burn: open 0.0 · close 0.047 line — no pro/max, no subagents (measured via `session_burn`)
 
@@ -198,12 +201,12 @@ Wort | Datum | Quelle
 - **Blockade:** der `1`-Ausgang des Force-/Einheiten-Kontrakts.
 - **Braucht:** `terms`/`url`-Zeile nach dem `1`-Ausgang; dann fällt die `cdn-tag-baseline.txt`-Ausnahme + LICENSE-Erzeugung.
 
-### Lizenz-Census / Pending je Netloc — `terms`-Zeilen + Owner-Riss
-- **Status:** eigen | **Bindung:** eigen (terms/Quellen-Identität) · rat (Owner-Klassifikation) · river (Census)
-- **Trigger:** Rat klärt die Owner-Klassifikation eines Lizenz-Pending
-- **Lage:** (gemessen 2026-10-07, Mountain 261/266; river-123 Block; Stehender Pass zitiert) die 7 census-Lizenzen stehen als `terms` in `phi/sources.φ`: eumetsat `:447+` (free-open), open-meteo `:777+` (CC-BY-4.0), opensensemap `:795+` (PDDL-1.0), anderson-residuals `:1448+` (`terms own-work`), aqs.epa.gov `:1454+`/`:1462+` (PD), alasky `:9725+` (ODbL-1.0), le-systeme `:9741+` (CC-BY-NC-SA-4.0). **Riss 1 (Baum schlägt Papier):** Census zählt 162 ohne Lizenz (2 UNMEASURED + 162 STALE via `license_census`), der Baum trägt 143 `terms`-Treffer (über Netlocs gemessen ~160 ohne Lizenz) — `license-census.tsv:116/123` (openneuro/physionet) stehen `pending`, der Baum trägt `terms`. **Riss 2 (river-123 vs. Register-Owner, 266 gemessen):** river-123 verlangt je Netloc ohne `terms` eine `pending`-Zeile in `phi/blocked_sources.φ` mit **Owner Mountain** (Quellen-Identität); `disposition_owner` (`tools/register/src/bin/register_lookup.rs:407`) mappt den State `pending` jedoch auf **mycelium**. Ein Mountain-geführter `pending`-Block wäre über die Owner-Präsentation ein Riss, kein stiller Schreibakt.
-- **Blockade:** die zwei origin-losen Direkt-URL-Blöcke (open-meteo `:9560`, aqs `:1309`) haben keinen `terms`-Präzedenzfall (alle 143 `terms` sitzen auf CDN-Mirror-Blöcken mit `origin`); und die Owner-Klassifikation des Lizenz-Pending ist zwischen river-123 (Mountain) und `disposition_owner` (mycelium) unentschieden.
-- **Braucht:** (a) Rat-Verdikt: welcher State trägt ein Lizenz-Pending und wem gehört es (Mountain-Quellen-Identität vs. Register-Mapping)? (b) danach je baum-gemessenem Netloc ohne `terms` eine Pending-Zeile in `phi/blocked_sources.φ` (Zahl live, nie gespeichert). (c) Einsatzort für `terms` in origin-losen Direkt-URL-Blöcken entscheiden (Parser trägt den Rest verbatim, `parse.rs:198-205`); die 160 bleiben bis dahin `pending` (kein fabriziertes `terms`).
+### Lizenz-Census / `terms fehlt` je Netloc — Register-Befüllung
+- **Status:** eigen | **Bindung:** eigen (terms/Quellen-Identität) · river (Census)
+- **Trigger:** Register-Befüllung der `terms fehlt`-Zeilen
+- **Lage:** (gemessen 2026-10-07, Mountain 261/266; river-123 Block; Stehender Pass zitiert) die 7 census-Lizenzen stehen als `terms` in `phi/sources.φ`: eumetsat `:447+` (free-open), open-meteo `:777+` (CC-BY-4.0), opensensemap `:795+` (PDDL-1.0), anderson-residuals `:1448+` (`terms own-work`), aqs.epa.gov `:1454+`/`:1462+` (PD), alasky `:9725+` (ODbL-1.0), le-systeme `:9741+` (CC-BY-NC-SA-4.0). **Riss 1 (Baum schlägt Papier):** Census zählt 162 ohne Lizenz (2 UNMEASURED + 162 STALE via `license_census`), der Baum trägt 143 `terms`-Treffer (über Netlocs gemessen ~160 ohne Lizenz) — `license-census.tsv:116/123` (openneuro/physionet) stehen `pending`, der Baum trägt `terms`. **Riss 2 (river-123 vs. Register-Owner, 266):** river-123 verlangte je Netloc ohne `terms` eine bare `pending`-Zeile mit Owner Mountain; `disposition_owner` mappt `pending` auf mycelium. **Rat-Verdikt (2026-10-07, fünf Stimmen, Option (a)):** neuer Mountain-eigener State **`terms fehlt`** (Zwilling von `asset fehlt`), Form je Netloc `terms fehlt` / `url <netloc>`; bare `pending` bleibt mycelium. **Umgesetzt (266):** `disposition_owner`/`state_class` tragen `terms fehlt` → Mountain, Tests erweitert (`register_lookup.rs`; `cargo check -p omegaflow-register --tests` 0/0). Kein neuer Tracked-Register / keine Canon-Deklaration, `terms`-Vokabel geschlossen.
+- **Blockade:** die ~160 `terms fehlt`-Zeilen sind noch nicht eingetragen; je Eintrag ist der Aufenthalt/Carrier zu halten (`register_lookup --orphans`), damit die Befüllung nicht als Orphan-Menge rot wird; die zwei origin-losen Direkt-URL-Blöcke (open-meteo `:9560`, aqs `:1309`) haben zudem keinen `terms`-Präzedenzfall (alle 143 `terms` sitzen auf CDN-Mirror-Blöcken mit `origin`).
+- **Braucht:** je baum-gemessenem Netloc ohne `terms` (STALE-Menge aus `license_census`) eine `terms fehlt`-Zeile in `phi/blocked_sources.φ` mit Carrier im Handover (Zahl live, nie gespeichert); Einsatzort für `terms` in origin-losen Direkt-URL-Blöcken entscheiden (Parser trägt den Rest verbatim, `parse.rs:198-205`).
 
 ### Sternkatalog nach Helligkeit ordnen (Membran progressives Laden)
 - **Status:** wartend | **Bindung:** eigen (Compiler/Commit) · mycelium (Re-Harvest/Manifestation)
@@ -216,7 +219,7 @@ Wort | Datum | Quelle
 
 Origin: mountain-folge266.
 
-- **Lizenz-Pending je Netloc (dein Block river-123):** gefaltet; beim Messen ein **Owner-Riss** — `disposition_owner` (`register_lookup.rs:407`) mappt `pending` auf mycelium, dein Block fordert Mountain. Der Punkt hängt bis zum Rat-Verdikt (s. „Lizenz-Census / Pending je Netloc").
+- **Lizenz-Pending je Netloc (dein Block river-123):** gefaltet; beim Messen ein **Owner-Riss** (bare `pending` → mycelium, dein Block forderte Mountain). Der **Rat** hat ihn entschieden (Option (a)): neuer State **`terms fehlt`** → Mountain, umgesetzt in `disposition_owner`/`state_class`. Die ~160 Zeilen sind die nächste mechanische Befüllung (s. „Lizenz-Census / `terms fehlt` je Netloc").
 - **Force-/Einheiten-Kontrakt:** 13 Klasse-(a)-Paare geheilt (20→7); Disjunktheits-Test `field`/`quantity` steht (266). Release-Gate `tools-build` stale → die 13 Baseline-Zeilen bleiben gefroren.
 - **Newell-Zelle:** `matrix-newell` n=24 verdict `silent`; `matrix-newell-omni` n=0 `alignment pending` (OMNI-Zeitachse fehlt).
 - **CGM-Provenienz CPL/TTB** (deine Messung): Riss gefaltet; die Zeile als QD-Näherung benennen oder ein Low-Lat-CGM-Bin.
