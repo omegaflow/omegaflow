@@ -1,0 +1,59 @@
+# workflow_dispatch only: the register block for cdr.eionet.europa.eu/eionet_cdr is not
+# yet in phi/sources.φ (Mountain's admission — it hangs on the point-source-kernel slot 2).
+# A push trigger would fire the verify step against an unregistered asset and leave a red
+# run; dispatch after the register lines land (Mountain: field/ttl after the kernel).
+name: eionet-cdr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      report-url:
+        description: 'E-PRTR/LCP pollutant release report XML (the authoritative annual report)'
+        required: false
+        type: string
+        default: 'https://cdr.eionet.europa.eu/at/eu/eprtrdat/envxwzhwa/EU_Report_2017_27Aug19.xml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  eionet-cdr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the cdr.eionet.europa.eu release exists on the CDN
+        run: |
+          if ! gh release view cdr.eionet.europa.eu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cdr.eionet.europa.eu --repo omegaflow/sources \
+              --title "cdr.eionet.europa.eu" \
+              --notes "E-PRTR/LCP pollutant release records compiled to the point-source-kernel bin (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the E-PRTR/LCP report
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin eionet_cdr_compiler -- \
+            --in "${{ inputs.report-url }}" \
+            --out data/cdr.eionet.europa.eu/eionet_cdr.bin --ci-mode
+      - name: Verify the registered cdr.eionet.europa.eu eionet_cdr asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh cdr.eionet.europa.eu eionet_cdr)
+          if [ -z "$expected" ]; then
+            echo "no eionet_cdr asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view cdr.eionet.europa.eu --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered cdr.eionet.europa.eu eionet_cdr assets all present"
