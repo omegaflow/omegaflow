@@ -235,3 +235,7 @@ pending
 url https://prop.kc2g.com/api/stations.json
 note KC2G (prop.kc2g.com, Ionosphäre/GIC-nah) — 2026-10-07 gemessen: JSON 200 (42482 B; mufd/fof2/tec/cs); terms unbestimmt; JSON-Reader-Arm gebaut (tools/harvest/src/bin/kc2g_stations.rs, CSV + Tests); pattern/Workflow/Register-Block nach Mountain-terms.
 
+pending
+url https://obis.osha.gov/opengov/healthsamples.zip
+note OSHA CEHD/OBIS (Arbeitsplatz-Chemie-Exposition) — 2026-10-07: Reader verwirft den Einheitentoken und bindet gemischte Zeilen an eine Unit (extract.rs:4116/geo.rs:859); unit-fähiger Reader fehlt. terms unbestimmt, nicht declined.
+

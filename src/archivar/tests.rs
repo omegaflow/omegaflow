@@ -169,6 +169,7 @@ fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     }
 }
 
@@ -890,6 +891,7 @@ fn test_render_source_url_substitutions() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = super::LeapSeconds {
         delta_t_a: 32.184,
@@ -1172,6 +1174,7 @@ fn test_post_body_rendering() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = super::LeapSeconds {
         delta_t_a: 32.184,
@@ -1240,6 +1243,7 @@ fn test_csv_zip_post_body_resolves_secret() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let mut env = HashMap::new();
     env.insert("TNS_API_KEY".to_string(), "secret123".to_string());
@@ -1384,6 +1388,7 @@ fn test_celestial_map_redshift_distance() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -1486,6 +1491,7 @@ fn test_extract_csv_zip_end_to_end() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -1785,6 +1791,7 @@ fn test_extract_cmap_dist_scale_kpc() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -1880,6 +1887,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -1970,6 +1978,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -2057,6 +2066,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -2152,6 +2162,7 @@ fn test_extract_cmap_pm_radvel_plx() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -2279,6 +2290,7 @@ fn test_extract_cmap_no_distance_skipped() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -2363,6 +2375,7 @@ fn test_extract_cmap_null_dist_skipped() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -2590,6 +2603,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let fixture_lsk = LeapSeconds {
         delta_t_a: 32.184,
@@ -3754,6 +3768,7 @@ fn test_parse_station_entries() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let stations = parse_station_entries(&j, &src);
     assert_eq!(stations.len(), 3);
@@ -3811,6 +3826,7 @@ fn test_parse_station_entries_flatten_filter() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let stations = parse_station_entries(&j, &src);
     assert_eq!(stations.len(), 2);
@@ -4884,6 +4900,7 @@ fn test_erddap_argo_map_extract() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
     let fixture_lsk = super::LeapSeconds {
@@ -5630,6 +5647,7 @@ fn test_anchor_body_agnostic() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let channel = super::Channel {
         z: 0.0,
@@ -5781,6 +5799,7 @@ fn test_anchor_applies_declared_unit() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let channel = super::Channel {
         z: 0.0,
@@ -8257,6 +8276,7 @@ fn test_diagnose_no_samples() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let empty_geojson =
         r#"{"type":"FeatureCollection","metadata":{"api":"2.7","count":0},"features":[]}"#;
@@ -8343,6 +8363,7 @@ fn test_ci_body_verdict() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let json_src = make("json");
     assert!(matches!(
@@ -8583,6 +8604,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
     let now = 8.4e8;
@@ -8684,6 +8706,7 @@ fn test_map_vel_unit_and_tau_key_override() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"data":[
             {"lat":10.0,"lon":20.0,"alt":0.0,"spd":72.0,"hdg":90.0,"vr":3.6,"row_tau":60.0,"v":5.0},
@@ -8962,6 +8985,7 @@ fn test_fold_directive_parse_and_extract() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"data":[
             {"lat":1.0,"lon":2.0,"alt":0.0,"nh":420.0,"sh":410.0},
@@ -9081,6 +9105,7 @@ fn test_keplermap_elements_to_icrs() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let au = 1.495978707e11;
     let expect_v = (1.32712440018e20_f64 / au).sqrt();
@@ -9409,6 +9434,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"rows":[
             {"t":1000000.0,"pts":[[[10.0,20.0,5.0],[11.0,21.0,6.0]],[[12.0,22.0,7.0]]],"v":3.5},
@@ -9509,6 +9535,7 @@ fn test_flux_from_mag_manifests() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"[{"ra":89.8,"dec":53.6,"mag":12.0,"plx":10.0}]"#;
     let now = 8.0e8;
@@ -9601,6 +9628,7 @@ fn test_map_lat_sign_lon_sign() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"data":[["2026-08-01 17:43:48","2.9","0.1","19.5","S","176.2","E","45.0",null],["2026-07-21 01:14:45","3.2","0.11","9.4","N","57.4","W","31.5",null]]}"#;
     let fixture_lsk = super::LeapSeconds {
@@ -9715,6 +9743,7 @@ fn test_mag_type_gating() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     let body = r#"{"data":[
             {"lat":1.0,"lon":2.0,"alt":0.0,"magType":"mww","mag":5.5},
@@ -11312,6 +11341,7 @@ fn fits_format_extracts_last_row() {
         live_only: false,
         cgm_lat: None,
         cgm_source: None,
+        span: None,
     };
     match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk()) {
         ExtractResult::Measurements(channels) => {

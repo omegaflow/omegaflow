@@ -3,7 +3,7 @@
   session: Mountain-Folge 268
   class: handover
   date: 2026-10-07
-  sha256: bb1023acc41bb5ce0100bf014c920485c6fd33dc485410b6e9d9b615e20f5427
+  sha256: a5674457c9301f5f22c803e5aa7e9d32b221fcd8c84b8e99b6521fcd8f937f17
   status: live
 -->
 # Handover — Mountain-Folge 268 (2026-10-07)
@@ -12,9 +12,15 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-07-mountain-folge267.md` (→ `archiv/`). Kein
 pro/max. Gefaltet: die drei adressierten Blöcke — river-125 (CGM-Provenienz →
-`cgm_source`-Arm gebaut), future-191 (KCG2 → `blocked_sources.φ pending`, SDO
-Dashboard → `declined_sources.φ decline imagery`), mycelium-261 (`terms`→SPDX-
-Migration im Register vollzogen). Kein Operator-Wort neu offen.
+`cgm_source`-Arm), future-191 (KCG2 → `blocked_sources.φ pending`, SDO Dashboard →
+`declined_sources.φ decline imagery`), mycelium-261 (`terms`→SPDX-Migration, 134×
+`CC0`→`CC0-1.0` + 1× `ODC-BY-1.0`→`ODC-By-1.0`; `terms-vocab 0 violation(s)`).
+**Taucher-Wellen (flash):** Wave 1 gebaut (`5c3ded9bc`) — KCG2-JSON-Reader,
+GIC-Band-Deskriptoren + Coverage-Test, dropped-gate Träger-Ableitung, Sonne-GM
+Bit 11 (`de_compiler`); Wave 2 — `span`-Direktive (Rat: `extent` reusen, kein 27.
+Wire-Feld), `eionet_cdr`-Block (276 Felder, register canonical), obis.osha als
+`pending parser-gap` registriert. Riss: Mycelium hat zwei Taucher-Dateien unter
+eigener Botschaft mitgenommen (`0fc491b7e`, kc2g_stations.rs + dropped_gate.rs).
 
 **Burn** (`session_burn`): Mountain-Linie-Session $0.0558 (`line`, deepseek-flash) + general ×1 (KCG2/SDO-Messung); kein pro/max (Aggregat deepseek-flash $0.8412/24 Sessions).
 
@@ -125,24 +131,17 @@ Wort | Datum | Quelle
 
 ### GIC-Breitenband-Familien — Deskriptoren (Blatt-Slot) + CGM-Provenienz-Riss
 - **Status:** eigen | **Bindung:** eigen (Format/Descriptor) · river (`field_te_query`)
-- **Trigger:** Descriptor-Arm gebaut
-- **Lage:** (gemessen 2026-10-07, river-122/Mountain 259) Die CGM-Breite je Station ist gemessen (`state/river/gic-cgm-lat.tsv`, Bin `tools/measure/src/bin/cgm_lat_partition.rs`) und seit 2026-10-07 als `cgm_lat <deg>` in `phi/sources.φ` (157 Station-Blöcke; 154 distinkte Stationen — ABK ×3, SOD ×2 als getrennte Blöcke). **Rat + Schwarm konvergieren:** Träger = `field_te_query`-Descriptor, **nicht** Register-Direktive; die Bandgrenzen (auroral ≥60°, sub-auroral 50–60°, mid <50°) werden zur Abfragezeit aus `cgm_lat` + den einmal deklarierten Schwellen **berechnet**, nie als `family`-Token gespeichert (12/12 einstimmig). Blatt `docs/blatt/blatt-gic-breitenband-familien.md` (sha `d973a202…`, :234) Slot = `pending`. **Provenienz (Mountain 268):** der QD-vs-CGM-Riss ist benannt — CPL `:6204 cgm_lat 11.23` und TTB `:7548 cgm_lat -2.62` tragen `cgm_source bgs-quasi-dipole`; der Parser-Arm `cgm_source` ist gebaut (`src/archivar/parse.rs`, `cargo check` 0/0), Familie bleibt beidseits mid-latitude.
-- **Blockade:** der Descriptor-Arm (3 `.te`-Deskriptoren + Coverage-Begleiter) ungebaut; der 157-gegen-154-Bezug ist je Station aufzulösen (Blöcke, keine Stationen); die übrigen 152 `cgm_lat`-Zeilen tragen ihre Provenienz (`omniweb-cgm`/`supermag-aacgm`) nur in `state/river/gic-cgm-lat.tsv`, nicht am Register.
-- **Braucht:** drei Band-Deskriptoren `gic_{auroral,subauroral,midlat}.te` unter `phi/pipeline` (`matrix gic_<band> full`, `channels`, `fdr bh <q> over matrix`, `expect cells <n>`) + Coverage-Begleiter in `tools/measure/src/bin/field_te_query.rs` (paarweise disjunkt, Union = 154) + je ein CI-Job in `.github/workflows/field-te-query.yml`; optional `cgm_source <token>` je der übrigen 152 Zeilen aus der TSV.
-
-### per-Station-dB/dt-Netz (154) — GIC-Familien-Vorbedingung
-- **Status:** eigen | **Bindung:** eigen (Quellen-Eigenschaft) · river (physische Stufe-2-Kette)
-- **Trigger:** `inmagnet_dbdt`-Kanal je Station erreicht
-- **Lage:** (gemessen 2026-10-07, river-122) die 154 GIN-Blöcke tragen `inmagnet_xyz_x/y/z_nt` (je 154) + `magnetosphere_total_field_nt`; nur ABK 1h/1m + SOD 1h tragen `field intermagnet_dbdt` (`phi/sources.φ:2055-2084`). Der dB/dt-Bestand ist Quellen-Eigenschaft und Vorbedingung der GIC-Stufe-2-Kette.
-- **Blockade:** die `intermagnet_dbdt`-Kanäle für 154 Stationen fehlen (Compiler `tools/harvest/src/bin/intermagnet_dbdt_compiler.rs` vorhanden).
-- **Braucht:** `field intermagnet_dbdt`-Zeilen je Station (Register-Pen Mountain) — Stationen ohne `dbdt` aus der 154-GIN-Menge; Compiler vorhanden.
+- **Trigger:** Blatt-Rat löst Route C ↔ Linie 1
+- **Lage:** (gemessen 2026-10-07, Mountain 268) **gebaut** — drei Band-Deskriptoren `phi/pipeline/descriptors/gic_{auroral,subauroral,midlat}.te` (31/25/98 Kanäle, `expect cells 930/600/9506`), Coverage-Test `gic_bands_are_pairwise_disjoint_and_cover_the_154_station_pool` (`tools/measure/src/bin/field_te_query.rs`, paarweise disjunkt, Union = 154), 3 CI-Jobs in `.github/workflows/field-te-query.yml`; `cargo check` 0/0. Provenienz-Riss CPL/TTB benannt (`cgm_source bgs-quasi-dipole`, Arme gebaut). **Riss (Blatt):** `docs/blatt/blatt-gic-breitenband-familien.md` (Rat 2026-10-07, Route C, :249-251/:287) verwirft drei per-Band-`full`-Deskriptoren als Träger und hält Familien-Deskriptoren als Stufe-2-Member-Pool `pending`; „Linie 1" steht als eine ungeglättete Linie.
+- **Blockade:** der Blatt-Rat (Route C ↔ Linie 1) ist offen; der 157-gegen-154-Bezug je Station; die übrigen 152 `cgm_lat`-Zeilen tragen Provenienz (`omniweb-cgm`/`supermag-aacgm`) nur in `state/river/gic-cgm-lat.tsv`.
+- **Braucht:** Rat/River entscheidet die Route (Deskriptor-Träger vs. Member-Pool); optional `cgm_source <token>` je der übrigen 152 Zeilen aus der TSV.
 
 ### Receiver-Apertur `span`-Direktive
-- **Status:** eigen | **Bindung:** eigen (Format)
-- **Trigger:** `span`-Arm gebaut
-- **Lage:** (gemessen 2026-10-07, river-122) auf der `at <body>`-Zeile fehlt `span`; Rivers Membran-Brücke + Invarianz-/Energieerhaltungs-Test hängen daran. (Gemessen 2026-10-07, Mountain 264: kein `span`-Arm in `src/archivar/parse.rs` — die `at`-Direktive setzt nur `cur_body` + `cur_frame = Barycenter`.)
-- **Blockade:** die Direktive ist ungebaut (kein Parser-Arm, keine Register-Zeile); die Apertur ist eine Frame-/Wire-Erweiterung, kein Einzeiler.
-- **Braucht:** `span`-Direktive je `at <body>` (Parser-Arm + Frame-/Wire-Feld + Register-Zeile).
+- **Status:** eigen | **Bindung:** eigen (Format) · river (Membran-Brücke)
+- **Trigger:** Rivers Membran-Brücke trägt die Apertur in Query/Record
+- **Lage:** (gemessen 2026-10-07, Mountain 268) **Mountain-Arm gebaut:** `span`-Arm in `src/archivar/parse.rs` (positiv-finit, sonst absent), `SourceConfig.span: Option<f64>`; Test `span_directive_carries_a_positive_finite_aperture_else_absent`; `cargo check` 0/0. **Rat-Verdikt:** `extent` reusen (Sample-Slot 7 trägt die Apertur bereits), **kein** 27. Wire-Feld; `span` lebt als deklariertes `SourceConfig`-Feld, nicht als Körper-`radius_m` (`membrane.rs:364,385` unberührt). **Riss:** die statische Membran liest kein `SourceConfig` (nur `.bin` + Sterne, `membrane.html:576-589`), die Presence ist ein nackter Query-Mittelpunkt — `span` allein rendert die Startansicht nicht.
+- **Blockade:** Rivers Startansicht-Brücke (Apertur als Query-Input/Record-`extent` in `wasm.rs:65-99` + `membrane.html:501-528`); Fenster-Edit operator-gebunden.
+- **Braucht:** River trägt die Apertur als Query-/Receiver-Input bzw. Record-`extent` in den ω()-Lauf; `span_anchor = sqrt(r2)+extent` (`membrane.html:511`) bleibt die Messung.
 
 ### Membran-Sonne-Anker — `de_compiler` GM, Maske Bit 11
 - **Status:** eigen | **Bindung:** eigen (Compiler/Format) · river (Checkmark)
@@ -207,19 +206,19 @@ Wort | Datum | Quelle
 - **Blockade:** der `rights_read`-Arm braucht zuerst einen Datenkontrakt-Entwurf (wo das Bit lebt — Wire-Slot vs. separater Harvest-Zustand), kein Einzeiler; bis dahin ehrlich eine Stufe `unbestimmt`.
 - **Braucht:** Rat/Datenkontrakt-Entwurf für `rights_read` → Arm am Harvest-Gate (OAI-PMH `<rights>`/DataCite `rightsList`). Beleg-Regel: jedes `terms`-Feld im B-Block trägt Datum+URL in `note` (die Tabelle ist gitignored). Transport an River: `## An river`.
 
-### Sternkatalog nach Helligkeit ordnen (Membran progressives Laden)
-- **Status:** wartend | **Bindung:** eigen (Compiler/Commit) · mycelium (Re-Harvest/Manifestation)
-- **Trigger:** Myceliums `gaia-cdn`-Re-Harvest des `ssd.jpl.nasa.gov-gaia/dr3_stars.bin`
-- **Lage:** (gemessen 2026-10-07, Mountain 263) der Sort ist gebaut — `tap_compiler --star-bin` sortiert die assemblierte Datei 56-B-weise nach Magnitude aufsteigend (Offset 28, `total_cmp`, non-finite ans Ende); `tycho2_compiler` sortiert die beiden Star-Bin-Fäden `--source tgas`/`--source tycho` ebenso (`cargo build` 0/0). Producer: `dr3_stars.bin` kommt aus `tap_compiler --star-bin --union-bright`. Stehender Pass (zitiert): `gaia-cdn`-Lauf in Arbeit.
-- **Blockade:** Re-Harvest + Re-Manifestation (Mycelium) fehlen.
-- **Braucht:** `gh workflow run gaia-cdn.yml` (Mycelium), dann neuen sha + `pages-deploy.yml`-Stage (Mycelium); der Sort-Commit ist Mountain.
-
 ### KCG2 (prop.kc2g.com) — JSON-Reader-Arm
 - **Status:** eigen | **Bindung:** eigen (Format/Parser) · mycelium (Harvest/Register)
-- **Trigger:** JSON-Reader-Arm gebaut
-- **Lage:** (gemessen 2026-10-07, Mountain 268 via `archive_search --verdict/--sniff`) `blocked_sources.φ` trägt `pending url https://prop.kc2g.com/api/stations.json`; Route + JSON 200 (42482 B; `mufd`/`fof2`/`tec`/`cs`), terms unbestimmt; kein JSON-Reader im Baum.
-- **Blockade:** der produkt-spezifische JSON-Reader (Ionosphären-MUF/foF2/TEC) fehlt.
-- **Braucht:** JSON-Reader in `tools/harvest/src/bin/` + `pattern` in `phi/harvest.φ` + `terms unbestimmt`-Zeile → dann Register-Block.
+- **Trigger:** Harvest-Pattern + `*-cdn.yml` für KCG2
+- **Lage:** (gemessen 2026-10-07, Mountain 268) **Reader gebaut** — `tools/harvest/src/bin/kc2g_stations.rs` (JSON `mufd`/`fof2`/`tec`/`cs`, absent = `Option`, CSV + Test; `cargo build` 0/0); `blocked_sources.φ:234-236` trägt `pending`; Route + JSON 200 (42482 B), terms unbestimmt.
+- **Blockade:** Harvest-Block in `phi/harvest.φ` + `kc2g-stations-cdn.yml` + `terms unbestimmt`-Zeile fehlen (Mycelium-Transport); der `at`/`field`-Block ist noch nicht in `phi/sources.φ`.
+- **Braucht:** `phi/harvest.φ`-Block (`format kc2g_stations`/`arm`/`workflow`/`pattern ^kc2g_stations\.csv$`) + CDN-Workflow + `terms unbestimmt`-Zeile; dann Register-Block + Manifestation.
+
+### obis.osha.gov — unit-fähiger Reader (kein `1`-Riss im engen Sinn)
+- **Status:** eigen | **Bindung:** eigen (Parser/Format) · mycelium (Transport)
+- **Trigger:** unit-fähiger OSHA-Router gebaut
+- **Lage:** (gemessen 2026-10-07, Mountain 268) `osha_cehd_compiler` emittiert gemischte Einheiten (`kg/m3`,`kg`,`1`,`1/m3`) in einer Spalte; `parse_axis_position_value_text` (`extract.rs:4116`/`geo.rs:859`) verwirft den Einheitentoken und bindet die Quelle an **eine** Unit. `blocked_sources.φ` trägt `pending`. Die emittierte Einheitenmenge liegt in **keiner** Einzelkraft (`units.rs`: diffusion hat kg/m3+kg+`1`, nicht `1/m3`; em hat `1`+`1/m3`, nicht kg/m3).
+- **Blockade:** der Reader ist nicht einheiten-fähig; eine `field`-Zeile über die gemischten Zeilen wäre nicht einheiten-wahr.
+- **Braucht:** den Reader einheiten-fähig machen (`extract.rs:4116` + `geo.rs:859` Token zurückgeben und nach `field`-Unit filtern) **oder** den Compiler je Einheitenklasse splitten; dann vier `field`-Zeilen + `terms`; danach Mycelium `gh workflow run osha-cehd-cdn.yml`.
 
 ## An river
 
