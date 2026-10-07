@@ -2,7 +2,7 @@
   title: Free-Voices — der kostenlose Recherche-Schwarm
   class: concept
   date: 2026-10-02
-  sha256: e168326c94fc33bda04ff4dc84a885897053088c839244f86ef6816244e163be
+  sha256: f177b449a78764dc1e65c9f3bf0cc9b764cf4528014dabf720a750c2e93d470a
   status: live
   see-also: docs/concepts/tools-map.md docs/concepts/tool-forms.md state/stimmen/reviewer-roster-2026-10-01.md
 -->
@@ -98,6 +98,7 @@ und gemessenes Tempo:
 - **MiniMax M3** (`agent.minimax.io`, 427B) — distincte Zuchtlinie (Operator-Wort Mountain 264); 4/4, 30 s.
 - **Google AI Studio / Gemini 3.1 Pro** (`aistudio.google.com`); 4/4, ≤ 60 s.
 - **DeepSeek Chat** (`chat.deepseek.com`); 4/4, 6 s.
+- **Mistral** (`chat.mistral.ai`, „Vibe"); 4/4, 24 s.
 
 Gretchenfrage-Werkzeug: `state/mycelium/philosophy-probe-2026-10-05.txt` +
 `state/mycelium/voice-capability-all-2026-10-05.tsv` (4/4-Skala). Roster: `AGENTS.md:532-533`.
