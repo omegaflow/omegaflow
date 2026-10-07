@@ -405,7 +405,7 @@ fn disposition_owner(state: &str) -> Option<&'static str> {
             _ => None,
         },
         Some("terms") => match tokens.next() {
-            Some("fehlt") => Some("mountain"),
+            Some("unbestimmt" | "keine") => Some("mountain"),
             _ => None,
         },
         Some("ausstehend" | "verifiziert" | "kompiliert" | "pending") => Some("mycelium"),
@@ -430,7 +430,9 @@ fn state_class(state: &str) -> Option<StateClass> {
     match state.trim() {
         "ausstehend" | "verifiziert" | "kompiliert" | "pending" | "fehlt" | "offen" | "absent"
         | "review" => Some(StateClass::Open("mycelium")),
-        "parser-gap" | "asset fehlt" | "terms fehlt" => Some(StateClass::Open("mountain")),
+        "parser-gap" | "asset fehlt" | "terms unbestimmt" | "terms keine" => {
+            Some(StateClass::Open("mountain"))
+        }
         "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
         | "refused" | "released" => Some(StateClass::Released),
         "asset present" | "index" | "artefakt" | "register" | "infra" | "probe" | "frame"
@@ -3948,7 +3950,8 @@ mod tests {
         assert_eq!(disposition_owner("blocked key"), Some("future"));
         assert_eq!(disposition_owner("blocked ip-blocked"), Some("mycelium"));
         assert_eq!(disposition_owner("pending"), Some("mycelium"));
-        assert_eq!(disposition_owner("terms fehlt"), Some("mountain"));
+        assert_eq!(disposition_owner("terms unbestimmt"), Some("mountain"));
+        assert_eq!(disposition_owner("terms keine"), Some("mountain"));
         assert_eq!(disposition_owner("descoped"), None);
     }
 
@@ -4030,7 +4033,8 @@ mod tests {
             ("declined", Some(StateClass::Released)),
             ("refused", Some(StateClass::Released)),
             ("asset fehlt", Some(StateClass::Open("mountain"))),
-            ("terms fehlt", Some(StateClass::Open("mountain"))),
+            ("terms unbestimmt", Some(StateClass::Open("mountain"))),
+            ("terms keine", Some(StateClass::Open("mountain"))),
             ("asset present", Some(StateClass::Ignored)),
             ("review", Some(StateClass::Open("mycelium"))),
             ("index", Some(StateClass::Ignored)),
