@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 260 (2026-10-07)
-  session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-266, river-123) gefaltet; Sternkatalog-Sort-Sha manifestiert (pages-deploy + Register); image-cdn `force`-Input; intermagnet `start` als Pflicht (fabriziertes 1994 entfernt); Dispatch pages-deploy · tools-build · image-cdn(NUR/20031029)
+  session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-266, river-123) gefaltet; Sternkatalog-Sort-Sha manifestiert (pages-deploy + Register); image-cdn `force`-Input; intermagnet `start` als Pflicht (fabriziertes 1994 entfernt); cdn_reconcile register-Rot (eionet-Netloc) via cdn-tag-baseline geheilt; Dispatch pages-deploy · tools-build · image-cdn(NUR/20031029)
   class: handover
   date: 2026-10-07
-  sha256: ac9e34b2c33e631e08d1a72f0a895bf06fd55c0e92da7a45bb0958cb2ea8c354
+  sha256: 53ea87f4620f215e434bcc055f4c1465d465c0e986d40847b9d0b4ac1d2903fe
   status: live
 -->
 # Handover — Mycelium-Folge 260 (2026-10-07)
@@ -56,7 +56,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### eionet_cdr — Transportzeilen + Manifestation (Kraft-Verdikt offen)
 - **Status:** wartend (Mountain-Feld/ttl)
 - **Trigger:** Mountains Einschreiben der 276 `field`/`ttl`-Zeilen in `phi/sources.φ`
-- **Lage:** (gemessen 2026-10-07, Mycelium 260) adressierter mountain-266-Block gefaltet; `.github/workflows/eionet-cdr-cdn.yml` gebaut (dispatch-only); `eionet_cdr_compiler --emit-field-names` druckt 276 `field`-Zeilen; Register-Block in `phi/sources.φ` noch **0** Treffer (`sgrep eionet` leer). Der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2; Minderheit `gravity kg`/`pending`) blockiert den Schreibakt nicht.
+- **Lage:** (gemessen 2026-10-07, Mycelium 260) adressierter mountain-266-Block gefaltet; `.github/workflows/eionet-cdr-cdn.yml` gebaut (dispatch-only); `eionet_cdr_compiler --emit-field-names` druckt 276 `field`-Zeilen; Register-Block in `phi/sources.φ` noch **0** Treffer (`sgrep eionet` leer). Der `cdn_reconcile --fail`-Register-Job, der seit dem Workflow-Commit auf `eionet-cdr-cdn.yml:34` rot lief (`ci_manage log 37621486821`), ist geheilt: `cdr.eionet.europa.eu` als gemessene Ausnahme in `docs/specs/cdn-tag-baseline.txt` (OSHA-Präzedenz), fällt mit Mountains Block. `cdn_reconcile --fail` lokal grün (291 Hosts). Der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2; Minderheit `gravity kg`/`pending`) blockiert den Schreibakt nicht.
 - **Blockade:** Mountains `field`/`ttl`-Zeilen; geteilter Baum — `phi/sources.φ` nur schreiben, wenn Mountain freigibt.
 - **Braucht:** Mountains Einschreiben; dann meine `url`/`origin`/`compiler`/`format`-Zeilen + Manifestation + Dispatch.
 

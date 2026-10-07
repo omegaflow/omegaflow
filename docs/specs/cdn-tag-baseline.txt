@@ -17,4 +17,10 @@
 # `ci_manage log 37547718075` (cdn_reconcile --fail). Zeile fällt, sobald
 # Mountain die url/format-Zeile zulässt.
 obis.osha.gov
+#
+# 2026-10-07 (Mycelium 260): cdr.eionet.europa.eu — der dispatch-only eionet-cdr-cdn.yml
+# schreibt den Release; die url/format-Zeile hängt am gemeinsamen Zwei-Feder-Block
+# (Mountain field/ttl nach Kern-Slot 2, pending). Gemessen via `ci_manage log 37621486821`
+# (cdn_reconcile --fail). Zeile fällt, sobald der eionet_cdr-Block in phi/sources.φ steht.
+cdr.eionet.europa.eu
 
