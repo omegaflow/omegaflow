@@ -67,6 +67,12 @@ eingelesen:
 
 !`cat state/mycelium/archive-search-preset.txt`
 
+**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `state/zustand/ui-open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `state/mycelium/ui-group.txt`:
+
+!`cat state/mycelium/ui-group.txt`
+
+Eine Linien-Session fährt Stimmen **nur** in ihrer eigenen Gruppe; die `1-ui`/`2-backup`-Gruppen des Operators und fremde Linien-Gruppen bleiben unberührt. Die Gruppe wird beim ersten `browser_open` mit dem Namen angelegt.
+
 Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
 
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen

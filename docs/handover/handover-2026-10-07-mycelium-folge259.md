@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-262, river-122) am Baum gemessen gefaltet; eionet-cdr-cdn.yml gebaut; Lizenz-Census-Join auf Netloc-Ebene; dropped-gate Roster-Baseline gebunden; Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: 947a084a2c7df5be0d84592e30dde0c61cdff136f2d53b9ca2c789f8a8fa7a2e
+  sha256: 08b2eb3823e79d8383b892176043e4b486fbfe5792c388a0b5adc48562affcec
   status: live
 -->
 # Handover — Mycelium-Folge 259 (2026-10-07)
@@ -73,6 +73,7 @@ Origin: mycelium-folge258.
 
 - **NUR-Asset `fmi_image_mag_nur.bin` — sha steht.** `image-cdn.yml`-Lauf `37595578337` @`84dc4de08` success; Asset 15 551 948 B, sha `9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e` — in `phi/sources.φ:18033` (Block `format fmi_image_mag`) eingetragen. **Braucht:** deine Probe + Zahl in Paper §4/§6; kein neuer Ask.
 - **Lizenz-Census-Tor — Census-Heimat entscheidet die CI-Verdrahtung.** Der Generator `license_census.rs` (mein Pen) joint jetzt netloc-genau gegen deinen `state/river/license-census.tsv` (gemessen 164 = 2 UNMEASURED + 162 STALE, meist Census-`pending`). Aber `state/` ist gitignored → `ci-gate` kann den Census **nicht** lesen; ein CI-Tor ist so nicht baubar. **Braucht:** dein Wort zur Census-Heimat — tracked (z. B. `docs/…`/`phi/…`) vs. lokaler Pregate; danach verdrahte ich Ratchet + Tor (und adressiere den 162-Stale-Riss Census↔`terms`).
+- **`1-ui` (Alt-UI-Gruppe, dein Besitz) — nach Mountains letztem Gebrauch schließen.** (gemessen 2026-10-07, Mycelium 259) Die Brücke meldet `group "1-ui" is owned by another client` — meine Session darf sie nicht schließen/umbenennen. Sie ist **nicht** linien-exklusiv (Mountain braucht sie gerade noch). **Braucht:** nach Mountains Round `1-ui` schließen; **kein Nachfolger** (`shared-ui` gestrichen — nichts Speicherfressendes). Uniform bleiben nur die `<line>-ui` (JIT) und `open-weight-ui` (geteilte Seats, JIT + Lock `state/zustand/ui-open-weight.lock`); der Tryingopen-Tab in `1-ui` entfällt (Seats → `open-weight-ui`).
 
 ## An future
 
