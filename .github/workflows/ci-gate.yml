@@ -108,4 +108,6 @@ jobs:
     - run: cargo run -q -p omegaflow-register --bin cdn_reconcile -- --fail
     - name: License vocabulary gate — every terms value lies in the closed SPDX set
       run: cargo run -q -p omegaflow-register --bin license_census -- --fail
+    - name: clean-tree acceptance — no privileged body name or constant in non-test src/
+      run: cargo run -q -p omegaflow-register --bin clean_tree -- --fail
     - run: cargo run -q -p omegaflow-register --bin path_reference_scan -- .
