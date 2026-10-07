@@ -3,7 +3,7 @@
   session: Mountain-Folge 270
   class: handover
   date: 2026-10-07
-  sha256: 44569714bbb082d600993d042e4c2e764e221301f41dbf7e8a9d3b489a783a73
+  sha256: 632d79706c770a469b52b4e9dcd1862e8e955a5a2c2a9ae3513e3f2f60b93bc1
   status: live
 -->
 # Handover — Mountain-Folge 270 (2026-10-07)
@@ -114,12 +114,12 @@ Wort | Datum | Quelle
 - **Blockade:** keine.
 - **Braucht:** `register_lookup --compilers` neu messen und das Blatt nachführen (Records / mit compiler / Binaries / ohne Direktive).
 
-### GIC-Faden-Wunschliste §A–G — Admission der 15 neuen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Mycelium legt die erreichten Kanäle vor (Reachability-Messung)
-- **Lage:** (gemessen 2026-10-07, Mountain 268/269) **10 Kanäle gebaut** (Compiler + Core-Reader + `phi/harvest.φ`-Block + `phi/sources.φ`-Felder); 33 Fäden gemessen — `state/mycelium/gic-api-reachability-2026-10-06.md` (lebt 14, neu+erreichbar 15, blockiert 7).
-- **Blockade:** Admission je neuem Kanal (Format-Arm nötig).
-- **Braucht:** Admission 2026-10-07 (`general`) — **admit:** AMPERE, THEMIS Tail, MMS, POES/MetOp, DMSP SSJ, SOHO/LASCO, WDC AE (AL/AU/SYM-H), ROTI, Wind SWE (generischer hapi-Arm) → Format-Arm + `terms`; **blocked** (parser-def): THEMIS GMAG (Dataset-ID), SuperDARN, OMTI/Abisko, Substorm-Onsets, PC-Index (TLS), EarthScope MT; **decline:** DMSP SSUSI (funded-dead). Korrektur CARISMA `www.carisma.ca`; Riss: `carisma_mag` erntet den ASC-Spiegel, nicht `www.carisma.ca`.
+### GIC-Faden §A–G — Admission gemessen, nur `blocked parser-def` offen
+- **Status:** eigen | **Bindung:** eigen (Parser-Arm) · mycelium (Transport)
+- **Trigger:** Reachability-Datei ändert sich
+- **Lage:** (gemessen 2026-10-07 270) Admission gemessen; die **admit-Kanäle sind bereits gebaut** (belegt: `phi/harvest.φ` AMPERE `:11`, ROTI `:72`, DMSP SSJ `:99`, POES/MetOp `:442`, SOHO/LASCO `:468`, THEMIS `:504`, plus MMS/WDC AE/Wind SWE über den generischen HAPI-Arm). **decline:** DMSP SSUSI (funded-dead).
+- **Blockade:** die verbleibenden Kanäle sind `blocked parser-def` (kein Datenarm).
+- **Braucht:** je `blocked parser-def`-Kanal (THEMIS GMAG Dataset-ID, SuperDARN, OMTI/Abisko, Substorm-Onsets, PC-Index TLS, EarthScope MT) den Parser-Arm bauen oder den Gap erklären; Korrektur CARISMA `www.carisma.ca` (Riss: `carisma_mag` erntet den ASC-Spiegel).
 
 ### GIC-Breitenband-Familien — Deskriptoren (Blatt-Slot) + CGM-Provenienz-Riss
 - **Status:** eigen | **Bindung:** eigen (Format/Descriptor) · river (`field_te_query`)
@@ -139,8 +139,8 @@ Wort | Datum | Quelle
 - **Status:** eigen | **Bindung:** eigen (Gate/Register) · mycelium (CI)
 - **Trigger:** Sichtung der 1300 + deklarierte Rebaseline
 - **Lage:** (gemessen 2026-10-07 via `register_lookup --dropped`/`ci_manage log 37553361521`) `dropped-gate` (`.github/workflows/ci-gate.yml:70`) zählt Punkte aus archivierten Übergaben ohne lebenden Träger/Commit; Baseline `docs/zustand/dropped-baseline.md` 1300 (zuletzt gebumpt `416f7b59b`), current 1282. **Drei externe Stimmen (qwen, duck/Gemma 4 31B, nemotron-3-ultra, 2026-10-07) konvergieren:** `archiv = Ort, kein Träger` · Auto-Bump und Archiv-als-Träger verworfen (0 honored) · Carrier-Ledger nur als **abgeleitete** Sicht · **explizites Carrying je Move** ist die Architektur. Nemotron-Formel: `dropped := punkt ohne träger in (lebend ∪ commits ∪ register) · move ohne disposition = rot · baseline frozen`.
-- **Blockade:** Träger-Ableitung im Gate ungebaut; Punkt-Identität über den Move (ID/Hash) unbelegt → `pending`; Pauschal-Transfers sind Fabrikation, wo Xs nächster Schritt die Natur nicht berührt.
-- **Braucht:** `move ohne disposition = rot` je Move bauen (je Punkt: resolved-in-commit | carried-in-owner-handover), Auto-Bump-Pfad entfernen, dann **einmalige** deklarierte Rebaseline; Punkt-ID/Hash-Schema (`pending`) für die Einzelpunkt-Disposition.
+- **Blockade:** Mycelium 264 hat die Träger-Ableitung **gebaut** (`register_lookup --dropped-keys`, Named-Key-Set statt Scalar, Baseline `docs/zustand/dropped-legacy-baseline.txt` 924 keys, `278ba2905`); offen nur die Punkt-ID/Hash-Disposition (ID über den Move unbelegt → `pending`).
+- **Braucht:** `move ohne disposition = rot` an die bestehende Named-Key-Set-Ableitung hängen (Mycelium-Pen); Punkt-ID/Hash-Schema (`pending`) für die Einzelpunkt-Disposition; danach einmalige deklarierte Rebaseline.
 
 ### DE441/DE442-Anker ohne sha256
 - **Status:** wartend | **Bindung:** eigen
