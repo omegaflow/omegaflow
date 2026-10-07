@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. NUR-Re-Harvest sha ins Register; Pipeline-5-Ledger auf disponiert + BRL-BIG-Kandidat; KC2G/OSHA/pages-deploy dispatcht; format-Drift register_lookup.rs geheilt; adressierte Blöcke future-199/mountain-270 gefaltet; Round-Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 74f0af8e2c355792e22bc3744701f4370e65bddfb0ada71360b2a20efe2bd763
+  sha256: b9262f9b1ba1ad54a08c31a3b3e5e8bfbc3ce1a95548c633b02a2a21406d564b
   status: live
 -->
 # Handover — Mycelium-Folge 265 (2026-10-07)
@@ -45,13 +45,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-07T21:1x) Mountain 270 lieferte den unit-fähigen Reader (`geo.rs:859`, `extract.rs:4184-4199`) + 4 `field`-Zeilen (`sources.φ:26115-26118`) + `harvest.φ`-Block; `gh workflow run osha-cehd-cdn.yml` dispatcht.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 37687769047` → neuen `osha_cehd_si`-sha ins Register.
-
-### Membran-Sonne-Anker — pages-deploy dispatcht
-- **Status:** wartend
-- **Trigger:** Lauf-Ergebnis `37687772653`
-- **Lage:** (gemessen 2026-10-07T21:1x) Mountain 270 zog die drei DE440-shas nach (earth `8b8998bd…`, moon `64ad003b…`, sun `7700832e…`); `gh workflow run pages-deploy.yml` dispatcht, damit die GM-tragende Sonne-`.bin` deployt ist.
-- **Blockade:** keine.
-- **Braucht:** `ci_manage view 37687772653`.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend
