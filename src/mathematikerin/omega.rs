@@ -514,11 +514,11 @@ impl OmegaLoop {
         let param_buf = self.te_param_buf.as_ref()?;
         let out_buf = self.te_out_buf.as_ref()?;
         let read_buf = self.te_read_buf.as_ref()?;
-        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
+        let mut data = vec![0f32; crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
         data[0..m].copy_from_slice(xs);
         data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(ys);
         let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
-        for s in 0..10 {
+        for s in 0..crate::te::TE_SURR_FLOOR {
             let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
             let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
@@ -536,7 +536,7 @@ impl OmegaLoop {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(pipe);
             pass.set_bind_group(0, bind, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
+            pass.dispatch_workgroups((crate::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
         }
         enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
         queue.submit(std::iter::once(enc.finish()));

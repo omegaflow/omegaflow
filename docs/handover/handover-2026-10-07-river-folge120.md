@@ -3,7 +3,7 @@
   session: River-Folge 120
   class: handover
   date: 2026-10-07
-  sha256: 69fefb9476b57d46a93e8565233a6bb92be29f15ebe50b73d925ce724b705ac7
+  sha256: fa2a82715a6f38a31aec3471ed5e533842275ad3363a339eaef08b7b7427ee69
   status: live
 -->
 # Handover — River-Folge 119 (2026-10-07)
@@ -37,10 +37,10 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 
 ## Offen (aufgeschlüsselt)
 
-### `ozzy` — Negative Fuzzy Engine (CPU-Floor (i)+(i-rest) gebaut: Rang-Grenze, typisierte Absenz, `N_eff`; CI-Verifikation offen)
+### `ozzy` — Negative Fuzzy Engine (CPU-Floor (i)+(i-rest) + GPU-Wire (ii) gebaut; CI-Verifikation offen)
 - **Status:** wartend (CI) | **Bindung:** eigen
 - **Trigger:** `ci-check`/`ci-gate` grün am jeweiligen HEAD.
-- **Lage:** (gemessen 2026-10-07, River 120) `independence_verdict` (`src/mathematikerin/ozzy.rs:146`) trägt den A-Test (held-out Zeugen) + B-Diagnose + die zwei Known-Answer-Gates. **Schritt (i) des CPU-Floors gebaut:** `TE_SURR_FLOOR = 99` (`te.rs:3450`) an `topological_te_phase`/`topological_te_arx`; die Kopplungsgrenze in `topological_te_with` ist die Rang-Regel `threshold = max(TE_surr)`; der KSG-k-Kalibrier-Harness `ksg_te_phase_null` (`ksg_k.rs:66`) auf dieselbe Grenze gezogen (Byte-Parität `gate_ksg_k_sweep_harness_byte_equals_kalibrier`). `cargo check` 0/0. **Schritt (i-rest) gebaut (`grind-flash`, 2026-10-07):** `ozzy.rs` trägt `VerdictWord`/`TeAbsence`; `IndependenceVerdict.a: Vec<(String, Result<VerdictWord, TeAbsence>)>` + `b_diagnostic` typisiert; `N_eff` (`τ_int` über den ersten Nulldurchgang, pro Messung getrennt; zweites Tor `df = N_eff − (dim·τ_max+1) − rank(E)`); `surrogates_used < TE_SURR_FLOOR` → `InsufficientSurrogates`; Known-Answer-Tests auf die Wörter gezogen; `cargo check --tests` 0/0. Offen bleibt die GPU-Divergenz: `topological_verdict_from_gpu` liest weiter 10 Slots/`mean+2σ` (Schritt ii).
+- **Lage:** (gemessen 2026-10-07, River 120) `independence_verdict` (`src/mathematikerin/ozzy.rs:146`) trägt den A-Test (held-out Zeugen) + B-Diagnose + die zwei Known-Answer-Gates. **Schritt (i) des CPU-Floors gebaut:** `TE_SURR_FLOOR = 99` (`te.rs:3450`) an `topological_te_phase`/`topological_te_arx`; die Kopplungsgrenze in `topological_te_with` ist die Rang-Regel `threshold = max(TE_surr)`; der KSG-k-Kalibrier-Harness `ksg_te_phase_null` (`ksg_k.rs:66`) auf dieselbe Grenze gezogen (Byte-Parität `gate_ksg_k_sweep_harness_byte_equals_kalibrier`). `cargo check` 0/0. **Schritt (i-rest) gebaut (`grind-flash`, 2026-10-07):** `ozzy.rs` trägt `VerdictWord`/`TeAbsence`; `IndependenceVerdict.a: Vec<(String, Result<VerdictWord, TeAbsence>)>` + `b_diagnostic` typisiert; `N_eff` (`τ_int` über den ersten Nulldurchgang, pro Messung getrennt; zweites Tor `df = N_eff − (dim·τ_max+1) − rank(E)`); `surrogates_used < TE_SURR_FLOOR` → `InsufficientSurrogates`; Known-Answer-Tests auf die Wörter gezogen; `cargo check --tests` 0/0. **Schritt (ii) GPU-Wire gebaut (`grind-flash`, 2026-10-07):** `TE_SERIES_COUNT = 2 + TE_SURR_FLOOR = 101`; `topological_verdict_from_gpu(&[f32])` liest die 99 Surrogat-Slots und nutzt die Rang-Grenze `max`; WGSL `SERIES_COUNT = 101` mit Rust-Paritätstest (`gate_te_wgsl_series_count_matches_rust`); Buffer/Reader/Dispatch (7 Workgroups `div_ceil(16)`) in `machines/verdict.rs`/`matrix.rs`/`solar.rs`/`omega.rs`/`tests.rs` nachgezogen. Die CPU/GPU-Grenzen-Divergenz ist geschlossen; `cargo check --tests` 0/0. Benanntes Residuum: der WGSL-Wert ist ein Literal, nur per Gate-Test gegen Rust gepinnt (kein Compile-Time-Interpolieren).
 - **Rat-Entscheid (2026-10-07, Session 119, fünf Stimmen über den `council`-Agenten) — der Floor-Riss ist aufgelöst:**
   1. **Rang-Form:** `p = (1 + #{TE_surr ≥ TE_obs}) / (n_surr+1)`; bei `n_surr = 99` ist `p_min = 0.01` und die Regel fällt mit dem Maximum der Null zusammen: Kopplung ⇔ `TE_obs > max(TE_surr)`. α an `1/(n_surr+1)` gebunden, nicht frei gewählt (A = A, kein interpolierter Zwischenwert).
   2. **`N_eff`:** `τ_int = 1 + 2·Σ_{k=1}^{K} ρ_k`, `K` = erster `k` mit `ρ_k ≤ 0` (erster Nulldurchgang), `N_eff = N / τ_int` — std-only (Eigenmittel/-varianz/-autokovarianz), **pro Messung getrennt** für A und B. Zweites Tor: `df = N_eff − (dim·τ_max + 1) − rank(E)` (B zusätzlich `rank(E)`, A ohne); unter dem Boden → getypte Absenz, kein Verdikt. Zwei Tore (`N_eff`, dann `df`), nie zu einem Wert vermischt.
@@ -52,7 +52,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
   - (iii) **Gates:** Known-Answer `ozzy.rs:323`/`:359`, A-Test-Kern `:338-356`.
   - (iv) **Verdrahtung** `field_te_query`/Matrix.
 - **Blockade:** kein CI-Runner grün; der Floor-Umbau ist eine mehrschrittige Konstruktion (TE-/Null-Atom). Kein Pro-Solo — der Rat hält sie; die Umsetzung läuft als sequenzierte bounded dispatches.
-- **Braucht:** (1) grüner `ci-check`/`ci-gate` am HEAD; (2) die restlichen bounded Schritte: (ii) GPU-Wire, (iii) Known-Answer-Kern, (iv) Verdrahtung `field_te_query`/Matrix.
+- **Braucht:** (1) grüner `ci-check`/`ci-gate` am HEAD; (2) die restlichen bounded Schritte: (iii) Known-Answer-Kern, (iv) Verdrahtung `field_te_query`/Matrix.
 - **Wort:** „river klärt es selbst" | 2026-10-07 | future-188 (A/B) · „das klingt doch vernünftig" | 2026-10-07 | Operator 115 (A gewählt)
 
 ### em-Apertur — Kanal-Identität statt Kernel-Proxy
@@ -159,5 +159,6 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/mathematikerin/te.rs` · `src/mathematikerin/ksg_k.rs` (CPU-Surrogat-Floor, Schritt i) · `docs/handover/handover-2026-10-07-river-folge120.md` (neu) · `docs/handover/archiv/handover-2026-10-07-river-folge119.md` (Move)
 - `src/mathematikerin/ozzy.rs` (ozzy Schritt (i-rest): typisierte Absenz + `N_eff`-Tore) · `docs/handover/handover-2026-10-07-river-folge120.md` (Kanten-Nachtrag: `## An mountain`/`## An mycelium`, `cgm_lat`-Fold/Auflösung)
+- `src/mathematikerin/{shaders.rs,machines/verdict.rs,machines/matrix.rs,solar.rs,omega.rs,te.rs,tests.rs}` (ozzy Schritt (ii): GPU-Wire 101 Serien)
 
-## Burn: open 0.0032 · close 0.1010 · cap 0.15 (Default) · Grund: River 120 — Line-Session (deepseek-flash): addresste Blöcke geprüft; `--fired river` meldet `ozzy`/`em-apertur` — Trigger nicht gefeuert (ci-gate @af7dc14e8 dropped-gate, von Mycelium 256 auf 1297 geheilt); `--stale` 0, `open_points_check` 0 STALE-CITATION. **ozzy-CPU-Floor (i)+(i-rest) gebaut** (`TE_SURR_FLOOR=99`, Rang-Grenze `max`, KSG-k-Parität, `VerdictWord`/`TeAbsence` + `N_eff`-Tore) via 2 `grind-flash`-Dispatchs (~$0.0154 + ~$0.0273); **Kanten gearbeitet:** `## An mountain` (span, GM Bit 11) + `## An mycelium` (NUR-Asset, Sternkatalog C), Mountain-259-Block gefaltet, `cgm_lat` gelandet (157 Zeilen = 154 Stationen + 3 Doppelzeilen, kein Riss) in GIC eingetragen. `cargo check` 0/0. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
+## Burn: open 0.0032 · close 0.1159 · cap 0.15 (Default) · Grund: River 120 — Line-Session (deepseek-flash): addresste Blöcke geprüft; `--fired river` meldet `ozzy`/`em-apertur` — Trigger nicht gefeuert (ci-gate @af7dc14e8 dropped-gate, von Mycelium 256 auf 1297 geheilt); `--stale` 0, `open_points_check` 0 STALE-CITATION. **ozzy-Floor (i)+(i-rest)+(ii) gebaut** (`TE_SURR_FLOOR=99`, Rang-Grenze `max`, KSG-k-Parität, `VerdictWord`/`TeAbsence` + `N_eff`-Tore; GPU-Wire 101 Serien/`TE_SERIES_COUNT`) via 3 `grind-flash`-Dispatchs (~$0.0154 + $0.0273 + $0.0589); **Kanten gearbeitet:** `## An mountain` (span, GM Bit 11) + `## An mycelium` (NUR-Asset, Sternkatalog C), Mountain-259-Block gefaltet, `cgm_lat` gelandet (157 Zeilen = 154 Stationen + 3 Doppelzeilen, kein Riss) in GIC eingetragen. `cargo check` 0/0. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.

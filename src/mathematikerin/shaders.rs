@@ -432,7 +432,7 @@ fn presence_probe() {
 
 pub const TE_WGSL: &str = r#"
 const RING_MAX: u32 = 1024u;
-const SERIES_COUNT: u32 = 12u;
+const SERIES_COUNT: u32 = 101u;
 const DIM: u32 = 3u;
 const ORDER: u32 = 3u;
 const F32_EPS: f32 = 1.19e-07;
@@ -1240,5 +1240,15 @@ mod tests {
             let g = force_absorption_grad(ft, alpha, kp, k);
             assert!((g - (kp - alpha * k)).abs() < 1e-6, "ft {ft}: {g}");
         }
+    }
+
+    #[test]
+    fn gate_te_wgsl_series_count_matches_rust() {
+        let needle = format!("const SERIES_COUNT: u32 = {}u;", crate::te::TE_SERIES_COUNT);
+        assert!(
+            super::TE_WGSL.contains(&needle),
+            "the WGSL SERIES_COUNT drifts from TE_SERIES_COUNT ({})",
+            crate::te::TE_SERIES_COUNT
+        );
     }
 }

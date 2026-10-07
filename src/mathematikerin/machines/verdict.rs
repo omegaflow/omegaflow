@@ -1,9 +1,9 @@
 pub(crate) const TE_SERIES_STRIDE: usize = 1024;
 
-pub(crate) const TE_SERIES_BYTES: u64 = (12 * TE_SERIES_STRIDE * 4) as u64;
+pub(crate) const TE_SERIES_BYTES: u64 = (crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE * 4) as u64;
 
-pub(crate) const TE_VERDICT_SLOTS: usize = 12 * 6;
-pub(crate) const TE_KSG_SLOTS: usize = 12 * 2;
+pub(crate) const TE_VERDICT_SLOTS: usize = crate::te::TE_SERIES_COUNT * 6;
+pub(crate) const TE_KSG_SLOTS: usize = crate::te::TE_SERIES_COUNT * 2;
 
 pub(crate) const fn te_verdict_bytes(k: u32) -> u64 {
     ((TE_VERDICT_SLOTS + if k > 0 { TE_KSG_SLOTS } else { 0 }) * 4) as u64
@@ -48,20 +48,21 @@ mod tests {
     fn gate_te_verdict_bytes_follows_k() {
         assert_eq!(
             te_verdict_bytes(0),
-            288,
+            (TE_VERDICT_SLOTS * 4) as u64,
             "K=0 carries the base verdict only"
         );
         for k in 1..=8u32 {
-            assert!(
-                te_verdict_bytes(k) >= 384,
-                "K={} must append the KSG columns (readback >= 384 B)",
+            assert_eq!(
+                te_verdict_bytes(k),
+                ((TE_VERDICT_SLOTS + TE_KSG_SLOTS) * 4) as u64,
+                "K={} must append the KSG columns",
                 k
             );
         }
         assert_eq!(
             te_verdict_bytes(4),
-            384,
-            "the Kalibrier-Gate K grows the verdict to 384 B"
+            ((TE_VERDICT_SLOTS + TE_KSG_SLOTS) * 4) as u64,
+            "the Kalibrier-Gate K grows the verdict by the KSG columns"
         );
     }
 }

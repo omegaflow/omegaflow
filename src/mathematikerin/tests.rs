@@ -224,11 +224,11 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
     }
     let seed = 42u64;
-    let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
+    let mut data = vec![0f32; crate::te::TE_SERIES_COUNT * TE_SERIES_STRIDE];
     data[0..n].copy_from_slice(&x);
     data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + n].copy_from_slice(&y);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for s in 0..10 {
+    for s in 0..crate::te::TE_SURR_FLOOR {
         let surr = crate::te::phase_randomized_surrogate(&y, &mut rng);
         let off = (2 + s) * TE_SERIES_STRIDE;
         data[off..off + n].copy_from_slice(&surr);
@@ -247,7 +247,7 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
         pass.set_pipeline(&te_pipe);
         pass.set_bind_group(0, &te_bind, &[]);
-        pass.dispatch_workgroups(1, 1, 1);
+        pass.dispatch_workgroups((crate::te::TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
     }
     enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, te_verdict_bytes(TE_KSG_K_PROD));
     queue.submit(std::iter::once(enc.finish()));
@@ -267,8 +267,8 @@ fn te_gpu_crosscheck_against_cpu_reference() {
     );
     let elapsed = start.elapsed();
     let mapped_data = slice.get_mapped_range();
-    let mut verdict = [0f32; 72];
-    for k in 0..72 {
+    let mut verdict = vec![0f32; (te_verdict_bytes(TE_KSG_K_PROD) / 4) as usize];
+    for k in 0..verdict.len() {
         let mut b = [0u8; 4];
         b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
         verdict[k] = f32::from_le_bytes(b);
@@ -381,8 +381,8 @@ fn te_gpu_crosscheck_against_cpu_reference() {
         }
         assert!(mapped.load(Ordering::SeqCst), "te scaled readback void");
         let mapped_data = slice.get_mapped_range();
-        let mut verdict = [0f32; 72];
-        for k in 0..72 {
+        let mut verdict = vec![0f32; (te_verdict_bytes(TE_KSG_K_PROD) / 4) as usize];
+        for k in 0..verdict.len() {
             let mut b = [0u8; 4];
             b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
             verdict[k] = f32::from_le_bytes(b);
