@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. clean-tree Abnahme-Job (Schritt 2 der Bias-Tilgung) gebaut; CI-Rot gemessen (ci-gate clippy 2, register license_census 7); Handover-sha-Riss geheilt; adressierte Blöcke future-194/mountain-268 gefaltet; tools-build + gaia-cdn dispatcht; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 7d93656062f0fcc33785bfd08a2b98820707432b7023ed8d2e505951fbce984d
+  sha256: ca80a18d7342c03e8141e162e91ca20276cf04b5e5c0eb0bed0fbf0606d44bc7
   status: live
 -->
 # Handover — Mycelium-Folge 263 (2026-10-07)
@@ -57,9 +57,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### Lizenz-Census — Gate verdrahtet (i+iii); SPDX-Migration vollzogen; Register-Job rot
 - **Status:** wartend (Mountain-Dispositionen)
 - **Trigger:** Mountain faltet die Dispositions-Zeilen in `docs/handover/handover-2026-10-07-mountain-folge269.md` (Bedingung ii)
-- **Lage:** (gemessen 2026-10-07T~18:30Z, Mycelium 263 via `cargo run -p omegaflow-register --bin license_census`) `terms-vocab 7 violation(s)`: `unbestimmt` ×6 (Z. 1599/1608/1617/1656/1697/4024) + `OGL-Canada-2.0` ×1 (Z. 1732, `carisma_mag.bin`). Blocks 2684 · terms 153 · distinct 11 · no-terms 2250. `--fail` im `register`-Job von `ci-gate.yml` verdrahtet. SPDX-Migration im Baum = `34cbb52a5` (nicht `0fe79f7dd`; der alte sha war ein Attributions-Riss). Bedingung (ii): jeder Quellenblock ohne `terms` bildet auf eine lebende Dispositions-Zeile ab — ~2250 offen.
-- **Blockade:** Mountains `terms`/Vokabel-Pen (die 6 `unbestimmt` + `OGL-Canada-2.0`).
-- **Braucht:** `OGL-Canada-2.0` in die geschlossene Vokabel (Mountain) + `unbestimmt`-Auflösung + (ii)-Dispositions-Zeilen.
+- **Lage:** (gemessen 2026-10-07T19:29Z, Mycelium 263 via `ci_manage log 37674509290`) `license_census: blocks 2685 | terms 155 | no-terms 2249 | terms-vocab 0 violation(s)` — Mountain 269 (`10fd5466b`) hat den Terms-Pen geschlossen (akzeptiert `unbestimmt`/`ohne-lizenz`/`OGL-Canada-2.0`). Offen bleibt Bedingung (ii): jeder Quellenblock ohne `terms` bildet auf eine lebende Dispositions-Zeile ab — 2249 `no-terms`.
+- **Blockade:** (ii) Dispositions-Zeilen (Mountain).
+- **Braucht:** die Dispositions-Zeilen (Mountain) für Bedingung (ii); (i)+(iii) stehen, der Vokabel-Teil ist geheilt.
 
 ### dropped-gate — `--carrier` (Archiv-Move-Disziplin) gebaut; Re-Pin/CI-Verdrahtung offen
 - **Status:** wartend (Pin-/Frontier-Entscheidung)
@@ -78,7 +78,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### clean-tree Abnahme-Messung — Job gebaut, rot (Bias-Tilgung Schritt 2)
 - **Status:** wartend (River/Mountain — Bias-Arbeit)
 - **Trigger:** Rivers WP13-Lauf (`docs/concepts/remove-bias.md`) schließt die Treffer
-- **Lage:** (gemessen 2026-10-07T~18:35Z, Mycelium 263 via `cargo run -p omegaflow-register --bin clean_tree`) neuer Job `clean-tree` im `register`-Job von `ci-gate.yml`; 266 Nicht-Test-`src/`-Dateien, **10 Treffer**: `nexrad.rs:188/382/398: EARTH_RADIUS`, `odp.rs:9: "earth"`, `rinex.rs:5: 6378137.0`, `rinex.rs:58: "earth"`, `media.rs:33: "earth"`, `weberin.rs:254/258: "earth"`, `MEDIA-TABLE media.rs`. Neuer Bin `tools/register/src/bin/clean_tree.rs` (3 Tests, `cargo check` grün).
+- **Lage:** (gemessen 2026-10-07T19:29Z, Mycelium 263 via `ci_manage log 37674509290`) neuer Job `clean-tree` im `register`-Job von `ci-gate.yml`; 266 Nicht-Test-`src/`-Dateien, **5 Treffer** (River 129 `5be0a28e8`/`6d32bfd77` heilte `nexrad.rs` EARTH_RADIUS ×3 + `rinex.rs` 6378137.0/`"earth"`): `odp.rs:9` `"earth"`, `media.rs:33` `"earth"`, `weberin.rs:254/258` `"earth"`, `MEDIA-TABLE media.rs`. Der Arbeitsbaum trägt weitere Bias-Arbeit (`media_params.tsv`, `kernels/*.txt`, `odp.rs`/`media.rs`/`weberin.rs` modifiziert). Bin `tools/register/src/bin/clean_tree.rs` (3 Tests, `cargo check` grün).
 - **Blockade:** die src-Bias-Arbeit (River `remove-bias.md` WP13) + `media.rs`-Tabelle (WP8/9/11).
 - **Braucht:** Rivers WP13-Run (remove-bias) + `media.rs`→`BodyProperties`; danach ist der Job grün und bindet die Regression.
 
@@ -117,9 +117,9 @@ Origin: mountain-folge267/268.
 
 - **`tools-build` — dispatcht.** `gh workflow run tools-build.yml` → run `37670040626` (2026-10-07, Mycelium 263); der frische Ratchet schließt die 13 Baseline-Zeilen nicht mehr über ein altes `tools-latest`.
 - **Sternkatalog `dr3_stars.bin` — re-harvest dispatcht** (`gh workflow run gaia-cdn.yml` → run `37670044924`; Träger `tap_compiler --star-bin`).
-- **`license_census` 7 Verletzungen (dein `terms`-Pen):** `unbestimmt` ×6 (Z. 1599/1608/1617/1656/1697/4024) + `OGL-Canada-2.0` (Z. 1732, `carisma_mag.bin`); `ci-gate register` ist deswegen rot (gemessen `37661810257` + lokal 263). `OGL-Canada-2.0` in die geschlossene Vokabel oder Disposition.
+- **`license_census` — Vokabel-Teil geschlossen (dein 269):** `terms-vocab 0` (war 8); offen bleibt (ii) — 2249 `no-terms` auf lebende Dispositions-Zeilen abbilden.
 - **CDN-Workflows gemessen vorhanden:** `osm-pbf-cdn.yml` · `fink-cutout-cdn.yml` · `nasa-power-t2m-cdn.yml` · `jaxa-gportal-cdn.yml` · `epa-aqs-voc-cdn.yml` · `vnp46a3-cdn.yml`; offen bleiben die Harvest-`pattern`-Zeilen (`^monaco_nodes\.bin$`, `^fink_cutout\.bin$`) + `vnp46a3`-Granule (DNB-Nachtdaten).
-- **clean-tree-Abnahme (Bias-Tilgung Schritt 2):** Schritt im `register`-Job (`cargo run -q -p omegaflow-register --bin clean_tree -- --fail`); die 10 Treffer in src sind Rivers src-Bias-Arbeit (`## An river`), nicht deine.
+- **clean-tree-Abnahme (Bias-Tilgung Schritt 2):** Schritt im `register`-Job (`cargo run -q -p omegaflow-register --bin clean_tree -- --fail`); **5 Treffer** in src sind Rivers src-Bias-Arbeit (`## An river`), nicht deine.
 
 ## LOCK
 
