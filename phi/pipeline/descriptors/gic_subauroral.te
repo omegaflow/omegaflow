@@ -1,0 +1,17 @@
+# gic_subauroral.te — GIC-Breitenband-Familie sub-auroral (50 <= |CGM| < 60 Grad): der
+#   Stufe-1-Screen ueber die 25 Stationen des Bandes. Die Bandzugehoerigkeit ist eine
+#   deklarierte Ableitung aus `cgm_lat` (phi/sources.φ, per Station) und den fixierten
+#   Grenzen — kein `family`-Token. Partition gemessen 2026-10-07: 154 = 31 + 25 + 98
+#   (Artefakt state/river/gic-cgm-lat.tsv).
+#   Lauf: .github/workflows/field-te-query.yml Job `matrix-gic-subauroral` (CI), nie lokal.
+matrix gic_subauroral full
+register sources
+channels intermagnet_xyz_x_nt_aia,intermagnet_xyz_x_nt_ars,intermagnet_xyz_x_nt_bfe,intermagnet_xyz_x_nt_box,intermagnet_xyz_x_nt_brd,intermagnet_xyz_x_nt_czt,intermagnet_xyz_x_nt_esk,intermagnet_xyz_x_nt_eyr,intermagnet_xyz_x_nt_gln,intermagnet_xyz_x_nt_hlp,intermagnet_xyz_x_nt_ler,intermagnet_xyz_x_nt_lov,intermagnet_xyz_x_nt_mgd,intermagnet_xyz_x_nt_new,intermagnet_xyz_x_nt_nur,intermagnet_xyz_x_nt_nvs,intermagnet_xyz_x_nt_ott,intermagnet_xyz_x_nt_paf,intermagnet_xyz_x_nt_shu,intermagnet_xyz_x_nt_sit,intermagnet_xyz_x_nt_spg,intermagnet_xyz_x_nt_stj,intermagnet_xyz_x_nt_ups,intermagnet_xyz_x_nt_vic,intermagnet_xyz_x_nt_yak
+cond none
+fdr bh 0.05 over matrix
+expect cells 600
+lags 0,1
+surrogate 10
+cadence live
+bin 86400
+seasonal none

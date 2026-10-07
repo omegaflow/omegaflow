@@ -4882,6 +4882,52 @@ mod tests {
     }
 
     #[test]
+    fn gic_bands_are_pairwise_disjoint_and_cover_the_154_station_pool() {
+        let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../../");
+        let bands = [
+            ("gic_auroral", "phi/pipeline/descriptors/gic_auroral.te"),
+            (
+                "gic_subauroral",
+                "phi/pipeline/descriptors/gic_subauroral.te",
+            ),
+            ("gic_midlat", "phi/pipeline/descriptors/gic_midlat.te"),
+        ];
+        let mut seen: std::collections::BTreeMap<String, &str> = std::collections::BTreeMap::new();
+        for (band, rel) in bands {
+            let path = format!("{root}{rel}");
+            let text = match std::fs::read_to_string(&path) {
+                Ok(t) => t,
+                Err(e) => panic!("{path} reads: {e}"),
+            };
+            let desc = match parse_descriptor(&text) {
+                Ok(d) => d,
+                Err(reason) => panic!("{rel} parses: {reason}"),
+            };
+            let spec = match desc.matrix {
+                Some(s) => s,
+                None => panic!("a band descriptor carries its matrix block"),
+            };
+            assert_eq!(
+                spec.label.as_str(),
+                band,
+                "the file {rel} carries the matrix label it names"
+            );
+            for c in &spec.channels {
+                if let Some(other) = seen.insert(c.clone(), band) {
+                    panic!(
+                        "channel {c} sits in {other} and {band} — the bands are not pairwise disjoint"
+                    );
+                }
+            }
+        }
+        assert_eq!(
+            seen.len(),
+            154,
+            "the union of the three bands is exactly the 154-station pool"
+        );
+    }
+
+    #[test]
     fn matrix_resolution_gate_flags_the_coarser_pair_never_bins_silently() {
         assert!(resolution_representable(86_400.0, 3_600.0, 3_600.0));
         assert!(resolution_representable(86_400.0, 86_400.0, 3_600.0));
