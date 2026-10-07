@@ -106,4 +106,6 @@ jobs:
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo run -q -p omegaflow-utils --bin register_sort -- phi/sources.φ
     - run: cargo run -q -p omegaflow-register --bin cdn_reconcile -- --fail
+    - name: License vocabulary gate — every terms value lies in the closed SPDX set
+      run: cargo run -q -p omegaflow-register --bin license_census -- --fail
     - run: cargo run -q -p omegaflow-register --bin path_reference_scan -- .
