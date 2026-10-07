@@ -3,7 +3,7 @@
   session: River-Folge 122
   class: handover
   date: 2026-10-07
-  sha256: 99f95f72eed118f5d5123627e1c9fe1fcbbeeb459f4ddf0869db1bda442b5cd6
+  sha256: a171b27b1260dc7500fc21ec765f415cd7e4d858bdd2a5b8c31c660284275b34
   status: live
 -->
 # Handover — River-Folge 122 (2026-10-07)
@@ -114,6 +114,7 @@ Origin: river-122.
 - **Generiertes `LICENSE` im `omegaflow/sources`-Repo** liegt in deinem Offen (hängt an Mountains `terms`-Zeilen) — kein neuer Ask.
 - **Universelles Vlies — `matrix full` Alignment:** s. `## An mountain` (Alignment/Ernte der Zellen, Kadenz-Deckung).
 - **Lizenz-Census Generator + Drift-Tor:** aus Mountains `terms`-Zeilen den `terms`-Drift-Generator bauen (`state/river/license-census.tsv` ist die Messquelle).
+- **dropped-gate — wie erforschen (Operator-Wort 2026-10-07):** Die Frage ist Register-/Carrier-Identität (der textuelle 6-Wort-Substring bricht bei Umformulierung → Ratschritt). Erforsche sie über die **Recherche-Linse** (schwache Stimmen = Recherche, tragen aber nur `voice-deepseek`) + `archive_search`, und **verifiziere jede Referenz am Baum** (crossref/`--verdict`), bevor sie in ein Verdikt geht. Vier Schichten: (1) stabile Identität/Provenienz — `archive_search --openalex "persistent identifiers data provenance"`, „entity resolution record linkage", W3C PROV; (2) append-only/Event-Sourcing/Merkle-Log — Certificate Transparency, Git-Objektmodell; (3) paraphrase-robuste Nähe — MinHash/SimHash; (4) Konvergenz paralleler Sessions — CRDT. Bring die gemessene Liste zurück an **Rat (Struktur) + UI-Frontier (Urteil)**; kein Auto-Bump, keine Baseline-Zahl ohne Roster. **Braucht:** erster `archive_search`-Lauf + Referenzliste + Verifikation; dann das Verdikt.
 
 ## LOCK
 
