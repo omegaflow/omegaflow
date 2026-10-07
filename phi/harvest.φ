@@ -51,6 +51,24 @@ pattern ^gaia_sso_tno\.bin$
 idempotent true
 
 asset present
+format cdaweb_roti
+tag cdaweb.gsfc.nasa.gov
+arm cdaweb_roti_compiler
+workflow cdaweb-roti-cdn.yml
+pattern ^cdaweb_roti_[0-9]+\.bin$
+idempotent true
+timeout 360
+
+asset present
+format cdaweb_tec
+tag cdaweb.gsfc.nasa.gov
+arm cdaweb_tec_compiler
+workflow cdaweb-tec-cdn.yml
+pattern ^cdaweb_tec\.bin$
+idempotent true
+timeout 60
+
+asset present
 format ceein_infrasound
 tag ceein.infp.ro
 arm ceein_infrasound_compiler
@@ -133,6 +151,15 @@ tag noaa-goes16.s3.amazonaws.com
 arm goes16_abi_compiler
 pattern ^goes16_abi\.bin$
 idempotent true
+
+asset present
+format goes16_mag
+tag cdaweb.gsfc.nasa.gov
+arm goes16_mag_compiler
+workflow goes16-mag-cdn.yml
+pattern ^goes16_mag\.bin$
+idempotent true
+timeout 120
 
 asset present
 format hamqsl_solar
@@ -356,6 +383,15 @@ args --netloc data.darts.isas.jaxa.jp --dat https://data.darts.isas.jaxa.jp/pub/
 pattern ^pds4_fixed_width_.+\.bin$
 idempotent true
 timeout 240
+
+asset present
+format poes19_meped
+tag cdaweb.gsfc.nasa.gov
+arm poes19_meped_compiler
+workflow poes19-meped-cdn.yml
+pattern ^poes19_meped\.bin$
+idempotent true
+timeout 60
 
 asset present
 format quake_ptevent

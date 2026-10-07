@@ -3,7 +3,7 @@
   session: Mountain-Folge 268
   class: handover
   date: 2026-10-07
-  sha256: 92b132b83c30da5c733a1493ca9b6a2eb0daca4c8e96a4f3391198f140871e2a
+  sha256: ee85b5f9a4254666d633b63e4a6059b23515f67f43d424bfd01b91a893f8b6d1
   status: live
 -->
 # Handover — Mountain-Folge 268 (2026-10-07)
@@ -23,7 +23,10 @@ Wire-Feld), `eionet_cdr`-Block (276 Felder, register canonical), obis.osha als
 `cdaweb_roti`, `goes16_mag`, `poes19_meped`) + `*-cdn.yml`, IGRF-Modul
 `src/archivar/igrf.rs` mit `geomag_lat`-Arm (Grad-1-Dipol gegen Beggan 2026
 verifiziert), **13 Klassen-(a)-Baseline-Zeilen gelöscht** (Release `tools-latest`
-@ `6d33a91da` gemessen fresh). Riss: Mycelium hat zwei Taucher-Dateien unter
+@ `6d33a91da` gemessen fresh). Wave 4 — Core-Reader für die 4 Kanäle
+(`src/archivar/{cdaweb_tec,cdaweb_roti,goes16_mag,poes19_meped}.rs` + Dispatch) und
+ihre Register (`phi/harvest.φ` 55 Blöcke grün, `phi/sources.φ` canonical 2678) —
+die 4 Kanäle sind damit geschlossen. Riss: Mycelium hat zwei Taucher-Dateien unter
 eigener Botschaft mitgenommen (`0fc491b7e`, kc2g_stations.rs + dropped_gate.rs).
 
 **Burn** (`session_burn`): Mountain-Linie-Session $0.0558 (`line`, deepseek-flash) + general ×1 (KCG2/SDO-Messung); kein pro/max (Aggregat deepseek-flash $0.8412/24 Sessions).
@@ -114,10 +117,10 @@ Wort | Datum | Quelle
 
 ### GIC-Faden §A–G — Compiler/Reader je Kanal
 - **Status:** eigen | **Bindung:** eigen (Compiler/Reader) · mycelium (Manifestation)
-- **Trigger:** Core-Consumer-Reader je Kanal erreicht
-- **Lage:** (gemessen 2026-10-07, Mountain 268) **4 Kanäle vorbereitet** — `cdaweb_tec`, `cdaweb_roti`, `goes16_mag`, `poes19_meped`: Compiler in `tools/harvest/src/bin/` + `*-cdn.yml` gebaut (CDF-3- bzw. NetCDF-4/HDF5-Arm), `cargo build` 0/0; Register-/Harvest-Block präpariert. Bestehende Kanäle live: `fink_cutout`, `intermagnet_dbdt`, `goes16_abi`. **Riss (Route):** `state/future/gic-unblock-routen-2026-10-06.md:65` nennt `tec15min_igs` „IONEX", gemessen ist es **CDF3** (`.cdf`). **Riss (Maß):** ein ROTI-Jahres-Asset ≈ 5.4 GiB > 2-GiB-Release-Grenze (per-day vs. Dezimation offen). DMSP-SSJ teilt den CDF-Arm, braucht einen eigenen Compiler.
-- **Blockade:** je Kanal fehlt der **Core-Consumer-Reader** — `src/archivar/extract.rs` dispatcht `parse_series` nach `format` (`:118/399/785`), `main_flow.rs` braucht den Kanal-Loop (wie `swarm_tec:4950`); ohne ihn lösen die `field`-Zeilen nicht auf und das kompilierte `.bin` erreicht den Wire nicht.
-- **Braucht:** je Kanal ein `src/archivar/<channel>.rs`-Reader + `extract.rs`/`fetch.rs`/`main_flow.rs`-Dispatch (nächster Atom); dann `phi/harvest.φ`-Block + `phi/sources.φ`-Felder + Manifestation. Offen bleiben: THEMIS GMAG (CDF, anonym), Swarm L2 FAC (CDF, GFZ-Mirror CC-BY-4.0), VLF AWESOME (`.mat`), PCN, CARISMA, AMPERE, DMSP-16 SSJ.
+- **Trigger:** Compiler+Reader+Register je Kanal erreicht
+- **Lage:** (gemessen 2026-10-07, Mountain 268) **4 Kanäle geschlossen** — `cdaweb_tec`, `cdaweb_roti`, `goes16_mag`, `poes19_meped`: Compiler (`tools/harvest/src/bin/`) + `*-cdn.yml` + **Core-Reader** (`src/archivar/<channel>.rs` + `extract.rs`/`main_flow.rs`-Dispatch) + `phi/harvest.φ`-Block (55, `harvest_reg --check` grün) + `phi/sources.φ`-Felder (Reader-Key = Register-Key; `register_sort` canonical 2678 Blöcke); `cargo check` 0/0. Bestehende: `fink_cutout`, `intermagnet_dbdt`, `goes16_abi`. **Riss (Route):** Route-Datei nennt `tec15min_igs` „IONEX", gemessen **CDF3**. **Riss (Maß):** ROTI-Jahres-Asset ≈ 5.4 GiB > 2-GiB-Release-Grenze (per-day vs. Dezimation offen).
+- **Blockade:** die restlichen 7 Kanäle sind ungebaut.
+- **Braucht:** Compiler+Reader+Register je Kanal für THEMIS GMAG (CDF, anonym), Swarm L2 FAC (CDF, GFZ-Mirror CC-BY-4.0), VLF AWESOME (`.mat`), PCN, CARISMA, AMPERE, DMSP-16 SSJ (CDF-Arm teilt POES; eigener Compiler).
 
 ### GIC-Faden-Wunschliste §A–G — Admission der 15 neuen
 - **Status:** eigen | **Bindung:** eigen
@@ -261,6 +264,10 @@ Eigene Pfade: `src/archivar/mod.rs`, `src/archivar/igrf.rs`,
 `.github/workflows/cdaweb-roti-cdn.yml`,
 `.github/workflows/goes16-mag-cdn.yml`,
 `.github/workflows/poes19-meped-cdn.yml`,
+`src/archivar/cdaweb_tec.rs`, `src/archivar/cdaweb_roti.rs`,
+`src/archivar/goes16_mag.rs`, `src/archivar/poes19_meped.rs`,
+`src/archivar/extract.rs`, `src/archivar/main_flow.rs`, `src/archivar/mod.rs`,
+`src/lib.rs`, `phi/harvest.φ`, `phi/sources.φ`,
 `docs/specs/force-unit-baseline.txt`,
 `docs/handover/handover-2026-10-07-mountain-folge268.md`,
 `docs/handover/archiv/handover-2026-10-07-mountain-folge267.md` (Move),
