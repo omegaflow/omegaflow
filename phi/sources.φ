@@ -1596,14 +1596,14 @@ on earth 0 0 0
 ttl 86400
 field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_roti_2012.bin
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_roti_20121201.bin
 format cdaweb_roti
-origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/roti15min_jpl/
+origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/roti15min_jpl/2012/gps_roti15min_jpl_20121201_v01.cdf
 terms unbestimmt
 compiler tools/harvest/src/bin/cdaweb_roti_compiler.rs
 at earth
 ttl 86400
-quantity cdaweb_roti_tecu_min cdaweb_roti_tecu_min inverse-square scale TECU/min 86400 0.0 0.0
+quantity cdaweb_roti_tecu_min cdaweb_roti_tecu_min inverse-square scale TECU/min 900 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_tec.bin
 format cdaweb_tec
@@ -1907,6 +1907,15 @@ sha256 cbf771d0cb3693e07ec213cd8d88dcf74f0043cd872d9362ee129d647e938479
 at phobos
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ftp.space.dtu.dk/pcn_2015.bin
+format pcn
+origin https://ftp.space.dtu.dk/WDC/indices/pcn/PCN_definitive/pcn2015d.dat
+terms CC-BY-4.0
+compiler tools/harvest/src/bin/pcn_compiler.rs
+at earth
+ttl 86400
+field pcn_mvm pcn_mvm inverse-square electric mV/m 60 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_rrl.bin
 origin https://gea.esac.esa.int/tap-server/tap/sync
 format gaia_rrl
@@ -2122,6 +2131,15 @@ station SOD
 cgm_lat 64.60
 ttl 86400
 field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/swarm_fac.bin
+format swarm_fac
+origin https://isdc-data.gfz.de/swarm/OPER/Level2/FAC_TMS/Sat_AC/small_scale/SW_OPER_FAC_TMS_2F_20201201T000000_20201201T235959_0402.cdf
+terms CC-BY-4.0
+compiler tools/harvest/src/bin/swarm_fac_compiler.rs
+at earth
+ttl 86400
+field swarm_fac_uam2 swarm_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_01.bin
 format aia
@@ -3982,6 +4000,17 @@ cmap .
 lat Latitude
 lon Longitude
 field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/themis.ssl.berkeley.edu/themis_mag.bin
+format themis_mag
+origin http://themis.ssl.berkeley.edu/data/themis/thg/l2/mag/abk/2026/thg_l2_mag_abk_20260101_v01.cdf
+terms unbestimmt
+compiler tools/harvest/src/bin/themis_mag_compiler.rs
+at earth
+ttl 86400
+field themis_mag_x_nt themis_mag_x_nt inverse-square em nT 86400 0.0 0.0
+field themis_mag_y_nt themis_mag_y_nt inverse-square em nT 86400 0.0 0.0
+field themis_mag_z_nt themis_mag_z_nt inverse-square em nT 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/unidata-nexrad-level2.s3.amazonaws.com/nexrad_level2.bin
 format nexrad_level2

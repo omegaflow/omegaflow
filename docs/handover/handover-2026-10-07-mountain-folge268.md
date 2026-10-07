@@ -3,7 +3,7 @@
   session: Mountain-Folge 268
   class: handover
   date: 2026-10-07
-  sha256: ee85b5f9a4254666d633b63e4a6059b23515f67f43d424bfd01b91a893f8b6d1
+  sha256: f9c5e734ee13780ad21fa27968da79e93e53660bf252f077fae06f228fbfe390
   status: live
 -->
 # Handover — Mountain-Folge 268 (2026-10-07)
@@ -26,8 +26,12 @@ verifiziert), **13 Klassen-(a)-Baseline-Zeilen gelöscht** (Release `tools-lates
 @ `6d33a91da` gemessen fresh). Wave 4 — Core-Reader für die 4 Kanäle
 (`src/archivar/{cdaweb_tec,cdaweb_roti,goes16_mag,poes19_meped}.rs` + Dispatch) und
 ihre Register (`phi/harvest.φ` 55 Blöcke grün, `phi/sources.φ` canonical 2678) —
-die 4 Kanäle sind damit geschlossen. Riss: Mycelium hat zwei Taucher-Dateien unter
-eigener Botschaft mitgenommen (`0fc491b7e`, kc2g_stations.rs + dropped_gate.rs).
+die 4 Kanäle sind damit geschlossen. Wave 5/6 — Compiler+Reader+Register für
+`themis_mag`, `swarm_fac`, `dmsp16_ssj`, `pcn` (8 Kanäle geschlossen), ROTI auf
+per-Day (15.9 MiB/Asset), Hook-Riss getrackt gefixt (`.githooks/pre-commit` refresht
+den Gate-Binary jetzt immer), `cses_hpm`-Test-Import geheilt. Riss: Mycelium hat zwei
+Taucher-Dateien unter eigener Botschaft mitgenommen (`0fc491b7e`, kc2g_stations.rs +
+dropped_gate.rs).
 
 **Burn** (`session_burn`): Mountain-Linie-Session $0.0558 (`line`, deepseek-flash) + general ×1 (KCG2/SDO-Messung); kein pro/max (Aggregat deepseek-flash $0.8412/24 Sessions).
 
@@ -118,8 +122,16 @@ Wort | Datum | Quelle
 ### GIC-Faden §A–G — Compiler/Reader je Kanal
 - **Status:** eigen | **Bindung:** eigen (Compiler/Reader) · mycelium (Manifestation)
 - **Trigger:** Compiler+Reader+Register je Kanal erreicht
-- **Lage:** (gemessen 2026-10-07, Mountain 268) **4 Kanäle geschlossen** — `cdaweb_tec`, `cdaweb_roti`, `goes16_mag`, `poes19_meped`: Compiler (`tools/harvest/src/bin/`) + `*-cdn.yml` + **Core-Reader** (`src/archivar/<channel>.rs` + `extract.rs`/`main_flow.rs`-Dispatch) + `phi/harvest.φ`-Block (55, `harvest_reg --check` grün) + `phi/sources.φ`-Felder (Reader-Key = Register-Key; `register_sort` canonical 2678 Blöcke); `cargo check` 0/0. Bestehende: `fink_cutout`, `intermagnet_dbdt`, `goes16_abi`. **Riss (Route):** Route-Datei nennt `tec15min_igs` „IONEX", gemessen **CDF3**. **Riss (Maß):** ROTI-Jahres-Asset ≈ 5.4 GiB > 2-GiB-Release-Grenze (per-day vs. Dezimation offen).
-- **Blockade:** die restlichen 7 Kanäle sind ungebaut.
+- **Lage:** (gemessen 2026-10-07, Mountain 268) **8 Kanäle geschlossen** — `cdaweb_tec`, `cdaweb_roti` (per-day), `goes16_mag`, `poes19_meped`, `themis_mag`, `swarm_fac`, `dmsp16_ssj`, `pcn`: Compiler (`tools/harvest/src/bin/`) + `*-cdn.yml` + **Core-Reader** (`src/archivar/<channel>.rs` + `extract.rs`/`main_flow.rs`-Dispatch) + `phi/harvest.φ`-Block (`harvest_reg --check`: 59 grün) + `phi/sources.φ`-Felder (Reader-Key = Register-Key; `register_sort` canonical 2682); `cargo check` 0/0. **Riss (Route):** Route-Datei nennt `tec15min_igs` „IONEX", gemessen **CDF3**. **Riss (Maß):** ROTI-Jahres-Asset war > 2 GiB → **gelöst** per-Day (15.9 MiB/Asset). `terms`: swarm_fac/pcn `CC-BY-4.0`, themis_mag/dmsp16_ssj `unbestimmt`.
+- **Blockade:** die restlichen 3 Kanäle sind ungebaut.
+- **Braucht:** Compiler+Reader+Register für CARISMA (Station-Magnetik), AMPERE (Zenodo-FAC-Reader), VLF AWESOME (`.mat` — Arm fehlt).
+
+### dmsp16_ssj — Register nach dem Release
+- **Status:** eigen | **Bindung:** eigen (Release) · mycelium (tools-build)
+- **Trigger:** `tools-latest` trägt `em ev/cm2/ster/s`
+- **Lage:** (gemessen 2026-10-07, Mountain 268) Compiler + Core-Reader + `phi/harvest.φ`-Block gebaut; die `sources.φ`-Felder nutzen `em ev/cm2/ster/s`, das der Ratchet gegen das **released** Gate als unbekannt flaggt. Die Einheit ist in `src/archivar/units.rs` ergänzt (SI `1.602176634e-15` W/m²/sr) — das Released-Gate kennt sie noch nicht; die Baseline darf laut Rat nur schrumpfen.
+- **Blockade:** der Release-Gate (gebaut vor diesem Atom) kennt die Einheit nicht.
+- **Braucht:** `gh workflow run tools-build.yml` → danach den `dmsp16_ssj`-`sources.φ`-Block (`field dmsp16_ssj_ele_total_energy_flux`/`_ion_… em eV/cm2/ster/s`) nachtragen.
 - **Braucht:** Compiler+Reader+Register je Kanal für THEMIS GMAG (CDF, anonym), Swarm L2 FAC (CDF, GFZ-Mirror CC-BY-4.0), VLF AWESOME (`.mat`), PCN, CARISMA, AMPERE, DMSP-16 SSJ (CDF-Arm teilt POES; eigener Compiler).
 
 ### GIC-Faden-Wunschliste §A–G — Admission der 15 neuen
@@ -267,7 +279,16 @@ Eigene Pfade: `src/archivar/mod.rs`, `src/archivar/igrf.rs`,
 `src/archivar/cdaweb_tec.rs`, `src/archivar/cdaweb_roti.rs`,
 `src/archivar/goes16_mag.rs`, `src/archivar/poes19_meped.rs`,
 `src/archivar/extract.rs`, `src/archivar/main_flow.rs`, `src/archivar/mod.rs`,
-`src/lib.rs`, `phi/harvest.φ`, `phi/sources.φ`,
+`src/lib.rs`, `src/archivar/units.rs`, `phi/harvest.φ`, `phi/sources.φ`,
+`tools/harvest/src/bin/themis_mag_compiler.rs`,
+`tools/harvest/src/bin/swarm_fac_compiler.rs`,
+`tools/harvest/src/bin/dmsp16_ssj_compiler.rs`,
+`tools/harvest/src/bin/pcn_compiler.rs`,
+`tools/harvest/src/bin/cses_hpm_compiler.rs`,
+`.github/workflows/themis-mag-cdn.yml`, `.github/workflows/swarm-fac-cdn.yml`,
+`.github/workflows/dmsp16-ssj-cdn.yml`, `.github/workflows/pcn-cdn.yml`,
+`src/archivar/themis_mag.rs`, `src/archivar/swarm_fac.rs`,
+`src/archivar/dmsp16_ssj.rs`, `src/archivar/pcn.rs`, `.githooks/pre-commit`,
 `docs/specs/force-unit-baseline.txt`,
 `docs/handover/handover-2026-10-07-mountain-folge268.md`,
 `docs/handover/archiv/handover-2026-10-07-mountain-folge267.md` (Move),
