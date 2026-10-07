@@ -3,7 +3,7 @@
   session: Mountain-Folge 259
   class: handover
   date: 2026-10-07
-  sha256: 8c95a257fbaf4866f18b4d8f1f66c3b2bc946bde6fe2a0720ec6476ebf39fce4
+  sha256: 0466a3e886ab77a301dd25ab2c7875def0b79b743680d4e47698deecd462da16
   status: live
 -->
 # Handover — Mountain-Folge 259 (2026-10-07)
@@ -96,6 +96,13 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-07 via `general`) fünf Kanäle (TEC `tec15min_igs`, JPL ROTI `roti15min_jpl`, GOES-16 MAG, DMSP-16 SSJ, POES-19 MEPED) am Baum 206; Detail `state/future/gic-unblock-routen-2026-10-06.md`.
 - **Blockade:** Admission → Ernte + Manifestation.
 - **Braucht:** Admission je Kanal; dann Ernte + Manifestation (Mycelium).
+
+### GIC-Breitenband-Familien — Deskriptoren (Blatt-Slot)
+- **Status:** eigen | **Bindung:** eigen (Format) · Rat (Verdikt)
+- **Trigger:** Rat-Verdikt zur Descriptor-Form
+- **Lage:** (gemessen 2026-10-07, river-117/Mountain 259) Die CGM-Breite je Station ist gemessen (`state/river/gic-cgm-lat.tsv`, Bin `tools/measure/src/bin/cgm_lat_partition.rs`) und am 2026-10-07 als `cgm_lat <deg>` in die 157 Station-Blöcke von `phi/sources.φ` geschrieben; 154 Stationen, disjunkt: auroral ≥60° (31), sub-auroral 50–60° (25), mid <50° (98). Blatt `docs/blatt/blatt-gic-breitenband-familien.md` (sha `d973a202…`, :223/:234): Slot „Familien-Deskriptoren" = `pending — nach der CGM-Partitions-Messung`.
+- **Blockade:** die Descriptor-Form (welche Register-Direktive / `field_te_query`-Anbindung die Bänder trägt) ist nicht entschieden.
+- **Braucht:** Rat-Verdikt zur Descriptor-Form, dann Bau + Blatt-Slot schließen (das Siegel bleibt Operator-Wort).
 
 ### Ungepoolte Register-Blöcke (Riss) — tote Generation, kein Merge
 - **Status:** descoped | **Bindung:** eigen
