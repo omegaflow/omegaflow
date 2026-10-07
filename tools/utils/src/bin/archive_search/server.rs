@@ -225,7 +225,7 @@ fn run_mode(state: &AppState, mode: &str, q: &str) -> Vec<String> {
             }
         }
         "git" => crate::git::run_lines(&state.repo, q),
-        other => crate::net::run_lines(other, q, &state.env),
+        other => crate::net::run_lines(other, q, &state.env, None),
     }
 }
 

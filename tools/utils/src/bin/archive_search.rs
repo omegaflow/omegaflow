@@ -572,7 +572,7 @@ fn main() {
                 Some(repo) => secrets::load_env(&repo),
                 None => env::vars().collect(),
             };
-            let lines = net::run_lines(name, &query, &env_map);
+            let lines = net::run_lines(name, &query, &env_map, pdf_out.as_deref());
             print_lines(&lines);
         }
     }

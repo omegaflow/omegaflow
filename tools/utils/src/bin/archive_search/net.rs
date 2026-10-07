@@ -1721,7 +1721,7 @@ fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
     let mut out = Vec::new();
     let mut full = Vec::new();
     for mode in QUERY_MODES {
-        let lines = run_lines(mode, query, env);
+        let lines = run_lines(mode, query, env, None);
         let n = lines.len();
         full.push(format!("=== {} ({}) ===", mode, n));
         full.extend(lines.iter().cloned());
@@ -1753,7 +1753,12 @@ fn token_key(top: &str, marker: Option<String>) -> String {
     }
 }
 
-pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<String> {
+pub fn run_lines(
+    mode: &str,
+    query: &str,
+    env: &HashMap<String, String>,
+    out: Option<&str>,
+) -> Vec<String> {
     crate::token::set_secrets(env.clone());
     let max = 10usize;
     if mode == "all" {
@@ -1905,7 +1910,26 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
                 env,
             );
             match token {
-                Secret::Value(t) => crate::alphaxiv::alphaxiv_call_lines(query, &t, 200),
+                Secret::Value(t) => match out {
+                    Some(dir) => match crate::alphaxiv::alphaxiv_call_text(query, &t) {
+                        Ok((tool, text)) => {
+                            let _ = std::fs::create_dir_all(dir);
+                            let epoch = match std::time::SystemTime::now()
+                                .duration_since(std::time::UNIX_EPOCH)
+                            {
+                                Ok(d) => d.as_secs().to_string(),
+                                Err(_) => "unknown".to_string(),
+                            };
+                            let path = format!("{dir}/alphaxiv-{tool}-{epoch}.txt");
+                            match std::fs::write(&path, text) {
+                                Ok(()) => vec![format!("alphaxiv-call: wrote {path}")],
+                                Err(e) => vec![format!("pending — could not write {path}: {e}")],
+                            }
+                        }
+                        Err(e) => e,
+                    },
+                    None => crate::alphaxiv::alphaxiv_call_lines(query, &t, 200),
+                },
                 Secret::Absent(marker) => vec![format!(
                     "pending — {} absent from .secrets.local/.env",
                     token_key("ALPHAXIV_API_KEY", marker)
