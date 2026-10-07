@@ -407,7 +407,13 @@ pub fn nexrad_gate_position(
     if !ground_km.is_finite() || ground_km < 0.0 {
         return None;
     }
-    let (lat, lon) = great_circle_destination(site.lat_deg, site.lon_deg, az_deg, ground_km, host_radius_km)?;
+    let (lat, lon) = great_circle_destination(
+        site.lat_deg,
+        site.lon_deg,
+        az_deg,
+        ground_km,
+        host_radius_km,
+    )?;
     Some((lat, lon, site.alt_m + height_km * 1000.0))
 }
 
