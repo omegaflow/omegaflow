@@ -3,7 +3,7 @@
   session: Mountain-Folge 270
   class: handover
   date: 2026-10-07
-  sha256: 632d79706c770a469b52b4e9dcd1862e8e955a5a2c2a9ae3513e3f2f60b93bc1
+  sha256: 33d928f4c9679b05cd3ae2da8bf599c28fc54b9a3d52953cd90416b5fcd43f98
   status: live
 -->
 # Handover — Mountain-Folge 270 (2026-10-07)
@@ -27,7 +27,7 @@ geschlossen:** Archivar-Reader + unit-Routing standen; die fehlenden `phi/harves
 ergänzt. **IGRF Grad-13-Synthese** gebaut + pyIGRF-Witness-Test (`grind-flash`),
 `cargo check` 0/0.
 
-**270-Folge (Operator-Wort: mit Agenten umsetzen + dem Rat, einem `archive_search`-Taucher und den Frontier-UI-Chats vorlegen):** Recherche-Schicht (`general`-Taucher) + **Rat** (5 Stimmen) + **UI-Runde** über die vier Architektur-/Ethikfragen. **Rat-Verdikte:** (1) GIC-Breitenband = **Member-Pool ist der Träger**, drei Band-Deskriptoren nur abgeleitete Query (Route C hält); (2) dropped-gate = Träger abgeleitet (lebend ∪ commits ∪ register), `move ohne disposition = rot`, einmalige deklarierte Rebaseline, danach frozen; (3) `rights_read` = **B-Block-Register**, kein Wire-Slot, DataCite-Triple `rights_identifier`+`rights_scheme`+`rights_uri`; (4) Bias-Token = **Review-Marker, kein Hart-Block** (nur das gemessene Ersatzmuster wäre ein Fixture; keines gemessen). **UI-Runde (gemessen):** Antworten gelesen bei Qwen · Z.ai · DeepSeek · MiniMax · Lumo (Member-Pool primär; Risse: Baseline-Freeze vs. Verwerfen, Rechte Record vs. Register, Defaults legitim vs. Bias); Claude generierte beim Lesen (`claude.ai/chat/8a93ac04…`); Mistral + AI Studio gesendet, Antwort nicht gelesen; **Duck.ai Tageslimit** (gemessener Nichtantwort-Grund); Open-Weight-Gruppe (`open-weight-ui`) beim Öffnen geschlossen = `pending`. **Gebaut:** `rights`-Parse-Arm (`rights <id> <scheme> <uri>` → `SourceConfig`, `parse.rs`/`types.rs`/`tests.rs`, additiv, kein Wire-Edit) + `DSN_STATION_COORD_SOURCE` (`odp.rs`; Quelle `pending` — kein Einzelbeleg gemessen). **Commit offen:** der geteilte Baum wird von einer fremden Session gehalten (`motion::BodyProperties`-Refactor, 14+ Dateien; `cargo check --tests` 148 Fremd-Fehler); `src/archivar/tests.rs` trägt fremde Hunks → kein pfad-sauberer Commit. Die eigenen src-Hunks (`types.rs`/`parse.rs`/`tests.rs`/`odp.rs`) sind per `git_safety --snapshot refs/safety/1791407421` geschützt; beim nächsten freien Baum pfad-scoped committen.
+**270-Folge (Operator-Wort: mit Agenten umsetzen + dem Rat, einem `archive_search`-Taucher und den Frontier-UI-Chats vorlegen):** Recherche-Schicht (`general`-Taucher) + **Rat** (5 Stimmen) + **UI-Runde** über die vier Architektur-/Ethikfragen. **Rat-Verdikte:** (1) GIC-Breitenband = **Member-Pool ist der Träger**, drei Band-Deskriptoren nur abgeleitete Query (Route C hält); (2) dropped-gate = Träger abgeleitet (lebend ∪ commits ∪ register), `move ohne disposition = rot`, einmalige deklarierte Rebaseline, danach frozen; (3) `rights_read` = **B-Block-Register**, kein Wire-Slot, DataCite-Triple `rights_identifier`+`rights_scheme`+`rights_uri`; (4) Bias-Token = **Review-Marker, kein Hart-Block** (nur das gemessene Ersatzmuster wäre ein Fixture; keines gemessen). **UI-Runde (gemessen):** Antworten gelesen bei Qwen · Z.ai · DeepSeek · MiniMax · Lumo (Member-Pool primär; Risse: Baseline-Freeze vs. Verwerfen, Rechte Record vs. Register, Defaults legitim vs. Bias); Claude generierte beim Lesen (`claude.ai/chat/8a93ac04…`); Mistral + AI Studio gesendet, Antwort nicht gelesen; **Duck.ai Tageslimit** (gemessener Nichtantwort-Grund); Open-Weight-Gruppe (`open-weight-ui`) beim Öffnen geschlossen = `pending`. **Gebaut:** `rights`-Parse-Arm (`rights <id> <scheme> <uri>` → `SourceConfig`, `parse.rs`/`types.rs`/`tests.rs`, additiv, kein Wire-Edit) + `DSN_STATION_COORD_SOURCE` (`odp.rs`; Quelle `pending` — kein Einzelbeleg gemessen). **Commit offen:** der geteilte Baum wird von einer fremden Session gehalten (`motion::BodyProperties`-Refactor, 14+ Dateien; `cargo check --tests` 148 Fremd-Fehler); `src/archivar/tests.rs` trägt fremde Hunks → kein pfad-sauberer Commit. Die eigenen src-Hunks (`types.rs`/`parse.rs`/`tests.rs`/`odp.rs`) sind per `git_safety --snapshot refs/safety/1791407421` geschützt; beim nächsten freien Baum pfad-scoped committen. **eigen-Pass (Operator-Wort 2026-10-07, „ihr solltet nur eigene arbeit tragen"):** sechs Warte-auf-andere-Punkte (Newell-OMNI, `span`→River, dropped-gate→Mycelium, DE441/442→Mycelium, Exposom→Mycelium, Vlies→River) sind nach `state/zustand/wartend.φ` mit Aufnehmer-Linie verschoben; diese Übergabe trägt nur noch `eigen`-Punkte (7) + LOCK.
 
 ## Burn: open 0.0015 · close 0.1678 · cap 0.20 — Grund: Operator-Dispatch (beide Runden: Rat×3 · general×5 · grind-flash×4 · UI-Runde); kein pro/max.
 
@@ -100,13 +100,6 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Newell dΦ/dt als `rect`-Treiber — Primär-Arm aligned, OMNI pending
-- **Status:** wartend | **Bindung:** eigen (Format) · river (CI-Lauf)
-- **Trigger:** `matrix-newell-omni`-Alignment (n=0, neuer `field-te-query`-Lauf)
-- **Lage:** (gemessen 2026-10-07 via `ci_manage log 37545120597`) Job `matrix-newell` Zelle `newell_dphi_dt->intermagnet_dbdt` **n=24**, TE 1.6439e-1, `p=0.7273`, verdict `silent`; Job `matrix-newell-omni` **n=0**, verdict `alignment pending`.
-- **Blockade:** der OMNI-Arm hat noch keine deckungsgleiche Zeitachse (n=0).
-- **Braucht:** OMNI-Alignment (`ci_manage log <neuer field-te-query-Lauf>`).
-
 ### ref-kompilierbare-quellen — Träger des Standblatts
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** `register_lookup --compilers`-Zahl ändert sich (Register wächst)
@@ -128,47 +121,12 @@ Wort | Datum | Quelle
 - **Blockade:** der Blatt-Rat (Route C ↔ Linie 1) ist offen; der 157-gegen-154-Bezug je Station; die übrigen 152 `cgm_lat`-Zeilen tragen Provenienz (`omniweb-cgm`/`supermag-aacgm`) nur in `state/river/gic-cgm-lat.tsv`.
 - **Braucht:** Route-C-Stufe-2 am per-Station-dB/dt-Bestand wiren (heute nur ABK/SOD, `sources.φ:2051-2079`); für AE/AL/AU · SME/SML/SMU je eine eigene `sources.φ`-Zeile admiten (OMNI-AE/SuperMAG-SME, `pending`); optional `cgm_source <token>` je der übrigen 152 Zeilen.
 
-### Receiver-Apertur `span`-Direktive
-- **Status:** eigen | **Bindung:** eigen (Format) · river (Membran-Brücke)
-- **Trigger:** Rivers Membran-Brücke trägt die Apertur in Query/Record
-- **Lage:** (gemessen 2026-10-07, Mountain 268) **Mountain-Arm gebaut:** `span`-Arm in `src/archivar/parse.rs` (positiv-finit, sonst absent), `SourceConfig.span: Option<f64>`; Test `span_directive_carries_a_positive_finite_aperture_else_absent`; `cargo check` 0/0. **Rat-Verdikt:** `extent` reusen (Sample-Slot 7 trägt die Apertur bereits), **kein** 27. Wire-Feld; `span` lebt als deklariertes `SourceConfig`-Feld, nicht als Körper-`radius_m` (`membrane.rs:364,385` unberührt). **Riss:** die statische Membran liest kein `SourceConfig` (nur `.bin` + Sterne, `membrane.html:576-589`), die Presence ist ein nackter Query-Mittelpunkt — `span` allein rendert die Startansicht nicht.
-- **Blockade:** Rivers Startansicht-Brücke (Apertur als Query-Input/Record-`extent` in `wasm.rs:65-99` + `membrane.html:501-528`); Fenster-Edit operator-gebunden.
-- **Braucht:** River trägt die Apertur als Query-/Receiver-Input bzw. Record-`extent` in den ω()-Lauf; `span_anchor = sqrt(r2)+extent` (`membrane.html:511`) bleibt die Messung.
-
-### dropped-gate — Carrier-Architektur (Register, nicht Baseline-Zahl)
-- **Status:** eigen | **Bindung:** eigen (Gate/Register) · mycelium (CI)
-- **Trigger:** Sichtung der 1300 + deklarierte Rebaseline
-- **Lage:** (gemessen 2026-10-07 via `register_lookup --dropped`/`ci_manage log 37553361521`) `dropped-gate` (`.github/workflows/ci-gate.yml:70`) zählt Punkte aus archivierten Übergaben ohne lebenden Träger/Commit; Baseline `docs/zustand/dropped-baseline.md` 1300 (zuletzt gebumpt `416f7b59b`), current 1282. **Drei externe Stimmen (qwen, duck/Gemma 4 31B, nemotron-3-ultra, 2026-10-07) konvergieren:** `archiv = Ort, kein Träger` · Auto-Bump und Archiv-als-Träger verworfen (0 honored) · Carrier-Ledger nur als **abgeleitete** Sicht · **explizites Carrying je Move** ist die Architektur. Nemotron-Formel: `dropped := punkt ohne träger in (lebend ∪ commits ∪ register) · move ohne disposition = rot · baseline frozen`.
-- **Blockade:** Mycelium 264 hat die Träger-Ableitung **gebaut** (`register_lookup --dropped-keys`, Named-Key-Set statt Scalar, Baseline `docs/zustand/dropped-legacy-baseline.txt` 924 keys, `278ba2905`); offen nur die Punkt-ID/Hash-Disposition (ID über den Move unbelegt → `pending`).
-- **Braucht:** `move ohne disposition = rot` an die bestehende Named-Key-Set-Ableitung hängen (Mycelium-Pen); Punkt-ID/Hash-Schema (`pending`) für die Einzelpunkt-Disposition; danach einmalige deklarierte Rebaseline.
-
-### DE441/DE442-Anker ohne sha256
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** erster Manifest-Lauf je Anker
-- **Lage:** (gemessen 2026-10-07 via `sread phi/sources.φ`) DE440-Anker tragen `sha256`; DE441/DE442-Anker keine Zeile.
-- **Blockade:** DE441 entsteht aus zwei gemergten NAIF-Teilen — der sha ist erst nach dem Lauf messbar.
-- **Braucht:** gemessene `sha256`-Direktive nach dem ersten Manifest je Anker.
-
 ### IGRF-Koeffizienten-Arm (für `geomag_lat`)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** CI-Test `synthesis_matches_pyigrf14_witness_points` grün
 - **Lage:** (gemessen 2026-10-07 270) **Grad-13-Synthese gebaut** — `IgrfCoeffs::synthesize` (`src/archivar/igrf.rs`; geozentrisch, Schmidt-halbnormiert, Rückgabe `[-Btheta, Bphi, -Br]` nT; `coefficient()`-SV-Bug für `date ≥ 2025` geheilt); NOAA-Fixture `src/archivar/igrf14coeffs.txt` (199 Zeilen, sha `8f8d8840…`); Test gegen 3 pyIGRF-14-Witness-Punkte (`atol/rtol 1e-2` nT); `cargo check` 0/0. Witness-Quelle `ciaranbe/pyIGRF tests/tests_igrf14.py` (IAGA-VMOD/BGS; 2026-10-07 gemessen). `igrf14testvalues.txt` = gemessen absent (404, kein Snapshot).
 - **Blockade:** der Test lief lokal nicht (`cargo test` = CI); die Synthese ist noch nicht an die Wire-/Config-API gebunden.
 - **Braucht:** `ci-check`-Lauf (Test grün) + optional die `geomag_lat_<frame>`-Form aus dem Rat (`archiv/handover-2026-10-06-mountain-folge249.md:61-66`).
-
-### Exposom-Matrix §A — Register-Zeilen je Klasse
-- **Status:** eigen | **Bindung:** eigen (Format) · mycelium (Register)
-- **Trigger:** Mycelium-Register-Block je Klasse
-- **Lage:** (gemessen 2026-10-06, Mountain 248; fortgeschrieben 2026-10-07) Reader `osm_pbf.rs`/`eionet_cdr.rs` gebaut, End-to-End am Realfile; `main_flow.rs:4155-4156` trägt `osm_nodes`/`eionet_cdr`. `osm_nodes` = `em 1` (Rat); `eionet` Medium-Arm gebaut.
-- **Blockade:** die Register-Zeilen je Klasse (s. eionet/osm).
-- **Braucht:** Mycelium-Register-Block je Klasse nach dem Medium-Arm.
-
-### Vlies-`matrix full` — alignment pending
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Format-/Compiler-Arm erreicht (`field_te_query` alignment)
-- **Lage:** (gemessen 2026-10-06, River 112, `d9351b0e`) Lauf `37500311359` misst 15/15 Arme; verbleibend alignment pending (n=0) bei den Solar-/Magnetosphären-Zellen.
-- **Blockade:** Format-/Compiler-Arm für die deckungsgleiche Zeitachse.
-- **Braucht:** Format-/Compiler-Arm bauen (s. GIC), dann erneuter CI-Lauf.
 
 ### Lizenz-Disposition — `terms`-Feld (SPDX); `rights_read` offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
