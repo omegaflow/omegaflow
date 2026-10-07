@@ -181,6 +181,30 @@ fn list_cdf_urls(html: &str, base: &str) -> Vec<String> {
     out
 }
 
+fn cdf_day(url: &str) -> Option<String> {
+    let name = url.rsplit('/').next()?;
+    let stem = match name.strip_suffix(".cdf") {
+        Some(s) => s,
+        None => name,
+    };
+    for token in stem.split('_') {
+        if token.len() == 8 && token.bytes().all(|b| b.is_ascii_digit()) {
+            return Some(token.to_string());
+        }
+    }
+    None
+}
+
+fn list_day_urls(base: &str, html: &str) -> Vec<(String, String)> {
+    let mut out: Vec<(String, String)> = list_cdf_urls(html, base)
+        .into_iter()
+        .filter_map(|url| cdf_day(&url).map(|day| (day, url)))
+        .collect();
+    out.sort();
+    out.dedup_by(|a, b| a.0 == b.0);
+    out
+}
+
 fn emit_records(records: &[[f64; FIELDS]], out: &str, origin: Option<&str>, void: usize) {
     if records.is_empty() {
         eprintln!("no records — the bin stays unwritten (0 honored)");
@@ -191,8 +215,14 @@ fn emit_records(records: &[[f64; FIELDS]], out: &str, origin: Option<&str>, void
         eprintln!("write {out} returned void");
         std::process::exit(1);
     }
-    let t_min = records.first().map(|r| r[2]).unwrap_or(f64::NAN);
-    let t_max = records.last().map(|r| r[2]).unwrap_or(f64::NAN);
+    let t_min = match records.first() {
+        Some(r) => r[2],
+        None => f64::NAN,
+    };
+    let t_max = match records.last() {
+        Some(r) => r[2],
+        None => f64::NAN,
+    };
     let v_min = records.iter().map(|r| r[3]).fold(f64::INFINITY, f64::min);
     let v_max = records
         .iter()
@@ -305,6 +335,38 @@ fn compile_dir(url: &str, out: &str) {
     emit_urls(&urls, out, Some(&base));
 }
 
+fn compile_day(day: &str, out: &str) {
+    if day.len() != 8 || !day.bytes().all(|b| b.is_ascii_digit()) {
+        eprintln!("{day}: no civil YYYYMMDD day — the bin stays unwritten");
+        std::process::exit(2);
+    }
+    let year = &day[..4];
+    let base = format!("{BASE_URL}{year}/");
+    let Some(html) = fetch_raw_bytes(&base) else {
+        eprintln!("{base}: the listing stays unfetched");
+        std::process::exit(1);
+    };
+    let html = String::from_utf8_lossy(&html);
+    let days = list_day_urls(&base, &html);
+    let Some((_, url)) = days.iter().find(|(d, _)| d == day) else {
+        eprintln!("{day}: no source cdf in {base} — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    };
+    emit_urls(std::slice::from_ref(url), out, Some(url));
+}
+
+fn list_days(year: &str) {
+    let base = format!("{BASE_URL}{year}/");
+    let Some(html) = fetch_raw_bytes(&base) else {
+        eprintln!("{base}: the listing stays unfetched");
+        std::process::exit(1);
+    };
+    let html = String::from_utf8_lossy(&html);
+    for (day, _) in list_day_urls(&base, &html) {
+        println!("{day}");
+    }
+}
+
 fn compile_url(url: &str, out: &str) {
     emit_urls(&[url.to_string()], out, Some(url));
 }
@@ -337,9 +399,22 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "cdaweb_roti.bin".to_string(),
+        None => match arg_value(&args, "--day") {
+            Some(day) => format!("cdaweb_roti_{day}.bin"),
+            None => "cdaweb_roti.bin".to_string(),
+        },
     };
-    if let Some(y) = arg_value(&args, "--year") {
+    if args.iter().any(|a| a == "--list-days") {
+        let Some(year) = arg_value(&args, "--year") else {
+            eprintln!("usage: cdaweb_roti_compiler --list-days --year <YYYY>");
+            std::process::exit(2);
+        };
+        list_days(&year);
+        return;
+    }
+    if let Some(day) = arg_value(&args, "--day") {
+        compile_day(&day, &out);
+    } else if let Some(y) = arg_value(&args, "--year") {
         let url = format!("{BASE_URL}{y}/");
         compile_dir(&url, &out);
     } else if let Some(url) = arg_value(&args, "--dir") {
@@ -350,7 +425,7 @@ fn main() {
         compile_file(&path, &out);
     } else {
         eprintln!(
-            "usage: cdaweb_roti_compiler --probe <cdf> | --year <YYYY> | --dir <url> | --url <cdf> | --file <cdf> [--out <bin>] [--ci-mode]"
+            "usage: cdaweb_roti_compiler --probe <cdf> | --list-days --year <YYYY> | --day <YYYYMMDD> | --year <YYYY> | --dir <url> | --url <cdf> | --file <cdf> [--out <bin>] [--ci-mode]"
         );
         std::process::exit(2);
     }
@@ -422,5 +497,27 @@ mod tests {
         assert_eq!(urls.len(), 2);
         assert!(urls[0].ends_with("20121201_v01.cdf"));
         assert!(urls[1].ends_with("20121202_v01.cdf"));
+    }
+
+    #[test]
+    fn cdf_day_reads_the_civil_stamp() {
+        assert_eq!(
+            cdf_day("https://x/gps_roti15min_jpl_20121201_v01.cdf").as_deref(),
+            Some("20121201")
+        );
+        assert_eq!(cdf_day("https://x/SHA1SUM"), None);
+        assert_eq!(cdf_day("https://x/gps_roti15min_jpl_v01.cdf"), None);
+    }
+
+    #[test]
+    fn day_listing_groups_by_civil_day() {
+        let html = r#"<a href="gps_roti15min_jpl_20121201_v01.cdf">a</a>
+            <a href="gps_roti15min_jpl_20121202_v01.cdf">b</a>
+            <a href="SHA1SUM">c</a>"#;
+        let days = list_day_urls("https://x/2012/", html);
+        assert_eq!(days.len(), 2);
+        assert_eq!(days[0].0, "20121201");
+        assert!(days[0].1.ends_with("20121201_v01.cdf"));
+        assert_eq!(days[1].0, "20121202");
     }
 }

@@ -322,6 +322,6 @@ mod tests {
         assert_eq!(parsed.len(), 1);
         assert!((parsed[0].val + 9581.369).abs() < 1e-9);
         assert_eq!(parsed[0].comp, COMP_CSES_HPM_FG2_X);
-        assert!(verify_bin(MAGIC_CSES_SCM, &bin).is_none());
+        assert!(verify_bin(omegaflow::archivar::geo::MAGIC_CSES_SCM, &bin).is_none());
     }
 }

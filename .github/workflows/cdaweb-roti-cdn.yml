@@ -26,15 +26,19 @@ jobs:
               --title "cdaweb.gsfc.nasa.gov" \
               --notes "CDAWeb anonymous channels compiled to typed bin assets (CDN tag = netloc)"
           fi
-      - name: Compile and manifest the JPL ROTI 15-min maps to the CDN
+      - name: Compile and manifest the JPL ROTI 15-min maps to the CDN (one asset per source day)
         run: |
           for year in 2012 2013 2014; do
-            out="cdaweb_roti_${year}.bin"
-            if gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
-               --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$out"; then
-              echo "asset $out already present — manifest skipped"
-              continue
-            fi
-            cargo run --release -p omegaflow-harvest --bin cdaweb_roti_compiler -- \
-              --year "$year" --out "$out" --ci-mode
+            days=$(cargo run --release -p omegaflow-harvest --bin cdaweb_roti_compiler -- \
+              --list-days --year "$year")
+            for day in $days; do
+              out="cdaweb_roti_${day}.bin"
+              if gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+                 --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "$out"; then
+                echo "asset $out already present — manifest skipped"
+                continue
+              fi
+              cargo run --release -p omegaflow-harvest --bin cdaweb_roti_compiler -- \
+                --day "$day" --out "$out" --ci-mode
+            done
           done

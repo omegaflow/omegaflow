@@ -1,0 +1,47 @@
+name: themis-mag-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  themis-mag:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view themis.ssl.berkeley.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "themis_mag.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset themis_mag.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset themis_mag.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the themis.ssl.berkeley.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view themis.ssl.berkeley.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create themis.ssl.berkeley.edu --repo omegaflow/sources \
+              --title "themis.ssl.berkeley.edu" \
+              --notes "THEMIS ground magnetometer L2 (thg_mag_<station>) compiled to omegaflow THGM binary assets (CDN tag = netloc)"
+          fi
+      - name: Fetch the THEMIS GMAG daily CDF and manifest the THGM bin to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin themis_mag_compiler -- \
+            --url 'http://themis.ssl.berkeley.edu/data/themis/thg/l2/mag/abk/2026/thg_l2_mag_abk_20260101_v01.cdf' \
+            --out themis_mag.bin \
+            --ci-mode
