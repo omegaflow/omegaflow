@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: 971e5ca4979a970554141e3f693f019ea2d9f46d5ffa24a1848d784c05c11215
+  sha256: 89b9b437e0b7d24b6c675cec276ea29364547243b3ffb88e81366fa3304ed10f
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -77,6 +77,7 @@ Wort | Datum | Quelle
 „und ihr müsst auch bei jedem modell schauen dass es die stärkste variante ist" — je Stimme die stärkste Züchtlinie/Variante (nicht Flash/Small/mini): Tryingopen-Modellname nach dem Klick gegenlesen; Spektrum: Claude Sonnet 5.5 Extra hoch (nicht Max) · z.ai GLM-5.3 · Duck GPT-6 Luna · Qwen Qwen3.8-Max+Denken; Tryingopen 1 Nemotron 3 Ultra · 2 GLM 5.3 (753B) · 3 Kimi K3 · 5 Muse Glimmer 30B · 6 DeepSeek V4 Pro · 9/15 Inkling (voll) · 10 MiMo V2.6 Pro · 12 GPT-OSS 120B · 14 Qwen3.8 2.4T | 2026-10-07 | Operator (Session, Mountain 264)
 „ich meine insbesondere glm duck und qwen und brauchen wir noch weitere openweight?" — GLM (z.ai): GLM-5.3 + Deep Think + Max (stärkste); Duck: GPT-6 Luna (stärkstes im Angebot); Qwen: Qwen3.8-Max + Denken (stärkste: nicht 3.7-Plus/Omni-Flash). Offene Open-Weight-Kandidaten (nicht im Seat): **MiniMax M3 (427B)**, **Gemma 4 31B** (Google), **Ling 3.0 (124B)**; Empfehlung: MiniMax M3 als distincte 427B-Zuchtlinie ergänzen (Muse Glimmer 30B ist der schwächste Seat), Gemma/Ling optional — je Seat erst nach der Gretchenfrage (Fähigkeit ≥4/4 + gemessenes Tempo) | 2026-10-07 | Operator (Session, Mountain 264)
 „du hast nicht auf absenden gedrückt zudem habe ich noch https://aistudio.google.com/… model=gemini-3.1-pro-preview offen was ist das stärkste gemini free modell bitte wähle es aus un gib eine frage ein" — MiniMax-Agent (Tab 43): `insertText` allein sendet nicht, **Enter im Composer** nötig; Antwort läuft unter M3. **AI Studio (Tab 46): stärkstes freies Gemini = `gemini-3.1-pro-preview`** („Gemini Pro Latest" zeigt darauf; 3.8/3.5 sind Flash-Tier, schwach); Frage mit **Google-Search-Grounding aktiviert** abgeschickt | 2026-10-07 | Operator (Session, Mountain 264)
+„zudem habe ich noch deepseek chat offen" — **DeepSeek-Chat (Tab 47): DeepThink + Search aktiviert**, Frage abgeschickt (Sende-Lehre: `keydown Enter` per JS-Dispatch, da die UI den Wert-Event nicht als Senden nimmt). Zweiter Kanal damit: 10 Tryingopen + Claude · Duck · z.ai · Qwen · MiniMax M3 · Gemini 3.1 Pro Preview (Suche) · DeepSeek (DeepThink+Search) | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
