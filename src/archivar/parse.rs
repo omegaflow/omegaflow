@@ -74,6 +74,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_station_code: Option<String> = None;
     let mut cur_cgm_lat: Option<f64> = None;
     let mut cur_cgm_source: Option<String> = None;
+    let mut cur_geomag_lat: Option<f64> = None;
     let mut cur_span: Option<f64> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
@@ -135,6 +136,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             live_only: cur_live_only,
                             cgm_lat: cur_cgm_lat,
                             cgm_source: cur_cgm_source.clone(),
+                            geomag_lat: cur_geomag_lat,
                             span: cur_span,
                         });
                     }
@@ -186,6 +188,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_station_code = None;
                 cur_cgm_lat = None;
                 cur_cgm_source = None;
+                cur_geomag_lat = None;
                 cur_span = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
@@ -1703,6 +1706,20 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "cgm_source" if parts.len() >= 2 => {
                 cur_cgm_source = Some(parts[1].to_string());
             }
+            "geomag_lat" if parts.len() >= 2 => {
+                let v: f64 = match parts[1].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("geomag_lat non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                };
+                cur_geomag_lat = Some(v);
+            }
             "repeat" if parts.len() >= 2 => {
                 if parts[1] == "ra" && parts.len() >= 5 {
                     if let Ok(v) = parts[4].parse::<u32>() {
@@ -1941,6 +1958,7 @@ mod tests {
             live_only: false,
             cgm_lat: None,
             cgm_source: None,
+            geomag_lat: None,
             span: None,
         }
     }

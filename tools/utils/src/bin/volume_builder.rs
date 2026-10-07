@@ -387,6 +387,7 @@ fn main() {
             station_code: None,
             cgm_lat: None,
             cgm_source: None,
+            geomag_lat: None,
             span: None,
         };
         match build_netcdf4_volume(&src, &bytes) {
