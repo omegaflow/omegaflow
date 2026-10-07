@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct MediumParams {
     pub sound_speed_m_s: f64,
     pub p_wave_m_s: f64,
