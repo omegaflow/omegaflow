@@ -405,7 +405,7 @@ fn disposition_owner(state: &str) -> Option<&'static str> {
             _ => None,
         },
         Some("terms") => match tokens.next() {
-            Some("unbestimmt" | "keine") => Some("mountain"),
+            Some("unbestimmt" | "ohne-lizenz") => Some("mountain"),
             _ => None,
         },
         Some("ausstehend" | "verifiziert" | "kompiliert" | "pending") => Some("mycelium"),
@@ -430,7 +430,7 @@ fn state_class(state: &str) -> Option<StateClass> {
     match state.trim() {
         "ausstehend" | "verifiziert" | "kompiliert" | "pending" | "fehlt" | "offen" | "absent"
         | "review" => Some(StateClass::Open("mycelium")),
-        "parser-gap" | "asset fehlt" | "terms unbestimmt" | "terms keine" => {
+        "parser-gap" | "asset fehlt" | "terms unbestimmt" | "terms ohne-lizenz" => {
             Some(StateClass::Open("mountain"))
         }
         "descoped" | "void" | "disponiert" | "erledigt" | "ausgelagert" | "declined"
@@ -547,6 +547,25 @@ fn scan_dispositions_text(
             )),
         }
         n += 1;
+
+        if !state.starts_with("terms ") {
+            if let Some((tline, tvalue)) =
+                lines.iter().find(|(_, l)| l.trim().starts_with("terms "))
+            {
+                let tstate = tvalue.trim();
+                match disposition_owner(tstate) {
+                    Some(owner) => open_out.push(format!(
+                        "DISPOSITION\t{}:{}\t[{}] {} | {}",
+                        path, tline, owner, tstate, step
+                    )),
+                    None => open_out.push(format!(
+                        "DISPOSITION_UNMAPPED\t{}:{}\t{} | {}",
+                        path, tline, tstate, step
+                    )),
+                }
+                n += 1;
+            }
+        }
     }
     n
 }
@@ -617,6 +636,24 @@ fn collect_orphan_candidates_in(text: &str, register: &str) -> Vec<OrphanCandida
                 || state.starts_with("parser-gap")
                 || state.starts_with("blocked parser-def"))
             && gap.is_empty();
+        let terms_candidate = if state.starts_with("terms ") {
+            None
+        } else {
+            lines
+                .iter()
+                .find(|(_, l)| l.trim_start().starts_with("terms "))
+                .and_then(|&(tline, tvalue)| {
+                    disposition_owner(tvalue.trim()).map(|towner| OrphanCandidate {
+                        register: register.to_string(),
+                        lineno: tline,
+                        owner: towner.to_string(),
+                        url: url.clone(),
+                        name: name.clone(),
+                        class_key: String::new(),
+                        no_gap: false,
+                    })
+                })
+        };
         out.push(OrphanCandidate {
             register: register.to_string(),
             lineno: start_line,
@@ -626,6 +663,9 @@ fn collect_orphan_candidates_in(text: &str, register: &str) -> Vec<OrphanCandida
             class_key,
             no_gap,
         });
+        if let Some(candidate) = terms_candidate {
+            out.push(candidate);
+        }
     }
     out
 }
@@ -3951,7 +3991,7 @@ mod tests {
         assert_eq!(disposition_owner("blocked ip-blocked"), Some("mycelium"));
         assert_eq!(disposition_owner("pending"), Some("mycelium"));
         assert_eq!(disposition_owner("terms unbestimmt"), Some("mountain"));
-        assert_eq!(disposition_owner("terms keine"), Some("mountain"));
+        assert_eq!(disposition_owner("terms ohne-lizenz"), Some("mountain"));
         assert_eq!(disposition_owner("descoped"), None);
     }
 
@@ -4014,6 +4054,19 @@ mod tests {
     }
 
     #[test]
+    fn scan_dispositions_reads_the_terms_field_orthogonal_to_the_head() {
+        let text =
+            "pending\nurl https://example.org/x\nterms unbestimmt\nnote keine Lizenz-Direktive\n";
+        let mut open_out = Vec::new();
+        let mut released_out = Vec::new();
+        let n = scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
+        assert_eq!(n, 2, "{:?}", open_out);
+        assert_eq!(open_out.len(), 2);
+        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:1\t[mycelium] pending"));
+        assert!(open_out[1].starts_with("DISPOSITION\tb.\u{3c6}:3\t[mountain] terms unbestimmt"));
+    }
+
+    #[test]
     fn state_class_maps_every_register_state() {
         let table: &[(&str, Option<StateClass>)] = &[
             ("ausstehend", Some(StateClass::Open("mycelium"))),
@@ -4034,7 +4087,7 @@ mod tests {
             ("refused", Some(StateClass::Released)),
             ("asset fehlt", Some(StateClass::Open("mountain"))),
             ("terms unbestimmt", Some(StateClass::Open("mountain"))),
-            ("terms keine", Some(StateClass::Open("mountain"))),
+            ("terms ohne-lizenz", Some(StateClass::Open("mountain"))),
             ("asset present", Some(StateClass::Ignored)),
             ("review", Some(StateClass::Open("mycelium"))),
             ("index", Some(StateClass::Ignored)),
@@ -4963,7 +5016,8 @@ mod tests {
             keys
         );
         assert!(
-            keys.iter().any(|k| k.contains("red") && k.contains("gates")),
+            keys.iter()
+                .any(|k| k.contains("red") && k.contains("gates")),
             "a real status heading stays a point: {:?}",
             keys
         );
