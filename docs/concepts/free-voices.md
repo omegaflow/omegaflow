@@ -2,7 +2,7 @@
   title: Free-Voices — der kostenlose Recherche-Schwarm
   class: concept
   date: 2026-10-02
-  sha256: 4fa2e75a03fb947c77d40baa6dc41e24892eb1afd5d587723bc88ad8a66311b8
+  sha256: 914243f2a565f8131b5ae6cba3d24b108b4e067836f22b83ef8c3f7f0cf67d43
   status: live
   see-also: docs/concepts/tools-map.md docs/concepts/tool-forms.md state/stimmen/reviewer-roster-2026-10-01.md
 -->
@@ -89,6 +89,18 @@ und der arch-PROLOG von `state/mycelium/voice-swarm.sh --mode arch`).
   Nullkontrolle (Mycelium) · Residuum (Future) (`docs/concepts/die-vier-schilde.md`).
 
 Die Stimmen liefern je Frage ein Verdikt; das Verdikt/Register trägt allein die Session.
+
+## UI-Seat-Kandidaten (Gretchenfrage `pending`)
+
+Am 2026-10-07 in der Gate-Stimmen-Runde gemessen erreichbar und antwortend, noch **kein Seat**
+(Aufnahme erst nach der Gretchenfrage: Fähigkeit ≥ 4/4 + gemessenes Tempo):
+
+- **MiniMax M3** (`agent.minimax.io`, 427B) — distincte Zuchtlinie (Operator-Wort Mountain 264).
+- **Google AI Studio / Gemini 3.1 Pro** (`aistudio.google.com`).
+- **DeepSeek Chat** (`chat.deepseek.com`).
+
+Gretchenfrage-Werkzeug: `state/mycelium/philosophy-probe-2026-10-05.txt` +
+`state/mycelium/voice-capability-all-2026-10-05.tsv` (4/4-Skala). Roster-Ziel: `AGENTS.md:532-533`.
 
 ## Dateien
 
