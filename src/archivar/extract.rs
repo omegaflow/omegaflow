@@ -1179,6 +1179,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_ERSSTV5 => Some("ersstv5_nino34_ssta"),
             _ => None,
         },
+        "hadisst_sst" => match comp {
+            crate::geo::COMP_HADISST => Some("hadisst_sst"),
+            _ => None,
+        },
         "ascat_wind" => match comp {
             crate::geo::COMP_ASCAT_WSPD => Some("ascat_wind_speed_m_s"),
             crate::geo::COMP_ASCAT_WDIR => Some("ascat_wind_direction_deg"),
