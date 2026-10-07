@@ -19782,14 +19782,6 @@ format reference
 origin https://isla.esac.esa.int
 ttl 31536000
 
-url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
-format ghsl_built_s
-origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
-compiler tools/harvest/src/bin/ghsl_compiler.rs
-on earth 0 0 0
-ttl 31536000
-field ghsl_built_surface_m2 ghsl_built_surface_m2 gaussian-inverse-square diffusion m2 31536000 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
 origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
 compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
