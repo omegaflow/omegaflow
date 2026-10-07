@@ -50,6 +50,14 @@ const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the query 
 // faint layer, streams in last.
 const BODIES_MANIFEST = "/membrane_bodies.txt";
 
+// The exposure is data-carried, never body-carried: the carrier is the wire's
+// force_type (the 9 force media, em 0 … electric 8), the aperture is the wire's
+// extent (finite anchors vs the star class's point). A key the wire never sends
+// has no level (0 honored) — the shader draws nothing, it invents no default.
+const FORCE_SLOTS = 9;
+const APERTURE_STAR = 0;   // wire extent 0.0 — the star class's own reach
+const APERTURE_ANCHOR = 1; // wire extent > 0.0 — the finite-extent anchors
+
 const canvas = document.getElementById("surface");
 const statusEl = document.getElementById("status");
 
@@ -67,8 +75,9 @@ const state = {
   span_star: 0.0,      // the stars' received bounding span; the star scale follows it
   receptors: 1,        // the receptor raster's minor axis (texels)
   lastCount: -1,
-  lvl: 1.0,            // the body anchors' exposure level; its own arrival
-  lvl_star: 1.0,       // the star catalog's exposure level; its own arrival (two apertures, two natures)
+  // Exposure per (force_type, aperture) (Rat B, 2026-10-07): index ft*2+ap,
+  // relaxed with alpha = 1 - exp(-1/8). A key with no arriving level keeps 0.
+  lvl: new Float32Array(FORCE_SLOTS * 2),
   t: 0,
   held: new Set(),
 };
@@ -189,17 +198,20 @@ function parseFlat(flat) {
 }
 
 const fieldShader = `
-// vp.expose = (lvl, color_mode, lut_lo, lut_hi): color_mode >= 0.5 selects the
+// vp.expose = (color_mode, lut_lo, lut_hi, spare): color_mode >= 0.5 selects the
 // measured color LUT keyed by the record's own color_index (a force/channel
 // identity, read never chosen); the neutral magnitude ramp is the fallback, never
-// a discard. vp.levels.x is the star class's own exposure level — the wire's
-// extent (finite anchor vs point) is the aperture, a data property, not a body
-// name. A force arrives colored by its channel; an unknown color_index is white.
+// a discard. The exposure is read per (force_type, aperture): the carrier is the
+// wire's force_type, the aperture is the wire's extent (finite anchor vs point),
+// a data property, not a body name. A key with no level draws nothing (0
+// honored). A force arrives colored by its channel; an unknown color_index is white.
 struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f, levels: vec4f };
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read> lut: array<vec4f>;
+// One vec4f per force_type: .x = star aperture, .y = anchor aperture.
+@group(0) @binding(4) var<storage, read> exposure: array<vec4f>;
 struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @location(1) color: vec4f };
 @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
     let count = u32(vp.surface.z);
@@ -237,18 +249,23 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @loca
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
     out.pos = vec4f(clip, 0.0, 1.0);
     out.local_uv = quad[vid];
-    let lvl = select(vp.levels.x, vp.expose.x, extent > 0.0);
+    let ft_raw = i32(field[id * 3 + 1].z);
+    let ap = select(0u, 1u, extent > 0.0);
+    var lvl = 0.0;
+    if (ft_raw >= 0 && ft_raw < 9) {
+        lvl = exposure[u32(ft_raw)][ap];
+    }
     if (lvl <= 0.0) { return out; }
     let aw = abs(val);
     let t2 = clamp((log2(aw / lvl) + 8.0) / 24.0, 0.0, 1.0);
-    if (vp.expose.y >= 0.5) {
+    if (vp.expose.x >= 0.5) {
         // The measured color: color_index is the channel's own identity. 0.0 is the
         // white point (no color declared), every other index reads the LUT.
         let ci = props[id * 4 + 2].z;
         var rgb = vec3f(1.0, 1.0, 1.0);
         if (ci != 0.0) {
-            let lo = vp.expose.z;
-            let hi = vp.expose.w;
+            let lo = vp.expose.y;
+            let hi = vp.expose.z;
             let idx = u32(clamp(floor((ci - lo) / (hi - lo) * 256.0), 0.0, 255.0));
             rgb = lut[idx].rgb;
         }
@@ -279,11 +296,13 @@ let fieldBuf = null;
 let propsBuf = null;
 let vpBuf = null;
 let lutBuf = null;
+let exposureBuf = null;
 let colorLut = null;
 let fieldCap = 0;
 let pipeline = null;
 let bindGroup = null;
 const vpData = new Float32Array(20);
+const exposureData = new Float32Array(FORCE_SLOTS * 4);
 
 // The measured color LUT (/color_lut): [lo:f32][hi:f32] then 256 × [r,g,b,a] f32,
 // little-endian — the Archivar's color_lut_wire() bytes. The shader mirrors the
@@ -316,11 +335,13 @@ async function initGPU() {
     { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
     { binding: 2, visibility: GPUShaderStage.VERTEX, buffer: { type: "uniform" } },
     { binding: 3, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
+    { binding: 4, visibility: GPUShaderStage.VERTEX, buffer: { type: "read-only-storage" } },
   ] });
 
   ensureBuffers(4096);
   vpBuf = device.createBuffer({ size: 80, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
   lutBuf = device.createBuffer({ size: COLOR_LUT_LEN * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+  exposureBuf = device.createBuffer({ size: FORCE_SLOTS * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
   if (colorLut) {
     device.queue.writeBuffer(lutBuf, 0, colorLut.lut);
   }
@@ -348,6 +369,7 @@ async function initGPU() {
       { binding: 1, resource: { buffer: propsBuf } },
       { binding: 2, resource: { buffer: vpBuf } },
       { binding: 3, resource: { buffer: lutBuf } },
+      { binding: 4, resource: { buffer: exposureBuf } },
     ],
   });
   return true;
@@ -370,6 +392,7 @@ function ensureBuffers(count) {
         { binding: 1, resource: { buffer: propsBuf } },
         { binding: 2, resource: { buffer: vpBuf } },
         { binding: 3, resource: { buffer: lutBuf } },
+        { binding: 4, resource: { buffer: exposureBuf } },
       ],
     });
   }
@@ -399,15 +422,22 @@ function render(record) {
   vpData[3] = state.scale;
   vpData[4] = 1; vpData[5] = 0; vpData[6] = 0; vpData[7] = state.scale_star;
   vpData[8] = 0; vpData[9] = 1; vpData[10] = 0; vpData[11] = 0;
-  vpData[12] = state.lvl;
-  vpData[13] = colorLut ? 1 : 0;
-  vpData[14] = colorLut ? colorLut.lo : 0;
-  vpData[15] = colorLut ? colorLut.hi : 1;
-  vpData[16] = state.lvl_star;
+  vpData[12] = colorLut ? 1 : 0;
+  vpData[13] = colorLut ? colorLut.lo : 0;
+  vpData[14] = colorLut ? colorLut.hi : 1;
+  vpData[15] = 0;
+  vpData[16] = 0;
   vpData[17] = 0;
   vpData[18] = 0;
   vpData[19] = 0;
   device.queue.writeBuffer(vpBuf, 0, vpData);
+  // One vec4f per force_type: x = star aperture, y = anchor aperture. A slot the
+  // wire never sent carries 0 — no level, nothing drawn (0 honored).
+  for (let ft = 0; ft < FORCE_SLOTS; ft++) {
+    exposureData[ft * 4] = state.lvl[ft * 2 + APERTURE_STAR];
+    exposureData[ft * 4 + 1] = state.lvl[ft * 2 + APERTURE_ANCHOR];
+  }
+  device.queue.writeBuffer(exposureBuf, 0, exposureData);
 
   const pass = device.createCommandEncoder();
   const rp = pass.beginRenderPass({
@@ -425,29 +455,31 @@ function render(record) {
   device.queue.submit([pass.finish()]);
 }
 
-// One exposure per aperture: the finite-extent body anchors and the star class
-// (wire extent 0) each relax to their own max over the arriving records. A shared
-// max would pit a finite body against the star catalog and let a single bright
-// star dim the sun (Rat + UI, 2026-10-07, option b).
+// Exposure per (force_type, aperture) (Rat B, 2026-10-07): the carrier is the
+// wire's force_type, the aperture is the wire's extent (>0 finite anchors, 0 the
+// star class). Each key relaxes to its own max over the arriving records; a key
+// the wire never sends keeps its 0 (0 honored), never a fabricated default. A
+// shared max would pit channels against each other and let one bright source dim
+// the rest.
 function updateLvl(record) {
-  let maxAnchor = 0;
-  let maxStar = 0;
+  const maxLvl = new Float64Array(FORCE_SLOTS * 2);
   for (let j = 0; j < record.count; j++) {
+    const ft = record.field[j * 12 + 6] | 0;
+    if (ft < 0 || ft >= FORCE_SLOTS) {
+      continue;
+    }
+    const ap = record.meta[j * 16] > 0.0 ? APERTURE_ANCHOR : APERTURE_STAR;
+    const k = ft * 2 + ap;
     const a = Math.abs(record.field[j * 12 + 3]);
-    if (record.meta[j * 16] > 0.0) {
-      if (a > maxAnchor) {
-        maxAnchor = a;
-      }
-    } else if (a > maxStar) {
-      maxStar = a;
+    if (a > maxLvl[k]) {
+      maxLvl[k] = a;
     }
   }
   const alpha = 1 - Math.exp(-1 / 8);
-  if (maxAnchor > 0) {
-    state.lvl = state.lvl + (maxAnchor - state.lvl) * alpha;
-  }
-  if (maxStar > 0) {
-    state.lvl_star = state.lvl_star + (maxStar - state.lvl_star) * alpha;
+  for (let k = 0; k < state.lvl.length; k++) {
+    if (maxLvl[k] > 0) {
+      state.lvl[k] = state.lvl[k] + (maxLvl[k] - state.lvl[k]) * alpha;
+    }
   }
 }
 
