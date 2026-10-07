@@ -34,7 +34,7 @@ impl Goes16MagRecord {
 }
 
 pub fn parse_bin(bytes: &[u8]) -> Option<Vec<Goes16MagRecord>> {
-    if bytes.len() < HEADER_BYTES || &bytes[0..4] != MAGIC || bytes[4] != VERSION {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC || bytes[4] != VERSION {
         return None;
     }
     let count = u32::from_le_bytes(bytes[8..12].try_into().ok()?) as usize;
