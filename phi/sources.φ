@@ -971,6 +971,18 @@ field ogimet_synop_dewp_c ogimet_synop_dewp_c exponential-decay thermal C 3600 0
 field ogimet_synop_wspd_ms ogimet_synop_wspd_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field ogimet_synop_slp_hpa ogimet_synop_slp_hpa gaussian-inverse-square advective hPa 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/prop.kc2g.com/kc2g_stations.csv
+format kc2g_stations
+origin https://prop.kc2g.com/api/stations.json
+terms unbestimmt https://prop.kc2g.com/
+compiler tools/harvest/src/bin/kc2g_stations.rs
+on earth 0 0 0
+ttl 3600
+field mufd_mhz kc2g_mufd_mhz inverse-square em MHz 3600 0.0 0.0
+field fof2_mhz kc2g_fof2_mhz inverse-square em MHz 3600 0.0 0.0
+field tec_tecu kc2g_tec_tecu inverse-square em TECU 3600 0.0 0.0
+field cs kc2g_cs inverse-square em % 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/rpw-lira.obspm.fr/rpw_efield_lira.bin
 format rpw_efield
 origin https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
@@ -26092,6 +26104,18 @@ origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_
 sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
 at earth
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/obis.osha.gov/osha_cehd_si.txt
+format osha_cehd_si_axis_value_text
+origin https://obis.osha.gov/opengov/healthsamples.zip
+terms unbestimmt https://obis.osha.gov/
+compiler tools/harvest/src/bin/osha_cehd_compiler.rs
+on earth 0 0 0
+ttl 31536000
+field osha_mass_concentration osha_mass_concentration inverse-square diffusion kg/m3 31536000 0.0 0.0
+field osha_mass osha_mass inverse-square diffusion kg 31536000 0.0 0.0
+field osha_amount_fraction osha_amount_fraction inverse-square diffusion 1 31536000 0.0 0.0
+field osha_number_density osha_number_density inverse-square em 1/m3 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/opendata.magic.pic.es/magic_dl3.sky1
 origin MAGIC per-project FITS URL (operator input; portal carries no single TAR)

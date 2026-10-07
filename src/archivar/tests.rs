@@ -2491,6 +2491,68 @@ field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0\n";
 }
 
 #[test]
+fn test_osha_cehd_units_route_each_line_to_its_field() {
+    let phi = "url https://example.org/osha_cehd_si.txt
+format osha_cehd_si_axis_value_text
+ttl 86400
+on earth 52.5 13.4 0
+field osha_mass_concentration osha_mass_concentration inverse-square diffusion kg/m3 86400 0.0 0.0
+field osha_mass osha_mass inverse-square diffusion kg 86400 0.0 0.0
+field osha_amount_fraction osha_amount_fraction inverse-square diffusion 1 86400 0.0 0.0
+field osha_number_density osha_number_density inverse-square em 1/m3 86400 0.0 0.0
+";
+    let sources = super::parse_sources(phi);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].extracts.len(), 4);
+    let body = "100 0.5 kg/m3 52.5 13.4\n101 3.0 kg 52.5 13.4\n102 0.25 1 52.5 13.4\n103 7.0 1/m3 52.5 13.4\n";
+    let lsk = full_fixture_lsk();
+    match super::extract(&sources[0], body, 8.0e8, &lsk) {
+        super::ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 4);
+            assert_eq!(
+                channels
+                    .iter()
+                    .filter(|(c, _)| c.name == "osha_mass_concentration")
+                    .count(),
+                1
+            );
+            assert_eq!(
+                channels
+                    .iter()
+                    .filter(|(c, _)| c.name == "osha_mass")
+                    .count(),
+                1
+            );
+            assert_eq!(
+                channels
+                    .iter()
+                    .filter(|(c, _)| c.name == "osha_amount_fraction")
+                    .count(),
+                1
+            );
+            assert_eq!(
+                channels
+                    .iter()
+                    .filter(|(c, _)| c.name == "osha_number_density")
+                    .count(),
+                1
+            );
+            let mc = channels
+                .iter()
+                .find(|(c, _)| c.name == "osha_mass_concentration")
+                .unwrap();
+            assert!((mc.0.value - 0.5).abs() < 1e-12);
+            let nd = channels
+                .iter()
+                .find(|(c, _)| c.name == "osha_number_density")
+                .unwrap();
+            assert!((nd.0.value - 7.0).abs() < 1e-12);
+        }
+        _ => panic!("osha expected Measurements"),
+    }
+}
+
+#[test]
 fn test_swarm_tec_reader_positions_and_values() {
     let records: [[f64; 5]; 3] = [
         [50.0, 10.0, 6800.0, 1_700_000_000.0, 12.5],
@@ -6978,6 +7040,51 @@ fn test_arpansa_uv_xml_emits_station_channels() {
             ));
         }
         _ => panic!("extract variant unexpected"),
+    }
+}
+
+#[test]
+fn kc2g_stations_csv_carries_per_row_position_and_absent_cell() {
+    let block = "url https://example.org/kc2g_stations.csv
+ttl 3600
+format kc2g_stations
+on earth 0 0 0
+field mufd_mhz kc2g_mufd_mhz inverse-square em MHz 3600 0.0 0.0
+field fof2_mhz kc2g_fof2_mhz inverse-square em MHz 3600 0.0 0.0
+field tec_tecu kc2g_tec_tecu inverse-square em TECU 3600 0.0 0.0
+field cs kc2g_cs inverse-square em 1 3600 0.0 0.0
+";
+    let srcs = super::parse_sources(block);
+    assert_eq!(srcs.len(), 1);
+    let body = "code,lat_deg,lon_deg,mufd_mhz,fof2_mhz,tec_tecu,cs,time_unix\n\
+        K2ABC,40.7,-74.0,14.2,5.1,12.5,0.83,1759800000.0\n\
+        VK2XYZ,-33.9,151.2,,3.3,0.0,0.5,1759800000.0\n";
+    let lsk = full_fixture_lsk();
+    match super::extract(&srcs[0], body, 1.7598e9, &lsk) {
+        super::ExtractResult::Measurements(v) => {
+            assert_eq!(v.len(), 7);
+            assert!(
+                v.iter()
+                    .all(|(c, _)| matches!(c.position, super::Position::Surface { .. }))
+            );
+            assert_eq!(
+                v.iter().filter(|(c, _)| c.name == "kc2g_mufd_mhz").count(),
+                1
+            );
+            assert!(
+                v.iter()
+                    .any(|(c, _)| c.name == "kc2g_tec_tecu" && c.value == 0.0)
+            );
+            let k2 = v.iter().find(|(c, _)| c.name == "kc2g_mufd_mhz").unwrap();
+            match &k2.0.position {
+                super::Position::Surface { lat, lon, .. } => {
+                    assert!((*lat - 40.7).abs() < 1e-12);
+                    assert!((*lon + 74.0).abs() < 1e-12);
+                }
+                _ => panic!("expected Surface"),
+            }
+        }
+        _ => panic!("kc2g expected Measurements"),
     }
 }
 

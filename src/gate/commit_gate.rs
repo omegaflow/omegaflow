@@ -278,6 +278,98 @@ fn line_of(content: &str, byte_idx: usize) -> usize {
         + 1
 }
 
+fn code_before_comment(line: &str) -> &str {
+    match line.find("//") {
+        Some(i) => &line[..i],
+        None => line,
+    }
+}
+
+fn brace_delta(line: &str) -> i32 {
+    let mut depth = 0i32;
+    for ch in code_before_comment(line).chars() {
+        match ch {
+            '{' => depth += 1,
+            '}' => depth -= 1,
+            _ => {}
+        }
+    }
+    depth
+}
+
+fn test_regions_stripped(content: &str) -> String {
+    let mut out = String::with_capacity(content.len());
+    let mut in_test = false;
+    let mut awaiting_open = false;
+    let mut depth = 0i32;
+    for raw in content.lines() {
+        if in_test {
+            depth += brace_delta(raw);
+            if depth <= 0 {
+                in_test = false;
+                depth = 0;
+            }
+            out.push('\n');
+            continue;
+        }
+        if awaiting_open {
+            let trimmed = raw.trim_start();
+            if trimmed.is_empty() || trimmed.starts_with("#[") {
+                out.push('\n');
+                continue;
+            }
+            awaiting_open = false;
+            if raw.contains('{') {
+                depth = brace_delta(raw);
+                if depth > 0 {
+                    in_test = true;
+                } else {
+                    depth = 0;
+                }
+                out.push('\n');
+                continue;
+            }
+            out.push_str(raw);
+            out.push('\n');
+            continue;
+        }
+        if raw.trim_start().starts_with("//") {
+            out.push_str(raw);
+            out.push('\n');
+            continue;
+        }
+        if code_before_comment(raw)
+            .trim_start()
+            .starts_with("#[cfg(test)]")
+        {
+            if raw.contains('{') {
+                depth = brace_delta(raw);
+                if depth > 0 {
+                    in_test = true;
+                } else {
+                    depth = 0;
+                }
+            } else {
+                awaiting_open = true;
+            }
+            out.push('\n');
+            continue;
+        }
+        out.push_str(raw);
+        out.push('\n');
+    }
+    out
+}
+
+fn is_test_file_path(path: &str) -> bool {
+    if path.split('/').any(|seg| seg == "tests") {
+        return true;
+    }
+    path.rsplit('/')
+        .next()
+        .is_some_and(|name| name.ends_with("tests.rs"))
+}
+
 #[derive(Clone, Debug)]
 pub struct RegisterValue {
     pub anchor: String,
@@ -1023,10 +1115,11 @@ impl Gate {
                 }
             }
         }
-        if is_code {
-            let lower = content.to_lowercase();
+        if is_code && !is_test_file_path(&path) {
+            let prod = test_regions_stripped(&content);
+            let lower = prod.to_lowercase();
             let v = vocab();
-            let german_char_idx = v.german_chars.iter().find_map(|c| content.find(*c));
+            let german_char_idx = v.german_chars.iter().find_map(|c| prod.find(*c));
             let german_word_idx = v
                 .german_function_words
                 .iter()
@@ -1035,58 +1128,58 @@ impl Gate {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "german-in-code".to_string(),
-                    line: line_of(&content, idx),
+                    line: line_of(&prod, idx),
                     feedback: "the code speaks English — German is the counter-slope of the register and the philosophy, not of code".to_string(),
-                    quote: clip(&content, 90),
+                    quote: clip(&prod, 90),
                 });
             }
             let zf_idx = vocab()
                 .zero_fabrication
                 .iter()
-                .filter_map(|m| content.find(m.as_str()))
+                .filter_map(|m| prod.find(m.as_str()))
                 .min();
             if let Some(idx) = zf_idx {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "zero-fabrication".to_string(),
-                    line: line_of(&content, idx),
+                    line: line_of(&prod, idx),
                     feedback: feedback("zero_fabrication").to_string(),
-                    quote: clip(&content, 90),
+                    quote: clip(&prod, 90),
                 });
             }
             for (marker, hint) in &vocab().fabrication {
-                if let Some(idx) = content.find(marker.as_str()) {
+                if let Some(idx) = prod.find(marker.as_str()) {
                     return Some(Verdict {
                         severity: Severity::Hard,
                         rule: "fabrication".to_string(),
-                        line: line_of(&content, idx),
+                        line: line_of(&prod, idx),
                         feedback: hint.clone(),
-                        quote: clip(&content, 90),
+                        quote: clip(&prod, 90),
                     });
                 }
             }
             for word in &vocab().template_slang {
-                if let Some(idx) = content.to_lowercase().find(word.as_str()) {
+                if let Some(idx) = lower.find(word.as_str()) {
                     return Some(Verdict {
                         severity: Severity::Hard,
                         rule: "template-slang".to_string(),
-                        line: line_of(&content, idx),
+                        line: line_of(&prod, idx),
                         feedback: feedback("template_slang").to_string(),
-                        quote: clip(&content, 90),
+                        quote: clip(&prod, 90),
                     });
                 }
             }
             for marker in &vocab().diagnostic_markers {
-                if let Some(idx) = content.find(marker.as_str()) {
+                if let Some(idx) = prod.find(marker.as_str()) {
                     let start = idx + marker.len();
-                    let rest = &content[start..];
+                    let rest = &prod[start..];
                     let msg: String = rest.chars().take(120).collect();
                     for bad in &vocab().forbidden {
                         if word_present(&msg.to_lowercase(), bad) {
                             return Some(Verdict {
                                 severity: Severity::Hard,
                                 rule: "forbidden-diagnostic".to_string(),
-                                line: line_of(&content, idx),
+                                line: line_of(&prod, idx),
                                 feedback: format!(
                                     "the diagnostic carries \"{}\" — diagnostics name what IS",
                                     bad
@@ -3181,6 +3274,42 @@ mod tests {
             let v = g.check_tool_call("edit", &args).unwrap();
             assert_eq!(v.rule, "fabrication");
         }
+    }
+
+    #[test]
+    fn fp_tool_fabrication_test_body_passes() {
+        let mut g = test_gate();
+        let src = "fn prod() -> &'static str { \"ok\" }\n\n#[cfg(test)]\nmod t {\n    #[test]\n    fn body() {\n        let x = \"pluto\";\n    }\n}\n";
+        let args = tool_args("src/x.rs", src);
+        assert!(g.check_tool_call("edit", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_fabrication_production_still_blocked() {
+        let mut g = test_gate();
+        let src = "fn prod() -> &'static str { \"pluto\" }\n\n#[cfg(test)]\nmod t {\n    fn body() {}\n}\n";
+        let args = tool_args("src/x.rs", src);
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_fabrication_after_test_module_still_blocked() {
+        let mut g = test_gate();
+        let src = "#[cfg(test)]\nmod t {\n    fn body() {}\n}\n\nfn prod() -> &'static str { \"pluto\" }\n";
+        let args = tool_args("src/x.rs", src);
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fp_tool_fabrication_test_file_passes() {
+        let mut g = test_gate();
+        let src = "fn body() {\n    let x = \"earth\";\n}\n";
+        let args = tool_args("src/foo/tests.rs", src);
+        assert!(g.check_tool_call("edit", &args).is_none());
     }
 
     #[test]

@@ -3,7 +3,7 @@
   session: Mountain-Folge 269
   class: handover
   date: 2026-10-07
-  sha256: 3a3b92e73bd115d73df59e274c2212f04b765ce8e5ca1645eb15582fd80bc0ed
+  sha256: 7ade47feed2102d3ce03bf2e114ee19444515493585a82049f390e254802cf94
   status: live
 -->
 # Handover — Mountain-Folge 269 (2026-10-07)
@@ -27,9 +27,11 @@ grün für diesen Teil; die 8 Verletzungen waren `unbestimmt`×7 + `OGL-Canada-2
 GM-Commit `5c3ded9bc`, Step DE441) — die deployte `ephemeris_de440_sun.bin` trägt den
 GM noch nicht (`093b3ab5…`, Run nicht fertig). `clean_tree --fail` = 10 Hits (River WP13).
 
-**Burn** (`session_burn`): Mountain-Linie-Session open $0.0006 · close $0.2056 · cap 0.3 — Grund: Operator-Folgeauftrag (terms-Pen + EIONET-Rechte-Messung); kein pro/max.
+**269-Bau (Operator-Wort „an so viele Agenten wie nötig"):** **KC2G-Archivar-Arm** `format kc2g_stations` (`src/archivar/geo.rs::parse_kc2g_stations` + `extract.rs`-Zweig + Test; `split_csv_line` bereits `pub`) und **OSHA-unit-Reader** (`parse_axis_position_value_text` gibt den Unit-Token mit, `extract.rs` routet je `field`-Unit; 2 Tests) — beide per `grind-flash`, `cargo build -p omegaflow-gate`/`cargo check` 0/0. `phi/sources.φ`: KC2G- + OSHA-Block eingeschrieben (`register_sort` canonical 2687; KC2G `:974`, OSHA `:26115`), `phi/blocked_sources.φ` KC2G/OSHA aufgelöst (`register_lookup --orphans` = 0). **Rat (5 Stimmen, `council`) + UI (Kimi K3, tryingopen):** Frage A (Gate nimmt `#[cfg(test)]` aus) — **Riss:** Rat/AGENTS/`clean_tree` konvergieren für die Ausnahme (Tests sind ein anderes Gegenüber), **Kimi reißt** (die Vollständigkeit ist gerade die Garantie; jede textuelle Ausnahme ist eine Schmuggelroute) → `commit_gate.rs::test_regions_stripped` gebaut (konservativ: nur echtes `#[cfg(test)]`-Attribut + Brace-Balance öffnet, sonst Produktion; 3 Fixture-Tests). Frage B (`"sun"`-Rahmen) — **konvergent:** kein Körper-Literal; deklarierter, datengetriebener Frame-Ursprung, Default **Baryzentrum** (Kimi: auch physikalisch präziser als die Sonne). **UI-Messung:** die Brücke tippt zuverlässig nur in Cl. (Antwort pending) + tryingopen/Kimi; Qwen/z.ai/DeepSeek/AI-Studio/MiniMax/Mistral resetten ohne Sende-Übernahme (`pending`, kein stiller Ausfall).
 
-## Burn: open 0.0006 · close 0.2056 · cap 0.3 — Grund: Operator-Folgeauftrag (terms-Pen + EIONET-Rechte-Messung)
+**Burn** (`session_burn`): Mountain-Linie-Session open $0.0006 · close $0.4144 · cap 0.45 — Grund: Operator-Dispatch (2 Bau-Agenten KC2G/OSHA + Gate-Agent + Rat + UI-Runde); kein pro/max.
+
+## Burn: open 0.0006 · close 0.4144 · cap 0.45 — Grund: Operator-Dispatch (2 Bau-Agenten + Gate-Agent + Rat + UI-Runde)
 
 ## Operator-Wort-Register
 
@@ -240,11 +242,19 @@ Wort | Datum | Quelle
 - **Blockade:** der Legacy-Token je Klasse ist ungemessen (Schritt 3, Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md`).
 - **Braucht:** je Klasse den gemessenen Legacy-Token → dann fünf Marker in `commit_gate_vocab.json`; das Tor republiziert via `tools-build`.
 
+### Pipeline-Zulassung — 5 erreichbare Datenquellen (`phi/pipeline/ledger.φ`)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** die 5 stehen als `ausstehend` in `phi/pipeline/ledger.φ` (Commit `eb7d7a4c4`, owner mycelium; `register_lookup --open` sichtbar)
+- **Lage:** (gemessen 2026-10-07, fremde Linie) SOLARNET VO `http://solarnet.oma.be/` · MICrONS Explorer `https://www.microns-explorer.org` (sha `70364993…`) · HadISST `…/hadobs/hadisst/data/HadISST_sst.nc.gz` (83 913 410 B) · SPCZ `higgins2020spczi-pseudo-recons.txt` (2 170 897 B, sha `f18b1088…`) · Brazilian VO `https://data.inpe.br/`. Bewusst **nicht** registriert: Tunka-Rex/GISTREP (unbelegt), infomeasure/OSF/Grokipedia (Plattformen), ENTRO-OMEGA/Microsoft/Monti (Paper) → Literatur/Riss, keine Quelle.
+- **Blockade:** die **Zulassung** je Kandidat (Quellen-Identität/Format/`terms`/Kraft-Verdikt) ist Mountain-Pen; der Pipeline-Eintrag ist der Vor-Verdikt-Zustand.
+- **Braucht:** je Kandidat die Admission-Messung (`--verdict`/`--sniff` am Baum) → `phi/sources.φ`-Verdikt-Zeile oder `declined_sources.φ`; dann SOURCE_PORT (Parser/Compile/`*-cdn.yml`).
+
 ## An river
 
 Origin: mountain-folge267.
 
 - **Census-TSV umgezogen:** `state/river/license-census.tsv` → `state/mountain/license-census.tsv` (Rat + UI 267: Lizenz ist Quellen-Eigenschaft → Mountain; „River misst, Mountain verdiktet" verworfen — Messung und `terms`-Verdikt sind ein Akt). Der Baum kennt genau einen Konsumenten (`license_census.rs:7`), die Konstante zeigt auf den neuen Pfad; `.gitignore:/state/` deckt ihn. **Braucht:** kein weiterer Schreibpfad auf `state/river/` — eine eigene gitignored Kopie dorthin verschieben; die Provenienz im Tabellenkopf („River 107") bleibt als Autor.
+- **Commit-Gate-Wall (Frage A, beantwortet 269):** Rat (5 Stimmen) + AGENTS-Intent + `clean_tree` konvergieren — der Fabrication-Scan nimmt `#[cfg(test)]` aus; gebaut in `commit_gate.rs::test_regions_stripped` (konservativ, Anti-Schmuggel, 3 Fixture-Tests), wirksam nach dem nächsten `tools-build`. **Riss (Kimi K3):** die Vollständigkeit des Gates ist seine Garantie — jede textuelle Test-Ausnahme ist eine Schmuggelroute; der Scanner schließt die billigen Routen (Kommentar, `starts_with`, fehlendes `{`), ein Raw-String/`//`-im-String-Rest bleibt benannt. **Frage B (`"sun"`):** Rat + Kimi konvergent — kein Körper-Literal; deklarierter, datengetriebener Frame-Ursprung, Default **Baryzentrum**; deine `inpop/epm_line_bodies()`-Fassung ist die Einlösung, die drei `body_barycenter_position("sun", …)` (442/579/1819) werden zu einem aufgelösten Referenzpunkt. Der Gate-Block auf `weberin.rs` fällt mit dieser Fassung + dem Test-Skip.
 
 ## An mycelium
 
@@ -266,7 +276,8 @@ Origin: mountain-folge269.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push.
 
-Eigene Pfade: `src/archivar/goes16_mag.rs`, `src/gate/commit_gate_vocab.json`,
+Eigene Pfade: `src/archivar/goes16_mag.rs`, `src/archivar/geo.rs`, `src/archivar/extract.rs`,
+`src/archivar/tests.rs`, `src/gate/commit_gate.rs`, `src/gate/commit_gate_vocab.json`,
 `tools/register/src/bin/license_census.rs`, `phi/sources.φ`, `phi/blocked_sources.φ`,
 `docs/handover/handover-2026-10-07-mountain-folge269.md`,
 `docs/handover/archiv/handover-2026-10-07-mountain-folge268.md` (Move),

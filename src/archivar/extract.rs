@@ -4141,13 +4141,63 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
-    if src.format == "osha_cehd_si_axis_value_text" {
-        let Some(Extract::Field(fc)) = src.extracts.first() else {
+    if src.format == "kc2g_stations" {
+        let Frame::Surface { alt, .. } = &src.frame else {
             return ExtractResult::Measurements(vec![]);
         };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
-        for (unix, lat, lon, value) in crate::archivar::geo::parse_axis_position_value_text(body) {
+        for row in crate::archivar::geo::parse_kc2g_stations(body) {
+            let Some(epoch) = lsk.unix_to_tdb(row.unix) else {
+                continue;
+            };
+            let position = Position::Surface {
+                body_name: frame_body_name(&src.frame),
+                lat: row.lat,
+                lon: row.lon,
+                alt: *alt,
+            };
+            for fc in &fields {
+                let Some((_, value)) = row.values.iter().find(|(k, _)| k == &fc.key) else {
+                    continue;
+                };
+                if !value.is_finite() {
+                    continue;
+                }
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        station_code: None,
+                        position: position.clone(),
+                        name: fc.name.clone(),
+                        value: *value,
+                    },
+                    fc.clone(),
+                ));
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "osha_cehd_si_axis_value_text" {
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for (unix, lat, lon, value, unit) in
+            crate::archivar::geo::parse_axis_position_value_text(body)
+        {
             let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            let unit_norm = normalize_unit(unit);
+            let Some(fc) = fields
+                .iter()
+                .find(|fc| normalize_unit(&fc.unit) == unit_norm)
+            else {
                 continue;
             };
             channels.push((

@@ -856,7 +856,7 @@ pub fn parse_axis_value_text(text: &str) -> Vec<(f64, f64)> {
     out
 }
 
-pub fn parse_axis_position_value_text(text: &str) -> Vec<(f64, f64, f64, f64)> {
+pub fn parse_axis_position_value_text(text: &str) -> Vec<(f64, f64, f64, f64, &str)> {
     let mut out = Vec::new();
     for line in text.lines() {
         let trimmed = line.trim();
@@ -864,7 +864,7 @@ pub fn parse_axis_position_value_text(text: &str) -> Vec<(f64, f64, f64, f64)> {
             continue;
         }
         let mut tokens = trimmed.split_whitespace();
-        let (Some(t), Some(v), Some(_unit), Some(lat), Some(lon)) = (
+        let (Some(t), Some(v), Some(unit), Some(lat), Some(lon)) = (
             tokens.next(),
             tokens.next(),
             tokens.next(),
@@ -880,8 +880,74 @@ pub fn parse_axis_position_value_text(text: &str) -> Vec<(f64, f64, f64, f64)> {
             continue;
         };
         if t.is_finite() && v.is_finite() && lat.is_finite() && lon.is_finite() {
-            out.push((t, lat, lon, v));
+            out.push((t, lat, lon, v, unit));
         }
+    }
+    out
+}
+
+pub struct Kc2gStationRow {
+    pub unix: f64,
+    pub lat: f64,
+    pub lon: f64,
+    pub values: Vec<(String, f64)>,
+}
+
+pub fn parse_kc2g_stations(text: &str) -> Vec<Kc2gStationRow> {
+    let split = crate::archivar::extract::split_csv_line;
+    let mut lines = text.lines().filter(|l| {
+        let t = l.trim();
+        !t.is_empty() && !t.starts_with('#')
+    });
+    let Some(header_line) = lines.next() else {
+        return Vec::new();
+    };
+    let headers = split(header_line);
+    let col = |name: &str| {
+        headers
+            .iter()
+            .position(|h| h.trim().eq_ignore_ascii_case(name))
+    };
+    let (Some(lat_i), Some(lon_i), Some(time_i)) =
+        (col("lat_deg"), col("lon_deg"), col("time_unix"))
+    else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for line in lines {
+        let cells = split(line);
+        if cells.len() != headers.len() {
+            continue;
+        }
+        let num = |i: usize| -> Option<f64> {
+            cells
+                .get(i)
+                .map(|s| s.trim())
+                .filter(|s| !s.is_empty())
+                .and_then(|s| s.parse::<f64>().ok())
+                .filter(|v| v.is_finite())
+        };
+        let (Some(lat), Some(lon), Some(unix)) = (num(lat_i), num(lon_i), num(time_i)) else {
+            continue;
+        };
+        if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) {
+            continue;
+        }
+        let mut values = Vec::new();
+        for (i, h) in headers.iter().enumerate() {
+            if i == lat_i || i == lon_i || i == time_i || h.trim().eq_ignore_ascii_case("code") {
+                continue;
+            }
+            if let Some(v) = num(i) {
+                values.push((h.trim().to_string(), v));
+            }
+        }
+        out.push(Kc2gStationRow {
+            unix,
+            lat,
+            lon,
+            values,
+        });
     }
     out
 }
@@ -1351,5 +1417,17 @@ mod tests {
         assert_eq!(parsed[0].lon, records[0].lon);
         assert_eq!(parsed[0].comp, COMP_OSM_PBF_NODE);
         assert!(parse_bin(MAGIC_OSM, &bytes).is_none());
+    }
+
+    #[test]
+    fn axis_position_value_text_carries_the_unit_token() {
+        let text = "100 0.5 kg/m3 52.5 13.4\n101 3.0 kg 52.5 13.4\n\
+                    102 0.25 1 52.5 13.4\n103 7.0 1/m3 52.5 13.4\n";
+        let out = parse_axis_position_value_text(text);
+        assert_eq!(out.len(), 4);
+        assert_eq!(out[0], (100.0, 52.5, 13.4, 0.5, "kg/m3"));
+        assert_eq!(out[1].4, "kg");
+        assert_eq!(out[2].4, "1");
+        assert_eq!(out[3].4, "1/m3");
     }
 }
