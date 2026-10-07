@@ -3,7 +3,7 @@
   session: Mountain-Folge 270
   class: handover
   date: 2026-10-07
-  sha256: 63779bbb4b365d440d4c1620df980cf9303c4e51d312d83706dad838a9983c63
+  sha256: b2153fdabfb4580711ccfc087ba4c4239bfbacaae5bdf3ce95b184e69815e31e
   status: live
 -->
 # Handover — Mountain-Folge 270 (2026-10-07)
@@ -27,7 +27,9 @@ geschlossen:** Archivar-Reader + unit-Routing standen; die fehlenden `phi/harves
 ergänzt. **IGRF Grad-13-Synthese** gebaut + pyIGRF-Witness-Test (`grind-flash`),
 `cargo check` 0/0.
 
-## Burn: open 0.0015 · close 0.0684 — Grund: Operator-Dispatch (Rat×2 · general×3 · grind-flash×2); kein pro/max.
+**270-Folge (Operator-Wort: mit Agenten umsetzen + dem Rat, einem `archive_search`-Taucher und den Frontier-UI-Chats vorlegen):** Recherche-Schicht (`general`-Taucher) + **Rat** (5 Stimmen) + **UI-Runde** über die vier Architektur-/Ethikfragen. **Rat-Verdikte:** (1) GIC-Breitenband = **Member-Pool ist der Träger**, drei Band-Deskriptoren nur abgeleitete Query (Route C hält); (2) dropped-gate = Träger abgeleitet (lebend ∪ commits ∪ register), `move ohne disposition = rot`, einmalige deklarierte Rebaseline, danach frozen; (3) `rights_read` = **B-Block-Register**, kein Wire-Slot, DataCite-Triple `rights_identifier`+`rights_scheme`+`rights_uri`; (4) Bias-Token = **Review-Marker, kein Hart-Block** (nur das gemessene Ersatzmuster wäre ein Fixture; keines gemessen). **UI-Runde:** Claude · Qwen · Z.ai · DeepSeek · MiniMax · Lumo · Mistral antworteten (Member-Pool primär; Rights-Riss Record vs. Register; Defaults-Riss legitim vs. Bias); **Duck.ai Tageslimit** (gemessener Nichtantwort-Grund); AI Studio + Open-Weight-Gruppe (geschlossen) = `pending`. **Gebaut:** `rights`-Parse-Arm (`rights <id> <scheme> <uri>` → `SourceConfig`, `parse.rs`/`types.rs`/`tests.rs`, additiv, kein Wire-Edit) + `DSN_STATION_COORD_SOURCE` (`odp.rs`; Quelle `pending` — kein Einzelbeleg gemessen). **Commit offen:** der geteilte Baum wird von einer fremden Session gehalten (`motion::BodyProperties`-Refactor, 14+ Dateien; `cargo check --tests` 148 Fremd-Fehler); `src/archivar/tests.rs` trägt fremde Hunks → kein pfad-sauberer Commit. Die eigenen src-Hunks (`types.rs`/`parse.rs`/`tests.rs`/`odp.rs`) sind per `git_safety --snapshot refs/safety/1791407421` geschützt; beim nächsten freien Baum pfad-scoped committen.
+
+## Burn: open 0.0015 · close 0.1678 · cap 0.20 — Grund: Operator-Dispatch (beide Runden: Rat×3 · general×5 · grind-flash×4 · UI-Runde); kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -94,6 +96,7 @@ Wort | Datum | Quelle
 „bitte mache auch eine wissenschafts und forschung und webrecherche und befrage die UI chats" — jede Architekturfrage bekommt die Recherche-Schicht (`archive_search`) + die Frontier-UI-Chats | 2026-10-07 | Operator (Session, Mountain 267)
 „council bitte immer durch frintier ui chats untermauern" — jede Ratsentscheidung wird durch die Frontier-UI-Chats untermauert | 2026-10-07 | Operator (Session, Mountain 267)
 „kannst du dich bitte darum kümmern?" — die `terms`→SPDX-Migration im Register vollziehen (134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` bleiben), dann Mycelium `license_census`/`ci-gate` | 2026-10-07 | Operator (Session, Mountain 268)
+„kannst du das bitte mit agenten umsetzen und dem rat, einerm taucher mit archive search und den frontier ui chats vorlegen" — die offenen Punkte mit Agenten arbeiten und die Architektur-/Ethikfragen durch Recherche-Schicht + Rat + UI-Frontier halten | 2026-10-07 | Operator (Session, Mountain 270)
 
 ## Offen (aufgeschlüsselt)
 
@@ -116,14 +119,14 @@ Wort | Datum | Quelle
 - **Trigger:** Mycelium legt die erreichten Kanäle vor (Reachability-Messung)
 - **Lage:** (gemessen 2026-10-07, Mountain 268/269) **10 Kanäle gebaut** (Compiler + Core-Reader + `phi/harvest.φ`-Block + `phi/sources.φ`-Felder); 33 Fäden gemessen — `state/mycelium/gic-api-reachability-2026-10-06.md` (lebt 14, neu+erreichbar 15, blockiert 7).
 - **Blockade:** Admission je neuem Kanal (Format-Arm nötig).
-- **Braucht:** Format-Arm je Kanal + `terms` aus der Admission; Korrekturen CARISMA `www.carisma.ca`, DMSP-SSJ via CDAWeb HAPI, `P_dyn` in `OMNI_HRO_1MIN`, SSUSI funded-dead.
+- **Braucht:** Admission 2026-10-07 (`general`) — **admit:** AMPERE, THEMIS Tail, MMS, POES/MetOp, DMSP SSJ, SOHO/LASCO, WDC AE (AL/AU/SYM-H), ROTI, Wind SWE (generischer hapi-Arm) → Format-Arm + `terms`; **blocked** (parser-def): THEMIS GMAG (Dataset-ID), SuperDARN, OMTI/Abisko, Substorm-Onsets, PC-Index (TLS), EarthScope MT; **decline:** DMSP SSUSI (funded-dead). Korrektur CARISMA `www.carisma.ca`; Riss: `carisma_mag` erntet den ASC-Spiegel, nicht `www.carisma.ca`.
 
 ### GIC-Breitenband-Familien — Deskriptoren (Blatt-Slot) + CGM-Provenienz-Riss
 - **Status:** eigen | **Bindung:** eigen (Format/Descriptor) · river (`field_te_query`)
-- **Trigger:** Blatt-Rat löst Route C ↔ Linie 1
+- **Trigger:** Route-C-Stufe-2 am per-Station-dB/dt-Bestand gewired (Rat-Verdikt 2026-10-07: **Member-Pool = Träger**)
 - **Lage:** (gemessen 2026-10-07, Mountain 268) **gebaut** — drei Band-Deskriptoren `phi/pipeline/descriptors/gic_{auroral,subauroral,midlat}.te` (31/25/98 Kanäle, `expect cells 930/600/9506`), Coverage-Test `gic_bands_are_pairwise_disjoint_and_cover_the_154_station_pool` (`tools/measure/src/bin/field_te_query.rs`, paarweise disjunkt, Union = 154), 3 CI-Jobs in `.github/workflows/field-te-query.yml`; `cargo check` 0/0. Provenienz-Riss CPL/TTB benannt (`cgm_source bgs-quasi-dipole`, Arme gebaut). **Riss (Blatt):** `docs/blatt/blatt-gic-breitenband-familien.md` (Rat 2026-10-07, Route C, :249-251/:287) verwirft drei per-Band-`full`-Deskriptoren als Träger und hält Familien-Deskriptoren als Stufe-2-Member-Pool `pending`; „Linie 1" steht als eine ungeglättete Linie.
 - **Blockade:** der Blatt-Rat (Route C ↔ Linie 1) ist offen; der 157-gegen-154-Bezug je Station; die übrigen 152 `cgm_lat`-Zeilen tragen Provenienz (`omniweb-cgm`/`supermag-aacgm`) nur in `state/river/gic-cgm-lat.tsv`.
-- **Braucht:** Rat/River entscheidet die Route (Deskriptor-Träger vs. Member-Pool); optional `cgm_source <token>` je der übrigen 152 Zeilen aus der TSV.
+- **Braucht:** Route-C-Stufe-2 am per-Station-dB/dt-Bestand wiren (heute nur ABK/SOD, `sources.φ:2051-2079`); für AE/AL/AU · SME/SML/SMU je eine eigene `sources.φ`-Zeile admiten (OMNI-AE/SuperMAG-SME, `pending`); optional `cgm_source <token>` je der übrigen 152 Zeilen.
 
 ### Receiver-Apertur `span`-Direktive
 - **Status:** eigen | **Bindung:** eigen (Format) · river (Membran-Brücke)
@@ -137,7 +140,7 @@ Wort | Datum | Quelle
 - **Trigger:** Sichtung der 1300 + deklarierte Rebaseline
 - **Lage:** (gemessen 2026-10-07 via `register_lookup --dropped`/`ci_manage log 37553361521`) `dropped-gate` (`.github/workflows/ci-gate.yml:70`) zählt Punkte aus archivierten Übergaben ohne lebenden Träger/Commit; Baseline `docs/zustand/dropped-baseline.md` 1300 (zuletzt gebumpt `416f7b59b`), current 1282. **Drei externe Stimmen (qwen, duck/Gemma 4 31B, nemotron-3-ultra, 2026-10-07) konvergieren:** `archiv = Ort, kein Träger` · Auto-Bump und Archiv-als-Träger verworfen (0 honored) · Carrier-Ledger nur als **abgeleitete** Sicht · **explizites Carrying je Move** ist die Architektur. Nemotron-Formel: `dropped := punkt ohne träger in (lebend ∪ commits ∪ register) · move ohne disposition = rot · baseline frozen`.
 - **Blockade:** Träger-Ableitung im Gate ungebaut; Punkt-Identität über den Move (ID/Hash) unbelegt → `pending`; Pauschal-Transfers sind Fabrikation, wo Xs nächster Schritt die Natur nicht berührt.
-- **Braucht:** Gate auf Träger-Ableitung (lebend ∪ commits ∪ register) umstellen, `move ohne disposition = rot`; danach **einmalige** deklarierte Rebaseline mit Sichtungsliste.
+- **Braucht:** `move ohne disposition = rot` je Move bauen (je Punkt: resolved-in-commit | carried-in-owner-handover), Auto-Bump-Pfad entfernen, dann **einmalige** deklarierte Rebaseline; Punkt-ID/Hash-Schema (`pending`) für die Einzelpunkt-Disposition.
 
 ### DE441/DE442-Anker ohne sha256
 - **Status:** wartend | **Bindung:** eigen
@@ -169,17 +172,17 @@ Wort | Datum | Quelle
 
 ### Lizenz-Disposition — `terms`-Feld (SPDX); `rights_read` offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
-- **Trigger:** `rights_read`-Datenkontrakt entworfen
+- **Trigger:** `rights`-Parse-Arm steht (Rat 2026-10-07: **B-Block-Register**, kein Wire-Slot)
 - **Lage:** (gemessen 2026-10-07 270) 269 hat die `terms-vocab`-Verletzungen geheilt (`terms-vocab 0`); **270** die 7 adressierten `terms unbestimmt`-Quellen (future-197) auf die am 2026-10-07 gemessene Lizenz gesetzt — 5× `CC0-1.0` SPDF (`sources.φ:1614/1623/1632/1642/1681`), `PD` CRAAM/OpenVLF (`:1722`), `free-open` THEMIS (`:4049`). Riss bleibt: Baum-`terms`-Zahl vs. Census; `ohne-lizenz`/`PD`-Verwechslung. `rights_read` (das Bit im B-Block) ist ungebaut.
 - **Blockade:** der `rights_read`-Arm braucht zuerst einen Datenkontrakt-Entwurf (wo das Bit lebt — Wire-Slot vs. separater Harvest-Zustand), kein Einzeiler.
-- **Braucht:** Rat/Datenkontrakt-Entwurf für `rights_read` → Arm am Harvest-Gate (OAI-PMH `<rights>`/DataCite `rightsList`).
+- **Braucht:** `rights`-Register-Zeilen je Quelle schreiben (DataCite-Triple `rights <id> <scheme> <uri>`, SPDX, Sentinel `NOASSERTION`/`NONE`); `license_census`/`ci-gate` nachführen. Kein Wire-Edit.
 
 ### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`) — Klassen-Token gemessen
 - **Status:** eigen | **Bindung:** eigen (Gate/Fixture)
-- **Trigger:** Rat-Verdikt je Klasse (welche Token sind Fabrikations-Marker)
+- **Trigger:** Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md` gebaut (heute absent)
 - **Lage:** (gemessen 2026-10-07 270, `general`) die Körper-Namen sind gegated (269). Klassen-Token: **Station-privilege** `dsn_station`/`station_coords` (`odp.rs:11`, `arpansa.rs:67`), **Now-default** `system_now_tdb`/`machine_now_tdb` (`lsk.rs:59`, `fetch.rs:1526`) — beide auch legitime Produktionsnutzung; **Observer-as-vantage**/`camera`/`Client-Server` haben **keinen** Produktions-Token (nur Testcode/Klassifikator). Das Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md` ist im Baum absent.
 - **Blockade:** welcher gemessene Token ist Fabrikations-Marker (Hart-Block) vs. legitime Nutzung (Review-Marker)? = Ethik-/Identitätsfrage.
-- **Braucht:** Rat-Verdikt je Klasse → dann Marker in `commit_gate_vocab.json` + Fixture-Test; `tools-build` republiziert.
+- **Braucht:** **kein** Hart-Block-Fixture für die vier Token (Rat 2026-10-07: Review-Marker, das Tor trifft das gemessene Ersatzmuster, nicht den Zugriffsnamen; keines gemessen); Inventar bauen; `*_SOURCE`-Riss geschlossen (`DSN_STATION_COORD_SOURCE`, `odp.rs` = `pending`).
 
 ### HadISST SST — Admission → SOURCE_PORT
 - **Status:** eigen | **Bindung:** eigen (Parser/Format) · mycelium (CDN)
