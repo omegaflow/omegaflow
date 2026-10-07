@@ -3,7 +3,7 @@
   session: River-Folge 127
   class: handover
   date: 2026-10-07
-  sha256: 41e30bd94842e2a76af5cd7c73492f9ae984264039cda372c140275c7cf15ad3
+  sha256: fa567a23bbe7784a2961b59752a4e5602bff3e7bdc0c0d04b136042bec25bcfc
   status: live
 -->
 # Handover — River-Folge 127 (2026-10-07)
@@ -36,6 +36,7 @@ genutzt und in `docs/concepts/tools-map.md` nachgetragen.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md` — see-also auf Archiv-Pfad (`:7` = `docs/handover/archiv/handover-2026-10-07-river-folge122.md`).
 - `docs/paper/gic-causal-driver.md` — NUR-Asset-Fakten §6, §4.7.
 - `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` — trägt den Objektophilie-Marker (`:40` = `static/membrane.html:43` `BODIES`) und das Manifest-Verdikt (`:113`).
+- `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13); lag seit `200ed6040` als `status: archived` im Baum (darum von keiner Session gemessen), 2026-10-07 live gestellt + Provenienz; die Zielgreps als `commit_gate`-Fixtures offen.
 
 ## Offen (aufgeschlüsselt)
 
