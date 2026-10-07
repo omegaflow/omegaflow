@@ -173,8 +173,8 @@ fn fold_events(log: &str, pin: &BTreeSet<String>) -> Outcome {
 }
 
 fn read_keys(path: &str, what: &str) -> Result<BTreeSet<String>, String> {
-    let text = std::fs::read_to_string(path)
-        .map_err(|e| format!("{what} `{path}` unreadable: {e}"))?;
+    let text =
+        std::fs::read_to_string(path).map_err(|e| format!("{what} `{path}` unreadable: {e}"))?;
     let mut set = BTreeSet::new();
     for line in text.lines() {
         let line = line.trim();
@@ -272,9 +272,7 @@ fn compare_roster(
         .count();
     let false_red = roster
         .iter()
-        .filter(|k| {
-            !pin.contains(*k) && !minted.contains(*k) && !alias_new_to_old.contains_key(*k)
-        })
+        .filter(|k| !pin.contains(*k) && !minted.contains(*k) && !alias_new_to_old.contains_key(*k))
         .count();
     Ok((false_red, false_green))
 }
@@ -314,8 +312,7 @@ fn shadow_null_control(pin: &BTreeSet<String>) -> (usize, usize) {
         let mut roster = pin.clone();
         roster.remove(first);
         roster.insert(renamed.clone());
-        let log =
-            format!("{HEADER_PREFIX}shadow\ncarried\t{renamed}\talias:{first}\t2026-10-07\n");
+        let log = format!("{HEADER_PREFIX}shadow\ncarried\t{renamed}\talias:{first}\t2026-10-07\n");
         match compare_roster(&roster, pin, &log) {
             Ok((r, g)) => {
                 dev_red += r;
@@ -387,8 +384,7 @@ fn run_selftest() -> Result<(), String> {
     if fold_events(revival_hole, &pin).refusal.is_none() {
         return Err("tombstoned mint without revive not refused".to_string());
     }
-    let revived_log =
-        "# dropped-events v1 pin=x\ndropped\tc\treason\t2026-10-07\nminted\tc\trevive\t2026-10-07\n";
+    let revived_log = "# dropped-events v1 pin=x\ndropped\tc\treason\t2026-10-07\nminted\tc\trevive\t2026-10-07\n";
     let revived = fold_events(revived_log, &pin);
     if let Some(r) = &revived.refusal {
         return Err(r.clone());
@@ -586,8 +582,7 @@ mod tests {
         let hole =
             "# dropped-events v1 pin=x\ndropped\tc\treason\t2026-10-07\nminted\tc\t\t2026-10-07\n";
         assert!(fold_events(hole, &pin).refusal.is_some());
-        let revived =
-            "# dropped-events v1 pin=x\ndropped\tc\treason\t2026-10-07\nminted\tc\trevive\t2026-10-07\n";
+        let revived = "# dropped-events v1 pin=x\ndropped\tc\treason\t2026-10-07\nminted\tc\trevive\t2026-10-07\n";
         let o = fold_events(revived, &pin);
         assert!(o.refusal.is_none(), "{:?}", o.refusal);
         assert!(o.keys.contains("c"));
@@ -610,9 +605,7 @@ mod tests {
         assert_eq!(compare_roster(&proven, &pin, &minted).unwrap(), (0, 0));
 
         let renamed = set(&["a__alias", "b", "c", "d"]);
-        let alias = format!(
-            "{HEADER_PREFIX}shadow\ncarried\ta__alias\talias:a\t2026-10-07\n"
-        );
+        let alias = format!("{HEADER_PREFIX}shadow\ncarried\ta__alias\talias:a\t2026-10-07\n");
         assert_eq!(compare_roster(&renamed, &pin, &alias).unwrap(), (0, 0));
     }
 
