@@ -438,6 +438,7 @@ pub struct SourceConfig {
     pub station_code: Option<String>,
     pub cgm_lat: Option<f64>,
     pub cgm_source: Option<String>,
+    pub span: Option<f64>,
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;
