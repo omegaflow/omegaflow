@@ -2,7 +2,7 @@
   title: Free-Voices — der kostenlose Recherche-Schwarm
   class: concept
   date: 2026-10-02
-  sha256: 914243f2a565f8131b5ae6cba3d24b108b4e067836f22b83ef8c3f7f0cf67d43
+  sha256: e168326c94fc33bda04ff4dc84a885897053088c839244f86ef6816244e163be
   status: live
   see-also: docs/concepts/tools-map.md docs/concepts/tool-forms.md state/stimmen/reviewer-roster-2026-10-01.md
 -->
@@ -90,17 +90,17 @@ und der arch-PROLOG von `state/mycelium/voice-swarm.sh --mode arch`).
 
 Die Stimmen liefern je Frage ein Verdikt; das Verdikt/Register trägt allein die Session.
 
-## UI-Seat-Kandidaten (Gretchenfrage `pending`)
+## UI-Seats (Gretchenfrage bestanden 2026-10-07)
 
-Am 2026-10-07 in der Gate-Stimmen-Runde gemessen erreichbar und antwortend, noch **kein Seat**
-(Aufnahme erst nach der Gretchenfrage: Fähigkeit ≥ 4/4 + gemessenes Tempo):
+Drei neue UI-Anbieter, Fähigkeit **4/4** (Probe `state/mycelium/philosophy-probe-2026-10-05.txt`)
+und gemessenes Tempo:
 
-- **MiniMax M3** (`agent.minimax.io`, 427B) — distincte Zuchtlinie (Operator-Wort Mountain 264).
-- **Google AI Studio / Gemini 3.1 Pro** (`aistudio.google.com`).
-- **DeepSeek Chat** (`chat.deepseek.com`).
+- **MiniMax M3** (`agent.minimax.io`, 427B) — distincte Zuchtlinie (Operator-Wort Mountain 264); 4/4, 30 s.
+- **Google AI Studio / Gemini 3.1 Pro** (`aistudio.google.com`); 4/4, ≤ 60 s.
+- **DeepSeek Chat** (`chat.deepseek.com`); 4/4, 6 s.
 
 Gretchenfrage-Werkzeug: `state/mycelium/philosophy-probe-2026-10-05.txt` +
-`state/mycelium/voice-capability-all-2026-10-05.tsv` (4/4-Skala). Roster-Ziel: `AGENTS.md:532-533`.
+`state/mycelium/voice-capability-all-2026-10-05.tsv` (4/4-Skala). Roster: `AGENTS.md:532-533`.
 
 ## Dateien
 
