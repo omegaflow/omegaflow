@@ -156,18 +156,6 @@ gap covariate-carrier
 note ghsl_built_surface_m2 (JRC GHSL GHS_BUILT_S_E2020) — statische built-up surface (m²), keine der 9 Kräfte → kein Kraft-Heim; aus sources.φ in die Disposition umgezogen; braucht den quantity_type-Träger (CRS+Epoche, 0 m² honored).
 
 pending
-url https://www.carisma.ca/carisma-data-repository
-note CARISMA (subauroral Kanada, GIC-Replikation §A) — 2026-10-06: offene Route carisma.ca/repository 200 (kein Konto); CSA-Mirror donnees-data.asc-csa.gc.ca im Tool pending (Riss, Future-UI 200 — nachmessen). Arm: Magnetometer.
-
-pending
-url https://zenodo.org/record/22345897
-note AMPERE/Iridium FAC (GIC-Mediator §B) — 2026-10-06: Zenodo CC0 (Record 22345897/14285392) 200, JHU/APL-Login vermeidbar; Arm: Zenodo-Datei-Reader.
-
-pending
-url https://isgi.unistra.fr/data_download.php
-note PC-Index (GIC-Driver §C) — 2026-10-06: ISGI-Route 200 (CC BY 4.0), kein Konto; pcindex.org + pcindex.space.dtu.dk im Tool pending (Riss). Arm: Index-Parser.
-
-pending
 url https://zenodo.org/record/4444068
 note Neutralpunkt-GIC (Kellerman 2021, GIC-Zielkanal §F) — 2026-10-06: Zenodo 200, 7 anonyme Knoten, CC-BY 4.0; +7446370 (Portugal) 200; Arm: Zenodo-CSV-Reader.
 
@@ -238,4 +226,8 @@ note KC2G (prop.kc2g.com, Ionosphäre/GIC-nah) — 2026-10-07 gemessen: JSON 200
 pending
 url https://obis.osha.gov/opengov/healthsamples.zip
 note OSHA CEHD/OBIS (Arbeitsplatz-Chemie-Exposition) — 2026-10-07: Reader verwirft den Einheitentoken und bindet gemischte Zeilen an eine Unit (extract.rs:4116/geo.rs:859); unit-fähiger Reader fehlt. terms unbestimmt, nicht declined.
+
+pending
+url https://craam-files-bucket.s3.amazonaws.com/
+note VLF AWESOME CRAAM/AWS (GIC-Observable §D) — 2026-10-07 gemessen: Bucket + Beispielobjekt HTTP 206, 352232 B; MAT Level-4-artig (5×int32-Kopf, Typcodes 0/10/30/50); kein Arm (matfile.rs/mat5.rs v5-only, Bytes[124..127]=00000000); v4-Arm fehlt.
 
