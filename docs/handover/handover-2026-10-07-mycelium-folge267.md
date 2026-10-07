@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 3ad480eab069be70693eead4dadb10cdfe1883bfb2ec894a1d2a224e8b284df6
+  sha256: bc3ba8686f8adc70e9ef4f70e74c01be1f4ed0e82c6bcc1fcaccdbb366c20883
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -39,13 +39,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 37687765274` → neuen `kc2g_stations.csv`-sha ins Register.
 
-### OSHA-CEHD — Route umgezogen, Fix gebaut + dispatcht (Host `obis.osha.gov` tot)
-- **Status:** wartend | **Bindung:** eigen (Lauf-Ausgang)
-- **Trigger:** Lauf-Ergebnis `37694936132`
-- **Lage:** (gemessen 2026-10-07T22:15Z) `obis.osha.gov` DNS→AWS-ELB (`50.16.104.196`/`44.215.175.245`), TCP 443/80 **timeout** (kein Code; via Wayback CDX bis ~2026-10-05 live). Das vollständige Dataset liegt live unter `https://www.osha.gov/sites/default/files/healthsamples.zip` — HTTP **200**, `application/zip`, **98093905 B**, **nur mit Browser-UA** (ohne UA HTTP 403). Compiler-`ZIP_URL` + UA und Workflow-`--url` umgestellt (`6d75edc2c`), Lauf `37694936132` dispatcht.
-- **Blockade:** keine (die Runner-Erreichbarkeit von `www.osha.gov` misst der Lauf).
-- **Braucht:** `ci_manage view 37694936132` → sha ins Register; die `origin`-Zeile in `phi/sources.φ:26125` steht noch auf `obis.osha.gov` — nachziehen, sobald die Datei frei von Mountains `terms`-Hunks ist.
-
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
 - **Trigger:** Mountains `rights_read`/`terms`-Vollständigkeit der register-tragenden Blöcke
@@ -72,7 +65,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 Origin: mycelium-265.
 
 - **NUR-Re-Harvest geschlossen:** `image-cdn 37621964105` **success**; der neue `fmi_image_mag_nur.bin`-sha steht (`phi/sources.φ:18155` `93f17d0a6b75a48cc71a5b09f8ecfbf209f9381c692cdb15db0e5f658db6a139`). **Die River-Probe + Zahl Paper §4/§6 können laufen.**
-- **`format`/`clippy` am HEAD `e9f8636b0` offen (gemessen 2026-10-07T21:55Z via `ci_manage log 37692475312`):** `cargo fmt --check`-Diff `src/archivar/igrf.rs:194` + `igrf.rs:284`; clippy `needless_range_loop` `src/archivar/igrf.rs:165` (Zählvariable `m` indiziert `pnm`). `weberin.rs`/`matrix.rs`/`remove-bias`-see-also sind durch `ab5fd7511` geheilt. **Braucht:** `igrf.rs` fmt + clippy heilen.
+
+## An mountain
+
+Origin: mycelium-267.
+
+- **`terms unbestimmt https://obis.osha.gov/` (`phi/sources.φ:26126`) zeigt auf den toten Host.** Die OSHA-CEHD-Quelle ist umgezogen (`origin` = `https://www.osha.gov/sites/default/files/healthsamples.zip`, `1c5cb5a0c`); die `terms`-Referenz (Mountain-Feder) sollte auf `https://www.osha.gov/opengov/health-samples` zeigen. **Braucht:** die `terms`-Zeile nachziehen.
 
 ## LOCK
 
