@@ -17,6 +17,11 @@ on:
         required: false
         type: string
         default: '30'
+      force:
+        description: 're-harvest and clobber the existing CDN asset'
+        required: false
+        type: boolean
+        default: false
 permissions:
   contents: write
 env:
@@ -32,7 +37,10 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view space.fmi.fi --repo omegaflow/sources \
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force — re-harvesting and clobbering fmi_image_mag_nur.bin"
+          elif gh release view space.fmi.fi --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "fmi_image_mag_nur.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset fmi_image_mag_nur.bin already present — manifest skipped"

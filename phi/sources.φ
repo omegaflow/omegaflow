@@ -18156,6 +18156,7 @@ format catalog_tycho
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
 origin https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/tycho2_compiler.rs
+sha256 49ea75958f909314d19a661dace13f7cc73dd20866134d917565a8b2378a0a0e
 catalog_epoch 2016.0
 at sun
 ttl 604800

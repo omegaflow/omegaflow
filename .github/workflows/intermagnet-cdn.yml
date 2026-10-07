@@ -23,9 +23,8 @@ on:
           - daily
       start:
         description: start year (YYYY)
-        required: false
+        required: true
         type: string
-        default: "1994"
       end:
         description: end year (YYYY); empty = current year
         required: false
