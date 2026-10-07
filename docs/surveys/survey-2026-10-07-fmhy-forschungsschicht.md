@@ -1,0 +1,64 @@
+<!--
+  title: FMHY für die Forschungsschicht — Messung 2026-10-07
+  class: survey
+  date: 2026-10-07
+  sha256: 574673c6b7cbb2ebe5128615cb0eed706714e125781747077b2c6f19c499fe0e
+  status: live
+  see-also: docs/concepts/tools-map.md state/future/research-chatbots-2026-10-07.md
+-->
+# FMHY für die Forschungsschicht — Messung 2026-10-07
+
+Ziel: FMHY (`fmhy.net`, FreeMediaHeckYeah) als **Quellen-Discovery** für die
+Recherche-Schicht prüfen — was davon ist für omegaflow (Astrophysik, Space Weather,
+GIC, Transfer-Entropie, freie Stimmen) brauchbar. Ein erster Schnitt; der Rest der
+FMHY-Wiki ist noch zu vermessen (Nächste Messung unten).
+
+## Gemessen (2026-10-07, Rohquellen via `curl`)
+
+- `fmhy.net/ai#specialized-chatbots` — Rohquelle `docs/ai.md` (46 KB) und Live-Anker
+  (176 KB; `h3 id="specialized-chatbots"` Z. 1969–2172).
+- `fmhy.net/reading#academic-papers` — Rohquelle `docs/reading.md` (83 KB).
+- `fmhy.net/educational` — Rohquelle `docs/educational.md` (183 KB).
+
+## Befund — brauchbar für uns
+
+**Recherche-Chatbots:**
+- **alphaXiv** (`alphaxiv.org`) — Paper-QA über arXiv. **Gebaut:** `archive_search
+  --alphaxiv <query>` (MCP `https://api.alphaxiv.org/mcp/v1`, Tool `discover_papers`;
+  public `2c12d4707`). Web-UI ohne Login.
+- **Elicit** (`elicit.com`) — **API nur ab Pro** ($49/Monat; `pricing` gemessen);
+  Basic gratis: 138 M Paper, Paper-Chat mit Volltext. Deshalb **nicht** verdrahtet.
+- **Sakana Chat** — Browser, Modell „Namazu", Sign-in nötig.
+- **SciSpace** — CloudFront-403, nicht erreichbar (auch US/JP-Exit + Browser).
+- **Sci-Bot** — Sci-Hub-Frontend; **nicht nutzen** (saubere Wege: Open Access,
+  arXiv/Repositorien, Autor:innen-Anfrage, Fernleihe).
+
+**Literatur-Werkzeuge** (über die `archive_search`-Arme `--arxiv/--crossref/--openalex/
+--semanticscholar/--pubmed/--europepmc/--core/--zenodo/--unpaywall/--doaj` hinaus):
+Connected Papers, LitMaps, Open Knowledge Maps, Citrus Search, Ai2 Asta, Consensus,
+Retraction Watch, PubPeer, Internet Archive Scholar, OpenAire, OA.mg, Lens/Dimensions,
+re3data, DataONE, arxivxplorer, searchthearxiv, soarxiv.
+
+**educational-Ergänzungen:** Manim (erklärte Mathe-Videos), LabPlot (wissenschaftlicher
+Plotter), OEIS, WolframAlpha, ProofWiki, nLab; Astronomy: `spaceweather.gov`, SolarHam,
+CelesTrack, Aladin, ESAsky, ExoplanetArchive, EarthData, Copernicus Browser, GOES-16;
+Spacecraft: Gunter's Space Page, Encyclopedia Astronautica, Sven's Grahn, JPL
+Photojournal; Study/Research: ResearchRabbit, Inciteful, Publish or Perish, GROBID
+(PDF-Metadaten-Extraktion), OpenRefine, Co-STORM.
+
+## Nächste Messung — der Rest der FMHY-Wiki
+
+Nur vier Anker sind gemessen. Zu vermessen gegen unseren Bedarf (Datenquellen,
+Literatur, Werkzeuge), mit `archive_search --verdict` je Kandidat:
+`misc#satellite-earth-data` (potenziell quellenrelevant), `edu#aerospace-engineering`,
+`ai#machine-learning`, `text-tools#latex-tools`, `text-tools#note-taking` sowie die
+übrigen Wiki-Seiten. Träger: Future (Recherche-Schicht).
+
+## Quellen
+
+- `raw.githubusercontent.com/fmhy/edit/main/docs/ai.md` · `docs/reading.md` ·
+  `docs/educational.md` (measured 2026-10-07 via `curl`)
+- `fmhy.net/ai#specialized-chatbots` Live-Anker (measured 2026-10-07 via `archive_search --playwright`)
+- `elicit.com/pricing` (measured 2026-10-07 via `archive_search --playwright`)
+- `api.alphaxiv.org/mcp/v1` — 401 ohne Auth (measured 2026-10-07); `--alphaxiv` public `2c12d4707`
+- Adoptions- und Riss-Details: `state/future/research-chatbots-2026-10-07.md` (privat)
