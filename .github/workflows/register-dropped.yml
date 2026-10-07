@@ -18,5 +18,12 @@ jobs:
         fetch-depth: 0
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo build --release -p omegaflow-register --bin register_lookup
-    - name: Dropped sweep — full-history measurement
-      run: target/release/register_lookup --dropped
+    - name: Dropped sweep — canonical keys of the un-witnessed drops
+      run: |
+        target/release/register_lookup --dropped-keys | sort -u | tee dropped-keys.txt
+        echo "dropped-keys: $(wc -l < dropped-keys.txt) key(s)"
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dropped-keys
+        path: dropped-keys.txt
+        if-no-files-found: error

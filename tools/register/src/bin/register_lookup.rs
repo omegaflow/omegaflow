@@ -2886,7 +2886,7 @@ fn run_dropped(args: &[String]) {
                 });
             }
         }
-        if !count_only {
+        if !count_only && !keys_only {
             if let Some(last) = list.last() {
                 if let Some(folge) = last.folge {
                     if private_successor_exists_in(PRIVATE_HANDOVER_DIR, line, folge) {

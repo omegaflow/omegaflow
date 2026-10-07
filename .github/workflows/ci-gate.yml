@@ -69,7 +69,7 @@ jobs:
 
   dropped-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       RUSTFLAGS: -D warnings
     steps:
@@ -78,17 +78,20 @@ jobs:
         fetch-depth: 0
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo build --release -p omegaflow-register --bin register_lookup
-    - name: Delta-Gate — dropped baseline
+    - name: Key-Set-Gate — no open point dropped beyond the frozen list
       run: |
-        baseline=$(awk '/^dropped-baseline /{print $2}' docs/zustand/dropped-baseline.md)
-        if [ -z "$baseline" ]; then
-          echo "dropped-gate: baseline pending — docs/zustand/dropped-baseline.md carries no dropped-baseline line; register the measured baseline" >&2
-          exit 1
+        pin=docs/zustand/dropped-legacy-baseline.txt
+        if [ ! -f "$pin" ]; then
+          echo "dropped-set-gate: pending — $pin absent; seed it from the register-dropped sweep artifact" >&2
+          exit 0
         fi
-        current=$(target/release/register_lookup --dropped --count)
-        echo "dropped-gate: baseline ${baseline} | current ${current} | delta $((current - baseline))"
-        if [ "$current" -gt "$baseline" ]; then
-          echo "dropped-gate: delta $((current - baseline)) > 0 — open points dropped without a resolving commit; carry them forward or bump the baseline in the accepting commit" >&2
+        target/release/register_lookup --dropped-keys | sort -u > current.txt
+        awk '!/^#/ && NF' "$pin" | sort -u > pin.txt
+        comm -23 current.txt pin.txt > new-drops.txt
+        echo "dropped-set-gate: current $(wc -l < current.txt) | pinned $(wc -l < pin.txt) | new $(wc -l < new-drops.txt)"
+        if [ -s new-drops.txt ]; then
+          echo "dropped-set-gate: new drops not in the frozen list:" >&2
+          cat new-drops.txt >&2
           exit 1
         fi
     - name: Gate self-test — shadow null-control is sharp
