@@ -8,6 +8,8 @@ pub const C: f64 = crate::archivar::types::C_LIGHT;
 pub const SUN_MU: f64 = 1.32712440018e20;
 pub const EARTH: &str = include_str!("kernels/dsn_host.txt");
 
+pub const DSN_STATION_COORD_SOURCE: &str = "pending";
+
 pub fn dsn_station(id: i64) -> Option<(f64, f64, f64)> {
     match id {
         11 => Some((35.3892806, -116.8561972, 900.0)),
