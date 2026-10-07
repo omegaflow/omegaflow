@@ -190,6 +190,7 @@ pub mod twomass;
 pub mod twomrs;
 pub mod usgs_comcat;
 pub mod viking_text;
+pub mod vlf_awesome;
 pub mod vlies;
 pub mod volume;
 pub mod voyager_merged;
