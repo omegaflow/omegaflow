@@ -528,6 +528,37 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     Some(out)
 }
 
+fn star_bin_mag_key(record: &[u8]) -> Option<f32> {
+    let m = f32::from_le_bytes([record[28], record[29], record[30], record[31]]);
+    if m.is_finite() { Some(m) } else { None }
+}
+
+fn sort_star_bin_by_magnitude(path: &str) {
+    if path.is_empty() {
+        return;
+    }
+    let Ok(bytes) = std::fs::read(path) else {
+        return;
+    };
+    if bytes.is_empty() || bytes.len() % STAR_BIN_STRIDE != 0 {
+        return;
+    }
+    let mut records: Vec<&[u8]> = bytes.chunks_exact(STAR_BIN_STRIDE).collect();
+    records.sort_by(|a, b| match (star_bin_mag_key(a), star_bin_mag_key(b)) {
+        (Some(ma), Some(mb)) => ma.total_cmp(&mb),
+        (Some(_), None) => std::cmp::Ordering::Less,
+        (None, Some(_)) => std::cmp::Ordering::Greater,
+        (None, None) => std::cmp::Ordering::Equal,
+    });
+    let mut out = Vec::with_capacity(bytes.len());
+    for r in &records {
+        out.extend_from_slice(r);
+    }
+    if let Err(err) = std::fs::write(path, &out) {
+        eprintln!("star bin: magnitude sort write {}: {}", path, err);
+    }
+}
+
 fn lattice_rank(rng: &mut u64) -> f64 {
     *rng = rng
         .wrapping_mul(6364136223846793005)
@@ -1702,6 +1733,7 @@ fn main() {
                         }
                     }
                 }
+                sort_star_bin_by_magnitude(&out_path_band);
                 if total > 0 && total % 11 == 0 {
                     match f.set_len(((total - 1) * STAR_BIN_STRIDE) as u64) {
                         Ok(_) => {
