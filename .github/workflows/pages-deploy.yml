@@ -58,7 +58,7 @@ jobs:
           fi
           ls -l "_site/$name"
         }
-        stage ssd.jpl.nasa.gov-gaia dr3_stars.bin 745a3f7167ecaa8a9272651e18b09b4fd683900b8626d61bc08869bfb7781aa0
+        stage ssd.jpl.nasa.gov-gaia dr3_stars.bin 49ea75958f909314d19a661dace13f7cc73dd20866134d917565a8b2378a0a0e
         stage ssd.jpl.nasa.gov-de ephemeris_de440_earth.bin 5554915dc7c2c753b13ede0e478d4fe735023a839620582a3335ef01077ce016
         stage ssd.jpl.nasa.gov-de ephemeris_de440_moon.bin d9b4091731f16912b73c544e95411ec8c99660aa2376c5e8507a71b27b0563a5
         stage ssd.jpl.nasa.gov-de ephemeris_de440_sun.bin 093b3ab5ee368e9b3834fe6520cc9c3ea491f9c30761ce44cf378425df66c226
