@@ -47,6 +47,11 @@ on:
         required: false
         type: boolean
         default: false
+      gpm_ku:
+        description: 'compile the fetched KuPR granule into jaxa_gpm_ku.bin and upload it (implies download+fetch)'
+        required: false
+        type: boolean
+        default: false
   push:
     paths:
       - 'tools/harvest/src/bin/jaxa_gportal_compiler.rs'
@@ -163,3 +168,18 @@ jobs:
                  "jaxa-gportal-cdn: payload upload returned void" \
                  "gh release upload gportal.jaxa.jp returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
+      - name: Compile the fetched KuPR granule into jaxa_gpm_ku.bin
+        if: github.event_name == 'workflow_dispatch' && inputs.fetch && inputs.gpm_ku
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(data/gportal.jaxa.jp/jaxa_gportal_*.bin)
+          [ ${#files[@]} -gt 0 ] \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "jaxa-gportal-cdn: fetched payload returned void" \
+                 "no jaxa_gportal_*.bin to compile. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          cargo run --release -p omegaflow-harvest --bin jaxa_gportal_compiler -- \
+            --granule "${files[0]}" \
+            --bin data/gportal.jaxa.jp/jaxa_gpm_ku.bin \
+            --ci-mode
