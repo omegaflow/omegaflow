@@ -3539,6 +3539,9 @@ fn print_usage() -> ! {
     eprintln!(
         "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
+    eprintln!(
+        "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
+    );
     std::process::exit(2);
 }
 
@@ -3640,6 +3643,291 @@ fn run_addressed(args: &[String]) {
     }
 }
 
+const COMPILER_SUFFIX: &str = "_compiler.rs";
+const WORKFLOWS_DIR: &str = ".github/workflows";
+const BINDINGS_DIR: &str = "phi/bindings";
+const LIVE_HANDOVER_DIR: &str = "docs/handover";
+
+struct CompilerEntry {
+    path: String,
+    binary: String,
+    format: Option<String>,
+    url: Option<String>,
+    anchor: Option<String>,
+    tags: Vec<String>,
+}
+
+struct TreeCompiler {
+    path: String,
+    stem: String,
+}
+
+fn sources_value<'a>(lines: &[(usize, &'a str)], name: &str) -> Option<&'a str> {
+    for (_, line) in lines {
+        let mut fields = line.split_whitespace();
+        if fields.next() == Some(name) {
+            return fields.next();
+        }
+    }
+    None
+}
+
+fn sources_values<'a>(lines: &[(usize, &'a str)], name: &str) -> Vec<&'a str> {
+    let mut out = Vec::new();
+    for (_, line) in lines {
+        let mut fields = line.split_whitespace();
+        if fields.next() == Some(name) {
+            out.extend(fields);
+        }
+    }
+    out
+}
+
+fn compiler_stem(line: &str) -> String {
+    match Path::new(line).file_stem() {
+        Some(stem) => stem.to_string_lossy().to_string(),
+        None => line.to_string(),
+    }
+}
+
+fn sources_compiler_entries(text: &str) -> Vec<CompilerEntry> {
+    let mut out = Vec::new();
+    for (_, lines) in parse_blocks(text) {
+        let compiler = match sources_value(&lines, "compiler") {
+            Some(value) => value,
+            None => continue,
+        };
+        out.push(CompilerEntry {
+            path: compiler.to_string(),
+            binary: compiler_stem(compiler),
+            format: sources_value(&lines, "format").map(|s| s.to_string()),
+            url: sources_value(&lines, "url").map(|s| s.to_string()),
+            anchor: sources_value(&lines, "at").map(|s| s.to_string()),
+            tags: sources_values(&lines, "tags")
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
+        });
+    }
+    out
+}
+
+fn format_domain(format: &str) -> &str {
+    match format.split_once('_') {
+        Some((prefix, _)) if !prefix.is_empty() => prefix,
+        _ => format,
+    }
+}
+
+fn tree_compilers(root: &Path) -> Vec<TreeCompiler> {
+    let mut out = Vec::new();
+    let crates = match fs::read_dir(root.join("tools")) {
+        Ok(entries) => entries,
+        Err(_) => return out,
+    };
+    for crate_entry in crates.flatten() {
+        let bin_dir = crate_entry.path().join("src").join("bin");
+        let files = match fs::read_dir(&bin_dir) {
+            Ok(entries) => entries,
+            Err(_) => continue,
+        };
+        for file in files.flatten() {
+            let name = file.file_name().to_string_lossy().to_string();
+            if !name.ends_with(COMPILER_SUFFIX) {
+                continue;
+            }
+            let path = file.path();
+            let rel = path.strip_prefix(root).unwrap_or(&path);
+            out.push(TreeCompiler {
+                path: rel.to_string_lossy().replace('\\', "/"),
+                stem: name.trim_end_matches(".rs").to_string(),
+            });
+        }
+    }
+    out.sort_by(|a, b| a.path.cmp(&b.path));
+    out
+}
+
+fn compiler_difference<'a>(
+    tree: &'a [TreeCompiler],
+    wired: &BTreeSet<String>,
+) -> Vec<&'a TreeCompiler> {
+    tree.iter().filter(|tc| !wired.contains(&tc.path)).collect()
+}
+
+fn common_prefix_len(a: &str, b: &str) -> usize {
+    a.bytes()
+        .zip(b.bytes())
+        .take_while(|(x, y)| x.eq_ignore_ascii_case(y))
+        .count()
+}
+
+fn wired_variants(stem: &str, wired_stems: &[String]) -> bool {
+    wired_stems
+        .iter()
+        .any(|w| w != stem && common_prefix_len(stem, w) >= 4)
+}
+
+fn workflows_text(root: &Path) -> String {
+    let mut out = String::new();
+    let entries = match fs::read_dir(root.join(WORKFLOWS_DIR)) {
+        Ok(entries) => entries,
+        Err(_) => return out,
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let name = entry.file_name().to_string_lossy().to_string();
+        if !(name.ends_with(".yml") || name.ends_with(".yaml")) {
+            continue;
+        }
+        if let Ok(text) = fs::read_to_string(&path) {
+            out.push_str(&text);
+            out.push('\n');
+        }
+    }
+    out
+}
+
+fn register_anchor(root: &Path, stem: &str) -> Option<String> {
+    let mut files = vec![WITNESSES_PATH.to_string(), FOOTPRINTS_PATH.to_string()];
+    if let Ok(entries) = fs::read_dir(root.join(BINDINGS_DIR)) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name.ends_with(".φ") {
+                files.push(format!("{}/{}", BINDINGS_DIR, name));
+            }
+        }
+    }
+    for file in files {
+        if let Ok(text) = fs::read_to_string(root.join(&file)) {
+            if text.contains(stem) {
+                return Some(file);
+            }
+        }
+    }
+    None
+}
+
+fn handover_mentions(root: &Path, stem: &str) -> bool {
+    let entries = match fs::read_dir(root.join(LIVE_HANDOVER_DIR)) {
+        Ok(entries) => entries,
+        Err(_) => return false,
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            continue;
+        }
+        let name = entry.file_name().to_string_lossy().to_string();
+        if !name.ends_with(".md") {
+            continue;
+        }
+        if let Ok(text) = fs::read_to_string(&path) {
+            if text.contains(stem) {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+fn classify_compiler(
+    has_workflow: bool,
+    register_file: Option<&str>,
+    has_variant: bool,
+    in_handover: bool,
+) -> String {
+    if has_workflow {
+        "workflow".to_string()
+    } else if let Some(file) = register_file {
+        format!("register:{}", file)
+    } else if has_variant {
+        "variant".to_string()
+    } else if in_handover {
+        "pending".to_string()
+    } else {
+        "unregistered".to_string()
+    }
+}
+
+fn run_compilers_no_directive(root: &Path, entries: &[CompilerEntry]) {
+    let wired: BTreeSet<String> = entries.iter().map(|e| e.path.clone()).collect();
+    let wired_stems: Vec<String> = entries.iter().map(|e| e.binary.clone()).collect();
+    let tree = tree_compilers(root);
+    let workflows = workflows_text(root);
+    let difference = compiler_difference(&tree, &wired);
+    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    for tc in &difference {
+        let register = register_anchor(root, &tc.stem);
+        let class = classify_compiler(
+            workflows.contains(&tc.stem),
+            register.as_deref(),
+            wired_variants(&tc.stem, &wired_stems),
+            handover_mentions(root, &tc.stem),
+        );
+        *counts.entry(class.clone()).or_insert(0) += 1;
+        println!("{}\t{}", class, tc.path);
+    }
+    println!(
+        "register_lookup --compilers --no-directive: {} tree compilers, {} wired, {} without directive",
+        tree.len(),
+        wired.len(),
+        difference.len()
+    );
+    for (class, n) in &counts {
+        println!("  {}\t{}", class, n);
+    }
+}
+
+fn run_compilers(args: &[String]) {
+    let root = Path::new(".");
+    let sources = match fs::read_to_string(SOURCES_PATH) {
+        Ok(text) => text,
+        Err(_) => {
+            println!("register_lookup --compilers: {} absent", SOURCES_PATH);
+            return;
+        }
+    };
+    let entries = sources_compiler_entries(&sources);
+    if args.iter().any(|a| a == "--no-directive") {
+        run_compilers_no_directive(root, &entries);
+        return;
+    }
+    let records = parse_blocks(&sources).len();
+    let mut domains: BTreeMap<String, usize> = BTreeMap::new();
+    for entry in &entries {
+        let format = match entry.format.clone() {
+            Some(f) => f,
+            None => "absent".to_string(),
+        };
+        *domains
+            .entry(format_domain(&format).to_string())
+            .or_insert(0) += 1;
+        let url = match entry.url.as_deref() {
+            Some(u) => u,
+            None => "absent",
+        };
+        let anchor = match entry.anchor.as_deref() {
+            Some(a) => a,
+            None => "absent",
+        };
+        println!("{} | {} | {} | at {}", entry.binary, format, url, anchor);
+    }
+    let distinct: BTreeSet<&str> = entries.iter().map(|e| e.binary.as_str()).collect();
+    let tagged = entries.iter().filter(|e| !e.tags.is_empty()).count();
+    println!(
+        "register_lookup --compilers: {} records, {} with compiler, {} distinct binaries, {} tagged, {} domains",
+        records,
+        entries.len(),
+        distinct.len(),
+        tagged,
+        domains.len()
+    );
+    for (domain, n) in &domains {
+        println!("  {}\t{}", domain, n);
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--open") {
@@ -3680,6 +3968,10 @@ fn main() {
     }
     if args.iter().any(|a| a == "--history") {
         run_history(&args);
+        return;
+    }
+    if args.iter().any(|a| a == "--compilers") {
+        run_compilers(&args);
         return;
     }
     let terms: Vec<String> = args
@@ -3724,6 +4016,95 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn compilers_block_parsing_reads_fields() {
+        let text = "\
+url https://example.org/a.bin
+format ephemeris_binary
+origin https://example.org/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at receiver-a
+tags alpha beta
+
+url https://example.org/b.bin
+compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
+";
+        let entries = sources_compiler_entries(text);
+        assert_eq!(entries.len(), 2);
+        assert_eq!(
+            entries[0].path,
+            "tools/harvest/src/bin/ephemeris_compiler.rs"
+        );
+        assert_eq!(entries[0].binary, "ephemeris_compiler");
+        assert_eq!(entries[0].format.as_deref(), Some("ephemeris_binary"));
+        assert_eq!(entries[0].url.as_deref(), Some("https://example.org/a.bin"));
+        assert_eq!(entries[0].anchor.as_deref(), Some("receiver-a"));
+        assert_eq!(
+            entries[0].tags,
+            vec!["alpha".to_string(), "beta".to_string()]
+        );
+        assert_eq!(entries[1].binary, "weberin_verdicts_compiler");
+        assert_eq!(entries[1].format, None);
+        assert_eq!(entries[1].anchor, None);
+    }
+
+    #[test]
+    fn compilers_block_parsing_skips_blocks_without_compiler() {
+        let text =
+            "url https://example.org/a.bin\nat receiver-a\n\nurl https://example.org/b.bin\n";
+        assert!(sources_compiler_entries(text).is_empty());
+    }
+
+    #[test]
+    fn compilers_set_difference_keeps_unwired() {
+        let tree = vec![
+            TreeCompiler {
+                path: "tools/harvest/src/bin/a_compiler.rs".to_string(),
+                stem: "a_compiler".to_string(),
+            },
+            TreeCompiler {
+                path: "tools/harvest/src/bin/b_compiler.rs".to_string(),
+                stem: "b_compiler".to_string(),
+            },
+        ];
+        let wired: BTreeSet<String> = ["tools/harvest/src/bin/a_compiler.rs".to_string()]
+            .into_iter()
+            .collect();
+        let difference = compiler_difference(&tree, &wired);
+        assert_eq!(difference.len(), 1);
+        assert_eq!(difference[0].stem, "b_compiler");
+    }
+
+    #[test]
+    fn compilers_classifier_prefers_stronger_channels() {
+        assert_eq!(
+            classify_compiler(true, Some("phi/witnesses.\u{3c6}"), true, true),
+            "workflow"
+        );
+        assert_eq!(
+            classify_compiler(false, Some("phi/witnesses.\u{3c6}"), true, true),
+            "register:phi/witnesses.\u{3c6}"
+        );
+        assert_eq!(classify_compiler(false, None, true, true), "variant");
+        assert_eq!(classify_compiler(false, None, false, true), "pending");
+        assert_eq!(classify_compiler(false, None, false, false), "unregistered");
+    }
+
+    #[test]
+    fn compilers_variant_uses_common_prefix() {
+        let wired = vec!["goes_xrs_compiler".to_string()];
+        assert!(wired_variants("goes_r_xrs_compiler", &wired));
+        assert!(!wired_variants("auger_compiler", &wired));
+        assert!(!wired_variants("goes_xrs_compiler", &wired));
+    }
+
+    #[test]
+    fn compilers_format_domain_takes_prefix() {
+        assert_eq!(format_domain("ephemeris_binary"), "ephemeris");
+        assert_eq!(format_domain("json"), "json");
+        assert_eq!(format_domain("_leading"), "_leading");
+    }
 
     #[test]
     fn snippet_leaves_short_lines_alone() {
