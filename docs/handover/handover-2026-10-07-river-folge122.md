@@ -3,7 +3,7 @@
   session: River-Folge 122
   class: handover
   date: 2026-10-07
-  sha256: d823cc000a28c03daef5c8a1712792138141ebddd9ecd25210e3e8b03016db13
+  sha256: a1ba54d9bf54ec758b135c52e3ef31708ddf97f8f818cedcf2ae2ef38563275a
   status: live
 -->
 # Handover — River-Folge 122 (2026-10-07)
@@ -20,6 +20,8 @@ Wort | Datum | Quelle
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-07 | Operator (Session, River 122) — Session-Start, Delegations-Consent
 „nutzt du eigentlich für architekturfragen auch immer archive search … mit archive search können wir doch die komplette wissenschafts- und forschungslandschaft befragen" | 2026-10-07 | Operator (Session, River 122) — `archive_search` gehört zur Architektur-Linse (nicht nur die Stimmen)
 „warte du sollst nicht innerhalb des chats umstellen die anderen modelle sind als tabs offen … nutze alle tryingopentabs" | 2026-10-07 | Operator (Session, River 122) — alle tryingopen-Seats je als eigener Tab befragen
+„die schwachen voice stimmen können wir doch nutzen um die wissenschafts- und forschungslandschaft und das internet abzugrasen … das denken überlassen wir den ui chat frontier modellen … befrage nemotron nochmal" | 2026-10-07 | Operator (Session, River 122) — Recherche-Rolle der schwachen Stimmen; Denken bei den UI-Frontier-Modellen
+„gmini ist gerade überlastet wir brauchen zuverlässige schnelle modelle die nicht fabrizieren für die recherche" | 2026-10-07 | Operator (Session, River 122) — Kriterium der Recherche-Rolle (zuverlässig · schnell · nicht fabrizierend)
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-07 | Operator (Session, River 121) — Session-Start
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-07 | Operator (Session, River 120) — Session-Start
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass." | 2026-10-07 | Operator (Session, River 119) — Session-Start
@@ -30,6 +32,10 @@ Wort | Datum | Quelle
 „bitte befrage die vioces und die ui chats" | 2026-10-07 | Operator (Session, River 115) — zweiter Kanal nach dem Rat
 „ich möchte übrigens dass die membran steht bevor wir uns irgendwo bewerben … und sie stehen vor der sonne" | 2026-10-05 | Operator (Future 181, gefaltet) — das Fenster-Wort der Startansicht
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge121.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
+
+## Stimmen-Rolle (gemessen 2026-10-07)
+
+Recherche (Wissenschafts-/Forschungslandschaft, Netz) trägt **`voice-deepseek`** (zuverlässig, nicht fabrizierend, Herkunft offengelegt); **`voice-gemini`** nur mit Verifikationspflicht (eine DOI fehlzu-geordnet, gemessen); **`voice-inkling`/`voice-gptoss`/`voice-nemotron`** tragen die Recherche-Klasse nicht. Denken/Urteil = UI-Frontier-Modelle. Der **Rat** bleibt als Form/Linse (fünf exklusive Perspektiven). Benchmark: `state/benchmark/2026-10-07-recherche-stimmen.md`.
 
 ## Träger (Prosa, eigene)
 
