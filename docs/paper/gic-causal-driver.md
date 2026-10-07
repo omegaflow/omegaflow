@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: e8915d298ada06d7f414a74da37d51191c28fd658c911d9d11eeb43b206663f9
+  sha256: 423cf68869d940e0e60350071a2bfa473b7c66dd4d0833667072a671f8dfa986
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -434,8 +434,32 @@ bound"` (`tools/measure/src/bin/bz_retro_probe.rs:651`) — and emits no per-lag
 `silent` state, so the printed `family bound` certifies only that the value sits
 below the round maximum, never a per-lag clearing. P_dyn is therefore the only
 one of the four whose per-lag excess is uniform across the 15 quarters, and it
-still does not clear `fam`; the family-bound verdict of the hardened quarterly
-round extends to all four derived channels.
+  still does not clear `fam`; the family-bound verdict of the hardened quarterly
+  round extends to all four derived channels.
+
+### 4.7 Sub-daily NUR dB/dt–GIC relation (measured 2026-10-07)
+
+The manifested NUR 10 s asset (`fmi_image_mag_nur.bin`, `phi/sources.φ:18030`)
+carries a 30-day window 2023-12-31…2024-01-30 UTC that does **not** overlap the
+GIC series (`fmi_gic.bin`, 1999-01-01…2023-10-01 UTC). The relation is therefore
+measured on the 2003 Halloween storm, where the IMAGE NUR 10 s series overlaps
+the hourly GIC asset. Reducing both channels to hourly peaks
+(`tools/measure/src/bin/nur_gic_relation_probe.rs`, n = 72 aligned hours across
+2003-10-29…31 UTC) gives a peak hour 2003-10-29T06:00Z with |ΔX/10s| = 240.9
+nT/10s and |I| = 57.05 A, and the empirical relation
+
+|GIC|_hourly = 0.2118·|ΔX/10s|_hourly + 1.755 (A per nT/10s),  Pearson r = 0.9448.
+
+The correlation is high on the storm but is a co-located linear relation, not a
+transfer-entropy arrow. It is a **scalar hourly-peak** reduction — driven by the
+GIC asset carrying hourly peak-magnitude buckets — and therefore is **not** the
+native-grain component regression of the literature: Juusola et al. (2025,
+`10.5194/angeo-43-271-2025`, Eq. 43/Table 1) fit
+a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t over all 10 s points of the same storm
+(CC = 0.80 on a 2-h hold-out; a_x = −1.69, a_y = −2.73, a_z = −0.23 A per
+nT/s), so the 0.80 → 0.945 gap measures the aggregation gain, not a stronger
+coupling. The hourly-peak grain and the single-storm window are named limits,
+and the manifested asset's non-overlapping window is the re-harvest riss.
 
 ## 5. Discussion
 
@@ -614,16 +638,24 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   of 2026-10-07 the NUR 10 s dB/dt series is a manifested CDN asset
   (`fmi_image_mag_nur.bin`, `phi/sources.φ:18030`; 15,551,948 B; sha256
   9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e, reachable
-  HTTP 206, measured 2026-10-07), so the co-located channel is wired; the
-  sub-daily dB/dt–GIC relation itself remains the named measurement below. The
+  HTTP 206, measured 2026-10-07), so the co-located channel is wired. The
+  manifested asset's window is 2023-12-31…2024-01-30 UTC (measured 2026-10-07),
+  which does not overlap the GIC series; the relation is therefore measured on
+  the 2003 Halloween storm (§4.7). The
   source carries its own caveats: the archive is non-uniform (pipeline
   reconfigurations, a 2005 site shift), gap- and spike-laden, with best quality
   1999–April 2005, and daily linear-trend subtraction is recommended. The
-  sub-daily dB/dt–GIC relation is therefore a named pending measurement, not yet
-  run; the empirical linear relation is quantified in Viljanen et al. (2025,
-  `https://doi.org/10.5194/angeo-43-271-2025`, Eq. 43/Table 1). The paper still
-  measures the excitation at ABK/SOD; the GIC-current side at Mäntsälä is now a
-  wired next step.
+  sub-daily dB/dt–GIC relation is measured on that storm as a co-located linear
+  correlation (r = 0.9448, n = 72 aligned hours, §4.7); the component
+  regression is quantified in **Juusola et al. (2025,
+  `https://doi.org/10.5194/angeo-43-271-2025`, Eq. 43/Table 1)** — a
+  3-component least-squares over a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t at
+  native 10 s (a_x = −1.69, a_y = −2.73, a_z = −0.23 A per nT/s; validation
+  CC = 0.80 on a 2-h hold-out), **not** a scalar peak — so §4.7's hourly-peak
+  scalar r is a different reduction and is not directly comparable. The paper
+  still measures the excitation at ABK/SOD; the GIC-current side at Mäntsälä is
+  now a wired next step. *(Citation corrected 2026-10-07: the anchor is Juusola
+  et al., Ann. Geophys. 43, 271–301, 2025 — Viljanen is the fifth author.)*
 - **Minute grain is a single 22-h window.** A storm-ensemble at minute
   resolution would require a minute-resolution retro solar-wind archive,
   which the stack does not carry (RTSW live holds ~1 day; the SWPC mirror
