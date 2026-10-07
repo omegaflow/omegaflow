@@ -38,7 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo run -p omegaflow-harvest --release --bin osha_cehd_compiler -- \
-            --url https://obis.osha.gov/opengov/healthsamples.zip \
+            --url https://www.osha.gov/sites/default/files/healthsamples.zip \
             --gazetteer data/www2.census.gov/zcta_gazetteer.bin \
             --out data/obis.osha.gov/osha_cehd_si.txt --ci-mode
       - name: Verify the registered obis.osha.gov osha_cehd_si asset is manifested
