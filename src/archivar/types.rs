@@ -434,6 +434,7 @@ pub struct SourceConfig {
     pub window: Option<(f64, f64)>,
     pub live_only: bool,
     pub station_code: Option<String>,
+    pub cgm_lat: Option<f64>,
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;
