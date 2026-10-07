@@ -343,6 +343,7 @@ fn main() {
             "--interpro" => mode = Mode::Net("interpro"),
             "--alphafold" => mode = Mode::Net("alphafold"),
             "--alphaxiv" => mode = Mode::Net("alphaxiv"),
+            "--alphaxiv-researchers" => mode = Mode::Net("alphaxiv-researchers"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--kind" => {
@@ -603,7 +604,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -626,6 +627,9 @@ fn usage() {
     eprintln!("  --linkup    Linkup Search API (api.linkup.so), LINKUP_API_KEY; url + title/text");
     eprintln!(
         "  --alphaxiv  alphaXiv MCP discover_papers (api.alphaxiv.org/mcp/v1), ALPHAXIV_API_KEY; url + title/abstract"
+    );
+    eprintln!(
+        "  --alphaxiv-researchers  alphaXiv MCP find_researchers (same endpoint/key); profile url + name/position/citations"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
