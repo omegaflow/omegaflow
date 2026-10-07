@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 8e68be94cbf072ee68a519731f18b2cfca56f6e8cd6f17e6448a9d882bf3af93
+  sha256: 3ad480eab069be70693eead4dadb10cdfe1883bfb2ec894a1d2a224e8b284df6
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -39,12 +39,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 37687765274` → neuen `kc2g_stations.csv`-sha ins Register.
 
-### OSHA-CEHD `obis.osha.gov` — Lauf fehlgeschlagen (Host nicht erreichbar)
-- **Status:** wartend | **Bindung:** eigen (Netz-Route)
-- **Trigger:** Lauf-Ergebnis `37687769047` (attempt 2) · oder Host wieder erreichbar
-- **Lage:** (gemessen 2026-10-07T21:53Z via `ci_manage log 37687769047`) attempt 2 **completed/failure**; gemessener Grund `curl: (28) Failed to connect to obis.osha.gov port 443 after ~271111 ms` — der Runner erreicht den Host nicht (kein Code-Fehler; Reader + Registerblock stehen).
-- **Blockade:** `obis.osha.gov:443` nicht erreichbar (Netz/Geo/Timeout).
-- **Braucht:** Erreichbarkeit messen (`archive_search --verdict https://obis.osha.gov/opengov/healthsamples.zip`) und bei 200 `gh workflow run osha-cehd-cdn.yml` erneut; sonst Route als `blocked ip-blocked`/`geo` registrieren.
+### OSHA-CEHD — Route umgezogen, Fix gebaut + dispatcht (Host `obis.osha.gov` tot)
+- **Status:** wartend | **Bindung:** eigen (Lauf-Ausgang)
+- **Trigger:** Lauf-Ergebnis `37694936132`
+- **Lage:** (gemessen 2026-10-07T22:15Z) `obis.osha.gov` DNS→AWS-ELB (`50.16.104.196`/`44.215.175.245`), TCP 443/80 **timeout** (kein Code; via Wayback CDX bis ~2026-10-05 live). Das vollständige Dataset liegt live unter `https://www.osha.gov/sites/default/files/healthsamples.zip` — HTTP **200**, `application/zip`, **98093905 B**, **nur mit Browser-UA** (ohne UA HTTP 403). Compiler-`ZIP_URL` + UA und Workflow-`--url` umgestellt (`6d75edc2c`), Lauf `37694936132` dispatcht.
+- **Blockade:** keine (die Runner-Erreichbarkeit von `www.osha.gov` misst der Lauf).
+- **Braucht:** `ci_manage view 37694936132` → sha ins Register; die `origin`-Zeile in `phi/sources.φ:26125` steht noch auf `obis.osha.gov` — nachziehen, sobald die Datei frei von Mountains `terms`-Hunks ist.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
