@@ -1,13 +1,7 @@
 use super::*;
 use crate::lsk::days_from_civil;
 
-pub fn ecef_to_geodetic(
-    x: f64,
-    y: f64,
-    z: f64,
-    a: f64,
-    e2: f64,
-) -> Option<(f64, f64, f64)> {
+pub fn ecef_to_geodetic(x: f64, y: f64, z: f64, a: f64, e2: f64) -> Option<(f64, f64, f64)> {
     let b = a * (1.0 - e2).sqrt();
     let ep2 = (a * a - b * b) / (b * b);
     let lon = y.atan2(x);
