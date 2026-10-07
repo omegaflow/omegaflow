@@ -3,7 +3,7 @@
   session: River-Folge 128
   class: handover
   date: 2026-10-07
-  sha256: 924c7b472240e02084d606b4d21428e4b0946d5bed300c9cf34cf7051048ef7b
+  sha256: 48eb87a870f7117499b95dd9ad8011ddeebc6ac6c4172298d1cb481bd7df85af
   status: live
 -->
 # Handover — River-Folge 128 (2026-10-07)
@@ -36,7 +36,7 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md` — see-also auf Archiv-Pfad (`:7` = `docs/handover/archiv/handover-2026-10-07-river-folge122.md`, `33debd1c5`).
 - `docs/paper/gic-causal-driver.md` — NUR-Asset-Fakten §6, §4.7.
 - `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` — Objektophilie-Marker (`:40` = `static/membrane.html:43` `BODIES`) und Manifest-Verdikt (`:113`).
-- `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13), live gestellt 2026-10-07; die Zielgreps als `commit_gate`-Fixtures offen.
+- `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13), live gestellt 2026-10-07; die WP13-Zielgreps sind als `fabrication`-Fixtures gebaut (`src/gate/commit_gate_vocab.json`, Commit `47706add5`).
 
 ## Offen (aufgeschlüsselt)
 
@@ -52,7 +52,7 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-07, River 127, `explore`-Audit + Legacy-Historie) Die Untersuchung existiert: `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13, kompletter Bias-Tilgungsplan; Legacy-Commits `a20e84ad`, `2a19cba7`, `3102bcd9`, `aca23650`, `ac6a5b13`, `74f12f14`, `ffaa1114`). **Gefixt (River 127):** `src/archivar/main_flow.rs:3519,3522` gatete jeden SPK-Kandidaten gegen hartkodiertes `"sun"` (`3e35c44a1`, river 38); jetzt liest der Gate `src.body` (deklarierte `at <body>`-Zeile, `parse.rs:227-233`). **Noch offen — ein unausgeführter Plan:** `src/mathematikerin/media.rs:29-54` Body→Medium-Tabelle, live benutzt in `src/archivar/ephemeris.rs:504` (`medium_params_of(body_name).map_or([0.0; 5], …)`); `BodyProperties` trägt `v_sound`/`v_seismic_p`/… nicht (WP9 ungetan). `src/mathematikerin/shaders.rs:5-15` `PROPAGATION_SPEED`-Konstanten (WP11-Ziel: Absorption im Record). `src/mathematikerin/machines/matrix.rs:786` `23.4392911°` Erd-Schiefe für **jeden** Body. `src/archivar/odp.rs:9 const EARTH` + `rinex.rs:5,58` `6378137.0`/`"earth"` + `nexrad.rs:188 EARTH_RADIUS_KM`. `src/archivar/main_flow.rs:209` `None => 0.0` (body_radius-Fabrication). Geheilt: `frames.rs`-Defaults + Anker-Bypass (`dcc3243f8`, mountain 238).
 - **Blockade:** keine (eigene).
-- **Braucht:** Rat-Verdikt, dann Bau in Atomen: (1) `media.rs`/`shaders.rs`-Konstanten → `BodyProperties` (Legacy WP8/WP9/WP11 + Ephemeriden-stype==2); (2) `matrix.rs` Erd-Obliquität → per-Body-Referenzebene; (3) `odp.rs`/`rinex.rs`/`nexrad.rs`-Erd-Konstanten → Register-Deklaration; (4) `main_flow.rs:209` `None => 0.0` → verweigern. Zielgreps aus Legacy-WP13: `"earth"`=0, `EARTH_RADIUS`=0.
+- **Braucht:** Rat-Verdikt, dann die vier Atome: (1) `media.rs`/`shaders.rs`-Konstanten → `BodyProperties` (Legacy WP8/WP9/WP11 + Ephemeriden-stype==2); (2) `matrix.rs` Erd-Obliquität → per-Body-Referenzebene; (3) `odp.rs`/`rinex.rs`/`nexrad.rs`-Erd-Konstanten → Register-Deklaration; (4) `main_flow.rs:209` `None => 0.0` → verweigern. Die WP13-Zielgreps sind gebaut (`47706add5`: `"earth"`, `EARTH_RADIUS`, `6378137.0`, `6378136.6`, `111319.0`, `0.40909`, `280.460`, `360.985`, `DEMO_KEY`, `V_SOUND_288`, `V_P_GRANITE`, `V_S_GRANITE`, `D_AIR`, `ALPHA_AIR`, `force_constants`); jede Neueinführung greift das `fabrication`-Gate.
 
 ### GIC-Stufe-2 — dB/dt selbst-abgeleitet; der Loader liest jetzt ab
 - **Status:** eigen | **Bindung:** eigen
@@ -102,4 +102,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-07-river-folge128.md` (neu)
 - `docs/handover/archiv/handover-2026-10-07-river-folge127.md` (Move)
 
-## Burn: open 0.0000 · close 0.0352 (line, deepseek-flash, `session_burn`-Aggregat-Delta $0.5654→$0.6006, gemessen) · kein pro/max · Dispatches: keine (eigener Bau: rustfmt-Fix `7e5853864` + `series_dbdt`-Loader-Ableitung `field_te_query.rs`)
+## Burn: open 0.0000 · close 0.1837 · cap 0.20 Grund: Operator-Wort Folgearbeit 2026-10-07 „kümmer dich darum"; line-Aggregat-Delta $0.5654→$0.7491 gemessen, enthält parallele Linien-Anteile · kein pro/max · Dispatches: keine (eigener Bau: rustfmt-Fix `7e5853864` + `series_dbdt`-Loader + WP13-Fixtures `47706add5`)
