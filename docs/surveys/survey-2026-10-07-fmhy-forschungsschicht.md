@@ -2,7 +2,7 @@
   title: FMHY für die Forschungsschicht — Messung 2026-10-07
   class: survey
   date: 2026-10-07
-  sha256: 793e8f81139ed69e9b22f4ea338ea32016826f0e95ed67e631e4e4db278dc873
+  sha256: b784e3b357b855f8da5a006af2cb8dc1e3df7f0d2cb2ceede1e0125914df3ad5
   status: live
   see-also: docs/concepts/tools-map.md state/future/research-chatbots-2026-10-07.md
 -->
@@ -67,10 +67,21 @@ WorldWide Telescope (`worldwidetelescope.org`), In-The-Sky (`in-the-sky.org`). C
 `pending` (keine Stufe antwortet). Nicht-neu: Earthdata/FIRMS/SWPC/Exoplanet Archive/ESAsky/
 NTRS gehalten; Sentinel Hub/CDSE/`api.nasa.gov`/Macrostrat declined/dead.
 
+## Förderung (gemessen 2026-10-07)
+
+FMHY trägt **keine Förder-Informationen**: über alle 30 Wiki-Seiten 0 Treffer für
+`funding`/`fellowship`/`incubator`; `grant`/`sponsor`/`bounty` sind Fehltreffer
+(`Grant Kot`, Adblocker-Prosa, Bug-Bounty-Boards). Nur infrastrukturrelevante
+Free-Tiers (Oracle/IBM Free Tier, Netlify, GitHub Student Pack — keine
+Studenten-Eligibility bei omegaflow) und Bug-Bounty-Boards (Verdienen, keine
+Förderung). Für ein NC/CC-Forschungs-/Kunstprojekt trägt FMHY **keine**
+Fördermöglichkeit; es senkt nur Infrastrukturkosten. Träger: Future (gemessener
+Negativbefund, kein Route-Punkt).
+
 ## Quellen
 
-- `raw.githubusercontent.com/fmhy/edit/main/docs/ai.md` · `docs/reading.md` ·
-  `docs/educational.md` (measured 2026-10-07 via `curl`)
+- `raw.githubusercontent.com/fmhy/edit/main/docs/*.md` — alle 30 Seiten (measured
+  2026-10-07 via GitHub-API + `curl`; Token-Scan funding/fellowship/grant/sponsor/bounty/credits)
 - `fmhy.net/ai#specialized-chatbots` Live-Anker (measured 2026-10-07 via `archive_search --playwright`)
 - `elicit.com/pricing` (measured 2026-10-07 via `archive_search --playwright`)
 - `api.alphaxiv.org/mcp/v1` — 401 ohne Auth (measured 2026-10-07); `--alphaxiv` public `2c12d4707`
