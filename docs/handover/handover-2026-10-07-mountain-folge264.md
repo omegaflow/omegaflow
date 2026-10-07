@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: 3a0185a95d2db6bd05eac8dec0da21517c313bbef76062d94ba7d92782966ef7
+  sha256: 747e46d317d6f49a5c92ea4a8fcc18b3d833d292faa8d9010fb940899ebd1b1b
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -75,6 +75,7 @@ Wort | Datum | Quelle
 „und ihr müsst das auch bei den chat uis berücksichtigen ihr nutzt sonst leider immer standard anstatt max thinkin deep search (falls die frage search erfordert)" — bei UI-Chats vor dem Senden **max thinking / deep search** wählen (Claude Effort „Extra hoch", z.ai Deep Think, Qwen Max+Denken, Duck Begründung+Werkzeuge), nicht Standard | 2026-10-07 | Operator (Session, Mountain 264)
 „nein bei den anderen max deep thinking deep search nur claude extra hoch nicht max" — **die anderen UI-Chats (z.ai/Duck/Qwen): Max Deep-Thinking + Deep-Search; Claude: „Extra hoch", NICHT Max** (Max dauert ewig + Token-Brand) | 2026-10-07 | Operator (Session, Mountain 264)
 „und ihr müsst auch bei jedem modell schauen dass es die stärkste variante ist" — je Stimme die stärkste Züchtlinie/Variante (nicht Flash/Small/mini): Tryingopen-Modellname nach dem Klick gegenlesen; Spektrum: Claude Sonnet 5.5 Extra hoch (nicht Max) · z.ai GLM-5.3 · Duck GPT-6 Luna · Qwen Qwen3.8-Max+Denken; Tryingopen 1 Nemotron 3 Ultra · 2 GLM 5.3 (753B) · 3 Kimi K3 · 5 Muse Glimmer 30B · 6 DeepSeek V4 Pro · 9/15 Inkling (voll) · 10 MiMo V2.6 Pro · 12 GPT-OSS 120B · 14 Qwen3.8 2.4T | 2026-10-07 | Operator (Session, Mountain 264)
+„ich meine insbesondere glm duck und qwen und brauchen wir noch weitere openweight?" — GLM (z.ai): GLM-5.3 + Deep Think + Max (stärkste); Duck: GPT-6 Luna (stärkstes im Angebot); Qwen: Qwen3.8-Max + Denken (stärkste: nicht 3.7-Plus/Omni-Flash). Offene Open-Weight-Kandidaten (nicht im Seat): **MiniMax M3 (427B)**, **Gemma 4 31B** (Google), **Ling 3.0 (124B)**; Empfehlung: MiniMax M3 als distincte 427B-Zuchtlinie ergänzen (Muse Glimmer 30B ist der schwächste Seat), Gemma/Ling optional — je Seat erst nach der Gretchenfrage (Fähigkeit ≥4/4 + gemessenes Tempo) | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
