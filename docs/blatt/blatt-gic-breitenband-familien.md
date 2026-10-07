@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 9f598e5dfae4539c853b6b083ff8449e6bfab7e2d90f280e5c0fb098bb5b04b2
+  sha256: 46121087b7227d07194662117e2b29b0fdd8be355549331fb15470abe7dc1293
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -241,19 +241,22 @@ kein `over family`, `cgm_lat` nie gelesen):
 - **Route B (drei per-Band-`full`-Deskriptoren) verworfen als Träger:** 31·30 + 25·24 +
   98·97 = 11 036 Zellen > der globalen Obergrenze — keine `M_eff`-Reduktion; nur als
   benannte Vergleichsmessung erlaubt, nie als Zerlegung des globalen Ergebnisses.
-- **Gruppierungs-Schlüssel (Riss #2, getragen):** Der Rat (fünf Stimmen) und 3 API-Stimmen
-  setzen **Paar-Band** — eine Zelle `d→t` gehört zu F nur, wenn beide Endpunkte in F liegen;
-  gemischte Endpunkte sind die benannte Familie `cross`, nie still über einen Target-Pool
-  gezogen. deepseek + Claude (Sonnet 5.5) + Kimi K3 widersprechen: **Target-Band**, weil der
-  Treiber Bz ein einzelner globaler, band-degenerierter Treiber ist (Driver-Band undefiniert;
-  das Paar-Band wird erst bei Station→Station eigenständig, wo der force_type wechselt). Beide
-  Linien stehen ungeglättet — Paar-Band ist das volle Objekt, Target-Band seine Projektion bei
-  band-degeneriertem Treiber.
+- **Gruppierungs-Schlüssel (Riss #2, gewichtet):** Der Rat (fünf Stimmen, **deepseek-flash
+  4 low** — schwach) setzt **Paar-Band** — eine Zelle `d→t` gehört zu F nur, wenn beide Endpunkte
+  in F liegen; gemischte Endpunkte sind die benannte Familie `cross`. Die **starken** Modelle
+  (`deepseek` + Claude Sonnet 5.5 + Kimi K3 + Qwen 3.8-Max + GLM 5.3 Deep Think Max + Duck
+  GPT-6 Luna) setzen **Target-Band**: der Treiber Bz ist ein einzelner globaler, band-degenerierter
+  Treiber → Driver-Band undefiniert; das Paar-Band kollabiert auf Target-Band (eigenständig erst
+  bei Station→Station, wo der force_type wechselt). Die Gegenlinie Paar-Band trägt der Rat + die
+  kleinen freien Stimmen (`gptoss`·`inkling`·`nemotron`). **Linien-Verdikt (Operator-Wort 2026-10-07
+  „der rat ist deepseek flash 4 low"): Target-Band** — die Zählung ist nicht das Gewicht; Pair-Band
+  bleibt als Rat-Linie getragen, nicht geglättet.
 - **12-Stimmen-Rat (Operator-Wort 2026-10-07):** Adressierung mit 5 Stimmen + 5 Axiomen +
   5 Achsen an 5 API-`voice-*` + die UI-Chats; **10/10 geantwortet** (gemini·gptoss·
   inkling·nemotron·deepseek + Claude·Kimi·Qwen·GLM + Duck/GPT-6 Luna), einstimmig **Route C**;
-  arena vom Operator fallengelassen. Gruppierungs-Tally: Rat + `gptoss`·`inkling`·`nemotron` =
-  Paar-Band; `gemini` = Driver-Band; `deepseek` + Claude + Kimi + Qwen + GLM + Duck = Target-Band.
+  arena vom Operator fallengelassen. Gruppierungs-Tally (gezählt): Rat + `gptoss`·`inkling`·`nemotron`
+  = Paar-Band; `gemini` = Driver-Band; `deepseek` + Claude + Kimi + Qwen + GLM + Duck = Target-Band —
+  **gewichtet** (nach Modellstärke) trägt **Target-Band**.
   Riss (b): die `M_eff`-Senkung ist abgeleitet, nicht gemessen; gemeinsame
   Surrogat-Ziehungen + α-Aufteilung über 3 Familien nötig; GLM: „gemessener Member-Pool im
   GIC-Sinne = 2 Mitglieder, nicht 154"; Duck: formale Gültigkeit von C bei datenabhängiger
