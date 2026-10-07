@@ -9,7 +9,11 @@
 #                          the six matrix workflows at job-level)
 set -u
 root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
-ensure() { [ -x "$root/target/release/$1" ] || "$root/bin/.tools_ensure" "$1" >/dev/null 2>&1 || true; }
+ensure() { "$root/bin/.tools_ensure" "$1" >/dev/null 2>&1 || true; }
+# The gate binary is refreshed on every commit via .tools_ensure (content-addressed,
+# TTL-gated) — a locally built older binary never hides a healed registry. The old
+# `[ -x ]` guard skipped the refresh and let a stale gate block a legitimate commit
+# (measured 2026-10-07: the healed force-unit baseline).
 run() {
     for b in "$root/target/release/$1" "$root/target/debug/$1"; do
         if [ -x "$b" ]; then
