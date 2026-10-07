@@ -1611,7 +1611,7 @@ field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_roti_20121201.bin
 format cdaweb_roti
 origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/roti15min_jpl/2012/gps_roti15min_jpl_20121201_v01.cdf
-terms unbestimmt
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/cdaweb_roti_compiler.rs
 at earth
 ttl 86400
@@ -1620,7 +1620,7 @@ quantity cdaweb_roti_tecu_min cdaweb_roti_tecu_min inverse-square scale TECU/min
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_tec.bin
 format cdaweb_tec
 origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/
-terms unbestimmt
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/cdaweb_tec_compiler.rs
 at earth
 ttl 86400
@@ -1629,7 +1629,7 @@ field cdaweb_tec_tecu cdaweb_tec_tecu inverse-square em TECU 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/dmsp16_ssj.bin
 format dmsp16_ssj
 origin https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssj/precipitating-electrons-ions/
-terms unbestimmt
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/dmsp16_ssj_compiler.rs
 at earth
 ttl 86400
@@ -1639,7 +1639,7 @@ field dmsp16_ssj_ion_total_energy_flux dmsp16_ssj_ion_total_energy_flux inverse-
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/goes16_mag.bin
 format goes16_mag
 origin https://cdaweb.gsfc.nasa.gov/pub/data/goes/goes16/mag_l2_netcdf/
-terms unbestimmt
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/goes16_mag_compiler.rs
 at earth
 ttl 86400
@@ -1678,7 +1678,7 @@ field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advecti
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/poes19_meped.bin
 format poes19_meped
 origin https://cdaweb.gsfc.nasa.gov/pub/data/noaa/noaa19/sem2_fluxes-2sec/
-terms unbestimmt
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/poes19_meped_compiler.rs
 at earth
 ttl 86400
@@ -1719,7 +1719,7 @@ field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/craam-files-bucket.s3.amazonaws.com/vlf_awesome.csv
 format vlf_awesome
 origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
-terms unbestimmt
+terms PD https://registry.opendata.aws/craam-open-vlf/
 compiler tools/harvest/src/bin/vlf_awesome_compiler.rs
 at earth
 ttl 86400
@@ -3962,7 +3962,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/e
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
-sha256 5554915dc7c2c753b13ede0e478d4fe735023a839620582a3335ef01077ce016
+sha256 8b8998bdad00fe3377dc5e732ba8bdf01618ad62c4bed343cdf2b7b0c27c0e03
 at earth
 ttl 86400
 
@@ -3970,7 +3970,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/e
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
-sha256 d9b4091731f16912b73c544e95411ec8c99660aa2376c5e8507a71b27b0563a5
+sha256 64ad003b75e9133030384fd62798226bca005247af5b736376eb97c75df63732
 at moon
 ttl 86400
 
@@ -3978,7 +3978,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/e
 format ephemeris_de440
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
-sha256 093b3ab5ee368e9b3834fe6520cc9c3ea491f9c30761ce44cf378425df66c226
+sha256 7700832ea5998d22eaf8da873c8b23073cd2447585fcd888a31b81475ef2df76
 at sun
 ttl 86400
 
@@ -4046,7 +4046,7 @@ field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/themis.ssl.berkeley.edu/themis_mag.bin
 format themis_mag
 origin http://themis.ssl.berkeley.edu/data/themis/thg/l2/mag/abk/2026/thg_l2_mag_abk_20260101_v01.cdf
-terms unbestimmt
+terms free-open https://themis.ssl.berkeley.edu/roadrules.shtml
 compiler tools/harvest/src/bin/themis_mag_compiler.rs
 at earth
 ttl 86400

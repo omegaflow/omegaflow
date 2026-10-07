@@ -1,6 +1,8 @@
 const WGS84_A2_KM2: f64 = 40_680_631.6;
 const WGS84_B2_KM2: f64 = 40_408_296.0;
 
+const IGRF_MAX_DEGREE: usize = 13;
+
 fn geodetic_to_geocentric_term() -> f64 {
     1.0 - WGS84_B2_KM2 / WGS84_A2_KM2
 }
@@ -73,7 +75,7 @@ impl IgrfCoeffs {
             return None;
         }
         if date >= last {
-            return Some(row.values[row.values.len() - 1] + (date - last) * row.sv);
+            return Some(row.values[self.epochs.len() - 1] + (date - last) * row.sv);
         }
         let mut i = 0;
         while i + 1 < self.epochs.len() && self.epochs[i + 1] <= date {
@@ -125,6 +127,103 @@ impl IgrfCoeffs {
         let s = lat_c.sin() * pole_lat_c.sin() + lat_c.cos() * pole_lat_c.cos() * dlon.cos();
         Some(s.clamp(-1.0, 1.0).asin().to_degrees())
     }
+
+    pub fn synthesize(
+        &self,
+        date: f64,
+        radius_km: f64,
+        reference_radius_km: f64,
+        colat_deg: f64,
+        lon_deg: f64,
+    ) -> Option<[f64; 3]> {
+        if !radius_km.is_finite() || radius_km <= 0.0 {
+            return None;
+        }
+        if !reference_radius_km.is_finite() || reference_radius_km <= 0.0 {
+            return None;
+        }
+        if !colat_deg.is_finite() || !(0.0..=180.0).contains(&colat_deg) {
+            return None;
+        }
+        if !lon_deg.is_finite() {
+            return None;
+        }
+        let pnm = schmidt_legendre(IGRF_MAX_DEGREE, colat_deg);
+        let theta = colat_deg.to_radians();
+        let costh = theta.cos();
+        let sinth = (1.0 - costh * costh).sqrt();
+        let phi = lon_deg.to_radians();
+        let radius = radius_km / reference_radius_km;
+        let mut b_r = 0.0;
+        let mut b_theta = 0.0;
+        let mut b_phi = 0.0;
+        let mut r_n = radius.powi(-3);
+        for n in 1..=IGRF_MAX_DEGREE {
+            let g = self.coefficient(false, n, 0, date)?;
+            b_r += (n as f64 + 1.0) * pnm[n][0] * r_n * g;
+            b_theta += -pnm[0][n + 1] * r_n * g;
+            for m in 1..=n {
+                let g = self.coefficient(false, n, m, date)?;
+                let h = self.coefficient(true, n, m, date)?;
+                let cmp = (m as f64 * phi).cos();
+                let smp = (m as f64 * phi).sin();
+                let gh = g * cmp + h * smp;
+                b_r += (n as f64 + 1.0) * pnm[n][m] * r_n * gh;
+                b_theta += -pnm[m][n + 1] * r_n * gh;
+                let div_pnm = if sinth == 0.0 {
+                    if costh > 0.0 {
+                        pnm[m][n + 1]
+                    } else {
+                        -pnm[m][n + 1]
+                    }
+                } else {
+                    pnm[n][m] / sinth
+                };
+                b_phi += m as f64 * div_pnm * r_n * (g * smp - h * cmp);
+            }
+            r_n /= radius;
+        }
+        Some([-b_theta, b_phi, -b_r])
+    }
+}
+
+fn schmidt_legendre(nmax: usize, colat_deg: f64) -> Vec<Vec<f64>> {
+    let theta = colat_deg.to_radians();
+    let costh = theta.cos();
+    let sinth = (1.0 - costh * costh).sqrt();
+    let mut pnm = vec![vec![0.0f64; nmax + 2]; nmax + 1];
+    pnm[0][0] = 1.0;
+    pnm[1][1] = sinth;
+    let rootn: Vec<f64> = (0..=(2 * nmax * nmax))
+        .map(|k| (k as f64).sqrt())
+        .collect();
+    for m in 0..nmax {
+        let pnm_tmp = rootn[2 * m + 1] * pnm[m][m];
+        pnm[m + 1][m] = costh * pnm_tmp;
+        if m > 0 {
+            pnm[m + 1][m + 1] = sinth * pnm_tmp / rootn[2 * m + 2];
+        }
+        for n in (m + 2)..=nmax {
+            let d = n * n - m * m;
+            let e = 2 * n - 1;
+            pnm[n][m] =
+                (e as f64 * costh * pnm[n - 1][m] - rootn[d - e] * pnm[n - 2][m]) / rootn[d];
+        }
+    }
+    pnm[0][2] = -pnm[1][1];
+    pnm[1][2] = pnm[1][0];
+    for n in 2..=nmax {
+        pnm[0][n + 1] = -((n * n + n) as f64 / 2.0).sqrt() * pnm[n][1];
+        pnm[1][n + 1] = ((2.0 * (n * n + n) as f64).sqrt() * pnm[n][0]
+            - ((n * n + n - 2) as f64).sqrt() * pnm[n][2])
+            / 2.0;
+        for m in 2..n {
+            pnm[m][n + 1] = 0.5 * (((n + m) * (n - m + 1)) as f64).sqrt() * pnm[n][m - 1]
+                - 0.5 * (((n + m + 1) * (n - m)) as f64).sqrt() * pnm[n][m + 1];
+        }
+        pnm[n][n + 1] = ((2 * n) as f64).sqrt() * pnm[n][n - 1] / 2.0;
+    }
+    pnm
 }
 
 #[cfg(test)]
@@ -173,5 +272,34 @@ h  1  1   5922   5909   5898   5875   5845   5817   5808   5812   5821   5810   
             IgrfCoeffs::parse("g/h n m 1900.0 1905.0 2025-30\ng 1 0 -31543 -31464\n").is_none()
         );
         assert!(IgrfCoeffs::parse("").is_none());
+    }
+
+    const IGRF14_COEFFICIENTS: &str = include_str!("igrf14coeffs.txt");
+
+    fn igrf14() -> IgrfCoeffs {
+        IgrfCoeffs::parse(IGRF14_COEFFICIENTS).expect("the IGRF-14 coefficient table parses")
+    }
+
+    #[test]
+    fn synthesis_matches_pyigrf14_witness_points() {
+        let c = igrf14();
+        let cases: [(f64, f64, f64, f64, [f64; 3]); 3] = [
+            (1900.0, 6300.0, 175.0, -150.0, [-5072.93, 10620.34, -67233.55]),
+            (2020.0, 6700.0, 15.0, 90.0, [3734.07, 1294.17, 50833.13]),
+            (2025.0, 6375.0, 56.0, -3.0, [28927.56, 261.98, 30910.08]),
+        ];
+        for (date, radius, colat, lon, expected) in cases {
+            let xyz = c
+                .synthesize(date, radius, 6371.2, colat, lon)
+                .expect("the IGRF-14 table covers the date");
+            for (k, &e) in expected.iter().enumerate() {
+                let got = xyz[k];
+                let tol = 1e-2 + 1e-2 * e.abs();
+                assert!(
+                    (got - e).abs() <= tol,
+                    "date {date} colat {colat} lon {lon} component {k}: got {got}, witness {e}"
+                );
+            }
+        }
     }
 }

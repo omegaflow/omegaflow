@@ -1439,6 +1439,10 @@ decline catalog
 url https://data.humdata.org/api/
 note HXL/Katalog-Index.
 
+decline registry/katalog
+url https://data.inpe.br/
+note Brazilian VO — Riss: benannter „Astronomy"-VO (Paper 10.1109/eScience.2014.11) ≠ live gemessenes INPE BIG Geodaten-Portal (STAC/GeoTIFF, em), 2026-10-07 200 (192329 B), kein Einzel-Asset. Live BIG eigener Kandidat. Rat 2026-10-07.
+
 decline static-catalog
 url https://data.lsdb.io/
 note LSDB: statische HATS-Katalog-Downloads (Python-Lib), kein Messwert-Stream — Katalog per Force Gate.
@@ -1983,6 +1987,10 @@ note grind: grind_terrapulse_a.φ Host lebt (Browser 2026-09-10), dead war curl-
 decline registry/katalog
 url https://exposome-explorer.iarc.fr/system/downloads/current/environmental_pollutants.csv.zip
 note Exposome-Explorer environmental_pollutants — 313-Zeilen-Chemikalien-Katalog (CAS/SMILES/Masse), keine gemessene Konzentration/Zeitachse; Exposom-Domäne Chemikalien.
+
+decline registry/katalog
+url https://expostats.ca/canjem/
+note CANJEM (Canadian Job-Exposure Matrix, re3data r3d100013957) — Beruf×Zeitfenster-Matrix (258 Agenten, Experten-P/F/I-Schaetzung 1930-2005), kein Messwert/Ort; Bulk nur per Web-App. Exposom-Arbeitsumfeld, analog O*NET 5427.
 
 decline position-only
 url https://eyes.nasa.gov/dsn/data/dsn.json?t=1786939200
@@ -3260,6 +3268,10 @@ decline registry/katalog
 url https://sciencebase.gov/
 note USGS ScienceBase Katalog — Registry ohne Messwert (Force-Gate 2026-09-23).
 
+decline imagery
+url https://sdo.gsfc.nasa.gov/data/dashboard/
+note SDO Dashboard (AIA EUV-Livefeed) — 2026-10-07: 200; JPEG-Produkt, das Bild ist kein Feld (NOAA-ERI-Präzedenz); SPDF deckt Space-Physics, nicht das Dashboard.
+
 decline molecular
 url https://search.rcsb.org/rcsbsearch/v2/query?json=
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
@@ -4079,6 +4091,10 @@ note Global-SO2-Monitoring-Portal: SO2-Saeule (diffusion DU) bei NASA Earthdata 
 decline registry/katalog
 url https://solar-dachs.oca.eu/tap
 note nur meteospace.epn_core (View) — Discovery.
+
+decline registry/katalog
+url https://solarnet.oma.be/
+note SOLARNET VO (Solar-Daten-Broker/Cross-Search, Paper 10.1007/s11207-025-02424-0) — 2026-10-07 API /service/api/svo 200 (6003 B), kein Einzel-Asset; Data-Policy-PDF 206. Rat 2026-10-07.
 
 decline station-registry
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
@@ -5005,6 +5021,10 @@ url https://www.metabolomicsworkbench.org/
 note Metabolomics Workbench — Spektren; 200 (2026-10-03).
 
 decline no-physical-force
+url https://www.microns-explorer.org
+note MICrONS Explorer — Kortex-Rekonstruktion (EM+Ca-Imaging, Neuroglancer/HDF5), CC BY 4.0; kein Feldmedium im 9-Kräfte-Kontrakt; 2026-10-07 HTTP 206. Rat 2026-10-07.
+
+decline no-physical-force
 url https://www.minorplanetcenter.net/cgi-bin/feedback.cgi
 note Support-Portal.
 
@@ -5304,6 +5324,10 @@ decline paleo-catalog
 url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
 note Eisbohrkern-δD (Vostok) — Paläo-Rekonstruktion, positionslos.
 
+decline paleo-catalog
+url https://www.ncei.noaa.gov/pub/data/paleo/treering/reconstructions/higgins2020spczi-pseudo-recons.txt
+note SPCZ-Index (Higgins et al.) — dimensionsloser SLP-Proxy, positionslos (WAIS/EPICA/Vostok-Präzedenz); 2026-10-07 200, 2170897 B, sha256 f18b1088…; NOAA/NCEI public domain. Rat 2026-10-07.
+
 decline no-physical-force
 url https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
 note grind: grind_terrapulse_a.φ
@@ -5427,10 +5451,6 @@ note OMIM — Mendelsche Gene, Registrierung/Subskription; 403 direkt (Wayback, 
 decline registry/katalog
 url https://www.onetcenter.org/dl_files/database/db_29_0_text.zip
 note O*NET-Datenbank — Berufs-Registry (Tasks/Skills), kein Messwert-Feld; Exposom-Domäne Arbeitsumfeld.
-
-decline registry/katalog
-url https://expostats.ca/canjem/
-note CANJEM (Canadian Job-Exposure Matrix, re3data r3d100013957) — Beruf×Zeitfenster-Matrix (258 Agenten, Experten-P/F/I-Schaetzung 1930-2005), kein Messwert/Ort; Bulk nur per Web-App. Exposom-Arbeitsumfeld, analog O*NET 5427.
 
 decline no-physical-force
 url https://www.openicpsr.org
@@ -5723,7 +5743,3 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
-
-decline imagery
-url https://sdo.gsfc.nasa.gov/data/dashboard/
-note SDO Dashboard (AIA EUV-Livefeed) — 2026-10-07: 200; JPEG-Produkt, das Bild ist kein Feld (NOAA-ERI-Präzedenz); SPDF deckt Space-Physics, nicht das Dashboard.
