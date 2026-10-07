@@ -1,0 +1,57 @@
+name: image-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: 'IMAGE archive window start (YYYYMMDD)'
+        required: true
+        type: string
+        default: '20240101'
+      days:
+        description: 'window length in days (max 14400 min per window)'
+        required: false
+        type: string
+        default: '30'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  image:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view space.fmi.fi --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "fmi_image_mag_nur.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset fmi_image_mag_nur.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset fmi_image_mag_nur.bin missing — compiling and manifesting"
+          fi
+      - name: Compile the IMAGE NUR magnetometer dX/dt series and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          cargo run -p omegaflow-harvest --release --bin image_mag_compiler -- \
+            --start "${{ inputs.start }}" \
+            --days "${{ inputs.days }}" \
+            --stations NUR \
+            --sample-rate 10 \
+            --lsk kernels/naif0012.tls \
+            --out-bin fmi_image_mag_nur.bin \
+            --ci-mode
