@@ -1,0 +1,46 @@
+name: swot-l2-lr-ssh-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'granule civil day (YYYY.MM.DD); empty = UTC yesterday'
+        required: false
+        type: string
+        default: ''
+      short-name:
+        description: 'CMR short_name'
+        required: false
+        type: string
+        default: 'SWOT_L2_LR_SSH_UNSMOOTHED_D'
+      limit:
+        description: 'granules to harvest (1..8)'
+        required: false
+        type: string
+        default: '2'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  EARTHDATA_EDL_TOKEN: ${{ secrets.EARTHDATA_EDL_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  swot-l2-lr-ssh:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the SWOT L2 LR SSH series and upload to CDN
+        run: |
+          set -euo pipefail
+          DAY="${{ inputs.day }}"; [ -n "$DAY" ] || DAY="$(date -u -d 'yesterday' +%Y.%m.%d)"
+          LIMIT="${{ inputs.limit }}"; [ -n "$LIMIT" ] || LIMIT="2"
+          cargo run -p omegaflow-harvest --release --bin swot_l2_lr_ssh_compiler -- \
+            --cmr --day "$DAY" --short-name "${{ inputs.short-name }}" --limit "$LIMIT" \
+            --out data/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin \
+            --ci-mode

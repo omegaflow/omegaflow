@@ -1,0 +1,53 @@
+name: toar-surface-o3-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      start-id:
+        description: 'first TOAR timeseries id'
+        required: false
+        type: string
+        default: '1000'
+      end-id:
+        description: 'last TOAR timeseries id'
+        required: false
+        type: string
+        default: '2000'
+      max-timeseries:
+        description: 'cap on timeseries harvested (empty = no cap)'
+        required: false
+        type: string
+        default: ''
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  toar-surface-o3:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the TOAR surface-O3 series and upload to CDN
+        run: |
+          set -euo pipefail
+          START="${{ inputs.start-id }}"; [ -n "$START" ] || START="1000"
+          END="${{ inputs.end-id }}"; [ -n "$END" ] || END="2000"
+          MAX="${{ inputs.max-timeseries }}"
+          if [ -n "$MAX" ]; then
+            cargo run -p omegaflow-harvest --release --bin toar_timeseries_compiler -- \
+              --out-bin data/toar-data.fz-juelich.de/toar_surface_o3.bin \
+              --start-id "$START" --end-id "$END" --max-timeseries "$MAX" \
+              --ci-mode
+          else
+            cargo run -p omegaflow-harvest --release --bin toar_timeseries_compiler -- \
+              --out-bin data/toar-data.fz-juelich.de/toar_surface_o3.bin \
+              --start-id "$START" --end-id "$END" \
+              --ci-mode
+          fi
