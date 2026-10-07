@@ -1,0 +1,50 @@
+# dropped-roster-Baseline — lebende Offen-Schlüssel (canonical_point_key)
+# Erzeugt 2026-10-07 (Mycelium-259) via `register_lookup --dropped-roster` am HEAD f10316975.
+# Das Gate vergleicht künftig `register_lookup --dropped-roster --baseline docs/zustand/dropped-roster-baseline.txt --count`
+# (LOST = Schlüssel der Baseline, der in keiner lebenden Übergabe mehr steht; NEW = neuer Schlüssel).
+# Der Skalar in dropped-baseline.md bleibt daneben bestehen; diese Datei ist der Roster-Träger.
+--addressed --fired --stale -fallback 0 0000 03z 08 1 12 122 1500 154 157 16 19 1h 1m 2 20 20-stimmen-rat 200 2019 2026-10-07 259 3 37591243668 37591243715 5 6 9 ab abk add ai als am an antworten api- archive auf auswahl-leckage bau baum be beschnitten bgs-quasi-dipole blatt block burn bzw c c164ba54b cap cargo cgm chat check ci ci-gate claude clean close cluster-depth-tests cpl cross-line-punkte d824e8d04 darum db deckt deepseek-flash den der die draws drift dt-einträge dt-member-serien duck eigene eigener eigenes em-apertur erster fenster-edit fenster-edits fired fmt fremdem für gefaltet gemeinsamen gemessen getragen gic-cgm-lat gic-familien-pool gic-stufe glm globalaussage greater grund grüner head http hunk im in katalog kein kirkley lat latitude lauf liegt line-session list lizenz-leads low-lat lvl manage max-dispatch mehrheit membran-risse methode mimo mit mountain mountain-259 mountains must mycelium nachgeholt nachgeliefert nicht nichts nur ohne omniweb-vitmo-cgm-endpunkt open operator-kritik operator-wort ozzy partition pass per-station-db phi points pool poolen pro punkte qd queued qwen rat register register-coverage register-drift-check repro risse river romano-wolf-stepdown rs runge schon schritte search send sind so sod sonne-anker sources stars state stimmen supermag target-band-pool te-finite-data than tragen tryingopen-seats tsv ttb ui-chats uncommittetem ungedeckt ungemessen unvollständiger v2 viel vlies-alignment voice- voice-nemotron vollen vs war wartet weist wy-max-t xyz-werte zu zwei zweiter über šidák α φ
+-direktive receiver-apertur span
+-repo -zeilen an ask deinem generiertes hängt im in kein license liegt mountains neuer omegaflow sources terms
+-repo generiertes im license omegaflow sources
+-riss 1 am gov license obis osha register-zeile
+-riss 1 einheiten- force- osha-cehd register-zeile
+-treiber aligned als dt dφ newell omni primär-arm rect
+-zeilen a aus dem lizenz-census river-census terms
+1 concepts docs glossar md sensory
+11 bit compiler de gm maske membran-sonne-anker
+15 a admission der g gic-faden-wunschliste neuen
+154 dt-netz gic-familien-vorbedingung per-station-db
+2 auf c db dt-bestand familien-kanal-listen gebaut generator gic-familien rat-verdikt route stufe stufe-2-pool wartet
+2026-10-05 auf authorized eeg gesendet key keys nedc-genehmigung public tuh wartet
+2026-12-02 4 blatt blatt-thuan-fragesteller docs md
+41 archivar ble ble-hr-reader external-state gebaut md rs src std-only
+47 58 a b baseline bleiben einheiten-kontrakt force- klasse
+a compiler g gic-faden harvest je kanal parser-arm steht
+a exposom-matrix je klasse register-zeilen
+admission cdaweb-anonymkanäle
+alignment compiler-arm format- full gic matrix s vlies-
+alignment full matrix vlies-
+alle für radiatoren receiver-apertur sub-pixel
+aperturen ci-verifikation gebaut membran-startansicht parity-fix zwei
+aufgeschlüsselt
+baseline-zahl carrier-architektur dropped-gate nicht register
+blatt-slot cgm-provenienz-riss deskriptoren gic-breitenband-familien
+c helligkeit laden membran nach ordnen progressives sternkatalog
+carrier china lz473049629cn ox64-m2c pine64 post
+cdr eionet kraft-verdikt manifestation transportzeilen
+cdr eionet register-block serien-zulassung
+ci-verifikation cpu-floor engine fuzzy gebaut gpu-wire negative ozzy
+de441 de442-anker ohne sha256
+def flyby-kette juice-recon kp omni2
+descoped fehlt hipaa nsrr
+dort nicht register state vorzulegen wahrheit zustand φ
+drift-tor gate-verdrahtung gebaut generator lizenz-census
+dropped-gate gate gebaut roster-emission
+eeg-portale frage future keine träger
+eigen
+em-apertur kanal-identität kernel-proxy statt
+esa europa-clipper flyby
+für geomag igrf-koeffizienten-arm lat
+generation kein merge register-blöcke riss tote ungepoolte
+harvest-weg ieeg konto live mycelium org rest signierter

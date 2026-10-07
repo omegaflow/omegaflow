@@ -2893,6 +2893,12 @@ fn canonical_open_point_keys(text: &str) -> BTreeSet<String> {
     keys
 }
 
+fn roster_diff(baseline: &BTreeSet<String>, keys: &BTreeSet<String>) -> (Vec<String>, Vec<String>) {
+    let lost = baseline.difference(keys).cloned().collect();
+    let new = keys.difference(baseline).cloned().collect();
+    (lost, new)
+}
+
 fn run_dropped_roster(args: &[String]) {
     let count_only = count_flag(args);
     let mut keys: BTreeSet<String> = BTreeSet::new();
@@ -2916,6 +2922,36 @@ fn run_dropped_roster(args: &[String]) {
             keys.extend(canonical_open_point_keys(&text));
         }
     }
+
+    let baseline_path = mode_line_filter(args, "--baseline");
+    if let Some(path) = baseline_path {
+        let text = match fs::read_to_string(path) {
+            Ok(text) => text,
+            Err(_) => {
+                eprintln!("register_lookup --dropped-roster: baseline {path} absent");
+                return;
+            }
+        };
+        let baseline: BTreeSet<String> = text
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty() && !line.starts_with('#'))
+            .map(str::to_string)
+            .collect();
+        let (lost, new) = roster_diff(&baseline, &keys);
+        if count_only {
+            println!("{}", lost.len());
+            return;
+        }
+        for key in &lost {
+            println!("LOST {key}");
+        }
+        for key in &new {
+            println!("NEW {key}");
+        }
+        return;
+    }
+
     if count_only {
         println!("{}", keys.len());
         return;
@@ -4876,5 +4912,15 @@ mod tests {
         assert_eq!(keys.len(), 2);
         assert!(keys.contains("bauen breitenband deskriptoren gic"));
         assert!(keys.contains("coverage-begleiter"));
+    }
+
+    #[test]
+    fn roster_diff_names_lost_and_new_keys() {
+        let baseline: BTreeSet<String> =
+            ["a b".to_string(), "c d".to_string()].into_iter().collect();
+        let keys: BTreeSet<String> = ["c d".to_string(), "e f".to_string()].into_iter().collect();
+        let (lost, new) = roster_diff(&baseline, &keys);
+        assert_eq!(lost, vec!["a b".to_string()]);
+        assert_eq!(new, vec!["e f".to_string()]);
     }
 }
