@@ -1443,6 +1443,10 @@ decline registry/katalog
 url https://data.inpe.br/
 note Brazilian VO — Riss: benannter „Astronomy"-VO (Paper 10.1109/eScience.2014.11) ≠ live gemessenes INPE BIG Geodaten-Portal (STAC/GeoTIFF, em), 2026-10-07 200 (192329 B), kein Einzel-Asset. Live BIG eigener Kandidat. Rat 2026-10-07.
 
+decline registry/katalog
+url https://data.inpe.br/big/
+note INPE BIG (Banco de Informações Georreferenciadas) — Geodaten-Portal/SPA (STAC/GeoTIFF, em), 2026-10-07 HTTP 200 (192329 B), kein Einzel-Asset; Rat 2026-10-07 decline registry/katalog (Riss benannter „Astronomy"-VO ≠ live BIG).
+
 decline static-catalog
 url https://data.lsdb.io/
 note LSDB: statische HATS-Katalog-Downloads (Python-Lib), kein Messwert-Stream — Katalog per Force Gate.

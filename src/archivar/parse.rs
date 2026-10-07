@@ -57,6 +57,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_post_body: Option<String> = None;
     let mut cur_origin: Option<String> = None;
     let mut cur_terms: Option<String> = None;
+    let mut cur_rights_identifier: Option<String> = None;
+    let mut cur_rights_scheme: Option<String> = None;
+    let mut cur_rights_uri: Option<String> = None;
 
     let mut cur_stations_url: Option<String> = None;
     let mut cur_stations_path = String::from("stations");
@@ -111,6 +114,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             target: cur_target.clone(),
                             origin: cur_origin.clone(),
                             terms: cur_terms.clone(),
+                            rights_identifier: cur_rights_identifier.clone(),
+                            rights_scheme: cur_rights_scheme.clone(),
+                            rights_uri: cur_rights_uri.clone(),
                             catalog: cur_catalog.clone(),
                             range: cur_range,
                             max_freq: cur_max_freq,
@@ -172,6 +178,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_post_body = None;
                 cur_origin = None;
                 cur_terms = None;
+                cur_rights_identifier = None;
+                cur_rights_scheme = None;
+                cur_rights_uri = None;
                 cur_stations_url = None;
                 cur_stations_path = String::from("stations");
                 cur_stations_lat = String::from("lat");
@@ -212,6 +221,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 } else {
                     Some(rest.to_string())
                 };
+            }
+            "rights" => {
+                cur_rights_identifier = parts.get(1).map(|s| s.to_string());
+                cur_rights_scheme = parts.get(2).map(|s| s.to_string());
+                cur_rights_uri = parts.get(3).map(|s| s.to_string());
             }
             "ttl" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<u64>() {
@@ -1927,6 +1941,9 @@ mod tests {
             url: url.into(),
             origin: None,
             terms: None,
+            rights_identifier: None,
+            rights_scheme: None,
+            rights_uri: None,
             frame: Frame::Manifest,
             format: format.into(),
             extracts: Vec::new(),
@@ -2021,6 +2038,31 @@ mod tests {
             "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nspan -5.0\n",
         );
         assert_eq!(negative[0].span, None);
+    }
+
+    #[test]
+    fn rights_triple_is_carried_and_absent_without_directive() {
+        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights CC-BY-4.0 SPDX https://spdx.org/licenses/CC-BY-4.0.html\n";
+        let with = parse_sources(declared);
+        assert_eq!(with[0].rights_identifier.as_deref(), Some("CC-BY-4.0"));
+        assert_eq!(with[0].rights_scheme.as_deref(), Some("SPDX"));
+        assert_eq!(
+            with[0].rights_uri.as_deref(),
+            Some("https://spdx.org/licenses/CC-BY-4.0.html")
+        );
+
+        let absent =
+            parse_sources("url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n");
+        assert_eq!(absent[0].rights_identifier, None);
+        assert_eq!(absent[0].rights_scheme, None);
+        assert_eq!(absent[0].rights_uri, None);
+
+        let partial = parse_sources(
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights NONE\n",
+        );
+        assert_eq!(partial[0].rights_identifier.as_deref(), Some("NONE"));
+        assert_eq!(partial[0].rights_scheme, None);
+        assert_eq!(partial[0].rights_uri, None);
     }
 
     #[test]
