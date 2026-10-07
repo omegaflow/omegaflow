@@ -4,7 +4,7 @@
   date: 2026-10-05
   sha256: fd354d4064ce380044be458591e060d00721f37f52aa32999e50ae9445c9d35c
   status: live
-  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/handover-2026-10-05-sensory-folge232.md
+  see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/archiv/handover-2026-10-05-sensory-folge232.md
 -->
 ## Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
 
