@@ -2804,6 +2804,7 @@ fn run_dropped(args: &[String]) {
     let filter = dropped_line_filter(args).map(canonical_line);
     let threshold = persist_threshold(args);
     let count_only = count_flag(args);
+    let keys_only = args.iter().any(|a| a == "--dropped-keys");
     let handovers = collect_handovers();
     let (live_by_line, live_docs) = dropped_live_carriers();
     let mut pairs = 0usize;
@@ -2920,6 +2921,14 @@ fn run_dropped(args: &[String]) {
                 "pending"
             }
         };
+        if keys_only {
+            if p.token.is_some() && git_status != "resolved" {
+                if let Some(key) = canonical_point_key(&p.text) {
+                    println!("{}", key);
+                }
+            }
+            continue;
+        }
         if !count_only {
             println!(
                 "DROPPED\t{}\t{}:{}\t{}\t{}\tpersist {}\tgit: {}",
@@ -2932,6 +2941,9 @@ fn run_dropped(args: &[String]) {
                 git_status
             );
         }
+    }
+    if keys_only {
+        return;
     }
     if count_only {
         println!("{}", dropped - resolved - pending);
@@ -3537,7 +3549,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
