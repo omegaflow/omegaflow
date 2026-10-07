@@ -325,6 +325,8 @@ pub const PRESENCE_FLAG_PHASE: f64 = 1.0;
 pub const PRESENCE_FLAG_ABSORPTION: f64 = 2.0;
 pub const PRESENCE_FLAG_ADVECTION: f64 = 4.0;
 pub const PRESENCE_FLAG_FLUX: f64 = 8.0;
+pub const PRESENCE_FLAG_QUANTITY: f64 = 16.0;
+pub const FORCE_TYPE_QUANTITY: u8 = 255;
 
 impl FieldConfig {
     pub fn absorption_measured(&self) -> Option<f64> {

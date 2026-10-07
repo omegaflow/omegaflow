@@ -15,6 +15,40 @@ pub fn force_id_of(name: &str) -> Option<u8> {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum QuantityKind {
+    Mass = 0,
+    Energy = 1,
+    Area = 2,
+    Scale = 3,
+    Intensity = 4,
+}
+
+pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
+    match name {
+        "mass" => Some(QuantityKind::Mass),
+        "energy" => Some(QuantityKind::Energy),
+        "area" => Some(QuantityKind::Area),
+        "scale" => Some(QuantityKind::Scale),
+        "intensity" => Some(QuantityKind::Intensity),
+        _ => None,
+    }
+}
+
+pub fn quantity_kind_name(kind: QuantityKind) -> &'static str {
+    match kind {
+        QuantityKind::Mass => "mass",
+        QuantityKind::Energy => "energy",
+        QuantityKind::Area => "area",
+        QuantityKind::Scale => "scale",
+        QuantityKind::Intensity => "intensity",
+    }
+}
+
+pub fn quantity_kind_id(kind: QuantityKind) -> u8 {
+    kind as u8
+}
+
 pub fn force_name_of(id: u8) -> Option<&'static str> {
     match id {
         0 => Some("em"),

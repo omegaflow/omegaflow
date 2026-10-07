@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-09-16
-  sha256: 6e248cd05ce40856ef815abdd2936eca6008f28257b43ae1fb5b4ef643d1b405
+  sha256: 0887c86e89aef4b718832bd9cdd2f659bfd370c3cfffd1ecb0d327e88d92de88
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
@@ -60,7 +60,7 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 
 - **Field ordering in the 96-byte GPU float pack** — the order must match the DataView parse function in `constants.js` exactly.
 - **WGSL field access alignment** — `field[id*3].w` must be `val`, `field[id*3+1].x` must be `t`, `field[id*3+1].z` must be `force_type`, `field[id*3+1].w` must be `absorption`, `field[id*3+2].x` must be `advection`, `props[id*4].z` must be `kernel_id`, `props[id*4+1].w` must be `j2`, `props[id*4+2].x` must be `j4`, `props[id*4+2].y` must be `r_eq`, `props[id*4+2].w` must be `freq`, `props[id*4+3].x` must be `bin_width`, `props[id*4+3].y` must be `phase`, `props[id*4+3].z` must be `presence`.
-- **Force type constants** — Rust labels forces 0–9; the WGSL `force_type` switch in the fragment shader must have a branch for every force type used in `phi/sources.φ`.
+- **Force type constants** — Rust labels forces 0–9; the WGSL `force_type` switch in the fragment shader must have a branch for every force type used in `phi/sources.φ`. Since 2026-10-07 a parallel `quantity` directive (`quantity <name> <key> <kernel> <kind> <unit> <tau> <absorption> <advection>`, kinds `mass`/`energy`/`area`/`scale`/`intensity`) carries non-force quantities outside Ω: its samples set `force_type = 255` (`FORCE_TYPE_QUANTITY`) and the `presence` bit `PRESENCE_FLAG_QUANTITY = 16.0`; they load and manifest but never enter Σω (`src/mathematikerin/shaders.rs` gates on `f < 9u` and on the bit), so the `force_type` switch gains no case — the two registries (`force_id_of` and `quantity_kind_of`) are disjoint and closed.
 - **`phi/sources.φ` parsing correctness** — column name mapping, cmap path resolution, motion law computation (Surface/Barycenter/Linear), force/tau/key propagation. `cargo check` verifies the parser compiles, not that it produces correct samples.
 - **Enclosure Lemma correctness** — the search radius dilation formula, propagation to common epoch, exact filter. Pure mathematics with no type-level guard.
 - **Chebyshev ephemeris evaluation** — polynomial coefficient loading, degree matching (`CHEBYSHEV_N`), granule window coverage, rotation matrix time-derivative interpolation.
