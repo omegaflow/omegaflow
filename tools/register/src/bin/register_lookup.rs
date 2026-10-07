@@ -3946,7 +3946,7 @@ fn main() {
         run_open();
         return;
     }
-    if args.iter().any(|a| a == "--dropped") {
+    if args.iter().any(|a| a == "--dropped" || a == "--dropped-keys") {
         run_dropped(&args);
         return;
     }
