@@ -561,6 +561,274 @@ pub fn alphaxiv_researchers_lines(query: &str, key: &str, max: usize) -> Vec<Str
     out
 }
 
+const WRITE_TOOLS: [&str; 9] = [
+    "follow_researcher",
+    "unfollow_researcher",
+    "save_papers_to_folder",
+    "remove_papers_from_folder",
+    "move_papers_between_folders",
+    "create_folder",
+    "rename_folder",
+    "delete_folder",
+    "edit_private_paper_metadata",
+];
+
+fn handshake(key: &str) -> Result<Option<String>, Vec<String>> {
+    if key.is_empty() {
+        return Err(vec![
+            "pending — ALPHAXIV_API_KEY absent from .secrets.local/.env".to_string(),
+        ]);
+    }
+    let init = "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"archive_search\",\"version\":\"1\"}}}";
+    let Some(init_resp) = call(init, key, None) else {
+        return Err(vec!["pending — no network".to_string()]);
+    };
+    if !init_resp.status.starts_with('2') {
+        let detail = flat(&init_resp.body);
+        return Err(vec![format!(
+            "pending — alphaxiv initialize HTTP {}: {}",
+            init_resp.status,
+            truncate(&detail, 300)
+        )]);
+    }
+    for p in &payloads(&init_resp.body) {
+        if let Some(err) = error_text(p) {
+            return Err(vec![format!("alphaxiv error: {}", flat(&err))]);
+        }
+    }
+    let session = init_resp.session;
+    let note = "{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}";
+    let _ = call(note, key, session.as_deref());
+    Ok(session)
+}
+
+fn text_content_lines(v: &Json, out: &mut Vec<String>, max: usize) {
+    if out.len() >= max {
+        return;
+    }
+    match v {
+        Json::Arr(items) => {
+            for item in items {
+                if out.len() >= max {
+                    break;
+                }
+                text_content_lines(item, out, max);
+            }
+        }
+        Json::Obj(_) => {
+            if let Some(t) = v.get("text").and_then(Json::as_str) {
+                for line in t.lines() {
+                    if out.len() >= max {
+                        break;
+                    }
+                    let l = line.trim();
+                    if !l.is_empty() {
+                        out.push(truncate(&flat(l), 300));
+                    }
+                }
+                return;
+            }
+            for key in [
+                "content",
+                "result",
+                "data",
+                "items",
+                "papers",
+                "researchers",
+                "folders",
+                "tools",
+            ] {
+                if let Some(child) = v.get(key) {
+                    text_content_lines(child, out, max);
+                    if out.len() >= max {
+                        return;
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
+fn annotation_flag(t: &Json) -> &'static str {
+    let Some(a) = t.get("annotations") else {
+        return "read";
+    };
+    let destructive = matches!(a.get("destructiveHint"), Some(Json::Bool(true)));
+    if destructive {
+        return "destructive";
+    }
+    match a.get("readOnlyHint") {
+        Some(Json::Bool(true)) => "read",
+        Some(Json::Bool(false)) => "write",
+        _ => "read",
+    }
+}
+
+fn tools_list(key: &str, session: Option<&str>) -> Vec<(String, &'static str)> {
+    let body = "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\"}";
+    let Some(resp) = call(body, key, session) else {
+        return Vec::new();
+    };
+    if !resp.status.starts_with('2') {
+        return Vec::new();
+    }
+    let mut out = Vec::new();
+    for p in &payloads(&resp.body) {
+        if let Some(tools) = p
+            .get("result")
+            .and_then(|r| r.get("tools"))
+            .and_then(Json::as_arr)
+        {
+            for t in tools {
+                let name = t.get("name").and_then(Json::as_str).unwrap_or("");
+                if !name.is_empty() {
+                    out.push((name.to_string(), annotation_flag(t)));
+                }
+            }
+        }
+    }
+    out
+}
+
+pub fn alphaxiv_tools_lines(key: &str) -> Vec<String> {
+    let session = match handshake(key) {
+        Ok(s) => s,
+        Err(e) => return e,
+    };
+    let body = "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\"}";
+    let Some(resp) = call(body, key, session.as_deref()) else {
+        return vec!["pending — no network".to_string()];
+    };
+    if !resp.status.starts_with('2') {
+        let detail = flat(&resp.body);
+        return vec![format!(
+            "pending — alphaxiv tools/list HTTP {}: {}",
+            resp.status,
+            truncate(&detail, 300)
+        )];
+    }
+    let parsed = payloads(&resp.body);
+    for p in &parsed {
+        if let Some(err) = error_text(p) {
+            return vec![format!("alphaxiv error: {}", flat(&err))];
+        }
+    }
+    let mut out = Vec::new();
+    for p in &parsed {
+        if let Some(tools) = p
+            .get("result")
+            .and_then(|r| r.get("tools"))
+            .and_then(Json::as_arr)
+        {
+            for t in tools {
+                let name = t.get("name").and_then(Json::as_str).unwrap_or("");
+                if name.is_empty() {
+                    continue;
+                }
+                out.push(format!("{} | {}", name, annotation_flag(t)));
+            }
+        }
+    }
+    if out.is_empty() {
+        let raw = flat(&resp.body);
+        return vec![format!(
+            "pending — the alphaxiv tools/list carried no tool: {}",
+            truncate(&raw, 400)
+        )];
+    }
+    out
+}
+
+pub fn alphaxiv_call_lines(spec: &str, key: &str, max: usize) -> Vec<String> {
+    let (tool, args) = match spec.split_once(char::is_whitespace) {
+        Some((t, a)) => (t.trim(), a.trim()),
+        None => (spec.trim(), ""),
+    };
+    if tool.is_empty() {
+        return vec![
+            "pending — --alphaxiv-call carries no tool name (form: --alphaxiv-call <tool> '<json-arguments>')"
+                .to_string(),
+        ];
+    }
+    if WRITE_TOOLS.contains(&tool) {
+        return vec![format!(
+            "refused — '{tool}' writes at alphaXiv; archive_search is read-only (a write is a per-act operator act)"
+        )];
+    }
+    let session = match handshake(key) {
+        Ok(s) => s,
+        Err(e) => return e,
+    };
+    let tool_list = tools_list(key, session.as_deref());
+    if !tool_list.is_empty() {
+        match tool_list.iter().find(|(n, _)| n.as_str() == tool) {
+            Some((_, "read")) => {}
+            Some((_, flag)) => {
+                return vec![format!(
+                    "refused — '{tool}' is {flag} at alphaXiv; archive_search is read-only (a write is a per-act operator act)"
+                )];
+            }
+            None => {
+                return vec![format!(
+                    "pending — '{tool}' is not an alphaXiv MCP tool (see --alphaxiv-tools)"
+                )];
+            }
+        }
+    }
+    let args = if args.is_empty() { "{}" } else { args };
+    let body = format!(
+        "{{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{{\"name\":\"{}\",\"arguments\":{}}}}}",
+        json_escape(tool),
+        args
+    );
+    let Some(resp) = call(&body, key, session.as_deref()) else {
+        return vec!["pending — no network".to_string()];
+    };
+    if !resp.status.starts_with('2') {
+        let detail = flat(&resp.body);
+        return vec![format!(
+            "pending — alphaxiv HTTP {}: {}",
+            resp.status,
+            truncate(&detail, 300)
+        )];
+    }
+    let parsed = payloads(&resp.body);
+    for p in &parsed {
+        if let Some(err) = error_text(p) {
+            return vec![format!("alphaxiv error: {}", flat(&err))];
+        }
+    }
+    let mut out = Vec::new();
+    for p in &parsed {
+        if let Some(result) = p.get("result") {
+            collect(result, &mut out, max);
+        }
+        if out.len() >= max {
+            break;
+        }
+    }
+    if out.is_empty() {
+        for p in &parsed {
+            if let Some(result) = p.get("result") {
+                text_content_lines(result, &mut out, max);
+            }
+            if out.len() >= max {
+                break;
+            }
+        }
+    }
+    if out.is_empty() {
+        let raw = flat(&resp.body);
+        return vec![format!(
+            "pending — the alphaxiv call carries no parseable text: {}",
+            truncate(&raw, 400)
+        )];
+    }
+    out.truncate(max);
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -680,5 +948,30 @@ mod tests {
         assert_eq!(lines.len(), 1);
         assert!(lines[0].starts_with("https://www.alphaxiv.org/@jane-doe | "));
         assert!(lines[0].contains("Jane Doe (ETH Zurich)"));
+    }
+
+    #[test]
+    fn alphaxiv_call_refuses_write_tools() {
+        let lines = alphaxiv_call_lines("follow_researcher {\"slug\":\"x\"}", "", 5);
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("refused — 'follow_researcher'"));
+    }
+
+    #[test]
+    fn alphaxiv_call_without_a_tool_names_the_form() {
+        let lines = alphaxiv_call_lines("", "", 5);
+        assert!(lines[0].starts_with("pending — --alphaxiv-call carries no tool name"));
+    }
+
+    #[test]
+    fn annotation_flag_reads_hints() {
+        let read = json::parse(r#"{"annotations":{"readOnlyHint":true}}"#).unwrap();
+        assert_eq!(annotation_flag(&read), "read");
+        let write = json::parse(r#"{"annotations":{"readOnlyHint":false}}"#).unwrap();
+        assert_eq!(annotation_flag(&write), "write");
+        let del = json::parse(r#"{"annotations":{"destructiveHint":true}}"#).unwrap();
+        assert_eq!(annotation_flag(&del), "destructive");
+        let none = json::parse("{}").unwrap();
+        assert_eq!(annotation_flag(&none), "read");
     }
 }

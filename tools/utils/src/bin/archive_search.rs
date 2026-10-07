@@ -344,6 +344,8 @@ fn main() {
             "--alphafold" => mode = Mode::Net("alphafold"),
             "--alphaxiv" => mode = Mode::Net("alphaxiv"),
             "--alphaxiv-researchers" => mode = Mode::Net("alphaxiv-researchers"),
+            "--alphaxiv-tools" => mode = Mode::Net("alphaxiv-tools"),
+            "--alphaxiv-call" => mode = Mode::Net("alphaxiv-call"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--kind" => {
@@ -630,6 +632,10 @@ fn usage() {
     );
     eprintln!(
         "  --alphaxiv-researchers  alphaXiv MCP find_researchers (same endpoint/key); profile url + name/position/citations"
+    );
+    eprintln!("  --alphaxiv-tools  list the alphaXiv MCP tools with their read/write annotation");
+    eprintln!(
+        "  --alphaxiv-call <tool> '<json-arguments>'  call any alphaXiv MCP tool (read-only; write/destructive tools are refused)"
     );
     eprintln!(
         "  --ntrs      a bare citation id resolves via the citation path, any other query searches"
