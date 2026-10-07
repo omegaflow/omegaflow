@@ -3,7 +3,7 @@
   session: River-Folge 122
   class: handover
   date: 2026-10-07
-  sha256: 030a7bb3799b02e638e13bd3dbc02cdcb7b08575adb46db78fbf13ad93b351d5
+  sha256: f3788d4359749ab5e10f9d14e038648420e3cc23396087d53250dd8e6f40cd49
   status: live
 -->
 # Handover — River-Folge 122 (2026-10-07)
@@ -22,6 +22,7 @@ Wort | Datum | Quelle
 „also insbesondere die recherche die wir gerade gemacht haben interessiert mich" | 2026-10-07 | Operator (Session, River 122) — die Literaturlandschaft zur GIC-Stufe-2 als Survey tragen
 „bitte als separate agenten testen" | 2026-10-07 | Operator (Session, River 122) — die Gemini-Varianten als eigene `voice-gemini-*`-Agenten anlegen (statt Standalone-Bench)
 „und müssen wir jetzt nicht immer so forschen?" | 2026-10-07 | Operator (Session, River 122) — die Recherche-Schicht (archive_search + schwache Stimmen) gehört **immer** vor jede Architektur-Frage
+„nein lass es uns strikt machen deaktiviere alle deepseek fremden anbieter und modelle und agenten und auch die pro max agenten, ich habe keinen fall gesehen wo pro max flash und die frontier UI chats geschlagen hätte" | 2026-10-07 | Operator (Session, River 122) — **strikt DeepSeek-flash-only**: alle nicht-DeepSeek-Provider/-Modelle/-Agenten + pro/max deaktiviert; Denken bleibt die UI-Frontier
 „warte du sollst nicht innerhalb des chats umstellen die anderen modelle sind als tabs offen … nutze alle tryingopentabs" | 2026-10-07 | Operator (Session, River 122) — alle tryingopen-Seats je als eigener Tab befragen
 „die schwachen voice stimmen können wir doch nutzen um die wissenschafts- und forschungslandschaft und das internet abzugrasen … das denken überlassen wir den ui chat frontier modellen … befrage nemotron nochmal" | 2026-10-07 | Operator (Session, River 122) — Recherche-Rolle der schwachen Stimmen; Denken bei den UI-Frontier-Modellen
 „gmini ist gerade überlastet wir brauchen zuverlässige schnelle modelle die nicht fabrizieren für die recherche" | 2026-10-07 | Operator (Session, River 122) — Kriterium der Recherche-Rolle (zuverlässig · schnell · nicht fabrizierend)
@@ -40,8 +41,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 
 ## Stimmen-Rolle (gemessen 2026-10-07)
 
-Recherche (Wissenschafts-/Forschungslandschaft, Netz) trägt **`voice-deepseek`** (zuverlässig, nicht fabrizierend, Herkunft offengelegt); **`voice-gemini`** nur mit Verifikationspflicht (eine DOI fehlzu-geordnet, gemessen); **`voice-inkling`/`voice-gptoss`/`voice-nemotron`** tragen die Recherche-Klasse nicht. Denken/Urteil = UI-Frontier-Modelle. Der **Rat** bleibt als Form/Linse (fünf exklusive Perspektiven). Benchmark: `state/benchmark/2026-10-07-recherche-stimmen.md`.
+Recherche (Wissenschafts-/Forschungslandschaft, Netz) trägt **`voice-deepseek`** (zuverlässig, nicht fabrizierend, Herkunft offengelegt); **`voice-gemini`** war nur mit Verifikationspflicht (eine DOI fehlzu-geordnet, gemessen) — jetzt **deaktiviert** (strikt); **`voice-inkling`/`voice-gptoss`/`voice-nemotron`** tragen die Recherche-Klasse nicht. Denken/Urteil = UI-Frontier-Modelle. Der **Rat** bleibt als Form/Linse (fünf exklusive Perspektiven). Benchmark: `state/benchmark/2026-10-07-recherche-stimmen.md`.
 **Roster-Revision (umgesetzt 2026-10-07):** `opencode.json` setzt `"disable": true` für `voice-gptoss` (Geraune, keine Liste), `voice-inkling` (`archive_search_public` leer), `voice-nemotron` (extrem langsam + 2× `unbelegt`). Aktiv bleiben `voice-deepseek` (Kern-Recherche + Messung) und `voice-gemini` (sekundär, Verifikationspflicht). Wirkt nach opencode-Neustart. Der Rat bleibt Struktur; das Urteil trägt die UI-Frontier.
+**Strikt (Operator-Wort 2026-10-07, umgesetzt):** lokal läuft **nur DeepSeek-flash**; **alle** nicht-DeepSeek-Agenten deaktiviert (`voice-gemini` + die 7 `voice-gemini-3-*`, `voice-gptoss`/`inkling`/`nemotron`, `voice-dots`/`ling`/`agnes`/`kenari`/`kilo`/`zen`/`zai`) **und alle pro/max** (`grind-pro`/`grind-max`/`research-max`/`voice-deepseek-pro`); `"disabled_providers"`: `google`/`openrouter`/`nvidia`/`kenari`/`kilo`/`zai`/`opencode`. Grund (Operator): kein Fall, in dem pro/max flash oder die UI-Frontier geschlagen hätte. Denken = UI-Frontier; lokal = Recherche + Messung + Bau auf flash. Wirkt nach opencode-Neustart.
 **Recherche-Ergebnis (2026-10-07):** `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md` — vier Schichten, jede Referenz am Baum gemessen: (1) max-t/Stepdown FWER bei Korrelation (Romano-Wolf, Meinshausen, cluster-depth, Winkler); (2) Gatekeeping/zweistufig; (3) Post-Selection/Selective Inference (= Auswahl-Riss); (4) TE finite data (Kirkley u. a. = unvollständiger Pool). Deckt die gewählte `--stage2 family`-Methode und beide Risse.
 **Gemini-Mess-Seats (angelegt 2026-10-07):** `voice-gemini-3-flash`, `-3-1-flash-lite`, `-3-1-pro`, `-3-5-flash`, `-3-6-flash`, `-3-7-flash`, `-3-8-flash` in `opencode.json` (read-only Voice-Prompt, im Task-Allow). **Gemessen (`free_model_bench --task T7`, 2026-10-07):** der Free-Endpoint ist erschöpft — 6/9 Gemini-Modelle nur `429`/`503`/Timeout (Gemma immer Timeout); die drei antwortenden (`gemini-3.5-flash-lite` = aktueller `voice-gemini`, `3.1-flash-lite`, `3.7-flash`) **fabrizieren die T7-Status-Spalte** — kein Modell besteht. Agenten-Dispatch erst nach opencode-Neustart (die laufende Session kennt die neuen Agenten nicht, Dispatch verweigert) + Quota-Reset → `pending`. Rohdaten `state/benchmark/2026-10-07-gemini-free-endpoint.md`, `/tmp/opencode/gemini-t7.tsv`.
 

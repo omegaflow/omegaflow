@@ -9,6 +9,7 @@
   "provider": {
     "zai": { "options": { "headerTimeout": 60000, "chunkTimeout": 60000 } }
   },
+  "disabled_providers": ["google", "openrouter", "nvidia", "kenari", "kilo", "zai", "opencode"],
   "agent": {
     "build": {
       "mode": "primary",
@@ -53,6 +54,7 @@
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "research-max": {
+      "disable": true,
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-pro",
       "variant": "max",
@@ -69,6 +71,7 @@
       "permission": { "edit": "allow", "task": "deny" }
     },
     "grind-pro": {
+      "disable": true,
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-pro",
       "variant": "high",
@@ -77,6 +80,7 @@
       "permission": { "edit": "allow", "task": "deny" }
     },
     "grind-max": {
+      "disable": true,
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-pro",
       "variant": "max",
@@ -135,6 +139,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.5-flash-lite",
       "variant": "low",
@@ -143,6 +148,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-flash": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3-flash-preview",
       "variant": "low",
@@ -151,6 +157,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-1-flash-lite": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.1-flash-lite",
       "variant": "low",
@@ -159,6 +166,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-1-pro": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.1-pro-preview",
       "variant": "low",
@@ -167,6 +175,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-5-flash": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.5-flash",
       "variant": "low",
@@ -175,6 +184,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-6-flash": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.6-flash",
       "variant": "low",
@@ -183,6 +193,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-7-flash": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.7-flash",
       "variant": "low",
@@ -191,6 +202,7 @@
       "permission": { "edit": "deny", "task": "deny", "read": "deny", "glob": "deny", "grep": "deny", "webfetch": "deny", "websearch": "deny", "playwright_*": "deny", "browser_*": "deny", "chrome-devtools_*": "deny", "chrome-devtools-voices_*": "allow", "bash": { "*": "deny", "archive_search_public *": "allow", "bin/archive_search_public *": "allow", "./bin/archive_search_public *": "allow", "voice_read_full *": "allow", "bin/voice_read_full *": "allow", "./bin/voice_read_full *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "voice-gemini-3-8-flash": {
+      "disable": true,
       "mode": "subagent",
       "model": "google/gemini-3.8-flash",
       "variant": "low",
