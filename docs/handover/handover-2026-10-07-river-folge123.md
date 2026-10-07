@@ -3,7 +3,7 @@
   session: River-Folge 123
   class: handover
   date: 2026-10-07
-  sha256: e373eeee353e6d5f1598bf8fa46a98fa539a38cdae0dd3d2512a4402074ea538
+  sha256: 73bb3f11f82d0ff228dec97951248c0e471da5165178dbda50fb3f727d9b4584
   status: live
 -->
 # Handover — River-Folge 123 (2026-10-07)
@@ -18,6 +18,7 @@ steht und `origin/main` Vorfahr von HEAD ist.
 Wort | Datum | Quelle
 --- | --- | ---
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-07 | Operator (Session, River 123) — Session-Start, Delegations-Consent
+„…das ist wichtig wir haben mächtige stimmen 1-ui gehört niemandem" | 2026-10-07 | Operator (Session, River 123) — `1-ui` ist **nicht** linien-fremd; die starken UI-Seats sind offen (Bridge-Meldung „owned by another client" ist für den Zugriff kein Verdikt)
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge122.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Stimmen-Rolle (gemessen 2026-10-07)
@@ -84,12 +85,12 @@ DeepSeek-flash** (`opencode.json`: alle nicht-DeepSeek-Agenten + alle pro/max de
 - **Blockade:** externe Kanäle; kein Polling.
 - **Braucht:** `flyby_path2_fill`-Lauf lesen + Addendum fortschreiben; Trigger feuern lassen; Δ/σ_recon.
 
-### `1-ui` (Alt-UI-Gruppe, River-Besitz) — nach Mountains Runde schließen
-- **Status:** wartend (Mountain) | **Bindung:** eigen (cross-line mountain)
-- **Trigger:** Mountains Runde ohne `1-ui`-Bedarf.
-- **Lage:** (gemessen 2026-10-07 via `register_lookup --addressed river`) Brücke meldet `group "1-ui" is owned by another client`; Mountain braucht sie gerade noch. Uniform bleiben nur `<line>-ui` (JIT) + `open-weight-ui` (Lock `state/zustand/ui-open-weight.lock`); kein `shared-ui`-Nachfolger.
-- **Blockade:** Mountain hält die Gruppe.
-- **Braucht:** nach Mountains Round `1-ui` schließen (Bridge); kein Nachfolger.
+### `1-ui` — starke UI-Seats, kein Linien-Eigentum (Operator-Wort 2026-10-07)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner (Operator-Wort liegt vor).
+- **Lage:** (gemessen 2026-10-07) die Brücke meldet `group "1-ui" is owned by another client`, doch der Operator hat gewortet: **`1-ui` gehört niemandem**; die starken Seats (Claude Sonnet 5.5, GLM, Qwen) sind offen. Praktisch erreicht: dieselben Seats über `river-ui` geöffnet (gleiches Profil) — **Claude Sonnet 5.5** hat die dB/dt–GIC-Methodenfrage beantwortet. Uniform bleiben `<line>-ui` (JIT) + `open-weight-ui`; `1-ui` ist keine linien-fremde Gruppe.
+- **Blockade:** keine.
+- **Braucht:** keine Schließung — `1-ui` als geteilte Starke-Seat-Gruppe führen; Myceliums „nach Mountain schließen" ist durch das Operator-Wort überholt.
 
 ## An mountain
 
@@ -119,4 +120,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-07-river-folge123.md` (neu)
 - `docs/handover/archiv/handover-2026-10-07-river-folge122.md` (Move)
 
-## Burn: open 0.0000 · close 0.1109 · cap 0.20 (Operator-Wort 2026-10-07) · Grund: River 123 — Line-Session (deepseek-flash), ein Pass. **Erster Pass:** `--fired river` 2 Punkte (`ozzy`/`em-apertur`, CI `queued`/`unread`); `--stale` 0; `--addressed river` 2 Blöcke gefaltet; `open_points_check` clean (1 word-carried). **Format-Fix:** `cargo fmt` auf `cgm_lat_partition.rs` (3 Diff-Sites :194/:230/:457), Build grün; fremder rustfmt-Zusatz `register_lookup.rs` 2× rückgängig gemacht. **Gebaut/gemessen:** `nur_gic_relation_probe.rs` (neuer Bin) — Asset-Probe: NUR 30 Tage 2023-12-31…2024-01-30 UTC, GIC-Ende 2023-10-01 UTC → **0 Überlapp** (Riss); Relation auf Halloween-Sturm 2003-10-29…31 gemessen: 72 h, Peak 240.9 nT/10s / 57.05 A, **r = 0.9448**, OLS 0.2118·|ΔX/10s| + 1.755 → Paper §4.7. **Recherche-Schicht (Operator-Wort):** `general`-Flash-Recherche (2) — (1) Zitat-Riss: der Anker ist **Juusola et al. 2025** (nicht Viljanen), Eq. 43 ist 3-Komponenten-Regression @10 s (CC 0.80) ≠ unser Skalar-Peak; Paper korrigiert; (2) Register-Einzige-Quelle: Option (c) gedeckt durch W3C PROV/Buneman/dbt/Event-Sourcing. **Rat (flash):** Lizenz-Census Option (c). **UI-Kanal (Operator-Wort):** `river-ui` → Duck.ai (GPT-6 Luna) bestätigt den Zitat-Riss (erster Autor Juusola; Eq. 43 = 3-Komponenten-Fit MAN-GIC vs NUR ∂Bx/∂t,∂By/∂t,∂Bz/∂t) und: Stunden-Peak-Skalar ist eine gültige deskriptive Assoziation, aber **keine** vorzeichen-tragende Transfer-Funktion; ein seitenspezifischer Fit behält üblicherweise Vorzeichen + Komponenten bei der Mess-Kadenz. Die starken UI-Seats (Claude/GLM) liegen in der Gruppe `1-ui`, die die Brücke als „owned by another client" verweigert (gemessen). **Gegengelesen (Operator-Kritik):** danach die **Arbeit gebaut**, nicht nur Dokument. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send. Fremde Baum-Hunks (`units.rs`, `phi/sources.φ`, `commit_gate*`, `AGENTS.md`, `intermagnet_dbdt_compiler.rs`) nicht angefasst.
+## Burn: open 0.0000 · close 0.1109 · cap 0.20 (Operator-Wort 2026-10-07) · Grund: River 123 — Line-Session (deepseek-flash), ein Pass. **Erster Pass:** `--fired river` 2 Punkte (`ozzy`/`em-apertur`, CI `queued`/`unread`); `--stale` 0; `--addressed river` 2 Blöcke gefaltet; `open_points_check` clean (1 word-carried). **Format-Fix:** `cargo fmt` auf `cgm_lat_partition.rs` (3 Diff-Sites :194/:230/:457), Build grün; fremder rustfmt-Zusatz `register_lookup.rs` 2× rückgängig gemacht. **Gebaut/gemessen:** `nur_gic_relation_probe.rs` (neuer Bin) — Asset-Probe: NUR 30 Tage 2023-12-31…2024-01-30 UTC, GIC-Ende 2023-10-01 UTC → **0 Überlapp** (Riss); Relation auf Halloween-Sturm 2003-10-29…31 gemessen: 72 h, Peak 240.9 nT/10s / 57.05 A, **r = 0.9448**, OLS 0.2118·|ΔX/10s| + 1.755 → Paper §4.7. **Recherche-Schicht (Operator-Wort):** `general`-Flash-Recherche (2) — (1) Zitat-Riss: der Anker ist **Juusola et al. 2025** (nicht Viljanen), Eq. 43 ist 3-Komponenten-Regression @10 s (CC 0.80) ≠ unser Skalar-Peak; Paper korrigiert; (2) Register-Einzige-Quelle: Option (c) gedeckt durch W3C PROV/Buneman/dbt/Event-Sourcing. **Rat (flash):** Lizenz-Census Option (c). **UI-Kanal (Operator-Wort):** `river-ui` → Duck.ai (GPT-6 Luna) bestätigt den Zitat-Riss und: Stunden-Peak-Skalar = gültige deskriptive Assoziation, keine Transfer-Funktion. Nach Operator-Wort („1-ui gehört niemandem") die starken Seats im selben Profil über `river-ui` geöffnet: **Claude Sonnet 5.5** bestätigt Erstautor **Juusola** (Viljanen letzter Autor), Eq. 43 = 3-Komponenten-Fit (a_x=−1.69/a_y=−2.73/a_z=−0.23, Fit 29.10. 08:00–31.10. 23:59:50 UT, CC=0.80 auf 2-h-Hold-out) und nennt die Limitationen: Richtung verloren (|GIC|/|dH/dt| 0…≈3.2 A/(nT/s) je Feldrichtung), Peak-Entkopplung, **GIC-Kette nicht unabhängig (NUR in beiden Größen)**, kein Out-of-Sample — alle in Paper §4.7 gefaltet. **Gegengelesen (Operator-Kritik):** danach die **Arbeit gebaut**, nicht nur Dokument. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send. Fremde Baum-Hunks (`units.rs`, `phi/sources.φ`, `commit_gate*`, `AGENTS.md`, `intermagnet_dbdt_compiler.rs`) nicht angefasst.
