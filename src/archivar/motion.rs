@@ -63,19 +63,12 @@ pub fn nutation_sum(terms: &[[f64; 3]], t: f64) -> f64 {
         .sum()
 }
 
-pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
+pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
     let tc = (jd - J2000_EPOCH) / 36525.0;
     let (d_ra, d_dec, d_pm) = match nutation_deltas_at(bp, jd) {
         Some(d) => d,
-        None => {
-            if bp.nutation.is_some() {
-                eprintln!(
-                    "nutation: no granule covers jd {:.3} — deltas carry zero for this interval",
-                    jd
-                );
-            }
-            (0.0, 0.0, 0.0)
-        }
+        None if bp.nutation.is_some() => return None,
+        None => (0.0, 0.0, 0.0),
     };
     let nut_ra = match &bp.nut_ra {
         Some(terms) => nutation_sum(terms, tc),
@@ -88,7 +81,7 @@ pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
     let ra = bp.α0_deg + bp.dα0_dt_deg_per_century * tc + nut_ra + d_ra;
     let dec = bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc + nut_dec + d_dec;
     let pm = bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH) + d_pm;
-    (ra, dec, pm)
+    Some((ra, dec, pm))
 }
 pub fn granule_lo(e: &BodyEphemeris, jd: f64) -> Option<usize> {
     let n = e.granules.len();
@@ -225,8 +218,8 @@ fn geodetic_to_body_fixed(bp: &BodyProperties, lat: f64, lon: f64, alt: f64) -> 
     ])
 }
 
-fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> [f64; 3] {
-    let (ra, dec, pm) = orientation_angles_at(bp, jd);
+fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> Option<[f64; 3]> {
+    let (ra, dec, pm) = orientation_angles_at(bp, jd)?;
     let a = (90.0 + ra).to_radians();
     let d = (90.0 - dec).to_radians();
     let w = pm.to_radians();
@@ -236,7 +229,7 @@ fn iau_rotate_to_icrs(bp: &BodyProperties, xyz: [f64; 3], jd: f64) -> [f64; 3] {
     let xt = xyz[0] * cw - xyz[1] * sw;
     let yt = xyz[0] * sw + xyz[1] * cw;
     let yp = yt * cd - xyz[2] * sd;
-    [xt * ca - yp * sa, xt * sa + yp * ca, yt * sd + xyz[2] * cd]
+    Some([xt * ca - yp * sa, xt * sa + yp * ca, yt * sd + xyz[2] * cd])
 }
 
 fn rotate_about_pole(m: &[f64; 9], mt: f64, jd: f64, rate_deg_day: f64, v: [f64; 3]) -> [f64; 3] {
@@ -306,7 +299,7 @@ pub fn body_fixed_vector_to_icrs(
         let [xi, yi, zi] = rotate_about_pole(rot_m, mt, jd, bp.dw_dt_deg_per_day, [xi0, yi0, zi0]);
         return Some([xi + bx, yi + by, zi + bz]);
     }
-    let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd);
+    let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)?;
     Some([xi + bx, yi + by, zi + bz])
 }
 
@@ -323,8 +316,25 @@ pub fn body_fixed_to_icrs_smooth(
     let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
     let [xb, yb, zb] = geodetic_to_body_fixed(bp, lat, lon, alt)?;
     let jd = tdb / 86400.0 + J2000_EPOCH;
-    let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd);
+    let [xi, yi, zi] = iau_rotate_to_icrs(bp, [xb, yb, zb], jd)?;
     Some([xi + bx, yi + by, zi + bz])
+}
+
+pub fn rotate_icrs_to_body_frame(bp: &BodyProperties, r: [f64; 3], jd: f64) -> Option<[f64; 3]> {
+    let (ra, dec, pm) = orientation_angles_at(bp, jd)?;
+    let a = (90.0 + ra).to_radians();
+    let d = (90.0 - dec).to_radians();
+    let w = pm.to_radians();
+    let (sw, cw) = w.sin_cos();
+    let (sa, ca) = a.sin_cos();
+    let (sd, cd) = d.sin_cos();
+    let x1 = r[0] * ca + r[1] * sa;
+    let y1 = -r[0] * sa + r[1] * ca;
+    let y2 = y1 * cd + r[2] * sd;
+    let z2 = -y1 * sd + r[2] * cd;
+    let xb = x1 * cw + y2 * sw;
+    let yb = -x1 * sw + y2 * cw;
+    Some([xb, yb, z2])
 }
 
 fn icrs_to_body_fixed(
@@ -357,19 +367,7 @@ fn icrs_to_body_fixed(
     } else {
         let bp = e.props.as_ref()?;
         let jd = tdb_secs / 86400.0 + J2000_EPOCH;
-        let (ra, dec, pm) = orientation_angles_at(bp, jd);
-        let a = (90.0 + ra).to_radians();
-        let d = (90.0 - dec).to_radians();
-        let w = pm.to_radians();
-        let (sw, cw) = w.sin_cos();
-        let (sa, ca) = a.sin_cos();
-        let (sd, cd) = d.sin_cos();
-        let x1 = rx * ca + ry * sa;
-        let y1 = -rx * sa + ry * ca;
-        let y2 = y1 * cd + rz * sd;
-        let z2 = -y1 * sd + rz * cd;
-        let xb = x1 * cw + y2 * sw;
-        let yb = -x1 * sw + y2 * cw;
+        let [xb, yb, z2] = rotate_icrs_to_body_frame(bp, [rx, ry, rz], jd)?;
         Some((xb, yb, z2))
     }
 }
