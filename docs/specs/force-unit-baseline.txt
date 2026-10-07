@@ -20,6 +20,19 @@
 # 1 kW = 1e3 W); `km`/`mm` admitted to gravity (venera surface radius :28015, uhslc
 # sea level :19284 — lengths, gravity already carries m/ft, SI 1e3 / 1e-3 m).
 # Measured 47 / 27.
+# Healed 2026-10-07 (Mountain 264): six of the seven class-(b) pairs closed, each a
+# source-identity verdict. `thermal m` → `gravity m` (d20_thermocline_depth_m, :850 —
+# a thermocline depth is a length; gravity owns lengths). `em hPa` → `acoustic hPa`
+# (cosmic_ro_pressure_hpa, :9994 — a pressure; em carries no pressure unit, acoustic
+# owns pa/hpa/npa/dbar). `ppm` admitted to em (exofop_toi_transit_depth_ppm, :1707 —
+# a dimensionless transit depth; em already owns %/1). `db` admitted to em
+# (superdarn_rawacf_lag0_power_db, :10152 — a dimensionless radar power ratio; em
+# already owns dbm/dbhz). `mm` admitted to advective (atmosphere_cma_precipitation_mm
+# :414, noaa_gsod_prcp_mm :10520 — a water-equivalent depth; advective owns m).
+# `m/s2` admitted to advective (bidsleep_mx/my/mz_ms2 :3813-3815, body-motion
+# accelerometry; soho_lasco_cme_accel_m_s2 :19392 — kinematics; advective owns m/s).
+# Measured 37 / 21. `advective g` stays pending: `g` is overloaded (gram-mass vs
+# standard gravity) and no force table carries a gram token.
 #
 # The production commit gate (commit_check) scans .rs only; this file is the
 # ratchet that closes the gap: a staged phi/sources.φ may not introduce a
@@ -29,16 +42,12 @@
 # rewrite — see the Force-/Einheiten-Kontrakt in the Mountain handover.
 advective erg
 advective g
-advective m/s2
-advective mm
 diffusion grains/m3
 diffusion kg/kg
 diffusion m2
 diffusion ml/l
-em db
 em dbz
 em erg/cm2/s
-em hpa
 em mcrab
 em millionths
 em mm/s2
@@ -46,11 +55,9 @@ em n-units
 em njy
 em nmgy
 em nw/cm2/sr
-em ppm
 em uj/sr
 em uj/sr/m2/um
 em w/m2/hz
 em w/m2/sr
 em w/m2/sr/um
 gravity nm/s2
-thermal m
