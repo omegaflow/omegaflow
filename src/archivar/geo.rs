@@ -277,6 +277,7 @@ pub const COMP_CSES_SCM_ULF_Y: u32 = 2;
 pub const COMP_CSES_SCM_ULF_Z: u32 = 3;
 pub const COMP_CSES_SCM_MAX: u32 = 3;
 
+#[derive(Debug)]
 pub struct GeoRec {
     pub t: f64,
     pub lat: f64,
