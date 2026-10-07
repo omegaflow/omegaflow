@@ -3,7 +3,7 @@
   session: River-Folge 132
   class: handover
   date: 2026-10-07
-  sha256: 76871d46926309589eb7dd9879f8f3b64b709824ed58f9ac0b9f813519fc477a
+  sha256: dc365e83e0a5d59c3bfd59e4c346a078d0bc3efce6912b6f358dc4a5995f5f64
   status: live
 -->
 # Handover — River-Folge 132 (2026-10-07)
@@ -50,7 +50,8 @@ Rat (council, 2 Runden) + UI-Frontier (`river-ui`: Claude Sonnet 5.5, Qwen3.7-Pl
 - **`kepler.rs`:** null-echt — J2000-Ekliptik-Definition heliozentrischer Elementsätze (5 Caller verifiziert: `cometels`, `dastcom`, `extract`, `kbo`, `mpcorb`) → umbenannt `ECLIPTIC_J2000_OBLIQUITY_DEG` + Standort-Name (Kommentar verboten: Code-Gate; Name = Implementation).
 - **`PROPAGATION_SPEED` (`shaders.rs`):** `c` für 0/1/8 null-echt; 2–7 sind Erd-Medium-Werte → absent (`0.0` → keine Zeitkorrektur, `val_eff_at:116`). Medium-Daten reisen künftig wie Kraft 7 über den `advection`-Slot (gebauter Präzedenzfall), kein neuer Wire-Slot.
 - **`kernel_extent`:** `kernel_id` ist die Form-Achse (Gauß/erfc/exp/Levy), nicht die Medium-Achse; der Gravitations-Radius wird doppelt gezählt (`body_term` `fetch.rs:554-558` + `kernel_extent` `force_type==1`) → entflechten (nächster Schritt).
-- **Nicht-Antworten (gemessen):** Duck.ai Tageslimit erreicht (Wird in 4h zurückgesetzt); Z.ai GLM-5.3 hat in ~3 min keine Antwort gerendert → `pending`, nicht wiederholt. Open-Weight-Seats (`open-weight-ui`, Lock frei) in dieser Runde nicht gefahren.
+- **Open-Weight-Seats (`open-weight-ui`, Lock river 132 gesetzt/zurückgegeben, Tabs nach der Runde geschlossen):** Kimi K3 + 4× GLM 5.3 Flash (Z.ai-Cloud-Fallback). Konvergent: Nutation = abwesende Messung/toter Platzhalter → `nut_ra` löschen (Single Source: Chebyshev); Ausbreitungsgeschwindigkeit = Medium-Eigenschaft am Körper (b), die `c`-Einträge bleiben Kraftart-Konstanten; `kernel_id` ist die falsche Medium-Achse, Gravitations-Radius doppelt gezählt (`max` statt Summe). Ein Seat trug noch eine vorige Frage (Commit-Gate/Frame-Origin) — nicht durchmischt.
+- **Nicht-Antworten (gemessen):** Duck.ai Tageslimit erreicht („Wird in 4h zurückgesetzt"); Z.ai (Frontier, `river-ui`) GLM-5.3 hat in ~3 min keine Antwort gerendert → `pending`, nicht wiederholt.
 
 ## Offen (aufgeschlüsselt)
 
