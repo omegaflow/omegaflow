@@ -372,7 +372,7 @@ pub fn urlencode(s: &str) -> String {
     out
 }
 
-fn json_escape(s: &str) -> String {
+pub(crate) fn json_escape(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
     for c in s.chars() {
         match c {
@@ -1849,6 +1849,19 @@ pub fn run_lines(mode: &str, query: &str, env: &HashMap<String, String>) -> Vec<
                 Secret::Absent(marker) => vec![format!(
                     "pending — {} absent from .secrets.local/.env",
                     token_key("LINKUP_API_KEY", marker)
+                )],
+            }
+        }
+        "alphaxiv" => {
+            let token = resolve_key(
+                env.get("ALPHAXIV_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::alphaxiv::alphaxiv_lines(query, &t, 5),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("ALPHAXIV_API_KEY", marker)
                 )],
             }
         }
