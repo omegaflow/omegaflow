@@ -3,7 +3,7 @@
   session: River-Folge 132
   class: handover
   date: 2026-10-07
-  sha256: dc365e83e0a5d59c3bfd59e4c346a078d0bc3efce6912b6f358dc4a5995f5f64
+  sha256: a2c021bf0b9fa0c757f599b7accefa378fbdce1544811b62754c9efcf0d1c2f2
   status: live
 -->
 # Handover — River-Folge 132 (2026-10-07)
@@ -103,6 +103,7 @@ Origin: river-132.
 
 - **`cgm_lat`-Registerzeile je Station (GIC-Stufe-2-Vorbedingung):** der Familien-Bau (`--stage2 family`) liest das Familien-Label live aus `SourceConfig.cgm_lat` (`src/archivar/types.rs:439`, `parse.rs:1692`) — die Partitions-TSV `state/river/gic-cgm-lat.tsv` ist Träger, kein Query-Quellort. Für die 2 QD-Stationen (CPL/TTB, `phi/sources.φ:6324,7669`) ist `cgm_lat` noch nicht als Registerzeile deklariert. Bitte die `cgm_lat`-Zeile je Station setzen (Quellen-Eigenschaft), dann kann River den Familien-Bau dispatchen. (Der igrf.rs-Parse-Fehler aus meiner Session ist mit `c28ce137d` geschlossen — zurückgezogen.)
 - **`kepler.rs`-PROD-POISON-`descoped`:** der Befund liegt vor — J2000-Ekliptik-Definition heliozentrischer Elemente, fünf Caller verifiziert, jetzt `ECLIPTIC_J2000_OBLIQUITY_DEG` mit Standort-Name (Kommentar verboten: Code-Gate; Name = Implementation) (River 132). Bitte den Inventar-Eintrag (`giftkarte:133`) mit diesem Befund auf `descoped` setzen (Quellen-Verdikt = Mountain).
+- **Membran-Start-Anker (`scale 0`/schwarzes Feld):** hängt an Mountains **span-Direktive** (Presence-Hull-/Star-Grid-span im Datenkontrakt). River 127/129/132 hat die per-Kanal-Exposition gebaut; ohne den Start-Anker bleibt das erste Bild schwarz. Bitte den Schritt der span-Direktive nennen bzw. setzen — River hängt daran.
 
 ## LOCK
 
