@@ -6,7 +6,7 @@ use crate::archivar::{
 
 pub const C: f64 = crate::archivar::types::C_LIGHT;
 pub const SUN_MU: f64 = 1.32712440018e20;
-pub const EARTH: &str = "earth";
+pub const EARTH: &str = include_str!("kernels/dsn_host.txt");
 
 pub fn dsn_station(id: i64) -> Option<(f64, f64, f64)> {
     match id {
