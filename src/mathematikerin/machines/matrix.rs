@@ -268,7 +268,7 @@ impl MatrixMachine {
 
     pub fn save_state_to(&self, path: &str) -> std::io::Result<()> {
         let mut buf: Vec<u8> = Vec::new();
-        buf.extend_from_slice(b"OMX3");
+        buf.extend_from_slice(b"OMX4");
         buf.extend_from_slice(&(self.rings.len() as u32).to_le_bytes());
         for (name, ring) in &self.rings {
             wr_name(&mut buf, name);
@@ -355,10 +355,10 @@ impl MatrixMachine {
         let bytes = std::fs::read(path).ok()?;
         let mut p = 0usize;
         let magic = bytes.get(p..p + 4)?;
-        if magic != b"OMX1" && magic != b"OMX2" && magic != b"OMX3" {
+        if magic != b"OMX1" && magic != b"OMX2" && magic != b"OMX3" && magic != b"OMX4" {
             return None;
         }
-        let carries_station_code = magic == b"OMX3";
+        let carries_station_code = magic == b"OMX3" || magic == b"OMX4";
         p += 4;
         let mut rings: HashMap<String, Vec<(f64, f32)>> = HashMap::new();
         let n = rd_u32(&bytes, &mut p)? as usize;
