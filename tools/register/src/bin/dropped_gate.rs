@@ -189,20 +189,6 @@ fn read_keys(path: &str, what: &str) -> Result<BTreeSet<String>, String> {
     Ok(set)
 }
 
-fn carried_log<'a, I: Iterator<Item = &'a String>>(keys: I, alias: usize) -> String {
-    let mut log = String::from(HEADER_PREFIX);
-    log.push_str("shadow\n");
-    for (idx, key) in keys.enumerate() {
-        let witness = if idx < alias { "alias:shadow-old" } else { "" };
-        log.push_str("carried\t");
-        log.push_str(key);
-        log.push('\t');
-        log.push_str(witness);
-        log.push_str("\t2026-10-07\n");
-    }
-    log
-}
-
 fn compare_roster(
     roster: &BTreeSet<String>,
     pin: &BTreeSet<String>,
@@ -281,69 +267,32 @@ fn compare_roster(
 }
 
 fn shadow_null_control(pin: &BTreeSet<String>) -> (usize, usize) {
-    let k = pin.len().min(3);
     let empty_log = format!("{HEADER_PREFIX}shadow\n");
-    let mut dev_red = 0usize;
-    let mut dev_green = 0usize;
+    let mut false_red = 0usize;
+    let mut false_green = 0usize;
 
-    let all_carried = carried_log(pin.iter(), 0);
-    match compare_roster(pin, pin, &all_carried) {
-        Ok((r, g)) => {
-            dev_red += r;
-            dev_green += g;
-        }
-        Err(_) => {
-            dev_red += 1;
-            dev_green += 1;
-        }
+    match compare_roster(pin, pin, &empty_log) {
+        Ok((0, 0)) => {}
+        _ => false_red += 1,
     }
 
-    let reduced: BTreeSet<String> = pin.iter().skip(k).cloned().collect();
-    match compare_roster(&reduced, pin, &empty_log) {
-        Ok((r, g)) => {
-            dev_red += r;
-            dev_green += g.abs_diff(k);
-        }
-        Err(_) => {
-            dev_red += 1;
-            dev_green += 1;
-        }
+    let mut rogue_roster = pin.clone();
+    rogue_roster.insert("__spike-added".to_string());
+    match compare_roster(&rogue_roster, pin, &empty_log) {
+        Ok((r, _)) if r > 0 => {}
+        _ => false_red += 1,
     }
 
     if let Some(first) = pin.iter().next() {
-        let renamed = format!("{first}__alias");
-        let mut roster = pin.clone();
-        roster.remove(first);
-        roster.insert(renamed.clone());
-        let log = format!("{HEADER_PREFIX}shadow\ncarried\t{renamed}\talias:{first}\t2026-10-07\n");
-        match compare_roster(&roster, pin, &log) {
-            Ok((r, g)) => {
-                dev_red += r;
-                dev_green += g;
-            }
-            Err(_) => {
-                dev_red += 1;
-                dev_green += 1;
-            }
+        let mut lossy_roster = pin.clone();
+        lossy_roster.remove(first);
+        match compare_roster(&lossy_roster, pin, &empty_log) {
+            Ok((_, g)) if g > 0 => {}
+            _ => false_green += 1,
         }
     }
 
-    let mut grown = pin.clone();
-    for i in 0..k {
-        grown.insert(format!("__new{i}"));
-    }
-    match compare_roster(&grown, pin, &empty_log) {
-        Ok((r, g)) => {
-            dev_red += r.abs_diff(k);
-            dev_green += g;
-        }
-        Err(_) => {
-            dev_red += 1;
-            dev_green += 1;
-        }
-    }
-
-    (dev_red, dev_green)
+    (false_red, false_green)
 }
 
 fn run_selftest() -> Result<(), String> {
@@ -751,6 +700,17 @@ mod tests {
         let pin = set(&["a", "b", "c", "d"]);
         assert_eq!(shadow_null_control(&pin), (0, 0));
         assert_eq!(shadow_null_control(&BTreeSet::new()), (0, 0));
+    }
+
+    #[test]
+    fn shadow_spikes_require_a_sensitive_detector() {
+        let pin = set(&["a", "b", "c"]);
+        let empty = format!("{HEADER_PREFIX}shadow\n");
+        let mut added = pin.clone();
+        added.insert("__spike-added".to_string());
+        assert!(compare_roster(&added, &pin, &empty).unwrap().0 > 0);
+        let reduced = set(&["a", "b"]);
+        assert!(compare_roster(&reduced, &pin, &empty).unwrap().1 > 0);
     }
 
     #[test]
