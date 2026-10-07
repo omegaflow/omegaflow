@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: be35306d10ea03c0e5bc62711e6eab26f6d7a9019150598b61d8355c3f310aa0
+  sha256: a99dd35eb11e0d22696c6a00048f5e29a3855b2fd517f6500ed16ffe59ad38fe
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -23,7 +23,8 @@ Sender-Zeilen in `## An river` / `## An future`.
 - Wort | 2026-10-07 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | Quelle: Operator (Session, Mycelium 261) — Session-Start, Delegations-Consent.
 - Wort | 2026-10-07 | „endlich mal die arbeit fertig machen" → Delegationsauftrag: eine Agenten-Kohorte (flash-first) parallel auf die arbeitsfähigen Mycelium-Atome. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „ja bitte" → Recherche-Schicht für `terms`-SPDX + dropped-gate-Thresholds starten und die UI-Frontier-Fragen-Sheets bereitlegen. | Quelle: Operator (Session, Mycelium 261).
-- Wort | 2026-10-07 | „fängst du jetzt bitte an zu arbeiten?" → Direktive: weiterarbeiten ohne Rückfrage. Gebaut: echtes dropped-gate (`--roster` + Tombstones/Generationen, nicht-vakuoser Shadow), Lizenz-Census (iii) + Join am Quellenblock, UI-Frontier-Runde gefahren (Qwen = b). | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „fängst du jetzt bitte an zu arbeiten?" → Direktive: weiterarbeiten ohne Rückfrage. Gebaut: echtes dropped-gate (`--roster` + Tombstones/Generationen, nicht-vakuoser Shadow), Lizenz-Census (iii) + Join am Quellenblock. | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „das ist einfach nur quatsch … schau dir bitte an welche tabs offen sind" → Korrektur: die Frontier-Seats sind offen/eingeloggt; die Antworten werden aus den offenen Tabs gelesen (nicht aus neuen, unangemeldeten Tabs). | Quelle: Operator (Session, Mycelium 261).
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge260.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -73,7 +74,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### Lizenz-Census — Tor-Bedingung (i)+(iii) gebaut; SPDX-Migration + Mountain-`terms` offen
 - **Status:** eigen → operator-gebunden (SPDX-Frage)
 - **Trigger:** Operator-Wort für die UI-Frontier-Runde (Sheet) + Mountains `terms`-Befüllung
-- **Lage:** (gemessen 2026-10-07, Mycelium 261) (i) geschlossene Vokabel + (iii) `blocks 2673 | terms 143 | distinct 9 | pending 2530` gebaut (gepusht `e9a2bd8cb`); der Join hängt jetzt am Quellenblock (url-Basename/`format`), nicht am github-release-tag → alle `terms`-Zeilen partizipieren. **Riss:** der `state/`-Census (`state/river/license-census.tsv`) ist auf netloc getaggt → die Drift-Ausgabe kippt auf 313 stale Zeilen; per Option (c) ist der `state/`-Pregate Komplement, nicht das Tor. **Frontier:** Qwen (`chat.qwen.ai`) antwortet **(b) migrieren** (SPDX für Lizenz-Terme, `PD`/`own-work`/`free-open` als Status-Achse; Unsicherheit: Downstream-Alt-Strings) — 1 gemessene Stimme, 5 Seats site-seitig gesperrt (`state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`).
+- **Lage:** (gemessen 2026-10-07, Mycelium 261) (i) geschlossene Vokabel + (iii) `blocks 2673 | terms 143 | distinct 9 | pending 2530` gebaut (gepusht `e9a2bd8cb`); der Join hängt jetzt am Quellenblock (url-Basename/`format`), nicht am github-release-tag → alle `terms`-Zeilen partizipieren. **Riss:** der `state/`-Census (`state/river/license-census.tsv`) ist auf netloc getaggt → die Drift-Ausgabe kippt auf 313 stale Zeilen; per Option (c) ist der `state/`-Pregate Komplement, nicht das Tor. **Frontier (aus den offenen Tabs gelesen — `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`):** 6 Seats (Qwen · Duck/GPT-6 · Gemini 3.1 · MiniMax · Kimi · Claude) konvergent — `terms fehlt` abgelehnt, Zustand (a) = `terms unbestimmt`/NOASSERTION; Riss bei (b): `keine`/NONE (5) vs. `ohne-lizenz` (Claude). Eigentümer = Quellen-Linie; `terms` als eigenes Feld, Ableitung statt 159 Zeilen. Die SPDX-Migrationsfrage (Sheet `..._terms-spdx-ui-fragen.md`) ist davon getrennt und noch nicht gestellt.
 - **Blockade:** (ii) Mountains ~160 `terms unbestimmt`-Zeilen fehlen (`phi/blocked_sources.φ` leer); die SPDX-Migrationsentscheidung.
 - **Braucht:** Operator-/Frontier-Wort zur Migration (Sheet `state/stimmen/2026-10-07_terms-spdx-ui-fragen.md`) + Mountains `terms`; dann die `phi/sources.φ`-Migration (Mountain-Pen) + `ci-gate`-Schritt. Der `state/`-Pregate bleibt Komplement, nie das Tor.
 
@@ -102,7 +103,7 @@ Origin: mycelium-folge255/260.
 - **GIC-Zugänge (per-Akt):** Accounts/Keys CARISMA, AMPERE, PC-Index, CDDIS-Earthdata. **Braucht:** Operator-Wort je Akt.
 - **JAXA G-Portal / Sample-/Record-Downloads** (`blocked_sources.φ`): Operator-Hand (Bestellung/Fetch) — jetzt inkl. `jaxa-gportal-cdn`-Dispatch (siehe `## Offen — eigen`).
 - **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen (Operator/Datenträger).
-- **UI-Frontier-Runde (SPDX) gefahren:** Qwen = **b (migrieren)**; 5 Seats site-seitig gesperrt — `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`. Fragen-Sheets: `..._terms-spdx-ui-fragen.md` + `..._dropped-gate-ui-fragen.md`. **Braucht:** Operator-Entscheid bzw. Freischaltung weiterer Seats.
+- **Frontier-Antworten liegen vor (aus den offenen Tabs gelesen):** `terms`-Vokabel-Quorum (6 Seats, `state/stimmen/2026-10-07_terms-vokabel-frontier-antworten.md`) — `unbestimmt`/`ohne-lizenz`, Quellen-Eigentümer; getragener Riss bei (b). Das separate SPDX-Sheet (`..._terms-spdx-ui-fragen.md`) ist noch nicht gestellt. **Braucht:** Operator-Entscheid zum (b)-Riss + SPDX.
 
 ## LOCK
 
