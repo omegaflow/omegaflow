@@ -12,10 +12,13 @@ const TERMS: &[&str] = &[
     "CC0-1.0",
     "ODC-By-1.0",
     "ODbL-1.0",
+    "OGL-Canada-2.0",
     "PD",
     "PDDL-1.0",
     "free-open",
     "own-work",
+    "unbestimmt",
+    "ohne-lizenz",
 ];
 
 fn blocks(content: &str) -> Vec<Vec<&str>> {
@@ -346,12 +349,13 @@ mod tests {
     }
 
     #[test]
-    fn closed_vocab_accepts_the_nine_and_refuses_others() {
+    fn closed_vocab_accepts_the_twelve_and_refuses_others() {
         let src = "terms CC-BY-4.0\n\n\
                    terms CC-BY-NC-SA-4.0\n\n\
                    terms CC0\n\n\
                    terms ODC-BY-1.0\n\n\
                    terms ODbL-1.0\n\n\
+                   terms OGL-Canada-2.0\n\n\
                    terms PD\n\n\
                    terms PDDL-1.0\n\n\
                    terms free-open\n\n\
@@ -363,17 +367,12 @@ mod tests {
                    url https://example.org/x.bin\n";
         let violations = closed_vocab_violations(src);
         let values: Vec<&str> = violations.iter().map(|(_, v)| v.as_str()).collect();
-        assert_eq!(
-            values,
-            vec!["unbestimmt", "ohne-lizenz", "unknown", "cc0"],
-            "{:?}",
-            violations
-        );
-        assert_eq!(violations[0].0, 19, "{:?}", violations);
+        assert_eq!(values, vec!["unknown", "cc0"], "{:?}", violations);
+        assert_eq!(violations[0].0, 25, "{:?}", violations);
         assert_eq!(
             terms_entries(src).len(),
-            13,
-            "nine accepted plus four refused"
+            14,
+            "twelve accepted plus two refused"
         );
     }
 }

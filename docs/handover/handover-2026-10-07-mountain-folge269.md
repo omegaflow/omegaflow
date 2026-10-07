@@ -3,7 +3,7 @@
   session: Mountain-Folge 269
   class: handover
   date: 2026-10-07
-  sha256: a1e582213ded17364f5ef616aa6f7b48b5b8d830630414cc214b39e1bb442ca5
+  sha256: 3a3b92e73bd115d73df59e274c2212f04b765ce8e5ca1645eb15582fd80bc0ed
   status: live
 -->
 # Handover — Mountain-Folge 269 (2026-10-07)
@@ -18,15 +18,18 @@ gebaut). **269-Arbeit:** `dmsp16_ssj`-Register-Block in `phi/sources.φ` (nach
 Clippy-`op_ref` geheilt (ci-gate-clippy rot @`5c8c6950f`); `commit_gate_vocab.json`
 `fabrication` um die Körper-Namen `"sun"`·`"moon"`·`"mars"`·`"jupiter"`·`"venus"`·
 `"saturn"`·`"uranus"`·`"neptune"`·`"pluto"` erweitert (Bias-Tor Schritt 1, Mountain).
+**269-terms-Pen (Operator-Wort, Folge-Auftrag):** `license_census.rs`-TERMS-Vokabel um
+`unbestimmt`·`ohne-lizenz`·`OGL-Canada-2.0` erweitert → **`terms-vocab 0`** (`ci-gate register`
+grün für diesen Teil; die 8 Verletzungen waren `unbestimmt`×7 + `OGL-Canada-2.0`);
+`eionet_cdr` `terms CC-BY-4.0` (CDR-Legal-Notice gemessen) eingeschrieben;
+`phi/blocked_sources.φ:226` OSHA auf `blocked parser-def` umgestellt → `register_lookup --orphans` = **0**.
 **Gemessen (269):** `de44-cdn`-Lauf `37634706117` in flight @`41c630aaf` (trägt den
 GM-Commit `5c3ded9bc`, Step DE441) — die deployte `ephemeris_de440_sun.bin` trägt den
-GM noch nicht (`093b3ab5…`, Run nicht fertig). `register-coverage` rot:
-`phi/blocked_sources.φ:226` OSHA `[mycelium]` orphan (gemessen via frisch gebautem
-`register_lookup --orphans`). `clean_tree --fail` = 10 Hits (River WP13).
+GM noch nicht (`093b3ab5…`, Run nicht fertig). `clean_tree --fail` = 10 Hits (River WP13).
 
-**Burn** (`session_burn`): Mountain-Linie-Session open $0.0006 · close $0.1211 (`line`, deepseek-flash); kein pro/max.
+**Burn** (`session_burn`): Mountain-Linie-Session open $0.0006 · close $0.2056 · cap 0.3 — Grund: Operator-Folgeauftrag (terms-Pen + EIONET-Rechte-Messung); kein pro/max.
 
-## Burn: open 0.0006 · close 0.1211
+## Burn: open 0.0006 · close 0.2056 · cap 0.3 — Grund: Operator-Folgeauftrag (terms-Pen + EIONET-Rechte-Messung)
 
 ## Operator-Wort-Register
 
@@ -212,7 +215,7 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (`unbestimmt`/`ohne-lizenz`); 159 abgeleitet, nicht persistiert
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `rights_read`-Datenkontrakt entworfen
-- **Lage:** (gemessen 2026-10-07, Mountain 267 via `cargo run -p omegaflow-register --bin license_census`) **Struktur entschieden** (Rat über zwei Runden, Recherche-Schicht via `archive_search`, sechs Frontier-UI-Chats — Claude, Duck, Qwen, z.ai, DeepSeek, Gemini). Verdikt: `terms` ist ein **eigenes Feld** im B-Block (nicht Kopf-Token; der Kopf trägt genau einen Infra-Zustand, Lizenz ist orthogonal). Token **`terms unbestimmt`** (SPDX `NOASSERTION`) und **`terms ohne-lizenz`** (SPDX `NONE`); `terms keine` gestrichen (Fehllese „keine Einschränkungen" = frei). Die Abwesenheiten werden **nicht** als Registerzeilen persistiert (Fabrikation; abgeleitetes Query-Komplement) — nur gemessene Zustände stehen im Register. **Gebaut:** `register_lookup.rs:408,433` (Owner mountain), `scan_dispositions_text`/`collect_orphan_candidates_in` lesen das orthogonale `terms`-Feld (Test `scan_dispositions_reads_the_terms_field_orthogonal_to_the_head`); `license_census.rs` meldet die abgeleitete `NO-TERMS`-Liste + Zählzeile — `blocks 2673 | terms 143 | distinct 9 | no-terms 2249 | pending 2530 | terms-vocab 0 violation(s)`. **Wohnort:** Census-TSV umgezogen nach `state/mountain/license-census.tsv` (genau ein Konsument; keine Operator-Frage). **Migration vollzogen (Mountain 268):** `phi/sources.φ` `terms`→SPDX — 134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` unberührt; danach zieht Mycelium `license_census.rs`/`ci-gate` nach. **Riss 1 (bleibt):** Baum 159 Netlocs ohne `terms` vs. Census 162 (`UNMEASURED`/`STALE`) — zwei unabhängige Linien, nie gemittelt. **Riss 2 (bleibt):** `ohne-lizenz` kann mit `PD` verwechselt werden (PD ist Vokabel-Wert, „keine Lizenz" restriktiv).
+- **Lage:** (gemessen 2026-10-07, Mountain 267 via `cargo run -p omegaflow-register --bin license_census`) **Struktur entschieden** (Rat über zwei Runden, Recherche-Schicht via `archive_search`, sechs Frontier-UI-Chats — Claude, Duck, Qwen, z.ai, DeepSeek, Gemini). Verdikt: `terms` ist ein **eigenes Feld** im B-Block (nicht Kopf-Token; der Kopf trägt genau einen Infra-Zustand, Lizenz ist orthogonal). Token **`terms unbestimmt`** (SPDX `NOASSERTION`) und **`terms ohne-lizenz`** (SPDX `NONE`); `terms keine` gestrichen (Fehllese „keine Einschränkungen" = frei). Die Abwesenheiten werden **nicht** als Registerzeilen persistiert (Fabrikation; abgeleitetes Query-Komplement) — nur gemessene Zustände stehen im Register. **Gebaut:** `register_lookup.rs:408,433` (Owner mountain), `scan_dispositions_text`/`collect_orphan_candidates_in` lesen das orthogonale `terms`-Feld (Test `scan_dispositions_reads_the_terms_field_orthogonal_to_the_head`); `license_census.rs` meldet die abgeleitete `NO-TERMS`-Liste + Zählzeile — `blocks 2673 | terms 143 | distinct 9 | no-terms 2249 | pending 2530 | terms-vocab 0 violation(s)`. **Wohnort:** Census-TSV umgezogen nach `state/mountain/license-census.tsv` (genau ein Konsument; keine Operator-Frage). **Migration vollzogen (Mountain 268):** `phi/sources.φ` `terms`→SPDX — 134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` unberührt; danach zieht Mycelium `license_census.rs`/`ci-gate` nach. **Riss 1 (bleibt):** Baum 159 Netlocs ohne `terms` vs. Census 162 (`UNMEASURED`/`STALE`) — zwei unabhängige Linien, nie gemittelt. **Riss 2 (bleibt):** `ohne-lizenz` kann mit `PD` verwechselt werden (PD ist Vokabel-Wert, „keine Lizenz" restriktiv). **269 geschlossen:** die `license_census.rs`-TERMS-Vokabel um `unbestimmt`/`ohne-lizenz` (die Rat-Token) + `OGL-Canada-2.0` (SPDX-Id, `carisma_mag.bin`) erweitert → `terms-vocab 0 violation(s)` (`ci-gate register` grün für diesen Teil; die 8 Verletzungen waren genau `unbestimmt`×7 + `OGL-Canada-2.0`). `eionet_cdr` `terms CC-BY-4.0 https://cdr.eionet.europa.eu/legalnotice` eingeschrieben (Lage gemessen: CDR-Legal-Notice HTTP 200, „CC-BY 4.0, provided the source is acknowledged").
 - **Blockade:** der `rights_read`-Arm braucht zuerst einen Datenkontrakt-Entwurf (wo das Bit lebt — Wire-Slot vs. separater Harvest-Zustand), kein Einzeiler; bis dahin ehrlich eine Stufe `unbestimmt`.
 - **Braucht:** Rat/Datenkontrakt-Entwurf für `rights_read` → Arm am Harvest-Gate (OAI-PMH `<rights>`/DataCite `rightsList`). Beleg-Regel: jedes `terms`-Feld im B-Block trägt Datum+URL in `note` (die Tabelle ist gitignored). Transport an River: `## An river`.
 
@@ -248,11 +251,11 @@ Origin: mountain-folge267.
 Origin: mountain-folge269.
 
 - **`tools-build` fresh (269 gemessen):** Release `tools-latest` `git_sha=5c8c6950f` (via `sfetch …/tools-latest/tools.manifest`) — der stale-Vorwurf der 268-Übergabe ist erledigt; die 13 Baseline-Zeilen sind gelöscht (7 live).
-- **`register-coverage` rot — OSHA-Orphan:** `phi/blocked_sources.φ:226` (`pending`, `https://obis.osha.gov/opengov/healthsamples.zip`) meldet `ORPHAN_COMMITTED [mycelium]` (gemessen 2026-10-07 269, frisch gebauter `register_lookup --orphans`). Dein Pen: die OSHA-Zeile in deiner Übergabe tragen **oder** sie auf `blocked parser-def`+`gap` setzen (der Blocker ist der unit-fähige Reader → Mountain). `intermagnet_dbdt`-Compiler: `--start` ist Pflicht (kein fabriziertes Default-1994); das Workflow `intermagnet-cdn.yml` sendet `inputs.start` — leerer Input bricht mit exit 2 ab.
+- **`register-coverage` (269, gemessen):** `register_lookup --orphans` = **0** — die OSHA-Zeile `phi/blocked_sources.φ:226` wurde von `pending` (→mycelium) auf `blocked parser-def` (Mountain, der Blocker ist der unit-fähige Reader) umgestellt und im Mountain-Handover getragen; `license_census --fail` grün. `intermagnet_dbdt`-Compiler: `--start` ist Pflicht (kein fabriziertes Default-1994); das Workflow `intermagnet-cdn.yml` sendet `inputs.start` — leerer Input bricht mit exit 2 ab.
 - **Sternkatalog `dr3_stars.bin` — Sort gebaut, Re-Harvest ist dein Schritt** (`gh workflow run gaia-cdn.yml`; Träger `tap_compiler --star-bin`).
-- **`eionet_cdr`** 276-`field`-Block reproduzierbar (`eionet_cdr_compiler --emit-field-names`); Block-Header (`url`/`origin`/`compiler`/`format`) ist dein Pen; Kraft-Verdikt `diffusion kg` + Punkt-Kernel offen.
+- **`eionet_cdr`** — `terms CC-BY-4.0 https://cdr.eionet.europa.eu/legalnotice` steht jetzt im Block (`sources.φ:19625`, CDR-Legal-Notice HTTP 200 gemessen: „CC-BY 4.0, provided the source is acknowledged"); `url`/`format`/`origin`/`compiler` + 276 `field`-Zeilen stehen (`sources.φ:19622-19627`). Offen nur der Kraft-Riss `diffusion kg` (Rat); Manifestation (`eionet-cdr-cdn.yml`, dispatch) frei.
 - **`osm_nodes`**-Register-Block steht (`phi/sources.φ:1678-1684`), Harvest-Pattern `^monaco_nodes\.bin$` + `*-cdn.yml` prüfen.
-- **Fink-Cutout** Harvest-Pattern `^fink_cutout\.bin$` + `*-cdn.yml`; **CDN-Workflows** für `jaxa_gpm_ku`, `nasa_power_t2m`, `epa_aqs_voc`, `osm_pbf_compiler`/`monaco_nodes` je `*-cdn.yml`; **`vnp46a3-cdn.yml`** Granule mit DNB-Nachtdaten wählen; **LICENSE** erst nach `terms`-Zeilen.
+- **Fink-Cutout** Harvest-Pattern `^fink_cutout\.bin$` + `*-cdn.yml`; **CDN-Workflows** für `jaxa_gpm_ku`, `nasa_power_t2m`, `epa_aqs_voc`, `osm_pbf_compiler`/`monaco_nodes` je `*-cdn.yml`; **`vnp46a3-cdn.yml`** Granule mit DNB-Nachtdaten wählen; **LICENSE** — `license_census --fail` grün (`terms-vocab 0`), der Treiber ist die `terms`-Vollständigkeit (2250 `no-terms`). **`KC2G`** — Harvest-Reader + `kc2g-cdn.yml` stehen, `terms unbestimmt` fixiert; es fehlt eine **Archivar-Parser-Arm** für `format kc2g_stations` (der CSV-Read-Site), nicht ein Term.
 - **Browser-Brücke `1-ui`-Eigentum (Operator-Frage 2026-10-07):** die Extension `OpenCode Browser` (id `fmjakelcochilgoghbdgnomafoogilof`, v0.17.2) + das Plugin `@vymalo/opencode-browser@0.17.0` binden jede Tab-Gruppe an den Client, der sie zuerst fuhr; eine neue Session ist ein neuer Client → `group "1-ui" is owned by another client` (hart; `browser_release` cleart es **nicht**, gemessen 266). Ein Mensch ist das nicht, eine tote Session-Client-Id. Hebel: (a) Plugin-/Extension-Version angleichen + opencode/Brücke neu starten (Ownership-Map prozess-lokal; die Chrome-Tab-Gruppen überleben → herrenlos); (b) Konvention `<line>-ui` (JIT) + `open-weight-ui` — jede Linie öffnet die starken Seats per URL im eigenen Profil (gleiche Logins); `1-ui` schließen, kein Nachfolger. Eine echt geteilte Gruppe bräuchte eine Option in der Dritt-Brücke (nicht im Repo).
 
 ## LOCK
@@ -264,7 +267,7 @@ Origin: mountain-folge269.
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push.
 
 Eigene Pfade: `src/archivar/goes16_mag.rs`, `src/gate/commit_gate_vocab.json`,
-`phi/sources.φ`,
+`tools/register/src/bin/license_census.rs`, `phi/sources.φ`, `phi/blocked_sources.φ`,
 `docs/handover/handover-2026-10-07-mountain-folge269.md`,
 `docs/handover/archiv/handover-2026-10-07-mountain-folge268.md` (Move),
 `state/operator-gespraeche/2026-10-07-mountain.md`.
