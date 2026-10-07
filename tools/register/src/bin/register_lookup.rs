@@ -2062,7 +2062,13 @@ fn is_container_heading(heading: &str) -> bool {
     if heading.to_lowercase().contains("kein auswahlpunkt") {
         return true;
     }
-    normalize_words(heading)
+    let words = normalize_words(heading);
+    if let Some(first) = words.first() {
+        if CONTAINER_HEADS.contains(&first.as_str()) {
+            return true;
+        }
+    }
+    words
         .iter()
         .filter(|w| is_meaningful_word(w) && !is_status_word(w))
         .count()
@@ -2079,6 +2085,18 @@ const CONTAINER_TAILS: &[&str] = &[
     "geteilter baum",
     "abschluss",
     "postfach",
+    "ci",
+];
+
+const CONTAINER_HEADS: &[&str] = &[
+    "offen",
+    "burn",
+    "abschluss",
+    "lock",
+    "postfach",
+    "zustand",
+    "benchmark",
+    "stehender",
     "ci",
 ];
 
@@ -4918,6 +4936,27 @@ mod tests {
         assert_eq!(keys.len(), 2);
         assert!(keys.contains("bauen breitenband deskriptoren gic"));
         assert!(keys.contains("coverage-begleiter"));
+    }
+
+    #[test]
+    fn dropped_roster_skips_burn_and_container_headings() {
+        let text = "## Offen (extra)\n\n### alpha point\n- **Status:** wartend\n\n## Burn: open 0.0 close 0.1 pending\n\n## Two red gates incomplete pending\n\n- ein offener Punkt\n";
+        let keys = canonical_open_point_keys(text);
+        assert!(
+            !keys.iter().any(|k| k.contains("burn")),
+            "the Burn line must not be a roster point: {:?}",
+            keys
+        );
+        assert!(
+            !keys.iter().any(|k| k.contains("extra")),
+            "the Offen container heading must not be a roster point: {:?}",
+            keys
+        );
+        assert!(
+            keys.iter().any(|k| k.contains("red") && k.contains("gates")),
+            "a real status heading stays a point: {:?}",
+            keys
+        );
     }
 
     #[test]
