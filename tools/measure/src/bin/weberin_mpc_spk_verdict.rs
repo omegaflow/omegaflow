@@ -6,7 +6,9 @@ use omegaflow::archivar::{
     BodyEphemeris, J2000_EPOCH, LeapSeconds, body_barycenter_position, embedded_lsk,
     parse_ephemeris_binary, system_now,
 };
-use omegaflow::weberin::{BODY_NUMBER, BodyOutcome, WEBERIN_TOL_M, Weberin, WeberinFeed};
+use omegaflow::weberin::{
+    BodyOutcome, WEBERIN_TOL_M, Weberin, WeberinFeed, body_number_table, frame_origin_name,
+};
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -119,7 +121,11 @@ fn main() {
         return;
     }
 
-    let Some(sun_eph) = read_eph(&eph_dir, "sun") else {
+    let Some(origin) = frame_origin_name() else {
+        println!("weberin-mpc: the frame origin is absent from the body table — no sun line");
+        return;
+    };
+    let Some(sun_eph) = read_eph(&eph_dir, origin.as_str()) else {
         println!(
             "weberin-mpc: the sun ephemeris bin is void — the heliocentric MPC line stays without a barycentric fold"
         );
@@ -127,15 +133,15 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
-    sun_map.insert("sun".to_string(), sun_eph);
+    sun_map.insert(origin.clone(), sun_eph);
     let mut spk_opened = 0usize;
-    for (name, _) in BODY_NUMBER {
+    for (name, _) in body_number_table() {
         if let Some(body_eph) = read_eph(&eph_dir, name) {
-            eph.insert((*name).to_string(), body_eph);
+            eph.insert(name.to_string(), body_eph);
             spk_opened += 1;
         }
     }
-    let sun_at_tdb = body_barycenter_position("sun", tdb, &sun_map);
+    let sun_at_tdb = body_barycenter_position(origin.as_str(), tdb, &sun_map);
     if sun_at_tdb.is_none() {
         println!(
             "weberin-mpc: the sun reference reads void at tdb {tdb:.3} — the weave stays closed"
@@ -150,7 +156,7 @@ fn main() {
         "mpc line {used_path}: {} record(s) read | weave epoch jd {jd:.5} (tdb {tdb:.3} s past J2000) | tolerance {tol_m:.3e} m | {} of {} small-body SPK ephemeris bin(s) opened",
         mpc_recs.len(),
         spk_opened,
-        BODY_NUMBER.len()
+        body_number_table().len()
     );
 
     let mut w = Weberin::new();

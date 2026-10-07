@@ -250,32 +250,43 @@ pub const WEBERIN_TOL_M: f64 = 1.0e6;
 
 pub const PLANET_WEBERIN_TOL_M: f64 = 1.0e5;
 
-pub const INPOP_LINE_BODIES: &[&str] = &[
-    "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
-];
+pub fn woven_major_bodies() -> Vec<String> {
+    let table = crate::archivar::ephemeris::body_table();
+    let mut names: Vec<String> = Vec::new();
+    for id in [1, 2, 4, 5, 6, 7, 8, 301, 399] {
+        if let Some(b) = table.get(&id) {
+            names.push(b.name.clone());
+        }
+    }
+    names
+}
 
-pub const EPM_LINE_BODIES: &[&str] = &[
-    "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune",
-];
+pub fn frame_origin_name() -> Option<String> {
+    crate::archivar::ephemeris::body_table()
+        .get(&10)
+        .map(|b| b.name.clone())
+}
 
-pub const BODY_NUMBER: &[(&str, u32)] = &[
-    ("ceres", 1),
-    ("pallas", 2),
-    ("juno_asteroid", 3),
-    ("vesta", 4),
-    ("pluto", 134340),
-    ("bennu", 101955),
-    ("apophis", 99942),
-    ("eris", 136199),
-    ("makemake", 136472),
-    ("haumea", 136108),
-];
+const SMALL_BODY_NUMBERS_TSV: &str = include_str!("archivar/kernels/small_body_numbers.tsv");
+
+pub fn body_number_table() -> Vec<(&'static str, u32)> {
+    SMALL_BODY_NUMBERS_TSV
+        .lines()
+        .filter(|l| !l.starts_with('#') && !l.trim().is_empty())
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            let n = p.next()?;
+            let num = p.next()?.parse().ok()?;
+            Some((n, num))
+        })
+        .collect()
+}
 
 pub fn body_number(name: &str) -> Option<u32> {
-    BODY_NUMBER
-        .iter()
+    body_number_table()
+        .into_iter()
         .find(|(n, _)| *n == name)
-        .map(|(_, num)| *num)
+        .map(|(_, num)| num)
 }
 
 pub fn small_body_number(name: &str) -> Option<u32> {
@@ -403,9 +414,9 @@ impl Weberin {
     pub fn feed(&mut self, feed: WeberinFeed) {
         let eph = feed.eph;
         let mut names: Vec<String> = eph.keys().cloned().collect();
-        for (n, _) in BODY_NUMBER {
-            if !names.iter().any(|k| k == n) {
-                names.push((*n).to_string());
+        for (n, _) in body_number_table() {
+            if !names.iter().any(|k| k.as_str() == n) {
+                names.push(n.to_string());
             }
         }
         for (n, _) in BODY_COMET {
@@ -439,7 +450,10 @@ impl Weberin {
         let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
             return;
         };
-        let Some(sun) = body_barycenter_position("sun", tdb, sun_map) else {
+        let Some(origin) = frame_origin_name() else {
+            return;
+        };
+        let Some(sun) = body_barycenter_position(&origin, tdb, sun_map) else {
             return;
         };
         let inpop_map = self.eph_inpop.as_ref();
@@ -456,7 +470,7 @@ impl Weberin {
                 (None, None) => None,
             };
             let mpc = t.mpc.as_ref().and_then(|r| mpcorb::state_at(r, jd));
-            let inpop_woven = INPOP_LINE_BODIES.contains(&t.name.as_str());
+            let inpop_woven = inpop_map.map_or(false, |m| m.contains_key(&t.name));
             let inpop = if inpop_woven {
                 match inpop_map {
                     Some(m) => body_barycenter_position(&t.name, tdb, m),
@@ -465,7 +479,7 @@ impl Weberin {
             } else {
                 None
             };
-            let epm_woven = EPM_LINE_BODIES.contains(&t.name.as_str());
+            let epm_woven = epm_map.map_or(false, |m| m.contains_key(&t.name));
             let epm = if epm_woven {
                 match epm_map {
                     Some(m) => body_barycenter_position(&t.name, tdb, m),
@@ -576,7 +590,10 @@ impl Weberin {
         let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
             return Vec::new();
         };
-        let Some(sun) = body_barycenter_position("sun", tdb, sun_map) else {
+        let Some(origin) = frame_origin_name() else {
+            return Vec::new();
+        };
+        let Some(sun) = body_barycenter_position(&origin, tdb, sun_map) else {
             return Vec::new();
         };
         let jd = tdb / 86400.0 + J2000_EPOCH;
@@ -1816,7 +1833,10 @@ impl Weberin {
                     for t in &group.transits {
                         let jd = t.tdb / 86400.0 + J2000_EPOCH;
                         let helio = kepler.helio(jd);
-                        let sun = body_barycenter_position("sun", t.tdb, sun_map);
+                        let sun = sun_map
+                            .keys()
+                            .next()
+                            .and_then(|o| body_barycenter_position(o, t.tdb, sun_map));
                         let receiver_pos = match receiver {
                             ReceiverWorldline::Body(name) => {
                                 body_barycenter_position(name, t.tdb, eph)
