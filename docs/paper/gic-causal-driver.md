@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 693b465d7f7bb2c3a185bb22d338c82ace8c73d652c4641966dc7243da538ae5
+  sha256: f829d458a083619bd1a0db3a69202beff790b17f344aafe997c6a71c0ee3c5f3
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -460,7 +460,16 @@ a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t (a_x = −1.69 ± 0.01, a
 a_z = −0.23 ± 0.02 A per nT/s; a second fit from 00:00 UT gives −1.70/−2.71/−0.21),
 validated only on the preceding 2-h window 06:00–07:59:50 UT (CC = 0.80,
 R² = 0.64), so the 0.80 → 0.945 gap measures the aggregation gain, not a stronger
-coupling. The named limits, set against the strong-seat review (2026-10-07):
+coupling. The named limits, held by the strong-seat review (2026-10-07): **Claude Sonnet 5.5**,
+**Qwen3.8-Max**, **DeepSeek V4 Pro** and **Duck.ai/GPT-6 Luna** on the UI channel,
+plus the flash `archive_search` cascade on the full text. Authorship (Juusola first,
+Viljanen last) and the coefficients a_x = −1.69, a_y = −2.73, a_z = −0.23 are
+confirmed by the full-text readings (Claude; Qwen) and the cascade; **DeepSeek V4
+Pro** (abstract-level, no full text) read the paper through its SECS/3-D
+geoelectric-field subject and could not reproduce Eq. 43 — a named riss, not
+smoothed. All four seats agree that the scalar hourly-peak form is a descriptive
+extreme-value proxy, not the sign-bearing transfer regression (Qwen: aggregation
+on maxima inflates r and yields no predictive transfer function). Concretely:
 
 - **Direction is lost**: the coefficient set implies |GIC|/|dH/dt| between 0 and
   ≈3.2 A per nT/s depending on field orientation (maximal at ≈58° east of north,
