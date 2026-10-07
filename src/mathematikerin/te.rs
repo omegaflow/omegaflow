@@ -3449,6 +3449,8 @@ pub fn topological_te_estimate_frozen(
 
 pub const TE_SURR_FLOOR: usize = 99;
 
+pub const TE_SERIES_COUNT: usize = 2 + TE_SURR_FLOOR;
+
 pub fn topological_te_phase(
     x: &[f32],
     y: &[f32],
@@ -3550,7 +3552,7 @@ pub fn topological_te_lag_sweep(x: &[f32], y: &[f32], dim: usize) -> Option<Memb
     })
 }
 
-pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVerdict> {
+pub fn topological_verdict_from_gpu(verdict: &[f32]) -> Option<TopologicalVerdict> {
     let valid_real = verdict[10] == 1.0;
     if !valid_real {
         return None;
@@ -3558,10 +3560,14 @@ pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVe
     let tau_c = verdict[0] as usize;
     let tau_y = verdict[6] as usize;
     let te = verdict[7] as f64;
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
-    for s in 2..12 {
-        if verdict[s * 6 + 4] == 1.0 {
-            vals.push(verdict[s * 6 + 1] as f64);
+    let mut vals: Vec<f64> = Vec::with_capacity(TE_SURR_FLOOR);
+    for s in 2..TE_SERIES_COUNT {
+        let o = s * 6;
+        if o + 4 >= verdict.len() {
+            break;
+        }
+        if verdict[o + 4] == 1.0 {
+            vals.push(verdict[o + 1] as f64);
         }
     }
     if vals.len() < 2 {
@@ -3585,7 +3591,7 @@ pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVe
         tau_c,
         tau_y,
         te,
-        threshold: mean + 2.0 * sd,
+        threshold: vals.iter().copied().fold(f64::NEG_INFINITY, f64::max),
         surrogate_mean: mean,
         surrogate_sd: sd,
         surrogates_used: vals.len(),
@@ -5091,7 +5097,7 @@ mod tests {
 
     #[test]
     fn gpu_verdict_assembles_threshold_from_valid_surrogates() {
-        let mut v = [0f32; 72];
+        let mut v = vec![0f32; TE_SERIES_COUNT * 6];
         v[0] = 4.0;
         v[6] = 3.0;
         v[7] = 0.5;
@@ -5122,20 +5128,23 @@ mod tests {
             .sqrt();
         assert!((r.surrogate_mean - expected_mean).abs() < 1e-12);
         assert!((r.surrogate_sd - expected_sd).abs() < 1e-12);
-        assert!((r.threshold - (expected_mean + 2.0 * expected_sd)).abs() < 1e-12);
+        assert!(
+            (r.threshold - c).abs() < 1e-12,
+            "the rank boundary is max(TE_surr)"
+        );
         assert_eq!(r.pe_x, Some(0.62f32 as f64));
         assert_eq!(r.pe_y, Some(0.44f32 as f64));
     }
 
     #[test]
     fn gpu_verdict_real_invalid_is_none() {
-        let v = [0f32; 72];
+        let v = vec![0f32; TE_SERIES_COUNT * 6];
         assert!(topological_verdict_from_gpu(&v).is_none());
     }
 
     #[test]
     fn gpu_verdict_fewer_than_two_surrogates_is_none() {
-        let mut v = [0f32; 72];
+        let mut v = vec![0f32; TE_SERIES_COUNT * 6];
         v[10] = 1.0;
         v[2 * 6 + 4] = 1.0;
         assert!(topological_verdict_from_gpu(&v).is_none());
@@ -5143,7 +5152,7 @@ mod tests {
 
     #[test]
     fn gpu_verdict_pe_invalid_is_none_value() {
-        let mut v = [0f32; 72];
+        let mut v = vec![0f32; TE_SERIES_COUNT * 6];
         v[10] = 1.0;
         v[2 * 6 + 4] = 1.0;
         v[2 * 6 + 1] = 0.1;
@@ -7934,13 +7943,13 @@ mod tests {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
         }
         let seed = 42u64;
-        let mut data = vec![0f32; 12 * crate::mathematikerin::TE_SERIES_STRIDE];
+        let mut data = vec![0f32; TE_SERIES_COUNT * crate::mathematikerin::TE_SERIES_STRIDE];
         data[0..n].copy_from_slice(&x);
         data[crate::mathematikerin::TE_SERIES_STRIDE..crate::mathematikerin::TE_SERIES_STRIDE + n]
             .copy_from_slice(&y);
         let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-        let mut surrogates: Vec<Vec<f32>> = Vec::with_capacity(10);
-        for s in 0..10 {
+        let mut surrogates: Vec<Vec<f32>> = Vec::with_capacity(TE_SURR_FLOOR);
+        for s in 0..TE_SURR_FLOOR {
             let surr = phase_randomized_surrogate(&y, &mut rng);
             let off = (2 + s) * crate::mathematikerin::TE_SERIES_STRIDE;
             data[off..off + n].copy_from_slice(&surr);
@@ -7959,7 +7968,7 @@ mod tests {
             let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(&te_pipe);
             pass.set_bind_group(0, &te_bind, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
+            pass.dispatch_workgroups((TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
         }
         enc.copy_buffer_to_buffer(
             &out_buf,
@@ -7985,8 +7994,9 @@ mod tests {
         );
         let mapped_data = slice.get_mapped_range();
         assert!(
-            crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32) >= 384,
-            "the K>0 verdict readback must carry the KSG columns (384 B)"
+            crate::mathematikerin::te_verdict_bytes(TE_KSG_K as u32)
+                > crate::mathematikerin::te_verdict_bytes(0),
+            "the K>0 verdict readback must carry the KSG columns"
         );
         assert_eq!(
             mapped_data.len(),
@@ -8007,13 +8017,14 @@ mod tests {
             "the kde real-pair slot must stay valid alongside the ksg mirror"
         );
         assert_eq!(
-            verdict[75], 1.0,
+            verdict[TE_SERIES_COUNT * 6 + 3],
+            1.0,
             "the wgsl ksg real-pair slot is absent at k={}",
             TE_KSG_K
         );
         let tau_c = verdict[0] as usize;
         let tau_y = verdict[6] as usize;
-        let gpu_te = verdict[74];
+        let gpu_te = verdict[TE_SERIES_COUNT * 6 + 2];
         let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
         let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
         let cpu_tau_y = find_mi_lag(&yf).expect("the cpu driver carries an MI lag");
@@ -8040,12 +8051,12 @@ mod tests {
             gap
         );
         let mut ksg_surrogates = 0usize;
-        for s in 2..12 {
-            if verdict[73 + 2 * s] != 1.0 {
+        for s in 2..TE_SERIES_COUNT {
+            if verdict[TE_SERIES_COUNT * 6 + 2 * s + 1] != 1.0 {
                 continue;
             }
             let tau_s = verdict[s * 6] as usize;
-            let gpu_s = verdict[72 + 2 * s];
+            let gpu_s = verdict[TE_SERIES_COUNT * 6 + 2 * s];
             let ysf: Vec<f64> = surrogates[s - 2].iter().map(|&v| v as f64).collect();
             let tau_c_s = find_cross_mi_lag(&xf, &ysf, tau_s)
                 .expect("the cpu carries a surrogate cross horizon");
@@ -8069,7 +8080,7 @@ mod tests {
             "wgsl ksg surrogate parity holds on {ksg_surrogates} series — the null mirror needs at least two"
         );
 
-        let mut flat_data = vec![0f32; 12 * crate::mathematikerin::TE_SERIES_STRIDE];
+        let mut flat_data = vec![0f32; TE_SERIES_COUNT * crate::mathematikerin::TE_SERIES_STRIDE];
         flat_data[0..n].copy_from_slice(&x);
         queue.write_buffer(
             &series_buf,
@@ -8081,7 +8092,7 @@ mod tests {
             let mut pass = enc2.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             pass.set_pipeline(&te_pipe);
             pass.set_bind_group(0, &te_bind, &[]);
-            pass.dispatch_workgroups(1, 1, 1);
+            pass.dispatch_workgroups((TE_SERIES_COUNT as u32).div_ceil(16), 1, 1);
         }
         enc2.copy_buffer_to_buffer(
             &out_buf,
@@ -8125,7 +8136,8 @@ mod tests {
             "no tau: the real-pair TE slot stays absent"
         );
         assert_eq!(
-            flat_verdict[75], 0.0,
+            flat_verdict[TE_SERIES_COUNT * 6 + 3],
+            0.0,
             "no tau: the ksg mirror stays absent too"
         );
     }
