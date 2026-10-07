@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 423cf68869d940e0e60350071a2bfa473b7c66dd4d0833667072a671f8dfa986
+  sha256: 693b465d7f7bb2c3a185bb22d338c82ace8c73d652c4641966dc7243da538ae5
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -454,12 +454,30 @@ The correlation is high on the storm but is a co-located linear relation, not a
 transfer-entropy arrow. It is a **scalar hourly-peak** reduction — driven by the
 GIC asset carrying hourly peak-magnitude buckets — and therefore is **not** the
 native-grain component regression of the literature: Juusola et al. (2025,
-`10.5194/angeo-43-271-2025`, Eq. 43/Table 1) fit
-a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t over all 10 s points of the same storm
-(CC = 0.80 on a 2-h hold-out; a_x = −1.69, a_y = −2.73, a_z = −0.23 A per
-nT/s), so the 0.80 → 0.945 gap measures the aggregation gain, not a stronger
-coupling. The hourly-peak grain and the single-storm window are named limits,
-and the manifested asset's non-overlapping window is the re-harvest riss.
+`10.5194/angeo-43-271-2025`, Eq. 43/Table 1), fit over 2003-10-29T08:00–31T23:59:50 UT
+(B_x, B_y, B_z = north, east, down), estimate the Mäntsälä GIC as
+a_x·∂B_x/∂t + a_y·∂B_y/∂t + a_z·∂B_z/∂t (a_x = −1.69 ± 0.01, a_y = −2.73 ± 0.02,
+a_z = −0.23 ± 0.02 A per nT/s; a second fit from 00:00 UT gives −1.70/−2.71/−0.21),
+validated only on the preceding 2-h window 06:00–07:59:50 UT (CC = 0.80,
+R² = 0.64), so the 0.80 → 0.945 gap measures the aggregation gain, not a stronger
+coupling. The named limits, set against the strong-seat review (2026-10-07):
+
+- **Direction is lost**: the coefficient set implies |GIC|/|dH/dt| between 0 and
+  ≈3.2 A per nT/s depending on field orientation (maximal at ≈58° east of north,
+  null at ≈32° west of north); a scalar Pearson averages this away.
+- **Peaks are decoupled**: the two hourly maxima may sit at different 10 s
+  instants; lag and coincidence are not tested.
+- **The measurement chain is not independent**: the Mäntsälä GIC is a
+  two-magnetometer difference (one over the pipeline and NUR), so NUR appears in
+  both channels; how strongly this drives r stays pending.
+- **Not out-of-sample**: the 72 h window overlaps Juusola's fit window, so their
+  coefficients are no independent test; and the 72 hourly values are not
+  independent (a common storm envelope; log-normal; few hours dominate).
+
+The recommendation is therefore a signed 3-component regression at native 10 s
+with a temporally separated fit/test window, reporting out-of-sample CC and R²;
+the scalar-peak r = 0.9448 stays a secondary proxy. The manifested asset's
+non-overlapping window is the re-harvest riss.
 
 ## 5. Discussion
 
