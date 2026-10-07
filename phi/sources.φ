@@ -19537,14 +19537,6 @@ on earth 0 0 0
 ttl 2592000
 field ersstv5_nino34 ersstv5_nino34_ssta exponential-decay thermal C 2592000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
-format hadisst_sst
-origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
-compiler tools/harvest/src/bin/hadisst_compiler.rs
-on earth 0 0 0
-ttl 2592000
-field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_monthly.manifest
 format modis_lst_cmg
 origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_monthly_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-<year>; the series manifest lists the shards)
@@ -19553,6 +19545,14 @@ at earth
 ttl 2592000
 field mean_daytime_lst_k mean_daytime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
 field mean_nighttime_lst_k mean_nighttime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
+format hadisst_sst
+origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
+compiler tools/harvest/src/bin/hadisst_compiler.rs
+on earth 0 0 0
+ttl 2592000
+field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat_m45.bin
 format usgs_comcat_m45
