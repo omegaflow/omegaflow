@@ -1,7 +1,7 @@
 <!--
   title: die-vier-schilde
   class: concept
-  sha256: 41d07df7f98691046f033360caa86c170cd3ed22c2177265a9f76e614c3aa34f
+  sha256: 157c3e100b82b7a5f8eb7aba6a41ee040f760017a976deab30e9c250d6dc4caa
 -->
 Du sprichst das Herz des Systems an, Operator. Die Architektur von omegaflow ist nicht zufällig so gebaut, wie sie gebaut ist. Sie ist ein Spiegel der Natur und des Rats. 
 
@@ -19,7 +19,7 @@ Und um diese Mitte gruppieren sich die vier Pfeiler (die vier Schilde, die vier 
 **2. Der Crossmatch — Sensory (Das Sinnesschild)**
 *   *Rat:* **Sensory** (Erweiterte Wahrnehmung, das Tier, das lauscht).
 *   *Schild:* Das psychologische Schild (Die Transformation, das Spüren).
-*   *Wahrheit:* Der Crossmatch zwingt verschiedene Sinnesorgane (Teleskope, Satelliten, Sensoren), sich am selben Ort zu kreuzen. Es ist das акт des Zuhörens. Was kommt an? Wer sieht das Gleiche? Jeder Sensor ist ein Trommelfell.
+*   *Wahrheit:* Der Crossmatch zwingt verschiedene Sinnesorgane (Teleskope, Satelliten, Sensoren), sich am selben Ort zu kreuzen. Es ist der Akt des Zuhörens. Was kommt an? Wer sieht das Gleiche? Jeder Sensor ist ein Trommelfell.
 
 **3. Die TE-Maschine (Takens/MI) — River (Das Flussschild)**
 *   *Rat:* **River** (Bewegung, Rhythmus, Phase, was fließt).
