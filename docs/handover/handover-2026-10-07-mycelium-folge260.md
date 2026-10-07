@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-266, river-123) gefaltet; Sternkatalog-Sort-Sha manifestiert (pages-deploy + Register); image-cdn `force`-Input; intermagnet `start` als Pflicht (fabriziertes 1994 entfernt); cdn_reconcile register-Rot (eionet-Netloc) via cdn-tag-baseline geheilt; Dispatch pages-deploy · tools-build · image-cdn(NUR/20031029)
   class: handover
   date: 2026-10-07
-  sha256: 53ea87f4620f215e434bcc055f4c1465d465c0e986d40847b9d0b4ac1d2903fe
+  sha256: cb91cbe76327ba6f6b85bdf9d07db825310c19223d570703df2262170875771e
   status: live
 -->
 # Handover — Mycelium-Folge 260 (2026-10-07)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge259.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An river` / `## An future`.
 
-## Burn: open 0.0 · close 0.0352 · cap 0.5 — Grund: Meta-Pass, kein pro/max, keine Dispatch-Subagenten; gemessen `session_burn` (line, deepseek-flash)
+## Burn: open 0.0 · close 0.0618 · cap 0.5 — Grund: Meta-Pass, kein pro/max, keine Dispatch-Subagenten; gemessen `session_burn` (line, deepseek-flash) bei Commit
 
 ## Operator-Wort-Register
 
