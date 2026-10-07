@@ -2888,6 +2888,10 @@ pub fn main_flow() {
                 archive.sources[i].format.as_str(),
                 "rpw_efield"
                     | "goes_xrs"
+                    | "cdaweb_tec"
+                    | "cdaweb_roti"
+                    | "goes16_mag"
+                    | "poes19_meped"
                     | "intermagnet_dbdt"
                     | "omni2_serie"
                     | "omni_hro"
