@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: c6549a1f8e1cf26c6a98f24c7a4e12e6d6616cff6f244ea91c37c9aa8eb70111
+  sha256: 3a0185a95d2db6bd05eac8dec0da21517c313bbef76062d94ba7d92782966ef7
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -74,6 +74,7 @@ Wort | Datum | Quelle
 „du hast nicht umgestellt / du hast die trying open modelle nicht umgestellt" — der Reload setzt die Tryingopen-Modelle auf den Default; der Wähler muss den `<button>` im `<li>` treffen und der Modellname danach gegengelesen werden | 2026-10-07 | Operator (Session, Mountain 264)
 „und ihr müsst das auch bei den chat uis berücksichtigen ihr nutzt sonst leider immer standard anstatt max thinkin deep search (falls die frage search erfordert)" — bei UI-Chats vor dem Senden **max thinking / deep search** wählen (Claude Effort „Extra hoch", z.ai Deep Think, Qwen Max+Denken, Duck Begründung+Werkzeuge), nicht Standard | 2026-10-07 | Operator (Session, Mountain 264)
 „nein bei den anderen max deep thinking deep search nur claude extra hoch nicht max" — **die anderen UI-Chats (z.ai/Duck/Qwen): Max Deep-Thinking + Deep-Search; Claude: „Extra hoch", NICHT Max** (Max dauert ewig + Token-Brand) | 2026-10-07 | Operator (Session, Mountain 264)
+„und ihr müsst auch bei jedem modell schauen dass es die stärkste variante ist" — je Stimme die stärkste Züchtlinie/Variante (nicht Flash/Small/mini): Tryingopen-Modellname nach dem Klick gegenlesen; Spektrum: Claude Sonnet 5.5 Extra hoch (nicht Max) · z.ai GLM-5.3 · Duck GPT-6 Luna · Qwen Qwen3.8-Max+Denken; Tryingopen 1 Nemotron 3 Ultra · 2 GLM 5.3 (753B) · 3 Kimi K3 · 5 Muse Glimmer 30B · 6 DeepSeek V4 Pro · 9/15 Inkling (voll) · 10 MiMo V2.6 Pro · 12 GPT-OSS 120B · 14 Qwen3.8 2.4T | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
