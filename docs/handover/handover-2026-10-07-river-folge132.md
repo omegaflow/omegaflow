@@ -3,7 +3,7 @@
   session: River-Folge 132
   class: handover
   date: 2026-10-07
-  sha256: 6025786bd2eb62c70e934772d347a1f9cf2858978ee7edb93c3e610be0a9f903
+  sha256: ccb7d77cfc6e7d292d73447f9a1f70a1ce69f45f2d9e2fc317f9b3327288ab38
   status: live
 -->
 # Handover — River-Folge 132 (2026-10-07)
@@ -83,19 +83,12 @@ Rat (council, 2 Runden) + UI-Frontier (`river-ui`: Claude Sonnet 5.5, Qwen3.7-Pl
 - **Blockade:** der Medien-Datenpfad ist nicht gebaut — `BodyProperties` stype==2 parst **5** f64 (`motion.rs:667/688`), `remove-bias.md` WP12 schreibt **6** (Stride-Lücke gemessen); Riss A (Provenienz der sechs Medium-Werte); Riss C (`kernel_extent`-Konflation) vor dem Umbenennen.
 - **Braucht:** `motion.rs:667` stype==2 auf 6 f64 / `pos += 48` korrigieren (WP12) und die sechs Medium-Werte benennen (`v_sound`, `v_seismic_p`, `v_seismic_s`, `alpha_thermal`, `d_diffusion`, `v_advective`), statt der Kernel-Namen (`gaussian_inverse_square` …) — sie reisen über den `advection`-Slot (Kraft-7-Präzedenz), kein neuer Wire-Slot; `membrane.rs:302` `kernel_extent` → `medium_reach` entflechten und den `force_type==1`-Radius-Zweig löschen (Doppelzählung `fetch.rs:554-558`); den `kepler.rs`-PROD-POISON-Eintrag als `descoped` mit Befund registrieren (Mountain). Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07); Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md`.
 
-### `medium_reach`-Reste (nach `b3dd7fb4c` + `0bc9af118`)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-07, River 132) **Gebaut/committet:** `b3dd7fb4c` (`MediumParams` → `BodyEphemeris.medium`; `kernel_extent` → `medium_reach(force_type, age, medium, advection)`; Gravitations-Radius-Zweig gefallen; Front einmal; `AUDIO_SPEED_AIR` → `AIR_SOUND_SPEED_M_S`; zwei `unwrap_or(0.0)` geheilt), `0bc9af118` (Matrix-Gate auf `age = |t_presence − meta.epoch|` + `meta.advection`), **`402aa6ee3`** (`flat_propagation_speed`-Erd-Konstanten entfernt → Kraft 2–6 absent, CPU = GPU-Schnitt), **`78eb65d67`** (`EnclosureField.body_props` write-only entfernt). Der „5→6-Stride" war ein Falschbefund (Writer/Parser/TSV = 5). `cargo check --tests` grün. Die zwei ehemals am geteilten `tests.rs` hängenden Schritte liefen nach Mountain's `rights`-Commit (`87aed0b14`) in diesem Pass.
-- **Blockade:** keine.
-- **Braucht:** **Riss:** `0bc9af118` erweiterte die State-Magic `OMX3` um `epoch`/`advection` ohne Bump auf `OMX4` (die Assertion `machines/tests.rs:296 assert saved.starts_with(b"OMX3")`); die State-Datei ist lokal/gitignored, der Loader best-effort — der saubere Abschluß wäre ein `OMX4`-Bump samt Assertion.
-
-### CI-Gate-Rot auf `9f582918b` — drei geheilt, einer Mountain's
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** neuer `ci-gate`-Lauf am HEAD `78eb65d67`.
-- **Lage:** (gemessen 2026-10-07 via `ci_manage log 37691117550` + `37692475312`) fünf Ursachen: (1) clippy `src/weberin.rs:473/482` `map_or(false, …)` → `is_some_and`; (2) format `src/mathematikerin/machines/matrix.rs:750`; (3) path_reference_scan `docs/concepts/remove-bias.md:7` see-also → `docs/handover/archiv/handover-2026-10-07-river-folge127.md` — **geheilt `ab5fd7511`**; (4) clippy `src/archivar/igrf.rs:165` `needless_range_loop` + (5) format `igrf.rs:194/284` — **geheilt `d121288c4`**. Der `dropped-set-gate`-Schlüssel (`auftrag auftrag-bias-tilgung bias-tor …`) ist **Mountain's Bias-Tor-Punkt** (`handover-2026-10-07-mountain-folge270.md:131`) — nicht River.
-- **Blockade:** die Dropped-Set-Baseline/der Bias-Tor gehört Mountain.
-- **Braucht:** neuen `ci-gate`-Lauf am HEAD `78eb65d67` lesen (`ci_manage status`); Mountain's Teil bleibt dessen.
+### CI-Gate-Verifikation (River 132)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `ci-gate`-Lauf am HEAD `4eb0c6915`.
+- **Lage:** (gemessen 2026-10-07) Rivers fünf Ursachen auf `9f582918b`/`e9f8636b0` (clippy `weberin.rs` `map_or`→`is_some_and`; fmt `matrix.rs`; path_reference_scan `remove-bias.md` see-also; clippy `igrf.rs:165` `needless_range_loop`; fmt `igrf.rs:194/284`) sind geheilt (`ab5fd7511`, `d121288c4`). Offen bleibt nur der **fremde** `dropped-set-gate`-Schlüssel (`auftrag auftrag-bias-tilgung bias-tor …`) = Mountain's Bias-Tor (`handover-2026-10-07-mountain-folge270.md:131`).
+- **Blockade:** neue Läufe; Mountain's Teil.
+- **Braucht:** neuen `ci-gate`-Lauf am HEAD `4eb0c6915` lesen (`ci_manage status`).
 
 ### NUR-Asset — Re-Harvest hängt in der CI-Queue
 - **Status:** wartend (Mycelium) | **Bindung:** eigen (cross-line mycelium)
