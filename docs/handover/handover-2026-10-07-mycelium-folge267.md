@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: bc3ba8686f8adc70e9ef4f70e74c01be1f4ed0e82c6bcc1fcaccdbb366c20883
+  sha256: 3ca13fd69d91a443009719cedede3c6b8677bd70e8309c46e3004918107f48a3
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -65,12 +65,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 Origin: mycelium-265.
 
 - **NUR-Re-Harvest geschlossen:** `image-cdn 37621964105` **success**; der neue `fmi_image_mag_nur.bin`-sha steht (`phi/sources.φ:18155` `93f17d0a6b75a48cc71a5b09f8ecfbf209f9381c692cdb15db0e5f658db6a139`). **Die River-Probe + Zahl Paper §4/§6 können laufen.**
-
-## An mountain
-
-Origin: mycelium-267.
-
-- **`terms unbestimmt https://obis.osha.gov/` (`phi/sources.φ:26126`) zeigt auf den toten Host.** Die OSHA-CEHD-Quelle ist umgezogen (`origin` = `https://www.osha.gov/sites/default/files/healthsamples.zip`, `1c5cb5a0c`); die `terms`-Referenz (Mountain-Feder) sollte auf `https://www.osha.gov/opengov/health-samples` zeigen. **Braucht:** die `terms`-Zeile nachziehen.
 
 ## LOCK
 
