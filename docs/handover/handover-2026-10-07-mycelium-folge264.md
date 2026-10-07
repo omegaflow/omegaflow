@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. dropped-gate (a) Zwei-Pin-Trennung (Roster vs. Legacy) gebaut, (b) `--shadow`-Selbsttest in ci-gate verdrahtet; eionet_cdr sha256 ins Register; adressierte Blöcke future-197/mountain-269/river-131 gefaltet; Round-Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: d4b0f0af76fd5a7f398651d8b04c1573d70cd0a43beee269f8f36a5ab333d292
+  sha256: 6603b64d4c2a0e67bb40d5da4991d7d4ebf6b93e3541af40e6cb61457b55a0a4
   status: live
 -->
 # Handover — Mycelium-Folge 264 (2026-10-07)
@@ -39,12 +39,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** keine (Runner-Queue).
 - **Braucht:** `ci_manage view 37676047864` → Ergebnis einmalig lesen (future-194/195-Adresse).
 
-### dropped-gate — Zwei-Pin-Trennung steht; Legacy-Pin + Roster-Gate offen
+### dropped-gate — der Selbsttest läuft; der scharfe Gate fehlt noch
 - **Status:** wartend
-- **Trigger:** der nächste Mycelium-Pass (Event-Emission-Entwurf) — `state/stimmen/2026-10-07_dropped-gate-stimmen-runde-2.md`
-- **Lage:** (gemessen 2026-10-07, Commit `f4f7b8f33`) `dropped_gate.rs` trennt `DEFAULT_ROSTER_PIN` (`docs/zustand/dropped-roster-baseline.txt`, Offen-Roster) von `DEFAULT_LEGACY_PIN` (`docs/zustand/dropped-legacy-baseline.txt`, Verlust-Scan); `--legacy-pin` neu; `--carrier` liest den Legacy-Pin und meldet bei Absenz `pending` (exit 2) — nie eine stille Null (`--carrier --count` → `pending`). `--selftest` grün; `--shadow` `false_red=0 false_green=0 sharp=true`. ci-gate `dropped-gate`-Job trägt den Schritt „Gate self-test — shadow null-control is sharp".
-- **Blockade:** (1) der volle Verlust-Scan (`register_lookup --dropped`) ist CI-only (>30 min) → der Legacy-Pin existiert noch nicht; (2) der harte Roster-Gate ist nicht scharf schaltbar, weil `register_lookup --dropped-roster --public-only --baseline … --count` = **17 LOST** (Baseline stale seit HEAD `351632051`) und ohne getypte `carried`/`resolved`-Emission jeder legitime Archive-Move rot färbt (Riss 4 der Design-Fragen).
-- **Braucht:** (1) den Legacy-Pin im CI-Dispatch-Job erzeugen; (2) die getypte Archive-Move-Event-Emission bauen; dann Re-Pin + Roster-Gate-Verdrahtung.
+- **Trigger:** der nächste Mycelium-Pass (Verlust-Liste + Archiv-Ereignis) — `state/stimmen/2026-10-07_dropped-gate-stimmen-runde-2.md`
+- **Lage:** (gemessen 2026-10-07) Der Selbsttest (`--shadow`, `--selftest`) ist grün und läuft in CI. Der Pin liegt in zwei getrennten Dateien: Offen-Roster (`docs/zustand/dropped-roster-baseline.txt`) und Verlust-Liste (`docs/zustand/dropped-legacy-baseline.txt`). Die Verlust-Liste gibt es noch nicht.
+- **Blockade:** Die Verlust-Liste entsteht nur im CI (der volle Scan dauert >30 min). Und der scharfe Roster-Gate würde sofort rot: die Offen-Roster-Baseline ist veraltet (17 Schlüssel fehlen), und wenn eine Linie Punkte ins Archiv verschiebt, meldet sie das heute nicht.
+- **Braucht:** (1) die Verlust-Liste im CI-Job erzeugen; (2) beim Archiv-Verschieben je Punkt ein Ereignis (`carried`/`resolved`) melden; dann den Roster-Gate neu pinnen und scharf schalten.
 
 ### KC2G `prop.kc2g.com` — Manifestation wartet Mountains Reader-Arm
 - **Status:** wartend
@@ -73,13 +73,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-07, Mycelium 263 via `ci_manage log 37674509290`) `clean-tree`-Schritt im `register`-Job; 5 Treffer in `src/` (River-Bias-Arbeit: `odp.rs:9`, `media.rs:33`, `weberin.rs:254/258`, `MEDIA-TABLE media.rs`).
 - **Blockade:** die src-Bias-Arbeit (River WP13).
 - **Braucht:** Rivers WP13-Run; danach ist der Job grün.
-
-### UI-Seat-Roster — Together-Submit-Pfad site-seitig
-- **Status:** wartend
-- **Trigger:** ein Together-Submit liefert wieder eine Konversation (`state/stimmen/2026-10-07_ui-seat-kandidaten.md`)
-- **Lage:** (gemessen 2026-10-07, Mycelium 263) `chat.together.ai` **lädt**, ein Submit erzeugt **keine Konversation** (kein Chat-POST). 4 neue Seats aufgenommen (MiniMax M3 · Gemini 3.1 Pro · DeepSeek Chat · Mistral).
-- **Blockade:** Together-Submit-Pfad site-seitig.
-- **Braucht:** erneuter Together-Submit in einem frischen Chat.
 
 ### Pipeline-Zulassung — 5 erreichbare Datenquellen (`phi/pipeline/ledger.φ`)
 - **Status:** wartend
