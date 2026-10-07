@@ -19622,6 +19622,7 @@ field lhaaso_sky1 lhaaso_sky1 inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdr.eionet.europa.eu/eionet_cdr.bin
 format eionet_cdr
 origin https://cdr.eionet.europa.eu/at/eu/eprtrdat/envxwzhwa/EU_Report_2017_27Aug19.xml
+terms CC-BY-4.0 https://cdr.eionet.europa.eu/legalnotice
 compiler tools/harvest/src/bin/eionet_cdr_compiler.rs
 at earth
 ttl 31536000
