@@ -3,7 +3,7 @@
   session: Mountain-Folge 264
   class: handover
   date: 2026-10-07
-  sha256: 9453c54de435c71b77e8645fc9e20312cf8463c7b03a5c28686ebdbaed634173
+  sha256: d9094b742955c9026647697b14361e6ee7a06f68409425a27626ae357ae33da4
   status: live
 -->
 # Handover — Mountain-Folge 264 (2026-10-07)
@@ -66,6 +66,9 @@ Wort | Datum | Quelle
 „gib mir nochmal die frage" — die Ratsfrage erneut ausgeben (neutralisierte Fassung) | 2026-10-07 | Operator (Session, Mountain 259)
 „ja gib sie kimi k3 nochmal" — die Frage erneut an Kimi K3 auf tryingopen senden | 2026-10-07 | Operator (Session, Mountain 259)
 „mach das ab jetzt automatisch — committe und pushe selbst, du bist die einzige Linie die das nicht automatisch tut" | 2026-10-07 | Operator (Session, Mountain 264)
+„ich meine die architektur ethik und recherche methodik, ich möchte dass du die offenen punkte so untersuchen lässt" — offene Punkte durch die Architektur-/Ethik-Linse (Rat) und die Recherche-Methodik (`archive_search`) untersuchen | 2026-10-07 | Operator (Session, Mountain 264)
+„und dann nimm die ui chats dazu (die tabs sind alle offen)" — den zweiten Kanal (UI-Frontier) je Tab als eigene Stimme mitnehmen | 2026-10-07 | Operator (Session, Mountain 264)
+„hast du wirklich alle stimmen? ich sehe z.b. kimi nicht · bitte weiter" — Kimi K3 fehlte (Header-Abbruch beim Senden), nachreichen | 2026-10-07 | Operator (Session, Mountain 264)
 
 ## Offen (aufgeschlüsselt)
 
@@ -75,6 +78,7 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-07, Mountain 264, via `register_unit_audit --file phi/sources.φ`) sechs der sieben Klasse-(b)-Paare geschlossen (47→37 Zeilen / 27→21 Paare): `thermal m`→`gravity m` (`d20_thermocline_depth_m` `:850` — eine Thermoklinen-Tiefe ist eine Länge; gravity trägt Längen); `em hPa`→`acoustic hPa` (`cosmic_ro_pressure_hpa` `:9994` — ein Druck; em trägt keine Druckeinheit, acoustic trägt pa/hpa/npa/dbar); `ppm` in die em-Tabelle (`exofop_toi_transit_depth_ppm` `:1707` — ein dimensionsloses Transit-Tiefen-Verhältnis; em trägt bereits %/1); `db` in die em-Tabelle (`superdarn_rawacf_lag0_power_db` `:10152` — ein dimensionsloses Radar-Leistungsverhältnis; em trägt dbm/dbhz); `mm` in die advective-Tabelle (`atmosphere_cma_precipitation_mm` `:414`, `noaa_gsod_prcp_mm` `:10520` — eine wasseräquivalente Tiefe; advective trägt m); `m/s2` in die advective-Tabelle (`bidsleep_mx/my/mz_ms2` `:3813-3815`, `soho_lasco_cme_accel_m_s2` `:19392` — Kinematik; advective trägt m/s). `src/archivar/units.rs` (Tabellen + `convert_to_si`), `docs/specs/force-unit-baseline.txt` fortgeschrieben (`cargo check` 0/0).
 - **Blockade:** **`advective g`** (`soho_lasco_cme_mass_g` `:19393`) bleibt `pending`: `g` ist überladen (Gramm-Masse vs. Standard-Gravitation; `convert_to_si` liest `g` als 9.80665 — die CME-Masse in Gramm würde als Beschleunigung skaliert). Kein Kraft-Token trägt eine Gramm-Masse; die Einheit muss als Masse benannt werden (z. B. `kg` mit Compiler-Umrechnung) — eine Quell-/Schema-Entscheidung. `em millionths` (`:1079`) bleibt `pending` (Quellzeile nötig).
 - **Braucht:** (3) nie mehr ohne Messung; (4) Klasse (a) (20 Paare, z. B. `em w/m2/hz|w/m2/sr|w/m2/sr/um|erg/cm2/s|njy|nmgy|mcrab|n-units|dbz|mm/s2|nw/cm2/sr|uj/sr`, `gravity nm/s2`, `diffusion grains/m3|kg/kg|m2|ml/l`) nur mit gemessener Dimension + SI-Faktor + Definitionsquelle, **nie aus dem Register selbst**; Gate dreiwertig (`ok`/`reject`/`pending`) scharf schalten.
+- **Linse (Rat + Recherche + UI, 2026-10-07):** `state/stimmen/2026-10-07_force-unit-arch-ethik-konsens.md` (Rohantworten `state/stimmen/forceunit-*.json`). **Konvergenz Rat + 12 UI-Stimmen:** (1) `g_mass`-Token (BIPM 1e-3 kg, Präzedenz `kt`/`kt_mass`) statt stillem `g`-Default — Q1 entschieden; (2) Druck = ein kanonischer Einheitenvertrag, Messkontexte (Oberfläche/MSL/Atmosphäre) erhalten, kein erzwungenes Ein-Heim; (3) `n-units`/`dbz`/`nmgy` eigene Observable-/Domänenklasse oder `pending`, **nicht** pauschal em; (4) `diffusion m2` `pending` (kein Heim ohne benannte Größe); (5) mechanisch = gleiche Dimension **und** gleiche Größe/Konvention, sonst Architektur (WGSL-`force_type`-Zweig); die Einstufung berechnet das Tool, nicht die Session. **Recherche:** 18/21 Paare mit belastbarer SI-Quelle (BIPM/ISO/NIST/ITU-R/NOAA/NASA/SDSS/IAU), `unbelegt`: `diffusion grains/m3` (Pollenkorn-Zählung = Datenprodukt-Konvention), `em millionths` (nur „solar hemisphere"), `em njy/nmgy` (IAU-Resolution nicht separat am Text). **Getragene Architektur-Risse** (Operator-Wort nötig, bevor `units.rs` eine neue Dimension aufnimmt): Masse-Heim (gravity/diffusion/em), Druck-Heim (Dimension vs. Kontext), em/Medium-Grenze + Kraft-Taxonomie (Dimension vs. Domain).
 
 ### Newell dΦ/dt als `rect`-Treiber — Primär-Arm aligned, OMNI pending
 - **Status:** wartend | **Bindung:** eigen (Format) · river (CI-Lauf)
