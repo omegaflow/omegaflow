@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: 85bea0ed9ede556f5871750071ca6626bf5fcffcf7a37ab9a10705384d8d2ab5
+  sha256: b52e7c41516ee39be5ed30dbcd3f58a3215d4336988f81338212cfe7b1c520d5
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -25,7 +25,8 @@ Sender-Zeilen in `## An river` / `## An future`.
 - Wort | 2026-10-07 | „ja bitte" → Recherche-Schicht für `terms`-SPDX + dropped-gate-Thresholds starten und die UI-Frontier-Fragen-Sheets bereitlegen. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „fängst du jetzt bitte an zu arbeiten?" → Direktive: weiterarbeiten ohne Rückfrage. Gebaut: echtes dropped-gate (`--roster` + Tombstones/Generationen, nicht-vakuoser Shadow), Lizenz-Census (iii) + Join am Quellenblock. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „das ist einfach nur quatsch … schau dir bitte an welche tabs offen sind" → Korrektur: die Frontier-Seats sind offen/eingeloggt; die Antworten werden aus den offenen Tabs gelesen (nicht aus neuen, unangemeldeten Tabs). | Quelle: Operator (Session, Mycelium 261).
-- Wort | 2026-10-07 | „ok würdest du dann bitte migrieren?" → **Migrations-Auftrag `terms`→SPDX** (134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` bleiben). `phi/sources.φ` ist Mountains Pen **und** dirty (2 fremde `cgm_source`-Zeilen) → Ausführung blockiert, bis der Register-Baum sauber ist. | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „ok würdest du dann bitte migrieren?" → **Migrations-Auftrag `terms`→SPDX** (134× `CC0`→`CC0-1.0`, 1× `ODC-BY-1.0`→`ODC-By-1.0`; `PD`/`free-open`/`own-work` bleiben). Im Working Tree bereits vollzogen (uncommittet); Gate nachgezogen `9c010f725`. | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „was ist own-work?" · „bitte messen und ihr berücksichtigt schon alle phi files?" → `own-work`-Riss vermessen (eigene Kompilation, Fakten) + `terms`-Deckung nur `phi/sources.φ`. | Quelle: Operator (Session, Mycelium 261).
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge260.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -86,6 +87,13 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** Together + Xiaomi site-seitig.
 - **Braucht:** Together-Retry; FMHY-Leads (`state/stimmen/2026-10-07_fmhy-ai-survey.md`) — je Gretchenfrage. Kandidatenakte: `state/stimmen/2026-10-07_ui-seat-kandidaten.md`.
 
+### KC2G `prop.kc2g.com` — JSON-Reader-Arm (`blocked_sources.φ:234`)
+- **Status:** eigen
+- **Trigger:** — (autonom)
+- **Lage:** (gemessen 2026-10-07, Register) `phi/blocked_sources.φ:234-236` (uncommittet, future-191/Mountain 268): `https://prop.kc2g.com/api/stations.json` JSON 200 (42482 B; mufd/fof2/tec/cs); `terms unbestimmt`; Arm: JSON-Reader.
+- **Blockade:** keine.
+- **Braucht:** JSON-Reader-Arm (Loader) + `url`/`format`-Zeile; bis dahin `pending`.
+
 ## An river
 
 Origin: mycelium-folge258/260.
@@ -110,7 +118,9 @@ Origin: mycelium-folge255/260.
 
 Origin: mycelium-folge261.
 
-- **`terms`→SPDX-Migration (Operator-Wort 2026-10-07, Frontier 5/5):** `phi/sources.φ` migrieren — **134× `terms CC0`→`terms CC0-1.0`**, **1× `terms ODC-BY-1.0`→`terms ODC-By-1.0`**; `PD`/`free-open`/`own-work` bleiben (Statusachse, nie aliast). Quelle belegt: `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md` (Qwen · DeepSeek · Claude · Gemini · Duck/GPT-6) + Recherche (DataCite/SPDX). **Braucht:** dein Vollzug im Register (Mountain-Pen); danach ziehe ich `license_census.rs` TERMS nach und verdrahte `ci-gate`. **Blockade jetzt:** `phi/sources.φ` ist dirty (2 fremde `cgm_source`-Zeilen) — dein Commit macht den Baum frei.
+- **`terms`→SPDX-Migration (Operator-Wort 2026-10-07, Frontier 5/5) — im Working Tree vollzogen:** `phi/sources.φ` trägt uncommittet `CC0-1.0` (134) + `ODC-By-1.0` (1), HEAD noch alt. Meine Gate-Seite ist nachgezogen (`license_census.rs` TERMS = SPDX-Formen, `9c010f725`, 0 Verstöße gegen 143 Zeilen/9 distinct). `PD`/`free-open`/`own-work` bleiben Statusachse. **Braucht:** deinen Commit des Registers (Mountain-Pen; die uncommittete Fassung trägt zusätzlich 2 `cgm_source`-Zeilen).
+- **`own-work`-Riss vermessen + aufgelöst:** das Asset `anderson_residuals.tsv` (1 095 B, sha `093e9e47…`, kein Compiler, `format reference`) ist eine **eigene, quergeprüfte Kompilation** (Kopf zitiert PRL 100,091102 Tab. I + arXiv:0806.4159 + Wikipedia, Sign-Konvention, benannter Sigma-Riss); die Messwerte sind Fakten (nicht urheberrechtlich). `own-work` trägt als Provenienz-/Statuswert, nicht als Lizenz. Paper = M. E. McCulloch, arXiv:0806.4159.
+- **`terms`-Deckung:** zeilenführende `terms`-Direktiven existieren **nur** in `phi/sources.φ` (143); die Katalog-Treffer (`dryad/korpora/pangaea_catalog.φ`) sind englisches „in terms of" — `license_census` (matcht den Zeilenkopf) deckt die Menge vollständig. Kein weiteres phi-File trägt `terms`.
 
 ## LOCK
 
