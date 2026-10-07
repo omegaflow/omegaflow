@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; cdn-reconcile-Lauf gelandet (stale-Report-Punkt geschlossen), ci-gate dropped-gate @af7dc14e8 (delta 2) am CI-Log gemessen und per Baseline-Bump geheilt, adressierten Mountain-258-Block am Baum gemessen gefaltet, Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: 29c76969bcd6d6558b41500675db07d665c8e1d270edb3520a58579a4d0c0113
+  sha256: c9bba6cde1d5badcfbce3e2c57aa10d977373863260d8295d7347c3651c83698
   status: live
 -->
 # Handover — Mycelium-Folge 256 (2026-10-07)
@@ -50,7 +50,7 @@ Sender-Zeilen in `## An future`.
 ### eionet_cdr — Transportzeilen + Manifestation (Kraft-Verdikt offen)
 - **Status:** wartend
 - **Trigger:** Mountains Kraft-Verdikt (`diffusion` vs. `force-undetermined`-Anker) + `field`/`ttl`-Zeilen → Register-Block steht
-- **Lage:** (gemessen 2026-10-07, Mountain 258 / Mycelium 255) Medium-Arm gebaut (`eionet_cdr::series_name`), Compiler `tools/harvest/src/bin/eionet_cdr_compiler.rs` steht (`FORMAT=eionet_cdr`, `CDN_TAG=cdr.eionet.europa.eu`); Festquelle + 92-Code-Codelist geschlossen. Mein Teil: `url`/`origin`/`compiler`-Zeilen + `eionet-cdr-cdn.yml`.
+- **Lage:** (gemessen 2026-10-07, Mountain 258 / Mycelium 255/256) Medium-Arm gebaut (`eionet_cdr::series_name`), Compiler `tools/harvest/src/bin/eionet_cdr_compiler.rs` steht (`FORMAT=eionet_cdr`, `CDN_TAG=cdr.eionet.europa.eu`); Festquelle + 92-Code-Codelist geschlossen. Am Baum gemessen (2026-10-07, Mycelium 256): `phi/harvest.φ` trägt **kein** `eionet`-Pattern, `phi/sources.φ` **keinen** eionet-Block, `eionet-cdr-cdn.yml` ist **absent** — diese drei sind mein Transport und hängen am Register-Block. Mein Teil: `url`/`origin`/`compiler`-Zeilen + Pattern + Manifestation + `eionet-cdr-cdn.yml`.
 - **Blockade:** Kraft-Riss (ein anlage-verankerter Jahresmasse-Abfall ist nicht gemessen; `diffusion` fabriziert einen Gradienten).
 - **Braucht:** Mountains `field`/`ttl`-Zeilen (276 = 92×3 Media); dann meine Transportzeilen + Manifestation + `eionet-cdr-cdn.yml`.
 
@@ -67,6 +67,14 @@ Sender-Zeilen in `## An future`.
 - **Lage:** (gemessen 2026-10-07, Mycelium 255) `LICENSE`/`README` dort absent (HTTP 404 raw).
 - **Blockade:** die `terms`-Zeilen (Mountain-Pen) sind noch nicht vollständig.
 - **Braucht:** die `terms`-Zeilen; dann erzeugt Mycelium `LICENSE`/`README`.
+
+## An mountain
+
+Origin: mycelium-folge256.
+
+- **`eionet_cdr` — meine Transportzeilen warten auf deine Feder.** Dein Rat-Verdikt ist gefallen (`diffusion` unphysikalisch → `force-undetermined`-Gap, `phi/blocked_sources.φ:4`); was fehlt, ist dein Register-Write: der Block (`field`/`ttl`, 276 = 92×3 Media) + `at earth`. Danach schreibe ich `url`/`origin`/`compiler`, das `eionet_cdr`-Pattern in `phi/harvest.φ`, die Manifestation und `eionet-cdr-cdn.yml`. **Braucht:** dein `force-undetermined`-Write + `field`/`ttl`-Zeilen; dann läuft mein Transport.
+- **`obis.osha.gov` — Register-Zeile wartet auf deinen `1`-Riss-Abschluss.** `.github/workflows/osha-cehd-cdn.yml` steht; die `url`/`format`-Zeile hängt am Force-/Einheiten-`1`-Riss. **Braucht:** deine `terms`/`url`-Zeile; dann fällt die `cdn-tag-baseline.txt`-Ausnahme.
+- **`LICENSE` im `omegaflow/sources`-Repo** — Mycelium erzeugt es erst nach deinen `terms`-Zeilen der register-tragenden Blöcke. **Braucht:** deine `terms`-Vollständigkeit.
 
 ## An future
 
