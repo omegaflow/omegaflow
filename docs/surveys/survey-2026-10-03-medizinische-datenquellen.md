@@ -4,7 +4,7 @@
   date: 2026-10-03
   sha256: feb2807818faf2b6bd66f009f0c0e7fd0c1f949e7230dc80b9cc1e05ca9a1c5e
   status: live
-  see-also: docs/handover/handover-2026-10-03-sensory-folge227.md phi/sources.φ
+  see-also: docs/handover/archiv/handover-2026-10-03-sensory-folge227.md phi/sources.φ
 -->
 # Survey — Medizinische/Life-Science-Datenquellen (2026-10-03)
 
