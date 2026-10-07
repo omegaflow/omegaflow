@@ -162,7 +162,7 @@ impl IgrfCoeffs {
             let g = self.coefficient(false, n, 0, date)?;
             b_r += (n as f64 + 1.0) * pnm[n][0] * r_n * g;
             b_theta += -pnm[0][n + 1] * r_n * g;
-            for m in 1..=n {
+            for (m, _) in pnm.iter().enumerate().take(n + 1).skip(1) {
                 let g = self.coefficient(false, n, m, date)?;
                 let h = self.coefficient(true, n, m, date)?;
                 let cmp = (m as f64 * phi).cos();
@@ -194,9 +194,7 @@ fn schmidt_legendre(nmax: usize, colat_deg: f64) -> Vec<Vec<f64>> {
     let mut pnm = vec![vec![0.0f64; nmax + 2]; nmax + 1];
     pnm[0][0] = 1.0;
     pnm[1][1] = sinth;
-    let rootn: Vec<f64> = (0..=(2 * nmax * nmax))
-        .map(|k| (k as f64).sqrt())
-        .collect();
+    let rootn: Vec<f64> = (0..=(2 * nmax * nmax)).map(|k| (k as f64).sqrt()).collect();
     for m in 0..nmax {
         let pnm_tmp = rootn[2 * m + 1] * pnm[m][m];
         pnm[m + 1][m] = costh * pnm_tmp;
@@ -284,7 +282,13 @@ h  1  1   5922   5909   5898   5875   5845   5817   5808   5812   5821   5810   
     fn synthesis_matches_pyigrf14_witness_points() {
         let c = igrf14();
         let cases: [(f64, f64, f64, f64, [f64; 3]); 3] = [
-            (1900.0, 6300.0, 175.0, -150.0, [-5072.93, 10620.34, -67233.55]),
+            (
+                1900.0,
+                6300.0,
+                175.0,
+                -150.0,
+                [-5072.93, 10620.34, -67233.55],
+            ),
             (2020.0, 6700.0, 15.0, 90.0, [3734.07, 1294.17, 50833.13]),
             (2025.0, 6375.0, 56.0, -3.0, [28927.56, 261.98, 30910.08]),
         ];
