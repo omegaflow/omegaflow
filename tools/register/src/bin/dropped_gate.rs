@@ -162,6 +162,69 @@ fn read_pin(path: &str) -> Result<BTreeSet<String>, String> {
     Ok(set)
 }
 
+fn carried_log<'a, I: Iterator<Item = &'a String>>(keys: I, alias: usize) -> String {
+    let mut log = String::from(HEADER_PREFIX);
+    log.push_str("shadow\n");
+    for (idx, key) in keys.enumerate() {
+        let witness = if idx < alias { "alias:shadow-old" } else { "" };
+        log.push_str("carried\t");
+        log.push_str(key);
+        log.push('\t');
+        log.push_str(witness);
+        log.push_str("\t2026-10-07\n");
+    }
+    log
+}
+
+fn compare_log_to_pin(log: &str, pin: &BTreeSet<String>) -> (usize, usize) {
+    let outcome = fold_events(log, pin);
+    if outcome.refusal.is_some() {
+        return (1, 1);
+    }
+    let mut mentioned: BTreeSet<String> = BTreeSet::new();
+    let mut minted: BTreeSet<String> = BTreeSet::new();
+    for line in log.lines().skip(1) {
+        let parts: Vec<&str> = line.split('\t').collect();
+        if parts.len() != 4 {
+            continue;
+        }
+        mentioned.insert(parts[1].to_string());
+        if parts[0] == "minted" {
+            minted.insert(parts[1].to_string());
+        }
+    }
+    let false_green = pin.iter().filter(|k| !mentioned.contains(*k)).count();
+    let false_red = outcome
+        .keys
+        .iter()
+        .filter(|k| !pin.contains(*k) && !minted.contains(*k))
+        .count();
+    (false_red, false_green)
+}
+
+fn shadow_null_control(pin: &BTreeSet<String>) -> (usize, usize) {
+    let k = pin.len().min(3);
+    let mut false_red = 0usize;
+    let mut false_green = 0usize;
+
+    let all_carried = carried_log(pin.iter(), 0);
+    let (r, g) = compare_log_to_pin(&all_carried, pin);
+    false_red += r;
+    false_green += g;
+
+    let reduced = carried_log(pin.iter().skip(k), 0);
+    let (r, g) = compare_log_to_pin(&reduced, pin);
+    false_red += r;
+    false_green += g.abs_diff(k);
+
+    let renamed = carried_log(pin.iter(), k);
+    let (r, g) = compare_log_to_pin(&renamed, pin);
+    false_red += r;
+    false_green += g;
+
+    (false_red, false_green)
+}
+
 fn run_selftest() -> Result<(), String> {
     let pin: BTreeSet<String> = ["a", "b", "c"].iter().map(|s| s.to_string()).collect();
     let log = concat!(
@@ -206,6 +269,7 @@ fn main() {
     let mut log_path: Option<String> = None;
     let mut pin_path = DEFAULT_PIN.to_string();
     let mut selftest = false;
+    let mut shadow = false;
 
     let mut i = 1;
     while i < args.len() {
@@ -231,6 +295,7 @@ fn main() {
                 }
             }
             "--selftest" => selftest = true,
+            "--shadow" => shadow = true,
             other => {
                 eprintln!("dropped_gate: unknown argument `{other}`");
                 std::process::exit(1);
@@ -248,6 +313,22 @@ fn main() {
             }
         }
         return;
+    }
+
+    if shadow {
+        let pin = match read_pin(&pin_path) {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("dropped_gate: {e}");
+                std::process::exit(1);
+            }
+        };
+        let (false_red, false_green) = shadow_null_control(&pin);
+        let sharp = false_red == 0 && false_green == 0;
+        println!(
+            "dropped_gate shadow: false_red={false_red} false_green={false_green} sharp={sharp}"
+        );
+        std::process::exit(if sharp { 0 } else { 1 });
     }
 
     let log_path = match log_path {
@@ -321,5 +402,24 @@ mod tests {
 
         let absent_carried = "# dropped-events v1 pin=x\ncarried\tz\t\t2026-10-07\n";
         assert!(fold_events(absent_carried, &pin).refusal.is_some());
+    }
+
+    #[test]
+    fn shadow_control_is_sharp_on_synthetic_pin() {
+        let pin: BTreeSet<String> = ["a", "b", "c", "d"].iter().map(|s| s.to_string()).collect();
+        let k = pin.len().min(3);
+
+        let all_carried = carried_log(pin.iter(), 0);
+        assert_eq!(compare_log_to_pin(&all_carried, &pin), (0, 0));
+
+        let reduced = carried_log(pin.iter().skip(k), 0);
+        let (false_red, false_green) = compare_log_to_pin(&reduced, &pin);
+        assert_eq!(false_red, 0);
+        assert_eq!(false_green, k);
+
+        let renamed = carried_log(pin.iter(), k);
+        assert_eq!(compare_log_to_pin(&renamed, &pin), (0, 0));
+
+        assert_eq!(shadow_null_control(&pin), (0, 0));
     }
 }
