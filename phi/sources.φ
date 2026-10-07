@@ -10750,7 +10750,7 @@ at mars
 ttl 604800
 field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
 field LONGITUDE viking_grav_longitude_deg inverse-square em deg 604800 0.0 0.0
-field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square em mm/s2 604800 0.0 0.0
+field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square gravity mm/s2 604800 0.0 0.0
 field ALTITUDE viking_grav_altitude_km inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-imaging.jpl.nasa.gov/pds3_img_m3g20081118t222604_v03_loc.bin

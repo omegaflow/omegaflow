@@ -3807,6 +3807,18 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_unwrap_or_constant_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "tools/harvest/src/bin/intermagnet_dbdt_compiler.rs",
+            &fx("fabrication_unwrap_or_constant"),
+        );
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
     fn fp_tool_absent_anchor_tuple_blocked() {
         let mut g = test_gate();
         let args = tool_args(
