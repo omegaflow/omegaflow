@@ -1,0 +1,11 @@
+# The small-body horizon numbers (name → number) as data, never a code literal.
+ceres	1
+pallas	2
+juno_asteroid	3
+vesta	4
+pluto	134340
+bennu	101955
+apophis	99942
+eris	136199
+makemake	136472
+haumea	136108

@@ -3,7 +3,7 @@
   session: River-Folge 131
   class: handover
   date: 2026-10-07
-  sha256: af4d67f335bb2661735469587789c8bc9bec2942cfadb3d2e6bc5749cebb6755
+  sha256: 23bdb82e51b8709f99a9f4280fa3cbdc4c870c3dbde27a8930666bf137ae6da4
   status: live
 -->
 # Handover — River-Folge 131 (2026-10-07)
@@ -66,9 +66,9 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 ### Bias-Audit Archivar/Mathematikerin — src-Rest und der Gate-Rückfall
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-07, River 127/129/130) Untersuchung `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13). **Geheilt:** `channels.rs:1423` τ=∞; `nexrad.rs`/`rinex.rs`/`odp.rs`/`media.rs` (10→2). **Gate-Wall gefallen (Mountain 269, `170a4da44`):** der Fabrication-Fixture-Scan nimmt `#[cfg(test)]` aus → `src/weberin.rs` ist committbar. **`clean_tree --fail` = 2 (gemessen 2026-10-07 via `./target/debug/clean_tree`), bestätigt am HEAD `e0708b53e` (`ci-gate register` failure):** `src/weberin.rs:254/258` — die Produktions-Consts `INPOP_LINE_BODIES`/`EPM_LINE_BODIES` tragen Körper-Namen-Literale. Offen weiter: `matrix.rs:786` (Erd-Schiefe per-Körper), `motion.rs:77` (Nutation → Option), `shaders.rs:5-15` (WP11), **Riss A** (Medium-Werte-Provenienz `pending`).
+- **Lage:** (gemessen 2026-10-07, River 127/129/130) Untersuchung `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13). **Geheilt:** `channels.rs:1423` τ=∞; `nexrad.rs`/`rinex.rs`/`odp.rs`/`media.rs` (10→2). **Gate-Wall gefallen (Mountain 269, `170a4da44`):** der Fabrication-Fixture-Scan nimmt `#[cfg(test)]` aus → `src/weberin.rs` ist committbar. **`clean_tree` 2 → 0 (geheilt River 131):** `src/weberin.rs:254/258` trugen die Literal-Listen `INPOP_LINE_BODIES`/`EPM_LINE_BODIES`; ersetzt durch `woven_major_bodies()` — die Namen kommen aus `ephemeris::body_table()` (NAIF-TSV `kernels/naif_body_ids.tsv`), die 4 Tool-Konsumenten (`inpop_compiler.rs`, `epm_compiler.rs`, `weberin_verdicts_compiler.rs`, `weberin_body_verdict.rs`) sind umgestellt; `./target/debug/clean_tree` = **0 Treffer** (gemessen 2026-10-07), `cargo check` grün, 4 Bins bauen. `BODY_NUMBER` (:261) trägt weitere Körper-Namen (MPC-IDs) — von `clean_tree` nicht geprüft (es jagt `"earth"`/Erd-Konstanten), bleibt. Offen weiter: `matrix.rs:786` (Erd-Schiefe per-Körper), `motion.rs:77` (Nutation → Option), `shaders.rs:5-15` (WP11), **Riss A** (Medium-Werte-Provenienz `pending`).
 - **Blockade:** Riss C (`kernel_extent`-Konflation, `membrane.rs:302-335`) vor dem Umbenennen entscheiden; Riss A (Provenienz der sechs Medium-Werte); Riss B (per-field `Option` vs. atomarer Block). Der `weberin`-Produktions-`"sun"`-Rahmen ist **Rat-geklärt (Mountain 269):** kein Körper-Literal, datengetriebener Frame-Ursprung, Default Baryzentrum; die `inpop/epm_line_bodies()`-Fassung löst die drei `body_barycenter_position("sun", …)` (442/579/1819) zum Referenzpunkt auf.
-- **Braucht:** die `weberin`-Daten-Fassung (`inpop/epm_line_bodies()` + 4 Tool-Konsumenten: `inpop_compiler.rs:200`, `epm_compiler.rs:214`, `weberin_verdicts_compiler.rs:269/292`, `weberin_body_verdict.rs:324/345`) auf dem neuen, committbaren Gate; `clean_tree` 2→0; danach `matrix.rs:786`, `motion.rs:77`, `shaders.rs:5-15`. Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07); Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md` (162 Funde).
+- **Braucht:** `matrix.rs:786` (Erd-Schiefe per-Körper), `motion.rs:77` (Nutation → Option), `shaders.rs:5-15` (WP11); der `weberin`-Frame-Ursprung (drei `body_barycenter_position("sun", …)` 442/579/1819 → ein aufgelöster, datengetriebener Referenzpunkt, Default Baryzentrum). Auftrag `docs/auftrag/auftrag-bias-tilgung.md` (Operator-Wort 2026-10-07); Inventory `state/future/giftkarte-klassifiziert-src-2026-10-07.md` (162 Funde).
 
 ### NUR-Asset — Re-Harvest hängt in der CI-Queue
 - **Status:** wartend (Mycelium) | **Bindung:** eigen (cross-line mycelium)
@@ -100,7 +100,10 @@ Origin: river-130.
 Pfad-begrenzte Commit-Pfade dieser Session (River 131):
 
 - `static/membrane.html` (per-Kanal-Expositions-State `lvl[force_type][aperture]`)
-- `docs/handover/handover-2026-10-07-river-folge131.md` (neu)
+- `src/weberin.rs` (Literal-Listen → `woven_major_bodies()` aus `body_table()`; weave prüft die Ephemeriden-Map)
+- `tools/harvest/src/bin/inpop_compiler.rs`, `tools/harvest/src/bin/epm_compiler.rs` (Weave-Scope aus `woven_major_bodies()`)
+- `tools/measure/src/bin/weberin_verdicts_compiler.rs`, `tools/measure/src/bin/weberin_body_verdict.rs` (Loader aus `woven_major_bodies()`)
+- `docs/handover/handover-2026-10-07-river-folge131.md`
 - `docs/handover/archiv/handover-2026-10-07-river-folge130.md` (Move)
 
-## Burn: open 0.0000 · close 0.0664 (line, deepseek-flash, `session_burn`, gemessen 2026-10-07) · cap 0.35 Grund: ein Ein-Pass-Atom — Membran-Expositions-Bau + GIC-Rat-Runde (Recherche + 5 Stimmen); kein pro/max · Dispatches: `general` (1: cgm_lat-Quelle/Drivers) + `council` (1: Rat GIC-Stufe-2)
+## Burn: open 0.0000 · close 0.1190 (line, deepseek-flash, `session_burn`, gemessen 2026-10-07) · cap 0.35 Grund: ein Ein-Pass-Atom — Membran-Expositions-Bau + GIC-Rat-Runde + weberin-Data-driven-Fix; kein pro/max · Dispatches: `general` (1: cgm_lat-Quelle/Drivers) + `council` (1: Rat GIC-Stufe-2)

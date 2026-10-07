@@ -11,8 +11,7 @@ use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
 use omegaflow::weberin::{
-    BodyOutcome, EPM_LINE_BODIES, INPOP_LINE_BODIES, ThreeWayVerdict, TriadFold, Weberin,
-    WeberinFeed, WitnessLine,
+    BodyOutcome, ThreeWayVerdict, TriadFold, Weberin, WeberinFeed, WitnessLine, woven_major_bodies,
 };
 
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
@@ -225,6 +224,10 @@ fn main() {
         );
         return;
     };
+    let Some(origin) = omegaflow::weberin::frame_origin_name() else {
+        println!("weberin-verdicts: the frame origin is absent from the body table — no sun line");
+        return;
+    };
     let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened = 0usize;
@@ -245,7 +248,7 @@ fn main() {
         }
         match extract(src, &path, tdb, &lsk) {
             ExtractResult::WithEphemeris(_, body_eph) => {
-                if name == "sun" {
+                if name.as_str() == origin.as_str() {
                     sun_map.insert(name.clone(), (*body_eph).clone());
                 }
                 eph.insert(name.clone(), *body_eph);
@@ -266,7 +269,7 @@ fn main() {
     const INPOP_NETLOC: &str = "ftp.imcce.fr";
     let mut inpop_map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened_inpop = 0usize;
-    for name in INPOP_LINE_BODIES {
+    for name in woven_major_bodies() {
         let asset = format!("ephemeris_inpop_{}.bin", name);
         let path = format!("{eph_dir}/{INPOP_NETLOC}/{asset}");
         let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset) else {
@@ -277,7 +280,7 @@ fn main() {
         };
         match parse_ephemeris_binary(&bytes) {
             Some(e) => {
-                inpop_map.insert((*name).to_string(), e);
+                inpop_map.insert(name.clone(), e);
                 opened_inpop += 1;
             }
             None => println!(
@@ -289,7 +292,7 @@ fn main() {
     const EPM_NETLOC: &str = "ftp.iaaras.ru";
     let mut epm_map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened_epm = 0usize;
-    for name in EPM_LINE_BODIES {
+    for name in woven_major_bodies() {
         let asset = format!("ephemeris_epm_{}.bin", name);
         let path = format!("{eph_dir}/{EPM_NETLOC}/{asset}");
         let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset) else {
@@ -300,7 +303,7 @@ fn main() {
         };
         match parse_ephemeris_binary(&bytes) {
             Some(e) => {
-                epm_map.insert((*name).to_string(), e);
+                epm_map.insert(name.clone(), e);
                 opened_epm += 1;
             }
             None => println!(
@@ -342,8 +345,8 @@ fn main() {
         println!(
             "weberin-verdicts: no body line judged — {opened}/{} registered SPK/orbit bin(s), {opened_inpop}/{} INPOP bin(s), {opened_epm}/{} EPM bin(s), {rec_count} asteroid record(s), {comet_count} comet record(s) read; no verdict bin written",
             bodies.len(),
-            INPOP_LINE_BODIES.len(),
-            EPM_LINE_BODIES.len()
+            woven_major_bodies().len(),
+            woven_major_bodies().len()
         );
         return;
     }
