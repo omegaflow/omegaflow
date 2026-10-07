@@ -3516,15 +3516,21 @@ pub fn main_flow() {
                 let src = archive.sources[i].clone();
                 let presences: Vec<PresenceSample> =
                     enclosure_presences(&archive.presence, &presence_slot, now);
-                let in_hull = match archive.body_ephemerides.get("sun") {
-                    Some(eph) => match (body_record_epoch(eph), eph.props.as_ref()) {
-                        (Some(t_r), Some(props)) => {
-                            match body_barycenter_position("sun", t_r, &archive.body_ephemerides) {
-                                Some(pos) => body_in_enclosure(&presences, props, pos, t_r, now),
-                                None => false,
+                let in_hull = match src.body.as_deref() {
+                    Some(body) => match archive.body_ephemerides.get(body) {
+                        Some(eph) => match (body_record_epoch(eph), eph.props.as_ref()) {
+                            (Some(t_r), Some(props)) => {
+                                match body_barycenter_position(body, t_r, &archive.body_ephemerides)
+                                {
+                                    Some(pos) => {
+                                        body_in_enclosure(&presences, props, pos, t_r, now)
+                                    }
+                                    None => false,
+                                }
                             }
-                        }
-                        _ => false,
+                            _ => false,
+                        },
+                        None => false,
                     },
                     None => false,
                 };

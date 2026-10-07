@@ -3,7 +3,7 @@
   session: River-Folge 127
   class: handover
   date: 2026-10-07
-  sha256: b03d51db7f7d8e3268b00683368f87eeef9c3942610dac456e78d2df7452e51a
+  sha256: 7d0e6b9fccc0495bf7dad42b5f245cea7fb3b2f26c5fc016efbb4682cd1f5386
   status: live
 -->
 # Handover — River-Folge 127 (2026-10-07)
@@ -45,6 +45,13 @@ genutzt und in `docs/concepts/tools-map.md` nachgetragen.
 - **Lage:** (gemessen 2026-10-07, River 127) `static/membrane.html:43,55` `const BODIES = ["sun","earth","moon"]` + `load_ephemeris(body,…)`/`add_stars()` — geschlossene Body-Menge im Code; Survey `survey-2026-10-06-agnostik-llm-verdikt.md:40,113` führt es als Identitäts-Bias und verlangt „kein Body-Name im File". Der Vertex-Shader (`:228`) wählt die Apertur über `extent>0` und **liest `force_type`/`color_index` nicht** — objekt-, nicht kraftbasiert. Die Presence spawnt am SSB (`:26-28`) und ist frei, doch die Ansicht ankert auf Bodies („the sun frames the operator's first view", `:494`); ohne endlichen Anker bleibt `state.scale=0` (HUD „stars 8 · scale 0.00e+0"). **Rat (5 Stimmen) + UI (Claude Sonnet 5.5; Duck/GPT-6, GLM-5.3, MiniMax M3, DeepSeek DeepThink gehört):** Schlüssel = Record-`force_type`/Kanal; `color_index` = Farbe; `extent` = Geometrie (nur Apertur); `BODIES` → hüllen-abgeleitetes Manifest; unbekannte `force_type` → neutrale Rampe, nie verwerfen. Riss (Claude): der statische Host hat keinen Listing-Endpunkt → das Manifest ist unvermeidbar, aber nur als generierter Hüllen-Cache legitim; die `force_type`→Rampe-Tabelle ist erneut eine geschlossene Menge, wenn nicht im Record (`color_index`) oder in der Hülle deklariert.
 - **Blockade:** kein Fenster-Edit ohne Operator-Wort.
 - **Braucht:** Operator-Wort für den agnostischen Umbau; kleinster Schritt = `BODIES` entfernen, Kanal-Schlüssel `force_type` im Shader lesen, Per-Kanal-State (lvl, scale).
+
+### Bias-Audit Archivar/Mathematikerin — der Gift-Rückfall 2026-09-27
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-07, River 127, `explore`-Audit) **Gefixt:** `src/archivar/main_flow.rs:3519,3522` gatete jeden SPK-Kandidaten gegen ein hartkodiertes `"sun"` — eingespritzt `3e35c44a1` (river 38, 2026-09-27, am selben Tag wie der Revert `e1f1baa65`); jetzt liest der Gate `src.body` (die deklarierte `at <body>`-Zeile, `parse.rs:227-233`) — kein gewählter Body-Name mehr, `cargo check` grün. **Noch offen (Gift, gemessen):** `src/mathematikerin/media.rs:29-54` — hartkodierte Body→Medium-Tabelle (Name→Wert im Code, `200ed6040`); `src/mathematikerin/machines/matrix.rs:786` — `23.4392911°` Erd-Schiefe als Eklittik-Frame für **jeden** Body; `src/archivar/odp.rs:9` `const EARTH` + `src/archivar/rinex.rs:58` `"earth"` (physisch erzwungen, aber Code-Konstante statt Deklaration); `src/archivar/main_flow.rs:209` `None => 0.0` (body_radius-Fabrication). **Die Survey-Stellen `frames.rs`-Defaults und der Anker-Bypass sind bereits geheilt** (`dcc3243f8` mountain 238, 2026-10-06).
+- **Blockade:** keine (eigene).
+- **Braucht:** Rat-Verdikt für die zwei Identitätstabellen (`media.rs` → Werte in `BodyProperties`; `matrix.rs` → per-Body-Referenzebene), dann Bau; für die erzwungenen `earth`-Konstanten (odp/rinex) die Deklaration im Register.
 
 ### GIC-Stufe-2 — dB/dt ist selbst-abgeleitet, nicht Mountain-abhängig
 - **Status:** eigen | **Bindung:** eigen
