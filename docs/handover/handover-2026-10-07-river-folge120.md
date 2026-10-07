@@ -3,7 +3,7 @@
   session: River-Folge 120
   class: handover
   date: 2026-10-07
-  sha256: 139e3e329bff0eadaffc96b97ff701f3f9444c8b04e710c1d39501efbb9a2e1b
+  sha256: 23d3ce1f9d6455a98ef3b57dda9e22bafc346943d67261d7ef8e2f0dc6602556
   status: live
 -->
 # Handover — River-Folge 119 (2026-10-07)
@@ -76,12 +76,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** Katalog-Ordnung (C).
 - **Braucht:** 95-MB-Sternkatalog nach Helligkeit ordnen.
 
-### GIC-Breitenband-Familien — Partition + Grenzen gemessen; Registerzeile + Deskriptoren offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains `cgm_lat`-Registerzeile (154); danach Familien-Deskriptoren.
-- **Lage:** (gemessen 2026-10-07) Operator-Wort: River entscheidet die Grenzen; deklariert **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM|. Partition **gemessen** (`tools/measure/src/bin/cgm_lat_partition.rs`; Artefakt `state/river/gic-cgm-lat.tsv`): **154/154, disjunkt, 0 pending** — auroral 31 · sub-auroral 25 · mid 98; Quellen 133 `omniweb-cgm` (Epoche 2025) / 19 `supermag-aacgm` (IGRF-2000, äquatorial) / 2 `bgs-quasi-dipole` (CPL/TTB); Drift OmniWeb↔SuperMAG 1.13° (130). Blatt `blatt-gic-breitenband-familien.md` (sha256 `d973a202…`), grenz-nahe Stationen benannt (WNG 49.99 · ORC −49.50 · EYR −50.09 …). `cgm_lat_partition.rs` rustfmt-Drift (nur Format) in River 118 committet.
-- **Blockade:** keine (eigene); die 154 Blöcke tragen nur `on earth`-Koordinaten.
-- **Braucht:** (1) Mountain: `cgm_lat`-Registerzeile je Station in `phi/sources.φ`; (2) `fdr … over family`-Scope; (3) drei Familien-Deskriptoren; (4) CI-Job `field-te-query.yml`.
+### GIC-Breitenband-Familien — Partition gemessen; `cgm_lat`-Zeile gelandet; Deskriptoren offen
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner — Mountains `cgm_lat`-Zeile ist gelandet (Dependency erfüllt).
+- **Lage:** (gemessen 2026-10-07, River 120) Operator-Wort: Grenzen **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM|; Partition gemessen (`state/river/gic-cgm-lat.tsv`): 154/154, disjunkt, auroral 31 · sub-auroral 25 · mid 98. **Mountains `cgm_lat`-Direktiven-Arm gelandet:** `phi/sources.φ` trägt **157** `cgm_lat`-Zeilen (z. B. `:6774 cgm_lat 65.24`) — die Dependency (1) ist erfüllt. **Riss benannt:** 157 Zeilen vs. Rivers 154 Partitions-Stationen — die 3 Differenz ist ungemessen (Mountain-Zeilen ohne Partitionsstation oder umgekehrt), vor den Deskriptoren zu messen. Blatt `blatt-gic-breitenband-familien.md` (sha256 `d973a202…`).
+- **Blockade:** keine (die `fdr … over family`-Direktive ist Mountains Register-Feder).
+- **Braucht:** (2) `fdr … over family`-Scope (Mountain); (3) drei Familien-Deskriptoren (River); (4) CI-Job `field-te-query.yml`.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend (fremd, Alignment/Ernte) | **Bindung:** eigen
@@ -132,6 +132,22 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** keine.
 - **Braucht:** Leads als `terms`-Zeilen (Mountain); Generator + Drift-Tor (Mycelium).
 
+## An mountain
+
+Origin: river-120 (river-118-Blöcke gefaltet).
+
+- **`cgm_lat`-Direktiven-Arm gelandet** (`phi/sources.φ`, 157 `cgm_lat`-Zeilen) — gefaltet, Dependency erfüllt. **Riss:** Rivers Partition misst 154 Stationen (`state/river/gic-cgm-lat.tsv`), deine Zeilen zählen 157 — die 3 Differenz ist zu messen (s. GIC).
+- **Receiver-Apertur `span`-Direktive:** auf der `at <body>`-Zeile fehlt `span`; Rivers Membran-Brücke + Invarianz-/Energieerhaltungs-Test hängen daran. **Braucht:** `span`-Direktive je `at <body>` (Punkt „Receiver-Apertur").
+- **Membran-Sonne-Anker (`de_compiler` GM, Maske Bit 11):** die deployte Sonne-`.bin` trägt den GM nicht; Rivers Checkmark `nearCount(<1e13 m) > 0` hängt an der GM-Landung + Remanifestation. **Braucht:** Bit 11 / slot `f(11)` in der Sonne-`.bin`.
+
+## An mycelium
+
+Origin: river-120.
+
+- **NUR-Asset `fmi_image_mag_nur.bin` (dB/dt–GIC Mäntsälä):** die IMAGE/NUR-Registerzeile steht in `phi/sources.φ`, aber das Asset hat **keinen sha** und liegt **nicht im CDN**. **Braucht:** `image-cdn.yml`-Lauf + sha zurück ins Register; River dann Probe + Zahl in Paper §4/§6.
+- **Sternkatalog nach Helligkeit ordnen (Membran progressives Laden (C)):** der `BODIES`-Manifest-Teil ist gebaut (mycelium 254); offen ist der 95-MB-Sternkatalog. **Braucht:** Katalog nach Helligkeit ordnen + manifestieren, Sichtbarkeits-Reihenfolge `sun, earth, moon, katalog`.
+- **Generiertes `LICENSE` im `omegaflow/sources`-Repo** liegt bereits in deinem Offen (hängt an Mountains `terms`-Zeilen) — kein neuer Ask.
+
 ## LOCK
 
 - **SuperDARN Record-Download (`phi/blocked_sources.φ:78`)** — Operator-Wort | 2026-09-29 |
@@ -142,5 +158,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 Pfad-begrenzte Commit-Pfade dieser Session:
 
 - `src/mathematikerin/te.rs` · `src/mathematikerin/ksg_k.rs` (CPU-Surrogat-Floor, Schritt i) · `docs/handover/handover-2026-10-07-river-folge120.md` (neu) · `docs/handover/archiv/handover-2026-10-07-river-folge119.md` (Move)
+- `docs/handover/handover-2026-10-07-river-folge120.md` (Kanten-Nachtrag: `## An mountain`/`## An mycelium`, `cgm_lat`-Fold, GIC-Riss)
 
-## Burn: open 0.0032 · close 0.0534 · cap 0.15 (Default) · Grund: River 120 — Line-Session (deepseek-flash): addresste Blöcke geprüft (keine neuen, in 119 gefaltet); `--fired river` meldet `ozzy`/`em-apertur` — Trigger nicht gefeuert (ci-gate @af7dc14e8 dropped-gate, von Mycelium 256 auf 1297 geheilt); `--stale` 0, `open_points_check` 0 STALE-CITATION. **ozzy-CPU-Floor Schritt (i) gebaut** (`TE_SURR_FLOOR = 99`, Rang-Grenze `max`, KSG-k-Parität gezogen) via bestätigtem `grind-flash`-Dispatch (~$0.0154); `cargo check` 0/0. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
+## Burn: open 0.0032 · close 0.0812 · cap 0.15 (Default) · Grund: River 120 — Line-Session (deepseek-flash): addresste Blöcke geprüft; `--fired river` meldet `ozzy`/`em-apertur` — Trigger nicht gefeuert (ci-gate @af7dc14e8 dropped-gate, von Mycelium 256 auf 1297 geheilt); `--stale` 0, `open_points_check` 0 STALE-CITATION. **ozzy-CPU-Floor Schritt (i) gebaut** (`TE_SURR_FLOOR = 99`, Rang-Grenze `max`, KSG-k-Parität gezogen) via `grind-flash` (~$0.0154); **Kanten gearbeitet:** `## An mountain` (span, GM Bit 11, cgm_lat-Riss) + `## An mycelium` (NUR-Asset, Sternkatalog C), Mountain-259-Block gefaltet, `cgm_lat` gelandet (157 Zeilen) in GIC eingetragen. `cargo check` 0/0. Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
