@@ -385,6 +385,7 @@ fn main() {
             window: None,
             live_only: false,
             station_code: None,
+            cgm_lat: None,
         };
         match build_netcdf4_volume(&src, &bytes) {
             Some((live_name, live)) => match compare_volumes(&volume, &live) {
