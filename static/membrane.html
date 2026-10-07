@@ -71,7 +71,8 @@ const state = {
   span_star: 0.0,      // the stars' received bounding span; the star scale follows it
   receptors: 1,        // the receptor raster's minor axis (texels)
   lastCount: -1,
-  lvl: 1.0,
+  lvl: 1.0,            // the body anchors' exposure level; its own arrival
+  lvl_star: 1.0,       // the star catalog's exposure level; its own arrival (two apertures, two natures)
   t: 0,
   held: new Set(),
 };
@@ -193,8 +194,11 @@ function parseFlat(flat) {
 
 const fieldShader = `
 // vp.expose = (lvl, color_mode, lut_lo, lut_hi): color_mode >= 0.5 selects the
-// measured color LUT; lvl is the exposure level in both modes.
-struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f };
+// measured color LUT; lvl is the body anchors' exposure level. vp.levels.x is the
+// star catalog's own exposure level — two apertures, two natures: the finite-extent
+// discriminator already separates the classes, so a single bright star cannot dim
+// the sun (Rat + UI, 2026-10-07, option b).
+struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f, levels: vec4f };
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
@@ -235,7 +239,7 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @loca
     clip.y += (quad[vid].y * point_size_px) / h * 2.0;
     out.pos = vec4f(clip, 0.0, 1.0);
     out.local_uv = quad[vid];
-    let lvl = vp.expose.x;
+    let lvl = select(vp.levels.x, vp.expose.x, extent > 0.0);
     if (lvl <= 0.0) { return out; }
     let aw = abs(val);
     let t2 = clamp((log2(aw / lvl) + 8.0) / 24.0, 0.0, 1.0);
@@ -265,7 +269,7 @@ let vpBuf = null;
 let fieldCap = 0;
 let pipeline = null;
 let bindGroup = null;
-const vpData = new Float32Array(16);
+const vpData = new Float32Array(20);
 
 async function initGPU() {
   const adapter = await navigator.gpu.requestAdapter();
@@ -285,7 +289,7 @@ async function initGPU() {
   ] });
 
   ensureBuffers(4096);
-  vpBuf = device.createBuffer({ size: 64, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+  vpBuf = device.createBuffer({ size: 80, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
 
   pipeline = device.createRenderPipeline({
     layout: device.createPipelineLayout({ bindGroupLayouts: [layout] }),
@@ -363,6 +367,10 @@ function render(record) {
   vpData[13] = 0;
   vpData[14] = 0;
   vpData[15] = 1;
+  vpData[16] = state.lvl_star;
+  vpData[17] = 0;
+  vpData[18] = 0;
+  vpData[19] = 0;
   device.queue.writeBuffer(vpBuf, 0, vpData);
 
   const pass = device.createCommandEncoder();
@@ -381,17 +389,29 @@ function render(record) {
   device.queue.submit([pass.finish()]);
 }
 
+// One exposure per aperture: the finite-extent body anchors and the star class
+// (wire extent 0) each relax to their own max over the arriving records. A shared
+// max would pit a finite body against the star catalog and let a single bright
+// star dim the sun (Rat + UI, 2026-10-07, option b).
 function updateLvl(record) {
-  let maxAbs = 0;
+  let maxAnchor = 0;
+  let maxStar = 0;
   for (let j = 0; j < record.count; j++) {
     const a = Math.abs(record.field[j * 12 + 3]);
-    if (a > maxAbs) {
-      maxAbs = a;
+    if (record.meta[j * 16] > 0.0) {
+      if (a > maxAnchor) {
+        maxAnchor = a;
+      }
+    } else if (a > maxStar) {
+      maxStar = a;
     }
   }
-  if (maxAbs > 0) {
-    const alpha = 1 - Math.exp(-1 / 8);
-    state.lvl = state.lvl + (maxAbs - state.lvl) * alpha;
+  const alpha = 1 - Math.exp(-1 / 8);
+  if (maxAnchor > 0) {
+    state.lvl = state.lvl + (maxAnchor - state.lvl) * alpha;
+  }
+  if (maxStar > 0) {
+    state.lvl_star = state.lvl_star + (maxStar - state.lvl_star) * alpha;
   }
 }
 
