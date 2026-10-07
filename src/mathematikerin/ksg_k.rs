@@ -2,8 +2,8 @@
 
 use crate::mathematikerin::machines::TE_KSG_K_PROD;
 use crate::mathematikerin::te::{
-    TE_KSG_K, embed_series, find_cross_mi_lag, find_mi_lag, phase_randomized_surrogate,
-    topological_te_phase, transfer_entropy_embedded_ksg,
+    TE_KSG_K, TE_SURR_FLOOR, embed_series, find_cross_mi_lag, find_mi_lag,
+    phase_randomized_surrogate, topological_te_phase, transfer_entropy_embedded_ksg,
 };
 
 const K_VARIANCE_FLOOR: usize = 4;
@@ -84,9 +84,9 @@ fn ksg_te_phase_null(
     let emb_x = embed_series(&xf, tau_c, dim);
     let emb_y = embed_series(&yf, tau_y, dim);
     let te = transfer_entropy_embedded_ksg(&xf, &emb_x, &emb_y, tau_c, tau_y, k)?;
-    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut vals: Vec<f64> = Vec::with_capacity(TE_SURR_FLOOR);
     let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
-    for _ in 0..10 {
+    for _ in 0..TE_SURR_FLOOR {
         let ys = phase_randomized_surrogate(driver, &mut rng);
         if ys.len() != n {
             continue;
@@ -110,9 +110,7 @@ fn ksg_te_phase_null(
     if vals.len() < 2 {
         return None;
     }
-    let mean = vals.iter().sum::<f64>() / vals.len() as f64;
-    let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / vals.len() as f64;
-    Some((te, mean + 2.0 * var.sqrt()))
+    Some((te, vals.iter().copied().fold(f64::NEG_INFINITY, f64::max)))
 }
 
 struct KSweepCell {

@@ -3378,7 +3378,7 @@ fn topological_te_with(
         tau_c: estimate.tau_c,
         tau_y: estimate.tau_y,
         te: estimate.te,
-        threshold: mean + 2.0 * sd,
+        threshold: vals.iter().copied().fold(f64::NEG_INFINITY, f64::max),
         surrogate_mean: mean,
         surrogate_sd: sd,
         surrogates_used: vals.len(),
@@ -3447,6 +3447,8 @@ pub fn topological_te_estimate_frozen(
     })
 }
 
+pub const TE_SURR_FLOOR: usize = 99;
+
 pub fn topological_te_phase(
     x: &[f32],
     y: &[f32],
@@ -3461,7 +3463,7 @@ pub fn topological_te_phase(
         order,
         SurrogateSpec {
             seed,
-            n_surr: 10,
+            n_surr: TE_SURR_FLOOR,
             frozen_tau: false,
         },
         &mut |v, rng| Some(phase_randomized_surrogate(v, rng)),
@@ -3483,7 +3485,7 @@ pub fn topological_te_arx(
         order,
         SurrogateSpec {
             seed,
-            n_surr: 10,
+            n_surr: TE_SURR_FLOOR,
             frozen_tau: false,
         },
         &mut |v, rng| arx_restricted_surrogate(v, max_lag, rng),
@@ -5011,7 +5013,7 @@ mod tests {
         let v = topological_te_phase(&x, &y, 3, 3, 42).unwrap();
         assert!(v.tau_c >= 1 && v.tau_y >= 1);
         assert!(
-            (2..=10).contains(&v.surrogates_used),
+            (2..=TE_SURR_FLOOR).contains(&v.surrogates_used),
             "surrogates used {}",
             v.surrogates_used
         );
