@@ -82,7 +82,9 @@ fn curl_get(url: &str) -> Option<String> {
         .ok()?;
     let stdout = out.stdout;
     let idx = stdout.iter().rposition(|&b| b == b'\n')?;
-    let code = String::from_utf8_lossy(&stdout[idx + 1..]).trim().to_string();
+    let code = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .to_string();
     if code != "200" {
         eprintln!("curl_get: HTTP {code} for {url}");
         return None;
@@ -238,7 +240,13 @@ fn main() {
         let (cgm_lat, cgm_lon, source, abs_cgm, family) = match resolved {
             Some((la, lo, src)) => {
                 let a = la.abs();
-                (format!("{la:.2}"), format!("{lo:.2}"), src, Some(a), family_of(a))
+                (
+                    format!("{la:.2}"),
+                    format!("{lo:.2}"),
+                    src,
+                    Some(a),
+                    family_of(a),
+                )
             }
             None => {
                 missing += 1;
@@ -309,7 +317,10 @@ fn main() {
     }
     let union = auroral + subau + midlat;
     if missing == 0 && union == stations.len() {
-        println!("coverage: disjoint by construction · union = {union} = {}", stations.len());
+        println!(
+            "coverage: disjoint by construction · union = {union} = {}",
+            stations.len()
+        );
     } else {
         println!(
             "coverage: measured {union} / {} · pending {missing} — the union omits the pending",
