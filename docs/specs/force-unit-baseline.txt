@@ -1,11 +1,12 @@
 # force-unit-baseline — frozen (force, unit) pairs outside allowed_units_for_force
 #
-# Measured 2026-10-07 (Mountain 257) via
+# Frozen 2026-10-07 (Mountain 257) at 58 field lines / 35 distinct pairs, then
 #   register_unit_audit --file phi/sources.φ --pairs
 # over the register field lines parsed by the gate's own tokenizer
-# (field_line_force_unit, quote-aware). 58 field lines carry a pair outside the
-# force registry (advective/em/diffusion/gravity/thermal), 35 distinct pairs —
-# the debt named in handover mountain-folge256 under the Force-/Einheiten-Kontrakt.
+# (field_line_force_unit, quote-aware). The debt named in handover
+# mountain-folge256 under the Force-/Einheiten-Kontrakt.
+# Healed 2026-10-07 (Mountain 260): `em v` → `electric v` at three wind_waves
+# field lines (rad1/rad2/tnr); the pair is deleted here. Measured 55 / 34.
 #
 # The production commit gate (commit_check) scans .rs only; this file is the
 # ratchet that closes the gap: a staged phi/sources.φ may not introduce a
@@ -40,7 +41,6 @@ em nw/cm2/sr
 em ppm
 em uj/sr
 em uj/sr/m2/um
-em v
 em w/m2/hz
 em w/m2/sr
 em w/m2/sr/um
