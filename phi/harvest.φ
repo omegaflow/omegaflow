@@ -526,6 +526,15 @@ idempotent true
 timeout 240
 
 asset present
+format vlf_awesome
+tag craam-files-bucket.s3.amazonaws.com
+arm vlf_awesome_compiler
+workflow vlf-awesome-cdn.yml
+pattern ^vlf_awesome_.+\.csv$
+idempotent true
+timeout 120
+
+asset present
 format wwlln_th
 tag wwlln.net
 arm wwlln_compiler

@@ -1694,6 +1694,15 @@ ttl 86400
 field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/craam-files-bucket.s3.amazonaws.com/vlf_awesome.csv
+format vlf_awesome
+origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
+terms unbestimmt
+compiler tools/harvest/src/bin/vlf_awesome_compiler.rs
+at earth
+ttl 86400
+field vlf_awesome_narrowband_amp vlf_awesome_narrowband_amp inverse-square em db 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-eocis-sst/esacci_sst.bin
 format esacci_sst_l4_cdr3
 origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
