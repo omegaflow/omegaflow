@@ -162,6 +162,11 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   `archive_search --alphaxiv-researchers <query>` — alphaXiv MCP `find_researchers`
   (derselbe Endpoint/Key); `url https://www.alphaxiv.org/@<slug>` + Name/Position/
   Zitationen/Affiliation (gemessen: liefert reale Profile, z. B. `@michael-wibral`).
+  **Ebenso 2026-10-07:** `archive_search --alphaxiv-tools` listet alle alphaXiv-MCP-Arme mit
+  ihrer `read`/`write`/`destructive`-Annotation; `archive_search --alphaxiv-call <tool>
+  '<json-arguments>'` ruft jeden **Lese**-Arm auf — Schreib-/Lösch-Arme werden verweigert
+  (`archive_search` ist read-only; ein Schreibakt ist Operator-Hand). Gemessen 2026-10-07:
+  **23 Arme** (14 read, 5 write, 4 destructive).
 - `archive_search --pubmed <query>` — NCBI E-utilities (esearch + esummary),
   `url https://pubmed.ncbi.nlm.nih.gov/<pmid>/` + Titel/Journal/Datum/DOI.
 - `archive_search --europepmc <query>` — Europe PMC REST search,
