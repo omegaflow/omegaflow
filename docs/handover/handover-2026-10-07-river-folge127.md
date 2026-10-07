@@ -3,7 +3,7 @@
   session: River-Folge 127
   class: handover
   date: 2026-10-07
-  sha256: 7d0e6b9fccc0495bf7dad42b5f245cea7fb3b2f26c5fc016efbb4682cd1f5386
+  sha256: 6b3f215c1c8d95a9881cbd46129dbb3f28a0581b95ec0237792b6b7fdb219cac
   status: live
 -->
 # Handover — River-Folge 127 (2026-10-07)
@@ -46,12 +46,12 @@ genutzt und in `docs/concepts/tools-map.md` nachgetragen.
 - **Blockade:** kein Fenster-Edit ohne Operator-Wort.
 - **Braucht:** Operator-Wort für den agnostischen Umbau; kleinster Schritt = `BODIES` entfernen, Kanal-Schlüssel `force_type` im Shader lesen, Per-Kanal-State (lvl, scale).
 
-### Bias-Audit Archivar/Mathematikerin — der Gift-Rückfall 2026-09-27
+### Bias-Audit Archivar/Mathematikerin — der Gift-Rückfall; die Legacy-Untersuchung
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-07, River 127, `explore`-Audit) **Gefixt:** `src/archivar/main_flow.rs:3519,3522` gatete jeden SPK-Kandidaten gegen ein hartkodiertes `"sun"` — eingespritzt `3e35c44a1` (river 38, 2026-09-27, am selben Tag wie der Revert `e1f1baa65`); jetzt liest der Gate `src.body` (die deklarierte `at <body>`-Zeile, `parse.rs:227-233`) — kein gewählter Body-Name mehr, `cargo check` grün. **Noch offen (Gift, gemessen):** `src/mathematikerin/media.rs:29-54` — hartkodierte Body→Medium-Tabelle (Name→Wert im Code, `200ed6040`); `src/mathematikerin/machines/matrix.rs:786` — `23.4392911°` Erd-Schiefe als Eklittik-Frame für **jeden** Body; `src/archivar/odp.rs:9` `const EARTH` + `src/archivar/rinex.rs:58` `"earth"` (physisch erzwungen, aber Code-Konstante statt Deklaration); `src/archivar/main_flow.rs:209` `None => 0.0` (body_radius-Fabrication). **Die Survey-Stellen `frames.rs`-Defaults und der Anker-Bypass sind bereits geheilt** (`dcc3243f8` mountain 238, 2026-10-06).
+- **Lage:** (gemessen 2026-10-07, River 127, `explore`-Audit + Legacy-Historie) Die Untersuchung existiert: `omegaflow-legacy/docs/concepts/remove-bias.md` (WP0–WP13, kompletter Bias-Tilgungsplan; Legacy-Commits `a20e84ad` „Ontologische Säuberung: Oscillator→Sample, die körperlose Messung eines `force_type`-Kanals", `2a19cba7` fabrication/zentrismus/render-pipeline, `3102bcd9` Optik-Bias, `aca23650` Membran≠Kamera, `ac6a5b13` Geräte-Bias, `74f12f14` Now-Bias, `ffaa1114` remove-bias-Doc). **Gefixt heute:** `src/archivar/main_flow.rs:3519,3522` gatete jeden SPK-Kandidaten gegen hartkodiertes `"sun"` (`3e35c44a1`, river 38, 2026-09-27); jetzt liest der Gate `src.body` (deklarierte `at <body>`-Zeile, `parse.rs:227-233`); `cargo check` grün. **Noch offen — der Fresh Start `200ed6040` hat die Legacy-Tilgung nicht mitgenommen:** `src/mathematikerin/media.rs:29-54` Body→Medium-Tabelle, **live benutzt** in `src/archivar/ephemeris.rs:504` (`medium_params_of(body_name).map_or([0.0; 5], …)`) — Legacy-WP8/WP9/WP11 sagten: Konstanten löschen, Werte → `BodyProperties` (stype==2 im Ephemeriden-Bin); `BodyProperties` trägt `v_sound`/`v_seismic_p`/… **nicht** (WP9 ungetan). `src/mathematikerin/shaders.rs:5-15` `PROPAGATION_SPEED`-Konstanten (WP11-Ziel: Absorption im Record). `src/mathematikerin/machines/matrix.rs:786` `23.4392911°` Erd-Schiefe für **jeden** Body. `src/archivar/odp.rs:9 const EARTH` + `rinex.rs:5,58` `6378137.0`/`"earth"` + `nexrad.rs:188 EARTH_RADIUS_KM` (physisch erzwungen, aber Code-Konstanten; WP13-Ziel `"earth"`=0). `src/archivar/main_flow.rs:209` `None => 0.0` (body_radius-Fabrication). Geheilt: `frames.rs`-Defaults + Anker-Bypass (`dcc3243f8`, mountain 238, 2026-10-06).
 - **Blockade:** keine (eigene).
-- **Braucht:** Rat-Verdikt für die zwei Identitätstabellen (`media.rs` → Werte in `BodyProperties`; `matrix.rs` → per-Body-Referenzebene), dann Bau; für die erzwungenen `earth`-Konstanten (odp/rinex) die Deklaration im Register.
+- **Braucht:** Rat-Verdikt, dann Bau in Atomen: (1) `media.rs`/`shaders.rs`-Konstanten → `BodyProperties` (Legacy WP8/WP9/WP11 + Ephemeriden-stype==2); (2) `matrix.rs` Erd-Obliquität → per-Body-Referenzebene; (3) `odp.rs`/`rinex.rs`/`nexrad.rs`-Erd-Konstanten → Register-Deklaration; (4) `main_flow.rs:209` `None => 0.0` → verweigern. Zielgreps aus Legacy-WP13: `"earth"`=0, `EARTH_RADIUS`=0.
 
 ### GIC-Stufe-2 — dB/dt ist selbst-abgeleitet, nicht Mountain-abhängig
 - **Status:** eigen | **Bindung:** eigen
