@@ -56,6 +56,7 @@ pub const MAGIC_EPA_AQS: [u8; 4] = *b"EPA1";
 pub const MAGIC_EPA_AQS_VOC: [u8; 4] = *b"EPV1";
 pub const MAGIC_OSM_PBF: [u8; 4] = super::osm_pbf::MAGIC;
 pub const MAGIC_EIONET_CDR: [u8; 4] = *b"ECD1";
+pub const MAGIC_HADISST: [u8; 4] = *b"HIS1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -246,6 +247,8 @@ pub const COMP_ESACCI_SST: u32 = 1;
 
 pub const COMP_ERSSTV5: u32 = 1;
 
+pub const COMP_HADISST: u32 = 1;
+
 pub const COMP_ASCAT_WSPD: u32 = 1;
 pub const COMP_ASCAT_WDIR: u32 = 2;
 pub const COMP_ASCAT_MAX: u32 = 2;
@@ -348,6 +351,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "gosat_tanso3" => Some(MAGIC_GOSAT),
         "esacci_sst_l4_cdr3" => Some(MAGIC_ESACCI_SST),
         "ersstv5_nino34" => Some(MAGIC_ERSSTV5),
+        "hadisst_sst" => Some(MAGIC_HADISST),
         "ascat_wind" => Some(MAGIC_ASCAT),
         "cses_lap" => Some(MAGIC_CSES_LAP),
         "cses_efd" => Some(MAGIC_CSES_EFD),
@@ -410,6 +414,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "gosat_tanso3" => Some(COMP_GOSAT_MAX),
         "esacci_sst_l4_cdr3" => Some(COMP_ESACCI_SST),
         "ersstv5_nino34" => Some(COMP_ERSSTV5),
+        "hadisst_sst" => Some(COMP_HADISST),
         "ascat_wind" => Some(COMP_ASCAT_MAX),
         "cses_lap" => Some(COMP_CSES_MAX),
         "cses_efd" => Some(COMP_CSES_EFD_MAX),
