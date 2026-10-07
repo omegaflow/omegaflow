@@ -730,6 +730,7 @@ mod tests {
             }],
             rotation_matrices: Vec::new(),
             props: None,
+            medium: None,
             orbit: None,
             granule_hint: Arc::new(AtomicUsize::new(0)),
         }
@@ -1946,6 +1947,7 @@ mod gaia_tests {
             }],
             rotation_matrices: Vec::new(),
             props: None,
+            medium: None,
             orbit: None,
             granule_hint: Arc::new(AtomicUsize::new(0)),
         }

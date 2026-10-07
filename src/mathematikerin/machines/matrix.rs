@@ -705,40 +705,48 @@ impl MatrixMachine {
         let mut present: Vec<String> = Vec::new();
         let mut point_anchor: Option<MetaAnchor> = None;
         for (name, meta) in &self.metas {
-            let (motion, body_props): (
+            let (motion, body_props, body_medium): (
                 crate::archivar::Motion,
                 Option<&crate::archivar::BodyProperties>,
+                Option<&crate::media::MediumParams>,
             ) = match &meta.anchor {
                 MetaAnchor::Surface {
                     body_name,
                     lat,
                     lon,
                     alt,
-                } => (
-                    crate::archivar::Motion::Surface {
-                        body_name: body_name.clone(),
-                        lat: *lat,
-                        lon: *lon,
-                        alt: *alt,
-                    },
-                    field
-                        .eph
-                        .get(body_name.as_str())
-                        .and_then(|e| e.props.as_ref()),
-                ),
+                } => {
+                    let e = field.eph.get(body_name.as_str());
+                    (
+                        crate::archivar::Motion::Surface {
+                            body_name: body_name.clone(),
+                            lat: *lat,
+                            lon: *lon,
+                            alt: *alt,
+                        },
+                        e.and_then(|e| e.props.as_ref()),
+                        e.and_then(|e| e.medium.as_ref()),
+                    )
+                }
                 MetaAnchor::Barycenter { .. } => continue,
             };
-            let Some(body_props) = body_props else {
+            if body_props.is_none() {
                 continue;
-            };
+            }
             let Some(p) = motion.at(t_presence, t_presence, &field.eph) else {
                 continue;
             };
             let d2 = (p[0] - presence[0]).powi(2)
                 + (p[1] - presence[1]).powi(2)
                 + (p[2] - presence[2]).powi(2);
-            let extent =
-                crate::archivar::kernel_extent(meta.force, meta.kernel, Some(body_props), meta.tau);
+            let Some(extent) = crate::archivar::medium_reach(
+                meta.force,
+                meta.tau,
+                body_medium,
+                crate::archivar::SLOT_ABSENT,
+            ) else {
+                continue;
+            };
             if d2 > (extent + MATRIX_PAD_M).powi(2) {
                 continue;
             }

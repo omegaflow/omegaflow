@@ -4256,6 +4256,9 @@ pub fn main_flow() {
                     let body_props = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.props.as_ref());
+                    let body_medium = eph_arc
+                        .get(body_name.as_str())
+                        .and_then(|e| e.medium.as_ref());
                     let mut channels = Vec::new();
                     for r in records {
                         let Some(name) = geo_series_component_key(&fmt, r.comp) else {
@@ -4282,6 +4285,7 @@ pub fn main_flow() {
                                 EnclosureField {
                                     config: fc,
                                     body_props,
+                                    medium: body_medium,
                                     body_radius,
                                 },
                                 AnchorEnvelope {
@@ -4419,6 +4423,9 @@ pub fn main_flow() {
                     let body_props = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.props.as_ref());
+                    let body_medium = eph_arc
+                        .get(body_name.as_str())
+                        .and_then(|e| e.medium.as_ref());
                     let mut channels = Vec::new();
                     for (t, freq, binw, val, recv) in records {
                         let name = format!(
@@ -4441,6 +4448,7 @@ pub fn main_flow() {
                                 EnclosureField {
                                     config: fc,
                                     body_props,
+                                    medium: body_medium,
                                     body_radius,
                                 },
                                 AnchorEnvelope {

@@ -491,11 +491,6 @@ pub struct BodyProperties {
     pub dw_dt_deg_per_day: f64,
     pub radius_m: f64,
     pub flattening: Option<f64>,
-    pub gaussian_inverse_square: f64,
-    pub gaussian_inverse: f64,
-    pub erfc: f64,
-    pub exponential_decay: f64,
-    pub patch_levy: f64,
     pub gm: Option<f64>,
     pub j2: Option<f64>,
     pub j4: Option<f64>,
@@ -528,6 +523,7 @@ pub struct BodyEphemeris {
     pub granules: Vec<ChebyshevGranule>,
     pub rotation_matrices: Vec<(f64, [f64; 9])>,
     pub props: Option<BodyProperties>,
+    pub medium: Option<crate::media::MediumParams>,
     pub orbit: Option<std::sync::Arc<crate::wind_orbit::OrbitRec>>,
     pub granule_hint: std::sync::Arc<AtomicUsize>,
 }
@@ -543,6 +539,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     let mut granules = Vec::new();
     let mut rotation_matrices = Vec::new();
     let mut props = None;
+    let mut medium = None;
     let mut has_stype2 = false;
     for _ in 0..section_count {
         if pos + 24 > data.len() {
@@ -603,11 +600,6 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                     Some(c) if radius_m > 0.0 => Some((radius_m - c) / radius_m),
                     _ => None,
                 },
-                gaussian_inverse_square: 0.0,
-                gaussian_inverse: 0.0,
-                erfc: 0.0,
-                exponential_decay: 0.0,
-                patch_levy: 0.0,
                 gm: slot(f(11), 11),
                 j2: slot(f(9), 9),
                 j4: slot(f(10), 10),
@@ -654,18 +646,13 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
                 f64::from_le_bytes(buf)
             };
-            let gis = f(0);
-            let giv = f(1);
-            let ert = f(2);
-            let ed = f(3);
-            let pl = f(4);
-            if let Some(ref mut p) = props {
-                p.gaussian_inverse_square = gis;
-                p.gaussian_inverse = giv;
-                p.erfc = ert;
-                p.exponential_decay = ed;
-                p.patch_levy = pl;
-            }
+            medium = Some(crate::media::MediumParams {
+                sound_speed_m_s: f(0),
+                p_wave_m_s: f(1),
+                s_wave_m_s: f(2),
+                thermal_diffusivity_m2_s: f(3),
+                molecular_diffusivity_m2_s: f(4),
+            });
             pos += 5 * 8;
             continue;
         }
@@ -770,6 +757,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             granules,
             rotation_matrices,
             props,
+            medium,
             orbit: None,
             granule_hint: std::sync::Arc::new(AtomicUsize::new(0)),
         })

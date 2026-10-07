@@ -3462,6 +3462,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     granules: Vec::new(),
                     rotation_matrices: Vec::new(),
                     props: None,
+                    medium: None,
                     orbit: Some(rec),
                     granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
                 }),

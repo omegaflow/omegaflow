@@ -299,39 +299,25 @@ pub fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
     }
 }
 
-pub fn kernel_extent(
+pub fn medium_reach(
     force_type: u8,
-    kernel_id: u8,
-    body_props: Option<&BodyProperties>,
-    tau: f64,
-) -> f64 {
-    if tau == 0.0 {
-        return 0.0;
+    age: f64,
+    medium: Option<&crate::media::MediumParams>,
+    advection: f64,
+) -> Option<f64> {
+    if age == 0.0 {
+        return Some(0.0);
     }
-    let p = match body_props {
-        Some(p) => p,
-        None => return 0.0,
-    };
-    if force_type == 1 {
-        return p.radius_m;
+    match force_type {
+        2 => Some(medium?.sound_speed_m_s * age),
+        3 => Some(medium?.p_wave_m_s * age),
+        4 => Some(medium?.s_wave_m_s * age),
+        5 => Some((2.0 * medium?.thermal_diffusivity_m2_s * age).sqrt()),
+        6 => Some((2.0 * medium?.molecular_diffusivity_m2_s * age).sqrt()),
+        7 => slot_measured(advection).then_some(advection * age),
+        0 | 1 | 8 => Some(C_LIGHT * age),
+        _ => None,
     }
-    let reach_time = tau;
-    if kernel_id == 1 {
-        return p.gaussian_inverse_square * reach_time;
-    }
-    if kernel_id == 2 {
-        return p.gaussian_inverse * reach_time;
-    }
-    if kernel_id == 3 {
-        return (2.0 * p.erfc * reach_time).sqrt();
-    }
-    if kernel_id == 4 {
-        return p.exponential_decay;
-    }
-    if kernel_id == 5 {
-        return p.patch_levy * reach_time;
-    }
-    0.0
 }
 
 pub fn granule_span_seconds(e: &BodyEphemeris) -> Option<f64> {
@@ -431,7 +417,7 @@ pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>) -> Vec<Samp
     out
 }
 
-pub const AUDIO_SPEED_AIR: f64 = 343.0;
+pub const AIR_SOUND_SPEED_M_S: f64 = 343.0;
 pub const SEISMIC_BODY_SPEED: f64 = 6000.0;
 pub const SEISMIC_SURFACE_SPEED: f64 = 3000.0;
 pub const DIFFUSIVITY_THERMAL: f64 = 0.3;
@@ -491,7 +477,7 @@ pub fn anchor_velocity(
 pub fn flat_propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     match force_type as u8 {
         0 | 1 | 8 => Some(C_LIGHT),
-        2 => Some(AUDIO_SPEED_AIR),
+        2 => Some(AIR_SOUND_SPEED_M_S),
         3 => Some(SEISMIC_BODY_SPEED),
         4 => Some(SEISMIC_SURFACE_SPEED),
         5 => Some(DIFFUSIVITY_THERMAL),
@@ -767,7 +753,7 @@ mod tests {
         );
         assert_eq!(
             propagation_speed(2.0, 0.0, 440.0, 0.0),
-            Some(AUDIO_SPEED_AIR)
+            Some(AIR_SOUND_SPEED_M_S)
         );
         assert_eq!(
             propagation_speed(7.0, 12.5, 0.0, 0.0),
@@ -796,7 +782,7 @@ mod tests {
         let flat = |ft: u8, advection: f32, advection_measured: bool| -> Option<f32> {
             match ft {
                 0 | 1 | 8 => Some(C_LIGHT as f32),
-                2 => Some(AUDIO_SPEED_AIR as f32),
+                2 => Some(AIR_SOUND_SPEED_M_S as f32),
                 3 => Some(SEISMIC_BODY_SPEED as f32),
                 4 => Some(SEISMIC_SURFACE_SPEED as f32),
                 5 => Some(DIFFUSIVITY_THERMAL as f32),

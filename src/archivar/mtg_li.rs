@@ -350,6 +350,7 @@ pub fn build_channels(
 ) -> Vec<(Channel, FieldConfig)> {
     let body_name = frame_body_name(&src.frame);
     let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let fields: Vec<&FieldConfig> = src
         .extracts
         .iter()
@@ -384,6 +385,7 @@ pub fn build_channels(
                     EnclosureField {
                         config: fc,
                         body_props,
+                        medium: body_medium,
                         body_radius,
                     },
                     AnchorEnvelope {

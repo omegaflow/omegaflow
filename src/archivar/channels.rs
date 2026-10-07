@@ -273,6 +273,7 @@ pub fn build_netcdf_channels(
     };
     let body_name = frame_body_name(&src.frame);
     let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
         let Extract::ProfileMap {
@@ -383,6 +384,7 @@ pub fn build_netcdf_channels(
                             EnclosureField {
                                 config: fc,
                                 body_props,
+                                medium: body_medium,
                                 body_radius,
                             },
                             AnchorEnvelope {
@@ -440,6 +442,7 @@ pub fn build_netcdf4_channels(
     };
     let body_name = frame_body_name(&src.frame);
     let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
         let Extract::ProfileMap {
@@ -535,6 +538,7 @@ pub fn build_netcdf4_channels(
                             EnclosureField {
                                 config: fc,
                                 body_props,
+                                medium: body_medium,
                                 body_radius,
                             },
                             AnchorEnvelope {
@@ -797,6 +801,7 @@ pub fn build_opendap_channels(
 ) -> Vec<(Channel, FieldConfig)> {
     let body_name = frame_body_name(&src.frame);
     let body_props = eph.get(body_name.as_str()).and_then(|e| e.props.as_ref());
+    let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
         let Extract::ProfileMap {
@@ -907,6 +912,7 @@ pub fn build_opendap_channels(
                             EnclosureField {
                                 config: fc,
                                 body_props,
+                                medium: body_medium,
                                 body_radius,
                             },
                             AnchorEnvelope {
@@ -1344,11 +1350,9 @@ pub fn anchor(
     {
         return None;
     }
-    let body_props = motion
-        .anchor_body()
-        .and_then(|name| eph.get(name))
-        .and_then(|e| e.props.as_ref());
-    let extent = kernel_extent(sensor.force, sensor.kernel, body_props, sensor.tau);
+    let body_eph = motion.anchor_body().and_then(|name| eph.get(name));
+    let body_medium = body_eph.and_then(|e| e.medium.as_ref());
+    let extent = medium_reach(sensor.force, sensor.tau, body_medium, sensor.advection)?;
     if !extent.is_finite() {
         return None;
     }

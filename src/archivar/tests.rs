@@ -3240,6 +3240,7 @@ fn test_raw_presence_gate_admits_within_reach_and_refuses_fieldless_source() {
         }],
         rotation_matrices: vec![],
         props: None,
+        medium: None,
         orbit: None,
         granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
     };
@@ -4120,11 +4121,6 @@ fn test_build_netcdf_channels() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some(0.0033528131084554157),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -4143,6 +4139,7 @@ fn test_build_netcdf_channels() {
         }],
         rotation_matrices: vec![],
         props: Some(earth_props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
     };
@@ -4231,6 +4228,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &fc,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4251,6 +4249,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &fc,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4275,6 +4274,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &no_law,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4295,6 +4295,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &fc,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4328,6 +4329,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &fc,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4348,6 +4350,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &fc,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4373,6 +4376,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &thermal,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4393,6 +4397,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &thermal,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4413,6 +4418,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             EnclosureField {
                 config: &fc,
                 body_props: None,
+                medium: None,
                 body_radius: None,
             },
             AnchorEnvelope {
@@ -4441,11 +4447,6 @@ fn test_wind_waves_loader_respects_load_gate() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some(0.0033528131084554157),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -4464,6 +4465,7 @@ fn test_wind_waves_loader_respects_load_gate() {
         }],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
     };
@@ -4514,6 +4516,7 @@ fn test_wind_waves_loader_respects_load_gate() {
                     EnclosureField {
                         config: &fc,
                         body_props: eph_map.get("earth").and_then(|e| e.props.as_ref()),
+                        medium: None,
                         body_radius: Some(body_radius),
                     },
                     AnchorEnvelope {
@@ -5125,11 +5128,6 @@ fn test_wgccre_roundtrip() {
         dw_dt_deg_per_day: 350.89198226,
         radius_m: 3389500.0,
         flattening: Some(0.00589),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5149,6 +5147,7 @@ fn test_wgccre_roundtrip() {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -5195,11 +5194,6 @@ fn test_earth_zenith_geometry() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some(0.0033528131084554157),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5219,6 +5213,7 @@ fn test_earth_zenith_geometry() {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
     };
@@ -5267,11 +5262,6 @@ fn test_rotation_matrix_roundtrip() {
         dw_dt_deg_per_day: 350.89198226,
         radius_m: 3389500.0,
         flattening: Some(0.00589),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5291,6 +5281,7 @@ fn test_rotation_matrix_roundtrip() {
         granules: vec![granule],
         rotation_matrices: vec![(jd, m)],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -5333,11 +5324,6 @@ fn test_matrix_vs_wgccre_agreement() {
         dw_dt_deg_per_day: 350.89198226,
         radius_m: 3389500.0,
         flattening: Some(0.00589),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5357,6 +5343,7 @@ fn test_matrix_vs_wgccre_agreement() {
         granules: vec![granule.clone()],
         rotation_matrices: vec![(jd, m)],
         props: Some(props.clone()),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -5364,6 +5351,7 @@ fn test_matrix_vs_wgccre_agreement() {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -5407,11 +5395,6 @@ fn test_matrix_path_matches_analytic_across_bodies_and_epochs() {
             dw_dt_deg_per_day: rate,
             radius_m: 3.0e6,
             flattening: Some(0.0),
-            gaussian_inverse_square: 0.0,
-            gaussian_inverse: 0.0,
-            erfc: 0.0,
-            patch_levy: 0.0,
-            exponential_decay: 0.0,
             gm: None,
             j2: None,
             j4: None,
@@ -5436,6 +5419,7 @@ fn test_matrix_path_matches_analytic_across_bodies_and_epochs() {
             granules: vec![granule.clone()],
             rotation_matrices: vec![(jd0, m)],
             props: Some(props.clone()),
+            medium: None,
             orbit: None,
             granule_hint: hint.clone(),
         };
@@ -5443,6 +5427,7 @@ fn test_matrix_path_matches_analytic_across_bodies_and_epochs() {
             granules: vec![granule],
             rotation_matrices: vec![],
             props: Some(props),
+            medium: None,
             orbit: None,
             granule_hint: hint,
         };
@@ -5484,11 +5469,6 @@ fn test_rotation_matrix_empty_props() {
         dw_dt_deg_per_day: 350.89198226,
         radius_m: 3389500.0,
         flattening: Some(0.00589),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5508,6 +5488,7 @@ fn test_rotation_matrix_empty_props() {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -5753,11 +5734,6 @@ fn test_anchor_body_agnostic() {
         dw_dt_deg_per_day: 350.89198226,
         radius_m: 3389500.0,
         flattening: Some(0.00589),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5777,6 +5753,7 @@ fn test_anchor_body_agnostic() {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -5904,11 +5881,6 @@ fn test_anchor_applies_declared_unit() {
         dw_dt_deg_per_day: 350.89198226,
         radius_m: 3389500.0,
         flattening: Some(0.00589),
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: None,
         j2: None,
         j4: None,
@@ -5928,6 +5900,7 @@ fn test_anchor_applies_declared_unit() {
         granules: vec![granule],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -6411,12 +6384,12 @@ fn test_parse_ephemeris_binary_stype2_medium_constants() {
         buf.extend_from_slice(&p.to_le_bytes());
     }
     let eph = super::parse_ephemeris_binary(&buf).unwrap();
-    let props = eph.props.unwrap();
-    assert_eq!(props.gaussian_inverse_square, 340.2);
-    assert_eq!(props.gaussian_inverse, 5950.0);
-    assert_eq!(props.erfc, 3630.0);
-    assert_eq!(props.exponential_decay, 2.18e-5);
-    assert_eq!(props.patch_levy, 2.00e-5);
+    let m = eph.medium.expect("stype2 medium section");
+    assert_eq!(m.sound_speed_m_s, 340.2);
+    assert_eq!(m.p_wave_m_s, 5950.0);
+    assert_eq!(m.s_wave_m_s, 3630.0);
+    assert_eq!(m.thermal_diffusivity_m2_s, 2.18e-5);
+    assert_eq!(m.molecular_diffusivity_m2_s, 2.00e-5);
 }
 
 #[test]
@@ -6694,6 +6667,7 @@ fn test_body_barycenter_position_at_granule_boundary() {
             granules: Vec::new(),
             rotation_matrices: Vec::new(),
             props: None,
+            medium: None,
             orbit: None,
             granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
         };
@@ -6739,6 +6713,7 @@ fn test_body_barycenter_velocity_linear_granule() {
         granules: Vec::new(),
         rotation_matrices: Vec::new(),
         props: None,
+        medium: None,
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -7773,11 +7748,6 @@ fn test_query_admits_surface_sample_within_window() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
-        gaussian_inverse_square: 340.2,
-        gaussian_inverse: 5950.0,
-        erfc: 3630.0,
-        exponential_decay: 2.18e-5,
-        patch_levy: 2.00e-5,
         gm: Some(3.986004418e14),
         j2: Some(1.08262668e-3),
         j4: Some(-1.619e-6),
@@ -7790,6 +7760,13 @@ fn test_query_admits_surface_sample_within_window() {
         granules: Vec::new(),
         rotation_matrices: Vec::new(),
         props: Some(props),
+        medium: Some(crate::media::MediumParams {
+            sound_speed_m_s: 340.2,
+            p_wave_m_s: 5950.0,
+            s_wave_m_s: 3630.0,
+            thermal_diffusivity_m2_s: 2.18e-5,
+            molecular_diffusivity_m2_s: 2.00e-5,
+        }),
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -7912,6 +7889,7 @@ fn test_wind_orbit_bin_positions_when_present() {
         granules: Vec::new(),
         rotation_matrices: Vec::new(),
         props: None,
+        medium: None,
         orbit: Some(rec),
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -10290,11 +10268,6 @@ fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
-        gaussian_inverse_square: 340.2,
-        gaussian_inverse: 5950.0,
-        erfc: 3630.0,
-        exponential_decay: 2.18e-5,
-        patch_levy: 2.00e-5,
         gm: Some(3.986004418e14),
         j2: Some(1.08262668e-3),
         j4: Some(-1.619e-6),
@@ -10308,6 +10281,13 @@ fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
         granules: Vec::new(),
         rotation_matrices: Vec::new(),
         props: Some(props),
+        medium: Some(crate::media::MediumParams {
+            sound_speed_m_s: 340.2,
+            p_wave_m_s: 5950.0,
+            s_wave_m_s: 3630.0,
+            thermal_diffusivity_m2_s: 2.18e-5,
+            molecular_diffusivity_m2_s: 2.00e-5,
+        }),
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -10363,11 +10343,6 @@ fn gestalt_surface_threads_roundtrip_projects_to_icrs_finite() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
-        gaussian_inverse_square: 340.2,
-        gaussian_inverse: 5950.0,
-        erfc: 3630.0,
-        exponential_decay: 2.18e-5,
-        patch_levy: 2.00e-5,
         gm: Some(3.986004418e14),
         j2: Some(1.08262668e-3),
         j4: Some(-1.619e-6),
@@ -10381,6 +10356,13 @@ fn gestalt_surface_threads_roundtrip_projects_to_icrs_finite() {
         granules: Vec::new(),
         rotation_matrices: Vec::new(),
         props: Some(props),
+        medium: Some(crate::media::MediumParams {
+            sound_speed_m_s: 340.2,
+            p_wave_m_s: 5950.0,
+            s_wave_m_s: 3630.0,
+            thermal_diffusivity_m2_s: 2.18e-5,
+            molecular_diffusivity_m2_s: 2.00e-5,
+        }),
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -10484,11 +10466,6 @@ fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
-        gaussian_inverse_square: 340.2,
-        gaussian_inverse: 5950.0,
-        erfc: 3630.0,
-        exponential_decay: 2.18e-5,
-        patch_levy: 2.00e-5,
         gm: Some(3.986004418e14),
         j2: Some(1.08262668e-3),
         j4: Some(-1.619e-6),
@@ -10502,6 +10479,13 @@ fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
         granules: Vec::new(),
         rotation_matrices: Vec::new(),
         props: Some(props),
+        medium: Some(crate::media::MediumParams {
+            sound_speed_m_s: 340.2,
+            p_wave_m_s: 5950.0,
+            s_wave_m_s: 3630.0,
+            thermal_diffusivity_m2_s: 2.18e-5,
+            molecular_diffusivity_m2_s: 2.00e-5,
+        }),
         orbit: None,
         granule_hint: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)),
     };
@@ -13191,11 +13175,6 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         dw_dt_deg_per_day: 360.9856235,
         radius_m: 6378136.6,
         flattening: None,
-        gaussian_inverse_square: 0.0,
-        gaussian_inverse: 0.0,
-        erfc: 0.0,
-        patch_levy: 0.0,
-        exponential_decay: 0.0,
         gm: Some(3.986004418e14),
         j2: None,
         j4: None,
@@ -13223,6 +13202,7 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         ],
         rotation_matrices: vec![],
         props: Some(props),
+        medium: None,
         orbit: None,
         granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
     };
