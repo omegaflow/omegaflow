@@ -2980,6 +2980,7 @@ pub fn main_flow() {
                     | "eve"
                     | "agrav"
                     | "pds4_acs_nir"
+                    | "vlf_awesome"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
