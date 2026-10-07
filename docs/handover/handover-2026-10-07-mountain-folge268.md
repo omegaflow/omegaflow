@@ -3,7 +3,7 @@
   session: Mountain-Folge 268
   class: handover
   date: 2026-10-07
-  sha256: f9c5e734ee13780ad21fa27968da79e93e53660bf252f077fae06f228fbfe390
+  sha256: 7c4701e503620de7d0d29b9c93bbde2554bb34f6833d32b0fa8b31736fefebb8
   status: live
 -->
 # Handover — Mountain-Folge 268 (2026-10-07)
@@ -29,9 +29,12 @@ ihre Register (`phi/harvest.φ` 55 Blöcke grün, `phi/sources.φ` canonical 267
 die 4 Kanäle sind damit geschlossen. Wave 5/6 — Compiler+Reader+Register für
 `themis_mag`, `swarm_fac`, `dmsp16_ssj`, `pcn` (8 Kanäle geschlossen), ROTI auf
 per-Day (15.9 MiB/Asset), Hook-Riss getrackt gefixt (`.githooks/pre-commit` refresht
-den Gate-Binary jetzt immer), `cses_hpm`-Test-Import geheilt. Riss: Mycelium hat zwei
-Taucher-Dateien unter eigener Botschaft mitgenommen (`0fc491b7e`, kc2g_stations.rs +
-dropped_gate.rs).
+den Gate-Binary jetzt immer), `cses_hpm`-Test-Import geheilt. Wave 7 —
+`carisma_mag` (CSA-Mirror) + `ampere_fac` (Zenodo CDF-1) Compiler+Reader+Register;
+VLF AWESOME als `.mat`-v5-Riss (`blocked_sources.φ pending`) registriert — 9 Kanäle
+registriert, `dmsp16_ssj` deferred. **Push ausstehend:** GitHub HTTP 500 (mehrere
+Commits lokal, Fast-Forward steht). Riss: Mycelium hat zwei Taucher-Dateien unter
+eigener Botschaft mitgenommen (`0fc491b7e`).
 
 **Burn** (`session_burn`): Mountain-Linie-Session $0.0558 (`line`, deepseek-flash) + general ×1 (KCG2/SDO-Messung); kein pro/max (Aggregat deepseek-flash $0.8412/24 Sessions).
 
@@ -123,8 +126,8 @@ Wort | Datum | Quelle
 - **Status:** eigen | **Bindung:** eigen (Compiler/Reader) · mycelium (Manifestation)
 - **Trigger:** Compiler+Reader+Register je Kanal erreicht
 - **Lage:** (gemessen 2026-10-07, Mountain 268) **8 Kanäle geschlossen** — `cdaweb_tec`, `cdaweb_roti` (per-day), `goes16_mag`, `poes19_meped`, `themis_mag`, `swarm_fac`, `dmsp16_ssj`, `pcn`: Compiler (`tools/harvest/src/bin/`) + `*-cdn.yml` + **Core-Reader** (`src/archivar/<channel>.rs` + `extract.rs`/`main_flow.rs`-Dispatch) + `phi/harvest.φ`-Block (`harvest_reg --check`: 59 grün) + `phi/sources.φ`-Felder (Reader-Key = Register-Key; `register_sort` canonical 2682); `cargo check` 0/0. **Riss (Route):** Route-Datei nennt `tec15min_igs` „IONEX", gemessen **CDF3**. **Riss (Maß):** ROTI-Jahres-Asset war > 2 GiB → **gelöst** per-Day (15.9 MiB/Asset). `terms`: swarm_fac/pcn `CC-BY-4.0`, themis_mag/dmsp16_ssj `unbestimmt`.
-- **Blockade:** die restlichen 3 Kanäle sind ungebaut.
-- **Braucht:** Compiler+Reader+Register für CARISMA (Station-Magnetik), AMPERE (Zenodo-FAC-Reader), VLF AWESOME (`.mat` — Arm fehlt).
+- **Blockade:** nur VLF AWESOME — der `.mat`-Arm (`src/archivar/matfile.rs`/`mat5.rs`) ist **v5-only**, die CRAAM-Datei ist Level-4-artig (Bytes `[124..127]=00000000`); als `blocked_sources.φ pending` registriert.
+- **Braucht:** `src/archivar/mat4.rs` (Level-4-Reader: 5×int32-Kopf, Typcodes 0=f64/10=f32/30/50 — erst gegen eine zweite Datei oder die `awlib`-Schreiberspezifikation pinnen), dann `vlf_awesome_compiler.rs`. CARISMA (CSA-Mirror) + AMPERE (Zenodo CDF-1) sind gebaut und registriert.
 
 ### dmsp16_ssj — Register nach dem Release
 - **Status:** eigen | **Bindung:** eigen (Release) · mycelium (tools-build)

@@ -8,6 +8,15 @@ idempotent true
 timeout 240
 
 asset present
+format ampere_fac
+tag zenodo.org
+arm ampere_fac_compiler
+workflow ampere-fac-cdn.yml
+pattern ^ampere_fac\.bin$
+idempotent true
+timeout 600
+
+asset present
 format bc_mpo_mag
 tag psa.esa.int
 arm bc_mpo_mag_compiler
@@ -21,6 +30,15 @@ tag transmission.bpa.gov
 arm bpa_gic_compiler
 workflow bpa-gic-cdn.yml
 pattern ^bpa_gic\.bin$
+idempotent true
+timeout 120
+
+asset present
+format carisma_mag
+tag donnees-data.asc-csa.gc.ca
+arm carisma_mag_compiler
+workflow carisma-mag-cdn.yml
+pattern ^carisma_mag\.bin$
 idempotent true
 timeout 120
 
