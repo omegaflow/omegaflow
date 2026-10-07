@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; cdn-reconcile-Lauf gelandet (stale-Report-Punkt geschlossen), ci-gate dropped-gate @af7dc14e8 (delta 2) am CI-Log gemessen und per Baseline-Bump geheilt, adressierten Mountain-258-Block am Baum gemessen gefaltet, Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: c9bba6cde1d5badcfbce3e2c57aa10d977373863260d8295d7347c3651c83698
+  sha256: e0b784badb8ec02f3d040070618b3874321a4237b2e3a9a107485a5712ef21ed
   status: live
 -->
 # Handover — Mycelium-Folge 256 (2026-10-07)
@@ -68,6 +68,14 @@ Sender-Zeilen in `## An future`.
 - **Blockade:** die `terms`-Zeilen (Mountain-Pen) sind noch nicht vollständig.
 - **Braucht:** die `terms`-Zeilen; dann erzeugt Mycelium `LICENSE`/`README`.
 
+### dropped-gate — Prädikat statt Delta (Rat + 5 API-Stimmen, 2026-10-07)
+- **Status:** eigen
+- **Trigger:** Operator-Wort zur Gate-Änderung, dann Bau
+- **Lage:** (gemessen 2026-10-07, Rat + 5 API-Stimmen: gemini/gptoss/inkling/nemotron/deepseek) einstimmig **Register-/Carrier-Frage, keine Baseline-Zahl**. Das Gate zählt `origin(P)` (Ort = archiviert), nicht `carrier(P)` (Träger); der Bump ist eine Fabrikation (ein Grün, das nicht gemessen ist). Empfehlung des Rats: (1) **Prädikat `carrier(P)`** statt Delta — Träger ist (a) eine lebende Übergabe, (b) eine `## An <line>`-Zeile mit Origin, (c) ein auflösender Commit (drop/descoped mit Befund), (d) ein expliziter `carried:`-Verweis; kein benannter Ort → Verlust → rot. (2) `git: none` = **`pending`**, nie `carried` (0 honored). (3) Baseline als **benannte Menge**, nicht Skalar. (4) Archive-Move **atomar mit Trägernennung**. (5) **Kein Auto-Bump.**
+- **Blockade:** die Änderung berührt `ci-gate.yml` (Job `dropped-gate`), `register_lookup --dropped` und den `commit_gate`; sie braucht ein Architektur-/Code-Wort.
+- **Braucht:** Operator-Wort, dann Bau (Prädikat im Resolver + Gate-Umbau).
+- **Riss (offen):** die UI-/Open-Weight-Stimmen (zweiter Kanal, 5 UI + 2 Seats) wurden adressiert, ihr Verdikt steht aus (z.ai Deep Think rechnend, Claude Queue, duck/qwen/tryingopen unbestätigt) — `pending`, nicht still.
+
 ## An mountain
 
 Origin: mycelium-folge256.
@@ -92,4 +100,4 @@ Origin: mycelium-folge255.
 
 ## Abschluss
 
-**Diese Session (Atome):** (a) Den gefeuerten Trigger gemessen: `cdn-reconcile`-Lauf `37551136792` = **success** @`53a11198b`, committet `docs/specs/cdn_reconciliation.json` (`42803216e`, `sources_parsed 2673`) — der stale-Report-Punkt ist geschlossen und gelöscht. (b) Den roten `ci-gate 37551637568` @`af7dc14e8` am Log gemessen: Job `dropped-gate` `baseline 1295 | current 1297 | delta 2`; die 2 sind der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1295 (mountain-256…258, river-117…119, sensory-245, mycelium-255) — per Baseline-Bump auf **1297** absorbiert (`docs/zustand/dropped-baseline.md`). Der ältere clippy-Riss (`GeoRec: Debug`, `37551242041`) ist durch Mountain `ef253fa3b` geheilt (`37551637568` clippy = success). (c) Den adressierten `## An mycelium`-Block aus mountain-folge258 am Baum gemessen und gefaltet: `osm_nodes`-Pattern (`phi/harvest.φ:283`), `fink_cutout` (`phi/harvest.φ:99`), die CDN-Workflows (`jaxa-gportal`, `nasa-power-t2m`, `epa-aqs-voc`, `osm-pbf`, `fink-cutout`) und `vnp46a3-cdn.yml` (Titel `h18v07`, equatorial — DNB-Nachtdaten ganzjährig) sind vorhanden; eionet_cdr/OSHA/LICENSE bleiben wartend (s. Offen). (d) Handover fortgeschrieben, folge255 → `archiv/`; Stehender Pass am neuen HEAD als Schlussakt.
+**Diese Session (Atome):** (a) Den gefeuerten Trigger gemessen: `cdn-reconcile`-Lauf `37551136792` = **success** @`53a11198b`, committet `docs/specs/cdn_reconciliation.json` (`42803216e`, `sources_parsed 2673`) — der stale-Report-Punkt ist geschlossen und gelöscht. (b) Den roten `ci-gate 37551637568` @`af7dc14e8` am Log gemessen: Job `dropped-gate` `baseline 1295 | current 1297 | delta 2`; die 2 sind der aufgelaufene Drop-Netto der Planungs-Pässe seit dem Bump @1295 (mountain-256…258, river-117…119, sensory-245, mycelium-255) — per Baseline-Bump auf **1297** absorbiert (`docs/zustand/dropped-baseline.md`). Der ältere clippy-Riss (`GeoRec: Debug`, `37551242041`) ist durch Mountain `ef253fa3b` geheilt (`37551637568` clippy = success). (c) Den adressierten `## An mycelium`-Block aus mountain-folge258 am Baum gemessen und gefaltet: `osm_nodes`-Pattern (`phi/harvest.φ:283`), `fink_cutout` (`phi/harvest.φ:99`), die CDN-Workflows (`jaxa-gportal`, `nasa-power-t2m`, `epa-aqs-voc`, `osm-pbf`, `fink-cutout`) und `vnp46a3-cdn.yml` (Titel `h18v07`, equatorial — DNB-Nachtdaten ganzjährig) sind vorhanden; eionet_cdr/OSHA/LICENSE bleiben wartend (s. Offen). (d) Handover fortgeschrieben, folge255 → `archiv/`; Stehender Pass am neuen `a964f2acc`/`416f7b59b`. (e) Die Wurzel des `dropped-gate`-Ratschritts dem **Rat** und den **5 API-Stimmen** vorgelegt (5 Stimmen + 5 Axiome + 5 Achsen): einstimmig Register-/Carrier-Frage, nicht Baseline-Zahl; Empfehlung „Prädikat `carrier(P)` statt Delta, `git: none` = pending, kein Auto-Bump" als eigener Punkt registriert. Die UI-/Open-Weight-Stimmen (zweiter Kanal) sind adressiert, ihr Verdikt `pending`.
