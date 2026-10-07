@@ -189,7 +189,7 @@ at earth
 map features
 lat properties.lat
 lon properties.lon
-field properties.intensity lightning_peak_current_ka inverse-square em kA 6.0 0.0 0.0
+field properties.intensity lightning_peak_current_ka inverse-square electric kA 6.0 0.0 0.0
 
 url https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start={week_ago}&end={today}&minmag=2.5
 ttl 60
@@ -1067,7 +1067,7 @@ url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
 ttl 3600
 at earth 0.99
 field 0.speed exosphere_ace_speed_kms inverse-square advective km/s 360.0 0.0 0.0
-field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
+field 0.dens exosphere_ace_dens_ncc inverse-square em 1/cm3 360.0 0.0 0.0
 field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/solar_regions.json
@@ -1875,7 +1875,7 @@ compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
 at sun
 ttl 86400
 field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
-field parallax gaia_rrl_parallax_mas inverse-square em mas 86400 0.0 0.0
+field parallax gaia_rrl_parallax_mas inverse-square gravity mas 86400 0.0 0.0
 field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
@@ -18031,6 +18031,7 @@ url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_imag
 format fmi_image_mag
 origin https://space.fmi.fi/image/www/data_download.php
 compiler tools/harvest/src/bin/image_mag_compiler.rs
+sha256 9c76f881d33e5e2d0c84b60b1641d4a7262f0039e43d3795a0dd8e9044714e0e
 on earth 60.50 24.65 0
 ttl 604800
 field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
