@@ -42,6 +42,11 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "ujy" => Some(value * 1e-32),
         "njy" => Some(value * 1e-35),
         "sfu" => Some(value * 1e-22),
+        "g_mass" => Some(value * 1e-3),
+        "erg" => Some(value * 1e-7),
+        "m2" => Some(value),
+        "uj/sr" => Some(value * 1e-6),
+        "jy/sr" => Some(value * 1e-26),
         "millionths" => Some(value * 2.0 * std::f64::consts::PI * 6.957e8 * 6.957e8 * 1e-6),
         "au" => Some(value * 1.495978707e11),
         "pc" => Some(value * 3.085677581e16),
@@ -490,6 +495,19 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         8 => &[
             "v/m", "v", "a", "ka", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1", "%",
         ],
+        _ => &[],
+    }
+}
+
+pub fn allowed_units_for_quantity(kind: u8) -> &'static [&'static str] {
+    match kind {
+        0 => &[
+            "g_mass", "kg", "t", "m_sun", "m_earth", "m_jup", "gt", "kt_mass",
+        ],
+        1 => &["j", "erg", "ev", "gev", "kwh", "e10j", "e22j"],
+        2 => &["millionths", "m2"],
+        3 => &["dbz", "n-units", "nmgy", "db", "ppm"],
+        4 => &["uj/sr", "w/m2/sr", "jy/sr", "nw/cm2/sr"],
         _ => &[],
     }
 }

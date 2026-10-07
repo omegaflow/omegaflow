@@ -393,13 +393,15 @@ fn presence_probe() {
         pp[u32(vp.surface.z) + j] = vec4f(f32(ft), mt.x, f32(kid), fast);        let c = osc_field(j, vec3f(0.0), pre);
         let f = u32(c.y);
         if (f < 9u) { omegas[f] += c.x; }
-        flow = flow + osc_flow(j, pre);
+        if ((u32(props[j * 4u + 3u].z) & 16u) == 0u) {
+            flow = flow + osc_flow(j, pre);
+        }
     }
     var phase_idx = array<u32, BEAT_PAIR_CAP>();
     var phase_n: u32 = 0u;
     for (var j = 0u; j < count; j = j + 1u) {
         let qj = props[j * 4u + 3u];
-        if (qj.z > 0.5 && props[j * 4u + 2u].w > 0.0 && phase_n < BEAT_PAIR_CAP) {
+        if ((u32(qj.z) & 16u) == 0u && qj.z > 0.5 && props[j * 4u + 2u].w > 0.0 && phase_n < BEAT_PAIR_CAP) {
             phase_idx[phase_n] = j;
             phase_n = phase_n + 1u;
         }
