@@ -252,6 +252,11 @@ mod tests {
             );
         }
         assert_eq!(kernel_id_for_force(9), None);
+        assert_eq!(
+            crate::archivar::extract::kernel_id_of("point"),
+            Some(2),
+            "the point/identity kernel occupies the free slot 2"
+        );
     }
 
     #[test]

@@ -1527,6 +1527,7 @@ pub fn kernel_id_of(name: &str) -> Option<u8> {
     match name {
         "inverse-square" => Some(0),
         "gaussian-inverse-square" => Some(1),
+        "point" => Some(2),
         "erfc" => Some(3),
         "exponential-decay" => Some(4),
         "patch-levy" => Some(5),
