@@ -3,7 +3,7 @@
   session: River-Folge 122
   class: handover
   date: 2026-10-07
-  sha256: aa175853c53833e4e5270d6d44b92fbcafa7586927129f03df31c70ff0a2da9b
+  sha256: 36f9aa5a18df016d5fe0a619a22cf10a0198d077aa2a62f620915d317541a924
   status: live
 -->
 # Handover — River-Folge 122 (2026-10-07)
@@ -66,20 +66,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** CI-Lauf-Ausgang `unread` (Stehender Pass/`ci_manage`, kein Polling).
 - **Braucht:** CI-grün; Pages-Deploy; Browser-Sicht auf `omegaflow.space/membrane.html`. Offen: `state.lvl` global über beide Aperturen; `MembraneLookup.add_stars` panikt bei Re-Init (Riss, kein Repro ohne WASM/Browser).
 
-### Membran — progressives Laden nach Helligkeit (C)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lieferung des nach Helligkeit geordneten Sternkatalogs (C) — Register `phi/sources.φ`, Mycelium/CI.
-- **Lage:** (gemessen 2026-10-07 via `git show 8a11fc3fb`) `BODIES`-Manifest gebaut (mycelium 254: `gen_bodies.sh` + Bindung in `pages-deploy`, Drift-Tor). Set ist River-Wort `["sun","earth","moon"]` in Sichtbarkeits-Reihenfolge. Offen bleibt: 95-MB-Sternkatalog nach Helligkeit ordnen (C).
-- **Blockade:** Katalog-Ordnung (C).
-- **Braucht:** 95-MB-Sternkatalog nach Helligkeit ordnen.
-
-### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
-- **Status:** wartend (fremd, Alignment/Ernte) | **Bindung:** eigen
-- **Trigger:** Alignment/Ernte der Solar-/Magnetosphären-Zellen (Mountain/Mycelium) — Beleg `field-te-query 37500311359 @d9351b0e` (`alignment pending`).
-- **Lage:** (gemessen 2026-10-06, River 112) 210/210 Zellen, 15/15 Arme; `0 of 210 cells pass`. Newell gefaltet (mountain-254): `matrix-newell` Zelle `newell_dphi_dt->intermagnet_dbdt` n=24, verdict `silent` (Bin 3600 korrekt); `matrix-newell-omni` n=0, `alignment pending` (OMNI-Zeitachse fehlt).
-- **Blockade:** Daten-/Kadenz-Deckung (Mountain/Mycelium).
-- **Braucht:** alignment-fähige Zellen; `ozzy`; Netz-Null als CI-Batterie.
-
 ### Receiver-Apertur — Sub-Pixel für ALLE Radiatoren
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Register-Direktive `span` auf der `at <body>`-Zeile (Mountain).
@@ -87,40 +73,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** großer Umbau (per-Fragment `source_contrib`).
 - **Braucht:** `span`-Direktive; Brücke in `static/membrane.html`; Invarianz-/Energieerhaltungs-Test; danach alle fünf Radiatoren.
 
-### dB/dt–GIC-Relation Mäntsälä (Viljanen-Empfehlungen)
-- **Status:** wartend | **Bindung:** eigen (cross-line)
-- **Trigger:** NUR-Asset `fmi_image_mag_nur.bin` im CDN.
-- **Lage:** (gemessen 2026-10-06, River 105) Fine-grain FMI-GIC manifestiert; NUR nicht im CDN.
-- **Blockade:** NUR-Manifestation + Probe.
-- **Braucht:** `image-cdn.yml` (Mycelium); ggf. Tages-Detrend (Mountain); Probe + Zahl in Paper §4/§6.
-
-### Membran-Sonne-Anker (Operator-Wort; cross-line)
-- **Status:** blockiert | **Bindung:** eigen (cross-line)
-- **Trigger:** Mountains `de_compiler`-GM-Landung (Maske Bit 11) + Mycelium-Remanifestation.
-- **Lage:** (gemessen 2026-10-06, River 106) deployte Maske `0x01FF`; Bit 11 klar; `body_anchor_samples` (`src/archivar/membrane.rs:404`) emittiert nur bei `props.omega_g`/`props.gm`. Mountain-257-Meldung (adressiert, gefaltet): Anker erledigt (`membrane.rs:426`, `wasm.rs:77` ohne `t2`).
-- **Blockade:** der gemessene GM fehlt in der Sonne-`.bin`.
-- **Braucht:** Mountain slot `f(11)`/Bit 11; Mycelium baut + manifestiert; Rivers Checkmark `nearCount(<1e13 m) > 0`.
-
-### Agnosis — Membran-Trio (Rest (a))
-- **Status:** wartend (fremd) | **Bindung:** eigen (cross-line Mycelium, CI)
-- **Trigger:** Mycelium/CI-Build-Time-Manifest (`static/membrane.html:51` `BODIES`).
-- **Lage:** (gemessen 2026-10-07 via `git show 8a11fc3fb`) Punkt (b) gebaut (mountain-239); (a) `BODIES`-Handkopie → Build-Time-Manifest erledigt (mycelium 254). Offen bleibt nur die Sternkatalog-Schicht (C).
-- **Blockade:** Katalog-Ordnung (Mycelium/CI).
-- **Braucht:** s. „Membran — progressives Laden".
-
 ### Flyby-Kette — OMNI2, kp `def`, JUICE-recon
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Kanal-Verfügbarkeit (OMNI2-Merge-Lag, GFZ `def`-Release, ESOC JUICE-recon). Wahrheit: `state/zustand/wartend.φ` (`flyby-chain-omni2`, `flyby-chain-kp-def`, `ephemeris-juice-recon`).
 - **Lage:** (gemessen 2026-10-06, River 105) OMNI2 26 Zellen `pending`; kp `def` leer; JUICE-recon absent (Wiedervorlage 2026-11-01).
 - **Blockade:** externe Kanäle; kein Polling.
 - **Braucht:** `flyby_path2_fill`-Lauf lesen + Addendum fortschreiben; Trigger feuern lassen; Δ/σ_recon.
-
-### Repo-weiter Lizenz-Census + `sources`-LICENSE
-- **Status:** eigen (Audit) | **Bindung:** eigen (cross-line)
-- **Trigger:** Operator-Wort 2026-10-06.
-- **Lage:** (gemessen 2026-10-06, River 107) `phi/sources.φ` 1945 Spiegel-URLs über 169 Netlocs; keine Lizenz-Direktive. `state/river/license-census.tsv` (169 Zeilen).
-- **Blockade:** keine.
-- **Braucht:** Leads als `terms`-Zeilen (Mountain); Generator + Drift-Tor (Mycelium).
 
 ## An mountain
 
@@ -130,6 +88,8 @@ Origin: river-122.
 - **CGM-Provenienz CPL/TTB (`cgm_lat`, dein `c164ba54b`):** `phi/sources.φ` führt für CPL `cgm_lat 11.23` und TTB `cgm_lat -2.62` — beide aus dem `bgs-quasi-dipole`-Fallback (`cgm_lat_partition.rs:165`), **QD ≠ CGM** (der OMNIWeb-VITMO-CGM-Endpunkt weist |lat| < 20° ab, SuperMAG führt die Codes nicht). Als `cgm_lat` registriert, ist der Wert nicht CGM — der Riss ist die Provenienz. **Braucht:** die Zeile als QD-Näherung benennen oder ein Low-Lat-CGM-Bin; die Familie bleibt bei beiden mid-latitude.
 - **Receiver-Apertur `span`-Direktive:** auf der `at <body>`-Zeile fehlt `span`; Rivers Membran-Brücke + Invarianz-/Energieerhaltungs-Test hängen daran. **Braucht:** `span`-Direktive je `at <body>` (Punkt „Receiver-Apertur").
 - **Membran-Sonne-Anker (`de_compiler` GM, Maske Bit 11):** die deployte Sonne-`.bin` trägt den GM nicht; Rivers Checkmark `nearCount(<1e13 m) > 0` hängt an der GM-Landung + Remanifestation. **Braucht:** Bit 11 / slot `f(11)` in der Sonne-`.bin`.
+- **Universelles Vlies — `matrix full` Alignment (210 Zellen):** 210/210 Zellen, 15/15 Arme, `0 of 210 cells pass`; `matrix-newell` n=24 verdict `silent` (Bin 3600), `matrix-newell-omni` n=0 `alignment pending` (OMNI-Zeitachse fehlt). Die Alignment-fähige Zelle ist Quellen-/Kadenz-Eigenschaft (Mountain/Mycelium). **Braucht:** alignment-fähige Zellen; danach River-Lauf + Net-Null als CI-Batterie.
+- **Lizenz-Census-Leads (`terms`):** `phi/sources.φ` hat 1945 Spiegel-URLs über 169 Netlocs ohne `terms`-Direktive; `state/river/license-census.tsv` misst 7 mit Lizenz (CC-BY-4.0, CC-BY-NC-SA-4.0, ODbL-1.0, PDDL-1.0, PD, own-work, free-open) und **162 ohne genannte Lizenz**. **Braucht:** die 7 als `terms`-Zeilen schreiben, die 162 als „keine Lizenz genannt" registrieren.
 
 ## An mycelium
 
@@ -138,6 +98,8 @@ Origin: river-122.
 - **NUR-Asset `fmi_image_mag_nur.bin` (dB/dt–GIC Mäntsälä):** die IMAGE/NUR-Registerzeile steht in `phi/sources.φ`, aber das Asset hat keinen sha und liegt nicht im CDN. **Braucht:** `image-cdn.yml`-Lauf + sha zurück ins Register; River dann Probe + Zahl in Paper §4/§6.
 - **Sternkatalog nach Helligkeit ordnen (Membran progressives Laden (C)):** der `BODIES`-Manifest-Teil ist gebaut (mycelium 254); offen ist der 95-MB-Sternkatalog. **Braucht:** Katalog nach Helligkeit ordnen + manifestieren, Sichtbarkeits-Reihenfolge `sun, earth, moon, katalog`.
 - **Generiertes `LICENSE` im `omegaflow/sources`-Repo** liegt in deinem Offen (hängt an Mountains `terms`-Zeilen) — kein neuer Ask.
+- **Universelles Vlies — `matrix full` Alignment:** s. `## An mountain` (Alignment/Ernte der Zellen, Kadenz-Deckung).
+- **Lizenz-Census Generator + Drift-Tor:** aus Mountains `terms`-Zeilen den `terms`-Drift-Generator bauen (`state/river/license-census.tsv` ist die Messquelle).
 
 ## LOCK
 
@@ -152,4 +114,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `docs/handover/handover-2026-10-07-river-folge122.md` (neu)
 - `docs/handover/archiv/handover-2026-10-07-river-folge121.md` (Move)
 
-## Burn: open 0.0000 · close 0.0699 · cap 0.20 (Operator-Wort 2026-10-07) · Grund: River 122 — Line-Session (deepseek-flash; `session_burn` line-agent $1.0393→$1.1092, Δ 0.0699; total $1.2009→$1.2708): `--fired river` 2 Punkte (`ozzy` FIRED_UNGEMESSEN, `em-apertur` FIRED); die CI am HEAD `d824e8d04` ist `queued` (`ci_manage list` — `37591243668 ci-gate`, `37591243715 register-coverage` @08:03Z), kein grüner Lauf; `--stale` 0; `--addressed river` 1 Block (mountain-259, war schon gefaltet); `open_points_check` 0 absent/0 stale-citation/0 format-gap. **Gemessen:** der OMNIWeb-VITMO-CGM-Endpunkt weist |lat| < 20° ab (HTTP 200, „Latitude must be greater than 20."); CPL/TTB (low-lat, nicht in SuperMAG) tragen darum den `bgs-quasi-dipole`-Fallback als `cgm_lat` im Register (Mountain 259 `c164ba54b`) — QD ≠ CGM; in Blatt (»Grenze der Primär-Route«) + `## An mountain` getragen. **Register-Drift-Check:** `phi/sources.φ` `cgm_lat` (157 Zeilen) vs `state/river/gic-cgm-lat.tsv` (154) — die 154 xyz-Werte stimmen; +3 dB/dt-Einträge (ABK 1h/1m, SOD 1h), kein Drift. Kein Bau (alle Punkte warten auf CI/Mountain/Mycelium), kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
+## Burn: open 0.0000 · close 0.0700 · cap 0.20 (Operator-Wort 2026-10-07) · Grund: River 122 — Line-Session (deepseek-flash). Erster Pass: `--fired river` 2 Punkte (`ozzy` FIRED_UNGEMESSEN, `em-apertur` FIRED); CI am HEAD `d824e8d04` `queued` (`ci_manage list` — `37591243668 ci-gate`, `37591243715 register-coverage` @08:03Z), kein grüner Lauf; `--stale` 0; `--addressed river` 1 Block (mountain-259, war schon gefaltet); `open_points_check` clean. **Gemessen:** der OMNIWeb-VITMO-CGM-Endpunkt weist |lat| < 20° ab (HTTP 200 „Latitude must be greater than 20."); CPL/TTB (low-lat, nicht in SuperMAG) tragen darum den `bgs-quasi-dipole`-Fallback als `cgm_lat` im Register (Mountain 259 `c164ba54b`) — QD ≠ CGM; in Blatt + `## An mountain` getragen. **Register-Drift-Check:** `phi/sources.φ` 157 `cgm_lat` vs `state/river/gic-cgm-lat.tsv` 154 — die 154 xyz-Werte stimmen, +3 dB/dt-Einträge (ABK 1h/1m, SOD 1h), kein Drift. **Zweiter Pass (Operator-Kritik „so viel nicht eigenes"):** Offen auf eigene Schritte beschnitten (12→6); die Cross-Line-Punkte als `## An mountain`/`## An mycelium` getragen (Vlies-Alignment, Lizenz-Leads, Sonne-Anker, NUR, Katalog). **Kein Bau:** der GIC-Familien-Pool wartet auf Mountains per-Station-dB/dt-Member-Serien (mit nur ABK/SOD nichts zu poolen); die Membran-Risse (`state.lvl`, `add_stars`) sind Fenster-Edits (Operator-Wort) bzw. ohne Repro; `cgm_lat_partition.rs` liegt mit fremdem, uncommittetem `cargo fmt` im Baum (kein eigener Hunk). Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
