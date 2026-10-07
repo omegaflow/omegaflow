@@ -81,7 +81,12 @@ fn wcs_from_header(h: &FitsHeader, naxis1: usize, naxis2: usize) -> Option<FitsW
     }
     let crpix1 = h.f64("CRPIX1").unwrap_or((naxis1 + 1) as f64 / 2.0);
     let crpix2 = h.f64("CRPIX2").unwrap_or((naxis2 + 1) as f64 / 2.0);
-    let cd = match (h.f64("CD1_1"), h.f64("CD1_2"), h.f64("CD2_1"), h.f64("CD2_2")) {
+    let cd = match (
+        h.f64("CD1_1"),
+        h.f64("CD1_2"),
+        h.f64("CD2_1"),
+        h.f64("CD2_2"),
+    ) {
         (Some(a), Some(b), Some(c), Some(d)) => [[a, b], [c, d]],
         _ => {
             let cdelt1 = h.f64("CDELT1").unwrap_or(1.0);
@@ -109,7 +114,11 @@ fn wcs_from_header(h: &FitsHeader, naxis1: usize, naxis2: usize) -> Option<FitsW
     Some(FitsWcs::tan(crval1, crval2, crpix1, crpix2, cd))
 }
 
-fn angular_step(world: &impl Fn(f64, f64) -> Option<(f64, f64)>, x: usize, y: usize) -> Option<f64> {
+fn angular_step(
+    world: &impl Fn(f64, f64) -> Option<(f64, f64)>,
+    x: usize,
+    y: usize,
+) -> Option<f64> {
     let (ra0, dec0) = world(x as f64 + 1.0, y as f64 + 1.0)?;
     let (ra1, dec1) = world(x as f64 + 2.0, y as f64 + 1.0)?;
     if !(ra0.is_finite() && dec0.is_finite() && ra1.is_finite() && dec1.is_finite()) {
