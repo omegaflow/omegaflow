@@ -1030,7 +1030,7 @@ impl Gate {
             let german_word_idx = v
                 .german_function_words
                 .iter()
-                .find_map(|w| lower.find(w.as_str()));
+                .find_map(|w| word_index(&lower, w));
             if let Some(idx) = german_char_idx.or(german_word_idx) {
                 return Some(Verdict {
                     severity: Severity::Hard,
@@ -2412,8 +2412,14 @@ pub fn register_field_unit_issues(content: &str) -> Vec<FieldUnitIssue> {
 }
 
 fn word_present(lower: &str, word: &str) -> bool {
+    word_index(lower, word).is_some()
+}
+
+fn word_index(lower: &str, word: &str) -> Option<usize> {
     let w = word.to_lowercase();
-    if let Some(pos) = lower.find(&w) {
+    let mut start = 0;
+    while let Some(rel) = lower[start..].find(&w) {
+        let pos = start + rel;
         let before = pos == 0 || {
             let c = lower.as_bytes()[pos - 1] as char;
             !c.is_alphanumeric()
@@ -2422,10 +2428,12 @@ fn word_present(lower: &str, word: &str) -> bool {
             let c = lower.as_bytes()[pos + w.len()] as char;
             !c.is_alphanumeric()
         };
-        before && after
-    } else {
-        false
+        if before && after {
+            return Some(pos);
+        }
+        start = pos + 1;
     }
+    None
 }
 
 const SYSTEM_HOMES: [&str; 13] = [

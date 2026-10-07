@@ -72,7 +72,22 @@
     ["Deckel **hart**", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
     ["Tool-Aufrufe/Session", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
     ["url,\n            stderr.trim()", "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"],
-    ["unwrap_or(1994)", "a CLI measurement window defaulted to a literal constant (start year 1994) fabricates the window — the window is named by the operator/CI input and a missing value is a usage error (exit 2), never a default"]
+    ["unwrap_or(1994)", "a CLI measurement window defaulted to a literal constant (start year 1994) fabricates the window — the window is named by the operator/CI input and a missing value is a usage error (exit 2), never a default"],
+    ["\"earth\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias WP13: the literal \"earth\" = 0; River 127/128)"],
+    ["EARTH_RADIUS", "the Earth's radius as a code constant fabricates one privileged body — the radius is a BodyProperties field read from the ephemeris binary (or the register declaration), never a constant in the code (remove-bias WP13)"],
+    ["6378137.0", "the WGS84 semi-major axis hardcoded as 6378137.0 fabricates Earth's shape into every body — r_eq is a BodyProperties measurement, never a geodetic literal in the code (remove-bias WP13)"],
+    ["6378136.6", "a hardcoded Earth-ellipsoid constant fabricates one body's shape into the code — the polar radius is a BodyProperties measurement (remove-bias WP13)"],
+    ["111319.0", "a hardcoded degrees-to-metres constant fabricates Earth's circumference into the code — the conversion belongs to the body's declared geometry, never a literal (remove-bias WP13)"],
+    ["0.40909", "a hardcoded obliquity/axis constant fabricates Earth's orientation into every body — the reference frame derives per body, never a literal (remove-bias WP13)"],
+    ["280.460", "a hardcoded Earth-rotation constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"],
+    ["360.985", "a hardcoded Earth-rotation-rate constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"],
+    ["DEMO_KEY", "a fabricated API demo key as a fallback fabricates access where the key is absent — a missing key is operator-bound (register), never DEMO_KEY (remove-bias WP13)"],
+    ["V_SOUND_288", "a hardcoded 288 K sound speed fabricates Earth's atmosphere into the medium table — v_sound is a BodyProperties measurement, never a constant (remove-bias WP9/WP13)"],
+    ["V_P_GRANITE", "a hardcoded granite P-wave speed fabricates one body's crust into the medium table — v_seismic_p is a BodyProperties measurement (remove-bias WP9/WP13)"],
+    ["V_S_GRANITE", "a hardcoded granite S-wave speed fabricates one body's crust into the medium table — v_seismic_s is a BodyProperties measurement (remove-bias WP9/WP13)"],
+    ["D_AIR", "a hardcoded air diffusion constant fabricates Earth's atmosphere into the medium table — d_diffusion is a BodyProperties measurement (remove-bias WP9/WP13)"],
+    ["ALPHA_AIR", "a hardcoded air thermal coefficient fabricates Earth's atmosphere into the medium table — alpha_thermal is a BodyProperties measurement (remove-bias WP9/WP13)"],
+    ["force_constants", "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
