@@ -4,7 +4,7 @@
   date: 2026-10-07
   sha256: 96fc86f1806c754cbdb990919b88c105963d705470db956637f08a28cd51ac65
   status: live
-  see-also: docs/blatt/blatt-gic-breitenband-familien.md docs/handover/handover-2026-10-07-river-folge122.md
+  see-also: docs/blatt/blatt-gic-breitenband-familien.md docs/handover/archiv/handover-2026-10-07-river-folge122.md
 -->
 
 # Survey — die Forschungslandschaft zur GIC-Stufe-2-Null (2026-10-07)
