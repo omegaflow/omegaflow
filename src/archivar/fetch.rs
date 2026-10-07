@@ -508,6 +508,7 @@ pub fn presence_gate(
 pub struct EnclosureField<'a> {
     pub config: &'a FieldConfig,
     pub body_props: Option<&'a BodyProperties>,
+    pub medium: Option<&'a crate::media::MediumParams>,
     pub body_radius: Option<f64>,
 }
 
@@ -527,7 +528,7 @@ pub fn record_in_enclosure(
     env: AnchorEnvelope,
 ) -> bool {
     let fc = field.config;
-    let body_props = field.body_props;
+    let medium = field.medium;
     let body_radius = field.body_radius;
     let anchor_vmax = env.vmax;
     let anchor_amax = env.amax;
@@ -540,12 +541,11 @@ pub fn record_in_enclosure(
     if age > effective_ttl * 64.0 {
         return false;
     }
-    let Some(reach_signal) =
-        signal_reach(fc.force as f64, fc.advection, age, fc.freq, fc.bin_width)
+    let Some(front) = medium_reach(fc.force, age, medium, fc.advection)
+        .or_else(|| signal_reach(fc.force as f64, fc.advection, age, fc.freq, fc.bin_width))
     else {
         return true;
     };
-    let extent = kernel_extent(fc.force, fc.kernel, body_props, fc.tau);
     let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);
     presences
         .iter()
@@ -555,7 +555,7 @@ pub fn record_in_enclosure(
                 Some(r) => r.max(Φ * grid_step),
                 None => Φ * grid_step,
             };
-            let limit = reach_signal + extent + rho + v_abs * age + body_term;
+            let limit = front + rho + v_abs * age + body_term;
             let dx = p_r[0] - px;
             let dy = p_r[1] - py;
             let dz = p_r[2] - pz;
@@ -590,6 +590,7 @@ pub fn catalog_sample_in_enclosure(
         EnclosureField {
             config: &fc,
             body_props: None,
+            medium: None,
             body_radius: None,
         },
         AnchorEnvelope {
@@ -630,6 +631,7 @@ pub fn body_in_enclosure(
         EnclosureField {
             config: &fc,
             body_props: Some(props),
+            medium: None,
             body_radius: Some(props.radius_m),
         },
         AnchorEnvelope {
