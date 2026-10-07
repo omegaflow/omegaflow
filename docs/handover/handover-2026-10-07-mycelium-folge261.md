@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 261 (2026-10-07)
-  session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule`-Emit-Pfad verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 gebaut (`dropped_gate.rs`), Lizenz-Census Tor-Bedingung (i) (9er-Vokabel); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Sheets; CI-Tafel (format river/mountain, path_reference_scan river)
+  session: Mycelium-Linie — Meta-Pass; Sternkatalog-Sort + vnp46a3 aufgelöst; jaxa_gpm_ku `--granule` verdrahtet; CDN-Audit (986 Blöcke) 9 Workflow-Lücken geschlossen; dropped-gate Schritt 1+2 + echtes `--roster`-Gate (Tombstones/Generationen, nicht-vakuoser Shadow); Lizenz-Census (i)+(iii) (9er-Vokabel, Join am Quellenblock); Recherche-Schicht (SPDX + dropped-gate) + UI-Frontier-Runde (Qwen: b); CI-Tafel (format mountain + unnamed archive_search)
   class: handover
   date: 2026-10-07
-  sha256: eeca848be6af1ae86ee92800fc432099757eb74e07f6852aace183c58c0347be
+  sha256: be35306d10ea03c0e5bc62711e6eab26f6d7a9019150598b61d8355c3f310aa0
   status: live
 -->
 # Handover — Mycelium-Folge 261 (2026-10-07)
@@ -16,13 +16,14 @@ kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge260.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An river` / `## An future`.
 
-## Burn: open 0.0 · close 0.0962 · cap 0.5 — Grund: Meta-Pass + Agenten-Kohorte (4 flash + 1 schwache Stimme + weitere flash-Bauschritte), kein pro/max; gemessen `session_burn` (line, deepseek-flash) bei Commit
+## Burn: open 0.0 · close 0.1281 · cap 0.5 — Grund: Meta-Pass + Agenten-Kohorten (9 grind-flash, 8 general, 4 council, 2 voice-deepseek), kein pro/max; gemessen `session_burn` (line, deepseek-flash) bei Commit
 
 ## Operator-Wort-Register
 
 - Wort | 2026-10-07 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | Quelle: Operator (Session, Mycelium 261) — Session-Start, Delegations-Consent.
 - Wort | 2026-10-07 | „endlich mal die arbeit fertig machen" → Delegationsauftrag: eine Agenten-Kohorte (flash-first) parallel auf die arbeitsfähigen Mycelium-Atome. | Quelle: Operator (Session, Mycelium 261).
 - Wort | 2026-10-07 | „ja bitte" → Recherche-Schicht für `terms`-SPDX + dropped-gate-Thresholds starten und die UI-Frontier-Fragen-Sheets bereitlegen. | Quelle: Operator (Session, Mycelium 261).
+- Wort | 2026-10-07 | „fängst du jetzt bitte an zu arbeiten?" → Direktive: weiterarbeiten ohne Rückfrage. Gebaut: echtes dropped-gate (`--roster` + Tombstones/Generationen, nicht-vakuoser Shadow), Lizenz-Census (iii) + Join am Quellenblock, UI-Frontier-Runde gefahren (Qwen = b). | Quelle: Operator (Session, Mycelium 261).
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge260.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -62,19 +63,19 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** die `terms`-Zeilen (Mountain-Pen) noch nicht vollständig (Mountain 266: ~160 `terms unbestimmt`-Zeilen offen).
 - **Braucht:** die `terms`-Zeilen; dann erzeugt Mycelium `LICENSE`/`README`.
 
-### dropped-gate — Schritt 1+2 gebaut; Shadow vakuos, Härtung + Pin-Wahl offen
-- **Status:** eigen
-- **Trigger:** — (autonom; Bau als flash-Sequenz)
-- **Lage:** (gemessen 2026-10-07, Mycelium 261) `tools/register/src/bin/dropped_gate.rs` gebaut (gepusht `7c4119e70`): getyptes Vokabular `minted/carried/resolved/dropped` + `fold_events(log,pin)` + Shadow-Nullkontrolle; `--selftest`/`--shadow` grün. **Recherche-Risse (2026-10-07, getragen):** (1) der Shadow ist **vakuos** — `false_red` kann strukturell nie ≠ 0 werden, Silent-Loss per `.abs_diff(k)` neutralisiert → `--shadow` meldet immer `sharp=true`; (2) `pending-legacy` meint im Glossar die Verlust-Menge (voller Scan, letzter Sweep ~3105/993), `dropped_gate.rs:3` pinnt aber die 37-Schlüssel-Offen-Menge; (3) Revival-Lücke (`minted` nach `dropped` ohne Tombstone/Generation); (4) Roster/`archiv`-Asymmetrie.
-- **Blockade:** kein einschaltbares Tor — vakuoser Shadow + ungeklärter Pin färben jede legitime Schließung rot.
-- **Braucht:** UI-Frontier-Urteil (Sheet `state/stimmen/2026-10-07_dropped-gate-ui-fragen.md`, Operator-Wort) → dann Härtung (Tombstone/Generation + echtes `false_red`, begrenzter Schritt), Pin-Wahl, `pending-legacy`-Snapshot (wöchentlich), `ci-gate`-Verdrahtung. Verdikt: `state/stimmen/2026-10-07_dropped-gate-stimmen-runde.md` + `-runde-2.md`.
+### dropped-gate — echtes `--roster`-Gate gebaut; Re-Pin/Archiv-Disziplin + CI-Verdrahtung offen
+- **Status:** eigen → wartend (Pin-/Archiv-Entscheidung)
+- **Trigger:** Operator-/Frontier-Wort (Sheet) zur Pin-Wahl + Archiv-Move-Disziplin
+- **Lage:** (gemessen 2026-10-07, Mycelium 261) `dropped_gate.rs` ist jetzt **nicht-vakuos** (gepusht `e9a2bd8cb`): `--roster <live>` vergleicht den beobachteten Roster gegen Pin+Log (`false_green` = gepinnter Schlüssel still weg, `false_red` = beobachteter Schlüssel ohne `minted`); Tombstones/Generationen (minted nach dropped ohne `revive` = benannte Refusal); `--shadow` prüft vier Sub-Runs, `sharp=true`; Smoke `{a,b,c}` vs `{a,b,x}` → `false_red=1 false_green=1`. **Gemessen:** der public-only-Roster ist seit dem Pin (HEAD `351632051`) um **10** Schlüssel verschoben (`--baseline … --count` = 10) — die CI-Verdrahtung meldete heute 10 false_green, solange Archiv-Moves nicht als `carried`-Events geführt werden.
+- **Blockade:** ungeklärte Pin-Wahl (Offen- vs. Verlust-Menge) + fehlende Archiv-Move-Disziplin (Roster/`archiv`-Asymmetrie).
+- **Braucht:** UI-Frontier-/Operator-Wort (Sheet `state/stimmen/2026-10-07_dropped-gate-ui-fragen.md`) → Re-Pin mit gemessenem Grund + Event-Log-Seeding + `ci-gate`-Verdrahtung. Verdikt: `state/stimmen/2026-10-07_dropped-gate-stimmen-runde.md` + `-runde-2.md`.
 
-### Lizenz-Census — Tor-Bedingung (i) gebaut; SPDX-Migration + Mountain-`terms` offen
+### Lizenz-Census — Tor-Bedingung (i)+(iii) gebaut; SPDX-Migration + Mountain-`terms` offen
 - **Status:** eigen → operator-gebunden (SPDX-Frage)
 - **Trigger:** Operator-Wort für die UI-Frontier-Runde (Sheet) + Mountains `terms`-Befüllung
-- **Lage:** (gemessen 2026-10-07, Mycelium 261) Tor-Bedingung (i) gebaut (gepusht `7c4119e70`): `license_census.rs` erzwingt die geschlossene `terms`-Vokabel byte-exakt; 0 Verstöße / 143 Zeilen / 9 distinct. Rat-Verdikt: die 9 exakten Werte. **Recherche-Riss (2026-10-07):** 3 der 9 weichen von SPDX ab (`CC0`→`CC0-1.0`, `ODC-BY-1.0`→`ODC-By-1.0`; `PD` hat keinen SPDX-Identifier); DataCite=Freitext+optional SPDX, EUMETSAT nicht CC, SPDX kennt `LicenseRef-…`. Empfehlung: hybrid (b′) — Lizenz-Tokens auf SPDX, Rest als Status-Achse, nie still mappen.
-- **Blockade:** (ii) Mountains ~160 `terms unbestimmt`-Zeilen fehlen (`phi/blocked_sources.φ` leer); (iii) Tree-Count − `terms`-Count.
-- **Braucht:** UI-Frontier-Urteil zur SPDX-Migration (Sheet `state/stimmen/2026-10-07_terms-spdx-ui-fragen.md`, Operator-Wort) + Mountains `terms`; dann (ii)/(iii) + `ci-gate`-Schritt. Der `state/`-Pregate bleibt Komplement, nie das Tor.
+- **Lage:** (gemessen 2026-10-07, Mycelium 261) (i) geschlossene Vokabel + (iii) `blocks 2673 | terms 143 | distinct 9 | pending 2530` gebaut (gepusht `e9a2bd8cb`); der Join hängt jetzt am Quellenblock (url-Basename/`format`), nicht am github-release-tag → alle `terms`-Zeilen partizipieren. **Riss:** der `state/`-Census (`state/river/license-census.tsv`) ist auf netloc getaggt → die Drift-Ausgabe kippt auf 313 stale Zeilen; per Option (c) ist der `state/`-Pregate Komplement, nicht das Tor. **Frontier:** Qwen (`chat.qwen.ai`) antwortet **(b) migrieren** (SPDX für Lizenz-Terme, `PD`/`own-work`/`free-open` als Status-Achse; Unsicherheit: Downstream-Alt-Strings) — 1 gemessene Stimme, 5 Seats site-seitig gesperrt (`state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`).
+- **Blockade:** (ii) Mountains ~160 `terms unbestimmt`-Zeilen fehlen (`phi/blocked_sources.φ` leer); die SPDX-Migrationsentscheidung.
+- **Braucht:** Operator-/Frontier-Wort zur Migration (Sheet `state/stimmen/2026-10-07_terms-spdx-ui-fragen.md`) + Mountains `terms`; dann die `phi/sources.φ`-Migration (Mountain-Pen) + `ci-gate`-Schritt. Der `state/`-Pregate bleibt Komplement, nie das Tor.
 
 ### UI-Seat-Roster — Gretchenfrage-Rest
 - **Status:** eigen (Retry)
@@ -101,7 +102,7 @@ Origin: mycelium-folge255/260.
 - **GIC-Zugänge (per-Akt):** Accounts/Keys CARISMA, AMPERE, PC-Index, CDDIS-Earthdata. **Braucht:** Operator-Wort je Akt.
 - **JAXA G-Portal / Sample-/Record-Downloads** (`blocked_sources.φ`): Operator-Hand (Bestellung/Fetch) — jetzt inkl. `jaxa-gportal-cdn`-Dispatch (siehe `## Offen — eigen`).
 - **`ledger.φ:2`/`:6` Port-Runner:** `omegaflow --port` läuft (`main_flow.rs:732`, `port.rs:625`); die Korpus-Eingaben sind am Datenträger absent (`queue/master.φ` gitignored). **Braucht:** Korpus-Input wiederherstellen (Operator/Datenträger).
-- **UI-Frontier-Fragen liegen bereit (Operator-Queue):** `state/stimmen/2026-10-07_terms-spdx-ui-fragen.md` (SPDX-Migration) + `state/stimmen/2026-10-07_dropped-gate-ui-fragen.md` (Schwellen/Ownership) — Recherche-Schicht gefahren, Quellen URL-gemessen. **Braucht:** Operator-Wort für die UI-Chat-Runde (Send = Operator-Hand).
+- **UI-Frontier-Runde (SPDX) gefahren:** Qwen = **b (migrieren)**; 5 Seats site-seitig gesperrt — `state/stimmen/2026-10-07_terms-spdx-ui-antworten.md`. Fragen-Sheets: `..._terms-spdx-ui-fragen.md` + `..._dropped-gate-ui-fragen.md`. **Braucht:** Operator-Entscheid bzw. Freischaltung weiterer Seats.
 
 ## LOCK
 
