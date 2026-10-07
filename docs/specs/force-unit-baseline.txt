@@ -58,10 +58,3 @@
 # healed; the file may only shrink (Council 2026-10-07: freeze the old debt,
 # block the new). Healing is a per-line source-identity verdict, never a class
 # rewrite — see the Force-/Einheiten-Kontrakt in the Mountain handover.
-advective erg
-advective g
-em dbz
-em millionths
-em n-units
-em nmgy
-em uj/sr

@@ -232,6 +232,15 @@ idempotent true
 timeout 360
 
 asset present
+format kc2g_stations
+tag prop.kc2g.com
+arm kc2g_stations
+workflow kc2g-cdn.yml
+pattern ^kc2g_stations\.csv$
+idempotent true
+timeout 120
+
+asset present
 format lro_trk
 tag imbrium.mit.edu
 arm lro_trk_compiler
@@ -328,6 +337,15 @@ workflow opensensemap-cdn.yml
 pattern ^opensensemap_temperatur\.bin$
 idempotent true
 timeout 120
+
+asset present
+format osha_cehd_si_axis_value_text
+tag obis.osha.gov
+arm osha_cehd_compiler
+workflow osha-cehd-cdn.yml
+pattern ^osha_cehd_si\.txt$
+idempotent true
+timeout 600
 
 asset present
 format osm_nodes
