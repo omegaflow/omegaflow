@@ -847,7 +847,7 @@ on earth 0.0 -120.0 0
 rows .
 epoch 0
 gate iso_6 0.0 500.0
-field 4 d20_thermocline_depth_m erfc thermal m 86400.0 0.0 0.0
+field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv
@@ -9991,7 +9991,7 @@ at earth
 ttl 604800
 field cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square em N-units 604800 0.0 0.0
 field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square thermal K 604800 0.0 0.0
-field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square em hPa 604800 0.0 0.0
+field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds3_binary_lrs_sw_wf_00n_007080e.bin
 format pds3_binary
