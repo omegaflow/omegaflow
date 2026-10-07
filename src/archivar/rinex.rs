@@ -1,19 +1,23 @@
 use super::*;
 use crate::lsk::days_from_civil;
 
-pub fn ecef_to_geodetic(x: f64, y: f64, z: f64) -> Option<(f64, f64, f64)> {
-    const A: f64 = 6378137.0;
-    const E2: f64 = 6.69437999014e-3;
-    let b = A * (1.0 - E2).sqrt();
-    let ep2 = (A * A - b * b) / (b * b);
+pub fn ecef_to_geodetic(
+    x: f64,
+    y: f64,
+    z: f64,
+    a: f64,
+    e2: f64,
+) -> Option<(f64, f64, f64)> {
+    let b = a * (1.0 - e2).sqrt();
+    let ep2 = (a * a - b * b) / (b * b);
     let lon = y.atan2(x);
     let p = (x * x + y * y).sqrt();
     if p < 1e-6 {
         return None;
     }
-    let theta = (z * A).atan2(p * b);
-    let lat = (z + ep2 * b * theta.sin().powi(3)).atan2(p - E2 * A * theta.cos().powi(3));
-    let n = A / (1.0 - E2 * lat.sin().powi(2)).sqrt();
+    let theta = (z * a).atan2(p * b);
+    let lat = (z + ep2 * b * theta.sin().powi(3)).atan2(p - e2 * a * theta.cos().powi(3));
+    let n = a / (1.0 - e2 * lat.sin().powi(2)).sqrt();
     let h = p / lat.cos() - n;
     Some((lat.to_degrees(), lon.to_degrees(), h))
 }
@@ -23,6 +27,7 @@ pub fn build_rinex_channels(
     text: &str,
     now: f64,
     lsk: &LeapSeconds,
+    eph: &std::collections::HashMap<String, BodyEphemeris>,
 ) -> Vec<(Channel, FieldConfig)> {
     let mut channels = Vec::new();
     let decoded;
@@ -51,14 +56,29 @@ pub fn build_rinex_channels(
     }
     match header.file_type {
         RinexFileType::Observation => {
-            let position = header
-                .approx_pos_xyz
-                .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z))
-                .map(|(lat, lon, alt)| Position::Surface {
-                    body_name: "earth".to_string(),
-                    lat,
-                    lon,
-                    alt,
+            let body_name = match src.body.as_deref() {
+                Some(b) if !b.is_empty() => b.to_string(),
+                _ => frame_body_name(&src.frame),
+            };
+            let position = eph
+                .get(&body_name)
+                .and_then(|e| e.props.as_ref())
+                .and_then(|p| {
+                    let a = p.radius_m;
+                    let f = p.flattening?;
+                    if !(a > 0.0) {
+                        return None;
+                    }
+                    let e2 = 2.0 * f - f * f;
+                    header
+                        .approx_pos_xyz
+                        .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z, a, e2))
+                        .map(|(lat, lon, alt)| Position::Surface {
+                            body_name: body_name.clone(),
+                            lat,
+                            lon,
+                            alt,
+                        })
                 })
                 .unwrap_or(Position::Source);
             let n_obs = header.obs_types.len();
