@@ -3,7 +3,7 @@
   session: Mountain-Folge 259
   class: handover
   date: 2026-10-07
-  sha256: d22ab0f4a68cbea8dcdad0b565d9a7dc77e1ad8cd1e8cc2cc78254b5a42b9b08
+  sha256: 679057551b8cfb46aed8d868bf892a7516c57cbc8e664bb93f31250fd3f45bdf
   status: live
 -->
 # Handover — Mountain-Folge 259 (2026-10-07)
@@ -14,7 +14,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`, geles
 `handover-2026-10-07-mountain-folge258.md` (→ `archiv/`). Kein pro/max; zwei
 flash-Dispatchs (cgm_lat-Arm, Lineage-Messung).
 
-## Burn: open 0.0041 · close 0.0415 (line) · 2 flash-Dispatchs (cgm_lat 0.0225, general 0.0132) · kein pro/max · Grund: der `cgm_lat`-Direktiven-Arm + die 157 Station-Zeilen gebaut und gegen `register_unit_audit` verifiziert, der Recovery-Snapshot als tote Generation gemessen. (gemessen via `session_burn`)
+## Burn: open 0.0041 · close 0.1491 (line) · Dispatchs: council 0.0185 + general 0.0215 + 2× grind-flash + 5 API-Stimmen (~0.03) + UI-Chats (0 Token) · kein pro/max · Grund: `cgm_lat`-Arm + 157 Station-Zeilen; Recovery-Snapshot als tote Generation; Rat-Verdikte (eionet-Kernel, GIC-Deskriptoren) + 12-Stimmen-Schwarm; Force-/Einheiten-Klassifikation (12 Klasse b / 23 Klasse a); NetCDF-Blocker + pages-deploy korrigiert. (gemessen via `session_burn`)
 
 ## Operator-Wort-Register
 
