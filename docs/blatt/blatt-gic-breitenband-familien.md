@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 941deef62d8db86c1f67f8a2390b954a9a5e583165eeb8b035dbc817d5cace03
+  sha256: a479b0547012cbb3e21192ed20a75b709127ee1438a4a6b4d922873dcd36d80a
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -250,11 +250,15 @@ kein `over family`, `cgm_lat` nie gelesen):
   Linien stehen ungeglättet — Paar-Band ist das volle Objekt, Target-Band seine Projektion bei
   band-degeneriertem Treiber.
 - **12-Stimmen-Rat (Operator-Wort 2026-10-07):** Adressierung mit 5 Stimmen + 5 Axiomen +
-  5 Achsen an 5 API-`voice-*` + die UI-Chats; **7/12 geantwortet** (gemini·gptoss·inkling·
-  nemotron·deepseek + Claude·Kimi), einstimmig **Route C**. Riss (b): die `M_eff`-Senkung ist
-  abgeleitet, nicht gemessen; gemeinsame Surrogat-Ziehungen + α-Aufteilung über 3 Familien nötig.
-  xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**, nicht als dB/dt-Aussage; dB/dt-152
-  = abgeleitete Serie (Operator/Kadenz/Filter), an ABK/SOD validiert → `pending`.
+  5 Achsen an 5 API-`voice-*` + die UI-Chats; **9/11 erreichbar geantwortet** (gemini·gptoss·
+  inkling·nemotron·deepseek + Claude·Kimi·Qwen·GLM), einstimmig **Route C**; arena
+  Generierungsfehler, Duck keine Antwort — `pending`. Gruppierungs-Tally: Rat + `gptoss`·
+  `inkling`·`nemotron` = Paar-Band; `gemini` = Driver-Band; `deepseek` + Claude + Kimi + Qwen +
+  GLM = Target-Band. Riss (b): die `M_eff`-Senkung ist abgeleitet, nicht gemessen; gemeinsame
+  Surrogat-Ziehungen + α-Aufteilung über 3 Familien nötig; GLM: „gemessener Member-Pool im
+  GIC-Sinne = 2 Mitglieder, nicht 154". xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**,
+  nicht als dB/dt-Aussage; dB/dt-152 = abgeleitete Serie (Operator/Kadenz/Filter), an ABK/SOD
+  validiert → `pending`.
 - **Gebaut (River 121):** `tools/measure/src/bin/cgm_lat_partition.rs` emittiert offline
   (`--from-tsv … --emit-dir …`) aus der gemessenen Partition die drei Kanal-Listen
   `gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, paarweise disjunkt,
