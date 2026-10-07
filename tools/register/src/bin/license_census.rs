@@ -6,15 +6,32 @@ use std::process::exit;
 const SOURCES: &str = "phi/sources.φ";
 const CENSUS: &str = "state/river/license-census.tsv";
 
+fn release_tag(url: &str) -> Option<&str> {
+    let marker = "/releases/download/";
+    let rest = url.split_once(marker)?.1;
+    let tag = rest.split('/').next()?;
+    if tag.is_empty() { None } else { Some(tag) }
+}
+
 fn parse_terms(content: &str) -> HashSet<(String, String)> {
     let mut out = HashSet::new();
-    for line in content.lines() {
-        let mut fields = line.split_whitespace();
-        if fields.next() != Some("terms") {
-            continue;
+    for block in content.split("\n\n") {
+        let mut netloc: Option<&str> = None;
+        let mut class: Option<&str> = None;
+        for line in block.lines() {
+            let mut fields = line.split_whitespace();
+            match fields.next() {
+                Some("url") => {
+                    if let Some(raw) = fields.next() {
+                        netloc = release_tag(raw);
+                    }
+                }
+                Some("terms") => class = fields.next(),
+                _ => {}
+            }
         }
-        if let (Some(class), Some(url)) = (fields.next(), fields.next()) {
-            out.insert((class.to_string(), url.to_string()));
+        if let (Some(netloc), Some(class)) = (netloc, class) {
+            out.insert((netloc.to_string(), class.to_string()));
         }
     }
     out
@@ -42,25 +59,25 @@ fn parse_census(content: &str) -> Vec<(String, String, String)> {
 fn drift(terms: &HashSet<(String, String)>, census: &[(String, String, String)]) -> Vec<String> {
     let measured: HashSet<(String, String)> = census
         .iter()
-        .map(|(_, class, url)| (class.clone(), url.clone()))
+        .map(|(netloc, class, _)| (netloc.clone(), class.clone()))
         .collect();
 
     let mut unmeasured: Vec<(&String, &String)> = terms
         .iter()
         .filter(|pair| !measured.contains(*pair))
-        .map(|(class, url)| (class, url))
+        .map(|(netloc, class)| (netloc, class))
         .collect();
     unmeasured.sort();
 
     let mut stale: Vec<&(String, String, String)> = census
         .iter()
-        .filter(|(_, class, url)| !terms.contains(&(class.clone(), url.clone())))
+        .filter(|(netloc, class, _)| !terms.contains(&(netloc.clone(), class.clone())))
         .collect();
     stale.sort();
 
     let mut lines = Vec::new();
-    for (class, url) in unmeasured {
-        lines.push(format!("UNMEASURED {} {}", class, url));
+    for (netloc, class) in unmeasured {
+        lines.push(format!("UNMEASURED {} {}", netloc, class));
     }
     for (netloc, class, url) in stale {
         lines.push(format!("STALE {} {} {}", netloc, class, url));
@@ -111,16 +128,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn joins_terms_against_census() {
-        let src = "terms CC0 https://a\nterms MIT https://b\nfoo terms X https://c\n";
-        let tsv = "# netloc\tclass\tterms-url\tmeasured\na.org\tCC0\thttps://a\t2026-10-07\nc.org\tGPL\thttps://c\t2026-10-07\n";
+    fn joins_register_netloc_against_census() {
+        let src = "url https://github.com/omegaflow/sources/releases/download/a.org/x.bin\n\
+                   terms CC0 https://a\n\n\
+                   url https://github.com/omegaflow/sources/releases/download/b.org/y.bin\n\
+                   terms MIT https://b\n\n\
+                   url https://github.com/omegaflow/sources/releases/download/x.org/z.bin\n\
+                   foo terms X https://c\n";
+        let tsv = "# netloc\tclass\tterms-url\tmeasured\n\
+                   a.org\tCC0\thttps://a\t2026-10-07\n\
+                   c.org\tGPL\thttps://c\t2026-10-07\n";
         let terms = parse_terms(src);
         assert_eq!(terms.len(), 2, "{:?}", terms);
         let census = parse_census(tsv);
         assert_eq!(census.len(), 2, "{:?}", census);
         let lines = drift(&terms, &census);
         assert!(
-            lines.contains(&"UNMEASURED MIT https://b".to_string()),
+            lines.contains(&"UNMEASURED b.org MIT".to_string()),
             "{:?}",
             lines
         );
