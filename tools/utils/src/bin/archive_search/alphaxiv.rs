@@ -740,39 +740,36 @@ pub fn alphaxiv_tools_lines(key: &str) -> Vec<String> {
     out
 }
 
-pub fn alphaxiv_call_lines(spec: &str, key: &str, max: usize) -> Vec<String> {
+fn call_tool(spec: &str, key: &str) -> Result<(String, String), Vec<String>> {
     let (tool, args) = match spec.split_once(char::is_whitespace) {
         Some((t, a)) => (t.trim(), a.trim()),
         None => (spec.trim(), ""),
     };
     if tool.is_empty() {
-        return vec![
+        return Err(vec![
             "pending — --alphaxiv-call carries no tool name (form: --alphaxiv-call <tool> '<json-arguments>')"
                 .to_string(),
-        ];
+        ]);
     }
     if WRITE_TOOLS.contains(&tool) {
-        return vec![format!(
+        return Err(vec![format!(
             "refused — '{tool}' writes at alphaXiv; archive_search is read-only (a write is a per-act operator act)"
-        )];
+        )]);
     }
-    let session = match handshake(key) {
-        Ok(s) => s,
-        Err(e) => return e,
-    };
+    let session = handshake(key)?;
     let tool_list = tools_list(key, session.as_deref());
     if !tool_list.is_empty() {
         match tool_list.iter().find(|(n, _)| n.as_str() == tool) {
             Some((_, "read")) => {}
             Some((_, flag)) => {
-                return vec![format!(
+                return Err(vec![format!(
                     "refused — '{tool}' is {flag} at alphaXiv; archive_search is read-only (a write is a per-act operator act)"
-                )];
+                )]);
             }
             None => {
-                return vec![format!(
+                return Err(vec![format!(
                     "pending — '{tool}' is not an alphaXiv MCP tool (see --alphaxiv-tools)"
-                )];
+                )]);
             }
         }
     }
@@ -783,22 +780,31 @@ pub fn alphaxiv_call_lines(spec: &str, key: &str, max: usize) -> Vec<String> {
         args
     );
     let Some(resp) = call(&body, key, session.as_deref()) else {
-        return vec!["pending — no network".to_string()];
+        return Err(vec!["pending — no network".to_string()]);
     };
     if !resp.status.starts_with('2') {
         let detail = flat(&resp.body);
-        return vec![format!(
+        return Err(vec![format!(
             "pending — alphaxiv HTTP {}: {}",
             resp.status,
             truncate(&detail, 300)
-        )];
+        )]);
     }
     let parsed = payloads(&resp.body);
     for p in &parsed {
         if let Some(err) = error_text(p) {
-            return vec![format!("alphaxiv error: {}", flat(&err))];
+            return Err(vec![format!("alphaxiv error: {}", flat(&err))]);
         }
     }
+    Ok((tool.to_string(), resp.body))
+}
+
+pub fn alphaxiv_call_lines(spec: &str, key: &str, max: usize) -> Vec<String> {
+    let body = match call_tool(spec, key) {
+        Ok((_, body)) => body,
+        Err(e) => return e,
+    };
+    let parsed = payloads(&body);
     let mut out = Vec::new();
     for p in &parsed {
         if let Some(result) = p.get("result") {
@@ -819,7 +825,7 @@ pub fn alphaxiv_call_lines(spec: &str, key: &str, max: usize) -> Vec<String> {
         }
     }
     if out.is_empty() {
-        let raw = flat(&resp.body);
+        let raw = flat(&body);
         return vec![format!(
             "pending — the alphaxiv call carries no parseable text: {}",
             truncate(&raw, 400)
@@ -827,6 +833,24 @@ pub fn alphaxiv_call_lines(spec: &str, key: &str, max: usize) -> Vec<String> {
     }
     out.truncate(max);
     out
+}
+
+pub fn alphaxiv_call_text(spec: &str, key: &str) -> Result<(String, String), Vec<String>> {
+    let (tool, body) = call_tool(spec, key)?;
+    let parsed = payloads(&body);
+    let mut out = Vec::new();
+    for p in &parsed {
+        if let Some(result) = p.get("result") {
+            text_content_lines(result, &mut out, usize::MAX);
+        }
+    }
+    if out.is_empty() {
+        return Err(vec![format!(
+            "pending — the alphaxiv call carries no parseable text: {}",
+            truncate(&flat(&body), 400)
+        )]);
+    }
+    Ok((tool, out.join("\n")))
 }
 
 #[cfg(test)]
