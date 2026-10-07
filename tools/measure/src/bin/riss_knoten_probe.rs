@@ -5,7 +5,9 @@ use omegaflow::archivar::{
     embedded_lsk, parse_ephemeris_binary, parse_json,
 };
 use omegaflow::dastcom::{AsteroidRec, RECORD_STRIDE, parse_record, state_at};
-use omegaflow::weberin::{Agreement, BODY_NUMBER, WEBERIN_TOL_M, add_sun, classify, separation_m};
+use omegaflow::weberin::{
+    Agreement, WEBERIN_TOL_M, add_sun, body_number_table, classify, frame_origin_name, separation_m,
+};
 use omegaflow_measure::weberin::borrowed_sense::{FINK_LSST_CLASS_ABSENT, simbad_otype_known};
 use omegaflow_measure::weberin::nadel_gate::{
     AGN_WEDGE_W1_W2, GateWord, WISE_AGN_CITE, WISE_RADIUS_ARCSEC, WiseRead, borrowed_gate,
@@ -577,16 +579,20 @@ fn main() {
     };
     let jd = epoch_from_args(&args);
 
+    let Some(origin) = frame_origin_name() else {
+        println!("riss-knoten: the frame origin is absent from the body table — no sun line");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened = 0usize;
-    for (name, _) in BODY_NUMBER {
+    for (name, _) in body_number_table() {
         if let Some(e) = read_body_spk(&eph_dir, name) {
-            eph.insert((*name).to_string(), e);
+            eph.insert(name.to_string(), e);
             opened += 1;
         }
     }
-    if let Some(sun) = read_body_spk(&eph_dir, "sun") {
-        eph.insert("sun".to_string(), sun);
+    if let Some(sun) = read_body_spk(&eph_dir, origin.as_str()) {
+        eph.insert(origin.clone(), sun);
     }
     let mut recs: HashMap<u32, AsteroidRec> = HashMap::new();
     let mut dastcom_records = 0usize;
@@ -608,13 +614,13 @@ fn main() {
     );
     println!(
         "body pair: {opened}/{} SPK ephemeris bin(s) opened in {eph_dir} | {dastcom_records} dastcom record(s) in {dastcom_path} | weave epoch jd {jd_word} | tolerance {tol_m:.3e} m",
-        BODY_NUMBER.len()
+        body_number_table().len()
     );
 
-    for (name, num) in BODY_NUMBER {
+    for (name, num) in body_number_table() {
         n_pairs += 1;
         let path = format!("{eph_dir}/ephemeris_{name}.bin");
-        let rec = recs.get(num).cloned();
+        let rec = recs.get(&num).cloned();
         let (Some(jd_v), Some(tdb)) = (jd, jd.map(|j| (j - J2000_EPOCH) * 86400.0)) else {
             n_absent += 1;
             println!(
@@ -629,7 +635,7 @@ fn main() {
         };
         let spk_bary = body_barycenter_position(name, tdb, &eph);
         let helio = rec.as_ref().and_then(|r| state_at(r, jd_v)).map(|(p, _)| p);
-        let sun_bary = body_barycenter_position("sun", tdb, &eph);
+        let sun_bary = body_barycenter_position(origin.as_str(), tdb, &eph);
         let (state, values) = match spk_bary {
             None => (
                 LedgerState::Absent,

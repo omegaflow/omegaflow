@@ -11,9 +11,9 @@ use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
 use omegaflow::weberin::{
-    Agreement, BODY_COMET, BODY_NUMBER, BodyOutcome, CometelsLine, CometelsOutcome,
-    EPM_LINE_BODIES, INPOP_LINE_BODIES, PLANET_WEBERIN_TOL_M, ThreeWayVerdict, TriadFold,
-    WEBERIN_TOL_M, Weberin, WeberinFeed, classify, separation_m, three_way_fold,
+    Agreement, BODY_COMET, BodyOutcome, CometelsLine, CometelsOutcome, PLANET_WEBERIN_TOL_M,
+    ThreeWayVerdict, TriadFold, WEBERIN_TOL_M, Weberin, WeberinFeed, body_number_table, classify,
+    frame_origin_name, separation_m, three_way_fold, woven_major_bodies,
 };
 
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
@@ -272,7 +272,7 @@ fn main() {
         recs.len(),
         comets.len(),
         bodies.len(),
-        BODY_NUMBER.len(),
+        body_number_table().len(),
         BODY_COMET.len()
     );
 
@@ -280,6 +280,10 @@ fn main() {
         println!(
             "weberin: the embedded leap-second table reads void — the body line cannot be judged"
         );
+        return;
+    };
+    let Some(origin) = frame_origin_name() else {
+        println!("weberin: the frame origin is absent from the body table — no sun line");
         return;
     };
     let mut sun_map: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -302,7 +306,7 @@ fn main() {
         }
         match extract(src, &path, tdb, &lsk) {
             ExtractResult::WithEphemeris(_, body_eph) => {
-                if name == "sun" {
+                if name.as_str() == origin.as_str() {
                     sun_map.insert(name.clone(), (*body_eph).clone());
                 }
                 eph.insert(name.clone(), *body_eph);
@@ -321,7 +325,7 @@ fn main() {
     const INPOP_NETLOC: &str = "ftp.imcce.fr";
     let mut inpop_map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened_inpop = 0usize;
-    for name in INPOP_LINE_BODIES {
+    for name in woven_major_bodies() {
         let asset = format!("ephemeris_inpop_{}.bin", name);
         let path = format!("{eph_dir}/{INPOP_NETLOC}/{asset}");
         let Some(bytes) = ensure_bin(&path, INPOP_NETLOC, &asset) else {
@@ -332,7 +336,7 @@ fn main() {
         };
         match parse_ephemeris_binary(&bytes) {
             Some(e) => {
-                inpop_map.insert((*name).to_string(), e);
+                inpop_map.insert(name.clone(), e);
                 opened_inpop += 1;
             }
             None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
@@ -342,7 +346,7 @@ fn main() {
     const EPM_NETLOC: &str = "ftp.iaaras.ru";
     let mut epm_map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut opened_epm = 0usize;
-    for name in EPM_LINE_BODIES {
+    for name in woven_major_bodies() {
         let asset = format!("ephemeris_epm_{}.bin", name);
         let path = format!("{eph_dir}/{EPM_NETLOC}/{asset}");
         let Some(bytes) = ensure_bin(&path, EPM_NETLOC, &asset) else {
@@ -353,7 +357,7 @@ fn main() {
         };
         match parse_ephemeris_binary(&bytes) {
             Some(e) => {
-                epm_map.insert((*name).to_string(), e);
+                epm_map.insert(name.clone(), e);
                 opened_epm += 1;
             }
             None => println!("weberin {name}: {path} reads but does not parse to a BodyEphemeris"),
@@ -367,7 +371,7 @@ fn main() {
         match ensure_bin(&path, INPOP_NETLOC, SUN_ASSET) {
             Some(bytes) => match parse_ephemeris_binary(&bytes) {
                 Some(e) => {
-                    sun_inpop.insert("sun".to_string(), e);
+                    sun_inpop.insert(origin.clone(), e);
                 }
                 None => println!("weberin sun: {path} reads but does not parse to a BodyEphemeris"),
             },
@@ -383,7 +387,7 @@ fn main() {
         match ensure_bin(&path, EPM_NETLOC, SUN_ASSET) {
             Some(bytes) => match parse_ephemeris_binary(&bytes) {
                 Some(e) => {
-                    sun_epm.insert("sun".to_string(), e);
+                    sun_epm.insert(origin.clone(), e);
                 }
                 None => println!("weberin sun: {path} reads but does not parse to a BodyEphemeris"),
             },
@@ -394,10 +398,10 @@ fn main() {
     }
 
     let de_sun = sun_map
-        .get("sun")
-        .and_then(|_| body_barycenter_position("sun", tdb, &eph));
-    let inpop_sun = body_barycenter_position("sun", tdb, &sun_inpop);
-    let epm_sun = body_barycenter_position("sun", tdb, &sun_epm);
+        .get(origin.as_str())
+        .and_then(|_| body_barycenter_position(origin.as_str(), tdb, &eph));
+    let inpop_sun = body_barycenter_position(origin.as_str(), tdb, &sun_inpop);
+    let epm_sun = body_barycenter_position(origin.as_str(), tdb, &sun_epm);
     match (de_sun, inpop_sun, epm_sun) {
         (Some(de), Some(inp), Some(epm)) => {
             let spk_inpop = classify(separation_m(de, inp), PLANET_WEBERIN_TOL_M);
@@ -407,7 +411,7 @@ fn main() {
             println!(
                 "{}",
                 triad_line(&ThreeWayVerdict {
-                    name: "sun".to_string(),
+                    name: origin.clone(),
                     spk_inpop,
                     spk_epm,
                     inpop_epm,
@@ -468,8 +472,8 @@ fn main() {
     println!(
         "weberin tally: {opened}/{} registered body bin(s) opened | {opened_inpop}/{} INPOP body bin(s) opened | {opened_epm}/{} EPM body bin(s) opened | {} body line(s) judged | placed {placed} | absent {absent} | riss {riss} | cometels {cometels_placed} placed {cometels_absent} absent {cometels_riss} riss of {} line(s)",
         bodies.len(),
-        INPOP_LINE_BODIES.len(),
-        EPM_LINE_BODIES.len(),
+        woven_major_bodies().len(),
+        woven_major_bodies().len(),
         w.verdicts.len(),
         cometels_verdicts.len(),
     );

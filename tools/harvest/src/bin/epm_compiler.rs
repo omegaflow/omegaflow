@@ -211,8 +211,9 @@ fn main() {
     }
     let pck_bodies: std::collections::HashMap<i32, PckBody> =
         pck::parse(None, body_pck_text(&pck_local).as_deref());
-    let woven = omegaflow::weberin::EPM_LINE_BODIES;
-    let in_scope = |name: &str| name == "sun" || woven.contains(&name);
+    let woven = omegaflow::weberin::woven_major_bodies();
+    let origin = omegaflow::weberin::frame_origin_name();
+    let in_scope = |name: &str| origin.as_deref() == Some(name) || woven.iter().any(|w| w == name);
     let mut written = 0usize;
     let mut uploaded = 0usize;
     if let Err(e) = std::fs::create_dir_all(OUT_DIR) {
