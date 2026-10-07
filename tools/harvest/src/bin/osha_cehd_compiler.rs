@@ -6,7 +6,8 @@ use omegaflow::lsk::days_from_civil;
 use std::process::Command;
 
 const NETLOC: &str = "obis.osha.gov";
-const ZIP_URL: &str = "https://obis.osha.gov/opengov/healthsamples.zip";
+const ZIP_URL: &str = "https://www.osha.gov/sites/default/files/healthsamples.zip";
+const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36";
 const FORMAT: &str = "osha_cehd_si_axis_value_text";
 const MEMBER: &str = "healthsamples/sample_data_2019.csv";
 
@@ -34,6 +35,8 @@ fn fetch(url: &str) -> Result<Vec<u8>, String> {
         .arg("2")
         .arg("--max-time")
         .arg("900")
+        .arg("--user-agent")
+        .arg(USER_AGENT)
         .arg(url)
         .output()
         .map_err(|e| format!("curl {url} returned void: {e}"))?;
