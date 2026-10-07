@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass; adressierte Blöcke (mountain-262, river-122) am Baum gemessen gefaltet; eionet-cdr-cdn.yml gebaut; Lizenz-Census-Join auf Netloc-Ebene; dropped-gate Roster-Baseline gebunden; Stehender Pass am neuen HEAD
   class: handover
   date: 2026-10-07
-  sha256: d6072ccc346775efe552807a730c4f49ecd121a379f83299ab79a30474591452
+  sha256: 947a084a2c7df5be0d84592e30dde0c61cdff136f2d53b9ca2c789f8a8fa7a2e
   status: live
 -->
 # Handover — Mycelium-Folge 259 (2026-10-07)
@@ -29,8 +29,8 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Status:** eigen (Block-Header) · wartend (Kraft-Verdikt)
 - **Trigger:** Mountain-263 folded (2026-10-07): der 276-`field`-Block ist via `eionet_cdr_compiler --emit-field-names` reproduzierbar erzeugt; Block-Header ist mein Pen
 - **Lage:** (gemessen 2026-10-07, Mycelium 259) adressierter mountain-262/263-Block gefaltet. Festquelle `EU_Report_2017_27Aug19.xml` closed; `eionet_cdr_compiler.rs` am Baum (format `eionet_cdr`, CDN-Tag `cdr.eionet.europa.eu`; `--emit-field-names` druckt 276 `field`-Zeilen). `.github/workflows/eionet-cdr-cdn.yml` gebaut (dispatch-only, Release + Compile + Verify via `register_release_set.sh`). Register-Block in `phi/sources.φ` noch `0` Treffer.
-- **Blockade:** **Grenzfall** — der Block ist Zwei-Feder (Mountain: `field`/`ttl`; Mycelium: `url`/`origin`/`compiler`), das ist laut Verfassung ein Riss, kein stiller Schreibakt; dazu der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2, Minderheit `gravity kg`/`pending`).
-- **Braucht:** die Block-Schreib-Entscheidung (Rat: eine Feder oder zwei getrennte Blöcke) + Mountains `field`/`ttl`; dann meine `url`/`origin`/`compiler`/`format`-Zeilen + Manifestation + `eionet-cdr-cdn.yml`-Dispatch.
+- **Blockade:** **keine Architektur-Frage** — `AGENTS.md:426` ist die stehende Grenze: Mountain schreibt `field`/`ttl` (Datenkontrakt/Verdikt), Mycelium `url`/`origin`/`compiler`/`format` (Mountain 263 weist `format` ausdrücklich meiner Feder zu). Der Block ist also der Normalfall der Zwei-Feder, kein neuer Grenzfall; kein Rat nötig (frühere Notiz berichtigt). Offen bleibt der getragene Kraft-Riss (Medium `diffusion kg` + Punkt-Kernel Slot 2; Minderheit `gravity kg`/`pending`) — er blockiert den Schreibakt nicht.
+- **Braucht:** Mountains Einschreiben der 276 `field`/`ttl`-Zeilen (seine Klasse) — dann meine `url`/`origin`/`compiler`/`format`-Zeilen + Manifestation + `eionet-cdr-cdn.yml`-Dispatch. Achtung geteilter Baum: `phi/sources.φ` nur schreiben, wenn die Mountain-Session das Blatt freigegeben hat.
 
 ### OSHA-CEHD — Register-Zeile (Force-/Einheiten-`1`-Riss)
 - **Status:** wartend
@@ -56,9 +56,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### dropped-gate — Roster-Emission + Baseline binden gebaut; pending-legacy-Snapshot + Gate offen
 - **Status:** eigen
 - **Trigger:** — (autonom; Bau als flash-Sequenz)
-- **Lage:** (gemessen 2026-10-07, Mycelium 259) Ratifiziertes Design (Rat + 5 API + 14 UI): 20/20 Register-/Carrier-Frage; Q1 hybrid (ID = Identität, Token nur `match_hint`), Q2 Roster, Q3 hart bei stillem/ungetyptem Move, Q4 `pending-legacy` einfrieren; Reihenfolge Nullkontrolle → ID-Feld → Snapshot → Vokabular → Roster-Gate → hartes Rot. Schnitt 1 committet (`1d3832197`, `canonical_point_key`), Schnitt 2 `--dropped-roster` (258). **Schnitt 3 (dieses Atom):** `--dropped-roster [--public-only] [--baseline <datei>] [--count]` gebaut (`roster_diff` in `tools/register/src/bin/register_lookup.rs`, Test `roster_diff_names_lost_and_new_keys`; `cargo build` grün). Baseline-Artefakt `docs/zustand/dropped-roster-baseline.txt` **public-only** am HEAD (41 öffentliche Schlüssel, CI-identisch; `--public-only --baseline … --count` = **0**). Emission `--dropped-roster` = 46 (41 öffentlich + 5 privat).
-- **Blockade:** `pending-legacy`-Einfrierliste + getyptes Ereignis-Vokabular + Zwei-Stufen-Gate (Hook + CI) fehlen; berührt `commit_gate`/`ci-gate.yml`. Die public-only-Baseline löst die frühere CI-Asymmetrie (private `future`-Handover, die CI nicht sieht).
-- **Braucht:** `pending-legacy`-Snapshot (voller dropped-Scan, CI-only, >30 min) einfrieren + Ereignis-Vokabular; dann `--dropped-roster --public-only --baseline docs/zustand/dropped-roster-baseline.txt --count` als `ci-gate`-Schritt verdrahten. Verdikt: `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md` §Schnitt.
+- **Lage:** (gemessen 2026-10-07, Mycelium 259) Ratifiziertes Design (Rat + 5 API + 14 UI): 20/20 Register-/Carrier-Frage; Q1 hybrid (ID = Identität, Token nur `match_hint`), Q2 Roster, Q3 hart bei stillem/ungetyptem Move, Q4 `pending-legacy` einfrieren; Reihenfolge Nullkontrolle → ID-Feld → Snapshot → Vokabular → Roster-Gate → hartes Rot. Schnitt 1 committet (`1d3832197`), Schnitt 2 `--dropped-roster` (258). **Schnitt 3 (dieses Atom):** `--dropped-roster [--public-only] [--baseline <datei>] [--count]` gebaut (`roster_diff`, Test `roster_diff_names_lost_and_new_keys`). **Emission-Fehler gefunden + geheilt:** `extract_open_points` zählte jede `## `-Überschrift mit Statuswort als Punkt — die `## Burn:`-Zeile wurde zur Riesenkette (215 Tokens), `## Offen (aufgeschlüsselt)` zu `aufgeschlüsselt`; Fix `CONTAINER_HEADS` (`is_container_heading` prüft das erste Wort: `offen`/`burn`/`abschluss`/`lock`/…), Test `dropped_roster_skips_burn_and_container_headings`. Baseline `docs/zustand/dropped-roster-baseline.txt` **public-only, emission-geheilt** am HEAD (37 öffentliche Schlüssel; `--public-only --baseline … --count` = **0**); vor dem Fix 41 (4 Container-/Burn-Scheinschlüssel).
+- **Blockade:** **kein einschaltbares Tor.** Die public-only-Baseline löst die CI-Asymmetrie (private `future`-Handover), der Emission-Fix die Scheinschlüssel — aber die Menge ändert sich mit jeder legitimen Übergabe/lösung; ohne den `pending-legacy`-Einfrierschritt (Q4) und das getypte Ereignis-Vokabular (Q3) würde das Gate jede geschlossene Punktzeile als LOST rot färben. `commit_gate`/`ci-gate.yml` unberührt.
+- **Braucht:** `pending-legacy`-Snapshot (voller dropped-Scan, CI-only, >30 min) einfrieren + getyptes Ereignis-Vokabular; dann `--dropped-roster --public-only --baseline docs/zustand/dropped-roster-baseline.txt --count` als `ci-gate`-Schritt verdrahten. Verdikt: `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md` §Schnitt.
 
 ### Lizenz-Census Drift-Tor (Join auf Netloc-Ebene gebaut; Gate-Verdrahtung offen)
 - **Status:** eigen
