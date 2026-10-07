@@ -2032,6 +2032,7 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 let now_c = now;
                 let e = env.clone();
+                let eph_c = archive.body_ephemerides.clone();
                 thread::spawn(move || {
                     let fetched: Option<(String, Vec<u8>)> = if fmt == "rinex" || fmt == "ionex" {
                         let mut headers = render_headers(&src_clone.headers, &e);
@@ -2090,7 +2091,7 @@ pub fn main_flow() {
                     let text = String::from_utf8_lossy(&bytes).into_owned();
                     let channels = match fmt.as_str() {
                         "ionex" => ionex::build_channels(&src_clone, &text, now_c, &lsk_c),
-                        "rinex" => build_rinex_channels(&src_clone, &text, now_c, &lsk_c),
+                        "rinex" => build_rinex_channels(&src_clone, &text, now_c, &lsk_c, &eph_c),
                         _ => build_finals_channels(&src_clone, &text, &lsk_c),
                     };
                     let _ = ftx.send(FetchResult {
