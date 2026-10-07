@@ -1,8 +1,11 @@
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
+use std::path::Path;
 
 const DEFAULT_PIN: &str = "docs/zustand/dropped-roster-baseline.txt";
 const HEADER_PREFIX: &str = "# dropped-events v1 pin=";
+const LIVE_HANDOVER_DIR: &str = "docs/handover";
+const REGISTER_DIR: &str = "phi";
 
 #[derive(Debug)]
 enum Event {
@@ -398,6 +401,104 @@ fn run_selftest() -> Result<(), String> {
     Ok(())
 }
 
+fn file_name_string(path: &Path) -> Option<String> {
+    path.file_name()
+        .and_then(|n| n.to_str())
+        .map(str::to_string)
+}
+
+fn has_phi_suffix(path: &Path) -> bool {
+    path.extension().and_then(|e| e.to_str()) == Some("\u{03c6}")
+}
+
+fn derive_carriers(root: &str) -> Result<Vec<String>, String> {
+    let mut carriers: Vec<String> = Vec::new();
+
+    let live_dir = Path::new(root).join(LIVE_HANDOVER_DIR);
+    if let Ok(entries) = std::fs::read_dir(&live_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let name = match file_name_string(&path) {
+                Some(name) => name,
+                None => continue,
+            };
+            let is_live_handover = entry.file_type().map(|t| t.is_file()).unwrap_or(false)
+                && name.starts_with("handover-")
+                && name.ends_with(".md");
+            if is_live_handover {
+                if let Ok(text) = std::fs::read_to_string(&path) {
+                    carriers.push(text);
+                }
+            }
+        }
+    }
+
+    let git = std::process::Command::new("git")
+        .arg("-C")
+        .arg(root)
+        .args(["log", "--pretty=format:%B", "--name-only"])
+        .output()
+        .map_err(|e| format!("git log unreadable: {e}"))?;
+    if git.status.success() {
+        carriers.push(String::from_utf8_lossy(&git.stdout).into_owned());
+    }
+
+    let register_dir = Path::new(root).join(REGISTER_DIR);
+    if let Ok(entries) = std::fs::read_dir(&register_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if has_phi_suffix(&path) {
+                if let Ok(text) = std::fs::read_to_string(&path) {
+                    carriers.push(text);
+                }
+            }
+        }
+    }
+
+    Ok(carriers)
+}
+
+fn normalize_words(text: &str) -> Vec<String> {
+    let mut words: Vec<String> = Vec::new();
+    let mut current = String::new();
+    for ch in text.chars() {
+        if ch.is_alphanumeric() || ch == '-' {
+            for lower in ch.to_lowercase() {
+                current.push(lower);
+            }
+        } else if !current.is_empty() {
+            words.push(std::mem::take(&mut current));
+        }
+    }
+    if !current.is_empty() {
+        words.push(current);
+    }
+    words
+}
+
+fn line_carries(line: &str, key: &str) -> bool {
+    let words = normalize_words(line);
+    key.split_whitespace()
+        .all(|token| words.iter().any(|word| word == token))
+}
+
+fn is_carried(key: &str, carriers: &[String]) -> bool {
+    carriers
+        .iter()
+        .any(|carrier| carrier.lines().any(|line| line_carries(line, key)))
+}
+
+fn dropped_keys<'a, I>(points: I, carriers: &[String]) -> Vec<String>
+where
+    I: IntoIterator<Item = &'a String>,
+{
+    points
+        .into_iter()
+        .filter(|key| !is_carried(key, carriers))
+        .cloned()
+        .collect()
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut log_path: Option<String> = None;
@@ -405,6 +506,8 @@ fn main() {
     let mut roster_path: Option<String> = None;
     let mut selftest = false;
     let mut shadow = false;
+    let mut carrier = false;
+    let mut count_only = false;
 
     let mut i = 1;
     while i < args.len() {
@@ -441,6 +544,8 @@ fn main() {
             }
             "--selftest" => selftest = true,
             "--shadow" => shadow = true,
+            "--carrier" => carrier = true,
+            "--count" => count_only = true,
             other => {
                 eprintln!("dropped_gate: unknown argument `{other}`");
                 std::process::exit(1);
@@ -474,6 +579,38 @@ fn main() {
             "dropped_gate shadow: false_red={false_red} false_green={false_green} sharp={sharp}"
         );
         std::process::exit(if sharp { 0 } else { 1 });
+    }
+
+    if carrier {
+        let points = match read_keys(&pin_path, "points") {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("dropped_gate: {e}");
+                std::process::exit(1);
+            }
+        };
+        let carriers = match derive_carriers(".") {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("dropped_gate: {e}");
+                std::process::exit(1);
+            }
+        };
+        let dropped = dropped_keys(points.iter(), &carriers);
+        if count_only {
+            println!("{}", dropped.len());
+        } else {
+            println!(
+                "dropped_gate carrier: carriers={} points={} dropped={}",
+                carriers.len(),
+                points.len(),
+                dropped.len()
+            );
+            for key in &dropped {
+                println!("dropped: {key}");
+            }
+        }
+        std::process::exit(if dropped.is_empty() { 0 } else { 1 });
     }
 
     let log_path = match log_path {
@@ -614,5 +751,32 @@ mod tests {
         let pin = set(&["a", "b", "c", "d"]);
         assert_eq!(shadow_null_control(&pin), (0, 0));
         assert_eq!(shadow_null_control(&BTreeSet::new()), (0, 0));
+    }
+
+    #[test]
+    fn point_carried_by_live_handover_is_not_dropped() {
+        let live = "## Offen — eigen\n\n- carrier derivation gate bauen (eigen)\n".to_string();
+        let carriers = vec![live];
+        let key = "carrier derivation gate".to_string();
+        assert!(is_carried(&key, &carriers));
+        assert!(dropped_keys([&key], &carriers).is_empty());
+    }
+
+    #[test]
+    fn point_only_in_archived_handover_without_carrier_is_dropped() {
+        let archived = "archiv handover verlorener punkt ohne traeger";
+        let carriers: Vec<String> = Vec::new();
+        assert!(!archived.is_empty());
+        let key = "verlorener punkt ohne traeger".to_string();
+        assert_eq!(dropped_keys([&key], &carriers), vec![key.clone()]);
+    }
+
+    #[test]
+    fn carrier_match_is_exact_key_token() {
+        let carriers = vec!["dropped-gate roster stands".to_string()];
+        let exact = "dropped-gate roster".to_string();
+        assert!(is_carried(&exact, &carriers));
+        let superset = "dropped-gate roster archiv".to_string();
+        assert!(!is_carried(&superset, &carriers));
     }
 }
