@@ -1420,7 +1420,11 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
         ));
     }
     if let Some((omega_g, sigma)) = props.omega_g {
-        let tau = if omega_g > 0.0 { 1.0 / omega_g } else { 0.0 };
+        let tau = if omega_g > 0.0 {
+            1.0 / omega_g
+        } else {
+            f64::INFINITY
+        };
         out.push((
             Channel {
                 z: 0.0,

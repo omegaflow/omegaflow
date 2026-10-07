@@ -204,10 +204,7 @@ pub fn raw_presence_gate(
         .body_ephemerides
         .get(anchor_body.as_str())
         .and_then(|e| e.props.as_ref());
-    let body_radius = match body_props {
-        Some(p) => p.radius_m,
-        None => return None,
-    };
+    let body_radius = body_props?.radius_m;
     let v_anchor = anchor_velocity(&sources[i].frame, ctx.now, ctx.body_ephemerides);
     if presence_gate(&presences, pos, r, body_radius, v_anchor, ctx.median_fetch) {
         Some(pos)
