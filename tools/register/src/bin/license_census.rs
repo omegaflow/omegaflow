@@ -18,32 +18,67 @@ const TERMS: &[&str] = &[
     "own-work",
 ];
 
-fn release_tag(url: &str) -> Option<&str> {
-    let marker = "/releases/download/";
-    let rest = url.split_once(marker)?.1;
-    let tag = rest.split('/').next()?;
-    if tag.is_empty() { None } else { Some(tag) }
+fn blocks(content: &str) -> Vec<Vec<&str>> {
+    let mut out: Vec<Vec<&str>> = Vec::new();
+    let mut cur: Vec<&str> = Vec::new();
+    for line in content.lines() {
+        if line.trim().is_empty() {
+            if !cur.is_empty() {
+                out.push(std::mem::take(&mut cur));
+            }
+        } else {
+            cur.push(line);
+        }
+    }
+    if !cur.is_empty() {
+        out.push(cur);
+    }
+    out
+}
+
+fn block_token<'a>(block: &[&'a str], name: &str) -> Option<&'a str> {
+    for line in block {
+        let mut fields = line.split_whitespace();
+        if fields.next() == Some(name) {
+            return fields.next();
+        }
+    }
+    None
+}
+
+fn url_basename(url: &str) -> Option<&str> {
+    let cut = url
+        .find(|c| c == '?' || c == '#')
+        .map(|i| &url[..i])
+        .unwrap_or(url);
+    let seg = cut.rsplit('/').next()?;
+    if seg.is_empty() { None } else { Some(seg) }
+}
+
+fn block_identity(block: &[&str]) -> Option<String> {
+    if let Some(url) = block_token(block, "url") {
+        if let Some(base) = url_basename(url) {
+            return Some(base.to_string());
+        }
+    }
+    if let Some(format) = block_token(block, "format") {
+        return Some(format.to_string());
+    }
+    block
+        .first()
+        .and_then(|line| line.split_whitespace().next())
+        .map(|token| token.to_string())
 }
 
 fn parse_terms(content: &str) -> HashSet<(String, String)> {
     let mut out = HashSet::new();
-    for block in content.split("\n\n") {
-        let mut netloc: Option<&str> = None;
-        let mut class: Option<&str> = None;
-        for line in block.lines() {
-            let mut fields = line.split_whitespace();
-            match fields.next() {
-                Some("url") => {
-                    if let Some(raw) = fields.next() {
-                        netloc = release_tag(raw);
-                    }
-                }
-                Some("terms") => class = fields.next(),
-                _ => {}
-            }
-        }
-        if let (Some(netloc), Some(class)) = (netloc, class) {
-            out.insert((netloc.to_string(), class.to_string()));
+    for block in blocks(content) {
+        let value = match block_token(&block, "terms") {
+            Some(value) => value,
+            None => continue,
+        };
+        if let Some(identity) = block_identity(&block) {
+            out.insert((identity, value.to_string()));
         }
     }
     out
@@ -114,30 +149,60 @@ fn parse_census(content: &str) -> Vec<(String, String, String)> {
 fn drift(terms: &HashSet<(String, String)>, census: &[(String, String, String)]) -> Vec<String> {
     let measured: HashSet<(String, String)> = census
         .iter()
-        .map(|(netloc, class, _)| (netloc.clone(), class.clone()))
+        .map(|(key, class, _)| (key.clone(), class.clone()))
         .collect();
 
     let mut unmeasured: Vec<(&String, &String)> = terms
         .iter()
         .filter(|pair| !measured.contains(*pair))
-        .map(|(netloc, class)| (netloc, class))
+        .map(|(key, class)| (key, class))
         .collect();
     unmeasured.sort();
 
     let mut stale: Vec<&(String, String, String)> = census
         .iter()
-        .filter(|(netloc, class, _)| !terms.contains(&(netloc.clone(), class.clone())))
+        .filter(|(key, class, _)| !terms.contains(&(key.clone(), class.clone())))
         .collect();
     stale.sort();
 
     let mut lines = Vec::new();
-    for (netloc, class) in unmeasured {
-        lines.push(format!("UNMEASURED {} {}", netloc, class));
+    for (key, class) in unmeasured {
+        lines.push(format!("UNMEASURED {} {}", key, class));
     }
-    for (netloc, class, url) in stale {
-        lines.push(format!("STALE {} {} {}", netloc, class, url));
+    for (key, class, url) in stale {
+        lines.push(format!("STALE {} {} {}", key, class, url));
     }
     lines
+}
+
+struct Counts {
+    blocks: usize,
+    with_terms: usize,
+    distinct_terms: usize,
+    pending: usize,
+}
+
+fn counts(content: &str) -> Counts {
+    let mut total: usize = 0;
+    let mut with_terms: usize = 0;
+    let mut with_compiler_or_url: usize = 0;
+    let mut values: HashSet<String> = HashSet::new();
+    for block in blocks(content) {
+        total += 1;
+        if let Some(value) = block_token(&block, "terms") {
+            with_terms += 1;
+            values.insert(value.to_string());
+        }
+        if block_token(&block, "compiler").is_some() || block_token(&block, "url").is_some() {
+            with_compiler_or_url += 1;
+        }
+    }
+    Counts {
+        blocks: total,
+        with_terms,
+        distinct_terms: values.len(),
+        pending: with_compiler_or_url.saturating_sub(with_terms),
+    }
 }
 
 fn main() {
@@ -177,17 +242,18 @@ fn main() {
         }
     }
 
-    let entries = terms_entries(&sources);
     let violations = closed_vocab_violations(&sources);
     for (line, value) in &violations {
         println!("terms-vocab VIOLATION {} {}", line, value);
     }
-    let distinct: HashSet<&str> = entries.iter().map(|(_, value)| value.as_str()).collect();
+    let census_counts = counts(&sources);
     println!(
-        "license_census: terms-vocab {} violation(s), {} terms lines, {} distinct",
-        violations.len(),
-        entries.len(),
-        distinct.len()
+        "license_census: blocks {} | terms {} | distinct {} | pending {} | terms-vocab {} violation(s)",
+        census_counts.blocks,
+        census_counts.with_terms,
+        census_counts.distinct_terms,
+        census_counts.pending,
+        violations.len()
     );
 }
 
@@ -196,32 +262,60 @@ mod tests {
     use super::*;
 
     #[test]
-    fn joins_register_netloc_against_census() {
+    fn drift_classifies_unmeasured_and_stale() {
         let src = "url https://github.com/omegaflow/sources/releases/download/a.org/x.bin\n\
                    terms CC0 https://a\n\n\
                    url https://github.com/omegaflow/sources/releases/download/b.org/y.bin\n\
                    terms MIT https://b\n\n\
                    url https://github.com/omegaflow/sources/releases/download/x.org/z.bin\n\
                    foo terms X https://c\n";
-        let tsv = "# netloc\tclass\tterms-url\tmeasured\n\
-                   a.org\tCC0\thttps://a\t2026-10-07\n\
-                   c.org\tGPL\thttps://c\t2026-10-07\n";
+        let tsv = "# key\tclass\tterms-url\tmeasured\n\
+                   x.bin\tCC0\thttps://a\t2026-10-07\n\
+                   c.bin\tGPL\thttps://c\t2026-10-07\n";
         let terms = parse_terms(src);
         assert_eq!(terms.len(), 2, "{:?}", terms);
         let census = parse_census(tsv);
         assert_eq!(census.len(), 2, "{:?}", census);
         let lines = drift(&terms, &census);
         assert!(
-            lines.contains(&"UNMEASURED b.org MIT".to_string()),
+            lines.contains(&"UNMEASURED y.bin MIT".to_string()),
             "{:?}",
             lines
         );
         assert!(
-            lines.contains(&"STALE c.org GPL https://c".to_string()),
+            lines.contains(&"STALE c.bin GPL https://c".to_string()),
             "{:?}",
             lines
         );
         assert_eq!(lines.len(), 2, "{:?}", lines);
+    }
+
+    #[test]
+    fn join_keys_on_the_source_block() {
+        let src = "url https://example.org/data/observations.csv?token=abc\n\
+                   terms CC-BY-4.0 https://example.org/licence\n\n\
+                   format tap\n\
+                   url https://other.example/tap/sync?QUERY=x\n\
+                   terms ODbL-1.0 https://other.example/terms\n\n\
+                   format openneuro_pd_eeg\n\
+                   terms CC0 https://openneuro.org/datasets/ds007822\n";
+        let terms = parse_terms(src);
+        assert!(
+            terms.contains(&("observations.csv".to_string(), "CC-BY-4.0".to_string())),
+            "{:?}",
+            terms
+        );
+        assert!(
+            terms.contains(&("sync".to_string(), "ODbL-1.0".to_string())),
+            "{:?}",
+            terms
+        );
+        assert!(
+            terms.contains(&("openneuro_pd_eeg".to_string(), "CC0".to_string())),
+            "{:?}",
+            terms
+        );
+        assert_eq!(terms.len(), 3, "{:?}", terms);
     }
 
     #[test]
