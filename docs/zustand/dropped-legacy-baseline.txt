@@ -926,3 +926,8 @@ skalen-reparatur-verdikt
 tapvizier-tap-klasse verifikationslauf
 toar-komponenten-arm
 τ-einfrieren-verdikt
+# 2026-10-07 (Mycelium-266): reviewed new key below. The Pipeline-Zulassung 5-sources point
+# was resolved (Mountain disposition + ledger set `disponiert`, d5a6c599d); its successor
+# carries a renamed heading, so no commit/register token resolves the drop -> frozen as a
+# known legacy name, not a silent drop.
+5 datenquellen erreichbare ledger phi pipeline pipeline-zulassung φ
