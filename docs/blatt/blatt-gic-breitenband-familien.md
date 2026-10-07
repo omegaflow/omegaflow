@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 761ed681f947a1a6f5ad5b21408e83c875819a9f1da99b2b82477af66669524e
+  sha256: 941deef62d8db86c1f67f8a2390b954a9a5e583165eeb8b035dbc817d5cace03
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -241,9 +241,20 @@ kein `over family`, `cgm_lat` nie gelesen):
 - **Route B (drei per-Band-`full`-Deskriptoren) verworfen als Träger:** 31·30 + 25·24 +
   98·97 = 11 036 Zellen > der globalen Obergrenze — keine `M_eff`-Reduktion; nur als
   benannte Vergleichsmessung erlaubt, nie als Zerlegung des globalen Ergebnisses.
-- **Gruppierungs-Schlüssel (Riss #2):** Paar-Band — eine Zelle `d→t` gehört zu F nur, wenn
-  beide Endpunkte in F liegen; gemischte Endpunkte sind die benannte Familie `cross`, nie
-  still über einen Target-Pool gezogen.
+- **Gruppierungs-Schlüssel (Riss #2, getragen):** Der Rat (fünf Stimmen) und 3 API-Stimmen
+  setzen **Paar-Band** — eine Zelle `d→t` gehört zu F nur, wenn beide Endpunkte in F liegen;
+  gemischte Endpunkte sind die benannte Familie `cross`, nie still über einen Target-Pool
+  gezogen. deepseek + Claude (Sonnet 5.5) + Kimi K3 widersprechen: **Target-Band**, weil der
+  Treiber Bz ein einzelner globaler, band-degenerierter Treiber ist (Driver-Band undefiniert;
+  das Paar-Band wird erst bei Station→Station eigenständig, wo der force_type wechselt). Beide
+  Linien stehen ungeglättet — Paar-Band ist das volle Objekt, Target-Band seine Projektion bei
+  band-degeneriertem Treiber.
+- **12-Stimmen-Rat (Operator-Wort 2026-10-07):** Adressierung mit 5 Stimmen + 5 Axiomen +
+  5 Achsen an 5 API-`voice-*` + die UI-Chats; **7/12 geantwortet** (gemini·gptoss·inkling·
+  nemotron·deepseek + Claude·Kimi), einstimmig **Route C**. Riss (b): die `M_eff`-Senkung ist
+  abgeleitet, nicht gemessen; gemeinsame Surrogat-Ziehungen + α-Aufteilung über 3 Familien nötig.
+  xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**, nicht als dB/dt-Aussage; dB/dt-152
+  = abgeleitete Serie (Operator/Kadenz/Filter), an ABK/SOD validiert → `pending`.
 - **Gebaut (River 121):** `tools/measure/src/bin/cgm_lat_partition.rs` emittiert offline
   (`--from-tsv … --emit-dir …`) aus der gemessenen Partition die drei Kanal-Listen
   `gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, paarweise disjunkt,
