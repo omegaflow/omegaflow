@@ -406,6 +406,35 @@ fn bv_to_bp_rp(bv: f64) -> f64 {
         + 0.01916 * x.powi(5)
 }
 
+fn record_mag(rec: &[u8]) -> Option<f32> {
+    let m = f32::from_le_bytes([rec[28], rec[29], rec[30], rec[31]]);
+    if m.is_finite() { Some(m) } else { None }
+}
+
+fn sort_records_by_magnitude(buf: &mut [u8]) {
+    if buf.len() % STAR_RECORD_STRIDE != 0 {
+        return;
+    }
+    let n = buf.len() / STAR_RECORD_STRIDE;
+    let mut idx: Vec<(Option<f32>, usize)> = (0..n)
+        .map(|i| {
+            let rec = &buf[i * STAR_RECORD_STRIDE..(i + 1) * STAR_RECORD_STRIDE];
+            (record_mag(rec), i)
+        })
+        .collect();
+    idx.sort_by(|a, b| match (a.0, b.0) {
+        (Some(x), Some(y)) => x.total_cmp(&y),
+        (Some(_), None) => std::cmp::Ordering::Less,
+        (None, Some(_)) => std::cmp::Ordering::Greater,
+        (None, None) => std::cmp::Ordering::Equal,
+    });
+    let src = buf.to_vec();
+    for (k, &(_, i)) in idx.iter().enumerate() {
+        buf[k * STAR_RECORD_STRIDE..(k + 1) * STAR_RECORD_STRIDE]
+            .copy_from_slice(&src[i * STAR_RECORD_STRIDE..(i + 1) * STAR_RECORD_STRIDE]);
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut source: String = "tycho2".to_string();
@@ -565,6 +594,7 @@ fn main() {
             encode(&row, &mut buf);
             written += 1;
         }
+        sort_records_by_magnitude(&mut buf);
         if written > 0 && written % 11 == 0 {
             buf.truncate(buf.len() - STAR_RECORD_STRIDE);
             written -= 1;
@@ -898,6 +928,7 @@ fn main() {
         encode(&row, &mut buf);
         written += 1;
     }
+    sort_records_by_magnitude(&mut buf);
     if written > 0 && written % 11 == 0 {
         buf.truncate(buf.len() - STAR_RECORD_STRIDE);
         written -= 1;
@@ -932,5 +963,33 @@ fn main() {
     if ci_mode && !upload_release("gea.esac.esa.int", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::sort_records_by_magnitude;
+
+    fn record(mag: f32) -> [u8; 56] {
+        let mut r = [0u8; 56];
+        r[28..32].copy_from_slice(&mag.to_le_bytes());
+        r
+    }
+
+    #[test]
+    fn magnitude_sort_orders_ascending_and_keeps_nonfinite_last() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&record(5.0));
+        buf.extend_from_slice(&record(f32::NAN));
+        buf.extend_from_slice(&record(1.0));
+        sort_records_by_magnitude(&mut buf);
+        let mags: Vec<Option<f32>> = buf
+            .chunks_exact(56)
+            .map(|r| {
+                let m = f32::from_le_bytes([r[28], r[29], r[30], r[31]]);
+                m.is_finite().then_some(m)
+            })
+            .collect();
+        assert_eq!(mags, vec![Some(1.0), Some(5.0), None]);
     }
 }

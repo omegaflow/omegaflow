@@ -1,4 +1,6 @@
-use omegaflow::archivar::eionet_cdr::parse_report;
+use omegaflow::archivar::eionet_cdr::{
+    COMP_AIR, COMP_SOIL, COMP_WATER, POLLUTANTS, parse_report, series_name,
+};
 use omegaflow::archivar::geo::{magic_of, parse_bin, write_bin};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
@@ -6,6 +8,19 @@ use std::process::Command;
 
 const FORMAT: &str = "eionet_cdr";
 const CDN_TAG: &str = "cdr.eionet.europa.eu";
+const TTL_SECONDS: u64 = 31_536_000;
+const MEDIA: [u32; 3] = [COMP_AIR, COMP_WATER, COMP_SOIL];
+
+fn emit_field_names() {
+    for (id, _, _) in POLLUTANTS {
+        for medium in MEDIA {
+            let comp = (*id << 2) | medium;
+            if let Some(name) = series_name(comp) {
+                println!("field {name} {name} point diffusion kg {TTL_SECONDS} 0.0 0.0");
+            }
+        }
+    }
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -60,6 +75,10 @@ fn read_source(source: &str) -> Result<Vec<u8>, String> {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    if args.iter().any(|a| a == "--emit-field-names") {
+        emit_field_names();
+        return Ok(());
+    }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let source = arg_value(args, "--in")
         .or_else(|| positional(args))
