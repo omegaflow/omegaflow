@@ -3,7 +3,7 @@
   session: River-Folge 120
   class: handover
   date: 2026-10-07
-  sha256: b2f2cca39e5afadae18b13dcb3a547d432f57c162c5257ac8ea134be267c99ff
+  sha256: 19b66c10d5adfe48e23a8adb569ecc2b4e8c1568ed9fd87d7ff91fc658737cd3
   status: live
 -->
 # Handover — River-Folge 119 (2026-10-07)
@@ -76,12 +76,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** Katalog-Ordnung (C).
 - **Braucht:** 95-MB-Sternkatalog nach Helligkeit ordnen.
 
-### GIC-Breitenband-Familien — Partition gemessen; `cgm_lat`-Zeile gelandet; Deskriptoren offen
+### GIC-Breitenband-Familien — Partition + `cgm_lat` gelandet; `over family`-Scope fehlt (gemessen); Deskriptoren offen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keiner — Mountains `cgm_lat`-Zeile ist gelandet (Dependency erfüllt).
-- **Lage:** (gemessen 2026-10-07, River 120) Operator-Wort: Grenzen **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM|; Partition gemessen (`state/river/gic-cgm-lat.tsv`): 154/154, disjunkt, auroral 31 · sub-auroral 25 · mid 98. **Mountains `cgm_lat`-Direktiven-Arm gelandet:** `phi/sources.φ` trägt **157** `cgm_lat`-Zeilen = **154 Stationen + 3 Doppelzeilen** (ABK ×3: `:2057`/`:2067`/`:5874`; SOD ×2: `:2077`/`:7386` — gleiche Station, gleicher Wert). **Kein Stations-Riss:** die Stationsmengen sind identisch (154 = 154; `state/river/gic-cgm-lat.tsv` 155 Zeilen = 1 Header + 154 Daten); die 157 ist eine Zeilen-, keine Stationszählung (gemessen 2026-10-07 via `general`-Taucher). Dependency (1) erfüllt. Blatt `blatt-gic-breitenband-familien.md` (sha256 `d973a202…`).
-- **Blockade:** keine (die `fdr … over family`-Direktive ist Mountains Register-Feder).
-- **Braucht:** (2) `fdr … over family`-Scope (Mountain); (3) drei Familien-Deskriptoren (River); (4) CI-Job `field-te-query.yml`.
+- **Trigger:** keiner — Mountains `cgm_lat`-Zeile ist gelandet.
+- **Lage:** (gemessen 2026-10-07, River 120) Operator-Wort: Grenzen **auroral ≥60°, sub-auroral 50–60°, mid-latitude <50°** |CGM|; Partition 154/154, disjunkt, auroral 31 · sub-auroral 25 · mid 98 (`state/river/gic-cgm-lat.tsv`, Spalte `family`). Mountains `cgm_lat`-Arm gelandet (157 Zeilen = 154 Stationen + 3 Doppelzeilen ABK×3/SOD×2 — kein Stations-Riss). **Scope gemessen (`grind-flash`, 2026-10-07):** `field_te_query` kennt nur `FdrScope {Matrix,Row,Col}` (`:144-158`); kein `over family`, kein Stations-Set im Matrix-Parser; `cgm_lat` wird vom Archivar geparst (`src/archivar/parse.rs:1584`), aber von `field_te_query` nie gelesen; die Partition ist Artefakt, kein Tool-Input. `family` im Tool = die max-T-Korrekturgruppe, nicht das Band (Riss benannt). Blatt `blatt-gic-breitenband-familien.md` (sha256 `d973a202…`).
+- **Blockade:** driver/target-Paarung der Familien-Tests unentschieden (Basiskanal dB/dt vs. abgeleitet) — ohne sie kein lauffähiger Deskriptor.
+- **Braucht:** (a) Route wählen — (A) `FdrScope::Family` + Band-Membership aus `cgm_lat`/Partition, oder (B) je Band explizite `channels`-Liste (kein Parser-Arm, kleiner); (b) driver/target festlegen; (c) drei `.te` + CI-Jobs `field-te-query.yml`.
 
 ### Universelles Vlies — der `matrix full`-Lauf (kein Bau)
 - **Status:** wartend (fremd, Alignment/Ernte) | **Bindung:** eigen
@@ -161,4 +161,4 @@ Pfad-begrenzte Commit-Pfade dieser Session:
 - `src/mathematikerin/ozzy.rs` (ozzy Schritt (i-rest): typisierte Absenz + `N_eff`-Tore) · `docs/handover/handover-2026-10-07-river-folge120.md` (Kanten-Nachtrag: `## An mountain`/`## An mycelium`, `cgm_lat`-Fold/Auflösung)
 - `src/mathematikerin/{shaders.rs,machines/verdict.rs,machines/matrix.rs,solar.rs,omega.rs,te.rs,tests.rs}` (ozzy Schritt (ii): GPU-Wire 101 Serien)
 
-## Burn: open 0.0032 · close 0.1344 · cap 0.15 (Default) · Grund: River 120 — Line-Session (deepseek-flash): addresste Blöcke geprüft; `--fired river` meldet `ozzy`/`em-apertur` — Trigger nicht gefeuert (ci-gate @af7dc14e8 dropped-gate, von Mycelium 256 auf 1297 geheilt); `--stale` 0, `open_points_check` 0 STALE-CITATION. **ozzy-Floor (i)+(i-rest)+(ii) gebaut** (`TE_SURR_FLOOR=99`, Rang-Grenze `max`, KSG-k-Parität, `VerdictWord`/`TeAbsence` + `N_eff`-Tore; GPU-Wire 101 Serien/`TE_SERIES_COUNT`) via 3 `grind-flash`-Dispatchs (~$0.0154 + $0.0273 + $0.0589); **Kanten gearbeitet:** `## An mountain` (span, GM Bit 11) + `## An mycelium` (NUR-Asset, Sternkatalog C), Mountain-259-Block gefaltet, `cgm_lat` gelandet (157 Zeilen = 154 Stationen + 3 Doppelzeilen, kein Riss) in GIC eingetragen. `cargo check` 0/0. (iii) geschlossen, (iv)=Matrix gemessen: `field_te_query` nutzt den binierten konditionalen TE, `topological_te*` bleibt Membran-Schiene (`omega.rs`/`matrix.rs`/`solar.rs`). Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
+## Burn: open 0.0032 · close 0.1465 · cap 0.15 (Default, erreicht) · Grund: River 120 — Line-Session (deepseek-flash): addresste Blöcke geprüft; `--fired river` meldet `ozzy`/`em-apertur` — Trigger nicht gefeuert (ci-gate @af7dc14e8 dropped-gate, von Mycelium 256 auf 1297 geheilt); `--stale` 0, `open_points_check` 0 STALE-CITATION. **ozzy-Floor (i)+(i-rest)+(ii) gebaut** (`TE_SURR_FLOOR=99`, Rang-Grenze `max`, KSG-k-Parität, `VerdictWord`/`TeAbsence` + `N_eff`-Tore; GPU-Wire 101 Serien/`TE_SERIES_COUNT`) via 3 `grind-flash`-Dispatchs (~$0.0154 + $0.0273 + $0.0589); **Kanten gearbeitet:** `## An mountain` (span, GM Bit 11) + `## An mycelium` (NUR-Asset, Sternkatalog C), Mountain-259-Block gefaltet, `cgm_lat` gelandet (157 Zeilen = 154 Stationen + 3 Doppelzeilen, kein Riss) in GIC eingetragen. `cargo check` 0/0. (iii) geschlossen, (iv)=Matrix gemessen: `field_te_query` nutzt den binierten konditionalen TE, `topological_te*` bleibt Membran-Schiene (`omega.rs`/`matrix.rs`/`solar.rs`). Kein pro/max-Dispatch, kein Fenster-Edit, kein Send.
