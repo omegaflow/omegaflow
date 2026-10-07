@@ -4,26 +4,19 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 3 * * *'
-  push:
-    paths:
-      - 'src/**'
-      - 'static/**'
-      - 'phi/**'
-      - 'tools/harvest/**'
-      - 'tools/register/**'
-      - 'tools/utils/**'
-      - 'Cargo.toml'
 
 permissions:
   issues: write
 
-# The heavy measurement. cancel-in-progress: false — a started run is never cut
-# mid-flight, so a per-SHA verdict forms. The fast per-push gates live in
-# `ci-gate.yml` (workflow-level concurrency, cancel-in-progress on) so the HEAD
-# is gated in minutes even while this long run is queued; the nightly schedule
-# guarantees one complete run per day regardless of push cadence.
+# The heavy nightly/on-demand measurement of the whole tree. It is NOT the per-SHA
+# gate — that is `ci-gate.yml` (fast, cancel-in-progress on). Under the old push
+# trigger every pushed run took the single pending slot and each newer push replaced
+# it before a runner got a job (measured 2026-10-07: 15 of 17 ci-check runs cancelled
+# with 0 jobs, 0 success — `cancel-in-progress: false` protects only a running run,
+# never a waiting one). One serialized heavy run per night and on dispatch; the
+# single heavy runner is shared, so a dispatch waits behind the nightly run.
 concurrency:
-  group: ci-check-${{ github.ref }}
+  group: ci-check
   cancel-in-progress: false
 
 env:
