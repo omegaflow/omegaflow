@@ -56,13 +56,6 @@ pub fn nutation_deltas_at(props: &BodyProperties, jd: f64) -> Option<(f64, f64, 
     ))
 }
 
-pub fn nutation_sum(terms: &[[f64; 3]], t: f64) -> f64 {
-    terms
-        .iter()
-        .map(|&[amplitude, frequency, phase]| amplitude * (frequency * t + phase).sin())
-        .sum()
-}
-
 pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
     let tc = (jd - J2000_EPOCH) / 36525.0;
     let (d_ra, d_dec, d_pm) = match nutation_deltas_at(bp, jd) {
@@ -70,16 +63,8 @@ pub fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> Option<(f64, f64, 
         None if bp.nutation.is_some() => return None,
         None => (0.0, 0.0, 0.0),
     };
-    let nut_ra = match &bp.nut_ra {
-        Some(terms) => nutation_sum(terms, tc),
-        None => 0.0,
-    };
-    let nut_dec = match &bp.nut_dec {
-        Some(terms) => nutation_sum(terms, tc),
-        None => 0.0,
-    };
-    let ra = bp.α0_deg + bp.dα0_dt_deg_per_century * tc + nut_ra + d_ra;
-    let dec = bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc + nut_dec + d_dec;
+    let ra = bp.α0_deg + bp.dα0_dt_deg_per_century * tc + d_ra;
+    let dec = bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc + d_dec;
     let pm = bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH) + d_pm;
     Some((ra, dec, pm))
 }
@@ -516,8 +501,6 @@ pub struct BodyProperties {
     pub j4: Option<f64>,
     pub radii_b: Option<f64>,
     pub radii_c: Option<f64>,
-    pub nut_ra: Option<Vec<[f64; 3]>>,
-    pub nut_dec: Option<Vec<[f64; 3]>>,
     pub nutation: Option<Vec<NutationRecord>>,
     pub omega_g: Option<(f64, f64)>,
 }
@@ -630,8 +613,6 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 j4: slot(f(10), 10),
                 radii_b,
                 radii_c,
-                nut_ra: None,
-                nut_dec: None,
                 nutation: None,
                 omega_g: None,
             });

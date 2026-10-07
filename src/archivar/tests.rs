@@ -4130,8 +4130,6 @@ fn test_build_netcdf_channels() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -4453,8 +4451,6 @@ fn test_wind_waves_loader_respects_load_gate() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5139,8 +5135,6 @@ fn test_wgccre_roundtrip() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5211,8 +5205,6 @@ fn test_earth_zenith_geometry() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5285,8 +5277,6 @@ fn test_rotation_matrix_roundtrip() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5353,8 +5343,6 @@ fn test_matrix_vs_wgccre_agreement() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5429,8 +5417,6 @@ fn test_matrix_path_matches_analytic_across_bodies_and_epochs() {
             j4: None,
             radii_b: None,
             radii_c: None,
-            nut_ra: None,
-            nut_dec: None,
             nutation: None,
             omega_g: None,
         };
@@ -5508,8 +5494,6 @@ fn test_rotation_matrix_empty_props() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5779,8 +5763,6 @@ fn test_anchor_body_agnostic() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -5932,8 +5914,6 @@ fn test_anchor_applies_declared_unit() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -7803,8 +7783,6 @@ fn test_query_admits_surface_sample_within_window() {
         j4: Some(-1.619e-6),
         radii_b: Some(6378136.6),
         radii_c: Some(6356751.9),
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -10322,8 +10300,6 @@ fn gbco_station_thread_projects_to_icrs_through_motion_surface() {
         j4: Some(-1.619e-6),
         radii_b: Some(6378136.6),
         radii_c: Some(6356751.9),
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -10397,8 +10373,6 @@ fn gestalt_surface_threads_roundtrip_projects_to_icrs_finite() {
         j4: Some(-1.619e-6),
         radii_b: Some(6378136.6),
         radii_c: Some(6356751.9),
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -10520,8 +10494,6 @@ fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
         j4: Some(-1.619e-6),
         radii_b: Some(6378136.6),
         radii_c: Some(6356751.9),
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
@@ -13229,8 +13201,6 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         j4: None,
         radii_b: None,
         radii_c: None,
-        nut_ra: None,
-        nut_dec: None,
         nutation: None,
         omega_g: None,
     };
