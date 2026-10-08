@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 1b163b408c77df80b46ba47f0c33024a12ebb211c6c7d304267d5aa918e7ae4f
+  sha256: e0dc1b75445514be1225c38466990fea1dff2097db3631a2197beb74022ab818
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -107,6 +107,21 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   trägt die Zulassung, nicht der Cache; `span` wird der Empfänger, der es ist; der AB-Fluss trägt
   seine Kraft nur mit seinem Band; der fehlende Pfad bleibt ausstehend, nicht abgeschrieben; und
   die 154 bleiben 154.
+
+  **Forschungsschicht mit den neuen Armen (2026-10-08):** `--consensus`/`--perplexity`/`--jina`
+  (Keys vorhanden) gemessen; `--perplexity` HTTP 0, `--tavily` 432, `--consensus` intermittierend
+  429 — nur `--consensus`/`--jina`/`--crossref`/`--openalex` tragen. Befunde: **Q1** Provenienz/
+  deklarierter Observer getragen, „presence hull as sole admission" = omegaflow-eigen (`pending`,
+  0 Treffer); **Q2** IVOA **Simple Cone Search** (`10.5479/ads/bib/2008ivoa.specq0222p`)
+  formalisiert die Query-Apertur (`SR`) **getrennt** von der Record-Position → stützt
+  `receiver.span` (**verdrahten**); **Q3** Bandpass-/pivot-λ-Referenz zwingend (ABv, Fukugita/
+  Bessell); **Q4** DSN/ESTRACK-Doppler-Residuen „routinely used" (PRIDE II
+  `10.1051/0004-6361/201731524`), öffentliche Residualroute = `pending`; **Q5** SuperMAG-Member-
+  Pool als Träger, Index als abgeleitete Sicht (`10.1029/2012ja017683`, Zitat 789), sparse 2/154 →
+  Band-Deskriptor fabriziert. **Die eine Linie: kein Wert ohne deklarierten Träger — A = A relativ
+  zu seinem Empfänger.** → **bestätigt die Axiom-Auflösung** (Q2 verdrahten, Q3 Band, Q4 pending,
+  Q5 Pool-vor-Aggregat). **Neue UI:** Sakana Chat (Namazu, eingeloggt) — Frage gestellt, antwortet
+  noch = `pending`.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
