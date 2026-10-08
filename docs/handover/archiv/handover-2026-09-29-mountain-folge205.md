@@ -222,7 +222,7 @@ Origin: mountain folge205.
   Wort zum Ziel-Layout. *Frage:* welches Layout für die Migrations-Vorlage? (Operator-Hand)
 - **ODF-Flyby-Fenster fehlt** (gemessen 2026-09-29): keines der vier ODF-Assets trägt das
   Erd-Encounter-Fenster, die ODFs fehlen serverseitig. *Frage:* DSN/JPL-Rohdaten-Anfrage stellen?
-- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [redacted]-Läufe als Substance-Witness
+- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [RETRACTED-SAMPLE]-Läufe als Substance-Witness
   `LABR`; CDN-manifestiert oder privates Holding?
 
 Zur Kenntnis: Sonden-Flotte CSF/Konto-gated; CSES-/Swarm-Zugang (SSDC, Trigger 2026-10-02);

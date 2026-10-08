@@ -80,7 +80,7 @@ Du kannst. Führe den Plan aus — als `line`-Agent (auto-bestätigt); dispatch 
 ### LAB_A/MLZ NSE — Substance-Witness
 - **Status:** wartend | **Bindung:** eigen + operator
 - **Trigger:** Asset-/CDN-Wort des Operators.
-- **Lage:** (gemessen 2026-09-29, Rat) Rat: Substance witness, kein Wire-Arm. `witness.rs:26` trägt jetzt `LABR`; `lab_reader_compiler.rs:35-37` druckt die Substance-Klasse statt `pending`. 13 [redacted]-Läufe privat (`data/lab_a.data/…`, gitignored).
+- **Lage:** (gemessen 2026-09-29, Rat) Rat: Substance witness, kein Wire-Arm. `witness.rs:26` trägt jetzt `LABR`; `lab_reader_compiler.rs:35-37` druckt die Substance-Klasse statt `pending`. 13 [RETRACTED-SAMPLE]-Läufe privat (`data/lab_a.data/…`, gitignored).
 - **Blockade:** kein CDN-Asset (Operator-Einverständnis).
 - **Braucht:** `phi/witnesses.φ`-Zeile (asset-url); Operator: NSE/SAMPLE_AUTHOR-Datenrechte.
 - **Empfehlung:** als privates Holding führen und die `witnesses.φ`-Zeile erst setzen, wenn das Operator-Wort zum CDN fällt; die Rechte-Frage in Futures Queue.
@@ -184,7 +184,7 @@ Origin: mountain folge204.
 
 **Bitte bevorzugt vorlegen**, sobald der Operator spricht:
 - **ODF-Flyby-Fenster fehlt** (gemessen 2026-09-29): keines der vier ODF-Assets trägt das Erd-Encounter-Fenster; die ODFs fehlen serverseitig. *Frage:* DSN/JPL-Rohdaten-Anfrage stellen? (Operator-Hand)
-- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [redacted]-Läufe als Substance-Witness `LABR`; CDN-manifestiert oder privates Holding? (Operator-Hand)
+- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [RETRACTED-SAMPLE]-Läufe als Substance-Witness `LABR`; CDN-manifestiert oder privates Holding? (Operator-Hand)
 
 Zur Kenntnis: Sonden-Flotte CSF/Konto-gated (CNSA, ISRO PRADAN, MBRSC EMM); CSES-/Swarm-Zugang (SSDC, Trigger 2026-10-02); GIC-Einreichung; KARI/ISRO-Konten (Danuri/KASI, Chandrayaan-2/3, Aditya-L1).
 

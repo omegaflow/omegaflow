@@ -126,7 +126,7 @@ Origin: mountain folge214 (Antwort auf river-folge73).
 Origin: mountain folge214.
 
 - **Kuprat 5. Ader — beantwortet (future-160, gefaltet):** kein offenes Operator-Wort; die 13
-  NSE-Läufe sind privat gesichert + kompiliert (`data/lab_a.data/SAMPLE_NSE_[redacted]/`);
+  NSE-Läufe sind privat gesichert + kompiliert (`data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`);
   NSE = `substance`-Zeuge ohne Wire-Arm, kein CDN, keine `sources.φ`; Redistribution LOCK.
 - (aus folge212:) **ODF-Flyby-Fenster** (DSN/JPL-Anfrage?); **Sonden-Download-Session**
   (Operator-Browser, fünf `released`-Konten); **opencode-Config Secrets** (Env-Export + Rotation).

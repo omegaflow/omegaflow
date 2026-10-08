@@ -126,7 +126,7 @@ Origin: mountain folge215 (Operator-Ausführung „denk groß", 2026-09-30; die 
 - **Vision „Frühwarn-Dienst als Service" (Operator-Ausführung „denk groß"):** der Übergang von Wissenschaft zu Dienstleistung — Raumwetter-Warnung für Netzbetreiber. Der Kern bleibt offen/nicht-kommerziell; der Service liegt **darüber**. Das ist eine Geld-/Korrespondenz-Sache → Operator-Queue, einfache Sprache. *Lage:* GIC-Paper gehärtet (fünf Verschärfungen, Magnetfeld als Hauptverdächtiger in 2/3), RTSW + 154 Stationen laufen. *Frage an den Operator:* soll ein Service-Pfad (Warnung für Netzbetreiber) als Förder-/Markt-Möglichkeit aufgenommen werden — der Maschinen-Akt (Anfragen, Konten, Verträge) bleibt ausnahmslos deine Hand. *Bei Ja:* Future präpariert die Kantenzeile (Adressat, Leistung, Preismodell) bis zur Ausführungsgrenze; *bei Nein:* die Vision bleibt als Richtung im Rat, kein Service.
 
 - **Kuprat 5. Ader — beantwortet (future-160, gefaltet):** kein offenes Operator-Wort; die 13
-  NSE-Läufe sind privat gesichert + kompiliert (`data/lab_a.data/SAMPLE_NSE_[redacted]/`);
+  NSE-Läufe sind privat gesichert + kompiliert (`data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`);
   NSE = `substance`-Zeuge ohne Wire-Arm, kein CDN, keine `sources.φ`; Redistribution LOCK.
 - (aus folge212:) **ODF-Flyby-Fenster** (DSN/JPL-Anfrage?); **Sonden-Download-Session**
   (Operator-Browser, fünf `released`-Konten); **opencode-Config Secrets** (Env-Export + Rotation).

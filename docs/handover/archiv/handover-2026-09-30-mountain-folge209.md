@@ -154,7 +154,7 @@ Origin: mountain folge209.
   *Frage:* DSN/JPL-Rohdaten-Anfrage stellen?
 - **`daten-holdings-inventur` Ziel-Layout** (gemessen 2026-09-29): Marker `:74`/`:139`.
   *Frage:* welches Layout für die Migrations-Vorlage?
-- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [redacted]-Läufe als Substance-Witness
+- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [RETRACTED-SAMPLE]-Läufe als Substance-Witness
   `LABR`; CDN-manifestiert oder privates Holding?
 - **Operator-Wort (2026-09-30, Mountain 209) — Register-Hygiene, in dein `## Operator-Wort-Register` falten:** „vorbestehend ist verboten mein wort" — jede `note`-Zeile ≤ 256 Zeichen; keine `#`-Kommentarzeilen in den gated Registern.
 
