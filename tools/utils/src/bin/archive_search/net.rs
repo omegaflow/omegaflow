@@ -1977,6 +1977,276 @@ fn ia_search_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+pub fn ngmdb_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!(
+        "https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer/0/query?where=map_name+LIKE+%27%25{}%27&outFields=map_name,primary_state,imprint_year,scan_id&f=json&resultRecordCount={}",
+        urlencode(query),
+        max
+    );
+    let headers = [
+        "-H",
+        "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+        "-H",
+        "Accept: application/json",
+        "-H",
+        "Range: bytes=0-131071",
+    ];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) || f.status == Some(206) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = ngmdb_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — NGMDB carries no map: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the NGMDB response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — NGMDB HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn ngmdb_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(features) = v.get("features").and_then(|f| f.as_arr()) else {
+        return out;
+    };
+    for feature in features {
+        let Some(attrs) = feature.get("attributes") else {
+            continue;
+        };
+        let Some(Json::Num(scan)) = attrs.get("scan_id") else {
+            continue;
+        };
+        if !scan.is_finite() {
+            continue;
+        }
+        let map_name = flatten(attrs.get("map_name").and_then(|m| m.as_str()).unwrap_or(""));
+        let state = attrs
+            .get("primary_state")
+            .and_then(|s| s.as_str())
+            .unwrap_or("");
+        let year = match attrs.get("imprint_year") {
+            Some(Json::Num(y)) if y.is_finite() => format!("{}", *y as i64),
+            _ => String::new(),
+        };
+        out.push(format!(
+            "url https://ngmdb.usgs.gov/topoview/viewer/#{}\ttitle: {}\tstate: {}\tyear: {}",
+            *scan as i64, map_name, state, year
+        ));
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn rss_bridge_lines(query: &str, max: usize) -> Vec<String> {
+    if kv_token(query, "bridge").is_none() {
+        return vec!["pending — rss-bridge needs bridge=<name>".to_string()];
+    }
+    let mut url = String::from("https://rss-bridge.org/bridge01/?action=display&format=Json");
+    for token in query.split_whitespace() {
+        if let Some((k, v)) = token.split_once('=') {
+            url.push_str(&format!("&{}={}", urlencode(k), urlencode(v)));
+        }
+    }
+    let headers = ["-H", "Accept: application/json"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = rss_bridge_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — rss-bridge carries no item: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the rss-bridge response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — rss-bridge HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn rss_bridge_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(items) = v.get("items").and_then(|i| i.as_arr()) else {
+        return out;
+    };
+    for item in items {
+        let link = item.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(item.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        let content = flatten(
+            item.get("content_text")
+                .and_then(|c| c.as_str())
+                .unwrap_or(""),
+        );
+        if !content.is_empty() {
+            let clipped: String = content.chars().take(120).collect();
+            line.push_str(&format!("\tcontent: {}", clipped));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+fn acquisition_link(entry: &str) -> Option<String> {
+    let pos = entry.find("acquisition")?;
+    let tag_start = entry[..pos].rfind("<link")?;
+    let tag_end = entry[pos..].find('>')? + pos;
+    let tag = &entry[tag_start..tag_end];
+    let h = tag.find("href=\"")? + 6;
+    let after = &tag[h..];
+    let end = after.find('"')?;
+    Some(after[..end].to_string())
+}
+
+fn entry_blocks(xml: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut rest = xml;
+    while let Some(open) = rest.find("<entry") {
+        let close = match rest[open..].find("</entry>") {
+            Some(c) => open + c,
+            None => break,
+        };
+        out.push(&rest[open..close]);
+        rest = &rest[close..];
+    }
+    out
+}
+
+pub fn kiwix_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!(
+        "https://opds.library.kiwix.org/catalog/v2/entries?q={}&lang=eng&count={}",
+        urlencode(query),
+        max
+    );
+    let headers = ["-H", "Accept: application/atom+xml"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => {
+            let entries = parse_atom_entries(&f.body);
+            let mut out = Vec::new();
+            if entries.is_empty() {
+                if f.body.contains("<entry") {
+                    out = kiwix_fallback_results(&f.body, max);
+                }
+            } else {
+                let blocks = entry_blocks(&f.body);
+                for (i, e) in entries.iter().enumerate() {
+                    let link = match blocks.get(i).and_then(|b| acquisition_link(b)) {
+                        Some(l) => l,
+                        None => e.id.clone(),
+                    };
+                    let mut line = format!("url {}\ttitle: {}", link, e.title);
+                    if let Some(s) = &e.summary {
+                        line.push_str(&format!("\tsummary: {}", s));
+                    }
+                    out.push(line);
+                    if out.len() >= max {
+                        break;
+                    }
+                }
+            }
+            if out.is_empty() {
+                out.push(format!("absent — Kiwix carries no entry: {}", query));
+            }
+            out
+        }
+        Some(f) => vec![format!("pending — Kiwix HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn kiwix_fallback_results(xml: &str, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    for block in entry_blocks(xml) {
+        let Some(title) = extract_between(block, "<title>", "</title>") else {
+            continue;
+        };
+        let title = flatten(&strip_tags(title));
+        if title.is_empty() {
+            continue;
+        }
+        let id = extract_between(block, "<id>", "</id>")
+            .map(|t| flatten(&strip_tags(t)))
+            .filter(|t| !t.is_empty());
+        let Some(link) = acquisition_link(block).or(id) else {
+            continue;
+        };
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if let Some(s) = field_text(block, "<summary>", "</summary>") {
+            line.push_str(&format!("\tsummary: {}", s));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn scrape_lines(query: &str, max: usize) -> Vec<String> {
+    let Some(target) = query.split_whitespace().next() else {
+        return vec!["pending — scrape needs a target url".to_string()];
+    };
+    let selector = match kv_token(query, "selector") {
+        Some(s) => s,
+        None => "a".to_string(),
+    };
+    let url = format!(
+        "https://web.scraper.workers.dev/?url={}&selector={}&pretty=true",
+        urlencode(target),
+        urlencode(&selector)
+    );
+    let headers = ["-H", "Accept: application/json"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = Vec::new();
+                if let Some(Json::Obj(map)) = v.get("result") {
+                    let mut keys: Vec<&String> = map.keys().collect();
+                    keys.sort();
+                    for k in keys {
+                        let Some(arr) = map[k].as_arr() else {
+                            continue;
+                        };
+                        for item in arr {
+                            let Some(s) = item.as_str() else {
+                                continue;
+                            };
+                            out.push(format!("url {}\ttext: {}", target, s));
+                            if out.len() >= max {
+                                break;
+                            }
+                        }
+                        if out.len() >= max {
+                            break;
+                        }
+                    }
+                }
+                if out.is_empty() {
+                    out.push(format!(
+                        "absent — the scraped page carries no {}: {}",
+                        selector, target
+                    ));
+                }
+                out
+            }
+            None => vec!["pending — the scraper response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — scraper HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 fn kv_token(query: &str, key: &str) -> Option<String> {
     query.split_whitespace().find_map(|t| {
         t.split_once('=')
@@ -2397,6 +2667,10 @@ const QUERY_MODES: &[&str] = &[
     "hal",
     "wiby",
     "ia-search",
+    "ngmdb",
+    "rss-bridge",
+    "kiwix",
+    "scrape",
     "shodan",
     "opencellid",
     "gfw",
@@ -2619,6 +2893,10 @@ pub fn run_lines(
         "hal" => hal_lines(query, max),
         "wiby" => wiby_lines(query, max),
         "ia-search" => ia_search_lines(query, max),
+        "ngmdb" => ngmdb_lines(query, max),
+        "rss-bridge" => rss_bridge_lines(query, max),
+        "kiwix" => kiwix_lines(query, max),
+        "scrape" => scrape_lines(query, max),
         "shodan" => {
             let token = resolve_key(
                 env.get("SHODAN_API_KEY").map(String::as_str).unwrap_or(""),
@@ -2855,6 +3133,10 @@ mod tests {
             "hal",
             "wiby",
             "ia-search",
+            "ngmdb",
+            "rss-bridge",
+            "kiwix",
+            "scrape",
             "shodan",
             "opencellid",
             "gfw",

@@ -351,6 +351,10 @@ fn main() {
             "--hal" => mode = Mode::Net("hal"),
             "--wiby" => mode = Mode::Net("wiby"),
             "--ia-search" => mode = Mode::Net("ia-search"),
+            "--ngmdb" => mode = Mode::Net("ngmdb"),
+            "--rss-bridge" => mode = Mode::Net("rss-bridge"),
+            "--kiwix" => mode = Mode::Net("kiwix"),
+            "--scrape" => mode = Mode::Net("scrape"),
             "--shodan" => mode = Mode::Net("shodan"),
             "--opencellid" => mode = Mode::Net("opencellid"),
             "--gfw" => mode = Mode::Net("gfw"),
@@ -708,7 +712,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--shodan|--opencellid|--gfw|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -748,6 +752,18 @@ fn usage() {
     );
     eprintln!(
         "  --ia-search Internet Archive full-text/metadata search (archive.org/advancedsearch.php), keyless; url + title/mediatype"
+    );
+    eprintln!(
+        "  --ngmdb     USGS National Geologic Map DB (ngmdb.usgs.gov ArcGIS REST), keyless; url + title/state/year"
+    );
+    eprintln!(
+        "  --rss-bridge rss-bridge JSON feed (rss-bridge.org), keyless; bridge=<name> <key>=<value>...; url + title/content"
+    );
+    eprintln!(
+        "  --kiwix     Kiwix OPDS catalog (opds.library.kiwix.org), keyless; url + title/summary"
+    );
+    eprintln!(
+        "  --scrape    scraper.workers.dev page text scrape, keyless; <url> [selector=<css>]; url + text"
     );
     eprintln!(
         "  --shodan    Shodan host search (api.shodan.io/shodan/host/search, key); ip/port/org/country"
