@@ -18,6 +18,7 @@ section Bindings
 phi/bindings/dust-maske.φ
 phi/bindings/bathymetrie-gebco.φ
 phi/bindings/bayestar19.φ
+phi/bindings/bands.φ
 
 section Stationstabellen
 phi/nrs_stations.φ

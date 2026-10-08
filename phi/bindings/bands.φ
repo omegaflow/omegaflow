@@ -1,0 +1,7 @@
+binding band DECam_g
+svo DECam/g
+url https://svo2.cab.inta-csic.es/svo/theory/fps3/getdata.php?format=ascii&id=DECam/g
+pivot 4808.49 angstrom
+zeropoint AB
+ttl 3840
+note Band-Anker fuer quantity flux_g noirlab_ls_dr10_g_flux (Legacy DR10 g, DECam). Rat 2026-10-08 Heim C: Identitaet lokal, Kurve bei SVO FPS. url gemessen HTTP 200 (0 B Body) 2026-10-08 -> Kurve ungemessen pending; url-Klasse = Mycelium.
