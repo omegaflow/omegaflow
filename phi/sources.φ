@@ -1688,6 +1688,15 @@ ttl 86400
 field poes19_meped_ele_flux poes19_meped_ele_flux inverse-square em pfu 86400 0.0 0.0
 field poes19_meped_pro_p6_flux poes19_meped_pro_p6_flux inverse-square em pfu 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/ssusi_aurora.bin
+format ssusi_aurora
+origin https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/
+compiler tools/harvest/src/bin/ssusi_compiler.rs
+at earth
+ttl 86400
+field ssusi_hemisphere_power_north ssusi_hemisphere_power_north inverse-square em GW 86400 0.0 0.0
+field ssusi_hemisphere_power_south ssusi_hemisphere_power_south inverse-square em GW 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_tec_gim.bin
 ttl 86400
 format ionex
@@ -4090,6 +4099,14 @@ compiler tools/harvest/src/bin/ampere_fac_compiler.rs
 at earth
 ttl 86400
 field ampere_fac_uam2 ampere_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_cpcp.bin
+format superdarn_cpcp
+origin https://zenodo.org/api/records/10374021/files/20160311.north.map2/content
+compiler tools/harvest/src/bin/superdarn_cpcp_compiler.rs
+at earth
+ttl 86400
+field superdarn_cpcp_pot_drop superdarn_cpcp_pot_drop inverse-square electric kV 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
 format reference
@@ -10127,6 +10144,21 @@ sha256 772e51d16c4a68537255144f66faba5c7aade396cfc5f17d9572e7e7afb2a776
 at moon
 ttl 604800
 field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emtf_usarray_cao01_2010.bin
+format emtf_impedance
+origin https://doi.org/10.17611/DP/EMTF/USARRAY/TA (EarthScope USArray MT impedance)
+compiler tools/harvest/src/bin/emtf_compiler.rs
+at earth
+ttl 604800
+field emtf_zxx_re emtf_zxx_re inverse-square em ohm 604800 0.0 0.0
+field emtf_zxx_im emtf_zxx_im inverse-square em ohm 604800 0.0 0.0
+field emtf_zxy_re emtf_zxy_re inverse-square em ohm 604800 0.0 0.0
+field emtf_zxy_im emtf_zxy_im inverse-square em ohm 604800 0.0 0.0
+field emtf_zyx_re emtf_zyx_re inverse-square em ohm 604800 0.0 0.0
+field emtf_zyx_im emtf_zyx_im inverse-square em ohm 604800 0.0 0.0
+field emtf_zyy_re emtf_zyy_re inverse-square em ohm 604800 0.0 0.0
+field emtf_zyy_im emtf_zyy_im inverse-square em ohm 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kmtnet.json
 format kasi
@@ -19546,14 +19578,6 @@ ttl 2592000
 field mean_daytime_lst_k mean_daytime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
 field mean_nighttime_lst_k mean_nighttime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
-format hadisst_sst
-origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
-compiler tools/harvest/src/bin/hadisst_compiler.rs
-on earth 0 0 0
-ttl 2592000
-field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat_m45.bin
 format usgs_comcat_m45
 origin https://earthquake.usgs.gov/fdsnws/event/1/query
@@ -19561,6 +19585,14 @@ compiler tools/harvest/src/bin/usgs_comcat_compiler.rs
 at earth
 ttl 2592000
 field usgs_comcat_m45 usgs_comcat_m45_rate gaussian-inverse-square seismic-body count 2592000.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
+format hadisst_sst
+origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
+compiler tools/harvest/src/bin/hadisst_compiler.rs
+on earth 0 0 0
+ttl 2592000
+field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
 format tap
