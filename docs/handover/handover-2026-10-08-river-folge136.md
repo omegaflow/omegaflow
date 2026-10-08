@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: 8fa9fa338f6e51f47cc4ca393c201e68d47abea8c79d1f6690165f5a1f424210
+  sha256: 3140c80bfa66755856f816e858386cf07b3ac40e76a1674de41ca01359c386f9
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -23,6 +23,17 @@ Wort | Datum | Quelle
 „Die Förder-Bewerbungen bleiben LOCK … Send bleibt deine Hand" | 2026-10-07 | Operator (Session, River 127) — Prototype Fund (30.11.) + EMAP (06.11.) bleiben LOCK
 „auf jeden fall agnostoisch dein vorgänger hat doch schon eine umfangreiche gibt und bias untersuchung gemacht ist die schon wiedre vergessen?" | 2026-10-07 | Operator (Session, River 129) — Wort für den agnostischen Membran-Edit
 „bitte ratsfragen auch vor ALLE UI chats bringen" | 2026-10-07 | Operator (Session, River 130) — Ratsfragen vor alle UI-Seats; als Regel in `AGENTS.md` eingetragen
+„um hast du das nicht gerabeitet? span-aperture-membran (Form = Architektur-Frage → Rat-Linse; Netz nötig), E0061-End-zu-End-flattening (CDN/Netz), em nmgy, CI-Verifikation, Membran-Instrumentierung, Flyby, Membran-Agnostik" | 2026-10-08 | Operator (Session, River 136) — fordert die Nacharbeit der als „wartend" abgelegten Punkte
+„das netzt steht" | 2026-10-08 | Operator (Session, River 136) — UI-Runde fahren
+„braucht es die anderen stimmen?" | 2026-10-08 | Operator (Session, River 136) — UI-Unterbau des Rat-Verdikts
+„aber was ist A = A mountain ist kein fremder er ist eingach nur eine stimme" | 2026-10-08 | Operator (Session, River 136) — A=A entscheidet, nicht Eigentum; die fünf Stimmen sind eine Linse, keine Parteien
+„1" | 2026-10-08 | Operator (Session, River 136) — `span` descopen + Empfänger-Apertur als Query-`extent` bauen
+„aber ist span immer noch das mittel der wahl?" | 2026-10-08 | Operator (Session, River 136) — `span` als Mechanismus hinterfragt
+„auch das kannst du mit wissenschat rat und frontier klären" | 2026-10-08 | Operator (Session, River 136) — Form-Frage über Wissenschaft + Rat + Frontier
+„bedenke dass du in trying open einige modelle hast" | 2026-10-08 | Operator (Session, River 136) — Tryingopen-Modelle in die Runde
+„das ist nicht die wissenschaft weisst du überhaupt wie mächtig archive search mittlerweile ist?" | 2026-10-08 | Operator (Session, River 136) — volle `archive_search`-Breite (`--all`)
+„ok hast du an die nächste session detailliert übergeben?" | 2026-10-08 | Operator (Session, River 136) — Übergabe-Prüfung
+Verbatim dieser Session: `state/operator-gespraeche/2026-10-08-river.md`.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge133.md` §Operator-Wort-Register — gefaltet, nicht kopiert. Verbatim: `state/operator-gespraeche/2026-10-07-river.md`.
 
 ## Träger (Prosa, eigene)
@@ -41,14 +52,14 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-08, Rat der fünf Stimmen) Verdikt **(b)**: die Empfänger-Apertur (`state/operator-gespraeche/2026-10-06-river.md:70`, „es geht um alle radiatoren") wirkt **empfangs-seitig**, nie im Record-`extent`; der Record-`extent` bleibt quellen-eigen. Gerade weil der Record von *allen* Radiatoren gelesen wird, trüge eine Empfänger-Apertur im Draht N Blicke für eine Quelle (Observer-as-vantage). Gebaute Empfangs-Orte: `static/membrane.html:467-494` (`state.lvl[ft·2+ap]`, Bild), `src/mathematikerin/omega.rs:361` (`frame.aperture = field_permeability · tone_scale`, Ton/Vibration), `src/mathematikerin/actuators.rs:73-79` (`Σω·aperture`). Der **HID-Pfad ist ungemessen** (kein HID-Aktuator im Baum) → `pending`.
 - **`span` descoped (2026-10-08, Operator-Wort „1"):** die per-Quelle `span`-Kappung ist vollständig entfernt — `SourceConfig.span` (`types.rs`), die `span`-Direktive + 2 Tests (`parse.rs`), `extent_eff` + `anchor`-Parameter + Test (`channels.rs`), 9 `anchor(...)`-Call-Sites (`main_flow.rs` ×4, `relay.rs` ×2, `tests.rs` ×3, 30 Fixtures), 2 Tool-Fixtures (`volume_builder.rs`, `field_te_query.rs`). `cargo check` 0/0; `cargo build -p omegaflow-utils --bin volume_builder` + `-p omegaflow-measure --bin field_te_query` grün. Doc `:33` auf den Zustand gezogen. Grund: `span` war nie deklariert (0 Treffer) und konnte eine Empfänger-Apertur nicht tragen (pro-Quelle statisch, im Record = Observer-as-vantage).
-- **Braucht:** die Empfänger-Apertur als **Query-`extent`** bauen — ein Receiver-Term **neben** `sample.extent` in `src/archivar/fetch.rs:521-563` (das `limit`) und `src/archivar/spatial.rs:932-934` (die `reach`), nie hinein; plus den HID-Aktuator-Term.
+- **Braucht (nächster Schritt nächste Session):** die Empfänger-Apertur als **Query-`extent`** bauen. Erster begrenzter Schritt: `ReceiverAperture { per (force_type, class) -> Option<Length> }` (18 Slots) + eine **zweite Schranke** in `record_in_enclosure` (`src/archivar/fetch.rs:543-557`) — Zulassung nur, wo **beide** Hüllen gelten (Schnitt); der Wert kommt aus der Empfänger-Weltlinien-Deklaration (`at`/`on`, `parse.rs:247`), die `(force,class)`-Tafel nur als Fallback. `spatial.rs:921-934` (geteilte `reach`) bleibt unangetastet. Danach: die per-Kraft-Wert-Ableitung benennen (Vibration/Serial/HID `pending`); plus den HID-Aktuator-Term.
 - **UI-Unterbau:** (gemessen 2026-10-08, via `state/stimmen/2026-10-08_river-ui_apertur-extent-runde.md`) Rat + **sechs distincte Linien konvergieren auf (b)** — Qwen3.7-Plus · Duck/GPT-6 Luna · Claude/Sonnet 5.5 · Tryingopen/DeepSeek V4 Pro (1.7T) · Tryingopen/GLM 5.3 (753B) · Tryingopen/Qwen3.8 2.4T; Z.ai/GLM-5.3 nativ `pending` (Deep-Think-Max ohne Antwort). Die saubere Form (Claude/GLM/Qwen3.8): **die Query trägt ihren eigenen, aus der Apertur abgeleiteten Extent**; der Record-`extent` bleibt die quellen-eigene Obergrenze (Broad-Phase/Index); beide treffen sich nur im Schnitt (Join). Verdikt (b) unterbaut.
 - **Form der Empfänger-Apertur (Wissenschaft + Rat + UI + Open-Weight, 2026-10-08):** Quelle des Werts = **(1)** deklarierte Eigenschaft der Empfänger-Weltlinie (`parse.rs:247`), statisch/reproduzierbar; **Ort** = zweite Schranke **neben** `sample.extent` in `record_in_enclosure` (`fetch.rs:543-557`, Schnitt: Zulassung nur wo **beide** Hüllen gelten; `spatial.rs:921-934` geteilt-unangetastet); **Schicht** CPU/std-only (nie `frame.aperture`/`state.lvl`); Name `receiver_aperture`/`aperture_class`. **Refinement (GLM 5.3 + Qwen nativ):** die `(force_type, class)`-Tafel (Kandidat 3) darf **nur** Default/Fallback sein, nie die Quelle der Wahrheit. Rat + Duck/Qwen/Claude/Frontier + DeepSeek V4 Pro/Qwen3.8/GLM 5.3 = (1); Z.ai `pending`. **Wissenschaft** (`archive_search --all`, 51 Modi): die Literatur-Linie **Data Provenance / Query Rewriting / Dependency View** deckt die Form — `Perm: Processing Provenance and Data on the Same Data Model through Query Rewriting` (ICDE 2009), W3C **PROV-DM**, `Provenance as dependency analysis` (Cheney/Ahmed/Acar), **provenance-based data skipping** (query-seitige Über-Approximation, die Datensätze überspringt), `Query-Dependent Feature Weighting`; dazu IVOA Spectrum Data Model 1.1. Die Form = eine query-seitige, empfänger-abhängige Annotierung/Rewrite, die die Basis nie mutiert. Runde: `state/stimmen/2026-10-08_river-ui_apertur-quelle-runde.md`. Riss (stehen gelassen): Deklaration vs. Operator-Gestus.
 
 ### Membran — Kraft-/Kanal-Agnostik (wartend auf den Render)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der erste nicht-schwarze Render gegen den deployten `static/membrane.html`.
-- **Lage:** (gemessen 2026-10-08) Der Contract `docs/concepts/archivar-mathematikerin.md:33` trägt den `span`-Self-cap; der `span`-Konsument `extent_eff` ist gebaut. `pages-deploy 37685135772` success an `c28ce137d`. `ci-gate 37817248866` läuft (in_progress, 18:42Z).
+- **Lage:** (gemessen 2026-10-08) Der Contract `docs/concepts/archivar-mathematikerin.md:33` trägt die Empfänger-Apertur als Query-Term; `span` ist descoped. `pages-deploy 37685135772` success an `c28ce137d`. Der Start-Anker fehlt weiter (schwarzes Feld/`scale 0`).
 - **Blockade:** der Start-Anker (schwarzes Feld/`scale 0`) — das Feld braucht einen Anker mit finiter `extent`.
 - **Braucht:** den deployten Render prüfen (`archive_search --playwright <pages-url>`), sobald die `ci-gate`-Kette grün ist.
 
@@ -123,4 +134,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 136):
 - `docs/handover/handover-2026-10-08-river-folge136.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge135.md` (Move, bereits committet)
 
-## Burn: open 0.0000 · close 0.0824 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · cap 0.15 Grund: Ein-Pass-Atom (Fold der adressierten Blöcke + E0061-End-zu-End + Membran-Instrumentierung + Rat-Verdikt + Flyby-OMNI2 + dropped-gate-Ursache) · kein pro/max
+## Burn: open 0.0340 · close 0.4591 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — Taucher zusätzlich (Rat 2× 0.0305, grind-flash `span`-Descope 0.0259) ≈ 0.515 gesamt (über dem harten Deckel 0.5) · cap 0.50 Grund: Ein-Pass-Atom mit voller Wissenschafts-/Rat-/Frontier-/Open-Weight-Runde (zwei UI-Runden, 12+ Seats) + `span`-Descope + `--all`-Recherche (51 Modi) · kein pro/max
