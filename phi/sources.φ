@@ -1626,6 +1626,14 @@ at earth
 ttl 86400
 quantity cdaweb_roti_tecu_min cdaweb_roti_tecu_min inverse-square scale TECU/min 900 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.impc.dlr.de/impc_roti.bin
+format impc_roti
+origin https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
+compiler tools/harvest/src/bin/impc_roti_compiler.rs
+at earth
+ttl 3600
+quantity impc_roti_tecu_min impc_roti_tecu_min inverse-square scale TECU/min 60 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_tec.bin
 format cdaweb_tec
 origin https://cdaweb.gsfc.nasa.gov/pub/data/gps/tec15min_igs/

@@ -230,7 +230,8 @@ fn main() {
 mod tests {
     use super::*;
 
-    const TAP_FIXTURE: &str = "inventar https://example.org/tap\ncatalog tbl_a scm table\ncatalog scm.tbl_b scm table\n";
+    const TAP_FIXTURE: &str =
+        "inventar https://example.org/tap\ncatalog tbl_a scm table\ncatalog scm.tbl_b scm table\n";
     const AGG_FIXTURE: &str = "# fixture\nid1 | First title\nid2 | Second | with pipe\n";
 
     #[test]
@@ -262,7 +263,8 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("tap_index_merge_test_{}", std::process::id()));
         std::fs::create_dir_all(&dir).expect("create fixture dir");
         std::fs::write(dir.join("tap_index_fixture.φ"), TAP_FIXTURE).expect("write tap fixture");
-        std::fs::write(dir.join("re3data_catalog.φ"), AGG_FIXTURE).expect("write aggregator fixture");
+        std::fs::write(dir.join("re3data_catalog.φ"), AGG_FIXTURE)
+            .expect("write aggregator fixture");
 
         let entries = collect_entries(&dir);
         assert_eq!(entries.len(), 4);
