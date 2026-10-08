@@ -3,7 +3,7 @@
   session: Mountain-Folge 277
   class: handover
   date: 2026-10-08
-  sha256: 910ca023dd0a48c9f50a156ac3c759c41d228cee4b1a4db33a565eb982f88b88
+  sha256: e90ca374d66cb5b8f953f505c6529688e37b1d8148ab21f4b216bd020aed6fcb
   status: live
 -->
 # Handover — Mountain-Folge 277 (2026-10-08)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 gemessen 2026-10-08T14:3xZ). Diese Session konsumierte
 `handover-2026-10-08-mountain-folge276.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.120 · cap 0.50 — Grund: line + Bau zweier Archivar-Reader (`superdarn_cpcp`/`ssusi_aurora`) + Wägung der Route-Admissionen; kein pro/max. (gemessen `session_burn`, Session „Mountain-Übergabe in einem Pass abarbeiten")
+## Burn: open 0.0000 · close 0.108 · cap 0.50 — Grund: line + Bau zweier Archivar-Reader (`superdarn_cpcp`/`ssusi_aurora`) + Wägung der Route-Admissionen; kein pro/max. (gemessen `session_burn`, Session „Mountain-Übergabe in einem Pass abarbeiten")
 
 ## Operator-Wort-Register
 
