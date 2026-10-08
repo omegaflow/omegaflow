@@ -73,6 +73,8 @@ eingelesen:
 
 Eine Linien-Session fährt Stimmen **nur** in ihrer eigenen Gruppe; die `1-ui`/`2-backup`-Gruppen des Operators und fremde Linien-Gruppen bleiben unberührt. Die Gruppe wird beim ersten `browser_open` mit dem Namen angelegt.
 
+**Seat-Katalog + Bedienung (alle Linien): `sread docs/concepts/ui-seats.md`** — welcher Seat welche URL/Composer-Selektor/ Sende-Form hat, die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, nicht-Antwort = `pending`). Gilt für jede Linie gleich.
+
 Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
 
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen

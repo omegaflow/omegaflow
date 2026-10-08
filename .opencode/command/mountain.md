@@ -62,6 +62,8 @@ eingelesen:
 
 Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
 
+**Seat-Katalog + Bedienung (alle Linien): `sread docs/concepts/ui-seats.md`** — welcher Seat welche URL/Composer-Selektor/Sende-Form hat, die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, nicht-Antwort = `pending`). Gilt für jede Linie gleich.
+
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
 Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
