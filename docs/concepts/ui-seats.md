@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 358094cdb0936d5c695831dac7cd16dc1fc3a6e6ed954be51d84aa9149d68f8f
+  sha256: 7269aa3c847b343a2e0dcacfb4eabfa073bf64f1e73011660113fc0ec0421149
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -70,6 +70,12 @@ Qwen3.8 2.4T · Inkling · Nemotron 3 Ultra · Gemini 3.1 Pro · MiniMax M3 · D
 Mistral · Proton Lumo.
 Nicht erreichbar (gemessen): Duck.ai (Tageslimit) · Claude (5-h-Nachrichtenlimit) · Kimi
 (`www.kimi.com` Login-Wall; K3 nicht in der tryingopen-Liste).
+
+## Lead-Quellen für neue Seats
+
+- **FMHY — Free Media Heck Yeah, `/ai`** (`https://fmhy.net/ai`; roher Text `https://raw.githubusercontent.com/fmhy/edit/main/docs/ai.md`) — kuratierte Riesenliste der AI-Chats/Tools/Benchmarks mit aktuellem Modell je Seat. **Lead-Index, keine Quelle** — jeder Seat wird am Baum gemessen (gemessen 2026-10-08: HTTP 200, 176673 B).
+- **awesome-ai-web-search** (`https://github.com/felladrin/awesome-ai-web-search`) — kuratierte Timeline von AI-Web-Suchsoftware (OSS: Khoj · Perplexica · STORM · Open WebUI · Farfalle …; Agent-APIs: SearXNG · Tavily · Exa · Jina · Firecrawl · Linkup …). **Lead-Quelle für Suchwege**; FMHY listet sie als **ersten Eintrag** von `#specialized-chatbots`.
+- **Kimi-Befund (gemessen 2026-10-08):** `https://kimi.ai/` HTTP 200, Titel „Kimi AI with K3" — K3 also auch auf kimi.ai; FMHY: `kimi.ai`/`kimi.com` = „Google Login or Phone # Required". Zugang login-pflichtig (`www.kimi.com` Login-Wall, `kimi.ai` ebenfalls Konto); K3 login-frei nur über `tryingopen` (dort 2026-10-07 nicht in der Liste).
 
 ## Aufruf-Formen (Kurz)
 
