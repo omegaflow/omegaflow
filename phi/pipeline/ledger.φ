@@ -86,3 +86,7 @@ note Brazilian VO = Astronomy (Paper 10.1109/eScience.2014.11) — 2026-10-07 da
 ausstehend
 kandidat https://data.inpe.br/big/
 note Brazilian live INPE BIG — STAC/GeoTIFF, em; 2026-10-07 HTTP 200 (192329 B), Portal/SPA, kein Einzel-Asset; eigener Kandidat getrennt vom declined benannten-VO-Riss (declined_sources.φ:1443).
+
+disponiert
+nachlauf tools/harvest/src/bin/cors_compiler.rs
+note cors_compiler ungewirter Duplikat-Pfad zu cors_rinex — kein Workflow ruft ihn (cors-cdn.yml:61 → cors_rinex_compiler), kein Reader-Arm (extract.rs:45; sources.φ:10618). river-136 Vorschlag descoped; gemessen 2026-10-08.
