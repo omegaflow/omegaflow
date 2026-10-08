@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 3bb36878905fe301605b39aea2f0dff67ef4657e2cc778ee9604907d644b1ce2
+  sha256: 0baa4e7567d9f79ab3de4f79d945c046b27b5f58c50ca254f7434fb0383048b6
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -50,6 +50,22 @@ Rolle) steht im AGENTS.md; diese Karte trägt das **Wie**.
 | DeepSeek Chat | `https://chat.deepseek.com/` | `textarea[placeholder*="Message DeepSeek"]` | Enter | `<line>-ui` |
 | Mistral | `https://chat.mistral.ai/` | `div[contenteditable="true"]` | Enter | `<line>-ui` |
 | Proton Lumo | `https://lumo.proton.me/` | `textarea[placeholder*="Frag alles"]` | Enter | `<line>-ui` |
+
+## Auth-Route-Seats (Gretchenfrage gemessen 2026-10-08)
+
+Über die **Auth-Route** (Operator-Profil-Browser bzw. Konto) erreichbar; Auth ist **kein**
+Ausschlusskriterium (nur kommerziell/illegal). Probe = `state/mycelium/philosophy-probe-2026-10-05.txt`
+(korrekt `PHIL: absent,null-echt,pending,nein,b,fabrication`).
+
+| Seat | URL | Composer | Senden | Fähigkeit | Tempo |
+|---|---|---|---|---|---|
+| **Perplexity** | `https://www.perplexity.ai/` | `div[contenteditable]` (Cloudflare via Bridge) | Enter | **4/4** ✅ | **3 s** (Site „Recherchiert 3 Sek.") |
+| **Sakana Chat** | `https://chat.sakana.ai/` | `textarea[placeholder*="Ask anything"]` | Enter | **4/4** ✅ | `pending` (kein Turn-Stempel) |
+| SciSpace | `https://scispace.com/` | textarea („Research task input") | — | `pending` | **Login-Wall** (Sign-up-Dialog vor dem Chat) |
+| Gemini Notebook | `https://notebooklm.google.com/` | — | — | `pending` | Dokument-Chatbot, kein freier Composer |
+
+Perplexity und Sakana sind damit **4/4-Seats** (Perplexity Deep Research ist science-relevant);
+SciSpace/Gemini Notebook bleiben Kandidaten (Auth-Route/Dokument-Bindung).
 
 ## Geteilte Open-Weight-Seats — `tryingopen.com` (`open-weight-ui`)
 

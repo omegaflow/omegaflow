@@ -2,7 +2,7 @@
   title: Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
   class: survey
   date: 2026-10-08
-  sha256: 7f7204c5cf805ad649f7d5ca57a619dc06f5df9b3bfb72ca66abb1d92ebf186d
+  sha256: f23ea3992a67bab98a926a032a8c3c1d2ecfe1b3736f1725dff98625f2f20093
   status: live
   see-also: docs/concepts/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -78,10 +78,11 @@ MathArena · Artificial Analysis), `paper2gal`, `hyperspace`.
 5. **Sci-Bot (Sci-Hub)**: Grauzone (UrhG/DMCA) — **Rat-Verdikt vor jeder Berührung**, nie
    blind wiren.
 6. **NVIDIA NIM** (keyless Modelle/Endpoint): als Seat **und** mögliche API-Quelle messen.
-7. **Perplexity · SciSpace · Sakana · NotebookLM** (Auth-Route, **kein** Ausschluss): über
-   den Operator-Profil-Browser öffnen (Cloudflare-Challenge/Bot-Block umgeht der Bridge),
-   Gretchenfrage (Fähigkeit 4/4 + Tempo), dann als Research-Seats in `ui-seats.md`. Perplexity
-   Deep Research ist science-relevant; SciSpace/Sakana sind Paper-/Lab-Chats.
+7. **Perplexity · Sakana — 4/4-Seats (Gretchenfrage gemessen 2026-10-08, Profil-Browser):**
+   Perplexity `PHIL: absent,null-echt,pending,nein,b,fabrication` (4/4, „Recherchiert 3 Sek.");
+   Sakana Chat 4/4 (Tempo `pending`, kein Turn-Stempel). Beide in `ui-seats.md` aufgenommen.
+   **SciSpace** = Login-Wall (Sign-up-Dialog vor dem Chat → `pending`), **Gemini Notebook** =
+   Dokument-Bot ohne freien Composer → beide Auth-Route-/Dokument-Kandidaten, kein Ausschluss.
 
 ## Träger
 
