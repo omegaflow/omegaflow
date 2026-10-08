@@ -23,25 +23,29 @@ note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-o
 note gap-Token point-source-kernel — Punkt-/Identitäts-Kernel ohne räumlichen Gradienten (Slot 2, kernel_id 2); Träger für punkt-/medienunabhängige Quellen (eionet_cdr); Arm steht (extract.rs:1530 "point" => Some(2); shaders.rs:49/:87).
 note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²) ohne physikalische Kraft; braucht einen quantity_type-/Kovariat-Träger außerhalb Ω (kein 10. force_type); Arm fehlt.
 
-pending
+blocked parser-def
 url https://psa.esa.int/psa-tap/tap/
-reg https://www.cosmos.esa.int/web/psa/contact-us
+gap bc-mpo-more
 note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/89517 proprietär), data?PRODUCT → 403, kein Konto-Gate; Freigabe-Anfrage an psahelp@cosmos.esa.int 2026-09-18. bc_mpo_mag anonym offen (5020 Zeilen seit 2024-03-12).
 
-pending
+blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
+gap tracking-doppler
 note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (mail_ledger.φ:207) → Antwort offen.
 
-pending
+blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
+gap mariner-rst
 note Mariner 10 Radio-Science/Tracking (762 7-Track-Tapes, SDDPT 73-085A-0008). 2026-09-17: Gesamtkorpus request-only. Teilroute: SPDF red_tele_signal_data_venus_occlt/ — 9 .tar à ~19,5 MB anonym, PSPA-00316. Anfrage 2026-09-16 (:208), Antwort offen.
 
-pending
+blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
+gap viking-tracking
 note Viking 1/2 Orbiter Radio Science Tracking (Doppler+Range). 2026-09-17: PSPG-00011 „Data Identified but not Received"; NSSDC-FTP anonym nicht bedienbar (→ SPDF 404); PDS-PPI 0. Anfrage 2026-09-16 (:209), Antwort offen.
 
-pending
+blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
+gap juno-efb
 note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
 
 pending
@@ -53,57 +57,28 @@ url https://regards.cnes.fr/api/v1/rs-order
 origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml
 note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
 
-pending
-url https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Cookie-Auth; GWT3F_L1B 132 Dateien, GWT3W_L1B 434; Probe 17 440 691 B HDF5. Arme + gosat-cdn.yml (fae4a5081). 36283215548 rot: Leerfenster als Overflow fehlklassifiziert; Empty/Overflow getrennt (2026-09-27); Re-Dispatch offen.
-
-pending
-url https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa HAPI 1.1 CSV: 200; Arm hapi_csv.rs + das2_iowa_compiler.rs registriert (sources.φ:16370), Workflow das2-iowa-cdn.yml steht (2026-09-30). Offen: Feld-Verdikt (kein field im Block).
-
-pending
-url https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206; Konto Operator-Hand; clpds_compiler.rs + clpds-cdn.yml + gras_2c-Reader stehen (sources.φ:9176). Offen: Portal-Ernte. future-folge149.
-
-pending
-url https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild, kein Skalarfeld → Bildquelle ohne `field` (Rat, analog hips_png). Compiler gefixt (deterministisch, --id/--limit, Refresh, Aggregat-Refusal). Block: Workflow + Loader-Arm + Frame-Bundle (Mycelium).
-
-pending
+blocked parser-def
 url https://superdarn.ca/data-download
-note MAP-Grid RST (DMap) — 2026-10-05: Zugang via Globus (`GLOBUS_ID_USER/PASS`, `wartend.φ:8 superdarn-af68c4f1`, Aufnehmer mycelium) vorhanden → Maschinen-Schritt, kein Operator-Akt. ascii nur FITACF; MAP-RST nur Globus/BAS-Mirror (2026-10-04 gemessen).
+gap dmap-map-grid
+note MAP-Grid RST (DMap) — 2026-10-05: Globus-Zugang (`GLOBUS_ID_USER/PASS`, wartend.φ:8 superdarn-af68c4f1, Aufnehmer mycelium); ascii nur FITACF, MAP-RST nur Globus/BAS-Mirror. Arm fehlt.
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
 note Akatsuki VCO-rs (JAXA/ISAS) — sources.φ:27774 (format pds4_fixed_width, compiler pds4_binary_compiler); Workflow vco-rs-cdn.yml steht. Die frühere Note nannte falschen Arm/Workflow (Riss). 2026-10-04.
 
-pending
+blocked parser-def
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
+gap kaguya-lrs
 note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
-
-pending
-url https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
-note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); Norder7/Dir0/Npix0.png 200 sha256 aa6318fe…; MOC.fits 404. Arm steht (hips.rs+hips_png_compiler.rs). Offen: Tree-Ernte, CDN, Sample.
-
-pending
-url https://pds.shadowcam.im-ldi.com/derived/
-note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; PDS4-Arm steht (pds4.rs); Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
-
-pending
-url https://gportal.jaxa.jp/
-note JAXA G-Portal — sources.φ:10370; compiler + jaxa-gportal-cdn.yml stehen; Katalog-Record trägt nur Footprint-Zentren (lon/lat), kein Messwert → Reader descoped (Rat 2026-10-06). Offen: Record-Download, Quota. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
 note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn (cses-{lap,efd,hpm,scm}-Compiler + Workflows, sources.φ 27 Z.); limadou-Host ohne Rohdatenpfad → descope-Kandidat. future-folge167.
 
-pending
+blocked parser-def
 url https://www.leos.ac.cn/
+gap leos-cses
 note LEOS (CSES) — 2026-10-08 re-measured: direct HTTP 206 (1 B); survey-2026-10-08-open-sources-delta.md:75/133; --jina renders app; CSES payloads not in sources.φ (sgrep leos.ac.cn=0; :17149 is Vega 2 MISCHA). Mountain admission.
-
-pending
-url https://clpds.bao.ac.cn/
-note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13 207 B); clpds_compiler.rs + clpds-cdn.yml gebaut (catalogue 98 + files 568 396); Annex-Arm --with-annex gebaut, Workflow ruft ihn noch ohne. PDS3-Reader steht. future-folge226.
 
 pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
@@ -112,10 +87,6 @@ note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-04: generischer `
 pending
 url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabilities,sync} je 200 per curl (kein Browser); Dateisystem /data/ 200; Arm tap_compiler passt. future-folge226.
-
-pending
-url https://data.kasi.re.kr/
-note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
 
 pending
 url https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=J/A+A/633/A99/members
@@ -147,67 +118,25 @@ pending
 url https://zenodo.org/record/4444068
 note Neutralpunkt-GIC (Kellerman 2021, GIC-Zielkanal §F) — 2026-10-06: Zenodo 200, 7 anonyme Knoten, CC-BY 4.0; +7446370 (Portugal) 200; Arm: Zenodo-CSV-Reader.
 
-pending
-url https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
-note ROTI (GIC Obs. §D) — 2026-10-08: data.impc.dlr.de/…/latest_D.json 200 (1.18 MB), 2D-Gitter 180×90 ohne per-Zelle-Koordinaten, Snapshot; cdaweb_roti.rs (CRTI) nutzbar, impc_roti_compiler.rs fehlt; Orientierung/Lizenz ungemessen. pending.
-
-pending
-url https://themis.igpp.ucla.edu/gmag/
-note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200 (http→https 301); HAPI-Arm steht (INTERMAGNET), Dataset-ID/Parameter ungemessen.
-
-pending
-url https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE
-note Wind SWE/MFI (GIC-Replikation §A) — 2026-10-06: 200; HAPI-Arm steht, Dataset-ID ungemessen.
-
-pending
+blocked parser-def
 url http://themis.ssl.berkeley.edu/data/themis/
+gap themis-tail
 note THEMIS Tail (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
 
-pending
+blocked parser-def
 url https://lasp.colorado.edu/mms/sdc/public/
+gap mms-magnetosheath
 note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
 
-pending
-url https://www.ncei.noaa.gov/data/poes-metop-space-environment-monitor/
-note POES/MetOp MEPED (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
-
-pending
-url https://ssusi.jhuapl.edu/
-note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
-
-pending
+blocked parser-def
 url https://space.fmi.fi/image/
+gap aurora-keogram
 note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-06: 200, CC BY 4.0; Bild-/Keogramm-Arm fehlt.
-
-pending
-url https://supermag.jhuapl.edu/products/
-note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18407-18431), Onset-Produkt neu.
-
-pending
-url https://cdaw.gsfc.nasa.gov/CME_list/
-note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-06: 200; ASCII-Katalog, kein Arm.
-
-pending
-url https://wdc.kugi.kyoto-u.ac.jp/
-note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-06: Host 200, aeasy.cgi 404; Host nur dead:832/declined:4552.
-
-pending
-url https://superdarn.usask.ca/convection-maps
-note SuperDARN CPCP (GIC §B) — 2026-10-08: Bestand 10374021 (Arm+WF stehen → ledger ausstehend); Zenodo 10875060 superDARN.zip 200 (32.6 MB, YYYYMMDD.north.nc NetCDF-4 map.pot.drop, CC-BY-4.0), kein .map2; superdarn_cpcp_nc_compiler.rs nötig. pending.
-
-pending
-url https://ds.iris.edu/ds/products/emtf/
-note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-10-06: 206; kein Arm.
 
 pending
 url https://geomag.usgs.gov/ws/data/
 note USGS-Geoelektrik E-Feld mV/km (GIC-Replikation §A) — 2026-10-06: 307→400; Magnetik ist declined_sources.φ:2176 (INTERMAGNET-Dup.), E-Feld neu.
 
-pending
-url http://awesome.ucsd.edu/
-note Sub-ionosphärische VLF AWESOME (GIC-unabhängige Observable §D) — 2026-10-06: DNS tot (000), Wayback 503; unbelegt.
-
 blocked account
 url https://supermag.jhuapl.edu/services/data-api.php
 note SuperMAG SME/SMU/SML Index (GIC-Stufe-2) — 2026-10-08: data-api.php 206/1 B (user-gated, kein keyless Index-Pfad). Rat+Science 2026-10-08: abgeleiteter Index = quantity, nie em. Account future.
-
