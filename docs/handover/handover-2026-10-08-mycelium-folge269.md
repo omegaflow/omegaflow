@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 269 (2026-10-08)
-  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen.
+  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Zweite Fortsetzung („und bitte umsetzen"): `--oapen` (OAI-PMH) gebaut, `ocr_reader`-PDF-Pfad am echten PDF verifiziert, `--gfw`-SQL-/Geometry-Bug repariert; deps.dev `descoped`.
   class: handover
   date: 2026-10-08
-  sha256: a9d1e28b4c8b1db7cc90f31dab79f1684092c3ef94a078ecdb96d1df73d2802e
+  sha256: 631b9151006068bc7a3691ca0a2762dc83e8fdd49c687a40ef1c8b5f54c1aa14
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.000 · close 0.055 · cap 0.5 — Grund: Fortsetzungs-Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.0551): die vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) und die zwei Reader-Bins (ocr_reader/meta_reader) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf dieses Registers).
+## Burn: open 0.000 · close 0.12 · cap 0.5 — Grund: Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.1200): vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) + `--oapen` + zwei Reader-Bins (ocr_reader/meta_reader) per `grind-flash`-Tauchern gebaut; `ocr_reader`-PDF-Pfad und `--gfw`-SQL/Geometry live gemessen. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf).
 
 ## Operator-Wort-Register
 
@@ -43,6 +43,8 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „ist drin, allerdings korrigiert in GFW_API_KEY" | Quelle: diese Session. → `--gfw`-Auth passiert (Key akzeptiert).
 - 2026-10-08 | „bitte lasse agenten bauen ich möchte dass es in dieser runde umgesezt wird" (die FMHY-Runde-2-Bauspecs + OCR-Sidecars) | Quelle: diese Session. → 4 Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + 2 Bins (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut, live gemessen.
 - 2026-10-08 | „ja, Rat, Forschungsschicht und die Frontier-Stimmen" (VO-/Katalog-Durchsuchbarkeit) | Quelle: diese Session. → Rat + `archive_search` + Duck/Qwen/Claude gefahren; Form (c) gestuft.
+- 2026-10-08 | „falls du die GFW-SQL-Tabelle brauchst, das ist der einzige offene Feinschliff" | Quelle: diese Session. → `--gfw`-Fix: Multi-Wort-SQL, Default-Tabelle = Dataset, `geostore_id`/`geometry`(POST).
+- 2026-10-08 | „und bitte umsetzen" (die restlichen offenen FMHY-/Reader-Punkte) | Quelle: diese Session. → `--oapen`-Arm (OAI-PMH) gebaut; `ocr_reader`-PDF-Pfad am echten PDF verifiziert; deps.dev `descoped`.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -117,19 +119,19 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** Mountain-Admission.
 - **Braucht:** Admission → Manifestation/Compiler.
 
-### FMHY Runde 2 — Rest nach dem Bau (Operator-Wort 2026-10-08 „in dieser runde umsetzen")
-- **Status:** eigen | **Bindung:** eigen (OAI-Harvest)
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-08) **alle Bauspecs gebaut und live gemessen:** `--ngmdb` (ArcGIS `MapServer/0/query`, Browser-UA+`Range:0-131071`, akzeptiert 200/206) · `--rss-bridge` (`rss-bridge.org/bridge01`, `action=display&format=Json`, JSON Feed) · `--kiwix` (OPDS/Atom `opds.library.kiwix.org/catalog/v2/entries`, `rel=…acquisition/open-access`) · `--scrape` (`web.scraper.workers.dev`, `{result:{selector:[text]}}`); Sidecars `ocr_reader` (Tesseract+pdftoppm) + `meta_reader` (`exiftool -j`) gebaut, beide grün. Offen bleibt nur: **deps.dev** keyless, aber kein Freitext-Arm (`/systems/{s}/packages/{p}`) → `descoped` (gemessen); **OAPEN** nur OAI-Harvest (`library.oapen.org/oai/request`), keine Suchroute.
+### FMHY Runde 2 — abgeschlossen (Operator-Wort 2026-10-08 „in dieser runde umsetzen" + „und bitte umsetzen")
+- **Status:** gebaut | **Bindung:** eigen (tools/utils)
+- **Trigger:** der nächste `tools-build`-Lauf trägt Arme + Bins in den PATH-Wrapper
+- **Lage:** (gemessen 2026-10-08) **alle Bauspecs gebaut und live gemessen:** `--ngmdb` (ArcGIS `MapServer/0/query`, Browser-UA+`Range`, 200/206) · `--rss-bridge` (JSON Feed) · `--kiwix` (OPDS/Atom, `rel=…acquisition/open-access`) · `--scrape` · **`--oapen`** (OAI-PMH: `--oapen` → ListSets; `--oapen "set=<spec>"` → ListRecords `oai_dc`, handle+title; **keine Freitext-Suchroute** — OAPEN- und DOAB-REST liefern HTTP 403, nur OAI 200). Sidecars `ocr_reader` + `meta_reader`; **`ocr_reader`-PDF-Pfad am echten PDF gemessen** (`docs/reference/19860018816-api.pdf`, 6 Seiten: Seiten 1–3 mit korrekten Seitenmarken OCRt, Laufzeitgrenze des Tools bei Seite 4 — kein Panic; `pdftoppm`/`tesseract`-Pfade grün). **deps.dev** keyless, aber kein Freitext-Arm (`/systems/{s}/packages/{p}`) → `descoped` (gemessen).
 - **Blockade:** —
-- **Braucht:** OAPEN-OAI-Harvest verdrahten oder als keine-Suchroute abschließen; sonst nichts. CI verifiziert Parser je Arm.
+- **Braucht:** `gh workflow run tools-build.yml` nach dem Push; CI verifiziert Parser je Arm.
 
 ### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
 - **Status:** gebaut | **Bindung:** eigen (tools/utils)
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); `/shodan/host/search` verlangt **Membership**, free-tier = Host-Lookup. **`--gfw` live** — der Key (`GFW_API_KEY`) wird akzeptiert (Auth passiert; `x-api-key` + `Authorization: Bearer`); ein Raster-Dataset braucht `geostore_id`/`geometry`, die SQL-Tabelle ist dataset-spezifisch (`SELECT * FROM data …` lieferte „Must list exactly one table").
+- **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); `/shodan/host/search` verlangt **Membership**, free-tier = Host-Lookup. **`--gfw` live und repariert** — der Key (`GFW_API_KEY`) wird akzeptiert. **Fix (2026-10-08):** `kv_token` schnitt den `sql=`-Wert beim ersten Leerzeichen ab (`sql=SELECT`) → jetzt wird `sql=` als Rest der Query gelesen (Multi-Wort-SQL); Default-Tabelle = Dataset-Name (`SELECT * FROM <dataset> LIMIT n`); `geostore_id=` als Query-Param; `geometry=` (GeoJSON) per **POST** an `/dataset/{d}/latest/query/json` (GET akzeptiert laut OpenAPI nur `sql`/`geostore_id`). Gemessene Fehlerkette: „Must list exactly one table" → „Raster tile set queries require a geometry" → „Geostore must be a Polygon or MultiPolygon for raster analysis" — die Analyse erreicht die API.
 - **Blockade:** —
-- **Braucht:** je Dataset die korrekte Tabellenform + `geometry=`/`geostore_id=` (Raster) beim Aufruf; `--gfw "dataset=<d> sql=<select>"`.
+- **Braucht:** je Vektor-Dataset die passende Tabelle/Version; Raster braucht ein **Polygon**-`geometry=` (oder `geostore_id`). Ein Vektor-Stichproben-Dataset mit Rückgabe ist noch nicht getroffen (500 auf dem Polygon-Versuch) → `pending`, dataset-spezifisch. Aufruf: `--gfw "dataset=<d> [geometry=<geojson>] sql=<select>"`.
 
 ### VO-/Katalog-Durchsuchbarkeit (Operator-Frage 2026-10-08)
 - **Status:** Verdikt da (Rat + 3 Frontier), Bau offen | **Bindung:** eigen → mountain
