@@ -94,6 +94,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
         out.push(FieldConfig {
             key: name.to_string(),
             name: name.to_string(),
+            band_id: None,
             kernel,
             force,
             tau,

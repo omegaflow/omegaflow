@@ -484,6 +484,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -509,6 +510,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -530,6 +532,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     } else {
                         parts[1].to_string()
                     },
+                    band_id: None,
                     kernel: 0,
                     force: 0,
                     tau: 0.0,
@@ -550,6 +553,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -582,6 +586,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -655,6 +660,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -676,6 +682,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -697,6 +704,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -861,6 +869,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -920,6 +929,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
+                    band_id: None,
                     kernel: match kernel_id_for_force(f) {
                         Some(k) => k,
                         None => continue,
@@ -1110,6 +1120,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: if band_declared {
+                        Some(parts[10].to_string())
+                    } else {
+                        None
+                    },
                     kernel: k,
                     force: FORCE_TYPE_QUANTITY,
                     tau,
@@ -1242,6 +1257,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
+                    band_id: None,
                     kernel: k,
                     force: f,
 
@@ -1581,6 +1597,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[2].to_string(),
                     name: format!("fold_{}_{}_{}", parts[1], parts[2], parts[3]),
+                    band_id: None,
                     kernel: k,
                     force: f,
                     tau,
@@ -2443,6 +2460,11 @@ mod tests {
         assert!(
             fc.bin_width > 0.0,
             "the edges resolve to a positive bandwidth"
+        );
+        assert_eq!(
+            fc.band_id.as_deref(),
+            Some("DECam_g"),
+            "the band id persists on the parsed field"
         );
     }
 }

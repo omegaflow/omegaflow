@@ -67,6 +67,7 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
     FieldConfig {
         key: name.into(),
         name: name.into(),
+        band_id: None,
         kernel: 0,
         force: 0,
         tau,
@@ -114,6 +115,7 @@ fn pds3_label_column_joins_the_field_line_by_source_key() {
     let fc = FieldConfig {
         key: "BX PSSO".into(),
         name: "pds3_mischa_bx_pso".into(),
+        band_id: None,
         kernel: 0,
         force: 0,
         tau: 604800.0,
@@ -1362,6 +1364,7 @@ fn test_celestial_map_redshift_distance() {
             fields: vec![FieldConfig {
                 key: "discoverymag".into(),
                 name: "tns_transient_flux".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 3600.0,
@@ -1468,6 +1471,7 @@ fn test_extract_csv_zip_end_to_end() {
             fields: vec![FieldConfig {
                 key: "discoverymag".into(),
                 name: "tns_transient_flux".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 3600.0,
@@ -1771,6 +1775,7 @@ fn test_extract_cmap_dist_scale_kpc() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -1870,6 +1875,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -1964,6 +1970,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -2055,6 +2062,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -2154,6 +2162,7 @@ fn test_extract_cmap_pm_radvel_plx() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -2285,6 +2294,7 @@ fn test_extract_cmap_no_distance_skipped() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -2373,6 +2383,7 @@ fn test_extract_cmap_null_dist_skipped() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "comet_h_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -2666,6 +2677,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
             fields: vec![FieldConfig {
                 key: "HIflux".into(),
                 name: "alfalfa_hi_flux".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 604800.0,
@@ -4248,6 +4260,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
     let fc = FieldConfig {
         key: "em".into(),
         name: "em".into(),
+        band_id: None,
         kernel: 0,
         force: 0,
         tau: 60.0,
@@ -4549,6 +4562,7 @@ fn test_wind_waves_loader_respects_load_gate() {
     let fc = FieldConfig {
         key: "wind_waves_rad1".into(),
         name: "wind_waves_rad1".into(),
+        band_id: None,
         kernel: 0,
         force: 0,
         tau: 60.0,
@@ -4998,6 +5012,7 @@ fn test_erddap_argo_map_extract() {
             fields: vec![FieldConfig {
                 key: "4".into(),
                 name: "argo_temp_c".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -5720,6 +5735,7 @@ fn test_anchor_body_agnostic() {
         extracts: vec![Extract::Field(FieldConfig {
             key: "v".into(),
             name: "v".into(),
+            band_id: None,
             kernel: 1,
             force: 0,
             tau: 0.0,
@@ -5779,6 +5795,7 @@ fn test_anchor_body_agnostic() {
     let sensor = super::FieldConfig {
         key: "v".into(),
         name: "v".into(),
+        band_id: None,
         kernel: 1,
         force: 0,
         tau: 60.0,
@@ -5928,6 +5945,7 @@ fn test_anchor_applies_declared_unit() {
     let sensor = super::FieldConfig {
         key: "bz".into(),
         name: "imf".into(),
+        band_id: None,
         kernel: 1,
         force: 0,
         tau: 60.0,
@@ -6510,6 +6528,7 @@ fn test_fetch_dispatch_gate_admits_em_source() {
     let fc = FieldConfig {
         key: "flux".into(),
         name: "flux".into(),
+        band_id: None,
         kernel: 0,
         force: 0,
         tau: 60.0,
@@ -6550,6 +6569,7 @@ fn test_fetch_dispatch_gate_thermal_without_body_medium_is_absent() {
     let fc = FieldConfig {
         key: "temp".into(),
         name: "temp".into(),
+        band_id: None,
         kernel: 3,
         force: 5,
         tau: 60.0,
@@ -6809,6 +6829,7 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
     let fc = FieldConfig {
         key: "x".into(),
         name: "x".into(),
+        band_id: None,
         kernel: 0,
         force: 9,
         tau: 60.0,
@@ -7310,6 +7331,7 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
     let fc = FieldConfig {
         key: "wind".into(),
         name: "wind".into(),
+        band_id: None,
         kernel: 5,
         force: 7,
         tau: 60.0,
@@ -7872,6 +7894,7 @@ fn test_query_admits_surface_sample_within_window() {
     let sensor = FieldConfig {
         key: "TEMP".into(),
         name: "argo_dac_temp_c".into(),
+        band_id: None,
         kernel: 3,
         force: 5,
         tau: 604800.0,
@@ -8385,6 +8408,7 @@ fn test_diagnose_no_samples() {
             fields: vec![FieldConfig {
                 key: "properties.mag".into(),
                 name: "mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -8535,6 +8559,7 @@ fn test_ci_body_verdict() {
     ndk_src.extracts = vec![super::Extract::Field(super::FieldConfig {
         key: "m0".into(),
         name: "gcmt_scalar_moment_nm".into(),
+        band_id: None,
         kernel: 1,
         force: 3,
         tau: 6.0,
@@ -8719,6 +8744,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
             fields: vec![FieldConfig {
                 key: "velocity".into(),
                 name: "velocity".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 1.0,
@@ -8824,6 +8850,7 @@ fn test_map_vel_unit_and_tau_key_override() {
             fields: vec![FieldConfig {
                 key: "v".into(),
                 name: "flow_value".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 7.0,
@@ -9091,6 +9118,7 @@ fn test_fold_directive_parse_and_extract() {
                 FieldConfig {
                     key: "nh".into(),
                     name: "fold_mean_nh_sh".into(),
+                    band_id: None,
                     kernel: 0,
                     force: 6,
                     tau: 100.0,
@@ -9105,6 +9133,7 @@ fn test_fold_directive_parse_and_extract() {
                 FieldConfig {
                     key: "nh".into(),
                     name: "fold_diff_nh_sh".into(),
+                    band_id: None,
                     kernel: 0,
                     force: 6,
                     tau: 100.0,
@@ -9234,6 +9263,7 @@ fn test_keplermap_elements_to_icrs() {
             fields: vec![FieldConfig {
                 key: "H".into(),
                 name: "abs_mag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 100.0,
@@ -9566,6 +9596,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
             fields: vec![FieldConfig {
                 key: "v".into(),
                 name: "v".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 10.0,
@@ -9669,6 +9700,7 @@ fn test_flux_from_mag_manifests() {
             fields: vec![FieldConfig {
                 key: "mag".into(),
                 name: "cat_vmag".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 100.0,
@@ -9761,6 +9793,7 @@ fn test_map_lat_sign_lon_sign() {
             fields: vec![FieldConfig {
                 key: "1".into(),
                 name: "fireball_energy_e10j".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 3600.0,
@@ -9879,6 +9912,7 @@ fn test_mag_type_gating() {
             fields: vec![FieldConfig {
                 key: "mag".into(),
                 name: "quake_moment".into(),
+                band_id: None,
                 kernel: 0,
                 force: 3,
                 tau: 6.0,
@@ -11475,6 +11509,7 @@ fn fits_format_extracts_last_row() {
     let fc = FieldConfig {
         key: "FLUX".into(),
         name: "flux".into(),
+        band_id: None,
         kernel: 0,
         force: 0,
         tau: 604800.0,
@@ -11591,6 +11626,7 @@ fn tar_gz_yaml_format_extracts_member_last_row() {
     let fc = FieldConfig {
         key: "KBR1B.range_rate".into(),
         name: "gracefo_kbr_range_rate".into(),
+        band_id: None,
         kernel: 0,
         force: 4,
         tau: 86400.0,
