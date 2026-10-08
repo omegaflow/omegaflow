@@ -512,6 +512,7 @@ pub fn allowed_units_for_quantity(kind: u8) -> &'static [&'static str] {
         2 => &["millionths", "m2"],
         3 => &["dbz", "n-units", "nmgy", "db", "ppm"],
         4 => &["uj/sr", "w/m2/sr", "jy/sr", "nw/cm2/sr"],
+        5 => &["nt"],
         _ => &[],
     }
 }
