@@ -1766,6 +1766,217 @@ pub fn serpapi_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     }
 }
 
+pub fn oeis_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!("https://oeis.org/search?q={}&fmt=json", urlencode(query));
+    let headers = ["-H", "Accept: application/json"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = oeis_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — OEIS carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the OEIS response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — OEIS HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn oeis_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(rows) = v.as_arr() else {
+        return out;
+    };
+    for r in rows {
+        let Some(Json::Num(number)) = r.get("number") else {
+            continue;
+        };
+        let name = flatten(r.get("name").and_then(|n| n.as_str()).unwrap_or(""));
+        let data = flatten(r.get("data").and_then(|d| d.as_str()).unwrap_or(""));
+        let mut line = format!(
+            "url https://oeis.org/A{:06}\ttitle: {}",
+            *number as i64, name
+        );
+        if !data.is_empty() {
+            let clipped: String = data.chars().take(120).collect();
+            line.push_str(&format!("\tdata: {}", clipped));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn hal_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!(
+        "https://api.archives-ouvertes.fr/search/?q={}&wt=json&rows={}&fl=title_s,uri_s,doiId_s,publicationDate_s",
+        urlencode(query),
+        max
+    );
+    let headers = ["-H", "Accept: application/json"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = hal_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — HAL carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the HAL response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — HAL HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn hal_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(docs) = v
+        .get("response")
+        .and_then(|r| r.get("docs"))
+        .and_then(|d| d.as_arr())
+    else {
+        return out;
+    };
+    for r in docs {
+        let link = r.get("uri_s").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = match r
+            .get("title_s")
+            .and_then(|t| t.as_arr())
+            .and_then(|a| a.first())
+        {
+            Some(Json::Str(s)) => flatten(s),
+            _ => String::new(),
+        };
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        let doi = r.get("doiId_s").and_then(|d| d.as_str()).unwrap_or("");
+        if !doi.is_empty() {
+            line.push_str(&format!("\tdoi: {}", doi));
+        }
+        let published = r
+            .get("publicationDate_s")
+            .and_then(|p| p.as_str())
+            .unwrap_or("");
+        if !published.is_empty() {
+            line.push_str(&format!("\tpublished: {}", published));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn wiby_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!("https://wiby.me/json/?q={}", urlencode(query));
+    let headers = ["-H", "Accept: application/json"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = wiby_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Wiby carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Wiby response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Wiby HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn wiby_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(rows) = v.as_arr() else {
+        return out;
+    };
+    for r in rows {
+        let link = r.get("URL").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("Title").and_then(|t| t.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        let desc = flatten(r.get("Description").and_then(|d| d.as_str()).unwrap_or(""));
+        if !desc.is_empty() {
+            line.push_str(&format!("\tdescription: {}", desc));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn ia_search_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!(
+        "https://archive.org/advancedsearch.php?q={}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=mediatype&rows={}&output=json",
+        urlencode(query),
+        max
+    );
+    let headers = ["-H", "Accept: application/json"];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = ia_search_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!(
+                        "absent — the Internet Archive carries no entry: {}",
+                        query
+                    ));
+                }
+                out
+            }
+            None => vec!["pending — the Internet Archive response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!(
+            "pending — Internet Archive HTTP {}",
+            f.status_text()
+        )],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn ia_search_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(docs) = v
+        .get("response")
+        .and_then(|r| r.get("docs"))
+        .and_then(|d| d.as_arr())
+    else {
+        return out;
+    };
+    for r in docs {
+        let id = r.get("identifier").and_then(|i| i.as_str()).unwrap_or("");
+        if id.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let mediatype = r.get("mediatype").and_then(|m| m.as_str()).unwrap_or("");
+        let mut line = format!("url https://archive.org/details/{}\ttitle: {}", id, title);
+        if !mediatype.is_empty() {
+            line.push_str(&format!("\tmediatype: {}", mediatype));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
 pub fn linkup_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — LINKUP_API_KEY absent from .secrets.local/.env".to_string()];
@@ -1931,6 +2142,10 @@ const QUERY_MODES: &[&str] = &[
     "firecrawl",
     "searchapi",
     "serpapi",
+    "oeis",
+    "hal",
+    "wiby",
+    "ia-search",
     "datacite",
     "zenodo",
     "wayback",
@@ -2146,6 +2361,10 @@ pub fn run_lines(
                 )],
             }
         }
+        "oeis" => oeis_lines(query, max),
+        "hal" => hal_lines(query, max),
+        "wiby" => wiby_lines(query, max),
+        "ia-search" => ia_search_lines(query, max),
         "linkup" => {
             let token = resolve_key(
                 env.get("LINKUP_API_KEY").map(String::as_str).unwrap_or(""),
@@ -2335,6 +2554,10 @@ mod tests {
             "firecrawl",
             "searchapi",
             "serpapi",
+            "oeis",
+            "hal",
+            "wiby",
+            "ia-search",
             "datacite",
             "zenodo",
             "wayback",
