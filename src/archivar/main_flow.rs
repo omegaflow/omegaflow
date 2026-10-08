@@ -2919,6 +2919,8 @@ pub fn main_flow() {
                     | "goes16_mag"
                     | "poes19_meped"
                     | "themis_mag"
+                    | "superdarn_cpcp"
+                    | "ssusi_aurora"
                     | "carisma_mag"
                     | "swarm_fac"
                     | "ampere_fac"
