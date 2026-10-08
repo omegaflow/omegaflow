@@ -48,6 +48,8 @@ mod isc;
 mod jina;
 #[path = "archive_search/json.rs"]
 mod json;
+#[path = "archive_search/lpf.rs"]
+mod lpf;
 #[path = "archive_search/magic.rs"]
 mod magic;
 #[path = "archive_search/materialsproject.rs"]
@@ -186,6 +188,7 @@ enum Mode {
     Oai,
     Consensus,
     Perplexity,
+    Lpf,
     Net(&'static str),
 }
 
@@ -330,6 +333,7 @@ fn main() {
             "--exa" => mode = Mode::Net("exa"),
             "--consensus" => mode = Mode::Consensus,
             "--perplexity" => mode = Mode::Perplexity,
+            "--lpf" => mode = Mode::Lpf,
             "--linkup" => mode = Mode::Net("linkup"),
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
@@ -629,6 +633,11 @@ fn main() {
             let lines = perplexity::perplexity_lines(&query);
             print_lines(&lines);
         }
+        Mode::Lpf => {
+            let query = keywords.join(" ");
+            let lines = lpf::lpf_lines(&query);
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -669,7 +678,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -742,6 +751,9 @@ fn usage() {
     eprintln!("              or start=<YYYYMMDDHHMM> extent=<seconds>   (station inventory)");
     eprintln!(
         "  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)"
+    );
+    eprintln!(
+        "  --lpf       <start> <end> [hdu]   (LISA Pathfinder DRS availability from the HEASARC selector, start/end as MJD or ISO; default hdu=SCI_SCIENCE_1Hz; binary body is measured, never printed)"
     );
     eprintln!(
         "  --all       the query through every keyword search mode ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
