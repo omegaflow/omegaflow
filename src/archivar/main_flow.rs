@@ -362,6 +362,7 @@ pub struct Archive {
     pub jump_epoch: Option<f64>,
     pub prev_presence_epoch: Option<f64>,
     pub declared_body: Option<DeclaredBody>,
+    pub receiver_aperture: ReceiverAperture,
     pub origins: HashMap<Origin, OriginState>,
     pub pck_bodies: HashMap<i32, PckBody>,
     pub time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -853,8 +854,23 @@ pub fn main_flow() {
             lat,
             lon,
             alt,
+            receiver_aperture: ReceiverAperture::new(),
         })
     });
+    let parsed_aperture = std::env::args().skip(1).find_map(|a| {
+        a.strip_prefix("#aperture=")
+            .map(ReceiverAperture::parse_declaration)
+    });
+    let mut declared_body = declared_body;
+    if let Some(b) = declared_body.as_mut()
+        && let Some(a) = parsed_aperture
+    {
+        b.receiver_aperture = a;
+    }
+    let receiver_aperture = match declared_body.as_ref() {
+        Some(b) => b.receiver_aperture.clone(),
+        None => ReceiverAperture::new(),
+    };
     if declared_body.is_none() {
         eprintln!(
             "native body undeclared — station samples refused (declare via #body=<body>,<lat>,<lon>,<alt>)"
@@ -953,6 +969,7 @@ pub fn main_flow() {
         jump_epoch: None,
         prev_presence_epoch: None,
         declared_body,
+        receiver_aperture,
         origins: HashMap::new(),
         pck_bodies: HashMap::new(),
         time: time.clone(),
@@ -1816,6 +1833,7 @@ pub fn main_flow() {
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
                 let eph_arc = archive.body_ephemerides.clone();
+                let receiver_aperture = archive.receiver_aperture.clone();
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
                     let tmp_path = content_cache(&format!("omegaflow_netcdf_{name}"));
@@ -1881,6 +1899,7 @@ pub fn main_flow() {
                             &presences,
                             body_radius,
                             &eph_arc,
+                            &receiver_aperture,
                         )
                     } else {
                         build_netcdf_channels(
@@ -1891,6 +1910,7 @@ pub fn main_flow() {
                             &presences,
                             body_radius,
                             &eph_arc,
+                            &receiver_aperture,
                         )
                     };
                     eprintln!("\r\x1b[K{} {}: {} samples", fmt_c, name, channels.len());
@@ -1937,6 +1957,7 @@ pub fn main_flow() {
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
                 let eph_arc = archive.body_ephemerides.clone();
+                let receiver_aperture = archive.receiver_aperture.clone();
                 thread::spawn(move || {
                     let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
@@ -2004,6 +2025,7 @@ pub fn main_flow() {
                         &presences,
                         body_radius,
                         &eph_arc,
+                        &receiver_aperture,
                     );
                     eprintln!("\r\x1b[Kopendap {}: {} samples", name, channels.len());
                     let _ = ftx.send(FetchResult {
@@ -4209,6 +4231,7 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
+                let receiver_aperture = archive.receiver_aperture.clone();
                 let body_radius = archive
                     .body_ephemerides
                     .get(frame_body_name(&src.frame).as_str())
@@ -4315,7 +4338,8 @@ pub fn main_flow() {
                                     config: fc,
                                     medium: body_medium,
                                     body_radius,
-                                    receiver_aperture: None,
+                                    receiver_aperture: receiver_aperture
+                                        .resolve(fc.force, fc.aperture),
                                 },
                                 AnchorEnvelope {
                                     vmax: anchor_vmax,
@@ -4375,6 +4399,7 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
+                let receiver_aperture = archive.receiver_aperture.clone();
                 let body_radius = archive
                     .body_ephemerides
                     .get(frame_body_name(&src.frame).as_str())
@@ -4475,7 +4500,8 @@ pub fn main_flow() {
                                     config: fc,
                                     medium: body_medium,
                                     body_radius,
-                                    receiver_aperture: None,
+                                    receiver_aperture: receiver_aperture
+                                        .resolve(fc.force, fc.aperture),
                                 },
                                 AnchorEnvelope {
                                     vmax: anchor_vmax,

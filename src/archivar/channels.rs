@@ -251,6 +251,7 @@ pub fn build_netcdf_channels(
     presences: &[PresenceSample],
     body_radius: Option<f64>,
     eph: &HashMap<String, BodyEphemeris>,
+    receiver_aperture: &ReceiverAperture,
 ) -> Vec<(Channel, FieldConfig)> {
     let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
         match gunzip(bytes) {
@@ -262,7 +263,16 @@ pub fn build_netcdf_channels(
     };
     const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
     if bytes.starts_with(&HDF5_MAGIC) {
-        return build_netcdf4_channels(src, &bytes, lsk, now, presences, body_radius, eph);
+        return build_netcdf4_channels(
+            src,
+            &bytes,
+            lsk,
+            now,
+            presences,
+            body_radius,
+            eph,
+            receiver_aperture,
+        );
     }
     let nc = match NetcdfFile::parse(&bytes) {
         Ok(f) => f,
@@ -384,7 +394,7 @@ pub fn build_netcdf_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
-                                receiver_aperture: None,
+                                receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -431,6 +441,7 @@ pub fn build_netcdf4_channels(
     presences: &[PresenceSample],
     body_radius: Option<f64>,
     eph: &HashMap<String, BodyEphemeris>,
+    receiver_aperture: &ReceiverAperture,
 ) -> Vec<(Channel, FieldConfig)> {
     let file = match crate::archivar::hdf5::Hdf5File::parse(bytes) {
         Ok(f) => f,
@@ -537,7 +548,7 @@ pub fn build_netcdf4_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
-                                receiver_aperture: None,
+                                receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -796,6 +807,7 @@ pub fn build_opendap_channels(
     presences: &[PresenceSample],
     body_radius: Option<f64>,
     eph: &HashMap<String, BodyEphemeris>,
+    receiver_aperture: &ReceiverAperture,
 ) -> Vec<(Channel, FieldConfig)> {
     let body_name = frame_body_name(&src.frame);
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
@@ -910,7 +922,7 @@ pub fn build_opendap_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
-                                receiver_aperture: None,
+                                receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,

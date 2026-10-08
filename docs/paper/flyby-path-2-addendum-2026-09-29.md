@@ -286,6 +286,18 @@ perigee `2026-09-28T11:58:50Z` geocentric **62 745 km**, 26 hourly cells
 (the two 538 696 B states) agree at 62 745 km; the sealed official arc (106 704 B) stands
 at 15 034 km. The riss is carried as three named witnesses, never averaged.
 
+## 2026-10-08 — OMNI2 trigger fired, RTSW cells filled
+
+The OMNI2 merged-1-h HAPI URL (OMNI2_H0_MRG1HR, 2026-09-26..29) returned
+**HTTP 200** (33 251 B) — the earlier 1201 "no data for time range" lag is
+healed. The fill ran locally (`flyby_path2_fill -- --flyby juice`): the
+trajectory placed **official** (arc `aeb3c82f…`, sha-verified), 26 register
+cells (`data/flyby2/tube-juice-2026-09-28.json`). The cells carry RTSW
+bt/bz/v/n/T/p; `omni2 bz` stays `pending` (parameter alignment). kp/Swarm/ACE
+carry their series values. kp `status=def` still returns **HTTP 500** (not yet
+released); the `pre` series stands (cells 23–25 at 0.667). No value is smoothed;
+a cell without a measurement stays `pending`.
+
 ## Next steps
 
 - The three lines are built (2026-10-04): official `15 034 km`, renewed and postflight
