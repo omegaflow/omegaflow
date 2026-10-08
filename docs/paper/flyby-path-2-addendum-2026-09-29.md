@@ -140,11 +140,14 @@ JSON body — the response carries the full payload; measured, not assumed):
 interval **start**; each cell carries the 3-h interval containing its start
 (the bin's fill_kp). The perigee instant 11:45:12Z lies in the interval
 [09:00, 12:00Z] → **Kp 0.667** (the bin's perigee-marker cell 13 carries the
-same interval). The Kp cells are `pre` — a later addendum carries the `def`
+same interval). The Kp cells were `pre` — a later addendum carries the `def`
 values when GFZ releases them. Re-measured 2026-09-30 (`kp.gfz.de`): the
-`status=def` query returns empty arrays; the preliminary series now reaches the
+`status=def` query returned empty arrays; the preliminary series now reaches the
 [21:00, 24:00Z) interval at 0.667 — the chain's cells 23–25 carry that value
-(revised from the earlier run's 0.00); `def` stays `pending`.
+(revised from the earlier run's 0.00). **Released 2026-10-08:** the
+`status=def,nowcast` query returns **HTTP 200** with all 33 intervals
+`status: "def"`; the register carries the 26 def kp values (cell 0→25:
+`0 0 0 0 0 1.333 1.333 1.333 0.333 0.333 0.333 0.667 0.667 0.667 0.667 0.667 0.667 0.667 0.667 0.667 1 1 1 0.333 0.333 0.333`), i.e. the final series, not `pre`.
 
 ## Swarm (SW_FAST_MAGA_LR_1B, at the site — no transit)
 
@@ -323,9 +326,12 @@ cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 
 `rtsw_temperature` K | 40075 | 38174 | 39276 | 30829 | 38280 | 29779 | 31798 | 38149 | 35587 | 36702 | 40694 | 37992 | 37045 | 40693 | 40998 | 30396 | 36721 | 39043 | 36622 | 36122 | 32550 | 53613 | 47586 | 43107 | 46740 | 49780
 `rtsw_pressure` nPa | 0.61 | 0.60 | 0.68 | 0.78 | 0.67 | 0.74 | 0.76 | 0.84 | 0.85 | 0.86 | 0.98 | 1.12 | 1.24 | 1.08 | 1.01 | 1.32 | 1.11 | 0.99 | 1.01 | 1.05 | 1.18 | 0.37 | 0.40 | 0.42 | 0.44 | 0.50
 
-`omni2_bz` remains `pending` (parameter alignment); kp `status=def` still returns
-**HTTP 500** (not released at this run); the `pre` series stands (cells 23–25 at
-0.667). `omni2_pressure` per cell (nPa, cell 0→25):
+`omni2_bz` is **absent in the source**: the OMNI2_H0_MRG1HR response carries
+`BX_GSE1800`/`BY_GSM1800`/`BZ_GSM1800` as the fill sentinel `999.9` across the
+whole window (only `Pressure1800` carries values) — no B measurement, so the
+channel stays `pending` (never 0.0). kp `status=def` is **released**: GFZ returns
+**HTTP 200** with all intervals `def` (measured 2026-10-08), and the register
+carries the 26 def kp values. `omni2_pressure` per cell (nPa, cell 0→25):
 
 cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25
 ---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
