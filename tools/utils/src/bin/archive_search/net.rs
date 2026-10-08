@@ -1603,6 +1603,163 @@ fn exa_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+fn organic_lines(v: &Json, key: &str, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get(key).and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("link").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if let Some(p) = r.get("position") {
+            let pv = match p {
+                Json::Num(n) if n.is_finite() => format!("{n}"),
+                Json::Str(s) => s.clone(),
+                _ => String::new(),
+            };
+            if !pv.is_empty() {
+                line.push_str(&format!("\tposition: {}", pv));
+            }
+        }
+        let snippet = flatten(r.get("snippet").and_then(|s| s.as_str()).unwrap_or(""));
+        if !snippet.is_empty() {
+            line.push_str(&format!("\tsnippet: {}", snippet));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn serper_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — SERPER_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let body = format!("{{\"q\":\"{}\",\"num\":{}}}", json_escape(query), max);
+    let auth = format!("X-API-KEY: {}", token);
+    let headers = [auth.as_str()];
+    match post("https://google.serper.dev/search", &body, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = organic_lines(&v, "organic", max);
+                if out.is_empty() {
+                    out.push(format!("absent — Serper carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Serper response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Serper HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+pub fn firecrawl_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — FIRECRAWL_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let body = format!("{{\"query\":\"{}\",\"limit\":{}}}", json_escape(query), max);
+    let auth = format!("Authorization: Bearer {}", token);
+    let headers = [auth.as_str()];
+    match post("https://api.firecrawl.dev/v1/search", &body, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = firecrawl_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Firecrawl carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the Firecrawl response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — Firecrawl HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn firecrawl_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("data").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        let description = flatten(r.get("description").and_then(|d| d.as_str()).unwrap_or(""));
+        if !description.is_empty() {
+            let clipped: String = description.chars().take(240).collect();
+            line.push_str(&format!("\tdescription: {}", clipped));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+pub fn searchapi_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — SEARCHAPI_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let url = format!(
+        "https://www.searchapi.io/api/v1/search?engine=google&q={}&num={}&api_key={}",
+        urlencode(query),
+        max,
+        urlencode(token)
+    );
+    match get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = organic_lines(&v, "organic_results", max);
+                if out.is_empty() {
+                    out.push(format!("absent — SearchApi carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the SearchApi response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — SearchApi HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+pub fn serpapi_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — SERPAPI_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let url = format!(
+        "https://serpapi.com/search.json?engine=google&q={}&num={}&api_key={}",
+        urlencode(query),
+        max,
+        urlencode(token)
+    );
+    match get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = organic_lines(&v, "organic_results", max);
+                if out.is_empty() {
+                    out.push(format!("absent — SerpApi carries no entry: {}", query));
+                }
+                out
+            }
+            None => vec!["pending — the SerpApi response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — SerpApi HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 pub fn linkup_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — LINKUP_API_KEY absent from .secrets.local/.env".to_string()];
@@ -1764,6 +1921,10 @@ const QUERY_MODES: &[&str] = &[
     "tavily",
     "exa",
     "linkup",
+    "serper",
+    "firecrawl",
+    "searchapi",
+    "serpapi",
     "datacite",
     "zenodo",
     "wayback",
@@ -1920,6 +2081,62 @@ pub fn run_lines(
                 Secret::Absent(marker) => vec![format!(
                     "pending — {} absent from .secrets.local/.env",
                     token_key("EXA_API_KEY", marker)
+                )],
+            }
+        }
+        "serper" => {
+            let token = resolve_key(
+                env.get("SERPER_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => serper_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("SERPER_API_KEY", marker)
+                )],
+            }
+        }
+        "firecrawl" => {
+            let token = resolve_key(
+                env.get("FIRECRAWL_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => firecrawl_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("FIRECRAWL_API_KEY", marker)
+                )],
+            }
+        }
+        "searchapi" => {
+            let token = resolve_key(
+                env.get("SEARCHAPI_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => searchapi_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("SEARCHAPI_API_KEY", marker)
+                )],
+            }
+        }
+        "serpapi" => {
+            let token = resolve_key(
+                env.get("SERPAPI_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => serpapi_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("SERPAPI_API_KEY", marker)
                 )],
             }
         }
@@ -2108,6 +2325,10 @@ mod tests {
             "tavily",
             "exa",
             "linkup",
+            "serper",
+            "firecrawl",
+            "searchapi",
+            "serpapi",
             "datacite",
             "zenodo",
             "wayback",
