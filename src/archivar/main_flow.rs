@@ -3129,6 +3129,7 @@ pub fn main_flow() {
                     | "wdc_ae"
                     | "bpa_gic"
                     | "superdarn_cpcp"
+                    | "superdarn_cpcp_nc"
                     | "ssusi_aurora"
                     | "carisma_mag"
                     | "swarm_fac"
