@@ -3,7 +3,7 @@
   session: Mountain-Folge 276
   class: handover
   date: 2026-10-08
-  sha256: fb20a98684c0dfa55eb88565bf03b520a3610b9d547c3705e846e3fa2308109a
+  sha256: b26d21185d2f035894791825f120ff3a21c52d1c13919f2db4b2491b4dea480a
   status: live
 -->
 # Handover — Mountain-Folge 276 (2026-10-08)
@@ -25,6 +25,7 @@ Wort | Datum | Quelle
 „berufe den rat ein aber mache dafür eine archive search recherche und befrage du frontier uis" | 2026-10-08 | Operator (Session, Mountain 273)
 „kannst du mit archive serch den ui chats und dem rat klären?" — offene Route-/GIC-Admissionen (Receiver/force) via archive_search + UI-Seats + Rat | 2026-10-08 | Operator (Session, Mountain 276)
 „das sind allerdings zu wenig stimmen — 3.7 plus ist nicht representativ; zudem kannst du tryingopen auch glm und qwen fahren und andere" — breitere UI-Runde | 2026-10-08 | Operator (Session, Mountain 276)
+„ich glaube du musst nochmal breiter fragen — du hast nicht wirklich die starken stimmen und die wissenschaft gefragt" — Science-Layer + starke Frontier-Seats | 2026-10-08 | Operator (Session, Mountain 276)
 
 ## Offen (aufgeschlüsselt)
 
@@ -44,14 +45,15 @@ Wort | Datum | Quelle
 ### GIC-Stufe-2 — Receiver/force ENTSCHIEDEN; dB/dt-Bestand 2/154
 - **Status:** eigen | **Bindung:** eigen (Register) · river (`compute_max_t`)
 - **Trigger:** AE/AL/AU · SME/SML/SMU als `sources.φ`-Zeilen gebaut
-- **Lage:** (gemessen 2026-10-08 276) **Rat + 6 UI-Seats — RISS, nicht geschlossen:**
-  AE/AU/AL (WDC/ISGI) und SME/SMU/SML (SuperMAG) — `quantity`/intensity 4
-  (Rat-Linse, Claude, Qwen3.7, GLM 5.3: Netzwerkstatistik, propagiert durch keins
-  der 9 Medien, `force em` würde behaupten, ein Organismus spüre den Index) **gegen**
-  `force em` 3 (Nemotron 3 Ultra, DeepSeek V4 Pro, Inkling: gemessene Größe IST
-  B(nT) an den Stationen, Index nur Reduktion, Receiver = Stationsnetz). Beide
-  Linien getragen. Vertrags-Satz in `docs/concepts/archivar-mathematikerin.md`
-  (Live-APIs, mit beiden Gegenlinien). `dB/dt-Bestand 2/154`
+- **Lage:** (gemessen 2026-10-08 276) **Science + Rat + 8 UI-Seats — RISS, nicht geschlossen:**
+  AE/AU/AL · SME/SMU/SML. **Wissenschaft:** reine statistische Reduktion (ISGI/Davis &
+  Sugiura 1966 `doi:10.17593/15031-54800`; Gjerloev 2012 `doi:10.1029/2012JA017683`) —
+  kein Ausbreitungsmechanismus, der Index hat keine eigene Receiver-Weltlinie; Rohkanal
+  em (B nT) an den Stationen. **Stimmen `quantity`/intensity** (Rat-Linse, Claude,
+  Qwen3.7, GLM 5.3, DeepSeek Chat, Lumo) **gegen `force em`** (Nemotron 3 Ultra,
+  DeepSeek V4 Pro, Inkling: gemessene Größe IST B(nT) am Stationsnetz). Beide Linien
+  getragen. Vertrags-Satz in `docs/concepts/archivar-mathematikerin.md` (Live-APIs).
+  `dB/dt-Bestand 2/154`
   (ABK `sources.φ:2150-2168`, SOD `:2170-2178`); beide 1h-Assets
   `gate-no-field-lines`-**refused** (`refusal_ledger.φ:75-76`).
 - **Blockade:** AE/AL/AU + SME/SML/SMU noch nicht als Zeilen gebaut; Receiver als
@@ -143,11 +145,14 @@ Wort | Datum | Quelle
 ### Route-Admissionen — Receiver/force je Arm ENTSCHIEDEN (Rat+UI); Zeilen-Bau offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium (Manifestation)
 - **Trigger:** `sources.φ`-Zeilen je Arm gebaut
-- **Lage:** (gemessen 2026-10-08 276, Rat + Claude · Qwen3.7 · GLM 5.3 · Nemotron 3
-  Ultra · DeepSeek V4 Pro · Inkling) je Arm in
+- **Lage:** (gemessen 2026-10-08 276; Science (2 Taucher) + Rat + Claude · Qwen3.7 ·
+  GLM 5.3 · Nemotron 3 Ultra · DeepSeek V4 Pro · Inkling · DeepSeek Chat · Lumo) je Arm in
   `state/mountain/rat-runde-2026-10-08-source-admission.md`: CALLISTO / THEMIS-GMAG
   → `em` (einhellig); DLR-IMPC / EMTF / INS / NSE → `quantity`; SuperDARN →
-  `quantity` (5:2); Fermi-4FGL → `em` (5:2). **Risse** (getragene Gegenlinien):
+  `quantity` (5:2); Fermi-4FGL → `em` (5:2). **Wissenschaft:** INS/NSE-Träger Neutron
+  ist kernwechselwirkend (nicht in den 9), Observable = abgeleitete Korrelation;
+  Teilchen-Detektoren: schwache/nukleare WW (nicht in den 9), nur em-Readout;
+  GEBCO: akustische Akquisition, Produkt ohne Kraft. **Risse** (getragene Gegenlinien):
   (a)(b) AE/SME `quantity` 4 vs `em` 3 (Nemotron/DeepSeek/Inkling: gemessene Größe
   IST B(nT) am Stationsnetz); (c) Wind SWE quantity/thermal/advective; (k) Teilchen
   quantity/refused/em; (l) GEBCO refused/quantity. Der zentrale Index-Riss steht im
