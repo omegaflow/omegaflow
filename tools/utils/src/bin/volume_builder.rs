@@ -391,7 +391,6 @@ fn main() {
             cgm_lat: None,
             cgm_source: None,
             geomag_lat: None,
-            span: None,
         };
         match build_netcdf4_volume(&src, &bytes) {
             Some((live_name, live)) => match compare_volumes(&volume, &live) {
