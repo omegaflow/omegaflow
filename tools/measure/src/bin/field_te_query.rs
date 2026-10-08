@@ -2,13 +2,13 @@ use std::env;
 use std::f64::consts::TAU;
 use std::process::exit;
 
+use omegaflow::archivar::gic::{GIC_FAMILY_NAMES, family_of};
 use omegaflow::archivar::witness::{WitnessKind, magic_identity, series_gate};
 use omegaflow::archivar::{
     Extract, FieldConfig, SourceConfig, embedded_lsk, extract_series, fetch_raw_bytes_headers,
     geo_series_component_name, geo_series_parse_bin, live_markers, load_sources,
     series_component_name, series_rows,
 };
-use omegaflow::archivar::gic::{GIC_FAMILY_NAMES, family_of};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::mathematikerin::newell::newell_dphi_dt;
 use omegaflow::mathematikerin::wy_max_t::{
@@ -5107,7 +5107,6 @@ mod tests {
             cgm_lat: None,
             cgm_source: None,
             geomag_lat: None,
-            span: None,
         }
     }
 

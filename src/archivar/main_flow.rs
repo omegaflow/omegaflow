@@ -1296,7 +1296,6 @@ pub fn main_flow() {
                     Some(&src.frame),
                     None,
                     &archive.body_ephemerides,
-                    src.span,
                 ) {
                     Some(sample) => fetched_samples.push(sample),
                     None => still_pending.push((channel, sensor, idx)),
@@ -1371,7 +1370,6 @@ pub fn main_flow() {
                         None
                     },
                     &archive.body_ephemerides,
-                    src.span,
                 ) {
                     if let Some(age) = res.sample_ttl_override {
                         sample.ttl = age;
@@ -1491,7 +1489,6 @@ pub fn main_flow() {
                     None,
                     None,
                     &archive.body_ephemerides,
-                    None,
                 ) {
                     fetched_samples.push(sample);
                 }
@@ -5818,7 +5815,6 @@ pub fn main_flow() {
                             Some(&frame),
                             None,
                             &archive.body_ephemerides,
-                            body_src.span,
                         ) {
                             sample.source = SampleSource::Ephemeris;
                             all.push(Arc::new(sample));

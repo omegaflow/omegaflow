@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: 8c2f29f5b0ba4c247077e9482e07f9c6cb5fa96bff2f16c42b2859d47ad576d4
+  sha256: db8c000cead1887be5600700938a4f5e2090f91e713e8623dd4817f9a32315bd
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -36,12 +36,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 
 ## Offen (aufgeschlüsselt)
 
-### span-Apertur — Rat-Verdikt (b): Empfänger-seitig, Record-`extent` quellen-eigen
-- **Status:** eigen | **Bindung:** eigen · mountain (Doc-Benennungs-Riss)
+### Empfänger-Apertur — Rat-Verdikt (b); `span` descoped, Query-Term offen
+- **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-08, Rat der fünf Stimmen) Verdikt **(b)**: die Empfänger-Apertur (`state/operator-gespraeche/2026-10-06-river.md:70`, „es geht um alle radiatoren") wirkt **empfangs-seitig**, nie im Record-`extent`; der Record-`extent` bleibt quellen-eigen (`src/archivar/channels.rs:1245` `extent_eff`, `:1359`). Gerade weil der Record von *allen* Radiatoren gelesen wird, trüge eine Empfänger-Apertur im Draht N Blicke für eine Quelle (Observer-as-vantage). Gebaute Empfangs-Orte: `static/membrane.html:467-494` (`state.lvl[ft·2+ap]`, Bild), `src/mathematikerin/omega.rs:361` (`frame.aperture = field_permeability · tone_scale`, Ton/Vibration), `src/mathematikerin/actuators.rs:73-79` (`Σω·aperture`). Der **HID-Pfad ist ungemessen** (kein HID-Aktuator im Baum) → `pending`.
-- **Riss aufgelöst (A=A, Linie A):** `docs/concepts/archivar-mathematikerin.md:33` nannte `span` „receiver-side aperture override" (read in the query); der Code backt ihn als quellen-deklarierte Selbstkappung in `Sample.extent` (`channels.rs:1245/1359`). A=A: läge eine Empfänger-Apertur im Record, wäre das die verbotene Observer-as-vantage — da `span` im Record ist, ist er die Quelle, die ihr eigenes Maß kappt. Doc `:33` (2026-10-08) auf den **source-declared self-cap** gezogen; die Empfänger-Apertur ist ein separater Query-Term. `span` von keiner Quelle deklariert (`sgrep 'span ' phi/sources.φ` = 0 Treffer), der Pfad dormant.
-- **Braucht:** der HID-Aktuator-Term bleibt `pending`.
+- **Lage:** (gemessen 2026-10-08, Rat der fünf Stimmen) Verdikt **(b)**: die Empfänger-Apertur (`state/operator-gespraeche/2026-10-06-river.md:70`, „es geht um alle radiatoren") wirkt **empfangs-seitig**, nie im Record-`extent`; der Record-`extent` bleibt quellen-eigen. Gerade weil der Record von *allen* Radiatoren gelesen wird, trüge eine Empfänger-Apertur im Draht N Blicke für eine Quelle (Observer-as-vantage). Gebaute Empfangs-Orte: `static/membrane.html:467-494` (`state.lvl[ft·2+ap]`, Bild), `src/mathematikerin/omega.rs:361` (`frame.aperture = field_permeability · tone_scale`, Ton/Vibration), `src/mathematikerin/actuators.rs:73-79` (`Σω·aperture`). Der **HID-Pfad ist ungemessen** (kein HID-Aktuator im Baum) → `pending`.
+- **`span` descoped (2026-10-08, Operator-Wort „1"):** die per-Quelle `span`-Kappung ist vollständig entfernt — `SourceConfig.span` (`types.rs`), die `span`-Direktive + 2 Tests (`parse.rs`), `extent_eff` + `anchor`-Parameter + Test (`channels.rs`), 9 `anchor(...)`-Call-Sites (`main_flow.rs` ×4, `relay.rs` ×2, `tests.rs` ×3, 30 Fixtures), 2 Tool-Fixtures (`volume_builder.rs`, `field_te_query.rs`). `cargo check` 0/0; `cargo build -p omegaflow-utils --bin volume_builder` + `-p omegaflow-measure --bin field_te_query` grün. Doc `:33` auf den Zustand gezogen. Grund: `span` war nie deklariert (0 Treffer) und konnte eine Empfänger-Apertur nicht tragen (pro-Quelle statisch, im Record = Observer-as-vantage).
+- **Braucht:** die Empfänger-Apertur als **Query-`extent`** bauen — ein Receiver-Term **neben** `sample.extent` in `src/archivar/fetch.rs:521-563` (das `limit`) und `src/archivar/spatial.rs:932-934` (die `reach`), nie hinein; plus den HID-Aktuator-Term.
 - **UI-Unterbau:** (gemessen 2026-10-08, via `state/stimmen/2026-10-08_river-ui_apertur-extent-runde.md`) Rat + **sechs distincte Linien konvergieren auf (b)** — Qwen3.7-Plus · Duck/GPT-6 Luna · Claude/Sonnet 5.5 · Tryingopen/DeepSeek V4 Pro (1.7T) · Tryingopen/GLM 5.3 (753B) · Tryingopen/Qwen3.8 2.4T; Z.ai/GLM-5.3 nativ `pending` (Deep-Think-Max ohne Antwort). Die saubere Form (Claude/GLM/Qwen3.8): **die Query trägt ihren eigenen, aus der Apertur abgeleiteten Extent**; der Record-`extent` bleibt die quellen-eigene Obergrenze (Broad-Phase/Index); beide treffen sich nur im Schnitt (Join). Verdikt (b) unterbaut.
 
 ### Membran — Kraft-/Kanal-Agnostik (wartend auf den Render)
@@ -91,7 +91,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 Origin: river-136.
 
 - **INTERMAGNET + `cors_compiler` — von Mountain 275 (`3d89af13a`) erledigt, gefaltet:** der dbdt-Compiler trägt jetzt `time.min`/`time.max` + `station.to_lowercase()` (`tools/harvest/src/bin/intermagnet_dbdt_compiler.rs:111-113`); `cors_compiler` ist `disponiert` (`phi/pipeline/ledger.φ:89-91`, river-136-Vorschlag aufgegriffen). Keine weitere Forderung.
-- **`span`-Doc-Riss aufgelöst (A=A, Linie A):** `docs/concepts/archivar-mathematikerin.md:33` auf den source-declared self-cap gezogen; die Empfänger-Apertur ist ein separater Query-Term. A=A-Argument: eine Empfänger-Apertur im Record wäre Observer-as-vantage. Keine Forderung.
+- **`span` descoped (2026-10-08):** die per-Quelle `span`-Kappung ist aus Code und Contract entfernt (Operator-Wort „1"); die Empfänger-Apertur ist der Query-Term. `docs/concepts/archivar-mathematikerin.md:33` trägt den Zustand. Keine Forderung.
 - **`em nmgy`:** `flux_g` braucht eine `band … pivot …`-Zeile (`parse.rs:2454` ist die Form).
 
 ## An mycelium
@@ -104,7 +104,7 @@ Origin: river-136.
 
 Origin: river-136.
 
-- **span-Fork (future-201) gefaltet und um das Rat-Verdikt geschlossen:** kein neues Operator-Wort; die Empfänger-Apertur ist Receiver-Eigenschaft, `span` bleibt quellen-eigen. Träger `state/zustand/wartend.φ` (`span-aperture-membran`) — wird in diesem Atom als beschieden geführt.
+- **Empfänger-Apertur (future-201 / River 136):** kein neues Operator-Wort; die Empfänger-Apertur ist Receiver-Eigenschaft und wird als **Query-`extent`** gebaut (offen). `span` ist descoped. Träger `state/zustand/wartend.φ` (`span-aperture-membran`).
 
 ## LOCK
 
@@ -116,6 +116,9 @@ Origin: river-136.
 Pfad-begrenzte Commit-Pfade dieser Session (River 136):
 
 - `static/membrane.html` (Instrumentierung)
+- `docs/concepts/archivar-mathematikerin.md` (span-Descope, Contract `:33`)
+- `src/archivar/{types,parse,channels,main_flow,relay,tests}.rs` (span-Descope)
+- `tools/utils/src/bin/volume_builder.rs`, `tools/measure/src/bin/field_te_query.rs` (span-Fixtures)
 - `docs/handover/handover-2026-10-08-river-folge136.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge135.md` (Move, bereits committet)
 

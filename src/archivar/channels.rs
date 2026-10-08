@@ -1242,11 +1242,6 @@ pub fn absorption_for_force(force: u8, declared: f64) -> f64 {
     0.0
 }
 
-pub fn extent_eff(span: Option<f64>, extent: f64) -> f64 {
-    span.filter(|s| s.is_finite() && *s > 0.0)
-        .map_or(extent, |s| extent.min(s))
-}
-
 pub fn anchor(
     channel: &Channel,
     sensor: &FieldConfig,
@@ -1255,7 +1250,6 @@ pub fn anchor(
     frame: Option<&Frame>,
     mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
-    span: Option<f64>,
 ) -> Option<Sample> {
     if sensor.tau <= 0.0 {
         return None;
@@ -1356,7 +1350,6 @@ pub fn anchor(
     if !extent.is_finite() {
         return None;
     }
-    let extent = extent_eff(span, extent);
     Some(Sample {
         source: match source_idx {
             Some(idx) => SampleSource::Source(idx),
@@ -1458,19 +1451,4 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
         ));
     }
     out
-}
-
-#[cfg(test)]
-mod tests {
-    use super::extent_eff;
-
-    #[test]
-    fn extent_eff_caps_a_declared_span_else_leaves_the_extent() {
-        assert_eq!(extent_eff(Some(5.0), 10.0), 5.0);
-        assert_eq!(extent_eff(Some(20.0), 10.0), 10.0);
-        assert_eq!(extent_eff(None, 10.0), 10.0);
-        assert_eq!(extent_eff(Some(0.0), 10.0), 10.0);
-        assert_eq!(extent_eff(Some(-1.0), 10.0), 10.0);
-        assert_eq!(extent_eff(Some(f64::NAN), 10.0), 10.0);
-    }
 }
