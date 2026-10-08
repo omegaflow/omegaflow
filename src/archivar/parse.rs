@@ -1889,6 +1889,8 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
         (d, t)
     } else if let Some((d, t)) = s.split_once(' ') {
         (d, t)
+    } else if let Some((d, t)) = s.split_once('/') {
+        (d, t)
     } else {
         (s, "0")
     };

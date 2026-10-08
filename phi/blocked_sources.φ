@@ -62,18 +62,10 @@ url https://superdarn.ca/data-download
 gap dmap-map-grid
 note MAP-Grid RST (DMap) — 2026-10-05: Globus-Zugang (`GLOBUS_ID_USER/PASS`, wartend.φ:8 superdarn-af68c4f1, Aufnehmer mycelium); ascii nur FITACF, MAP-RST nur Globus/BAS-Mirror. Arm fehlt.
 
-pending
-url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki VCO-rs (JAXA/ISAS) — sources.φ:27774 (format pds4_fixed_width, compiler pds4_binary_compiler); Workflow vco-rs-cdn.yml steht. Die frühere Note nannte falschen Arm/Workflow (Riss). 2026-10-04.
-
 blocked parser-def
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
 gap kaguya-lrs
 note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
-
-pending
-url https://limadou.ssdc.asi.it/
-note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn (cses-{lap,efd,hpm,scm}-Compiler + Workflows, sources.φ 27 Z.); limadou-Host ohne Rohdatenpfad → descope-Kandidat. future-folge167.
 
 blocked parser-def
 url https://www.leos.ac.cn/
@@ -87,10 +79,6 @@ note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-04: generischer `
 pending
 url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabilities,sync} je 200 per curl (kein Browser); Dateisystem /data/ 200; Arm tap_compiler passt. future-folge226.
-
-pending
-url https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=J/A+A/633/A99/members
-note Gaia cluster_ka members (Cantat-Gaudin+2020) — 2026-10-08 re-registered: Gaia-TAP has no cluster/member column (gaiadr3.cluster_ka HTTP 400); VizieR members table HTTP 200 (58318 B, measured 2026-10-08). Lost pointer restored.
 
 pending
 url https://www.ieeg.org
@@ -116,7 +104,7 @@ note ghsl_built_surface_m2 (JRC GHSL GHS_BUILT_S_E2020) — statische built-up s
 
 pending
 url https://zenodo.org/record/4444068
-note Neutralpunkt-GIC (Kellerman 2021, GIC-Zielkanal §F) — 2026-10-06: Zenodo 200, 7 anonyme Knoten, CC-BY 4.0; +7446370 (Portugal) 200; Arm: Zenodo-CSV-Reader.
+note Neutralpunkt-GIC (Kellerman 2021) — Zenodo 200, 7 anonyme Knoten, CC-BY 4.0. 2026-10-09: Slash-Datum `YYYY-MM-DD/HH:MM:SS` liest der generische `csv`-Arm (`parse_iso_tdb`); offen: Knoten-Koordinaten + Port.
 
 blocked parser-def
 url http://themis.ssl.berkeley.edu/data/themis/
