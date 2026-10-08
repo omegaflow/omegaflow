@@ -3,7 +3,7 @@
   session: River-Folge 139
   class: handover
   date: 2026-10-08
-  sha256: 8dce769c8af1747cc00d3410fd216b6cae62a0caf3a7d86eea70f079210457df
+  sha256: 47340a18a95c975eb177ba903a91073920a837b01ecf1fee5e08aceba8df5c1b
   status: live
 -->
 # Handover — River-Folge 139 (2026-10-08)
@@ -34,6 +34,7 @@ Wort | Datum | Quelle
 „das ist nicht die wissenschaft weisst du überhaupt wie mächtig archive search mittlerweile ist?" | 2026-10-08 | Operator (Session, River 136) — volle `archive_search`-Breite (`--all`)
 „ok hast du an die nächste session detailliert übergeben?" | 2026-10-08 | Operator (Session, River 136) — Übergabe-Prüfung
 „wenn etwas durch den rat geht bitte auch durch archive search, ui und openweight" | 2026-10-08 | Operator (Session, River 138) — Rat-Runden durch Wissenschaft + UI + Open-Weight
+„und ich sage nur at sun weil die auf jeden fall strahlen müssen aber es gibt nch viel mehr odszillatoren die die presenze am ssb erreichen" | 2026-10-08 | Operator (Session, River 139) — „at sun" ist nur das Beispiel; der Prüfstein ist die Presence-Hülle am SSB
 Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `docs/handover/archiv/handover-2026-10-07-river-folge133.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -75,12 +76,13 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 - **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent (`ephemeris_juice_recon.bin` 404).
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Release-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
-### Membran — Feld aus Body-Ankern statt `at sun`-Oszillatoren (Sichtprüfung)
+### Membran — Feld aus Body-Ankern statt der Oszillatoren, die die Presence am SSB erreichen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-08T21:2xZ via Browser-Bridge + `sread src/wasm.rs`/`src/archivar/membrane.rs`/`static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, FieldConfig `force_type 1` (Gravitation), `color_index 0`. Die **532 `at sun`-Quellen** aus `phi/sources.φ` (`sgrep -c "at sun"` = 532) werden **nicht** geladen — das statische Blatt liest `phi/sources.φ` nie. `frame()` rahmt den größten finiten Anker: „the largest (the sun) frames the operator's first view" (`membrane.html:572/567-607`). Der **blaue** Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` auf pages nicht gestagt wird (`archive_search --verdict` → HTTP 404) → `colorLut=null` → `color_mode 0`; die Exposure normalisiert den Anker-Wert auf sich selbst → `t2≈0.33` → blaue Bande — kein deklarierter Kanal-Farbwert.
-- **Blockade:** keine (Messung steht). Die Auflösung ist eine **Architektur-/Contract-Frage**: agnostischer Start aus den `at sun`-Oszillatoren vs. Body-Gravitationsanker (ohne den Anker las der Start schwarz — `membrane.html:575`); berührt das Operator-Wort „es gibt keine sonne erde mond" (River 127).
-- **Braucht:** **Rat (fünf Stimmen) + Wissenschaft (`archive_search`) + UI-Frontier**: wie die Membran einen nicht-schwarzen Start **ohne** Body-Anker gewinnt — die `at sun`-Oszillatoren statt der Body-Gravitationsanker laden. Kein Pro-Solo; danach Bau im Membran-Pfad.
+- **Lage:** (gemessen 2026-10-08T21:3xZ via Browser-Bridge + `sread src/wasm.rs` · `src/archivar/membrane.rs` · `static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, FieldConfig `force_type 1` (Gravitation), `color_index 0`. Das statische Blatt liest `phi/sources.φ` **nie** — die Register-Oszillatoren (2693 `url` · 7964 `field` · 22 `quantity`; `sgrep -c` je Begriff) werden **nicht** geladen. `frame()` rahmt den größten finiten Anker: „the largest (the sun) frames the operator's first view" (`membrane.html:572/567-607`). Der **blaue** Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` auf pages nicht gestagt wird (`archive_search --verdict` → HTTP 404) → `colorLut=null` → `color_mode 0`; die Exposure normalisiert den Anker-Wert auf sich selbst → `t2≈0.33` → blaue Bande — kein deklarierter Kanal-Farbwert.
+- **Operator-Wort (River 139, 2026-10-08):** „at sun" war nur das Beispiel (die strahlen auf jeden Fall) — **viel mehr Oszillatoren erreichen die Presence am SSB**. Der Prüfstein ist die Presence-Hülle (Enclosure) am SSB, nicht ein Anker-Name.
+- **Blockade:** keine (Messung steht). Die Auflösung ist eine **Architektur-/Contract-Frage**: wie das Membran-Blatt die Oszillatoren trägt, deren Signal die Presence am SSB erreicht (ohne Body-Anker; ohne den Anker las der Start schwarz — `membrane.html:575`) — berührt das Operator-Wort „es gibt keine sonne erde mond" (River 127).
+- **Braucht:** **Rat (fünf Stimmen) + Wissenschaft (`archive_search`) + UI-Frontier**: wie die Membran die Feld-Oszillatoren (Enclosure am SSB) lädt/backt statt der Body-Gravitationsanker. Kein Pro-Solo; danach Bau im Membran-Pfad (Kandidat: die Enclosure-Query am SSB als statisches Feld-Asset backen, das die serverless Seite lädt).
 
 ## An mountain
 
@@ -117,4 +119,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 139):
 - `docs/handover/handover-2026-10-08-river-folge139.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge138.md` (Move)
 
-## Burn: open 0.0030 · close 0.0865 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
+## Burn: open 0.0030 · close 0.0974 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
