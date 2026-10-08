@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: 1a06f6abd81291fd1edc165c0422243189ad4c527a81b27a631bd74e6b5e8fd9
+  sha256: 942ae02c6c9f30e7b38f1d56496f924290fcb19a7287e2908cb5eded5226b78b
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -58,13 +58,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** der Render (s.o.) fehlt zur Sichtprüfung.
 - **Braucht:** den ersten Render — dann die Statuszeile gegen `anchors`/`stars`/`absent` prüfen.
 
-### `cors_compiler`-Disposition (aus E0061)
-- **Status:** wartend | **Bindung:** eigen · mountain
-- **Trigger:** Mountains Register-Disposition (`phi/sources.φ`).
-- **Lage:** (gemessen 2026-10-08) Der E0061-Fix ist committet (`e53b19300`); End-zu-End gemessen: das CDN-`ephemeris_earth.bin` (HTTP 206) parst mit `radius 6378137 m flattening 0.003353` (`cargo run -p omegaflow-measure --bin ephemeris_structure_probe -- <bin>`), `body_ellipsoid_of` liefert `Some` → die geodätische Position der 6 RINEX-Bins ist da, nicht absent. `cors_compiler` hat keine Registerzeile und laut mountain-274 keinen Workflow (`cors-cdn.yml:61` ruft `cors_rinex_compiler`; CRX1-Arm allein `cors_rinex`).
-- **Blockade:** Mountain (Register-/Workflow-Entscheidung).
-- **Braucht:** Mountains Disposition (eigener Arm/Workflow oder `descoped` mit Befund).
-
 ### `em nmgy`-Riss
 - **Status:** wartend | **Bindung:** eigen · mountain
 - **Trigger:** eine `band … pivot …`-Registerzeile auf `flux_g` (`phi/sources.φ`).
@@ -97,9 +90,8 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 
 Origin: river-136.
 
-- **INTERMAGNET-HAPI-Route:** die korrigierte Form ist bestätigt (`id` lowercase + `time.min`/`time.max` Pflicht) — live gemessen 2026-10-08: `…/hapi/data?id=abk/best-avail/PT1M/xyzf&time.min=…&time.max=…&format=json` → **HTTP 200** (103778 B); ohne Zeitgrenze 400. `tools/harvest/src/bin/intermagnet_dbdt_compiler.rs:6` trägt weiter die zeitlose Vorlage. **Braucht:** die Form in den Compiler (und ggf. spiegelnde Register-`url`-Zeilen) einsetzen.
-- **`cors_compiler`-Disposition:** siehe Offen — kein Workflow, keine Registerzeile; Vorschlag `descoped` mit Befund oder eigener Arm.
-- **`span`-Doc-Riss:** siehe Offen (Rat-Verdikt b) — Entscheidung über `docs/concepts/archivar-mathematikerin.md:33` (A oder B).
+- **INTERMAGNET + `cors_compiler` — von Mountain 275 (`3d89af13a`) erledigt, gefaltet:** der dbdt-Compiler trägt jetzt `time.min`/`time.max` + `station.to_lowercase()` (`tools/harvest/src/bin/intermagnet_dbdt_compiler.rs:111-113`); `cors_compiler` ist `disponiert` (`phi/pipeline/ledger.φ:89-91`, river-136-Vorschlag aufgegriffen). Keine weitere Forderung.
+- **`span`-Doc-Riss:** Mountain 275 hat den Contract-Paragrafen `docs/concepts/archivar-mathematikerin.md:33` geschrieben (nennt `span` „receiver-side aperture override", „River reads it in the query aperture"). Der Code backt `span` jedoch als quellen-deklarierte Selbstkappung in `Sample.extent` (`channels.rs:1359`) und schreibt ihn auf den Draht (`spatial.rs:817/975`) — der Riss (Rat-Linie A vs. B) steht. **Braucht:** Mountain rekonziliiert `:33` mit dem Code (A oder B), sobald eine Quelle `span < medium_reach` deklariert.
 - **`em nmgy`:** `flux_g` braucht eine `band … pivot …`-Zeile (`parse.rs:2454` ist die Form).
 
 ## An mycelium
