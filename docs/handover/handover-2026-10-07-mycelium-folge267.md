@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: cf0d2fde946beded3d905c20955f814f6ba55de05281b8a1603961c945315dfd
+  sha256: 875cbc59dd90f809517f6ef6106adb08c6973fd303d0127db25ca1f1556b0e80
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -26,6 +26,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „die fmhy surveys nicht nur verpuffen lassen, denkt groß — wahnsinniges potential gerade im science/research Bereich" → Survey `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` + offene Punkte | Quelle: diese Session.
 - 2026-10-08 | „auth ist nicht zwingend ein ausschlusskriterium nur kommerziell und illegal" → Auth-Route-Kandidaten (Perplexity/SciSpace/Sakana/NotebookLM) in der Survey; kein „raus" wegen 403/Login | Quelle: diese Session. (Deckt sich mit AGENTS „Authentifizierung ist kein Ausschlusskriterium", Operator-Wort 2026-10-08.)
 - 2026-10-08 | „ja bitte" (Gretchenfrage für die Auth-Route-Kandidaten fahren) → Perplexity 4/4 (3 s), Sakana 4/4 → `ui-seats.md` | Quelle: diese Session.
+- 2026-10-08 | „mich interessieren natürlich am meisten die APIs/MCPs" → API/MCP-Survey `docs/surveys/survey-2026-10-08-research-api-mcp.md` + `--consensus`-Arm; Endpunkte gemessen | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -75,6 +76,13 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-08, `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`) das Mining liefert **kein** neues Science-Daten-Arm (beide Listen out-of-scope). **`--jina` gebaut** (`0e644437d`, `jina.rs` + Wiring; end-to-end gemessen `--jina https://example.com` → 200, sauberer Text) + in `docs/concepts/tools-map.md` eingetragen. **Auth-Route-Gretchenfrage** (`state/stimmen/2026-10-08_gretchenfrage-auth-route.md`): **Perplexity 4/4** (`PHIL: absent,null-echt,pending,nein,b,fabrication`, 3 s) und **Sakana Chat 4/4** (Tempo `pending`) → in `ui-seats.md`; SciSpace Login-Wall, Gemini Notebook Dokument-Bot → `pending`. Offen: `--searxng` (JSON-Instanz), AI2 Playground, Elicit/Consensus, Sci-Bot (Rat), NVIDIA NIM.
 - **Blockade:** die offenen Arme sind Code (`tools/utils`, Vorbild `--mwmbl`); AI2/Elicit/Consensus brauchen die Gretchenfrage (Fähigkeit 4/4 + Tempo).
 - **Braucht:** `archive_search --searxng <query>` bauen + JSON-fähige Instanz; AI2-Playground-Seat testen; Elicit/Consensus gegen `--openalex`/`--semanticscholar` gegenprüfen; Sci-Bot via Rat.
+
+### Research-APIs/MCPs — Consensus · Elicit · SciSpace · Perplexity (`docs/surveys/survey-2026-10-08-research-api-mcp.md`)
+- **Status:** wartend | **Bindung:** eigen (tools/utils + Operator-Key)
+- **Trigger:** `CONSENSUS_API_KEY` in `.secrets.local` gesetzt
+- **Lage:** (gemessen 2026-10-08) alle vier haben API + MCP: **Consensus** `GET https://api.consensus.app/v1/search` (`x-api-key`) + MCP `mcp.consensus.app/mcp`; **Perplexity** remote MCP `https://api.perplexity.ai/mcp` (Bearer) + Agent/Search-API; **Elicit** API+MCP (GA 2026-07-15; Pro kostet); **SciSpace** API+MCP. **`--consensus` gebaut** (`consensus.rs` + Wiring; keyless end-to-end gemessen → `pending — CONSENSUS_API_KEY absent`, kein Zero).
+- **Blockade:** der API-Key (Operator, per-Akt).
+- **Braucht:** `CONSENSUS_API_KEY` (self-serve im Consensus-Konto) in `.secrets.local` — dann `archive_search --consensus "<query>"` live; danach `--perplexity`-Arm; Elicit/SciSpace-Endpunkte + Keys nachziehen.
 
 ## An river
 
