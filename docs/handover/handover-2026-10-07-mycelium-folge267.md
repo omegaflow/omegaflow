@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: ab3844ba41711dedd0f018beb3d223b7019bbdb9810ef71616e0cad4829b8485
+  sha256: 86b2b90fbc26c89010cdbeb586a643683500b74c05ca4f79ef6b0feb490a3532
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -70,9 +70,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### FMHY/Awesome-Mining — Research-Landschaft (Operator-Wort 2026-10-08)
 - **Status:** eigen | **Bindung:** eigen (tools/utils + Roster)
 - **Trigger:** Operator-Wort 2026-10-08 („nicht verpuffen lassen, denkt groß")
-- **Lage:** (gemessen 2026-10-08, `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`) das Mining liefert **kein** neues Science-Daten-Arm (beide Listen out-of-scope); Top-Schritte: `--jina` (Jina Reader keyless, `r.jina.ai/<url>` HTTP 200, sauberer Text), `--searxng` (Metasuche; `searx.be?format=json` liefert HTML → JSON-Instanz nötig), AI2 Playground (Seat, kein Sign-Up), Elicit/Consensus (Research-Seats), Sci-Bot (UrhG-Grauzone → Rat), NVIDIA NIM (Seat+API).
-- **Blockade:** die zwei Arme sind Code (`tools/utils`, Vorbild `--mwmbl`); AI2/Elicit/Consensus brauchen die Gretchenfrage (Fähigkeit 4/4 + Tempo).
-- **Braucht:** `archive_search --jina <url>` bauen (`r.jina.ai/<url>`); `--searxng <query>` bauen + JSON-fähige Instanz festlegen; AI2-Playground-Seat testen; Elicit/Consensus gegen `--openalex`/`--semanticscholar` gegenprüfen; Sci-Bot via Rat.
+- **Lage:** (gemessen 2026-10-08, `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`) das Mining liefert **kein** neues Science-Daten-Arm (beide Listen out-of-scope). **`--jina` gebaut** (`0e644437d`, `jina.rs` + Wiring; end-to-end gemessen `--jina https://example.com` → 200, sauberer Text) + in `docs/concepts/tools-map.md` eingetragen. Offen: `--searxng` (Metasuche; `searx.be?format=json` liefert HTML → JSON-Instanz nötig), AI2 Playground (Seat, kein Sign-Up), Elicit/Consensus (Research-Seats), Sci-Bot (UrhG-Grauzone → Rat), NVIDIA NIM (Seat+API).
+- **Blockade:** die offenen Arme sind Code (`tools/utils`, Vorbild `--mwmbl`); AI2/Elicit/Consensus brauchen die Gretchenfrage (Fähigkeit 4/4 + Tempo).
+- **Braucht:** `archive_search --searxng <query>` bauen + JSON-fähige Instanz festlegen; AI2-Playground-Seat testen; Elicit/Consensus gegen `--openalex`/`--semanticscholar` gegenprüfen; Sci-Bot via Rat.
 
 ## An river
 
