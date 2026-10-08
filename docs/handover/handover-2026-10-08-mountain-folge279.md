@@ -3,7 +3,7 @@
   session: Mountain-Folge 279
   class: handover
   date: 2026-10-08
-  sha256: bf760dab8d9c80a7d2f8c441f592724a23ed4b9ac713f74ddb7e7ff68af917f9
+  sha256: 37abc412c1d9d76b9f8b4fe0f345a38f01f48402ca368a24096f751d869c3bc6
   status: live
 -->
 # Handover — Mountain-Folge 279 (2026-10-08)
@@ -119,6 +119,33 @@ Origin: mountain-folge279.
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82): `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf lokal/silent, nie CI. Träger `state/mountain/kuprat-complex-te/`. Beide Arme gebaut, `--selftest` grün; offen: der Sweep. Riss: KDE-CMI verliert Power bei großer Kovariat-Varianz.
 
+## Nachtrag — Operator-Wort „was ist offen? Zulassungen, der Stau" (Fortsetzung derselben Session)
+
+### Gebaut/erledigt in der Fortsetzung
+- **VO-Katalog-Index Arm 1 GEBAUT** — `tools/harvest/src/bin/tap_index_merge.rs` (Commit `f1e7a6469`): liest 72 `phi/pipeline/catalog/tap_index_*.φ` + die 5 getrackten Aggregatoren (`dryad`/`pangaea`/`re3data`/`seanoe`/`zenodo`_catalog.φ), **25 392** statische Einträge, kein Netz/Live-Pfad. **Riss:** mycelium-269 nennt `dataone`/`erddap` als Aggregatoren — die sind gitignoriert/untracked; der Baum gewinnt.
+- **KC2G-Parser** war bereits geheilt (`1ed930b82`, mountain-274): `tools/harvest/src/bin/kc2g_stations.rs:42-45` liest `station.latitude`/`longitude` (Strings), Fixture `:165` spiegelt die Live-Form. Der mycelium-269-Adressblock ist damit veraltet → Mycelium: CDN neu dispatchen.
+
+### Gemessen (Agenten, 2026-10-08)
+- **blocked_sources.φ-Klassentabelle** — `state/mountain/blocked-sources-klassen.md`: 46 Einträge → **a=9 · b=3 · c=15 · d=19**; **10 Notes zitieren die falsche Zeile** (Drift; z. B. SuperDARN CPCP `:17777` = vega2, USGS `declined_sources.φ:2160` = geofon). Riss zu mycelium-268 (11/9/9/10): 46 vs. 39 Einträge.
+- **Aufnahme-Messung 11 Routen** (volle Tabelle im Session-Spill): THEMIS GMAG/HAPI 200, `themis_mag` bereits registriert `:4060-4069`; **Wind SWE `WI_H0_SWE` absent**, literale ISO-Grenzen liefern Datenzeilen (`{now}` liest 0); DLR-ROTI `--sniff` 1 065 774 B JSON; SuperDARN-CPCP Zenodo-Zip 32 597 002 B (record 10875060, CC-BY-4.0); SSUSI/`ssusi_aurora` registriert `:1691-1698`; USGS `/ws/data/` 400 (**Riss:** dieselbe URL in `blocked` **und** `declined_sources.φ`); Gaia cluster_ka VizieR 200; INPE-BIG bleibt `declined` (kein Einzel-Asset); LEOS 206 user-gated, CSES-Payloads stehen via scidb.cn; `rights`-Arm `parse.rs:222-226` steht, 0 `rights`-Zeilen, 171 `terms`.
+
+### Rat-Verdikte (fünf Stimmen, 2026-10-08) — vollständig im Session-Spill
+- **F1 Eingefrorenes Fenster:** literale ISO-Grenzen in die `url`-Zeile, **kein** `historic_window`-Direktiv; `ttl = no-cadence` (`window` deckt Epochen-Filterung schon).
+- **F2 THEMIS GMAG:** ein physikalischer Kanal = **eine** `sources.φ`-Zeile; Zugangsweg = Transport → **Routenwechsel**, keine zweite Zeile/kein Fallback. **Gebunden vor dem Wechsel:** reale `THG_L2_MAG_ABK`-Serie (`time.min/max`) gegen SSL-CDF am selben Intervall; gleich → `origin`/Compiler wechseln; verschieden → Riss (zwei Messungen, distinkte Feldnamen).
+- **F3 Arm-Ökonomie:** Default kein neuer Arm; eigener Arm nur bei neuem Byte-/Record-Layout **oder** neuer Observable-Klasse (eng: nur abweichendes Dekodieren). DLR-ROTI → `json`+`map` **oder** Compiler ins vorhandene CRTI-Layout (`impc_roti`-Alias `extract.rs:122`); Zenodo 4444068 → `csv`+`rows`; cluster_ka → `asu-tsv`+`cmap` (Präzedenz `sources.φ:19455`).
+
+### UI-Untermauerung (Gruppe `mountain-ui`, 2026-10-08)
+- **Claude:** alle drei zustimmen (F3-Verschärfung: Klasse eng — nur abweichendes Dekodieren).
+- **Qwen (3.7-Plus): Riss F1** — getrennte Direktive statt literaler URL (Konfiguration ≠ Transport). F2/F3 zustimmen. **Riss benannt, nicht geglättet.**
+- **Z.ai (GLM-5.3): `pending`** (Denken ohne Antwort) · **Duck (Luna): `pending`** (keine Antwort sichtbar). Nicht wiederholt.
+- **`open-weight-ui` nicht gefahren** (Lock nicht gesetzt) — `pending`. Tabs geschlossen (JIT).
+
+### Offen (nächster Atom — Eingaben liegen bereit)
+- **blocked_sources.φ-Aufräumen** (Mountain-Stift): Klassentabelle vollstrecken — 9 a→`ledger.φ` `ausstehend`; 3 b unverändert; 15 c (`gap`-Token); 19 d re-messen; 10 Drift-Zeilen korrigieren; Stale-Schutz + `descoped-check` auf `blocked parser-def` (Gate-Fixture).
+- **Wind-SWE-Zeile** (Rat F1) bauen, nachdem die HAPI-Parameterreihenfolge am realen Response verifiziert ist.
+- **THEMIS-HAPI-Serienvergleich** (Rat F2) vor einem Routenwechsel.
+- **Admissions** (Rat F3): ROTI, SuperDARN-Record, cluster_ka, Kellerman-CSV.
+
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (stehendes Wort 2026-10-07, Mountain 264).
@@ -127,5 +154,6 @@ Eigene Pfade: `src/archivar/main_flow.rs` (EMTF-Arm), `src/archivar/types.rs` ·
 `src/archivar/parse.rs` · `src/archivar/extract.rs` · `src/archivar/channels.rs` ·
 `src/archivar/relay.rs` · `src/archivar/fetch.rs` · `src/archivar/tests.rs` ·
 `src/mathematikerin/machines/tests.rs` und die 28 Einleser-Module (band_id-Feld),
+`tools/harvest/src/bin/tap_index_merge.rs` (VO-Index Arm 1, `f1e7a6469`),
 `docs/handover/handover-2026-10-08-mountain-folge279.md`,
 `docs/handover/archiv/handover-2026-10-08-mountain-folge278.md` (Move).
