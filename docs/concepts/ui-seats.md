@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 7269aa3c847b343a2e0dcacfb4eabfa073bf64f1e73011660113fc0ec0421149
+  sha256: 3bb36878905fe301605b39aea2f0dff67ef4657e2cc778ee9604907d644b1ce2
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -75,7 +75,7 @@ Nicht erreichbar (gemessen): Duck.ai (Tageslimit) · Claude (5-h-Nachrichtenlimi
 
 - **FMHY — Free Media Heck Yeah, `/ai`** (`https://fmhy.net/ai`; roher Text `https://raw.githubusercontent.com/fmhy/edit/main/docs/ai.md`) — kuratierte Riesenliste der AI-Chats/Tools/Benchmarks mit aktuellem Modell je Seat. **Lead-Index, keine Quelle** — jeder Seat wird am Baum gemessen (gemessen 2026-10-08: HTTP 200, 176673 B).
 - **awesome-ai-web-search** (`https://github.com/felladrin/awesome-ai-web-search`) — kuratierte Timeline von AI-Web-Suchsoftware (OSS: Khoj · Perplexica · STORM · Open WebUI · Farfalle …; Agent-APIs: SearXNG · Tavily · Exa · Jina · Firecrawl · Linkup …). **Lead-Quelle für Suchwege**; FMHY listet sie als **ersten Eintrag** von `#specialized-chatbots`.
-- **Kimi-Befund (gemessen 2026-10-08):** `https://kimi.ai/` HTTP 200, Titel „Kimi AI with K3" — K3 also auch auf kimi.ai; FMHY: `kimi.ai`/`kimi.com` = „Google Login or Phone # Required". Zugang login-pflichtig (`www.kimi.com` Login-Wall, `kimi.ai` ebenfalls Konto); K3 login-frei nur über `tryingopen` (dort 2026-10-07 nicht in der Liste).
+- **Kimi-Befund (Operator-Wort + gemessen 2026-10-08):** `https://kimi.ai/` HTTP 200, Titel „Kimi AI with K3" — **der Titel ist Marketing; auf kimi.ai läuft in der Regel nur 2.6, nicht K3** (Operator-Wort 2026-10-08). Der Chat ist login-pflichtig (Google/Telefon); FMHY: `kimi.ai`/`kimi.com` = „Google Login or Phone # Required". Login-freies K3 nur über `tryingopen` (dort 2026-10-07 nicht in der Liste).
 
 ## Aufruf-Formen (Kurz)
 
