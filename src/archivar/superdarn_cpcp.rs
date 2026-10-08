@@ -13,7 +13,6 @@ const COLUMNS: &[(u32, &str, &str)] = &[(COMP_POT_DROP, "superdarn_cpcp_pot_drop
 pub struct SuperdarnCpcpRecord {
     pub t_unix: f64,
     pub pot_drop_kv: f64,
-    pub err_kv: f64,
 }
 
 impl SuperdarnCpcpRecord {
@@ -34,18 +33,14 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<SuperdarnCpcpRecord>> {
     let mut off = HEADER_BYTES;
     for _ in 0..n {
         let t_unix = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
-        off += 8;
-        let pot_drop_kv = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
-        off += 8;
-        let err_kv = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
-        off += 8;
-        if !t_unix.is_finite() || !pot_drop_kv.is_finite() || !err_kv.is_finite() {
+        let pot_drop_kv = f64::from_le_bytes(bytes.get(off + 8..off + 16)?.try_into().ok()?);
+        off += RECORD_BYTES;
+        if !t_unix.is_finite() || !pot_drop_kv.is_finite() {
             return None;
         }
         out.push(SuperdarnCpcpRecord {
             t_unix,
             pot_drop_kv,
-            err_kv,
         });
     }
     Some(out)
@@ -120,8 +115,13 @@ mod tests {
         assert_eq!(parsed.len(), 2);
         assert_eq!(parsed[0].t_unix, 1_767_225_600.0);
         assert_eq!(parsed[0].pot_drop_kv, 42.5);
-        assert_eq!(parsed[0].err_kv, 1.5);
         assert_eq!(parsed[1].pot_drop_kv, 38.0);
+    }
+
+    #[test]
+    fn the_third_slot_is_metadata_and_never_drops_the_record() {
+        let parsed = parse_bin(&pack(&[[100.0, 1.0, f64::NAN]])).expect("record parses");
+        assert_eq!(parsed[0].pot_drop_kv, 1.0);
     }
 
     #[test]
