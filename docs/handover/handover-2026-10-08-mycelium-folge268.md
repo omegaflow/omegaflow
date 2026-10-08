@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 268 (2026-10-08)
-  session: Mycelium-Linie — Meta-Pass. `blocked_sources.φ`-Drift diagnostiziert (48 Einträge: 39 pending · 7 descoped · 2 blocked, plus 24-Zeilen-gap-Legende); adressierte Blöcke (future-199, mountain-272) gefaltet; JAXA-gportal + KC2G-CDN gemessen (beide failure, Ursache aus dem Log); die drei neuen CDN-Arme success; folge267 archiviert.
+  session: Mycelium-Linie — Meta-Pass + Drift-Fix. `blocked_sources.φ`-Drift diagnostiziert (Diver + Rat-Verdikt, an Mountain); adressierte Blöcke (future-199, mountain-272) gefaltet; KC2G-CDN failure gemessen (Ursache aus dem Log), JAXA re-dispatched green (`37778516310`); folge267 archiviert, Move+Commit auf der Rewrite-Basis (`b19aaf14` → `de301fd19`) neu.
   class: handover
   date: 2026-10-08
-  sha256: dc41cdbb685844b12b71cbf893a0fb0682d5633f31110ee8922982cb46a300f9
+  sha256: 3485ecfa909e3a64ea0729f91e2bef81a11961f830e753455622f370bc88892e
   status: live
 -->
 # Handover — Mycelium-Folge 268 (2026-10-08)
@@ -46,13 +46,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-08, `grep`/`read`/`register_lookup`; Diver A/B via `archive_search --verdict`/`--sniff` + Arm-/Workflow-Abgleich; Rat-Verdikt) **221 Zeilen, 48 Einträge: 39 `pending`, 7 `descoped`, 2 `blocked parser-def` — 0 `blocked account`/`key`/`ip-blocked`.** Davor 24 `note`-Zeilen Legende (22 gap-Tokens; Arme fehlen WIRKLICH nur bei `konverter`, `covariate-carrier`). `docs/SOURCE_PORT.md:36` definiert das Register als `key-needed`/`parser-def`. Diver-Befunde: **7 `descoped`** = 3 messbar redundant (nssdc.ac.cn→CDS-HiPS, titanNotebook→cassini_odf, ioc-v1→service.php; ENTFERNEN ohne Verlust) + 4 Riss/verlorener Zeiger (**leos.ac.cn** steht descoped/Captcha, neu 206 user-gated unregistriert; **Gaia cluster_ka** → VizieR J/A+A/633/A99/members nirgends registriert; TUH EEG Zugang live/Feld descoped; NSRR Gate=Operator-HIPAA/Arm gebaut). **2 parser-def:** Madrigal-`gap html-parser-arm` ist FALSCH (Arm steht, echte Lücke = OpenMadrigal-API-Arm); GHSL-`covariate-carrier` echt. **39 `pending`** Klassen a/b/c/d = **11/9/9/10** (a: Arm+WF stehen → ledger; b: Konto/Key → blocked account/key; c: Arm/Feld fehlt → parser-def/Bau; **d: 10 Stale-Verdikte** — Note sagt „kein Arm"/„neu", Compiler+WF liegen im Baum).
 - **Blockade:** die Verdikt-Zeilen sind Mountains Feder (`AGENTS.md` — Mountain alleiniger Schreiber der Dispositions-Verdikte); `--orphans` = 0 (Einträge sind getragen).
 - **Braucht:** **Mountains Ausführung des Rat-Verdikts (2026-10-08):** *Umziehen* — Klasse a (11) → `phi/pipeline/ledger.φ` `ausstehend`; die 3 redundanten `descoped` → `declined_sources.φ` `decline superseded-by-integrated`. *Umtaggen* — Klasse b (9) → `blocked account`/`blocked key`; Klasse c (9) → `parser-def` mit korrektem `gap`; Madrigal-`gap` korrigieren; GHSL bleibt. *Re-messen* — Klasse d (10) einzeln (Arm steht → ledger; tot → dead; absent → pending+Trigger); leos+Gaia re-registrieren; TUH/NSRR re-messen. *Entfernen* — die 20 Legenden-`note`s mit stehendem Arm + Zeile 2 („19 Tokens" falsch); die 2 echten `gap`s bleiben am Block. *Stale-Schutz* — Register-Eintrag trägt künftig Messstelle/`gap` + Mess-Stempel + Trigger; `register_lookup --descoped-check` auf `blocked parser-def` ausdehnen (Gate-Fixture). **UI-Zweiter-Kanal (Operator-Wort) noch offen** — Frage: „Register-Schnitt ohne Verlust: pending→ledger, descoped→declined, blocked bleibt — trägt, mit welcher Bedingung?" (Gruppe `mycelium-ui` + `open-weight-ui`).
-
-### JAXA G-Portal-CDN — Lauf `37676047864` failure
-- **Status:** wartend | **Bindung:** eigen (Compiler-Riss)
-- **Trigger:** neue Lauf-Ergebnis-Zeile
-- **Lage:** (gemessen 2026-10-08 via `ci_manage view`/`log`) **failure**; Ursache aus dem Log: `jaxa_gpm_ku: FS/navigation/scLat stays unread` → `exit 1`. Der Download lief (`HTTP 200`, 153785337 B); der Compiler verweigert, weil das GPM-Ku-Granule das Navigationsfeld `scLat` nicht liest.
-- **Blockade:** der Compiler-Arm liest `FS/navigation/scLat` nicht (Granule-Struktur).
-- **Braucht:** `ci_manage log 37676047864` → Arm um `scLat` (bzw. die Ku-Navigation) erweitern; dann `gh workflow run jaxa-gportal-cdn.yml`.
 
 ### KC2G `prop.kc2g.com` — Lauf `37687765274` failure
 - **Status:** wartend | **Bindung:** eigen (Quelle leer)
