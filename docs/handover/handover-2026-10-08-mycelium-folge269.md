@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 3da93f1bee939e0f87b40d99345a6db3d469923dfec1fbab7c92a74ff261afdc
+  sha256: a1041946af7d98c01b8a240c2e76df2b8fcde14a5685d7b5352fbb5abe7bde12
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -135,6 +135,13 @@ Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); `/shodan/host/search` verlangt **Membership**, free-tier = Host-Lookup. **`--gfw` live** — der Key (`GFW_API_KEY`) wird akzeptiert (Auth passiert; `x-api-key` + `Authorization: Bearer`); ein Raster-Dataset braucht `geostore_id`/`geometry`, die SQL-Tabelle ist dataset-spezifisch (`SELECT * FROM data …` lieferte „Must list exactly one table").
 - **Blockade:** —
 - **Braucht:** je Dataset die korrekte Tabellenform + `geometry=`/`geostore_id=` (Raster) beim Aufruf; `--gfw "dataset=<d> sql=<select>"`.
+
+### VO-/Katalog-Durchsuchbarkeit (Operator-Frage 2026-10-08)
+- **Status:** offen — Architektur → Rat | **Bindung:** eigen
+- **Trigger:** Operator-Wort (Rat + Forschungsschicht anstoßen)
+- **Lage:** (gemessen 2026-10-08) `phi/pipeline/catalog/` trägt **84 getrackte Dateien** — **72 `tap_index_*` (VO-TAP-Service-Indizes)** + 5 Aggregator-Catalogs (re3data · zenodo · dataone · dryad · erddap/…) + ArcGIS/b2find-NASA-CMR-Tags; `phi/pipeline/index.φ` führt ihren Zustand (`index`/`descoped`). Heute **teil-durchsuchbar:** `archive_search --root phi` (Inhalt), `archive_search --index` (Pfade), `register_lookup <term>` (Register). **Gap:** kein dedizierter Query über alle 72 TAP-Indizes (Service · Tabelle · Spalte · Kraft · Domain) — „welche VO-Quelle deckt K?".
+- **Blockade:** Architektur-Entscheidung (Form — und ob überhaupt nötig; die Quellen liegen als Metadaten, der Archivar fragt die Live-Dienste).
+- **Braucht:** Forschungsschicht (`archive_search` über VO/Registry-Muster) + **Rat (5 Stimmen)** → Form (z. B. ein `catalog_search`/Index über die TAP-Indizes); danach Bau durch Mountain (Register/Parser).
 
 ## An mountain
 
