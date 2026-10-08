@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 8f172a2ef11c34bd0c845238c315f3675ca08827d3f97536971daa620b845a85
+  sha256: fa7d67f991cfdcce06179edb5386ba09546214f4f55699c2d0d8d23e520fbb42
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -43,7 +43,13 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   Q4 — `pending`-mit-Trigger: Qwen, DeepSeek-Chat, Lumo, DeepSeek-V4-Pro; **`measured descoped`:
   Claude, Duck, Inkling, Mistral, MiniMax, Z.ai (6:4)**. Q5 — **nicht wirebar / Gegenlinie steht:
   DeepSeek-Chat, Duck, Inkling, Mistral, MiniMax, Lumo, DeepSeek-V4-Pro (7)**; wirebar-mit-
-  Coverage: Qwen, Claude, Z.ai (3). **Gemessene Nicht-Antwort:** Z.ai/GLM-Frontier war am Peak
+  Coverage: Qwen, Claude, Z.ai (3). **Gewichtung (Roster-Tier = Frontier + ≥750B open-weight):**
+  Q4 `descoped` 4:1 (Claude, Duck/GPT-6, Inkling 975B, GLM-5.3 753B gegen DeepSeek V4 Pro 1.7T);
+  Q5 nicht-wirebar 3:2 (Duck/GPT-6, Inkling, DeepSeek V4 Pro gegen Claude, GLM-5.3) — die
+  ungewichtete Zahl **unterschätzt** den Riss. **Der Rat hält Q4 `pending` und Q5 Member-Pool-Träger
+  (Route C) → gewichtete UI-Mehrheit und Rat divergieren auf beiden Fragen = der eigentliche Riss.**
+  Vorbehalt: nicht jeder Seat lief die stärkste Variante (Qwen-Tab = `Qwen3.7-Plus`, nicht 3.8-Max;
+  Z.ai erst `GLM-5.3-Flash`, dann GLM-5.3). **Gemessene Nicht-Antwort:** Z.ai/GLM-Frontier war am Peak
   „Model currently at capacity" (2×), antwortete später als GLM-5.3. Max-Thinking/Deep-Search je
   Seat, wo ein Toggle gemessen wurde.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
