@@ -2,7 +2,7 @@
   title: Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
   class: survey
   date: 2026-10-08
-  sha256: df1bb578567962357fb123f11a0d165c3edd593c4a38a12923aa4ee2f7617651
+  sha256: 7f7204c5cf805ad649f7d5ca57a619dc06f5df9b3bfb72ca66abb1d92ebf186d
   status: live
   see-also: docs/concepts/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -44,18 +44,26 @@ bereits breiter ab als beide Listen zusammen.
 | Sci-Bot (Sci-Hub) | sci-bot.ru | a | 200 | nein | mittel — **Grauzone (UrhG), Rat** |
 | Bohrium | bohrium.com | a | 200 | Sign-Up | niedrig |
 | Firecrawl | firecrawl.dev | b | 200 | Key | mittel (überlappt `--playwright`) |
-| Perplexity | perplexity.ai | b | **403** | ja | raus (kein Free-API) |
-| SciSpace | scispace.com | a | 403 | Bot-Block | niedrig |
-| Sakana Chat | chat.sakana.ai | a | 403 | Bot-Block | niedrig |
-| NotebookLM | notebooklm.google.com | a | 301 | Google | niedrig (JS) |
+| Perplexity | perplexity.ai | b (Answer-Engine + Deep Research) | 403 Cloudflare (Bridge: Challenge) | Google-Login optional | **Kandidat — Auth-Route** |
+| SciSpace | scispace.com | a/c (Paper-Chat) | 202 mit Browser-UA | Konto | **Kandidat — Auth-Route** |
+| Sakana Chat | chat.sakana.ai | a (Research-Lab-Chat) | 200 mit Browser-UA | Konto | **Kandidat — Auth-Route** |
+| NotebookLM | notebooklm.google.com | a | 301 | Google | mittel (Auth-Route) |
 | LongCat 2.0 | longcat.ai/chat | a (Seat) | 200 | Sign-Up | mittel |
 | Tencent Hy3 | aistudio.tencent.com | a (Seat) | 200 | Sign-Up | mittel |
 | MiMo Studio | aistudio.xiaomimimo.com | a (Seat) | **000** | — | pending (nicht erreichbar) |
 | Chat Motif | chat.motiftech.io/chat | a (Seat) | 200 | nein | mittel |
 
-**Raus (Noise/Redundanz):** die keyed General-Such-APIs (Desearch · Querit · Context.dev ·
-Tako · Olostep · JigsawStack — `--tavily/--exa/--linkup` vorhanden), AI-Leaderboards
-(LMArena · Vals · SWE-bench · MathArena · Artificial Analysis), `paper2gal`, `hyperspace`.
+**Ausschluss-Kriterium (Operator-Wort 2026-10-08): nur `kommerziell` (pay-only, keine
+Free-/Auth-Route) und `illegal` schließen aus. Auth ist KEIN Ausschluss** — Login,
+API-Key und Cloudflare-Challenge laufen über die **Auth-Route** (Operator-Account bzw.
+Browser-Bridge/Operator-Profil); ein 403-Bot-Block ist ein Reachability-Zustand, kein
+Verdikt. Gemessen 2026-10-08: Perplexity (Cloudflare-Challenge, Bridge), SciSpace
+(202 mit Browser-UA), Sakana (200 mit Browser-UA) — alle **Auth-Kandidaten**, nicht „raus".
+
+**Geringer Wert / redundant (kein Ausschluss, nur kein erster Schritt):** die keyed
+General-Such-APIs (Desearch · Querit · Context.dev · Tako · Olostep · JigsawStack —
+`--tavily/--exa/--linkup` vorhanden), AI-Leaderboards (LMArena · Vals · SWE-bench ·
+MathArena · Artificial Analysis), `paper2gal`, `hyperspace`.
 
 ## Top-Schritte (nicht verpuffen — je Kandidat ein konkreter Schritt)
 
@@ -70,6 +78,10 @@ Tako · Olostep · JigsawStack — `--tavily/--exa/--linkup` vorhanden), AI-Lead
 5. **Sci-Bot (Sci-Hub)**: Grauzone (UrhG/DMCA) — **Rat-Verdikt vor jeder Berührung**, nie
    blind wiren.
 6. **NVIDIA NIM** (keyless Modelle/Endpoint): als Seat **und** mögliche API-Quelle messen.
+7. **Perplexity · SciSpace · Sakana · NotebookLM** (Auth-Route, **kein** Ausschluss): über
+   den Operator-Profil-Browser öffnen (Cloudflare-Challenge/Bot-Block umgeht der Bridge),
+   Gretchenfrage (Fähigkeit 4/4 + Tempo), dann als Research-Seats in `ui-seats.md`. Perplexity
+   Deep Research ist science-relevant; SciSpace/Sakana sind Paper-/Lab-Chats.
 
 ## Träger
 

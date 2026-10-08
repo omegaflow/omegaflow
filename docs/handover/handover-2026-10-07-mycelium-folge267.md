@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 86b2b90fbc26c89010cdbeb586a643683500b74c05ca4f79ef6b0feb490a3532
+  sha256: ec301ca7902da08bcbf93945b509f84768fae230857a8807dfa1958d00a187cd
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -24,6 +24,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-07 | „mir ist wichtig dass ab jetzt alle linien wissen was möglich ist und wie die modelle auch einzusetzen sind" → getrackte Karte `docs/concepts/ui-seats.md` + Verweis in allen Linien-Command-Prompts (`ebf39c309`) | Quelle: diese Session.
 - 2026-10-08 | „k3 läuft in der regel nicht auf kimi.ai nur 2.6" (Korrektur zum Seitentitel) | Quelle: diese Session.
 - 2026-10-08 | „die fmhy surveys nicht nur verpuffen lassen, denkt groß — wahnsinniges potential gerade im science/research Bereich" → Survey `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` + offene Punkte | Quelle: diese Session.
+- 2026-10-08 | „auth ist nicht zwingend ein ausschlusskriterium nur kommerziell und illegal" → Auth-Route-Kandidaten (Perplexity/SciSpace/Sakana/NotebookLM) in der Survey; kein „raus" wegen 403/Login | Quelle: diese Session. (Deckt sich mit AGENTS „Authentifizierung ist kein Ausschlusskriterium", Operator-Wort 2026-10-08.)
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -72,7 +73,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Trigger:** Operator-Wort 2026-10-08 („nicht verpuffen lassen, denkt groß")
 - **Lage:** (gemessen 2026-10-08, `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`) das Mining liefert **kein** neues Science-Daten-Arm (beide Listen out-of-scope). **`--jina` gebaut** (`0e644437d`, `jina.rs` + Wiring; end-to-end gemessen `--jina https://example.com` → 200, sauberer Text) + in `docs/concepts/tools-map.md` eingetragen. Offen: `--searxng` (Metasuche; `searx.be?format=json` liefert HTML → JSON-Instanz nötig), AI2 Playground (Seat, kein Sign-Up), Elicit/Consensus (Research-Seats), Sci-Bot (UrhG-Grauzone → Rat), NVIDIA NIM (Seat+API).
 - **Blockade:** die offenen Arme sind Code (`tools/utils`, Vorbild `--mwmbl`); AI2/Elicit/Consensus brauchen die Gretchenfrage (Fähigkeit 4/4 + Tempo).
-- **Braucht:** `archive_search --searxng <query>` bauen + JSON-fähige Instanz festlegen; AI2-Playground-Seat testen; Elicit/Consensus gegen `--openalex`/`--semanticscholar` gegenprüfen; Sci-Bot via Rat.
+- **Braucht:** `archive_search --searxng <query>` bauen + JSON-fähige Instanz festlegen; AI2-Playground-Seat testen; Elicit/Consensus gegen `--openalex`/`--semanticscholar` gegenprüfen; Perplexity/SciSpace/Sakana/NotebookLM über den Operator-Profil-Browser als Research-Seats testen (Auth-Route, **kein** Ausschluss — nur kommerziell/illegal schließen aus); Sci-Bot via Rat.
 
 ## An river
 
