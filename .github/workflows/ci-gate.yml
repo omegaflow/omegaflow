@@ -16,12 +16,16 @@ on:
 permissions:
   issues: write
 
-# The fast per-push gate for the HEAD. A superseded push may cut this run
-# mid-flight — that is the point: the newest HEAD must be gated within minutes.
-# The heavy measurement (`ci-check`, the long `test` job) stays
-# cancel-in-progress: false and is scheduled nightly as well.
+# The fast per-push gate for the HEAD. Keyed per SHA, not per ref: a newer push
+# can never evict an older SHA's waiting run — only duplicate runs of the SAME
+# SHA cancel each other. (Measured 2026-10-08: `group: ci-gate-${{ github.ref }}`
+# let every newer push on main cancel the older SHA's waiting run; `ci-check`'s
+# `cancel-in-progress: false` protects only a running run, never a waiting one —
+# 15/17 cancelled with 0 jobs. Rat + Duck + Qwen + Z.ai: the per-SHA group is the
+# necessary mechanics; the durable per-SHA verdict (`SHA -> {green,red,pending}`,
+# default pending) is a separate data invariant, still to build.)
 concurrency:
-  group: ci-gate-${{ github.ref }}
+  group: ci-gate-${{ github.sha }}
   cancel-in-progress: true
 
 env:
@@ -43,6 +47,22 @@ jobs:
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
           "health: cargo check returned void" \
           "Build job failed on ${{ github.sha }}" \
+          health
+
+  subset:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo test --lib
+    - if: failure()
+      run: |
+        bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          "health: subset test returned void" \
+          "Subset (cargo test --lib) failed on ${{ github.sha }}" \
           health
 
   format:
