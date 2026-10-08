@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 6c7b2da6805cdcbdd6caf9c95f2e412677f166f6e8dc7db92012826c4e99d0be
+  sha256: 8047cb36a2e8121ca3835f9c431d2c5269f4750bead8cf170dd8f4138653b2e7
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -34,6 +34,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „nicht nur die Top irgendwas (LLM-Seuche) — alle speichern; harte Taucher inkl. Secrets/Proton/`--all` auf die Blockierten, ggf. UI-Chats; wenn ihr die legal knackt wäre der Hammer" → vollständige Tabellen (keine Top-N) + zwei harte Taucher: LPF geknackt (HEASARC), Lasair/DEMETER/GOSAT-GW bis zur Auth-Kante | Quelle: diese Session.
 - 2026-10-08 | **Rat-Vorbereitung (dauerhaft):** „immer wenn ihr den rat tagen lasst, davor eine archive_search (evtl. ein billiges `--all` als gespeicherter Text, damit Baum, Wissenschaft/Forschung und Internet bekannt sind) und die gewichteten UI-Chats im stärksten Modus (außer Claude, der extra hochgefahren wird)" → in `AGENTS.md` (Rat-Block) eingetragen | Quelle: diese Session.
 - 2026-10-08 | „kannst du dafür keine token wrapper bauen … und hast du die secrets lokal geprüft?" → `--lasair` (`LASAIR_LSST_TOKEN`) + `--gosat` (`GOSAT_GW_MAIL/PASS`) gebaut, live gemessen; DEMETER/CNES/REGARDS **kein** Secret (Token im abgelaufenen Metalink) | Quelle: diese Session.
+- 2026-10-08 | „ich hab keinen nerv darauf zu warten — bitte vertage CDPP" → DEMETER/CDPP als `wartend` (App hängt im Ladespinner, kein Login-Formular) in `state/zustand/wartend.φ:demeter-refresh`; Trigger = App erholt sich / Login möglich | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -97,7 +98,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-08) **die neuen Arme endlich genutzt** (`--jina`/`--perplexity`/`--consensus`) — sie liefern: `--perplexity` fand den **CSES-Port `www.leos.ac.cn`** (200, user-gated, unregistriert), `--consensus` CSES-Vorläufer-Papers, `--jina` liest Portal-Seiten. Quellen-Delta: HI-Surveys (LAB/EBHIS/GASS/GALFA-HI, SkyView EBHIS/GASS), CMB (PLA, LAMBDA, ACT/SPT), Solar (IRIS/SDO/VSO/HEK/Solar Orbiter/PSP), LAIC (CSSDC/LEOS/INTERMAGNET/ISGI), FRB (CHIME/Blinkverse), Teilchen (ATLAS/Belle II/GWOSC/Fermilab). **Re-Audit:** SuperMAG jetzt erreichbar (206; `--jina`: `ERROR: No username` → braucht `username`-Param); LEOS neu; PSA/SSDC/Chang'e erreichbar; LPF/Lasair/DEMETER-order/GOSAT-Host blockiert. **Riss:** der Diver zitierte CSES als `sources.φ:17149` — der Baum trägt dort Vega 2 MISCHA (`sgrep leos.ac.cn`=0).
 - **Blockade:** die neuen Kanäle brauchen Mountain-Admission (Verdikt-Zeile) + Mycelium-Manifestation; die Kuprat-Rückfrage ist operator-gebunden.
 - **Blockierte vier (harte Runde, Kaskade inkl. Proton + neue Arme):** **keine** war geo/Cloudflare — **LPF GEKNACKT** (offenes NASA/HEASARC-Mirror `heasarc.gsfc.nasa.gov/lpf/cgi/selector?start=&end=&hdu=` → 200 `application/fits`; ESA `/lpfsa/` lebt); **Lasair Route geknackt** (`api.lasair.lsst.ac.uk` 401 = am Leben; `cone/query/object/sherlock`, `?token=<TOK>`/`Authorization: Token`); **DEMETER** Block wanderte WAF-403→auth-401 (lokale Metalink-JWTs **abgelaufen** 2026-10-05; Endpunkt `…/orders/public/files/<id>?orderToken=<JWT>&scope=cdpp`); **GOSAT-GW** falscher Host → echter Port `product.gosat-gw.nies.go.jp` 200, API cookie-gated (Login `mail_address`/`password`).
-- **Braucht:** Mountain-Verdikt für die neuen Quellen + **LPF-HEASARC**; **`--lasair` (`LASAIR_LSST_TOKEN`) und `--gosat` (`GOSAT_GW_MAIL/PASS`) gebaut & live gemessen** (`ba6202471`); **DEMETER = Operator-Akt** (REGARDS-Login → frisches Metalink/Token; **keine** CNES/REGARDS-Creds in `.secrets.local`; bare 403 · file `?scope=cdpp` 400 · Portal 200); SuperMAG-`username`-Kontrakt; Kuprat-/Detektor-Rückfrage an den Operator.
+- **Braucht:** Mountain-Verdikt für die neuen Quellen + **LPF-HEASARC**; **`--lasair` (`LASAIR_LSST_TOKEN`) und `--gosat` (`GOSAT_GW_MAIL/PASS`) gebaut & live gemessen** (`ba6202471`); **DEMETER = `wartend`** (Operator-Wort 2026-10-08 „bitte vertage CDPP": REGARDS-OSS-App hängt im Ladespinner, kein Login-Formular; `state/zustand/wartend.φ:demeter-refresh`; Trigger = App erholt sich / Login möglich; bare 403 · file `?scope=cdpp` 400 · Portal 200); SuperMAG-`username`-Kontrakt; Kuprat-/Detektor-Rückfrage an den Operator.
 
 ## An mountain
 
