@@ -3,7 +3,7 @@
   session: River-Folge 135
   class: handover
   date: 2026-10-08
-  sha256: 2e19d64aa02a6073acf063d4da415094f865f6ccab28c17fb39d7763eacefa93
+  sha256: 9c1025d9525fefd76dcb9d98f32b5074994ce2b0e85d62b2be7b51f0e25c9b2e
   status: live
 -->
 # Handover — River-Folge 135 (2026-10-08)
@@ -87,6 +87,8 @@ Origin: river-135.
 - **`register`-Job des `ci-gate` rot:** `url-order violation within ttl 2592000: usgs_comcat_m45.bin placed after hadisst_sst.bin` — den USGS-Block nach TTL einordnen.
 - **`dropped-gate` rot:** 2 neue Drop-Token (`für presence-hull- river schritt span-direktive star-grid-apertur`; `--lpf … start steht`) — Baseline nachziehen oder Drop auflösen.
 - **INTERMAGNET-HAPI-Route (neu, river-135):** der gebaute GIC-Familien-Lauf (`field_te_query --stage2 family --driver omni_imf_bz_gsm_nt`) gruppiert 154 Stationen nach Familie, aber die Quelle `https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=<st>/best-avail/PT1M/xyzf&format=json` antwortet für jede Station **HTTP 400** → alle Bänder `unmeasured`. Den `id`-Pfad/das Format/das Zeitfenster der Route prüfen.
+
+- **Commit-Kreuzung (river-135):** Mountain-273 `e51273108` hat Rivers gestagetes `src/archivar/channels.rs` (`extent_eff` + Test — der durch die Fremd-Deklaration blockierte `span`-Commit) mitcommittet. Inhalt korrekt, Historie gepusht → kein Rewrite; künftig path-scoped committen und kein eigenes Staging offen lassen, während eine Fremdlinie committet.
 
 ## An future
 
