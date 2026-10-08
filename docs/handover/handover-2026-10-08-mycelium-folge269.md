@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 269 (2026-10-08)
-  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Zweite Fortsetzung („und bitte umsetzen"): `--oapen` (OAI-PMH) gebaut, `ocr_reader`-PDF-Pfad am echten PDF verifiziert, `--gfw`-SQL-/Geometry-Bug repariert; deps.dev `descoped`.
+  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Zweite Fortsetzung („und bitte umsetzen"): `--oapen` (OAI-PMH) gebaut, `ocr_reader`-PDF-Pfad am echten PDF verifiziert, `--gfw`-SQL-/Geometry-Bug repariert; deps.dev `descoped`. Dritte Fortsetzung („bitte fixen" + Meta-API-Recherche): `--gfw` Vektor (`wdpa_protected_areas`) und Raster (Polygon-Geometry) live verifiziert; **IVOA RegTAP** (`dc.g-vo.org/tap`, 32 380 Ressourcen) und **apis.guru** (2529 APIs) als Meta-APIs gemessen.
   class: handover
   date: 2026-10-08
-  sha256: 631b9151006068bc7a3691ca0a2762dc83e8fdd49c687a40ef1c8b5f54c1aa14
+  sha256: 7e148502c4de1eee0f290990cffbf467d0c20166a1e8190628339a49c83de981
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.000 · close 0.12 · cap 0.5 — Grund: Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.1200): vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) + `--oapen` + zwei Reader-Bins (ocr_reader/meta_reader) per `grind-flash`-Tauchern gebaut; `ocr_reader`-PDF-Pfad und `--gfw`-SQL/Geometry live gemessen. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf).
+## Burn: open 0.000 · close 0.17 · cap 0.5 — Grund: Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.1690): vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) + `--oapen` + zwei Reader-Bins (ocr_reader/meta_reader) gebaut; `ocr_reader`-PDF-Pfad, `--gfw` Vektor+Raster und die Meta-API-Recherche (RegTAP/apis.guru) live gemessen — per `grind-flash`/`general`-Tauchern. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf).
 
 ## Operator-Wort-Register
 
@@ -45,6 +45,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „ja, Rat, Forschungsschicht und die Frontier-Stimmen" (VO-/Katalog-Durchsuchbarkeit) | Quelle: diese Session. → Rat + `archive_search` + Duck/Qwen/Claude gefahren; Form (c) gestuft.
 - 2026-10-08 | „falls du die GFW-SQL-Tabelle brauchst, das ist der einzige offene Feinschliff" | Quelle: diese Session. → `--gfw`-Fix: Multi-Wort-SQL, Default-Tabelle = Dataset, `geostore_id`/`geometry`(POST).
 - 2026-10-08 | „und bitte umsetzen" (die restlichen offenen FMHY-/Reader-Punkte) | Quelle: diese Session. → `--oapen`-Arm (OAI-PMH) gebaut; `ocr_reader`-PDF-Pfad am echten PDF verifiziert; deps.dev `descoped`.
+- 2026-10-08 | „bitte fixen" (GFW-Rückgabe) + „mache auch noch eine recherche mit dem neuen archive search … es gibt doch eine art meta api für alle apis oder VOs oder astro apis" | Quelle: diese Session. → `--gfw` Vektor (`wdpa_protected_areas`) **und** Raster (Polygon-Geometry) live verifiziert; Meta-API-Recherche: **IVOA RegTAP** (`dc.g-vo.org/tap`, 32 380 Ressourcen) + **apis.guru** (2529 APIs).
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -126,12 +127,19 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** —
 - **Braucht:** `gh workflow run tools-build.yml` nach dem Push; CI verifiziert Parser je Arm.
 
+### Meta-API für alle APIs / VOs / Astro-APIs (Operator-Recherche 2026-10-08)
+- **Status:** eigen (Recherche) → Mountain (Admission)
+- **Trigger:** Operator-Wort (Registrierung)
+- **Lage:** (gemessen 2026-10-08, `archive_search`-Arme + `--verdict` + direkte TAP-Abfrage) **Die Meta-API der VOs ist IVOA RegTAP:** `http://dc.g-vo.org/tap/sync` (ADQL; `rr.resource` **32 380** Ressourcen, `rr.capability` **128 301**; Schema `rr.*` = 22 Tabellen) — Alias `http://reg.g-vo.org/tap` (https: TLS-Namens-Mismatch), EURO-VO-Kopie `https://registry.euro-vo.org/eurovo/regtap/tap` (`rr.resource` 32 362), GAVO-Potsdam `http://gavo.aip.de/tap` (128 292); **Registry of Registries** `http://rofr.ivoa.net` (indexiert die Registry-Endpunkte). **Meta-API aller Web-APIs:** **apis.guru** `https://api.apis.guru/v2/list.json` (**2529** APIs, **3992** Specs, 108 837 Endpoints), daneben `public-apis` (~2058), `apis.io`, `apis.directory`, `openapi.city` (94). Abwesend: `registry.ivoa.net` (DNS), `registry.euro-vo.org/tap` (404, alter Pfad). Eigene Verifikation: RegTAP-Query lieferte `ivo://fai.kz/soft_order_obs/q/orderobs`; apis.guru `metrics.json` = `{numAPIs:2529, numSpecs:3992}`.
+- **Blockade:** —
+- **Braucht:** Mountain: **IVOA RegTAP** (`dc.g-vo.org/tap`) + **apis.guru** als Discovery-Routen in `phi/sources.φ` registrieren; danach ggf. ein `--regtap`-Arm (TAP/ADQL) in `tools/utils` (deckt sich mit der VO-Katalog-Frage unten).
+
 ### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
 - **Status:** gebaut | **Bindung:** eigen (tools/utils)
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); `/shodan/host/search` verlangt **Membership**, free-tier = Host-Lookup. **`--gfw` live und repariert** — der Key (`GFW_API_KEY`) wird akzeptiert. **Fix (2026-10-08):** `kv_token` schnitt den `sql=`-Wert beim ersten Leerzeichen ab (`sql=SELECT`) → jetzt wird `sql=` als Rest der Query gelesen (Multi-Wort-SQL); Default-Tabelle = Dataset-Name (`SELECT * FROM <dataset> LIMIT n`); `geostore_id=` als Query-Param; `geometry=` (GeoJSON) per **POST** an `/dataset/{d}/latest/query/json` (GET akzeptiert laut OpenAPI nur `sql`/`geostore_id`). Gemessene Fehlerkette: „Must list exactly one table" → „Raster tile set queries require a geometry" → „Geostore must be a Polygon or MultiPolygon for raster analysis" — die Analyse erreicht die API.
 - **Blockade:** —
-- **Braucht:** je Vektor-Dataset die passende Tabelle/Version; Raster braucht ein **Polygon**-`geometry=` (oder `geostore_id`). Ein Vektor-Stichproben-Dataset mit Rückgabe ist noch nicht getroffen (500 auf dem Polygon-Versuch) → `pending`, dataset-spezifisch. Aufruf: `--gfw "dataset=<d> [geometry=<geojson>] sql=<select>"`.
+- **Braucht:** nichts offen — **beide Pfade live verifiziert (2026-10-08):** **Vektor** `--gfw "dataset=wdpa_protected_areas sql=SELECT name,desig_type FROM wdpa_protected_areas LIMIT 2"` → `{"desig_type":"National","name":"Paraheka"}`; **Raster** `--gfw 'dataset=umd_glad_landsat_alerts geometry={"type":"Polygon",…} sql=SELECT latitude,longitude,umd_glad_landsat_alerts__date_conf AS conf FROM umd_glad_landsat_alerts LIMIT 2'` → Zeilen. Ursache des leeren 200: der Erfolgs-Body trug das curl-Write-out-Präfix aus der Redirect-Kette (`\n000\n\n000\n`) → **toleranter Parse ab erstem `{`/`[`**; `[gfw]`-Doppelpräfix entfernt, Zeilen auf 300 Zeichen gekappt. Aufruf: `--gfw "dataset=<d> [geometry=<geojson>|geostore_id=<id>] [sql=<select>]"`.
 
 ### VO-/Katalog-Durchsuchbarkeit (Operator-Frage 2026-10-08)
 - **Status:** Verdikt da (Rat + 3 Frontier), Bau offen | **Bindung:** eigen → mountain
