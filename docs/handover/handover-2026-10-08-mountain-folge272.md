@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 84f0d214d5fc1bb87a08d05df106d444e35be66e83b66dd954a2bd2fd6b0e06f
+  sha256: 43dcdacb93ae53fea915bd3a7880b3fbc5b5141088f927894a06e7605520bae6
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -64,6 +64,18 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   Q5 nicht als einheitlicher Pool (Claude: arm-weise, 2/154-Gegenlinie bleibt). **Offen:** Open-
   Weight **DeepSeek V4 Pro (1.7T)** + **GLM 5.3 (753B)** nach >1 min weiter „Thinking…" = `pending`
   (Lock gesetzt/entfernt, Gruppe JIT geschlossen).
+
+  **Open-Weight-Roster vollständig (2026-10-08):** die 23 `tryingopen`-Modelle gesichtet; gefahren
+  wurden die stärksten **distinkten** Linien — DeepSeek V4 Pro (1.7T; Q4 `pending`, Q5 nicht
+  wirebar), Inkling (975B; Q4 `descoped`, Q5 nicht wirebar), GLM 5.3 (753B; `pending`), Qwen3.8
+  2.4T (**„No response. The model returned nothing."**), Nemotron 3 Ultra 550B (**verweigert ohne
+  Codebase**, fordert Artefakte), Hy4 Preview 770B, GPT-OSS 120B, MiniMax M3 427B, Mistral Large 4,
+  Muse Glimmer 30B, MiMo V2.6 Pro. **Gemessene Nicht-Antworten:** Qwen3.8 2.4T (leer), Nemotron 3
+  Ultra (Refusal); die übrigen antworten langsam/noch = `pending`. **Nicht gefahren:** die
+  Flash/Small/älteren Varianten (GLM 5.2/5.3 Flash, Qwen3.8 27B/Flash, DeepSeek V4 Flash/V4.1
+  Flash, Nemotron 3.5 Lightning, Gemma 4 31B/26B/E2B, Ling 3.0 Flash VL, Inkling Small, MiMo V2.6
+  Flash, Liquid 3B) — schwächere Züchtlinien der vertretenen Familien (Operator-Wort: stärkste
+  Variante, nicht Flash/Small/mini).
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
