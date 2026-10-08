@@ -1,0 +1,50 @@
+name: ssusi-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ssusi-aurora:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "ssusi_aurora.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ssusi_aurora.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ssusi_aurora.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the cdaweb.gsfc.nasa.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view cdaweb.gsfc.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create cdaweb.gsfc.nasa.gov --repo omegaflow/sources \
+              --title "cdaweb.gsfc.nasa.gov" \
+              --notes "CDAWeb anonymous channels compiled to omegaflow typed bins (CDN tag = netloc)"
+          fi
+      - name: Fetch DMSP-16 SSUSI EDR-Aurora granules and manifest the SSUSI bin to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin ssusi_compiler -- \
+            --url 'https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/2016/236/dmspf16_ssusi_edr-aurora_2016236T004723-2016236T022914-REV66287_vA8.2.0r000.nc' \
+            --url 'https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/2016/236/dmspf16_ssusi_edr-aurora_2016236T022919-2016236T041110-REV66288_vA8.2.0r000.nc' \
+            --url 'https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/2016/236/dmspf16_ssusi_edr-aurora_2016236T041115-2016236T055306-REV66289_vA8.2.0r000.nc' \
+            --url 'https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/2016/236/dmspf16_ssusi_edr-aurora_2016236T055311-2016236T073502-REV66290_vA8.2.0r000.nc' \
+            --out ssusi_aurora.bin \
+            --ci-mode
