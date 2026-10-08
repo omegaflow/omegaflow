@@ -12635,6 +12635,19 @@ fn test_parse_iso_tdb_date_only_is_midnight() {
 }
 
 #[test]
+fn test_parse_iso_tdb_slash_between_date_and_time() {
+    let lsk = fixture_lsk();
+    assert_eq!(
+        super::parse_iso_tdb("2018-08-01/00:00:00", &lsk),
+        super::parse_iso_tdb("2018-08-01T00:00:00Z", &lsk)
+    );
+    assert_eq!(
+        super::parse_iso_tdb("2018-08-01/00:00:09", &lsk),
+        super::parse_iso_tdb("2018-08-01T00:00:09Z", &lsk)
+    );
+}
+
+#[test]
 fn test_rows_per_row_lat_lon_and_date_epoch() {
     let block = "url https://example.com/aqs.csv
 ttl 86400
