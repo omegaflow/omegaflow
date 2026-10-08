@@ -105,6 +105,15 @@ idempotent true
 timeout 120
 
 asset present
+format emtf_impedance
+tag data.earthscope.org
+arm emtf_compiler
+workflow emtf-cdn.yml
+pattern ^emtf_usarray_cao01_2010\.bin$
+idempotent true
+timeout 7200
+
+asset present
 format ephemeris_binary
 tag www.kari.re.kr
 arm kplo_spice_compiler
@@ -481,6 +490,24 @@ workflow soho-lasco-cme-cdn.yml
 pattern ^soho_lasco_cme\.bin$
 idempotent true
 timeout 120
+
+asset present
+format ssusi_aurora
+tag cdaweb.gsfc.nasa.gov
+arm ssusi_compiler
+workflow ssusi-cdn.yml
+pattern ^ssusi_aurora\.bin$
+idempotent true
+timeout 60
+
+asset present
+format superdarn_cpcp
+tag zenodo.org
+arm superdarn_cpcp_compiler
+workflow superdarn-cpcp-cdn.yml
+pattern ^superdarn_cpcp\.bin$
+idempotent true
+timeout 14400
 
 asset present
 format swarm_fac

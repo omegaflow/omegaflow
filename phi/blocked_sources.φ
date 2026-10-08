@@ -65,10 +65,6 @@ pending
 url https://moon.bao.ac.cn/
 note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206; Konto Operator-Hand; clpds_compiler.rs + clpds-cdn.yml + gras_2c-Reader stehen (sources.φ:9176). Offen: Portal-Ernte. future-folge149.
 
-descoped
-url https://www.nssdc.ac.cn/
-note Tianwen-1/Zhurong (CNSA) — descoped 2026-10-04 (Operator-Wort, Future 177): CDS-HiPS `CDS_P_Mars_Tianwen1-MoRIC` (`:119`, ODbL, anonym, Arm hips.rs) trägt die Oberfläche; NSSDC nur Konto-gebunden. future-folge149.
-
 pending
 url https://sdc.emiratesmarsmission.ae/
 note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild, kein Skalarfeld → Bildquelle ohne `field` (Rat, analog hips_png). Compiler gefixt (deterministisch, --id/--limit, Refresh, Aggregat-Refusal). Block: Workflow + Loader-Arm + Frame-Bundle (Mycelium).
@@ -101,17 +97,13 @@ pending
 url https://limadou.ssdc.asi.it/
 note CSES/LIMADOU (SSDC/ASI) — 2026-10-02 HTTP 200; CSES-Rohdaten via scidb.cn (cses-{lap,efd,hpm,scm}-Compiler + Workflows, sources.φ 27 Z.); limadou-Host ohne Rohdatenpfad → descope-Kandidat. future-folge167.
 
-descoped
+pending
 url https://www.leos.ac.cn/
-note LEOS (CSES) — 2026-10-05 (gemessen): Captcha-gated login, Katalog-JSON = Metadaten-Dict ohne lat/lon/time; Nutzdaten = CSES-Payloads bereits registriert → phi/sources.φ:17149-17192. Kein eigenes Feld, descoped.
+note LEOS (CSES) — 2026-10-08 re-measured: direct HTTP 206 (1 B); survey-2026-10-08-open-sources-delta.md:75/133; --jina renders app; CSES payloads not in sources.φ (sgrep leos.ac.cn=0; :17149 is Vega 2 MISCHA). Mountain admission.
 
 pending
 url https://clpds.bao.ac.cn/
 note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13 207 B); clpds_compiler.rs + clpds-cdn.yml gebaut (catalogue 98 + files 568 396); Annex-Arm --with-annex gebaut, Workflow ruft ihn noch ohne. PDS3-Reader steht. future-folge226.
-
-descoped
-url https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/
-note Cassini titanNotebook tray — gemessen 2026-10-02 200/13058 B: Log-/Browse-Baum, kein Feld-Serien-Endpunkt; 2026-10-04 verdict pending, Wayback ohne Snapshot → trägt keine Feldserie; ODF-Serie steht sources.φ:9074 (cassini_odf). future-folge165.
 
 pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
@@ -125,29 +117,25 @@ pending
 url https://data.kasi.re.kr/
 note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
 
-descoped
-url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20cluster_ka%20IS%20NOT%20NULL%20AND%20phot_g_mean_mag%20%3C%2015
-note gemessen 2026-10-03: gaiadr3.cluster_ka HTTP 400; TAP_SCHEMA 248 Tabellen, keine cluster/member-Spalte → keine Mitgliedschaft in der Gaia-TAP; extern: VizieR J/A+A/633/A99/members 2026-10-04 HTTP 200 (Cantat-Gaudin+2020).
+pending
+url https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=J/A+A/633/A99/members
+note Gaia cluster_ka members (Cantat-Gaudin+2020) — 2026-10-08 re-registered: Gaia-TAP has no cluster/member column (gaiadr3.cluster_ka HTTP 400); VizieR members table HTTP 200 (58318 B, measured 2026-10-08). Lost pointer restored.
 
 pending
 url https://www.ieeg.org
 note ieeg.org — 2026-10-04: REST ohne Elektroden-Koordinaten (kein MNI); /api 503; Bau-Schritt = BIDS-Sidecar `*_electrodes.tsv` (`src/archivar/electrodes.rs`); ds003844 x=y=z=0.
 
-descoped
+blocked account
 url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — 2026-10-04: descoped — Elektroden-Doku rein symbolisch (Ferrell et al. 2020 par.nsf.gov/servlets/purl/10199699: Label/Text, keine Koordinaten; edf.rs EdfSignal ohne Positionsfeld); NEDC-Formular gesendet (wartend.φ:39).
+note TUH EEG (Temple) — 2026-10-08 re-measured: landing HTTP 200 (15360 B); data via NEDC account (form sent, wartend.φ:39); electrode doc label/text only (Ferrell 2020, no coordinates). State descoped→blocked account (UI-Runde 2026-10-08).
 
-descoped
+blocked account
 url https://sleepdata.org
-note NSRR — 2026-10-04: descoped (Human-Subjects-/HIPAA-Training Pflicht, absent); Konto bestätigt (mail_ledger.φ:361/:362), NSRR_USER/PASS/EMAIL in .secrets.local; Arm nsrr_psg steht (9d416e57b, edf.rs); Asset-Block fehlt.
-
-descoped
-url https://api.ioc-sealevelmonitoring.org/v1
-note IOC Sea Level v1 — 2026-10-06 gemessen: keyless service.php-Route HTTP 200 (1 997 376 B) deckt die Stationen (sources.φ:1145); v1 ohne Key 403 → descoped.
+note NSRR — 2026-10-08 re-measured: account confirmed (mail_ledger.φ:361/:362); arm nsrr_psg stands (9d416e57b, edf.rs); asset block absent; HIPAA-training gate. State descoped→blocked account (UI-Runde 2026-10-08).
 
 blocked parser-def
 url https://cedar.openmadrigal.org
-gap html-parser-arm
+gap openmadrigal-api
 note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
 
 blocked parser-def
