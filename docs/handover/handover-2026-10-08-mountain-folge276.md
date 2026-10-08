@@ -3,7 +3,7 @@
   session: Mountain-Folge 276
   class: handover
   date: 2026-10-08
-  sha256: 36ffe0d8c4a29e611a2ca66f39e8c598c4ccbe87166ccb1f14d8a9086f11dac5
+  sha256: fb20a98684c0dfa55eb88565bf03b520a3610b9d547c3705e846e3fa2308109a
   status: live
 -->
 # Handover — Mountain-Folge 276 (2026-10-08)
@@ -24,6 +24,7 @@ Wort | Datum | Quelle
 „mach das ab jetzt automatisch — committe und pushe selbst, du bist die einzige Linie die das nicht automatisch tut" | 2026-10-07 | Operator (Session, Mountain 264)
 „berufe den rat ein aber mache dafür eine archive search recherche und befrage du frontier uis" | 2026-10-08 | Operator (Session, Mountain 273)
 „kannst du mit archive serch den ui chats und dem rat klären?" — offene Route-/GIC-Admissionen (Receiver/force) via archive_search + UI-Seats + Rat | 2026-10-08 | Operator (Session, Mountain 276)
+„das sind allerdings zu wenig stimmen — 3.7 plus ist nicht representativ; zudem kannst du tryingopen auch glm und qwen fahren und andere" — breitere UI-Runde | 2026-10-08 | Operator (Session, Mountain 276)
 
 ## Offen (aufgeschlüsselt)
 
@@ -32,9 +33,9 @@ Wort | Datum | Quelle
 - **Trigger:** Reachability-Datei ändert sich
 - **Lage:** (gemessen 2026-10-08 276) SSUSI/CPCP/EMTF registriert (273).
   INTERMAGNET-HAPI-Form im Compiler (275). **cors entschieden** (`cors_compiler`
-  disponiert, `ledger.φ:89-92`). **Wind SWE entschieden** (Rat+UI 276):
-  `quantity`/energy, Receiver = Wind-Sonden-Weltlinie. Offen: OMTI/Abisko,
-  Substorm-Onsets, DLR ROTI, Kellerman/Zenodo 4444068, USGS E-Feld.
+  disponiert, `ledger.φ:89-92`). **Wind SWE — Riss** (quantity/thermal/advective,
+  Rat+Runde-2). Offen: OMTI/Abisko, Substorm-Onsets, DLR ROTI, Kellerman/Zenodo
+  4444068, USGS E-Feld.
 - **Blockade:** Zeilen-Bau für die entschiedenen Arme; Receiver-Feld-Reader (s. u.).
 - **Braucht:** Wind-SWE-`quantity`-Zeile bauen (Receiver = Wind-Sonde); übrige Arme
   nach demselben Rat-Verdikt (`state/mountain/rat-runde-2026-10-08-source-admission.md`)
@@ -43,19 +44,21 @@ Wort | Datum | Quelle
 ### GIC-Stufe-2 — Receiver/force ENTSCHIEDEN; dB/dt-Bestand 2/154
 - **Status:** eigen | **Bindung:** eigen (Register) · river (`compute_max_t`)
 - **Trigger:** AE/AL/AU · SME/SML/SMU als `sources.φ`-Zeilen gebaut
-- **Lage:** (gemessen 2026-10-08 276) **Rat+UI-Verdikt:** AE/AU/AL (WDC/ISGI) und
-  SME/SMU/SML (SuperMAG) sind **`quantity`/intensity** — Bodenmagnetometer-Netz-
-  Hüllkurven, nie `em` (ein `force em` würde behaupten, ein Organismus spüre den
-  Index; A ≠ A). Receiver = Netz-Mittellinie (deklariert); der em-Rohkanal sind
-  die Stationsreihen, je Station mit eigener Receiver-Weltlinie. Vertrags-Satz:
-  `docs/concepts/archivar-mathematikerin.md` (Live-APIs). `dB/dt-Bestand 2/154`
+- **Lage:** (gemessen 2026-10-08 276) **Rat + 6 UI-Seats — RISS, nicht geschlossen:**
+  AE/AU/AL (WDC/ISGI) und SME/SMU/SML (SuperMAG) — `quantity`/intensity 4
+  (Rat-Linse, Claude, Qwen3.7, GLM 5.3: Netzwerkstatistik, propagiert durch keins
+  der 9 Medien, `force em` würde behaupten, ein Organismus spüre den Index) **gegen**
+  `force em` 3 (Nemotron 3 Ultra, DeepSeek V4 Pro, Inkling: gemessene Größe IST
+  B(nT) an den Stationen, Index nur Reduktion, Receiver = Stationsnetz). Beide
+  Linien getragen. Vertrags-Satz in `docs/concepts/archivar-mathematikerin.md`
+  (Live-APIs, mit beiden Gegenlinien). `dB/dt-Bestand 2/154`
   (ABK `sources.φ:2150-2168`, SOD `:2170-2178`); beide 1h-Assets
   `gate-no-field-lines`-**refused** (`refusal_ledger.φ:75-76`).
 - **Blockade:** AE/AL/AU + SME/SML/SMU noch nicht als Zeilen gebaut; Receiver als
   deklariertes `FieldConfig`-Feld hat keinen Reader (span-Apertur, s. 275).
-- **Braucht:** `quantity`-Zeilen für AE/AL/AU (WDC Kyoto/ISGI) und SME/SMU/SML
-  (SuperMAG) mit Receiver-Mittellinie schreiben; `gate-no-field-lines`-Refusal der
-  2 dB/dt-Arme lösen oder `blockiert` registrieren; dann River Stufe 2 am
+- **Braucht:** den Riss `quantity` vs `em` entscheiden (neuer Rat mit dem Befund,
+  oder Operator-Wort) — erst danach die Zeile bauen; `gate-no-field-lines`-Refusal
+  der 2 dB/dt-Arme lösen oder `blockiert` registrieren; dann River Stufe 2 am
   `compute_max_t`.
 
 ### em-nmgy / Bandreferenz — Parser-Arm GEBAUT; `band_id`-Persistenz + Heim offen
@@ -140,24 +143,28 @@ Wort | Datum | Quelle
 ### Route-Admissionen — Receiver/force je Arm ENTSCHIEDEN (Rat+UI); Zeilen-Bau offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium (Manifestation)
 - **Trigger:** `sources.φ`-Zeilen je Arm gebaut
-- **Lage:** (gemessen 2026-10-08 276) Rat+UI-Verdikt je Arm in
-  `state/mountain/rat-runde-2026-10-08-source-admission.md`: CALLISTO/THEMIS-GMAG/
-  SuperDARN-FITACF/Fermi-4FGL → `em`; Wind-SWE/EMTF/IMPC-ROTI/TEC/MUF/Slab/
-  SuperDARN-CPCP/INS/NSE → `quantity` (+kind); GEBCO/CEDA und die Teilchen-Detektoren
-  = **Riss** (refused vs quantity vs em — getragene Gegenlinien). Abgeleitete
-  Netz-Indizes sind nie `em` (Vertrags-Satz in `archivar-mathematikerin.md`).
+- **Lage:** (gemessen 2026-10-08 276, Rat + Claude · Qwen3.7 · GLM 5.3 · Nemotron 3
+  Ultra · DeepSeek V4 Pro · Inkling) je Arm in
+  `state/mountain/rat-runde-2026-10-08-source-admission.md`: CALLISTO / THEMIS-GMAG
+  → `em` (einhellig); DLR-IMPC / EMTF / INS / NSE → `quantity`; SuperDARN →
+  `quantity` (5:2); Fermi-4FGL → `em` (5:2). **Risse** (getragene Gegenlinien):
+  (a)(b) AE/SME `quantity` 4 vs `em` 3 (Nemotron/DeepSeek/Inkling: gemessene Größe
+  IST B(nT) am Stationsnetz); (c) Wind SWE quantity/thermal/advective; (k) Teilchen
+  quantity/refused/em; (l) GEBCO refused/quantity. Der zentrale Index-Riss steht im
+  Vertrags-Satz `docs/concepts/archivar-mathematikerin.md`.
 - **Blockade:** Receiver als deklariertes `FieldConfig`-Feld ohne Reader (span);
-  Riss-Arme (k)(l) nicht einhellig.
-- **Braucht:** `sources.φ`-Zeilen nach dem Verdikt bauen (force/quantity + Receiver);
-  Riss-Arme (k)(l) als getragene Gegenlinien oder per neuem Rat entscheiden.
+  Riss-Arme nicht einhellig.
+- **Braucht:** `sources.φ`-Zeilen für die einhelligen Arme bauen (em/quantity +
+  Receiver); Riss-Arme (a)(b)(c)(k)(l) per neuem Rat entscheiden.
 
 ## An river
 
 Origin: mountain-folge276.
 
-- **Rat+UI-Verdikt Source-Admission** (`state/mountain/rat-runde-2026-10-08-source-admission.md`):
-  abgeleitete Netz-Indizes sind `quantity`, nie `em`; der em-Rohkanal je Station trägt
-  die Receiver-Weltlinie. Betrifft `wasm.rs`/Query-Apertur nur mittelbar.
+- **Rat+UI-Runde Source-Admission** (`state/mountain/rat-runde-2026-10-08-source-admission.md`):
+  der abgeleitete Netz-Index ist ein **offener Riss** `quantity` (Rat-Linse + 3 Seats)
+  vs `force em` (3 Seats: gemessene Größe IST B(nT) am Stationsnetz) — keine
+  Festlegung; betrifft `wasm.rs`/Query-Apertur nur mittelbar.
 - **`span`/Receiver-Feld:** der Vertrags-Satz steht (275); ein deklariertes
   Receiver-Feld braucht den Reader — River liest `receiver.span` in der Query-Apertur.
 - **INTERMAGNET-HAPI-Form** im Compiler (275) live 200; `cors_rinex`-End-zu-End-Lauf offen.
