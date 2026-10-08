@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 813310259a9d0e60497546ce43b31b215506bf2e842f9e60b356c3bc13fb0194
+  sha256: cc684d297758338fd528f40f98b9e4a78d9260ba7baa524c3a1eb2db2afc3ecf
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -36,16 +36,17 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „VT SuperDArn ist eingeloggt" | Quelle: diese Session. → Route `vt.superdarn.org/data-download` gemessen, eingeloggt; LOCK-Download bleibt Operator-Hand.
 - 2026-10-08 | „ich meinte die https://github.com/felladrin/awesome-ai-web-search" | Quelle: diese Session. → Diver-Mining der Liste (5 neue Arme).
 - 2026-10-08 | „auth ist kein ausschlusskriterium nur kommerziell" | Quelle: diese Session. → Arm-Auswahl: Auth/Free-Route erlaubt, nur pay-only/illegal aus.
+- 2026-10-08 | „SERPER_API_KEY · FIRECRAWL_API_KEY · SEARCHAPI_API_KEY · SERPAPI_API_KEY sind drin; jina ist raus — negativer Saldo" | Quelle: diese Session. → 4 Arme gebaut, Jina Search entfällt.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
 
-### Such-Arme aus `awesome-ai-web-search` + FMHY (Operator-Wort 2026-10-08)
-- **Status:** eigen (Keys fehlen = operator) | **Bindung:** eigen (tools/utils) + operator (Keys)
-- **Trigger:** die Key-Namen in `.secrets.local` (`SERPER_API_KEY` · `FIRECRAWL_API_KEY` · `SEARCHAPI_API_KEY` · `SERPAPI_API_KEY` · `JINA_API_KEY`)
-- **Lage:** (gemessen 2026-10-08, Diver) `--searxng` **gebaut** (`net.rs` `SEARXNG_INSTANCES`/`searxng_lines`; Hosts `search.mectov.my.id`/`sx.xo.st`; end-to-end `--searxng "test"` → url/title/content/engine). Die 144 Einträge der Liste gesichtet — fast alle Chatbot-Seats; **5 neue Arme** klassifiziert, alle mit Auth/Free-Route (**kein pay-only**, Operator-Wort 2026-10-08): **Serper** (POST `google.serper.dev/search`, `X-API-KEY`) · **Firecrawl** (POST `api.firecrawl.dev/v1/search`, Bearer; OSS self-host keyless) · **SearchApi** (GET `searchapi.io/api/v1/search`, Bearer) · **SerpApi** (GET `serpapi.com/search.json`, keyless-gemessen 200) · **Jina Search** (GET `s.jina.ai/?q=`, Bearer). `--brave` ist 402-erschöpft → ein SERP-Ersatz nötig.
-- **Blockade:** die 5 Schlüsselnamen fehlen in `.secrets.local` (Operator-Hand).
-- **Braucht:** Operator: Keys setzen; dann je Kandidat einen `searxng`-analogen Arm bauen (`--serper`/`--firecrawl`/`--searchapi`/`--serpapi`/`--jina-search`).
+### Such-Arme aus `awesome-ai-web-search` + FMHY (Operator-Wort 2026-10-08) — gebaut
+- **Status:** eigen (Release) | **Bindung:** eigen (tools/utils)
+- **Trigger:** der nächste `tools-build`-Lauf (Rolling-Release `tools-latest`) trägt die neuen Arme in die PATH-Wrapper
+- **Lage:** (gemessen 2026-10-08) **`--searxng` + `--serper`/`--firecrawl`/`--searchapi`/`--serpapi` gebaut**, `cargo build -p omegaflow-utils --bin archive_search` grün, end-to-end gemessen (je Treffer `url`/`title` + `position`/`snippet` bzw. `description`). Keys vorhanden: `SERPER_API_KEY` · `FIRECRAWL_API_KEY` · `SEARCHAPI_API_KEY` · `SERPAPI_API_KEY`. **Jina Search (`s.jina.ai`) entfällt** (Operator-Wort 2026-10-08: negativer Saldo); der Reader `--jina` (`r.jina.ai`) bleibt keyless.
+- **Blockade:** —
+- **Braucht:** `gh workflow run tools-build.yml` nach dem Push (dann tragen die Wrapper die Arme); ein Unit-Test je Parser ist noch offen (CI verifiziert).
 
 ### `ci-gate` Per-SHA-Verdikt — Config gebaut, Dateninvariante offen
 - **Status:** eigen | **Bindung:** eigen (CI-Config) + operator (Branch-Protection) + mountain (Dateninvariante/Register)
