@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 0f98a18246bb9a97f046b0d9dd6877df466a7353b7b8dd1721ffa787a1646334
+  sha256: 3da93f1bee939e0f87b40d99345a6db3d469923dfec1fbab7c92a74ff261afdc
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -75,7 +75,7 @@ Sender-Zeilen in `## An <line>`.
 
 ### Pipeline — INPE-BIG-Kandidat (`phi/pipeline/ledger.φ`)
 - **Status:** wartend | **Bindung:** eigen (Ernte-Verdrahtung) · auf Mountain
-- **Trigger:** Mountains Zulassungs-/Dispositions-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge275.md` §Pipeline-5)
+- **Trigger:** Mountains Zulassungs-/Dispositions-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge276.md` §Pipeline-5)
 - **Lage:** (gemessen 2026-10-07) die 5 Alt-Einträge auf `disponiert`; neu `https://data.inpe.br/big/` (STAC/GeoTIFF, em; 2026-10-07 HTTP 200, 192329 B) als eigener Kandidat.
 - **Blockade:** Mountains Zulassung.
 - **Braucht:** Mountains Dispositions-Verdikt; dann Ernte-Verdrahtung.
@@ -96,14 +96,14 @@ Sender-Zeilen in `## An <line>`.
 
 ### Manifestation der neuen Routen (from future-199/200)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge275.md`)
+- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge276.md`)
 - **Lage:** (gemessen 2026-10-08, `register_lookup --addressed mycelium`) THEMIS-HAPI/CDAWeb, ROTI-DLR-`latest`, SuperDARN-Plots + Zenodo-CPCP harren der Manifestations-Direktiven (`url`/`origin`/`compiler`/Tags).
 - **Blockade:** Mountains Verdikt zuerst.
 - **Braucht:** Mountains Admission; dann schreibt Mycelium die `url`/`origin`/`compiler`/Tags.
 
 ### `hadisst-cdn.yml` — Dispatch nach Admission (from mountain-272)
 - **Status:** wartend | **Bindung:** eigen (CI-Dispatch)
-- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge275.md`)
+- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge276.md`)
 - **Lage:** (gemessen 2026-10-08) Workflow steht, noch nicht dispatcht; Asset im CDN erst nach Admission sichtbar.
 - **Blockade:** Mountains Admission.
 - **Braucht:** `gh workflow run hadisst-cdn.yml` nach Admission; sha je Asset ins Register.
@@ -120,7 +120,14 @@ Sender-Zeilen in `## An <line>`.
 - **Trigger:** Operator-Auswahl / Mountain-Admission
 - **Lage:** (gemessen 2026-10-08, 3 Diver über `educational`/`reading`/`developer-tools`/`internet-tools`/`storage`/`misc`/`image`/`text`/`file`/`system-tools`) die FMHY-Erd-/Weltraum-Landschaft ist im Baum weitgehend registriert; **neue, verifizierte Kandidaten (nicht in `phi/` registriert, kein `archive_search`-Modus):** Daten/Research: **USGS NGMDB** (`https://ngmdb.usgs.gov/ArcGIS/rest/services?f=pjson`, 206) · **Internet Archive advancedsearch** (`https://archive.org/advancedsearch.php?q=…&output=json`, 200) · **HAL** (`https://api.archives-ouvertes.fr/search/?q=…&wt=json`, 206) · **OEIS** (`https://oeis.org/search?q=…&fmt=json`, 200) · **OAPEN** (OAI `library.oapen.org/oai/request`, 200) · **deps.dev API** (keyless). Suche/Infra: **Wiby JSON** (`https://wiby.me/json/?q=`, 200) · **RSS-Bridge** (`rss-bridge.org`, 200) · **Kiwix** (`download.kiwix.org/zim/…`, 200) · **web.scraper.workers.dev** (200) · **Shodan/OpenCelliD/Global Forest Watch** (free key). Reader/OCR-Kandidaten: **Tesseract · OCRmyPDF · Marker · Docling · MarkItDown · exifTool · ImageMagick · qsv/xan (Rust)**.
 - **Blockade:** —
-- **Braucht:** `gh workflow run tools-build.yml` nach dem Push (Rolling-Release trägt die Arme); **gebaut (dieses Atom): `--oeis` · `--hal` · `--wiby` · `--ia-search`** (keyless JSON, end-to-end grün). Ferner offen (Operator/Mountain): `--ngmdb` (ArcGIS-Endpunkt noch nicht sauber gemessen), OAPEN (OAI/XML), Reader/OCR-Sidecars (Tesseract/OCRmyPDF/Marker/Docling/MarkItDown/exifTool/ImageMagick/qsv).
+- **Braucht:** `gh workflow run tools-build.yml` nach dem Push (Rolling-Release trägt die Arme); **gebaut (dieses Atom): `--oeis` · `--hal` · `--wiby` · `--ia-search`** (keyless JSON, end-to-end grün). **Offen — gemessene Bauspecs (2026-10-08, Diver):**
+  - `--ngmdb`: echter REST-Service `https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer?f=pjson` (Browser-UA nötig); Layer-Query `…/MapServer/0/query?where=1=1&outFields=*&f=json&resultRecordCount=1`.
+  - `--rss-bridge`: `https://rss-bridge.org/bridge01/?action=display&bridge=<Bridge>&format=Json` → JSON Feed (`items[]{title,url,content_text}`).
+  - `--kiwix`: `https://opds.library.kiwix.org/catalog/v2/entries?q=<q>&lang=eng&count=<n>` → OPDS/Atom (`entry[]{title,summary,link[rel=acquisition]}`), **kein JSON**.
+  - `--scrape`: `https://web.scraper.workers.dev/?url=<url>&selector=<css>&pretty=true` → `{result:{<selector>:[text]}}`.
+  - `--deps-dev`: keyless, aber **kein Freitext-Sucharm** (`/systems/{s}/packages/{p}`) → ungeeignet.
+  - OAPEN: OAI-Harvest (`library.oapen.org/oai/request`), **keine Suchroute** → nur als Harvester sinnvoll.
+  - **OCR-/Lese-Sidecars:** Tesseract · pdftoppm · exifTool sind **auf PATH** → ein neues Bin `ocr_reader` (unter `tools/utils/src/bin/`; PDF→PNG→`tesseract`, Bilder direkt) und `meta_reader` (`exiftool -j`); Python-Tools (Marker/Docling/MarkItDown/OCRmyPDF) fallen raus (Python-Bann).
 
 ### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
 - **Status:** gebaut | **Bindung:** eigen (tools/utils)
