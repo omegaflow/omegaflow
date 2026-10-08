@@ -1400,6 +1400,83 @@ fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+const SEARXNG_INSTANCES: &[&str] = &[
+    "https://search.mectov.my.id",
+    "https://sx.xo.st",
+    "https://www.isci.si",
+];
+
+pub fn searxng_lines(query: &str, max: usize) -> Vec<String> {
+    let headers = [
+        "-H",
+        "Accept: application/json",
+        "-H",
+        "User-Agent: omegaflow-archive-search",
+    ];
+    let mut last = "pending — no SearXNG instance answered".to_string();
+    let mut absent = false;
+    for base in SEARXNG_INSTANCES {
+        let url = format!("{}/search?q={}&format=json", base, urlencode(query));
+        match get(&url, &headers, "40") {
+            Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                Some(v) => {
+                    let out = searxng_results(&v, max);
+                    if out.is_empty() {
+                        last = format!("absent — {} carries no entry: {}", base, query);
+                        absent = true;
+                        continue;
+                    }
+                    return out;
+                }
+                None => {
+                    last = format!("pending — {} carries no JSON", base);
+                    continue;
+                }
+            },
+            Some(f) => {
+                last = format!("pending — {} HTTP {}", base, f.status_text());
+                continue;
+            }
+            None => {
+                last = format!("pending — no network to {}", base);
+                continue;
+            }
+        }
+    }
+    if absent {
+        last = format!("absent — SearXNG carries no entry: {}", query);
+    }
+    vec![last]
+}
+
+fn searxng_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let content = flatten(r.get("content").and_then(|d| d.as_str()).unwrap_or(""));
+        let engine = r.get("engine").and_then(|e| e.as_str()).unwrap_or("");
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if !engine.is_empty() {
+            line.push_str(&format!("\tengine: {}", engine));
+        }
+        if !content.is_empty() {
+            line.push_str(&format!("\tcontent: {}", content));
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
 pub fn tavily_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — TAVILY_API_KEY absent from .secrets.local/.env".to_string()];
@@ -1683,6 +1760,7 @@ const QUERY_MODES: &[&str] = &[
     "librs",
     "mwmbl",
     "marginalia",
+    "searxng",
     "tavily",
     "exa",
     "linkup",
@@ -1818,6 +1896,7 @@ pub fn run_lines(
         }
         "mwmbl" => mwmbl_lines(query, max),
         "marginalia" => marginalia_lines(query, max),
+        "searxng" => searxng_lines(query, max),
         "tavily" => {
             let token = resolve_key(
                 env.get("TAVILY_API_KEY").map(String::as_str).unwrap_or(""),
@@ -2025,6 +2104,7 @@ mod tests {
             "librs",
             "mwmbl",
             "marginalia",
+            "searxng",
             "tavily",
             "exa",
             "linkup",
@@ -2160,6 +2240,33 @@ mod tests {
         assert_eq!(
             lines[1],
             "url https://example.org/b\ttitle: B\tquality: high\tdescription: text"
+        );
+    }
+
+    #[test]
+    fn searxng_results_carry_url_title_content_engine() {
+        let body = r#"{
+            "query":"interplanetary scintillation",
+            "number_of_results":2,
+            "results":[
+                {"url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
+                 "title":"Interplanetary scintillation",
+                 "content":"In astronomy, interplanetary scintillation",
+                 "engine":"wikipedia"},
+                {"url":"","title":"no url","content":"x","engine":"duckduckgo"},
+                {"url":"https://example.org/b","title":"B","content":"text"}
+            ]
+        }"#;
+        let v = json::parse(body).expect("json");
+        let lines = searxng_results(&v, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tengine: wikipedia\tcontent: In astronomy, interplanetary scintillation"
+        );
+        assert_eq!(
+            lines[1],
+            "url https://example.org/b\ttitle: B\tcontent: text"
         );
     }
 

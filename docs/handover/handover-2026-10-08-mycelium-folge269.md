@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 269 (2026-10-08)
-  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199, mountain-272) gefaltet. `--searxng`-Instanz-Landschaft gemessen (keine öffentliche JSON-Instanz). folge268 archiviert.
+  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 8d34400241c6c438b4c01378517b22f45b1f0bea04578bb1ffa935e37201cd2f
+  sha256: 813310259a9d0e60497546ce43b31b215506bf2e842f9e60b356c3bc13fb0194
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0028 · close 0.14 · cap 0.5 — Grund: Meta-Pass + KC2G-Diagnose + Adress-Faltung + `--searxng`-Messung + Rat/Diver/UI (ci-gate) + Mountain-Inventar; kein pro/max; gemessen `session_burn`
+## Burn: open 0.0028 · close 0.22 · cap 0.5 — Grund: Meta-Pass + KC2G + Rat/Diver/UI (ci-gate) + Mountain-Inventar + `--searxng` gebaut + Arm-Mining; kein pro/max; gemessen `session_burn`
 
 ## Operator-Wort-Register
 
@@ -34,16 +34,18 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „teilweise — der CI-Config-Teil ist baubar; das Rat-Verdikt fehlt — bitte den Rat, den Taucher mit archive search und die UI-Voices befragen" (ci-gate Per-SHA-Verdikt) | Quelle: diese Session. → Rat + Diver + 3 UI-Seats; Config gebaut.
 - 2026-10-08 | „bitte recherchieren alle Mountain-Punkte mit Prio Routen / Research-APIs / MCP; eigentlich habe ich neugestartet" | Quelle: diese Session. → Inventar + Routen-Verifikation; MCP-Neustart-Trigger gefeuert.
 - 2026-10-08 | „VT SuperDArn ist eingeloggt" | Quelle: diese Session. → Route `vt.superdarn.org/data-download` gemessen, eingeloggt; LOCK-Download bleibt Operator-Hand.
+- 2026-10-08 | „ich meinte die https://github.com/felladrin/awesome-ai-web-search" | Quelle: diese Session. → Diver-Mining der Liste (5 neue Arme).
+- 2026-10-08 | „auth ist kein ausschlusskriterium nur kommerziell" | Quelle: diese Session. → Arm-Auswahl: Auth/Free-Route erlaubt, nur pay-only/illegal aus.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
 
-### `--searxng`-Arm / FMHY-Forschungslandschaft (Operator-Wort 2026-10-08)
-- **Status:** blockiert | **Bindung:** eigen (tools/utils + Roster)
-- **Trigger:** eine JSON-fähige SearXNG-Instanz ist gemessen
-- **Lage:** (gemessen 2026-10-08, `curl` Instanz-Probe) kein öffentlicher SearXNG-Treffer liefert JSON: `searx.be` HTTP 200 = HTML (kein JSON-Format); `searx.tiekoetter.com`/`priv.au`/`search.hbubli.cc`/`opnxng.com`/`search.rhscz.eu`/`searx.perennialte.ch`/`searx.dresden.network`/`searx.namejeff.xyz` = 429; `search.projectsegfau.lt` = 200 text/plain 25 B (Format abgelehnt); `searxng.site` = 403. `--jina` steht (`0e644437d`); Perplexity/Sakana 4/4 in `ui-seats.md`.
-- **Blockade:** öffentliche SearXNG-Instanzen haben den JSON-Exporter abgeschaltet (nur die HTML-Suche bleibt); der Arm braucht `formats: [json]` (selbst gehostet) oder einen HTML-Parser.
-- **Braucht:** eine gemessene JSON-Instanz (oder Selbst-Host) → dann `searxng_lines`/`searxng_results` in `tools/utils/src/bin/archive_search/net.rs` nach dem `marginalia`-Muster; AI2-Playground-Seat testen; Sci-Bot via Rat.
+### Such-Arme aus `awesome-ai-web-search` + FMHY (Operator-Wort 2026-10-08)
+- **Status:** eigen (Keys fehlen = operator) | **Bindung:** eigen (tools/utils) + operator (Keys)
+- **Trigger:** die Key-Namen in `.secrets.local` (`SERPER_API_KEY` · `FIRECRAWL_API_KEY` · `SEARCHAPI_API_KEY` · `SERPAPI_API_KEY` · `JINA_API_KEY`)
+- **Lage:** (gemessen 2026-10-08, Diver) `--searxng` **gebaut** (`net.rs` `SEARXNG_INSTANCES`/`searxng_lines`; Hosts `search.mectov.my.id`/`sx.xo.st`; end-to-end `--searxng "test"` → url/title/content/engine). Die 144 Einträge der Liste gesichtet — fast alle Chatbot-Seats; **5 neue Arme** klassifiziert, alle mit Auth/Free-Route (**kein pay-only**, Operator-Wort 2026-10-08): **Serper** (POST `google.serper.dev/search`, `X-API-KEY`) · **Firecrawl** (POST `api.firecrawl.dev/v1/search`, Bearer; OSS self-host keyless) · **SearchApi** (GET `searchapi.io/api/v1/search`, Bearer) · **SerpApi** (GET `serpapi.com/search.json`, keyless-gemessen 200) · **Jina Search** (GET `s.jina.ai/?q=`, Bearer). `--brave` ist 402-erschöpft → ein SERP-Ersatz nötig.
+- **Blockade:** die 5 Schlüsselnamen fehlen in `.secrets.local` (Operator-Hand).
+- **Braucht:** Operator: Keys setzen; dann je Kandidat einen `searxng`-analogen Arm bauen (`--serper`/`--firecrawl`/`--searchapi`/`--serpapi`/`--jina-search`).
 
 ### `ci-gate` Per-SHA-Verdikt — Config gebaut, Dateninvariante offen
 - **Status:** eigen | **Bindung:** eigen (CI-Config) + operator (Branch-Protection) + mountain (Dateninvariante/Register)

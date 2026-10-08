@@ -335,6 +335,7 @@ fn main() {
             "--brave" => mode = Mode::Net("brave"),
             "--mwmbl" => mode = Mode::Net("mwmbl"),
             "--marginalia" => mode = Mode::Net("marginalia"),
+            "--searxng" => mode = Mode::Net("searxng"),
             "--tavily" => mode = Mode::Net("tavily"),
             "--exa" => mode = Mode::Net("exa"),
             "--consensus" => mode = Mode::Consensus,
@@ -696,7 +697,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -709,6 +710,9 @@ fn usage() {
     );
     eprintln!(
         "  --marginalia Marginalia public search (api.marginalia-search.com), keyless JSON; url + title/description/quality (CC-BY-NC-SA)"
+    );
+    eprintln!(
+        "  --searxng   SearXNG meta-search (public JSON instances, keyless; self-host fallback); url + title/content/engine"
     );
     eprintln!(
         "  --jina      Jina Reader (r.jina.ai), keyless; the clean text of a page for a target url"
