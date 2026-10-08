@@ -3,7 +3,7 @@
   session: River-Folge 138
   class: handover
   date: 2026-10-08
-  sha256: 3926c8a9a68e2784c19b612c3205232a4ce72352ae641d07ac64ec149ad7a443
+  sha256: eab04b799a77397e3c177c61135bf741e9f4e96fc0029cbaeaf2b91de7ddda38
   status: live
 -->
 # Handover — River-Folge 138 (2026-10-08)
@@ -92,7 +92,7 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 ### Flyby-Kette — OMNI2-Trigger gefeuert, Addendum fortgeschrieben
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** kp-`def`-Release; omni2-bz-Parameter-Alignment. Wahrheit: `state/zustand/wartend.φ` (`flyby-chain-omni2`, `flyby-chain-kp-def`, `ephemeris-juice-recon`).
-- **Lage:** (gemessen 2026-10-08) **OMNI2-Trigger gefeuert:** die HAPI-URL (OMNI2_H0_MRG1HR, 2026-09-26..29) liefert `HTTP 200` (33 251 B). Der Fill lief lokal: Trajectory `official: placed` (sha `aeb3c82…`), 26 Zellen, Register `data/flyby2/tube-juice-2026-09-28.json`; die Zellen tragen RTSW bt/bz/v/n/T/p, `omni2 bz` weiter `pending`. Das Addendum `docs/paper/flyby-path-2-addendum-2026-09-29.md` trägt die 2026-10-08-Sektion. **kp `def`: HTTP 500** (nicht gereift). **JUICE-recon** absent (Wiedervorlage 2026-11-01).
+- **Lage:** (gemessen 2026-10-08, korrigiert River 138) **OMNI2-HAPI erreichbar:** die URL (OMNI2_H0_MRG1HR, 2026-09-26..29) liefert `HTTP 200` (33 251 B). Der Fill lief lokal und schrieb das Register `data/flyby2/tube-juice-2026-09-28.json` neu (17 885 B, mtime 2026-10-08 20:49; die 40 771-B-Angabe ist überholt): Trajectory `official: placed` (`aeb3c82…`), 26 Zellen. **Gemessener Registerstand (korrigiert):** alle `rtsw_*` und `omni2_bz` sind 26× `pending` — der Fill hat sie **nicht** gefüllt; gefüllt sind nur `ace_bt` 25, `ace_speed`/`ace_density` 23, `kp`/`omni2_pressure`/`swarm_f` 26. Die folge137-Zeile „die Zellen tragen RTSW-bt/bz/v/n/T/p" ist damit **widerlegt** (Riss, der Baum gewinnt). Das Addendum trägt die korrigierte 2026-10-08-Sektion samt Füll-Tafel + `omni2_pressure`-Reihe. **kp `def`: HTTP 500.** **JUICE-recon** absent (Wiedervorlage 2026-11-01).
 - **Blockade:** kp-`def`-Release + omni2-bz-Parameter-Alignment.
 - **Braucht:** kp `def` erneut prüfen (bei Release); `omni2 bz` Zell-Füllung.
 
