@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: cc684d297758338fd528f40f98b9e4a78d9260ba7baa524c3a1eb2db2afc3ecf
+  sha256: 2f0ae3c3d004bd0a9297d35ca9df3dffe10b2a71ed7b312dfca32e07dd651bc4
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0028 · close 0.22 · cap 0.5 — Grund: Meta-Pass + KC2G + Rat/Diver/UI (ci-gate) + Mountain-Inventar + `--searxng` gebaut + Arm-Mining; kein pro/max; gemessen `session_burn`
+## Burn: open 0.0028 · close 0.30 · cap 0.5 — Grund: Meta-Pass + KC2G + Rat/Diver/UI (ci-gate) + `--searxng`/4 SERP-Arme gebaut + FMHY Runde 2 (3 Diver) + verdict-Kurzschluss; kein pro/max; gemessen `session_burn`
 
 ## Operator-Wort-Register
 
@@ -37,6 +37,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „ich meinte die https://github.com/felladrin/awesome-ai-web-search" | Quelle: diese Session. → Diver-Mining der Liste (5 neue Arme).
 - 2026-10-08 | „auth ist kein ausschlusskriterium nur kommerziell" | Quelle: diese Session. → Arm-Auswahl: Auth/Free-Route erlaubt, nur pay-only/illegal aus.
 - 2026-10-08 | „SERPER_API_KEY · FIRECRAWL_API_KEY · SEARCHAPI_API_KEY · SERPAPI_API_KEY sind drin; jina ist raus — negativer Saldo" | Quelle: diese Session. → 4 Arme gebaut, Jina Search entfällt.
+- 2026-10-08 | „wir haben ja schonmal eine fmhy.net-Vermessung gemacht, aber uns gehen noch spannende (legale!) Quellen ab — nochmal Agenten auf die Seite loslassen" | Quelle: diese Session. → FMHY Runde 2 (3 Diver), neue Kandidaten im Handover.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -110,6 +111,13 @@ Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-08) VizieR members table `https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=J/A+A/633/A99/members` HTTP 200 (58318 B); Gaia-TAP `cluster_ka` column absent (HTTP 400). Der verlorene Zeiger ist als `pending` re-registriert.
 - **Blockade:** Mountain-Admission.
 - **Braucht:** Admission → Manifestation/Compiler.
+
+### FMHY Runde 2 — neue legale Quellen/Arme (Operator-Wort 2026-10-08 „nochmal Agenten auf fmhy.net")
+- **Status:** eigen | **Bindung:** eigen (tools/utils) → mountain (Admission)
+- **Trigger:** Operator-Auswahl / Mountain-Admission
+- **Lage:** (gemessen 2026-10-08, 3 Diver über `educational`/`reading`/`developer-tools`/`internet-tools`/`storage`/`misc`/`image`/`text`/`file`/`system-tools`) die FMHY-Erd-/Weltraum-Landschaft ist im Baum weitgehend registriert; **neue, verifizierte Kandidaten (nicht in `phi/` registriert, kein `archive_search`-Modus):** Daten/Research: **USGS NGMDB** (`https://ngmdb.usgs.gov/ArcGIS/rest/services?f=pjson`, 206) · **Internet Archive advancedsearch** (`https://archive.org/advancedsearch.php?q=…&output=json`, 200) · **HAL** (`https://api.archives-ouvertes.fr/search/?q=…&wt=json`, 206) · **OEIS** (`https://oeis.org/search?q=…&fmt=json`, 200) · **OAPEN** (OAI `library.oapen.org/oai/request`, 200) · **deps.dev API** (keyless). Suche/Infra: **Wiby JSON** (`https://wiby.me/json/?q=`, 200) · **RSS-Bridge** (`rss-bridge.org`, 200) · **Kiwix** (`download.kiwix.org/zim/…`, 200) · **web.scraper.workers.dev** (200) · **Shodan/OpenCelliD/Global Forest Watch** (free key). Reader/OCR-Kandidaten: **Tesseract · OCRmyPDF · Marker · Docling · MarkItDown · exifTool · ImageMagick · qsv/xan (Rust)**.
+- **Blockade:** —
+- **Braucht:** Auswahl, welche gebaut werden; erste kleine keyless-JSON-Arme wären `--oeis` · `--hal` · `--wiby` · `--ia-search`.
 
 ## An mountain
 

@@ -515,7 +515,13 @@ pub fn verdict_lines(url: &str) -> Vec<String> {
     lines.push(format!("verdict {} — three-stage ladder", url));
     let direct = verdict_probe(url, "30", &Exit::Direct);
     let direct_blocked = matches!(&direct, Some(f) if is_block(f.status));
+    let direct_found = matches!(&direct, Some(f) if is_found(f));
     stage(&mut lines, 1, "direct", url, direct);
+    if direct_found {
+        lines.push("  stage 2/3 skipped — stage 1 answered".to_string());
+        lines.push(format!("measurement {}", today()));
+        return lines;
+    }
     let proxies: Vec<Exit> = exits()
         .into_iter()
         .filter(|exit| !matches!(exit, Exit::Direct))
