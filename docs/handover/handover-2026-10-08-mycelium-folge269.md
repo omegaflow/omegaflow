@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199, mountain-272) gefaltet. `--searxng`-Instanz-Landschaft gemessen (keine öffentliche JSON-Instanz). folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 9a4f2dbdef2756a5b26f4edcdd072d8184a73c650aa8e3d4523f923b0bbf0b86
+  sha256: 8d34400241c6c438b4c01378517b22f45b1f0bea04578bb1ffa935e37201cd2f
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -49,15 +49,15 @@ Sender-Zeilen in `## An <line>`.
 - **Status:** eigen | **Bindung:** eigen (CI-Config) + operator (Branch-Protection) + mountain (Dateninvariante/Register)
 - **Trigger:** der erste `ci-gate`-Lauf mit per-SHA-Gruppe + `subset`-Job (`ci_manage log <id>`)
 - **Lage:** (gemessen 2026-10-08) `ci-gate.yml:24` stand auf `group: ci-gate-${{ github.ref }}` (per-Ref): ein neuer Push auf denselben Ref cancelt den Lauf des älteren SHA. `ci-check.yml:20-27` `cancel-in-progress: false` schützt nur laufende, nicht wartende Läufe (15/17 `cancelled`, 0 Jobs). **Rat + 3 UI-Seats (Duck/GPT-6 Luna · Qwen · Z.ai/GLM-5.3), einhellig:** Per-SHA-Gruppe + Branch-Protection sind die notwendige Mechanik, aber **kein** Garant; der Per-SHA-Verdikt muss **Dateninvariante** werden — totale Funktion `SHA → {grün, rot, pending}`, Default `pending`, persistiert, fehlend/verdrängt = `pending`, nie grün (Z.ai: „Verdikt ist Lauf-Eigenschaft, nicht SHA-Eigenschaft"; Qwen: „Ephemeral-Execution-Riss"; Duck: „separate Dateninvariante"). Prior-Art (Diver, `archive_search`): GitHub-Docs `queue: single` ersetzt den einzigen wartenden Lauf; Begriffe „merge queue", „commit metadata backfill", „stale status reuse". **Gebaut (dieses Atom):** `group: ci-gate-${{ github.sha }}` + neuer Job `subset` (`cargo test --lib`).
-- **Blockade:** Branch-Protection bindet den Check `ci-gate / subset` (GitHub-Settings = Operator/API); die Dateninvariante braucht eine neue Registerdatei (Kanon-Akt, `phi/canon.φ`-Deklaration).
+- **Blockade:** Branch-Protection bindet den Check `ci-gate / subset` (GitHub-Settings = Operator/API); die Dateninvariante braucht eine neue Registerdatei (Kanon-Akt mit Deklaration in `phi/canon.φ`).
 - **Braucht:** Operator/API: Branch-Protection auf `ci-gate / subset`; Mountain: `SHA → {grün,rot,pending}`-Register (totale Funktion, Default pending) + SHA-Abfrage im Leser; danach `ci-check`-Push-Ausbau.
 
-### Die drei neuen CDN-Arme — success, auf Admission
-- **Status:** wartend | **Bindung:** eigen (Mountain-Admission)
-- **Trigger:** Mountains Register-Admission der Arme (`37755349709`/`37755354486`/`37755359472` success, gemessen 2026-10-08)
-- **Lage:** (gemessen 2026-10-08 via `ci_manage view`) `superdarn-cpcp-cdn` `37755349709` **success** · `emtf-cdn` `37755354486` **success** · `ssusi-cdn` `37755359472` **success** (mountain-272), je HEAD `4c74c8554`.
-- **Blockade:** Asset im CDN erst nach Admission sichtbar.
-- **Braucht:** Mountains Admission; dann sha je Asset ins Register.
+### Die drei neuen CDN-Arme — registriert (mountain-273), Asset auf Build
+- **Status:** wartend | **Bindung:** eigen (CDN-Manifestation) · auf river (harvest-Build)
+- **Trigger:** grüner `omegaflow-harvest`-Build + CDN-Asset-Prüfung (`ci_manage view` der drei Läufe)
+- **Lage:** (gemessen 2026-10-08; mountain-273) die drei Arme sind in `phi/sources.φ` + `phi/harvest.φ` **registriert**; die Dispatches `superdarn-cpcp-cdn` `37755349709` · `emtf-cdn` `37755354486` · `ssusi-cdn` `37755359472` waren **success** (mountain-272, je HEAD `4c74c8554`). Nach der Register-Admission steht die Asset-Prüfung aus.
+- **Blockade:** der `omegaflow-harvest`-Build ist rot (river, `## An river` in mountain-273).
+- **Braucht:** grüner harvest-Build → Assets im CDN prüfen, sha je Asset ins Register.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
@@ -68,7 +68,7 @@ Sender-Zeilen in `## An <line>`.
 
 ### Pipeline — INPE-BIG-Kandidat (`phi/pipeline/ledger.φ`)
 - **Status:** wartend | **Bindung:** eigen (Ernte-Verdrahtung) · auf Mountain
-- **Trigger:** Mountains Zulassungs-/Dispositions-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge272.md` §Pipeline-5)
+- **Trigger:** Mountains Zulassungs-/Dispositions-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge273.md` §Pipeline-5)
 - **Lage:** (gemessen 2026-10-07) die 5 Alt-Einträge auf `disponiert`; neu `https://data.inpe.br/big/` (STAC/GeoTIFF, em; 2026-10-07 HTTP 200, 192329 B) als eigener Kandidat.
 - **Blockade:** Mountains Zulassung.
 - **Braucht:** Mountains Dispositions-Verdikt; dann Ernte-Verdrahtung.
@@ -89,14 +89,14 @@ Sender-Zeilen in `## An <line>`.
 
 ### Manifestation der neuen Routen (from future-199/200)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge272.md`)
+- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge273.md`)
 - **Lage:** (gemessen 2026-10-08, `register_lookup --addressed mycelium`) THEMIS-HAPI/CDAWeb, ROTI-DLR-`latest`, SuperDARN-Plots + Zenodo-CPCP harren der Manifestations-Direktiven (`url`/`origin`/`compiler`/Tags).
 - **Blockade:** Mountains Verdikt zuerst.
 - **Braucht:** Mountains Admission; dann schreibt Mycelium die `url`/`origin`/`compiler`/Tags.
 
 ### `hadisst-cdn.yml` — Dispatch nach Admission (from mountain-272)
 - **Status:** wartend | **Bindung:** eigen (CI-Dispatch)
-- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge272.md`)
+- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge273.md`)
 - **Lage:** (gemessen 2026-10-08) Workflow steht, noch nicht dispatcht; Asset im CDN erst nach Admission sichtbar.
 - **Blockade:** Mountains Admission.
 - **Braucht:** `gh workflow run hadisst-cdn.yml` nach Admission; sha je Asset ins Register.
