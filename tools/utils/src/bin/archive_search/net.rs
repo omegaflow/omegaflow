@@ -2193,6 +2193,142 @@ fn kiwix_fallback_results(xml: &str, max: usize) -> Vec<String> {
     out
 }
 
+fn record_blocks(xml: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut rest = xml;
+    while let Some(open) = rest.find("<record") {
+        let close = match rest[open..].find("</record>") {
+            Some(c) => open + c,
+            None => break,
+        };
+        out.push(&rest[open..close]);
+        rest = &rest[close..];
+    }
+    out
+}
+
+fn oapen_set_blocks(xml: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut rest = xml;
+    while let Some(open) = rest.find("<set>") {
+        let close = match rest[open..].find("</set>") {
+            Some(c) => open + c,
+            None => break,
+        };
+        out.push(&rest[open..close]);
+        rest = &rest[close..];
+    }
+    out
+}
+
+fn oapen_title(block: &str) -> Option<String> {
+    let mut rest = block;
+    while let Some(open) = rest.find("<dc:title>") {
+        let start = open + "<dc:title>".len();
+        let tail = &rest[start..];
+        let Some(end) = tail.find("</dc:title>") else {
+            break;
+        };
+        let title = flatten(&strip_tags(&tail[..end]));
+        if !title.is_empty() {
+            return Some(title);
+        }
+        rest = &tail[end..];
+    }
+    None
+}
+
+pub fn oapen_lines(query: &str, max: usize) -> Vec<String> {
+    let base = "https://library.oapen.org/oai/request";
+    let headers = ["-H", "Accept: application/xml"];
+    if query.trim().is_empty() {
+        let url = format!("{base}?verb=ListSets");
+        return match get(&url, &headers, "40") {
+            Some(f) if f.status == Some(200) => {
+                let mut out = Vec::new();
+                for block in oapen_set_blocks(&f.body) {
+                    let Some(spec) = field_text(block, "<setSpec>", "</setSpec>") else {
+                        continue;
+                    };
+                    let name = field_text(block, "<setName>", "</setName>");
+                    let mut line = format!("set {spec}");
+                    if let Some(name) = name {
+                        line.push_str(&format!("\tname: {name}"));
+                    }
+                    out.push(line);
+                    if out.len() >= max {
+                        break;
+                    }
+                }
+                if out.is_empty() {
+                    out.push("absent — OAPEN OAI carries no set".to_string());
+                }
+                out
+            }
+            Some(f) => vec![format!("pending — OAPEN OAI HTTP {}", f.status_text())],
+            None => vec!["pending — no network".to_string()],
+        };
+    }
+    let Some(set) = kv_token(query, "set") else {
+        return vec![
+            "pending — OAPEN OAI carries no free-text search; give set=<setSpec> (--oapen with no argument lists the sets)"
+                .to_string(),
+        ];
+    };
+    let mut url = format!(
+        "{base}?verb=ListRecords&metadataPrefix=oai_dc&set={}",
+        urlencode(&set)
+    );
+    if let Some(from) = kv_token(query, "from") {
+        url.push_str(&format!("&from={}", urlencode(&from)));
+    }
+    if let Some(until) = kv_token(query, "until") {
+        url.push_str(&format!("&until={}", urlencode(&until)));
+    }
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => {
+            if f.body.contains("noRecordsMatch") {
+                return vec![format!(
+                    "absent — OAPEN OAI: noRecordsMatch for set {}",
+                    set
+                )];
+            }
+            let mut out = Vec::new();
+            for block in record_blocks(&f.body) {
+                let Some(ident) = field_text(block, "<identifier>", "</identifier>") else {
+                    continue;
+                };
+                let handle = ident
+                    .strip_prefix("oai:library.oapen.org:")
+                    .unwrap_or(&ident)
+                    .to_string();
+                let Some(title) = oapen_title(block) else {
+                    continue;
+                };
+                out.push(format!(
+                    "url https://library.oapen.org/handle/{}\ttitle: {}",
+                    handle, title
+                ));
+                if out.len() >= max {
+                    break;
+                }
+            }
+            if out.is_empty() {
+                return vec![format!(
+                    "absent — OAPEN OAI carries no record for set {}",
+                    set
+                )];
+            }
+            if f.body.contains("<resumptionToken") {
+                out.push("more — resumptionToken present".to_string());
+            }
+            out
+        }
+        Some(f) => vec![format!("pending — OAPEN OAI HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 pub fn scrape_lines(query: &str, max: usize) -> Vec<String> {
     let Some(target) = query.split_whitespace().next() else {
         return vec!["pending — scrape needs a target url".to_string()];
@@ -2452,20 +2588,40 @@ pub fn gfw_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     let Some(dataset) = dataset else {
         return vec!["pending — gfw needs dataset=<name> [sql=<select>]".to_string()];
     };
-    let sql = match kv_token(query, "sql") {
-        Some(s) => s,
-        None => format!("SELECT * FROM data LIMIT {}", max),
+    let sql = match query.split_once("sql=") {
+        Some((_, rest)) if !rest.trim().is_empty() => rest.trim().to_string(),
+        _ => format!("SELECT * FROM {dataset} LIMIT {max}"),
     };
-    let url = format!(
-        "https://data-api.globalforestwatch.org/dataset/{}/latest/query/json?sql={}&x-api-key={}",
-        urlencode(&dataset),
-        urlencode(&sql),
-        urlencode(token)
+    let base = format!(
+        "https://data-api.globalforestwatch.org/dataset/{}/latest/query/json",
+        urlencode(&dataset)
     );
     let auth = format!("x-api-key: {}", token);
     let bearer = format!("Authorization: Bearer {}", token);
     let headers = [auth.as_str(), bearer.as_str()];
-    match get(&url, &headers, "40") {
+    let fetched = match kv_token(query, "geometry") {
+        Some(geom) if !geom.trim().is_empty() => {
+            let body = format!(
+                "{{\"sql\":\"{}\",\"geometry\":{}}}",
+                json_escape(&sql),
+                geom.trim()
+            );
+            post(&base, &body, &headers, "40")
+        }
+        _ => {
+            let mut url = format!(
+                "{}?sql={}&x-api-key={}",
+                base,
+                urlencode(&sql),
+                urlencode(token)
+            );
+            if let Some(geostore) = kv_token(query, "geostore_id") {
+                url.push_str(&format!("&geostore_id={}", urlencode(&geostore)));
+            }
+            get(&url, &headers, "40")
+        }
+    };
+    match fetched {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {
             Some(v) => gfw_results(&v, max),
             None => vec!["pending — the GFW response carries no JSON".to_string()],
@@ -2674,6 +2830,7 @@ const QUERY_MODES: &[&str] = &[
     "shodan",
     "opencellid",
     "gfw",
+    "oapen",
     "datacite",
     "zenodo",
     "wayback",
@@ -2940,6 +3097,7 @@ pub fn run_lines(
                 )],
             }
         }
+        "oapen" => oapen_lines(query, max),
         "linkup" => {
             let token = resolve_key(
                 env.get("LINKUP_API_KEY").map(String::as_str).unwrap_or(""),
@@ -3140,6 +3298,7 @@ mod tests {
             "shodan",
             "opencellid",
             "gfw",
+            "oapen",
             "datacite",
             "zenodo",
             "wayback",
