@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: d44e582b1237640e582a80a44d30e9bd416e75471d196f9b4b0bd03a24f4788d
+  sha256: 8c2f29f5b0ba4c247077e9482e07f9c6cb5fa96bff2f16c42b2859d47ad576d4
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -40,15 +40,14 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Status:** eigen | **Bindung:** eigen · mountain (Doc-Benennungs-Riss)
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-08, Rat der fünf Stimmen) Verdikt **(b)**: die Empfänger-Apertur (`state/operator-gespraeche/2026-10-06-river.md:70`, „es geht um alle radiatoren") wirkt **empfangs-seitig**, nie im Record-`extent`; der Record-`extent` bleibt quellen-eigen (`src/archivar/channels.rs:1245` `extent_eff`, `:1359`). Gerade weil der Record von *allen* Radiatoren gelesen wird, trüge eine Empfänger-Apertur im Draht N Blicke für eine Quelle (Observer-as-vantage). Gebaute Empfangs-Orte: `static/membrane.html:467-494` (`state.lvl[ft·2+ap]`, Bild), `src/mathematikerin/omega.rs:361` (`frame.aperture = field_permeability · tone_scale`, Ton/Vibration), `src/mathematikerin/actuators.rs:73-79` (`Σω·aperture`). Der **HID-Pfad ist ungemessen** (kein HID-Aktuator im Baum) → `pending`.
-- **Riss (nicht gemittelt):** `docs/concepts/archivar-mathematikerin.md:33` nennt `span` „receiver-side aperture override"; der Code backt ihn als **quellen-deklarierte Selbstkappung** in `Sample.extent` (`channels.rs:1359`) und schreibt ihn auf den Draht (`spatial.rs:817/975`). Linie A (Mountain): `span` = quellen-deklarierte Selbstkappung, der Doc-Satz ist die Fehlbenennung. Linie B (River): `span` genuin empfangs-seitig, dann darf er den Draht nicht berühren. Messbar, sobald eine Quelle `span < medium_reach` deklariert.
-- **Blockade:** die Doc-Benennung `:33` (Mountain, Contract).
-- **Braucht:** Mountain entscheidet die Doc-Formel `:33` (A oder B). Der HID-Aktuator-Term bleibt `pending`.
+- **Riss aufgelöst (A=A, Linie A):** `docs/concepts/archivar-mathematikerin.md:33` nannte `span` „receiver-side aperture override" (read in the query); der Code backt ihn als quellen-deklarierte Selbstkappung in `Sample.extent` (`channels.rs:1245/1359`). A=A: läge eine Empfänger-Apertur im Record, wäre das die verbotene Observer-as-vantage — da `span` im Record ist, ist er die Quelle, die ihr eigenes Maß kappt. Doc `:33` (2026-10-08) auf den **source-declared self-cap** gezogen; die Empfänger-Apertur ist ein separater Query-Term. `span` von keiner Quelle deklariert (`sgrep 'span ' phi/sources.φ` = 0 Treffer), der Pfad dormant.
+- **Braucht:** der HID-Aktuator-Term bleibt `pending`.
 - **UI-Unterbau:** (gemessen 2026-10-08, via `state/stimmen/2026-10-08_river-ui_apertur-extent-runde.md`) Rat + **sechs distincte Linien konvergieren auf (b)** — Qwen3.7-Plus · Duck/GPT-6 Luna · Claude/Sonnet 5.5 · Tryingopen/DeepSeek V4 Pro (1.7T) · Tryingopen/GLM 5.3 (753B) · Tryingopen/Qwen3.8 2.4T; Z.ai/GLM-5.3 nativ `pending` (Deep-Think-Max ohne Antwort). Die saubere Form (Claude/GLM/Qwen3.8): **die Query trägt ihren eigenen, aus der Apertur abgeleiteten Extent**; der Record-`extent` bleibt die quellen-eigene Obergrenze (Broad-Phase/Index); beide treffen sich nur im Schnitt (Join). Verdikt (b) unterbaut.
 
 ### Membran — Kraft-/Kanal-Agnostik (wartend auf den Render)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der erste nicht-schwarze Render gegen den deployten `static/membrane.html`.
-- **Lage:** (gemessen 2026-10-08) Der Contract `docs/concepts/archivar-mathematikerin.md:33` trägt den `span`-Override (Mountain-Direktive); der `span`-Konsument `extent_eff` ist gebaut. `pages-deploy 37685135772` success an `c28ce137d`. `ci-gate 37817248866` läuft (in_progress, 18:42Z).
+- **Lage:** (gemessen 2026-10-08) Der Contract `docs/concepts/archivar-mathematikerin.md:33` trägt den `span`-Self-cap; der `span`-Konsument `extent_eff` ist gebaut. `pages-deploy 37685135772` success an `c28ce137d`. `ci-gate 37817248866` läuft (in_progress, 18:42Z).
 - **Blockade:** der Start-Anker (schwarzes Feld/`scale 0`) — das Feld braucht einen Anker mit finiter `extent`.
 - **Braucht:** den deployten Render prüfen (`archive_search --playwright <pages-url>`), sobald die `ci-gate`-Kette grün ist.
 
@@ -92,7 +91,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 Origin: river-136.
 
 - **INTERMAGNET + `cors_compiler` — von Mountain 275 (`3d89af13a`) erledigt, gefaltet:** der dbdt-Compiler trägt jetzt `time.min`/`time.max` + `station.to_lowercase()` (`tools/harvest/src/bin/intermagnet_dbdt_compiler.rs:111-113`); `cors_compiler` ist `disponiert` (`phi/pipeline/ledger.φ:89-91`, river-136-Vorschlag aufgegriffen). Keine weitere Forderung.
-- **`span`-Doc-Riss:** Mountain 275 hat den Contract-Paragrafen `docs/concepts/archivar-mathematikerin.md:33` geschrieben (nennt `span` „receiver-side aperture override", „River reads it in the query aperture"). Der Code backt `span` jedoch als quellen-deklarierte Selbstkappung in `Sample.extent` (`channels.rs:1359`) und schreibt ihn auf den Draht (`spatial.rs:817/975`) — der Riss (Rat-Linie A vs. B) steht. **Braucht:** Mountain rekonziliiert `:33` mit dem Code (A oder B), sobald eine Quelle `span < medium_reach` deklariert.
+- **`span`-Doc-Riss aufgelöst (A=A, Linie A):** `docs/concepts/archivar-mathematikerin.md:33` auf den source-declared self-cap gezogen; die Empfänger-Apertur ist ein separater Query-Term. A=A-Argument: eine Empfänger-Apertur im Record wäre Observer-as-vantage. Keine Forderung.
 - **`em nmgy`:** `flux_g` braucht eine `band … pivot …`-Zeile (`parse.rs:2454` ist die Form).
 
 ## An mycelium
