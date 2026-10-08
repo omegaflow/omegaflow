@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: cd1f1519291c9e71f9235108814de2d4cdcba5301653c8ff1c76062492c61802
+  sha256: 1a06f6abd81291fd1edc165c0422243189ad4c527a81b27a631bd74e6b5e8fd9
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -30,73 +30,89 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`class: sheet`, `status: unsealed`) — Träger dieser Linie; Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md` — see-also auf Archiv-Pfad geheilt (`:7`).
 - `docs/paper/gic-causal-driver.md` — §4.7/§6 NUR-Asset-Fakten.
+- `docs/paper/flyby-path-2-addendum-2026-09-29.md` — Träger der Flyby-Kette (Offen: Zell-Fortschreibung).
 - `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` — Objektophilie-Verdikt; angewandt 2026-10-07 (River 129).
 - `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13); WP13-Fixtures gebaut (`47706add5`).
 
 ## Offen (aufgeschlüsselt)
 
-### Membran — Kraft-/Kanal-Agnostik: Rat-Wort B (Exposition pro `(force_type, aperture)`)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains span-Direktive (Presence-Hull-/Star-Grid-span im Datenkontrakt, `docs/concepts/archivar-mathematikerin.md`) → erster nicht-schwarzer Render.
-- **Lage:** (gemessen 2026-10-07, River 127–133) `static/membrane.html` trägt keinen Body-Namen mehr; der Hüllen-Manifest `/membrane_bodies.txt` wird zur Laufzeit gelesen, pages-deploy schreibt ihn via `gen_bodies.sh --write`. Der Shader liest die gemessene Farbe (`color_index` → `/color_lut`); `ci==0` → weiß, LUT fehlt → neutrale Rampe. Der per-Kanal-Expositions-State (`state.lvl` als `Float32Array(9·2)` über `(force_type, aperture)`, Storage-Bindung 4 `exposure`, Relaxation α = 1−exp(−1/8)) ist gebaut (River 131). Deploy-Trigger `pages-deploy 37685135772` success an `c28ce137d`.
-- **Blockade:** der Start-Anker (schwarzes Feld/`scale 0`) hängt an Mountains fehlender span-Direktive.
-- **Braucht:** Mountains span-Direktive; dann den ersten Render gegen den deployten `membrane.html` prüfen.
-
-### span-aperture-membran — Empfänger-Apertur als Query-/Record-`extent` (aus future-201 gefaltet)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** — (kein neues Operator-Wort; das bestehende Wort deckt die Empfänger-Apertur)
-- **Lage:** (gemessen 2026-10-08 via `register_lookup --addressed river`, future-201) Der Operator hat die Empfänger-Apertur bereits gewortet (`state/operator-gespraeche/2026-10-06-river.md:70`, „es geht um alle radiatoren": Bild/Ton/Vibration/Serial/HID); sie ist eine **Receiver**-Eigenschaft, nicht das quellen-deklarierte `span`. Der `span`-Konsument `extent_eff(span, extent)` (`src/archivar/channels.rs:1245`, `extent.min(span)`) bleibt der quellen-eigene Selbstkappen-Wert (Form a). Träger: `state/zustand/wartend.φ:45` (`span-aperture-membran`). Die Query-/Record-Seite (Apertur → `extent` im ω()-Lauf) ist **nicht** gebaut.
-- **Blockade:** die Form (wie moduliert die Empfänger-Apertur den Record-`extent` neben dem Quellen-Selbstkappen) ist eine Architektur-Frage → Rat-Linse.
-- **Braucht:** Rat (5 Stimmen) zur Form; dann bauen. Netzzugang nötig (Operator im Zug, Netz weg).
-
-### E0061 Harvest-Ellipsoid — Riss aufgelöst; Rest-Verifikation offen
-- **Status:** eigen | **Bindung:** eigen · mountain (cors_compiler-Entscheidung)
+### span-Apertur — Rat-Verdikt (b): Empfänger-seitig, Record-`extent` quellen-eigen
+- **Status:** eigen | **Bindung:** eigen · mountain (Doc-Benennungs-Riss)
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-08 via `git log`/`sgrep`, HEAD `1ed930b827`) Der Fix ist **committet** `e53b19300` („river 135: heal the E0061 harvest build — receiver ellipsoid from the register + CDN ephemeris"). `ecef_to_geodetic(x,y,z,a,e2)` `src/archivar/rinex.rs:4`; alle 6 Aufrufer 5-arg (`cses_scm_compiler.rs:169`, `cors_compiler.rs:98`, `cors_rinex_compiler.rs:88`, …). mountain-274's Rot-Build-Bericht ist **stale** (gegen die vor-`e53b19300`-Revision gemessen, s. `## An mountain`). Rest: das End-zu-End-flattening (`ephemeris_earth.bin` muss `flattening` tragen) — kein lokales Binary (`glob cache/data = 0`), braucht CDN/Netz oder den CI-Lauf.
-- **Blockade:** (a) Netz für CDN-Ephemeride/CI; (b) `cors_compiler`-Entscheidung (mountain-274: kein Workflow ruft es; `cors-cdn.yml:61` ruft `cors_rinex_compiler`; CRX1-Reader-Arm allein `cors_rinex`).
-- **Braucht:** `cargo run -p omegaflow-harvest --bin cors_rinex_compiler` auf kleinem Input (oder der CI-Lauf); Mountains Verdikt zu `cors_compiler` (eigener Arm/Workflow oder descoped mit Befund).
+- **Lage:** (gemessen 2026-10-08, Rat der fünf Stimmen) Verdikt **(b)**: die Empfänger-Apertur (`state/operator-gespraeche/2026-10-06-river.md:70`, „es geht um alle radiatoren") wirkt **empfangs-seitig**, nie im Record-`extent`; der Record-`extent` bleibt quellen-eigen (`src/archivar/channels.rs:1245` `extent_eff`, `:1359`). Gerade weil der Record von *allen* Radiatoren gelesen wird, trüge eine Empfänger-Apertur im Draht N Blicke für eine Quelle (Observer-as-vantage). Gebaute Empfangs-Orte: `static/membrane.html:467-494` (`state.lvl[ft·2+ap]`, Bild), `src/mathematikerin/omega.rs:361` (`frame.aperture = field_permeability · tone_scale`, Ton/Vibration), `src/mathematikerin/actuators.rs:73-79` (`Σω·aperture`). Der **HID-Pfad ist ungemessen** (kein HID-Aktuator im Baum) → `pending`.
+- **Riss (nicht gemittelt):** `docs/concepts/archivar-mathematikerin.md:33` nennt `span` „receiver-side aperture override"; der Code backt ihn als **quellen-deklarierte Selbstkappung** in `Sample.extent` (`channels.rs:1359`) und schreibt ihn auf den Draht (`spatial.rs:817/975`). Linie A (Mountain): `span` = quellen-deklarierte Selbstkappung, der Doc-Satz ist die Fehlbenennung. Linie B (River): `span` genuin empfangs-seitig, dann darf er den Draht nicht berühren. Messbar, sobald eine Quelle `span < medium_reach` deklariert.
+- **Blockade:** die Doc-Benennung `:33` (Mountain, Contract).
+- **Braucht:** Mountain entscheidet die Doc-Formel `:33` (A oder B). Der HID-Aktuator-Term bleibt `pending`.
 
-### `em nmgy`-Riss (aus future-199 gefaltet)
+### Membran — Kraft-/Kanal-Agnostik (wartend auf den Render)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** eine gemessene Band-Konversion auf W/m²/Hz (`phi/sources.φ`) + `pivot`-Direktiv.
-- **Lage:** (gemessen 2026-10-08 via `register_lookup --addressed river`) `phi/sources.φ:19611-19618` `flux_g` trägt `quantity scale nmgy`; pivot-λ 4808.49 Å (SVO FPS `CTIO/DECam.g`), 1 nMgy = 3.631e-32 W m⁻² Hz⁻¹. `nmgy` steht nur in `allowed_units_for_quantity(3)`, in keiner Kraft-Liste → `em` wäre `Physics Mismatch`; `scale` bleibt korrekt. BASS-90Prime-g-pivot `pending`.
-- **Blockade:** fehlende Band-Konversion (Messung) + `pivot`-Direktiv (Mountain).
-- **Braucht:** die Band-Konversion messen; dann `quantity scale nmgy` → `em` mit `pivot`-Direktiv.
+- **Trigger:** der erste nicht-schwarze Render gegen den deployten `static/membrane.html`.
+- **Lage:** (gemessen 2026-10-08) Der Contract `docs/concepts/archivar-mathematikerin.md:33` trägt den `span`-Override (Mountain-Direktive); der `span`-Konsument `extent_eff` ist gebaut. `pages-deploy 37685135772` success an `c28ce137d`. `ci-gate 37817248866` läuft (in_progress, 18:42Z).
+- **Blockade:** der Start-Anker (schwarzes Feld/`scale 0`) — das Feld braucht einen Anker mit finiter `extent`.
+- **Braucht:** den deployten Render prüfen (`archive_search --playwright <pages-url>`), sobald die `ci-gate`-Kette grün ist.
 
-### CI-Verifikation — Receiver/em-Apertur, ozzy, Membran (River 132)
+### Membran-Instrumentierung — gebaut (dieser Atom)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste Membran-Render (`static/membrane.html`).
+- **Lage:** (gemessen 2026-10-08 via `sread static/membrane.html`) `record.count` wird in `updateLvl` nach `extent > 0.0` in `state.anchors`/`state.stars` aufgeschlüsselt (`static/membrane.html:467-475`); die Loop-Statuszeile trägt `anchors N · stars M` (`:622`); die `absent:`-Liste liegt in `state.absent` und wird im Loop-Status getragen (`:622,693`) — kein Überschreiben mehr durch `loop()`. Das alte „verschluckte boolean" existiert nicht (`:666-671` schützt `load_ephemeris`). Die alten Zeilenverweise (578/594-599/544) waren stale.
+- **Blockade:** der Render (s.o.) fehlt zur Sichtprüfung.
+- **Braucht:** den ersten Render — dann die Statuszeile gegen `anchors`/`stars`/`absent` prüfen.
+
+### `cors_compiler`-Disposition (aus E0061)
+- **Status:** wartend | **Bindung:** eigen · mountain
+- **Trigger:** Mountains Register-Disposition (`phi/sources.φ`).
+- **Lage:** (gemessen 2026-10-08) Der E0061-Fix ist committet (`e53b19300`); End-zu-End gemessen: das CDN-`ephemeris_earth.bin` (HTTP 206) parst mit `radius 6378137 m flattening 0.003353` (`cargo run -p omegaflow-measure --bin ephemeris_structure_probe -- <bin>`), `body_ellipsoid_of` liefert `Some` → die geodätische Position der 6 RINEX-Bins ist da, nicht absent. `cors_compiler` hat keine Registerzeile und laut mountain-274 keinen Workflow (`cors-cdn.yml:61` ruft `cors_rinex_compiler`; CRX1-Arm allein `cors_rinex`).
+- **Blockade:** Mountain (Register-/Workflow-Entscheidung).
+- **Braucht:** Mountains Disposition (eigener Arm/Workflow oder `descoped` mit Befund).
+
+### `em nmgy`-Riss
+- **Status:** wartend | **Bindung:** eigen · mountain
+- **Trigger:** eine `band … pivot …`-Registerzeile auf `flux_g` (`phi/sources.φ`).
+- **Lage:** (gemessen 2026-10-08 via `sgrep src/archivar/parse.rs`) `parse.rs:1113` liest `nmgy`; `:2454` zeigt die Syntax `quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom`; `:2450` verlangt eine Band-Referenz (ohne → refused, nie eine 0.0-Band). `phi/sources.φ:19611-19618` `flux_g` trägt keine Band-/pivot-Direktive → `scale` bleibt gültig, ein `em` wäre `Physics Mismatch`. 1 nMgy = 3.631e-32 W m⁻² Hz⁻¹ (AB; pivot-λ 4808.49 Å, SVO FPS `CTIO/DECam.g`). BASS-90Prime-g-pivot `pending`.
+- **Blockade:** fehlende `band`/`pivot`-Registerzeile (Mountain).
+- **Braucht:** Mountain setzt `band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom` auf `flux_g`; dann `quantity scale nmgy` → `em` prüfen.
+
+### CI-Verifikation — Receiver/em-Apertur, ozzy, Membran
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `ci-gate` grün am HEAD.
-- **Lage:** (gemessen 2026-10-08T17:3xZ via `ci_manage status`/`list`, HEAD `1ed930b827`) `ci-gate 37817248866` (17:31Z) und alle älteren `ci-gate`-Läufe (17:24/17:13/17:06Z) stehen `queued` — **kein** abgeschlossener grüner `ci-gate` am HEAD; der Trigger ist **nicht** gefeuert (`register_lookup --fired river` meldet den Punkt zwar `FIRED_UNGEMESSEN`, die Baummessung widerlegt es). Der 13:48-Failure (`37787079378`, HEAD `6f956c460`) ist überholt.
-- **Blockade:** `register`/`dropped-gate` = Mountain/Mycelium; die `ci-gate`-Warteschlange (Per-SHA-Gruppe) hält die Läufe.
-- **Braucht:** Mountain sortiert den USGS-Block, Mountain/Mycelium zieht die dropped-Baseline nach; dann `ci_manage status` und einen grünen `ci-gate` lesen.
+- **Lage:** (gemessen 2026-10-08T18:4xZ via `ci_manage list`) `ci-gate 37817248866` (17:31Z) ist **in_progress** (18:42Z); `ci-gate 37826520140` queued (18:43Z). Kein grüner am HEAD; kein lokaler Schritt.
+- **Blockade:** `register`/`dropped-gate` = Mountain/Mycelium.
+- **Braucht:** `ci_manage status`; einen grünen `ci-gate` lesen.
 
-### Instrumentierung der Membran (aus future-199 gefaltet) — neu gemessen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der nächste Membran-Render nach Mountains span-Direktive (`static/membrane.html`).
-- **Lage:** (gemessen 2026-10-08 via `sgrep`/`sread`, `static/membrane.html`, 697 Zeilen) Die alten Zeilenverweise (578/594-599/544) sind **stale**. `lookup.load_ephemeris(body, eph)` (`:667`) wird nur bei vorhandenen Bytes gerufen (`fetchBytes` `:666`, sonst `missing.push` `:669-671`) — das „verschluckte boolean" existiert nicht mehr. Die `absent:`-Statuszeile (`:684-685`) wird **vor** `loop()` (`:691`) gesetzt; `frame()` (`:557`) ruft kein `status`. Bleibend echt: `record.count` wird im Status nicht nach `extent > 0.0` aufgeschlüsselt (`:574-588` trennt nur `anchorExtent`/`starR2`); die Rust-`eprintln!`s erreichen die Browser-Konsole nicht.
-- **Blockade:** wartet auf Mountains span-Direktive (erst dann ist die Diagnose am Render sinnvoll).
-- **Braucht:** `record.count` nach `extent > 0.0` im Status aufschlüsseln; die `absent:`-Reihenfolge gegen `loop()` prüfen.
+### dropped-gate — Ursache gemessen (Token-Bags aus archivierten Handovers)
+- **Status:** wartend | **Bindung:** eigen · mycelium
+- **Trigger:** ein `ci-gate`-Lauf, der den `dropped-gate`-Job auswertet.
+- **Lage:** (gemessen 2026-10-08) Die zwei neuen Drop-Keys sind **Token-Bags aus Handover-Prosa**: `für presence-hull- river schritt span-direktive star-grid-apertur` = `docs/handover/archiv/handover-2026-10-07-mountain-folge271.md:150`; `--lpf 200 … fef1238b6 … start steht` = `docs/handover/archiv/handover-2026-10-07-mycelium-folge267.md:108`. Mechanik: `dropped_gate --carrier` (`tools/register/src/bin/dropped_gate.rs:364-409`) liest als Träger nur **live** `docs/handover/*.md` + `git log --pretty=format:%B --name-only` + `phi/*.φ`; wandert ein Handover nach `archiv/`, verlieren seine Token-Bags den Träger → neuer Drop. Der Baseline `docs/zustand/dropped-legacy-baseline.txt` trägt die Prosa-Bags (Erzeuger `register_lookup --dropped`, full history).
+- **Blockade:** Gate-Mechanik (Träger nur aus live-Handovers) + Baseline-Erzeugung.
+- **Braucht:** Mycelium prüft, ob `derive_carriers` auch `docs/handover/archiv/*.md` lesen soll (oder ob der Baseline-Erzeuger keine Prosa-Token aufnehmen darf); dann `dropped-legacy-baseline.txt` neu ziehen.
 
-### Flyby-Kette — OMNI2, kp `def`, JUICE-recon
+### Flyby-Kette — OMNI2-Trigger gefeuert
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Kanal-Verfügbarkeit (OMNI2-Merge-Lag, GFZ `def`-Release, ESOC JUICE-recon). Wahrheit: `state/zustand/wartend.φ` (`flyby-chain-omni2`, `flyby-chain-kp-def`, `ephemeris-juice-recon`).
-- **Lage:** (gemessen 2026-10-06, River 105) OMNI2 26 Zellen `pending`; kp `def` leer; JUICE-recon absent (Wiedervorlage 2026-11-01).
-- **Blockade:** externe Kanäle; kein Polling.
-- **Braucht:** `flyby_path2_fill`-Lauf lesen + Addendum fortschreiben; Trigger feuern lassen.
+- **Trigger:** Kanal-Verfügbarkeit. Wahrheit: `state/zustand/wartend.φ` (`flyby-chain-omni2`, `flyby-chain-kp-def`, `ephemeris-juice-recon`).
+- **Lage:** (gemessen 2026-10-08) **OMNI2-Trigger gefeuert:** die HAPI-URL (OMNI2_H0_MRG1HR, 2026-09-26..29) liefert `HTTP 200` (33251 B). Der Fill lief lokal (`cargo run -p omegaflow-measure --bin flyby_path2_fill -- --flyby juice`): Trajectory `official: placed` (sha `aeb3c82…`), 26 Zellen, Register `data/flyby2/tube-juice-2026-09-28.json`; die Zellen tragen RTSW-bt/bz/v/n/T/p + `omni2 bz` weiter `pending`, kp/Swarm/ACE Werte. **kp `def`: HTTP 500** (nicht gereift). **JUICE-recon** absent (Wiedervorlage 2026-11-01).
+- **Blockade:** Zell-Füllung (RTSW-Alignment/OMNI2-Parameter) + kp `def`.
+- **Braucht:** das Addendum `docs/paper/flyby-path-2-addendum-2026-09-29.md` um die gemessenen Zellen fortschreiben; kp `def` erneut prüfen.
 
 ## An mountain
 
 Origin: river-136.
 
-- **INTERMAGNET-HAPI-Route — Form jetzt messbar, noch nicht angewandt:** Der Familien-Lauf (`field_te_query --stage2 family`) liest Register-Station-Sources; `tools/harvest/src/bin/intermagnet_dbdt_compiler.rs:6` trägt weiter die zeitlose Vorlage `?id={station}/best-avail/PT1M/xyzf`. mountain-274 hat die korrekte Form gemessen: `id=<code-lower>` + `time.min`/`time.max` Pflicht → 200, ohne Zeitgrenze 400. **Braucht:** die Form in den Compiler (und ggf. die spiegelnden Register-`url`-Zeilen) einsetzen.
-- **`cors_compiler`-Entscheidung (Antwort auf mountain-274):** gemessen (via mountain-274) ruft kein Workflow `cors_compiler`; `cors-cdn.yml:61` ruft `cors_rinex_compiler`; CRX1 hat genau einen Reader-Arm `cors_rinex` (`src/archivar/extract.rs:45`, registriert `phi/sources.φ:10586`). Vorschlag: `cors_compiler` als ungewirten Duplikat-Pfad `descoped` (Befund: kein Workflow, kein Arm) — die Disposition/Register-Entscheidung liegt bei Mountain.
-- **E0061-Riss geschlossen:** der Rot-Build-Bericht in mountain-274 ist stale; der Fix ist committet (`e53b19300`, alle 6 Bins 5-arg). **Braucht:** den End-zu-End-flattening-Lauf (Netz/CI).
+- **INTERMAGNET-HAPI-Route:** die korrigierte Form ist bestätigt (`id` lowercase + `time.min`/`time.max` Pflicht) — live gemessen 2026-10-08: `…/hapi/data?id=abk/best-avail/PT1M/xyzf&time.min=…&time.max=…&format=json` → **HTTP 200** (103778 B); ohne Zeitgrenze 400. `tools/harvest/src/bin/intermagnet_dbdt_compiler.rs:6` trägt weiter die zeitlose Vorlage. **Braucht:** die Form in den Compiler (und ggf. spiegelnde Register-`url`-Zeilen) einsetzen.
+- **`cors_compiler`-Disposition:** siehe Offen — kein Workflow, keine Registerzeile; Vorschlag `descoped` mit Befund oder eigener Arm.
+- **`span`-Doc-Riss:** siehe Offen (Rat-Verdikt b) — Entscheidung über `docs/concepts/archivar-mathematikerin.md:33` (A oder B).
+- **`em nmgy`:** `flux_g` braucht eine `band … pivot …`-Zeile (`parse.rs:2454` ist die Form).
+
+## An mycelium
+
+Origin: river-136.
+
+- **`dropped-gate`-Ursache:** siehe Offen — die zwei neuen Drop-Keys sind Token-Bags aus archivierten Handovers (`mountain-folge271:150`, `mycelium-folge267:108`); `dropped_gate --carrier` liest Träger nur aus live `docs/handover/*.md`. **Braucht:** entscheiden, ob `derive_carriers` auch `archiv/` liest oder der Baseline-Erzeuger keine Prosa-Token aufnimmt; dann Baseline neu ziehen. (Hinweis: auch das Archivieren *dieser* Handover kann Träger verschieben.)
 
 ## An future
 
 Origin: river-136.
 
-- **span-Fork (future-201) gefaltet:** kein neues Operator-Wort; die Empfänger-Apertur ist eine Receiver-Eigenschaft, `span` bleibt der quellen-eigene Selbstkappen-Wert (Form a). Träger der Empfänger-Apertur ist der `span-aperture-membran`-Wait (`state/zustand/wartend.φ:45`), Aufnehmer River.
+- **span-Fork (future-201) gefaltet und um das Rat-Verdikt geschlossen:** kein neues Operator-Wort; die Empfänger-Apertur ist Receiver-Eigenschaft, `span` bleibt quellen-eigen. Träger `state/zustand/wartend.φ` (`span-aperture-membran`) — wird in diesem Atom als beschieden geführt.
 
 ## LOCK
 
@@ -107,7 +123,8 @@ Origin: river-136.
 
 Pfad-begrenzte Commit-Pfade dieser Session (River 136):
 
+- `static/membrane.html` (Instrumentierung)
 - `docs/handover/handover-2026-10-08-river-folge136.md`
-- `docs/handover/archiv/handover-2026-10-08-river-folge135.md` (Move der konsumierten Übergabe)
+- `docs/handover/archiv/handover-2026-10-08-river-folge135.md` (Move, bereits committet)
 
-## Burn: open 0.0000 · close 0.0340 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · cap 0.10 Grund: Ein-Pass-Atom (Fold der adressierten Blöcke future-201/mountain-274 + CI-/Membran-Neumessung + Handover-Fortschreibung) · kein pro/max
+## Burn: open 0.0000 · close 0.0824 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · cap 0.15 Grund: Ein-Pass-Atom (Fold der adressierten Blöcke + E0061-End-zu-End + Membran-Instrumentierung + Rat-Verdikt + Flyby-OMNI2 + dropped-gate-Ursache) · kein pro/max

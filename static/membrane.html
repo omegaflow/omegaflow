@@ -75,6 +75,9 @@ const state = {
   span_star: 0.0,      // the stars' received bounding span; the star scale follows it
   receptors: 1,        // the receptor raster's minor axis (texels)
   lastCount: -1,
+  anchors: 0,          // records with a finite extent (body anchors) in the current field
+  stars: 0,            // records with wire_extent 0.0 (the star class) in the current field
+  absent: [],          // named absent assets; the loop() status line carries them past boot
   // Exposure per (force_type, aperture) (Rat B, 2026-10-07): index ft*2+ap,
   // relaxed with alpha = 1 - exp(-1/8). A key with no arriving level keeps 0.
   lvl: new Float32Array(FORCE_SLOTS * 2),
@@ -463,6 +466,13 @@ function render(record) {
 // the rest.
 function updateLvl(record) {
   const maxLvl = new Float64Array(FORCE_SLOTS * 2);
+  let anchors = 0;
+  let stars = 0;
+  for (let j = 0; j < record.count; j++) {
+    if (record.meta[j * 16] > 0.0) { anchors++; } else { stars++; }
+  }
+  state.anchors = anchors;
+  state.stars = stars;
   for (let j = 0; j < record.count; j++) {
     const ft = record.field[j * 12 + 6] | 0;
     if (ft < 0 || ft >= FORCE_SLOTS) {
@@ -609,7 +619,7 @@ function loop(now) {
   last = now;
   integrate(dt);
   const record = frame();
-  status("stars " + record.count + " · scale " + state.scale.toExponential(2) + " m/px · t " + Math.round(state.t) + " s TDB");
+  status("anchors " + state.anchors + " · stars " + state.stars + " · scale " + state.scale.toExponential(2) + " m/px · t " + Math.round(state.t) + " s TDB" + (state.absent.length ? " · absent: " + state.absent.join(",") : ""));
   requestAnimationFrame(loop);
 }
 
@@ -681,6 +691,7 @@ async function boot() {
   }
 
   if (missing.length) {
+    state.absent = missing.slice();
     console.warn("absent: " + missing.join(", "));
     status("absent: " + missing.join(", ") + " — honest black");
   } else {
