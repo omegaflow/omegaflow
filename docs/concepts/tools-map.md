@@ -145,6 +145,13 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   liefert den sauberen Text einer Seite als `Title / URL Source / Markdown Content`.
   Gemessen 2026-10-08 end-to-end (`--jina https://example.com` → 200, 1465 B,
   Markdown-Text). Die sauberere Text-Extraktion neben `--playwright`/`--sniff`.
+- `archive_search --consensus <query>` — Consensus-Literatursuche (`api.consensus.app/v1/search`,
+  `CONSENSUS_API_KEY`); `title`/`doi`/`publish_year`/`citation_count`/`study_type`/`takeaway`.
+  Gemessen 2026-10-08: liefert echte Literatur (z. B. die YBCO-6,35-Spin-Dynamik-Arbeit).
+- `archive_search --perplexity <query>` — Perplexity Sonar (`api.perplexity.ai`,
+  `PERPLEXITY_API_KEY`); `answer`-Text + Quellen-Zitationen. Gemessen 2026-10-08: funktioniert
+  (fand die öffentliche NSE-Cuprat-Arbeit `10.1088/1367-2630/12/10/105006`); ein früherer
+  Lauf kam als `HTTP 0` (transient) → `pending`, nie stiller Nullwert.
 - `archive_search --tavily <query>` — Tavily Search API (`TAVILY_API_KEY`); `url`
   + Titel/`score`/Text.
 - `archive_search --exa <query>` — Exa Search API (`EXA_API_KEY`); `url` +
