@@ -150,10 +150,10 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
     sofort"):** Register-Zeile `phi/sources.φ` gelöscht, Manifest-Workflow `ieeg-cdn.yml` gelöscht.
     Das Asset war **nie auf dem CDN** (`gh release view www.ieeg.org` = „release not found";
     Backend 503), keine lokale Kopie. Lizenz ungeklärt (User Agreement).
-  - ✅ **iEEG läuft als privates Experiment nach dem [redacted]-Muster (Operator-Wort 2026-10-06):**
+  - ✅ **iEEG läuft als privates Experiment nach dem [RETRACTED-CONTACT]-Muster (Operator-Wort 2026-10-06):**
     Daten lokal unter `data/` (gitignored, `www.ieeg.org`), Reader/Compiler `ieeg_compiler.rs`
     bleibt für lokale Läufe — **kein CDN, keine `sources.φ`, kein `--ci-mode`**. Präzedenz:
-    `[redacted]-[redacted]` (`state/zustand/wartend.φ:7`, Operator-Wort 2026-10-01 „nichts was die von
+    `[RETRACTED-INSTRUMENT]-[redacted]` (`state/zustand/wartend.φ:7`, Operator-Wort 2026-10-01 „nichts was die von
     [redacted] zugesandten daten betrifft verlässt das haus"). **Das ist die allgemeine Route für
     DUA-/ungeklärte Körperdaten: privat, nie veröffentlicht.**
   - **Kein `license`/`terms`-Feld** im Register (`phi/sources.φ`) oder `SourceConfig`
@@ -164,7 +164,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Braucht:** (1) `license`/`terms`-Direktive je Körperdatenzeile (Mountain) + Gate „keine
   CDN-Manifestation ohne Lizenz" (Mountain/Mycelium); (2) `THIRD_PARTY_LICENSES`/NOTICE im Repo mit
   der Attribution + Quelle/DOI je Dataset (ODC-BY verlangt die Attribution, CC0 nicht);
-  (3) Daten ohne redistributions-erlaubende Lizenz laufen **privat** nach dem [redacted]-Muster
+  (3) Daten ohne redistributions-erlaubende Lizenz laufen **privat** nach dem [RETRACTED-CONTACT]-Muster
   (lokal, kein CDN, keine `sources.φ`). **Messung abgeschlossen:** PhysioNet BIDSleep = ODC-BY 1.0,
   OpenNeuro ds005034 = CC0, iEEG → privat (entfernt vom Publikationspfad).
 
