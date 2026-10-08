@@ -3,7 +3,7 @@
   session: Mountain-Folge 276
   class: handover
   date: 2026-10-08
-  sha256: b26d21185d2f035894791825f120ff3a21c52d1c13919f2db4b2491b4dea480a
+  sha256: a6aef083c83287e051b53f2d8ae69a819a02e7f6357644a6cd11476b2f725e06
   status: live
 -->
 # Handover — Mountain-Folge 276 (2026-10-08)
@@ -45,12 +45,12 @@ Wort | Datum | Quelle
 ### GIC-Stufe-2 — Receiver/force ENTSCHIEDEN; dB/dt-Bestand 2/154
 - **Status:** eigen | **Bindung:** eigen (Register) · river (`compute_max_t`)
 - **Trigger:** AE/AL/AU · SME/SML/SMU als `sources.φ`-Zeilen gebaut
-- **Lage:** (gemessen 2026-10-08 276) **Science + Rat + 8 UI-Seats — RISS, nicht geschlossen:**
+- **Lage:** (gemessen 2026-10-08 276) **Science + Rat + 9 UI-Seats — RISS, nicht geschlossen:**
   AE/AU/AL · SME/SMU/SML. **Wissenschaft:** reine statistische Reduktion (ISGI/Davis &
   Sugiura 1966 `doi:10.17593/15031-54800`; Gjerloev 2012 `doi:10.1029/2012JA017683`) —
   kein Ausbreitungsmechanismus, der Index hat keine eigene Receiver-Weltlinie; Rohkanal
-  em (B nT) an den Stationen. **Stimmen `quantity`/intensity** (Rat-Linse, Claude,
-  Qwen3.7, GLM 5.3, DeepSeek Chat, Lumo) **gegen `force em`** (Nemotron 3 Ultra,
+  em (B nT) an den Stationen.   **Stimmen `quantity`/intensity 7** (Rat-Linse, Claude,
+  Qwen3.7, GLM 5.3, DeepSeek Chat, Lumo, Perplexity 75 Quellen) **gegen `force em` 3** (Nemotron 3 Ultra,
   DeepSeek V4 Pro, Inkling: gemessene Größe IST B(nT) am Stationsnetz). Beide Linien
   getragen. Vertrags-Satz in `docs/concepts/archivar-mathematikerin.md` (Live-APIs).
   `dB/dt-Bestand 2/154`
