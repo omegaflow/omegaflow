@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: a2b8fccbc0400d44d2b00abeaec2f801d23bcca773b47eb244e89033685b3d93
+  sha256: 4a566072afbaecfd629320d54b433360b3bf0586b43137ce84ceb6a336b3d241
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -43,7 +43,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Riss (nicht gemittelt):** `docs/concepts/archivar-mathematikerin.md:33` nennt `span` „receiver-side aperture override"; der Code backt ihn als **quellen-deklarierte Selbstkappung** in `Sample.extent` (`channels.rs:1359`) und schreibt ihn auf den Draht (`spatial.rs:817/975`). Linie A (Mountain): `span` = quellen-deklarierte Selbstkappung, der Doc-Satz ist die Fehlbenennung. Linie B (River): `span` genuin empfangs-seitig, dann darf er den Draht nicht berühren. Messbar, sobald eine Quelle `span < medium_reach` deklariert.
 - **Blockade:** die Doc-Benennung `:33` (Mountain, Contract).
 - **Braucht:** Mountain entscheidet die Doc-Formel `:33` (A oder B). Der HID-Aktuator-Term bleibt `pending`.
-- **UI-Unterbau:** (gemessen 2026-10-08 via `state/stimmen/2026-10-08_river-ui_apertur-extent-runde.md`) die Frontier-Runde lief (`river-ui`: Duck/Claude/Qwen/Z.ai); **kein Seat antwortete** — Composer nahm den Text, das Absenden erzeugte keine Antwort, Qwen-Konsole mit wiederholten `Error`-Gruppen → `pending` (Verbindung/Zug-Netz, kein Tageslimit/Login). Nach der Regel gilt das Verdikt ohne UI-Untermauerung erst, wenn der zweite Kanal konvergiert oder der Riss benannt ist — der fehlende Kanal ist benannt.
+- **UI-Unterbau:** (gemessen 2026-10-08, Netz steht, via `state/stimmen/2026-10-08_river-ui_apertur-extent-runde.md`) Rat + **vier distincte Linien konvergieren auf (b)** — Qwen3.7-Plus · Duck/GPT-6 Luna · Claude/Sonnet 5.5 · Tryingopen/DeepSeek V4 Pro (1.7T); Z.ai/GLM-5.3 `pending` (Deep-Think-Max ohne Antwort). Claude + Rat liefern die saubere Empfangs-Form: **die Query trägt ihren eigenen, aus der Apertur abgeleiteten Extent**; der Record-`extent` bleibt die quellen-eigene Obergrenze (Broad-Phase/Index), die Apertur verengt erst in der Exposure/Join. Verdikt (b) damit unterbaut.
 
 ### Membran — Kraft-/Kanal-Agnostik (wartend auf den Render)
 - **Status:** wartend | **Bindung:** eigen
