@@ -3,7 +3,7 @@
   session: River-Folge 135
   class: handover
   date: 2026-10-08
-  sha256: 470bf3d2216f8de4ad15e19e4b9c191e3d8f7ce7ef3be15e41e6643b032e1d2f
+  sha256: b3fee954cf3ed7b28a49a898082534c195c1517775d4e92cf72ac0e22fa18f21
   status: live
 -->
 # Handover — River-Folge 135 (2026-10-08)
@@ -43,11 +43,11 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Braucht:** Mountains span-Direktive (s. `## An mountain`); dann den ersten Render gegen den deployten `membrane.html` prüfen.
 
 ### `span`-Apertur — Empfänger-/Query-Eigenschaft (Rat + UI-Verdikt 2026-10-08)
-- **Status:** pending | **Bindung:** eigen (Rat)
-- **Trigger:** reader built — **erfüllt** (gemessen 2026-10-08: `parse.rs:255` parst `span <f64>`; `SourceConfig.span` `types.rs:445`).
-- **Lage:** (gemessen 2026-10-08, `explore`) `SourceConfig.span` hat **keinen** Produktions-Konsumenten — nur `parse.rs` (`:81/:146/:201/:255`) + Tests lesen `.span`; 0 Treffer in `main_flow.rs`/`channels.rs`/`membrane.rs`/`wasm.rs`. Die Query-Apertur steht in `query_hash` (`src/archivar/spatial.rs:707`), Body-Emit `reach = reach_signal + sample.extent + enclosure_rho(...)` (`:932-934`); `ReceiverWorldline` (`src/weberin.rs:1747`) ist ein enum `Body|ReferencePoint` ohne span; `MembraneCtx` (`spatial.rs:696-705`) trägt kein span; `Sample.extent` = `types.rs:45`. Minimaler Einbau: `span: Option<f64>` neben `Sample.extent`, gefüllt aus `SourceConfig.span` bei der Sample-Konstruktion, dann an `spatial.rs:933` `let extent_eff = sample.span.map_or(sample.extent, |s| s.min(s.extent));`. Träger bleibt die gebaute `ReceiverWorldline` als Query-Input; `BodyProperties`/Wire unangetastet.
-- **Blockade:** `Sample` ist breit konstruiert (`sgrep -c 'Sample {' src` = 64) — die Feldergänzung berührt viele Literale; eigener Bau.
-- **Braucht:** `Sample.span` + Befüllung aus `SourceConfig.span` + `extent_eff` an `spatial.rs:933`; `cargo check` 0/0. Kein Wire-Bump.
+- **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** Rat-Verdikt zum Konsumenten-Pfad.
+- **Lage:** (gemessen 2026-10-08, `explore`) Der Reader ist gebaut (`parse.rs:255` parst `span <f64>`; `SourceConfig.span` `types.rs:445`), aber es gibt **keinen** Produktions-Konsumenten — `span` steht in keinem Produktionsfile (`main_flow.rs`/`channels.rs`/`membrane.rs`/`wasm.rs`: 0 Treffer). Die Query-Apertur liegt in `query_hash` (`src/archivar/spatial.rs:707`), Body-Emit `reach = reach_signal + sample.extent + enclosure_rho(...)` (`:932-934`); `Sample.extent` = `types.rs:45`. **Riss:** `wasm.rs`/`MembraneCtx` (`spatial.rs:696-705`) tragen kein `SourceConfig`, die Membran kann `span` nicht erreichen; das Rat-Verdikt nannte `ReceiverWorldline` (`weberin.rs:1747`) als Träger, aber das ist ein enum `Body|ReferencePoint` ohne span (Astro-Linie, nicht die Query-Apertur). Welcher Query-Pfad `span` konsumiert und wie die Quellen-Eigenschaft dorthin reist, ist unentschieden.
+- **Blockade:** Architektur — der Konsumenten-Pfad (`SourceConfig`→Query) ist offen.
+- **Braucht:** den Rat (fünf Stimmen) + UI-Frontier: welcher Query-Pfad konsumiert `span` (Archivar-Query mit `SourceConfig` vs. wasm-Membran ohne) und wie reist die Quellen-Eigenschaft dorthin; danach `extent_eff = span.map_or(extent, |s| s.min(s.extent))` an `spatial.rs:933`.
 
 ### E0061 Harvest-Ellipsoid — Empfänger aus dem Register (Rat: Route b) — gebaut (Commit in diesem Atom)
 - **Status:** eigen | **Bindung:** eigen · mountain (cors-Registerzeile)
@@ -63,12 +63,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** fehlende Band-Konversion (Messung) + `pivot`-Direktiv (Mountain).
 - **Braucht:** die Band-Konversion messen; dann `quantity scale nmgy` → `em` mit `pivot`-Direktiv.
 
-### GIC-Stufe-2 — dB/dt abgeleitet; der Familien-Pool ist ein eigener Bau
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** `cgm_lat`-Registerzeile je Station (Mountain) — **gefeuert** (gemessen 2026-10-08: CPL `phi/sources.φ:6327-6329` `cgm_lat 11.23`, TTB `:7672-7674` `cgm_lat -2.62`, beide `cgm_source bgs-quasi-dipole`).
-- **Lage:** (gemessen 2026-10-08, `explore`) **Riss:** der Anchor `main_flow.rs:4371` ist falsch — die Funktionen liegen in `tools/measure/src/bin/field_te_query.rs`. Dort: `run_pair_matrix:4371` (`fn run_pair_matrix(desc:&Descriptor, sources:&[SourceConfig], witnesses:&[WitnessRecord], anchor:&QueryAnchor) -> i32`), `load_field_across_sources:1129`, `align_many:4137`, `joint_columns:4211`, `compute_max_t:2824`; `MatrixShape:106-110` = Rect|Full|Upper. **Kein** `stage2`-Arm, keine `family`-Variante (0 Treffer). Arg-Grammatik `:4743-4744`; Dispatch `:4740` (desc.matrix → `run_pair_matrix:4804`). Stufe 1 muss byte-identisch bleiben.
-- **Blockade:** eigener Bau (kein `stage2`-Arm).
-- **Braucht:** neue `run_family`-Fn nahe `run_pair_matrix` + `--stage2 family`-Arm; je Familie `Vec<Member>` (target=station_dBdt, driver=globaler Bz), per Familie ein `compute_max_t`; Family-Label live aus `cgm_lat` (`cgm_lat_partition.rs:168 family_of`, Grenzen 60/50); reuse `load_field_across_sources:1129`, `align_many:4137`, `joint_columns:4211`; Stufe 1 byte-identisch. Dann UI-Runde (`river-ui` + `open-weight-ui`).
+### GIC-Stufe-2 — dB/dt abgeleitet; Familien-Bau gebaut (UI-/Rat-Runde offen)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-Wort 2026-10-07 („Rat vor alle UI-Seats") → Rat-/UI-Runde.
+- **Lage:** (gemessen 2026-10-08, `grind-flash` + eigener Bau) `--stage2 family` + `run_family` (`tools/measure/src/bin/field_te_query.rs:4442`) gebaut: geladene Stationen mit `station_code` + finitem `cgm_lat` (dedupe), je Familie (auroral ≥60, sub-auroral 50–60, mid <50; `family_of:46`) target = `intermagnet_dbdt_<code>`, driver = der deklarierte `--driver`-Arm; `align_many`/`joint_columns` + **ein** `compute_max_t` je Familie; leere Band = voller Befund (nie geglättet), Station ohne Target = `pending`. Stufe 1 byte-identisch (nur neue Zweige). `cargo check`/`build -p omegaflow-measure --bin field_te_query` grün/0 Warnungen. Riss: der Anchor `main_flow.rs:4371` im Vorgänger-Handover war falsch — die Fn liegt in `field_te_query.rs`. Nebenbefund: `family_of` ist in `field_te_query.rs:48` neben `cgm_lat_partition.rs:168` dupliziert (Bins sind getrennte crates).
+- **Blockade:** UI-Undergirding fehlt.
+- **Braucht:** den Bau durch Rat (fünf Stimmen) + UI-Frontier halten (`river-ui` + `open-weight-ui`); dann `--stage2 family` gegen eine echte Station-Liste laufen lassen (Daten-Trigger).
 
 ### CI-Verifikation — Receiver/em-Apertur, ozzy, Membran (River 132)
 - **Status:** wartend | **Bindung:** eigen
@@ -115,4 +115,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 135):
 - `src/archivar/rinex.rs`
 - `tools/harvest/src/bin/{cses_scm,cses_hpm,cses_efd,champ_plpt,cors,cors_rinex}_compiler.rs`
 
-## Burn: open 0.0039 · close 0.0455 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — 2 Taucher zusätzlich (grind-flash E0061 0.0712, explore 0.0190) · kein pro/max
+## Burn: open 0.0039 · close 0.0762 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — 3 Taucher zusätzlich (grind-flash E0061 0.0712, GIC 0.0514, explore 0.0190) · kein pro/max
