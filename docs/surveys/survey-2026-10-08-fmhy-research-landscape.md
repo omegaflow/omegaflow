@@ -2,7 +2,7 @@
   title: Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
   class: survey
   date: 2026-10-08
-  sha256: 5631de761d0a8e5d0a82f348cbe436c23846eedb6c9ee3c1783492f881a9db04
+  sha256: df1bb578567962357fb123f11a0d165c3edd593c4a38a12923aa4ee2f7617651
   status: live
   see-also: docs/concepts/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -59,10 +59,7 @@ Tako · Olostep · JigsawStack — `--tavily/--exa/--linkup` vorhanden), AI-Lead
 
 ## Top-Schritte (nicht verpuffen — je Kandidat ein konkreter Schritt)
 
-1. **`archive_search --jina <url>`** (Jina Reader, keyless): **gemessen 2026-10-08** —
-   `https://r.jina.ai/<url>` → HTTP 200, liefert „Title / URL Source / Markdown Content".
-   Saubere Text-Extraktion jenseits von `--playwright`/`--sniff`. **Arm in `tools/utils`
-   bauen** (Vorbild `--mwmbl`); der `r.jina.ai`-Reader ist die kanonische Form.
+1. **`archive_search --jina <url>`** (Jina Reader, keyless) — **GEBAUT** (`0e644437d`, `tools/utils/src/bin/archive_search/jina.rs` + Wiring). Gemessen end-to-end: `./target/debug/archive_search --jina https://example.com` → HTTP 200, liefert „Title / URL Source / Markdown Content" (1465 B). Saubere Text-Extraktion jenseits von `--playwright`/`--sniff`. Nächster Schritt: `tools-latest`-Release bestätigen (Lauf), dann nur noch nutzen.
 2. **`archive_search --searxng <query>`** (keyless Metasuche): gemessen — `searx.be`
    `?format=json` liefert **HTML** (JSON-Format nicht freigeschaltet); braucht eine Instanz
    mit `format: json` (self-host oder freigegebene Instanz). **Arm bauen + Instanz festlegen**.
