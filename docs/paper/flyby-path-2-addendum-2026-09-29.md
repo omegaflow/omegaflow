@@ -286,20 +286,24 @@ perigee `2026-09-28T11:58:50Z` geocentric **62 745 km**, 26 hourly cells
 (the two 538 696 B states) agree at 62 745 km; the sealed official arc (106 704 B) stands
 at 15 034 km. The riss is carried as three named witnesses, never averaged.
 
-## 2026-10-08 — OMNI2 HAPI reachable, register rewritten (RTSW cells still pending)
+## 2026-10-08 — OMNI2 HAPI reachable; the RTSW snapshots fill the register
 
 The OMNI2 merged-1-h HAPI URL (OMNI2_H0_MRG1HR, 2026-09-26..29) returned
 **HTTP 200** (33 251 B) — the earlier 1201 "no data for time range" lag is
-healed. The fill ran locally (`flyby_path2_fill -- --flyby juice`), placed the
-trajectory **official** (arc `aeb3c82f…`, sha-verified) and rewrote the 26-cell
-register (`data/flyby2/tube-juice-2026-09-28.json`, 17 885 B, mtime
-2026-10-08 20:49 — the earlier 40 771 B state at `:49` is superseded).
+healed. The first fill (`flyby_path2_fill -- --flyby juice`) placed the
+trajectory **official** (arc `aeb3c82f…`, sha-verified) but left every RTSW cell
+and `omni2_bz` `pending`: run without `--snapshots`, the loader reaches only the
+live SWPC URL, whose 24-h retention no longer holds the window. The frozen
+mirrors (`data/services.swpc.noaa.gov/rtsw_{mag,wind}_1m-*.json`) carry it; the
+re-run with `--snapshots data/services.swpc.noaa.gov` filled all 26 cells
+(register `data/flyby2/tube-juice-2026-09-28.json` rewritten 2026-10-08 23:04,
+41 528 B).
 
-Measured register state per channel (n of 26 cells filled, from the JSON):
+Measured register state per channel (n of 26 cells filled):
 
 | channel | filled | pending |
 |---|---|---|
-| `rtsw_bt` `rtsw_bz` `rtsw_speed` `rtsw_density` `rtsw_temperature` `rtsw_pressure` | 0 | 26 |
+| `rtsw_bt` `rtsw_bz` `rtsw_speed` `rtsw_density` `rtsw_temperature` `rtsw_pressure` | 26 | 0 |
 | `omni2_bz` | 0 | 26 |
 | `kp` (`status def`) | 26 | 0 |
 | `omni2_pressure` | 26 | 0 |
@@ -308,20 +312,26 @@ Measured register state per channel (n of 26 cells filled, from the JSON):
 | `ace_speed` | 23 | 3 (cells 3, 14, 16) |
 | `ace_density` | 23 | 3 (cells 3, 14, 16) |
 
-The RTSW channel slots exist but carry no measurement: the 2026-10-08 fill did
-**not** fill them — `data/flyby2/tube-juice-2026-09-28.json` carries `rtsw_bt`,
-`rtsw_bz`, `rtsw_speed`, `rtsw_density`, `rtsw_temperature`, `rtsw_pressure`
-and `omni2_bz` as `pending` in all 26 cells. A prior register line that claimed
-"the cells carry RTSW bt/bz/v/n/T/p" is **contradicted by the register** —
-carried as a riss, resolved to `pending` (the tree is the measurement). kp
-`status=def` still returns **HTTP 500** (not released at this run); the `pre`
-series stands (cells 23–25 at 0.667). `omni2_pressure` per cell (nPa, cell 0→25):
+RTSW series per cell (cell 0→25), from the `--snapshots` fill:
+
+cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25
+---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
+`rtsw_bt` nT | 3.37 | 3.70 | 3.69 | 3.63 | 4.24 | 3.82 | 3.77 | 3.68 | 3.91 | 3.88 | 3.85 | 3.69 | 3.41 | 4.09 | 4.29 | 3.29 | 4.14 | 4.42 | 4.23 | 3.78 | 3.49 | 3.75 | 3.81 | 3.58 | 3.35 | 3.28
+`rtsw_bz` nT | -0.02 | -0.11 | -0.08 | -0.65 | -1.59 | -1.34 | -1.08 | -0.89 | -0.53 | -0.39 | -0.57 | -0.52 | -0.56 | -0.05 | 0.57 | -0.64 | -1.10 | -0.90 | -1.29 | -1.30 | -1.17 | -1.48 | -1.43 | -0.68 | -0.68 | -1.02
+`rtsw_speed` km/s | 376.0 | 367.0 | 360.1 | 353.5 | 355.7 | 352.5 | 348.5 | 349.0 | 350.3 | 350.6 | 353.1 | 353.8 | 348.5 | 344.7 | 341.2 | 342.4 | 335.3 | 329.6 | 330.5 | 330.5 | 330.2 | 330.0 | 326.5 | 325.4 | 329.4 | 330.9
+`rtsw_density` cm⁻³ | 2.60 | 2.67 | 3.10 | 3.74 | 3.15 | 3.56 | 3.75 | 4.13 | 4.09 | 4.17 | 4.67 | 5.32 | 6.09 | 5.43 | 5.19 | 6.67 | 5.87 | 5.42 | 5.55 | 5.74 | 6.38 | 2.07 | 2.29 | 2.40 | 2.44 | 2.71
+`rtsw_temperature` K | 40075 | 38174 | 39276 | 30829 | 38280 | 29779 | 31798 | 38149 | 35587 | 36702 | 40694 | 37992 | 37045 | 40693 | 40998 | 30396 | 36721 | 39043 | 36622 | 36122 | 32550 | 53613 | 47586 | 43107 | 46740 | 49780
+`rtsw_pressure` nPa | 0.61 | 0.60 | 0.68 | 0.78 | 0.67 | 0.74 | 0.76 | 0.84 | 0.85 | 0.86 | 0.98 | 1.12 | 1.24 | 1.08 | 1.01 | 1.32 | 1.11 | 0.99 | 1.01 | 1.05 | 1.18 | 0.37 | 0.40 | 0.42 | 0.44 | 0.50
+
+`omni2_bz` remains `pending` (parameter alignment); kp `status=def` still returns
+**HTTP 500** (not released at this run); the `pre` series stands (cells 23–25 at
+0.667). `omni2_pressure` per cell (nPa, cell 0→25):
 
 cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25
 ---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
 `omni2_pressure` nPa | 0.83 | 0.82 | 0.84 | 0.81 | 0.92 | 1.10 | 1.10 | 1.19 | 1.32 | 1.46 | 1.46 | 1.40 | 1.55 | 1.62 | 1.53 | 1.55 | 1.52 | 1.36 | 1.47 | 1.29 | 1.29 | 1.23 | 1.26 | 1.28 | 1.35 | 1.42
 
-No value is smoothed; a cell without a measurement stays `pending`.
+No value is smoothed; a cell without a measurement stays `pending` — never 0.0.
 
 ## Next steps
 
