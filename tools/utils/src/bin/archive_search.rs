@@ -784,7 +784,7 @@ fn usage() {
         "  --regtap IVOA RegTAP registry search (dc.g-vo.org/tap, ADQL over rr.resource), keyless; ivoid + title/description"
     );
     eprintln!(
-        "  --apis apis.guru web-API directory search (api.apis.guru/v2/list.json), keyless; spec url + title/provider"
+        "  --apis API directory search (apis.io/api/v1/apis primary, api.apis.guru/v2/list.json fallback), keyless; spec url + title/provider"
     );
     eprintln!(
         "  --jina      Jina Reader (r.jina.ai), keyless; the clean text of a page for a target url"
