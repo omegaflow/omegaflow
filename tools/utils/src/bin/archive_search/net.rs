@@ -2622,10 +2622,21 @@ pub fn gfw_lines(query: &str, token: &str, max: usize) -> Vec<String> {
         }
     };
     match fetched {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => gfw_results(&v, max),
-            None => vec!["pending — the GFW response carries no JSON".to_string()],
-        },
+        Some(f) if f.status == Some(200) => {
+            let body = match f.body.find(|c| c == '{' || c == '[') {
+                Some(start) => &f.body[start..],
+                None => &f.body[..],
+            };
+            match json::parse(body) {
+                Some(v) => gfw_results(&v, max),
+                None => {
+                    let snip: String = body.chars().take(160).collect();
+                    vec![format!(
+                        "pending — the GFW response carries no JSON: {snip}"
+                    )]
+                }
+            }
+        }
         Some(f) => vec![format!(
             "pending — GFW HTTP {} {}",
             f.status_text(),
@@ -2643,7 +2654,9 @@ fn gfw_results(v: &Json, max: usize) -> Vec<String> {
     };
     let mut out = Vec::new();
     for row in data {
-        out.push(format!("[gfw] {}", json_compact(row)));
+        let compact = json_compact(row);
+        let clipped: String = compact.chars().take(300).collect();
+        out.push(clipped);
         if out.len() >= max {
             break;
         }
