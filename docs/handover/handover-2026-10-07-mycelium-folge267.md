@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: a196d43551c94f0b3d345369120c1223adce5b9606a584bf254130b5208aa311
+  sha256: 6f853e0c99c7f9f0ca299fc656d5f2051209aac0e91be6a7e44afff68284243d
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -29,6 +29,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „mich interessieren natürlich am meisten die APIs/MCPs" → API/MCP-Survey `docs/surveys/survey-2026-10-08-research-api-mcp.md` + `--consensus`-Arm; Endpunkte gemessen | Quelle: diese Session.
 - 2026-10-08 | „consensus und perplexity sind drin, elicit descoped da kostenpflichtig" → Keys in `.secrets.local`; `--consensus` live; Elicit `descoped` | Quelle: diese Session.
 - 2026-10-08 | „können wir den connector nicht für opencode nachbauen? und braucht unser taucher nicht einen MCP harness?" → opencode `mcp`-Block ist der Harness; `consensus` + `perplexity` als `type: remote` verdrahtet; SciSpace-MCP gebrokert, nicht nachbaubar | Quelle: diese Session.
+- 2026-10-08 | „scispace nochmal mit harten bandagen … perplexity hab ich nochmal sicher eingegeben 10$ guthaben geschenkt" → SciSpace: cookie-interne API (kein Arm); Perplexity: Endpunkt umgezogen → Agent-API, `--perplexity` live (`1569a26d8`) | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -82,9 +83,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### Research-APIs/MCPs — Consensus · Perplexity · Elicit(descoped) · SciSpace (`docs/surveys/survey-2026-10-08-research-api-mcp.md`)
 - **Status:** wartend | **Bindung:** eigen (tools/utils + MCP-Config)
 - **Trigger:** opencode-Neustart mit exportierten Keys (`set -a; source .secrets.local; set +a`)
-- **Lage:** (gemessen 2026-10-08) **`--consensus` läuft live** (`CONSENSUS_API_KEY` in `.secrets.local`; 10 relevante Papers am Baum); **`--perplexity`-Arm gebaut** (`72fe2202b`, POST `api.perplexity.ai/chat/completions`, Modell `sonar`, Bearer) — Live-Aufruf **HTTP 403** (Key aufgelöst, API lehnt ab; Plan/Credits in `console.perplexity.ai` prüfen); **MCP-Harness verdrahtet** — `opencode.json` `mcp`-Block: `consensus` (`mcp.consensus.app/mcp`) + `perplexity` (`api.perplexity.ai/mcp`) als `type: "remote"` mit `{env:VAR}` (kein Secret getrackt). **Elicit `descoped`** (nur Pro/Scale/Enterprise). **SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT), keine öffentlichen REST-Docs → `pending`.
-- **Blockade:** Perplexity-API-Zugang (403); opencode-Neustart mit exportierten Keys steht aus.
-- **Braucht:** Perplexity-Plan/Credits in der Console prüfen; `set -a; source .secrets.local; set +a` + opencode neu starten (MCP-Tools für alle Agenten).
+- **Lage:** (gemessen 2026-10-08) **`--consensus` läuft live** (`CONSENSUS_API_KEY`; 10 Papers am Baum); **`--perplexity` läuft live** (`1569a26d8`) — der 403 war der **umgezogene Endpunkt**: Sonar ist jetzt die **Agent-API** (`POST api.perplexity.ai/v1/agent`, `preset`+`input`); Antwort mit `[web:n]`-Citations. **MCP-Harness verdrahtet** (`opencode.json` `mcp`: `consensus` + `perplexity` als `type: "remote"` mit `{env:VAR}`). **Elicit `descoped`** (nur Pro/Scale/Enterprise). **SciSpace:** `api.scispace.com/api/v1/*` → 403 `{"message":"Missing cookies"}` — cookie-interne Web-API, **keine Key-API**, keine öffentlichen REST-Docs; MCP nur gebrokert → **kein Arm** (`pending`).
+- **Blockade:** opencode-Neustart mit exportierten Keys steht aus.
+- **Braucht:** `set -a; source .secrets.local; set +a` + opencode neu starten (MCP-Tools für alle Agenten).
 
 ## An river
 
