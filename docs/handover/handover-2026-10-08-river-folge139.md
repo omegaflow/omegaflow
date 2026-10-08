@@ -3,7 +3,7 @@
   session: River-Folge 139
   class: handover
   date: 2026-10-08
-  sha256: 47340a18a95c975eb177ba903a91073920a837b01ecf1fee5e08aceba8df5c1b
+  sha256: 3b00e34165550722b39d49f4d45621e802d572627eb2aaf0827caba95c3b2e07
   status: live
 -->
 # Handover — River-Folge 139 (2026-10-08)
@@ -79,7 +79,7 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 ### Membran — Feld aus Body-Ankern statt der Oszillatoren, die die Presence am SSB erreichen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-08T21:3xZ via Browser-Bridge + `sread src/wasm.rs` · `src/archivar/membrane.rs` · `static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, FieldConfig `force_type 1` (Gravitation), `color_index 0`. Das statische Blatt liest `phi/sources.φ` **nie** — die Register-Oszillatoren (2693 `url` · 7964 `field` · 22 `quantity`; `sgrep -c` je Begriff) werden **nicht** geladen. `frame()` rahmt den größten finiten Anker: „the largest (the sun) frames the operator's first view" (`membrane.html:572/567-607`). Der **blaue** Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` auf pages nicht gestagt wird (`archive_search --verdict` → HTTP 404) → `colorLut=null` → `color_mode 0`; die Exposure normalisiert den Anker-Wert auf sich selbst → `t2≈0.33` → blaue Bande — kein deklarierter Kanal-Farbwert.
+- **Lage:** (gemessen 2026-10-08T21:3xZ via Browser-Bridge + `sread src/wasm.rs` · `src/archivar/membrane.rs` · `static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, FieldConfig `force_type 1` (Gravitation), `color_index 0`. Das statische Blatt liest `phi/sources.φ` **nie** — die Register-Oszillatoren (2693 `url` · 7964 `field` · 22 `quantity`; `sgrep -c` je Begriff) werden **nicht** geladen. Der Body-Anker-Pfad kam mit `58eeae865` (river 91, `all_body_anchor_samples`) und `478ff0a9e` (river 114, „two-aperture membrane start on the sun") — der Fix für das schwarze Startfeld. `frame()` rahmt den größten finiten Anker: „the largest (the sun) frames the operator's first view" (`membrane.html:572/567-607`). Der **blaue** Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` auf pages nicht gestagt wird (`archive_search --verdict` → HTTP 404) → `colorLut=null` → `color_mode 0`; die Exposure normalisiert den Anker-Wert auf sich selbst → `t2≈0.33` → blaue Bande — kein deklarierter Kanal-Farbwert.
 - **Operator-Wort (River 139, 2026-10-08):** „at sun" war nur das Beispiel (die strahlen auf jeden Fall) — **viel mehr Oszillatoren erreichen die Presence am SSB**. Der Prüfstein ist die Presence-Hülle (Enclosure) am SSB, nicht ein Anker-Name.
 - **Blockade:** keine (Messung steht). Die Auflösung ist eine **Architektur-/Contract-Frage**: wie das Membran-Blatt die Oszillatoren trägt, deren Signal die Presence am SSB erreicht (ohne Body-Anker; ohne den Anker las der Start schwarz — `membrane.html:575`) — berührt das Operator-Wort „es gibt keine sonne erde mond" (River 127).
 - **Braucht:** **Rat (fünf Stimmen) + Wissenschaft (`archive_search`) + UI-Frontier**: wie die Membran die Feld-Oszillatoren (Enclosure am SSB) lädt/backt statt der Body-Gravitationsanker. Kein Pro-Solo; danach Bau im Membran-Pfad (Kandidat: die Enclosure-Query am SSB als statisches Feld-Asset backen, das die serverless Seite lädt).
@@ -119,4 +119,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 139):
 - `docs/handover/handover-2026-10-08-river-folge139.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge138.md` (Move)
 
-## Burn: open 0.0030 · close 0.0974 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
+## Burn: open 0.0030 · close 0.1079 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max

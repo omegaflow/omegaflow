@@ -3,7 +3,7 @@
   session: Mountain-Folge 279
   class: handover
   date: 2026-10-08
-  sha256: 37abc412c1d9d76b9f8b4fe0f345a38f01f48402ca368a24096f751d869c3bc6
+  sha256: c12fe105ac88b8c342547fa9af3e332f0e34ad45079501cd4becf9ff6ea98cd9
   status: live
 -->
 # Handover — Mountain-Folge 279 (2026-10-08)
@@ -140,11 +140,18 @@ Origin: mountain-folge279.
 - **Z.ai (GLM-5.3): `pending`** (Denken ohne Antwort) · **Duck (Luna): `pending`** (keine Antwort sichtbar). Nicht wiederholt.
 - **`open-weight-ui` nicht gefahren** (Lock nicht gesetzt) — `pending`. Tabs geschlossen (JIT).
 
-### Offen (nächster Atom — Eingaben liegen bereit)
-- **blocked_sources.φ-Aufräumen** (Mountain-Stift): Klassentabelle vollstrecken — 9 a→`ledger.φ` `ausstehend`; 3 b unverändert; 15 c (`gap`-Token); 19 d re-messen; 10 Drift-Zeilen korrigieren; Stale-Schutz + `descoped-check` auf `blocked parser-def` (Gate-Fixture).
-- **Wind-SWE-Zeile** (Rat F1) bauen, nachdem die HAPI-Parameterreihenfolge am realen Response verifiziert ist.
+### Vollstreckt (Fortsetzung 2, Operator-Wort „ja bitte")
+- **Wind-SWE-Zeile GEBAUT** (`phi/sources.φ`, nach `WI_H0_MFI`): live HAPI, literale ISO-Grenzen (1994-12-29…2001-05-31), `no-cadence`, `at sun`, `hapi Te=… el_bulk_vel_magn=… el_density=…` + 3 `field`-Zeilen (K/thermal, km/s/advective, cm-3/diffusion). Parameterreihenfolge am realen Response verifiziert (`Te,el_bulk_vel_magn,el_density`; nur `pa_press_tensor`/`sc_position` sind Vektoren). Rat F1 vollstreckt.
+- **ROTI-Disposition aktualisiert** (`blocked_sources.φ`): gemessenes 2D-Gitter 180×90, Ein-Zeitpunkt-Snapshot, Gitter-Orientierung ungemessen, Lizenz-URL 404; Rat F3 → Compiler ins CRTI-Layout (pending).
+- **SuperDARN-CPCP-Disposition aktualisiert**: bestehende `10374021` → ledger ausstehend; Zenodo `10875060` = NetCDF-4 `map.pot.drop` (kein `.map2`), neuer `superdarn_cpcp_nc_compiler.rs` nötig (pending).
+- **8 Note-Drift-Korrekturen** in `blocked_sources.φ`: Voyager `:74`→`:207` · Akatsuki `:25583`→`:27774` · JAXA G-Portal `:9512`→`:10370` · Juno `extract.rs:3846`→`:4315` · TUH `wartend.φ:39`→`:36/:37` · SuperMAG `:18010–18021`→`:18407-18431` · USGS `declined_sources.φ:2160`→`:2176` · SuperDARN `:17777` entfernt. **2 offen** (DAS2 `:16370`, Chang'e `:9176` — Zielzeile nicht gefunden).
+- **open-weight-Runde:** `open-weight-ui`-Lock gesetzt/entfernt (kein Stale-Lock); Seat **DeepSeek V4 Pro (1.7T)** → **alle drei zustimmen** (F1-Kaveat: explizite Zeitzone in den ISO-Grenzen). Nur ein Seat gefahren (Budget); übrige Seats `pending`.
+
+### Offen
+- **blocked_sources.φ-Klassen-Vollstreckung** (Mountain-Stift): 9 a→`ledger.φ` `ausstehend`; 15 c retaggen (`pending`→`blocked parser-def` + `gap <token>`); 19 d (viele sind nach Zitat-Korrektur a); 2 Drift-Reste (DAS2/Chang'e); Stale-Schutz + `descoped-check` auf `blocked parser-def` (Gate-Fixture). Eingabe: `state/mountain/blocked-sources-klassen.md`.
+- **ROTI-Compiler** (`impc_roti_compiler.rs` ins CRTI-Layout) + **SuperDARN-NC-Compiler** (HDF5 `map.pot.drop`) — je ein eigener Bau-Schritt; ROTI-Gitter-Orientierung vorher messen.
 - **THEMIS-HAPI-Serienvergleich** (Rat F2) vor einem Routenwechsel.
-- **Admissions** (Rat F3): ROTI, SuperDARN-Record, cluster_ka, Kellerman-CSV.
+- **Admissions** (Rat F3): cluster_ka (`asu-tsv`+`cmap`), Kellerman-CSV (`csv`+`rows`).
 
 ## Abschluss
 
