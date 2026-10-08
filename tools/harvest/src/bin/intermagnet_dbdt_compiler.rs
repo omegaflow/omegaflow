@@ -109,8 +109,8 @@ fn harvest_year_buckets(station: &str, year: i64, bucket_s: f64) -> Vec<(f64, f6
             continue;
         }
         let url = format!(
-            "{}&start={start}&stop={stop}&format=json",
-            STATION_HAPI.replace("{station}", station)
+            "{}&time.min={start}&time.max={stop}&format=json",
+            STATION_HAPI.replace("{station}", &station.to_lowercase())
         );
         let mut root_json: Option<JsonVal> = None;
         for attempt in 0..3 {
