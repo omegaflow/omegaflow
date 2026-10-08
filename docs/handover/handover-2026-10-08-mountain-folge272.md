@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 2aea3ca22293320c95e191920d0282843c84a8834c0368203cc55c9703c9f769
+  sha256: b1a68ae4756038a2698229fb90146447c6a65f7174bbbc18cef3b01f99017142
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -28,8 +28,13 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
 - **river-133 gegenstandslos (gemessen):** `cgm_source bgs-quasi-dipole` + `cgm_lat`
   CPL/TTB stehen (`phi/sources.φ:6328-6329`, `:7673-7674`); `kepler.rs`-PROD-POISON ist
   `descoped` (`state/future/giftkarte-klassifiziert-src-2026-10-07.md:133`).
-- **Rat (5 Stimmen) + Recherche-Schicht (`archive_search`) gefahren** + **UI-Runde**
-  an 9 Seats (mountain-ui) — Verdikte unten.
+- **Rat (5 Stimmen) + Recherche-Schicht (`archive_search`) gefahren** — Verdikte je Punkt
+  unten. **UI-Runde:** die konsolidierte 5-Fragen-Frage an 9 Seats (`mountain-ui`) gestellt.
+  Gemessen: DeepSeek-Chat antwortet in-thread konvergierend (Member-Pool zuerst, Indizes
+  daraus abgeleitet; der Bias sitzt im Ersatzmuster, nicht im Zugriffsnamen; Rechte-Feld =
+  DataCite `rightsList`/SPDX); Duck.ai-Send landete nicht (Composer gemessen leer),
+  Claude/Qwen/Z.ai/übrige in-thread (Antworten noch nicht eingesammelt). Max-Thinking/
+  Deep-Search je Seat, wo ein Toggle gemessen wurde.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
