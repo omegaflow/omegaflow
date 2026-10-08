@@ -4,7 +4,7 @@ use crate::secrets::{Secret, resolve_key};
 use std::collections::HashMap;
 
 const PERPLEXITY_KEY: &str = "PERPLEXITY_API_KEY";
-const PERPLEXITY_URL: &str = "https://api.perplexity.ai/chat/completions";
+const PERPLEXITY_URL: &str = "https://api.perplexity.ai/v1/agent";
 
 pub fn perplexity_lines(query: &str) -> Vec<String> {
     let env_map: HashMap<String, String> = match crate::find_repo_root() {
@@ -29,7 +29,7 @@ pub fn perplexity_lines(query: &str) -> Vec<String> {
 
 pub fn perplexity_body(query: &str) -> String {
     format!(
-        "{{\"model\":\"sonar\",\"messages\":[{{\"role\":\"user\",\"content\":\"{}\"}}]}}",
+        "{{\"preset\":\"medium\",\"input\":\"{}\"}}",
         json_escape(query)
     )
 }
@@ -50,25 +50,62 @@ fn perplexity_request(query: &str, token: &str) -> Vec<String> {
             }
             None => vec!["pending — the Perplexity response carries no JSON".to_string()],
         },
-        Some(f) => vec![format!("pending — perplexity HTTP {}", f.status_text())],
+        Some(f) => {
+            let raw: String = f.body.chars().take(240).collect();
+            let message = match json::parse(&f.body) {
+                Some(v) => match v
+                    .get("error")
+                    .and_then(|e| e.get("message"))
+                    .or_else(|| v.get("message"))
+                    .and_then(|m| m.as_str())
+                {
+                    Some(s) if !s.is_empty() => s.to_string(),
+                    _ => raw.trim().to_string(),
+                },
+                None => raw.trim().to_string(),
+            };
+            vec![format!(
+                "pending — perplexity HTTP {}: {}",
+                f.status_text(),
+                message
+            )]
+        }
         None => vec!["pending — no network".to_string()],
     }
 }
 
 fn perplexity_results(v: &Json) -> Vec<String> {
     let mut out = Vec::new();
-    if let Some(content) = v
-        .get("choices")
-        .and_then(|c| c.as_arr())
-        .and_then(|a| a.first())
-        .and_then(|c| c.get("message"))
-        .and_then(|m| m.get("content"))
-        .and_then(|c| c.as_str())
-    {
-        for line in content.lines() {
-            let text = line.trim_end();
-            if !text.trim().is_empty() {
-                out.push(text.to_string());
+    if let Some(items) = v.get("output").and_then(|o| o.as_arr()) {
+        for item in items {
+            if let Some(content) = item.get("content").and_then(|c| c.as_arr()) {
+                for part in content {
+                    if let Some(text) = part.get("text").and_then(|t| t.as_str()) {
+                        for line in text.lines() {
+                            let trimmed = line.trim_end();
+                            if !trimmed.trim().is_empty() {
+                                out.push(trimmed.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if out.is_empty() {
+        if let Some(content) = v
+            .get("choices")
+            .and_then(|c| c.as_arr())
+            .and_then(|a| a.first())
+            .and_then(|c| c.get("message"))
+            .and_then(|m| m.get("content"))
+            .and_then(|c| c.as_str())
+        {
+            for line in content.lines() {
+                let trimmed = line.trim_end();
+                if !trimmed.trim().is_empty() {
+                    out.push(trimmed.to_string());
+                }
             }
         }
     }
@@ -89,20 +126,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn builds_the_sonar_body_with_json_escaped_query() {
+    fn builds_the_agent_body_with_json_escaped_input() {
         assert_eq!(
             perplexity_body("transfer entropy"),
-            "{\"model\":\"sonar\",\"messages\":[{\"role\":\"user\",\"content\":\"transfer entropy\"}]}"
+            "{\"preset\":\"medium\",\"input\":\"transfer entropy\"}"
         );
         assert_eq!(
             perplexity_body("a\"b\nc"),
-            "{\"model\":\"sonar\",\"messages\":[{\"role\":\"user\",\"content\":\"a\\\"b\\nc\"}]}"
+            "{\"preset\":\"medium\",\"input\":\"a\\\"b\\nc\"}"
         );
     }
 
     #[test]
     fn reads_the_answer_text_and_appends_citations() {
-        let body = r#"{"choices":[{"message":{"role":"assistant","content":"It holds.\nA = A."}}],"citations":["https://a.example/x","https://b.example/y"]}"#;
+        let body = r#"{"output":[{"type":"message","content":[{"type":"output_text","text":"It holds.\nA = A."}]}],"citations":["https://a.example/x","https://b.example/y"]}"#;
         let v = json::parse(body).unwrap();
         assert_eq!(
             perplexity_results(&v),
