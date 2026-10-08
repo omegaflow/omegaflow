@@ -2,7 +2,7 @@
   title: Survey — Research-APIs & MCPs (Consensus · Elicit · SciSpace · Perplexity)
   class: survey
   date: 2026-10-08
-  sha256: 7eefa55baecba4dc61e46aac037e2208dc644bc881247dba9e51c13948cd89f4
+  sha256: bfb40b6eada7264454d8f6d40aec4d991d2faf7e525089a9e2888a01deb80f5b
   status: live
   see-also: docs/surveys/survey-2026-10-08-fmhy-research-landscape.md docs/concepts/ui-seats.md docs/concepts/tools-map.md
 -->
@@ -28,6 +28,11 @@ Ausschluss** — die Auth-Route ist der Weg.
 HTTP gemessen: `api.consensus.app/v1/search` = **401** (Key nötig, erreichbar),
 `mcp.consensus.app/mcp` = **401** (Auth), Consensus-MCP-README = 200, Perplexity-MCP-README = 200.
 
+**Status 2026-10-08:** `CONSENSUS_API_KEY` und `PERPLEXITY_API_KEY` liegen in `.secrets.local`;
+**`--consensus` läuft live** (10 Treffer am Baum); `--perplexity`-Arm als Nächstes.
+**Elicit `descoped`** (Operator-Wort): API nur auf Pro/Scale/Enterprise = kommerziell.
+**SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT).
+
 ## Consensus — der stärkste Arm (220–400M Papers, Volltext)
 
 - `GET https://api.consensus.app/v1/search?query=…&year_min=…&study_types=rct,meta-analysis`
@@ -50,9 +55,18 @@ HTTP gemessen: `api.consensus.app/v1/search` = **401** (Key nötig, erreichbar),
 2. **`archive_search --perplexity <query>`** — Perplexity Search/Agent API (`PERPLEXITY_API_KEY`).
 3. **Elicit API/MCP** und **SciSpace API/MCP** — Endpunkte + Auth aus `docs.elicit.com`
    bzw. SciSpace-Connector-Doku ziehen; Keys (Elicit/SciSpace) anlegen.
-4. **MCP-Nutzung:** unsere Agenten haben keinen MCP-Client im Harness; die Remote-MCPs sind
-   damit `pending` (kein Konsument) — die **REST-APIs** sind der wirebare Weg. Ein späterer
-   MCP-Client (Claude/Codex) kann die Server direkt binden.
+4. **MCP-Harness (opencode ist der Harness):** `opencode.json` hat einen `mcp`-Block mit
+   `type: "remote"` + `{env:VAR}`-Interpolation. **Verdrahtet 2026-10-08:** `consensus`
+   (`https://mcp.consensus.app/mcp`, Header `x-api-key: {env:CONSENSUS_API_KEY}`) und
+   `perplexity` (`https://api.perplexity.ai/mcp`, `Authorization: Bearer
+   {env:PERPLEXITY_API_KEY}`) — kein Secret im getrackten Config. **Braucht:** die zwei Env-Vars
+   im Shell exportieren (`set -a; source .secrets.local; set +a`) und opencode **neu starten**;
+   dann haben alle Agenten (auch der Taucher) die MCP-Tools direkt.
+5. **SciSpace-MCP — nichts nachzubauen:** der SciSpace-MCP ist ausschließlich über die
+   Claude-/ChatGPT-Connector-Verzeichnisse verfügbar (kein öffentlicher MCP-URL); ein
+   Nachbau wäre Reverse-Engineering des gebrokeren Connectors (ToS-Risiko). Der REST-Host
+   `api.scispace.com` antwortet (202/302) — **SciSpace als `archive_search`-Arm wiren**, sobald
+   Key/Docs vorliegen. Kein `SCISPACE_API_KEY` verfügbar.
 
 ## Träger
 
