@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: b5a72993e37a26b0fef7bb2470b54577077d2dcf5ecf72bb5557b361959b522e
+  sha256: 1b163b408c77df80b46ba47f0c33024a12ebb211c6c7d304267d5aa918e7ae4f
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -83,6 +83,30 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   Weight DeepSeek V4 Pro, Inkling); **Nicht-Antworten sind gemessen benannt, nie als Null
   gezählt**; Divergenzen (Q2, Q4, Q5) stehen als Riss, nicht geglättet. Kein Mehrheits-Mittel:
   die UI ist der Reiß-Kanal, der **Rat trägt das Verdikt** (Q4 `pending`, Q5 Member-Pool Route C).
+
+  **Axiom-Auflösung des Risses (Rat, 2026-10-08):** die fünf Axiome (A=A · ICRS&TDB ·
+  force_type · 0 honored · pending) entscheiden, wo UI und Rat divergieren.
+  1. **Q1 (A=A + ICRS&TDB):** Gate über **jeden** Body (Cache wie Fetch); Receiver = zwingende
+     per-Record-Weltlinie. **River** führt den Cache-Zweig `src/archivar/main_flow.rs:1173`
+     (+ ~37 `cache_fresh`-Geschwister) durchs Gate; **Mountain** schreibt den Receiver-Satz in
+     `docs/concepts/archivar-mathematikerin.md`. Kein Riss (UI+Rat einig).
+  2. **Q2 (ICRS&TDB):** `span` ist **Empfänger-Eigenschaft** (`receiver.span`, Schnitt mit
+     `extent`) → **verdrahten**; ohne Konsument im selben Atom `pending` mit Trigger
+     `reader built` — **nie ohne Befund streichen**. Riss benannt (UI-Mehrheit streichen ↔ Claude
+     verdrahten). **Mountain** hält `span` als `receiver.span`-Direktiv; **River** liest es.
+  3. **Q3 (force_type):** `em` nur mit Band-/pivot-λ-Referenz; fehlend → Record verweigert.
+     **Mountain:** pivot-λ am Knoten `phi/sources.φ:19618`. Kein Riss.
+  4. **Q4 (pending):** bleibt `pending` mit Trigger; `descoped` verlangt den Befund „nie gebaut,
+     nicht gebraucht" — der liegt nicht vor. **Mycelium:** `phi/blocked_sources.φ`/`ledger.φ`
+     `pending` mit Trigger `route erscheint`. UI-`measured descoped` vom Axiom zurückgewiesen.
+  5. **Q5 (A=A):** Member-Pool zulässig als **Register-Klassenträger** (jeder Member mit eigener
+     Kraft/Deskriptor), als **ein Wire-Deskriptor** verboten (löst 154 Messungen in einen
+     Mittelwert auf). **Mycelium** trägt den Klassenträger; **River** verdrahtet die drei
+     getrennten Deskriptoren.
+  **Der eine Satz:** Nur die Sache selbst darf an der Stelle der Sache stehen — die Weltlinie
+  trägt die Zulassung, nicht der Cache; `span` wird der Empfänger, der es ist; der AB-Fluss trägt
+  seine Kraft nur mit seinem Band; der fehlende Pfad bleibt ausstehend, nicht abgeschrieben; und
+  die 154 bleiben 154.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
@@ -274,12 +298,18 @@ Origin: mountain-folge272.
   gegenstandslos (gegen den Stand vor dem 270-Bau gemessen).
 - **`kepler.rs`-PROD-POISON (river-133):** bereits `descoped`
   (`state/future/giftkarte-klassifiziert-src-2026-10-07.md:133`).
-- **`span`-Apertur:** Mountain-Arm (`parse.rs`) steht. Rat 2026-10-08: Apertur = Record-
-  `extent`; `span` ohne Leser → verdrahten **oder** streichen. **Braucht:** River nennt die
-  konkrete Signatur (Query-/Receiver-Input vs. Record-`extent` in `wasm.rs:65-99` +
-  `membrane.html:501-528`); die Semantik zuvor durch die fünf Stimmen.
-- **`em nmgy`-Riss:** der Rat hält die Zeile als `quantity scale nmgy`; wandert nach `em`,
-  sobald die g-Band-Bandreferenz (pivot-λ) gemessen ist.
+- **Loader-Gate (Q1, Axiom A=A + ICRS&TDB; Rat 2026-10-08):** das Zulassungs-Gate muss über
+  **jeden** Body (Cache wie Fetch). Der Cache-Zweig `src/archivar/main_flow.rs:1173` (+ die ~37
+  `cache_fresh`-Geschwister) lädt einen cache-frischen Körper unbedingt. **Braucht:** River zieht
+  das Gate vor das Laden (nicht nur in den else-Zweig); Mountain schreibt den Receiver-Satz
+  (Abwesenheit der Weltlinie → Record verweigert) in `docs/concepts/archivar-mathematikerin.md`.
+- **`span`-Apertur (Q2, Axiom ICRS&TDB; Rat 2026-10-08):** `span` ist **Empfänger-Eigenschaft**
+  (`receiver.span`, Schnitt mit `extent`) → **verdrahten**; ohne Konsument im selben Atom `pending`
+  mit Trigger `reader built` — **nie ohne Befund streichen**. Mountain hält das `receiver.span`-
+  Direktiv (`parse.rs`); **Braucht:** River liest `receiver.span` in der Query-Apertur
+  (`wasm.rs:65-99` + `membrane.html:501-528`).
+- **`em nmgy`-Riss (Q3, Axiom force_type; Rat 2026-10-08):** `em` nur mit **Band-/pivot-λ-Referenz**;
+  fehlend → Record verweigert (kein Sample). Mountain hängt die pivot-λ an `phi/sources.φ:19618`.
 
 ## An mycelium
 
@@ -294,6 +324,14 @@ Origin: mountain-folge272.
   Workflow; Assets landen im CDN.
 - **`hadisst-cdn.yml`:** nach dem Push dispatchen.
 - **LICENSE/README `omegaflow/sources`:** `terms`-Vollständigkeit treibt die Erzeugung.
+- **Doppler-Kanal (Q4, Axiom pending; Rat 2026-10-08):** bleibt `pending` mit Trigger
+  (`route erscheint / Produkt gemessen`); `descoped` verlangt den Befund „nie gebaut, nicht
+  gebraucht" — liegt nicht vor. **Braucht:** Mycelium führt die Pfad-Lücke in
+  `phi/blocked_sources.φ`/`phi/pipeline/ledger.φ` als `pending` mit Trigger.
+- **GIC-Stufe-2 Member-Pool (Q5, Axiom A=A; Rat 2026-10-08):** als **Register-Klassenträger**
+  zulässig (jeder Member mit eigener Kraft/Deskriptor), als **ein Wire-Deskriptor** verboten
+  (löst 154 Messungen in einen Mittelwert auf). **Braucht:** Mycelium trägt den Klassenträger;
+  River verdrahtet die drei getrennten Deskriptoren.
 
 ## LOCK
 
