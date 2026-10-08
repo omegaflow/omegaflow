@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199, mountain-272) gefaltet. `--searxng`-Instanz-Landschaft gemessen (keine öffentliche JSON-Instanz). folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 39ba3fe756e2bbe7c74f44b9a451265b77d902fb6cb66a775d29d5e42f35945d
+  sha256: 9a4f2dbdef2756a5b26f4edcdd072d8184a73c650aa8e3d4523f923b0bbf0b86
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0028 · close 0.034 · cap 0.5 — Grund: Meta-Pass + KC2G-Diagnose + Adress-Faltung + `--searxng`-Messung; kein pro/max; gemessen `session_burn`
+## Burn: open 0.0028 · close 0.14 · cap 0.5 — Grund: Meta-Pass + KC2G-Diagnose + Adress-Faltung + `--searxng`-Messung + Rat/Diver/UI (ci-gate) + Mountain-Inventar; kein pro/max; gemessen `session_burn`
 
 ## Operator-Wort-Register
 
@@ -31,6 +31,9 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „consensus und perplexity sind drin, elicit descoped da kostenpflichtig" | Quelle: mycelium-267.
 - 2026-10-08 | „können wir den connector nicht für opencode nachbauen? …" → `mcp`-Block | Quelle: mycelium-267.
 - 2026-10-08 | „scispace nochmal mit harten bandagen … perplexity hab ich nochmal sicher eingegeben 10$ guthaben" | Quelle: mycelium-267.
+- 2026-10-08 | „teilweise — der CI-Config-Teil ist baubar; das Rat-Verdikt fehlt — bitte den Rat, den Taucher mit archive search und die UI-Voices befragen" (ci-gate Per-SHA-Verdikt) | Quelle: diese Session. → Rat + Diver + 3 UI-Seats; Config gebaut.
+- 2026-10-08 | „bitte recherchieren alle Mountain-Punkte mit Prio Routen / Research-APIs / MCP; eigentlich habe ich neugestartet" | Quelle: diese Session. → Inventar + Routen-Verifikation; MCP-Neustart-Trigger gefeuert.
+- 2026-10-08 | „VT SuperDArn ist eingeloggt" | Quelle: diese Session. → Route `vt.superdarn.org/data-download` gemessen, eingeloggt; LOCK-Download bleibt Operator-Hand.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -42,12 +45,12 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** öffentliche SearXNG-Instanzen haben den JSON-Exporter abgeschaltet (nur die HTML-Suche bleibt); der Arm braucht `formats: [json]` (selbst gehostet) oder einen HTML-Parser.
 - **Braucht:** eine gemessene JSON-Instanz (oder Selbst-Host) → dann `searxng_lines`/`searxng_results` in `tools/utils/src/bin/archive_search/net.rs` nach dem `marginalia`-Muster; AI2-Playground-Seat testen; Sci-Bot via Rat.
 
-### `ci-gate` trägt ein leichtes Testsubset (Bedingung des ci-check-Beschlusses)
-- **Status:** wartend | **Bindung:** eigen (CI-Config)
-- **Trigger:** der erste `ci-gate`-Lauf mit dem neuen Test-Job (`ci_manage log`)
-- **Lage:** (gemessen 2026-10-07, Rat + 11 UI-Seats; mountain-272 Riss bestätigt) `ci-check` behauptet `cancel-in-progress: false`, wird aber als `cancelled` mit 0 Jobs verdrängt (`.github/workflows/ci-check.yml:20-27`). Riss (Qwen3.8): „Diagnose trägt, Fix trägt nicht" — der per-SHA-Verdikt muss Dateninvariante werden (`gap-fill`), nicht Scheduler-Nebenwirkung; `queue:max` verworfen.
-- **Blockade:** der grüne/schnelle Subset-Job + Branch-Protection; lokaler Testlauf ist kein Nachweis.
-- **Braucht:** `cargo test --lib`-Subset-Job in `ci-gate.yml` (+ per-SHA-Gruppe `ci-gate-${{ github.sha }}`); Branch-Protection auf ci-gate **vor** dem ci-check-push-Ausbau; Rat-Verdikt zum Riss (Dateninvariante `gap-fill` + Bisect vs. Nachtlauf).
+### `ci-gate` Per-SHA-Verdikt — Config gebaut, Dateninvariante offen
+- **Status:** eigen | **Bindung:** eigen (CI-Config) + operator (Branch-Protection) + mountain (Dateninvariante/Register)
+- **Trigger:** der erste `ci-gate`-Lauf mit per-SHA-Gruppe + `subset`-Job (`ci_manage log <id>`)
+- **Lage:** (gemessen 2026-10-08) `ci-gate.yml:24` stand auf `group: ci-gate-${{ github.ref }}` (per-Ref): ein neuer Push auf denselben Ref cancelt den Lauf des älteren SHA. `ci-check.yml:20-27` `cancel-in-progress: false` schützt nur laufende, nicht wartende Läufe (15/17 `cancelled`, 0 Jobs). **Rat + 3 UI-Seats (Duck/GPT-6 Luna · Qwen · Z.ai/GLM-5.3), einhellig:** Per-SHA-Gruppe + Branch-Protection sind die notwendige Mechanik, aber **kein** Garant; der Per-SHA-Verdikt muss **Dateninvariante** werden — totale Funktion `SHA → {grün, rot, pending}`, Default `pending`, persistiert, fehlend/verdrängt = `pending`, nie grün (Z.ai: „Verdikt ist Lauf-Eigenschaft, nicht SHA-Eigenschaft"; Qwen: „Ephemeral-Execution-Riss"; Duck: „separate Dateninvariante"). Prior-Art (Diver, `archive_search`): GitHub-Docs `queue: single` ersetzt den einzigen wartenden Lauf; Begriffe „merge queue", „commit metadata backfill", „stale status reuse". **Gebaut (dieses Atom):** `group: ci-gate-${{ github.sha }}` + neuer Job `subset` (`cargo test --lib`).
+- **Blockade:** Branch-Protection bindet den Check `ci-gate / subset` (GitHub-Settings = Operator/API); die Dateninvariante braucht eine neue Registerdatei (Kanon-Akt, `phi/canon.φ`-Deklaration).
+- **Braucht:** Operator/API: Branch-Protection auf `ci-gate / subset`; Mountain: `SHA → {grün,rot,pending}`-Register (totale Funktion, Default pending) + SHA-Abfrage im Leser; danach `ci-check`-Push-Ausbau.
 
 ### Die drei neuen CDN-Arme — success, auf Admission
 - **Status:** wartend | **Bindung:** eigen (Mountain-Admission)
@@ -70,12 +73,12 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** Mountains Zulassung.
 - **Braucht:** Mountains Dispositions-Verdikt; dann Ernte-Verdrahtung.
 
-### Research-APIs/MCPs — Consensus · Perplexity · SciSpace (`survey-2026-10-08-research-api-mcp.md`)
-- **Status:** wartend | **Bindung:** eigen (MCP-Config) + operator (Neustart)
-- **Trigger:** opencode-Neustart mit exportierten Keys (`set -a; source .secrets.local; set +a`)
-- **Lage:** (gemessen 2026-10-08) `--consensus`/`--perplexity` live; MCP-Harness (`opencode.json` `mcp`, `consensus`+`perplexity` `type: remote`) verdrahtet; Elicit `descoped`; SciSpace cookie-interne API → kein Arm.
-- **Blockade:** opencode-Neustart mit `set -a; source .secrets.local; set +a`.
-- **Braucht:** Neustart (MCP-Tools für alle Agenten).
+### Research-APIs/MCPs — Consensus · Perplexity (Rest: MCP-Tool-Call)
+- **Status:** eigen | **Bindung:** eigen (MCP)
+- **Trigger:** opencode-Neustart — **gefeuert** (Operator-Wort 2026-10-08 „eigentlich habe ich neugestartet")
+- **Lage:** (gemessen 2026-10-08) `--consensus` + `--perplexity` HTTP-Arme **live** (beide liefern Treffer); `PERPLEXITY_API_KEY`/`CONSENSUS_API_KEY` als Schlüsselnamen vorhanden (`bin/secrets_keys`); MCP-Block `opencode.json:439-450` verdrahtet. Ein positiver MCP-Tool-Call selbst ist in dieser Session nicht gemessen — die Arme sind das Äquivalent.
+- **Blockade:** —
+- **Braucht:** ein Agent mit MCP-Tool-Zugriff bestätigt `consensus`/`perplexity` als Tool; sonst gilt der `archive_search`-Arm als der Weg.
 
 ### Gegen-Audit — Quellen-Delta + Re-Audit (`survey-2026-10-08-open-sources-delta.md`)
 - **Status:** eigen | **Bindung:** eigen (Recherche) → Mountain (Admission)
@@ -98,6 +101,13 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** Mountains Admission.
 - **Braucht:** `gh workflow run hadisst-cdn.yml` nach Admission; sha je Asset ins Register.
 
+### Gaia cluster_ka — Pfad-Träger (`phi/blocked_sources.φ:120`, owner mycelium)
+- **Status:** wartend | **Bindung:** eigen (Manifestation)
+- **Trigger:** Mountain-Admission der VizieR-Route (`phi/blocked_sources.φ:120`)
+- **Lage:** (gemessen 2026-10-08) VizieR members table `https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=J/A+A/633/A99/members` HTTP 200 (58318 B); Gaia-TAP `cluster_ka` column absent (HTTP 400). Der verlorene Zeiger ist als `pending` re-registriert.
+- **Blockade:** Mountain-Admission.
+- **Braucht:** Admission → Manifestation/Compiler.
+
 ## An mountain
 
 Origin: mycelium-269.
@@ -108,6 +118,7 @@ Origin: mycelium-269.
 - **`ci-check`-Verdrängung:** `.github/workflows/ci-check.yml:20-27` `cancel-in-progress: false` → jeder Lauf `cancelled` 0 Jobs (mountain-272). Fix nötig.
 - **Doppler-Kanal (Q4, Axiom pending):** Pfad-Lücke als `pending` mit Trigger („route erscheint / Produkt gemessen") — Register (`blocked_sources.φ`/`ledger.φ`) ist deine Feder; der Riss „Mycelium führt die Pfad-Lücke"/Mountain-Pen bleibt benannt.
 - **GIC-Stufe-2 Member-Pool (Q5):** als Register-Klassenträger zulässig (jeder Member eigene Kraft/Deskriptor), als ein Wire-Deskriptor verboten. Register ist deine Feder; River verdrahtet die drei Deskriptoren.
+- **Routen-/API-/MCP-Stand aller offenen Punkte (gemessen 2026-10-08, Diver-Abgleich + `archive_search --verdict`):** 200: `supermag.jhuapl.edu/products/` · `zenodo.org/record/4444068` · `impc.dlr.de/…one-minute-maximum-roti-global` · `cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE` · `…?id=OMNI2_H0_MRG1HR` · `space.fmi.fi/image/` · `prop.kc2g.com/api/stations.json` · `superdarn.usask.ca/convection-maps` · `vizier.cds.unistra.fr/…/J/A+A/633/A99/members` · `datalab.noirlab.edu/tap/sync`. 206/1 B (user-gated, kein vollen Payload): `leos.ac.cn` · `vires.services/…SW_FAST_MAGA_LR_1B` · `cedar.openmadrigal.org` · `ds.iris.edu/ds/products/emtf/` · `ssusi.jhuapl.edu/`. 400 (Wayback 503): `geomag.usgs.gov/ws/data/`. `--consensus`/`--perplexity` live (MCP-Keys vorhanden).
 
 ## An future
 
@@ -118,3 +129,4 @@ Origin: mycelium-269.
 ## LOCK
 
 - **SuperDARN Record-Download (`blocked_sources.φ:78`)** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt; Globus-Route gemessen, Download = Operator-Hand.
+- **Nachtrag 2026-10-08 (Operator-Wort „VT SuperDArn ist eingeloggt"):** die Route `https://vt.superdarn.org/data-download` ist eingeloggt und erreichbar (gemessen; 15/15 Downloads, File-Types FitACF3 · FitACF · FitEX · Map2 · Grid2, 5 Radars). Der Route-Status ist aktualisiert; der **Download-Akt bleibt die Operator-Hand** — das LOCK steht, kein Maschinen-Akt.
