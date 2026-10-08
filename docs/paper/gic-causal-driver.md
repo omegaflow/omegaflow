@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 80aaec97dadb6b79fb49cad2c1884a31cf8c9fd5f464269f641aece8cac9cdce
+  sha256: 4e2f4feb38f342a14f60af4fc65c55e2b06cc8d70236cd5de6a5fc9ba0aeee75
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -674,7 +674,7 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
   and is already a SuperMAG station (`phi/supermag_stations.φ:368`, 60.5° N
   24.65° E), so a co-located magnetogram is obtainable through the existing
   SuperMAG chain — the earlier "no co-located magnetogram" no longer holds. As
-   of 2026-10-07 the NUR 10 s dB/dt series is a manifested CDN asset
+  of 2026-10-07 the NUR 10 s dB/dt series is a manifested CDN asset
   (`fmi_image_mag_nur.bin`, `phi/sources.φ:18156`; 1,555,148 B; sha256
   93f17d0a6b75a48cc71a5b09f8ecfbf209f9381c692cdb15db0e5f658db6a139, reachable
   HTTP 200, measured 2026-10-07), so the co-located channel is wired. The
