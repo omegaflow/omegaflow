@@ -23,6 +23,7 @@ pub enum QuantityKind {
     Scale = 3,
     Intensity = 4,
     Index = 5,
+    Impedance = 6,
 }
 
 pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
@@ -33,6 +34,7 @@ pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
         "scale" => Some(QuantityKind::Scale),
         "intensity" => Some(QuantityKind::Intensity),
         "index" => Some(QuantityKind::Index),
+        "impedance" => Some(QuantityKind::Impedance),
         _ => None,
     }
 }
@@ -45,6 +47,7 @@ pub fn quantity_kind_name(kind: QuantityKind) -> &'static str {
         QuantityKind::Scale => "scale",
         QuantityKind::Intensity => "intensity",
         QuantityKind::Index => "index",
+        QuantityKind::Impedance => "impedance",
     }
 }
 

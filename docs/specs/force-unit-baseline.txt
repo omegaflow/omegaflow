@@ -64,6 +64,8 @@
 # electric `kv` (superdarn_cpcp_pot_drop kV, a potential; electric owns v/kv),
 # em `ohm` (emtf_z*_* SI-Ω MT impedance, an EM transfer function). Frozen here
 # until tools-latest republishes the gate, then deleted.
+# Mountain 277 (2026-10-08): `em ohm` healed — emtf_z*_* are now
+# `quantity … impedance ohm` (Rat+UI: derived response function, no force channel);
+# the pair is deleted, the file shrinks.
 em gw
 electric kv
-em ohm

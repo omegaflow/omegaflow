@@ -3,7 +3,7 @@
   session: Mountain-Folge 277
   class: handover
   date: 2026-10-08
-  sha256: e90ca374d66cb5b8f953f505c6529688e37b1d8148ab21f4b216bd020aed6fcb
+  sha256: ca7d6e38536ddcff2cba87c6b4866407f8d623cf6ad9fe7e615333aace91d530
   status: live
 -->
 # Handover — Mountain-Folge 277 (2026-10-08)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 gemessen 2026-10-08T14:3xZ). Diese Session konsumierte
 `handover-2026-10-08-mountain-folge276.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.108 · cap 0.50 — Grund: line + Bau zweier Archivar-Reader (`superdarn_cpcp`/`ssusi_aurora`) + Wägung der Route-Admissionen; kein pro/max. (gemessen `session_burn`, Session „Mountain-Übergabe in einem Pass abarbeiten")
+## Burn: open 0.0000 · close 0.208 · cap 0.50 — Grund: line + Bau zweier Archivar-Reader (`superdarn_cpcp`/`ssusi_aurora`) + Rat/UI/open-weight-Runde EMTF (council + 5 UI-Seats) + Bau (`QuantityKind::Impedance` + 8 Zeilen); kein pro/max. (gemessen `session_burn`, Session „Mountain-Übergabe in einem Pass abarbeiten")
 
 ## Operator-Wort-Register
 
@@ -31,12 +31,12 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Route-Admissionen — 2 Reader-Arme GEBAUT; Fetch-Liste + EMTF-Repräsentation offen
+### Route-Admissionen — 2 Reader-Arme + EMTF-Verdikt GEBAUT; EMTF-Reader offen
 - **Status:** eigen | **Bindung:** eigen (Register/Code) · mycelium (Manifestation)
-- **Trigger:** `src/archivar/main_flow.rs` fremd-dirty frei (`receiver_aperture`-Hunks weg) → Format-Listen-Ergänzung nachziehen
-- **Lage:** (gemessen 2026-10-08 277) **Riss gemessen:** `ssusi_aurora` und `superdarn_cpcp` waren in `phi/sources.φ` registriert (`:1691`, `:4103`), aber **ohne Archivar-Reader** — `src/archivar/extract.rs::series_parse_bin`/`series_declared_fields`/`series_component_name` trugen sie nicht, und die Series-Fetch-Liste `main_flow.rs:2913-3010` ebenso wenig → die Zeilen waren stumm (0 honored, kein Lauf). Gebaut: `src/archivar/superdarn_cpcp.rs` (MAGIC `CPCP`, [epoch, pot.drop kV, err kV] → `superdarn_cpcp_pot_drop` electric kV) und `src/archivar/ssusi_aurora.rs` (MAGIC `SSUI`, [epoch, north GW, south GW] → `ssusi_hemisphere_power_north`/`_south` em GW), je `parse_bin`/`component_name`/`declared_fields`/`parse_series` + Tests; `cargo check` 0/0. Fetch-Liste-Hunk (`+ "superdarn_cpcp"`, `+ "ssusi_aurora"`) via `git apply --cached` im Index (Fremd-Hunks `receiver_aperture: None` in derselben Datei nicht angefasst).
-- **Blockade:** `main_flow.rs` trägt fremde uncommittete Hunks (river-„`receiver_aperture`"); der eigene Format-Listen-Hunk wird nur über den Index committet. **`wdc_ae` (`:4081`) und `bpa_gic` fehlen ebenfalls in der Fetch-Liste** — auch deren Serie-Zeilen (u. a. die 6 `quantity`-`wdc_ae`-Zeilen aus 276) sind nicht gefetcht (gemessen 2026-10-08: kein `wdc_ae`/`bpa_gic` in `main_flow.rs`).
-- **Braucht:** `wdc_ae`/`bpa_gic` in die Series-Fetch-Liste eintragen (nach river-Commit); `emtf_impedance`-Darstellung entscheiden (perioden-indiziertes Impedanz-Spektrum, **kein Zeit-Serien-Vertrag** → Rat/Architektur); Riss-Arme (a)(b)(c)(k)(l) per neuem Rat.
+- **Trigger:** Rat+UI-Runde abgeschlossen (2026-10-08) — entschieden und angewandt; nächster Bau: EMTF-Reader-Arm
+- **Lage:** (gemessen 2026-10-08 277) **Riss gemessen:** `ssusi_aurora` und `superdarn_cpcp` waren in `phi/sources.φ` registriert (`:1691`, `:4103`), aber **ohne Archivar-Reader** — `src/archivar/extract.rs::series_parse_bin`/`series_declared_fields`/`series_component_name` trugen sie nicht, und die Series-Fetch-Liste `main_flow.rs:2913-3010` ebenso wenig → die Zeilen waren stumm (0 honored, kein Lauf). Gebaut: `src/archivar/superdarn_cpcp.rs` (MAGIC `CPCP`, [epoch, pot.drop kV, err kV] → `superdarn_cpcp_pot_drop` electric kV) und `src/archivar/ssusi_aurora.rs` (MAGIC `SSUI`, [epoch, north GW, south GW] → `ssusi_hemisphere_power_north`/`_south` em GW), je `parse_bin`/`component_name`/`declared_fields`/`parse_series` + Tests; `cargo check` 0/0. Fetch-Liste-Hunk (`+ "superdarn_cpcp"`, `+ "ssusi_aurora"`) via `git apply --cached` im Index (Fremd-Hunks `receiver_aperture: None` in derselben Datei nicht angefasst). **277 nachgezogen:** `wdc_ae` (`:4081`) und `bpa_gic` ebenfalls in die Series-Fetch-Liste eingetragen (die 6 `quantity`-`wdc_ae`-Zeilen aus 276 werden damit gefetcht); **EMTF entschieden A** (Rat 4:1 + UI 4:1 = 8:2, `state/mountain/rat-verdict-emtf-2026-10-08.md`) — `QuantityKind::Impedance` (id 6) + `ohm` (`force.rs`/`units.rs`), die 8 `emtf_z*`-Zeilen (`:10154-10161`) auf `quantity … impedance ohm`, `em ohm`-Baseline geheilt; `cargo check` 0/0.
+- **Blockade:** EMTF-Reader-Arm fehlt (eigener perioden-indizierter Spektral-Arm; `series_parse_bin` trägt `(t,v,comp)` nicht).
+- **Braucht:** `src/archivar/emtf.rs` bauen (Spektral-Arm: je Periode `freq = 1/T`, `bin_width` aus Periodenkanten; Verdikt `state/mountain/rat-verdict-emtf-2026-10-08.md`); Riss-Arme (a)(b)(c)(k)(l) per neuem Rat.
 
 ### GIC-Faden §A–G — neue Arme registriert; Zeilen-Bau offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium
@@ -49,8 +49,8 @@ Wort | Datum | Quelle
 - **Status:** eigen | **Bindung:** eigen (Register) · river (`compute_max_t`)
 - **Trigger:** AE/AL/AU · SME/SML/SMU als `sources.φ`-Zeilen gebaut
 - **Lage:** (gemessen 2026-10-08 276) `quantity`/`index nt` (Operator-Wort „ja bitte"); neue `quantity`-Kind `index` gebaut (`src/mathematikerin/force.rs`, `src/archivar/units.rs`, Test `derived_magnetic_index_is_a_quantity_not_a_force_field`); die 6 `wdc_ae`-Zeilen (`sources.φ:4087-4092`) umgestellt. AE/AL/AU stehen; SME/SMU/SML: SuperMAG `blocked account` (`blocked_sources.φ:210-212`, User-Gated). `dB/dt-Bestand 2/154` (ABK `:2150-2168`, SOD `:2170-2178`), beide 1h-Assets `gate-no-field-lines`-refused (`refusal_ledger.φ:75-76`).
-- **Blockade:** **der `wdc_ae`-Fetch fehlt** (s. Route-Admissionen) → die umgestellten Zeilen sind bis dahin stumm; Receiver als deklariertes `FieldConfig`-Feld hat keinen Reader.
-- **Braucht:** `wdc_ae` in die Fetch-Liste; SME/SMU/SML über `blocked account` (SuperMAG-Login, Operator-Hand); `gate-no-field-lines`-Refusal der 2 dB/dt-Arme lösen oder `blockiert` registrieren.
+- **Blockade:** Receiver als deklariertes `FieldConfig`-Feld hat keinen Reader.
+- **Braucht:** SME/SMU/SML über `blocked account` (SuperMAG-Login, Operator-Hand); `gate-no-field-lines`-Refusal der 2 dB/dt-Arme lösen oder `blockiert` registrieren.
 
 ### em-nmgy / Bandreferenz — Parser-Arm GEBAUT; `band_id`-Persistenz offen
 - **Status:** eigen | **Bindung:** eigen · river (Feld-Erweiterung)
@@ -106,7 +106,7 @@ Wort | Datum | Quelle
 
 Origin: mountain-folge277.
 
-- **`main_flow.rs` geteilt:** die Session hat nur den eigenen Format-Listen-Hunk (`+ "superdarn_cpcp"`, `+ "ssusi_aurora"`) via `git apply --cached` gestaged; die fremden `receiver_aperture: None`-Hunks (4313/4473) blieben unangetastet. Nach deinem Commit gehört `wdc_ae`/`bpa_gic` in dieselbe Liste.
+- **`main_flow.rs` geteilt:** der eigene Format-Listen-Hunk (`+ "superdarn_cpcp"`, `+ "ssusi_aurora"`, `+ "wdc_ae"`, `+ "bpa_gic"`) steht; die fremden `receiver_aperture: None`-Hunks sind inzwischen committet (river-137).
 - **`span`/Receiver:** der Vertrags-Satz steht (275); ein deklariertes Receiver-Feld braucht den Reader.
 
 ## An mycelium
@@ -127,8 +127,12 @@ Origin: mountain-folge277.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (stehendes Wort 2026-10-07, Mountain 264).
 
-Eigene Pfade: `src/archivar/superdarn_cpcp.rs`, `src/archivar/ssusi_aurora.rs`,
-`src/archivar/extract.rs`, `src/archivar/main_flow.rs` (nur eigener Hunk),
-`src/archivar/mod.rs`, `src/lib.rs`,
+Eigene Pfade: `src/mathematikerin/force.rs`, `src/archivar/units.rs`,
+`src/archivar/superdarn_cpcp.rs`, `src/archivar/ssusi_aurora.rs`,
+`src/archivar/extract.rs`, `src/archivar/main_flow.rs`,
+`src/archivar/mod.rs`, `src/lib.rs`, `phi/sources.φ`,
+`docs/specs/force-unit-baseline.txt`,
 `docs/handover/handover-2026-10-08-mountain-folge277.md`,
-`docs/handover/archiv/handover-2026-10-08-mountain-folge276.md` (Move).
+`docs/handover/archiv/handover-2026-10-08-mountain-folge276.md` (Move),
+`state/mountain/rat-vorbereitung-emtf-2026-10-08.md` (gitignored),
+`state/mountain/rat-verdict-emtf-2026-10-08.md` (gitignored).
