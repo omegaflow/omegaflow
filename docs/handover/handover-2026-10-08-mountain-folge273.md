@@ -3,7 +3,7 @@
   session: Mountain-Folge 273
   class: handover
   date: 2026-10-08
-  sha256: 915d0c302f1a2b8975549e46424e8d64fe801b29ad3767eee9faa90c3df2dd46
+  sha256: ef27f8eb0a0bf708893841130f0588a5bcd497d69f4db11321d9d07fa28aaeb0
   status: live
 -->
 # Handover — Mountain-Folge 273 (2026-10-08)
@@ -54,6 +54,8 @@ Wort | Datum | Quelle
 „Architektur-/Ethik-Entscheidungen gehen durch die Linse der fünf Stimmen (Rat), nie in Pro-Solo" | 2026-10-07 | Operator (Session, Mountain 251–273)
 „mach das ab jetzt automatisch — committe und pushe selbst, du bist die einzige Linie die das nicht automatisch tut" | 2026-10-07 | Operator (Session, Mountain 264)
 „bitte kümmer dich drum" — span/Agnostik, em-nmgy, Flyby-Kette, GIC-Stufe-2 durch Recherche + Rat + UI-Runde arbeiten; LOCK unberührt; keine neue Operator-Frage | 2026-10-08 | Operator (Session, Mountain 272)
+„berufe den rat ein aber mache dafür eine archive search recherche und befrage du frontier uis" | 2026-10-08 | Operator (Session, Mountain 273)
+„hast du die tyrigopen auch befragt und die antworten gewichtet?" — tryingopen einbeziehen + gewichten | 2026-10-08 | Operator (Session, Mountain 273)
 
 ## Offen (aufgeschlüsselt)
 
@@ -85,17 +87,32 @@ Wort | Datum | Quelle
   als `sources.φ`-Zeilen admiten; `gate-no-field-lines`-Refusal der 2 dB/dt-Arme
   lösen oder `blockiert` registrieren; dann River Stufe 2 am `compute_max_t`.
 
-### em-nmgy-Riss — Bandreferenz braucht einen Parser-Arm
-- **Status:** eigen | **Bindung:** eigen (Format/Unit) · Rat (Architektur)
-- **Trigger:** Parser-Direktiv für Band-/pivot-λ-Referenz steht
-- **Lage:** (gemessen 2026-10-08 273) `quantity flux_g … scale nmgy`
-  (`sources.φ:19618`). `parse_where` (`parse.rs:1850`) liest `where <key> <value>`
-  nur auf `first`/`last`; auf einer `field`/`quantity`-Zeile explizit verweigert
-  (`parse.rs:1078-1085`). Die Rat-Q3-Bandreferenz ist **nicht ausdrückbar** ohne
-  neues Direktiv.
-- **Blockade:** kein Parser-Arm für Band-/pivot-λ auf Quelle-Zeilen.
-- **Braucht:** Rat/Vater-Wort zu einem `band`/`pivot`-Direktiv (Architektur-Akt),
-  dann pivot-λ 4808.49 Å (SVO FPS) an `sources.φ:19618` und `scale` → `em`.
+### em-nmgy / Bandreferenz — Rat-Verdikt steht (Synthese A+C); Parser-Arm offen
+- **Status:** eigen (Parser-Arm) | **Bindung:** eigen · Rat (entschieden) · Mycelium (Band-Heim)
+- **Trigger:** Parser-Arm `band` gebaut
+- **Lage:** (gemessen 2026-10-08 273, HEAD `dff6ccfda`) `quantity flux_g
+  noirlab_ls_dr10_g_flux scale nmgy` liegt **`sources.φ:19650`** (nicht `:19618` —
+  Zitat-Drift, s. Riss). `parse_where` (`parse.rs:1850`) liest `where <key> <value>`
+  nur auf `first`/`last`; auf `field` verweigert (`parse.rs:1078-1085`). Der
+  `quantity`-Arm (`parse.rs:993`) nimmt `parts.len() >= 9` — ein Tail-Direktiv ist
+  syntaktisch anbaubar. `band_id`+`band_wavelength` sind im Granulat-Kontrakt
+  bereits ein Paar (`goes_abi.rs:469`, `gk2a_ami.rs:471`).
+  **Rat-Verdikt (2026-10-08, Synthese A+C; Recherche + 10 UI-Seats + tryingopen):**
+  **A trägt die Syntax, C die Semantik.** Tail-Direktiv
+  `band <id> pivot <λ><unit> [edges <λmin>-<λmax><unit>]` auf der `quantity`-Zeile;
+  `scale` bleibt ohne Band gültig; **`em` für einen breitbandigen Fluss nur mit
+  `band`-Klausel**, sonst `pending` (nie `0.0`, nie stilles `em`). **B verworfen**
+  (`where` ist Zeilen-Selektor, keine Objekteigenschaft); **D verworfen** (`note`
+  hat keinen Parser-Arm). Gewichtet: Frontier 4/4 = C; open-weight GLM 5.3 (753B)
+  = C, DeepSeek V4 Pro (1.7T) = A (Gegenlinie). Rohantworten
+  `state/stimmen/2026-10-08_ui-runde_bandreferenz.md`.
+- **Blockade:** kein Parser-Arm `band`; das **Band-Heim** ist offen (lokales
+  getracktes `phi/bands.φ` vs. externes SVO-FPS-Heim — neue getrackte Datei =
+  Architektur-Akt + `phi/canon.φ`).
+- **Braucht:** Parser-Arm `band` (id+λ, optional edges) im `quantity`-Arm bauen;
+  then `scale`→`em` für `flux_g` erst mit Klausel; SVO-FPS-`<id>` + pivot-λ
+  4808.49 Å am Harvest messen. **Riss:** Heim-Entscheidung (lokal vs. SVO) offen;
+  Zitat-Drift `:19618`→`:19650` geheilt.
 
 ### span-Apertur / Membran-Agnostik — Mountain hält `receiver.span`
 - **Status:** eigen (Datenkontrakt) | **Bindung:** eigen · river (ω()-Lauf)
