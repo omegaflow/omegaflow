@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: e0dc1b75445514be1225c38466990fea1dff2097db3631a2197beb74022ab818
+  sha256: 4116c58976df46bfaddfec9537ffdb7b5493599232a3f872b99836407cc82c2f
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -120,8 +120,10 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   Pool als Träger, Index als abgeleitete Sicht (`10.1029/2012ja017683`, Zitat 789), sparse 2/154 →
   Band-Deskriptor fabriziert. **Die eine Linie: kein Wert ohne deklarierten Träger — A = A relativ
   zu seinem Empfänger.** → **bestätigt die Axiom-Auflösung** (Q2 verdrahten, Q3 Band, Q4 pending,
-  Q5 Pool-vor-Aggregat). **Neue UI:** Sakana Chat (Namazu, eingeloggt) — Frage gestellt, antwortet
-  noch = `pending`.
+  Q5 Pool-vor-Aggregat). **Neue UI:** Sakana Chat (Namazu, eingeloggt) — die Frage gestellt;
+  Namazu durchsuchte **55 Seiten**, fand nur das öffentliche Repo-README und **verweigerte ohne
+  Spezifikation** (fordert Upload des Vertragstexts) = **gemessene Nicht-Antwort/Refusal** (wie
+  Nemotron 3 Ultra) — `pending` auf den Vertrags-Upload.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
