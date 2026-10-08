@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (mountain-280) gefaltet: themis_mag-CDN-Orphan bereinigt (Routenwechsel → live CDAWeb HAPI) — Workflow, Compiler, harvest.φ-Arm und CDN-Release entfernt; emtf/kc2g/hadisst bereits in 270 dispatcht; ci-check-Verdrängung als geheilt gemessen.
   class: handover
   date: 2026-10-09
-  sha256: a9bdcae729f4f94d01c7fd5c435905881ee17124294071eb72b17267ff490ed3
+  sha256: 79e01ec6934cb05e12e0e7fd022d8996879385af4b263ab0f921a483fcd0c3ea
   status: live
 -->
 # Handover — Mycelium-Folge 271 (2026-10-09)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge270.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.000 · close 0.092 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`-Delta im Atom 0.4987→0.5907); kein pro/max, keine Sub-Agenten.
+## Burn: open 0.000 · close 0.042 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, 13 Sessions total 0.6272; die laufende Mycelium-Session 0.042; der Gesamtbaum-Delta 0.4987→0.5907 enthält parallele Linien-Sessions); kein pro/max, keine Sub-Agenten.
 
 ## Operator-Wort-Register
 
@@ -127,5 +127,5 @@ Origin: mycelium-271.
 
 ## Abschluss
 
-- **Burn:** close 0.092 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** close 0.042 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`, laufende Session).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
