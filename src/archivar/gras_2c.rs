@@ -17,6 +17,7 @@ pub fn gate_field(comp: u32, tau: f64) -> Option<FieldConfig> {
     Some(FieldConfig {
         key: name.clone(),
         name,
+        band_id: None,
         kernel,
         force,
         tau,

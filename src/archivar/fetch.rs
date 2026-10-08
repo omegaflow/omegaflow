@@ -573,6 +573,7 @@ pub fn catalog_sample_in_enclosure(
     let fc = FieldConfig {
         key: sample.name.clone(),
         name: sample.name.clone(),
+        band_id: None,
         kernel: sample.kernel_id as u8,
         force: sample.force_type as u8,
         tau: sample.tau,
@@ -614,6 +615,7 @@ pub fn body_in_enclosure(
     let fc = FieldConfig {
         key: String::new(),
         name: String::new(),
+        band_id: None,
         kernel: 0,
         force: 1,
         tau: f64::INFINITY,

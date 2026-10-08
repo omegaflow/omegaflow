@@ -668,6 +668,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             let fc = FieldConfig {
                                 key: bs.key.clone(),
                                 name: bs.key.clone(),
+                                band_id: None,
                                 kernel: bs.kernel,
                                 force: bs.force,
                                 tau: effective_tau,
@@ -729,6 +730,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         let fc = FieldConfig {
                             key: bs.key.clone(),
                             name: bs.key.clone(),
+                            band_id: None,
                             kernel: bs.kernel,
                             force: bs.force,
                             tau: effective_tau,

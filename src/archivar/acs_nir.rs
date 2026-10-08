@@ -29,6 +29,7 @@ pub fn declared_fields() -> Vec<FieldConfig> {
         out.push(FieldConfig {
             key: name.clone(),
             name,
+            band_id: None,
             kernel,
             force,
             tau: TAU_INTEGRATION_S,
