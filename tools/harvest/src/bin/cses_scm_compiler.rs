@@ -4,7 +4,7 @@ use omegaflow::archivar::geo::{
     verify_bin, write_bin,
 };
 use omegaflow::archivar::hdf5::{Endian, Hdf5File};
-use omegaflow::archivar::rinex::ecef_to_geodetic;
+use omegaflow::archivar::rinex::{ecef_to_geodetic, receiver_ellipsoid_for_compiler};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::SPECTRAL_NO_BAND;
@@ -14,6 +14,7 @@ const FILETREE_URL: &str = "https://www.scidb.cn/api/sdb-filetree-service/getAll
 const DEFAULT_FILE_ID: &str = "6398427cbae2f1393c118b55";
 const DOWNLOAD: &str = "https://download.scidb.cn/download?fileId=";
 const DAY_S: f64 = 86400.0;
+const BIN: &str = "cses_scm_compiler";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -120,6 +121,7 @@ fn assemble_legacy(
     xyz: &[f64],
     b: [&[f64]; 3],
     to_nt: f64,
+    ellipsoid: Option<(f64, f64)>,
 ) -> Result<Vec<GeoRec>, String> {
     if ns == 0 {
         return Err("packet size 0 carries no sample".to_string());
@@ -163,7 +165,9 @@ fn assemble_legacy(
     let mut out = Vec::with_capacity(total);
     for p in 0..np {
         let Some(t_pkt) = utc[p] else { continue };
-        let (la, lo, al) = match ecef_to_geodetic(xyz[p * 3], xyz[p * 3 + 1], xyz[p * 3 + 2]) {
+        let Some((a, e2)) = ellipsoid else { continue };
+        let (la, lo, al) = match ecef_to_geodetic(xyz[p * 3], xyz[p * 3 + 1], xyz[p * 3 + 2], a, e2)
+        {
             Some((la, lo, al))
                 if la.is_finite()
                     && (-90.0..=90.0).contains(&la)
@@ -189,7 +193,7 @@ fn assemble_legacy(
     Ok(out)
 }
 
-fn parse_scm(bytes: &[u8]) -> Result<Vec<GeoRec>, String> {
+fn parse_scm(bytes: &[u8], ellipsoid: Option<(f64, f64)>) -> Result<Vec<GeoRec>, String> {
     let file = Hdf5File::parse(bytes).map_err(|n| format!("HDF5 parse: {n:?}"))?;
     let mut b: [Vec<f64>; 3] = [Vec::new(), Vec::new(), Vec::new()];
     for (c, ds) in ["X_WAVE", "Y_WAVE", "Z_WAVE"].iter().enumerate() {
@@ -211,7 +215,7 @@ fn parse_scm(bytes: &[u8]) -> Result<Vec<GeoRec>, String> {
         COMP_CSES_SCM_ULF_Y,
         COMP_CSES_SCM_ULF_Z,
     ];
-    assemble_legacy(comps, ns, &utc, &xyz, [&b[0], &b[1], &b[2]], 1.0)
+    assemble_legacy(comps, ns, &utc, &xyz, [&b[0], &b[1], &b[2]], 1.0, ellipsoid)
 }
 
 fn main() {
@@ -250,7 +254,7 @@ fn main() {
         }
     };
 
-    let mut records = match parse_scm(&bytes) {
+    let mut records = match parse_scm(&bytes, receiver_ellipsoid_for_compiler(BIN)) {
         Ok(r) => r,
         Err(msg) => {
             eprintln!("cses_scm_compiler: {msg} — the bin stays unwritten");
@@ -322,7 +326,16 @@ mod tests {
             COMP_CSES_SCM_ULF_Y,
             COMP_CSES_SCM_ULF_Z,
         ];
-        let recs = assemble_legacy(comps, 2, &utc, &xyz, [&x, &y, &z], 1.0).expect("assembles");
+        let recs = assemble_legacy(
+            comps,
+            2,
+            &utc,
+            &xyz,
+            [&x, &y, &z],
+            1.0,
+            Some((6_378_137.0, 6.694_379_990_14e-3)),
+        )
+        .expect("assembles");
         assert_eq!(recs.len(), 12);
         assert_eq!(recs[0].comp, COMP_CSES_SCM_ULF_X);
         assert!((recs[0].val - 1.0).abs() < 1e-12);

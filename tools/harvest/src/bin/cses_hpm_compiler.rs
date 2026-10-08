@@ -4,7 +4,7 @@ use omegaflow::archivar::geo::{
     verify_bin, write_bin,
 };
 use omegaflow::archivar::hdf5::Hdf5File;
-use omegaflow::archivar::rinex::ecef_to_geodetic;
+use omegaflow::archivar::rinex::{ecef_to_geodetic, receiver_ellipsoid_for_compiler};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::SPECTRAL_NO_BAND;
@@ -14,6 +14,7 @@ const FILETREE_URL: &str = "https://www.scidb.cn/api/sdb-filetree-service/getAll
 const DEFAULT_FILE_ID: &str = "6398427cbae2f1393c118b52";
 const DOWNLOAD: &str = "https://download.scidb.cn/download?fileId=";
 const DAY_S: f64 = 86400.0;
+const BIN: &str = "cses_hpm_compiler";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -124,7 +125,12 @@ fn push_rec(
     });
 }
 
-fn assemble_fg2(utc: &[Option<f64>], xyz: &[f64], fg2: &[f32]) -> Result<Vec<GeoRec>, String> {
+fn assemble_fg2(
+    utc: &[Option<f64>],
+    xyz: &[f64],
+    fg2: &[f32],
+    ellipsoid: Option<(f64, f64)>,
+) -> Result<Vec<GeoRec>, String> {
     let np = utc.len();
     if fg2.len() < np * 3 {
         return Err(format!("FG2 carries {} values, {np} x 3 needed", fg2.len()));
@@ -158,7 +164,9 @@ fn assemble_fg2(utc: &[Option<f64>], xyz: &[f64], fg2: &[f32]) -> Result<Vec<Geo
     let mut out = Vec::with_capacity(np * 3);
     for p in 0..np {
         let Some(t) = utc[p] else { continue };
-        let (la, lo, al) = match ecef_to_geodetic(xyz[p * 3], xyz[p * 3 + 1], xyz[p * 3 + 2]) {
+        let Some((a, e2)) = ellipsoid else { continue };
+        let (la, lo, al) = match ecef_to_geodetic(xyz[p * 3], xyz[p * 3 + 1], xyz[p * 3 + 2], a, e2)
+        {
             Some((la, lo, al))
                 if la.is_finite()
                     && (-90.0..=90.0).contains(&la)
@@ -180,7 +188,7 @@ fn assemble_fg2(utc: &[Option<f64>], xyz: &[f64], fg2: &[f32]) -> Result<Vec<Geo
     Ok(out)
 }
 
-fn parse_hpm(bytes: &[u8]) -> Result<Vec<GeoRec>, String> {
+fn parse_hpm(bytes: &[u8], ellipsoid: Option<(f64, f64)>) -> Result<Vec<GeoRec>, String> {
     let file = Hdf5File::parse(bytes).map_err(|n| format!("HDF5 parse: {n:?}"))?;
     let fg2 = file
         .read_f32_dataset("FG2")
@@ -190,7 +198,7 @@ fn parse_hpm(bytes: &[u8]) -> Result<Vec<GeoRec>, String> {
         .read_f32_dataset("SatPos")
         .map_err(|n| format!("SatPos unread: {n:?}"))?;
     let xyz: Vec<f64> = sat_pos.iter().map(|v| *v as f64).collect();
-    assemble_fg2(&utc, &xyz, &fg2)
+    assemble_fg2(&utc, &xyz, &fg2, ellipsoid)
 }
 
 fn main() {
@@ -229,7 +237,7 @@ fn main() {
         }
     };
 
-    let mut records = match parse_hpm(&bytes) {
+    let mut records = match parse_hpm(&bytes, receiver_ellipsoid_for_compiler(BIN)) {
         Ok(r) => r,
         Err(msg) => {
             eprintln!("cses_hpm_compiler: {msg} — the bin stays unwritten");
@@ -294,7 +302,8 @@ mod tests {
             164443.0, 2390484.0, -6447972.0, 167864.0, 2396892.0, -6445496.0,
         ];
         let fg2 = [1.0f32, 2.0, 3.0, -4.0, 5.0, 6.0];
-        let recs = assemble_fg2(&utc, &xyz, &fg2).expect("assembles");
+        let recs = assemble_fg2(&utc, &xyz, &fg2, Some((6_378_137.0, 6.694_379_990_14e-3)))
+            .expect("assembles");
         assert_eq!(recs.len(), 6);
         assert_eq!(recs[0].comp, COMP_CSES_HPM_FG2_X);
         assert_eq!(recs[1].comp, COMP_CSES_HPM_FG2_Y);
