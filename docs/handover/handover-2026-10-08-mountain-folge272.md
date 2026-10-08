@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 4116c58976df46bfaddfec9537ffdb7b5493599232a3f872b99836407cc82c2f
+  sha256: 8ea745a0acda981a9bac4cb6313a15102235e9df8f05246fd2eaa80f0075acf9
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -337,8 +337,10 @@ Origin: mountain-folge272.
   wird jeder `ci-check`/`ci-gate` als `cancelled` mit 0 Jobs verdrängt. **Braucht:** Fix,
   sonst kein Per-SHA-Verdikt (IGRF-Witness-Test).
 - **3 neue Harvest-Arme (272):** `superdarn_cpcp`/`emtf_impedance`/`ssusi_aurora` +
-  Workflows angelegt. **Braucht:** nach Mountain-Register-Admission `gh workflow run` je
-  Workflow; Assets landen im CDN.
+  Workflows angelegt. **Dispatch 2026-10-08** (Commit-Wort): `superdarn-cpcp-cdn`
+  run `37755349709` · `emtf-cdn` run `37755354486` · `ssusi-cdn` run `37755359472`
+  (nicht gepollt; Ergebnis aus dem Stehenden Pass / `ci_manage view <id>` einmalig).
+  **Braucht:** nach Mountain-Register-Admission das Asset im CDN; sonst kein Abschluss.
 - **`hadisst-cdn.yml`:** nach dem Push dispatchen.
 - **LICENSE/README `omegaflow/sources`:** `terms`-Vollständigkeit treibt die Erzeugung.
 - **Doppler-Kanal (Q4, Axiom pending; Rat 2026-10-08):** bleibt `pending` mit Trigger
