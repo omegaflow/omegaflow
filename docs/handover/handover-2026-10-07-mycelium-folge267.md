@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: f2910fe2336ad64d2221873a96c277814a1e335734e96e3e971d5c8ae98b981c
+  sha256: f63cd50ff512c59c94d406e63c9cd75baddefa9de16477c8d640f689f14328b2
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -31,6 +31,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „können wir den connector nicht für opencode nachbauen? und braucht unser taucher nicht einen MCP harness?" → opencode `mcp`-Block ist der Harness; `consensus` + `perplexity` als `type: remote` verdrahtet; SciSpace-MCP gebrokert, nicht nachbaubar | Quelle: diese Session.
 - 2026-10-08 | „scispace nochmal mit harten bandagen … perplexity hab ich nochmal sicher eingegeben 10$ guthaben geschenkt" → SciSpace: cookie-interne API (kein Arm); Perplexity: Endpunkt umgezogen → Agent-API, `--perplexity` live (`1569a26d8`) | Quelle: diese Session.
 - 2026-10-08 | „nochmal prüfen ob du quellen findest die future nicht gefunden hat … und hast du gerade das tool mit seinen neuen skills genutzt?" → Gegen-Audit `docs/surveys/survey-2026-10-08-open-sources-delta.md` (neue Arme genutzt, LEOS/CSES u. a. neu) | Quelle: diese Session.
+- 2026-10-08 | „nicht nur die Top irgendwas (LLM-Seuche) — alle speichern; harte Taucher inkl. Secrets/Proton/`--all` auf die Blockierten, ggf. UI-Chats; wenn ihr die legal knackt wäre der Hammer" → vollständige Tabellen (keine Top-N) + zwei harte Taucher: LPF geknackt (HEASARC), Lasair/DEMETER/GOSAT-GW bis zur Auth-Kante | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -93,7 +94,8 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Trigger:** Operator-Wort 2026-10-08 („Quellen finden, die Future nicht fand" + „hast du das Tool mit den neuen Skills genutzt?")
 - **Lage:** (gemessen 2026-10-08) **die neuen Arme endlich genutzt** (`--jina`/`--perplexity`/`--consensus`) — sie liefern: `--perplexity` fand den **CSES-Port `www.leos.ac.cn`** (200, user-gated, unregistriert), `--consensus` CSES-Vorläufer-Papers, `--jina` liest Portal-Seiten. Quellen-Delta: HI-Surveys (LAB/EBHIS/GASS/GALFA-HI, SkyView EBHIS/GASS), CMB (PLA, LAMBDA, ACT/SPT), Solar (IRIS/SDO/VSO/HEK/Solar Orbiter/PSP), LAIC (CSSDC/LEOS/INTERMAGNET/ISGI), FRB (CHIME/Blinkverse), Teilchen (ATLAS/Belle II/GWOSC/Fermilab). **Re-Audit:** SuperMAG jetzt erreichbar (206; `--jina`: `ERROR: No username` → braucht `username`-Param); LEOS neu; PSA/SSDC/Chang'e erreichbar; LPF/Lasair/DEMETER-order/GOSAT-Host blockiert. **Riss:** der Diver zitierte CSES als `sources.φ:17149` — der Baum trägt dort Vega 2 MISCHA (`sgrep leos.ac.cn`=0).
 - **Blockade:** die neuen Kanäle brauchen Mountain-Admission (Verdikt-Zeile) + Mycelium-Manifestation; die Kuprat-Rückfrage ist operator-gebunden.
-- **Braucht:** Mountain-Verdikt für die neuen Quellen; LEOS als CSES-Kanal; SuperMAG-`username`-Kontrakt messen; Kuprat-/Detektor-Rückfrage an den Operator.
+- **Blockierte vier (harte Runde, Kaskade inkl. Proton + neue Arme):** **keine** war geo/Cloudflare — **LPF GEKNACKT** (offenes NASA/HEASARC-Mirror `heasarc.gsfc.nasa.gov/lpf/cgi/selector?start=&end=&hdu=` → 200 `application/fits`; ESA `/lpfsa/` lebt); **Lasair Route geknackt** (`api.lasair.lsst.ac.uk` 401 = am Leben; `cone/query/object/sherlock`, `?token=<TOK>`/`Authorization: Token`); **DEMETER** Block wanderte WAF-403→auth-401 (lokale Metalink-JWTs **abgelaufen** 2026-10-05; Endpunkt `…/orders/public/files/<id>?orderToken=<JWT>&scope=cdpp`); **GOSAT-GW** falscher Host → echter Port `product.gosat-gw.nies.go.jp` 200, API cookie-gated (Login `mail_address`/`password`).
+- **Braucht:** Mountain-Verdikt für die neuen Quellen + **LPF-HEASARC**; Lasair mit Token einmalig messen (Probe bauen); **DEMETER/GOSAT-GW = Operator-Akt** (frisches REGARDS-Token / NIES-Cookie); SuperMAG-`username`-Kontrakt messen; Kuprat-/Detektor-Rückfrage an den Operator.
 
 ## An river
 
