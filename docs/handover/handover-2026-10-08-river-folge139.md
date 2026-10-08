@@ -3,7 +3,7 @@
   session: River-Folge 139
   class: handover
   date: 2026-10-08
-  sha256: e2b30aa7c34c3aa04127f5135b83c395e7e9b061261a3ae0876f2e313265a4cd
+  sha256: 8dce769c8af1747cc00d3410fd216b6cae62a0caf3a7d86eea70f079210457df
   status: live
 -->
 # Handover — River-Folge 139 (2026-10-08)
@@ -75,6 +75,13 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 - **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent (`ephemeris_juice_recon.bin` 404).
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Release-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
+### Membran — Feld aus Body-Ankern statt `at sun`-Oszillatoren (Sichtprüfung)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-08T21:2xZ via Browser-Bridge + `sread src/wasm.rs`/`src/archivar/membrane.rs`/`static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, FieldConfig `force_type 1` (Gravitation), `color_index 0`. Die **532 `at sun`-Quellen** aus `phi/sources.φ` (`sgrep -c "at sun"` = 532) werden **nicht** geladen — das statische Blatt liest `phi/sources.φ` nie. `frame()` rahmt den größten finiten Anker: „the largest (the sun) frames the operator's first view" (`membrane.html:572/567-607`). Der **blaue** Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` auf pages nicht gestagt wird (`archive_search --verdict` → HTTP 404) → `colorLut=null` → `color_mode 0`; die Exposure normalisiert den Anker-Wert auf sich selbst → `t2≈0.33` → blaue Bande — kein deklarierter Kanal-Farbwert.
+- **Blockade:** keine (Messung steht). Die Auflösung ist eine **Architektur-/Contract-Frage**: agnostischer Start aus den `at sun`-Oszillatoren vs. Body-Gravitationsanker (ohne den Anker las der Start schwarz — `membrane.html:575`); berührt das Operator-Wort „es gibt keine sonne erde mond" (River 127).
+- **Braucht:** **Rat (fünf Stimmen) + Wissenschaft (`archive_search`) + UI-Frontier**: wie die Membran einen nicht-schwarzen Start **ohne** Body-Anker gewinnt — die `at sun`-Oszillatoren statt der Body-Gravitationsanker laden. Kein Pro-Solo; danach Bau im Membran-Pfad.
+
 ## An mountain
 
 Origin: river-139.
@@ -95,7 +102,7 @@ Origin: river-139.
 Origin: river-139.
 
 - **Empfänger-Apertur (future-202, gefaltet):** kein neues Operator-Wort; die Apertur ist Receiver-Eigenschaft und als Query-Term gebaut (DeclaredBody + `#aperture=`). `span` bleibt descoped.
-- **Membran rendert — LOCK-Voraussetzung gemessen erfüllt.** (gemessen 2026-10-08T21:15Z via Browser-Bridge, echtes Chrome mit WebGPU) `https://omegaflow.space/membrane.html` rendert **nicht-schwarz**: Statuszeile `anchors 3 · stars 8 · scale 2.05e+6 m/px · t 844766121 s TDB`, ein blaues Radiator-Glow auf schwarzem Feld (Screenshot); keine Body-Namen. Die LOCK-Voraussetzung „die Membran rendert" ist damit erfüllt — kein neues Operator-Wort gesetzt.
+- **Membran rendert — LOCK-Voraussetzung gemessen erfüllt (mit Befund).** (gemessen 2026-10-08T21:15Z via Browser-Bridge, echtes Chrome mit WebGPU) `https://omegaflow.space/membrane.html` rendert **nicht-schwarz**: Statuszeile `anchors 3 · stars 8 · scale 2.05e+6 m/px · t 844766121 s TDB`, ein blaues Glow auf schwarzem Feld (Screenshot); keine Body-Namen im Text. **Aber:** das Feld ist aus Body-Ankern (Gravitation) + Sternen gebaut, nicht aus den `at sun`-Oszillatoren — s. neuen offenen Punkt „Membran — Body-Anker statt at-sun-Oszillatoren". Die LOCK-Voraussetzung „die Membran rendert" ist formal erfüllt; der Befund liegt beim Rat.
 
 ## LOCK
 
@@ -110,4 +117,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 139):
 - `docs/handover/handover-2026-10-08-river-folge139.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge138.md` (Move)
 
-## Burn: open 0.0030 · close 0.0586 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
+## Burn: open 0.0030 · close 0.0865 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
