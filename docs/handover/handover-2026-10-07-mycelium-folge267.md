@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 875cbc59dd90f809517f6ef6106adb08c6973fd303d0127db25ca1f1556b0e80
+  sha256: 363527a9a8ac9b595f54cc6df6e46be73f0664d724d83a4db0c5fa6277c95190
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -27,6 +27,8 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „auth ist nicht zwingend ein ausschlusskriterium nur kommerziell und illegal" → Auth-Route-Kandidaten (Perplexity/SciSpace/Sakana/NotebookLM) in der Survey; kein „raus" wegen 403/Login | Quelle: diese Session. (Deckt sich mit AGENTS „Authentifizierung ist kein Ausschlusskriterium", Operator-Wort 2026-10-08.)
 - 2026-10-08 | „ja bitte" (Gretchenfrage für die Auth-Route-Kandidaten fahren) → Perplexity 4/4 (3 s), Sakana 4/4 → `ui-seats.md` | Quelle: diese Session.
 - 2026-10-08 | „mich interessieren natürlich am meisten die APIs/MCPs" → API/MCP-Survey `docs/surveys/survey-2026-10-08-research-api-mcp.md` + `--consensus`-Arm; Endpunkte gemessen | Quelle: diese Session.
+- 2026-10-08 | „consensus und perplexity sind drin, elicit descoped da kostenpflichtig" → Keys in `.secrets.local`; `--consensus` live; Elicit `descoped` | Quelle: diese Session.
+- 2026-10-08 | „können wir den connector nicht für opencode nachbauen? und braucht unser taucher nicht einen MCP harness?" → opencode `mcp`-Block ist der Harness; `consensus` + `perplexity` als `type: remote` verdrahtet; SciSpace-MCP gebrokert, nicht nachbaubar | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -77,12 +79,12 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** die offenen Arme sind Code (`tools/utils`, Vorbild `--mwmbl`); AI2/Elicit/Consensus brauchen die Gretchenfrage (Fähigkeit 4/4 + Tempo).
 - **Braucht:** `archive_search --searxng <query>` bauen + JSON-fähige Instanz; AI2-Playground-Seat testen; Elicit/Consensus gegen `--openalex`/`--semanticscholar` gegenprüfen; Sci-Bot via Rat.
 
-### Research-APIs/MCPs — Consensus · Elicit · SciSpace · Perplexity (`docs/surveys/survey-2026-10-08-research-api-mcp.md`)
-- **Status:** wartend | **Bindung:** eigen (tools/utils + Operator-Key)
-- **Trigger:** `CONSENSUS_API_KEY` in `.secrets.local` gesetzt
-- **Lage:** (gemessen 2026-10-08) alle vier haben API + MCP: **Consensus** `GET https://api.consensus.app/v1/search` (`x-api-key`) + MCP `mcp.consensus.app/mcp`; **Perplexity** remote MCP `https://api.perplexity.ai/mcp` (Bearer) + Agent/Search-API; **Elicit** API+MCP (GA 2026-07-15; Pro kostet); **SciSpace** API+MCP. **`--consensus` gebaut** (`consensus.rs` + Wiring; keyless end-to-end gemessen → `pending — CONSENSUS_API_KEY absent`, kein Zero).
-- **Blockade:** der API-Key (Operator, per-Akt).
-- **Braucht:** `CONSENSUS_API_KEY` (self-serve im Consensus-Konto) in `.secrets.local` — dann `archive_search --consensus "<query>"` live; danach `--perplexity`-Arm; Elicit/SciSpace-Endpunkte + Keys nachziehen.
+### Research-APIs/MCPs — Consensus · Perplexity · Elicit(descoped) · SciSpace (`docs/surveys/survey-2026-10-08-research-api-mcp.md`)
+- **Status:** wartend | **Bindung:** eigen (tools/utils + MCP-Config)
+- **Trigger:** opencode-Neustart mit exportierten Keys (`set -a; source .secrets.local; set +a`)
+- **Lage:** (gemessen 2026-10-08) **`--consensus` läuft live** (`CONSENSUS_API_KEY` in `.secrets.local`; 10 relevante Papers am Baum); **MCP-Harness verdrahtet** — `opencode.json` `mcp`-Block: `consensus` (`mcp.consensus.app/mcp`) + `perplexity` (`api.perplexity.ai/mcp`) als `type: "remote"` mit `{env:VAR}` (kein Secret getrackt). **Elicit `descoped`** (API nur Pro/Scale/Enterprise = kommerziell, Operator-Wort). **SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT-Verzeichnisse) → nicht nachbauen; REST-Host `api.scispace.com` antwortet (202/302) als Arm-Kandidat.
+- **Blockade:** opencode-Neustart steht aus; `--perplexity`-Arm noch nicht gebaut.
+- **Braucht:** `PERPLEXITY_API_KEY` exportieren + opencode neu starten (MCP-Tools für alle Agenten), dann `archive_search --perplexity <query>` bauen.
 
 ## An river
 
