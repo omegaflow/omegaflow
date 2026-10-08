@@ -3,7 +3,7 @@
   session: River-Folge 135
   class: handover
   date: 2026-10-08
-  sha256: b3fee954cf3ed7b28a49a898082534c195c1517775d4e92cf72ac0e22fa18f21
+  sha256: 846b35aed0300c26386117de703f4cd29eddc0ce3b581353e29a308d7f3d9e70
   status: live
 -->
 # Handover — River-Folge 135 (2026-10-08)
@@ -42,13 +42,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Blockade:** der Start-Anker (schwarzes Feld/`scale 0`) hängt an Mountains fehlender span-Direktive.
 - **Braucht:** Mountains span-Direktive (s. `## An mountain`); dann den ersten Render gegen den deployten `membrane.html` prüfen.
 
-### `span`-Apertur — Empfänger-/Query-Eigenschaft (Rat + UI-Verdikt 2026-10-08)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** Rat-Verdikt zum Konsumenten-Pfad.
-- **Lage:** (gemessen 2026-10-08, `explore`) Der Reader ist gebaut (`parse.rs:255` parst `span <f64>`; `SourceConfig.span` `types.rs:445`), aber es gibt **keinen** Produktions-Konsumenten — `span` steht in keinem Produktionsfile (`main_flow.rs`/`channels.rs`/`membrane.rs`/`wasm.rs`: 0 Treffer). Die Query-Apertur liegt in `query_hash` (`src/archivar/spatial.rs:707`), Body-Emit `reach = reach_signal + sample.extent + enclosure_rho(...)` (`:932-934`); `Sample.extent` = `types.rs:45`. **Riss:** `wasm.rs`/`MembraneCtx` (`spatial.rs:696-705`) tragen kein `SourceConfig`, die Membran kann `span` nicht erreichen; das Rat-Verdikt nannte `ReceiverWorldline` (`weberin.rs:1747`) als Träger, aber das ist ein enum `Body|ReferencePoint` ohne span (Astro-Linie, nicht die Query-Apertur). Welcher Query-Pfad `span` konsumiert und wie die Quellen-Eigenschaft dorthin reist, ist unentschieden.
-- **Blockade:** Architektur — der Konsumenten-Pfad (`SourceConfig`→Query) ist offen.
-- **Braucht:** den Rat (fünf Stimmen) + UI-Frontier: welcher Query-Pfad konsumiert `span` (Archivar-Query mit `SourceConfig` vs. wasm-Membran ohne) und wie reist die Quellen-Eigenschaft dorthin; danach `extent_eff = span.map_or(extent, |s| s.min(s.extent))` an `spatial.rs:933`.
-
 ### E0061 Harvest-Ellipsoid — Empfänger aus dem Register (Rat: Route b) — gebaut (Commit in diesem Atom)
 - **Status:** eigen | **Bindung:** eigen · mountain (cors-Registerzeile)
 - **Trigger:** —
@@ -62,13 +55,6 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Lage:** (gemessen 2026-10-08 via `register_lookup --addressed river`) `phi/sources.φ:19611-19618` `flux_g` trägt `quantity scale nmgy` (Legacy DR10 g, native DECam g); pivot-λ 4808.49 Å (SVO FPS `CTIO/DECam.g`), 1 nMgy = 3.631e-32 W m⁻² Hz⁻¹ (AB, λ-unabhängig). `nmgy` steht nur in `allowed_units_for_quantity(3)`, in keiner Kraft-Liste → ein `em` wäre `Physics Mismatch`; `scale` bleibt korrekt, ein Wechsel nach `em` bräuchte ein `pivot`-Direktiv. BASS-90Prime-g-pivot `pending`.
 - **Blockade:** fehlende Band-Konversion (Messung) + `pivot`-Direktiv (Mountain).
 - **Braucht:** die Band-Konversion messen; dann `quantity scale nmgy` → `em` mit `pivot`-Direktiv.
-
-### GIC-Stufe-2 — dB/dt abgeleitet; Familien-Bau gebaut (UI-/Rat-Runde offen)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-Wort 2026-10-07 („Rat vor alle UI-Seats") → Rat-/UI-Runde.
-- **Lage:** (gemessen 2026-10-08, `grind-flash` + eigener Bau) `--stage2 family` + `run_family` (`tools/measure/src/bin/field_te_query.rs:4442`) gebaut: geladene Stationen mit `station_code` + finitem `cgm_lat` (dedupe), je Familie (auroral ≥60, sub-auroral 50–60, mid <50; `family_of:46`) target = `intermagnet_dbdt_<code>`, driver = der deklarierte `--driver`-Arm; `align_many`/`joint_columns` + **ein** `compute_max_t` je Familie; leere Band = voller Befund (nie geglättet), Station ohne Target = `pending`. Stufe 1 byte-identisch (nur neue Zweige). `cargo check`/`build -p omegaflow-measure --bin field_te_query` grün/0 Warnungen. Riss: der Anchor `main_flow.rs:4371` im Vorgänger-Handover war falsch — die Fn liegt in `field_te_query.rs`. Nebenbefund: `family_of` ist in `field_te_query.rs:48` neben `cgm_lat_partition.rs:168` dupliziert (Bins sind getrennte crates).
-- **Blockade:** UI-Undergirding fehlt.
-- **Braucht:** den Bau durch Rat (fünf Stimmen) + UI-Frontier halten (`river-ui` + `open-weight-ui`); dann `--stage2 family` gegen eine echte Station-Liste laufen lassen (Daten-Trigger).
 
 ### CI-Verifikation — Receiver/em-Apertur, ozzy, Membran (River 132)
 - **Status:** wartend | **Bindung:** eigen
@@ -100,6 +86,13 @@ Origin: river-135.
 - **GM-Anker:** laut future-199 ist der fehlende GM-Anker der Mountain-Teil; die Sonne erscheint, wenn beide stehen (die Render-Ursache liegt nicht im Frontend).
 - **`register`-Job des `ci-gate` rot:** `url-order violation within ttl 2592000: usgs_comcat_m45.bin placed after hadisst_sst.bin` — den USGS-Block nach TTL einordnen.
 - **`dropped-gate` rot:** 2 neue Drop-Token (`für presence-hull- river schritt span-direktive star-grid-apertur`; `--lpf … start steht`) — Baseline nachziehen oder Drop auflösen.
+- **INTERMAGNET-HAPI-Route (neu, river-135):** der gebaute GIC-Familien-Lauf (`field_te_query --stage2 family --driver omni_imf_bz_gsm_nt`) gruppiert 154 Stationen nach Familie, aber die Quelle `https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=<st>/best-avail/PT1M/xyzf&format=json` antwortet für jede Station **HTTP 400** → alle Bänder `unmeasured`. Den `id`-Pfad/das Format/das Zeitfenster der Route prüfen.
+
+## An future
+
+Origin: river-135.
+
+- **`span`-Fork (Operator-Wort nötig, ein Wort):** Der `span`-Konsument ist gebaut (Selbstkappen: `anchor` faltet `min(span, extent)` in `extent`, `src/archivar/channels.rs:1245`; Rat + Qwen3.7-Plus konvergieren darauf). **Frage:** Soll `span` semantisch (a) die quellen-eigene Obergrenze bleiben (so gebaut), oder (b) eine echte **Empfänger-Apertur pro Query** sein (FOV/pad, wie IVOA SIA2 — dann wäre `MembraneCtx.pad` der Ort und `SourceConfig` der falsche Träger)? Bei (b) wird ein neuer River-Punkt.
 
 ## LOCK
 
@@ -108,11 +101,10 @@ Origin: river-135.
 
 ## Abschluss
 
-Pfad-begrenzte Commit-Pfade dieser Session (River 135):
+Pfad-begrenzte Commit-Pfade dieser Session (River 135, Fortschreibung):
 
+- `src/archivar/channels.rs`, `src/archivar/main_flow.rs`, `src/archivar/mod.rs`, `src/archivar/relay.rs`, `src/archivar/tests.rs`, `src/archivar/gic.rs`
+- `tools/measure/src/bin/cgm_lat_partition.rs`, `tools/measure/src/bin/field_te_query.rs`
 - `docs/handover/handover-2026-10-08-river-folge135.md`
-- `docs/handover/archiv/handover-2026-10-08-river-folge134.md` (Move)
-- `src/archivar/rinex.rs`
-- `tools/harvest/src/bin/{cses_scm,cses_hpm,cses_efd,champ_plpt,cors,cors_rinex}_compiler.rs`
 
-## Burn: open 0.0039 · close 0.0762 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — 3 Taucher zusätzlich (grind-flash E0061 0.0712, GIC 0.0514, explore 0.0190) · kein pro/max
+## Burn: open 0.0039 · close 0.1674 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — Taucher zusätzlich (grind-flash E0061 0.0712, GIC 0.0514, span-Bau, family_of-Dedup, explore 0.0190) + Rat/UI-Runde · cap 0.35 Grund: Ein-Pass-Atom (E0061 + GIC-Familie + span-Bau + Dedup + Recherche→Rat→UI-Runde, mehrere Taucher) · kein pro/max

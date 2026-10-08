@@ -8,6 +8,7 @@ use omegaflow::archivar::{
     geo_series_component_name, geo_series_parse_bin, live_markers, load_sources,
     series_component_name, series_rows,
 };
+use omegaflow::archivar::gic::{GIC_FAMILY_NAMES, family_of};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::mathematikerin::newell::newell_dphi_dt;
 use omegaflow::mathematikerin::wy_max_t::{
@@ -38,20 +39,6 @@ const REC_T2D_LAG: usize = 9;
 const REC_T2D_TE: f64 = 2.2693e-1;
 const REC_CTE: f64 = 8.3587e-3;
 const REC_CTE_THR: f64 = 2.6118e-2;
-
-const GIC_AURORAL_MIN: f64 = 60.0;
-const GIC_SUBAURORAL_MIN: f64 = 50.0;
-const GIC_FAMILY_NAMES: [&str; 3] = ["auroral", "sub-auroral", "mid-latitude"];
-
-fn family_of(abs_cgm: f64) -> &'static str {
-    if abs_cgm >= GIC_AURORAL_MIN {
-        GIC_FAMILY_NAMES[0]
-    } else if abs_cgm >= GIC_SUBAURORAL_MIN {
-        GIC_FAMILY_NAMES[1]
-    } else {
-        GIC_FAMILY_NAMES[2]
-    }
-}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum State {
@@ -4518,7 +4505,9 @@ fn run_family(desc: &Descriptor, sources: &[SourceConfig], anchor: &QueryAnchor)
         let cols: Vec<&[Option<f64>]> = cells.iter().map(|c| c.as_slice()).collect();
         let joint = joint_columns(&cols);
         let Some(n) = joint.first().map(|c| c.len()) else {
-            println!("family {family}: the joint grid carries no column — the band stays unmeasured");
+            println!(
+                "family {family}: the joint grid carries no column — the band stays unmeasured"
+            );
             continue;
         };
         if n < TE_FLOOR {

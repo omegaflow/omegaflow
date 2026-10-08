@@ -5,6 +5,8 @@ use std::process::Command;
 use std::thread::sleep;
 use std::time::Duration;
 
+use omegaflow::archivar::gic::{GIC_FAMILY_NAMES as FAMILY_NAMES, family_of};
+
 const EPOCH_YEAR: f64 = 2025.0;
 const HEIGHT_KM: f64 = 0.0;
 const CGM_URL: &str = "https://omniweb.gsfc.nasa.gov/cgi/vitmo/cgm_model.cgi";
@@ -12,9 +14,6 @@ const SUPERMAG_URL: &str =
     "https://raw.githubusercontent.com/spacecataz/supermag/master/station_info.txt";
 const DEFAULT_OUT: &str = "state/river/gic-cgm-lat.tsv";
 const DEFAULT_PAUSE_MS: u64 = 150;
-const AURORAL_MIN: f64 = 60.0;
-const SUBAURORAL_MIN: f64 = 50.0;
-const FAMILY_NAMES: [&str; 3] = ["auroral", "sub-auroral", "mid-latitude"];
 const FAMILY_CHANNEL_FIELD: &str = "intermagnet_xyz_x_nt";
 
 struct Station {
@@ -163,16 +162,6 @@ fn resolve(lat: f64, lon: f64, smag: Option<(f64, f64)>) -> Option<(f64, f64, &'
         return Some((la, lo, "supermag-aacgm"));
     }
     bgs_qd(lat, lon).map(|(la, lo)| (la, lo, "bgs-quasi-dipole"))
-}
-
-fn family_of(abs_cgm: f64) -> &'static str {
-    if abs_cgm >= AURORAL_MIN {
-        "auroral"
-    } else if abs_cgm >= SUBAURORAL_MIN {
-        "sub-auroral"
-    } else {
-        "mid-latitude"
-    }
 }
 
 fn read_partition(tsv_path: &str) -> BTreeMap<String, String> {
@@ -411,15 +400,6 @@ mod tests {
         rows.iter()
             .map(|(c, f)| (c.to_string(), f.to_string()))
             .collect()
-    }
-
-    #[test]
-    fn family_of_holds_the_declared_boundaries() {
-        assert_eq!(family_of(60.0), "auroral");
-        assert_eq!(family_of(59.99), "sub-auroral");
-        assert_eq!(family_of(50.0), "sub-auroral");
-        assert_eq!(family_of(49.99), "mid-latitude");
-        assert_eq!(family_of(0.0), "mid-latitude");
     }
 
     #[test]

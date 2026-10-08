@@ -700,7 +700,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     let mut samples = Vec::new();
                     for (channel, sensor, sensor_ttl) in channels {
                         if let Some(sample) =
-                            anchor(&channel, &sensor, sensor_ttl, None, None, None, &eph_map)
+                            anchor(&channel, &sensor, sensor_ttl, None, None, None, &eph_map, None)
                         {
                             samples.push(sample);
                         }
@@ -768,6 +768,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         Some(&frame),
                         None,
                         &eph_map,
+                        None,
                     ) {
                         samples.push(sample);
                     }
