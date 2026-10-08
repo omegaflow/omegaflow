@@ -2,7 +2,7 @@
   title: Survey — Research-APIs & MCPs (Consensus · Elicit · SciSpace · Perplexity)
   class: survey
   date: 2026-10-08
-  sha256: bfb40b6eada7264454d8f6d40aec4d991d2faf7e525089a9e2888a01deb80f5b
+  sha256: b42ec1f7be1c1d1ef800a8959dea1fe2f22eabe1381bea5f7f17fa4f5988eaad
   status: live
   see-also: docs/surveys/survey-2026-10-08-fmhy-research-landscape.md docs/concepts/ui-seats.md docs/concepts/tools-map.md
 -->
@@ -29,9 +29,13 @@ HTTP gemessen: `api.consensus.app/v1/search` = **401** (Key nötig, erreichbar),
 `mcp.consensus.app/mcp` = **401** (Auth), Consensus-MCP-README = 200, Perplexity-MCP-README = 200.
 
 **Status 2026-10-08:** `CONSENSUS_API_KEY` und `PERPLEXITY_API_KEY` liegen in `.secrets.local`;
-**`--consensus` läuft live** (10 Treffer am Baum); `--perplexity`-Arm als Nächstes.
-**Elicit `descoped`** (Operator-Wort): API nur auf Pro/Scale/Enterprise = kommerziell.
-**SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT).
+**`--consensus` läuft live** (10 Treffer am Baum). **`--perplexity`-Arm gebaut** (`72fe2202b`,
+POST `api.perplexity.ai/chat/completions`, Modell `sonar`, Bearer); der Live-Aufruf antwortet
+**HTTP 403** — der Key wird aufgelöst (kein `absent`), die API lehnt aber ab (Plan/Credits in
+`console.perplexity.ai` prüfen). **Elicit `descoped`** (Operator-Wort): API nur Pro/Scale/
+Enterprise = kommerziell. **SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT);
+REST-Host `api.scispace.com` antwortet (202/302), aber **keine öffentlichen REST-Docs gefunden**
+→ `pending`.
 
 ## Consensus — der stärkste Arm (220–400M Papers, Volltext)
 
