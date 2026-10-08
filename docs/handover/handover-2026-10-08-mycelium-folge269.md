@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 269 (2026-10-08)
-  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
+  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen.
   class: handover
   date: 2026-10-08
-  sha256: a1041946af7d98c01b8a240c2e76df2b8fcde14a5685d7b5352fbb5abe7bde12
+  sha256: a9d1e28b4c8b1db7cc90f31dab79f1684092c3ef94a078ecdb96d1df73d2802e
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0028 · close 0.46 · cap 0.5 — Grund: Meta-Pass + KC2G + Rat/Diver/UI (ci-gate) + 16 Arme gebaut (searxng/SERP/oeis/hal/wiby/ia/shodan/opencellid/gfw) + FMHY + verdict-Kurzschluss; kein pro/max; gemessen `session_burn`
+## Burn: open 0.000 · close 0.055 · cap 0.5 — Grund: Fortsetzungs-Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.0551): die vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) und die zwei Reader-Bins (ocr_reader/meta_reader) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf dieses Registers).
 
 ## Operator-Wort-Register
 
@@ -41,6 +41,8 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „ich hätte gerne alle" (die FMHY-Runde-2-Arme) | Quelle: diese Session. → `--oeis`/`--hal`/`--wiby`/`--ia-search` gebaut.
 - 2026-10-08 | „probier mal, ich hab alle drei keys jetzt drin" (Shodan/OpenCelliD/GFW) | Quelle: diese Session. → `--opencellid` + `--shodan` live; `--gfw` wartet auf gültigen Key.
 - 2026-10-08 | „ist drin, allerdings korrigiert in GFW_API_KEY" | Quelle: diese Session. → `--gfw`-Auth passiert (Key akzeptiert).
+- 2026-10-08 | „bitte lasse agenten bauen ich möchte dass es in dieser runde umgesezt wird" (die FMHY-Runde-2-Bauspecs + OCR-Sidecars) | Quelle: diese Session. → 4 Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + 2 Bins (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut, live gemessen.
+- 2026-10-08 | „ja, Rat, Forschungsschicht und die Frontier-Stimmen" (VO-/Katalog-Durchsuchbarkeit) | Quelle: diese Session. → Rat + `archive_search` + Duck/Qwen/Claude gefahren; Form (c) gestuft.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -115,19 +117,12 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** Mountain-Admission.
 - **Braucht:** Admission → Manifestation/Compiler.
 
-### FMHY Runde 2 — neue legale Quellen/Arme (Operator-Wort 2026-10-08 „nochmal Agenten auf fmhy.net")
-- **Status:** eigen | **Bindung:** eigen (tools/utils) → mountain (Admission)
-- **Trigger:** Operator-Auswahl / Mountain-Admission
-- **Lage:** (gemessen 2026-10-08, 3 Diver über `educational`/`reading`/`developer-tools`/`internet-tools`/`storage`/`misc`/`image`/`text`/`file`/`system-tools`) die FMHY-Erd-/Weltraum-Landschaft ist im Baum weitgehend registriert; **neue, verifizierte Kandidaten (nicht in `phi/` registriert, kein `archive_search`-Modus):** Daten/Research: **USGS NGMDB** (`https://ngmdb.usgs.gov/ArcGIS/rest/services?f=pjson`, 206) · **Internet Archive advancedsearch** (`https://archive.org/advancedsearch.php?q=…&output=json`, 200) · **HAL** (`https://api.archives-ouvertes.fr/search/?q=…&wt=json`, 206) · **OEIS** (`https://oeis.org/search?q=…&fmt=json`, 200) · **OAPEN** (OAI `library.oapen.org/oai/request`, 200) · **deps.dev API** (keyless). Suche/Infra: **Wiby JSON** (`https://wiby.me/json/?q=`, 200) · **RSS-Bridge** (`rss-bridge.org`, 200) · **Kiwix** (`download.kiwix.org/zim/…`, 200) · **web.scraper.workers.dev** (200) · **Shodan/OpenCelliD/Global Forest Watch** (free key). Reader/OCR-Kandidaten: **Tesseract · OCRmyPDF · Marker · Docling · MarkItDown · exifTool · ImageMagick · qsv/xan (Rust)**.
+### FMHY Runde 2 — Rest nach dem Bau (Operator-Wort 2026-10-08 „in dieser runde umsetzen")
+- **Status:** eigen | **Bindung:** eigen (OAI-Harvest)
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-08) **alle Bauspecs gebaut und live gemessen:** `--ngmdb` (ArcGIS `MapServer/0/query`, Browser-UA+`Range:0-131071`, akzeptiert 200/206) · `--rss-bridge` (`rss-bridge.org/bridge01`, `action=display&format=Json`, JSON Feed) · `--kiwix` (OPDS/Atom `opds.library.kiwix.org/catalog/v2/entries`, `rel=…acquisition/open-access`) · `--scrape` (`web.scraper.workers.dev`, `{result:{selector:[text]}}`); Sidecars `ocr_reader` (Tesseract+pdftoppm) + `meta_reader` (`exiftool -j`) gebaut, beide grün. Offen bleibt nur: **deps.dev** keyless, aber kein Freitext-Arm (`/systems/{s}/packages/{p}`) → `descoped` (gemessen); **OAPEN** nur OAI-Harvest (`library.oapen.org/oai/request`), keine Suchroute.
 - **Blockade:** —
-- **Braucht:** `gh workflow run tools-build.yml` nach dem Push (Rolling-Release trägt die Arme); **gebaut (dieses Atom): `--oeis` · `--hal` · `--wiby` · `--ia-search`** (keyless JSON, end-to-end grün). **Offen — gemessene Bauspecs (2026-10-08, Diver):**
-  - `--ngmdb`: echter REST-Service `https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer?f=pjson` (Browser-UA nötig); Layer-Query `…/MapServer/0/query?where=1=1&outFields=*&f=json&resultRecordCount=1`.
-  - `--rss-bridge`: `https://rss-bridge.org/bridge01/?action=display&bridge=<Bridge>&format=Json` → JSON Feed (`items[]{title,url,content_text}`).
-  - `--kiwix`: `https://opds.library.kiwix.org/catalog/v2/entries?q=<q>&lang=eng&count=<n>` → OPDS/Atom (`entry[]{title,summary,link[rel=acquisition]}`), **kein JSON**.
-  - `--scrape`: `https://web.scraper.workers.dev/?url=<url>&selector=<css>&pretty=true` → `{result:{<selector>:[text]}}`.
-  - `--deps-dev`: keyless, aber **kein Freitext-Sucharm** (`/systems/{s}/packages/{p}`) → ungeeignet.
-  - OAPEN: OAI-Harvest (`library.oapen.org/oai/request`), **keine Suchroute** → nur als Harvester sinnvoll.
-  - **OCR-/Lese-Sidecars:** Tesseract · pdftoppm · exifTool sind **auf PATH** → ein neues Bin `ocr_reader` (unter `tools/utils/src/bin/`; PDF→PNG→`tesseract`, Bilder direkt) und `meta_reader` (`exiftool -j`); Python-Tools (Marker/Docling/MarkItDown/OCRmyPDF) fallen raus (Python-Bann).
+- **Braucht:** OAPEN-OAI-Harvest verdrahten oder als keine-Suchroute abschließen; sonst nichts. CI verifiziert Parser je Arm.
 
 ### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
 - **Status:** gebaut | **Bindung:** eigen (tools/utils)
@@ -137,11 +132,12 @@ Sender-Zeilen in `## An <line>`.
 - **Braucht:** je Dataset die korrekte Tabellenform + `geometry=`/`geostore_id=` (Raster) beim Aufruf; `--gfw "dataset=<d> sql=<select>"`.
 
 ### VO-/Katalog-Durchsuchbarkeit (Operator-Frage 2026-10-08)
-- **Status:** offen — Architektur → Rat | **Bindung:** eigen
-- **Trigger:** Operator-Wort (Rat + Forschungsschicht anstoßen)
-- **Lage:** (gemessen 2026-10-08) `phi/pipeline/catalog/` trägt **84 getrackte Dateien** — **72 `tap_index_*` (VO-TAP-Service-Indizes)** + 5 Aggregator-Catalogs (re3data · zenodo · dataone · dryad · erddap/…) + ArcGIS/b2find-NASA-CMR-Tags; `phi/pipeline/index.φ` führt ihren Zustand (`index`/`descoped`). Heute **teil-durchsuchbar:** `archive_search --root phi` (Inhalt), `archive_search --index` (Pfade), `register_lookup <term>` (Register). **Gap:** kein dedizierter Query über alle 72 TAP-Indizes (Service · Tabelle · Spalte · Kraft · Domain) — „welche VO-Quelle deckt K?".
-- **Blockade:** Architektur-Entscheidung (Form — und ob überhaupt nötig; die Quellen liegen als Metadaten, der Archivar fragt die Live-Dienste).
-- **Braucht:** Forschungsschicht (`archive_search` über VO/Registry-Muster) + **Rat (5 Stimmen)** → Form (z. B. ein `catalog_search`/Index über die TAP-Indizes); danach Bau durch Mountain (Register/Parser).
+- **Status:** Verdikt da (Rat + 3 Frontier), Bau offen | **Bindung:** eigen → mountain
+- **Trigger:** Bau-Atom (Arm 1)
+- **Lage:** (gemessen 2026-10-08) `phi/pipeline/catalog/` trägt **84 getrackte Dateien** — **72 `tap_index_*` (VO-TAP-Service-Indizes)** + 5 Aggregator-Catalogs (re3data · zenodo · dataone · dryad · erddap/…) + ArcGIS/b2find-NASA-CMR-Tags; `phi/pipeline/index.φ` führt ihren Zustand (`index`/`descoped`). Heute **teil-durchsuchbar:** `archive_search --root phi` (Inhalt), `archive_search --index` (Pfade), `register_lookup <term>` (Register). **Gap:** kein dedizierter Query über alle 72 TAP-Indizes (Service · Tabelle · Spalte · Kraft · Domain) — „welche VO-Quelle deckt K?". **Die VOs aus dem Novitäts-Scan** (`state/future/survey-2026-10-07-novitaet-scan.md`): **SOLARNET VO** (`declined_sources.φ:4108`, Rat 2026-10-07 decline registry/katalog) · **MICrONS Explorer „VO of the Cortex"** (`declined_sources.φ:5036`, decline no-physical-force) — entschieden, **nicht** neu. **Nicht registriert (die Registry-VOs):** IVOA (International Virtual Observatory Alliance) · China-VO · Brazilian VO · Tunka-Rex VO — **Registry/Föderations-Zugangsschicht**, kein Datensatz → als **Discovery-Route** für den Katalog-Query relevant.
+- **Verdikt (Rat + Frontier Duck/Qwen/Claude; Z.ai `pending`):** **Option (c) gestuft, (a) als Primärpfad.** *Arm 1* — statischer Baum-Index `Quelle → Tabelle → Spalte` (inkl. UCD/Domain-Tag), deterministisch/offline/testbar; Bin auf der Archivar-Seite (`tools/harvest`, kein Feld/GPU). *Arm 2* — **kein Live-Suchpfad**, nur ein **Frische-Check pro Treffer** (TAP_SCHEMA/RegTAP) mit `verified_at`/`stale`; die 72 Endpunkte sind latency-/verfügbarkeitsunkontrollierbar (Claude). **Riss:** „deckt Kraft/Domain K" ist **keine Schemafrage** — TAP_SCHEMA/Registry liefern Tabellen/Spalten/UCDs, aber keine projektinterne Domain-Taxonomie; das Mapping `Domain K → UCD/Keyword/Tabelle` muss **kuratiert** werden (Rat + Clair: `pending`, nie 0).
+- **Blockade:** kuratiertes Domain→UCD-Mapping; ob die 72 Indizes UCDs/Domain-Tags tragen (Stichprobe nötig, `pending`); TAP_SCHEMA-Vollständigkeit/Refresh-Kadenz (Claude pending).
+- **Braucht:** Bau **Arm 1** (Bin parst 72 `tap_index_*` + 5 Aggregatoren; Readings über `phi/pipeline/index.φ`) durch Mountain/Archivar; **IVOA · China-VO · Brazilian VO** als Registry-Route in `phi/sources.φ` registrieren (Mountain); Frische-Check-Trigger in `state/zustand/external-state.md`.
 
 ## An mountain
 
