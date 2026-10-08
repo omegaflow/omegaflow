@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: a99bf10e7842422bf770b99cfc22209dd6ec8739a873d3ebb85cd1e92678d126
+  sha256: b866a579612b782f70629f3a811795faaa285dd85e3c01fad411b90547ebb89f
   status: live
   see-also: AGENTS.md
 -->
@@ -141,6 +141,10 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   (`api.marginalia-search.com`), **keyless JSON, kein Gate**; `url` +
   Titel/Beschreibung/`quality`. Gemessen 2026-09-23: relevante Treffer (MPG,
   ESA/sci.esa.int), 200 — die zweite keyless Engine neben `--mwmbl`.
+- `archive_search --jina <url>` — Jina Reader (`r.jina.ai/<url>`), **keyless**;
+  liefert den sauberen Text einer Seite als `Title / URL Source / Markdown Content`.
+  Gemessen 2026-10-08 end-to-end (`--jina https://example.com` → 200, 1465 B,
+  Markdown-Text). Die sauberere Text-Extraktion neben `--playwright`/`--sniff`.
 - `archive_search --tavily <query>` — Tavily Search API (`TAVILY_API_KEY`); `url`
   + Titel/`score`/Text.
 - `archive_search --exa <query>` — Exa Search API (`EXA_API_KEY`); `url` +
