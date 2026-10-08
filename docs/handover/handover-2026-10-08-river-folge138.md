@@ -3,7 +3,7 @@
   session: River-Folge 138
   class: handover
   date: 2026-10-08
-  sha256: e7d3e4e7106dd1a3a9fbf7273eeea38053db08a9fb1752bf6700cf08abd89c59
+  sha256: ae8af7c0a08df7b0a882000050e7e012187d2215ec72cb3b0cec6656ff38cf13
   status: live
 -->
 # Handover — River-Folge 138 (2026-10-08)
@@ -89,12 +89,12 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 - **Blockade:** Gate-Mechanik (Träger nur aus live-Handovers) + Baseline-Erzeugung.
 - **Braucht:** Mycelium prüft, ob `derive_carriers` auch `docs/handover/archiv/*.md` lesen soll; dann `dropped-legacy-baseline.txt` neu ziehen.
 
-### Flyby-Kette — RTSW-Snapshots gefüllt, Addendum trägt die Reihen
+### Flyby-Kette — RTSW + kp-`def` geschlossen, recon bleibt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** kp-`def`-Release; omni2-bz-Parameter-Alignment. Wahrheit: `state/zustand/wartend.φ` (`flyby-chain-omni2`, `flyby-chain-kp-def`, `ephemeris-juice-recon`).
-- **Lage:** (gemessen 2026-10-08, River 138) **OMNI2-HAPI erreichbar:** die URL (OMNI2_H0_MRG1HR, 2026-09-26..29) liefert `HTTP 200` (33 251 B). Der erste Fill (ohne `--snapshots`) ließ alle `rtsw_*` und `omni2_bz` `pending` — er liest dann nur die Live-SWPC-URL, deren 24-h-Retention das Fenster nicht mehr hält. **Gelöst:** der Re-Lauf mit `--snapshots data/services.swpc.noaa.gov` hat alle 26 Zellen gefüllt (Register `data/flyby2/tube-juice-2026-09-28.json`, 41 528 B, mtime 2026-10-08 23:04); Trajectory `official: placed` (`aeb3c82…`). Das Addendum `docs/paper/flyby-path-2-addendum-2026-09-29.md` trägt die 2026-10-08-Sektion samt Füll-Tafel + den sechs RTSW-Reihen + `omni2_pressure`. Die folge137-Zeile „die Zellen tragen RTSW-bt/bz/v/n/T/p" war nur **nach** dem `--snapshots`-Lauf wahr (vorher Riss, der Baum gewinnt). **Offen: `omni2_bz` 26× `pending`** (Parameter-Alignment). **kp `def`: HTTP 500.** **JUICE-recon** absent (Wiedervorlage 2026-11-01).
-- **Blockade:** kp-`def`-Release + omni2-bz-Parameter-Alignment.
-- **Braucht:** kp `def` erneut prüfen (bei Release); `omni2 bz` Alignment. Der CI-Lauf (`.github/workflows/flyby-path2-fill.yml:57`) trägt `--snapshots data/services.swpc.noaa.gov` bereits — der Riss war allein der lokale Handlauf ohne das Flag; ein CI-Lauf füllt RTSW regulär.
+- **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34` (`ephemeris-juice-recon`).
+- **Lage:** (gemessen 2026-10-08, River 138) **RTSW gefüllt:** der Re-Lauf mit `--snapshots data/services.swpc.noaa.gov` hat alle 26 Zellen gefüllt (Register `data/flyby2/tube-juice-2026-09-28.json`, 41 528 B, mtime 23:04); Trajectory `official: placed` (`aeb3c82…`). **kp `def` freigegeben:** der GFZ-Lauf `status=def,nowcast` liefert `HTTP 200`, alle 33 Intervalle `def`; das Register trägt 26 kp-Zellen `status def` (Werte stichprobenartig gegen die GFZ-Reihe gedeckt). **`omni2_bz` in der Quelle absent:** der OMNI2_H0_MRG1HR-Response trägt `BX`/`BY`/`BZ` als Fill `999.9` über das ganze Fenster (nur `Pressure1800` hat Werte) → `pending`, nie 0.0. Das Addendum trägt die 2026-10-08-Sektion (Füll-Tafel, sechs RTSW-Reihen, `omni2_pressure`, kp-`def`-Werte). `wartend.φ` `flyby-chain-omni2`/`flyby-chain-kp-def` entfernt. **Offen:** `ephemeris-juice-recon` (SPK absent, 404 gemessen 2026-10-02).
+- **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent (`ephemeris-juice-recon.bin` 404).
+- **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Release-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
 ## An mountain
 
