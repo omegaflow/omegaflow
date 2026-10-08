@@ -936,3 +936,17 @@ toar-komponenten-arm
 # known legacy names, not silent drops.
 bandreferenz em-nmgy-riss reinem scale statt
 body cache fetch gebaut jeden loader-gate q1 uncommittet wie zulassung über
+# 2026-10-08 (Mycelium-270): gemessene Drop-Namen dieses Atoms — canonical_point_key erzeugt Ganzzeilen-Schluessel, darum als bekannte Legacy-Namen gefroren, kein stiller Drop.
+2026-10-08 axiom bleibt doppler-kanal mit q4 rat trigger
+2026-10-08 gfw key-arme opencellid operator-wort shodan
+2026-10-08 katalog-durchsuchbarkeit operator-frage vo-
+202 admission an future-201 gemessen mountain route-admissionen
+2 emtf-reader emtf-verdikt gebaut reader-arme route-admissionen
+als axiom benannt bleibt blocked deine der die doppler-kanal erscheint feder führt gemessen ist ledger mit mountain-pen mycelium pfad-lücke produkt q4 register riss route sources trigger φ
+aus der future-199 gefaltet instrumentierung membran
+compiler-epoch emtf-reader-arm flow-verdrahtung gebaut main reader-modul
+consensus mcp-tool-call mcps perplexity research-apis rest
+--consensus --perplexity --verdict 1 1b 200 2026-10-08 206 400 4444068 503 633 a a99 ac aller api api- archive b ca cdaweb cds cedar cn com convection-maps data datalab de diver-abgleich dlr ds edu emtf fast fi fmi fr gemessen geomag gov gsfc h0 hapi id image impc info iris j jhuapl json kc2g kein leos live lr maga mcp-keys mcp-stand members mrg1hr nasa noirlab omni2 one-minute-maximum-roti-global openmadrigal org payload products prop punkte record routen- search services space ssusi stations superdarn supermag sw swe sync tap unistra usask user-gated usgs vires vizier vollen vorhanden wayback wi ws zenodo
+hält loadergate mountain o q1 receiver s span unverändert
+hält membran-agnostik mountain receiver span span-apertur
+--lpf 200 application arm cgi end fef1238b6 fits gov gsfc hdu heasarc keyless lpf lpf-heasarc nasa registrieren selector start steht
