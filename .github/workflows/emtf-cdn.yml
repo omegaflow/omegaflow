@@ -1,0 +1,47 @@
+name: emtf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'EMTF-XML file URL (data.earthscope.org .../emtf/surveys/...xml)'
+        type: string
+        default: 'https://data.earthscope.org/archive/seismology/products/emtf/surveys/2010/MT_TF_USArray.CAO01.2010/USArray.CAO01.2010.xml'
+      out:
+        description: 'CDN asset name'
+        type: string
+        default: 'emtf_usarray_cao01_2010.bin'
+  push:
+    paths:
+      - 'tools/harvest/src/bin/emtf_compiler.rs'
+      - '.github/workflows/emtf-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  emtf:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the data.earthscope.org release exists on the CDN
+        run: |
+          if ! gh release view data.earthscope.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create data.earthscope.org --repo omegaflow/sources \
+              --title "data.earthscope.org" \
+              --notes "EarthScope/USArray magnetotelluric transfer functions (EMTF-XML) compiled to omegaflow EMTF binary assets (CDN tag = netloc; Z in SI ohm, period in s). Survey DOI 10.17611/DP/EMTF/USARRAY/TA."
+          fi
+      - name: Compile the EMTF file and manifest the EMTF bin to the CDN
+        run: |
+          set -euo pipefail
+          url="${{ inputs.url }}"; [ -n "$url" ] || url="https://data.earthscope.org/archive/seismology/products/emtf/surveys/2010/MT_TF_USArray.CAO01.2010/USArray.CAO01.2010.xml"
+          out="${{ inputs.out }}"; [ -n "$out" ] || out="emtf_usarray_cao01_2010.bin"
+          cargo run --release -p omegaflow-harvest --bin emtf_compiler -- \
+            --url "$url" --out "$out" --ci-mode
