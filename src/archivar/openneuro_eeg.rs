@@ -334,6 +334,7 @@ pub fn emit_channels(
         let fc = FieldConfig {
             key: name.clone(),
             name,
+            band_id: None,
             kernel,
             force,
             tau,

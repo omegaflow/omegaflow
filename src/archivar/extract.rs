@@ -1644,6 +1644,7 @@ pub fn edf_emit_channels_with_electrodes(
         let fc = FieldConfig {
             key: name.clone(),
             name: name.clone(),
+            band_id: None,
             kernel,
             force,
             tau,
@@ -1733,6 +1734,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                 FieldConfig {
                     key: outputs[0].clone(),
                     name: outputs[0].clone(),
+                    band_id: None,
                     kernel: 0,
                     force: 3,
                     tau: *tau,
@@ -1747,6 +1749,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                 FieldConfig {
                     key: outputs[1].clone(),
                     name: outputs[1].clone(),
+                    band_id: None,
                     kernel: 0,
                     force: 3,
                     tau: *tau,
@@ -1773,6 +1776,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                 FieldConfig {
                     key: outputs[0].clone(),
                     name: outputs[0].clone(),
+                    band_id: None,
                     kernel: 1,
                     force: 3,
                     tau: *tau,
@@ -1787,6 +1791,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                 FieldConfig {
                     key: outputs[1].clone(),
                     name: outputs[1].clone(),
+                    band_id: None,
                     kernel: 3,
                     force: 4,
                     tau: *tau,
@@ -2054,6 +2059,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             fields.push(FieldConfig {
                 key: "val".into(),
                 name: "val".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -2070,6 +2076,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             fields.push(FieldConfig {
                 key: "extent".into(),
                 name: "extent".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -2086,6 +2093,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             fields.push(FieldConfig {
                 key: "tau".into(),
                 name: "tau".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -2126,6 +2134,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             fields.push(FieldConfig {
                 key: "val".into(),
                 name: "val".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -2142,6 +2151,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             fields.push(FieldConfig {
                 key: "extent".into(),
                 name: "extent".into(),
+                band_id: None,
                 kernel: 0,
                 force: 0,
                 tau: 0.0,
@@ -3917,6 +3927,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let fc = FieldConfig {
             key: "uv_index".to_string(),
             name: "uv_index".to_string(),
+            band_id: None,
             kernel: 0,
             force: 0,
             tau,
@@ -3968,6 +3979,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             Some(FieldConfig {
                 key: name.to_string(),
                 name: name.to_string(),
+                band_id: None,
                 kernel,
                 force,
                 tau,
@@ -4038,6 +4050,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let fc = FieldConfig {
             key: "fugin_moment0".to_string(),
             name: "fugin_moment0".to_string(),
+            band_id: None,
             kernel: 0,
             force: 0,
             tau,
@@ -5937,6 +5950,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     FieldConfig {
                                         key: outputs[0].clone(),
                                         name: outputs[0].clone(),
+                                        band_id: None,
                                         kernel: 0,
                                         force: 3,
                                         tau: *tau,
@@ -5968,6 +5982,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     FieldConfig {
                                         key: outputs[1].clone(),
                                         name: outputs[1].clone(),
+                                        band_id: None,
                                         kernel: 0,
                                         force: 3,
                                         tau: *tau,
@@ -6017,6 +6032,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 FieldConfig {
                                     key: outputs[0].clone(),
                                     name: outputs[0].clone(),
+                                    band_id: None,
                                     kernel: 1,
                                     force: 3,
                                     tau: *tau,
@@ -6049,6 +6065,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 FieldConfig {
                                     key: outputs[1].clone(),
                                     name: outputs[1].clone(),
+                                    band_id: None,
                                     kernel: 3,
                                     force: 4,
                                     tau: *tau,

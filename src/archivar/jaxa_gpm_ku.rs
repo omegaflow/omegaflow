@@ -28,6 +28,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
     vec![FieldConfig {
         key: "jaxa_gpm_ku_echo_power_w".to_string(),
         name: "jaxa_gpm_ku_echo_power_w".to_string(),
+        band_id: None,
         kernel,
         force,
         tau,

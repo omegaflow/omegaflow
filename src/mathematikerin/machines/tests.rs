@@ -169,6 +169,7 @@ mod matrix_record_tests {
             FieldConfig {
                 key: "WSPD".to_string(),
                 name: name.to_string(),
+                band_id: None,
                 kernel: 0,
                 force: 7,
                 tau: 21600.0,
@@ -376,6 +377,7 @@ mod matrix_rebuild_tests {
             crate::archivar::FieldConfig {
                 key: "TMP".to_string(),
                 name: name.to_string(),
+                band_id: None,
                 kernel: 0,
                 force: 1,
                 tau: 21600.0,

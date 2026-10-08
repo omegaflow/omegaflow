@@ -28,6 +28,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
     vec![FieldConfig {
         key: "fink_cutout_flux_njy".to_string(),
         name: "fink_cutout_flux_njy".to_string(),
+        band_id: None,
         kernel,
         force,
         tau,

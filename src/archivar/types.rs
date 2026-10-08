@@ -373,6 +373,7 @@ impl ReceiverAperture {
 pub struct FieldConfig {
     pub key: String,
     pub name: String,
+    pub band_id: Option<String>,
     pub kernel: u8,
     pub force: u8,
     pub tau: f64,

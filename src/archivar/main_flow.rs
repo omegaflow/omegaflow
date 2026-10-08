@@ -1464,6 +1464,7 @@ pub fn main_flow() {
                 let fc = FieldConfig {
                     key: bs.key.clone(),
                     name: bs.key.clone(),
+                    band_id: None,
                     kernel: bs.kernel,
                     force: bs.force,
                     tau: effective_tau,
@@ -2540,6 +2541,189 @@ pub fn main_flow() {
                         sent += 1;
                     }
                     eprintln!("\r\x1b[Kxp_spectra {}: {} stars sent", url, sent);
+                });
+                continue;
+            }
+            if archive.sources[i].format == "emtf_impedance" {
+                if raw_presence_gate(
+                    i,
+                    &archive.sources,
+                    &archive.presence,
+                    PresenceGateCtx {
+                        slot: &presence_slot,
+                        body_ephemerides: &archive.body_ephemerides,
+                        now,
+                        median_fetch,
+                        refusal_ledger: &refusal_ledger,
+                    },
+                )
+                .is_none()
+                {
+                    continue;
+                }
+                let src = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let url = src.url.clone();
+                    let name = url
+                        .rsplit('/')
+                        .next()
+                        .unwrap_or("emtf_impedance")
+                        .to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_emtf_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("emtf_impedance {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("emtf_impedance {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("emtf_impedance {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let bin = match crate::archivar::emtf::parse_bin(&bytes) {
+                        Some(b) => b,
+                        None => {
+                            eprintln!(
+                                "emtf_impedance {}: bin reads void — {} B carry no emtf_impedance contract",
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let epoch = match lsk_c.unix_to_tdb(bin.epoch_unix) {
+                        Some(t) => t,
+                        None => {
+                            eprintln!(
+                                "emtf_impedance {}: epoch {} unix carries no TDB — the measurement stays unmanifested",
+                                url, bin.epoch_unix
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let motion = match &src.frame {
+                        Frame::Surface {
+                            body_name,
+                            lat,
+                            lon,
+                            alt,
+                        } => Motion::Surface {
+                            body_name: body_name.clone(),
+                            lat: *lat,
+                            lon: *lon,
+                            alt: *alt,
+                        },
+                        Frame::Barycenter { body_name, scale } => Motion::Barycenter {
+                            body_name: body_name.clone(),
+                            scale: *scale,
+                        },
+                        Frame::Manifest => {
+                            eprintln!(
+                                "emtf_impedance {}: frameless — the block declares no position",
+                                url
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let fields: Vec<FieldConfig> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    if fields.is_empty() {
+                        eprintln!(
+                            "emtf_impedance {}: field undeclared — the block carries no field line",
+                            url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    }
+                    let mut sent = 0usize;
+                    for comp in 0..crate::archivar::emtf::COMPONENT_COUNT {
+                        let Some(component) = crate::archivar::emtf::component_name(comp as u32)
+                        else {
+                            continue;
+                        };
+                        let field = match fields
+                            .iter()
+                            .find(|f| f.key.eq_ignore_ascii_case(component))
+                        {
+                            Some(fc) => fc.clone(),
+                            None => {
+                                eprintln!(
+                                    "emtf_impedance {}: {} carries no field line",
+                                    url, component
+                                );
+                                continue;
+                            }
+                        };
+                        let bins = crate::archivar::emtf::component_bins(&bin, comp);
+                        if bins.is_empty() {
+                            continue;
+                        }
+                        let hash = SpectralHash {
+                            name: component.to_string(),
+                            motion: motion.clone(),
+                            epoch,
+                            ttl: src_ttl as f64,
+                            tau: field.tau,
+                            kernel_id: field.kernel as f64,
+                            force_type: field.force as f64,
+                            absorption: field.absorption,
+                            advection: field.advection,
+                            redshift: 0.0,
+                            z_kind: 0,
+                            bins,
+                        };
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: Some(hash),
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                        sent += 1;
+                    }
+                    eprintln!("\r\x1b[Kemtf_impedance {}: {} components sent", url, sent);
                 });
                 continue;
             }

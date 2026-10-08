@@ -1419,6 +1419,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
             FieldConfig {
                 key: format!("{}.mass", name),
                 name: format!("{}.mass", name),
+                band_id: None,
                 kernel: 0,
                 force: 1,
                 tau: f64::INFINITY,
@@ -1452,6 +1453,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
             FieldConfig {
                 key: format!("{}.omega_g", name),
                 name: format!("{}.omega_g", name),
+                band_id: None,
                 kernel: 0,
                 force: 1,
                 tau,
