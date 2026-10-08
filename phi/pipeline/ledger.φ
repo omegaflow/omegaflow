@@ -90,3 +90,83 @@ note Brazilian live INPE BIG — STAC/GeoTIFF, em; 2026-10-07 HTTP 200 (192329 B
 disponiert
 nachlauf tools/harvest/src/bin/cors_compiler.rs
 note cors_compiler ungewirter Duplikat-Pfad zu cors_rinex — kein Workflow ruft ihn (cors-cdn.yml:61 → cors_rinex_compiler), kein Reader-Arm (extract.rs:45; sources.φ:10618). river-136 Vorschlag descoped; gemessen 2026-10-08.
+
+ausstehend
+kandidat https://www.gosat-gw.nies.go.jp
+note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132 / GWT3W_L1B 434 Dateien, Probe HDF5 17440691 B; gosat_tanso3_compiler.rs + gosat-cdn.yml stehen. Offen: CI 36283215548 rot (Leerfenster/Overflow).
+
+ausstehend
+kandidat https://planet.physics.uiowa.edu/das/das2Server/hapi
+note DAS2 Iowa HAPI 1.1 CSV — 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml stehen; origin sources.φ:17952. Offen: Feld-Verdikt (kein field im Block).
+
+ausstehend
+kandidat https://moon.bao.ac.cn/
+note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206; clpds_compiler.rs + clpds-cdn.yml stehen, gras_2c-Reader; Annex sources.φ:10100. Offen: Portal-Ernte. future-folge149.
+
+ausstehend
+kandidat https://sdc.emiratesmarsmission.ae/
+note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild, kein Skalarfeld (Bildquelle ohne field). emm_exi.rs + emm_sdc_compiler.rs + emm-sdc-cdn.yml stehen. Offen: Frame-Bundle.
+
+ausstehend
+kandidat https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
+note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); hips.rs + hips_png_compiler.rs + hips-png-cdn.yml stehen. Offen: Tree-Ernte, CDN, Sample.
+
+ausstehend
+kandidat https://pds.shadowcam.im-ldi.com/derived/
+note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; pds4.rs + pds4-fits-cdn.yml stehen; Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
+
+ausstehend
+kandidat https://gportal.jaxa.jp/
+note JAXA G-Portal — sources.φ:10370; jaxa_gportal_compiler.rs + jaxa-gportal-cdn.yml stehen; Katalog-Record nur Footprint-Zentren (lon/lat), kein Messwert → Reader descoped (Rat 2026-10-06). Offen: Record-Download, Quota. future-folge226.
+
+ausstehend
+kandidat https://clpds.bao.ac.cn/
+note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13207 B); clpds_compiler.rs + clpds-cdn.yml stehen; Annex-Arm --with-annex gebaut, Workflow ruft ihn noch ohne; PDS3-Reader steht. future-folge226.
+
+ausstehend
+kandidat https://data.kasi.re.kr/
+note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
+
+ausstehend
+kandidat https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
+note ROTI (GIC Obs. §D) — 2026-10-08: data.impc.dlr.de/…/latest_D.json 200 (1.18 MB), 2D-Gitter 180×90 ohne per-Zelle-Koordinaten, Snapshot; cdaweb_roti.rs + cdaweb-roti-cdn.yml stehen, impc_roti_compiler.rs fehlt (Dataset-ID messen).
+
+ausstehend
+kandidat https://themis.igpp.ucla.edu/gmag/
+note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200 (http→https 301); hapi_csv.rs/intermagnet.rs + themis-mag-cdn.yml stehen; Dataset-ID/Parameter messen.
+
+ausstehend
+kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE
+note Wind SWE/MFI (GIC-Replikation §A) — 2026-10-06: 200; hapi_csv.rs + cdaweb-tec-cdn.yml (HAPI-Familie) stehen; Dataset-ID messen.
+
+ausstehend
+kandidat https://www.ncei.noaa.gov/data/poes-metop-space-environment-monitor/
+note POES/MetOp MEPED (GIC-Mediator §B) — 2026-10-06: 200; poes19_meped_compiler.rs + poes19-meped-cdn.yml stehen (Note „kein Arm" widerlegt).
+
+ausstehend
+kandidat https://ssusi.jhuapl.edu/
+note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-06: 200; dmsp16_ssj_compiler.rs + ssusi_compiler.rs + ssusi-cdn.yml stehen (Note „kein Arm" widerlegt).
+
+ausstehend
+kandidat https://supermag.jhuapl.edu/products/
+note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18407-18431); supermag-cdn.yml steht; Onset-Produkt braucht Arm.
+
+ausstehend
+kandidat https://cdaw.gsfc.nasa.gov/CME_list/
+note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-06: 200; soho_lasco_compiler.rs + soho-lasco-cme-cdn.yml stehen (Note „kein Arm" widerlegt).
+
+ausstehend
+kandidat https://wdc.kugi.kyoto-u.ac.jp/
+note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-06: Host 200, aeasy.cgi 404; wdc_ae_compiler.rs + wdc-ae-cdn.yml stehen; Host-Status messen.
+
+ausstehend
+kandidat https://superdarn.usask.ca/convection-maps
+note SuperDARN CPCP (GIC §B) — 2026-10-08: Bestand 10374021 (Arm+WF stehen); Zenodo 10875060 superDARN.zip 200 (32.6 MB, NetCDF-4 map.pot.drop, CC-BY-4.0), kein .map2; superdarn_cpcp_nc_compiler.rs nötig.
+
+ausstehend
+kandidat https://ds.iris.edu/ds/products/emtf/
+note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-10-06: 206; emtf.rs + emtf_compiler.rs + emtf-cdn.yml stehen (Note „kein Arm" widerlegt).
+
+ausstehend
+kandidat http://awesome.ucsd.edu/
+note Sub-ionosphärische VLF AWESOME (GIC-unabhängige Observable §D) — 2026-10-06: DNS tot (000), Wayback 503; vlf_awesome.rs + vlf-awesome-cdn.yml stehen (Note „unbelegt" widerlegt).

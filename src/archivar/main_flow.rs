@@ -3122,6 +3122,7 @@ pub fn main_flow() {
                     | "goes_xrs"
                     | "cdaweb_tec"
                     | "cdaweb_roti"
+                    | "impc_roti"
                     | "goes16_mag"
                     | "poes19_meped"
                     | "themis_mag"

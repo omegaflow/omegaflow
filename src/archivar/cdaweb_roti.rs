@@ -7,6 +7,8 @@ pub const RECORD_BYTES: usize = FIELDS * 8;
 
 pub const COMP_ROTI: u32 = 0;
 
+pub const IMPC_ROTI_NAME: &str = "impc_roti_tecu_min";
+
 const COLUMNS: &[(u32, &str, &str)] = &[(COMP_ROTI, "cdaweb_roti_tecu_min", "TECU/min")];
 
 #[derive(Clone, Debug, PartialEq)]
@@ -54,30 +56,41 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
     COLUMNS.iter().find(|c| c.0 == comp).map(|c| c.1)
 }
 
+pub fn impc_roti_component_name(comp: u32) -> Option<&'static str> {
+    (comp == COMP_ROTI).then_some(IMPC_ROTI_NAME)
+}
+
+fn named_column(name: &str, unit: &str, tau: f64) -> Option<FieldConfig> {
+    let force = force_id_of("em")?;
+    let kernel = kernel_id_for_force(force)?;
+    Some(FieldConfig {
+        key: name.to_string(),
+        name: name.to_string(),
+        band_id: None,
+        kernel,
+        force,
+        tau,
+        absorption: 0.0,
+        advection: 0.0,
+        unit: unit.to_string(),
+        freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
+        bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
+        fold: None,
+        aperture: Aperture::None,
+    })
+}
+
 pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
-    let Some(force) = force_id_of("em") else {
-        return Vec::new();
-    };
-    let Some(kernel) = kernel_id_for_force(force) else {
-        return Vec::new();
-    };
     COLUMNS
         .iter()
-        .map(|(_, name, unit)| FieldConfig {
-            key: name.to_string(),
-            name: name.to_string(),
-            band_id: None,
-            kernel,
-            force,
-            tau,
-            absorption: 0.0,
-            advection: 0.0,
-            unit: (*unit).to_string(),
-            freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
-            bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
-            fold: None,
-            aperture: Aperture::None,
-        })
+        .filter_map(|(_, name, unit)| named_column(name, unit, tau))
+        .collect()
+}
+
+pub fn impc_roti_declared_fields(tau: f64) -> Vec<FieldConfig> {
+    COLUMNS
+        .iter()
+        .filter_map(|(_, _, unit)| named_column(IMPC_ROTI_NAME, unit, tau))
         .collect()
 }
 
