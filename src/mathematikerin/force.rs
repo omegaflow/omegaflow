@@ -22,6 +22,7 @@ pub enum QuantityKind {
     Area = 2,
     Scale = 3,
     Intensity = 4,
+    Index = 5,
 }
 
 pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
@@ -31,6 +32,7 @@ pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
         "area" => Some(QuantityKind::Area),
         "scale" => Some(QuantityKind::Scale),
         "intensity" => Some(QuantityKind::Intensity),
+        "index" => Some(QuantityKind::Index),
         _ => None,
     }
 }
@@ -42,6 +44,7 @@ pub fn quantity_kind_name(kind: QuantityKind) -> &'static str {
         QuantityKind::Area => "area",
         QuantityKind::Scale => "scale",
         QuantityKind::Intensity => "intensity",
+        QuantityKind::Index => "index",
     }
 }
 

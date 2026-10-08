@@ -2397,6 +2397,25 @@ mod tests {
     }
 
     #[test]
+    fn derived_magnetic_index_is_a_quantity_not_a_force_field() {
+        let field_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+        let q = "url https://example.com/q.bin\nttl 604800\n\
+                 quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
+        let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
+        assert_eq!(
+            fc.force, FORCE_TYPE_QUANTITY,
+            "a derived index stays outside Σω"
+        );
+    }
+
+    #[test]
     fn photometric_flux_without_band_is_refused_and_with_band_carries_the_band() {
         let field_of = |content: &str| -> Option<FieldConfig> {
             parse_sources(content).first().and_then(|s| {

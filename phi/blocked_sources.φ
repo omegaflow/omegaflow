@@ -207,3 +207,7 @@ pending
 url http://awesome.ucsd.edu/
 note Sub-ionosphärische VLF AWESOME (GIC-unabhängige Observable §D) — 2026-10-06: DNS tot (000), Wayback 503; unbelegt.
 
+blocked account
+url https://supermag.jhuapl.edu/services/data-api.php
+note SuperMAG SME/SMU/SML Index (GIC-Stufe-2) — 2026-10-08: data-api.php 206/1 B (user-gated, kein keyless Index-Pfad). Rat+Science 2026-10-08: abgeleiteter Index = quantity, nie em. Account future.
+

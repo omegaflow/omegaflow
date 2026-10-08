@@ -3,7 +3,7 @@
   session: Mountain-Folge 276
   class: handover
   date: 2026-10-08
-  sha256: ca63289cfd2c821f2e9994fa14dd190ca3ea7fbabb88dd01b84670927bc7ed1a
+  sha256: 7e89d01dfcb313d2517d9b8298967e7040ceded2947a04815a15330c3140ba37
   status: live
 -->
 # Handover — Mountain-Folge 276 (2026-10-08)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 gemessen 2026-10-08T14:3xZ). Diese Session konsumierte
 `handover-2026-10-08-mountain-folge275.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.1058 · cap 0.50 — Grund: line + archive_search `--all` (Vorbereitung) + Rat-Dispatch (council) + 4 Frontier-UI-Seats + 1 open-weight-Seat (DeepSeek V4 Pro, kein Verdikt) ; kein pro/max. (gemessen `session_burn`, Session „Mountain-Linie in einem Pass starten")
+## Burn: open 0.0000 · close 0.3043 · cap 0.50 — Grund: line + archive_search `--all` + 2 Rat-Dispatches (council) + 2 Wissenschafts-Taucher (general) + ~9 UI-Seats + Bau (`quantity`-Kind `index`); kein pro/max. (gemessen `session_burn`, Session „Mountain-Linie in einem Pass starten")
 
 ## Operator-Wort-Register
 
@@ -27,6 +27,7 @@ Wort | Datum | Quelle
 „das sind allerdings zu wenig stimmen — 3.7 plus ist nicht representativ; zudem kannst du tryingopen auch glm und qwen fahren und andere" — breitere UI-Runde | 2026-10-08 | Operator (Session, Mountain 276)
 „ich glaube du musst nochmal breiter fragen — du hast nicht wirklich die starken stimmen und die wissenschaft gefragt" — Science-Layer + starke Frontier-Seats | 2026-10-08 | Operator (Session, Mountain 276)
 „kimi ist gerade nicht verfügbar und gemini ist nicht so wichtig" — Kimi/Gemini nicht nachziehen; Runde gilt als vollständig | 2026-10-08 | Operator (Session, Mountain 276)
+„ja bitte" — Index-Riss als Mountain-Verdikt `quantity` setzen + die `sources.φ`-Zeilen bauen | 2026-10-08 | Operator (Session, Mountain 276)
 
 ## Offen (aufgeschlüsselt)
 
@@ -46,7 +47,14 @@ Wort | Datum | Quelle
 ### GIC-Stufe-2 — Receiver/force ENTSCHIEDEN; dB/dt-Bestand 2/154
 - **Status:** eigen | **Bindung:** eigen (Register) · river (`compute_max_t`)
 - **Trigger:** AE/AL/AU · SME/SML/SMU als `sources.φ`-Zeilen gebaut
-- **Lage:** (gemessen 2026-10-08 276) **Science + Rat + 9 UI-Seats — RISS, nicht geschlossen:**
+- **Lage:** (gemessen 2026-10-08 276) **Science + Rat + 9 UI-Seats 7:3 — ENTSCHIEDEN
+  (Operator-Wort „ja bitte"): `quantity`, nie Σω.** Gebaut: neue `quantity`-Kind `index`
+  (unit `nt`) in `src/mathematikerin/force.rs` + `src/archivar/units.rs` + Test
+  `derived_magnetic_index_is_a_quantity_not_a_force_field`; die 6 `wdc_ae`-Zeilen
+  (AE/AL/AU + SYM-D/H + Dst, `sources.φ:4087-4092`) von `field … em nT` auf
+  `quantity … index nt` umgestellt; `register_sort` canonical (2691 Blöcke),
+  `cargo check` 0/0. SME/SMU/SML: SuperMAG-Index-Route user-gated (206/1 B) →
+  `phi/blocked_sources.φ` `blocked account`.
   AE/AU/AL · SME/SMU/SML. **Wissenschaft:** reine statistische Reduktion (ISGI/Davis &
   Sugiura 1966 `doi:10.17593/15031-54800`; Gjerloev 2012 `doi:10.1029/2012JA017683`) —
   kein Ausbreitungsmechanismus, der Index hat keine eigene Receiver-Weltlinie; Rohkanal
@@ -59,10 +67,9 @@ Wort | Datum | Quelle
   `gate-no-field-lines`-**refused** (`refusal_ledger.φ:75-76`).
 - **Blockade:** AE/AL/AU + SME/SML/SMU noch nicht als Zeilen gebaut; Receiver als
   deklariertes `FieldConfig`-Feld hat keinen Reader (span-Apertur, s. 275).
-- **Braucht:** den Riss `quantity` vs `em` entscheiden (neuer Rat mit dem Befund,
-  oder Operator-Wort) — erst danach die Zeile bauen; `gate-no-field-lines`-Refusal
-  der 2 dB/dt-Arme lösen oder `blockiert` registrieren; dann River Stufe 2 am
-  `compute_max_t`.
+- **Braucht:** SME/SMU/SML über `blocked account` (SuperMAG-Login, Operator-Hand);
+  `gate-no-field-lines`-Refusal der 2 dB/dt-Arme lösen oder `blockiert` registrieren;
+  dann River Stufe 2 am `compute_max_t`.
 
 ### em-nmgy / Bandreferenz — Parser-Arm GEBAUT; `band_id`-Persistenz + Heim offen
 - **Status:** eigen | **Bindung:** eigen · river (Feld-Erweiterung)
@@ -154,11 +161,12 @@ Wort | Datum | Quelle
   `quantity` (5:2); Fermi-4FGL → `em` (5:2). **Wissenschaft:** INS/NSE-Träger Neutron
   ist kernwechselwirkend (nicht in den 9), Observable = abgeleitete Korrelation;
   Teilchen-Detektoren: schwache/nukleare WW (nicht in den 9), nur em-Readout;
-  GEBCO: akustische Akquisition, Produkt ohne Kraft. **Risse** (getragene Gegenlinien):
-  (a)(b) AE/SME `quantity` 4 vs `em` 3 (Nemotron/DeepSeek/Inkling: gemessene Größe
-  IST B(nT) am Stationsnetz); (c) Wind SWE quantity/thermal/advective; (k) Teilchen
-  quantity/refused/em; (l) GEBCO refused/quantity. Der zentrale Index-Riss steht im
-  Vertrags-Satz `docs/concepts/archivar-mathematikerin.md`.
+  GEBCO: akustische Akquisition, Produkt ohne Kraft.   **Risse** (getragene Gegenlinien):
+  (a)(b) AE/SME — **entschieden `quantity`/`index nt` (Operator-Wort), `wdc_ae`-Zeilen
+  gebaut, SME `blocked account`** (Gegenlinie `em`: Nemotron/DeepSeek V4 Pro/Inkling);
+  (c) Wind SWE quantity/thermal/advective; (k) Teilchen quantity/refused/em;
+  (l) GEBCO refused/quantity. Der entschiedene Index-Satz steht im Vertrags-Satz
+  `docs/concepts/archivar-mathematikerin.md`.
 - **Blockade:** Receiver als deklariertes `FieldConfig`-Feld ohne Reader (span);
   Riss-Arme nicht einhellig.
 - **Braucht:** `sources.φ`-Zeilen für die einhelligen Arme bauen (em/quantity +
@@ -206,7 +214,9 @@ Origin: mountain-folge276.
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und
 Push (stehendes Wort 2026-10-07, Mountain 264).
 
-Eigene Pfade: `docs/concepts/archivar-mathematikerin.md`,
+Eigene Pfade: `src/mathematikerin/force.rs`, `src/archivar/units.rs`,
+`src/archivar/parse.rs`, `phi/sources.φ`, `phi/blocked_sources.φ`,
+`docs/concepts/archivar-mathematikerin.md`,
 `docs/handover/handover-2026-10-08-mountain-folge276.md`,
 `docs/handover/archiv/handover-2026-10-08-mountain-folge275.md` (Move),
 `state/mountain/rat-runde-2026-10-08-source-admission.md` (gitignored),
