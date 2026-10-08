@@ -1,7 +1,9 @@
 use omegaflow::archivar::fetch_raw;
+use omegaflow::archivar::hapi_csv::parse_iso_seconds;
 use omegaflow::cdn::upload_release;
 
 const MAGIC: &[u8; 4] = b"EMTF";
+const HEADER_BYTES: usize = 16;
 const FIELDS: usize = 9;
 const NETLOC: &str = "data.earthscope.org";
 const OUT_PATH: &str = "emtf_usarray.bin";
@@ -14,10 +16,11 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
-fn write_bin(records: &[[f64; FIELDS]]) -> Vec<u8> {
-    let mut out = Vec::with_capacity(8 + records.len() * FIELDS * 8);
+fn write_bin(epoch_unix: f64, records: &[[f64; FIELDS]]) -> Vec<u8> {
+    let mut out = Vec::with_capacity(HEADER_BYTES + records.len() * FIELDS * 8);
     out.extend_from_slice(MAGIC);
     out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    out.extend_from_slice(&epoch_unix.to_le_bytes());
     for r in records {
         for v in r {
             out.extend_from_slice(&v.to_le_bytes());
@@ -26,24 +29,28 @@ fn write_bin(records: &[[f64; FIELDS]]) -> Vec<u8> {
     out
 }
 
-fn parse_bin(bytes: &[u8]) -> Option<Vec<[f64; FIELDS]>> {
+fn parse_bin(bytes: &[u8]) -> Option<(f64, Vec<[f64; FIELDS]>)> {
     if bytes.get(0..4)? != MAGIC {
         return None;
     }
     let n = u32::from_le_bytes(bytes.get(4..8)?.try_into().ok()?) as usize;
-    if bytes.len() != 8 + n * FIELDS * 8 {
+    let epoch_unix = f64::from_le_bytes(bytes.get(8..16)?.try_into().ok()?);
+    if bytes.len() != HEADER_BYTES + n * FIELDS * 8 {
+        return None;
+    }
+    if !epoch_unix.is_finite() {
         return None;
     }
     let mut out = Vec::with_capacity(n);
     for i in 0..n {
         let mut r = [0.0f64; FIELDS];
         for (j, slot) in r.iter_mut().enumerate() {
-            let off = 8 + i * FIELDS * 8 + j * 8;
+            let off = HEADER_BYTES + i * FIELDS * 8 + j * 8;
             *slot = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
         }
         out.push(r);
     }
-    Some(out)
+    Some((epoch_unix, out))
 }
 
 fn field_value(text: &str) -> Option<f64> {
@@ -94,6 +101,12 @@ fn period_blocks(body: &str) -> Vec<&str> {
         rest = &after[end + "</Period>".len()..];
     }
     blocks
+}
+
+fn parse_epoch(body: &str) -> Option<f64> {
+    let start = body.find("<Start>")? + "<Start>".len();
+    let end = body[start..].find("</Start>")? + start;
+    parse_iso_seconds(body[start..end].trim())
 }
 
 fn parse_emtf(body: &str) -> Vec<[f64; FIELDS]> {
@@ -164,14 +177,18 @@ fn main() {
         std::process::exit(2);
     };
 
+    let Some(epoch_unix) = parse_epoch(&body) else {
+        eprintln!("EMTF: the acquisition epoch is absent — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    };
     let mut records = parse_emtf(&body);
     records.sort_by(|a, b| a[0].total_cmp(&b[0]));
-    eprintln!("EMTF: {} periods", records.len());
+    eprintln!("EMTF: {} periods, epoch {epoch_unix} unix", records.len());
     if records.is_empty() {
         eprintln!("no records — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     }
-    let bytes = write_bin(&records);
+    let bytes = write_bin(epoch_unix, &records);
     if let Some(parent) = std::path::Path::new(&out).parent() {
         if !parent.as_os_str().is_empty() {
             if let Err(e) = std::fs::create_dir_all(parent) {
@@ -185,9 +202,9 @@ fn main() {
         std::process::exit(1);
     }
     match parse_bin(&bytes) {
-        Some(parsed) => {
+        Some((parsed_epoch, parsed)) => {
             eprintln!(
-                "{out}: {} periods, roundtrip parses ({} B)",
+                "{out}: {} periods, epoch {parsed_epoch} unix, roundtrip parses ({} B)",
                 parsed.len(),
                 bytes.len()
             );
@@ -253,13 +270,24 @@ mod tests {
     }
 
     #[test]
-    fn bin_roundtrip_preserves_records() {
+    fn bin_roundtrip_preserves_records_and_epoch() {
         let records = parse_emtf(SAMPLE);
-        let bytes = write_bin(&records);
-        assert_eq!(bytes.len(), 8 + records.len() * FIELDS * 8);
-        assert_eq!(parse_bin(&bytes).as_deref(), Some(records.as_slice()));
+        let bytes = write_bin(1_275_444_092.0, &records);
+        assert_eq!(bytes.len(), HEADER_BYTES + records.len() * FIELDS * 8);
+        let parsed = parse_bin(&bytes).expect("roundtrip parses");
+        assert_eq!(parsed.0, 1_275_444_092.0);
+        assert_eq!(parsed.1, records);
         assert!(parse_bin(b"XXXX").is_none());
         let short = &bytes[..bytes.len() - 1];
         assert!(parse_bin(short).is_none());
+    }
+
+    #[test]
+    fn parse_epoch_takes_the_first_start() {
+        let body = "<Site><Start>2010-06-02T02:01:32</Start>\
+                    <End>2010-06-30T16:44:38</End></Site>\
+                    <Instrument><Start>2010-06-05T16:58:25</Start></Instrument>";
+        assert_eq!(parse_epoch(body), Some(1_275_444_092.0));
+        assert_eq!(parse_epoch("<EM_TF></EM_TF>"), None);
     }
 }
