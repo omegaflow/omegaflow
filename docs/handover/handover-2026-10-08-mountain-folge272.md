@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 87f502841174c71ac5374e0474791998075192d75799d5ee6912fe4ec2d8cb9f
+  sha256: cfc1742a1b1e82d2430e4db8ad7c5756f25c353166528ff37479cf43b0eae320
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -30,19 +30,21 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   `descoped` (`state/future/giftkarte-klassifiziert-src-2026-10-07.md:133`).
 - **Rat (5 Stimmen) + Recherche-Schicht (`archive_search`) gefahren** — Verdikte je Punkt
   unten. **UI-Runde:** die konsolidierte 5-Fragen-Frage an 9 Seats (`mountain-ui`) gestellt.
-  **Antworten auf die exakte Frage** (gemessen aus den Tabs): Qwen, Claude (Sonnet 5.5
-  Extra hoch), DeepSeek. **Konvergenz:** Q1 Bootstrap-Cache-Load = Verletzung, Receiver =
-  zwingende Weltlinie (`Receiver(Worldline)`/`admit` → `Refusal` ohne Receiver); Q2 Apertur
-  = Record-`extent`, `span`-Direktiv **streichen**; Q3 nmgy nur mit Filter-/pivot-λ-Referenz
-  als `em`; Q5 Member-Pool nur mit **expliziter Abdeckung**, Lücke sichtbar.
-  **Riss (nicht geglättet):** Q4 — Qwen/DeepSeek: `pending`-mit-Trigger; **Claude:
-  `measured descoped`** („pending verspricht etwas, das die Regel nicht braucht"). Q5 —
-  Qwen/Claude: Pool wirebar mit Abdeckung; **DeepSeek: nicht wirebar** (2/154 = Minderheit
-  an der Stelle des Ganzen), Gegenlinie steht. **Gemessene Nicht-Antworten:** Z.ai/GLM =
-  „Model currently at capacity" (Peak); Duck.ai-Send landete nicht (Composer leer, 2×
-  `not a text-editable element`); AI Studio = Temporary Chat ohne Sendebestätigung;
-  Mistral/MiniMax/Lumo in-thread (Antwort auf die gleichlautende Vor-Batterie: Member-Pool
-  zuerst, Rechte im Register). Max-Thinking/Deep-Search je Seat, wo ein Toggle gemessen wurde.
+  **Antworten auf die exakte Frage** (gemessen aus den Tabs): Duck.ai (GPT-6 Luna), Gemini
+  3.1 Pro (AI Studio), Qwen, Claude (Sonnet 5.5 Extra hoch), DeepSeek-Chat, plus Open-Weight
+  **Inkling** (tryingopen); DeepSeek V4 Pro + GLM 5.3 noch am Antworten = `pending` (1.7T/753B,
+  Reasoning läuft). **Konvergenz (6/6):** Q1 Bootstrap-Cache-Load = Verletzung; Receiver =
+  zwingende per-Record-Weltlinie (`Receiver(WorldlineRef)` / `Receiver<RecordId,Worldline>` /
+  `Future::Worldline<Continuity>`); `admit` → `Refusal` ohne Receiver. Q2 Apertur =
+  Record-`extent`, `span`-Direktiv **streichen**. Q3 nmgy nur mit Filter-/pivot-λ-Referenz
+  als `em` (Inkling nennt ~477 nm für SDSS g). **Riss (nicht geglättet):** Q4 —
+  Qwen/DeepSeek-Chat: `pending`-mit-Trigger; **Claude, Duck(GPT-6), Inkling: `measured
+  descoped`** (kein Messpfad für einen Trigger). Q5 — Qwen/Claude: Pool wirebar mit
+  **expliziter Abdeckung**; **DeepSeek-Chat, Duck, Inkling: nicht wirebar** (2/154 =
+  Minderheit an der Stelle des Ganzen), drei Deskriptoren getrennt. **Gemessene
+  Nicht-Antworten:** Z.ai/GLM = „Model currently at capacity" (Peak, 2× gemessen, kein
+  Send); Mistral/MiniMax/Lumo bisher nur die gleichlautende Vor-Batterie (Member-Pool zuerst,
+  Rechte im Register). Max-Thinking/Deep-Search je Seat, wo ein Toggle gemessen wurde.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
