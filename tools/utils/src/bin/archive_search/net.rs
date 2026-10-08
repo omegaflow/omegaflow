@@ -1977,6 +1977,256 @@ fn ia_search_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+fn kv_token(query: &str, key: &str) -> Option<String> {
+    query.split_whitespace().find_map(|t| {
+        t.split_once('=')
+            .and_then(|(k, v)| if k == key { Some(v.to_string()) } else { None })
+    })
+}
+
+fn error_detail(body: &str) -> String {
+    if let Some(v) = json::parse(body) {
+        for k in ["error", "detail", "message", "msg"] {
+            if let Some(s) = v.get(k).and_then(|m| m.as_str()) {
+                if !s.is_empty() {
+                    return s.to_string();
+                }
+            }
+        }
+    }
+    let clipped: String = body.chars().take(160).collect();
+    clipped
+}
+
+fn json_compact(v: &Json) -> String {
+    match v {
+        Json::Null => "null".to_string(),
+        Json::Bool(b) => {
+            if *b {
+                "true".to_string()
+            } else {
+                "false".to_string()
+            }
+        }
+        Json::Num(n) => {
+            if n.is_finite() {
+                format!("{n}")
+            } else {
+                "null".to_string()
+            }
+        }
+        Json::Str(s) => format!("\"{}\"", s.replace('\\', "\\\\").replace('"', "\\\"")),
+        Json::Arr(a) => {
+            let parts: Vec<String> = a.iter().map(json_compact).collect();
+            format!("[{}]", parts.join(","))
+        }
+        Json::Obj(m) => {
+            let mut keys: Vec<&String> = m.keys().collect();
+            keys.sort();
+            let parts: Vec<String> = keys
+                .iter()
+                .map(|k| format!("\"{}\":{}", k, json_compact(&m[*k])))
+                .collect();
+            format!("{{{}}}", parts.join(","))
+        }
+    }
+}
+
+pub fn shodan_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — SHODAN_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    if query.split_whitespace().count() != 1 || query.trim().is_empty() {
+        return vec![format!(
+            "pending — shodan uses the free-tier host lookup: pass a single ip (got: {})",
+            query
+        )];
+    }
+    let target = query.trim();
+    let url = format!(
+        "https://api.shodan.io/shodan/host/{}?key={}",
+        urlencode(target),
+        urlencode(token)
+    );
+    match get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let mut out = shodan_host_results(&v, max);
+                if out.is_empty() {
+                    out.push(format!("absent — Shodan carries no host for {}", target));
+                }
+                out
+            }
+            None => vec!["pending — the Shodan response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!(
+            "pending — Shodan HTTP {} {}",
+            f.status_text(),
+            error_detail(&f.body)
+        )],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn shodan_host_results(v: &Json, max: usize) -> Vec<String> {
+    let ip = v.get("ip_str").and_then(|i| i.as_str()).unwrap_or("");
+    if ip.is_empty() {
+        return Vec::new();
+    }
+    let mut line = format!("url https://www.shodan.io/host/{}\tip: {}", ip, ip);
+    if let Some(ports) = v.get("ports").and_then(|p| p.as_arr()) {
+        let list: Vec<String> = ports.iter().filter_map(|p| p.as_scalar_string()).collect();
+        if !list.is_empty() {
+            line.push_str(&format!("\tports: {}", list.join(",")));
+        }
+    }
+    if let Some(org) = v.get("org").and_then(|o| o.as_str()) {
+        if !org.is_empty() {
+            line.push_str(&format!("\torg: {}", org));
+        }
+    }
+    if let Some(country) = v.get("country_name").and_then(|c| c.as_str()) {
+        if !country.is_empty() {
+            line.push_str(&format!("\tcountry: {}", country));
+        }
+    }
+    let mut out = vec![line];
+    if let Some(data) = v.get("data").and_then(|d| d.as_arr()) {
+        for banner in data.iter().take(max.saturating_sub(1)) {
+            let text = banner.get("data").and_then(|d| d.as_str()).map(flatten);
+            if let Some(text) = text {
+                if !text.is_empty() {
+                    let clipped: String = text.chars().take(120).collect();
+                    out.push(format!("  banner: {}", clipped));
+                }
+            }
+        }
+    }
+    out
+}
+
+pub fn opencellid_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — OPENCELLID_API_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let (Some(mcc), Some(mnc), Some(lac), Some(cellid)) = (
+        kv_token(query, "mcc"),
+        kv_token(query, "mnc"),
+        kv_token(query, "lac"),
+        kv_token(query, "cellid"),
+    ) else {
+        return vec![format!(
+            "pending — OpenCelliD needs mcc=<..> mnc=<..> lac=<..> cellid=<..> [radio=..] (got: {})",
+            query
+        )];
+    };
+    let mut url = format!(
+        "https://opencellid.org/cell/get?key={}&mcc={}&mnc={}&lac={}&cellid={}&format=json",
+        urlencode(token),
+        urlencode(&mcc),
+        urlencode(&mnc),
+        urlencode(&lac),
+        urlencode(&cellid)
+    );
+    if let Some(radio) = kv_token(query, "radio") {
+        url.push_str(&format!("&radio={}", urlencode(&radio)));
+    }
+    match get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => opencellid_results(&v, &query)
+                .into_iter()
+                .take(max)
+                .collect(),
+            None => vec!["pending — the OpenCelliD response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — OpenCelliD HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn opencellid_results(v: &Json, query: &str) -> Vec<String> {
+    for key in ["error", "err", "message"] {
+        if let Some(msg) = v.get(key).and_then(|m| m.as_str()) {
+            return vec![format!("pending — OpenCelliD: {}", msg)];
+        }
+    }
+    let lat = v.get("lat").and_then(|x| x.as_scalar_string());
+    let lon = v.get("lon").and_then(|x| x.as_scalar_string());
+    match (lat, lon) {
+        (Some(lat), Some(lon)) => {
+            let mut line = format!(
+                "url https://www.opencellid.org/#zoom=16&lat={}&lon={}\tlat: {}\tlon: {}",
+                lat, lon, lat, lon
+            );
+            if let Some(range) = v.get("range").and_then(|r| r.as_scalar_string()) {
+                line.push_str(&format!("\trange: {}", range));
+            }
+            if let Some(samples) = v.get("samples").and_then(|s| s.as_scalar_string()) {
+                line.push_str(&format!("\tsamples: {}", samples));
+            }
+            vec![line]
+        }
+        _ => vec![format!(
+            "absent — OpenCelliD carries no position for {}",
+            query
+        )],
+    }
+}
+
+pub fn gfw_lines(query: &str, token: &str, max: usize) -> Vec<String> {
+    if token.is_empty() {
+        return vec!["pending — GFW_PI_KEY absent from .secrets.local/.env".to_string()];
+    }
+    let dataset = kv_token(query, "dataset")
+        .or_else(|| query.split_whitespace().next().map(|s| s.to_string()));
+    let Some(dataset) = dataset else {
+        return vec!["pending — gfw needs dataset=<name> [sql=<select>]".to_string()];
+    };
+    let sql = match kv_token(query, "sql") {
+        Some(s) => s,
+        None => format!("SELECT * FROM data LIMIT {}", max),
+    };
+    let url = format!(
+        "https://data-api.globalforestwatch.org/dataset/{}/latest/query/json?sql={}&x-api-key={}",
+        urlencode(&dataset),
+        urlencode(&sql),
+        urlencode(token)
+    );
+    let auth = format!("x-api-key: {}", token);
+    let headers = [auth.as_str()];
+    match get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => gfw_results(&v, max),
+            None => vec!["pending — the GFW response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!(
+            "pending — GFW HTTP {} {}",
+            f.status_text(),
+            error_detail(&f.body)
+        )],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn gfw_results(v: &Json, max: usize) -> Vec<String> {
+    let Some(data) = v.get("data").and_then(|d| d.as_arr()) else {
+        let status = v.get("status").and_then(|s| s.as_str()).unwrap_or("?");
+        let msg = v.get("message").and_then(|m| m.as_str()).unwrap_or("");
+        return vec![format!("pending — GFW status {} {}", status, msg)];
+    };
+    let mut out = Vec::new();
+    for row in data {
+        out.push(format!("[gfw] {}", json_compact(row)));
+        if out.len() >= max {
+            break;
+        }
+    }
+    if out.is_empty() {
+        out.push("absent — GFW query carried no rows".to_string());
+    }
+    out
+}
+
 pub fn linkup_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — LINKUP_API_KEY absent from .secrets.local/.env".to_string()];
@@ -2146,6 +2396,9 @@ const QUERY_MODES: &[&str] = &[
     "hal",
     "wiby",
     "ia-search",
+    "shodan",
+    "opencellid",
+    "gfw",
     "datacite",
     "zenodo",
     "wayback",
@@ -2365,6 +2618,49 @@ pub fn run_lines(
         "hal" => hal_lines(query, max),
         "wiby" => wiby_lines(query, max),
         "ia-search" => ia_search_lines(query, max),
+        "shodan" => {
+            let token = resolve_key(
+                env.get("SHODAN_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => shodan_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("SHODAN_API_KEY", marker)
+                )],
+            }
+        }
+        "opencellid" => {
+            let token = resolve_key(
+                env.get("OPENCELLID_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => opencellid_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("OPENCELLID_API_KEY", marker)
+                )],
+            }
+        }
+        "gfw" => {
+            let raw = env
+                .get("GFW_PI_KEY")
+                .or_else(|| env.get("GFW_API_KEY"))
+                .map(String::as_str)
+                .unwrap_or("");
+            let token = resolve_key(raw, env);
+            match token {
+                Secret::Value(t) => gfw_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("GFW_PI_KEY", marker)
+                )],
+            }
+        }
         "linkup" => {
             let token = resolve_key(
                 env.get("LINKUP_API_KEY").map(String::as_str).unwrap_or(""),
@@ -2558,6 +2854,9 @@ mod tests {
             "hal",
             "wiby",
             "ia-search",
+            "shodan",
+            "opencellid",
+            "gfw",
             "datacite",
             "zenodo",
             "wayback",

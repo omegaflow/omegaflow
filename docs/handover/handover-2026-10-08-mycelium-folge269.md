@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 63b97f02813343c64f5723161e2ee5c53756661c57a57b820b2491dde247bae4
+  sha256: 2589bee9288c6c68719f569649e169bf2776f0de41dd2f5b0528113256da8593
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0028 · close 0.30 · cap 0.5 — Grund: Meta-Pass + KC2G + Rat/Diver/UI (ci-gate) + `--searxng`/4 SERP-Arme gebaut + FMHY Runde 2 (3 Diver) + verdict-Kurzschluss; kein pro/max; gemessen `session_burn`
+## Burn: open 0.0028 · close 0.46 · cap 0.5 — Grund: Meta-Pass + KC2G + Rat/Diver/UI (ci-gate) + 16 Arme gebaut (searxng/SERP/oeis/hal/wiby/ia/shodan/opencellid/gfw) + FMHY + verdict-Kurzschluss; kein pro/max; gemessen `session_burn`
 
 ## Operator-Wort-Register
 
@@ -39,6 +39,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „SERPER_API_KEY · FIRECRAWL_API_KEY · SEARCHAPI_API_KEY · SERPAPI_API_KEY sind drin; jina ist raus — negativer Saldo" | Quelle: diese Session. → 4 Arme gebaut, Jina Search entfällt.
 - 2026-10-08 | „wir haben ja schonmal eine fmhy.net-Vermessung gemacht, aber uns gehen noch spannende (legale!) Quellen ab — nochmal Agenten auf die Seite loslassen" | Quelle: diese Session. → FMHY Runde 2 (3 Diver), neue Kandidaten im Handover.
 - 2026-10-08 | „ich hätte gerne alle" (die FMHY-Runde-2-Arme) | Quelle: diese Session. → `--oeis`/`--hal`/`--wiby`/`--ia-search` gebaut.
+- 2026-10-08 | „probier mal, ich hab alle drei keys jetzt drin" (Shodan/OpenCelliD/GFW) | Quelle: diese Session. → `--opencellid` + `--shodan` live; `--gfw` wartet auf gültigen Key.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -73,7 +74,7 @@ Sender-Zeilen in `## An <line>`.
 
 ### Pipeline — INPE-BIG-Kandidat (`phi/pipeline/ledger.φ`)
 - **Status:** wartend | **Bindung:** eigen (Ernte-Verdrahtung) · auf Mountain
-- **Trigger:** Mountains Zulassungs-/Dispositions-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge273.md` §Pipeline-5)
+- **Trigger:** Mountains Zulassungs-/Dispositions-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge275.md` §Pipeline-5)
 - **Lage:** (gemessen 2026-10-07) die 5 Alt-Einträge auf `disponiert`; neu `https://data.inpe.br/big/` (STAC/GeoTIFF, em; 2026-10-07 HTTP 200, 192329 B) als eigener Kandidat.
 - **Blockade:** Mountains Zulassung.
 - **Braucht:** Mountains Dispositions-Verdikt; dann Ernte-Verdrahtung.
@@ -94,14 +95,14 @@ Sender-Zeilen in `## An <line>`.
 
 ### Manifestation der neuen Routen (from future-199/200)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge273.md`)
+- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge275.md`)
 - **Lage:** (gemessen 2026-10-08, `register_lookup --addressed mycelium`) THEMIS-HAPI/CDAWeb, ROTI-DLR-`latest`, SuperDARN-Plots + Zenodo-CPCP harren der Manifestations-Direktiven (`url`/`origin`/`compiler`/Tags).
 - **Blockade:** Mountains Verdikt zuerst.
 - **Braucht:** Mountains Admission; dann schreibt Mycelium die `url`/`origin`/`compiler`/Tags.
 
 ### `hadisst-cdn.yml` — Dispatch nach Admission (from mountain-272)
 - **Status:** wartend | **Bindung:** eigen (CI-Dispatch)
-- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge273.md`)
+- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge275.md`)
 - **Lage:** (gemessen 2026-10-08) Workflow steht, noch nicht dispatcht; Asset im CDN erst nach Admission sichtbar.
 - **Blockade:** Mountains Admission.
 - **Braucht:** `gh workflow run hadisst-cdn.yml` nach Admission; sha je Asset ins Register.
@@ -119,6 +120,13 @@ Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-08, 3 Diver über `educational`/`reading`/`developer-tools`/`internet-tools`/`storage`/`misc`/`image`/`text`/`file`/`system-tools`) die FMHY-Erd-/Weltraum-Landschaft ist im Baum weitgehend registriert; **neue, verifizierte Kandidaten (nicht in `phi/` registriert, kein `archive_search`-Modus):** Daten/Research: **USGS NGMDB** (`https://ngmdb.usgs.gov/ArcGIS/rest/services?f=pjson`, 206) · **Internet Archive advancedsearch** (`https://archive.org/advancedsearch.php?q=…&output=json`, 200) · **HAL** (`https://api.archives-ouvertes.fr/search/?q=…&wt=json`, 206) · **OEIS** (`https://oeis.org/search?q=…&fmt=json`, 200) · **OAPEN** (OAI `library.oapen.org/oai/request`, 200) · **deps.dev API** (keyless). Suche/Infra: **Wiby JSON** (`https://wiby.me/json/?q=`, 200) · **RSS-Bridge** (`rss-bridge.org`, 200) · **Kiwix** (`download.kiwix.org/zim/…`, 200) · **web.scraper.workers.dev** (200) · **Shodan/OpenCelliD/Global Forest Watch** (free key). Reader/OCR-Kandidaten: **Tesseract · OCRmyPDF · Marker · Docling · MarkItDown · exifTool · ImageMagick · qsv/xan (Rust)**.
 - **Blockade:** —
 - **Braucht:** `gh workflow run tools-build.yml` nach dem Push (Rolling-Release trägt die Arme); **gebaut (dieses Atom): `--oeis` · `--hal` · `--wiby` · `--ia-search`** (keyless JSON, end-to-end grün). Ferner offen (Operator/Mountain): `--ngmdb` (ArcGIS-Endpunkt noch nicht sauber gemessen), OAPEN (OAI/XML), Reader/OCR-Sidecars (Tesseract/OCRmyPDF/Marker/Docling/MarkItDown/exifTool/ImageMagick/qsv).
+
+### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
+- **Status:** teil-gebaut | **Bindung:** eigen (tools/utils) + operator (GFW-Key)
+- **Trigger:** ein gültiger GFW-Data-API-Key in `.secrets.local`
+- **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples; `OPENCELLID_API_KEY`). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); die Suche (`/shodan/host/search`) verlangt **Membership** (HTTP 403 „Requires membership or higher"), free-tier = Host-Lookup. **`--gfw` gebaut**, aber HTTP 403 „Request is missing valid API key" — der gespeicherte `GFW_PI_KEY` ist kein gültiger Data-API-Key (Auth-Token ≠ API-Key).
+- **Blockade:** GFW-API-Key fehlt (Okta-Konto existiert; `/auth/apikey` noch nicht gelaufen).
+- **Braucht:** `POST /auth/token` → `access_token`; `POST /auth/apikey` → API-Key; diesen als `GFW_PI_KEY` in `.secrets.local`.
 
 ## An mountain
 
