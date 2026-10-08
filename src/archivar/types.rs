@@ -126,6 +126,7 @@ pub struct DeclaredBody {
     pub lat: f64,
     pub lon: f64,
     pub alt: Option<f64>,
+    pub receiver_aperture: ReceiverAperture,
 }
 
 #[derive(Clone)]
@@ -332,6 +333,39 @@ impl ReceiverAperture {
         if let Some(i) = Self::index(force, class) {
             self.slots[i] = Some(length);
         }
+    }
+
+    pub fn resolve(&self, force: u8, class: Aperture) -> Option<f64> {
+        self.get(force, class)
+    }
+
+    pub fn parse_declaration(spec: &str) -> Self {
+        let mut aperture = Self::new();
+        for entry in spec.split(',') {
+            let mut parts = entry.split(':');
+            let Some(force_name) = parts.next() else {
+                continue;
+            };
+            let Some(class_name) = parts.next() else {
+                continue;
+            };
+            let Some(length_spec) = parts.next() else {
+                continue;
+            };
+            let Some(force) = force_id_of(force_name) else {
+                continue;
+            };
+            let Some(class) = Aperture::of_class(class_name) else {
+                continue;
+            };
+            let Ok(length) = length_spec.parse::<f64>() else {
+                continue;
+            };
+            if length.is_finite() && length > 0.0 {
+                aperture.set(force, class, length);
+            }
+        }
+        aperture
     }
 }
 
