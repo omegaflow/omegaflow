@@ -5822,6 +5822,7 @@ fn test_anchor_body_agnostic() {
         Some(&src.frame),
         Some(&mut origin_state),
         &eph,
+        None,
     );
     assert!(sample.is_some(), "sample is None");
     let sample = sample.unwrap();
@@ -5972,6 +5973,7 @@ fn test_anchor_applies_declared_unit() {
         Some(&src.frame),
         Some(&mut origin_state),
         &eph,
+        None,
     );
     assert!(sample.is_some(), "sample is None");
     let sample = sample.unwrap();
@@ -7875,6 +7877,7 @@ fn test_query_admits_surface_sample_within_window() {
         Some(&frame),
         None,
         &eph_map,
+        None,
     )
     .expect("argo sample anchors");
     let hash = super::build_spatial_hash(vec![Arc::new(sample)], 1.0);
