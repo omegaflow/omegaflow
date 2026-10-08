@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: fa7d67f991cfdcce06179edb5386ba09546214f4f55699c2d0d8d23e520fbb42
+  sha256: 84f0d214d5fc1bb87a08d05df106d444e35be66e83b66dd954a2bd2fd6b0e06f
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -52,6 +52,18 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   Z.ai erst `GLM-5.3-Flash`, dann GLM-5.3). **Gemessene Nicht-Antwort:** Z.ai/GLM-Frontier war am Peak
   „Model currently at capacity" (2×), antwortete später als GLM-5.3. Max-Thinking/Deep-Search je
   Seat, wo ein Toggle gemessen wurde.
+
+  **Max-Settings-Runde (2026-10-08, erneut, je stärkste Variante + Max):** Claude **Sonnet 5.5
+  Maximal** (neu verfügbar), Gemini 3.1 Pro **Thinking High**, Duck **GPT-6 Luna + Begründung**,
+  Qwen **3.8-Max**, DeepSeek **DeepThink + Search**, Z.ai **GLM-5.3**, Mistral, MiniMax **M3**,
+  Lumo **2.0 Max** erneut gesendet. Vollständig gelesen: **Claude** und **Gemini** (neu). Claude
+  liefert die **einzige Q2-Abweichung**: die Apertur ist ein deklarierter **Receiver-`span`**
+  (`receiver.span`, Schnitt mit `extent`) — *verdrahten*; die übrigen Seats: Record-`extent`,
+  *streichen*. Sonst bestätigt die Frontier-Runde: Q1 Verletzung (Claude: `Admitted`-Token,
+  `load` annimmt nur den Gate-Token), Q3 Bandpass-Referenz Pflicht, **Q4 `measured descoped`**,
+  Q5 nicht als einheitlicher Pool (Claude: arm-weise, 2/154-Gegenlinie bleibt). **Offen:** Open-
+  Weight **DeepSeek V4 Pro (1.7T)** + **GLM 5.3 (753B)** nach >1 min weiter „Thinking…" = `pending`
+  (Lock gesetzt/entfernt, Gruppe JIT geschlossen).
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
