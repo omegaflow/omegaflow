@@ -1250,6 +1250,7 @@ pub fn anchor(
     frame: Option<&Frame>,
     mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
+    span: Option<f64>,
 ) -> Option<Sample> {
     if sensor.tau <= 0.0 {
         return None;
@@ -1350,6 +1351,9 @@ pub fn anchor(
     if !extent.is_finite() {
         return None;
     }
+    let extent = span
+        .filter(|s| s.is_finite() && *s > 0.0)
+        .map_or(extent, |s| extent.min(s));
     Some(Sample {
         source: match source_idx {
             Some(idx) => SampleSource::Source(idx),
