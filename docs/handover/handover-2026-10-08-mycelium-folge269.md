@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 269 (2026-10-08)
-  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Zweite Fortsetzung („und bitte umsetzen"): `--oapen` (OAI-PMH) gebaut, `ocr_reader`-PDF-Pfad am echten PDF verifiziert, `--gfw`-SQL-/Geometry-Bug repariert; deps.dev `descoped`. Dritte Fortsetzung („bitte fixen" + Meta-API-Recherche): `--gfw` Vektor (`wdpa_protected_areas`) und Raster (Polygon-Geometry) live verifiziert; **IVOA RegTAP** (`dc.g-vo.org/tap`, 32 380 Ressourcen) und **apis.guru** (2529 APIs) als Meta-APIs gemessen.
+  session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert. Fortsetzung (Operator-Wort): die vier FMHY-Runde-2-Arme (`--ngmdb`/`--rss-bridge`/`--kiwix`/`--scrape`) + zwei Reader-Sidecars (`ocr_reader`/`meta_reader`) per zwei parallelen `grind-flash`-Tauchern gebaut und live gemessen. Zweite Fortsetzung („und bitte umsetzen"): `--oapen` (OAI-PMH) gebaut, `ocr_reader`-PDF-Pfad am echten PDF verifiziert, `--gfw`-SQL-/Geometry-Bug repariert; deps.dev `descoped`. Dritte Fortsetzung („bitte fixen" + Meta-API-Recherche): `--gfw` Vektor (`wdpa_protected_areas`) und Raster (Polygon-Geometry) live verifiziert; **IVOA RegTAP** (`dc.g-vo.org/tap`, 32 380 Ressourcen) und **apis.guru** (2529 APIs) als Meta-APIs gemessen. Vierte Fortsetzung („nicht nur astro"): die Meta-APIs durchsuchbar gemacht — `--regtap` (VO-Registry, ADQL) und `--apis` (apis.guru).
   class: handover
   date: 2026-10-08
-  sha256: a39c91321d2b66f0d99489f5a0725cb9b8fe097820a9b2dba7e3f23f13dfc136
+  sha256: 10eaeb16ee6384e359ed387463d31f1a88a53fe914e8f31a3275bf61bc009c99
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -16,7 +16,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge268.md` (
 Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte liegen als
 Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.000 · close 0.17 · cap 0.5 — Grund: Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.1690): vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) + `--oapen` + zwei Reader-Bins (ocr_reader/meta_reader) gebaut; `ocr_reader`-PDF-Pfad, `--gfw` Vektor+Raster und die Meta-API-Recherche (RegTAP/apis.guru) live gemessen — per `grind-flash`/`general`-Tauchern. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf).
+## Burn: open 0.000 · close 0.21 · cap 0.5 — Grund: Session „Mycelium Agenten Runde 2: Sucharme umsetzen" (gemessen `session_burn` $0.2075): vier FMHY-Runde-2-Arme (ngmdb/rss-bridge/kiwix/scrape) + `--oapen` + `--regtap` + `--apis` + zwei Reader-Bins (ocr_reader/meta_reader) gebaut; `ocr_reader`-PDF-Pfad, `--gfw` Vektor+Raster und die Meta-API-Recherche (RegTAP/apis.guru) live gemessen — per `grind-flash`/`general`-Tauchern. Kein pro/max. Die Vorgänger-Session dieses Registers schloss bei $0.46 (Meta-Pass, 16 Arme, ci-gate Per-SHA; im git-Verlauf).
 
 ## Operator-Wort-Register
 
@@ -46,6 +46,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „falls du die GFW-SQL-Tabelle brauchst, das ist der einzige offene Feinschliff" | Quelle: diese Session. → `--gfw`-Fix: Multi-Wort-SQL, Default-Tabelle = Dataset, `geostore_id`/`geometry`(POST).
 - 2026-10-08 | „und bitte umsetzen" (die restlichen offenen FMHY-/Reader-Punkte) | Quelle: diese Session. → `--oapen`-Arm (OAI-PMH) gebaut; `ocr_reader`-PDF-Pfad am echten PDF verifiziert; deps.dev `descoped`.
 - 2026-10-08 | „bitte fixen" (GFW-Rückgabe) + „mache auch noch eine recherche mit dem neuen archive search … es gibt doch eine art meta api für alle apis oder VOs oder astro apis" | Quelle: diese Session. → `--gfw` Vektor (`wdpa_protected_areas`) **und** Raster (Polygon-Geometry) live verifiziert; Meta-API-Recherche: **IVOA RegTAP** (`dc.g-vo.org/tap`, 32 380 Ressourcen) + **apis.guru** (2529 APIs).
+- 2026-10-08 | „aber wir sind doch nicht nur astro … [die Meta-API] müssen doch auch durchsuchbar sein" | Quelle: diese Session. → zwei Arme gebaut: `--regtap` (VO-Registry, ADQL über `rr.resource`) und `--apis` (apis.guru, alle Web-APIs), beide live gemessen.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -127,12 +128,13 @@ Sender-Zeilen in `## An <line>`.
 - **Blockade:** —
 - **Braucht:** `gh workflow run tools-build.yml` nach dem Push; CI verifiziert Parser je Arm.
 
-### Meta-API für alle APIs / VOs / Astro-APIs (Operator-Recherche 2026-10-08)
-- **Status:** eigen (Recherche) → Mountain (Admission)
-- **Trigger:** Operator-Wort (Registrierung)
-- **Lage:** (gemessen 2026-10-08, `archive_search`-Arme + `--verdict` + direkte TAP-Abfrage) **Die Meta-API der VOs ist IVOA RegTAP:** `http://dc.g-vo.org/tap/sync` (ADQL; `rr.resource` **32 380** Ressourcen, `rr.capability` **128 301**; Schema `rr.*` = 22 Tabellen) — Alias `http://reg.g-vo.org/tap` (https: TLS-Namens-Mismatch), EURO-VO-Kopie `https://registry.euro-vo.org/eurovo/regtap/tap` (`rr.resource` 32 362), GAVO-Potsdam `http://gavo.aip.de/tap` (128 292); **Registry of Registries** `http://rofr.ivoa.net` (indexiert die Registry-Endpunkte). **Meta-API aller Web-APIs:** **apis.guru** `https://api.apis.guru/v2/list.json` (**2529** APIs, **3992** Specs, 108 837 Endpoints), daneben `public-apis` (~2058), `apis.io`, `apis.directory`, `openapi.city` (94). Abwesend: `registry.ivoa.net` (DNS), `registry.euro-vo.org/tap` (404, alter Pfad). Eigene Verifikation: RegTAP-Query lieferte `ivo://fai.kz/soft_order_obs/q/orderobs`; apis.guru `metrics.json` = `{numAPIs:2529, numSpecs:3992}`.
+### Meta-API für alle APIs / VOs / Astro-APIs (Operator-Recherche 2026-10-08) — gebaut
+- **Status:** gebaut | **Bindung:** eigen (tools/utils) → Mountain (Admission)
+- **Trigger:** der nächste `tools-build`-Lauf
+- **Lage:** (gemessen 2026-10-08, `archive_search`-Arme + `--verdict` + TAP) **Die Meta-API der VOs ist IVOA RegTAP:** `http://dc.g-vo.org/tap/sync` (ADQL; `rr.resource` **32 380** Ressourcen, `rr.capability` **128 301**; Schema `rr.*` = 22 Tabellen) — Alias `http://reg.g-vo.org/tap` (https: TLS-Namens-Mismatch), EURO-VO-Kopie `https://registry.euro-vo.org/eurovo/regtap/tap` (`rr.resource` 32 362), GAVO-Potsdam `http://gavo.aip.de/tap` (128 292); **Registry of Registries** `http://rofr.ivoa.net`. **Meta-API aller Web-APIs:** **apis.guru** `https://api.apis.guru/v2/list.json` (**2529** APIs, **3992** Specs, 108 837 Endpoints), daneben `public-apis` (~2058), `apis.io`, `apis.directory`, `openapi.city` (94). Abwesend: `registry.ivoa.net` (DNS), `registry.euro-vo.org/tap` (404, alter Pfad). Eigene Verifikation: RegTAP-Query lieferte `ivo://fai.kz/soft_order_obs/q/orderobs`; apis.guru `metrics.json` = `{numAPIs:2529, numSpecs:3992}`.
+- **Gebaut (2026-10-08):** `--regtap <kw>` (RegTAP/ADQL über `rr.resource`, `ivo_nocasematch` in Titel+Beschreibung; Mirror-Fallback `registry.euro-vo.org/eurovo/regtap/tap`) und `--apis <kw>` (apis.guru `list.json`, 8,8 MB, Client-Filter über provider/Titel/Beschreibung; ~5–6 s, Parser trägt die 8,8 MB). Live: `--regtap "black hole"` → `ivo://cds.vizier/j/a+a/713/a139`; `--apis weather` → `groundhog-day.com`/`interzoid.com:getweathercity`.
 - **Blockade:** —
-- **Braucht:** Mountain: **IVOA RegTAP** (`dc.g-vo.org/tap`) + **apis.guru** als Discovery-Routen in `phi/sources.φ` registrieren; danach ggf. ein `--regtap`-Arm (TAP/ADQL) in `tools/utils` (deckt sich mit der VO-Katalog-Frage unten).
+- **Braucht:** Mountain: **IVOA RegTAP** (`dc.g-vo.org/tap`) + **apis.guru** als Discovery-Routen in `phi/sources.φ` registrieren; `--regtap`/`--apis` gehen über den nächsten `tools-build` in den PATH-Wrapper. Deckt sich mit der VO-Katalog-Frage unten (live Query vs. statischer Index).
 
 ### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
 - **Status:** gebaut | **Bindung:** eigen (tools/utils)

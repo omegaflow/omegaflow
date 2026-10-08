@@ -2329,6 +2329,167 @@ pub fn oapen_lines(query: &str, max: usize) -> Vec<String> {
     }
 }
 
+pub fn regtap_lines(query: &str, max: usize) -> Vec<String> {
+    let keyword = query.trim();
+    if keyword.is_empty() {
+        return vec!["pending — regtap needs a keyword".to_string()];
+    }
+    let sanitized = keyword.replace('\'', "''");
+    let adql = format!(
+        "SELECT TOP {max} ivoid, res_title, res_description FROM rr.resource WHERE 1=ivo_nocasematch(res_title, '%{sanitized}%') OR 1=ivo_nocasematch(res_description, '%{sanitized}%')"
+    );
+    let path = format!(
+        "/sync?request=doQuery&lang=ADQL&format=json&query={}",
+        urlencode(&adql)
+    );
+    let headers = ["-H", "Accept: application/json"];
+    let primary = get(&format!("http://dc.g-vo.org/tap{path}"), &headers, "40");
+    let primary_status = primary.as_ref().and_then(|f| f.status);
+    if let Some(f) = &primary {
+        if f.status == Some(200) {
+            if let Some(out) = regtap_body(&f.body, max) {
+                return regtap_result(out, query);
+            }
+        }
+    }
+    let mirror = get(
+        &format!("https://registry.euro-vo.org/eurovo/regtap/tap{path}"),
+        &headers,
+        "40",
+    );
+    if let Some(f) = &mirror {
+        if f.status == Some(200) {
+            if let Some(out) = regtap_body(&f.body, max) {
+                return regtap_result(out, query);
+            }
+        }
+    }
+    match primary_status {
+        Some(s) => vec![format!("pending — RegTAP HTTP {s}")],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn regtap_body(body: &str, max: usize) -> Option<Vec<String>> {
+    let v = json::parse(body)?;
+    let rows = v.get("data").and_then(|d| d.as_arr())?;
+    let mut out = Vec::new();
+    for row in rows {
+        let Some(cols) = row.as_arr() else {
+            continue;
+        };
+        let ivoid = cols.first().and_then(|c| c.as_str()).unwrap_or("");
+        if ivoid.is_empty() {
+            continue;
+        }
+        let title = cols.get(1).and_then(|c| c.as_str()).unwrap_or("");
+        let mut line = format!("url {ivoid}\ttitle: {title}");
+        if let Some(desc) = cols.get(2).and_then(|c| c.as_str()) {
+            if !desc.trim().is_empty() {
+                line.push_str(&format!("\tdescription: {}", regtap_clip(desc)));
+            }
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    Some(out)
+}
+
+fn regtap_result(out: Vec<String>, query: &str) -> Vec<String> {
+    if out.is_empty() {
+        vec![format!("absent — RegTAP carries no resource: {query}")]
+    } else {
+        out
+    }
+}
+
+fn regtap_clip(s: &str) -> String {
+    let flat = flatten(s);
+    if flat.chars().count() <= 160 {
+        return flat;
+    }
+    let mut out: String = flat.chars().take(160).collect();
+    out.push('…');
+    out
+}
+
+pub fn apis_lines(query: &str, max: usize) -> Vec<String> {
+    let keyword = query.trim();
+    if keyword.is_empty() {
+        return vec!["pending — apis needs a keyword".to_string()];
+    }
+    let needle = keyword.to_lowercase();
+    let headers = ["-H", "Accept: application/json"];
+    match get("https://api.apis.guru/v2/list.json", &headers, "60") {
+        Some(f) if f.status == Some(200) => match apis_body(&f.body, &needle, max) {
+            Some(out) if !out.is_empty() => out,
+            Some(_) => vec![format!("absent — apis.guru carries no API: {query}")],
+            None => vec!["pending — the apis.guru response carries no JSON".to_string()],
+        },
+        Some(f) => vec![format!("pending — apis.guru HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn apis_body(body: &str, needle: &str, max: usize) -> Option<Vec<String>> {
+    let Json::Obj(providers) = json::parse(body)? else {
+        return None;
+    };
+    let mut keys: Vec<&String> = providers.keys().collect();
+    keys.sort();
+    let mut out = Vec::new();
+    for provider in keys {
+        let Some(pv) = providers.get(provider) else {
+            continue;
+        };
+        let versions = pv.get("versions");
+        let entry = match pv.get("preferred").and_then(|p| p.as_str()) {
+            Some(pref) => versions.and_then(|vs| vs.get(pref)),
+            None => versions.and_then(|vs| match vs {
+                Json::Obj(map) => map.values().next(),
+                _ => None,
+            }),
+        };
+        let Some(entry) = entry else {
+            continue;
+        };
+        let info = entry.get("info");
+        let title = info
+            .and_then(|i| i.get("title"))
+            .and_then(|t| t.as_str())
+            .unwrap_or("");
+        let desc = info
+            .and_then(|i| i.get("description"))
+            .and_then(|d| d.as_str());
+        let in_desc = desc
+            .map(|d| d.to_lowercase().contains(needle))
+            .unwrap_or(false);
+        if !provider.to_lowercase().contains(needle)
+            && !title.to_lowercase().contains(needle)
+            && !in_desc
+        {
+            continue;
+        }
+        let swagger = entry
+            .get("swaggerUrl")
+            .and_then(|s| s.as_str())
+            .unwrap_or("");
+        let mut line = format!("url {swagger}\ttitle: {title}\tprovider: {provider}");
+        if let Some(d) = desc {
+            if !d.trim().is_empty() {
+                line.push_str(&format!("\tdescription: {}", regtap_clip(d)));
+            }
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    Some(out)
+}
+
 pub fn scrape_lines(query: &str, max: usize) -> Vec<String> {
     let Some(target) = query.split_whitespace().next() else {
         return vec!["pending — scrape needs a target url".to_string()];
@@ -2844,6 +3005,8 @@ const QUERY_MODES: &[&str] = &[
     "opencellid",
     "gfw",
     "oapen",
+    "regtap",
+    "apis",
     "datacite",
     "zenodo",
     "wayback",
@@ -3111,6 +3274,8 @@ pub fn run_lines(
             }
         }
         "oapen" => oapen_lines(query, max),
+        "regtap" => regtap_lines(query, max),
+        "apis" => apis_lines(query, max),
         "linkup" => {
             let token = resolve_key(
                 env.get("LINKUP_API_KEY").map(String::as_str).unwrap_or(""),
@@ -3312,6 +3477,8 @@ mod tests {
             "opencellid",
             "gfw",
             "oapen",
+            "regtap",
+            "apis",
             "datacite",
             "zenodo",
             "wayback",
