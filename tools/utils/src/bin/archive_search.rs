@@ -347,6 +347,10 @@ fn main() {
             "--firecrawl" => mode = Mode::Net("firecrawl"),
             "--searchapi" => mode = Mode::Net("searchapi"),
             "--serpapi" => mode = Mode::Net("serpapi"),
+            "--oeis" => mode = Mode::Net("oeis"),
+            "--hal" => mode = Mode::Net("hal"),
+            "--wiby" => mode = Mode::Net("wiby"),
+            "--ia-search" => mode = Mode::Net("ia-search"),
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
             "--zenodo" => mode = Mode::Net("zenodo"),
@@ -701,7 +705,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -729,6 +733,18 @@ fn usage() {
     );
     eprintln!(
         "  --serpapi   SerpApi (serpapi.com/search.json, api_key); url + title/position/snippet"
+    );
+    eprintln!(
+        "  --oeis      OEIS integer-sequence search (oeis.org/search?fmt=json), keyless; url + title/data"
+    );
+    eprintln!(
+        "  --hal       HAL open archive (api.archives-ouvertes.fr/search), keyless; url + title/doi/published"
+    );
+    eprintln!(
+        "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
+    );
+    eprintln!(
+        "  --ia-search Internet Archive full-text/metadata search (archive.org/advancedsearch.php), keyless; url + title/mediatype"
     );
     eprintln!(
         "  --jina      Jina Reader (r.jina.ai), keyless; the clean text of a page for a target url"

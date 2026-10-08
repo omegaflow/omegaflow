@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 2f0ae3c3d004bd0a9297d35ca9df3dffe10b2a71ed7b312dfca32e07dd651bc4
+  sha256: 63b97f02813343c64f5723161e2ee5c53756661c57a57b820b2491dde247bae4
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -38,6 +38,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „auth ist kein ausschlusskriterium nur kommerziell" | Quelle: diese Session. → Arm-Auswahl: Auth/Free-Route erlaubt, nur pay-only/illegal aus.
 - 2026-10-08 | „SERPER_API_KEY · FIRECRAWL_API_KEY · SEARCHAPI_API_KEY · SERPAPI_API_KEY sind drin; jina ist raus — negativer Saldo" | Quelle: diese Session. → 4 Arme gebaut, Jina Search entfällt.
 - 2026-10-08 | „wir haben ja schonmal eine fmhy.net-Vermessung gemacht, aber uns gehen noch spannende (legale!) Quellen ab — nochmal Agenten auf die Seite loslassen" | Quelle: diese Session. → FMHY Runde 2 (3 Diver), neue Kandidaten im Handover.
+- 2026-10-08 | „ich hätte gerne alle" (die FMHY-Runde-2-Arme) | Quelle: diese Session. → `--oeis`/`--hal`/`--wiby`/`--ia-search` gebaut.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -117,7 +118,7 @@ Sender-Zeilen in `## An <line>`.
 - **Trigger:** Operator-Auswahl / Mountain-Admission
 - **Lage:** (gemessen 2026-10-08, 3 Diver über `educational`/`reading`/`developer-tools`/`internet-tools`/`storage`/`misc`/`image`/`text`/`file`/`system-tools`) die FMHY-Erd-/Weltraum-Landschaft ist im Baum weitgehend registriert; **neue, verifizierte Kandidaten (nicht in `phi/` registriert, kein `archive_search`-Modus):** Daten/Research: **USGS NGMDB** (`https://ngmdb.usgs.gov/ArcGIS/rest/services?f=pjson`, 206) · **Internet Archive advancedsearch** (`https://archive.org/advancedsearch.php?q=…&output=json`, 200) · **HAL** (`https://api.archives-ouvertes.fr/search/?q=…&wt=json`, 206) · **OEIS** (`https://oeis.org/search?q=…&fmt=json`, 200) · **OAPEN** (OAI `library.oapen.org/oai/request`, 200) · **deps.dev API** (keyless). Suche/Infra: **Wiby JSON** (`https://wiby.me/json/?q=`, 200) · **RSS-Bridge** (`rss-bridge.org`, 200) · **Kiwix** (`download.kiwix.org/zim/…`, 200) · **web.scraper.workers.dev** (200) · **Shodan/OpenCelliD/Global Forest Watch** (free key). Reader/OCR-Kandidaten: **Tesseract · OCRmyPDF · Marker · Docling · MarkItDown · exifTool · ImageMagick · qsv/xan (Rust)**.
 - **Blockade:** —
-- **Braucht:** Auswahl, welche gebaut werden; erste kleine keyless-JSON-Arme wären `--oeis` · `--hal` · `--wiby` · `--ia-search`.
+- **Braucht:** `gh workflow run tools-build.yml` nach dem Push (Rolling-Release trägt die Arme); **gebaut (dieses Atom): `--oeis` · `--hal` · `--wiby` · `--ia-search`** (keyless JSON, end-to-end grün). Ferner offen (Operator/Mountain): `--ngmdb` (ArcGIS-Endpunkt noch nicht sauber gemessen), OAPEN (OAI/XML), Reader/OCR-Sidecars (Tesseract/OCRmyPDF/Marker/Docling/MarkItDown/exifTool/ImageMagick/qsv).
 
 ## An mountain
 
