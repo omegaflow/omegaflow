@@ -3,7 +3,7 @@
   session: River-Folge 136
   class: handover
   date: 2026-10-08
-  sha256: 942ae02c6c9f30e7b38f1d56496f924290fcb19a7287e2908cb5eded5226b78b
+  sha256: a2b8fccbc0400d44d2b00abeaec2f801d23bcca773b47eb244e89033685b3d93
   status: live
 -->
 # Handover — River-Folge 136 (2026-10-08)
@@ -43,6 +43,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-river-folge
 - **Riss (nicht gemittelt):** `docs/concepts/archivar-mathematikerin.md:33` nennt `span` „receiver-side aperture override"; der Code backt ihn als **quellen-deklarierte Selbstkappung** in `Sample.extent` (`channels.rs:1359`) und schreibt ihn auf den Draht (`spatial.rs:817/975`). Linie A (Mountain): `span` = quellen-deklarierte Selbstkappung, der Doc-Satz ist die Fehlbenennung. Linie B (River): `span` genuin empfangs-seitig, dann darf er den Draht nicht berühren. Messbar, sobald eine Quelle `span < medium_reach` deklariert.
 - **Blockade:** die Doc-Benennung `:33` (Mountain, Contract).
 - **Braucht:** Mountain entscheidet die Doc-Formel `:33` (A oder B). Der HID-Aktuator-Term bleibt `pending`.
+- **UI-Unterbau:** (gemessen 2026-10-08 via `state/stimmen/2026-10-08_river-ui_apertur-extent-runde.md`) die Frontier-Runde lief (`river-ui`: Duck/Claude/Qwen/Z.ai); **kein Seat antwortete** — Composer nahm den Text, das Absenden erzeugte keine Antwort, Qwen-Konsole mit wiederholten `Error`-Gruppen → `pending` (Verbindung/Zug-Netz, kein Tageslimit/Login). Nach der Regel gilt das Verdikt ohne UI-Untermauerung erst, wenn der zweite Kanal konvergiert oder der Riss benannt ist — der fehlende Kanal ist benannt.
 
 ### Membran — Kraft-/Kanal-Agnostik (wartend auf den Render)
 - **Status:** wartend | **Bindung:** eigen
