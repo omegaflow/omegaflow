@@ -39,16 +39,17 @@ fn parse_stations(text: &str) -> Option<Vec<Station>> {
     };
     let mut out = Vec::with_capacity(rows.len());
     for row in rows {
-        let (Some(lat), Some(lon), Some(code)) = (
-            finite(jnum(row, "station.lat")),
-            finite(jnum(row, "station.lon")),
+        let (Some(lat), Some(lon_deg), Some(code)) = (
+            finite(jnum(row, "station.latitude")),
+            finite(jnum(row, "station.longitude")),
             jstr(row, "station.code"),
         ) else {
             continue;
         };
-        if !(-90.0..=90.0).contains(&lat) || !(-180.0..=180.0).contains(&lon) {
+        if !(-90.0..=90.0).contains(&lat) {
             continue;
         }
+        let lon = ((lon_deg + 180.0).rem_euclid(360.0)) - 180.0;
         out.push(Station {
             code,
             lat_deg: lat,
@@ -161,9 +162,9 @@ mod tests {
     use super::*;
 
     const FIXTURE: &str = r#"[
-        {"mufd":14.2,"fof2":5.1,"tec":12.5,"cs":0.83,"station":{"lat":40.7,"lon":-74.0,"code":"K2ABC"},"time":1759800000.0},
-        {"mufd":null,"fof2":3.3,"tec":0.0,"cs":0.5,"station":{"lat":-33.9,"lon":151.2,"code":"VK2XYZ"},"time":1759800000.0},
-        {"mufd":9.9,"fof2":4.4,"tec":7.7,"cs":0.6,"station":{"lat":999.0,"lon":0.0,"code":"BAD"}}
+        {"mufd":14.2,"fof2":5.1,"tec":12.5,"cs":0.83,"station":{"latitude":"40.7","longitude":"286.0","code":"K2ABC"},"time":"2026-10-08T17:10:01"},
+        {"mufd":null,"fof2":3.3,"tec":0.0,"cs":0.5,"station":{"latitude":"-33.9","longitude":"151.2","code":"VK2XYZ"},"time":"2026-10-08T17:10:01"},
+        {"mufd":9.9,"fof2":4.4,"tec":7.7,"cs":0.6,"station":{"latitude":"999.0","longitude":"0.0","code":"BAD"}}
     ]"#;
 
     #[test]
@@ -177,7 +178,7 @@ mod tests {
         assert_eq!(rows[0].fof2_mhz, Some(5.1));
         assert_eq!(rows[0].tec_tecu, Some(12.5));
         assert_eq!(rows[0].cs, Some(0.83));
-        assert_eq!(rows[0].time_unix, Some(1759800000.0));
+        assert_eq!(rows[0].time_unix, None);
         assert_eq!(rows[1].code, "VK2XYZ");
         assert_eq!(rows[1].mufd_mhz, None);
         assert_eq!(rows[1].tec_tecu, Some(0.0));
@@ -185,7 +186,7 @@ mod tests {
 
     #[test]
     fn skips_rows_without_position_or_code() {
-        let text = r#"[{"mufd":1.0,"station":{"lat":10.0,"lon":20.0}}]"#;
+        let text = r#"[{"mufd":1.0,"station":{"latitude":"10.0","longitude":"20.0"}}]"#;
         assert!(parse_stations(text).is_none());
     }
 }

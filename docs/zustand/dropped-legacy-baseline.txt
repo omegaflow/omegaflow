@@ -931,3 +931,8 @@ toar-komponenten-arm
 # carries a renamed heading, so no commit/register token resolves the drop -> frozen as a
 # known legacy name, not a silent drop.
 5 datenquellen erreichbare ledger phi pipeline pipeline-zulassung φ
+# 2026-10-08 (Mountain-274): two renamed, still-carried points (folge272→273
+# heading drift); no commit/register token resolves the renamed key -> frozen as
+# known legacy names, not silent drops.
+bandreferenz em-nmgy-riss reinem scale statt
+body cache fetch gebaut jeden loader-gate q1 uncommittet wie zulassung über
