@@ -3,7 +3,7 @@
   session: Mountain-Folge 273
   class: handover
   date: 2026-10-08
-  sha256: 7d1fa4d6d4db43d7a7714b7a1724e289482bafca3928029479b03bd4bc71e88e
+  sha256: fa41617ad84fd284423d526634bc076f8dfc270777f9235d2bc6ce268883bd82
   status: live
 -->
 # Handover — Mountain-Folge 273 (2026-10-08)
@@ -108,10 +108,15 @@ Wort | Datum | Quelle
   `main_flow.rs:1449`, `relay.rs:668/729`, `channels.rs:1408/1441` (river-135
   uncommittet). Die Klausel-`<id>` (`DECam_g`) wird geparst/validiert, aber nicht
   gespeichert. Der Test-Lauf ist CI-pending (lokal `cargo test` verweigert).
-- **Braucht:** nach river-135-Commit das Feld `band_id: Option<String>` in
-  `FieldConfig` ergänzen (eine Zeile je Literal) + im `quantity`-Arm setzen;
-  CI-Test grün. **Riss:** Band-Heim offen (lokal `phi/bands.φ` vs. SVO FPS) — der
-  `<id>`-Home ist damit noch nicht gebunden; SVO-FPS-id + pivot-λ am Harvest messen.
+- **Band-Heim (Rat 2026-10-08, C; UI Duck/Claude/Qwen3.8-Max = C, A=A-Stabilität):** gebaut
+  — `phi/bindings/bands.φ` (`binding band DECam_g` / `svo DECam/g` / `url …` /
+  `pivot 4808.49 angstrom` / `zeropoint AB` / `ttl 3840`); `phi/canon.φ`
+  `section Bindings` deklariert (Architektur-Akt). **Riss 1:** der Anker stabilisiert
+  die *Referenz*, nicht die *Bytes* (kein Kurven-`sha256`). **Riss 2:** `band`/`svo`/
+  `pivot`/`zeropoint` = Mountain, `url` = Mycelium (AGENTS.md 2026-09-27). SVO-Kurve
+  ungemessen (HTTP 200, 0 B Body) → `pending`. **Braucht:** nach river-135-Commit das
+  Feld `band_id: Option<String>` in `FieldConfig` ergänzen (eine Zeile je Literal) +
+  im `quantity`-Arm setzen; CI-Test grün.
 
 ### span-Apertur / Membran-Agnostik — Mountain hält `receiver.span`
 - **Status:** eigen (Datenkontrakt) | **Bindung:** eigen · river (ω()-Lauf)
