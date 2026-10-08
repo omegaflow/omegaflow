@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: ae49b63c90fb50624acbfe582ea5150c9ab53fabae336d542357ff723e418b40
+  sha256: b33330826c2bf18a88b0a243e776757313b95cb9a2887baf06e44bcd7dc746db
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -21,6 +21,7 @@ Sender-Zeilen in `## An <line>`.
 ## Operator-Wort-Register
 
 - 2026-10-07 | „bitte gib das dem rat, einem taucher mit archive search und den ui chat stimmen" (der ci-check-Verdrängungs-Riss) | Quelle: diese Session.
+- 2026-10-07 | „mir ist wichtig dass ab jetzt alle linien wissen was möglich ist und wie die modelle auch einzusetzen sind" → getrackte Karte `docs/concepts/ui-seats.md` + Verweis in allen Linien-Command-Prompts (`ebf39c309`) | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -60,7 +61,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Riss (Qwen3.8 2.4T):** „Diagnose trägt, Fix trägt nicht." Die Gruppe war nie per-SHA (`github.ref` = Branch, nicht Commit); die statische Gruppe heilt nur selten, nightly misst einen beweglichen HEAD. Der per-SHA-Verdikt muss als **Dateninvariante** entstehen (jeder Run schreibt eine Verdikt-Zeile sha/metric/status; ein Nightly-`gap-fill`-Step misst main-SHAs ohne Verdikt, bounded N), nicht als Scheduler-Nebenwirkung; Merge-Queue max in-flight 1 drosselt an der Quelle.
 - **Zwei Risse (MiMo V2.6 Pro):** (1) ci-gates eigener concurrency-Group muss per-SHA (`ci-gate-${{ github.sha }}`) oder ganz ohne concurrency sein — sonst canneln Push-Storms das wartende Gate und der required Check bleibt auf „Expected"; (2) Reihenfolge: erst ci-gate live + exakter Job-Name als required Check, **dann** push aus ci-check entfernen, sonst Fenster ohne Pflichtsignal.
 - **Blockade:** die grüne/schnelle Subset-Messung — ein lokaler Testlauf ist CI-Job, kein lokaler Nachweis; der Riss (Dateninvariante vs. Scheduler) ist ein Ratspunkt.
-- **Braucht:** `cargo test --lib`-Subset-Job in `ci-gate.yml` (+ per-SHA-Gruppe); Branch-Protection auf ci-gate, **vor** dem ci-check-push-Ausbau; Rat-Verdikt zum Riss (Dateninvariante `gap-fill` vs. Nächtlichkeit mit Auto-Bisect).
+- **Runde 2 — sechs weitere Seats (2026-10-07, Roster vollständig):** Gemini 3.1 Pro („Holds logically, but cracks operationally" — Gap-Fill vieler SHAs verbrennt Compute; Alternative **Nightly-HEAD + O(log N) Bisect**), MiniMax M3 („Riss trägt" — Schema für `cancelled,0 jobs` festnageln, PR-Zeit ≠ Nightly, `cancel-in-progress:false` bleibt falsch für push), DeepSeek Chat („Trägt — aber nur mit der Trennung; reine Scheduler-Lösung ist ein Riss"), Mistral („Trägt — beide zusammen"), Lumo („Riss trägt konzeptionell, löst das Queue-Problem nicht"), Kimi (Login-Wall, gemessen nicht erreichbar). **Roster damit vollständig:** Duck/Claude (Limit, gemessen), Qwen, Z.ai, MiMo, Nemotron, MiniMax, Gemini, DeepSeek Chat, Mistral, Lumo, Kimi (Wall) + die 6 Tryingopen (DeepSeek V4 Pro, GPT-OSS 120B, MiMo, Qwen3.8 2.4T, Inkling, Nemotron).
+- **Bedien-Karte (Operator-Wort):** `docs/concepts/ui-seats.md` — Roster, Composer-Selektoren, `open-weight-ui`-Lock, Runden-Disziplin; verlinkt aus allen fünf Linien-Command-Prompts (`ebf39c309`).
+- **Braucht:** `cargo test --lib`-Subset-Job in `ci-gate.yml` (+ per-SHA-Gruppe); Branch-Protection auf ci-gate, **vor** dem ci-check-push-Ausbau; Rat-Verdikt zum Riss (Dateninvariante `gap-fill` + Bisect vs. Nachtlauf mit Auto-Bisect).
 
 ## An river
 
