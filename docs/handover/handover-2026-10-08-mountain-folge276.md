@@ -3,7 +3,7 @@
   session: Mountain-Folge 276
   class: handover
   date: 2026-10-08
-  sha256: a6aef083c83287e051b53f2d8ae69a819a02e7f6357644a6cd11476b2f725e06
+  sha256: ca63289cfd2c821f2e9994fa14dd190ca3ea7fbabb88dd01b84670927bc7ed1a
   status: live
 -->
 # Handover — Mountain-Folge 276 (2026-10-08)
@@ -26,6 +26,7 @@ Wort | Datum | Quelle
 „kannst du mit archive serch den ui chats und dem rat klären?" — offene Route-/GIC-Admissionen (Receiver/force) via archive_search + UI-Seats + Rat | 2026-10-08 | Operator (Session, Mountain 276)
 „das sind allerdings zu wenig stimmen — 3.7 plus ist nicht representativ; zudem kannst du tryingopen auch glm und qwen fahren und andere" — breitere UI-Runde | 2026-10-08 | Operator (Session, Mountain 276)
 „ich glaube du musst nochmal breiter fragen — du hast nicht wirklich die starken stimmen und die wissenschaft gefragt" — Science-Layer + starke Frontier-Seats | 2026-10-08 | Operator (Session, Mountain 276)
+„kimi ist gerade nicht verfügbar und gemini ist nicht so wichtig" — Kimi/Gemini nicht nachziehen; Runde gilt als vollständig | 2026-10-08 | Operator (Session, Mountain 276)
 
 ## Offen (aufgeschlüsselt)
 
@@ -146,7 +147,8 @@ Wort | Datum | Quelle
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium (Manifestation)
 - **Trigger:** `sources.φ`-Zeilen je Arm gebaut
 - **Lage:** (gemessen 2026-10-08 276; Science (2 Taucher) + Rat + Claude · Qwen3.7 ·
-  GLM 5.3 · Nemotron 3 Ultra · DeepSeek V4 Pro · Inkling · DeepSeek Chat · Lumo) je Arm in
+  GLM 5.3 · Nemotron 3 Ultra · DeepSeek V4 Pro · Inkling · DeepSeek Chat · Lumo ·
+  Perplexity; Kimi/Gemini per Operator-Wort nicht nachgezogen) je Arm in
   `state/mountain/rat-runde-2026-10-08-source-admission.md`: CALLISTO / THEMIS-GMAG
   → `em` (einhellig); DLR-IMPC / EMTF / INS / NSE → `quantity`; SuperDARN →
   `quantity` (5:2); Fermi-4FGL → `em` (5:2). **Wissenschaft:** INS/NSE-Träger Neutron
