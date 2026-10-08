@@ -133,7 +133,7 @@ note ROTI (GIC Obs. §D) — 2026-10-08: data.impc.dlr.de/…/latest_D.json 200 
 
 ausstehend
 kandidat https://themis.igpp.ucla.edu/gmag/
-note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200 (http→https 301); hapi_csv.rs/intermagnet.rs + themis-mag-cdn.yml stehen; Dataset-ID/Parameter messen.
+note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200; ABK live CDAWeb HAPI THG_L2_MAG_ABK (sources.φ:4076-4082, themis_gmag_h/e/z_nt); Kompilat-Arm/themis-mag-cdn.yml/themis_mag_compiler.rs entfernt (Routenwechsel); übrige Stn offen.
 
 ausstehend
 kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE
