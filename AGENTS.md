@@ -248,6 +248,7 @@ Bau-Reihenfolge, kein Quellen-Verdikt. **`blocked key-needed` ist eine Messung, 
 Vermutung:** der Eintrag verlangt den gemessenen **401 MIT dem vorhandenen Token**
 (`.secrets.local`) — ein 401 ohne Token ist kein Key-Gap (der IONEX-Eintrag
 2026-09-16 widerlegt: mit `EARTHDATA_EDL_TOKEN` → HTTP 200). Erst messen, dann fordern.
+**Authentifizierung ist kein Ausschlusskriterium** (Operator-Wort 2026-10-08): ein `blocked account`/`blocked key` ist **kein Quellen-Verdikt**, sondern eine `pending`-Operator-Aufgabe — wo der Operator zugangsberechtigt ist oder ein Key bereits besteht, wird die Quelle über die **Auth-Route** geführt (Registrierung/Key als Operator-Hand), nie als `declined` gestrichen. Gilt generell für Quellen.
 Work surface: `phi/pipeline/`
 (`stage/` conversion outputs, `ledger.φ` state register, `index.φ` index,
 `prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
