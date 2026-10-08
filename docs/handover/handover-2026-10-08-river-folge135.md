@@ -3,7 +3,7 @@
   session: River-Folge 135
   class: handover
   date: 2026-10-08
-  sha256: 846b35aed0300c26386117de703f4cd29eddc0ce3b581353e29a308d7f3d9e70
+  sha256: 2e19d64aa02a6073acf063d4da415094f865f6ccab28c17fb39d7763eacefa93
   status: live
 -->
 # Handover — River-Folge 135 (2026-10-08)
@@ -92,7 +92,7 @@ Origin: river-135.
 
 Origin: river-135.
 
-- **`span`-Fork (Operator-Wort nötig, ein Wort):** Der `span`-Konsument ist gebaut (Selbstkappen: `anchor` faltet `min(span, extent)` in `extent`, `src/archivar/channels.rs:1245`; Rat + Qwen3.7-Plus konvergieren darauf). **Frage:** Soll `span` semantisch (a) die quellen-eigene Obergrenze bleiben (so gebaut), oder (b) eine echte **Empfänger-Apertur pro Query** sein (FOV/pad, wie IVOA SIA2 — dann wäre `MembraneCtx.pad` der Ort und `SourceConfig` der falsche Träger)? Bei (b) wird ein neuer River-Punkt.
+- **`span`-Runde abgeschlossen (kein Operator-Wort mehr nötig):** Rat (5 Stimmen) + Frontier-UI **4/4** — Duck.ai (GPT-6 Luna), Claude (Sonnet 5.5), Qwen3.7-Plus, Z.ai (GLM-5.3) — konvergieren auf **(a) quelleneigene Obergrenze** (Selbstkappen, `extent_eff = min(span, extent)`), so gebaut (`src/archivar/channels.rs:1245`). Rohantworten `state/stimmen/2026-10-08_ui-runde_span.md` (Mistral/DeepSeek Chat/Lumo/tryingopen `pending`). Ein Operator-Wort für (b) per-Query-Apertur würde einen neuen River-Punkt öffnen.
 
 ## LOCK
 
@@ -107,4 +107,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 135, Fortschreibung):
 - `tools/measure/src/bin/cgm_lat_partition.rs`, `tools/measure/src/bin/field_te_query.rs`
 - `docs/handover/handover-2026-10-08-river-folge135.md`
 
-## Burn: open 0.0039 · close 0.1674 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — Taucher zusätzlich (grind-flash E0061 0.0712, GIC 0.0514, span-Bau, family_of-Dedup, explore 0.0190) + Rat/UI-Runde · cap 0.35 Grund: Ein-Pass-Atom (E0061 + GIC-Familie + span-Bau + Dedup + Recherche→Rat→UI-Runde, mehrere Taucher) · kein pro/max
+## Burn: open 0.0039 · close 0.2216 (deepseek-flash, `session_burn`, gemessen 2026-10-08) — Taucher zusätzlich (grind-flash E0061 0.0712, GIC 0.0514, span-Bau, family_of-Dedup, explore 0.0190) + Recherche→Rat→UI-Runde (Frontier 4/4) · cap 0.35 Grund: Ein-Pass-Atom (E0061 + GIC-Familie + span-Bau + Dedup + Recherche→Rat→UI-Runde, mehrere Taucher) · kein pro/max
