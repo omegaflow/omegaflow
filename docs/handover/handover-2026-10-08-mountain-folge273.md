@@ -3,7 +3,7 @@
   session: Mountain-Folge 273
   class: handover
   date: 2026-10-08
-  sha256: ef27f8eb0a0bf708893841130f0588a5bcd497d69f4db11321d9d07fa28aaeb0
+  sha256: 7d1fa4d6d4db43d7a7714b7a1724e289482bafca3928029479b03bd4bc71e88e
   status: live
 -->
 # Handover — Mountain-Folge 273 (2026-10-08)
@@ -87,32 +87,31 @@ Wort | Datum | Quelle
   als `sources.φ`-Zeilen admiten; `gate-no-field-lines`-Refusal der 2 dB/dt-Arme
   lösen oder `blockiert` registrieren; dann River Stufe 2 am `compute_max_t`.
 
-### em-nmgy / Bandreferenz — Rat-Verdikt steht (Synthese A+C); Parser-Arm offen
-- **Status:** eigen (Parser-Arm) | **Bindung:** eigen · Rat (entschieden) · Mycelium (Band-Heim)
-- **Trigger:** Parser-Arm `band` gebaut
-- **Lage:** (gemessen 2026-10-08 273, HEAD `dff6ccfda`) `quantity flux_g
-  noirlab_ls_dr10_g_flux scale nmgy` liegt **`sources.φ:19650`** (nicht `:19618` —
-  Zitat-Drift, s. Riss). `parse_where` (`parse.rs:1850`) liest `where <key> <value>`
-  nur auf `first`/`last`; auf `field` verweigert (`parse.rs:1078-1085`). Der
-  `quantity`-Arm (`parse.rs:993`) nimmt `parts.len() >= 9` — ein Tail-Direktiv ist
-  syntaktisch anbaubar. `band_id`+`band_wavelength` sind im Granulat-Kontrakt
-  bereits ein Paar (`goes_abi.rs:469`, `gk2a_ami.rs:471`).
+### em-nmgy / Bandreferenz — Parser-Arm GEBAUT; `band_id`-Persistenz + Heim offen
+- **Status:** eigen | **Bindung:** eigen · river (Feld-Erweiterung)
+- **Trigger:** river-135 committet (Fremd-Dirty weg) → `band_id`-Feld
+- **Lage:** (gemessen 2026-10-08 273, HEAD `dff6ccfda`) **Parser-Arm gebaut:**
+  `quantity`-Arm (`parse.rs:1037-1139`) parst Tail
+  `band <id> pivot <λ><unit> [edges <λmin>-<λmax><unit>]` → `freq = c/λ_m`,
+  `bin_width = |c/λmin − c/λmax|`; Erzwingung `QuantityKind::Scale`+`nmgy` ohne Band
+  → Anomalie + Record verweigert (nie `0.0`); Helfer + `#[cfg(test)]`-Test
+  (`parse.rs:2017-`, `:2436-`). Register `sources.φ:19650` trägt jetzt
+  `… scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom`
+  (kind bleibt `scale` — kein `em`-Kind im Code, `force.rs:18-36`). Gate-Fixture
+  `commit_gate_vocab.json:100`. `register_sort` canonical; `cargo check` 0/0.
   **Rat-Verdikt (2026-10-08, Synthese A+C; Recherche + 10 UI-Seats + tryingopen):**
-  **A trägt die Syntax, C die Semantik.** Tail-Direktiv
-  `band <id> pivot <λ><unit> [edges <λmin>-<λmax><unit>]` auf der `quantity`-Zeile;
-  `scale` bleibt ohne Band gültig; **`em` für einen breitbandigen Fluss nur mit
-  `band`-Klausel**, sonst `pending` (nie `0.0`, nie stilles `em`). **B verworfen**
-  (`where` ist Zeilen-Selektor, keine Objekteigenschaft); **D verworfen** (`note`
-  hat keinen Parser-Arm). Gewichtet: Frontier 4/4 = C; open-weight GLM 5.3 (753B)
-  = C, DeepSeek V4 Pro (1.7T) = A (Gegenlinie). Rohantworten
+  A Syntax (Werte an der Zeile), C Semantik; B/D verworfen; gewichtet Frontier 4/4 C,
+  GLM 5.3 (753B) C, DeepSeek V4 Pro (1.7T) A (Gegenlinie). Rohantworten
   `state/stimmen/2026-10-08_ui-runde_bandreferenz.md`.
-- **Blockade:** kein Parser-Arm `band`; das **Band-Heim** ist offen (lokales
-  getracktes `phi/bands.φ` vs. externes SVO-FPS-Heim — neue getrackte Datei =
-  Architektur-Akt + `phi/canon.φ`).
-- **Braucht:** Parser-Arm `band` (id+λ, optional edges) im `quantity`-Arm bauen;
-  then `scale`→`em` für `flux_g` erst mit Klausel; SVO-FPS-`<id>` + pivot-λ
-  4808.49 Å am Harvest messen. **Riss:** Heim-Entscheidung (lokal vs. SVO) offen;
-  Zitat-Drift `:19618`→`:19650` geheilt.
+- **Blockade:** `band_id` als Feld in `FieldConfig` persistiert noch **nicht** — ein
+  neues Pflichtfeld bräche die Literale in den fremd-dirty Dateien
+  `main_flow.rs:1449`, `relay.rs:668/729`, `channels.rs:1408/1441` (river-135
+  uncommittet). Die Klausel-`<id>` (`DECam_g`) wird geparst/validiert, aber nicht
+  gespeichert. Der Test-Lauf ist CI-pending (lokal `cargo test` verweigert).
+- **Braucht:** nach river-135-Commit das Feld `band_id: Option<String>` in
+  `FieldConfig` ergänzen (eine Zeile je Literal) + im `quantity`-Arm setzen;
+  CI-Test grün. **Riss:** Band-Heim offen (lokal `phi/bands.φ` vs. SVO FPS) — der
+  `<id>`-Home ist damit noch nicht gebunden; SVO-FPS-id + pivot-λ am Harvest messen.
 
 ### span-Apertur / Membran-Agnostik — Mountain hält `receiver.span`
 - **Status:** eigen (Datenkontrakt) | **Bindung:** eigen · river (ω()-Lauf)

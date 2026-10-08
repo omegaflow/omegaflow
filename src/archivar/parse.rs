@@ -1,5 +1,5 @@
 use super::*;
-use crate::force::{quantity_kind_id, quantity_kind_of};
+use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 
 fn split_directive(line: &str) -> Vec<&str> {
     let bytes = line.as_bytes();
@@ -1037,6 +1037,92 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
+                let mut freq = crate::spectral::SPECTRAL_NO_BAND;
+                let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
+                let mut band_declared = false;
+                if parts.len() > 9 {
+                    if parts[9] != "band" {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "quantity {} carries an unknown trailing token \"{}\": {}",
+                                parts[1], parts[9], line
+                            ),
+                        );
+                        continue;
+                    }
+                    if parts.len() < 13 || parts[11] != "pivot" {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "quantity {} band clause malformed (band <id> pivot <lambda><unit> [edges <lo>-<hi><unit>]): {}",
+                                parts[1], line
+                            ),
+                        );
+                        continue;
+                    }
+                    let lam_m = match parse_wavelength_m(parts[12]) {
+                        Some(m) => m,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "quantity {} pivot wavelength \"{}\" unmeasurable: {}",
+                                    parts[1], parts[12], line
+                                ),
+                            );
+                            continue;
+                        }
+                    };
+                    freq = C_LIGHT / lam_m;
+                    band_declared = true;
+                    if parts.len() > 13 {
+                        if parts[13] != "edges" || parts.len() < 15 {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "quantity {} edges clause malformed (edges <lo>-<hi><unit>): {}",
+                                    parts[1], line
+                                ),
+                            );
+                            continue;
+                        }
+                        match parse_wavelength_range_m(parts[14]) {
+                            Some((lo_m, hi_m)) => {
+                                bin_width = (C_LIGHT / lo_m - C_LIGHT / hi_m).abs();
+                            }
+                            None => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!(
+                                        "quantity {} edges \"{}\" unmeasurable: {}",
+                                        parts[1], parts[14], line
+                                    ),
+                                );
+                                continue;
+                            }
+                        }
+                    }
+                }
+                if kind == QuantityKind::Scale
+                    && normalize_unit(parts[5]) == "nmgy"
+                    && !band_declared
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "photometric flux {} without band: declare band <id> pivot <lambda> [edges <lo>-<hi>]",
+                            parts[1]
+                        ),
+                    );
+                    continue;
+                }
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
@@ -1046,8 +1132,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
-                    freq: crate::spectral::SPECTRAL_NO_BAND,
-                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    freq,
+                    bin_width,
                     fold: None,
                     aperture: Aperture::None,
                 };
@@ -1931,6 +2017,43 @@ pub fn refuse_shard_overlaps(sources: Vec<SourceConfig>) -> Vec<SourceConfig> {
     kept
 }
 
+fn wavelength_value_and_scale(token: &str) -> Option<(f64, f64)> {
+    let (value, factor) = if let Some(v) = token.strip_suffix("angstrom") {
+        (v, 1e-10)
+    } else if let Some(v) = token.strip_suffix("nm") {
+        (v, 1e-9)
+    } else if let Some(v) = token.strip_suffix("um") {
+        (v, 1e-6)
+    } else {
+        return None;
+    };
+    let value: f64 = value.parse().ok()?;
+    Some((value, factor))
+}
+
+fn parse_wavelength_m(token: &str) -> Option<f64> {
+    let (value, factor) = wavelength_value_and_scale(token)?;
+    let m = value * factor;
+    if m.is_finite() && m > 0.0 {
+        Some(m)
+    } else {
+        None
+    }
+}
+
+fn parse_wavelength_range_m(token: &str) -> Option<(f64, f64)> {
+    let (lo_str, hi_str) = token.split_once('-')?;
+    let (hi_value, factor) = wavelength_value_and_scale(hi_str)?;
+    let lo_value: f64 = lo_str.parse().ok()?;
+    let lo_m = lo_value * factor;
+    let hi_m = hi_value * factor;
+    if lo_m.is_finite() && hi_m.is_finite() && lo_m > 0.0 && lo_m < hi_m {
+        Some((lo_m, hi_m))
+    } else {
+        None
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2306,6 +2429,37 @@ mod tests {
             field_of(kind_as_force),
             None,
             "field with a quantity kind in the force slot must not become a field"
+        );
+    }
+
+    #[test]
+    fn photometric_flux_without_band_is_refused_and_with_band_carries_the_band() {
+        let field_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+
+        let bandless = "url https://example.com/q.bin\nttl 604800\n\
+                        quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0\n";
+        assert!(
+            field_of(bandless).is_none(),
+            "a photometric scale nmgy quantity without a band reference is refused, never a 0.0 band"
+        );
+
+        let with_band = "url https://example.com/q.bin\nttl 604800\n\
+                         quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom\n";
+        let fc = field_of(with_band).expect("the band-declared photometric quantity flows");
+        assert!(
+            fc.freq > 0.0,
+            "the pivot wavelength resolves to a positive frequency"
+        );
+        assert!(
+            fc.bin_width > 0.0,
+            "the edges resolve to a positive bandwidth"
         );
     }
 }

@@ -19647,7 +19647,7 @@ at sun
 cmap .
 ra ra
 dec dec
-quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0
+quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom
 
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
 format tap

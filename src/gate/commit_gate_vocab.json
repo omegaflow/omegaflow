@@ -96,7 +96,8 @@
     ["V_S_GRANITE", "a hardcoded granite S-wave speed fabricates one body's crust into the medium table — v_seismic_s is a BodyProperties measurement (remove-bias WP9/WP13)"],
     ["D_AIR", "a hardcoded air diffusion constant fabricates Earth's atmosphere into the medium table — d_diffusion is a BodyProperties measurement (remove-bias WP9/WP13)"],
     ["ALPHA_AIR", "a hardcoded air thermal coefficient fabricates Earth's atmosphere into the medium table — alpha_thermal is a BodyProperties measurement (remove-bias WP9/WP13)"],
-    ["force_constants", "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"]
+    ["force_constants", "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"],
+    ["quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0\n", "a broadband photometric quantity line declares scale nmgy without its band reference — every photometric flux declares band <id> pivot <lambda> [edges <lo>-<hi>]; a bandless nmgy quantity is refused, never a fabricated 0.0 band (Rat 2026-10-08, Synthese A+C)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
