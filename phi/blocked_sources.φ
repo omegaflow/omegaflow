@@ -30,7 +30,7 @@ note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/895
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
-note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (mail_ledger.φ:74) → Antwort offen.
+note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (mail_ledger.φ:207) → Antwort offen.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
@@ -75,7 +75,7 @@ note MAP-Grid RST (DMap) — 2026-10-05: Zugang via Globus (`GLOBUS_ID_USER/PASS
 
 pending
 url https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
-note Akatsuki VCO-rs (JAXA/ISAS) — sources.φ:25583 (format pds4_fixed_width, compiler pds4_binary_compiler); Workflow vco-rs-cdn.yml steht. Die frühere Note nannte falschen Arm/Workflow (Riss). 2026-10-04.
+note Akatsuki VCO-rs (JAXA/ISAS) — sources.φ:27774 (format pds4_fixed_width, compiler pds4_binary_compiler); Workflow vco-rs-cdn.yml steht. Die frühere Note nannte falschen Arm/Workflow (Riss). 2026-10-04.
 
 pending
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
@@ -91,7 +91,7 @@ note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ veri
 
 pending
 url https://gportal.jaxa.jp/
-note JAXA G-Portal — sources.φ:9512; compiler + jaxa-gportal-cdn.yml stehen; Katalog-Record trägt nur Footprint-Zentren (lon/lat), kein Messwert → Reader descoped (Rat 2026-10-06). Offen: Record-Download, Quota. future-folge226.
+note JAXA G-Portal — sources.φ:10370; compiler + jaxa-gportal-cdn.yml stehen; Katalog-Record trägt nur Footprint-Zentren (lon/lat), kein Messwert → Reader descoped (Rat 2026-10-06). Offen: Record-Download, Quota. future-folge226.
 
 pending
 url https://limadou.ssdc.asi.it/
@@ -107,7 +107,7 @@ note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13 207 B);
 
 pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
-note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-04: generischer `csv`-Arm liest Plain-CSV (extract.rs:3846, kein neuer Arm nötig); Host 000/Wayback ohne Snapshot, 2026-10-02 nur 1 B → Feld-Verdikt nicht messbar. future-folge165.
+note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-04: generischer `csv`-Arm liest Plain-CSV (extract.rs:4315, kein neuer Arm nötig); Host 000/Wayback ohne Snapshot, 2026-10-02 nur 1 B → Feld-Verdikt nicht messbar. future-folge165.
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
@@ -127,7 +127,7 @@ note ieeg.org — 2026-10-04: REST ohne Elektroden-Koordinaten (kein MNI); /api 
 
 blocked account
 url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — 2026-10-08 re-measured: landing HTTP 200 (15360 B); data via NEDC account (form sent, wartend.φ:39); electrode doc label/text only (Ferrell 2020, no coordinates). State descoped→blocked account (UI-Runde 2026-10-08).
+note TUH EEG (Temple) — 2026-10-08 re-measured: landing HTTP 200 (15360 B); data via NEDC account (form sent, wartend.φ:36/:37); electrode doc label/text only (Ferrell 2020, no coordinates). State descoped→blocked account (UI-Runde 2026-10-08).
 
 blocked account
 url https://sleepdata.org
@@ -149,7 +149,7 @@ note Neutralpunkt-GIC (Kellerman 2021, GIC-Zielkanal §F) — 2026-10-06: Zenodo
 
 pending
 url https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
-note ROTI (GIC-unabhängige Observable §D) — 2026-10-06: DLR IMPC 200 (offen); CDDIS nur Earthdata-gated; Arm: ROTI-Raster/Nagoya-Route.
+note ROTI (GIC Obs. §D) — 2026-10-08: data.impc.dlr.de/…/latest_D.json 200 (1.18 MB), 2D-Gitter 180×90 ohne per-Zelle-Koordinaten, Snapshot; cdaweb_roti.rs (CRTI) nutzbar, impc_roti_compiler.rs fehlt; Orientierung/Lizenz ungemessen. pending.
 
 pending
 url https://themis.igpp.ucla.edu/gmag/
@@ -181,7 +181,7 @@ note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-06: 200, CC BY
 
 pending
 url https://supermag.jhuapl.edu/products/
-note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18010–18021), Onset-Produkt neu.
+note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18407-18431), Onset-Produkt neu.
 
 pending
 url https://cdaw.gsfc.nasa.gov/CME_list/
@@ -193,7 +193,7 @@ note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-06: Ho
 
 pending
 url https://superdarn.usask.ca/convection-maps
-note SuperDARN CPCP/Konvektion (GIC-Mediator §B) — 2026-10-06: 200; fitacf lebt (sources.φ:17777), CPCP/Konvektionskarte neu.
+note SuperDARN CPCP (GIC §B) — 2026-10-08: Bestand 10374021 (Arm+WF stehen → ledger ausstehend); Zenodo 10875060 superDARN.zip 200 (32.6 MB, YYYYMMDD.north.nc NetCDF-4 map.pot.drop, CC-BY-4.0), kein .map2; superdarn_cpcp_nc_compiler.rs nötig. pending.
 
 pending
 url https://ds.iris.edu/ds/products/emtf/
@@ -201,7 +201,7 @@ note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-1
 
 pending
 url https://geomag.usgs.gov/ws/data/
-note USGS-Geoelektrik E-Feld mV/km (GIC-Replikation §A) — 2026-10-06: 307→400; Magnetik ist declined_sources.φ:2160 (INTERMAGNET-Dup.), E-Feld neu.
+note USGS-Geoelektrik E-Feld mV/km (GIC-Replikation §A) — 2026-10-06: 307→400; Magnetik ist declined_sources.φ:2176 (INTERMAGNET-Dup.), E-Feld neu.
 
 pending
 url http://awesome.ucsd.edu/

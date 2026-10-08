@@ -684,6 +684,14 @@ field wind_mfi_bx_gse_nt wind_mfi_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
+no-cadence
+at sun
+hapi Te=wind_swe_te_k el_bulk_vel_magn=wind_swe_el_bulk_vel_magn_kms el_density=wind_swe_el_density_cm3
+field wind_swe_te_k wind_swe_te_k exponential-decay thermal K 3600 0.0 0.0
+field wind_swe_el_bulk_vel_magn_kms wind_swe_el_bulk_vel_magn_kms patch-levy advective km/s 3600 0.0 0.0
+field wind_swe_el_density_cm3 wind_swe_el_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
 ttl 3600
 on earth 0 0 0
