@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 363527a9a8ac9b595f54cc6df6e46be73f0664d724d83a4db0c5fa6277c95190
+  sha256: a196d43551c94f0b3d345369120c1223adce5b9606a584bf254130b5208aa311
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -82,9 +82,9 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### Research-APIs/MCPs — Consensus · Perplexity · Elicit(descoped) · SciSpace (`docs/surveys/survey-2026-10-08-research-api-mcp.md`)
 - **Status:** wartend | **Bindung:** eigen (tools/utils + MCP-Config)
 - **Trigger:** opencode-Neustart mit exportierten Keys (`set -a; source .secrets.local; set +a`)
-- **Lage:** (gemessen 2026-10-08) **`--consensus` läuft live** (`CONSENSUS_API_KEY` in `.secrets.local`; 10 relevante Papers am Baum); **MCP-Harness verdrahtet** — `opencode.json` `mcp`-Block: `consensus` (`mcp.consensus.app/mcp`) + `perplexity` (`api.perplexity.ai/mcp`) als `type: "remote"` mit `{env:VAR}` (kein Secret getrackt). **Elicit `descoped`** (API nur Pro/Scale/Enterprise = kommerziell, Operator-Wort). **SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT-Verzeichnisse) → nicht nachbauen; REST-Host `api.scispace.com` antwortet (202/302) als Arm-Kandidat.
-- **Blockade:** opencode-Neustart steht aus; `--perplexity`-Arm noch nicht gebaut.
-- **Braucht:** `PERPLEXITY_API_KEY` exportieren + opencode neu starten (MCP-Tools für alle Agenten), dann `archive_search --perplexity <query>` bauen.
+- **Lage:** (gemessen 2026-10-08) **`--consensus` läuft live** (`CONSENSUS_API_KEY` in `.secrets.local`; 10 relevante Papers am Baum); **`--perplexity`-Arm gebaut** (`72fe2202b`, POST `api.perplexity.ai/chat/completions`, Modell `sonar`, Bearer) — Live-Aufruf **HTTP 403** (Key aufgelöst, API lehnt ab; Plan/Credits in `console.perplexity.ai` prüfen); **MCP-Harness verdrahtet** — `opencode.json` `mcp`-Block: `consensus` (`mcp.consensus.app/mcp`) + `perplexity` (`api.perplexity.ai/mcp`) als `type: "remote"` mit `{env:VAR}` (kein Secret getrackt). **Elicit `descoped`** (nur Pro/Scale/Enterprise). **SciSpace:** kein self-serve Key, MCP nur gebrokert (Claude/ChatGPT), keine öffentlichen REST-Docs → `pending`.
+- **Blockade:** Perplexity-API-Zugang (403); opencode-Neustart mit exportierten Keys steht aus.
+- **Braucht:** Perplexity-Plan/Credits in der Console prüfen; `set -a; source .secrets.local; set +a` + opencode neu starten (MCP-Tools für alle Agenten).
 
 ## An river
 
