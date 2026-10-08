@@ -570,6 +570,10 @@ decline no-physical-force
 url https://api.github.com/events?per_page=100
 note GitHub public events count per minute: naked count, no physical field.
 
+decline superseded-by-integrated
+url https://api.ioc-sealevelmonitoring.org/v1
+note IOC Sea Level v1 — v1 ohne Key 403; die keyless service.php-Route ist in phi/sources.φ registriert und deckt die Stationen (gemessen 2026-10-06).
+
 decline infrastructure
 url https://api.ioda.caida.org/v2/outages/asn/
 note IODA v2 Internet-Ausfälle (BGP/Reachability je ASN) — Zustand menschlicher Netz-Infrastruktur, kein physikalisches Feld; Kraft absent. Gemessen 2026-09-15: kein HTTP über drei Routen — der Decline ist das Urteil (infrastructure).
@@ -3016,6 +3020,10 @@ decline catalog-registry
 url https://pds.nasa.gov/api/search/1/products?limit=1
 note grind: grind_planetary.φ
 
+decline superseded-by-integrated
+url https://pdsatmospheres.nmsu.edu/data_and_services/atmospheres_data/Cassini/logs/titanNotebook/titan/s34/O050/
+note Cassini titanNotebook tray — Log-/Browse-Baum, kein Feld-Serien-Endpunkt (200/13058 B, 2026-10-02; Wayback ohne Snapshot); die ODF-Serie steht in phi/sources.φ (cassini_odf).
+
 decline html
 url https://pdssbn.astro.umd.edu/holdings/pds4-nh_documents:rex-v2.0/SUPPORT/dataset.shtml
 note NH-REX-Support-Dokumentation; die REX-TNF-Messung ist schon blocked parser-def tnf. Gemessen 2026-09-14 HTTP 200.
@@ -5431,6 +5439,10 @@ note SNOTEL/SNODAS-Stations-Graph (graph.json/csv.json CDN-Captures, Station CEM
 decline model-reanalysis
 url https://www.nohrsc.noaa.gov/snowfall/
 note SNODAS = Schnee-Daten-Assimilation-Reanalyse/abgeleitetes Produkt, kein Punkt-Live-Feed; 200.
+
+decline superseded-by-integrated
+url https://www.nssdc.ac.cn/
+note NSSDC China Tianwen-1/Zhurong — konto-gebunden; CDS-HiPS CDS_P_Mars_Tianwen1-MoRIC trägt die Oberfläche (ODbL, anonym, Arm hips.rs). Descoped 2026-10-04 (Future 177); direct HTTP 206 (1 B), measured 2026-10-08.
 
 decline imagery
 url https://www.oasis-brains.org

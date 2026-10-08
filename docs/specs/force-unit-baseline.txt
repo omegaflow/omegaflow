@@ -58,3 +58,12 @@
 # healed; the file may only shrink (Council 2026-10-07: freeze the old debt,
 # block the new). Healing is a per-line source-identity verdict, never a class
 # rewrite — see the Force-/Einheiten-Kontrakt in the Mountain handover.
+#
+# Mountain 273 (2026-10-08): the three GIC-arm pairs admitted to units.rs —
+# em `gw` (ssusi_hemisphere_power_* GW, a power; em already owns w/kw),
+# electric `kv` (superdarn_cpcp_pot_drop kV, a potential; electric owns v/kv),
+# em `ohm` (emtf_z*_* SI-Ω MT impedance, an EM transfer function). Frozen here
+# until tools-latest republishes the gate, then deleted.
+em gw
+electric kv
+em ohm
