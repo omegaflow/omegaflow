@@ -384,6 +384,7 @@ pub fn build_netcdf_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
+                                receiver_aperture: None,
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -536,6 +537,7 @@ pub fn build_netcdf4_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
+                                receiver_aperture: None,
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -908,6 +910,7 @@ pub fn build_opendap_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
+                                receiver_aperture: None,
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,

@@ -304,6 +304,38 @@ impl Aperture {
 }
 
 #[derive(Clone)]
+pub struct ReceiverAperture {
+    slots: [Option<f64>; 18],
+}
+
+impl ReceiverAperture {
+    pub fn new() -> Self {
+        Self { slots: [None; 18] }
+    }
+
+    fn index(force: u8, class: Aperture) -> Option<usize> {
+        if (force as usize) >= 9 {
+            return None;
+        }
+        let c = match class {
+            Aperture::None => 0usize,
+            Aperture::Flux => 1usize,
+        };
+        Some(force as usize * 2 + c)
+    }
+
+    pub fn get(&self, force: u8, class: Aperture) -> Option<f64> {
+        Self::index(force, class).and_then(|i| self.slots[i])
+    }
+
+    pub fn set(&mut self, force: u8, class: Aperture, length: f64) {
+        if let Some(i) = Self::index(force, class) {
+            self.slots[i] = Some(length);
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct FieldConfig {
     pub key: String,
     pub name: String,

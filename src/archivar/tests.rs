@@ -4261,6 +4261,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &fc,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4281,6 +4282,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &fc,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4290,6 +4292,27 @@ fn test_load_gate_clips_records_outside_enclosure() {
             },
         ),
         "a record beyond reach_signal + extent + rho stays raw"
+    );
+    assert!(
+        !super::record_in_enclosure(
+            &near,
+            Some([1.0, 0.0, 0.0]),
+            now,
+            now,
+            EnclosureField {
+                config: &fc,
+                medium: None,
+                body_radius: None,
+                receiver_aperture: Some(0.5),
+            },
+            AnchorEnvelope {
+                vmax: 0.0,
+                amax: 0.0,
+                pad: 0.0,
+                ttl: 60.0,
+            },
+        ),
+        "a record beyond the receiver aperture is refused even inside the source reach"
     );
     let no_law = FieldConfig {
         force: 9,
@@ -4305,6 +4328,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &no_law,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4325,6 +4349,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &fc,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4358,6 +4383,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &fc,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4378,6 +4404,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &fc,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4403,6 +4430,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &thermal,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4423,6 +4451,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &thermal,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 1.0,
@@ -4443,6 +4472,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
                 config: &fc,
                 medium: None,
                 body_radius: None,
+                receiver_aperture: None,
             },
             AnchorEnvelope {
                 vmax: 0.0,
@@ -4540,6 +4570,7 @@ fn test_wind_waves_loader_respects_load_gate() {
                         config: &fc,
                         medium: None,
                         body_radius: Some(body_radius),
+                        receiver_aperture: None,
                     },
                     AnchorEnvelope {
                         vmax: anchor_vmax,

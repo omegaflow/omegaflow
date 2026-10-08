@@ -509,6 +509,7 @@ pub struct EnclosureField<'a> {
     pub config: &'a FieldConfig,
     pub medium: Option<&'a crate::media::MediumParams>,
     pub body_radius: Option<f64>,
+    pub receiver_aperture: Option<f64>,
 }
 
 pub struct AnchorEnvelope {
@@ -529,6 +530,7 @@ pub fn record_in_enclosure(
     let fc = field.config;
     let medium = field.medium;
     let body_radius = field.body_radius;
+    let receiver_aperture = field.receiver_aperture;
     let anchor_vmax = env.vmax;
     let anchor_amax = env.amax;
     let pad = env.pad;
@@ -558,7 +560,8 @@ pub fn record_in_enclosure(
             let dx = p_r[0] - px;
             let dy = p_r[1] - py;
             let dz = p_r[2] - pz;
-            (dx * dx + dy * dy + dz * dz).sqrt() <= limit
+            let dist = (dx * dx + dy * dy + dz * dz).sqrt();
+            dist <= limit && receiver_aperture.is_none_or(|aperture| dist <= aperture)
         })
 }
 
@@ -590,6 +593,7 @@ pub fn catalog_sample_in_enclosure(
             config: &fc,
             medium: None,
             body_radius: None,
+            receiver_aperture: None,
         },
         AnchorEnvelope {
             vmax: sample.anchor_vmax,
@@ -630,6 +634,7 @@ pub fn body_in_enclosure(
             config: &fc,
             medium: None,
             body_radius: Some(props.radius_m),
+            receiver_aperture: None,
         },
         AnchorEnvelope {
             vmax: 0.0,
