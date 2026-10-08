@@ -3,7 +3,7 @@
   session: River-Folge 138
   class: handover
   date: 2026-10-08
-  sha256: ae8af7c0a08df7b0a882000050e7e012187d2215ec72cb3b0cec6656ff38cf13
+  sha256: d3694946befb63d2068883ddf8292f303e07bf4c432c6c5885f12ad30eca8656
   status: live
 -->
 # Handover — River-Folge 138 (2026-10-08)
@@ -92,7 +92,7 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 ### Flyby-Kette — RTSW + kp-`def` geschlossen, recon bleibt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34` (`ephemeris-juice-recon`).
-- **Lage:** (gemessen 2026-10-08, River 138) **RTSW gefüllt:** der Re-Lauf mit `--snapshots data/services.swpc.noaa.gov` hat alle 26 Zellen gefüllt (Register `data/flyby2/tube-juice-2026-09-28.json`, 41 528 B, mtime 23:04); Trajectory `official: placed` (`aeb3c82…`). **kp `def` freigegeben:** der GFZ-Lauf `status=def,nowcast` liefert `HTTP 200`, alle 33 Intervalle `def`; das Register trägt 26 kp-Zellen `status def` (Werte stichprobenartig gegen die GFZ-Reihe gedeckt). **`omni2_bz` in der Quelle absent:** der OMNI2_H0_MRG1HR-Response trägt `BX`/`BY`/`BZ` als Fill `999.9` über das ganze Fenster (nur `Pressure1800` hat Werte) → `pending`, nie 0.0. Das Addendum trägt die 2026-10-08-Sektion (Füll-Tafel, sechs RTSW-Reihen, `omni2_pressure`, kp-`def`-Werte). `wartend.φ` `flyby-chain-omni2`/`flyby-chain-kp-def` entfernt. **Offen:** `ephemeris-juice-recon` (SPK absent, 404 gemessen 2026-10-02).
+- **Lage:** (gemessen 2026-10-08, River 138) **RTSW gefüllt:** der Re-Lauf mit `--snapshots data/services.swpc.noaa.gov` hat alle 26 Zellen gefüllt (Register `data/flyby2/tube-juice-2026-09-28.json`, 41 528 B, mtime 23:04); Trajectory `official: placed` (`aeb3c82…`). **kp `def` freigegeben:** der GFZ-Lauf `status=def,nowcast` liefert `HTTP 200`, alle 33 Intervalle `def`; das Register trägt 26 kp-Zellen `status def` (Werte stichprobenartig gegen die GFZ-Reihe gedeckt). **`omni2_bz` in der Quelle absent:** der OMNI2_H0_MRG1HR-Response trägt `BX`/`BY`/`BZ` als Fill `999.9` über das ganze Fenster (nur `Pressure1800` hat Werte) → `pending`, nie 0.0. Das Addendum trägt die 2026-10-08-Sektion (Füll-Tafel, sechs RTSW-Reihen, `omni2_pressure`, kp-`def`-Werte). `wartend.φ` `flyby-chain-omni2`/`flyby-chain-kp-def` entfernt. **Verdikt bleibt `pending`:** die Präregistrierung (`flyby-path-2-preregistration-revised.md:63-68`) fällt genau dann, wenn `Δ > δ + 3·σ_recon`; `δ = 0,168 km` steht, aber **Δ** braucht die Post-Flyby-Rekonstruktion und **σ_recon** die Kovarianz — beide absent (re-gemessen 2026-10-08: `ephemeris_juice_recon.bin` 404 über die Drei-Stufen-Leiter; das ESOC-SPK-Listing `spiftp.esac.esa.int` führt keine JUICE-Trajektorie nach 2026-09-28). Die Feldkette ist deskriptiv/Verifikation, nie das Gate.
 - **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent (`ephemeris-juice-recon.bin` 404).
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Release-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
