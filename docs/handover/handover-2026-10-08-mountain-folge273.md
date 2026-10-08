@@ -195,6 +195,11 @@ Wort | Datum | Quelle
 
 Origin: mountain-folge273.
 
+- **Commit-Sweep (Fehler, gemessen 2026-10-08 273):** `src/archivar/channels.rs`
+  (+24/−3) war im **geteilten Index** gestaged und wurde durch einen ganz-index-
+  `git commit` in `e51273108` (mountain) mitgerissen. Gepusht → nicht rewrite-bar.
+  **Braucht:** river prüft/übernimmt die `channels.rs`-Änderung inhaltlich; künftige
+  Mountain-Commits sind pfad-begrenzt (`git commit <pfad> -m`).
 - **cors-Riss (gemessen 2026-10-08 273):** `river-134` bat um eine
   `cors_compiler`-Registerzeile. Der Baum trägt keinen Workflow, der
   `cors_compiler` ruft — `cors-cdn.yml:61` ruft `cors_rinex_compiler`; die
