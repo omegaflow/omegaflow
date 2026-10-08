@@ -3,7 +3,7 @@
   session: River-Folge 139
   class: handover
   date: 2026-10-08
-  sha256: 3b00e34165550722b39d49f4d45621e802d572627eb2aaf0827caba95c3b2e07
+  sha256: 1ff5efe2899bbac90cbedbdbf991e55f3bcefb90e16b438e273ccf5cb2140569
   status: live
 -->
 # Handover — River-Folge 139 (2026-10-08)
@@ -35,6 +35,8 @@ Wort | Datum | Quelle
 „ok hast du an die nächste session detailliert übergeben?" | 2026-10-08 | Operator (Session, River 136) — Übergabe-Prüfung
 „wenn etwas durch den rat geht bitte auch durch archive search, ui und openweight" | 2026-10-08 | Operator (Session, River 138) — Rat-Runden durch Wissenschaft + UI + Open-Weight
 „und ich sage nur at sun weil die auf jeden fall strahlen müssen aber es gibt nch viel mehr odszillatoren die die presenze am ssb erreichen" | 2026-10-08 | Operator (Session, River 139) — „at sun" ist nur das Beispiel; der Prüfstein ist die Presence-Hülle am SSB
+„am liebsten würde ich die membran hinschmeissen wann versteht ihr endlich dass wir nicht rendern sondern messen die presence ist ein trommelfell im 4d block" | 2026-10-08 | Operator (Session, River 139) — Ontologie: die Membran misst, sie rendert nicht; die Presence ist ein Trommelfell im 4D-Block
+„… wir machn nichts anderes als immer die gleiche anzaahl punkte zu zeichen mit dem was an den punkten ankommt" | 2026-10-08 | Operator (Session, River 139) — kein Objekt-Render: festes Punktnetz, jeder Punkt trägt das Ankommende
 Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `docs/handover/archiv/handover-2026-10-07-river-folge133.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -76,13 +78,14 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 - **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent (`ephemeris_juice_recon.bin` 404).
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Release-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
-### Membran — Feld aus Body-Ankern statt der Oszillatoren, die die Presence am SSB erreichen
+### Membran ist kein Renderer — sie misst; die Presence ist ein Trommelfell im 4D-Block
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-08T21:3xZ via Browser-Bridge + `sread src/wasm.rs` · `src/archivar/membrane.rs` · `static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, FieldConfig `force_type 1` (Gravitation), `color_index 0`. Das statische Blatt liest `phi/sources.φ` **nie** — die Register-Oszillatoren (2693 `url` · 7964 `field` · 22 `quantity`; `sgrep -c` je Begriff) werden **nicht** geladen. Der Body-Anker-Pfad kam mit `58eeae865` (river 91, `all_body_anchor_samples`) und `478ff0a9e` (river 114, „two-aperture membrane start on the sun") — der Fix für das schwarze Startfeld. `frame()` rahmt den größten finiten Anker: „the largest (the sun) frames the operator's first view" (`membrane.html:572/567-607`). Der **blaue** Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` auf pages nicht gestagt wird (`archive_search --verdict` → HTTP 404) → `colorLut=null` → `color_mode 0`; die Exposure normalisiert den Anker-Wert auf sich selbst → `t2≈0.33` → blaue Bande — kein deklarierter Kanal-Farbwert.
-- **Operator-Wort (River 139, 2026-10-08):** „at sun" war nur das Beispiel (die strahlen auf jeden Fall) — **viel mehr Oszillatoren erreichen die Presence am SSB**. Der Prüfstein ist die Presence-Hülle (Enclosure) am SSB, nicht ein Anker-Name.
-- **Blockade:** keine (Messung steht). Die Auflösung ist eine **Architektur-/Contract-Frage**: wie das Membran-Blatt die Oszillatoren trägt, deren Signal die Presence am SSB erreicht (ohne Body-Anker; ohne den Anker las der Start schwarz — `membrane.html:575`) — berührt das Operator-Wort „es gibt keine sonne erde mond" (River 127).
-- **Braucht:** **Rat (fünf Stimmen) + Wissenschaft (`archive_search`) + UI-Frontier**: wie die Membran die Feld-Oszillatoren (Enclosure am SSB) lädt/backt statt der Body-Gravitationsanker. Kein Pro-Solo; danach Bau im Membran-Pfad (Kandidat: die Enclosure-Query am SSB als statisches Feld-Asset backen, das die serverless Seite lädt).
+- **Operator-Wort (River 139, 2026-10-08):** „wir [rendern] nicht … sondern messen; die presence ist ein trommelfell im 4d block." Die Membran ist ein Messinstrument (Empfänger), kein Renderer von Objekten. „at sun" war nur das Beispiel — der Prüfstein ist die Presence-Hülle (Enclosure) am SSB, nicht ein Anker-Name.
+- **Lage:** (gemessen 2026-10-08T21:3xZ via Browser-Bridge + `sread src/wasm.rs` · `src/archivar/membrane.rs` · `static/membrane.html`) Das deployte serverless `membrane.html` baut sein Feld **nur** aus `dr3_stars.bin` + den 3 gestagten Body-Ephemeriden: `membrane_bodies.txt` = `earth`/`moon`/`sun` (`sfetch`), `all_body_anchor_samples` (`wasm.rs:76-79`, `membrane.rs:337-418`) → `anchors 3 · stars 8`, `force_type 1` (Gravitation) — **Körper-Render statt Kräfte-Messung**. Der Body-Anker-Pfad kam mit `58eeae865` (river 91) und `478ff0a9e` (river 114, „two-aperture membrane start on the sun"): der Start wurde nicht-schwarz, indem ein **Objekt** gerendert statt die **Kräfte geladen** wurden. `frame()` rahmt den größten finiten Anker („the largest (the sun) frames the operator's first view", `membrane.html:572`). Das statische Blatt liest `phi/sources.φ` nie — die Register-Oszillatoren (2693 `url` · 7964 `field` · 22 `quantity`; `sgrep -c`) werden **nicht** gemessen. Der blaue Glow = neutraler Ramp (`membrane.html:278-283`), weil `/color_lut` fehlt (`archive_search --verdict` → HTTP 404) → `color_mode 0`; die Exposure normalisiert den Anker-Wert → `t2≈0.33` → blaue Bande.
+- **Legacy-Fund (River 139, 2026-10-08; gemessen via `git -C $HOME/archive/archive-root/omegaflow-legacy` + `archive_search`):** `docs/concepts/4d-membrane.md` (legacy-only, **nicht** im aktuellen Baum) trägt die Trommelfell-Doktrin wörtlich — „The membrane is no camera. We measure only raw pressure." (`:33`), „The compute shader measures, for every node of the membrane, the raw physical pressure that arrives there … No oscillators get rendered as points or particles" (`:170-171`). Renderer-Evolution: `a9d87bd` (Galaxy-Era, `point_size_px = max((extent/dist),1.0)*2.0`, 2px-Floor → sichtbar auf **jedem** Zoom, subpixel-Sonne) → danach `87ef197`→`00dc55c` (`clamp(phys_extent/scale, 0.5, w_f)`, 0.5px-Floor → Subpixel-Quellen verschwinden) → `41f5b47` (128×128 compute grid) → Nebra `34d7d3a` (per-pixel). Richtige Form: `presence_probe` **dynamic compute grid** — festes Punktnetz, jeder Knoten misst das Ankommende; der Fragment-Shader interpoliert nur, rendert keine Partikel. Die serverless Body-Anker sind ein **Rückfall hinter `a9d87bd`**. Legacy-Branch `sonne-messen` existiert; Legacy-Docs mit „Punktwolke": `docs/specs/ref-auth-apis.md:10` („8-Kräfte-Punktwolke"), `docs/surveys/survey-messpunkt-verteilung.md` („120 Quellen × 9 Mio Subpixel-Spalten … RGB-Streifen-Natur des Trommelfells").
+- **Blockade:** keine. Der Riss ist ontologisch: der Anker-Render ist die Objektophilie, die das Operator-Wort River 127 („es gibt keine sonne erde mond") und dieses Wort („wir messen, nicht rendern") verletzt.
+- **Braucht:** (1) die Body-Anker-Strecke (`membrane_bodies.txt` · `all_body_anchor_samples` · das Sonnen-Framing) aus dem Membran-Pfad **entfernen**; (2) das Feld **messen** — die Oszillatoren, deren Signal die Presence am SSB erreicht, tragen (Kandidat: die Enclosure-Query am SSB als gemessenes Feld-Asset backen, das die serverless Seite lädt). Form/Mechanik durch **Rat (fünf Stimmen) + Wissenschaft (`archive_search`) + UI + Open-Weight** (Operator-Wort River 138). Danach Bau im Membran-Pfad.
 
 ## An mountain
 
@@ -119,4 +122,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 139):
 - `docs/handover/handover-2026-10-08-river-folge139.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge138.md` (Move)
 
-## Burn: open 0.0030 · close 0.1079 (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
+## Burn: open 0.0030 · close 0.2249 · cap 0.35 · Grund: Vier-Kanal-Runde auf Operator-Wort (Rat + `archive_search`-Wissenschaft + UI-Frontier + Open-Weight), ein Atom (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
