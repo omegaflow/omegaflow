@@ -343,6 +343,10 @@ fn main() {
             "--perplexity" => mode = Mode::Perplexity,
             "--lpf" => mode = Mode::Lpf,
             "--linkup" => mode = Mode::Net("linkup"),
+            "--serper" => mode = Mode::Net("serper"),
+            "--firecrawl" => mode = Mode::Net("firecrawl"),
+            "--searchapi" => mode = Mode::Net("searchapi"),
+            "--serpapi" => mode = Mode::Net("serpapi"),
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
             "--zenodo" => mode = Mode::Net("zenodo"),
@@ -697,7 +701,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -713,6 +717,18 @@ fn usage() {
     );
     eprintln!(
         "  --searxng   SearXNG meta-search (public JSON instances, keyless; self-host fallback); url + title/content/engine"
+    );
+    eprintln!(
+        "  --serper    Serper Google SERP (google.serper.dev/search, X-API-KEY); url + title/position/snippet"
+    );
+    eprintln!(
+        "  --firecrawl Firecrawl search (api.firecrawl.dev/v1/search, Bearer; OSS self-host fallback); url + title/description"
+    );
+    eprintln!(
+        "  --searchapi SearchApi.io (searchapi.io/api/v1/search, Bearer); url + title/position/snippet"
+    );
+    eprintln!(
+        "  --serpapi   SerpApi (serpapi.com/search.json, api_key); url + title/position/snippet"
     );
     eprintln!(
         "  --jina      Jina Reader (r.jina.ai), keyless; the clean text of a page for a target url"
