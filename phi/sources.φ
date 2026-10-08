@@ -10151,14 +10151,14 @@ origin https://doi.org/10.17611/DP/EMTF/USARRAY/TA (EarthScope USArray MT impeda
 compiler tools/harvest/src/bin/emtf_compiler.rs
 at earth
 ttl 604800
-field emtf_zxx_re emtf_zxx_re inverse-square em ohm 604800 0.0 0.0
-field emtf_zxx_im emtf_zxx_im inverse-square em ohm 604800 0.0 0.0
-field emtf_zxy_re emtf_zxy_re inverse-square em ohm 604800 0.0 0.0
-field emtf_zxy_im emtf_zxy_im inverse-square em ohm 604800 0.0 0.0
-field emtf_zyx_re emtf_zyx_re inverse-square em ohm 604800 0.0 0.0
-field emtf_zyx_im emtf_zyx_im inverse-square em ohm 604800 0.0 0.0
-field emtf_zyy_re emtf_zyy_re inverse-square em ohm 604800 0.0 0.0
-field emtf_zyy_im emtf_zyy_im inverse-square em ohm 604800 0.0 0.0
+quantity emtf_zxx_re emtf_zxx_re inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zxx_im emtf_zxx_im inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zxy_re emtf_zxy_re inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zxy_im emtf_zxy_im inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zyx_re emtf_zyx_re inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zyx_im emtf_zyx_im inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zyy_re emtf_zyy_re inverse-square impedance ohm 604800 0.0 0.0
+quantity emtf_zyy_im emtf_zyy_im inverse-square impedance ohm 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kmtnet.json
 format kasi
