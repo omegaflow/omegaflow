@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: 6f853e0c99c7f9f0ca299fc656d5f2051209aac0e91be6a7e44afff68284243d
+  sha256: f2910fe2336ad64d2221873a96c277814a1e335734e96e3e971d5c8ae98b981c
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -30,6 +30,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „consensus und perplexity sind drin, elicit descoped da kostenpflichtig" → Keys in `.secrets.local`; `--consensus` live; Elicit `descoped` | Quelle: diese Session.
 - 2026-10-08 | „können wir den connector nicht für opencode nachbauen? und braucht unser taucher nicht einen MCP harness?" → opencode `mcp`-Block ist der Harness; `consensus` + `perplexity` als `type: remote` verdrahtet; SciSpace-MCP gebrokert, nicht nachbaubar | Quelle: diese Session.
 - 2026-10-08 | „scispace nochmal mit harten bandagen … perplexity hab ich nochmal sicher eingegeben 10$ guthaben geschenkt" → SciSpace: cookie-interne API (kein Arm); Perplexity: Endpunkt umgezogen → Agent-API, `--perplexity` live (`1569a26d8`) | Quelle: diese Session.
+- 2026-10-08 | „nochmal prüfen ob du quellen findest die future nicht gefunden hat … und hast du gerade das tool mit seinen neuen skills genutzt?" → Gegen-Audit `docs/surveys/survey-2026-10-08-open-sources-delta.md` (neue Arme genutzt, LEOS/CSES u. a. neu) | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -86,6 +87,13 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Lage:** (gemessen 2026-10-08) **`--consensus` läuft live** (`CONSENSUS_API_KEY`; 10 Papers am Baum); **`--perplexity` läuft live** (`1569a26d8`) — der 403 war der **umgezogene Endpunkt**: Sonar ist jetzt die **Agent-API** (`POST api.perplexity.ai/v1/agent`, `preset`+`input`); Antwort mit `[web:n]`-Citations. **MCP-Harness verdrahtet** (`opencode.json` `mcp`: `consensus` + `perplexity` als `type: "remote"` mit `{env:VAR}`). **Elicit `descoped`** (nur Pro/Scale/Enterprise). **SciSpace:** `api.scispace.com/api/v1/*` → 403 `{"message":"Missing cookies"}` — cookie-interne Web-API, **keine Key-API**, keine öffentlichen REST-Docs; MCP nur gebrokert → **kein Arm** (`pending`).
 - **Blockade:** opencode-Neustart mit exportierten Keys steht aus.
 - **Braucht:** `set -a; source .secrets.local; set +a` + opencode neu starten (MCP-Tools für alle Agenten).
+
+### Gegen-Audit — Quellen-Delta + Re-Audit (`docs/surveys/survey-2026-10-08-open-sources-delta.md`)
+- **Status:** eigen | **Bindung:** eigen (Recherche) → Mountain (Admission)
+- **Trigger:** Operator-Wort 2026-10-08 („Quellen finden, die Future nicht fand" + „hast du das Tool mit den neuen Skills genutzt?")
+- **Lage:** (gemessen 2026-10-08) **die neuen Arme endlich genutzt** (`--jina`/`--perplexity`/`--consensus`) — sie liefern: `--perplexity` fand den **CSES-Port `www.leos.ac.cn`** (200, user-gated, unregistriert), `--consensus` CSES-Vorläufer-Papers, `--jina` liest Portal-Seiten. Quellen-Delta: HI-Surveys (LAB/EBHIS/GASS/GALFA-HI, SkyView EBHIS/GASS), CMB (PLA, LAMBDA, ACT/SPT), Solar (IRIS/SDO/VSO/HEK/Solar Orbiter/PSP), LAIC (CSSDC/LEOS/INTERMAGNET/ISGI), FRB (CHIME/Blinkverse), Teilchen (ATLAS/Belle II/GWOSC/Fermilab). **Re-Audit:** SuperMAG jetzt erreichbar (206; `--jina`: `ERROR: No username` → braucht `username`-Param); LEOS neu; PSA/SSDC/Chang'e erreichbar; LPF/Lasair/DEMETER-order/GOSAT-Host blockiert. **Riss:** der Diver zitierte CSES als `sources.φ:17149` — der Baum trägt dort Vega 2 MISCHA (`sgrep leos.ac.cn`=0).
+- **Blockade:** die neuen Kanäle brauchen Mountain-Admission (Verdikt-Zeile) + Mycelium-Manifestation; die Kuprat-Rückfrage ist operator-gebunden.
+- **Braucht:** Mountain-Verdikt für die neuen Quellen; LEOS als CSES-Kanal; SuperMAG-`username`-Kontrakt messen; Kuprat-/Detektor-Rückfrage an den Operator.
 
 ## An river
 
