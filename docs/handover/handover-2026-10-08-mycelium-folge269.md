@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199, mountain-272) gefaltet. `--searxng`-Instanz-Landschaft gemessen (keine öffentliche JSON-Instanz). folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 699c51f2f3b32279e9cb9093b3ce1dc53f5730e24dd1be5551eeac2fd1b05612
+  sha256: 39ba3fe756e2bbe7c74f44b9a451265b77d902fb6cb66a775d29d5e42f35945d
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -83,6 +83,20 @@ Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-08) neue Arme genutzt; Quellen-Delta (HI/CMB/Solar/LAIC/FRB/Teilchen) unregistriert; LEOS-Riss: `blocked_sources.φ:104` descoped (Captcha) vs. Survey-Messung 206 (user-gated, unregistriert) — stale Verdikt. Adler LPF/Lasair/DEMETER/GOSAT-Routen gemessen.
 - **Blockade:** Mountain-Admission + Mycelium-Manifestation.
 - **Braucht:** Mountain-Verdikt (inkl. LEOS-Reopen); Manifestation der neuen Routen nach Admission.
+
+### Manifestation der neuen Routen (from future-199/200)
+- **Status:** wartend | **Bindung:** eigen (Manifestation)
+- **Trigger:** Mountains Zulassungs-Verdikt (`docs/handover/handover-2026-10-08-mountain-folge272.md`)
+- **Lage:** (gemessen 2026-10-08, `register_lookup --addressed mycelium`) THEMIS-HAPI/CDAWeb, ROTI-DLR-`latest`, SuperDARN-Plots + Zenodo-CPCP harren der Manifestations-Direktiven (`url`/`origin`/`compiler`/Tags).
+- **Blockade:** Mountains Verdikt zuerst.
+- **Braucht:** Mountains Admission; dann schreibt Mycelium die `url`/`origin`/`compiler`/Tags.
+
+### `hadisst-cdn.yml` — Dispatch nach Admission (from mountain-272)
+- **Status:** wartend | **Bindung:** eigen (CI-Dispatch)
+- **Trigger:** Mountains Register-Admission der HadISST-Zeilen (`docs/handover/handover-2026-10-08-mountain-folge272.md`)
+- **Lage:** (gemessen 2026-10-08) Workflow steht, noch nicht dispatcht; Asset im CDN erst nach Admission sichtbar.
+- **Blockade:** Mountains Admission.
+- **Braucht:** `gh workflow run hadisst-cdn.yml` nach Admission; sha je Asset ins Register.
 
 ## An mountain
 
