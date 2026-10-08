@@ -139,7 +139,7 @@ Du kannst. Führe den Plan aus — als `line`-Agent (auto-bestätigt); dispatch 
 ### LAB_A/MLZ NSE I(q,t) — privates Holding
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Rat-/Operator-Wort zur Feld-/Wire-Karte der NSE-Serie (Future-Queue).
-- **Lage:** (gemessen 2026-09-28) Reader + Compiler gebaut (`lab_reader.rs`, `lab_reader_compiler.rs`); 13 Läufe [redacted] privat gesichert (`data/lab_a.data/…`, gitignored).
+- **Lage:** (gemessen 2026-09-28) Reader + Compiler gebaut (`lab_reader.rs`, `lab_reader_compiler.rs`); 13 Läufe [RETRACTED-SAMPLE] privat gesichert (`data/lab_a.data/…`, gitignored).
 - **Blockade:** Wire-Lücke — NSE-Polarisation trägt keine ICRS-Position/keinen Kraftkanal.
 - **Braucht:** Feld-/Wire-Entscheidung (Rat/Future); kein CDN ohne Operator-Einverständnis.
 

@@ -67,7 +67,7 @@ zitiert, nie kopiert).
 ### NSE I(q,t) — Redistribution-Einverständnis offen
 - **Status:** wartend | **Bindung:** operator (SAMPLE_CONTACT-Akt)
 - **Trigger:** SAMPLE_CONTACTs Antwort / Operator-Sende-Wort.
-- **Lage:** (gemessen 2026-09-28 folge199) SAMPLE_CONTACT/LAB_A lieferte 13 NSE-I(q,t)-Läufe (q=(0.5,0.5,1.0), T 3.47–32.52 K), privat `data/lab_a.data/SAMPLE_NSE_[redacted]/` (sha256 `SOURCE_SHA…e6d864`, `PROVENANCE.txt`: NOT manifested). Reader `src/archivar/lab_reader.rs` + `lab_reader_compiler` gebaut. Reply-Entwurf `state/mail/[redacted].md`. Operator-Wort: kein CDN ohne Einverständnis. **Audit 2026-09-28:** keine weitere Dritt-Gabe im Register veröffentlicht (`phi/sources.φ` ohne private `origin`; `declined_sources.φ` ~24× `decline redistribution`).
+- **Lage:** (gemessen 2026-09-28 folge199) SAMPLE_CONTACT/LAB_A lieferte 13 NSE-I(q,t)-Läufe (q=(0.5,0.5,1.0), T 3.47–32.52 K), privat `data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/` (sha256 `SOURCE_SHA…e6d864`, `PROVENANCE.txt`: NOT manifested). Reader `src/archivar/lab_reader.rs` + `lab_reader_compiler` gebaut. Reply-Entwurf `state/mail/[redacted].md`. Operator-Wort: kein CDN ohne Einverständnis. **Audit 2026-09-28:** keine weitere Dritt-Gabe im Register veröffentlicht (`phi/sources.φ` ohne private `origin`; `declined_sources.φ` ~24× `decline redistribution`).
 - **Blockade:** Einverständnis zur Redistribution (Mensch, Operator-Hand).
 - **Braucht:** Reply um die Lizenz-/Redistributionsfrage erweitern, dann Operator sendet; bis dahin privates Holding.
 

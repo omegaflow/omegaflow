@@ -149,7 +149,7 @@ Origin: mountain folge208.
   *Frage:* DSN/JPL-Rohdaten-Anfrage stellen?
 - **`daten-holdings-inventur` Ziel-Layout** (gemessen 2026-09-29): Marker `:74`/`:139`.
   *Frage:* welches Layout für die Migrations-Vorlage?
-- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [redacted]-Läufe als Substance-Witness
+- **NSE/SAMPLE_AUTHOR-Datenrechte** (gemessen 2026-09-29, Rat): 13 [RETRACTED-SAMPLE]-Läufe als Substance-Witness
   `LABR`; CDN-manifestiert oder privates Holding?
 
 ## Abschluss

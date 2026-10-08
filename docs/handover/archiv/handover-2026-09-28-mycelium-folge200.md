@@ -109,8 +109,8 @@ zitiert, nie kopiert).
 
 ### [redacted] Warte-Zeile schließen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** gefeuert — Mail-Eingang `state/mail/mail_ledger.φ:181`, Daten `data/lab_a.data/SAMPLE_NSE_[redacted]/`.
-- **Lage:** (gemessen 2026-09-28) `state/zustand/wartend.φ:8` (Aufnehmer mycelium) wartete auf Mail-Eingang; `mail_ledger.φ:181` (SAMPLE_CONTACT/LAB_A), Daten `data/lab_a.data/SAMPLE_NSE_[redacted]/`.
+- **Trigger:** gefeuert — Mail-Eingang `state/mail/mail_ledger.φ:181`, Daten `data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`.
+- **Lage:** (gemessen 2026-09-28) `state/zustand/wartend.φ:8` (Aufnehmer mycelium) wartete auf Mail-Eingang; `mail_ledger.φ:181` (SAMPLE_CONTACT/LAB_A), Daten `data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`.
 - **Blockade:** keine.
 - **Braucht:** die Warte-Zeile in `state/zustand/wartend.φ` schließen.
 
