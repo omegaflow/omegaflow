@@ -180,6 +180,8 @@ pub mod sexagesimal;
 pub mod sha256;
 pub mod skydirection;
 pub mod soho_lasco;
+pub mod ssusi_aurora;
+pub mod superdarn_cpcp;
 pub mod suprastrom;
 pub mod swarm_fac;
 pub mod tdat;
