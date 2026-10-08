@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: b1a68ae4756038a2698229fb90146447c6a65f7174bbbc18cef3b01f99017142
+  sha256: 87f502841174c71ac5374e0474791998075192d75799d5ee6912fe4ec2d8cb9f
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -30,11 +30,19 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   `descoped` (`state/future/giftkarte-klassifiziert-src-2026-10-07.md:133`).
 - **Rat (5 Stimmen) + Recherche-Schicht (`archive_search`) gefahren** — Verdikte je Punkt
   unten. **UI-Runde:** die konsolidierte 5-Fragen-Frage an 9 Seats (`mountain-ui`) gestellt.
-  Gemessen: DeepSeek-Chat antwortet in-thread konvergierend (Member-Pool zuerst, Indizes
-  daraus abgeleitet; der Bias sitzt im Ersatzmuster, nicht im Zugriffsnamen; Rechte-Feld =
-  DataCite `rightsList`/SPDX); Duck.ai-Send landete nicht (Composer gemessen leer),
-  Claude/Qwen/Z.ai/übrige in-thread (Antworten noch nicht eingesammelt). Max-Thinking/
-  Deep-Search je Seat, wo ein Toggle gemessen wurde.
+  **Antworten auf die exakte Frage** (gemessen aus den Tabs): Qwen, Claude (Sonnet 5.5
+  Extra hoch), DeepSeek. **Konvergenz:** Q1 Bootstrap-Cache-Load = Verletzung, Receiver =
+  zwingende Weltlinie (`Receiver(Worldline)`/`admit` → `Refusal` ohne Receiver); Q2 Apertur
+  = Record-`extent`, `span`-Direktiv **streichen**; Q3 nmgy nur mit Filter-/pivot-λ-Referenz
+  als `em`; Q5 Member-Pool nur mit **expliziter Abdeckung**, Lücke sichtbar.
+  **Riss (nicht geglättet):** Q4 — Qwen/DeepSeek: `pending`-mit-Trigger; **Claude:
+  `measured descoped`** („pending verspricht etwas, das die Regel nicht braucht"). Q5 —
+  Qwen/Claude: Pool wirebar mit Abdeckung; **DeepSeek: nicht wirebar** (2/154 = Minderheit
+  an der Stelle des Ganzen), Gegenlinie steht. **Gemessene Nicht-Antworten:** Z.ai/GLM =
+  „Model currently at capacity" (Peak); Duck.ai-Send landete nicht (Composer leer, 2×
+  `not a text-editable element`); AI Studio = Temporary Chat ohne Sendebestätigung;
+  Mistral/MiniMax/Lumo in-thread (Antwort auf die gleichlautende Vor-Batterie: Member-Pool
+  zuerst, Rechte im Register). Max-Thinking/Deep-Search je Seat, wo ein Toggle gemessen wurde.
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
