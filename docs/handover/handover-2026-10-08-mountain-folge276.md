@@ -3,7 +3,7 @@
   session: Mountain-Folge 276
   class: handover
   date: 2026-10-08
-  sha256: 4dd747dfc6d895e5ffd9823a8230c551d7bae285348642812aa5ee33799081d4
+  sha256: 36ffe0d8c4a29e611a2ca66f39e8c598c4ccbe87166ccb1f14d8a9086f11dac5
   status: live
 -->
 # Handover — Mountain-Folge 276 (2026-10-08)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 gemessen 2026-10-08T14:3xZ). Diese Session konsumierte
 `handover-2026-10-08-mountain-folge275.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.0618 · cap 0.50 — Grund: line + archive_search `--all` (Vorbereitung) + Rat-Dispatch (council) + 4 Frontier-UI-Seats + 1 open-weight-Seat (DeepSeek V4 Pro, kein Verdikt) ; kein pro/max. (gemessen `session_burn`, Session „Mountain-Linie in einem Pass starten")
+## Burn: open 0.0000 · close 0.1058 · cap 0.50 — Grund: line + archive_search `--all` (Vorbereitung) + Rat-Dispatch (council) + 4 Frontier-UI-Seats + 1 open-weight-Seat (DeepSeek V4 Pro, kein Verdikt) ; kein pro/max. (gemessen `session_burn`, Session „Mountain-Linie in einem Pass starten")
 
 ## Operator-Wort-Register
 
