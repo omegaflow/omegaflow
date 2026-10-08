@@ -39,6 +39,20 @@ const REC_T2D_TE: f64 = 2.2693e-1;
 const REC_CTE: f64 = 8.3587e-3;
 const REC_CTE_THR: f64 = 2.6118e-2;
 
+const GIC_AURORAL_MIN: f64 = 60.0;
+const GIC_SUBAURORAL_MIN: f64 = 50.0;
+const GIC_FAMILY_NAMES: [&str; 3] = ["auroral", "sub-auroral", "mid-latitude"];
+
+fn family_of(abs_cgm: f64) -> &'static str {
+    if abs_cgm >= GIC_AURORAL_MIN {
+        GIC_FAMILY_NAMES[0]
+    } else if abs_cgm >= GIC_SUBAURORAL_MIN {
+        GIC_FAMILY_NAMES[1]
+    } else {
+        GIC_FAMILY_NAMES[2]
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum State {
     Built,
@@ -4368,6 +4382,212 @@ fn matrix_cell_bias(
     bias_column(Some(te), n, n_eff, BiasArm::BinnedHistogram)
 }
 
+fn stage2_from_args(args: &[String]) -> Result<Descriptor, String> {
+    let driver = arg_after(args, "--driver").ok_or(
+        "--stage2 family carries no --driver <field>; the global driver is declared, never defaulted",
+    )?;
+    let lags = match arg_after(args, "--lags") {
+        Some(t) => parse_lags(t)?,
+        None => default_lags(),
+    };
+    let surrogate = match arg_after(args, "--surrogate") {
+        Some(t) => t
+            .parse()
+            .map_err(|_| format!("--surrogate '{t}' carries no count"))?,
+        None => 100,
+    };
+    let bin = match arg_after(args, "--bin") {
+        Some(t) => {
+            let seconds: f64 = t
+                .parse()
+                .map_err(|_| format!("--bin '{t}' carries no second count"))?;
+            if !(seconds.is_finite() && seconds > 0.0) {
+                return Err(format!("--bin '{t}' is no positive finite width"));
+            }
+            Some(seconds)
+        }
+        None => None,
+    };
+    let seasonal = match arg_after(args, "--seasonal") {
+        Some("none") | None => Seasonal::None,
+        Some("climatology+standardize") => Seasonal::Climatology,
+        Some(other) => {
+            return Err(format!(
+                "--seasonal '{other}' names no none|climatology+standardize"
+            ));
+        }
+    };
+    Ok(Descriptor {
+        pair: None,
+        driver: Some(Arm {
+            name: driver.to_string(),
+            state: State::Built,
+        }),
+        target: None,
+        conds: Vec::new(),
+        events: Vec::new(),
+        gates: Vec::new(),
+        seasonal,
+        lags,
+        surrogate,
+        register: Register::Sources,
+        bin,
+        event_conditional: false,
+        count_quantiles: None,
+        matrix: None,
+        derived: Vec::new(),
+    })
+}
+
+fn run_family(desc: &Descriptor, sources: &[SourceConfig], anchor: &QueryAnchor) -> i32 {
+    let Some(driver_arm) = &desc.driver else {
+        println!("stage2 family: the descriptor carries no driver arm");
+        return 0;
+    };
+    let driver_name = driver_arm.name.as_str();
+    println!("=== stage2 family — driver {driver_name} -> station dBdt (WY-max-t per band) ===");
+    let mut stations: Vec<(String, f64)> = Vec::new();
+    for s in sources {
+        let (Some(code), Some(cgm)) = (s.station_code.as_deref(), s.cgm_lat) else {
+            continue;
+        };
+        if !cgm.is_finite() {
+            continue;
+        }
+        if !stations.iter().any(|(c, _)| c == code) {
+            stations.push((code.to_owned(), cgm));
+        }
+    }
+    if stations.is_empty() {
+        println!("family pending — no loaded station carries a declared cgm_lat");
+        return 0;
+    }
+    println!("stations with a declared cgm_lat: {}", stations.len());
+    let driver = match load_field_across_sources(sources, driver_name, anchor) {
+        Ok(Some(series)) if !series.is_empty() => series,
+        Ok(_) => {
+            println!("driver '{driver_name}' stays pending — no measured series");
+            return 0;
+        }
+        Err(reason) => {
+            println!("driver '{driver_name}' stays pending — {reason}");
+            return 0;
+        }
+    };
+    for family in GIC_FAMILY_NAMES {
+        let band: Vec<&(String, f64)> = stations
+            .iter()
+            .filter(|(_, cgm)| family_of(cgm.abs()) == family)
+            .collect();
+        if band.is_empty() {
+            println!(
+                "family {family}: 0 stations — the empty band is a full finding, never a smoothed 0"
+            );
+            continue;
+        }
+        let mut loaded: Vec<(String, Vec<(f64, f64)>)> = Vec::new();
+        for entry in &band {
+            let code = &entry.0;
+            let field = format!("intermagnet_dbdt_{}", code.to_ascii_lowercase());
+            match load_field_across_sources(sources, &field, anchor) {
+                Ok(Some(series)) if !series.is_empty() => loaded.push((code.clone(), series)),
+                Ok(_) => println!(
+                    "family {family}: station {code} stays pending — '{field}' carries no measured series"
+                ),
+                Err(reason) => {
+                    println!("family {family}: station {code} stays pending — {reason}")
+                }
+            }
+        }
+        if loaded.is_empty() {
+            println!("family {family}: every target stays pending — the band is unmeasured");
+            continue;
+        }
+        let mut arms: Vec<&[(f64, f64)]> = Vec::with_capacity(loaded.len() + 1);
+        arms.push(driver.as_slice());
+        for (_, series) in &loaded {
+            arms.push(series.as_slice());
+        }
+        let (cells, grid, grid_dt) = match align_many(&arms, desc.seasonal, desc.bin) {
+            Ok(a) => a,
+            Err(reason) => {
+                println!("family {family}: alignment stays pending — {reason}");
+                continue;
+            }
+        };
+        let cols: Vec<&[Option<f64>]> = cells.iter().map(|c| c.as_slice()).collect();
+        let joint = joint_columns(&cols);
+        let Some(n) = joint.first().map(|c| c.len()) else {
+            println!("family {family}: the joint grid carries no column — the band stays unmeasured");
+            continue;
+        };
+        if n < TE_FLOOR {
+            println!(
+                "family {family}: {n} complete rows < floor {TE_FLOOR} — the band stays unmeasured"
+            );
+            continue;
+        }
+        let mut times_s: Vec<f64> = Vec::with_capacity(n);
+        for (i, t) in grid.iter().enumerate() {
+            if cols
+                .iter()
+                .all(|c| matches!(c.get(i), Some(Some(v)) if v.is_finite()))
+            {
+                times_s.push(*t);
+            }
+        }
+        if times_s.len() != n {
+            println!(
+                "family {family}: {} complete timestamps against {n} joint rows — the band stays unmeasured",
+                times_s.len()
+            );
+            continue;
+        }
+        let driver_col = &joint[0];
+        let mut members: Vec<Member> = Vec::new();
+        for (si, entry) in loaded.iter().enumerate() {
+            let target_col = &joint[si + 1];
+            for &lag in &desc.lags {
+                members.push(Member::new(
+                    format!("{driver_name}->intermagnet_dbdt_{}", entry.0),
+                    si,
+                    lag,
+                    target_col.clone(),
+                    driver_col.clone(),
+                ));
+            }
+        }
+        let observed = observed_family(&members);
+        let block = if grid_dt <= 3600.0 { 24usize } else { 1usize };
+        match compute_max_t(&members, &observed, &times_s, block, desc.surrogate) {
+            Some(maxt) => {
+                println!(
+                    "family {family}: stations {} | members {} | n {} | grid_dt {grid_dt:.0} s | block {block} | surrogates {} | finite nulls {}",
+                    loaded.len(),
+                    members.len(),
+                    n,
+                    maxt.replicas,
+                    maxt.finite
+                );
+                let observed_word = match maxt.observed_max {
+                    Some(v) => format!("{v:.4e}"),
+                    None => "absent".to_string(),
+                };
+                let verdict = if maxt.clears { "clears" } else { "silent" };
+                println!(
+                    "family {family}: observed max-T {observed_word} | threshold {:.4e} | {verdict}",
+                    maxt.quantile
+                );
+            }
+            None => println!(
+                "family {family}: compute_max_t carries no null (n {n}, surrogates {}) — the band stays unmeasured",
+                desc.surrogate
+            ),
+        }
+    }
+    0
+}
+
 fn run_pair_matrix(
     desc: &Descriptor,
     sources: &[SourceConfig],
@@ -4741,7 +4961,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n>"
+        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n> | modes --stage2 family --driver <field> [--lags <list>] [--surrogate <n>] [--bin <seconds>] [--seasonal none|climatology+standardize]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -4774,6 +4994,21 @@ fn main() {
 
     if args.iter().any(|a| a == "--parity") {
         exit(run_parity(&sources, &witnesses));
+    }
+
+    if let Some(mode) = arg_after(&args, "--stage2") {
+        if mode != "family" {
+            eprintln!("--stage2 '{mode}' names no family");
+            exit(2);
+        }
+        let desc = match stage2_from_args(&args) {
+            Ok(d) => d,
+            Err(reason) => {
+                eprintln!("{reason}");
+                exit(2);
+            }
+        };
+        exit(run_family(&desc, &sources, &anchor));
     }
 
     let desc = if let Some(path) = arg_after(&args, "--descriptor") {
