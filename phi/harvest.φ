@@ -537,15 +537,6 @@ idempotent true
 timeout 120
 
 asset present
-format themis_mag
-tag themis.ssl.berkeley.edu
-arm themis_mag_compiler
-workflow themis-mag-cdn.yml
-pattern ^themis_mag\.bin$
-idempotent true
-timeout 120
-
-asset present
 format ulysses_atdf
 tag pds-ppi.igpp.ucla.edu
 arm ulysses_atdf_compiler
