@@ -2175,7 +2175,7 @@ fn opencellid_results(v: &Json, query: &str) -> Vec<String> {
 
 pub fn gfw_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
-        return vec!["pending — GFW_PI_KEY absent from .secrets.local/.env".to_string()];
+        return vec!["pending — GFW_API_KEY absent from .secrets.local/.env".to_string()];
     }
     let dataset = kv_token(query, "dataset")
         .or_else(|| query.split_whitespace().next().map(|s| s.to_string()));
@@ -2193,7 +2193,8 @@ pub fn gfw_lines(query: &str, token: &str, max: usize) -> Vec<String> {
         urlencode(token)
     );
     let auth = format!("x-api-key: {}", token);
-    let headers = [auth.as_str()];
+    let bearer = format!("Authorization: Bearer {}", token);
+    let headers = [auth.as_str(), bearer.as_str()];
     match get(&url, &headers, "40") {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {
             Some(v) => gfw_results(&v, max),
@@ -2657,7 +2658,7 @@ pub fn run_lines(
                 Secret::Value(t) => gfw_lines(query, &t, max),
                 Secret::Absent(marker) => vec![format!(
                     "pending — {} absent from .secrets.local/.env",
-                    token_key("GFW_PI_KEY", marker)
+                    token_key("GFW_API_KEY", marker)
                 )],
             }
         }

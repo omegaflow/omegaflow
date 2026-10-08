@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. KC2G-CDN-Ursache gemessen (Parser liest station.lat/lon, die Live-API trägt station.latitude/longitude als String → 0 Stationen; an Mountain). Adressierte Blöcke (future-199/200, mountain-272/273) gefaltet. `--searxng`-Arm gebaut (JSON-fähige Instanzen gefunden) + `awesome-ai-web-search` gemint (5 neue Arme). Rat+Diver+UI zum ci-gate Per-SHA-Verdikt; Per-SHA-Gruppe + subset-Job gebaut. folge268 archiviert.
   class: handover
   date: 2026-10-08
-  sha256: 2589bee9288c6c68719f569649e169bf2776f0de41dd2f5b0528113256da8593
+  sha256: 0f98a18246bb9a97f046b0d9dd6877df466a7353b7b8dd1721ffa787a1646334
   status: live
 -->
 # Handover — Mycelium-Folge 269 (2026-10-08)
@@ -40,6 +40,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „wir haben ja schonmal eine fmhy.net-Vermessung gemacht, aber uns gehen noch spannende (legale!) Quellen ab — nochmal Agenten auf die Seite loslassen" | Quelle: diese Session. → FMHY Runde 2 (3 Diver), neue Kandidaten im Handover.
 - 2026-10-08 | „ich hätte gerne alle" (die FMHY-Runde-2-Arme) | Quelle: diese Session. → `--oeis`/`--hal`/`--wiby`/`--ia-search` gebaut.
 - 2026-10-08 | „probier mal, ich hab alle drei keys jetzt drin" (Shodan/OpenCelliD/GFW) | Quelle: diese Session. → `--opencellid` + `--shodan` live; `--gfw` wartet auf gültigen Key.
+- 2026-10-08 | „ist drin, allerdings korrigiert in GFW_API_KEY" | Quelle: diese Session. → `--gfw`-Auth passiert (Key akzeptiert).
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-07 | Quelle: mycelium-263.
 
 ## Offen — eigen
@@ -122,11 +123,11 @@ Sender-Zeilen in `## An <line>`.
 - **Braucht:** `gh workflow run tools-build.yml` nach dem Push (Rolling-Release trägt die Arme); **gebaut (dieses Atom): `--oeis` · `--hal` · `--wiby` · `--ia-search`** (keyless JSON, end-to-end grün). Ferner offen (Operator/Mountain): `--ngmdb` (ArcGIS-Endpunkt noch nicht sauber gemessen), OAPEN (OAI/XML), Reader/OCR-Sidecars (Tesseract/OCRmyPDF/Marker/Docling/MarkItDown/exifTool/ImageMagick/qsv).
 
 ### Key-Arme — Shodan · OpenCelliD · GFW (Operator-Wort 2026-10-08)
-- **Status:** teil-gebaut | **Bindung:** eigen (tools/utils) + operator (GFW-Key)
-- **Trigger:** ein gültiger GFW-Data-API-Key in `.secrets.local`
-- **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples; `OPENCELLID_API_KEY`). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); die Suche (`/shodan/host/search`) verlangt **Membership** (HTTP 403 „Requires membership or higher"), free-tier = Host-Lookup. **`--gfw` gebaut**, aber HTTP 403 „Request is missing valid API key" — der gespeicherte `GFW_PI_KEY` ist kein gültiger Data-API-Key (Auth-Token ≠ API-Key).
-- **Blockade:** GFW-API-Key fehlt (Okta-Konto existiert; `/auth/apikey` noch nicht gelaufen).
-- **Braucht:** `POST /auth/token` → `access_token`; `POST /auth/apikey` → API-Key; diesen als `GFW_PI_KEY` in `.secrets.local`.
+- **Status:** gebaut | **Bindung:** eigen (tools/utils)
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-08) **`--opencellid` live** (`mcc=.. mnc=.. lac=.. cellid=.. [radio=..]` → lat/lon/range/samples). **`--shodan` live als Host-Lookup** (`--shodan 8.8.8.8` → ip/ports/org/country/banners); `/shodan/host/search` verlangt **Membership**, free-tier = Host-Lookup. **`--gfw` live** — der Key (`GFW_API_KEY`) wird akzeptiert (Auth passiert; `x-api-key` + `Authorization: Bearer`); ein Raster-Dataset braucht `geostore_id`/`geometry`, die SQL-Tabelle ist dataset-spezifisch (`SELECT * FROM data …` lieferte „Must list exactly one table").
+- **Blockade:** —
+- **Braucht:** je Dataset die korrekte Tabellenform + `geometry=`/`geostore_id=` (Raster) beim Aufruf; `--gfw "dataset=<d> sql=<select>"`.
 
 ## An mountain
 
