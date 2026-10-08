@@ -4,7 +4,7 @@ use omegaflow::archivar::geo::{
     COMP_CSES_EFD_ULF_EY, COMP_CSES_EFD_ULF_EZ, COMP_CSES_EFD_VLF_EX, COMP_CSES_EFD_VLF_EY,
     COMP_CSES_EFD_VLF_EZ, GeoRec, MAGIC_CSES_EFD, verify_bin, write_bin,
 };
-use omegaflow::archivar::rinex::ecef_to_geodetic;
+use omegaflow::archivar::rinex::{ecef_to_geodetic, receiver_ellipsoid_for_compiler};
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File};
 use omegaflow::lsk::days_from_civil;
@@ -15,6 +15,7 @@ const FILETREE_URL: &str = "https://www.scidb.cn/api/sdb-filetree-service/getAll
 const DEFAULT_FILE_ID: &str = "6398427cbae2f1393c118b54";
 const DOWNLOAD: &str = "https://download.scidb.cn/download?fileId=";
 const DAY_S: f64 = 86400.0;
+const BIN: &str = "cses_efd_compiler";
 
 struct EfdBand {
     tag: &'static str,
@@ -278,6 +279,7 @@ fn assemble_legacy(
     xyz: &[f64],
     e: [&[f64]; 3],
     to_v_m: f64,
+    ellipsoid: Option<(f64, f64)>,
 ) -> Result<Vec<GeoRec>, String> {
     if ns == 0 {
         return Err("packet size 0 carries no sample".to_string());
@@ -321,7 +323,9 @@ fn assemble_legacy(
     let mut out = Vec::with_capacity(total);
     for p in 0..np {
         let Some(t_pkt) = utc[p] else { continue };
-        let (la, lo, al) = match ecef_to_geodetic(xyz[p * 3], xyz[p * 3 + 1], xyz[p * 3 + 2]) {
+        let Some((a, e2)) = ellipsoid else { continue };
+        let (la, lo, al) = match ecef_to_geodetic(xyz[p * 3], xyz[p * 3 + 1], xyz[p * 3 + 2], a, e2)
+        {
             Some((la, lo, al))
                 if la.is_finite()
                     && (-90.0..=90.0).contains(&la)
@@ -390,7 +394,11 @@ fn parse_modern(file: &Hdf5File, band_tag: Option<&str>) -> Result<Vec<GeoRec>, 
     )
 }
 
-fn parse_legacy(file: &Hdf5File, band_tag: Option<&str>) -> Result<Vec<GeoRec>, String> {
+fn parse_legacy(
+    file: &Hdf5File,
+    band_tag: Option<&str>,
+    ellipsoid: Option<(f64, f64)>,
+) -> Result<Vec<GeoRec>, String> {
     let band = match band_tag {
         Some(tag) => EFD_BANDS
             .iter()
@@ -417,16 +425,28 @@ fn parse_legacy(file: &Hdf5File, band_tag: Option<&str>) -> Result<Vec<GeoRec>, 
         Ok(f) => f,
         Err(_) => 1.0e-3,
     };
-    assemble_legacy(band.comps, ns, &utc, &xyz, [&e[0], &e[1], &e[2]], to_v_m)
+    assemble_legacy(
+        band.comps,
+        ns,
+        &utc,
+        &xyz,
+        [&e[0], &e[1], &e[2]],
+        to_v_m,
+        ellipsoid,
+    )
 }
 
-fn parse_efd(bytes: &[u8], band_tag: Option<&str>) -> Result<Vec<GeoRec>, String> {
+fn parse_efd(
+    bytes: &[u8],
+    band_tag: Option<&str>,
+    ellipsoid: Option<(f64, f64)>,
+) -> Result<Vec<GeoRec>, String> {
     let file = Hdf5File::parse(bytes).map_err(|n| format!("HDF5 parse: {n:?}"))?;
     if EFD_BANDS.iter().any(|b| file.dataset(b.ds[0]).is_ok()) {
         return parse_modern(&file, band_tag);
     }
     if file.dataset("X_WAVE").is_ok() {
-        return parse_legacy(&file, band_tag);
+        return parse_legacy(&file, band_tag, ellipsoid);
     }
     Err(
         "no EFD waveform dataset present (A111_W/A121_W/A131_W or X_WAVE/Y_WAVE/Z_WAVE)"
@@ -471,7 +491,11 @@ fn main() {
         }
     };
 
-    let mut records = match parse_efd(&bytes, band.as_deref()) {
+    let mut records = match parse_efd(
+        &bytes,
+        band.as_deref(),
+        receiver_ellipsoid_for_compiler(BIN),
+    ) {
         Ok(r) => r,
         Err(msg) => {
             eprintln!("cses_efd_compiler: {msg} — the bin stays unwritten");
@@ -655,8 +679,16 @@ mod tests {
             COMP_CSES_EFD_ULF_EY,
             COMP_CSES_EFD_ULF_EZ,
         ];
-        let recs =
-            assemble_legacy(comps, 2, &utc, &xyz, [&ex, &ey, &ez], 1.0e-3).expect("assembles");
+        let recs = assemble_legacy(
+            comps,
+            2,
+            &utc,
+            &xyz,
+            [&ex, &ey, &ez],
+            1.0e-3,
+            Some((6_378_137.0, 6.694_379_990_14e-3)),
+        )
+        .expect("assembles");
         assert_eq!(recs.len(), 12);
         assert!((recs[0].t - epoch).abs() < 1e-6);
         assert!((recs[3].t - (epoch + 0.5)).abs() < 1e-9);
@@ -678,7 +710,18 @@ mod tests {
             COMP_CSES_EFD_ULF_EY,
             COMP_CSES_EFD_ULF_EZ,
         ];
-        assert!(assemble_legacy(comps, 2, &utc, &xyz, [&ex, &ey, &ez], 1.0e-3).is_err());
+        assert!(
+            assemble_legacy(
+                comps,
+                2,
+                &utc,
+                &xyz,
+                [&ex, &ey, &ez],
+                1.0e-3,
+                Some((6_378_137.0, 6.694_379_990_14e-3)),
+            )
+            .is_err()
+        );
     }
 
     #[test]

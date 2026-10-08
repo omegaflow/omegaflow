@@ -16,6 +16,51 @@ pub fn ecef_to_geodetic(x: f64, y: f64, z: f64, a: f64, e2: f64) -> Option<(f64,
     Some((lat.to_degrees(), lon.to_degrees(), h))
 }
 
+pub fn body_ellipsoid_of(body: &BodyEphemeris) -> Option<(f64, f64)> {
+    let props = body.props.as_ref()?;
+    let a = props.radius_m;
+    if !(a.is_finite() && a > 0.0) {
+        return None;
+    }
+    let f = props.flattening?;
+    let e2 = 2.0 * f - f * f;
+    if e2.is_finite() { Some((a, e2)) } else { None }
+}
+
+pub fn receiver_body_for_compiler(bin: &str) -> Option<String> {
+    for path in [
+        "phi/sources.φ",
+        "phi/dead_sources.φ",
+        "phi/declined_sources.φ",
+        "phi/blocked_sources.φ",
+    ] {
+        let Ok(content) = std::fs::read_to_string(path) else {
+            continue;
+        };
+        let mut compiler: Option<&str> = None;
+        for line in content.lines() {
+            let t = line.trim();
+            if t.starts_with("url ") {
+                compiler = None;
+            } else if let Some(rest) = t.strip_prefix("compiler ") {
+                compiler = rest.rsplit('/').next();
+            } else if let Some(rest) = t.strip_prefix("at ").or_else(|| t.strip_prefix("on ")) {
+                if compiler == Some(bin) {
+                    return rest.split_whitespace().next().map(str::to_string);
+                }
+            }
+        }
+    }
+    None
+}
+
+pub fn receiver_ellipsoid_for_compiler(bin: &str) -> Option<(f64, f64)> {
+    let body = receiver_body_for_compiler(bin)?;
+    let bytes = fetch_raw_bytes(&super::cdn::body_url(&body))?;
+    let eph = parse_ephemeris_binary(&bytes)?;
+    body_ellipsoid_of(&eph)
+}
+
 pub fn build_rinex_channels(
     src: &SourceConfig,
     text: &str,

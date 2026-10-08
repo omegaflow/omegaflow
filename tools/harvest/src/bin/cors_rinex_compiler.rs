@@ -4,7 +4,7 @@ use omegaflow::archivar::cors::{
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::rinex::{
     RinexFileType, ecef_to_geodetic, parse_rinex_header, parse_rinex_nav_gps, parse_rinex_nav_gps3,
-    parse_rinex_obs,
+    parse_rinex_obs, receiver_ellipsoid_for_compiler,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
@@ -13,6 +13,7 @@ use std::collections::BTreeSet;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const NETLOC: &str = "noaa-cors-pds.s3.amazonaws.com";
+const BIN: &str = "cors_rinex_compiler";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -81,9 +82,11 @@ fn run(args: &[String]) -> Result<(), String> {
     let text = read_rinex(url.as_deref(), input.as_deref())?;
     let header = parse_rinex_header(&text)
         .ok_or_else(|| "RINEX header stays unread — the asset stays unwritten".to_string())?;
-    let position = header
-        .approx_pos_xyz
-        .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z));
+    let position = receiver_ellipsoid_for_compiler(BIN).and_then(|(a, e2)| {
+        header
+            .approx_pos_xyz
+            .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z, a, e2))
+    });
     let station = pack_station(&header.marker_name);
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)

@@ -4,13 +4,14 @@ use omegaflow::archivar::cors::{
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::rinex::{
     RinexFileType, SBF_SYNC, crx2rnx, ecef_to_geodetic, is_hatanaka, parse_rinex_header,
-    parse_rinex_obs,
+    parse_rinex_obs, receiver_ellipsoid_for_compiler,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 
 const NETLOC: &str = "noaa-cors-pds.s3.amazonaws.com";
 const GZIP_MAGIC: [u8; 2] = [0x1f, 0x8b];
+const BIN: &str = "cors_compiler";
 
 struct Summary {
     station_name: String,
@@ -62,7 +63,10 @@ fn plausible_value(obs: &[u8; 2], v: f64) -> bool {
     }
 }
 
-fn collect(text: &str) -> Result<(Vec<CorsRecord>, Summary), String> {
+fn collect(
+    text: &str,
+    ellipsoid: Option<(f64, f64)>,
+) -> Result<(Vec<CorsRecord>, Summary), String> {
     let decoded;
     let text = if is_hatanaka(text) {
         match crx2rnx(text) {
@@ -88,9 +92,11 @@ fn collect(text: &str) -> Result<(Vec<CorsRecord>, Summary), String> {
             header.marker_name
         ));
     }
-    let position = header
-        .approx_pos_xyz
-        .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z));
+    let position = ellipsoid.and_then(|(a, e2)| {
+        header
+            .approx_pos_xyz
+            .and_then(|(x, y, z)| ecef_to_geodetic(x, y, z, a, e2))
+    });
     let station = pack_station(&header.marker_name);
     let n_obs = header.obs_types.len();
     let Some(obs_type) = header.obs_types.first().cloned() else {
@@ -257,7 +263,7 @@ fn main() {
         }
     };
 
-    let (records, summary) = match collect(&text) {
+    let (records, summary) = match collect(&text, receiver_ellipsoid_for_compiler(BIN)) {
         Ok(x) => x,
         Err(e) => {
             eprintln!("cors_compiler: {e}");
@@ -354,7 +360,8 @@ mod tests {
 
     #[test]
     fn collect_builds_records_from_rinex_211_obs() {
-        let (records, summary) = collect(&obs_file()).unwrap();
+        let (records, summary) =
+            collect(&obs_file(), Some((6_378_137.0, 6.694_379_990_14e-3))).unwrap();
         assert_eq!(summary.station_name, "1LSU");
         assert_eq!(summary.obs_type, "C1");
         assert_eq!(summary.sats, vec!["G01"]);
@@ -405,7 +412,7 @@ mod tests {
             "{:>14.3}  {:>14.3}  \n",
             21345678.123, -12345678.123
         ));
-        let (records, summary) = collect(&text).unwrap();
+        let (records, summary) = collect(&text, None).unwrap();
         assert!(summary.position.is_none());
         assert_eq!(records[0].present & PRES_POSITION, 0);
     }
