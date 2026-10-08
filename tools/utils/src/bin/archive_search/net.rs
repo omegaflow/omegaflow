@@ -2420,6 +2420,51 @@ pub fn apis_lines(query: &str, max: usize) -> Vec<String> {
     if keyword.is_empty() {
         return vec!["pending — apis needs a keyword".to_string()];
     }
+    let headers = ["-H", "Accept: application/json"];
+    let url = format!("https://apis.io/api/v1/apis?q={}", urlencode(keyword));
+    if let Some(f) = get(&url, &headers, "40") {
+        if f.status == Some(200) {
+            if let Some(out) = apis_io_body(&f.body, max) {
+                if !out.is_empty() {
+                    return out;
+                }
+            }
+        }
+    }
+    apis_guru_lines(keyword, max)
+}
+
+fn apis_io_body(body: &str, max: usize) -> Option<Vec<String>> {
+    let v = json::parse(body)?;
+    let data = v.get("data").and_then(|d| d.as_arr())?;
+    let mut out = Vec::new();
+    for item in data {
+        let name = item.get("name").and_then(|n| n.as_str()).unwrap_or("");
+        let url = item
+            .get("humanURL")
+            .and_then(|u| u.as_str())
+            .or_else(|| item.get("baseURL").and_then(|u| u.as_str()))
+            .unwrap_or("");
+        let provider = item
+            .get("provider_name")
+            .and_then(|p| p.as_str())
+            .unwrap_or("");
+        let mut line = format!("url {url}\ttitle: {name}\tprovider: {provider}");
+        if let Some(d) = item.get("description").and_then(|d| d.as_str()) {
+            if !d.trim().is_empty() {
+                line.push_str(&format!("\tdescription: {}", regtap_clip(d)));
+            }
+        }
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    Some(out)
+}
+
+fn apis_guru_lines(keyword: &str, max: usize) -> Vec<String> {
+    let query = keyword;
     let needle = keyword.to_lowercase();
     let headers = ["-H", "Accept: application/json"];
     match get("https://api.apis.guru/v2/list.json", &headers, "60") {
