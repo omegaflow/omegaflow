@@ -4313,6 +4313,7 @@ pub fn main_flow() {
                                     config: fc,
                                     medium: body_medium,
                                     body_radius,
+                                    receiver_aperture: None,
                                 },
                                 AnchorEnvelope {
                                     vmax: anchor_vmax,
@@ -4472,6 +4473,7 @@ pub fn main_flow() {
                                     config: fc,
                                     medium: body_medium,
                                     body_radius,
+                                    receiver_aperture: None,
                                 },
                                 AnchorEnvelope {
                                     vmax: anchor_vmax,
