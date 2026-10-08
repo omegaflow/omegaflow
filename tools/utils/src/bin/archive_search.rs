@@ -16,6 +16,8 @@ mod clinicaltrials;
 mod cochrane;
 #[path = "archive_search/cod.rs"]
 mod cod;
+#[path = "archive_search/consensus.rs"]
+mod consensus;
 #[path = "archive_search/core.rs"]
 mod core_api;
 #[path = "archive_search/datacite.rs"]
@@ -40,10 +42,10 @@ mod heasarc;
 mod index;
 #[path = "archive_search/interpro.rs"]
 mod interpro;
-#[path = "archive_search/jina.rs"]
-mod jina;
 #[path = "archive_search/isc.rs"]
 mod isc;
+#[path = "archive_search/jina.rs"]
+mod jina;
 #[path = "archive_search/json.rs"]
 mod json;
 #[path = "archive_search/magic.rs"]
@@ -180,6 +182,7 @@ enum Mode {
     PdfText,
     ArxivSrc,
     Oai,
+    Consensus,
     Net(&'static str),
 }
 
@@ -322,6 +325,7 @@ fn main() {
             "--marginalia" => mode = Mode::Net("marginalia"),
             "--tavily" => mode = Mode::Net("tavily"),
             "--exa" => mode = Mode::Net("exa"),
+            "--consensus" => mode = Mode::Consensus,
             "--linkup" => mode = Mode::Net("linkup"),
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
@@ -588,6 +592,34 @@ fn main() {
             let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
             print_lines(&lines);
         }
+        Mode::Consensus => {
+            let query = keywords.join(" ");
+            let env_map = match find_repo_root() {
+                Some(repo) => secrets::load_env(&repo),
+                None => env::vars().collect(),
+            };
+            let key = secrets::resolve_key(
+                env_map
+                    .get("CONSENSUS_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                &env_map,
+            );
+            let lines = match key {
+                secrets::Secret::Value(t) => consensus::consensus_lines(&query, &t, 10),
+                secrets::Secret::Absent(marker) => {
+                    let name = match marker {
+                        Some(m) => format!("CONSENSUS_API_KEY marker {{{m}}}"),
+                        None => "CONSENSUS_API_KEY".to_string(),
+                    };
+                    vec![format!(
+                        "pending — {} absent from .secrets.local/.env",
+                        name
+                    )]
+                }
+            };
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -628,7 +660,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -650,6 +682,9 @@ fn usage() {
     );
     eprintln!(
         "  --exa       Exa Search API (api.exa.ai), EXA_API_KEY; url + title/author/published/text"
+    );
+    eprintln!(
+        "  --consensus Consensus literature search (api.consensus.app), CONSENSUS_API_KEY; title/doi/publish_year/citation_count/study_type/takeaway"
     );
     eprintln!("  --linkup    Linkup Search API (api.linkup.so), LINKUP_API_KEY; url + title/text");
     eprintln!(
