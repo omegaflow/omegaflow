@@ -36,6 +36,8 @@ mod europepmc;
 mod git;
 #[path = "archive_search/go.rs"]
 mod go;
+#[path = "archive_search/gosat.rs"]
+mod gosat;
 #[path = "archive_search/heasarc.rs"]
 mod heasarc;
 #[path = "archive_search/index.rs"]
@@ -48,6 +50,8 @@ mod isc;
 mod jina;
 #[path = "archive_search/json.rs"]
 mod json;
+#[path = "archive_search/lasair.rs"]
+mod lasair;
 #[path = "archive_search/lpf.rs"]
 mod lpf;
 #[path = "archive_search/magic.rs"]
@@ -187,8 +191,10 @@ enum Mode {
     ArxivSrc,
     Oai,
     Consensus,
+    Lasair,
     Perplexity,
     Lpf,
+    Gosat,
     Net(&'static str),
 }
 
@@ -332,6 +338,7 @@ fn main() {
             "--tavily" => mode = Mode::Net("tavily"),
             "--exa" => mode = Mode::Net("exa"),
             "--consensus" => mode = Mode::Consensus,
+            "--lasair" => mode = Mode::Lasair,
             "--perplexity" => mode = Mode::Perplexity,
             "--lpf" => mode = Mode::Lpf,
             "--linkup" => mode = Mode::Net("linkup"),
@@ -371,6 +378,7 @@ fn main() {
             "--alphaxiv-call" => mode = Mode::Net("alphaxiv-call"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
+            "--gosat" => mode = Mode::Gosat,
             "--kind" => {
                 i += 1;
                 if let Some(v) = args.get(i) {
@@ -628,6 +636,11 @@ fn main() {
             };
             print_lines(&lines);
         }
+        Mode::Lasair => {
+            let query = keywords.join(" ");
+            let lines = lasair::lasair_lines(&query);
+            print_lines(&lines);
+        }
         Mode::Perplexity => {
             let query = keywords.join(" ");
             let lines = perplexity::perplexity_lines(&query);
@@ -636,6 +649,11 @@ fn main() {
         Mode::Lpf => {
             let query = keywords.join(" ");
             let lines = lpf::lpf_lines(&query);
+            print_lines(&lines);
+        }
+        Mode::Gosat => {
+            let query = keywords.join(" ");
+            let lines = gosat::gosat_lines(&query);
             print_lines(&lines);
         }
         Mode::Net(name) => {
@@ -678,7 +696,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -703,6 +721,9 @@ fn usage() {
     );
     eprintln!(
         "  --consensus Consensus literature search (api.consensus.app), CONSENSUS_API_KEY; title/doi/publish_year/citation_count/study_type/takeaway"
+    );
+    eprintln!(
+        "  --lasair    Lasair LSST object query (api.lasair.lsst.ac.uk), LASAIR_LSST_TOKEN; objectId -> present diaObject fields (direct, then socks5h 127.0.0.1:25344)"
     );
     eprintln!(
         "  --perplexity Perplexity Sonar web search (api.perplexity.ai), PERPLEXITY_API_KEY; answer text + source citations"
@@ -751,6 +772,9 @@ fn usage() {
     eprintln!("              or start=<YYYYMMDDHHMM> extent=<seconds>   (station inventory)");
     eprintln!(
         "  --heasarc   key=value: table=<w3browse-table> rows=<n>   (real W3Browse tables, e.g. table=sao — 'master' does not exist)"
+    );
+    eprintln!(
+        "  --gosat     <product> [<start> <end>]   (GOSAT-GW TANSO-3 product search, cookie-authed via GOSAT_GW_MAIL/GOSAT_GW_PASS; default product GWT3F_L1B, default last 30 days)"
     );
     eprintln!(
         "  --lpf       <start> <end> [hdu]   (LISA Pathfinder DRS availability from the HEASARC selector, start/end as MJD or ISO; default hdu=SCI_SCIENCE_1Hz; binary body is measured, never printed)"
