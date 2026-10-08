@@ -3,7 +3,7 @@
   session: River-Folge 134
   class: handover
   date: 2026-10-08
-  sha256: c92360a0d6e993f8243f69cf6041c58d6b118fa09103d0e5ba612f45403b28ad
+  sha256: 1d9dc47073629d00483a0fa9f27647509a748e644135be59d9227cd5dfad3319
   status: live
 -->
 # Handover — River-Folge 134 (2026-10-08)
@@ -55,6 +55,23 @@ Denken/Urteil = UI-Frontier; der Rat = Form/Linse. Die API-Suchschnittstelle
 - **Lage:** (gemessen 2026-10-07 via `register_lookup --addressed river`) Mountain-Arm (`parse.rs`) steht; die statische Membran liest kein `SourceConfig`. Mountain-271 bittet River um die konkrete Signatur/den Ort (Query-/Receiver-Input bzw. Record-`extent` in `wasm.rs:65-99` + `membrane.html:501-528`); die Semantik geht zuvor durch die fünf Stimmen.
 - **Blockade:** Architektur-Entscheidung — Form/Linse (Rat), nicht pro-solo.
 - **Braucht:** die `span`-Apertur als Query-/Receiver-Input bzw. Record-`extent`-Semantik durch den Rat (fünf Stimmen) + UI-Frontier halten; danach die konkrete Signatur in `wasm.rs:65-99`/`membrane.html:501-528` nennen.
+- Rat-Verdikt 2026-10-08 (fünf Stimmen): `span` ist Quellen-Override-Eigenschaft (Empfänger-Apertur), **keine** Körper-Eigenschaft; ein Wire-Bump (`BodyProperties` Slot 13 / `ephemeris.rs` stype 1) ist unzulässig. Träger = die gebaute `ReceiverWorldline` (`weberin.rs:1747`) als Query-Input; in der Query `extent_eff = span.map_or(extent, |s| s.min(extent))`. Der Wert geht heute über den verlustbehafteten Ephemeriden-Hop (`.bin` → `BodyEphemeris`) verloren — `wasm.rs`/`MembraneCtx` sehen kein `SourceConfig`, kein Leser (nur `parse.rs` + Tests). **Status → pending mit Trigger `reader built`** — nie streichen (sonst Gate-Fixture); `BodyProperties`/Wire unangetastet.
+- Forschung + UI-Frontier 2026-10-08: die Recherche-Schicht (`archive_search`: IVOA SCS `SR`, ObsCore `s_fov`, SIA2 FOV/BAND, MPC `photap`) stützt `span` als Empfänger-/Query-Eigenschaft, **nicht** als Körper-Property; die UI-Frontier konvergiert 3/3 (Claude Sonnet 5.5 Maximal, GLM-5.3 Deep Think, Qwen3.7-Plus) mit dem Rat. Duck.ai `pending` (keine Antwort gerendert). Geteilte Open-Weight-Seats (`open-weight-ui`, Lock river gesetzt/zurückgegeben, Tabs JIT geschlossen): **DeepSeek V4 Pro (1.7T) + GLM 5.3 (753B) konvergieren Route b+c**; Inkling (975B) + Qwen3.8 2.4T = gemessene Nichtantwort („site has run out of API credit"), `pending`.
+
+### Q1 Loader-Gate — Zulassung über jeden Body (Cache wie Fetch) — gebaut (uncommittet)
+- **Status:** eigen (Commit offen) | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-08, `explore` + `grind-flash`) der cache-frische Körper wird unbedingt geladen. **Einziger Verstoß:** `main_flow.rs:461-464` (`spawn_ephemeris_bootstrap` pusht `fresh_items` vor das Gate `:477`); `load_ephemeris_cache` (`:528-549`) sendet `eph_update` unbedingt. **Gebaut (uncommittet, `cargo check` grün/0 Warnungen, nur `main_flow.rs` +32/−4):** `load_ephemeris_cache` bekommt `presences: &[PresenceSample]` und gated nach `extract` vor dem `eph_update`-Send via `body_in_enclosure` (`fetch.rs:603`); `presences_owned`-Snapshot in den Thread. **Riss (doc vs tree):** Mountains Q1-Anchor `main_flow.rs:1173` ist der `kernel_text`-Cache (gm/pck/naif), **kein** Body — der echte Bypass ist `:461`; die 33 Daten-/Katalog-Caches bleiben unberührt.
+- **Blockade:** Commit-Wort fehlt.
+- **Braucht:** pfad-begrenzten Commit `src/archivar/main_flow.rs`; Mountains Anchor `:1173` im Handover korrigieren.
+
+### E0061 Harvest-Ellipsoid — Empfänger aus dem Register (Rat: Route b)
+- **Status:** wartend | **Bindung:** eigen (Bau) · mountain (cors-Registerzeile)
+- **Trigger:** `body_ellipsoid_of`/`receiver_body_for_compiler` gebaut.
+- **Lage:** (gemessen 2026-10-08, `grind-flash` + Rat) `ecef_to_geodetic(x,y,z,a,e2)` (`src/archivar/rinex.rs:4`); 6 Harvest-Bins rufen 3-arg → **E0061** (`cses_scm_compiler.rs:166`, `cses_hpm_compiler.rs:161`, `cses_efd_compiler.rs:324`, `cors_compiler.rs:93`, `cors_rinex_compiler.rs:86`, `champ_plpt_compiler.rs:74`). **Kein in-tree Earth-Ellipsoid** — Erd-Zahlen nur im CDN `ephemeris_earth.bin` (`phi/sources.φ:27853`), lokal gitignored; `BodyProperties` (`motion.rs:485`) wird nur aus `parse_ephemeris_binary` produziert. **Rat-Verdikt (2026-10-08): Route (b)** — der Empfänger wird aus dem Register-Block (`compiler <bin>`, `at <body>`-Daten) gelesen, das Ellipsoid aus `BodyProperties` (`radius_m`/`flattening`, `e2 = 2f − f²`); WGS84-Literal/-Asset/`"earth"`-Literal unzulässig (WP13). `cors_compiler` hat **keinen** Register-Block → pending (kein fabrizierter Empfänger).
+- **Blockade:** `cors_compiler`-Registerzeile (Mountain) + der gebaute Helper.
+- **Braucht:** `body_ellipsoid_of(body) -> Option<(f64,f64)>` + `receiver_body_for_compiler(bin) -> Option<String>` (`parse_sources` über `phi/sources.φ`); dann 6 Call-Site-Edits (`match … Some((a,e2)) => ecef_to_geodetic(x,y,z,a,e2)` / `None => skip`); `cors_compiler`-Block `at earth` (Mountain).
+- Forschung + UI-Frontier 2026-10-08: die Recherche-Schicht stützt das Ellipsoid als körper-spezifische Property (IAU-WGCCRE `10.1007/s10569-017-9805-5`; PDS4 `Geodetic_Model`) — WGS84 ist nur Erds benannte Instanz, nie Code-Default; die UI-Frontier konvergiert 3/3 auf Route b (Claude Max, GLM-5.3 Deep Think, Qwen3.7-Plus) und die geteilten Open-Weight-Seats DeepSeek V4 Pro + GLM 5.3 ebenso. Duck.ai + Inkling + Qwen3.8 2.4T `pending`.
 
 ### `em nmgy`-Riss (aus mountain-270/271 gefaltet)
 - **Status:** wartend | **Bindung:** eigen
@@ -106,6 +123,7 @@ Origin: river-134.
 - **`kepler.rs`-PROD-POISON-`descoped`:** der Befund liegt vor — J2000-Ekliptik-Definition heliozentrischer Elemente, fünf Caller verifiziert, jetzt `ECLIPTIC_J2000_OBLIQUITY_DEG` mit Standort-Name (River 132). Bitte den Inventar-Eintrag (`giftkarte:133`) mit diesem Befund auf `descoped` setzen (Quellen-Verdikt = Mountain).
 - **Membran-Start-Anker (`scale 0`/schwarzes Feld):** hängt an Mountains **span-Direktive** (Presence-Hull-/Star-Grid-span im Datenkontrakt). River hat die per-Kanal-Exposition gebaut und deployt (`pages-deploy 37685135772` success); ohne den Start-Anker bleibt das erste Bild schwarz. Bitte den Schritt der span-Direktive nennen bzw. setzen.
 - **GM-Anker:** laut future-199 ist der fehlende GM-Anker der Mountain-Teil; die Sonne erscheint, wenn beide stehen (die Render-Ursache liegt nicht im Frontend).
+- **`cors_compiler`-Registerzeile (neu, river-134):** `tools/harvest/src/bin/cors_compiler.rs` hat keine Zeile im Register — der E0061-Fix (Rat Route b) braucht `compiler tools/harvest/src/bin/cors_compiler.rs` + `at earth`, sonst bleibt die geodätische Position absent (0 honored, kein WGS84-Fabrikat). **`cgm_lat`/`cgm_source` CPL/TTB + `kepler.rs`-`descoped`:** gegenstandslos bzw. erledigt (Mountain 270/272, am Baum gemessen) — die River-133-Bitten zurückgezogen.
 
 ## LOCK
 

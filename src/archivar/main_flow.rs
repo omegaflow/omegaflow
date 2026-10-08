@@ -484,6 +484,7 @@ pub fn spawn_ephemeris_bootstrap(
         return;
     }
     let guard = guard.clone();
+    let presences_owned: Vec<PresenceSample> = presences.to_vec();
     thread::spawn(move || {
         let lsk = match leap_seconds(&time) {
             Some(l) => l,
@@ -500,7 +501,7 @@ pub fn spawn_ephemeris_bootstrap(
             }
         };
         for (i, s, p) in fresh_items {
-            load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk);
+            load_ephemeris_cache(&fetch_tx, i, &s, &p, now, &lsk, &presences_owned);
         }
         let stale = rest_items;
         let mut present: Vec<(usize, SourceConfig, String)> = Vec::new();
@@ -513,13 +514,13 @@ pub fn spawn_ephemeris_bootstrap(
             }
         }
         for (i, s, p) in &present {
-            load_ephemeris_cache(&fetch_tx, *i, s, p, now, &lsk);
+            load_ephemeris_cache(&fetch_tx, *i, s, p, now, &lsk, &presences_owned);
         }
         let mut refresh = present;
         refresh.extend(missing.iter().cloned());
         download_ephemeris_batch(&refresh);
         for (i, s, p) in &missing {
-            load_ephemeris_cache(&fetch_tx, *i, s, p, now, &lsk);
+            load_ephemeris_cache(&fetch_tx, *i, s, p, now, &lsk, &presences_owned);
         }
         guard.store(false, std::sync::atomic::Ordering::SeqCst);
     });
@@ -532,12 +533,39 @@ fn load_ephemeris_cache(
     tmp_path: &str,
     now: f64,
     lsk: &LeapSeconds,
+    presences: &[PresenceSample],
 ) {
     if let ExtractResult::WithEphemeris(_, eph) = extract(src, tmp_path, now, lsk) {
+        let Some(body) = src.body.as_deref() else {
+            return;
+        };
+        let mut one: HashMap<String, BodyEphemeris> = HashMap::new();
+        one.insert(body.to_string(), *eph);
+        let admitted = {
+            let Some(entry) = one.get(body) else {
+                return;
+            };
+            let Some(t_r) = body_record_epoch(entry) else {
+                return;
+            };
+            let Some(props) = entry.props.as_ref() else {
+                return;
+            };
+            match body_barycenter_position(body, t_r, &one) {
+                Some(pos) => body_in_enclosure(presences, props, pos, t_r, now),
+                None => false,
+            }
+        };
+        if !admitted {
+            return;
+        }
+        let Some(eph) = one.remove(body) else {
+            return;
+        };
         let _ = fetch_tx.send(FetchResult {
             source_idx,
             channels: Vec::new(),
-            eph_update: src.body.clone().map(|b| (b, *eph)),
+            eph_update: Some((body.to_string(), eph)),
             asteroid_samples: Vec::new(),
             star_samples: Vec::new(),
             curves: None,
