@@ -4206,6 +4206,7 @@ fn test_build_netcdf_channels() {
         &presences,
         Some(6378136.6),
         &eph_map,
+        &ReceiverAperture::new(),
     );
     assert_eq!(channels.len(), 3);
     assert_eq!(channels[0].0.name, "argo_dac_temp_c");
@@ -4231,6 +4232,15 @@ fn test_build_netcdf_channels() {
     assert!((alts[0] + 1.08).abs() < 1e-2);
     assert!((alts[1] + 1.08).abs() < 1e-2);
     assert!((alts[2] + 2.0).abs() < 1e-2);
+}
+
+#[test]
+fn receiver_aperture_declaration_parses_measured_lengths() {
+    let aperture = ReceiverAperture::parse_declaration("em:flux:1.0e7,seismic-body:none:3.0e5");
+    assert_eq!(aperture.get(0, Aperture::Flux), Some(1.0e7));
+    assert_eq!(aperture.get(3, Aperture::None), Some(3.0e5));
+    let invalid = ReceiverAperture::parse_declaration("em:flux:-1,em:flux:0");
+    assert_eq!(invalid.get(0, Aperture::Flux), None);
 }
 
 #[test]

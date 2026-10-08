@@ -347,6 +347,7 @@ pub fn build_channels(
     presences: &[PresenceSample],
     body_radius: Option<f64>,
     eph: &HashMap<String, BodyEphemeris>,
+    receiver_aperture: &ReceiverAperture,
 ) -> Vec<(Channel, FieldConfig)> {
     let body_name = frame_body_name(&src.frame);
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
@@ -385,7 +386,7 @@ pub fn build_channels(
                         config: fc,
                         medium: body_medium,
                         body_radius,
-                        receiver_aperture: None,
+                        receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
                     },
                     AnchorEnvelope {
                         vmax: anchor_vmax,
