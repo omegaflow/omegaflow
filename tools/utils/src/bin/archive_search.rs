@@ -68,6 +68,8 @@ mod paged;
 mod pdb;
 #[path = "archive_search/pdf.rs"]
 mod pdf;
+#[path = "archive_search/perplexity.rs"]
+mod perplexity;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
 #[path = "archive_search/psychporta.rs"]
@@ -183,6 +185,7 @@ enum Mode {
     ArxivSrc,
     Oai,
     Consensus,
+    Perplexity,
     Net(&'static str),
 }
 
@@ -326,6 +329,7 @@ fn main() {
             "--tavily" => mode = Mode::Net("tavily"),
             "--exa" => mode = Mode::Net("exa"),
             "--consensus" => mode = Mode::Consensus,
+            "--perplexity" => mode = Mode::Perplexity,
             "--linkup" => mode = Mode::Net("linkup"),
             "--datacite" => mode = Mode::Net("datacite"),
             "--sniff" => mode = Mode::Net("sniff"),
@@ -620,6 +624,11 @@ fn main() {
             };
             print_lines(&lines);
         }
+        Mode::Perplexity => {
+            let query = keywords.join(" ");
+            let lines = perplexity::perplexity_lines(&query);
+            print_lines(&lines);
+        }
         Mode::Net(name) => {
             let query = keywords.join(" ");
             let env_map = match find_repo_root() {
@@ -660,7 +669,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--jina|--tavily|--exa|--consensus|--perplexity|--linkup|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -685,6 +694,9 @@ fn usage() {
     );
     eprintln!(
         "  --consensus Consensus literature search (api.consensus.app), CONSENSUS_API_KEY; title/doi/publish_year/citation_count/study_type/takeaway"
+    );
+    eprintln!(
+        "  --perplexity Perplexity Sonar web search (api.perplexity.ai), PERPLEXITY_API_KEY; answer text + source citations"
     );
     eprintln!("  --linkup    Linkup Search API (api.linkup.so), LINKUP_API_KEY; url + title/text");
     eprintln!(
