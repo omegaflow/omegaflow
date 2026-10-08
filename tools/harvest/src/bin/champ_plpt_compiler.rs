@@ -4,7 +4,7 @@ use omegaflow::archivar::units::days_to_ymd;
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::unzip;
 use omegaflow::lsk::days_from_civil;
-use omegaflow::rinex::ecef_to_geodetic;
+use omegaflow::rinex::{ecef_to_geodetic, receiver_ellipsoid_for_compiler};
 use omegaflow::spectral::SPECTRAL_NO_BAND;
 
 const NETLOC: &str = "isdc-data.gfz.de";
@@ -12,6 +12,7 @@ const TEMPLATE: &str =
     "https://isdc-data.gfz.de/champ/ME/Level2/PLPT/{year}/CH-ME-2-PLPT+{date}_1.zip";
 const CADENCE_S: f64 = 15.0;
 const DAY_S: f64 = 86400.0;
+const BIN: &str = "champ_plpt_compiler";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -31,7 +32,7 @@ fn parse_ymd(s: &str) -> Option<(i64, i64, i64)> {
     Some((y, m, d))
 }
 
-fn parse_plpt_dat(bytes: &[u8]) -> Vec<GeoRec> {
+fn parse_plpt_dat(bytes: &[u8], ellipsoid: Option<(f64, f64)>) -> Vec<GeoRec> {
     let text = String::from_utf8_lossy(bytes);
     let mut out = Vec::new();
     for line in text.lines() {
@@ -71,10 +72,13 @@ fn parse_plpt_dat(bytes: &[u8]) -> Vec<GeoRec> {
         let r = radius_km * 1000.0;
         let lat_rad = lat_gc.to_radians();
         let lon_rad = lon.to_radians();
+        let Some((a, e2)) = ellipsoid else { continue };
         let (lat, lon, alt) = match ecef_to_geodetic(
             r * lat_rad.cos() * lon_rad.cos(),
             r * lat_rad.cos() * lon_rad.sin(),
             r * lat_rad.sin(),
+            a,
+            e2,
         ) {
             Some(g) => g,
             None => continue,
@@ -94,9 +98,9 @@ fn parse_plpt_dat(bytes: &[u8]) -> Vec<GeoRec> {
     out
 }
 
-fn ingest_zip(bytes: &[u8]) -> Vec<GeoRec> {
+fn ingest_zip(bytes: &[u8], ellipsoid: Option<(f64, f64)>) -> Vec<GeoRec> {
     match unzip(bytes) {
-        Some(inner) => parse_plpt_dat(&inner),
+        Some(inner) => parse_plpt_dat(&inner, ellipsoid),
         None => Vec::new(),
     }
 }
@@ -121,6 +125,7 @@ fn main() {
     let mut fetched = 0usize;
     let mut skipped = 0usize;
     let range_mode = input.is_none() && url.is_none();
+    let ellipsoid = receiver_ellipsoid_for_compiler(BIN);
 
     if let Some(path) = input {
         let bytes = match std::fs::read(&path) {
@@ -130,7 +135,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        records = ingest_zip(&bytes);
+        records = ingest_zip(&bytes, ellipsoid);
         if records.is_empty() {
             eprintln!(
                 "champ_plpt_compiler: {path} carries no PLPT rows — the bin stays unwritten (0 honored)"
@@ -146,7 +151,7 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        records = ingest_zip(&bytes);
+        records = ingest_zip(&bytes, ellipsoid);
         if records.is_empty() {
             eprintln!(
                 "champ_plpt_compiler: {route} carries no PLPT rows — the bin stays unwritten (0 honored)"
@@ -224,7 +229,7 @@ fn main() {
             match fetch_raw_bytes(&route) {
                 Some(bytes) => {
                     fetched += 1;
-                    records.extend(ingest_zip(&bytes));
+                    records.extend(ingest_zip(&bytes, ellipsoid));
                 }
                 None => skipped += 1,
             }
