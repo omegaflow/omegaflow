@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: f63cd50ff512c59c94d406e63c9cd75baddefa9de16477c8d640f689f14328b2
+  sha256: 4807f672868e543e457b460119b37ff33f35b56aed89e5a7d8431c8ff16d36c0
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -32,6 +32,7 @@ Sender-Zeilen in `## An <line>`.
 - 2026-10-08 | „scispace nochmal mit harten bandagen … perplexity hab ich nochmal sicher eingegeben 10$ guthaben geschenkt" → SciSpace: cookie-interne API (kein Arm); Perplexity: Endpunkt umgezogen → Agent-API, `--perplexity` live (`1569a26d8`) | Quelle: diese Session.
 - 2026-10-08 | „nochmal prüfen ob du quellen findest die future nicht gefunden hat … und hast du gerade das tool mit seinen neuen skills genutzt?" → Gegen-Audit `docs/surveys/survey-2026-10-08-open-sources-delta.md` (neue Arme genutzt, LEOS/CSES u. a. neu) | Quelle: diese Session.
 - 2026-10-08 | „nicht nur die Top irgendwas (LLM-Seuche) — alle speichern; harte Taucher inkl. Secrets/Proton/`--all` auf die Blockierten, ggf. UI-Chats; wenn ihr die legal knackt wäre der Hammer" → vollständige Tabellen (keine Top-N) + zwei harte Taucher: LPF geknackt (HEASARC), Lasair/DEMETER/GOSAT-GW bis zur Auth-Kante | Quelle: diese Session.
+- 2026-10-08 | **Rat-Vorbereitung (dauerhaft):** „immer wenn ihr den rat tagen lasst, davor eine archive_search (evtl. ein billiges `--all` als gespeicherter Text, damit Baum, Wissenschaft/Forschung und Internet bekannt sind) und die gewichteten UI-Chats im stärksten Modus (außer Claude, der extra hochgefahren wird)" → in `AGENTS.md` (Rat-Block) eingetragen | Quelle: diese Session.
 Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-folge263.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Offen — eigen
@@ -96,6 +97,23 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 - **Blockade:** die neuen Kanäle brauchen Mountain-Admission (Verdikt-Zeile) + Mycelium-Manifestation; die Kuprat-Rückfrage ist operator-gebunden.
 - **Blockierte vier (harte Runde, Kaskade inkl. Proton + neue Arme):** **keine** war geo/Cloudflare — **LPF GEKNACKT** (offenes NASA/HEASARC-Mirror `heasarc.gsfc.nasa.gov/lpf/cgi/selector?start=&end=&hdu=` → 200 `application/fits`; ESA `/lpfsa/` lebt); **Lasair Route geknackt** (`api.lasair.lsst.ac.uk` 401 = am Leben; `cone/query/object/sherlock`, `?token=<TOK>`/`Authorization: Token`); **DEMETER** Block wanderte WAF-403→auth-401 (lokale Metalink-JWTs **abgelaufen** 2026-10-05; Endpunkt `…/orders/public/files/<id>?orderToken=<JWT>&scope=cdpp`); **GOSAT-GW** falscher Host → echter Port `product.gosat-gw.nies.go.jp` 200, API cookie-gated (Login `mail_address`/`password`).
 - **Braucht:** Mountain-Verdikt für die neuen Quellen + **LPF-HEASARC**; Lasair mit Token einmalig messen (Probe bauen); **DEMETER/GOSAT-GW = Operator-Akt** (frisches REGARDS-Token / NIES-Cookie); SuperMAG-`username`-Kontrakt messen; Kuprat-/Detektor-Rückfrage an den Operator.
+
+## An mountain
+
+Origin: mycelium-267.
+
+- **Quellen-Zulassung (vollständige Survey `docs/surveys/survey-2026-10-08-open-sources-delta.md`, keine Top-N):** HI-Surveys (LAB · EBHIS · GASS · GALFA-HI), CMB (Planck Legacy Archive · LAMBDA · ACT · SPT-3G), Solar (IRIS · SDO/AIA · VSO · HEK · Solar Orbiter · PSP · Hinode), LAIC/CSES (LEOS · CSSDC · INTERMAGNET · ISGI · Swarm · GIRO), FRB (CHIME/FRB · Blinkverse · VOEvent), Teilchen (ATLAS Open Data · Belle II · GWOSC · Fermilab) — alle keyless, **unregistriert**; brauchen dein Zulassungs-/Dispositions-Verdikt.
+- **LPF-HEASARC offen:** `heasarc.gsfc.nasa.gov/lpf/cgi/selector?start=&end=&hdu=` → 200 `application/fits`, keyless; Arm `--lpf` steht (`fef1238b6`). Registrieren.
+- **Blockierte vier (harte Runde):** LPF geknackt (HEASARC), Lasair-Route offen (`api.lasair.lsst.ac.uk`, Token `LASAIR_LSST_TOKEN`), DEMETER WAF-403→auth-401 (Metalink-JWT abgelaufen 2026-10-05), GOSAT-GW falscher Host → `product.gosat-gw.nies.go.jp` (Cookie).
+- **SuperMAG:** erreichbar (206), braucht jetzt `username`-Param — Kontrakt messen.
+- **Riss:** Diver-CSES-Zitat traf Vega 2 (`leos.ac.cn`=0 im Baum).
+
+## An future
+
+Origin: mycelium-267.
+
+- **Operator-Akte (in deine Queue, direkter Edit):** (1) **DEMETER** — im REGARDS-Portal neu einloggen → frisches Metalink/Token (Endpunkt `regards.cnes.fr/api/v1/rs-order/orders/public/files/<id>?orderToken=<JWT>&scope=cdpp`); (2) **GOSAT-GW** — NIES-Login (`mail_address`/`password`) → Cookie für `product.gosat-gw.nies.go.jp/product_search/api/cui-{search,download}`; (3) **Perplexity-API** freigegeben ($10-Guthaben; `--perplexity` live, MCP verdrahtet); (4) **Kuprat-/Detektor-Rückfrage** — welches „private Teilchenexperiment" (Kuprat = Festkörper, kein Teilchen) bestimmt die admission-fähigen Kanäle.
+- **Neue Rat-Vorbereitungs-Regel** (Operator-Wort 2026-10-08) ist in `AGENTS.md` (Rat-Block) eingetragen.
 
 ## An river
 
