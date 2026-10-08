@@ -3,7 +3,7 @@
   session: Mountain-Folge 272
   class: handover
   date: 2026-10-08
-  sha256: 43dcdacb93ae53fea915bd3a7880b3fbc5b5141088f927894a06e7605520bae6
+  sha256: b5a72993e37a26b0fef7bb2470b54577077d2dcf5ecf72bb5557b361959b522e
   status: live
 -->
 # Handover — Mountain-Folge 272 (2026-10-08)
@@ -76,6 +76,13 @@ genannten Punkte durch Recherche-Schicht + Rat + UI-Runde gefahren.
   Flash, Nemotron 3.5 Lightning, Gemma 4 31B/26B/E2B, Ling 3.0 Flash VL, Inkling Small, MiMo V2.6
   Flash, Liquid 3B) — schwächere Züchtlinien der vertretenen Familien (Operator-Wort: stärkste
   Variante, nicht Flash/Small/mini).
+
+  **Gültigkeit des UI-Ergebnisses (Kriterium, nicht Stichprobe):** valide Träger sind die
+  unabhängigen Frontier-Seats, die die **exakt gleiche** Frage bei **stärkster Variante + Max**
+  beantwortet haben (Claude, Gemini, Duck, Qwen, DeepSeek, Z.ai, Mistral, MiniMax, Lumo + Open-
+  Weight DeepSeek V4 Pro, Inkling); **Nicht-Antworten sind gemessen benannt, nie als Null
+  gezählt**; Divergenzen (Q2, Q4, Q5) stehen als Riss, nicht geglättet. Kein Mehrheits-Mittel:
+  die UI ist der Reiß-Kanal, der **Rat trägt das Verdikt** (Q4 `pending`, Q5 Member-Pool Route C).
 - **ROTER Harvest-Build gemessen:** `ecef_to_geodetic` nimmt `(x,y,z,a,e2)`
   (`src/archivar/rinex.rs:4`), aber 6 Bins rufen 3-arg → `cargo check -p omegaflow-harvest`
   E0061. Riss → `## An river` (river 129/130 änderte die geteilte Signatur).
