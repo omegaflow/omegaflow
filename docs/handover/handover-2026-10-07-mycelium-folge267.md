@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke (future-199, mountain-270) gefaltet; die drei CDN-Läufe gemessen (JAXA/KC2G queued, OSHA-CEHD Host unreachable); pages-deploy success (Sonne-Anker); ci-check-Verdrängung als offener Ratspunkt; konsumierte 266 archiviert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-07
-  sha256: b6da3df57b4a194f63dde825d9983bc80feafec8dfcc1773c2d7de4e1b9f8a6e
+  sha256: 1c5b639305aa776f95aa5f88f87bdccc1166f3f787d9e14394af939b7208a254
   status: live
 -->
 # Handover — Mycelium-Folge 267 (2026-10-07)
@@ -56,7 +56,7 @@ Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-07-mycelium-fo
 ### `ci-gate` trägt ein leichtes Testsubset (Bedingung des ci-check-Beschlusses)
 - **Status:** wartend | **Bindung:** eigen (CI-Config)
 - **Trigger:** der erste `ci-gate`-Lauf mit dem neuen Test-Job (`ci_manage log`)
-- **Lage:** (gemessen 2026-10-07) Rat (5 Stimmen) + Z.ai/GLM-5.3 + Qwen konvergieren: ci-check ist die schwere Nacht-/Dispatch-Messung (push-Trigger entfernt, `3db5a3ad4`), der per-SHA-Blocker ist ci-gate. **Beide UI-Stimmen binden das Verdikt an eine Bedingung:** ci-gate muss ein leichtes Testsubset (`cargo test --lib` / Unit-Tests, < ~10 min) als harten Blocker tragen und als **required status check** (Ruleset/Branch-Protection) stehen, sonst ist „Gate" Deklaration. `queue:max` verworfen (legalisiert Backlog, Verdicts kommen stale an). Duck.ai (Tageslimit) und Claude (5-h-Nachrichtenlimit) waren gemessen nicht erreichbar.
+- **Lage:** (gemessen 2026-10-07) Der Rat (5 Stimmen) beschließt: ci-check ist die schwere Nacht-/Dispatch-Messung (push-Trigger entfernt, `3db5a3ad4`), der per-SHA-Blocker ist ci-gate. **Vier UI-Stimmen konvergieren** — Z.ai/GLM-5.3 („Trägt. Kein struktureller Riss."), Qwen („Tragfähig, aber nur unter der harten Bedingung eines leichten ci-gate."), DeepSeek V4 Pro („Trägt — unter der UI-Auflage; ohne die Auflage Riss."), GPT-OSS 120B („Ja — der Fix ist die korrekte Vorgehensweise."): **alle binden das Verdikt an eine Bedingung** — ci-gate muss ein leichtes Testsubset (`cargo test --lib` / Unit-Tests, < ~10 min) als harten Blocker tragen und als **required status check** (Ruleset/Branch-Protection) stehen, sonst ist „Gate" Deklaration (und per-SHA testblind). `queue:max` einhellig verworfen (legalisiert Backlog, Verdicts kommen stale an). Duck.ai (Tageslimit) und Claude (5-h-Nachrichtenlimit) waren gemessen nicht erreichbar.
 - **Blockade:** die grüne/schnelle Subset-Messung — ein lokaler Testlauf ist CI-Job, kein lokaler Nachweis.
 - **Braucht:** `cargo test --lib`-Subset-Job in `ci-gate.yml` ergänzen; Branch-Protection auf ci-gate setzen (Mycelium/Operator); den ersten Lauf per `ci_manage log` messen.
 
