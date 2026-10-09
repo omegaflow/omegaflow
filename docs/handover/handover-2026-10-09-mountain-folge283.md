@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 3c22ea93a11db830bc64e0f6eb12ff6d0d08311b056f5c590651328e9262a428
+  sha256: 121a12172136ef814350bda3cbb198a8a0dc5a8cb979692b342e031c5802ad1b
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -78,7 +78,7 @@ Wort | Datum | Quelle
 ### PETREL19-Ephemeriden — Wei erteilt CC BY 4.0 (decline widerlegt)
 - **Status:** eigen | **Bindung:** eigen (Register/Port)
 - **Trigger:** Port gebaut (PETREL19-Arm im `ephemeris_compiler`)
-- **Lage:** (gemessen 2026-10-09) **Tian Wei** (`tian-we@163.com`, `mail_ledger.φ#1791552291`, 9. Okt 10:44) erteilt **CC BY 4.0** für PETREL19 („free for both research and commercial purposes", Redistribution ok; README folgt). Die frühere `decline redistribution` (`declined_sources.φ:2264`, unlicensed/all-rights-reserved, 2026-10-04) ist damit **widerlegt und entfernt**; PETREL19 steht jetzt als `pending` in `blocked_sources.φ`. `ephemeris_compiler.rs` supportet PETREL19 noch nicht (nur JUICE etc.; Upload-Tag `ssd.jpl.nasa.gov-ephemeris`).
+- **Lage:** (gemessen 2026-10-09) **Tian Wei** (PETREL19-Autor; Kontakt `mail_ledger.φ#1791552291`, 9. Okt 10:44) erteilt **CC BY 4.0** für PETREL19 („free for both research and commercial purposes", Redistribution ok; README folgt). Die frühere `decline redistribution` (`declined_sources.φ:2264`, unlicensed/all-rights-reserved, 2026-10-04) ist damit **widerlegt und entfernt**; PETREL19 steht jetzt als `pending` in `blocked_sources.φ`. `ephemeris_compiler.rs` supportet PETREL19 noch nicht (nur JUICE etc.; Upload-Tag `ssd.jpl.nasa.gov-ephemeris`).
 - **Blockade:** der PETREL19-Arm im Compiler fehlt.
 - **Braucht:** `ephemeris_compiler.rs` um PETREL19 erweitern (SPICE/JPL-DE, 1799-10-13..2106-05-05) → `sources.φ`-Block mit `terms CC-BY-4.0 https://github.com/TIAN-we/petrel19`.
 
@@ -99,8 +99,6 @@ Origin: mountain-folge283.
 Origin: mountain-folge283.
 
 - **Operator-Wort (2026-10-09):** „2 bitte spreche dich mit river ab das ist teil seines plans". Die **Kraft-/Register-Physik-Migration** (`force` → Quantity | Mechanism | Medium) ist **Teil deines Plans** — du führst Taxonomie + Migrationsreihenfolge. Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ` (Register-Domäne) auf deine Schema-Entscheidung. Kontext: dein `## An mountain` aus river-143, `docs/concepts/kanal-ontologie-komplettbau.md` §P10.2a (Zielschema `field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau>`, `force` als n:m-Tag), Werkzeug `source_physics_lint` (field 8006), Migrationsreihenfolge `gravity`/`seismic` → `acoustic`/`diffusion` → `em` zuletzt; Protokolle `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` / `…-river-register-physik.md`. Bitte falte diesen Punkt in deine Übergabe; Mountain hält die Register-Seite.
-
-## LOCK
 
 ## LOCK
 

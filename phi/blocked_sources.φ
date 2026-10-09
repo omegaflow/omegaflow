@@ -103,4 +103,4 @@ note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/data/?id=<IAGA>&elements=E
 
 pending
 url https://github.com/TIAN-we/petrel19
-note PETREL19 — 2026-10-09: Wei (tian-we@163.com, mail_ledger.φ#1791552291) erteilt CC BY 4.0; frühere `decline redistribution` (unlicensed) damit widerlegt + entfernt. Port offen: PETREL19-Arm in `ephemeris_compiler.rs` (SPICE/DE).
+note PETREL19 — 2026-10-09: Wei (PETREL19-Autor; mail_ledger.φ#1791552291) erteilt CC BY 4.0; frühere `decline redistribution` (unlicensed) damit widerlegt + entfernt. Port offen: PETREL19-Arm in `ephemeris_compiler.rs` (SPICE/DE).
