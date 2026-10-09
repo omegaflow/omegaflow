@@ -53,10 +53,11 @@ pub fn channel_intensity(omega: &[f32], aperture: &[f32], state: &[TriState]) ->
 
 pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
     let n = frame.n as usize;
-    match channel_intensity(&frame.omega[..n], &frame.aperture[..n], &frame.state[..n]) {
-        Some(v) => v,
-        None => 0.0,
-    }
+    let Some(v) = channel_intensity(&frame.omega[..n], &frame.aperture[..n], &frame.state[..n])
+    else {
+        return 0.0;
+    };
+    v
 }
 
 pub fn frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
@@ -118,9 +119,8 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
     let omega = &frame.omega[..n];
     let aperture = &frame.aperture[..n];
     let state = &frame.state[..n];
-    let intensity = match channel_intensity(omega, aperture, state) {
-        Some(v) => v,
-        None => 0.0,
+    let Some(intensity) = channel_intensity(omega, aperture, state) else {
+        return vec![0u8; PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2];
     };
     let f_hz = tone_hz(frame.tau_ticks);
     let step = f_hz * std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
@@ -386,6 +386,7 @@ pub struct SenseReq {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::mathematikerin::channel::live_schema_hash;
 
     fn cap9(v: [f32; 9]) -> [f32; CHANNEL_CAP] {
         let mut out = [0.0f32; CHANNEL_CAP];

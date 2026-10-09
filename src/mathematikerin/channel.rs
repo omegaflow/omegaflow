@@ -32,6 +32,12 @@ pub enum QuantityRole {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Quantity {
+    pub conserved: Conserved,
+    pub role: QuantityRole,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(u8)]
 pub enum PdeType {
     Elliptic = 0,
@@ -340,8 +346,7 @@ impl Eq for ChannelDescriptor {}
 
 impl ChannelDescriptor {
     pub fn new(
-        conserved: Conserved,
-        role: QuantityRole,
+        quantity: Quantity,
         op: TransportOp,
         pde_type: PdeType,
         medium: Medium,
@@ -350,8 +355,8 @@ impl ChannelDescriptor {
         unit: &'static str,
     ) -> Self {
         Self {
-            conserved,
-            role,
+            conserved: quantity.conserved,
+            role: quantity.role,
             op,
             pde_type,
             medium,
@@ -482,7 +487,13 @@ impl ChannelDescriptor {
             ));
         }
         Ok(ChannelDescriptor::new(
-            conserved, role, op, pde_type, medium, domain, boundary, unit,
+            Quantity { conserved, role },
+            op,
+            pde_type,
+            medium,
+            domain,
+            boundary,
+            unit,
         )
         .with_extent(extent))
     }
@@ -608,8 +619,10 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
         return None;
     }
     Some(ChannelDescriptor::new(
-        conserved,
-        QuantityRole::Primary,
+        Quantity {
+            conserved,
+            role: QuantityRole::Primary,
+        },
         op,
         pde_type,
         medium,
@@ -1233,8 +1246,10 @@ mod tests {
     #[test]
     fn differing_fields_differ_in_hash() {
         let a = ChannelDescriptor::new(
-            Conserved::Mass,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fick),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1243,8 +1258,10 @@ mod tests {
             "kg",
         );
         let b = ChannelDescriptor::new(
-            Conserved::Mass,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fick),
             PdeType::Parabolic,
             Medium::Vacuum,
@@ -1258,8 +1275,10 @@ mod tests {
     #[test]
     fn hash_is_stable() {
         let d = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -1273,8 +1292,10 @@ mod tests {
     #[test]
     fn domain_enters_the_hash() {
         let unspecified = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -1283,8 +1304,10 @@ mod tests {
             "kg m / s",
         );
         let line = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -1299,8 +1322,10 @@ mod tests {
         );
 
         let dirichlet_line = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -1314,8 +1339,10 @@ mod tests {
     #[test]
     fn role_enters_the_hash() {
         let primary = ChannelDescriptor::new(
-            Conserved::Mass,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fick),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1324,8 +1351,10 @@ mod tests {
             "kg",
         );
         let geometry = ChannelDescriptor::new(
-            Conserved::Mass,
-            QuantityRole::Geometry,
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Geometry,
+            },
             TransportOp::Flux(FluxKind::Fick),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1343,8 +1372,10 @@ mod tests {
     #[test]
     fn pde_type_enters_the_hash() {
         let elliptic = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Maxwell,
             PdeType::Elliptic,
             Medium::Vacuum,
@@ -1353,8 +1384,10 @@ mod tests {
             "V/m",
         );
         let hyperbolic = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Maxwell,
             PdeType::Hyperbolic,
             Medium::Vacuum,
@@ -1425,8 +1458,10 @@ mod tests {
 
     fn heat() -> ChannelDescriptor {
         ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fourier),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1452,8 +1487,10 @@ mod tests {
         let mut reg = ChannelRegistry::with_capacity(16);
         reg.register(heat());
         reg.register(ChannelDescriptor::new(
-            Conserved::Mass,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fick),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1468,8 +1505,10 @@ mod tests {
     fn an_alias_resolves_to_the_registered_descriptor() {
         let mut reg = ChannelRegistry::with_capacity(16);
         let em = ChannelDescriptor::new(
-            Conserved::Charge,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Ohm),
             PdeType::Elliptic,
             Medium::Fluid,
@@ -1487,8 +1526,10 @@ mod tests {
     #[test]
     fn the_unit_follows_from_quantity_and_operator_not_identity() {
         let a = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fourier),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1497,8 +1538,10 @@ mod tests {
             "J / (m2 s)",
         );
         let b = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Flux(FluxKind::Fourier),
             PdeType::Parabolic,
             Medium::Fluid,
@@ -1696,8 +1739,10 @@ mod tests {
     #[test]
     fn a_sphere_carries_its_sector_in_the_hash() {
         let l0 = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -1706,8 +1751,10 @@ mod tests {
             "Pa",
         );
         let l1 = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -1728,8 +1775,10 @@ mod tests {
     #[test]
     fn a_free_surface_binds_through_the_medium() {
         let fluid = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -1743,8 +1792,10 @@ mod tests {
         assert_eq!(fluid.mode_wavenumbers(2), Some(dirichlet));
 
         let solid = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -1844,10 +1895,10 @@ mod tests {
         )
         .expect("rectangle modes");
         let expected = [
-            pi * (0.25 + 1.0 / 9.0).sqrt(),
-            pi * (0.25 + 4.0 / 9.0).sqrt(),
-            pi * (1.0 + 1.0 / 9.0).sqrt(),
-            pi * (0.25 + 1.0).sqrt(),
+            pi * (0.25_f64 + 1.0 / 9.0).sqrt(),
+            pi * (0.25_f64 + 4.0 / 9.0).sqrt(),
+            pi * (1.0_f64 + 1.0 / 9.0).sqrt(),
+            pi * (0.25_f64 + 1.0).sqrt(),
         ];
         for (j, e) in expected.iter().enumerate() {
             assert!((k[j] - e).abs() < 1e-9, "mode {j}: {} vs {}", k[j], e);
@@ -1857,8 +1908,10 @@ mod tests {
     #[test]
     fn a_rectangle_carries_its_arity_in_the_domain_not_in_extent() {
         let d = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -1984,8 +2037,10 @@ mod tests {
     #[test]
     fn the_declared_body_constitutes_the_channel_frequencies() {
         let fluid = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -2001,8 +2056,10 @@ mod tests {
         assert!(f[0] > 0.0);
 
         let solid = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -2014,8 +2071,10 @@ mod tests {
         assert!(solid.mode_frequencies_hz_for_body("earth", 2).is_none());
 
         let vacuum = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Maxwell,
             PdeType::Mixed,
             Medium::Vacuum,
@@ -2068,8 +2127,10 @@ mod tests {
     #[test]
     fn an_elastic_solid_defaults_to_the_spheroidal_family() {
         let base = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::ElasticSolid,
@@ -2082,8 +2143,10 @@ mod tests {
         let toroidal = base.clone().with_family(ModeFamily::Toroidal);
         assert_ne!(base.hash(), toroidal.hash());
         let fluid = ChannelDescriptor::new(
-            Conserved::Energy,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -2099,8 +2162,10 @@ mod tests {
     #[test]
     fn a_sphere_sector_carries_its_degeneracy() {
         let d = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -2110,8 +2175,10 @@ mod tests {
         );
         assert_eq!(d.mode_degeneracy(), Some(5));
         let line = ChannelDescriptor::new(
-            Conserved::Momentum,
-            QuantityRole::Primary,
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
             TransportOp::Wave,
             PdeType::Hyperbolic,
             Medium::Fluid,
@@ -2219,7 +2286,7 @@ mod tests {
             "Pa",
         )
         .expect("bare parses");
-        let sized = bare.with_extent(Some(1.0));
+        let sized = bare.clone().with_extent(Some(1.0));
         assert_ne!(bare.hash(), sized.hash());
         assert_ne!(bare, sized);
     }
