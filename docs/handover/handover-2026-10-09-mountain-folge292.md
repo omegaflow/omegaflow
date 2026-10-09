@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 7a018cbd5e86d718a45f7a6c789220a3a7ac9c0693e4b974ff0068ec39241f9c
+  sha256: 8cfaf6d1ec61e8997940f04f6b68b9d5a00dabf04fe9f68a641c09ba4bf87135
   status: live
 -->
 # Handover — Mountain-Folge 292 (2026-10-09)
@@ -126,17 +126,20 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Register-Sprache — verbleibende deutsche Zustands-Token
+### Register-Sprache — Zustands-Token migriert; Prosa-Detektoren offen (Doktrin)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-10) `terms unbestimmt`/`ohne-lizenz` sind auf Englisch
-  umgestellt (0 Rest). Deutsche Zustands-Token verbleiben in `phi/*.φ`: `ausstehend` 8,
-  `verifiziert` 4, `kompiliert` 10, `disponiert` 38.
-- **Blockade:** Tooling-Kopplung — `register_lookup` bildet diese Zustände auf Owner ab;
-  `phi/pipeline/ledger.φ` + Gate-Fixtures tragen sie.
-- **Braucht:** Migration auf Englisch (`ausstehend`→`pending`, `verifiziert`→`verified`,
-  `kompiliert`→`compiled`, `disponiert`→`released`) in `phi/*.φ` **und**
-  `register_lookup`/`register_sort`/Gate-Fixtures im selben Atom.
+- **Trigger:** Operator-Wort zur Register-/Handover-Sprache
+- **Lage:** (gemessen 2026-10-10) `terms unbestimmt`/`ohne-lizenz` → englisch (0 Rest);
+  `phi/pipeline/ledger.φ` Zustände `ausstehend`/`disponiert` → `pending`/`released`
+  (0/0 Rest), `register_lookup` erkennt sie. **Verbleibendes Deutsch ist Prosa/Detektion:**
+  `verifiziert` 4 · `kompiliert` 10 · `disponiert`/`erledigt` in `phi/pipeline/index.φ`
+  (Work-Log-Prosa) · `offen`/`fehlt`/`wartet`/`nächster schritt` in
+  `src/gate/commit_gate.rs:2267 DOC_OPEN_MARKERS` + `register_lookup`-Armen +
+  `session_te`/`commit_words`/`claim_reader` — diese **lesen die deutsche
+  Handover-/Register-Prosa**; ohne deutsche Prosa wären sie sinnlos.
+- **Blockade:** Doktrin — AGENTS.md definiert den Handover-Register als deutsch.
+- **Braucht:** Operator-Wort: Register-/Handover-**Prosa** auf Englisch umstellen
+  (AGENTS.md-Zeile + alle Dokumente + Detektor-Token)? Dann fällt das Tool-Deutsch mit.
 
 ### Dimensionlose Einheit `relative` — Leser gebaut; sources.φ-Zeilen + Blinkverse-Pfad offen
 - **Status:** eigen | **Bindung:** eigen
