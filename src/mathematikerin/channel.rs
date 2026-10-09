@@ -230,7 +230,15 @@ impl ChannelDescriptor {
     }
 
     pub fn mode_wavenumbers(&self, count: usize) -> Option<Vec<f64>> {
-        eigen_wavenumbers(self.domain, self.boundary, self.extent?, count)
+        eigen_wavenumbers(self.domain, self.effective_boundary(), self.extent?, count)
+    }
+
+    fn effective_boundary(&self) -> Boundary {
+        match (self.boundary, self.medium) {
+            (Boundary::FreeSurface, Medium::Fluid) => Boundary::Dirichlet,
+            (Boundary::FreeSurface, Medium::ElasticSolid) => Boundary::Neumann,
+            (boundary, _) => boundary,
+        }
     }
 
     pub fn mode_frequencies_hz(&self, speed: f64, count: usize) -> Option<Vec<f64>> {
@@ -560,7 +568,7 @@ pub fn eigen_wavenumbers(
         return None;
     }
     match (domain, boundary) {
-        (Domain::Line, Boundary::Dirichlet) | (Domain::Line, Boundary::FreeSurface) => Some(
+        (Domain::Line, Boundary::Dirichlet) => Some(
             (1..=count)
                 .map(|j| j as f64 * std::f64::consts::PI / extent)
                 .collect(),
@@ -1236,10 +1244,47 @@ mod tests {
     }
 
     #[test]
-    fn a_free_surface_line_is_harmonic() {
+    fn a_sphere_dirichlet_is_the_l0_radial_sector() {
+        let pi = std::f64::consts::PI;
+        let k = eigen_wavenumbers(Domain::Sphere, Boundary::Dirichlet, 1.0, 2).expect("sphere l=0");
+        assert_eq!(k, vec![pi, 2.0 * pi]);
+    }
+
+    #[test]
+    fn a_bare_free_surface_has_no_closed_spectrum() {
+        assert!(eigen_wavenumbers(Domain::Line, Boundary::FreeSurface, 2.0, 2).is_none());
+    }
+
+    #[test]
+    fn a_free_surface_binds_through_the_medium() {
+        let fluid = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Line,
+            Boundary::FreeSurface,
+            "Pa",
+        )
+        .with_extent(Some(2.0));
         let dirichlet = eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 2.0, 2).expect("dir");
-        let free = eigen_wavenumbers(Domain::Line, Boundary::FreeSurface, 2.0, 2).expect("free");
-        assert_eq!(dirichlet, free);
+        assert_eq!(fluid.mode_wavenumbers(2), Some(dirichlet));
+
+        let solid = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::FreeSurface,
+            "m",
+        )
+        .with_extent(Some(2.0));
+        let neumann = eigen_wavenumbers(Domain::Line, Boundary::Neumann, 2.0, 2).expect("neumann");
+        assert_eq!(solid.mode_wavenumbers(2), Some(neumann));
+        assert_eq!(solid.mode_wavenumbers(2).expect("solid modes")[0], 0.0);
     }
 
     #[test]
