@@ -1,0 +1,46 @@
+name: usgs-geomag-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: IAGA station code (e.g. BOU)
+        required: true
+        type: string
+        default: "BOU"
+      start:
+        description: start ISO datetime (e.g. 2025-06-01T00:00:00Z)
+        required: true
+        type: string
+        default: "2025-06-01T00:00:00Z"
+      stop:
+        description: stop ISO datetime (e.g. 2025-07-01T00:00:00Z)
+        required: true
+        type: string
+        default: "2025-07-01T00:00:00Z"
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  geomag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the USGS geomagnetic E-field window and manifest the bin to the CDN
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin usgs_geomag_compiler -- \
+            --station "${{ inputs.station }}" \
+            --start "${{ inputs.start }}" \
+            --stop "${{ inputs.stop }}" \
+            --out "usgs_geomag_efield_${{ inputs.station }}.bin" \
+            --ci-mode

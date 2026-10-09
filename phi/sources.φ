@@ -136,6 +136,16 @@ field dsn_ka_down_power dsn_ka_down_power inverse-square em dBm 60.0 0.0 0.0
 field dsn_s_up_power dsn_s_up_power inverse-square em kW 60.0 0.0 0.0
 field dsn_x_up_power dsn_x_up_power inverse-square em kW 60.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/usgs_geomag_efield_BOU.bin
+terms PD https://geomag.usgs.gov/
+format usgs_geomag_efield
+origin https://geomag.usgs.gov/ws/data/
+compiler tools/harvest/src/bin/usgs_geomag_compiler.rs
+on earth 40.137 -105.237 1682
+ttl 60
+field usgs_geomag_e_e_mv_km usgs_geomag_e_e_mv_km inverse-square electric mV/km 60 0.0 0.0
+field usgs_geomag_e_n_mv_km usgs_geomag_e_n_mv_km inverse-square electric mV/km 60 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format fdsn_waveform

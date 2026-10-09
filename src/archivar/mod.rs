@@ -199,6 +199,7 @@ pub mod tns;
 pub mod twomass;
 pub mod twomrs;
 pub mod usgs_comcat;
+pub mod usgs_geomag;
 pub mod viking_text;
 pub mod vlf_awesome;
 pub mod vlies;
