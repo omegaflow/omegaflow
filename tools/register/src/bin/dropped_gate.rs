@@ -308,6 +308,95 @@ fn shadow_null_control(pin: &BTreeSet<String>) -> (usize, usize) {
     (false_red, false_green)
 }
 
+#[cfg(test)]
+fn reformulation_corpus() -> &'static [(&'static str, &'static str, &'static str)] {
+    &[
+        (
+            "lizenz-disposition terms -feld unbestimmt ohne-lizenz 159",
+            r#"### Lizenz-Disposition — `terms`-Feld (`unbestimmt`/`ohne-lizenz`); 159 abgeleitet, nicht persistiert"#,
+            "docs/handover/archiv/handover-2026-10-07-mountain-folge269.md:217",
+        ),
+        (
+            "lizenz-disposition terms -feld spdx rights read",
+            r#"### Lizenz-Disposition — `terms`-Feld (SPDX); `rights_read` offen"#,
+            "docs/handover/archiv/handover-2026-10-07-mountain-folge270.md:124",
+        ),
+        (
+            "lizenz-disposition terms -feld spdx rest-sweep",
+            r#"### Lizenz-Disposition — `terms`-Feld (SPDX); Rest-Sweep offen"#,
+            "docs/handover/archiv/handover-2026-10-09-mountain-folge281.md:67",
+        ),
+        (
+            "lizenz-disposition terms -feld spdx esa intermagnet",
+            r#"### Lizenz-Disposition — `terms`-Feld (SPDX); ESA + INTERMAGNET + HF-Radar gesweept, langer Rest offen"#,
+            "docs/handover/archiv/handover-2026-10-09-mountain-folge283.md:64",
+        ),
+        (
+            "lizenz-disposition terms -feld spdx jeder block",
+            r#"### Lizenz-Disposition — `terms`-Feld (SPDX); jeder Block trägt `terms`"#,
+            "docs/handover/archiv/handover-2026-10-09-mountain-folge284.md:96",
+        ),
+        (
+            "kraft-taxonomie ton-modell stimmen-runde konvergenz riss",
+            r#"### Kraft-Taxonomie + Ton-Modell — Stimmen-Runde: Konvergenz + Riss"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge142.md:109",
+        ),
+        (
+            "kraft-taxonomie register-physik-migration wort gefeuert schema-riss benannt",
+            r#"### Kraft-Taxonomie + Register-Physik-Migration — Wort gefeuert; Schema-Riss benannt, Mountain schreibt die Zeilen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge147.md:111",
+        ),
+        (
+            "kraft-taxonomie register-physik-migration rat frontend-runde gefallen lint",
+            r#"### Kraft-Taxonomie + Register-Physik-Migration — Rat + Frontend-Runde gefallen, Lint gebaut; Schema-Erweiterung offen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge148.md:83",
+        ),
+        (
+            "usgs-geomag e-feld produkt getrennt riss gefixt",
+            r#"### USGS-geomag E-Feld — Produkt getrennt (Riss gefixt)"#,
+            "docs/handover/archiv/handover-2026-10-09-mountain-folge284.md:54",
+        ),
+        (
+            "usgs-geomag e-feld verdikt d compiler-arm rat",
+            r#"### USGS-geomag E-Feld — Verdikt D: Compiler-Arm (Rat + Frontier konvergent)"#,
+            "docs/handover/archiv/handover-2026-10-09-mountain-folge285.md:41",
+        ),
+        (
+            "kanalzahl a a senken-projektion tonkern gebaut",
+            r#"### Kanalzahl (A=A) + Senken-Projektion — Tonkern gebaut; Wire/GPU/JS offen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge149.md:69",
+        ),
+        (
+            "kanalzahl a a senken-projektion p3 3",
+            r#"### Kanalzahl (A=A) + Senken-Projektion — P3.3 + P3.1/P5 + P4 gebaut; Ton offen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge152.md:72",
+        ),
+        (
+            "span-direktive presence-hull- star-grid-apertur schritt für river",
+            r#"### span-Direktive (Presence-Hull-/Star-Grid-Apertur) — Schritt für River"#,
+            "docs/handover/archiv/handover-2026-10-07-mountain-folge271.md:150",
+        ),
+        (
+            "die drei cdn-arme aus mountain-273 asset-prüfung",
+            r#"### Die drei CDN-Arme aus mountain-273 — Asset-Prüfung offen"#,
+            "docs/handover/archiv/handover-2026-10-08-mycelium-folge270.md:52",
+        ),
+        (
+            "ui-chat-stimmen zum epochrange -befund vier von",
+            r#"### UI-Chat-Stimmen zum `epochrange`-Befund (vier von fünf)"#,
+            "docs/handover/archiv/handover-2026-09-26-mountain-folge172.md:115",
+        ),
+    ]
+}
+
+#[cfg(test)]
+fn true_drop_fixture() -> (&'static str, &'static str) {
+    (
+        "gzip-body ohne gz -suffix kein erkennungs-",
+        "docs/zustand/dropped-legacy-baseline.txt:33",
+    )
+}
+
 fn run_selftest() -> Result<(), String> {
     let pin: BTreeSet<String> = ["a", "b", "c"].iter().map(|s| s.to_string()).collect();
     let log = concat!(
@@ -784,5 +873,34 @@ mod tests {
         assert!(is_carried(&exact, &carriers));
         let superset = "dropped-gate roster archiv".to_string();
         assert!(!is_carried(&superset, &carriers));
+    }
+
+    #[test]
+    fn grounded_reformulation_corpus_stays_silent() {
+        for &(key, line, source) in reformulation_corpus() {
+            let carriers = vec![line.to_string()];
+            assert!(is_carried(key, &carriers), "carrier missed at {source}");
+            let key_owned = key.to_string();
+            assert!(
+                dropped_keys([&key_owned], &carriers).is_empty(),
+                "false alarm at {source}"
+            );
+        }
+    }
+
+    #[test]
+    fn grounded_true_drop_fires() {
+        let carriers: Vec<String> = reformulation_corpus()
+            .iter()
+            .map(|(_, line, _)| (*line).to_string())
+            .collect();
+        let (key, source) = true_drop_fixture();
+        let key_owned = key.to_string();
+        let expected = vec![key.to_string()];
+        assert_eq!(
+            dropped_keys([&key_owned], &carriers),
+            expected,
+            "true drop `{key}` must fire ({source})"
+        );
     }
 }
