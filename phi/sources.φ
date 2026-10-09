@@ -20135,6 +20135,14 @@ plx plx
 field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/themis.ssl.berkeley.edu/themis_asi.bin
+terms free-open https://themis.ssl.berkeley.edu/roadrules.shtml
+format themis_asi
+origin https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf
+compiler tools/harvest/src/bin/themis_asi_compiler.rs
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/toar-data.fz-juelich.de/toar_surface_o3.bin
 terms CC-BY-4.0 https://toar-data.fz-juelich.de/footer/terms-of-use.html
 format toar_surface_o3
