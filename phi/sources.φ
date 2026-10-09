@@ -14,7 +14,7 @@ map .
 lat Latitude
 lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
-channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
+channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface Pa
 
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 terms unbestimmt https://vires.services/
@@ -99,7 +99,7 @@ lat latitude
 lon longitude
 field depth ceic_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
 field magnitude ceic_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
-channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:free-surface Pa
+channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface Pa
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 terms PD https://earthquake.usgs.gov/
@@ -2327,6 +2327,7 @@ terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
 format ephemeris_petrel19
 origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 935fae882501311e61c9386f8e83cbc398d96565028e9c11904101f2ed6f7651
 at earth
 ttl 86400
 
@@ -2335,6 +2336,7 @@ terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
 format ephemeris_petrel19
 origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 e53d5a3b0160b2f8fa3ab383e3d0e34afc61ea5287ad154c37280ee0a27592bf
 at moon
 ttl 86400
 
@@ -2343,6 +2345,7 @@ terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
 format ephemeris_petrel19
 origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 3656f56b0cfce11c3c1033f79c904125efc84a102b964c410a1bea05de108217
 at sun
 ttl 86400
 
@@ -10938,6 +10941,7 @@ terms CC-BY-4.0 https://data.inpe.br/bdc/stac/v1/collections/samet_daily-1
 format inpe_stac_samet_daily
 origin https://data.inpe.br/bdc/data/samet_daily/DAILY/TMAX/2026/10/SAMeT_CPTEC_TMAX_20261008.nc
 compiler tools/harvest/src/bin/inpe_stac_compiler.rs
+sha256 ba2ff33cddc11f240c5f3a2d7c553dd1ff16493066c4f932177d01eb56ff722f
 ttl 604800
 at earth
 field tmax samet_tmax inverse-square thermal C 604800 0.0 0.0
