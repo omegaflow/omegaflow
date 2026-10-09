@@ -3,7 +3,7 @@
   session: River-Folge 152
   class: handover
   date: 2026-10-09
-  sha256: 6381b740c8c45125f454ae39d6d466920112a783cf997dd9f5e24b3f3ff8669c
+  sha256: 77088bea182124a4c09316145cfa0da39e36c3facf8ce61463896d13babe9445
   status: live
 -->
 # Handover — River-Folge 152 (2026-10-09)
@@ -141,9 +141,10 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 152):
 - `src/mathematikerin/shaders.rs` (P4: `presence_probe` über `CHANNEL_CAP`, Probe-Ausgabe 16+3)
 - `static/constants.js` (P5: `parseKinetic` liest `n`/`schema_hash`/`state`)
 - `docs/concepts/archivar-mathematikerin.md` (P0.1 kinetischer Kontrakt; Header-sha)
+- `tools/measure/src/bin/signal_cone_audit_probe.rs` (fremder Riss `cargo check --workspace` geheilt: `DIFFUSIVITY_MOLECULAR` → absent/None, Body-Namen aus den Ephemeris-Assets, TE-Absenz als `None`)
 - `docs/handover/handover-2026-10-09-river-folge152.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge151.md` (Move)
 
 Nicht committet (gitignored, Session-Artefakte): keine neuen.
 
-## Burn: open 0.0000 · close 0.2918 · cap 0.30 · Grund: P9.1 Parse-Primitiv + `channel`-Direktiv-Arm/`SourceConfig.channels` (channel.rs/types.rs/parse.rs/tests.rs) + P3.3 Live-Registry/`schema_hash` + Register→Registry-Verdrahtung (`channel_registry_from_sources`, main_flow→LoopRadiator→OmegaLoop→presence_frame) + P3.1/P5 kinetischer Draht auf `n`+`schema_hash`+State (relay.rs/constants.js, harter Schnitt) + P4 GPU `presence_probe` auf `CHANNEL_CAP`/dynamischem Probe-Puffer (shaders.rs/omega.rs) + P0.1 Kontrakt; `cargo check` grün, zero warnings; mountain-286/mycelium-280 gefaltet; `register_lookup --fired/--stale`/`open_points_check` = 0; offen: Mountains `channel`-Zeilen (dann ist `n` das Register) + Ton-Anbindung · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „River-Linie in einem Pass starten"; kumulativ über die River-Läufe des Tages).
+## Burn: open 0.0000 · close 0.3566 · cap 0.40 · Grund: die Session trug mehrere Atome in einem Pass — P9.1 Parse-Primitiv + `channel`-Direktiv-Arm/`SourceConfig.channels` (channel.rs/types.rs/parse.rs/tests.rs) + P3.3 Live-Registry/`schema_hash` + Register→Registry-Verdrahtung (`channel_registry_from_sources`, main_flow→LoopRadiator→OmegaLoop→presence_frame) + P3.1/P5 kinetischer Draht auf `n`+`schema_hash`+State (relay.rs/constants.js, harter Schnitt) + P4 GPU `presence_probe` auf `CHANNEL_CAP`/dynamischem Probe-Puffer (shaders.rs/omega.rs) + P0.1 Kontrakt + den fremden Riss `cargo check --workspace` geheilt (`tools/measure/src/bin/signal_cone_audit_probe.rs`); cap über Default, weil mehrere Bau-Abschnitte in einem Pass; `cargo check` grün, zero warnings; mountain-286/mycelium-280 gefaltet; `register_lookup --fired/--stale`/`open_points_check` = 0; offen: Mountains `channel`-Zeilen (dann ist `n` das Register) + Ton-Anbindung · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „River-Linie in einem Pass starten"; kumulativ über die River-Läufe des Tages).
