@@ -1874,9 +1874,18 @@ impl Weberin {
                         });
                         continue;
                     }
-                    let median_sep = median_of(&mut seps).unwrap_or(f64::NAN);
-                    let median_sigma = median_of(&mut sigmas).unwrap_or(f64::NAN);
-                    let max_sep = max_sep_arcsec.unwrap_or(f64::NAN);
+                    let (Some(median_sep), Some(median_sigma), Some(max_sep)) =
+                        (median_of(&mut seps), median_of(&mut sigmas), max_sep_arcsec)
+                    else {
+                        verdicts.push(BodyGaiaVerdict {
+                            name,
+                            receiver: receiver.label().to_string(),
+                            fold: GaiaFold::Unjudgeable {
+                                transits: group.transits.len(),
+                            },
+                        });
+                        continue;
+                    };
                     let fold = if median_sep <= median_sigma {
                         GaiaFold::Placed {
                             total: seps.len(),

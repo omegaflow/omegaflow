@@ -1962,7 +1962,9 @@ fn apply_filters(
                 data.truncate(data.len() - 4);
             }
             FILTER_SCALEOFFSET => {
-                let scale_type = f.cd_values.first().copied().unwrap_or(2);
+                let Some(scale_type) = f.cd_values.first().copied() else {
+                    return Err(Hdf5Note::Filter { id: f.id, off: 0 });
+                };
                 let sf = f.cd_values.get(1).copied();
                 if data.len() < 21 {
                     return Err(Hdf5Note::Filter { id: f.id, off: 0 });
