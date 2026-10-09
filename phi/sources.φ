@@ -84,6 +84,7 @@ field depth ceic_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
 field magnitude ceic_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+terms PD https://earthquake.usgs.gov/
 ttl 60
 on earth 0 0 0
 map features
@@ -94,6 +95,7 @@ field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.
 field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+terms PD https://earthquake.usgs.gov/
 ttl 60
 live
 on earth 0 0 0
@@ -101,12 +103,14 @@ geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 mag_type_key magType
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true
+terms PD https://earthquake.usgs.gov/
 ttl 60
 on earth 0 0 0
 format quakeml
 quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/eyes.nasa.gov/dsn_snapshot.bin
+terms PD https://eyes.nasa.gov/
 format dsn_snapshot
 origin https://eyes.nasa.gov/dsn/data/dsn.xml
 compiler tools/harvest/src/bin/dsn_compiler.rs
@@ -137,21 +141,25 @@ lon geometry.coordinates.0
 field properties.mag geosphere_ga_mag_today erfc seismic-surface Mw 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 on earth 0.0 -75.2 35786023
 last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 on earth 0.0 -75.2 35786023
 last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 on earth 0.0 -75.2 35786023
 last flux radiation_proton_flux_integral inverse-square em pfu 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 on earth 0.0 -75.2 35786023
 last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
@@ -159,17 +167,20 @@ last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
 last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 on earth 0.0 -75.2 35786023
 last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 at sun
 last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
 last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 at sun
 first bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
@@ -177,6 +188,7 @@ first by_gsm magnetosphere_imf_by_nt inverse-square em nT 6.0 0.0 0.0
 first bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+terms PD https://www.swpc.noaa.gov/
 ttl 60
 at sun
 first proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0
@@ -260,6 +272,7 @@ field No1.magnitude jma_quake_magnitude gaussian-inverse-square seismic-body M 3
 field No1.depth jma_quake_depth_km gaussian-inverse-square seismic-body km 10 0.0 0.0
 
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+terms PD https://aviationweather.gov/
 ttl 300
 on earth 0 0 0
 map .
@@ -395,6 +408,7 @@ lon geometry.coordinates.0
 field properties.value pm25_ug_m3 erfc diffusion µg/m3 3600 0.0 0.0
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+terms PD https://waterservices.usgs.gov/
 ttl 300
 on earth 0 0 0
 map value.timeSeries
@@ -425,6 +439,7 @@ lastrow PRES hydrosphere_buoy_51003_pressure gaussian-inverse-square acoustic hP
 lastrow WTMP hydrosphere_buoy_51003_water_temp exponential-decay thermal C 3600 0.0 0.0
 
 url https://www.nhc.noaa.gov/CurrentStorms.json
+terms PD https://www.nhc.noaa.gov/
 ttl 300
 at earth
 map activeStorms
@@ -434,6 +449,7 @@ field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 0.
 field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.0
 
 url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+terms PD https://aviationweather.gov/
 ttl 600
 on earth 0 0 0
 map .
@@ -453,11 +469,13 @@ ttl 600
 field radiance mtg_li_flash_radiance_mw_m2_sr inverse-square em mW/m2/sr 600 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+terms PD https://www.swpc.noaa.gov/
 ttl 600
 at sun
 first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 0.0 0.0 where frequency 2800
 
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
+terms PD https://www.swpc.noaa.gov/
 ttl 600
 at sun
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
@@ -489,6 +507,7 @@ lon geometry.coordinates.0
 field properties.value bfs_odl_gamma_dose_rate_usv_h inverse-square em usv/h 3600 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/realtime2/21414.dart
+terms PD https://www.ndbc.noaa.gov/
 ttl 900
 on earth 48.977 178.199 0
 rows
@@ -599,6 +618,7 @@ last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-sq
 last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 0.0 0.0
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+terms PD https://tidesandcurrents.noaa.gov/
 ttl 3600
 on earth 0 0 0
 stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=waterlevels&units=metric
@@ -612,6 +632,7 @@ fanout_delay 10
 last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
 
 url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=2000&format=json&age=6
+terms PD https://aviationweather.gov/
 ttl 3600
 on earth 0 0 0
 map .
@@ -726,6 +747,7 @@ on earth 49.4195 8.6767 114.0
 field Value eea_aq_pm10_hourly_ug_m3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
 
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+terms PD https://www.aoml.noaa.gov/
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -734,6 +756,7 @@ lon 1
 field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
 url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst,ve,vn&time%3E=max(time)-7days
+terms PD https://www.aoml.noaa.gov/
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -744,6 +767,7 @@ field 3 hydrosphere_drifter_current_east_m_s patch-levy advective m/s 360.0 0.0 
 field 4 hydrosphere_drifter_current_north_m_s patch-levy advective m/s 360.0 0.0 0.0
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
+terms PD https://firms.modaps.eosdis.nasa.gov/
 ttl 3600
 format csv
 on earth 0 0 0
@@ -754,6 +778,7 @@ field bright_ti4 biosphere_fire_modis_brightness_ti4_k gaussian-inverse-square t
 field frp biosphere_fire_modis_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
+terms PD https://firms.modaps.eosdis.nasa.gov/
 ttl 3600
 format csv
 on earth 0 0 0
@@ -764,6 +789,7 @@ field bright_ti4 biosphere_fire_noaa20_brightness_ti4_k gaussian-inverse-square 
 field frp biosphere_fire_noaa20_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
+terms PD https://firms.modaps.eosdis.nasa.gov/
 ttl 3600
 format csv
 on earth 0 0 0
@@ -855,6 +881,7 @@ field omni_hro_solarwind_temp_k omni_hro_solarwind_temp_k exponential-decay ther
 field omni_hro_solarwind_pressure_npa omni_hro_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo_30hpa.csv
+terms PD https://www.cpc.ncep.noaa.gov/
 origin https://www.cpc.ncep.noaa.gov/data/indices/qbo.u30.index
 compiler tools/harvest/src/bin/qbo_compiler.rs
 ttl 3600
@@ -959,6 +986,7 @@ ttl 3600
 field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes16.s3.amazonaws.com/goes16_abi.bin
+terms PD https://www.noaa.gov/
 format goes_abi
 origin procedure: fetch https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/ then goes16_abi_compiler
 compiler tools/harvest/src/bin/goes16_abi_compiler.rs
@@ -967,6 +995,7 @@ ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes18.s3.amazonaws.com/goes18_abi.bin
+terms PD https://www.noaa.gov/
 format goes_abi
 origin procedure: fetch https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/ then goes18_abi_compiler
 compiler tools/harvest/src/bin/goes18_abi_compiler.rs
@@ -975,6 +1004,7 @@ ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazonaws.com/goes_abi_rad.bin
+terms PD https://www.noaa.gov/
 format goes_abi
 origin procedure: fetch https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/ then goes_abi_compiler
 compiler tools/harvest/src/bin/goes_abi_compiler.rs
@@ -991,6 +1021,7 @@ ttl 3600
 field rad himawari_ahi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-oar-hourly-gdp-pds.s3.amazonaws.com/gdp_drifter.bin
+terms PD https://www.noaa.gov/
 format gdp_drifter
 origin https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr
 compiler tools/harvest/src/bin/gdp_drifter_compiler.rs
@@ -1031,6 +1062,7 @@ field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_efield.bin
+terms PD https://www.swpc.noaa.gov/
 format swpc_efield
 origin https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
 compiler tools/harvest/src/bin/swpc_efield_compiler.rs
@@ -1040,6 +1072,7 @@ field swpc_efield_ex swpc_efield_ex inverse-square electric v/m 60 0.0 0.0
 field swpc_efield_ey swpc_efield_ey inverse-square electric v/m 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
+terms PD https://ssd.jpl.nasa.gov/
 format goes_xrs
 origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
 compiler tools/harvest/src/bin/goes_xrs_compiler.rs
@@ -1070,6 +1103,7 @@ gate average 300.0 600.0
 field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
 
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME?startDate={week_ago}&endDate={today}
+terms PD https://ccmc.gsfc.nasa.gov/
 ttl 3600
 at sun
 map .
@@ -1078,6 +1112,7 @@ lon cmeAnalyses.0.longitude
 field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square advective km/s 3600 0.0 0.0
 
 url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate={week_ago}&endDate={today}&classType=X
+terms PD https://ccmc.gsfc.nasa.gov/
 ttl 3600
 at sun
 regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
@@ -1116,6 +1151,7 @@ tau_key properties.detected_duration
 field properties.detected_energy glm_bolide_radiant_energy_j inverse-square em J 3600 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+terms PD https://www.swpc.noaa.gov/
 ttl 3600
 at earth 0.99
 field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
@@ -1124,6 +1160,7 @@ field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
 field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+terms PD https://www.swpc.noaa.gov/
 ttl 3600
 at earth 0.99
 field 0.speed exosphere_ace_speed_kms inverse-square advective km/s 360.0 0.0 0.0
@@ -1131,6 +1168,7 @@ field 0.dens exosphere_ace_dens_ncc inverse-square em 1/cm3 360.0 0.0 0.0
 field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/solar_regions.json
+terms PD https://www.swpc.noaa.gov/
 ttl 3600
 at sun
 map .
@@ -1267,6 +1305,7 @@ lon Lon
 field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
 
 url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
+terms PD https://www.ncei.noaa.gov/
 header token {NOAA_CDO_TOKEN}
 ttl 3600
 on earth 52.5 13.4 0
@@ -1340,6 +1379,7 @@ field 5 maxi_J0006+202_4_10kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
 field 7 maxi_J0006+202_10_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
+terms PD https://aeronet.gsfc.nasa.gov/
 ttl 86400
 format csv
 on earth 38.9925 -76.839833 87
@@ -1373,6 +1413,7 @@ alt geometry.coordinates.2
 field properties.daily_columno3 woudc_total_ozone_column_du gaussian-inverse-square diffusion DU 86400.0 0.0 0.0
 
 url https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
+terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 ttl 86400
 format csv_zip
 on earth 0 0 0
@@ -1413,6 +1454,7 @@ sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7
 ttl 86400
 
 url https://cddis.nasa.gov/archive/gnss/data/daily/{year}/brdc/BRDC00IGS_R_{year}{yday}0000_01D_MN.rnx.gz
+terms PD https://cddis.nasa.gov/
 ttl 86400
 format rinex
 header Authorization {EARTHDATA_EDL_TOKEN}
@@ -1475,6 +1517,7 @@ sha256 b962cead63aad83227774c63509e2483cb555adb6601cc77ae0ade57e9745645
 ttl 86400
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+terms PD https://www.pmel.noaa.gov/
 ttl 86400
 on earth 0 0 0
 map table.rows
@@ -1483,6 +1526,7 @@ lon 1
 field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
 
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=max(time)-7days
+terms PD https://www.pmel.noaa.gov/
 ttl 86400
 on earth 0 0 0
 field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
@@ -1652,6 +1696,7 @@ field epa_aqs_voc_45810 epa_aqs_voc_45810 gaussian-inverse-square diffusion ppbC
 field epa_aqs_voc_46201 epa_aqs_voc_46201 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin
+terms PD https://www.earthdata.nasa.gov/
 format swot_l2_lr_ssh
 origin https://archive.podaac.earthdata.nasa.gov
 compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
@@ -1749,6 +1794,7 @@ field ssusi_hemisphere_power_north ssusi_hemisphere_power_north inverse-square e
 field ssusi_hemisphere_power_south ssusi_hemisphere_power_south inverse-square em GW 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/ionex_tec_gim.bin
+terms PD https://cddis.nasa.gov/
 ttl 86400
 format ionex
 header Authorization {EARTHDATA_EDL_TOKEN}
@@ -1800,6 +1846,7 @@ ttl 86400
 field esacci_sst_l4_cdr3 esacci_sst_l4_cdr3 exponential-decay thermal K 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.epa.gov/radnet.bin
+terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 format radnet
 origin https://data.epa.gov/efservice/ERM_RESULT/rows/0:3/json
 compiler tools/harvest/src/bin/radnet_compiler.rs
@@ -1809,6 +1856,7 @@ ttl 86400
 field result_in_si radnet_activity_bq_l inverse-square em Bq/L 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin
+terms PD https://www.earthdata.nasa.gov/
 format black_marble_vnp46a3_nightlight
 origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
 compiler tools/harvest/src/bin/vnp46a3_compiler.rs
@@ -1855,6 +1903,7 @@ ttl 86400
 field depth_ppm exofop_toi_transit_depth_ppm inverse-square em ppm 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/fits.gsfc.nasa.gov/WFPC2u5780205r_c0fx.fits
+terms PD https://fits.gsfc.nasa.gov/
 format reference
 origin https://fits.gsfc.nasa.gov/samples/WFPC2u5780205r_c0fx.fits
 sha256 da7c0f1b6643850856cba100e9b3e8db76b80e91583eb088635c416a2b4161b3
@@ -2866,6 +2915,7 @@ at sun
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin
+terms PD https://www.ncei.noaa.gov/
 format noaa_cdo_ghcnd_tmax
 origin https://www.ncdc.noaa.gov/cdo-web/api/v2/data
 compiler tools/harvest/src/bin/noaa_cdo_compiler.rs
@@ -2874,6 +2924,7 @@ on earth 0 0 0
 field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
+terms PD https://www.ncei.noaa.gov/
 format spectral
 origin procedure: NCEI solar spectral irradiance monthly netCDF (SSI), host ncei.noaa.gov
 compiler tools/harvest/src/bin/spectral_compiler.rs
@@ -2882,6 +2933,7 @@ ttl 86400
 field irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin
+terms PD https://www.noaa.gov/
 format noaa_ccor
 origin https://noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/SWFO/GOES-19/CCOR-1/ccor1-dm_science/
 compiler tools/harvest/src/bin/noaa_ccor_compiler.rs
@@ -3982,6 +4034,7 @@ field bidsleep_my_ms2 bidsleep_my_ms2 gaussian-inverse-square advective m/s2 864
 field bidsleep_mz_ms2 bidsleep_mz_ms2 gaussian-inverse-square advective m/s2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/power.larc.nasa.gov/nasa_power_t2m.txt
+terms PD https://power.larc.nasa.gov/
 format nasa_power_t2m_axis_value_text
 origin https://power.larc.nasa.gov/api/temporal/daily/point
 compiler tools/harvest/src/bin/nasa_power_compiler.rs
@@ -4179,6 +4232,7 @@ format reference
 ttl 86400
 
 url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+terms PD https://gml.noaa.gov/
 ttl 86400
 on earth 71.29 -156.57 0
 rows
@@ -7918,6 +7972,7 @@ sha256 52cf6793f14e250ffc1436ce7f6fe6d92f6a066c433ec9efc66e4178f3d45a1f
 ttl 86400
 
 url https://maia.usno.navy.mil/ser7/finals.all
+terms PD https://maia.usno.navy.mil/
 format finals
 ttl 86400
 at earth
@@ -7926,6 +7981,7 @@ field pmx eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0
 field pmy eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+terms PD https://mars.nasa.gov/
 ttl 86400
 on mars 18.445 77.45 0
 field sols.6.max_temp cosmos_mars2020_max_temp_c exponential-decay thermal C 86400 0.0 0.0
@@ -7933,6 +7989,7 @@ field sols.6.min_temp cosmos_mars2020_min_temp_c exponential-decay thermal C 864
 field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+terms PD https://mars.nasa.gov/
 ttl 86400
 on mars -4.5895 137.4417 0
 field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 86400 0.0 0.0
@@ -8281,6 +8338,7 @@ field igra_relative_humidity_pct igra_relative_humidity_pct gaussian-inverse-squ
 field igra_dewpoint_c igra_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/realtime2/15006.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth -6 -10 0
 rows
@@ -8319,6 +8377,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 34.7 -72.4 0
 rows
@@ -8357,6 +8416,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41002.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 31.743 -74.955 0
 rows
@@ -8395,6 +8455,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41010.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 28.86 -78.478 0
 rows
@@ -8433,6 +8494,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41043.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 21.09 -64.864 0
 rows
@@ -8471,6 +8533,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41049.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 27.505 -62.271 0
 rows
@@ -8509,6 +8572,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 25.90 -89.67 0
 rows
@@ -8547,6 +8611,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 25.16 -94.42 0
 rows
@@ -8585,6 +8650,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 28.50 -84.52 0
 rows
@@ -8623,6 +8689,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 22.14 -91.39 0
 rows
@@ -8661,6 +8728,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 38.46 -74.70 0
 rows
@@ -8699,6 +8767,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 42.35 -70.69 0
 rows
@@ -8737,6 +8806,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45001.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 48.061 -87.793 0
 rows
@@ -8775,6 +8845,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45161.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 43.185 -86.354 0
 rows
@@ -8813,6 +8884,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45178.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 44.603 -73.394 0
 rows
@@ -8851,6 +8923,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45186.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 42.368 -87.795 0
 rows
@@ -8889,6 +8962,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/45207.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 41.731 -81.367 0
 rows
@@ -8927,6 +9001,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 56.30 -148.17 0
 rows
@@ -8965,6 +9040,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 42.67 -124.82 0
 rows
@@ -9003,6 +9079,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 46.06 -124.96 0
 rows
@@ -9041,6 +9118,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 37.36 -122.88 0
 rows
@@ -9079,6 +9157,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 40.74 -124.54 0
 rows
@@ -9117,6 +9196,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 33.75 -119.20 0
 rows
@@ -9155,6 +9235,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 37.75 -122.84 0
 rows
@@ -9193,6 +9274,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 46.12 -124.51 0
 rows
@@ -9231,6 +9313,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46035.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 57.034 -177.468 0
 rows
@@ -9269,6 +9352,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 32.42 -119.53 0
 rows
@@ -9307,6 +9391,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 34.26 -119.86 0
 rows
@@ -9345,6 +9430,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 34.27 -120.68 0
 rows
@@ -9383,6 +9469,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 38.07 -124.03 0
 rows
@@ -9421,6 +9508,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 33.66 -120.20 0
 rows
@@ -9459,6 +9547,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46071.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 51.035 179.808 0
 rows
@@ -9497,6 +9586,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46075.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 53.93 -160.763 0
 rows
@@ -9535,6 +9625,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 32.49 -118.02 0
 rows
@@ -9573,6 +9664,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 23.52 -153.82 0
 rows
@@ -9611,6 +9703,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 24.44 -162.00 0
 rows
@@ -9649,6 +9742,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 86400
 on earth 17.56 -152.39 0
 rows
@@ -9687,11 +9781,13 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
+terms PD https://www.ncei.noaa.gov/
 format reference
 sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
 ttl 86400
 
 url https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
+terms PD https://www.sciencebase.gov/
 format reference
 ttl 86400
 
@@ -10274,6 +10370,7 @@ at sun
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
+terms PD https://www.earthdata.nasa.gov/
 format gedi_l2a
 origin https://s3.us-west-2.amazonaws.com/lp-prod-protected
 compiler tools/harvest/src/bin/gedi_l2a_compiler.rs
@@ -10282,6 +10379,7 @@ ttl 604800
 field gedi_l2a_rh98 gedi_l2a_rh98_m inverse-square em m 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin
+terms PD https://www.earthdata.nasa.gov/
 format icesat2_atl03
 origin https://s3.us-west-2.amazonaws.com/nsidc-cumulus-prod-protected
 compiler tools/harvest/src/bin/icesat2_atl03_compiler.rs
@@ -10411,6 +10509,7 @@ ttl 604800
 field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
+terms PD https://www.earthdata.nasa.gov/
 format glm_l1b
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/glml1bflash__1/
 compiler tools/harvest/src/bin/glm_l1b_compiler.rs
@@ -10420,6 +10519,7 @@ ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/iss_lis.bin
+terms PD https://www.earthdata.nasa.gov/
 format iss_lis
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/isslis_v3_fin__3/
 compiler tools/harvest/src/bin/iss_lis_compiler.rs
@@ -10428,6 +10528,7 @@ ttl 604800
 field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/lis_otd.bin
+terms PD https://www.earthdata.nasa.gov/
 format lis_otd
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/
 compiler tools/harvest/src/bin/lis_otd_compiler.rs
@@ -10436,6 +10537,7 @@ ttl 604800
 quantity rad lis_otd_flash_radiance_uj_sr inverse-square intensity uj/sr 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/trmm_lis.bin
+terms PD https://www.earthdata.nasa.gov/
 format trmm_lis
 origin procedure: fetch https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/ then trmm_lis_compiler
 compiler tools/harvest/src/bin/trmm_lis_compiler.rs
@@ -10718,6 +10820,7 @@ z z
 field z ned_gitter_redshift_z inverse-linear em 1 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/noaa-cors-pds.s3.amazonaws.com/cors_1lsu_2024001.bin
+terms PD https://www.noaa.gov/
 format cors_rinex
 origin https://noaa-cors-pds.s3.amazonaws.com/rinex/<year>/<doy>/<station>/
 compiler tools/harvest/src/bin/cors_rinex_compiler.rs
@@ -10736,6 +10839,7 @@ field s2 cors_rinex_s2_dbhz inverse-square em dbhz 604800 0.0 0.0
 field s5 cors_rinex_s5_dbhz inverse-square em dbhz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-dcdb-bathymetry-pds.s3.amazonaws.com/dcdb_csb_2017-04-25.bin
+terms PD https://www.noaa.gov/
 ttl 604800
 format noaa_dcdb_bathymetry
 origin https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com
@@ -10744,6 +10848,7 @@ at earth
 field noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square acoustic m 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-global-hourly-pds.s3.amazonaws.com/isd_01001099999_2025-03.bin
+terms PD https://www.noaa.gov/
 format noaa_isd
 origin https://noaa-global-hourly-pds.s3.amazonaws.com
 compiler tools/harvest/src/bin/noaa_isd_compiler.rs
@@ -10765,6 +10870,7 @@ ttl 604800
 field glm_l2_flash_radiant_energy_j glm_l2_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-gsod-pds.s3.amazonaws.com/gsod_01001099999_2025-03.bin
+terms PD https://www.noaa.gov/
 format noaa_gsod
 origin https://noaa-gsod-pds.s3.amazonaws.com
 compiler tools/harvest/src/bin/noaa_gsod_compiler.rs
@@ -10780,6 +10886,7 @@ field noaa_gsod_min_c noaa_gsod_min_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_prcp_mm noaa_gsod_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-oar-keo-papa-pds.s3.amazonaws.com/keo_OS_KEO_200406_M_TSVMBP_32N145E_dy.bin
+terms PD https://www.noaa.gov/
 ttl 604800
 format noaa_keo_papa
 origin https://noaa-oar-keo-papa-pds.s3.amazonaws.com
@@ -10791,6 +10898,7 @@ field noaa_keo_ucur_ms noaa_keo_ucur_ms gaussian-inverse-square advective m/s 86
 field noaa_keo_vcur_ms noaa_keo_vcur_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-wod-pds.s3.amazonaws.com/noaa_wod_2000_drb.bin
+terms PD https://www.noaa.gov/
 ttl 604800
 format noaa_wod
 origin procedure: https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc
@@ -10801,6 +10909,7 @@ field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 60
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/magellan_odf.bin
+terms PD https://pds-geosciences.wustl.edu/
 format magellan_odf
 origin https://pds-geosciences.wustl.edu/mgn/mgn-v-rss-1-tracking-v1/mg_2601/odf/
 compiler tools/harvest/src/bin/magellan_odf_compiler.rs
@@ -10809,6 +10918,7 @@ ttl 604800
 field observable_hz magellan_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mgs_odf.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mgs_odf
 origin https://pds-geosciences.wustl.edu/mgs/mgs-m-rss-1-moi-v1/
 compiler tools/harvest/src/bin/mgs_odf_compiler.rs
@@ -10817,6 +10927,7 @@ ttl 604800
 field observable_hz mgs_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t210176230_237739612.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10825,6 +10936,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t237739613_260662939.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10833,6 +10945,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t260662940_280238586.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10841,6 +10954,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t280238587_304154246.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10849,6 +10963,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t304154247_322754571.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10857,6 +10972,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t322754572_343479074.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10865,6 +10981,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t343479074_371260333.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10873,6 +10990,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t371260334_397062602.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10881,6 +10999,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t397062603_424347865.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10889,6 +11008,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t424347866_450824107.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10897,6 +11017,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t450824108_472506285.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10905,6 +11026,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t472506286_496474244.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10913,6 +11035,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t496474245_522967272.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10921,6 +11044,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/mro_odf_t522967273_546637287.bin
+terms PD https://pds-geosciences.wustl.edu/
 format mro_odf
 origin https://pds-geosciences.wustl.edu/mro/mro-m-rss-1-magr-v1/mrors_0xxx/odf/
 compiler tools/harvest/src/bin/mro_odf_compiler.rs
@@ -10929,6 +11053,7 @@ ttl 604800
 field observable_hz mro_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t261261447_508869542.bin
+terms PD https://pds-geosciences.wustl.edu/
 format odyssey_odf
 origin https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
 compiler tools/harvest/src/bin/odyssey_odf_compiler.rs
@@ -10937,6 +11062,7 @@ ttl 604800
 field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t49912566_66317462.bin
+terms PD https://pds-geosciences.wustl.edu/
 format odyssey_odf
 origin https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
 compiler tools/harvest/src/bin/odyssey_odf_compiler.rs
@@ -10945,6 +11071,7 @@ ttl 604800
 field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t508869552_550631778.bin
+terms PD https://pds-geosciences.wustl.edu/
 format odyssey_odf
 origin https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
 compiler tools/harvest/src/bin/odyssey_odf_compiler.rs
@@ -10953,6 +11080,7 @@ ttl 604800
 field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/odyssey_odf_t66317463_261261437.bin
+terms PD https://pds-geosciences.wustl.edu/
 format odyssey_odf
 origin https://pds-geosciences.wustl.edu/ody/ody-m-rss-1-raw-v1/
 compiler tools/harvest/src/bin/odyssey_odf_compiler.rs
@@ -10961,6 +11089,7 @@ ttl 604800
 field observable_hz odyssey_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pathfinder_odf.bin
+terms PD https://pds-geosciences.wustl.edu/
 format pathfinder_odf
 origin https://pds-geosciences.wustl.edu/mpf/mpf-m-rss-1-5-radiotrack-v1/
 compiler tools/harvest/src/bin/pathfinder_odf_compiler.rs
@@ -10969,6 +11098,7 @@ ttl 604800
 field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_img_fsb_00720_1cd_xhu_84n209_v1.bin
+terms PD https://pds-geosciences.wustl.edu/
 format pds3_img
 origin https://pds-geosciences.wustl.edu/lunar/ch1-orb-l-mrffr-1-pdr-v1/ch1mrf_0xxx/data/sar/00700_00799/level1/fsb_00720_1cd_xhu_84n209_v1.lbl
 compiler tools/harvest/src/bin/pds3_img_compiler.rs
@@ -10980,6 +11110,7 @@ field "CROSS POWER INTENSITY (REAL)" minirf_cross_real inverse-square em 1 60480
 field "CROSS POWER INTENSITY (IMAGINARY)" minirf_cross_imag inverse-square em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce1_mrm.fits
+terms PD https://pds-geosciences.wustl.edu/
 format pds4_fits
 origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce1_mrm.fits
 compiler tools/harvest/src/bin/pds4_fits_compiler.rs
@@ -10991,6 +11122,7 @@ field ce1_mrm_t3 t3 gaussian-inverse-square thermal K 2 0.0 0.0
 field ce1_mrm_t4 t4 gaussian-inverse-square thermal K 2 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce2_mrm.fits
+terms PD https://pds-geosciences.wustl.edu/
 format pds4_fits
 origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce2_mrm.fits
 compiler tools/harvest/src/bin/pds4_fits_compiler.rs
@@ -11002,6 +11134,7 @@ field ce2_mrm_t3 t3 gaussian-inverse-square thermal K 2 0.0 0.0
 field ce2_mrm_t4 t4 gaussian-inverse-square thermal K 2 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/viking_grav_vmar001l.bin
+terms PD https://pds-geosciences.wustl.edu/
 origin https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat
 format viking_grav
 compiler tools/harvest/src/bin/viking_grav_compiler.rs
@@ -18466,6 +18599,7 @@ field PHOTOMETER8 pds3_krfm_photometer8 inverse-square em count 604800 0.0 0.0
 field PHOTOMETER9 pds3_krfm_photometer9 inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pdssbn.astro.umd.edu/dart_tnf.bin
+terms PD https://pdssbn.astro.umd.edu/
 format dart_tnf
 origin https://pdssbn.astro.umd.edu/holdings/pds4-dart:data_trk234-v1.0/
 compiler tools/harvest/src/bin/dart_tnf_compiler.rs
@@ -18520,6 +18654,7 @@ field by_nT bc_mpo_mag_by inverse-square em nT 604800 0.0 0.0
 field bz_nT bc_mpo_mag_bz inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/psl.noaa.gov/godas_pottmp_2024_cell.txt
+terms PD https://psl.noaa.gov/
 format godas_pottmp_axis_value_text
 origin https://psl.noaa.gov/thredds/dodsC/Datasets/godas/pottmp.2024.nc
 compiler tools/harvest/src/bin/godas_pottmp_compiler.rs
@@ -18571,6 +18706,7 @@ field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/dawn_odf.bin
+terms PD https://sbn.psi.edu/pds/
 format dawn_odf
 origin https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-ceres/data-odf/ + https://sbnarchive.psi.edu/pds4/dawn/gravity/dawn-rss-raw-vesta/data-odf/
 compiler tools/harvest/src/bin/dawn_odf_compiler.rs
@@ -18579,6 +18715,7 @@ ttl 604800
 field observable_hz dawn_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_f_20051029_20051118.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_f_20051029_20051118.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_f_20051029_20051118.tab
@@ -18588,6 +18725,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_opt_20050911_20050929.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050911_20050929.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050911_20050929.tab
@@ -18597,6 +18735,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_opt_20050930_20051028.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20050930_20051028.tab
@@ -18606,6 +18745,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_opt_20051029_20051118.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_opt_20051029_20051118.tab
@@ -18615,6 +18755,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_uf_20050911_20050929.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050911_20050929.tab
@@ -18624,6 +18765,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_uf_20050930_20051028.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20050930_20051028.tab
@@ -18633,6 +18775,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_uf_20051029_20051118.bin
+terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.xml
 origin https://sbnarchive.psi.edu/pds4/hayabusa/hay.lidar/data_calibrated/cdr_uf_20051029_20051118.tab
@@ -19358,6 +19501,7 @@ ttl 604800
 field toar_surface_o3_ppb toar_surface_o3_ppb gaussian-inverse-square diffusion ppb 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
+terms PD https://www.usgs.gov/
 format las
 origin procedure: fetch https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz then las_compiler
 compiler tools/harvest/src/bin/las_compiler.rs
@@ -19470,6 +19614,7 @@ field CDOD mars_dust_cdod inverse-square em 1 86400 0.0 0.0
 sha256 95cb85094cf4e120452b148977aa7666791ea391ccc6214b1b1f3a222e2d5402
 
 url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
+terms PD https://www.waterqualitydata.us/
 format wqp_result
 origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20(DO)&characteristicName=Specific%20conductance&characteristicName=Nitrate&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
 compiler tools/harvest/src/bin/wqp_result_compiler.rs
@@ -20222,6 +20367,7 @@ field GIC kellerman_node7_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node7_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_8day.manifest
+terms PD https://www.earthdata.nasa.gov/
 format modis_lst_cmg
 origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_8day_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-<year>; the series manifest lists the shards)
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
@@ -20231,6 +20377,7 @@ field daytime_lst_8day_k daytime_lst_8day_k gaussian-inverse-square thermal K 69
 field nighttime_lst_8day_k nighttime_lst_8day_k gaussian-inverse-square thermal K 691200 0.0 0.0
 
 url https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/GRACEFO_L1B_ASCII_GRAV_JPL_RL04/gracefo_1B_2026-08-14_RL04.ascii.noLRI.tgz
+terms PD https://www.earthdata.nasa.gov/
 format tar_gz_yaml
 header Authorization {EARTHDATA_EDL_TOKEN}
 ttl 2592000
@@ -20239,6 +20386,7 @@ last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square gravity m/s 8640
 last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
+terms PD https://cdaw.gsfc.nasa.gov/
 origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
 format soho_lasco_cme
 compiler tools/harvest/src/bin/soho_lasco_compiler.rs
@@ -20261,6 +20409,7 @@ ttl 2592000
 field ersstv5_nino34 ersstv5_nino34_ssta exponential-decay thermal C 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_monthly.manifest
+terms PD https://www.earthdata.nasa.gov/
 format modis_lst_cmg
 origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_monthly_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-<year>; the series manifest lists the shards)
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
@@ -20270,6 +20419,7 @@ field mean_daytime_lst_k mean_daytime_lst_k gaussian-inverse-square thermal K 25
 field mean_nighttime_lst_k mean_nighttime_lst_k gaussian-inverse-square thermal K 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/usgs_comcat_m45.bin
+terms PD https://earthquake.usgs.gov/
 format usgs_comcat_m45
 origin https://earthquake.usgs.gov/fdsnws/event/1/query
 compiler tools/harvest/src/bin/usgs_comcat_compiler.rs
@@ -20751,6 +20901,7 @@ at earth
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.giss.nasa.gov/gistemp_aod550_global_mean.txt
+terms PD https://data.giss.nasa.gov/
 format gistemp_aod550_axis_value_text
 origin https://data.giss.nasa.gov/modelforce/strataer/data/tau_reff_Sato-Lacis.nc
 compiler tools/harvest/src/bin/gistemp_aod_compiler.rs
@@ -27443,6 +27594,7 @@ origin https://ned.ipac.caltech.edu
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/ngdc.noaa.gov/ETOPO1_Ice_g_gdal.grd.gz
+terms PD https://www.ncei.noaa.gov/
 format reference
 origin https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/ice_surface/grid_registered/netcdf/ETOPO1_Ice_g_gdal.grd.gz
 sha256 98c62471284141f35e91c70f584ba13b2affd7f18b904a55005b453a6838f3a9
@@ -27475,6 +27627,7 @@ origin https://padc-tap-rcsed.obspm.fr
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin
+terms PD https://www.sciencebase.gov/
 format slab2_depth
 origin https://web.archive.org/web/20250309001257if_/https://www.sciencebase.gov/catalog/file/get/5aa1b00ee4b0b1c392e86467?f=__disk__d5%2F91%2F39%2Fd591399bf4f249ab49ffec8a366e5070fe96e0ba
 compiler tools/harvest/src/bin/slab2_compiler.rs
@@ -27687,10 +27840,12 @@ dec dec
 field mag_auto_g des_dr2_auto_mag_g inverse-square em mag 31536000 0.0 0.0
 
 url https://vdatum.noaa.gov/download/data/
+terms PD https://vdatum.noaa.gov/
 format reference
 ttl 31536000
 
 url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 48.977 178.199 0
 rows
@@ -27702,6 +27857,7 @@ gate HEIGHT 0 9999
 field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 34.7 -72.4 0
 rows
@@ -27740,6 +27896,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 31.743 -74.955 0
 rows
@@ -27778,6 +27935,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 28.86 -78.478 0
 rows
@@ -27816,6 +27974,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 21.09 -64.864 0
 rows
@@ -27854,6 +28013,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 27.505 -62.271 0
 rows
@@ -27892,6 +28052,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 25.90 -89.67 0
 rows
@@ -27930,6 +28091,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 25.16 -94.42 0
 rows
@@ -27968,6 +28130,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 28.50 -84.52 0
 rows
@@ -28006,6 +28169,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 22.14 -91.39 0
 rows
@@ -28044,6 +28208,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 38.46 -74.70 0
 rows
@@ -28082,6 +28247,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 42.35 -70.69 0
 rows
@@ -28120,6 +28286,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 48.061 -87.793 0
 rows
@@ -28158,6 +28325,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 43.185 -86.354 0
 rows
@@ -28196,6 +28364,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 44.603 -73.394 0
 rows
@@ -28234,6 +28403,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 42.368 -87.795 0
 rows
@@ -28272,6 +28442,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 41.731 -81.367 0
 rows
@@ -28310,6 +28481,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 56.30 -148.17 0
 rows
@@ -28348,6 +28520,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 42.67 -124.82 0
 rows
@@ -28386,6 +28559,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 46.06 -124.96 0
 rows
@@ -28424,6 +28598,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 37.36 -122.88 0
 rows
@@ -28462,6 +28637,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 40.74 -124.54 0
 rows
@@ -28500,6 +28676,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 33.75 -119.20 0
 rows
@@ -28538,6 +28715,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 37.75 -122.84 0
 rows
@@ -28576,6 +28754,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 46.12 -124.51 0
 rows
@@ -28614,6 +28793,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 57.034 -177.468 0
 rows
@@ -28652,6 +28832,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 32.42 -119.53 0
 rows
@@ -28690,6 +28871,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 34.26 -119.86 0
 rows
@@ -28728,6 +28910,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 34.27 -120.68 0
 rows
@@ -28766,6 +28949,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 38.07 -124.03 0
 rows
@@ -28804,6 +28988,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 33.66 -120.20 0
 rows
@@ -28842,6 +29027,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 51.035 179.808 0
 rows
@@ -28880,6 +29066,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 53.93 -160.763 0
 rows
@@ -28918,6 +29105,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 32.49 -118.02 0
 rows
@@ -28956,6 +29144,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 23.52 -153.82 0
 rows
@@ -28994,6 +29183,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 24.44 -162.00 0
 rows
@@ -29032,6 +29222,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
+terms PD https://www.ndbc.noaa.gov/
 ttl 31536000
 on earth 17.56 -152.39 0
 rows
@@ -29109,6 +29300,7 @@ at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29116,6 +29308,7 @@ at adrastea
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29123,6 +29316,7 @@ at amalthea
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29130,6 +29324,7 @@ at apophis
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29137,6 +29332,7 @@ at ariel
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29144,6 +29340,7 @@ at atlas
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29151,6 +29348,7 @@ at atlas_3i
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29158,6 +29356,7 @@ at bennu
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29165,6 +29364,7 @@ at callisto
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_cassini.bin
+terms PD https://naif.jpl.nasa.gov/naif/rules.html
 format ephemeris_binary
 origin https://naif.jpl.nasa.gov/pub/naif/CASSINI/kernels/spk/990807A_SCEPH_EM52_EP13.bsp
 compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
@@ -29172,6 +29372,7 @@ at cassini
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29179,6 +29380,7 @@ at ceres
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29186,6 +29388,7 @@ at charon
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29193,6 +29396,7 @@ at deimos
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29200,6 +29404,7 @@ at despina
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29207,6 +29412,7 @@ at dione
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29214,6 +29420,7 @@ at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29221,6 +29428,7 @@ at enceladus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29228,6 +29436,7 @@ at encke
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29235,6 +29444,7 @@ at epimetheus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29242,6 +29452,7 @@ at eris
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29249,6 +29460,7 @@ at europa
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29256,6 +29468,7 @@ at galatea
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galileo.bin
+terms PD https://naif.jpl.nasa.gov/naif/rules.html
 format ephemeris_binary
 origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/spk/s970311a.bsp
 compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
@@ -29263,6 +29476,7 @@ at galileo
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29270,6 +29484,7 @@ at ganymede
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29277,6 +29492,7 @@ at haumea
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29284,6 +29500,7 @@ at helene
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29291,6 +29508,7 @@ at himalia
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29298,6 +29516,7 @@ at hydra
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29305,6 +29524,7 @@ at hyperion
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29312,6 +29532,7 @@ at iapetus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29319,6 +29540,7 @@ at io
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29326,6 +29548,7 @@ at iss
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29333,6 +29556,7 @@ at janus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29340,6 +29564,7 @@ at juice
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29347,6 +29572,7 @@ at juice_cog
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29354,6 +29580,7 @@ at juno
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29361,6 +29588,7 @@ at juno_asteroid
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29368,6 +29596,7 @@ at jupiter
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29375,6 +29604,7 @@ at jwst
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29382,6 +29612,7 @@ at kerberos
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29389,6 +29620,7 @@ at larissa
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29404,6 +29636,7 @@ at mariner10
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29411,6 +29644,7 @@ at mars
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29418,6 +29652,7 @@ at mercury
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_messenger.bin
+terms PD https://naif.jpl.nasa.gov/naif/rules.html
 format ephemeris_binary
 origin https://naif.jpl.nasa.gov/pub/naif/messsp_1000/data/spk/msgr_040803_120516_140823_od268sc_0.bsp
 compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
@@ -29425,6 +29660,7 @@ at messenger
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29432,6 +29668,7 @@ at metis
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29439,6 +29676,7 @@ at mimas
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29446,6 +29684,7 @@ at miranda
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29453,6 +29692,7 @@ at moon
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29460,6 +29700,7 @@ at naiad
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_near.bin
+terms PD https://naif.jpl.nasa.gov/naif/rules.html
 format ephemeris_binary
 origin https://naif.jpl.nasa.gov/pub/naif/nearsp_1000/data/spk/near_cruise_nav_v1.bsp
 compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
@@ -29467,6 +29708,7 @@ at near
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29474,6 +29716,7 @@ at neptune
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29481,6 +29724,7 @@ at neptune_c
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29488,6 +29732,7 @@ at nereid
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29495,6 +29740,7 @@ at nix
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29502,6 +29748,7 @@ at oberon
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29509,6 +29756,7 @@ at pallas
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29516,6 +29764,7 @@ at pandora
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29523,6 +29772,7 @@ at parker_solar_probe
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29530,6 +29780,7 @@ at phobos
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29537,6 +29788,7 @@ at phoebe
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29544,6 +29796,7 @@ at pluto
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29551,6 +29804,7 @@ at prometheus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29558,6 +29812,7 @@ at proteus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29565,6 +29820,7 @@ at rhea
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29572,6 +29828,7 @@ at saturn
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29579,6 +29836,7 @@ at solar_orbiter
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29586,6 +29844,7 @@ at styx
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29593,6 +29852,7 @@ at sun
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29600,6 +29860,7 @@ at tethys
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29607,6 +29868,7 @@ at thalassa
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29614,6 +29876,7 @@ at thebe
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29621,6 +29884,7 @@ at titan
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29628,6 +29892,7 @@ at titania
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29635,6 +29900,7 @@ at triton
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29642,6 +29908,7 @@ at umbriel
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29649,6 +29916,7 @@ at uranus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29656,6 +29924,7 @@ at uranus_c
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29663,6 +29932,7 @@ at venus
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
+terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
@@ -29794,12 +30064,14 @@ at kplo
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
+terms PD https://www.census.gov/
 origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
 compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
 no-cadence
 
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
+terms PD https://pds-geosciences.wustl.edu/
 no-cadence
 format text
 at venus
@@ -29810,6 +30082,7 @@ field 7 venera15_16_brightness_temp_v_k exponential-decay thermal K 33554432.0 0
 field 8 venera15_16_brightness_temp_h_k exponential-decay thermal K 33554432.0 0.0 0.0
 
 url https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
+terms PD https://pds-geosciences.wustl.edu/
 no-cadence
 format text
 at venus

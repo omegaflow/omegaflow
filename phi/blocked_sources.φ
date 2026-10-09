@@ -114,6 +114,41 @@ blocked ip-blocked
 url https://ceic.ac.cn/data/data.json
 note CENC Quake-Feed — 2026-10-09: vom Runner nicht erreichbar (`curl 28/7`, Lauf 37910580075 failure), lokal HTTP 206. Disposition `ip-blocked` (Runner-Route): Mycelium entfernt den Slot aus `quake-feeds-cdn.yml`, `sources.φ:77` bleibt.
 
+blocked parser-def
+url https://data.inpe.br/bdc/stac/v1/
+gap inpe-big-stac
+note INPE BIG STAC (Catalog 1.0.0) — 2026-10-09: root 200, 79 Sammlungen (GeoTIFF/COG, NetCDF, GRIB2; 44 CC-BY-4.0 / 4 CC0 / 3 PD / 28 proprietary); STAC+tiff+netcdf+grib2-Arme stehen; offen: Sammlung→Feld-Compiler + Lizenz je Sammlung.
+
+blocked parser-def
+url https://skyview.gsfc.nasa.gov/cgi-bin/images
+gap hi-21cm
+note HI 21cm (LAB/EBHIS/GASS/HI4PI) — 2026-10-09: VizieR J/A+A/440/775 + J/ApJS/181/398, SkyView, HEASARC W3Browse je HTTP 200; VO/FITS-Arm für HI-Karten fehlt.
+
+blocked parser-def
+url https://lambda.gsfc.nasa.gov/
+gap cmb-lambda
+note CMB LAMBDA/PLA — 2026-10-09: lambda.gsfc 206, `pla.esac.esa.int` GWT-App; Planck via IRSA registriert; LAMBDA/PLA-Produkt-Arm offen.
+
+blocked parser-def
+url https://vso.stanford.edu/
+gap solar-vso
+note Solar IRIS/SDO/VSO — 2026-10-09: `iris.lmsal.com` + `sdo.gsfc.nasa.gov/data/aiahmi/` + `vso.stanford.edu` HTTP 200; FITS/VSO-TAP-Arm fehlt.
+
+blocked parser-def
+url https://www.cssdc.ac.cn/en/
+gap laic-cssdc
+note LAIC CSSDC — 2026-10-09: `cssdc.ac.cn` 200; Portal-Parser fehlt (LEOS bleibt `pending`, `sources.φ` unverändert).
+
+blocked parser-def
+url https://opendata.atlas.cern/
+gap particle-cern
+note Teilchen CERN/ATLAS + GWOSC — 2026-10-09: `opendata.atlas.cern` + `gwosc.org` je HTTP 200; CERN-Open-Data-API + GWOSC-Arm fehlen (`dead:496` stale).
+
+blocked parser-def
+url https://blinkverse.zerooffset.xyz/
+gap blinkverse-frb
+note FRB Blinkverse — 2026-10-09: direct+Proton pending, kein Wayback-Snapshot; CHIME-FRB gedeckt (`frb_chime_cat1.json`).
+
 pending
 url https://geomag.usgs.gov/ws/data/
 note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein `geoelectric`/`mV`; bare `/ws/data/` 400. Reale Route NOAA SWPC rgeojson (eigener Eintrag). Magnetik: declined_sources.φ:2176 — per Datensatz getrennt.
