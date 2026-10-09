@@ -524,6 +524,7 @@ pub struct SourceConfig {
     pub cgm_lat: Option<f64>,
     pub cgm_source: Option<String>,
     pub geomag_lat: Option<f64>,
+    pub weberin_role: Option<WeberinRole>,
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;

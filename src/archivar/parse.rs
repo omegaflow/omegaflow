@@ -81,6 +81,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_cgm_lat: Option<f64> = None;
     let mut cur_cgm_source: Option<String> = None;
     let mut cur_geomag_lat: Option<f64> = None;
+    let mut cur_weberin_role: Option<WeberinRole> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut cur_sha256: Option<String> = None;
@@ -148,6 +149,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             cgm_lat: cur_cgm_lat,
                             cgm_source: cur_cgm_source.clone(),
                             geomag_lat: cur_geomag_lat,
+                            weberin_role: cur_weberin_role,
                         });
                     }
                 }
@@ -204,6 +206,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_cgm_lat = None;
                 cur_cgm_source = None;
                 cur_geomag_lat = None;
+                cur_weberin_role = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
                 cur_sha256 = None;
@@ -249,15 +252,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "live" => {
                 cur_live_only = true;
             }
-            "weberin" if parts.len() >= 2 => {
-                if WeberinRole::parse(parts[1]).is_none() {
-                    report_anomaly(
-                        "Invalid Syntax",
-                        &cur_url,
-                        &format!("unknown weberin role \"{}\": {}", parts[1], line),
-                    );
-                }
-            }
+            "weberin" if parts.len() >= 2 => match WeberinRole::parse(parts[1]) {
+                Some(role) => cur_weberin_role = Some(role),
+                None => report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("unknown weberin role \"{}\": {}", parts[1], line),
+                ),
+            },
             "weberin" => {
                 report_anomaly(
                     "Invalid Syntax",
@@ -2160,6 +2162,7 @@ mod tests {
             cgm_lat: None,
             cgm_source: None,
             geomag_lat: None,
+            weberin_role: None,
         }
     }
 
