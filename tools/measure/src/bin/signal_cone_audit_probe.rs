@@ -4,8 +4,8 @@ use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::goes::{self, COMP_XRSA, COMP_XRSB};
 use omegaflow::archivar::omni2::{self, COMP_BZ, COMP_N1800, COMP_V1800};
 use omegaflow::archivar::{
-    BodyEphemeris, C_LIGHT, DIFFUSIVITY_MOLECULAR, body_barycenter_position,
-    parse_ephemeris_binary, signal_reach, spectral::SPECTRAL_NO_BAND,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, parse_ephemeris_binary, signal_reach,
+    spectral::SPECTRAL_NO_BAND,
 };
 use omegaflow::te::{permutation_entropy, phase_randomized_surrogate, transfer_entropy_lag};
 use omegaflow::wind::{self, RECEIVER_RAD1, RECEIVER_RAD2, RECEIVER_TNR};
@@ -212,8 +212,8 @@ struct PairVerdict {
     to: usize,
     n: usize,
     best_lag: usize,
-    te: f64,
-    thr: f64,
+    te: Option<f64>,
+    thr: Option<f64>,
     arrow: bool,
     family_bound: bool,
     pe_held: Option<bool>,
@@ -226,7 +226,7 @@ fn verdict_word(v: &PairVerdict) -> &'static str {
         "PFEIL"
     } else if v.family_bound {
         "family bound"
-    } else if v.te.is_nan() {
+    } else if v.te.is_none() {
         "no statement"
     } else {
         "still"
@@ -261,6 +261,13 @@ fn cone_reach(force: u8, advection: f64, tau_s: f64) -> Option<f64> {
     )
 }
 
+fn ephemeris_body(file: &str) -> String {
+    file.strip_prefix("ephemeris_")
+        .and_then(|s| s.strip_suffix(".bin"))
+        .unwrap_or(file)
+        .to_string()
+}
+
 fn cone_min_tau(force: u8, advection: f64, d: f64) -> Option<f64> {
     match force {
         FORCE_EM => Some(d / C_LIGHT),
@@ -271,7 +278,7 @@ fn cone_min_tau(force: u8, advection: f64, d: f64) -> Option<f64> {
                 None
             }
         }
-        FORCE_DIFFUSION => Some(d * d / (2.0 * DIFFUSIVITY_MOLECULAR)),
+        FORCE_DIFFUSION => None,
         _ => None,
     }
 }
@@ -567,7 +574,7 @@ fn main() {
     )
     .and_then(|b| parse_ephemeris_binary(&b));
     if let Some(e) = sun_eph {
-        eph.insert("sun".to_string(), e);
+        eph.insert(ephemeris_body("ephemeris_sun.bin"), e);
     }
     let earth_eph = load_bytes(
         "ephemeris_earth.bin",
@@ -577,7 +584,7 @@ fn main() {
     )
     .and_then(|b| parse_ephemeris_binary(&b));
     if let Some(e) = earth_eph {
-        eph.insert("earth".to_string(), e);
+        eph.insert(ephemeris_body("ephemeris_earth.bin"), e);
     }
     let wind_orbit = load_bytes(
         "wind_orbit.bin",
@@ -588,12 +595,13 @@ fn main() {
     .and_then(|b| wind_orbit::parse_bin(&b))
     .map(|records| wind_orbit::orbit_rec(&records));
 
-    let sun_pos = body_barycenter_position("sun", t_mid, &eph);
+    let sun_pos = body_barycenter_position(&ephemeris_body("ephemeris_sun.bin"), t_mid, &eph);
     let wind_gci = wind_orbit
         .as_ref()
         .and_then(|rec| wind_orbit::position_at(rec, t_mid))
         .map(|(p, _)| p);
-    let earth_pos_mid = body_barycenter_position("earth", t_mid, &eph);
+    let earth_pos_mid =
+        body_barycenter_position(&ephemeris_body("ephemeris_earth.bin"), t_mid, &eph);
     let wind_pos = match (wind_gci, earth_pos_mid) {
         (Some(w), Some(e)) => Some([w[0] + e[0], w[1] + e[1], w[2] + e[2]]),
         _ => None,
@@ -677,8 +685,10 @@ fn main() {
         }
         for (li, &lag) in LAGS.iter().enumerate() {
             let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let Some(te) = transfer_entropy_lag(&xs, &ys, lag) else {
+                continue;
+            };
             let surrs = surrogate_te_values(&xs, &ys, lag, seed);
-            let te = transfer_entropy_lag(&xs, &ys, lag).unwrap_or(f64::NAN);
             round[pi][li] = Some(PairTe { te, surrs });
         }
         eprintln!(
@@ -715,8 +725,8 @@ fn main() {
                 to: ti,
                 n: xs.len(),
                 best_lag: 0,
-                te: f64::NAN,
-                thr: f64::NAN,
+                te: None,
+                thr: None,
                 arrow: false,
                 family_bound: false,
                 pe_held: None,
@@ -732,7 +742,9 @@ fn main() {
                 continue;
             }
             if best.map_or(true, |(_, b, _)| pt.te > b) {
-                let thr = mean_plus_2sigma(&pt.surrs).unwrap_or(f64::NAN);
+                let Some(thr) = mean_plus_2sigma(&pt.surrs) else {
+                    continue;
+                };
                 best = Some((lag, pt.te, thr));
             }
         }
@@ -742,8 +754,8 @@ fn main() {
                 to: ti,
                 n: xs.len(),
                 best_lag: 0,
-                te: f64::NAN,
-                thr: f64::NAN,
+                te: None,
+                thr: None,
                 arrow: false,
                 family_bound: false,
                 pe_held: None,
@@ -758,8 +770,8 @@ fn main() {
             to: ti,
             n: xs.len(),
             best_lag,
-            te,
-            thr,
+            te: Some(te),
+            thr: Some(thr),
             arrow,
             family_bound,
             pe_held,
@@ -772,14 +784,22 @@ fn main() {
         n
     );
     for v in &verdicts {
+        let te_word = match v.te {
+            Some(t) => format!("{t:>10.4e}"),
+            None => format!("{:>10}", "absent"),
+        };
+        let thr_word = match v.thr {
+            Some(t) => format!("{t:>10.4e}"),
+            None => format!("{:>10}", "absent"),
+        };
         println!(
-            "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {:>10.4e} | thr {:>10.4e} | {}",
+            "{:>6} → {:<6} | n {:>5} | lag {:<2} d | TE {} | thr {} | {}",
             series[v.from].name,
             series[v.to].name,
             v.n,
             v.best_lag,
-            v.te,
-            v.thr,
+            te_word,
+            thr_word,
             verdict_word(v)
         );
     }
@@ -922,7 +942,7 @@ fn main() {
 
     println!();
     println!("=== Funnel cross-check (Nadel Ⅵ, shared) ===");
-    let earth_pos = body_barycenter_position("earth", t_mid, &eph);
+    let earth_pos = body_barycenter_position(&ephemeris_body("ephemeris_earth.bin"), t_mid, &eph);
     match (sun_pos, earth_pos) {
         (Some(s), Some(e)) => {
             let d_au =
@@ -933,11 +953,10 @@ fn main() {
                 d_au / AU
             );
             println!(
-                "Minimum τ against the same cone: em {:.1} s | advective ({:.1e} m/s) {:.1} d | diffusion {:.2e} s — no law carries both paths.",
+                "Minimum τ against the same cone: em {:.1} s | advective ({:.1e} m/s) {:.1} d | diffusion absent (no declared medium) — no law carries both paths.",
                 d_au / C_LIGHT,
                 RTSW_WIND_ADVECTION_MS,
-                d_au / RTSW_WIND_ADVECTION_MS / DAY,
-                d_au * d_au / (2.0 * DIFFUSIVITY_MOLECULAR)
+                d_au / RTSW_WIND_ADVECTION_MS / DAY
             );
         }
         _ => println!("d(sun↔earth) = absent — the funnel geometry does not stand (0 honored)"),
