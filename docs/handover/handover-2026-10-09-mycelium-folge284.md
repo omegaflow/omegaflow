@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: f62c14c5cad5ad5f683f904e528dd5e0c3d0d9db1ab9dbec596fc3bfdf83a165
+  sha256: bb6c3d93affb8cdd7094a727b66d1978d6a32923ba56ce41d9fb6ce5fd47eb08
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1965 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 5 `general`-Taucher (Redistributions-Alternativen 41 Blöcke + Lizenz-Zertifizierung, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot geheilt (5 stale Workflows + 2 harvest-Einträge entfernt, `--fail` clean); Orphan-Gate geheilt; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.3849 (41 Sessions).
+## Burn: open 0.0000 · close 0.2565 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 6 `general`-Taucher (Redistributions-Alternativen + Lizenz-Zertifizierung + Rückgewinnungs-Karte, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot geheilt; Orphan-Gate geheilt; NC-Block-Fabrikation gestrichen; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.5491 (43 Sessions).
 
 ## Operator-Wort-Register
 
@@ -126,7 +126,7 @@ Origin: mycelium-284 (2026-10-09) — drei Kontrakt-/Register-Messungen:
 - **`sources_repo_license` pro Quelle:** der terms-Format-Verdikt-Stand „pro Quelle" ist gemessen; das Tool emittiert weiterhin `<netloc> | <token> | <url>` (`sources_repo_license.rs:128-142`). Der Populations-Riss ist geheilt (beide Zensus no-terms 0, terms 2698). Braucht das pro-Quelle-Format, dann commitet der Workflow `LICENSE` ins `omegaflow/sources`-Repo.
 - **CSSDC/LEOS-Verdikt:** `cssdc.ac.cn/en` liefert gemessen keine Datenquelle mehr (Telegram-APK-Advert-Seite) → `declined` (stale); LEOS `www.leos.ac.cn` ist Login+Captcha-gated → `blocked account` (Auth-Route, Credential `LEOS_USER/PASS`). Offene CSES-Alternative: DTU Space `ftp.spacecenter.dk/data/magnetic-satellites/CSES/` (CDF, offen, MAG).
 - **Gegen-Audit CDN-fähige Alternativen:** `hi-21cm` → Zenodo HI4PI `5956696` (cc-by-4.0, FITS, 206); `cmb-lambda` → Zenodo SILC Planck PR2 `44373` (cc-by-4.0, FITS, 206); `blinkverse-frb` → Zenodo CHIME Cat 2 `18843430` (cc-by-4.0, CSV, 206); `particle-cern` → CERN Open Data `1120` (CC0) / GWOSC (CC BY 4.0). Bitte die Verdikte je Route.
-- **Redistributions-Alternativen:** Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md` — 41 `decline redistribution`-Blöcke; CDN-fähig zertifiziert nur Open-Meteo (CC-BY 4.0) und OSM (ODbL); der Rest `Lizenz ungemessen`. Braucht Mountains Re-Admission je Kandidat.
+- **Redistributions-Rückgewinnung:** Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md` §Rückgewinnungs-Karte. **23/41** Messungen sind über bereits zugelassene freie Quellen **schon wieder da** (Blitz/WWLLN→GOES GLM, PurpleAir→OpenAQ, Sofar→NDBC, Meteostat/WeatherXM→Open-Meteo, Sentinel-Hub→Copernicus, InPOP→JPL SSD, SuperMAG→INTERMAGNET/SWPC, hamqsl/BoM→SWPC, ogimet→NCEI, LHAASO→TeVCat). **13** `neu-zulassen` (OSM ODbL, RouteViews CC-BY-4.0, GIRO CC-BY-NC-SA, GNIP PD, GloFAS, Global Forest Watch, transport.data.gouv, carbonintensity, aishub/dma, ds.iris.edu, opensky). **5 blockiert** (kein Messwert/proprietär). Bitte Mountain-Admission der 13 → dann Mycelium-CDN.
 
 ## LOCK
 
