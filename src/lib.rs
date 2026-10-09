@@ -107,6 +107,7 @@ pub use archivar::soho_lasco;
 pub use archivar::spectral;
 pub use archivar::ssusi_aurora;
 pub use archivar::stac;
+pub use archivar::substorm;
 pub use archivar::superdarn_cpcp;
 pub use archivar::supermag_index;
 pub use archivar::suprastrom;

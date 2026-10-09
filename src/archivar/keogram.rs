@@ -37,6 +37,56 @@ pub fn brightness_columns(jpeg: &[u8]) -> Option<KeogramColumns> {
     })
 }
 
+pub const MAGIC: [u8; 4] = *b"KGRM";
+pub const HEADER_BYTES: usize = 8;
+pub const RECORD_BYTES: usize = 8 + 4 + 1 + 8;
+
+pub fn write_bin(rows: &[(f64, u32, f64)]) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(HEADER_BYTES + rows.len() * RECORD_BYTES);
+    buf.extend_from_slice(&MAGIC);
+    buf.extend_from_slice(&(rows.len() as u32).to_le_bytes());
+    for (t_unix, comp, mean) in rows {
+        buf.extend_from_slice(&t_unix.to_le_bytes());
+        buf.extend_from_slice(&comp.to_le_bytes());
+        buf.push(1u8);
+        buf.extend_from_slice(&mean.to_le_bytes());
+    }
+    buf
+}
+
+pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, u32, f64)>> {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != HEADER_BYTES + n * RECORD_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = HEADER_BYTES;
+    for _ in 0..n {
+        let t_unix = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
+        off += 8;
+        let comp = u32::from_le_bytes(bytes.get(off..off + 4)?.try_into().ok()?);
+        off += 4;
+        let present = *bytes.get(off)?;
+        off += 1;
+        let mean = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
+        off += 8;
+        if !t_unix.is_finite() {
+            return None;
+        }
+        if present & 1 == 0 {
+            continue;
+        }
+        if !mean.is_finite() {
+            return None;
+        }
+        out.push((t_unix, comp, mean));
+    }
+    Some(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -72,5 +122,37 @@ mod tests {
     #[test]
     fn brightness_columns_rejects_invalid_stream() {
         assert!(brightness_columns(&[0x00, 0x01, 0x02, 0x03]).is_none());
+    }
+
+    #[test]
+    fn bin_roundtrip_keeps_rows() {
+        let rows = vec![
+            (86400.0, 0u32, 12.5),
+            (86400.0, 1u32, 128.0),
+            (172800.0, 0u32, 3.25),
+        ];
+        let bytes = write_bin(&rows);
+        assert_eq!(bytes.len(), HEADER_BYTES + 3 * RECORD_BYTES);
+        assert_eq!(parse_bin(&bytes), Some(rows));
+    }
+
+    #[test]
+    fn an_empty_bin_roundtrips_to_no_rows() {
+        let bytes = write_bin(&[]);
+        assert_eq!(parse_bin(&bytes), Some(Vec::new()));
+    }
+
+    #[test]
+    fn an_absent_value_bit_drops_the_record() {
+        let mut bytes = write_bin(&[(86400.0, 0u32, 12.5)]);
+        bytes[HEADER_BYTES + 12] = 0;
+        assert_eq!(parse_bin(&bytes), Some(Vec::new()));
+    }
+
+    #[test]
+    fn a_truncated_or_foreign_bin_is_void() {
+        assert!(parse_bin(b"XXXX").is_none());
+        let bytes = write_bin(&[(86400.0, 0u32, 12.5)]);
+        assert!(parse_bin(&bytes[..bytes.len() - 1]).is_none());
     }
 }

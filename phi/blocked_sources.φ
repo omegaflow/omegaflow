@@ -108,17 +108,10 @@ note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
 blocked parser-def
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
 gap aurora-keogram
-note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Arm gebaut (`src/archivar/keogram.rs` + `tiff::decode_jpeg_raster`, 600×570); offen: Quelle/Compiler (nächtliche JPEGs) + Vision-Read der Achsen.
+note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Dekoder `keogram.rs` + Compiler `keogram_compiler.rs` gebaut (600×570, Spaltenmittel); Wire-Feld descoped (raw/relativ, FMI „not suitable"); offen: Quelle als Vision-Asset registrieren.
 
 pending
 url https://geomag.usgs.gov/ws/data/
 note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein `geoelectric`/`mV`; bare `/ws/data/` 400. Reale Route NOAA SWPC rgeojson (eigener Eintrag). Magnetik: declined_sources.φ:2176 — per Datensatz getrennt.
 
-pending
-url https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
-note NOAA SWPC Geoelektrik (GIC §A) — 2026-10-09: Reader `swpc_efield` + Compiler `swpc_efield_compiler.rs` gebaut (Ex/Ey mV/km, Gitter-Mittel je Frame); offen: `sources.φ`-Zeile + CDN-Workflow (Compiler braucht --start/--stop).
 
-blocked parser-def
-url https://supermag.jhuapl.edu/lib/services/?service=substorms
-gap substorm-list
-note Substorm-Onsets (GIC §A) — 2026-10-09: SuperMAG `lib/services?service=substorms` CSV **offen** (HTTP 200 ohne user=; list=newell/forsyth/liou/frey/ohtani, IMAGE-FUV/Frey darin); kein Compiler-Arm.

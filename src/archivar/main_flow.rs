@@ -3116,6 +3116,7 @@ pub fn main_flow() {
                     | "poes19_meped"
                     | "themis_mag"
                     | "wdc_ae"
+                    | "substorm"
                     | "bpa_gic"
                     | "superdarn_cpcp"
                     | "superdarn_cpcp_nc"
