@@ -55,7 +55,25 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     Some((days * SECONDS_PER_DAY as i64 + h * 3600 + mi * 60 + sec) as f64 + frac)
 }
 
-fn zip_parallel_arrays(times: &[f64], series: &[(u32, Vec<Option<f64>>)]) -> Vec<(f64, f64, u32)> {
+enum ParallelZip {
+    Zipped(Vec<(f64, f64, u32)>),
+    Riss {
+        times_len: usize,
+        values_len: usize,
+        k: usize,
+    },
+}
+
+fn zip_parallel_arrays(times: &[f64], series: &[(u32, Vec<Option<f64>>)]) -> ParallelZip {
+    for (_, values) in series {
+        if values.len() != times.len() {
+            return ParallelZip::Riss {
+                times_len: times.len(),
+                values_len: values.len(),
+                k: times.len().min(values.len()),
+            };
+        }
+    }
     let mut out = Vec::new();
     for (element, values) in series {
         for (i, t) in times.iter().enumerate() {
@@ -66,7 +84,7 @@ fn zip_parallel_arrays(times: &[f64], series: &[(u32, Vec<Option<f64>>)]) -> Vec
             }
         }
     }
-    out
+    ParallelZip::Zipped(out)
 }
 
 fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
@@ -231,7 +249,19 @@ fn main() {
         }
         series.push((idx, col));
     }
-    let raw = zip_parallel_arrays(&times, &series);
+    let raw = match zip_parallel_arrays(&times, &series) {
+        ParallelZip::Zipped(raw) => raw,
+        ParallelZip::Riss {
+            times_len,
+            values_len,
+            k,
+        } => {
+            eprintln!(
+                "usgs_geomag {station}: parallel arrays diverge (times {times_len}, values {values_len}, first divergent k {k}) — the whole set is a Riss, no pad/truncate, the bin stays unwritten"
+            );
+            std::process::exit(1);
+        }
+    };
     if raw.is_empty() {
         eprintln!(
             "usgs_geomag {station}: no value carries a finite east/north measurement — the bin stays unwritten (0 honored)"
@@ -263,5 +293,43 @@ fn main() {
     }
     if ci_mode && !upload_release("geomag.usgs.gov", &out) {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn zip_refuses_divergent_parallel_arrays() {
+        let times = vec![1.0, 2.0, 3.0];
+        let series = vec![(0u32, vec![Some(1.0), Some(2.0)])];
+        match zip_parallel_arrays(&times, &series) {
+            ParallelZip::Riss {
+                times_len,
+                values_len,
+                k,
+            } => {
+                assert_eq!(times_len, 3);
+                assert_eq!(values_len, 2);
+                assert_eq!(k, 2);
+            }
+            ParallelZip::Zipped(_) => panic!("divergent parallel arrays read as Zipped"),
+        }
+    }
+
+    #[test]
+    fn zip_keeps_equal_length_arrays() {
+        let times = vec![1.0, 2.0];
+        let series = vec![
+            (0u32, vec![Some(1.0), None]),
+            (1u32, vec![Some(3.0), Some(4.0)]),
+        ];
+        match zip_parallel_arrays(&times, &series) {
+            ParallelZip::Zipped(records) => {
+                assert_eq!(records, vec![(1.0, 1.0, 0), (1.0, 3.0, 1), (2.0, 4.0, 1)]);
+            }
+            ParallelZip::Riss { .. } => panic!("equal-length arrays read as Riss"),
+        }
     }
 }
