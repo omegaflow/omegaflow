@@ -568,26 +568,35 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         out.sort_by(|a, b| a.name.cmp(&b.name));
         return out;
     }
-    let prefix = match system {
-        "jupiter" => "jup",
-        "saturn" => "sat",
-        "mars" => "mar",
-        "uranus" => "ura",
-        "neptune" => "nep",
-        "pluto" => "plu",
-        _ => return out,
-    };
+    let prefix: String = system.chars().take(3).collect();
+    if prefix.is_empty() {
+        return out;
+    }
     let spk: Vec<IndexEntry> = entries
         .iter()
-        .filter(|e| e.family == "spk-satellites" && e.name.starts_with(prefix))
+        .filter(|e| e.family == "spk-satellites" && e.name.starts_with(prefix.as_str()))
         .cloned()
         .collect();
-    let moon_carriers: &[&str] = match system {
-        "jupiter" => &["jup365"],
-        "saturn" => &["sat441"],
-        "neptune" => &["nep097"],
-        _ => &[],
+    if spk.is_empty() {
+        return out;
+    }
+    let mut carrier_counts: Vec<(String, usize)> = Vec::new();
+    for e in &spk {
+        let base = base_of(&e.name);
+        match carrier_counts.iter_mut().find(|(b, _)| *b == base) {
+            Some((_, count)) => *count += 1,
+            None => carrier_counts.push((base, 1)),
+        }
+    }
+    let max_count = match carrier_counts.iter().map(|(_, count)| *count).max() {
+        Some(count) => count,
+        None => return out,
     };
+    let moon_carriers: Vec<String> = carrier_counts
+        .iter()
+        .filter(|(_, count)| *count == max_count)
+        .map(|(base, _)| base.clone())
+        .collect();
     let mut ranked = spk.clone();
     ranked.sort_by(|a, b| {
         numeric_of(&b.name)
@@ -787,6 +796,8 @@ fn flatten(
     ci_mode: bool,
     omega_g: Option<(String, f64, f64)>,
     small_bodies_only: bool,
+    release: &str,
+    prefix: &str,
 ) -> Vec<String> {
     let mut spk_files = Vec::new();
     for kernel_path in kernels {
@@ -875,7 +886,7 @@ fn flatten(
         granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         nutation.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-        let path = format!("ephemeris_{}.bin", body_name);
+        let path = format!("{}{}.bin", prefix, body_name);
         let og = match &omega_g {
             Some((n, v, s)) if n == body_name => Some((*v, *s)),
             _ => None,
@@ -890,7 +901,7 @@ fn flatten(
                 body_name,
                 granules.len()
             ));
-            if ci_mode && !upload_release("ssd.jpl.nasa.gov-ephemeris", &path) {
+            if ci_mode && !upload_release(release, &path) {
                 upload_failed += 1;
             } else if ci_mode {
                 emit(&format!("upload {} → CDN", body_name));
@@ -1455,16 +1466,15 @@ fn summarize(index_path: &str, out_path: &str) {
         ));
     }
     let mut systems = String::new();
-    for sys in [
-        "planets",
-        "asteroids",
-        "jupiter",
-        "saturn",
-        "mars",
-        "uranus",
-        "neptune",
-        "pluto",
-    ] {
+    let mut sys_list: Vec<String> = vec!["planets".to_string(), "asteroids".to_string()];
+    for e in entries.iter().filter(|e| e.family == "spk-satellites") {
+        let prefix: String = base_of(&e.name).chars().take(3).collect();
+        if !prefix.is_empty() && !sys_list.contains(&prefix) {
+            sys_list.push(prefix);
+        }
+    }
+    sys_list.sort();
+    for sys in &sys_list {
         let sel = select_system(&entries, sys);
         let mut spk_name = "—";
         let mut pck_name = "—";
@@ -1645,6 +1655,8 @@ fn main() {
     let mut extras: Vec<String> =
         vec!["gm_Horizons.pck".to_string(), "geophysical.ker".to_string()];
     let mut dest = "kernels".to_string();
+    let mut release = "ssd.jpl.nasa.gov-ephemeris".to_string();
+    let mut prefix = "ephemeris_".to_string();
     let mut omega_g_path: Option<String> = None;
     let mut small_bodies_only = false;
     let mut i = 1;
@@ -1719,6 +1731,18 @@ fn main() {
             }
             "--omega-g" => {
                 omega_g_path = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--release" => {
+                if let Some(r) = args.get(i + 1) {
+                    release = r.clone();
+                }
+                i += 1;
+            }
+            "--prefix" => {
+                if let Some(p) = args.get(i + 1) {
+                    prefix = p.clone();
+                }
                 i += 1;
             }
             other => kernel_paths.push(other.to_string()),
@@ -1879,6 +1903,8 @@ fn main() {
             ci_mode,
             omega_g.clone(),
             small_bodies_only,
+            &release,
+            &prefix,
         );
         if ci_mode {
             if let Some(idx) = &index_path {
@@ -1919,5 +1945,7 @@ fn main() {
         ci_mode,
         omega_g,
         small_bodies_only,
+        &release,
+        &prefix,
     );
 }
