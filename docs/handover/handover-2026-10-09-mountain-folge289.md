@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: a50d07e4c974cb59bcdcd9448cb3f125d470e3d0207e6e30fdbf49bd6b5888f2
+  sha256: b39d181d206bfadf1ec20660604c9f3321c51f3299a462de58e7fd31dbb58b72
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -14,7 +14,7 @@ Mycelium, gemessen 2026-10-09T18:37Z — am älteren HEAD `00b008452`, vor dem
 Kaguya-Fix). Diese Session konsumierte `handover-2026-10-09-mountain-folge288.md`
 (→ `archiv/`). flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.0000 · cap 0.15 — Grund: Kaguya-CI-Fehllage geheilt (Case-Bug), Keogramm-Form-Verdikt
+## Burn: open 0.0000 · close 0.0540 · cap 0.15 — Grund: Kaguya-CI-Fehllage geheilt (Case-Bug), Keogramm-Form-Verdikt; `session_burn` bei Schluss nennt die Mountain-Linie $0.0540 (total $0.9188 / 31 Sessions, deepseek-flash), flash only, kein pro/max
 
 ## Operator-Wort-Register
 
