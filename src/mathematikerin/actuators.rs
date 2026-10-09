@@ -21,7 +21,7 @@ pub struct PackedWindow {
 #[derive(Clone, Copy)]
 pub struct PresenceFrame {
     pub omega: [f32; 9],
-    pub aperture: f32,
+    pub aperture: [f32; 9],
     pub pan_ms: Option<f32>,
     pub tilt_ms: Option<f32>,
     pub tau_ticks: u64,
@@ -31,8 +31,12 @@ pub trait KineticRadiator: Send + 'static {
     fn vibrate(&mut self, frame: &PresenceFrame);
 }
 
+pub fn channel_intensity(omega: &[f32; 9], aperture: &[f32; 9]) -> f32 {
+    omega.iter().zip(aperture.iter()).map(|(o, a)| o * a).sum()
+}
+
 pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
-    frame.omega.iter().sum::<f32>() * frame.aperture
+    channel_intensity(&frame.omega, &frame.aperture)
 }
 
 pub fn frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
@@ -70,13 +74,13 @@ pub fn tone_hz(tau_ticks: u64) -> f32 {
     1000.0 / (tau_ticks as f32 * LOOP_TICK_MS as f32)
 }
 
-pub fn acoustic_amplitude(omega_sum: f32, aperture: f32) -> f32 {
-    (omega_sum * aperture).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
+pub fn acoustic_amplitude(omega: &[f32; 9], aperture: &[f32; 9]) -> f32 {
+    channel_intensity(omega, aperture).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
 }
 
 pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
-    let sum: f32 = frame.omega.iter().sum();
-    let amp = acoustic_amplitude(sum, frame.aperture);
+    let intensity = channel_intensity(&frame.omega, &frame.aperture);
+    let amp = intensity.clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
     let f_hz = tone_hz(frame.tau_ticks);
     let step = f_hz * std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
     let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
@@ -90,8 +94,8 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
         } else {
             0.0
         };
-        let left = if sum < 0.0 { s } else { 0.0 };
-        let right = if sum > 0.0 { s } else { 0.0 };
+        let left = if intensity < 0.0 { s } else { 0.0 };
+        let right = if intensity > 0.0 { s } else { 0.0 };
         pcm.extend_from_slice(&(left as i16).to_le_bytes());
         pcm.extend_from_slice(&(right as i16).to_le_bytes());
     }
@@ -408,7 +412,7 @@ mod tests {
     fn the_audio_law_is_linear_without_saturation() {
         let frame = PresenceFrame {
             omega: [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -419,7 +423,7 @@ mod tests {
             let scaled = frame.omega.map(|o| (o as f64 * lambda) as f32);
             let got = kinetic_sample(&PresenceFrame {
                 omega: scaled,
-                aperture: 1.0,
+                aperture: [1.0; 9],
                 pan_ms: None,
                 tilt_ms: None,
                 tau_ticks: 1,
@@ -441,7 +445,7 @@ mod tests {
         for aperture in [1.0f32, 0.5, 0.0, f32::EPSILON] {
             let got = kinetic_sample(&PresenceFrame {
                 omega,
-                aperture,
+                aperture: [aperture; 9],
                 pan_ms: None,
                 tilt_ms: None,
                 tau_ticks: 1,
@@ -455,7 +459,7 @@ mod tests {
         let omega = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
         let frame = PresenceFrame {
             omega,
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -481,7 +485,7 @@ mod tests {
         let mut osc = SeismicOscillator::new(Box::new(Sink(bytes.clone())));
         let frame = PresenceFrame {
             omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -513,12 +517,17 @@ mod tests {
 
     #[test]
     fn the_acoustic_amplitude_clamps_at_the_s16_bound() {
-        assert_eq!(acoustic_amplitude(9.0, 1.0), 9.0);
-        assert_eq!(acoustic_amplitude(-4.0, 2.0), -8.0);
-        assert_eq!(acoustic_amplitude(1.0e9, 1.0), PCM_S16_BOUND);
-        assert_eq!(acoustic_amplitude(-1.0e9, 1.0), -PCM_S16_BOUND);
-        assert_eq!(acoustic_amplitude(0.0, 1.0), 0.0);
-        assert_eq!(acoustic_amplitude(5.0, 0.0), 0.0);
+        let one = |v: f32| {
+            let mut o = [0.0f32; 9];
+            o[0] = v;
+            o
+        };
+        assert_eq!(acoustic_amplitude(&one(9.0), &[1.0; 9]), 9.0);
+        assert_eq!(acoustic_amplitude(&one(-4.0), &[2.0; 9]), -8.0);
+        assert_eq!(acoustic_amplitude(&one(1.0e9), &[1.0; 9]), PCM_S16_BOUND);
+        assert_eq!(acoustic_amplitude(&one(-1.0e9), &[1.0; 9]), -PCM_S16_BOUND);
+        assert_eq!(acoustic_amplitude(&[0.0; 9], &[1.0; 9]), 0.0);
+        assert_eq!(acoustic_amplitude(&one(5.0), &[0.0; 9]), 0.0);
     }
 
     #[test]
@@ -526,7 +535,7 @@ mod tests {
         let mut phase = 0.0f32;
         let frame = PresenceFrame {
             omega: [100.0; 9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -558,7 +567,7 @@ mod tests {
         let mut phase = 0.0f32;
         let frame = PresenceFrame {
             omega: [-100.0; 9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -581,7 +590,7 @@ mod tests {
         let mut phase = 0.0f32;
         let frame = PresenceFrame {
             omega: [1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 0.0],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -599,7 +608,7 @@ mod tests {
         let mut phase = 0.0f32;
         let frame = PresenceFrame {
             omega: [100.0; 9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 3,
@@ -619,14 +628,14 @@ mod tests {
         let mut phase = 0.0f32;
         let fast = PresenceFrame {
             omega: [100.0; 9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
         };
         let slow = PresenceFrame {
             omega: [100.0; 9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 2,
@@ -661,7 +670,7 @@ mod tests {
         let osc = AcousticOscillator::new(rx, Some(Box::new(Sink(bytes.clone()))));
         let frame = PresenceFrame {
             omega: [100.0; 9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,
@@ -683,7 +692,7 @@ mod tests {
     fn a_frame_with_pan_and_tilt_emits_the_full_mask_and_three_payloads() {
         let frame = PresenceFrame {
             omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: Some(1.5),
             tilt_ms: Some(1.25),
             tau_ticks: 1,
@@ -708,7 +717,7 @@ mod tests {
     fn a_present_but_non_finite_pan_clears_its_bit() {
         let frame = PresenceFrame {
             omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: Some(f32::NAN),
             tilt_ms: None,
             tau_ticks: 1,
@@ -722,7 +731,7 @@ mod tests {
     fn a_frame_without_pan_or_tilt_carries_one_payload() {
         let frame = PresenceFrame {
             omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-            aperture: 1.0,
+            aperture: [1.0; 9],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 1,

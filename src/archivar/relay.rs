@@ -1061,13 +1061,15 @@ fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
         mask |= 0x04;
     }
     let mut out = Vec::with_capacity(
-        4 + 10 * 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4,
+        4 + 18 * 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4,
     );
     out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG, mask]);
     for v in &frame.omega {
         out.extend_from_slice(&v.to_le_bytes());
     }
-    out.extend_from_slice(&frame.aperture.to_le_bytes());
+    for a in &frame.aperture {
+        out.extend_from_slice(&a.to_le_bytes());
+    }
     if let Some(p) = pan {
         out.extend_from_slice(&p.to_le_bytes());
     }
