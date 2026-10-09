@@ -2390,41 +2390,8 @@ fn match_prefix(tokens: &[String]) -> Option<String> {
     Some(tokens[..take].join(" "))
 }
 
-fn explicit_point_id(text: &str) -> Option<String> {
-    let bytes = text.as_bytes();
-    let mut i = 0usize;
-    while i + 2 < bytes.len() {
-        let is_id =
-            (bytes[i] | 0x20) == b'i' && (bytes[i + 1] | 0x20) == b'd' && bytes[i + 2] == b':';
-        if is_id {
-            let boundary = i == 0 || !bytes[i - 1].is_ascii_alphanumeric();
-            if boundary {
-                let slug: String = text[i + 3..]
-                    .trim_start_matches([' ', '\t', '*', '`'])
-                    .chars()
-                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_' || *c == '.')
-                    .collect();
-                if !slug.is_empty() {
-                    return Some(slug.to_lowercase());
-                }
-            }
-        }
-        i += 1;
-    }
-    None
-}
-
 fn canonical_point_key(text: &str) -> Option<String> {
-    if let Some(slug) = explicit_point_id(text) {
-        return Some(slug);
-    }
-    let mut tokens = point_key_tokens(text);
-    if tokens.is_empty() {
-        return None;
-    }
-    tokens.sort();
-    tokens.dedup();
-    Some(tokens.join(" "))
+    match_prefix(&point_key_tokens(text))
 }
 
 fn canonical_key_in_carrier(carrier: &str, key: &str) -> bool {
@@ -5349,22 +5316,14 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
     }
 
     #[test]
-    fn canonical_point_key_absorbs_reformulation() {
-        let first = canonical_point_key("1. GIC Breitenband Deskriptoren bauen (wartend)");
-        let second = canonical_point_key("bauen Deskriptoren Breitenband GIC blockiert");
-        assert_eq!(first, second);
-        assert_eq!(first.as_deref(), Some("bauen breitenband deskriptoren gic"));
-    }
-
-    #[test]
-    fn explicit_id_marker_beats_token_set() {
-        let marked = canonical_point_key("**ID:** gic-breitenband this is the point");
-        assert_eq!(marked.as_deref(), Some("gic-breitenband"));
-        let unmarked = canonical_point_key("gic-breitenband this is the point");
-        assert_ne!(marked, unmarked);
+    fn canonical_point_key_uses_the_six_word_name_head() {
         assert_eq!(
-            canonical_point_key("ID: alpha-1 some later text").as_deref(),
-            Some("alpha-1")
+            canonical_point_key("1. GIC Breitenband Deskriptoren bauen (wartend)").as_deref(),
+            Some("gic breitenband deskriptoren bauen")
+        );
+        assert_eq!(
+            canonical_point_key("GIC Breitenband Deskriptoren bauen x y z").as_deref(),
+            Some("gic breitenband deskriptoren bauen x y")
         );
     }
 
@@ -5389,12 +5348,12 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
     }
 
     #[test]
-    fn dropped_roster_collects_distinct_canonical_point_keys() {
-        let text = "## Offen\n\n- GIC Breitenband Deskriptoren bauen\n- bauen Deskriptoren Breitenband GIC (wartend)\n- **ID:** coverage-begleiter Coverage Begleiter bauen\n";
+    fn dropped_roster_collects_distinct_name_heads() {
+        let text = "## Offen\n\n- GIC Breitenband Deskriptoren bauen\n- GIC Breitenband Coverage Begleiter bauen\n";
         let keys = canonical_open_point_keys(text);
         assert_eq!(keys.len(), 2);
-        assert!(keys.contains("bauen breitenband deskriptoren gic"));
-        assert!(keys.contains("coverage-begleiter"));
+        assert!(keys.contains("gic breitenband deskriptoren bauen"));
+        assert!(keys.contains("gic breitenband coverage begleiter bauen"));
     }
 
     #[test]
