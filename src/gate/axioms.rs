@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use crate::json::JsonVal;
 
-pub fn load(root: &str) -> String {
-    std::fs::read_to_string(format!("{root}/docs/granit.md")).unwrap_or_default()
+pub fn load(root: &str) -> Option<String> {
+    std::fs::read_to_string(format!("{root}/docs/granit.md")).ok()
 }
 
 pub fn system_message(axioms: &str) -> JsonVal {
@@ -23,7 +23,9 @@ pub fn inject(parsed: &mut JsonVal, root: &str) {
     let Some(JsonVal::Arr(msgs)) = map.get_mut("messages") else {
         return;
     };
-    msgs.insert(0, system_message(&load(root)));
+    if let Some(axioms) = load(root) {
+        msgs.insert(0, system_message(&axioms));
+    }
 }
 
 #[cfg(test)]
@@ -32,7 +34,7 @@ mod tests {
 
     #[test]
     fn axioms_are_granite() {
-        let g = load(".");
+        let g = load(".").expect("docs/granit.md is present");
         assert!(g.contains("A = A"));
         assert!(g.contains("0 honored"));
         assert!(g.contains("force_type"));

@@ -125,9 +125,9 @@ pub struct AnomalyRow {
     pub ra_deg: f64,
     pub dec_deg: f64,
     pub excess_mag: f64,
-    pub gaia_color: f64,
-    pub radio_flux: f64,
-    pub tns_z: f64,
+    pub gaia_color: Option<f64>,
+    pub radio_flux: Option<f64>,
+    pub tns_z: Option<f64>,
     pub excluded: bool,
     pub ex_name: [u8; 32],
 }
@@ -162,15 +162,9 @@ pub fn crossmatch(args: &CrossmatchArgs<'_>) -> Vec<AnomalyRow> {
         if only_excess && !is_excess {
             continue;
         }
-        let gaia_color = gaia
-            .nearest_val(ir_ra[i], ir_dec[i], radius)
-            .unwrap_or(f64::NAN);
-        let radio_flux = radio
-            .nearest_val(ir_ra[i], ir_dec[i], radius)
-            .unwrap_or(f64::NAN);
-        let tns_z = tns
-            .nearest_val(ir_ra[i], ir_dec[i], radius)
-            .unwrap_or(f64::NAN);
+        let gaia_color = gaia.nearest_val(ir_ra[i], ir_dec[i], radius);
+        let radio_flux = radio.nearest_val(ir_ra[i], ir_dec[i], radius);
+        let tns_z = tns.nearest_val(ir_ra[i], ir_dec[i], radius);
         let ex_name = excl.nearest_name(ir_ra[i], ir_dec[i], radius);
         let excluded = ex_name.is_some();
         rows.push(AnomalyRow {
@@ -231,9 +225,9 @@ mod tests {
             only_excess: true,
         });
         assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].gaia_color, 2.135);
-        assert_eq!(rows[0].tns_z, 0.027172);
-        assert!(rows[0].radio_flux.is_nan());
+        assert_eq!(rows[0].gaia_color, Some(2.135));
+        assert_eq!(rows[0].tns_z, Some(0.027172));
+        assert_eq!(rows[0].radio_flux, None);
         assert!(!rows[0].excluded);
     }
 
