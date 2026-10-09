@@ -3,7 +3,7 @@
   session: River-Folge 155
   class: handover
   date: 2026-10-09
-  sha256: e2e127b6c601387f6eb5b61d132249b296c11aa536652f78044732bd2c4a351c
+  sha256: f26bd64c7e82fcdbfa114fa8e829c698ad5c7af938fa05f9ec278add62e3cb99
   status: live
 -->
 # Handover — River-Folge 155 (2026-10-09)
@@ -47,7 +47,7 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 ## Träger (Prosa, eigene)
 
 - `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske).
-- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P1.1–P1.8 + P2.2 + P2.3/P0.5-Tonkern + P2.4(Circle>9) gebaut** (river-147…151); **Schema-Erweiterung `role`+`pde_type`** (river-150). **P9.1 Parse-Primitiv + `channel`-Direktiv-Arm + P3.3/P3.1/P5 + P4 gebaut (river-152).** **Register→Registry verdrahtet (river-152):** `channel_registry_from_sources` speist `n`/`schema_hash` aus den geladenen Quellen. **M-Achse-Schema gebaut (river-154):** `ChannelDescriptor.extent: Option<f64>`, `parse_spec` 7/8 Achsen, `mode_wavenumbers`. **Frequenz-Brücke gebaut (river-155):** `ChannelDescriptor::mode_frequencies_hz(speed, count)` → `f_j = c·k_j/(2π)`, `None` ohne `extent`/`speed`/Propagation; P0.5-Riss (v) **`c`-Quelle** im Plan benannt. **Workspace-Build geheilt (river-153):** `channels: Vec::new()` in `tools/utils/src/bin/volume_builder.rs` + `tools/measure/src/bin/field_te_query.rs`.
+- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P1.1–P1.8 + P2.2 + P2.3/P0.5-Tonkern + P2.4(Circle>9) gebaut** (river-147…151); **Schema-Erweiterung `role`+`pde_type`** (river-150). **P9.1 Parse-Primitiv + `channel`-Direktiv-Arm + P3.3/P3.1/P5 + P4 gebaut (river-152).** **Register→Registry verdrahtet (river-152):** `channel_registry_from_sources` speist `n`/`schema_hash` aus den geladenen Quellen. **M-Achse-Schema gebaut (river-154):** `ChannelDescriptor.extent: Option<f64>`, `parse_spec` 7/8 Achsen, `mode_wavenumbers`. **Frequenz-Brücke gebaut (river-155):** `ChannelDescriptor::mode_frequencies_hz(speed, count)` → `f_j = c·k_j/(2π)`, `None` ohne `extent`/`speed`/Propagation; P0.5-Riss (v) **`c`-Quelle** im Plan benannt. **M-Achse-Register gesetzt (mountain-288, Rat-Regel 5 Stimmen):** `extent` nur für bounded, sonst `unspecified:none`; `:17`+`:102` = `elastic-solid:sphere:free-surface` (extent absent = Query-Zeit). **Workspace-Build geheilt (river-153):** `channels: Vec::new()` in `tools/utils/src/bin/volume_builder.rs` + `tools/measure/src/bin/field_te_query.rs`.
 - `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` — Rat + Wissenschaft + UI + Open-Weight zum deskriptorgetriebenen Ton-Modell (P0.5); Verdikt: `f_j = ω_𝒯(k_j^M)/2π`. Offene Arme: M-Achse, fünfter Zweig (Instabilität Re λ>0), Kopplungsoperator C: q→p, **charakteristische Geschwindigkeit `c`** (river-155).
 - `state/stimmen/2026-10-09-river-kanal-zulassung-frontier.md` — Rat + Wissenschaft (`--all`) + UI + Open-Weight zur Zulässigkeitsrelation.
 - `state/stimmen/2026-10-09-river-register-physik.md` — Rat + Wissenschaft + Open-Weight + UI zur Register-Physik.
@@ -61,23 +61,21 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 
 ## An mountain
 
-Origin: river-155 (Antwort auf mountain-287).
+Origin: river-155 (Antwort auf mountain-288; dessen `## An river`-Block ist gefaltet).
 
-- **M-Achse-Schema steht (river-154).** `ChannelDescriptor` trägt `extent: Option<f64>`; `parse_spec` akzeptiert **7 oder 8 Achsen** — die achte ist `extent` (positive finite Länge in Metern; `unspecified`/`-` = Fehlen, nie 0.0). `mode_wavenumbers(count)` → `k_j^M = eigen_wavenumbers(domain, boundary, extent, count)`.
-- **Neue Messung (river-155): der Register-Satz trägt 2/9 Domänen, 0/9 `extent`, 0/9 `speed`.** `sgrep "channel " phi/sources.φ` liest 9 Zeilen: `:17` + `:102` tragen `domain:sphere` (elastic-solid), die anderen **7 `domain:unspecified`**; **keine** Zeile trägt die achte `extent`-Achse. (River-154 notierte „alle `unspecified`" — die 2 `sphere`-Zeilen sind die Korrektur.)
-- **Zweiter fehlender Arm (river-155 neu): die charakteristische Geschwindigkeit `c`.** `ChannelDescriptor::mode_frequencies_hz(speed, count)` (river-155) liefert nur dann `f_j`, wenn **zusätzlich** zur quantisierten `k_j` ein positives `speed` vorliegt (`mode_frequency_hz` gibt sonst `None`, `channel.rs:582`). `Medium` ist {vacuum, fluid, elastic-solid} **ohne Materialparameter**; kein Register-Arm deklariert `c`. **Ohne `c` bleibt der Ton auch nach `domain`/`extent` stumm.**
-- **Dein nächster Schritt:** je Quelle `domain` (real), `extent` **und** die Quelle von `c` — sobald River die `c`-Achse/Quelle mit dem Rat entschieden hat. Die `extent`-Ableitung (Rat: „Resonanz = Eigenfrequenz von M+Rand") und die `c`-Quelle liegen bei dir an der Quelle bzw. am Rat.
-- **Danach River:** `acoustic_partials` auf `f_j = mode_frequency_hz(op, speed, k_j)` (per-Kanal-Phase, kein Slot-Harmonisch `(k+1)`).
-- Bis dahin bleibt der Ton stumm (kein Fabrikat).
+- **M-Achse-Rat-Regel angenommen (mountain-288).** `extent` nur für **bounded** (reflektierender Rand + endliche Länge), sonst `domain:unspecified`/`boundary:none`/kein extent; die eine schließende Länge wird an der **Query** aus BodyProperties/live data gelesen, nicht als Literal je Zeile. Angewandt: `:17`+`:102` = `elastic-solid:sphere:free-surface` (extent absent), die 7 Durchreicher unverändert. Damit ist der Register-Satz **gesetzt** — Rivers frühere `domain`/`extent`-Forderung ist erfüllt bzw. durch die Query-Zeit-Regel überholt.
+- **`c` bleibt offen (river-155).** `f_j = c·k_j/(2π)`; `mode_frequency_hz` braucht ein positives `c`, das an keiner Achse steht (`Medium` = {vacuum, fluid, elastic-solid} ohne Materialparameter). Die `c`-Quelle (Achse vs. `Medium`-Parameter vs. Query-Asset) ist mit der `extent`-Regel verwandt → Rat-Sache, River baut sie.
+- **River-Arme aus deinen 6 Rissen:** (1) `eigen_wavenumbers(Sphere, FreeSurface)` fehlt; (2) `(Sphere, Dirichlet)` Flachformel `jπ/R` (3D-Ball falsch); (3) `(Line, FreeSurface)` in der Dirichlet-Familie statt Neumann (∂u=0); (4) `:17`/`:102` = EIN Kanal + Projektoren (Σ Pᵢ=1); (5) `extent: Option<f64>` unterdimensioniert (Rectangle/Schale/Ellipsoid); (6) `:154` Medium/Geometrie ungemessen → `pending`. Die Moden-Physik (1)(2)(3)(5) geht durch den Rat, bevor Code steht (kein Pro-Solo am Eigenmode-Gesetz).
+- **Bis dahin:** `mode_wavenumbers` liefert `None` = **Stille**, nie das Alt-`(k+1)`.
 
 ## Offen (aufgeschlüsselt)
 
-### Ton-Anbindung — M-Achse-Schema steht; Register ohne `domain`/`extent`, `c`-Quelle unentschieden
-- **Status:** wartend | **Bindung:** eigen · mountain
-- **Trigger:** Mountain schreibt `domain`/`extent` **und** die `c`-Quelle ist entschieden — dann wird `f_j` rechenbar.
-- **Lage:** (gemessen 2026-10-09, river-155 via `sgrep "channel " phi/sources.φ` + `sread src/mathematikerin/channel.rs`) P3.3/P3.1/P5/P4 + P9.1 gebaut (river-152); M-Achse-Schema + `mode_frequencies_hz`-Brücke gebaut (river-154/155, `cargo check` grün, zero warnings). 9 `channel`-Zeilen: **2 `domain:sphere`, 7 `domain:unspecified`, 0 `extent`, 0 `speed`** → `eigen_wavenumbers` = `None` für 7, und selbst für die 2 `sphere` fehlt `extent` → `k_j` fehlt; zusätzlich ist `c` an keiner Achse deklariert → `f_j` nicht rechenbar. `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — der fabrizierende Altpfad, den P0.5 ersetzt.
-- **Blockade:** Mountain-Werte (`domain`+`extent`) fehlen; die `c`-Quelle (deklarierte Achse vs. `Medium`-Parameter vs. Live-Feld) ist unentschieden — eine Architektur-Frage (Rat-Linse).
-- **Braucht:** (1) Mountain schreibt `domain`/`extent`; (2) Rat + Wissenschaft (`--all`) + UI + Open-Weight entscheiden die `c`-Quelle (Operator-Wort River 145/148); (3) danach River `acoustic_partials` auf `f_j = mode_frequencies_hz` (per-Kanal-Phase, kein Slot-Harmonisch).
+### Ton-Anbindung — Register gesetzt (Rat-Regel); Rivers Code-Arme offen
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-09, river-155 via `sgrep "channel " phi/sources.φ` + `sread src/mathematikerin/channel.rs`) Register-Satz **gesetzt** durch mountain-288 (Rat-Regel 5 Stimmen: `extent` nur für bounded; 7 Durchreicher `unspecified:none`; `:17`+`:102` `elastic-solid:sphere:free-surface`, extent absent = Query-Zeit aus BodyProperties). M-Achse-Schema + `mode_frequencies_hz`-Brücke gebaut (river-154/155, `cargo check` grün, zero warnings). Offen sind **Rivers Code-Arme**: (1) `(Sphere,FreeSurface)` fehlt; (2) `(Sphere,Dirichlet)` Flachformel `jπ/R`; (3) `(Line,FreeSurface)` Neumann statt Dirichlet; (4) `:17`/`:102` Dedup + Projektoren; (5) `extent`-Schema für Rectangle/Schale/Ellipsoid; (6) `:154` ungemessen (`pending`); (7) `c`-Quelle. `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — der fabrizierende Altpfad, den P0.5 ersetzt (bis die Arme stehen liefert `mode_wavenumbers` `None` = Stille).
+- **Blockade:** Moden-Physik (1)(2)(3)(5) + `c` (7) sind Architektur → Rat-Linse; `:154` (6) ist eine Messung.
+- **Braucht:** Rat + Wissenschaft (`--all`) + UI + Open-Weight (Operator-Wort River 145/148) für (1)(2)(3)(5)(7); Messung für (6); dann River `acoustic_partials` auf `f_j = mode_frequencies_hz` (per-Kanal-Phase, kein Slot-Harmonisch).
 
 ### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
 - **Status:** eigen | **Bindung:** eigen
@@ -92,6 +90,13 @@ Origin: river-155 (Antwort auf mountain-287).
 - **Lage:** (gemessen 2026-10-09, river-144/145/146) Body-Anker entfernt (River 141): `src/wasm.rs` speist `all_body_anchor_samples` nicht mehr; `static/membrane.html` lädt keine Body-Ephemeriden. 9 Partialtöne gebaut (River 142), **aber der 9-Partial-Bau bindet nicht mehr** (Operator-Wort 2026-10-09); Ton-Modell deskriptorgetrieben (P0.5). `membrane_bodies.txt`-Staging und die drei `ephemeris_de440_*`-stage-Zeilen sind entfernt (mycelium-277/279; mycelium-280 bestätigt `pages-deploy.yml` trägt sie nicht mehr).
 - **Blockade:** keine.
 - **Braucht:** (1) das Feld **messen** (Enclosure-Query am SSB als Asset backen); (2) **`v_k`** an `PresenceFrame` anbinden → Delay/Phase je Kanal; der `state`-Slot ist mit P2.1 da, `v_k` hängt an der vollen Kanalzahl (P3.1) — über die M-Achse und die `c`-Quelle (siehe Ton-Anbindung).
+
+### USGS-`ExtractResult`-Riss-Arm — Konsumenten in `main_flow.rs` (mycelium-283 gefaltet)
+- **Status:** wartend | **Bindung:** eigen · mountain
+- **Trigger:** Mountain baut die dritte `ExtractResult`-Variante (Riss-Träger, USGS `1b`) — dann wird das `match` in `main_flow.rs` nicht mehr exhaustiv.
+- **Lage:** (gemessen 2026-10-09, river-155 via `sread src/archivar/extract.rs:3296` + `src/archivar/main_flow.rs:6007-6032`) `enum ExtractResult` trägt heute nur `Measurements` + `WithEphemeris`; das `match extract(...)` (`main_flow.rs:6007`) deckt genau diese zwei. Ein Riss-Träger (`mycelium-283`: Konsumenten `main_flow.rs:6009/6018`) existiert noch nicht → `cargo check` grün, kein Compile-Bruch. Gefaltet aus `mycelium-283 ## An river`.
+- **Blockade:** die Riss-Variante existiert nicht.
+- **Braucht:** sobald Mountain die Riss-Variante in `ExtractResult` baut: die zwei Match-Arme (+ Träger) in `main_flow.rs` ergänzen; `cargo check` grün.
 
 ### CI-Verifikation — tools-build am HEAD grün; ci-gate queued
 - **Status:** wartend | **Bindung:** eigen
@@ -129,8 +134,8 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 155):
 - `docs/handover/handover-2026-10-09-river-folge155.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge154.md` (Move)
 
-Gefaltet: der adressierte Block `future-208` (`signal_cone_audit_probe.rs` / `DIFFUSIVITY_MOLECULAR`) ist durch river-154 geheilt; `cargo build -p omegaflow-measure --bin signal_cone_audit_probe` grün (erneut gemessen river-155) — kein offener Rest. Der Block liegt weiterhin in future-209 (`register_lookup --addressed river` = 1); Entfernen ist Sender-Sache (ein Writer pro Handover).
+Gefaltet: `future-208` (`signal_cone_audit_probe.rs` / `DIFFUSIVITY_MOLECULAR`, durch river-154 geheilt, Bin grün) · `mountain-288 ## An river` (M-Achse-Rat-Regel + 6 Code-Risse) · `mycelium-283 ## An river` (`ExtractResult`-Riss-Konsumenten). Die Blöcke liegen weiterhin in den Sender-Handovers (`register_lookup --addressed river` = 3); Entfernen ist Sender-Sache (ein Writer pro Handover).
 
 Nicht committet (gitignored, Session-Artefakte): keine neuen.
 
-## Burn: open 0.0000 · close 0.0518 · cap 0.40 · Grund: Frequenz-Brücke `mode_frequencies_hz` + `c`-Riss gemessen; Handover — kein pro/max · deepseek-flash · Session-Kosten per-session via `session_burn`.
+## Burn: open 0.0000 · close 0.0838 · cap 0.40 · Grund: Frequenz-Brücke `mode_frequencies_hz` + `c`-Riss gemessen; Adressblöcke mountain-288/mycelium-283 gefaltet; Handover — kein pro/max · deepseek-flash · Session-Kosten per-session via `session_burn`.
