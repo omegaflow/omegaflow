@@ -197,6 +197,7 @@ pub struct OmegaLoop {
     pub prev_probe_omega: [f32; 9],
     pub channels: Option<super::channel::ChannelRegistry>,
     pub probe_flow: [f32; 3],
+    pub probe_r: [f32; CHANNEL_CAP],
     pub probe_ring: [[f32; 12]; 256],
     pub ring_head: usize,
     pub ring_filled: usize,
@@ -318,6 +319,7 @@ impl OmegaLoop {
             prev_probe_omega: [0.0; 9],
             channels: None,
             probe_flow: [0.0; 3],
+            probe_r: [0.0; CHANNEL_CAP],
             probe_ring: [[0.0; 12]; 256],
             ring_head: 0,
             ring_filled: 0,
@@ -374,9 +376,16 @@ impl OmegaLoop {
             }
         };
         let mut partials_hz = [0.0f32; CHANNEL_CAP];
+        let mut delay_rad = [0.0f32; CHANNEL_CAP];
         for (k, d) in registry.descriptors().iter().enumerate().take(CHANNEL_CAP) {
             if let Some(f) = d.fundamental_hz() {
                 partials_hz[k] = f as f32;
+            }
+            if let (Some(wavenumber), true) = (
+                d.carrier_wavenumber(),
+                self.probe_r[k].is_finite() && self.probe_r[k] > 0.0,
+            ) {
+                delay_rad[k] = (wavenumber * self.probe_r[k] as f64) as f32;
             }
         }
         PresenceFrame {
@@ -386,6 +395,7 @@ impl OmegaLoop {
             aperture,
             state,
             partials_hz,
+            delay_rad,
             pan_ms,
             tilt_ms,
             tau_ticks: self.natural_latency_ticks,
@@ -986,7 +996,7 @@ impl OmegaLoop {
             0,
             &probe_read,
             0,
-            ((CHANNEL_CAP + 3) * 4) as u64,
+            ((2 * CHANNEL_CAP + 3) * 4) as u64,
         );
         queue.submit(std::iter::once(enc.finish()));
         let mapped = Arc::new(AtomicBool::new(false));
@@ -1001,7 +1011,7 @@ impl OmegaLoop {
         }
         if mapped.load(Ordering::SeqCst) {
             let data = slice.get_mapped_range();
-            let mut v = [0f32; CHANNEL_CAP + 3];
+            let mut v = [0f32; 2 * CHANNEL_CAP + 3];
             for (k, slot) in v.iter_mut().enumerate() {
                 let mut b = [0u8; 4];
                 b.copy_from_slice(&data[k * 4..k * 4 + 4]);
@@ -1011,6 +1021,8 @@ impl OmegaLoop {
             self.probe_omega.copy_from_slice(&v[0..9]);
             self.probe_flow
                 .copy_from_slice(&v[CHANNEL_CAP..CHANNEL_CAP + 3]);
+            self.probe_r
+                .copy_from_slice(&v[CHANNEL_CAP + 3..2 * CHANNEL_CAP + 3]);
             let mut ring = [0f32; 12];
             ring[..9].copy_from_slice(&v[..9]);
             ring[9..12].copy_from_slice(&v[CHANNEL_CAP..CHANNEL_CAP + 3]);
@@ -1457,13 +1469,13 @@ impl OmegaLoop {
         });
         let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: ((CHANNEL_CAP + 3) * 4) as u64,
+            size: ((2 * CHANNEL_CAP + 3) * 4) as u64,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: false,
         });
         let probe_read = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: ((CHANNEL_CAP + 3) * 4) as u64,
+            size: ((2 * CHANNEL_CAP + 3) * 4) as u64,
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
