@@ -20131,6 +20131,76 @@ ra ra
 dec dec
 field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
 
+url https://zenodo.org/api/records/4444068/files/Node_1_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node1_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node1_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
+url https://zenodo.org/api/records/4444068/files/Node_2_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node2_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node2_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
+url https://zenodo.org/api/records/4444068/files/Node_3_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node3_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node3_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
+url https://zenodo.org/api/records/4444068/files/Node_4_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node4_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node4_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
+url https://zenodo.org/api/records/4444068/files/Node_5_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node5_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node5_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
+url https://zenodo.org/api/records/4444068/files/Node_6_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node6_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node6_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
+url https://zenodo.org/api/records/4444068/files/Node_7_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
+origin https://zenodo.org/record/4444068
+ttl 604800
+format csv_gz
+at earth
+rows
+epoch DateTime
+field GIC kellerman_node7_gic_a inverse-square electric A 1 0.0 0.0
+field GIC_QDC kellerman_node7_gic_qdc_a inverse-square electric A 1 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_8day.manifest
 format modis_lst_cmg
 origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_8day_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-<year>; the series manifest lists the shards)
