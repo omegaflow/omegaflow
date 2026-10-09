@@ -16,8 +16,21 @@ const FORCES: [&str; 9] = [
 ];
 
 const GEOMETRY_HINTS: [&str; 15] = [
-    "depth", "distance", "height", "magnitude", "latitude", "longitude", "lat", "lon", "area",
-    "altitude", "azimuth", "angle", "index", "ratio", "coordinate",
+    "depth",
+    "distance",
+    "height",
+    "magnitude",
+    "latitude",
+    "longitude",
+    "lat",
+    "lon",
+    "area",
+    "altitude",
+    "azimuth",
+    "angle",
+    "index",
+    "ratio",
+    "coordinate",
 ];
 
 const REGISTERS: [&str; 6] = [
@@ -116,7 +129,7 @@ fn main() {
             rel, report.field_lines, report.quantity_lines, report.geometry
         );
         let mut groups: Vec<_> = report.groups.iter().collect();
-        groups.sort_by(|a, b| b.1 .0.cmp(&a.1 .0));
+        groups.sort_by(|a, b| b.1.0.cmp(&a.1.0));
         for ((force, kernel), (count, examples)) in groups {
             println!("  {force} × {kernel}: {count}");
             for ex in examples {

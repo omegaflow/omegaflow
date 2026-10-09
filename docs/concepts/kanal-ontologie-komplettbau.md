@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: 8003d99de5f7a7322a08933a1c8216e9eaa02852e6c6e1661e802306bf4d3bd7
+  sha256: 216c3a6112708abf3ad397f2f57a2ba4e49658691d82e0f8364a6d5fb18d47c7
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -122,6 +122,32 @@ Ausbreitungsweg. Die Idee trägt, die Materialisierung ist falsch.
   Es gruppiert `force × kernel`, zählt, nennt je Gruppe 2–3 Beispielzeilen und meldet
   Geometrie-/Quellparameter (Tiefe, Distanz, Höhe, Magnitude) sowie die `em`/`electric`-Überlappung —
   die **Messung**, woher die 6088 `em` stammen. Kein Verdikt, keine Schreiboperation.
+- **P10.2a — Normalize-Schema (Rat-Entwurf 2026-10-09, additiv, noch nicht geschrieben):**
+```
+field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau> [abs] [adv]
+quantity <id> <quantity> <role> <medium> <unit> <tau>     # force_type=255, tritt nie in Σω ein
+```
+  - `force` → **n:m-Tag/FK** auf eine Lookup-Tabelle `mechanisms`; nie mehr die Reichweiten-Achse.
+  - `pde_type` ∈ {elliptic, parabolic, hyperbolic, advective, mixed} — trägt den Charakter.
+  - `medium` ∈ {vacuum, atmosphere, ocean, solid-earth, ionosphere, …}; `interaction` optional ∈ {gravity, em};
+    `role` ∈ {primary, derived, geometry, source-parameter}.
+  - **Abbildung der 9 Labels:** `em` → elliptic (quasi-statisch, In-situ) | hyperbolic (strahlend,
+    **regime-abhängig**); `gravity` → elliptic (Poisson-Constraint); `acoustic`/`seismic-body`/
+    `seismic-surface` → hyperbolic; `thermal` → parabolic; `diffusion` → parabolic; `advective` →
+    advective; `electric` → elliptic (⊆ em quasi-statisch).
+  - **Zulässigkeitsrelation (Regel, nicht Liste):** Flux-Operatoren koppeln an ihre Erhaltungsgröße —
+    Fick↔Masse, Fourier↔Energie, Ohm↔Ladung, Newton-viskos↔Impuls; legal nur, wo `operator × medium`
+    einen definierten konstitutiven Tensor hat. Kopplungsterme (Onsager: Thermodiffusion, Seebeck,
+    Lorentz) liegen **zwischen** Kanälen (sparse Paar-Matrix), nicht in ihnen.
+  - **Migrationsregel je top-Gruppe:** Geometrie/Quellparameter (Tiefe, Distanz, Höhe, Magnitude) →
+    `quantity role=geometry|source-parameter`; In-situ-Zustand (`electron_density`, `field_intensity`,
+    `density`, `humidity`, `temperature`, `pressure`) → `quantity role=primary` mit statischem
+    `pde_type`; echte Propagatoren (wind/CME-`speed` → advective) bleiben mit `pde_type`.
+  - **Reihenfolge:** `gravity`(118)/`seismic`(41)+Wellenhöhen zuerst, dann `acoustic`/`diffusion`,
+    **`em`(6012) zuletzt** als reine Umbenennung.
+  - **Gate/Fixture:** kein `force`-Feld ohne `quantity`; eine `quantity`-Zeile trägt keine Σω-Wirkung.
+  - **Risse (getragen, nicht geglättet):** Moden-Partition (`Σ Pᵢ=1`); Kopplung; Einheiten folgen;
+    `gravity` = Constraint.
 - **P10.2 (Mountain-Domäne, nach Rat + Operator-Wort):** **Zulässigkeits-/Normalisierungsschema**:
   getrennte Achsen **Quantity** (Was/Kind: primär/abgeleitet/Geometrie/Quellparameter) |
   **Mechanism** (`pde_type`: elliptisch/parabolisch/hyperbolisch/Advektion; optional Wechselwirkung
