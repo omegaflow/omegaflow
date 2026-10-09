@@ -63,11 +63,6 @@ url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200, 219 `.epn_core`; Enumerator gebaut `pds_ppi_compiler.rs` (115cf1657), Arm `pds4_fixed_width_compiler`. Offen: `sources.φ`-Zeile + `field`/`terms` + Workflow.
 
 blocked parser-def
-url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
-gap aurora-keogram
-note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Dekoder `keogram.rs` + Compiler `keogram_compiler.rs` gebaut (600×570, Spaltenmittel); Wire-Feld descoped (raw/relativ, FMI „not suitable"); offen: Quelle als Vision-Asset registrieren.
-
-blocked parser-def
 url https://data.inpe.br/bdc/stac/v1/
 gap inpe-big-stac
 note INPE BIG STAC (Catalog 1.0.0) — 2026-10-09: root 200, 79 Sammlungen (GeoTIFF/COG, NetCDF, GRIB2; 44 CC-BY-4.0 / 4 CC0 / 3 PD / 28 proprietary); STAC+tiff+netcdf+grib2-Arme stehen; offen: Sammlung→Feld-Compiler + Lizenz je Sammlung.
@@ -100,7 +95,7 @@ note Teilchen CERN/ATLAS + GWOSC — 2026-10-09: `opendata.atlas.cern` + `gwosc.
 blocked parser-def
 url https://blinkverse.zerooffset.xyz/
 gap blinkverse-frb
-note FRB Blinkverse — 2026-10-09: direct+Proton pending, kein Wayback-Snapshot; CHIME-FRB gedeckt (`frb_chime_cat1.json`).
+note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamikspektren + 92 Host-Galaxien) → nicht superseded (Rat + UI); Zugang direct+Proton pending; Dedup gegen `frb_chime_cat1.json`/`frbcat_flat.json`/`frb_a279.json`.
 
 pending
 url https://geomag.usgs.gov/ws/data/
