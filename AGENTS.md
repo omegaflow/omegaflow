@@ -1,9 +1,9 @@
 # omegaflow
 
 Kybernetic field system. Pure Rust, WebGPU point cloud, ICRS block universe.
-`cargo run` → the membrane (ESC closes it);
-`cargo run --features browser_relay` → + WS 127.0.0.1:1618, the browser sensor.
-The 620 bin targets (`tools/*/src/bin/*.rs`, auto-discovered, what `cargo build` builds) live in functional crates under `tools/` — `tools/harvest` (262, `omegaflow-harvest`), `tools/measure` (251, `omegaflow-measure`), `tools/register` (17, `omegaflow-register`), `tools/service` (8, `omegaflow-service`), `tools/science` (5, `omegaflow-science`), `tools/gate` (2, `omegaflow-gate`), `tools/utils` (75, `omegaflow-utils`). Each is `cargo run -p omegaflow-<fkt> --bin <name>`; `cargo build` builds only the core. `src/` is the one core crate (Archivar + Mathematikerin + the gate modules) — Cargo's source-directory convention names it, not a functional label.
+`cargo run` → the headless ω-loop, no window (the crate carries no window package — `winit` absent; deps: wgpu, pollster, serialport);
+`cargo run --features browser_relay` → the membrane: the browser WebGPU surface over WS 127.0.0.1:1618, the browser sensor (ESC closes the browser window — `main_flow.rs:1171`).
+The 707 bin targets (`tools/*/src/bin/*.rs`, auto-discovered — top-level cargo bins only; the 53 `tools/utils/src/bin/archive_search/*.rs` are modules, so `git ls-files 'tools/*/src/bin/*.rs'` reports 760 including them) live in functional crates under `tools/` — `tools/harvest` (359, `omegaflow-harvest`), `tools/measure` (275, `omegaflow-measure`), `tools/register` (22, `omegaflow-register`), `tools/service` (8, `omegaflow-service`), `tools/science` (5, `omegaflow-science`), `tools/gate` (3, `omegaflow-gate`), `tools/utils` (35, `omegaflow-utils`). Each is `cargo run -p omegaflow-<fkt> --bin <name>`; `cargo build` builds only the core. `src/` is the one core crate (Archivar + Mathematikerin + the gate modules) — Cargo's source-directory convention names it, not a functional label.
 
 ## Rule Index — which rule lives where
 

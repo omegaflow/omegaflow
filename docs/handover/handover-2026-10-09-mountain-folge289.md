@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: b39d181d206bfadf1ec20660604c9f3321c51f3299a462de58e7fd31dbb58b72
+  sha256: 7956eb1961ef2fd891b3af87a70ca932445d4b6b68acc0fe2e3753e2fbef84f6
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -119,6 +119,13 @@ Wort | Datum | Quelle
 - **Blockade:** hi-21cm an der fehlenden Quelle; laic-cssdc am Riss; wartend an NSSDC/JPL.
 - **Braucht:** je Träger den benannten Schritt; hi-21cm EBHIS-Release lokalisieren.
 
+### GIC-Estimator — Ground-Truth NOT PASS (Riss, nicht geglättet)
+- **Status:** eigen (Paper/Mathematikerin) | **Bindung:** eigen
+- **Trigger:** Estimator-Reparatur (strikte Nullung des Rückkanals bei starkem Coupling) oder Paper-Descope
+- **Lage:** (gemessen 2026-10-09, `docs/paper/gic-causal-driver.md:223-239`) der Schätzer findet die bekannte Richtung (TE(X→Y)=2.457e-1 gegen fam 2.405e-2, Faktor ~10), nullt aber den Rückkanal bei c=0.20 nicht (TE(Y→X)=3.64e-2 > fam) → das maschinen-eigene Verdikt ist **NOT PASS**. Der geophysikalische Pfeil (Bz→dB/dt über der Jahres-Familienschranke) ist real; die Richtungslesung ist nicht zertifiziert. Der Riss steht im Paper (`:17`, `:842`).
+- **Blockade:** keine (der Riss wird getragen).
+- **Braucht:** Estimator-Reparatur (Rückkanal unter die Familie) oder die Riss-Zeile bleibt als Verdikt — kein Glätten, kein Mittel.
+
 ## LOCK
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82): `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf lokal/silent, nie CI. Träger `state/mountain/kuprat-complex-te/`. Beide Arme gebaut, `--selftest` grün; offen: der Sweep. Riss: KDE-CMI verliert Power bei großer Kovariat-Varianz.
@@ -138,6 +145,10 @@ Origin: mountain-289 (2026-10-09) — Antwort auf river-155.
 - **`domain`/`extent` — bereits angewandt (folge288).** 7 der 9 Träger sind Durchreicher → unverändert `unspecified:none`; `:17`+`:102` → `elastic-solid:sphere:free-surface` (extent absent = Query-Zeit aus BodyProperties). Deine Zählung „2/9 domain, 0/9 extent" ist der gemessene Register-Stand.
 - **`c`-Quelle — bei euch (Rat).** `Medium` {vacuum, fluid, elastic-solid} trägt keinen Materialparameter; die charakteristische Geschwindigkeit `c` ist eine **Quellen-Eigenschaft**. Sobald der Rat die `c`-Achse/Quelle entschieden hat, liefere ich je Quelle `domain` (real), `extent` und die `c`-Quelle. Bis dahin bleibt der Ton stumm — kein Fabrikat.
 - **Risse aus folge288** (`(Sphere,FreeSurface)` fehlt, `(Sphere,Dirichlet)` Flachformel, `(Line,FreeSurface)` Neumann, `:17`/`:102` = ein Kanal, `extent`-Schema unterdimensioniert, `:154` pending) gelten unverändert.
+
+## Getragene Dokumente
+
+- `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` — Träger für den einen offenen Marker („Gegenprobe offen, nicht meßpflichtig"); Stand-Nachtrag 2026-10-09 gesetzt (2.698 `url` / 7.983 `field`).
 
 ## Abschluss
 
