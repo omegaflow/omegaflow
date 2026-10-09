@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: e558f093c2e453e04345f561e825f035d2c4aa09830d88589d27daf76cf382e4
+  sha256: ee363dad94acbbb3b89315b2e86829cc86da81152f763ebcbf6dc9af4d66f517
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -80,7 +80,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P1.1** `enum Conserved { Mass, Momentum, Energy, Charge }`.
 - **P1.2** `enum TransportOp { Flux(FluxKind), Advective, Wave, Poisson }`.
 - **P1.3** `enum Medium { Vacuum, Fluid, ElasticSolid }`, `enum Boundary { None, FreeSurface, … }`.
-- **P1.4** `struct ChannelDescriptor { conserved, role, op, pde_type, medium, domain, boundary, extent: Option<f64>, unit }` + `hash()`; `extent` trägt die M-Achse (Geometrie-Ausdehnung), `mode_wavenumbers(count)` → `k_j^M`, `mode_frequencies_hz(speed, count)` → `f_j = c·k_j/(2π)` (river-155; `None` ohne `extent`/`speed`/Propagation).
+- **P1.4** `struct ChannelDescriptor { conserved, role, op, pde_type, medium, domain, boundary, extent: Option<f64>, unit }` + `hash()`; `extent` trägt die M-Achse (Geometrie-Ausdehnung), `mode_wavenumbers(count)` → `k_j^M`, `mode_frequencies_hz(speed, count)` → `f_j = c·k_j/(2π)` (river-155; `None` ohne `extent`/`speed`/Propagation). **Domain-Arity (river-157, Rat-Wort river-156):** `extent` bleibt die *eine* schließende Länge für 1D-Schluss-Domänen (Line/Circle/Sphere); Mehrfachlängen liegen als Tupel im `Domain`-Enum — `Rectangle { lx, ly }`, `Shell { r_in, r_out }`, `Ellipsoid { a, b, c }` (kein zweiter `extent`, keine neue Achse). Spec-Token compound: `rectangle(Lx,Ly)` / `shell(r_in,r_out)` / `ellipsoid(a,b,c)`. Das Rechteck trägt das analytische Pythagoras-Spektrum (`k=π√((m/Lx)²+(n/Ly)²)`, Dirichlet m,n≥1, Neumann m,n≥0); Shell/Ellipsoid bleiben `None` (`pending`, transzendent/nicht separierbar).
 - **P1.5** `fn is_admissible(q, op, medium) -> bool` — die **Zulässigkeitsrelation** (der Graph).
 - **P1.6** `enum TriState { Present, Pending, Absent }` + Übergangsregel (P7.2).
 - **P1.7** `struct ChannelRegistry { cap: usize, descs: Vec<ChannelDescriptor>, id: HashMap<u64, usize> }`;
