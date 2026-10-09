@@ -199,6 +199,7 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
         }
         "catalog_gaia_sso" => crate::gaia_sso::parse_bin(bytes).map(|bodies| bodies.len()),
         "zcta_gazetteer" => crate::archivar::zcta::parse_bin(bytes).map(|rows| rows.len()),
+        "openmadrigal" => openmadrigal::parse_isprint(bytes).map(|print| print.rows.len()),
         "mpcobs" => {
             if !bytes.len().is_multiple_of(MPCOBS_RECORD_STRIDE) {
                 return None;
@@ -4289,6 +4290,42 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         lat: station_lat,
                         lon: station_lon,
                         alt: station_alt,
+                    },
+                    name: fc.name.clone(),
+                    value,
+                },
+                fc.clone(),
+            ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "openmadrigal" {
+        let Some(print) = crate::archivar::openmadrigal::parse_isprint(body.as_bytes()) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for (unix, value) in print.series("UT1_UNIX", &fc.key) {
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat: *lat,
+                        lon: *lon,
+                        alt: *alt,
                     },
                     name: fc.name.clone(),
                     value,

@@ -21,7 +21,7 @@ note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.pn
 note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
 note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-only Dekoder → SZIP-Granulen descoped (kein libaec, std-stack bleibt); MOD11C2/C3 lesen über NONE/RLE/DEFLATE.
 note gap-Token point-source-kernel — Punkt-/Identitäts-Kernel ohne räumlichen Gradienten (Slot 2, kernel_id 2); Träger für punkt-/medienunabhängige Quellen (eionet_cdr); Arm steht (extract.rs:1530 "point" => Some(2); shaders.rs:49/:87).
-note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²) ohne physikalische Kraft; braucht einen quantity_type-/Kovariat-Träger außerhalb Ω (kein 10. force_type); Arm fehlt.
+note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²) ohne physikalische Kraft; Arm steht (FORCE_TYPE_QUANTITY 255 + presence bit 16.0; QuantityKind Area, m2); Träger ghsl_built_surface_m2 in sources.φ.
 
 blocked parser-def
 url https://psa.esa.int/psa-tap/tap/
@@ -67,10 +67,9 @@ url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%
 gap kaguya-lrs
 note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
 
-blocked parser-def
+pending
 url https://www.leos.ac.cn/
-gap leos-cses
-note LEOS (CSES) — 2026-10-08 re-measured: direct HTTP 206 (1 B); survey-2026-10-08-open-sources-delta.md:75/133; --jina renders app; CSES payloads not in sources.φ (sgrep leos.ac.cn=0; :17149 is Vega 2 MISCHA). Mountain admission.
+note LEOS (CSES) — 2026-10-09: direct HTTP 206 (1 B), user-gated → Auth-Route (nie declined). CSES-Kern via scidb.cn integriert (cses-{efd,hpm,lap,scm}); LEOS-spezifische Route offen. survey-2026-10-08-open-sources-delta.md:75/133.
 
 pending
 url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
@@ -92,16 +91,6 @@ blocked account
 url https://sleepdata.org
 note NSRR — 2026-10-08 re-measured: account confirmed (mail_ledger.φ:361/:362); arm nsrr_psg stands (9d416e57b, edf.rs); asset block absent; HIPAA-training gate. State descoped→blocked account (UI-Runde 2026-10-08).
 
-blocked parser-def
-url https://cedar.openmadrigal.org
-gap openmadrigal-api
-note Madrigal (cedar.openmadrigal.org) — 2026-10-05: HTTP 206/200, 15070 B HTML-Landing (magic unrecognized); kein Madrigal-Reader im Baum (nur re3data-Katalog); OpenMadrigal-API-Arm fehlt.
-
-blocked parser-def
-url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
-gap covariate-carrier
-note ghsl_built_surface_m2 (JRC GHSL GHS_BUILT_S_E2020) — statische built-up surface (m²), keine der 9 Kräfte → kein Kraft-Heim; aus sources.φ in die Disposition umgezogen; braucht den quantity_type-Träger (CRS+Epoche, 0 m² honored).
-
 pending
 url https://zenodo.org/record/4444068
 note Neutralpunkt-GIC (Kellerman 2021) — Zenodo 200, 7 anonyme Knoten, CC-BY 4.0. 2026-10-09: Slash-Datum `YYYY-MM-DD/HH:MM:SS` liest der generische `csv`-Arm (`parse_iso_tdb`); offen: Knoten-Koordinaten + Port.
@@ -119,11 +108,11 @@ note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
 blocked parser-def
 url https://space.fmi.fi/image/
 gap aurora-keogram
-note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-06: 200, CC BY 4.0; Bild-/Keogramm-Arm fehlt.
+note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-09: `space.fmi.fi/image/` HTTP 200 (6599 B) = HTML-Index, kein Keogramm-File; erster Schritt ist die echte Keogramm-Datei-URL + Format (Bild-Arm fehlt), CC BY 4.0. Nicht refused.
 
 pending
 url https://geomag.usgs.gov/ws/data/
-note USGS-Geoelektrik E-Feld mV/km (GIC-Replikation §A) — 2026-10-06: 307→400; Magnetik ist declined_sources.φ:2176 (INTERMAGNET-Dup.), E-Feld neu.
+note USGS E-Feld mV/km (GIC §A) — 2026-10-09: bare `/ws/data/` HTTP 400; Query-Endpunkt + Geoelektrik-Arm fehlen. Magnetik derselben URL: declined_sources.φ:2176 — Riss, per Datensatz getrennt.
 
 blocked account
 url https://supermag.jhuapl.edu/services/data-api.php
