@@ -3,7 +3,7 @@
   session: Mountain-Folge 282
   class: handover
   date: 2026-10-09
-  sha256: 908e05137ec5911c29f97c8953cd058149481e86ae739fa01c49ea432e9afc7a
+  sha256: ff1910ebf0917c9e0f944cf8708c971c789cac5c1d95d73ce99adab509b56948
   status: live
 -->
 # Handover — Mountain-Folge 282 (2026-10-09)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 Mycelium-273, gemessen 2026-10-09T07:51Z). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge281.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.0942 · cap 0.50 — Grund: line-only, kein pro/max, keine Sub-Agenten (gemessen `session_burn` 2026-10-09, Session Mountain-282)
+## Burn: open 0.0000 · close 0.1377 · cap 0.50 — Grund: line + Taucher (4 `general`-Recherche, 1 `grind-flash` terms-Sweep), kein pro/max (gemessen `session_burn` 2026-10-09, Session Mountain-282)
 
 ## Operator-Wort-Register
 
@@ -29,19 +29,19 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Route-Admissionen — Liveness gemessen; Wind-SWE gebaut; IMPC = Login-Wall
+### Route-Admissionen — alle lebenden Routen registriert; zwei Landing-/Fehlrouten eingetragen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium (Manifestation)
 - **Trigger:** je Route der Arm/`refused`-Befund
-- **Lage:** (gemessen 2026-10-09, gefaltet future-204/205) **200:** CDAWeb HAPI `WI_H0_SWE` · `THG_L2_MAG_ABK` · DLR-IMPC ROTI (`sources.φ`, live) · Zenodo `15316905` · Zenodo `4444068` · `prop.kc2g.com/api/stations.json` · `superdarn.usask.ca/convection-maps` · `vizier.cds.unistra.fr/…/J/A+A/633/A99/members` · `datalab.noirlab.edu/tap/sync`. **HTML-Index (kein File):** `space.fmi.fi/image/` (200, 6599 B) → echte Keogramm-Datei-URL+Format offen. **Login-Wall:** `data.impc.dlr.de` Root + `/tec/` = SSO-Login-Seite. **400:** `geomag.usgs.gov/ws/data/` (bare). Wind-SWE-Zeile gebaut (Rat F1). **DMSP SSUSI** lebende Route = CDAWeb-Spiegel. **EMTF** DataCite-DOI `10.17611/DP/EMTF/USARRAY/TA` live (206).
-- **Blockade:** per-Route-Verdikt (`sources.φ`-Zeile/Arm oder `refused`/`pending account` mit Trigger).
-- **Braucht:** je Route `archive_search --verdict`/`--sniff` gegen `phi/sources.φ` prüfen, Arm/`ttl` setzen oder `refused`/`pending account` registrieren; Mycelium manifestiert nach Zulassung.
+- **Lage:** (gemessen 2026-10-09, gefaltet future-204/205 + Taucher-Lauf) **Alle 11 geprüften Routen sind gemessen und registriert:** CDAWeb HAPI `WI_H0_SWE` (`sources.φ:694`), `THG_L2_MAG_ABK` (`:4113`), DLR-IMPC ROTI (Auth-Route `:1652`, Arm steht), Zenodo `15316905` (**declined** `declined_sources.φ:5683`, kein Kraft-Kanal), Zenodo `4444068` (Eintrag → `blocked parser-def gap csv-gzip`), `prop.kc2g.com` (`:1003`), `vizier…J/A+A/633/A99` (`:19998`), `datalab.noirlab.edu` (`:20192`), EMTF (`:10221`, Arm steht). **Neu eingetragen:** `superdarn.usask.ca/convection-maps` = HTML-Landing ohne Daten-Endpoint (Konvektion via `superdarn_cpcp`) → `pending`; USGS E-Feld → NOAA SWPC rgeojson (`blocked parser-def gap geojson-efield`), USGS-`openapi.json` trägt kein `geoelectric`. Wind-SWE gebaut. **DMSP SSUSI** = CDAWeb-Spiegel.
+- **Blockade:** keiner für die registrierten Routen.
+- **Braucht:** nichts Neues; Mycelium manifestiert nach Zulassung.
 
 ### GIC-Faden §A–G — neue Arme registriert; Rest-Zeilen offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium
 - **Trigger:** `sources.φ`-Zeilen je entschiedenem Arm gebaut
-- **Lage:** (gemessen 2026-10-09, gefaltet river-141) SSUSI/CPCP/EMTF registriert; INTERMAGNET-HAPI-Form im Compiler; ROTI-Compiler gebaut (`bd0e34fcf`). GHSL/covariate-carrier geschlossen (`sources.φ:794-800`). LEOS auf `pending` Auth-Route. **SuperMAG-Index-Arm diese Session gebaut** (eigenes `supermag_index`-Format, s. u.). Offen: OMTI/Abisko (Bild-Arm, File-URL), Substorm-Onsets (`account`), USGS E-Feld (Query-Endpunkt+Arm), Kellerman (Knoten-Koordinaten+Port).
-- **Blockade:** Zeilen-/Arm-Bau für die verbleibenden Quellen.
-- **Braucht:** Arme/Zeilen bauen oder `refused`/`quantity`/`blocked account` registrieren.
+- **Lage:** (gemessen 2026-10-09, gefaltet river-141 + Taucher-Lauf) SSUSI/CPCP/EMTF registriert; ROTI-Compiler gebaut (`bd0e34fcf`); GHSL/covariate-carrier geschlossen (`sources.φ:794-800`); **SuperMAG-Index-Arm gebaut** (eigenes `supermag_index`-Format). **OMTI/Abisko:** Riss geschlossen — `space.fmi.fi/image/` = IMAGE-Magnetometer (`fmi_image_mag`), die Keogramme liegen unter `space.fmi.fi/MIRACLE/ASC/ASC_keograms/<STA>.YYMM/<STA>_YYMMDD.jpg` (ABK `206 image/jpeg`); URL in `blocked_sources.φ` korrigiert; offen bleibt der **Bild-Arm/Vision** (kein Raster-/JPEG-Arm in `src/archivar`). **Kellerman:** Koordinaten/Port per Design absent (anonymisiert) → `descoped`; neuer Gap `csv-gzip` (.csv.gz liest kein Arm). **USGS E-Feld:** USGS trägt keins → NOAA SWPC rgeojson, neuer Gap `geojson-efield`. **Substorm-Onsets:** `account`-Route, ungemessen.
+- **Blockade:** Arm-Bau (Bild-Arm, `csv`-Gunzip, GeoJSON-E-Feld) + Substorm-Account.
+- **Braucht:** Bild-/Vision-Arm für Keogramme; `csv`-Gunzip-Schritt; GeoJSON-E-Feld-Reader; Substorm-Quelle messen.
 
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
@@ -60,21 +60,21 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (SPDX); Rest-Sweep offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09 via `cargo run -p omegaflow-register --bin license_census`) **blocks 2698 · terms 1257 · distinct 11 · no-terms 1165 · pending 1441 · 0 violation(s)**. **1086 `terms PD <url>`-Zeilen geschrieben** (NASA/JPL/PDS/NOAA; +1 Block `supermag_index` diese Session). Vokabular (geschlossen, `license_census.rs:9-22`): `unbestimmt`, `ohne-lizenz`; **`NOASSERTION`/`NONE` sind NICHT im Vokabular**.
-- **Blockade:** die restlichen 1165 `no-terms`-Blöcke sind ein Sweep; 92 Blöcke ohne `format`/`origin` (kein Anker) + 81 Mehrfach-Host-Blöcke (Riss) offen.
-- **Braucht:** Rest-`terms` schreiben (Anchor fehlt für 92; 81 Mehrfach-Host-Blöcke per Hand auflösen); `license_census`/`ci-gate` nachführen.
+- **Lage:** (gemessen 2026-10-09 via `cargo run -p omegaflow-register --bin license_census`) **blocks 2698 · terms 1348 · distinct 11 · no-terms 1101 · pending 1350 · 0 violation(s)**. Diese Session **+91 `terms`-Zeilen** (NASA/IPAC PD: cdaweb 11 · exoplanetarchive 3 · ned 4 · exofop 4 · heasarc 2 · ssd-api 1; ESO CC-BY-4.0 4; CDS/VizieR-Spiegel `unbestimmt` 62). Vokabular (geschlossen, `license_census.rs:9-22`): `PD`, `CC-BY-4.0`, `CC0-1.0`, `unbestimmt`, `ohne-lizenz`; **`NOASSERTION`/`NONE` sind NICHT im Vokabular**.
+- **Blockade:** die restlichen `no-terms`-Blöcke sind heterogen; **ESA/ESAC** (archives/gea/isla/eas/…esac.esa.int, psa.esa.int) tragen **CC BY-NC 3.0 IGO** — nicht im geschlossenen Vokabular (Vokabel-Erweiterung nötig); `zenodo.org` per Record (Record-API); `datalab.noirlab.edu`/`dc.g-vo.org` ohne Daten-Lizenzaussage (`pending`); Anker fehlt weiter für Blöcke ohne `format`/`origin`.
+- **Braucht:** Vokabel-Erweiterung für `CC-BY-NC-3.0-IGO` (Rat/Wort) ODER ESA `pending` belassen; zenodo-Terms per Record (`archive_search --zenodo <id>`); Rest-Sweep je Anker; `license_census`/`ci-gate` nachführen.
 
 ### `blocked_sources.φ`-Aufräumen — Klassen-Träger (`gap`-Token) + TUH/NSRR-Riss
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
 - **Trigger:** Bau je Klassen-Träger / TUH-NSRR-Verdikt
-- **Lage:** (gemessen 2026-10-09) **SuperMAG GIC-Stufe-2-Arm gebaut** (eigenes `supermag_index`-Format in `sources.φ` + `src/archivar/supermag_index.rs` + Compiler; der `blocked_sources.φ`-Eintrag entfernt). **Offen: 10 `gap`-Träger** `bc-mpo-more · tracking-doppler · mariner-rst · viking-tracking · juno-efb · dmap-map-grid · kaguya-lrs · themis-tail · mms-magnetosheath · aurora-keogram`. **future-205-Riss:** TUH `blocked_sources.φ:87` + NSRR `:92` — Etikett `descoped→blocked account` (UI-Runde 2026-10-08): GLM/Gemini/DeepSeek: Etikett falsch; Claude/Duck/Qwen: nicht ohne Gegenmessung entfernen; Session-Verdikt: kein Löschen, Etikett korrigieren. TUH: Konto-Form `wartend.φ:36/:37`; NSRR: Konto bestätigt (`mail_ledger.φ:361/:362`), HIPAA-Training-Gate.
-- **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile); TUH/NSRR: Register-Riss.
-- **Braucht:** je Träger Arm/Workflow/`sources.φ`-Zeile oder Disposition; TUH/NSRR: Mountain-Verdikt (`descoped` → `dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
+- **Lage:** (gemessen 2026-10-09 + Taucher-Lauf) **SuperMAG GIC-Stufe-2-Arm gebaut** (Eintrag entfernt). **Kellerman** → `blocked parser-def gap csv-gzip` (lat/lon/Port per Design absent, descoped; echt: `.csv.gz`). **Aurora-Keogramm**-URL auf `space.fmi.fi/MIRACLE/ASC/ASC_keograms/` korrigiert (Riss zum IMAGE-Magnetometer geschlossen). **USGS E-Feld** → NOAA SWPC rgeojson (`gap geojson-efield`). **SuperDARN convection-maps** → `pending` (Landing). **Verbleibende `gap`-Träger mit gemessenem nächstem Schritt:** `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`), `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen), `mariner-rst` (7-Track-Parser fehlt; SDDPT-Messung), `dmap-map-grid` (DMap-Kern aus `superdarn_fitacf_compiler.rs` nach `src/archivar/` heben, neues `dmap`-Modul; Globus-Antwort `wartend.φ:8`), `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat` messen → Block+Workflow), `themis-tail` (Playwright: konkrete Datei+Format messen), `mms-magnetosheath` (Arm fehlt). **future-205-Riss:** TUH `blocked_sources.φ:87` + NSRR `:92` — Etikett `descoped→blocked account` (UI-Runde 2026-10-08), Session-Verdikt: kein Löschen, Etikett korrigieren. TUH: Konto-Form `wartend.φ:36/:37`; NSRR: Konto bestätigt (`mail_ledger.φ:361/:362`), HIPAA-Training-Gate.
+- **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile) oder eine wartende Antwort; TUH/NSRR: Register-Riss.
+- **Braucht:** `phi/blocked_sources.φ::gap:csv-gzip ×1` · `phi/blocked_sources.φ::gap:geojson-efield ×1` · `phi/blocked_sources.φ::gap:aurora-keogram ×1` (Klassen-Träger, Bau je Arm) · je Wartendem die Antwort; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
 
 ### `register_sort` — 4 ttl- + 1 url-Ordnungsverletzung (vorbestehend, gemessen)
 - **Status:** eigen | **Bindung:** eigen (Register-Reihenfolge)
 - **Trigger:** `register_sort`-Lauf ohne neue Verletzung
-- **Lage:** (gemessen 2026-10-09 via `cargo run -p omegaflow-utils --bin register_sort`) `phi/sources.φ` trägt **4 ttl-order** (neracoos A01_met ttl 3600 nach 33554432 · amda rpw_efield 3600 nach 31536000 · impc_roti 3600 nach 86400 · THG_L2_MAG_ABK 3600 nach 86400) + **1 url-order** (vizier `III/283` nach `J/A+A/633/A99`) Verletzung über 2696 Blöcke. Die neue `supermag_index.bin`-Zeile fügt **keine** hinzu.
+- **Lage:** (gemessen 2026-10-09 via `cargo run -p omegaflow-utils --bin register_sort`) `phi/sources.φ` trägt **4 ttl-order** (neracoos A01_met ttl 3600 nach 33554432 · amda rpw_efield 3600 nach 31536000 · impc_roti 3600 nach 86400 · THG_L2_MAG_ABK 3600 nach 86400) + **1 url-order** (vizier `III/283` nach `J/A+A/633/A99`) Verletzung über 2698 Blöcke. Die neue `supermag_index.bin`-Zeile fügt **keine** hinzu.
 - **Blockade:** ein `register_sort --write` würde fremde Blöcke mitumsortieren (nur-eigene-Hunks); die vier ttl-Zeilen liegen in fremden Quellen-Blöcken.
 - **Braucht:** je Verletzung den Block an seine ttl-/url-Position bewegen (oder begründen, warum die Reihe bewusst abweicht); danach `cargo run -p omegaflow-utils --bin register_sort` nachprüfen.
 
@@ -85,7 +85,7 @@ Origin: mountain-folge282.
 - **SuperMAG-Index-Träger-Entscheid (dein Block aus 273):** Mountain-Verdikt = **eigenes `supermag_index`-Format** (nicht COMP_SMG 7-9). Begründung: der Index ist global (SME/SML/SMU, kein Station-Anker) — als COMP-Codes im per-Station-`supermag_1m`-Kontrakt bräuchte er eine fabrizierte Station-Koordinate. Gebaut: `src/archivar/supermag_index.rs` (magic `SMIX`, COMP_SME/SML/SMU, JSON-Parser auf `OK\n[{tval,SME,SML,SMU}]`), Wiring in `extract.rs`/`main_flow.rs`/`mod.rs`, Compiler `tools/harvest/src/bin/supermag_index_compiler.rs`, Quelle `phi/sources.φ` (Netloc `supermag.jhuapl.edu`, `ttl 604800`, `quantity … ^index nt 60`). **Braucht:** Manifestation via den generischen Manifestator (der Compiler läuft mit `--start/--stop`); prüfe, dass die Workflow-Bin-Liste den neuen Compiler trägt.
 - **SSUSI-Aurora-CDN-Asset (deine 104-B-Meldung aus 273):** gemessen 2026-10-09 via `curl` → 104 B = `SSUI`-Magic, Count `u32` = 4, `4 × 24 B + 8 B` Header. Der Bin ist strukturell gültig (4 gemessene Hemisphären-Power-Records), kein Kompilat-Defekt.
 - **`ci-gate` Per-SHA-Verdikt:** der dauerhafte Verdikt ist die totale Funktion `SHA → {grün,rot,pending}`, Default `pending`, als Ergebnis-Register — **Braucht: Operator/Rat-Wort für den Ort** (getracktes Register vs. lokaler Zustands-Speicher), dann baut Mountain Register + Abfrage.
-- **terms-Ernte:** 1086 `terms PD <url>`-Zeilen geschrieben; `license_census` terms 1257 · no-terms 1163; Rest-Sweep folgt (Mountain). Mycelium kann `LICENSE`/`README` aus den terms erzeugen.
+- **terms-Ernte:** diese Session **+91** `terms`-Zeilen (NASA/IPAC PD, ESO CC-BY-4.0, CDS/VizieR `unbestimmt`); `license_census` **terms 1348 · no-terms 1101 · 0 violation**. Mycelium kann `LICENSE`/`README` aus den terms erzeugen. Offen: ESA/ESAC (CC BY-NC 3.0 IGO, Vokabel-Erweiterung), zenodo per Record.
 - **Route-Admissionen** manifestieren, sobald Mountain die Zeilen/Arme baut.
 
 ## LOCK
