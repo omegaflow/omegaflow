@@ -177,6 +177,7 @@ pub mod range;
 pub mod regrid;
 pub mod rinex;
 pub mod rixs;
+pub mod root;
 pub mod rpw;
 pub mod s2event;
 pub mod session;
