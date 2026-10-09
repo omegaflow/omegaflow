@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 33b730e9c6bbd81c64570cce63bf030511fd51b8403a2317321e78600a6fc32e
+  sha256: 4bbf985b1ac72f80a40e1f64a0c57b27221bf396b8fb332f58e5d891f4995367
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -79,18 +79,21 @@ nicht kopiert.
 - **Braucht:** weitere Kanal-Geometrien, wo die Physik sie trägt — Fluid/Akustik ohne Hohlraum und
   Maxwell ohne Kavität bleiben `unspecified` (0 ehrt die offene Geometrie, kein Fabrikat).
 
-### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-144) Deklarationsquelle steht
-  (`DeclaredBody.receiver_aperture` + `ReceiverAperture::parse_declaration`/`resolve`,
-  `types.rs:124/307-370`; CLI `#aperture=…`). Mountain hat die QueryCenter-Vollform gebaut (`0bc382e58`):
-  `QueryCenter` (`types.rs:478`), `SourceConfig.fanout_center` (`:514`), Parse-Arm (`parse.rs:1789`),
-  `channels.rs:121-170` mit `refusal_ledger`. Record-Ebene: der Contract lebt als **Fanout-Arm**;
-  ein eigener per-Record-Receiver-Weltlinien-Arm existiert nicht (`sgrep worldline src/archivar`
-  = nur `motion.rs:162`, `s2.rs`) — benannter `pending`-Riss.
-- **Blockade:** keine.
-- **Braucht:** die per-Kraft-Wert-Ableitung benennen (Vibration/Serial/HID `pending`).
+### Empfänger-Apertur — Deklaration statt Geräte-Hardcode
+- **Status:** eigen | **Bindung:** eigen · mountain
+- **Trigger:** Mountain baut einen eigenen per-Record-Receiver-Weltlinien-Arm (heute trägt der **Fanout-Arm** den Contract).
+- **Lage:** (gemessen 2026-10-09, river-160) Die Apertur ist eine **Deklaration**, kein Geräte-Zweig:
+  `#aperture=<force>:<class>:<length>,…` → `ReceiverAperture::parse_declaration` (`types.rs:343`),
+  generisch über jede (force×class)-Kombination (18 Slots); jedes Feld deklariert seine Klasse per
+  `aperture:<class>` in `phi/sources.φ` (`:1445`,`:8595`) → `FieldConfig.aperture`; `resolve(fc.force,
+  fc.aperture)` speist `EnclosureField.receiver_aperture` als Query-`extent` (`fetch.rs:512/533`).
+  Kein Geräte-Hardcode: `archive_search garmin --root src` findet nur das FIT-Fixture, BLE/Serial
+  (`OMEGAFLOW_BLE_HR`) speisen den Beat, nicht die Apertur. Test
+  `receiver_aperture_declaration_parses_measured_lengths`. Mountain: `QueryCenter` (`types.rs:478`),
+  `SourceConfig.fanout_center` (`:514`), Parse-Arm (`parse.rs:1789`), `channels.rs:121-170` mit `refusal_ledger`.
+- **Blockade:** der per-Record-Receiver-Weltlinien-Arm existiert nicht (`sgrep worldline src/archivar` = nur `motion.rs:162`, `s2.rs`).
+- **Braucht:** nichts Gerätespezifisches — die Länge steht in der Deklaration, die Klasse pro Feld;
+  ein neues Gerät reicht seine Kanalwerte durch dieselbe Deklaration.
 
 ### Membran ist kein Renderer — Body-Anker entfernt; P3.1 entblockt v_k
 - **Status:** eigen | **Bindung:** eigen
