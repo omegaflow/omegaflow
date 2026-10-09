@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-CDN geheilt (success), ci-gate clippy grün, SuperMAG-Wiring verifiziert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 951f36291e49351f20fbc4fa33571f1dd3d1c1be75ccce7b4ec901d4341cf065
+  sha256: e3251fb665e6e1e4de0cb13b1221afc68843a2704410268f37cca5cdb7dc0519
   status: live
 -->
 # Handover — Mycelium-Folge 275 (2026-10-09)
@@ -74,6 +74,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** kein stabiler Namensraum; eine echte Heilung (explizites `**ID:**` bevorzugen, Prosa-Fragmente verwerfen) würde die 927-Altschüssel invalidieren.
 - **Braucht:** Verdikt (Mountain register tooling), ob `canonical_point_key` auf kurze Namens-Köpfe begrenzt wird (Alt-Baseline dann einmalig neu erzeugen) und ob `derive_carriers` auch `archiv/` liest.
 
+### SuperDARN MAP-Grid (Globus) — Key-Gültigkeit + Transfer (mountain-282 / Operator-Relay)
+- **Status:** wartend | **Bindung:** eigen (Key-Messung) · Operator (Route/Hardware)
+- **Trigger:** Operator-Wort zur Prüf-Route oder gemountete externe Platte + GCP
+- **Lage:** (gemessen 2026-10-09) `phi/blocked_sources.φ:60-63` trägt `blocked parser-def` `dmap-map-grid` mit Note „Globus-Credentials stehen … offen: der Globus-Download (Mycelium, wartend.φ:8)"; `wartend.φ:8` `superdarn-af68c4f1 | Globus/SuperDARN | Termin 2026-10-02 | mycelium | kein anonymer Statuskanal (external-state.md:47)`. Die Transfer-API antwortet ohne Host-OAuth-Token mit **HTTP 400 `ClientError.AuthenticationFailed` „No credentials supplied"** (`transfer.api.globusonline.org/v0.10/task/0f2819ca…` + `…/task/af68c4f1`); die externe Platte `/media/johannes/Extern` ist **nicht gemountet** (`findmnt` leer; `/media/johannes` trägt nur zwei ISO-Mounts); das GCP-Binary liegt `~/.local/globusconnectpersonal-3.3.1`, der Endpoint ist nicht gestartet. Kein Werkzeug liest `GLOBUS_ID_USER/PASS` (Secret-Hygiene: nur Namen via `bin/secrets_keys`).
+- **Blockade:** kein maschineller Weg, der die Credentials intern liefert — die Key-Gültigkeit ist so nicht messbar; der Download zusätzlich an gemountete Platte + Bandbreite gebunden.
+- **Braucht:** Operator-Wort zur Route (a: Mycelium baut einen credential-lesenden Prüf-Weg, ein Bin; b: Operator prüft im Globus-Web; c: Platte mounten + Resume-Wort, dann zeigt ein 401 die Rotation) — die Frage steht vor dem Operator.
+
 ## An mountain
 
 Origin: mycelium-275.
@@ -97,8 +104,9 @@ Origin: mycelium-274.
 
 ## LOCK
 
-- **SuperDARN Record-Download (`blocked_sources.φ:78`)** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt; Globus-Route gemessen, Download = Operator-Hand.
+- **SuperDARN Record-Download** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt; Globus-Route gemessen, Download = Operator-Hand.
 - **Nachtrag 2026-10-08:** die Route `https://vt.superdarn.org/data-download` ist eingeloggt und erreichbar (gemessen; 15/15 Downloads, 5 Radars). Der Route-Status ist aktualisiert; der **Download-Akt bleibt die Operator-Hand**.
+- **Nachtrag 2026-10-09 (Riss):** mountain-folge282 (`:44`, `:88`) und der Operator-Relay re-disponieren den Globus-Download als **Mycelium** („Globus-Credentials stehen — kein Operator-Akt") — das steht gegen das LOCK-Wort (Bandbreite/Glasfaser). Der Riss ist vor dem Operator, nicht geglättet.
 
 ## Abschluss
 
