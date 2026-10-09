@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-CDN geheilt (success), ci-gate clippy grün, SuperMAG-Wiring verifiziert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 65e69b1e3ac58ecbd045cb80ab585e31c7bf4bed8101f615ba7e4f1896e21fae
+  sha256: f1c4b1638ea64eb3bcdb91a1d3c10e05245513e50562ffc424bee48ed132805e
   status: live
 -->
 # Handover — Mycelium-Folge 275 (2026-10-09)
@@ -28,6 +28,8 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „consensus/perplexity als descoped streichen" | 2026-10-09 | Quelle: mycelium-272. **Descoped-Befund:** die zwei Remote-MCP-Einträge (`mcp.consensus.app`, `api.perplexity.ai`) aus `opencode.json` entfernt; der `archive_search`-Arm trägt die Route.
 - „leider warst du freezed" | 2026-10-09 | Quelle: mycelium-274.
 - „kannst du das nicht wissenschaft, den rat die UI und openweight stimmen fragen?" | 2026-10-09 | Quelle: mycelium-274 (Verdikt zum Per-SHA-Ort **B** lokal; in `668c8ada4` gebaut, `2f93f37ac` verdrahtet).
+- „ja fahre bitte den browser um den token abzuholen" | 2026-10-09 | Quelle: mycelium-275 (Globus-Browser-Login; Transfer-API mit der Session HTTP 200, Task `0f2819ca…` FAILED `EXPIRED`).
+- „warte bis zur glasfase" | 2026-10-09 | Quelle: mycelium-275 (SuperDARN MAP Re-Submit vertagt bis Glasfaser — **LOCK**).
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge274.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-274.
 
 ## Offen — eigen
@@ -74,15 +76,6 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** kein stabiler Namensraum; eine echte Heilung (explizites `**ID:**` bevorzugen, Prosa-Fragmente verwerfen) würde die 927-Altschüssel invalidieren.
 - **Braucht:** Verdikt (Mountain register tooling), ob `canonical_point_key` auf kurze Namens-Köpfe begrenzt wird (Alt-Baseline dann einmalig neu erzeugen) und ob `derive_carriers` auch `archiv/` liest.
 
-### SuperDARN MAP-Grid (Globus) — Key-Gültigkeit + Transfer (mountain-282 / Operator-Relay)
-- **Status:** wartend | **Bindung:** eigen (Key-Messung) · Operator (Route/Hardware)
-- **Trigger:** Operator-Wort zur Prüf-Route oder gemountete externe Platte + GCP
-- **Lage:** (gemessen 2026-10-09) `phi/blocked_sources.φ:60-63` trägt `blocked parser-def` `dmap-map-grid` mit Note „Globus-Credentials stehen … offen: der Globus-Download (Mycelium, wartend.φ:8)"; `wartend.φ:8` `superdarn-af68c4f1 | Globus/SuperDARN | Termin 2026-10-02 | mycelium | kein anonymer Statuskanal (external-state.md:47)`. Die Transfer-API antwortet ohne Bearer mit **HTTP 400 `ClientError.AuthenticationFailed` „No credentials supplied"** und mit totem Bearer mit **HTTP 401 `AuthenticationFailed` „Token is not active"** (`transfer.api.globusonline.org/v0.10/task/af68c4f1`); die externe Platte `/media/johannes/Extern` ist **nicht gemountet** (`findmnt` leer); GCP liegt `~/.local/globusconnectpersonal-3.3.1`, kein Token-Cache in `~/.globusonline/lta/`. **(Korrektur der Annahme, gemessen via Recherche 2026-10-09):** `GLOBUS_ID_USER/PASS` sind **nicht** kopf-los prüfbar — Globus Auths Password-Grant ist gesperrt: `POST https://auth.globus.org/v2/oauth2/token` `grant_type=password` mit der GCP-Client-ID → **HTTP 401 `invalid_client`** (routes-seitig gesperrt, **kein** `invalid_grant`). Ein 401 bei diesem Weg ist also **nicht** die Key-Rotation. Kein Haus-Tool liest `GLOBUS_ID_USER/PASS` (Secret-Hygiene: nur Namen via `bin/secrets_keys`).
-- **Blockade:** die Credential-Paar-Prüfung ist kopf-los nicht möglich; Globus verlangt einen einmaligen Browser-OAuth (`authorization_code`+PKCE, `offline_access`) für einen Refresh-Token — danach ist der Task-Status kopf-los messbar. Der Download zusätzlich an gemountete Platte + Bandbreite gebunden.
-- **Ergebnis des Browser-Logins (2026-10-09, Operator-Wort „ja fahre den Browser"):** der Globus-Browser ist angemeldet, die Transfer-API antwortet mit der Session **HTTP 200**. Task `0f2819ca-bb2f-11f1-a6ad-0effcb3df825`: **FAILED** `fatal_error EXPIRED „deadline expired"`, 1006/55 690 Dateien, 2,44 GB von 291 GB, `completion_time 2026-10-01T11:51:02Z` (deadline 2026-10-01T11:50:32Z). Die Kennung `af68c4f1` ist **stale** (Kurz-ID, keine UUID → 400). Der Download ist also **nicht „Key kaputt"** — der Lauf ist schlicht abgelaufen. `wartend.φ:8` trägt jetzt `superdarn-globus-map`.
-- **Blockade:** kein kopf-loser Credential-Prüfweg (Password-Grant gesperrt, kein Refresh-Token); Download zusätzlich an gemountete Platte + Bandbreite gebunden.
-- **Braucht:** externe Platte `/media/johannes/Extern` mounten + neuen Transfer submitten (291 GB, Bandbreite) — der alte Task ist tot; ein Re-Submit läuft über den Globus File Manager (Browser-Session) oder GCP.
-
 ## An mountain
 
 Origin: mycelium-275.
@@ -108,7 +101,7 @@ Origin: mycelium-274.
 
 - **SuperDARN Record-Download** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt; Globus-Route gemessen, Download = Operator-Hand.
 - **Nachtrag 2026-10-08:** die Route `https://vt.superdarn.org/data-download` ist eingeloggt und erreichbar (gemessen; 15/15 Downloads, 5 Radars). Der Route-Status ist aktualisiert; der **Download-Akt bleibt die Operator-Hand**.
-- **Nachtrag 2026-10-09 (Riss):** mountain-folge282 (`:44`, `:88`) und der Operator-Relay re-disponieren den Globus-Download als **Mycelium** („Globus-Credentials stehen — kein Operator-Akt") — das steht gegen das LOCK-Wort (Bandbreite/Glasfaser). Der Riss ist vor dem Operator, nicht geglättet.
+- **Nachtrag 2026-10-09 (Riss geschlossen):** mountain-folge282 (`:44`, `:88`) hatte den Download Mycelium zugeschrieben; das Operator-Wort „warte bis zur glasfase" schließt den Riss — der Re-Submit bleibt bis Glasfaser vertagt (**LOCK**). **Gemessen (2026-10-09, Operator-Browser-Session):** Konto/Token valid (Transfer-API **HTTP 200**); Task `0f2819ca-bb2f-11f1-a6ad-0effcb3df825` **FAILED** `EXPIRED „deadline expired"`, 1006/55 690 F, 2,44 GB von 291 GB, `completion 2026-10-01T11:51:02Z`; die alte Kennung `af68c4f1` ist stale (Kurz-ID, keine UUID). `wartend.φ:8` → `superdarn-globus-map`. **Braucht (bei Glasfaser):** externe Platte mounten + neuen Transfer submitten.
 
 ## Abschluss
 
