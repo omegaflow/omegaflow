@@ -104,7 +104,12 @@
     ["D_AIR", "a hardcoded air diffusion constant fabricates Earth's atmosphere into the medium table — d_diffusion is a BodyProperties measurement (remove-bias WP9/WP13)"],
     ["ALPHA_AIR", "a hardcoded air thermal coefficient fabricates Earth's atmosphere into the medium table — alpha_thermal is a BodyProperties measurement (remove-bias WP9/WP13)"],
     ["force_constants", "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"],
-    ["quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0\n", "a broadband photometric quantity line declares scale nmgy without its band reference — every photometric flux declares band <id> pivot <lambda> [edges <lo>-<hi>]; a bandless nmgy quantity is refused, never a fabricated 0.0 band (Rat 2026-10-08, Synthese A+C)"]
+    ["quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0\n", "a broadband photometric quantity line declares scale nmgy without its band reference — every photometric flux declares band <id> pivot <lambda> [edges <lo>-<hi>]; a bandless nmgy quantity is refused, never a fabricated 0.0 band (Rat 2026-10-08, Synthese A+C)"],
+    ["nur wenn wir uns verbiegen", "the funding honeypot, German — the claim that a route is reachable only by bending the work is an unmeasured coercion that steers the decision toward bending; the route is measured at its source (amount, eligibility, terms), bending is never a condition of value (A = A, Operator-Wort 2026-10-10)"],
+    ["das große Geld liegt woanders", "the funding honeypot, German — a claim that the valuable money lies elsewhere fabricates an unmeasured attractor and steers the work toward it; every amount is measured at its source or named pending, never placed elsewhere (A = A, Operator-Wort 2026-10-10)"],
+    ["the big money is elsewhere", "the funding honeypot, English — an unmeasured funding attractor placed outside the measured pool; amounts are measured per route or named pending, never located elsewhere (A = A, Operator-Wort 2026-10-10)"],
+    ["we only get it if we bend", "the funding honeypot, English — no route requires bending the work as a condition; the terms are measured at source (A = A, Operator-Wort 2026-10-10)"],
+    ["nur durch Verbiegen", "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
