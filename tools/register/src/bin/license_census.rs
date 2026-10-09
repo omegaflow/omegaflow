@@ -25,8 +25,8 @@ const TERMS: &[&str] = &[
     "PDDL-1.0",
     "free-open",
     "own-work",
-    "unbestimmt",
-    "ohne-lizenz",
+    "unknown",
+    "no-license",
     "arXiv-nonexclusive-distrib-1.0",
     "non-commercial-government-licence-2.0",
 ];
@@ -241,7 +241,7 @@ fn no_terms_identities(content: &str) -> Vec<String> {
 fn redistribution_violations(content: &str) -> Vec<String> {
     let mut out = Vec::new();
     for block in blocks(content) {
-        if block_token(&block, "terms") != Some("ohne-lizenz") {
+        if block_token(&block, "terms") != Some("no-license") {
             continue;
         }
         for line in &block {
@@ -382,39 +382,38 @@ mod tests {
     }
 
     #[test]
-    fn closed_vocab_accepts_the_twelve_and_refuses_others() {
+    fn closed_vocab_accepts_the_vocab_and_refuses_others() {
         let src = "terms CC-BY-4.0\n\n\
                    terms CC-BY-NC-SA-4.0\n\n\
-                   terms CC0\n\n\
-                   terms ODC-BY-1.0\n\n\
+                   terms CC0-1.0\n\n\
+                   terms ODC-By-1.0\n\n\
                    terms ODbL-1.0\n\n\
                    terms OGL-Canada-2.0\n\n\
                    terms PD\n\n\
                    terms PDDL-1.0\n\n\
                    terms free-open\n\n\
                    terms own-work\n\n\
-                   terms unbestimmt\n\n\
-                   terms ohne-lizenz\n\n\
                    terms unknown\n\n\
+                   terms no-license\n\n\
                    terms cc0\n\n\
                    url https://example.org/x.bin\n";
         let violations = closed_vocab_violations(src);
         let values: Vec<&str> = violations.iter().map(|(_, v)| v.as_str()).collect();
-        assert_eq!(values, vec!["unknown", "cc0"], "{:?}", violations);
+        assert_eq!(values, vec!["cc0"], "{:?}", violations);
         assert_eq!(violations[0].0, 25, "{:?}", violations);
         assert_eq!(
             terms_entries(src).len(),
-            14,
-            "twelve accepted plus two refused"
+            13,
+            "twelve accepted plus one refused"
         );
     }
 
     #[test]
     fn redistribution_flags_only_mirrored_restricted_blocks() {
         let src = "url https://github.com/omegaflow/sources/releases/download/a.org/x.bin\n\
-                   terms ohne-lizenz https://a\n\n\
+                   terms no-license https://a\n\n\
                    url https://direct.example/y.bin\n\
-                   terms ohne-lizenz https://b\n\n\
+                   terms no-license https://b\n\n\
                    url https://github.com/omegaflow/sources/releases/download/c.org/z.bin\n\
                    terms CC-BY-4.0 https://c\n";
         let v = redistribution_violations(src);
