@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. pages-deploy membrane_bodies-Staging entfernt (river-143); mountain-283 + river-143 gefaltet; `ausstehend`-Queue (§A–E) in 11 Agenten abgearbeitet; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 79237a3a267e730285b94123ea5d8cf8058f46b60386b8e054995081d2c3fd7a
+  sha256: e7dcd243d2491ab197aa4d38f47f40df529084dd5b4cbce8b8031ab23476d1d2
   status: live
 -->
 # Handover — Mycelium-Folge 276 (2026-10-09)
@@ -31,6 +31,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „ja fahre bitte den browser um den token abzuholen" | 2026-10-09 | Quelle: mycelium-275 (Globus-Browser-Login; Transfer-API mit der Session HTTP 200, Task `0f2819ca…` FAILED `EXPIRED`).
 - „warte bis zur glasfase" | 2026-10-09 | Quelle: mycelium-275 (SuperDARN MAP Re-Submit vertagt bis Glasfaser — **LOCK**).
 - „dann bitte endlich descoped wir haben darüber schon bestimmt 3mal gesprochen" | 2026-10-09 | Quelle: mycelium-276. **Befund:** NSRR (`phi/blocked_sources.φ:90`) `blocked account` → **verschoben nach `phi/declined_sources.φ`** als `decline no-physical-force` (keine Elektroden-Koordinaten → kein Feldwert, Familie TUH `src/archivar/main_flow.rs:3490`; Zugang zusätzlich IRB-gebunden `PMC6188513`). Verdikt-Register ist `declined_sources.φ`, nicht das Blocked-Register (Operator-Wort 2026-10-09: dort nur die Quellen, „die wir wollen und brauchen").
+- „ich dachte da kommen wirklich nur die sources hin die wir wollen und brauchen" | 2026-10-09 | Quelle: mycelium-276. **Konsequenz:** `blocked_sources.φ` trägt nur wanted-but-blocked (`parser-def`/`pending`/`ip-blocked`/`key`); `descoped`/released gehören nicht dorthin — NSRR + TUH nach `declined_sources.φ` (`decline no-physical-force`), `blocked account` geleert.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge274.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-274.
 
 ## Offen — eigen
@@ -98,8 +99,9 @@ Origin: mycelium-276.
 
 - **paper-check-Issue schließen (river-139).** Das GH-Issue „paper gate: a paper carries a named difference" ist bei grünem `paper-check` am HEAD closable: `37846763539` an `93b097510` **success**, `git diff 93b097510..HEAD -- docs/paper docs/blatt` leer. `gh issue close` ist der Maschine verweigert → Operator-Hand.
 - **Orphan-Register (owner future), geklärt (gemessen 2026-10-09):**
-  - `phi/blocked_sources.φ:86` TUH EEG — `blocked account` ist **stale**: Zugang live (SSH-Key/rsync EXIT 0, `wartend.φ:37`, 2026-10-07); Mountain re-verdiktet auf `descoped` (s. `## An mountain`). Ein Träger in Futures (privater) lebender Übergabe ist berichtet, am öffentlichen Baum aber nicht verifizierbar (Taucher-Claim).
-  - `phi/blocked_sources.φ:90` NSRR — **geschlossen** (Operator-Wort 2026-10-09): Eintrag nach `phi/declined_sources.φ` verschoben (`decline no-physical-force`). Kein Operator-Akt, kein Carrier, kein Konto/Training/DUA mehr nötig; Befund im Verdikt-Register.
+  - TUH EEG — **geschlossen** (Operator-Wort 2026-10-09): `blocked account` widerlegt (Zugang live seit 2026-10-07, SSH-Key/rsync EXIT 0, `mail_ledger.φ:245`) → nach `phi/declined_sources.φ` verschoben (`decline no-physical-force`; Elektroden-Doku symbolisch, keine Koordinaten). Kein Carrier nötig.
+  - NSRR — **geschlossen** (Operator-Wort 2026-10-09): `blocked account` → `phi/declined_sources.φ` (`decline no-physical-force`; kein Feldwert, IRB-Gate). Kein Operator-Akt, kein Carrier.
+  - **Beide Orphans damit 0**; `blocked account` ist in `blocked_sources.φ` leer.
 
 ## An mountain
 
@@ -107,7 +109,7 @@ Origin: mycelium-276.
 
 - **Wind SWE/MFI-Route (Riss, `phi/pipeline/ledger.φ:138`):** gemessen 2026-10-09 — `WI_H0_SWE` (`sources.φ:29445`) ist **Elektronen** und am **2001-05-31 eingefroren**; die GIC-Replikation §A braucht Protonen: `WI_K0_SWE` (`Np` #/cc, `V_GSE` km/s, 1994→2026-10-06) + `WI_H2_MFI` (`BGSM`/`BGSE` nT, 1994→2026-09-27). Bitte dein Feld-/Quantity-Verdikt und die `sources.φ`-Zeilen (HAPI-Parameter in Dataset-Reihenfolge — `parameters=Time,Np,V_GSE` sonst `HAPI 1411 Parameter out of order`).
 - **DAS2 Iowa (`:98`) / Substorm-Onset (`:150`):** dein Arm/Verdikt steht noch aus.
-- **Orphan-Verdikte (`phi/blocked_sources.φ`):** (a) `:86` TUH EEG — `blocked account` widerlegt (Zugang live 2026-10-07, SSH-Key/rsync EXIT 0, `wartend.φ:37`); dieselbe Feld-Lage wie NSRR (Elektroden ohne Koordinaten → kein Feldwert) → bitte nach `phi/declined_sources.φ` (`decline no-physical-force`). Der Anker `:138` in `wartend.φ:37` ist ebenso falsch (dort Blinkverse-FRB). (b) `:90` NSRR — **erledigt** durch Operator-Wort 2026-10-09: Mycelium hat den Eintrag nach `declined_sources.φ` verschoben (beide Enden benannt); kein weiterer Akt.
+- **Orphan-Verdikte (`phi/blocked_sources.φ`):** TUH EEG (`:86`) und NSRR (`:90`) sind **erledigt** (Operator-Wort 2026-10-09): beide nach `phi/declined_sources.φ` als `decline no-physical-force` verschoben (beide Enden benannt). `blocked account` ist damit leer. **Rest für dich:** der Anker in `wartend.φ:37` auf `blocked_sources.φ:138` ist stale (dort steht heute ein anderer Eintrag); die Nicht-Feld-Nutzung von TUH bleibt operator-gebunden (`wartend.φ:37`).
 - **JAXA-Registerzitat:** `ledger.φ:120` zitierte `sources.φ:10370` — dort steht kein JAXA-Block (g-vo-Maser-`ttl`); die JAXA-Zeilen sind `sources.φ:10962-10968` + `2286-2292`. Bitte die falsche Zitatstelle prüfen.
 - **ShadowCam-Admission:** `pds.shadowcam.im-ldi.com/derived/` liefert `.cub` (ISIS) + `_cog.tif`, **kein `.fits`**; der vorhandene `pds4-fits`-Arm ist Chang'e-MRM. Braucht eine eigene Admission/`format` + TIFF-Compiler-Route (Mycelium baut auf dein Verdikt).
 
