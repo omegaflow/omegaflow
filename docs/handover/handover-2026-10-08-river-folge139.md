@@ -3,7 +3,7 @@
   session: River-Folge 139
   class: handover
   date: 2026-10-08
-  sha256: 1ff5efe2899bbac90cbedbdbf991e55f3bcefb90e16b438e273ccf5cb2140569
+  sha256: 8c21f6ffd45b8bd08fd88c4c124b5f5b1a9725865af74133bd32428b33a10002
   status: live
 -->
 # Handover — River-Folge 139 (2026-10-08)
@@ -37,6 +37,7 @@ Wort | Datum | Quelle
 „und ich sage nur at sun weil die auf jeden fall strahlen müssen aber es gibt nch viel mehr odszillatoren die die presenze am ssb erreichen" | 2026-10-08 | Operator (Session, River 139) — „at sun" ist nur das Beispiel; der Prüfstein ist die Presence-Hülle am SSB
 „am liebsten würde ich die membran hinschmeissen wann versteht ihr endlich dass wir nicht rendern sondern messen die presence ist ein trommelfell im 4d block" | 2026-10-08 | Operator (Session, River 139) — Ontologie: die Membran misst, sie rendert nicht; die Presence ist ein Trommelfell im 4D-Block
 „… wir machn nichts anderes als immer die gleiche anzaahl punkte zu zeichen mit dem was an den punkten ankommt" | 2026-10-08 | Operator (Session, River 139) — kein Objekt-Render: festes Punktnetz, jeder Punkt trägt das Ankommende
+„kannst du denn eine archeologie machen über alle varianten wie die 'sonne' gerendert wurde (inkl. omegaflow-legacy …) bis zurück zu nebra" | 2026-10-08 | Operator (Session, River 139) — Sonnen-Render-Archäologie über legacy-Branches/Commits bis nebra
 Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `docs/handover/archiv/handover-2026-10-07-river-folge133.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -47,6 +48,7 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` — Träger der Flyby-Kette; Header-sha in river-139 geheilt (s. CI-Verifikation).
 - `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` — Objektophilie-Verdikt; angewandt 2026-10-07 (River 129).
 - `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13); WP13-Fixtures gebaut (`47706add5`).
+- `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — Sonnen-Render-Archäologie nebra→HEAD (jede Variante); Träger dieser Messung.
 
 ## Offen (aufgeschlüsselt)
 
@@ -122,4 +124,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 139):
 - `docs/handover/handover-2026-10-08-river-folge139.md`
 - `docs/handover/archiv/handover-2026-10-08-river-folge138.md` (Move)
 
-## Burn: open 0.0030 · close 0.2249 · cap 0.35 · Grund: Vier-Kanal-Runde auf Operator-Wort (Rat + `archive_search`-Wissenschaft + UI-Frontier + Open-Weight), ein Atom (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
+## Burn: open 0.0030 · close 0.2805 · cap 0.35 · Grund: Vier-Kanal-Runde auf Operator-Wort (Rat + `archive_search`-Wissenschaft + UI-Frontier + Open-Weight) + Legacy-Sonnen-Archäologie (2 Taucher), ein Atom (deepseek-flash, `session_burn`, gemessen 2026-10-08) · kein pro/max
