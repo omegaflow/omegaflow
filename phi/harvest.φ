@@ -581,6 +581,15 @@ idempotent true
 timeout 240
 
 asset present
+format usgs_geomag_efield
+tag geomag.usgs.gov
+arm usgs_geomag_compiler
+workflow usgs-geomag-cdn.yml
+pattern ^usgs_geomag_efield_[A-Z0-9]+\.bin$
+idempotent true
+timeout 240
+
+asset present
 format viking_grav
 tag pds-geosciences.wustl.edu
 arm viking_grav_compiler

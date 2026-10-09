@@ -31,7 +31,7 @@ note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/895
 blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
 gap tracking-doppler
-note Voyager 1/2 closed-loop Doppler (TRK-2-34/ODF/ATDF). V2 radio_science_rss=2 dirs (saturn_encounter_data, saturn_occultation_medium_band), kein Cruise (2026-09-26); PDS nur open-loop .ODR. Anfrage 2026-09-16 (mail_ledger.φ:207) → Antwort offen.
+note Voyager closed-loop Doppler — 2026-10-09: PSNO-00007 200, VGR_8201–8245 request-only; atdf-Arm steht (extract.rs:27), Riss zu blocked-sources-klassen.md:8. Anfrage 2026-09-16 mail_ledger.φ:74 → offen (wartend.φ:6).
 
 blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
@@ -41,12 +41,12 @@ note Mariner 10 Radio-Science/Tracking (762 7-Track-Tapes, SDDPT 73-085A-0008). 
 blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
 gap viking-tracking
-note Viking 1/2 Orbiter Radio Science Tracking (Doppler+Range). 2026-09-17: PSPG-00011 „Data Identified but not Received"; NSSDC-FTP anonym nicht bedienbar (→ SPDF 404); PDS-PPI 0. Anfrage 2026-09-16 (:209), Antwort offen.
+note Viking Orbiter Tracking (Doppler+Range) — 2026-10-09: PSPG-00011 „not Received", PSPG-00457 SDDPT live; kein Tracking-Parser (viking_text = Lander-Text), odf/atdf generisch. Anfrage 2026-09-16 mail_ledger.φ:76 → offen (wartend.φ:16).
 
 blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
 gap juno-efb
-note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
+note Juno Earth-Flyby pre-EFB ODF — 2026-10-09: pre-EFB request-only; OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11); odf-Arm + juno_odf.bin stehen. Anfrage 2026-09-16 mail_ledger.φ:78 → offen.
 
 blocked parser-def
 url https://superdarn.ca/data-download
@@ -56,36 +56,36 @@ note MAP-Grid RST (DMap) — 2026-10-09: DMap-Kern + `map_grid_value` gebaut (`s
 blocked parser-def
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
 gap kaguya-lrs
-note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
+note Kaguya/SELENE LRS (DARTS/PDS3) — 2026-10-09: pds3_binary-Arm steht; DARTS-Host flappt (200/503 F5-WAF), WUSTL-ODE 200. sources.φ-Block + Workflow fehlen → buildable now (Arm steht).
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
-note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200, 219 `.epn_core`; Enumerator gebaut `pds_ppi_compiler.rs` (115cf1657), Arm `pds4_fixed_width_compiler`. Offen: `sources.φ`-Zeile + `field`/`terms` + Workflow.
+note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.φ-Arm stehen; terms TSPA=PD. Keine statische Zeile: Family unbounded, kein Manifest, pds4_fixed_width braucht field-Zeilen. Vorbedingung: Manifest + dynamische Felder.
 
 blocked parser-def
 url https://data.inpe.br/bdc/stac/v1/
 gap inpe-big-stac
-note INPE BIG STAC (Catalog 1.0.0) — 2026-10-09: root 200, 79 Sammlungen (GeoTIFF/COG, NetCDF, GRIB2; 44 CC-BY-4.0 / 4 CC0 / 3 PD / 28 proprietary); STAC+tiff+netcdf+grib2-Arme stehen; offen: Sammlung→Feld-Compiler + Lizenz je Sammlung.
+note INPE BIG STAC 1.0.0 — 2026-10-09: root 200, 79 Sammlungen; Compiler inpe_stac_compiler.rs gebaut (samet_daily-1, CC-BY-4.0, NetCDF4 tmax); topodata Deflate+tiled → tiff-Arm verweigert. Reader+sources.φ blockiert: NetCDF tmax ohne units-Attribut.
 
 blocked parser-def
 url https://skyview.gsfc.nasa.gov/cgi-bin/images
 gap hi-21cm
-note HI 21cm (LAB/EBHIS/GASS/HI4PI) — 2026-10-09: VizieR J/A+A/440/775 + J/ApJS/181/398, SkyView, HEASARC W3Browse je HTTP 200; VO/FITS-Arm für HI-Karten fehlt.
+note HI 21cm — 2026-10-09 RISS: EBHIS-VizieR J/A+A/585/A136 existiert NICHT (VizieR-+-Falsch-Positiv; Paper DOI 10.1051/0004-6361/201527007 ohne Katalog). HEASARC W3Browse hi4pi 200, GASS J/ApJS/181/398 200; kein HI-Arm. EBHIS-Quelle suchen.
 
 blocked parser-def
 url https://lambda.gsfc.nasa.gov/
 gap cmb-lambda
-note CMB LAMBDA/PLA — 2026-10-09: lambda.gsfc 206, `pla.esac.esa.int` GWT-App; Planck via IRSA registriert; LAMBDA/PLA-Produkt-Arm offen.
+note CMB LAMBDA/PLA — 2026-10-09: lambda.gsfc/PLA; Planck via IRSA/SMICA/PSZ2 gebaut (sources.φ:11239-11275); Rest WMAP/ACT/SPT (LAMBDA-PD) ohne Arm → buildable remainder.
 
 blocked parser-def
 url https://vso.stanford.edu/
 gap solar-vso
-note Solar IRIS/SDO/VSO — 2026-10-09: `iris.lmsal.com` + `sdo.gsfc.nasa.gov/data/aiahmi/` + `vso.stanford.edu` HTTP 200; FITS/VSO-TAP-Arm fehlt.
+note Solar VSO/IRIS — 2026-10-09: VSO SOAP-Aggregator (vso.stanford.edu/cgi-bin/vsoi 411), SDO/AIA bereits gebaut (sources.φ:2934); IRIS-FITS-Arm fehlt → buildable now (neuer iris-Compiler auf fits.rs).
 
 blocked parser-def
 url https://www.cssdc.ac.cn/en/
 gap laic-cssdc
-note LAIC CSSDC — 2026-10-09: `cssdc.ac.cn` 200; Portal-Parser fehlt (LEOS bleibt `pending`, `sources.φ` unverändert).
+note LAIC CSSDC — 2026-10-09 RISS: `cssdc.ac.cn` + `/en/` liefern identisch eine Telegram-APK-Advert-Seite (kein Datenportal); Wayback 2018–2026 hat Snapshots, Inhalt unread (429). Register-URL trägt keine Wissenschaft mehr; LEOS pending.
 
 blocked parser-def
 url https://opendata.atlas.cern/
@@ -98,9 +98,5 @@ gap blinkverse-frb
 note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamikspektren + 92 Host-Galaxien) → nicht superseded (Rat + UI); Zugang direct+Proton pending; Dedup gegen `frb_chime_cat1.json`/`frbcat_flat.json`/`frb_a279.json`.
 
 pending
-url https://geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json
-note USGS E-Feld mV/km (GIC §A) — 2026-10-09: id=BOU&elements=E-E,E-N HTTP 206; Rat+7 Frontier einstimmig D: usgs_geomag_compiler.rs (state/stimmen/2026-10-09-mountain-usgs-extrakt-arm.md); Magnetik declined_sources.φ:2176.
-
-pending
 url https://github.com/TIAN-we/petrel19
-note PETREL19 — 2026-10-09: Wei (PETREL19-Autor; mail_ledger.φ#1791552291) erteilt CC BY 4.0; frühere `decline redistribution` (unlicensed) damit widerlegt + entfernt. Port offen: PETREL19-Arm in `ephemeris_compiler.rs` (SPICE/DE).
+note PETREL19 — 2026-10-09: Wei erteilt CC BY 4.0; decline widerlegt. Riss: ephemeris_compiler seit 0615424f6 parameterisiert, aber keine Invokation/Workflow/Zeile. Route: TIAN-we/petrel19 fmt_spice-Kernel → de_compiler --label petrel19.
