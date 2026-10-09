@@ -16,6 +16,7 @@ const TERMS: &[&str] = &[
     "CC-BY-SA-3.0",
     "CC-BY-SA-4.0",
     "CC0-1.0",
+    "GPL-3.0",
     "ODC-By-1.0",
     "ODbL-1.0",
     "OGL-Canada-2.0",
@@ -26,6 +27,8 @@ const TERMS: &[&str] = &[
     "own-work",
     "unbestimmt",
     "ohne-lizenz",
+    "arXiv-nonexclusive-distrib-1.0",
+    "non-commercial-government-licence-2.0",
 ];
 
 fn blocks(content: &str) -> Vec<Vec<&str>> {
