@@ -3189,7 +3189,8 @@ mod tests {
     #[test]
     fn fp_tool_open_source_claim() {
         let mut g = test_gate();
-        let args = r#"{"filePath":"docs/x.md","newString":"omegaflow, an open-source research project"}"#;
+        let args =
+            r#"{"filePath":"docs/x.md","newString":"omegaflow, an open-source research project"}"#;
         let v = g.check_tool_call("write", args).unwrap();
         assert_eq!(v.rule, "fabrication");
     }

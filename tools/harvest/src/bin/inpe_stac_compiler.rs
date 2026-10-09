@@ -185,12 +185,12 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let items_url = format!("{STAC_ROOT}/collections/{collection}/items?limit=1");
     let items_bytes = fetch(&items_url)?;
-    let items = parse_items(&items_bytes)
-        .ok_or_else(|| format!("{items_url}: carries no STAC item — the harvest stays unwritten"))?;
-    let item = items
-        .into_iter()
-        .next()
-        .ok_or_else(|| format!("{items_url}: the item list is empty — the harvest stays unwritten"))?;
+    let items = parse_items(&items_bytes).ok_or_else(|| {
+        format!("{items_url}: carries no STAC item — the harvest stays unwritten")
+    })?;
+    let item = items.into_iter().next().ok_or_else(|| {
+        format!("{items_url}: the item list is empty — the harvest stays unwritten")
+    })?;
     let unix = item.datetime_epoch.ok_or_else(|| {
         format!(
             "{}: carries no datetime — the time coordinate stays unnamed, refused",
@@ -240,9 +240,7 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     std::fs::write(&out, &bin).map_err(|e| format!("write {out} void: {e}"))?;
 
-    println!(
-        "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{FORMAT}.bin"
-    );
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{FORMAT}.bin");
     println!("origin {}", asset.href);
     println!("compiler tools/harvest/src/bin/inpe_stac_compiler.rs");
     println!("format {FORMAT}");
@@ -319,7 +317,9 @@ fn main() {
         );
         eprintln!("  reads one openly-licensed INPE BIG STAC collection (CC-BY-4.0 / CC0 / PD);");
         eprintln!("  default {COLLECTION_ID} = {COLLECTION_LICENSE}");
-        eprintln!("  the default band tmax is the 2 m maximum temperature grid (SAMeT daily, CPTEC/INPE)");
+        eprintln!(
+            "  the default band tmax is the 2 m maximum temperature grid (SAMeT daily, CPTEC/INPE)"
+        );
         eprintln!("  --ci-mode uploads the verified flat bin to the {NETLOC} CDN release");
         std::process::exit(2);
     }

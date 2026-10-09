@@ -92,6 +92,11 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
         "pds4_acs_nir" => acs_nir::parse_series(bytes),
+        "keogram" => keogram::parse_bin(bytes).map(|rows| {
+            rows.into_iter()
+                .map(|(t, comp, mean)| (t, mean, comp))
+                .collect()
+        }),
         "galileo_odr" => galileo_odr::parse_series(bytes),
         "galileo_ionocal" => ionocal::parse_series(bytes),
         "cassini_rsr" => cassini_rsr::parse_series(bytes),
@@ -384,6 +389,20 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
                 .collect();
             (names, recs)
         }
+        "keogram" => {
+            let recs = keogram::parse_bin(bytes)?;
+            let mut names: Vec<String> = Vec::new();
+            let mut rows: Vec<(f64, f64, u32)> = Vec::with_capacity(recs.len());
+            for (t, comp, mean) in recs {
+                let idx = comp as usize;
+                if idx >= names.len() {
+                    names.resize_with(idx + 1, String::new);
+                }
+                names[idx] = keogram::component_name(comp);
+                rows.push((t, mean, comp));
+            }
+            (names, rows)
+        }
         _ => return None,
     };
     let (freq, bin_width) = (spectral::SPECTRAL_NO_BAND, spectral::SPECTRAL_NO_BAND);
@@ -441,6 +460,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "agrav" => agrav::declared_fields(tau),
         "vlf_awesome" => vlf_awesome::declared_fields(tau),
         "pds4_acs_nir" => acs_nir::declared_fields(),
+        "keogram" => keogram::declared_fields(names, tau),
         _ => Vec::new(),
     }
 }
