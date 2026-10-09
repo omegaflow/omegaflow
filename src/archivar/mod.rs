@@ -184,6 +184,7 @@ pub mod skydirection;
 pub mod soho_lasco;
 pub mod ssusi_aurora;
 pub mod superdarn_cpcp;
+pub mod supermag_index;
 pub mod suprastrom;
 pub mod swarm_fac;
 pub mod tdat;

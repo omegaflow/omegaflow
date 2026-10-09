@@ -106,6 +106,7 @@ pub use archivar::spectral;
 pub use archivar::ssusi_aurora;
 pub use archivar::stac;
 pub use archivar::superdarn_cpcp;
+pub use archivar::supermag_index;
 pub use archivar::suprastrom;
 pub use archivar::swarm_fac;
 pub use archivar::tdat;
