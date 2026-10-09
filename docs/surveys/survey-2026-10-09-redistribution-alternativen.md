@@ -2,7 +2,7 @@
   title: Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
   class: survey
   date: 2026-10-09
-  sha256: 90c13b1ac0968c5a881811e8e4faba08505545d8ddaa7e81ca367314f9d62826
+  sha256: 52ddbd98eb4e2bc381de657a53bcd61db4235945a94929502b8c7de60f88f615
   status: live
 -->
 # Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
@@ -103,12 +103,20 @@ Die HTTP-gemessene Shortlist wurde am Lizenztext zertifiziert (`--jina`):
 | Global Floods (GloFAS/CEMS) | CEMS-Lizenz (offen; restricted subset prüfen) |
 | HDX/OCHA · Copernicus Emergency | je Dataset CC-BY/CC0/ODbL (Plattform offen) |
 
-**NC-/restriktions-blockiert (nicht CDN-fähig):**
+**Redistributions-/klarheits-blockiert (nicht CDN-fähig):**
 
-- **GIRO DIDBase** — CC BY-NC-SA 4.0 (NC-Klausel).
-- **INTERMAGNET** — CC BY-NC 4.0 (NC-Klausel).
-- **GRDC** — „No commercial use" **und** „No redistribution".
-- **RIPE RIS** — keine Standard-Open-Lizenz (widerrufliche Default-Erlaubnis) → unklar.
+- **GRDC** — „No redistribution" (der Veto ist die Redistribution, nicht das NC).
+- **RIPE RIS** — keine Standard-Open-Lizenz; widerrufliche Default-Erlaubnis, Repository-Terms restriktiv → unklar.
+
+**NC ist kein Block (Korrektur eines Fabrikationsmusters im zweiten Lauf).** Das
+Projekt ist selbst NC (PolyForm NC + CC BY-NC-SA); die geschlossene Terms-Vokabel
+führt `CC-BY-NC-3.0-IGO`/`CC-BY-NC-4.0`/`CC-BY-NC-SA-4.0` (`license_census.rs:12-14`),
+und **181** `sources.φ`-Einträge tragen bereits `CC-BY-NC-3.0-IGO` (ESA). Die einzige
+harte Terms-Wache ist `ohne-lizenz` auf einem CDN-Block (`license_census.rs:241-257`).
+Damit sind **GIRO DIDBase (CC-BY-NC-SA-4.0) und INTERMAGNET (CC-BY-NC-4.0)
+NC-kompatibel → admissibel**, nicht blockiert. Die `decline redistribution`-Verdikte
+der 41 Blöcke gründen auf **expliziten Redistributions-Verboten** (kommerzielle ToS),
+nicht auf NC.
 
 **Nächster Schritt:** Mountains Re-Admission je Kandidat → dann CDN-Workflow/`sources.φ`-Block.
 Divergenz: `earthdata.nasa.gov`-Policy 403 (CloudFront); Lizenz über
