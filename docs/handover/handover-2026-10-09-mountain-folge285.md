@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 25ac14b19a595dd3dd4fed9b0509634745240b1779ab5b2bd72991cda77c232b
+  sha256: 9c72f2c55b07f1ef722d536618a92ba1592045e1b5a1de180bd32798611a7a58
   status: live
 -->
 # Handover — Mountain-Folge 285 (2026-10-09)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 Mycelium, gemessen 2026-10-09). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge284.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.0604 — `session_burn` 2026-10-09 (Mountain-Linie, flash only, kein pro/max: 1 `grind-flash` + 3 read-only `general`)
+## Burn: open 0.0000 · close 0.1290 — `session_burn` 2026-10-09 (Mountain-Linie, flash only, kein pro/max: 1 `grind-flash` + 3 read-only `general` + 1 `council`)
 
 ## Operator-Wort-Register
 
@@ -34,15 +34,16 @@ Wort | Datum | Quelle
 „natürlich 1 wir sind nicht open source wir sind NC CC" | 2026-10-09 | Operator (Session, Mountain 283)
 „das ist compliance theater" — keine Lizenz-Boilerplate in einer Anfrage-Mail; nur sagen, was die Frage braucht | 2026-10-09 | Operator (Session, Mountain 283)
 „bitte fixen: ledger.φ JAXA-Zitat (gportal.jaxa.jp ×2) · SuperMAG-Zitat (kein substorm-Block; substorm_compiler.rs + supermag-cdn.yml stehen) · USGS-Basis-URL → zwei Produkte trennen · ShadowCam admission ja, Format-Arm fehlt; Migration (river-148) gefaltet" | 2026-10-09 | Operator (Session, Mountain 284)
+„bitte mit archive search all dem rat und den top tier frontier voices besprechen" — USGS-Extract-Arm-Architektur | 2026-10-09 | Operator (Session, Mountain 285)
 
 ## Offen (aufgeschlüsselt)
 
-### USGS-geomag E-Feld — Reader-Arm fehlt (Architektur-Gate)
-- **Status:** eigen (Bau) | **Bindung:** eigen (Register/Kernkontrakt) · Rat-Linse
-- **Trigger:** Rat-Linsen-Verdikt über den neuen Extract-Zweig; danach Arm gebaut
-- **Lage:** (gemessen 2026-10-09 via `archive_search --verdict` + curl + `jaq` + `sread`) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206, Station BOU `40.137/-105.237/1682`; Shape ist **zwei parallele Top-Level-Arrays** `times[]` + `values[].values[]` (Selektor `values[].metadata.element`). Kein Extract-Zweig zippt sie (`profile` `parse.rs:355` // `epncore` `:366` // `rows` `:397` // HAPI alle andere Shapes; `jpath_val` kann Index-Pfade, kein Consumer zippt). `blocked_sources.φ`-`pending`-Notiz auf die Messung aktualisiert; Magnetik bleibt `declined_sources.φ`.
-- **Blockade:** neuer `Extract`-Variant + Direktive + Consumer (`types.rs`/`parse.rs`/`extract.rs`) — Kernkontrakt, daher Rat-Linse.
-- **Braucht:** Rat-Linsen-Verdikt (neuer Extract-Zweig = Architektur); dann Bau `parse.rs`/`extract.rs`/`types.rs` + Test, dann `sources.φ`-Zeile.
+### USGS-geomag E-Feld — Verdikt D: Compiler-Arm (Rat + Frontier konvergent)
+- **Status:** eigen (Bau) | **Bindung:** eigen (Register/Compiler)
+- **Trigger:** Compiler `usgs_geomag_compiler.rs` gebaut; C-Due-Diligence gemessen
+- **Lage:** (gemessen 2026-10-09 via `archive_search --verdict` + curl + `jaq`; Stimmen-Runde `state/stimmen/2026-10-09-mountain-usgs-extrakt-arm.md`) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206, Station BOU `40.137/-105.237/1682`; Shape ist **zwei parallele Top-Level-Arrays** `times[]` + `values[].values[]` (Selektor `values[].metadata.element`). Rat (5 Stimmen) + 6 Frontier-Seats (GPT-6 Luna · Qwen · GLM-5.3 · DeepSeek V4 Pro · Nemotron 3 Ultra · Qwen3.8 2.4T) einstimmig **D**: Compiler zippt in Rust, flaches `.bin`, CDN, `sources.φ`-Block wie die 986 — Kernkontrakt `enum Extract` bleibt unangetastet; A = vorzeitige Generalität für n=1 (echtes Sprachloch erst ab 2. unabhängiger Quelle). Claude `pending` (5-h-Nachrichtenlimit, gemessen).
+- **Blockade:** keine (Verdikt gefallen).
+- **Braucht:** (a) C-Due-Diligence: prüfen, ob eine bestehende Live-Route dieselbe geoelektrische Größe führt; (b) Bau `tools/harvest/src/bin/usgs_geomag_compiler.rs` (Zip als isoliertes `fn zip_parallel_arrays`, damit bei Quellen #2/#3 in den Kern hebbar) + `format`-Arm + Workflow; (c) `blocked_sources.φ`-Eintrag auf den Verdikt-Stand.
 
 ### PDS-PPI — Enumerator/Arm stehen, Arm-NETLOC ungeklärt
 - **Status:** eigen (Register) | **Bindung:** eigen (Register) · mycelium (Arm/Workflow)
