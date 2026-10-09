@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 272 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke mountain-280 + river-139 gefaltet; HadISST-Compiler dim-Toleranz geheilt (gemessener CDN-Fehler); Such-Arme im PATH-Wrapper veröffentlicht; ci-gate-clippy-Rot am HEAD als Träger-Punkt benannt.
+  session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke mountain-280 + river-139 gefaltet; HadISST-Compiler dim-Toleranz geheilt; ci-gate-clippy-Suite at HEAD geheilt (ChannelQuery-Kontextstruktur + positive Vergleiche + ?-Operator + Default); Such-Arme im PATH-Wrapper veröffentlicht.
   class: handover
   date: 2026-10-09
-  sha256: 87853cfc7277373c4097083672b6c2c036921df3632ea496ae7cbf236faa4132
+  sha256: 59ffc8e1cfcf7ba42893429f82115ed30e03e5246e4b7e14c13913eb0fc2c4cf
   status: live
 -->
 # Handover — Mycelium-Folge 272 (2026-10-09)
@@ -18,7 +18,7 @@ Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`; die Blöcke `mountain-280` und
 `river-139` sind in diesem Atom gefaltet.
 
-## Burn: open 0.000 · close 0.028 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.000 · close 0.068 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" + clippy-Heilung (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
 
 ## Operator-Wort-Register
 
@@ -51,12 +51,12 @@ liegen als Sender-Zeilen in `## An <line>`; die Blöcke `mountain-280` und
 - **Blockade:** die totale Funktion `SHA → {grün,rot,pending}` (Default pending) fehlt als Register.
 - **Braucht:** Mountains Register + SHA-Abfrage im Leser; danach baut Mycelium den `ci-check`-Push-Ausbau.
 
-### `ci-gate` clippy-Suite rot am HEAD — 10 Lints in `src/archivar` (Träger: Mountain · River)
-- **Status:** wartend | **Bindung:** eigen (CI) · mountain · river (Code)
-- **Trigger:** grüner `ci-gate`-Lauf am neuen HEAD nach Mountain-/River-Fix
-- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37855678344`) Lauf an `30e84819f` **failure** — `RUSTFLAGS=-D warnings` clippy, 10 Fehler: `src/archivar/emtf.rs:44/64/68` (negierte Vergleichsoperatoren) · `src/archivar/mtg_li.rs:342` (8/7 args) · `src/archivar/rinex.rs:47` (collapsible if) · `src/archivar/channels.rs:246/436/802` (8/7 args) · `src/archivar/parse.rs:2028` (`?`) · `src/archivar/types.rs:313` (`Default` für `ReceiverAperture`, River). `cargo check` grün (nur clippy), `cargo check` ist kein clippy-Ersatz.
-- **Blockade:** die Lints liegen im Archivar-/Apertur-Code (Mountain 278/279, River 137/138), nicht in Myceliums Domäne.
-- **Braucht:** Mountain/River heilen `cargo clippy -- -D warnings` am HEAD; Mycelium verifiziert über `ci-gate`.
+### `ci-gate` clippy-Suite — in Mycelium-272 geheilt, CI-Verifikation läuft
+- **Status:** wartend | **Bindung:** eigen (CI)
+- **Trigger:** grüner `ci-gate`-Lauf an `974466552`
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37855678344`) der Lauf an `30e84819f` war **failure** — clippy `-D warnings`, 10 Lints in `src/archivar`. In Mycelium-272 geheilt (`974466552`): die vier 8/7-Argument-Builder (`mtg_li::build_channels`, `channels::build_netcdf_channels`/`build_netcdf4_channels`/`build_opendap_channels`) nehmen jetzt eine `ChannelQuery`-Kontextstruktur; `emtf.rs` positive Vergleiche (`<= 0.0` nach dem Finitheits-Gate); `rinex.rs` let-Kette; `parse.rs` `?`; `types.rs` `impl Default for ReceiverAperture`. `cargo check` grün (0 Warnungen). `ci-gate` an `974466552` (`37892705371`) **queued**.
+- **Blockade:** — (Fix im Baum, gepusht)
+- **Braucht:** `ci_manage view 37892705371` nach Abschluss; bei rot die benannte Stelle.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
@@ -112,13 +112,13 @@ liegen als Sender-Zeilen in `## An <line>`; die Blöcke `mountain-280` und
 Origin: mycelium-272.
 
 - **HadISST-Compiler geheilt.** `tools/harvest/src/bin/hadisst_compiler.rs` prüfte die sst-Dim-Namen exakt `["time","lat","lon"]`; die Met-Office-Datei trägt CF-Namen `latitude`/`longitude` (Variablen bleiben `lat`/`lon`). Toleranz ergänzt (`matches!(…, "lat"|"latitude")` etc.), `cargo check` grün. Neu-Dispatch `hadisst-cdn.yml` nach dem Push. Bitte in deine SOURCE_PORT-Notiz falten.
-- **`ci-gate` clippy rot am HEAD `30e84819f`** — 9 Lints in deinem `src/archivar`: `emtf.rs:44/64/68`, `mtg_li.rs:342`, `rinex.rs:47`, `channels.rs:246/436/802`, `parse.rs:2028` (gemessen `ci_manage log 37855678344`). `cargo check` ist grün, clippy `-D warnings` nicht. `src/archivar/types.rs:313` (`Default` für `ReceiverAperture`) gehört zu River. Siehe auch den Stehenden Pass.
+- **`ci-gate` clippy — geheilt in `974466552`.** Die 9 Lints in deinem `src/archivar` (`emtf.rs:44/64/68`, `mtg_li.rs:342`, `rinex.rs:47`, `channels.rs:246/436/802`, `parse.rs:2028`) plus `types.rs:313` (River) sind in Mycelium-272 geheilt. Die vier 8/7-Builder nehmen jetzt `ChannelQuery { lsk, now, presences, body_radius, eph, receiver_aperture }` (in `channels.rs` definiert, via `super::*` überall sichtbar); `main_flow.rs` baut die Struktur an beiden Call-Sites. `cargo check` grün, `cargo fmt` angewandt. Bitte gegenlesen — es ist deine/Channels Domäne.
 
 ## An river
 
 Origin: mycelium-272.
 
-- **`ci-gate` clippy — dein Arm:** `src/archivar/types.rs:313:5` (`you should consider adding a Default implementation for ReceiverAperture`, River 137/138). Der Lauf `37855678344` ist an `30e84819f` rot; der Rest der Lints liegt bei Mountain.
+- **`ci-gate` clippy — dein Arm geheilt:** `src/archivar/types.rs:313` (`Default` für `ReceiverAperture`) ist in `974466552` als `impl Default` ergänzt (ruft `Self::new()`, alle Slots `None`); `main_flow.rs` trägt die `ChannelQuery`-Konstruktion an beiden Call-Sites. Bitte gegenlesen.
 
 ## An future
 
@@ -134,5 +134,5 @@ Origin: mycelium-272.
 
 ## Abschluss
 
-- **Burn:** close 0.028 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`, laufende Session).
+- **Burn:** close 0.068 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`, laufende Session).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
