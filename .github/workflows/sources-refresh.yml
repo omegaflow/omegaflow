@@ -1,0 +1,56 @@
+name: sources-refresh
+
+concurrency:
+  group: sources-refresh
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Refresh the source catalogs (Rust port of the removed refresh_all.py)
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin sources_refresh -- \
+            --spec tools/harvest/data/sources_refresh.spec.json \
+            --out data
+      - name: Upload the refreshed catalogs to the v1.0 release
+        run: |
+          set -euo pipefail
+          for family in horizons ndbc jpl swpc mass elements orbits observer; do
+            for f in data/${family}_*.json; do
+              [ -f "$f" ] || continue
+              gh release upload v1.0 "$f" --clobber --repo omegaflow/sources
+            done
+          done
+      - name: Commit the data snapshot into omegaflow/sources (audit trail)
+        run: |
+          set -euo pipefail
+          git clone --depth 1 \
+            "https://x-access-token:${GH_TOKEN}@github.com/omegaflow/sources.git" /tmp/sources
+          mkdir -p /tmp/sources/data
+          cp data/*.json /tmp/sources/data/
+          cd /tmp/sources
+          if [ -z "$(git status --porcelain -- data)" ]; then
+            echo "the catalogs read unchanged"
+            exit 0
+          fi
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add data
+          git commit -m "refresh: source catalogs"
+          git push origin HEAD:main
