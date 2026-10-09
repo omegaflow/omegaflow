@@ -2313,6 +2313,30 @@ compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_earth.bin
+terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
+format ephemeris_petrel19
+origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
+compiler tools/harvest/src/bin/de_compiler.rs
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_moon.bin
+terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
+format ephemeris_petrel19
+origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
+compiler tools/harvest/src/bin/de_compiler.rs
+at moon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_sun.bin
+terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
+format ephemeris_petrel19
+origin https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp
+compiler tools/harvest/src/bin/de_compiler.rs
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/gportal.jaxa.jp/jaxa_gpm_ku.bin
 terms free-open https://gportal.jaxa.jp/gpr/index/eula
 format jaxa_gpm_ku
@@ -10899,6 +10923,15 @@ quantity emtf_zyx_re emtf_zyx_re inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyx_im emtf_zyx_im inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyy_re emtf_zyy_re inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyy_im emtf_zyy_im inverse-square impedance ohm 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.inpe.br/inpe_stac_samet_daily.bin
+terms CC-BY-4.0 https://data.inpe.br/bdc/stac/v1/collections/samet_daily-1
+format inpe_stac_samet_daily
+origin https://data.inpe.br/bdc/data/samet_daily/DAILY/TMAX/2026/10/SAMeT_CPTEC_TMAX_20261008.nc
+compiler tools/harvest/src/bin/inpe_stac_compiler.rs
+ttl 604800
+at earth
+field tmax samet_tmax inverse-square thermal C 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kmtnet.json
 terms unbestimmt https://data.kasi.re.kr/

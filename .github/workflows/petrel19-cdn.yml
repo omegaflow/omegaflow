@@ -1,0 +1,56 @@
+name: petrel19-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 5 3 * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  petrel19:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the github.com release exists on the CDN
+        run: |
+          if ! gh release view github.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create github.com --repo omegaflow/sources \
+              --title "github.com" \
+              --notes "datasets whose origin is a github.com repository, compiled for omegaflow measure tools (CDN tag = origin host)"
+          fi
+      - name: Fetch the PETREL19 translation kernel and its constants file
+        run: |
+          curl -sfL -o PETREL19_translation.bsp https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19_translation.bsp \
+            && curl -sfL -o PETREL19.tpc https://raw.githubusercontent.com/TIAN-we/petrel19/main/fmt_spice/PETREL19.tpc \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "petrel19-cdn: the petrel19 kernel returned void" \
+                 "curl on raw.githubusercontent.com/TIAN-we/petrel19 did not reach the translation kernel or the constants file. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Compile the PETREL19 sun/moon/earth line and upload
+        run: |
+          cargo run -p omegaflow-harvest --release --bin de_compiler -- PETREL19_translation.bsp --label petrel19 --netloc github.com --gm PETREL19.tpc --pck PETREL19.tpc --ci-mode
+      - name: Verify every registered github.com/petrel19 asset is manifested
+        run: |
+          set -euo pipefail
+          expected=$(bash .github/workflows/scripts/register_release_set.sh github.com ephemeris_petrel19)
+          if [ -z "$expected" ]; then
+            echo "no github.com ephemeris_petrel19 asset registered — the register is the source of truth (pending, not zero)"
+            exit 1
+          fi
+          present=$(gh release view github.com --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null | sort -u)
+          missing=$(comm -23 <(printf '%s\n' "$expected") <(printf '%s\n' "$present"))
+          if [ -n "$missing" ]; then
+            echo "registered but not manifested: $(printf '%s\n' "$missing" | tr '\n' ' ')"
+            exit 1
+          fi
+          echo "$(printf '%s\n' "$expected" | wc -l) registered github.com ephemeris_petrel19 assets all present"
