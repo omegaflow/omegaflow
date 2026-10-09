@@ -3,7 +3,7 @@
   session: River-Folge 147
   class: handover
   date: 2026-10-09
-  sha256: 1fcf0c8c6a2fcfbdf3d1fcbadc0beeecd64fa77f2ef8bcf5ca9a84ff9e6360f7
+  sha256: 2ba231b9bbfbdaa678952c96ce46d18570b27f6cfacf121497e4d41d98a86985
   status: live
 -->
 # Handover — River-Folge 147 (2026-10-09)
@@ -36,6 +36,7 @@ Wort | Datum | Quelle
 „es muss doch alles zusammenpassen mein wort galt noch dem 9 partial bau das gilt natürlich jetzt nicht mehr" | 2026-10-09 | Operator (Session, River 143) — das „auf jeden fall bleibt" bindet den Ton-Bau nicht mehr
 „wenn es sein muss schicke nochmal taucher mit archive search all den rat die frontier ui und openweight voices los" | 2026-10-09 | Operator (Session, River 143) — volle Stimmen-Runde autorisiert
 „2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283, gefaltet) — Kraft-/Register-Physik-Migration ist River-geführt; Mountain schreibt die Verdikt-Zeilen
+„ja" | 2026-10-09 | Operator (Session, River 147) — Wort für die Register-Physik-Migration (`force` → Quantity|Mechanism|Medium); River führt Schema + Reihenfolge, Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ`
 
 Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in `docs/handover/archiv/handover-2026-10-09-river-folge146.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
@@ -55,6 +56,12 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in `d
 Origin: river-146 (unverändert offen, Fortsetzung river-145 an mycelium-276).
 
 - **`ephemeris_de440_{earth,moon,sun}.bin`-Staging in `pages-deploy.yml:60-62`** — in river-144/145 gemessen als tote stage-Zeilen (kein Leser; `static/membrane.html` fetcht nur `/dr3_stars.bin`). River-Seite entschieden: die Kopplung ist die **Apertur**, nicht eine Ephemeriden-Datei; die drei Zeilen sind totes Staging (kein künftiges Kraftfeld-Asset). Bitte entfernen (CI-Domäne). Unverändert offen.
+
+## An mountain
+
+Origin: river-147.
+
+- **Operator-Wort „ja" (2026-10-09):** die **Register-Physik-Migration** (`force` → Quantity|Mechanism|Medium) ist freigegeben — River führt Schema + Reihenfolge, Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ`. Erste Gruppe gemäß P10.3 (`kanal-ontologie-komplettbau.md`): **`gravity` (118) / `seismic` (41) + Wellenhöhen zuerst**, dann `acoustic`/`diffusion`, **`em` (6012) zuletzt**. Auf dem gebauten `quantity`-Arm (`parse.rs:990`, `FORCE_TYPE_QUANTITY = 255`). **Benannter Riss vor dem `em`-Massen-rename:** die gebaute `quantity`-`kind`-Achse (`mass/energy/area/scale/intensity/index/impedance`) vs. P10.2a `role`/`medium`/`pde_type` — gehört durch die Rat-Linse, nicht in den stillen Lauf; die erste Gruppe (`gravity`/`seismic`) ist davon nicht betroffen und kann beginnen.
 
 ## Offen (aufgeschlüsselt)
 
@@ -101,12 +108,13 @@ Origin: river-146 (unverändert offen, Fortsetzung river-145 an mycelium-276).
 - **Blockade:** keine.
 - **Braucht:** (1) ~~Body-Anker entfernen~~ erledigt; (2) das Feld **messen** (Enclosure-Query am SSB als Asset backen); (3) **`v_k`** an `PresenceFrame` anbinden → Delay/Phase je Kanal; der `state`-Slot ist mit P2.1 nun da, `v_k` hängt an der vollen Kanalzahl (P2.1 CAP/n + P3.1); (4) ~~`membrane_bodies.txt`-Staging~~ erledigt.
 
-### Kraft-Taxonomie + Register-Physik-Migration — Rat-Linse gefallen; Mountain schreibt die Zeilen
+### Kraft-Taxonomie + Register-Physik-Migration — Wort gefeuert; Schema-Riss benannt, Mountain schreibt die Zeilen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Operator-Wort zum Register-Schema (Mountain schreibt die Zeilen).
-- **Lage:** (gemessen 2026-10-09, river-145/146) **Rat + Frontier-Runde gefallen** (Protokoll `state/stimmen/2026-10-09-river-kanal-zulassung-frontier.md`): Zulässigkeitsrelation verdichtet, `Maxwell` als eigener Operator, `Charge-Poisson` in Festkörpern korrigiert, Entropie keine Erhaltungsgröße (Bilanzkanal), Kopplungspaare benannt. Schema-Entwurf `kanal-ontologie-komplettbau.md` §P10.2a. `source_physics_lint` gemessen: 7972 field-Zeilen (em 6088 · diffusion 474 · acoustic 438 · advective 433 · thermal 340 · gravity 118 · electric 40 · seismic 65); Parser multi-arity. Migrationsreihenfolge: gravity/seismic → acoustic/diffusion → **em zuletzt**. **Mountain-283 gefaltet:** River führt Taxonomie + Reihenfolge, Mountain schreibt die Verdikt-Zeilen.
+- **Trigger:** gefeuert — Operator-Wort „ja" 2026-10-09 (River 147).
+- **Lage:** (gemessen 2026-10-09, river-147 via `sgrep`/`sread`) **Rat + Frontier-Runde gefallen** (Protokoll `state/stimmen/2026-10-09-river-kanal-zulassung-frontier.md`): Zulässigkeitsrelation verdichtet, `Maxwell` als eigener Operator, `Charge-Poisson` in Festkörpern korrigiert, Entropie keine Erhaltungsgröße (Bilanzkanal), Kopplungspaare benannt. **Parser-Stand:** die `quantity`-Direktive ist gebaut (`parse.rs:990`, Arity ≥ 9: `quantity <key> <name> <kernel> <kind> <unit> <tau> <abs> <adv> [band …]`, `FORCE_TYPE_QUANTITY = 255` in `types.rs:402`, `spatial.rs:844/1002`), die Disjunktions-Tests `field_and_quantity_are_disjoint_taxonomies`/`derived_magnetic_index_is_a_quantity_not_a_force_field` stehen; die `channel`-Direktive (P0.3) ist **nicht** gebaut (`sgrep '"channel"' src/archivar/parse.rs` = leer). Register-Stand: weiterhin **8003 `field`-Zeilen**, **0 `quantity`**, **0 `channel`** — die Migration hat noch nicht begonnen. `source_physics_lint`: 7972 field-Zeilen (em 6088 · diffusion 474 · acoustic 438 · advective 433 · thermal 340 · gravity 118 · electric 40 · seismic 65). **Benannter Schema-Riss (nicht geglättet):** die gebaute `quantity`-Achse ist `kind ∈ {mass, energy, area, scale, intensity, index, impedance}` (`force.rs:quantity_kind_of`), der Rat-Entwurf P10.2a trägt stattdessen `role ∈ {primary, derived, geometry, source-parameter}` + `medium` + `pde_type` — die zwei Achsen sind nicht dieselbe; vor dem `em`-Massen-rename (zuletzt) braucht es die Rat-Linse.
 - **Blockade:** keine.
-- **Braucht:** (a) die Migrations-Ausführung — Verdikt-Zeilen in `phi/sources.φ`, **Mountain-Domäne** auf Rivers Schema; (b) `channel`-Direktive P0.3/P9.1 (Parser-Arm River in `src/archivar/parse.rs`, Register-Zeilen Mountain); (c) offene Risse aus der Runde in die Migration tragen (Spezies, Plasma, Entropie, Kopplungsmatrix).
+- **Braucht:** (a) **`## An mountain`** — die Verdikt-Zeilen-Migration, erste Gruppe `gravity`/`seismic` gemäß P10.3, auf dem gebauten `quantity`-Arm; (b) **Rat-Linse** für die `kind`- vs. `role`/`medium`-Achse der `quantity`-Direktive, bevor `em` (6012) umbenannt wird; (c) die `channel`-Direktive P0.3/P9.1 (Parser-Arm River in `src/archivar/parse.rs`) erst, wenn das Register sie trägt; (d) offene Risse aus der Runde in die Migration tragen (Spezies, Plasma, Entropie, Kopplungsmatrix).
+- **Wort:** „ja" 2026-10-09 (River 147) — Register-Physik-Migration freigegeben.
 
 ## LOCK
 
