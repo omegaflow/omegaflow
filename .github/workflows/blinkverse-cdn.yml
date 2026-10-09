@@ -1,0 +1,27 @@
+name: blinkverse-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  blinkverse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the Blinkverse FRB CSV, compile it and upload to CDN
+        run: |
+          set -euo pipefail
+          mkdir -p data/blinkverse.zero2x.org
+          cargo run --release -p omegaflow-harvest --bin blinkverse_compiler -- \
+            --url https://blinkverse.zero2x.org/api/app/adcp-blinkverse/type/FRB_SOURCE/download \
+            --out data/blinkverse.zero2x.org/blinkverse_frb.bin --ci-mode

@@ -10804,6 +10804,17 @@ at sun
 ttl 604800
 field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/blinkverse.zero2x.org/blinkverse_frb.bin
+terms unknown https://blinkverse.zero2x.org/
+origin https://blinkverse.zero2x.org/api/app/adcp-blinkverse/type/FRB_SOURCE/download
+compiler tools/harvest/src/bin/blinkverse_compiler.rs
+format blinkverse_frb
+ttl 604800
+at sun
+field DM frb_blinkverse_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
+field DM_ne2001 frb_blinkverse_dm_ne2001_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
+field DM_ymw16 frb_blinkverse_dm_ymw16_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
 terms unknown https://blpd0.ssl.berkeley.edu/
 format bl_narrowband
