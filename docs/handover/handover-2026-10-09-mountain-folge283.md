@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 088d081fa0dbccdc9fb47d71131c3354c1e30ce49a70d434e05f4994c48a4a0b
+  sha256: f645c9e81fc3d8fef5826645860b4d5fb57dd4f7b4b5951cf38898e6813e9c8e
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -33,6 +33,7 @@ Wort | Datum | Quelle
 „kannst du das nicht in einem patch per archive search machen lassen? … und 2 ja" | 2026-10-09 | Operator (Session, Mountain 283)
 „was ist mit den 140 pending? und hast du die mail von wei gesehen" | 2026-10-09 | Operator (Session, Mountain 283)
 „ja bitte" — per-Record-Hosts (Zenodo/EarthScope) je Datensatz auflösen | 2026-10-09 | Operator (Session, Mountain 283)
+„ja bitte alles" — (a) Kontaktadresse, (b) Regel `ohne-lizenz ⇒ nicht spiegeln`, (c) die 27 lokal halten/schließen, (d) einzeln anschreiben | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -88,6 +89,8 @@ Origin: mountain-folge283.
 - **Keogramm** (OMTI/Abisko): Wire-Feld descoped (raw/relativ); offen ist die **Vision-Asset-Registrierung** — bitte führen, falls Mycelium das Bild als Asset trägt.
 - **Route-Admissionen / Arme:** THEMIS-Tail + MMS-Magnetosheath-Arme stehen jetzt (`phi/sources.φ`); manifestiere, sobald die Zeilen stehen. Übrige `gap`-Träger siehe oben.
 
+- **CDN-Aufräumen (Operator-Wort 2026-10-09):** die 23 `ohne-lizenz`-Assets (dhm.gov.np, hamqsl.com, ogimet.com, ftp.imcce.fr×12, pradan.issdc.gov.in, supermag.jhuapl.edu×4, wwlln.net, casdc.china-vo.org) sind aus `sources.φ`/`harvest.φ` entfernt; die bereits veröffentlichten Release-Assets im `omegaflow/sources`-Repo liegen noch vor — bitte neutralisieren/entfernen und, wo feld-relevant (IMCCE/SuperMAG), lokal unter `data/<netloc>/` (gitignored) halten.
+
 ## An river
 
 Origin: mountain-folge283.
@@ -98,7 +101,7 @@ Origin: mountain-folge283.
 
 Origin: mountain-folge283.
 
-- **Operator-Frage (Redistributions-Rechte, Rat 2026-10-09):** 27 `ohne-lizenz`-Blöcke (IMCCE, SuperMAG, WWLLN, OGIMET, DHM, Pradan/ISRO, MAXI/RIKEN, Linea, UHSLC, CASDC, …) tragen eine CDN-Mirror-`url` und erscheinen damit redistribuiert; 526 `unbestimmt`. **Rat (fünf Stimmen):** proaktiv messen → Attribution + Takedown-Route als Default → nur bei gemessenem Vorbehalt entfernen; Rechteinhaber nur bei hohem Wert *und* echter Unklarheit einzeln anschreiben (nicht in Masse). **Umgesetzt:** NOTICE im sources-Repo trägt jetzt eine Takedown-/Kontaktroute (`code@omegaflow.space`). **Frage an den Operator:** (a) Kontaktadresse ok? (b) `ohne-lizenz ⇒ nicht spiegeln` als Regelzeile freigeben? (c) die 27 lokal (`data/<netloc>/`, gitignored) halten oder schließen? (d) für namentlich benannte Hochwert-Quellen einzeln schreiben? Bitte in die Operator-Queue falten.
+- **Redistributions-Rechte — Operator-Wort „ja bitte alles" (2026-10-09), ausgeführt:** (a) Takedown-Adresse `code@omegaflow.space` im `NOTICE` (`00acd77c`). (b) Regel **`ohne-lizenz ⇒ nicht spiegeln`** gebaut — `license_census` flaggt `terms ohne-lizenz` + CDN-Mirror-`url` als `terms-redistribution VIOLATION` (+ Test); **23 gespiegelte `ohne-lizenz`-Blöcke** aus `sources.φ` nach `declined_sources.φ` (`decline redistribution`); `harvest.φ`-Slots entfernt. (c) die 23: IMCCE/SuperMAG lokal zu halten, Rest geschlossen (Notiz je Eintrag); die 4 direkten (nicht gespiegelten: maxi/ldeo/uhslc/linea) bleiben. **Offen (d):** je eine Lizenz-Anfrage an IMCCE (INPOP/NOE4) und SuperMAG vorbereiten — Senden ist die Operator-Hand. Bitte in die Operator-Queue falten.
 
 ## LOCK
 
