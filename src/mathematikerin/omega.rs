@@ -356,9 +356,13 @@ impl OmegaLoop {
 
     pub fn presence_frame(&self) -> PresenceFrame {
         let (pan_ms, tilt_ms) = aim_pulse_ms(self.v);
+        let aperture: [f32; 9] =
+            std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale);
+        let state = aperture_state(&aperture);
         PresenceFrame {
             omega: self.probe_omega,
-            aperture: std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale),
+            aperture,
+            state,
             pan_ms,
             tilt_ms,
             tau_ticks: self.natural_latency_ticks,
@@ -1817,7 +1821,11 @@ impl OmegaLoop {
                         alpha,
                         self.tone_code.load(std::sync::atomic::Ordering::SeqCst),
                         self.tone_scale,
-                        acoustic_amplitude(&self.probe_omega, &aperture)
+                        acoustic_amplitude(
+                            &self.probe_omega,
+                            &aperture,
+                            &aperture_state(&aperture)
+                        )
                     );
                 }
             }

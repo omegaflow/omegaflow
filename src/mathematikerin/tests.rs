@@ -919,7 +919,10 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     assert_eq!(fields[14], crate::archivar::hrv::TONE_ABSENT as f32);
     assert_eq!(fields[15], app.tone_scale);
     let aperture: [f32; 9] = std::array::from_fn(|i| app.field_permeability[i] * app.tone_scale);
-    assert_eq!(fields[16], acoustic_amplitude(&app.probe_omega, &aperture));
+    assert_eq!(
+        fields[16],
+        acoustic_amplitude(&app.probe_omega, &aperture, &aperture_state(&aperture))
+    );
 
     app.last_hud = None;
     app.tick();
