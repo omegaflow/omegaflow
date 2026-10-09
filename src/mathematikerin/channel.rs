@@ -324,6 +324,7 @@ pub struct ChannelDescriptor {
     pub boundary: Boundary,
     pub extent: Option<f64>,
     pub family: ModeFamily,
+    pub body: Option<String>,
     pub unit: &'static str,
 }
 
@@ -338,6 +339,7 @@ impl PartialEq for ChannelDescriptor {
             && self.boundary == other.boundary
             && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
             && self.family == other.family
+            && self.body == other.body
             && self.unit == other.unit
     }
 }
@@ -367,12 +369,18 @@ impl ChannelDescriptor {
                 Medium::ElasticSolid => ModeFamily::Spheroidal,
                 Medium::Vacuum | Medium::Fluid => ModeFamily::Scalar,
             },
+            body: None,
             unit,
         }
     }
 
     pub fn with_extent(mut self, extent: Option<f64>) -> Self {
         self.extent = extent;
+        self
+    }
+
+    pub fn with_body(mut self, body: Option<String>) -> Self {
+        self.body = body;
         self
     }
 
@@ -401,8 +409,13 @@ impl ChannelDescriptor {
     }
 
     pub fn fundamental_hz(&self) -> Option<f64> {
-        let speed = characteristic_speed(self.medium, None)?;
-        self.mode_frequencies_hz(speed, 1)?.into_iter().next()
+        match self.body.as_deref() {
+            Some(body) => self.mode_frequencies_hz_for_body(body, 1)?.into_iter().next(),
+            None => {
+                let speed = characteristic_speed(self.medium, None)?;
+                self.mode_frequencies_hz(speed, 1)?.into_iter().next()
+            }
+        }
     }
 
     pub fn mode_frequencies_hz_for_body(&self, body_name: &str, count: usize) -> Option<Vec<f64>> {
@@ -456,9 +469,13 @@ impl ChannelDescriptor {
         h = fnv1a(&[self.family as u8], h);
         h = self.domain.hash_into(h);
         h = fnv1a(&[self.boundary as u8], h);
-        match self.extent {
+        h = match self.extent {
             None => fnv1a(&[0u8], h),
             Some(e) => fnv1a(&e.to_bits().to_le_bytes(), fnv1a(&[1u8], h)),
+        };
+        match &self.body {
+            None => fnv1a(&[0u8], h),
+            Some(b) => fnv1a(b.as_bytes(), fnv1a(&[1u8], h)),
         }
     }
 
@@ -1233,7 +1250,11 @@ pub fn channel_registry_from_sources(sources: &[crate::archivar::SourceConfig]) 
     let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
     for s in sources {
         for d in &s.channels {
-            reg.register(d.clone());
+            let mut d = d.clone();
+            if d.body.is_none() {
+                d.body = s.body.clone();
+            }
+            reg.register(d);
         }
     }
     if reg.is_empty() {
@@ -2185,6 +2206,45 @@ mod tests {
             "toroidal l=1 first tone {}",
             tor[0]
         );
+    }
+
+    #[test]
+    fn the_earth_seismic_channel_rings_through_its_body() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Sphere { l: 0 },
+            Boundary::FreeSurface,
+            "Pa",
+        )
+        .with_extent(Some(6_371_000.0))
+        .with_body(Some("earth".to_string()));
+        let f = d
+            .fundamental_hz()
+            .expect("the earth seismic channel carries a fundamental tone");
+        assert!(f.is_finite() && f > 0.0, "fundamental {f}");
+    }
+
+    #[test]
+    fn a_channel_without_geometry_stays_silent() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Maxwell,
+            PdeType::Mixed,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "V/m",
+        );
+        assert_eq!(d.fundamental_hz(), None);
     }
 
     #[test]

@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 965e8ec4fc84bcca9db20e1062145d0fa47403ef27584a4fdf07a0657d2a9ba0
+  sha256: 33b730e9c6bbd81c64570cce63bf030511fd51b8403a2317321e78600a6fc32e
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -40,9 +40,11 @@ Wort | Datum | Quelle
 „bitte durch archive search all den rat und ALLLEEEEE!! UI und openweight chats mit gewichtung analysieren lassen" | 2026-10-09 | Operator (Session, River 148) — volle gewichtete Stimmen-Runde (Wissenschaft + Rat + alle UI- + Open-Weight-Seats) zu den Register-Achsen Riss A/B; ausgeführt (`…achsen-runde.md`)
 „kann es sein dass du weder claude noch glm in tryingopen befragt hast?" | 2026-10-09 | Operator (Session, River 148) — gemessener Fehler: Claude und `tryingopen`-GLM 5.3 (plus Nemotron/Hy4/GPT-OSS/MiMo/DeepSeek V4.1) fehlten im ersten Lauf; nachgefahren, Runde vervollständigt (`…achsen-runde.md`)
 „hast du die modelle nach stärke gewichtet?" | 2026-10-09 | Operator (Session, River 148) — Verdichtung war konvergenz-gezählt; explizite Stärke-Gewichtung nachgeführt (`…achsen-runde.md` §Stärke-Gewichtung): Riss A 15.35 : 0.9, Riss B 15.35 : 1.25, Kante 4. Achse Domain/Rand
+„warum führst du future lock punkte?" | 2026-10-09 | Operator (Session, River 160) — River trägt keine Future-LOCK-Punkte; Förder-Bewerbungen leben in Futures Operator-Queue
+„bitte mach das jetzt einfach mal fertig Eigenmode-Arme … Empfänger-Apertur, USGS ExtractResult riss-arm (Mountain), CI-Verifikation … dropped-gate, Flyby (termin:2026-11-01)" | 2026-10-09 | Operator (Session, River 160) — offene Punkte bis zur Kante fertigmachen
 
-Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Kein neues Operator-Wort in
-River 160. Vorherige Worte in
+Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Zwei neue Worte in
+River 160 (die letzten zwei Register-Zeilen). Vorherige Worte in
 `docs/handover/archiv/handover-2026-10-09-river-folge159.md` §Operator-Wort-Register — gefaltet,
 nicht kopiert.
 
@@ -57,21 +59,25 @@ nicht kopiert.
 
 ## Offen (aufgeschlüsselt)
 
-### Eigenmode-Arme — P3.1 CSR-Wire gebaut; Kanal-Direktiven (Geometrie + c) offen
+### Eigenmode-Arme — P3.1 CSR-Wire + c-Quelle gebaut; Ton-Pfad steht
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-160) Kinetic-Wire trägt die CSR-Offsets:
+- **Lage:** (gemessen 2026-10-09, river-160) **CSR-Wire (P3.1):**
   `[CF 86 0A flags][n u16][schema_hash u32][00 00][offsets u32[n+1]][f32 Nutzlast][state mask][pan?][tilt?]`,
   Kanal k = `payload[offsets[k]..offsets[k+1]]` (heute `[omega, aperture]`, `offsets[k]=2k`; eine
-  reichere Nutzlast wächst im Span, ohne Layout-Wechsel). Gebaut: `relay.rs kinetic_frame_bytes`
-  + `static/constants.js parseKinetic` + Rust-Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`;
-  `cargo check --features browser_relay --tests` grün, zero warnings. Vorher (river-159):
-  `Domain::Sphere{l}`, `fundamental_hz`, `presence_frame`/`partials_hz`, Deskriptor-Manifest TAG 12.
-- **Blockade:** Quell-Kanäle tragen `Domain::Unspecified` → `mode_wavenumbers` None;
-  `fundamental_hz()` ruft `characteristic_speed(medium, None)` → Fluid/Elastik ohne
-  Materialparameter None (Vakuum trägt c). Der Ton bleibt stumm, kein Fabrikat.
-- **Braucht:** `channel`-Direktiven in `phi/sources.φ` mit `sphere(l)`/`rectangle(…)`/`extent`;
-  die `c`-Quelle je Medium — `mode_frequencies_hz_for_body` liest `media::medium_params_of(body)`.
+  reichere Nutzlast wächst im Span). `relay.rs kinetic_frame_bytes` + `static/constants.js parseKinetic`
+  + Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`. **c-Quelle gebaut:**
+  `ChannelDescriptor.body: Option<String>`, gesetzt aus `SourceConfig.body` (`at`/`on`) in
+  `channel_registry_from_sources`; `hash`/`PartialEq` binden ihn; `fundamental_hz()` löst `c` über
+  `media::medium_params_of(body)` (`media_params.tsv`, gemessen) und ist familien-bewusst
+  (Scalar/Toroidal/Spheroidal). Die zwei seismischen Kanäle (`phi/sources.φ:17`/`:102`) tragen jetzt
+  `:6371000` (Erdradius) → `elastic_spheroidal_frequencies(0, cp, cs, R, 1)` liefert den Grundton.
+  Tests `the_earth_seismic_channel_rings_through_its_body`, `a_channel_without_geometry_stays_silent`;
+  `cargo check --features browser_relay --tests` grün. Vorher (river-159): `Domain::Sphere{l}`,
+  `presence_frame`/`partials_hz`, Deskriptor-Manifest TAG 12.
+- **Blockade:** keine — der `c`-Pfad steht.
+- **Braucht:** weitere Kanal-Geometrien, wo die Physik sie trägt — Fluid/Akustik ohne Hohlraum und
+  Maxwell ohne Kavität bleiben `unspecified` (0 ehrt die offene Geometrie, kein Fabrikat).
 
 ### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
 - **Status:** eigen | **Bindung:** eigen
@@ -113,8 +119,10 @@ nicht kopiert.
   — river-159 hatte ihn als fremd geführt, er ist **river-eigen**; gefixt
   (`&sources[0].channels[0]`), `cargo check --features browser_relay --tests` grün. Offen im
   selben `clippy`-Job, **fremde** Ursachen: clippy `dmap.rs:250/257`, `keogram.rs:21` (archivar, Mountain).
+  (gemessen 2026-10-09 via `ci_manage status`) `ci-gate` `37996791318` @`22:00:31Z` **queued**, Step
+  `subset → Run cargo test --lib` — Single-Runner-Stau, kein grünes Verdikt am HEAD.
 - **Blockade:** CI-Queue + fremde Job-Ursachen.
-- **Braucht:** `ci_manage status`; einen grünen `ci-gate` am neuen HEAD lesen.
+- **Braucht:** `ci_manage status`; einen grünen `ci-gate` am neuen HEAD lesen (`37996791318`).
 
 ### dropped-gate — Ursache gemessen (Token-Bags aus archivierten Handovers)
 - **Status:** wartend | **Bindung:** eigen · mycelium
@@ -134,7 +142,6 @@ nicht kopiert.
 
 - **SuperDARN Record-Download (`phi/blocked_sources.φ:78`)** — Operator-Wort 2026-09-29; kein Maschinen-Akt.
 - **SuperDARN MAP/Globus Re-Submit** — Operator-Wort 2026-10-09: „warte bis zur glasfase"; `wartend.φ:8`.
-- **Förder-Bewerbungen Prototype Fund (Frist 30.11.) + EMAP (Frist 06.11.)** — Operator-Wort 2026-10-07: bleiben **LOCK**; Send = Operator-Hand.
 
 ## Abschluss
 
@@ -143,7 +150,9 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `src/archivar/relay.rs` (P3.1 CSR-Offsets `u32[n+1]` + f32-Nutzlast + State-Maske danach; Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`)
 - `static/constants.js` (`parseKinetic` liest CSR-Offsets, gibt `{n, schemaHash, state, omega, aperture, pan, tilt}` unverändert zurück)
 - `src/archivar/parse.rs` (E0507-Test-Fix `588735e39 river 154`: `&sources[0].channels[0]`)
-- `docs/concepts/kanal-ontologie-komplettbau.md` (P3.1 Layout eingetragen; sha neu)
+- `src/mathematikerin/channel.rs` (`ChannelDescriptor.body` + `with_body`; `hash`/`PartialEq` binden den Körper; `fundamental_hz()` familien-/body-bewusst; `channel_registry_from_sources` setzt `body` aus `SourceConfig.body`; Tests)
+- `phi/sources.φ` (die zwei seismischen Kanäle `:17`/`:102` tragen `:extent 6371000`)
+- `docs/concepts/kanal-ontologie-komplettbau.md` (P3.1 Layout + P1.9 body; sha neu)
 - `docs/handover/handover-2026-10-09-river-folge160.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge159.md` (Move)
 
@@ -151,4 +160,4 @@ Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## A
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/archivar/extract.rs`, `src/archivar/mod.rs`, `src/lib.rs`, `tools/harvest/src/bin/cmb_planck_compiler.rs`, `src/archivar/iris.rs`, `src/archivar/themis_asi.rs` (source-arm).
 
-## Burn: open $0.5502 · close $0.7093 (Fenster 24 Sessions, deepseek-flash) · Grund: P3.1 CSR-Wire (relay + Browser-parse) + river-eigenen E0507-Test-Fix; CI-Trigger wartend
+## Burn: open 0.0000 · close 0.1424 · cap 0.20 — River 160 (deepseek-flash, kein pro/max); Fenster 30 Sessions 1.2413; Grund: P3.1 CSR-Wire + c-Quelle/Seismik-Geometrie + river-eigener E0507-Fix
