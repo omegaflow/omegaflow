@@ -171,7 +171,7 @@ impl Boundary {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct ChannelDescriptor {
     pub conserved: Conserved,
     pub role: QuantityRole,
@@ -180,8 +180,25 @@ pub struct ChannelDescriptor {
     pub medium: Medium,
     pub domain: Domain,
     pub boundary: Boundary,
+    pub extent: Option<f64>,
     pub unit: &'static str,
 }
+
+impl PartialEq for ChannelDescriptor {
+    fn eq(&self, other: &Self) -> bool {
+        self.conserved == other.conserved
+            && self.role == other.role
+            && self.op == other.op
+            && self.pde_type == other.pde_type
+            && self.medium == other.medium
+            && self.domain == other.domain
+            && self.boundary == other.boundary
+            && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
+            && self.unit == other.unit
+    }
+}
+
+impl Eq for ChannelDescriptor {}
 
 impl ChannelDescriptor {
     pub fn new(
@@ -202,8 +219,18 @@ impl ChannelDescriptor {
             medium,
             domain,
             boundary,
+            extent: None,
             unit,
         }
+    }
+
+    pub fn with_extent(mut self, extent: Option<f64>) -> Self {
+        self.extent = extent;
+        self
+    }
+
+    pub fn mode_wavenumbers(&self, count: usize) -> Option<Vec<f64>> {
+        eigen_wavenumbers(self.domain, self.boundary, self.extent?, count)
     }
 
     pub fn hash(&self) -> u64 {
@@ -220,14 +247,18 @@ impl ChannelDescriptor {
         h = fnv1a(&[self.pde_type as u8], h);
         h = fnv1a(&[self.medium as u8], h);
         h = fnv1a(&[self.domain as u8], h);
-        fnv1a(&[self.boundary as u8], h)
+        h = fnv1a(&[self.boundary as u8], h);
+        match self.extent {
+            None => fnv1a(&[0u8], h),
+            Some(e) => fnv1a(&e.to_bits().to_le_bytes(), fnv1a(&[1u8], h)),
+        }
     }
 
     pub fn parse_spec(spec: &str, unit: &'static str) -> Result<Self, String> {
         let t: Vec<&str> = spec.split(':').collect();
-        if t.len() != 7 {
+        if t.len() != 7 && t.len() != 8 {
             return Err(format!(
-                "channel spec needs 7 axes conserved:role:op:pde_type:medium:domain:boundary, got {}",
+                "channel spec needs 7 axes conserved:role:op:pde_type:medium:domain:boundary (or 8 with :extent), got {}",
                 t.len()
             ));
         }
@@ -241,6 +272,11 @@ impl ChannelDescriptor {
         let domain = Domain::parse(t[5]).ok_or_else(|| format!("unknown domain \"{}\"", t[5]))?;
         let boundary =
             Boundary::parse(t[6]).ok_or_else(|| format!("unknown boundary \"{}\"", t[6]))?;
+        let extent = if t.len() == 8 {
+            parse_extent(t[7])?
+        } else {
+            None
+        };
         if !is_admissible(conserved, op, medium) {
             return Err(format!(
                 "inadmissible channel {}/{}/{} is not in the admissibility relation",
@@ -249,7 +285,26 @@ impl ChannelDescriptor {
         }
         Ok(ChannelDescriptor::new(
             conserved, role, op, pde_type, medium, domain, boundary, unit,
-        ))
+        )
+        .with_extent(extent))
+    }
+}
+
+fn parse_extent(token: &str) -> Result<Option<f64>, String> {
+    match token {
+        "unspecified" | "absent" | "-" => Ok(None),
+        _ => {
+            let v: f64 = token
+                .parse()
+                .map_err(|_| format!("unknown extent \"{}\"", token))?;
+            if !v.is_finite() || v <= 0.0 {
+                return Err(format!(
+                    "extent must be a positive finite length, got \"{}\"",
+                    token
+                ));
+            }
+            Ok(Some(v))
+        }
     }
 }
 
@@ -1327,6 +1382,54 @@ mod tests {
             err.contains("inadmissible"),
             "the refusal names the relation: {err}"
         );
+    }
+
+    #[test]
+    fn an_eight_axis_spec_carries_the_geometry_extent() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:circle:dirichlet:2.0",
+            "Pa",
+        )
+        .expect("circle channel with extent parses");
+        assert_eq!(d.extent, Some(2.0));
+        let k = d.mode_wavenumbers(3).expect("circle modes");
+        assert_eq!(k.len(), 3);
+        assert!((k[0] - FIRST_BESSEL_J0_ZERO / 2.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn a_seven_axis_spec_leaves_the_extent_absent() {
+        let d = ChannelDescriptor::parse_spec(
+            "mass:primary:poisson:elliptic:vacuum:line:dirichlet",
+            "m/s^2",
+        )
+        .expect("seven axes parse");
+        assert_eq!(d.extent, None);
+        assert!(d.mode_wavenumbers(3).is_none(), "absent extent is no mode");
+    }
+
+    #[test]
+    fn the_extent_enters_the_channel_identity() {
+        let bare = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:line:dirichlet",
+            "Pa",
+        )
+        .expect("bare parses");
+        let sized = bare.with_extent(Some(1.0));
+        assert_ne!(bare.hash(), sized.hash());
+        assert_ne!(bare, sized);
+    }
+
+    #[test]
+    fn a_nonpositive_or_nan_extent_is_refused() {
+        for token in ["0", "-1", "NaN", "furlongs"] {
+            let err = ChannelDescriptor::parse_spec(
+                &format!("energy:primary:wave:hyperbolic:fluid:circle:dirichlet:{token}"),
+                "Pa",
+            )
+            .expect_err("bad extent is refused");
+            assert!(err.contains("extent"), "the refusal names the axis: {err}");
+        }
     }
 
     #[test]
