@@ -8,6 +8,7 @@ pub(crate) use crate::machines::{
 };
 
 pub mod actuators;
+pub mod channel;
 pub mod dispersion;
 pub mod doppler;
 pub mod equilibrium;
