@@ -2744,7 +2744,9 @@ fn bias_column(
     let Some(floor) = arm.neff_floor() else {
         return (None, "floor_unmeasured");
     };
-    let ne = n_eff.unwrap_or(f64::NAN);
+    let Some(ne) = n_eff else {
+        return (None, "neff_absent");
+    };
     if !(ne.is_finite() && ne >= floor) {
         return (None, "unadjusted_below_floor");
     }
@@ -3598,21 +3600,20 @@ fn largest_pow2_bin(n: usize) -> usize {
     q
 }
 
-fn quantile_sorted(sorted: &[f64], p: f64) -> f64 {
-    if sorted.is_empty() {
-        return f64::NAN;
-    }
+fn quantile_sorted(sorted: &[f64], p: f64) -> Option<f64> {
+    let first = *sorted.first()?;
     if sorted.len() == 1 {
-        return sorted[0];
+        return Some(first);
     }
     let pos = p.clamp(0.0, 1.0) * (sorted.len() - 1) as f64;
     let lo = pos.floor() as usize;
     let hi = pos.ceil() as usize;
-    if lo == hi {
-        return sorted[lo];
-    }
-    let frac = pos - lo as f64;
-    sorted[lo] * (1.0 - frac) + sorted[hi] * frac
+    Some(if lo == hi {
+        sorted[lo]
+    } else {
+        let frac = pos - lo as f64;
+        sorted[lo] * (1.0 - frac) + sorted[hi] * frac
+    })
 }
 
 fn driver_decorrelation_s(driver: &[(f64, f64)]) -> Option<f64> {
@@ -3638,10 +3639,15 @@ fn driver_decorrelation_s(driver: &[(f64, f64)]) -> Option<f64> {
     if n < 8 {
         return None;
     }
-    let grid: Vec<f64> = (0..n)
-        .map(|k| sample_nearest(driver, t0 + k as f64 * dt).unwrap_or(f64::NAN))
+    let grid: Vec<Option<f64>> = (0..n)
+        .map(|k| sample_nearest(driver, t0 + k as f64 * dt))
         .collect();
-    let finite: Vec<f64> = grid.iter().copied().filter(|v| v.is_finite()).collect();
+    let finite: Vec<f64> = grid
+        .iter()
+        .copied()
+        .flatten()
+        .filter(|v| v.is_finite())
+        .collect();
     if finite.len() * 2 < n {
         return None;
     }
@@ -3656,11 +3662,11 @@ fn driver_decorrelation_s(driver: &[(f64, f64)]) -> Option<f64> {
         let mut num = 0.0f64;
         let mut cnt = 0usize;
         for i in 0..(n - lag) {
-            let a = grid[i];
-            let b = grid[i + lag];
-            if a.is_finite() && b.is_finite() {
-                num += (a - mean) * (b - mean);
-                cnt += 1;
+            if let (Some(a), Some(b)) = (grid[i], grid[i + lag]) {
+                if a.is_finite() && b.is_finite() {
+                    num += (a - mean) * (b - mean);
+                    cnt += 1;
+                }
             }
         }
         if cnt == 0 {
@@ -3760,7 +3766,11 @@ fn run_count_panel(driver: &[(f64, f64)], events: &[(f64, f64)], q: usize, surro
     values.sort_by(|a, b| a.total_cmp(b));
     let mut edges: Vec<f64> = Vec::with_capacity(q + 1);
     for k in 0..=q {
-        edges.push(quantile_sorted(&values, k as f64 / q as f64));
+        let Some(edge) = quantile_sorted(&values, k as f64 / q as f64) else {
+            println!("count panel pending — the driver carries no finite quantile");
+            return;
+        };
+        edges.push(edge);
     }
     let bin_of = |v: f64| -> Option<usize> {
         if !v.is_finite() {
@@ -5097,6 +5107,7 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            fanout_center: None,
             stations_flatten: String::new(),
             stations_filter: None,
             fanout_delay: 0,
@@ -5851,9 +5862,9 @@ cadence live
     #[test]
     fn quantile_sorted_interpolates() {
         let v = [0.0, 1.0, 2.0, 3.0];
-        assert!((quantile_sorted(&v, 0.0) - 0.0).abs() < 1e-12);
-        assert!((quantile_sorted(&v, 1.0) - 3.0).abs() < 1e-12);
-        assert!((quantile_sorted(&v, 0.5) - 1.5).abs() < 1e-12);
+        assert!((quantile_sorted(&v, 0.0).unwrap() - 0.0).abs() < 1e-12);
+        assert!((quantile_sorted(&v, 1.0).unwrap() - 3.0).abs() < 1e-12);
+        assert!((quantile_sorted(&v, 0.5).unwrap() - 1.5).abs() < 1e-12);
     }
 
     #[test]
