@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: f645c9e81fc3d8fef5826645860b4d5fb57dd4f7b4b5951cf38898e6813e9c8e
+  sha256: c730733083e7f680965f274cd65184e84d5ac34e200516f02c0129101ccf27a1
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -101,7 +101,7 @@ Origin: mountain-folge283.
 
 Origin: mountain-folge283.
 
-- **Redistributions-Rechte — Operator-Wort „ja bitte alles" (2026-10-09), ausgeführt:** (a) Takedown-Adresse `code@omegaflow.space` im `NOTICE` (`00acd77c`). (b) Regel **`ohne-lizenz ⇒ nicht spiegeln`** gebaut — `license_census` flaggt `terms ohne-lizenz` + CDN-Mirror-`url` als `terms-redistribution VIOLATION` (+ Test); **23 gespiegelte `ohne-lizenz`-Blöcke** aus `sources.φ` nach `declined_sources.φ` (`decline redistribution`); `harvest.φ`-Slots entfernt. (c) die 23: IMCCE/SuperMAG lokal zu halten, Rest geschlossen (Notiz je Eintrag); die 4 direkten (nicht gespiegelten: maxi/ldeo/uhslc/linea) bleiben. **Offen (d):** je eine Lizenz-Anfrage an IMCCE (INPOP/NOE4) und SuperMAG vorbereiten — Senden ist die Operator-Hand. Bitte in die Operator-Queue falten.
+- **Redistributions-Rechte — Operator-Wort „ja bitte alles" (2026-10-09), ausgeführt:** (a) Takedown-Adresse `code@omegaflow.space` im `NOTICE` (`00acd77c`). (b) Regel **`ohne-lizenz ⇒ nicht spiegeln`** gebaut — `license_census` flaggt `terms ohne-lizenz` + CDN-Mirror-`url` als `terms-redistribution VIOLATION` (+ Test); **23 gespiegelte `ohne-lizenz`-Blöcke** aus `sources.φ` nach `declined_sources.φ` (`decline redistribution`); `harvest.φ`-Slots entfernt. (c) die 23: IMCCE/SuperMAG lokal zu halten, Rest geschlossen (Notiz je Eintrag); die 4 direkten (nicht gespiegelten: maxi/ldeo/uhslc/linea) bleiben. **(d) vorbereitet** (Future war beschäftigt, Mountain übernahm): zwei Entwürfe `state/mail/imcce-inpop-lizenz-2026-10-09.body.txt` und `state/mail/supermag-lizenz-2026-10-09.body.txt`, QUELLEN je `state/mail/lizenz-anfragen-2026-10-09.md:1-6`, `smail --dry-run` grün (nichts gesendet). **Send = Operator-Hand:** `smail --to inpop.imcce@obspm.fr --subject "…" --body state/mail/imcce-inpop-lizenz-2026-10-09.body.txt --send` bzw. `smail --to supermag@listserv.jhuapl.edu --cc Jesper.Gjerloev@jhuapl.edu --body state/mail/supermag-lizenz-2026-10-09.body.txt --send`. Bitte in die Operator-Queue falten. Kein vorheriger Mail-Thread mit beiden (gemessen, `mail_ledger.φ` leer für imcce/supermag).
 
 ## LOCK
 
