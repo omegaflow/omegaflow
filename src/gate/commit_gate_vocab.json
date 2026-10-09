@@ -10,6 +10,8 @@
     "zweig-modell"
   ],
   "fabrication": [
+    ["open-source research project", "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"],
+    ["open-source non-commercial", "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"],
     ["sgrep -i TOKEN .secrets.local", "reading .secrets.local values dumps secret values into the transcript — only key names, never values"],
     ["cat .secrets.local", "cat dumps every secret value into the transcript — only key names, never values"],
     ["head .secrets.local", "head dumps secret values into the transcript — only key names, never values"],
