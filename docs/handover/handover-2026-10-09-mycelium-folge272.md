@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierte Blöcke mountain-280 + river-139 gefaltet; HadISST-Compiler dim-Toleranz geheilt; ci-gate-clippy-Suite geheilt (ChannelQuery-Kontextstruktur + positive Vergleiche + ?-Operator + Default); impc_roti-CDN-Arm verdrahtet (harvest.φ + impc-roti-cdn.yml); Such-Arme im PATH-Wrapper veröffentlicht.
   class: handover
   date: 2026-10-09
-  sha256: 4c73cdbbaeccef46244179b4674c63f0e54583867e46997a8fa5ae1fbbb1256c
+  sha256: d81072249badea00d6ec6ab9d6d807faa4b14dd4957366a358dd53493da937be
   status: live
 -->
 # Handover — Mycelium-Folge 272 (2026-10-09)
@@ -26,6 +26,7 @@ liegen als Sender-Zeilen in `## An <line>`; die Blöcke `mountain-280` und
 - „in sources nur APIs mit Kräften" | 2026-10-08 | Quelle: mycelium-269.
 - „auf meinem XPS13 dürfen sie auf keinen Fall laufen" | 2026-10-08 | Quelle: mycelium-269 (`subset` auf `t420`).
 - „VT SuperDArn ist eingeloggt" | 2026-10-08 | Quelle: mycelium-269.
+- „consensus/perplexity als descoped streichen" | 2026-10-09 | Quelle: Operator (diese Session). **Descoped-Befund:** die zwei Remote-MCP-Einträge (`mcp.consensus.app`, `api.perplexity.ai`) aus `opencode.json` entfernt; der `archive_search`-Arm trägt die Route (gemessen: `--perplexity` positiv, `--consensus` 429 transient; beide selbst-contained in Rust, dieselben Backends), kein Agenten-Profil exponierte die MCP-Tools. `chrome-devtools*`-MCP bleibt (Browser-Automation).
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge271.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-271.
 
 ## Offen — eigen

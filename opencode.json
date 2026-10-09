@@ -437,18 +437,6 @@
     }
   },
   "mcp": {
-    "consensus": {
-      "type": "remote",
-      "url": "https://mcp.consensus.app/mcp",
-      "enabled": true,
-      "headers": { "x-api-key": "{env:CONSENSUS_API_KEY}" }
-    },
-    "perplexity": {
-      "type": "remote",
-      "url": "https://api.perplexity.ai/mcp",
-      "enabled": true,
-      "headers": { "Authorization": "Bearer {env:PERPLEXITY_API_KEY}" }
-    },
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@1.9.0", "--no-usage-statistics", "--no-performance-crux", "--autoConnect"],
