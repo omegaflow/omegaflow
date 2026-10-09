@@ -1,0 +1,48 @@
+name: ebhis-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the bin is already present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ebhis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the bin is already manifested
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view cdsarc.cds.unistra.fr --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^ebhis_hpx190\.bin$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ebhis_hpx190.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ebhis_hpx190.bin missing — compiling and manifesting"
+          fi
+      - name: Compile the EBHIS HPX spectral map and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-harvest --bin ebhis_compiler -- \
+            --out "data/cdsarc.cds.unistra.fr/ebhis_hpx190.bin" --ci-mode
