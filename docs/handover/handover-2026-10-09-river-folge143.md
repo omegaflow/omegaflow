@@ -3,7 +3,7 @@
   session: River-Folge 143
   class: handover
   date: 2026-10-09
-  sha256: 7d2f2842d0f93773c726ee0d1b271a157a11bf807977a8ae18d1d47a3caf8842
+  sha256: e1a4c50df0e0e340aadd812aefc1923c4d3d8983ed2ced44979874ed08cefd80
   status: live
 -->
 # Handover — River-Folge 143 (2026-10-09)
@@ -149,9 +149,10 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 143):
 
 - `tools/measure/src/bin/field_te_query.rs` (mycelium-274-Adressblock gefaltet: `fanout_center: None` im Test-Modul; `bias_column` benannter Arm `neff_absent`; Grid/`quantile_sorted` auf `Option<f64>` statt NaN)
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P0.5 Ton-Relation gefaltet; P2.3/P6.2 an P0.5 gebunden)
+- `docs/concepts/ui-seats.md` (Kimi-URL `kimi.com` → `kimi.ai` geheilt, Composer/Senden nach `state/stimmen/README.md`; Header-sha)
 - `docs/handover/handover-2026-10-09-river-folge143.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge142.md` (Move)
 
 Nicht committet (gitignored, Session-Artefakt): `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` (Rohprotokoll), `state/operator-gespraeche/2026-10-09-river.md` (die River-143-Worte geschnitten).
 
-## Burn: open 0.0000 · close 0.31 (Line-Session `session_burn` $0.2428 + 2 Taucher + Rat ≈ $0.07) · cap 0.5 · Grund: mycelium-274-Adressblock gefaltet (`field_te_query.rs`); Operator-Wort „Ja" (Kanalzahl-Umbau); volle Ton-Modell-Runde **plus Roster-Erweiterung** (`archive_search --all` + 2 Taucher + Rat + 7 Frontier- + 4 Open-Weight-Seats), Verdikt + Riss-Inventar als P0.5 in den Bauplan gefaltet; `cargo check` + `cargo build -p omegaflow-measure --bin field_te_query` grün (deepseek-flash, `session_burn`, gemessen 2026-10-09) · kein pro/max. **Cap überschritten** — benannter Burn, kein stiller.
+## Burn: open 0.0000 · close 0.33 (Line-Session `session_burn` $0.2619 + 2 Taucher + Rat ≈ $0.07) · cap 0.5 · Grund: mycelium-274-Adressblock gefaltet (`field_te_query.rs`); Operator-Wort „Ja" (Kanalzahl-Umbau); volle Ton-Modell-Runde **plus Roster-Erweiterung** (`archive_search --all` + 2 Taucher + Rat + 7 Frontier- + 4 Open-Weight-Seats), Verdikt + Riss-Inventar als P0.5 in den Bauplan gefaltet; `cargo check` + `cargo build -p omegaflow-measure --bin field_te_query` grün (deepseek-flash, `session_burn`, gemessen 2026-10-09) · kein pro/max. **Cap überschritten** — benannter Burn, kein stiller.

@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 0e11b3793aface7ee76264089182b5a2f9704f80ad7e092a990e329be6981a34
+  sha256: 5b263ea11739b8544dd0bc4d58fb2750e5d71724dd2f961192466baff0ef271d
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -37,7 +37,7 @@ Rolle) steht im AGENTS.md; diese Karte trägt das **Wie**.
 | Claude | `https://claude.ai/new` | `div[contenteditable="true"]` (ProseMirror) | Enter | `<line>-ui` |
 | Qwen | `https://chat.qwen.ai/` | `textarea[placeholder*="Qwen fragen"]` | Klick `.message-input-right-button-send` (Enter füllt nur) | `<line>-ui` |
 | GLM / Z.ai | `https://chat.z.ai/` | Textbox „How can I help you today?" | Senden-Button / Enter | `<line>-ui` |
-| Kimi | `https://www.kimi.com/` | `div[contenteditable]` | Senden-Button | `<line>-ui` |
+| Kimi | `https://www.kimi.ai/` (nicht `kimi.com`; **kein K3** — schneller Modus, K3 nur über `tryingopen`) | `div.chat-input-editor` (contenteditable) | `.send-button-container` / Enter | `<line>-ui` |
 | MiMo V2.6 Pro (Xiaomi) | `https://agent.minimax.io/` | `div[contenteditable][placeholder*="Enter message"]` | Senden | `<line>-ui` |
 | Nemotron 3 Ultra (NVIDIA) | über `open-weight-ui` (s. u.) oder NIM | — | — | geteilt |
 
