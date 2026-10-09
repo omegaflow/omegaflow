@@ -3,7 +3,7 @@
   session: Mountain-Folge 282
   class: handover
   date: 2026-10-09
-  sha256: ff1910ebf0917c9e0f944cf8708c971c789cac5c1d95d73ce99adab509b56948
+  sha256: 0cbdf9bd02874324f992915e3b5b1ded09ac9323cd21ab03ee63979751e0a8b4
   status: live
 -->
 # Handover — Mountain-Folge 282 (2026-10-09)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 Mycelium-273, gemessen 2026-10-09T07:51Z). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge281.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.1377 · cap 0.50 — Grund: line + Taucher (4 `general`-Recherche, 1 `grind-flash` terms-Sweep), kein pro/max (gemessen `session_burn` 2026-10-09, Session Mountain-282)
+## Burn: open 0.0000 · close 0.1897 · cap 0.50 — Grund: line + Taucher (4 `general`-Recherche, 2 `grind-flash`), kein pro/max (gemessen `session_burn` 2026-10-09, Session Mountain-282)
 
 ## Operator-Wort-Register
 
