@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: 107041d3fef664f9001289f94a1a4b15d529ddb5cf73e1f4a5ea18650f0f6c96
+  sha256: dae779a3094477db3bdd8f7ef2e8a2b3fca1f2acc1948c6ea891d3936226b00f
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1152 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 4 `general`-Taucher (Redistributions-Alternativen 41 Blöcke, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.2143 (41 Sessions).
+## Burn: open 0.0000 · close 0.1402 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 4 `general`-Taucher (Redistributions-Alternativen 41 Blöcke, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot (6 unbound Workflows) gemessen; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.2812 (41 Sessions).
 
 ## Operator-Wort-Register
 
@@ -40,6 +40,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-09 via `ci_manage`) **in_progress** seit 12:45Z. `ledger.φ:110` `ausstehend`.
 - **Blockade:** keiner.
 - **Braucht:** bei success `ledger.φ:110` → `disponiert` + CDN-Asset prüfen.
+
+### CDN — `cdn_reconcile --fail`: 6 Workflows schreiben abgelehnte netlocs
+- **Status:** wartend | **Bindung:** eigen (CDN-Infra)
+- **Trigger:** `ci-gate` `register`-Job rot (`cdn_reconcile --fail`, `37983273688` @`4e3bd565a`)
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37983273688`) `hamqsl-cdn.yml:39` (`hamqsl.com`) · `lhaaso-cdn.yml:24` (`casdc.china-vo.org`) · `ogimet-cdn.yml:39` (`ogimet.com`) · `pradan-cdn.yml:79/109` (`pradan.issdc.gov.in`) · `wwlln-cdn.yml:43` (`wwlln.net`) — alle netlocs stehen in `declined_sources.φ` (redistribution/kommerziell), nicht in `sources.φ`.
+- **Blockade:** die Workflows sind stale (Quelle abgelehnt) ODER die Quelle ist über eine freie Alternative wieder zuzulassen.
+- **Braucht:** je Workflow: entfernen (stale) oder über die Survey-Alternative (Open-Meteo/GOES-GLM) neu binden → dann `register`-Job grün.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo + Release-Body-Lizenz
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Tool-Format)
