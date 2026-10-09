@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: e73577a316fb6acb55671c7b9da1906ddbf123feae7aa73db997941459ff6b68
+  sha256: 2eebaac9baef2bff136e1b9d3bf9983453bd065f777c8e4f03e10b92e88af2ea
   status: live
 -->
 # Handover — Mountain-Folge 292 (2026-10-09)
@@ -30,8 +30,45 @@ Arbeit (river: `src/mathematikerin/actuators.rs`, `src/mathematikerin/channel.rs
   `(t_unix, comp, mean)` wird auf den Draht `(t, value, comp)` gespiegelt —
   genau die in folge291 benannte `comp↔mean`-Hazard; 2 Gate-Tests in
   `src/archivar/tests.rs` ergänzt (Lauf in CI). `cargo check` 0/0, 0 warnings.
+- **iris/themis_asi-Kernmodule gebaut** (Taucher-Welle, 2 Diver): neue
+  `src/archivar/iris.rs` (MAGIC `IRIS`, 8-B-Header, 20-B-Record, `parse_bin`
+  == Draht-Reihenfolge) und `src/archivar/themis_asi.rs` (MAGIC `TASI`,
+  12-B-Header, `u16`-Raster je Frame → `(t, value, comp=pixel)`,
+  `declared_fields` em/`relative`); in `mod.rs`/`lib.rs` + `extract.rs`
+  (`series_parse_bin`/`series_named`; `themis_asi` auch `series_declared_fields`)
+  verdrahtet, je eigene `#[cfg(test)]`-Tests. `iris` bewusst **ohne**
+  `declared_fields` (Einheit ungemessen). `cargo check` 0/0.
+- **SPT-Arm verdrahtet** (CMB-Punkt): `cmb_planck_compiler.rs` nimmt
+  `--url <full_maps_d1.tar.bz2> [--member <name>]`,
+  `fetch_raw_bytes → bzip2::decompress → inflate::tar_members → FITS`; ohne
+  `--member` der erste `.fits`-Eintrag. Der Tar-Member-Name ist `pending`
+  (erster echter Lauf druckt ihn); `cargo check` 0/0.
+- **Blinkverse-Test-Compile-Rot geheilt** (`tools/harvest/src/bin/blinkverse_compiler.rs`):
+  `Table` trug kein `Debug`, `assert_eq!(parse_bin(&bytes), Some(t))` in
+  `blinkverse_compiler.rs:322` kompilierte nicht (Mountain-289-Erbe) —
+  `#[derive(Clone, PartialEq, Debug)]`; `cargo check` 0/0.
 
-## Burn: open 0.0000 · close 0.0625 · cap 0.15 — Grund: `session_burn` @Schluss nennt die Mountain-292-Session $0.0625 (14 Sessions im Fenster, deepseek-flash); kein pro/max
+## Riss (nicht geglättet)
+
+- **Keogramm-Disposition.** `phi/declined_sources.φ:4151-4153` lehnt das
+  ASC-Keogramm-Verzeichnis als `image` ab („Bildprodukt, kein Feld … kein
+  SI-Wert/`force_type`"), während `phi/sources.φ:19517` `keogram_ABK.bin` als
+  `format keogram` / Einheit `relative` führt. Der Leser (`keogram.rs:45`,
+  `QuantityKind::Relative=7`) ist jetzt gebaut — die genannte Ablehnung ist
+  damit überholt. Beide Zeilen stehen; Mountain-Dispositionsakt offen
+  (declined-Eintrag prüfen oder Verdikt fortschreiben).
+- **Keogramm-`ttl`.** `sources.φ:19523` trägt `ttl 604800` (mycelium-287),
+  die Vorübergabe nannte `no-cadence`. Die intra-Nacht-Kadenz ist ungemessen
+  (ASC: grün/blau ≥10 s, rot ≥30 s, unregelmäßig; `keogram_compiler.rs:79`
+  wirft die Tageszeit weg); `ttl 604800` ist ein Prüfintervall, keine
+  Datenkadenz — belassen, im Punkt benannt.
+- **ABK-Höhe.** `sources.φ:19522` `on earth 68.358 18.823 380` — lat/lon/alt
+  sind die der **ko-lokierten INTERMAGNET-ABK-Station**
+  (`imag-data.bgs.ac.uk/GIN_V1/hapi/info?id=abk/best-avail/PT1M/xyzf`); die
+  ASC-eigene Höhe ist `unmeasured`. Die Werte sind gemessen (ko-lokalisiert),
+  nicht die Kamera-Höhe.
+
+## Burn: open 0.0000 · close 0.0969 · cap 0.15 — Grund: `session_burn` @Schluss nennt die Mountain-292-Session $0.0969 (21 Sessions im Fenster, deepseek-flash; 3 `grind-flash`/`general`-Taucher + Research); kein pro/max
 
 ## Operator-Wort-Register
 
@@ -47,27 +84,22 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Dimensionlose Einheit `relative` — Keogramm-Leser verdrahtet; themis_asi/iris-Kernmodule + sources.φ-Zeilen offen
+### Dimensionlose Einheit `relative` — Leser gebaut; sources.φ-Zeilen + iris-Einheit offen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Bau der Bin-Reader (`iris`/`themis_asi`) + gemessene `on earth`-Koordinate/tau je Arm
-- **Lage:** (gemessen 2026-10-09, Mountain 292) `QuantityKind::Relative=7` und
-  `allowed_units_for_quantity(7)` gebaut (291). **Keogramm verdrahtet:** `extract.rs`
-  `series_parse_bin`/`series_named`/`series_declared_fields` kennen `keogram`,
-  `keogram::declared_fields` liefert `keogram_col_%04`/em/`relative`, `src/archivar/tests.rs`
-  trägt 2 Gate-Tests; `cargo check` 0/0. `themis_asi`/`iris` **Kernmodule fehlen**
-  (die Archivar-Module gibt es nicht; die Compiler
-  `tools/harvest/src/bin/iris_compiler.rs` und
-  `tools/harvest/src/bin/themis_asi_compiler.rs` schreiben eigene Layouts
-  `IRIS`/`TASI`). `parse.rs` braucht **keine** Änderung: ein
-  `on earth <lat> <lon> <alt>`/`at`-Frame (oder ein `field`) läßt einen
-  Serienblock flushen.
-- **Blockade:** iris/themis_asi-Kernmodule; Einheit + tau für iris/themis_asi ungemessen.
-- **Braucht:** neue Archivar-Module `iris` (`parse_bin` == Draht-Reihenfolge
-  `(t,value,comp)`, MAGIC `IRIS`, 8-B-Header, 20-B-Record) und `themis_asi`
-  (MAGIC `TASI`, 12-B-Header + `u32`-Pixelzahl, `u16`-Raster je Frame) in
-  `mod.rs`/`lib.rs` + `extract.rs` verdrahten; dann die `sources.φ`-Zeile je Arm.
-  Keogramm-Block: Station (Workflow-Default `ABK`) + gemessene `on earth`-Koordinate
-  + `no-cadence` (Form exakt; `ttl` nur numerisch).
+- **Trigger:** gemessene `on earth`-Koordinate/tau je verbleibendem Arm; iris-Einheit-Messung
+- **Lage:** (gemessen 2026-10-09, Mountain 292) `QuantityKind::Relative=7` +
+  `allowed_units_for_quantity(7)` gebaut. **Keogramm** (`series_parse_bin`/`series_named`/
+  `declared_fields`, `comp↔mean`-Spiegelung) **und** **iris/themis_asi**-Kernmodule
+  (`src/archivar/iris.rs`, `src/archivar/themis_asi.rs`) gebaut und in `extract.rs`
+  verdrahtet; `themis_asi::declared_fields` em/`relative`. `keogram_ABK.bin` ist in
+  `sources.φ:19517-19523` registriert (mycelium-287; `ttl 604800`, `on earth 68.358
+  18.823 380` = ko-lokiertes INTERMAGNET ABK). `iris` hat bewusst kein
+  `declared_fields` (Einheit ungemessen).
+- **Blockade:** iris-Einheit ungemessen; kein `field`/`quantity`-Block für
+  `themis_asi`/`iris` am Baum.
+- **Braucht:** iris-Wert-Einheit messen (FITS `BUNIT`/`BTYPE` aus einem echten
+  IRIS-Level-2-Frame) → dann `iris::declared_fields` + `sources.φ`-Zeilen für
+  `themis_asi`/`iris` (mit `on`/`at`-Frame + `no-cadence`/numerischem `ttl`).
 
 ### USGS-geomag — Draht- vs. Register-Riss (Rat/Roster-Riss)
 - **Status:** eigen (Archivar-Kontrakt) | **Bindung:** eigen · Rat
@@ -80,18 +112,20 @@ Wort | Datum | Quelle
 - **Braucht:** Rat+Operator-Entscheid; danach `ExtractResult`-Riss-Arm **oder**
   Register-Riss.
 
-### CMB LAMBDA — WMAP `mK`→`K` geheilt; SPT-Arm offen
+### CMB LAMBDA — WMAP `mK`→`K` geheilt; SPT-Arm verdrahtet, Member+Werte offen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** SPT-Arm-Wiring (`full_maps_d1.tar.bz2`)
-- **Lage:** (gemessen 2026-10-09) `cmb_planck_compiler.rs` wendet den gemessenen
-  `TUNIT1`/`BUNIT`-Faktor an; fehlender/unbekannter Token → `read_table` `None`
-  (Wert bleibt pending, kein stilles K). ACT trug den `mK`-Faktor bereits am HEAD.
-  SPT: `src/archivar/bzip2.rs::decompress` + `inflate.rs::tar_members` stehen →
-  Entpackung mit std möglich; offen ist nur das Arm-Wiring (fetch → decompress →
-  tar-Member → FITS-Parse).
-- **Blockade:** Arm-Wiring.
-- **Braucht:** `[url, bytes] → bzip2::decompress → inflate::tar_members → FITS` im
-  cmb-Arm.
+- **Trigger:** erster SPT-Lauf `--url full_maps_d1.tar.bz2`
+- **Lage:** (gemessen 2026-10-09, Mountain 292) `cmb_planck_compiler.rs` wendet den
+  gemessenen `TUNIT1`/`BUNIT`-Faktor an; fehlender/unbekannter Token → `read_table`
+  `None` (Wert bleibt pending, kein stilles K). ACT trug den `mK`-Faktor am HEAD.
+  **SPT-Arm verdrahtet:** `--url <tar.bz2> [--member <name>]`,
+  `fetch_raw_bytes → bzip2::decompress → inflate::tar_members → FITS` (ohne
+  `--member` der erste `.fits`-Eintrag), `--ci-mode`-Emit unverändert;
+  `cargo check` 0/0.
+- **Blockade:** Tar-Member-Name ungemessen (erster Lauf druckt ihn).
+- **Braucht:** `cargo run -p omegaflow-harvest --bin cmb_planck_compiler -- --url
+  <full_maps_d1.tar.bz2>` einmal gegen den echten Tar (Member messen), dann
+  `sources.φ`-Zeile.
 
 ### PDS-PPI — P1-Manifest gebaut; P2-Feldtaxonomie offen
 - **Status:** eigen | **Bindung:** eigen · Rat
@@ -136,14 +170,16 @@ Wort | Datum | Quelle
   BepiColombo `CC-BY-4.0` (Zenodo-Record-License-ID), EBHIS `unbestimmt`
   (Vizier-Licences), ACT `PD` (NASA/HEASARC), Blinkverse `unbestimmt` (kein
   License-Hinweis, nur Citation-Bitte). `ttl` für **alle** pending (kein
-  gemessener Cadence-Wert); die `field`/`quantity`-Zeilen penden an den
-  Lese-Armen. **Gemessener Arm-Defekt (Blinkverse):** `RA`/`Dec` sind
+  gemessener Cadence-Wert); die Leser für Keogramm/THEMIS-ASI/IRIS stehen jetzt
+  (voriger Punkt), die `field`/`quantity`-Zeilen warten auf Einheit/Koordinate.
+  **Gemessener Arm-Defekt (Blinkverse):** `RA`/`Dec` sind
   sexagesimal (`22:17:30.0`), `cell_num` → `None`, `keep_table` **droppt** die
   Positionsspalten — der FRB-Katalog verliert Position; Position nur aus den
   dezimalen `GL`/`GB` (galactic, deg), oder Sexagesimal-Reader nötig.
-- **Blockade:** Lese-Arme + ttl.
-- **Braucht:** Reader verdrahten, dann die `sources.φ`-Blöcke (Form exakt:
-  `no-cadence` als bare Direktive, nicht `ttl pending` — `ttl` nur numerisch).
+- **Blockade:** Einheit/Koordinate je Arm + ttl.
+- **Braucht:** `sources.φ`-Blöcke (Form exakt: `no-cadence` als bare Direktive,
+  nicht `ttl pending` — `ttl` nur numerisch); Blinkverse-Sexagesimal-Reader
+  (Position aus `RA`/`Dec`).
 
 ### Medizin-Kante (SUDEP/exposom) — gefaltet aus future-209
 - **Status:** blockiert | **Bindung:** eigen (Register/Bau)
@@ -243,9 +279,15 @@ Origin: mountain-291 (2026-10-09) — Antwort auf river-157/158.
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe selbst",
-2026-10-07) trägt Commit und Push. Eigene Pfade:
+2026-10-07) trägt Commit und Push. Eigene Pfade (Atom 292, zwei Wellen):
 `docs/handover/handover-2026-10-09-mountain-folge292.md` ·
 `docs/handover/archiv/handover-2026-10-09-mountain-folge291.md` ·
 `src/archivar/extract.rs` · `src/archivar/keogram.rs` · `src/archivar/tests.rs` ·
-`src/gate/commit_gate.rs` · `tools/harvest/src/bin/inpe_stac_compiler.rs`.
+`src/archivar/iris.rs` · `src/archivar/themis_asi.rs` · `src/archivar/mod.rs` ·
+`src/lib.rs` · `src/gate/commit_gate.rs` ·
+`tools/harvest/src/bin/inpe_stac_compiler.rs` ·
+`tools/harvest/src/bin/cmb_planck_compiler.rs` ·
+`tools/harvest/src/bin/blinkverse_compiler.rs`.
+2 Taucher-Wellen (Keogramm-Leser + iris/themis_asi, SPT-Arm, Blinkverse-Debug) +
+Research (ABK-Frame, Keogramm-Kadenz); `cargo check` 0/0.
 Keogramm-Leser + `comp↔mean`-Spiegelung, 2 Gate-Tests; `cargo check` 0/0.
