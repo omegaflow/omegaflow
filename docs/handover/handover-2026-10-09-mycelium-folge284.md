@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: e231e309592df6e7dc65651404cf2c7f9baa62581720c96d950983b6bb04bcfc
+  sha256: e8fa70fecfdcc82aecc91b1ace9af16a75f8b1af6efe4f7b2d9d7bb793edcca0
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1846 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 4 `general`-Taucher (Redistributions-Alternativen 41 Blöcke, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot geheilt (5 stale Workflows + 2 harvest-Einträge entfernt, `cdn_reconcile --fail` clean); Orphan-Gate geheilt; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.3820 (40 Sessions).
+## Burn: open 0.0000 · close 0.1965 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 5 `general`-Taucher (Redistributions-Alternativen 41 Blöcke + Lizenz-Zertifizierung, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot geheilt (5 stale Workflows + 2 harvest-Einträge entfernt, `--fail` clean); Orphan-Gate geheilt; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.3849 (41 Sessions).
 
 ## Operator-Wort-Register
 
@@ -114,9 +114,9 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Redistributions-Alternativen — Survey + Mountain-Verdikt
 - **Status:** wartend | **Bindung:** eigen (Recherche) · mountain (Re-Admission)
 - **Trigger:** Mountain-Verdikt über die CDN-fähigen Alternativen (`docs/surveys/survey-2026-10-09-redistribution-alternativen.md`)
-- **Lage:** (gemessen 2026-10-09, `general`-Taucher) 41 `decline redistribution`-Blöcke erstmals systematisch durchsucht; Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`. Nur 2 Alternativen lizenz-zertifiziert: Open-Meteo (`api.open-meteo.com`, **CC-BY 4.0**, 200) und OpenStreetMap-Tiles (**ODbL**, 206); der Rest HTTP-gemessen mit `Lizenz ungemessen`.
-- **Blockade:** die flächendeckende Lizenzmessung (nur 2/41 am Lizenztext geprüft).
-- **Braucht:** `archive_search --jina <lizenz-url>` je Shortlist-Kandidat → dann Mountain-Re-Admission.
+- **Lage:** (gemessen 2026-10-09, zwei `general`-Taucher) 41 `decline redistribution`-Blöcke systematisch durchsucht; Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`. **Lizenz-zertifiziert:** Open-Meteo (CC-BY 4.0), OpenStreetMap (ODbL); zweiter Lauf am Lizenztext: **NOAA SWPC/NCEI/NDBC (PD/CC0), NASA Earthdata (CC0), JPL SSD (CC0), Copernicus Data Space, RouteViews (CC-BY-4.0), GOES GLM, ICGEM GFZ (CC-BY-4.0)**. **Blockiert:** GIRO DIDBase (CC-BY-NC-SA), INTERMAGNET (CC-BY-NC), GRDC (no-redistribution), RIPE RIS (keine Open-Lizenz).
+- **Blockade:** keiner für die zertifizierten Kandidaten — Mountain-Re-Admission fehlt.
+- **Braucht:** Mountains Re-Admission je zertifiziertem Kandidaten → dann CDN-Workflow/`sources.φ`-Block (Mycelium).
 
 ## An mountain
 
