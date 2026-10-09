@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: dae779a3094477db3bdd8f7ef2e8a2b3fca1f2acc1948c6ea891d3936226b00f
+  sha256: e231e309592df6e7dc65651404cf2c7f9baa62581720c96d950983b6bb04bcfc
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1402 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 4 `general`-Taucher (Redistributions-Alternativen 41 Blöcke, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot (6 unbound Workflows) gemessen; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.2812 (41 Sessions).
+## Burn: open 0.0000 · close 0.1846 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 4 `general`-Taucher (Redistributions-Alternativen 41 Blöcke, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `cdn_reconcile`-Rot geheilt (5 stale Workflows + 2 harvest-Einträge entfernt, `cdn_reconcile --fail` clean); Orphan-Gate geheilt; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.3820 (40 Sessions).
 
 ## Operator-Wort-Register
 
@@ -41,13 +41,6 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** keiner.
 - **Braucht:** bei success `ledger.φ:110` → `disponiert` + CDN-Asset prüfen.
 
-### CDN — `cdn_reconcile --fail`: 6 Workflows schreiben abgelehnte netlocs
-- **Status:** wartend | **Bindung:** eigen (CDN-Infra)
-- **Trigger:** `ci-gate` `register`-Job rot (`cdn_reconcile --fail`, `37983273688` @`4e3bd565a`)
-- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37983273688`) `hamqsl-cdn.yml:39` (`hamqsl.com`) · `lhaaso-cdn.yml:24` (`casdc.china-vo.org`) · `ogimet-cdn.yml:39` (`ogimet.com`) · `pradan-cdn.yml:79/109` (`pradan.issdc.gov.in`) · `wwlln-cdn.yml:43` (`wwlln.net`) — alle netlocs stehen in `declined_sources.φ` (redistribution/kommerziell), nicht in `sources.φ`.
-- **Blockade:** die Workflows sind stale (Quelle abgelehnt) ODER die Quelle ist über eine freie Alternative wieder zuzulassen.
-- **Braucht:** je Workflow: entfernen (stale) oder über die Survey-Alternative (Open-Meteo/GOES-GLM) neu binden → dann `register`-Job grün.
-
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo + Release-Body-Lizenz
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Tool-Format)
 - **Trigger:** `sources_repo_license` emittiert pro-Quelle-Zeilen statt netloc-Rollup
@@ -65,7 +58,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Gegen-Audit Quellen-Delta + Manifestation der neuen Routen
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · auf mountains Parser-Arme
 - **Trigger:** je Route der Mountain-Arm (`blocked_sources.φ:36/41/54/59/72/77`)
-- **Lage:** (gemessen 2026-10-09, mountain-289 `57a6df02b` + `general`-Taucher) 6 echte Arme offen: `mariner-rst`, `viking-tracking`, `hi-21cm`, `cmb-lambda`, `particle-cern`, `blinkverse-frb` (`blocked_sources.φ:36/41/54/59/72/77`); `bc-mpo-more`/`tracking-doppler`/`juno-efb`/`solar-vso`/`laic-cssdc` sind `pending` (kein Parser-Gap). **Freie Alternativen gemessen (offene Lizenz + HTTP + Format):** `hi-21cm` → Zenodo HI4PI `5956696` (cc-by-4.0, FITS, 206); `cmb-lambda` → Zenodo SILC Planck PR2 `44373` (cc-by-4.0, FITS, 206); `blinkverse-frb` → Zenodo CHIME Cat 2 `18843430` (cc-by-4.0, CSV, 206); `particle-cern` → CERN Open Data `1120` (CC0) / GWOSC (CC BY 4.0, HDF5). `mariner-rst`/`viking-tracking`: NASA SPDF/PDS erreichbar (206, PD), aber exakter Tracking-Subpfad 404 bzw. Parser-Gap — keine maschinenlesbare Route gemessen.
+- **Lage:** (gemessen 2026-10-09, mountain-289 `57a6df02b` + `general`-Taucher) 6 echte Arme offen: `mariner-rst`, `viking-tracking`, `hi-21cm`, `cmb-lambda`, `particle-cern`, `blinkverse-frb` (`blocked_sources.φ:36/41/54/59/72/77`); `bc-mpo-more`/`tracking-doppler`/`juno-efb`/`solar-vso`/`laic-cssdc` sind `pending` (kein Parser-Gap). **Freie Alternativen gemessen (offene Lizenz + HTTP + Format):** `hi-21cm` → Zenodo HI4PI `5956696` (cc-by-4.0, FITS, 206); `cmb-lambda` → Zenodo SILC Planck PR2 `44373` (cc-by-4.0, FITS, 206); `blinkverse-frb` → Zenodo CHIME Cat 2 `18843430` (cc-by-4.0, CSV, 206); `particle-cern` → CERN Open Data `1120` (CC0) / GWOSC (CC BY 4.0, HDF5). `mariner-rst`/`viking-tracking`: NASA SPDF/PDS erreichbar (206, PD), aber exakter Tracking-Subpfad 404 bzw. Parser-Gap — keine maschinenlesbare Route gemessen. **Offene Mycelium-`sources.φ`-Blöcke (Arme stehen, `blocked_sources.φ:50/54/71`):** `https://skyview.gsfc.nasa.gov/cgi-bin/images` (`hi-21cm`, `ebhis_compiler`), `https://lambda.gsfc.nasa.gov/` (`cmb-lambda`, `cmb_planck_compiler`/`cmb_act_compiler`), `https://blinkverse.zero2x.org/` (`blinkverse-frb`, `blinkverse_compiler`).
 - **Blockade:** je Route der fehlende Mountain-Arm.
 - **Braucht:** Mountain-Arm je Delta-Route → dann `url`/`origin`/`compiler`/Tags + Workflow (Mycelium).
 
