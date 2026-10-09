@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-Compiler-Koordinaten-Lookup (dim-name → var-name) geheilt; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 92bb03612a3327b67899155a9981afc0d2e210096c3bf21c17bea74358a0e0ff
+  sha256: e9a2468555797405cd02b6a3203a3f8057e20769dbf7216006019b25c9961356
   status: live
 -->
 # Handover — Mycelium-Folge 274 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0 · close 0.0617 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.0 · close 0.0921 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
 
 ## Operator-Wort-Register
 
@@ -35,7 +35,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Trigger:** grüner `hadisst-cdn`-Lauf am Fix-HEAD
 - **Lage:** (gemessen 2026-10-09 via `ci_manage log 37891967856`) Lauf `cc9f4cf7c` **failure**: `hadisst_compiler: …HadISST_sst.nc.gz: lat carries no numeric values` — der Dim-Toleranz-Fix aus 272 matchte `latitude`/`longitude` als **Dim**-Namen, aber `values_numeric(&bytes, "lat")` suchte die Koordinaten-**Variable** literal `lat`; die CF-Datei trägt `latitude`. In `tools/harvest/src/bin/hadisst_compiler.rs` auf `dim_names[0..2]` umgestellt (Dim-Name = Var-Name), `cargo check` grün, `cargo build -p omegaflow-harvest --bin hadisst_compiler` grün.
 - **Blockade:** der geteilte `t420`-Runner + die neue Laufzeit.
-- **Braucht:** `ci_manage view <id>` am Fix-HEAD; bei rot die benannte Stelle aus dem Log.
+- **Braucht:** `ci_manage view 37905540612` (an `efe8b33f4`, **queued** gemessen 2026-10-09 via `ci_manage view`) nach Abschluss; bei rot die benannte Stelle aus dem Log.
 
 ### `ci-gate` clippy-Suite — in Mycelium-272 geheilt, CI-Verifikation hängt in der Queue
 - **Status:** wartend | **Bindung:** eigen (CI)
@@ -93,13 +93,6 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** kein stabiler Namensraum; eine echte Heilung (explizites `**ID:**` bevorzugen, Prosa-Fragmente verwerfen) würde die 927-Altschüssel invalidieren.
 - **Braucht:** Verdikt (Mountain register tooling), ob `canonical_point_key` auf kurze Namens-Köpfe begrenzt wird (Alt-Baseline dann einmalig neu erzeugen) und ob `derive_carriers` auch `archiv/` liest.
 
-### SuperMAG SME/SMU/SML-Index — Träger gebaut (eigenes Format), Manifestation verdrahtet, Ernte harrt des Laufs
-- **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** der `harvest-dispatch`-Lauf an diesem Push (bzw. `gh workflow run harvest.yml -f format=supermag_index`)
-- **Lage:** (gemessen 2026-10-09; mountain-282 gefaltet) Mountain entschied **eigenes `supermag_index`-Format** (nicht `COMP_SMG` 7-9) — der Index ist global, ohne Station-Anker. Gebaut: `src/archivar/supermag_index.rs` (`SMIX`, `COMP_SME/SML/SMU`, JSON-Parser), Wiring `extract.rs`/`main_flow.rs`/`mod.rs`, Compiler `tools/harvest/src/bin/supermag_index_compiler.rs`, Quelle `phi/sources.φ:18945-18953` (`supermag.jhuapl.edu`, `ttl 604800`, `quantity … ^index nt 60`). Mycelium ergänzte den `phi/harvest.φ`-Block (`arm supermag_index_compiler`, args `--start 2025-03-01T00:00:00Z --stop 2025-04-01T00:00:00Z --out supermag_index.bin`, `asset fehlt`, `timeout 120`); `./target/debug/harvest_reg --check` = 69 Blöcke grün, `cargo build -p omegaflow-harvest --bin supermag_index_compiler` grün. Fenster = der gemessene `supermag-cdn.yml`-Default (`2025-03-01`, 31 d).
-- **Blockade:** der geteilte Runner + die API-Route (`logon=omegaflow`).
-- **Braucht:** `harvest-dispatch`-Lauf oder `gh workflow run harvest.yml -f format=supermag_index`; dann `gh release view supermag.jhuapl.edu --json assets` auf `supermag_index.bin` prüfen (der `asset fehlt`-Block wird beim Push automatisch dispatcht).
-
 ## An river
 
 Origin: mycelium-274.
@@ -121,5 +114,5 @@ Origin: mycelium-274.
 
 ## Abschluss
 
-- **Burn:** close 0.0617 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** close 0.0921 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
