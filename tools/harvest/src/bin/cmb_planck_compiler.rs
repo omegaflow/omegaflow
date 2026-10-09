@@ -179,28 +179,92 @@ fn write_json(rows: &[(f64, f64, f64)], path: &str) -> bool {
     true
 }
 
+fn select_fits_member<'a>(
+    members: &'a [omegaflow::archivar::inflate::TarMember],
+    tar: &'a [u8],
+    want: Option<&str>,
+) -> Option<(&'a omegaflow::archivar::inflate::TarMember, &'a [u8])> {
+    let member = match want {
+        Some(name) => members.iter().find(|m| m.name == name)?,
+        None => members
+            .iter()
+            .find(|m| m.name.to_ascii_lowercase().ends_with(".fits"))?,
+    };
+    let data = tar.get(member.start..member.end)?;
+    Some((member, data))
+}
+
+fn tarball_fits_member(url: &str, want: Option<&str>) -> Option<Vec<u8>> {
+    let bytes = match omegaflow::archivar::fetch::fetch_raw_bytes(url) {
+        Some(b) => b,
+        None => {
+            eprintln!("fetch {url} returned void: the tarball stays unread");
+            return None;
+        }
+    };
+    let tar = match omegaflow::archivar::bzip2::decompress(&bytes) {
+        Some(t) => t,
+        None => {
+            eprintln!("bzip2 decompress of {url} returned void: the tarball stays unread");
+            return None;
+        }
+    };
+    let members = match omegaflow::archivar::inflate::tar_members(&tar) {
+        Some(m) => m,
+        None => {
+            eprintln!("tar_members of {url} returned void: the tarball stays unread");
+            return None;
+        }
+    };
+    let (member, data) = match select_fits_member(&members, &tar, want) {
+        Some(v) => v,
+        None => {
+            eprintln!(
+                "no .fits member among {} tar members from {url}: the map stays unwritten",
+                members.len()
+            );
+            return None;
+        }
+    };
+    eprintln!("tar member '{}': {} bytes -> FITS", member.name, data.len());
+    Some(data.to_vec())
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let Some(input) = arg_value(&args, "--input") else {
-        eprintln!(
-            "usage: cmb_planck_compiler --input <fits> [--nside 64] [--out path] [--ci-mode]"
-        );
-        std::process::exit(1);
-    };
     let nside_out: i64 = arg_value(&args, "--nside")
         .and_then(|v| v.parse().ok())
         .unwrap_or(64);
+    let spt_url = arg_value(&args, "--url");
     let out = match arg_value(&args, "--out") {
         Some(o) => o,
+        None if spt_url.is_some() => format!("cmb_spt_d1_n{}.json", nside_out),
         None => format!("cmb_planck_smica_n{}.json", nside_out),
     };
     let ci_mode = has_flag(&args, "--ci-mode");
 
-    let bytes = match std::fs::read(&input) {
-        Ok(b) => b,
-        Err(e) => {
-            eprintln!("read {input} returned void: {e}");
-            std::process::exit(1);
+    let bytes = match spt_url {
+        Some(url) => {
+            let member = arg_value(&args, "--member");
+            match tarball_fits_member(&url, member.as_deref()) {
+                Some(b) => b,
+                None => std::process::exit(1),
+            }
+        }
+        None => {
+            let Some(input) = arg_value(&args, "--input") else {
+                eprintln!(
+                    "usage: cmb_planck_compiler (--input <fits> | --url <tar.bz2> [--member <name>]) [--nside 64] [--out path] [--ci-mode]"
+                );
+                std::process::exit(1);
+            };
+            match std::fs::read(&input) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("read {input} returned void: {e}");
+                    std::process::exit(1);
+                }
+            }
         }
     };
     let Some((table, col)) = read_table(&bytes) else {
@@ -418,5 +482,46 @@ mod tests {
         let npix = (12 * nside * nside) as usize;
         let bytes = synth_map(nside, &vec![1000.0; npix], "NESTED", None);
         assert!(read_table(&bytes).is_none());
+    }
+
+    fn tar_header(name: &str, size: usize) -> [u8; 512] {
+        let mut h = [0u8; 512];
+        h[..name.len()].copy_from_slice(name.as_bytes());
+        let octal = format!("{size:011o}");
+        h[124..135].copy_from_slice(octal.as_bytes());
+        h[156] = b'0';
+        h[257..262].copy_from_slice(b"ustar");
+        h[148..156].fill(b' ');
+        let sum: u32 = h.iter().map(|&b| b as u32).sum();
+        let checksum = format!("{sum:06o}");
+        h[148..154].copy_from_slice(checksum.as_bytes());
+        h[154] = 0;
+        h[155] = b' ';
+        h
+    }
+
+    fn pad_block(out: &mut Vec<u8>) {
+        out.resize(out.len().div_ceil(512) * 512, 0);
+    }
+
+    #[test]
+    fn select_fits_member_reads_the_named_member() {
+        let fits = synth_map(1, &vec![1.0; 12], "NESTED", Some("K"));
+        let mut tar = Vec::new();
+        tar.extend_from_slice(&tar_header("readme.txt", 2));
+        tar.extend_from_slice(b"hi");
+        pad_block(&mut tar);
+        tar.extend_from_slice(&tar_header("map.fits", fits.len()));
+        tar.extend_from_slice(&fits);
+        pad_block(&mut tar);
+        tar.extend_from_slice(&[0u8; 1024]);
+
+        let members = omegaflow::archivar::inflate::tar_members(&tar).unwrap();
+        let (member, data) = select_fits_member(&members, &tar, None).unwrap();
+        assert_eq!(member.name, "map.fits");
+        assert_eq!(data, &fits[..]);
+        let (named, _) = select_fits_member(&members, &tar, Some("readme.txt")).unwrap();
+        assert_eq!(named.name, "readme.txt");
+        assert!(select_fits_member(&members, &tar, Some("absent.fits")).is_none());
     }
 }
