@@ -1,0 +1,67 @@
+name: pds-ppi-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      table:
+        description: EPN-TAP table to enumerate (e.g. galileo_hic_jup_raw.epn_core)
+        required: true
+        type: string
+        default: galileo_hic_jup_raw.epn_core
+      all:
+        description: Enumerate every *.epn_core table (overrides table)
+        required: false
+        type: boolean
+        default: false
+      force:
+        description: Rebuild even when pds_ppi assets already exist on the CDN
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pds-ppi:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if a pds_ppi asset already exists on the CDN
+        id: idempotence
+        run: |
+          names=$(gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+            --json assets --jq '.assets[]?.name' 2>/dev/null || true)
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force=true — rebuilding despite existing assets"
+          elif printf '%s\n' "$names" | grep -qE '^pds_ppi'; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "pds_ppi asset already present — harvest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "pds_ppi asset missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "PDS-PPI (UCLA) EPN-TAP Fixed-Width tables. The enumerator resolves each table's .TAB/.xml pair over the EPN-TAP sync endpoint, parses the PDS4 Table_Character label and packs it to the P4FW columnar format. Header 16 B: magic P4FW (4), column count (u32 LE), row count (u32 LE), table flags (u32 LE). Column block: count x 180 B (name 64, unit 16, data_type 32, sampling name 16, sampling unit 16, missing f64, sampling min f64, sampling max f64, start_byte u32, nbytes u32, flags u32). Data: rows x (count x f64 LE value + ceil(count/64) x u64 LE presence bitmask). No ASCII_DATE_TIME/MET axis (TIME is ASCII_String) -> axis none, every numeric ASCII_Integer/ASCII_Real column kept. Asset names pds_ppi_<bundle>_<stem>.bin."
+          fi
+      - name: Compile the EPN-TAP table(s) and manifest to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if [ "${{ inputs.all }}" = "true" ]; then
+            cargo run --release -p omegaflow-harvest --bin pds_ppi_compiler -- --all --ci-mode
+          else
+            cargo run --release -p omegaflow-harvest --bin pds_ppi_compiler -- --table "${{ inputs.table }}" --ci-mode
+          fi
