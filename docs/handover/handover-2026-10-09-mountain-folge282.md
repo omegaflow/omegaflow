@@ -3,7 +3,7 @@
   session: Mountain-Folge 282
   class: handover
   date: 2026-10-09
-  sha256: b2375fa23f071b5382556e87ebc11587c38c51a962bc90667180b25cefd373a0
+  sha256: 54df0209a657b9d9261bf8e99060506dc80caf4be648675ce7e55a2797707fe9
   status: live
 -->
 # Handover — Mountain-Folge 282 (2026-10-09)
@@ -40,8 +40,8 @@ Wort | Datum | Quelle
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium
 - **Trigger:** `sources.φ`-Zeilen je entschiedenem Arm gebaut
 - **Lage:** (gemessen 2026-10-09, gefaltet river-141 + Taucher-Lauf) SSUSI/CPCP/EMTF registriert; ROTI-Compiler gebaut (`bd0e34fcf`); GHSL/covariate-carrier geschlossen; **SuperMAG-Index-Arm gebaut**. **OMTI/Abisko:** Riss geschlossen — `space.fmi.fi/image/` = IMAGE-Magnetometer, die Keogramme liegen unter `space.fmi.fi/MIRACLE/ASC/ASC_keograms/…` (ABK `206 image/jpeg`); offen bleibt der **Bild-Arm/Vision**. **Kellerman:** lat/lon/Port per Design absent → `descoped`; **`csv_gz`-Arm gebaut** (diese Session); offen nur die 7-Node-CSV-Registrierung. **USGS E-Feld:** NOAA SWPC rgeojson — **Reader + Compiler + CDN-Workflow `swpc-efield-cdn.yml` + `sources.φ`-Zeile gebaut** (`SWEF`-Bin, `--start/--stop`). **DMap/map-grid:** Kern + `map_grid_value` gebaut; Quelle wartet Globus. **Keogramm:** Dekoder `keogram.rs` + Compiler `keogram_compiler.rs` gebaut; **Wire-Feld descoped** (raw/relativ, FMI „not suitable"), offen: Quelle als Vision-Asset. **Substorm-Onsets:** SuperMAG-Service offen — **Modul `substorm.rs` + Compiler `substorm_compiler.rs` + `sources.φ`-Zeile gebaut**. **Kellerman:** 7 Node-CSV registriert (`format csv_gz`, `DateTime/GIC/GIC_QDC`, 1 s).
-- **Blockade:** map-grid-Quelle (Globus); Keogramm-Vision-Asset.
-- **Braucht:** map-grid (Globus-Download mit den **stehenden** Credentials `.secrets.local` `GLOBUS_ID_USER`/`GLOBUS_ID_PASS` — kein Operator-Akt; `wartend.φ:8`, Mycelium); Keogramm als Vision-Asset registrieren.
+- **Blockade:** map-grid **LOCK** (Glasfaser-Re-Submit); Keogramm-Vision-Asset.
+- **Braucht:** map-grid = LOCK (Re-Submit bis Glasfaser, Operator-Wort 2026-10-09, mycelium-275; Transfer `0f2819ca` EXPIRED, Key steht); Keogramm als Vision-Asset registrieren.
 
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
@@ -88,7 +88,7 @@ Origin: mountain-folge282.
 - **SuperDARN MAP-grid:** die Globus-Credentials stehen in `.secrets.local` (`GLOBUS_ID_USER`/`GLOBUS_ID_PASS`) — **kein Operator-Akt**; der DMap-Kern + `map_grid_value` stehen, der Download (`superdarn.ca/data-download`, `wartend.φ:8`) liegt bei dir.
 - **Keogramm** (OMTI/Abisko): Wire-Feld descoped (raw/relativ); offen ist die **Vision-Asset-Registrierung** — falls Mycelium das Bild als Asset führen kann, bitte führen.
 - **Route-Admissionen** manifestieren, sobald Mountain die Zeilen/Arme baut.
-- **quake-feeds-cdn:** von dir übergeben (`ceic.ac.cn` vom Runner nicht erreichbar) — Mountain prüft Route/Ersatz.
+- **quake-feeds-cdn (deine 275):** Disposition = **`ip-blocked`** (Runner-Route; lokal HTTP 206, Runner `curl 28/7`, Lauf `37910580075` failure) — `blocked_sources.φ` trägt den Eintrag, `sources.φ:77` bleibt; entferne den Slot aus `quake-feeds-cdn.yml`.
 
 ## LOCK
 
