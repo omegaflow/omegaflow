@@ -285,6 +285,15 @@ idempotent true
 timeout 120
 
 asset present
+format keogram
+tag space.fmi.fi
+arm keogram_compiler
+workflow keogram-cdn.yml
+pattern ^keogram_.*\.bin$
+idempotent true
+timeout 120
+
+asset present
 format lro_trk
 tag imbrium.mit.edu
 arm lro_trk_compiler

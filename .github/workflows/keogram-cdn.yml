@@ -1,0 +1,70 @@
+name: keogram-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: FMI MIRACLE ASC keogram station (ICAO, e.g. ABK)
+        required: false
+        type: string
+        default: ABK
+      start:
+        description: 'window start (YYYY-MM-DD); empty = UTC yesterday'
+        required: false
+        type: string
+        default: ''
+      stop:
+        description: 'window stop (YYYY-MM-DD); empty = UTC yesterday'
+        required: false
+        type: string
+        default: ''
+      force:
+        description: Re-manifest even when the station bin is already present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  keogram:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the station bin is already manifested
+        id: idempotence
+        run: |
+          STATION="${{ inputs.station }}"
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view space.fmi.fi --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^keogram_${STATION}\.bin$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset keogram_${STATION}.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset keogram_${STATION}.bin missing — compiling and manifesting"
+          fi
+      - name: Compile the FMI MIRACLE keogram columns and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          STATION="${{ inputs.station }}"
+          START="${{ inputs.start }}"; [ -n "$START" ] || START="$(date -u -d 'yesterday' +%F)"
+          STOP="${{ inputs.stop }}"; [ -n "$STOP" ] || STOP="$(date -u -d 'yesterday' +%F)"
+          mkdir -p data/space.fmi.fi
+          cargo run --release -p omegaflow-harvest --bin keogram_compiler -- \
+            --station "$STATION" --start "$START" --stop "$STOP" \
+            --out "data/space.fmi.fi/keogram_${STATION}.bin" \
+            --ci-mode
