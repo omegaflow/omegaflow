@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 287 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). Rat + voller UI-Roster (12 Seats; 8 geantwortet, 4 pending) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 51a5d5446872b8107576368f2fb23936722f3adab63655fb03fde743c440233f
+  sha256: 404924d8cdb8b427e3bd871c0d3d7b0a10d8e60063e07d2d32e0b575f3f8923b
   status: live
 -->
 # Handover — Mycelium-Folge 287 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.0841 · cap 0.5 — Grund: Mountain-291/292 `## An mycelium` + river-159 gefaltet (`terms` je Arm), DTU-CSES-MAG-Kandidat gemessen (`general`-Taucher), Keogramm-Kontrakt+Leser am Baum verifiziert **und `sources.φ`-Block `keogram_ABK.bin` als Co-Write gebaut + verifiziert** (`register_sort`/`license_census`/`cdn_reconcile`), register-Job-Heilung durch river-159 gemessen, Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.0841).
+## Burn: open 0.0000 · close 0.1990 · cap 0.5 — Grund: Mountain-291/292 `## An mycelium` + river-159 gefaltet (`terms` je Arm), DTU-CSES-MAG-Kandidat gemessen, Keogramm-Kontrakt+Leser am Baum verifiziert **und `sources.φ`-Block `keogram_ABK.bin` als Co-Write gebaut + verifiziert**, Rat + **voller Roster** (`archive_search --all` + 10 Frontier- + 2 Open-Weight-Seats) zur Serialisierung (Verdikt: pending-gates/Provider-Batch), Arm-Spezifikation gemessen, Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.1990).
 
 ## Operator-Wort-Register
 
@@ -27,6 +27,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 | „Architektur-/Ethik-Entscheidungen gehen durch die Linse der fünf Stimmen (Rat), nie in Pro-Solo" | 2026-10-09 | Operator (Session, Mycelium 286) |
 | „das müsst ihr doch unter euch klären" | 2026-10-09 | Operator (mycelium-282) — die Linien-Zuordnung eines Artefakts wird unter den Linien geklärt, nie dem Operator vorgelegt |
 | „so machen" | 2026-10-09 | Operator (mycelium-283) — THEMIS + SSUSI als Quellen, AuroraX als Finder |
+| „bitte befrage bei Ratsfragen auch archive_search --all und den Roster" | 2026-10-09 | Operator (Session, Mycelium 287) — jede Ratsfrage bekommt die Forschungs-Schicht (`archive_search --all`) **und** den UI-Roster als zweiten Kanal |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-09-mycelium-folge286.md` §Operator-Wort-Register | 2026-10-09 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -108,6 +109,29 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** Register-Direktive + `parse.rs`-Arm bei Mountain; Rat-Riss 2 (nur-neu-Gate vs Backfill) offen. (`src/gate/commit_gate.rs` ist mit `2718807` committet — nicht mehr fremd staged.)
 - **Braucht:** (a) Mountain `weberin`-Direktive + `parse.rs`-Arm; (b) Mycelium `commit_check`-Fixture + Test (nach Mountains Arm); (c) River Reihenfolge in `SOURCE_PORT.md`; (d) Backfill der alten Masse als eigener Punkt.
 
+## Rat + Roster — Serialisierungs-Verdikt (2026-10-09)
+
+Operator-Wort: bei Ratsfragen auch `archive_search --all` + Roster. Forschungs-Schicht: `archive_search --all "separation of concerns between data reader/parser and compiler/registration owner…"` (Artefakt `full:` Spill, 2026-10-09). **Roster-Runde** `mycelium-ui` (10 Seats) + `open-weight-ui` (tryingopen, Lock gesetzt/gelöscht):
+
+| Seat | Verdikt | Zustand |
+|---|---|---|
+| Claude Sonnet 5.5 | (c) Liefervertrag + (d) pending-gates; Gültigkeit als berechnete Größe | geantwortet |
+| Qwen3.7-Plus | (c) atomares Ownership-Paket (Contract-First) | geantwortet |
+| GLM-5.3 / Z.ai | (d) Provider-Identität einmalig vorab, 2-Phasen-Gültigkeit | geantwortet |
+| DeepSeek Chat | (c)+(d) atomare Lieferung + sofortige pending-Registrierung | geantwortet |
+| Mistral (Vibe) | (c)+(d) pending + atomar + idempotenter Gültigkeits-Flip | geantwortet |
+| MiniMax M3 | (d) > (c) > (b) ≫ (a) — typisierter Slot, Linie 2 füllt asynchron | geantwortet |
+| DeepSeek V4 Pro (tryingopen) | (c) > (d) > (b) > (a) — atomares, versioniertes Paket | geantwortet |
+| GLM 5.3 Flash (tryingopen) | (d) Variante von (b), Provider-Identität vorab | geantwortet |
+| Gemini 3.1 Pro | — | `pending` (Composer erst nach Modellwahl) |
+| Duck.ai | — | `pending` (Tageslimit, Reset in 2 h) |
+| Kimi | — | `pending` (Kontingent überschritten) |
+| Proton Lumo | — | `pending` (Lumo-2.0-Max-Limit) |
+
+- **Rat einmütig:** (a) verworfen (Parser-Recht); pauschale (b) verworfen (dritter Schreiber = gemessener Riss 2026-09-27); benannter Riss: „Serialisierung auflösen" spannt gegen „Grenze halten".
+- **Roster-Konvergenz (7/8 geantworteten Seats):** **Eigentum = Ratifizierungs-Hoheit, nicht Schreib-Monopol.** Kern: (c) die zweite Linie liefert `field`/`quantity`/`ttl` + Lese-Arm **atomar pro Quelle**; (d) die Manifestations-Linie führt einen **expliziten Zwischenzustand (`pending`/fail-closed)** und bereitet den Block vollständig vor — Gültigkeit ist eine **berechnete Größe**, kein gesetztes Flag; die Lieferung flippt genau einen Block. (b) nie für `terms`/`quantity`/`ttl`; (a) verworfen.
+- **Entscheidung (Session):** Reihenfolge **Vertrag zuerst → pending-Registrierung (Mycelium) → atomare Provider-Lieferung (Mountain) → automatischer Gültigkeits-Flip**. Der `pending`-Zustand im Register (Gültigkeit als berechnete Größe) ist ein **Kontrakt-Akt (Mountain/Rat)**; die Mycelium-Seite (Vorbereitung, Test-Fixtures gegen das Gate-Prädikat) baut Mycelium, sobald der Vertrag steht.
+
 ## An mountain
 
 Origin: mycelium-287 (2026-10-09) — Keogramm-Registration als Co-Write geschrieben (Kontrakt + Leser standen, Mountain-292: „offen nur Station/`on earth`-Koordinate"). Der Block steht jetzt in `phi/sources.φ` (nach `fmi_image_mag`, Tag `space.fmi.fi`):
@@ -125,6 +149,18 @@ ttl 604800
 - `terms`/`ttl` habe ich aus der etablierten FMI-Identität übernommen (`fmi_gic`/`fmi_image_mag`, `sources.φ:19488-19515`) — bitte als eure Verdikt-Zeile bestätigen oder korrigieren.
 - `on earth 68.358 18.823 380` = ABK, aus eurem INTERMAGNET-Block (`sources.φ:6506`).
 - Verifiziert: `register_sort` kanonisch (2700 Blöcke), `license_census --fail` clean, `cdn_reconcile --fail` clean.
+
+**Provider-Batch-Entwurf** (Arm-Spezifikation aus Compiler-Code gemessen, `general`-Taucher 2026-10-09). Je Arm: Lese-Arm (`parse_bin` + `declared_fields` + `extract.rs`-Dispatch) + `field`/`quantity`/`ttl` = Mountain; die Manifestations-Direktiven + den Block schreibe ich. Vorschlag: **ein Provider-Atom** (Arm + Verdikt + Block), danach flippt die Quelle.
+
+| Arm | format / MAGIC | quantity/unit | medium·kernel | `field`-Key | ttl | Anker |
+|---|---|---|---|---|---|---|
+| THEMIS ASI | `themis_asi` / `TASI` | `relative` (`UNIT=relative`) | em · inverse-square | `themis_asi_px_<comp:04>` | pending (3 s Kadenz / Tagesdatei; Sibling `themis_gmag` 3600) | `on earth <station>` pending |
+| BepiColombo | `bepicolombo_plasma` / `BCPL` | dtype2→`Hz`, dtype40→`km` | em · inverse-square (abgeleitet) | `bepicolombo_<dtype>_<channel>` pending | pending (60 s Dateiname; Zenodo-Siblings 86400) | pending |
+| EBHIS 21 cm | `ebhis_hpx_series` / `EBH1` | `K` (T_B, 945 Kanäle) | **Riss**: thermal (`cmb_planck_smica`) vs em (21 cm Linie) | pending | 604800 | `at sun` |
+| ACT DR6.02 | JSON (Token pending) | `K` (uK/mK→K) | thermal · gaussian-inverse-square | `T` (analog `cmb_planck_smica_T`) | 604800 | `at sun`, cmap ra/dec/z |
+| Blinkverse | `blinkverse_frb` / `BVFR` v1 | spaltenabhängig (`DM` pc/cm³ …) | em · inverse-square | CSV-Header (pending messen) | 604800 | `at sun`, cmap `.`, ra/dec |
+
+Evidenz je Arm: `general`-Report (Compiler-Zeilen, 2026-10-09). `terms` je Arm: THEMIS `free-open` · BepiColombo `CC-BY-4.0` · EBHIS `unbestimmt` (Vizier) · ACT `PD` · Blinkverse `unbestimmt`.
 
 ## LOCK
 
