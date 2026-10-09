@@ -4213,12 +4213,14 @@ fn test_build_netcdf_channels() {
     let channels = super::build_netcdf_channels(
         &srcs[0],
         &b,
-        &lsk,
-        expected_epoch,
-        &presences,
-        Some(6378136.6),
-        &eph_map,
-        &ReceiverAperture::new(),
+        &super::ChannelQuery {
+            lsk: &lsk,
+            now: expected_epoch,
+            presences: &presences,
+            body_radius: Some(6378136.6),
+            eph: &eph_map,
+            receiver_aperture: &ReceiverAperture::new(),
+        },
     );
     assert_eq!(channels.len(), 3);
     assert_eq!(channels[0].0.name, "argo_dac_temp_c");

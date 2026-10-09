@@ -243,16 +243,29 @@ pub fn fanout_fetch(
     channels
 }
 
+#[derive(Clone, Copy)]
+pub struct ChannelQuery<'a> {
+    pub lsk: &'a LeapSeconds,
+    pub now: f64,
+    pub presences: &'a [PresenceSample],
+    pub body_radius: Option<f64>,
+    pub eph: &'a HashMap<String, BodyEphemeris>,
+    pub receiver_aperture: &'a ReceiverAperture,
+}
+
 pub fn build_netcdf_channels(
     src: &SourceConfig,
     bytes: &[u8],
-    lsk: &LeapSeconds,
-    now: f64,
-    presences: &[PresenceSample],
-    body_radius: Option<f64>,
-    eph: &HashMap<String, BodyEphemeris>,
-    receiver_aperture: &ReceiverAperture,
+    q: &ChannelQuery,
 ) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
     let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
         match gunzip(bytes) {
             Some(b) => b,
@@ -263,16 +276,7 @@ pub fn build_netcdf_channels(
     };
     const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
     if bytes.starts_with(&HDF5_MAGIC) {
-        return build_netcdf4_channels(
-            src,
-            &bytes,
-            lsk,
-            now,
-            presences,
-            body_radius,
-            eph,
-            receiver_aperture,
-        );
+        return build_netcdf4_channels(src, &bytes, q);
     }
     let nc = match NetcdfFile::parse(&bytes) {
         Ok(f) => f,
@@ -436,13 +440,16 @@ pub fn build_netcdf_channels(
 pub fn build_netcdf4_channels(
     src: &SourceConfig,
     bytes: &[u8],
-    lsk: &LeapSeconds,
-    now: f64,
-    presences: &[PresenceSample],
-    body_radius: Option<f64>,
-    eph: &HashMap<String, BodyEphemeris>,
-    receiver_aperture: &ReceiverAperture,
+    q: &ChannelQuery,
 ) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
     let file = match crate::archivar::hdf5::Hdf5File::parse(bytes) {
         Ok(f) => f,
         Err(note) => {
@@ -802,13 +809,16 @@ pub fn build_netcdf4_volume(
 pub fn build_opendap_channels(
     src: &SourceConfig,
     file: &crate::archivar::opendap::DapFile,
-    lsk: &LeapSeconds,
-    now: f64,
-    presences: &[PresenceSample],
-    body_radius: Option<f64>,
-    eph: &HashMap<String, BodyEphemeris>,
-    receiver_aperture: &ReceiverAperture,
+    q: &ChannelQuery,
 ) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
     let body_name = frame_body_name(&src.frame);
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();

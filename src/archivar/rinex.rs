@@ -44,10 +44,10 @@ pub fn receiver_body_for_compiler(bin: &str) -> Option<String> {
                 compiler = None;
             } else if let Some(rest) = t.strip_prefix("compiler ") {
                 compiler = rest.rsplit('/').next();
-            } else if let Some(rest) = t.strip_prefix("at ").or_else(|| t.strip_prefix("on ")) {
-                if compiler == Some(bin) {
-                    return rest.split_whitespace().next().map(str::to_string);
-                }
+            } else if let Some(rest) = t.strip_prefix("at ").or_else(|| t.strip_prefix("on "))
+                && compiler == Some(bin)
+            {
+                return rest.split_whitespace().next().map(str::to_string);
             }
         }
     }
