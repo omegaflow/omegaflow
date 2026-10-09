@@ -272,6 +272,47 @@ fn compile_entry(
     Some(asset)
 }
 
+fn pairs_from_hrefs(hrefs: &[String], data_ext: &str, label_ext: &str) -> Vec<(String, String)> {
+    let data_suffix = format!(".{}", data_ext.to_ascii_lowercase());
+    let label_suffix = label_ext.to_ascii_lowercase();
+    let mut data_by_stem: std::collections::HashMap<String, String> =
+        std::collections::HashMap::new();
+    let mut label_names: Vec<String> = Vec::new();
+    for h in hrefs {
+        let name = h
+            .trim_end_matches('/')
+            .rsplit('/')
+            .next()
+            .unwrap_or("")
+            .to_string();
+        if name.is_empty() {
+            continue;
+        }
+        let lower = name.to_ascii_lowercase();
+        if let Some(stem) = lower.strip_suffix(&data_suffix) {
+            data_by_stem.insert(stem.to_string(), name.clone());
+        }
+        if lower.ends_with(&label_suffix) {
+            label_names.push(name);
+        }
+    }
+    label_names.sort();
+    label_names.dedup();
+    let mut out = Vec::new();
+    for name in &label_names {
+        let lower = name.to_ascii_lowercase();
+        let Some(stem) = lower.strip_suffix(&label_suffix) else {
+            continue;
+        };
+        let Some(dat_name) = data_by_stem.get(stem) else {
+            eprintln!("{name}: no sibling {data_suffix} in the listing — pair skipped");
+            continue;
+        };
+        out.push((name.clone(), dat_name.clone()));
+    }
+    out
+}
+
 fn collect_pairs(dir_url: &str, data_ext: &str, label_ext: &str, out: &mut Vec<(String, String)>) {
     let Some(bytes) = fetch_raw_bytes(dir_url) else {
         eprintln!("{dir_url}: listing fetch void");
@@ -281,28 +322,9 @@ fn collect_pairs(dir_url: &str, data_ext: &str, label_ext: &str, out: &mut Vec<(
         eprintln!("{dir_url}: listing not utf8");
         return;
     };
-    let low = data_ext.to_ascii_lowercase();
-    let mut names: Vec<String> = hrefs(text)
-        .into_iter()
-        .filter(|h| h.to_ascii_lowercase().ends_with(label_ext))
-        .map(|h| {
-            h.trim_end_matches('/')
-                .rsplit('/')
-                .next()
-                .unwrap_or("")
-                .to_string()
-        })
-        .collect();
-    names.sort();
-    names.dedup();
     let base = dir_url.trim_end_matches('/');
-    for name in &names {
-        let lower = name.to_ascii_lowercase();
-        let Some(stem) = lower.strip_suffix(label_ext) else {
-            continue;
-        };
-        let dat_name = format!("{stem}.{low}");
-        out.push((format!("{base}/{name}"), format!("{base}/{dat_name}")));
+    for (label, dat) in pairs_from_hrefs(&hrefs(text), data_ext, label_ext) {
+        out.push((format!("{base}/{label}"), format!("{base}/{dat}")));
     }
 }
 
@@ -344,4 +366,40 @@ fn main() {
         std::process::exit(1);
     }
     eprintln!("{written} table(s) packed");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pairs_preserve_the_listing_case() {
+        let listing = vec![
+            "?C=N;O=D".to_string(),
+            "LRS_SW_WF_00N_007080E.lbl".to_string(),
+            "LRS_SW_WF_00N_007080E.tbl".to_string(),
+            "LRS_SW_WF_00S_007080E.lbl".to_string(),
+            "LRS_SW_WF_00S_007080E.tbl".to_string(),
+        ];
+        let pairs = pairs_from_hrefs(&listing, "tbl", ".lbl");
+        assert_eq!(
+            pairs,
+            vec![
+                (
+                    "LRS_SW_WF_00N_007080E.lbl".to_string(),
+                    "LRS_SW_WF_00N_007080E.tbl".to_string()
+                ),
+                (
+                    "LRS_SW_WF_00S_007080E.lbl".to_string(),
+                    "LRS_SW_WF_00S_007080E.tbl".to_string()
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn a_label_without_sibling_data_is_not_paired() {
+        let listing = vec!["ORPHAN.lbl".to_string(), "OTHER.tbl".to_string()];
+        assert!(pairs_from_hrefs(&listing, "tbl", ".lbl").is_empty());
+    }
 }
