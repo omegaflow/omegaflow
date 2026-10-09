@@ -10920,6 +10920,16 @@ at moon
 ttl 604800
 field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds3_binary_lrs_sw_wf_00s_007080e.bin
+terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
+format pds3_binary
+origin https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/LRS_SW_WF_00S_007080E.lbl
+compiler tools/harvest/src/bin/pds3_binary_compiler.rs
+sha256 8c681469da1d59b00bb36348b2e6ac0f1cabc0da6a19760a62404f8553995c62
+at moon
+ttl 604800
+field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emtf_usarray_cao01_2010.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format emtf_impedance
