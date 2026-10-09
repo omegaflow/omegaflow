@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Der Rust-Refresh-Arm ist am ersten Lauf verifiziert (sources-refresh 37970858064 success, data-Snapshot 415a14b; sources-README auf den Rust-Arm gezogen). PETREL19-CDN success (37966130284), der pending-Eintrag geschlossen. Mountains dropped-gate-Verdikt gelandet (canonical_point_key = kurzer Namenskopf, Baseline neu gezogen); die zwei tools-build-Fehler der 282 geheilt. Vier Kontraktfragen (USGS-Extract, Keogramm-Form, terms-Granularität, DTM-quantity) durch archive_search --all → Rat → 8 UI-Seats gefahren; zwei grind-flash-Dispatches (USGS-Arm, Keogramm-Referenz) endeten in gemessenen STOPs — der Baum korrigierte die Vorlage; Risse benannt.
   class: handover
   date: 2026-10-09
-  sha256: 3fb7471e1be536c6dc0faac71f7a33fc209535a492b4ddce24544a8c945e3334
+  sha256: 272d40b2caa82faaedf4c0e9fbdc9f34efb14ab22af95a8453c2d581263bef54
   status: live
 -->
 # Handover — Mycelium-Folge 283 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1933 · cap 0.5 — Grund: Refresh-Arm verifiziert (`37970858064` success, `data`-Snapshot `415a14b`), sources-README gezogen; PETREL19-CDN success (`37966130284`), `pending` geschlossen; dropped-gate-Verdikt (287) gefaltet; **vier Kontraktfragen durch `archive_search --all` → Rat → 8 UI-Seats**, zwei `grind-flash`-Dispatches (USGS-Arm, Keogramm-Referenz) — beide STOP mit Baum-Korrektur; **Folge-Recherche 1b/2** (ungleiche Arrays; Keogramm-Raster+JPEG-Metadaten); `register_lookup --fired/--stale`/`open_points_check` = 0 · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „Mycelium-Linie starten und Stehenden Pass sch…"); Fenster-Total $0.7296 (22 Sessions).
+## Burn: open 0.0000 · close 0.2108 · cap 0.5 — Grund: Refresh-Arm verifiziert (`37970858064` success, `data`-Snapshot `415a14b`), sources-README gezogen; PETREL19-CDN success (`37966130284`), `pending` geschlossen; dropped-gate-Verdikt (287) gefaltet; **vier Kontraktfragen durch `archive_search --all` → Rat → 8 UI-Seats**, zwei `grind-flash`-Dispatches (USGS-Arm, Keogramm-Referenz) — beide STOP mit Baum-Korrektur; **Folge-Recherchen 1b/2** (ungleiche Arrays; Keogramm-Raster+JPEG-Metadaten) + **Aurora-Alternativen**; `register_lookup --fired/--stale`/`open_points_check` = 0 · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „Mycelium-Linie starten und Stehenden Pass sch…"); Fenster-Total $0.9722 (31 Sessions).
 
 ## Operator-Wort-Register
 
@@ -27,6 +27,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „beides bitte" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** (1) restliche Roster-Seats (Z.ai/GLM · Kimi · MiMo · Gemini · Mistral · Lumo) fahren, (2) die zwei dispatch-reifen Punkte (USGS-Arm, Keogramm-Referenzzeile) an `grind-flash` geben. Beides ausgeführt; die Dispatches endeten in gemessenen STOPs (Baum korrigiert die Vorlage).
 - „1 natürlich b und dafür hat die wissenschaft sicher eine lösung frag archive search all" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** USGS-Weg (b) bauen (neuer `ExtractResult`-Riss-Arm); `archive_search --all` zur wissenschaftlichen Lösung — Form: ganzer Satz als `Riss` mit beiden Längen + k.
 - „2 und sind die bilder nicht daten so wie vp4 oder wie es heisst bzw. in den jpgs müssen doch metainformationen stehen" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Keogramm als Datenquelle prüfen + JPEG-Metadaten messen — Keogramm = relative Rasterkarte (Daten); JPEG trägt **nur `JFIF`** (kein Exif/COM), Station/Datum nur im Dateinamen; Raster-Form offen.
+- „1 ist klar aber 2 habe ich keine ahnung gibt es keine alternativen aurora bilder die wir besser nutzen können?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Alternativen-Recherche — THEMIS ASI Level-1 (CDF), AuroraX, SSUSI/GUVI (CDF, kalibriert), VIIRS-DNB (kein Aurora-Produkt); Auswahl bleibt Operator-Wort.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge281.md` §Operator-Wort-Register (und folge280) — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-283.
 
 ## Offen — eigen
@@ -91,8 +92,9 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Status:** wartend | **Bindung:** eigen (Form) · operator/rat
 - **Trigger:** Form-Wort über die Raster-Quellen-Registrierung
 - **Lage:** (gemessen 2026-10-09) **Operator-Frage 2** hat die Vorlage gekippt: Keogramme **sind Daten** — eine relative 8-Bit-Intensitätskarte (x = Zeit UT, y = geografische Breite; FMI-Wissenschaftsguide + THEMIS-Katalog). **JPEG-Metadaten widerlegt (gemessen):** `ABK_160115.jpg` trägt **nur `JFIF`** — kein `Exif`, kein `COM`, keine Station/Zeit im JPEG; Station+Datum leben **nur im Dateinamen** (`ABK_160115.jpg`). Der Baum kann die Pixel lesen: `archivar::tiff::decode_jpeg_raster` (Baseline SOF0/1) → `keogram.rs brightness_columns()` nutzt es bereits; progressiv → `pending`. Als **Feld** bleibt der `decline` (`declined_sources.φ:4152`) korrekt (kein SI-Wert/`force_type`). Korrekte Klasse: **relative Raster-Datenquelle, filename-getragen**.
-- **Blockade:** die Form, relative Rasterquellen zu registrieren (kein Wire-Feld, aber auch keine reine URL-Referenz).
-- **Braucht:** Operator/Rat-Wort über die Raster-Quellen-Form; dann `format`-/Compiler-Entscheidung + `sources.φ`-Zeile (Mycelium).
+- **Alternativen (gemessen 2026-10-09, Operator-Frage):** **THEMIS ASI Level-1** über NASA CDAWeb — Keogramm in **CDF** mit Zeit/Station (`catalog.data.gov/dataset/themis-ground-based-all-sky-imager-keogram-level-1` HTTP 200; der exakte CDAWeb-Dataset-Pfad bleibt `unbelegt`, `…/themis/asi/` = 404) · **AuroraX** (UCalgary) — API/Metadaten-Schicht über 80 %+ der Anbieter (`aurorax.space`/`api.aurorax.space` HTTP 206) · **DMSP SSUSI** und **TIMED GUVI** — kalibrierte FUV-Aurora in **CDF** (`cdaweb.gsfc.nasa.gov`, SKT 200; `guvitimed.jhuapl.edu` 200/206) · **NOAA-20 VIIRS DNB** = kalibriertes GeoTIFF, aber **kein Aurora-Produkt** (Aurora herausgefiltert).
+- **Blockade:** die Wahl der Quelle (FMI-JPEG vs. THEMIS-ASI-CDF vs. SSUSI/GUVI vs. AuroraX) und die Form, sie zu registrieren.
+- **Braucht:** Operator-Wort, welche Aurora-Quelle genutzt wird; dann exakten CDAWeb-Pfad/Endpoint pinnen (`archive_search --verdict`) + `sources.φ`-Zeile (Mycelium).
 
 ## Rat + UI — Kontraktvorlagen (2026-10-09)
 
