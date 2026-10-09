@@ -408,9 +408,27 @@ impl ChannelDescriptor {
             .collect()
     }
 
+    pub fn carrier_wavenumber(&self) -> Option<f64> {
+        self.mode_wavenumbers(1)?.into_iter().next()
+    }
+
+    pub fn phase_velocity_m_s(&self) -> Option<f64> {
+        if !matches!(self.family, ModeFamily::Scalar) {
+            return None;
+        }
+        let k = self.carrier_wavenumber()?;
+        if !(k.is_finite() && k > 0.0) {
+            return None;
+        }
+        Some(std::f64::consts::TAU * self.fundamental_hz()? / k)
+    }
+
     pub fn fundamental_hz(&self) -> Option<f64> {
         match self.body.as_deref() {
-            Some(body) => self.mode_frequencies_hz_for_body(body, 1)?.into_iter().next(),
+            Some(body) => self
+                .mode_frequencies_hz_for_body(body, 1)?
+                .into_iter()
+                .next(),
             None => {
                 let speed = characteristic_speed(self.medium, None)?;
                 self.mode_frequencies_hz(speed, 1)?.into_iter().next()
@@ -2245,6 +2263,49 @@ mod tests {
             "V/m",
         );
         assert_eq!(d.fundamental_hz(), None);
+    }
+
+    #[test]
+    fn the_propagating_phase_velocity_equals_the_medium_speed() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 0 },
+            Boundary::Dirichlet,
+            "Pa",
+        )
+        .with_extent(Some(2.0))
+        .with_body(Some("earth".to_string()));
+        let k = d.carrier_wavenumber().expect("geometry carries a wavenumber");
+        let v_p = d.phase_velocity_m_s().expect("scalar branch carries a velocity");
+        let params = crate::media::medium_params_of("earth");
+        let c = characteristic_speed(Medium::Fluid, params.as_ref()).expect("earth sound speed");
+        assert!(k > 0.0);
+        assert!((v_p - c).abs() < 1e-9, "v_p {v_p} vs c {c}");
+    }
+
+    #[test]
+    fn an_elastic_channel_carries_no_single_phase_velocity() {
+        let d = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Energy,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Sphere { l: 0 },
+            Boundary::FreeSurface,
+            "Pa",
+        )
+        .with_extent(Some(6_371_000.0))
+        .with_body(Some("earth".to_string()));
+        assert_eq!(d.phase_velocity_m_s(), None);
     }
 
     #[test]
