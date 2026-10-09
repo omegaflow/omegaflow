@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 287 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). Rat + voller UI-Roster (12 Seats; 8 geantwortet, 4 pending) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). **THEMIS ASI end-to-end gebaut** (`e04be201a`: Workflow + Arm + Block). Rat + voller UI-Roster (12 Seats; 8 geantwortet, 4 pending) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 404924d8cdb8b427e3bd871c0d3d7b0a10d8e60063e07d2d32e0b575f3f8923b
+  sha256: 374e7587ec3249a3d324f0a72e793e9b775b41cb2c046cc8a3342609c8410a6e
   status: live
 -->
 # Handover — Mycelium-Folge 287 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1990 · cap 0.5 — Grund: Mountain-291/292 `## An mycelium` + river-159 gefaltet (`terms` je Arm), DTU-CSES-MAG-Kandidat gemessen, Keogramm-Kontrakt+Leser am Baum verifiziert **und `sources.φ`-Block `keogram_ABK.bin` als Co-Write gebaut + verifiziert**, Rat + **voller Roster** (`archive_search --all` + 10 Frontier- + 2 Open-Weight-Seats) zur Serialisierung (Verdikt: pending-gates/Provider-Batch), Arm-Spezifikation gemessen, Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.1990).
+## Burn: open 0.0000 · close 0.2409 · cap 0.5 — Grund: Mountain-291/292 `## An mycelium` + river-159 gefaltet, DTU-CSES-MAG-Kandidat gemessen, Keogramm `sources.φ`-Block gebaut, **THEMIS ASI end-to-end gebaut** (`themis-asi-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block, Lauf `37998113249`), Rat + **voller Roster** (12 Seats) zur Serialisierung (Verdikt pending-gates/Provider-Batch), Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.2409).
 
 ## Operator-Wort-Register
 
@@ -32,19 +32,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ## Offen — eigen
 
-### Manifestation — fünf Arme: `terms` geliefert, `field`/`quantity`/`ttl` penden
+### Manifestation — vier Arme offen (THEMIS ASI gebaut): `terms` da, `field`/`quantity`/`ttl` penden
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (`field`/`quantity`/`ttl` + Lese-Arme)
 - **Trigger:** Mountains `field`/`quantity`/`ttl` je Arm (Lese-Arm)
-- **Lage:** (gemessen 2026-10-09) Mountain-291/292 `## An mycelium` gefaltet — `terms` je Arm geliefert: **THEMIS ASI** `terms free-open https://themis.ssl.berkeley.edu/roadrules.shtml` · **BepiColombo** `terms CC-BY-4.0 https://zenodo.org/records/17813314` · **EBHIS** `terms unbestimmt` (Vizier) · **ACT** `terms PD` (NASA/HEASARC LAMBDA) · **Blinkverse** `terms unbestimmt` (kein License-Hinweis). `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain-292); Mountain: „bitte die `sources.φ`-Blöcke noch nicht schreiben". Die sechs Arme sind committet (`31af3a949`/`7695d58ae`); kein `harvest.φ`-Arm und keine `sources.φ`-Zeile je Arm. **CERN ROOT** bleibt `--probe`-only (nicht manifestierbar).
-- **Blockade:** die expliziten `field`/`quantity`/`ttl`-Tokens (Mountain); `ttl` nur numerisch, ohne `ttl` flusht kein Block.
-- **Braucht:** Mountain `field`/`quantity`/`ttl` je Arm → dann `*-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block (Mycelium) in einem Atom. **Drei `pending`-Dispositionen mit Mycelium-Aufenthalt** (`phi/blocked_sources.φ:51` skyview, `:55` lambda, `:72` blinkverse) hängen an demselben Braucht; `register_lookup --orphans` = 0.
-
-### Aurora — THEMIS ASI (`terms` da, `field`/`quantity` offen)
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (`field`/`quantity`)
-- **Trigger:** Mountains `field`/`quantity` der Bildintensität
-- **Lage:** (gemessen 2026-10-09) `terms free-open` (Mountain-291). `src/archivar/cdf.rs` (CDF3, MAGIC `cd f3 00 01`) + `--sniff`-Arm `cdf3` + `themis_asi_compiler.rs` stehen. Die ASI-Bildintensität ist dimensionslos → mit der jetzt gebauten Einheit `relative` registrierbar, sobald Lese-Arm + `field` stehen.
-- **Blockade:** `field`/`quantity` (Bildintensität) + Lese-Arm.
-- **Braucht:** Mountain `field`/`quantity` → dann `themis-asi-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block.
+- **Lage:** (gemessen 2026-10-09) **THEMIS ASI ist gebaut** (`e04be201a`: `themis-asi-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block `themis_asi.bin` `free-open`/`at earth`/604800; Reader mountain-292b `1a9bca729`; Lauf `37998113249` dispatcht) — damit ist auch der frühere Aurora-Punkt geschlossen. Offen die **vier Arme**: **BepiColombo** (`terms CC-BY-4.0`), **EBHIS** (`unbestimmt`, Vizier), **ACT** (`PD`), **Blinkverse** (`unbestimmt`); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). CERN ROOT bleibt `--probe`-only.
+- **Blockade:** `field`/`quantity`/`ttl` + Lese-Arme (Mountain).
+- **Braucht:** Mountain `field`/`quantity`/`ttl` + Reader je Arm → dann `*-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block (Mycelium) im selben Atom. **Drei `pending`-Dispositionen mit Mycelium-Aufenthalt** (`phi/blocked_sources.φ:51` skyview, `:55` lambda, `:72` blinkverse) hängen an demselben Braucht; `register_lookup --orphans` = 0.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
@@ -154,7 +147,7 @@ ttl 604800
 
 | Arm | format / MAGIC | quantity/unit | medium·kernel | `field`-Key | ttl | Anker |
 |---|---|---|---|---|---|---|
-| THEMIS ASI | `themis_asi` / `TASI` | `relative` (`UNIT=relative`) | em · inverse-square | `themis_asi_px_<comp:04>` | pending (3 s Kadenz / Tagesdatei; Sibling `themis_gmag` 3600) | `on earth <station>` pending |
+| THEMIS ASI | `themis_asi` / `TASI` | `relative` (`UNIT=relative`) | em · inverse-square | `themis_asi_px_<comp:04>` | 604800 | **gebaut** `e04be201a` (`at earth`) |
 | BepiColombo | `bepicolombo_plasma` / `BCPL` | dtype2→`Hz`, dtype40→`km` | em · inverse-square (abgeleitet) | `bepicolombo_<dtype>_<channel>` pending | pending (60 s Dateiname; Zenodo-Siblings 86400) | pending |
 | EBHIS 21 cm | `ebhis_hpx_series` / `EBH1` | `K` (T_B, 945 Kanäle) | **Riss**: thermal (`cmb_planck_smica`) vs em (21 cm Linie) | pending | 604800 | `at sun` |
 | ACT DR6.02 | JSON (Token pending) | `K` (uK/mK→K) | thermal · gaussian-inverse-square | `T` (analog `cmb_planck_smica_T`) | 604800 | `at sun`, cmap ra/dec/z |
