@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-CDN geheilt (success), ci-gate clippy grün, SuperMAG-Wiring verifiziert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 9da235d09542927fa33ed28295e232d6f7aaffcd847524a8f2a6ad2f48589a14
+  sha256: 65e69b1e3ac58ecbd045cb80ab585e31c7bf4bed8101f615ba7e4f1896e21fae
   status: live
 -->
 # Handover — Mycelium-Folge 275 (2026-10-09)
@@ -79,7 +79,9 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Trigger:** Operator-Wort zur Prüf-Route oder gemountete externe Platte + GCP
 - **Lage:** (gemessen 2026-10-09) `phi/blocked_sources.φ:60-63` trägt `blocked parser-def` `dmap-map-grid` mit Note „Globus-Credentials stehen … offen: der Globus-Download (Mycelium, wartend.φ:8)"; `wartend.φ:8` `superdarn-af68c4f1 | Globus/SuperDARN | Termin 2026-10-02 | mycelium | kein anonymer Statuskanal (external-state.md:47)`. Die Transfer-API antwortet ohne Bearer mit **HTTP 400 `ClientError.AuthenticationFailed` „No credentials supplied"** und mit totem Bearer mit **HTTP 401 `AuthenticationFailed` „Token is not active"** (`transfer.api.globusonline.org/v0.10/task/af68c4f1`); die externe Platte `/media/johannes/Extern` ist **nicht gemountet** (`findmnt` leer); GCP liegt `~/.local/globusconnectpersonal-3.3.1`, kein Token-Cache in `~/.globusonline/lta/`. **(Korrektur der Annahme, gemessen via Recherche 2026-10-09):** `GLOBUS_ID_USER/PASS` sind **nicht** kopf-los prüfbar — Globus Auths Password-Grant ist gesperrt: `POST https://auth.globus.org/v2/oauth2/token` `grant_type=password` mit der GCP-Client-ID → **HTTP 401 `invalid_client`** (routes-seitig gesperrt, **kein** `invalid_grant`). Ein 401 bei diesem Weg ist also **nicht** die Key-Rotation. Kein Haus-Tool liest `GLOBUS_ID_USER/PASS` (Secret-Hygiene: nur Namen via `bin/secrets_keys`).
 - **Blockade:** die Credential-Paar-Prüfung ist kopf-los nicht möglich; Globus verlangt einen einmaligen Browser-OAuth (`authorization_code`+PKCE, `offline_access`) für einen Refresh-Token — danach ist der Task-Status kopf-los messbar. Der Download zusätzlich an gemountete Platte + Bandbreite gebunden.
-- **Braucht:** Operator-Wort für den einmaligen Browser-Login (GCP `-start` oder Globus-Web) — dabei resümiert der Transfer (Bandbreite); oder eine Dritte-Partei-Anfrage, den Password-Grant für einen Client freizuschalten. Bis dahin `wartend`; keine „Credential fehlt"-Zeile.
+- **Ergebnis des Browser-Logins (2026-10-09, Operator-Wort „ja fahre den Browser"):** der Globus-Browser ist angemeldet, die Transfer-API antwortet mit der Session **HTTP 200**. Task `0f2819ca-bb2f-11f1-a6ad-0effcb3df825`: **FAILED** `fatal_error EXPIRED „deadline expired"`, 1006/55 690 Dateien, 2,44 GB von 291 GB, `completion_time 2026-10-01T11:51:02Z` (deadline 2026-10-01T11:50:32Z). Die Kennung `af68c4f1` ist **stale** (Kurz-ID, keine UUID → 400). Der Download ist also **nicht „Key kaputt"** — der Lauf ist schlicht abgelaufen. `wartend.φ:8` trägt jetzt `superdarn-globus-map`.
+- **Blockade:** kein kopf-loser Credential-Prüfweg (Password-Grant gesperrt, kein Refresh-Token); Download zusätzlich an gemountete Platte + Bandbreite gebunden.
+- **Braucht:** externe Platte `/media/johannes/Extern` mounten + neuen Transfer submitten (291 GB, Bandbreite) — der alte Task ist tot; ein Re-Submit läuft über den Globus File Manager (Browser-Session) oder GCP.
 
 ## An mountain
 
