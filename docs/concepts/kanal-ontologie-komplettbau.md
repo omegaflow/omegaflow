@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: 216c3a6112708abf3ad397f2f57a2ba4e49658691d82e0f8364a6d5fb18d47c7
+  sha256: c75a5ef65bb288b5e993557a84421fce60df28b8ff7b8b4ec04b72188e812b5c
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -47,6 +47,20 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   je Quelle (Ersatz des flachen `force`-Tokens); Parser-Arm in `src/archivar/parse.rs`
   analog `fanout`/`fanout_center`. **Mountain-Domäne** (Verdikt-Zeilen) + River (Parse).
 - **P0.4** `phi/canon.φ` falls eine neue Registerdatei entsteht.
+- **P0.5 — Ton-Relation (Operator-Wort 2026-10-09: „es muss doch alles zusammenpassen").**
+  Das Ton-Modell wird **vor** P1/P2.2 entschieden (nicht erst in P6.2): der Klang ist **keine
+  Zuordnung `𝒯→Klangfamilie`**, sondern eine **Ableitung**: `f_j = ω_𝒯(k_j^M)/2π` — Dispersion
+  aus `𝒯`, Wellenzahl-Quantisierung aus `M` (inharmonisch nur, wo `M` es erzwingt: 2D-Kreis →
+  Bessel `1·1,59·2,14·2,30·2,65·2,92·3,16·3,50·3,60`; 1D-Saite → harmonisch). Parabolisch →
+  Relaxationsspektrum (Debye), kein Pitch; erster Ordnung → eine Charakteristikenfamilie, reine
+  Laufzeit, Doppler = Pfad zwischen zwei **deklarierten** Weltlinien; elliptisch → **kein
+  Zeitmodus, kein Ton — aber nicht Stille** (Durchreicher: Quellzeitverlauf × räumlicher Gain,
+  Eigenfarbe null); der erhaltene Anteil (k=0, ω=0) ist in **jedem** `𝒯` stumm. Der Deskriptor
+  trägt das **Gesetz**; die **Anregung** (Quelle+Anfangsdaten) ist ein eigener Zustand. Die
+  **Receiver-Schicht** (ERB/Bark) ist nicht aus `(q,𝒯,M)` ableitbar — sie ist die deklarierte
+  `ReceiverAperture` oder in `M` zu absorbieren; ERB als reine Organ-Funktion. Protokoll:
+  `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` (Wissenschaft + Rat + Duck/Claude/Qwen
+  + DeepSeek V4 Pro).
 
 ### P1 — Ontologie-Kern (`src/mathematikerin/force.rs` + neu `channel.rs`)
 - **P1.1** `enum Conserved { Mass, Momentum, Energy, Charge }`.
@@ -65,7 +79,10 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   state: [u8; CAP], pan_ms, tilt_ms, tau_ticks }` (CAP = 2ᵏ).
 - **P2.2** **Der A=A-Kern zuerst:** `channel_intensity` → `Σ_active wᵢφᵢ / Σ_active wᵢ`
   (Monoid `(Σ, W)`), Teiler nie konstant; `Pending`/`Absent` korrekt (kein 0.0-Mittel).
-- **P2.3** `acoustic_partials`/`acoustic_amplitude` über `n`/active, nicht 9.
+- **P2.3** `acoustic_partials`/`acoustic_amplitude` über `n`/active, nicht 9; **deskriptorgetrieben
+  nach P0.5** — kein Slot-Harmonisches (k+1), sondern `f_j = ω_𝒯(k_j^M)/2π`; das Regime wird
+  **pro Mode** über die Diskriminante der Dispersionsrelation entschieden (nicht pro Kanal);
+  elliptische Kanäle als Durchreicher (kein Ton), der k=0/ω=0-Anteil stumm.
 - **P2.4** Alle `[f32;9]`-Signaturen → `&[f32]` + `n` (oder `ChannelVec`).
 
 ### P3 — Wire & Relay (`src/archivar/relay.rs`, `main_flow.rs`)
@@ -86,8 +103,9 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P6.1** **Bild/Luminanz**: erst auf ein gemeinsames dimensionsloses Maß normieren, dann gewichtete
   Projektion (Organ kollabiert legitim — Trichromatie).
 - **P6.2** **Audio**: ERB-/Kochlea-Bänder bzw. Partiale über aktive Kanäle; Kollaps nur als
-  Schalldruck-Superposition (gleiche Größe). **Zuerst** das Ton-Modell klären (harmonisch vs.
-  inharmonisch/Bänder — `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md`).
+  Schalldruck-Superposition (gleiche Größe) — der Ton ist deskriptorgetrieben nach **P0.5**
+  entschieden (Ableitung `f_j = ω_𝒯(k_j^M)/2π`, kein Slot-Harmonisches). ERB/Bark sind die
+  deklarierte Receiver-Apertur (Organ-Funktion), nicht der Kanal.
 - **P6.3** **Vibration/Haptik**: 1:1 Aktuator, **bleibt kanalaufgelöst**.
 - **P6.4** **Serial/HID**: struct-of-fields, dimensional; bit-exakt.
 - **P6.5** **Relay/Netz**: Verbatim, verlustfrei, n-fach.
