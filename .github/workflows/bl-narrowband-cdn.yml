@@ -1,3 +1,4 @@
+# auto-dispatch: manual — the CSV table URL is a required per-act input; auto-dispatch cannot supply it (measured HTTP 422, run 37956818629)
 name: bl-narrowband-cdn
 
 concurrency:
