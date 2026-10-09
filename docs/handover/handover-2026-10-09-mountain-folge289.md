@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 7956eb1961ef2fd891b3af87a70ca932445d4b6b68acc0fe2e3753e2fbef84f6
+  sha256: a5f168302e66be5680189a9b8baa3bbaaf9dfe0e0e2bb0fbe56bfbe4ab96b824
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -28,12 +28,12 @@ Wort | Datum | Quelle
 
 ## Offen (aufgeschlüsselt)
 
-### Kaguya/SELENE LRS — Case-Bug geheilt, 00S-Lauf neu dispatcht
+### Kaguya/SELENE LRS — Case-Bug geheilt, Fix im Lauf verifiziert, Re-Dispatch
 - **Status:** wartend (CI) | **Bindung:** eigen
-- **Trigger:** Lauf `kaguya-lrs-cdn.yml` (#37979918649) grün, 00S-Assets manifestiert
-- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37978167263`) der Lauf #37978167263 endete `failure`: `collect_pairs` lowercased den Daten-Stem und baute `lrs_sw_wf_*e.tbl`; DARTS ist case-sensitiv (`archive_search --verdict`: `LRS_SW_WF_00S_007080E.tbl` → 200, `lrs_sw_wf_00s_007080e.tbl` → 404), also jeder Datensatz 404 → `no table packed — nothing written (0 honored)`. Das Label blieb korrekt (`name` blieb original). Fix `9b1911eb7`: `pairs_from_hrefs` paart per lowercased Stem auf den echten Listing-Namen (behält die Case), 2 Regression-Tests; `cargo build -p omegaflow-harvest --bin pds3_binary_compiler` grün. Neu dispatcht #37979918649.
+- **Trigger:** Lauf `kaguya-lrs-cdn.yml` (#37981227493) grün, 00S-Assets manifestiert
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37979918649`) der Fix `9b1911eb7` ist **im Lauf verifiziert**: `pds3_binary_lrs_sw_wf_00n_007080e.bin` packt mit sha256 `772e51d1…` (identisch zur bestehenden Register-Zeile) und `pds3_binary_lrs_sw_wf_00s_007080e.bin` erstmals mit sha256 `8c681469…` (1971 rows). Der Lauf #37979918649 wurde mid-way **cancelled** (nicht failure) → erneut dispatcht #37981227493. Ursache des vorigen Lauf #37978167263: `collect_pairs` lowercased den Daten-Stem (`lrs_sw_wf_*e.tbl` → 404, DARTS case-sensitiv), das Label blieb korrekt.
 - **Blockade:** DARTS-Host flappt 200/503 (`curl --retry` fängt 5xx)
-- **Braucht:** Lauf #37979918649 grün → neue 00S-Asset-Namen als `sources.φ`-Zeilen + sha256 aus dem Release-Digest nachtragen.
+- **Braucht:** Lauf #37981227493 grün → neue 00S-Asset-Namen als `sources.φ`-Zeilen + sha256 aus dem Release-Digest nachtragen (00S `8c681469…` steht schon gemessen).
 
 ### Keogramm (FMI MIRACLE) — Arm gebaut, Form-Verdikt + Manifestation offen
 - **Status:** eigen (Register/Manifestation) | **Bindung:** eigen · mycelium (Workflow/CDN)
@@ -154,4 +154,4 @@ Origin: mountain-289 (2026-10-09) — Antwort auf river-155.
 
 Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe selbst", 2026-10-07) trägt Commit und Push. Eigene Pfade:
 `docs/handover/handover-2026-10-09-mountain-folge289.md` · `docs/handover/archiv/handover-2026-10-09-mountain-folge288.md`.
-Der Kaguya-Case-Fix (`tools/harvest/src/bin/pds3_binary_compiler.rs`, `9b1911eb7`) ist bereits committet und gepusht; `kaguya-lrs-cdn.yml` (#37979918649) ist dispatcht.
+Der Kaguya-Case-Fix (`tools/harvest/src/bin/pds3_binary_compiler.rs`, `9b1911eb7`) ist committet und gepusht und im Lauf #37979918649 verifiziert; `kaguya-lrs-cdn.yml` ist als #37981227493 erneut dispatcht.
