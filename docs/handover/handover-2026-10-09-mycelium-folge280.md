@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. CI-Erntelauf wdc-ae triagiert (failure gemessen und geheilt); Schreibpfad-Heilung an 4 Compilern, die auf frischen Runnern an fehlendem Ausgabe-Verzeichnis scheiterten; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 7fa002a45caa94721303a62b2ef7a39618c1b1d29062ec1d57a6c2b5a4b7cd48
+  sha256: 4adef509e09a3f38891427d52ed25925f6e40449a87a850fe3927682e1c53d6b
   status: live
 -->
 # Handover — Mycelium-Folge 280 (2026-10-09)
@@ -52,12 +52,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** keiner.
 - **Braucht:** Marker `# auto-dispatch: manual` je betroffenem Workflow — Audit `comm -23 <(sgrep -l 'required: true' .github/workflows | sort) <(sgrep -l 'auto-dispatch: manual' .github/workflows | sort)`.
 
-### Pipeline — `swpc-efield-cdn` 0 frames / 0 rows
+### Pipeline — `swpc-efield-cdn` 0 frames / 0 rows (Fenster vs. Quellen-Retention)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
-- **Trigger:** Lauf `37956892248` (swpc-efield-cdn) Abschluss
-- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37956846056:610-611`) Lauf **failure**: `swpc_efield_compiler --start 2026-10-08T00:00:00Z --stop 2026-10-09T00:00:00Z` meldet „0 frames, 0 rows" → exit 1 (`no records — the bin stays unwritten (0 honored)`). Der Workflow führt `mkdir -p data/services.swpc.noaa.gov` — **nicht** der Verzeichnis-Bug.
+- **Trigger:** erneuter `swpc-efield-cdn`-Lauf nach Fenster-Korrektur (bzw. `gh workflow run swpc-efield-cdn.yml`)
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37956846056:610-611` und `curl https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/`) Beide Läufe (`37956846056`, `37956892248`) **failure**: Compiler läuft `--start 2026-10-08T00:00:00Z --stop 2026-10-09T00:00:00Z` → „0 frames, 0 rows" → exit 1. Die Quellen-Liste `https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/` trägt aktuell nur `2026-10-09T08:xx`-Frames — die „1D"-Retention ist kürzer als das gestern-Fenster des Workflows.
 - **Blockade:** keiner.
-- **Braucht:** `ci_manage view 37956892248`; wenn die Quelle für den Tag wirklich leer ist: entscheiden, ob ein leeres Tag exit 0 (honored) oder exit 1 trägt.
+- **Braucht:** Fenster an die verfügbare Retention anpassen (z. B. die Listing-Spanne nutzen statt fix gestern→heute); dann `gh workflow run swpc-efield-cdn.yml`, `ci_manage view <id>`, bei success `sources.φ`/`ledger.φ` prüfen.
 
 ### Pipeline — `das2-iowa-cdn` queued
 - **Status:** wartend | **Bindung:** eigen (Ernte)
