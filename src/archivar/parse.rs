@@ -249,6 +249,22 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "live" => {
                 cur_live_only = true;
             }
+            "weberin" if parts.len() >= 2 => {
+                if WeberinRole::parse(parts[1]).is_none() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("unknown weberin role \"{}\": {}", parts[1], line),
+                    );
+                }
+            }
+            "weberin" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("weberin needs <role>: {}", line),
+                );
+            }
             "at" if parts.len() >= 2 => {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());

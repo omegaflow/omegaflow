@@ -210,6 +210,7 @@ pub mod voyager_occlt;
 pub mod voyager_odr;
 pub mod voyager_saturn;
 pub mod vtscat;
+pub mod weberin_fit;
 pub mod weberin_verdicts;
 pub mod win32;
 pub mod wind;
@@ -273,6 +274,7 @@ pub use rinex::*;
 pub use spatial::*;
 pub use types::*;
 pub use units::*;
+pub use weberin_fit::*;
 pub use weberin_verdicts::*;
 
 pub(crate) use crate::dastcom::{RECORD_STRIDE, hill_radius_m, parse_record, state_at};

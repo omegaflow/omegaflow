@@ -292,6 +292,19 @@ fn shadow_null_control(pin: &BTreeSet<String>) -> (usize, usize) {
         }
     }
 
+    if let Some(first) = pin.iter().next() {
+        let renamed = format!("{first}__alias");
+        let mut alias_roster = pin.clone();
+        alias_roster.remove(first);
+        alias_roster.insert(renamed.clone());
+        let alias_log =
+            format!("{HEADER_PREFIX}shadow\ncarried\t{renamed}\talias:{first}\t2026-10-07\n");
+        match compare_roster(&alias_roster, pin, &alias_log) {
+            Ok((0, 0)) => {}
+            _ => false_red += 1,
+        }
+    }
+
     (false_red, false_green)
 }
 
@@ -719,6 +732,20 @@ mod tests {
         let pin = set(&["a", "b", "c", "d"]);
         assert_eq!(shadow_null_control(&pin), (0, 0));
         assert_eq!(shadow_null_control(&BTreeSet::new()), (0, 0));
+    }
+
+    #[test]
+    fn shadow_control_exercises_the_alias_channel() {
+        let pin = set(&["a", "b", "c"]);
+        assert_eq!(shadow_null_control(&pin), (0, 0));
+
+        let mut renamed = pin.clone();
+        renamed.remove("a");
+        renamed.insert("a__alias".to_string());
+        let alias = format!("{HEADER_PREFIX}shadow\ncarried\ta__alias\talias:a\t2026-10-07\n");
+        assert_eq!(compare_roster(&renamed, &pin, &alias).unwrap(), (0, 0));
+        let empty = format!("{HEADER_PREFIX}shadow\n");
+        assert_eq!(compare_roster(&renamed, &pin, &empty).unwrap(), (1, 1));
     }
 
     #[test]

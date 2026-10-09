@@ -409,6 +409,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "1e-4w/m2",
             "1",
             "%",
+            "relative",
             "pfu",
             "pfu/mev",
             "w/m^2/nm",
@@ -515,6 +516,7 @@ pub fn allowed_units_for_quantity(kind: u8) -> &'static [&'static str] {
         4 => &["uj/sr", "w/m2/sr", "jy/sr", "nw/cm2/sr"],
         5 => &["nt"],
         6 => &["ohm"],
+        7 => &["relative", "1", "dn", "count", "%"],
         _ => &[],
     }
 }
@@ -675,5 +677,18 @@ mod tests {
         assert_eq!(unit_from_name_suffix("so2_emission_kt"), Some("kt"));
         assert!(!allowed_units_for_force(6).contains(&normalize_unit("kt").as_str()));
         assert!(allowed_units_for_force(6).contains(&normalize_unit("kt_mass").as_str()));
+    }
+
+    #[test]
+    fn relative_is_a_dimensionless_quantity_kind() {
+        use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_name, quantity_kind_of};
+        let kind = quantity_kind_id(QuantityKind::Relative);
+        assert_eq!(kind, 7);
+        for unit in ["relative", "1", "dn", "count", "%"] {
+            assert!(allowed_units_for_quantity(kind).contains(&unit));
+        }
+        assert!(allowed_units_for_force(0).contains(&normalize_unit("relative").as_str()));
+        assert_eq!(quantity_kind_of("relative"), Some(QuantityKind::Relative));
+        assert_eq!(quantity_kind_name(QuantityKind::Relative), "relative");
     }
 }
