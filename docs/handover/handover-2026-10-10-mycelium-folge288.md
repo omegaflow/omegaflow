@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 288 (2026-10-10)
-  session: Mycelium-Linie — Meta-Pass. de441/de442 `sha256` aus dem GitHub-Release-Digest registriert (erste Manifest-Läufe, Wait `de441-de442-sha` geschlossen); future-211-Block (sources-refresh) gefaltet — Workflow war bereits in mycelium-282 verdrahtet (`ba59976da`/`b46c9e514`, Rust-Bin `d72710803`), kein offener Punkt. Register kanonisch (2705 Blöcke), license_census/cdn_reconcile clean. Nachtrag nach Operator-Wort „fixen": die CI-Roh-API-Lehre (`conclusion=` unwirksam → `status=failure`, `docs/concepts/tools-map.md`) und der zuvor übersehene rote `keogram-cdn`-Lauf (`ABK`-Quelle steht seit 2026-04-21) sind gemessen + eingetragen. `harvest-dispatch`-Rot geheilt: `phi/harvest.φ` Block-Ordnung (75/0, `harvest_reg --check`); `path_reference_scan .` clean (3427/0/0). Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. de441/de442 `sha256` aus dem GitHub-Release-Digest registriert (erste Manifest-Läufe, Wait `de441-de442-sha` geschlossen); future-211-Block (sources-refresh) gefaltet — Workflow war bereits in mycelium-282 verdrahtet (`ba59976da`/`b46c9e514`, Rust-Bin `d72710803`), kein offener Punkt. Register kanonisch (2705 Blöcke), license_census/cdn_reconcile clean. Nachtrag nach Operator-Wort „fixen": die CI-Roh-API-Lehre (`conclusion=` unwirksam → `status=failure`, `docs/concepts/tools-map.md`) und der zuvor übersehene rote `keogram-cdn`-Lauf (`ABK`-Quelle steht seit 2026-04-21) sind gemessen + eingetragen. `harvest-dispatch`-Rot geheilt: `phi/harvest.φ` Block-Ordnung (75/0, `harvest_reg --check`); `path_reference_scan .` clean (3427/0/0). Folgefaltung (river-160 + Mountain-294): SSB-Feld-Asset-CI/CDN + `sources.φ`-Block gebaut (`.github/workflows/ssb-field-cdn.yml`, `format ssb_field`); Blinkverse-Reader steht (Mountain `b385a7ea5`), Register offen; INPE-BIG (gedeckt) + USGS (kein Arm) geschlossen; LICENSE/PDS-PPI/Weberin fortgeschrieben. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-10
-  sha256: 1a520dd9fff2951f727063ccc356fadaa6748a65fa43f16266202747688b2d2c
+  sha256: d114d125d3514b77e9a69b832cd77081162a614c813a1c177ef526ac3f0f21de
   status: live
 -->
 # Handover — Mycelium-Folge 288 (2026-10-10)
@@ -19,7 +19,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 **CI-Messlehre (2026-10-10, Randbefund-Fix):** der GitHub-Roh-API-Filter `conclusion=` auf `…/actions/runs` ist unwirksam (wird still ignoriert; `?status=completed&conclusion=failure` lieferte `cancelled`-Läufe und zählte fälschlich 0 rote) — korrekt ist `status=failure`/`status=cancelled`/`status=success` (oder client-seitig `jaq 'select(.conclusion=="failure")'`); kanonischer Leser bleibt `ci_manage`. Eingetragen in `docs/concepts/tools-map.md` (CI-Roh-API). Der zuvor übersehene rote Lauf `keogram-cdn 37995952959` ist damit gemessen (siehe Keogramm-Punkt).
 
-## Burn: open 0.0000 · close 0.0504 · cap 0.5 — Grund: de441/de442 `sha256` registriert (6 Blöcke), future-211-Block gefaltet (sources-refresh, bereits verdrahtet → kein offener Punkt), Register kanonisch 2705 Blöcke, license_census/cdn_reconcile clean · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss; Fenster 9 Sessions total $0.7817, Session `Mycelium-Linie starten: Stehender Pass`).
+## Burn: open 0.0000 · close 0.1885 · cap 0.5 — Grund: de441/de442 `sha256` registriert (6 Blöcke), future-211-Block gefaltet (sources-refresh, bereits verdrahtet → kein offener Punkt), Register kanonisch 2706 Blöcke, license_census/cdn_reconcile clean, `harvest.φ` sortiert, CI-Roh-API-Lehre, SSB-Feld-Asset (Workflow + Register-Block) gebaut, river-160/Mountain-294 gefaltet · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss; Fenster 25 Sessions total $1.4627, Session `Mycelium-Linie starten: Stehender Pass`).
 
 ## Operator-Wort-Register
 
@@ -32,12 +32,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ## Offen — eigen
 
-### Manifestation — sechs Arme registriert; nur Blinkverse offen
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Archivar-Leser)
-- **Trigger:** Blinkverse-Katalog-Pfad in `src/archivar/extract.rs` gebaut
-- **Lage:** (gemessen 2026-10-10 via `ci_manage status`) HEAD `53c1aacd2`. Registriert: Keogramm, THEMIS ASI (`e04be201a`), EBHIS + BepiColombo (`05924d088`/`4bbb836dc`), ACT (`4570ee30e`), IRIS (`a637c5672`). Die sechs CDN-Läufe (Single-Runner-Stau): `37995952959` keogram **rot** (siehe Keogramm-Punkt) · `37998113249` themis-asi queue · `38000948001` ebhis queue · `38000952599` bepicolombo queue · `38001184677` act (`in_progress`) · `38001780912` iris queue. Offen: Blinkverse — Reader `src/archivar/blinkverse.rs` steht, aber der benannte Katalog-Pfad (Tabelle ohne `t`) fehlt in `src/archivar/extract.rs` (`sgrep -i blinkverse src/archivar` = reader+mod, kein dispatch).
-- **Blockade:** der Blinkverse-Dispatch in `extract.rs` (Archivar = Mountain) fehlt; die Feld-/Anker-Zuordnung (ra/dec, cmap, DM-Spalte) ist Mountain/Rat-Register.
-- **Braucht:** Blinkverse-Katalog-Pfad in `extract.rs` → dann `blinkverse-cdn.yml` + `sources.φ`-Block.
+### Manifestation — sechs Arme registriert; Blinkverse-Reader steht, Register offen
+- **Status:** wartend | **Bindung:** eigen (Manifestation)
+- **Trigger:** Mountain-`b385a7ea5` (Blinkverse-Dispatch in `extract.rs`) — **gefeuert**
+- **Lage:** (gemessen 2026-10-10) Registriert: Keogramm, THEMIS ASI (`e04be201a`), EBHIS + BepiColombo (`05924d088`/`4bbb836dc`), ACT (`4570ee30e`), IRIS (`a637c5672`). **Blinkverse-Dispatch gebaut** (mountain-294 `b385a7ea5`): `format blinkverse`/`blinkverse_frb` in `extract.rs` (`verify_records:213`, `extract_raw:3783`, Helfer `blinkverse_frb_channels:3513`); eine `field`-Zeile mit CSV-Spaltenname macht genau diese Spalte sichtbar, `RA`/`Dec` → Position (Einheitsvektor), `None`-Zelle ⇒ kein Kanal (nie 0.0). Der Block (`url`/`origin`/`compiler`/`format blinkverse_frb` + `field DM …`) + `blinkverse-cdn.yml` sind noch **nicht** geschrieben.
+- **Blockade:** keine (der Mountain-Arm steht).
+- **Braucht:** `blinkverse-cdn.yml` (Build/Upload des `blinkverse_compiler`-Bins) + `sources.φ`-Block (`format blinkverse_frb`, `field DM …`) → `register_sort`/`license_census`/`cdn_reconcile`.
 
 ### Manifestation — Keogramm ABK: Quelle steht seit 2026-04-21 (Riss gemessen)
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Quellen-Verdikt)
@@ -45,6 +45,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-10 via `ci_manage log 37995952959` + `general`-Taucher) `keogram-cdn` Lauf `37995952959 @9347c3fc4` **rot**: `fetch_bytes … ABK.2610/ABK_261008.jpg curl: (22) … 404`. Das FMI-MIRACLE-Archiv endet `ABK.2604` (April 2026; `2605`/`2606` existieren leer, kein `2607`–`2610`). SGO (`www.sgo.fi/pub_asc/emCCD_ABK/emCCD_ABK_{YYYY}/emCCD_ABK_{YYYYMM}/ABK_{YYMMDD}/ABK_{YYMMDD}.jpg`) trägt die Monats-/Tagesverzeichnisse 2026-08/09/10, aber **leer**; `iXon/ABK_latest.jpg` Last-Modified 2026-04-22. **Jüngste vorhandene ABK-Nacht: 2026-04-21** (`…/emCCD_ABK_202604/ABK_260421/ABK_260421.jpg`, HTTP 200). Die ABK-Quelle liefert seit 2026-04-21 keine Daten — der Vorgestern-Default ist dauerhaft 404.
 - **Blockade:** ABK-Kamera liefert seit 2026-04-21 nichts (an FMI **und** SGO).
 - **Braucht:** Mountain-Verdikt (SGO-Live gibt es nicht → `declined`/`pending`) → dann `keogram-cdn.yml`/`sources.φ` anpassen.
+
+### Manifestation — SSB-Feld-Asset: CI/CDN + Register-Zeile gebaut (river-160)
+- **Status:** wartend | **Bindung:** eigen (Manifestation)
+- **Trigger:** erster `ssb-field-cdn`-Lauf (sha256 erst dann messbar)
+- **Lage:** (gemessen 2026-10-10) `tools/measure/src/bin/ssb_field_bake.rs` (river-160) backt die Enclosure-Query am SSB (26×f64 LE, `--ci-mode`). Gebaut: `.github/workflows/ssb-field-cdn.yml` (holt `dr3_stars.bin` vom `ssd.jpl.nasa.gov-gaia`-CDN → `--ci-mode` → `gh release upload ssb out/ssb_field.bin`) + `phi/sources.φ:19664`-Block `format ssb_field` (`url …/download/ssb/ssb_field.bin`, `terms CC-BY-NC-3.0-IGO` vom `catalog_tycho` geerbt, `compiler …/ssb_field_bake.rs`, `at sun`, `ttl 604800`). `register_sort` kanonisch (2706), `license_census --fail`/`cdn_reconcile --fail` clean, `harvest_reg` 75/0.
+- **Blockade:** sha256 + `terms`/`ttl`-Bestätigung erst nach dem ersten Lauf / durch Mountain.
+- **Braucht:** erster Lauf → `sha256` in den Block; Mountain bestätigt `terms`/`ttl`.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
@@ -54,32 +61,25 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Braucht:** Abschluss (Watchdog cancelt past 2× Median) → bei success `ledger.φ:110` → `disponiert` + CDN-Asset prüfen.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo + Release-Body-Lizenz
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Tool-Format)
-- **Trigger:** `sources_repo_license` emittiert pro-Quelle-Zeilen statt netloc-Rollup
-- **Lage:** (gemessen 2026-10-09) terms-Format-Verdikt ist **pro Quelle** (mountain-289/290). Populations-Riss geheilt: `license_census` 2698 terms / 0 no-terms (2026-10-10: 2705/0), `sources_repo_license` 2698 terms / 0 no-terms. Offen: `sources_repo_license.rs:128-142` emittiert `<netloc> | <token> | <url>`; `LICENSE` wird nur nach `/tmp/licence` erzeugt, nicht ins Repo committed.
-- **Blockade:** das pro-Quelle-Format des Tools (Mountain).
-- **Braucht:** Mountain `sources_repo_license.rs` pro-Quelle → dann `sources-repo-licence.yml`-Schritt „commit `LICENSE` ins `omegaflow/sources`".
+- **Status:** wartend | **Bindung:** eigen (Manifestation)
+- **Trigger:** `sources_repo_license` pro-Quelle (mountain-294 `b385a7ea5`) — **gefeuert**
+- **Lage:** (gemessen 2026-10-10) `sources_repo_license` emittiert jetzt `<source-url> | <terms-token> | <terms-url>` (eine Zeile je `url`-Block, stabil sortiert; mountain-294 `b385a7ea5`); `license_census` 2706/0. Offen: der `sources-repo-licence.yml`-Schritt, der `LICENSE` ins `omegaflow/sources`-Repo committed.
+- **Blockade:** keine.
+- **Braucht:** `sources-repo-licence.yml`-Schritt „commit `LICENSE` ins `omegaflow/sources`".
 
 ### Pipeline — INPE-BIG-Kandidat (`phi/pipeline/ledger.φ:86`)
-- **Status:** wartend | **Bindung:** eigen (Ernte-Verdrahtung) · mountain
-- **Trigger:** Mountains `inpe-big-stac`-Compiler/Arm
-- **Lage:** (gemessen 2026-10-09) `ledger.φ:86` `ausstehend` (`data.inpe.br/big/`); kein `inpe_big_*`-Bin.
-- **Blockade:** Mountains BIG-STAC-Arm (parser-def).
-- **Braucht:** Mountain-Arm → Ernte-Verdrahtung (Workflow/`sources.φ`).
+- **Status:** wartend | **Bindung:** eigen (Ernte-Verdrahtung)
+- **Trigger:** `inpe_stac_compiler --collection <id>` (mountain-294 `4f85c7311`) — **gefeuert, gedeckt**
+- **Lage:** (gemessen 2026-10-10) mountain-294: `data.inpe.br/big/` ist ein WordPress-**Portal** (HTTP 200, HTML, kein STAC); die Daten liegen am **INPE STAC Server** `https://data.inpe.br/bdc/stac/v1` (HTTP 200, **79 Collections**), und `inpe_stac_compiler` trägt bereits `--collection <id>` (default `samet_daily-1`, `4f85c7311`). `ledger.φ:86-88` ist damit durch den bestehenden Arm gedeckt — **kein `inpe_big_*`-Arm nötig**.
+- **Blockade:** keine; `ledger.φ`-Disposition + der konkrete BDC-Collection-Block ist die offene Ernte-Verdrahtung.
+- **Braucht:** BDC-Collection wählen → `ledger.φ:86` disponieren + `sources.φ`-Block (`format inpe_stac_samet_daily`-Familie).
 
-### PDS-PPI — Zuordnung gemessen, `sources.φ`-Zeile offen
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain
-- **Trigger:** Mountain-`field`/`terms` je Sammlung
-- **Lage:** (gemessen 2026-10-09) `pds_ppi_compiler.rs` + `pds-ppi-cdn.yml` + `harvest.φ`-Arm stehen; Family unbounded, kein Manifest, `pds4_fixed_width` braucht `field`-Zeilen.
-- **Blockade:** Mountain-`field`/`terms` je Sammlung.
-- **Braucht:** Mountain misst `field`/`terms`/`ttl` → dann `sources.φ`-Block.
-
-### USGS-geomag E-Feld — Reader-Arm + Riss-Träger
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Arm) · river (`main_flow`-Consumer)
-- **Trigger:** Mountains `ExtractResult`-Riss-Arm + `GeomagParallel`-Arm
-- **Lage:** (gemessen 2026-10-09) Quelle 206; Feldquelle `values[i].metadata.element` (`usgs_geomag_compiler.rs:199-214`); der silent-truncate in `zip_parallel_arrays` ist geheilt (`ParallelZip::Riss { times_len, values_len, k }`, Hard-Abort, mountain-290 `4b7cb0df`). Offen bleibt die Wire-Frage: `ExtractResult` (`extract.rs:3296`) hat keinen Riss-Arm (Consumer `fetch.rs:1196`, `port.rs:806/814`, `main_flow.rs:6009/6018`); `GeomagParallel` existiert nicht.
-- **Blockade:** Bau des Riss-Arms (Mountain) + Consumer (River).
-- **Braucht:** Bau → dann `sources.φ`-Zeile (Mycelium) + Mountain `field`/`terms`/`ttl`.
+### PDS-PPI — Force descoped, `quantity` aus Label-Einheit
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (pro Spalte)
+- **Trigger:** Mountain-Build-Schritt `quantity` je Spalte
+- **Lage:** (gemessen 2026-10-10) Rat-Verdikt: `field`-Force für die generische PDS4-Familie **descoped**; `quantity` **allein aus der gemessenen Label-Einheit** pro Spalte; Spalten ohne Label-Einheit `pending`. `pds_ppi_compiler.rs` + `pds-ppi-cdn.yml` + `harvest.φ`-Arm stehen.
+- **Blockade:** Mountain-Build-Schritt (pro Spalte) — siehe Mountain-Offen.
+- **Braucht:** Mountain `quantity` je Spalte → dann `sources.φ`-Block.
 
 ### Solar VSO/IRIS — Workflow gebaut, `sources.φ`-Feld/Unit offen
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Feld/Unit)
@@ -102,12 +102,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** keine für die zertifizierten Kandidaten — Mountain-Re-Admission fehlt.
 - **Braucht:** Mountain Re-Admission je Kandidat → dann CDN-Workflow/`sources.φ`-Block.
 
-### Weberin-Gate — Verfeinerung (Rat gehalten 2026-10-09)
+### Weberin-Gate — Fixture folgt dem Arm (Rat gehalten 2026-10-09)
 - **Status:** wartend | **Bindung:** eigen (Gate-Bau/CI) · mountain (Register/Parse) · river (Reihenfolge/Membran)
-- **Trigger:** Operator-Wort „weberin-Gate verfeinern" (2026-10-09) — **gefeuert**, Rat-Struktur steht
-- **Lage:** (gemessen 2026-10-10) kein Gate prüft die Weberin-Rolle. Rat-Struktur: `weberin <role>`-Direktive in `sources.φ` (Klassen `kette:{direction,body,station}` · `zeuge:{…}` · `kein-faden`), allein von Mountain geschrieben; `witnesses.φ::witness <kind>` bleibt; Gate als `commit_check`-Fixture + Test im selben Atom; Mess-Tool `weberin_fit` (Achsen pos·series·qty, setzt kein Verdikt); Reihenfolge als erster Schritt in `docs/SOURCE_PORT.md`. Am Baum: `weberin-verdicts-cdn.yml` + (fremd, untracked) `src/archivar/weberin_fit.rs`; `sources.φ:19678-19683` trägt `format weberin_verdicts`; keine `weberin`-Direktive (`sgrep weberin phi/sources.φ` = 0).
-- **Blockade:** Register-Direktive + `parse.rs`-Arm bei Mountain; Rat-Riss 2 (nur-neu-Gate vs Backfill) offen.
-- **Braucht:** (a) Mountain `weberin`-Direktive + `parse.rs`-Arm; (b) Mycelium `commit_check`-Fixture + Test (nach Mountains Arm); (c) River Reihenfolge in `SOURCE_PORT.md`; (d) Backfill der alten Masse als eigener Punkt.
+- **Trigger:** Operator-Wort „weberin-Gate verfeinern" (2026-10-09) — **gefeuert**, Rat-Struktur steht; Mountain-Arm steht
+- **Lage:** (gemessen 2026-10-10, mountain-294) kein Gate prüft die Weberin-Rolle. Rat-Struktur: `weberin <role>`-Direktive in `sources.φ` (Klassen `kette:{direction,body,station}` · `zeuge:{…}` · `kein-faden`), allein von Mountain geschrieben; `witnesses.φ::witness <kind>` bleibt; Gate als `commit_check`-Fixture + Test im selben Atom; Mess-Tool `weberin_fit` (Achsen pos·series·qty, setzt kein Verdikt). Am Baum: `parse.rs:255` (Parse-Arm) + `types.rs:527` (`SourceConfig.weberin_role`) stehen (mountain-294); `sources.φ:19678` trägt `format weberin_verdicts`; keine `weberin`-Direktive, weil **keine Stations-Serien-Quelle existiert** — Mountain schreibt die Direktive, sobald eine registriert ist.
+- **Blockade:** die erste Stations-Serien-Quelle (für die Direktive); Rat-Riss 2 (nur-neu-Gate vs Backfill) offen.
+- **Braucht:** (a) Mountain `weberin`-Direktive sobald eine Quelle steht; (b) Mycelium `commit_check`-Fixture + Test gegen das Gate-Prädikat (Arm steht); (c) River Reihenfolge in `SOURCE_PORT.md`; (d) Backfill der alten Masse als eigener Punkt.
 
 ## LOCK
 

@@ -19661,6 +19661,14 @@ field doppler_count_lp voyager_saturn_doppler_count_lp inverse-square em count 6
 field angle_a voyager_saturn_angle_a inverse-square em rad 604800 0.0 0.0
 field angle_b voyager_saturn_angle_b inverse-square em rad 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssb/ssb_field.bin
+format ssb_field
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
+origin procedure: enclosure query at the resting presence (the SSB origin) over the measured star hull (catalog_tycho)
+compiler tools/measure/src/bin/ssb_field_bake.rs
+at sun
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/kbo_elements.json
 origin https://ssd-api.jpl.nasa.gov/sbdb_query.api ; https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
 compiler tools/harvest/src/bin/kbo_compiler.rs
