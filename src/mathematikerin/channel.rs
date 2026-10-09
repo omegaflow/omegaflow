@@ -1198,7 +1198,7 @@ mod tests {
             Boundary::None,
             "A / m2",
         );
-        let idx = reg.register(em);
+        let idx = reg.register(em.clone());
         reg.alias("electric", &em);
         assert_eq!(reg.resolve("electric").map(|d| d.hash()), Some(em.hash()));
         assert!(reg.id.get(&em.hash()) == Some(&idx));
