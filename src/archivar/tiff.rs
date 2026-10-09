@@ -854,6 +854,11 @@ fn decode_jpeg(data: &[u8]) -> Option<JpegImage> {
     }
 }
 
+pub(crate) fn decode_jpeg_raster(bytes: &[u8]) -> Option<(usize, usize, Vec<u8>)> {
+    let img = decode_jpeg(bytes)?;
+    Some((img.width, img.height, img.pixels))
+}
+
 fn decode_jpeg_with_tables(block: &[u8], tables: Option<&[u8]>) -> Option<JpegImage> {
     match tables {
         Some(t) if !t.is_empty() => {

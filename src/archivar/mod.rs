@@ -125,6 +125,7 @@ pub mod jwst_equilibrium;
 pub mod kasi;
 pub mod kbo;
 pub mod kcdc;
+pub mod keogram;
 pub mod kepler;
 pub mod las;
 pub mod llnl_g3d;

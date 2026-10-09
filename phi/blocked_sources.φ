@@ -112,7 +112,7 @@ note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
 blocked parser-def
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
 gap aurora-keogram
-note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: `space.fmi.fi/image/` = IMAGE-Magnetometer (fmi_image_mag), Riss geschlossen; Keogramme unter `MIRACLE/ASC/ASC_keograms/<STA>.YYMM/<STA>_YYMMDD.jpg` (ABK 206 image/jpeg). Bild-Arm/Vision fehlt.
+note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Arm gebaut (`src/archivar/keogram.rs` + `tiff::decode_jpeg_raster`, 600×570); offen: Quelle/Compiler (nächtliche JPEGs) + Vision-Read der Achsen.
 
 pending
 url https://geomag.usgs.gov/ws/data/
