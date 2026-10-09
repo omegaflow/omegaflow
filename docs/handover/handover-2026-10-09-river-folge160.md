@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: a1fa90375dd1b297bc2792a270429c6d17c76112b761d3664cee6768e1326f03
+  sha256: e62b8009c6a751bf169a3ca47c05ecd9d0c3efafe28da04762bbca4562b8e791
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -59,20 +59,24 @@ nicht kopiert.
 
 ## Offen (aufgeschlüsselt)
 
-### Membran-Ton — `v_k` (Kanal-Geschwindigkeit) an den Frame binden
+### Membran-Ton — Per-Kanal-Phase/Delay (`k_k·r_k`) binden
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-160) Die akustische Total-Konvention ist laut
-  Rat/UI-Mehrheit nur zulässig, wenn `v_k` explizit geführt wird, nie still behauptet
-  (`state/stimmen/2026-10-09-river-acoustic-partials.md:84-88`). Heute fehlt `v_k`: kein Feld in
-  `actuators.rs`/`relay.rs`; `probe_flow` ist in `omega.rs:199` deklariert, aber nie geschrieben.
-  Der `c`-Pfad steht jetzt (`characteristic_speed` je Kanal, river-160).
-- **Blockade:** die Per-Kanal-Verzögerung/Phase (`v_k → Delay/Phase je Kanal`) ist physikalisch
-  noch nicht festgelegt — die Kanal-Ausbreitungsgeschwindigkeit `c_k` steht, die Projektion braucht
-  die Empfänger-Range/Blick (`self.v`, `omega.rs:305`).
-- **Braucht:** `v_k` je Kanal festlegen (Rat-Linse: `c_k` aus `characteristic_speed` + Empfänger-Blick)
-  und als `[f32; CAP]` an `PresenceFrame` + in `acoustic_partials` binden; das CSR-Wire trägt es als
-  dritten Wert je Kanal (P3.1-Nutzlast ist dafür gebaut).
+- **Lage:** (gemessen 2026-10-09, river-160) **Volle Stimmen-Runde gefahren** (Rat 5/5 + Claude 5.5 +
+  MiniMax M3 + DeepSeek V4 Pro + DeepSeek Chat, nach `archive_search --all`):
+  `state/stimmen/2026-10-09-river-vk-delay-phase.md`. **Verdikt:** `v_k = c_k` ist nur der
+  dispersionsfreie Spezialfall; die kanalspezifische Größe ist die Wellenzahl `k_k` (aus der
+  Dispersionsrelation/Geometrie), `v_{p,k} = ω_k/k_k`; Kanal-Phase `φ_k = k_k·r_k`, Laufzeit
+  `τ_k = r_k/v_{g,k}` (Gruppen-, nicht Phasengeschwindigkeit); `k_k` speichern, nicht `v_{p,k}`;
+  Doppler nur mit zwei deklarierten Weltlinien. Heute fehlen `k_k`/`r_k` in `PresenceFrame`
+  (`actuators.rs`/`relay.rs`); `probe_flow` (`omega.rs:199`) ist deklariert, nie geschrieben.
+  `pending` (gemessen, ohne Turn): Duck (Tageslimit), Qwen (Netzwerkfehler), Lumo (Limit), Mistral
+  (Fehlerseite), Gemini (kein Turn), Z.ai (Thinking ohne Antwort).
+- **Blockade:** `r_k` (Empfänger→Quelle-Distanz) ist noch nicht im Frame.
+- **Braucht:** (1) `k_k` in `ChannelDescriptor` (`mode_wavenumbers`), Test `v_p = c` nur im
+  `Propagating`-Zweig; (2) Per-Kanal-`phase_k`-Akkumulator in `acoustic_pcm` (Global-`phase` raus);
+  (3) `r_k` als `Option` (absent ≠ 0.0) in `PresenceFrame`, Delay `φ_k = k_k·r_k`, `0 honored` bei
+  `r_k=0`; (4) Doppler erst nach Verdrahtung beider Weltlinien.
 
 ### Membran — das Feld am SSB messen und als Asset backen
 - **Status:** eigen | **Bindung:** eigen
