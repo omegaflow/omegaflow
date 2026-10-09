@@ -82,6 +82,7 @@ const state = {
   lvl: new Float32Array(FORCE_SLOTS * 2),
   t: 0,
   held: new Set(),
+  cut: null,           // the measured SSB field cut (26 × f64 per record); null until it arrives
 };
 
 let lookup = null;
@@ -565,7 +566,14 @@ function integrate(dt) {
 // stays native/WASM. Used during boot for each arriving layer and by the loop.
 function frame() {
   state.t = Date.now() / 1000 - J2000_UNIX_S;
-  const flat = lookup.query(state.px, state.py, state.pz, state.t, 0.0, 0.0, 0.0);
+  // The membrane is a cut through the 4D block (Operator word 2026-10-09): at rest
+  // it rests on the measured SSB cut (the baked field asset, the enclosure query at
+  // the origin); a tuned presence re-evaluates the live corpus. No observer enters:
+  // the cut is a coordinate, not a gaze.
+  const atRest = state.px === 0 && state.py === 0 && state.pz === 0 && state.cut !== null;
+  const flat = atRest
+    ? state.cut
+    : lookup.query(state.px, state.py, state.pz, state.t, 0.0, 0.0, 0.0);
   const record = parseFlat(flat);
   // Two apertures, two natures (Rat + 12 channels, 2026-10-06, option b). The
   // body anchors carry a finite extent; the largest (the sun) frames the
@@ -661,6 +669,15 @@ async function boot() {
     lookup.add_stars(stars, CATALOG_EPOCH_YR);
   } else {
     missing.push("stars");
+  }
+
+  // The measured force-field cut (the enclosure query at the SSB), baked by
+  // tools/measure/src/bin/ssb_field_bake.rs. It is the field at the rest cut; the
+  // live corpus carries the tuned cuts. Its absence keeps the star field — honest,
+  // never a fabricated cut.
+  const cut = await fetchBytes("/ssb_field.bin", "loading field…");
+  if (cut) {
+    state.cut = new Float64Array(cut.buffer, cut.byteOffset, cut.byteLength / 8);
   }
 
   if (missing.length) {
