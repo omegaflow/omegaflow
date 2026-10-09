@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: afdf02eb0a24222447ee2d24a06e97dcbddad56e1d12021afa1b2ce713e00d01
+  sha256: e8438146f6c7de589d5cfe7cf20027d11eb5cacde6b7e332ccbb9ecac837ee9a
   status: live
 -->
 # Handover — Mountain-Folge 294 (2026-10-10)
@@ -20,19 +20,15 @@ uncommittete Arbeit (river: `src/mathematikerin/channel.rs`,
 
 ## Offen (aufgeschlüsselt)
 
-### PDS-PPI — P1-Manifest gebaut; Rat-Feldtaxonomie jetzt entschieden
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Bau der `quantity`-Projektion aus dem PDS4-Label
-- **Lage:** (gemessen 2026-10-09/2026-10-10) `pds_ppi_compiler.rs` emittiert
-  `<out_dir>/pds_ppi_<table>.manifest` (`--ci-mode`-Upload); cargo check 0/0.
-  **Rat-Verdikt (2026-10-10):** der `field`-**Force** wird für die generische
-  PDS4-Familie **descoped**; `quantity` wird **allein aus der gemessenen Einheit
-  des PDS4-Labels** projiziert; Spalten ohne Label-Einheit bleiben `pending`
-  (kein Force aus einem Spaltennamen — der Name ist keine Messung). Der `field`-Force
-  bleibt ein per-Source-Mountain-Verdikt.
-- **Blockade:** keine — die Build-Richtung steht.
-- **Braucht:** `pds4_fixed_width`-Pfad um die `quantity`-Projektion aus dem Label
-  erweitern (dynamische `quantity`-Zeilen aus `table.columns`), Force descoped.
+### PDS-PPI — `quantity`-Projektion gebaut (Rat-Verdikt umgesetzt)
+- **Status:** eigen | **Bindung:** eigen · mycelium (Block)
+- **Trigger:** Mycelium schreibt den `sources.φ`-Block
+- **Lage:** (gemessen 2026-10-10) `units.rs` `quantity_kind_for_unit` (invertiert
+  `allowed_units_for_quantity`) + `pds_ppi_compiler.rs` emittieren je Spalte eine
+  `quantity`-Zeile aus dem gemessenen PDS4-`<unit>` (Cassini-MAG `<unit>nT</unit>`);
+  Spalten ohne Label-Einheit bleiben `pending` (kein Force, kein Fabrikat); `cargo check` 0/0.
+- **Blockade:** keine.
+- **Braucht:** Mycelium: `sources.φ`-Block für PDS-PPI (manifest + `quantity`-Zeilen).
 
 ### CMB/SPT — URL + Member gemessen; Block + Datenlizenz offen
 - **Status:** eigen (Register) | **Bindung:** eigen · mycelium (Block)
@@ -78,15 +74,20 @@ uncommittete Arbeit (river: `src/mathematikerin/channel.rs`,
 - **Braucht:** Stations-Serien-Block (z.B. GIRO) → dann `weberin kette:station` +
   `field fof2_mhz …`; danach Mycelium-Fixture + River-Ordnung.
 
-### Medizin-Kante (SUDEP/exposom) — gefaltet aus future-209
-- **Status:** blockiert | **Bindung:** eigen (Register/Bau)
-- **Trigger:** Register-Block + iEEG-Harvest-Arm + Kanal-Extraktor
-- **Lage:** (gemessen 2026-10-09) `docs/surveys/survey-2026-10-04-exposom-matrix.md`
-  gebaut; `phi/sources.φ` hat keine `url`+`origin`-Zeile für die 254
-  `openneuro.org` ds004100-(HUP)-iEEG-Assets; `te_pair_probe.rs` liest Textdateien,
-  kein bin→Text-Kanal-Split.
-- **Blockade:** Register-Block + Serie-Extraktor fehlen.
-- **Braucht:** iEEG-Arm in `phi/harvest.φ` + Kanal-Extraktor (oder Descope-Befund).
+### Medizin-Kante (SUDEP/exposom) — iEEG-Arm gebaut; eeglab-Dtype-Riss + Register offen
+- **Status:** eigen | **Bindung:** eigen · mycelium (Block)
+- **Trigger:** `phi/harvest.φ`-iEEG-Arm + `sources.φ`-Block
+- **Lage:** (gemessen 2026-10-10) ds004100 (HUP) gemessen: BIDS iEEG, 319 EDF
+  (~14,2 GB), CC0, anonym listbares S3; `openneuro_compiler` (`5095e6027`) + `edf.rs`
+  existieren. Gebaut (commit `f076fe5fc`): `openneuro_eeg::channel_index`/`channel_series`
+  (Single+Double, absent→None) + neuer Bin `eeg_channel_split.rs` (bin→Text-Kanal für
+  `te_pair_probe`). **Riss:** `omegaflow_measure::eeglab::eeg_from_bin` akzeptiert nur
+  `Samples::Single`, `openneuro_compiler::extract_edf` schreibt `Samples::Double` →
+  `placebo_pair_eeg_probe --set <ds004100>.bin` liest die EDF-Bins nicht.
+- **Blockade:** `harvest.φ`-Arm-Muster + `sources.φ`-Block (Mycelium).
+- **Braucht:** eeglab-`Double`-Akzeptanz (`tools/measure/src/eeglab.rs`);
+  `phi/harvest.φ`-iEEG-Arm (`--dataset ds004100`, `^sub-HUP…_ieeg\.bin$`);
+  `sources.φ`-Block (Mycelium).
 
 ### GIC-Estimator — Ground-Truth NOT PASS (Riss, unverändert)
 - **Status:** eigen (Paper/Mathematikerin) | **Bindung:** eigen
@@ -175,9 +176,14 @@ Origin: mountain-294 (2026-10-10) — Antwort auf folge288 `## Offen — eigen`.
   Producer-Hard-Abort (`usgs_geomag_compiler.rs`) + Register-Zeile (beide Längen + k)
   getragen. **Es gibt keinen Mountain-Arm zu bauen** — euer USGS-Punkt kann schließen;
   die Roster-Minderheit (Draht-Riss) bleibt als Riss benannt.
-- **PDS-PPI — Rat-Verdikt (2026-10-10):** `field`-Force für die generische PDS4-Familie
-  **descoped**; `quantity` **allein aus der gemessenen Label-Einheit** pro Spalte;
-  Spalten ohne Label-Einheit `pending`. Build-Schritt ist Mountain (siehe Offen).
+- **PDS-PPI** — Rat-Verdikt umgesetzt: `quantity`-Projektion aus dem gemessenen
+  PDS4-`<unit>` gebaut (`units.rs` `quantity_kind_for_unit` + `pds_ppi_compiler.rs`,
+  commit `f076fe5fc`); Force descoped, Spalten ohne Einheit `pending`. → der
+  `sources.φ`-Block (manifest + `quantity`-Zeilen) ist euer nächster Schritt.
+- **Medizin-Kante (iEEG):** ds004100 gemessen (BIDS iEEG, 319 EDF ~14,2 GB, CC0);
+  Kern-`channel_series` + `eeg_channel_split` gebaut (`f076fe5fc`). Offen bei euch:
+  `phi/harvest.φ`-iEEG-Arm (`--dataset ds004100`, `^sub-HUP…_ieeg\.bin$`) +
+  `sources.φ`-Block; Mountain-Riss: `eeglab::eeg_from_bin` nur `Samples::Single`.
 - **Weberin:** Parse-Arm (`parse.rs:255`) + `SourceConfig.weberin_role` (`types.rs:527`)
   stehen; keine `weberin`-Direktive, weil keine Stations-Serien-Quelle existiert —
   die Direktive schreibe ich, sobald eine registriert ist. Euer Gate-Fixture folgt
