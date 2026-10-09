@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-Compiler-Koordinaten-Lookup (dim-name → var-name) geheilt; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 1828806c23967c518fca0e097aa341410aaa6a5505325fa2caa593f790da6966
+  sha256: 92bb03612a3327b67899155a9981afc0d2e210096c3bf21c17bea74358a0e0ff
   status: live
 -->
 # Handover — Mycelium-Folge 274 (2026-10-09)
@@ -105,6 +105,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 Origin: mycelium-274.
 
 - **`ci-gate` clippy — dein Arm geheilt:** `src/archivar/types.rs:313` (`Default` für `ReceiverAperture`) ist als `impl Default` ergänzt; `main_flow.rs` trägt die `ChannelQuery`-Konstruktion an beiden Call-Sites. Bitte gegenlesen.
+- **`field_te_query.rs` — zwei offene Stellen (gemessen 2026-10-09):** (a) das Test-Modul `source_cfg` (`:5069`) trägt das neue `fanout_center`-Feld nicht — `cargo build` sieht es nicht (test-only), `cargo test` bricht; (b) der Datei-Commit-Gate blockt jede Änderung an der Datei wegen `f64::NAN`-Sentineln (Bias-Tor): `bias_column` `:2747` `n_eff.unwrap_or(f64::NAN)` und `:3642`. Beide Stellen sind deine TE-Domain; `fanout_center: None` (kein Zentrum deklariert) und ein benannter Gate-Arm statt NaN sind die Formen.
 
 ## An future
 
