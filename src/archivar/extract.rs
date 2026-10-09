@@ -4340,15 +4340,18 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     }
     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
-    let csv_zip_text: Option<String> = if src.format == "csv_zip" {
-        std::fs::read(body)
+    let packed_text: Option<String> = match src.format.as_str() {
+        "csv_zip" => std::fs::read(body)
             .ok()
             .and_then(|b| unzip(&b))
-            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
-    } else {
-        None
+            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned()),
+        "csv_gz" => std::fs::read(body)
+            .ok()
+            .and_then(|b| gunzip(&b))
+            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned()),
+        _ => None,
     };
-    let parsed_json = if src.format == "csv_zip" {
+    let parsed_json = if src.format == "csv_zip" || src.format == "csv_gz" {
         let rows_only = src
             .extracts
             .iter()
@@ -4356,7 +4359,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         if rows_only {
             None
         } else {
-            csv_zip_text.as_deref().and_then(csv_to_json)
+            packed_text.as_deref().and_then(csv_to_json)
         }
     } else if src.format == "csv" {
         if src.extracts.iter().any(|e| matches!(e, Extract::Hapi(_))) {
@@ -5260,7 +5263,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 bin_s,
                 name_prefix,
             } => {
-                let text: &str = csv_zip_text.as_deref().unwrap_or(body);
+                let text: &str = packed_text.as_deref().unwrap_or(body);
                 let position = match &src.frame {
                     Frame::Surface { lat, lon, alt, .. } => Position::Surface {
                         body_name: frame_body_name(&src.frame),
@@ -5274,7 +5277,8 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     },
                     Frame::Manifest => Position::Source,
                 };
-                let csv_mode = src.format == "csv" || src.format == "csv_zip";
+                let csv_mode =
+                    src.format == "csv" || src.format == "csv_zip" || src.format == "csv_gz";
                 let split_row = |line: &str| -> Vec<String> {
                     if csv_mode {
                         split_csv_line(line)

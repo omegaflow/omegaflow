@@ -4960,6 +4960,84 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "csv_gz" {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let eph_arc = archive.body_ephemerides.clone();
+                let e = env.clone();
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let url = match render_source_url(
+                        &src_clone,
+                        RenderCtx {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                            tdb: now,
+                            r: 0.0,
+                            eph: &eph_arc,
+                            lsk: &lsk_c,
+                        },
+                        &e,
+                    ) {
+                        Some(u) => u,
+                        None => {
+                            eprintln!("csv_gz {}: url render void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let tmp_path = content_cache(&format!("omegaflow_csv_gz_{src_idx}.csv.gz"));
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let headers = render_headers(&src_clone.headers, &e);
+                        let bytes = match fetch_raw_bytes_headers(&url, &headers) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("csv_gz {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("csv_gz {}: write void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                    } else {
+                        eprintln!("csv_gz {}: extract void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(empty(true));
+                    }
+                });
+                continue;
+            }
             if archive.sources[i].format == "sky1" {
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();

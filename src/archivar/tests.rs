@@ -12657,6 +12657,76 @@ fn stored_zip(csv: &str) -> Vec<u8> {
     zip
 }
 
+fn stored_gzip(csv: &str) -> Vec<u8> {
+    let raw = csv.as_bytes();
+    let len = raw.len() as u16;
+    let mut gz = Vec::new();
+    gz.extend_from_slice(&[0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03]);
+    gz.push(0x01);
+    gz.extend_from_slice(&len.to_le_bytes());
+    gz.extend_from_slice(&(!len).to_le_bytes());
+    gz.extend_from_slice(raw);
+    gz.extend_from_slice(&[0, 0, 0, 0]);
+    gz.extend_from_slice(&(raw.len() as u32).to_le_bytes());
+    gz
+}
+
+fn epa_aqs_csv_gz_block() -> &'static str {
+    "url https://example.com/aqs.csv.gz
+ttl 86400
+format csv_gz
+on earth 0 0 0
+rows
+epoch 11
+lat 5
+lon 6
+field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
+"
+}
+
+#[test]
+fn test_extract_csv_gz_rows_per_row_position() {
+    let csv = epa_aqs_rows();
+    let gz = stored_gzip(&csv);
+    let path = std::env::temp_dir().join("omegaflow_test_aqs_rows.csv.gz");
+    std::fs::write(&path, &gz).unwrap();
+    let srcs = super::parse_sources(epa_aqs_csv_gz_block());
+    let lsk = fixture_lsk();
+    let path_str = path.to_string_lossy().to_string();
+    let result = extract(&srcs[0], &path_str, 8.0e8, &lsk);
+    let _ = std::fs::remove_file(&path);
+    match result {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2);
+            assert!((channels[0].0.value - 3.625).abs() < 1e-12);
+            assert!((channels[1].0.value - 6.791667).abs() < 1e-12);
+            match &channels[0].0.position {
+                super::Position::Surface { lat, lon, .. } => {
+                    assert!((lat - 30.497478).abs() < 1e-9);
+                    assert!((lon + 87.880258).abs() < 1e-9);
+                }
+                _ => panic!("expected per-row Surface position"),
+            }
+        }
+        _ => panic!("expected Measurements"),
+    }
+}
+
+#[test]
+fn test_extract_csv_gz_invalid_stream_is_void() {
+    let path = std::env::temp_dir().join("omegaflow_test_invalid.csv.gz");
+    std::fs::write(&path, b"not a gzip stream").unwrap();
+    let srcs = super::parse_sources(epa_aqs_csv_gz_block());
+    let lsk = fixture_lsk();
+    let path_str = path.to_string_lossy().to_string();
+    let result = extract(&srcs[0], &path_str, 8.0e8, &lsk);
+    let _ = std::fs::remove_file(&path);
+    match result {
+        ExtractResult::Measurements(channels) => assert!(channels.is_empty()),
+        _ => panic!("expected Measurements"),
+    }
+}
+
 #[test]
 fn test_parse_rows_lat_lon_epoch_directives() {
     let srcs = super::parse_sources(epa_aqs_block());

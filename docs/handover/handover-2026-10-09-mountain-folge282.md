@@ -3,7 +3,7 @@
   session: Mountain-Folge 282
   class: handover
   date: 2026-10-09
-  sha256: 0cbdf9bd02874324f992915e3b5b1ded09ac9323cd21ab03ee63979751e0a8b4
+  sha256: 08f3099c238cf9a7653e784a7705852a775c8f9820b92d16a046a9603aa9db75
   status: live
 -->
 # Handover — Mountain-Folge 282 (2026-10-09)
@@ -39,9 +39,9 @@ Wort | Datum | Quelle
 ### GIC-Faden §A–G — neue Arme registriert; Rest-Zeilen offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium
 - **Trigger:** `sources.φ`-Zeilen je entschiedenem Arm gebaut
-- **Lage:** (gemessen 2026-10-09, gefaltet river-141 + Taucher-Lauf) SSUSI/CPCP/EMTF registriert; ROTI-Compiler gebaut (`bd0e34fcf`); GHSL/covariate-carrier geschlossen (`sources.φ:794-800`); **SuperMAG-Index-Arm gebaut** (eigenes `supermag_index`-Format). **OMTI/Abisko:** Riss geschlossen — `space.fmi.fi/image/` = IMAGE-Magnetometer (`fmi_image_mag`), die Keogramme liegen unter `space.fmi.fi/MIRACLE/ASC/ASC_keograms/<STA>.YYMM/<STA>_YYMMDD.jpg` (ABK `206 image/jpeg`); URL in `blocked_sources.φ` korrigiert; offen bleibt der **Bild-Arm/Vision** (kein Raster-/JPEG-Arm in `src/archivar`). **Kellerman:** Koordinaten/Port per Design absent (anonymisiert) → `descoped`; neuer Gap `csv-gzip` (.csv.gz liest kein Arm). **USGS E-Feld:** USGS trägt keins → NOAA SWPC rgeojson, neuer Gap `geojson-efield`. **Substorm-Onsets:** `account`-Route, ungemessen.
-- **Blockade:** Arm-Bau (Bild-Arm, `csv`-Gunzip, GeoJSON-E-Feld) + Substorm-Account.
-- **Braucht:** Bild-/Vision-Arm für Keogramme; `csv`-Gunzip-Schritt; GeoJSON-E-Feld-Reader; Substorm-Quelle messen.
+- **Lage:** (gemessen 2026-10-09, gefaltet river-141 + Taucher-Lauf) SSUSI/CPCP/EMTF registriert; ROTI-Compiler gebaut (`bd0e34fcf`); GHSL/covariate-carrier geschlossen; **SuperMAG-Index-Arm gebaut**. **OMTI/Abisko:** Riss geschlossen — `space.fmi.fi/image/` = IMAGE-Magnetometer, die Keogramme liegen unter `space.fmi.fi/MIRACLE/ASC/ASC_keograms/…` (ABK `206 image/jpeg`); offen bleibt der **Bild-Arm/Vision**. **Kellerman:** lat/lon/Port per Design absent → `descoped`; **`csv_gz`-Arm gebaut** (diese Session); offen nur die 7-Node-CSV-Registrierung. **USGS E-Feld:** USGS trägt keins → NOAA SWPC rgeojson, Gap `geojson-efield`. **DMap-Kern** nach `src/archivar/dmap.rs` gehoben (geteilt, `pub mod`); offen: der map-grid-Arm nutzt ihn. **Substorm-Onsets:** `account`-Route, ungemessen.
+- **Blockade:** Arm-Bau (Bild-Arm, GeoJSON-E-Feld, map-grid-Arm) + Substorm-Account.
+- **Braucht:** Bild-/Vision-Arm für Keogramme; GeoJSON-E-Feld-Reader (`swpc_efield`); map-grid-Quelle (Globus `wartend.φ:8`) über `dmap::parse_records`; Kellerman-7-Node-Quelle registrieren; Substorm-Quelle messen.
 
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
@@ -53,9 +53,9 @@ Wort | Datum | Quelle
 ### IGRF-Koeffizienten-Arm (`geomag_lat`)
 - **Status:** wartend | **Bindung:** mycelium (`ci-check`-Lauf)
 - **Trigger:** CI-Test `synthesis_matches_pyigrf14_witness_points` grün
-- **Lage:** (gemessen 2026-10-09, gefaltet mycelium-271) Grad-13-Synthese + `igrf.rs` stehen. `ci-check` trägt **kein** `push:` mehr (nur `schedule`+`workflow_dispatch`); `ci-gate` clippy (`974466552`) geheilt. Offen: ein nicht-cancelled `ci-check`-Lauf.
-- **Blockade:** kein nicht-cancelled `ci-check`-Lauf.
-- **Braucht:** `gh workflow run ci-check.yml` (Mycelium) oder Nächst-Schedule.
+- **Lage:** (gemessen 2026-10-09, gefaltet mycelium-271) Grad-13-Synthese + `igrf.rs` stehen. `ci-check` trägt **kein** `push:` mehr (nur `schedule`+`workflow_dispatch`); `ci-gate` clippy (`974466552`) geheilt. **Dispatcher gefeuert (diese Session):** `gh workflow run ci-check.yml` → run `37910517444` (head `ce47ce13c`, `queued`, measured 2026-10-09 via `ci_manage view`).
+- **Blockade:** keiner mehr — der Lauf läuft.
+- **Braucht:** `ci_manage view 37910517444` beim nächsten Pass (kein Session-Polling); bei grün Punkt schließen.
 
 ### Lizenz-Disposition — `terms`-Feld (SPDX); Rest-Sweep offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
@@ -67,9 +67,9 @@ Wort | Datum | Quelle
 ### `blocked_sources.φ`-Aufräumen — Klassen-Träger (`gap`-Token) + TUH/NSRR-Riss
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
 - **Trigger:** Bau je Klassen-Träger / TUH-NSRR-Verdikt
-- **Lage:** (gemessen 2026-10-09 + Taucher-Lauf) **SuperMAG GIC-Stufe-2-Arm gebaut** (Eintrag entfernt). **Kellerman** → `blocked parser-def gap csv-gzip` (lat/lon/Port per Design absent, descoped; echt: `.csv.gz`). **Aurora-Keogramm**-URL auf `space.fmi.fi/MIRACLE/ASC/ASC_keograms/` korrigiert (Riss zum IMAGE-Magnetometer geschlossen). **USGS E-Feld** → NOAA SWPC rgeojson (`gap geojson-efield`). **SuperDARN convection-maps** → `pending` (Landing). **Verbleibende `gap`-Träger mit gemessenem nächstem Schritt:** `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`), `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen), `mariner-rst` (7-Track-Parser fehlt; SDDPT-Messung), `dmap-map-grid` (DMap-Kern aus `superdarn_fitacf_compiler.rs` nach `src/archivar/` heben, neues `dmap`-Modul; Globus-Antwort `wartend.φ:8`), `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat` messen → Block+Workflow), `themis-tail` (Playwright: konkrete Datei+Format messen), `mms-magnetosheath` (Arm fehlt). **future-205-Riss:** TUH `blocked_sources.φ:87` + NSRR `:92` — Etikett `descoped→blocked account` (UI-Runde 2026-10-08), Session-Verdikt: kein Löschen, Etikett korrigieren. TUH: Konto-Form `wartend.φ:36/:37`; NSRR: Konto bestätigt (`mail_ledger.φ:361/:362`), HIPAA-Training-Gate.
+- **Lage:** (gemessen 2026-10-09 + Taucher-Lauf) **SuperMAG GIC-Stufe-2-Arm gebaut** (Eintrag entfernt). **Kellerman** → `pending` (`csv_gz`-Arm gebaut; lat/lon/Port per Design absent, descoped). **Aurora-Keogramm**-URL auf `space.fmi.fi/MIRACLE/ASC/ASC_keograms/` korrigiert (Riss zum IMAGE-Magnetometer geschlossen). **USGS E-Feld** → NOAA SWPC rgeojson (`gap geojson-efield`). **SuperDARN convection-maps** → `pending` (Landing). **DMap-Kern** geteilt nach `src/archivar/dmap.rs`. **Verbleibende `gap`-Träger mit gemessenem nächstem Schritt:** `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`), `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen), `mariner-rst` (7-Track-Parser fehlt; SDDPT-Messung), `dmap-map-grid` (DMap-Kern aus `superdarn_fitacf_compiler.rs` nach `src/archivar/` heben, neues `dmap`-Modul; Globus-Antwort `wartend.φ:8`), `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat` messen → Block+Workflow), `themis-tail` (Playwright: konkrete Datei+Format messen), `mms-magnetosheath` (Arm fehlt). **future-205-Riss:** TUH `blocked_sources.φ:87` + NSRR `:92` — Etikett `descoped→blocked account` (UI-Runde 2026-10-08), Session-Verdikt: kein Löschen, Etikett korrigieren. TUH: Konto-Form `wartend.φ:36/:37`; NSRR: Konto bestätigt (`mail_ledger.φ:361/:362`), HIPAA-Training-Gate. **Mountain-Verdikt (2026-10-09, Register-Disposition):** beide bleiben `blocked account` — Konto real, Daten hinter NEDC/HIPAA; kein Descope. Riss geschlossen.
 - **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile) oder eine wartende Antwort; TUH/NSRR: Register-Riss.
-- **Braucht:** `phi/blocked_sources.φ::gap:csv-gzip ×1` · `phi/blocked_sources.φ::gap:geojson-efield ×1` · `phi/blocked_sources.φ::gap:aurora-keogram ×1` (Klassen-Träger, Bau je Arm) · je Wartendem die Antwort; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
+- **Braucht:** `phi/blocked_sources.φ::gap:geojson-efield ×1` · `phi/blocked_sources.φ::gap:aurora-keogram ×1` (Klassen-Träger, Bau je Arm; `csv_gz`-Arm gebaut, `dmap`-Kern gehoben) · je Wartendem die Antwort; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
 
 ### `register_sort` — 4 ttl- + 1 url-Ordnungsverletzung (vorbestehend, gemessen)
 - **Status:** eigen | **Bindung:** eigen (Register-Reihenfolge)
