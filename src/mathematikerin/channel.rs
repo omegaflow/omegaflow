@@ -46,6 +46,18 @@ pub enum Medium {
 pub enum Boundary {
     None = 0,
     FreeSurface = 1,
+    Dirichlet = 2,
+    Neumann = 3,
+    Robin = 4,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Domain {
+    Unspecified = 0,
+    Line = 1,
+    Rectangle = 2,
+    Circle = 3,
+    Sphere = 4,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -53,6 +65,7 @@ pub struct ChannelDescriptor {
     pub conserved: Conserved,
     pub op: TransportOp,
     pub medium: Medium,
+    pub domain: Domain,
     pub boundary: Boundary,
     pub unit: &'static str,
 }
@@ -62,6 +75,7 @@ impl ChannelDescriptor {
         conserved: Conserved,
         op: TransportOp,
         medium: Medium,
+        domain: Domain,
         boundary: Boundary,
         unit: &'static str,
     ) -> Self {
@@ -69,6 +83,7 @@ impl ChannelDescriptor {
             conserved,
             op,
             medium,
+            domain,
             boundary,
             unit,
         }
@@ -85,6 +100,7 @@ impl ChannelDescriptor {
             TransportOp::Maxwell => h = fnv1a(&[4u8], h),
         }
         h = fnv1a(&[self.medium as u8], h);
+        h = fnv1a(&[self.domain as u8], h);
         fnv1a(&[self.boundary as u8], h)
     }
 }
@@ -173,7 +189,12 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
         return None;
     }
     Some(ChannelDescriptor::new(
-        conserved, op, medium, boundary, unit,
+        conserved,
+        op,
+        medium,
+        Domain::Unspecified,
+        boundary,
+        unit,
     ))
 }
 
@@ -332,6 +353,7 @@ mod tests {
             Conserved::Mass,
             TransportOp::Flux(FluxKind::Fick),
             Medium::Fluid,
+            Domain::Unspecified,
             Boundary::None,
             "kg",
         );
@@ -339,6 +361,7 @@ mod tests {
             Conserved::Mass,
             TransportOp::Flux(FluxKind::Fick),
             Medium::Vacuum,
+            Domain::Unspecified,
             Boundary::None,
             "kg",
         );
@@ -351,10 +374,46 @@ mod tests {
             Conserved::Momentum,
             TransportOp::Wave,
             Medium::ElasticSolid,
+            Domain::Line,
             Boundary::FreeSurface,
             "kg m / s",
         );
         assert_eq!(d.hash(), d.hash());
+    }
+
+    #[test]
+    fn domain_enters_the_hash() {
+        let unspecified = ChannelDescriptor::new(
+            Conserved::Momentum,
+            TransportOp::Wave,
+            Medium::ElasticSolid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg m / s",
+        );
+        let line = ChannelDescriptor::new(
+            Conserved::Momentum,
+            TransportOp::Wave,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::None,
+            "kg m / s",
+        );
+        assert_ne!(
+            unspecified.hash(),
+            line.hash(),
+            "the domain axis must enter the hash"
+        );
+
+        let dirichlet_line = ChannelDescriptor::new(
+            Conserved::Momentum,
+            TransportOp::Wave,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "kg m / s",
+        );
+        assert_ne!(dirichlet_line.hash(), unspecified.hash());
     }
 
     #[test]
@@ -416,6 +475,7 @@ mod tests {
             Conserved::Energy,
             TransportOp::Flux(FluxKind::Fourier),
             Medium::Fluid,
+            Domain::Unspecified,
             Boundary::None,
             "J / (m2 s)",
         )
@@ -440,6 +500,7 @@ mod tests {
             Conserved::Mass,
             TransportOp::Flux(FluxKind::Fick),
             Medium::Fluid,
+            Domain::Unspecified,
             Boundary::None,
             "kg / (m2 s)",
         ));
@@ -453,6 +514,7 @@ mod tests {
             Conserved::Charge,
             TransportOp::Flux(FluxKind::Ohm),
             Medium::Fluid,
+            Domain::Unspecified,
             Boundary::None,
             "A / m2",
         );
@@ -469,6 +531,7 @@ mod tests {
             Conserved::Energy,
             TransportOp::Flux(FluxKind::Fourier),
             Medium::Fluid,
+            Domain::Unspecified,
             Boundary::None,
             "J / (m2 s)",
         );
@@ -476,6 +539,7 @@ mod tests {
             Conserved::Energy,
             TransportOp::Flux(FluxKind::Fourier),
             Medium::Fluid,
+            Domain::Unspecified,
             Boundary::None,
             "W / m2",
         );
