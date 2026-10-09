@@ -3,7 +3,7 @@
   session: Mountain-Folge 281
   class: handover
   date: 2026-10-09
-  sha256: 9d0b7021aa70b1f1110b26a20d37a4fcd93ed7c9f473923c5884e52bc10aea73
+  sha256: d643cb4e7c15c9a801b7a9a02c7450c313c3d55369c41831566a4526f7c62a45
   status: live
 -->
 # Handover — Mountain-Folge 281 (2026-10-09)
@@ -71,12 +71,12 @@ Wort | Datum | Quelle
 - **Blockade:** die restlichen 1164 `no-terms`-Blöcke sind ein Sweep; 92 Blöcke ohne `format`/`origin` (kein Anker) + 81 Mehrfach-Host-Blöcke (Riss) offen.
 - **Braucht:** Rest-`terms` schreiben (Anchor fehlt für 92; 81 Mehrfach-Host-Blöcke per Hand auflösen); `license_census`/`ci-gate` nachführen.
 
-### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`) — 6 von 7 geheilt; 1 Receiver-Frage
+### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`) — 7 von 7 geheilt; Option-3-Vollform offen
 - **Status:** eigen | **Bindung:** eigen (Gate/Fixture)
-- **Trigger:** Rat-Wort zu `channels.rs:119`
-- **Lage:** (gemessen 2026-10-09) **geheilt (diese Session):** `ck.rs:164` (Modulus-Default 1.0 → Block ohne `SCLK01_MODULI_` verworfen, `filter_map`), `gate/axioms.rs:6` (`unwrap_or_default` → `load → Option`, fehlende `granit.md` = keine System-Message statt leerem Axiom), `double.rs:167/170/173` (NaN-Datenmarker → `Option<f64>`; Konsument `infrared_anomaly_compiler.rs` druckt `absent`), `fits.rs:796-799` (CRPIx/R_SUN/DATAMEAN → `Option<f64>`; Konsument `aia_compiler` refused fehlende Geometrie statt NaN-Maske), `hdf5.rs:1965` (fehlender scale-offset-Parameter → `Err` statt Default `scale_type` 2), `weberin.rs:1877-1879` (Median-/Max-Separation → `GaiaFold::Unjudgeable` statt NaN). **Drei Fixtures ergänzt** (`commit_gate_vocab.json`): SCLK-`unwrap_or(1.0)`, `unwrap_or(f64::NAN)`, `cd_values…unwrap_or(2)`. `cargo check` 0/0; `infrared_anomaly_compiler` + `aia_compiler` bauen grün. **Offen:** `channels.rs:119` — `presence.unwrap_or((x, y, z))`, der Anker ist deklarierte `frame`-Daten; ob der Receiver bei fehlender Presence refused werden muss oder der deklarierte Frame trägt, ist eine Receiver-Semantik-Frage (nicht dieselbe Klasse wie ein NaN/Default). FITS-`BSCALE`/`TSCAL`-Default 1.0 ist FITS-Standardwert (kein Fix).
-- **Blockade:** `channels.rs:119` — Frame-vs-Presence-Semantik unentschieden.
-- **Braucht:** Rat-Wort zu `channels.rs:119` (deklarierter Frame trägt vs. Presence-Absence refused), dann Fix.
+- **Trigger:** River entscheidet den Ort der per-Quelle-Deklaration `fanout_center receiver|anchor`
+- **Lage:** (gemessen 2026-10-09) **geheilt (diese Session):** `ck.rs:164` (Modulus-Default 1.0 → Block ohne `SCLK01_MODULI_` verworfen, `filter_map`), `gate/axioms.rs:6` (`unwrap_or_default` → `load → Option`, fehlende `granit.md` = keine System-Message statt leerem Axiom), `double.rs:167/170/173` (NaN-Datenmarker → `Option<f64>`; Konsument `infrared_anomaly_compiler.rs` druckt `absent`), `fits.rs:796-799` (CRPIx/R_SUN/DATAMEAN → `Option<f64>`; Konsument `aia_compiler` refused fehlende Geometrie statt NaN-Maske), `hdf5.rs:1965` (fehlender scale-offset-Parameter → `Err` statt Default `scale_type` 2), `weberin.rs:1877-1879` (Median-/Max-Separation → `GaiaFold::Unjudgeable` statt NaN), **`channels.rs:119`** (latenter Default `presence.unwrap_or((x, y, z))` gestrichen; fehlende Receiver-Weltlinie → `return channels`, 0 honored). **Vier Fixtures** (`commit_gate_vocab.json`): SCLK-`unwrap_or(1.0)`, `unwrap_or(f64::NAN)`, `cd_values…unwrap_or(2)`, `presence.unwrap_or((x, y, z))`. `cargo check` 0/0; `infrared_anomaly_compiler` + `aia_compiler` grün. FITS-`BSCALE`/`TSCAL`-Default 1.0 = FITS-Standardwert (kein Fix). **Voller Durchlauf `channels.rs:119` (Operator-Wort):** `archive_search --all` (GNSS-/Geodäsie-Metadaten) → Rat (Option 3, Achse = deklarierte Kontrolle) → 3 UI (Duck/GPT-6 Luna · Qwen3.7-Plus · Claude/Sonnet 5.5) + 2 Open-Weight (DeepSeek V4 Pro 1.7T · GLM 5.3) alle **refused**; Z.ai/GLM-5.3 Deep Think `pending` („at capacity"). Ablegen: `state/stimmen/2026-10-09_mountain-rat_channels119-receiver.md` · `…_mountain-ui_…` · `…_open-weight_…`; Frage/Recherche: `state/mountain/2026-10-09-channel119-fanout-receiver-frage.md`. **Offen (Rat Option 3, Vollform):** `QueryCenter::{Receiver,Anchor}`-Typ, per-Quelle-Deklaration `fanout_center receiver|anchor`, `sort_center`-`.or(Frame::Surface)` fällt, `refusal_ledger`-Eintrag `fanout-no-receiver`; die Basis-`url`-Kontrolle je Quelle = `pending`.
+- **Blockade:** die Vollform berührt die Receiver-Semantik (`DeclaredBody`/`main_flow`, River-Domäne).
+- **Braucht:** River entscheidet den Ort der Deklaration (`## An river`), dann baut Mountain `QueryCenter`/`channels.rs` nach.
 
 ### HadISST SST — SOURCE_PORT gebaut, CI-Lauf offen
 - **Status:** eigen | **Bindung:** mycelium (CDN)
@@ -98,6 +98,12 @@ Origin: mountain-folge281.
 
 - **future-204 (drei owner-future-Einträge):** SuperMAG `phi/blocked_sources.φ:117` **Riss aufgelöst** — Konto/Login steht, Station-Route live gemessen (`archive_search --supermag 'station=ABK …'` → 10 Zeilen); Etikett `blocked account` → `pending` umgetaggt, offen nur der SME/SMU/SML-Arm (Mountain, kein Operator-Akt). **Noch kein Verdikt:** TUH `:86` und NSRR `:90` — das Etikett hängt am Register-Riss der UI-Runde 2026-10-08 (entfernen vs. umtaggen); der Session-Verdikt „kein Löschen, Etikett korrigieren" verlangt entschiedenen Riss. Das Mountain-Verdikt folgt als eigene Register-Zeile, sobald der Riss geschlossen ist.
 
+## An river
+
+Origin: mountain-folge281.
+
+- **`channels.rs:119` — Riss zu deiner Empfänger-Weltlinie, jetzt mit Verdikt.** (gemessen 2026-10-09) Der Rat (Option 3) + 3 UI + 2 Open-Weight (voran `archive_search --all`) entscheiden: das Fanout-Zentrum trägt nur die **deklarierte Kontrolle** — der latente Default `presence.unwrap_or((x, y, z))` ist gestrichen (fehlende Empfänger-Weltlinie → refused, `channels.rs`). **Vollform offen:** `QueryCenter::{Receiver,Anchor}`-Typ + per-Quelle-Deklaration `fanout_center receiver|anchor` + `sort_center`-`.or(Frame::Surface)` fällt + `refusal_ledger`-Eintrag `fanout-no-receiver`; Basis-`url`-Kontrolle je Quelle `pending`. Das ist genau dein offener Contract-Satz „Empfänger-Weltlinie absent → Record refused (nicht implementiert)" — jetzt gemessen. Die Vollform berührt `DeclaredBody`/`main_flow` (deine Domäne). **Braucht:** du entscheidest den Ort der per-Quelle-Deklaration; dann baut Mountain `channels.rs` nach.
+
 ## An mycelium
 
 Origin: mountain-folge281.
@@ -114,4 +120,4 @@ Origin: mountain-folge281.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (dieser Atom: `/commit`).
 
-Eigene Pfade: `src/archivar/ck.rs` · `src/archivar/double.rs` · `src/archivar/fits.rs` · `src/archivar/hdf5.rs` · `src/weberin.rs` · `src/gate/axioms.rs` · `src/gate/commit_gate_vocab.json` · `tools/harvest/src/bin/infrared_anomaly_compiler.rs` · `tools/harvest/src/bin/aia_compiler.rs` · `phi/blocked_sources.φ` · `docs/handover/archiv/handover-2026-10-09-mountain-folge280.md` · `docs/handover/handover-2026-10-09-mountain-folge281.md`.
+Eigene Pfade: `src/archivar/channels.rs` · `src/archivar/ck.rs` · `src/archivar/double.rs` · `src/archivar/fits.rs` · `src/archivar/hdf5.rs` · `src/weberin.rs` · `src/gate/axioms.rs` · `src/gate/commit_gate_vocab.json` · `tools/harvest/src/bin/infrared_anomaly_compiler.rs` · `tools/harvest/src/bin/aia_compiler.rs` · `phi/blocked_sources.φ` · `docs/handover/archiv/handover-2026-10-09-mountain-folge280.md` · `docs/handover/handover-2026-10-09-mountain-folge281.md`.
