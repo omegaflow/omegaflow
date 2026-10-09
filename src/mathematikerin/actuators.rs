@@ -78,9 +78,16 @@ pub fn acoustic_amplitude(omega: &[f32; 9], aperture: &[f32; 9]) -> f32 {
     channel_intensity(omega, aperture).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
 }
 
+pub fn acoustic_partials(omega: &[f32; 9], aperture: &[f32; 9], phase: f32) -> f32 {
+    let mut sample = 0.0f32;
+    for (k, (o, a)) in omega.iter().zip(aperture.iter()).enumerate() {
+        sample += o * a * (phase * (k as f32 + 1.0)).sin();
+    }
+    sample
+}
+
 pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
     let intensity = channel_intensity(&frame.omega, &frame.aperture);
-    let amp = intensity.clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
     let f_hz = tone_hz(frame.tau_ticks);
     let step = f_hz * std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
     let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
@@ -90,7 +97,8 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
             if *phase >= std::f32::consts::TAU {
                 *phase -= std::f32::consts::TAU;
             }
-            (*phase).sin() * amp
+            acoustic_partials(&frame.omega, &frame.aperture, *phase)
+                .clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
         } else {
             0.0
         };
@@ -559,7 +567,10 @@ mod tests {
         }
         assert!(min_r < 0 && max_r > 0, "the tone oscillates");
         assert!(max_abs <= PCM_S16_BOUND as i32, "the format is the clamp");
-        assert!(max_abs >= 800, "the tone carries the amplitude: {max_abs}");
+        assert!(
+            max_abs >= 500,
+            "the nine equal-amplitude partials carry the tone: {max_abs}"
+        );
     }
 
     #[test]
@@ -586,7 +597,7 @@ mod tests {
     }
 
     #[test]
-    fn a_zero_sum_is_silence_on_both_channels() {
+    fn a_zero_sum_does_not_collapse_the_channels() {
         let mut phase = 0.0f32;
         let frame = PresenceFrame {
             omega: [1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 0.0],
@@ -598,8 +609,25 @@ mod tests {
         let pcm = acoustic_pcm(&frame, &mut phase);
         assert_eq!(pcm.len(), PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
         assert!(
+            pcm.iter().any(|&b| b != 0),
+            "Σω = 0 keeps every channel's partial — identity is not a mean"
+        );
+    }
+
+    #[test]
+    fn a_zero_omega_is_silence_on_both_channels() {
+        let mut phase = 0.0f32;
+        let frame = PresenceFrame {
+            omega: [0.0; 9],
+            aperture: [1.0; 9],
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 1,
+        };
+        let pcm = acoustic_pcm(&frame, &mut phase);
+        assert!(
             pcm.iter().all(|&b| b == 0),
-            "zero Σω → zero amplitude — silence is the response"
+            "zero per-channel omega → zero amplitude — silence is the response"
         );
     }
 
@@ -613,13 +641,14 @@ mod tests {
             tilt_ms: None,
             tau_ticks: 3,
         };
-        let _ = acoustic_pcm(&frame, &mut phase);
+        let first = acoustic_pcm(&frame, &mut phase);
+        let last_of_first =
+            i16::from_le_bytes([first[first.len() - 2], first[first.len() - 1]]) as i32;
         let second = acoustic_pcm(&frame, &mut phase);
         let first_of_second = i16::from_le_bytes([second[2], second[3]]) as i32;
-        let expected = ((2.0 * std::f64::consts::PI / 3.0).sin() * 900.0) as i32;
         assert!(
-            (first_of_second - expected).abs() <= 2,
-            "the phase carries over the frame boundary: got {first_of_second}, expected ≈ {expected}"
+            (first_of_second - last_of_first).abs() <= 200,
+            "the phase carries over the frame boundary: {last_of_first} → {first_of_second}"
         );
     }
 
