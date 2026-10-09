@@ -9,7 +9,7 @@ const BASE: &str = "https://blinkverse.zero2x.org/api/app/adcp-blinkverse/type";
 const DEFAULT_TYPE: &str = "FRB_SOURCE";
 const COMPILER: &str = "tools/harvest/src/bin/blinkverse_compiler.rs";
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 struct Table {
     names: Vec<String>,
     rows: Vec<Vec<Option<f64>>>,

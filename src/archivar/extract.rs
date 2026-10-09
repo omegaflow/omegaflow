@@ -92,6 +92,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
         "pds4_acs_nir" => acs_nir::parse_series(bytes),
+        "iris" => iris::parse_bin(bytes),
+        "themis_asi" => themis_asi::parse_bin(bytes),
         "keogram" => keogram::parse_bin(bytes).map(|rows| {
             rows.into_iter()
                 .map(|(t, comp, mean)| (t, mean, comp))
@@ -389,6 +391,18 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
                 .collect();
             (names, recs)
         }
+        "iris" => {
+            let recs = iris::parse_bin(bytes)?;
+            let max_comp = recs.iter().map(|r| r.2).max()?;
+            let names: Vec<String> = (0..=max_comp).map(iris::component_name).collect();
+            (names, recs)
+        }
+        "themis_asi" => {
+            let recs = themis_asi::parse_bin(bytes)?;
+            let max_comp = recs.iter().map(|r| r.2).max()?;
+            let names: Vec<String> = (0..=max_comp).map(themis_asi::component_name).collect();
+            (names, recs)
+        }
         "keogram" => {
             let recs = keogram::parse_bin(bytes)?;
             let mut names: Vec<String> = Vec::new();
@@ -460,6 +474,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "agrav" => agrav::declared_fields(tau),
         "vlf_awesome" => vlf_awesome::declared_fields(tau),
         "pds4_acs_nir" => acs_nir::declared_fields(),
+        "themis_asi" => themis_asi::declared_fields(names, tau),
         "keogram" => keogram::declared_fields(names, tau),
         _ => Vec::new(),
     }
