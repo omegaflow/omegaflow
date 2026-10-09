@@ -361,6 +361,9 @@ fn main() {
         .filter(|l| l.word == VerdictWord::Placed)
         .count();
     let bytes = encode_weberin_verdicts(&lines);
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!(
             "weberin-verdicts: {out} did not take the {} byte(s) — the verdict bin is not on disk",

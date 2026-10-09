@@ -279,6 +279,9 @@ fn main() {
         }
     };
     drop(events);
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!("write {} returned void", out);
         std::process::exit(1);
