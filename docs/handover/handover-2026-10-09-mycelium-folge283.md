@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Der Rust-Refresh-Arm ist am ersten Lauf verifiziert (sources-refresh 37970858064 success, data-Snapshot 415a14b; sources-README auf den Rust-Arm gezogen). PETREL19-CDN success (37966130284), der pending-Eintrag geschlossen. Mountains dropped-gate-Verdikt gelandet (canonical_point_key = kurzer Namenskopf, Baseline neu gezogen); die zwei tools-build-Fehler der 282 geheilt. Vier Kontraktfragen (USGS-Extract, Keogramm-Form, terms-Granularität, DTM-quantity) durch archive_search --all → Rat → 8 UI-Seats gefahren; zwei grind-flash-Dispatches (USGS-Arm, Keogramm-Referenz) endeten in gemessenen STOPs — der Baum korrigierte die Vorlage; Risse benannt.
   class: handover
   date: 2026-10-09
-  sha256: e9bac9018c8eac1bd502f4a2cfd0f3b3f4ad1c49533667b14539a12c570a5461
+  sha256: 3fb7471e1be536c6dc0faac71f7a33fc209535a492b4ddce24544a8c945e3334
   status: live
 -->
 # Handover — Mycelium-Folge 283 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1608 · cap 0.5 — Grund: Refresh-Arm verifiziert (`37970858064` success, `data`-Snapshot `415a14b`), sources-README gezogen; PETREL19-CDN success (`37966130284`), `pending` geschlossen; dropped-gate-Verdikt (287) gefaltet; **vier Kontraktfragen durch `archive_search --all` → Rat → 8 UI-Seats**, plus zwei `grind-flash`-Dispatches (USGS-Arm, Keogramm-Referenz) — beide STOP mit gemessener Baum-Korrektur; `register_lookup --fired/--stale`/`open_points_check` = 0 · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „Mycelium-Linie starten und Stehenden Pass sch…"); Fenster-Total $1.1353 (26 Sessions).
+## Burn: open 0.0000 · close 0.1933 · cap 0.5 — Grund: Refresh-Arm verifiziert (`37970858064` success, `data`-Snapshot `415a14b`), sources-README gezogen; PETREL19-CDN success (`37966130284`), `pending` geschlossen; dropped-gate-Verdikt (287) gefaltet; **vier Kontraktfragen durch `archive_search --all` → Rat → 8 UI-Seats**, zwei `grind-flash`-Dispatches (USGS-Arm, Keogramm-Referenz) — beide STOP mit Baum-Korrektur; **Folge-Recherche 1b/2** (ungleiche Arrays; Keogramm-Raster+JPEG-Metadaten); `register_lookup --fired/--stale`/`open_points_check` = 0 · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „Mycelium-Linie starten und Stehenden Pass sch…"); Fenster-Total $0.7296 (22 Sessions).
 
 ## Operator-Wort-Register
 
@@ -25,6 +25,8 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „welche punkte können mit archive search all, rat, und den frontier ui und openweight chats geklärt werden?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** die vier Kontraktfragen (USGS-`Extract`, Keogramm-Form, `terms`-Granularität, DTM-`quantity`) werden durch die Kette `archive_search --all` → Rat → UI/Open-Weight geführt.
 - „ja bitte" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Ausführung der Kette (Recherche + Rat + UI-Runde) freigegeben; Runde gefahren, Ergebnis als Vorlage registriert.
 - „beides bitte" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** (1) restliche Roster-Seats (Z.ai/GLM · Kimi · MiMo · Gemini · Mistral · Lumo) fahren, (2) die zwei dispatch-reifen Punkte (USGS-Arm, Keogramm-Referenzzeile) an `grind-flash` geben. Beides ausgeführt; die Dispatches endeten in gemessenen STOPs (Baum korrigiert die Vorlage).
+- „1 natürlich b und dafür hat die wissenschaft sicher eine lösung frag archive search all" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** USGS-Weg (b) bauen (neuer `ExtractResult`-Riss-Arm); `archive_search --all` zur wissenschaftlichen Lösung — Form: ganzer Satz als `Riss` mit beiden Längen + k.
+- „2 und sind die bilder nicht daten so wie vp4 oder wie es heisst bzw. in den jpgs müssen doch metainformationen stehen" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Keogramm als Datenquelle prüfen + JPEG-Metadaten messen — Keogramm = relative Rasterkarte (Daten); JPEG trägt **nur `JFIF`** (kein Exif/COM), Station/Datum nur im Dateinamen; Raster-Form offen.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge281.md` §Operator-Wort-Register (und folge280) — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-283.
 
 ## Offen — eigen
@@ -78,19 +80,19 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** Mountain-`field`/`terms` je Sammlung.
 - **Braucht:** Mountain misst `field`/`terms`/`ttl` → dann `sources.φ`-Block.
 
-### USGS-geomag E-Feld — Reader-Arm fehlt (`blocked_sources.φ:100`)
-- **Status:** blockiert | **Bindung:** eigen (Erhebung) · operator/rat (Kontrakt)
-- **Trigger:** Kontrakt-Wort über den Riss-Träger (Dispatcher-STOP unten)
-- **Lage:** (gemessen 2026-10-09) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206; zwei parallele Top-Level-Arrays `times[]` + `values[].values[]`. **Rat+UI-Vorlage 8/8 OK** (`GeomagParallel`, ein Record je `values[i]`). **Dispatch-STOP (der Baum korrigiert die Vorlage):** die Feldquelle ist `values[i].metadata.element` (`usgs_geomag_compiler.rs:199-214`), **nicht** `values[i].id`; `usgs_geomag::COLUMNS` ist privat; und `ExtractResult` (`extract.rs:3296`) hat **keinen Riss-Arm** (ein dritter Arm bräche `fetch.rs:1196`, `port.rs:806/814`, `main_flow.rs:6009/6018`).
-- **Blockade:** der Riss-Träger für die Längen-Divergenz ist im `ExtractResult`-Kontrakt nicht vorhanden.
-- **Braucht:** Operator/Rat-Wort über den Riss-Träger (neuer `ExtractResult`-Arm → Fremddateien, oder ein anderer gemessener Träger); danach Arm-Bau + `sources.φ`-Zeile (Mycelium) + Mountain `field`/`terms`/`ttl`.
+### USGS-geomag E-Feld — Reader-Arm + Riss-Träger
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Arm, Archivar) · river (`main_flow`-Consumer)
+- **Trigger:** Mountains `ExtractResult`-Riss-Arm + `GeomagParallel`-Arm (Form steht, `## An mountain`)
+- **Lage:** (gemessen 2026-10-09) Quelle HTTP 206; `times[]` + `values[].values[]`. **Operator-Wort 1b:** den größeren sauberen Weg bauen (neuer `ExtractResult`-Arm). **Wissenschaft (archive_search --all, `/tmp/omegaflow_all_1791573066_…txt`):** CF-Conventions lösen es strukturell (Features/Collections + Fill, keine erzwungene Indexgleichheit); pandas wirft einen **expliziten Fehler** (Guard vor Paarung); stilles `nil`-Pad (Ruby) ist das Anti-Muster. Empfehlung: bei atomarer Paarung (jeder `times[k]` braucht `values[k]`) **ganzen Satz als `Riss` registrieren**, beide Längen + erstes divergentes k als Zeugen — kein Pad, kein Truncate, keine Imputation. **Baum-Korrektur:** Feldquelle ist `values[i].metadata.element` (`usgs_geomag_compiler.rs:199-214`), **nicht** `values[i].id`; `usgs_geomag::COLUMNS` privat; `ExtractResult` (`extract.rs:3296`) hat keinen Riss-Arm (die 3 Consumers `fetch.rs:1196`, `port.rs:806/814`, `main_flow.rs:6009/6018`).
+- **Blockade:** keiner mehr (Form steht).
+- **Braucht:** Bau: neuer `ExtractResult`-Riss-Arm (beide Längen + k) + GeomagParallel + Consumer + Test, `cargo check` grün; danach `sources.φ`-Zeile (Mycelium) + Mountain `field`/`terms`/`ttl`.
 
-### Keogramm-Quelle als Vision-Asset
-- **Status:** blockiert | **Bindung:** eigen (Manifestation) · operator/rat (Form)
-- **Trigger:** Form-Wort über Token/Asset-Träger (Dispatcher-STOP unten)
-- **Lage:** (gemessen 2026-10-09) Basis `space.fmi.fi/MIRACLE/ASC/ASC_keograms` (`keogram_compiler.rs:8`); Beispiel `ABK_160115.jpg` HTTP 200 `image/jpeg`, sha256 `15a6f030df249c584dc49d3cfe9d364c672775a29cddaeb41c90227981803002`. **Rat+UI-Vorlage 7/1** (Referenzzeile). **Dispatch-STOP:** `format image/jpeg` wird von `parse.rs:94-99` **still verworfen** — der Baum-Token ist `format reference` (`phi/sources.φ:28138` ff.); `image/jpeg` existiert in `phi/` nicht. Und jede Referenzzeile trägt **einen** CDN-`url` + **eine** sha256; die Keogramm-Quelle ist eine unbeschränkte Tagesserie ohne deterministischen Asset-Namen.
-- **Blockade:** der Referenz-Token (`reference`) vs. Media-Typ im `origin`, und Einzelartefakt vs. Serie.
-- **Braucht:** Form-Wort: `format reference` (Media-Typ über `origin`/Content-Type) + der Träger (eine Probe-Datei oder eine andere gemessene Asset-/Namenskonvention); dann Referenzzeile + CDN-Manifestation (Mycelium).
+### Keogramm — Raster-Datenquelle (nicht Referenz, nicht Feld)
+- **Status:** wartend | **Bindung:** eigen (Form) · operator/rat
+- **Trigger:** Form-Wort über die Raster-Quellen-Registrierung
+- **Lage:** (gemessen 2026-10-09) **Operator-Frage 2** hat die Vorlage gekippt: Keogramme **sind Daten** — eine relative 8-Bit-Intensitätskarte (x = Zeit UT, y = geografische Breite; FMI-Wissenschaftsguide + THEMIS-Katalog). **JPEG-Metadaten widerlegt (gemessen):** `ABK_160115.jpg` trägt **nur `JFIF`** — kein `Exif`, kein `COM`, keine Station/Zeit im JPEG; Station+Datum leben **nur im Dateinamen** (`ABK_160115.jpg`). Der Baum kann die Pixel lesen: `archivar::tiff::decode_jpeg_raster` (Baseline SOF0/1) → `keogram.rs brightness_columns()` nutzt es bereits; progressiv → `pending`. Als **Feld** bleibt der `decline` (`declined_sources.φ:4152`) korrekt (kein SI-Wert/`force_type`). Korrekte Klasse: **relative Raster-Datenquelle, filename-getragen**.
+- **Blockade:** die Form, relative Rasterquellen zu registrieren (kein Wire-Feld, aber auch keine reine URL-Referenz).
+- **Braucht:** Operator/Rat-Wort über die Raster-Quellen-Form; dann `format`-/Compiler-Entscheidung + `sources.φ`-Zeile (Mycelium).
 
 ## Rat + UI — Kontraktvorlagen (2026-10-09)
 
@@ -107,15 +109,22 @@ Kette gefahren: `archive_search --all` (4 Fragen; Texte `/tmp/opencode/research-
 - **USGS:** `values[i].id` ist **nicht** die Feldquelle — der bestehende Compiler liest `values[i].metadata.element` (`tools/harvest/src/bin/usgs_geomag_compiler.rs:199-214`); `usgs_geomag::COLUMNS` ist **privat** (öffentlich nur `component_name(comp: u32)`). Und `ExtractResult` (`src/archivar/extract.rs:3296`) hat **keinen Riss-Arm**; ein dritter Arm bräche die exhaustiven Matches `fetch.rs:1196`, `port.rs:806/814`, `main_flow.rs:6009/6018`. Der Riss-Träger ist damit eine **offene Kontraktfrage**, kein direkter Bau.
 - **Keogramm:** `format image/jpeg` wird von `parse.rs:94-99` **still verworfen** (nur `reference`/`frame`/`extracts`/`channels` pushen); der Baum-Token ist `format reference` (`phi/sources.φ:28138` ff.), `image/jpeg` existiert in `phi/` nicht. Zudem trägt jede Referenzzeile **einen** CDN-`url` + **eine** sha256 — die Keogramm-Quelle ist eine unbeschränkte Tagesserie ohne deterministischen Asset-Namen. Gemessen: `ABK_160115.jpg` HTTP 200 `image/jpeg`, sha256 `15a6f030df249c584dc49d3cfe9d364c672775a29cddaeb41c90227981803002`.
 
-**Ungemittelte Risse (stehen, werden nicht geglättet):** (a) 532-Gap ohne belegte Subset-Relation; (b) fehlender Höhen-Wire-Slot/`QuantityKind`; (c) zweite Bildklasse nicht existent; (d) `times.len == values[i].len` nirgends garantiert; (e) `ExtractResult` ohne Riss-Träger; (f) Referenzzeile = Einzelartefakt vs. unbeschränkte Keogramm-Serie.
+**Folge-Recherche (Operator-Wort 1b/2, `archive_search --all`):** (1) ungleiche Parallel-Arrays — CF-Conventions/Features+Fill, pandas **expliziter Fehler**, stilles `nil`-Pad = Anti-Muster; Form: ganzer Satz als `Riss` mit beiden Längen + erstem divergenten k (`/tmp/omegaflow_all_1791573066_…txt`). (2) Keogramm — relative 8-Bit-Rasterkarte (Zeit × Breite); FMI-JPEG trägt **nur `JFIF`**, kein `Exif`/`COM`; Station+Datum nur im Dateinamen; `decode_jpeg_raster` liest den Raster.
+
+**Ungemittelte Risse (stehen, werden nicht geglättet):** (a) 532-Gap ohne belegte Subset-Relation; (b) fehlender Höhen-Wire-Slot/`QuantityKind`; (c) zweite Bildklasse nicht existent; (d) `times.len == values[i].len` nirgends garantiert (jetzt per `Riss`-Arm getragen); (e) `ExtractResult` bekommt den Riss-Arm (Operator-Wort 1b); (f) der Keogramm-Raster-Form-Weg ist offen (Raster ≠ Feld ≠ Referenz).
 
 ## An mountain
 
 Origin: mycelium-283 (2026-10-09) — bittet um die Register-/Tooling-Verdikte, die allein Mountain schreibt:
 
 - **`terms`-Format:** `phi/sources.φ` trägt `terms <SPDX> <url>` je Block. Vorlage: **pro Quelle** speichern (Truth), netloc nur berechnet, inhomogener Host → `mixed`. Bitte das Format-Verdikt (netloc-keyed vs. pro-Quelle). Der Riss `license_census` no-terms **827** vs. `sources_repo_license` **1359** ist ein **Populations-Riss**, kein Mittelwert: Teilmengen-Relation (827 ⊆ 1359?) messen oder beide Zählungen mit Definition führen (`tools/register/src/bin/license_census.rs:221` vs. `sources_repo_license.rs:150`).
-- **USGS-geomag `field`/`terms`/`ttl`:** sobald der Riss-Träger-Kontrakt entschieden und der `GeomagParallel`-Arm gebaut ist, braucht `sources.φ` die Zeile; `ttl` ungemessen → `pending`.
+- **USGS-`ExtractResult`-Riss-Arm + `GeomagParallel` (Archivar-Kontrakt, Operator-Wort 1b):** neuen `ExtractResult`-Arm bauen, der die Längen-Divergenz trägt — beide Längen + erstes divergentes `k` als Zeugen (kein Pad, kein Truncate, keine Imputation; CF/pandas-Muster belegt, `/tmp/omegaflow_all_1791573066_…txt`). Dazu den `GeomagParallel`-Arm: ein `(Channel,FieldConfig)` je `values[i]`, Name/Unit aus `values[i].metadata.element` (`usgs_geomag_compiler.rs:199-214`), **nicht** `values[i].id`; `COLUMNS` öffentlich machen. Danach braucht `sources.φ` die Zeile (`ttl` ungemessen → `pending`) — die schreibt Mycelium.
+- **Keogramm — Raster-Datenquelle:** die Form „Referenz vs. Feld" ist gekippt; Keogramm = relative 8-Bit-Rasterkarte (Zeit × Breite), FMI-JPEG **ohne** Exif/COM (nur `JFIF`), Station/Datum im Dateinamen; `archivar::tiff::decode_jpeg_raster` (Baseline) liest den Raster, `keogram.rs` nutzt ihn. Bitte um Mountains Form-Verdikt für relative Rasterquellen (kein Wire-Feld, keine reine Referenz).
 - **DTM-Wire-Slot:** der neue `quantity`/Slot ist ein **Kontrakt-Akt** (Operator/Rat), nicht Mountains Registerzeile; Mountain liefert erst nach dem Slot-Verdikt `field`/`terms`.
+
+## An river
+
+Origin: mycelium-283 (2026-10-09) — der neue `ExtractResult`-Riss-Arm (USGS, Operator-Wort 1b) hat Consumer in `main_flow.rs:6009/6018`; die Datei liegt in Rivers Membran. Bitte die zwei Match-Arme um den Riss-Träger ergänzen (oder das Wort, wer ihn trägt), sobald Mountain den Arm baut.
 
 ## LOCK
 
