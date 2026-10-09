@@ -23,15 +23,13 @@ note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-o
 note gap-Token point-source-kernel — Punkt-/Identitäts-Kernel ohne räumlichen Gradienten (Slot 2, kernel_id 2); Träger für punkt-/medienunabhängige Quellen (eionet_cdr); Arm steht (extract.rs:1530 "point" => Some(2); shaders.rs:49/:87).
 note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²) ohne physikalische Kraft; Arm steht (FORCE_TYPE_QUANTITY 255 + presence bit 16.0; QuantityKind Area, m2); Träger ghsl_built_surface_m2 in sources.φ.
 
-blocked parser-def
+pending
 url https://psa.esa.int/psa-tap/tap/
-gap bc-mpo-more
-note BepiColombo bc_mpo_more (Radio Science): release_date 2099-01-01 (89434/89517 proprietär), data?PRODUCT → 403, kein Konto-Gate; Freigabe-Anfrage an psahelp@cosmos.esa.int 2026-09-18. bc_mpo_mag anonym offen (5020 Zeilen seit 2024-03-12).
+note BepiColombo bc_mpo_more (Radio Science): release 2099-01-01 (89434/89517 proprietär), data?PRODUCT 403; bc_mpo_mag-Arm steht (5020 Zeilen seit 2024-03-12). Kein Parser-Gap (2026-10-09).
 
-blocked parser-def
+pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
-gap tracking-doppler
-note Voyager closed-loop Doppler — 2026-10-09: PSNO-00007 200, VGR_8201–8245 request-only; atdf-Arm steht (extract.rs:27), Riss zu blocked-sources-klassen.md:8. Anfrage 2026-09-16 mail_ledger.φ:74 → offen (wartend.φ:6).
+note Voyager closed-loop Doppler — 2026-10-09: PSNO-00007 200, VGR_8201–8245 request-only; atdf-Arm steht (extract.rs:27), Riss zu blocked-sources-klassen.md:8. Anfrage 2026-09-16 mail_ledger.φ:74 → offen (wartend.φ:6). Kein Parser-Gap.
 
 blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
@@ -43,29 +41,13 @@ url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
 gap viking-tracking
 note Viking Orbiter Tracking (Doppler+Range) — 2026-10-09: PSPG-00011 „not Received", PSPG-00457 SDDPT live; kein Tracking-Parser (viking_text = Lander-Text), odf/atdf generisch. Anfrage 2026-09-16 mail_ledger.φ:76 → offen (wartend.φ:16).
 
-blocked parser-def
+pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
-gap juno-efb
-note Juno Earth-Flyby pre-EFB ODF — 2026-10-09: pre-EFB request-only; OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11); odf-Arm + juno_odf.bin stehen. Anfrage 2026-09-16 mail_ledger.φ:78 → offen.
-
-blocked parser-def
-url https://superdarn.ca/data-download
-gap dmap-map-grid
-note MAP-Grid RST (DMap) — 2026-10-09: DMap-Kern + `map_grid_value` gebaut (`src/archivar/dmap.rs`); Globus-Key steht, Transfer `0f2819ca` EXPIRED (kein Key-Defekt), Re-Submit bis Glasfaser vertagt = LOCK (Operator-Wort 2026-10-09, mycelium-275).
-
-blocked parser-def
-url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
-gap kaguya-lrs
-note Kaguya/SELENE LRS (DARTS/PDS3) — 2026-10-09: Riss widerlegt: sources.φ:10877 trägt den 00N-Block (mountain 213); generischer pds3-binary-cdn.yml läuft; kaguya-lrs-cdn.yml (--dir, 00S) + harvest.φ-Arm ergänzt. DARTS flappt 200/503.
+note Juno Earth-Flyby pre-EFB ODF — 2026-10-09: pre-EFB request-only; OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11); odf-Arm + juno_odf.bin stehen. Anfrage 2026-09-16 mail_ledger.φ:78 → offen. Kein Parser-Gap.
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.φ-Arm stehen; terms TSPA=PD. Keine statische Zeile: Family unbounded, kein Manifest, pds4_fixed_width braucht field-Zeilen. Vorbedingung: Manifest + dynamische Felder.
-
-blocked parser-def
-url https://data.inpe.br/bdc/stac/v1/
-gap inpe-big-stac
-note INPE BIG STAC 1.0.0 — 2026-10-09: tmax ohne units-Attribut; STAC eo:bands[0].description "Unit: Celsius" → field C. sources.φ-Block + inpe-stac-cdn.yml + Arm gebaut; Asset sha256 96cc2d1a… == STAC checksum.
 
 blocked parser-def
 url https://skyview.gsfc.nasa.gov/cgi-bin/images
@@ -77,15 +59,13 @@ url https://lambda.gsfc.nasa.gov/
 gap cmb-lambda
 note CMB LAMBDA/PLA — 2026-10-09: WMAP ILC 9yr (206, NESTED Galactic, kein TUNIT1 → Einheit pending) via cmb_planck_compiler; ACT DR6.02 RING/equatorial → neuer Arm; SPT D1 tar.bz2. lambda.gsfc/PLA.
 
-blocked parser-def
+pending
 url https://vso.stanford.edu/
-gap solar-vso
-note Solar VSO/IRIS — 2026-10-09: VSO POST 411 (lebt); IRIS HCR-API www.lmsal.com/hek/hcr liefert comp_data_url; FITS 200 (…/level2/…/iris_l2_…_SJI_2796_t000.fits, 9 207 360 B). iris_compiler.rs gebaut; Register pending.
+note Solar VSO/IRIS — 2026-10-09: VSO POST 411; IRIS HCR-API www.lmsal.com/hek/hcr → comp_data_url; FITS 200 (9 207 360 B). iris_compiler.rs steht; sources.φ-Zeile + Workflow pending — kein Parser-Gap.
 
-blocked parser-def
+pending
 url https://www.cssdc.ac.cn/en/
-gap laic-cssdc
-note LAIC CSSDC — 2026-10-09 RISS: `cssdc.ac.cn` + `/en/` liefern identisch eine Telegram-APK-Advert-Seite (kein Datenportal); Wayback 2018–2026 hat Snapshots, Inhalt unread (429). Register-URL trägt keine Wissenschaft mehr; LEOS pending.
+note LAIC CSSDC — 2026-10-09 RISS: `cssdc.ac.cn`/`/en/` liefern eine Telegram-APK-Advert-Seite (kein Datenportal); Wayback unread (429). Register-URL ohne Wissenschaft; LEOS-Umzug pending — kein Parser-Gap.
 
 blocked parser-def
 url https://opendata.atlas.cern/
