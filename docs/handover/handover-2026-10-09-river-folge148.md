@@ -3,7 +3,7 @@
   session: River-Folge 148
   class: handover
   date: 2026-10-09
-  sha256: bde45cbff259dd74437984dc77e6a7f4af79c94efcddc64b9eade7bcb887bc4f
+  sha256: 1b1e39f54ed4ca24fd774ce90e2be6fc4a751fd4c879a34db8c567ec37f65691
   status: live
 -->
 # Handover — River-Folge 148 (2026-10-09)
@@ -38,6 +38,7 @@ Wort | Datum | Quelle
 „2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283, gefaltet) — Kraft-/Register-Physik-Migration ist River-geführt; Mountain schreibt die Verdikt-Zeilen
 „ja" | 2026-10-09 | Operator (Session, River 147) — Wort für die Register-Physik-Migration (`force` → Quantity|Mechanism|Medium); River führt Schema + Reihenfolge, Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ`
 „bitte durch archive search all den rat und ALLLEEEEE!! UI und openweight chats mit gewichtung analysieren lassen" | 2026-10-09 | Operator (Session, River 148) — volle gewichtete Stimmen-Runde (Wissenschaft + Rat + alle UI- + Open-Weight-Seats) zu den Register-Achsen Riss A/B; ausgeführt (`…achsen-runde.md`)
+„kann es sein dass du weder claude noch glm in tryingopen befragt hast?" | 2026-10-09 | Operator (Session, River 148) — gemessener Fehler: Claude und `tryingopen`-GLM 5.3 (plus Nemotron/Hy4/GPT-OSS/MiMo/DeepSeek V4.1) fehlten im ersten Lauf; nachgefahren, Runde vervollständigt (`…achsen-runde.md`)
 
 Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 `docs/handover/archiv/handover-2026-10-09-river-folge147.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
@@ -141,4 +142,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 148):
 
 Nicht committet (gitignored, Session-Artefakte): keine neuen.
 
-## Burn: open 0.0000 · close 0.1130 · Grund: P2.1/P2.4 Layout-Saat gebaut (`cargo check` grün, zero warnings); `source_physics_lint` gemessen (field 8003 · quantity 27 · geometry 95); volle Stimmen-Runde (archive_search --all + Rat + UI + Open-Weight, gewichtet) zu Riss A/B gefaltet. deepseek-flash, 2026-10-09 · kein pro/max · Session-Kosten per-session via `session_burn` (Session „River-Linie in einem Pass abarbeiten"); die maschinenweite Summe trägt parallele Linien.
+## Burn: open 0.0000 · close 0.1691 · cap 0.20 · Grund: P2.1/P2.4 Layout-Saat gebaut (`cargo check` grün, zero warnings); `source_physics_lint` gemessen (field 8003 · quantity 27 · geometry 95); volle gewichtete Stimmen-Runde (archive_search --all + Rat + alle UI- + Open-Weight-Seats) zu Riss A/B gefaltet; cap über Default, weil die Runde zweimal lief (Nachtrag Claude + tryingopen-GLM). deepseek-flash, 2026-10-09 · kein pro/max · Session-Kosten per-session via `session_burn` (Session „River-Linie in einem Pass abarbeiten"); die maschinenweite Summe trägt parallele Linien.
