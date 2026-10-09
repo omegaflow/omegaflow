@@ -7,10 +7,12 @@ const SOURCES: &str = "phi/sources.φ";
 const CENSUS: &str = "state/mountain/license-census.tsv";
 
 const TERMS: &[&str] = &[
+    "CC-BY-3.0",
     "CC-BY-4.0",
     "CC-BY-NC-3.0-IGO",
     "CC-BY-NC-4.0",
     "CC-BY-NC-SA-4.0",
+    "CC-BY-SA-3.0",
     "CC0-1.0",
     "ODC-By-1.0",
     "ODbL-1.0",

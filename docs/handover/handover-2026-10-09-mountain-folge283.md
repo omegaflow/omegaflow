@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 733a0366a01221553a2ee9dd6d90d123d5fdcd42e6b2b30c2e8b10c8db0b25b5
+  sha256: 4dcb7738e715202e799442399a0f970234fabdc2c9b27d03006da0a41aa3d410
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -30,6 +30,7 @@ Wort | Datum | Quelle
 „2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283)
 „du sollst das prüfen, die lizenzen müssen korrekt sein" | 2026-10-09 | Operator (Session, Mountain 283)
 „sind jetzt alle blöcke in allen asset files mit tes versehen (also auch die anderen weberinnen sources) und sollten wir eigentlich die beschreibungen von sources repo und assets noch anpassen?" | 2026-10-09 | Operator (Session, Mountain 283)
+„kannst du das nicht in einem patch per archive search machen lassen? … und 2 ja" | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -57,9 +58,9 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (SPDX); ESA + INTERMAGNET + HF-Radar gesweept, langer Rest offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 2006 · distinct 13 · no-terms 620 · pending 704 · 0 violation(s)**. Gesweept in diesem Atom: **ESA 21** (`CC-BY-NC-3.0-IGO`) · **INTERMAGNET 157** (`imag-data.bgs.ac.uk`, `CC-BY-NC-4.0`, gemessen `https://intermagnet.org/data_conditions.html`) · **HF-Radar 204** (`hfradar.ioos.us`, `free-open`, ERDDAP-`NC_GLOBAL license` = „may be used and redistributed for free", gemessen an `SKIO_CNS`/`USF_RDSR`). Vokabular erweitert um `CC-BY-NC-3.0-IGO` + `CC-BY-NC-4.0`. **Prüfung (Operator-Wort „du sollst das prüfen"):** alle ESA-Blöcke sind ESAC-/PSA-Hosts unter der ESDC-Regel; kein ESA-Block ohne `terms` (awk-Sweep leer). **Riss geschlossen:** `dr3_stars.bin` trug fälschlich `terms PD https://ssd.jpl.nasa.gov/` — Quellen sind CDS-Hipparcos + Gaia-DR3-Supplement (`tycho2_compiler.rs:361` fragt `gea.esac.esa.int/tap-server`), jetzt `terms CC-BY-NC-3.0-IGO`. ESA-SPICE (`spiftp.esac.esa.int`) hat keine eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt).
-- **Blockade:** **704 `url`/`compiler`-Blöcke ohne `terms`** — dominiert von **543 GitHub-CDN-Mirror-Blöcken** (`url`=github-Release, echter Quell-Host im Tag/`origin`), dazu `services*.arcgis.com` ~24 · `zenodo.org` 11 · `vires.services` 12 · `data.earthscope.org` 9 · `raw.githubusercontent.com` 5 · usw.; je Host muss die Lizenz gemessen werden. `hfradar`-Rest nicht mehr offen.
-- **Braucht:** je Anker (Quell-Host) die Lizenz per `archive_search`/`curl` messen und `terms <token> <url>` schreiben; danach `license_census` (0 violations) + `register_sort` nachführen.
+- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 2570 · distinct 16 · no-terms 68 · pending 140 · 0 violation(s)** — **95 % Abdeckung**. Gesweept (diese Session, per `archive_search`/Host-Histogramm, zwei Taucher-Batches): **ESA 21** (`CC-BY-NC-3.0-IGO`) · **INTERMAGNET 157** (`CC-BY-NC-4.0`) · **HF-Radar 204** (`free-open`) · **CDN-Mirror 543** über den Tag-Host (`jsoc` `CC0-1.0`; `jvo`/`zenodo`/`earthscope`/`geoazur`/`mpc`/`kasi`/`clpds`/`canfar`/`bgr` `unbestimmt`; `imcce`/`supermag`/`wwlln`/`dhm`/`ogimet`/`pradan`/`casdc`/`hamqsl` `ohne-lizenz`; `iaaras`/`gportal`/`wdc`/`nso`/`argo`/`copernicus`/`noaa-s3` `free-open`; `fmi`/`darts`/`gmrt`/`eea`/`toar` `CC-BY-4.0`; `isc` `CC-BY-SA-3.0`; `vo.astron` `CC-BY-3.0`; `geofabrik` `ODbL-1.0`; `impc`/`ssd.jpl` `PD`). **Alle 2005 CDN-Mirror-Blöcke** tragen jetzt `terms`. Vokabular +`CC-BY-NC-3.0-IGO` · +`CC-BY-NC-4.0` · +`CC-BY-3.0` · +`CC-BY-SA-3.0`. **Prüfung (Operator-Wort „du sollst das prüfen"):** kein ESA-Block ohne `terms` (awk-Sweep leer); **Riss geschlossen:** `dr3_stars.bin` `terms PD`(JPL)→`CC-BY-NC-3.0-IGO` (Gaia-Origin gemessen `tycho2_compiler.rs:361`); ESA-SPICE ohne eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt).
+- **Blockade:** **140 `url`/`compiler`-Blöcke ohne `terms`** — kein Mirror mehr; langer Nicht-Mirror-Tail über ~75 Hosts: `vires.services` 12 · `services*.arcgis.com` ~25 · `raw.githubusercontent.com` 5 · `gs.llnl.gov` 4 · `data.oceannetworks.ca` 4 · `seismic-api.science.unimelb.edu.au` 3 · `data-argo.ifremer.fr` 3 · `api.wolfx.jp` 3 · Rest 1–2. Je Host Lizenz messen.
+- **Braucht:** Rest-Tail mit derselben Mechanik: `awk`-Host-Histogramm → `archive_search` je Host → `terms`-Patch; danach `license_census`/`register_sort`.
 
 ### `blocked_sources.φ`-Aufräumen — 15 Klassen-Träger (`gap`-Token)
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
@@ -73,7 +74,7 @@ Wort | Datum | Quelle
 Origin: mountain-folge283.
 
 - **terms-Ernte:** **terms 2006 · pending 704 · 0 violation** (gemessen 2026-10-09, `license_census`). Der `sources_repo_license`-Bin bleibt **dein** uncommitteter Draft (`tools/register/src/bin/sources_repo_license.rs`); Mountain baut ihn nicht.
-- **`omegaflow/sources`-Repo + Asset-Beschreibungen (Operator-Wort 2026-10-09):** das Repo hat **keine LICENSE** und **keine Lizenz in der Description** (`gh repo view omegaflow/sources`: Beschreibung nennt nur Inhalte, `licenseInfo: null`); jedes Release trägt `body` = „harvest CDN release for <netloc>". Da das Repo Fremddaten unter heterogenen Lizenzen redistribuiert, ist eine Pauschal-Lizenz falsch. Vorschlag: (a) `NOTICE`/`README` „third-party data, per-source licences — ledger `phi/sources.φ` / `state/mountain/license-census.tsv`"; (b) der CI-Manifestator schreibt die Quell-Lizenz in den Release-Body; (c) Repo-Description um „per-source licences" ergänzen. Lizenz-**Eigenschaft** (`terms`) ist Mountains, **Transport** (Repo/Description/Release-Body) deiner.
+- **`omegaflow/sources`-Repo + Asset-Beschreibungen (Operator-Wort „2 ja", 2026-10-09):** **Repo-Description gesetzt** („Third-party data redistributed under per-source licences — ledger `phi/sources.φ` (see NOTICE)"), **`NOTICE` im sources-Repo angelegt** (`gh api … contents/NOTICE`, Commit `24f351cd2b`); `licenseInfo: null` bleibt bewusst (kein Pauschal-Lizenztext). **Offen für dich (Transport):** der CI-Manifestator soll die Quell-Lizenz je Release in den Body schreiben (liest die `terms`-Zeile) — bisher nur `harvest CDN release for <netloc>`.
 - **SuperDARN MAP-grid:** Globus-Credentials stehen (`GLOBUS_ID_USER`/`GLOBUS_ID_PASS`), kein Operator-Akt; der Download (`superdarn.ca/data-download`, `wartend.φ:8`) liegt bei dir.
 - **Keogramm** (OMTI/Abisko): Wire-Feld descoped (raw/relativ); offen ist die **Vision-Asset-Registrierung** — bitte führen, falls Mycelium das Bild als Asset trägt.
 - **Route-Admissionen / Arme:** THEMIS-Tail + MMS-Magnetosheath-Arme stehen jetzt (`phi/sources.φ`); manifestiere, sobald die Zeilen stehen. Übrige `gap`-Träger siehe oben.
