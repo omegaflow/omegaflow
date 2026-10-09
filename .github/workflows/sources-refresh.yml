@@ -28,16 +28,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin sources_refresh -- \
             --spec tools/harvest/data/sources_refresh.spec.json \
             --out data
-      - name: Upload the refreshed catalogs to the v1.0 release
-        run: |
-          set -euo pipefail
-          for family in horizons ndbc jpl swpc mass elements orbits observer; do
-            for f in data/${family}_*.json; do
-              [ -f "$f" ] || continue
-              gh release upload v1.0 "$f" --clobber --repo omegaflow/sources
-            done
-          done
-      - name: Commit the data snapshot into omegaflow/sources (audit trail)
+      - name: Commit the refreshed catalogs into omegaflow/sources data/
         run: |
           set -euo pipefail
           git clone --depth 1 \

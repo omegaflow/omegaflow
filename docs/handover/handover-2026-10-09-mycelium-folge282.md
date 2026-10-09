@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. refresh.yml-Verdrahtung gebaut (Haupt-CI-Arm: das Rust-Bin landete als harvest d72710803, der sources-Repo-Arm ist tot — keine Workflows, kein Rust-Workspace); swpc-efield-cdn success geschlossen; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: ac28b584727d4a9402296915370babe00adb94ba10308f24060dc9001016796b
+  sha256: f0f9f54f06d44ef8af5b6dd8d44aa8fd660d76de88a76c49a7c7ddf52f44d8c9
   status: live
 -->
 # Handover — Mycelium-Folge 282 (2026-10-09)
@@ -29,7 +29,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### refresh.yml-Verdrahtung — Haupt-CI-Arm gebaut, Lauf offen
 - **Status:** wartend | **Bindung:** eigen (CI) · auf den ersten Workflow-Lauf
 - **Trigger:** erster `sources-refresh`-Lauf (schedule `17 */6 * * *` oder `workflow_dispatch`)
-- **Lage:** (gemessen 2026-10-09) Das Python-`refresh.yml` entfernt (sources-Repo, `e5b092ae`); das Rust-Bin landete als `d72710803` (`tools/harvest/src/bin/sources_refresh.rs` + `data/sources_refresh.spec.json`). **Der sources-Repo-Arm ist tot** (`gh api repos/omegaflow/sources/contents/.github/workflows` → 404; kein Rust-Workspace). Darum Haupt-CI: `.github/workflows/sources-refresh.yml` läuft `cargo run -p omegaflow-harvest --release --bin sources_refresh -- --spec … --out data`, lädt `horizons/ndbc/jpl/swpc/mass/elements/orbits/observer_*.json` nach Release `v1.0` (alter Vertrag) und committet den `data/`-Snapshot ins sources-Repo. Der Design-Punkt `ed8d214` ist lokal **unread** (`gh api …/commits/ed8d214` → 422; im Haupt-Repo kein Objekt) — nicht bestätigt, nicht fabriziert.
+- **Lage:** (gemessen 2026-10-09) Das Python-`refresh.yml` entfernt (sources-Repo, `e5b092ae`); das Rust-Bin landete als `d72710803` (`tools/harvest/src/bin/sources_refresh.rs` + `data/sources_refresh.spec.json`). **Der sources-Repo-Arm ist tot** (`gh api repos/omegaflow/sources/contents/.github/workflows` → 404; kein Rust-Workspace). Darum Haupt-CI: `.github/workflows/sources-refresh.yml` läuft `cargo run -p omegaflow-harvest --release --bin sources_refresh -- --spec … --out data` und committet den geänderten `data/*.json`-Snapshot ins sources-Repo. **Gemessen:** ein Release `v1.0` existiert dort **nicht** (`gh release view v1.0` → not found) — der Upload-Zweig der entfernten Workflow fiel; die README nennt `data/` als Heim der Kataloge. Der Design-Punkt `ed8d214` ist lokal **unread** (`gh api …/commits/ed8d214` → 422; im Haupt-Repo kein Objekt) — nicht bestätigt, nicht fabriziert.
 - **Blockade:** keiner.
 - **Braucht:** `ci_manage list` nach dem Dispatch; `README.md` des sources-Repos („pending a Rust port") auf den Rust-Arm nachziehen.
 
