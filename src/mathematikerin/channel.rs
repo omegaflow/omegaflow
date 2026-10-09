@@ -462,6 +462,60 @@ impl ChannelDescriptor {
         }
     }
 
+    pub fn spec_token(&self) -> String {
+        let conserved = conserved_name(self.conserved);
+        let role = match self.role {
+            QuantityRole::Primary => "primary",
+            QuantityRole::Derived => "derived",
+            QuantityRole::Geometry => "geometry",
+            QuantityRole::SourceParameter => "source-parameter",
+        };
+        let op = match self.op {
+            TransportOp::Flux(FluxKind::Fick) => "flux-fick",
+            TransportOp::Flux(FluxKind::Fourier) => "flux-fourier",
+            TransportOp::Flux(FluxKind::Ohm) => "flux-ohm",
+            TransportOp::Flux(FluxKind::NewtonViscous) => "flux-newton-viscous",
+            TransportOp::Advective => "advective",
+            TransportOp::Wave => "wave",
+            TransportOp::Poisson => "poisson",
+            TransportOp::Maxwell => "maxwell",
+        };
+        let pde = match self.pde_type {
+            PdeType::Elliptic => "elliptic",
+            PdeType::Parabolic => "parabolic",
+            PdeType::Hyperbolic => "hyperbolic",
+            PdeType::Advective => "advective",
+            PdeType::Mixed => "mixed",
+        };
+        let medium = match self.medium {
+            Medium::Vacuum => "vacuum",
+            Medium::Fluid => "fluid",
+            Medium::ElasticSolid => "elastic-solid",
+        };
+        let domain = match &self.domain {
+            Domain::Unspecified => "unspecified".to_string(),
+            Domain::Line => "line".to_string(),
+            Domain::Circle => "circle".to_string(),
+            Domain::Sphere { l: 0 } => "sphere".to_string(),
+            Domain::Sphere { l } => format!("sphere({l})"),
+            Domain::Rectangle { lx, ly } => format!("rectangle({lx},{ly})"),
+            Domain::Shell { r_in, r_out } => format!("shell({r_in},{r_out})"),
+            Domain::Ellipsoid { a, b, c } => format!("ellipsoid({a},{b},{c})"),
+        };
+        let boundary = match self.boundary {
+            Boundary::None => "none",
+            Boundary::FreeSurface => "free-surface",
+            Boundary::Dirichlet => "dirichlet",
+            Boundary::Neumann => "neumann",
+            Boundary::Robin => "robin",
+        };
+        let mut out = format!("{conserved}:{role}:{op}:{pde}:{medium}:{domain}:{boundary}");
+        if let Some(e) = self.extent {
+            out.push_str(&format!(":{e}"));
+        }
+        out
+    }
+
     pub fn parse_spec(spec: &str, unit: &'static str) -> Result<Self, String> {
         let t: Vec<&str> = spec.split(':').collect();
         if t.len() != 7 && t.len() != 8 {
@@ -2286,6 +2340,21 @@ mod tests {
         .expect("seven axes parse");
         assert_eq!(d.extent, None);
         assert!(d.mode_wavenumbers(3).is_none(), "absent extent is no mode");
+    }
+
+    #[test]
+    fn a_descriptor_round_trips_through_its_spec_token() {
+        let d = ChannelDescriptor::parse_spec(
+            "momentum:primary:wave:hyperbolic:fluid:rectangle(2,3):dirichlet",
+            "Pa",
+        )
+        .expect("rectangle channel parses")
+        .with_extent(Some(2.5));
+        let token = d.spec_token();
+        let back = ChannelDescriptor::parse_spec(&token, "Pa").expect("round-trips");
+        assert_eq!(token, back.spec_token(), "the token is a fixed point");
+        assert_eq!(d, back, "the descriptor survives its own token");
+        assert_eq!(d.hash(), back.hash(), "identity is stable");
     }
 
     #[test]

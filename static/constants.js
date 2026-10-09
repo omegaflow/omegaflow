@@ -1,6 +1,7 @@
 export const PROTOCOL_VERSION = 9;
 export const KINETIC_TAG = 10;
 export const VERDICT_TAG = 11;
+export const MANIFEST_TAG = 12;
 export const RECORD_BYTES = 208;
 export const FRAME_HEADER = 19;
 
@@ -261,4 +262,27 @@ export function parseVerdicts(bytes) {
     });
   }
   return lines;
+}
+
+export function parseManifest(bytes) {
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let o = 3;
+  const count = dv.getUint16(o, true);
+  o += 2;
+  const schemaHash = dv.getUint32(o, true);
+  o += 4;
+  const dec = new TextDecoder();
+  const descriptors = [];
+  for (let i = 0; i < count; i++) {
+    const sl = dv.getUint16(o, true);
+    o += 2;
+    const spec = dec.decode(new Uint8Array(bytes.buffer, bytes.byteOffset + o, sl));
+    o += sl;
+    const ul = dv.getUint8(o);
+    o += 1;
+    const unit = dec.decode(new Uint8Array(bytes.buffer, bytes.byteOffset + o, ul));
+    o += ul;
+    descriptors.push({ spec, unit });
+  }
+  return { count, schemaHash, descriptors };
 }
