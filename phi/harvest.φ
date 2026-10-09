@@ -276,6 +276,24 @@ idempotent true
 timeout 120
 
 asset present
+format ebhis_hpx_series
+tag cdsarc.cds.unistra.fr
+arm ebhis_compiler
+workflow ebhis-cdn.yml
+pattern ^ebhis_hpx190\.bin$
+idempotent true
+timeout 120
+
+asset present
+format bepicolombo_plasma
+tag zenodo.org
+arm bepicolombo_plasma_compiler
+workflow bepicolombo-cdn.yml
+pattern ^bepicolombo_plasma\.bin$
+idempotent true
+timeout 120
+
+asset present
 format kc2g_stations
 tag prop.kc2g.com
 arm kc2g_stations

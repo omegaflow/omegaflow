@@ -1,0 +1,48 @@
+name: bepicolombo-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the bin is already present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  bepicolombo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the bin is already manifested
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view zenodo.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^bepicolombo_plasma\.bin$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset bepicolombo_plasma.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset bepicolombo_plasma.bin missing — compiling and manifesting"
+          fi
+      - name: Compile the BepiColombo plasma series and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-harvest --bin bepicolombo_plasma_compiler -- \
+            --out "data/zenodo.org/bepicolombo_plasma.bin" --ci-mode
