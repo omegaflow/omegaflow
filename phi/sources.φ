@@ -19045,7 +19045,7 @@ field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-gaia/dr3_stars.bin
 format catalog_tycho
-terms PD https://ssd.jpl.nasa.gov/
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 origin https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
 origin https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/tycho2_compiler.rs
