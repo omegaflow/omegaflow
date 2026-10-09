@@ -186,8 +186,12 @@ fn run(args: &[String]) -> Result<(), String> {
     for i in 0..sst.dim_ids.len() {
         dim_names.push(dim_name(&file, sst, i)?.to_string());
     }
-    let expected = ["time", "lat", "lon"];
-    if dim_names.len() != 3 || !dim_names.iter().map(String::as_str).eq(expected) {
+    let expected = ["time", "lat|latitude", "lon|longitude"];
+    let matched = dim_names.len() == 3
+        && dim_names[0] == "time"
+        && matches!(dim_names[1].as_str(), "lat" | "latitude")
+        && matches!(dim_names[2].as_str(), "lon" | "longitude");
+    if !matched {
         return Err(format!(
             "{url}: sst dims {dim_names:?} are not {expected:?}"
         ));
