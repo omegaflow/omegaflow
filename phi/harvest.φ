@@ -25,6 +25,15 @@ idempotent true
 timeout 60
 
 asset present
+format bepicolombo_plasma
+tag zenodo.org
+arm bepicolombo_plasma_compiler
+workflow bepicolombo-cdn.yml
+pattern ^bepicolombo_plasma\.bin$
+idempotent true
+timeout 120
+
+asset present
 format bpa_gic
 tag transmission.bpa.gov
 arm bpa_gic_compiler
@@ -101,6 +110,15 @@ tag cdaweb.gsfc.nasa.gov
 arm dmsp16_ssj_compiler
 workflow dmsp16-ssj-cdn.yml
 pattern ^dmsp16_ssj\.bin$
+idempotent true
+timeout 120
+
+asset present
+format ebhis_hpx_series
+tag cdsarc.cds.unistra.fr
+arm ebhis_compiler
+workflow ebhis-cdn.yml
+pattern ^ebhis_hpx190\.bin$
 idempotent true
 timeout 120
 
@@ -276,24 +294,6 @@ idempotent true
 timeout 120
 
 asset present
-format ebhis_hpx_series
-tag cdsarc.cds.unistra.fr
-arm ebhis_compiler
-workflow ebhis-cdn.yml
-pattern ^ebhis_hpx190\.bin$
-idempotent true
-timeout 120
-
-asset present
-format bepicolombo_plasma
-tag zenodo.org
-arm bepicolombo_plasma_compiler
-workflow bepicolombo-cdn.yml
-pattern ^bepicolombo_plasma\.bin$
-idempotent true
-timeout 120
-
-asset present
 format kc2g_stations
 tag prop.kc2g.com
 arm kc2g_stations
@@ -308,15 +308,6 @@ tag space.fmi.fi
 arm keogram_compiler
 workflow keogram-cdn.yml
 pattern ^keogram_.*\.bin$
-idempotent true
-timeout 120
-
-asset present
-format themis_asi
-tag themis.ssl.berkeley.edu
-arm themis_asi_compiler
-workflow themis-asi-cdn.yml
-pattern ^themis_asi\.bin$
 idempotent true
 timeout 120
 
@@ -605,6 +596,15 @@ tag data.pmel.noaa.gov
 arm tao_wnd_compiler
 workflow tao-wnd-cdn.yml
 pattern ^tao_wnd_zonal\.csv$
+idempotent true
+timeout 120
+
+asset present
+format themis_asi
+tag themis.ssl.berkeley.edu
+arm themis_asi_compiler
+workflow themis-asi-cdn.yml
+pattern ^themis_asi\.bin$
 idempotent true
 timeout 120
 
