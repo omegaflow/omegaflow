@@ -3,7 +3,7 @@
   session: Mountain-Folge 280
   class: handover
   date: 2026-10-09
-  sha256: 92392c18eccbcf6adbeaee2ff729d8fc98a5ea4ba4d55cf99652dc1642e2761e
+  sha256: 93306d74537b5a0cdb0acbc71e69a4ecf4a5a903ccbf283e3daafee5462ad6c8
   status: live
 -->
 # Handover — Mountain-Folge 280 (2026-10-09)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
 gemessen 2026-10-08T14:3xZ, Mycelium-269). Diese Session konsumierte
 `handover-2026-10-08-mountain-folge279.md` (→ `archiv/`). Kein pro/max.
 
-## Burn: open 0.0000 · close 0.130 · cap 0.50 — Grund: line $0.0767 + Sub-Agenten (ROTI $0.0183 · Kellerman $0.0155 · Rat $0.0121 · SuperDARN $0.0074); kein pro/max. (gemessen `session_burn`, 2026-10-09)
+## Burn: open 0.0000 · close 0.45 · cap 0.50 — Grund: line $0.2727 + Sub-Agenten (Terms $0.0767 · OpenMadrigal $0.0945 · Lizenz/Delta, flash); kein pro/max. (gemessen `session_burn`, 2026-10-09)
 
 ## Operator-Wort-Register
 
@@ -25,57 +25,58 @@ Wort | Datum | Quelle
 „ja bitte" — Index-Riss als Mountain-Verdikt `quantity` setzen + die `sources.φ`-Zeilen bauen | 2026-10-08 | Operator (Session, Mountain 276)
 „ich glaube du musst nochmal breiter fragen" — Science-Layer + starke Frontier-Seats für die Route-Admission | 2026-10-08 | Operator (Session, Mountain 276)
 „bitte umsetzen Offen (im Report benannt): 2 blocked_sources-Risse (limadou/vco_rs Dubletten; cluster_ka-Zeile ohne gap), SuperDARN dritter Layout-Slot (kein pot.drop.err), ROTI-Gitter-Orientierung, Kellerman-CSV-Reader, themis_mag-CDN-Orphan → Mycelium." | 2026-10-09 | Operator (Session, Mountain 280)
+„Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher, höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort — Commit und Push trägt `/commit`." + „aber mach dann auch wirklich die Arbeit" | 2026-10-09 | Operator (Session, Mountain 281)
 
 ## Offen (aufgeschlüsselt)
 
-### Route-Admissionen — Liveness gemessen; Wind-SWE-Riss
+### Route-Admissionen — Liveness gemessen; Wind-SWE gebaut; IMPC = Login-Wall
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium (Manifestation)
-- **Trigger:** je Route der Arm/`refused`-Befund; DLR/Wind-Klasse neu
-- **Lage:** (gemessen 2026-10-08 279) **200:** CDAWeb HAPI `WI_H0_SWE` · `THG_L2_MAG_ABK` (`themis_mag` registriert) · DLR-IMPC TEC-Nowcast/ROTI/`_D.json` · Zenodo `15316905` (Kuprat LSCO INS) · Zenodo `4444068` (Kellerman) · FMI MIRACLE ASC-keograms · `prop.kc2g.com/api/stations.json` · `superdarn.usask.ca/convection-maps` · `vizier.cds.unistra.fr/…/J/A+A/633/A99/members` · `datalab.noirlab.edu/tap/sync`. **206:** EMTF DOI · `vires.services/…SW_FAST_MAGA_LR_1B` · `cedar.openmadrigal.org` · `ds.iris.edu/ds/products/emtf/` · `ssusi.jhuapl.edu/` · LEOS. **400 (Wayback 503):** `geomag.usgs.gov/ws/data/`. **Riss Wind SWE:** Route lebt, `info` trägt `startDate 1994-12-29 · stopDate 2001-05-31`; literale ISO-Grenzen liefern Datenzeilen (`{now}` liest 0) — Wind-SWE-Zeile bereits gebaut (Rat F1, s. Git). Neue Pools (future-202): DLR-IMPC sechs Produkte, SuperDARN VT-Portal, ONCat, SuperMAG, Open-Sources-Audit.
-- **Blockade:** per-Route-Verdikt (`sources.φ`-Zeile/Arm oder `refused`/`pending` mit Trigger) fehlt für die verbleibenden Routen.
-- **Braucht:** je Route `archive_search --verdict`/`--sniff` gegen `phi/sources.φ` prüfen, Verdikt/`ttl`/Arm setzen oder `refused`/`pending` mit Trigger registrieren; Mycelium manifestiert nach Zulassung.
+- **Trigger:** je Route der Arm/`refused`-Befund
+- **Lage:** (gemessen 2026-10-09 281) **200:** CDAWeb HAPI `WI_H0_SWE` · `THG_L2_MAG_ABK` · DLR-IMPC ROTI (`sources.φ:1629-1635`, live) · Zenodo `15316905` · Zenodo `4444068` · `prop.kc2g.com/api/stations.json` · `superdarn.usask.ca/convection-maps` · `vizier.cds.unistra.fr/…/J/A+A/633/A99/members` · `datalab.noirlab.edu/tap/sync`. **HTML-Index (kein File):** `space.fmi.fi/image/` (200, 6599 B) → echte Keogramm-Datei-URL+Format offen. **Login-Wall:** `data.impc.dlr.de` Root + `/tec/` = SSO-Login-Seite; TEC-Nowcast/Forecast/Slab-Endpunkte anonym unsichtbar → Auth-Route (Operator-Hand). **400:** `geomag.usgs.gov/ws/data/` (bare, Pflichtparameter fehlen). Wind-SWE-Zeile gebaut (Rat F1, Git). **IMPC trägt kein MUF/CALLISTO** (Produktbaum TEC/RoTI/Slab/NEGIX/TEGIX; CALLISTO = e-Callisto, `dead_sources.φ:872`). Neue Pools (future-202): DLR-IMPC Produkte, SuperDARN VT-Portal, ONCat, SuperMAG, Open-Sources-Audit.
+- **Blockade:** per-Route-Verdikt (`sources.φ`-Zeile/Arm oder `refused`/`pending account` mit Trigger) fehlt für die verbleibenden Routen.
+- **Braucht:** je Route `archive_search --verdict`/`--sniff` gegen `phi/sources.φ` prüfen, Arm/`ttl` setzen oder `refused`/`pending account` registrieren; Mycelium manifestiert nach Zulassung.
 
 ### GIC-Faden §A–G — neue Arme registriert; Zeilen-Bau offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium
 - **Trigger:** `sources.φ`-Zeilen je entschiedenem Arm gebaut
-- **Lage:** (gemessen 2026-10-08 279) SSUSI/CPCP/EMTF registriert (273). INTERMAGNET-HAPI-Form im Compiler (275). **cors entschieden** (`cors_compiler` disponiert, `ledger.φ:89-92`). **Wind SWE — Riss** (s. Route-Admissionen). Offen: OMTI/Abisko, Substorm-Onsets (`account`), DLR ROTI, Kellerman/Zenodo 4444068, USGS E-Feld.
-- **Blockade:** Zeilen-Bau für die entschiedenen Arme; Receiver-Feld-Reader (river-138, s. GIC-Stufe-2).
-- **Braucht:** übrige Arme nach dem Rat-Verdikt bauen oder `refused`/`quantity` registrieren.
+- **Lage:** (gemessen 2026-10-09 281, gefaltet river-139) SSUSI/CPCP/EMTF registriert; INTERMAGNET-HAPI-Form im Compiler; **ROTI-Compiler gebaut** (`bd0e34fcf`). GHSL/covariate-carrier geschlossen (Rat A: `quantity ghsl_built_surface_m2 … point area m2`, `sources.φ:794-800`). LEOS auf `pending` Auth-Route. Offen: OMTI/Abisko (Bild-Arm, File-URL), Substorm-Onsets (`account`), USGS E-Feld (Query-Endpunkt+Arm), Kellerman (Knoten-Koordinaten+Port).
+- **Blockade:** Zeilen-/Arm-Bau für die verbleibenden Quellen.
+- **Braucht:** Arme/Zeilen bauen oder `refused`/`quantity`/`blocked account` registrieren.
 
-### GIC-Stufe-2 — Receiver/force ENTSCHIEDEN; Receiver-Reader steht (river-138)
-- **Status:** eigen | **Bindung:** eigen (Register) · river (`compute_max_t`)
-- **Trigger:** AE/AL/AU · SME/SML/SMU als `sources.φ`-Zeilen gebaut
-- **Lage:** (gemessen 2026-10-08 279) `quantity`/`index nt` (Operator-Wort „ja bitte"); `QuantityKind::Index` gebaut; die 6 `wdc_ae`-Zeilen (`sources.φ:4087-4092`) umgestellt. AE/AL/AU stehen; SME/SMU/SML: SuperMAG `blocked account` (`blocked_sources.φ:210-212`). `dB/dt-Bestand 2/154` (ABK `:2150-2168`, SOD `:2170-2178`). **river-138:** Receiver-Body mit `#aperture=` gebaut. **GIC-Stufe-2 Member-Pool:** als Register-Klassenträger zulässig, als ein Wire-Deskriptor verboten; River verdrahtet die drei Deskriptoren.
-- **Blockade:** ob der GIC-Force-Deskriptor den Receiver-Reader (`DeclaredBody`) nutzt, ist ungemessen.
-- **Braucht:** SME/SMU/SML über `blocked account` (SuperMAG-Login, Operator-Hand); den `DeclaredBody`-Reader am GIC-Deskriptor messen (river).
+### GIC-Stufe-2 — Receiver-Reader NUTZT den Arm (river-139 gemessen)
+- **Status:** eigen | **Bindung:** eigen (Register)
+- **Trigger:** SME/SML/SMU als `sources.φ`-Zeilen gebaut
+- **Lage:** (gemessen 2026-10-09 281, gefaltet river-139) AE/AL/AU stehen (`sources.φ:4087-4092`). **Der positionale Geo-Serien-Arm nutzt den Receiver-Reader** (`fmi_gic`/`fmi_gic_1min` → `receiver_aperture.resolve`, `main_flow.rs:4518-4527`; netcdf/netcdf4/opendap `channels.rs:254/444/810`). Die frühere Blockade „ungemessen" ist gelöst. Offen: SME/SMU/SML = SuperMAG `blocked account` (Operator-Hand).
+- **Blockade:** keine (Mountain); SME/SMU/SML Account.
+- **Braucht:** SuperMAG-Login (Operator-Hand) → future-Queue.
 
-### Flyby-Kette — Doppler `pending`
-- **Status:** eigen | **Bindung:** eigen (Register) · mycelium
-- **Trigger:** DSN/ESTRACK-Residualroute admittiert oder Descope-Befund
-- **Lage:** (gemessen 2026-10-08 279) `SW_FAST_MAGA_LR_1B` registriert (`sources.φ:8153`). RTSW/ACE/Kp/OMNI2/Swarm/DSN-Power/JUICE registriert. Nicht registriert: Doppler (`src/archivar/doppler.rs` absent), σ_recon absent. Neuer Kanal: BepiColombo-Zenodo `17813314` (60-s, CC-BY-4.0).
-- **Blockade:** keine ESTRACK/DSN-Residualquelle.
-- **Braucht:** ESTRACK-Route + `doppler.rs` bauen **oder** Descope-Befund; sonst `pending` mit Trigger (Rat).
+### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
+- **Status:** eigen | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
+- **Trigger:** ESOC-Recon-Release (Wiedervorlage 2026-11-01) oder Descope
+- **Lage:** (gemessen 2026-10-09 281) Der ESTRACK/DSN-Residual ist **nicht absent**: 157 ODF-Referenzen in `sources.φ` (MEX `:9945`, Rosetta `:9953`, Juno `:10011`, Magellan `:10723`, Pioneer `:18231`, Viking `:18365`, VEX `:27809`); `odf.rs` steht, `doppler.rs` absent. `estrack.esa.int` hat kein Datenportal. **Riss:** σ_recon ist NICHT ein Doppler-Residual, sondern die 1-σ-Kovarianz der ESOC-Post-Flyby-Recon-Ephemeride (`ephemeris_juice_recon.bin` 404; river-139 `:74-79`, gate `flyby_ephemeris_gate.rs:296-307`).
+- **Blockade:** kein ESOC-Recon-Release; `doppler.rs` wird vom ODF-Residual nicht gebraucht.
+- **Braucht:** ESOC-Release abwarten (river) oder Descope-Befund für `doppler.rs`.
 
 ### IGRF-Koeffizienten-Arm (`geomag_lat`)
-- **Status:** eigen | **Bindung:** mycelium (`ci-check`-Verdikt)
+- **Status:** eigen | **Bindung:** mycelium (`ci-check`-Lauf)
 - **Trigger:** CI-Test `synthesis_matches_pyigrf14_witness_points` grün
-- **Lage:** (gemessen 2026-10-07 271) Grad-13-Synthese gebaut, `igrf.rs` formatiert; Witness-Test läuft nur in CI. `ci-check` wird als `cancelled` mit 0 Jobs verdrängt (`.github/workflows/ci-check.yml:18-20` `cancel-in-progress: false`).
+- **Lage:** (gemessen 2026-10-09 281, gefaltet mycelium-271) Grad-13-Synthese + `igrf.rs` stehen. `ci-check` trägt **kein** `push:` mehr (nur `schedule`+`workflow_dispatch`) — die Verdrängung ist geheilt. Offen: ein nicht-cancelled `ci-check`-Lauf.
 - **Blockade:** kein nicht-cancelled `ci-check`-Lauf.
-- **Braucht:** ein nicht-cancelled `ci-check`-Lauf (Test grün). Mycelium-Feder (`ci-check`-Workflow).
+- **Braucht:** `gh workflow run ci-check.yml` (Mycelium) oder Nächst-Schedule.
 
 ### Lizenz-Disposition — `terms`-Feld (SPDX); `rights_read` offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
-- **Trigger:** `rights`-Parse-Arm steht
-- **Lage:** (gemessen 2026-10-07 271) `rights`-Parse-Arm gebaut (`87aed0b14`); Riss: Baum-`terms`-Zahl vs. Census (2246 no-terms).
-- **Blockade:** je-Quelle-`terms`/`rights`-Zeilen sind ein Sweep.
-- **Braucht:** `rights`-Register-Zeilen schreiben (DataCite-Triple, SPDX, `NOASSERTION`/`NONE`); `license_census`/`ci-gate` nachführen.
+- **Trigger:** `terms`-Zeilen je Quelle geschrieben
+- **Lage:** (gemessen 2026-10-09 281 via `license_census`) **blocks 2697 · terms 1257 · distinct 11 · no-terms 1164 · pending 1440 · 0 violation(s)** (vorher terms 171). **1086 `terms PD <url>`-Zeilen geschrieben** (NASA/JPL/PDS/NOAA: naif 592 · PDS-SBN 390 · ssd.jpl 32 · pds-ppi 23 · pds-rings 19 · ipac 15 · NOAA-Hosts). Vokabular (geschlossen, `license_census.rs:9-22`): `unbestimmt` = unbestimmt, `ohne-lizenz` = reserved; **`NOASSERTION`/`NONE` sind NICHT im Vokabular**.
+- **Blockade:** die restlichen 1164 `no-terms`-Blöcke sind ein Sweep; 92 Blöcke ohne `format`/`origin` (kein Anker) + 81 Mehrfach-Host-Blöcke (Riss) offen.
+- **Braucht:** Rest-`terms` schreiben (Anchor fehlt für 92; 81 Mehrfach-Host-Blöcke per Hand auflösen); `license_census`/`ci-gate` nachführen.
 
 ### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`)
 - **Status:** eigen | **Bindung:** eigen (Gate/Fixture)
-- **Trigger:** Ersatzmuster (`unwrap_or`/Default-Fill) in Produktion gemessen
-- **Lage:** (gemessen 2026-10-08 277) Inventar `state/future/giftkarte-klassifiziert-src-2026-10-07.md` exists (gitignored), veraltet; die genannten „Ersatzmuster" sind gemessene Falsch-Positive (`astrometry.rs:10/336`, `odp.rs:9/48`).
-- **Blockade:** welches Muster Hart-Block (Fixture) vs. Review = Rat; neues Inventar nötig.
-- **Braucht:** Inventar auf den heutigen Baum nachführen (Produktions-`unwrap_or`/Default-Fill ohne Test-Region); Fixture-Kandidaten in `commit_gate_vocab.json` prüfen.
+- **Trigger:** Kandidat in Produktion gemessen
+- **Lage:** (gemessen 2026-10-09 281, Scan Prod ohne Test-Region) 7 Kandidaten: `channels.rs:119` (Receiver-Presence absent → Anker-Koordinaten substituiert); `ck.rs:164` (Uhr-`msf` 1.0 fabriziert); `double.rs:167/170/173` (Farbe/Fluss/Rotverschiebung → NaN-Datenmarker); `fits.rs:796-799` (CRPIx/R_SUN/DATAMEAN → NaN); `hdf5.rs:1965` (`scale_type` 2 fabriziert); `weberin.rs:1877-1879` (Winkel-Separationen → NaN); `gate/axioms.rs:6` (`unwrap_or_default` — fehlende `granit.md` → leer, kein `pending`). `unwrap_or_else`/`#[derive(Default)]`/`_ => 0`/`max(1)` = 0 Produktions-Treffer.
+- **Blockade:** welcher Kandidat Hart-Block (Fixture) vs. Review = Rat; `unwrap_or(f64::NAN)` fehlt als Fixture.
+- **Braucht:** je Kandidat Fix (Option statt NaN) oder Fixture + Gate-Test; Fixture-Kandidaten in `commit_gate_vocab.json` prüfen.
 
 ### HadISST SST — SOURCE_PORT gebaut, CI-Lauf offen
 - **Status:** eigen | **Bindung:** mycelium (CDN)
@@ -87,33 +88,32 @@ Wort | Datum | Quelle
 ### `blocked_sources.φ`-Aufräumen — Klassen-Träger (`gap`-Token)
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
 - **Trigger:** Bau je Klassen-Träger
-- **Lage:** (gemessen 2026-10-09 280) Klassen-Vollstreckung ausgeführt (`bd0e34fcf`): 213→130 Z., 20 Moves nach `ledger.φ` `ausstehend`, 11 `parser-def`-Retags + `gap`. Die drei gemeldeten Risse sind geschlossen: `limadou` (Dublette wartend.φ:5) entfernt; `vco_rs` (in `sources.φ:27800+` integriert) entfernt; `cluster_ka` (in `sources.φ:19486` integriert, generischer `asu-tsv`-Arm) entfernt. **Offen: 11 Klassen-Träger** `phi/blocked_sources.φ::gap:bc-mpo-more · tracking-doppler · mariner-rst · viking-tracking · juno-efb · dmap-map-grid · kaguya-lrs · leos-cses · themis-tail · mms-magnetosheath · aurora-keogram ×1` — je Arm/Zeile zu bauen oder `refused`/`pending` mit Trigger.
+- **Lage:** (gemessen 2026-10-09 281) Klassen-Vollstreckung (`bd0e34fcf`) + Risse geschlossen: `limadou`/`vco_rs`/`cluster_ka` entfernt; `covariate-carrier` gebaut (GHSL in `sources.φ:794-800`); LEOS auf `pending` Auth-Route (gap entfällt); **`openmadrigal-api` gebaut** (Arm `src/archivar/openmadrigal.rs`, `extract.rs:202/4302`, `sources.φ:27808-27813`). **Offen: 10 `gap`-Träger** `bc-mpo-more · tracking-doppler · mariner-rst · viking-tracking · juno-efb · dmap-map-grid · kaguya-lrs · themis-tail · mms-magnetosheath · aurora-keogram ×1` — je Arm/Zeile zu bauen oder Disposition.
 - **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile).
 - **Braucht:** je Träger Arm/Workflow/`sources.φ`-Zeile bauen oder Disposition registrieren.
-
-### LEOS-Riss — `blocked_sources.φ` vs. Open-Sources-Delta
-- **Status:** eigen | **Bindung:** eigen (Disposition)
-- **Trigger:** Re-Messung der LEOS-Route
-- **Lage:** (gemessen 2026-10-08 279) `phi/blocked_sources.φ` LEOS-Eintrag trägt `pending` (Zeile driftet); `survey-2026-10-08-open-sources-delta.md:75/133` misst `206` (user-gated).
-- **Blockade:** Zeilen-Drift + zwei Fassungen.
-- **Braucht:** LEOS-Zeile am Baum festnageln, `206 user-gated` als `pending`/Auth-Route registrieren (nie `declined`, Auth kein Ausschluss).
 
 ## An river
 
 Origin: mountain-folge280.
 
-- **`main_flow.rs` sauber:** der Fremd-Commit (river-138) ist gelandet. Der eigene Format-Listen-Hunk (`superdarn_cpcp`/`ssusi_aurora`/`wdc_ae`/`bpa_gic`) steht (277).
-- **Receiver:** river-138 (`DeclaredBody` + `#aperture=`) — ob der GIC-Force-Deskriptor den Reader nutzt, ist die nächste Messung (GIC-Stufe-2).
+- **`main_flow.rs` sauber:** der Fremd-Commit (river-138) ist gelandet; der Format-Listen-Hunk steht (277).
+- **GIC-Stufe-2:** der positionale Geo-Serien-Arm nutzt den Receiver-Reader (`main_flow.rs:4518-4527`) — die frühere Blockade „ob der GIC-Force-Deskriptor den Reader nutzt" ist gelöst.
+- **`em nmgy`-Verdikt:** `quantity … em …` ist kein Arm (`quantity_kind_of("em")`=None); `flux_g` bleibt `quantity … scale nmgy … band …` (`sources.φ:19686`) — kein Bau, der Riss ist als Verdikt geschlossen.
 
 ## An mycelium
 
 Origin: mountain-folge280.
 
-- **`themis_mag`-CDN-Orphan (neu).** Der THEMIS-Routenwechsel ist ausgeführt (`2328b58a2`): `themis_mag` liest jetzt live CDAWeb HAPI `THG_L2_MAG_ABK` (Felder A=A `themis_gmag_h/e/z_nt`). Folge: das alte `themis_mag.bin`-Release-Asset und `tools/harvest/src/bin/themis_mag_compiler.rs` sind verwaist → aus dem CDN-Release entfernen (bzw. `themis-mag-cdn.yml` auf den CDAWeb-HAPI-Pfad umstellen).
-- **`emtf-cdn.yml` neu dispatchen** — der EMTF-Format-Arm ist verdrahtet (`main_flow.rs` `emtf_impedance`), das Bin-Format ist 16-B-Header (Epoch); das alte CDN-Asset ist alt-Format.
-- **KC2G-Parser geheilt** (`1ed930b82`, mountain-274): `kc2g_stations.rs` liest `station.latitude`/`longitude` — CDN-`failure`-Lauf obsolet, neu dispatchen.
-- **`ci-check` verdrängt jeden Lauf** (`.github/workflows/ci-check.yml:18-20` `cancel-in-progress: false`); Fix nötig (IGRF-Witness).
-- **`hadisst-cdn.yml`** dispatchen.
+- **`ci-gate` Per-SHA-Verdikt — Mountain-Verdikt (Dateninvariante):** der dauerhafte Verdikt ist die **totale Funktion `SHA → {grün,rot,pending}`, Default `pending`**, als **Ergebnis-Register** — nicht als CI-Config: eine append-only Zeile je SHA (`<sha> <grün|rot|pending> <run-id> <date>`), gelesen von `register_lookup --ci <sha>`; eine SHA ohne Eintrag = `pending` (nie grün). **Riss:** ein getracktes Register (Kanon-Akt) würde jede CI-Zeile committen (Lärm); der Verdikt ist Lauf-Eigenschaft, der Eintrag die Persistenz. **Braucht:** Operator/Rat-Wort für den Ort (getracktes Register vs. lokaler Zustands-Speicher), dann baut Mountain Register + Abfrage.
+- **`LICENSE`/`README` `omegaflow/sources` — terms-Ernte:** 1086 `terms PD <url>`-Zeilen geschrieben (NASA/JPL/PDS/NOAA); `license_census`: **terms 1257 · no-terms 1164 · 0 violation(s)** (vorher terms 171). Rest 1164 folgt. Mycelium kann `LICENSE`/`README` aus den terms erzeugen.
+- **Pipeline INPE-BIG — Verdikt liegt schon vor:** `data.inpe.br/big/` ist **declined** (`declined_sources.φ:1451-1452`, `registry/katalog`, Rat 2026-10-07); kein Einzel-Asset → keine Ernte-Verdrahtung.
+- **Gegen-Audit (Quellen-Delta) — Admission:** der Survey prüfte nur `sources.φ`; die Tree-Messung zeigt mehrere „neue" Quellen bereits declined/registriert (LEOS `blocked_sources.φ:70-72`, HI4PI `declined_sources.φ:4324`, SDO/AIA `:3284`, SkyView `:4096`) — **Tree schlägt Survey**. **Admit** (em/plasma): LAB/EBHIS/GASS/GALFA-HI (21 cm), Planck-PLA/LAMBDA/ACT-NERSC/SPT-3G (CMB), IRIS/SPICE/Solar-Orbiter. **Decline:** VSO/HEK (aggregate-index). **Pending:** Simons Observatory, CMB-S4, LiteBIRD; ACT-princeton (Cloudflare). Lines schreibt SOURCE_PORT.
+- **Manifestation der neuen Routen:** THEMIS (live HAPI `H/E/Z`), ROTI (`sources.φ:1629-1635`), SuperDARN-CPCP-NC (`:4124-4131`), Zenodo-CPCP `10875060` → `superdarn_cpcp_nc`, cluster_ka (`:19486`) sind **live registriert** (url/format) — **kein** CDN-Asset nötig. Kein offener Manifestationspunkt.
+- **`canonical_point_key`/`dropped-gate` — Mountain-Verdikt:** (a) **Nein** — nicht auf kurze Namens-Köpfe begrenzen (`match_prefix` min 6 kollidiert distinct Punkte, invalidiert 927 Altschlüssel); der stabile Namensraum ist bereits `**ID:** <slug>` (`explicit_point_id`, `register_lookup.rs:2418`), das `canonical_point_key` vorrangig liest. (b) **Ja** — `collect_handovers` liest `archiv/` bereits (`HANDOVER_DIRS` trägt `docs/handover` und `docs/handover/archiv`, `:1939/:2481`). Kein Code-Change; Prosa-Drift auf unmarkierten Zeilen heilt die deklarierte Rebaseline (Rat 2026-10-07).
+- **`emtf-cdn.yml` neu dispatchen** — EMTF-Format-Arm verdrahtet (`main_flow.rs` `emtf_impedance`), Bin-Format 16-B-Header; das alte CDN-Asset ist alt-Format.
+- **KC2G-Parser geheilt** (`1ed930b82`) — neu dispatchen.
+- **`hadisst-cdn.yml`** dispatchen (Compiler-Dim-Toleranz in mycelium-272 geheilt).
+- **`ci-check`-Lauf** (IGRF-Witness) — Verdrängung geheilt, ein nicht-cancelled Lauf fehlt.
 - **Route-Admissionen** manifestieren, sobald Mountain die Zeilen/Arme baut.
 
 ## LOCK
@@ -122,6 +122,6 @@ Origin: mountain-folge280.
 
 ## Abschluss
 
-Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (stehendes Wort 2026-10-07, Mountain 264).
+Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (dieser Atom: `/commit`).
 
-Eigene Pfade: `src/archivar/parse.rs` · `src/archivar/tests.rs` · `src/archivar/superdarn_cpcp.rs` · `tools/harvest/src/bin/impc_roti_compiler.rs` · `phi/blocked_sources.φ` · `docs/handover/handover-2026-10-09-mountain-folge280.md` · `docs/handover/archiv/handover-2026-10-08-mountain-folge279.md` (Move).
+Eigene Pfade: `phi/sources.φ` · `phi/blocked_sources.φ` · `src/archivar/openmadrigal.rs` · `src/archivar/mod.rs` · `src/archivar/extract.rs` · `docs/handover/handover-2026-10-09-mountain-folge280.md`.
