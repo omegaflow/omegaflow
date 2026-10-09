@@ -2,7 +2,7 @@
   title: Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
   class: survey
   date: 2026-10-09
-  sha256: d64f05e66bd96fa6e347f94201e22daf401d01c33dbfde0cae8d74ca73c19216
+  sha256: 3d5e7ae88a11c4b24a2c03785e8fbe0cd2621654942a949b16e13f6dc2d805dd
   status: live
 -->
 # Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
@@ -174,3 +174,31 @@ die übrigen sind **Daten-Wiederverwendungs**-Alternativen, keine neuen Felder. 
 **Konsequenz:** die 23 `schon-da` brauchen keine Zulassung — die Messung ist zurück;
 die 13 `neu-zulassen` sind Mountains Re-Admission (dann Mycelium-CDN); die 5
 `blockiert` bleiben.
+
+### Weberin-Eignung — der eigentliche Maßstab
+
+Die Weberin trägt **Weltlinien** (Kette: Direction · Body · Station) und einen
+**Schuss** (Verdict · TE · Abstammung) — ein Quell ist weberin-fähig, wenn er
+(a) eine **Weltlinie mit gemessenem Skalar-Series** trägt (Station/Body/Direction),
+die per TE zwirnbar ist, oder (b) ein **Zeuge** ist: S²-Direction (ra/dec +
+Energie, τ=0), räumliche Gestalt (Binding, z. B. `dust-maske.φ`) oder Presence.
+**Kein Zeuge:** Modell/Forecast, Katalog/Registry, Bild/Tile, position-only,
+statisches Raster ohne Messwert (`die-weberin.md:128`; `survey-2026-09-13-weberin-quellen.md`).
+
+Damit sind von den **13 `neu-zulassen`** nur **2 weberin-tauglich**:
+- **`giro.uml.edu/didbase`** (foF2) — Ionosonde-Station, Zeitreihe → **Station-TE-Faden**.
+- **`ds.iris.edu`** (Hydroakustik) — Station, akustische Zeitreihe → **Station-TE-Faden**.
+- `globalfloods.eu` (GloFAS) — **Forecast → kein Zeuge**.
+- `data.mendeley.com` (GNIP) — Isotop-Station, dimensionslose Reihe → **Kontrakt-Riss**, kein Kraft-Faden.
+- die übrigen (OSM-Tiles, RouteViews, Forest Watch, transport, carbonintensity, AIS, ADS-B) — **keine Weltlinie, kein Zeuge**.
+
+Von den **23 `schon-da`** sind die echten Weberin-Fäden schon da: **INTERMAGNET**
+Station-Magnetometer-Reihen (der Exempel-Zwirn `station_convergence_probe`),
+**NDBC** (Boje/Station), **JPL SSD** (Body-Kette), **SWPC/NCEI** (Station/Feld),
+**Open-Meteo** (Wetter-Station, thermal), **TeVCat** (S²-Direction-Zeuge);
+Copernicus/Sentinel = Gestalt-Binding, GOES GLM = Presence-/Event-Zeuge.
+
+**Kern:** der Redistributions-Filter hat viele **Daten**-, aber nur wenige
+**Weberin**-Quellen betroffen. Die verlorenen Weberin-Fäden (Magnetometer,
+Seismik, Infraschall, Gravimeter) sind über die zugelassenen freien Quellen
+bereits rückgeholt; neu bleibt allein **GIRO** und **ds.iris.edu**.
