@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: a159a73f4d3742ae4f4a1c9917165fe3a3da27cbc6ec5fb3a9504c44b56db3e0
+  sha256: 1f8f97af50cd53d33904007ed6891397a345c89fffdb6cf5678a4500aa835466
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -156,8 +156,10 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   Kanalzahl; `color_index`/`force_type`-Semantik neu binden.
 
 ### P10 — `phi`-Register: `force` → Quantity | Mechanism | Medium (Register-Physik)
+**Operator-Wort 2026-10-09 („alle Blöcke müssen korrekt sein, dafür haben wir die Wissenschaft"): die Migration läuft; jeder `field`-Block wird wissenschaftlich geprüft.** P10.1 ist gebaut und gemessen (`source_physics_lint`, 2026-10-09/10): `phi/sources.φ` = **7989 `field` · 24 `quantity` · 90 Geometrie-Kandidaten**; `em × inverse-square: 6002` (~75 %). P10.2a unten ist das **verbindliche Zielschema**; der Parser-Arm dafür (River) ist der nächste Bau, dann die Zeilen (Mountain).
+
 Gemessen 2026-10-09 (`state/stimmen/2026-10-09-river-register-physik.md`): die `force`-Spalte
-in `phi/sources.φ` (7972 `field`-Zeilen; em 6088 …) trägt **Kategorie-Etiketten**, keinen
+in `phi/sources.φ` (7989 `field`-Zeilen; em ~6013) trägt **Kategorie-Etiketten**, keinen
 Ausbreitungsweg. Die Idee trägt, die Materialisierung ist falsch.
 - **P10.1 (erster, autonomer Schritt — der lesende Lint):** ein **rein lesendes** Werkzeug über
   `phi/sources.φ` (und die weiteren `field`/`force`-Register `declined_sources.φ`,
@@ -165,7 +167,7 @@ Ausbreitungsweg. Die Idee trägt, die Materialisierung ist falsch.
   Es gruppiert `force × kernel`, zählt, nennt je Gruppe 2–3 Beispielzeilen und meldet
   Geometrie-/Quellparameter (Tiefe, Distanz, Höhe, Magnitude) sowie die `em`/`electric`-Überlappung —
   die **Messung**, woher die 6088 `em` stammen. Kein Verdikt, keine Schreiboperation.
-- **P10.2a — Normalize-Schema (Rat-Entwurf 2026-10-09, additiv, noch nicht geschrieben):**
+- **P10.2a — Normalize-Schema (Rat-Entwurf 2026-10-09; verbindlich per Operator-Wort 2026-10-09, additiv):**
 ```
 field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau> [abs] [adv]
 quantity <id> <quantity> <role> <medium> <unit> <tau>     # force_type=255, tritt nie in Σω ein

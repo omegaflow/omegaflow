@@ -45,9 +45,10 @@ Wort | Datum | Quelle
 „ja natürlich die membran ist und bleibt ein schnitt durch den 4d block egal ob jemand hinschaut oder nicht (schrödingers katze)" | 2026-10-09 | Operator (Session, River 160) — die Messung ist beobachterunabhängig
 „ist es denn korrekt den doppler zu löschen? … ich möchte eben keinen observer bias ich möchte eine agnostische presence" | 2026-10-09 | Operator (Session, River 160) — der Doppler ist nicht an sich Bias; `v_obs` (= `self.v`, Operator-Thrust, `omega.rs:658`) gestrichen, die agnostische **Quellen-Weltlinien-Form** gebaut (`dot(fm.yzw, n̂)`, Empfänger ruht am Schnitt)
 „ich würde sagen oder das ist wahr" | 2026-10-09 | Operator (Session, River 160) — bestätigt die A=A-Regel: **der Wert hängt nur von Koordinaten und deklarierten Weltlinien ab, nie vom Blick**; freies Bewegen = Wahl des Schnitts, freies Drehen = Wahl des Rahmens/Blicks — beide ändern den Block nicht
+„ja ich meine alle blöcke müssen korrekt sein dafür haben wir doch die wissenschaft" | 2026-10-09 | Operator (Session, River 160) — **P10-Wort**: die Register-Physik-Migration läuft; **jeder** `field`-Block wird wissenschaftlich geprüft und korrekt etikettiert (Quantity \| Mechanism \| Medium)
 
-Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Fünf neue Worte in
-River 160 (die letzten fünf Register-Zeilen). Vorherige Worte in
+Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Sechs neue Worte in
+River 160 (die letzten sechs Register-Zeilen). Vorherige Worte in
 `docs/handover/archiv/handover-2026-10-09-river-folge159.md` §Operator-Wort-Register — gefaltet,
 nicht kopiert.
 
