@@ -371,8 +371,9 @@ fn presence_probe() {
     let count = u32(vp.surface.z);
     var omegas = array<f32, CHANNEL_CAP>();
     var dist = array<f32, CHANNEL_CAP>();
+    var radial = array<f32, CHANNEL_CAP>();
     var wsum = array<f32, CHANNEL_CAP>();
-    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { omegas[i] = 0.0; dist[i] = 0.0; wsum[i] = 0.0; }
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { omegas[i] = 0.0; dist[i] = 0.0; radial[i] = 0.0; wsum[i] = 0.0; }
     var flow = vec3f(0.0);
     let dt = vp.presence.w - vp.expose_ex.y;
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
@@ -398,7 +399,11 @@ fn presence_probe() {
             omegas[f] += c.x;
             let w = abs(c.x);
             if (w > 0.0) {
-                dist[f] += w * length(propagated - vp.presence.xyz);
+                let rel = propagated - vp.presence.xyz;
+                let d = length(rel);
+                let n = select(vec3f(0.0), rel / d, d > 0.0);
+                dist[f] += w * d;
+                radial[f] += w * dot(fm.yzw, n);
                 wsum[f] += w;
             }
         }
@@ -448,6 +453,7 @@ fn presence_probe() {
     probe_out[CHANNEL_CAP + 2u] = flow.z;
     for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {
         probe_out[CHANNEL_CAP + 3u + i] = select(0.0, dist[i] / wsum[i], wsum[i] > 0.0);
+        probe_out[CHANNEL_CAP + 3u + CHANNEL_CAP + i] = select(0.0, radial[i] / wsum[i], wsum[i] > 0.0);
     }
 }
 "#;
