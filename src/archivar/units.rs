@@ -76,6 +76,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "ug/m3" | "ug/m³" | "µg/m3" | "µg/m³" => Some(value * 1e-9),
         "ua/m2" | "ua/m²" | "µa/m2" | "µa/m²" => Some(value * 1e-6),
         "mv/m" => Some(value * 1e-3),
+        "mv/km" => Some(value * 1e-6),
         "us/cm" => Some(value * 1e-4),
         "uatm" => Some(value * 0.101325),
         "erg/cm2" => Some(value * 1e-3),
@@ -497,7 +498,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "decibar", "npa", "deg", "mm", "m/s2",
         ],
         8 => &[
-            "v/m", "v", "a", "ka", "kv", "s/m", "ua/m2", "mv/m", "us/cm", "m/s", "1", "%",
+            "v/m", "v", "a", "ka", "kv", "s/m", "ua/m2", "mv/m", "mv/km", "us/cm", "m/s", "1", "%",
         ],
         _ => &[],
     }

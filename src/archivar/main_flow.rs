@@ -3122,6 +3122,7 @@ pub fn main_flow() {
                     | "superdarn_cpcp_nc"
                     | "supermag_index"
                     | "swpc_efield"
+                    | "usgs_geomag_efield"
                     | "ssusi_aurora"
                     | "carisma_mag"
                     | "swarm_fac"
