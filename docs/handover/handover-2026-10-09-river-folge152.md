@@ -3,7 +3,7 @@
   session: River-Folge 152
   class: handover
   date: 2026-10-09
-  sha256: bbaef13761380480d29ae0273d3f8b52fb4572cf5b2fe7bef7ac837cbcde8562
+  sha256: f8ebee24f6c0ff852caac5db0928891b62b7f93ed725a44e6dbc32c037d49d60
   status: live
 -->
 # Handover — River-Folge 152 (2026-10-09)
@@ -46,6 +46,7 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 
 ## Träger (Prosa, eigene)
 
+- `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske).
 - `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P1.1–P1.8 + P2.2 + P2.3/P0.5-Tonkern + P2.4(Circle>9) gebaut** (river-147…151); **Schema-Erweiterung `role`+`pde_type`** (river-150). **P9.1 Parse-Primitiv gebaut (river-152):** `ChannelDescriptor::parse_spec` + Token-Parser je Enum + `is_admissible`-Prüfung in `src/mathematikerin/channel.rs`; die Register-Form ist `conserved:role:op:pde_type:medium:domain:boundary` (+ deklarierte unit), die Direktive-Verankerung in `parse.rs` ist P3.3-gekoppelt.
 - `state/stimmen/2026-10-09-river-kanal-zulassung-frontier.md` — Rat + Wissenschaft (`--all`) + UI (Duck/Qwen/Z.ai; Claude pending) + Open-Weight (DeepSeek V4 Pro/GLM 5.3/Inkling) zur Zulässigkeitsrelation.
 - `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` — Rat + Wissenschaft + UI + Open-Weight zum deskriptorgetriebenen Ton-Modell (P0.5); die M-Achse (Geometrie/Symmetrie auf `Medium`) als fehlender Arm benannt.
