@@ -145,6 +145,7 @@ fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
             scale: 1.0,
         },
         format: format.into(),
+        channels: Vec::new(),
         extracts,
         headers: vec![],
         post_body: None,
@@ -871,6 +872,7 @@ fn test_render_source_url_substitutions() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![],
         post_body: None,
@@ -1155,6 +1157,7 @@ fn test_post_body_rendering() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![("Content-Type".into(), "application/stac+json".into())],
         post_body: Some(
@@ -1231,6 +1234,7 @@ fn test_csv_zip_post_body_resolves_secret() {
             alt: 0.0,
         },
         format: "csv_zip".into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![("user-agent".into(), "{TNS_UA}".into())],
         post_body: Some("api_key={TNS_API_KEY}".into()),
@@ -1351,6 +1355,7 @@ fn test_celestial_map_redshift_distance() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -1459,6 +1464,7 @@ fn test_extract_csv_zip_end_to_end() {
             scale: 1.0,
         },
         format: "csv_zip".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -1783,6 +1789,7 @@ fn test_extract_cmap_dist_scale_kpc() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -1884,6 +1891,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -1980,6 +1988,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -2073,6 +2082,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -2174,6 +2184,7 @@ fn test_extract_cmap_pm_radvel_plx() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -2307,6 +2318,7 @@ fn test_extract_cmap_no_distance_skipped() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -2397,6 +2409,7 @@ fn test_extract_cmap_null_dist_skipped() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -2692,6 +2705,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
             scale: 1.0,
         },
         format: "csv".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "RAdeg_HI".into(),
@@ -3892,6 +3906,7 @@ fn test_parse_station_entries() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![],
         post_body: None,
@@ -3954,6 +3969,7 @@ fn test_parse_station_entries_flatten_filter() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![],
         post_body: None,
@@ -5034,6 +5050,7 @@ fn test_erddap_argo_map_extract() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Map {
             arr_path: "table.rows".into(),
             lat_key: "2".into(),
@@ -5770,6 +5787,7 @@ fn test_anchor_body_agnostic() {
         rights_uri: None,
         frame,
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::Field(FieldConfig {
             key: "v".into(),
             name: "v".into(),
@@ -5935,6 +5953,7 @@ fn test_anchor_applies_declared_unit() {
         rights_uri: None,
         frame,
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![],
         post_body: None,
@@ -8433,6 +8452,7 @@ fn test_diagnose_no_samples() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Map {
             arr_path: "features".into(),
             lat_key: "geometry.coordinates.1".into(),
@@ -8556,6 +8576,7 @@ fn test_ci_body_verdict() {
             alt: 0.0,
         },
         format: format.into(),
+        channels: Vec::new(),
         extracts: vec![],
         headers: vec![],
         post_body: None,
@@ -8771,6 +8792,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Map {
             arr_path: ".".into(),
             lat_key: "latitude".into(),
@@ -8878,6 +8900,7 @@ fn test_map_vel_unit_and_tau_key_override() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Map {
             arr_path: "data".into(),
             lat_key: "lat".into(),
@@ -9146,6 +9169,7 @@ fn test_fold_directive_parse_and_extract() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Map {
             arr_path: "data".into(),
             lat_key: "lat".into(),
@@ -9294,6 +9318,7 @@ fn test_keplermap_elements_to_icrs() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::KeplerMap {
             arr_path: "data".into(),
             a_key: a_key.into(),
@@ -9635,6 +9660,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Flatten {
             arr_path: "rows".into(),
             geom_path: "pts".into(),
@@ -9730,6 +9756,7 @@ fn test_flux_from_mag_manifests() {
             scale: 1.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::CelestialMap {
             arr_path: ".".into(),
             ra_key: "ra".into(),
@@ -9826,6 +9853,7 @@ fn test_map_lat_sign_lon_sign() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::Map {
             arr_path: "data".into(),
             lat_key: "3".into(),
@@ -9946,6 +9974,7 @@ fn test_mag_type_gating() {
             alt: 0.0,
         },
         format: "json".into(),
+        channels: Vec::new(),
         extracts: vec![super::Extract::Map {
             arr_path: "data".into(),
             lat_key: "lat".into(),
@@ -11581,6 +11610,7 @@ fn fits_format_extracts_last_row() {
         rights_uri: None,
         frame: Frame::Manifest,
         format: "fits".into(),
+        channels: Vec::new(),
         extracts: vec![Extract::Last(fc, None)],
         headers: vec![],
         post_body: None,
