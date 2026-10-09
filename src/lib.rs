@@ -110,6 +110,7 @@ pub use archivar::superdarn_cpcp;
 pub use archivar::supermag_index;
 pub use archivar::suprastrom;
 pub use archivar::swarm_fac;
+pub use archivar::swpc_efield;
 pub use archivar::tdat;
 pub use archivar::themis_mag;
 pub use archivar::thermochem;

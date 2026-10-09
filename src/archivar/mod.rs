@@ -188,6 +188,7 @@ pub mod superdarn_cpcp;
 pub mod supermag_index;
 pub mod suprastrom;
 pub mod swarm_fac;
+pub mod swpc_efield;
 pub mod tdat;
 pub mod themis_mag;
 pub mod thermochem;

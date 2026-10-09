@@ -60,7 +60,7 @@ note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt;
 blocked parser-def
 url https://superdarn.ca/data-download
 gap dmap-map-grid
-note MAP-Grid RST (DMap) — 2026-10-05: Globus-Zugang (`GLOBUS_ID_USER/PASS`, wartend.φ:8 superdarn-af68c4f1, Aufnehmer mycelium); ascii nur FITACF, MAP-RST nur Globus/BAS-Mirror. Arm fehlt.
+note MAP-Grid RST (DMap) — 2026-10-09: DMap-Kern + `map_grid_value` gebaut (`src/archivar/dmap.rs`, vector.vel.median/kvect); offen: Globus-Zugang (`GLOBUS_ID_USER/PASS`, wartend.φ:8, Aufnehmer mycelium).
 
 blocked parser-def
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
@@ -120,5 +120,5 @@ note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein 
 
 blocked parser-def
 url https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
-gap geojson-efield
-note NOAA SWPC Geoelektrisches Feld (GIC §A) — 2026-10-09: Apache-Index 200; Frames `<YYYYMMDDThhmmss>-15-Efield-US-Canada.json` (~1,1 MB GeoJSON). GeoJSON-E-Feld-Reader fehlt.
+gap efield-series
+note NOAA SWPC Geoelektrik (GIC §A) — 2026-10-09: Reader `swpc_efield` gebaut (Ex/Ey mV/km, FeatureCollection); offen: Serien-Compiler (zeitvariierende `<ts>-15-Efield-*.json`, kein latest-Endpoint).
