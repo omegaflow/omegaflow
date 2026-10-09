@@ -3,7 +3,7 @@
   session: River-Folge 142
   class: handover
   date: 2026-10-09
-  sha256: 7ccbe4090bdcc0ac9b78221e98c3abafc516660ecc8b509932ebee10bba71be0
+  sha256: 1738310593e412460dc93265b838dc8a8e3934a58a14ccf11d7512f9aa45125c
   status: live
 -->
 # Handover — River-Folge 142 (2026-10-09)
@@ -43,6 +43,8 @@ Wort | Datum | Quelle
 „du kannst doch jedes modell in trying open auswählen" | 2026-10-09 | Operator (Session, River 142) — Modellwahl verifizieren statt Fallback melden
 „du musst auch die fähigkeiten und stärken der modelle gewichten … low tier und frontier [nicht] in einen topf" | 2026-10-09 | Operator (Session, River 142) — Stimmen nach Fähigkeit gewichten
 „auf jeden fall bleibt" | 2026-10-09 | Operator (Session, River 142) — **Entscheidung: der 9-Partial-Bau bleibt**; `v_k`→Delay/Phase bleibt benannter `pending`-Nachbau
+„aber warum 9 aperturen ist das in stein gemeisselt ich will keinen pragmatismus wenn es nicht A=A ist" | 2026-10-09 | Operator (Session, River 142) — die feste 9 ist kein A=A; Kanalzahl muss abgeleitetes Datum sein, nicht Typ-Konstante
+„bitte vermesse nochmal die sources und die anderen phi dateien stimmt ihr format physikalisch oder waren wir die ganze zeit auf dem holzweg bitte auch mit wissenschaft rat ui und openweight voices" | 2026-10-09 | Operator (Session, River 142) — Register-Physik prüfen
 Verbatim: `state/operator-gespraeche/2026-10-08-river.md`; das neue Wort ist in derselben Session zu schneiden. Vorherige Worte: `docs/handover/archiv/handover-2026-10-09-river-folge141.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -55,11 +57,13 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`; das neue Wort ist in 
 - `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13); WP13-Fixtures gebaut (`47706add5`).
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — Sonnen-Render-Archäologie nebra→HEAD + Kanal-Runden-Verdikt.
 - `state/stimmen/2026-10-09-river-acoustic-partials.md` — Rohprotokoll der vollen Stimmen-Runde (Rat + UI + Open-Weight).
+- `docs/concepts/kanal-ontologie-komplettbau.md` — **der komplette Bauplan** (feste 9 → Kapazität 2ⁿ + lebendiges n; Phasen P0–P9); Träger dieser Linie.
 
 ## An mountain
 
 Origin: river-142 (fortgeschrieben aus river-141).
 
+- **Kraft-Taxonomie — Stimmen-Runde (Nachtrag 2026-10-09).** (gemessen 2026-10-09, Frontier+Mid) Near-unanim: `electric` ⊂ `em`; `thermal` ≡ `diffusion` (gleiche PDE); `acoustic`/`seismic-body`/`seismic-surface` = ein elastisches Medium (Vorschlag `elastic` + Modus-Parameter); fehlend chemisch/Teilchenstrahlung/quasistat. Magnetfeld; `strong`/`weak` explizit als out-of-scale ausschließen; sauberer Feld × Transportkern × Medium als Produkt. **Braucht:** Operator-Wort (Taxonomie ist deine Register-Domäne); Protokoll `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md`. Ich habe **nichts** in `phi/sources.φ` geändert.
 - **`channels.rs:119` per-Quelle-Deklaration — der Ort ist entschieden.** (gemessen 2026-10-09) Die per-Quelle-Deklaration des Fanout-Zentrums lebt in `phi/sources.φ` als Direktive `fanout_center <receiver|anchor>`, geparst in `src/archivar/parse.rs` neben `fanout`/`fanout_delay`/`stations` (`:1766-1783`) in ein neues `SourceConfig.fanout_center: Option<QueryCenter>` (`src/archivar/types.rs:478-518`); `enum QueryCenter { Receiver, Anchor }` liegt in `types.rs`. Semantik = deklarierte Kontrolle: absent → refused, kein Default (`refusal_ledger`-Eintrag `fanout-no-receiver`); `receiver` = die Presence-Weltlinie (`presences.first()`), `anchor` = der `Frame::Surface { lat, lon }`-Punkt. In `channels.rs` fällt der `sort_center`-`.or(Frame::Surface)`-Fall (`:149-155`); der Konsument in `main_flow.rs` (`FanoutCtx`-Bau `:5819-5829`) setzt das Zentrum aus `SourceConfig.fanout_center` + der Presence. **Braucht:** du baust den Parse-Arm + `QueryCenter` + `channels.rs` nach; die Basis-`url`-Kontrolle je Quelle bleibt `pending`, wie von dir benannt.
 
 ## Offen (aufgeschlüsselt)
@@ -100,6 +104,27 @@ Origin: river-142 (fortgeschrieben aus river-141).
 - **Blockade:** keine.
 - **Braucht:** (1) ~~Body-Anker entfernen~~ **erledigt** (River 141); (2) das Feld **messen** (Enclosure-Query am SSB als Asset backen); (3) **`v_k:[f32;9]` an `PresenceFrame` anbinden** (Quelle `signal_reach`/`membrane.rs`) → Delay/Phase je Kanal — der als `pending` deklarierte §5-Achsenrest; (4) Mycelium entfernt das unbenutzte `membrane_bodies.txt`-Staging aus `pages-deploy`.
 - **Wort:** „auf jeden fall bleibt" | 2026-10-09 | Operator (Session, River 142) — der 9-Partial-Bau bleibt; `v_k` bleibt benannter Nachbau
+
+### Kraft-Taxonomie + Ton-Modell — Stimmen-Runde: Konvergenz + Riss
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-09, River 142; Frontier- + Mid-Runde + `archive_search --all` ×2) **Near-unanim über alle Tiers:** (1) `electric` ⊂ `em` — redundant; (2) `thermal` ≡/⊂ `diffusion` (gleiche PDE); (3) `acoustic`/`seismic-body`/`seismic-surface` sind **ein** Medium (elastische Wellen) → als `elastic` mit **Modus**-Parameter führen, nicht als drei Kanäle; (4) fehlend: chemisches Potential/Reaktionskinetik, ionisierende Teilchenstrahlung, quasistatisches Magnetfeld (Geomagnetik), MHD/Kapillarität; (5) `strong`/`weak` skalenirrelevant, aber **explizit ausschließen** statt still; (6) sauberer: Feld/Antrieb × Transportkern × Medium/Geometrie als Produkt statt flacher 9er-Liste. **Ton:** das harmonische `(k+1)`-Modell ist der **schwächste** Kandidat (Fusion zu einem Pitch, Oktav-/Chroma-Kollaps, Maskierung); konvergent besser: **inharmonische Partialtöne** (Membran-/Bessel-Moden `1 · 1,59 · 2,14 · 2,30 · 2,65 · 2,92 · 3,16 · 3,50 · 3,60`, oder `f_k = f0·k·√(1+Bk²)`) **+ Formant-/ERB-Bänder** pro Kanal, **Timbre-Raum** (Lautheit/Bandbreite/Decay/AM/Pan) statt Lautstärke, **granular** für Transientes, **Shepard** nur für Zyklisches. **Riss:** ein gemeinsames τ existiert physikalisch nicht (MiniMax: 9 Medien spannen >20 Zeit-Größenordnungen) → f0 nur Referenzdrohne. Protokoll: `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md`; `pending`: Z.ai Deep Think Max, Qwen-UI (Low-Tier ausgeschlossen).
+- **Blockade:** keine.
+- **Braucht:** (a) **Operator-Wort** zur Kraft-Taxonomie (Mountain-Domäne `phi/sources.φ`: `electric`/`thermal`/`acoustic` zusammenführen, neue Medien nur bei Bedarf; `## An mountain`); (b) **Operator-Wort** zum Ton-Modell (harmonisch durch inharmonisch/Bänder ersetzen?); (c) unabhängig davon bleibt die `v_k`-Bindung der nächste Bau.
+
+### Kanalzahl (A=A) + Senken-Projektion — feste 9 ist kein A=A
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** Operator-Wort zum Umbau (Kanalzahl datengetragen) + Rat-Linse.
+- **Lage:** (gemessen 2026-10-09, River 142; 4 Forschungs-Agenten + Rat + 8 Open-Weight + 5 UI) **A≠A einstimmig.** Gemessen: `[f32;9]` in `PresenceFrame.omega/aperture` (`actuators.rs:23-24`), `force_ref`/`probe_omega`/`field_permeability`/`aperture` (`omega.rs`), Relay-Wire, `static/constants.js:199`. `force_type` benennt **5–7/9 falsch** (nur em+gravity Kräfte; electric⊂em; thermal≡diffusion; acoustic/seismic-body/surface = Moden EINES elastischen Feldes; advective komponiert). `integral/9.0` = Kleene-/0-Kanon-Bruch. **A=A:** feste Kapazität 2ⁿ (Hardware-Alignment) + lebendiges n; **Kanal = Descriptor (q, 𝒯, M+Rand, u) ⊗ Tri-State**, Identität = hash (nie Slot); Wire `{n, schema_hash}` + `offsets[n+1]` + `f32[n]`; GPU runtime-sized + `arrayLength`; Reduktion `Σ_active wᵢφᵢ / Σ_active wᵢ` (Teiler nie konstant). **Erster Bau:** (1) Nenner = Σ aktive Gewichte (A=A-Kern, vor jedem Layout); (2) Layout `offsets[n+1]`; (3) Registry ChannelId→Descriptor, die drei elastischen Moden als EINE abgeleitete Instanz (Test: `thermal==diffusion` dedupliziert). **Deichbrüche (Risse):** Moden sind Partition der Einheit (`Σ Pᵢ=1`), keine Achsen — getrennt addiert doppelzählen sie Energie (Hy4); das Produkt ist ein dünn besetzter Graph, kein Vektorraum (Zulassungsrelation, kein nacktes ⊗); Onsager-Kreuzterme → Kopplungsmatrix; Einheiten folgen, sind keine Achse; gravity = elliptische Constraint; Tri-State orthogonal zur Identität, aber seine **Übergangssemantik** ist der tiefste Riss (MiniMax); gemeinsamer Wire ⇒ gemeinsamer Zeitschritt (Diffusion vs Advektion); jede kanonische Enumeration (Config/Spec/Registry) ist wieder A≠A. **Senken:** kollabieren nur, wo das Organ kollabiert (Auge, Ohr-Druck) und nach Normierung; Haptik/Serial/Relay bleiben aufgelöst, Relay verlustfrei. **Übersehen:** Archiv/Replay + Analyse-/Kohärenz-Senke (Kreuzkanal-Bilinearform). Protokolle: `state/stimmen/2026-10-09-river-kanalzahl-frontier.md` (+ `…-radiatoren.md`, `…-kraefte-tonmodelle.md`). `pending`: Z.ai, Qwen-UI, Gemini, Duck, Kimi.
+- **Blockade:** keine.
+- **Braucht:** (a) **Operator-Wort** für den Umbau (feste 9 → Kapazität + lebendiges n; Wire/GPU/JS); (b) Rat-Linse für die exakte **Zulässigkeitsrelation** (q×𝒯×M legal) + Kopplungsmatrix; (c) unabhängig: `v_k`-Bindung + Ton-Modell-Entscheidung.
+
+### Register-Physik — `force` ist Kategorie-Etikett, nicht Mechanismus
+- **Status:** eigen · mountain | **Bindung:** eigen
+- **Trigger:** Operator-Wort für die Migration (Mountain-Domäne) + erster Lint-Bau.
+- **Lage:** (gemessen 2026-10-09, River 142; 1 Forschungs-Agent + Rat + 6 Open-Weight + Claude) `phi/sources.φ`: **7972 field-Zeilen** (Parser multi-arity `parse.rs:848/915/978/1166` — die NF-Streuung ist **kein** Formatfehler), Verteilung **em 6088 · diffusion 474 · acoustic 438 · advective 433 · thermal 340 · gravity 118 · electric 40 · seismic-body 25 · seismic-surface 16**; +27 `quantity` (separat). Gemessene Fehlzuordnungen: `gravity`←Satellitendistanz/Gezeitenhub/Wellenhöhe; `seismic-body`←Erdbebentiefe; `seismic-surface`←Tiefe+Magnitude; `diffusion`←Thermosphärendichte/Feuchte; `acoustic`←METAR-Druck/MSLP/Wellenhöhe; `thermal`←Lufttemperatur; `electric`←Blitzstrom/GIC. **Verdikt (konvergent):** die Idee (Propagations-Kanal-Litmus, Ausbreitungsmechanismus) **trägt**; die **Materialisierung** ist physikalisch falsch — `force` trägt Kategorie-Etiketten, `em` 76 % ist ein Auffangbecken. Korrekte Form: getrennt **Quantity (Was/Kind) | Mechanism (PDE-Klasse) | Medium (Wo)**, Relation many-to-many; `quantity`-Arm (`force_type=255`) existiert, nur 27/7972 genutzt. Protokoll: `state/stimmen/2026-10-09-river-register-physik.md`. `pending`: GLM 5.3, Hy4 Preview, Gemini, MiniMax.
+- **Blockade:** keine.
+- **Braucht:** (a) ~~erster Bau = rein lesender Lint~~ **gebaut** (`tools/register/src/bin/source_physics_lint.rs`, `cargo build -p omegaflow-register --bin source_physics_lint` grün; gemessen: `phi/sources.φ` field 7972 · quantity 27 · **92 Geometrie-Kandidaten**, top-Gruppen `em × inverse-square 6012` (u. a. `magnetic_field_intensity`, `electron_density` — In-situ-Zustände), `acoustic × inverse-square 372` (Wellenhöhe/Periode), `advective × inverse-square 340` (CME-/Exosphären-Speed), `diffusion × point 276`, `gravity × inverse-square 105` (`inter_satellite_distance`, `TIDE`), `em`-Becken enthält auch `mag`-Magnituden und `z`-Redshift); (b) danach die Migration (`force → mechanism`, `medium`/`pde_type`/`quantity_role` ergänzen, `em` zuletzt) — **Mountain-Domäne**, Rat + Operator-Wort.
 
 ## LOCK
 
