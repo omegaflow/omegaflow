@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); die `sources.φ`-`quantity`-Zeile als Contract-Riss gemessen (keine dimensionslose Quantity + kein `format keogram`-Arm). Mountain-289 `## An mycelium` gefaltet (Keogramm-Form-Verdikt, terms pro Quelle, USGS/Dtm unverändert). LICENSE-Populations-Riss geheilt (beide Zensus 0 no-terms, 2698 terms). Fired/stale/addressed = sauber; hips-png-cdn läuft.
   class: handover
   date: 2026-10-09
-  sha256: be9f5497c0c7cf25529d1a2155dfad963b0ce5f9e9405eea50a1ff3d86a2eff5
+  sha256: 8acae779fe7b63f33dcbd4e9fd23c021788f7cbc806eb63969ee4ff75e1eb28b
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -100,14 +100,14 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Solar VSO/IRIS — `sources.φ`-Zeile + Workflow offen
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
 - **Trigger:** HCR-Query gemessen (fetchbarer FITS) → Workflow (`iris_compiler.rs`, `blocked_sources.φ:63`)
-- **Lage:** (gemessen 2026-10-09) `blocked_sources.φ:63-64` `pending`; `iris_compiler.rs` steht (liest `--input <fits>`, druckt den `sources.φ`-Block, `--ci-mode`-Upload `vso.stanford.edu/iris.bin`). VSO POST 411; IRIS HCR-API `www.lmsal.com/hek/hcr` mit geratenen Parametern `archive_search --verdict` = HTTP 206/19 B (kein Treffer) → die HCR-Suchform ist **ungemessen**, nicht geraten.
+- **Lage:** (gemessen 2026-10-09) `blocked_sources.φ:63-64` `pending` (`https://vso.stanford.edu/`); `iris_compiler.rs` steht (liest `--input <fits>`, druckt den `sources.φ`-Block, `--ci-mode`-Upload `vso.stanford.edu/iris.bin`). VSO POST 411; IRIS HCR-API `www.lmsal.com/hek/hcr` mit geratenen Parametern `archive_search --verdict` = HTTP 206/19 B (kein Treffer) → die HCR-Suchform ist **ungemessen**, nicht geraten.
 - **Blockade:** die HCR-API-Suchform (Start/Stop/Name-Mapping) — erste Messung.
 - **Braucht:** HCR-Query messen (`--playwright https://www.lmsal.com/hek/hcr`) → dann `iris-cdn.yml` (HCR → FITS → `iris_compiler --ci-mode`) + `sources.φ`-Zeile (`vso.stanford.edu/iris.bin`).
 
 ### LAIC CSSDC — Register-URL ohne Wissenschaft
 - **Status:** wartend | **Bindung:** eigen (Register-Riss)
 - **Trigger:** LEOS-Admission (`www.leos.ac.cn` user-gated)
-- **Lage:** (gemessen 2026-10-09) `blocked_sources.φ:66-68` `pending`; `cssdc.ac.cn/en` = Telegram-APK-Advert-Seite (kein Datenportal); LEOS `www.leos.ac.cn` 206 (user-gated/captcha), unregistriert. Kein Parser-Gap.
+- **Lage:** (gemessen 2026-10-09) `blocked_sources.φ:66-68` `pending` (`https://www.cssdc.ac.cn/en/`); `cssdc.ac.cn/en` = Telegram-APK-Advert-Seite (kein Datenportal); LEOS `www.leos.ac.cn` 206 (user-gated/captcha), unregistriert. Kein Parser-Gap.
 - **Blockade:** LEOS-Zugang (user-gated).
 - **Braucht:** LEOS/CSES-Admission (Operator-Auth-Route) → dann URL-Verdikt.
 
