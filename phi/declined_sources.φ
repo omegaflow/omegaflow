@@ -5763,3 +5763,24 @@ note NSRR Schlaf-EEG (SHHS/MESA) — 2026-10-09: Elektroden ohne Koordinaten →
 decline no-physical-force
 url https://isip.piconepress.com/projects/tuh_eeg/
 note TUH EEG (Temple) — 2026-10-09: Elektroden-Doku symbolisch (Ferrell 2020, keine Koordinaten) → kein Feldwert; Zugang live (SSH-Key/rsync EXIT 0, `mail_ledger.φ:245`); Nicht-Feld-Nutzung operator-gebunden (`wartend.φ:37`).
+
+decline not-redistributable
+url https://regards.cnes.fr/api/v1/rs-order
+note DEMETER-IAP (CNES/CDPP) — 2026-10-09: Auth existiert (CDPP_USER/PASS), Login ok, Order WAF-blockiert (exit 137); Arm ist ISL (1144), IAP (1139/40) fehlt; SIPAD: Rohprodukte nur mit Erlaubnis weitergebbar.
+
+decline not-redistributable
+url https://www.leos.ac.cn/
+note LEOS (CSES) — 2026-10-09: Auth existiert (LEOS_USER/PASS), Login = user/pass + Captcha (+ ggf. Mail-Code); Lizenz NINH-MEM verbietet Weitergabe an Dritte ohne Erlaubnis; CSES-Kern via scidb.cn offen.
+
+decline product-file-index
+url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-77.csv
+note Juno Gravity Raw Orbits CSV — 2026-10-09: lebt (200, `-1-77.csv` 85831 B, 2026-05-22); Datei-Index (File Type/URN/Start/Stop/Name/Size), kein physikalisches Feld; ODF via `juno_odf.bin` (`sources.φ:10719`).
+
+decline no-measurement-field
+url https://www.ieeg.org
+note ieeg.org — 2026-10-09: REST (`/services`) liefert Kanaele/Montagen, keine Elektroden-/MNI-Koordinaten; Lizenz research-only; ds003844 `*_electrodes.tsv` x=y=z=0.
+
+decline superseded-by-superdarn_fitacf
+url https://superdarn.usask.ca/convection-maps
+note SuperDARN Convection-Maps — 2026-10-09: Endpoint `sdc-serv.usask.ca/website_updating_tools/latest_convection_packet.json` (200, pcpot+contours); Host via `superdarn_fitacf` registriert, pcpot deckt `superdarn_cpcp_pot_drop` (`:4375`).
+

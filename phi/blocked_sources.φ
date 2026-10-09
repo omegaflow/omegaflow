@@ -48,15 +48,6 @@ url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
 gap juno-efb
 note Juno Earth-Flyby pre-EFB merged ODF. 2026-09-17: pre-EFB request-only — OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11). Anfrage 2026-09-16 (:211), Antwort offen. Post-EFB als juno_odf.bin; Abgleich offen.
 
-pending
-url https://pds-ppi.igpp.ucla.edu/data/mess-rs-raw/data-odf/
-note MESSENGER Erd-Encounter 2005 absent: Bundle data-odf/ 2007-2015, kein 2005 (survey-2026-09-14-weberin-quellen-rerun.md:210; sfetch --links 2026-09-30); messenger_odf.bin = Venus/Merkur. Quelle bleibt; nur Erd-Ketten-Rolle absent.
-
-pending
-url https://regards.cnes.fr/api/v1/rs-order
-origin https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml
-note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt; Order 18400 defekt (availableFilesCount 0, filesInErrorCount 1000), 18387 DONE_WITH_WARNING 96978/97078; UA-Riss 403/403 vs 403/684 (orderToken); Träger wartend.φ:4.
-
 blocked parser-def
 url https://superdarn.ca/data-download
 gap dmap-map-grid
@@ -68,24 +59,8 @@ gap kaguya-lrs
 note Kaguya/SELENE LRS (DARTS/PDS3): Array-Arm v2 steht (P3BV, 1971 Z./7 Spalten); sources.φ-Block steht NICHT (kein kaguya/selene gemessen) + kein Workflow → Re-Manifest + Source-Block. 2026-10-04.
 
 pending
-url https://www.leos.ac.cn/
-note LEOS (CSES) — 2026-10-09: direct HTTP 206 (1 B), user-gated → Auth-Route (nie declined). CSES-Kern via scidb.cn integriert (cses-{efd,hpm,lap,scm}); LEOS-spezifische Route offen. survey-2026-10-08-open-sources-delta.md:75/133.
-
-pending
-url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-56.csv
-note Juno Gravity Raw Orbits CSV (PDS Atmospheres) — 2026-10-04: generischer `csv`-Arm liest Plain-CSV (extract.rs:4315, kein neuer Arm nötig); Host 000/Wayback ohne Snapshot, 2026-10-02 nur 1 B → Feld-Verdikt nicht messbar. future-folge165.
-
-pending
 url https://pds-ppi.igpp.ucla.edu/data
-note PDS-PPI (UCLA) — 2026-10-03: EPN-TAP vo-pds-ppi.igpp.ucla.edu/tap/{capabilities,sync} je 200 per curl (kein Browser); Dateisystem /data/ 200; Arm tap_compiler passt. future-folge226.
-
-pending
-url https://www.ieeg.org
-note ieeg.org — 2026-10-04: REST ohne Elektroden-Koordinaten (kein MNI); /api 503; Bau-Schritt = BIDS-Sidecar `*_electrodes.tsv` (`src/archivar/electrodes.rs`); ds003844 x=y=z=0.
-
-pending
-url https://superdarn.usask.ca/convection-maps
-note SuperDARN Convection-Maps — 2026-10-09: HTTP 200 HTML-Landing, kein Daten-Endpoint; Konvektions-Potential via `superdarn_cpcp` gedeckt. Kein eigener Arm.
+note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200, 219 `.epn_core`; Enumerator gebaut `pds_ppi_compiler.rs` (115cf1657), Arm `pds4_fixed_width_compiler`. Offen: `sources.φ`-Zeile + `field`/`terms` + Workflow.
 
 blocked parser-def
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
@@ -94,7 +69,7 @@ note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Dekoder `keogram.r
 
 blocked ip-blocked
 url https://ceic.ac.cn/data/data.json
-note CENC Quake-Feed — 2026-10-09: vom Runner nicht erreichbar (`curl 28/7`, Lauf 37910580075 failure), lokal HTTP 206. Disposition `ip-blocked` (Runner-Route): Mycelium entfernt den Slot aus `quake-feeds-cdn.yml`, `sources.φ:77` bleibt.
+note CENC Quake-Feed — 2026-10-09: HTTPS-Direktpfad vom Runner unerreichbar (`curl 28/7`); CENC-Mirror `https://api.wolfx.jp/cenc_eqlist.json` registriert (`sources.φ:523`, Host vom Runner erreichbar); `sources.φ:77` bleibt bis Mountain-Verdikt.
 
 blocked parser-def
 url https://data.inpe.br/bdc/stac/v1/
@@ -133,10 +108,8 @@ note FRB Blinkverse — 2026-10-09: direct+Proton pending, kein Wayback-Snapshot
 
 pending
 url https://geomag.usgs.gov/ws/data/
-note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein `geoelectric`/`mV`; bare `/ws/data/` 400. Reale Route NOAA SWPC rgeojson (eigener Eintrag). Magnetik: declined_sources.φ:2176 — per Datensatz getrennt.
+note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/data/?id=<IAGA>&elements=E-E,E-N&format=json` 200 (E-Feld, runtime); openapi nennt kein geoelectric; Magnetik-Teil Duplikat `declined_sources.φ:2176` (URL doppelt = Riss).
 
 pending
 url https://github.com/TIAN-we/petrel19
-note PETREL19 — 2026-10-09: Wei (tian-we@163.com, mail_ledger.φ#1791552291) erteilt CC BY 4.0; frühere `decline redistribution` (unlicensed) damit widerlegt + entfernt. Port offen: PETREL19-Arm in `ephemeris_compiler.rs` (SPICE/DE, 1799-10-13..2106-05-05).
-
-
+note PETREL19 — 2026-10-09: Wei (tian-we@163.com, mail_ledger.φ#1791552291) erteilt CC BY 4.0; frühere `decline redistribution` (unlicensed) damit widerlegt + entfernt. Port offen: PETREL19-Arm in `ephemeris_compiler.rs` (SPICE/DE).
