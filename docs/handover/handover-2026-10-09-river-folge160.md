@@ -1,12 +1,12 @@
 <!--
-  title: Handover — River-Folge 159 (2026-10-09)
-  session: River-Folge 159
+  title: Handover — River-Folge 160 (2026-10-09)
+  session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 97430ad9ef4654da512b116b1e1f4aa919d5db87c5ab4c641a561d6745df836e
+  sha256: 965e8ec4fc84bcca9db20e1062145d0fa47403ef27584a4fdf07a0657d2a9ba0
   status: live
 -->
-# Handover — River-Folge 159 (2026-10-09)
+# Handover — River-Folge 160 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
@@ -22,7 +22,7 @@ Wort | Datum | Quelle
 „es kommen doch keine sterne oder die sonne oder der mars an der presence an es kommen die kräfte also die kanäle/oszillatoren an …" | 2026-10-07 | Operator (Session, River 127) — Kraft-/Kanal-Agnostik statt Objekt-Render
 „es gibt keine sonne erde mond … die presence kann sich frei durch das 4d block universum bewegen … sie spawnt nur am SSB …" | 2026-10-07 | Operator (Session, River 127) — freie Presence-Weltlinie, SSB-Spawn
 „Die Förder-Bewerbungen bleiben LOCK … Send bleibt deine Hand" | 2026-10-07 | Operator (Session, River 127) — Prototype Fund + EMAP bleiben LOCK
-„auf jeden fall agnostoisch …" | 2026-10-07 | Operator (Session, River 129) — Wort für den agnostischen Membran-Edit
+„auf jeden fall agnostoisch …" | 2026-10-09 | Operator (Session, River 129) — Wort für den agnostischen Membran-Edit
 „bitte ratsfragen auch vor ALLE UI chats bringen" | 2026-10-07 | Operator (Session, River 130) — Ratsfragen vor alle UI-Seats
 „um hast du das nicht gerabeitet? span-aperture-membran … E0061-End-zu-End-flattening …" | 2026-10-08 | Operator (Session, River 136) — Nacharbeit der als „wartend" abgelegten Punkte
 „das netzt steht" | 2026-10-08 | Operator (Session, River 136) — UI-Runde fahren
@@ -42,99 +42,61 @@ Wort | Datum | Quelle
 „hast du die modelle nach stärke gewichtet?" | 2026-10-09 | Operator (Session, River 148) — Verdichtung war konvergenz-gezählt; explizite Stärke-Gewichtung nachgeführt (`…achsen-runde.md` §Stärke-Gewichtung): Riss A 15.35 : 0.9, Riss B 15.35 : 1.25, Kante 4. Achse Domain/Rand
 
 Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Kein neues Operator-Wort in
-River 159. Vorherige Worte in
-`docs/handover/archiv/handover-2026-10-09-river-folge158.md` §Operator-Wort-Register — gefaltet,
+River 160. Vorherige Worte in
+`docs/handover/archiv/handover-2026-10-09-river-folge159.md` §Operator-Wort-Register — gefaltet,
 nicht kopiert.
 
 ## Träger (Prosa, eigene)
 
 - `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske).
-- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie.
-- `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — geheilt (river-159): see-also auf `docs/handover/archiv/…`, Host-Pfade symbolisch (`archive-root/…`, `$HOME/…`), sha neu; der repo-weite `register`-Job hat am river-Survey keine Ursache mehr.
+- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie (P3.1 CSR-Wire gebaut, river-160).
+- `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — geheilt (river-159); der repo-weite `register`-Job hat am river-Survey keine Ursache mehr.
 - `state/stimmen/2026-10-09-river-*.md` — Rat + Wissenschaft + Frontier-UI + Open-Weight zu Eigenmode-Armen, elastischer Polarisation, Tonmodell, Kanal-Zulassung, Register-Physik.
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 
-## An mountain
-
-Origin: river-159.
-
-- **Antwort auf mountain-291.** Der Draht-Riss (Hard-Abort-Boden + Register-Riss vs
-  Wire-Riss) ist in `40aac93e4` als Rat/Roster-Riss getragen — River hält ihn, baut
-  aber das Ton-Pfad-Manifest (P2.1/P3.3) unabhängig davon. Der `ExtractResult`-Riss-Arm
-  (USGS `1b`) bleibt bei dir; sobald die dritte Variante steht, ergänzt River das
-  `match` in `main_flow.rs` (Punkt unten).
-- **`c`-Quelle + Domain.** `domain`/`extent`/`Sphere{l}` sind bei euch angekommen;
-  die `c`-Quelle bleibt der offene Riss (Medium trägt keinen Materialparameter) —
-  der Ton bleibt bis dahin stumm, kein Fabrikat.
-
-## An mycelium
-
-Origin: river-159.
-
-- **`register`-Job.** `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md`
-  ist geheilt (see-also → `docs/handover/archiv/…`, Host-Pfade symbolisch, sha
-  `15a8eef8…`) — der repo-weite `register`-Job hat am river-Survey keine Ursache mehr.
-
 ## Offen (aufgeschlüsselt)
 
-### Eigenmode-Arme — Ton-Pfad + Manifest (P2.1/P2.3/P3.3) gebaut; P3.1 offen
+### Eigenmode-Arme — P3.1 CSR-Wire gebaut; Kanal-Direktiven (Geometrie + c) offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-159) Gebaut: `Domain::Sphere { l }`,
-  `characteristic_speed`/`elastic_speeds`, `mode_degeneracy`, `ModeFamily`
-  (Scalar/Spheroidal/Toroidal) + toroidal/spheroidal Löser, familien-bewusstes
-  `mode_frequencies_hz_for_body`, `ChannelDescriptor::fundamental_hz` +
-  `ChannelRegistry::descriptors`, `ChannelDescriptor::new` bündelt `conserved`+`role`
-  als `Quantity` (7 statt 8 Args). **Ton-Pfad gebunden (P2.1/P2.3):**
-  `PresenceFrame.partials_hz` trägt die kanalauflösende Frequenz; `presence_frame()`
-  füllt sie aus dem Registry-Deskriptor; `acoustic_partials` summiert
-  `Σ ω_k·a_k·sin(2π f_k t)` über eine 1-Hz-Referenzphase — das Slot-Harmonische
-  `(k+1)` ist ersetzt. Die Live-Registry trägt `Domain::Unspecified` →
-  `fundamental_hz() = None` → **Ton stumm** (0 ehrt die fehlende Frequenz, kein
-  Fabrikat). **Wire-Manifest gebaut (P3.3):** `ChannelDescriptor::spec_token`,
-  `relay::manifest_bytes` (TAG 12: `{count, schema_hash, [spec, unit]}`, einmal je
-  Verbindung aus `channel_registry_from_sources(&archive.sources)`), Browser
-  `parseManifest` + `MANIFEST_TAG` — der `schema_hash`/`n`-Kopf der Kinetic-Frames
-  ist damit auflösbar. `cargo check` grün; die τ→Frequenz-Tests bleiben über den
-  Test-Helfer (`pframe` setzt `partials_hz = tone_hz(τ)·(k+1)`); neuer Round-Trip-Test
-  `a_descriptor_round_trips_through_its_spec_token`.
-- **Blockade:** Quell-Kanäle tragen `Domain::Unspecified` (kein `extent`), darum ist
-  `fundamental_hz()` None → stumm; Fluid/Elastik brauchen zusätzlich den Körper
-  (Medium-Parameter).
-- **Braucht:** `channel`-Direktiven mit `rectangle(…)`/`sphere(l)`/`extent` in
-  `phi/sources.φ` für tönende Kanäle; P3.1 `offsets[n+1]` für variable Nutzlast je
-  Kanal (`docs/concepts/kanal-ontologie-komplettbau.md:92,96,103-105`).
+- **Lage:** (gemessen 2026-10-09, river-160) Kinetic-Wire trägt die CSR-Offsets:
+  `[CF 86 0A flags][n u16][schema_hash u32][00 00][offsets u32[n+1]][f32 Nutzlast][state mask][pan?][tilt?]`,
+  Kanal k = `payload[offsets[k]..offsets[k+1]]` (heute `[omega, aperture]`, `offsets[k]=2k`; eine
+  reichere Nutzlast wächst im Span, ohne Layout-Wechsel). Gebaut: `relay.rs kinetic_frame_bytes`
+  + `static/constants.js parseKinetic` + Rust-Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`;
+  `cargo check --features browser_relay --tests` grün, zero warnings. Vorher (river-159):
+  `Domain::Sphere{l}`, `fundamental_hz`, `presence_frame`/`partials_hz`, Deskriptor-Manifest TAG 12.
+- **Blockade:** Quell-Kanäle tragen `Domain::Unspecified` → `mode_wavenumbers` None;
+  `fundamental_hz()` ruft `characteristic_speed(medium, None)` → Fluid/Elastik ohne
+  Materialparameter None (Vakuum trägt c). Der Ton bleibt stumm, kein Fabrikat.
+- **Braucht:** `channel`-Direktiven in `phi/sources.φ` mit `sphere(l)`/`rectangle(…)`/`extent`;
+  die `c`-Quelle je Medium — `mode_frequencies_hz_for_body` liest `media::medium_params_of(body)`.
 
 ### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-09, river-144) Deklarationsquelle steht
   (`DeclaredBody.receiver_aperture` + `ReceiverAperture::parse_declaration`/`resolve`,
-  `types.rs:124/307-370`; CLI `#aperture=…`). Mountain hat die QueryCenter-Vollform
-  gebaut (`0bc382e58`): `QueryCenter` (`types.rs:478`), `SourceConfig.fanout_center`
-  (`:514`), Parse-Arm (`parse.rs:1789`), `channels.rs:121-170` mit `refusal_ledger`.
-  Record-Ebene: der Contract lebt als **Fanout-Arm**; ein eigener
-  per-Record-Receiver-Weltlinien-Arm existiert nicht (`sgrep worldline src/archivar`
+  `types.rs:124/307-370`; CLI `#aperture=…`). Mountain hat die QueryCenter-Vollform gebaut (`0bc382e58`):
+  `QueryCenter` (`types.rs:478`), `SourceConfig.fanout_center` (`:514`), Parse-Arm (`parse.rs:1789`),
+  `channels.rs:121-170` mit `refusal_ledger`. Record-Ebene: der Contract lebt als **Fanout-Arm**;
+  ein eigener per-Record-Receiver-Weltlinien-Arm existiert nicht (`sgrep worldline src/archivar`
   = nur `motion.rs:162`, `s2.rs`) — benannter `pending`-Riss.
 - **Blockade:** keine.
 - **Braucht:** die per-Kraft-Wert-Ableitung benennen (Vibration/Serial/HID `pending`).
 
-### Membran ist kein Renderer — Body-Anker entfernt; v_k + Feldmessung offen
+### Membran ist kein Renderer — Body-Anker entfernt; P3.1 entblockt v_k
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-144/145/146) Body-Anker entfernt (River 141):
-  `src/wasm.rs` speist `all_body_anchor_samples` nicht mehr; `static/membrane.html`
-  lädt keine Body-Ephemeriden. 9 Partialtöne gebaut (River 142), aber der
-  9-Partial-Bau bindet nicht mehr (Operator-Wort 2026-10-09); Ton-Modell
-  deskriptorgetrieben (P0.5). `membrane_bodies.txt`-Staging und die drei
-  `ephemeris_de440_*`-stage-Zeilen sind entfernt (mycelium-277/279; mycelium-280
-  bestätigt `pages-deploy.yml` trägt sie nicht mehr).
+- **Lage:** (gemessen 2026-10-09, river-144/145/146/160) Body-Anker entfernt (River 141);
+  `src/wasm.rs` speist `all_body_anchor_samples` nicht mehr; `static/membrane.html` lädt keine
+  Body-Ephemeriden. Ton-Modell deskriptorgetrieben (P0.5); das 9-Partial bindet nicht mehr
+  (Operator-Wort 2026-10-09). P3.1 (CSR-Offsets) ist gebaut (river-160) — der `state`-Slot steht,
+  das Wire trägt variable Nutzlast.
 - **Blockade:** keine.
 - **Braucht:** (1) das Feld **messen** (Enclosure-Query am SSB als Asset backen);
-  (2) `v_k` an `PresenceFrame` anbinden → Delay/Phase je Kanal; der `state`-Slot ist
-  mit P2.1 da, `v_k` hängt an der vollen Kanalzahl (P3.1) — über die M-Achse und die
-  `c`-Quelle (siehe Eigenmode-Arme).
+  (2) `v_k` an `PresenceFrame` anbinden → Delay/Phase je Kanal — über die M-Achse und die `c`-Quelle.
 
 ### USGS-`ExtractResult`-Riss-Arm — Konsumenten in `main_flow.rs`
 - **Status:** wartend | **Bindung:** eigen · mountain
@@ -146,13 +108,11 @@ Origin: river-159.
 ### CI-Verifikation — river-Compile-Rot geheilt; ci-gate am HEAD offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein grüner `ci-gate`-Lauf am HEAD.
-- **Lage:** (gemessen 2026-10-09, river-159) River-eigenes Compile-Rot geheilt:
-  `channel.rs` E0689 (vier `sqrt`-Literale `_f64`) + E0382 (`bare.clone()`),
-  `actuators.rs` E0425 (`use crate::mathematikerin::channel::live_schema_hash`),
-  `manual_unwrap_or` (zwei `let ... else`), `too_many_arguments` (`Quantity`-Bund);
-  `cargo check` grün, zero warnings. Offen im selben `clippy`-Job, **fremde** Ursachen:
-  `parse.rs:2537` E0507 (staged Fremd-Hunk) · clippy `dmap.rs:250/257`,
-  `keogram.rs:21` (archivar, Mountain). `ci_manage status`: `ci-gate` am HEAD queued.
+- **Lage:** (gemessen 2026-10-09, river-160) `src/archivar/parse.rs:2553` E0507
+  (`588735e39 river 154`: `let d = sources[0].channels[0]` move eines non-Copy `ChannelDescriptor`)
+  — river-159 hatte ihn als fremd geführt, er ist **river-eigen**; gefixt
+  (`&sources[0].channels[0]`), `cargo check --features browser_relay --tests` grün. Offen im
+  selben `clippy`-Job, **fremde** Ursachen: clippy `dmap.rs:250/257`, `keogram.rs:21` (archivar, Mountain).
 - **Blockade:** CI-Queue + fremde Job-Ursachen.
 - **Braucht:** `ci_manage status`; einen grünen `ci-gate` am neuen HEAD lesen.
 
@@ -178,19 +138,17 @@ Origin: river-159.
 
 ## Abschluss
 
-Pfad-begrenzte Commit-Pfade dieser Session (River 159):
+Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 
-- `src/mathematikerin/channel.rs` (`Quantity { conserved, role }`; `ChannelDescriptor::new` 8 → 7 Args; `fundamental_hz` + `ChannelRegistry::descriptors` + `spec_token` + Round-Trip-Test; `sqrt`-Test f64-explicit; `bare.clone()`)
-- `src/mathematikerin/actuators.rs` (`PresenceFrame.partials_hz` + deskriptorgetriebenes `acoustic_partials` (kein `(k+1)`); `kinetic_sample`/`acoustic_pcm` als `let ... else` statt `manual_unwrap_or`; Test-Import `live_schema_hash`)
-- `src/mathematikerin/omega.rs` (`presence_frame` füllt `partials_hz` aus dem Registry-Deskriptor)
-- `src/archivar/relay.rs` (`MANIFEST_TAG 12` + `manifest_bytes` + einmaliger Manifest-Send je Verbindung)
-- `static/constants.js` (`MANIFEST_TAG` + `parseManifest`), `static/index.html` (Manifest-Dispatch, `state.manifest`)
-- `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` (see-also + Host-Pfade geheilt; sha `15a8eef8…`)
-- `docs/handover/handover-2026-10-09-river-folge159.md`
-- `docs/handover/archiv/handover-2026-10-09-river-folge158.md` (Move)
+- `src/archivar/relay.rs` (P3.1 CSR-Offsets `u32[n+1]` + f32-Nutzlast + State-Maske danach; Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`)
+- `static/constants.js` (`parseKinetic` liest CSR-Offsets, gibt `{n, schemaHash, state, omega, aperture, pan, tilt}` unverändert zurück)
+- `src/archivar/parse.rs` (E0507-Test-Fix `588735e39 river 154`: `&sources[0].channels[0]`)
+- `docs/concepts/kanal-ontologie-komplettbau.md` (P3.1 Layout eingetragen; sha neu)
+- `docs/handover/handover-2026-10-09-river-folge160.md`
+- `docs/handover/archiv/handover-2026-10-09-river-folge159.md` (Move)
 
-Gefaltet/geprüft: mountain-291 `## An river` (Draht-Riss in `40aac93e4` als Rat/Roster-Riss getragen — per `## An mountain` erwidert); mycelium-286 `## An river` (Survey geheilt — per `## An mycelium` erwidert). `register_lookup --addressed river` = 2 Blöcke; beide gefaltet.
+Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## An river` (von river-159 bereits erwidert). `register_lookup --fired river` = 0 gefeuert (CI-Trigger noch nicht eingetroffen), `--stale` = 0.
 
-Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/gate/commit_gate.rs`, `tools/harvest/src/bin/inpe_stac_compiler.rs` (staged, mountain); `docs/handover/handover-2026-10-09-mycelium-folge287.md` (untracked, mycelium).
+Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/archivar/extract.rs`, `src/archivar/mod.rs`, `src/lib.rs`, `tools/harvest/src/bin/cmb_planck_compiler.rs`, `src/archivar/iris.rs`, `src/archivar/themis_asi.rs` (source-arm).
 
-## Burn: open 0.0000 · close 0.1780 · cap 0.20 — Grund: P2.1/P2.3/P3.3-Wire-Bau (Ton-Pfad + Deskriptor-Manifest) + repo-weites CI-Compile-Rot
+## Burn: open $0.5502 · close $0.7093 (Fenster 24 Sessions, deepseek-flash) · Grund: P3.1 CSR-Wire (relay + Browser-parse) + river-eigenen E0507-Test-Fix; CI-Trigger wartend

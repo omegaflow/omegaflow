@@ -1078,12 +1078,23 @@ fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
     let n = frame.n as usize;
     let state_bytes = n.div_ceil(4).div_ceil(4) * 4;
     let mut out = Vec::with_capacity(
-        12 + state_bytes + 2 * n * 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4,
+        12 + (n + 1) * 4
+            + 2 * n * 4
+            + state_bytes
+            + (pan.is_some() as usize) * 4
+            + (tilt.is_some() as usize) * 4,
     );
     out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG, flags]);
     out.extend_from_slice(&frame.n.to_le_bytes());
     out.extend_from_slice(&frame.schema_hash.to_le_bytes());
     out.extend_from_slice(&[0u8, 0u8]);
+    for k in 0..=n {
+        out.extend_from_slice(&((2 * k) as u32).to_le_bytes());
+    }
+    for k in 0..n {
+        out.extend_from_slice(&frame.omega[k].to_le_bytes());
+        out.extend_from_slice(&frame.aperture[k].to_le_bytes());
+    }
     let mut state = vec![0u8; state_bytes];
     for k in 0..n {
         let v = match frame.state[k] {
@@ -1094,12 +1105,6 @@ fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
         state[k / 4] |= v << ((k % 4) * 2);
     }
     out.extend_from_slice(&state);
-    for v in &frame.omega[..n] {
-        out.extend_from_slice(&v.to_le_bytes());
-    }
-    for a in &frame.aperture[..n] {
-        out.extend_from_slice(&a.to_le_bytes());
-    }
     if let Some(p) = pan {
         out.extend_from_slice(&p.to_le_bytes());
     }
@@ -1170,6 +1175,50 @@ mod tests {
         assert_eq!(relay_tau(0.0, None), None);
         assert_eq!(relay_tau(0.0, Some(0.0)), None);
         assert_eq!(relay_tau(0.0, Some(-1.0)), None);
+    }
+
+    #[test]
+    fn kinetic_frame_carries_csr_offsets_and_recovers_the_arrays() {
+        let mut frame = PresenceFrame {
+            n: 3,
+            schema_hash: 0xABCD,
+            omega: [0.0; 16],
+            aperture: [0.0; 16],
+            state: [TriState::Absent; 16],
+            partials_hz: [0.0; 16],
+            pan_ms: Some(1.5),
+            tilt_ms: None,
+            tau_ticks: 0,
+        };
+        frame.omega[0] = 1.0;
+        frame.omega[1] = 2.0;
+        frame.omega[2] = 3.0;
+        frame.aperture[0] = 0.5;
+        frame.aperture[1] = 0.6;
+        frame.aperture[2] = 0.7;
+        frame.state[0] = TriState::Present;
+        let bytes = kinetic_frame_bytes(&frame);
+        assert_eq!(&bytes[0..4], &[0xCF, 0x86, KINETIC_TAG, 0x01]);
+        assert_eq!(u16::from_le_bytes([bytes[4], bytes[5]]), 3);
+        let mut o = 12;
+        let mut offsets = [0u32; 4];
+        for slot in offsets.iter_mut() {
+            *slot = u32::from_le_bytes([bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]]);
+            o += 4;
+        }
+        assert_eq!(offsets, [0, 2, 4, 6]);
+        let read = |i: usize| {
+            f32::from_le_bytes([
+                bytes[o + i * 4],
+                bytes[o + i * 4 + 1],
+                bytes[o + i * 4 + 2],
+                bytes[o + i * 4 + 3],
+            ])
+        };
+        assert_eq!(read(0), 1.0);
+        assert_eq!(read(1), 0.5);
+        assert_eq!(read(4), 3.0);
+        assert_eq!(read(5), 0.7);
     }
 
     #[test]

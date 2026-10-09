@@ -2550,7 +2550,7 @@ mod tests {
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].channels.len(), 1);
-        let d = sources[0].channels[0];
+        let d = &sources[0].channels[0];
         assert_eq!(d.extent, Some(2.0));
         assert!(d.mode_wavenumbers(3).is_some(), "geometry carries modes");
     }
