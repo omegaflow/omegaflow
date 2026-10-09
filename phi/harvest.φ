@@ -250,6 +250,15 @@ idempotent true
 timeout 360
 
 asset present
+format impc_roti
+tag data.impc.dlr.de
+arm impc_roti_compiler
+workflow impc-roti-cdn.yml
+pattern ^impc_roti\.bin$
+idempotent true
+timeout 300
+
+asset present
 format kc2g_stations
 tag prop.kc2g.com
 arm kc2g_stations
