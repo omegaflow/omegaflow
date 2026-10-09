@@ -15,12 +15,26 @@ fn has_flag(args: &[String], name: &str) -> bool {
     args.iter().any(|a| a == name)
 }
 
+fn unit_factor(u: &str) -> Option<f64> {
+    let s = u.trim();
+    if s.starts_with("uK") || s.starts_with("\u{b5}K") || s.starts_with("microK") {
+        Some(1e-6)
+    } else if s.starts_with("mK") {
+        Some(1e-3)
+    } else if s.starts_with('K') {
+        Some(1.0)
+    } else {
+        None
+    }
+}
+
 struct Table {
     nside: i64,
     npix: usize,
     data_start: usize,
     t_width: usize,
     width: usize,
+    unit: f64,
 }
 
 fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
@@ -35,7 +49,13 @@ fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
         );
         return None;
     }
-    let ordering = h.str_unescaped("ORDERING").unwrap_or_default();
+    let ordering = match h.str_unescaped("ORDERING") {
+        Some(o) => o,
+        None => {
+            eprintln!("ORDERING absent: the map stays unwritten");
+            return None;
+        }
+    };
     if !ordering.trim().eq_ignore_ascii_case("NESTED") {
         eprintln!(
             "ORDERING '{}': the compiler reads NESTED only — the map stays unwritten",
@@ -44,7 +64,13 @@ fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
         return None;
     }
     let width = h.int("NAXIS1")? as usize;
-    let tform = h.str_unescaped("TFORM1").unwrap_or_default();
+    let tform = match h.str_unescaped("TFORM1") {
+        Some(t) => t,
+        None => {
+            eprintln!("TFORM1 absent: the I column stays unread");
+            return None;
+        }
+    };
     let t_width = if tform.contains('D') { 8 } else { 4 };
     if width < t_width {
         eprintln!(
@@ -53,12 +79,35 @@ fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
         );
         return None;
     }
-    let ttype = h.str_unescaped("TTYPE1").unwrap_or_default();
-    let tunit = h.str_unescaped("TUNIT1").unwrap_or_default();
+    let ttype = h.str_unescaped("TTYPE1");
+    let unit_text = match h
+        .str_unescaped("TUNIT1")
+        .or_else(|| h.str_unescaped("BUNIT"))
+    {
+        Some(u) => u,
+        None => {
+            eprintln!("TUNIT1 and BUNIT absent: the unit stays unread");
+            return None;
+        }
+    };
+    let unit = match unit_factor(&unit_text) {
+        Some(u) => u,
+        None => {
+            eprintln!(
+                "TUNIT1/BUNIT '{}' unknown: the unit stays unread",
+                unit_text
+            );
+            return None;
+        }
+    };
     if data_start + npix * width > bytes.len() {
         eprintln!("table exceeds the fetched bytes — the map stays unwritten");
         return None;
     }
+    let label = match ttype {
+        Some(t) => format!("{} {} {}", t, unit_text, tform),
+        None => format!("{} {}", unit_text, tform),
+    };
     Some((
         Table {
             nside,
@@ -66,8 +115,9 @@ fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
             data_start,
             t_width,
             width,
+            unit,
         },
-        format!("{} {} {}", ttype, tunit, tform),
+        label,
     ))
 }
 
@@ -103,7 +153,7 @@ fn degrade(bytes: &[u8], table: &Table, width: usize, nside_out: i64) -> Vec<Opt
             if count[c] == 0 {
                 None
             } else {
-                Some((sum[c] / count[c] as f64, count[c]))
+                Some((sum[c] / count[c] as f64 * table.unit, count[c]))
             }
         })
         .collect()
@@ -140,8 +190,10 @@ fn main() {
     let nside_out: i64 = arg_value(&args, "--nside")
         .and_then(|v| v.parse().ok())
         .unwrap_or(64);
-    let out = arg_value(&args, "--out")
-        .unwrap_or_else(|| format!("cmb_planck_smica_n{}.json", nside_out));
+    let out = match arg_value(&args, "--out") {
+        Some(o) => o,
+        None => format!("cmb_planck_smica_n{}.json", nside_out),
+    };
     let ci_mode = has_flag(&args, "--ci-mode");
 
     let bytes = match std::fs::read(&input) {
@@ -192,18 +244,18 @@ fn main() {
         }
         let _ = n;
     }
-    eprintln!(
-        "{} rows, {} empty cells skipped, T mean {:.6} K, min {:.6} K, max {:.6} K",
-        rows.len(),
-        skipped,
-        tsum / rows.len().max(1) as f64,
-        tmin,
-        tmax
-    );
     if rows.is_empty() {
         eprintln!("no rows — the map stays unwritten (0 honored)");
         std::process::exit(1);
     }
+    eprintln!(
+        "{} rows, {} empty cells skipped, T mean {:.6} K, min {:.6} K, max {:.6} K",
+        rows.len(),
+        skipped,
+        tsum / rows.len() as f64,
+        tmin,
+        tmax
+    );
     if !write_json(&rows, &out) {
         std::process::exit(1);
     }
@@ -234,7 +286,7 @@ mod tests {
         format!("{:<8}= {:<70}", kw, val)
     }
 
-    fn synth_map(nside: i64, values: &[f64], ordering: &str) -> Vec<u8> {
+    fn synth_map(nside: i64, values: &[f64], ordering: &str, unit: Option<&str>) -> Vec<u8> {
         let npix = 12 * nside * nside;
         assert_eq!(values.len(), npix as usize);
         let mut buf: Vec<u8> = Vec::new();
@@ -250,7 +302,7 @@ mod tests {
             hdr.push(b' ');
         }
         buf.extend_from_slice(&hdr);
-        let table = format!(
+        let mut table = format!(
             "{}{}{}{}{}{}{}{}{}",
             card("XTENSION", "'BINTABLE'"),
             card("BITPIX", "8"),
@@ -262,6 +314,9 @@ mod tests {
             card("TTYPE1", "'I_STOKES'"),
             card("TFORM1", "'1E'")
         );
+        if let Some(u) = unit {
+            table.push_str(&card("TUNIT1", &format!("'{}'", u)));
+        }
         let mut thdr = table.into_bytes();
         thdr.extend(card("END", "").into_bytes());
         while thdr.len() % 2880 != 0 {
@@ -280,7 +335,7 @@ mod tests {
     fn degrade_uniform_map() {
         let nside_in = 4;
         let npix = (12 * nside_in * nside_in) as usize;
-        let bytes = synth_map(nside_in, &vec![1.0; npix], "NESTED");
+        let bytes = synth_map(nside_in, &vec![1.0; npix], "NESTED", Some("K"));
         let table = read_table(&bytes).unwrap().0;
         let coarse = degrade(&bytes, &table, ROW_BYTES, 1);
         assert_eq!(coarse.len(), 12);
@@ -297,7 +352,7 @@ mod tests {
         let npix = (12 * nside_in * nside_in) as usize;
         let mut vals = vec![1.0; npix];
         vals[0] = f64::NAN;
-        let bytes = synth_map(nside_in, &vals, "NESTED");
+        let bytes = synth_map(nside_in, &vals, "NESTED", Some("K"));
         let table = read_table(&bytes).unwrap().0;
         let coarse = degrade(&bytes, &table, ROW_BYTES, 1);
         assert_eq!(coarse[0].unwrap().1, 15);
@@ -315,7 +370,7 @@ mod tests {
         for v in vals.iter_mut().take(16) {
             *v = -1.0;
         }
-        let bytes = synth_map(nside_in, &vals, "NESTED");
+        let bytes = synth_map(nside_in, &vals, "NESTED", Some("K"));
         let table = read_table(&bytes).unwrap().0;
         let coarse = degrade(&bytes, &table, ROW_BYTES, 1);
         assert!((coarse[0].unwrap().0 + 1.0).abs() < 1e-12);
@@ -326,7 +381,42 @@ mod tests {
     #[test]
     fn read_table_refuses_ring() {
         let nside = 1;
-        let bytes = synth_map(nside, &vec![1.0; 12], "RING");
+        let bytes = synth_map(nside, &vec![1.0; 12], "RING", Some("K"));
+        assert!(read_table(&bytes).is_none());
+    }
+
+    #[test]
+    fn unit_factor_reads_the_measured_token() {
+        assert_eq!(unit_factor("mK, thermodynamic"), Some(1e-3));
+        assert_eq!(unit_factor("uK"), Some(1e-6));
+        assert_eq!(unit_factor("K"), Some(1.0));
+        assert_eq!(unit_factor("Jy/sr"), None);
+    }
+
+    #[test]
+    fn read_table_applies_mk_to_k() {
+        let nside = 4;
+        let npix = (12 * nside * nside) as usize;
+        let bytes = synth_map(
+            nside,
+            &vec![1000.0; npix],
+            "NESTED",
+            Some("mK, thermodynamic"),
+        );
+        let (table, _) = read_table(&bytes).unwrap();
+        assert!((table.unit - 1e-3).abs() < 1e-30);
+        let coarse = degrade(&bytes, &table, ROW_BYTES, 1);
+        for c in &coarse {
+            let (t, _) = c.unwrap();
+            assert!((t - 1.0).abs() < 1e-9, "mK 1000 -> K {}", t);
+        }
+    }
+
+    #[test]
+    fn read_table_leaves_a_missing_unit_pending() {
+        let nside = 4;
+        let npix = (12 * nside * nside) as usize;
+        let bytes = synth_map(nside, &vec![1000.0; npix], "NESTED", None);
         assert!(read_table(&bytes).is_none());
     }
 }

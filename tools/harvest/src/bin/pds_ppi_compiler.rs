@@ -230,12 +230,44 @@ fn print_inventory(
     );
 }
 
+fn family_name(table: &str) -> String {
+    let stem = table.strip_suffix(EPN_SUFFIX).unwrap_or(table);
+    format!("pds_ppi_{stem}.manifest")
+}
+
+fn write_manifest(
+    family: &str,
+    shards: &[(String, String)],
+    out_dir: Option<&str>,
+    ci_mode: bool,
+) -> bool {
+    let dir = match out_dir {
+        Some(d) => d.trim_end_matches('/').to_string(),
+        None => format!("data/{NETLOC}/pds4_fixed_width"),
+    };
+    let path = format!("{dir}/{family}");
+    let mut text = String::new();
+    for (name, sha) in shards {
+        text.push_str(&format!("{name} {sha}\n"));
+    }
+    if std::fs::write(&path, &text).is_err() {
+        eprintln!("{family}: write {path} returned void");
+        return false;
+    }
+    eprintln!("{family}: {} shard(s) listed", shards.len());
+    if ci_mode && !upload_release(NETLOC, &path) {
+        eprintln!("{family}: CDN upload returned void");
+        return false;
+    }
+    true
+}
+
 fn compile_entry(
     dat_spec: &str,
     label_spec: &str,
     out_dir: Option<&str>,
     ci_mode: bool,
-) -> Option<String> {
+) -> Option<(String, String)> {
     let Some(label_bytes) = fetch_or_read(label_spec) else {
         eprintln!("label fetch void ({label_spec})");
         return None;
@@ -292,11 +324,11 @@ fn compile_entry(
         eprintln!("write {out_path} returned void");
         return None;
     }
+    let sha = sha256_hex(&bin);
     eprintln!(
-        "{out_path}: {} row(s) packed, {} byte(s), sha256 {}, roundtrip holds",
+        "{out_path}: {} row(s) packed, {} byte(s), sha256 {sha}, roundtrip holds",
         table.rows.len(),
-        bin.len(),
-        sha256_hex(&bin)
+        bin.len()
     );
     print_inventory(
         &asset,
@@ -311,7 +343,7 @@ fn compile_entry(
         eprintln!("{asset}: CDN upload returned void");
         return None;
     }
-    Some(asset)
+    Some((asset, sha))
 }
 
 fn main() {
@@ -355,26 +387,38 @@ fn main() {
         std::process::exit(2);
     }
 
-    let mut pairs: Vec<(String, String)> = Vec::new();
+    let mut per_table: Vec<(String, Vec<(String, String)>)> = Vec::new();
+    let mut found = 0usize;
     for t in &tables {
-        let before = pairs.len();
-        collect_tap_pairs(&root, t, &mut pairs);
-        eprintln!("{t}: {} pair(s)", pairs.len() - before);
+        let mut table_pairs: Vec<(String, String)> = Vec::new();
+        collect_tap_pairs(&root, t, &mut table_pairs);
+        eprintln!("{t}: {} pair(s)", table_pairs.len());
+        found += table_pairs.len();
+        per_table.push((t.clone(), table_pairs));
     }
-    if pairs.is_empty() {
+    if found == 0 {
         eprintln!("no .TAB/.xml pair found — nothing written (0 honored)");
         std::process::exit(1);
     }
     if args.iter().any(|a| a == "--pairs") {
-        for (label, dat) in &pairs {
-            println!("{label}\t{dat}");
+        for (_, pairs) in &per_table {
+            for (label, dat) in pairs {
+                println!("{label}\t{dat}");
+            }
         }
         return;
     }
     let mut written = 0usize;
-    for (label_spec, dat_spec) in &pairs {
-        if compile_entry(dat_spec, label_spec, out_arg.as_deref(), ci_mode).is_some() {
-            written += 1;
+    for (table, pairs) in &per_table {
+        let mut shards: Vec<(String, String)> = Vec::new();
+        for (label_spec, dat_spec) in pairs {
+            if let Some(entry) = compile_entry(dat_spec, label_spec, out_arg.as_deref(), ci_mode) {
+                shards.push(entry);
+                written += 1;
+            }
+        }
+        if !shards.is_empty() {
+            write_manifest(&family_name(table), &shards, out_arg.as_deref(), ci_mode);
         }
     }
     if written == 0 {
@@ -412,6 +456,15 @@ mod tests {
             asset_name(url),
             "pds_ppi_data_galileo-hic-jup-raw_data_orb_29_high_res_uncalib.bin"
         );
+    }
+
+    #[test]
+    fn family_name_strips_the_epn_suffix() {
+        assert_eq!(
+            family_name("galileo_hic_jup_raw.epn_core"),
+            "pds_ppi_galileo_hic_jup_raw.manifest"
+        );
+        assert_eq!(family_name("odd"), "pds_ppi_odd.manifest");
     }
 
     #[test]
