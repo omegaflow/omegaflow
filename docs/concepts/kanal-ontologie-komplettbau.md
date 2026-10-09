@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: d201d8851ad68bc9f789505739c727ebdc2f676bd5771f8fe1a872c843dc4fe9
+  sha256: a159a73f4d3742ae4f4a1c9917165fe3a3da27cbc6ec5fb3a9504c44b56db3e0
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -87,6 +87,12 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   Moden als **eine** abgeleitete Instanz; `electric` = Alias(em); `thermal` = diffusion-Zeile.
 - **P1.8** Tests: `thermal==diffusion` dedupliziert; Modus-Projektor `Σ Pᵢ = 1`; Zulässigkeitsgraph
   (Masse×Fourier verboten); `ChannelId` = Hash, stabil.
+- **P1.9** `ChannelDescriptor.body: Option<String>` — das Medium-Material (Körpername);
+  `channel_registry_from_sources` setzt ihn aus `SourceConfig.body` (`at`/`on`), `hash_into`/`PartialEq`
+  binden ihn (verschiedene Körper = verschiedene Identität), `fundamental_hz()` löst `c` über
+  `media::medium_params_of(body)` und ist familien-bewusst (Scalar/Toroidal/Spheroidal); ohne Body
+  bleibt der Vakuum-Pfad (`characteristic_speed(medium, None)`). Das baut die `c`-Quelle je Medium
+  über die gemessene `media_params.tsv` (river-160).
 
 ### P2 — Frame & Reduktion (`src/mathematikerin/actuators.rs`)
 - **P2.1** `struct PresenceFrame { n: u16, omega: [f32; CAP], aperture: [f32; CAP],
