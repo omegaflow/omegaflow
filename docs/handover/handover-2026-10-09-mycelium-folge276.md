@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. pages-deploy membrane_bodies-Staging entfernt (river-143); mountain-283 + river-143 gefaltet; `ausstehend`-Queue (§A–E) in 11 Agenten abgearbeitet; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: e7dcd243d2491ab197aa4d38f47f40df529084dd5b4cbce8b8031ab23476d1d2
+  sha256: a283c18c3fddc8c1be2d00666fbe486e45edbf016d03d60dc9096d2acb5713c2
   status: live
 -->
 # Handover — Mycelium-Folge 276 (2026-10-09)
@@ -109,7 +109,7 @@ Origin: mycelium-276.
 
 - **Wind SWE/MFI-Route (Riss, `phi/pipeline/ledger.φ:138`):** gemessen 2026-10-09 — `WI_H0_SWE` (`sources.φ:29445`) ist **Elektronen** und am **2001-05-31 eingefroren**; die GIC-Replikation §A braucht Protonen: `WI_K0_SWE` (`Np` #/cc, `V_GSE` km/s, 1994→2026-10-06) + `WI_H2_MFI` (`BGSM`/`BGSE` nT, 1994→2026-09-27). Bitte dein Feld-/Quantity-Verdikt und die `sources.φ`-Zeilen (HAPI-Parameter in Dataset-Reihenfolge — `parameters=Time,Np,V_GSE` sonst `HAPI 1411 Parameter out of order`).
 - **DAS2 Iowa (`:98`) / Substorm-Onset (`:150`):** dein Arm/Verdikt steht noch aus.
-- **Orphan-Verdikte (`phi/blocked_sources.φ`):** TUH EEG (`:86`) und NSRR (`:90`) sind **erledigt** (Operator-Wort 2026-10-09): beide nach `phi/declined_sources.φ` als `decline no-physical-force` verschoben (beide Enden benannt). `blocked account` ist damit leer. **Rest für dich:** der Anker in `wartend.φ:37` auf `blocked_sources.φ:138` ist stale (dort steht heute ein anderer Eintrag); die Nicht-Feld-Nutzung von TUH bleibt operator-gebunden (`wartend.φ:37`).
+- **Orphan-Verdikte (`phi/blocked_sources.φ`):** TUH EEG (`:86`) und NSRR (`:90`) sind **erledigt** (Operator-Wort 2026-10-09): beide nach `phi/declined_sources.φ` als `decline no-physical-force` verschoben (beide Enden benannt). `blocked account` ist damit leer. Der stale Anker in `wartend.φ:37` ist korrigiert (`blocked_sources.φ:138` → `phi/declined_sources.φ:5767`); die Nicht-Feld-Nutzung von TUH bleibt operator-gebunden (`wartend.φ:37`). Kein weiterer Mountain-Akt.
 - **JAXA-Registerzitat:** `ledger.φ:120` zitierte `sources.φ:10370` — dort steht kein JAXA-Block (g-vo-Maser-`ttl`); die JAXA-Zeilen sind `sources.φ:10962-10968` + `2286-2292`. Bitte die falsche Zitatstelle prüfen.
 - **ShadowCam-Admission:** `pds.shadowcam.im-ldi.com/derived/` liefert `.cub` (ISIS) + `_cog.tif`, **kein `.fits`**; der vorhandene `pds4-fits`-Arm ist Chang'e-MRM. Braucht eine eigene Admission/`format` + TIFF-Compiler-Route (Mycelium baut auf dein Verdikt).
 
