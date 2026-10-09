@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::env;
 use std::fs;
 use std::path::PathBuf;
@@ -81,25 +81,31 @@ struct Attribution {
 }
 
 fn attribute(content: &str) -> Attribution {
-    let mut by_key: BTreeMap<String, BTreeSet<(String, Option<String>)>> = BTreeMap::new();
+    let mut lines: BTreeSet<String> = BTreeSet::new();
+    let mut netlocs: BTreeSet<String> = BTreeSet::new();
     let mut terms: usize = 0;
     let mut no_terms: usize = 0;
     for block in blocks(content) {
         let netloc = block_token(&block, "url")
             .and_then(extract_netloc)
             .map(|value| value.to_string());
-        let identity = block_identity(&block);
+        if let Some(netloc) = &netloc {
+            netlocs.insert(netloc.clone());
+        }
         match block_terms(&block) {
             Some((token, terms_url)) => {
                 terms += 1;
-                let key = match netloc {
-                    Some(netloc) => netloc,
-                    None => match identity {
+                let source = match block_token(&block, "url") {
+                    Some(url) => url.to_string(),
+                    None => match block_identity(&block) {
                         Some(identity) => identity,
                         None => continue,
                     },
                 };
-                by_key.entry(key).or_default().insert((token, terms_url));
+                match terms_url {
+                    Some(url) => lines.insert(format!("{source} | {token} | {url}")),
+                    None => lines.insert(format!("{source} | {token}")),
+                };
             }
             None => {
                 if netloc.is_some() {
@@ -108,18 +114,9 @@ fn attribute(content: &str) -> Attribution {
             }
         }
     }
-    let mut lines = Vec::new();
-    for (key, set) in &by_key {
-        for (token, url) in set {
-            match url {
-                Some(url) => lines.push(format!("{key} | {token} | {url}")),
-                None => lines.push(format!("{key} | {token}")),
-            }
-        }
-    }
     Attribution {
-        lines,
-        netlocs: by_key.len(),
+        lines: lines.into_iter().collect(),
+        netlocs: netlocs.len(),
         terms,
         no_terms,
     }
@@ -127,10 +124,12 @@ fn attribute(content: &str) -> Attribution {
 
 fn license_text(attribution: &Attribution) -> String {
     let mut out = String::new();
-    out.push_str("# omegaflow/sources — aggregate source attribution\n");
+    out.push_str("# omegaflow/sources — per-source attribution\n");
     out.push_str("# Generated from the `terms` directives in phi/sources.φ.\n");
-    out.push_str("# Each line: <netloc> | <terms-token> | <terms-url>\n");
-    out.push_str("# A netloc repeated carries disagreeing terms — never smoothed.\n");
+    out.push_str("# Each line: <source-url> | <terms-token> | <terms-url>\n");
+    out.push_str(
+        "# One line per source; a source repeated carries disagreeing terms — never smoothed.\n",
+    );
     out.push('\n');
     for line in &attribution.lines {
         out.push_str(line);
@@ -204,19 +203,45 @@ mod tests {
     use super::*;
 
     #[test]
-    fn attributes_netloc_terms_pairs_and_counts_the_remainder() {
+    fn attributes_one_line_per_source_terms_pair_and_counts_the_remainder() {
         let src = "url https://www.example.org/data/a.csv\n\
                    terms CC-BY-4.0 https://example.org/licence\n\n\
                    url https://other.example/tap/sync?QUERY=x\n";
         let attribution = attribute(src);
         assert_eq!(
             attribution.lines,
-            vec!["example.org | CC-BY-4.0 | https://example.org/licence".to_string()],
+            vec![
+                "https://www.example.org/data/a.csv | CC-BY-4.0 | https://example.org/licence"
+                    .to_string()
+            ],
             "{:?}",
             attribution.lines
         );
         assert_eq!(attribution.netlocs, 1);
         assert_eq!(attribution.terms, 1);
         assert_eq!(attribution.no_terms, 1);
+    }
+
+    #[test]
+    fn keeps_one_line_per_source_under_one_netloc() {
+        let src = "url https://example.org/data/a.csv\n\
+                   terms CC-BY-4.0 https://example.org/licence\n\n\
+                   url https://example.org/data/b.csv\n\
+                   terms CC-BY-SA-4.0 https://example.org/licence\n";
+        let attribution = attribute(src);
+        assert_eq!(
+            attribution.lines,
+            vec![
+                "https://example.org/data/a.csv | CC-BY-4.0 | https://example.org/licence"
+                    .to_string(),
+                "https://example.org/data/b.csv | CC-BY-SA-4.0 | https://example.org/licence"
+                    .to_string(),
+            ],
+            "{:?}",
+            attribution.lines
+        );
+        assert_eq!(attribution.netlocs, 1);
+        assert_eq!(attribution.terms, 2);
+        assert_eq!(attribution.no_terms, 0);
     }
 }

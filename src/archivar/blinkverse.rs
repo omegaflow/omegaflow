@@ -12,6 +12,16 @@ pub fn component_name(comp: u32) -> String {
     format!("blinkverse_col_{comp:04}")
 }
 
+pub const RA_NAMES: &[&str] = &["ra", "right ascension"];
+pub const DEC_NAMES: &[&str] = &["dec", "decl", "declination"];
+
+pub fn column_index(names: &[String], wanted: &[&str]) -> Option<usize> {
+    names.iter().position(|name| {
+        let n = name.trim();
+        wanted.iter().any(|w| n.eq_ignore_ascii_case(w))
+    })
+}
+
 pub fn write_bin(table: &Table) -> Vec<u8> {
     let n_cols = table.names.len();
     let words = (n_cols + 63) / 64;
@@ -135,6 +145,18 @@ mod tests {
         let mut leftover = write_bin(&table());
         leftover.push(0u8);
         assert!(parse_bin(&leftover).is_none());
+    }
+
+    #[test]
+    fn column_index_reads_ra_dec_by_name_and_refuses_absence() {
+        let names = vec![
+            "DM".to_string(),
+            "RA".to_string(),
+            "declination".to_string(),
+        ];
+        assert_eq!(column_index(&names, RA_NAMES), Some(1));
+        assert_eq!(column_index(&names, DEC_NAMES), Some(2));
+        assert_eq!(column_index(&names, &["flux"]), None);
     }
 
     #[test]
