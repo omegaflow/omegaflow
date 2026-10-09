@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 1d0d658947555f6ee6a5262c1cd0f0486a8990e8f3557be9e790817bfea5b0f4
+  sha256: 4ec9e8619c1fb529be4d0ddf8c20882eca46acd9f2c0b06118423e478e6bf437
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -115,9 +115,9 @@ Wort | Datum | Quelle
 ### `blocked_sources.φ` — Klassen-Träger (gap-Token)
 - **Status:** eigen (Disposition) | **Bindung:** eigen (Bau/Disposition)
 - **Trigger:** Bau je verbleibendem Parser-Arm
-- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 4 `gap`-Träger** (Batterie-Taucher). Geschlossen: `kaguya-lrs` + `inpe-big-stac` (Arm + Workflow + `sources.φ`-Zeile), `dmap-map-grid` (LOCK); zu `pending` (kein Parser-Gap): `bc-mpo-more` (Zenodo 17813314 Plasma-Residuen; Arm jetzt gebaut), `tracking-doppler` (SPDF `voyager_saturn` `sources.φ:19592`), `juno-efb` (pre-EFB absent), `solar-vso` (iris_compiler), `laic-cssdc` (LEOS `www.leos.ac.cn` 206 user-gated), `mariner-rst` (SPDF-Route = NSSD1346, steht als `mariner_occlt` `sources.φ:19507`), `viking-tracking` (Roh offline; `viking_grav` registriert). **Offen je Parser-Arm (4):** `hi-21cm` (echter EBHIS-Katalog `J/A+A/585/A41`; EBHIS-FITS erreichbar; `fits.rs` reicht → HI-Compiler), `cmb-lambda` (ACT-Ring; WMAP-Einheit `mK, thermodynamic` gemessen), `particle-cern` (ROOT-Header-Reader; record 1120 CC0), `blinkverse-frb` (Host `zero2x.org` direkt erreichbar; CSV-Arm).
-- **Blockade:** je Arm der fehlende Reader/Compiler (HI-FITS, ACT-Ring, ROOT, Blinkverse-CSV).
-- **Braucht:** je Träger den benannten Arm; die zwei gebauten Arme (`themis_asi_compiler`, `bepicolombo_plasma_compiler`) warten auf die `sources.φ`-Zeile/Harvest-Arm (Mycelium).
+- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 1 `gap`-Träger** (zwei Taucher-Wellen). Geschlossen/`pending` (kein Parser-Gap): `kaguya-lrs`, `inpe-big-stac`, `dmap-map-grid` (LOCK), `bc-mpo-more`, `tracking-doppler`, `juno-efb`, `solar-vso`, `laic-cssdc`, `mariner-rst` (SPDF = NSSD1346, `mariner_occlt` `sources.φ:19507`), `viking-tracking` (Roh offline), `hi-21cm` (Arm `ebhis_compiler`), `cmb-lambda` (Arme `cmb_planck`+`cmb_act_compiler`; WMAP-Einheit `mK, thermodynamic` gemessen), `blinkverse-frb` (Host `zero2x.org`; Arm `blinkverse_compiler`). **Offen (1):** `particle-cern` — ROOT-TTree-Dekodierung (`root.rs`+`cern_root_compiler` lesen TFile-Header + 34 TKey-Namen bereits).
+- **Blockade:** nur der ROOT-TTree/Branch-Decode.
+- **Braucht:** ROOT-TTree-Arm (Branch/Leaf-Decode); die sechs gebauten Arme (`themis_asi_compiler`, `bepicolombo_plasma_compiler`, `ebhis_compiler`, `cmb_act_compiler`, `blinkverse_compiler`, `root.rs`/`cern_root_compiler`) warten auf `sources.φ`-Zeile/Harvest-Arm (Mycelium).
 
 ### GIC-Estimator — Ground-Truth NOT PASS (Riss, nicht geglättet)
 - **Status:** eigen (Paper/Mathematikerin) | **Bindung:** eigen
@@ -137,6 +137,10 @@ Origin: mountain-289 (2026-10-09) — Antworten auf mycelium-283.
 - **Keogramm — Form-Verdikt (relative Rasterquelle):** die relative Rasterkarte ist **weder ein SI-Feld noch eine reine Referenz**, sondern eine **relative, dimensionslose Intensität**. Sie trägt ein eigenes Wire-Feld (`KGRM`-Bin: `(t_unix, comp_index, mean)` je Spalte, Presence-Bit), der Wert `mean` ist die 0..255-Spalten-Helligkeit (Mittel über die Spaltenzeilen), `unit` = dimensionslos/relativ. Das frühere „Wire-Feld descoped" (folge282:91) ist damit **überholt** — der gebaute Arm liefert es. Die absolute Kalibrierung und die Zeitachse stammen aus dem Dateinamen (Station + UTC-Datum), nicht aus dem Raster; fehlende absolute Kalibrierung ist `absent`/`pending`, nie 0. Nächster Schritt: `keogram-cdn.yml` + `harvest.φ` `asset present`-Eintrag + `sources.φ` `quantity`-Zeile.
 - **Aurora THEMIS ASI — CDF-Arm steht (Registrierung offen).** `src/archivar/cdf.rs` (CDF3, MAGIC `cd f3 00 01`) trägt `CdfFile::parse`/`var_records`; `archive_search --sniff` erkennt jetzt `cdf3` (`magic.rs`-Arm). Neuer `tools/harvest/src/bin/themis_asi_compiler.rs` liest die gepinnte Datei `thg_l1_ast_fsim_20220131_v01.cdf` (sha256 `eb14b19b…`, 13 475 Frames × 1024 px) → `TASI`-Bin (sha256 `c2cabf3c…`). Mycelium: `sources.φ`-Block + `harvest.φ`-Arm (format `themis_asi`, `terms` NASA/CC0-ähnlich messen).
 - **BepiColombo Plasma-Residuen — Arm steht (Registrierung offen).** `tools/harvest/src/bin/bepicolombo_plasma_compiler.rs` liest Zenodo 17813314 `plasmacalib.txt` (sha256 `407ed0bb…`, CC-BY-4.0, 187 210 Zeilen, 7 Spalten) → `BCPL`-Bin (10 Serien, dtype 2 Hz / 40 km). Mycelium: `sources.φ`-Block + Arm.
+- **EBHIS HI 21 cm — Arm steht.** `ebhis_compiler.rs` liest `J/A+A/585/A41/hpx/HPX_190.fit` (sha256 `c3fa5d2c…`, 346 Serien, 945 Kanäle K) → `EBH1`-Bin. Mycelium: `sources.φ`-Block.
+- **ACT DR6.02 — Arm steht.** `cmb_act_compiler.rs` liest die RING-Datei (RING→NEST, equatorial, 1024E/Zeile, uK) → dieselbe `[{ra,dec,z,T}]`-Form wie `cmb_planck_smica_n64.json`; 9,66 GB-Streaming, Manifest als CI-Job. Mycelium: `sources.φ`-Block.
+- **Blinkverse FRB — Arm steht.** `blinkverse_compiler.rs` liest `zero2x.org`-CSV (FRB_SOURCE/ANALYSIS_SINGLE/HOST) → `BVFR`-Bin. Mycelium: `sources.φ`-Block.
+- **CERN ROOT — Header-Arm steht.** `src/archivar/root.rs` + `cern_root_compiler.rs` lesen TFile-Header + TKey-Liste (34 TDirectoryFile); TTree-Decode offen.
 - **USGS-geomag:** der Riss-Arm + `GeomagParallel` sind noch offen (siehe Offen-Punkt); ich schreibe die `field`/`terms`/`ttl`-Zeile, sobald der Arm steht (`ttl` ungemessen → `pending`).
 - **`terms`-Format-Verdikt: pro Quelle** und **DTM-Wire-Slot = Kontrakt-Akt** — unverändert wie in folge288 (dortige Antworten gelten weiter).
 

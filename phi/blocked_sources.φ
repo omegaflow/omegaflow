@@ -47,15 +47,13 @@ pending
 url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.φ-Arm stehen; terms TSPA=PD. Keine statische Zeile: Family unbounded, kein Manifest, pds4_fixed_width braucht field-Zeilen. Vorbedingung: Manifest + dynamische Felder.
 
-blocked parser-def
+pending
 url https://skyview.gsfc.nasa.gov/cgi-bin/images
-gap hi-21cm
-note HI 21cm — 2026-10-09: echter EBHIS-Katalog J/A+A/585/A41 (nicht A136); GASS J/ApJS/181/398 = Falsch-Positiv; HI4PI J/A+A/594/A116 existiert. EBHIS-FITS erreichbar (A41/fits/SIN_A01.fit 617 MB, BUNIT K); fits.rs reicht → HI-Compiler bauen.
+note HI 21cm — 2026-10-09: Arm ebhis_compiler steht (FITS hpx/HPX_190.fit, EBHIS J/A+A/585/A41, 346 Serien K); GASS Falsch-Positiv, HI4PI J/A+A/594/A116 existiert. sources.φ-Block pending (Mycelium).
 
-blocked parser-def
+pending
 url https://lambda.gsfc.nasa.gov/
-gap cmb-lambda
-note CMB LAMBDA/PLA — 2026-10-09: WMAP ILC 9yr Einheit GEMESSEN TUNIT1='mK, thermodynamic' (2. HDU, fitsheader.cgi) — nicht pending. ACT DR6.02 RING/COORDSYS C/TFORM1 1024E/uK → neuer Arm (ring→nest, equatorial). SPT D1 tar.bz2.
+note CMB LAMBDA/PLA — 2026-10-09: Arme cmb_planck_compiler (NESTED) + cmb_act_compiler (ACT RING→NEST, equatorial, 1024E, uK) stehen; WMAP-Einheit TUNIT1='mK, thermodynamic' gemessen; SPT D1 tar.bz2. sources.φ-Block pending (Mycelium).
 
 pending
 url https://vso.stanford.edu/
@@ -68,9 +66,8 @@ note LAIC CSSDC — 2026-10-09 RISS: cssdc.ac.cn/en liefert eine Telegram-APK-Ad
 blocked parser-def
 url https://opendata.atlas.cern/
 gap particle-cern
-note Teilchen CERN + GWOSC — 2026-10-09: CERN record 1120 (ALICE, CC0 bestätigt; kleinste Datei AliVSD_Masterclass_6.root 35,4 MB, magic root) → ROOT-Header-Reader fehlt; GWOSC Strain HDF5 steht (gwosc_compiler.rs). dead:496 korrekt.
+note Teilchen CERN + GWOSC — 2026-10-09: root.rs + cern_root_compiler stehen (TFile-Header + TKey-Liste, 34 TDirectoryFile; AliVSD_Masterclass_6.root 35,4 MB, CC0); TTree-Dekodierung offen. GWOSC Strain HDF5 steht (gwosc_compiler.rs).
 
-blocked parser-def
-url https://blinkverse.zerooffset.xyz/
-gap blinkverse-frb
-note FRB Blinkverse — 2026-10-09: HOST GEZOGEN → blinkverse.zero2x.org direkt 200 (kein Auth); API .../adcp-blinkverse/type/{FRB_SOURCE,FRB_ANALYSIS_SINGLE,FRB_HOST} + CSV (4020 Quellen, 35342 Pulse, 154 Hosts). Alter Host tot. CSV-Arm bauen.
+pending
+url https://blinkverse.zero2x.org/
+note FRB Blinkverse — 2026-10-09: Host zero2x.org direkt 200; Arm blinkverse_compiler steht (CSV: 4020 Quellen, 35342 Pulse, 154 Hosts); alter Host zerooffset.xyz tot. sources.φ-Block pending (Mycelium).
