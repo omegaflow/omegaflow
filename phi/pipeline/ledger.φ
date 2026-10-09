@@ -97,7 +97,7 @@ note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132/GWT3W_L1B 434 B, Probe
 
 ausstehend
 kandidat https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa HAPI 1.1 CSV — 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml stehen; origin sources.φ:17952. Offen: Feld-Verdikt (kein field im Block).
+note DAS2 Iowa HAPI 1.1 CSV — 2026-10-09: 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml stehen; origin sources.φ:17952. Feld-Verdikt gefallen (mountain-285): Block trägt hapi_csv_*_nt (em nT); Note geschlossen.
 
 ausstehend
 kandidat https://moon.bao.ac.cn/

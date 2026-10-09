@@ -1,0 +1,84 @@
+name: sources-repo-licence
+
+concurrency:
+  group: sources-repo-licence
+  cancel-in-progress: false
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'phi/sources.φ'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  licence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Generate the aggregate source attribution
+        run: |
+          cargo run -q -p omegaflow-register --release --bin sources_repo_license -- --out-dir /tmp/licence
+      - name: Write the per-source licence into every release body
+        run: |
+          set -euo pipefail
+
+          declare -A terms_by_netloc
+          while IFS= read -r line; do
+            case "$line" in
+              \#*|"") continue ;;
+            esac
+            case "$line" in
+              *" | "*) ;;
+              *) continue ;;
+            esac
+            net=$(printf '%s' "$line" | awk -F' \\| ' '{print $1}' | xargs)
+            tok=$(printf '%s' "$line" | awk -F' \\| ' '{print $2}' | xargs)
+            url=$(printf '%s' "$line" | awk -F' \\| ' '{print $3}' | xargs)
+            if [ -n "$net" ] && [ -n "$tok" ]; then
+              if [ -n "$url" ]; then
+                terms_by_netloc["$net"]="$tok — $url"
+              else
+                terms_by_netloc["$net"]="$tok"
+              fi
+            fi
+          done < /tmp/licence/LICENSE
+
+          gh release list --repo omegaflow/sources --limit 1000 --json tagName --jq '.[].tagName' > /tmp/tags.txt
+
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            lic="${terms_by_netloc[$tag]:-}"
+            desired=""
+            [ -n "$lic" ] && desired="Source licence: $lic"
+
+            body=$(gh release view "$tag" --repo omegaflow/sources --json body --jq '.body // ""')
+
+            current=$(printf '%s\n' "$body" | awk '
+              /<!-- omegaflow-source-licence -->/{f=1; next}
+              /<!-- \/omegaflow-source-licence -->/{f=0; next}
+              f==1 {print}
+            ')
+            [ "$current" = "$desired" ] && continue
+
+            clean=$(printf '%s\n' "$body" | awk '
+              /<!-- omegaflow-source-licence -->/{f=1; next}
+              /<!-- \/omegaflow-source-licence -->/{f=0; next}
+              f==0 {print}
+            ')
+            if [ -n "$lic" ]; then
+              printf '%s\n\n<!-- omegaflow-source-licence -->\n%s\n<!-- /omegaflow-source-licence -->\n' "$clean" "$desired" > /tmp/release-body.md
+            else
+              printf '%s\n' "$clean" > /tmp/release-body.md
+            fi
+            gh release edit "$tag" --repo omegaflow/sources --notes-file /tmp/release-body.md
+            echo "source licence written: $tag"
+          done < /tmp/tags.txt
