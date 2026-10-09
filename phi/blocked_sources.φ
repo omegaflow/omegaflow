@@ -56,7 +56,7 @@ note MAP-Grid RST (DMap) — 2026-10-09: DMap-Kern + `map_grid_value` gebaut (`s
 blocked parser-def
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
 gap kaguya-lrs
-note Kaguya/SELENE LRS (DARTS/PDS3) — 2026-10-09: pds3_binary-Arm steht; DARTS-Host flappt (200/503 F5-WAF), WUSTL-ODE 200. sources.φ-Block + Workflow fehlen → buildable now (Arm steht).
+note Kaguya/SELENE LRS (DARTS/PDS3) — 2026-10-09: Riss widerlegt: sources.φ:10877 trägt den 00N-Block (mountain 213); generischer pds3-binary-cdn.yml läuft; kaguya-lrs-cdn.yml (--dir, 00S) + harvest.φ-Arm ergänzt. DARTS flappt 200/503.
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
@@ -65,7 +65,7 @@ note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.�
 blocked parser-def
 url https://data.inpe.br/bdc/stac/v1/
 gap inpe-big-stac
-note INPE BIG STAC 1.0.0 — 2026-10-09: root 200, 79 Sammlungen; Compiler inpe_stac_compiler.rs gebaut (samet_daily-1, CC-BY-4.0, NetCDF4 tmax); topodata Deflate+tiled → tiff-Arm verweigert. Reader+sources.φ blockiert: NetCDF tmax ohne units-Attribut.
+note INPE BIG STAC 1.0.0 — 2026-10-09: tmax ohne units-Attribut; STAC eo:bands[0].description "Unit: Celsius" → field C. sources.φ-Block + inpe-stac-cdn.yml + Arm gebaut; Asset sha256 96cc2d1a… == STAC checksum.
 
 blocked parser-def
 url https://skyview.gsfc.nasa.gov/cgi-bin/images
@@ -75,12 +75,12 @@ note HI 21cm — 2026-10-09 RISS: EBHIS-VizieR J/A+A/585/A136 existiert NICHT (V
 blocked parser-def
 url https://lambda.gsfc.nasa.gov/
 gap cmb-lambda
-note CMB LAMBDA/PLA — 2026-10-09: lambda.gsfc/PLA; Planck via IRSA/SMICA/PSZ2 gebaut (sources.φ:11239-11275); Rest WMAP/ACT/SPT (LAMBDA-PD) ohne Arm → buildable remainder.
+note CMB LAMBDA/PLA — 2026-10-09: WMAP ILC 9yr (206, NESTED Galactic, kein TUNIT1 → Einheit pending) via cmb_planck_compiler; ACT DR6.02 RING/equatorial → neuer Arm; SPT D1 tar.bz2. lambda.gsfc/PLA.
 
 blocked parser-def
 url https://vso.stanford.edu/
 gap solar-vso
-note Solar VSO/IRIS — 2026-10-09: VSO SOAP-Aggregator (vso.stanford.edu/cgi-bin/vsoi 411), SDO/AIA bereits gebaut (sources.φ:2934); IRIS-FITS-Arm fehlt → buildable now (neuer iris-Compiler auf fits.rs).
+note Solar VSO/IRIS — 2026-10-09: VSO POST 411 (lebt); IRIS HCR-API www.lmsal.com/hek/hcr liefert comp_data_url; FITS 200 (…/level2/…/iris_l2_…_SJI_2796_t000.fits, 9 207 360 B). iris_compiler.rs gebaut; Register pending.
 
 blocked parser-def
 url https://www.cssdc.ac.cn/en/
@@ -90,7 +90,7 @@ note LAIC CSSDC — 2026-10-09 RISS: `cssdc.ac.cn` + `/en/` liefern identisch ei
 blocked parser-def
 url https://opendata.atlas.cern/
 gap particle-cern
-note Teilchen CERN/ATLAS + GWOSC — 2026-10-09: `opendata.atlas.cern` + `gwosc.org` je HTTP 200; CERN-Open-Data-API + GWOSC-Arm fehlen (`dead:496` stale).
+note Teilchen CERN/ATLAS + GWOSC — 2026-10-09: CERN opendata /api/records/ 200, recid 1120 ALICE ROOT CC0 → ROOT-Arm pending; GWOSC Strain HDF5 206 (CC BY 4.0) → gwosc_compiler.rs gebaut. dead:496 korrekt.
 
 blocked parser-def
 url https://blinkverse.zerooffset.xyz/
@@ -99,4 +99,4 @@ note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamiks
 
 pending
 url https://github.com/TIAN-we/petrel19
-note PETREL19 — 2026-10-09: Wei erteilt CC BY 4.0; decline widerlegt. Riss: ephemeris_compiler seit 0615424f6 parameterisiert, aber keine Invokation/Workflow/Zeile. Route: TIAN-we/petrel19 fmt_spice-Kernel → de_compiler --label petrel19.
+note PETREL19 — 2026-10-09: Wei CC BY 4.0; decline widerlegt. Route gebaut: petrel19-cdn.yml (de_compiler --label petrel19 --gm/--pck PETREL19.tpc) + sources.φ ephemeris_petrel19_{earth,moon,sun}. Manifest pending.

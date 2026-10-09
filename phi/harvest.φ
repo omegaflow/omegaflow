@@ -129,6 +129,14 @@ pattern ^ephemeris_epm_[a-z]+\.bin$
 idempotent true
 
 asset present
+format ephemeris_petrel19
+tag github.com
+arm de_compiler
+workflow petrel19-cdn.yml
+pattern ^ephemeris_petrel19_[a-z]+\.bin$
+idempotent true
+
+asset present
 format ersstv5_nino34
 tag coastwatch.pfeg.noaa.gov
 arm ersstv5_compiler
@@ -257,6 +265,15 @@ workflow impc-roti-cdn.yml
 pattern ^impc_roti\.bin$
 idempotent true
 timeout 300
+
+asset present
+format inpe_stac_samet_daily
+tag data.inpe.br
+arm inpe_stac_compiler
+workflow inpe-stac-cdn.yml
+pattern ^inpe_stac_samet_daily\.bin$
+idempotent true
+timeout 60
 
 asset present
 format kc2g_stations
@@ -398,6 +415,16 @@ tag data.darts.isas.jaxa.jp
 arm pds3_binary_compiler
 workflow pds3-binary-cdn.yml
 pattern ^pds3_binary_.+\.bin$
+idempotent true
+timeout 240
+
+asset present
+format pds3_binary_kaguya_lrs
+tag data.darts.isas.jaxa.jp
+arm pds3_binary_compiler
+workflow kaguya-lrs-cdn.yml
+args --dir https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/
+pattern ^pds3_binary_lrs_.+\.bin$
 idempotent true
 timeout 240
 
