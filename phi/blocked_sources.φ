@@ -67,10 +67,6 @@ url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
 gap aurora-keogram
 note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Dekoder `keogram.rs` + Compiler `keogram_compiler.rs` gebaut (600×570, Spaltenmittel); Wire-Feld descoped (raw/relativ, FMI „not suitable"); offen: Quelle als Vision-Asset registrieren.
 
-blocked ip-blocked
-url https://ceic.ac.cn/data/data.json
-note CENC Quake-Feed — 2026-10-09: HTTPS-Direktpfad vom Runner unerreichbar (`curl 28/7`); CENC-Mirror `https://api.wolfx.jp/cenc_eqlist.json` registriert (`sources.φ:523`, Host vom Runner erreichbar); `sources.φ:77` bleibt bis Mountain-Verdikt.
-
 blocked parser-def
 url https://data.inpe.br/bdc/stac/v1/
 gap inpe-big-stac
