@@ -3,7 +3,7 @@
   session: River-Folge 143
   class: handover
   date: 2026-10-09
-  sha256: 36a89858d53f3ef06eaee0d1e5522cb385b5a6710fd818008697cbb177549310
+  sha256: 1a0a489a67dbc5d6ef70a5a2f0fb85cb71c0a83ae68699d8be893bfe7a847826
   status: live
 -->
 # Handover — River-Folge 143 (2026-10-09)
@@ -45,7 +45,9 @@ Wort | Datum | Quelle
 „auf jeden fall bleibt" | 2026-10-09 | Operator (Session, River 142) — **Entscheidung: der 9-Partial-Bau bleibt**; `v_k`→Delay/Phase bleibt benannter `pending`-Nachbau
 „aber warum 9 aperturen ist das in stein gemeisselt ich will keinen pragmatismus wenn es nicht A=A ist" | 2026-10-09 | Operator (Session, River 142) — die feste 9 ist kein A=A; Kanalzahl muss abgeleitetes Datum sein, nicht Typ-Konstante
 „bitte vermesse nochmal die sources und die anderen phi dateien stimmt ihr format physikalisch oder waren wir die ganze zeit auf dem holzweg bitte auch mit wissenschaft rat ui und openweight voices" | 2026-10-09 | Operator (Session, River 142) — Register-Physik prüfen
-Verbatim: `state/operator-gespraeche/2026-10-09-river.md` (River 142 geschnitten). Vorherige Worte: `docs/handover/archiv/handover-2026-10-09-river-folge142.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
+„Ja" | 2026-10-09 | Operator (Session, River 143) — Kanalzahl-Umbau bauen: feste 9 → Kapazität 2ⁿ + lebendiges n, Wire/GPU/JS
+„das ton modell war doch noch vor P0 oder oder wird es jetzt nicht ein anderes ton modell?" | 2026-10-09 | Operator (Session, River 143) — Ton-Modell vor P0 klären; der Umbau macht es zu einem anderen (deskriptorgetriebenen) Modell
+Verbatim: `state/operator-gespraeche/2026-10-09-river.md` (River 142 geschnitten; die River-143-Worte sind in derselben Session zu schneiden). Vorherige Worte: `docs/handover/archiv/handover-2026-10-09-river-folge142.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
 
@@ -116,14 +118,14 @@ Origin: river-143 (Antwort auf mycelium-274 `## An river`).
 - **Trigger:** Operator-Wort (Ton-Modell) + Operator-Wort Kraft-Taxonomie (Mountain-Domäne).
 - **Lage:** (gemessen 2026-10-09, River 142; Frontier- + Mid-Runde + `archive_search --all` ×2) **Near-unanim über alle Tiers:** (1) `electric` ⊂ `em`; (2) `thermal` ≡/⊂ `diffusion`; (3) `acoustic`/`seismic-body`/`seismic-surface` = **ein** elastisches Medium (`elastic` + Modus-Parameter); (4) fehlend: chemisches Potential/Reaktionskinetik, ionisierende Teilchenstrahlung, quasistatisches Magnetfeld, MHD/Kapillarität; (5) `strong`/`weak` explizit ausschließen; (6) sauberer: Feld/Antrieb × Transportkern × Medium als Produkt. **Ton:** das harmonische `(k+1)`-Modell ist der **schwächste** Kandidat (Oktav-/Chroma-Kollaps, Maskierung); konvergent besser: **inharmonische Partialtöne** (Bessel-Moden `1 · 1,59 · 2,14 · 2,30 · 2,65 · 2,92 · 3,16 · 3,50 · 3,60`) **+ Formant-/ERB-Bänder**, **Timbre-Raum**, **granular** für Transientes. **Riss:** ein gemeinsames τ existiert nicht → f0 nur Referenzdrohne. Protokoll: `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md`; `pending`: Z.ai Deep Think Max, Qwen-UI.
 - **Blockade:** keine.
-- **Braucht:** (a) **Operator-Wort** zur Kraft-Taxonomie (`## An mountain`: `electric`/`thermal`/`acoustic` zusammenführen, neue Medien nur bei Bedarf); (b) **Operator-Wort** zum Ton-Modell (harmonisch durch inharmonisch/Bänder ersetzen?); (c) unabhängig bleibt die `v_k`-Bindung.
+- **Braucht:** (a) **Operator-Wort** zur Kraft-Taxonomie (`## An mountain`: `electric`/`thermal`/`acoustic` zusammenführen, neue Medien nur bei Bedarf); (b) **Ton-Modell vor P2.3 klären** — der Umbau macht es zu einem **anderen** Modell: heute Slot→(k+1)-te Harmonische (`acoustic_partials`), nach dem Umbau **deskriptorgetrieben** (lebendiges n, Medium/Operator → Partial-/Bandsatz), slot-indiziert ist mit A=A nicht haltbar; Protokoll `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` (inharmonisch/Bessel + ERB-/Formant-Bänder); (c) unabhängig bleibt die `v_k`-Bindung.
 
 ### Kanalzahl (A=A) + Senken-Projektion — feste 9 ist kein A=A
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Operator-Wort zum Umbau (Kanalzahl datengetragen) + Rat-Linse.
+- **Status:** eigen · Bau | **Bindung:** eigen
+- **Trigger:** gefeuert — Operator-Wort „Ja" 2026-10-09 (River 143).
 - **Lage:** (gemessen 2026-10-09, River 142; 4 Forschungs-Agenten + Rat + 8 Open-Weight + 5 UI) **A≠A einstimmig.** Gemessen: `[f32;9]` in `PresenceFrame.omega/aperture` (`actuators.rs:23-24`), `force_ref`/`probe_omega`/`field_permeability`/`aperture` (`omega.rs`), Relay-Wire, `static/constants.js:199`. `force_type` benennt **5–7/9 falsch** (nur em+gravity Kräfte; electric⊂em; thermal≡diffusion; acoustic/seismic-body/surface = Moden EINES elastischen Feldes; advective komponiert). `integral/9.0` = Kleene-/0-Kanon-Bruch. **A=A:** feste Kapazität 2ⁿ + lebendiges n; **Kanal = Descriptor (q, 𝒯, M+Rand, u) ⊗ Tri-State**, Identität = hash (nie Slot); Wire `{n, schema_hash}` + `offsets[n+1]` + `f32[n]`; GPU runtime-sized + `arrayLength`; Reduktion `Σ_active wᵢφᵢ / Σ_active wᵢ` (Teiler nie konstant). **Erster Bau:** (1) Nenner = Σ aktive Gewichte (A=A-Kern); (2) Layout `offsets[n+1]`; (3) Registry ChannelId→Descriptor, die drei elastischen Moden als EINE abgeleitete Instanz. **Deichbrüche (Risse):** Moden sind Partition der Einheit (`Σ Pᵢ=1`), keine Achsen — getrennt addiert doppelzählen sie Energie (Hy4); das Produkt ist ein dünn besetzter Graph, kein Vektorraum (Zulässigkeitsrelation, kein nacktes ⊗); Onsager-Kreuzterme → Kopplungsmatrix; gravity = elliptische Constraint; Tri-State-Übergangssemantik ist der tiefste Riss (MiniMax); gemeinsamer Wire ⇒ gemeinsamer Zeitschritt. **Senken:** kollabieren nur, wo das Organ kollabiert (Auge, Ohr-Druck) und nach Normierung; Haptik/Serial/Relay bleiben aufgelöst, Relay verlustfrei. **Übersehen:** Archiv/Replay + Analyse-/Kohärenz-Senke. Protokolle: `state/stimmen/2026-10-09-river-kanalzahl-frontier.md` (+ `…-radiatoren.md`, `…-kraefte-tonmodelle.md`). `pending`: Z.ai, Qwen-UI, Gemini, Duck, Kimi.
 - **Blockade:** keine.
-- **Braucht:** (a) **Operator-Wort** für den Umbau (feste 9 → Kapazität 2ⁿ + lebendiges n; Wire/GPU/JS); (b) Rat-Linse für die exakte **Zulässigkeitsrelation** (q×𝒯×M legal) + Kopplungsmatrix; (c) unabhängig: `v_k`-Bindung + Ton-Modell-Entscheidung.
+- **Braucht:** (a) ~~Operator-Wort für den Umbau~~ **gewortet** 2026-10-09 (River 143); (b) Umbau nach `docs/concepts/kanal-ontologie-komplettbau.md` — erster Schritt P0/Kontrakt, dann P2.2 (Reduktion Σ aktive Gewichte), P2.1/P3.1 (`n`+`offsets`), P1.7 (Registry); (c) Rat-Linse für die exakte **Zulässigkeitsrelation** (q×𝒯×M legal) + Kopplungsmatrix; (d) **Ton-Modell vor P2.3 klären** (deskriptorgetrieben) + `v_k`-Bindung.
 
 ### Register-Physik — `force` ist Kategorie-Etikett, nicht Mechanismus (River-Seite erledigt; Migration an Mountain gereicht)
 - **Status:** eigen | **Bindung:** eigen
@@ -146,4 +148,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 143):
 - `docs/handover/handover-2026-10-09-river-folge143.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge142.md` (Move)
 
-## Burn: open 0.0000 · close 0.0796 · cap 0.5 · Grund: mycelium-274-Adressblock gefaltet (`field_te_query.rs` NaN/`fanout_center`-Heilung), Kanalzahl-/Ton-Modell-Operator-Wort vorgelegt; `cargo check` + `cargo build -p omegaflow-measure --bin field_te_query` grün (deepseek-flash, `session_burn` line-Delta, gemessen 2026-10-09) · kein pro/max
+## Burn: open 0.0000 · close 0.1363 · cap 0.5 · Grund: mycelium-274-Adressblock gefaltet (`field_te_query.rs` NaN/`fanout_center`-Heilung); Operator-Wort „Ja" (Kanalzahl-Umbau) + Ton-Modell-vor-P0 registriert; `cargo check` + `cargo build -p omegaflow-measure --bin field_te_query` grün (deepseek-flash, `session_burn` line-Delta, gemessen 2026-10-09) · kein pro/max
