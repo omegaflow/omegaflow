@@ -642,6 +642,15 @@ field temp pirep_air_temp_c exponential-decay thermal C 360 0.0 0.0
 field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
 field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at earth
+hapi mms1_edp_dce_gse_fast_l2.0=mms1_edp_ex_gse_mvm mms1_edp_dce_gse_fast_l2.1=mms1_edp_ey_gse_mvm mms1_edp_dce_gse_fast_l2.2=mms1_edp_ez_gse_mvm
+field mms1_edp_ex_gse_mvm mms1_edp_ex_gse_mvm inverse-square electric mV/m 3600 0.0 0.0
+field mms1_edp_ey_gse_mvm mms1_edp_ey_gse_mvm inverse-square electric mV/m 3600 0.0 0.0
+field mms1_edp_ez_gse_mvm mms1_edp_ez_gse_mvm inverse-square electric mV/m 3600 0.0 0.0
+
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
@@ -650,6 +659,16 @@ hapi mms1_fgm_b_gse_srvy_l2_clean.0=mms1_fgm_bx_gse_nt mms1_fgm_b_gse_srvy_l2_cl
 field mms1_fgm_bx_gse_nt mms1_fgm_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field mms1_fgm_by_gse_nt mms1_fgm_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field mms1_fgm_bz_gse_nt mms1_fgm_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FPI_FAST_L2_DES-MOMS&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_des_numberdensity_fast,mms1_des_bulkv_gse_fast&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at earth
+hapi mms1_des_numberdensity_fast=mms1_des_numberdensity_percc mms1_des_bulkv_gse_fast.0=mms1_des_vx_gse_kms mms1_des_bulkv_gse_fast.1=mms1_des_vy_gse_kms mms1_des_bulkv_gse_fast.2=mms1_des_vz_gse_kms
+field mms1_des_numberdensity_percc mms1_des_numberdensity_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field mms1_des_vx_gse_kms mms1_des_vx_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field mms1_des_vy_gse_kms mms1_des_vy_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field mms1_des_vz_gse_kms mms1_des_vz_gse_kms patch-levy advective km/s 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
@@ -710,6 +729,16 @@ field tha_fgs_btotal_nt tha_fgs_btotal_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_bx_gse_nt tha_fgs_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_by_gse_nt tha_fgs_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_bz_gse_nt tha_fgs_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_MOM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_peim_density,tha_peim_velocity_gse&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at earth
+hapi tha_peim_density=tha_peim_density_percc tha_peim_velocity_gse.0=tha_peim_vx_gse_kms tha_peim_velocity_gse.1=tha_peim_vy_gse_kms tha_peim_velocity_gse.2=tha_peim_vz_gse_kms
+field tha_peim_density_percc tha_peim_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field tha_peim_vx_gse_kms tha_peim_vx_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field tha_peim_vy_gse_kms tha_peim_vy_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field tha_peim_vz_gse_kms tha_peim_vz_gse_kms patch-levy advective km/s 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
