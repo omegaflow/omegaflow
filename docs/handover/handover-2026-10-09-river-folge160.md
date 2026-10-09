@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 9efafe8f99d8ff69b1de82521b29a3b91bec3f906c6f72a4c4f941cd830b46b3
+  sha256: 7859e19579c63f7f30527991bd97b26789b195eda0505ac433a8fc3f9723e746
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -42,10 +42,12 @@ Wort | Datum | Quelle
 „hast du die modelle nach stärke gewichtet?" | 2026-10-09 | Operator (Session, River 148) — Verdichtung war konvergenz-gezählt; explizite Stärke-Gewichtung nachgeführt (`…achsen-runde.md` §Stärke-Gewichtung): Riss A 15.35 : 0.9, Riss B 15.35 : 1.25, Kante 4. Achse Domain/Rand
 „warum führst du future lock punkte?" | 2026-10-09 | Operator (Session, River 160) — River trägt keine Future-LOCK-Punkte; Förder-Bewerbungen leben in Futures Operator-Queue
 „bitte mach das jetzt einfach mal fertig Eigenmode-Arme … Empfänger-Apertur, USGS ExtractResult riss-arm (Mountain), CI-Verifikation … dropped-gate, Flyby (termin:2026-11-01)" | 2026-10-09 | Operator (Session, River 160) — offene Punkte bis zur Kante fertigmachen
-„ja natürlich die membran ist und bleibt ein schnitt durch den 4d block egal ob jemand hinschaut oder nicht (schrödingers katze)" | 2026-10-09 | Operator (Session, River 160) — die Messung ist beobachterunabhängig; der Doppler-Term (an `v_obs`/Blick) ist gestrichen, nicht pending
+„ja natürlich die membran ist und bleibt ein schnitt durch den 4d block egal ob jemand hinschaut oder nicht (schrödingers katze)" | 2026-10-09 | Operator (Session, River 160) — die Messung ist beobachterunabhängig
+„ist es denn korrekt den doppler zu löschen? … ich möchte eben keinen observer bias ich möchte eine agnostische presence" | 2026-10-09 | Operator (Session, River 160) — der Doppler ist nicht an sich Bias; `v_obs` (= `self.v`, Operator-Thrust, `omega.rs:658`) gestrichen, die agnostische **Quellen-Weltlinien-Form** gebaut (`dot(fm.yzw, n̂)`, Empfänger ruht am Schnitt)
+„ich würde sagen oder das ist wahr" | 2026-10-09 | Operator (Session, River 160) — bestätigt die A=A-Regel: **der Wert hängt nur von Koordinaten und deklarierten Weltlinien ab, nie vom Blick**; freies Bewegen = Wahl des Schnitts, freies Drehen = Wahl des Rahmens/Blicks — beide ändern den Block nicht
 
-Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Drei neue Worte in
-River 160 (die letzten drei Register-Zeilen). Vorherige Worte in
+Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Fünf neue Worte in
+River 160 (die letzten fünf Register-Zeilen). Vorherige Worte in
 `docs/handover/archiv/handover-2026-10-09-river-folge159.md` §Operator-Wort-Register — gefaltet,
 nicht kopiert.
 
@@ -120,8 +122,8 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `src/archivar/parse.rs` (E0507-Test-Fix `588735e39 river 154`: `&sources[0].channels[0]`)
 - `src/mathematikerin/channel.rs` (`ChannelDescriptor.body` + `with_body`; `hash`/`PartialEq` binden den Körper; `fundamental_hz()` familien-/body-bewusst; `channel_registry_from_sources` setzt `body` aus `SourceConfig.body`; `carrier_wavenumber`/`phase_velocity_m_s`; Tests)
 - `src/mathematikerin/actuators.rs` (Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`, globale `phase` raus; `PresenceFrame.delay_rad` + `sin(phase_k − delay_k)`; Tests)
-- `src/mathematikerin/shaders.rs` (`presence_probe` akkumuliert je Kanal die amplitudengewichtete Quell-Distanz → `probe_out[CHANNEL_CAP+3+…]`)
-- `src/mathematikerin/omega.rs` (`probe_r` + Probe-Puffer-Größe; `presence_frame()` füllt `delay_rad[k] = k_k·probe_r[k]`)
+- `src/mathematikerin/shaders.rs` (`presence_probe` akkumuliert je Kanal die amplitudengewichtete Quell-Distanz `probe_r` **und** die deklarierte Quellen-Radialgeschwindigkeit `dot(fm.yzw, n̂)` `probe_u` → `probe_out[CHANNEL_CAP+3+…]`)
+- `src/mathematikerin/omega.rs` (`probe_r`/`probe_u` + Probe-Puffer-Größe; `presence_frame()` füllt `delay_rad[k] = k_k·probe_r[k]` und den agnostischen Doppler `partials_hz[k] *= (1 − probe_u[k]/v_{p,k})`)
 - `tools/measure/src/bin/ssb_field_bake.rs` (Enclosure-Query am SSB → Feld-Asset, 26×f64 LE; `--out`/`--ci-mode`)
 - `static/membrane.html` (lädt `/ssb_field.bin`, zeigt den gemessenen SSB-Schnitt in der Ruhe; `parseFlat` unverändert)
 - `phi/sources.φ` (die zwei seismischen Kanäle `:17`/`:102` tragen `:extent 6371000`)
@@ -131,7 +133,7 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 
 Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## An river` (von river-159 bereits erwidert). `register_lookup --fired river` = 0 gefeuert, `--stale` = 0.
 
-Aus der Offen-Liste entfernt (gebaut, git trägt sie): **Eigenmode-Arme**, **Empfänger-Apertur** und **Membran-`v_k`** (steps 1–3; step 4 Doppler per Operator-Wort gestrichen). Zurückgeholt/offen: die **Feldmessung** (Baker + Loader gebaut, nur Mycelium's CI/CDN + Register-Zeile fehlt). **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. `LOCK` trägt keine Future-Punkte mehr.
+Aus der Offen-Liste entfernt (gebaut, git trägt sie): **Eigenmode-Arme**, **Empfänger-Apertur** und **Membran-`v_k`** (steps 1–3 + step 4 Doppler **agnostisch**, nur die Quellen-Weltlinie; der `self.v`-Term gestrichen). Zurückgeholt/offen: die **Feldmessung** (Baker + Loader gebaut, nur Mycelium's CI/CDN + Register-Zeile fehlt). **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. `LOCK` trägt keine Future-Punkte mehr.
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): source-arm (`extract.rs`/`root.rs`/`types.rs`/`tests.rs`/`mod.rs`/`lib.rs`/`iris.rs`/`themis_asi.rs`), register-/measure-tools (`dropped_gate.rs`, `field_te_query.rs`, `volume_builder.rs`), `phi/sources.φ` nach dem Seal.
 
