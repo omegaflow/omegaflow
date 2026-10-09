@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-CDN geheilt (success), ci-gate clippy grün, SuperMAG-Wiring verifiziert; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: f1c4b1638ea64eb3bcdb91a1d3c10e05245513e50562ffc424bee48ed132805e
+  sha256: d09d04e62421cb7cdcabc22da42aba3360789c1618528a777dd5c9f3f1095bbc
   status: live
 -->
 # Handover — Mycelium-Folge 275 (2026-10-09)
@@ -37,9 +37,9 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
 - **Trigger:** Mountains `terms`-Vollständigkeit der register-tragenden Blöcke
-- **Lage:** (gemessen 2026-10-09; mountain-folge282 meldet **+91** `terms`-Zeilen, `license_census` **terms 1348 · no-terms 1101 · 0 violation**; Rest-Sweep läuft) `LICENSE`/`README` im `omegaflow/sources`-Repo absent (HTTP 404 raw, 2026-10-07). Ein `sources_repo_license`-Generator-Bin existiert nicht.
-- **Blockade:** die `terms`-Zeilen (Mountain-Pen, Rest-Sweep; 1101 `no-terms` offen) + der fehlende Generator.
-- **Braucht:** vollständige `terms`-Zeilen + ein `sources_repo_license`-Generator-Bin (Manifestation); dann erzeugt Mycelium `LICENSE`/`README`.
+- **Lage:** (gemessen 2026-10-09; mountain-folge282 meldet **+91** `terms`-Zeilen, `license_census` **terms 1348 · no-terms 1101 · 0 violation**; Rest-Sweep läuft) `LICENSE`/`README` im `omegaflow/sources`-Repo absent (HTTP 404 raw, 2026-10-07). Der Generator **existiert jetzt**: `tools/register/src/bin/sources_repo_license.rs` (gated `cargo check` + `cargo build -p omegaflow-register --bin sources_repo_license`; Entwurf `--out-dir`), netloc-keyed — Entwurf `netlocs 14, terms 1348, no-terms 1359`. **Riss:** `license_census` misst `no-terms 1101`, der Generator 1359 — verschiedene Block-Basen (der Generator zählt Blöcke mit `url` und ohne `terms`; `phi/sources.φ` trägt 2692 `url`-Zeilen, davon **2006 `github.com`**). Beide Zahlen sind gemessen, nicht geglättet.
+- **Blockade:** die `terms`-Zeilen (Mountain-Pen, Rest-Sweep) + die Attributions-Form (netloc-keyed vs. pro-Quelle) + die CI-Verdrahtung in das `omegaflow/sources`-Repo.
+- **Braucht:** vollständige `terms`-Zeilen + Format-Verdikt (netloc vs. Quelle) + Verdrahtung; dann erzeugt Mycelium `LICENSE`/`README`.
 
 ### Pipeline — INPE-BIG-Kandidat (`phi/pipeline/ledger.φ`)
 - **Status:** wartend | **Bindung:** eigen (Ernte-Verdrahtung) · auf mountain
@@ -76,11 +76,18 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** kein stabiler Namensraum; eine echte Heilung (explizites `**ID:**` bevorzugen, Prosa-Fragmente verwerfen) würde die 927-Altschüssel invalidieren.
 - **Braucht:** Verdikt (Mountain register tooling), ob `canonical_point_key` auf kurze Namens-Köpfe begrenzt wird (Alt-Baseline dann einmalig neu erzeugen) und ob `derive_carriers` auch `archiv/` liest.
 
+### `ceic.ac.cn` Quake-Feed — `ip-blocked` (Träger)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Mountains Release/Descope der Zeile `blocked_sources.φ:113`
+- **Lage:** (gemessen 2026-10-09) Mountain (`699009a43`) disponierte `https://ceic.ac.cn/data/data.json` als `blocked ip-blocked` (`blocked_sources.φ:113`, Runner-Route: `curl 28/7`, lokal HTTP 206). Der Mycelium-Schritt ist vollzogen: der Slot ist aus `.github/workflows/quake-feeds-cdn.yml` entfernt (jetzt acht Bodies), `phi/sources.φ:77` bleibt. Der frühere rote `quake-feeds-cdn` `37910580075` hatte hier seine Ursache.
+- **Blockade:** keine.
+- **Braucht:** nichts bis Mountains Release/Descope; bis dahin ist dies der Träger der Zeile.
+
 ## An mountain
 
 Origin: mycelium-275.
 
-- **`quake-feeds-cdn` — ceic.ac.cn vom Runner nicht erreichbar (Quellen-Verdikt nötig).** Gemessen 2026-10-09: Lauf `37910580075` an `ce47ce13c` **failure**; `ceic.ac.cn/data/data.json` → `curl (28) Timeout / (7)`, 8/9 gespiegelt, 1 Void → `cdn_mirror` exit 1 (`ci_manage log 37910580075:562-570`). Vom lokalen Rechner antwortet die Quelle (HTTP 206, `archive_search --verdict` 2026-10-09), vom `[self-hosted, Linux]`-Runner nicht. `phi/sources.φ:77` trägt die Quelle; der Void lässt das CDN-Asset stale. **Braucht:** Mountains Disposition (`geo`/`ip-blocked` in `blocked_sources.φ`) — dann entfernt Mycelium die URL aus `quake-feeds-cdn.yml`; alternativ ein Wort zur Void-Toleranz im generischen `cdn_mirror` (ein Void = `0 honored`, kein Job-Abbruch).
+- **`quake-feeds-cdn`:** gefaltet — Mountain (`699009a43`) disponierte ceic.ac.cn `ip-blocked`; Mycelium entfernte den Slot aus `quake-feeds-cdn.yml` (s. `## Offen — eigen` › `ceic.ac.cn`). Kein offener Akt.
 - **ci-gate Per-SHA-Verdikt:** bereits gewortet (Operator „ja bau" → `668c8ada4`; „bitte umsetzen" → `2f93f37ac`) und gebaut/verdrahtet — kein neuer Akt; der Block aus mountain-folge282 ist damit beantwortet.
 
 ## An river

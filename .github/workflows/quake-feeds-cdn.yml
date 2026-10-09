@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Mirror the nine quake catalog bodies 1:1 onto the CDN void path
+      - name: Mirror the eight quake catalog bodies 1:1 onto the CDN void path
         run: |
           cargo build -p omegaflow-harvest --release --bin cdn_mirror_compiler
           ./target/release/cdn_mirror_compiler --ci-mode \
@@ -25,7 +25,6 @@ jobs:
             --url 'https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1' \
             --url 'https://api.vedur.is/quakes/events' \
             --url 'https://api.geonet.org.nz/quake?MMI=4' \
-            --url 'https://ceic.ac.cn/data/data.json' \
             --url 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson' \
             --url 'https://seismic-api.science.unimelb.edu.au/today-quakes' \
             --xml-url 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true' \
