@@ -199,6 +199,79 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ModeRegime {
+    Propagating = 0,
+    Advective = 1,
+    Diffusive = 2,
+    Constraint = 3,
+}
+
+pub fn mode_regime(op: TransportOp) -> ModeRegime {
+    match op {
+        TransportOp::Wave | TransportOp::Maxwell => ModeRegime::Propagating,
+        TransportOp::Advective => ModeRegime::Advective,
+        TransportOp::Flux(_) => ModeRegime::Diffusive,
+        TransportOp::Poisson => ModeRegime::Constraint,
+    }
+}
+
+const CIRCLE_DRUM_MODE_RATIOS: [f64; 9] = [
+    1.0, 1.593_34, 2.135_36, 2.295_49, 2.653_07, 2.917_28, 3.155_46, 3.500_11, 3.598_23,
+];
+
+const FIRST_BESSEL_J0_ZERO: f64 = 2.404_825_557_7;
+
+pub fn eigen_wavenumbers(
+    domain: Domain,
+    boundary: Boundary,
+    extent: f64,
+    count: usize,
+) -> Option<Vec<f64>> {
+    if !extent.is_finite() || extent <= 0.0 || count == 0 {
+        return None;
+    }
+    match (domain, boundary) {
+        (Domain::Line, Boundary::Dirichlet) | (Domain::Line, Boundary::FreeSurface) => Some(
+            (1..=count)
+                .map(|j| j as f64 * std::f64::consts::PI / extent)
+                .collect(),
+        ),
+        (Domain::Line, Boundary::Neumann) => Some(
+            (0..count)
+                .map(|j| j as f64 * std::f64::consts::PI / extent)
+                .collect(),
+        ),
+        (Domain::Sphere, Boundary::Dirichlet) => Some(
+            (1..=count)
+                .map(|j| j as f64 * std::f64::consts::PI / extent)
+                .collect(),
+        ),
+        (Domain::Circle, Boundary::Dirichlet) if count <= CIRCLE_DRUM_MODE_RATIOS.len() => Some(
+            CIRCLE_DRUM_MODE_RATIOS[..count]
+                .iter()
+                .map(|r| r * FIRST_BESSEL_J0_ZERO / extent)
+                .collect(),
+        ),
+        _ => None,
+    }
+}
+
+pub fn mode_frequency_hz(op: TransportOp, speed: f64, k: f64) -> Option<f64> {
+    if !k.is_finite() {
+        return None;
+    }
+    match mode_regime(op) {
+        ModeRegime::Propagating => {
+            if !speed.is_finite() || speed <= 0.0 {
+                return None;
+            }
+            Some(speed * k / std::f64::consts::TAU)
+        }
+        ModeRegime::Advective | ModeRegime::Diffusive | ModeRegime::Constraint => None,
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(u8)]
 pub enum TriState {
     Absent = 0,
@@ -703,5 +776,69 @@ mod tests {
     #[test]
     fn an_unknown_label_is_refused() {
         assert!(descriptor_for_force("phlogiston", Medium::Fluid).is_none());
+    }
+
+    #[test]
+    fn a_line_is_harmonic() {
+        let k = eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 1.0, 3).expect("line modes");
+        let pi = std::f64::consts::PI;
+        assert_eq!(k, vec![pi, 2.0 * pi, 3.0 * pi]);
+    }
+
+    #[test]
+    fn a_free_surface_line_is_harmonic() {
+        let dirichlet = eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 2.0, 2).expect("dir");
+        let free = eigen_wavenumbers(Domain::Line, Boundary::FreeSurface, 2.0, 2).expect("free");
+        assert_eq!(dirichlet, free);
+    }
+
+    #[test]
+    fn a_neumann_line_keeps_the_constant_mode() {
+        let k = eigen_wavenumbers(Domain::Line, Boundary::Neumann, 1.0, 3).expect("neumann");
+        assert_eq!(k[0], 0.0);
+        assert!(k[1] > 0.0);
+    }
+
+    #[test]
+    fn a_circle_is_the_drum_spectrum() {
+        let k = eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, 3).expect("circle");
+        assert!((k[0] - FIRST_BESSEL_J0_ZERO).abs() < 1e-9);
+        assert!((k[1] - 3.831_706).abs() < 1e-4);
+        assert!((k[2] - 5.135_622).abs() < 1e-4);
+    }
+
+    #[test]
+    fn a_domain_without_a_closed_mode_is_absent() {
+        assert!(eigen_wavenumbers(Domain::Unspecified, Boundary::None, 1.0, 3).is_none());
+        assert!(eigen_wavenumbers(Domain::Rectangle, Boundary::Dirichlet, 1.0, 3).is_none());
+        assert!(eigen_wavenumbers(Domain::Line, Boundary::Robin, 1.0, 3).is_none());
+        assert!(eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, 16).is_none());
+    }
+
+    #[test]
+    fn a_non_positive_extent_has_no_mode() {
+        assert!(eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 0.0, 3).is_none());
+        assert!(eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, -1.0, 3).is_none());
+        assert!(eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, f64::NAN, 3).is_none());
+    }
+
+    #[test]
+    fn a_wave_carries_a_pitch() {
+        let pi = std::f64::consts::PI;
+        let f = mode_frequency_hz(TransportOp::Wave, 343.0, 2.0 * pi).expect("wave tone");
+        assert!((f - 343.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn an_elliptic_or_diffusive_mode_carries_no_pitch() {
+        assert!(mode_frequency_hz(TransportOp::Poisson, 1.0, 1.0).is_none());
+        assert!(mode_frequency_hz(TransportOp::Flux(FluxKind::Fourier), 1.0, 1.0).is_none());
+        assert!(mode_frequency_hz(TransportOp::Advective, 1.0, 1.0).is_none());
+    }
+
+    #[test]
+    fn a_wave_without_a_speed_carries_no_pitch() {
+        assert!(mode_frequency_hz(TransportOp::Wave, 0.0, 1.0).is_none());
+        assert!(mode_frequency_hz(TransportOp::Wave, f64::NAN, 1.0).is_none());
     }
 }
