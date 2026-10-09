@@ -5759,3 +5759,7 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
+
+decline no-physical-force
+url https://sleepdata.org
+note NSRR Schlaf-EEG (SHHS/MESA) — 2026-10-09: Elektroden ohne Koordinaten → kein Feldwert (Familie TUH, `src/archivar/main_flow.rs:3490`); Zugang zusätzlich IRB-gebunden (PMC6188513).
