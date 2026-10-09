@@ -4263,6 +4263,7 @@ format ephemeris_de441
 terms PD https://ssd.jpl.nasa.gov/
 origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 ad4c8cb05a5375cb553779f55f011cd96c679e7a110a26ca253676410c396d58
 at earth
 ttl 86400
 
@@ -4271,6 +4272,7 @@ format ephemeris_de441
 terms PD https://ssd.jpl.nasa.gov/
 origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 7cfb8971757d6a3fcc121854748f86989c331df1447efaa984661a0eba65e8eb
 at moon
 ttl 86400
 
@@ -4279,6 +4281,7 @@ format ephemeris_de441
 terms PD https://ssd.jpl.nasa.gov/
 origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 e682d727beb4d6afc2c3dcaa7720796751b02a1613b6f78c6e8187bf566b84c2
 at sun
 ttl 86400
 
@@ -4287,6 +4290,7 @@ format ephemeris_de442
 terms PD https://ssd.jpl.nasa.gov/
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 1f920307eb446e973648646abd40a78d5e0be3097ab506528d881bd9012be25c
 at earth
 ttl 86400
 
@@ -4295,6 +4299,7 @@ format ephemeris_de442
 terms PD https://ssd.jpl.nasa.gov/
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 489c6890dc146ca4b8d77a4e40c105f3f7e589644cce1c06ca6851ef2ebd93d9
 at moon
 ttl 86400
 
@@ -4303,6 +4308,7 @@ format ephemeris_de442
 terms PD https://ssd.jpl.nasa.gov/
 origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de442.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
+sha256 996e6944f3dc3bc999c209f6c283f79a2770e00ddc9f324da9df05df36bfac30
 at sun
 ttl 86400
 
