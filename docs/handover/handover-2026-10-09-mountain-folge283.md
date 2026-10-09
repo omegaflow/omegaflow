@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 901e0667dd6b9c607515e419806fc85c8808b2b22b3658e76b11be28fb071d47
+  sha256: 3c22ea93a11db830bc64e0f6eb12ff6d0d08311b056f5c590651328e9262a428
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -100,12 +100,7 @@ Origin: mountain-folge283.
 
 - **Operator-Wort (2026-10-09):** „2 bitte spreche dich mit river ab das ist teil seines plans". Die **Kraft-/Register-Physik-Migration** (`force` → Quantity | Mechanism | Medium) ist **Teil deines Plans** — du führst Taxonomie + Migrationsreihenfolge. Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ` (Register-Domäne) auf deine Schema-Entscheidung. Kontext: dein `## An mountain` aus river-143, `docs/concepts/kanal-ontologie-komplettbau.md` §P10.2a (Zielschema `field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau>`, `force` als n:m-Tag), Werkzeug `source_physics_lint` (field 8006), Migrationsreihenfolge `gravity`/`seismic` → `acoustic`/`diffusion` → `em` zuletzt; Protokolle `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` / `…-river-register-physik.md`. Bitte falte diesen Punkt in deine Übergabe; Mountain hält die Register-Seite.
 
-## An future
-
-Origin: mountain-folge283.
-
-- **Redistributions-Rechte — Operator-Wort „ja bitte alles" (2026-10-09), ausgeführt:** (a) Takedown-Adresse `code@omegaflow.space` im `NOTICE` (`00acd77c`). (b) Regel **`ohne-lizenz ⇒ nicht spiegeln`** gebaut — `license_census` flaggt `terms ohne-lizenz` + CDN-Mirror-`url` als `terms-redistribution VIOLATION` (+ Test); **23 gespiegelte `ohne-lizenz`-Blöcke** aus `sources.φ` nach `declined_sources.φ` (`decline redistribution`); `harvest.φ`-Slots entfernt. (c) die 23: IMCCE/SuperMAG lokal zu halten, Rest geschlossen (Notiz je Eintrag); die 4 direkten (nicht gespiegelten: maxi/ldeo/uhslc/linea) bleiben. **(d) vorbereitet** (Future war beschäftigt, Mountain übernahm): zwei Entwürfe `state/mail/imcce-inpop-lizenz-2026-10-09.body.txt` und `state/mail/supermag-lizenz-2026-10-09.body.txt`, QUELLEN je `state/mail/lizenz-anfragen-2026-10-09.md:1-6`, `smail --dry-run` grün (nichts gesendet); Entwürfe auf **„source-available, not open-source"** korrigiert (Operator-Wort „wir sind immer noch nicht opensource"), Gate-Fixture `open-source research project`/`open-source non-commercial` + Test in `commit_gate.rs`. **Send = Operator-Hand:** `smail --to inpop.imcce@obspm.fr --subject "…" --body state/mail/imcce-inpop-lizenz-2026-10-09.body.txt --send` bzw. `smail --to supermag@listserv.jhuapl.edu --cc Jesper.Gjerloev@jhuapl.edu --body state/mail/supermag-lizenz-2026-10-09.body.txt --send`. Bitte in die Operator-Queue falten. Kein vorheriger Mail-Thread mit beiden (gemessen, `mail_ledger.φ` leer für imcce/supermag).
-- **Retro-Label „open-source"** in frühen Mails (~2026-09-20: frame.work, PINE64, BiSON, CARISMA, CSES, NEDC); an Z.ai/DeepSeek (2026-09-26) explizit korrigiert, spätere Mails korrekt (`non-commercial, source-available`). Kein Rechtsproblem — die Lizenz, nicht das Mailwort, gewährt Rechte; eine Pauschal-Korrektur an die Übrigen ist nur nötig, wo ihre Entscheidung darauf ruht. Gate verhindert Wiederholung. Lizenzwechsel: für künftige Releases jederzeit möglich (alleiniger Urheber), für bereits veröffentlichte Kopien unumkehrbar (CC/PolyForm sind für die gewährten Kopien unwiderruflich).
+## LOCK
 
 ## LOCK
 
