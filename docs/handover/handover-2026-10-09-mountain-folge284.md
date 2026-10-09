@@ -3,7 +3,7 @@
   session: Mountain-Folge 284
   class: handover
   date: 2026-10-09
-  sha256: e7a524f493b09bc3b7854a6c6c4f3b30558be34fbfbc189c1dff5d1bf7876cf4
+  sha256: 6f5a66437d8d767c9e901a788c9f2f68e8eb9ec5db770a5fd8a9fc46fa0914e3
   status: live
 -->
 # Handover — Mountain-Folge 284 (2026-10-09)
@@ -33,6 +33,7 @@ Wort | Datum | Quelle
 „wir sind immer noch nicht opensource" — omegaflow ist source-available (PolyForm NC/CC BY-NC-SA), NIE „open-source" nennen | 2026-10-09 | Operator (Session, Mountain 283)
 „natürlich 1 wir sind nicht open source wir sind NC CC" | 2026-10-09 | Operator (Session, Mountain 283)
 „das ist compliance theater" — keine Lizenz-Boilerplate in einer Anfrage-Mail; nur sagen, was die Frage braucht | 2026-10-09 | Operator (Session, Mountain 283)
+„bitte fixen: ledger.φ JAXA-Zitat (gportal.jaxa.jp ×2) · SuperMAG-Zitat (kein substorm-Block; substorm_compiler.rs + supermag-cdn.yml stehen) · USGS-Basis-URL → zwei Produkte trennen · ShadowCam admission ja, Format-Arm fehlt; Migration (river-148) gefaltet" | 2026-10-09 | Operator (Session, Mountain 284)
 
 ## Offen (aufgeschlüsselt)
 
@@ -43,19 +44,19 @@ Wort | Datum | Quelle
 - **Blockade:** SuperDARN-MAP-grid-Download liegt bei Mycelium (`wartend.φ:8`, Globus-Credentials stehen); Keogramm-Vision-Asset bei Mycelium.
 - **Braucht:** Mycelium: MAP-grid-Download + Keogramm als Vision-Asset; sonst nichts Neues.
 
-### Substorm-Onset / SuperMAG — Riss: ledger behauptet eine Registrierung, die fehlt
+### Substorm-Onset / SuperMAG — Zitat gefixt; Arm + Workflow fehlen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium (Workflow/CDN)
 - **Trigger:** `substorm`-`sources.φ`-Zeile + Workflow
-- **Lage:** (gemessen 2026-10-09, `sread`/`sgrep`/`archive_search`) `tools/harvest/src/bin/substorm_compiler.rs` steht (BASE `supermag.jhuapl.edu/lib/services/`, `--list newell|forsyth|liou|frey|ohtani`, write_bin, `upload_release("supermag.jhuapl.edu", …)`); **kein** `substorm`/`supermag`-Block in `phi/sources.φ`. `ledger.φ:152` behauptet „SuperMAG registriert (sources.φ:18407-18431)" — diese Zeilen sind die Vega2/Mischa-PDS3-Felder (`sgrep` bestätigt, Riss). `supermag-cdn.yml` ruft `supermag_compiler` (Netzwerk), nicht den Onset-Compiler.
+- **Lage:** (gemessen 2026-10-09, `sread`/`sgrep`) `substorm_compiler.rs` steht (BASE `supermag.jhuapl.edu/lib/services/`, `--list newell|forsyth|liou|frey|ohtani`); **kein** `substorm`/`supermag`-Block in `phi/sources.φ`. Das `ledger.φ:152`-Zitat ist per Operator-Wort **gefixt** (citiert jetzt `substorm_compiler.rs` + `supermag.jhuapl.edu/lib/services` statt der Vega2/Mischa-Zeilen `sources.φ:18407-18431`). `supermag-cdn.yml` ruft `supermag_compiler` (Netzwerk), nicht den Onset-Compiler.
 - **Blockade:** substorm-Workflow fehlt; Quelle nicht registriert.
-- **Braucht:** 5 `sources.φ`-Blöcke (`format hapi_csv`, `compiler …/substorm_compiler.rs`, `origin supermag.jhuapl.edu/lib/services`) + eigener Workflow; `ledger.φ:152`-Zitat auf netloc-Key umstellen.
+- **Braucht:** 5 `sources.φ`-Blöcke (`format hapi_csv`, `compiler …/substorm_compiler.rs`, `origin supermag.jhuapl.edu/lib/services`) + eigener Workflow.
 
-### USGS-geomag E-Feld — Riss: gleiche Basis-URL, zwei Produkte
+### USGS-geomag E-Feld — Produkt getrennt (Riss gefixt)
 - **Status:** eigen | **Bindung:** mycelium (`pending`-Eintrag schließen)
 - **Trigger:** `sources.φ`-Zeile für das E-Feld-Produkt
-- **Lage:** (gemessen 2026-10-09, `sgrep`) `blocked_sources.φ:100-102` `pending` `/ws/data/` (`elements=E-E,E-N` → mV/km, 200); `declined_sources.φ:2176-2177` dieselbe Basis-URL (`data.json`, XYZF) als Duplikat des registrierten InterMAGNET-Fanouts (BOU). **Riss = gleiche URL, zwei Produkte:** E-Feld (neu, physikalisch berechtigt) vs. Magnetik (Duplikat). Verdikt: E-Feld-Produkt admission, Magnetik bleibt `declined`; die URL ist per Query zu trennen.
-- **Blockade:** keine (Verdikt steht).
-- **Braucht:** `sources.φ`-Zeile `…/ws/data/?id=<IAGA>&elements=E-E,E-N&format=json` (field mV/km, `terms`), dann Mycelium `pending`-Eintrag schließen.
+- **Lage:** (gemessen 2026-10-09, `archive_search --verdict`) die Doppelresidenz ist per Operator-Wort **gefixt**: `blocked_sources.φ` trägt jetzt die produkt-spezifische E-Feld-URL `…/ws/data/?id=BOU&elements=E-E,E-N&format=json` (200), getrennt vom Magnetik-Duplikat `declined_sources.φ:2176` (`data.json`/XYZF, InterMAGNET-Fanout BOU). E-Feld admission, Magnetik bleibt `declined`.
+- **Blockade:** keine (Register getrennt).
+- **Braucht:** `sources.φ`-Zeile für das E-Feld (field mV/km, `terms`), dann Mycelium `pending`-Eintrag schließen.
 
 ### PDS-PPI — Enumerator/Arm stehen, `sources.φ`-Zeile fehlt
 - **Status:** eigen | **Bindung:** mycelium
@@ -67,7 +68,7 @@ Wort | Datum | Quelle
 ### ShadowCam-Admission — Verdikt: admission ja, Format-Arm fehlt
 - **Status:** eigen | **Bindung:** mycelium (Format/Arm baut)
 - **Trigger:** Format-Arm/Workflow
-- **Lage:** (gemessen 2026-10-09 via `archive_search --verdict` + curl) `pds.shadowcam.im-ldi.com/derived/` HTTP 200 (PDS4 `Product_Collection`-CSV/XML + Subdirs `dtm/` `lronac_cmosaic/` `umosaic/` `vector/`); **kein `.fits`** — `pds4-fits` (`blocked_sources.φ:17`) deckt Chang'e-MRM, nicht diesen Baum. Admission: **ja** (PDS public, KPLO/LRO-NAC-Derivate). Format: PDS4-derived raster (ISIS `.cub` + `_cog.tif`) — neue Format-Klasse.
+- **Lage:** (gemessen 2026-10-09 via `archive_search --verdict` + curl) `pds.shadowcam.im-ldi.com/derived/` HTTP 200; DTM-Blatt z.B. `shadowcam_dtm_shackleton1_p896s1181_dtm_6m.cub` (ISIS-compatible image) + `…_cog.tif` (Cloud-Optimized GeoTIFF) + `.xml` (PDS4-Label); **kein `.fits`** — `pds4-fits` (`blocked_sources.φ:17`) deckt Chang'e-MRM. Admission **ja** (PDS public, KPLO/LRO-NAC). Format: PDS4-Derivat-Raster (ISIS `.cub` + `_cog.tif`) — neue Format-Klasse; Mycelium baut auf dieses Verdikt.
 - **Blockade:** Format-Arm fehlt.
 - **Braucht:** Mycelium baut Format/Arm; Mountain schreibt die `sources.φ`-Zeile auf die Format-Entscheidung.
 
@@ -118,10 +119,10 @@ Wort | Datum | Quelle
 Origin: mountain-folge284.
 
 - **Wind-Arme (GIC §A) registriert:** `WI_K0_SWE` (Protonen `Np`/`V_GSE`) + `WI_H2_MFI` (`BGSM`) stehen in `phi/sources.φ`; bitte manifestieren, sobald die Zeilen stehen.
-- **JAXA-Registerzitat (Riss):** `ledger.φ:120` zitiert `sources.φ:10962-10968` + `2286-2292` — gemessen sind das **BGR-Infraschall** bzw. **geoazur apdb**, kein JAXA. Die JAXA-Blöcke sind `gportal.jaxa.jp` (2×) + `data.darts.isas.jaxa.jp` (2×). Zitat auf **netloc-Key** umstellen, nie Zeilennummer (register_sort verschiebt Zeilen).
-- **SuperMAG-Riss:** `ledger.φ:152` zitiert `sources.φ:18407-18431` (= Vega2/Mischa); in `phi/sources.φ` existiert **kein** SuperMAG-/substorm-Block, obwohl `frame_registry.φ:880-881` `supermag_2025-03*.bin` als Asset führt. Zitat korrigieren; substorm-Registrierung siehe Offen.
-- **USGS-geomag:** E-Feld-Produkt (`/ws/data/?elements=E-E,E-N`) admission, Magnetik `declined` — `pending`-Eintrag `blocked_sources.φ:100-102` kann auf die E-Feld-Zeile geschlossen werden.
-- **ShadowCam:** Admission **ja**, Format-Arm (PDS4-derived raster, kein `.fits`) fehlt — bitte bauen, Mountain schreibt die Zeile.
+- **JAXA-Registerzitat (gefixt per Operator-Wort):** `ledger.φ:120` zitiert jetzt `gportal.jaxa.jp` (2 Blöcke: `format jaxa_gpm_ku`, `format jaxa_gportal`) statt der falschen BGR-/geoazur-Zeilen; `data.darts.isas.jaxa.jp` ×2 ist als weitere JAXA/ISAS-Quelle benannt.
+- **SuperMAG-Zitat (gefixt per Operator-Wort):** `ledger.φ:152` zitiert jetzt `substorm_compiler.rs` + `supermag.jhuapl.edu/lib/services`; in `phi/sources.φ` existiert **kein** SuperMAG-/substorm-Block (obwohl `frame_registry.φ:880-881` `supermag_2025-03*.bin` führt) — substorm-Registrierung + Workflow siehe Offen.
+- **USGS-geomag:** E-Feld-Produkt admission, Magnetik `declined` — Doppelresidenz getrennt (E-Feld-Query trägt der `pending`-Eintrag); bitte auf die `sources.φ`-Zeile schließen.
+- **ShadowCam:** Admission **ja**, Format-Arm (PDS4-Derivat-Raster: `.cub` ISIS + `_cog.tif` COG, kein `.fits`) fehlt — bitte bauen, Mountain schreibt die `sources.φ`-Zeile.
 - **`blocked_sources.φ`-Gap-Token-Header** auf 22 korrigiert (stand 19).
 - **CDN-Aufräumen (Operator-Wort 2026-10-09, aus 283):** 23 `ohne-lizenz`-Assets aus `sources.φ`/`harvest.φ` entfernt; die veröffentlichten Release-Assets im `omegaflow/sources`-Repo bitte neutralisieren/entfernen und, wo feld-relevant (IMCCE/SuperMAG), lokal unter `data/<netloc>/` halten.
 - **`omegaflow/sources`-Repo/NOTICE (aus 283):** Repo-Description + `NOTICE` stehen; offen: der CI-Manifestator schreibt die Quell-Lizenz je Release-Body (liest die `terms`-Zeile).

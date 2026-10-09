@@ -117,7 +117,7 @@ note ShadowCam PDS4 — 2026-10-09: /derived/ 200 öffentlich; Produkte .cub (IS
 
 disponiert
 kandidat https://gportal.jaxa.jp/
-note JAXA G-Portal — Quellen sources.φ:10962-10968 + 2286-2292; Record-Download 2026-10-07 Run 37676047864: Login ok, fetch 200 153785337 B; nicht public; Compile-Riss FS/navigation/scLat unread. future-folge226.
+note JAXA G-Portal — Quellen `gportal.jaxa.jp` (2 Blöcke: `jaxa_gpm_ku`, `jaxa_gportal`); Download 2026-10-07 Run 37676047864: Login ok, 200 153785337 B; nicht public; Compile-Riss FS/navigation/scLat unread. future-folge226.
 
 ausstehend
 kandidat https://clpds.bao.ac.cn/
@@ -149,7 +149,7 @@ note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-09: cdaweb dmsp16_ssj.bin 414
 
 ausstehend
 kandidat https://supermag.jhuapl.edu/products/
-note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18407-18431); supermag-cdn.yml steht; Onset-Produkt braucht Arm.
+note Substorm-Onsets (GIC-Mediator §B) — 2026-10-09: `substorm_compiler.rs` steht (supermag.jhuapl.edu/lib/services, 5 Listen), aber kein substorm-Block in sources.φ; Arm+Workflow fehlen.
 
 disponiert
 kandidat https://cdaw.gsfc.nasa.gov/CME_list/

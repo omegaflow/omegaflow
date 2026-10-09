@@ -98,8 +98,8 @@ gap blinkverse-frb
 note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamikspektren + 92 Host-Galaxien) → nicht superseded (Rat + UI); Zugang direct+Proton pending; Dedup gegen `frb_chime_cat1.json`/`frbcat_flat.json`/`frb_a279.json`.
 
 pending
-url https://geomag.usgs.gov/ws/data/
-note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/data/?id=<IAGA>&elements=E-E,E-N&format=json` 200 (E-Feld, runtime); openapi nennt kein geoelectric; Magnetik-Teil Duplikat `declined_sources.φ:2176` (URL doppelt = Riss).
+url https://geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json
+note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `id=BOU&elements=E-E,E-N` 200 (je IAGA-Station); Produkt getrennt vom Magnetik-Duplikat `declined_sources.φ:2176` (data.json/XYZF); offen: `sources.φ`-Zeile.
 
 pending
 url https://github.com/TIAN-we/petrel19
