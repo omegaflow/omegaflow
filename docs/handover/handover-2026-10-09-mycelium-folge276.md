@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. pages-deploy membrane_bodies-Staging entfernt (river-143); mountain-283 + river-143 gefaltet; `ausstehend`-Queue (§A–E) in 11 Agenten abgearbeitet; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: a283c18c3fddc8c1be2d00666fbe486e45edbf016d03d60dc9096d2acb5713c2
+  sha256: 8538eade02792bdfb0f4629f0bb96e0db67f92246c5c7f10b7607d189ee24d08
   status: live
 -->
 # Handover — Mycelium-Folge 276 (2026-10-09)
@@ -78,12 +78,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** die Form-Entscheidung (Vision-Asset-Register vs. reine URL-Referenz).
 - **Braucht:** Verdikt/Vorlage, wie ein figure-only Bild-Asset registriert wird; dann führt Mycelium es.
 
-### `ceic.ac.cn` Quake-Feed — `ip-blocked` (Träger)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains Release/Descope der Zeile `blocked_sources.φ:103-104`
-- **Lage:** (gemessen 2026-10-09) Mountain (`699009a43`) disponierte `https://ceic.ac.cn/data/data.json` als `blocked ip-blocked` (`blocked_sources.φ:103`, Runner-Route: `curl 28/7`, lokal HTTP 206). Der Mycelium-Schritt ist vollzogen: der Slot ist aus `.github/workflows/quake-feeds-cdn.yml` entfernt (acht Bodies), `phi/sources.φ:77` bleibt. Der rote `quake-feeds-cdn` `37910580075` hat hier seine Ursache.
-- **Blockade:** keine.
-- **Braucht:** nichts bis Mountains Release/Descope; bis dahin ist dies der Träger der Zeile.
+### Pending-/`ip-blocked`-Taucher-Runde (9 Ziele, `archive_search --all`) — 2026-10-09
+- **Status:** eigen (Messung) | **Bindung:** eigen → mountain (Verdikt) · operator (DEMETER/LEOS-Auth)
+- **Trigger:** Mountains Register-Verdikte
+- **Lage:** (gemessen 2026-10-09, Taucher-Runde `archive_search --all`) MESSENGER `:51` Erd-2005-ODF nie archiviert (data-odf/ 2007-2015, 2005/ + 2006/ 404, Kontrolle 2009/ 200, Dataset MESS-V/H ohne E) → descope · DEMETER `:55` keine order-freie Route (AMDA/CDPP-EPN-TAP/CDAWeb/LATMOS ohne DEMETER, SPASE-AccessURL nur REGARDS, rs-order 403) → Auth-Route bleibt · LEOS `:70` dataDownloadList → Login, Registrierung verlangt chinesische ID-Felder, ASI-SSDC restricted → blocked account · Juno-CSV `:74` lebt (`-1-77.csv` 200/85831 B), ist Datei-Index (URN/Name/Größe), kein Feld, ODF via `juno_odf.bin` (`sources.φ:10719`) → descope · PDS-PPI `:78` TAP bestätigt (224 `.epn_core`, `mess_mag_calibrated_rtn_avg.epn_core` nutzbar), Arm `pds4_fixed_width_compiler` nicht `tap_compiler`, Enumerator bauen · ieeg.org `:82` keine Elektroden-Koordinaten (REST `/services` ohne MNI, ds003844 x=y=z=0) → descope · SuperDARN-Conv `:86` echter Endpoint `sdc-serv.usask.ca/website_updating_tools/latest_convection_packet.json` 200 (pcpot+contours), Host via `superdarn_fitacf` registriert, pcpot deckt `superdarn_cpcp_pot_drop` → superseded · USGS-geomag `:134` exakter Endpoint `/ws/data/?id=<IAGA>&starttime=&endtime=&elements=&format=json` 200, nur Magnetik nT, E-Feld = SWPC `sources.φ:1106`, Magnetik-Duplikat `declined_sources.φ:2176` → streichen · ceic `:95` Wolfx-CENC-Mirror `sources.φ:523` schon registriert, Host vom Runner erreichbar → kein Workflow-Akt, Verdikt über `sources.φ:77`.
+- **Blockade:** Mountains Register-Verdikte; DEMETER/LEOS Accounts (operator).
+- **Braucht:** Mountain-Verdikte (s. `## An mountain`); Operator nur, falls DEMETER-Order/LEOS-Konto genutzt werden soll.
 
 ## An river
 
@@ -112,6 +112,7 @@ Origin: mycelium-276.
 - **Orphan-Verdikte (`phi/blocked_sources.φ`):** TUH EEG (`:86`) und NSRR (`:90`) sind **erledigt** (Operator-Wort 2026-10-09): beide nach `phi/declined_sources.φ` als `decline no-physical-force` verschoben (beide Enden benannt). `blocked account` ist damit leer. Der stale Anker in `wartend.φ:37` ist korrigiert (`blocked_sources.φ:138` → `phi/declined_sources.φ:5767`); die Nicht-Feld-Nutzung von TUH bleibt operator-gebunden (`wartend.φ:37`). Kein weiterer Mountain-Akt.
 - **JAXA-Registerzitat:** `ledger.φ:120` zitierte `sources.φ:10370` — dort steht kein JAXA-Block (g-vo-Maser-`ttl`); die JAXA-Zeilen sind `sources.φ:10962-10968` + `2286-2292`. Bitte die falsche Zitatstelle prüfen.
 - **ShadowCam-Admission:** `pds.shadowcam.im-ldi.com/derived/` liefert `.cub` (ISIS) + `_cog.tif`, **kein `.fits`**; der vorhandene `pds4-fits`-Arm ist Chang'e-MRM. Braucht eine eigene Admission/`format` + TIFF-Compiler-Route (Mycelium baut auf dein Verdikt).
+- **Pending-/`ip-blocked`-Verdikte (Taucher-Runde 2026-10-09, Details in `## Offen — eigen`):** MESSENGER `:51` → descope (Absenz); Juno-CSV `:74` → descope (Index, kein Feld); ieeg.org `:82` → descope (keine Koordinaten); SuperDARN-Conv `:86` → superseded (Host registriert, `pcpot` deckt `superdarn_cpcp`); USGS-geomag `:134` → pending-Zeile streichen (Magnetik-Duplikat `declined_sources.φ:2176`, E-Feld = `sources.φ:1106`); DEMETER `:55` → `blocked account` (Auth-Route) oder descope; LEOS `:70` → `blocked account`/future (chinesische ID); ceic `:77` → Verdikt über den HTTPS-Direktblock (Wolfx-Mirror `sources.φ:523` deckt). **PDS-PPI `:78`** → Bau-Auftrag: EPN-TAP→`pds4_fixed_width_compiler`-Paar-Enumerator (Mycelium/Mountain).
 
 ## LOCK
 
