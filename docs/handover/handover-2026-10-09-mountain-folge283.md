@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 1733034f5500a1df041c75d2f8886dfe619f0f2b922dc0442371d29c780ddbb7
+  sha256: 733a0366a01221553a2ee9dd6d90d123d5fdcd42e6b2b30c2e8b10c8db0b25b5
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -29,6 +29,7 @@ Wort | Datum | Quelle
 „1. natürlich Ja wir brauchen die lizenzen sind regeln der quellen nicht unsnere" | 2026-10-09 | Operator (Session, Mountain 283)
 „2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283)
 „du sollst das prüfen, die lizenzen müssen korrekt sein" | 2026-10-09 | Operator (Session, Mountain 283)
+„sind jetzt alle blöcke in allen asset files mit tes versehen (also auch die anderen weberinnen sources) und sollten wir eigentlich die beschreibungen von sources repo und assets noch anpassen?" | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -53,12 +54,12 @@ Wort | Datum | Quelle
 - **Blockade:** keiner.
 - **Braucht:** `ci_manage view 37929072865` beim nächsten Pass (kein Session-Polling); bei grün Punkt schließen.
 
-### Lizenz-Disposition — `terms`-Feld (SPDX); ESA-Vokabel erweitert, Rest-Sweep offen
+### Lizenz-Disposition — `terms`-Feld (SPDX); ESA + INTERMAGNET + HF-Radar gesweept, langer Rest offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 1645 · distinct 12 · no-terms 827 · pending 1065 · 0 violation(s)**. Operator-Wort „1. natürlich Ja wir brauchen die lizenzen …": `CC-BY-NC-3.0-IGO` ins geschlossene Vokabular (`license_census.rs`) aufgenommen und **21 Blöcke der ESA Space Science Archives** (`*.esac.esa.int` + `psa.esa.int`) mit `terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions` versehen. Quelle gemessen: `https://www.cosmos.esa.int/web/gaia-users/license` und `https://www.cosmos.esa.int/web/esdc/terms-and-conditions` nennen beide „CC BY-NC 3.0 IGO". **Prüfung (Operator-Wort „du sollst das prüfen"):** alle 21 Blöcke sind ESAC-/PSA-Hosts und fallen unter die ESDC-Regel „Data hosted in the ESA Space Science Archives … CC BY-NC 3.0 IGO"; kein ESA-Block ohne `terms` (awk-Sweep leer). **Riss geschlossen:** `dr3_stars.bin` trug fälschlich `terms PD https://ssd.jpl.nasa.gov/` — Quellen sind CDS-Hipparcos + Gaia-DR3-Supplement (`tycho2_compiler.rs:361` fragt `gea.esac.esa.int/tap-server`), jetzt `terms CC-BY-NC-3.0-IGO`. ESA-SPICE (`spiftp.esac.esa.int`, JUICE-Kernel) trägt keine eigene Lizenz-Aussage (aareadme + Playwright-Seite leer) → ESDC-Umbrella angewandt (schwächste Evidenz, benannt).
-- **Blockade:** `zenodo.org` per Record; `datalab.noirlab.edu`/`dc.g-vo.org` ohne Daten-Lizenzaussage (`pending`); gemischte Hosts (arcgis/jaxa/kasi/…); Anker fehlt für Blöcke ohne `format`/`origin`.
-- **Braucht:** zenodo-Terms per Record (`archive_search --zenodo <id>`); Rest-Sweep je Anker; `license_census`/`ci-gate` nachführen.
+- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 2006 · distinct 13 · no-terms 620 · pending 704 · 0 violation(s)**. Gesweept in diesem Atom: **ESA 21** (`CC-BY-NC-3.0-IGO`) · **INTERMAGNET 157** (`imag-data.bgs.ac.uk`, `CC-BY-NC-4.0`, gemessen `https://intermagnet.org/data_conditions.html`) · **HF-Radar 204** (`hfradar.ioos.us`, `free-open`, ERDDAP-`NC_GLOBAL license` = „may be used and redistributed for free", gemessen an `SKIO_CNS`/`USF_RDSR`). Vokabular erweitert um `CC-BY-NC-3.0-IGO` + `CC-BY-NC-4.0`. **Prüfung (Operator-Wort „du sollst das prüfen"):** alle ESA-Blöcke sind ESAC-/PSA-Hosts unter der ESDC-Regel; kein ESA-Block ohne `terms` (awk-Sweep leer). **Riss geschlossen:** `dr3_stars.bin` trug fälschlich `terms PD https://ssd.jpl.nasa.gov/` — Quellen sind CDS-Hipparcos + Gaia-DR3-Supplement (`tycho2_compiler.rs:361` fragt `gea.esac.esa.int/tap-server`), jetzt `terms CC-BY-NC-3.0-IGO`. ESA-SPICE (`spiftp.esac.esa.int`) hat keine eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt).
+- **Blockade:** **704 `url`/`compiler`-Blöcke ohne `terms`** — dominiert von **543 GitHub-CDN-Mirror-Blöcken** (`url`=github-Release, echter Quell-Host im Tag/`origin`), dazu `services*.arcgis.com` ~24 · `zenodo.org` 11 · `vires.services` 12 · `data.earthscope.org` 9 · `raw.githubusercontent.com` 5 · usw.; je Host muss die Lizenz gemessen werden. `hfradar`-Rest nicht mehr offen.
+- **Braucht:** je Anker (Quell-Host) die Lizenz per `archive_search`/`curl` messen und `terms <token> <url>` schreiben; danach `license_census` (0 violations) + `register_sort` nachführen.
 
 ### `blocked_sources.φ`-Aufräumen — 15 Klassen-Träger (`gap`-Token)
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
@@ -71,7 +72,8 @@ Wort | Datum | Quelle
 
 Origin: mountain-folge283.
 
-- **terms-Ernte:** **terms 1624 · no-terms 841 · pending 1086 · 0 violation** (gemessen 2026-10-09, `license_census`). Der `sources_repo_license`-Bin bleibt **dein** uncommitteter Draft (`tools/register/src/bin/sources_repo_license.rs`); Mountain baut ihn nicht. Offen für dich: ESA/ESAC (CC BY-NC 3.0 IGO, Vokabel-Erweiterung), zenodo per Record, gemischte Hosts.
+- **terms-Ernte:** **terms 2006 · pending 704 · 0 violation** (gemessen 2026-10-09, `license_census`). Der `sources_repo_license`-Bin bleibt **dein** uncommitteter Draft (`tools/register/src/bin/sources_repo_license.rs`); Mountain baut ihn nicht.
+- **`omegaflow/sources`-Repo + Asset-Beschreibungen (Operator-Wort 2026-10-09):** das Repo hat **keine LICENSE** und **keine Lizenz in der Description** (`gh repo view omegaflow/sources`: Beschreibung nennt nur Inhalte, `licenseInfo: null`); jedes Release trägt `body` = „harvest CDN release for <netloc>". Da das Repo Fremddaten unter heterogenen Lizenzen redistribuiert, ist eine Pauschal-Lizenz falsch. Vorschlag: (a) `NOTICE`/`README` „third-party data, per-source licences — ledger `phi/sources.φ` / `state/mountain/license-census.tsv`"; (b) der CI-Manifestator schreibt die Quell-Lizenz in den Release-Body; (c) Repo-Description um „per-source licences" ergänzen. Lizenz-**Eigenschaft** (`terms`) ist Mountains, **Transport** (Repo/Description/Release-Body) deiner.
 - **SuperDARN MAP-grid:** Globus-Credentials stehen (`GLOBUS_ID_USER`/`GLOBUS_ID_PASS`), kein Operator-Akt; der Download (`superdarn.ca/data-download`, `wartend.φ:8`) liegt bei dir.
 - **Keogramm** (OMTI/Abisko): Wire-Feld descoped (raw/relativ); offen ist die **Vision-Asset-Registrierung** — bitte führen, falls Mycelium das Bild als Asset trägt.
 - **Route-Admissionen / Arme:** THEMIS-Tail + MMS-Magnetosheath-Arme stehen jetzt (`phi/sources.φ`); manifestiere, sobald die Zeilen stehen. Übrige `gap`-Träger siehe oben.
