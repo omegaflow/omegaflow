@@ -2987,6 +2987,7 @@ fn magic_label(magic: crate::magic::Magic) -> &'static str {
         crate::magic::Magic::Gzip => "gzip",
         crate::magic::Magic::Hdf5 => "hdf5",
         crate::magic::Magic::NetCdf => "netcdf",
+        crate::magic::Magic::Cdf => "cdf3",
         crate::magic::Magic::Tiff => "tiff",
         crate::magic::Magic::Unrecognized => "unrecognized",
     }
