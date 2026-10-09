@@ -2260,10 +2260,6 @@ decline catalog-register
 url https://github.com/FreeCodeCamp/ProjectReferenceData
 note NASA-Meteoriten-Landungen — statischer Katalog, kein Live-Messwert.
 
-decline redistribution
-url https://github.com/TIAN-we/petrel19
-note PETREL19 unlicensed — LICENSE main+master 404, GitHub license-API 404 (2026-10-04); GitHub-Default all-rights-reserved, CDN-Redistribution ausgeschlossen. Arm ephemeris_compiler.rs steht; Coverage 1799-10-13..2106-05-05.
-
 decline infrastructure
 url https://github.com/arijguest/3D-meteorite-viewer
 note gebündelte Natural-Earth-Küsten/Grenzen + statischer Impaktkrater-Katalog — kein Messwert am Ort.

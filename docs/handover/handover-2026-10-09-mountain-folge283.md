@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 4dcb7738e715202e799442399a0f970234fabdc2c9b27d03006da0a41aa3d410
+  sha256: 5bd3971c2eb2bb25812c964103160b7fa5115bddab83281d5d08217f817e9421
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -31,6 +31,7 @@ Wort | Datum | Quelle
 „du sollst das prüfen, die lizenzen müssen korrekt sein" | 2026-10-09 | Operator (Session, Mountain 283)
 „sind jetzt alle blöcke in allen asset files mit tes versehen (also auch die anderen weberinnen sources) und sollten wir eigentlich die beschreibungen von sources repo und assets noch anpassen?" | 2026-10-09 | Operator (Session, Mountain 283)
 „kannst du das nicht in einem patch per archive search machen lassen? … und 2 ja" | 2026-10-09 | Operator (Session, Mountain 283)
+„was ist mit den 140 pending? und hast du die mail von wei gesehen" | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -58,9 +59,9 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (SPDX); ESA + INTERMAGNET + HF-Radar gesweept, langer Rest offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 2570 · distinct 16 · no-terms 68 · pending 140 · 0 violation(s)** — **95 % Abdeckung**. Gesweept (diese Session, per `archive_search`/Host-Histogramm, zwei Taucher-Batches): **ESA 21** (`CC-BY-NC-3.0-IGO`) · **INTERMAGNET 157** (`CC-BY-NC-4.0`) · **HF-Radar 204** (`free-open`) · **CDN-Mirror 543** über den Tag-Host (`jsoc` `CC0-1.0`; `jvo`/`zenodo`/`earthscope`/`geoazur`/`mpc`/`kasi`/`clpds`/`canfar`/`bgr` `unbestimmt`; `imcce`/`supermag`/`wwlln`/`dhm`/`ogimet`/`pradan`/`casdc`/`hamqsl` `ohne-lizenz`; `iaaras`/`gportal`/`wdc`/`nso`/`argo`/`copernicus`/`noaa-s3` `free-open`; `fmi`/`darts`/`gmrt`/`eea`/`toar` `CC-BY-4.0`; `isc` `CC-BY-SA-3.0`; `vo.astron` `CC-BY-3.0`; `geofabrik` `ODbL-1.0`; `impc`/`ssd.jpl` `PD`). **Alle 2005 CDN-Mirror-Blöcke** tragen jetzt `terms`. Vokabular +`CC-BY-NC-3.0-IGO` · +`CC-BY-NC-4.0` · +`CC-BY-3.0` · +`CC-BY-SA-3.0`. **Prüfung (Operator-Wort „du sollst das prüfen"):** kein ESA-Block ohne `terms` (awk-Sweep leer); **Riss geschlossen:** `dr3_stars.bin` `terms PD`(JPL)→`CC-BY-NC-3.0-IGO` (Gaia-Origin gemessen `tycho2_compiler.rs:361`); ESA-SPICE ohne eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt).
-- **Blockade:** **140 `url`/`compiler`-Blöcke ohne `terms`** — kein Mirror mehr; langer Nicht-Mirror-Tail über ~75 Hosts: `vires.services` 12 · `services*.arcgis.com` ~25 · `raw.githubusercontent.com` 5 · `gs.llnl.gov` 4 · `data.oceannetworks.ca` 4 · `seismic-api.science.unimelb.edu.au` 3 · `data-argo.ifremer.fr` 3 · `api.wolfx.jp` 3 · Rest 1–2. Je Host Lizenz messen.
-- **Braucht:** Rest-Tail mit derselben Mechanik: `awk`-Host-Histogramm → `archive_search` je Host → `terms`-Patch; danach `license_census`/`register_sort`.
+- **Lage:** (gemessen 2026-10-09, `license_census` + `register_sort`) **blocks 2710 · terms 2710 · distinct 19 · no-terms 0 · pending 0 · 0 violation(s) — 100 % der `url`/`compiler`-Blöcke tragen `terms`**. Gesweept (diese Session, `archive_search`-Host-Histogramm + Taucher-Batches): ESA 21 · INTERMAGNET 157 · HF-Radar 204 · CDN-Mirror 543 · Tail 140 (`vires`/`arcgis`/`raw.githubusercontent`/`gs.llnl.gov`/`data.oceannetworks.ca`/… `unbestimmt`; `sdss`/`iastate-mesonet` `PD`; `met.no`/`ethz`/`vedur` `free-open`; `seismicportal`/`ingv`/`jma`/`bom`/`gfz`/`unimelb`/`open-meteo`/`p2pquake` `CC-BY-4.0`; `geonet` `CC-BY-3.0`; `safecast` `CC0-1.0`; `ldeo`/`linea`/`uhslc`/`riken` `ohne-lizenz`; `environment.data.gov.uk` `OGL-UK-3.0`; `sondehub` `CC-BY-SA-2.0`; `meteo.lt` `CC-BY-SA-4.0`). Vokabular +`CC-BY-NC-3.0-IGO` · +`CC-BY-NC-4.0` · +`CC-BY-3.0` · +`CC-BY-SA-2.0` · +`CC-BY-SA-3.0` · +`CC-BY-SA-4.0` · +`OGL-UK-3.0`. **Prüfung/Riss (Operator-Wort „du sollst das prüfen"):** ESAC/PSA-Blöcke unter ESDC-Regel; `dr3_stars.bin` `terms PD`(JPL)→`CC-BY-NC-3.0-IGO` (Gaia-Origin gemessen `tycho2_compiler.rs:361`); ESA-SPICE ohne eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt). `per-record`-Hosts (`zenodo`/`earthscope`/`scidb`/`dataverse`/`arxiv`/`erddap`/`github`) host-level `unbestimmt`, record-level offen.
+- **Blockade:** keine (Abdeckung vollständig). **Riss:** Hosts mit unterschiedlichem Service (`vo.astron.nl` Mirror-Tag `CC-BY-3.0` vs. Nicht-Mirror `unbestimmt`; `data-argo.ifremer.fr` `free-open` vs. `unbestimmt`; `maxi.riken.jp` `unbestimmt` vs. `ohne-lizenz`) — belassen, benannt.
+- **Braucht:** nichts (geschlossen); `per-record`-Records können bei Bedarf später je Record aufgelöst werden.
 
 ### `blocked_sources.φ`-Aufräumen — 15 Klassen-Träger (`gap`-Token)
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
@@ -68,6 +69,13 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-09, diese Session) **15 verbleibende `gap`-Träger** (themis-tail + mms-magnetosheath gebaut/entfernt): `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`) · `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen) · `mariner-rst` (7-Track-Parser fehlt, SDDPT) · `dmap-map-grid` (Globus-Download bei Mycelium `wartend.φ:8`; Kern `dmap.rs` + `map_grid_value` stehen) · `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat`) · `inpe-big-stac` (79 Sammlungen, Sammlung→Feld-Compiler) · `hi-21cm` (VO/FITS-Arm) · `cmb-lambda` (LAMBDA/PLA-Produkt-Arm) · `solar-vso` (FITS/VSO-TAP) · `laic-cssdc` (Portal-Parser) · `particle-cern` (CERN-Open-Data-API + GWOSC) · `blinkverse-frb` (direct+Proton pending, kein Wayback). TUH/NSRR-`blocked account`-Riss geschlossen (Mountain-Verdikt 2026-10-09: kein Descope, Konto real, Daten hinter NEDC/HIPAA).
 - **Blockade:** je Träger der Bau (Arm/Workflow/`sources.φ`-Zeile) oder eine wartende Antwort.
 - **Braucht:** je Träger Arm/Workflow/`sources.φ`-Zeile oder Disposition.
+
+### PETREL19-Ephemeriden — Wei erteilt CC BY 4.0 (decline widerlegt)
+- **Status:** eigen | **Bindung:** eigen (Register/Port)
+- **Trigger:** Port gebaut (PETREL19-Arm im `ephemeris_compiler`)
+- **Lage:** (gemessen 2026-10-09) **Tian Wei** (`tian-we@163.com`, `mail_ledger.φ#1791552291`, 9. Okt 10:44) erteilt **CC BY 4.0** für PETREL19 („free for both research and commercial purposes", Redistribution ok; README folgt). Die frühere `decline redistribution` (`declined_sources.φ:2264`, unlicensed/all-rights-reserved, 2026-10-04) ist damit **widerlegt und entfernt**; PETREL19 steht jetzt als `pending` in `blocked_sources.φ`. `ephemeris_compiler.rs` supportet PETREL19 noch nicht (nur JUICE etc.; Upload-Tag `ssd.jpl.nasa.gov-ephemeris`).
+- **Blockade:** der PETREL19-Arm im Compiler fehlt.
+- **Braucht:** `ephemeris_compiler.rs` um PETREL19 erweitern (SPICE/JPL-DE, 1799-10-13..2106-05-05) → `sources.φ`-Block mit `terms CC-BY-4.0 https://github.com/TIAN-we/petrel19`.
 
 ## An mycelium
 
