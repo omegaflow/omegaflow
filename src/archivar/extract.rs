@@ -94,6 +94,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_acs_nir" => acs_nir::parse_series(bytes),
         "iris" => iris::parse_bin(bytes),
         "themis_asi" => themis_asi::parse_bin(bytes),
+        "bepicolombo_plasma" => bepicolombo::parse_bin(bytes),
         "keogram" => keogram::parse_bin(bytes).map(|rows| {
             rows.into_iter()
                 .map(|(t, comp, mean)| (t, mean, comp))
@@ -395,6 +396,12 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let recs = iris::parse_bin(bytes)?;
             let max_comp = recs.iter().map(|r| r.2).max()?;
             let names: Vec<String> = (0..=max_comp).map(iris::component_name).collect();
+            (names, recs)
+        }
+        "bepicolombo_plasma" => {
+            let recs = bepicolombo::parse_bin(bytes)?;
+            let max_comp = recs.iter().map(|r| r.2).max()?;
+            let names: Vec<String> = (0..=max_comp).map(bepicolombo::component_name).collect();
             (names, recs)
         }
         "themis_asi" => {
@@ -4139,6 +4146,61 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 },
                 fc.clone(),
             ));
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "ebhis_hpx_series" {
+        let buf = match std::fs::read(body) {
+            Ok(b) => b,
+            Err(_) => return ExtractResult::Measurements(vec![]),
+        };
+        let Some(records) = ebhis::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for rec in &records {
+            let theta = (90.0 - rec.glat).to_radians();
+            let phi = rec.glon.to_radians();
+            let (ra_deg, dec_deg) = crate::mathematikerin::healpix::galactic_to_icrs(theta, phi);
+            let ra = ra_deg.to_radians();
+            let dec = dec_deg.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca, cd * sa, sd];
+            for comp in 0..ebhis::N_CHANNELS as u32 {
+                let name = ebhis::component_name(comp);
+                let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                    continue;
+                };
+                let Some(value) = ebhis::component_value(rec, comp) else {
+                    continue;
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: spectral::SPECTRAL_NO_BAND,
+                        bin_width: spectral::SPECTRAL_NO_BAND,
+                        epoch,
+                        station_code: None,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    fc.clone(),
+                ));
+            }
         }
         return ExtractResult::Measurements(channels);
     }

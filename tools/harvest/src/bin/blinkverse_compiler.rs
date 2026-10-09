@@ -1,4 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
+use omegaflow::archivar::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
@@ -72,6 +73,31 @@ fn cell_num(s: &str) -> Option<f64> {
     t.parse::<f64>().ok().filter(|v| v.is_finite())
 }
 
+fn is_ra_column(name: &str) -> bool {
+    let n = name.trim();
+    n.eq_ignore_ascii_case("ra") || n.eq_ignore_ascii_case("right ascension")
+}
+
+fn is_dec_column(name: &str) -> bool {
+    let n = name.trim();
+    n.eq_ignore_ascii_case("dec")
+        || n.eq_ignore_ascii_case("decl")
+        || n.eq_ignore_ascii_case("declination")
+}
+
+fn cell_value(name: &str, s: &str) -> Option<f64> {
+    if let Some(v) = cell_num(s) {
+        return Some(v);
+    }
+    if is_ra_column(name) {
+        return sexagesimal_ra_to_deg(s);
+    }
+    if is_dec_column(name) {
+        return sexagesimal_dec_to_deg(s);
+    }
+    None
+}
+
 fn parse_csv(text: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
     let mut lines = text.lines();
     let header_line = lines.next()?;
@@ -97,9 +123,9 @@ fn numeric_columns(header: &[String], rows: &[Vec<String>]) -> Vec<usize> {
     header
         .iter()
         .enumerate()
-        .filter(|(i, _)| {
+        .filter(|(i, name)| {
             rows.iter()
-                .any(|r| r.get(*i).and_then(|c| cell_num(c)).is_some())
+                .any(|r| r.get(*i).and_then(|c| cell_value(name, c)).is_some())
         })
         .map(|(i, _)| i)
         .collect()
@@ -112,7 +138,7 @@ fn keep_table(header: &[String], rows: &[Vec<String>]) -> Table {
         .iter()
         .map(|r| {
             cols.iter()
-                .map(|i| r.get(*i).and_then(|c| cell_num(c)))
+                .map(|i| r.get(*i).and_then(|c| cell_value(&header[*i], c)))
                 .collect()
         })
         .collect();
@@ -331,11 +357,12 @@ mod tests {
     }
 
     #[test]
-    fn numeric_columns_keep_only_value_bearing() {
+    fn numeric_columns_keep_value_bearing_sexagesimal_position() {
         let header = vec![
             "Source".to_string(),
             "DM".to_string(),
             "RA".to_string(),
+            "Dec".to_string(),
             "Err".to_string(),
         ];
         let rows = vec![
@@ -343,16 +370,29 @@ mod tests {
                 "FRB1".to_string(),
                 "460.8".to_string(),
                 "22:17:30.0".to_string(),
+                "-72:11:33.8".to_string(),
                 "+0.18/-0.18".to_string(),
             ],
             vec![
                 "FRB2".to_string(),
                 "".to_string(),
                 "01:00:00.0".to_string(),
+                "+22:00:52.2".to_string(),
                 "+0.2/-0.2".to_string(),
             ],
         ];
-        assert_eq!(numeric_columns(&header, &rows), vec![1]);
+        assert_eq!(numeric_columns(&header, &rows), vec![1, 2, 3]);
+    }
+
+    #[test]
+    fn ra_dec_sexagesimal_to_degrees() {
+        let ra = cell_value("RA", "22:17:30.0").unwrap();
+        assert!((ra - 334.375).abs() < 1e-9);
+        let dec = cell_value("Dec", "-72:11:33.8").unwrap();
+        assert!((dec - (-72.192722222222)).abs() < 1e-6);
+        assert_eq!(cell_value("RA", ""), None);
+        assert_eq!(cell_value("Dec", "not-a-position"), None);
+        assert_eq!(cell_value("DM", "460.8"), Some(460.8));
     }
 
     #[test]

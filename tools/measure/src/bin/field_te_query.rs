@@ -5119,6 +5119,7 @@ mod tests {
             cgm_lat: None,
             cgm_source: None,
             geomag_lat: None,
+            weberin_role: None,
         }
     }
 

@@ -219,6 +219,24 @@ pub fn read_file(bytes: &[u8]) -> Result<RootFile, &'static str> {
     Ok(RootFile { header, keys })
 }
 
+pub fn parse_tree(bytes: &[u8], tree: &RootKey) -> Result<Vec<(f64, f64, u32)>, &'static str> {
+    if tree.class != "TTree" {
+        return Err("key is not a TTree");
+    }
+    if tree.seek_key < 0 || tree.keylen < 0 {
+        return Err("TTree key offset negative");
+    }
+    let payload = (tree.seek_key as usize)
+        .checked_add(tree.keylen as usize)
+        .ok_or("TTree payload offset out of range")?;
+    if payload >= bytes.len() {
+        return Err("TTree payload absent");
+    }
+    Err(
+        "TTree scalar decode pending: TStreamerInfo streamers (fBranches/fLeaves), TBasket free-segment (fEntryOffsetLen)",
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -273,5 +291,32 @@ mod tests {
     #[test]
     fn key_list_absence_is_named_not_zero() {
         assert_eq!(read_file(HEADER), Err("directory key absent at fBEGIN"));
+    }
+
+    #[test]
+    fn tree_scalar_leaf_decode_names_the_missing_substructures() {
+        let tree = RootKey {
+            name: "AliVSD".to_string(),
+            class: "TTree".to_string(),
+            nbytes: 0,
+            objlen: 0,
+            keylen: 8,
+            cycle: 1,
+            seek_key: 0,
+            seek_pdir: 0,
+        };
+        assert_eq!(
+            parse_tree(&[0u8; 64], &tree),
+            Err(
+                "TTree scalar decode pending: TStreamerInfo streamers (fBranches/fLeaves), TBasket free-segment (fEntryOffsetLen)"
+            )
+        );
+
+        let mut directory = tree.clone();
+        directory.class = "TDirectoryFile".to_string();
+        assert_eq!(
+            parse_tree(&[0u8; 64], &directory),
+            Err("key is not a TTree")
+        );
     }
 }
