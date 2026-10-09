@@ -1,3 +1,4 @@
+use super::actuators::CHANNEL_CAP;
 use std::collections::HashMap;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -262,11 +263,82 @@ pub fn mode_regime(op: TransportOp) -> ModeRegime {
     }
 }
 
+#[cfg(test)]
 const CIRCLE_DRUM_MODE_RATIOS: [f64; 9] = [
     1.0, 1.593_34, 2.135_36, 2.295_49, 2.653_07, 2.917_28, 3.155_46, 3.500_11, 3.598_23,
 ];
 
 const FIRST_BESSEL_J0_ZERO: f64 = 2.404_825_557_7;
+
+const CIRCLE_ZERO_SEARCH_MAX: f64 = 20.0;
+const CIRCLE_ZERO_STEP: f64 = 0.05;
+
+fn bessel_j(m: u32, x: f64) -> f64 {
+    if x == 0.0 {
+        return if m == 0 { 1.0 } else { 0.0 };
+    }
+    let half = 0.5 * x;
+    let mut term = 1.0f64;
+    for k in 1..=m {
+        term *= half / k as f64;
+    }
+    let mut sum = term;
+    let mut max_abs = term.abs();
+    let mut k: u32 = 0;
+    loop {
+        k += 1;
+        term *= -(half * half) / (k as f64 * (k as f64 + m as f64));
+        sum += term;
+        let a = term.abs();
+        if a > max_abs {
+            max_abs = a;
+        }
+        if a <= max_abs * 1e-17 || k >= 4096 {
+            break;
+        }
+    }
+    sum
+}
+
+fn bessel_zero(m: u32, lo: f64, hi: f64) -> f64 {
+    let mut a = lo;
+    let mut b = hi;
+    let mut fa = bessel_j(m, a);
+    for _ in 0..200 {
+        if b - a <= 1e-13 {
+            break;
+        }
+        let mid = 0.5 * (a + b);
+        let fm = bessel_j(m, mid);
+        if (fm < 0.0) != (fa < 0.0) {
+            b = mid;
+        } else {
+            a = mid;
+            fa = fm;
+        }
+    }
+    0.5 * (a + b)
+}
+
+fn circular_membrane_zeros(count: usize) -> Vec<f64> {
+    let mut pool: Vec<f64> = Vec::new();
+    for m in 0..=(count as u32) {
+        let mut prev_x = CIRCLE_ZERO_STEP;
+        let mut prev = bessel_j(m, prev_x);
+        let mut x = prev_x + CIRCLE_ZERO_STEP;
+        while x <= CIRCLE_ZERO_SEARCH_MAX {
+            let cur = bessel_j(m, x);
+            if (cur < 0.0) != (prev < 0.0) {
+                pool.push(bessel_zero(m, prev_x, x));
+            }
+            prev_x = x;
+            prev = cur;
+            x += CIRCLE_ZERO_STEP;
+        }
+    }
+    pool.sort_by(|a, b| a.total_cmp(b));
+    pool
+}
 
 pub fn eigen_wavenumbers(
     domain: Domain,
@@ -293,12 +365,13 @@ pub fn eigen_wavenumbers(
                 .map(|j| j as f64 * std::f64::consts::PI / extent)
                 .collect(),
         ),
-        (Domain::Circle, Boundary::Dirichlet) if count <= CIRCLE_DRUM_MODE_RATIOS.len() => Some(
-            CIRCLE_DRUM_MODE_RATIOS[..count]
-                .iter()
-                .map(|r| r * FIRST_BESSEL_J0_ZERO / extent)
-                .collect(),
-        ),
+        (Domain::Circle, Boundary::Dirichlet) if count <= CHANNEL_CAP => {
+            let zeros = circular_membrane_zeros(count);
+            if zeros.len() < count || (zeros[0] - FIRST_BESSEL_J0_ZERO).abs() > 1e-9 {
+                return None;
+            }
+            Some(zeros[..count].iter().map(|z| z / extent).collect())
+        }
         _ => None,
     }
 }
@@ -935,11 +1008,44 @@ mod tests {
     }
 
     #[test]
+    fn a_circle_keeps_the_documented_mode_ratios_through_nine() {
+        let extent = FIRST_BESSEL_J0_ZERO;
+        let k = eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, extent, 9)
+            .expect("circle modes");
+        assert_eq!(k.len(), 9);
+        assert!((k[0] - 1.0).abs() < 1e-9);
+        for (j, &ratio) in CIRCLE_DRUM_MODE_RATIOS.iter().enumerate() {
+            let measured = k[j] / k[0];
+            assert!(
+                (measured - ratio).abs() < 1e-3,
+                "mode {j}: measured ratio {measured} vs documented {ratio}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_circle_carries_the_full_channel_capacity() {
+        let k = eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, CHANNEL_CAP)
+            .expect("16 circle modes");
+        assert_eq!(k.len(), CHANNEL_CAP);
+        for j in 1..k.len() {
+            assert!(k[j] > k[j - 1], "mode {j} must exceed mode {}", j - 1);
+        }
+    }
+
+    #[test]
+    fn a_circle_with_zero_count_has_no_mode() {
+        assert!(eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, 0).is_none());
+    }
+
+    #[test]
     fn a_domain_without_a_closed_mode_is_absent() {
         assert!(eigen_wavenumbers(Domain::Unspecified, Boundary::None, 1.0, 3).is_none());
         assert!(eigen_wavenumbers(Domain::Rectangle, Boundary::Dirichlet, 1.0, 3).is_none());
         assert!(eigen_wavenumbers(Domain::Line, Boundary::Robin, 1.0, 3).is_none());
-        assert!(eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, 16).is_none());
+        assert!(
+            eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, CHANNEL_CAP + 1).is_none()
+        );
     }
 
     #[test]
