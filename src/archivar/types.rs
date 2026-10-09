@@ -1,4 +1,5 @@
 use super::*;
+use crate::mathematikerin::channel::ChannelDescriptor;
 
 pub trait Radiator: Send + Sync {
     fn accept(&mut self, field: Arc<Buffer>);
@@ -492,6 +493,7 @@ pub struct SourceConfig {
     pub frame: Frame,
     pub format: String,
     pub extracts: Vec<Extract>,
+    pub channels: Vec<ChannelDescriptor>,
     pub headers: Vec<(String, String)>,
     pub post_body: Option<String>,
     pub target: Option<String>,

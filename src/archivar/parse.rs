@@ -1,5 +1,6 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
+use crate::mathematikerin::channel::{ChannelDescriptor, unit_token};
 
 fn split_directive(line: &str) -> Vec<&str> {
     let bytes = line.as_bytes();
@@ -47,6 +48,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_url = String::new();
     let mut cur_format = String::new();
     let mut cur_extracts: Vec<Extract> = Vec::new();
+    let mut cur_channels: Vec<ChannelDescriptor> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
     let mut cur_target: Option<String> = None;
     let mut cur_catalog: Option<String> = None;
@@ -93,6 +95,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     || cur_format == "reference"
                     || cur_frame.is_some()
                     || !cur_extracts.is_empty()
+                    || !cur_channels.is_empty()
                 {
                     if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                         eprintln!(
@@ -109,6 +112,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             },
                             format: std::mem::take(&mut cur_format),
                             extracts: std::mem::take(&mut cur_extracts),
+                            channels: std::mem::take(&mut cur_channels),
                             headers: std::mem::take(&mut cur_headers),
                             post_body: cur_post_body.clone(),
                             target: cur_target.clone(),
@@ -167,6 +171,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_url = parts[1].to_string();
                 cur_format.clear();
                 cur_extracts.clear();
+                cur_channels.clear();
                 cur_headers.clear();
                 cur_ttl = 0;
                 cur_target = None;
@@ -973,6 +978,25 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 } else {
                     cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
+            "channel" if parts.len() >= 3 => {
+                let unit = match unit_token(parts[2]) {
+                    Some(u) => u,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("unknown channel unit \"{}\": {}", parts[2], line),
+                        );
+                        continue;
+                    }
+                };
+                match ChannelDescriptor::parse_spec(parts[1], unit) {
+                    Ok(d) => cur_channels.push(d),
+                    Err(reason) => {
+                        report_anomaly("Invalid Syntax", &cur_url, &format!("{}: {}", reason, line))
+                    }
                 }
             }
             "field" if parts.len() == 3 => {
@@ -2088,6 +2112,7 @@ mod tests {
             rights_uri: None,
             frame: Frame::Manifest,
             format: format.into(),
+            channels: Vec::new(),
             extracts: Vec::new(),
             headers: Vec::new(),
             post_body: None,
@@ -2484,6 +2509,34 @@ mod tests {
             fc.band_id.as_deref(),
             Some("DECam_g"),
             "the band id persists on the parsed field"
+        );
+    }
+
+    #[test]
+    fn a_channel_directive_carries_the_descriptor() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].channels.len(), 1);
+        let expected = crate::mathematikerin::channel::descriptor_for_force(
+            "gravity",
+            crate::mathematikerin::channel::Medium::Vacuum,
+        )
+        .expect("gravity descriptor");
+        assert_eq!(sources[0].channels[0].hash(), expected.hash());
+    }
+
+    #[test]
+    fn a_channel_directive_with_an_unknown_unit_is_refused() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:poisson:elliptic:vacuum:unspecified:none furlongs\n";
+        let sources = parse_sources(content);
+        assert!(
+            sources
+                .first()
+                .map(|s| s.channels.is_empty())
+                .unwrap_or(true)
         );
     }
 }
