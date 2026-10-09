@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 8ac81d5fcc753efa9a46619b7ef2aab9bd9b9ed09c5b83970220a4d90dc09c1a
+  sha256: 337f4dfcfe2da9a3e4cf86be7190804ab39c9abb1b97830530a48d31378d8918
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -62,6 +62,22 @@ nicht kopiert.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 
 ## Offen (aufgeschlüsselt)
+
+### P10 Register-Physik — Wort da, Schema verbindlich, `gravity` wissenschaftlich klassifiziert
+- **Status:** eigen | **Bindung:** eigen · mountain
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-09/10, river-160) Operator-Wort „alle Blöcke müssen korrekt sein,
+  dafür haben wir die Wissenschaft" → die Migration läuft. **P10.1** `source_physics_lint` gebaut:
+  `phi/sources.φ` = **7989 `field` · 24 `quantity` · 90 Geometrie-Kandidaten**; `em×inverse-square`
+  **6002** (~75 %). **P10.2a** (Schema, `docs/concepts/kanal-ontologie-komplettbau.md`) ist
+  verbindlich. **Erste Gruppe wissenschaftlich klassifiziert** (`state/river/p10-gravity-klassifikation.md`):
+  von 121 `gravity`-Tokenträgern **10 korrekt**, **104 → `quantity role=geometry`**,
+  **5 → `quantity role=source-parameter`**, **2 pending** (GW-Ereignismarker — Riss: Gravitation,
+  aber hyperbolisch, nicht Poisson).
+- **Blockade:** der `quantity role=geometry|source-parameter`-Form fehlt der Parser-Arm.
+- **Braucht:** (1) **River:** Parser-Arm für das P10.2a-Schema; (2) danach die Zeilen-Migration je
+  Gruppe nach Fehlergröße (`gravity` zuerst, `em` zuletzt), **Mountain** schreibt die Verdikt-Zeilen
+  in `phi/sources.φ`.
 
 ### Membran — SSB-Feld-Asset landen sehen + sha256 eintragen
 - **Status:** wartend | **Bindung:** eigen
