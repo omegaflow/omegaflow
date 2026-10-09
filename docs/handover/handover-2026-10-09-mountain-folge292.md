@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 2eebaac9baef2bff136e1b9d3bf9983453bd065f777c8e4f03e10b92e88af2ea
+  sha256: ebc12aa9cd0df90292768acc114fec5829cd52ceb3dc5a996bef81b13cbed09a
   status: live
 -->
 # Handover — Mountain-Folge 292 (2026-10-09)
@@ -47,8 +47,44 @@ Arbeit (river: `src/mathematikerin/actuators.rs`, `src/mathematikerin/channel.rs
   `Table` trug kein `Debug`, `assert_eq!(parse_bin(&bytes), Some(t))` in
   `blinkverse_compiler.rs:322` kompilierte nicht (Mountain-289-Erbe) —
   `#[derive(Clone, PartialEq, Debug)]`; `cargo check` 0/0.
+- **Vier-Arm-Reader-Welle** (Taucher, 4 Diver + zentrale Verdrahtung; gemessen: nur
+  BepiColombo ist serien-förmig): **BepiColombo** (`src/archivar/bepicolombo.rs`, `BCPL`)
+  und **EBHIS** (`src/archivar/ebhis.rs`, `EBH1`, spektrale HPX-Karte 346×945) gebaut und
+  verdrahtet — BepiColombo in `series_parse_bin`/`series_named`, EBHIS als
+  `ebhis_hpx_series`-Arm in `extract_raw` (fugin-Präzedenz, galaktisch→ICRS).
+  **Blinkverse** (`src/archivar/blinkverse.rs`, `BVFR`, benannte Tabelle) gebaut — der
+  Tabellen-Pfad fehlt (kein `t`). **ACT** schreibt **JSON** (cmap): kein Rust-Reader nötig,
+  der generische `Extract::CelestialMap`-Pfad trägt es (Planck-Präzedenz
+  `sources.φ:11295`). `cargo check` 0/0.
+- **Weberin-Gate:** `SourceConfig.weberin_role: Option<WeberinRole>` + Set im Parse-Arm +
+  alle Konstruktions-Sites (`types.rs`, `parse.rs`, `tests.rs`, `field_te_query.rs`,
+  `volume_builder.rs`); `cargo check` 0/0.
+- **dropped-gate-Korpus:** 15 echte archivierte Reformulierungen + 1 echter Drop
+  (`dropped-legacy-baseline.txt:33`) als `#[cfg(test)]`-Fixtures; die 5 Altlinien-Zitate
+  (`-ernte-folge`/`-forschung-folge`) mußten entfallen (`line-routing`-Gate) — 15/20.
+- **Blinkverse-Rot + Sexagesimal:** `Table` trug kein `Debug` (assert_eq kompilierte nicht);
+  `#[derive(Clone, PartialEq, Debug)]`; `sexagesimal_ra/dec_to_deg` im Blinkverse-Compiler,
+  Position überlebt `keep_table`.
+- **ROOT-TTree:** `root::parse_tree` als benannte Verweigerung (TStreamerInfo/fBranches +
+  TBasket-`fEntryOffsetLen` fehlen; zlib-Inflate ist **nicht** der Blocker) + Gate-Test.
+- **`eclipse_shadow_probe`-Compile-Rot registriert** (nicht committbar): `.2` auf
+  `Option<(f64,f64,f64)>` (`motion.rs:59` seit Signaturwechsel) — Fix bereit, aber das
+  `fabrication`-Gate blockt die Datei (Body-Literal `"earth"`, `:166` u. a.); ein
+  Body-Namen-Refactor der Sonde ist ein eigener Akt.
+- **Sprache gemessen:** `unbestimmt` **0× in `src/`**, **530× in `phi/sources.φ`** —
+  Register-Vokabel-Token; `license_census.rs:396` akzeptiert `unbestimmt` **und** `unknown`.
+  Kein Code-Deutsch; die Vokabel-Wahl (deutsch/englisch) ist offen.
 
 ## Riss (nicht geglättet)
+
+- **Vier-Arm-Leser-Form.** mycelium-287 erwartete `series_parse_bin`-Arme für alle vier
+  Arme; gemessen sind nur BepiColombo (Serie) und EBHIS (Karte, `extract_raw`-Arm)
+  serien-nah; Blinkverse (benannte Tabelle) und ACT (JSON-cmap) **passen nicht** auf den
+  `(t,value,comp)`-Draht. ACT braucht nur einen `sources.φ`-`cmap`-Block, Blinkverse einen
+  benannten Katalog-/Tabellen-Pfad — kein erzwungener Serien-Arm.
+- **Terms-Vokabel.** `unbestimmt`/`ohne-lizenz` (deutsch) und `unknown` (englisch) stehen
+  im selben `terms`-Wortschatz, beide akzeptiert; eine Vereinheitlichung ist ein
+  Registerentscheid (Mountain), kein stiller Ersatz.
 
 - **Keogramm-Disposition.** `phi/declined_sources.φ:4151-4153` lehnt das
   ASC-Keogramm-Verzeichnis als `image` ab („Bildprodukt, kein Feld … kein
@@ -68,7 +104,7 @@ Arbeit (river: `src/mathematikerin/actuators.rs`, `src/mathematikerin/channel.rs
   ASC-eigene Höhe ist `unmeasured`. Die Werte sind gemessen (ko-lokalisiert),
   nicht die Kamera-Höhe.
 
-## Burn: open 0.0000 · close 0.0969 · cap 0.15 — Grund: `session_burn` @Schluss nennt die Mountain-292-Session $0.0969 (21 Sessions im Fenster, deepseek-flash; 3 `grind-flash`/`general`-Taucher + Research); kein pro/max
+## Burn: open 0.0000 · close 0.2464 · cap 0.30 (raise declared: three dive waves, 8 divers + research + central wiring — deepseek-flash, kein pro/max) — Grund: `session_burn` @Schluss nennt die Mountain-292-Session $0.2464 (Default-Cap 0.15 überschritten)
 
 ## Operator-Wort-Register
 
@@ -81,25 +117,29 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass … die 4 buildable Arme, PETREL19-Route, inpe-Reader/Block nach Einheiten-Messung, kaguya-lrs sind die nächsten Dispatch-Kandidaten" | 2026-10-09 | Operator (Session, Mountain 287)
 „bitte schicke viele agenten los und bringe die arbeit zuende" | 2026-10-09 | Operator (Session Mountain 291)
 „bitte untersuche die architekturfrage auch mit archive search all und der roster batterie" | 2026-10-09 | Operator (Session Mountain 291)
+„schicke Taucher — die Liste wird nicht kleiner" | 2026-10-10 | Operator (Session, Mountain 292)
+„bitte mach das noch fertig" (die vier Arme BepiColombo/EBHIS/ACT/Blinkverse) | 2026-10-10 | Operator (Session, Mountain 292)
+„wenn du das Council fragst, bitte auch archive_search all und den vollen Roster" | 2026-10-10 | Operator (Session, Mountain 292)
+„warum eigentlich Deutsch im Code (in sources steht `unbestimmt`?)" | 2026-10-10 | Operator (Session, Mountain 292)
 
 ## Offen (aufgeschlüsselt)
 
-### Dimensionlose Einheit `relative` — Leser gebaut; sources.φ-Zeilen + iris-Einheit offen
+### Dimensionlose Einheit `relative` — Leser gebaut; sources.φ-Zeilen + Blinkverse-Pfad offen
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** gemessene `on earth`-Koordinate/tau je verbleibendem Arm; iris-Einheit-Messung
+- **Trigger:** `sources.φ`-Block je verbleibendem Arm; Blinkverse-Tabellen-Pfad
 - **Lage:** (gemessen 2026-10-09, Mountain 292) `QuantityKind::Relative=7` +
-  `allowed_units_for_quantity(7)` gebaut. **Keogramm** (`series_parse_bin`/`series_named`/
-  `declared_fields`, `comp↔mean`-Spiegelung) **und** **iris/themis_asi**-Kernmodule
-  (`src/archivar/iris.rs`, `src/archivar/themis_asi.rs`) gebaut und in `extract.rs`
-  verdrahtet; `themis_asi::declared_fields` em/`relative`. `keogram_ABK.bin` ist in
-  `sources.φ:19517-19523` registriert (mycelium-287; `ttl 604800`, `on earth 68.358
-  18.823 380` = ko-lokiertes INTERMAGNET ABK). `iris` hat bewusst kein
-  `declared_fields` (Einheit ungemessen).
-- **Blockade:** iris-Einheit ungemessen; kein `field`/`quantity`-Block für
-  `themis_asi`/`iris` am Baum.
-- **Braucht:** iris-Wert-Einheit messen (FITS `BUNIT`/`BTYPE` aus einem echten
-  IRIS-Level-2-Frame) → dann `iris::declared_fields` + `sources.φ`-Zeilen für
-  `themis_asi`/`iris` (mit `on`/`at`-Frame + `no-cadence`/numerischem `ttl`).
+  `allowed_units_for_quantity(7)` gebaut. Keogramm, iris, themis_asi gelesen; die vier
+  neuen Arme: BepiColombo (`bepicolombo.rs` `BCPL`) + EBHIS (`ebhis.rs` `EBH1`,
+  `extract_raw`-Arm) verdrahtet, Blinkverse (`blinkverse.rs` `BVFR`, Tabelle) gebaut,
+  ACT = JSON-cmap (kein Reader). **iris-Einheit gemessen** (`BUNIT='Corrected DN'`,
+  ITN26 §5.2): Werte sind korrigierte DN → `UNIT="count"`, `iris::declared_fields`
+  gebaut und verdrahtet; `themis_asi` em/`relative`. `keogram_ABK.bin` in
+  `sources.φ:19517-19523` (mycelium-287). `cargo check` 0/0.
+- **Blockade:** `field`/`quantity`-Zeilen für themis_asi/iris/ebhis; Blinkverse fehlt
+  der Tabellen-/Katalog-Pfad (kein `t`).
+- **Braucht:** `sources.φ`-Blöcke (Frame + `no-cadence`/numerisches `ttl`) für
+  themis_asi/iris/ebhis; für ACT nur der `cmap`-Block; Blinkverse braucht einen
+  benannten Katalog-/Tabellen-Pfad (neuer Archivar-Pfad, kein Serien-Arm).
 
 ### USGS-geomag — Draht- vs. Register-Riss (Rat/Roster-Riss)
 - **Status:** eigen (Archivar-Kontrakt) | **Bindung:** eigen · Rat
@@ -279,15 +319,18 @@ Origin: mountain-291 (2026-10-09) — Antwort auf river-157/158.
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe selbst",
-2026-10-07) trägt Commit und Push. Eigene Pfade (Atom 292, zwei Wellen):
+2026-10-07) trägt Commit und Push. Eigene Pfade (Atom 292, drei Wellen):
 `docs/handover/handover-2026-10-09-mountain-folge292.md` ·
 `docs/handover/archiv/handover-2026-10-09-mountain-folge291.md` ·
 `src/archivar/extract.rs` · `src/archivar/keogram.rs` · `src/archivar/tests.rs` ·
-`src/archivar/iris.rs` · `src/archivar/themis_asi.rs` · `src/archivar/mod.rs` ·
-`src/lib.rs` · `src/gate/commit_gate.rs` ·
-`tools/harvest/src/bin/inpe_stac_compiler.rs` ·
-`tools/harvest/src/bin/cmb_planck_compiler.rs` ·
-`tools/harvest/src/bin/blinkverse_compiler.rs`.
-2 Taucher-Wellen (Keogramm-Leser + iris/themis_asi, SPT-Arm, Blinkverse-Debug) +
-Research (ABK-Frame, Keogramm-Kadenz); `cargo check` 0/0.
+`src/archivar/iris.rs` · `src/archivar/themis_asi.rs` · `src/archivar/bepicolombo.rs` ·
+`src/archivar/ebhis.rs` · `src/archivar/blinkverse.rs` · `src/archivar/root.rs` ·
+`src/archivar/parse.rs` · `src/archivar/types.rs` · `src/archivar/mod.rs` ·
+`src/lib.rs` · `src/gate/commit_gate.rs` · `tools/harvest/src/bin/inpe_stac_compiler.rs` ·
+`tools/harvest/src/bin/cmb_planck_compiler.rs` · `tools/harvest/src/bin/blinkverse_compiler.rs` ·
+`tools/measure/src/bin/field_te_query.rs` · `tools/utils/src/bin/volume_builder.rs` ·
+`tools/register/src/bin/dropped_gate.rs`.
+Wellen: Keogramm-Leser + iris/themis_asi; SPT-Arm, Blinkverse-Debug, Weberin-Feld,
+ROOT-`parse_tree`, dropped-gate-Korpus; BepiColombo/EBHIS/Blinkverse-Reader + iris-Einheit.
+`cargo check` 0/0.
 Keogramm-Leser + `comp↔mean`-Spiegelung, 2 Gate-Tests; `cargo check` 0/0.

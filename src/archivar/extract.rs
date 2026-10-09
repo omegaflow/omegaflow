@@ -482,6 +482,7 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "vlf_awesome" => vlf_awesome::declared_fields(tau),
         "pds4_acs_nir" => acs_nir::declared_fields(),
         "themis_asi" => themis_asi::declared_fields(names, tau),
+        "iris" => iris::declared_fields(names, tau),
         "keogram" => keogram::declared_fields(names, tau),
         _ => Vec::new(),
     }
