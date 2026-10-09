@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. PDS-PPI-Zuordnung gemessen (pds_ppi_compiler + pds-ppi-cdn.yml); substorm-cdn-Lauf grün; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 0a65ece37a3f5c6277604bdb6ee852a0bd37c5dd083180a73fbe9a3f1aa3174f
+  sha256: 66c696e3e50076d58748231e00935b880ef71ebad5e5ededcfccbb2e125e2863
   status: live
 -->
 # Handover — Mycelium-Folge 278 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.0262 · cap 0.5 — Grund: Meta-Pass (PDS-PPI-Messung, Stehender Pass, kein pro/max; `session_burn` „Mycelium-Linie: Stehender Pass starten").
+## Burn: open 0.0000 · close 0.0450 · cap 0.5 — Grund: Meta-Pass (PDS-PPI-Messung, Quell-Lizenz-Dublette behoben, Stehender Pass, kein pro/max; `session_burn` „Mycelium-Linie: Stehender Pass starten", Endwert im Pass).
 
 ## Operator-Wort-Register
 
@@ -41,7 +41,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo + Release-Body-Lizenz
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · auf Mountain-`terms`
 - **Trigger:** Mountains `terms`-Vollständigkeit + Format-Verdikt (netloc vs. Quelle)
-- **Lage:** (gemessen 2026-10-09) `.github/workflows/sources-repo-licence.yml` ruft `sources_repo_license` und schreibt die verwaltete `<!-- omegaflow-source-licence -->`-Zeile je Release-Body; erster Lauf `37951369596` in_progress. **Parser konsistent:** `sources_repo_license.rs:115` erzeugt `<netloc> | <terms> | <url>`, der Workflow liest genau diese Form. Mountain terms 2006 · pending 704 (284). **Riss:** `license_census` no-terms 827 vs. Generator no-terms 1359 — verschiedene Block-Basen.
+- **Lage:** (gemessen 2026-10-09) `.github/workflows/sources-repo-licence.yml` ruft `sources_repo_license` und schreibt die verwaltete `<!-- omegaflow-source-licence -->`-Zeile je Release-Body. Erster Lauf `37951369596` **failure**: `gh release edit` HTTP 422 `Release.tag_name already exists` auf der **doppelten Tag** `ned.ipac.caltech.edu` (leere Zweit-Release id `367046826`, assetlos; die echte id `367046825` trägt die Assets) — Ursache aus dem Log gemessen (`ci_manage log 37951369596:654`), Tag-Dublette per `gh api --paginate` bestätigt (einzige Dublette). **Behoben:** die leere Doppel-Release per API gelöscht, Tag eindeutig, Test-Edit grün; Re-Dispatch `37952375720`. **Parser konsistent:** `sources_repo_license.rs:115` erzeugt `<netloc> | <terms> | <url>`, der Workflow liest genau diese Form. Mountain terms 2006 · pending 704 (284). **Riss:** `license_census` no-terms 827 vs. Generator no-terms 1359 — verschiedene Block-Basen.
 - **Blockade:** die `terms`-Vollständigkeit + Format-Verdikt (netloc-keyed vs. pro-Quelle).
 - **Braucht:** Mountain-`terms`-Verdikt; dann `LICENSE`/`README`-Erzeugung in das Repo verdrahten.
 
