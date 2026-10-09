@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: e62b8009c6a751bf169a3ca47c05ecd9d0c3efafe28da04762bbca4562b8e791
+  sha256: 23d57b232d83d4536757f88e453baee7b5fb9623178f546f1191011f151b2b5c
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -71,22 +71,30 @@ nicht kopiert.
   Doppler nur mit zwei deklarierten Weltlinien. Heute fehlen `k_k`/`r_k` in `PresenceFrame`
   (`actuators.rs`/`relay.rs`); `probe_flow` (`omega.rs:199`) ist deklariert, nie geschrieben.
   `pending` (gemessen, ohne Turn): Duck (Tageslimit), Qwen (Netzwerkfehler), Lumo (Limit), Mistral
-  (Fehlerseite), Gemini (kein Turn), Z.ai (Thinking ohne Antwort).
-- **Blockade:** `r_k` (Empfänger→Quelle-Distanz) ist noch nicht im Frame.
-- **Braucht:** (1) `k_k` in `ChannelDescriptor` (`mode_wavenumbers`), Test `v_p = c` nur im
-  `Propagating`-Zweig; (2) Per-Kanal-`phase_k`-Akkumulator in `acoustic_pcm` (Global-`phase` raus);
-  (3) `r_k` als `Option` (absent ≠ 0.0) in `PresenceFrame`, Delay `φ_k = k_k·r_k`, `0 honored` bei
-  `r_k=0`; (4) Doppler erst nach Verdrahtung beider Weltlinien.
+  (Fehlerseite), Gemini (kein Turn), Z.ai (Thinking ohne Antwort). **Gebaut (river-160):** (1)
+  `ChannelDescriptor::carrier_wavenumber()` + `phase_velocity_m_s()` (Scalar-only; Test `v_p = c` für
+  Fluid/Erde, `None` für elastisch); (2) Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`
+  (die globale `phase` ist heraus, kein 1-s-Wrap-Klick). **Korrektur:** `probe_flow` WIRD geschrieben
+  (`omega.rs:1012`, aus dem GPU-Probe-Puffer), entgegen der Runden-Annahme — der Fluss steht.
+- **Blockade:** `r_k` (Empfänger→Quelle-Distanz je Kanal) ist nicht im Frame; die GPU-Probe liefert
+  nur per-Kanal-`omega` + einen Fluss-3-Vektor, keine Quell-Distanz.
+- **Braucht:** (3) `r_k` je Kanal in `PresenceFrame` (Empfänger `self.p` ↔ Quellenposition),
+  Delay `φ_k = k_k·r_k`, `0 honored` bei `r_k=0`, `pending` bei absent; (4) Doppler erst nach
+  Verdrahtung beider Weltlinien.
 
 ### Membran — das Feld am SSB messen und als Asset backen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-160) Die Membran läuft live über den Relay
-  (`relay.rs`/`static/membrane.html`); ein gebackenes Feld-Asset (Enclosure-Query am SSB) hat noch
-  keinen Erzeuger — `tools/measure/src/bin/membrane_hull_probe.rs` ist ein Diagnose-Probe, kein Baker.
-- **Blockade:** eine Pipeline (Erzeuger-Bin + `--ci-mode`-Manifestation), kein bounded step.
-- **Braucht:** die Enclosure-Query am SSB als Harvester bauen (`membrane_hull_probe` als Vorlage),
-  in `phi/sources.φ` registrieren, vom CI-Manifestator aufs CDN bringen.
+- **Lage:** (gemessen 2026-10-09, river-160) **Baker gebaut:**
+  `tools/measure/src/bin/ssb_field_bake.rs` fährt die Enclosure-Query am ruhenden Presence-Slot
+  (SSB-Origin) über den gemessenen Stern-/Asteroiden-Hull und backt die Records als Asset
+  (26×f64 LE je Record); `--out`/`--ci-mode` schreibt das Asset + sha256;
+  `cargo check -p omegaflow-measure --bin ssb_field_bake` grün. Die serverlose Membran
+  (`static/membrane.html:50`) nennt dieses Asset als das fehlende: heute ist `/dr3_stars.bin` das Feld.
+- **Blockade:** die Manifestation (Registrierung + CDN) und der Membran-Loader.
+- **Braucht:** eine Zeile in `phi/sources.φ` (`url`, `compiler tools/measure/src/bin/ssb_field_bake.rs`,
+  `format ssb_field`, sha256 nach dem Lauf) + CI-Manifestation (`--ci-mode`); danach lädt
+  `static/membrane.html` `/ssb_field.bin` neben `/dr3_stars.bin`.
 
 ### CI-Verifikation — ci-gate am HEAD grün lesen
 - **Status:** wartend | **Bindung:** eigen
@@ -118,7 +126,9 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `src/archivar/relay.rs` (P3.1 CSR-Offsets `u32[n+1]` + f32-Nutzlast + State-Maske danach; Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`)
 - `static/constants.js` (`parseKinetic` liest CSR-Offsets, gibt `{n, schemaHash, state, omega, aperture, pan, tilt}` unverändert zurück)
 - `src/archivar/parse.rs` (E0507-Test-Fix `588735e39 river 154`: `&sources[0].channels[0]`)
-- `src/mathematikerin/channel.rs` (`ChannelDescriptor.body` + `with_body`; `hash`/`PartialEq` binden den Körper; `fundamental_hz()` familien-/body-bewusst; `channel_registry_from_sources` setzt `body` aus `SourceConfig.body`; Tests)
+- `src/mathematikerin/channel.rs` (`ChannelDescriptor.body` + `with_body`; `hash`/`PartialEq` binden den Körper; `fundamental_hz()` familien-/body-bewusst; `channel_registry_from_sources` setzt `body` aus `SourceConfig.body`; `carrier_wavenumber`/`phase_velocity_m_s`; Tests)
+- `src/mathematikerin/actuators.rs` (Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`, globale `phase` raus; Tests)
+- `tools/measure/src/bin/ssb_field_bake.rs` (Enclosure-Query am SSB → Feld-Asset, 26×f64 LE; `--out`/`--ci-mode`)
 - `phi/sources.φ` (die zwei seismischen Kanäle `:17`/`:102` tragen `:extent 6371000`)
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P3.1 Layout + P1.9 body; sha neu)
 - `docs/handover/handover-2026-10-09-river-folge160.md`
