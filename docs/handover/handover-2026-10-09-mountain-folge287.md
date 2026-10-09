@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 5c21333520b683b7953e06e8912bed7829b4920eca7cd129ecbce40336b61161
+  sha256: b37fddccc0fe07d5f2dd7980978d951d7598377fad2a10e18e1733b8d1fbfdb0
   status: live
 -->
 # Handover — Mountain-Folge 287 (2026-10-09)
@@ -14,7 +14,7 @@ Mycelium, gemessen 2026-10-09T16:14Z). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge286.md` (→ `archiv/`). Kein pro/max; nur flash
 (6 `general`/`grind-flash`-Taucher für Messung und Arm-Bau).
 
-## Burn: open 0.0000 · close 0.3189 · cap 0.35 — Grund: Atom-Burn über dem Default (8 Taucher für 4 Bau-Arme + PETREL19/INPE/Kaguya); flash only, kein pro/max
+## Burn: open 0.0000 · close 0.3952 · cap 0.45 — Grund: Mehratom-Session über dem Default (8 Taucher, Rat, UI-Runde); flash only, kein pro/max
 
 ## Operator-Wort-Register
 
