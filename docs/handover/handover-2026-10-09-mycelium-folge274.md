@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-Compiler-Koordinaten-Lookup (dim-name → var-name) geheilt; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 8fa7aac10256873d57353aed6c28426ff51802e361b16a440fe05d80dc71732d
+  sha256: 677058bd142fd004ab96111d933ac9a1b879a9ca48da834ce61da61beb38c010
   status: live
 -->
 # Handover — Mycelium-Folge 274 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0 · close 0.2142 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.0 · close 0.2561 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
 
 ## Operator-Wort-Register
 
@@ -46,12 +46,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** der geteilte `t420`-Runner.
 - **Braucht:** `ci_manage view <id>` nach Abschluss; bei rot die benannte Stelle.
 
-### `ci-gate` Per-SHA-Verdikt — Ort entschieden: **lokal** (`state/zustand/`, external-state-Form)
-- **Status:** eigen (Bau) | **Bindung:** eigen · mountain (Abfrage)
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-09) Der Ort ist durch **Forschung + Rat + UI/Open-Weight konvergent** entschieden: **(B) lokal** unter `state/zustand/` in der `external-state`-Form — eine Zeile je SHA (`SHA | Verdikt | measured-at (SHA + run-id) | fällig | Schritt`), Cache/Index der content-addressed Attestations, keine `phi/`-Kanon-Zeile, kein Commit pro Zustandswechsel. Stimmen: **Rat einstimmig B**; Wissenschaft (`archive_search --all`) → Kettle (arXiv 2605.08363), evidence-driven CI (arXiv 2605.21089), SLSA/Sigstore/in-toto = content-addressed, abgeleitet; **UI**: Duck.ai **B**, Qwen **B**; **Open-Weight**: Nemotron 3 Ultra **B**, DeepSeek V4 Pro **B**, Inkling **B**; Z.ai (Deep Think, GLM 5.3) und Claude (Sonnet 5.5, Draft vorgefunden) **pending** — nicht geantwortet. Branch-Protection gesetzt (`main` + Pflicht-Check `subset`); `ci-gate.yml:28` `group: ci-gate-${{ github.sha }}`.
+### `ci-gate` Per-SHA-Verdikt — **gebaut**: lokales Register + SHA-Abfrage
+- **Status:** eigen (Watchdog-Verdrahtung) | **Bindung:** eigen
+- **Trigger:** der nächste Stehende Pass
+- **Lage:** (gemessen 2026-10-09) Ort = **(B) lokal**, riss-frei entschieden (Forschung; Rat einstimmig; UI Duck/Qwen; Open-Weight Nemotron 3 Ultra/DeepSeek V4 Pro/Inkling; Z.ai + Claude pending). **Gebaut:** `tools/utils/src/bin/ci_gate_register.rs` (SHA → `green|red|pending` (Register-Token; deutsch grün/rot/pending) aus `GET /repos/omegaflow/omegaflow/commits/<sha>/check-runs`, decisive Check `subset`; `cargo build -p omegaflow-utils --bin ci_gate_register` grün, 5 Unit-Tests) + Wrapper `bin/ci_gate_register` + Register `state/zustand/ci-gate.φ` in external-state-Zeilenform (`SHA | Verdikt | measured-at (checks) | fällig | Schritt`). Erstlauf für HEAD `1a0a5df8b` = `pending` (alle Checks queued). `ci-check.yml` ist der schwere Nachtlauf, **nicht** der Per-SHA-Gate.
 - **Blockade:** keine.
-- **Braucht:** den Bau — `state/zustand/ci-gate.φ` (external-state-Zeile je SHA) + die SHA→Verdikt-Ableitung aus `ci_manage status/view`; Mountain trägt die SHA-Abfrage, Mycelium die Ablage/Ableitung und den `ci-check`-Push-Ausbau.
+- **Braucht:** `ci_gate_register` je Stehendem Pass (ein Schritt) — dann kein weiterer Bau. Der frühere „`ci-check`-Push-Ausbau" ist **descoped** (Befund: das Register ist lokal; kein CI-Workflow schreibt es; die Attestation ist der `subset`-Check-Run, die Ableitung läuft lokal).
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
@@ -116,5 +116,5 @@ Origin: mycelium-274.
 
 ## Abschluss
 
-- **Burn:** close 0.2142 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** close 0.2561 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
