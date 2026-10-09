@@ -1010,24 +1010,6 @@ lon 2
 gate wu_422 -50.0 50.0
 field 4 tao_wnd_zonal_m_s patch-levy advective m/s 86400.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4657_stage.txt
-terms ohne-lizenz https://dhm.gov.np/
-format dhm_stage
-origin https://dhm.gov.np/hydrology/hms-Single/4657
-compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
-on earth 28.098163 85.318589 0
-ttl 3600
-field dhm_4657_stage dhm_4657_stage_m inverse-square gravity m 3600 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/dhm.gov.np/dhm_4661_stage.txt
-terms ohne-lizenz https://dhm.gov.np/
-format dhm_stage
-origin https://dhm.gov.np/hydrology/hms-Single/4661
-compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
-on earth 27.82 84.45 0
-ttl 3600
-field dhm_4661_stage dhm_4661_stage_m inverse-square gravity m 3600 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
 terms CC-BY-4.0 https://erddap.emso.eu/erddap/legal.html
 origin https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
@@ -1042,17 +1024,6 @@ field 4 emso_obsea_water_temp_c exponential-decay thermal C 1800 0.0 0.0
 field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0.0
 field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/hamqsl.com/hamqsl_solar.bin
-terms ohne-lizenz https://www.hamqsl.com/
-format hamqsl_solar
-origin https://www.hamqsl.com/solarxml.php
-compiler tools/harvest/src/bin/hamqsl_compiler.rs
-at sun
-ttl 3600
-field hamqsl_solarflux_sfu hamqsl_solarflux_sfu inverse-square em sfu 3600 0.0 0.0
-field hamqsl_solarwind_kms hamqsl_solarwind_kms patch-levy advective km/s 3600 0.0 0.0
-field hamqsl_magneticfield_nt hamqsl_magneticfield_nt inverse-square em nT 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/uscrn_hourly.bin
 format us_crn_hourly
@@ -1117,18 +1088,6 @@ compiler tools/harvest/src/bin/gdp_drifter_compiler.rs
 on earth 0 0 0
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/ogimet.com/ogimet_synop.bin
-terms ohne-lizenz https://www.ogimet.com/licencia.phtml
-format ogimet_synop
-origin https://www.ogimet.com/cgi-bin/gsynres
-compiler tools/harvest/src/bin/ogimet_compiler.rs
-at earth
-ttl 3600
-field ogimet_synop_temp_c ogimet_synop_temp_c exponential-decay thermal C 3600 0.0 0.0
-field ogimet_synop_dewp_c ogimet_synop_dewp_c exponential-decay thermal C 3600 0.0 0.0
-field ogimet_synop_wspd_ms ogimet_synop_wspd_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field ogimet_synop_slp_hpa ogimet_synop_slp_hpa gaussian-inverse-square advective hPa 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/prop.kc2g.com/kc2g_stations.csv
 format kc2g_stations
@@ -2122,104 +2081,6 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_earth.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_jupiter.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mars.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_moon.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_neptune.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_saturn.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_sun.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_uranus.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_venus.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_inpop
-origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-compiler tools/harvest/src/bin/inpop_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_deimos.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_noe4
-origin https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc
-compiler tools/harvest/src/bin/noe4_compiler.rs
-sha256 ec891e7e9bb7367a948515e0f1c90eccf2fcfa38787352e0dfe7a3fafec5cabb
-at deimos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_phobos.bin
-terms ohne-lizenz https://www.imcce.fr/mentions-legales
-format ephemeris_noe4
-origin https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc
-compiler tools/harvest/src/bin/noe4_compiler.rs
-sha256 cbf771d0cb3693e07ec213cd8d88dcf74f0043cd872d9362ee129d647e938479
-at phobos
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ftp.space.dtu.dk/pcn_2015.bin
@@ -19321,16 +19182,6 @@ field hapi_csv_x_nt hapi_csv_x_nt inverse-square em nT 604800 0.0 0.0
 field hapi_csv_y_nt hapi_csv_y_nt inverse-square em nT 604800 0.0 0.0
 field hapi_csv_z_nt hapi_csv_z_nt inverse-square em nT 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/pradan.issdc.gov.in/ch2_cla_l1_2025_10.zip
-terms ohne-lizenz https://pradan.issdc.gov.in/grasp/disclaimer.xhtml
-format pradan_ch2
-origin https://pradan.issdc.gov.in/ch2/protected/downloadFile/class_holder/ch2_cla_l1_2025_10.zip
-compiler tools/harvest/src/bin/pradan_ch2_compiler.rs
-sha256 f0fd23d680eadae2d8a7317a32aa41deac8e57cf18dee7393a079b6bc016db1f
-at moon
-ttl 604800
-field pradan_ch2_cla_l1_counts pradan_ch2_cla_l1_counts inverse-square em count 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 terms unbestimmt https://product.gosat-gw.nies.go.jp/
 format gosat_tanso3
@@ -19800,57 +19651,6 @@ compiler tools/harvest/src/bin/flac_compiler.rs
 at earth
 ttl 604800
 field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_newell.bin
-terms ohne-lizenz https://supermag.jhuapl.edu/info/?page=rulesoftheroad
-format substorm
-origin https://supermag.jhuapl.edu/lib/services/?service=substorms
-compiler tools/harvest/src/bin/substorm_compiler.rs
-at earth
-ttl 604800
-field substorm_mlt_h substorm_mlt_h inverse-square em h 604800 0.0 0.0
-field substorm_mlat_deg substorm_mlat_deg inverse-square em deg 604800 0.0 0.0
-field substorm_glon_deg substorm_glon_deg inverse-square em deg 604800 0.0 0.0
-field substorm_glat_deg substorm_glat_deg inverse-square em deg 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03a.bin
-terms ohne-lizenz https://supermag.jhuapl.edu/info/?page=rulesoftheroad
-format supermag_1m
-origin https://supermag.jhuapl.edu/services/data-api.php
-compiler tools/harvest/src/bin/supermag_compiler.rs
-at earth
-ttl 604800
-field supermag_n_nez_nt supermag_n_nez_nt inverse-square em nT 86400 0.0 0.0
-field supermag_e_nez_nt supermag_e_nez_nt inverse-square em nT 86400 0.0 0.0
-field supermag_z_nez_nt supermag_z_nez_nt inverse-square em nT 86400 0.0 0.0
-field supermag_n_geo_nt supermag_n_geo_nt inverse-square em nT 86400 0.0 0.0
-field supermag_e_geo_nt supermag_e_geo_nt inverse-square em nT 86400 0.0 0.0
-field supermag_z_geo_nt supermag_z_geo_nt inverse-square em nT 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03b.bin
-terms ohne-lizenz https://supermag.jhuapl.edu/info/?page=rulesoftheroad
-format supermag_1m
-origin https://supermag.jhuapl.edu/services/data-api.php
-compiler tools/harvest/src/bin/supermag_compiler.rs
-at earth
-ttl 604800
-field supermag_n_nez_nt supermag_n_nez_nt inverse-square em nT 86400 0.0 0.0
-field supermag_e_nez_nt supermag_e_nez_nt inverse-square em nT 86400 0.0 0.0
-field supermag_z_nez_nt supermag_z_nez_nt inverse-square em nT 86400 0.0 0.0
-field supermag_n_geo_nt supermag_n_geo_nt inverse-square em nT 86400 0.0 0.0
-field supermag_e_geo_nt supermag_e_geo_nt inverse-square em nT 86400 0.0 0.0
-field supermag_z_geo_nt supermag_z_geo_nt inverse-square em nT 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_index.bin
-terms ohne-lizenz https://supermag.jhuapl.edu/info/?page=rulesoftheroad
-format supermag_index
-origin https://supermag.jhuapl.edu/services/indices.php
-compiler tools/harvest/src/bin/supermag_index_compiler.rs
-at earth
-ttl 604800
-quantity supermag_sme_nt supermag_sme_nt inverse-square index nt 60 0.0 0.0
-quantity supermag_sml_nt supermag_sml_nt inverse-square index nt 60 0.0 0.0
-quantity supermag_smu_nt supermag_smu_nt inverse-square index nt 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -20382,19 +20182,6 @@ ra RA_Source
 dec DEC_Source
 field Total_flux_source vlass_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/wwlln.net/wwlln_th.csv
-terms ohne-lizenz https://wwlln.net/
-origin https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
-compiler tools/harvest/src/bin/wwlln_compiler.rs
-sha256 060314032c3d0fe05b9143802b93c606d24d17e75075707031b38c90fef994bc
-ttl 604800
-format text
-on earth 0 0 0
-rows .
-lat lat
-lon lon
-field 2 wwlln_thunder_hours_h patch-levy em h 604800.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210525042001_20210525043243_00011_a.bin
 terms CC-BY-4.0 https://zenodo.org/records/15812343
@@ -21320,15 +21107,6 @@ terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 origin https://archives.esac.esa.int
 ttl 31536000
-
-url https://github.com/omegaflow/sources/releases/download/casdc.china-vo.org/lhaaso_sky1.sky1
-terms ohne-lizenz https://casdc.china-vo.org/
-origin https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
-compiler tools/harvest/src/bin/lhaaso_compiler.rs
-format sky1
-at sun
-ttl 31536000
-field lhaaso_sky1 lhaaso_sky1 inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdr.eionet.europa.eu/eionet_cdr.bin
 format eionet_cdr
