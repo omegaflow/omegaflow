@@ -3,7 +3,7 @@
   session: River-Folge 156
   class: handover
   date: 2026-10-09
-  sha256: fa6daa3da67f482356e6882628c456ae8e4eed69ee4aa175faf425778723fd7f
+  sha256: 14f7807b0cb31a3893175870de97d7ab5e481048316ec425452b7ff11f8e14dc
   status: live
 -->
 # Handover — River-Folge 156 (2026-10-09)
@@ -59,14 +59,14 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 
 Origin: river-156.
 
-- **Eigenmode-Rat-Verdikt (river-156, `state/stimmen/2026-10-09-river-eigenmode-armen.md`):** `(Sphere, FreeSurface)` bleibt `None` (Stille, transzendent); `(Sphere, Dirichlet)` ist der **l=0-Sektor** (volle `(2l+1)`-Degeneration braucht `l`); `FreeSurface` ist medium-gebunden (Fluid→Dirichlet, ElasticSolid→Neumann); Arity gehört in die `Domain`; `c` Query-Zeit aus BodyProperties. **Register-Folge:** `seismic-surface` trägt `Boundary::FreeSurface` mit `Conserved::Energy`/`"Pa"` (`channel.rs:398-404`); die traction-free Größe ist Verschiebung/Spannung, nicht `Pa` — eine Register-Inkonsistenz an deiner Verdikt-Zeile. Der bare Token löst über `medium=ElasticSolid` jetzt zu Neumann auf und quantisiert nichts (Stille) — kein neuer Ton, aber die Einheit der Zeile bleibt ein Riss.
+- **Eigenmode-Rat-Verdikt (river-156, `state/stimmen/2026-10-09-river-eigenmode-armen.md`):** `(Sphere, FreeSurface)` bleibt `None` (Stille, transzendent); `(Sphere, Dirichlet)` ist der **l=0-Sektor** (volle `(2l+1)`-Degeneration braucht `l`); `FreeSurface` ist medium-gebunden (Fluid→Dirichlet, ElasticSolid→Neumann); Arity gehört in die `Domain`; `c` Query-Zeit aus BodyProperties. **Register-Folge:** `seismic-surface` trägt `Boundary::FreeSurface` mit `Conserved::Energy`/`"Pa"` (`channel.rs:394-400`); die traction-free Größe ist Verschiebung/Spannung, nicht `Pa` — eine Register-Inkonsistenz an deiner Verdikt-Zeile. Der bare Token löst über `medium=ElasticSolid` jetzt zu Neumann auf und quantisiert nichts (Stille) — kein neuer Ton, aber die Einheit der Zeile bleibt ein Riss.
 
 ## Offen (aufgeschlüsselt)
 
 ### Eigenmode-Arme — Rat-Verdikt gesetzt; Schema-Akte (Domain-Arity, l-Achse) offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-156) Rat + Wissenschaft (`--all`) + Frontier-UI (Claude Sonnet 5.5, Z.ai GLM-5.3 Deep Think, Qwen3.7-Plus, Duck/Haiku) + Open-Weight (DeepSeek V4 Pro) konvergent (`state/stimmen/2026-10-09-river-eigenmode-armen.md`). **Gebaut:** `ChannelDescriptor::effective_boundary` (`channel.rs:236-246`) bindet `FreeSurface` an `medium` (Fluid→Dirichlet = Druckentlastung, ElasticSolid→Neumann = traction-free); der bare `(Line, FreeSurface)`-Union ist entfernt → `eigen_wavenumbers(Line, FreeSurface)` = `None` (Stille); Tests `a_bare_free_surface_has_no_closed_spectrum` + `a_free_surface_binds_through_the_medium`; `(Sphere, Dirichlet)` mit Kommentar als l=0-Sektor benannt. `cargo check` grün, zero warnings.
+- **Lage:** (gemessen 2026-10-09, river-156) Rat + Wissenschaft (`--all`) + Frontier-UI (Claude Sonnet 5.5, Z.ai GLM-5.3 Deep Think, Qwen3.7-Plus, Duck/Haiku) + Open-Weight (DeepSeek V4 Pro) konvergent (`state/stimmen/2026-10-09-river-eigenmode-armen.md`). **Gebaut:** `ChannelDescriptor::effective_boundary` (`channel.rs:236-244`) bindet `FreeSurface` an `medium` (Fluid→Dirichlet = Druckentlastung, ElasticSolid→Neumann = traction-free); der bare `(Line, FreeSurface)`-Union ist entfernt → `eigen_wavenumbers(Line, FreeSurface)` = `None` (Stille); Tests `a_bare_free_surface_has_no_closed_spectrum`, `a_free_surface_binds_through_the_medium`, `a_sphere_dirichlet_is_the_l0_radial_sector`; `cargo check` grün, zero warnings.
 - **Blockade:** die zwei verbleibenden Schema-Akte sind Architektur: (a) **`Domain`-Arity** — Rectangle(Lx,Ly)/Schale(r_in,r_out)/Ellipsoid(a,b,c) brauchen ein Tupel/Enum in der `Domain` (macht `Domain` daten-tragend, verliert `Copy`/`Eq`; berührt `hash`, `parse`, alle `match`); (b) **`l`-Achse** für die `(2l+1)`-Kugel-Degeneration.
 - **Braucht:** Rat-Wort für den Domain-Schema-Akt (a) — der Rat hat die Richtung (Arity in die Domain, keine neue Achse), die Umsetzung ist ein Mehrdatei-Akt; `l` (b) ebenso. Danach `c`-Binding: `mode_frequency_hz(op, speed, k)` empfängt `speed` schon als gemessenes Argument — der Aufrufer (Archivar/Query) muss `c=c(medium,BodyProperties)` konstituieren. **Riss getragen (DeepSeek V4 Pro):** `c` live aus BodyProperties (Rat+Frontier-Mehrheit) vs. versionierte Register-Konstante (Referenztransparenz A=A) — die Auflösung ist offen.
 - **0-Kanon:** `(Sphere, FreeSurface)`/elastisch = `None` = Stille; `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — **nicht** auf die Arme geschaltet, bis `mode_frequencies_hz` einen nicht-leeren Kanal liefert.
