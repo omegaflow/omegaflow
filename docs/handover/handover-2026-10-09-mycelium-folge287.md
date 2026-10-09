@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 287 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). **THEMIS ASI end-to-end gebaut** (`e04be201a`: Workflow + Arm + Block). Rat + voller UI-Roster (12 Seats; 8 geantwortet, 4 pending) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). **THEMIS ASI end-to-end gebaut** (`e04be201a`: Workflow + Arm + Block). **EBHIS + BepiColombo Workflows + `harvest.φ`-Arme gebaut** (`05924d088`); ihre `sources.φ`-Blöcke sind bereit, aber durch einen fremden uncommitteten Register-Rename (`unbestimmt`→`unknown`) blockiert (würde `register_lookup` brechen) — gehalten. Rat + voller UI-Roster (12 Seats; 8 geantwortet, 4 pending) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 374e7587ec3249a3d324f0a72e793e9b775b41cb2c046cc8a3342609c8410a6e
+  sha256: e4e481cdb39dc15968f799a5181a2649adf32546e70e4e857e51435e9c3f7fe3
   status: live
 -->
 # Handover — Mycelium-Folge 287 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.2409 · cap 0.5 — Grund: Mountain-291/292 `## An mycelium` + river-159 gefaltet, DTU-CSES-MAG-Kandidat gemessen, Keogramm `sources.φ`-Block gebaut, **THEMIS ASI end-to-end gebaut** (`themis-asi-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block, Lauf `37998113249`), Rat + **voller Roster** (12 Seats) zur Serialisierung (Verdikt pending-gates/Provider-Batch), Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.2409).
+## Burn: open 0.0000 · close 0.2900 · cap 0.5 — Grund: Mountain-291/292/292d `## An mycelium` + river-159 gefaltet, DTU-CSES-MAG gemessen, Keogramm + **THEMIS ASI** + **EBHIS/BepiColombo-Workflows+Arme** gebaut, Rat + **voller Roster** (12 Seats) zur Serialisierung, fremder `sources.φ`-Rename als Riss erkannt + gehalten, Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.2900).
 
 ## Operator-Wort-Register
 
@@ -32,12 +32,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ## Offen — eigen
 
-### Manifestation — vier Arme offen (THEMIS ASI gebaut): `terms` da, `field`/`quantity`/`ttl` penden
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (`field`/`quantity`/`ttl` + Lese-Arme)
-- **Trigger:** Mountains `field`/`quantity`/`ttl` je Arm (Lese-Arm)
-- **Lage:** (gemessen 2026-10-09) **THEMIS ASI ist gebaut** (`e04be201a`: `themis-asi-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block `themis_asi.bin` `free-open`/`at earth`/604800; Reader mountain-292b `1a9bca729`; Lauf `37998113249` dispatcht) — damit ist auch der frühere Aurora-Punkt geschlossen. Offen die **vier Arme**: **BepiColombo** (`terms CC-BY-4.0`), **EBHIS** (`unbestimmt`, Vizier), **ACT** (`PD`), **Blinkverse** (`unbestimmt`); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). CERN ROOT bleibt `--probe`-only.
-- **Blockade:** `field`/`quantity`/`ttl` + Lese-Arme (Mountain).
-- **Braucht:** Mountain `field`/`quantity`/`ttl` + Reader je Arm → dann `*-cdn.yml` + `harvest.φ`-Arm + `sources.φ`-Block (Mycelium) im selben Atom. **Drei `pending`-Dispositionen mit Mycelium-Aufenthalt** (`phi/blocked_sources.φ:51` skyview, `:55` lambda, `:72` blinkverse) hängen an demselben Braucht; `register_lookup --orphans` = 0.
+### Manifestation — EBHIS + BepiColombo gebaut; `sources.φ`-Blöcke blockiert durch fremden Register-Rename
+- **Status:** wartend | **Bindung:** eigen (Manifestation/Register-Riss)
+- **Trigger:** der `sources.φ`-Rename (`terms unbestimmt`→`terms unknown`) ist committet oder zurückgenommen
+- **Lage:** (gemessen 2026-10-10) HEAD `05924d088`. **THEMIS ASI** end-to-end gebaut (`e04be201a`). **EBHIS + BepiColombo**: Reader stehen (mountain-292d `afa5d6877`), `field`/`quantity` deklariert, `--ci-mode`-Compiler selbst-fetchend → **Workflows `ebhis-cdn.yml` + `bepicolombo-cdn.yml` + `harvest.φ`-Arme gebaut + gepusht** (`05924d088`; `cdn_reconcile --fail` clean). Die `sources.φ`-Blöcke sind bereit (EBHIS `ebhis_hpx_series`/`unbestimmt`/`at sun`/604800; BepiColombo `bepicolombo_plasma`/`CC-BY-4.0`/`at sun`/86400) — **gehalten**: im Arbeitsbaum liegt ein fremder uncommitteter Rename `terms unbestimmt`→`terms unknown` (530×), der `register_lookup` bräche (`unbestimmt`/`ohne-lizenz` → owner mountain, `register_lookup.rs:408/433` hart kodiert); ein `git commit phi/sources.φ` würde ihn sweepen. **ACT** = `cmap`-Block (kein Reader nötig, Planck-Präzedenz `sources.φ:11295`); **Blinkverse** = benannter Katalog-Pfad (kein Serien-Arm); **iris** = Reader + `harvest.φ`-Arm stehen, Workflow `iris-cdn.yml` fehlt (Compiler braucht `--input <fits>`).
+- **Blockade:** der fremde Register-Rename im Arbeitsbaum.
+- **Braucht:** Rename committen (Vokabel entschieden) oder zurücknehmen → dann `sources.φ`-Blöcke EBHIS/BepiColombo + ACT-`cmap`-Block + `iris-cdn.yml` im selben Atom.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
