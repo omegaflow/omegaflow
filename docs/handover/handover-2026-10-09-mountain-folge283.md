@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: b6357d2c3a26c1c441936cdd7aeb6b29b5caf2454130a67c568e1a5a75868759
+  sha256: 901e0667dd6b9c607515e419806fc85c8808b2b22b3658e76b11be28fb071d47
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -36,6 +36,7 @@ Wort | Datum | Quelle
 „ja bitte alles" — (a) Kontaktadresse, (b) Regel `ohne-lizenz ⇒ nicht spiegeln`, (c) die 27 lokal halten/schließen, (d) einzeln anschreiben | 2026-10-09 | Operator (Session, Mountain 283)
 „wir sind immer noch nicht opensource" — omegaflow ist source-available (PolyForm NC/CC BY-NC-SA), NIE „open-source" nennen | 2026-10-09 | Operator (Session, Mountain 283)
 „natürlich 1 wir sind nicht open source wir sind NC CC" | 2026-10-09 | Operator (Session, Mountain 283)
+„das ist compliance theater" — keine Lizenz-Boilerplate in einer Anfrage-Mail; nur sagen, was die Frage braucht | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
