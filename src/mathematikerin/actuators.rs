@@ -107,29 +107,20 @@ pub fn acoustic_partials(
     omega: &[f32],
     aperture: &[f32],
     state: &[TriState],
-    partials_hz: &[f32],
-    phase: f32,
+    phases: &[f32],
 ) -> f32 {
-    let n = omega
-        .len()
-        .min(aperture.len())
-        .min(state.len())
-        .min(partials_hz.len());
+    let n = omega.len().min(aperture.len()).min(state.len()).min(phases.len());
     let mut sample = 0.0f32;
     for k in 0..n {
         if state[k] != TriState::Present {
             continue;
         }
-        let f = partials_hz[k];
-        if !(f.is_finite() && f > 0.0) {
-            continue;
-        }
-        sample += omega[k] * aperture[k] * (phase * f).sin();
+        sample += omega[k] * aperture[k] * phases[k].sin();
     }
     sample
 }
 
-pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
+pub fn acoustic_pcm(frame: &PresenceFrame, phases: &mut [f32; CHANNEL_CAP]) -> Vec<u8> {
     let n = frame.n as usize;
     let omega = &frame.omega[..n];
     let aperture = &frame.aperture[..n];
@@ -141,11 +132,15 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
     let step = std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
     let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
     for _ in 0..PCM_SAMPLES_PER_TICK {
-        *phase += step;
-        if *phase >= std::f32::consts::TAU {
-            *phase -= std::f32::consts::TAU;
+        for (phase, f) in phases.iter_mut().zip(partials).take(n) {
+            if f.is_finite() && *f > 0.0 {
+                *phase += step * *f;
+                if *phase >= std::f32::consts::TAU {
+                    *phase -= std::f32::consts::TAU;
+                }
+            }
         }
-        let s = acoustic_partials(omega, aperture, state, partials, *phase)
+        let s = acoustic_partials(omega, aperture, state, &phases[..n])
             .clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
         let left = if intensity < 0.0 { s } else { 0.0 };
         let right = if intensity > 0.0 { s } else { 0.0 };
@@ -164,9 +159,9 @@ impl AcousticOscillator {
             let Some(mut out) = writer else {
                 return;
             };
-            let mut phase: f32 = 0.0;
+            let mut phases = [0.0f32; CHANNEL_CAP];
             while let Ok(frame) = rx.recv() {
-                let bytes = acoustic_pcm(&frame, &mut phase);
+                let bytes = acoustic_pcm(&frame, &mut phases);
                 if std::io::Write::write_all(&mut out, &bytes).is_err()
                     || std::io::Write::flush(&mut out).is_err()
                 {
@@ -606,9 +601,9 @@ mod tests {
 
     #[test]
     fn the_acoustic_channel_emits_s16_stereo_pcm_with_signed_steering() {
-        let mut phase = 0.0f32;
+        let mut phases = [0.0f32; CHANNEL_CAP];
         let frame = pframe([100.0; 9], [1.0; 9], 1);
-        let pcm = acoustic_pcm(&frame, &mut phase);
+        let pcm = acoustic_pcm(&frame, &mut phases);
         assert_eq!(
             pcm.len(),
             PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2,
@@ -635,9 +630,9 @@ mod tests {
 
     #[test]
     fn a_negative_sum_routes_the_tone_left() {
-        let mut phase = 0.0f32;
+        let mut phases = [0.0f32; CHANNEL_CAP];
         let frame = pframe([-100.0; 9], [1.0; 9], 1);
-        let pcm = acoustic_pcm(&frame, &mut phase);
+        let pcm = acoustic_pcm(&frame, &mut phases);
         let mut min_l = 0i32;
         let mut max_l = 0i32;
         for pair in pcm.as_chunks::<4>().0 {
@@ -652,13 +647,13 @@ mod tests {
 
     #[test]
     fn a_zero_sum_does_not_collapse_the_channels() {
-        let mut phase = 0.0f32;
+        let mut phases = [0.0f32; CHANNEL_CAP];
         let frame = pframe(
             [1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 0.0],
             [1.0; 9],
             1,
         );
-        let pcm = acoustic_pcm(&frame, &mut phase);
+        let pcm = acoustic_pcm(&frame, &mut phases);
         assert_eq!(pcm.len(), PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
         assert!(
             pcm.iter().any(|&b| b != 0),
@@ -668,9 +663,9 @@ mod tests {
 
     #[test]
     fn a_zero_omega_is_silence_on_both_channels() {
-        let mut phase = 0.0f32;
+        let mut phases = [0.0f32; CHANNEL_CAP];
         let frame = pframe([0.0; 9], [1.0; 9], 1);
-        let pcm = acoustic_pcm(&frame, &mut phase);
+        let pcm = acoustic_pcm(&frame, &mut phases);
         assert!(
             pcm.iter().all(|&b| b == 0),
             "zero per-channel omega → zero amplitude — silence is the response"
@@ -679,12 +674,12 @@ mod tests {
 
     #[test]
     fn the_acoustic_phase_continues_across_frames() {
-        let mut phase = 0.0f32;
+        let mut phases = [0.0f32; CHANNEL_CAP];
         let frame = pframe([100.0; 9], [1.0; 9], 3);
-        let first = acoustic_pcm(&frame, &mut phase);
+        let first = acoustic_pcm(&frame, &mut phases);
         let last_of_first =
             i16::from_le_bytes([first[first.len() - 2], first[first.len() - 1]]) as i32;
-        let second = acoustic_pcm(&frame, &mut phase);
+        let second = acoustic_pcm(&frame, &mut phases);
         let first_of_second = i16::from_le_bytes([second[2], second[3]]) as i32;
         assert!(
             (first_of_second - last_of_first).abs() <= 200,
@@ -694,13 +689,13 @@ mod tests {
 
     #[test]
     fn a_tau_step_changes_pitch_without_an_edge() {
-        let mut phase = 0.0f32;
+        let mut phases = [0.0f32; CHANNEL_CAP];
         let fast = pframe([100.0; 9], [1.0; 9], 1);
         let slow = pframe([100.0; 9], [1.0; 9], 2);
-        let first = acoustic_pcm(&fast, &mut phase);
+        let first = acoustic_pcm(&fast, &mut phases);
         let last_of_first =
             i16::from_le_bytes([first[first.len() - 2], first[first.len() - 1]]) as i32;
-        let second = acoustic_pcm(&slow, &mut phase);
+        let second = acoustic_pcm(&slow, &mut phases);
         let first_of_second = i16::from_le_bytes([second[2], second[3]]) as i32;
         assert!(
             (first_of_second - last_of_first).abs() <= 100,
@@ -792,5 +787,37 @@ mod tests {
         let bytes = frame_bytes(&frame);
         assert_eq!(bytes[1], 0x01);
         assert_eq!(bytes.len(), 6);
+    }
+
+    #[test]
+    fn the_per_channel_phase_advances_with_its_own_frequency() {
+        let mut frame = PresenceFrame {
+            n: 2,
+            schema_hash: 0,
+            omega: [0.0; CHANNEL_CAP],
+            aperture: [0.0; CHANNEL_CAP],
+            state: [TriState::Absent; CHANNEL_CAP],
+            partials_hz: [0.0; CHANNEL_CAP],
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks: 0,
+        };
+        frame.omega[0] = 1.0;
+        frame.omega[1] = 1.0;
+        frame.aperture[0] = 1.0;
+        frame.aperture[1] = 1.0;
+        frame.state[0] = TriState::Present;
+        frame.state[1] = TriState::Present;
+        frame.partials_hz[0] = 2.0;
+        frame.partials_hz[1] = 3.0;
+        let mut phases = [0.0f32; CHANNEL_CAP];
+        let _ = acoustic_pcm(&frame, &mut phases);
+        assert!(phases[0] > 0.0 && phases[1] > 0.0);
+        assert!(
+            (phases[1] / phases[0] - 1.5).abs() < 1e-3,
+            "each channel advances with its own frequency: {} vs {}",
+            phases[1],
+            phases[0]
+        );
     }
 }
