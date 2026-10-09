@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 2a506b5fb427c5ae0565b8ac83a2ac8fd47e7df6a32efc11c62e8a59c513a6f8
+  sha256: 9efafe8f99d8ff69b1de82521b29a3b91bec3f906c6f72a4c4f941cd830b46b3
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -75,19 +75,18 @@ Origin: river-160.
 ### Membran — das Feld am SSB messen und als Asset backen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-160) **Baker gebaut:**
-  `tools/measure/src/bin/ssb_field_bake.rs` fährt die Enclosure-Query am ruhenden Presence-Slot
-  (SSB-Origin) über den gemessenen Stern-/Asteroiden-Hull und backt die Records als Asset
-  (26×f64 LE je Record); `--out`/`--ci-mode` schreibt das Asset + sha256;
-  `cargo check -p omegaflow-measure --bin ssb_field_bake` grün. Die serverlose Membran
-  (`static/membrane.html:50`) nennt dieses Asset als das fehlende: heute ist `/dr3_stars.bin` das Feld.
-- **Blockade:** die CI-Manifestation + Register-Zeile (Mycelium) und der Membran-Loader (River).
-- **Braucht:** (a) **Mycelium:** `ssb_field_bake` in CI (`--ci-mode`) bauen und aufs CDN
+- **Lage:** (gemessen 2026-10-09, river-160) **Baker gebaut:** `tools/measure/src/bin/ssb_field_bake.rs`
+  fährt die Enclosure-Query am ruhenden Presence-Slot (SSB-Origin) über den gemessenen
+  Stern-/Asteroiden-Hull und backt die Records als Asset (26×f64 LE je Record); `--out`/`--ci-mode`
+  schreibt das Asset + sha256. **Loader gebaut:** `static/membrane.html` lädt `/ssb_field.bin` und
+  zeigt den gemessenen SSB-Schnitt als Feld in der Ruhe; beim Tune re-evaluiert der Live-Korpus.
+  `parseFlat` liest dasselbe 26×f64-Format → **kein WASM-Umbau**. Der Schnitt ist eine Koordinate,
+  kein Blick (Operator-Wort 2026-10-09); abwesendes Asset → Stern-Feld, ehrlich.
+- **Blockade:** nur noch die CI-Manifestation + Register-Zeile (Mycelium).
+- **Braucht:** **Mycelium:** `ssb_field_bake` in CI (`--ci-mode`) bauen und aufs CDN
   (`…/releases/download/…/ssb_field.bin`), dann die Register-Zeile in `phi/sources.φ` (`url`,
   `compiler tools/measure/src/bin/ssb_field_bake.rs`, `format ssb_field`, sha256) — die
-  Manifestations-Direktiven sind per Verfassung Mycelium's, darum als `## An mycelium` gereicht;
-  (b) **River:** den Membran-Loader bauen (`static/membrane.html` + `wasm.rs`-Records-Pfad) — der
-  wasm-Bundle läuft nur in CI (`wasm-pack`), daher nicht lokal `cargo check`-bar.
+  Manifestations-Direktiven sind per Verfassung Mycelium's, darum als `## An mycelium` gereicht.
 
 ### CI-Verifikation — ci-gate am HEAD grün lesen
 - **Status:** wartend | **Bindung:** eigen
@@ -124,6 +123,7 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `src/mathematikerin/shaders.rs` (`presence_probe` akkumuliert je Kanal die amplitudengewichtete Quell-Distanz → `probe_out[CHANNEL_CAP+3+…]`)
 - `src/mathematikerin/omega.rs` (`probe_r` + Probe-Puffer-Größe; `presence_frame()` füllt `delay_rad[k] = k_k·probe_r[k]`)
 - `tools/measure/src/bin/ssb_field_bake.rs` (Enclosure-Query am SSB → Feld-Asset, 26×f64 LE; `--out`/`--ci-mode`)
+- `static/membrane.html` (lädt `/ssb_field.bin`, zeigt den gemessenen SSB-Schnitt in der Ruhe; `parseFlat` unverändert)
 - `phi/sources.φ` (die zwei seismischen Kanäle `:17`/`:102` tragen `:extent 6371000`)
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P3.1 Layout + P1.9 body; sha neu)
 - `docs/handover/handover-2026-10-09-river-folge160.md`
@@ -131,7 +131,7 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 
 Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## An river` (von river-159 bereits erwidert). `register_lookup --fired river` = 0 gefeuert, `--stale` = 0.
 
-Aus der Offen-Liste entfernt: **Eigenmode-Arme** und **Empfänger-Apertur** gebaut (git trägt sie); **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. **Membran-`v_k`** und die **Feldmessung** sind Rivers eigene Punkte — als `eigen` geführt (Owner River), nicht fallen gelassen. `LOCK` trägt keine Future-Punkte mehr.
+Aus der Offen-Liste entfernt (gebaut, git trägt sie): **Eigenmode-Arme**, **Empfänger-Apertur** und **Membran-`v_k`** (steps 1–3; step 4 Doppler per Operator-Wort gestrichen). Zurückgeholt/offen: die **Feldmessung** (Baker + Loader gebaut, nur Mycelium's CI/CDN + Register-Zeile fehlt). **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. `LOCK` trägt keine Future-Punkte mehr.
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): source-arm (`extract.rs`/`root.rs`/`types.rs`/`tests.rs`/`mod.rs`/`lib.rs`/`iris.rs`/`themis_asi.rs`), register-/measure-tools (`dropped_gate.rs`, `field_te_query.rs`, `volume_builder.rs`), `phi/sources.φ` nach dem Seal.
 
