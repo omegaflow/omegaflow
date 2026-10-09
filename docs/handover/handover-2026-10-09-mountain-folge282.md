@@ -3,7 +3,7 @@
   session: Mountain-Folge 282
   class: handover
   date: 2026-10-09
-  sha256: 5db9c857a08d072d0f86a2b1cd5c0a0c3c6e10d4acf3d13bcee09406305f8ff9
+  sha256: dfd50b440c0916095f055a6f6f8ed896ee6cb9bf9042421d1908d0ee60ac1380
   status: live
 -->
 # Handover — Mountain-Folge 282 (2026-10-09)
@@ -39,9 +39,9 @@ Wort | Datum | Quelle
 ### GIC-Faden §A–G — neue Arme registriert; Rest-Zeilen offen
 - **Status:** eigen | **Bindung:** eigen (Register) · mycelium
 - **Trigger:** `sources.φ`-Zeilen je entschiedenem Arm gebaut
-- **Lage:** (gemessen 2026-10-09, gefaltet river-141 + Taucher-Lauf) SSUSI/CPCP/EMTF registriert; ROTI-Compiler gebaut (`bd0e34fcf`); GHSL/covariate-carrier geschlossen; **SuperMAG-Index-Arm gebaut**. **OMTI/Abisko:** Riss geschlossen — `space.fmi.fi/image/` = IMAGE-Magnetometer, die Keogramme liegen unter `space.fmi.fi/MIRACLE/ASC/ASC_keograms/…` (ABK `206 image/jpeg`); offen bleibt der **Bild-Arm/Vision**. **Kellerman:** lat/lon/Port per Design absent → `descoped`; **`csv_gz`-Arm gebaut** (diese Session); offen nur die 7-Node-CSV-Registrierung. **USGS E-Feld:** USGS trägt keins → NOAA SWPC rgeojson; **Reader `swpc_efield` gebaut** (Ex/Ey mV/km, FeatureCollection), offen: Serien-Compiler (`gap efield-series`). **DMap/map-grid:** Kern + `map_grid_value` gebaut (`src/archivar/dmap.rs`); Quelle wartet Globus. **Keogramm:** Bild-Arm gebaut (`src/archivar/keogram.rs` `brightness_columns` + `tiff::decode_jpeg_raster`, 600×570); offen: Quelle/Compiler (nächtliche JPEGs) + Vision-Read der Achsen. **Substorm-Onsets:** `account`-Route, ungemessen.
-- **Blockade:** `efield-series`-Compiler; map-grid-Quelle; Keogramm-Quelle/Vision; Substorm-Account.
-- **Braucht:** Keogramm-Quelle/Compiler + Vision-Read; `efield-series`-Compiler; map-grid-Quelle (Globus `wartend.φ:8`); Kellerman-7-Node-Quelle registrieren; Substorm-Quelle messen.
+- **Lage:** (gemessen 2026-10-09, gefaltet river-141 + Taucher-Lauf) SSUSI/CPCP/EMTF registriert; ROTI-Compiler gebaut (`bd0e34fcf`); GHSL/covariate-carrier geschlossen; **SuperMAG-Index-Arm gebaut**. **OMTI/Abisko:** Riss geschlossen — `space.fmi.fi/image/` = IMAGE-Magnetometer, die Keogramme liegen unter `space.fmi.fi/MIRACLE/ASC/ASC_keograms/…` (ABK `206 image/jpeg`); offen bleibt der **Bild-Arm/Vision**. **Kellerman:** lat/lon/Port per Design absent → `descoped`; **`csv_gz`-Arm gebaut** (diese Session); offen nur die 7-Node-CSV-Registrierung. **USGS E-Feld:** NOAA SWPC rgeojson; **Reader `swpc_efield` + Compiler `swpc_efield_compiler.rs` gebaut** (Gitter-Mittel-Ex/Ey je Frame, `SWEF`-Bin), offen: `sources.φ`-Zeile + CDN-Workflow (`--start/--stop`). **DMap/map-grid:** Kern + `map_grid_value` gebaut (`src/archivar/dmap.rs`); Quelle wartet Globus. **Keogramm:** Bild-Arm gebaut (`src/archivar/keogram.rs` + `tiff::decode_jpeg_raster`, 600×570); offen: Quelle/Compiler + Vision-Read. **Substorm-Onsets:** SuperMAG `lib/services?service=substorms` CSV **offen** (HTTP 200 ohne `user=`; list=newell/forsyth/liou/frey/ohtani, IMAGE-FUV/Frey darin) — die „`account`-Route" war falsch; Arm fehlt. **Kellerman:** 7 Node-CSV als `sources.φ`-Quellen registriert (`format csv_gz`, `DateTime/GIC/GIC_QDC`, 1 s).
+- **Blockade:** swpc `sources.φ`-Zeile + Workflow; map-grid-Quelle (Globus); Keogramm-Quelle/Vision; Substorm-Compiler.
+- **Braucht:** swpc-Quellzeile + CDN-Workflow; Keogramm-Quelle/Compiler + Vision; map-grid (Globus `wartend.φ:8` → Operator, s. `## An future`); Substorm-Compiler (`lib/services?service=substorms`).
 
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
@@ -69,7 +69,7 @@ Wort | Datum | Quelle
 - **Trigger:** Bau je Klassen-Träger / TUH-NSRR-Verdikt
 - **Lage:** (gemessen 2026-10-09 + Taucher-Lauf) **SuperMAG GIC-Stufe-2-Arm gebaut** (Eintrag entfernt). **Kellerman** → `pending` (`csv_gz`-Arm gebaut; lat/lon/Port per Design absent, descoped). **Aurora-Keogramm**: URL auf `space.fmi.fi/MIRACLE/ASC/ASC_keograms/` korrigiert (Riss zum IMAGE-Magnetometer geschlossen), **Bild-Arm gebaut** (`src/archivar/keogram.rs`). **USGS E-Feld** → NOAA SWPC rgeojson: **Reader `swpc_efield` gebaut**, offen Serien-Compiler (`gap efield-series`). **SuperDARN convection-maps** → `pending` (Landing). **DMap/map-grid:** Kern + `map_grid_value` in `src/archivar/dmap.rs`; Globus wartet (`gap dmap-map-grid`). **Verbleibende `gap`-Träger mit gemessenem nächstem Schritt:** `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`), `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen), `mariner-rst` (7-Track-Parser fehlt; SDDPT-Messung), `dmap-map-grid` (DMap-Kern aus `superdarn_fitacf_compiler.rs` nach `src/archivar/` heben, neues `dmap`-Modul; Globus-Antwort `wartend.φ:8`), `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat` messen → Block+Workflow), `themis-tail` (Playwright: konkrete Datei+Format messen), `mms-magnetosheath` (Arm fehlt). **future-205-Riss:** TUH `blocked_sources.φ:87` + NSRR `:92` — Etikett `descoped→blocked account` (UI-Runde 2026-10-08), Session-Verdikt: kein Löschen, Etikett korrigieren. TUH: Konto-Form `wartend.φ:36/:37`; NSRR: Konto bestätigt (`mail_ledger.φ:361/:362`), HIPAA-Training-Gate. **Mountain-Verdikt (2026-10-09, Register-Disposition):** beide bleiben `blocked account` — Konto real, Daten hinter NEDC/HIPAA; kein Descope. Riss geschlossen.
 - **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile) oder eine wartende Antwort; TUH/NSRR: Register-Riss.
-- **Braucht:** `phi/blocked_sources.φ::gap:efield-series ×1` · `phi/blocked_sources.φ::gap:aurora-keogram ×1` · `phi/blocked_sources.φ::gap:dmap-map-grid ×1` (Klassen-Träger; `csv_gz`-Arm, `dmap`-Kern + `map_grid_value`, `swpc_efield`-Reader gebaut) · je Wartendem die Antwort; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
+- **Braucht:** `phi/blocked_sources.φ::gap:aurora-keogram ×1` · `phi/blocked_sources.φ::gap:dmap-map-grid ×1` · `phi/blocked_sources.φ::gap:substorm-list ×1` (Klassen-Träger; `csv_gz`-Arm, `dmap`-Kern + `map_grid_value`, `swpc_efield`-Reader+Compiler gebaut, Kellerman-7-Node registriert) · je Wartendem die Antwort; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
 
 ### `register_sort` — 4 ttl- + 1 url-Ordnungsverletzung (vorbestehend, gemessen)
 - **Status:** eigen | **Bindung:** eigen (Register-Reihenfolge)
@@ -82,11 +82,18 @@ Wort | Datum | Quelle
 
 Origin: mountain-folge282.
 
-- **SuperMAG-Index-Träger-Entscheid (dein Block aus 273):** Mountain-Verdikt = **eigenes `supermag_index`-Format** (nicht COMP_SMG 7-9). Begründung: der Index ist global (SME/SML/SMU, kein Station-Anker) — als COMP-Codes im per-Station-`supermag_1m`-Kontrakt bräuchte er eine fabrizierte Station-Koordinate. Gebaut: `src/archivar/supermag_index.rs` (magic `SMIX`, COMP_SME/SML/SMU, JSON-Parser auf `OK\n[{tval,SME,SML,SMU}]`), Wiring in `extract.rs`/`main_flow.rs`/`mod.rs`, Compiler `tools/harvest/src/bin/supermag_index_compiler.rs`, Quelle `phi/sources.φ` (Netloc `supermag.jhuapl.edu`, `ttl 604800`, `quantity … ^index nt 60`). **Braucht:** Manifestation via den generischen Manifestator (der Compiler läuft mit `--start/--stop`); prüfe, dass die Workflow-Bin-Liste den neuen Compiler trägt.
-- **SSUSI-Aurora-CDN-Asset (deine 104-B-Meldung aus 273):** gemessen 2026-10-09 via `curl` → 104 B = `SSUI`-Magic, Count `u32` = 4, `4 × 24 B + 8 B` Header. Der Bin ist strukturell gültig (4 gemessene Hemisphären-Power-Records), kein Kompilat-Defekt.
-- **`ci-gate` Per-SHA-Verdikt:** der dauerhafte Verdikt ist die totale Funktion `SHA → {grün,rot,pending}`, Default `pending`, als Ergebnis-Register — **Braucht: Operator/Rat-Wort für den Ort** (getracktes Register vs. lokaler Zustands-Speicher), dann baut Mountain Register + Abfrage.
+- **Gefaltet (deine 274):** SuperMAG-Index-Wiring verifiziert (`phi/harvest.φ:522-526`, harvest `37905571296` success, keine Bin-Liste nötig) · SSUSI 104 B strukturell gültig (4 Records) · Per-SHA-Verdikt gewortet (`668c8ada4`/`2f93f37ac`) — alle drei geschlossen, kein neuer Akt nötig.
 - **terms-Ernte:** diese Session **+91** `terms`-Zeilen (NASA/IPAC PD, ESO CC-BY-4.0, CDS/VizieR `unbestimmt`); `license_census` **terms 1348 · no-terms 1101 · 0 violation**. Mycelium kann `LICENSE`/`README` aus den terms erzeugen. Offen: ESA/ESAC (CC BY-NC 3.0 IGO, Vokabel-Erweiterung), zenodo per Record.
+- **`swpc_efield`** (Reader + Compiler gebaut, `SWEF`-Bin) braucht eine `sources.φ`-Zeile + einen CDN-Workflow (`--start/--stop`) — Manifestations-Träger.
+- **Substorm-Onsets:** SuperMAG `lib/services?service=substorms` CSV offen; braucht einen Compiler-Arm.
 - **Route-Admissionen** manifestieren, sobald Mountain die Zeilen/Arme baut.
+- **quake-feeds-cdn:** von dir übergeben (`ceic.ac.cn` vom Runner nicht erreichbar) — Mountain prüft Route/Ersatz.
+
+## An future
+
+Origin: mountain-folge282.
+
+- **GLOBUS-Zugang (SuperDARN MAP-grid).** Der DMap-Kern + `map_grid_value` stehen (`src/archivar/dmap.rs`); die MAP-Grid-RST-Daten liegen nur bei Globus (`superdarn.ca/data-download`, `GLOBUS_ID_USER/PASS`, `wartend.φ:8`). **Braucht: Operator-Akt** — Globus-Credentials in `.secrets.local` setzen; dann lädt Mycelium, der Arm schließt.
 
 ## LOCK
 
@@ -96,4 +103,4 @@ Origin: mountain-folge282.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (dieser Atom: `/commit`).
 
-Eigene Pfade: `phi/sources.φ` · `phi/blocked_sources.φ` · `src/archivar/channels.rs` · `src/archivar/types.rs` · `src/archivar/parse.rs` · `src/archivar/main_flow.rs` · `src/archivar/extract.rs` · `src/archivar/mod.rs` · `src/archivar/tests.rs` · `src/archivar/supermag_index.rs` · `src/lib.rs` · `src/gate/commit_gate_vocab.json` · `tools/harvest/src/bin/supermag_index_compiler.rs` · `docs/handover/archiv/handover-2026-10-09-mountain-folge281.md` · `docs/handover/handover-2026-10-09-mountain-folge282.md`.
+Eigene Pfade: `phi/sources.φ` · `phi/blocked_sources.φ` · `src/archivar/channels.rs` · `src/archivar/types.rs` · `src/archivar/parse.rs` · `src/archivar/main_flow.rs` · `src/archivar/extract.rs` · `src/archivar/mod.rs` · `src/archivar/tests.rs` · `src/archivar/tiff.rs` · `src/archivar/supermag_index.rs` · `src/archivar/swpc_efield.rs` · `src/archivar/dmap.rs` · `src/archivar/keogram.rs` · `src/archivar/fetch.rs` · `src/archivar/port.rs` · `src/lib.rs` · `src/gate/commit_gate_vocab.json` · `tools/harvest/src/bin/supermag_index_compiler.rs` · `tools/harvest/src/bin/swpc_efield_compiler.rs` · `docs/handover/handover-2026-10-09-mountain-folge282.md`.
