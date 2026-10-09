@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 337f4dfcfe2da9a3e4cf86be7190804ab39c9abb1b97830530a48d31378d8918
+  sha256: 5f5be2b3cf3f286ab39e49283fe447eed72bc2519c8e1bc2fd04a1261ee20157
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -61,6 +61,17 @@ nicht kopiert.
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 
+## An mountain
+
+Origin: river-160.
+
+- **P10 erste Welle — `gravity` migrieren.** Der **Parser-Arm steht** (river-160): `quantity <key> <name> <kernel> <kind> <unit> <tau> <abs> <adv>` akzeptiert jetzt `kind` = `geometry` | `source-parameter` (neue `QuantityKind` 8/9, **kein** Einheiten-Gate — Länge/Winkel/Masse sind frei); `cargo check --tests --features browser_relay` grün. Die wissenschaftliche Klassifikation der 121 `gravity`-Tokenträger liegt in `state/river/p10-gravity-klassifikation.md`:
+  - **10 bleiben `gravity`** (echte Schwere/Geopotential: `agrav_gravity_ms2`, `copernicus_geopotential_height`, `igets_gravity_nm_s2`, `viking_grav_acceleration_mm_s2`, `lpf_drs_dg_x/y/z_ms2`, `corot_logg`/`polarbase_logg`/`pastel_logg`).
+  - **104 → `quantity … geometry`** (Höhen/Tiefen/Distanzen/Wellenhöhen/Gezeiten `tide_ft`×73/Radien/Parallaxen/Winkeldurchmesser/EOP).
+  - **5 → `quantity … source-parameter`** (Stern-/Planetenmassen).
+  - **2 `pending`** (GW-Ereignismarker `gravity_wave_far`, `gw250207_115645` — Riss: Gravitation, aber hyperbolisch, nicht Poisson→elliptisch).
+  Bitte die Verdikt-Zeilen in `phi/sources.φ` umschreiben (Um-Tagung, keine Schema-Demolition), `register_sort`/`cargo check` grün halten. Danach die nächste Gruppe (`seismic`), **`em` zuletzt**.
+
 ## Offen (aufgeschlüsselt)
 
 ### P10 Register-Physik — Wort da, Schema verbindlich, `gravity` wissenschaftlich klassifiziert
@@ -74,10 +85,11 @@ nicht kopiert.
   von 121 `gravity`-Tokenträgern **10 korrekt**, **104 → `quantity role=geometry`**,
   **5 → `quantity role=source-parameter`**, **2 pending** (GW-Ereignismarker — Riss: Gravitation,
   aber hyperbolisch, nicht Poisson).
-- **Blockade:** der `quantity role=geometry|source-parameter`-Form fehlt der Parser-Arm.
-- **Braucht:** (1) **River:** Parser-Arm für das P10.2a-Schema; (2) danach die Zeilen-Migration je
-  Gruppe nach Fehlergröße (`gravity` zuerst, `em` zuletzt), **Mountain** schreibt die Verdikt-Zeilen
-  in `phi/sources.φ`.
+- **Blockade:** die Zeilen-Migration (Mountain).
+- **Braucht:** **Mountain** schreibt die `gravity`-Zeilen um (Klassifikation in
+  `state/river/p10-gravity-klassifikation.md`, Parser-Arm steht, `## An mountain`); danach `seismic`,
+  `acoustic`/`diffusion`, **`em` zuletzt**. Offen bei River: der 3-Achsen-`field`-Arm
+  (`pde_type`/`medium`, optionales `interaction` — mehrdeutig mit den jetzigen `field`-Aritäten).
 
 ### Membran — SSB-Feld-Asset landen sehen + sha256 eintragen
 - **Status:** wartend | **Bindung:** eigen
@@ -124,6 +136,7 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `static/constants.js` (`parseKinetic` liest CSR-Offsets, gibt `{n, schemaHash, state, omega, aperture, pan, tilt}` unverändert zurück)
 - `src/archivar/parse.rs` (E0507-Test-Fix `588735e39 river 154`: `&sources[0].channels[0]`)
 - `src/mathematikerin/channel.rs` (`ChannelDescriptor.body` + `with_body`; `hash`/`PartialEq` binden den Körper; `fundamental_hz()` familien-/body-bewusst; `channel_registry_from_sources` setzt `body` aus `SourceConfig.body`; `carrier_wavenumber`/`phase_velocity_m_s`; Tests)
+- `src/mathematikerin/force.rs` + `src/archivar/parse.rs` (P10-Parser-Arm: `QuantityKind::Geometry`/`SourceParameter` (8/9), kein Einheiten-Gate; Test)
 - `src/mathematikerin/actuators.rs` (Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`, globale `phase` raus; `PresenceFrame.delay_rad` + `sin(phase_k − delay_k)`; Tests)
 - `src/mathematikerin/shaders.rs` (`presence_probe` akkumuliert je Kanal die amplitudengewichtete Quell-Distanz `probe_r` **und** die deklarierte Quellen-Radialgeschwindigkeit `dot(fm.yzw, n̂)` `probe_u` → `probe_out[CHANNEL_CAP+3+…]`)
 - `src/mathematikerin/omega.rs` (`probe_r`/`probe_u` + Probe-Puffer-Größe; `presence_frame()` füllt `delay_rad[k] = k_k·probe_r[k]` und den agnostischen Doppler `partials_hz[k] *= (1 − probe_u[k]/v_{p,k})`)
