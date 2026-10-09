@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 7859e19579c63f7f30527991bd97b26789b195eda0505ac433a8fc3f9723e746
+  sha256: 68e44e3e8f7af0f3fcf891da3b6678c51d7a3df0655a251673eda7af2aa7b5cf
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -53,7 +53,7 @@ nicht kopiert.
 
 ## Träger (Prosa, eigene)
 
-- `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske).
+- `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske; seit river-160 CSR-`offsets` und die A=A-Regel unter freier Bewegung/Drehung).
 - `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie (P3.1 CSR-Wire gebaut, river-160).
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — geheilt (river-159); der repo-weite `register`-Job hat am river-Survey keine Ursache mehr.
 - `state/stimmen/2026-10-09-river-*.md` — Rat + Wissenschaft + Frontier-UI + Open-Weight zu Eigenmode-Armen, elastischer Polarisation, Tonmodell, Kanal-Zulassung, Register-Physik.
