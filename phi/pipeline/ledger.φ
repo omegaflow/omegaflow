@@ -93,7 +93,7 @@ note cors_compiler ungewirter Duplikat-Pfad zu cors_rinex — kein Workflow ruft
 
 ausstehend
 kandidat https://www.gosat-gw.nies.go.jp
-note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132 / GWT3W_L1B 434 Dateien, Probe HDF5 17440691 B; gosat_tanso3_compiler.rs + gosat-cdn.yml stehen. Offen: CI 36283215548 rot (Leerfenster/Overflow).
+note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132/GWT3W_L1B 434 B, Probe HDF5 17440691 B; Compiler+WF stehen; 2026-10-09: CI 36283215548 stale, Defekt in 5215745f7+f6fdfd1a3 behoben.
 
 ausstehend
 kandidat https://planet.physics.uiowa.edu/das/das2Server/hapi
@@ -101,15 +101,15 @@ note DAS2 Iowa HAPI 1.1 CSV — 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-
 
 ausstehend
 kandidat https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) — 2026-10-04: --verdict 206; clpds_compiler.rs + clpds-cdn.yml stehen, gras_2c-Reader; Annex sources.φ:10100. Offen: Portal-Ernte. future-folge149.
+note Chang'e 1–6 GRAS (CNSA) — 2026-10-09: clpds catalogue 200 ohne Auth; Compiler+WF (--with-annex) stehen, gras_2c-Reader; Annex sources.φ:10100; Run 37932167423 dispatched. future-folge149.
 
-ausstehend
+disponiert
 kandidat https://sdc.emiratesmarsmission.ae/
-note Hope/Al-Amal EMM EXI — 2026-10-05: L2a = Bild, kein Skalarfeld (Bildquelle ohne field). emm_exi.rs + emm_sdc_compiler.rs + emm-sdc-cdn.yml stehen. Offen: Frame-Bundle.
+note Hope/Al-Amal EMM EXI — 2026-10-09: L2a = Bild, kein Skalarfeld; Compiler+WF stehen; CDN emm_exi_l2a.tar 1439406 B (2026-10-05), Run 37932156681 = idempotenter Skip. Offen: Sample-Prüfung.
 
 ausstehend
 kandidat https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
-note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-09-29 properties 206 (png, ord7, mars); hips.rs + hips_png_compiler.rs + hips-png-cdn.yml stehen. Offen: Tree-Ernte, CDN, Sample.
+note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-10-09: properties 206 (1 B); hips.rs + hips_png_compiler.rs + hips-png-cdn.yml stehen. Tree-Ernte Run 37932098229 dispatched (queued, 32 Shards). Offen: Run-Ergebnis, CDN, Sample.
 
 ausstehend
 kandidat https://pds.shadowcam.im-ldi.com/derived/
@@ -121,15 +121,15 @@ note JAXA G-Portal — sources.φ:10370; jaxa_gportal_compiler.rs + jaxa-gportal
 
 ausstehend
 kandidat https://clpds.bao.ac.cn/
-note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-04: Konto; catalogue 200 (13207 B); clpds_compiler.rs + clpds-cdn.yml stehen; Annex-Arm --with-annex gebaut, Workflow ruft ihn noch ohne; PDS3-Reader steht. future-folge226.
+note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-09: catalogue 200 (6786 B) ohne Auth; clpds_compiler.rs + clpds-cdn.yml stehen; Annex-Arm --with-annex im Workflow verdrahtet (783044d36); PDS3-Reader steht. future-folge226.
 
 ausstehend
 kandidat https://data.kasi.re.kr/
 note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
 
-ausstehend
+disponiert
 kandidat https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
-note ROTI (GIC Obs. §D) — 2026-10-08: data.impc.dlr.de/…/latest_D.json 200 (1.18 MB), 2D-Gitter 180×90 ohne per-Zelle-Koordinaten, Snapshot; cdaweb_roti.rs + cdaweb-roti-cdn.yml stehen, impc_roti_compiler.rs fehlt (Dataset-ID messen).
+note ROTI (GIC Obs. §D) — 2026-10-09: data.impc.dlr.de/…/latest_D.json 200; impc_roti_compiler.rs steht (sources.φ:924-930), impc-roti-cdn Run 37895723379 success.
 
 ausstehend
 kandidat https://themis.igpp.ucla.edu/gmag/
@@ -137,35 +137,35 @@ note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200; ABK live CD
 
 ausstehend
 kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE
-note Wind SWE/MFI (GIC-Replikation §A) — 2026-10-06: 200; hapi_csv.rs + cdaweb-tec-cdn.yml (HAPI-Familie) stehen; Dataset-ID messen.
+note Wind SWE/MFI (GIC-Replikation §A) — 2026-10-09: WI_H0_SWE = Elektronen, eingefroren 2001-05-31 (sources.φ:29445); GIC-Route braucht WI_K0_SWE (Np/V_GSE, 1994→2026-10-06) + WI_H2_MFI (BGSM/BGSE); Mountain-Verdikt offen.
 
-ausstehend
+disponiert
 kandidat https://www.ncei.noaa.gov/data/poes-metop-space-environment-monitor/
-note POES/MetOp MEPED (GIC-Mediator §B) — 2026-10-06: 200; poes19_meped_compiler.rs + poes19-meped-cdn.yml stehen (Note „kein Arm" widerlegt).
+note POES/MetOp MEPED (GIC-Mediator §B) — 2026-10-09: CDN poes19_meped.bin 1036784 B (sources.φ:1805), Lauf 37648555875 success — kompiliert+manifestiert.
 
-ausstehend
+disponiert
 kandidat https://ssusi.jhuapl.edu/
-note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-06: 200; dmsp16_ssj_compiler.rs + ssusi_compiler.rs + ssusi-cdn.yml stehen (Note „kein Arm" widerlegt).
+note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-09: cdaweb dmsp16_ssj.bin 4146104 B (Run 37653771143), ssusi_aurora.bin 104 B n=4 (Run 37742154115) beide success.
 
 ausstehend
 kandidat https://supermag.jhuapl.edu/products/
 note Substorm-Onsets (GIC-Mediator §B) — 2026-10-06: 200; SuperMAG registriert (sources.φ:18407-18431); supermag-cdn.yml steht; Onset-Produkt braucht Arm.
 
-ausstehend
+disponiert
 kandidat https://cdaw.gsfc.nasa.gov/CME_list/
-note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-06: 200; soho_lasco_compiler.rs + soho-lasco-cme-cdn.yml stehen (Note „kein Arm" widerlegt).
+note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-09: Lauf 37778516294 success; soho_lasco_cme.bin 11009 B manifestiert (sources.φ:20511-20523).
 
 ausstehend
 kandidat https://wdc.kugi.kyoto-u.ac.jp/
-note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-06: Host 200, aeasy.cgi 404; wdc_ae_compiler.rs + wdc-ae-cdn.yml stehen; Host-Status messen.
+note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-09: Host/aeasy/aedir 206, aeasy.cgi 404; Daten-Endpoint /hapi/data?id=min_ae 200 (54883 B); wdc_ae_compiler.rs + wdc-ae-cdn.yml stehen.
 
-ausstehend
+disponiert
 kandidat https://superdarn.usask.ca/convection-maps
-note SuperDARN CPCP (GIC §B) — 2026-10-08: Bestand 10374021 (Arm+WF stehen); Zenodo 10875060 superDARN.zip 200 (32.6 MB, NetCDF-4 map.pot.drop, CC-BY-4.0), kein .map2; superdarn_cpcp_nc_compiler.rs nötig.
+note SuperDARN CPCP (GIC §B) — 2026-10-09: superdarn_cpcp + superdarn_cpcp_nc gebaut (sources.φ:4244-4259, superdarn-cpcp-cdn.yml), Zenodo 10875060 NetCDF-4 manifestiert.
 
-ausstehend
+disponiert
 kandidat https://ds.iris.edu/ds/products/emtf/
-note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-10-06: 206; emtf.rs + emtf_compiler.rs + emtf-cdn.yml stehen (Note „kein Arm" widerlegt).
+note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-10-09: emtf_usarray_cao01_2010.bin 2176 B (Run 37853400993 success, sources.φ:10443).
 
 ausstehend
 kandidat http://awesome.ucsd.edu/
