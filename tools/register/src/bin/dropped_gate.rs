@@ -386,6 +386,31 @@ fn reformulation_corpus() -> &'static [(&'static str, &'static str, &'static str
             r#"### UI-Chat-Stimmen zum `epochrange`-Befund (vier von fünf)"#,
             "docs/handover/archiv/handover-2026-09-26-mountain-folge172.md:115",
         ),
+        (
+            "kraft-taxonomie register-physik-migration river-geführt verdikt-zeilen",
+            r#"### Kraft-Taxonomie + Register-Physik-Migration — River-geführt; Mountain schreibt die Verdikt-Zeilen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge144.md:128",
+        ),
+        (
+            "kraft-taxonomie register-physik-migration rat-linse gefallen zeilen",
+            r#"### Kraft-Taxonomie + Register-Physik-Migration — Rat-Linse gefallen; Mountain schreibt die Zeilen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge145.md:103",
+        ),
+        (
+            "kanalzahl a a senken-projektion reduktion verdrahtet layout wire gpu js offen",
+            r#"### Kanalzahl (A=A) + Senken-Projektion — Reduktion verdrahtet, Layout/Wire/GPU/JS offen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge146.md:60",
+        ),
+        (
+            "kanalzahl a a senken-projektion reduktion legacy-brücke verdrahtet layout wire gpu js offen",
+            r#"### Kanalzahl (A=A) + Senken-Projektion — Reduktion + Legacy-Brücke verdrahtet, Layout/Wire/GPU/JS offen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge147.md:68",
+        ),
+        (
+            "kanalzahl a a senken-projektion layout-saat gebaut wire gpu js offen",
+            r#"### Kanalzahl (A=A) + Senken-Projektion — Layout-Saat gebaut, Wire/GPU/JS offen"#,
+            "docs/handover/archiv/handover-2026-10-09-river-folge148.md:75",
+        ),
     ]
 }
 
