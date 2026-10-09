@@ -2,7 +2,6 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::path::Path;
 
-const DEFAULT_ROSTER_PIN: &str = "docs/zustand/dropped-roster-baseline.txt";
 const DEFAULT_LEGACY_PIN: &str = "docs/zustand/dropped-legacy-baseline.txt";
 const HEADER_PREFIX: &str = "# dropped-events v1 pin=";
 const LIVE_HANDOVER_DIR: &str = "docs/handover";
@@ -452,7 +451,7 @@ where
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut log_path: Option<String> = None;
-    let mut pin_path = DEFAULT_ROSTER_PIN.to_string();
+    let mut pin_path = DEFAULT_LEGACY_PIN.to_string();
     let mut legacy_path = DEFAULT_LEGACY_PIN.to_string();
     let mut roster_path: Option<String> = None;
     let mut selftest = false;

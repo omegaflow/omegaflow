@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 8597448c62acdc361aa7515ac54673d50caec900060a5666ddaa9b256739ab45
+  sha256: ab8db82a96cf8a977931ae0c2195e8cde9ca8641790a18e106f9b755eb00b590
   status: live
 -->
 # Handover — Mountain-Folge 287 (2026-10-09)
@@ -103,13 +103,6 @@ Wort | Datum | Quelle
 - **Blockade:** keine.
 - **Braucht:** Headless-Lauf zur `n`-Verifikation (Register statt 9); Ton-Anbindung `f_j` (river — `medium`/`domain` liegen in den Zeilen).
 
-### ci-gate / dropped-gate — Verdikt gefällt, Baseline-Re-Draw offen
-- **Status:** eigen (CI-Artefakt) | **Bindung:** eigen · mycelium (Baseline)
-- **Trigger:** CI-Artefakt `register_lookup --dropped-keys` am neuen HEAD
-- **Lage:** (gemessen 2026-10-09) `--dropped-keys` liefert 20 neue Keys gegen die gefrorene `docs/zustand/dropped-legacy-baseline.txt`; alle sind Prosa-Reformulierungen (`canonical_point_key` verschlüsselt den ganzen Token-Beutel, kein realer Punktverlust). **Mountain-Verdikt:** `canonical_point_key` auf den kurzen Namens-Kopf (`match_prefix`, sechs Wörter) begrenzen. Der lokale `--dropped-keys`-Lauf überschreitet das Session-Zeitbudget (>6 min, git-Historie) — die Baseline ist ein CI-Artefakt.
-- **Blockade:** Baseline-Re-Draw ist ein CI-Lauf; der Code-Eingriff kann nicht ohne neu gezogene Baseline landen (sonst ci-gate rot).
-- **Braucht:** `canonical_point_key` → `match_prefix` + Tests; Baseline aus dem CI-Artefakt neu ziehen (Mycelium), dann committen.
-
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
 - **Trigger:** ESOC-Recon-Release (Wiedervorlage 2026-11-01) oder Descope
@@ -141,5 +134,7 @@ Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe sel
 `phi/sources.φ` · `phi/harvest.φ` · `phi/blocked_sources.φ` ·
 `.github/workflows/petrel19-cdn.yml` · `.github/workflows/kaguya-lrs-cdn.yml` · `.github/workflows/inpe-stac-cdn.yml` ·
 `tools/harvest/src/bin/iris_compiler.rs` · `tools/harvest/src/bin/gwosc_compiler.rs` ·
+`tools/register/src/bin/register_lookup.rs` · `tools/register/src/bin/dropped_gate.rs` ·
+`docs/zustand/dropped-legacy-baseline.txt` · `docs/zustand/dropped-roster-baseline.txt` (gelöscht) ·
 `docs/handover/handover-2026-10-09-mountain-folge287.md` · `docs/handover/archiv/handover-2026-10-09-mountain-folge286.md`.
 Nach dem Push: `petrel19-cdn.yml`, `inpe-stac-cdn.yml`, `kaguya-lrs-cdn.yml` dispatchen.
