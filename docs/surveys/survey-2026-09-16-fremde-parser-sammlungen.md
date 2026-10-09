@@ -2,7 +2,7 @@
   title: Survey — fremde Parser-/Compiler-Sammlungen (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 6917d5b981bfebffcc0320553ff75398d4e3a007c75f1f1183cfdedf4d82ccb2
+  sha256: 08bc79105275dd22f13958472e1dbe5b72ea2819c56fc7e098034197f6b7011e
   status: live
   see-also: phi/sources.φ phi/declined_sources.φ phi/blocked_sources.φ phi/dead_sources.φ
 -->
@@ -45,6 +45,13 @@ Quellhost** steht im Pfad; für die Schnittmenge wurde er aufgelöst. Registries
 gesamt: **918 live · 912 declined · 12 blocked ·
 244 dead** (~2086 katalogisierte Quellen). Tools: **197** harvest-Bins + **233**
 measure-Bins.
+
+> **Nachtrag 2026-10-09 (Mountain).** Die Zahlen dieses Abschnitts sind der
+> gemessene Stand **2026-09-16**, nicht der heutige. Aktuell (gemessen 2026-10-09,
+> `awk` über die Register): `phi/sources.φ` **2.698** `url`-Zeilen (Live),
+> **7.983** `field`, **1.492** `at`, **2.074** `format`; Registries gesamt
+> **2.698 live · 1.460 declined · 15 blocked · 259 dead**. Die 918/1655/424 und
+> die 199/918-Schnittmenge sind historisch.
 
 **Krafttypen** (1655 Oszillatoren, `field $5`):
 
