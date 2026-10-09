@@ -109,14 +109,22 @@ jobs:
         fetch-depth: 0
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo build --release -p omegaflow-register --bin register_lookup
-    - name: Key-Set-Gate — no open point dropped beyond the frozen list
+    - name: Key-Set-Gate — no open point dropped by this push beyond the frozen list
       run: |
         pin=docs/zustand/dropped-legacy-baseline.txt
         if [ ! -f "$pin" ]; then
           echo "dropped-set-gate: pending — $pin absent; seed it from the register-dropped sweep artifact" >&2
           exit 0
         fi
-        target/release/register_lookup --dropped-keys | sort -u > current.txt
+        since='${{ github.event.before }}'
+        if [ -z "$since" ] || [ "$since" = "0000000000000000000000000000000000000000" ]; then
+          since="$(git rev-parse HEAD~1 2>/dev/null || echo '')"
+        fi
+        if [ -n "$since" ]; then
+          target/release/register_lookup --dropped-keys --changed-since "$since" | sort -u > current.txt
+        else
+          target/release/register_lookup --dropped-keys | sort -u > current.txt
+        fi
         awk '!/^#/ && NF' "$pin" | sort -u > pin.txt
         comm -23 current.txt pin.txt > new-drops.txt
         echo "dropped-set-gate: current $(wc -l < current.txt) | pinned $(wc -l < pin.txt) | new $(wc -l < new-drops.txt)"

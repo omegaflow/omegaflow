@@ -2494,13 +2494,13 @@ fn collect_handovers() -> BTreeMap<String, Vec<Handover>> {
 }
 
 fn load_commit_message_corpus() -> Option<String> {
-    let output = Command::new("git")
-        .arg("log")
-        .arg("--exclude=refs/safety/*")
-        .arg("--all")
-        .arg("--format=%B%x00")
-        .output()
-        .ok()?;
+    let mut cmd = Command::new("git");
+    cmd.arg("log").arg("--exclude=refs/safety/*");
+    for a in commit_log_range_args() {
+        cmd.arg(a);
+    }
+    cmd.arg("--format=%B%x00");
+    let output = cmd.output().ok()?;
     if !output.status.success() {
         return None;
     }
@@ -2508,6 +2508,18 @@ fn load_commit_message_corpus() -> Option<String> {
 }
 
 static MESSAGE_CORPUS_LOWER: std::sync::OnceLock<Option<String>> = std::sync::OnceLock::new();
+static DROPPED_SINCE: std::sync::OnceLock<Option<String>> = std::sync::OnceLock::new();
+
+fn dropped_since_sha() -> Option<String> {
+    DROPPED_SINCE.get().cloned().flatten()
+}
+
+fn commit_log_range_args() -> Vec<String> {
+    match dropped_since_sha() {
+        Some(sha) if !sha.is_empty() => vec![format!("{sha}..HEAD")],
+        _ => vec!["--all".to_string()],
+    }
+}
 
 fn commit_message_corpus_lower() -> Option<&'static str> {
     MESSAGE_CORPUS_LOWER
@@ -2560,19 +2572,13 @@ fn load_commit_content_index(tokens: &BTreeSet<String>) -> BTreeSet<String> {
     }
     let mut pending: BTreeSet<String> = tokens.clone();
     let mut found: BTreeSet<String> = BTreeSet::new();
-    let mut child = match Command::new("git")
-        .args([
-            "log",
-            "--exclude=refs/safety/*",
-            "--all",
-            "--format=%x00",
-            "-p",
-            "--unified=0",
-        ])
-        .stdout(Stdio::piped())
-        .stderr(Stdio::null())
-        .spawn()
-    {
+    let mut cmd = Command::new("git");
+    cmd.arg("log").arg("--exclude=refs/safety/*");
+    for a in commit_log_range_args() {
+        cmd.arg(a);
+    }
+    cmd.args(["--format=%x00", "-p", "--unified=0"]);
+    let mut child = match cmd.stdout(Stdio::piped()).stderr(Stdio::null()).spawn() {
         Ok(c) => c,
         Err(_) => return found,
     };
@@ -2672,6 +2678,36 @@ fn count_flag(args: &[String]) -> bool {
     args.iter().any(|a| a == "--count")
 }
 
+fn changed_since(args: &[String]) -> Option<String> {
+    let mut it = args.iter();
+    while let Some(a) = it.next() {
+        if a == "--changed-since" {
+            return match it.next() {
+                Some(v) if !v.is_empty() && !v.starts_with("--") => Some(v.clone()),
+                _ => None,
+            };
+        }
+    }
+    None
+}
+
+fn changed_handover_paths(since: &str) -> BTreeSet<String> {
+    let mut set = BTreeSet::new();
+    let output = match Command::new("git")
+        .args(["diff", "--name-only", since, "HEAD", "--", "docs/handover"])
+        .output()
+    {
+        Ok(o) if o.status.success() => o,
+        _ => return set,
+    };
+    for line in String::from_utf8_lossy(&output.stdout).lines() {
+        if let Some(base) = line.rsplit('/').next() {
+            set.insert(base.to_string());
+        }
+    }
+    set
+}
+
 fn persist_threshold(args: &[String]) -> usize {
     let mut it = args.iter();
     while let Some(a) = it.next() {
@@ -2768,6 +2804,11 @@ struct DroppedPoint {
 }
 
 fn run_dropped(args: &[String]) {
+    let changed = changed_since(args);
+    if let Some(sha) = &changed {
+        let _ = DROPPED_SINCE.set(Some(sha.clone()));
+    }
+    let changed_paths = changed.as_deref().map(changed_handover_paths);
     let filter = dropped_line_filter(args).map(canonical_line);
     let threshold = persist_threshold(args);
     let count_only = count_flag(args);
@@ -2792,6 +2833,12 @@ fn run_dropped(args: &[String]) {
         for index in 0..list.len().saturating_sub(1) {
             let n = &list[index];
             let next = &list[index + 1];
+            if let Some(cp) = &changed_paths {
+                let next_base = next.path.rsplit('/').next().unwrap_or(next.path.as_str());
+                if !cp.contains(next_base) {
+                    continue;
+                }
+            }
             pairs += 1;
             let next_padded = &padded[index + 1];
             let mut seen_keys: Vec<String> = Vec::new();
@@ -3516,7 +3563,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
@@ -5313,6 +5360,16 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         );
         assert!(!mountain.iter().any(|l| l.contains("the HUD line")));
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn changed_since_reads_the_flag() {
+        let args: Vec<String> = ["--dropped-keys", "--changed-since", "abc"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        assert_eq!(changed_since(&args).as_deref(), Some("abc"));
+        assert_eq!(changed_since(&["--dropped-keys".to_string()]), None);
     }
 
     #[test]
