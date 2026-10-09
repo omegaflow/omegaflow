@@ -651,6 +651,18 @@ pub fn live_schema_hash() -> u32 {
     live_channel_registry().schema_hash()
 }
 
+pub fn unit_token(token: &str) -> Option<&'static str> {
+    match token {
+        "V/m" => Some("V/m"),
+        "m/s^2" => Some("m/s^2"),
+        "Pa" => Some("Pa"),
+        "K" => Some("K"),
+        "kg/m^3" => Some("kg/m^3"),
+        "kg/(m^2 s)" => Some("kg/(m^2 s)"),
+        _ => None,
+    }
+}
+
 #[derive(Clone, Copy)]
 pub struct ChannelSum {
     pub weighted: f64,
