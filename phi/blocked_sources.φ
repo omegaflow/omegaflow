@@ -91,10 +91,9 @@ blocked account
 url https://sleepdata.org
 note NSRR — 2026-10-08 re-measured: account confirmed (mail_ledger.φ:361/:362); arm nsrr_psg stands (9d416e57b, edf.rs); asset block absent; HIPAA-training gate. State descoped→blocked account (UI-Runde 2026-10-08).
 
-blocked parser-def
+pending
 url https://zenodo.org/record/4444068
-gap csv-gzip
-note Neutralpunkt-GIC (Kellerman 2021) — 2026-10-09: Record „Anonymous GIC data" (7 Knoten, cc-by-4.0); lat/lon/Port per Design absent (anonymisiert) → descoped. Echter Gap: `Node_*.csv.gz`, `csv`-Arm liest kein gzip.
+note Neutralpunkt-GIC (Kellerman 2021) — 2026-10-09: Record „Anonymous GIC data" (7 Knoten, cc-by-4.0); lat/lon/Port per Design absent → descoped. `csv_gz`-Arm gebaut; offen: 7 Node-CSV als Quelle registrieren.
 
 pending
 url https://superdarn.usask.ca/convection-maps

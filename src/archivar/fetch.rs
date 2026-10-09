@@ -662,6 +662,7 @@ fn format_readable(fmt: &str) -> bool {
             | "universal"
             | "csv"
             | "csv_zip"
+            | "csv_gz"
             | "free text"
             | "tap"
             | "votable"
@@ -1092,6 +1093,7 @@ pub fn live_sweep(
         }
         if s.fanout_cap > 0
             || s.format == "csv_zip"
+            || s.format == "csv_gz"
             || s.format == "igra_zip"
             || s.format == "kernel_text"
         {

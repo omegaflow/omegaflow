@@ -37,6 +37,7 @@ pub use archivar::dastcom;
 pub use archivar::decaps;
 pub use archivar::demeter;
 pub use archivar::des_y6;
+pub use archivar::dmap;
 pub use archivar::dmsp16_ssj;
 pub use archivar::eels;
 pub use archivar::emc;

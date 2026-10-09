@@ -54,6 +54,7 @@ pub mod decaps;
 pub mod demeter;
 pub mod des_y6;
 pub mod dl3;
+pub mod dmap;
 pub mod dmsp16_ssj;
 pub mod double;
 pub mod drs_fits;
