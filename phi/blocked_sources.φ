@@ -91,9 +91,14 @@ blocked account
 url https://sleepdata.org
 note NSRR — 2026-10-08 re-measured: account confirmed (mail_ledger.φ:361/:362); arm nsrr_psg stands (9d416e57b, edf.rs); asset block absent; HIPAA-training gate. State descoped→blocked account (UI-Runde 2026-10-08).
 
-pending
+blocked parser-def
 url https://zenodo.org/record/4444068
-note Neutralpunkt-GIC (Kellerman 2021) — Zenodo 200, 7 anonyme Knoten, CC-BY 4.0. 2026-10-09: Slash-Datum `YYYY-MM-DD/HH:MM:SS` liest der generische `csv`-Arm (`parse_iso_tdb`); offen: Knoten-Koordinaten + Port.
+gap csv-gzip
+note Neutralpunkt-GIC (Kellerman 2021) — 2026-10-09: Record „Anonymous GIC data" (7 Knoten, cc-by-4.0); lat/lon/Port per Design absent (anonymisiert) → descoped. Echter Gap: `Node_*.csv.gz`, `csv`-Arm liest kein gzip.
+
+pending
+url https://superdarn.usask.ca/convection-maps
+note SuperDARN Convection-Maps — 2026-10-09: HTTP 200 HTML-Landing, kein Daten-Endpoint; Konvektions-Potential via `superdarn_cpcp` gedeckt. Kein eigener Arm.
 
 blocked parser-def
 url http://themis.ssl.berkeley.edu/data/themis/
@@ -106,10 +111,15 @@ gap mms-magnetosheath
 note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
 
 blocked parser-def
-url https://space.fmi.fi/image/
+url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
 gap aurora-keogram
-note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-09: `space.fmi.fi/image/` HTTP 200 (6599 B) = HTML-Index, kein Keogramm-File; erster Schritt ist die echte Keogramm-Datei-URL + Format (Bild-Arm fehlt), CC BY 4.0. Nicht refused.
+note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: `space.fmi.fi/image/` = IMAGE-Magnetometer (fmi_image_mag), Riss geschlossen; Keogramme unter `MIRACLE/ASC/ASC_keograms/<STA>.YYMM/<STA>_YYMMDD.jpg` (ABK 206 image/jpeg). Bild-Arm/Vision fehlt.
 
 pending
 url https://geomag.usgs.gov/ws/data/
-note USGS E-Feld mV/km (GIC §A) — 2026-10-09: bare `/ws/data/` HTTP 400; Query-Endpunkt + Geoelektrik-Arm fehlen. Magnetik derselben URL: declined_sources.φ:2176 — Riss, per Datensatz getrennt.
+note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein `geoelectric`/`mV`; bare `/ws/data/` 400. Reale Route NOAA SWPC rgeojson (eigener Eintrag). Magnetik: declined_sources.φ:2176 — per Datensatz getrennt.
+
+blocked parser-def
+url https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
+gap geojson-efield
+note NOAA SWPC Geoelektrisches Feld (GIC §A) — 2026-10-09: Apache-Index 200; Frames `<YYYYMMDDThhmmss>-15-Efield-US-Canada.json` (~1,1 MB GeoJSON). GeoJSON-E-Feld-Reader fehlt.
