@@ -210,6 +210,7 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
             )
         }
         "catalog_gaia_sso" => crate::gaia_sso::parse_bin(bytes).map(|bodies| bodies.len()),
+        "blinkverse" | "blinkverse_frb" => blinkverse::parse_bin(bytes).map(|t| t.rows.len()),
         "zcta_gazetteer" => crate::archivar::zcta::parse_bin(bytes).map(|rows| rows.len()),
         "openmadrigal" => openmadrigal::parse_isprint(bytes).map(|print| print.rows.len()),
         "mpcobs" => {
@@ -3509,6 +3510,64 @@ fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
     }
 }
 
+fn blinkverse_frb_channels(
+    table: &blinkverse::Table,
+    fields: &[FieldConfig],
+    epoch: f64,
+) -> Vec<(Channel, FieldConfig)> {
+    if fields.is_empty() {
+        return Vec::new();
+    }
+    let ra_col = blinkverse::column_index(&table.names, blinkverse::RA_NAMES);
+    let dec_col = blinkverse::column_index(&table.names, blinkverse::DEC_NAMES);
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+    for row in &table.rows {
+        let position = match (ra_col, dec_col) {
+            (Some(ri), Some(di)) => match (
+                row.get(ri).copied().flatten(),
+                row.get(di).copied().flatten(),
+            ) {
+                (Some(ra), Some(dec)) => {
+                    let (sa, ca) = ra.to_radians().sin_cos();
+                    let (sd, cd) = dec.to_radians().sin_cos();
+                    Position::StateVector {
+                        p: [cd * ca, cd * sa, sd],
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    }
+                }
+                _ => Position::Source,
+            },
+            _ => Position::Source,
+        };
+        for (j, name) in table.names.iter().enumerate() {
+            if Some(j) == ra_col || Some(j) == dec_col {
+                continue;
+            }
+            let Some(fc) = fields.iter().find(|fc| fc.name == *name || fc.key == *name) else {
+                continue;
+            };
+            let Some(value) = row.get(j).copied().flatten() else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    name: fc.name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    station_code: None,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    channels
+}
+
 fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary"
         || matches!(
@@ -3720,6 +3779,22 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             }
         }
         return ExtractResult::Measurements(channels);
+    }
+    if matches!(src.format.as_str(), "blinkverse" | "blinkverse_frb") {
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(table) = blinkverse::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        return ExtractResult::Measurements(blinkverse_frb_channels(&table, &fields, epoch));
     }
     if src.format == "twomass_psc" {
         let epoch = match src.catalog_epoch {
@@ -7719,5 +7794,67 @@ mod edf_arm_tests {
         let channels = edf_emit_channels(&bytes, &Position::Source, 1.0, 1.0, 8);
         assert!(channels.len() <= 8);
         assert_eq!(channels.len(), 7);
+    }
+}
+
+#[cfg(test)]
+mod blinkverse_frb_tests {
+    use super::*;
+
+    fn field(name: &str) -> FieldConfig {
+        FieldConfig {
+            key: name.to_string(),
+            name: name.to_string(),
+            band_id: None,
+            kernel: 0,
+            force: 0,
+            tau: 604800.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "deg".to_string(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+            aperture: Aperture::None,
+        }
+    }
+
+    fn table() -> blinkverse::Table {
+        blinkverse::Table {
+            names: vec!["DM".to_string(), "RA".to_string(), "Dec".to_string()],
+            rows: vec![
+                vec![Some(460.8), Some(334.375), Some(-72.192722222222)],
+                vec![Some(200.0), Some(15.0), None],
+                vec![None, Some(15.0), Some(10.0)],
+            ],
+        }
+    }
+
+    #[test]
+    fn dispatch_roundtrips_named_columns_and_places_ra_dec() {
+        let parsed =
+            blinkverse::parse_bin(&blinkverse::write_bin(&table())).expect("roundtrip parses");
+        let channels = blinkverse_frb_channels(&parsed, &[field("DM")], 1234.0);
+        assert_eq!(channels.len(), 2);
+        assert_eq!(channels[0].0.value, 460.8);
+        assert_eq!(channels[0].0.epoch, 1234.0);
+        assert_eq!(channels[0].0.name, "DM");
+        match &channels[0].0.position {
+            Position::StateVector { p, .. } => {
+                let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+                assert!((r - 1.0).abs() < 1e-12);
+            }
+            other => panic!("expected a state vector from RA/Dec, read {other:?}"),
+        }
+    }
+
+    #[test]
+    fn absent_cell_stays_absent_and_a_missing_dec_is_not_fabricated() {
+        let parsed =
+            blinkverse::parse_bin(&blinkverse::write_bin(&table())).expect("roundtrip parses");
+        let channels = blinkverse_frb_channels(&parsed, &[field("DM")], 0.0);
+        assert_eq!(channels.len(), 2);
+        assert!(matches!(channels[1].0.position, Position::Source));
+        assert!(channels.iter().all(|(c, _)| c.value.is_finite()));
     }
 }
