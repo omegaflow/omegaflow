@@ -1,0 +1,53 @@
+name: kaguya-lrs-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      dir:
+        description: PDS3 .lbl/.tbl directory to enumerate (Kaguya/SELENE LRS WAVEFORM)
+        required: false
+        type: string
+        default: https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/
+      force:
+        description: Re-manifest even when the LRS waveform assets are present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  kaguya-lrs:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the LRS WAVEFORM directory is already manifested
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view data.darts.isas.jaxa.jp --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^pds3_binary_lrs_sw_wf_00s_"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset pds3_binary_lrs_sw_wf_00s_* already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset pds3_binary_lrs_sw_wf_00s_* missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the Kaguya/SELENE LRS WAVEFORM tables to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin pds3_binary_compiler -- \
+            --dir "${{ inputs.dir }}" \
+            --ci-mode
