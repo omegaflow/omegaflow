@@ -96,16 +96,6 @@ url https://superdarn.usask.ca/convection-maps
 note SuperDARN Convection-Maps — 2026-10-09: HTTP 200 HTML-Landing, kein Daten-Endpoint; Konvektions-Potential via `superdarn_cpcp` gedeckt. Kein eigener Arm.
 
 blocked parser-def
-url http://themis.ssl.berkeley.edu/data/themis/
-gap themis-tail
-note THEMIS Tail (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
-
-blocked parser-def
-url https://lasp.colorado.edu/mms/sdc/public/
-gap mms-magnetosheath
-note MMS Magnetosheath (GIC-Mediator §B) — 2026-10-06: 200; kein Arm.
-
-blocked parser-def
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
 gap aurora-keogram
 note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Bild-Dekoder `keogram.rs` + Compiler `keogram_compiler.rs` gebaut (600×570, Spaltenmittel); Wire-Feld descoped (raw/relativ, FMI „not suitable"); offen: Quelle als Vision-Asset registrieren.
