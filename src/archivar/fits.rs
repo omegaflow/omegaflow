@@ -744,10 +744,10 @@ pub struct FitsCompressedImage {
     pub blank: Option<i64>,
     pub block: usize,
     pub bytepix: usize,
-    pub crpix1: f64,
-    pub crpix2: f64,
-    pub r_sun: f64,
-    pub datamean: f64,
+    pub crpix1: Option<f64>,
+    pub crpix2: Option<f64>,
+    pub r_sun: Option<f64>,
+    pub datamean: Option<f64>,
     pub totvals: usize,
     table: FitsTable,
 }
@@ -793,10 +793,10 @@ impl FitsCompressedImage {
         let zscale = header.f64("ZSCALE").unwrap_or(1.0);
         let zzero = header.f64("ZZERO").unwrap_or(FITS_ZERO_ABSENT);
         let blank = header.int("BLANK");
-        let crpix1 = header.f64("CRPIX1").unwrap_or(f64::NAN);
-        let crpix2 = header.f64("CRPIX2").unwrap_or(f64::NAN);
-        let r_sun = header.f64("R_SUN").unwrap_or(f64::NAN);
-        let datamean = header.f64("DATAMEAN").unwrap_or(f64::NAN);
+        let crpix1 = header.f64("CRPIX1");
+        let crpix2 = header.f64("CRPIX2");
+        let r_sun = header.f64("R_SUN");
+        let datamean = header.f64("DATAMEAN");
         let totvals = match header.int("TOTVALS") {
             Some(v) => v as usize,
             None => 0,

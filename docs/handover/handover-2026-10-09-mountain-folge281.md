@@ -3,7 +3,7 @@
   session: Mountain-Folge 281
   class: handover
   date: 2026-10-09
-  sha256: a177398667d5bba7ed497b53a749d4a9f14daadef5d950501e2bc776c4413278
+  sha256: 9d0b7021aa70b1f1110b26a20d37a4fcd93ed7c9f473923c5884e52bc10aea73
   status: live
 -->
 # Handover — Mountain-Folge 281 (2026-10-09)
@@ -71,12 +71,12 @@ Wort | Datum | Quelle
 - **Blockade:** die restlichen 1164 `no-terms`-Blöcke sind ein Sweep; 92 Blöcke ohne `format`/`origin` (kein Anker) + 81 Mehrfach-Host-Blöcke (Riss) offen.
 - **Braucht:** Rest-`terms` schreiben (Anchor fehlt für 92; 81 Mehrfach-Host-Blöcke per Hand auflösen); `license_census`/`ci-gate` nachführen.
 
-### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`) — 3 von 7 geheilt
+### Bias-Tor (`docs/auftrag/auftrag-bias-tilgung.md`) — 6 von 7 geheilt; 1 Receiver-Frage
 - **Status:** eigen | **Bindung:** eigen (Gate/Fixture)
-- **Trigger:** je Restkandidat Rat-Wort (Hart-Block vs. Review)
-- **Lage:** (gemessen 2026-10-09) **geheilt (diese Session):** `ck.rs:164` (Modulus-Default 1.0 → Block ohne `SCLK01_MODULI_` verworfen, `filter_map`), `gate/axioms.rs:6` (`unwrap_or_default` → `load → Option`, fehlende `granit.md` = keine System-Message statt leerem Axiom), `double.rs:167/170/173` (NaN-Datenmarker → `Option<f64>`; Konsument `infrared_anomaly_compiler.rs` druckt `absent`; Tests auf `Some`/`None`). **Zwei Fixtures ergänzt** (`commit_gate_vocab.json`): SCLK-`unwrap_or(1.0)`-Muster + `unwrap_or(f64::NAN)`. `cargo check` 0/0; `cargo build -p omegaflow-harvest --bin infrared_anomaly_compiler` grün. **Offen:** `channels.rs:119` (Receiver-Presence absent → Anker substituiert); `fits.rs:796-799` (CRPIx/R_SUN/DATAMEAN → NaN); `hdf5.rs:1965` (`scale_type` 2 default); `weberin.rs:1877-1879` (Winkel-Separationen → NaN). FITS-`BSCALE`/`TSCAL`-Default 1.0 ist FITS-Standardwert (kein Fix).
-- **Blockade:** Klassifikation Hart-Block (Fixture) vs. Review je Restkandidat = Rat.
-- **Braucht:** Rat-Wort je Restkandidat, dann Fix (Option statt NaN) oder Fixture + Gate-Test.
+- **Trigger:** Rat-Wort zu `channels.rs:119`
+- **Lage:** (gemessen 2026-10-09) **geheilt (diese Session):** `ck.rs:164` (Modulus-Default 1.0 → Block ohne `SCLK01_MODULI_` verworfen, `filter_map`), `gate/axioms.rs:6` (`unwrap_or_default` → `load → Option`, fehlende `granit.md` = keine System-Message statt leerem Axiom), `double.rs:167/170/173` (NaN-Datenmarker → `Option<f64>`; Konsument `infrared_anomaly_compiler.rs` druckt `absent`), `fits.rs:796-799` (CRPIx/R_SUN/DATAMEAN → `Option<f64>`; Konsument `aia_compiler` refused fehlende Geometrie statt NaN-Maske), `hdf5.rs:1965` (fehlender scale-offset-Parameter → `Err` statt Default `scale_type` 2), `weberin.rs:1877-1879` (Median-/Max-Separation → `GaiaFold::Unjudgeable` statt NaN). **Drei Fixtures ergänzt** (`commit_gate_vocab.json`): SCLK-`unwrap_or(1.0)`, `unwrap_or(f64::NAN)`, `cd_values…unwrap_or(2)`. `cargo check` 0/0; `infrared_anomaly_compiler` + `aia_compiler` bauen grün. **Offen:** `channels.rs:119` — `presence.unwrap_or((x, y, z))`, der Anker ist deklarierte `frame`-Daten; ob der Receiver bei fehlender Presence refused werden muss oder der deklarierte Frame trägt, ist eine Receiver-Semantik-Frage (nicht dieselbe Klasse wie ein NaN/Default). FITS-`BSCALE`/`TSCAL`-Default 1.0 ist FITS-Standardwert (kein Fix).
+- **Blockade:** `channels.rs:119` — Frame-vs-Presence-Semantik unentschieden.
+- **Braucht:** Rat-Wort zu `channels.rs:119` (deklarierter Frame trägt vs. Presence-Absence refused), dann Fix.
 
 ### HadISST SST — SOURCE_PORT gebaut, CI-Lauf offen
 - **Status:** eigen | **Bindung:** mycelium (CDN)
@@ -114,4 +114,4 @@ Origin: mountain-folge281.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (dieser Atom: `/commit`).
 
-Eigene Pfade: `src/archivar/ck.rs` · `src/archivar/double.rs` · `src/gate/axioms.rs` · `src/gate/commit_gate_vocab.json` · `tools/harvest/src/bin/infrared_anomaly_compiler.rs` · `phi/blocked_sources.φ` · `docs/handover/archiv/handover-2026-10-09-mountain-folge280.md` · `docs/handover/handover-2026-10-09-mountain-folge281.md`.
+Eigene Pfade: `src/archivar/ck.rs` · `src/archivar/double.rs` · `src/archivar/fits.rs` · `src/archivar/hdf5.rs` · `src/weberin.rs` · `src/gate/axioms.rs` · `src/gate/commit_gate_vocab.json` · `tools/harvest/src/bin/infrared_anomaly_compiler.rs` · `tools/harvest/src/bin/aia_compiler.rs` · `phi/blocked_sources.φ` · `docs/handover/archiv/handover-2026-10-09-mountain-folge280.md` · `docs/handover/handover-2026-10-09-mountain-folge281.md`.

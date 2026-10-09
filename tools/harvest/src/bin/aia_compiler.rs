@@ -280,7 +280,11 @@ fn full_disk_verify(bytes: &[u8]) -> Option<(f64, f64, usize)> {
     if img.dims[0] == 0 || img.dims[1] == 0 {
         return None;
     }
-    let r2 = img.r_sun * img.r_sun;
+    let r_sun = img.r_sun?;
+    let crpix1 = img.crpix1?;
+    let crpix2 = img.crpix2?;
+    let datamean = img.datamean?;
+    let r2 = r_sun * r_sun;
     if !r2.is_finite() || r2 <= 0.0 {
         return None;
     }
@@ -288,9 +292,9 @@ fn full_disk_verify(bytes: &[u8]) -> Option<(f64, f64, usize)> {
     let mut n = 0usize;
     for y in 0..img.dims[1] {
         let row = img.tile_pixels(bytes, [0, y, 0])?;
-        let dy = y as f64 + 1.0 - img.crpix2;
+        let dy = y as f64 + 1.0 - crpix2;
         for x in 0..img.dims[0] {
-            let dx = x as f64 + 1.0 - img.crpix1;
+            let dx = x as f64 + 1.0 - crpix1;
             if dx * dx + dy * dy > r2 {
                 continue;
             }
@@ -305,7 +309,7 @@ fn full_disk_verify(bytes: &[u8]) -> Option<(f64, f64, usize)> {
     if n == 0 {
         return None;
     }
-    Some((sum, img.datamean, img.totvals))
+    Some((sum, datamean, img.totvals))
 }
 
 fn region_verify(bytes: &[u8], cx: f64, cy: f64, r: f64) -> Option<(f64, usize)> {
@@ -314,13 +318,15 @@ fn region_verify(bytes: &[u8], cx: f64, cy: f64, r: f64) -> Option<(f64, usize)>
     if img.dims[0] == 0 || img.dims[1] == 0 {
         return None;
     }
+    let crpix1 = img.crpix1?;
+    let crpix2 = img.crpix2?;
     let mut sum = 0.0;
     let mut n = 0usize;
     for y in 0..img.dims[1] {
         let row = img.tile_pixels(bytes, [0, y, 0])?;
-        let dy = y as f64 + 1.0 - img.crpix2 - cy;
+        let dy = y as f64 + 1.0 - crpix2 - cy;
         for x in 0..img.dims[0] {
-            let dx = x as f64 + 1.0 - img.crpix1 - cx;
+            let dx = x as f64 + 1.0 - crpix1 - cx;
             if dx * dx + dy * dy > r * r {
                 continue;
             }
