@@ -622,6 +622,7 @@ field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
 field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_fgm_b_gse_srvy_l2_clean&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at earth
 hapi mms1_fgm_b_gse_srvy_l2_clean.0=mms1_fgm_bx_gse_nt mms1_fgm_b_gse_srvy_l2_clean.1=mms1_fgm_by_gse_nt mms1_fgm_b_gse_srvy_l2_clean.2=mms1_fgm_bz_gse_nt
@@ -630,6 +631,7 @@ field mms1_fgm_by_gse_nt mms1_fgm_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field mms1_fgm_bz_gse_nt mms1_fgm_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at sun
 hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt Pressure1800=omni_solarwind_pressure_npa
@@ -642,6 +644,7 @@ field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at parker_solar_probe
 hapi BR=psp_imf_br_rtn_nt BT=psp_imf_bt_rtn_nt BN=psp_imf_bn_rtn_nt B=psp_imf_bmag_nt ProtonSpeed=psp_solarwind_flow_speed_kms protonDensity=psp_solarwind_density_percc protonTemp=psp_solarwind_temp_k
@@ -654,6 +657,7 @@ field psp_solarwind_density_percc psp_solarwind_density_percc gaussian-inverse-s
 field psp_solarwind_temp_k psp_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=psp_fld_l2_mag_RTN&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at parker_solar_probe
 hapi psp_fld_l2_mag_RTN.0=psp_fld_br_rtn_nt psp_fld_l2_mag_RTN.1=psp_fld_bt_rtn_nt psp_fld_l2_mag_RTN.2=psp_fld_bn_rtn_nt
@@ -662,6 +666,7 @@ field psp_fld_bt_rtn_nt psp_fld_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
 field psp_fld_bn_rtn_nt psp_fld_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=np_moment_gd,wp_moment_gd&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at parker_solar_probe
 hapi np_moment_gd=psp_proton_density_percc wp_moment_gd=psp_proton_thermal_speed_kms
@@ -669,12 +674,14 @@ field psp_proton_density_percc psp_proton_density_percc gaussian-inverse-square 
 field psp_proton_thermal_speed_kms psp_proton_thermal_speed_kms exponential-decay thermal km/s 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=SN_RMS_E&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at solar_orbiter
 hapi SN_RMS_E=solo_rpw_e_rms_vm
 field solo_rpw_e_rms_vm solo_rpw_e_rms_vm inverse-square electric V/m 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THA_L2_FGM@0&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=tha_fgs_btotal,tha_fgs_gse&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at earth
 hapi tha_fgs_btotal=tha_fgs_btotal_nt tha_fgs_gse.0=tha_fgs_bx_gse_nt tha_fgs_gse.1=tha_fgs_by_gse_nt tha_fgs_gse.2=tha_fgs_bz_gse_nt
@@ -684,6 +691,7 @@ field tha_fgs_by_gse_nt tha_fgs_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_bz_gse_nt tha_fgs_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at sun
 hapi BGSE.0=wind_mfi_bx_gse_nt BGSE.1=wind_mfi_by_gse_nt BGSE.2=wind_mfi_bz_gse_nt
@@ -692,6 +700,7 @@ field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 no-cadence
 at sun
 hapi Te=wind_swe_te_k el_bulk_vel_magn=wind_swe_el_bulk_vel_magn_kms el_density=wind_swe_el_density_cm3
@@ -1217,6 +1226,7 @@ field properties.mag tohoku_quake_magnitude gaussian-inverse-square seismic-body
 field properties.depth tohoku_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
+terms PD https://ssd.jpl.nasa.gov/
 ttl 3600
 at earth
 map data
@@ -1728,6 +1738,7 @@ field poes19_meped_ele_flux poes19_meped_ele_flux inverse-square em pfu 86400 0.
 field poes19_meped_pro_p6_flux poes19_meped_pro_p6_flux inverse-square em pfu 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/ssusi_aurora.bin
+terms PD https://cdaweb.gsfc.nasa.gov/
 format ssusi_aurora
 origin https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf16/ssusi/data/edr-aurora/
 compiler tools/harvest/src/bin/ssusi_compiler.rs
@@ -1745,6 +1756,7 @@ at earth
 field tec ionex_tec inverse-square em tecu 7200 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_des_y6
 origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/258/41/catalog.dat
 compiler tools/harvest/src/bin/des_y6_compiler.rs
@@ -1752,6 +1764,7 @@ at sun
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_ossos
 origin procedure: fixed-width t3char.dat (CDS J/ApJS/236/18), CDN tag cdsarc.cds.unistra.fr
 compiler tools/harvest/src/bin/ossos_compiler.rs
@@ -1832,6 +1845,7 @@ field EWCT emodnet_hfr_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field NSCT emodnet_hfr_northward_m_s patch-levy advective m/s 21600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/exofop_toi.bin
+terms PD https://exofop.ipac.caltech.edu/
 format exofop_toi
 origin https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
 compiler tools/harvest/src/bin/exofop_compiler.rs
@@ -4111,6 +4125,7 @@ lon Longitude
 field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at earth
 hapi thg_magh_abk=themis_gmag_h_nt thg_magd_abk=themis_gmag_e_nt thg_magz_abk=themis_gmag_z_nt
@@ -8006,6 +8021,7 @@ at sun
 ttl 86400
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
+terms PD https://ned.ipac.caltech.edu/
 format tap
 ttl 86400
 at sun
@@ -8143,6 +8159,7 @@ sha256 0a8479226fd0f4474068c2aa68afebfb2c4f517cb412c2724180ba2aa2fe7393
 ttl 86400
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
 at sun
 cmap .
@@ -8153,6 +8170,7 @@ dist_scale 3.085677581e19
 field S1400 atnf_pulsar_flux_1400mhz_mjy inverse-square em mJy 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Speak,Sint+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
 at sun
 cmap .
@@ -8162,6 +8180,7 @@ field Speak cornish_peak_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
 field Sint cornish_integrated_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+"VIII/92/first14"+WHERE+RAJ2000+IS+NOT+NULL
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
 at sun
 cmap .
@@ -8171,6 +8190,7 @@ field Fpeak first_radio_peak_flux_mjy inverse-square em mJy 86400 0.0 0.0
 field Fint first_radio_integrated_flux_mjy inverse-square em mJy 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
 at sun
 cmap .
@@ -8183,6 +8203,7 @@ field W1mag hecate_w1_3_4um_mag gaussian-inverse-square em mag 86400 0.0 0.0
 field W2mag hecate_w2_4_6um_mag gaussian-inverse-square em mag 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,VarType,magMax,Min1+FROM+"B/gcvs/gcvs_cat"+WHERE+RAJ2000+IS+NOT+NULL
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
 at sun
 cmap .
@@ -8192,6 +8213,7 @@ field magMax gcvs_max_magnitude gaussian-inverse-square em mag 86400 0.0 0.0
 field Min1 gcvs_min1_magnitude gaussian-inverse-square em mag 86400 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
 at sun
 cmap .
@@ -9913,6 +9935,7 @@ field 2 smartbay_ctd_conductivity_s_m inverse-square electric S/m 604800 0.0 0.0
 field 3 smartbay_ctd_salinity_psu gaussian-inverse-square diffusion PSU 604800 0.0 0.0
 
 url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+terms PD https://exoplanetarchive.ipac.caltech.edu/
 ttl 604800
 at sun
 cmap .
@@ -10132,6 +10155,7 @@ field copernicus_wind_from_direction copernicus_wind_from_direction gaussian-inv
 field copernicus_wind_speed copernicus_wind_speed gaussian-inverse-square advective m/s 21600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/frb_chime_cat1.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/257/59/table2.dat
 compiler tools/harvest/src/bin/frb_compiler.rs
 format json
@@ -10332,6 +10356,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/magnetar_flat.json
+terms PD https://exofop.ipac.caltech.edu/
 origin https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
@@ -10345,6 +10370,7 @@ z z
 field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin
+terms PD https://exofop.ipac.caltech.edu/
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync (pscomppars) ; https://mast.stsci.edu/api/v0/invoke
 compiler tools/harvest/src/bin/tess_compiler.rs
 format lightcurve
@@ -10352,6 +10378,7 @@ ttl 604800
 at sun
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tevcat_flat.json
+terms PD https://exofop.ipac.caltech.edu/
 origin https://tevcat2.tevcat.org/api/sources ; https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
@@ -10365,6 +10392,7 @@ z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/curated48_spectra.bin
+terms PD https://exoplanetarchive.ipac.caltech.edu/
 format jwst_spectra
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
@@ -10441,6 +10469,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/ams02_spec.bin
+terms PD https://heasarc.gsfc.nasa.gov/
 format ams02_spec
 origin https://heasarc.gsfc.nasa.gov/FTP/heasarc/dbase/tdat_files/heasarc_ams02spec.tdat.gz
 compiler tools/harvest/src/bin/ams02_tdat_compiler.rs
@@ -10495,6 +10524,7 @@ field ams02_sulfur_energy_min_gev ams02_sulfur_energy_min_gev inverse-square em 
 field ams02_sulfur_rigidity_min_gv ams02_sulfur_rigidity_min_gv inverse-square em GV 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/drs_20160102_093513__20160103_165224.bin
+terms PD https://heasarc.gsfc.nasa.gov/
 format drs_fits
 origin https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
 compiler tools/harvest/src/bin/drs_fits_compiler.rs
@@ -10672,6 +10702,7 @@ dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-byparams/ned_byparams_redshift.json
+terms PD https://ned.ipac.caltech.edu/
 origin https://ned.ipac.caltech.edu/byparams
 compiler tools/harvest/src/bin/ned_byparams_compiler.rs
 ttl 604800
@@ -10683,6 +10714,7 @@ z z
 field z ned_byparams_redshift_z inverse-linear em 1 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-ned/ned.json
+terms PD https://ned.ipac.caltech.edu/
 origin https://ned.ipac.caltech.edu/NED::API/ConeSearchByPosition
 compiler tools/harvest/src/bin/ned_cone_compiler.rs
 ttl 604800
@@ -18953,6 +18985,7 @@ quantity supermag_sml_nt supermag_sml_nt inverse-square index nt 60 0.0 0.0
 quantity supermag_smu_nt supermag_smu_nt inverse-square index nt 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync tables=VII/110A/table3,VII/110A/table4
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -18963,6 +18996,7 @@ dec dec
 z z
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/avo_rad.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/avo.rad/catalog
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -18974,6 +19008,7 @@ z z
 field flux avo_vflux gaussian-inverse-square em Jy 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/bzcat5.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=VII/274/bzcat5
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -18985,6 +19020,7 @@ z z
 field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0 aperture:flux
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cbdata.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/cb/cbdata
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19004,6 +19040,7 @@ field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 field m2 cb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/chandra_csc.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=IX/70/csc21mas
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19015,6 +19052,7 @@ z z
 field flux chandra_csc_flux_ergcm2_s gaussian-inverse-square em erg/cm2/s 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/corot.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/corot/Bright_star
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19034,6 +19072,7 @@ field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg corot_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/ApJ/944/94/table2
 compiler tools/harvest/src/bin/cosmicflows_compiler.rs
 sha256 07c7ebc8fb48d3f473c171712f828b3b2211032860215c63001e5fd69cb2884b
@@ -19047,6 +19086,7 @@ dist_scale 3.085677581e22
 field vpec cosmicflows_vpec gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/exoplanets.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync table=pscomppars
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19060,6 +19100,7 @@ field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frb_a279.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/693/A279/frbs
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19072,6 +19113,7 @@ field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0 aperture:none
 field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frbcat_flat.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/other/PASA/33.45/frbcat
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19084,6 +19126,7 @@ field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0 aperture:none
 field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/gcvs_cat.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/gcvs/gcvs_cat
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19102,6 +19145,7 @@ field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/harps_rvcat.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://archive.eso.org/tap_cat/sync table=safcat.HARPS_RVCAT_V1
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19115,6 +19159,7 @@ rv_scale 1000.0
 field rv harps_rv_km_s gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/lmxbdata.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/cb/lmxbdata
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19134,6 +19179,7 @@ field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 field m2 lmxb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/mcxc_clusters.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/534/A109/mcxc
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19144,6 +19190,7 @@ dec dec
 z z
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/merlin.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/merlin/merlin
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19161,6 +19208,7 @@ field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/polarbase.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/polarbase/polarbase
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19180,6 +19228,7 @@ field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/psr.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/psr/psr
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19199,6 +19248,7 @@ field dm_unc pulsar_dm_unc_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/psz2_clusters.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/594/A27/psz2
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19209,6 +19259,7 @@ dec dec
 z z
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/sb9.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/sb9/main
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19227,6 +19278,7 @@ field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/sncat.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/sn/sncat
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19239,6 +19291,7 @@ z z
 field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/swiftgrb.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync table=swiftgrb
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19250,6 +19303,7 @@ z z
 field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/twomrs.bin
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format twomrs
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 compiler tools/harvest/src/bin/twomrs_compiler.rs
@@ -19258,6 +19312,7 @@ at sun
 field cz twomrs_cz_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/vsx.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/vsx/vsx
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19277,6 +19332,7 @@ field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field period vsx_period_d gaussian-inverse-square em d 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/wd.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/wd/catalog
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19311,6 +19367,7 @@ field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0
 field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/denis.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/denis/denis
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19329,6 +19386,7 @@ field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/extinction_curves.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJ/663/320/stars&-out.all
 compiler tools/harvest/src/bin/extinction_curves_compiler.rs
 ttl 604800
@@ -19342,6 +19400,7 @@ field ebv extinction_ebv_mag inverse-square em mag 604800 0.0 0.0
 field e_ebv extinction_ebv_unc_mag inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/mktypes.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/mk/mktypes
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19359,6 +19418,7 @@ dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/pastel.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/pastel/pastel
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19378,6 +19438,7 @@ field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/wds.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=B/wds/wds
 compiler tools/harvest/src/bin/tap_compiler.rs
 ttl 604800
@@ -19942,11 +20003,13 @@ field cz sdss_specobj_cz_kms inverse-square advective km/s 604800 0.0 0.0
 field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format tap
 ttl 604800
 at sun
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+RAJ2000,DEJ2000,UD,LD,Plx+FROM+%22J/A%2BA/431/773/charm2%22+WHERE+Method=%27LO%27
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
 format tap
 at sun
@@ -19958,6 +20021,7 @@ field UD charm2_ud_mas inverse-square gravity mas 604800 0.0 0.0
 field LD charm2_ld_mas inverse-square gravity mas 604800 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
 at sun
 cmap .
@@ -19987,6 +20051,7 @@ epoch 0
 field 3 uhslc_sea_level_mm inverse-square gravity mm 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
 format asu-tsv
 at sun
@@ -19996,6 +20061,7 @@ dec _DEJ2000
 field LDD jsdc_ldd_mas inverse-square gravity mas 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/633/A99/members&-out.max=100000
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
 format asu-tsv
 at sun
@@ -20010,6 +20076,7 @@ field Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square em mag 604800 0.0 0
 field BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
 format asu-tsv
 at sun
@@ -20022,6 +20089,7 @@ field Teffs rave_dr6_teffs_sparv gaussian-inverse-square thermal K 604800 0.0 0.
 field Teffir rave_dr6_teff_irfm gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/598/A78&-out.max=623604&-out.all
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
 format asu-tsv
 at sun
@@ -20071,6 +20139,7 @@ dec DEC_Source
 field Total_flux_source vlass_ql_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://xcatdb.unistra.fr/xtapdb/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,sc_flux+FROM+public.mergedentry+WHERE+sc_flux+IS+NOT+NULL
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format tap
 ttl 604800
 at sun
@@ -20144,6 +20213,7 @@ ttl 2592000
 field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
+terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
 format tap
 ttl 31536000
 at sun
@@ -20153,6 +20223,7 @@ dec dec
 field ksmag vhs_ks_mag inverse-square em mag 31536000 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+safcat.viking_er5_zyjj_1j_2hks_catMetaData_fits_V4+WHERE+KSPETROMAG+IS+NOT+NULL
+terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
 format tap
 ttl 31536000
 at sun
@@ -20212,11 +20283,13 @@ field mean_mag_i decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
 field mean_mag_z decaps_dr2_z_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archive.eso.org/tap_cat-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RA2000_AS_ra_DEC2000_AS_dec_KSPETROMAG_AS_ksmag_FROM_VHS_CAT_V3_WHERE_KSPETROMAG_IS_NOT_NULL.json
+terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
 format reference
 origin https://archive.eso.org
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/archive.eso.org/tap_cat-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RA2000_AS_ra_DEC2000_AS_dec_KSPETROMAG_AS_ksmag_FROM_safcat.viking_er5_zyjj_1j_2hks_catMetaData_fits_V4_WHERE_KSPETROMAG_IS_NOT_NULL.json
+terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
 format reference
 origin https://archive.eso.org
 ttl 31536000
@@ -20674,6 +20747,7 @@ origin https://eas.esac.esa.int
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_ra_dec_sy_dist_st_teff_FROM_stellarhosts_WHERE_ra_IS_NOT_NULL_AND_st_teff_IS_NOT_NULL.json
+terms PD https://exoplanetarchive.ipac.caltech.edu/
 format reference
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
 ttl 31536000
@@ -27282,6 +27356,7 @@ ttl 31536000
 field goes_euvs_lya1216 goes_euvs_lya1216 inverse-square em wm2_1au 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_ra_dec_z_prefname_type_key_n_spectra_FROM_NEDTAP.objdir_WHERE_z__3E_0.json
+terms PD https://ned.ipac.caltech.edu/
 format reference
 origin https://ned.ipac.caltech.edu
 ttl 31536000
@@ -27350,46 +27425,55 @@ ttl 31536000
 field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_MPC_massINPOP25c_sigmaINPOP25c_FROM__22J-A_2BA-705-A189-tablea1_22.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_RAJ2000_DEJ2000_UD_LD_Plx_FROM__22J-A_2BA-431-773-charm2_22_WHERE_Method-_27LO_27.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+RAJ2000,DEJ2000,UD,LD,Plx+FROM+%22J/A%2BA/431/773/charm2%22+WHERE+Method=%27LO%27
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_Name_RAJ2000_DEJ2000_Dist_S1400_FROM__J-ApJS-208-17-psrcat__WHERE_RAJ2000_IS_NOT_NULL_ORDER_BY_S1400_DESC.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_Name_RAJ2000_DEJ2000_Speak_Sint_FROM__J-ApJS-205-1-catalog__WHERE_RAJ2000_IS_NOT_NULL_AND_Speak_1_ORDER_BY_Speak_DESC.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_Fpeak_Fint_FROM__VIII-92-first14__WHERE_RAJ2000_IS_NOT_NULL.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_HRV_D_W1mag_W2mag_FROM__J-MNRAS-506-1896-hecate__WHERE_RAJ2000_IS_NOT_NULL.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_2000_RAJ2000_DEJ2000_VarType_magMax_Min1_FROM__B-gcvs-gcvs_cat__WHERE_RAJ2000_IS_NOT_NULL.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_RAJ2000_DEJ2000_Teff_Jmag_Hmag_Ksmag_FROM__22III-286-catalog_22.json
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_charm2
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/charm2 JOIN I/355/gaiadr3, DISTANCE < 2")
 compiler tools/harvest/src/bin/charm2_compiler.rs
@@ -27399,6 +27483,7 @@ field UD charm2_ud_mas inverse-square gravity mas 31536000 0.0 0.0
 field LD charm2_ld_mas inverse-square gravity mas 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/ariel_j.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/ariel_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
@@ -27407,6 +27492,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/miran_j.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/miran_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
@@ -27415,6 +27501,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/obero_j.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/obero_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
@@ -27423,6 +27510,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/sosb_lucky_star.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://occultations.ct.utfpr.edu.br/api/events?pageSize=100&page=1
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
@@ -27431,6 +27519,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/titan_j.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/titan_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
@@ -27439,6 +27528,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/umbri_j.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://vizier.cfa.harvard.edu/viz-bin/asu-tsv?-source=J/A+A/582/A8/umbri_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
@@ -27447,6 +27537,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/uranu_j.ast1
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 format astrometry_series
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/582/A8/uranu_j&-out.max=100000
 compiler tools/harvest/src/bin/astrometry_series_compiler.rs
