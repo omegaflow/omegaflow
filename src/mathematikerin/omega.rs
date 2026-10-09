@@ -363,8 +363,10 @@ impl OmegaLoop {
             self.field_permeability[k] * self.tone_scale
         }));
         let state = aperture_state(&aperture);
+        let registry = super::channel::live_channel_registry();
         PresenceFrame {
-            n: 9,
+            n: registry.len() as u16,
+            schema_hash: registry.schema_hash(),
             omega,
             aperture,
             state,
