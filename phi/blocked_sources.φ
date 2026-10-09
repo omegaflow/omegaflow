@@ -99,7 +99,7 @@ note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamiks
 
 pending
 url https://geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json
-note USGS E-Feld mV/km (GIC §A) — 2026-10-09: id=BOU&elements=E-E,E-N HTTP 206; Rat+6 Frontier einstimmig D: usgs_geomag_compiler.rs (state/stimmen/2026-10-09-mountain-usgs-extrakt-arm.md); Magnetik declined_sources.φ:2176.
+note USGS E-Feld mV/km (GIC §A) — 2026-10-09: id=BOU&elements=E-E,E-N HTTP 206; Rat+7 Frontier einstimmig D: usgs_geomag_compiler.rs (state/stimmen/2026-10-09-mountain-usgs-extrakt-arm.md); Magnetik declined_sources.φ:2176.
 
 pending
 url https://github.com/TIAN-we/petrel19
