@@ -95,9 +95,9 @@ ausstehend
 kandidat https://www.gosat-gw.nies.go.jp
 note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132/GWT3W_L1B 434 B, Probe HDF5 17440691 B; Compiler+WF stehen; 2026-10-09: CI 36283215548 stale, Defekt in 5215745f7+f6fdfd1a3 behoben.
 
-ausstehend
+disponiert
 kandidat https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa HAPI 1.1 CSV — 2026-10-09: 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml stehen; origin sources.φ:17952. Feld-Verdikt gefallen (mountain-285): Block trägt hapi_csv_*_nt (em nT). Dispatch 37955273716 (idempotent).
+note DAS2 Iowa HAPI 1.1 CSV — 2026-10-09: 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml; origin sources.φ:19226; Feld mountain-285 hapi_csv_*_nt (em nT); Lauf 37955273716 success; Asset sources.φ:19223.
 
 disponiert
 kandidat https://moon.bao.ac.cn/
@@ -155,9 +155,9 @@ disponiert
 kandidat https://cdaw.gsfc.nasa.gov/CME_list/
 note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-09: Lauf 37778516294 success; soho_lasco_cme.bin 11009 B manifestiert (sources.φ:20511-20523).
 
-ausstehend
+disponiert
 kandidat https://wdc.kugi.kyoto-u.ac.jp/
-note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-09: Daten-Endpoint /hapi/data?id=min_ae 200 (54883 B); wdc_ae_compiler.rs + wdc-ae-cdn.yml stehen; Dispatch 37955268834.
+note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-09: /hapi/data?id=min_ae 200 (54883 B); wdc_ae_compiler.rs + wdc-ae-cdn.yml; Lauf 37956875278 success; wdc_ae.bin manifestiert (sources.φ:4329).
 
 disponiert
 kandidat https://superdarn.usask.ca/convection-maps

@@ -86,6 +86,33 @@ poll_once() {
     mark "$id"
   done
 
+  # 2b. queued `ci-gate` run of a superseded SHA: its workflow concurrency is
+  #     per-SHA (ci-gate-${{ github.sha }}), so a newer push never evicts an
+  #     older SHA's waiting run — it waits for nothing and only saturates the
+  #     ubuntu queue (measured 2026-10-09: 22 queued runs, ~6 jobs each). The
+  #     tip is read once from the remote; a queued ci-gate run whose head_sha
+  #     differs is cancelled. Its per-SHA verdict stays `pending` in the local
+  #     register (ci_gate_register reads the cancelled run as pending, never
+  #     fabricated green). Only `ci-gate` is cancelled here — other workflows
+  #     have real work and are left waiting.
+  tip=$(git ls-remote origin -h refs/heads/main 2>/dev/null | awk '{print $1}')
+  if [ -n "$tip" ]; then
+    printf '%s\n' "$rows" | awk -F'\t' '$2=="queued" && $5=="ci-gate"{print $1}' |
+    while IFS= read -r id; do
+      [ -n "$id" ] || continue
+      seen "$id" && continue
+      sha=$($CI view "$id" 2>/dev/null | awk -F': ' '/^head_sha:/{print $2}')
+      [ -n "$sha" ] || continue
+      if [ "$sha" != "$tip" ]; then
+        log "cancel queued ci-gate $id ($sha != tip $tip)"
+        $CI cancel "$id" >>"$LOG" 2>&1
+      fi
+      mark "$id"
+    done
+  else
+    log "tip void — git ls-remote origin answered void; queued ci-gate left alone"
+  fi
+
   # 3. rerun: a failure at attempt 1 with a measured transient cause only —
   #    never an assertion (red is the null holding not), never a cap class.
   printf '%s\n' "$rows" | awk -F'\t' '$3=="failure" && $4=="1"{print $1"\t"$5}' |
