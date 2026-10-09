@@ -80,6 +80,96 @@ pub enum Domain {
     Sphere = 4,
 }
 
+impl Conserved {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "mass" => Some(Conserved::Mass),
+            "momentum" => Some(Conserved::Momentum),
+            "energy" => Some(Conserved::Energy),
+            "charge" => Some(Conserved::Charge),
+            _ => None,
+        }
+    }
+}
+
+impl QuantityRole {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "primary" => Some(QuantityRole::Primary),
+            "derived" => Some(QuantityRole::Derived),
+            "geometry" => Some(QuantityRole::Geometry),
+            "source-parameter" => Some(QuantityRole::SourceParameter),
+            _ => None,
+        }
+    }
+}
+
+impl PdeType {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "elliptic" => Some(PdeType::Elliptic),
+            "parabolic" => Some(PdeType::Parabolic),
+            "hyperbolic" => Some(PdeType::Hyperbolic),
+            "advective" => Some(PdeType::Advective),
+            "mixed" => Some(PdeType::Mixed),
+            _ => None,
+        }
+    }
+}
+
+impl TransportOp {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "flux-fick" => Some(TransportOp::Flux(FluxKind::Fick)),
+            "flux-fourier" => Some(TransportOp::Flux(FluxKind::Fourier)),
+            "flux-ohm" => Some(TransportOp::Flux(FluxKind::Ohm)),
+            "flux-newton-viscous" => Some(TransportOp::Flux(FluxKind::NewtonViscous)),
+            "advective" => Some(TransportOp::Advective),
+            "wave" => Some(TransportOp::Wave),
+            "poisson" => Some(TransportOp::Poisson),
+            "maxwell" => Some(TransportOp::Maxwell),
+            _ => None,
+        }
+    }
+}
+
+impl Medium {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "vacuum" => Some(Medium::Vacuum),
+            "fluid" => Some(Medium::Fluid),
+            "elastic-solid" => Some(Medium::ElasticSolid),
+            _ => None,
+        }
+    }
+}
+
+impl Domain {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "unspecified" => Some(Domain::Unspecified),
+            "line" => Some(Domain::Line),
+            "rectangle" => Some(Domain::Rectangle),
+            "circle" => Some(Domain::Circle),
+            "sphere" => Some(Domain::Sphere),
+            _ => None,
+        }
+    }
+}
+
+impl Boundary {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "none" => Some(Boundary::None),
+            "free-surface" => Some(Boundary::FreeSurface),
+            "dirichlet" => Some(Boundary::Dirichlet),
+            "neumann" => Some(Boundary::Neumann),
+            "robin" => Some(Boundary::Robin),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct ChannelDescriptor {
     pub conserved: Conserved,
@@ -130,6 +220,35 @@ impl ChannelDescriptor {
         h = fnv1a(&[self.medium as u8], h);
         h = fnv1a(&[self.domain as u8], h);
         fnv1a(&[self.boundary as u8], h)
+    }
+
+    pub fn parse_spec(spec: &str, unit: &'static str) -> Result<Self, String> {
+        let t: Vec<&str> = spec.split(':').collect();
+        if t.len() != 7 {
+            return Err(format!(
+                "channel spec needs 7 axes conserved:role:op:pde_type:medium:domain:boundary, got {}",
+                t.len()
+            ));
+        }
+        let conserved =
+            Conserved::parse(t[0]).ok_or_else(|| format!("unknown conserved \"{}\"", t[0]))?;
+        let role = QuantityRole::parse(t[1]).ok_or_else(|| format!("unknown role \"{}\"", t[1]))?;
+        let op = TransportOp::parse(t[2]).ok_or_else(|| format!("unknown op \"{}\"", t[2]))?;
+        let pde_type =
+            PdeType::parse(t[3]).ok_or_else(|| format!("unknown pde_type \"{}\"", t[3]))?;
+        let medium = Medium::parse(t[4]).ok_or_else(|| format!("unknown medium \"{}\"", t[4]))?;
+        let domain = Domain::parse(t[5]).ok_or_else(|| format!("unknown domain \"{}\"", t[5]))?;
+        let boundary =
+            Boundary::parse(t[6]).ok_or_else(|| format!("unknown boundary \"{}\"", t[6]))?;
+        if !is_admissible(conserved, op, medium) {
+            return Err(format!(
+                "inadmissible channel {}/{}/{} is not in the admissibility relation",
+                t[0], t[2], t[4]
+            ));
+        }
+        Ok(ChannelDescriptor::new(
+            conserved, role, op, pde_type, medium, domain, boundary, unit,
+        ))
     }
 }
 
@@ -1073,5 +1192,71 @@ mod tests {
     fn a_wave_without_a_speed_carries_no_pitch() {
         assert!(mode_frequency_hz(TransportOp::Wave, 0.0, 1.0).is_none());
         assert!(mode_frequency_hz(TransportOp::Wave, f64::NAN, 1.0).is_none());
+    }
+
+    #[test]
+    fn a_parsed_channel_spec_meets_the_forced_descriptor() {
+        let gravity = ChannelDescriptor::parse_spec(
+            "mass:primary:poisson:elliptic:vacuum:unspecified:none",
+            "m/s^2",
+        )
+        .expect("gravity spec parses");
+        assert_eq!(
+            gravity.hash(),
+            descriptor_for_force("gravity", Medium::Vacuum)
+                .expect("gravity descriptor")
+                .hash()
+        );
+
+        let em = ChannelDescriptor::parse_spec(
+            "energy:primary:maxwell:mixed:vacuum:unspecified:none",
+            "V/m",
+        )
+        .expect("em spec parses");
+        assert_eq!(
+            em.hash(),
+            descriptor_for_force("em", Medium::Vacuum)
+                .expect("em descriptor")
+                .hash()
+        );
+
+        let seismic = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:elastic-solid:unspecified:none",
+            "Pa",
+        )
+        .expect("seismic spec parses");
+        assert_eq!(
+            seismic.hash(),
+            descriptor_for_force("seismic-body", Medium::ElasticSolid)
+                .expect("seismic descriptor")
+                .hash()
+        );
+    }
+
+    #[test]
+    fn a_channel_spec_with_an_unknown_token_is_refused() {
+        let err = ChannelDescriptor::parse_spec(
+            "mass:primary:poisson:elliptic:aether:unspecified:none",
+            "m/s^2",
+        )
+        .expect_err("aether is not a medium");
+        assert!(err.contains("aether"), "the refused token is named: {err}");
+
+        let arity = ChannelDescriptor::parse_spec("mass:poisson:vacuum", "m/s^2")
+            .expect_err("a partial spec is refused");
+        assert!(arity.contains("7 axes"), "the arity is named: {arity}");
+    }
+
+    #[test]
+    fn an_inadmissible_channel_spec_is_refused() {
+        let err = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fourier:parabolic:fluid:unspecified:none",
+            "K",
+        )
+        .expect_err("Fourier carries energy, not mass");
+        assert!(
+            err.contains("inadmissible"),
+            "the refusal names the relation: {err}"
+        );
     }
 }
