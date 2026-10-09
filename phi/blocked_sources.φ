@@ -83,10 +83,6 @@ pending
 url https://www.ieeg.org
 note ieeg.org — 2026-10-04: REST ohne Elektroden-Koordinaten (kein MNI); /api 503; Bau-Schritt = BIDS-Sidecar `*_electrodes.tsv` (`src/archivar/electrodes.rs`); ds003844 x=y=z=0.
 
-blocked account
-url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — 2026-10-08 re-measured: landing HTTP 200 (15360 B); data via NEDC account (form sent, wartend.φ:36/:37); electrode doc label/text only (Ferrell 2020, no coordinates). State descoped→blocked account (UI-Runde 2026-10-08).
-
 pending
 url https://superdarn.usask.ca/convection-maps
 note SuperDARN Convection-Maps — 2026-10-09: HTTP 200 HTML-Landing, kein Daten-Endpoint; Konvektions-Potential via `superdarn_cpcp` gedeckt. Kein eigener Arm.
