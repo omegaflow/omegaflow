@@ -5876,3 +5876,7 @@ decline redistribution
 url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
 note CASDC — 2026-10-09: „© National Astronomical Observatories, CAS"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
 
+decline image
+url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
+note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Wire-Feld descoped (raw/relativ 8-Bit-Spaltenmittel, kein SI-Wert/force_type) = Bildprodukt, kein Feld; Präzedenz `image`/`image-survey`/`imagery`. Rat + 6 UI-Seats einstimmig decline.
+
