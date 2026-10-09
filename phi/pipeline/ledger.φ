@@ -97,11 +97,11 @@ note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132/GWT3W_L1B 434 B, Probe
 
 ausstehend
 kandidat https://planet.physics.uiowa.edu/das/das2Server/hapi
-note DAS2 Iowa HAPI 1.1 CSV — 2026-10-09: 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml stehen; origin sources.φ:17952. Feld-Verdikt gefallen (mountain-285): Block trägt hapi_csv_*_nt (em nT); Note geschlossen.
+note DAS2 Iowa HAPI 1.1 CSV — 2026-10-09: 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml stehen; origin sources.φ:17952. Feld-Verdikt gefallen (mountain-285): Block trägt hapi_csv_*_nt (em nT). Dispatch 37955273716 (idempotent).
 
-ausstehend
+disponiert
 kandidat https://moon.bao.ac.cn/
-note Chang'e 1–6 GRAS (CNSA) — 2026-10-09: clpds catalogue 200 ohne Auth; Compiler+WF (--with-annex) stehen, gras_2c-Reader; Annex sources.φ:10100; Run 37932167423 dispatched. future-folge149.
+note Chang'e 1–6 GRAS (CNSA) — 2026-10-09: clpds-cdn Lauf 37932167423 success; gras_2c-Reader, Annex sources.φ:10100; kompiliert+manifestiert. future-folge149.
 
 disponiert
 kandidat https://sdc.emiratesmarsmission.ae/
@@ -109,7 +109,7 @@ note Hope/Al-Amal EMM EXI — 2026-10-09: L2a = Bild, kein Skalarfeld; Compiler+
 
 ausstehend
 kandidat https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
-note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-10-09: properties 206 (1 B); hips.rs + hips_png_compiler.rs + hips-png-cdn.yml stehen. Tree-Ernte Run 37932098229 dispatched (queued, 32 Shards). Offen: Run-Ergebnis, CDN, Sample.
+note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-10-09: properties 206 (1 B); hips.rs + hips_png_compiler.rs + hips-png-cdn.yml stehen. Lauf 37932098229 in_progress (32 Shards). Offen: Run-Ergebnis, CDN, Sample.
 
 ausstehend
 kandidat https://pds.shadowcam.im-ldi.com/derived/
@@ -119,13 +119,13 @@ disponiert
 kandidat https://gportal.jaxa.jp/
 note JAXA G-Portal — Quellen `gportal.jaxa.jp` (2 Blöcke: `jaxa_gpm_ku`, `jaxa_gportal`); Download 2026-10-07 Run 37676047864: Login ok, 200 153785337 B; nicht public; Compile-Riss FS/navigation/scLat unread. future-folge226.
 
-ausstehend
+disponiert
 kandidat https://clpds.bao.ac.cn/
-note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-09: catalogue 200 (6786 B) ohne Auth; clpds_compiler.rs + clpds-cdn.yml stehen; Annex-Arm --with-annex im Workflow verdrahtet (783044d36); PDS3-Reader steht. future-folge226.
+note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-09: Assets clpds_annex.jsonl/clpds_catalogue.json/clpds_files.jsonl am Release-Tag clpds.bao.ac.cn (gh api); PDS3-Reader steht. future-folge226.
 
-ausstehend
+disponiert
 kandidat https://data.kasi.re.kr/
-note KASI Science Data Portal — 2026-10-04: MIRIS-API 200 (public); kasi_compiler.rs + kasi-cdn.yml + Reader kasi.rs stehen (sources.φ 12 Z.). future-folge168.
+note KASI Science Data Portal — 2026-10-09: Assets kasi_kmtnet.json/kasi_kvn.json/kasi_miris.json am Release-Tag data.kasi.re.kr (gh api); Reader kasi.rs steht. future-folge168.
 
 disponiert
 kandidat https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
@@ -147,9 +147,9 @@ disponiert
 kandidat https://ssusi.jhuapl.edu/
 note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-09: cdaweb dmsp16_ssj.bin 4146104 B (Run 37653771143), ssusi_aurora.bin 104 B n=4 (Run 37742154115) beide success.
 
-ausstehend
+disponiert
 kandidat https://supermag.jhuapl.edu/products/
-note Substorm-Onsets (GIC-Mediator §B) — 2026-10-09: `substorm_compiler.rs` steht (supermag.jhuapl.edu/lib/services, 5 Listen), aber kein substorm-Block in sources.φ; Arm+Workflow fehlen.
+note Substorm-Onsets (GIC-Mediator §B) — 2026-10-09: 5 Blöcke in sources.φ:19663-19699 (format substorm, url supermag.jhuapl.edu/substorm_{forsyth,frey,liou,newell,ohtani}.bin); substorm-cdn.yml Lauf 37951374863 success; kompiliert+manifestiert.
 
 disponiert
 kandidat https://cdaw.gsfc.nasa.gov/CME_list/
@@ -157,7 +157,7 @@ note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-09: Lauf 37778516294 su
 
 ausstehend
 kandidat https://wdc.kugi.kyoto-u.ac.jp/
-note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-09: Host/aeasy/aedir 206, aeasy.cgi 404; Daten-Endpoint /hapi/data?id=min_ae 200 (54883 B); wdc_ae_compiler.rs + wdc-ae-cdn.yml stehen.
+note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-09: Daten-Endpoint /hapi/data?id=min_ae 200 (54883 B); wdc_ae_compiler.rs + wdc-ae-cdn.yml stehen; Dispatch 37955268834.
 
 disponiert
 kandidat https://superdarn.usask.ca/convection-maps
