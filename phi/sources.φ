@@ -2104,6 +2104,7 @@ ttl 86400
 field pcn_mvm pcn_mvm inverse-square electric mV/m 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_rrl.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 origin https://gea.esac.esa.int/tap-server/tap/sync
 format gaia_rrl
 compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
@@ -2114,6 +2115,7 @@ field parallax gaia_rrl_parallax_mas inverse-square gravity mas 86400 0.0 0.0
 field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format catalog_gaia_sso
 origin https://gea.esac.esa.int/tap-server/tap/sync
 compiler tools/harvest/src/bin/gaia_sso_compiler.rs
@@ -8232,6 +8234,7 @@ field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
 field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
 
 url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_cog_000114_230416_261003_v01.bsp
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 sha256 0a8479226fd0f4474068c2aa68afebfb2c4f517cb412c2724180ba2aa2fe7393
 ttl 86400
@@ -9851,6 +9854,7 @@ dec dec
 field flux planck_ercsc_857ghz_flux_jy inverse-square em Jy 604800 0.0 0.0
 
 url http://esaskylegacy.esac.esa.int/esasky-legacy-sl-tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,plx,mag_v+FROM+hipparcos1.hip_main+WHERE+plx+IS+NOT+NULL
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -9924,6 +9928,7 @@ on earth 19.48 -155.6 0
 path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 0.0 0.0
 
 url https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -9933,6 +9938,7 @@ dec dec
 field flux herschel_pacs_070_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/MEX-M-MRS-1-2-3-CR1-0009-V1.0/DATA/LEVEL1A/CLOSED_LOOP/DSN/TNF/M15TNF0L1A_TNF_032000724_00.DAT
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 at mars
 ttl 604800
@@ -10021,6 +10027,7 @@ field teff_k rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field Jmag rave_jmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -10063,6 +10070,7 @@ dist_scale 3.085677581e16
 field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -10073,6 +10081,7 @@ plx parallax
 field phot_g_mean_mag gaia_dr3_g_mag inverse-square em mag 604800 0.0 0.0
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -10125,6 +10134,7 @@ field gravity agrav_gravity_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format pds4_acs_nir
 origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1__4_0.xml
 origin https://archives.esac.esa.int/psa/ftp/ExoMars2016/em16_tgo_acs/data_raw/Science_Phase/Orbit_Range_4100_4199/Orbit_4140/acs_raw_sc_nir_20181027T221352-20181027T223353-4140-1-1-EC__4_0.tab
@@ -10134,6 +10144,7 @@ sha256 465f3c07c4a04053895046cb8853ce96f1c38fe7038d23d7cd05d91ce87419c1
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/mars_express_odf.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format mars_express_odf
 origin https://archives.esac.esa.int/psa/ftp/MARS-EXPRESS/MRS/DATA/LEVEL1A/CLOSED_LOOP/DSN/ODF/
 compiler tools/harvest/src/bin/mars_express_odf_compiler.rs
@@ -10142,6 +10153,7 @@ ttl 604800
 field observable_hz mars_express_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1080341864_1431499728.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format rosetta_odf
 origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
@@ -10152,6 +10164,7 @@ field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 6048
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1431499728_1464565518.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format rosetta_odf
 origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
@@ -10162,6 +10175,7 @@ field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 6048
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/rosetta_odf_t1464565518_1475187437.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format rosetta_odf
 origin https://archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/
 compiler tools/harvest/src/bin/rosetta_odf_compiler.rs
@@ -10530,6 +10544,7 @@ ttl 604800
 field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/xp_spectra.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format xp_spectra
 origin https://dc.g-vo.org/tap/sync
 compiler tools/harvest/src/bin/gaia_xp_compiler.rs
@@ -18672,6 +18687,7 @@ field gosat_tanso3_radiance_wide_band2_w_m2_sr_um gosat_tanso3_radiance_wide_ban
 field gosat_tanso3_radiance_wide_band3_w_m2_sr_um gosat_tanso3_radiance_wide_band3_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/psa.esa.int/bc_mpo_mag.bin
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format bc_mpo_mag
 origin https://psa.esa.int/psa-tap/data?retrieval_access=DIRECT&retrieval_type=PRODUCT&tapclient=EPN-TAP&id=urn:esa:psa:bc_mpo_mag:data_derived:mag_der_sc_ib_a001_e2k_00000_20181024
 compiler tools/harvest/src/bin/bc_mpo_mag_compiler.rs
@@ -20099,6 +20115,7 @@ at earth
 sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23
 
 url https://isla.esac.esa.int/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+ila.cat_source+WHERE+flux+IS+NOT+NULL
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -20132,6 +20149,7 @@ body pck00010
 ttl 604800
 
 url https://nxsa.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,ep_flux+FROM+xsa.v_epic_source+WHERE+ep_flux+IS+NOT+NULL
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format tap
 ttl 604800
 at sun
@@ -20547,6 +20565,7 @@ origin https://archive.eso.org
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/hsa-whsa-tap-server-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_flux_FROM_hsa.pacs_point_source_070_WHERE_flux_IS_NOT_NULL.json
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 origin https://archives.esac.esa.int
 ttl 31536000
@@ -20995,6 +21014,7 @@ at earth
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/eas.esac.esa.int/tap-server-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_right_ascension_declination_flux_detection_total_FROM_catalogue.mer_catalogue_WHERE_flux_detection_total_IS_NOT_NULL.json
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 origin https://eas.esac.esa.int
 ttl 31536000
@@ -21123,6 +21143,7 @@ field kmag twomass_k_mag inverse-square em mag 31536000 0.0 0.0
 field e_kmag twomass_e_k_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/isla.esac.esa.int/tap-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_flux_FROM_ila.cat_source_WHERE_flux_IS_NOT_NULL.json
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 origin https://isla.esac.esa.int
 ttl 31536000

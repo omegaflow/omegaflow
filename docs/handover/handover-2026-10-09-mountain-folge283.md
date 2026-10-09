@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 60cfff2282dca6a8893b4fd45d214d60677ae6b1f9e24b9e8573c0bb1e7a401d
+  sha256: 003b99d2611d9e52829ad8968625d8bf68961f20f418c095d169b4303b728146
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -26,6 +26,8 @@ Wort | Datum | Quelle
 „ich glaube du musst nochmal breiter fragen" — Science-Layer + starke Frontier-Seats für die Route-Admission | 2026-10-08 | Operator (Session, Mountain 276)
 „bitte umsetzen Offen (im Report benannt): 2 blocked_sources-Risse (limadou/vco_rs Dubletten; cluster_ka-Zeile ohne gap), SuperDARN dritter Layout-Slot (kein pot.drop.err), ROTI-Gitter-Orientierung, Kellerman-CSV-Reader, themis_mag-CDN-Orphan → Mycelium." | 2026-10-09 | Operator (Session, Mountain 280)
 „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher, höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort — Commit und Push trägt `/commit`." + „aber mach dann auch wirklich die Arbeit" | 2026-10-09 | Operator (Session, Mountain 281)
+„1. natürlich Ja wir brauchen die lizenzen sind regeln der quellen nicht unsnere" | 2026-10-09 | Operator (Session, Mountain 283)
+„2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -50,12 +52,12 @@ Wort | Datum | Quelle
 - **Blockade:** keiner.
 - **Braucht:** `ci_manage view 37929072865` beim nächsten Pass (kein Session-Polling); bei grün Punkt schließen.
 
-### Lizenz-Disposition — `terms`-Feld (SPDX); Rest-Sweep offen
+### Lizenz-Disposition — `terms`-Feld (SPDX); ESA-Vokabel erweitert, Rest-Sweep offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 1624 · distinct 11 · no-terms 841 · pending 1086 · 0 violation(s)**. Vokabular (geschlossen, `license_census.rs:9-22`): `PD`, `CC-BY-4.0`, `CC0-1.0`, `unbestimmt`, `ohne-lizenz`; `NOASSERTION`/`NONE` sind NICHT im Vokabular.
-- **Blockade:** **ESA/ESAC** (archives/gea/isla/eas/…esac.esa.int, psa.esa.int) tragen **CC BY-NC 3.0 IGO** — nicht im geschlossenen Vokabular; `zenodo.org` per Record; `datalab.noirlab.edu`/`dc.g-vo.org` ohne Daten-Lizenzaussage (`pending`); gemischte Hosts (arcgis/jaxa/kasi/…); Anker fehlt weiter für Blöcke ohne `format`/`origin`.
-- **Braucht:** Vokabel-Erweiterung um `CC-BY-NC-3.0-IGO` (Operator-Wort) ODER ESA `pending` belassen; zenodo-Terms per Record (`archive_search --zenodo <id>`); Rest-Sweep je Anker; `license_census`/`ci-gate` nachführen.
+- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 1645 · distinct 12 · no-terms 827 · pending 1065 · 0 violation(s)**. Operator-Wort „1. natürlich Ja wir brauchen die lizenzen …": `CC-BY-NC-3.0-IGO` ins geschlossene Vokabular (`license_census.rs`) aufgenommen und **21 Blöcke der ESA Space Science Archives** (`*.esac.esa.int` + `psa.esa.int`) mit `terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions` versehen. Quelle gemessen: `https://www.cosmos.esa.int/web/gaia-users/license` und `https://www.cosmos.esa.int/web/esdc/terms-and-conditions` nennen beide „CC BY-NC 3.0 IGO".
+- **Blockade:** `zenodo.org` per Record; `datalab.noirlab.edu`/`dc.g-vo.org` ohne Daten-Lizenzaussage (`pending`); gemischte Hosts (arcgis/jaxa/kasi/…); Anker fehlt für Blöcke ohne `format`/`origin`.
+- **Braucht:** zenodo-Terms per Record (`archive_search --zenodo <id>`); Rest-Sweep je Anker; `license_census`/`ci-gate` nachführen.
 
 ### `blocked_sources.φ`-Aufräumen — 15 Klassen-Träger (`gap`-Token)
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
@@ -63,13 +65,6 @@ Wort | Datum | Quelle
 - **Lage:** (gemessen 2026-10-09, diese Session) **15 verbleibende `gap`-Träger** (themis-tail + mms-magnetosheath gebaut/entfernt): `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`) · `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen) · `mariner-rst` (7-Track-Parser fehlt, SDDPT) · `dmap-map-grid` (Globus-Download bei Mycelium `wartend.φ:8`; Kern `dmap.rs` + `map_grid_value` stehen) · `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat`) · `inpe-big-stac` (79 Sammlungen, Sammlung→Feld-Compiler) · `hi-21cm` (VO/FITS-Arm) · `cmb-lambda` (LAMBDA/PLA-Produkt-Arm) · `solar-vso` (FITS/VSO-TAP) · `laic-cssdc` (Portal-Parser) · `particle-cern` (CERN-Open-Data-API + GWOSC) · `blinkverse-frb` (direct+Proton pending, kein Wayback). TUH/NSRR-`blocked account`-Riss geschlossen (Mountain-Verdikt 2026-10-09: kein Descope, Konto real, Daten hinter NEDC/HIPAA).
 - **Blockade:** je Träger der Bau (Arm/Workflow/`sources.φ`-Zeile) oder eine wartende Antwort.
 - **Braucht:** je Träger Arm/Workflow/`sources.φ`-Zeile oder Disposition.
-
-### Kraft-/Register-Physik-Migration (`force` → Quantity | Mechanism | Medium) — river-143
-- **Status:** eigen | **Bindung:** Rat + Operator-Wort
-- **Trigger:** Operator-Wort zur Taxonomie + Migrationsfreigabe
-- **Lage:** (gemessen 2026-10-09, gefaltet river-143) River legt near-unanim (Rat + 8 Open-Weight + UI) vor: `electric` ⊂ `em`; `thermal` ≡ `diffusion` (gleiche PDE); `acoustic`/`seismic-body`/`seismic-surface` = ein elastisches Medium (Vorschlag `elastic` + Modus-Parameter); fehlend chemisch/Teilchenstrahlung/quasistat. Magnetfeld; `strong`/`weak` explizit out-of-scale. Werkzeug `source_physics_lint` (read-only): field 8006 · quantity 27 · 95 Geometrie-Kandidaten. Rat-Entwurf Zielschema `docs/concepts/kanal-ontologie-komplettbau.md` §P10.2a: `field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau>`, `force` als n:m-Tag. Migrationsreihenfolge: `gravity`/`seismic` → `acoustic`/`diffusion` → **`em` zuletzt**. River hat **nichts** in `phi/` geändert; Protokolle `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` · `…-river-register-physik.md`.
-- **Blockade:** Architektur-/Register-Entscheid; kein Messschritt offen.
-- **Braucht:** Operator-Wort (Taxonomie + Migrationsfreigabe); die Verdikt-Zeilen schreibt Mountain.
 
 ## An mycelium
 
@@ -80,6 +75,12 @@ Origin: mountain-folge283.
 - **Keogramm** (OMTI/Abisko): Wire-Feld descoped (raw/relativ); offen ist die **Vision-Asset-Registrierung** — bitte führen, falls Mycelium das Bild als Asset trägt.
 - **Route-Admissionen / Arme:** THEMIS-Tail + MMS-Magnetosheath-Arme stehen jetzt (`phi/sources.φ`); manifestiere, sobald die Zeilen stehen. Übrige `gap`-Träger siehe oben.
 
+## An river
+
+Origin: mountain-folge283.
+
+- **Operator-Wort (2026-10-09):** „2 bitte spreche dich mit river ab das ist teil seines plans". Die **Kraft-/Register-Physik-Migration** (`force` → Quantity | Mechanism | Medium) ist **Teil deines Plans** — du führst Taxonomie + Migrationsreihenfolge. Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ` (Register-Domäne) auf deine Schema-Entscheidung. Kontext: dein `## An mountain` aus river-143, `docs/concepts/kanal-ontologie-komplettbau.md` §P10.2a (Zielschema `field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau>`, `force` als n:m-Tag), Werkzeug `source_physics_lint` (field 8006), Migrationsreihenfolge `gravity`/`seismic` → `acoustic`/`diffusion` → `em` zuletzt; Protokolle `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` / `…-river-register-physik.md`. Bitte falte diesen Punkt in deine Übergabe; Mountain hält die Register-Seite.
+
 ## LOCK
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82): `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern (`docs/blatt/blatt-te-externer-steuerparameter.md`), Lauf lokal/silent, nie CI. Träger `state/mountain/kuprat-complex-te/`. Beide Arme gebaut, `--selftest` grün; offen: der Sweep. Riss: KDE-CMI verliert Power bei großer Kovariat-Varianz.
@@ -88,4 +89,4 @@ Origin: mountain-folge283.
 
 Der Commit ist die letzte Handlung; das Commit-Wort des Operators trägt Commit und Push (dieser Atom: `/commit`).
 
-Eigene Pfade: `phi/sources.φ` · `phi/blocked_sources.φ` · `docs/handover/handover-2026-10-09-mountain-folge283.md` · `docs/handover/archiv/handover-2026-10-09-mountain-folge282.md`.
+Eigene Pfade: `phi/sources.φ` · `phi/blocked_sources.φ` · `tools/register/src/bin/license_census.rs` · `docs/handover/handover-2026-10-09-mountain-folge283.md` · `docs/handover/archiv/handover-2026-10-09-mountain-folge282.md`.
