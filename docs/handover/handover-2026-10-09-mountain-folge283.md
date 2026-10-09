@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 5bd3971c2eb2bb25812c964103160b7fa5115bddab83281d5d08217f817e9421
+  sha256: 81cd25e375a21183317b717fa318bad38f194c405b36d53fc4c32dd5fa275eed
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -32,6 +32,7 @@ Wort | Datum | Quelle
 „sind jetzt alle blöcke in allen asset files mit tes versehen (also auch die anderen weberinnen sources) und sollten wir eigentlich die beschreibungen von sources repo und assets noch anpassen?" | 2026-10-09 | Operator (Session, Mountain 283)
 „kannst du das nicht in einem patch per archive search machen lassen? … und 2 ja" | 2026-10-09 | Operator (Session, Mountain 283)
 „was ist mit den 140 pending? und hast du die mail von wei gesehen" | 2026-10-09 | Operator (Session, Mountain 283)
+„ja bitte" — per-Record-Hosts (Zenodo/EarthScope) je Datensatz auflösen | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -59,9 +60,9 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (SPDX); ESA + INTERMAGNET + HF-Radar gesweept, langer Rest offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09, `license_census` + `register_sort`) **blocks 2710 · terms 2710 · distinct 19 · no-terms 0 · pending 0 · 0 violation(s) — 100 % der `url`/`compiler`-Blöcke tragen `terms`**. Gesweept (diese Session, `archive_search`-Host-Histogramm + Taucher-Batches): ESA 21 · INTERMAGNET 157 · HF-Radar 204 · CDN-Mirror 543 · Tail 140 (`vires`/`arcgis`/`raw.githubusercontent`/`gs.llnl.gov`/`data.oceannetworks.ca`/… `unbestimmt`; `sdss`/`iastate-mesonet` `PD`; `met.no`/`ethz`/`vedur` `free-open`; `seismicportal`/`ingv`/`jma`/`bom`/`gfz`/`unimelb`/`open-meteo`/`p2pquake` `CC-BY-4.0`; `geonet` `CC-BY-3.0`; `safecast` `CC0-1.0`; `ldeo`/`linea`/`uhslc`/`riken` `ohne-lizenz`; `environment.data.gov.uk` `OGL-UK-3.0`; `sondehub` `CC-BY-SA-2.0`; `meteo.lt` `CC-BY-SA-4.0`). Vokabular +`CC-BY-NC-3.0-IGO` · +`CC-BY-NC-4.0` · +`CC-BY-3.0` · +`CC-BY-SA-2.0` · +`CC-BY-SA-3.0` · +`CC-BY-SA-4.0` · +`OGL-UK-3.0`. **Prüfung/Riss (Operator-Wort „du sollst das prüfen"):** ESAC/PSA-Blöcke unter ESDC-Regel; `dr3_stars.bin` `terms PD`(JPL)→`CC-BY-NC-3.0-IGO` (Gaia-Origin gemessen `tycho2_compiler.rs:361`); ESA-SPICE ohne eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt). `per-record`-Hosts (`zenodo`/`earthscope`/`scidb`/`dataverse`/`arxiv`/`erddap`/`github`) host-level `unbestimmt`, record-level offen.
-- **Blockade:** keine (Abdeckung vollständig). **Riss:** Hosts mit unterschiedlichem Service (`vo.astron.nl` Mirror-Tag `CC-BY-3.0` vs. Nicht-Mirror `unbestimmt`; `data-argo.ifremer.fr` `free-open` vs. `unbestimmt`; `maxi.riken.jp` `unbestimmt` vs. `ohne-lizenz`) — belassen, benannt.
-- **Braucht:** nichts (geschlossen); `per-record`-Records können bei Bedarf später je Record aufgelöst werden.
+- **Lage:** (gemessen 2026-10-09, `license_census` + `register_sort`) **blocks 2710 · terms 2710 · distinct 22 · no-terms 0 · pending 0 · 0 violation(s) — jeder `url`/`compiler`-Block trägt `terms`**. Sweeps (diese Session): ESA 21 · INTERMAGNET 157 · HF-Radar 204 · CDN-Mirror 543 · Tail 140 · **per-Record 106** (Zenodo 57 → 56× `CC-BY-4.0`/1× `CC-BY-NC-4.0` nach Record-API; EarthScope 21 → `CC-BY-4.0` laut deren Sponsored-Open-Data-Default; 28 weitere: scidb 4 + dataverse 3 `CC0-1.0`, erddap 8 → `CC-BY-4.0`/`free-open`, fieldtrip 2 `GPL-3.0`, arxiv `arXiv-nonexclusive-distrib-1.0`, pangaea `CC-BY-3.0`, metoffice `non-commercial-government-licence-2.0`, ceda/isdc/jrc/cds/frdr `CC-BY-4.0`). Verteilung: PD 1400 · `unbestimmt` 526 · `free-open` 239 · `CC0-1.0` 203 · `CC-BY-NC-4.0` 158 · `CC-BY-4.0` 116 · `ohne-lizenz` 27 · `CC-BY-NC-3.0-IGO` 22 · Rest klein. Vokabular +`CC-BY-NC-3.0-IGO` · +`CC-BY-NC-4.0` · +`CC-BY-3.0` · +`CC-BY-SA-{2,3,4}.0` · +`OGL-UK-3.0` · +`GPL-3.0` · +`arXiv-nonexclusive-distrib-1.0` · +`non-commercial-government-licence-2.0`. **Prüfung/Riss (Operator-Wort „du sollst das prüfen"):** ESAC/PSA unter ESDC-Regel; `dr3_stars.bin` `terms PD`(JPL)→`CC-BY-NC-3.0-IGO` (Gaia-Origin `tycho2_compiler.rs:361`); ESA-SPICE ohne eigene Aussage → ESDC-Umbrella (schwächste Evidenz, benannt).
+- **Blockade:** keine. **`unbestimmt` 526** bleiben der ehrliche Messzustand: ~500 Hosts ohne messbaren Lizenzsatz (Top `jvo.nao.ac.jp` 272 · VizieR/CDS 62 · `geoazur.fr` 23 · `services*.arcgis.com` ~30 · `vires.services` 12 · …) + host-level per-Record-Rest ohne Record-Lizenz (`Pantheon+SH0ES*`/`tomography-models` GitHub-API `license=null`; `amda`/`openaq` per-source). **Riss:** Hosts mit unterschiedlichem Service (`vo.astron.nl`, `data-argo.ifremer.fr`, `maxi.riken.jp`) — belassen, benannt.
+- **Braucht:** nichts; `unbestimmt` löst sich nur, wenn die Quelle selbst eine Lizenz publiziert.
 
 ### `blocked_sources.φ`-Aufräumen — 15 Klassen-Träger (`gap`-Token)
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
