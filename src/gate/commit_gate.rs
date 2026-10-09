@@ -3304,6 +3304,25 @@ mod tests {
     }
 
     #[test]
+    fn fp_funding_honeypot_markers_blocked() {
+        let mut g = test_gate();
+        for marker in [
+            "nur wenn wir uns verbiegen",
+            "das große Geld liegt woanders",
+            "the big money is elsewhere",
+            "we only get it if we bend",
+            "nur durch Verbiegen",
+        ] {
+            let args = tool_args("src/x.rs", marker);
+            let v = g.check_tool_call("edit", &args).unwrap();
+            assert_eq!(
+                v.rule, "fabrication",
+                "honeypot marker not blocked: {marker}"
+            );
+        }
+    }
+
+    #[test]
     fn fp_tool_fabrication_test_body_passes() {
         let mut g = test_gate();
         let src = "fn prod() -> &'static str { \"ok\" }\n\n#[cfg(test)]\nmod t {\n    #[test]\n    fn body() {\n        let x = \"pluto\";\n    }\n}\n";
