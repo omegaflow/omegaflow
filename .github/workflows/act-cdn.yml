@@ -1,0 +1,30 @@
+name: act-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  act:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the ACT DR6.02 f150 CMB map once and upload to CDN
+        run: |
+          mkdir -p kernels
+          gh release download lambda.gsfc.nasa.gov --repo omegaflow/sources \
+            --pattern cmb_act_f150_n64.json --clobber 2>/dev/null && exit 0
+          curl -sSfL --retry 3 --max-time 5400 -o kernels/act_f150.fits \
+            https://lambda.gsfc.nasa.gov/data/act/maps/published/act-planck_dr4dr6_coadd_AA_daynight_f150_map_srcfree_healpix.fits
+          cargo run -p omegaflow-harvest --release --bin cmb_act_compiler -- \
+            --input kernels/act_f150.fits --nside 64 \
+            --out cmb_act_f150_n64.json --ci-mode
