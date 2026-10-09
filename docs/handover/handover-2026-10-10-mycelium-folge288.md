@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 288 (2026-10-10)
-  session: Mycelium-Linie — Meta-Pass. de441/de442 `sha256` aus dem GitHub-Release-Digest registriert (erste Manifest-Läufe, Wait `de441-de442-sha` geschlossen); future-211-Block (sources-refresh) gefaltet — Workflow war bereits in mycelium-282 verdrahtet (`ba59976da`/`b46c9e514`, Rust-Bin `d72710803`), kein offener Punkt. Register kanonisch (2705 Blöcke), license_census/cdn_reconcile clean. Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. de441/de442 `sha256` aus dem GitHub-Release-Digest registriert (erste Manifest-Läufe, Wait `de441-de442-sha` geschlossen); future-211-Block (sources-refresh) gefaltet — Workflow war bereits in mycelium-282 verdrahtet (`ba59976da`/`b46c9e514`, Rust-Bin `d72710803`), kein offener Punkt. Register kanonisch (2705 Blöcke), license_census/cdn_reconcile clean. Nachtrag nach Operator-Wort „fixen": die CI-Roh-API-Lehre (`conclusion=` unwirksam → `status=failure`, `docs/concepts/tools-map.md`) und der zuvor übersehene rote `keogram-cdn`-Lauf (`ABK`-Quelle steht seit 2026-04-21) sind gemessen + eingetragen. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-10
-  sha256: 9434ab5f560fff80d40fd9ab266de0c17dc8af6d1ca6c8564d10021617fb2604
+  sha256: 1a520dd9fff2951f727063ccc356fadaa6748a65fa43f16266202747688b2d2c
   status: live
 -->
 # Handover — Mycelium-Folge 288 (2026-10-10)
@@ -16,6 +16,8 @@ zitiert, nie kopiert). Diese Session konsumierte
 **Aufenthalt = Eigentum:** `## Offen — eigen` trägt nur Punkte, deren *nächster
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
+
+**CI-Messlehre (2026-10-10, Randbefund-Fix):** der GitHub-Roh-API-Filter `conclusion=` auf `…/actions/runs` ist unwirksam (wird still ignoriert; `?status=completed&conclusion=failure` lieferte `cancelled`-Läufe und zählte fälschlich 0 rote) — korrekt ist `status=failure`/`status=cancelled`/`status=success` (oder client-seitig `jaq 'select(.conclusion=="failure")'`); kanonischer Leser bleibt `ci_manage`. Eingetragen in `docs/concepts/tools-map.md` (CI-Roh-API). Der zuvor übersehene rote Lauf `keogram-cdn 37995952959` ist damit gemessen (siehe Keogramm-Punkt).
 
 ## Burn: open 0.0000 · close 0.0504 · cap 0.5 — Grund: de441/de442 `sha256` registriert (6 Blöcke), future-211-Block gefaltet (sources-refresh, bereits verdrahtet → kein offener Punkt), Register kanonisch 2705 Blöcke, license_census/cdn_reconcile clean · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss; Fenster 9 Sessions total $0.7817, Session `Mycelium-Linie starten: Stehender Pass`).
 
@@ -33,9 +35,16 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Manifestation — sechs Arme registriert; nur Blinkverse offen
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Archivar-Leser)
 - **Trigger:** Blinkverse-Katalog-Pfad in `src/archivar/extract.rs` gebaut
-- **Lage:** (gemessen 2026-10-10 via `ci_manage status`) HEAD `53c1aacd2`. Registriert: Keogramm, THEMIS ASI (`e04be201a`), EBHIS + BepiColombo (`05924d088`/`4bbb836dc`), ACT (`4570ee30e`), IRIS (`a637c5672`). Die sechs CDN-Läufe queue/in_progress (Single-Runner-Stau): `37995952959` keogram · `37998113249` themis-asi · `38000948001` ebhis · `38000952599` bepicolombo · `38001184677` act (`in_progress`) · `38001780912` iris. Manifestation pending. Offen: Blinkverse — Reader `src/archivar/blinkverse.rs` steht, aber der benannte Katalog-Pfad (Tabelle ohne `t`) fehlt in `src/archivar/extract.rs` (`sgrep -i blinkverse src/archivar` = reader+mod, kein dispatch).
+- **Lage:** (gemessen 2026-10-10 via `ci_manage status`) HEAD `53c1aacd2`. Registriert: Keogramm, THEMIS ASI (`e04be201a`), EBHIS + BepiColombo (`05924d088`/`4bbb836dc`), ACT (`4570ee30e`), IRIS (`a637c5672`). Die sechs CDN-Läufe (Single-Runner-Stau): `37995952959` keogram **rot** (siehe Keogramm-Punkt) · `37998113249` themis-asi queue · `38000948001` ebhis queue · `38000952599` bepicolombo queue · `38001184677` act (`in_progress`) · `38001780912` iris queue. Offen: Blinkverse — Reader `src/archivar/blinkverse.rs` steht, aber der benannte Katalog-Pfad (Tabelle ohne `t`) fehlt in `src/archivar/extract.rs` (`sgrep -i blinkverse src/archivar` = reader+mod, kein dispatch).
 - **Blockade:** der Blinkverse-Dispatch in `extract.rs` (Archivar = Mountain) fehlt; die Feld-/Anker-Zuordnung (ra/dec, cmap, DM-Spalte) ist Mountain/Rat-Register.
 - **Braucht:** Blinkverse-Katalog-Pfad in `extract.rs` → dann `blinkverse-cdn.yml` + `sources.φ`-Block.
+
+### Manifestation — Keogramm ABK: Quelle steht seit 2026-04-21 (Riss gemessen)
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Quellen-Verdikt)
+- **Trigger:** Mountain-Verdikt zur ABK-Keogramm-Quelle (re-point SGO oder `declined`)
+- **Lage:** (gemessen 2026-10-10 via `ci_manage log 37995952959` + `general`-Taucher) `keogram-cdn` Lauf `37995952959 @9347c3fc4` **rot**: `fetch_bytes … ABK.2610/ABK_261008.jpg curl: (22) … 404`. Das FMI-MIRACLE-Archiv endet `ABK.2604` (April 2026; `2605`/`2606` existieren leer, kein `2607`–`2610`). SGO (`www.sgo.fi/pub_asc/emCCD_ABK/emCCD_ABK_{YYYY}/emCCD_ABK_{YYYYMM}/ABK_{YYMMDD}/ABK_{YYMMDD}.jpg`) trägt die Monats-/Tagesverzeichnisse 2026-08/09/10, aber **leer**; `iXon/ABK_latest.jpg` Last-Modified 2026-04-22. **Jüngste vorhandene ABK-Nacht: 2026-04-21** (`…/emCCD_ABK_202604/ABK_260421/ABK_260421.jpg`, HTTP 200). Die ABK-Quelle liefert seit 2026-04-21 keine Daten — der Vorgestern-Default ist dauerhaft 404.
+- **Blockade:** ABK-Kamera liefert seit 2026-04-21 nichts (an FMI **und** SGO).
+- **Braucht:** Mountain-Verdikt (SGO-Live gibt es nicht → `declined`/`pending`) → dann `keogram-cdn.yml`/`sources.φ` anpassen.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
