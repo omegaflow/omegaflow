@@ -356,11 +356,16 @@ impl OmegaLoop {
 
     pub fn presence_frame(&self) -> PresenceFrame {
         let (pan_ms, tilt_ms) = aim_pulse_ms(self.v);
-        let aperture: [f32; 9] =
-            std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale);
+        let mut omega = [0.0f32; CHANNEL_CAP];
+        omega[..9].copy_from_slice(&self.probe_omega);
+        let mut aperture = [0.0f32; CHANNEL_CAP];
+        aperture[..9].copy_from_slice(&std::array::from_fn::<f32, 9, _>(|k| {
+            self.field_permeability[k] * self.tone_scale
+        }));
         let state = aperture_state(&aperture);
         PresenceFrame {
-            omega: self.probe_omega,
+            n: 9,
+            omega,
             aperture,
             state,
             pan_ms,

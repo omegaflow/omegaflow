@@ -19,11 +19,14 @@ pub struct PackedWindow {
     pub count: u32,
 }
 
+pub const CHANNEL_CAP: usize = 16;
+
 #[derive(Clone, Copy)]
 pub struct PresenceFrame {
-    pub omega: [f32; 9],
-    pub aperture: [f32; 9],
-    pub state: [TriState; 9],
+    pub n: u16,
+    pub omega: [f32; CHANNEL_CAP],
+    pub aperture: [f32; CHANNEL_CAP],
+    pub state: [TriState; CHANNEL_CAP],
     pub pan_ms: Option<f32>,
     pub tilt_ms: Option<f32>,
     pub tau_ticks: u64,
@@ -33,9 +36,9 @@ pub trait KineticRadiator: Send + 'static {
     fn vibrate(&mut self, frame: &PresenceFrame);
 }
 
-pub fn aperture_state(aperture: &[f32; 9]) -> [TriState; 9] {
+pub fn aperture_state(aperture: &[f32]) -> [TriState; CHANNEL_CAP] {
     std::array::from_fn(|k| {
-        if aperture[k] > 0.0 {
+        if k < aperture.len() && aperture[k] > 0.0 {
             TriState::Present
         } else {
             TriState::Absent
@@ -43,16 +46,13 @@ pub fn aperture_state(aperture: &[f32; 9]) -> [TriState; 9] {
     })
 }
 
-pub fn channel_intensity(
-    omega: &[f32; 9],
-    aperture: &[f32; 9],
-    state: &[TriState; 9],
-) -> Option<f32> {
+pub fn channel_intensity(omega: &[f32], aperture: &[f32], state: &[TriState]) -> Option<f32> {
     channel_reduce(omega, aperture, state)
 }
 
 pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
-    match channel_intensity(&frame.omega, &frame.aperture, &frame.state) {
+    let n = frame.n as usize;
+    match channel_intensity(&frame.omega[..n], &frame.aperture[..n], &frame.state[..n]) {
         Some(v) => v,
         None => 0.0,
     }
@@ -93,21 +93,17 @@ pub fn tone_hz(tau_ticks: u64) -> f32 {
     1000.0 / (tau_ticks as f32 * LOOP_TICK_MS as f32)
 }
 
-pub fn acoustic_amplitude(omega: &[f32; 9], aperture: &[f32; 9], state: &[TriState; 9]) -> f32 {
+pub fn acoustic_amplitude(omega: &[f32], aperture: &[f32], state: &[TriState]) -> f32 {
     match channel_intensity(omega, aperture, state) {
         Some(v) => v.clamp(-PCM_S16_BOUND, PCM_S16_BOUND),
         None => 0.0,
     }
 }
 
-pub fn acoustic_partials(
-    omega: &[f32; 9],
-    aperture: &[f32; 9],
-    state: &[TriState; 9],
-    phase: f32,
-) -> f32 {
+pub fn acoustic_partials(omega: &[f32], aperture: &[f32], state: &[TriState], phase: f32) -> f32 {
+    let n = omega.len().min(aperture.len()).min(state.len());
     let mut sample = 0.0f32;
-    for k in 0..9 {
+    for k in 0..n {
         if state[k] != TriState::Present {
             continue;
         }
@@ -117,7 +113,11 @@ pub fn acoustic_partials(
 }
 
 pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
-    let intensity = match channel_intensity(&frame.omega, &frame.aperture, &frame.state) {
+    let n = frame.n as usize;
+    let omega = &frame.omega[..n];
+    let aperture = &frame.aperture[..n];
+    let state = &frame.state[..n];
+    let intensity = match channel_intensity(omega, aperture, state) {
         Some(v) => v,
         None => 0.0,
     };
@@ -130,8 +130,7 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
             if *phase >= std::f32::consts::TAU {
                 *phase -= std::f32::consts::TAU;
             }
-            acoustic_partials(&frame.omega, &frame.aperture, &frame.state, *phase)
-                .clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
+            acoustic_partials(omega, aperture, state, *phase).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
         } else {
             0.0
         };
@@ -387,11 +386,19 @@ pub struct SenseReq {
 mod tests {
     use super::*;
 
+    fn cap9(v: [f32; 9]) -> [f32; CHANNEL_CAP] {
+        let mut out = [0.0f32; CHANNEL_CAP];
+        out[..9].copy_from_slice(&v);
+        out
+    }
+
     fn pframe(omega: [f32; 9], aperture: [f32; 9], tau_ticks: u64) -> PresenceFrame {
+        let a = cap9(aperture);
         PresenceFrame {
-            omega,
-            aperture,
-            state: aperture_state(&aperture),
+            n: 9,
+            omega: cap9(omega),
+            aperture: a,
+            state: aperture_state(&a),
             pan_ms: None,
             tilt_ms: None,
             tau_ticks,
@@ -462,15 +469,12 @@ mod tests {
 
     #[test]
     fn the_audio_law_is_linear_without_saturation() {
-        let frame = pframe(
-            [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
-            [1.0; 9],
-            1,
-        );
+        let omega = [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0];
+        let frame = pframe(omega, [1.0; 9], 1);
         let base = kinetic_sample(&frame) as f64;
         assert_ne!(base, 0.0);
         for lambda in [0.5f64, 2.0, 1e4] {
-            let scaled = frame.omega.map(|o| (o as f64 * lambda) as f32);
+            let scaled = omega.map(|o| (o as f64 * lambda) as f32);
             let got = kinetic_sample(&pframe(scaled, [1.0; 9], 1)) as f64;
             let want = base * lambda;
             let rel = (got - want).abs() / want.abs();
@@ -721,9 +725,10 @@ mod tests {
     #[test]
     fn a_frame_with_pan_and_tilt_emits_the_full_mask_and_three_payloads() {
         let frame = PresenceFrame {
-            omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-            aperture: [1.0; 9],
-            state: [TriState::Present; 9],
+            n: 9,
+            omega: cap9([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]),
+            aperture: cap9([1.0; 9]),
+            state: aperture_state(&cap9([1.0; 9])),
             pan_ms: Some(1.5),
             tilt_ms: Some(1.25),
             tau_ticks: 1,
@@ -747,9 +752,10 @@ mod tests {
     #[test]
     fn a_present_but_non_finite_pan_clears_its_bit() {
         let frame = PresenceFrame {
-            omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-            aperture: [1.0; 9],
-            state: [TriState::Present; 9],
+            n: 9,
+            omega: cap9([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]),
+            aperture: cap9([1.0; 9]),
+            state: aperture_state(&cap9([1.0; 9])),
             pan_ms: Some(f32::NAN),
             tilt_ms: None,
             tau_ticks: 1,
