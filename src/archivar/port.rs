@@ -3081,6 +3081,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
             || src.format == "spk"
             || src.format == "catalog_dastcom"
             || src.format == "csv_zip"
+            || src.format == "csv_gz"
             || src.format == "igra_zip"
             || src.format == "kernel_text"
             || src.format == "opendap"
