@@ -1,10 +1,12 @@
 url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
+terms unbestimmt https://vires.services/
 ttl 4
 at earth
 hapi F=cryosat_magnetic_field_intensity_nt
 field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 4 0.0 0.0
 
 url https://api.wolfx.jp/jma_eew.json
+terms unbestimmt https://api.wolfx.jp/
 ttl 5
 at earth
 map .
@@ -13,6 +15,7 @@ lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
 
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
+terms unbestimmt https://vires.services/
 ttl 5
 at earth
 hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
@@ -20,36 +23,42 @@ field gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distanc
 field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
+terms unbestimmt https://vires.services/
 ttl 10
 at earth
 hapi density=champ_thermosphere_density_kgm3
 field champ_thermosphere_density_kgm3 champ_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 10 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
+terms unbestimmt https://vires.services/
 ttl 10
 at earth
 hapi Absolute_VTEC=champ_absolute_vertical_tec_tecu
 field champ_absolute_vertical_tec_tecu champ_absolute_vertical_tec_tecu inverse-square em TECU 10 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
+terms unbestimmt https://vires.services/
 ttl 10
 at earth
 hapi crosswind=champ_thermosphere_crosswind_ms
 field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+terms unbestimmt https://vires.services/
 ttl 10
 at earth
 hapi density=grace_thermosphere_density_kgm3
 field grace_thermosphere_density_kgm3 grace_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 10 0.0 0.0
 
 url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+terms unbestimmt https://vires.services/
 ttl 16
 at earth
 hapi F=goce_magnetic_field_intensity_nt
 field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-square em nT 16 0.0 0.0
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+terms CC-BY-4.0 https://www.p2pquake.net/secondary_use/
 ttl 30
 at earth
 map .
@@ -58,6 +67,7 @@ lon earthquake.hypocenter.longitude
 field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 
 url https://api.vedur.is/quakes/events
+terms free-open https://en.vedur.is/about-imo/the-web/conditions
 ttl 30
 at earth
 map features
@@ -66,6 +76,7 @@ lon geometry.coordinates.0
 field properties.depth vedur_quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 
 url https://api.geonet.org.nz/quake?MMI=4
+terms CC-BY-3.0 https://www.geonet.org.nz/policy
 ttl 60
 on earth 0 0 0
 map features
@@ -75,6 +86,7 @@ alt geometry.coordinates.2
 field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body Mw 60.0 0.0 0.0
 
 url https://ceic.ac.cn/data/data.json
+terms unbestimmt https://ceic.ac.cn/
 ttl 60
 at earth
 map .
@@ -134,6 +146,7 @@ ttl 60
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/today-quakes
+terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
 ttl 60
 at earth
 map features
@@ -197,6 +210,7 @@ first proton_density solar_wind_density_cm3 gaussian-inverse-square diffusion 1/
 first proton_temperature solar_wind_temp_k exponential-decay thermal K 6.0 0.0 0.0
 
 url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services6.arcgis.com/
 ttl 60
 at earth
 map features
@@ -205,6 +219,7 @@ lon properties.lon
 field properties.intensity lightning_peak_current_ka inverse-square electric kA 6.0 0.0 0.0
 
 url https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start={week_ago}&end={today}&minmag=2.5
+terms unbestimmt https://servisnet.afad.gov.tr/
 ttl 60
 at earth
 map .
@@ -216,6 +231,7 @@ field magnitude geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
 field depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
 ttl 60
 at earth
 map features
@@ -224,6 +240,7 @@ lon geometry.coordinates.0
 field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 
 url http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
+terms free-open https://www.seismo.ethz.ch/en/knowledge/earthquake-data-and-analysis-tools/waveform-data/
 ttl 300
 format csv
 on earth 0 0 0
@@ -234,6 +251,7 @@ lon 3
 field 4 sed_quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+terms CC-BY-4.0 https://reg.bom.gov.au/other/copyright.shtml
 ttl 300
 on earth 0 0 0
 map observations.data
@@ -244,6 +262,7 @@ field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffu
 field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
+terms CC-BY-4.0 https://open-meteo.com/en/licence
 ttl 300
 on earth 0 0 0
 map current
@@ -254,6 +273,7 @@ field surface_pressure open_meteo_pressure_hpa gaussian-inverse-square advective
 field wind_speed_10m open_meteo_wind_speed_kmh gaussian-inverse-square advective km/h 30.0 0.0 0.0
 
 url https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
+terms CC0-1.0 https://safecast.org/about/licenses-we-use/
 ttl 300
 at earth
 map .
@@ -263,6 +283,7 @@ epoch captured_at
 last value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
 
 url https://api.wolfx.jp/jma_eqlist.json
+terms unbestimmt https://api.wolfx.jp/
 ttl 300
 at earth
 map .
@@ -286,6 +307,7 @@ field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square advective kt 3
 field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square advective deg 30.0 0.0 0.0
 
 url https://data.sensor.community/airrohr/v1/filter/box={lon_min},{lat_min},{lon_max},{lat_max}&type=SDS011
+terms unbestimmt https://data.sensor.community/
 ttl 300
 on earth 0 0 0
 map .
@@ -295,6 +317,7 @@ field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion u
 field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 30 0.0 0.0
 
 url https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/39/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://gis.ccc.govt.nz/
 ttl 300
 at earth
 map features
@@ -323,16 +346,19 @@ field bpa_gic_moses_lake_wa_a bpa_gic_moses_lake_wa_a inverse-square electric A 
 origin https://transmission.bpa.gov/business/operations/gic/gic.txt
 
 url https://gracedb.ligo.org/api/superevents/?limit=10
+terms unbestimmt https://gracedb.ligo.org/
 ttl 300
 at earth
 last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
 
 url https://resonanceone.app/api/now
+terms unbestimmt https://resonanceone.app/
 ttl 300
 at earth
 field schumann_frequency_hz resonance_schumann_hz inverse-square em Hz 600 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/three-day-quakes
+terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
 ttl 300
 at earth
 map features
@@ -341,6 +367,7 @@ lon geometry.coordinates.0
 field properties.mag geosphere_ga_mag_3day erfc seismic-surface Mw 30.0 0.0 0.0
 
 url https://services-ap1.arcgis.com/YQyt7djuXN7rQyg4/arcgis/rest/services/Mary_Cairncross_Scenic_Reserve_R718b140_Temperature_Sensor/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services-ap1.arcgis.com/
 ttl 300
 at earth
 map features
@@ -349,6 +376,7 @@ lon geometry.coordinates.0
 field properties.temperature sensor_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
 
 url https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 300
 at earth
 map features
@@ -358,6 +386,7 @@ field properties.air_temp air_temperature_c gaussian-inverse-square thermal C 6.
 field properties.press mslp_hpa gaussian-inverse-square acoustic hPa 6.0 0.0 0.0
 
 url https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 300
 at earth
 map features
@@ -367,6 +396,7 @@ field properties.FLOW streamflow_cfs gaussian-inverse-square advective cfs 6.0 0
 field properties.STAGE gage_height_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
 
 url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 300
 at earth
 map features
@@ -375,6 +405,7 @@ lon properties.longitude
 field properties.discharge1 streamflow_cfs gaussian-inverse-square advective cfs 6.0 0.0 0.0
 
 url https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services2.arcgis.com/
 ttl 300
 at earth
 map features
@@ -383,6 +414,7 @@ lon properties.Buoy_lon
 field properties.Sig_wave_height_m sig_wave_height_m gaussian-inverse-square gravity m 6.0 0.0 0.0
 
 url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services5.arcgis.com/
 ttl 300
 at earth
 map features
@@ -402,6 +434,7 @@ field properties.WTMP hydrosphere_ndbc_buoy_water_temp erfc thermal C 30.0 0.0 0
 field properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square gravity m 30.0 0.0 0.0
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services9.arcgis.com/
 ttl 300
 at earth
 map features
@@ -419,6 +452,7 @@ lon sourceInfo.geoLocation.geogLocation.longitude
 field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
 
 url https://weather.cma.cn/api/now/54511
+terms unbestimmt https://weather.cma.cn/
 ttl 300
 header User-Agent Mozilla/5.0
 on earth 39.904 116.407 0
@@ -484,11 +518,13 @@ last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where l
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
+terms CC-BY-4.0 https://www.jma.go.jp/jma/en/copyright.html
 ttl 600
 on earth 35.68 139.69 0
 last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
 
 url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
+terms OGL-UK-3.0 http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 ttl 900
 on earth 0 0 0
 stations https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
@@ -501,6 +537,7 @@ fanout_center receiver
 last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+terms unbestimmt https://www.imis.bfs.de/
 ttl 900
 at earth
 map features
@@ -521,6 +558,7 @@ gate HEIGHT 0 9999
 field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
 
 url https://api.wolfx.jp/cenc_eqlist.json
+terms unbestimmt https://api.wolfx.jp/
 ttl 1541
 at earth
 map .
@@ -531,6 +569,7 @@ field No1.magnitude cenc_quake_magnitude gaussian-inverse-square seismic-body M 
 field No1.depth cenc_quake_depth_km gaussian-inverse-square seismic-body km 10 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
+terms unbestimmt https://data.oceannetworks.ca/
 ttl 1800
 at earth
 stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
@@ -546,6 +585,7 @@ epoch sampleTime
 field value oceannetworks_ctd_conductivity_sm inverse-square electric S/m 1800 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
+terms unbestimmt https://data.oceannetworks.ca/
 ttl 1800
 at earth
 stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
@@ -561,6 +601,7 @@ epoch sampleTime
 field value oceannetworks_ctd_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
+terms unbestimmt https://data.oceannetworks.ca/
 ttl 1800
 at earth
 stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
@@ -576,6 +617,7 @@ epoch sampleTime
 field value oceannetworks_ctd_salinity_psu erfc diffusion psu 1800 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
+terms unbestimmt https://data.oceannetworks.ca/
 ttl 1800
 at earth
 stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
@@ -591,6 +633,7 @@ epoch sampleTime
 field value oceannetworks_ctd_temperature_c erfc thermal C 1800 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/month-quakes
+terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
 ttl 1800
 at earth
 map features
@@ -599,6 +642,7 @@ lon geometry.coordinates.0
 field properties.mag geosphere_ga_mag_month erfc seismic-surface Mw 180.0 0.0 0.0
 
 url https://api.alerce.online/alerts/v1/objects/?page=1&page_size=1000&order_by=firstmjd&order_mode=DESC
+terms unbestimmt https://api.alerce.online/
 format alerce
 ttl 3600
 at sun
@@ -609,6 +653,7 @@ field magpsf alerce_ztf_detection_magpsf gaussian-inverse-square em mag 3600 0.0
 field magap alerce_ztf_detection_magap gaussian-inverse-square em mag 3600 0.0 0.0
 
 url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
+terms CC-BY-SA-4.0 https://api.meteo.lt/
 ttl 3600
 on earth 54.625992 25.107064 0
 last observations.airTemperature meteo_lt_air_temp_c exponential-decay thermal C 3600 0.0 0.0
@@ -761,6 +806,7 @@ field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
+terms unbestimmt https://data.neracoos.org/erddap/legal.html
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -771,6 +817,7 @@ field 3 neracoos_wind_speed_m_s gaussian-inverse-square advective m/s 3600 0.0 0
 field 4 neracoos_wind_gust_m_s gaussian-inverse-square advective m/s 3600 0.0 0.0
 
 url https://eeadmz1-downloads-api-appservice.azurewebsites.net/ParquetFile/urls
+terms unbestimmt https://eeadmz1-downloads-api-appservice.azurewebsites.net/
 ttl 3600
 format eea_aq_parquet
 post_body {"countries":["DE"],"cities":["Heidelberg"],"pollutants":["PM10"],"dataset":1,"source":"API","aggregationType":"hour"}
@@ -831,6 +878,7 @@ field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square th
 field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
 url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default
+terms free-open https://data.met.no/DataPolicy
 header Authorization {FROST_BASIC_AUTH}
 ttl 3600
 on earth 0 0 0
@@ -844,6 +892,7 @@ fanout_center receiver
 first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
 
 url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
+terms free-open https://data.met.no/DataPolicy
 header Authorization {FROST_BASIC_AUTH}
 ttl 3600
 on earth 0 0 0
@@ -1124,6 +1173,7 @@ field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
+terms unbestimmt https://gliders.ioos.us/erddap/legal.html
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -1160,6 +1210,7 @@ at sun
 regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
 
 url https://maps.sensor.community/data/v2/data.json
+terms unbestimmt https://maps.sensor.community/
 ttl 3600
 on earth 0 0 0
 map .
@@ -1174,6 +1225,7 @@ field sensordatavalues.value_type=humidity.value sensorcommunity_humidity_pct ga
 field sensordatavalues.value_type=pressure.value sensorcommunity_pressure_pa gaussian-inverse-square acoustic Pa 3600 0.0 0.0
 
 url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1182,6 +1234,7 @@ lon properties.longitude
 field properties.value usgs_stream_temp_c erfc thermal C 3600 0.0 0.0
 
 url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1220,6 +1273,7 @@ quantity area swpc_solar_region_area_millionths inverse-square area millionths 8
 field extent swpc_solar_region_extent_deg inverse-square em deg 86400 0.0 0.0
 
 url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1228,6 +1282,7 @@ lon geometry.coordinates.0
 field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal C 3600 0.0 0.0
 
 url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1237,6 +1292,7 @@ field properties.mag chile_quake_magnitude gaussian-inverse-square seismic-body 
 field properties.depth chile_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1246,6 +1302,7 @@ field properties.Temperature dc_wq_temperature_c erfc thermal C 3600 0.0 0.0
 field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
 
 url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services2.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1254,6 +1311,7 @@ lon properties.Longitude
 field properties.Particulate_Matter___PM2_5_atm_ chpl_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
 
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services2.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1262,6 +1320,7 @@ lon properties.lon
 field properties.mean_intensity geomagnetic_total_field_nt inverse-square em nT 6.0 0.0 0.0
 
 url https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/CREST_Buoy_2_Miami_River_030620___082420/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services2.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1271,6 +1330,7 @@ field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion psu 3600 0.0 0.
 field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
 
 url https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services2.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1280,6 +1340,7 @@ field properties.Magnitude va_quake_magnitude gaussian-inverse-square seismic-bo
 field properties.Depth_km va_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services3.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1289,6 +1350,7 @@ field properties.PAW plant_available_water_mm erfc diffusion mm 6.0 0.0 0.0
 field properties.Soil_temp soil_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
 
 url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services5.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1298,6 +1360,7 @@ field properties.mag haiti_quake_magnitude gaussian-inverse-square seismic-body 
 field properties.depth haiti_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services7.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1306,6 +1369,7 @@ lon properties.Long
 field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0
 
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services7.arcgis.com/
 ttl 3600
 at earth
 map features
@@ -1329,6 +1393,7 @@ field 1 geosphere_fireball_radiated_energy_e10j inverse-square em e10j 3600 0.0 
 field 2 geosphere_fireball_impact_energy_kt inverse-square em kt_tnt 3600 0.0 0.0
 
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+terms CC-BY-4.0 https://data.ingv.it/docs/legal-notes.html
 ttl 3600
 at earth
 map features
@@ -1339,6 +1404,7 @@ field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface 
 field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
 
 url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+terms unbestimmt https://www.ioc-sealevelmonitoring.org/
 ttl 3600
 on earth 0 0 0
 map .
@@ -1361,6 +1427,7 @@ fanout_center receiver
 last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
 
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
+terms unbestimmt https://www.nmdb.eu/
 ttl 3600
 format text
 on earth 65.06 25.47 0
@@ -1369,6 +1436,7 @@ epoch 0
 field 1 oulu_neutron_corr_for_eff inverse-square em % 3600.0 0.0 0.0
 
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=uncorrected&date_choice=last&last_days=7&tresolution=60&yunits=0
+terms unbestimmt https://www.nmdb.eu/
 ttl 3600
 format text
 on earth 65.05 25.47 0
@@ -1377,6 +1445,7 @@ epoch 0
 field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
 url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
+terms unbestimmt https://www.wis-tns.org/
 format csv_zip
 header user-agent {TNS_UA}
 post_body api_key={TNS_API_KEY}
@@ -1390,11 +1459,13 @@ z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0 aperture:none
 
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
+terms CC-BY-4.0 https://kp.gfz.de/
 ttl 10800
 on earth 52.07 12.68 0
 last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 0.0 0.0
 
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
+terms unbestimmt https://docs.openaq.org/resources/licenses
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600
 on earth 0 0 0
@@ -1411,6 +1482,7 @@ fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
 
 url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
+terms ohne-lizenz https://www.riken.jp/en/terms/
 ttl 86400
 format text
 at earth
@@ -1432,6 +1504,7 @@ field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
 field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
 
 url https://api.v2.sondehub.org/sonde/Y3313219
+terms CC-BY-SA-2.0 https://registry.opendata.aws/sondehub-telemetry/
 ttl 86400
 on earth 0 0 0
 map .
@@ -1446,6 +1519,7 @@ field pressure radiosonde_air_pressure_hpa patch-levy advective hPa 3600 0.0 0.0
 field humidity radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
 
 url https://api.woudc.org/collections/totalozone/items?limit=1
+terms unbestimmt https://api.woudc.org/
 ttl 86400
 on earth 0 0 0
 map features
@@ -1466,6 +1540,7 @@ lon 6
 field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 0.0 0.0
 
 url https://argovis-api.colorado.edu/argo?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=temperature,salinity,pressure
+terms unbestimmt https://argovis-api.colorado.edu/
 ttl 86400
 on earth 0 0 0
 profile .
@@ -1477,6 +1552,7 @@ field temperature argo_temperature_c erfc thermal C 86400 0.0 0.0
 field salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0
 
 url https://argovis-api.colorado.edu/bgcargoplus?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=pressure,DOWN_IRRADIANCE380_ADJUSTED_RO,DOWN_IRRADIANCE412_ADJUSTED_RO,DOWN_IRRADIANCE490_ADJUSTED_RO,DOWNWELLING_PAR_ADJUSTED_RO,CDOM_ADJUSTED_RO
+terms unbestimmt https://argovis-api.colorado.edu/
 ttl 86400
 on earth 0 0 0
 profile .
@@ -1491,6 +1567,7 @@ field DOWNWELLING_PAR_ADJUSTED_RO argovis_downwelling_par erfc em microMoleQuant
 field CDOM_ADJUSTED_RO argovis_cdom erfc diffusion ppb 86400 0.0 0.0
 
 url https://arxiv.org/e-print/2012.08534
+terms unbestimmt https://info.arxiv.org/help/license/
 format reference
 sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7
 ttl 86400
@@ -1504,6 +1581,7 @@ at earth
 field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
 
 url https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
+terms unbestimmt https://ceotr.ocean.dal.ca/erddap/legal.html
 ttl 86400
 on earth 0 0 0
 map table.rows
@@ -1583,11 +1661,13 @@ on earth 0 0 0
 field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://dataverse.harvard.edu/api/access/datafile/3424724
+terms unbestimmt https://support.dataverse.harvard.edu/harvard-dataverse-general-terms-use
 format reference
 sha256 f68f14dfba45556b4a073d5ca20b99a100e7ac91c97312f11c24e27b1e32ef99
 ttl 86400
 
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+terms unbestimmt https://erddap.dataexplorer.oceanobservatories.org/erddap/legal.html
 ttl 86400
 format csv
 on earth 46.05 -125.0 0
@@ -1595,6 +1675,7 @@ lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2
 lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
+terms unbestimmt https://erddap.hfrnode.eu/erddap/legal.html
 ttl 86400
 on earth 0 0 0
 map table.rows
@@ -4384,6 +4465,7 @@ ttl 86400
 field superdarn_cpcp_pot_drop superdarn_cpcp_pot_drop inverse-square electric kV 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 ttl 86400
 
@@ -8513,16 +8595,19 @@ field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay therm
 field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
 
 url https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 2f48f84fbd674054281bb6e294174f65e42219dd14713a052948257eabe482f2
 ttl 86400
 
 url https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 50eb365114ab1fe977701790b7df2951e96388096d92e3a16aea88821a110a65
 ttl 86400
 
 url https://mesonet.agron.iastate.edu/json/raob.py?station=OAX&ts={yesterday_nodashes}0000
+terms PD https://mesonet.agron.iastate.edu/disclaimer.php
 ttl 86400
 on earth 0 0 0
 last profiles.0.profile.tmpc radiosonde_temperature_c exponential-decay thermal C 8640.0 0.0 0.0
@@ -8595,31 +8680,37 @@ z z
 field z ned_redshift_z inverse-linear em 1 86400 0.0 0.0 aperture:none
 
 url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES.dat
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 1cb0fc379ef066afdc2ffd1857681cc478024570d8a3eba284fb645775198cf8
 ttl 86400
 
 url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STAT+SYS.cov
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 abf806d966485e64afdb359c87bffc0ecc00d05eff0a31ced66f247385df0fdc
 ttl 86400
 
 url https://raw.githubusercontent.com/PantheonPlusSH0ES/DataRelease/main/Pantheon+_Data/4_DISTANCES_AND_COVAR/Pantheon+SH0ES_STATONLY.cov
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 9f177129a332735d3637affd20054080d5260815f3ca0809120c05b2c902297f
 ttl 86400
 
 url https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/template/electrode/standard_1005.elc
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 1ee59197946d62de872db2ac7f2243a596662c231427366f6dc5d84ed237f853
 ttl 86400
 
 url https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/template/headmodel/standard_bem.mat
+terms unbestimmt https://docs.github.com/articles/licensing-a-repository
 format reference
 sha256 299454de329124f941688b67d59aee456a6e4118fd83a194c58fec8fcb322b19
 ttl 86400
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
+terms unbestimmt https://service.earthscope.org/
 ttl 86400
 format text
 on earth 0 0 0
@@ -8629,6 +8720,7 @@ lon 3
 field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+terms unbestimmt https://services.arcgis.com/
 ttl 86400
 on earth 0 0 0
 map features
@@ -8638,6 +8730,7 @@ field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh gaussian-invers
 field attributes.Temperature_C environment_canada_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
 
 url https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 86400
 at earth
 map features
@@ -8647,6 +8740,7 @@ field properties.ATMP ndbc_archive_air_temp_c erfc thermal C 86400 0.0 0.0
 field properties.WTMP ndbc_archive_water_temp_c erfc thermal C 86400 0.0 0.0
 
 url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 86400
 at earth
 map features
@@ -8655,6 +8749,7 @@ lon properties.longitude
 field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
 
 url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 86400
 at earth
 map features
@@ -8663,6 +8758,7 @@ lon properties.longitude
 field properties.measurevalue_degc wqp_water_temp_c erfc thermal C 86400 0.0 0.0
 
 url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services1.arcgis.com/
 ttl 86400
 on earth 0 0 0
 map features
@@ -8673,6 +8769,7 @@ field properties.avg_tempt ocean_average_temperature_c gaussian-inverse-square t
 field properties.salinity ocean_salinity_psu gaussian-inverse-square diffusion PSU 86400.0 0.0 0.0
 
 url https://services2.arcgis.com/VNo0ht0YPXJoI4oE/arcgis/rest/services/Weather_Station/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services2.arcgis.com/
 ttl 86400
 at earth
 map features
@@ -8681,6 +8778,7 @@ lon properties.LONGITUDE
 field properties.TAVG monthly_tavg_c gaussian-inverse-square thermal C 6.0 0.0 0.0
 
 url https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+terms unbestimmt https://services4.arcgis.com/
 ttl 86400
 on earth 0 0 0
 map features
@@ -8689,6 +8787,7 @@ lon attributes.longitude
 field attributes.depth worldwide_quake_depth_km gaussian-inverse-square seismic-body km 3600.0 0.0 0.0
 
 url https://services8.arcgis.com/JDjQrQppZR2u4Y1i/arcgis/rest/services/Seismicity_(Catalogue_compilation_1901_-_June_2020)_view/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services8.arcgis.com/
 ttl 86400
 at earth
 map features
@@ -8698,6 +8797,7 @@ field properties.Mw_hom sheec_magnitude_mw gaussian-inverse-square seismic-body 
 field properties.DEP sheec_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+terms unbestimmt https://services8.arcgis.com/
 ttl 86400
 on earth 0 0 0
 map features
@@ -8707,6 +8807,7 @@ field attributes.Depth romplus_quake_depth_km gaussian-inverse-square seismic-bo
 field attributes.Mw romplus_quake_mw gaussian-inverse-square seismic-surface Mw 3600.0 0.0 0.0
 
 url https://services9.arcgis.com/NpUZ2jEsnfm9HSQT/arcgis/rest/services/Buoy_46092/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://services9.arcgis.com/
 ttl 86400
 at earth
 map features
@@ -8788,12 +8889,14 @@ dist_scale 3.085677581e16
 field Ksmag carmenes_ks_mag inverse-square em mag 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
+terms unbestimmt https://vires.services/
 ttl 86400
 at earth
 hapi F=champ_magnetic_field_intensity_nt
 field champ_magnetic_field_intensity_nt champ_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
+terms unbestimmt https://vires.services/
 ttl 86400
 at earth
 hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
@@ -8802,6 +8905,7 @@ field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 86
 field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
+terms unbestimmt https://vires.services/
 ttl 86400
 at earth
 hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
@@ -8809,18 +8913,21 @@ field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam
 field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
+terms unbestimmt https://vires.services/
 ttl 86400
 at earth
 hapi F=swarm_magnetic_field_intensity_nt
 field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=Absolute_VTEC&format=json
+terms unbestimmt https://vires.services/
 ttl 86400
 at earth
 hapi Absolute_VTEC=swarm_absolute_vertical_tec_tecu
 field swarm_absolute_vertical_tec_tecu swarm_absolute_vertical_tec_tecu inverse-square em TECU 86400 0.0 0.0
 
 url https://weather.uwyo.edu/wsgi/sounding?datetime={yesterday}%2000:00:00&id=72293&src=UNKNOWN&type=TEXT:CSV
+terms unbestimmt https://weather.uwyo.edu/
 ttl 86400
 format csv
 on earth 0 0 0
@@ -8835,6 +8942,7 @@ field 8 radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 864
 field 12 radiosonde_wind_speed_m_s patch-levy advective m/s 8640.0 0.0 0.0
 
 url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
+terms ohne-lizenz https://www.ldeo.columbia.edu/chrr/terms_of_use.html
 format ndk
 at earth
 ttl 86400
@@ -10332,6 +10440,7 @@ sha256 a61cd748cfbca3ea4201f7a8c743b7e47a1434fb798a4290d18afefc1a357525
 ttl 86400
 
 url http://archives.ia2.inaf.it:80/vo/tap/projects/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+planck.planck_ercsc_f857+WHERE+flux+IS+NOT+NULL
+terms unbestimmt https://archives.ia2.inaf.it/
 format tap
 ttl 604800
 at sun
@@ -10352,6 +10461,7 @@ plx plx
 field mag_v hipparcos_v_mag inverse-square em mag 604800 0.0 0.0
 
 url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
+terms unbestimmt https://gavo.aip.de/
 format tap
 ttl 604800
 at sun
@@ -10362,6 +10472,7 @@ field HRV rave_dr4_radial_velocity_kms gaussian-inverse-square advective km/s 60
 field Teff_K rave_dr4_effective_temp_k erfc thermal K 604800 0.0 0.0
 
 url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+r.ra,r.dec,r.z,f.objid,f.corrfibmag_u,f.corrfibmag_g,f.corrfibmag_r+FROM+specphot.rcsed+AS+r+JOIN+specphot.rcsed_fibermags+AS+f+ON+r.objid=f.objid+WHERE+f.corrfibmag_g+IS+NOT+NULL
+terms unbestimmt https://padc-tap-rcsed.obspm.fr/
 format tap
 ttl 604800
 at sun
@@ -10374,6 +10485,7 @@ field corrfibmag_g rcsed_g_fiber_mag inverse-square em mag 604800 0.0 0.0 apertu
 field corrfibmag_r rcsed_r_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
 
 url http://tap.roe.ac.uk/osa/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+5000+ra,dec,uAperMag3,gAperMag3,rAperMag3,iAperMag3+FROM+ATLASDR4.atlasSource
+terms unbestimmt https://tap.roe.ac.uk/
 format tap
 ttl 604800
 at sun
@@ -10386,6 +10498,7 @@ field rAperMag3 atlasdr4_r_aper_mag3 gaussian-inverse-square em mag 604800 0.0 0
 field iAperMag3 atlasdr4_i_aper_mag3 gaussian-inverse-square em mag 604800 0.0 0.0
 
 url http://tap.roe.ac.uk/ssa/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+5000+ra,dec,muAcosD,muD,classMagB,classMagR1,classMagR2,classMagI+FROM+SSA.Source
+terms unbestimmt https://tap.roe.ac.uk/
 format tap
 ttl 604800
 at sun
@@ -10400,6 +10513,7 @@ field classMagR2 ssa_class_mag_r2 gaussian-inverse-square em mag 604800 0.0 0.0
 field classMagI ssa_class_mag_i gaussian-inverse-square em mag 604800 0.0 0.0
 
 url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag,vr+FROM+hyperleda.galaxies+WHERE+vr+IS+NOT+NULL
+terms unbestimmt https://voparis-tap-astro-m.obspm.fr/
 format tap
 ttl 604800
 at sun
@@ -10410,6 +10524,7 @@ field vr hyperleda_radial_velocity_kms gaussian-inverse-square advective km/s 60
 field mag hyperleda_mag inverse-square em mag 604800 0.0 0.0
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
+terms CC-BY-4.0 https://open-meteo.com/en/licence
 ttl 604800
 on earth 19.48 -155.6 0
 path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 0.0 0.0
@@ -10431,6 +10546,7 @@ at mars
 ttl 604800
 
 url https://dachs.oca.eu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,abs_mag,diameter+FROM+mp3c_main.best+WHERE+abs_mag+IS+NOT+NULL
+terms unbestimmt https://dachs.oca.eu/
 format tap
 ttl 604800
 at sun
@@ -10440,6 +10556,7 @@ dec dec
 field abs_mag mp3c_asteroid_abs_mag inverse-square em mag 604800 0.0 0.0
 
 url https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
+terms unbestimmt https://data-argo.ifremer.fr/
 ttl 604800
 on earth 0 0 0
 format netcdf
@@ -10455,6 +10572,7 @@ field BBP700 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.0 0.0
 field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
 url https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
+terms unbestimmt https://data-argo.ifremer.fr/
 ttl 604800
 on earth 0 0 0
 format netcdf
@@ -10470,6 +10588,7 @@ field BBP700 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.0 0.0
 field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
 url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+terms unbestimmt https://data-argo.ifremer.fr/
 ttl 604800
 on earth 0 0 0
 format netcdf
@@ -10482,6 +10601,7 @@ field TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0
 field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0
 
 url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra_dr2,dec_dr2,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
+terms unbestimmt https://datacentral.org.au/
 format tap
 ttl 604800
 at sun
@@ -10493,6 +10613,7 @@ field teff galah_dr3_effective_temp_k erfc thermal K 604800 0.0 0.0
 field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
+terms unbestimmt https://dc.g-vo.org/
 ttl 604800
 at sun
 cmap .
@@ -10502,6 +10623,7 @@ field flux_dens_red ohmaser_flux_red_jy inverse-square em Jy 604800 0.0 0.0
 field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
+terms unbestimmt https://dc.g-vo.org/
 ttl 604800
 at sun
 cmap .
@@ -10524,6 +10646,7 @@ dec declination
 field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 0.0 0.0
 
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+terms unbestimmt https://egg.astro.cornell.edu/
 ttl 604800
 format csv
 at sun
@@ -10535,6 +10658,7 @@ dist_scale 3.085677581e22
 field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
 
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
+terms unbestimmt https://erddap.marine.ie/erddap/legal.html
 ttl 604800
 on earth 0 0 0
 map table.rows
@@ -20763,6 +20887,7 @@ dec dec
 field ep_flux xmm_epic_flux_wm2 inverse-square em W/m2 604800 0.0 0.0
 
 url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+terms unbestimmt https://sheffieldcitycouncil.cloud.esriuk.com/
 ttl 604800
 at earth
 map features
@@ -20771,6 +20896,7 @@ lon properties.long
 field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion ug/m3 604800 0.0 0.0
 
 url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
+terms unbestimmt https://skvo.science.upjs.sk/
 format tap
 ttl 604800
 at sun
@@ -20781,6 +20907,7 @@ epoch obs_time mjd
 field magnitude ogle_magnitude inverse-square em mag 604800 0.0 0.0
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
+terms PD https://www.sdss.org/collaboration/image-use-policy/
 ttl 604800
 at sun
 cmap 0.Rows
@@ -20792,6 +20919,7 @@ field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 
 field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0 aperture:none
 
 url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
+terms PD https://www.sdss.org/collaboration/image-use-policy/
 ttl 604800
 at sun
 cmap 0.Rows
@@ -20832,6 +20960,7 @@ field Hmag apogee_dr17_hmag gaussian-inverse-square em mag 604800 0.0 0.0
 field Ksmag apogee_dr17_ksmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://tools.ssdc.asi.it/TAPSSDC/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+catalogs.mmc_bzcat5th+WHERE+flux+IS+NOT+NULL
+terms unbestimmt https://tools.ssdc.asi.it/
 format tap
 ttl 604800
 at sun
@@ -20841,6 +20970,7 @@ dec dec
 field flux bzcat5th_flux inverse-square em mJy 604800 0.0 0.0
 
 url https://uhslc.soest.hawaii.edu/erddap/tabledap/global_hourly_fast.json?time,latitude,longitude,sea_level&time%3E=max(time)-2days
+terms ohne-lizenz https://uhslc.soest.hawaii.edu/
 ttl 604800
 on earth 0 0 0
 map table.rows
@@ -20899,6 +21029,7 @@ field Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square em mag 604800 0.0 0
 field BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://vo.astron.nl/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,total_flux,peak_flux+FROM+lotss_dr2.main_sources+WHERE+total_flux+IS+NOT+NULL
+terms unbestimmt https://vo.astron.nl/
 format tap
 ttl 604800
 at sun
@@ -21118,6 +21249,7 @@ dec dec
 field ksmag viking_ks_petromag inverse-square em mag 31536000 0.0 0.0
 
 url http://arvo-registry.sci.am/__system__/tap/run/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,magb,magr+FROM+dfbsspec.spectra+WHERE+magb+IS+NOT+NULL
+terms unbestimmt https://arvo-registry.sci.am/
 format tap
 ttl 31536000
 at sun
@@ -21148,6 +21280,7 @@ dec dec
 field jmag irsf_j_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,flux_g+FROM+ls_dr10.tractor+WHERE+flux_g+IS+NOT+NULL
+terms unbestimmt https://datalab.noirlab.edu/
 format tap
 ttl 31536000
 at sun
@@ -21157,6 +21290,7 @@ dec dec
 quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom
 
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
+terms unbestimmt https://datalab.noirlab.edu/
 format tap
 ttl 31536000
 at sun
@@ -28769,21 +28903,25 @@ origin https://voparis-tap-astro-m.obspm.fr
 ttl 31536000
 
 url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-Earth3D.5.4.3.jar
+terms unbestimmt https://gs.llnl.gov/
 format reference
 sha256 e9e26fd79ef1399003035ecdcc58db0465c2cf6bf8558257bb0167bf7f4b53ed
 ttl 31536000
 
 url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-G3D-JPS.e3d.binary
+terms unbestimmt https://gs.llnl.gov/
 format reference
 sha256 7c6e8fd3ccbba4329abe37de44711dec0554884a9bbb316f97c8aa73231b2b4f
 ttl 31536000
 
 url https://gs.llnl.gov/sites/gs/files/2021-09/llnl-g3d-jps_tomofilt_1.zip
+terms unbestimmt https://gs.llnl.gov/
 format reference
 sha256 76aa5860791855d7c52bfab3724ad11ec4af7595741f7243f262e77bdda67908
 ttl 31536000
 
 url https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip
+terms unbestimmt https://gs.llnl.gov/
 format reference
 sha256 3bb043779efd1c4e4cb7e99547ad7c2fa12f7477922bb3cb22dd9ea67450edc8
 ttl 31536000
@@ -28802,6 +28940,7 @@ field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 0.0 0.0
 field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 0.0 0.0
 
 url https://userquery.linea.org.br/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_auto_g+FROM+des_dr2.main+WHERE+mag_auto_g+IS+NOT+NULL
+terms ohne-lizenz https://userquery.linea.org.br/
 format tap
 ttl 31536000
 at sun
@@ -30241,6 +30380,7 @@ field wind_swe_el_bulk_vel_magn_kms wind_swe_el_bulk_vel_magn_kms patch-levy adv
 field wind_swe_el_density_cm3 wind_swe_el_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 
 url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
+terms unbestimmt https://cedar.openmadrigal.org/
 format openmadrigal
 origin https://cedar.openmadrigal.org
 on earth 42.619 288.510 0.146

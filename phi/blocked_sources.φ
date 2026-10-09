@@ -135,4 +135,8 @@ pending
 url https://geomag.usgs.gov/ws/data/
 note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein `geoelectric`/`mV`; bare `/ws/data/` 400. Reale Route NOAA SWPC rgeojson (eigener Eintrag). Magnetik: declined_sources.φ:2176 — per Datensatz getrennt.
 
+pending
+url https://github.com/TIAN-we/petrel19
+note PETREL19 — 2026-10-09: Wei (tian-we@163.com, mail_ledger.φ#1791552291) erteilt CC BY 4.0; frühere `decline redistribution` (unlicensed) damit widerlegt + entfernt. Port offen: PETREL19-Arm in `ephemeris_compiler.rs` (SPICE/DE, 1799-10-13..2106-05-05).
+
 
