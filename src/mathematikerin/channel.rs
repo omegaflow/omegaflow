@@ -1,6 +1,9 @@
 use super::actuators::CHANNEL_CAP;
 use super::force::force_name_of;
+use super::media::MediumParams;
 use std::collections::HashMap;
+
+pub const VACUUM_SPEED_M_S: f64 = 299_792_458.0;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Conserved {
@@ -78,7 +81,7 @@ pub enum Domain {
     Line,
     Rectangle { lx: f64, ly: f64 },
     Circle,
-    Sphere,
+    Sphere { l: u32 },
     Shell { r_in: f64, r_out: f64 },
     Ellipsoid { a: f64, b: f64, c: f64 },
 }
@@ -88,8 +91,8 @@ impl PartialEq for Domain {
         match (self, other) {
             (Domain::Unspecified, Domain::Unspecified)
             | (Domain::Line, Domain::Line)
-            | (Domain::Circle, Domain::Circle)
-            | (Domain::Sphere, Domain::Sphere) => true,
+            | (Domain::Circle, Domain::Circle) => true,
+            (Domain::Sphere { l: a }, Domain::Sphere { l: b }) => a == b,
             (Domain::Rectangle { lx: a, ly: b }, Domain::Rectangle { lx: c, ly: d }) => {
                 a.to_bits() == c.to_bits() && b.to_bits() == d.to_bits()
             }
@@ -189,7 +192,7 @@ impl Domain {
             "unspecified" => Some(Domain::Unspecified),
             "line" => Some(Domain::Line),
             "circle" => Some(Domain::Circle),
-            "sphere" => Some(Domain::Sphere),
+            "sphere" => Some(Domain::Sphere { l: 0 }),
             _ => parse_compound_domain(token),
         }
     }
@@ -200,7 +203,7 @@ impl Domain {
             Domain::Line => 1,
             Domain::Rectangle { .. } => 2,
             Domain::Circle => 3,
-            Domain::Sphere => 4,
+            Domain::Sphere { .. } => 4,
             Domain::Shell { .. } => 5,
             Domain::Ellipsoid { .. } => 6,
         }
@@ -222,6 +225,7 @@ impl Domain {
                 let h = fnv1a(&b.to_bits().to_le_bytes(), h);
                 fnv1a(&c.to_bits().to_le_bytes(), h)
             }
+            Domain::Sphere { l } => fnv1a(&l.to_le_bytes(), h),
             _ => h,
         }
     }
@@ -237,6 +241,10 @@ fn parse_compound_domain(token: &str) -> Option<Domain> {
         return None;
     }
     let kind = &token[..open];
+    if kind == "sphere" {
+        let l: u32 = token[open + 1..close].trim().parse().ok()?;
+        return Some(Domain::Sphere { l });
+    }
     let mut args: Vec<f64> = Vec::new();
     for raw in token[open + 1..close].split(',') {
         let v: f64 = raw.trim().parse().ok()?;
@@ -356,6 +364,19 @@ impl ChannelDescriptor {
             .into_iter()
             .map(|k| mode_frequency_hz(self.op, speed, k))
             .collect()
+    }
+
+    pub fn mode_frequencies_hz_for_body(&self, body_name: &str, count: usize) -> Option<Vec<f64>> {
+        let params = super::media::medium_params_of(body_name);
+        let speed = characteristic_speed(self.medium, params.as_ref())?;
+        self.mode_frequencies_hz(speed, count)
+    }
+
+    pub fn mode_degeneracy(&self) -> Option<u32> {
+        match (&self.domain, self.effective_boundary()) {
+            (Domain::Sphere { l }, Boundary::Dirichlet) => Some(2 * *l + 1),
+            _ => None,
+        }
     }
 
     pub fn hash(&self) -> u64 {
@@ -601,6 +622,10 @@ const FIRST_BESSEL_J0_ZERO: f64 = 2.404_825_557_7;
 const CIRCLE_ZERO_SEARCH_MAX: f64 = 20.0;
 const CIRCLE_ZERO_STEP: f64 = 0.05;
 
+const SPHERE_ZERO_EPS: f64 = 1e-4;
+const SPHERE_ZERO_STEP: f64 = 0.02;
+const SPHERE_ZERO_SEARCH_MAX: f64 = 200.0;
+
 fn bessel_j(m: u32, x: f64) -> f64 {
     if x == 0.0 {
         return if m == 0 { 1.0 } else { 0.0 };
@@ -668,6 +693,64 @@ fn circular_membrane_zeros(count: usize) -> Vec<f64> {
     pool
 }
 
+fn spherical_bessel_j(l: u32, x: f64) -> f64 {
+    if x == 0.0 {
+        return if l == 0 { 1.0 } else { 0.0 };
+    }
+    let mut jm1 = x.sin() / x;
+    if l == 0 {
+        return jm1;
+    }
+    let mut jn = x.sin() / (x * x) - x.cos() / x;
+    for n in 1..l {
+        let jp1 = (2.0 * n as f64 + 1.0) / x * jn - jm1;
+        jm1 = jn;
+        jn = jp1;
+    }
+    jn
+}
+
+fn spherical_bessel_zero(l: u32, lo: f64, hi: f64) -> f64 {
+    let mut a = lo;
+    let mut b = hi;
+    let mut fa = spherical_bessel_j(l, a);
+    for _ in 0..200 {
+        if b - a <= 1e-13 {
+            break;
+        }
+        let mid = 0.5 * (a + b);
+        let fm = spherical_bessel_j(l, mid);
+        if (fm < 0.0) != (fa < 0.0) {
+            b = mid;
+        } else {
+            a = mid;
+            fa = fm;
+        }
+    }
+    0.5 * (a + b)
+}
+
+fn spherical_bessel_zeros(l: u32, count: usize) -> Option<Vec<f64>> {
+    let mut zeros: Vec<f64> = Vec::with_capacity(count);
+    let mut prev_x = SPHERE_ZERO_EPS;
+    let mut prev = spherical_bessel_j(l, prev_x);
+    let mut x = prev_x + SPHERE_ZERO_STEP;
+    while x <= SPHERE_ZERO_SEARCH_MAX && zeros.len() < count {
+        let cur = spherical_bessel_j(l, x);
+        if (cur < 0.0) != (prev < 0.0) {
+            zeros.push(spherical_bessel_zero(l, prev_x, x));
+        }
+        prev_x = x;
+        prev = cur;
+        x += SPHERE_ZERO_STEP;
+    }
+    if zeros.len() == count {
+        Some(zeros)
+    } else {
+        None
+    }
+}
+
 pub fn eigen_wavenumbers(
     domain: &Domain,
     boundary: Boundary,
@@ -679,7 +762,7 @@ pub fn eigen_wavenumbers(
     }
     match domain {
         Domain::Rectangle { lx, ly } => rectangular_wavenumbers(*lx, *ly, boundary, count),
-        Domain::Line | Domain::Circle | Domain::Sphere => {
+        Domain::Line | Domain::Circle | Domain::Sphere { .. } => {
             let extent = extent?;
             if !extent.is_finite() || extent <= 0.0 {
                 return None;
@@ -695,11 +778,15 @@ pub fn eigen_wavenumbers(
                         .map(|j| j as f64 * std::f64::consts::PI / extent)
                         .collect(),
                 ),
-                (Domain::Sphere, Boundary::Dirichlet) => Some(
+                (Domain::Sphere { l: 0 }, Boundary::Dirichlet) => Some(
                     (1..=count)
                         .map(|j| j as f64 * std::f64::consts::PI / extent)
                         .collect(),
                 ),
+                (Domain::Sphere { l }, Boundary::Dirichlet) => {
+                    let zeros = spherical_bessel_zeros(*l, count)?;
+                    Some(zeros.into_iter().map(|z| z / extent).collect())
+                }
                 (Domain::Circle, Boundary::Dirichlet) if count <= CHANNEL_CAP => {
                     let zeros = circular_membrane_zeros(count);
                     if zeros.len() < count || (zeros[0] - FIRST_BESSEL_J0_ZERO).abs() > 1e-9 {
@@ -744,6 +831,32 @@ fn rectangular_wavenumbers(lx: f64, ly: f64, boundary: Boundary, count: usize) -
         if bound > 4096 {
             return None;
         }
+    }
+}
+
+pub fn characteristic_speed(medium: Medium, params: Option<&MediumParams>) -> Option<f64> {
+    match medium {
+        Medium::Vacuum => Some(VACUUM_SPEED_M_S),
+        Medium::Fluid => {
+            let p = params?;
+            if p.sound_speed_m_s.is_finite() && p.sound_speed_m_s > 0.0 {
+                Some(p.sound_speed_m_s)
+            } else {
+                None
+            }
+        }
+        Medium::ElasticSolid => None,
+    }
+}
+
+pub fn elastic_speeds(params: &MediumParams) -> Option<(f64, f64)> {
+    let cp = params.p_wave_m_s;
+    let cs = params.s_wave_m_s;
+    let finite_positive = |v: f64| v.is_finite() && v > 0.0;
+    if finite_positive(cp) && finite_positive(cs) && cp >= cs {
+        Some((cp, cs))
+    } else {
+        None
     }
 }
 
@@ -856,6 +969,21 @@ impl ChannelRegistry {
 
     pub fn descriptor(&self, hash: u64) -> Option<&ChannelDescriptor> {
         self.id.get(&hash).map(|&i| &self.descs[i])
+    }
+
+    pub fn mode_frequencies_hz_for_body(
+        &self,
+        body_name: &str,
+        count: usize,
+    ) -> Vec<Option<Vec<f64>>> {
+        let params = super::media::medium_params_of(body_name);
+        self.descs
+            .iter()
+            .map(|d| {
+                let speed = characteristic_speed(d.medium, params.as_ref())?;
+                d.mode_frequencies_hz(speed, count)
+            })
+            .collect()
     }
 
     pub fn schema_hash(&self) -> u32 {
@@ -1400,9 +1528,45 @@ mod tests {
     #[test]
     fn a_sphere_dirichlet_is_the_l0_radial_sector() {
         let pi = std::f64::consts::PI;
-        let k = eigen_wavenumbers(&Domain::Sphere, Boundary::Dirichlet, Some(1.0), 2)
+        let k = eigen_wavenumbers(&Domain::Sphere { l: 0 }, Boundary::Dirichlet, Some(1.0), 2)
             .expect("sphere l=0");
         assert_eq!(k, vec![pi, 2.0 * pi]);
+    }
+
+    #[test]
+    fn a_sphere_l1_is_the_j1_zero_spectrum() {
+        let k = eigen_wavenumbers(&Domain::Sphere { l: 1 }, Boundary::Dirichlet, Some(1.0), 3)
+            .expect("sphere l=1");
+        assert!((k[0] - 4.493_409).abs() < 1e-3, "first j1 zero {}", k[0]);
+        assert!((k[1] - 7.725_252).abs() < 1e-3, "second j1 zero {}", k[1]);
+        assert!(k[2] > k[1]);
+    }
+
+    #[test]
+    fn a_sphere_carries_its_sector_in_the_hash() {
+        let l0 = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 0 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        let l1 = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 1 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert_ne!(l0.hash(), l1.hash());
+        assert_eq!(Domain::parse("sphere"), Some(Domain::Sphere { l: 0 }));
+        assert_eq!(Domain::parse("sphere(2)"), Some(Domain::Sphere { l: 2 }));
     }
 
     #[test]
@@ -1640,6 +1804,123 @@ mod tests {
         )
         .expect("wave line spec parses");
         assert!(d.mode_frequencies_hz(343.0, 3).is_none());
+    }
+
+    #[test]
+    fn a_medium_constitutes_its_characteristic_speed() {
+        let fluid = MediumParams {
+            sound_speed_m_s: 343.0,
+            p_wave_m_s: 0.0,
+            s_wave_m_s: 0.0,
+            thermal_diffusivity_m2_s: 0.0,
+            molecular_diffusivity_m2_s: 0.0,
+        };
+        assert_eq!(
+            characteristic_speed(Medium::Vacuum, None),
+            Some(VACUUM_SPEED_M_S)
+        );
+        assert_eq!(
+            characteristic_speed(Medium::Fluid, Some(&fluid)),
+            Some(343.0)
+        );
+        assert_eq!(characteristic_speed(Medium::Fluid, None), None);
+        assert_eq!(
+            characteristic_speed(Medium::ElasticSolid, Some(&fluid)),
+            None
+        );
+    }
+
+    #[test]
+    fn the_declared_body_constitutes_the_channel_frequencies() {
+        let fluid = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "Pa",
+        )
+        .with_extent(Some(2.0));
+        let f = fluid
+            .mode_frequencies_hz_for_body("earth", 2)
+            .expect("earth carries a sound speed");
+        assert_eq!(f.len(), 2);
+        assert!(f[0] > 0.0);
+
+        let solid = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Line,
+            Boundary::Neumann,
+            "m",
+        )
+        .with_extent(Some(2.0));
+        assert!(solid.mode_frequencies_hz_for_body("earth", 2).is_none());
+
+        let vacuum = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Maxwell,
+            PdeType::Mixed,
+            Medium::Vacuum,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "V/m",
+        )
+        .with_extent(Some(2.0));
+        assert!(
+            vacuum.mode_frequencies_hz_for_body("iss", 2).is_some(),
+            "vacuum is the constant light speed, no body needed"
+        );
+    }
+
+    #[test]
+    fn an_elastic_solid_constitutes_two_speeds() {
+        let solid = MediumParams {
+            sound_speed_m_s: 0.0,
+            p_wave_m_s: 5950.0,
+            s_wave_m_s: 3630.0,
+            thermal_diffusivity_m2_s: 0.0,
+            molecular_diffusivity_m2_s: 0.0,
+        };
+        assert_eq!(elastic_speeds(&solid), Some((5950.0, 3630.0)));
+        let inverted = MediumParams {
+            p_wave_m_s: 3630.0,
+            s_wave_m_s: 5950.0,
+            ..solid.clone()
+        };
+        assert_eq!(elastic_speeds(&inverted), None);
+    }
+
+    #[test]
+    fn a_sphere_sector_carries_its_degeneracy() {
+        let d = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 2 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert_eq!(d.mode_degeneracy(), Some(5));
+        let line = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Line,
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert_eq!(line.mode_degeneracy(), None);
     }
 
     #[test]
