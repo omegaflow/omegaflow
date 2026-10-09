@@ -54,6 +54,16 @@ pub fn rec_array<'a>(rec: &'a DmapRecord, name: &str) -> Option<&'a DmapArray> {
     rec.arrays.iter().find(|a| a.name == name)
 }
 
+pub fn map_grid_value(rec: &DmapRecord) -> Option<(f64, f64)> {
+    let vel = rec_array(rec, "vector.vel.median")?.nums.first().copied()?;
+    let azm = rec_array(rec, "vector.kvect")?.nums.first().copied()?;
+    if vel.is_finite() && azm.is_finite() {
+        Some((vel, azm))
+    } else {
+        None
+    }
+}
+
 fn le_u16_at(b: &[u8], p: usize) -> Option<u16> {
     let s = b.get(p..p + 2)?;
     let arr: [u8; 2] = s.try_into().ok()?;
@@ -339,5 +349,40 @@ mod tests {
     fn parse_records_void_on_a_truncated_stream() {
         let bytes = sample_record();
         assert!(parse_records(&bytes[..bytes.len() - 1]).is_none());
+    }
+
+    fn sample_grid_record() -> Vec<u8> {
+        let mut payload = Vec::new();
+        payload.extend_from_slice(&0u32.to_le_bytes());
+        payload.extend_from_slice(&2u32.to_le_bytes());
+        enc_array_f32(&mut payload, "vector.vel.median", &[123.5]);
+        enc_array_f32(&mut payload, "vector.kvect", &[45.0]);
+        let sze = 8 + payload.len();
+        let mut out = Vec::new();
+        out.extend_from_slice(&DMAP_CODE.to_le_bytes());
+        out.extend_from_slice(&(sze as u32).to_le_bytes());
+        out.extend_from_slice(&payload);
+        out
+    }
+
+    #[test]
+    fn map_grid_value_reads_velocity_and_kvect() {
+        let recs = parse_records(&sample_grid_record()).expect("one record");
+        assert_eq!(map_grid_value(&recs[0]), Some((123.5, 45.0)));
+    }
+
+    #[test]
+    fn map_grid_value_void_without_kvect() {
+        let mut payload = Vec::new();
+        payload.extend_from_slice(&0u32.to_le_bytes());
+        payload.extend_from_slice(&1u32.to_le_bytes());
+        enc_array_f32(&mut payload, "vector.vel.median", &[123.5]);
+        let sze = 8 + payload.len();
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(&DMAP_CODE.to_le_bytes());
+        bytes.extend_from_slice(&(sze as u32).to_le_bytes());
+        bytes.extend_from_slice(&payload);
+        let recs = parse_records(&bytes).expect("one record");
+        assert_eq!(map_grid_value(&recs[0]), None);
     }
 }

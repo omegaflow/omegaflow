@@ -690,6 +690,15 @@ field tha_fgs_bx_gse_nt tha_fgs_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_by_gse_nt tha_fgs_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field tha_fgs_bz_gse_nt tha_fgs_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at earth
+hapi thg_magh_abk=themis_gmag_h_nt thg_magd_abk=themis_gmag_e_nt thg_magz_abk=themis_gmag_z_nt
+field themis_gmag_h_nt themis_gmag_h_nt inverse-square em nT 3600 0.0 0.0
+field themis_gmag_e_nt themis_gmag_e_nt inverse-square em nT 3600 0.0 0.0
+field themis_gmag_z_nt themis_gmag_z_nt inverse-square em nT 3600 0.0 0.0
+
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
@@ -698,15 +707,6 @@ hapi BGSE.0=wind_mfi_bx_gse_nt BGSE.1=wind_mfi_by_gse_nt BGSE.2=wind_mfi_bz_gse_
 field wind_mfi_bx_gse_nt wind_mfi_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
-
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
-terms PD https://cdaweb.gsfc.nasa.gov/
-no-cadence
-at sun
-hapi Te=wind_swe_te_k el_bulk_vel_magn=wind_swe_el_bulk_vel_magn_kms el_density=wind_swe_el_density_cm3
-field wind_swe_te_k wind_swe_te_k exponential-decay thermal K 3600 0.0 0.0
-field wind_swe_el_bulk_vel_magn_kms wind_swe_el_bulk_vel_magn_kms patch-levy advective km/s 3600 0.0 0.0
-field wind_swe_el_density_cm3 wind_swe_el_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
 ttl 3600
@@ -809,14 +809,6 @@ on earth 52.52 13.405 0
 ttl 3600
 field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
-format ghsl_built_s
-origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
-compiler tools/harvest/src/bin/ghsl_compiler.rs
-on earth 0 0 0
-ttl 31536000
-quantity ghsl_built_surface_m2 ghsl_built_surface_m2 point area m2 31536000 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/amda.irap.omp.eu/rpw_efield.bin
 format rpw_efield
 origin https://amda.irap.omp.eu/service/hapi
@@ -872,6 +864,14 @@ rows .
 epoch year month day 0 0
 gate qbo_30hpa_ms -300.0 300.0
 field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.impc.dlr.de/impc_roti.bin
+format impc_roti
+origin https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
+compiler tools/harvest/src/bin/impc_roti_compiler.rs
+at earth
+ttl 3600
+quantity impc_roti_tecu_min impc_roti_tecu_min inverse-square scale TECU/min 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyIso.csv
@@ -1658,14 +1658,6 @@ compiler tools/harvest/src/bin/cdaweb_roti_compiler.rs
 at earth
 ttl 86400
 quantity cdaweb_roti_tecu_min cdaweb_roti_tecu_min inverse-square scale TECU/min 900 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/data.impc.dlr.de/impc_roti.bin
-format impc_roti
-origin https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
-compiler tools/harvest/src/bin/impc_roti_compiler.rs
-at earth
-ttl 3600
-quantity impc_roti_tecu_min impc_roti_tecu_min inverse-square scale TECU/min 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_tec.bin
 format cdaweb_tec
@@ -4123,15 +4115,6 @@ cmap .
 lat Latitude
 lon Longitude
 field absolute_vtec_tecu absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
-
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=THG_L2_MAG_ABK&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=thg_magh_abk,thg_magd_abk,thg_magz_abk&format=json
-terms PD https://cdaweb.gsfc.nasa.gov/
-ttl 3600
-at earth
-hapi thg_magh_abk=themis_gmag_h_nt thg_magd_abk=themis_gmag_e_nt thg_magz_abk=themis_gmag_z_nt
-field themis_gmag_h_nt themis_gmag_h_nt inverse-square em nT 3600 0.0 0.0
-field themis_gmag_e_nt themis_gmag_e_nt inverse-square em nT 3600 0.0 0.0
-field themis_gmag_z_nt themis_gmag_z_nt inverse-square em nT 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/unidata-nexrad-level2.s3.amazonaws.com/nexrad_level2.bin
 format nexrad_level2
@@ -20060,21 +20043,6 @@ ra _RAJ2000
 dec _DEJ2000
 field LDD jsdc_ldd_mas inverse-square gravity mas 604800 0.0 0.0
 
-url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/633/A99/members&-out.max=100000
-terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
-ttl 604800
-format asu-tsv
-at sun
-cmap .
-ra RA_ICRS
-dec DE_ICRS
-plx Plx
-pmra pmRA
-pmdec pmDE
-field Plx gaia_dr2_opencluster_plx_mas inverse-square gravity mas 604800 0.0 0.0
-field Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square em mag 604800 0.0 0.0
-field BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square em mag 604800 0.0 0.0
-
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 604800
@@ -20098,6 +20066,21 @@ ra RAJ2000
 dec DEJ2000
 field Stotal tgss_adr1_stotal_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 field Speak tgss_adr1_speak_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+
+url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/633/A99/members&-out.max=100000
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
+ttl 604800
+format asu-tsv
+at sun
+cmap .
+ra RA_ICRS
+dec DE_ICRS
+plx Plx
+pmra pmRA
+pmdec pmDE
+field Plx gaia_dr2_opencluster_plx_mas inverse-square gravity mas 604800 0.0 0.0
+field Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square em mag 604800 0.0 0.0
+field BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://vo.astron.nl/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,total_flux,peak_flux+FROM+lotss_dr2.main_sources+WHERE+total_flux+IS+NOT+NULL
 format tap
@@ -20873,6 +20856,14 @@ url https://github.com/omegaflow/sources/releases/download/isla.esac.esa.int/tap
 format reference
 origin https://isla.esac.esa.int
 ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
+format ghsl_built_s
+origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
+compiler tools/harvest/src/bin/ghsl_compiler.rs
+on earth 0 0 0
+ttl 31536000
+quantity ghsl_built_surface_m2 ghsl_built_surface_m2 point area m2 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/jvo.nao.ac.jp/fgn00000000.sky1
 origin http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
@@ -28987,6 +28978,15 @@ fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+no-cadence
+at sun
+hapi Te=wind_swe_te_k el_bulk_vel_magn=wind_swe_el_bulk_vel_magn_kms el_density=wind_swe_el_density_cm3
+field wind_swe_te_k wind_swe_te_k exponential-decay thermal K 3600 0.0 0.0
+field wind_swe_el_bulk_vel_magn_kms wind_swe_el_bulk_vel_magn_kms patch-levy advective km/s 3600 0.0 0.0
+field wind_swe_el_density_cm3 wind_swe_el_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 
 url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
 format openmadrigal
