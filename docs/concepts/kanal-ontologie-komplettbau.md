@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: 55498553128b6602b66b24cf39829f5c9794128fc686c9bda45bfcbc46f15cdf
+  sha256: d201d8851ad68bc9f789505739c727ebdc2f676bd5771f8fe1a872c843dc4fe9
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -100,7 +100,12 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P2.4** Alle `[f32;9]`-Signaturen → `&[f32]` + `n` (oder `ChannelVec`).
 
 ### P3 — Wire & Relay (`src/archivar/relay.rs`, `main_flow.rs`)
-- **P3.1** Wire-Kopf `{ n: u16, schema_hash: u32 }` + `offsets[n+1]` + `f32[n]` + 2-Bit-State-Maske.
+- **P3.1** Wire-Kopf `{ n: u16, schema_hash: u32 }` + `offsets[n+1]` + `f32` Nutzlast + 2-Bit-State-Maske.
+  **Gebaut (river-160):** `[CF 86 0A flags][n u16][schema_hash u32][00 00][offsets u32[n+1]][f32 Nutzlast][state mask][pan?][tilt?]`;
+  jeder Kanal k besitzt `payload[offsets[k]..offsets[k+1]]` (heute `[omega, aperture]`, also `offsets[k]=2k`;
+  eine reichere Nutzlast wächst im Span, ohne Layout-Wechsel). Die u32-Offsets halten die Nutzlast
+  4-Byte-ausgerichtet für den `Float32Array`-Read; Browser `parseKinetic` liest das CSR-Layout.
+  Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays` (`relay.rs`).
 - **P3.2** `TcpRadiator`: n Aperturen mit offsets, nicht 9.
 - **P3.3** selbstbeschreibend: Deskriptor-Manifest beim Handshake/Szenen-Load.
 

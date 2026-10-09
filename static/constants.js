@@ -198,14 +198,29 @@ export function parseKinetic(bytes) {
   const flags = dv.getUint8(3);
   const n = dv.getUint16(4, true);
   const schemaHash = dv.getUint32(6, true);
-  const stateBytes = Math.ceil(Math.ceil(n / 4) / 4) * 4;
   let o = 12;
+  const offsets = new Uint32Array(n + 1);
+  for (let i = 0; i <= n; i++) {
+    offsets[i] = dv.getUint32(o, true);
+    o += 4;
+  }
+  const total = offsets[n];
+  const payload = new Float32Array(bytes.buffer, bytes.byteOffset + o, total);
+  o += total * 4;
+  const stateBytes = Math.ceil(Math.ceil(n / 4) / 4) * 4;
   const state = new Uint8Array(bytes.buffer, bytes.byteOffset + o, stateBytes);
   o += stateBytes;
-  const omega = new Float32Array(bytes.buffer, bytes.byteOffset + o, n);
-  o += n * 4;
-  const aperture = new Float32Array(bytes.buffer, bytes.byteOffset + o, n);
-  o += n * 4;
+  const omega = new Float32Array(n);
+  const aperture = new Float32Array(n);
+  for (let k = 0; k < n; k++) {
+    const len = offsets[k + 1] - offsets[k];
+    if (len >= 1) {
+      omega[k] = payload[offsets[k]];
+    }
+    if (len >= 2) {
+      aperture[k] = payload[offsets[k] + 1];
+    }
+  }
   let pan = null;
   let tilt = null;
   if (flags & 0x01) {
