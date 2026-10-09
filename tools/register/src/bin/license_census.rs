@@ -238,6 +238,24 @@ fn no_terms_identities(content: &str) -> Vec<String> {
     out
 }
 
+fn redistribution_violations(content: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for block in blocks(content) {
+        if block_token(&block, "terms") != Some("ohne-lizenz") {
+            continue;
+        }
+        for line in &block {
+            if let Some(url) = line.strip_prefix("url ")
+                && url.contains("github.com/omegaflow/sources/releases/")
+            {
+                out.push(url.to_string());
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
 fn main() {
     let count_only = env::args().any(|a| a == "--count");
     let fail = env::args().any(|a| a == "--fail");
@@ -276,6 +294,10 @@ fn main() {
     for (line, value) in &violations {
         println!("terms-vocab VIOLATION {} {}", line, value);
     }
+    let redistribution = redistribution_violations(&sources);
+    for url in &redistribution {
+        println!("terms-redistribution VIOLATION {}", url);
+    }
     let no_terms = no_terms_identities(&sources);
     if !count_only {
         for identity in &no_terms {
@@ -284,15 +306,16 @@ fn main() {
     }
     let census_counts = counts(&sources);
     println!(
-        "license_census: blocks {} | terms {} | distinct {} | no-terms {} | pending {} | terms-vocab {} violation(s)",
+        "license_census: blocks {} | terms {} | distinct {} | no-terms {} | pending {} | terms-vocab {} violation(s) | redistribution {} violation(s)",
         census_counts.blocks,
         census_counts.with_terms,
         census_counts.distinct_terms,
         no_terms.len(),
         census_counts.pending,
-        violations.len()
+        violations.len(),
+        redistribution.len()
     );
-    if fail && !violations.is_empty() {
+    if fail && (!violations.is_empty() || !redistribution.is_empty()) {
         exit(1);
     }
 }
@@ -383,6 +406,23 @@ mod tests {
             terms_entries(src).len(),
             14,
             "twelve accepted plus two refused"
+        );
+    }
+
+    #[test]
+    fn redistribution_flags_only_mirrored_restricted_blocks() {
+        let src = "url https://github.com/omegaflow/sources/releases/download/a.org/x.bin\n\
+                   terms ohne-lizenz https://a\n\n\
+                   url https://direct.example/y.bin\n\
+                   terms ohne-lizenz https://b\n\n\
+                   url https://github.com/omegaflow/sources/releases/download/c.org/z.bin\n\
+                   terms CC-BY-4.0 https://c\n";
+        let v = redistribution_violations(src);
+        assert_eq!(
+            v,
+            vec!["https://github.com/omegaflow/sources/releases/download/a.org/x.bin".to_string()],
+            "{:?}",
+            v
         );
     }
 }
