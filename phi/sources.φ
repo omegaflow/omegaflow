@@ -557,17 +557,6 @@ gate T 1 2
 gate HEIGHT 0 9999
 field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
 
-url https://api.wolfx.jp/cenc_eqlist.json
-terms unbestimmt https://api.wolfx.jp/
-ttl 1541
-at earth
-map .
-lat No1.latitude
-lon No1.longitude
-alt No1.depth
-field No1.magnitude cenc_quake_magnitude gaussian-inverse-square seismic-body M 3600 0.0 0.0
-field No1.depth cenc_quake_depth_km gaussian-inverse-square seismic-body km 10 0.0 0.0
-
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
 terms unbestimmt https://data.oceannetworks.ca/
 ttl 1800
@@ -19670,6 +19659,46 @@ compiler tools/harvest/src/bin/flac_compiler.rs
 at earth
 ttl 604800
 field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_forsyth.bin
+terms unbestimmt https://supermag.jhuapl.edu/lib/services/
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_frey.bin
+terms unbestimmt https://supermag.jhuapl.edu/lib/services/
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_liou.bin
+terms unbestimmt https://supermag.jhuapl.edu/lib/services/
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_newell.bin
+terms unbestimmt https://supermag.jhuapl.edu/lib/services/
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_ohtani.bin
+terms unbestimmt https://supermag.jhuapl.edu/lib/services/
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
