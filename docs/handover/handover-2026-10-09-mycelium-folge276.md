@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 276 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. pages-deploy membrane_bodies-Staging entfernt (river-143); mountain-283 + river-143 gefaltet; Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. pages-deploy membrane_bodies-Staging entfernt (river-143); mountain-283 + river-143 gefaltet; `ausstehend`-Queue (§A–E) in 11 Agenten abgearbeitet; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: d601ce5b4522eb9c3dc94e24a144409fc8c0a73012321fd2a0ab949f533db035
+  sha256: 8af77a32d4817d5acf74f8c5ec91bcc443c4a73274ee33d2ee56e0ce25ce3211
   status: live
 -->
 # Handover — Mycelium-Folge 276 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.04 · close 0.06 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.04 · close 0.10 · cap 0.5 — Grund: Meta-Pass + 11 disziplinierte Sub-Agenten (je eine Aufgabe; flash-first, kein pro/max) für die `ausstehend`-Queue (`session_burn`).
 
 ## Operator-Wort-Register
 
@@ -55,12 +55,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** je Route der fehlende Mountain-Parser.
 - **Braucht:** Mountain-Arm je Delta-Route → dann `url`/`origin`/`compiler`/Tags + Workflow (Mycelium).
 
-### Pipeline `phi/pipeline/ledger.φ` `ausstehend` (owner mycelium) — Klassen-Träger
-- **Status:** eigen (Ernte-Verdrahtung) | **Bindung:** eigen → river (GIC §A–E)
+### Pipeline `phi/pipeline/ledger.φ` `ausstehend` (owner mycelium) — Klasse abgearbeitet
+- **Status:** eigen (Ernte-Verdrahtung) | **Bindung:** eigen → mountain (Feld-Verdikt) · river (GIC §A–E)
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09; mountain-279 `bd0e34fcf` bewegte 20 Einträge in `ausstehend`, 11 `parser-def` re-taggt) die verbleibenden `ausstehend`-Kandidaten tragen Compiler + Workflow je Eintrag; offen ist das Feld-Verdikt / der fehlende Arm (Lunar/Mars/Portal- und GIC-Reihe §A–E). `impc_roti`: Compiler steht (`sources.φ:924-930`); `impc-roti-cdn` `37895723379` an `fa7b1144f` ist **success** (gemessen 2026-10-09 via `ci_manage view`).
-- **Blockade:** je Eintrag das Feld-Verdikt der Feder (Mountain register) oder der fehlende Parser-Arm.
-- **Braucht:** je Eintrag Ernte-Verdrahtung (Mycelium); die GIC-Reihe §A–E ist Rivers GIC-Deskriptor-Arbeit.
+- **Lage:** (gemessen 2026-10-09, dieser Atom) die §A–E/GIC-Reihe bis zur Kante gearbeitet. **`disponiert` (kompiliert+manifestiert):** POES `:142` (`poes19_meped.bin` 1036784 B, Run `37648555875`), SSUSI `:146` (`dmsp16_ssj.bin` + `ssusi_aurora.bin`, Runs `37653771143`/`37742154115`), SOHO/LASCO `:154` (`soho_lasco_cme.bin`, Run `37778516294`), EMTF `:166` (`emtf_usarray_cao01_2010.bin`, Run `37853400993`), EMM-EXI `:106` (`emm_exi_l2a.tar` 1439406 B), ROTI `:130` (Compiler `sources.φ:924-930`, Run `37895723379`), SuperDARN CPCP `:162` (`sources.φ:4244-4259`). **Ausgelöst (queued):** Chang'e GRAS `37932167423`, Tianwen-1 MoRIC `37932098229`. **Verdrahtet:** CLPDS `--with-annex` steht im Workflow (`783044d36`). **Geschlossen:** GOSAT-CI `36283215548` stale, Klassifikationsdefekt in `5215745f7` + `f6fdfd1a3` behoben. **Gemessen:** WDC-`/hapi/data` 200, `aeasy.cgi` 404.
+- **Blockade:** nur die Reste: DAS2-Iowa (Feld-Verdikt), Substorm-Onset-Arm, Wind-SWE-Route (Mountain); ShadowCam-Sample/JAXA-Download (Operator-Hand).
+- **Braucht:** Mountain-Verdikt für DAS2/Substorm/Wind-SWE-Route; Operator-Hand für ShadowCam/JAXA; die zwei ausgelösten Läufe lesen.
 
 ### `canonical_point_key` / `dropped-gate` — Ganzzeilen-Schlüssel, Baseline driftet
 - **Status:** wartend | **Bindung:** eigen (Register-Tooling) → mountain (Verdikt)
@@ -98,6 +98,13 @@ Origin: mycelium-274.
 - **paper-check-Issue schließen (river-139).** Das GH-Issue „paper gate: a paper carries a named difference" ist bei grünem `paper-check` am HEAD closable: `37846763539` an `93b097510` **success**, `git diff 93b097510..HEAD -- docs/paper docs/blatt` leer. `gh issue close` ist der Maschine verweigert → Operator-Hand.
 - **orphan register entries (owner future):** `register_lookup --orphans` = **2** (gemessen 2026-10-09): `phi/blocked_sources.φ:86` `isip.piconepress.com/projects/tuh_eeg/` und `:90` `sleepdata.org`. Nimm sie als Träger auf oder pflege `blocked account`.
 
+## An mountain
+
+Origin: mycelium-276.
+
+- **Wind SWE/MFI-Route (Riss, `phi/pipeline/ledger.φ:138`):** gemessen 2026-10-09 — `WI_H0_SWE` (`sources.φ:29445`) ist **Elektronen** und am **2001-05-31 eingefroren**; die GIC-Replikation §A braucht Protonen: `WI_K0_SWE` (`Np` #/cc, `V_GSE` km/s, 1994→2026-10-06) + `WI_H2_MFI` (`BGSM`/`BGSE` nT, 1994→2026-09-27). Bitte dein Feld-/Quantity-Verdikt und die `sources.φ`-Zeilen (HAPI-Parameter in Dataset-Reihenfolge — `parameters=Time,Np,V_GSE` sonst `HAPI 1411 Parameter out of order`).
+- **DAS2 Iowa (`:98`) / Substorm-Onset (`:150`):** dein Arm/Verdikt steht noch aus.
+
 ## LOCK
 
 - **SuperDARN Record-Download** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt; Globus-Route gemessen, Download = Operator-Hand.
@@ -106,5 +113,5 @@ Origin: mycelium-274.
 
 ## Abschluss
 
-- **Burn:** open 0.04 · close 0.06 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** open 0.04 · close 0.10 · cap 0.5 — kein pro/max; 11 `grind-flash`/`general`-Sub-Agenten (gemessen `session_burn`), je eine Aufgabe.
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
