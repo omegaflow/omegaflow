@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 4bbf985b1ac72f80a40e1f64a0c57b27221bf396b8fb332f58e5d891f4995367
+  sha256: 8df8166317b6488d58c55abd250c4b2a65b3c825807e69d6f8cf3540ab744170
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -59,85 +59,21 @@ nicht kopiert.
 
 ## Offen (aufgeschlüsselt)
 
-### Eigenmode-Arme — P3.1 CSR-Wire + c-Quelle gebaut; Ton-Pfad steht
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-160) **CSR-Wire (P3.1):**
-  `[CF 86 0A flags][n u16][schema_hash u32][00 00][offsets u32[n+1]][f32 Nutzlast][state mask][pan?][tilt?]`,
-  Kanal k = `payload[offsets[k]..offsets[k+1]]` (heute `[omega, aperture]`, `offsets[k]=2k`; eine
-  reichere Nutzlast wächst im Span). `relay.rs kinetic_frame_bytes` + `static/constants.js parseKinetic`
-  + Test `kinetic_frame_carries_csr_offsets_and_recovers_the_arrays`. **c-Quelle gebaut:**
-  `ChannelDescriptor.body: Option<String>`, gesetzt aus `SourceConfig.body` (`at`/`on`) in
-  `channel_registry_from_sources`; `hash`/`PartialEq` binden ihn; `fundamental_hz()` löst `c` über
-  `media::medium_params_of(body)` (`media_params.tsv`, gemessen) und ist familien-bewusst
-  (Scalar/Toroidal/Spheroidal). Die zwei seismischen Kanäle (`phi/sources.φ:17`/`:102`) tragen jetzt
-  `:6371000` (Erdradius) → `elastic_spheroidal_frequencies(0, cp, cs, R, 1)` liefert den Grundton.
-  Tests `the_earth_seismic_channel_rings_through_its_body`, `a_channel_without_geometry_stays_silent`;
-  `cargo check --features browser_relay --tests` grün. Vorher (river-159): `Domain::Sphere{l}`,
-  `presence_frame`/`partials_hz`, Deskriptor-Manifest TAG 12.
-- **Blockade:** keine — der `c`-Pfad steht.
-- **Braucht:** weitere Kanal-Geometrien, wo die Physik sie trägt — Fluid/Akustik ohne Hohlraum und
-  Maxwell ohne Kavität bleiben `unspecified` (0 ehrt die offene Geometrie, kein Fabrikat).
-
-### Empfänger-Apertur — Deklaration statt Geräte-Hardcode
-- **Status:** eigen | **Bindung:** eigen · mountain
-- **Trigger:** Mountain baut einen eigenen per-Record-Receiver-Weltlinien-Arm (heute trägt der **Fanout-Arm** den Contract).
-- **Lage:** (gemessen 2026-10-09, river-160) Die Apertur ist eine **Deklaration**, kein Geräte-Zweig:
-  `#aperture=<force>:<class>:<length>,…` → `ReceiverAperture::parse_declaration` (`types.rs:343`),
-  generisch über jede (force×class)-Kombination (18 Slots); jedes Feld deklariert seine Klasse per
-  `aperture:<class>` in `phi/sources.φ` (`:1445`,`:8595`) → `FieldConfig.aperture`; `resolve(fc.force,
-  fc.aperture)` speist `EnclosureField.receiver_aperture` als Query-`extent` (`fetch.rs:512/533`).
-  Kein Geräte-Hardcode: `archive_search garmin --root src` findet nur das FIT-Fixture, BLE/Serial
-  (`OMEGAFLOW_BLE_HR`) speisen den Beat, nicht die Apertur. Test
-  `receiver_aperture_declaration_parses_measured_lengths`. Mountain: `QueryCenter` (`types.rs:478`),
-  `SourceConfig.fanout_center` (`:514`), Parse-Arm (`parse.rs:1789`), `channels.rs:121-170` mit `refusal_ledger`.
-- **Blockade:** der per-Record-Receiver-Weltlinien-Arm existiert nicht (`sgrep worldline src/archivar` = nur `motion.rs:162`, `s2.rs`).
-- **Braucht:** nichts Gerätespezifisches — die Länge steht in der Deklaration, die Klasse pro Feld;
-  ein neues Gerät reicht seine Kanalwerte durch dieselbe Deklaration.
-
-### Membran ist kein Renderer — Body-Anker entfernt; P3.1 entblockt v_k
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-144/145/146/160) Body-Anker entfernt (River 141);
-  `src/wasm.rs` speist `all_body_anchor_samples` nicht mehr; `static/membrane.html` lädt keine
-  Body-Ephemeriden. Ton-Modell deskriptorgetrieben (P0.5); das 9-Partial bindet nicht mehr
-  (Operator-Wort 2026-10-09). P3.1 (CSR-Offsets) ist gebaut (river-160) — der `state`-Slot steht,
-  das Wire trägt variable Nutzlast.
-- **Blockade:** keine.
-- **Braucht:** (1) das Feld **messen** (Enclosure-Query am SSB als Asset backen);
-  (2) `v_k` an `PresenceFrame` anbinden → Delay/Phase je Kanal — über die M-Achse und die `c`-Quelle.
-
-### USGS-`ExtractResult`-Riss-Arm — Konsumenten in `main_flow.rs`
-- **Status:** wartend | **Bindung:** eigen · mountain
-- **Trigger:** Mountain baut die dritte `ExtractResult`-Variante (Riss-Träger, USGS `1b`) — dann wird das `match` in `main_flow.rs` nicht mehr exhaustiv.
-- **Lage:** (gemessen 2026-10-09, river-155 via `sread src/archivar/extract.rs:3296` + `src/archivar/main_flow.rs:6007-6032`) `enum ExtractResult` trägt heute nur `Measurements` + `WithEphemeris`; das `match extract(...)` (`main_flow.rs:6007`) deckt genau diese zwei. Ein Riss-Träger existiert noch nicht → `cargo check` grün, kein Compile-Bruch.
-- **Blockade:** die Riss-Variante existiert nicht.
-- **Braucht:** sobald Mountain die Riss-Variante in `ExtractResult` baut: die zwei Match-Arme (+ Träger) in `main_flow.rs` ergänzen; `cargo check` grün.
-
-### CI-Verifikation — river-Compile-Rot geheilt; ci-gate am HEAD offen
+### CI-Verifikation — ci-gate am HEAD grün lesen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein grüner `ci-gate`-Lauf am HEAD.
-- **Lage:** (gemessen 2026-10-09, river-160) `src/archivar/parse.rs:2553` E0507
-  (`588735e39 river 154`: `let d = sources[0].channels[0]` move eines non-Copy `ChannelDescriptor`)
-  — river-159 hatte ihn als fremd geführt, er ist **river-eigen**; gefixt
-  (`&sources[0].channels[0]`), `cargo check --features browser_relay --tests` grün. Offen im
-  selben `clippy`-Job, **fremde** Ursachen: clippy `dmap.rs:250/257`, `keogram.rs:21` (archivar, Mountain).
-  (gemessen 2026-10-09 via `ci_manage status`) `ci-gate` `37996791318` @`22:00:31Z` **queued**, Step
-  `subset → Run cargo test --lib` — Single-Runner-Stau, kein grünes Verdikt am HEAD.
-- **Blockade:** CI-Queue + fremde Job-Ursachen.
-- **Braucht:** `ci_manage status`; einen grünen `ci-gate` am neuen HEAD lesen (`37996791318`).
+- **Lage:** (gemessen 2026-10-09, river-160) river-eigenes Compile-Rot geheilt: `parse.rs:2553`
+  E0507 (`588735e39 river 154` — river-159 hatte ihn als fremd geführt) → `&sources[0].channels[0]`;
+  `cargo check --features browser_relay --tests` grün. `ci-gate` `37996791318` @`22:00:31Z` **queued**
+  (`subset → cargo test --lib`), Single-Runner-Stau. Fremde Ursachen offen: clippy `dmap.rs:250/257`,
+  `keogram.rs:21` (archivar, Mountain).
+- **Blockade:** CI-Queue (Single-Runner).
+- **Braucht:** `ci_manage status`; einen grünen `ci-gate` am HEAD lesen.
 
-### dropped-gate — Ursache gemessen (Token-Bags aus archivierten Handovers)
-- **Status:** wartend | **Bindung:** eigen · mycelium
-- **Trigger:** ein `ci-gate`-Lauf, der den `dropped-gate`-Job auswertet.
-- **Lage:** (gemessen 2026-10-09 via `sread tools/register/src/bin/dropped_gate.rs`) Ursache: Token-Bags aus archivierten Handovers; `dropped_gate --carrier` (`:364-409`) liest als Träger nur **live** `docs/handover/*.md` + `git log` + `phi/*.φ`. Mycelium-276 gefaltet: Antwort = **nicht** `archiv/` lesen; der `new 6`-Riss ist die Ganzzeilen-Schlüsselbildung, das Verdikt liegt bei Mountain.
-- **Blockade:** Gate-Mechanik + Baseline-Erzeugung.
-- **Braucht:** Mountain entscheidet über die Ganzzeilen-Schlüsselbildung; dann `dropped-legacy-baseline.txt` neu ziehen.
-
-### Flyby-Kette — RTSW + kp-`def` geschlossen, recon bleibt
+### Flyby-Kette — recon bleibt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34`.
-- **Lage:** (gemessen 2026-10-08, River 138) RTSW gefüllt; kp `def` freigegeben; `omni2_bz` absent → `pending`. Verdikt `pending`: `Δ > δ + 3·σ_recon`; `δ = 0,168 km` steht, Δ + σ_recon brauchen die Post-Flyby-Rekonstruktion (`ephemeris_juice_recon.bin` 404).
+- **Lage:** (gemessen 2026-10-08, River 138) RTSW gefüllt; kp `def` freigegeben; `omni2_bz` absent → `pending`; `δ = 0,168 km` steht, Δ + σ_recon brauchen die Post-Flyby-Rekonstruktion (`ephemeris_juice_recon.bin` 404).
 - **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent.
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
@@ -159,8 +95,10 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `docs/handover/handover-2026-10-09-river-folge160.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge159.md` (Move)
 
-Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## An river` (von river-159 bereits erwidert). `register_lookup --fired river` = 0 gefeuert (CI-Trigger noch nicht eingetroffen), `--stale` = 0.
+Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## An river` (von river-159 bereits erwidert). `register_lookup --fired river` = 0 gefeuert, `--stale` = 0.
 
-Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/archivar/extract.rs`, `src/archivar/mod.rs`, `src/lib.rs`, `tools/harvest/src/bin/cmb_planck_compiler.rs`, `src/archivar/iris.rs`, `src/archivar/themis_asi.rs` (source-arm).
+Aus der Offen-Liste entfernt (Operator-Wort 2026-10-09 „mach fertig" + „warum führst du future lock"): **Eigenmode-Arme** und **Empfänger-Apertur** gebaut (git trägt sie); **Membran-v_k/Feldmessung** ist kein bounded step (v_k braucht erst eine physikalische Definition; die Feldmessung eine Pipeline) — nicht getragen; **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. `LOCK` trägt keine Future-Punkte mehr.
+
+Fremde uncommittete Arbeit (nicht berührt, nicht committet): source-arm (`extract.rs`/`root.rs`/`types.rs`/`tests.rs`/`mod.rs`/`lib.rs`/`iris.rs`/`themis_asi.rs`), register-/measure-tools (`dropped_gate.rs`, `field_te_query.rs`, `volume_builder.rs`), `phi/sources.φ` nach dem Seal.
 
 ## Burn: open 0.0000 · close 0.1424 · cap 0.20 — River 160 (deepseek-flash, kein pro/max); Fenster 30 Sessions 1.2413; Grund: P3.1 CSR-Wire + c-Quelle/Seismik-Geometrie + river-eigener E0507-Fix
