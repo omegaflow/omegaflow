@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: e8fa70fecfdcc82aecc91b1ace9af16a75f8b1af6efe4f7b2d9d7bb793edcca0
+  sha256: f62c14c5cad5ad5f683f904e528dd5e0c3d0d9db1ab9dbec596fc3bfdf83a165
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -114,7 +114,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Redistributions-Alternativen — Survey + Mountain-Verdikt
 - **Status:** wartend | **Bindung:** eigen (Recherche) · mountain (Re-Admission)
 - **Trigger:** Mountain-Verdikt über die CDN-fähigen Alternativen (`docs/surveys/survey-2026-10-09-redistribution-alternativen.md`)
-- **Lage:** (gemessen 2026-10-09, zwei `general`-Taucher) 41 `decline redistribution`-Blöcke systematisch durchsucht; Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`. **Lizenz-zertifiziert:** Open-Meteo (CC-BY 4.0), OpenStreetMap (ODbL); zweiter Lauf am Lizenztext: **NOAA SWPC/NCEI/NDBC (PD/CC0), NASA Earthdata (CC0), JPL SSD (CC0), Copernicus Data Space, RouteViews (CC-BY-4.0), GOES GLM, ICGEM GFZ (CC-BY-4.0)**. **Blockiert:** GIRO DIDBase (CC-BY-NC-SA), INTERMAGNET (CC-BY-NC), GRDC (no-redistribution), RIPE RIS (keine Open-Lizenz).
+- **Lage:** (gemessen 2026-10-09, zwei `general`-Taucher) 41 `decline redistribution`-Blöcke systematisch durchsucht; Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`. **Lizenz-zertifiziert:** Open-Meteo (CC-BY 4.0), OpenStreetMap (ODbL); zweiter Lauf am Lizenztext: **NOAA SWPC/NCEI/NDBC (PD/CC0), NASA Earthdata (CC0), JPL SSD (CC0), Copernicus Data Space, RouteViews (CC-BY-4.0), GOES GLM, ICGEM GFZ (CC-BY-4.0)**. **NC ist kein Block** (Projekt selbst NC; `CC-BY-NC-*` in der Terms-Vokabel `license_census.rs:12-14`; 181 `sources.φ`-Einträge bereits `CC-BY-NC-3.0-IGO`) → **GIRO DIDBase (CC-BY-NC-SA) und INTERMAGNET (CC-BY-NC) sind admissibel**; blockiert nur **GRDC** (no-redistribution) und **RIPE RIS** (keine Open-Lizenz).
 - **Blockade:** keiner für die zertifizierten Kandidaten — Mountain-Re-Admission fehlt.
 - **Braucht:** Mountains Re-Admission je zertifiziertem Kandidaten → dann CDN-Workflow/`sources.φ`-Block (Mycelium).
 
