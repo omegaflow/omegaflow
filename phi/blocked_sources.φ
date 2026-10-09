@@ -99,7 +99,7 @@ note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamiks
 
 pending
 url https://geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json
-note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `id=BOU&elements=E-E,E-N` 200 (je IAGA-Station); Produkt getrennt vom Magnetik-Duplikat `declined_sources.φ:2176` (data.json/XYZF); offen: `sources.φ`-Zeile.
+note USGS E-Feld mV/km (GIC §A) — 2026-10-09: id=BOU&elements=E-E,E-N HTTP 206; Reader-Arm fehlt: zwei parallele Top-Level-Arrays times[]+values[].values[], kein Extract-Zweig zippt sie; Magnetik declined_sources.φ:2176.
 
 pending
 url https://github.com/TIAN-we/petrel19

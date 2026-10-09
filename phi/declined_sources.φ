@@ -994,6 +994,10 @@ decline model-forecast
 url https://api.windbornesystems.com
 note WindBorne — API liefert primär WM6-Modellforecast, keine reine Messung. Welle 2026-08-19.
 
+decline duplicate-ceic
+url https://api.wolfx.jp/cenc_eqlist.json
+note Wolfx-CENC-Mirror (mess. 2026-10-09): EventID identisch zum CEIC-Direktfeed ceic.ac.cn; dieselben 4 Registerfelder; Fenster 50 vs ~740 Events; Direktfeed bleibt primär. intensity/ReportTime ungemappt. Aus sources.φ verschoben.
+
 decline aggregate-statistics
 url https://api.worldbank.org/v2/
 note grind: grind_terrapulse_b.φ
@@ -1193,6 +1197,10 @@ note Carto Kartenkachel-CDN — Infrastruktur (Force-Gate 2026-09-23).
 decline registry/katalog
 url https://cartocdn-gusc.global.ssl.fastly.net/wri-rw/api/v3/sql?q=SELECT+cartodb_id,the_geom,name,country,primary_fuel,capacity_mw,latitude,longitude+FROM+powerwatch_data_20180102+LIMIT+5000&format=geojson
 note WRI Powerwatch power-plant registry (capacity_mw, coordinates): asset registry, no live field.
+
+decline redistribution
+url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
+note CASDC — 2026-10-09: „© National Astronomical Observatories, CAS"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
 
 decline redundant
 url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
@@ -1614,6 +1622,14 @@ note Patent-Registry.
 decline docs
 url https://developers.arcgis.com/rest/
 note Dokumentation.
+
+decline redistribution
+url https://dhm.gov.np/hydrology/hms-Single/4657
+note DHM Nepal — 2026-10-09: „© Nepal Meteorological Department"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
+
+decline redistribution
+url https://dhm.gov.np/hydrology/hms-Single/4661
+note DHM Nepal — 2026-10-09: „© Nepal Meteorological Department"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
 
 decline health-stats
 url https://disease.sh/v3/covid-19/all
@@ -2043,6 +2059,14 @@ note Preisindizes.
 decline no-physical-force
 url https://fred.stlouisfed.org/docs/api/api_key.html
 note Ökonomie-Daten.
+
+decline redistribution
+url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
+
+decline redistribution
+url https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc
+note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
 
 decline archive-catalog
 url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items
@@ -2600,6 +2624,10 @@ decline metadata-registry
 url https://isdc.gfz.de/igets-data-base
 note IGETS-Stationsliste (65 Stationen) — Stations-Metadaten; die IGETS-Gravimetrie ist via igets.bin in sources.φ (igets_gravity_nm_s2). Gemessen 2026-09-14 HTTP 200.
 
+decline no-physical-force
+url https://isip.piconepress.com/projects/tuh_eeg/
+note TUH EEG (Temple) — 2026-10-09: Elektroden-Doku symbolisch (Ferrell 2020, keine Koordinaten) → kein Feldwert; Zugang live (SSH-Key/rsync EXIT 0, `mail_ledger.φ:245`); Nicht-Feld-Nutzung operator-gebunden (`wartend.φ:37`).
+
 decline reference-constant
 url https://itrf.ign.fr/
 note ITRF terrestrischer Referenzrahmen (HTTP 200) — Referenz-Konstanten, kein Feldwert.
@@ -3008,6 +3036,10 @@ decline reference-constant
 url https://pdgapi.lbl.gov/
 note Particle Data Group Konstanten — Referenz, keine Feldmessung (Force-Gate 2026-09-23).
 
+decline product-file-index
+url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-77.csv
+note Juno Gravity Raw Orbits CSV — 2026-10-09: lebt (200, `-1-77.csv` 85831 B, 2026-05-22); Datei-Index (File Type/URN/Start/Stop/Name/Size), kein physikalisches Feld; ODF via `juno_odf.bin` (`sources.φ:10719`).
+
 decline derived-product
 url https://pds-rings.seti.org/holdings/archives-volumes/CORSS_8xxx/
 note CORSS_8001 (CO-SR-RSS-4/5-OCC-V2.0) PROCESSED ring occultation τ(r)-Profile, binned+rekonstruiert (Marouf 1986); Roh-RSS nicht im Bundle (→ cassini_tnf).
@@ -3083,6 +3115,10 @@ note NASA POWER = Reanalyse/Modellparameter (HTTP 422 — Pflichtparameter fehle
 decline model-reanalysis
 url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M&community=RE&longitude=-95.34&latitude=29.78&start=20260801&end=20260814&format=JSON
 note grind: grind_nasa.φ
+
+decline redistribution
+url https://pradan.issdc.gov.in/ch2/protected/downloadFile/class_holder/ch2_cla_l1_2025_10.zip
+note ISRO Pradan — 2026-10-09: „Ownership and copyright lies with ISRO"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
 
 decline registry/katalog
 url https://pris.iaea.org/api/reactors?format=json&limit=500&status=Operational
@@ -3227,6 +3263,10 @@ note Biodiversitäts-Vorkommens-Register, Sensor-Regel: Klassifikation ohne phys
 decline registry/katalog
 url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
 note NBN Atlas Chiroptera occurrence search: species presence records, no measured field.
+
+decline not-redistributable
+url https://regards.cnes.fr/api/v1/rs-order
+note DEMETER-IAP (CNES/CDPP) — 2026-10-09: Auth existiert (CDPP_USER/PASS), Login ok, Order WAF-blockiert (exit 137); Arm ist ISL (1144), IAP (1139/40) fehlt; SIPAD: Rohprodukte nur mit Erlaubnis weitergebbar.
 
 decline registry
 url https://registry.euro-vo.org/regtap/tap
@@ -4092,6 +4132,10 @@ decline image-survey
 url https://skyview.gsfc.nasa.gov/current/cgi/query.pl
 note SkyView-Bild-Cutout-Dienst (VTSS H-Alpha, Mellinger, DSS2) — Bild-Survey, FITS/JPEG-Cutouts ohne Punkt-Messwert; ein Bild ist kein Skalar an einem Punkt. Gemessen 2026-09-11: query.pl 200 (170 KB Form); runquery.pl?Return=JSON 500. Kein Compiler.
 
+decline no-physical-force
+url https://sleepdata.org
+note NSRR Schlaf-EEG (SHHS/MESA) — 2026-10-09: Elektroden ohne Koordinaten → kein Feldwert (Familie TUH, `src/archivar/main_flow.rs:3490`); Zugang zusätzlich IRB-gebunden (PMC6188513).
+
 decline no-measurement
 url https://so2.gsfc.nasa.gov/measures/measures_so2.html
 note Global-SO2-Monitoring-Portal: SO2-Saeule (diffusion DU) bei NASA Earthdata GES DISC (netCDF); so2.gsfc.nasa.gov liefert nur Monitoring-Portal, /measures 404 gemessen 2026-09-23.
@@ -4103,6 +4147,10 @@ note nur meteospace.epn_core (View) — Discovery.
 decline registry/katalog
 url https://solarnet.oma.be/
 note SOLARNET VO (Solar-Daten-Broker/Cross-Search, Paper 10.1007/s11207-025-02424-0) — 2026-10-07 API /service/api/svo 200 (6003 B), kein Einzel-Asset; Data-Policy-PDF 206. Rat 2026-10-07.
+
+decline image
+url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
+note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Wire-Feld descoped (raw/relativ 8-Bit-Spaltenmittel, kein SI-Wert/force_type) = Bildprodukt, kein Feld; Präzedenz `image`/`image-survey`/`imagery`. Rat + 6 UI-Seats einstimmig decline.
 
 decline station-registry
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
@@ -4300,9 +4348,25 @@ decline model-computation
 url https://sungeo.net/api/current
 note Clear-Sky-Solarberechnung aus Sonnengeometrie — Modell, keine Messung.
 
+decline superseded-by-superdarn_fitacf
+url https://superdarn.usask.ca/convection-maps
+note SuperDARN Convection-Maps — 2026-10-09: Endpoint `sdc-serv.usask.ca/website_updating_tools/latest_convection_packet.json` (200, pcpot+contours); Host via `superdarn_fitacf` registriert, pcpot deckt `superdarn_cpcp_pot_drop` (`:4375`).
+
+decline redistribution
+url https://supermag.jhuapl.edu/lib/services/?service=substorms
+note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
+
 decline superseded-by-integrated
 url https://supermag.jhuapl.edu/mag/?fidelity=low&format=json
 note SuperMAG — als supermag_*.bin integriert (origin data-api.php, supermag.jhuapl.edu); HTTP 200.
+
+decline redistribution
+url https://supermag.jhuapl.edu/services/data-api.php
+note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
+
+decline redistribution
+url https://supermag.jhuapl.edu/services/indices.php
+note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
 
 decline redistribution
 url https://sws-data.sws.bom.gov.au/
@@ -4672,6 +4736,10 @@ decline aggregated-index
 url https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
 note WWLLN-Thunder-Hour-Jahresgitter (netCDF) — Zählwert ohne Ereignis-Records, aggregierter Index (Council 2026-09-13). Gemessen 2026-09-14 Teil-Download 24346624 B.
 
+decline redistribution
+url https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
+note WWLLN — 2026-10-09: „copyrighted by the University of Washington"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
+
 decline aggregated-index
 url https://wwlln.net/climate/th_yr/data/WWLLN_th_YYYY.nc.zip
 note Thunder-Hour-Klimatologie — Zählwert ohne Ereignis-Records, not-published. Aggregierter Index, keine Zweitlinie zu LIS/GLM. Council 2026-09-13. Endpoint lebt (HTTP 200, 2026-09-13); Liveness ändert die Identität nicht.
@@ -4968,9 +5036,17 @@ decline aggregate-indices
 url https://www.hamqsl.com/solarxml.php
 note N0NBH-solarxml (solarxml.json/solarxml.php.json CDN-Captures, HTTP 200): Zusammenfassung von solarflux/sunspots/xray/a-k/protonflux — aggregierte Indizes bereits registrierter Primaerquellen (SWPC-GOES-JSON, SIDC-Sonnenfleckenzahl).
 
+decline redistribution
+url https://www.hamqsl.com/solarxml.php
+note hamqsl — 2026-10-09: „© Paul L Herrman, All Rights Reserved"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
+
 decline no-physical-force
 url https://www.icpsr.umich.edu
 note Sozialwissenschaftliches Archiv — kein Feld; 403 (2026-10-03).
+
+decline no-measurement-field
+url https://www.ieeg.org
+note ieeg.org — 2026-10-09: REST (`/services`) liefert Kanaele/Montagen, keine Elektroden-/MNI-Koordinaten; Lizenz research-only; ds003844 `*_electrodes.tsv` x=y=z=0.
 
 decline simulation
 url https://www.illustris-project.org/data/docs/api/
@@ -5003,6 +5079,10 @@ note ISRCTN — Studien-Registry; 200 (2026-10-03).
 decline superseded-by-integrated
 url https://www.lamost.org/dr10/v2.0/voservice/tap
 note LAMOST DR10 TAP — von DR11 abgelöst (tap_index_lamost_dr11.φ). tap_index_lamost_dr10.φ geerntet.
+
+decline not-redistributable
+url https://www.leos.ac.cn/
+note LEOS (CSES) — 2026-10-09: Auth existiert (LEOS_USER/PASS), Login = user/pass + Captcha (+ ggf. Mail-Code); Lizenz NINH-MEM verbietet Weitergabe an Dritte ohne Erlaubnis; CSES-Kern via scidb.cn offen.
 
 decline registry
 url https://www.marinespecies.org/rest/
@@ -5456,6 +5536,10 @@ decline redistributed-synop
 url https://www.ogimet.com/cgi-bin/getsynop
 note OGIMET-SYNOP (getsynop.json CDN-Capture, HTTP 200, CSV-AAXX-Zeilen): WMO-SYNOP-Rebroadcast, Stationen nur per Block-Nummer ohne Daten-Position — keine neue Messung gegenueber den registrierten Meteorologie-Kanaelen.
 
+decline redistribution
+url https://www.ogimet.com/cgi-bin/gsynres
+note OGIMET — 2026-10-09: copyright per country; CDN-Mirror entfernt (Operator-Wort); geschlossen.
+
 decline commercial
 url https://www.omim.org
 note OMIM — Mendelsche Gene, Registrierung/Subskription; 403 direkt (Wayback, 2026-10-03).
@@ -5755,128 +5839,3 @@ note OCS Hydrodata — die soundings-Tabelle trägt Tiefe (Elevation), der Compi
 decline terrain
 url s3://usgs-lidar-public.s3.amazonaws.com
 note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe Verdikt-Lage wie coastal-lidar/opentopodata. Gestalt-Zeugen-Kandidat, nie Kraft-Feld.
-
-decline no-physical-force
-url https://sleepdata.org
-note NSRR Schlaf-EEG (SHHS/MESA) — 2026-10-09: Elektroden ohne Koordinaten → kein Feldwert (Familie TUH, `src/archivar/main_flow.rs:3490`); Zugang zusätzlich IRB-gebunden (PMC6188513).
-
-decline no-physical-force
-url https://isip.piconepress.com/projects/tuh_eeg/
-note TUH EEG (Temple) — 2026-10-09: Elektroden-Doku symbolisch (Ferrell 2020, keine Koordinaten) → kein Feldwert; Zugang live (SSH-Key/rsync EXIT 0, `mail_ledger.φ:245`); Nicht-Feld-Nutzung operator-gebunden (`wartend.φ:37`).
-
-decline not-redistributable
-url https://regards.cnes.fr/api/v1/rs-order
-note DEMETER-IAP (CNES/CDPP) — 2026-10-09: Auth existiert (CDPP_USER/PASS), Login ok, Order WAF-blockiert (exit 137); Arm ist ISL (1144), IAP (1139/40) fehlt; SIPAD: Rohprodukte nur mit Erlaubnis weitergebbar.
-
-decline not-redistributable
-url https://www.leos.ac.cn/
-note LEOS (CSES) — 2026-10-09: Auth existiert (LEOS_USER/PASS), Login = user/pass + Captcha (+ ggf. Mail-Code); Lizenz NINH-MEM verbietet Weitergabe an Dritte ohne Erlaubnis; CSES-Kern via scidb.cn offen.
-
-decline product-file-index
-url https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/JUNO/logs/Juno_Gravity_Data_Raw_Orbits-1-77.csv
-note Juno Gravity Raw Orbits CSV — 2026-10-09: lebt (200, `-1-77.csv` 85831 B, 2026-05-22); Datei-Index (File Type/URN/Start/Stop/Name/Size), kein physikalisches Feld; ODF via `juno_odf.bin` (`sources.φ:10719`).
-
-decline no-measurement-field
-url https://www.ieeg.org
-note ieeg.org — 2026-10-09: REST (`/services`) liefert Kanaele/Montagen, keine Elektroden-/MNI-Koordinaten; Lizenz research-only; ds003844 `*_electrodes.tsv` x=y=z=0.
-
-decline superseded-by-superdarn_fitacf
-url https://superdarn.usask.ca/convection-maps
-note SuperDARN Convection-Maps — 2026-10-09: Endpoint `sdc-serv.usask.ca/website_updating_tools/latest_convection_packet.json` (200, pcpot+contours); Host via `superdarn_fitacf` registriert, pcpot deckt `superdarn_cpcp_pot_drop` (`:4375`).
-
-decline redistribution
-url https://dhm.gov.np/hydrology/hms-Single/4657
-note DHM Nepal — 2026-10-09: „© Nepal Meteorological Department"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline redistribution
-url https://dhm.gov.np/hydrology/hms-Single/4661
-note DHM Nepal — 2026-10-09: „© Nepal Meteorological Department"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline redistribution
-url https://www.hamqsl.com/solarxml.php
-note hamqsl — 2026-10-09: „© Paul L Herrman, All Rights Reserved"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline redistribution
-url https://www.ogimet.com/cgi-bin/gsynres
-note OGIMET — 2026-10-09: copyright per country; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc
-note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
-
-decline redistribution
-url https://pradan.issdc.gov.in/ch2/protected/downloadFile/class_holder/ch2_cla_l1_2025_10.zip
-note ISRO Pradan — 2026-10-09: „Ownership and copyright lies with ISRO"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline redistribution
-url https://supermag.jhuapl.edu/lib/services/?service=substorms
-note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
-
-decline redistribution
-url https://supermag.jhuapl.edu/services/data-api.php
-note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
-
-decline redistribution
-url https://supermag.jhuapl.edu/services/data-api.php
-note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
-
-decline redistribution
-url https://supermag.jhuapl.edu/services/indices.php
-note SuperMAG — 2026-10-09: „cannot be redistributed" (rulesoftheroad); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/supermag.jhuapl.edu/.
-
-decline redistribution
-url https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
-note WWLLN — 2026-10-09: „copyrighted by the University of Washington"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline redistribution
-url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
-note CASDC — 2026-10-09: „© National Astronomical Observatories, CAS"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
-
-decline image
-url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
-note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Wire-Feld descoped (raw/relativ 8-Bit-Spaltenmittel, kein SI-Wert/force_type) = Bildprodukt, kein Feld; Präzedenz `image`/`image-survey`/`imagery`. Rat + 6 UI-Seats einstimmig decline.
-
