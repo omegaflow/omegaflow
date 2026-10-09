@@ -28,6 +28,7 @@ pub struct PresenceFrame {
     pub omega: [f32; CHANNEL_CAP],
     pub aperture: [f32; CHANNEL_CAP],
     pub state: [TriState; CHANNEL_CAP],
+    pub partials_hz: [f32; CHANNEL_CAP],
     pub pan_ms: Option<f32>,
     pub tilt_ms: Option<f32>,
     pub tau_ticks: u64,
@@ -102,14 +103,28 @@ pub fn acoustic_amplitude(omega: &[f32], aperture: &[f32], state: &[TriState]) -
     }
 }
 
-pub fn acoustic_partials(omega: &[f32], aperture: &[f32], state: &[TriState], phase: f32) -> f32 {
-    let n = omega.len().min(aperture.len()).min(state.len());
+pub fn acoustic_partials(
+    omega: &[f32],
+    aperture: &[f32],
+    state: &[TriState],
+    partials_hz: &[f32],
+    phase: f32,
+) -> f32 {
+    let n = omega
+        .len()
+        .min(aperture.len())
+        .min(state.len())
+        .min(partials_hz.len());
     let mut sample = 0.0f32;
     for k in 0..n {
         if state[k] != TriState::Present {
             continue;
         }
-        sample += omega[k] * aperture[k] * (phase * (k as f32 + 1.0)).sin();
+        let f = partials_hz[k];
+        if !(f.is_finite() && f > 0.0) {
+            continue;
+        }
+        sample += omega[k] * aperture[k] * (phase * f).sin();
     }
     sample
 }
@@ -119,22 +134,19 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
     let omega = &frame.omega[..n];
     let aperture = &frame.aperture[..n];
     let state = &frame.state[..n];
+    let partials = &frame.partials_hz[..n];
     let Some(intensity) = channel_intensity(omega, aperture, state) else {
         return vec![0u8; PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2];
     };
-    let f_hz = tone_hz(frame.tau_ticks);
-    let step = f_hz * std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
+    let step = std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
     let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
     for _ in 0..PCM_SAMPLES_PER_TICK {
-        let s = if f_hz > 0.0 {
-            *phase += step;
-            if *phase >= std::f32::consts::TAU {
-                *phase -= std::f32::consts::TAU;
-            }
-            acoustic_partials(omega, aperture, state, *phase).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
-        } else {
-            0.0
-        };
+        *phase += step;
+        if *phase >= std::f32::consts::TAU {
+            *phase -= std::f32::consts::TAU;
+        }
+        let s = acoustic_partials(omega, aperture, state, partials, *phase)
+            .clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
         let left = if intensity < 0.0 { s } else { 0.0 };
         let right = if intensity > 0.0 { s } else { 0.0 };
         pcm.extend_from_slice(&(left as i16).to_le_bytes());
@@ -396,12 +408,14 @@ mod tests {
 
     fn pframe(omega: [f32; 9], aperture: [f32; 9], tau_ticks: u64) -> PresenceFrame {
         let a = cap9(aperture);
+        let base = tone_hz(tau_ticks);
         PresenceFrame {
             n: 9,
             schema_hash: live_schema_hash(),
             omega: cap9(omega),
             aperture: a,
             state: aperture_state(&a),
+            partials_hz: std::array::from_fn(|k| base * (k as f32 + 1.0)),
             pan_ms: None,
             tilt_ms: None,
             tau_ticks,
@@ -733,6 +747,7 @@ mod tests {
             omega: cap9([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]),
             aperture: cap9([1.0; 9]),
             state: aperture_state(&cap9([1.0; 9])),
+            partials_hz: [0.0; CHANNEL_CAP],
             pan_ms: Some(1.5),
             tilt_ms: Some(1.25),
             tau_ticks: 1,
@@ -761,6 +776,7 @@ mod tests {
             omega: cap9([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]),
             aperture: cap9([1.0; 9]),
             state: aperture_state(&cap9([1.0; 9])),
+            partials_hz: [0.0; CHANNEL_CAP],
             pan_ms: Some(f32::NAN),
             tilt_ms: None,
             tau_ticks: 1,

@@ -373,12 +373,19 @@ impl OmegaLoop {
                 &fallback
             }
         };
+        let mut partials_hz = [0.0f32; CHANNEL_CAP];
+        for (k, d) in registry.descriptors().iter().enumerate().take(CHANNEL_CAP) {
+            if let Some(f) = d.fundamental_hz() {
+                partials_hz[k] = f as f32;
+            }
+        }
         PresenceFrame {
             n: registry.len() as u16,
             schema_hash: registry.schema_hash(),
             omega,
             aperture,
             state,
+            partials_hz,
             pan_ms,
             tilt_ms,
             tau_ticks: self.natural_latency_ticks,

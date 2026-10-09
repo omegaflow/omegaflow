@@ -3,7 +3,7 @@
   session: River-Folge 159
   class: handover
   date: 2026-10-09
-  sha256: 0aed764f14a2a7fc0fdcba1e89b556bf81bc2c37459de92c4a541aeb82bf7ec8
+  sha256: 492f0b2225d0d6e29e0038e57f69bd8af2145ed206eedc66a639daddfe0a7b12
   status: live
 -->
 # Handover — River-Folge 159 (2026-10-09)
@@ -78,24 +78,28 @@ Origin: river-159.
 
 ## Offen (aufgeschlüsselt)
 
-### Eigenmode-Arme — Ton-Pfad-Anbindung (Wire-Manifest) offen
+### Eigenmode-Arme — Ton-Pfad gebaut (P2.1/P2.3); Wire-Manifest offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-09, river-159) Gebaut: `Domain::Sphere { l }`,
   `characteristic_speed`/`elastic_speeds`, `mode_degeneracy`, `ModeFamily`
   (Scalar/Spheroidal/Toroidal) + toroidal/spheroidal Löser, familien-bewusstes
-  `mode_frequencies_hz_for_body`. `acoustic_partials` (`actuators.rs:104`) summiert
-  weiter das Slot-Harmonische `(k+1)*phase` — die Arm-Frequenzen sind da, die
-  Frame-Anbindung fehlt. `ChannelDescriptor::new` bündelt seit river-159
-  `conserved`+`role` als `Quantity` (7 Args statt 8).
-- **Blockade:** der Deskriptor ist im `PresenceFrame`/ω-Loop nicht kanalauflösend
-  geführt; P2.1/P3.3 (`kanal-ontologie-komplettbau.md:92,96,103-105`) ist eine
-  Wire-Kontrakt-Achse.
-- **Braucht:** P2.1 `PresenceFrame` um die kanalauflösende Frequenz/Deskriptor-Achse
-  fortschreiben, dann `acoustic_partials` deskriptorgetrieben (`f_j = ω_𝒯(k_j^M)/2π`)
-  statt `(k+1)`; danach P3.1 Wire-Kopf `{n, schema_hash}` + `offsets[n+1]`,
-  P3.3 Deskriptor-Manifest beim Handshake/Szenen-Load. Ein begrenzter Schritt je
-  Dispatch (`docs/concepts/kanal-ontologie-komplettbau.md`).
+  `mode_frequencies_hz_for_body`, `ChannelDescriptor::fundamental_hz` +
+  `ChannelRegistry::descriptors`, `ChannelDescriptor::new` bündelt `conserved`+`role`
+  als `Quantity` (7 statt 8 Args). **Ton-Pfad gebunden (P2.1/P2.3):**
+  `PresenceFrame.partials_hz` trägt die kanalauflösende Frequenz; `presence_frame()`
+  füllt sie aus dem Registry-Deskriptor; `acoustic_partials` summiert
+  `Σ ω_k·a_k·sin(2π f_k t)` über eine 1-Hz-Referenzphase — das Slot-Harmonische
+  `(k+1)` ist ersetzt. Die Live-Registry trägt `Domain::Unspecified` →
+  `fundamental_hz() = None` → **Ton stumm** (0 ehrt die fehlende Frequenz, kein
+  Fabrikat). `cargo check` grün; die τ→Frequenz-Tests bleiben über den Test-Helfer
+  (`pframe` setzt `partials_hz = tone_hz(τ)·(k+1)`).
+- **Blockade:** die Quell-Kanäle tragen im ω-Loop weder `domain`/`extent` noch
+  Medium-Parameter; Fluid/Elastik brauchen den Körper (Manifest P3.3).
+- **Braucht:** P3.1 Wire-Kopf `{n, schema_hash}` + `offsets[n+1]`; P3.3
+  Deskriptor-Manifest beim Handshake/Szenen-Load, damit Quell-Kanäle `domain`/
+  `extent`/Körper-Parameter tragen — dann klingt der Ton deskriptorgetrieben
+  (`docs/concepts/kanal-ontologie-komplettbau.md:92,96,103-105`).
 
 ### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
 - **Status:** eigen | **Bindung:** eigen
@@ -171,8 +175,9 @@ Origin: river-159.
 
 Pfad-begrenzte Commit-Pfade dieser Session (River 159):
 
-- `src/mathematikerin/channel.rs` (`Quantity { conserved, role }`; `ChannelDescriptor::new` 8 → 7 Args; `sqrt`-Test f64-explicit; `bare.clone()`)
-- `src/mathematikerin/actuators.rs` (`kinetic_sample`/`acoustic_pcm` als `let ... else` statt `manual_unwrap_or`; Test-Import `live_schema_hash`)
+- `src/mathematikerin/channel.rs` (`Quantity { conserved, role }`; `ChannelDescriptor::new` 8 → 7 Args; `fundamental_hz` + `ChannelRegistry::descriptors`; `sqrt`-Test f64-explicit; `bare.clone()`)
+- `src/mathematikerin/actuators.rs` (`PresenceFrame.partials_hz` + deskriptorgetriebenes `acoustic_partials` (kein `(k+1)`); `kinetic_sample`/`acoustic_pcm` als `let ... else` statt `manual_unwrap_or`; Test-Import `live_schema_hash`)
+- `src/mathematikerin/omega.rs` (`presence_frame` füllt `partials_hz` aus dem Registry-Deskriptor)
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` (see-also + Host-Pfade geheilt; sha `15a8eef8…`)
 - `docs/handover/handover-2026-10-09-river-folge159.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge158.md` (Move)
@@ -181,4 +186,4 @@ Gefaltet/geprüft: mountain-291 `## An river` (Draht-Riss in `40aac93e4` als Rat
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/gate/commit_gate.rs`, `tools/harvest/src/bin/inpe_stac_compiler.rs` (staged, mountain); `docs/handover/handover-2026-10-09-mycelium-folge287.md` (untracked, mycelium).
 
-## Burn: open 0.0000 · close 0.0738 · deepseek-flash · session_burn (River-Linie-Pass $0.0624 + grind-flash Quantity-Bund $0.0114)
+## Burn: open 0.0000 · close 0.1243 · deepseek-flash · session_burn (River-Linie-Pass $0.1129 + grind-flash Quantity-Bund $0.0114)

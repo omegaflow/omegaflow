@@ -400,6 +400,11 @@ impl ChannelDescriptor {
             .collect()
     }
 
+    pub fn fundamental_hz(&self) -> Option<f64> {
+        let speed = characteristic_speed(self.medium, None)?;
+        self.mode_frequencies_hz(speed, 1)?.into_iter().next()
+    }
+
     pub fn mode_frequencies_hz_for_body(&self, body_name: &str, count: usize) -> Option<Vec<f64>> {
         let params = super::media::medium_params_of(body_name);
         match self.family {
@@ -1108,6 +1113,10 @@ impl ChannelRegistry {
 
     pub fn len(&self) -> usize {
         self.descs.len()
+    }
+
+    pub fn descriptors(&self) -> &[ChannelDescriptor] {
+        &self.descs
     }
 
     pub fn is_empty(&self) -> bool {
