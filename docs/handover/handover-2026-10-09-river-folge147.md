@@ -3,7 +3,7 @@
   session: River-Folge 147
   class: handover
   date: 2026-10-09
-  sha256: 1f74326837149e3706c7e4421b328fbea4aa120279133ff32ba2df1cb4d4d9c6
+  sha256: 1fcf0c8c6a2fcfbdf3d1fcbadc0beeecd64fa77f2ef8bcf5ca9a84ff9e6360f7
   status: live
 -->
 # Handover — River-Folge 147 (2026-10-09)
@@ -124,4 +124,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 147):
 
 Nicht committet (gitignored, Session-Artefakte): keine neuen.
 
-## Burn: open 0.0000 · close 0.0653 · Grund: P1.7-Legacy-Brücke `descriptor_for_force` gebaut (`cargo check` grün, zero warnings); deepseek-flash, gemessen 2026-10-09 · kein pro/max.
+## Burn: open 0.0000 · close 0.1269 · Grund: P1.7-Legacy-Brücke `descriptor_for_force` gebaut (`cargo check` grün, zero warnings); Session-Delta maschinenweit gemessen via `session_burn` (2.0081 → 2.1350); deepseek-flash, 2026-10-09 · kein pro/max.
