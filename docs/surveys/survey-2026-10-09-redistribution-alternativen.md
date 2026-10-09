@@ -2,7 +2,7 @@
   title: Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
   class: survey
   date: 2026-10-09
-  sha256: eada6e3541c7575db78e41bea55e82ca4f284cdf738907856fce2ff1400273b4
+  sha256: 90c13b1ac0968c5a881811e8e4faba08505545d8ddaa7e81ca367314f9d62826
   status: live
 -->
 # Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
@@ -82,3 +82,34 @@ US-Government / offene Knoten mit 2xx, Lizenz nicht am Quelltext gemessen:
 **Grenze des Laufs:** nur 2 Alternativen sind lizenz-zertifiziert; der Rest ist
 HTTP-gemessen mit `Lizenz ungemessen`. `frbcat.org`/Blinkverse und der Mariner-
 Tracking-Subpfad blieben `pending`.
+
+## Zweiter Lauf — Lizenz-Zertifizierung der Shortlist (2026-10-09)
+
+Die HTTP-gemessene Shortlist wurde am Lizenztext zertifiziert (`--jina`):
+
+**Neu CDN-fähig (offene Lizenz + HTTP 2xx):**
+
+| Kandidat | Lizenz (gemessen) |
+|---|---|
+| NOAA SWPC | US-Government public domain (`weather.gov/disclaimer`) |
+| NOAA NCEI | PD / CC0 (NCEI Open Data Policy) |
+| NASA Earthdata | CC0 (NASA Science Data License) |
+| JPL SSD | CC0 (NASA-led) |
+| Copernicus Data Space (Sentinel) | Copernicus Sentinel Data licence (frei/voll/offen + Attribution) |
+| RouteViews | **CC-BY-4.0** |
+| GOES GLM | PD / CC0 (NCEI/NOAA) |
+| NOAA NDBC | US-Government public domain |
+| ICGEM GFZ | **CC-BY-4.0** |
+| Global Floods (GloFAS/CEMS) | CEMS-Lizenz (offen; restricted subset prüfen) |
+| HDX/OCHA · Copernicus Emergency | je Dataset CC-BY/CC0/ODbL (Plattform offen) |
+
+**NC-/restriktions-blockiert (nicht CDN-fähig):**
+
+- **GIRO DIDBase** — CC BY-NC-SA 4.0 (NC-Klausel).
+- **INTERMAGNET** — CC BY-NC 4.0 (NC-Klausel).
+- **GRDC** — „No commercial use" **und** „No redistribution".
+- **RIPE RIS** — keine Standard-Open-Lizenz (widerrufliche Default-Erlaubnis) → unklar.
+
+**Nächster Schritt:** Mountains Re-Admission je Kandidat → dann CDN-Workflow/`sources.φ`-Block.
+Divergenz: `earthdata.nasa.gov`-Policy 403 (CloudFront); Lizenz über
+`science.data.nasa.gov/about/license` belegt.
