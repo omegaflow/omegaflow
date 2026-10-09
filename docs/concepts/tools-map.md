@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: b866a579612b782f70629f3a811795faaa285dd85e3c01fad411b90547ebb89f
+  sha256: c6f3bb7d747fbcece1025d38917ba8a7ddd4adb3e6c7a60dfaecf3879044a18e
   status: live
   see-also: AGENTS.md
 -->
@@ -306,6 +306,12 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 | `session_burn` | Burn je Session (opencode.db) | lokal | P1 |
 | OpenCode-Tools | kein Prozess, ein Round-Trip | — | nach Profil |
 | `curl` | nur wo `sfetch`/`archive_search` nichts trägt | Netz | P3 |
+
+**CI-Roh-API (`curl` → `api.github.com/.../actions/runs`):** der Filter `conclusion=` wird
+nicht unterstützt und still ignoriert (die Liste kommt ungefiltert zurück — gemessen 2026-10-10:
+`?status=completed&conclusion=failure` lieferte `cancelled`-Läufe, und zählte fälschlich 0 rote).
+Der tragfähige Filter ist `status=failure` / `status=cancelled` / `status=success` (plus `head_sha`),
+sonst client-seitig `jaq 'select(.conclusion=="failure")'`; der kanonische Leser bleibt `ci_manage`.
 
 ## Session-Checks — lokal, deterministisch/gescoped (2026-09-28)
 
