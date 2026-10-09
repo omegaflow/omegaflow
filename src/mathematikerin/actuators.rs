@@ -29,6 +29,7 @@ pub struct PresenceFrame {
     pub aperture: [f32; CHANNEL_CAP],
     pub state: [TriState; CHANNEL_CAP],
     pub partials_hz: [f32; CHANNEL_CAP],
+    pub delay_rad: [f32; CHANNEL_CAP],
     pub pan_ms: Option<f32>,
     pub tilt_ms: Option<f32>,
     pub tau_ticks: u64,
@@ -108,14 +109,20 @@ pub fn acoustic_partials(
     aperture: &[f32],
     state: &[TriState],
     phases: &[f32],
+    delays: &[f32],
 ) -> f32 {
-    let n = omega.len().min(aperture.len()).min(state.len()).min(phases.len());
+    let n = omega
+        .len()
+        .min(aperture.len())
+        .min(state.len())
+        .min(phases.len())
+        .min(delays.len());
     let mut sample = 0.0f32;
     for k in 0..n {
         if state[k] != TriState::Present {
             continue;
         }
-        sample += omega[k] * aperture[k] * phases[k].sin();
+        sample += omega[k] * aperture[k] * (phases[k] - delays[k]).sin();
     }
     sample
 }
@@ -126,6 +133,7 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phases: &mut [f32; CHANNEL_CAP]) -> V
     let aperture = &frame.aperture[..n];
     let state = &frame.state[..n];
     let partials = &frame.partials_hz[..n];
+    let delays = &frame.delay_rad[..n];
     let Some(intensity) = channel_intensity(omega, aperture, state) else {
         return vec![0u8; PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2];
     };
@@ -140,7 +148,7 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phases: &mut [f32; CHANNEL_CAP]) -> V
                 }
             }
         }
-        let s = acoustic_partials(omega, aperture, state, &phases[..n])
+        let s = acoustic_partials(omega, aperture, state, &phases[..n], delays)
             .clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
         let left = if intensity < 0.0 { s } else { 0.0 };
         let right = if intensity > 0.0 { s } else { 0.0 };
@@ -411,6 +419,7 @@ mod tests {
             aperture: a,
             state: aperture_state(&a),
             partials_hz: std::array::from_fn(|k| base * (k as f32 + 1.0)),
+            delay_rad: [0.0; CHANNEL_CAP],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks,
@@ -743,6 +752,7 @@ mod tests {
             aperture: cap9([1.0; 9]),
             state: aperture_state(&cap9([1.0; 9])),
             partials_hz: [0.0; CHANNEL_CAP],
+            delay_rad: [0.0; CHANNEL_CAP],
             pan_ms: Some(1.5),
             tilt_ms: Some(1.25),
             tau_ticks: 1,
@@ -772,6 +782,7 @@ mod tests {
             aperture: cap9([1.0; 9]),
             state: aperture_state(&cap9([1.0; 9])),
             partials_hz: [0.0; CHANNEL_CAP],
+            delay_rad: [0.0; CHANNEL_CAP],
             pan_ms: Some(f32::NAN),
             tilt_ms: None,
             tau_ticks: 1,
@@ -798,6 +809,7 @@ mod tests {
             aperture: [0.0; CHANNEL_CAP],
             state: [TriState::Absent; CHANNEL_CAP],
             partials_hz: [0.0; CHANNEL_CAP],
+            delay_rad: [0.0; CHANNEL_CAP],
             pan_ms: None,
             tilt_ms: None,
             tau_ticks: 0,
@@ -819,5 +831,20 @@ mod tests {
             phases[1],
             phases[0]
         );
+    }
+
+    #[test]
+    fn a_channel_delay_shifts_its_partial() {
+        let omega = [1.0f32];
+        let aperture = [1.0f32];
+        let state = [TriState::Present];
+        let phases = [0.5f32];
+        let no_delay = [0.0f32];
+        let delay = [std::f32::consts::FRAC_PI_2];
+        let plain = acoustic_partials(&omega, &aperture, &state, &phases, &no_delay);
+        let shifted = acoustic_partials(&omega, &aperture, &state, &phases, &delay);
+        assert!((plain - 0.5f32.sin()).abs() < 1e-6);
+        assert!((shifted - (0.5f32 - std::f32::consts::FRAC_PI_2).sin()).abs() < 1e-6);
+        assert!((plain - shifted).abs() > 0.1);
     }
 }

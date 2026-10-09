@@ -1186,6 +1186,7 @@ mod tests {
             aperture: [0.0; 16],
             state: [TriState::Absent; 16],
             partials_hz: [0.0; 16],
+            delay_rad: [0.0; 16],
             pan_ms: Some(1.5),
             tilt_ms: None,
             tau_ticks: 0,
