@@ -10,8 +10,8 @@ pub const HEADER_BYTES: usize = 8;
 pub const RECORD_BYTES: usize = 8 + 1 + 2 * 8;
 
 const COLUMNS: &[(u32, &str, &str, &str)] = &[
-    (COMP_EX, "swpc_efield_ex", "mV/km", "Ex"),
-    (COMP_EY, "swpc_efield_ey", "mV/km", "Ey"),
+    (COMP_EX, "swpc_efield_ex", "v/m", "Ex"),
+    (COMP_EY, "swpc_efield_ey", "v/m", "Ey"),
 ];
 
 pub fn component_name(comp: u32) -> Option<&'static str> {
@@ -70,8 +70,8 @@ pub fn parse_frame(bytes: &[u8]) -> Option<(Option<f64>, Option<f64>)> {
     let JsonVal::Arr(features) = jpath_val(&json, "features")? else {
         return None;
     };
-    let ex = mean_of(features, "Ex");
-    let ey = mean_of(features, "Ey");
+    let ex = mean_of(features, "Ex").map(|v| v * 1e-6);
+    let ey = mean_of(features, "Ey").map(|v| v * 1e-6);
     if ex.is_none() && ey.is_none() {
         None
     } else {
@@ -158,8 +158,8 @@ mod tests {
     #[test]
     fn a_frame_carries_the_signed_continental_grid_mean_of_ex_and_ey() {
         let (ex, ey) = parse_frame(FIXTURE.as_bytes()).expect("the frame parses");
-        assert_eq!(ex, Some(2.0));
-        assert_eq!(ey, Some(-3.0));
+        assert_eq!(ex, Some(2.0 * 1e-6));
+        assert_eq!(ey, Some(-3.0 * 1e-6));
     }
 
     #[test]
@@ -171,8 +171,8 @@ mod tests {
             r#"{"properties": {"Ex": 7.0}}]}"#,
         );
         let (ex, ey) = parse_frame(body.as_bytes()).unwrap();
-        assert_eq!(ex, Some(6.0));
-        assert_eq!(ey, Some(-1.0));
+        assert_eq!(ex, Some(6.0 * 1e-6));
+        assert_eq!(ey, Some(-1.0 * 1e-6));
     }
 
     #[test]
@@ -225,7 +225,7 @@ mod tests {
         let fields = declared_fields(86400.0);
         assert_eq!(fields.len(), COLUMNS.len());
         assert_eq!(fields[0].name, "swpc_efield_ex");
-        assert_eq!(fields[0].unit, "mV/km");
+        assert_eq!(fields[0].unit, "v/m");
         assert_eq!(fields[1].name, "swpc_efield_ey");
         assert_eq!(fields[0].force, force_id_of("electric").unwrap());
         assert_eq!(component_name(COMP_EY), Some("swpc_efield_ey"));

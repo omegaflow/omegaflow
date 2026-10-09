@@ -1,0 +1,43 @@
+name: swpc-efield-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: 'window start (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC yesterday 00:00'
+        required: false
+        type: string
+        default: ''
+      stop:
+        description: 'window stop (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC today 00:00'
+        required: false
+        type: string
+        default: ''
+  schedule:
+    - cron: '47 4 * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  swpc-efield:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile the SWPC US-Canada geoelectric E-field series and upload to CDN
+        run: |
+          set -euo pipefail
+          START="${{ inputs.start }}"; [ -n "$START" ] || START="$(date -u -d 'yesterday 00:00:00' +%Y-%m-%dT%H:%M:%SZ)"
+          STOP="${{ inputs.stop }}"; [ -n "$STOP" ] || STOP="$(date -u -d 'today 00:00:00' +%Y-%m-%dT%H:%M:%SZ)"
+          mkdir -p data/services.swpc.noaa.gov
+          cargo run -p omegaflow-harvest --release --bin swpc_efield_compiler -- \
+            --start "$START" --stop "$STOP" \
+            --out data/services.swpc.noaa.gov/swpc_efield.bin \
+            --ci-mode
