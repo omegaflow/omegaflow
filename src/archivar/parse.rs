@@ -1045,7 +1045,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                if !allowed_units_for_quantity(quantity_kind_id(kind))
+                if !matches!(
+                    kind,
+                    QuantityKind::Geometry | QuantityKind::SourceParameter
+                ) && !allowed_units_for_quantity(quantity_kind_id(kind))
                     .contains(&normalize_unit(parts[5]).as_str())
                 {
                     report_anomaly(
@@ -2492,6 +2495,34 @@ mod tests {
         assert_eq!(
             fc.force, FORCE_TYPE_QUANTITY,
             "a derived index stays outside Σω"
+        );
+    }
+
+    #[test]
+    fn a_geometry_and_source_parameter_quantity_flow_without_a_unit_gate() {
+        let field_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+        let geometry = "url https://example.com/q.bin\nttl 604800\n\
+                        quantity tide_ft tide_ft inverse-square geometry ft 3600 0.0 0.0\n";
+        let fc = field_of(geometry).expect("a geometry quantity flows");
+        assert_eq!(fc.force, FORCE_TYPE_QUANTITY);
+        assert_eq!(
+            fc.unit, "ft",
+            "the geometry unit is free (length, angle, mass …)"
+        );
+
+        let source_parameter = "url https://example.com/q.bin\nttl 604800\n\
+                                quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
+        assert_eq!(
+            field_of(source_parameter).map(|f| f.force),
+            Some(FORCE_TYPE_QUANTITY),
+            "a source parameter flows as a quantity, never a field"
         );
     }
 
