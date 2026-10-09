@@ -96,7 +96,3 @@ blocked parser-def
 url https://blinkverse.zerooffset.xyz/
 gap blinkverse-frb
 note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamikspektren + 92 Host-Galaxien) → nicht superseded (Rat + UI); Zugang direct+Proton pending; Dedup gegen `frb_chime_cat1.json`/`frbcat_flat.json`/`frb_a279.json`.
-
-pending
-url https://github.com/TIAN-we/petrel19
-note PETREL19 — 2026-10-09: Wei CC BY 4.0; decline widerlegt. Route gebaut: petrel19-cdn.yml (de_compiler --label petrel19 --gm/--pck PETREL19.tpc) + sources.φ ephemeris_petrel19_{earth,moon,sun}. Manifest pending.
