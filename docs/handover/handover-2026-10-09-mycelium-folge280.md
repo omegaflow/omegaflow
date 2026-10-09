@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. CI-Erntelauf wdc-ae triagiert (failure gemessen und geheilt); Schreibpfad-Heilung an 4 Compilern, die auf frischen Runnern an fehlendem Ausgabe-Verzeichnis scheiterten; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 83c6d40d072fef7aaa57468e702d96b7ab885e390e4d62495f216a5bcfae2916
+  sha256: 7fa002a45caa94721303a62b2ef7a39618c1b1d29062ec1d57a6c2b5a4b7cd48
   status: live
 -->
 # Handover — Mycelium-Folge 280 (2026-10-09)
@@ -41,7 +41,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Pipeline — Erntelauf `wdc-ae-cdn` geheilt, Re-Dispatch offen
 - **Status:** wartend | **Bindung:** eigen (Ernte)
 - **Trigger:** Re-Dispatch `wdc-ae-cdn` (nach diesem Push) bzw. `ci_manage view 37955268834` (Altlauf rot)
-- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37955268834:607-614`) Lauf **failure**: `wdc_ae_compiler` schrieb `data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin` — `std::fs::write` → `write … returned void` (exit 1), weil das Elternverzeichnis fehlt (Workflow `ubuntu-latest`, kein `mkdir`). **Geheilt:** `create_dir_all(parent)` vor dem `fs::write`. Derselbe Sweep über alle 21 Workflows mit `--out data/…` ohne `mkdir` fand vier gleichartige Fälle — `cdaweb_tec_compiler`, `swpc_efield_compiler`, `bl_narrowband_compiler` (alle `ubuntu-latest`), + defensiv `weberin_verdicts_compiler` (self-hosted) — alle in diesem Atom geheilt und gebaut clean.
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37955268834:607-614`) Lauf **failure**: `wdc_ae_compiler` schrieb `data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin` — `std::fs::write` → `write … returned void` (exit 1), weil das Elternverzeichnis fehlt (Workflow `ubuntu-latest`, kein `mkdir`). **Geheilt:** `create_dir_all(parent)` vor dem `fs::write`; Re-Dispatch `37956875278` **completed success**. Der Sweep über alle Workflows mit `--out data/…` ohne `mkdir` fand als zweiten echten Fall `cdaweb_tec_compiler` (ubuntu-latest) — Re-Dispatch `37956885165` **completed success**. `swpc_efield_compiler`, `bl_narrowband_compiler` und `weberin_verdicts_compiler` erhielten den Guard defensiv (ihr Workflow führt teils `mkdir -p`); alle fünf gebaut clean.
 - **Blockade:** keiner.
 - **Braucht:** `gh workflow run wdc-ae-cdn.yml`; dann `ci_manage view <id>`; bei success sha256/Asset in `phi/sources.φ` prüfen + `ledger.φ` auf `disponiert`.
 
@@ -51,6 +51,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-09 via `ci_manage log 37956818629:153`) `auto-dispatch` dispatcht je geändertem Harvest-Bin den aufrufenden Workflow; ein Workflow mit `required: true`-Dispatch-Input ohne `# auto-dispatch: manual`-Marker scheitert (422). `bl-narrowband-cdn` (required `url`) in diesem Atom geheilt (Marker + Begründung). Kandidaten-Rest: 41 Workflows mit `required: true` (`sgrep -l 'required: true' .github/workflows`), je zu prüfen, ob es ein Dispatch-Input ist.
 - **Blockade:** keiner.
 - **Braucht:** Marker `# auto-dispatch: manual` je betroffenem Workflow — Audit `comm -23 <(sgrep -l 'required: true' .github/workflows | sort) <(sgrep -l 'auto-dispatch: manual' .github/workflows | sort)`.
+
+### Pipeline — `swpc-efield-cdn` 0 frames / 0 rows
+- **Status:** wartend | **Bindung:** eigen (Ernte)
+- **Trigger:** Lauf `37956892248` (swpc-efield-cdn) Abschluss
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37956846056:610-611`) Lauf **failure**: `swpc_efield_compiler --start 2026-10-08T00:00:00Z --stop 2026-10-09T00:00:00Z` meldet „0 frames, 0 rows" → exit 1 (`no records — the bin stays unwritten (0 honored)`). Der Workflow führt `mkdir -p data/services.swpc.noaa.gov` — **nicht** der Verzeichnis-Bug.
+- **Blockade:** keiner.
+- **Braucht:** `ci_manage view 37956892248`; wenn die Quelle für den Tag wirklich leer ist: entscheiden, ob ein leeres Tag exit 0 (honored) oder exit 1 trägt.
 
 ### Pipeline — `das2-iowa-cdn` queued
 - **Status:** wartend | **Bindung:** eigen (Ernte)
