@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: a5f168302e66be5680189a9b8baa3bbaaf9dfe0e0e2bb0fbe56bfbe4ab96b824
+  sha256: 304b2d2799d6921f41e0ebfff63fa94987a74c65be926d9e5a1d65a98513158d
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -114,10 +114,10 @@ Wort | Datum | Quelle
 
 ### `blocked_sources.φ` — Klassen-Träger (gap-Token)
 - **Status:** eigen (Disposition) | **Bindung:** eigen (Bau/Disposition)
-- **Trigger:** Bau je Klassen-Träger
-- **Lage:** (gemessen 2026-10-09) **14 `gap`-Träger** (`sgrep -c 'gap '`). Hi-21cm (EBHIS-Release), blinkverse-frb, laic-cssdc (Riss) buildable; wartend: tracking-doppler, viking-tracking, juno-efb; LOCK: bc-mpo-more, mariner-rst, dmap-map-grid.
-- **Blockade:** hi-21cm an der fehlenden Quelle; laic-cssdc am Riss; wartend an NSSDC/JPL.
-- **Braucht:** je Träger den benannten Schritt; hi-21cm EBHIS-Release lokalisieren.
+- **Trigger:** Bau je verbleibendem Parser-Arm
+- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 6 `gap`-Träger**. Geschlossen: `kaguya-lrs` + `inpe-big-stac` (Arm + Workflow + `sources.φ`-Zeile stehen), `dmap-map-grid` (LOCK, Operator-Wort); reklassifiziert zu `pending` (kein Parser-Gap): `bc-mpo-more` (Release 2099), `tracking-doppler`/`juno-efb` (atdf/odf-Arm steht, NSSDC-Anfrage offen), `solar-vso` (iris_compiler steht), `laic-cssdc` (Register-URL tot, LEOS-Umzug). Offen je Parser-Arm: **mariner-rst** (7-Track), **viking-tracking**, **hi-21cm** (HI-Arm + EBHIS-Quelle), **cmb-lambda** (ACT-Ring), **particle-cern** (ROOT), **blinkverse-frb** (FRB-Dynamik).
+- **Blockade:** je Arm der fehlende Format-Reader (7-Track, Tracking, HI, ACT-Ring, ROOT, FRB-Dynamik); `hi-21cm` zusätzlich an der fehlenden EBHIS-Quelle.
+- **Braucht:** je Träger den benannten Arm; `hi-21cm` EBHIS-Quelle lokalisieren, sonst GASS `J/ApJS/181/398` (200) als Route.
 
 ### GIC-Estimator — Ground-Truth NOT PASS (Riss, nicht geglättet)
 - **Status:** eigen (Paper/Mathematikerin) | **Bindung:** eigen
