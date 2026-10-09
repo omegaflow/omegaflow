@@ -11445,6 +11445,18 @@ dec dec
 z z
 field T cmb_act_f150_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/lambda.gsfc.nasa.gov/cmb_spt_d1_n64.json
+origin https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2
+terms unknown https://lambda.gsfc.nasa.gov/
+compiler tools/harvest/src/bin/cmb_planck_compiler.rs
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field T cmb_spt_d1_T gaussian-inverse-square thermal K 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/maxi.riken.jp/maxi_J0006+202.max1
 terms unknown https://maxi.riken.jp/
 format maxi

@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 288 (2026-10-10)
-  session: Mycelium-Linie — Meta-Pass. de441/de442 `sha256` aus dem GitHub-Release-Digest registriert (erste Manifest-Läufe, Wait `de441-de442-sha` geschlossen); future-211-Block (sources-refresh) gefaltet — Workflow war bereits in mycelium-282 verdrahtet (`ba59976da`/`b46c9e514`, Rust-Bin `d72710803`), kein offener Punkt. Register kanonisch (2705 Blöcke), license_census/cdn_reconcile clean. Nachtrag nach Operator-Wort „fixen": die CI-Roh-API-Lehre (`conclusion=` unwirksam → `status=failure`, `docs/concepts/tools-map.md`) und der zuvor übersehene rote `keogram-cdn`-Lauf (`ABK`-Quelle steht seit 2026-04-21) sind gemessen + eingetragen. `harvest-dispatch`-Rot geheilt: `phi/harvest.φ` Block-Ordnung (75/0, `harvest_reg --check`); `path_reference_scan .` clean (3427/0/0). Folgefaltung (river-160 + Mountain-294): SSB-Feld-Asset-CI/CDN + `sources.φ`-Block gebaut (`.github/workflows/ssb-field-cdn.yml`, `format ssb_field`); Blinkverse-Reader steht (Mountain `b385a7ea5`), Register offen; INPE-BIG (gedeckt) + USGS (kein Arm) geschlossen; LICENSE/PDS-PPI/Weberin fortgeschrieben. Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. de441/de442 `sha256` aus dem GitHub-Release-Digest registriert (erste Manifest-Läufe, Wait `de441-de442-sha` geschlossen); future-211-Block (sources-refresh) gefaltet — Workflow war bereits in mycelium-282 verdrahtet (`ba59976da`/`b46c9e514`, Rust-Bin `d72710803`), kein offener Punkt. Register kanonisch (2705 Blöcke), license_census/cdn_reconcile clean. Nachtrag nach Operator-Wort „fixen": die CI-Roh-API-Lehre (`conclusion=` unwirksam → `status=failure`, `docs/concepts/tools-map.md`) und der zuvor übersehene rote `keogram-cdn`-Lauf (`ABK`-Quelle steht seit 2026-04-21) sind gemessen + eingetragen. `harvest-dispatch`-Rot geheilt: `phi/harvest.φ` Block-Ordnung (75/0, `harvest_reg --check`); `path_reference_scan .` clean (3427/0/0). Folgefaltung (river-160 + Mountain-294): SSB-Feld-Asset-CI/CDN + `sources.φ`-Block gebaut (`.github/workflows/ssb-field-cdn.yml`, `format ssb_field`); Blinkverse-Reader steht (Mountain `b385a7ea5`), Register offen; INPE-BIG (gedeckt) + USGS (kein Arm) geschlossen; LICENSE/PDS-PPI/Weberin fortgeschrieben. CMB/SPT: SPT-3G D1 `cmap`-Block (`cmb_spt_d1_n64.json`) + `cmb-cdn`-Schritt geschrieben, Upload-Host-Fix im Compiler. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-10
-  sha256: d114d125d3514b77e9a69b832cd77081162a614c813a1c177ef526ac3f0f21de
+  sha256: fe9f1f002a77497d54aa2a95865182bb035c45e185e41cd22f761cdc3ed5083a
   status: live
 -->
 # Handover — Mycelium-Folge 288 (2026-10-10)
@@ -19,7 +19,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 **CI-Messlehre (2026-10-10, Randbefund-Fix):** der GitHub-Roh-API-Filter `conclusion=` auf `…/actions/runs` ist unwirksam (wird still ignoriert; `?status=completed&conclusion=failure` lieferte `cancelled`-Läufe und zählte fälschlich 0 rote) — korrekt ist `status=failure`/`status=cancelled`/`status=success` (oder client-seitig `jaq 'select(.conclusion=="failure")'`); kanonischer Leser bleibt `ci_manage`. Eingetragen in `docs/concepts/tools-map.md` (CI-Roh-API). Der zuvor übersehene rote Lauf `keogram-cdn 37995952959` ist damit gemessen (siehe Keogramm-Punkt).
 
-## Burn: open 0.0000 · close 0.1885 · cap 0.5 — Grund: de441/de442 `sha256` registriert (6 Blöcke), future-211-Block gefaltet (sources-refresh, bereits verdrahtet → kein offener Punkt), Register kanonisch 2706 Blöcke, license_census/cdn_reconcile clean, `harvest.φ` sortiert, CI-Roh-API-Lehre, SSB-Feld-Asset (Workflow + Register-Block) gebaut, river-160/Mountain-294 gefaltet · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss; Fenster 25 Sessions total $1.4627, Session `Mycelium-Linie starten: Stehender Pass`).
+## Burn: open 0.0000 · close 0.2341 · cap 0.5 — Grund: de441/de442 `sha256` registriert (6 Blöcke), future-211-Block gefaltet (sources-refresh, bereits verdrahtet → kein offener Punkt), Register kanonisch 2707 Blöcke, license_census/cdn_reconcile clean, `harvest.φ` sortiert, CI-Roh-API-Lehre, SSB-Feld-Asset (Workflow + Register-Block) gebaut, SPT-3G-D1-`cmap`-Block + `cmb-cdn`-Schritt + Upload-Host-Fix, river-160/Mountain-294 gefaltet · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss; Fenster 28 Sessions total $1.6164, Session `Mycelium-Linie starten: Stehender Pass`).
 
 ## Operator-Wort-Register
 
@@ -52,6 +52,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-10) `tools/measure/src/bin/ssb_field_bake.rs` (river-160) backt die Enclosure-Query am SSB (26×f64 LE, `--ci-mode`). Gebaut: `.github/workflows/ssb-field-cdn.yml` (holt `dr3_stars.bin` vom `ssd.jpl.nasa.gov-gaia`-CDN → `--ci-mode` → `gh release upload ssb out/ssb_field.bin`) + `phi/sources.φ:19664`-Block `format ssb_field` (`url …/download/ssb/ssb_field.bin`, `terms CC-BY-NC-3.0-IGO` vom `catalog_tycho` geerbt, `compiler …/ssb_field_bake.rs`, `at sun`, `ttl 604800`). `register_sort` kanonisch (2706), `license_census --fail`/`cdn_reconcile --fail` clean, `harvest_reg` 75/0.
 - **Blockade:** sha256 + `terms`/`ttl`-Bestätigung erst nach dem ersten Lauf / durch Mountain.
 - **Braucht:** erster Lauf → `sha256` in den Block; Mountain bestätigt `terms`/`ttl`.
+
+### Manifestation — SPT-3G D1 `cmap`-Block geschrieben (Mountain-294 lieferte die Messung)
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (terms/Member)
+- **Trigger:** erster `cmb-cdn`-SPT-Lauf (sha256 + Member-Prefix)
+- **Lage:** (gemessen 2026-10-10) Mountain-294: SPT-3G D1 tar `…/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2` (HTTP 206, 7,87 GB), Member-Template `full_{095,150,220}ghz.fits`, tar-interner Prefix `pending`. Geschrieben: `phi/sources.φ`-Block `cmb_spt_d1_n64.json` (`url …/download/lambda.gsfc.nasa.gov/cmb_spt_d1_n64.json`, `origin` tar, `compiler tools/harvest/src/bin/cmb_planck_compiler.rs`, `cmap .`, `at sun`, `ttl 604800`, `field T cmb_spt_d1_T …`, `terms unknown` pending). `cmb-cdn.yml` um einen SPT-Schritt (`--url <tar> --nside 64 --ci-mode`) erweitert; der Upload-Host im Compiler für den SPT-Pfad auf `lambda.gsfc.nasa.gov` korrigiert (war hart `irsa.ipac.caltech.edu`). `register_sort` kanonisch (2707), `license_census --fail` 2707/0, `cdn_reconcile --fail` clean, `cargo build -p omegaflow-harvest --bin cmb_planck_compiler` clean.
+- **Blockade:** tar-interner Member-Prefix + SPT-Datenlizenz `pending` (Mountain).
+- **Braucht:** Member-Prefix + `terms`-Verdikt (Mountain) → erster Lauf → `sha256` in den Block.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)

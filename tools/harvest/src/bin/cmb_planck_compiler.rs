@@ -236,9 +236,10 @@ fn main() {
         .and_then(|v| v.parse().ok())
         .unwrap_or(64);
     let spt_url = arg_value(&args, "--url");
+    let is_spt = spt_url.is_some();
     let out = match arg_value(&args, "--out") {
         Some(o) => o,
-        None if spt_url.is_some() => format!("cmb_spt_d1_n{}.json", nside_out),
+        None if is_spt => format!("cmb_spt_d1_n{}.json", nside_out),
         None => format!("cmb_planck_smica_n{}.json", nside_out),
     };
     let ci_mode = has_flag(&args, "--ci-mode");
@@ -336,7 +337,12 @@ fn main() {
         }
     }
     if ci_mode {
-        let _ = omegaflow::cdn::upload_release("irsa.ipac.caltech.edu", &out);
+        let host = if is_spt {
+            "lambda.gsfc.nasa.gov"
+        } else {
+            "irsa.ipac.caltech.edu"
+        };
+        let _ = omegaflow::cdn::upload_release(host, &out);
     }
 }
 
