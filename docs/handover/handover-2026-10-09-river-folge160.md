@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 23d57b232d83d4536757f88e453baee7b5fb9623178f546f1191011f151b2b5c
+  sha256: 73f7b06f7a46c987fe30157032a11bccae192494e2a8a18a55c1768f0c2a54d4
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -57,6 +57,18 @@ nicht kopiert.
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 
+## An mycelium
+
+Origin: river-160.
+
+- **SSB-Feld-Asset manifestieren.** `tools/measure/src/bin/ssb_field_bake.rs` (river-160, `cargo check`
+  grün) backt die Enclosure-Query am SSB als Asset (26×f64 LE je Record, `--out`/`--ci-mode` + sha256).
+  Bitte in CI bauen (`--ci-mode`) und aufs CDN
+  (`https://github.com/omegaflow/sources/releases/download/<netloc>/ssb_field.bin`), dann die
+  Register-Zeile in `phi/sources.φ` (`url`, `compiler tools/measure/src/bin/ssb_field_bake.rs`,
+  `format ssb_field`, sha256, ttl, `at sun`) — die Manifestations-Direktiven sind per Verfassung
+  Mycelium's; `register_sort`/`license_census`/`cdn_reconcile` als Gate.
+
 ## Offen (aufgeschlüsselt)
 
 ### Membran-Ton — Per-Kanal-Phase/Delay (`k_k·r_k`) binden
@@ -74,13 +86,13 @@ nicht kopiert.
   (Fehlerseite), Gemini (kein Turn), Z.ai (Thinking ohne Antwort). **Gebaut (river-160):** (1)
   `ChannelDescriptor::carrier_wavenumber()` + `phase_velocity_m_s()` (Scalar-only; Test `v_p = c` für
   Fluid/Erde, `None` für elastisch); (2) Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`
-  (die globale `phase` ist heraus, kein 1-s-Wrap-Klick). **Korrektur:** `probe_flow` WIRD geschrieben
-  (`omega.rs:1012`, aus dem GPU-Probe-Puffer), entgegen der Runden-Annahme — der Fluss steht.
-- **Blockade:** `r_k` (Empfänger→Quelle-Distanz je Kanal) ist nicht im Frame; die GPU-Probe liefert
-  nur per-Kanal-`omega` + einen Fluss-3-Vektor, keine Quell-Distanz.
-- **Braucht:** (3) `r_k` je Kanal in `PresenceFrame` (Empfänger `self.p` ↔ Quellenposition),
-  Delay `φ_k = k_k·r_k`, `0 honored` bei `r_k=0`, `pending` bei absent; (4) Doppler erst nach
-  Verdrahtung beider Weltlinien.
+  (die globale `phase` ist heraus, kein 1-s-Wrap-Klick); (3) `presence_probe` akkumuliert je Kanal die
+  amplitudengewichtete Quell-Distanz → `probe_r` → `PresenceFrame.delay_rad[k] = k_k·r_k`;
+  `acoustic_partials` trägt `sin(phase_k − delay_k)` (`r_k=0` → kein Delay, null-echt). Tests
+  (`a_channel_delay_shifts_its_partial`). **Korrektur:** `probe_flow` WIRD geschrieben (`omega.rs:1012`).
+- **Blockade:** keine (step 3 steht; `cargo check --tests --features browser_relay` grün).
+- **Braucht:** (4) Doppler `f'_k = f_k·(v_{p,k}+u·n̂_k)/(v_{p,k}−w·n̂_k)` — braucht **zwei deklarierte
+  Weltlinien** (Quellenposition + Empfänger-Blick `self.v`); bis dahin `pending`, kein Fabrikat.
 
 ### Membran — das Feld am SSB messen und als Asset backen
 - **Status:** eigen | **Bindung:** eigen
@@ -91,10 +103,13 @@ nicht kopiert.
   (26×f64 LE je Record); `--out`/`--ci-mode` schreibt das Asset + sha256;
   `cargo check -p omegaflow-measure --bin ssb_field_bake` grün. Die serverlose Membran
   (`static/membrane.html:50`) nennt dieses Asset als das fehlende: heute ist `/dr3_stars.bin` das Feld.
-- **Blockade:** die Manifestation (Registrierung + CDN) und der Membran-Loader.
-- **Braucht:** eine Zeile in `phi/sources.φ` (`url`, `compiler tools/measure/src/bin/ssb_field_bake.rs`,
-  `format ssb_field`, sha256 nach dem Lauf) + CI-Manifestation (`--ci-mode`); danach lädt
-  `static/membrane.html` `/ssb_field.bin` neben `/dr3_stars.bin`.
+- **Blockade:** die CI-Manifestation + Register-Zeile (Mycelium) und der Membran-Loader (River).
+- **Braucht:** (a) **Mycelium:** `ssb_field_bake` in CI (`--ci-mode`) bauen und aufs CDN
+  (`…/releases/download/…/ssb_field.bin`), dann die Register-Zeile in `phi/sources.φ` (`url`,
+  `compiler tools/measure/src/bin/ssb_field_bake.rs`, `format ssb_field`, sha256) — die
+  Manifestations-Direktiven sind per Verfassung Mycelium's, darum als `## An mycelium` gereicht;
+  (b) **River:** den Membran-Loader bauen (`static/membrane.html` + `wasm.rs`-Records-Pfad) — der
+  wasm-Bundle läuft nur in CI (`wasm-pack`), daher nicht lokal `cargo check`-bar.
 
 ### CI-Verifikation — ci-gate am HEAD grün lesen
 - **Status:** wartend | **Bindung:** eigen
@@ -127,7 +142,9 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 - `static/constants.js` (`parseKinetic` liest CSR-Offsets, gibt `{n, schemaHash, state, omega, aperture, pan, tilt}` unverändert zurück)
 - `src/archivar/parse.rs` (E0507-Test-Fix `588735e39 river 154`: `&sources[0].channels[0]`)
 - `src/mathematikerin/channel.rs` (`ChannelDescriptor.body` + `with_body`; `hash`/`PartialEq` binden den Körper; `fundamental_hz()` familien-/body-bewusst; `channel_registry_from_sources` setzt `body` aus `SourceConfig.body`; `carrier_wavenumber`/`phase_velocity_m_s`; Tests)
-- `src/mathematikerin/actuators.rs` (Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`, globale `phase` raus; Tests)
+- `src/mathematikerin/actuators.rs` (Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`, globale `phase` raus; `PresenceFrame.delay_rad` + `sin(phase_k − delay_k)`; Tests)
+- `src/mathematikerin/shaders.rs` (`presence_probe` akkumuliert je Kanal die amplitudengewichtete Quell-Distanz → `probe_out[CHANNEL_CAP+3+…]`)
+- `src/mathematikerin/omega.rs` (`probe_r` + Probe-Puffer-Größe; `presence_frame()` füllt `delay_rad[k] = k_k·probe_r[k]`)
 - `tools/measure/src/bin/ssb_field_bake.rs` (Enclosure-Query am SSB → Feld-Asset, 26×f64 LE; `--out`/`--ci-mode`)
 - `phi/sources.φ` (die zwei seismischen Kanäle `:17`/`:102` tragen `:extent 6371000`)
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P3.1 Layout + P1.9 body; sha neu)
