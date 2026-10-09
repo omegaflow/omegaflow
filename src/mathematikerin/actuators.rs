@@ -24,6 +24,7 @@ pub const CHANNEL_CAP: usize = 16;
 #[derive(Clone, Copy)]
 pub struct PresenceFrame {
     pub n: u16,
+    pub schema_hash: u32,
     pub omega: [f32; CHANNEL_CAP],
     pub aperture: [f32; CHANNEL_CAP],
     pub state: [TriState; CHANNEL_CAP],
@@ -396,6 +397,7 @@ mod tests {
         let a = cap9(aperture);
         PresenceFrame {
             n: 9,
+            schema_hash: live_schema_hash(),
             omega: cap9(omega),
             aperture: a,
             state: aperture_state(&a),
@@ -726,6 +728,7 @@ mod tests {
     fn a_frame_with_pan_and_tilt_emits_the_full_mask_and_three_payloads() {
         let frame = PresenceFrame {
             n: 9,
+            schema_hash: live_schema_hash(),
             omega: cap9([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]),
             aperture: cap9([1.0; 9]),
             state: aperture_state(&cap9([1.0; 9])),
@@ -753,6 +756,7 @@ mod tests {
     fn a_present_but_non_finite_pan_clears_its_bit() {
         let frame = PresenceFrame {
             n: 9,
+            schema_hash: live_schema_hash(),
             omega: cap9([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]),
             aperture: cap9([1.0; 9]),
             state: aperture_state(&cap9([1.0; 9])),
