@@ -1,5 +1,5 @@
 note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
-note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (19 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png, covariate-carrier); register-eigen: iaga-text.
+note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (22 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png, covariate-carrier); register-eigen: iaga-text.
 note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
 note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
 note gap-Token konverter — Feld-Einheit falsch als mag; Arm fehlt. (gemessen 2026-10-05: port.rs:2176-2183/2373 routet `_mag_bx/by/bz/bt` + `_nt` → em nT; alle übrigen `mag` sind astronomische Magnituden) → descoped.

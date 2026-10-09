@@ -805,6 +805,25 @@ field wind_mfi_bx_gse_nt wind_mfi_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H2_MFI&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSM&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at sun
+hapi BGSM.0=wind_mfi_bx_gsm_nt BGSM.1=wind_mfi_by_gsm_nt BGSM.2=wind_mfi_bz_gsm_nt
+field wind_mfi_bx_gsm_nt wind_mfi_bx_gsm_nt inverse-square em nT 3600 0.0 0.0
+field wind_mfi_by_gsm_nt wind_mfi_by_gsm_nt inverse-square em nT 3600 0.0 0.0
+field wind_mfi_bz_gsm_nt wind_mfi_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_K0_SWE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=V_GSE,Np&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at sun
+hapi V_GSE.0=wind_swe_vx_gse_kms V_GSE.1=wind_swe_vy_gse_kms V_GSE.2=wind_swe_vz_gse_kms Np=wind_swe_np_percc
+field wind_swe_vx_gse_kms wind_swe_vx_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field wind_swe_vy_gse_kms wind_swe_vy_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field wind_swe_vz_gse_kms wind_swe_vz_gse_kms patch-levy advective km/s 3600 0.0 0.0
+field wind_swe_np_percc wind_swe_np_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
 terms free-open https://data.neracoos.org/erddap/legal.html
 ttl 3600
