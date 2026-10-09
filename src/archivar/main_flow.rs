@@ -1083,28 +1083,31 @@ pub fn main_flow() {
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
     } else {
-        let em = crate::mathematikerin::LoopRadiator::new(crate::mathematikerin::LoopCtx {
-            time: time.clone(),
-            consent: consent.clone(),
-            tone_code: tone_code.clone(),
-            acoustic_tx,
-            seismic_tx,
-            relay_tx: {
-                #[cfg(feature = "browser_relay")]
-                {
-                    Some(relay_kinetic_tx)
-                }
-                #[cfg(not(feature = "browser_relay"))]
-                {
-                    None
-                }
+        let em = crate::mathematikerin::LoopRadiator::new(
+            crate::mathematikerin::LoopCtx {
+                time: time.clone(),
+                consent: consent.clone(),
+                tone_code: tone_code.clone(),
+                acoustic_tx,
+                seismic_tx,
+                relay_tx: {
+                    #[cfg(feature = "browser_relay")]
+                    {
+                        Some(relay_kinetic_tx)
+                    }
+                    #[cfg(not(feature = "browser_relay"))]
+                    {
+                        None
+                    }
+                },
+                solar_rx,
+                machine_rx,
+                presence: presence_slot.clone(),
+                diode: diode.clone(),
+                verdicts: verdicts_shared.clone(),
             },
-            solar_rx,
-            machine_rx,
-            presence: presence_slot.clone(),
-            diode: diode.clone(),
-            verdicts: verdicts_shared.clone(),
-        });
+            crate::mathematikerin::channel::channel_registry_from_sources(&archive.sources),
+        );
         let em_shutdown = em.shutdown_flag();
         radiators.push(Box::new(em));
         em_shutdown

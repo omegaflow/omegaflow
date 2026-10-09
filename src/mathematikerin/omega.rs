@@ -195,6 +195,7 @@ pub struct OmegaLoop {
     pub em_color: [f32; 4],
     pub probe_omega: [f32; 9],
     pub prev_probe_omega: [f32; 9],
+    pub channels: Option<super::channel::ChannelRegistry>,
     pub probe_flow: [f32; 3],
     pub probe_ring: [[f32; 12]; 256],
     pub ring_head: usize,
@@ -315,6 +316,7 @@ impl OmegaLoop {
             em_color: [0.0; 4],
             probe_omega: [0.0; 9],
             prev_probe_omega: [0.0; 9],
+            channels: None,
             probe_flow: [0.0; 3],
             probe_ring: [[0.0; 12]; 256],
             ring_head: 0,
@@ -363,7 +365,14 @@ impl OmegaLoop {
             self.field_permeability[k] * self.tone_scale
         }));
         let state = aperture_state(&aperture);
-        let registry = super::channel::live_channel_registry();
+        let fallback;
+        let registry = match &self.channels {
+            Some(r) => r,
+            None => {
+                fallback = super::channel::live_channel_registry();
+                &fallback
+            }
+        };
         PresenceFrame {
             n: registry.len() as u16,
             schema_hash: registry.schema_hash(),
@@ -2000,8 +2009,10 @@ pub fn run_loop(
     res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
     shutdown: Arc<AtomicBool>,
     ctx: LoopCtx,
+    channels: super::channel::ChannelRegistry,
 ) {
     let mut loop_ = OmegaLoop::new(rx, req_tx, res_rx, shutdown.clone(), ctx);
+    loop_.channels = Some(channels);
     loop_.init_gpu();
     while !shutdown.load(Ordering::SeqCst) {
         let t0 = std::time::Instant::now();
@@ -2022,7 +2033,7 @@ pub struct LoopRadiator {
 
 #[cfg(not(target_arch = "wasm32"))]
 impl LoopRadiator {
-    pub fn new(ctx: LoopCtx) -> Self {
+    pub fn new(ctx: LoopCtx, channels: super::channel::ChannelRegistry) -> Self {
         let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
         let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
         let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, f64, u64)>(2);
@@ -2102,7 +2113,7 @@ impl LoopRadiator {
             }
         });
         let handle = thread::spawn(move || {
-            run_loop(rx, req_tx, res_rx, shutdown_clone, ctx);
+            run_loop(rx, req_tx, res_rx, shutdown_clone, ctx, channels);
         });
         Self {
             tx,

@@ -651,6 +651,19 @@ pub fn live_schema_hash() -> u32 {
     live_channel_registry().schema_hash()
 }
 
+pub fn channel_registry_from_sources(sources: &[crate::archivar::SourceConfig]) -> ChannelRegistry {
+    let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
+    for s in sources {
+        for d in &s.channels {
+            reg.register(*d);
+        }
+    }
+    if reg.is_empty() {
+        return live_channel_registry();
+    }
+    reg
+}
+
 pub fn unit_token(token: &str) -> Option<&'static str> {
     match token {
         "V/m" => Some("V/m"),
