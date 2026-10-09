@@ -276,6 +276,15 @@ idempotent true
 timeout 60
 
 asset present
+format iris
+tag vso.stanford.edu
+arm iris_compiler
+workflow iris-cdn.yml
+pattern ^iris\.bin$
+idempotent true
+timeout 120
+
+asset present
 format kc2g_stations
 tag prop.kc2g.com
 arm kc2g_stations
