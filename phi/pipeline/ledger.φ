@@ -1,172 +1,172 @@
 
-disponiert
+released
 queue phi/pipeline/queue/sources_potential_pre-cdn_9k_richest.φ
 note Force-Gate 2026-10-04 (Block-Kontext, Drops, `sep`-Riss geschlossen) → converted 824/711 parse/0 pending/66 declined; 843 field; 0 # pending.
 
-disponiert
+released
 queue phi/pipeline/queue/sources_potential_pre-cdn_params.φ
 note Force-Gate 2026-10-04 → converted 63/53 parse/0 pending/10 declined; 2 field; 0 # pending. Join-Paar zu _9k_richest.
 
-disponiert
+released
 kandidat http://pithia.cbk.waw.pl/tap
 note 2026-09-27 released in phi/blocked_sources.φ (Backend tot: PG refused, /tap/tables 500; Arm epncore-spatial steht parse.rs:319); planeto decline registry/katalog (declined_sources.φ:213).
 
-disponiert
+released
 kandidat https://limadou.ssdc.asi.it/
 note SSDC/LIMADOU: 2026-10-04 query.php 200 = CAS-Login „Login" (reg /UserManager/requestUser.jsp); TAPSSDC 69 Tabellen, 0 CSES/LIMADOU = kein offener Arm; Sotgiu CSES-02-Umbau (mail_ledger.φ:79). → blocked_sources.φ `https://limadou.ssdc.asi.it/`.
 
-disponiert
+released
 kandidat https://babamul.caltech.edu/api/
 note Babamul (Caltech LSST/ZTF-Broker): /api/babamul/objects Bearer 200 (anonym 401); sky1. 2026-09-23 CDN babamul_alerts.bin HTTP 200, 2000013 B, sha256 sources.φ:14022; Lauf 35805467066 success. Port kompiliert+manifestiert, Re-Dispatch erledigt.
 
-disponiert
+released
 kandidat https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter
 note 2026-09-23 HTTP 200 JSON, flaches Array von Objekten alle Werte String; Pflichtparameter start/end/minmag (limit wirkungslos); Route in phi/sources.φ eingegangen (map ., lat/lon/epoch/mag_type_key, magnitude+depth).
 
-disponiert
+released
 nachlauf docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md
 note survey 2026-09-14 gemessen 2026-09-26: 26/26 Pendings im Register (sources.φ:869,811,819,843,3494,7821,8122,8207,8763,9343; declined_sources.φ:2270,1391,1407,1011), nur ERI compiler-pending (noaa_nodd_disposition.φ:50)
 
-disponiert
+released
 kandidat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/
 note Akatsuki Radio Science (JAXA/ISAS) PDS4 vco_rs — 2026-09-28 dir GET 503 (direct+Proton); SIS v13 PDF dokumentiert binäre Doppler-/Open-Loop-Produkte. → phi/blocked_sources.φ parser-def gap pds4-binary.
 
-disponiert
+released
 kandidat https://sbnarchive.psi.edu/pds4/hayabusa/
 note Hayabusa (JAXA/ISAS) PDS4 — 2026-09-28 HTTP 206; LIDAR cdr_*.tab fixed-width ~30 Spalten (MET/UTC/Range), kein In-File-Header, Einheiten im XML-Label, 43–177 MB. → phi/blocked_sources.φ parser-def gap pds4-fixed-width.
 
-disponiert
+released
 kandidat https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
 note Kaguya/SELENE LRS-Roh (JAXA/ISAS, PDS ODE) — 2026-09-28 HTTP 206; Lunar Radar Sounder binäre .dat hinter ODE-Portal, kein Einzeldatei-Endpoint gefunden. → phi/blocked_sources.φ parser-def gap pds3-binary.
 
-disponiert
+released
 kandidat https://pds-geosciences.wustl.edu/missions/chandrayaan1/
 note Chandrayaan-1 (ISRO) PDS3 — 2026-09-28 HTTP 206; Mini-RF .img (PDS3-Raster) + M3 ENVI-Cube binär. → phi/blocked_sources.φ parser-def gap pds3-img.
 
-disponiert
+released
 kandidat https://pds-geosciences.wustl.edu/venera/mpi-venus-alt.dat
 note Venera 15/16 (UdSSR, PDS-Spiegel) — 2026-09-28 200 anonym; Altimetrie 10398160 B ASCII (lat/lon/radius km) + Radiometrie 5949650 B (lat/lon/brightness-temp K). → phi/sources.φ (2 no-cadence, rows, at venus; gravity km / thermal K).
 
-disponiert
+released
 kandidat https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/
 note Vega 1/2 Halley (UdSSR) 7 Instrument-Sets PDS3 — 2026-09-28 HTTP 206; fixed-width Tabellen, Einheiten im .lbl. → phi/blocked_sources.φ parser-def gap pds3-fixed-width.
 
-disponiert
+released
 kandidat https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
 note Phobos 2 (UdSSR) PDS3 — 2026-09-28 HTTP 206; krfm.dat fixed-width, Spalten ohne In-File-Einheiten. → phi/blocked_sources.φ parser-def gap pds3-fixed-width (unit-auto-detect gilt zusätzlich).
 
-disponiert
+released
 kandidat https://archives.esac.esa.int/psa/ftp/ExoMars2016/
 note ExoMars TGO (ESA/Roskosmos, ACS/FREND) — 2026-09-28 HTTP 200 (2124 B FTP-Listing); ACS-NIR-Okkultation PDS4 binär. → phi/blocked_sources.φ parser-def gap pds4-binary.
 
-disponiert
+released
 kandidat https://pda.kasi.re.kr/
 note Danuri/KPLO (KARI/KASI): KASI-DALO pda.kasi.re.kr (Login-Wall) → blocked_sources.φ blocked account; KARI KPDS kari.re.kr/kpds (HTML) → pending; ShadowCam pds.shadowcam.im-ldi.com/derived (PDS4) → pending. KMTNet-MOC → descoped. 2026-09-29.
 
-disponiert
+released
 kandidat http://solarnet.oma.be/
 note SOLARNET VO (Solar-Datensatz-Suche/Cross-Search, Paper 10.1007/s11207-025-02424-0) — 2026-10-07 sidc.be/SVO 200 (42489 B); solarnet.uv.es tot. Portal, kein Einzel-Asset. Rat 2026-10-07 decline registry/katalog (declined_sources.φ:4096).
 
-disponiert
+released
 kandidat https://www.microns-explorer.org
 note MICrONS Explorer „Virtual Observatory of the Cortex" (U24, Kortex-Datenportal) — 2026-10-07 HTTP 200/206, sha256 70364993c3167f4d. Portal, kein Einzel-Asset; Explore offen. Rat 2026-10-07 decline no-physical-force (declined_sources.φ:5024).
 
-disponiert
+released
 kandidat https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
 note HadISST SST (Met Office Hadley) — 2026-10-07 HTTP 200, 83913410 B gzip; HadISST_ice.nc.gz ebenso. NetCDF; Parser offen. Rat 2026-10-07 admit thermal (SOURCE_PORT, Mountain).
 
-disponiert
+released
 kandidat https://www.ncei.noaa.gov/pub/data/paleo/treering/reconstructions/higgins2020spczi-pseudo-recons.txt
 note SPCZ-Index-Rekonstruktion (NOAA NCEI, Higgins et al., 1300 J) — 2026-10-07 HTTP 200, 2170897 B, sha256 f18b1088651f11ec; ASCII. Parser offen. Rat 2026-10-07 decline paleo-catalog (declined_sources.φ:5328).
 
-disponiert
+released
 kandidat https://data.inpe.br/
 note Brazilian VO = Astronomy (Paper 10.1109/eScience.2014.11) — 2026-10-07 data.inpe.br (BIG) HTTP 200; „Climate" im Novitäts-Scan war falsch. Rat 2026-10-07 decline registry/katalog, Riss benannter VO ≠ live BIG (declined_sources.φ:1443).
 
-ausstehend
+pending
 kandidat https://data.inpe.br/big/
 note Brazilian live INPE BIG — STAC/GeoTIFF, em; 2026-10-07 HTTP 200 (192329 B), Portal/SPA, kein Einzel-Asset; eigener Kandidat getrennt vom declined benannten-VO-Riss (declined_sources.φ:1443).
 
-disponiert
+released
 nachlauf tools/harvest/src/bin/cors_compiler.rs
 note cors_compiler ungewirter Duplikat-Pfad zu cors_rinex — kein Workflow ruft ihn (cors-cdn.yml:61 → cors_rinex_compiler), kein Reader-Arm (extract.rs:45; sources.φ:10618). river-136 Vorschlag descoped; gemessen 2026-10-08.
 
-ausstehend
+pending
 kandidat https://www.gosat-gw.nies.go.jp
 note GOSAT-GW: Cookie-Auth (wartend.φ:48); GWT3F_L1B 132/GWT3W_L1B 434 B, Probe HDF5 17440691 B; Compiler+WF stehen; 2026-10-09: CI 36283215548 stale, Defekt in 5215745f7+f6fdfd1a3 behoben.
 
-disponiert
+released
 kandidat https://planet.physics.uiowa.edu/das/das2Server/hapi
 note DAS2 Iowa HAPI 1.1 CSV — 2026-10-09: 200; hapi_csv.rs + das2_iowa_compiler.rs + das2-iowa-cdn.yml; origin sources.φ:19226; Feld mountain-285 hapi_csv_*_nt (em nT); Lauf 37955273716 success; Asset sources.φ:19223.
 
-disponiert
+released
 kandidat https://moon.bao.ac.cn/
 note Chang'e 1–6 GRAS (CNSA) — 2026-10-09: clpds-cdn Lauf 37932167423 success; gras_2c-Reader, Annex sources.φ:10100; kompiliert+manifestiert. future-folge149.
 
-disponiert
+released
 kandidat https://sdc.emiratesmarsmission.ae/
 note Hope/Al-Amal EMM EXI — 2026-10-09: L2a = Bild, kein Skalarfeld; Compiler+WF stehen; CDN emm_exi_l2a.tar 1439406 B (2026-10-05), Run 37932156681 = idempotenter Skip. Offen: Sample-Prüfung.
 
-ausstehend
+pending
 kandidat https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/
 note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-10-09: properties 206 (1 B); hips.rs + hips_png_compiler.rs + hips-png-cdn.yml stehen. Lauf 37932098229 in_progress (32 Shards). Offen: Run-Ergebnis, CDN, Sample.
 
-ausstehend
+pending
 kandidat https://pds.shadowcam.im-ldi.com/derived/
 note ShadowCam PDS4 — 2026-10-09: /derived/ 200 öffentlich; Produkte .cub (ISIS) + _cog.tif, KEIN .fits; pds4-fits-CDN ist Chang'e-MRM (widerlegt); tiff.rs-Reader steht. Nötig: ShadowCam-TIFF-Compiler + WF (Mountain-Admission).
 
-disponiert
+released
 kandidat https://gportal.jaxa.jp/
 note JAXA G-Portal — Quellen `gportal.jaxa.jp` (2 Blöcke: `jaxa_gpm_ku`, `jaxa_gportal`); Download 2026-10-07 Run 37676047864: Login ok, 200 153785337 B; nicht public; Compile-Riss FS/navigation/scLat unread. future-folge226.
 
-disponiert
+released
 kandidat https://clpds.bao.ac.cn/
 note CLPDS (NAOC/GRAS, Chang'e) — 2026-10-09: Assets clpds_annex.jsonl/clpds_catalogue.json/clpds_files.jsonl am Release-Tag clpds.bao.ac.cn (gh api); PDS3-Reader steht. future-folge226.
 
-disponiert
+released
 kandidat https://data.kasi.re.kr/
 note KASI Science Data Portal — 2026-10-09: Assets kasi_kmtnet.json/kasi_kvn.json/kasi_miris.json am Release-Tag data.kasi.re.kr (gh api); Reader kasi.rs steht. future-folge168.
 
-disponiert
+released
 kandidat https://impc.dlr.de/products/ionospheric-perturbations/rate-of-change-of-tec-index/one-minute-maximum-roti-global
 note ROTI (GIC Obs. §D) — 2026-10-09: data.impc.dlr.de/…/latest_D.json 200; impc_roti_compiler.rs steht (sources.φ:924-930), impc-roti-cdn Run 37895723379 success.
 
-ausstehend
+pending
 kandidat https://themis.igpp.ucla.edu/gmag/
 note THEMIS GMAG (~40 Stn, GIC-Replikation §A) — 2026-10-06: 200; ABK live CDAWeb HAPI THG_L2_MAG_ABK (sources.φ:4076-4082, themis_gmag_h/e/z_nt); Kompilat-Arm/themis-mag-cdn.yml/themis_mag_compiler.rs entfernt (Routenwechsel); übrige Stn offen.
 
-ausstehend
+pending
 kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=WI_H0_SWE
 note Wind SWE/MFI (GIC-Replikation §A) — 2026-10-09: WI_H0_SWE = Elektronen, eingefroren 2001-05-31 (sources.φ:29445); GIC-Route braucht WI_K0_SWE (Np/V_GSE, 1994→2026-10-06) + WI_H2_MFI (BGSM/BGSE); Mountain-Verdikt offen.
 
-disponiert
+released
 kandidat https://www.ncei.noaa.gov/data/poes-metop-space-environment-monitor/
 note POES/MetOp MEPED (GIC-Mediator §B) — 2026-10-09: CDN poes19_meped.bin 1036784 B (sources.φ:1805), Lauf 37648555875 success — kompiliert+manifestiert.
 
-disponiert
+released
 kandidat https://ssusi.jhuapl.edu/
 note DMSP SSJ/SSUSI (GIC-Mediator §B) — 2026-10-09: cdaweb dmsp16_ssj.bin 4146104 B (Run 37653771143), ssusi_aurora.bin 104 B n=4 (Run 37742154115) beide success.
 
-disponiert
+released
 kandidat https://supermag.jhuapl.edu/products/
 note Substorm-Onsets (GIC-Mediator §B) — 2026-10-09: 5 Blöcke in sources.φ:19663-19699 (format substorm, url supermag.jhuapl.edu/substorm_{forsyth,frey,liou,newell,ohtani}.bin); substorm-cdn.yml Lauf 37951374863 success; kompiliert+manifestiert.
 
-disponiert
+released
 kandidat https://cdaw.gsfc.nasa.gov/CME_list/
 note SOHO/LASCO CME-Katalog (GIC-Driver §C) — 2026-10-09: Lauf 37778516294 success; soho_lasco_cme.bin 11009 B manifestiert (sources.φ:20511-20523).
 
-disponiert
+released
 kandidat https://wdc.kugi.kyoto-u.ac.jp/
 note AL/AU/SYM-H (WDC Kyoto, GIC-unabhängige Observable §D) — 2026-10-09: /hapi/data?id=min_ae 200 (54883 B); wdc_ae_compiler.rs + wdc-ae-cdn.yml; Lauf 37956875278 success; wdc_ae.bin manifestiert (sources.φ:4329).
 
-disponiert
+released
 kandidat https://superdarn.usask.ca/convection-maps
 note SuperDARN CPCP (GIC §B) — 2026-10-09: superdarn_cpcp + superdarn_cpcp_nc gebaut (sources.φ:4244-4259, superdarn-cpcp-cdn.yml), Zenodo 10875060 NetCDF-4 manifestiert.
 
-disponiert
+released
 kandidat https://ds.iris.edu/ds/products/emtf/
 note EarthScope/USArray MT-Impedanzen (EMTF, GIC-Kalibrier-Zeuge §E) — 2026-10-09: emtf_usarray_cao01_2010.bin 2176 B (Run 37853400993 success, sources.φ:10443).
 
-ausstehend
+pending
 kandidat http://awesome.ucsd.edu/
 note Sub-ionosphärische VLF AWESOME (GIC-unabhängige Observable §D) — 2026-10-06: DNS tot (000), Wayback 503; vlf_awesome.rs + vlf-awesome-cdn.yml stehen (Note „unbelegt" widerlegt).
