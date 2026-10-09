@@ -129,8 +129,18 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
 
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
     let (conserved, op, boundary, unit) = match name {
-        "em" | "electric" => (Conserved::Energy, TransportOp::Maxwell, Boundary::None, "V/m"),
-        "gravity" => (Conserved::Mass, TransportOp::Poisson, Boundary::None, "m/s^2"),
+        "em" | "electric" => (
+            Conserved::Energy,
+            TransportOp::Maxwell,
+            Boundary::None,
+            "V/m",
+        ),
+        "gravity" => (
+            Conserved::Mass,
+            TransportOp::Poisson,
+            Boundary::None,
+            "m/s^2",
+        ),
         "acoustic" => (Conserved::Energy, TransportOp::Wave, Boundary::None, "Pa"),
         "seismic-body" => (Conserved::Energy, TransportOp::Wave, Boundary::None, "Pa"),
         "seismic-surface" => (
@@ -162,7 +172,9 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
     if !is_admissible(conserved, op, medium) {
         return None;
     }
-    Some(ChannelDescriptor::new(conserved, op, medium, boundary, unit))
+    Some(ChannelDescriptor::new(
+        conserved, op, medium, boundary, unit,
+    ))
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -602,8 +614,7 @@ mod tests {
             ("electric", Medium::Vacuum),
         ];
         for (name, medium) in declared {
-            let d = descriptor_for_force(name, medium)
-                .unwrap_or_else(|| panic!("{name} must map"));
+            let d = descriptor_for_force(name, medium).unwrap_or_else(|| panic!("{name} must map"));
             assert!(
                 is_admissible(d.conserved, d.op, medium),
                 "{name} must be admissible in {medium:?}"
