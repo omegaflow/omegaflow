@@ -25,6 +25,8 @@ pub enum QuantityKind {
     Index = 5,
     Impedance = 6,
     Relative = 7,
+    Geometry = 8,
+    SourceParameter = 9,
 }
 
 pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
@@ -37,6 +39,8 @@ pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
         "index" => Some(QuantityKind::Index),
         "impedance" => Some(QuantityKind::Impedance),
         "relative" => Some(QuantityKind::Relative),
+        "geometry" => Some(QuantityKind::Geometry),
+        "source-parameter" => Some(QuantityKind::SourceParameter),
         _ => None,
     }
 }
@@ -51,6 +55,8 @@ pub fn quantity_kind_name(kind: QuantityKind) -> &'static str {
         QuantityKind::Index => "index",
         QuantityKind::Impedance => "impedance",
         QuantityKind::Relative => "relative",
+        QuantityKind::Geometry => "geometry",
+        QuantityKind::SourceParameter => "source-parameter",
     }
 }
 
