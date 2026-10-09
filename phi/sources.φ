@@ -4,6 +4,7 @@ ttl 4
 at earth
 hapi F=cryosat_magnetic_field_intensity_nt
 field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 4 0.0 0.0
+channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 
 url https://api.wolfx.jp/jma_eew.json
 terms unbestimmt https://api.wolfx.jp/
@@ -13,6 +14,7 @@ map .
 lat Latitude
 lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
+channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 terms unbestimmt https://vires.services/
@@ -20,6 +22,7 @@ ttl 5
 at earth
 hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
 field gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distance_m inverse-square gravity m 5 0.0 0.0
+channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2
 field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
@@ -28,6 +31,7 @@ ttl 10
 at earth
 hapi density=champ_thermosphere_density_kgm3
 field champ_thermosphere_density_kgm3 champ_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 10 0.0 0.0
+channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3
 
 url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
 terms unbestimmt https://vires.services/
@@ -42,6 +46,7 @@ ttl 10
 at earth
 hapi crosswind=champ_thermosphere_crosswind_ms
 field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0
+channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s)
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
 terms unbestimmt https://vires.services/
@@ -94,6 +99,7 @@ lat latitude
 lon longitude
 field depth ceic_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
 field magnitude ceic_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:free-surface Pa
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 terms PD https://earthquake.usgs.gov/
@@ -145,6 +151,7 @@ on earth 40.137 -105.237 1682
 ttl 60
 field usgs_geomag_e_e_mv_km usgs_geomag_e_e_mv_km inverse-square electric mV/km 60 0.0 0.0
 field usgs_geomag_e_n_mv_km usgs_geomag_e_n_mv_km inverse-square electric mV/km 60 0.0 0.0
+channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
@@ -268,6 +275,7 @@ map observations.data
 lat lat
 lon lon
 field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
+channel energy:primary:flux-fourier:parabolic:fluid:unspecified:none K
 field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
 field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
 
@@ -313,6 +321,7 @@ lon lon
 field temp atmosphere_metar_temp_c gaussian-inverse-square thermal C 30.0 0.0 0.0
 field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square thermal C 30.0 0.0 0.0
 field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+channel energy:primary:wave:hyperbolic:fluid:unspecified:none Pa
 field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square advective kt 30.0 0.0 0.0
 field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square advective deg 30.0 0.0 0.0
 
