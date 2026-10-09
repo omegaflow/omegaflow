@@ -215,15 +215,6 @@ idempotent true
 timeout 600
 
 asset present
-format hamqsl_solar
-tag www.hamqsl.com
-arm hamqsl_compiler
-workflow hamqsl-cdn.yml
-pattern ^hamqsl_solar\.bin$
-idempotent true
-timeout 120
-
-asset present
 format hapi_csv
 tag planet.physics.uiowa.edu
 arm das2_iowa_compiler
@@ -345,16 +336,6 @@ arm odyssey_odf_compiler
 pattern ^odyssey_odf(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$
 shard 4
 idempotent true
-
-asset present
-format ogimet_synop
-tag www.ogimet.com
-arm ogimet_compiler
-args --station 72594
-workflow ogimet-cdn.yml
-pattern ^ogimet_synop\.bin$
-idempotent true
-timeout 120
 
 asset present
 format openneuro_brainvision
