@@ -104,19 +104,19 @@ pub fn fanout_fetch(
     ctx: FanoutCtx<'_>,
 ) -> Vec<(Channel, FieldConfig)> {
     let FanoutCtx {
-        x,
-        y,
-        z,
         presence,
         now,
         r,
         eph,
         env,
         lsk,
+        ..
     } = ctx;
     let mut channels = Vec::new();
     let body_name = frame_body_name(&src.frame);
-    let (ux, uy, uz) = presence.unwrap_or((x, y, z));
+    let Some((ux, uy, uz)) = presence else {
+        return channels;
+    };
     let stations_url = match render_url(
         stations_url_tmpl,
         &body_name,
