@@ -87,9 +87,9 @@ blocked account
 url https://isip.piconepress.com/projects/tuh_eeg/
 note TUH EEG (Temple) — 2026-10-08 re-measured: landing HTTP 200 (15360 B); data via NEDC account (form sent, wartend.φ:36/:37); electrode doc label/text only (Ferrell 2020, no coordinates). State descoped→blocked account (UI-Runde 2026-10-08).
 
-blocked account
+descoped
 url https://sleepdata.org
-note NSRR — 2026-10-08 re-measured: account confirmed (mail_ledger.φ:361/:362); arm nsrr_psg stands (9d416e57b, edf.rs); asset block absent; HIPAA-training gate. State descoped→blocked account (UI-Runde 2026-10-08).
+note NSRR — 2026-10-09 descoped (gemessen): Schlaf-EEG (SHHS/MESA); Feld-Familie TUH (`src/archivar/main_flow.rs:3490`), Elektroden ohne Koordinaten → kein Feldwert; Zugang IRB-gebunden (PMC6188513).
 
 pending
 url https://superdarn.usask.ca/convection-maps
