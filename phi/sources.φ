@@ -4361,6 +4361,14 @@ at earth
 ttl 86400
 field ampere_fac_uam2 ampere_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/bepicolombo_plasma.bin
+terms CC-BY-4.0 https://zenodo.org/records/17813314
+format bepicolombo_plasma
+origin https://zenodo.org/api/records/17813314/files/SCE1_2021_HGA_MEANR4ONR6_KaTSelfCal_DST1Cal_60s_XX_KK_MT_plasmacalib.txt/content
+compiler tools/harvest/src/bin/bepicolombo_plasma_compiler.rs
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_cpcp.bin
 terms CC-BY-4.0 https://zenodo.org/records/10374021
 format superdarn_cpcp
@@ -10823,6 +10831,14 @@ field copernicus_water_temperature copernicus_water_temperature exponential-deca
 field copernicus_wet_bulb_temperature copernicus_wet_bulb_temperature exponential-decay thermal K 21600 0.0 0.0
 field copernicus_wind_from_direction copernicus_wind_from_direction gaussian-inverse-square advective deg 21600 0.0 0.0
 field copernicus_wind_speed copernicus_wind_speed gaussian-inverse-square advective m/s 21600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ebhis_hpx190.bin
+terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
+format ebhis_hpx_series
+origin https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/hpx/HPX_190.fit
+compiler tools/harvest/src/bin/ebhis_compiler.rs
+at sun
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/frb_chime_cat1.json
 terms unbestimmt https://cds.unistra.fr/vizier-org/licences_vizier.html
