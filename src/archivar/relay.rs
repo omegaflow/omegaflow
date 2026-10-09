@@ -11,6 +11,7 @@ pub const PORT_CONST: u16 = 1618;
 pub const RELAY_BIND_ENV: &str = "OMEGAFLOW_RELAY_BIND";
 pub const RELAY_BIND_DEFAULT: &str = "127.0.0.1";
 const KINETIC_TAG: u8 = 10;
+const MANIFEST_TAG: u8 = 12;
 
 fn bind_from(raw: Option<String>) -> String {
     match raw {
@@ -464,6 +465,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
     let mut last_field_r: Option<Arc<Buffer>> = None;
     let mut last_kinetic: Option<PresenceFrame> = None;
     let mut sent_verdicts = false;
+    let mut sent_manifest = false;
     let _ = stream.set_nodelay(true);
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode == 0x8 {
@@ -891,6 +893,18 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 out.extend_from_slice(&phase.to_le_bytes());
                 out.extend_from_slice(&presence.to_le_bytes());
             }
+            if !sent_manifest {
+                sent_manifest = true;
+                let registry =
+                    crate::mathematikerin::channel::channel_registry_from_sources(&cfg.sources);
+                if let Err(e) = write_ws_binary(&mut stream, &manifest_bytes(&registry)) {
+                    eprintln!(
+                        "ws manifest write returned {:?} — the browser connection ended",
+                        e.kind()
+                    );
+                    return;
+                }
+            }
             if let Err(e) = write_ws_binary(&mut stream, &out) {
                 eprintln!(
                     "ws frame write returned {:?} — the browser connection ended",
@@ -1091,6 +1105,23 @@ fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
     }
     if let Some(t) = tilt {
         out.extend_from_slice(&t.to_le_bytes());
+    }
+    out
+}
+
+fn manifest_bytes(registry: &crate::mathematikerin::channel::ChannelRegistry) -> Vec<u8> {
+    let mut out = Vec::with_capacity(10);
+    out.extend_from_slice(&[0xCF, 0x86, MANIFEST_TAG, 0x00]);
+    out.extend_from_slice(&(registry.len() as u16).to_le_bytes());
+    out.extend_from_slice(&registry.schema_hash().to_le_bytes());
+    for d in registry.descriptors() {
+        let spec = d.spec_token();
+        let sb = spec.as_bytes();
+        out.extend_from_slice(&(sb.len() as u16).to_le_bytes());
+        out.extend_from_slice(sb);
+        let ub = d.unit.as_bytes();
+        out.extend_from_slice(&[ub.len() as u8]);
+        out.extend_from_slice(ub);
     }
     out
 }

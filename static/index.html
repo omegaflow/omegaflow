@@ -53,7 +53,7 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
   </div>
 </div>
 <script type="module">
-import { syncFrame, parseRecords, parseKinetic, parseVerdicts, parseColorLut, PROTOCOL_VERSION, KINETIC_TAG, VERDICT_TAG } from "./constants.js";
+import { syncFrame, parseRecords, parseKinetic, parseVerdicts, parseColorLut, parseManifest, PROTOCOL_VERSION, KINETIC_TAG, VERDICT_TAG, MANIFEST_TAG } from "./constants.js";
 
 const canvas = document.getElementById("surface");
 const statusEl = document.getElementById("status");
@@ -77,6 +77,7 @@ const state = {
   id: 0,
   consented: false,
   colorMode: "field",
+  manifest: null,
 };
 
 const held = new Set();
@@ -440,6 +441,10 @@ function connect() {
     }
     if (tag === VERDICT_TAG) {
       applyVerdicts(parseVerdicts(bytes));
+      return;
+    }
+    if (tag === MANIFEST_TAG) {
+      state.manifest = parseManifest(bytes);
       return;
     }
     if (tag !== PROTOCOL_VERSION) {
