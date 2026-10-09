@@ -129,7 +129,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "superdarn_cpcp" => superdarn_cpcp::parse_series(bytes),
         "superdarn_cpcp_nc" => superdarn_cpcp::parse_series(bytes),
         "supermag_index" => supermag_index::parse_series(bytes),
-        "swpc_efield" => swpc_efield::parse_series(bytes),
+        "swpc_efield" => swpc_efield::parse_bin(bytes),
         "ssusi_aurora" => ssusi_aurora::parse_series(bytes),
         "ampere_fac" => ampere_fac::parse_series(bytes),
         "dmsp16_ssj" => dmsp16_ssj::parse_series(bytes),

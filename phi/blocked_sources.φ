@@ -92,10 +92,6 @@ url https://sleepdata.org
 note NSRR — 2026-10-08 re-measured: account confirmed (mail_ledger.φ:361/:362); arm nsrr_psg stands (9d416e57b, edf.rs); asset block absent; HIPAA-training gate. State descoped→blocked account (UI-Runde 2026-10-08).
 
 pending
-url https://zenodo.org/record/4444068
-note Neutralpunkt-GIC (Kellerman 2021) — 2026-10-09: Record „Anonymous GIC data" (7 Knoten, cc-by-4.0); lat/lon/Port per Design absent → descoped. `csv_gz`-Arm gebaut; offen: 7 Node-CSV als Quelle registrieren.
-
-pending
 url https://superdarn.usask.ca/convection-maps
 note SuperDARN Convection-Maps — 2026-10-09: HTTP 200 HTML-Landing, kein Daten-Endpoint; Konvektions-Potential via `superdarn_cpcp` gedeckt. Kein eigener Arm.
 
@@ -118,7 +114,11 @@ pending
 url https://geomag.usgs.gov/ws/data/
 note USGS E-Feld mV/km (GIC §A) — 2026-10-09: `/ws/openapi.json` trägt kein `geoelectric`/`mV`; bare `/ws/data/` 400. Reale Route NOAA SWPC rgeojson (eigener Eintrag). Magnetik: declined_sources.φ:2176 — per Datensatz getrennt.
 
-blocked parser-def
+pending
 url https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
-gap efield-series
-note NOAA SWPC Geoelektrik (GIC §A) — 2026-10-09: Reader `swpc_efield` gebaut (Ex/Ey mV/km, FeatureCollection); offen: Serien-Compiler (zeitvariierende `<ts>-15-Efield-*.json`, kein latest-Endpoint).
+note NOAA SWPC Geoelektrik (GIC §A) — 2026-10-09: Reader `swpc_efield` + Compiler `swpc_efield_compiler.rs` gebaut (Ex/Ey mV/km, Gitter-Mittel je Frame); offen: `sources.φ`-Zeile + CDN-Workflow (Compiler braucht --start/--stop).
+
+blocked parser-def
+url https://supermag.jhuapl.edu/lib/services/?service=substorms
+gap substorm-list
+note Substorm-Onsets (GIC §A) — 2026-10-09: SuperMAG `lib/services?service=substorms` CSV **offen** (HTTP 200 ohne user=; list=newell/forsyth/liou/frey/ohtani, IMAGE-FUV/Frey darin); kein Compiler-Arm.
