@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 003b99d2611d9e52829ad8968625d8bf68961f20f418c095d169b4303b728146
+  sha256: 1733034f5500a1df041c75d2f8886dfe619f0f2b922dc0442371d29c780ddbb7
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -28,6 +28,7 @@ Wort | Datum | Quelle
 „Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus — als `line`-Agent (auto-bestätigt). Delegiere an die Taucher, höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Dies ist der session-weite Consent (Delegation), nicht das Commit-Wort — Commit und Push trägt `/commit`." + „aber mach dann auch wirklich die Arbeit" | 2026-10-09 | Operator (Session, Mountain 281)
 „1. natürlich Ja wir brauchen die lizenzen sind regeln der quellen nicht unsnere" | 2026-10-09 | Operator (Session, Mountain 283)
 „2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283)
+„du sollst das prüfen, die lizenzen müssen korrekt sein" | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -55,7 +56,7 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (SPDX); ESA-Vokabel erweitert, Rest-Sweep offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 1645 · distinct 12 · no-terms 827 · pending 1065 · 0 violation(s)**. Operator-Wort „1. natürlich Ja wir brauchen die lizenzen …": `CC-BY-NC-3.0-IGO` ins geschlossene Vokabular (`license_census.rs`) aufgenommen und **21 Blöcke der ESA Space Science Archives** (`*.esac.esa.int` + `psa.esa.int`) mit `terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions` versehen. Quelle gemessen: `https://www.cosmos.esa.int/web/gaia-users/license` und `https://www.cosmos.esa.int/web/esdc/terms-and-conditions` nennen beide „CC BY-NC 3.0 IGO".
+- **Lage:** (gemessen 2026-10-09, diese Session via `license_census`) **blocks 2710 · terms 1645 · distinct 12 · no-terms 827 · pending 1065 · 0 violation(s)**. Operator-Wort „1. natürlich Ja wir brauchen die lizenzen …": `CC-BY-NC-3.0-IGO` ins geschlossene Vokabular (`license_census.rs`) aufgenommen und **21 Blöcke der ESA Space Science Archives** (`*.esac.esa.int` + `psa.esa.int`) mit `terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions` versehen. Quelle gemessen: `https://www.cosmos.esa.int/web/gaia-users/license` und `https://www.cosmos.esa.int/web/esdc/terms-and-conditions` nennen beide „CC BY-NC 3.0 IGO". **Prüfung (Operator-Wort „du sollst das prüfen"):** alle 21 Blöcke sind ESAC-/PSA-Hosts und fallen unter die ESDC-Regel „Data hosted in the ESA Space Science Archives … CC BY-NC 3.0 IGO"; kein ESA-Block ohne `terms` (awk-Sweep leer). **Riss geschlossen:** `dr3_stars.bin` trug fälschlich `terms PD https://ssd.jpl.nasa.gov/` — Quellen sind CDS-Hipparcos + Gaia-DR3-Supplement (`tycho2_compiler.rs:361` fragt `gea.esac.esa.int/tap-server`), jetzt `terms CC-BY-NC-3.0-IGO`. ESA-SPICE (`spiftp.esac.esa.int`, JUICE-Kernel) trägt keine eigene Lizenz-Aussage (aareadme + Playwright-Seite leer) → ESDC-Umbrella angewandt (schwächste Evidenz, benannt).
 - **Blockade:** `zenodo.org` per Record; `datalab.noirlab.edu`/`dc.g-vo.org` ohne Daten-Lizenzaussage (`pending`); gemischte Hosts (arcgis/jaxa/kasi/…); Anker fehlt für Blöcke ohne `format`/`origin`.
 - **Braucht:** zenodo-Terms per Record (`archive_search --zenodo <id>`); Rest-Sweep je Anker; `license_census`/`ci-gate` nachführen.
 
