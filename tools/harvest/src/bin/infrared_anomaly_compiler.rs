@@ -137,13 +137,22 @@ fn run(
     ));
     for r in &rows {
         out.push_str(&format!(
-            "  ra {:.4}  dec {:.4}  W3−W4 {:.3}  gaia_color {:.3}  radio {:.3e}  tns_z {:.4}  {}\n",
+            "  ra {:.4}  dec {:.4}  W3−W4 {:.3}  gaia_color {}  radio {}  tns_z {}  {}\n",
             r.ra_deg,
             r.dec_deg,
             r.excess_mag,
-            r.gaia_color,
-            r.radio_flux,
-            r.tns_z,
+            match r.gaia_color {
+                Some(v) => format!("{v:.3}"),
+                None => "absent".to_string(),
+            },
+            match r.radio_flux {
+                Some(v) => format!("{v:.3e}"),
+                None => "absent".to_string(),
+            },
+            match r.tns_z {
+                Some(v) => format!("{v:.4}"),
+                None => "absent".to_string(),
+            },
             if r.excluded {
                 format!("EXCLUDED (VSX/GCVS/Exoplanet: {})", name_of(&r.ex_name))
             } else {

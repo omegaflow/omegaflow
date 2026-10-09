@@ -156,13 +156,12 @@ impl SclkFile {
         }
         let blocks: Vec<(i32, SclkBlock)> = coeff_blocks
             .into_iter()
-            .map(|(id, coeffs)| {
+            .filter_map(|(id, coeffs)| {
                 let msf = moduli
                     .iter()
                     .find(|(mid, _)| (*mid as u32) == id.unsigned_abs())
-                    .map(|(_, m)| msf_of(m))
-                    .unwrap_or(1.0);
-                (id, SclkBlock { msf, coeffs })
+                    .map(|(_, m)| msf_of(m))?;
+                Some((id, SclkBlock { msf, coeffs }))
             })
             .collect();
         SclkFile { blocks }
