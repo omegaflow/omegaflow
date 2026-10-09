@@ -2025,10 +2025,9 @@ fn wavelength_value_and_scale(token: &str) -> Option<(f64, f64)> {
         (v, 1e-10)
     } else if let Some(v) = token.strip_suffix("nm") {
         (v, 1e-9)
-    } else if let Some(v) = token.strip_suffix("um") {
-        (v, 1e-6)
     } else {
-        return None;
+        let v = token.strip_suffix("um")?;
+        (v, 1e-6)
     };
     let value: f64 = value.parse().ok()?;
     Some((value, factor))

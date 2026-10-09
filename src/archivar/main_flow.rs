@@ -1891,28 +1891,18 @@ pub fn main_flow() {
                             return;
                         }
                     };
+                    let q = ChannelQuery {
+                        lsk: &lsk_c,
+                        now,
+                        presences: &presences,
+                        body_radius,
+                        eph: &eph_arc,
+                        receiver_aperture: &receiver_aperture,
+                    };
                     let channels = if src_clone.format == "mtg_li" {
-                        mtg_li::build_channels(
-                            &src_clone,
-                            &bytes,
-                            &lsk_c,
-                            now,
-                            &presences,
-                            body_radius,
-                            &eph_arc,
-                            &receiver_aperture,
-                        )
+                        mtg_li::build_channels(&src_clone, &bytes, &q)
                     } else {
-                        build_netcdf_channels(
-                            &src_clone,
-                            &bytes,
-                            &lsk_c,
-                            now,
-                            &presences,
-                            body_radius,
-                            &eph_arc,
-                            &receiver_aperture,
-                        )
+                        build_netcdf_channels(&src_clone, &bytes, &q)
                     };
                     eprintln!("\r\x1b[K{} {}: {} samples", fmt_c, name, channels.len());
                     let _ = ftx.send(FetchResult {
@@ -2018,16 +2008,15 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let channels = build_opendap_channels(
-                        &src_clone,
-                        &file,
-                        &lsk_c,
+                    let q = ChannelQuery {
+                        lsk: &lsk_c,
                         now,
-                        &presences,
+                        presences: &presences,
                         body_radius,
-                        &eph_arc,
-                        &receiver_aperture,
-                    );
+                        eph: &eph_arc,
+                        receiver_aperture: &receiver_aperture,
+                    };
+                    let channels = build_opendap_channels(&src_clone, &file, &q);
                     eprintln!("\r\x1b[Kopendap {}: {} samples", name, channels.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,

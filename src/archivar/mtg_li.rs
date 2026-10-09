@@ -1,5 +1,4 @@
 use super::*;
-use crate::archivar::fetch::PresenceSample;
 use crate::archivar::hdf5::{Endian, Hdf5Attribute, Hdf5File};
 
 pub const COMP_RADIANCE: u32 = 0;
@@ -342,13 +341,16 @@ pub fn parse_flashes(bytes: &[u8], value_key: &str) -> Option<Vec<MtgFlash>> {
 pub fn build_channels(
     src: &SourceConfig,
     bytes: &[u8],
-    lsk: &LeapSeconds,
-    now: f64,
-    presences: &[PresenceSample],
-    body_radius: Option<f64>,
-    eph: &HashMap<String, BodyEphemeris>,
-    receiver_aperture: &ReceiverAperture,
+    q: &ChannelQuery,
 ) -> Vec<(Channel, FieldConfig)> {
+    let ChannelQuery {
+        lsk,
+        now,
+        presences,
+        body_radius,
+        eph,
+        receiver_aperture,
+    } = *q;
     let body_name = frame_body_name(&src.frame);
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let fields: Vec<&FieldConfig> = src

@@ -41,7 +41,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<EmtfBin> {
             *slot = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
             off += 8;
         }
-        if !r.iter().all(|v| v.is_finite()) || !(r[0] > 0.0) {
+        if !r.iter().all(|v| v.is_finite()) || r[0] <= 0.0 {
             return None;
         }
         rows.push(r);
@@ -61,11 +61,11 @@ pub fn component_bins(bin: &EmtfBin, comp: usize) -> Vec<(f64, f64, f64)> {
     for row in &bin.rows {
         let period = row[0];
         let value = row[1 + comp];
-        if !period.is_finite() || !value.is_finite() || !(period > 0.0) {
+        if !period.is_finite() || !value.is_finite() || period <= 0.0 {
             continue;
         }
         let freq = 1.0 / period;
-        if !freq.is_finite() || !(freq > 0.0) {
+        if !freq.is_finite() || freq <= 0.0 {
             continue;
         }
         points.push((freq, value));
