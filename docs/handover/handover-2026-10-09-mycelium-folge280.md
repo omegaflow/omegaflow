@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. CI-Erntelauf wdc-ae triagiert (failure gemessen und geheilt); Schreibpfad-Heilung an 4 Compilern, die auf frischen Runnern an fehlendem Ausgabe-Verzeichnis scheiterten; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 4adef509e09a3f38891427d52ed25925f6e40449a87a850fe3927682e1c53d6b
+  sha256: 94d102aef89e11f71dbc389bdcfa9c4433093ec01860df64d3ade83734748d95
   status: live
 -->
 # Handover — Mycelium-Folge 280 (2026-10-09)
@@ -37,6 +37,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge279.md` §Operator-Wort-Register (und folge278) — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-280.
 
 ## Offen — eigen
+
+### CI — `subset`-Job nur am Tip (t420-Stau), Watchdog-Aufnehmer offen
+- **Status:** wartend | **Bindung:** eigen (CI-Infra)
+- **Trigger:** `ci-gate`-Lauf am Tip, dessen `subset` nie grün wird (gemessen im Register `state/zustand/ci-gate.φ`) — oder ein neuer `in_progress`-Ghost > 2× Median
+- **Lage:** (gemessen 2026-10-09) 90 `ci-gate`-Runs queued, ein `subset`-Ghost 8,5 h `in_progress` (Timeout 30 min) hielt `t420`; gecancelt, Runner nahm den nächsten Job. Ursache: jeder gepushte SHA lässt `cargo test --lib` auf dem einen self-hosted Runner laufen. **Rat-Verdikt (2026-10-09): Weg B** — der Per-SHA-Register `ci_gate_register` trägt die Historie, nicht die Run-Queue. Gebaut: `ci_gate_register` liest `skipped`/`cancelled` jetzt als `pending` (nie grün, nie rot); `ci-gate.yml` `subset`-Job-Concurrency `ci-gate-subset-${{ github.ref }}` + `cancel-in-progress` → nur der Tip belegt `t420`.
+- **Blockade:** keiner.
+- **Braucht:** Watchdog-Schritt „gequeueter `ci-gate`-Lauf mit SHA != `origin/main`-Tip → cancel" als messbarer Aufnehmer; **falls B gemessen hungert** (subset am Tip nie grün), Weg A (subset auf `ubuntu-latest`) dem Operator als neues Wort vorlegen.
 
 ### Pipeline — Erntelauf `wdc-ae-cdn` geheilt, Re-Dispatch offen
 - **Status:** wartend | **Bindung:** eigen (Ernte)
