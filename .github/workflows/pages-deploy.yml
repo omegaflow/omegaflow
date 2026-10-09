@@ -35,8 +35,6 @@ jobs:
         ls -lh _site
     - name: Stage the membrane page (when it stands)
       run: cp static/membrane.html _site/membrane.html 2>/dev/null || true
-    - name: Write the membrane ephemeris manifest (the hull of staged bodies)
-      run: bash .github/workflows/scripts/gen_bodies.sh --write _site/membrane_bodies.txt
     - name: Build the wasm web bundle (browser target, ES module)
       continue-on-error: true
       run: wasm-pack build --target web --release --out-dir pkg
