@@ -1,9 +1,43 @@
+use super::FieldConfig;
+
 pub const MAGIC: [u8; 4] = *b"IRIS";
 pub const HEADER_BYTES: usize = 8;
 pub const RECORD_BYTES: usize = 20;
+pub const UNIT: &str = "count";
 
 pub fn component_name(comp: u32) -> String {
     format!("iris_{comp:04}")
+}
+
+pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
+    let Some(force) = crate::force::force_id_of("em") else {
+        return Vec::new();
+    };
+    let Some(kernel) = crate::force::kernel_id_for_force(force) else {
+        return Vec::new();
+    };
+    names
+        .iter()
+        .enumerate()
+        .map(|(comp, _)| {
+            let name = component_name(comp as u32);
+            FieldConfig {
+                key: name.clone(),
+                name,
+                band_id: None,
+                kernel,
+                force,
+                tau,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: UNIT.to_string(),
+                freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
+                bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
+                fold: None,
+                aperture: crate::archivar::Aperture::None,
+            }
+        })
+        .collect()
 }
 
 pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
