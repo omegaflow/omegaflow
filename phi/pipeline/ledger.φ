@@ -83,9 +83,9 @@ released
 kandidat https://data.inpe.br/
 note Brazilian VO = Astronomy (Paper 10.1109/eScience.2014.11) — 2026-10-07 data.inpe.br (BIG) HTTP 200; „Climate" im Novitäts-Scan war falsch. Rat 2026-10-07 decline registry/katalog, Riss benannter VO ≠ live BIG (declined_sources.φ:1443).
 
-pending
+released
 kandidat https://data.inpe.br/big/
-note Brazilian live INPE BIG — STAC/GeoTIFF, em; 2026-10-07 HTTP 200 (192329 B), Portal/SPA, kein Einzel-Asset; eigener Kandidat getrennt vom declined benannten-VO-Riss (declined_sources.φ:1443).
+note Brazilian live INPE BIG — 2026-10-10: big/ = WordPress-Portal, kein STAC; Daten am STAC-Server data.inpe.br/bdc/stac/v1; inpe_stac_compiler --collection 4f85c7311; Kette gebaut (sources.φ:10990, harvest.φ:279).
 
 released
 nachlauf tools/harvest/src/bin/cors_compiler.rs

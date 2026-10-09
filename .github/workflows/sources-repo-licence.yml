@@ -82,3 +82,20 @@ jobs:
             gh release edit "$tag" --repo omegaflow/sources --notes-file /tmp/release-body.md
             echo "source licence written: $tag"
           done < /tmp/tags.txt
+      - name: Commit the aggregate LICENSE into omegaflow/sources
+        run: |
+          set -euo pipefail
+          git clone --depth 1 \
+            "https://x-access-token:${GH_TOKEN}@github.com/omegaflow/sources.git" /tmp/sources
+          cp /tmp/licence/LICENSE /tmp/sources/LICENSE
+          cp /tmp/licence/README.md /tmp/sources/README.md
+          cd /tmp/sources
+          if [ -z "$(git status --porcelain -- LICENSE README.md)" ]; then
+            echo "the licence reads unchanged"
+            exit 0
+          fi
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add LICENSE README.md
+          git commit -m "licence: regenerate the per-source attribution"
+          git push origin HEAD:main
