@@ -43,9 +43,11 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P0.1** `docs/concepts/archivar-mathematikerin.md` um den neuen Kanal-Kontrakt erweitern
   (Descriptor, CAP/n, Tri-State, offsets, Reduktion) — der Wire/GPU-Force-Abschnitt.
 - **P0.2** Dieses Konzept (`kanal-ontologie-komplettbau.md`) als Träger in die Übergabe.
-- **P0.3** `phi/sources.φ`: neue Direktive `channel <conserved>:<op>:<medium>:<boundary>:<unit>`
+- **P0.3** `phi/sources.φ`: neue Direktive `channel <conserved>:<role>:<op>:<pde_type>:<medium>:<domain>:<boundary>[:<extent>] <unit>`
   je Quelle (Ersatz des flachen `force`-Tokens); Parser-Arm in `src/archivar/parse.rs`
-  analog `fanout`/`fanout_center`. **Mountain-Domäne** (Verdikt-Zeilen) + River (Parse).
+  analog `fanout`/`fanout_center`. Die achte Achse `extent` (positive finite Länge in
+  Metern) ist die **M-Achse** — die Wellenzahl-Quantisierung `k_j^M`; `unspecified`/`-`
+  trägt das Fehlen (nicht 0.0). **Mountain-Domäne** (Verdikt-Zeilen) + River (Parse/Schema).
 - **P0.4** `phi/canon.φ` falls eine neue Registerdatei entsteht.
 - **P0.5 — Ton-Relation (Operator-Wort 2026-10-09: „es muss doch alles zusammenpassen").**
   Das Ton-Modell wird **vor** P1/P2.2 entschieden (nicht erst in P6.2): der Klang ist **keine
@@ -73,7 +75,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P1.1** `enum Conserved { Mass, Momentum, Energy, Charge }`.
 - **P1.2** `enum TransportOp { Flux(FluxKind), Advective, Wave, Poisson }`.
 - **P1.3** `enum Medium { Vacuum, Fluid, ElasticSolid }`, `enum Boundary { None, FreeSurface, … }`.
-- **P1.4** `struct ChannelDescriptor { conserved, op, medium, boundary, unit }` + `hash()`.
+- **P1.4** `struct ChannelDescriptor { conserved, role, op, pde_type, medium, domain, boundary, extent: Option<f64>, unit }` + `hash()`; `extent` trägt die M-Achse (Geometrie-Ausdehnung), `mode_wavenumbers(count)` → `k_j^M`.
 - **P1.5** `fn is_admissible(q, op, medium) -> bool` — die **Zulässigkeitsrelation** (der Graph).
 - **P1.6** `enum TriState { Present, Pending, Absent }` + Übergangsregel (P7.2).
 - **P1.7** `struct ChannelRegistry { cap: usize, descs: Vec<ChannelDescriptor>, id: HashMap<u64, usize> }`;

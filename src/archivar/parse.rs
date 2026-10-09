@@ -2528,6 +2528,18 @@ mod tests {
     }
 
     #[test]
+    fn a_channel_directive_carries_the_geometry_extent() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel energy:primary:wave:hyperbolic:fluid:circle:dirichlet:2.0 Pa\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].channels.len(), 1);
+        let d = sources[0].channels[0];
+        assert_eq!(d.extent, Some(2.0));
+        assert!(d.mode_wavenumbers(3).is_some(), "geometry carries modes");
+    }
+
+    #[test]
     fn a_channel_directive_with_an_unknown_unit_is_refused() {
         let content = "url https://example.com/x\nttl 3600\n\
                        channel mass:primary:poisson:elliptic:vacuum:unspecified:none furlongs\n";
