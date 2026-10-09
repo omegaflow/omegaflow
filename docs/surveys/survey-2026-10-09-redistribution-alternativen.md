@@ -2,7 +2,7 @@
   title: Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
   class: survey
   date: 2026-10-09
-  sha256: 14020a6a21169c1c014649001e3451e09a2e4eaec646900d988c56f4e4d2729e
+  sha256: d64f05e66bd96fa6e347f94201e22daf401d01c33dbfde0cae8d74ca73c19216
   status: live
 -->
 # Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
@@ -141,6 +141,35 @@ legalen Weg bereits vorhanden ist (`sgrep -c <alternative> phi/sources.φ`):
   `aishub.net`/`dma.dk` · `ds.iris.edu` · `opensky-network.org` (Key/Account offen).
 - **blockiert (5)** — keine legale Route gemessen: `almascience.org` (kein Kandidat),
   `data.lsst.cloud` (proprietäre Frist), `api.z.ai` ×2 + `reddit.com/dev/api` (kein Messwert).
+
+### Feld-Zulassung — die Redistributions-Route ist nicht die Feld-Route
+
+**Korrektur:** die Karte oben ist eine **Redistributions**-Karte. `redistribution` ist nur
+**43** von ~1600 Decline-Blöcken; die dominante Ursache ist **`no-physical-force` (250)**,
+dann `registry/katalog` (~229), `superseded-by-*` (~160), `model-forecast` (~85),
+`variant` (62), `static` (51), `molecular` (48). Ein free-/legaler Kandidat, der keine
+Kraft/Quantity trägt, wird am Feld-Gate **`no-physical-force`** abgelehnt.
+
+Unter den 13 `neu-zulassen` ist nur ein Teil **feld-fähig** (9 Kräfte: em · gravity ·
+acoustic · seismic-body · seismic-surface · thermal · diffusion · advective · electric):
+
+| Kandidat | Feld? | Träger |
+|---|---|---|
+| `giro.uml.edu/didbase` (foF2) | **ja** | electric/quantity (Ionosphäre, Frequenz) |
+| `ds.iris.edu` (CTBTO Hydroakustik) | **ja** | acoustic/seismic-body |
+| `data.mendeley.com`/`waterisotopesDB` (GNIP) | **evtl.** | isotope ratio (dimensionlos — derselbe Kontrakt-Riss wie Keogramm) |
+| `globalfloods.eu` (GloFAS) | **evtl.** | advective — aber **model-forecast** (Decline-Muster) |
+| `tile.openstreetmap.org` | **nein** | Bild/Karte → `image`/`registry` |
+| `archive.routeviews.org` | **nein** | Netz-Infrastruktur → `infrastructure` |
+| `data-api.globalforestwatch.org` | **nein** | Landbedeckung → `no-physical-force` |
+| `transport.data.gouv.fr` | **nein** | Transit → `no-physical-force` |
+| `api.carbonintensity.org.uk` | **nein** | Netz-CO₂ → `aggregate-index` |
+| `aishub.net`/`dma.dk` (AIS) | **nein** | Verkehr → `no-physical-force` |
+| `opensky-network.org` (ADS-B) | **nein** | Verkehr → `no-physical-force` |
+
+**Damit:** von den 13 sind nur **~2–4 feld-fähig** (GIRO, ds.iris.edu, ggf. GNIP/GloFAS);
+die übrigen sind **Daten-Wiederverwendungs**-Alternativen, keine neuen Felder. Die
+`schon-da`-Liste trägt ohnehin nur Messungen, die schon als Feld zugelassen sind.
 
 **Konsequenz:** die 23 `schon-da` brauchen keine Zulassung — die Messung ist zurück;
 die 13 `neu-zulassen` sind Mountains Re-Admission (dann Mycelium-CDN); die 5

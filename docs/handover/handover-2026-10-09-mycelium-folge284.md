@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: bb6c3d93affb8cdd7094a727b66d1978d6a32923ba56ce41d9fb6ce5fd47eb08
+  sha256: 6c62fda38e79f88494889cf353878ca92380f390a5b3c4285240703df4e23949
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -126,7 +126,7 @@ Origin: mycelium-284 (2026-10-09) — drei Kontrakt-/Register-Messungen:
 - **`sources_repo_license` pro Quelle:** der terms-Format-Verdikt-Stand „pro Quelle" ist gemessen; das Tool emittiert weiterhin `<netloc> | <token> | <url>` (`sources_repo_license.rs:128-142`). Der Populations-Riss ist geheilt (beide Zensus no-terms 0, terms 2698). Braucht das pro-Quelle-Format, dann commitet der Workflow `LICENSE` ins `omegaflow/sources`-Repo.
 - **CSSDC/LEOS-Verdikt:** `cssdc.ac.cn/en` liefert gemessen keine Datenquelle mehr (Telegram-APK-Advert-Seite) → `declined` (stale); LEOS `www.leos.ac.cn` ist Login+Captcha-gated → `blocked account` (Auth-Route, Credential `LEOS_USER/PASS`). Offene CSES-Alternative: DTU Space `ftp.spacecenter.dk/data/magnetic-satellites/CSES/` (CDF, offen, MAG).
 - **Gegen-Audit CDN-fähige Alternativen:** `hi-21cm` → Zenodo HI4PI `5956696` (cc-by-4.0, FITS, 206); `cmb-lambda` → Zenodo SILC Planck PR2 `44373` (cc-by-4.0, FITS, 206); `blinkverse-frb` → Zenodo CHIME Cat 2 `18843430` (cc-by-4.0, CSV, 206); `particle-cern` → CERN Open Data `1120` (CC0) / GWOSC (CC BY 4.0). Bitte die Verdikte je Route.
-- **Redistributions-Rückgewinnung:** Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md` §Rückgewinnungs-Karte. **23/41** Messungen sind über bereits zugelassene freie Quellen **schon wieder da** (Blitz/WWLLN→GOES GLM, PurpleAir→OpenAQ, Sofar→NDBC, Meteostat/WeatherXM→Open-Meteo, Sentinel-Hub→Copernicus, InPOP→JPL SSD, SuperMAG→INTERMAGNET/SWPC, hamqsl/BoM→SWPC, ogimet→NCEI, LHAASO→TeVCat). **13** `neu-zulassen` (OSM ODbL, RouteViews CC-BY-4.0, GIRO CC-BY-NC-SA, GNIP PD, GloFAS, Global Forest Watch, transport.data.gouv, carbonintensity, aishub/dma, ds.iris.edu, opensky). **5 blockiert** (kein Messwert/proprietär). Bitte Mountain-Admission der 13 → dann Mycelium-CDN.
+- **Redistributions-Rückgewinnung:** Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md` §Rückgewinnungs-Karte. **23/41** Messungen sind über bereits zugelassene freie Quellen **schon wieder da** (Blitz/WWLLN→GOES GLM, PurpleAir→OpenAQ, Sofar→NDBC, Meteostat/WeatherXM→Open-Meteo, Sentinel-Hub→Copernicus, InPOP→JPL SSD, SuperMAG→INTERMAGNET/SWPC, hamqsl/BoM→SWPC, ogimet→NCEI, LHAASO→TeVCat). **13** sind legale Daten-Alternativen, aber **nur ~2–4 feld-fähig** (GIRO foF2 `electric`, `ds.iris.edu` acoustic/seismic-body; GNIP/GloFAS mit Riss) — die übrigen (OSM-Tiles, RouteViews/BGP, Global Forest Watch, transport.data.gouv, carbonintensity, AIS, ADS-B) tragen **keine Kraft** → würden `no-physical-force`/`registry` abgelehnt. **5 blockiert** (kein Messwert/proprietär). Bitte Mountain-Admission nur der feld-fähigen.
 
 ## LOCK
 
