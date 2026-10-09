@@ -369,6 +369,12 @@ impl ReceiverAperture {
     }
 }
 
+impl Default for ReceiverAperture {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Clone)]
 pub struct FieldConfig {
     pub key: String,
