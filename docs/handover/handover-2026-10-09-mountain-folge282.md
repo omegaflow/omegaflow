@@ -3,7 +3,7 @@
   session: Mountain-Folge 282
   class: handover
   date: 2026-10-09
-  sha256: 54df0209a657b9d9261bf8e99060506dc80caf4be648675ce7e55a2797707fe9
+  sha256: 5ae70681e3d308a8ff30defaf1d5886f422a15736799033c4a25af249f1be714
   status: live
 -->
 # Handover — Mountain-Folge 282 (2026-10-09)
@@ -60,7 +60,7 @@ Wort | Datum | Quelle
 ### Lizenz-Disposition — `terms`-Feld (SPDX); Rest-Sweep offen
 - **Status:** eigen | **Bindung:** eigen (Format/Datenkontrakt)
 - **Trigger:** `terms`-Zeilen je Quelle geschrieben
-- **Lage:** (gemessen 2026-10-09 via `cargo run -p omegaflow-register --bin license_census`) **blocks 2698 · terms 1348 · distinct 11 · no-terms 1101 · pending 1350 · 0 violation(s)**. Diese Session **+91 `terms`-Zeilen** (NASA/IPAC PD: cdaweb 11 · exoplanetarchive 3 · ned 4 · exofop 4 · heasarc 2 · ssd-api 1; ESO CC-BY-4.0 4; CDS/VizieR-Spiegel `unbestimmt` 62). Vokabular (geschlossen, `license_census.rs:9-22`): `PD`, `CC-BY-4.0`, `CC0-1.0`, `unbestimmt`, `ohne-lizenz`; **`NOASSERTION`/`NONE` sind NICHT im Vokabular**.
+- **Lage:** (gemessen 2026-10-09 via `cargo run -p omegaflow-register --bin license_census`) **terms 1621 · no-terms 841 · distinct 11 · 0 violation(s)**. Sweeps: **+91** (NASA/IPAC/ESO/CDS) + **+273** (~39 US-Government-PD-Hosts: ssd.jpl · ndbc · pds-geosciences · podaac · laads · lpdaac · nsidc · ghrc · sbn · naif-spacecraft · usgs · ncei · …). Vokabular (geschlossen, `license_census.rs:9-22`): `PD`, `CC-BY-4.0`, `CC0-1.0`, `unbestimmt`, `ohne-lizenz`; **`NOASSERTION`/`NONE` sind NICHT im Vokabular**.
 - **Blockade:** die restlichen `no-terms`-Blöcke sind heterogen; **ESA/ESAC** (archives/gea/isla/eas/…esac.esa.int, psa.esa.int) tragen **CC BY-NC 3.0 IGO** — nicht im geschlossenen Vokabular (Vokabel-Erweiterung nötig); `zenodo.org` per Record (Record-API); `datalab.noirlab.edu`/`dc.g-vo.org` ohne Daten-Lizenzaussage (`pending`); Anker fehlt weiter für Blöcke ohne `format`/`origin`.
 - **Braucht:** Vokabel-Erweiterung für `CC-BY-NC-3.0-IGO` (Rat/Wort) ODER ESA `pending` belassen; zenodo-Terms per Record (`archive_search --zenodo <id>`); Rest-Sweep je Anker; `license_census`/`ci-gate` nachführen.
 
@@ -68,8 +68,8 @@ Wort | Datum | Quelle
 - **Status:** eigen | **Bindung:** eigen (Disposition) · mycelium (Diver-Tabelle)
 - **Trigger:** Bau je Klassen-Träger / TUH-NSRR-Verdikt
 - **Lage:** (gemessen 2026-10-09 + Taucher-Lauf) **SuperMAG GIC-Stufe-2-Arm gebaut** (Eintrag entfernt). **Kellerman** → `pending` (`csv_gz`-Arm gebaut; lat/lon/Port per Design absent, descoped). **Aurora-Keogramm**: URL auf `space.fmi.fi/MIRACLE/ASC/ASC_keograms/` korrigiert (Riss zum IMAGE-Magnetometer geschlossen), **Bild-Arm gebaut** (`src/archivar/keogram.rs`). **USGS E-Feld** → NOAA SWPC rgeojson: **Reader `swpc_efield` gebaut**, offen Serien-Compiler (`gap efield-series`). **SuperDARN convection-maps** → `pending` (Landing). **DMap/map-grid:** Kern + `map_grid_value` in `src/archivar/dmap.rs`; Globus wartet (`gap dmap-map-grid`). **Verbleibende `gap`-Träger mit gemessenem nächstem Schritt:** `bc-mpo-more` (PSA-Release 2099, wartet `psahelp@`), `tracking-doppler`/`viking-tracking`/`juno-efb` (NSSDC-Antworten, `mail_ledger.φ:207/209/211`, Parser `odf.rs`/`viking_text.rs` stehen), `mariner-rst` (7-Track-Parser fehlt; SDDPT-Messung), `dmap-map-grid` (DMap-Kern aus `superdarn_fitacf_compiler.rs` nach `src/archivar/` heben, neues `dmap`-Modul; Globus-Antwort `wartend.φ:8`), `kaguya-lrs` (WUSTL/DARTS `.lbl`/`.dat` messen → Block+Workflow), `themis-tail` (Playwright: konkrete Datei+Format messen), `mms-magnetosheath` (Arm fehlt). **future-205-Riss:** TUH `blocked_sources.φ:87` + NSRR `:92` — Etikett `descoped→blocked account` (UI-Runde 2026-10-08), Session-Verdikt: kein Löschen, Etikett korrigieren. TUH: Konto-Form `wartend.φ:36/:37`; NSRR: Konto bestätigt (`mail_ledger.φ:361/:362`), HIPAA-Training-Gate. **Mountain-Verdikt (2026-10-09, Register-Disposition):** beide bleiben `blocked account` — Konto real, Daten hinter NEDC/HIPAA; kein Descope. Riss geschlossen.
-- **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile) oder eine wartende Antwort; TUH/NSRR: Register-Riss.
-- **Braucht:** `phi/blocked_sources.φ::gap:aurora-keogram ×1` · `phi/blocked_sources.φ::gap:dmap-map-grid ×1` · `phi/blocked_sources.φ::gap:substorm-list ×1` (Klassen-Träger; `csv_gz`-Arm, `dmap`-Kern + `map_grid_value`, `swpc_efield`-Reader+Compiler gebaut, Kellerman-7-Node registriert) · je Wartendem die Antwort; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
+- **Blockade:** je Träger der Bau (Arm/Workflow/Register-Zeile) oder eine wartende Antwort; TUH/NSRR: Register-Riss. Träger: `phi/blocked_sources.φ::gap:aurora-keogram ×1` · `phi/blocked_sources.φ::gap:dmap-map-grid ×1` · `phi/blocked_sources.φ::gap:inpe-big-stac ×1` · `phi/blocked_sources.φ::gap:hi-21cm ×1` · `phi/blocked_sources.φ::gap:cmb-lambda ×1` · `phi/blocked_sources.φ::gap:solar-vso ×1` · `phi/blocked_sources.φ::gap:laic-cssdc ×1` · `phi/blocked_sources.φ::gap:particle-cern ×1` · `phi/blocked_sources.φ::gap:blinkverse-frb ×1`
+- **Braucht:** je Träger Arm/Workflow/`sources.φ`-Zeile oder Disposition; TUH/NSRR: Mountain-Verdikt (`descoped`→`dead_sources.φ` mit Befund vs. `blocked account` mit Pfad:Zeile).
 
 ### `register_sort` — 4 ttl- + 1 url-Ordnungsverletzung (vorbestehend, gemessen)
 - **Status:** eigen | **Bindung:** eigen (Register-Reihenfolge)
@@ -83,7 +83,9 @@ Wort | Datum | Quelle
 Origin: mountain-folge282.
 
 - **Gefaltet (deine 274):** SuperMAG-Index-Wiring verifiziert (`phi/harvest.φ:522-526`, harvest `37905571296` success, keine Bin-Liste nötig) · SSUSI 104 B strukturell gültig (4 Records) · Per-SHA-Verdikt gewortet (`668c8ada4`/`2f93f37ac`) — alle drei geschlossen, kein neuer Akt nötig.
-- **terms-Ernte:** diese Session **+91** `terms`-Zeilen (NASA/IPAC PD, ESO CC-BY-4.0, CDS/VizieR `unbestimmt`); `license_census` **terms 1348 · no-terms 1101 · 0 violation**. Mycelium kann `LICENSE`/`README` aus den terms erzeugen. Offen: ESA/ESAC (CC BY-NC 3.0 IGO, Vokabel-Erweiterung), zenodo per Record.
+- **terms-Ernte:** **terms 1621 · no-terms 841 · 0 violation** (Sweeps +91 +273). **Generator-Riss:** der `sources_repo_license`-Bin existiert als **dein** uncommitteter Draft (`tools/register/src/bin/sources_repo_license.rs`, netloc/`--out-dir`) — Mountain baut ihn **nicht** (Kollision vermieden); du committest ihn. Offen: ESA/ESAC (CC BY-NC 3.0 IGO, Vokabel-Erweiterung), zenodo per Record, die gemischten Hosts (arcgis/jaxa/kasi/…).
+- **INPE-BIG-Verdikt (deine 275):** Katalog = `blocked parser-def gap inpe-big-stac` (79 Sammlungen, gemischte Formate/Lizenzen 44 CC-BY-4.0 / 4 CC0 / 3 PD / 28 proprietary); Einzel-Sammlungen später nach Sammlung→Feld-Compiler.
+- **Quellen-Delta + LEOS (deine 275):** LEOS ist bereits `pending` (kein `descoped`-Eintrag mehr — nichts zu korrigieren); der Delta (HI/CMB/Solar/LAIC/Teilchen/FRB) ist als `blocked parser-def` registriert (Gaps `hi-21cm`/`cmb-lambda`/`solar-vso`/`laic-cssdc`/`particle-cern`/`blinkverse-frb`); Planck/CHIME/INTERMAGNET sind gedeckt.
 - **`swpc_efield`/`substorm`/Kellerman:** Arme + `sources.φ`-Zeilen gebaut; Manifestation über den Generator/Compiler (swpc: `swpc-efield-cdn.yml`).
 - **SuperDARN MAP-grid:** die Globus-Credentials stehen in `.secrets.local` (`GLOBUS_ID_USER`/`GLOBUS_ID_PASS`) — **kein Operator-Akt**; der DMap-Kern + `map_grid_value` stehen, der Download (`superdarn.ca/data-download`, `wartend.φ:8`) liegt bei dir.
 - **Keogramm** (OMTI/Abisko): Wire-Feld descoped (raw/relativ); offen ist die **Vision-Asset-Registrierung** — falls Mycelium das Bild als Asset führen kann, bitte führen.
