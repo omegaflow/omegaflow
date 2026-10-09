@@ -2,7 +2,7 @@
   title: Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
   class: survey
   date: 2026-10-09
-  sha256: 52ddbd98eb4e2bc381de657a53bcd61db4235945a94929502b8c7de60f88f615
+  sha256: 14020a6a21169c1c014649001e3451e09a2e4eaec646900d988c56f4e4d2729e
   status: live
 -->
 # Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
@@ -121,3 +121,27 @@ nicht auf NC.
 **Nächster Schritt:** Mountains Re-Admission je Kandidat → dann CDN-Workflow/`sources.φ`-Block.
 Divergenz: `earthdata.nasa.gov`-Policy 403 (CloudFront); Lizenz über
 `science.data.nasa.gov/about/license` belegt.
+
+## Rückgewinnungs-Karte (2026-10-09)
+
+Für die 41 abgelehnten Quellen wurde gemessen, ob die **Messung** über einen
+legalen Weg bereits vorhanden ist (`sgrep -c <alternative> phi/sources.φ`):
+
+- **schon-da (23)** — die Messung läuft bereits über eine zugelassene freie Quelle:
+  Blitzortung (×2) + WWLLN (×2) + GLD360 → **GOES GLM** (`glm_l2.bin`);
+  PurpleAir → OpenAQ/Sensor.Community; Sofar → **NDBC**; LHAASO → TeVCat;
+  Amentum → **INTERMAGNET/SWPC**; Meteostat/WeatherXM → **Open-Meteo**;
+  Sentinel-Hub (×2) → **Copernicus**; InPOP19a/NOE-4 → **JPL SSD**;
+  SuperMAG (×3) → INTERMAGNET/SWPC; BoM → SWPC; hamqsl → SWPC; ogimet → NCEI.
+- **neu-zulassen (13)** — Kandidat gemessen, nicht in `sources.φ` (Mountain-Admission):
+  `tile.openstreetmap.org` (ODbL) · `archive.routeviews.org` (**CC-BY-4.0**) ·
+  `giro.uml.edu/didbase` (**CC-BY-NC-SA-4.0**, NC-kompatibel) ·
+  `data.mendeley.com`/`waterisotopesDB.org` (GNIP PD) · `globalfloods.eu` (GloFAS/CEMS) ·
+  `data-api.globalforestwatch.org` · `transport.data.gouv.fr` · `api.carbonintensity.org.uk` ·
+  `aishub.net`/`dma.dk` · `ds.iris.edu` · `opensky-network.org` (Key/Account offen).
+- **blockiert (5)** — keine legale Route gemessen: `almascience.org` (kein Kandidat),
+  `data.lsst.cloud` (proprietäre Frist), `api.z.ai` ×2 + `reddit.com/dev/api` (kein Messwert).
+
+**Konsequenz:** die 23 `schon-da` brauchen keine Zulassung — die Messung ist zurück;
+die 13 `neu-zulassen` sind Mountains Re-Admission (dann Mycelium-CDN); die 5
+`blockiert` bleiben.
