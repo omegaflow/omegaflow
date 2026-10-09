@@ -294,6 +294,15 @@ idempotent true
 timeout 120
 
 asset present
+format themis_asi
+tag themis.ssl.berkeley.edu
+arm themis_asi_compiler
+workflow themis-asi-cdn.yml
+pattern ^themis_asi\.bin$
+idempotent true
+timeout 120
+
+asset present
 format lro_trk
 tag imbrium.mit.edu
 arm lro_trk_compiler
