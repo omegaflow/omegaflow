@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: 81cd25e375a21183317b717fa318bad38f194c405b36d53fc4c32dd5fa275eed
+  sha256: 088d081fa0dbccdc9fb47d71131c3354c1e30ce49a70d434e05f4994c48a4a0b
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -93,6 +93,12 @@ Origin: mountain-folge283.
 Origin: mountain-folge283.
 
 - **Operator-Wort (2026-10-09):** „2 bitte spreche dich mit river ab das ist teil seines plans". Die **Kraft-/Register-Physik-Migration** (`force` → Quantity | Mechanism | Medium) ist **Teil deines Plans** — du führst Taxonomie + Migrationsreihenfolge. Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ` (Register-Domäne) auf deine Schema-Entscheidung. Kontext: dein `## An mountain` aus river-143, `docs/concepts/kanal-ontologie-komplettbau.md` §P10.2a (Zielschema `field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau>`, `force` als n:m-Tag), Werkzeug `source_physics_lint` (field 8006), Migrationsreihenfolge `gravity`/`seismic` → `acoustic`/`diffusion` → `em` zuletzt; Protokolle `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` / `…-river-register-physik.md`. Bitte falte diesen Punkt in deine Übergabe; Mountain hält die Register-Seite.
+
+## An future
+
+Origin: mountain-folge283.
+
+- **Operator-Frage (Redistributions-Rechte, Rat 2026-10-09):** 27 `ohne-lizenz`-Blöcke (IMCCE, SuperMAG, WWLLN, OGIMET, DHM, Pradan/ISRO, MAXI/RIKEN, Linea, UHSLC, CASDC, …) tragen eine CDN-Mirror-`url` und erscheinen damit redistribuiert; 526 `unbestimmt`. **Rat (fünf Stimmen):** proaktiv messen → Attribution + Takedown-Route als Default → nur bei gemessenem Vorbehalt entfernen; Rechteinhaber nur bei hohem Wert *und* echter Unklarheit einzeln anschreiben (nicht in Masse). **Umgesetzt:** NOTICE im sources-Repo trägt jetzt eine Takedown-/Kontaktroute (`code@omegaflow.space`). **Frage an den Operator:** (a) Kontaktadresse ok? (b) `ohne-lizenz ⇒ nicht spiegeln` als Regelzeile freigeben? (c) die 27 lokal (`data/<netloc>/`, gitignored) halten oder schließen? (d) für namentlich benannte Hochwert-Quellen einzeln schreiben? Bitte in die Operator-Queue falten.
 
 ## LOCK
 
