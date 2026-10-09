@@ -9,6 +9,7 @@ const CENSUS: &str = "state/mountain/license-census.tsv";
 const TERMS: &[&str] = &[
     "CC-BY-4.0",
     "CC-BY-NC-3.0-IGO",
+    "CC-BY-NC-4.0",
     "CC-BY-NC-SA-4.0",
     "CC0-1.0",
     "ODC-By-1.0",
