@@ -12194,6 +12194,23 @@ fn demeter_isl_series_dispatch_and_component_names() {
 }
 
 #[test]
+fn keogram_series_parse_swaps_bin_layout_into_the_wire_order() {
+    let bytes = super::keogram::write_bin(&[(86400.0, 3u32, 12.5), (172800.0, 7u32, 128.0)]);
+    let rows = super::extract::series_parse_bin("keogram", &bytes).expect("keogram bin parses");
+    assert_eq!(rows, vec![(86400.0, 12.5, 3), (172800.0, 128.0, 7)]);
+}
+
+#[test]
+fn keogram_named_series_carries_per_column_names() {
+    let bytes = super::keogram::write_bin(&[(100.0, 0u32, 1.0), (100.0, 2u32, 2.0)]);
+    let ns = super::extract::series_named("keogram", &bytes).expect("named series");
+    assert_eq!(ns.names.len(), 3);
+    assert_eq!(ns.names[2], "keogram_col_0002");
+    assert_eq!(ns.rows[1].comp, 2);
+    assert_eq!(ns.rows[1].value, 2.0);
+}
+
+#[test]
 fn drs_fits_register_field_names_match_components() {
     let srcs = super::load_sources();
     let src = srcs

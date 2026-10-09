@@ -1,3 +1,4 @@
+use super::FieldConfig;
 use super::tiff::decode_jpeg_raster;
 
 pub struct KeogramColumns {
@@ -40,6 +41,43 @@ pub fn brightness_columns(jpeg: &[u8]) -> Option<KeogramColumns> {
 pub const MAGIC: [u8; 4] = *b"KGRM";
 pub const HEADER_BYTES: usize = 8;
 pub const RECORD_BYTES: usize = 8 + 4 + 1 + 8;
+
+pub const UNIT: &str = "relative";
+
+pub fn component_name(comp: u32) -> String {
+    format!("keogram_col_{comp:04}")
+}
+
+pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
+    let Some(force) = crate::force::force_id_of("em") else {
+        return Vec::new();
+    };
+    let Some(kernel) = crate::force::kernel_id_for_force(force) else {
+        return Vec::new();
+    };
+    names
+        .iter()
+        .enumerate()
+        .map(|(comp, _)| {
+            let name = component_name(comp as u32);
+            FieldConfig {
+                key: name.clone(),
+                name,
+                band_id: None,
+                kernel,
+                force,
+                tau,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: UNIT.to_string(),
+                freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
+                bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
+                fold: None,
+                aperture: crate::archivar::Aperture::None,
+            }
+        })
+        .collect()
+}
 
 pub fn write_bin(rows: &[(f64, u32, f64)]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(HEADER_BYTES + rows.len() * RECORD_BYTES);
@@ -154,5 +192,15 @@ mod tests {
         assert!(parse_bin(b"XXXX").is_none());
         let bytes = write_bin(&[(86400.0, 0u32, 12.5)]);
         assert!(parse_bin(&bytes[..bytes.len() - 1]).is_none());
+    }
+
+    #[test]
+    fn declared_fields_are_dimensionless_brightness_per_column() {
+        let names: Vec<String> = (0..3).map(component_name).collect();
+        let fields = declared_fields(&names, 60.0);
+        assert_eq!(fields.len(), 3);
+        assert!(fields.iter().all(|f| f.unit == UNIT));
+        assert_eq!(fields[0].key, "keogram_col_0000");
+        assert_eq!(fields[2].key, "keogram_col_0002");
     }
 }
