@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. pages-deploy membrane_bodies-Staging entfernt (river-143); mountain-283 + river-143 gefaltet; `ausstehend`-Queue (§A–E) in 11 Agenten abgearbeitet; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 8af77a32d4817d5acf74f8c5ec91bcc443c4a73274ee33d2ee56e0ce25ce3211
+  sha256: f4556c33fb9316fd6bc1526eb97d2bdffc47ac54fdb8f71df6b97df22309effe
   status: live
 -->
 # Handover — Mycelium-Folge 276 (2026-10-09)
