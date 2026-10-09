@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 283 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Der Rust-Refresh-Arm ist am ersten Lauf verifiziert (sources-refresh 37970858064 success, data-Snapshot 415a14b; sources-README auf den Rust-Arm gezogen). PETREL19-CDN success (37966130284), der pending-Eintrag geschlossen. Mountains dropped-gate-Verdikt gelandet (canonical_point_key = kurzer Namenskopf, Baseline neu gezogen); die zwei tools-build-Fehler der 282 geheilt. Vier Kontraktfragen (USGS-Extract, Keogramm-Form, terms-Granularität, DTM-quantity) durch archive_search --all → Rat → UI/Open-Weight gefahren; Vorlagen registriert, drei ungemittelte Risse benannt.
+  session: Mycelium-Linie — Meta-Pass. Der Rust-Refresh-Arm ist am ersten Lauf verifiziert (sources-refresh 37970858064 success, data-Snapshot 415a14b; sources-README auf den Rust-Arm gezogen). PETREL19-CDN success (37966130284), der pending-Eintrag geschlossen. Mountains dropped-gate-Verdikt gelandet (canonical_point_key = kurzer Namenskopf, Baseline neu gezogen); die zwei tools-build-Fehler der 282 geheilt. Vier Kontraktfragen (USGS-Extract, Keogramm-Form, terms-Granularität, DTM-quantity) durch archive_search --all → Rat → 8 UI-Seats gefahren; zwei grind-flash-Dispatches (USGS-Arm, Keogramm-Referenz) endeten in gemessenen STOPs — der Baum korrigierte die Vorlage; Risse benannt.
   class: handover
   date: 2026-10-09
-  sha256: 15ca32a297dd8406b189ab9783f6f956e6a49470325e81b3da26125453149b23
+  sha256: e9bac9018c8eac1bd502f4a2cfd0f3b3f4ad1c49533667b14539a12c570a5461
   status: live
 -->
 # Handover — Mycelium-Folge 283 (2026-10-09)
@@ -17,13 +17,14 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.1086 · cap 0.5 — Grund: der Rust-Refresh-Arm ist am ersten `sources-refresh`-Lauf verifiziert (`37970858064` success, `data`-Snapshot `415a14b`), sources-README auf den Rust-Arm gezogen; PETREL19-CDN success (`37966130284`), `pending`-Eintrag `blocked_sources.φ` geschlossen; dropped-gate-Verdikt (287) gefaltet; **vier Kontraktfragen durch die Kette `archive_search --all` → Rat → UI/Open-Weight gefahren** (5 UI-Seats); `register_lookup --fired/--stale`/`open_points_check` = 0 · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „Mycelium-Linie starten und Stehenden Pass sch…"); Fenster-Total $0.9884 (23 Sessions).
+## Burn: open 0.0000 · close 0.1608 · cap 0.5 — Grund: Refresh-Arm verifiziert (`37970858064` success, `data`-Snapshot `415a14b`), sources-README gezogen; PETREL19-CDN success (`37966130284`), `pending` geschlossen; dropped-gate-Verdikt (287) gefaltet; **vier Kontraktfragen durch `archive_search --all` → Rat → 8 UI-Seats**, plus zwei `grind-flash`-Dispatches (USGS-Arm, Keogramm-Referenz) — beide STOP mit gemessener Baum-Korrektur; `register_lookup --fired/--stale`/`open_points_check` = 0 · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „Mycelium-Linie starten und Stehenden Pass sch…"); Fenster-Total $1.1353 (26 Sessions).
 
 ## Operator-Wort-Register
 
 - „das müsst ihr doch unter euch klären" | 2026-10-09 | Quelle: mycelium-282. **Konsequenz:** die Linien-Zuordnung eines Artefakts (wer das `sources_refresh`-Bin gebaut hat) wird unter den Linien geklärt (Commit-/Register-Spur), nie dem Operator vorgelegt. Kein Consent-Stopp für Bekanntes.
 - „welche punkte können mit archive search all, rat, und den frontier ui und openweight chats geklärt werden?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** die vier Kontraktfragen (USGS-`Extract`, Keogramm-Form, `terms`-Granularität, DTM-`quantity`) werden durch die Kette `archive_search --all` → Rat → UI/Open-Weight geführt.
 - „ja bitte" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Ausführung der Kette (Recherche + Rat + UI-Runde) freigegeben; Runde gefahren, Ergebnis als Vorlage registriert.
+- „beides bitte" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** (1) restliche Roster-Seats (Z.ai/GLM · Kimi · MiMo · Gemini · Mistral · Lumo) fahren, (2) die zwei dispatch-reifen Punkte (USGS-Arm, Keogramm-Referenzzeile) an `grind-flash` geben. Beides ausgeführt; die Dispatches endeten in gemessenen STOPs (Baum korrigiert die Vorlage).
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge281.md` §Operator-Wort-Register (und folge280) — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-283.
 
 ## Offen — eigen
@@ -78,38 +79,42 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Braucht:** Mountain misst `field`/`terms`/`ttl` → dann `sources.φ`-Block.
 
 ### USGS-geomag E-Feld — Reader-Arm fehlt (`blocked_sources.φ:100`)
-- **Status:** wartend | **Bindung:** eigen (Erhebung) · mountain (Bau/Kontrakt)
-- **Trigger:** Bau des `Extract::GeomagParallel`-Arms (Vorlage steht); danach `sources.φ`-Zeile
-- **Lage:** (gemessen 2026-10-09) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206; zwei parallele Top-Level-Arrays `times[]` + `values[].values[]`. **Rat+UI-Vorlage (2026-10-09):** `Extract::GeomagParallel { times, values, id }`, ein `(Channel,FieldConfig)` je `values[i]`, Name/Unit aus `values[i].id` (`usgs_geomag::COLUMNS`, `usgs_geomag.rs:8/10`); Längen-Divergenz → `Riss` mit beiden Längen als Zeugen, nie Pad/Truncate; generisches `ZipParallel` erst bei 2. Parallelklasse. UI-Runde 5/5 OK. **Riss (ungemittelt):** `times.len == values[i].len` ist nirgends garantiert; `ttl` ungemessen → `pending`.
-- **Blockade:** der Arm-Bau (`src/archivar/parse.rs`/`extract.rs:3296`, Consumer-Typ steht).
-- **Braucht:** Arm bauen; danach `sources.φ`-Zeile/Workflow (Mycelium) + Mountain `field`/`terms`/`ttl`.
+- **Status:** blockiert | **Bindung:** eigen (Erhebung) · operator/rat (Kontrakt)
+- **Trigger:** Kontrakt-Wort über den Riss-Träger (Dispatcher-STOP unten)
+- **Lage:** (gemessen 2026-10-09) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206; zwei parallele Top-Level-Arrays `times[]` + `values[].values[]`. **Rat+UI-Vorlage 8/8 OK** (`GeomagParallel`, ein Record je `values[i]`). **Dispatch-STOP (der Baum korrigiert die Vorlage):** die Feldquelle ist `values[i].metadata.element` (`usgs_geomag_compiler.rs:199-214`), **nicht** `values[i].id`; `usgs_geomag::COLUMNS` ist privat; und `ExtractResult` (`extract.rs:3296`) hat **keinen Riss-Arm** (ein dritter Arm bräche `fetch.rs:1196`, `port.rs:806/814`, `main_flow.rs:6009/6018`).
+- **Blockade:** der Riss-Träger für die Längen-Divergenz ist im `ExtractResult`-Kontrakt nicht vorhanden.
+- **Braucht:** Operator/Rat-Wort über den Riss-Träger (neuer `ExtractResult`-Arm → Fremddateien, oder ein anderer gemessener Träger); danach Arm-Bau + `sources.φ`-Zeile (Mycelium) + Mountain `field`/`terms`/`ttl`.
 
 ### Keogramm-Quelle als Vision-Asset
-- **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** die konkrete Keogramm-URL-Messung `archive_search --sniff <keogram-url>` (noch offen) → Referenzzeile in `phi/sources.φ`
-- **Lage:** (gemessen 2026-10-09) `space.fmi.fi/MIRACLE/ASC/ASC_keograms/…` liefert ABK-Keogramme (`206 image/jpeg`); Wire-Feld-Pfad descoped; `keogram.rs` + `keogram_compiler.rs` stehen. **Rat+UI-Vorlage:** **Hybrid C** — Referenzzeile in `phi/sources.φ` mit `origin` + `format image/jpeg` + sha256 via `archive_search --sniff`, **kein** eigenes Kanon-Register, **kein** Compiler; eigenes Bild-Register erst bei ≥2 Bildklassen (dann Kanon-Akt Operator/Rat + `phi/canon.φ`). UI-Runde 5/5 OK. **Riss (ungemittelt):** eine zweite Kanon-Objektklasse ist nicht existent/nicht gemessen.
-- **Blockade:** keiner.
-- **Braucht:** Referenzzeile + sha256 (`--sniff`) in `sources.φ`; die CDN-Manifestation der Referenz (Mycelium).
+- **Status:** blockiert | **Bindung:** eigen (Manifestation) · operator/rat (Form)
+- **Trigger:** Form-Wort über Token/Asset-Träger (Dispatcher-STOP unten)
+- **Lage:** (gemessen 2026-10-09) Basis `space.fmi.fi/MIRACLE/ASC/ASC_keograms` (`keogram_compiler.rs:8`); Beispiel `ABK_160115.jpg` HTTP 200 `image/jpeg`, sha256 `15a6f030df249c584dc49d3cfe9d364c672775a29cddaeb41c90227981803002`. **Rat+UI-Vorlage 7/1** (Referenzzeile). **Dispatch-STOP:** `format image/jpeg` wird von `parse.rs:94-99` **still verworfen** — der Baum-Token ist `format reference` (`phi/sources.φ:28138` ff.); `image/jpeg` existiert in `phi/` nicht. Und jede Referenzzeile trägt **einen** CDN-`url` + **eine** sha256; die Keogramm-Quelle ist eine unbeschränkte Tagesserie ohne deterministischen Asset-Namen.
+- **Blockade:** der Referenz-Token (`reference`) vs. Media-Typ im `origin`, und Einzelartefakt vs. Serie.
+- **Braucht:** Form-Wort: `format reference` (Media-Typ über `origin`/Content-Type) + der Träger (eine Probe-Datei oder eine andere gemessene Asset-/Namenskonvention); dann Referenzzeile + CDN-Manifestation (Mycelium).
 
 ## Rat + UI — Kontraktvorlagen (2026-10-09)
 
-Kette gefahren: `archive_search --all` (4 Fragen; Texte `/tmp/opencode/research-{usgs,keogramm,license,shadowcam}.txt`) → **Rat** (5 Stimmen, flash) → **UI-Runde** (Claude · Duck.ai/Claude-Haiku · DeepSeek Chat · Qwen · DeepSeek V4 Pro via `open-weight-ui`; Tabs danach geschlossen, Lock gelöscht). Nicht geöffnet diese Runde: Z.ai/GLM · Kimi · MiMo · Gemini AI Studio · Mistral · Lumo (Roster-Rest, `pending`).
+Kette gefahren: `archive_search --all` (4 Fragen; Texte `/tmp/opencode/research-{usgs,keogramm,license,shadowcam}.txt`) → **Rat** (5 Stimmen, flash) → **UI-Runden** (8 Seats: Claude · Duck.ai/Claude-Haiku · DeepSeek Chat · Qwen · DeepSeek V4 Pro via `open-weight-ui` · Gemini 3.1 Pro · Mistral · Lumo; Tabs geschlossen, Lock gelöscht). `pending`: z.ai/GLM (Deep-Think, keine Antwort bei Schluss) · Kimi (Composer nicht lokalisiert) · MiMo (nicht geöffnet).
 
-| Frage | Vorlage (Rat) | UI |
+| Frage | Vorlage (Rat) | UI (8 Seats) |
 |---|---|---|
-| USGS-`Extract` | `GeomagParallel {times,values,id}`, ein `(Channel,FieldConfig)` je `values[i]`, Divergenz → `Riss` | **5/5 OK** |
-| Keogramm-Form | Referenzzeile (`origin`+sha256), kein Kanon-Register, kein Compiler | **5/5 OK** |
-| `terms`-Basis | pro Quelle speichern; netloc-Rollup berechnet; `mixed` | **4/5 RISS:** `532 = 1359−827` über getrennte Populationen |
-| DTM-`quantity` | PDS4-Label + COG-Pixel; Höhe vs. benanntem `r_ref` | **2/5 RISS:** offener Slot verletzt 26×f64 |
+| USGS-`Extract` | `GeomagParallel {times,values,id}`, ein `(Channel,FieldConfig)` je `values[i]`, Divergenz → `Riss` | **8/8 OK** |
+| Keogramm-Form | Referenzzeile (`origin`+sha256), kein Kanon-Register, kein Compiler | **7 OK / 1 RISS** — Gemini: auch *eine* Bildklasse braucht sofort ein eigenes Register; sha256/`origin` passen nicht in 26×f64 |
+| `terms`-Basis | pro Quelle speichern; netloc-Rollup berechnet; `mixed` | **4 OK / 4 RISS** — der 532-Gap über getrennte Populationen |
+| DTM-`quantity` | PDS4-Label + COG-Pixel; Höhe vs. benanntem `r_ref` | **4 OK / 4 RISS** — offener Slot; Mistral: `.cub` ist Kanon, COG nur *gegen* `.cub` verifiziert |
 
-**Ungemittelte Risse (stehen, werden nicht geglättet):** (a) die 532-Differenz ohne belegte Subset-Relation; (b) fehlender Höhen-Wire-Slot/`QuantityKind`; (c) zweite Bildklasse nicht existent; (d) `times.len == values[i].len` nirgends garantiert.
+**Tree-Messungen, die die Vorlage korrigieren (je ein Dispatch, beide STOP — der Baum gewinnt):**
+- **USGS:** `values[i].id` ist **nicht** die Feldquelle — der bestehende Compiler liest `values[i].metadata.element` (`tools/harvest/src/bin/usgs_geomag_compiler.rs:199-214`); `usgs_geomag::COLUMNS` ist **privat** (öffentlich nur `component_name(comp: u32)`). Und `ExtractResult` (`src/archivar/extract.rs:3296`) hat **keinen Riss-Arm**; ein dritter Arm bräche die exhaustiven Matches `fetch.rs:1196`, `port.rs:806/814`, `main_flow.rs:6009/6018`. Der Riss-Träger ist damit eine **offene Kontraktfrage**, kein direkter Bau.
+- **Keogramm:** `format image/jpeg` wird von `parse.rs:94-99` **still verworfen** (nur `reference`/`frame`/`extracts`/`channels` pushen); der Baum-Token ist `format reference` (`phi/sources.φ:28138` ff.), `image/jpeg` existiert in `phi/` nicht. Zudem trägt jede Referenzzeile **einen** CDN-`url` + **eine** sha256 — die Keogramm-Quelle ist eine unbeschränkte Tagesserie ohne deterministischen Asset-Namen. Gemessen: `ABK_160115.jpg` HTTP 200 `image/jpeg`, sha256 `15a6f030df249c584dc49d3cfe9d364c672775a29cddaeb41c90227981803002`.
+
+**Ungemittelte Risse (stehen, werden nicht geglättet):** (a) 532-Gap ohne belegte Subset-Relation; (b) fehlender Höhen-Wire-Slot/`QuantityKind`; (c) zweite Bildklasse nicht existent; (d) `times.len == values[i].len` nirgends garantiert; (e) `ExtractResult` ohne Riss-Träger; (f) Referenzzeile = Einzelartefakt vs. unbeschränkte Keogramm-Serie.
 
 ## An mountain
 
 Origin: mycelium-283 (2026-10-09) — bittet um die Register-/Tooling-Verdikte, die allein Mountain schreibt:
 
 - **`terms`-Format:** `phi/sources.φ` trägt `terms <SPDX> <url>` je Block. Vorlage: **pro Quelle** speichern (Truth), netloc nur berechnet, inhomogener Host → `mixed`. Bitte das Format-Verdikt (netloc-keyed vs. pro-Quelle). Der Riss `license_census` no-terms **827** vs. `sources_repo_license` **1359** ist ein **Populations-Riss**, kein Mittelwert: Teilmengen-Relation (827 ⊆ 1359?) messen oder beide Zählungen mit Definition führen (`tools/register/src/bin/license_census.rs:221` vs. `sources_repo_license.rs:150`).
-- **USGS-geomag `field`/`terms`/`ttl`:** nach dem Bau des `GeomagParallel`-Arms braucht `sources.φ` die Zeile; `ttl` ungemessen → `pending`. Vorlage steht (Rat+UI).
+- **USGS-geomag `field`/`terms`/`ttl`:** sobald der Riss-Träger-Kontrakt entschieden und der `GeomagParallel`-Arm gebaut ist, braucht `sources.φ` die Zeile; `ttl` ungemessen → `pending`.
 - **DTM-Wire-Slot:** der neue `quantity`/Slot ist ein **Kontrakt-Akt** (Operator/Rat), nicht Mountains Registerzeile; Mountain liefert erst nach dem Slot-Verdikt `field`/`terms`.
 
 ## LOCK
