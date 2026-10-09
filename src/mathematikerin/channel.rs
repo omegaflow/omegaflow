@@ -127,6 +127,44 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
     }
 }
 
+pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
+    let (conserved, op, boundary, unit) = match name {
+        "em" | "electric" => (Conserved::Energy, TransportOp::Maxwell, Boundary::None, "V/m"),
+        "gravity" => (Conserved::Mass, TransportOp::Poisson, Boundary::None, "m/s^2"),
+        "acoustic" => (Conserved::Energy, TransportOp::Wave, Boundary::None, "Pa"),
+        "seismic-body" => (Conserved::Energy, TransportOp::Wave, Boundary::None, "Pa"),
+        "seismic-surface" => (
+            Conserved::Energy,
+            TransportOp::Wave,
+            Boundary::FreeSurface,
+            "Pa",
+        ),
+        "thermal" => (
+            Conserved::Energy,
+            TransportOp::Flux(FluxKind::Fourier),
+            Boundary::None,
+            "K",
+        ),
+        "diffusion" => (
+            Conserved::Mass,
+            TransportOp::Flux(FluxKind::Fick),
+            Boundary::None,
+            "kg/m^3",
+        ),
+        "advective" => (
+            Conserved::Mass,
+            TransportOp::Advective,
+            Boundary::None,
+            "kg/(m^2 s)",
+        ),
+        _ => return None,
+    };
+    if !is_admissible(conserved, op, medium) {
+        return None;
+    }
+    Some(ChannelDescriptor::new(conserved, op, medium, boundary, unit))
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(u8)]
 pub enum TriState {
@@ -548,5 +586,47 @@ mod tests {
         latch.mark_pending();
         assert_eq!(latch.state, TriState::Pending);
         assert_eq!(latch.observe(false), TriState::Pending);
+    }
+
+    #[test]
+    fn every_legacy_force_label_maps_onto_its_admissible_descriptor() {
+        let declared = [
+            ("em", Medium::Vacuum),
+            ("gravity", Medium::Vacuum),
+            ("acoustic", Medium::Fluid),
+            ("seismic-body", Medium::ElasticSolid),
+            ("seismic-surface", Medium::ElasticSolid),
+            ("thermal", Medium::Fluid),
+            ("diffusion", Medium::Fluid),
+            ("advective", Medium::Fluid),
+            ("electric", Medium::Vacuum),
+        ];
+        for (name, medium) in declared {
+            let d = descriptor_for_force(name, medium)
+                .unwrap_or_else(|| panic!("{name} must map"));
+            assert!(
+                is_admissible(d.conserved, d.op, medium),
+                "{name} must be admissible in {medium:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn the_bridge_refuses_a_medium_the_relation_forbids() {
+        assert!(descriptor_for_force("acoustic", Medium::Vacuum).is_none());
+        assert!(descriptor_for_force("thermal", Medium::Vacuum).is_none());
+        assert!(descriptor_for_force("diffusion", Medium::Vacuum).is_none());
+    }
+
+    #[test]
+    fn electric_is_the_em_alias() {
+        let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
+        assert_eq!(em.hash(), electric.hash());
+    }
+
+    #[test]
+    fn an_unknown_label_is_refused() {
+        assert!(descriptor_for_force("phlogiston", Medium::Fluid).is_none());
     }
 }
