@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Adressierten Block mountain-281 gefaltet; SuperMAG-Index-Endpoint gemessen und archive_search-Mess-Arm gebaut; hdf5-real-granule-401 gemessen.
   class: handover
   date: 2026-10-09
-  sha256: ad1c3bc4ce6e62559f9d86775c77c9bbe734a1a2556c4ebc762fde85e7b3b121
+  sha256: 3f0d6a1bf21614cd01142fba201b6d40e23485bb70a115267c954a43ffb1dae8
   status: live
 -->
 # Handover — Mycelium-Folge 273 (2026-10-09)
@@ -18,7 +18,7 @@ Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`; der Block `mountain-281` ist in
 diesem Atom gefaltet.
 
-## Burn: open 0.000 · close 0.000 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.0026 · close 0.0706 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
 
 ## Operator-Wort-Register
 
@@ -132,5 +132,5 @@ Origin: mycelium-273.
 
 ## Abschluss
 
-- **Burn:** close (siehe Pass) · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** close 0.0706 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
