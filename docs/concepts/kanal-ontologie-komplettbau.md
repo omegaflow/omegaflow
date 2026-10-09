@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-09
-  sha256: c75a5ef65bb288b5e993557a84421fce60df28b8ff7b8b4ec04b72188e812b5c
+  sha256: bccd06f162efe7492a671f6a4588c2382fa0e9a35edce9a010eacf5c342cfd18
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -59,8 +59,15 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   trägt das **Gesetz**; die **Anregung** (Quelle+Anfangsdaten) ist ein eigener Zustand. Die
   **Receiver-Schicht** (ERB/Bark) ist nicht aus `(q,𝒯,M)` ableitbar — sie ist die deklarierte
   `ReceiverAperture` oder in `M` zu absorbieren; ERB als reine Organ-Funktion. Protokoll:
-  `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` (Wissenschaft + Rat + Duck/Claude/Qwen
-  + DeepSeek V4 Pro).
+  `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` (Wissenschaft + Rat + Duck/Claude/Qwen/
+  DeepSeek Chat/GLM-5.3/Gemini/Mistral + DeepSeek V4 Pro/GLM 5.3/Inkling/Hy4).
+  **Offene Risse (Roster-Erweiterung, zu tragen):** (i) der **fehlende Instabilitäts-Quadrant**
+  Re λ>0 — die vier Familien sind stabile Propagatoren (Färbung), die **Quelle/Stimme**
+  (Bogenstrich/Anblaskante/Feedback, nichtlinear gesättigt) ist ein eigener Zweig; (ii)
+  **Superposition ↔ Treue** — A⊕B verliert die Einzel-Identität, der Ausweg ist die Projektion
+  mit deklariertem Kopplungsoperator C + Anregungs-Verfolgung; (iii) **Steifigkeit höherer
+  Ordnung** (biharmonisch, B) wird vom 2.-Ordnungs-Operatorensatz verfehlt; (iv) die
+  `𝒯`-Liste ist uneinheitlich (Ordnung vs. Typ; „Flux" = Fick-Diffusion, sonst fehlt parabolisch).
 
 ### P1 — Ontologie-Kern (`src/mathematikerin/force.rs` + neu `channel.rs`)
 - **P1.1** `enum Conserved { Mass, Momentum, Energy, Charge }`.
