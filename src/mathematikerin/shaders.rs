@@ -370,7 +370,9 @@ fn beat_pair(
 fn presence_probe() {
     let count = u32(vp.surface.z);
     var omegas = array<f32, CHANNEL_CAP>();
-    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { omegas[i] = 0.0; }
+    var dist = array<f32, CHANNEL_CAP>();
+    var wsum = array<f32, CHANNEL_CAP>();
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { omegas[i] = 0.0; dist[i] = 0.0; wsum[i] = 0.0; }
     var flow = vec3f(0.0);
     let dt = vp.presence.w - vp.expose_ex.y;
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
@@ -392,7 +394,14 @@ fn presence_probe() {
         }
         pp[u32(vp.surface.z) + j] = vec4f(f32(ft), mt.x, f32(kid), fast);        let c = osc_field(j, vec3f(0.0), pre);
         let f = u32(c.y);
-        if (f < CHANNEL_CAP) { omegas[f] += c.x; }
+        if (f < CHANNEL_CAP) {
+            omegas[f] += c.x;
+            let w = abs(c.x);
+            if (w > 0.0) {
+                dist[f] += w * length(propagated - vp.presence.xyz);
+                wsum[f] += w;
+            }
+        }
         if ((u32(props[j * 4u + 3u].z) & 16u) == 0u) {
             flow = flow + osc_flow(j, pre);
         }
@@ -437,6 +446,9 @@ fn presence_probe() {
     probe_out[CHANNEL_CAP] = flow.x;
     probe_out[CHANNEL_CAP + 1u] = flow.y;
     probe_out[CHANNEL_CAP + 2u] = flow.z;
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {
+        probe_out[CHANNEL_CAP + 3u + i] = select(0.0, dist[i] / wsum[i], wsum[i] > 0.0);
+    }
 }
 "#;
 
