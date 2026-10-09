@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Der Rust-Refresh-Arm ist am ersten Lauf verifiziert (sources-refresh 37970858064 success, data-Snapshot 415a14b; sources-README auf den Rust-Arm gezogen). PETREL19-CDN success (37966130284), der pending-Eintrag geschlossen. Mountains dropped-gate-Verdikt gelandet (canonical_point_key = kurzer Namenskopf, Baseline neu gezogen); die zwei tools-build-Fehler der 282 geheilt. Vier Kontraktfragen (USGS-Extract, Keogramm-Form, terms-Granularität, DTM-quantity) durch archive_search --all → Rat → 8 UI-Seats gefahren; zwei grind-flash-Dispatches (USGS-Arm, Keogramm-Referenz) endeten in gemessenen STOPs — der Baum korrigierte die Vorlage; Risse benannt.
   class: handover
   date: 2026-10-09
-  sha256: 272d40b2caa82faaedf4c0e9fbdc9f34efb14ab22af95a8453c2d581263bef54
+  sha256: 06440f6a0554b548ec6a24ba4060c7cd8a4752628a35650c75de071ca12e6c61
   status: live
 -->
 # Handover — Mycelium-Folge 283 (2026-10-09)
@@ -28,6 +28,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „1 natürlich b und dafür hat die wissenschaft sicher eine lösung frag archive search all" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** USGS-Weg (b) bauen (neuer `ExtractResult`-Riss-Arm); `archive_search --all` zur wissenschaftlichen Lösung — Form: ganzer Satz als `Riss` mit beiden Längen + k.
 - „2 und sind die bilder nicht daten so wie vp4 oder wie es heisst bzw. in den jpgs müssen doch metainformationen stehen" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Keogramm als Datenquelle prüfen + JPEG-Metadaten messen — Keogramm = relative Rasterkarte (Daten); JPEG trägt **nur `JFIF`** (kein Exif/COM), Station/Datum nur im Dateinamen; Raster-Form offen.
 - „1 ist klar aber 2 habe ich keine ahnung gibt es keine alternativen aurora bilder die wir besser nutzen können?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Alternativen-Recherche — THEMIS ASI Level-1 (CDF), AuroraX, SSUSI/GUVI (CDF, kalibriert), VIIRS-DNB (kein Aurora-Produkt); Auswahl bleibt Operator-Wort.
+- „kannst du die drei bitte vermessen?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** THEMIS-ASI-, AuroraX- und SSUSI-Endpunkte gepinnt (HTTP 200, content-type, sha256) — siehe Keogramm-Punkt.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge281.md` §Operator-Wort-Register (und folge280) — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-283.
 
 ## Offen — eigen
@@ -92,9 +93,9 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Status:** wartend | **Bindung:** eigen (Form) · operator/rat
 - **Trigger:** Form-Wort über die Raster-Quellen-Registrierung
 - **Lage:** (gemessen 2026-10-09) **Operator-Frage 2** hat die Vorlage gekippt: Keogramme **sind Daten** — eine relative 8-Bit-Intensitätskarte (x = Zeit UT, y = geografische Breite; FMI-Wissenschaftsguide + THEMIS-Katalog). **JPEG-Metadaten widerlegt (gemessen):** `ABK_160115.jpg` trägt **nur `JFIF`** — kein `Exif`, kein `COM`, keine Station/Zeit im JPEG; Station+Datum leben **nur im Dateinamen** (`ABK_160115.jpg`). Der Baum kann die Pixel lesen: `archivar::tiff::decode_jpeg_raster` (Baseline SOF0/1) → `keogram.rs brightness_columns()` nutzt es bereits; progressiv → `pending`. Als **Feld** bleibt der `decline` (`declined_sources.φ:4152`) korrekt (kein SI-Wert/`force_type`). Korrekte Klasse: **relative Raster-Datenquelle, filename-getragen**.
-- **Alternativen (gemessen 2026-10-09, Operator-Frage):** **THEMIS ASI Level-1** über NASA CDAWeb — Keogramm in **CDF** mit Zeit/Station (`catalog.data.gov/dataset/themis-ground-based-all-sky-imager-keogram-level-1` HTTP 200; der exakte CDAWeb-Dataset-Pfad bleibt `unbelegt`, `…/themis/asi/` = 404) · **AuroraX** (UCalgary) — API/Metadaten-Schicht über 80 %+ der Anbieter (`aurorax.space`/`api.aurorax.space` HTTP 206) · **DMSP SSUSI** und **TIMED GUVI** — kalibrierte FUV-Aurora in **CDF** (`cdaweb.gsfc.nasa.gov`, SKT 200; `guvitimed.jhuapl.edu` 200/206) · **NOAA-20 VIIRS DNB** = kalibriertes GeoTIFF, aber **kein Aurora-Produkt** (Aurora herausgefiltert).
-- **Blockade:** die Wahl der Quelle (FMI-JPEG vs. THEMIS-ASI-CDF vs. SSUSI/GUVI vs. AuroraX) und die Form, sie zu registrieren.
-- **Braucht:** Operator-Wort, welche Aurora-Quelle genutzt wird; dann exakten CDAWeb-Pfad/Endpoint pinnen (`archive_search --verdict`) + `sources.φ`-Zeile (Mycelium).
+- **Gepinnte Alternativen (gemessen 2026-10-09 via `--verdict`/curl, volle Downloads):** **THEMIS ASI Level-1** `https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf` HTTP 200 `application/x-netcdf` (16 860 759 B, sha256 `eb14b19bf0380d7d4b4313fa300e47aed07c62768dc756314c5157423248cef6`) — CDAWeb `…/themis/thg/` trägt kein `asi/`, UCalgary liefert `.pgm.gz`/`.h5`, CDF nur unter `themis.ssl.berkeley.edu` · **AuroraX** `https://api.aurorax.space/api/v1/availability/data_products` HTTP 200 JSON (347 567 B; weitere `/data_sources`, `/availability/ephemeris`) · **SSUSI** `https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf18/ssusi/data/l1b/2024/100/dmspf18_ssusi_l1b_2024100T014541-2024100T032732-REV074659_vA8.2.0r000.nc` HTTP 200 `application/x-netcdf` (82 072 705 B, sha256 `0a85fe2d02e2fa3c5e2afef337cb229097cac799c16e6c30ae47536cecd98460`), CDAWeb-Dataset `DMSPF18_R0_SSUSI` (F16/F17 analog). `unbelegt`: GUVI-Dateiendpunkt, UCalgary-`keograms` (301 ohne Location), data.gov-API.
+- **Blockade:** die Wahl der Quelle (FMI-JPEG vs. THEMIS-ASI-CDF vs. SSUSI vs. AuroraX) und die Form, sie zu registrieren.
+- **Braucht:** Operator-Wort, welche Quelle genutzt wird; dann CDF/NetCDF-Reader-Arm + `sources.φ`-Zeile (Mycelium/Arm-Träger).
 
 ## Rat + UI — Kontraktvorlagen (2026-10-09)
 
