@@ -3,7 +3,7 @@
   session: River-Folge 143
   class: handover
   date: 2026-10-09
-  sha256: 1a0a489a67dbc5d6ef70a5a2f0fb85cb71c0a83ae68699d8be893bfe7a847826
+  sha256: 355de865855a679563c26c74b4627b5b374a68db909295d7ae7d1956abddb0c7
   status: live
 -->
 # Handover — River-Folge 143 (2026-10-09)
@@ -47,6 +47,8 @@ Wort | Datum | Quelle
 „bitte vermesse nochmal die sources und die anderen phi dateien stimmt ihr format physikalisch oder waren wir die ganze zeit auf dem holzweg bitte auch mit wissenschaft rat ui und openweight voices" | 2026-10-09 | Operator (Session, River 142) — Register-Physik prüfen
 „Ja" | 2026-10-09 | Operator (Session, River 143) — Kanalzahl-Umbau bauen: feste 9 → Kapazität 2ⁿ + lebendiges n, Wire/GPU/JS
 „das ton modell war doch noch vor P0 oder oder wird es jetzt nicht ein anderes ton modell?" | 2026-10-09 | Operator (Session, River 143) — Ton-Modell vor P0 klären; der Umbau macht es zu einem anderen (deskriptorgetriebenen) Modell
+„es muss doch alles zusammenpassen mein wort galt noch dem 9 partial bau das gilt natürlich jetzt nicht mehr" | 2026-10-09 | Operator (Session, River 143) — **das „auf jeden fall bleibt" bindet den Ton-Bau nicht mehr**; das Ton-Modell muss zur Kanal-Ontologie passen
+„wenn es sein muss schicke nochmal taucher mit archive search all den rat und die frontier ui und openweight voices los" | 2026-10-09 | Operator (Session, River 143) — volle Stimmen-Runde (`archive_search --all` + Rat + UI + Open-Weight) für das Ton-Modell autorisiert
 Verbatim: `state/operator-gespraeche/2026-10-09-river.md` (River 142 geschnitten; die River-143-Worte sind in derselben Session zu schneiden). Vorherige Worte: `docs/handover/archiv/handover-2026-10-09-river-folge142.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
 
 ## Träger (Prosa, eigene)
@@ -58,7 +60,8 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md` (River 142 geschnitten
 - `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md` — Objektophilie-Verdikt; angewandt 2026-10-07 (River 129).
 - `docs/concepts/remove-bias.md` — der Bias-Tilgungsplan (WP0–WP13); WP13-Fixtures gebaut (`47706add5`).
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — Sonnen-Render-Archäologie nebra→HEAD + Kanal-Runden-Verdikt.
-- `state/stimmen/2026-10-09-river-acoustic-partials.md` — Rohprotokoll der vollen Stimmen-Runde (Rat + UI + Open-Weight).
+- `state/stimmen/2026-10-09-river-acoustic-partials.md` — Rohprotokoll der vollen Stimmen-Runde (Rat + UI + Open-Weight) der 9-Partial-Frage.
+- `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` — Rohprotokoll der Ton-Modell-Runde (Wissenschaft + Rat + Duck/Claude/Qwen + DeepSeek V4 Pro); Träger von P0.5.
 - `docs/concepts/kanal-ontologie-komplettbau.md` — **der komplette Bauplan** (feste 9 → Kapazität 2ⁿ + lebendiges n; Phasen P0–P9); Träger dieser Linie.
 
 ## An mountain
@@ -118,7 +121,7 @@ Origin: river-143 (Antwort auf mycelium-274 `## An river`).
 - **Trigger:** Operator-Wort (Ton-Modell) + Operator-Wort Kraft-Taxonomie (Mountain-Domäne).
 - **Lage:** (gemessen 2026-10-09, River 142; Frontier- + Mid-Runde + `archive_search --all` ×2) **Near-unanim über alle Tiers:** (1) `electric` ⊂ `em`; (2) `thermal` ≡/⊂ `diffusion`; (3) `acoustic`/`seismic-body`/`seismic-surface` = **ein** elastisches Medium (`elastic` + Modus-Parameter); (4) fehlend: chemisches Potential/Reaktionskinetik, ionisierende Teilchenstrahlung, quasistatisches Magnetfeld, MHD/Kapillarität; (5) `strong`/`weak` explizit ausschließen; (6) sauberer: Feld/Antrieb × Transportkern × Medium als Produkt. **Ton:** das harmonische `(k+1)`-Modell ist der **schwächste** Kandidat (Oktav-/Chroma-Kollaps, Maskierung); konvergent besser: **inharmonische Partialtöne** (Bessel-Moden `1 · 1,59 · 2,14 · 2,30 · 2,65 · 2,92 · 3,16 · 3,50 · 3,60`) **+ Formant-/ERB-Bänder**, **Timbre-Raum**, **granular** für Transientes. **Riss:** ein gemeinsames τ existiert nicht → f0 nur Referenzdrohne. Protokoll: `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md`; `pending`: Z.ai Deep Think Max, Qwen-UI.
 - **Blockade:** keine.
-- **Braucht:** (a) **Operator-Wort** zur Kraft-Taxonomie (`## An mountain`: `electric`/`thermal`/`acoustic` zusammenführen, neue Medien nur bei Bedarf); (b) **Ton-Modell vor P2.3 klären** — der Umbau macht es zu einem **anderen** Modell: heute Slot→(k+1)-te Harmonische (`acoustic_partials`), nach dem Umbau **deskriptorgetrieben** (lebendiges n, Medium/Operator → Partial-/Bandsatz), slot-indiziert ist mit A=A nicht haltbar; Protokoll `state/stimmen/2026-10-09-river-kraefte-tonmodelle.md` (inharmonisch/Bessel + ERB-/Formant-Bänder); (c) unabhängig bleibt die `v_k`-Bindung.
+- **Braucht:** (a) **Operator-Wort** zur Kraft-Taxonomie (`## An mountain`: `electric`/`thermal`/`acoustic` zusammenführen, neue Medien nur bei Bedarf); (b) ~~Ton-Modell vor P2.3 klären~~ **erledigt (River 143): volle Runde gefahren** — das Ton-Modell ist **Ableitung, keine Zuordnung** (`f_j = ω_𝒯(k_j^M)/2π`, Dispersion aus 𝒯, Quantisierung aus M; elliptisch = Durchreicher, nicht Stille; q=0/ω=0 stumm in jedem 𝒯); der **Riss** ist die Receiver-Schicht (ERB/Bark = deklarierte `ReceiverAperture`, nicht aus (q,𝒯,M) ableitbar). Als **P0.5** in den Bauplan gefaltet (`kanal-ontologie-komplettbau.md`), vor P1/P2.3. Protokoll `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md`; (c) unabhängig bleibt die `v_k`-Bindung.
 
 ### Kanalzahl (A=A) + Senken-Projektion — feste 9 ist kein A=A
 - **Status:** eigen · Bau | **Bindung:** eigen
@@ -145,7 +148,10 @@ Origin: river-143 (Antwort auf mycelium-274 `## An river`).
 Pfad-begrenzte Commit-Pfade dieser Session (River 143):
 
 - `tools/measure/src/bin/field_te_query.rs` (mycelium-274-Adressblock gefaltet: `fanout_center: None` im Test-Modul; `bias_column` benannter Arm `neff_absent`; Grid/`quantile_sorted` auf `Option<f64>` statt NaN)
+- `docs/concepts/kanal-ontologie-komplettbau.md` (P0.5 Ton-Relation gefaltet; P2.3/P6.2 an P0.5 gebunden)
 - `docs/handover/handover-2026-10-09-river-folge143.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge142.md` (Move)
 
-## Burn: open 0.0000 · close 0.1363 · cap 0.5 · Grund: mycelium-274-Adressblock gefaltet (`field_te_query.rs` NaN/`fanout_center`-Heilung); Operator-Wort „Ja" (Kanalzahl-Umbau) + Ton-Modell-vor-P0 registriert; `cargo check` + `cargo build -p omegaflow-measure --bin field_te_query` grün (deepseek-flash, `session_burn` line-Delta, gemessen 2026-10-09) · kein pro/max
+Nicht committet (gitignored, Session-Artefakt): `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` (Rohprotokoll), `state/operator-gespraeche/2026-10-09-river.md` (die River-143-Worte geschnitten).
+
+## Burn: open 0.0000 · close 0.335 (line 0.287 + general 0.048 in der Runde) · cap 0.5 · Grund: mycelium-274-Adressblock gefaltet (`field_te_query.rs`); Operator-Wort „Ja" (Kanalzahl-Umbau); volle Ton-Modell-Runde (`archive_search --all` + 2 Taucher + Rat + Duck/Claude/Qwen + DeepSeek V4 Pro), Verdikt als P0.5 in den Bauplan gefaltet; `cargo check` + `cargo build -p omegaflow-measure --bin field_te_query` grün (deepseek-flash, `session_burn`, gemessen 2026-10-09) · kein pro/max
