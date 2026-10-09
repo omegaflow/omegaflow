@@ -6,6 +6,7 @@ pub enum Magic {
     Gzip,
     Hdf5,
     NetCdf,
+    Cdf,
     Tiff,
     Unrecognized,
 }
@@ -23,6 +24,8 @@ pub fn magic_identity(bytes: &[u8]) -> Magic {
         Magic::Gzip
     } else if bytes.starts_with(b"\x89HDF\r\n\x1a\n") {
         Magic::Hdf5
+    } else if bytes.starts_with(&[0xcd, 0xf3, 0x00, 0x01]) {
+        Magic::Cdf
     } else if bytes.starts_with(b"CDF\x01") || bytes.starts_with(b"CDF\x02") {
         Magic::NetCdf
     } else if bytes.starts_with(b"II*\x00") || bytes.starts_with(b"MM\x00*") {
@@ -80,6 +83,14 @@ mod tests {
     fn netcdf() {
         assert!(matches!(magic_identity(b"CDF\x01rest"), Magic::NetCdf));
         assert!(matches!(magic_identity(b"CDF\x02rest"), Magic::NetCdf));
+    }
+
+    #[test]
+    fn cdf3() {
+        assert!(matches!(
+            magic_identity(&[0xcd, 0xf3, 0x00, 0x01, 0x00, 0x00]),
+            Magic::Cdf
+        ));
     }
 
     #[test]
