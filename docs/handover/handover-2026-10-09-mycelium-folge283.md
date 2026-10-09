@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Der Rust-Refresh-Arm ist am ersten Lauf verifiziert (sources-refresh 37970858064 success, data-Snapshot 415a14b; sources-README auf den Rust-Arm gezogen). PETREL19-CDN success (37966130284), der pending-Eintrag geschlossen. Mountains dropped-gate-Verdikt gelandet (canonical_point_key = kurzer Namenskopf, Baseline neu gezogen); die zwei tools-build-Fehler der 282 geheilt. Vier Kontraktfragen (USGS-Extract, Keogramm-Form, terms-Granularität, DTM-quantity) durch archive_search --all → Rat → 8 UI-Seats gefahren; zwei grind-flash-Dispatches (USGS-Arm, Keogramm-Referenz) endeten in gemessenen STOPs — der Baum korrigierte die Vorlage; Risse benannt.
   class: handover
   date: 2026-10-09
-  sha256: 06440f6a0554b548ec6a24ba4060c7cd8a4752628a35650c75de071ca12e6c61
+  sha256: b77e67921b4b91932b94254ab51273311002137096f195391bd7debe6eba8100
   status: live
 -->
 # Handover — Mycelium-Folge 283 (2026-10-09)
@@ -29,6 +29,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „2 und sind die bilder nicht daten so wie vp4 oder wie es heisst bzw. in den jpgs müssen doch metainformationen stehen" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Keogramm als Datenquelle prüfen + JPEG-Metadaten messen — Keogramm = relative Rasterkarte (Daten); JPEG trägt **nur `JFIF`** (kein Exif/COM), Station/Datum nur im Dateinamen; Raster-Form offen.
 - „1 ist klar aber 2 habe ich keine ahnung gibt es keine alternativen aurora bilder die wir besser nutzen können?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** Alternativen-Recherche — THEMIS ASI Level-1 (CDF), AuroraX, SSUSI/GUVI (CDF, kalibriert), VIIRS-DNB (kein Aurora-Produkt); Auswahl bleibt Operator-Wort.
 - „kannst du die drei bitte vermessen?" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** THEMIS-ASI-, AuroraX- und SSUSI-Endpunkte gepinnt (HTTP 200, content-type, sha256) — siehe Keogramm-Punkt.
+- „so machen" | 2026-10-09 | Quelle: mycelium-283. **Konsequenz:** THEMIS + SSUSI als Quellen führen, AuroraX als Finder. Messung: SSUSI **bereits registriert** (`sources.φ:1904`); THEMIS ASI braucht einen CDF-Leser (→ `## An mountain`); AuroraX = Werkzeug.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge281.md` §Operator-Wort-Register (und folge280) — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-283.
 
 ## Offen — eigen
@@ -89,13 +90,26 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** keiner mehr (Form steht).
 - **Braucht:** Bau: neuer `ExtractResult`-Riss-Arm (beide Längen + k) + GeomagParallel + Consumer + Test, `cargo check` grün; danach `sources.φ`-Zeile (Mycelium) + Mountain `field`/`terms`/`ttl`.
 
-### Keogramm — Raster-Datenquelle (nicht Referenz, nicht Feld)
-- **Status:** wartend | **Bindung:** eigen (Form) · operator/rat
-- **Trigger:** Form-Wort über die Raster-Quellen-Registrierung
-- **Lage:** (gemessen 2026-10-09) **Operator-Frage 2** hat die Vorlage gekippt: Keogramme **sind Daten** — eine relative 8-Bit-Intensitätskarte (x = Zeit UT, y = geografische Breite; FMI-Wissenschaftsguide + THEMIS-Katalog). **JPEG-Metadaten widerlegt (gemessen):** `ABK_160115.jpg` trägt **nur `JFIF`** — kein `Exif`, kein `COM`, keine Station/Zeit im JPEG; Station+Datum leben **nur im Dateinamen** (`ABK_160115.jpg`). Der Baum kann die Pixel lesen: `archivar::tiff::decode_jpeg_raster` (Baseline SOF0/1) → `keogram.rs brightness_columns()` nutzt es bereits; progressiv → `pending`. Als **Feld** bleibt der `decline` (`declined_sources.φ:4152`) korrekt (kein SI-Wert/`force_type`). Korrekte Klasse: **relative Raster-Datenquelle, filename-getragen**.
-- **Gepinnte Alternativen (gemessen 2026-10-09 via `--verdict`/curl, volle Downloads):** **THEMIS ASI Level-1** `https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf` HTTP 200 `application/x-netcdf` (16 860 759 B, sha256 `eb14b19bf0380d7d4b4313fa300e47aed07c62768dc756314c5157423248cef6`) — CDAWeb `…/themis/thg/` trägt kein `asi/`, UCalgary liefert `.pgm.gz`/`.h5`, CDF nur unter `themis.ssl.berkeley.edu` · **AuroraX** `https://api.aurorax.space/api/v1/availability/data_products` HTTP 200 JSON (347 567 B; weitere `/data_sources`, `/availability/ephemeris`) · **SSUSI** `https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf18/ssusi/data/l1b/2024/100/dmspf18_ssusi_l1b_2024100T014541-2024100T032732-REV074659_vA8.2.0r000.nc` HTTP 200 `application/x-netcdf` (82 072 705 B, sha256 `0a85fe2d02e2fa3c5e2afef337cb229097cac799c16e6c30ae47536cecd98460`), CDAWeb-Dataset `DMSPF18_R0_SSUSI` (F16/F17 analog). `unbelegt`: GUVI-Dateiendpunkt, UCalgary-`keograms` (301 ohne Location), data.gov-API.
-- **Blockade:** die Wahl der Quelle (FMI-JPEG vs. THEMIS-ASI-CDF vs. SSUSI vs. AuroraX) und die Form, sie zu registrieren.
-- **Braucht:** Operator-Wort, welche Quelle genutzt wird; dann CDF/NetCDF-Reader-Arm + `sources.φ`-Zeile (Mycelium/Arm-Träger).
+### Aurora — Quellen-Entscheid (Operator-Wort „so machen")
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (CDF-Leser)
+- **Trigger:** Mountains `cdf-reader`-Arm (THEMIS ASI)
+- **Lage:** (gemessen 2026-10-09) Keogramme **sind Daten** (relative 8-Bit-Karte, Zeit × Breite); FMI-JPEG trägt **nur `JFIF`** (kein Exif/COM), Station/Datum nur im Dateinamen — als Feld bleibt der `decline` (`declined_sources.φ:4152`) korrekt. **SSUSI ist BEREITS registriert** (`phi/sources.φ:1904` `ssusi_aurora`; `ssusi_compiler.rs`; `origin …/dmspf16/ssusi/data/edr-aurora/`; Felder `ssusi_hemisphere_power_north/south` GW) — die kalibrierte Satelliten-Aurora existiert schon, nichts zu registrieren. **THEMIS ASI (Boden-Keogramm) ist neu** — gepinnt `https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf` (HTTP 200; voller Download 16 860 759 B sha256 `eb14b19bf0380d7d4b4313fa300e47aed07c62768dc756314c5157423248cef6`; `--sniff` Magic **unrecognized** → NASA-CDF, **kein Leser im Baum**). SSUSI-`.nc` snifft **hdf5** (`src/archivar/netcdf.rs`/`hdf5.rs` vorhanden). **AuroraX** `https://api.aurorax.space/api/v1/availability/data_products` HTTP 200 JSON = Finder/Verzeichnis, **keine Messung** → Werkzeug, keine Quellenzeile. FMI-JPEG = schwächste Variante (nie registriert, nichts zu demoten).
+- **Blockade:** der CDF-Leser für THEMIS ASI (Mountain).
+- **Braucht:** Mountain-Arm `cdf-reader` → dann THEMIS-ASI-`sources.φ`-Block (Mycelium); AuroraX als Finder (Handover-Werkzeug); SSUSI closed.
+
+### Solar VSO / IRIS — `sources.φ`-Zeile + Workflow offen
+- **Status:** wartend | **Bindung:** eigen (Manifestation)
+- **Trigger:** `iris_compiler.rs` steht (gebaut) → Zeile/Workflow offen
+- **Lage:** (gemessen 2026-10-09) `phi/blocked_sources.φ:62` `pending` `https://vso.stanford.edu/`; VSO POST 411; IRIS HCR-API `www.lmsal.com/hek/hcr` → `comp_data_url`; FITS 200 (9 207 360 B). Kein Parser-Gap.
+- **Blockade:** keiner.
+- **Braucht:** `sources.φ`-Zeile + CDN-Workflow (Mycelium).
+
+### LAIC CSSDC — Register-URL ohne Wissenschaft
+- **Status:** wartend | **Bindung:** eigen (Register-Riss)
+- **Trigger:** Wayback-Re-Messung frei (`archive_search --verdict`) oder LEOS-Umzug gemeldet
+- **Lage:** (gemessen 2026-10-09) `phi/blocked_sources.φ:66` `pending`; `cssdc.ac.cn`/`/en/` liefern identisch eine Telegram-APK-Advert-Seite (kein Datenportal); Wayback 2018–2026 Snapshots unread (429). Kein Parser-Gap.
+- **Blockade:** die Register-URL trägt keine Wissenschaft mehr.
+- **Braucht:** Wayback-Re-Messung (`archive_search --verdict`) oder LEOS-Umzug prüfen; dann URL-Verdikt.
 
 ## Rat + UI — Kontraktvorlagen (2026-10-09)
 
@@ -122,7 +136,7 @@ Origin: mycelium-283 (2026-10-09) — bittet um die Register-/Tooling-Verdikte, 
 
 - **`terms`-Format:** `phi/sources.φ` trägt `terms <SPDX> <url>` je Block. Vorlage: **pro Quelle** speichern (Truth), netloc nur berechnet, inhomogener Host → `mixed`. Bitte das Format-Verdikt (netloc-keyed vs. pro-Quelle). Der Riss `license_census` no-terms **827** vs. `sources_repo_license` **1359** ist ein **Populations-Riss**, kein Mittelwert: Teilmengen-Relation (827 ⊆ 1359?) messen oder beide Zählungen mit Definition führen (`tools/register/src/bin/license_census.rs:221` vs. `sources_repo_license.rs:150`).
 - **USGS-`ExtractResult`-Riss-Arm + `GeomagParallel` (Archivar-Kontrakt, Operator-Wort 1b):** neuen `ExtractResult`-Arm bauen, der die Längen-Divergenz trägt — beide Längen + erstes divergentes `k` als Zeugen (kein Pad, kein Truncate, keine Imputation; CF/pandas-Muster belegt, `/tmp/omegaflow_all_1791573066_…txt`). Dazu den `GeomagParallel`-Arm: ein `(Channel,FieldConfig)` je `values[i]`, Name/Unit aus `values[i].metadata.element` (`usgs_geomag_compiler.rs:199-214`), **nicht** `values[i].id`; `COLUMNS` öffentlich machen. Danach braucht `sources.φ` die Zeile (`ttl` ungemessen → `pending`) — die schreibt Mycelium.
-- **Keogramm — Raster-Datenquelle:** die Form „Referenz vs. Feld" ist gekippt; Keogramm = relative 8-Bit-Rasterkarte (Zeit × Breite), FMI-JPEG **ohne** Exif/COM (nur `JFIF`), Station/Datum im Dateinamen; `archivar::tiff::decode_jpeg_raster` (Baseline) liest den Raster, `keogram.rs` nutzt ihn. Bitte um Mountains Form-Verdikt für relative Rasterquellen (kein Wire-Feld, keine reine Referenz).
+- **Aurora THEMIS ASI — CDF-Leser (Operator-Wort „so machen"):** das Boden-Keogramm `https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf` (HTTP 200, NASA-CDF, `--sniff` Magic **unrecognized** → **kein Leser im Baum**; SSUSI ist bereits registriert `sources.φ:1904`). Bitte `cdf-reader`-Arm + `format cdf` bestimmen, dann registriert Mycelium den `sources.φ`-Block. AuroraX bleibt Finder/Werkzeug, keine Quelle.
 - **DTM-Wire-Slot:** der neue `quantity`/Slot ist ein **Kontrakt-Akt** (Operator/Rat), nicht Mountains Registerzeile; Mountain liefert erst nach dem Slot-Verdikt `field`/`terms`.
 
 ## An river
