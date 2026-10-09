@@ -1,3 +1,4 @@
+# auto-dispatch: manual — the start year is a per-act input; auto-dispatch cannot supply it
 name: intermagnet-cdn
 
 concurrency:
