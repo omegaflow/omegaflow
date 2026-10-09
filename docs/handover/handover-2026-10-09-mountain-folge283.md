@@ -3,7 +3,7 @@
   session: Mountain-Folge 283
   class: handover
   date: 2026-10-09
-  sha256: c730733083e7f680965f274cd65184e84d5ac34e200516f02c0129101ccf27a1
+  sha256: be848c96afed9a5056a6e137f51c8cf3abf33a8679fb496cb272b23eace33b20
   status: live
 -->
 # Handover — Mountain-Folge 283 (2026-10-09)
@@ -34,6 +34,7 @@ Wort | Datum | Quelle
 „was ist mit den 140 pending? und hast du die mail von wei gesehen" | 2026-10-09 | Operator (Session, Mountain 283)
 „ja bitte" — per-Record-Hosts (Zenodo/EarthScope) je Datensatz auflösen | 2026-10-09 | Operator (Session, Mountain 283)
 „ja bitte alles" — (a) Kontaktadresse, (b) Regel `ohne-lizenz ⇒ nicht spiegeln`, (c) die 27 lokal halten/schließen, (d) einzeln anschreiben | 2026-10-09 | Operator (Session, Mountain 283)
+„wir sind immer noch nicht opensource" — omegaflow ist source-available (PolyForm NC/CC BY-NC-SA), NIE „open-source" nennen | 2026-10-09 | Operator (Session, Mountain 283)
 
 ## Offen (aufgeschlüsselt)
 
@@ -101,7 +102,7 @@ Origin: mountain-folge283.
 
 Origin: mountain-folge283.
 
-- **Redistributions-Rechte — Operator-Wort „ja bitte alles" (2026-10-09), ausgeführt:** (a) Takedown-Adresse `code@omegaflow.space` im `NOTICE` (`00acd77c`). (b) Regel **`ohne-lizenz ⇒ nicht spiegeln`** gebaut — `license_census` flaggt `terms ohne-lizenz` + CDN-Mirror-`url` als `terms-redistribution VIOLATION` (+ Test); **23 gespiegelte `ohne-lizenz`-Blöcke** aus `sources.φ` nach `declined_sources.φ` (`decline redistribution`); `harvest.φ`-Slots entfernt. (c) die 23: IMCCE/SuperMAG lokal zu halten, Rest geschlossen (Notiz je Eintrag); die 4 direkten (nicht gespiegelten: maxi/ldeo/uhslc/linea) bleiben. **(d) vorbereitet** (Future war beschäftigt, Mountain übernahm): zwei Entwürfe `state/mail/imcce-inpop-lizenz-2026-10-09.body.txt` und `state/mail/supermag-lizenz-2026-10-09.body.txt`, QUELLEN je `state/mail/lizenz-anfragen-2026-10-09.md:1-6`, `smail --dry-run` grün (nichts gesendet). **Send = Operator-Hand:** `smail --to inpop.imcce@obspm.fr --subject "…" --body state/mail/imcce-inpop-lizenz-2026-10-09.body.txt --send` bzw. `smail --to supermag@listserv.jhuapl.edu --cc Jesper.Gjerloev@jhuapl.edu --body state/mail/supermag-lizenz-2026-10-09.body.txt --send`. Bitte in die Operator-Queue falten. Kein vorheriger Mail-Thread mit beiden (gemessen, `mail_ledger.φ` leer für imcce/supermag).
+- **Redistributions-Rechte — Operator-Wort „ja bitte alles" (2026-10-09), ausgeführt:** (a) Takedown-Adresse `code@omegaflow.space` im `NOTICE` (`00acd77c`). (b) Regel **`ohne-lizenz ⇒ nicht spiegeln`** gebaut — `license_census` flaggt `terms ohne-lizenz` + CDN-Mirror-`url` als `terms-redistribution VIOLATION` (+ Test); **23 gespiegelte `ohne-lizenz`-Blöcke** aus `sources.φ` nach `declined_sources.φ` (`decline redistribution`); `harvest.φ`-Slots entfernt. (c) die 23: IMCCE/SuperMAG lokal zu halten, Rest geschlossen (Notiz je Eintrag); die 4 direkten (nicht gespiegelten: maxi/ldeo/uhslc/linea) bleiben. **(d) vorbereitet** (Future war beschäftigt, Mountain übernahm): zwei Entwürfe `state/mail/imcce-inpop-lizenz-2026-10-09.body.txt` und `state/mail/supermag-lizenz-2026-10-09.body.txt`, QUELLEN je `state/mail/lizenz-anfragen-2026-10-09.md:1-6`, `smail --dry-run` grün (nichts gesendet); Entwürfe auf **„source-available, not open-source"** korrigiert (Operator-Wort „wir sind immer noch nicht opensource"), Gate-Fixture `open-source research project`/`open-source non-commercial` + Test in `commit_gate.rs`. **Send = Operator-Hand:** `smail --to inpop.imcce@obspm.fr --subject "…" --body state/mail/imcce-inpop-lizenz-2026-10-09.body.txt --send` bzw. `smail --to supermag@listserv.jhuapl.edu --cc Jesper.Gjerloev@jhuapl.edu --body state/mail/supermag-lizenz-2026-10-09.body.txt --send`. Bitte in die Operator-Queue falten. Kein vorheriger Mail-Thread mit beiden (gemessen, `mail_ledger.φ` leer für imcce/supermag).
 
 ## LOCK
 

@@ -3187,6 +3187,14 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_open_source_claim() {
+        let mut g = test_gate();
+        let args = r#"{"filePath":"docs/x.md","newString":"omegaflow, an open-source research project"}"#;
+        let v = g.check_tool_call("write", args).unwrap();
+        assert_eq!(v.rule, "fabrication");
+    }
+
+    #[test]
     fn forbidden_words_not_flagged_in_text() {
         let mut g = test_gate();
         assert!(g.check_text("the channel default was hit").is_none());
