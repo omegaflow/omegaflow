@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 73f7b06f7a46c987fe30157032a11bccae192494e2a8a18a55c1768f0c2a54d4
+  sha256: 2a506b5fb427c5ae0565b8ac83a2ac8fd47e7df6a32efc11c62e8a59c513a6f8
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -42,9 +42,10 @@ Wort | Datum | Quelle
 „hast du die modelle nach stärke gewichtet?" | 2026-10-09 | Operator (Session, River 148) — Verdichtung war konvergenz-gezählt; explizite Stärke-Gewichtung nachgeführt (`…achsen-runde.md` §Stärke-Gewichtung): Riss A 15.35 : 0.9, Riss B 15.35 : 1.25, Kante 4. Achse Domain/Rand
 „warum führst du future lock punkte?" | 2026-10-09 | Operator (Session, River 160) — River trägt keine Future-LOCK-Punkte; Förder-Bewerbungen leben in Futures Operator-Queue
 „bitte mach das jetzt einfach mal fertig Eigenmode-Arme … Empfänger-Apertur, USGS ExtractResult riss-arm (Mountain), CI-Verifikation … dropped-gate, Flyby (termin:2026-11-01)" | 2026-10-09 | Operator (Session, River 160) — offene Punkte bis zur Kante fertigmachen
+„ja natürlich die membran ist und bleibt ein schnitt durch den 4d block egal ob jemand hinschaut oder nicht (schrödingers katze)" | 2026-10-09 | Operator (Session, River 160) — die Messung ist beobachterunabhängig; der Doppler-Term (an `v_obs`/Blick) ist gestrichen, nicht pending
 
-Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Zwei neue Worte in
-River 160 (die letzten zwei Register-Zeilen). Vorherige Worte in
+Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Drei neue Worte in
+River 160 (die letzten drei Register-Zeilen). Vorherige Worte in
 `docs/handover/archiv/handover-2026-10-09-river-folge159.md` §Operator-Wort-Register — gefaltet,
 nicht kopiert.
 
@@ -70,29 +71,6 @@ Origin: river-160.
   Mycelium's; `register_sort`/`license_census`/`cdn_reconcile` als Gate.
 
 ## Offen (aufgeschlüsselt)
-
-### Membran-Ton — Per-Kanal-Phase/Delay (`k_k·r_k`) binden
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, river-160) **Volle Stimmen-Runde gefahren** (Rat 5/5 + Claude 5.5 +
-  MiniMax M3 + DeepSeek V4 Pro + DeepSeek Chat, nach `archive_search --all`):
-  `state/stimmen/2026-10-09-river-vk-delay-phase.md`. **Verdikt:** `v_k = c_k` ist nur der
-  dispersionsfreie Spezialfall; die kanalspezifische Größe ist die Wellenzahl `k_k` (aus der
-  Dispersionsrelation/Geometrie), `v_{p,k} = ω_k/k_k`; Kanal-Phase `φ_k = k_k·r_k`, Laufzeit
-  `τ_k = r_k/v_{g,k}` (Gruppen-, nicht Phasengeschwindigkeit); `k_k` speichern, nicht `v_{p,k}`;
-  Doppler nur mit zwei deklarierten Weltlinien. Heute fehlen `k_k`/`r_k` in `PresenceFrame`
-  (`actuators.rs`/`relay.rs`); `probe_flow` (`omega.rs:199`) ist deklariert, nie geschrieben.
-  `pending` (gemessen, ohne Turn): Duck (Tageslimit), Qwen (Netzwerkfehler), Lumo (Limit), Mistral
-  (Fehlerseite), Gemini (kein Turn), Z.ai (Thinking ohne Antwort). **Gebaut (river-160):** (1)
-  `ChannelDescriptor::carrier_wavenumber()` + `phase_velocity_m_s()` (Scalar-only; Test `v_p = c` für
-  Fluid/Erde, `None` für elastisch); (2) Per-Kanal-`phase_k` in `acoustic_partials`/`acoustic_pcm`
-  (die globale `phase` ist heraus, kein 1-s-Wrap-Klick); (3) `presence_probe` akkumuliert je Kanal die
-  amplitudengewichtete Quell-Distanz → `probe_r` → `PresenceFrame.delay_rad[k] = k_k·r_k`;
-  `acoustic_partials` trägt `sin(phase_k − delay_k)` (`r_k=0` → kein Delay, null-echt). Tests
-  (`a_channel_delay_shifts_its_partial`). **Korrektur:** `probe_flow` WIRD geschrieben (`omega.rs:1012`).
-- **Blockade:** keine (step 3 steht; `cargo check --tests --features browser_relay` grün).
-- **Braucht:** (4) Doppler `f'_k = f_k·(v_{p,k}+u·n̂_k)/(v_{p,k}−w·n̂_k)` — braucht **zwei deklarierte
-  Weltlinien** (Quellenposition + Empfänger-Blick `self.v`); bis dahin `pending`, kein Fabrikat.
 
 ### Membran — das Feld am SSB messen und als Asset backen
 - **Status:** eigen | **Bindung:** eigen
