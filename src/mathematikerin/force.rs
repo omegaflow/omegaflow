@@ -24,6 +24,7 @@ pub enum QuantityKind {
     Intensity = 4,
     Index = 5,
     Impedance = 6,
+    Relative = 7,
 }
 
 pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
@@ -35,6 +36,7 @@ pub fn quantity_kind_of(name: &str) -> Option<QuantityKind> {
         "intensity" => Some(QuantityKind::Intensity),
         "index" => Some(QuantityKind::Index),
         "impedance" => Some(QuantityKind::Impedance),
+        "relative" => Some(QuantityKind::Relative),
         _ => None,
     }
 }
@@ -48,6 +50,7 @@ pub fn quantity_kind_name(kind: QuantityKind) -> &'static str {
         QuantityKind::Intensity => "intensity",
         QuantityKind::Index => "index",
         QuantityKind::Impedance => "impedance",
+        QuantityKind::Relative => "relative",
     }
 }
 
@@ -278,6 +281,13 @@ mod tests {
         }
         assert_eq!(force_id_of("biotic"), None);
         assert_eq!(force_name_of(9), None);
+    }
+
+    #[test]
+    fn test_relative_quantity_kind_roundtrip() {
+        assert_eq!(quantity_kind_of("relative"), Some(QuantityKind::Relative));
+        assert_eq!(quantity_kind_name(QuantityKind::Relative), "relative");
+        assert_eq!(quantity_kind_id(QuantityKind::Relative), 7);
     }
 
     #[test]
