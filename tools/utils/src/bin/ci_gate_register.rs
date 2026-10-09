@@ -126,8 +126,9 @@ fn verdict_of_check(check_runs: &[JsonVal], required: &str) -> (String, Vec<(Str
     let verdict = match decisive {
         None => "pending".to_string(),
         Some((_, state)) => match state.as_str() {
-            "success" | "neutral" | "skipped" => "green".to_string(),
-            "queued" | "in_progress" | "waiting" | "requested" | "pending" => "pending".to_string(),
+            "success" | "neutral" => "green".to_string(),
+            "queued" | "in_progress" | "waiting" | "requested" | "pending" | "skipped"
+            | "cancelled" => "pending".to_string(),
             _ => "red".to_string(),
         },
     };
@@ -286,6 +287,22 @@ mod tests {
     fn absent_required_check_reads_pending_never_green() {
         let v = runs(
             r#"{"check_runs":[{"name":"other","status":"completed","conclusion":"success"}]}"#,
+        );
+        assert_eq!(verdict_of_check(&v, "subset").0, "pending");
+    }
+
+    #[test]
+    fn skipped_required_check_reads_pending_never_green() {
+        let v = runs(
+            r#"{"check_runs":[{"name":"subset","status":"completed","conclusion":"skipped"}]}"#,
+        );
+        assert_eq!(verdict_of_check(&v, "subset").0, "pending");
+    }
+
+    #[test]
+    fn cancelled_required_check_reads_pending_never_red() {
+        let v = runs(
+            r#"{"check_runs":[{"name":"subset","status":"completed","conclusion":"cancelled"}]}"#,
         );
         assert_eq!(verdict_of_check(&v, "subset").0, "pending");
     }
