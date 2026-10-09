@@ -2,15 +2,15 @@
   title: Sonnen-Render-Archäologie — nebra bis HEAD, jede Variante
   class: survey
   date: 2026-10-08
-  sha256: 4dad549b7c396d9f9bcd235f48ba535aaf99c93debf10a3473d31b13703c468b
+  sha256: 15a8eef8522882570804cf4ff248844337b8d516f3a765718c8b8a4ee8c6cdcf
   status: live
-  see-also: docs/concepts/archivar-mathematikerin.md docs/handover/handover-2026-10-08-river-folge139.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/handover/archiv/handover-2026-10-08-river-folge139.md
 -->
 # Sonnen-Render-Archäologie — nebra bis HEAD, jede Variante
 
 **Quellen (gemessen 2026-10-08 via `git -C` Pickaxe + `sread`):**
-- `omegaflow-legacy` (Git-Repo, `/home/johannes/archive/archive-root/omegaflow-legacy`; 2867 Commits, ~40 lokale Branches + ~40 `origin/*`, 40 Tags). Render-Code in `static/index.html` (Browser, WGSL/JS eingebettet) + `src/main.rs` (nativ).
-- `nebra`-Referenz auf Platte (kein git: `/home/johannes/archive/knowledge/omegaflow/omegaflow_water/reference/nebra`; `crates/nebra-core/src/field.rs`, `crates/nebra-api/src/main.rs`, `docs/nebra.yaml`).
+- `omegaflow-legacy` (Git-Repo, `archive-root/omegaflow-legacy`; 2867 Commits, ~40 lokale Branches + ~40 `origin/*`, 40 Tags). Render-Code in `static/index.html` (Browser, WGSL/JS eingebettet) + `src/main.rs` (nativ).
+- `nebra`-Referenz auf Platte (kein git: `$HOME/archive/knowledge/omegaflow/omegaflow_water/reference/nebra`; `crates/nebra-core/src/field.rs`, `crates/nebra-api/src/main.rs`, `docs/nebra.yaml`).
 
 Die Sonne ist **kein Sonderfall im Code** — sie ist ein Oszillator/Körper unter vielen; jede Variante ist die Variante der ganzen Pipeline. Der Token `Sonne` existiert 0× im Code; `sun` nur in Orbital-Listen/`/jump/sun`.
 
