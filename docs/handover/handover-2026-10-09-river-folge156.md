@@ -3,7 +3,7 @@
   session: River-Folge 156
   class: handover
   date: 2026-10-09
-  sha256: 14f7807b0cb31a3893175870de97d7ab5e481048316ec425452b7ff11f8e14dc
+  sha256: 8bba8bc562380c4718824c999d7fdd185bb01739f0cbc92f5b2e840f422a1da6
   status: live
 -->
 # Handover — River-Folge 156 (2026-10-09)
@@ -69,7 +69,7 @@ Origin: river-156.
 - **Lage:** (gemessen 2026-10-09, river-156) Rat + Wissenschaft (`--all`) + Frontier-UI (Claude Sonnet 5.5, Z.ai GLM-5.3 Deep Think, Qwen3.7-Plus, Duck/Haiku) + Open-Weight (DeepSeek V4 Pro) konvergent (`state/stimmen/2026-10-09-river-eigenmode-armen.md`). **Gebaut:** `ChannelDescriptor::effective_boundary` (`channel.rs:236-244`) bindet `FreeSurface` an `medium` (Fluid→Dirichlet = Druckentlastung, ElasticSolid→Neumann = traction-free); der bare `(Line, FreeSurface)`-Union ist entfernt → `eigen_wavenumbers(Line, FreeSurface)` = `None` (Stille); Tests `a_bare_free_surface_has_no_closed_spectrum`, `a_free_surface_binds_through_the_medium`, `a_sphere_dirichlet_is_the_l0_radial_sector`; `cargo check` grün, zero warnings.
 - **Blockade:** die zwei verbleibenden Schema-Akte sind Architektur: (a) **`Domain`-Arity** — Rectangle(Lx,Ly)/Schale(r_in,r_out)/Ellipsoid(a,b,c) brauchen ein Tupel/Enum in der `Domain` (macht `Domain` daten-tragend, verliert `Copy`/`Eq`; berührt `hash`, `parse`, alle `match`); (b) **`l`-Achse** für die `(2l+1)`-Kugel-Degeneration.
 - **Braucht:** Rat-Wort für den Domain-Schema-Akt (a) — der Rat hat die Richtung (Arity in die Domain, keine neue Achse), die Umsetzung ist ein Mehrdatei-Akt; `l` (b) ebenso. Danach `c`-Binding: `mode_frequency_hz(op, speed, k)` empfängt `speed` schon als gemessenes Argument — der Aufrufer (Archivar/Query) muss `c=c(medium,BodyProperties)` konstituieren. **Riss getragen (DeepSeek V4 Pro):** `c` live aus BodyProperties (Rat+Frontier-Mehrheit) vs. versionierte Register-Konstante (Referenztransparenz A=A) — die Auflösung ist offen.
-- **0-Kanon:** `(Sphere, FreeSurface)`/elastisch = `None` = Stille; `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — **nicht** auf die Arme geschaltet, bis `mode_frequencies_hz` einen nicht-leeren Kanal liefert.
+Elastischer Kugelrand und bare `(Sphere, FreeSurface)` liefern `None` (kein Ton). `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — **nicht** auf die Arme geschaltet, bis `mode_frequencies_hz` einen nicht-leeren Kanal liefert.
 
 ### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
 - **Status:** eigen | **Bindung:** eigen
@@ -129,6 +129,6 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 156):
 
 Gefaltet: `mountain-288` + `mycelium-283` (bereits river-155 gefaltet, im Archiv). `future-folge209`-Adressblock (`signal_cone_audit_probe.rs` / `DIFFUSIVITY_MOLECULAR`) **widerlegt**: `signal_cone_audit_probe.rs:7` importiert `DIFFUSIVITY_MOLECULAR` nicht mehr (durch river-154 geheilt) — kein Handlungsbedarf; der Sender kann den Block entfernen.
 
-Nicht committet (gitignored, Session-Artefakte): `state/stimmen/2026-10-09-river-eigenmode-armen.md` (Stimmen-Runde), `state/zustand/ui-open-weight.lock` (gesetzt/gelöscht in der Runde).
+Nicht committet (gitignored, Session-Artefakte): `state/stimmen/2026-10-09-river-eigenmode-armen.md` (Stimmen-Runde) und der `open-weight-ui`-Lock (in der Runde gesetzt und wieder gelöscht).
 
 ## Burn: open 0.0000 · close 0.1192 · cap 0.40 · Grund: Eigenmode-Rat-Runde (Rat + Wissenschaft `--all` + Frontier-UI + Open-Weight DeepSeek V4 Pro) + `effective_boundary`-FreeSurface-Bindung gebaut; kein pro/max · deepseek-flash · Session-Kosten per-session via `session_burn`.
