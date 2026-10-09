@@ -113,11 +113,11 @@ note CDS/Aladin Tianwen-1 MoRIC (NAOC/GRAS, CLPDS) — 2026-10-09: properties 20
 
 ausstehend
 kandidat https://pds.shadowcam.im-ldi.com/derived/
-note Danuri/KPLO ShadowCam PDS4 — 2026-09-29 HTTP 200 (13117 B) /derived/ verifizierbar; pds4.rs + pds4-fits-cdn.yml stehen; Verdikt 207: format pds4-fits, at moon, ttl 604800; Sample-Download Operator-Hand.
+note ShadowCam PDS4 — 2026-10-09: /derived/ 200 öffentlich; Produkte .cub (ISIS) + _cog.tif, KEIN .fits; pds4-fits-CDN ist Chang'e-MRM (widerlegt); tiff.rs-Reader steht. Nötig: ShadowCam-TIFF-Compiler + WF (Mountain-Admission).
 
-ausstehend
+disponiert
 kandidat https://gportal.jaxa.jp/
-note JAXA G-Portal — sources.φ:10370; jaxa_gportal_compiler.rs + jaxa-gportal-cdn.yml stehen; Katalog-Record nur Footprint-Zentren (lon/lat), kein Messwert → Reader descoped (Rat 2026-10-06). Offen: Record-Download, Quota. future-folge226.
+note JAXA G-Portal — Quellen sources.φ:10962-10968 + 2286-2292; Record-Download 2026-10-07 Run 37676047864: Login ok, fetch 200 153785337 B; nicht public; Compile-Riss FS/navigation/scLat unread. future-folge226.
 
 ausstehend
 kandidat https://clpds.bao.ac.cn/
