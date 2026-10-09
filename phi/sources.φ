@@ -4361,6 +4361,14 @@ at earth
 ttl 86400
 field ampere_fac_uam2 ampere_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/bepicolombo_plasma.bin
+terms CC-BY-4.0 https://zenodo.org/records/17813314
+format bepicolombo_plasma
+origin https://zenodo.org/api/records/17813314/files/SCE1_2021_HGA_MEANR4ONR6_KaTSelfCal_DST1Cal_60s_XX_KK_MT_plasmacalib.txt/content
+compiler tools/harvest/src/bin/bepicolombo_plasma_compiler.rs
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_cpcp.bin
 terms CC-BY-4.0 https://zenodo.org/records/10374021
 format superdarn_cpcp
@@ -10824,6 +10832,14 @@ field copernicus_wet_bulb_temperature copernicus_wet_bulb_temperature exponentia
 field copernicus_wind_from_direction copernicus_wind_from_direction gaussian-inverse-square advective deg 21600 0.0 0.0
 field copernicus_wind_speed copernicus_wind_speed gaussian-inverse-square advective m/s 21600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ebhis_hpx190.bin
+terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
+format ebhis_hpx_series
+origin https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/hpx/HPX_190.fit
+compiler tools/harvest/src/bin/ebhis_compiler.rs
+at sun
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/frb_chime_cat1.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://cdsarc.cds.unistra.fr/ftp/J/ApJS/257/59/table2.dat
@@ -11402,6 +11418,18 @@ field kcdc_grande_shower_age kcdc_grande_shower_age inverse-square em 1 604800 0
 field kcdc_general_air_temp_c kcdc_general_air_temp_c inverse-square thermal C 604800 0.0 0.0
 field kcdc_general_air_pressure_hpa kcdc_general_air_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
 field kcdc_lopes_efieldmax_v_m kcdc_lopes_efieldmax_v_m inverse-square electric V/m 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/lambda.gsfc.nasa.gov/cmb_act_f150_n64.json
+origin https://lambda.gsfc.nasa.gov/data/act/maps/published/act-planck_dr4dr6_coadd_AA_daynight_f150_map_srcfree_healpix.fits
+terms PD https://lambda.gsfc.nasa.gov/
+compiler tools/harvest/src/bin/cmb_act_compiler.rs
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field T cmb_act_f150_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/maxi.riken.jp/maxi_J0006+202.max1
 terms unknown https://maxi.riken.jp/
@@ -31113,20 +31141,3 @@ rows .
 lat 0
 lon 1
 field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ebhis_hpx190.bin
-terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
-format ebhis_hpx_series
-origin https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/hpx/HPX_190.fit
-compiler tools/harvest/src/bin/ebhis_compiler.rs
-at sun
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/bepicolombo_plasma.bin
-terms CC-BY-4.0 https://zenodo.org/records/17813314
-format bepicolombo_plasma
-origin https://zenodo.org/api/records/17813314/files/SCE1_2021_HGA_MEANR4ONR6_KaTSelfCal_DST1Cal_60s_XX_KK_MT_plasmacalib.txt/content
-compiler tools/harvest/src/bin/bepicolombo_plasma_compiler.rs
-at sun
-ttl 86400
-
