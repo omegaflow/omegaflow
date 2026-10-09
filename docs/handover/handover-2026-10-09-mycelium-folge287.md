@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 287 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). **Fünf Quellen-Arme registriert** (Keogramm, THEMIS ASI `e04be201a`; EBHIS + BepiColombo `05924d088`/`4bbb836dc`; ACT `4570ee30e`). Rat + voller UI-Roster (12 Seats; 8 geantwortet, 4 pending) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Register-Vokabel-Riss (`unbestimmt`→`unknown`) von Mountain geheilt (`1dd2e6385`+`1512ab02c`), Register kanonisiert. Offen: iris + Blinkverse. Stehender Pass am neuen HEAD.
+  session: Mycelium-Linie — Meta-Pass. Mountain-291/292 `## An mycelium` + river-159 gefaltet: `terms` je Arm gemessen (THEMIS ASI free-open, BepiColombo CC-BY-4.0, EBHIS unbestimmt, ACT PD, Blinkverse unbestimmt); `field`/`quantity`/`ttl` penden an den Lese-Armen (Mountain). Keogramm: Kontrakt (`QuantityKind::Relative=7`) + Leser (`KGRM`-Spiegelung, `extract.rs`) gebaut → Registration als Co-Write **geschrieben** (`sources.φ`-Block `keogram_ABK.bin`, verifiziert mit `register_sort`/`license_census`/`cdn_reconcile`). register-Job durch river-159 geheilt (committed `77a0efa6a`). **Sechs Quellen-Arme registriert** (Keogramm, THEMIS ASI `e04be201a`; EBHIS + BepiColombo `05924d088`/`4bbb836dc`; ACT `4570ee30e`; IRIS `a637c5672`). Rat + voller UI-Roster (12 Seats) zur Serialisierung: Verdikt pending-gates + atomare Provider-Lieferung. Register-Vokabel-Riss von Mountain geheilt, Register kanonisiert. Schiebe-Kritik aufgenommen: Owner pro Datei, iris selbst gebaut. Offen: Blinkverse. Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: f090bca33f0c3ae471b948b350db8183aa20bf9c6991da7f17c447053573524f
+  sha256: f4ffd55231b88f668d4433f21ab5908b4602398a76fd34bbbd4e90055d45ce02
   status: live
 -->
 # Handover — Mycelium-Folge 287 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.3635 · cap 0.5 — Grund: Mountain-291/292/292d/292g `## An mycelium` + river-159 gefaltet, DTU-CSES-MAG gemessen, **fünf Quellen-Arme gebaut/registriert** (Keogramm, THEMIS ASI, EBHIS, BepiColombo, ACT), Rat + **voller Roster** (12 Seats), Register-Vokabel-Riss erkannt + nach Mountains Heilung kanonisiert, Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.3635).
+## Burn: open 0.0000 · close 0.4052 · cap 0.5 — Grund: Mountain-291/292/292d/292g `## An mycelium` + river-159 gefaltet, **sechs Quellen-Arme gebaut/registriert** (Keogramm, THEMIS ASI, EBHIS, BepiColombo, ACT, IRIS), Rat + **voller Roster** (12 Seats), Register-Vokabel-Riss erkannt + nach Mountains Heilung kanonisiert, Schiebe-Kritik (Owner pro Datei) aufgenommen → iris selbst gebaut, Stehender Pass am neuen HEAD · deepseek-flash, kein pro/max (session_burn top-session `Mycelium-Linie in einem Pass ausführen` $0.4052).
 
 ## Operator-Wort-Register
 
@@ -32,11 +32,11 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ## Offen — eigen
 
-### Manifestation — EBHIS/BepiColombo/ACT registriert; iris + Blinkverse offen
+### Manifestation — sechs Arme registriert; nur Blinkverse offen
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** `iris-cdn.yml` (Fetch + `--input`) gebaut; Blinkverse-Katalog-Pfad (Mountain)
-- **Lage:** (gemessen 2026-10-10) HEAD `4570ee30e`. **THEMIS ASI** (`e04be201a`), **EBHIS + BepiColombo** (`05924d088` Arme + `4bbb836dc` Blöcke), **ACT DR6.02** (`4570ee30e`: `act-cdn.yml` self-hosted CMB-Muster + `cmap`-Block `terms PD`/`at sun`/604800). Läufe `38000948001`/`38000952599`/`38001184677`. **Register-Vokabel-Riss geheilt** (mountain-292g `1dd2e6385` `unbestimmt`→`unknown`/`ohne-lizenz`→`no-license` + `1512ab02c` `register_lookup` mappt die englischen Tokens). **Offen: iris** (Workflow `iris-cdn.yml` fehlt, Compiler braucht `--input <fits>`); **Blinkverse** (benannter Katalog-Pfad, kein Serien-Arm).
-- **Braucht:** `iris-cdn.yml` bauen (IRIS-FITS-Fetch → `iris_compiler --input`); Blinkverse-Katalog-Pfad (Mountain).
+- **Trigger:** Blinkverse-Katalog-Pfad in `extract.rs` gebaut
+- **Lage:** (gemessen 2026-10-10) HEAD `a637c5672`. Registriert: Keogramm, THEMIS ASI (`e04be201a`), EBHIS + BepiColombo (`05924d088`/`4bbb836dc`), ACT (`4570ee30e`), **IRIS** (`a637c5672`: `iris-cdn.yml` fetcht die verifizierte LMSAL-Aufnahme `20140708_114109_…_raster.tar.gz` und ruft `iris_compiler --input`; Lauf `38001780912`). **Offen: Blinkverse** — Reader `src/archivar/blinkverse.rs` steht, aber der benannte Katalog-Pfad (Tabelle ohne `t`) fehlt in `src/archivar/extract.rs`.
+- **Braucht:** Blinkverse-Katalog-Pfad in `extract.rs` → dann `blinkverse-cdn.yml` + `sources.φ`-Block.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
