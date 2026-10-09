@@ -14,6 +14,7 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
 );
 const TWO_PI: f32 = 6.283185307179586;
 const BEAT_PAIR_CAP: u32 = 64u;
+const CHANNEL_CAP: u32 = 16u;
 
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
@@ -368,8 +369,8 @@ fn beat_pair(
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
-    var omegas = array<f32, 9>();
-    for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
+    var omegas = array<f32, CHANNEL_CAP>();
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { omegas[i] = 0.0; }
     var flow = vec3f(0.0);
     let dt = vp.presence.w - vp.expose_ex.y;
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
@@ -391,7 +392,7 @@ fn presence_probe() {
         }
         pp[u32(vp.surface.z) + j] = vec4f(f32(ft), mt.x, f32(kid), fast);        let c = osc_field(j, vec3f(0.0), pre);
         let f = u32(c.y);
-        if (f < 9u) { omegas[f] += c.x; }
+        if (f < CHANNEL_CAP) { omegas[f] += c.x; }
         if ((u32(props[j * 4u + 3u].z) & 16u) == 0u) {
             flow = flow + osc_flow(j, pre);
         }
@@ -411,7 +412,7 @@ fn presence_probe() {
         for (var b = a + 1u; b < phase_n; b = b + 1u) {
             let jb = phase_idx[b];
             let ftb = u32(field[jb * 3u + 1u].z);
-            if (fta == ftb && fta < 9u) {
+            if (fta == ftb && fta < CHANNEL_CAP) {
                 omegas[fta] += beat_pair(
                     props[ja * 4u + 2u].w, props[ja * 4u + 3u].y, props[ja * 4u + 3u].z,
                     props[jb * 4u + 2u].w, props[jb * 4u + 3u].y, props[jb * 4u + 3u].z,
@@ -432,10 +433,10 @@ fn presence_probe() {
             }
         }
     }
-    for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
-    probe_out[9] = flow.x;
-    probe_out[10] = flow.y;
-    probe_out[11] = flow.z;
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { probe_out[i] = omegas[i]; }
+    probe_out[CHANNEL_CAP] = flow.x;
+    probe_out[CHANNEL_CAP + 1u] = flow.y;
+    probe_out[CHANNEL_CAP + 2u] = flow.z;
 }
 "#;
 
