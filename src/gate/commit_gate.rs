@@ -1803,7 +1803,7 @@ fn check_addressed_origin(path: &str, content: &str) -> Option<Verdict> {
     })
 }
 
-fn is_offen_heading(line: &str) -> bool {
+fn is_open_heading(line: &str) -> bool {
     let Some(rest) = line.trim_start().strip_prefix("## ") else {
         return false;
     };
@@ -1932,7 +1932,7 @@ fn field_text(block: &[&str], name: &str) -> String {
 pub fn status_proof_violations(handover: &str) -> Vec<(usize, String, String)> {
     let mut out = Vec::new();
     let lines: Vec<&str> = handover.lines().collect();
-    let Some(start) = lines.iter().position(|l| is_offen_heading(l)) else {
+    let Some(start) = lines.iter().position(|l| is_open_heading(l)) else {
         return out;
     };
     let end = lines

@@ -316,7 +316,7 @@ mod tests {
     }
 
     #[test]
-    fn malformed_count_is_fehlt_not_zero() {
+    fn malformed_count_is_missing_not_zero() {
         let path = temp_path("malformed");
         std::fs::write(&path, "tool bash allowed nope 0 clean\n").unwrap();
         let perm = ToolPerm::load(&path);

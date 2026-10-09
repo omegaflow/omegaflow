@@ -203,7 +203,7 @@ mod tests {
     }
 
     #[test]
-    fn malformed_counter_is_fehlt_not_zero() {
+    fn malformed_counter_is_missing_not_zero() {
         let root =
             std::env::temp_dir().join(format!("omegaflow_state_badcount_{}", std::process::id()));
         let path = root.join("phi").join("reports").join("gate_state.φ");
