@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 8cfaf6d1ec61e8997940f04f6b68b9d5a00dabf04fe9f68a641c09ba4bf87135
+  sha256: fd3333c81236ee3216818745ac1b9a8676eaf8306cdc3352293357ca7b02a272
   status: live
 -->
 # Handover — Mountain-Folge 292 (2026-10-09)
@@ -71,11 +71,14 @@ Arbeit (river: `src/mathematikerin/actuators.rs`, `src/mathematikerin/channel.rs
   `Option<(f64,f64,f64)>` (`motion.rs:59` seit Signaturwechsel) — Fix bereit, aber das
   `fabrication`-Gate blockt die Datei (Body-Literal `"earth"`, `:166` u. a.); ein
   Body-Namen-Refactor der Sonde ist ein eigener Akt.
-- **Register-Sprache auf Englisch umgestellt** (Operator-Wort 2026-10-10): `terms
-  unbestimmt` → `terms unknown` (530), `terms ohne-lizenz` → `terms no-license` (4);
-  `license_census` TERMS + `redistribution` + Teste auf Englisch; `license_census --fail`
-  exit 0, 0 vocab violations. Der closed-vocab widerspricht der Regel nicht mehr (vorher
-  akzeptierte er deutsch und verwarf `unknown`).
+- **Sprach-Regel umgesetzt** (Operator-Wort 2026-10-10: „kein Deutsch im Code — Prosa
+  in Deutsch ist ok, das ist Counter-Slope"): `terms unbestimmt` → `terms unknown` (531),
+  `terms ohne-lizenz` → `terms no-license` (4); `phi/pipeline/ledger.φ` Zustände
+  `ausstehend`/`disponiert` → `pending`/`released` (8/38); die Gate-Bezeichner
+  `is_offen_heading` → `is_open_heading`, `malformed_*_is_fehlt_*` → `*_is_missing_*`.
+  `license_census --fail` exit 0, 0 vocab violations; `cargo check` 0/0. Deutsche
+  `note`/Handover-Prosa bleibt (Counter-Slope); die deutschen Detektor-Marker
+  (`DOC_OPEN_MARKERS`) bleiben, weil sie diese Prosa lesen.
 
 ## Riss (nicht geglättet)
 
@@ -84,9 +87,6 @@ Arbeit (river: `src/mathematikerin/actuators.rs`, `src/mathematikerin/channel.rs
   serien-nah; Blinkverse (benannte Tabelle) und ACT (JSON-cmap) **passen nicht** auf den
   `(t,value,comp)`-Draht. ACT braucht nur einen `sources.φ`-`cmap`-Block, Blinkverse einen
   benannten Katalog-/Tabellen-Pfad — kein erzwungener Serien-Arm.
-- **Terms-Vokabel.** `unbestimmt`/`ohne-lizenz` (deutsch) und `unknown` (englisch) stehen
-  im selben `terms`-Wortschatz, beide akzeptiert; eine Vereinheitlichung ist ein
-  Registerentscheid (Mountain), kein stiller Ersatz.
 
 - **Keogramm-Disposition.** `phi/declined_sources.φ:4151-4153` lehnt das
   ASC-Keogramm-Verzeichnis als `image` ab („Bildprodukt, kein Feld … kein
@@ -123,23 +123,9 @@ Wort | Datum | Quelle
 „bitte mach das noch fertig" (die vier Arme BepiColombo/EBHIS/ACT/Blinkverse) | 2026-10-10 | Operator (Session, Mountain 292)
 „wenn du das Council fragst, bitte auch archive_search all und den vollen Roster" | 2026-10-10 | Operator (Session, Mountain 292)
 „warum eigentlich Deutsch im Code (in sources steht `unbestimmt`?)" | 2026-10-10 | Operator (Session, Mountain 292)
+„ich sage immer kein Deutsch im Code — Prosa in Deutsch ist ok, das ist Counter-Slope" | 2026-10-10 | Operator (Session, Mountain 292)
 
 ## Offen (aufgeschlüsselt)
-
-### Register-Sprache — Zustands-Token migriert; Prosa-Detektoren offen (Doktrin)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Operator-Wort zur Register-/Handover-Sprache
-- **Lage:** (gemessen 2026-10-10) `terms unbestimmt`/`ohne-lizenz` → englisch (0 Rest);
-  `phi/pipeline/ledger.φ` Zustände `ausstehend`/`disponiert` → `pending`/`released`
-  (0/0 Rest), `register_lookup` erkennt sie. **Verbleibendes Deutsch ist Prosa/Detektion:**
-  `verifiziert` 4 · `kompiliert` 10 · `disponiert`/`erledigt` in `phi/pipeline/index.φ`
-  (Work-Log-Prosa) · `offen`/`fehlt`/`wartet`/`nächster schritt` in
-  `src/gate/commit_gate.rs:2267 DOC_OPEN_MARKERS` + `register_lookup`-Armen +
-  `session_te`/`commit_words`/`claim_reader` — diese **lesen die deutsche
-  Handover-/Register-Prosa**; ohne deutsche Prosa wären sie sinnlos.
-- **Blockade:** Doktrin — AGENTS.md definiert den Handover-Register als deutsch.
-- **Braucht:** Operator-Wort: Register-/Handover-**Prosa** auf Englisch umstellen
-  (AGENTS.md-Zeile + alle Dokumente + Detektor-Token)? Dann fällt das Tool-Deutsch mit.
 
 ### Dimensionlose Einheit `relative` — Leser gebaut; sources.φ-Zeilen + Blinkverse-Pfad offen
 - **Status:** eigen | **Bindung:** eigen
