@@ -185,6 +185,7 @@ pub mod sha256;
 pub mod skydirection;
 pub mod soho_lasco;
 pub mod ssusi_aurora;
+pub mod substorm;
 pub mod superdarn_cpcp;
 pub mod supermag_index;
 pub mod suprastrom;

@@ -1030,6 +1030,15 @@ ttl 3600
 field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_efield.bin
+format swpc_efield
+origin https://services.swpc.noaa.gov/json/lists/rgeojson/US-Canada-1D/
+compiler tools/harvest/src/bin/swpc_efield_compiler.rs
+at earth
+ttl 3600
+field swpc_efield_ex swpc_efield_ex inverse-square electric v/m 60 0.0 0.0
+field swpc_efield_ey swpc_efield_ey inverse-square electric v/m 60 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
 format goes_xrs
 origin https://www.ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs
@@ -18930,6 +18939,17 @@ compiler tools/harvest/src/bin/flac_compiler.rs
 at earth
 ttl 604800
 field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_newell.bin
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/?service=substorms
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 604800
+field substorm_mlt_h substorm_mlt_h inverse-square em h 604800 0.0 0.0
+field substorm_mlat_deg substorm_mlat_deg inverse-square em deg 604800 0.0 0.0
+field substorm_glon_deg substorm_glon_deg inverse-square em deg 604800 0.0 0.0
+field substorm_glat_deg substorm_glat_deg inverse-square em deg 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_2025-03a.bin
 format supermag_1m
