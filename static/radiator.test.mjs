@@ -1,8 +1,20 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createRadiator } from "./radiator.js";
+import { createRadiator, project } from "./radiator.js";
 
 const OMEGA = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+test("project: a per-channel aperture weights each channel at the sink", () => {
+  assert.equal(project(OMEGA, [1, 1, 1, 1, 1, 1, 1, 1, 1]), 45);
+  assert.equal(project(OMEGA, [1, 0, 1, 0, 1, 0, 1, 0, 1]), 25);
+  assert.ok(Number.isNaN(project(OMEGA, [1, 1, 1, 1, 1, 1, 1, 1, NaN])));
+});
+
+test("project: a legacy scalar aperture keeps Σω·aperture", () => {
+  assert.equal(project(OMEGA, 1), 45);
+  assert.equal(project(OMEGA, 0.5), 22.5);
+  assert.ok(Number.isNaN(project(OMEGA, NaN)));
+});
 
 test("the radiator peer set is flat and closed", () => {
   const radiator = createRadiator({ consent: () => true, serial: null });

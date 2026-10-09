@@ -196,10 +196,10 @@ export function parseKinetic(bytes) {
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const mask = dv.getUint8(3);
   const omega = new Float32Array(bytes.buffer, bytes.byteOffset + 4, 9);
-  const aperture = dv.getFloat32(4 + 9 * 4, true);
+  const aperture = new Float32Array(bytes.buffer, bytes.byteOffset + 4 + 9 * 4, 9);
   let pan = null;
   let tilt = null;
-  let o = 4 + 9 * 4 + 4;
+  let o = 4 + 9 * 4 + 9 * 4;
   if (mask & 0x02) {
     pan = dv.getFloat32(o, true);
     o += 4;

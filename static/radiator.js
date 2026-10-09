@@ -1,13 +1,46 @@
-// The browser radiator: the membrane's PresenceFrame { omega: [f32; 9], aperture,
-// pan, tilt } is dispatched to a flat, closed peer set — window, audio, stderr,
-// serial, USB, Bluetooth, HID, vibration. No peer is privileged; none is the
-// center. Every peer receives all nine forces; the translation rule is its own
-// property (canRadiate). Σω is the canonical scalar. Every peer speaks only while
-// consent() is true: the machine asks before it radiates, as the sensors ask
-// before they record. A peer whose device is absent stays silent (0 honored) —
-// the frame is never fabricated into a sink that is not there.
+// The browser radiator: the membrane's PresenceFrame { omega: [f32; 9], aperture:
+// [f32; 9], pan, tilt } is dispatched to a flat, closed peer set — window, audio,
+// stderr, serial, USB, Bluetooth, HID, vibration. No peer is privileged; none is
+// the center. Every peer receives all nine forces and their per-channel apertures;
+// the translation rule is its own property (canRadiate), and each peer projects
+// the nine channels at its own sink (the legitimate epilogue), never in the
+// measurement. Every peer speaks only while consent() is true: the machine asks
+// before it radiates, as the sensors ask before they record. A peer whose device
+// is absent stays silent (0 honored) — the frame is never fabricated into a sink
+// that is not there.
 
 import { encodeFrame } from "./presence_frame.js";
+
+// A peer's projection of the nine-channel frame: channel-weighted intensity
+// Σ omega[i]·aperture[i] when the membrane delivers the per-channel aperture,
+// Σ omega[i]·min(1,|aperture|) for a legacy scalar aperture. The projection is
+// the peer's own law (the legitimate epilogue), never the sensor's (the
+// illegitimate prologue).
+export function project(omega, aperture) {
+  let sum = 0;
+  if (aperture && aperture.length === 9) {
+    for (let i = 0; i < 9; i++) {
+      const o = omega[i];
+      const a = aperture[i];
+      if (!Number.isFinite(o) || !Number.isFinite(a)) {
+        return NaN;
+      }
+      sum += o * a;
+    }
+    return sum;
+  }
+  if (!Number.isFinite(aperture)) {
+    return NaN;
+  }
+  for (let i = 0; i < 9; i++) {
+    const o = omega[i];
+    if (!Number.isFinite(o)) {
+      return NaN;
+    }
+    sum += o;
+  }
+  return sum * Math.min(1, Math.abs(aperture));
+}
 
 function audioPeer() {
   let context = null;
@@ -61,17 +94,11 @@ registerProcessor("sigma-w", SigmaW);`;
       if (!node) {
         return;
       }
-      let sum = 0;
-      for (let i = 0; i < 9; i++) {
-        if (Number.isFinite(omega[i])) {
-          sum += omega[i];
-        }
-      }
+      const sum = project(omega, aperture);
       if (!Number.isFinite(sum)) {
         return;
       }
-      const level = Number.isFinite(aperture) ? Math.min(1, Math.abs(aperture)) : 0;
-      node.port.postMessage(sum * level);
+      node.port.postMessage(sum);
     },
   };
 }
@@ -86,15 +113,13 @@ function vibrationPeer() {
         navigator.vibrate(0);
       }
     },
-    onFrame(omega) {
+    onFrame(omega, aperture) {
       if (typeof navigator.vibrate !== "function") {
         return;
       }
-      let sum = 0;
-      for (let i = 0; i < 9; i++) {
-        if (Number.isFinite(omega[i])) {
-          sum += omega[i];
-        }
+      const sum = project(omega, aperture);
+      if (!Number.isFinite(sum)) {
+        return;
       }
       const now = performance.now();
       if (now - last < 100) {

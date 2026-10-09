@@ -76,6 +76,18 @@ test("encodeFrame: a non-finite pan clears its bit", () => {
   assert.equal(encodeFrame(OMEGA, 1, Infinity).length, 6);
 });
 
+test("encodeFrame: a per-channel aperture projects at the serial sink", () => {
+  const flat = encodeFrame(OMEGA, [1, 1, 1, 1, 1, 1, 1, 1, 1]);
+  assert.deepEqual(Array.from(flat), [0x02, 0x01, 0x00, 0x00, 0x34, 0x42]);
+  const gated = encodeFrame(OMEGA, [1, 0, 1, 0, 1, 0, 1, 0, 1]);
+  assert.deepEqual(Array.from(gated), [0x02, 0x01, 0x00, 0x00, 0xc8, 0x41]); // 25
+});
+
+test("encodeFrame: a non-finite channel aperture is absent", () => {
+  const aperture = [1, 1, 1, 1, 1, 1, 1, 1, NaN];
+  assert.equal(encodeFrame(OMEGA, aperture), null);
+});
+
 test("consented: reads the api's consent gate", () => {
   assert.equal(consented({ consent: () => true }), true);
   assert.equal(consented({ consent: () => false }), false);

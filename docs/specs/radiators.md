@@ -1,7 +1,7 @@
 <!--
   title: radiators
   class: concept
-  sha256: 836a92750e38493669dd9ca51b46aff834a15860eb6c9289860c362e973cbe67
+  sha256: 00c9636755525984db0aed597adde9813ea6ad81230b9511c4b4fb946c4a4712
 -->
 **This is the ultimate final line under the architecture.**
 
@@ -92,28 +92,34 @@ blob `1a0da547` + `constants.js` blob `95f9c949`, last carrying commit
 1. **Peer set** — flat and closed: one dispatcher, one `Arc<Buffer>`, one
    `PresenceFrame { omega: [f32; 9] }`. No radiator is privileged; none is the
    center.
-2. **Channel rule** — every radiator receives all nine forces; the translation
-   rule is its own property (`canRadiate`). Σω is canonical for scalar
-   excitation. The lost channel assignment (audio→2, haptics→4) does not
-   return (Atom 9 Geräte-Bias).
+2. **Channel rule** — every radiator receives all nine forces and their
+   per-channel apertures; the translation rule is its own property
+   (`canRadiate`), and each sink projects the nine channels itself (the
+   legitimate epilogue), never in the measurement. The lost channel assignment
+   (audio→2, haptics→4) does not return (Atom 9 Geräte-Bias).
 3. **Backport prohibition** — from `01a22e84` only the thing itself returns:
    the flat peer set (the one dispatcher), the consent double-question,
    navigation as the operator's act. The synthesizer, the exposure machinery
    (`get_expose`/`exposureBoost`), `window_median_extent`, window-as-center
    stay dead.
-4. **Aperture binding** — `target = inTE/(inTE + threshold + ε)`,
-   `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`: one rule for all
-   radiators. Built (`356fa616`): `field_permeability` relaxes per tick
-   (`src/mathematikerin/omega.rs:1601-1605`, TE branch; `:1622-1625`,
-   self-series `tanh(v_c/(g+ε))`, `perm_target` `:15-16`, floor
-   `PERM_GROUND = f32::EPSILON` `:13`), `aperture = field_permeability *
-   tone_scale` (`:345`), `kinetic_sample = Σω * aperture`
-   (   `src/mathematikerin/actuators.rs:29`), test
-   `src/mathematikerin/tests.rs:570`. The HRV tone binding is built (`tone_scale`
-   written at `omega.rs:1647-1655` from `tone_code`, read at `omega.rs:347`); it
-    is pending only for its N-N source — the Forerunner 945 BLE reader is routed
-    to the sensory line (2026-09-23; std-only BlueZ over
-    D-Bus), `OMEGAFLOW_SERIAL_IN` (`src/archivar/ingress.rs`) the transport hook.
+4. **Aperture binding** — per channel since River 139/140 (Rat + 11 voices,
+   `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` §5): the layer
+   confusion is repaired — `field_permeability: [f32; 9]` relaxes per tick and
+   per channel (`src/mathematikerin/omega.rs`; the TE branch applies the
+   field-level target to every channel, the self-series branch uses each
+   channel's own `perm_target(omega[k], |Δomega[k]|)`, floor
+   `PERM_GROUND = f32::EPSILON`). No `Σω`/`/9.0` runs before the radiator: the
+   frame carries the per-channel aperture `aperture[k] = field_permeability[k] *
+   tone_scale`, each sink projects at its own edge (`kinetic_sample = Σ_k
+   omega[k]·aperture[k]`, `src/mathematikerin/actuators.rs`). The relay wire and
+   `static/constants.js` `parseKinetic` carry nine apertures; `static/radiator.js`
+   projects per peer; the CDC serial packet keeps its single intensity as the
+   serial sink's projection (the per-channel packet is `pending` — the ESP32
+   firmware carries one intensity). The HRV tone binding (`tone_scale`) is
+   unchanged: written at `omega.rs` from `tone_code`, read at the frame; it is
+   pending only for its N-N source — the Forerunner 945 BLE reader is routed to
+   the sensory line (2026-09-23; std-only BlueZ over D-Bus), `OMEGAFLOW_SERIAL_IN`
+   (`src/archivar/ingress.rs`) the transport hook.
 
 Doctrine map: Atom 8 Sensorium, Atom 9 Geräte-Bias, agnostische Benennung,
 Stille-Doktrin, Relay-Floor-Präzedenz. Open radiators: Bluetooth, HID, ESP32,

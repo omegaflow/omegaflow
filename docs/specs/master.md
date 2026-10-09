@@ -1,7 +1,7 @@
 <!--
   title: OMEGAFLOW: ARCHITECTURE & STATUS MANIFEST
   class: concept
-  sha256: 3652442da96e808510efb50ad222884fa8eaef7d73b7050b65b61c1580b786ef
+  sha256: cce4edd375f08a35ba4f7b45dd6854b1e727f8120638f8a3491ae2fa15e8ca4f
 -->
 STATUS: LIVE
 
@@ -39,7 +39,7 @@ The system computes no pretty maps, but respects causal horizons and physical pr
 *   **Enclosure Lemma (Rust):** the spatial cell division (hash grid) computes its cell size dynamically from the motion equation (`rmax + vmax * cadence + 0.5 * amax * cadence²`), rounded to the next power of two.
 *   **Pure oscillator point cloud (WGSL):** the GPU computes no "brute-forced global raster" anymore. The vertex shader takes the raw 3D points, projects them onto the 2D presence disc, and generates discrete quads. The size corresponds to the true physical extent (`extent / dist`).
 *   **Analog glow (WGSL):** the fragment shader uses exponential falloff (`exp(-dist² * 4.0)`) and intrinsic noise (dithering) to prevent digital banding. Additive blending realizes the physical superposition.
-*   **Force separation (WGSL):** fields do not get stirred into a mush. The compute shader (`presence_probe`) computes 7 separate `omegas` that then drive audio, haptics, and hardware separately.
+*   **Force separation (WGSL):** fields do not get stirred into a mush. The compute shader (`presence_probe`) computes 9 separate `omegas` (one per force medium) that then drive audio, haptics, and hardware separately; each sink projects the nine channels at its own edge.
 
 ## 5. The cybernetic hardware (ESP32 Mantis-Shrimp)
 The logical continuation of the WebGPU interface. An ESP32-S3 acts as a physical sensor array (35 modules via I2C).

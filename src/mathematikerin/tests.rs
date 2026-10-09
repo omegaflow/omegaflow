@@ -555,7 +555,7 @@ fn force_ref_snaps_on_first_sight() {
 #[test]
 fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
     let mut app = OmegaLoop {
-        field_permeability: 0.42,
+        field_permeability: [0.42; 9],
         natural_latency_ticks: 7,
         ..OmegaLoop::new(
             mpsc::channel().1,
@@ -585,7 +585,7 @@ fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
     };
     app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     let frame = app.presence_frame();
-    assert_eq!(frame.aperture, 0.42);
+    assert_eq!(frame.aperture, [0.42; 9]);
     assert_eq!(frame.omega, app.probe_omega);
     assert_eq!(frame.tau_ticks, 7);
 }
@@ -596,7 +596,7 @@ fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
         crate::archivar::hrv::TONE_STRESSED,
     ));
     let mut app = OmegaLoop {
-        field_permeability: 0.8,
+        field_permeability: [0.8; 9],
         ..OmegaLoop::new(
             mpsc::channel().1,
             mpsc::sync_channel(1).0,
@@ -636,7 +636,7 @@ fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
     );
     assert_eq!(
         app.presence_frame().aperture,
-        app.field_permeability * app.tone_scale
+        std::array::from_fn::<f32, 9, _>(|i| app.field_permeability[i] * app.tone_scale)
     );
 
     tone_code.store(
@@ -770,12 +770,11 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
     app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     app.tick();
     let sum1: f32 = app.probe_omega.iter().sum();
-    let mut integral1 = 0.0f32;
-    for i in 0..9 {
-        integral1 += perm_target(app.probe_omega[i].abs(), app.probe_omega[i].abs());
-    }
     let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
-    let expected1 = 0.0f32 + (integral1 / 9.0 - 0.0f32) * alpha1;
+    let expected1: [f32; 9] = std::array::from_fn(|i| {
+        let target = perm_target(app.probe_omega[i].abs(), app.probe_omega[i].abs());
+        (0.0f32 + (target - 0.0f32) * alpha1).clamp(PERM_GROUND, 1.0)
+    });
     assert_eq!(app.field_permeability, expected1);
     assert_eq!(app.prev_omega_sum, sum1);
     assert_eq!(app.prev_probe_omega, app.probe_omega);
@@ -798,7 +797,7 @@ fn the_no_te_tick_maps_the_silence_signal_to_the_epsilon_floor() {
         app.last_hud = None;
         app.tick();
     }
-    assert_eq!(app.field_permeability, PERM_GROUND);
+    assert_eq!(app.field_permeability, [PERM_GROUND; 9]);
 }
 
 #[test]
@@ -834,18 +833,17 @@ fn the_no_te_tick_hears_each_oscillator_not_the_sum() {
     app.natural_latency_ticks = 1;
     app.probe_omega = [0.0, 0.0, 0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0];
     app.prev_probe_omega = [0.0, 0.0, 0.25, 0.0, 0.0, 0.75, 0.0, 0.0, 0.0];
-    let mut integral = 0.0f32;
-    for i in 0..9 {
-        let d_i = app.probe_omega[i] - app.prev_probe_omega[i];
-        integral += perm_target(app.probe_omega[i].abs(), d_i.abs());
-    }
-    app.tick();
     let alpha = 1.0f32 - (-1.0f32 / 1.0f32).exp();
-    let expected = (integral / 9.0) * alpha;
+    let expected: [f32; 9] = std::array::from_fn(|i| {
+        let d_i = app.probe_omega[i] - app.prev_probe_omega[i];
+        let target = perm_target(app.probe_omega[i].abs(), d_i.abs());
+        (0.0f32 + (target - 0.0f32) * alpha).clamp(PERM_GROUND, 1.0)
+    });
+    app.tick();
     assert_eq!(app.field_permeability, expected);
     assert!(
-        app.field_permeability > 0.0,
-        "two media moving against each other are not silence"
+        app.field_permeability[2] > 0.0 && app.field_permeability[5] > 0.0,
+        "each moving oscillator carries its own channel, not the sum"
     );
     assert_eq!(app.prev_probe_omega, app.probe_omega);
 }
@@ -897,13 +895,8 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
     app.tick();
 
     let sum1: f32 = app.probe_omega.iter().sum();
-    let delta1 = sum1 - 0.0f32;
     let g1 = sum1.abs();
-    let v_c1 = delta1.abs();
-    let mut integral1 = 0.0f32;
-    for i in 0..9 {
-        integral1 += perm_target(app.probe_omega[i].abs(), app.probe_omega[i].abs());
-    }
+    let v_c1 = sum1.abs();
     let alpha1 = 1.0f32 - (-1.0f32 / 1.0f32).exp();
 
     app.perm_log = None;
@@ -914,22 +907,19 @@ fn the_no_te_branch_logs_one_line_per_fresh_field_sample() {
         .split(',')
         .map(|s| s.parse::<f32>().unwrap())
         .collect();
-    assert_eq!(fields.len(), 12);
+    assert_eq!(fields.len(), 17);
     assert_eq!(fields[0], 1.0);
     assert_eq!(fields[1], sum1);
     assert_eq!(fields[2], g1);
     assert_eq!(fields[3], v_c1);
-    assert_eq!(fields[4], integral1 / 9.0);
-    assert_eq!(fields[5], alpha1);
-    assert_eq!(fields[6], crate::archivar::hrv::TONE_ABSENT as f32);
-    assert_eq!(fields[7], app.tone_scale);
-    assert_eq!(fields[8], app.field_permeability * app.tone_scale);
-    assert_eq!(fields[9], tone_hz(app.natural_latency_ticks));
-    assert_eq!(
-        fields[10],
-        acoustic_amplitude(sum1, app.field_permeability * app.tone_scale)
-    );
-    assert_eq!(fields[11], app.field_permeability);
+    for i in 0..9 {
+        assert_eq!(fields[4 + i], app.field_permeability[i]);
+    }
+    assert_eq!(fields[13], alpha1);
+    assert_eq!(fields[14], crate::archivar::hrv::TONE_ABSENT as f32);
+    assert_eq!(fields[15], app.tone_scale);
+    let aperture: [f32; 9] = std::array::from_fn(|i| app.field_permeability[i] * app.tone_scale);
+    assert_eq!(fields[16], acoustic_amplitude(&app.probe_omega, &aperture));
 
     app.last_hud = None;
     app.tick();

@@ -205,7 +205,7 @@ pub struct OmegaLoop {
     pub matrix: MatrixMachine,
     pub te_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
     pub te_cpu: Option<(usize, usize, Option<f64>, Option<f64>)>,
-    pub field_permeability: f32,
+    pub field_permeability: [f32; 9],
     pub tone_scale: f32,
     pub prev_omega_sum: f32,
     pub prev_delta: f32,
@@ -325,7 +325,7 @@ impl OmegaLoop {
             matrix: MatrixMachine::new(ctx.machine_rx),
             te_topology: None,
             te_cpu: None,
-            field_permeability: 0.0,
+            field_permeability: [0.0; 9],
             tone_scale: 1.0,
             prev_omega_sum: 0.0,
             prev_delta: 0.0,
@@ -358,7 +358,7 @@ impl OmegaLoop {
         let (pan_ms, tilt_ms) = aim_pulse_ms(self.v);
         PresenceFrame {
             omega: self.probe_omega,
-            aperture: self.field_permeability * self.tone_scale,
+            aperture: std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale),
             pan_ms,
             tilt_ms,
             tau_ticks: self.natural_latency_ticks,
@@ -1750,7 +1750,8 @@ impl OmegaLoop {
                     self.direction = -1;
                 }
                 if self.direction < 0
-                    && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
+                    && (delta_te > threshold
+                        || self.field_permeability.iter().all(|&p| p <= PERM_GROUND))
                 {
                     self.natural_latency_ticks = if self.ticks_since_turn == 0 {
                         1
@@ -1763,8 +1764,10 @@ impl OmegaLoop {
                 let target =
                     (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
                 let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
-                self.field_permeability += (target - self.field_permeability) * alpha;
-                self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
+                for p in self.field_permeability.iter_mut() {
+                    *p += (target - *p) * alpha;
+                    *p = p.clamp(PERM_GROUND, 1.0);
+                }
             } else {
                 let omega_sum: f32 = self.probe_omega.iter().sum();
                 let delta = omega_sum - self.prev_omega_sum;
@@ -1781,35 +1784,40 @@ impl OmegaLoop {
                 self.prev_omega_sum = omega_sum;
                 let g = omega_sum.abs();
                 let v_c = delta.abs();
-                let mut integral = 0.0f32;
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
                 for i in 0..9 {
                     let d_i = self.probe_omega[i] - self.prev_probe_omega[i];
-                    integral += perm_target(self.probe_omega[i].abs(), d_i.abs());
+                    let target = perm_target(self.probe_omega[i].abs(), d_i.abs());
+                    self.field_permeability[i] += (target - self.field_permeability[i]) * alpha;
+                    self.field_permeability[i] = self.field_permeability[i].clamp(PERM_GROUND, 1.0);
                 }
                 self.prev_probe_omega = self.probe_omega;
-                let target = integral / 9.0;
-                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks as f32).exp();
-                self.field_permeability += (target - self.field_permeability) * alpha;
-                self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                 if let Some(f) = self.perm_log.as_mut()
                     && self.ring_gen != self.perm_log_gen
                 {
                     self.perm_log_gen = self.ring_gen;
+                    let aperture: [f32; 9] =
+                        std::array::from_fn(|k| self.field_permeability[k] * self.tone_scale);
                     let _ = writeln!(
                         f,
-                        "{},{},{},{},{},{},{},{},{},{},{},{}",
+                        "{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
                         self.ring_gen,
                         omega_sum,
                         g,
                         v_c,
-                        target,
+                        self.field_permeability[0],
+                        self.field_permeability[1],
+                        self.field_permeability[2],
+                        self.field_permeability[3],
+                        self.field_permeability[4],
+                        self.field_permeability[5],
+                        self.field_permeability[6],
+                        self.field_permeability[7],
+                        self.field_permeability[8],
                         alpha,
                         self.tone_code.load(std::sync::atomic::Ordering::SeqCst),
                         self.tone_scale,
-                        self.field_permeability * self.tone_scale,
-                        tone_hz(self.natural_latency_ticks),
-                        acoustic_amplitude(omega_sum, self.field_permeability * self.tone_scale),
-                        self.field_permeability
+                        acoustic_amplitude(&self.probe_omega, &aperture)
                     );
                 }
             }
@@ -1894,9 +1902,15 @@ impl OmegaLoop {
                     "-".to_string()
                 }
             };
+            let perm_s = self
+                .field_permeability
+                .iter()
+                .map(|p| format!("{:.2}", p))
+                .collect::<Vec<_>>()
+                .join("/");
             if self.silent || std::io::IsTerminal::is_terminal(&std::io::stderr()) {
                 eprintln!(
-                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {:.2} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} vlies {} riss {} perm {:.2} pts {}",
+                    "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | perm {} | off {:.2} | refs {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} {:.2e} | te {} thr {} | te_cpu {} | tau {} | pe {} | state {} | em {} | sky osc {} live {} shell {:.2} fwd {:.2} vlies {} riss {} perm {:.2} pts {}",
                     self.t_presence,
                     rec,
                     self.ring_gen,
@@ -1904,7 +1918,7 @@ impl OmegaLoop {
                     self.probe_flow[1],
                     self.probe_flow[2],
                     force_tokens,
-                    self.field_permeability,
+                    perm_s,
                     self.expose_offset,
                     self.force_ref[0],
                     self.force_ref[1],
