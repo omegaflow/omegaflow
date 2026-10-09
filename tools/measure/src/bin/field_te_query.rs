@@ -5089,6 +5089,7 @@ mod tests {
             format: "text".into(),
             extracts: vec![Extract::Field(field)],
             headers: vec![],
+            channels: vec![],
             post_body: None,
             target: None,
             catalog: None,
