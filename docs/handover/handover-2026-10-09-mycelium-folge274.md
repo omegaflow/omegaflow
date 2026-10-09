@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-Compiler-Koordinaten-Lookup (dim-name → var-name) geheilt; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: 677058bd142fd004ab96111d933ac9a1b879a9ca48da834ce61da61beb38c010
+  sha256: 1c6ff592c11bd6b8ec2da1bf0165449781882f2359f89594657f6deb3b621e37
   status: live
 -->
 # Handover — Mycelium-Folge 274 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0 · close 0.2561 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.0 · close 0.3539 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
 
 ## Operator-Wort-Register
 
@@ -45,13 +45,6 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-09 via `ci_manage view`) `37892705371` an `974466552` **in_progress**; `37892764277` (`19cbb7fc7`) und `37895712548` (`fa7b1144f`) **queued** (t420-Stau). Kein abgeschlossener Lauf am Fix-HEAD.
 - **Blockade:** der geteilte `t420`-Runner.
 - **Braucht:** `ci_manage view <id>` nach Abschluss; bei rot die benannte Stelle.
-
-### `ci-gate` Per-SHA-Verdikt — **gebaut**: lokales Register + SHA-Abfrage
-- **Status:** eigen (Watchdog-Verdrahtung) | **Bindung:** eigen
-- **Trigger:** der nächste Stehende Pass
-- **Lage:** (gemessen 2026-10-09) Ort = **(B) lokal**, riss-frei entschieden (Forschung; Rat einstimmig; UI Duck/Qwen; Open-Weight Nemotron 3 Ultra/DeepSeek V4 Pro/Inkling; Z.ai + Claude pending). **Gebaut:** `tools/utils/src/bin/ci_gate_register.rs` (SHA → `green|red|pending` (Register-Token; deutsch grün/rot/pending) aus `GET /repos/omegaflow/omegaflow/commits/<sha>/check-runs`, decisive Check `subset`; `cargo build -p omegaflow-utils --bin ci_gate_register` grün, 5 Unit-Tests) + Wrapper `bin/ci_gate_register` + Register `state/zustand/ci-gate.φ` in external-state-Zeilenform (`SHA | Verdikt | measured-at (checks) | fällig | Schritt`). Erstlauf für HEAD `1a0a5df8b` = `pending` (alle Checks queued). `ci-check.yml` ist der schwere Nachtlauf, **nicht** der Per-SHA-Gate.
-- **Blockade:** keine.
-- **Braucht:** `ci_gate_register` je Stehendem Pass (ein Schritt) — dann kein weiterer Bau. Der frühere „`ci-check`-Push-Ausbau" ist **descoped** (Befund: das Register ist lokal; kein CI-Workflow schreibt es; die Attestation ist der `subset`-Check-Run, die Ableitung läuft lokal).
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
@@ -116,5 +109,5 @@ Origin: mycelium-274.
 
 ## Abschluss
 
-- **Burn:** close 0.2561 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** close 0.3539 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
