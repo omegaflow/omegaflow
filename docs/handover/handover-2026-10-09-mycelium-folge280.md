@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. CI-Erntelauf wdc-ae triagiert (failure gemessen und geheilt); Schreibpfad-Heilung an 4 Compilern, die auf frischen Runnern an fehlendem Ausgabe-Verzeichnis scheiterten; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: c69b6b501bd048f0ef790c64bb5f69d7c99cd5a53564bd7b89cbb0be61724ea8
+  sha256: 83c6d40d072fef7aaa57468e702d96b7ab885e390e4d62495f216a5bcfae2916
   status: live
 -->
 # Handover — Mycelium-Folge 280 (2026-10-09)
@@ -44,6 +44,13 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Lage:** (gemessen 2026-10-09 via `ci_manage log 37955268834:607-614`) Lauf **failure**: `wdc_ae_compiler` schrieb `data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin` — `std::fs::write` → `write … returned void` (exit 1), weil das Elternverzeichnis fehlt (Workflow `ubuntu-latest`, kein `mkdir`). **Geheilt:** `create_dir_all(parent)` vor dem `fs::write`. Derselbe Sweep über alle 21 Workflows mit `--out data/…` ohne `mkdir` fand vier gleichartige Fälle — `cdaweb_tec_compiler`, `swpc_efield_compiler`, `bl_narrowband_compiler` (alle `ubuntu-latest`), + defensiv `weberin_verdicts_compiler` (self-hosted) — alle in diesem Atom geheilt und gebaut clean.
 - **Blockade:** keiner.
 - **Braucht:** `gh workflow run wdc-ae-cdn.yml`; dann `ci_manage view <id>`; bei success sha256/Asset in `phi/sources.φ` prüfen + `ledger.φ` auf `disponiert`.
+
+### auto-dispatch 422 bei required-input-CDN-Workflows — Rest-Audit
+- **Status:** wartend | **Bindung:** eigen (CI-Infra)
+- **Trigger:** `auto-dispatch`-Lauf mit HTTP 422 `Required input` (gemessen: Lauf `37956818629`, Push dieses Atoms)
+- **Lage:** (gemessen 2026-10-09 via `ci_manage log 37956818629:153`) `auto-dispatch` dispatcht je geändertem Harvest-Bin den aufrufenden Workflow; ein Workflow mit `required: true`-Dispatch-Input ohne `# auto-dispatch: manual`-Marker scheitert (422). `bl-narrowband-cdn` (required `url`) in diesem Atom geheilt (Marker + Begründung). Kandidaten-Rest: 41 Workflows mit `required: true` (`sgrep -l 'required: true' .github/workflows`), je zu prüfen, ob es ein Dispatch-Input ist.
+- **Blockade:** keiner.
+- **Braucht:** Marker `# auto-dispatch: manual` je betroffenem Workflow — Audit `comm -23 <(sgrep -l 'required: true' .github/workflows | sort) <(sgrep -l 'auto-dispatch: manual' .github/workflows | sort)`.
 
 ### Pipeline — `das2-iowa-cdn` queued
 - **Status:** wartend | **Bindung:** eigen (Ernte)
