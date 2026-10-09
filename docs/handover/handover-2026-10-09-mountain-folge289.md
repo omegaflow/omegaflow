@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 304b2d2799d6921f41e0ebfff63fa94987a74c65be926d9e5a1d65a98513158d
+  sha256: 89221cbbc22d9d6ac7b5bf5a549957736e8bac3b36490467a2f3af033da40e24
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -115,7 +115,7 @@ Wort | Datum | Quelle
 ### `blocked_sources.φ` — Klassen-Träger (gap-Token)
 - **Status:** eigen (Disposition) | **Bindung:** eigen (Bau/Disposition)
 - **Trigger:** Bau je verbleibendem Parser-Arm
-- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 6 `gap`-Träger**. Geschlossen: `kaguya-lrs` + `inpe-big-stac` (Arm + Workflow + `sources.φ`-Zeile stehen), `dmap-map-grid` (LOCK, Operator-Wort); reklassifiziert zu `pending` (kein Parser-Gap): `bc-mpo-more` (Release 2099), `tracking-doppler`/`juno-efb` (atdf/odf-Arm steht, NSSDC-Anfrage offen), `solar-vso` (iris_compiler steht), `laic-cssdc` (Register-URL tot, LEOS-Umzug). Offen je Parser-Arm: **mariner-rst** (7-Track), **viking-tracking**, **hi-21cm** (HI-Arm + EBHIS-Quelle), **cmb-lambda** (ACT-Ring), **particle-cern** (ROOT), **blinkverse-frb** (FRB-Dynamik).
+- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 6 `gap`-Träger**. Geschlossen: `kaguya-lrs` + `inpe-big-stac` (Arm + Workflow + `sources.φ`-Zeile stehen), `dmap-map-grid` (LOCK, Operator-Wort); reklassifiziert zu `pending` (kein Parser-Gap): `bc-mpo-more` (MORE ~2027-04 gated; neuer keyless Kanal Zenodo 17813314 Plasma-Residuen 200/sha `407ed0bb…`), `tracking-doppler` (SPDF `saturn_encounter_data` steht als `voyager_saturn` `sources.φ:19592`, CC0; NSSDC-Anker PSNO-00007 → PSPA-00049), `juno-efb` (pre-EFB öffentlich absent), `solar-vso` (iris_compiler steht), `laic-cssdc` (CSSDC-Adress-Seite tot; neu LEOS `www.leos.ac.cn` 206, user-gated, unregistriert). Offen je Parser-Arm: **mariner-rst** (7-Track), **viking-tracking**, **hi-21cm** (HI-Arm + EBHIS-Quelle), **cmb-lambda** (ACT-Ring), **particle-cern** (ROOT), **blinkverse-frb** (FRB-Dynamik).
 - **Blockade:** je Arm der fehlende Format-Reader (7-Track, Tracking, HI, ACT-Ring, ROOT, FRB-Dynamik); `hi-21cm` zusätzlich an der fehlenden EBHIS-Quelle.
 - **Braucht:** je Träger den benannten Arm; `hi-21cm` EBHIS-Quelle lokalisieren, sonst GASS `J/ApJS/181/398` (200) als Route.
 
