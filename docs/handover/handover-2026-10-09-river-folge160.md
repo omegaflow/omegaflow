@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 8df8166317b6488d58c55abd250c4b2a65b3c825807e69d6f8cf3540ab744170
+  sha256: a1fa90375dd1b297bc2792a270429c6d17c76112b761d3664cee6768e1326f03
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -59,6 +59,31 @@ nicht kopiert.
 
 ## Offen (aufgeschlüsselt)
 
+### Membran-Ton — `v_k` (Kanal-Geschwindigkeit) an den Frame binden
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-09, river-160) Die akustische Total-Konvention ist laut
+  Rat/UI-Mehrheit nur zulässig, wenn `v_k` explizit geführt wird, nie still behauptet
+  (`state/stimmen/2026-10-09-river-acoustic-partials.md:84-88`). Heute fehlt `v_k`: kein Feld in
+  `actuators.rs`/`relay.rs`; `probe_flow` ist in `omega.rs:199` deklariert, aber nie geschrieben.
+  Der `c`-Pfad steht jetzt (`characteristic_speed` je Kanal, river-160).
+- **Blockade:** die Per-Kanal-Verzögerung/Phase (`v_k → Delay/Phase je Kanal`) ist physikalisch
+  noch nicht festgelegt — die Kanal-Ausbreitungsgeschwindigkeit `c_k` steht, die Projektion braucht
+  die Empfänger-Range/Blick (`self.v`, `omega.rs:305`).
+- **Braucht:** `v_k` je Kanal festlegen (Rat-Linse: `c_k` aus `characteristic_speed` + Empfänger-Blick)
+  und als `[f32; CAP]` an `PresenceFrame` + in `acoustic_partials` binden; das CSR-Wire trägt es als
+  dritten Wert je Kanal (P3.1-Nutzlast ist dafür gebaut).
+
+### Membran — das Feld am SSB messen und als Asset backen
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-09, river-160) Die Membran läuft live über den Relay
+  (`relay.rs`/`static/membrane.html`); ein gebackenes Feld-Asset (Enclosure-Query am SSB) hat noch
+  keinen Erzeuger — `tools/measure/src/bin/membrane_hull_probe.rs` ist ein Diagnose-Probe, kein Baker.
+- **Blockade:** eine Pipeline (Erzeuger-Bin + `--ci-mode`-Manifestation), kein bounded step.
+- **Braucht:** die Enclosure-Query am SSB als Harvester bauen (`membrane_hull_probe` als Vorlage),
+  in `phi/sources.φ` registrieren, vom CI-Manifestator aufs CDN bringen.
+
 ### CI-Verifikation — ci-gate am HEAD grün lesen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein grüner `ci-gate`-Lauf am HEAD.
@@ -97,7 +122,7 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 160):
 
 Gefaltet/geprüft: `register_lookup --addressed river` = mountain-folge292 `## An river` (von river-159 bereits erwidert). `register_lookup --fired river` = 0 gefeuert, `--stale` = 0.
 
-Aus der Offen-Liste entfernt (Operator-Wort 2026-10-09 „mach fertig" + „warum führst du future lock"): **Eigenmode-Arme** und **Empfänger-Apertur** gebaut (git trägt sie); **Membran-v_k/Feldmessung** ist kein bounded step (v_k braucht erst eine physikalische Definition; die Feldmessung eine Pipeline) — nicht getragen; **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. `LOCK` trägt keine Future-Punkte mehr.
+Aus der Offen-Liste entfernt: **Eigenmode-Arme** und **Empfänger-Apertur** gebaut (git trägt sie); **USGS-`ExtractResult`-Riss** und **dropped-gate** sind Mountain's, kein River-Aufenthalt. **Membran-`v_k`** und die **Feldmessung** sind Rivers eigene Punkte — als `eigen` geführt (Owner River), nicht fallen gelassen. `LOCK` trägt keine Future-Punkte mehr.
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): source-arm (`extract.rs`/`root.rs`/`types.rs`/`tests.rs`/`mod.rs`/`lib.rs`/`iris.rs`/`themis_asi.rs`), register-/measure-tools (`dropped_gate.rs`, `field_te_query.rs`, `volume_builder.rs`), `phi/sources.φ` nach dem Seal.
 
