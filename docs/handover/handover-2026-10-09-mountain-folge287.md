@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: c5740588c4a9a88e4a692ee31786c4d056c81f819a3820b1e341eb4915e5cae7
+  sha256: f145abf78c44bbb3e7121ddcccd194f894be8f4de0221f6362d34694fb5a1bc4
   status: live
 -->
 # Handover — Mountain-Folge 287 (2026-10-09)
@@ -42,21 +42,21 @@ Wort | Datum | Quelle
 
 ### PETREL19 — Route gebaut, Manifest im CI-Flug
 - **Status:** eigen (CI) | **Bindung:** eigen
-- **Trigger:** Lauf `petrel19-cdn.yml` grün, Asset manifestiert
+- **Trigger:** Lauf `petrel19-cdn.yml` (#37966130284) grün, Asset manifestiert
 - **Lage:** (gemessen 2026-10-09) `.github/workflows/petrel19-cdn.yml` + `phi/harvest.φ` Arm `ephemeris_petrel19` + `phi/sources.φ:2316-2341` (`ephemeris_petrel19_{earth,moon,sun}`, CC-BY-4.0) gebaut. Kommando: `de_compiler PETREL19_translation.bsp --label petrel19 --netloc github.com --gm PETREL19.tpc --pck PETREL19.tpc --ci-mode`. Kernel 46 976 000 B HTTP 206; `PETREL19.tpc` 17 475 B (GM/RADII). `PETREL19_rotation.bpc` (frame 3011) wird **nicht** konsumiert (`de_compiler` übergibt `bpc_files=&[]`).
 - **Blockade:** Manifest pending (Workflow noch nicht gelaufen); sha256 fehlt in den 3 Zeilen.
 - **Braucht:** `petrel19-cdn.yml` dispatchen; danach sha256 je Asset in `sources.φ` nachtragen.
 
 ### INPE BIG STAC — Einheit gemessen, Route gebaut
 - **Status:** eigen (CI) | **Bindung:** eigen
-- **Trigger:** Lauf `inpe-stac-cdn.yml` grün, Asset manifestiert
+- **Trigger:** Lauf `inpe-stac-cdn.yml` (#37966134016) grün, Asset manifestiert
 - **Lage:** (gemessen 2026-10-09) NetCDF4 `tmax` trägt **kein** `units` (nur `_FillValue`/`missing_value`); STAC-Item `assets.tmax.eo:bands[0].description = "Unit: Celsius"` → `field tmax samet_tmax inverse-square thermal C 604800 0.0 0.0` (`phi/sources.φ:10927-10934`). Asset-Href `…/TMAX/2026/10/SAMeT_CPTEC_TMAX_20261008.nc`, sha256 `96cc2d1a…` == STAC `checksum:multihash`. `inpe-stac-cdn.yml` + `harvest.φ` Arm gebaut.
 - **Blockade:** Manifest pending.
 - **Braucht:** `inpe-stac-cdn.yml` dispatchen.
 
 ### Kaguya/SELENE LRS — Block stand, dedizierter Workflow ergänzt
 - **Status:** eigen (CI) | **Bindung:** eigen
-- **Trigger:** Lauf `kaguya-lrs-cdn.yml` grün
+- **Trigger:** Lauf `kaguya-lrs-cdn.yml` (#37966137750) grün
 - **Lage:** (gemessen 2026-10-09) Riss widerlegt: `phi/sources.φ:10877` trägt den 00N-Block (mountain 213, sha256 `772e51d1…`); generischer `pds3-binary-cdn.yml` läuft. `kaguya-lrs-cdn.yml` (`--dir …/20071120/data/`, Idempotenz auf `00s`) + `harvest.φ` Arm `pds3_binary_kaguya_lrs` ergänzt für 00S + weitere Datums-Verzeichnisse.
 - **Blockade:** DARTS-Host flappt 200/503 (Compiler `curl --retry` fängt 5xx).
 - **Braucht:** `kaguya-lrs-cdn.yml` dispatchen; neue Asset-Namen danach als `sources.φ`-Zeilen nachtragen.
