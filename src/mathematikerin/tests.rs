@@ -585,8 +585,8 @@ fn the_frame_carries_the_permeability_aperture_and_latency_ticks() {
     };
     app.probe_omega = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0];
     let frame = app.presence_frame();
-    assert_eq!(frame.aperture, [0.42; 9]);
-    assert_eq!(frame.omega, app.probe_omega);
+    assert_eq!(frame.aperture[..9], [0.42; 9]);
+    assert_eq!(frame.omega[..9], app.probe_omega[..]);
     assert_eq!(frame.tau_ticks, 7);
 }
 
@@ -635,7 +635,7 @@ fn the_tone_code_relaxes_the_aperture_between_floor_and_unity() {
         app.tone_scale
     );
     assert_eq!(
-        app.presence_frame().aperture,
+        app.presence_frame().aperture[..9],
         std::array::from_fn::<f32, 9, _>(|i| app.field_permeability[i] * app.tone_scale)
     );
 
