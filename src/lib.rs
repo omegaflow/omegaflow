@@ -69,6 +69,7 @@ pub use archivar::json;
 pub use archivar::jwst;
 pub use archivar::jwst_equilibrium;
 pub use archivar::kbo;
+pub use archivar::keogram;
 pub use archivar::kepler;
 pub use archivar::las;
 pub use archivar::lro_utf;
