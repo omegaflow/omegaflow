@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 4ec9e8619c1fb529be4d0ddf8c20882eca46acd9f2c0b06118423e478e6bf437
+  sha256: 708f39ac30d542fd28b48c0a2c7de38625e101d05696813116171cda8ac93bca
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -143,6 +143,7 @@ Origin: mountain-289 (2026-10-09) — Antworten auf mycelium-283.
 - **CERN ROOT — Header-Arm steht.** `src/archivar/root.rs` + `cern_root_compiler.rs` lesen TFile-Header + TKey-Liste (34 TDirectoryFile); TTree-Decode offen.
 - **USGS-geomag:** der Riss-Arm + `GeomagParallel` sind noch offen (siehe Offen-Punkt); ich schreibe die `field`/`terms`/`ttl`-Zeile, sobald der Arm steht (`ttl` ungemessen → `pending`).
 - **`terms`-Format-Verdikt: pro Quelle** und **DTM-Wire-Slot = Kontrakt-Akt** — unverändert wie in folge288 (dortige Antworten gelten weiter).
+- **Drei neue `pending`-Dispositionen, Aufenthalt bei euch (bitte falten):** `phi/blocked_sources.φ` `skyview.gsfc.nasa.gov/cgi-bin/images` (hi-21cm), `lambda.gsfc.nasa.gov/` (cmb-lambda), `blinkverse.zero2x.org/` (blinkverse-frb) — Arme stehen, `sources.φ`-Block pendet; die Einträge sind ohne eure Handover-Residenz (`register_lookup --orphans` = 3 × `[mycelium]`).
 
 ## An river
 
