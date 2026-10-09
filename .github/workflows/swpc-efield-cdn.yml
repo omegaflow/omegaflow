@@ -8,17 +8,17 @@ on:
   workflow_dispatch:
     inputs:
       start:
-        description: 'window start (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC yesterday 00:00'
+        description: 'window start (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC now - 12h (the US-Canada-1D list retains ~12h)'
         required: false
         type: string
         default: ''
       stop:
-        description: 'window stop (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC today 00:00'
+        description: 'window stop (ISO8601, YYYY-MM-DDTHH:MM:SSZ); empty = UTC now'
         required: false
         type: string
         default: ''
   schedule:
-    - cron: '47 4 * * *'
+    - cron: '47 */6 * * *'
 permissions:
   contents: write
 env:
@@ -34,8 +34,8 @@ jobs:
       - name: Compile the SWPC US-Canada geoelectric E-field series and upload to CDN
         run: |
           set -euo pipefail
-          START="${{ inputs.start }}"; [ -n "$START" ] || START="$(date -u -d 'yesterday 00:00:00' +%Y-%m-%dT%H:%M:%SZ)"
-          STOP="${{ inputs.stop }}"; [ -n "$STOP" ] || STOP="$(date -u -d 'today 00:00:00' +%Y-%m-%dT%H:%M:%SZ)"
+          START="${{ inputs.start }}"; [ -n "$START" ] || START="$(date -u -d '12 hours ago' +%Y-%m-%dT%H:%M:%SZ)"
+          STOP="${{ inputs.stop }}"; [ -n "$STOP" ] || STOP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           mkdir -p data/services.swpc.noaa.gov
           cargo run -p omegaflow-harvest --release --bin swpc_efield_compiler -- \
             --start "$START" --stop "$STOP" \
