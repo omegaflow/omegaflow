@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: ebc12aa9cd0df90292768acc114fec5829cd52ceb3dc5a996bef81b13cbed09a
+  sha256: 7a018cbd5e86d718a45f7a6c789220a3a7ac9c0693e4b974ff0068ec39241f9c
   status: live
 -->
 # Handover — Mountain-Folge 292 (2026-10-09)
@@ -71,9 +71,11 @@ Arbeit (river: `src/mathematikerin/actuators.rs`, `src/mathematikerin/channel.rs
   `Option<(f64,f64,f64)>` (`motion.rs:59` seit Signaturwechsel) — Fix bereit, aber das
   `fabrication`-Gate blockt die Datei (Body-Literal `"earth"`, `:166` u. a.); ein
   Body-Namen-Refactor der Sonde ist ein eigener Akt.
-- **Sprache gemessen:** `unbestimmt` **0× in `src/`**, **530× in `phi/sources.φ`** —
-  Register-Vokabel-Token; `license_census.rs:396` akzeptiert `unbestimmt` **und** `unknown`.
-  Kein Code-Deutsch; die Vokabel-Wahl (deutsch/englisch) ist offen.
+- **Register-Sprache auf Englisch umgestellt** (Operator-Wort 2026-10-10): `terms
+  unbestimmt` → `terms unknown` (530), `terms ohne-lizenz` → `terms no-license` (4);
+  `license_census` TERMS + `redistribution` + Teste auf Englisch; `license_census --fail`
+  exit 0, 0 vocab violations. Der closed-vocab widerspricht der Regel nicht mehr (vorher
+  akzeptierte er deutsch und verwarf `unknown`).
 
 ## Riss (nicht geglättet)
 
@@ -123,6 +125,18 @@ Wort | Datum | Quelle
 „warum eigentlich Deutsch im Code (in sources steht `unbestimmt`?)" | 2026-10-10 | Operator (Session, Mountain 292)
 
 ## Offen (aufgeschlüsselt)
+
+### Register-Sprache — verbleibende deutsche Zustands-Token
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-10) `terms unbestimmt`/`ohne-lizenz` sind auf Englisch
+  umgestellt (0 Rest). Deutsche Zustands-Token verbleiben in `phi/*.φ`: `ausstehend` 8,
+  `verifiziert` 4, `kompiliert` 10, `disponiert` 38.
+- **Blockade:** Tooling-Kopplung — `register_lookup` bildet diese Zustände auf Owner ab;
+  `phi/pipeline/ledger.φ` + Gate-Fixtures tragen sie.
+- **Braucht:** Migration auf Englisch (`ausstehend`→`pending`, `verifiziert`→`verified`,
+  `kompiliert`→`compiled`, `disponiert`→`released`) in `phi/*.φ` **und**
+  `register_lookup`/`register_sort`/Gate-Fixtures im selben Atom.
 
 ### Dimensionlose Einheit `relative` — Leser gebaut; sources.φ-Zeilen + Blinkverse-Pfad offen
 - **Status:** eigen | **Bindung:** eigen
