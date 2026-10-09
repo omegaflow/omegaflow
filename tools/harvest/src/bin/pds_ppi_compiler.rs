@@ -1,9 +1,12 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::pds4::{
-    Pds4Meta, Pds4Table, assemble, axis_of, decode_rows, pack, parse_label_for_file, parse_table,
+    Pds4Column, Pds4Meta, Pds4Table, assemble, axis_of, decode_rows, pack, parse_label_for_file,
+    parse_table,
 };
+use omegaflow::archivar::quantity_kind_for_unit;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
+use omegaflow::force::quantity_kind_name;
 use omegaflow::json::{JsonVal, parse_json};
 use std::collections::{BTreeSet, HashMap};
 use std::process::Command;
@@ -191,7 +194,50 @@ fn print_register_lines(asset: &str) {
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{asset}");
     println!("format pds4_fixed_width");
     println!("ttl 604800");
-    println!();
+}
+
+const QUANTITY_KERNEL: &str = "point";
+const QUANTITY_TAU: f64 = 604800.0;
+
+fn register_token(name: &str) -> String {
+    let mut token = String::with_capacity(name.len());
+    for ch in name.chars() {
+        if ch.is_ascii_alphanumeric() {
+            token.push(ch.to_ascii_lowercase());
+        } else if !token.is_empty() && !token.ends_with('_') {
+            token.push('_');
+        }
+    }
+    token.trim_matches('_').to_string()
+}
+
+fn quantity_line(column: &Pds4Column, tau: f64) -> Option<String> {
+    let unit = column.unit.as_deref()?.trim();
+    if unit.is_empty() {
+        return None;
+    }
+    let (kind, canonical) = quantity_kind_for_unit(unit)?;
+    let token = register_token(&column.name);
+    if token.is_empty() {
+        return None;
+    }
+    Some(format!(
+        "quantity {token} {token} {QUANTITY_KERNEL} {} {canonical} {tau} 0.0 0.0",
+        quantity_kind_name(kind),
+    ))
+}
+
+fn print_quantity_lines(table: &Pds4Table) {
+    for column in &table.columns {
+        match quantity_line(column, QUANTITY_TAU) {
+            Some(line) => println!("{line}"),
+            None => eprintln!(
+                "{}: no registerable unit (\"{}\") — quantity stays pending",
+                column.name,
+                column.unit.as_deref().unwrap_or("")
+            ),
+        }
+    }
 }
 
 fn print_inventory(
@@ -339,6 +385,8 @@ fn compile_entry(
         trailing,
     );
     print_register_lines(&asset);
+    print_quantity_lines(&table);
+    println!();
     if ci_mode && !upload_release(NETLOC, &out_path) {
         eprintln!("{asset}: CDN upload returned void");
         return None;
@@ -483,5 +531,46 @@ mod tests {
     fn rows_from_json_yields_no_rows_for_a_body_without_data() {
         let (_, rows) = rows_from_json("{}").unwrap();
         assert!(rows.is_empty());
+    }
+
+    fn column(name: &str, unit: Option<&str>) -> Pds4Column {
+        Pds4Column {
+            name: name.to_string(),
+            unit: unit.map(|u| u.to_string()),
+            data_type: None,
+            missing_constant: None,
+            sampling_name: String::new(),
+            sampling_unit: String::new(),
+            sampling_min: None,
+            sampling_max: None,
+            start_byte: None,
+            bytes: None,
+        }
+    }
+
+    #[test]
+    fn quantity_line_is_projected_from_the_measured_label_unit() {
+        assert_eq!(
+            quantity_line(&column("BR", Some("nT")), 604800.0).unwrap(),
+            "quantity br br point index nt 604800 0.0 0.0"
+        );
+        assert_eq!(
+            quantity_line(&column("ZXX_RE", Some("Ohm")), 604800.0).unwrap(),
+            "quantity zxx_re zxx_re point impedance ohm 604800 0.0 0.0"
+        );
+    }
+
+    #[test]
+    fn quantity_line_stays_absent_without_a_registerable_unit() {
+        assert!(quantity_line(&column("TIME", None), 604800.0).is_none());
+        assert!(quantity_line(&column("RANGE", Some("Saturn Radii")), 604800.0).is_none());
+        assert!(quantity_line(&column("LATITUDE", Some("Degree")), 604800.0).is_none());
+        assert!(quantity_line(&column("LOCAL HOUR", Some("hr")), 604800.0).is_none());
+    }
+
+    #[test]
+    fn register_token_folds_whitespace_to_an_underscore() {
+        assert_eq!(register_token("EAST LONGITUDE"), "east_longitude");
+        assert_eq!(register_token("BR"), "br");
     }
 }

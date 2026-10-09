@@ -300,6 +300,36 @@ fn sample_at(samples: &Samples, index: usize) -> Option<f64> {
     }
 }
 
+pub fn channel_index(eeg: &OpenNeuroEeg, selector: &str) -> Option<usize> {
+    let nbchan = eeg.nbchan as usize;
+    if nbchan == 0 || eeg.labels.len() != nbchan {
+        return None;
+    }
+    match selector.parse::<usize>() {
+        Ok(n) if n >= 1 && n <= nbchan => Some(n - 1),
+        Ok(_) => None,
+        Err(_) => eeg.labels.iter().position(|label| label == selector),
+    }
+}
+
+pub fn channel_series(eeg: &OpenNeuroEeg, selector: &str) -> Option<Vec<f64>> {
+    let nbchan = eeg.nbchan as usize;
+    let channel = channel_index(eeg, selector)?;
+    let points = (eeg.pnts as usize).checked_mul(eeg.trials as usize)?;
+    if points == 0 || nbchan.checked_mul(points).is_none() {
+        return None;
+    }
+    let mut out = Vec::with_capacity(points);
+    for k in 0..points {
+        let value = sample_at(&eeg.samples, k.checked_mul(nbchan)?.checked_add(channel)?)?;
+        if !value.is_finite() {
+            return None;
+        }
+        out.push(value);
+    }
+    Some(out)
+}
+
 pub fn emit_channels(
     eeg: &OpenNeuroEeg,
     position: &Position,
@@ -547,5 +577,44 @@ mod tests {
         assert_eq!(emitted.len(), 3);
         let values: Vec<f64> = emitted.iter().map(|(c, _)| c.value).collect();
         assert_eq!(values, vec![0.0, 4.0, 8.0]);
+    }
+
+    #[test]
+    fn channel_series_reads_single_by_label_and_index() {
+        let eeg = bin(Samples::Single(vec![1.0, 10.0, 2.0, 20.0, 3.0, 30.0]), None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert_eq!(channel_series(&parsed, "Fp1"), Some(vec![1.0, 2.0, 3.0]));
+        assert_eq!(channel_series(&parsed, "Fp2"), Some(vec![10.0, 20.0, 30.0]));
+        assert_eq!(channel_series(&parsed, "2"), Some(vec![10.0, 20.0, 30.0]));
+        assert_eq!(channel_series(&parsed, "1"), Some(vec![1.0, 2.0, 3.0]));
+    }
+
+    #[test]
+    fn channel_series_reads_double_samples() {
+        let mut eeg = bin(Samples::Double(vec![1.5, 10.5, 2.5, 20.5]), None);
+        eeg.pnts = 2;
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert_eq!(channel_series(&parsed, "Fp1"), Some(vec![1.5, 2.5]));
+        assert_eq!(channel_series(&parsed, "Fp2"), Some(vec![10.5, 20.5]));
+    }
+
+    #[test]
+    fn channel_series_refuses_absent_selectors_and_nonfinite_samples() {
+        let eeg = bin(Samples::Single(vec![1.0, 10.0, 2.0, 20.0, 3.0, 30.0]), None);
+        let bytes = write_bin(&eeg);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert!(channel_series(&parsed, "Fp9").is_none());
+        assert!(channel_series(&parsed, "0").is_none());
+        assert!(channel_series(&parsed, "99").is_none());
+
+        let nan = bin(
+            Samples::Single(vec![1.0, 10.0, 2.0, 20.0, f32::NAN, 30.0]),
+            None,
+        );
+        let bytes = write_bin(&nan);
+        let parsed = parse_bin(&bytes).expect("roundtrip");
+        assert!(channel_series(&parsed, "Fp1").is_none());
     }
 }

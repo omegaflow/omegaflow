@@ -521,6 +521,35 @@ pub fn allowed_units_for_quantity(kind: u8) -> &'static [&'static str] {
     }
 }
 
+pub fn quantity_kind_for_unit(unit: &str) -> Option<(crate::force::QuantityKind, &'static str)> {
+    let normalized = normalize_unit(unit);
+    if normalized.is_empty() {
+        return None;
+    }
+    let mut found: Option<(crate::force::QuantityKind, &'static str)> = None;
+    for kind in [
+        crate::force::QuantityKind::Mass,
+        crate::force::QuantityKind::Energy,
+        crate::force::QuantityKind::Area,
+        crate::force::QuantityKind::Scale,
+        crate::force::QuantityKind::Intensity,
+        crate::force::QuantityKind::Index,
+        crate::force::QuantityKind::Impedance,
+        crate::force::QuantityKind::Relative,
+    ] {
+        if let Some(canonical) = allowed_units_for_quantity(crate::force::quantity_kind_id(kind))
+            .iter()
+            .find(|c| **c == normalized)
+        {
+            if found.is_some() {
+                return None;
+            }
+            found = Some((kind, canonical));
+        }
+    }
+    found
+}
+
 pub fn report_physics_mismatch(force: u8, unit: &str, key: &str, url: &str) {
     if !allowed_units_for_force(force).contains(&normalize_unit(unit).as_str()) {
         report_anomaly(
@@ -690,5 +719,21 @@ mod tests {
         assert!(allowed_units_for_force(0).contains(&normalize_unit("relative").as_str()));
         assert_eq!(quantity_kind_of("relative"), Some(QuantityKind::Relative));
         assert_eq!(quantity_kind_name(QuantityKind::Relative), "relative");
+    }
+
+    #[test]
+    fn quantity_kind_is_derived_from_the_measured_unit_only() {
+        use crate::force::QuantityKind;
+        assert_eq!(
+            quantity_kind_for_unit("nT"),
+            Some((QuantityKind::Index, "nt"))
+        );
+        assert_eq!(
+            quantity_kind_for_unit("Ohm"),
+            Some((QuantityKind::Impedance, "ohm"))
+        );
+        assert_eq!(quantity_kind_for_unit(""), None);
+        assert_eq!(quantity_kind_for_unit("Saturn Radii"), None);
+        assert_eq!(quantity_kind_for_unit("Degree"), None);
     }
 }
