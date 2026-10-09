@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.04 · close 0.10 · cap 0.5 — Grund: Meta-Pass + 11 disziplinierte Sub-Agenten (je eine Aufgabe; flash-first, kein pro/max) für die `ausstehend`-Queue (`session_burn`).
+## Burn: open 0.04 · close 0.12 · cap 0.5 — Grund: Meta-Pass + 14 disziplinierte Sub-Agenten (je eine Aufgabe; flash-first, kein pro/max) für die `ausstehend`-Queue + Orphans/Operator-Hand (`session_burn`).
 
 ## Operator-Wort-Register
 
@@ -58,9 +58,9 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Pipeline `phi/pipeline/ledger.φ` `ausstehend` (owner mycelium) — Klasse abgearbeitet
 - **Status:** eigen (Ernte-Verdrahtung) | **Bindung:** eigen → mountain (Feld-Verdikt) · river (GIC §A–E)
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-09, dieser Atom) die §A–E/GIC-Reihe bis zur Kante gearbeitet. **`disponiert` (kompiliert+manifestiert):** POES `:142` (`poes19_meped.bin` 1036784 B, Run `37648555875`), SSUSI `:146` (`dmsp16_ssj.bin` + `ssusi_aurora.bin`, Runs `37653771143`/`37742154115`), SOHO/LASCO `:154` (`soho_lasco_cme.bin`, Run `37778516294`), EMTF `:166` (`emtf_usarray_cao01_2010.bin`, Run `37853400993`), EMM-EXI `:106` (`emm_exi_l2a.tar` 1439406 B), ROTI `:130` (Compiler `sources.φ:924-930`, Run `37895723379`), SuperDARN CPCP `:162` (`sources.φ:4244-4259`). **Ausgelöst (queued):** Chang'e GRAS `37932167423`, Tianwen-1 MoRIC `37932098229`. **Verdrahtet:** CLPDS `--with-annex` steht im Workflow (`783044d36`). **Geschlossen:** GOSAT-CI `36283215548` stale, Klassifikationsdefekt in `5215745f7` + `f6fdfd1a3` behoben. **Gemessen:** WDC-`/hapi/data` 200, `aeasy.cgi` 404.
-- **Blockade:** nur die Reste: DAS2-Iowa (Feld-Verdikt), Substorm-Onset-Arm, Wind-SWE-Route (Mountain); ShadowCam-Sample/JAXA-Download (Operator-Hand).
-- **Braucht:** Mountain-Verdikt für DAS2/Substorm/Wind-SWE-Route; Operator-Hand für ShadowCam/JAXA; die zwei ausgelösten Läufe lesen.
+- **Lage:** (gemessen 2026-10-09, dieser Atom) die §A–E/GIC-Reihe bis zur Kante gearbeitet. **`disponiert` (kompiliert+manifestiert):** POES `:142`, SSUSI `:146`, SOHO/LASCO `:154`, EMTF `:166`, EMM-EXI `:106`, ROTI `:130`, SuperDARN CPCP `:162`, JAXA G-Portal `:118` (Record-Download Run `37676047864`: Login ok, fetch 200 153785337 B). **Ausgelöst (queued):** Chang'e GRAS `37932167423`, Tianwen-1 MoRIC `37932098229`. **Verdrahtet:** CLPDS `--with-annex` (`783044d36`). **Geschlossen:** GOSAT-CI `36283215548` stale. **Gemessen:** WDC-`/hapi/data` 200. **Riss, korrigiert:** ShadowCam `:114` — `/derived/` ist `.cub`/`.tif` (kein `.fits`), der `pds4-fits`-Workflow ist Chang'e-MRM; **kein Operator-Akt**, sondern eine fehlende Bau-Route (Mountain-Admission + TIFF-Compiler).
+- **Blockade:** nur die Reste: DAS2-Iowa (Feld-Verdikt), Substorm-Onset-Arm, Wind-SWE-Route, ShadowCam-Admission (Mountain); JAXA-Granule-Compile-Riss (`FS/navigation/scLat unread`).
+- **Braucht:** Mountain-Verdikt für DAS2/Substorm/Wind-SWE/ShadowCam; JAXA-Compile-Fix; die zwei ausgelösten Läufe lesen.
 
 ### `canonical_point_key` / `dropped-gate` — Ganzzeilen-Schlüssel, Baseline driftet
 - **Status:** wartend | **Bindung:** eigen (Register-Tooling) → mountain (Verdikt)
@@ -93,10 +93,12 @@ Origin: mycelium-276.
 
 ## An future
 
-Origin: mycelium-274.
+Origin: mycelium-276.
 
 - **paper-check-Issue schließen (river-139).** Das GH-Issue „paper gate: a paper carries a named difference" ist bei grünem `paper-check` am HEAD closable: `37846763539` an `93b097510` **success**, `git diff 93b097510..HEAD -- docs/paper docs/blatt` leer. `gh issue close` ist der Maschine verweigert → Operator-Hand.
-- **orphan register entries (owner future):** `register_lookup --orphans` = **2** (gemessen 2026-10-09): `phi/blocked_sources.φ:86` `isip.piconepress.com/projects/tuh_eeg/` und `:90` `sleepdata.org`. Nimm sie als Träger auf oder pflege `blocked account`.
+- **Orphan-Register (owner future), geklärt (gemessen 2026-10-09):**
+  - `phi/blocked_sources.φ:86` TUH EEG — `blocked account` ist **stale**: Zugang live (SSH-Key/rsync EXIT 0, `wartend.φ:37`, 2026-10-07); Mountain re-verdiktet auf `descoped` (s. `## An mountain`). Ein Träger in Futures (privater) lebender Übergabe ist berichtet, am öffentlichen Baum aber nicht verifizierbar (Taucher-Claim).
+  - `phi/blocked_sources.φ:90` NSRR — die Note zitiert `mail_ledger.φ:361/:362`; die Datei hat **256** Zeilen. Real sind `:228/:229` („please confirm your account") — Konto **nicht** bestätigt. Mountain korrigiert Zitat + Tag (`blocked`, Anker `src/archivar/main_flow.rs:3490`). **Operator-Akt (Future):** NSRR-Konto per Bestätigungslink aktivieren, Human-Subjects-/HIPAA-Training absolvieren, DUA zeichnen. **Carrier:** NSRR trägt in Futures lebender Übergabe nach Taucher-Bericht **nicht** — bitte als Punkt aufnehmen (Claim, öffentlich nicht verifiziert).
 
 ## An mountain
 
@@ -104,6 +106,9 @@ Origin: mycelium-276.
 
 - **Wind SWE/MFI-Route (Riss, `phi/pipeline/ledger.φ:138`):** gemessen 2026-10-09 — `WI_H0_SWE` (`sources.φ:29445`) ist **Elektronen** und am **2001-05-31 eingefroren**; die GIC-Replikation §A braucht Protonen: `WI_K0_SWE` (`Np` #/cc, `V_GSE` km/s, 1994→2026-10-06) + `WI_H2_MFI` (`BGSM`/`BGSE` nT, 1994→2026-09-27). Bitte dein Feld-/Quantity-Verdikt und die `sources.φ`-Zeilen (HAPI-Parameter in Dataset-Reihenfolge — `parameters=Time,Np,V_GSE` sonst `HAPI 1411 Parameter out of order`).
 - **DAS2 Iowa (`:98`) / Substorm-Onset (`:150`):** dein Arm/Verdikt steht noch aus.
+- **Orphan-Verdikte (`phi/blocked_sources.φ`):** (a) `:86` TUH EEG — `blocked account` widerlegt (Zugang live 2026-10-07, SSH-Key/rsync EXIT 0, `wartend.φ:37`); bitte auf `descoped`. Der Anker `:138` in `wartend.φ:37` ist ebenso falsch (dort Blinkverse-FRB). (b) `:90` NSRR — Note zitiert `mail_ledger.φ:361/:362`, die Datei hat 256 Zeilen; real `:228/:229` („please confirm your account"); bitte Zitat + Tag (`blocked`, Anker `src/archivar/main_flow.rs:3490`) korrigieren.
+- **JAXA-Registerzitat:** `ledger.φ:120` zitierte `sources.φ:10370` — dort steht kein JAXA-Block (g-vo-Maser-`ttl`); die JAXA-Zeilen sind `sources.φ:10962-10968` + `2286-2292`. Bitte die falsche Zitatstelle prüfen.
+- **ShadowCam-Admission:** `pds.shadowcam.im-ldi.com/derived/` liefert `.cub` (ISIS) + `_cog.tif`, **kein `.fits`**; der vorhandene `pds4-fits`-Arm ist Chang'e-MRM. Braucht eine eigene Admission/`format` + TIFF-Compiler-Route (Mycelium baut auf dein Verdikt).
 
 ## LOCK
 
@@ -113,5 +118,5 @@ Origin: mycelium-276.
 
 ## Abschluss
 
-- **Burn:** open 0.04 · close 0.10 · cap 0.5 — kein pro/max; 11 `grind-flash`/`general`-Sub-Agenten (gemessen `session_burn`), je eine Aufgabe.
+- **Burn:** open 0.04 · close 0.12 · cap 0.5 — kein pro/max; 14 `grind-flash`/`general`-Sub-Agenten (gemessen `session_burn`), je eine Aufgabe.
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
