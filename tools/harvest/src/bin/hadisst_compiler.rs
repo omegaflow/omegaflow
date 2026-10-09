@@ -204,14 +204,14 @@ fn run(args: &[String]) -> Result<(), String> {
     let time_units = attr_text(&file, time_var, "units")
         .ok_or_else(|| format!("{url}: 'time' carries no units attribute"))?;
     let time_values = file
-        .values_numeric(&bytes, "time")
-        .ok_or_else(|| format!("{url}: time carries no numeric values"))?;
+        .values_numeric(&bytes, &dim_names[0])
+        .ok_or_else(|| format!("{url}: {} carries no numeric values", dim_names[0]))?;
     let lat_values = file
-        .values_numeric(&bytes, "lat")
-        .ok_or_else(|| format!("{url}: lat carries no numeric values"))?;
+        .values_numeric(&bytes, &dim_names[1])
+        .ok_or_else(|| format!("{url}: {} carries no numeric values", dim_names[1]))?;
     let lon_values = file
-        .values_numeric(&bytes, "lon")
-        .ok_or_else(|| format!("{url}: lon carries no numeric values"))?;
+        .values_numeric(&bytes, &dim_names[2])
+        .ok_or_else(|| format!("{url}: {} carries no numeric values", dim_names[2]))?;
     if time_values.len() != nt || lat_values.len() != nlat || lon_values.len() != nlon {
         return Err(format!(
             "{url}: a coordinate carries {} / {} / {} values against the shape {nt}x{nlat}x{nlon}",

@@ -518,6 +518,15 @@ pattern ^superdarn_cpcp\.bin$
 idempotent true
 timeout 14400
 
+asset fehlt
+format supermag_index
+tag supermag.jhuapl.edu
+arm supermag_index_compiler
+args --start 2025-03-01T00:00:00Z --stop 2025-04-01T00:00:00Z --out supermag_index.bin
+pattern ^supermag_index\.bin$
+idempotent true
+timeout 120
+
 asset present
 format swarm_fac
 tag isdc-data.gfz.de
