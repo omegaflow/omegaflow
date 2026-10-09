@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 0baa4e7567d9f79ab3de4f79d945c046b27b5f58c50ca254f7434fb0383048b6
+  sha256: 0e11b3793aface7ee76264089182b5a2f9704f80ad7e092a990e329be6981a34
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -107,3 +107,23 @@ browser_close  <group>                         # Runde schließen
 
 Antwort ablegen als `state/stimmen/<TS>_<site>_<slug>.md` mit Kopf (Site, Modell, Zeit,
 Tab-URL, Prompt); die Session verifiziert die Claims am Baum, nie die Stimme.
+
+## Bedien-Lehre (gemessen 2026-10-09, Future)
+
+Zwei Browser-Wege stehen bereit: die geforkte Bridge (`browser_*`) und der **chrome-devtools-MCP**
+(`chrome-devtools_*`). Der MCP-Snapshot liefert exakte `uid`s — damit gelingt die Bedienung, an
+der die Bridge oft scheitert. Die gemessenen Regeln:
+
+- **React-Inputs brauchen Keyboard-Typing.** Der native Value-Setter (`browser_fill`/`fill`) setzt
+  den Wert, triggert aber **keine** React-Events → der Senden-Button bleibt `disabled`
+  (gemessen: Duck.ai, Google AI Studio, tryingopen). **Regel: `chrome-devtools_type_text` (Tastatur)
+  in das fokussierte Feld, dann senden.**
+- **Senden explizit klicken**, nicht nur Enter: Duck.ai „Senden" · Google AI Studio „Run"/Strg+Enter ·
+  tryingopen „Send message" · Qwen `.message-input-right-button-send`.
+- **Vor „pending" prüfen, ob die Frage angekommen ist:** Chat-Titel/Session-Liste (Z.ai
+  „Top 2 success axes…", Perplexity-Session) belegen den Empfang; langsame Seats (Z.ai Deep Think,
+  Mistral Vibe) brauchen Wartezeit, kein sofortiges `pending`.
+- **Echte Login-Walls** (Kimi: WeChat/Telefon) sind ein Zugangs-Gate, kein Tempo — als
+  `blocked account` benennen, nie als `pending`.
+- **contenteditable-Seats** (Claude, Kimi `.chat-input-editor`, Mistral, Perplexity): erst per JS
+  fokussieren, dann `type_text`.
