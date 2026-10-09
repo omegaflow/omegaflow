@@ -18,6 +18,25 @@ pub fn conserved_name(c: Conserved) -> &'static str {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum QuantityRole {
+    Primary = 0,
+    Derived = 1,
+    Geometry = 2,
+    SourceParameter = 3,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum PdeType {
+    Elliptic = 0,
+    Parabolic = 1,
+    Hyperbolic = 2,
+    Advective = 3,
+    Mixed = 4,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum FluxKind {
     Fick = 0,
     Fourier = 1,
@@ -63,7 +82,9 @@ pub enum Domain {
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct ChannelDescriptor {
     pub conserved: Conserved,
+    pub role: QuantityRole,
     pub op: TransportOp,
+    pub pde_type: PdeType,
     pub medium: Medium,
     pub domain: Domain,
     pub boundary: Boundary,
@@ -73,7 +94,9 @@ pub struct ChannelDescriptor {
 impl ChannelDescriptor {
     pub fn new(
         conserved: Conserved,
+        role: QuantityRole,
         op: TransportOp,
+        pde_type: PdeType,
         medium: Medium,
         domain: Domain,
         boundary: Boundary,
@@ -81,7 +104,9 @@ impl ChannelDescriptor {
     ) -> Self {
         Self {
             conserved,
+            role,
             op,
+            pde_type,
             medium,
             domain,
             boundary,
@@ -92,6 +117,7 @@ impl ChannelDescriptor {
     pub fn hash(&self) -> u64 {
         let mut h: u64 = 0xcbf29ce484222325;
         h = fnv1a(&[self.conserved as u8], h);
+        h = fnv1a(&[self.role as u8], h);
         match self.op {
             TransportOp::Flux(kind) => h = fnv1a(&[0u8, kind as u8], h),
             TransportOp::Advective => h = fnv1a(&[1u8], h),
@@ -99,6 +125,7 @@ impl ChannelDescriptor {
             TransportOp::Poisson => h = fnv1a(&[3u8], h),
             TransportOp::Maxwell => h = fnv1a(&[4u8], h),
         }
+        h = fnv1a(&[self.pde_type as u8], h);
         h = fnv1a(&[self.medium as u8], h);
         h = fnv1a(&[self.domain as u8], h);
         fnv1a(&[self.boundary as u8], h)
@@ -144,42 +171,60 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
 }
 
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
-    let (conserved, op, boundary, unit) = match name {
+    let (conserved, op, pde_type, boundary, unit) = match name {
         "em" | "electric" => (
             Conserved::Energy,
             TransportOp::Maxwell,
+            PdeType::Mixed,
             Boundary::None,
             "V/m",
         ),
         "gravity" => (
             Conserved::Mass,
             TransportOp::Poisson,
+            PdeType::Elliptic,
             Boundary::None,
             "m/s^2",
         ),
-        "acoustic" => (Conserved::Energy, TransportOp::Wave, Boundary::None, "Pa"),
-        "seismic-body" => (Conserved::Energy, TransportOp::Wave, Boundary::None, "Pa"),
+        "acoustic" => (
+            Conserved::Energy,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Boundary::None,
+            "Pa",
+        ),
+        "seismic-body" => (
+            Conserved::Energy,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Boundary::None,
+            "Pa",
+        ),
         "seismic-surface" => (
             Conserved::Energy,
             TransportOp::Wave,
+            PdeType::Hyperbolic,
             Boundary::FreeSurface,
             "Pa",
         ),
         "thermal" => (
             Conserved::Energy,
             TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
             Boundary::None,
             "K",
         ),
         "diffusion" => (
             Conserved::Mass,
             TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
             Boundary::None,
             "kg/m^3",
         ),
         "advective" => (
             Conserved::Mass,
             TransportOp::Advective,
+            PdeType::Advective,
             Boundary::None,
             "kg/(m^2 s)",
         ),
@@ -190,7 +235,9 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
     }
     Some(ChannelDescriptor::new(
         conserved,
+        QuantityRole::Primary,
         op,
+        pde_type,
         medium,
         Domain::Unspecified,
         boundary,
@@ -424,7 +471,9 @@ mod tests {
     fn differing_fields_differ_in_hash() {
         let a = ChannelDescriptor::new(
             Conserved::Mass,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
             Medium::Fluid,
             Domain::Unspecified,
             Boundary::None,
@@ -432,7 +481,9 @@ mod tests {
         );
         let b = ChannelDescriptor::new(
             Conserved::Mass,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
             Medium::Vacuum,
             Domain::Unspecified,
             Boundary::None,
@@ -445,7 +496,9 @@ mod tests {
     fn hash_is_stable() {
         let d = ChannelDescriptor::new(
             Conserved::Momentum,
+            QuantityRole::Primary,
             TransportOp::Wave,
+            PdeType::Hyperbolic,
             Medium::ElasticSolid,
             Domain::Line,
             Boundary::FreeSurface,
@@ -458,7 +511,9 @@ mod tests {
     fn domain_enters_the_hash() {
         let unspecified = ChannelDescriptor::new(
             Conserved::Momentum,
+            QuantityRole::Primary,
             TransportOp::Wave,
+            PdeType::Hyperbolic,
             Medium::ElasticSolid,
             Domain::Unspecified,
             Boundary::None,
@@ -466,7 +521,9 @@ mod tests {
         );
         let line = ChannelDescriptor::new(
             Conserved::Momentum,
+            QuantityRole::Primary,
             TransportOp::Wave,
+            PdeType::Hyperbolic,
             Medium::ElasticSolid,
             Domain::Line,
             Boundary::None,
@@ -480,13 +537,73 @@ mod tests {
 
         let dirichlet_line = ChannelDescriptor::new(
             Conserved::Momentum,
+            QuantityRole::Primary,
             TransportOp::Wave,
+            PdeType::Hyperbolic,
             Medium::ElasticSolid,
             Domain::Line,
             Boundary::Dirichlet,
             "kg m / s",
         );
         assert_ne!(dirichlet_line.hash(), unspecified.hash());
+    }
+
+    #[test]
+    fn role_enters_the_hash() {
+        let primary = ChannelDescriptor::new(
+            Conserved::Mass,
+            QuantityRole::Primary,
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg",
+        );
+        let geometry = ChannelDescriptor::new(
+            Conserved::Mass,
+            QuantityRole::Geometry,
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg",
+        );
+        assert_ne!(
+            primary.hash(),
+            geometry.hash(),
+            "the role axis must enter the hash"
+        );
+    }
+
+    #[test]
+    fn pde_type_enters_the_hash() {
+        let elliptic = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Maxwell,
+            PdeType::Elliptic,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "V/m",
+        );
+        let hyperbolic = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Maxwell,
+            PdeType::Hyperbolic,
+            Medium::Vacuum,
+            Domain::Unspecified,
+            Boundary::None,
+            "V/m",
+        );
+        assert_ne!(
+            elliptic.hash(),
+            hyperbolic.hash(),
+            "Maxwell carries two regimes; the pde_type is identity"
+        );
     }
 
     #[test]
@@ -546,7 +663,9 @@ mod tests {
     fn heat() -> ChannelDescriptor {
         ChannelDescriptor::new(
             Conserved::Energy,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
             Medium::Fluid,
             Domain::Unspecified,
             Boundary::None,
@@ -571,7 +690,9 @@ mod tests {
         reg.register(heat());
         reg.register(ChannelDescriptor::new(
             Conserved::Mass,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
             Medium::Fluid,
             Domain::Unspecified,
             Boundary::None,
@@ -585,7 +706,9 @@ mod tests {
         let mut reg = ChannelRegistry::with_capacity(16);
         let em = ChannelDescriptor::new(
             Conserved::Charge,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
             Medium::Fluid,
             Domain::Unspecified,
             Boundary::None,
@@ -602,7 +725,9 @@ mod tests {
     fn the_unit_follows_from_quantity_and_operator_not_identity() {
         let a = ChannelDescriptor::new(
             Conserved::Energy,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
             Medium::Fluid,
             Domain::Unspecified,
             Boundary::None,
@@ -610,7 +735,9 @@ mod tests {
         );
         let b = ChannelDescriptor::new(
             Conserved::Energy,
+            QuantityRole::Primary,
             TransportOp::Flux(FluxKind::Fourier),
+            PdeType::Parabolic,
             Medium::Fluid,
             Domain::Unspecified,
             Boundary::None,
