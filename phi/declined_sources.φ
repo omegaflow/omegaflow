@@ -5763,3 +5763,7 @@ note USGS 3DEP EPT — EPT/LASzip-Punktwolke = Geländehöhe (terrain), dieselbe
 decline no-physical-force
 url https://sleepdata.org
 note NSRR Schlaf-EEG (SHHS/MESA) — 2026-10-09: Elektroden ohne Koordinaten → kein Feldwert (Familie TUH, `src/archivar/main_flow.rs:3490`); Zugang zusätzlich IRB-gebunden (PMC6188513).
+
+decline no-physical-force
+url https://isip.piconepress.com/projects/tuh_eeg/
+note TUH EEG (Temple) — 2026-10-09: Elektroden-Doku symbolisch (Ferrell 2020, keine Koordinaten) → kein Feldwert; Zugang live (SSH-Key/rsync EXIT 0, `mail_ledger.φ:245`); Nicht-Feld-Nutzung operator-gebunden (`wartend.φ:37`).
