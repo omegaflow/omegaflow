@@ -1,3 +1,4 @@
+use super::channel::{TriState, channel_reduce};
 use super::*;
 
 const FRAME_TAG: u8 = 0x02;
@@ -22,6 +23,7 @@ pub struct PackedWindow {
 pub struct PresenceFrame {
     pub omega: [f32; 9],
     pub aperture: [f32; 9],
+    pub state: [TriState; 9],
     pub pan_ms: Option<f32>,
     pub tilt_ms: Option<f32>,
     pub tau_ticks: u64,
@@ -31,12 +33,29 @@ pub trait KineticRadiator: Send + 'static {
     fn vibrate(&mut self, frame: &PresenceFrame);
 }
 
-pub fn channel_intensity(omega: &[f32; 9], aperture: &[f32; 9]) -> f32 {
-    omega.iter().zip(aperture.iter()).map(|(o, a)| o * a).sum()
+pub fn aperture_state(aperture: &[f32; 9]) -> [TriState; 9] {
+    std::array::from_fn(|k| {
+        if aperture[k] > 0.0 {
+            TriState::Present
+        } else {
+            TriState::Absent
+        }
+    })
+}
+
+pub fn channel_intensity(
+    omega: &[f32; 9],
+    aperture: &[f32; 9],
+    state: &[TriState; 9],
+) -> Option<f32> {
+    channel_reduce(omega, aperture, state)
 }
 
 pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
-    channel_intensity(&frame.omega, &frame.aperture)
+    match channel_intensity(&frame.omega, &frame.aperture, &frame.state) {
+        Some(v) => v,
+        None => 0.0,
+    }
 }
 
 pub fn frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
@@ -74,20 +93,34 @@ pub fn tone_hz(tau_ticks: u64) -> f32 {
     1000.0 / (tau_ticks as f32 * LOOP_TICK_MS as f32)
 }
 
-pub fn acoustic_amplitude(omega: &[f32; 9], aperture: &[f32; 9]) -> f32 {
-    channel_intensity(omega, aperture).clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
+pub fn acoustic_amplitude(omega: &[f32; 9], aperture: &[f32; 9], state: &[TriState; 9]) -> f32 {
+    match channel_intensity(omega, aperture, state) {
+        Some(v) => v.clamp(-PCM_S16_BOUND, PCM_S16_BOUND),
+        None => 0.0,
+    }
 }
 
-pub fn acoustic_partials(omega: &[f32; 9], aperture: &[f32; 9], phase: f32) -> f32 {
+pub fn acoustic_partials(
+    omega: &[f32; 9],
+    aperture: &[f32; 9],
+    state: &[TriState; 9],
+    phase: f32,
+) -> f32 {
     let mut sample = 0.0f32;
-    for (k, (o, a)) in omega.iter().zip(aperture.iter()).enumerate() {
-        sample += o * a * (phase * (k as f32 + 1.0)).sin();
+    for k in 0..9 {
+        if state[k] != TriState::Present {
+            continue;
+        }
+        sample += omega[k] * aperture[k] * (phase * (k as f32 + 1.0)).sin();
     }
     sample
 }
 
 pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
-    let intensity = channel_intensity(&frame.omega, &frame.aperture);
+    let intensity = match channel_intensity(&frame.omega, &frame.aperture, &frame.state) {
+        Some(v) => v,
+        None => 0.0,
+    };
     let f_hz = tone_hz(frame.tau_ticks);
     let step = f_hz * std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
     let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
@@ -97,7 +130,7 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phase: &mut f32) -> Vec<u8> {
             if *phase >= std::f32::consts::TAU {
                 *phase -= std::f32::consts::TAU;
             }
-            acoustic_partials(&frame.omega, &frame.aperture, *phase)
+            acoustic_partials(&frame.omega, &frame.aperture, &frame.state, *phase)
                 .clamp(-PCM_S16_BOUND, PCM_S16_BOUND)
         } else {
             0.0
@@ -354,6 +387,17 @@ pub struct SenseReq {
 mod tests {
     use super::*;
 
+    fn pframe(omega: [f32; 9], aperture: [f32; 9], tau_ticks: u64) -> PresenceFrame {
+        PresenceFrame {
+            omega,
+            aperture,
+            state: aperture_state(&aperture),
+            pan_ms: None,
+            tilt_ms: None,
+            tau_ticks,
+        }
+    }
+
     fn pack_one(force_type: f64, val: f64, color_index: f64) -> (Vec<f32>, Vec<f32>) {
         let r: SampleRecord = (
             0.0,
@@ -418,24 +462,16 @@ mod tests {
 
     #[test]
     fn the_audio_law_is_linear_without_saturation() {
-        let frame = PresenceFrame {
-            omega: [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe(
+            [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0],
+            [1.0; 9],
+            1,
+        );
         let base = kinetic_sample(&frame) as f64;
         assert_ne!(base, 0.0);
         for lambda in [0.5f64, 2.0, 1e4] {
             let scaled = frame.omega.map(|o| (o as f64 * lambda) as f32);
-            let got = kinetic_sample(&PresenceFrame {
-                omega: scaled,
-                aperture: [1.0; 9],
-                pan_ms: None,
-                tilt_ms: None,
-                tau_ticks: 1,
-            }) as f64;
+            let got = kinetic_sample(&pframe(scaled, [1.0; 9], 1)) as f64;
             let want = base * lambda;
             let rel = (got - want).abs() / want.abs();
             assert!(
@@ -446,33 +482,30 @@ mod tests {
     }
 
     #[test]
-    fn the_aperture_attenuates_the_raw_sum() {
+    fn the_reduction_divides_by_the_active_weight() {
         let omega = [1.0, -2.0, 3.0, 4.0, -5.0, 6.0, -7.0, 8.0, -9.0];
-        let raw = omega.iter().sum::<f32>();
-        assert_ne!(raw, 0.0);
-        for aperture in [1.0f32, 0.5, 0.0, f32::EPSILON] {
-            let got = kinetic_sample(&PresenceFrame {
-                omega,
-                aperture: [aperture; 9],
-                pan_ms: None,
-                tilt_ms: None,
-                tau_ticks: 1,
-            });
-            assert_eq!(got, raw * aperture, "aperture {aperture}");
+        let mean = omega.iter().sum::<f32>() / 9.0;
+        for aperture in [1.0f32, 0.5, f32::EPSILON] {
+            let got = kinetic_sample(&pframe(omega, [aperture; 9], 1));
+            assert!(
+                (got - mean).abs() < 1e-4,
+                "aperture {aperture}: {got} vs {mean}"
+            );
         }
+        let mut weighted = [1.0f32; 9];
+        weighted[0] = 9.0;
+        let want = (omega.iter().sum::<f32>() + 8.0 * omega[0]) / 17.0;
+        let got = kinetic_sample(&pframe(omega, weighted, 1));
+        assert!((got - want).abs() < 1e-4, "weighted: {got} vs {want}");
+        assert_eq!(kinetic_sample(&pframe(omega, [0.0; 9], 1)), 0.0);
     }
 
     #[test]
-    fn an_open_aperture_passes_the_raw_sum_untouched() {
+    fn an_open_aperture_yields_the_mean_of_the_channels() {
         let omega = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
-        let frame = PresenceFrame {
-            omega,
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
-        assert_eq!(kinetic_sample(&frame), omega.iter().sum::<f32>());
+        let frame = pframe(omega, [1.0; 9], 1);
+        let mean = omega.iter().sum::<f32>() / 9.0;
+        assert_eq!(kinetic_sample(&frame), mean);
     }
 
     struct Sink(std::sync::Arc<std::sync::Mutex<Vec<u8>>>);
@@ -488,16 +521,10 @@ mod tests {
     }
 
     #[test]
-    fn the_seismic_wire_carries_the_raw_sum() {
+    fn the_seismic_wire_carries_the_reduced_value() {
         let bytes = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
         let mut osc = SeismicOscillator::new(Box::new(Sink(bytes.clone())));
-        let frame = PresenceFrame {
-            omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], [1.0; 9], 1);
         osc.vibrate(&frame);
         let got = bytes.lock().expect("sink lock").clone();
         let mut expected = [0u8; 6];
@@ -530,24 +557,36 @@ mod tests {
             o[0] = v;
             o
         };
-        assert_eq!(acoustic_amplitude(&one(9.0), &[1.0; 9]), 9.0);
-        assert_eq!(acoustic_amplitude(&one(-4.0), &[2.0; 9]), -8.0);
-        assert_eq!(acoustic_amplitude(&one(1.0e9), &[1.0; 9]), PCM_S16_BOUND);
-        assert_eq!(acoustic_amplitude(&one(-1.0e9), &[1.0; 9]), -PCM_S16_BOUND);
-        assert_eq!(acoustic_amplitude(&[0.0; 9], &[1.0; 9]), 0.0);
-        assert_eq!(acoustic_amplitude(&one(5.0), &[0.0; 9]), 0.0);
+        assert_eq!(
+            acoustic_amplitude(&one(9.0), &[1.0; 9], &[TriState::Present; 9]),
+            1.0
+        );
+        let mut solo = [0.0f32; 9];
+        solo[0] = 1.0;
+        let solo_state = aperture_state(&solo);
+        assert_eq!(acoustic_amplitude(&one(9.0), &solo, &solo_state), 9.0);
+        assert_eq!(
+            acoustic_amplitude(&one(1.0e9), &solo, &solo_state),
+            PCM_S16_BOUND
+        );
+        assert_eq!(
+            acoustic_amplitude(&one(-1.0e9), &solo, &solo_state),
+            -PCM_S16_BOUND
+        );
+        assert_eq!(
+            acoustic_amplitude(&[0.0; 9], &[1.0; 9], &[TriState::Present; 9]),
+            0.0
+        );
+        assert_eq!(
+            acoustic_amplitude(&one(5.0), &[0.0; 9], &[TriState::Absent; 9]),
+            0.0
+        );
     }
 
     #[test]
     fn the_acoustic_channel_emits_s16_stereo_pcm_with_signed_steering() {
         let mut phase = 0.0f32;
-        let frame = PresenceFrame {
-            omega: [100.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe([100.0; 9], [1.0; 9], 1);
         let pcm = acoustic_pcm(&frame, &mut phase);
         assert_eq!(
             pcm.len(),
@@ -576,13 +615,7 @@ mod tests {
     #[test]
     fn a_negative_sum_routes_the_tone_left() {
         let mut phase = 0.0f32;
-        let frame = PresenceFrame {
-            omega: [-100.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe([-100.0; 9], [1.0; 9], 1);
         let pcm = acoustic_pcm(&frame, &mut phase);
         let mut min_l = 0i32;
         let mut max_l = 0i32;
@@ -599,13 +632,11 @@ mod tests {
     #[test]
     fn a_zero_sum_does_not_collapse_the_channels() {
         let mut phase = 0.0f32;
-        let frame = PresenceFrame {
-            omega: [1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 0.0],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe(
+            [1.0, -1.0, 2.0, -2.0, 3.0, -3.0, 4.0, -4.0, 0.0],
+            [1.0; 9],
+            1,
+        );
         let pcm = acoustic_pcm(&frame, &mut phase);
         assert_eq!(pcm.len(), PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
         assert!(
@@ -617,13 +648,7 @@ mod tests {
     #[test]
     fn a_zero_omega_is_silence_on_both_channels() {
         let mut phase = 0.0f32;
-        let frame = PresenceFrame {
-            omega: [0.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe([0.0; 9], [1.0; 9], 1);
         let pcm = acoustic_pcm(&frame, &mut phase);
         assert!(
             pcm.iter().all(|&b| b == 0),
@@ -634,13 +659,7 @@ mod tests {
     #[test]
     fn the_acoustic_phase_continues_across_frames() {
         let mut phase = 0.0f32;
-        let frame = PresenceFrame {
-            omega: [100.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 3,
-        };
+        let frame = pframe([100.0; 9], [1.0; 9], 3);
         let first = acoustic_pcm(&frame, &mut phase);
         let last_of_first =
             i16::from_le_bytes([first[first.len() - 2], first[first.len() - 1]]) as i32;
@@ -655,20 +674,8 @@ mod tests {
     #[test]
     fn a_tau_step_changes_pitch_without_an_edge() {
         let mut phase = 0.0f32;
-        let fast = PresenceFrame {
-            omega: [100.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
-        let slow = PresenceFrame {
-            omega: [100.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 2,
-        };
+        let fast = pframe([100.0; 9], [1.0; 9], 1);
+        let slow = pframe([100.0; 9], [1.0; 9], 2);
         let first = acoustic_pcm(&fast, &mut phase);
         let last_of_first =
             i16::from_le_bytes([first[first.len() - 2], first[first.len() - 1]]) as i32;
@@ -697,13 +704,7 @@ mod tests {
         let bytes = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
         let (tx, rx) = mpsc::channel::<PresenceFrame>();
         let osc = AcousticOscillator::new(rx, Some(Box::new(Sink(bytes.clone()))));
-        let frame = PresenceFrame {
-            omega: [100.0; 9],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe([100.0; 9], [1.0; 9], 1);
         tx.send(frame).expect("frame reaches the oscillator");
         drop(tx);
         if let Some(h) = osc._thread {
@@ -722,6 +723,7 @@ mod tests {
         let frame = PresenceFrame {
             omega: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
             aperture: [1.0; 9],
+            state: [TriState::Present; 9],
             pan_ms: Some(1.5),
             tilt_ms: Some(1.25),
             tau_ticks: 1,
@@ -747,6 +749,7 @@ mod tests {
         let frame = PresenceFrame {
             omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
             aperture: [1.0; 9],
+            state: [TriState::Present; 9],
             pan_ms: Some(f32::NAN),
             tilt_ms: None,
             tau_ticks: 1,
@@ -758,13 +761,7 @@ mod tests {
 
     #[test]
     fn a_frame_without_pan_or_tilt_carries_one_payload() {
-        let frame = PresenceFrame {
-            omega: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-            aperture: [1.0; 9],
-            pan_ms: None,
-            tilt_ms: None,
-            tau_ticks: 1,
-        };
+        let frame = pframe([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], [1.0; 9], 1);
         let bytes = frame_bytes(&frame);
         assert_eq!(bytes[1], 0x01);
         assert_eq!(bytes.len(), 6);
