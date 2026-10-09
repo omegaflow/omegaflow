@@ -352,6 +352,7 @@ fn main() {
             rights_scheme: None,
             rights_uri: None,
             frame: Frame::Manifest,
+            fanout_center: None,
             format: "volume_netcdf".to_string(),
             extracts: vec![Extract::Volume {
                 value_key,
