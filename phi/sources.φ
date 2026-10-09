@@ -137,7 +137,7 @@ field dsn_s_up_power dsn_s_up_power inverse-square em kW 60.0 0.0 0.0
 field dsn_x_up_power dsn_x_up_power inverse-square em kW 60.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
-terms unbestimmt https://service.earthscope.org/fdsnws/dataselect/1/query
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format fdsn_waveform
 origin https://service.earthscope.org/fdsnws/dataselect/1/query
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
@@ -806,7 +806,7 @@ field wind_mfi_by_gse_nt wind_mfi_by_gse_nt inverse-square em nT 3600 0.0 0.0
 field wind_mfi_bz_gse_nt wind_mfi_bz_gse_nt inverse-square em nT 3600 0.0 0.0
 
 url https://data.neracoos.org/erddap/tabledap/A01_met.json?latitude,longitude,air_temperature,wind_speed,wind_gust&time%3E=max(time)-1day
-terms unbestimmt https://data.neracoos.org/erddap/legal.html
+terms free-open https://data.neracoos.org/erddap/legal.html
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -1029,7 +1029,7 @@ ttl 3600
 field dhm_4661_stage dhm_4661_stage_m inverse-square gravity m 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/erddap.emso.eu/emso_obsea_seabed_ts.json
-terms unbestimmt https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
+terms CC-BY-4.0 https://erddap.emso.eu/erddap/legal.html
 origin https://erddap.emso.eu/erddap/tabledap/OBSEA_seabed_station_TS_L1c.json
 compiler tools/harvest/src/bin/emso_compiler.rs
 ttl 3600
@@ -1173,7 +1173,7 @@ field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
-terms unbestimmt https://gliders.ioos.us/erddap/legal.html
+terms free-open https://gliders.ioos.us/erddap/legal.html
 ttl 3600
 on earth 0 0 0
 map table.rows
@@ -1567,7 +1567,7 @@ field DOWNWELLING_PAR_ADJUSTED_RO argovis_downwelling_par erfc em microMoleQuant
 field CDOM_ADJUSTED_RO argovis_cdom erfc diffusion ppb 86400 0.0 0.0
 
 url https://arxiv.org/e-print/2012.08534
-terms unbestimmt https://info.arxiv.org/help/license/
+terms arXiv-nonexclusive-distrib-1.0 http://arxiv.org/licenses/nonexclusive-distrib/1.0/
 format reference
 sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7
 ttl 86400
@@ -1581,7 +1581,7 @@ at earth
 field a0 gps_sv_clock_bias_s inverse-square em s 86400 0.0 0.0
 
 url https://ceotr.ocean.dal.ca/erddap/tabledap/codar_totals_2015.json?time,longitude,latitude,VELU,VELV&time%3E=max(time)-2days
-terms unbestimmt https://ceotr.ocean.dal.ca/erddap/legal.html
+terms free-open https://ceotr.ocean.dal.ca/erddap/legal.html
 ttl 86400
 on earth 0 0 0
 map table.rows
@@ -1592,55 +1592,55 @@ field 3 hfradar_codar_2015_u_cm_s inverse-square advective cm/s 21600 0.0 0.0
 field 4 hfradar_codar_2015_v_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 1f3131b38fa4e94ad6d5a997ff91d1eeac46034b99ae7b316ba4f4b4e767f5c3
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP22-MASK-3D.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 2cf72b83526f36283bd4fa14141f9873a3799eba0084a726ae9a0769af069c2c
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/BBNAP19-MASK-3D.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 d2c7a7bd165037caf311d82b478733dec83b1b5807fada51aec449acddd7e1d7
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/CAP22-MASK-5deg-3D.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 44fd2db35424c71782f106b7ceee12234cb62506bdba74409e078e9339735dc7
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMP_kmps.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 93af180a953d992b04b4348157f6950034bff252ec8b425e1eebb74c6cf47ffe
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUMS_kmps.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 acb1e8d9563dfdeffb016ededdbba9890ceab0efefb0139554856d4c97799cc5
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/GYPSUM_percent.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 a6cbe31d1fc52535173b775d477b34044d6b11c481d91ccf972a7dc50ddd36b0
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/LITHO1.0.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 ba13dfe1b7685d7ab07aa201590568f48b79fd3109e7ba17c01dded2892c375f
 ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/TX2019slab_percent.r0.0-n4c.nc
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
 sha256 b962cead63aad83227774c63509e2483cb555adb6601cc77ae0ade57e9745645
 ttl 86400
@@ -1661,13 +1661,13 @@ on earth 0 0 0
 field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://dataverse.harvard.edu/api/access/datafile/3424724
-terms unbestimmt https://support.dataverse.harvard.edu/harvard-dataverse-general-terms-use
+terms CC0-1.0 https://doi.org/10.7910/DVN/2EJ9TX
 format reference
 sha256 f68f14dfba45556b4a073d5ca20b99a100e7ac91c97312f11c24e27b1e32ef99
 ttl 86400
 
 url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
-terms unbestimmt https://erddap.dataexplorer.oceanobservatories.org/erddap/legal.html
+terms free-open https://erddap.dataexplorer.oceanobservatories.org/erddap/legal.html
 ttl 86400
 format csv
 on earth 46.05 -125.0 0
@@ -1675,7 +1675,7 @@ lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2
 lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
-terms unbestimmt https://erddap.hfrnode.eu/erddap/legal.html
+terms CC-BY-4.0 https://erddap.hfrnode.eu/erddap/legal.html
 ttl 86400
 on earth 0 0 0
 map table.rows
@@ -1970,7 +1970,7 @@ ttl 86400
 field vlf_awesome_narrowband_amp vlf_awesome_narrowband_amp inverse-square em db 300 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-eocis-sst/esacci_sst.bin
-terms unbestimmt https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
+terms CC-BY-4.0 https://artefacts.ceda.ac.uk/licences/specific_licences/esacci_sst_terms_and_conditions_v2.pdf
 format esacci_sst_l4_cdr3
 origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
 compiler tools/harvest/src/bin/esacci_sst_compiler.rs
@@ -2019,7 +2019,7 @@ ttl 86400
 field osm_node osm_node inverse-square em 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/erddap.emodnet-physics.eu/emodnet_hfr_nadr.bin
-terms unbestimmt https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
+terms CC-BY-4.0 https://erddap.emodnet-physics.eu/erddap/legal.html
 format emodnet_hfr
 origin https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
 compiler tools/harvest/src/bin/emodnet_hfr_compiler.rs
@@ -4447,7 +4447,7 @@ ttl 86400
 field ampere_fac_uam2 ampere_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_cpcp.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/10374021
 format superdarn_cpcp
 origin https://zenodo.org/api/records/10374021/files/20160311.north.map2/content
 compiler tools/harvest/src/bin/superdarn_cpcp_compiler.rs
@@ -4465,7 +4465,7 @@ ttl 86400
 field superdarn_cpcp_pot_drop superdarn_cpcp_pot_drop inverse-square electric kV 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/tag/archive-api.open-meteo.com
-terms unbestimmt https://docs.github.com/articles/licensing-a-repository
+terms CC-BY-4.0 https://open-meteo.com/en/licence
 format reference
 ttl 86400
 
@@ -8698,19 +8698,19 @@ sha256 9f177129a332735d3637affd20054080d5260815f3ca0809120c05b2c902297f
 ttl 86400
 
 url https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/template/electrode/standard_1005.elc
-terms unbestimmt https://docs.github.com/articles/licensing-a-repository
+terms GPL-3.0 https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/COPYING
 format reference
 sha256 1ee59197946d62de872db2ac7f2243a596662c231427366f6dc5d84ed237f853
 ttl 86400
 
 url https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/template/headmodel/standard_bem.mat
-terms unbestimmt https://docs.github.com/articles/licensing-a-repository
+terms GPL-3.0 https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/COPYING
 format reference
 sha256 299454de329124f941688b67d59aee456a6e4118fd83a194c58fec8fcb322b19
 ttl 86400
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
-terms unbestimmt https://service.earthscope.org/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 ttl 86400
 format text
 on earth 0 0 0
@@ -10415,26 +10415,26 @@ format reference
 ttl 86400
 
 url https://zenodo.org/api/records/21132339/files/data.zip/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/21132339
 format reference
 origin https://zenodo.org/api/records/21132339
 compiler tools/harvest/src/bin/zenodo_record_harvester.rs
 ttl 86400
 
 url https://zenodo.org/records/10620251/files/Proudfoot23_TNBFits.zip
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/10620251
 format reference
 sha256 374a374fae7fff03c9de7b2a1799c2e49768a575ff20a75d111240838f2bdf58
 ttl 86400
 
 url https://zenodo.org/records/10620251/files/multimoon-1.0.zip
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/10620251
 format reference
 sha256 07b26a4f01f285d1807ea46cd7b9aa8ae7d7d3b7c2dfd877bbdab5c70cb46ffc
 ttl 86400
 
 url https://zenodo.org/records/10794666/files/2007_10_10_Gallagher%20et%20al_DAP%202.0_ESE-RFC-004v1.2.pdf
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/10794666
 format reference
 sha256 a61cd748cfbca3ea4201f7a8c743b7e47a1434fb798a4290d18afefc1a357525
 ttl 86400
@@ -10658,7 +10658,7 @@ dist_scale 3.085677581e22
 field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
 
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
-terms unbestimmt https://erddap.marine.ie/erddap/legal.html
+terms CC-BY-4.0 https://erddap.marine.ie/erddap/legal.html
 ttl 604800
 on earth 0 0 0
 map table.rows
@@ -10877,7 +10877,7 @@ ttl 604800
 field snr bl_lband2017_narrowband_snr inverse-square em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cds.climate.copernicus.eu/copernicus_cuon_2020-01-01.bin
-terms unbestimmt https://cds.climate.copernicus.eu/api
+terms CC-BY-4.0 https://cds.climate.copernicus.eu/
 ttl 604800
 format copernicus_cdm_obs
 origin https://cds.climate.copernicus.eu/api
@@ -10895,7 +10895,7 @@ field copernicus_wind_from_direction copernicus_wind_from_direction gaussian-inv
 field copernicus_wind_speed copernicus_wind_speed gaussian-inverse-square advective m/s 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cds.climate.copernicus.eu/copernicus_icoads_2020-01-01.bin
-terms unbestimmt https://cds.climate.copernicus.eu/api
+terms CC-BY-4.0 https://cds.climate.copernicus.eu/
 ttl 604800
 format copernicus_cdm_obs
 origin https://cds.climate.copernicus.eu/api
@@ -11006,7 +11006,7 @@ ttl 604800
 field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emtf_usarray_cao01_2010.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format emtf_impedance
 origin https://doi.org/10.17611/DP/EMTF/USARRAY/TA (EarthScope USArray MT impedance)
 compiler tools/harvest/src/bin/emtf_compiler.rs
@@ -11085,7 +11085,7 @@ ttl 604800
 field iers_eop_lod_s iers_eop_lod_s inverse-square gravity s 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
-terms unbestimmt https://doi.pangaea.de/10.1594/PANGAEA.758961?format=textfile
+terms CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
 origin https://doi.pangaea.de/10.1594/PANGAEA.758961?format=textfile
 compiler tools/harvest/src/bin/pangaea_harvester.rs
 ttl 604800
@@ -11177,7 +11177,7 @@ ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdarn_rawacf.bin
-terms unbestimmt https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
+terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 format superdarn_rawacf
 origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
 compiler tools/harvest/src/bin/superdarn_rawacf_compiler.rs
@@ -11421,7 +11421,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/champ_plpt.bin
-terms unbestimmt https://isdc-data.gfz.de/champ/ME/Level2/PLPT/{year}/CH-ME-2-PLPT+{date}_1.zip
+terms CC-BY-4.0 https://isdc.gfz-potsdam.de/champ-isdc/access-to-the-champ-data
 format champ_plpt
 origin https://isdc-data.gfz.de/champ/ME/Level2/PLPT/{year}/CH-ME-2-PLPT+{date}_1.zip
 compiler tools/harvest/src/bin/champ_plpt_compiler.rs
@@ -19493,7 +19493,7 @@ ttl 604800
 field RANGE hay_lidar_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_efd.bin
-terms unbestimmt https://www.scidb.cn/en/about/terms
+terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_efd
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b54 (EFD_ULF_L2_028981; dataset 10.57760/sciencedb.06921, CC0)
 compiler tools/harvest/src/bin/cses_efd_compiler.rs
@@ -19505,7 +19505,7 @@ field Y_WAVE cses_efd_ulf_ey_v_m inverse-square electric V/m 86400 0.0 0.0
 field Z_WAVE cses_efd_ulf_ez_v_m inverse-square electric V/m 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_hpm.bin
-terms unbestimmt https://www.scidb.cn/en/about/terms
+terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_hpm
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b52 (CSES_HPM_FG2_0028981; dataset 10.57760/sciencedb.06921, CC0)
 compiler tools/harvest/src/bin/cses_hpm_compiler.rs
@@ -19517,7 +19517,7 @@ field FG2_Y cses_hpm_fg2_y_nt inverse-square em nT 86400 0.0 0.0
 field FG2_Z cses_hpm_fg2_z_nt inverse-square em nT 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_lap.bin
-terms unbestimmt https://www.scidb.cn/en/about/terms
+terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_lap
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b50 (CSES_01_LAP_1_L02_A3_028981; dataset 10.57760/sciencedb.06921)
 compiler tools/harvest/src/bin/cses_lap_compiler.rs
@@ -19530,7 +19530,7 @@ field UP cses_lap_up_v inverse-square electric V 86400 0.0 0.0
 field UF cses_lap_uf_v inverse-square electric V 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_scm.bin
-terms unbestimmt https://www.scidb.cn/en/about/terms
+terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_scm
 origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55 (SCM_ULF_L1_0028981; dataset 10.57760/sciencedb.06921, CC0)
 compiler tools/harvest/src/bin/cses_scm_compiler.rs
@@ -20397,7 +20397,7 @@ lon lon
 field 2 wwlln_thunder_hours_h patch-levy em h 604800.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210525042001_20210525043243_00011_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210525042001_20210525043243_00011_A.2CL/content
@@ -20407,7 +20407,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210528062805_20210528063800_00014_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210528062805_20210528063800_00014_A.2CL/content
@@ -20417,7 +20417,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210530073623_20210530074230_00016_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210530073623_20210530074230_00016_A.2CL/content
@@ -20427,7 +20427,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210605100445_20210605101554_00022_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210605100445_20210605101554_00022_A.2CL/content
@@ -20437,7 +20437,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210606104402_20210606105856_00023_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210606104402_20210606105856_00023_A.2CL/content
@@ -20447,7 +20447,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210607112519_20210607114327_00024_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210607112519_20210607114327_00024_A.2CL/content
@@ -20457,7 +20457,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210608120247_20210608122320_00025_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210608120247_20210608122320_00025_A.2CL/content
@@ -20467,7 +20467,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210609124205_20210609130229_00026_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210609124205_20210609130229_00026_A.2CL/content
@@ -20477,7 +20477,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210610132123_20210610133816_00027_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210610132123_20210610133816_00027_A.2CL/content
@@ -20487,7 +20487,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210611140040_20210611142216_00028_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210611140040_20210611142216_00028_A.2CL/content
@@ -20497,7 +20497,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210612143959_20210612150247_00029_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210612143959_20210612150247_00029_A.2CL/content
@@ -20507,7 +20507,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210613151917_20210613154608_00030_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210613151917_20210613154608_00030_A.2CL/content
@@ -20517,7 +20517,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210614155835_20210614162453_00031_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210614155835_20210614162453_00031_A.2CL/content
@@ -20527,7 +20527,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210616171702_20210616172557_00033_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210616171702_20210616172557_00033_A.2CL/content
@@ -20537,7 +20537,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210617172542_20210617174251_00034_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210617172542_20210617174251_00034_A.2CL/content
@@ -20547,7 +20547,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210618180500_20210618183135_00035_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210618180500_20210618183135_00035_A.2CL/content
@@ -20557,7 +20557,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210619184419_20210619190603_00036_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210619184419_20210619190603_00036_A.2CL/content
@@ -20567,7 +20567,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210623212136_20210623214627_00040_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210623212136_20210623214627_00040_A.2CL/content
@@ -20577,7 +20577,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210625224006_20210625224957_00042_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210625224006_20210625224957_00042_A.2CL/content
@@ -20587,7 +20587,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210627235846_20210628000439_00044_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210627235846_20210628000439_00044_A.2CL/content
@@ -20597,7 +20597,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210630005145_20210630005917_00046_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HH_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
@@ -20607,7 +20607,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210525042001_20210525043243_00011_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210525042001_20210525043243_00011_A.2CL/content
@@ -20617,7 +20617,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210528062805_20210528063800_00014_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210528062805_20210528063800_00014_A.2CL/content
@@ -20627,7 +20627,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210530073623_20210530074230_00016_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210530073623_20210530074230_00016_A.2CL/content
@@ -20637,7 +20637,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210605100445_20210605101554_00022_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210605100445_20210605101554_00022_A.2CL/content
@@ -20647,7 +20647,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210606104402_20210606105856_00023_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210606104402_20210606105856_00023_A.2CL/content
@@ -20657,7 +20657,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210607112519_20210607114327_00024_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210607112519_20210607114327_00024_A.2CL/content
@@ -20667,7 +20667,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210608120247_20210608122320_00025_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210608120247_20210608122320_00025_A.2CL/content
@@ -20677,7 +20677,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210609124205_20210609130229_00026_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210609124205_20210609130229_00026_A.2CL/content
@@ -20687,7 +20687,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210610132123_20210610133816_00027_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210610132123_20210610133816_00027_A.2CL/content
@@ -20697,7 +20697,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210611140040_20210611142216_00028_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210611140040_20210611142216_00028_A.2CL/content
@@ -20707,7 +20707,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210612143959_20210612150247_00029_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210612143959_20210612150247_00029_A.2CL/content
@@ -20717,7 +20717,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210613151917_20210613154608_00030_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210613151917_20210613154608_00030_A.2CL/content
@@ -20727,7 +20727,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210614155835_20210614162453_00031_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210614155835_20210614162453_00031_A.2CL/content
@@ -20737,7 +20737,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210616171702_20210616172557_00033_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210616171702_20210616172557_00033_A.2CL/content
@@ -20747,7 +20747,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210617172542_20210617174251_00034_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210617172542_20210617174251_00034_A.2CL/content
@@ -20757,7 +20757,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210618180500_20210618183135_00035_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210618180500_20210618183135_00035_A.2CL/content
@@ -20767,7 +20767,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210619184419_20210619190603_00036_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210619184419_20210619190603_00036_A.2CL/content
@@ -20777,7 +20777,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210623212136_20210623214627_00040_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210623212136_20210623214627_00040_A.2CL/content
@@ -20787,7 +20787,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210625224006_20210625224957_00042_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210625224006_20210625224957_00042_A.2CL/content
@@ -20797,7 +20797,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210627235846_20210628000439_00044_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210627235846_20210628000439_00044_A.2CL/content
@@ -20807,7 +20807,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hv_sci_n_20210630005145_20210630005917_00046_a.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15812343
 format gras_2c
 range 0.0 0.01722
 origin https://zenodo.org/api/records/15812343/files/HX1-Ro_GRAS_RoPeR-HF-HV_SCI_N_20210630005145_20210630005917_00046_A.2CL/content
@@ -20817,7 +20817,7 @@ at mars
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/iaga_text.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/10594301
 format iaga_text
 origin https://zenodo.org/api/records/10594301/files/Mag_Data.zip/content
 compiler tools/harvest/src/bin/iaga_text_compiler.rs
@@ -20826,7 +20826,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/kyoto_pressure.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-NC-4.0 https://zenodo.org/records/8098323
 format kyoto_pressure
 ttl 604800
 origin https://zenodo.org/records/8098323/files/data.zip
@@ -20834,7 +20834,7 @@ at earth
 field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/21185812
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
 compiler tools/harvest/src/bin/quaoar_occlt_compiler.rs
 format quaoar_occlt
@@ -21082,7 +21082,7 @@ dec dec
 field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_1_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21093,7 +21093,7 @@ field GIC kellerman_node1_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node1_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_2_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21104,7 +21104,7 @@ field GIC kellerman_node2_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node2_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_3_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21115,7 +21115,7 @@ field GIC kellerman_node3_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node3_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_4_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21126,7 +21126,7 @@ field GIC kellerman_node4_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node4_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_5_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21137,7 +21137,7 @@ field GIC kellerman_node5_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node5_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_6_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21148,7 +21148,7 @@ field GIC kellerman_node6_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node6_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/4444068/files/Node_7_anon_gic_qdc_median_wdy10_wmin1800_fm3_wgic.csv.gz/content
-terms unbestimmt https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/4444068
 origin https://zenodo.org/record/4444068
 ttl 604800
 format csv_gz
@@ -21220,7 +21220,7 @@ ttl 2592000
 field usgs_comcat_m45 usgs_comcat_m45_rate gaussian-inverse-square seismic-body count 2592000.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
-terms unbestimmt https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
+terms non-commercial-government-licence-2.0 https://www.metoffice.gov.uk/hadobs/hadisst/
 format hadisst_sst
 origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
 compiler tools/harvest/src/bin/hadisst_compiler.rs
@@ -21632,7 +21632,7 @@ at earth
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP20-MASK-3D.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21641,7 +21641,7 @@ sha256 0e1c632fa49ddab28647205324a5c6f7558ebf71e0898048f2c8b5b56b6edee8
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP22-MASK-3D.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21650,7 +21650,7 @@ sha256 5d3f2d304365364cd99c45817bb9bda4e89582baf20d874db3c64b64735de1a7
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/BBNAP19-MASK-3D.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21659,7 +21659,7 @@ sha256 88f3552d574b2f8117a3c9f5e913f223ae34c1a1535c25a7014f264dcd38a0e3
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21668,7 +21668,7 @@ sha256 46a7b7e8c2aa348f2b47c05d0e2492589d42052de1c74cf76fcb37397bde980c
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMP_kmps.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21677,7 +21677,7 @@ sha256 797151fab00f3619ec59ba5a3455bb115d8590041f4eef27d064db1a1a234a40
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMS_kmps.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21686,7 +21686,7 @@ sha256 15dc651057e21b8ae8bb9758fe942290c5f81b71e90669af46fba408c2a999a8
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUM_percent.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21695,7 +21695,7 @@ sha256 f34444584aa993e7b2eceecbb1dbc3dd1dfed4c1b83a20abca22883f7dfe4bcb
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
 origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
 compiler tools/utils/src/bin/volume_builder.rs
@@ -21704,7 +21704,7 @@ sha256 a3fe6dc3a049ed4717bea420f59f781cd238af895d9bd5d729fd7a3cc82587fa
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emc_radial.bin
-terms unbestimmt https://www.earthscope.org/sponsored-open-data/
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format emc_radial
 origin https://data.earthscope.org/archive/seismology/products/emc/data/
 compiler tools/harvest/src/bin/emc_compiler.rs
@@ -21740,7 +21740,7 @@ ttl 31536000
 field hawc_3hwc hawc_3hwc inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/bayestar2019.be19
-terms unbestimmt https://dataverse.harvard.edu/api/access/datafile/3424708
+terms CC0-1.0 https://doi.org/10.7910/DVN/2EJ9TX
 format bayestar
 origin https://dataverse.harvard.edu/api/access/datafile/3424708
 compiler tools/harvest/src/bin/bayestar_compiler.rs
@@ -21749,7 +21749,7 @@ at sun
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/decaps_dr2_stars.bin
-terms unbestimmt https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI (110 decaps_stars_batch_*.fits.gz)
+terms CC0-1.0 https://doi.org/10.7910/DVN/K88GFI
 format decaps_dr2_stars
 origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI (110 decaps_stars_batch_*.fits.gz)
 compiler tools/harvest/src/bin/decaps_dr2_compiler.rs
@@ -21802,7 +21802,7 @@ origin https://gavo.aip.de
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/github.com/vtscat_flux.sky1
-terms unbestimmt https://api.github.com/repos/VERITAS-Observatory/VERITAS-VTSCat/git/trees/main?recursive=1 ; https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/
+terms CC0-1.0 https://github.com/VERITAS-Observatory/VERITAS-VTSCat
 origin https://api.github.com/repos/VERITAS-Observatory/VERITAS-VTSCat/git/trees/main?recursive=1 ; https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/
 compiler tools/harvest/src/bin/vtscat_compiler.rs
 format sky1
@@ -21925,7 +21925,7 @@ origin https://isla.esac.esa.int
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
-terms unbestimmt https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
+terms CC-BY-4.0 https://jeodpp.jrc.ec.europa.eu/
 format ghsl_built_s
 origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
 compiler tools/harvest/src/bin/ghsl_compiler.rs
