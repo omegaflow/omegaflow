@@ -132,6 +132,9 @@ fn main() {
         std::process::exit(1);
     }
     let bytes = write_bin(&rows);
+    if let Some(parent) = std::path::Path::new(&out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
     if std::fs::write(&out, &bytes).is_err() {
         eprintln!("write {out} returned void");
         std::process::exit(1);

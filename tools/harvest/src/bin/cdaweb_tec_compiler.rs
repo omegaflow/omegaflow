@@ -208,6 +208,9 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
     });
 
     let bytes_out = write_bin(&records);
+    if let Some(parent) = std::path::Path::new(out).parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
     if std::fs::write(out, &bytes_out).is_err() {
         eprintln!("write {out} returned void");
         std::process::exit(1);
@@ -217,8 +220,8 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
         .iter()
         .map(|r| r[2])
         .fold(f64::NEG_INFINITY, f64::max);
-    let t_min = records.first().map(|r| r[3]).unwrap_or(f64::NAN);
-    let t_max = records.last().map(|r| r[3]).unwrap_or(f64::NAN);
+    let t_min = records[0][3];
+    let t_max = records[records.len() - 1][3];
     eprintln!(
         "{out}: {} records ({} epoch(s) skipped), TEC [{}, {}] TECU, t [{}, {}] unix",
         records.len(),
