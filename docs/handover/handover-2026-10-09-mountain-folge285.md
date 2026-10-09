@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 9c72f2c55b07f1ef722d536618a92ba1592045e1b5a1de180bd32798611a7a58
+  sha256: 86b64ff49f54f456f3abe9696d528649f6c1d413b01133c492f753c7bb99e2e5
   status: live
 -->
 # Handover — Mountain-Folge 285 (2026-10-09)
@@ -41,7 +41,7 @@ Wort | Datum | Quelle
 ### USGS-geomag E-Feld — Verdikt D: Compiler-Arm (Rat + Frontier konvergent)
 - **Status:** eigen (Bau) | **Bindung:** eigen (Register/Compiler)
 - **Trigger:** Compiler `usgs_geomag_compiler.rs` gebaut; C-Due-Diligence gemessen
-- **Lage:** (gemessen 2026-10-09 via `archive_search --verdict` + curl + `jaq`; Stimmen-Runde `state/stimmen/2026-10-09-mountain-usgs-extrakt-arm.md`) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206, Station BOU `40.137/-105.237/1682`; Shape ist **zwei parallele Top-Level-Arrays** `times[]` + `values[].values[]` (Selektor `values[].metadata.element`). Rat (5 Stimmen) + 6 Frontier-Seats (GPT-6 Luna · Qwen · GLM-5.3 · DeepSeek V4 Pro · Nemotron 3 Ultra · Qwen3.8 2.4T) einstimmig **D**: Compiler zippt in Rust, flaches `.bin`, CDN, `sources.φ`-Block wie die 986 — Kernkontrakt `enum Extract` bleibt unangetastet; A = vorzeitige Generalität für n=1 (echtes Sprachloch erst ab 2. unabhängiger Quelle). Claude `pending` (5-h-Nachrichtenlimit, gemessen).
+- **Lage:** (gemessen 2026-10-09 via `archive_search --verdict` + curl + `jaq`; Stimmen-Runde `state/stimmen/2026-10-09-mountain-usgs-extrakt-arm.md`) `geomag.usgs.gov/ws/data/?id=BOU&elements=E-E,E-N&format=json` HTTP 206, Station BOU `40.137/-105.237/1682`; Shape ist **zwei parallele Top-Level-Arrays** `times[]` + `values[].values[]` (Selektor `values[].metadata.element`). Rat (5 Stimmen) + 7 Frontier-Seats (GPT-6 Luna · Qwen · GLM-5.3 · DeepSeek V4 Pro · Nemotron 3 Ultra · Qwen3.8 2.4T · Claude Sonnet 5.5) einstimmig **D**: Compiler zippt in Rust, flaches `.bin`, CDN, `sources.φ`-Block wie die 986 — Kernkontrakt `enum Extract` bleibt unangetastet; A = vorzeitige Generalität für n=1 (echtes Sprachloch erst ab 2. unabhängiger Quelle).
 - **Blockade:** keine (Verdikt gefallen).
 - **Braucht:** (a) C-Due-Diligence: prüfen, ob eine bestehende Live-Route dieselbe geoelektrische Größe führt; (b) Bau `tools/harvest/src/bin/usgs_geomag_compiler.rs` (Zip als isoliertes `fn zip_parallel_arrays`, damit bei Quellen #2/#3 in den Kern hebbar) + `format`-Arm + Workflow; (c) `blocked_sources.φ`-Eintrag auf den Verdikt-Stand.
 
