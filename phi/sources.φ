@@ -14,7 +14,7 @@ map .
 lat Latitude
 lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
-channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface Pa
+channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface:6371000 Pa
 
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 terms unbestimmt https://vires.services/
@@ -99,7 +99,7 @@ lat latitude
 lon longitude
 field depth ceic_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
 field magnitude ceic_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
-channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface Pa
+channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface:6371000 Pa
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 terms PD https://earthquake.usgs.gov/
