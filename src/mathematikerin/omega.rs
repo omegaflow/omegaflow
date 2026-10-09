@@ -965,7 +965,13 @@ impl OmegaLoop {
             return;
         };
         let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-        enc.copy_buffer_to_buffer(&probe_buf, 0, &probe_read, 0, 48);
+        enc.copy_buffer_to_buffer(
+            &probe_buf,
+            0,
+            &probe_read,
+            0,
+            ((CHANNEL_CAP + 3) * 4) as u64,
+        );
         queue.submit(std::iter::once(enc.finish()));
         let mapped = Arc::new(AtomicBool::new(false));
         let m2 = mapped.clone();
@@ -979,16 +985,20 @@ impl OmegaLoop {
         }
         if mapped.load(Ordering::SeqCst) {
             let data = slice.get_mapped_range();
-            let mut v = [0f32; 12];
-            for k in 0..12 {
+            let mut v = [0f32; CHANNEL_CAP + 3];
+            for (k, slot) in v.iter_mut().enumerate() {
                 let mut b = [0u8; 4];
                 b.copy_from_slice(&data[k * 4..k * 4 + 4]);
-                v[k] = f32::from_le_bytes(b);
+                *slot = f32::from_le_bytes(b);
             }
             drop(data);
             self.probe_omega.copy_from_slice(&v[0..9]);
-            self.probe_flow.copy_from_slice(&v[9..12]);
-            self.probe_ring[self.ring_head] = v;
+            self.probe_flow
+                .copy_from_slice(&v[CHANNEL_CAP..CHANNEL_CAP + 3]);
+            let mut ring = [0f32; 12];
+            ring[..9].copy_from_slice(&v[..9]);
+            ring[9..12].copy_from_slice(&v[CHANNEL_CAP..CHANNEL_CAP + 3]);
+            self.probe_ring[self.ring_head] = ring;
             self.ring_head = (self.ring_head + 1) % 256;
             if self.ring_filled < 256 {
                 self.ring_filled += 1;
@@ -1431,13 +1441,13 @@ impl OmegaLoop {
         });
         let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 48,
+            size: ((CHANNEL_CAP + 3) * 4) as u64,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
             mapped_at_creation: false,
         });
         let probe_read = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 48,
+            size: ((CHANNEL_CAP + 3) * 4) as u64,
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
