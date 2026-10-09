@@ -364,6 +364,7 @@ fn main() {
                 frame_body: None,
             }],
             headers: Vec::new(),
+            channels: Vec::new(),
             post_body: None,
             target: None,
             catalog: None,
