@@ -72,14 +72,52 @@ pub enum Boundary {
     Robin = 4,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Debug)]
 pub enum Domain {
-    Unspecified = 0,
-    Line = 1,
-    Rectangle = 2,
-    Circle = 3,
-    Sphere = 4,
+    Unspecified,
+    Line,
+    Rectangle { lx: f64, ly: f64 },
+    Circle,
+    Sphere,
+    Shell { r_in: f64, r_out: f64 },
+    Ellipsoid { a: f64, b: f64, c: f64 },
 }
+
+impl PartialEq for Domain {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Domain::Unspecified, Domain::Unspecified)
+            | (Domain::Line, Domain::Line)
+            | (Domain::Circle, Domain::Circle)
+            | (Domain::Sphere, Domain::Sphere) => true,
+            (Domain::Rectangle { lx: a, ly: b }, Domain::Rectangle { lx: c, ly: d }) => {
+                a.to_bits() == c.to_bits() && b.to_bits() == d.to_bits()
+            }
+            (Domain::Shell { r_in: a, r_out: b }, Domain::Shell { r_in: c, r_out: d }) => {
+                a.to_bits() == c.to_bits() && b.to_bits() == d.to_bits()
+            }
+            (
+                Domain::Ellipsoid {
+                    a: a1,
+                    b: b1,
+                    c: c1,
+                },
+                Domain::Ellipsoid {
+                    a: a2,
+                    b: b2,
+                    c: c2,
+                },
+            ) => {
+                a1.to_bits() == a2.to_bits()
+                    && b1.to_bits() == b2.to_bits()
+                    && c1.to_bits() == c2.to_bits()
+            }
+            _ => false,
+        }
+    }
+}
+
+impl Eq for Domain {}
 
 impl Conserved {
     pub fn parse(token: &str) -> Option<Self> {
@@ -150,11 +188,83 @@ impl Domain {
         match token {
             "unspecified" => Some(Domain::Unspecified),
             "line" => Some(Domain::Line),
-            "rectangle" => Some(Domain::Rectangle),
             "circle" => Some(Domain::Circle),
             "sphere" => Some(Domain::Sphere),
-            _ => None,
+            _ => parse_compound_domain(token),
         }
+    }
+
+    fn tag(&self) -> u8 {
+        match self {
+            Domain::Unspecified => 0,
+            Domain::Line => 1,
+            Domain::Rectangle { .. } => 2,
+            Domain::Circle => 3,
+            Domain::Sphere => 4,
+            Domain::Shell { .. } => 5,
+            Domain::Ellipsoid { .. } => 6,
+        }
+    }
+
+    fn hash_into(&self, h: u64) -> u64 {
+        let h = fnv1a(&[self.tag()], h);
+        match self {
+            Domain::Rectangle { lx, ly } => fnv1a(
+                &ly.to_bits().to_le_bytes(),
+                fnv1a(&lx.to_bits().to_le_bytes(), h),
+            ),
+            Domain::Shell { r_in, r_out } => fnv1a(
+                &r_out.to_bits().to_le_bytes(),
+                fnv1a(&r_in.to_bits().to_le_bytes(), h),
+            ),
+            Domain::Ellipsoid { a, b, c } => {
+                let h = fnv1a(&a.to_bits().to_le_bytes(), h);
+                let h = fnv1a(&b.to_bits().to_le_bytes(), h);
+                fnv1a(&c.to_bits().to_le_bytes(), h)
+            }
+            _ => h,
+        }
+    }
+}
+
+fn parse_compound_domain(token: &str) -> Option<Domain> {
+    let open = token.find('(')?;
+    if !token.ends_with(')') {
+        return None;
+    }
+    let close = token.len() - 1;
+    if close <= open {
+        return None;
+    }
+    let kind = &token[..open];
+    let mut args: Vec<f64> = Vec::new();
+    for raw in token[open + 1..close].split(',') {
+        let v: f64 = raw.trim().parse().ok()?;
+        if !v.is_finite() || v <= 0.0 {
+            return None;
+        }
+        args.push(v);
+    }
+    match (kind, args.len()) {
+        ("rectangle", 2) => Some(Domain::Rectangle {
+            lx: args[0],
+            ly: args[1],
+        }),
+        ("shell", 2) => {
+            if args[1] <= args[0] {
+                return None;
+            }
+            Some(Domain::Shell {
+                r_in: args[0],
+                r_out: args[1],
+            })
+        }
+        ("ellipsoid", 3) => Some(Domain::Ellipsoid {
+            a: args[0],
+            b: args[1],
+            c: args[2],
+        }),
+        _ => None,
     }
 }
 
@@ -171,7 +281,7 @@ impl Boundary {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub struct ChannelDescriptor {
     pub conserved: Conserved,
     pub role: QuantityRole,
@@ -230,7 +340,7 @@ impl ChannelDescriptor {
     }
 
     pub fn mode_wavenumbers(&self, count: usize) -> Option<Vec<f64>> {
-        eigen_wavenumbers(self.domain, self.effective_boundary(), self.extent?, count)
+        eigen_wavenumbers(&self.domain, self.effective_boundary(), self.extent, count)
     }
 
     fn effective_boundary(&self) -> Boundary {
@@ -261,7 +371,7 @@ impl ChannelDescriptor {
         }
         h = fnv1a(&[self.pde_type as u8], h);
         h = fnv1a(&[self.medium as u8], h);
-        h = fnv1a(&[self.domain as u8], h);
+        h = self.domain.hash_into(h);
         h = fnv1a(&[self.boundary as u8], h);
         match self.extent {
             None => fnv1a(&[0u8], h),
@@ -559,38 +669,81 @@ fn circular_membrane_zeros(count: usize) -> Vec<f64> {
 }
 
 pub fn eigen_wavenumbers(
-    domain: Domain,
+    domain: &Domain,
     boundary: Boundary,
-    extent: f64,
+    extent: Option<f64>,
     count: usize,
 ) -> Option<Vec<f64>> {
-    if !extent.is_finite() || extent <= 0.0 || count == 0 {
+    if count == 0 {
         return None;
     }
-    match (domain, boundary) {
-        (Domain::Line, Boundary::Dirichlet) => Some(
-            (1..=count)
-                .map(|j| j as f64 * std::f64::consts::PI / extent)
-                .collect(),
-        ),
-        (Domain::Line, Boundary::Neumann) => Some(
-            (0..count)
-                .map(|j| j as f64 * std::f64::consts::PI / extent)
-                .collect(),
-        ),
-        (Domain::Sphere, Boundary::Dirichlet) => Some(
-            (1..=count)
-                .map(|j| j as f64 * std::f64::consts::PI / extent)
-                .collect(),
-        ),
-        (Domain::Circle, Boundary::Dirichlet) if count <= CHANNEL_CAP => {
-            let zeros = circular_membrane_zeros(count);
-            if zeros.len() < count || (zeros[0] - FIRST_BESSEL_J0_ZERO).abs() > 1e-9 {
+    match domain {
+        Domain::Rectangle { lx, ly } => rectangular_wavenumbers(*lx, *ly, boundary, count),
+        Domain::Line | Domain::Circle | Domain::Sphere => {
+            let extent = extent?;
+            if !extent.is_finite() || extent <= 0.0 {
                 return None;
             }
-            Some(zeros[..count].iter().map(|z| z / extent).collect())
+            match (domain, boundary) {
+                (Domain::Line, Boundary::Dirichlet) => Some(
+                    (1..=count)
+                        .map(|j| j as f64 * std::f64::consts::PI / extent)
+                        .collect(),
+                ),
+                (Domain::Line, Boundary::Neumann) => Some(
+                    (0..count)
+                        .map(|j| j as f64 * std::f64::consts::PI / extent)
+                        .collect(),
+                ),
+                (Domain::Sphere, Boundary::Dirichlet) => Some(
+                    (1..=count)
+                        .map(|j| j as f64 * std::f64::consts::PI / extent)
+                        .collect(),
+                ),
+                (Domain::Circle, Boundary::Dirichlet) if count <= CHANNEL_CAP => {
+                    let zeros = circular_membrane_zeros(count);
+                    if zeros.len() < count || (zeros[0] - FIRST_BESSEL_J0_ZERO).abs() > 1e-9 {
+                        return None;
+                    }
+                    Some(zeros[..count].iter().map(|z| z / extent).collect())
+                }
+                _ => None,
+            }
         }
-        _ => None,
+        Domain::Unspecified | Domain::Shell { .. } | Domain::Ellipsoid { .. } => None,
+    }
+}
+
+fn rectangular_wavenumbers(lx: f64, ly: f64, boundary: Boundary, count: usize) -> Option<Vec<f64>> {
+    let start = match boundary {
+        Boundary::Dirichlet => 1usize,
+        Boundary::Neumann => 0usize,
+        _ => return None,
+    };
+    let mut bound = count + 1;
+    loop {
+        let mut modes: Vec<f64> = Vec::new();
+        for m in start..=bound {
+            for n in start..=bound {
+                let km = m as f64 * std::f64::consts::PI / lx;
+                let kn = n as f64 * std::f64::consts::PI / ly;
+                modes.push((km * km + kn * kn).sqrt());
+            }
+        }
+        if modes.len() < count {
+            return None;
+        }
+        modes.sort_by(|a, b| a.total_cmp(b));
+        let k_max = modes[count - 1];
+        let need_x = (k_max * lx / std::f64::consts::PI).ceil() as usize + 1;
+        let need_y = (k_max * ly / std::f64::consts::PI).ceil() as usize + 1;
+        if need_x <= bound && need_y <= bound {
+            return Some(modes[..count].to_vec());
+        }
+        bound = need_x.max(need_y).max(bound + 1);
+        if bound > 4096 {
+            return None;
+        }
     }
 }
 
@@ -725,7 +878,7 @@ pub fn channel_registry_from_sources(sources: &[crate::archivar::SourceConfig]) 
     let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
     for s in sources {
         for d in &s.channels {
-            reg.register(*d);
+            reg.register(d.clone());
         }
     }
     if reg.is_empty() {
@@ -1008,8 +1161,8 @@ mod tests {
     fn identical_descriptors_dedupe_to_one_instance() {
         let mut reg = ChannelRegistry::with_capacity(16);
         let d = heat();
-        let a = reg.register(d);
-        let b = reg.register(d);
+        let a = reg.register(d.clone());
+        let b = reg.register(d.clone());
         assert_eq!(a, b);
         assert_eq!(reg.len(), 1);
         assert_eq!(reg.descriptor(d.hash()).map(|x| x.hash()), Some(d.hash()));
@@ -1238,7 +1391,8 @@ mod tests {
 
     #[test]
     fn a_line_is_harmonic() {
-        let k = eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 1.0, 3).expect("line modes");
+        let k = eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(1.0), 3)
+            .expect("line modes");
         let pi = std::f64::consts::PI;
         assert_eq!(k, vec![pi, 2.0 * pi, 3.0 * pi]);
     }
@@ -1246,13 +1400,14 @@ mod tests {
     #[test]
     fn a_sphere_dirichlet_is_the_l0_radial_sector() {
         let pi = std::f64::consts::PI;
-        let k = eigen_wavenumbers(Domain::Sphere, Boundary::Dirichlet, 1.0, 2).expect("sphere l=0");
+        let k = eigen_wavenumbers(&Domain::Sphere, Boundary::Dirichlet, Some(1.0), 2)
+            .expect("sphere l=0");
         assert_eq!(k, vec![pi, 2.0 * pi]);
     }
 
     #[test]
     fn a_bare_free_surface_has_no_closed_spectrum() {
-        assert!(eigen_wavenumbers(Domain::Line, Boundary::FreeSurface, 2.0, 2).is_none());
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::FreeSurface, Some(2.0), 2).is_none());
     }
 
     #[test]
@@ -1268,7 +1423,8 @@ mod tests {
             "Pa",
         )
         .with_extent(Some(2.0));
-        let dirichlet = eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 2.0, 2).expect("dir");
+        let dirichlet =
+            eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(2.0), 2).expect("dir");
         assert_eq!(fluid.mode_wavenumbers(2), Some(dirichlet));
 
         let solid = ChannelDescriptor::new(
@@ -1282,21 +1438,23 @@ mod tests {
             "m",
         )
         .with_extent(Some(2.0));
-        let neumann = eigen_wavenumbers(Domain::Line, Boundary::Neumann, 2.0, 2).expect("neumann");
+        let neumann =
+            eigen_wavenumbers(&Domain::Line, Boundary::Neumann, Some(2.0), 2).expect("neumann");
         assert_eq!(solid.mode_wavenumbers(2), Some(neumann));
         assert_eq!(solid.mode_wavenumbers(2).expect("solid modes")[0], 0.0);
     }
 
     #[test]
     fn a_neumann_line_keeps_the_constant_mode() {
-        let k = eigen_wavenumbers(Domain::Line, Boundary::Neumann, 1.0, 3).expect("neumann");
+        let k = eigen_wavenumbers(&Domain::Line, Boundary::Neumann, Some(1.0), 3).expect("neumann");
         assert_eq!(k[0], 0.0);
         assert!(k[1] > 0.0);
     }
 
     #[test]
     fn a_circle_is_the_drum_spectrum() {
-        let k = eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, 3).expect("circle");
+        let k =
+            eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(1.0), 3).expect("circle");
         assert!((k[0] - FIRST_BESSEL_J0_ZERO).abs() < 1e-9);
         assert!((k[1] - 3.831_706).abs() < 1e-4);
         assert!((k[2] - 5.135_622).abs() < 1e-4);
@@ -1305,7 +1463,7 @@ mod tests {
     #[test]
     fn a_circle_keeps_the_documented_mode_ratios_through_nine() {
         let extent = FIRST_BESSEL_J0_ZERO;
-        let k = eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, extent, 9)
+        let k = eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(extent), 9)
             .expect("circle modes");
         assert_eq!(k.len(), 9);
         assert!((k[0] - 1.0).abs() < 1e-9);
@@ -1320,7 +1478,7 @@ mod tests {
 
     #[test]
     fn a_circle_carries_the_full_channel_capacity() {
-        let k = eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, CHANNEL_CAP)
+        let k = eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(1.0), CHANNEL_CAP)
             .expect("16 circle modes");
         assert_eq!(k.len(), CHANNEL_CAP);
         for j in 1..k.len() {
@@ -1330,24 +1488,103 @@ mod tests {
 
     #[test]
     fn a_circle_with_zero_count_has_no_mode() {
-        assert!(eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, 0).is_none());
+        assert!(eigen_wavenumbers(&Domain::Circle, Boundary::Dirichlet, Some(1.0), 0).is_none());
     }
 
     #[test]
     fn a_domain_without_a_closed_mode_is_absent() {
-        assert!(eigen_wavenumbers(Domain::Unspecified, Boundary::None, 1.0, 3).is_none());
-        assert!(eigen_wavenumbers(Domain::Rectangle, Boundary::Dirichlet, 1.0, 3).is_none());
-        assert!(eigen_wavenumbers(Domain::Line, Boundary::Robin, 1.0, 3).is_none());
+        assert!(eigen_wavenumbers(&Domain::Unspecified, Boundary::None, Some(1.0), 3).is_none());
         assert!(
-            eigen_wavenumbers(Domain::Circle, Boundary::Dirichlet, 1.0, CHANNEL_CAP + 1).is_none()
+            eigen_wavenumbers(
+                &Domain::Shell {
+                    r_in: 1.0,
+                    r_out: 2.0
+                },
+                Boundary::Dirichlet,
+                Some(1.0),
+                3
+            )
+            .is_none()
+        );
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Robin, Some(1.0), 3).is_none());
+        assert!(
+            eigen_wavenumbers(
+                &Domain::Circle,
+                Boundary::Dirichlet,
+                Some(1.0),
+                CHANNEL_CAP + 1
+            )
+            .is_none()
         );
     }
 
     #[test]
+    fn a_rectangular_membrane_is_the_pythagorean_drum() {
+        let pi = std::f64::consts::PI;
+        let k = eigen_wavenumbers(
+            &Domain::Rectangle { lx: 2.0, ly: 3.0 },
+            Boundary::Dirichlet,
+            Some(1.0),
+            4,
+        )
+        .expect("rectangle modes");
+        let expected = [
+            pi * (0.25 + 1.0 / 9.0).sqrt(),
+            pi * (0.25 + 4.0 / 9.0).sqrt(),
+            pi * (1.0 + 1.0 / 9.0).sqrt(),
+            pi * (0.25 + 1.0).sqrt(),
+        ];
+        for (j, e) in expected.iter().enumerate() {
+            assert!((k[j] - e).abs() < 1e-9, "mode {j}: {} vs {}", k[j], e);
+        }
+    }
+
+    #[test]
+    fn a_rectangle_carries_its_arity_in_the_domain_not_in_extent() {
+        let d = ChannelDescriptor::new(
+            Conserved::Momentum,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Rectangle { lx: 1.0, ly: 1.0 },
+            Boundary::Dirichlet,
+            "Pa",
+        );
+        assert!(d.mode_wavenumbers(2).is_some());
+    }
+
+    #[test]
+    fn the_compound_domain_token_parses_its_arity() {
+        assert_eq!(
+            Domain::parse("rectangle(2.0,3.0)"),
+            Some(Domain::Rectangle { lx: 2.0, ly: 3.0 })
+        );
+        assert_eq!(
+            Domain::parse("shell(1.0,2.0)"),
+            Some(Domain::Shell {
+                r_in: 1.0,
+                r_out: 2.0
+            })
+        );
+        assert_eq!(
+            Domain::parse("ellipsoid(1.0,2.0,3.0)"),
+            Some(Domain::Ellipsoid {
+                a: 1.0,
+                b: 2.0,
+                c: 3.0
+            })
+        );
+        assert_eq!(Domain::parse("shell(2.0,1.0)"), None);
+        assert_eq!(Domain::parse("rectangle(2.0)"), None);
+        assert_eq!(Domain::parse("rectangle(0.0,3.0)"), None);
+    }
+
+    #[test]
     fn a_non_positive_extent_has_no_mode() {
-        assert!(eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, 0.0, 3).is_none());
-        assert!(eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, -1.0, 3).is_none());
-        assert!(eigen_wavenumbers(Domain::Line, Boundary::Dirichlet, f64::NAN, 3).is_none());
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(0.0), 3).is_none());
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(-1.0), 3).is_none());
+        assert!(eigen_wavenumbers(&Domain::Line, Boundary::Dirichlet, Some(f64::NAN), 3).is_none());
     }
 
     #[test]
