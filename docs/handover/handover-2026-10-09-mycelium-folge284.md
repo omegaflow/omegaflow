@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); die `sources.φ`-`quantity`-Zeile als Contract-Riss gemessen (keine dimensionslose Quantity + kein `format keogram`-Arm). Mountain-289 `## An mycelium` gefaltet (Keogramm-Form-Verdikt, terms pro Quelle, USGS/Dtm unverändert). LICENSE-Populations-Riss geheilt (beide Zensus 0 no-terms, 2698 terms). Fired/stale/addressed = sauber; hips-png-cdn läuft.
   class: handover
   date: 2026-10-09
-  sha256: 8acae779fe7b63f33dcbd4e9fd23c021788f7cbc806eb63969ee4ff75e1eb28b
+  sha256: dcde8bee2f837875a1c3367c3de4dc1c6668b8235b845dd82e2cfef194ef7788
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.0551 · cap 0.5 — Grund: Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ`), `sources.φ`-`quantity` als Kontrakt-Riss gemessen, Mountain-289 gefaltet; `license_census`/`sources_repo_license` no-terms 0/0 (Riss geheilt); `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $1.5062 (33 Sessions).
+## Burn: open 0.0000 · close 0.0779 · cap 0.5 — Grund: Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ`), `sources.φ`-`quantity` als Kontrakt-Riss gemessen, Mountain-289 gefaltet; `license_census`/`sources_repo_license` no-terms 0/0 (Riss geheilt); Orphan-Gate geheilt (exakte vso/cssdc-Identitäten); `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $1.5566 (33 Sessions).
 
 ## Operator-Wort-Register
 
