@@ -1,4 +1,5 @@
 use super::actuators::CHANNEL_CAP;
+use super::force::force_name_of;
 use std::collections::HashMap;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -365,6 +366,34 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
     ))
 }
 
+const LIVE_FORCE_MEDIA: [Medium; 9] = [
+    Medium::Vacuum,
+    Medium::Vacuum,
+    Medium::Fluid,
+    Medium::ElasticSolid,
+    Medium::ElasticSolid,
+    Medium::Fluid,
+    Medium::Fluid,
+    Medium::Fluid,
+    Medium::Vacuum,
+];
+
+pub fn descriptor_for_force_type(ft: u8) -> Option<ChannelDescriptor> {
+    let name = force_name_of(ft)?;
+    let medium = *LIVE_FORCE_MEDIA.get(ft as usize)?;
+    descriptor_for_force(name, medium)
+}
+
+pub fn live_channel_registry() -> ChannelRegistry {
+    let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
+    for ft in 0..9u8 {
+        if let Some(d) = descriptor_for_force_type(ft) {
+            reg.register(d);
+        }
+    }
+    reg
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum ModeRegime {
     Propagating = 0,
@@ -605,6 +634,21 @@ impl ChannelRegistry {
     pub fn descriptor(&self, hash: u64) -> Option<&ChannelDescriptor> {
         self.id.get(&hash).map(|&i| &self.descs[i])
     }
+
+    pub fn schema_hash(&self) -> u32 {
+        let mut h: u64 = 0xcbf29ce484222325;
+        for d in &self.descs {
+            for b in d.hash().to_le_bytes() {
+                h ^= b as u64;
+                h = h.wrapping_mul(FNV_PRIME);
+            }
+        }
+        h as u32
+    }
+}
+
+pub fn live_schema_hash() -> u32 {
+    live_channel_registry().schema_hash()
 }
 
 #[derive(Clone, Copy)]
@@ -1258,5 +1302,29 @@ mod tests {
             err.contains("inadmissible"),
             "the refusal names the relation: {err}"
         );
+    }
+
+    #[test]
+    fn every_live_force_type_carries_a_descriptor() {
+        for ft in 0..9u8 {
+            assert!(descriptor_for_force_type(ft).is_some(), "force type {ft}");
+        }
+        assert!(descriptor_for_force_type(9).is_none());
+    }
+
+    #[test]
+    fn a_live_registry_carries_nine_channels_and_a_stable_fingerprint() {
+        let reg = live_channel_registry();
+        assert_eq!(reg.len(), 9);
+        assert_eq!(reg.schema_hash(), live_schema_hash());
+        assert_eq!(reg.schema_hash(), live_channel_registry().schema_hash());
+    }
+
+    #[test]
+    fn the_fingerprint_changes_when_a_channel_differs() {
+        let full = live_channel_registry();
+        let mut one = ChannelRegistry::with_capacity(CHANNEL_CAP);
+        one.register(descriptor_for_force("em", Medium::Vacuum).expect("em"));
+        assert_ne!(full.schema_hash(), one.schema_hash());
     }
 }
