@@ -1,5 +1,6 @@
 use crate::archivar::SampleRecord;
 use crate::archivar::*;
+use crate::mathematikerin::channel::TriState;
 use crate::mathematikerin::{DiodeState, PresenceFrame};
 use std::io::{Cursor, Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -1053,18 +1054,32 @@ fn sha1(data: &[u8]) -> [u8; 20] {
 fn kinetic_frame_bytes(frame: &PresenceFrame) -> Vec<u8> {
     let pan = frame.pan_ms.filter(|v| v.is_finite());
     let tilt = frame.tilt_ms.filter(|v| v.is_finite());
-    let mut mask = 0x01u8;
+    let mut flags = 0u8;
     if pan.is_some() {
-        mask |= 0x02;
+        flags |= 0x01;
     }
     if tilt.is_some() {
-        mask |= 0x04;
+        flags |= 0x02;
     }
     let n = frame.n as usize;
+    let state_bytes = n.div_ceil(4).div_ceil(4) * 4;
     let mut out = Vec::with_capacity(
-        4 + 2 * n * 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4,
+        12 + state_bytes + 2 * n * 4 + (pan.is_some() as usize) * 4 + (tilt.is_some() as usize) * 4,
     );
-    out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG, mask]);
+    out.extend_from_slice(&[0xCF, 0x86, KINETIC_TAG, flags]);
+    out.extend_from_slice(&frame.n.to_le_bytes());
+    out.extend_from_slice(&frame.schema_hash.to_le_bytes());
+    out.extend_from_slice(&[0u8, 0u8]);
+    let mut state = vec![0u8; state_bytes];
+    for k in 0..n {
+        let v = match frame.state[k] {
+            TriState::Absent => 0u8,
+            TriState::Pending => 1u8,
+            TriState::Present => 2u8,
+        };
+        state[k / 4] |= v << ((k % 4) * 2);
+    }
+    out.extend_from_slice(&state);
     for v in &frame.omega[..n] {
         out.extend_from_slice(&v.to_le_bytes());
     }

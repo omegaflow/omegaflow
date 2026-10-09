@@ -194,20 +194,27 @@ export function colorForCiLut(ci, lo, hi, lut) {
 
 export function parseKinetic(bytes) {
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  const mask = dv.getUint8(3);
-  const omega = new Float32Array(bytes.buffer, bytes.byteOffset + 4, 9);
-  const aperture = new Float32Array(bytes.buffer, bytes.byteOffset + 4 + 9 * 4, 9);
+  const flags = dv.getUint8(3);
+  const n = dv.getUint16(4, true);
+  const schemaHash = dv.getUint32(6, true);
+  const stateBytes = Math.ceil(Math.ceil(n / 4) / 4) * 4;
+  let o = 12;
+  const state = new Uint8Array(bytes.buffer, bytes.byteOffset + o, stateBytes);
+  o += stateBytes;
+  const omega = new Float32Array(bytes.buffer, bytes.byteOffset + o, n);
+  o += n * 4;
+  const aperture = new Float32Array(bytes.buffer, bytes.byteOffset + o, n);
+  o += n * 4;
   let pan = null;
   let tilt = null;
-  let o = 4 + 9 * 4 + 9 * 4;
-  if (mask & 0x02) {
+  if (flags & 0x01) {
     pan = dv.getFloat32(o, true);
     o += 4;
   }
-  if (mask & 0x04) {
+  if (flags & 0x02) {
     tilt = dv.getFloat32(o, true);
   }
-  return { omega, aperture, pan, tilt };
+  return { n, schemaHash, state, omega, aperture, pan, tilt };
 }
 
 const VERDICT_WORDS = ["placed", "absent", "direction-only", "riss"];

@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-09-16
-  sha256: be8ba87aabdaa4eb73dadb6056a206dbb0b92b1982c1d203f0f6d9989036a76b
+  sha256: 256d82da1a2432a9067e9ecec47cf77a9c33d3141b5e9988e2fa4ff4b3dfc712
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
@@ -40,6 +40,22 @@ The browser is a pure sensor window. The presence window is a 2D surface in the 
 - **Point Cloud Evaluation:** The fragment shader iterates the flat array per pixel — one oscillator, one kernel, one law. Pixel-scale splatting, additive superposition. The GPU evaluates the physical field in real-time.
 - **The actuators are oscillators (Atom 9):** a machine that measures the field has no loudspeakers and no monitors — it has physical actuators, each itself an oscillator excited by the field, each translating the full 4D field (all 9 forces) into its own dimension. `AcousticOscillator` (acoustic): the Σω sum scaled by the aperture (`acoustic_amplitude`) drives a synthesised sine carrier whose pitch follows the field's own cadence (`tone_hz(tau_ticks)`), stereo-panned by the sign of Σω, written as s16-LE PCM on stdout (`acoustic_pcm`, `actuators.rs:77-99`); the seismic/serial path (`KineticRadiator::vibrate`) emits the raw aperture-scaled Σω as f32-LE, and the em actuator maps the field to a colour (`color_emission`). (The earlier "no synthesized waveform" claim was corrected 2026-10-05 — the acoustic path does synthesise the carrier.) `SeismicOscillator` (seismic, `KineticRadiator::vibrate`): the Σω sum as raw f32-LE intensity bytes (4 B/frame) on the serial port. `EMOscillator` (em): the presence window translates all 9 forces into a 2D em emission distribution — the em color is sampled on the CPU by `color_emission` (actuators.rs) from the Archivar LUT `color_lut_rgba` (`spectral::color_for_ci`) into `DiodeState.em_color`; the other 8 forces carry no color of their own — they curve the field (lum, transfer entropy) and render neutral. The browser-texture path (`color_lut_rgb`, bindings 9+12) is a dead branch — descoped, no renderer carries it (Atom C, 2026-09-08). The false-color lie (`hsl_to_rgb`) is dead.
 - **GPU role (decided):** the GPU is the membrane — the surface that renders the field where it is seen. It is not the compute backbone: the Archivar stays CPU-slim (no GPU dependency in the data keeper). `te_compute` (WGSL) runs productively in solar/matrix (`SolarMachine::te_probe`, `MatrixMachine::probe`); the shader estimates KDE (Silverman bandwidths, quadruple kernel sums), the canonical CPU phase path (`topological_te_phase` → `transfer_entropy_embedded_ksg`) estimates KSG — two estimator families of one quantity, carried as a riss, never averaged. Defensive: no reliable free cloud GPU exists to plan on — the membrane runs on whatever GPU is at the viewing device (or the CPU software path); the compute strategy never rests on a free cloud GPU.
+
+### Kinetic Frame — the channel layout (P3.1/P3.3, hard cut 2026-10-09)
+
+The relay's kinetic frame (`relay.rs` → `static/constants.js parseKinetic`) carries the per-channel presence measure to the membrane. The channel count is a datum, never a constant: `n` rides the wire, and `schema_hash` fingerprints the ordered live descriptors (`mathematikerin::channel::live_channel_registry().schema_hash()`). Little-endian:
+
+- `0xCF 0x86 0x0A` — magic + `KINETIC_TAG` (10)
+- `flags: u8` — bit 0 pan present, bit 1 tilt present
+- `n: u16` — declared channel count
+- `schema_hash: u32`
+- `reserved: u16` (0)
+- `state: ceil(n/4)` bytes rounded up to a multiple of 4 — 2-bit `TriState` per channel (0 absent, 1 pending, 2 present); channel k in bits `2k, 2k+1`
+- `omega[n]: f32` — per-channel presence measure
+- `aperture[n]: f32` — per-channel receiver aperture
+- `pan: f32` (flag 0) · `tilt: f32` (flag 1)
+
+The f32 payload begins at byte 16 for `n ≤ 16` (`12 + state_bytes` is 4-aligned). The 9-hardcoded old layout is gone — no backward-compatible reader exists. The live registry spans the nine force types (`force_name_of` order); P3.3 is built, P4 (GPU runtime-sized `n`) is the next layer.
 
 ## 0-Kanon — the wire clause (from AGENTS.md, verbatim)
 
