@@ -4413,14 +4413,18 @@ mod tests {
     #[ignore = "reads the measured ICESat-2 ATL03 granule via EDL range reads; the hdf5-real-granule workflow sets ATL03_GRANULE_URL and EARTHDATA_EDL_TOKEN"]
     fn real_granule_atl03_v1_chunk_index_materializes_multilevel() {
         let url = std::env::var("ATL03_GRANULE_URL")
-            .expect("ATL03_GRANULE_URL absent — the measured ATL03 granule URL is not set");
+            .expect("ATL03_GRANULE_URL absent — the measured ATL03 granule URL is not set (s3://nsidc-cumulus-prod-protected/…)");
         let token = std::env::var("EARTHDATA_EDL_TOKEN")
             .expect("EARTHDATA_EDL_TOKEN absent — no Earthdata bearer token");
         const GRANULE_BYTES: u64 = 771_751_936;
         const PREFIX_BYTES: u64 = 1 << 22;
 
-        let fetch =
-            |off: u64, len: u64| crate::archivar::range::fetch_bearer_range(&url, off, len, &token);
+        let creds = crate::archivar::range::edl_s3_credentials_for(&url, &token).expect(
+            "the EDL S3 credential route refused — the NSIDC protected bucket needs temporary S3 credentials, not a bare bearer",
+        );
+        let fetch = |off: u64, len: u64| {
+            crate::archivar::range::fetch_s3_range(&url, off, len, Some(&creds))
+        };
 
         let prefix =
             fetch(0, PREFIX_BYTES).expect("the ATL03 granule prefix range read returned void");
