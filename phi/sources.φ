@@ -19514,6 +19514,14 @@ on earth 60.50 24.65 0
 ttl 604800
 field fmi_image_mag_dxdt fmi_image_mag_dxdt inverse-square em nT 10 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/keogram_ABK.bin
+terms CC-BY-4.0 https://en.ilmatieteenlaitos.fi/open-data-licence
+format keogram
+origin https://space.fmi.fi/MIRACLE/ASC/ASC_keograms
+compiler tools/harvest/src/bin/keogram_compiler.rs
+on earth 68.358 18.823 380
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/
