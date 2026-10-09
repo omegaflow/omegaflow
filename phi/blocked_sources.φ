@@ -60,7 +60,7 @@ note DEMETER — extern wartend (Order exp 2026-10-05); CDPP-Generierung defekt;
 blocked parser-def
 url https://superdarn.ca/data-download
 gap dmap-map-grid
-note MAP-Grid RST (DMap) — 2026-10-09: DMap-Kern + `map_grid_value` gebaut (`src/archivar/dmap.rs`, vector.vel.median/kvect); offen: Globus-Zugang (`GLOBUS_ID_USER/PASS`, wartend.φ:8, Aufnehmer mycelium).
+note MAP-Grid RST (DMap) — 2026-10-09: DMap-Kern + `map_grid_value` gebaut (`src/archivar/dmap.rs`, vector.vel.median/kvect); Globus-Credentials stehen (`.secrets.local`: GLOBUS_ID_USER/GLOBUS_ID_PASS); offen: der Globus-Download (Mycelium, wartend.φ:8).
 
 blocked parser-def
 url https://ode.rsl.wustl.edu/moon/pagehelp/Content/Missions_Instruments/KAGUYA%20(SELENE)/LRS/Raw_Data.htm
