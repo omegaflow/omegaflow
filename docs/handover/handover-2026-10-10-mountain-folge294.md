@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: b2c7c44084dfd5b7b89cadfb26180d96e70ff2d406b0e5171fce3ad6ac6e246b
+  sha256: afdf02eb0a24222447ee2d24a06e97dcbddad56e1d12021afa1b2ce713e00d01
   status: live
 -->
 # Handover — Mountain-Folge 294 (2026-10-10)
@@ -48,19 +48,23 @@ uncommittete Arbeit (river: `src/mathematikerin/channel.rs`,
 - **Braucht:** Mycelium: SPT-`cmap`-Block (LAMBDA-Familie `cmb_planck_smica`/`cmb_act_f150`);
   `terms` pending (SPT-Datenpolitik / LAMBDA-Kontakt).
 
-### Keogramm-Disposition — Riss (ungeglättet)
-- **Status:** eigen (Disposition) | **Bindung:** eigen · Rat
-- **Trigger:** Rat-Verdikt Bild vs. relatives Feld
-- **Lage:** (gemessen 2026-10-10) `phi/declined_sources.φ:4151-4153` lehnt das
-  ASC-Keogramm-Verzeichnis als `image` ab („kein SI-Wert/force_type", Rat + 6 UI-Seats);
-  `phi/sources.φ:19553-19559` führt `keogram_ABK.bin` als `format keogram` / `relative`,
-  der Leser (`keogram.rs:45` `QuantityKind::Relative=7`, Force `em`) ist gebaut.
-  Präzedenz: `emm_exi_count` (`sources.φ:19522`) führt eine optische Kamera-Zählung
-  ebenfalls unter `em`/`count`. Eine Ablehnung für eine zugelassene Quelle ist ein
-  Selbstwiderspruch.
-- **Blockade:** die Ablehnung ist ein Rat-Verdikt — nicht Mountain-allein zu kippen.
-- **Braucht:** Rat-Verdikt (declined-Eintrag streichen **oder** Verdikt fortschreiben);
-  danach `declined_sources.φ`-Edit.
+### Keogramm-Fabrikations-Fixture — Rat-Verdikt umgesetzt
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** Gate-Fixture + Test in `src/gate/commit_gate_vocab.json`
+- **Lage:** (gemessen 2026-10-10) Rat-Verdikt mit vorgeschalteter Vorbereitung
+  (`archive_search --all` `/tmp/omegaflow_all_1791589716_keogram*` + `/tmp/omegaflow_all_1791589434_aurora_keogram*`)
+  und UI-Roster: **Claude** Bild; **Qwen/DeepSeek/Mistral/MiniMax/Perplexity** Feld
+  (provenienz-gebunden, gamma-/JPEG-Mittel als Fabrication-Riss); **Duck.ai** (Tageslimit),
+  **Z.ai** (Deep-Think ohne Antwort), **Lumo** (Limit), **Kimi** (Kontingent),
+  **Perplexity** beantwortet, **Gemini** (nicht gesendet/ohne Antwort), **tryingopen/Nemotron**
+  (out of API credit) = `pending`. Verdikt: das Keogramm-Bild bleibt `decline image`; der
+  kompilierte `keogram_ABK.bin` bleibt als `em`/`relative`-Index zugelassen (Präzedenz
+  THEMIS-ASI/`emm_exi_count`), mit Provenienz (Browse-JPEG, 0–255, gamma, kein Rayleigh).
+  Note in `declined_sources.φ:4151-4153` ersetzt (die alte „Wire-Feld descoped"-Behauptung
+  war messbar falsch); beide Zeilen bleiben.
+- **Blockade:** keine.
+- **Braucht:** Fabrikations-Fixture in `commit_gate_vocab.json` + Gate-Test: ein optischer
+  Index, dessen Herkunft ein Browse-JPEG ist und dessen note radiance/`count` behauptet.
 
 ### Weberin-Gate — Parse-Arm + SourceConfig gebaut; Station-Quelle + Gate offen
 - **Status:** eigen (Register) | **Bindung:** eigen · mycelium (Gate) · river (Ordnung)

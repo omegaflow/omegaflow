@@ -4150,7 +4150,7 @@ note SOLARNET VO (Solar-Daten-Broker/Cross-Search, Paper 10.1007/s11207-025-0242
 
 decline image
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
-note Aurora-Kamera OMTI/Abisko (GIC §B) — 2026-10-09: Wire-Feld descoped (raw/relativ 8-Bit-Spaltenmittel, kein SI-Wert/force_type) = Bildprodukt, kein Feld; Präzedenz `image`/`image-survey`/`imagery`. Rat + 6 UI-Seats einstimmig decline.
+note FMI-ASC OMTI/Abisko — Keogramm-Bild = Bildprodukt, kein Feld. Riss sources.φ:19582 keogram_ABK.bin = em/relative Index (keogram.rs), RGB-Mittel 0-255 gamma, kein Rayleigh. Roster 5 Feld (provenienz-gebunden) / 1 Bild. Bild declined, Index zugelassen.
 
 decline station-registry
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
