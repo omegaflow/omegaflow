@@ -1,0 +1,41 @@
+name: ssb-field-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ssb-field:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ssb release exists on the CDN
+        run: |
+          if ! gh release view ssb --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ssb --repo omegaflow/sources \
+              --title "ssb" \
+              --notes "the measured field at the resting presence (the SSB origin) over the star hull"
+          fi
+      - name: Fetch the measured star hull (catalog_tycho)
+        run: |
+          set -euo pipefail
+          mkdir -p data/ssd.jpl.nasa.gov
+          curl -sfL -o data/ssd.jpl.nasa.gov/dr3_stars.bin \
+            https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-gaia/dr3_stars.bin
+      - name: Bake the SSB field asset (enclosure query at the resting presence)
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-measure --bin ssb_field_bake -- --ci-mode
+      - name: Upload the SSB field asset to the CDN
+        run: |
+          set -euo pipefail
+          gh release upload ssb out/ssb_field.bin --clobber --repo omegaflow/sources
