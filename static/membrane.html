@@ -26,7 +26,7 @@ html, body { height: 100%; background: #000; color: #c4b9a8; font-family: system
 // The serverless membrane — the presence rests on the ICRS grid at the SSB origin
 // and is freely tunable through the 4D block: every coordinate (x,y,z,t) is
 // re-evaluated by the WASM lookup over the static CDN corpus, then rendered by the
-// GPU. No server, no relay: the two same-origin assets are the whole source.
+// GPU. No server, no relay: the same-origin measured assets are the whole source.
 //
 // Assets staged same-origin by pages-deploy.yml:
 //   /dr3_stars.bin  (ssd.jpl.nasa.gov-gaia, catalog_epoch 2000.0)
@@ -42,13 +42,12 @@ const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the query 
                                        // on UNIX (distinct from the catalog epoch)
 // No fixed world span: the receiver's span is what has arrived (the loaded
 // sources' bounding radius). The scale follows the reception, never a constant.
-// The hull of staged ephemerides is data: pages-deploy writes the manifest
-// /membrane_bodies.txt from its own stage lines (gen_bodies.sh), so no body name
-// is written here — the file reads the set, it never chooses it. Each staged .bin
-// carries the measured props; the anchor's field ttl is the .bin's own granule
-// span, never the register's ttl 86400 (the fetch cadence). The star catalog, the
-// faint layer, streams in last.
-const BODIES_MANIFEST = "/membrane_bodies.txt";
+// The field is measured, not object-rendered: the staged body ephemerides
+// (membrane_bodies.txt) and the synthesized finite-extent body anchors
+// (all_body_anchor_samples) are removed — they reversed the Atom-8 object
+// tilgung (survey-2026-10-08-sonnen-render-archaeologie §3/§5). The star
+// catalog (dr3_stars.bin), a measured hull, is the field until the measured
+// force-field asset (the enclosure query at the SSB) exists.
 
 // The exposure is data-carried, never body-carried: the carrier is the wire's
 // force_type (the 9 force media, em 0 … electric 8), the aperture is the wire's
@@ -634,17 +633,6 @@ async function boot() {
   if (lutBytes) {
     colorLut = parseColorLut(lutBytes);
   }
-  // The hull of staged ephemerides is data: the manifest names the set, this file
-  // writes no body name. A missing manifest is an honest black with its name.
-  const manifestBytes = await fetchBytes(BODIES_MANIFEST);
-  let bodies = [];
-  if (manifestBytes) {
-    bodies = new TextDecoder()
-      .decode(manifestBytes)
-      .split("\n")
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-  }
   let mod;
   try {
     mod = await import("./omegaflow.js");
@@ -653,9 +641,8 @@ async function boot() {
     status("lookup absent (omegaflow.js / omegaflow_bg.wasm) — honest black");
     return;
   }
-  // The lookup starts without the catalog: the visible anchors render first and
-  // the fainter stars stream in behind them. The field grows by visibility order,
-  // each arriving layer measured and shown before the next is fetched.
+  // The lookup starts without the catalog; the measured star field is the one
+  // arriving layer, parsed and shown before the GPU loop starts.
   lookup = new mod.MembraneLookup(new Uint8Array(0), CATALOG_EPOCH_YR);
   status("starting GPU…");
   await paint();
@@ -666,20 +653,6 @@ async function boot() {
   }
 
   const missing = [];
-  if (bodies.length === 0) {
-    missing.push("manifest");
-  }
-  for (const body of bodies) {
-    status("anchoring " + body + "…");
-    await paint();
-    const eph = await fetchBytes("/ephemeris_de440_" + body + ".bin", "anchoring " + body + "…");
-    if (eph) {
-      lookup.load_ephemeris(body, eph);
-      frame();
-    } else {
-      missing.push(body);
-    }
-  }
 
   status("loading stars…");
   await paint();

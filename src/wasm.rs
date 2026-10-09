@@ -4,8 +4,8 @@ use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 
 use crate::archivar::{
-    BodyEphemeris, MembraneCtx, Sample, SampleRecord, SpatialHash, all_body_anchor_samples,
-    build_spatial_hash, build_star_samples, parse_ephemeris_binary, query_hash,
+    BodyEphemeris, MembraneCtx, Sample, SampleRecord, SpatialHash, build_spatial_hash,
+    build_star_samples, parse_ephemeris_binary, query_hash,
 };
 
 #[wasm_bindgen]
@@ -13,7 +13,6 @@ pub struct MembraneLookup {
     stars: Vec<Sample>,
     hash: Option<SpatialHash>,
     eph: HashMap<String, BodyEphemeris>,
-    bodies_sealed: usize,
 }
 
 impl MembraneLookup {
@@ -37,7 +36,6 @@ impl MembraneLookup {
             stars: Vec::new(),
             hash: None,
             eph: HashMap::new(),
-            bodies_sealed: usize::MAX,
         };
         lookup.add_stars(stars, catalog_epoch_yr);
         lookup
@@ -72,13 +70,9 @@ impl MembraneLookup {
         fy: f64,
         fz: f64,
     ) -> Vec<f64> {
-        if self.hash.is_none() || self.bodies_sealed != self.eph.len() {
-            let mut all: Vec<Arc<Sample>> = self.stars.iter().cloned().map(Arc::new).collect();
-            for s in all_body_anchor_samples(&self.eph) {
-                all.push(Arc::new(s));
-            }
+        if self.hash.is_none() {
+            let all: Vec<Arc<Sample>> = self.stars.iter().cloned().map(Arc::new).collect();
             self.hash = Some(build_spatial_hash(all, 1.0));
-            self.bodies_sealed = self.eph.len();
         }
         let Some(hash) = self.hash.as_ref() else {
             return Vec::new();
