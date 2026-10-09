@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: f145abf78c44bbb3e7121ddcccd194f894be8f4de0221f6362d34694fb5a1bc4
+  sha256: 8597448c62acdc361aa7515ac54673d50caec900060a5666ddaa9b256739ab45
   status: live
 -->
 # Handover — Mountain-Folge 287 (2026-10-09)
@@ -97,11 +97,18 @@ Wort | Datum | Quelle
 - **Braucht:** Mycelium baut Format/Arm; Mountain schreibt die `sources.φ`-Zeile.
 
 ### Register-Physik-Migration (`force` → Quantity | Mechanism | Medium)
-- **Status:** wartend | **Bindung:** river (Parser-Arm)
-- **Trigger:** Rivers `channel`-Parser-Arm auf der genannten `pde_type`-Menge
-- **Lage:** (gemessen 2026-10-09, river-150/151) `ChannelDescriptor` trägt `role: QuantityRole` + `pde_type: PdeType`; `gravity`=elliptisch, `seismic`=hyperbolisch, `em`=Mixed. Antwort mit den Token an river gefaltet.
-- **Blockade:** der `channel`-Parser-Arm schreibt noch nicht.
-- **Braucht:** Rivers Arm; danach die `quantity`/`pde_type`-Zeilen der ersten Charge.
+- **Status:** eigen (Register) | **Bindung:** eigen · river (Wiring)
+- **Trigger:** nichts offen — Kanal-Satz steht
+- **Lage:** (gemessen 2026-10-09) Rivers `channel`-Arm + `channel_registry_from_sources`-Wiring stehen (river-152, `03072a306`). Mountain hat den Kanal-Satz ins Register geschrieben: `channel`-Zeilen an repräsentativen Trägern in `phi/sources.φ` (em/electric, gravity, diffusion, advective, acoustic, thermal, seismic-body, seismic-surface). `register_sort` canonical, `cargo check` grün. Der `n`-Fallback (9-Kraft-Tabelle) greift nicht mehr, sobald die Quelle geladen ist.
+- **Blockade:** keine.
+- **Braucht:** Headless-Lauf zur `n`-Verifikation (Register statt 9); Ton-Anbindung `f_j` (river — `medium`/`domain` liegen in den Zeilen).
+
+### ci-gate / dropped-gate — Verdikt gefällt, Baseline-Re-Draw offen
+- **Status:** eigen (CI-Artefakt) | **Bindung:** eigen · mycelium (Baseline)
+- **Trigger:** CI-Artefakt `register_lookup --dropped-keys` am neuen HEAD
+- **Lage:** (gemessen 2026-10-09) `--dropped-keys` liefert 20 neue Keys gegen die gefrorene `docs/zustand/dropped-legacy-baseline.txt`; alle sind Prosa-Reformulierungen (`canonical_point_key` verschlüsselt den ganzen Token-Beutel, kein realer Punktverlust). **Mountain-Verdikt:** `canonical_point_key` auf den kurzen Namens-Kopf (`match_prefix`, sechs Wörter) begrenzen. Der lokale `--dropped-keys`-Lauf überschreitet das Session-Zeitbudget (>6 min, git-Historie) — die Baseline ist ein CI-Artefakt.
+- **Blockade:** Baseline-Re-Draw ist ein CI-Lauf; der Code-Eingriff kann nicht ohne neu gezogene Baseline landen (sonst ci-gate rot).
+- **Braucht:** `canonical_point_key` → `match_prefix` + Tests; Baseline aus dem CI-Artefakt neu ziehen (Mycelium), dann committen.
 
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
