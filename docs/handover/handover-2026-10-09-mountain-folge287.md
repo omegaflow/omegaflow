@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 73bc0d67ddde353920057edf30be4267f322326b1479fc341cd9caab945d1d02
+  sha256: 5c21333520b683b7953e06e8912bed7829b4920eca7cd129ecbce40336b61161
   status: live
 -->
 # Handover — Mountain-Folge 287 (2026-10-09)
@@ -103,6 +103,13 @@ Wort | Datum | Quelle
 - **Blockade:** keine.
 - **Braucht:** Headless-Lauf zur `n`-Verifikation (Register statt 9); Ton-Anbindung `f_j` (river — `medium`/`domain` liegen in den Zeilen).
 
+### dropped-gate — Umbau nach Rat+UI-Verdikt (Operator-Wort „ja")
+- **Status:** eigen (Register/Tooling) | **Bindung:** eigen · mycelium (CI)
+- **Trigger:** Operator-Wort „ja" (2026-10-09, Mountain 287)
+- **Lage:** (gemessen 2026-10-09) Forschung = Entity Resolution/Dedup. Rat: Text-Key ist nur ein Blocking-Key, keine Entität; (a) einmal geminte explizite ID + (b) Alias-Ereignis, (c) fehlt = pending/nie rot, Pin kadenz-neu, Push-Diff-Scope. **UI-Riss (Qwen+GLM einig):** (c) macht das Tor blind für den stillen Verlust — der still gelöschte Punkt hat kein „gedroppt"-Ereignis. Korrektur: still fehlend ohne Beleg = **rot**; Baseline-Neuaufbau muss **diffen** (nicht Ist übernehmen); Merge/Rebase-Stand prüfen. **Gebaut:** `explicit_point_id`-Träger (`**ID:**`) zurück als autoritativer Slot, `canonical_point_key` = ID sonst Namens-Kopf; 2 Kalibrier-Tests.
+- **Blockade:** der Alias-Kanal/Event-Fold (`dropped_gate.rs` modelliert `alias:`/Witness, der CI-Pfad nutzt ihn nicht) ist noch nicht verdrahtet.
+- **Braucht:** Alias-Witness in den CI-Pfad; Pin kadenz-neu aus dem Sweep mit Diff statt Ist-Übernahme; Merge-Stand-Scope; 20-Fehlalarm-Negativ-Fixtures + 1 echter Drop als Positiv-Fixture.
+
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
 - **Trigger:** ESOC-Recon-Release (Wiedervorlage 2026-11-01) oder Descope
@@ -135,6 +142,6 @@ Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe sel
 `.github/workflows/petrel19-cdn.yml` · `.github/workflows/kaguya-lrs-cdn.yml` · `.github/workflows/inpe-stac-cdn.yml` ·
 `tools/harvest/src/bin/iris_compiler.rs` · `tools/harvest/src/bin/gwosc_compiler.rs` ·
 `tools/register/src/bin/register_lookup.rs` · `tools/register/src/bin/dropped_gate.rs` · `.github/workflows/ci-gate.yml` ·
-`docs/zustand/dropped-legacy-baseline.txt` · `docs/zustand/dropped-roster-baseline.txt` (gelöscht) ·
+`docs/zustand/dropped-legacy-baseline.txt` · die ungenutzte Roster-Baseline (gelöscht) ·
 `docs/handover/handover-2026-10-09-mountain-folge287.md` · `docs/handover/archiv/handover-2026-10-09-mountain-folge286.md`.
 Nach dem Push: `petrel19-cdn.yml`, `inpe-stac-cdn.yml`, `kaguya-lrs-cdn.yml` dispatchen.

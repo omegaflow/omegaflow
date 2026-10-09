@@ -2390,7 +2390,34 @@ fn match_prefix(tokens: &[String]) -> Option<String> {
     Some(tokens[..take].join(" "))
 }
 
+fn explicit_point_id(text: &str) -> Option<String> {
+    let bytes = text.as_bytes();
+    let mut i = 0usize;
+    while i + 2 < bytes.len() {
+        let is_id =
+            (bytes[i] | 0x20) == b'i' && (bytes[i + 1] | 0x20) == b'd' && bytes[i + 2] == b':';
+        if is_id {
+            let boundary = i == 0 || !bytes[i - 1].is_ascii_alphanumeric();
+            if boundary {
+                let slug: String = text[i + 3..]
+                    .trim_start_matches([' ', '\t', '*', '`'])
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_' || *c == '.')
+                    .collect();
+                if !slug.is_empty() {
+                    return Some(slug.to_lowercase());
+                }
+            }
+        }
+        i += 1;
+    }
+    None
+}
+
 fn canonical_point_key(text: &str) -> Option<String> {
+    if let Some(slug) = explicit_point_id(text) {
+        return Some(slug);
+    }
     match_prefix(&point_key_tokens(text))
 }
 
@@ -5360,6 +5387,26 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         );
         assert!(!mountain.iter().any(|l| l.contains("the HUD line")));
         let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn explicit_id_carries_identity_across_reformulation() {
+        let a = canonical_point_key("**ID:** dropped-gate the point about the register");
+        let b = canonical_point_key("**ID:** dropped-gate a total rewording of the same point");
+        assert_eq!(a.as_deref(), Some("dropped-gate"));
+        assert_eq!(a, b);
+    }
+
+    #[test]
+    fn explicit_id_beats_the_name_head() {
+        assert_eq!(
+            canonical_point_key("ID: alpha-1 some later text").as_deref(),
+            Some("alpha-1")
+        );
+        assert_eq!(
+            canonical_point_key("1. GIC Breitenband Deskriptoren bauen (wartend)").as_deref(),
+            Some("gic breitenband deskriptoren bauen")
+        );
     }
 
     #[test]
