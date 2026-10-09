@@ -3,7 +3,7 @@
   session: River-Folge 152
   class: handover
   date: 2026-10-09
-  sha256: 89a6608283eada3d7f4cff85fda41b8f47c8548df67a79790062f3e043269284
+  sha256: ea6fb4d938be91e7e6c435edd3d51d024a67035bbe2c88cc8564700a78d31bd4
   status: live
 -->
 # Handover — River-Folge 152 (2026-10-09)
@@ -47,7 +47,7 @@ Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 ## Träger (Prosa, eigene)
 
 - `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske).
-- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P1.1–P1.8 + P2.2 + P2.3/P0.5-Tonkern + P2.4(Circle>9) gebaut** (river-147…151); **Schema-Erweiterung `role`+`pde_type`** (river-150). **P9.1 Parse-Primitiv gebaut (river-152):** `ChannelDescriptor::parse_spec` + Token-Parser je Enum + `is_admissible`-Prüfung in `src/mathematikerin/channel.rs`; die Register-Form ist `conserved:role:op:pde_type:medium:domain:boundary` (+ deklarierte unit), die Direktive-Verankerung in `parse.rs` ist P3.3-gekoppelt. **P3.3 + P3.1/P5 gebaut (river-152):** Live-Registry (`descriptor_for_force_type`/`live_channel_registry`) + `schema_hash` auf `PresenceFrame`; der kinetische Draht trägt `n` + `schema_hash` + 2-Bit-State-Maske (harter Schnitt, `parseKinetic` liest `n`); Kontrakt in `archivar-mathematikerin.md` (P0.1).
+- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P1.1–P1.8 + P2.2 + P2.3/P0.5-Tonkern + P2.4(Circle>9) gebaut** (river-147…151); **Schema-Erweiterung `role`+`pde_type`** (river-150). **P9.1 Parse-Primitiv gebaut (river-152):** `ChannelDescriptor::parse_spec` + Token-Parser je Enum + `is_admissible`-Prüfung in `src/mathematikerin/channel.rs`; die Register-Form ist `conserved:role:op:pde_type:medium:domain:boundary` (+ deklarierte unit), die Direktive-Verankerung in `parse.rs` ist P3.3-gekoppelt. **P3.3 + P3.1/P5 gebaut (river-152):** Live-Registry (`descriptor_for_force_type`/`live_channel_registry`) + `schema_hash` auf `PresenceFrame`; der kinetische Draht trägt `n` + `schema_hash` + 2-Bit-State-Maske (harter Schnitt, `parseKinetic` liest `n`); Kontrakt in `archivar-mathematikerin.md` (P0.1). **P4 gebaut (river-152):** WGSL `presence_probe` über `CHANNEL_CAP` (kein const 9), Probe-Puffer dynamisch.
 - `state/stimmen/2026-10-09-river-kanal-zulassung-frontier.md` — Rat + Wissenschaft (`--all`) + UI (Duck/Qwen/Z.ai; Claude pending) + Open-Weight (DeepSeek V4 Pro/GLM 5.3/Inkling) zur Zulässigkeitsrelation.
 - `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` — Rat + Wissenschaft + UI + Open-Weight zum deskriptorgetriebenen Ton-Modell (P0.5); die M-Achse (Geometrie/Symmetrie auf `Medium`) als fehlender Arm benannt.
 - `state/stimmen/2026-10-09-river-register-physik.md` — Rat + Wissenschaft (`--all`) + Open-Weight + UI zur Register-Physik: konvergente Form Quantity (kind+role) | Mechanism/Operator (pde_type) | Medium, `force` als n:m-Tag; erster Bau = rein lesender Lint.
@@ -68,12 +68,12 @@ Origin: river-152 (Antwort auf mountain-286).
 
 ## Offen (aufgeschlüsselt)
 
-### Kanalzahl (A=A) + Senken-Projektion — P3.3 + P3.1/P5 gebaut; P4 + Ton offen
+### Kanalzahl (A=A) + Senken-Projektion — P3.3 + P3.1/P5 + P4 gebaut; Ton offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** gefeuert — Operator-Wort „Ja" 2026-10-09 (River 143) + „los"/„komplette Umsetzung, keine Abwärtskompatibilität" (River 152).
-- **Lage:** (gemessen 2026-10-09, river-152 via `cargo check`, grün, zero warnings) **P3.3 gebaut:** `descriptor_for_force_type`/`live_channel_registry`/`schema_hash` in `channel.rs`; `PresenceFrame.schema_hash` + `n` aus der Registry (`omega.rs`). **P3.1 + P5 gebaut (harter Schnitt):** `relay.rs kinetic_frame_bytes` schreibt `[0xCF,0x86,KINETIC_TAG,flags]` + `n:u16` + `schema_hash:u32` + reserviert + 2-Bit-State-Maske + `omega[n]` + `aperture[n]` + optional pan/tilt; `constants.js parseKinetic` liest `n`/`schema_hash`/`state`/`omega`/`aperture` (kein hartes 9); `offsets` bewusst weggelassen (Payload flach: 2 f32/Kanal). Kontrakt P0.1 in `docs/concepts/archivar-mathematikerin.md`. **Noch nicht gebaut:** **P4** (GPU-`presence_probe` `array<f32,9>` + `for ft in 0..9` → Kapazität/`n`; Probe-Puffer 48 B → dynamisch; `field_permeability`/`probe_omega` `[f32;9]`) und die **Ton-Anbindung** (`acoustic_partials` `(k+1)` → `f_j`, braucht Medium/Domain aus dem Register).
-- **Blockade:** keine (Operator-Wort steht). P4 berührt `shaders.rs`/`omega.rs`; die Ton-Anbindung hängt an der Register-Medium-Achse.
-- **Braucht:** (a) **P4** — WGSL `presence_probe` auf `CHANNEL_CAP`/`n` + dynamischer Probe-Puffer, Rust-Typripple in `tests.rs` (CI trägt); (b) **Ton** — `f_j = mode_frequency_hz(...)` je Kanal.
+- **Lage:** (gemessen 2026-10-09, river-152 via `cargo check`, grün, zero warnings) **P3.3 gebaut:** `descriptor_for_force_type`/`live_channel_registry`/`schema_hash` in `channel.rs`; `PresenceFrame.schema_hash` + `n` aus der Registry (`omega.rs`). **P3.1 + P5 gebaut (harter Schnitt):** `relay.rs kinetic_frame_bytes` schreibt `[0xCF,0x86,KINETIC_TAG,flags]` + `n:u16` + `schema_hash:u32` + reserviert + 2-Bit-State-Maske + `omega[n]` + `aperture[n]` + optional pan/tilt; `constants.js parseKinetic` liest `n`/`schema_hash`/`state` (kein hartes 9); `offsets` bewusst weggelassen (Payload flach: 2 f32/Kanal). Kontrakt P0.1 in `docs/concepts/archivar-mathematikerin.md`. **P4 gebaut:** WGSL `presence_probe` rechnet über `const CHANNEL_CAP: u32 = 16u` (kein hartes 9), alle Gates `f < CHANNEL_CAP`, Probe-Puffer dynamisch `((CHANNEL_CAP+3)*4)`; Rust liest 19 f32, behält die 9 live-Kanäle (`probe_omega[..9]`) + Flow (`v[16..19]`), Ring unverändert 12. `probe_omega`/`field_permeability` bleiben `[f32;9]`, weil die Live-Registry 9 ist (kein Fabrikat). **Noch nicht gebaut:** die **Ton-Anbindung** (`acoustic_partials` `(k+1)` → `f_j`), sie braucht Medium/Domain/Extent je Kanal aus dem Register.
+- **Blockade:** die Ton-Anbindung hängt an der Register-Medium-/Domain-Achse (Mountain schreibt die `channel`-Zeilen); P4 ist durch.
+- **Braucht:** **Ton** — `acoustic_partials` auf `f_j = mode_frequency_hz(op_k, speed_k, k_j)` je Kanal; davor die Register-Zeilen mit `medium`/`domain`.
 - **Wort:** „Ja" 2026-10-09 (River 143) + „los" (River 152) — Kanalzahl-Umbau, harter Schnitt.
 
 ### Register-Physik-Migration — Parse-Primitiv + Live-Registry stehen; `channel`-Direktive offen
@@ -133,6 +133,7 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 152):
 - `src/mathematikerin/omega.rs` (`PresenceFrame.n`/`schema_hash` aus der Live-Registry)
 - `src/mathematikerin/actuators.rs` (`PresenceFrame.schema_hash`; Testaufbau)
 - `src/archivar/relay.rs` (P3.1: `kinetic_frame_bytes` auf `n`+`schema_hash`+State-Maske; harter Schnitt)
+- `src/mathematikerin/shaders.rs` (P4: `presence_probe` über `CHANNEL_CAP`, Probe-Ausgabe 16+3)
 - `static/constants.js` (P5: `parseKinetic` liest `n`/`schema_hash`/`state`)
 - `docs/concepts/archivar-mathematikerin.md` (P0.1 kinetischer Kontrakt; Header-sha)
 - `docs/handover/handover-2026-10-09-river-folge152.md`
@@ -140,4 +141,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 152):
 
 Nicht committet (gitignored, Session-Artefakte): keine neuen.
 
-## Burn: open 0.0000 · close 0.1705 · cap 0.30 · Grund: P9.1 Parse-Primitiv (channel.rs) + P3.3 Live-Registry/`schema_hash` (`channel.rs`/`omega.rs`/`actuators.rs`) + P3.1/P5 kinetischer Draht auf `n`+`schema_hash`+State (relay.rs/constants.js, harter Schnitt) + P0.1 Kontrakt; `cargo check` grün, zero warnings; mountain-286/mycelium-280 gefaltet; `register_lookup --fired/--stale`/`open_points_check` = 0; P4 + Ton-Anbindung offen · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „River-Linie in einem Pass starten"; kumulativ über die River-Läufe des Tages).
+## Burn: open 0.0000 · close 0.1988 · cap 0.30 · Grund: P9.1 Parse-Primitiv + P3.3 Live-Registry/`schema_hash` (channel.rs/omega.rs/actuators.rs) + P3.1/P5 kinetischer Draht auf `n`+`schema_hash`+State (relay.rs/constants.js, harter Schnitt) + P4 GPU `presence_probe` auf `CHANNEL_CAP`/dynamischem Probe-Puffer (shaders.rs/omega.rs) + P0.1 Kontrakt; `cargo check` grün, zero warnings; mountain-286/mycelium-280 gefaltet; `register_lookup --fired/--stale`/`open_points_check` = 0; nur die Ton-Anbindung offen (hängt an der Register-Medium-/Domain-Achse) · deepseek-flash, kein pro/max · Session-Kosten per-session via `session_burn` (Session „River-Linie in einem Pass starten"; kumulativ über die River-Läufe des Tages).
