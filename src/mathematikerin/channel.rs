@@ -233,6 +233,13 @@ impl ChannelDescriptor {
         eigen_wavenumbers(self.domain, self.boundary, self.extent?, count)
     }
 
+    pub fn mode_frequencies_hz(&self, speed: f64, count: usize) -> Option<Vec<f64>> {
+        self.mode_wavenumbers(count)?
+            .into_iter()
+            .map(|k| mode_frequency_hz(self.op, speed, k))
+            .collect()
+    }
+
     pub fn hash(&self) -> u64 {
         let mut h: u64 = 0xcbf29ce484222325;
         h = fnv1a(&[self.conserved as u8], h);
@@ -1316,6 +1323,41 @@ mod tests {
     fn a_wave_without_a_speed_carries_no_pitch() {
         assert!(mode_frequency_hz(TransportOp::Wave, 0.0, 1.0).is_none());
         assert!(mode_frequency_hz(TransportOp::Wave, f64::NAN, 1.0).is_none());
+    }
+
+    #[test]
+    fn a_wave_line_carries_harmonic_mode_frequencies() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:line:dirichlet:2.0",
+            "Pa",
+        )
+        .expect("wave line spec parses");
+        let f = d.mode_frequencies_hz(343.0, 3).expect("modes carry pitch");
+        assert_eq!(f.len(), 3);
+        for (i, fj) in f.iter().enumerate() {
+            let j = (i + 1) as f64;
+            assert!((fj - 343.0 * j / (2.0 * 2.0)).abs() < 1e-9);
+        }
+    }
+
+    #[test]
+    fn a_diffusive_mode_carries_no_mode_frequency() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:flux-fourier:parabolic:fluid:line:dirichlet:2.0",
+            "K",
+        )
+        .expect("fourier spec parses");
+        assert!(d.mode_frequencies_hz(1.0, 3).is_none());
+    }
+
+    #[test]
+    fn a_wave_without_extent_carries_no_mode_frequency() {
+        let d = ChannelDescriptor::parse_spec(
+            "energy:primary:wave:hyperbolic:fluid:line:dirichlet",
+            "Pa",
+        )
+        .expect("wave line spec parses");
+        assert!(d.mode_frequencies_hz(343.0, 3).is_none());
     }
 
     #[test]
