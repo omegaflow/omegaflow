@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: ab8db82a96cf8a977931ae0c2195e8cde9ca8641790a18e106f9b755eb00b590
+  sha256: 73bc0d67ddde353920057edf30be4267f322326b1479fc341cd9caab945d1d02
   status: live
 -->
 # Handover — Mountain-Folge 287 (2026-10-09)
@@ -134,7 +134,7 @@ Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe sel
 `phi/sources.φ` · `phi/harvest.φ` · `phi/blocked_sources.φ` ·
 `.github/workflows/petrel19-cdn.yml` · `.github/workflows/kaguya-lrs-cdn.yml` · `.github/workflows/inpe-stac-cdn.yml` ·
 `tools/harvest/src/bin/iris_compiler.rs` · `tools/harvest/src/bin/gwosc_compiler.rs` ·
-`tools/register/src/bin/register_lookup.rs` · `tools/register/src/bin/dropped_gate.rs` ·
+`tools/register/src/bin/register_lookup.rs` · `tools/register/src/bin/dropped_gate.rs` · `.github/workflows/ci-gate.yml` ·
 `docs/zustand/dropped-legacy-baseline.txt` · `docs/zustand/dropped-roster-baseline.txt` (gelöscht) ·
 `docs/handover/handover-2026-10-09-mountain-folge287.md` · `docs/handover/archiv/handover-2026-10-09-mountain-folge286.md`.
 Nach dem Push: `petrel19-cdn.yml`, `inpe-stac-cdn.yml`, `kaguya-lrs-cdn.yml` dispatchen.
