@@ -25,11 +25,11 @@ note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²
 
 pending
 url https://psa.esa.int/psa-tap/tap/
-note BepiColombo bc_mpo_more (Radio Science): release 2099-01-01 (89434/89517 proprietär), data?PRODUCT 403; bc_mpo_mag-Arm steht (5020 Zeilen seit 2024-03-12). Kein Parser-Gap (2026-10-09).
+note BepiColombo bc_mpo_more: PSA 200, MORE ab ~2027-04 gated (2099); keyless Neu-Kanal Zenodo 17813314 Plasma-Residuen (200, CC-BY-4.0, sha256 407ed0bb…). bc_mpo_mag-Arm steht, kein MORE-Arm (2026-10-09).
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
-note Voyager closed-loop Doppler — 2026-10-09: PSNO-00007 200, VGR_8201–8245 request-only; atdf-Arm steht (extract.rs:27), Riss zu blocked-sources-klassen.md:8. Anfrage 2026-09-16 mail_ledger.φ:74 → offen (wartend.φ:6). Kein Parser-Gap.
+note Voyager closed-loop Doppler — 2026-10-09: SPDF saturn_encounter_data/ anonym registriert als voyager_saturn (sources.φ:19592, CC0, doppler_count_*). NSSDC-Anker falsch: PSNO-00007 → PSPA-00049; Anfrage offen (wartend.φ:6). Kein Parser-Gap.
 
 blocked parser-def
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
@@ -43,7 +43,7 @@ note Viking Orbiter Tracking (Doppler+Range) — 2026-10-09: PSPG-00011 „not R
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
-note Juno Earth-Flyby pre-EFB ODF — 2026-10-09: pre-EFB request-only; OCRU-Route atmos.nmsu.edu/PDS/data/jnogrv_0001/ beginnt post-EFB (2013-10-11); odf-Arm + juno_odf.bin stehen. Anfrage 2026-09-16 mail_ledger.φ:78 → offen. Kein Parser-Gap.
+note Juno Earth-Flyby pre-EFB ODF — 2026-10-09: pre-EFB öffentlich absent (Bestand beginnt post-EFB 2013-10-11, OCRU-Route); odf-Arm + juno_odf.bin stehen. NSSDC-Anfrage offen. Kein Parser-Gap (keine Quelle).
 
 pending
 url https://pds-ppi.igpp.ucla.edu/data
@@ -65,7 +65,7 @@ note Solar VSO/IRIS — 2026-10-09: VSO POST 411; IRIS HCR-API www.lmsal.com/hek
 
 pending
 url https://www.cssdc.ac.cn/en/
-note LAIC CSSDC — 2026-10-09 RISS: `cssdc.ac.cn`/`/en/` liefern eine Telegram-APK-Advert-Seite (kein Datenportal); Wayback unread (429). Register-URL ohne Wissenschaft; LEOS-Umzug pending — kein Parser-Gap.
+note LAIC CSSDC — 2026-10-09 RISS: cssdc.ac.cn/en liefert eine Telegram-APK-Advert-Seite (kein Datenportal). Neu via --perplexity: LEOS www.leos.ac.cn 206 (user-gated/captcha), unregistriert; LEOS/CSES-Admission pending. Kein Parser-Gap.
 
 blocked parser-def
 url https://opendata.atlas.cern/
