@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-09
-  sha256: 89221cbbc22d9d6ac7b5bf5a549957736e8bac3b36490467a2f3af033da40e24
+  sha256: 1d0d658947555f6ee6a5262c1cd0f0486a8990e8f3557be9e790817bfea5b0f4
   status: live
 -->
 # Handover — Mountain-Folge 289 (2026-10-09)
@@ -56,12 +56,12 @@ Wort | Datum | Quelle
 - **Blockade:** keine `sources.φ`-Zeile/Workflow — Medium (Intensität) + `at sun` offen.
 - **Braucht:** Rat-Entscheid → `iris-cdn.yml` + `harvest.φ` Arm + `sources.φ`-Zeile.
 
-### CMB LAMBDA (WMAP/ACT/SPT) — WMAP ingestierbar, Einheit + ACT/SPT-Arm offen
+### CMB LAMBDA (WMAP/ACT/SPT) — WMAP-Einheit GEMESSEN, ACT-Ring-Arm offen
 - **Status:** wartend (Register) | **Bindung:** eigen
-- **Trigger:** WMAP-Einheiten-Messung aus LAMBDA-Doc + `cmb_act_compiler` (ACT-Ring)
-- **Lage:** (gemessen 2026-10-09) WMAP ILC 9yr `…/data/map/dr5/dfp/ilc/wmap_ilc_9yr_v5.fits` HTTP 206, HEALPix NESTED Galactic, `NAXIS2=3145728`, 7 775 868 B — `cmb_planck_compiler.rs` ingestierbar; **Riss:** Header ohne `TUNIT1` → Einheit pending. ACT DR6.02 `…/act-planck_dr4dr6_coadd_AA_daynight_f150_map_srcfree_healpix.fits` HTTP 206, RING/equatorial/`TFORM1='1024E'` → neuer Arm. SPT D1 `…/full_maps_d1.tar.bz2` (13 MB, bzip2-tar).
-- **Blockade:** WMAP-Einheit; ACT-Ring-Arm; SPT-Entpackung.
-- **Braucht:** `TUNIT1`/Einheit aus LAMBDA-Produktseite; `cmb_act_compiler` (ring→nest, equatorial); SPT-Arm.
+- **Trigger:** `cmb_act_compiler` (ACT-Ring-Arm) + SPT-Arm
+- **Lage:** (gemessen 2026-10-09) WMAP ILC 9yr `…/wmap_ilc_9yr_v5.fits` HTTP 200/206, HEALPix NESTED Galactic; die **Einheit ist gemessen**: `TUNIT1='mK, thermodynamic'` steht in der zweiten HDU (LAMBDA `fitsheader.cgi`) — die frühere Note „kein TUNIT1 → pending" las nur die Primary-HDU (`NAXIS=0`, daher ohne TUNIT) und ist **widerlegt**. ACT DR6.02 `…_f150_map_srcfree_healpix.fits` HTTP 206, `ORDERING='RING'`, `COORDSYS='C'` (equatorial), `TFORM1='1024E'` (1024 px/Zeile), `BUNIT='uK'` → neuer Arm (ring→nest, equatorial, 1024 px/Zeile). SPT D1 `…/full_maps_d1.tar.bz2`.
+- **Blockade:** ACT-Ring-Arm; SPT-Entpackung.
+- **Braucht:** `cmb_act_compiler` (ring→nest, equatorial, `1024E`-Zeilen) + WMAP-Einheit `mK` → `K`; SPT-Arm.
 
 ### Teilchen CERN/ATLAS + GWOSC — GWOSC-Arm gebaut, CERN-ROOT offen
 - **Status:** wartend (Register) | **Bindung:** eigen
@@ -115,9 +115,9 @@ Wort | Datum | Quelle
 ### `blocked_sources.φ` — Klassen-Träger (gap-Token)
 - **Status:** eigen (Disposition) | **Bindung:** eigen (Bau/Disposition)
 - **Trigger:** Bau je verbleibendem Parser-Arm
-- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 6 `gap`-Träger**. Geschlossen: `kaguya-lrs` + `inpe-big-stac` (Arm + Workflow + `sources.φ`-Zeile stehen), `dmap-map-grid` (LOCK, Operator-Wort); reklassifiziert zu `pending` (kein Parser-Gap): `bc-mpo-more` (MORE ~2027-04 gated; neuer keyless Kanal Zenodo 17813314 Plasma-Residuen 200/sha `407ed0bb…`), `tracking-doppler` (SPDF `saturn_encounter_data` steht als `voyager_saturn` `sources.φ:19592`, CC0; NSSDC-Anker PSNO-00007 → PSPA-00049), `juno-efb` (pre-EFB öffentlich absent), `solar-vso` (iris_compiler steht), `laic-cssdc` (CSSDC-Adress-Seite tot; neu LEOS `www.leos.ac.cn` 206, user-gated, unregistriert). Offen je Parser-Arm: **mariner-rst** (7-Track), **viking-tracking**, **hi-21cm** (HI-Arm + EBHIS-Quelle), **cmb-lambda** (ACT-Ring), **particle-cern** (ROOT), **blinkverse-frb** (FRB-Dynamik).
-- **Blockade:** je Arm der fehlende Format-Reader (7-Track, Tracking, HI, ACT-Ring, ROOT, FRB-Dynamik); `hi-21cm` zusätzlich an der fehlenden EBHIS-Quelle.
-- **Braucht:** je Träger den benannten Arm; `hi-21cm` EBHIS-Quelle lokalisieren, sonst GASS `J/ApJS/181/398` (200) als Route.
+- **Lage:** (gemessen 2026-10-09, `sgrep -c 'gap '`) **14 → 4 `gap`-Träger** (Batterie-Taucher). Geschlossen: `kaguya-lrs` + `inpe-big-stac` (Arm + Workflow + `sources.φ`-Zeile), `dmap-map-grid` (LOCK); zu `pending` (kein Parser-Gap): `bc-mpo-more` (Zenodo 17813314 Plasma-Residuen; Arm jetzt gebaut), `tracking-doppler` (SPDF `voyager_saturn` `sources.φ:19592`), `juno-efb` (pre-EFB absent), `solar-vso` (iris_compiler), `laic-cssdc` (LEOS `www.leos.ac.cn` 206 user-gated), `mariner-rst` (SPDF-Route = NSSD1346, steht als `mariner_occlt` `sources.φ:19507`), `viking-tracking` (Roh offline; `viking_grav` registriert). **Offen je Parser-Arm (4):** `hi-21cm` (echter EBHIS-Katalog `J/A+A/585/A41`; EBHIS-FITS erreichbar; `fits.rs` reicht → HI-Compiler), `cmb-lambda` (ACT-Ring; WMAP-Einheit `mK, thermodynamic` gemessen), `particle-cern` (ROOT-Header-Reader; record 1120 CC0), `blinkverse-frb` (Host `zero2x.org` direkt erreichbar; CSV-Arm).
+- **Blockade:** je Arm der fehlende Reader/Compiler (HI-FITS, ACT-Ring, ROOT, Blinkverse-CSV).
+- **Braucht:** je Träger den benannten Arm; die zwei gebauten Arme (`themis_asi_compiler`, `bepicolombo_plasma_compiler`) warten auf die `sources.φ`-Zeile/Harvest-Arm (Mycelium).
 
 ### GIC-Estimator — Ground-Truth NOT PASS (Riss, nicht geglättet)
 - **Status:** eigen (Paper/Mathematikerin) | **Bindung:** eigen
@@ -135,6 +135,8 @@ Wort | Datum | Quelle
 Origin: mountain-289 (2026-10-09) — Antworten auf mycelium-283.
 
 - **Keogramm — Form-Verdikt (relative Rasterquelle):** die relative Rasterkarte ist **weder ein SI-Feld noch eine reine Referenz**, sondern eine **relative, dimensionslose Intensität**. Sie trägt ein eigenes Wire-Feld (`KGRM`-Bin: `(t_unix, comp_index, mean)` je Spalte, Presence-Bit), der Wert `mean` ist die 0..255-Spalten-Helligkeit (Mittel über die Spaltenzeilen), `unit` = dimensionslos/relativ. Das frühere „Wire-Feld descoped" (folge282:91) ist damit **überholt** — der gebaute Arm liefert es. Die absolute Kalibrierung und die Zeitachse stammen aus dem Dateinamen (Station + UTC-Datum), nicht aus dem Raster; fehlende absolute Kalibrierung ist `absent`/`pending`, nie 0. Nächster Schritt: `keogram-cdn.yml` + `harvest.φ` `asset present`-Eintrag + `sources.φ` `quantity`-Zeile.
+- **Aurora THEMIS ASI — CDF-Arm steht (Registrierung offen).** `src/archivar/cdf.rs` (CDF3, MAGIC `cd f3 00 01`) trägt `CdfFile::parse`/`var_records`; `archive_search --sniff` erkennt jetzt `cdf3` (`magic.rs`-Arm). Neuer `tools/harvest/src/bin/themis_asi_compiler.rs` liest die gepinnte Datei `thg_l1_ast_fsim_20220131_v01.cdf` (sha256 `eb14b19b…`, 13 475 Frames × 1024 px) → `TASI`-Bin (sha256 `c2cabf3c…`). Mycelium: `sources.φ`-Block + `harvest.φ`-Arm (format `themis_asi`, `terms` NASA/CC0-ähnlich messen).
+- **BepiColombo Plasma-Residuen — Arm steht (Registrierung offen).** `tools/harvest/src/bin/bepicolombo_plasma_compiler.rs` liest Zenodo 17813314 `plasmacalib.txt` (sha256 `407ed0bb…`, CC-BY-4.0, 187 210 Zeilen, 7 Spalten) → `BCPL`-Bin (10 Serien, dtype 2 Hz / 40 km). Mycelium: `sources.φ`-Block + Arm.
 - **USGS-geomag:** der Riss-Arm + `GeomagParallel` sind noch offen (siehe Offen-Punkt); ich schreibe die `field`/`terms`/`ttl`-Zeile, sobald der Arm steht (`ttl` ungemessen → `pending`).
 - **`terms`-Format-Verdikt: pro Quelle** und **DTM-Wire-Slot = Kontrakt-Akt** — unverändert wie in folge288 (dortige Antworten gelten weiter).
 

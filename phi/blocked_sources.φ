@@ -31,15 +31,13 @@ pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
 note Voyager closed-loop Doppler — 2026-10-09: SPDF saturn_encounter_data/ anonym registriert als voyager_saturn (sources.φ:19592, CC0, doppler_count_*). NSSDC-Anker falsch: PSNO-00007 → PSPA-00049; Anfrage offen (wartend.φ:6). Kein Parser-Gap.
 
-blocked parser-def
+pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
-gap mariner-rst
-note Mariner 10 Radio-Science/Tracking (762 7-Track-Tapes, SDDPT 73-085A-0008). 2026-09-17: Gesamtkorpus request-only. Teilroute: SPDF red_tele_signal_data_venus_occlt/ — 9 .tar à ~19,5 MB anonym, PSPA-00316. Anfrage 2026-09-16 (:208), Antwort offen.
+note Mariner 10 Radio-Science/Tracking — 2026-10-09: die SPDF-Teilroute (9 .tar, PSPA-00316) ist NSSD1346 und steht als mariner_occlt (sources.φ:19507, Arm + Workflow). Gesamtkorpus (762 7-Track-Tapes) request-only. Kein Parser-Gap.
 
-blocked parser-def
+pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
-gap viking-tracking
-note Viking Orbiter Tracking (Doppler+Range) — 2026-10-09: PSPG-00011 „not Received", PSPG-00457 SDDPT live; kein Tracking-Parser (viking_text = Lander-Text), odf/atdf generisch. Anfrage 2026-09-16 mail_ledger.φ:76 → offen (wartend.φ:16).
+note Viking Orbiter Tracking — 2026-10-09: kein Roh-Tracking online (PSPG-00011 not Received; PSPG-00457/00277 request/offline; PDS-GEO/SPDF ohne Orbiter-RSS). Abgeleitet VO2 LOS-Gravity steht als viking_grav (sources.φ:11761). Kein Parser-Gap.
 
 pending
 url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
@@ -52,12 +50,12 @@ note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.�
 blocked parser-def
 url https://skyview.gsfc.nasa.gov/cgi-bin/images
 gap hi-21cm
-note HI 21cm — 2026-10-09 RISS: EBHIS-VizieR J/A+A/585/A136 existiert NICHT (VizieR-+-Falsch-Positiv; Paper DOI 10.1051/0004-6361/201527007 ohne Katalog). HEASARC W3Browse hi4pi 200, GASS J/ApJS/181/398 200; kein HI-Arm. EBHIS-Quelle suchen.
+note HI 21cm — 2026-10-09: echter EBHIS-Katalog J/A+A/585/A41 (nicht A136); GASS J/ApJS/181/398 = Falsch-Positiv; HI4PI J/A+A/594/A116 existiert. EBHIS-FITS erreichbar (A41/fits/SIN_A01.fit 617 MB, BUNIT K); fits.rs reicht → HI-Compiler bauen.
 
 blocked parser-def
 url https://lambda.gsfc.nasa.gov/
 gap cmb-lambda
-note CMB LAMBDA/PLA — 2026-10-09: WMAP ILC 9yr (206, NESTED Galactic, kein TUNIT1 → Einheit pending) via cmb_planck_compiler; ACT DR6.02 RING/equatorial → neuer Arm; SPT D1 tar.bz2. lambda.gsfc/PLA.
+note CMB LAMBDA/PLA — 2026-10-09: WMAP ILC 9yr Einheit GEMESSEN TUNIT1='mK, thermodynamic' (2. HDU, fitsheader.cgi) — nicht pending. ACT DR6.02 RING/COORDSYS C/TFORM1 1024E/uK → neuer Arm (ring→nest, equatorial). SPT D1 tar.bz2.
 
 pending
 url https://vso.stanford.edu/
@@ -70,9 +68,9 @@ note LAIC CSSDC — 2026-10-09 RISS: cssdc.ac.cn/en liefert eine Telegram-APK-Ad
 blocked parser-def
 url https://opendata.atlas.cern/
 gap particle-cern
-note Teilchen CERN/ATLAS + GWOSC — 2026-10-09: CERN opendata /api/records/ 200, recid 1120 ALICE ROOT CC0 → ROOT-Arm pending; GWOSC Strain HDF5 206 (CC BY 4.0) → gwosc_compiler.rs gebaut. dead:496 korrekt.
+note Teilchen CERN + GWOSC — 2026-10-09: CERN record 1120 (ALICE, CC0 bestätigt; kleinste Datei AliVSD_Masterclass_6.root 35,4 MB, magic root) → ROOT-Header-Reader fehlt; GWOSC Strain HDF5 steht (gwosc_compiler.rs). dead:496 korrekt.
 
 blocked parser-def
 url https://blinkverse.zerooffset.xyz/
 gap blinkverse-frb
-note FRB Blinkverse — 2026-10-09: Superset von FRBCAT/TNS/CHIME (FAST-Dynamikspektren + 92 Host-Galaxien) → nicht superseded (Rat + UI); Zugang direct+Proton pending; Dedup gegen `frb_chime_cat1.json`/`frbcat_flat.json`/`frb_a279.json`.
+note FRB Blinkverse — 2026-10-09: HOST GEZOGEN → blinkverse.zero2x.org direkt 200 (kein Auth); API .../adcp-blinkverse/type/{FRB_SOURCE,FRB_ANALYSIS_SINGLE,FRB_HOST} + CSV (4020 Quellen, 35342 Pulse, 154 Hosts). Alter Host tot. CSV-Arm bauen.
