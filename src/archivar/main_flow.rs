@@ -3119,6 +3119,7 @@ pub fn main_flow() {
                     | "bpa_gic"
                     | "superdarn_cpcp"
                     | "superdarn_cpcp_nc"
+                    | "supermag_index"
                     | "ssusi_aurora"
                     | "carisma_mag"
                     | "swarm_fac"
@@ -5826,6 +5827,7 @@ pub fn main_flow() {
                                 eph: &eph_arc,
                                 env: &e,
                                 lsk: &lsk_c,
+                                refusal_ledger: rl.as_ref(),
                             },
                         );
                         let _ = ftx.send(FetchResult {

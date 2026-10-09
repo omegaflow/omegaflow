@@ -96,6 +96,7 @@ pub struct FanoutCtx<'a> {
     pub eph: &'a HashMap<String, BodyEphemeris>,
     pub env: &'a HashMap<String, String>,
     pub lsk: &'a LeapSeconds,
+    pub refusal_ledger: &'a std::sync::Mutex<RefusalLedger>,
 }
 
 pub fn fanout_fetch(
@@ -104,17 +105,67 @@ pub fn fanout_fetch(
     ctx: FanoutCtx<'_>,
 ) -> Vec<(Channel, FieldConfig)> {
     let FanoutCtx {
+        x,
+        y,
+        z,
         presence,
         now,
         r,
         eph,
         env,
         lsk,
-        ..
+        refusal_ledger,
     } = ctx;
     let mut channels = Vec::new();
     let body_name = frame_body_name(&src.frame);
-    let Some((ux, uy, uz)) = presence else {
+    let center_kind = match src.fanout_center {
+        Some(c) => c,
+        None => {
+            eprintln!(
+                "fanout {}: fanout_center absent — refused, retry in ttl/Φ",
+                src.url
+            );
+            if let Ok(mut ledger) = refusal_ledger.lock() {
+                ledger.register(&src.url, "fanout-no-receiver");
+            }
+            return channels;
+        }
+    };
+    let (ux, uy, uz) = match center_kind {
+        QueryCenter::Receiver => match presence {
+            Some(p) => p,
+            None => {
+                eprintln!(
+                    "fanout {}: receiver worldline absent — refused, retry in ttl/Φ",
+                    src.url
+                );
+                if let Ok(mut ledger) = refusal_ledger.lock() {
+                    ledger.register(&src.url, "fanout-no-receiver");
+                }
+                return channels;
+            }
+        },
+        QueryCenter::Anchor => (x, y, z),
+    };
+    let sort_center = match center_kind {
+        QueryCenter::Receiver => icrs_to_body_surface(ux, uy, uz, now, &body_name, eph),
+        QueryCenter::Anchor => match &src.frame {
+            Frame::Surface { lat, lon, .. } => Some((*lat, *lon)),
+            _ => None,
+        },
+    };
+    let Some((clat, clon)) = sort_center else {
+        let arm = match center_kind {
+            QueryCenter::Receiver => "receiver",
+            QueryCenter::Anchor => "anchor",
+        };
+        eprintln!(
+            "fanout {}: fanout_center {} unresolved — refused, retry in ttl/Φ",
+            src.url, arm
+        );
+        if let Ok(mut ledger) = refusal_ledger.lock() {
+            ledger.register(&src.url, "fanout-no-anchor");
+        }
         return channels;
     };
     let stations_url = match render_url(
@@ -142,24 +193,11 @@ pub fn fanout_fetch(
         Some(j) => parse_station_entries(&j, src),
         None => parse_stations_xml(&raw),
     };
-    let sort_center = match presence {
-        Some((px, py, pz)) => icrs_to_body_surface(px, py, pz, now, &body_name, eph),
-        None => None,
-    }
-    .or({
-        if let Frame::Surface { lat, lon, .. } = src.frame {
-            Some((lat, lon))
-        } else {
-            None
-        }
+    stations.sort_by(|a, b| {
+        angular_distance_deg(a.lat, a.lon, clat, clon)
+            .partial_cmp(&angular_distance_deg(b.lat, b.lon, clat, clon))
+            .unwrap_or(std::cmp::Ordering::Equal)
     });
-    if let Some((clat, clon)) = sort_center {
-        stations.sort_by(|a, b| {
-            angular_distance_deg(a.lat, a.lon, clat, clon)
-                .partial_cmp(&angular_distance_deg(b.lat, b.lon, clat, clon))
-                .unwrap_or(std::cmp::Ordering::Equal)
-        });
-    }
     let cap = src.fanout_cap as usize;
     let base_url = match render_url(
         &src.url,

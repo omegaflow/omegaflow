@@ -164,6 +164,7 @@ fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -889,6 +890,7 @@ fn test_render_source_url_substitutions() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -1175,6 +1177,7 @@ fn test_post_body_rendering() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -1247,6 +1250,7 @@ fn test_csv_zip_post_body_resolves_secret() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -1396,6 +1400,7 @@ fn test_celestial_map_redshift_distance() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -1503,6 +1508,7 @@ fn test_extract_csv_zip_end_to_end() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -1583,6 +1589,25 @@ rv_scale 1000.0\n";
         Extract::CelestialMap { rv_scale, .. } => assert_eq!(*rv_scale, Some(1000.0)),
         _ => panic!("expected CelestialMap extract"),
     }
+}
+
+#[test]
+fn test_parse_sources_fanout_center_arms() {
+    let base = "url https://example.com/fanout.json\n\
+ttl 604800\n\
+at earth\n\
+fanout 10\n";
+    let declared = format!("{}fanout_center receiver\n", base);
+    let sources = parse_sources(&declared);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].fanout_center, Some(QueryCenter::Receiver));
+
+    let anchor = format!("{}fanout_center anchor\n", base);
+    let sources = parse_sources(&anchor);
+    assert_eq!(sources[0].fanout_center, Some(QueryCenter::Anchor));
+
+    let sources = parse_sources(base);
+    assert_eq!(sources[0].fanout_center, None);
 }
 
 #[test]
@@ -1807,6 +1832,7 @@ fn test_extract_cmap_dist_scale_kpc() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -1907,6 +1933,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -2002,6 +2029,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -2094,6 +2122,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -2194,6 +2223,7 @@ fn test_extract_cmap_pm_radvel_plx() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -2326,6 +2356,7 @@ fn test_extract_cmap_no_distance_skipped() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -2415,6 +2446,7 @@ fn test_extract_cmap_null_dist_skipped() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -2709,6 +2741,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -3878,6 +3911,7 @@ fn test_parse_station_entries() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -3939,6 +3973,7 @@ fn test_parse_station_entries_flatten_filter() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: "sensors".into(),
         station_code: None,
         stations_filter: Some(("parameter.name".into(), "pm25".into())),
@@ -5050,6 +5085,7 @@ fn test_erddap_argo_map_extract() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -5767,6 +5803,7 @@ fn test_anchor_body_agnostic() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -5917,6 +5954,7 @@ fn test_anchor_applies_declared_unit() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -8446,6 +8484,7 @@ fn test_diagnose_no_samples() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -8536,6 +8575,7 @@ fn test_ci_body_verdict() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -8782,6 +8822,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -8888,6 +8929,7 @@ fn test_map_vel_unit_and_tau_key_override() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -9172,6 +9214,7 @@ fn test_fold_directive_parse_and_extract() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -9296,6 +9339,7 @@ fn test_keplermap_elements_to_icrs() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -9629,6 +9673,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -9734,6 +9779,7 @@ fn test_flux_from_mag_manifests() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -9831,6 +9877,7 @@ fn test_map_lat_sign_lon_sign() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -9950,6 +9997,7 @@ fn test_mag_type_gating() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,
@@ -11553,6 +11601,7 @@ fn fits_format_extracts_last_row() {
         catalog_epoch: None,
         repeat_ra_bins: 0,
         fanout_cap: 0,
+        fanout_center: None,
         stations_flatten: String::new(),
         station_code: None,
         stations_filter: None,

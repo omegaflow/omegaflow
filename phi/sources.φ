@@ -477,6 +477,7 @@ stations_id notation
 stations_lat lat
 stations_lon long
 fanout 40
+fanout_center receiver
 last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
@@ -517,6 +518,7 @@ stations_id locationCode
 stations_lat lat
 stations_lon lon
 fanout 8
+fanout_center receiver
 fanout_delay 10
 map sensorData.0.data
 epoch sampleTime
@@ -531,6 +533,7 @@ stations_id locationCode
 stations_lat lat
 stations_lon lon
 fanout 8
+fanout_center receiver
 fanout_delay 10
 map sensorData.0.data
 epoch sampleTime
@@ -545,6 +548,7 @@ stations_id locationCode
 stations_lat lat
 stations_lon lon
 fanout 8
+fanout_center receiver
 fanout_delay 10
 map sensorData.0.data
 epoch sampleTime
@@ -559,6 +563,7 @@ stations_id locationCode
 stations_lat lat
 stations_lon lon
 fanout 8
+fanout_center receiver
 fanout_delay 10
 map sensorData.0.data
 epoch sampleTime
@@ -602,6 +607,7 @@ stations_id id
 stations_lat lat
 stations_lon lng
 fanout 40
+fanout_center receiver
 fanout_delay 10
 last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
 
@@ -768,6 +774,7 @@ stations_id id
 stations_lat geometry.coordinates.1
 stations_lon geometry.coordinates.0
 fanout 40
+fanout_center receiver
 first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
 
 url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
@@ -780,6 +787,7 @@ stations_id id
 stations_lat geometry.coordinates.1
 stations_lon geometry.coordinates.0
 fanout 40
+fanout_center receiver
 first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
@@ -1249,6 +1257,7 @@ stations_id id
 stations_lat latitude
 stations_lon longitude
 fanout 50
+fanout_center receiver
 last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
 
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
@@ -1297,6 +1306,7 @@ stations_id id
 stations_lat coordinates.latitude
 stations_lon coordinates.longitude
 fanout 25
+fanout_center receiver
 fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
 
@@ -18931,6 +18941,16 @@ field supermag_z_nez_nt supermag_z_nez_nt inverse-square em nT 86400 0.0 0.0
 field supermag_n_geo_nt supermag_n_geo_nt inverse-square em nT 86400 0.0 0.0
 field supermag_e_geo_nt supermag_e_geo_nt inverse-square em nT 86400 0.0 0.0
 field supermag_z_geo_nt supermag_z_geo_nt inverse-square em nT 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/supermag_index.bin
+format supermag_index
+origin https://supermag.jhuapl.edu/services/indices.php
+compiler tools/harvest/src/bin/supermag_index_compiler.rs
+at earth
+ttl 604800
+quantity supermag_sme_nt supermag_sme_nt inverse-square index nt 60 0.0 0.0
+quantity supermag_sml_nt supermag_sml_nt inverse-square index nt 60 0.0 0.0
+quantity supermag_smu_nt supermag_smu_nt inverse-square index nt 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync tables=VII/110A/table3,VII/110A/table4
