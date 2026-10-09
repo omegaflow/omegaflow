@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 284 (2026-10-09)
-  session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); die `sources.φ`-`quantity`-Zeile als Contract-Riss gemessen (keine dimensionslose Quantity + kein `format keogram`-Arm). Mountain-289 `## An mycelium` gefaltet (Keogramm-Form-Verdikt, terms pro Quelle, USGS/Dtm unverändert). LICENSE-Populations-Riss geheilt (beide Zensus 0 no-terms, 2698 terms). Fired/stale/addressed = sauber; hips-png-cdn läuft.
+  session: Mycelium-Linie — Meta-Pass. Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ` `format keogram`); `iris-cdn.yml` + `harvest.φ` `format iris` gebaut (HCR-Query gemessen); die `sources.φ`-`quantity`/IRIS-Feld-Zeilen als Contract-Risse gemessen. Mountain-289 `## An mycelium` gefaltet. Vier `general`-Taucher: Redistributions-Alternativen (41 Blöcke → Survey), IRIS-HCR, LEOS/cssdc, Gegen-Audit. LICENSE-Populations-Riss geheilt; Orphan-Gate geheilt.
   class: handover
   date: 2026-10-09
-  sha256: dcde8bee2f837875a1c3367c3de4dc1c6668b8235b845dd82e2cfef194ef7788
+  sha256: 107041d3fef664f9001289f94a1a4b15d529ddb5cf73e1f4a5ea18650f0f6c96
   status: live
 -->
 # Handover — Mycelium-Folge 284 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0000 · close 0.0779 · cap 0.5 — Grund: Keogramm-Manifestation gebaut (`keogram-cdn.yml` + `harvest.φ`), `sources.φ`-`quantity` als Kontrakt-Riss gemessen, Mountain-289 gefaltet; `license_census`/`sources_repo_license` no-terms 0/0 (Riss geheilt); Orphan-Gate geheilt (exakte vso/cssdc-Identitäten); `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $1.5566 (33 Sessions).
+## Burn: open 0.0000 · close 0.1152 · cap 0.5 — Grund: Keogramm-Manifestation + `iris-cdn.yml`/`harvest.φ` gebaut, `sources.φ`-quantity/IRIS-Feld als Kontrakt-Risse gemessen, Mountain-289 gefaltet; 4 `general`-Taucher (Redistributions-Alternativen 41 Blöcke, IRIS-HCR, LEOS/cssdc, Gegen-Audit) — Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`; `register_lookup --fired/--stale` = 0 · deepseek-flash, kein pro/max · Session-Kosten via `session_burn` (Session „Mycelium-Linie in einem Pass starten"); Fenster-Total $2.2143 (41 Sessions).
 
 ## Operator-Wort-Register
 
@@ -58,7 +58,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 ### Gegen-Audit Quellen-Delta + Manifestation der neuen Routen
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · auf mountains Parser-Arme
 - **Trigger:** je Route der Mountain-Arm (`blocked_sources.φ:36/41/54/59/72/77`)
-- **Lage:** (gemessen 2026-10-09, mountain-289 `57a6df02b`) 6 echte Arme offen: `mariner-rst`, `viking-tracking`, `hi-21cm`, `cmb-lambda`, `particle-cern`, `blinkverse-frb` (`blocked_sources.φ:36/41/54/59/72/77`); `bc-mpo-more`/`tracking-doppler`/`juno-efb`/`solar-vso`/`laic-cssdc` sind `pending` (kein Parser-Gap).
+- **Lage:** (gemessen 2026-10-09, mountain-289 `57a6df02b` + `general`-Taucher) 6 echte Arme offen: `mariner-rst`, `viking-tracking`, `hi-21cm`, `cmb-lambda`, `particle-cern`, `blinkverse-frb` (`blocked_sources.φ:36/41/54/59/72/77`); `bc-mpo-more`/`tracking-doppler`/`juno-efb`/`solar-vso`/`laic-cssdc` sind `pending` (kein Parser-Gap). **Freie Alternativen gemessen (offene Lizenz + HTTP + Format):** `hi-21cm` → Zenodo HI4PI `5956696` (cc-by-4.0, FITS, 206); `cmb-lambda` → Zenodo SILC Planck PR2 `44373` (cc-by-4.0, FITS, 206); `blinkverse-frb` → Zenodo CHIME Cat 2 `18843430` (cc-by-4.0, CSV, 206); `particle-cern` → CERN Open Data `1120` (CC0) / GWOSC (CC BY 4.0, HDF5). `mariner-rst`/`viking-tracking`: NASA SPDF/PDS erreichbar (206, PD), aber exakter Tracking-Subpfad 404 bzw. Parser-Gap — keine maschinenlesbare Route gemessen.
 - **Blockade:** je Route der fehlende Mountain-Arm.
 - **Braucht:** Mountain-Arm je Delta-Route → dann `url`/`origin`/`compiler`/Tags + Workflow (Mycelium).
 
@@ -97,26 +97,36 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** der CDF-Leser für THEMIS ASI (Mountain).
 - **Braucht:** Mountain-Arm `cdf-reader` → dann THEMIS-ASI-`sources.φ`-Block (Mycelium).
 
-### Solar VSO/IRIS — `sources.φ`-Zeile + Workflow offen
-- **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** HCR-Query gemessen (fetchbarer FITS) → Workflow (`iris_compiler.rs`, `blocked_sources.φ:63`)
-- **Lage:** (gemessen 2026-10-09) `blocked_sources.φ:63-64` `pending` (`https://vso.stanford.edu/`); `iris_compiler.rs` steht (liest `--input <fits>`, druckt den `sources.φ`-Block, `--ci-mode`-Upload `vso.stanford.edu/iris.bin`). VSO POST 411; IRIS HCR-API `www.lmsal.com/hek/hcr` mit geratenen Parametern `archive_search --verdict` = HTTP 206/19 B (kein Treffer) → die HCR-Suchform ist **ungemessen**, nicht geraten.
-- **Blockade:** die HCR-API-Suchform (Start/Stop/Name-Mapping) — erste Messung.
-- **Braucht:** HCR-Query messen (`--playwright https://www.lmsal.com/hek/hcr`) → dann `iris-cdn.yml` (HCR → FITS → `iris_compiler --ci-mode`) + `sources.φ`-Zeile (`vso.stanford.edu/iris.bin`).
+### Solar VSO/IRIS — Workflow gebaut, `sources.φ`-Feld/Unit offen
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · mountain (Feld/Unit)
+- **Trigger:** Mountain misst `field`/`quantity`/`unit` des IRIS-Rohpixels
+- **Lage:** (gemessen 2026-10-09, `general`-Taucher) HCR-Form gemessen: `https://www.lmsal.com/hek/hcr?cmd=search-events-corr&outputformat=jsonMedium&instrument=IRIS&startTime=…&stopTime=…` (HTTP 200; `comp_data_url` je Gruppe, JSON `{"Events":[{"groups":[{…}]}]}`); `cmd=search` existiert nicht (19 B `cmd not recognized`). Beispiel-FITS `.fits.gz` 8 805 453 B (gzip, sha256 `71909bfe925417dc204c5df8516e3444e8ebfa241f7501bbe3f43c16f97876ee`). `.github/workflows/iris-cdn.yml` + `harvest.φ` `format iris` gebaut. Offen: `iris_compiler.rs` druckt keinen `field`/`quantity`-Token (Rohpixel ohne Einheit) → `sources.φ`-Block unvollständig.
+- **Blockade:** die physikalische Einheit des IRIS-Rohpixels (DN/Intensität) — Mountain-Register.
+- **Braucht:** Mountain `field`/`quantity`/`unit` für `format iris` → dann `sources.φ`-Block (`vso.stanford.edu/iris.bin`).
 
-### LAIC CSSDC — Register-URL ohne Wissenschaft
+### LAIC CSSDC — Riss gemessen: cssdc stale, LEOS `blocked account`
 - **Status:** wartend | **Bindung:** eigen (Register-Riss)
-- **Trigger:** LEOS-Admission (`www.leos.ac.cn` user-gated)
-- **Lage:** (gemessen 2026-10-09) `blocked_sources.φ:66-68` `pending` (`https://www.cssdc.ac.cn/en/`); `cssdc.ac.cn/en` = Telegram-APK-Advert-Seite (kein Datenportal); LEOS `www.leos.ac.cn` 206 (user-gated/captcha), unregistriert. Kein Parser-Gap.
-- **Blockade:** LEOS-Zugang (user-gated).
-- **Braucht:** LEOS/CSES-Admission (Operator-Auth-Route) → dann URL-Verdikt.
+- **Trigger:** Mountain-Verdikt (`cssdc.ac.cn` → `declined`; LEOS → `blocked account`)
+- **Lage:** (gemessen 2026-10-09, `general`-Taucher) `cssdc.ac.cn/en` = Telegram-APK-Advert-Seite (Playwright-Titel „TG纸飞机…", kein Datenportal) → der `pending`-Eintrag `blocked_sources.φ:66-68` trägt keine Wissenschaft. LEOS `www.leos.ac.cn` hinter Login+Captcha (`#/dataService/dataDownloadList` → `#/login`), Credential `LEOS_USER/PASS` existiert (`declined_sources.φ:5085`). Offene CSES-Alternative: DTU Space `https://ftp.spacecenter.dk/data/magnetic-satellites/CSES/` (HTTP 200, CDF, kein Login, MAG 2018).
+- **Blockade:** Mountain-Verdikt + die Captcha/Login-Kante (LEOS) — Operator-Auth.
+- **Braucht:** Mountain `cssdc.ac.cn` → `declined` (stale), LEOS → `blocked account` (Auth-Route); DTU-CSES-MAG als offenen Kandidaten prüfen.
+
+### Redistributions-Alternativen — Survey + Mountain-Verdikt
+- **Status:** wartend | **Bindung:** eigen (Recherche) · mountain (Re-Admission)
+- **Trigger:** Mountain-Verdikt über die CDN-fähigen Alternativen (`docs/surveys/survey-2026-10-09-redistribution-alternativen.md`)
+- **Lage:** (gemessen 2026-10-09, `general`-Taucher) 41 `decline redistribution`-Blöcke erstmals systematisch durchsucht; Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`. Nur 2 Alternativen lizenz-zertifiziert: Open-Meteo (`api.open-meteo.com`, **CC-BY 4.0**, 200) und OpenStreetMap-Tiles (**ODbL**, 206); der Rest HTTP-gemessen mit `Lizenz ungemessen`.
+- **Blockade:** die flächendeckende Lizenzmessung (nur 2/41 am Lizenztext geprüft).
+- **Braucht:** `archive_search --jina <lizenz-url>` je Shortlist-Kandidat → dann Mountain-Re-Admission.
 
 ## An mountain
 
-Origin: mycelium-284 (2026-10-09) — zwei Kontrakt-Messungen:
+Origin: mycelium-284 (2026-10-09) — drei Kontrakt-/Register-Messungen:
 
 - **Keogramm `sources.φ`-Zeile:** der gebaute KGRM-Arm ist manifestiert (`keogram-cdn.yml` + `harvest.φ` `format keogram`, `space.fmi.fi`), aber die `quantity`-Zeile ist unter dem aktuellen Kontrakt **nicht schreibbar**: `allowed_units_for_quantity` kennt keine dimensionslose Einheit (`units.rs:507`) und `parse.rs` flusht kein `format keogram` (`:94-99`). Bitte das Kontrakt-Verdikt (neuer `QuantityKind`/unit + fetch-Arm) oder das Wort, wer den Arm trägt.
 - **`sources_repo_license` pro Quelle:** der terms-Format-Verdikt-Stand „pro Quelle" ist gemessen; das Tool emittiert weiterhin `<netloc> | <token> | <url>` (`sources_repo_license.rs:128-142`). Der Populations-Riss ist geheilt (beide Zensus no-terms 0, terms 2698). Braucht das pro-Quelle-Format, dann commitet der Workflow `LICENSE` ins `omegaflow/sources`-Repo.
+- **CSSDC/LEOS-Verdikt:** `cssdc.ac.cn/en` liefert gemessen keine Datenquelle mehr (Telegram-APK-Advert-Seite) → `declined` (stale); LEOS `www.leos.ac.cn` ist Login+Captcha-gated → `blocked account` (Auth-Route, Credential `LEOS_USER/PASS`). Offene CSES-Alternative: DTU Space `ftp.spacecenter.dk/data/magnetic-satellites/CSES/` (CDF, offen, MAG).
+- **Gegen-Audit CDN-fähige Alternativen:** `hi-21cm` → Zenodo HI4PI `5956696` (cc-by-4.0, FITS, 206); `cmb-lambda` → Zenodo SILC Planck PR2 `44373` (cc-by-4.0, FITS, 206); `blinkverse-frb` → Zenodo CHIME Cat 2 `18843430` (cc-by-4.0, CSV, 206); `particle-cern` → CERN Open Data `1120` (CC0) / GWOSC (CC BY 4.0). Bitte die Verdikte je Route.
+- **Redistributions-Alternativen:** Survey `docs/surveys/survey-2026-10-09-redistribution-alternativen.md` — 41 `decline redistribution`-Blöcke; CDN-fähig zertifiziert nur Open-Meteo (CC-BY 4.0) und OSM (ODbL); der Rest `Lizenz ungemessen`. Braucht Mountains Re-Admission je Kandidat.
 
 ## LOCK
 
