@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. HadISST-Compiler-Koordinaten-Lookup (dim-name → var-name) geheilt; Stehender Pass am neuen HEAD.
   class: handover
   date: 2026-10-09
-  sha256: e9a2468555797405cd02b6a3203a3f8057e20769dbf7216006019b25c9961356
+  sha256: 8fa7aac10256873d57353aed6c28426ff51802e361b16a440fe05d80dc71732d
   status: live
 -->
 # Handover — Mycelium-Folge 274 (2026-10-09)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 Schritt* Myceliums Natur berührt (CDN/CI/Infra/Ernte). Fremd-gebundene Punkte
 liegen als Sender-Zeilen in `## An <line>`.
 
-## Burn: open 0.0 · close 0.0921 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
+## Burn: open 0.0 · close 0.2142 · cap 0.5 — Grund: Meta-Pass „Mycelium-Linie in einem Pass starten" (`session_burn`, Session-Figur; kein pro/max, keine Sub-Agenten).
 
 ## Operator-Wort-Register
 
@@ -27,6 +27,8 @@ liegen als Sender-Zeilen in `## An <line>`.
 - „VT SuperDArn ist eingeloggt" | 2026-10-08 | Quelle: mycelium-269.
 - „consensus/perplexity als descoped streichen" | 2026-10-09 | Quelle: mycelium-272. **Descoped-Befund:** die zwei Remote-MCP-Einträge (`mcp.consensus.app`, `api.perplexity.ai`) aus `opencode.json` entfernt; der `archive_search`-Arm trägt die Route.
 - Vorherige Worte der Linie: `docs/handover/archiv/handover-2026-10-09-mycelium-folge272.md` §Operator-Wort-Register — gefaltet, nicht kopiert | 2026-10-09 | Quelle: mycelium-272.
+- „leider warst du freezed" | 2026-10-09 | Quelle: mycelium-274 (Session nach Freeze fortgesetzt; Pass `44a57459f` war stale → am neuen HEAD `ce47ce13c` neu gemessen).
+- „kannst du das nicht wissenschaft, den rat die UI und openweight stimmen fragen?" | 2026-10-09 | Quelle: mycelium-274 (Verdikt zum Per-SHA-Ort: Forschung + Rat + UI/Open-Weight, alle **B**).
 
 ## Offen — eigen
 
@@ -44,12 +46,12 @@ liegen als Sender-Zeilen in `## An <line>`.
 - **Blockade:** der geteilte `t420`-Runner.
 - **Braucht:** `ci_manage view <id>` nach Abschluss; bei rot die benannte Stelle.
 
-### `ci-gate` Per-SHA-Verdikt — Mechanik steht, Dateninvariante bei Mountain
-- **Status:** wartend | **Bindung:** eigen (CI-Config) · mountain (Register)
-- **Trigger:** Operator/Rat-Wort zum **Ort** des Registers (getracktes Register vs. lokaler Zustands-Speicher)
-- **Lage:** (gemessen 2026-10-08; mountain-281 gefaltet 2026-10-09) Branch-Protection gesetzt (`main` + Pflicht-Check `subset`, API `branches/main/protection`); `ci-gate.yml:28` `group: ci-gate-${{ github.sha }}`, `subset` läuft auf `[self-hosted, Linux]` (`t420`). Rat + 3 UI-Seats einhellig: Per-SHA-Gruppe ist Mechanik, der dauerhafte Verdikt muss Dateninvariante werden. Mountain-281: der Verdikt ist die totale Funktion `SHA → {grün,rot,pending}`, Default `pending`.
-- **Blockade:** der **Ort** des Registers — Operator/Rat-Wort.
-- **Braucht:** Operator/Rat-Wort; danach baut Mountain Register + SHA-Abfrage, Mycelium den `ci-check`-Push-Ausbau.
+### `ci-gate` Per-SHA-Verdikt — Ort entschieden: **lokal** (`state/zustand/`, external-state-Form)
+- **Status:** eigen (Bau) | **Bindung:** eigen · mountain (Abfrage)
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-09) Der Ort ist durch **Forschung + Rat + UI/Open-Weight konvergent** entschieden: **(B) lokal** unter `state/zustand/` in der `external-state`-Form — eine Zeile je SHA (`SHA | Verdikt | measured-at (SHA + run-id) | fällig | Schritt`), Cache/Index der content-addressed Attestations, keine `phi/`-Kanon-Zeile, kein Commit pro Zustandswechsel. Stimmen: **Rat einstimmig B**; Wissenschaft (`archive_search --all`) → Kettle (arXiv 2605.08363), evidence-driven CI (arXiv 2605.21089), SLSA/Sigstore/in-toto = content-addressed, abgeleitet; **UI**: Duck.ai **B**, Qwen **B**; **Open-Weight**: Nemotron 3 Ultra **B**, DeepSeek V4 Pro **B**, Inkling **B**; Z.ai (Deep Think, GLM 5.3) und Claude (Sonnet 5.5, Draft vorgefunden) **pending** — nicht geantwortet. Branch-Protection gesetzt (`main` + Pflicht-Check `subset`); `ci-gate.yml:28` `group: ci-gate-${{ github.sha }}`.
+- **Blockade:** keine.
+- **Braucht:** den Bau — `state/zustand/ci-gate.φ` (external-state-Zeile je SHA) + die SHA→Verdikt-Ableitung aus `ci_manage status/view`; Mountain trägt die SHA-Abfrage, Mycelium die Ablage/Ableitung und den `ci-check`-Push-Ausbau.
 
 ### Generiertes `LICENSE` im `omegaflow/sources`-Repo
 - **Status:** wartend | **Bindung:** eigen (Manifestation) · blockiert auf Mountain-`terms`
@@ -114,5 +116,5 @@ Origin: mycelium-274.
 
 ## Abschluss
 
-- **Burn:** close 0.0921 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
+- **Burn:** close 0.2142 · cap 0.5 — kein pro/max, keine Sub-Agenten (gemessen `session_burn`).
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
