@@ -72,6 +72,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_catalog_epoch: Option<f64> = None;
     let mut cur_repeat_ra_bins: u32 = 0;
     let mut cur_fanout_cap: u32 = 0;
+    let mut cur_fanout_center: Option<QueryCenter> = None;
     let mut cur_stations_flatten = String::new();
     let mut cur_stations_filter: Option<(String, String)> = None;
     let mut cur_station_code: Option<String> = None;
@@ -132,6 +133,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             catalog_epoch: cur_catalog_epoch,
                             repeat_ra_bins: cur_repeat_ra_bins,
                             fanout_cap: cur_fanout_cap,
+                            fanout_center: cur_fanout_center,
                             stations_flatten: std::mem::take(&mut cur_stations_flatten),
                             station_code: cur_station_code.clone(),
                             stations_filter: cur_stations_filter.take(),
@@ -190,6 +192,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_catalog_epoch = None;
                 cur_repeat_ra_bins = 0;
                 cur_fanout_cap = 0;
+                cur_fanout_center = None;
                 cur_stations_flatten = String::new();
                 cur_stations_filter = None;
                 cur_station_code = None;
@@ -1783,6 +1786,20 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     cur_fanout_cap = v;
                 }
             }
+            "fanout_center" if parts.len() >= 2 => {
+                cur_fanout_center = match parts[1] {
+                    "receiver" => Some(QueryCenter::Receiver),
+                    "anchor" => Some(QueryCenter::Anchor),
+                    other => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("fanout_center unknown arm: {}", other),
+                        );
+                        None
+                    }
+                };
+            }
             "flux_from_mag" if parts.len() >= 2 => cur_flux_from_mag = Some(parts[1].to_string()),
             "abs_mag_from" if parts.len() >= 2 => cur_abs_mag_from = Some(parts[1].to_string()),
             "catalog_epoch" if parts.len() >= 2 => {
@@ -2091,6 +2108,7 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            fanout_center: None,
             stations_flatten: String::new(),
             station_code: None,
             stations_filter: None,

@@ -474,6 +474,12 @@ pub struct RangeAxis {
     pub step_m: f64,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum QueryCenter {
+    Receiver,
+    Anchor,
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
@@ -505,6 +511,7 @@ pub struct SourceConfig {
     pub catalog_epoch: Option<f64>,
     pub repeat_ra_bins: u32,
     pub fanout_cap: u32,
+    pub fanout_center: Option<QueryCenter>,
     pub stations_flatten: String,
     pub stations_filter: Option<(String, String)>,
     pub fanout_delay: u64,

@@ -113,7 +113,3 @@ note Aurora-Kamera OMTI/KEO Abisko (GIC-Mediator §B) — 2026-10-09: `space.fmi
 pending
 url https://geomag.usgs.gov/ws/data/
 note USGS E-Feld mV/km (GIC §A) — 2026-10-09: bare `/ws/data/` HTTP 400; Query-Endpunkt + Geoelektrik-Arm fehlen. Magnetik derselben URL: declined_sources.φ:2176 — Riss, per Datensatz getrennt.
-
-pending
-url https://supermag.jhuapl.edu/services/data-api.php
-note SuperMAG SME/SMU/SML Index (GIC-Stufe-2) — 2026-10-09: Konto steht, Route live gemessen (`--supermag station=ABK` → 10 Zeilen). Offen: SME/SMU/SML-Arm + quantity-Zeile(n). Index = quantity, nie em (Rat+Science 2026-10-08). future-204.
