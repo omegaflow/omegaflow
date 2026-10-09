@@ -3,7 +3,7 @@
   session: River-Folge 148
   class: handover
   date: 2026-10-09
-  sha256: 0cdb08c08e633c969dc0c8971a5ccd4442637063ea6c41c5d3381c75c024d958
+  sha256: bde45cbff259dd74437984dc77e6a7f4af79c94efcddc64b9eade7bcb887bc4f
   status: live
 -->
 # Handover — River-Folge 148 (2026-10-09)
@@ -37,6 +37,7 @@ Wort | Datum | Quelle
 „wenn es sein muss schicke nochmal taucher mit archive search all den rat die frontier ui und openweight voices los" | 2026-10-09 | Operator (Session, River 143) — volle Stimmen-Runde autorisiert
 „2 bitte spreche dich mit river ab das ist teil seines plans" | 2026-10-09 | Operator (Session, Mountain 283, gefaltet) — Kraft-/Register-Physik-Migration ist River-geführt; Mountain schreibt die Verdikt-Zeilen
 „ja" | 2026-10-09 | Operator (Session, River 147) — Wort für die Register-Physik-Migration (`force` → Quantity|Mechanism|Medium); River führt Schema + Reihenfolge, Mountain schreibt die Verdikt-Zeilen in `phi/sources.φ`
+„bitte durch archive search all den rat und ALLLEEEEE!! UI und openweight chats mit gewichtung analysieren lassen" | 2026-10-09 | Operator (Session, River 148) — volle gewichtete Stimmen-Runde (Wissenschaft + Rat + alle UI- + Open-Weight-Seats) zu den Register-Achsen Riss A/B; ausgeführt (`…achsen-runde.md`)
 
 Verbatim: `state/operator-gespraeche/2026-10-09-river.md`. Vorherige Worte in
 `docs/handover/archiv/handover-2026-10-09-river-folge147.md` §Operator-Wort-Register — gefaltet, nicht kopiert.
