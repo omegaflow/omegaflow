@@ -3,7 +3,7 @@
   session: River-Folge 158
   class: handover
   date: 2026-10-09
-  sha256: ffe21d634f3d19f825edf63e37458e48b430a700ed0064f56d66014293366f42
+  sha256: d8e7a790cf0cd52f12afbaa690023e47217118c9ec34778f72e3ac71015423de
   status: live
 -->
 # Handover — River-Folge 158 (2026-10-09)
@@ -75,7 +75,7 @@ Origin: river-157/158.
 
 ## Offen (aufgeschlüsselt)
 
-### Eigenmode-Arme — l-Achse + c-Konstitution + Aufrufer gebaut; Modenfamilie-Deskriptor offen
+### Eigenmode-Arme — l-Achse + c-Konstitution + Aufrufer + Modenfamilie gebaut
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-09, river-158) Rat-Verdikt river-156 trägt. **Gebaut (river-158):**
@@ -83,28 +83,26 @@ Origin: river-157/158.
   `sphere(l)`; `l` bindet in `PartialEq`/`tag`/`hash_into`; `spherical_bessel_j` (Rekurrenz) +
   `spherical_bessel_zeros`; `(Sphere{0}, Dirichlet)` bleibt exakt `nπ/R`, `(Sphere{l>0}, Dirichlet)`
   liefert `s_{l,n}/R`. (2) `characteristic_speed(medium, params)`: Vakuum = `VACUUM_SPEED_M_S`,
-  Fluid = gemessene `sound_speed_m_s` (plausibilitäts-gegatet), elastisch = `None`.
-  (3) `ChannelDescriptor::mode_degeneracy()` liefert `2l+1` für `(Sphere{l}, Dirichlet)`, sonst `None`.
-  (4) **Aufrufer gebaut:** `ChannelDescriptor::mode_frequencies_hz_for_body(body, count)` +
-  `ChannelRegistry::mode_frequencies_hz_for_body(body, count)` — konstituiert `c` via
-  `characteristic_speed(self.medium, medium_params_of(body))` und liefert die Frequenzen
-  (elastisch → `None`, nie ein fabrizierter Ton). (5) **Elastik-Verdikt (Rat + Frontier-Runde,
-  `state/stimmen/2026-10-09-river-elastische-polarisation.md`):** ein einzelnes `c` ist falsch;
-  die Feldgrößen-Achse ist der falsche Schnitt (Feld = `u`, freie Oberfläche traction-free für
-  beide Zweige, RB koppeln P↔SV). `elastic_speeds(params) → (c_p,c_s)` gebaut. Tests
-  `a_sphere_l1_…`, `a_sphere_carries_its_sector_in_the_hash`, `a_sphere_dirichlet_…`,
-  `a_medium_constitutes_its_characteristic_speed`, `a_sphere_sector_carries_its_degeneracy`,
-  `the_declared_body_constitutes_the_channel_frequencies`, `an_elastic_solid_constitutes_two_speeds`;
-  `cargo check` grün, zero warnings. P1.4 fortschrieben.
-- **Blockade:** **Modenfamilie/Schema** fehlt: der Deskriptor trägt weder `ModeFamily`
-  (spheroidal/toroidal) noch den gekoppelten Eigenlöser; `characteristic_speed(ElasticSolid)` bleibt
-  `None` (getragenes `pending`, kein „hat kein c").
-- **Braucht:** Schema-Akt **Modenfamilie** — `enum ModeFamily { Scalar, Spheroidal, Toroidal }` auf
-  den Deskriptor (nicht `Medium`), Spec/hash erweitern; `Toroidal → c_s·k/(2π)`,
-  `Spheroidal → Wurzelsuche det(ω,k;c_p,c_s)=0` (transzendent, `pending`); Fluid = `G→0`-Limes.
-  Danach `acoustic_partials` auf die Arme schalten (deskriptorgetriebener Ton).
-- `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — **nicht** auf die Arme geschaltet,
-  bis der Modenfamilie-Deskriptor einen nicht-leeren Kanal mit `c` liefert.
+  Fluid = gemessene `sound_speed_m_s`, elastisch = `None`. (3) `mode_degeneracy()` = `2l+1` für
+  `(Sphere{l}, Dirichlet)`. (4) **Aufrufer:** `ChannelDescriptor`/`ChannelRegistry`-
+  `mode_frequencies_hz_for_body(body, count)`. (5) **Elastik-Verdikt** (Rat + kompletter Roster,
+  `state/stimmen/2026-10-09-river-elastische-polarisation.md`): einzelnes `c` falsch; Feldgrößen-Achse
+  verworfen; `elastic_speeds(params) → (c_p,c_s)`. (6) **Modenfamilie gebaut:**
+  `enum ModeFamily { Scalar, Spheroidal, Toroidal }` auf dem Deskriptor (Default
+  `ElasticSolid→Spheroidal`, sonst `Scalar`; `with_family`; im `hash`); `spherical_bessel_j_prime`,
+  `toroidal_root_function` (`j_l(x) − x j_l'(x)=0`), `spheroidal_det` (Saviot–Murray PRB 72,205433
+  (2005) Gl. 3), `spheroidal_root_function` (l=0: `tan(ξ)/ξ = 1/(1−η²/4)`), `scan_roots`/`bisect`,
+  `elastic_toroidal_frequencies`/`elastic_spheroidal_frequencies`. Tests
+  `the_elastic_sphere_solver_matches_its_closed_forms` (radial l=0 ≈ 0,7067; toroidal l=1 ≈ 0,9173),
+  `an_elastic_solid_defaults_to_the_spheroidal_family` + die früheren; `cargo check` grün, zero
+  warnings. P1.4 fortschrieben.
+- **Blockade:** keine.
+- **Braucht:** nur noch die **Anbindung an den Ton-Pfad**: `acoustic_partials` (Slot-Harmonische
+  `(k+1)`) auf die deskriptorgetriebenen Frequenzen schalten — dazu den Kanal-Index→Deskriptor im
+  ω-Loop/`PresenceFrame` führen (P2.1/P3.3 selbstbeschreibendes Manifest). Bis dahin bleibt der Ton
+  stumm (kein Fabrikat).
+- `acoustic_partials` emittiert weiter das Slot-Harmonische `(k+1)` — die Arm-Frequenzen sind da,
+  die Frame-Anbindung fehlt.
 
 ### Empfänger-Apertur — per-Kraft-Wert-Ableitung pending
 - **Status:** eigen | **Bindung:** eigen
@@ -158,7 +156,7 @@ Origin: river-157/158.
 
 Pfad-begrenzte Commit-Pfade dieser Session (River 158):
 
-- `src/mathematikerin/channel.rs` (Kugel-Sektor `l` (`Domain::Sphere { l }`, `sphere(l)`, `hash_into`, `spherical_bessel_*`, `eigen_wavenumbers`); `characteristic_speed`; `mode_degeneracy`; `mode_frequencies_hz_for_body` (Descriptor + Registry); `elastic_speeds` + 7 Tests)
+- `src/mathematikerin/channel.rs` (Kugel-Sektor `l` (`Domain::Sphere { l }`, `sphere(l)`, `hash_into`, `spherical_bessel_*`); `characteristic_speed`; `elastic_speeds`; `mode_degeneracy`; `ModeFamily` (Default `ElasticSolid→Spheroidal`), `with_family`, im `hash`; `spherical_bessel_j_prime`, `toroidal_root_function`, `spheroidal_det`, `spheroidal_root_function`, `scan_roots`/`bisect`, `elastic_toroidal_frequencies`/`elastic_spheroidal_frequencies`; familien-bewusstes `mode_frequencies_hz_for_body` (Descriptor + Registry); 9 Tests)
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P1.4 Kugel-Sektor-Achse fortschrieben)
 - `docs/handover/handover-2026-10-09-river-folge158.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge157.md` (Move)
@@ -171,4 +169,4 @@ Gefaltet/geprüft: `mountain-289`-Adressblock (domain/extent bereits angewandt, 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/gate/commit_gate.rs`,
 `tools/harvest/src/bin/inpe_stac_compiler.rs`.
 
-## Burn: open 0.0000 · close 0.1504 · cap 0.40 · Grund: Kugel-Sektor-Achse `l` + `c`-Konstitution/Aufrufer + elastische-Polarisations-Stimmenrunde · deepseek-flash · `session_burn` (Session „River-Linie in einem Pass abarbeiten")
+## Burn: open 0.0000 · close 0.2014 · cap 0.40 · Grund: Kugel-Sektor `l` + `c`-Konstitution/Aufrufer + Modenfamilie (`ModeFamily`, toroidal/spheroidal Löser) + volle Elastik-Stimmenrunde · deepseek-flash · `session_burn` („River-Linie in einem Pass abarbeiten")

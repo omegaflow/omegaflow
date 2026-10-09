@@ -75,6 +75,24 @@ pub enum Boundary {
     Robin = 4,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ModeFamily {
+    Scalar = 0,
+    Spheroidal = 1,
+    Toroidal = 2,
+}
+
+impl ModeFamily {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "scalar" => Some(ModeFamily::Scalar),
+            "spheroidal" => Some(ModeFamily::Spheroidal),
+            "toroidal" => Some(ModeFamily::Toroidal),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum Domain {
     Unspecified,
@@ -299,6 +317,7 @@ pub struct ChannelDescriptor {
     pub domain: Domain,
     pub boundary: Boundary,
     pub extent: Option<f64>,
+    pub family: ModeFamily,
     pub unit: &'static str,
 }
 
@@ -312,6 +331,7 @@ impl PartialEq for ChannelDescriptor {
             && self.domain == other.domain
             && self.boundary == other.boundary
             && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
+            && self.family == other.family
             && self.unit == other.unit
     }
 }
@@ -338,12 +358,21 @@ impl ChannelDescriptor {
             domain,
             boundary,
             extent: None,
+            family: match medium {
+                Medium::ElasticSolid => ModeFamily::Spheroidal,
+                Medium::Vacuum | Medium::Fluid => ModeFamily::Scalar,
+            },
             unit,
         }
     }
 
     pub fn with_extent(mut self, extent: Option<f64>) -> Self {
         self.extent = extent;
+        self
+    }
+
+    pub fn with_family(mut self, family: ModeFamily) -> Self {
+        self.family = family;
         self
     }
 
@@ -368,8 +397,30 @@ impl ChannelDescriptor {
 
     pub fn mode_frequencies_hz_for_body(&self, body_name: &str, count: usize) -> Option<Vec<f64>> {
         let params = super::media::medium_params_of(body_name);
-        let speed = characteristic_speed(self.medium, params.as_ref())?;
-        self.mode_frequencies_hz(speed, count)
+        match self.family {
+            ModeFamily::Scalar => {
+                let speed = characteristic_speed(self.medium, params.as_ref())?;
+                self.mode_frequencies_hz(speed, count)
+            }
+            ModeFamily::Toroidal => {
+                let l = match &self.domain {
+                    Domain::Sphere { l } => *l,
+                    _ => return None,
+                };
+                let r = self.extent.filter(|v| v.is_finite() && *v > 0.0)?;
+                let (_, cs) = elastic_speeds(params.as_ref()?)?;
+                elastic_toroidal_frequencies(l, cs, r, count)
+            }
+            ModeFamily::Spheroidal => {
+                let l = match &self.domain {
+                    Domain::Sphere { l } => *l,
+                    _ => return None,
+                };
+                let r = self.extent.filter(|v| v.is_finite() && *v > 0.0)?;
+                let (cp, cs) = elastic_speeds(params.as_ref()?)?;
+                elastic_spheroidal_frequencies(l, cp, cs, r, count)
+            }
+        }
     }
 
     pub fn mode_degeneracy(&self) -> Option<u32> {
@@ -392,6 +443,7 @@ impl ChannelDescriptor {
         }
         h = fnv1a(&[self.pde_type as u8], h);
         h = fnv1a(&[self.medium as u8], h);
+        h = fnv1a(&[self.family as u8], h);
         h = self.domain.hash_into(h);
         h = fnv1a(&[self.boundary as u8], h);
         match self.extent {
@@ -751,6 +803,109 @@ fn spherical_bessel_zeros(l: u32, count: usize) -> Option<Vec<f64>> {
     }
 }
 
+const ELASTIC_SEARCH_MAX: f64 = 400.0;
+const ELASTIC_ZERO_START: f64 = 0.5;
+
+fn spherical_bessel_j_prime(l: u32, x: f64) -> f64 {
+    if l == 0 {
+        -spherical_bessel_j(1, x)
+    } else {
+        spherical_bessel_j(l - 1, x) - (l + 1) as f64 / x * spherical_bessel_j(l, x)
+    }
+}
+
+fn toroidal_root_function(l: u32, x: f64) -> f64 {
+    spherical_bessel_j(l, x) - x * spherical_bessel_j_prime(l, x)
+}
+
+fn spheroidal_det(l: u32, xi: f64, eta: f64) -> f64 {
+    let lf = l as f64;
+    let t11 = (lf * lf - lf - eta * eta / 2.0) * spherical_bessel_j(l, xi)
+        + 2.0 * xi * spherical_bessel_j(l + 1, xi);
+    let t13 = lf
+        * (lf + 1.0)
+        * ((lf - 1.0) * spherical_bessel_j(l, eta) - eta * spherical_bessel_j(l + 1, eta));
+    let t41 = (lf - 1.0) * spherical_bessel_j(l, xi) - xi * spherical_bessel_j(l + 1, xi);
+    let t43 = (lf * lf - 1.0 - eta * eta / 2.0) * spherical_bessel_j(l, eta)
+        + eta * spherical_bessel_j(l + 1, eta);
+    t11 * t43 - t13 * t41
+}
+
+fn spheroidal_root_function(l: u32, cs_over_cp: f64, eta: f64) -> f64 {
+    let xi = cs_over_cp * eta;
+    if l == 0 {
+        -(eta * eta / 2.0) * spherical_bessel_j(0, xi) + 2.0 * xi * spherical_bessel_j(1, xi)
+    } else {
+        spheroidal_det(l, xi, eta)
+    }
+}
+
+fn bisect(f: impl Fn(f64) -> f64, mut a: f64, mut b: f64) -> f64 {
+    let mut fa = f(a);
+    for _ in 0..200 {
+        if b - a <= 1e-13 {
+            break;
+        }
+        let mid = 0.5 * (a + b);
+        let fm = f(mid);
+        if (fm < 0.0) != (fa < 0.0) {
+            b = mid;
+        } else {
+            a = mid;
+            fa = fm;
+        }
+    }
+    0.5 * (a + b)
+}
+
+fn scan_roots(f: impl Fn(f64) -> f64, count: usize) -> Option<Vec<f64>> {
+    let mut roots: Vec<f64> = Vec::with_capacity(count);
+    let mut a = ELASTIC_ZERO_START;
+    let mut fa = f(a);
+    let mut x = a + SPHERE_ZERO_STEP;
+    while x <= ELASTIC_SEARCH_MAX && roots.len() < count {
+        let fx = f(x);
+        if fx.is_finite() && fa.is_finite() && (fx < 0.0) != (fa < 0.0) {
+            roots.push(bisect(&f, a, x));
+        }
+        a = x;
+        fa = fx;
+        x += SPHERE_ZERO_STEP;
+    }
+    if roots.len() == count {
+        Some(roots)
+    } else {
+        None
+    }
+}
+
+fn elastic_toroidal_frequencies(l: u32, cs: f64, r: f64, count: usize) -> Option<Vec<f64>> {
+    let roots = scan_roots(|x| toroidal_root_function(l, x), count)?;
+    Some(
+        roots
+            .into_iter()
+            .map(|x| cs * x / (std::f64::consts::TAU * r))
+            .collect(),
+    )
+}
+
+fn elastic_spheroidal_frequencies(
+    l: u32,
+    cp: f64,
+    cs: f64,
+    r: f64,
+    count: usize,
+) -> Option<Vec<f64>> {
+    let ratio = cs / cp;
+    let roots = scan_roots(|eta| spheroidal_root_function(l, ratio, eta), count)?;
+    Some(
+        roots
+            .into_iter()
+            .map(|eta| cs * eta / (std::f64::consts::TAU * r))
+            .collect(),
+    )
+}
+
 pub fn eigen_wavenumbers(
     domain: &Domain,
     boundary: Boundary,
@@ -976,13 +1131,9 @@ impl ChannelRegistry {
         body_name: &str,
         count: usize,
     ) -> Vec<Option<Vec<f64>>> {
-        let params = super::media::medium_params_of(body_name);
         self.descs
             .iter()
-            .map(|d| {
-                let speed = characteristic_speed(d.medium, params.as_ref())?;
-                d.mode_frequencies_hz(speed, count)
-            })
+            .map(|d| d.mode_frequencies_hz_for_body(body_name, count))
             .collect()
     }
 
@@ -1895,6 +2046,54 @@ mod tests {
             ..solid.clone()
         };
         assert_eq!(elastic_speeds(&inverted), None);
+    }
+
+    #[test]
+    fn the_elastic_sphere_solver_matches_its_closed_forms() {
+        let radial =
+            elastic_spheroidal_frequencies(0, 3f64.sqrt(), 1.0, 1.0, 1).expect("radial l=0");
+        assert!(
+            (radial[0] - 0.7067).abs() < 0.02,
+            "radial l=0 first tone {}",
+            radial[0]
+        );
+        let tor = elastic_toroidal_frequencies(1, 1.0, 1.0, 1).expect("toroidal l=1");
+        assert!(
+            (tor[0] - 5.7635 / std::f64::consts::TAU).abs() < 0.02,
+            "toroidal l=1 first tone {}",
+            tor[0]
+        );
+    }
+
+    #[test]
+    fn an_elastic_solid_defaults_to_the_spheroidal_family() {
+        let base = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::ElasticSolid,
+            Domain::Sphere { l: 1 },
+            Boundary::FreeSurface,
+            "m",
+        )
+        .with_extent(Some(1.0));
+        assert_eq!(base.family, ModeFamily::Spheroidal);
+        let toroidal = base.clone().with_family(ModeFamily::Toroidal);
+        assert_ne!(base.hash(), toroidal.hash());
+        let fluid = ChannelDescriptor::new(
+            Conserved::Energy,
+            QuantityRole::Primary,
+            TransportOp::Wave,
+            PdeType::Hyperbolic,
+            Medium::Fluid,
+            Domain::Sphere { l: 1 },
+            Boundary::Dirichlet,
+            "Pa",
+        )
+        .with_extent(Some(1.0));
+        assert_eq!(fluid.family, ModeFamily::Scalar);
+        assert_eq!(ModeFamily::parse("toroidal"), Some(ModeFamily::Toroidal));
     }
 
     #[test]
