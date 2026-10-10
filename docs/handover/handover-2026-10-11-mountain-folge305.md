@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Nutation IAU 2000A (Schritt 0 komplett), particle-cern Teil B (parse_tree), Vantage-Rest-Bias (b)(c)(d), ci-gate-Clippy-Lints, open-lidar-data-φ-Block, FMHY-7-Verdikte, Asservatenkammer 3/9
   class: handover
   date: 2026-10-11
-  sha256: 78c97e6c7c2625198157b159dd620905b2b0eab00fb5c27bb995aa0a8836b6e4
+  sha256: e232defb99880068c1f9470673fe8a1c189bdd0e8c2131008ecf096406c83ce0
   status: live
 -->
 # Handover — Mountain-Folge 305 (2026-10-11)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge304.md` (→ `archiv/`).
 flash only, kein pro/max; vier begrenzte Dispatches (Nutation, particle-cern,
 Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 
-## Burn: open 0.0 · close 0.122 · Grund: line 0.122 + 7 Diver (grind-flash/general ~0.66), deepseek-flash, kein pro/max
+## Burn: open 0.0 · close 0.143 · cap 0.2 — Grund: line session with 7 bounded dispatches (grind-flash/general), deepseek-flash, kein pro/max
 
 ## Offen (aufgeschlüsselt)
 
@@ -139,7 +139,7 @@ zwei Register-Dispatches, flash only.
 - **open-lidar-data-φ-Block geschrieben** (terms/at/ttl/field aus gemessenem License-Link).
 - **FMHY**: 7 research-data-Verdikte (3 pending, 4 declined Portale); worldclim.org als Portal korrigiert.
 - **Asservatenkammer**: 3 von 9 Doks mit erstem Schritt gemessen (Header-sha via `omega_sh sha`).
-- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — die `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); verbleiben 24 Zeilen gap-Token-Kanon + 8 offene Einträge (1 `blocked parser-def` particle-cern, 7 `pending`: BepiColombo-MORE, 4 NSSDC-Request, PDS-PPI-Manifest, LOSC).
+- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — die `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon (22 `note`-Essays, kein Code liest ihn, kein offener Eintrag referenzierte einen Token) entfernt — git/Handover tragen ihn. Register jetzt 32 Zeilen: 8 offene Einträge (1 `blocked parser-def` particle-cern, 7 `pending`: BepiColombo-MORE, 4 NSSDC-Request, PDS-PPI-Manifest, LOSC).
 **Geteilter Baum:** `src/mathematikerin/pc.rs` wird von einer parallelen Linie uncommittet
 restrukturiert — nicht angefasst/committet. Ebenso fremd uncommittet: `tools/utils/src/bin/archive_search/osf.rs`.
 Eigene committete Pfade: `src/mathematikerin/receiver.rs` · `src/mathematikerin/mci.rs` ·

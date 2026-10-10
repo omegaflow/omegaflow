@@ -1,28 +1,3 @@
-note blocked account (Konto/Login), parser-def <typ> (Format-Lücke, Messung echt), pending (Register-Duty); Zeugen in witnesses.φ. key-needed: 401 MIT Token.
-note gap-Token (Arm-Direktive eines parser-def/parser-gap-Blocks); Kanon = die gap-Token-Noten dieses Registers (22 Tokens, u.a. unit-auto-detect, pds3-fixed-width, hips-png, covariate-carrier); register-eigen: iaga-text.
-note gap-Token unit-auto-detect — Feld ohne Einheit; Arm steht (units.rs unit_from_name_suffix + port.rs probe_classify, Spec §6 R.4 Suffix-Inferenz, R.5 Feld-Drop); Re-Port trägt die Einheit per Suffix oder droppt das Feld.
-note gap-Token force-undetermined — Feld passt in kein 9-Kraft-Medium; Verdikt steht (port.rs probe_classify_raw: parallax/Farbindex → DROP, Entfernung via cmap plx) — 2026-09-25 descoped.
-note gap-Token konverter — Feld-Einheit falsch als mag; Arm fehlt. (gemessen 2026-10-05: port.rs:2176-2183/2373 routet `_mag_bx/by/bz/bt` + `_nt` → em nT; alle übrigen `mag` sind astronomische Magnituden) → descoped.
-note gap-Token astrometry-reader — Positions-Serie JD/RA/Dec eines bewegten Körpers, kein Skalarfeld; Serien-Arm steht (astrometry_series.rs direction_only_lines + astrometry_series_compiler.rs, 2026-10-04).
-note gap-Token curation — ADQL-/HAPI-Anfrage stale oder ill-formed (FORMAT, Fenster, Identifier); kein Arm-Surface (per-entry-Fix; 15/17 integriert) — 2026-09-25 descoped.
-note gap-Token votable-reader — kanonische Klasse; Reader-Arm steht (extract.rs votable_to_json), kein Register-Eintrag trägt sie.
-note gap-Token epoch-key — per-Objekt-Epoch (epoch_key) für cmap/CelestialMap; Arm steht (parse.rs epoch-Direktive trägt CelestialMap, epoch <key> [mjd]).
-note gap-Token epncore-spatial — EPN-core Region statt lat/lon-Skalar (c1..c3 min/max, s_region STC-S); Arm steht (extract.rs EpnCore + parse.rs epncore, tests.rs); Quelle planeto declined (declined_sources.φ:213).
-note gap-Token html-parser-arm — HTML-Quelle (Tabelle/Seite) → Positions-Felder; Arm steht (extract.rs html_to_json + html_table_rows, Dispatch extract.rs:3496/:5417; fetch.rs:603 format_readable "html").
-note gap-Token pds3-fixed-width — PDS3 fixed-width ASCII-Tabelle, Spalten per Byte-Position, Einheiten im .lbl-Label, kein In-File-Header; Arm steht (src/archivar/pds3_table.rs; tools/harvest/src/bin/pds3_fixed_width_compiler.rs, 2026-09-28).
-note gap-Token pds3-img — PDS3 Raster-Bild .img/.imq + abgetrenntes .lbl, M3-ENVI-Cube; Arm steht (src/archivar/pds3_img.rs; tools/harvest/src/bin/pds3_img_compiler.rs); WUSTL/Mini-RF-Asset present 2026-10-01 (sha256 6aa0eb1f…), M3 CI-403.
-note gap-Token pds3-binary — PDS3 binäres Rohdatenprodukt, keine ASCII-Tabelle; Reader-Arm steht (src/archivar/pds3_binary.rs, 2026-09-28); Compiler-Bin steht (tools/harvest/src/bin/pds3_binary_compiler.rs, c0af97075).
-note gap-Token pds4-fixed-width — PDS4 fixed-width ASCII .tab, Spalten/Einheiten im XML-Label; Arm steht (src/archivar/pds4.rs; tools/harvest/src/bin/pds4_fixed_width_compiler.rs, 2026-09-28).
-note gap-Token pds4-binary — PDS4 binäres Produkt .dat/.tab + XML-Label; Reader-Arm steht (src/archivar/pds4_binary.rs, 2026-09-28); Compiler-Bin steht (tools/harvest/src/bin/pds4_binary_compiler.rs, c0af97075).
-note gap-Token pds4-fits — PDS4-Bundle mit FITS-Produkten; Reader-Arm steht (src/archivar/pds4_fits.rs, 2026-09-29); Compiler-Bin steht (tools/harvest/src/bin/pds4_fits_compiler.rs, 30d93daf7); Sample fehlt.
-note gap-Token gras-2c — HX1-RoPeR (.2C+.2CL: Table_Binary, 2048×(R,I) f32 LE); Compiler roper_pds4_compiler.rs → G2CB Sample 15812343 (2026-10-03); `range` parst als Metadaten (parse.rs); kein Wire-Slot (Rat): kein Konsument, Gate im Feldnamen.
-note gap-Token mat-v5 — MATLAB-v5 .mat; Reader stehen (mat5.rs, matfile.rs); kein source deklariert format mat-v5. Descoped 2026-09-29: Container-Format ohne Geometrie/Force/Einheit; Arm erst per Quelle.
-note gap-Token hips-png — HiPS-PNG-Kachelbaum (properties + Norder/Dir/Npix.png); kein Einzeldatei-Asset; Arm steht (src/archivar/hips.rs + tools/harvest/src/bin/hips_png_compiler.rs, 2026-09-29).
-note gap-Token array-arm — Array-Spalte (Breite ∉ 1/2/4/8) im P3BN/P3BV-Asset; Arm steht (pds3_binary.rs P3BV v2 Array-Bytes per Row + pds3_binary_compiler.rs, 2026-09-30); erster Träger Kaguya LRS WAVEFORM (2048×u16).
-note gap-Token hdf4 — NBIT+SKPHUFF gebaut (hdf4.rs); SZIP (CODER 5) ohne std-only Dekoder → SZIP-Granulen descoped (kein libaec, std-stack bleibt); MOD11C2/C3 lesen über NONE/RLE/DEFLATE.
-note gap-Token point-source-kernel — Punkt-/Identitäts-Kernel ohne räumlichen Gradienten (Slot 2, kernel_id 2); Träger für punkt-/medienunabhängige Quellen (eionet_cdr); Arm steht (extract.rs:1530 "point" => Some(2); shaders.rs:49/:87).
-note gap-Token covariate-carrier — statische Kovariate (Fläche/Geometrie, m²) ohne physikalische Kraft; Arm steht (FORCE_TYPE_QUANTITY 255 + presence bit 16.0; QuantityKind Area, m2); Träger ghsl_built_surface_m2 in sources.φ.
-
 pending
 url https://psa.esa.int/psa-tap/tap/
 note BepiColombo bc_mpo_more: PSA 200, MORE ab ~2027-04 gated (2099); keyless Neu-Kanal Zenodo 17813314 Plasma-Residuen (200, CC-BY-4.0, sha256 407ed0bb…). bc_mpo_mag-Arm steht, kein MORE-Arm (2026-10-09).
