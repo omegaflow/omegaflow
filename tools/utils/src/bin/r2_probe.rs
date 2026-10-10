@@ -154,6 +154,30 @@ fn run() -> Result<(), String> {
         return Err(named_reason("delete", &del));
     }
 
+    if std::env::var("OMEGAFLOW_R2_MIRROR").is_ok() {
+        let tmp = std::env::temp_dir().join("r2-mirror-probe.txt");
+        std::fs::write(&tmp, BODY)
+            .map_err(|e| format!("r2_probe: mirror temp write void — {}", e))?;
+        let mirrored =
+            omegaflow::archivar::cdn::r2_mirror("ci-probe", &tmp.to_string_lossy());
+        println!("r2_probe: cdn::r2_mirror -> {}", mirrored);
+        let mkey = format!("/{}/ci-probe/r2-mirror-probe.txt", bucket);
+        let muri = format!("{}{}", endpoint, mkey);
+        let mheaders = sigv4_put_headers(&Sigv4PutArgs {
+            method: "DELETE",
+            access_key,
+            secret_key,
+            region: R2_REGION,
+            host: &host,
+            canonical_uri: &mkey,
+            payload_sha256: &empty_sha,
+            content_length: None,
+            amz_date: &amz_date,
+            date_stamp: &date_stamp,
+        });
+        let _ = send("DELETE", &muri, &mheaders, None);
+    }
+
     println!(
         "r2_probe: put/get/delete ok — bucket={} key={} sha256={}",
         bucket, OBJECT_KEY, payload_sha256

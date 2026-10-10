@@ -1,6 +1,12 @@
 use std::collections::HashSet;
-use std::process::Command;
+use std::io::Write;
+use std::process::{Command, Stdio};
 use std::sync::{Mutex, OnceLock};
+
+use crate::archivar::range::{Sigv4PutArgs, sigv4_put_headers};
+use crate::archivar::{date_str, hour_str, load_env, sha256};
+
+const R2_REGION: &str = "auto";
 
 pub const EPHEMERIS_TAG: &str = "ssd.jpl.nasa.gov-ephemeris";
 pub const CAPPED_RELEASE: &str = "ssd.jpl.nasa.gov";
@@ -93,7 +99,10 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
         .arg(CDN_REPO)
         .output();
     match out {
-        Ok(o) if o.status.success() => true,
+        Ok(o) if o.status.success() => {
+            r2_mirror(tag, path);
+            true
+        }
         Ok(o) => {
             eprintln!(
                 "upload {}: gh returned void: {}",
@@ -104,6 +113,107 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
         }
         Err(e) => {
             eprintln!("upload {}: gh absent: {}", path, e);
+            false
+        }
+    }
+}
+
+pub fn r2_mirror(tag: &str, path: &str) -> bool {
+    if std::env::var("OMEGAFLOW_R2_MIRROR").is_err() {
+        return false;
+    }
+    let env = load_env();
+    let (Some(access_key), Some(secret_key), Some(endpoint), Some(bucket)) = (
+        env.get("R2_ACCESS_KEY_ID"),
+        env.get("R2_SECRET_ACCESS_KEY"),
+        env.get("R2_ENDPOINT"),
+        env.get("R2_BUCKET"),
+    ) else {
+        eprintln!("r2_mirror {}: R2_* absent — pending", path);
+        return false;
+    };
+    let endpoint = endpoint.trim_end_matches('/');
+    let Some(rest) = endpoint
+        .strip_prefix("https://")
+        .or_else(|| endpoint.strip_prefix("http://"))
+    else {
+        eprintln!("r2_mirror {}: R2_ENDPOINT malformed", path);
+        return false;
+    };
+    let host = rest.split('/').next().unwrap_or(rest);
+    let body = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(e) => {
+            eprintln!("r2_mirror {}: read void: {}", path, e);
+            return false;
+        }
+    };
+    let name = std::path::Path::new(path)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or(path);
+    let canonical_uri = format!("/{}/{}/{}", bucket, tag, name);
+    let url = format!("{}{}", endpoint, canonical_uri);
+    let payload_sha256 = sha256::sha256_hex(&body);
+    let unix = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => {
+            eprintln!("r2_mirror {}: system clock before UNIX_EPOCH", path);
+            return false;
+        }
+    };
+    let date_stamp = date_str(unix).replace('-', "");
+    let amz_date = hour_str(unix).replace(['-', ':'], "");
+    let headers = sigv4_put_headers(&Sigv4PutArgs {
+        method: "PUT",
+        access_key,
+        secret_key,
+        region: R2_REGION,
+        host,
+        canonical_uri: &canonical_uri,
+        payload_sha256: &payload_sha256,
+        content_length: Some(body.len() as u64),
+        amz_date: &amz_date,
+        date_stamp: &date_stamp,
+    });
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS").arg("-f").arg("-X").arg("PUT").arg(&url);
+    for (k, v) in &headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    cmd.arg("--data-binary").arg("@-");
+    if let Ok(ca) = std::env::var("OMEGAFLOW_CA_BUNDLE") {
+        if !ca.is_empty() && std::path::Path::new(&ca).is_file() {
+            cmd.arg("--cacert").arg(ca);
+        }
+    }
+    let mut child = match cmd
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("r2_mirror {}: curl absent: {}", path, e);
+            return false;
+        }
+    };
+    if let Some(mut stdin) = child.stdin.take() {
+        let _ = stdin.write_all(&body);
+    }
+    match child.wait_with_output() {
+        Ok(o) if o.status.success() => true,
+        Ok(o) => {
+            eprintln!(
+                "r2_mirror {}: curl returned void: {}",
+                path,
+                String::from_utf8_lossy(&o.stderr).trim()
+            );
+            false
+        }
+        Err(e) => {
+            eprintln!("r2_mirror {}: wait void: {}", path, e);
             false
         }
     }
@@ -176,6 +286,14 @@ pub fn ensure_release(tag: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn r2_mirror_is_off_unless_the_flag_is_set() {
+        if std::env::var("OMEGAFLOW_R2_MIRROR").is_ok() {
+            return;
+        }
+        assert!(!r2_mirror("ci-probe", "Cargo.toml"));
+    }
 
     #[test]
     fn modis_lst_cmg_tag_parses_the_granule_shard() {
