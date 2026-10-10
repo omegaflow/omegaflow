@@ -6,30 +6,16 @@ concurrency:
 
 on:
   workflow_dispatch:
+
 permissions:
   contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   corot:
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile CoRoT bright-star catalog and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
-            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-            --table "B/corot/Bright_star" \
-            --columns 'ra:RAJ2000;dec:DEJ2000;mag:Vmag;teff:Teff;logg:logg' \
-            --skip-null mag \
-            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
-            --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
-            --out corot.json \
-            --ci-mode \
-            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "flatten: corot returned void" \
-                 "corot compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health; exit 1; }
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"corot.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table \"B/corot/Bright_star\" --columns 'ra:RAJ2000;dec:DEJ2000;mag:Vmag;teff:Teff;logg:logg' --skip-null mag --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' --out corot.json"}
+        ]
