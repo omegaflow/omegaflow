@@ -1,32 +1,14 @@
-pending
-url https://psa.esa.int/psa-tap/tap/
-note BepiColombo bc_mpo_more: PSA 200, MORE ab ~2027-04 gated (2099); keyless Neu-Kanal Zenodo 17813314 Plasma-Residuen (200, CC-BY-4.0, sha256 407ed0bb…). bc_mpo_mag-Arm steht, kein MORE-Arm (2026-10-09).
-
-pending
-url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSNO-00007
-note Voyager closed-loop Doppler — 2026-10-09: SPDF saturn_encounter_data/ anonym registriert als voyager_saturn (sources.φ:19592, CC0, doppler_count_*). NSSDC-Anker falsch: PSNO-00007 → PSPA-00049; Anfrage offen (wartend.φ:6). Kein Parser-Gap.
-
-pending
-url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSCM-00009
-note Mariner 10 Radio-Science/Tracking — 2026-10-09: die SPDF-Teilroute (9 .tar, PSPA-00316) ist NSSD1346 und steht als mariner_occlt (sources.φ:19507, Arm + Workflow). Gesamtkorpus (762 7-Track-Tapes) request-only. Kein Parser-Gap.
-
-pending
-url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPG-00011
-note Viking Orbiter Tracking — 2026-10-09: kein Roh-Tracking online (PSPG-00011 not Received; PSPG-00457/00277 request/offline; PDS-GEO/SPDF ohne Orbiter-RSS). Abgeleitet VO2 LOS-Gravity steht als viking_grav (sources.φ:11761). Kein Parser-Gap.
-
-pending
-url https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=PSPA-00605
-note Juno Earth-Flyby pre-EFB ODF — 2026-10-09: pre-EFB öffentlich absent (Bestand beginnt post-EFB 2013-10-11, OCRU-Route); odf-Arm + juno_odf.bin stehen. NSSDC-Anfrage offen. Kein Parser-Gap (keine Quelle).
-
-pending
+blocked parser-def
 url https://pds-ppi.igpp.ucla.edu/data
-note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.φ-Arm stehen; terms TSPA=PD. Keine statische Zeile: Family unbounded, kein Manifest, pds4_fixed_width braucht field-Zeilen. Vorbedingung: Manifest + dynamische Felder.
+gap pds-ppi-manifest
+note PDS-PPI (UCLA) — 2026-10-11: EPN-TAP 200, Compiler + Workflow + harvest.φ-Arm stehen (terms TSPA=PD); der Familie fehlt ein Manifest + dynamische field-Zeilen. Vorbedingung: Manifest-Arm.
 
 blocked parser-def
 url https://opendata.cern.ch/record/1120
 gap particle-cern
 note Teilchen CERN — 2026-10-10: --probe AliVSD_Masterclass_6.root = 34 Keys (33 TDirectoryFile EventXXXX + 1 TDirectory); kein Top-Level-TTree, TTree je Event-Dir. Rat 2026-10-10 (5/7 UI): parser-def bleibt (Bau-Schuld), Indexdomäne ungemessen.
 
-pending
+blocked parser-def
 url https://losc.ligo.org/
-note LIGO Open Science Center 200 (21527 B HTML, 2026-10-11): GW-Strain offen (HDF5/GWF); Event-Alerts via gracedb registriert; Strain-Arm/Compiler ungebaut.
+gap gwf-strain
+note LIGO Open Science Center — 2026-10-11: losc.ligo.org 200 (21527 B HTML), Event-Alerts via gracedb registriert; GW-Strain (HDF5/GWF) Arm/Compiler ungebaut.
