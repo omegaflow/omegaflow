@@ -50,18 +50,19 @@ jobs:
           health
 
   subset:
-    # The one self-hosted runner (t420) can only serve one subset at a time.
-    # A high commit rate would queue every SHA's `cargo test --lib` behind it
-    # (measured 2026-10-09: 90 ci-gate runs queued, one subset ghost in
-    # "in_progress" for 8.5 h). The durable per-SHA verdict lives in
-    # state/zustand/ci-gate.φ (ci_gate_register), not in the run queue — so the
-    # job keeps only the tip: a newer subset cancels the older one, and the
-    # superseded SHA stays pending (never fabricated green). Rat verdict,
+    # Runs on the self-hosted t420 (operator word 2026-10-08 "nur der subset-Job
+    # auf den T420" + 2026-10-10 "gerne mehr Last"). The one runner serves one
+    # subset at a time; a high commit rate would queue every SHA's
+    # `cargo test --lib` behind it (measured 2026-10-09: 90 ci-gate runs queued,
+    # one subset ghost in "in_progress" for 8.5 h). The durable per-SHA verdict
+    # lives in state/zustand/ci-gate.φ (ci_gate_register), not in the run queue —
+    # so the job keeps only the tip: a newer subset cancels the older one, and
+    # the superseded SHA stays pending (never fabricated green). Rat verdict,
     # 2026-10-09.
     concurrency:
       group: ci-gate-subset-${{ github.ref }}
       cancel-in-progress: true
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     timeout-minutes: 30
     env:
       RUSTFLAGS: -D warnings
