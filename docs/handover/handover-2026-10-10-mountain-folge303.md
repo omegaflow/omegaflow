@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 95d12889361f62bb5e51404b290f09c522935aed19d122f9996db3e2ef5770a6
+  sha256: 1fd723a0bf5db5d70435e3cd3c766920df1dd4aa18c556ada8b12b925f0076aa
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -48,9 +48,9 @@ flash only, kein pro/max.
 ### FMHY-Routing — Arm vs `phi` vs `tools` (Untersuchung)
 - **Status:** eigen (Architektur) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Schritt je Riss/Route
-- **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`.
-- **Blockade:** UI-Seats fehlen (gemessen: nur fremde Gruppe `mycelium-read` verbunden, keine `mountain-ui`/`open-weight-ui`) — Rat-Verdikt struktur-pending bis UI-Konvergenz.
-- **Braucht:** Riss 3 (`--verdict`/curl mit Token → KNMI/Mindat), Riss 4 (`--verdict overpass-api.de/api/status`), Riss 5 (`field`+Einheit belegen oder Referenz-Lead); dann je Arm ein `net.rs`-Zweig + FALLBACK + Hilfe-Zeile (begrenzter Dispatch), je B-Kandidat `url`+Compiler+`field`; UI-Runde in eigener Gruppe.
+- **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`. **Messungen 2026-10-10:** Riss 3 (KNMI/Mindat) — kein Key in `.secrets.local` → `pending` (Operator-Route); Riss 4 (Overpass) — HTTP 406 direkt+Proton → bot-gated `pending`; Riss 5 — SURFRAD/ECAD/DWD/WorldClim = Messwert, GADM/Worldview = Referenz/Anzeige. **UI-Runde gefahren** (`mountain-ui`: Duck Haiku · Claude Sonnet · Qwen · Z.ai GLM, alle geantwortet): Achse tragfähig, aber **Manifestation statt Quelle** klassifizieren + **Lizenz-/Zugangs-Gate vor** der Achse + **Kontext-Achse** ergänzen — Konvergenz mit dem Rat (Riss = fehlende Gate-Achse).
+- **Blockade:** Arm-Hälfte blockiert — `tools/utils/src/bin/archive_search.rs` + `net.rs` tragen fremde uncommittete Hunks (archive_search-Session); ein Arm-Dispatch würde deren Arbeit mitschwemmen. Riss 3 (kein Key) + Riss 4 (bot-gated) sind `pending`.
+- **Braucht:** (a) Arm-Hälfte wartet auf den fremden archive_search-Commit, dann je Arm (`--gplates`, `--gwosc`, EMSC-dual) ein `net.rs`-Zweig + FALLBACK + Hilfe-Zeile. (b) SURFRAD-Compiler `tools/harvest/src/bin/surfrad_compiler.rs` steht (gemessen: 1440 Z. geparst, 2 `.bin`-Felder W/m², `cargo check` 0/0) — die `phi/sources.φ`-Registrierung (`url`/`origin`/`compiler`) ist **Mycelium-Recht** → `## An mycelium`. (c) weitere B-Compiler (ECAD, DWD, WorldClim, AODN) je begrenzter Dispatch. (d) KNMI/Mindat-Key → Futures Operator-Queue.
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -130,12 +130,14 @@ Wort | Datum | Quelle
 „sehr gut denn die seite birgt grosse schätze aber halt auch problematische" | 2026-10-10 | Operator (Session, Mountain 303)
 „das waren jetzt die datenseiten aber hast du auch die tools und wissens seiten nochmal gescannt?" | 2026-10-10 | Operator (Session, Mountain 303)
 „können wir nun eine untersuchung machen was davon als arme in archive search sollte, was in tools und was in phi dateien?" | 2026-10-10 | Operator (Session, Mountain 303)
+„ja bitte Nächste Schritte (in der Übergabe): Riss 3/4/5 messen → je Arm ein net.rs-Zweig + cargo check, je B-Kandidat url+Compiler+field; dann die UI-Runde in eigener Gruppe, dann das Routing als Register-Zeile." | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
 Origin: mountain-303 (2026-10-10).
 
 - **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-08-research-api-mcp.md` (3 offen) — Consensus/Elicit/SciSpace/Perplexity als Recherche-APIs; Auth-Route/Keys = Mycelium-Domäne. Bitte einen Träger-Punkt mit nächstem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
+- **SURFRAD-Compiler gebaut (Routing B):** `tools/harvest/src/bin/surfrad_compiler.rs` (gemessen 2026-10-10: SURFRAD-`*.dat` 1440 Z./Tag geparst, Felder `surfrad_shortwave_down` + `surfrad_direct_normal` W/m², hourly, `cargo check` 0/0; Sample `https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat` HTTP 200). Bitte die `phi/sources.φ`-Zeile setzen — `url` (CDN-Asset) + `origin https://gml.noaa.gov/aftp/data/radiation/surfrad/` + `compiler tools/harvest/src/bin/surfrad_compiler.rs` + `field` — plus die Manifestations-Workflow. Grenzfall (Rat): Mountain trägt die Verdikt-/`ttl`-Seite, Mycelium die Materialisierung (`url`/`origin`/`compiler`) — kein stiller Schreibakt.
 
 ## An river
 
