@@ -1374,7 +1374,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 push_field(&mut cur_extracts, fc);
             }
             "field"
-                if parts.len() >= 11
+                if parts.len() >= 10
                     && TransportOp::parse(parts[3]).is_some()
                     && PdeType::parse(parts[4]).is_some()
                     && Medium::parse(parts[5]).is_some() =>
@@ -1406,34 +1406,13 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         }
                     },
                 };
-                let role_idx = if QuantityRole::parse(parts[6]).is_some() {
-                    6
-                } else {
-                    match parts[6] {
-                        "gravity" | "em" => 7,
-                        _ => {
-                            report_anomaly(
-                                "Invalid Syntax",
-                                &cur_url,
-                                &format!(
-                                    "field {} carries \"{}\" where an interaction (gravity/em) or a role is expected",
-                                    parts[1], parts[6]
-                                ),
-                            );
-                            continue;
-                        }
-                    }
-                };
-                let role = match QuantityRole::parse(parts[role_idx]) {
-                    Some(_) => parts[role_idx],
-                    None => {
+                let (role, role_idx) = match interaction_or_role(&parts, 6) {
+                    Ok(resolved) => resolved,
+                    Err(reason) => {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
-                            &format!(
-                                "field {} carries \"{}\" where a role (primary/derived/geometry/source-parameter) is expected",
-                                parts[1], parts[role_idx]
-                            ),
+                            &format!("field {}: {}", parts[1], reason),
                         );
                         continue;
                     }
@@ -2474,6 +2453,29 @@ fn parse_wavelength_range_m(token: &str) -> Option<(f64, f64)> {
     }
 }
 
+fn interaction_or_role<'a>(parts: &[&'a str], idx: usize) -> Result<(&'a str, usize), String> {
+    if QuantityRole::parse(parts[idx]).is_some() {
+        return Ok((parts[idx], idx));
+    }
+    match parts[idx] {
+        "gravity" | "em" => match parts.get(idx + 1) {
+            Some(role) if QuantityRole::parse(*role).is_some() => Ok((*role, idx + 1)),
+            Some(other) => Err(format!(
+                "carries \"{}\" where a role (primary/derived/geometry/source-parameter) is expected after the interaction token",
+                other
+            )),
+            None => Err(format!(
+                "carries interaction \"{}\" with no role after it",
+                parts[idx]
+            )),
+        },
+        other => Err(format!(
+            "carries \"{}\" where an interaction (gravity/em) or a role is expected",
+            other
+        )),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -2598,6 +2600,39 @@ mod tests {
                 .iter()
                 .all(|e| !matches!(e, Extract::Field(_))),
             "a quantity that resolves to no conserved quantity is pending, never defaulted"
+        );
+    }
+
+    #[test]
+    fn p10_2a_interaction_absent_form_parses() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        let field = sources[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .expect("the optional interaction may be absent — the line is admitted, never silently dropped");
+        assert_eq!(
+            field.force, 8,
+            "the interaction-absent form resolves to the same channel as the interaction-present form"
+        );
+        assert_eq!(field.unit, "V/m");
+    }
+
+    #[test]
+    fn p10_2a_bogus_interaction_refused() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum bogus primary V/m 60.0 inverse-square\n";
+        let sources = parse_sources(content);
+        assert!(
+            sources[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "a token that is neither an interaction (gravity/em) nor a role is refused, never defaulted"
         );
     }
 

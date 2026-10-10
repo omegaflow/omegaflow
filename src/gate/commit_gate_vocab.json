@@ -120,7 +120,9 @@
     ["Advective => \"mass\"", "advective's conserved quantity is the transported <quantity>, never a Mass default — an operator-derived binding is a fabrication (Rat + roster 2026-10-10)"],
     ["Wave => \"energy\"", "wave is quantity-bounded within {Momentum, Energy} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
     ["Maxwell => \"energy\"", "maxwell is quantity-bounded within {Energy, Momentum} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
-    ["Poisson => \"mass\"", "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"]
+    ["Poisson => \"mass\"", "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"],
+    ["\"gravity\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"],
+    ["\"em\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
