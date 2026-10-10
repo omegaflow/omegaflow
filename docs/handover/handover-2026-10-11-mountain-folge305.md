@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Nutation IAU 2000A (Schritt 0 komplett), particle-cern Teil B (parse_tree), Vantage-Rest-Bias (b)(c)(d), ci-gate-Clippy-Lints, open-lidar-data-φ-Block, FMHY-7-Verdikte, Asservatenkammer 3/9
   class: handover
   date: 2026-10-11
-  sha256: 692cedb1238ba0657b3764f29aa6466a0eaec88fa08f02a84fdb68f7599ce21c
+  sha256: 13c5d38e04ada5771b4d27bf01c31065fd6361e77a5227159bd7a7cb62af958e
   status: live
 -->
 # Handover — Mountain-Folge 305 (2026-10-11)
@@ -118,7 +118,7 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 ### GWOSC-Strain — Rat + Roster gefahren (Kraft-Admission: Riss, Operator-Wort nötig)
 - **Status:** eigen (Register/Bau) | **Bindung:** eigen
 - **Trigger:** Operator-Wort zur Kraft-/Klassen-Admission (via `## An future`)
-- **Lage:** (gemessen 2026-10-11) Recherche (`archive_search --all`) + Rat (5 Stimmen) + UI-Runde `mountain-ui` (Claude ✓ · Qwen ✓ · Duck.ai `pending` Tageslimit · Z.ai `pending` Timeout). **Konvergenz:** (a) der „Vorzeichen-Riss" ist ein **Doku-Riss** — der Leser `spatial.rs:766` nutzt `val.abs()` als NaN-Gate, der Sign trägt; Doku-Zeile `archivar-mathematikerin.md:31` korrigiert. (b) ein Arm, eine Quelle: **LOSC (26×f64) bleibt**, `gwosc_compiler.rs` (GWOS 3-Feld, kein Leser im Baum) descoped mit Befund. (c) Kraft: **Riss** — eigene Klasse (Krümmung/Gezeiten; Rat) ↔ `force gravity` + deklarierter Empfänger (Claude/Qwen) — beide brauchen das Operator-/Kanon-Wort. `losc_compiler.rs` setzt jetzt `SLOT_TTL`/`SLOT_FORCE_TYPE` und erzwingt `--force`/`--ttl` (vorher ttl=0 → jeder Record verworfen; force=em fabriziert).
+- **Lage:** (gemessen 2026-10-11) Recherche (`archive_search --all`) + **Rat** (5 Stimmen) + **Roster**: `voice-deepseek` ✓ · Claude ✓ · Qwen ✓ · Duck.ai `pending` (Tageslimit) · Z.ai `pending` (Timeout) · `open-weight-ui` DeepSeek V4 Pro ✓ + GPT-OSS 120B ✓. **Konvergenz:** (a) der „Vorzeichen-Riss" ist ein **Doku-Riss** — der Leser `spatial.rs:766` nutzt `val.abs()` als NaN-Gate, der Sign trägt; Doku-Zeile `archivar-mathematikerin.md:31` korrigiert. (b) ein Arm, eine Quelle: **LOSC (26×f64) bleibt** (alle Seats), `gwosc_compiler.rs` (GWOS 3-Feld, kein Leser) descoped mit Befund. (c) Kraft: **Riss** — eigene Klasse (Krümmung/Gezeiten; Rat + Claude + voice-deepseek + DeepSeek V4 Pro + GPT-OSS 120B) ↔ `force gravity`/Medium (Qwen) — braucht das Operator-/Kanon-Wort. `losc_compiler.rs` setzt jetzt `SLOT_TTL`/`SLOT_FORCE_TYPE` und erzwingt `--force`/`--ttl` (vorher ttl=0 → jeder Record verworfen; force=em fabriziert).
 - **Blockade:** Kanon-/Operator-Wort für die Kraft-/Klassen-Klasse (`phi/canon.φ` + WGSL-Branch = River).
 - **Braucht:** Operator-Wort (siehe `## An future`); danach `losc_compiler.rs` verdrahten + `phi/sources.φ`-Registrierung.
 
