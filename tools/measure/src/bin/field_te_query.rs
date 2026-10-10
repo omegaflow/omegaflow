@@ -10,7 +10,7 @@ use omegaflow::archivar::{
     series_component_name, series_rows,
 };
 use omegaflow::lsk::days_from_civil;
-use omegaflow::mathematikerin::mci::{MciParams, mci_window_links};
+use omegaflow::mathematikerin::mci::{MciParams, mci_window_graph};
 use omegaflow::mathematikerin::newell::newell_dphi_dt;
 use omegaflow::mathematikerin::wy_max_t::{
     Member, ResampleMode, null_matrix, null_means_per_statistic, observed_family, phase_data,
@@ -261,7 +261,16 @@ struct Descriptor {
     event_conditional: bool,
     count_quantiles: Option<usize>,
     matrix: Option<MatrixSpec>,
+    panel: Option<PanelSpec>,
     derived: Vec<(String, Vec<String>)>,
+}
+
+struct PanelSpec {
+    label: String,
+    channels: Vec<String>,
+    scale_s: Option<f64>,
+    stage2_mci: bool,
+    fdr_q: f64,
 }
 
 fn default_lags() -> Vec<usize> {
@@ -524,6 +533,9 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
     let mut matrix_cond: Option<MatrixCond> = None;
     let mut matrix_fdr: Option<(FdrMethod, f64, FdrScope)> = None;
     let mut matrix_expect: Option<usize> = None;
+    let mut panel_head: Option<String> = None;
+    let mut panel_scale: Option<f64> = None;
+    let mut panel_stage2 = false;
     let mut derived: Vec<(String, Vec<String>)> = Vec::new();
 
     for (lineno, raw) in text.lines().enumerate() {
@@ -612,6 +624,11 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 })?;
                 if matrix_head.is_some() {
                     return Err(format!("descriptor:{at}: matrix declared twice"));
+                }
+                if panel_head.is_some() {
+                    return Err(format!(
+                        "descriptor:{at}: matrix and panel name one round — one form"
+                    ));
                 }
                 matrix_head = Some((label.to_string(), shape));
             }
@@ -885,29 +902,120 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 }
                 event_conditional = true;
             }
+            "panel" => {
+                let label = parts
+                    .get(1)
+                    .ok_or_else(|| format!("descriptor:{at}: panel carries no label"))?;
+                if panel_head.is_some() {
+                    return Err(format!("descriptor:{at}: panel declared twice"));
+                }
+                if matrix_head.is_some() {
+                    return Err(format!(
+                        "descriptor:{at}: panel and matrix name one round — one form"
+                    ));
+                }
+                panel_head = Some(label.to_string());
+            }
+            "scale" => {
+                let token = parts
+                    .get(1)
+                    .copied()
+                    .ok_or_else(|| format!("descriptor:{at}: scale carries no auto|<seconds>"))?;
+                if token == "auto" {
+                    panel_scale = None;
+                } else {
+                    let s: f64 = token.parse().map_err(|_| {
+                        format!("descriptor:{at}: scale '{token}' carries no second count")
+                    })?;
+                    if !(s.is_finite() && s > 0.0) {
+                        return Err(format!(
+                            "descriptor:{at}: scale '{token}' is no positive finite width"
+                        ));
+                    }
+                    panel_scale = Some(s);
+                }
+            }
+            "stage2" => {
+                let token = parts
+                    .get(1)
+                    .copied()
+                    .ok_or_else(|| format!("descriptor:{at}: stage2 carries no stage"))?;
+                if token != "mci" {
+                    return Err(format!(
+                        "descriptor:{at}: stage2 '{token}' names no mci — the panel's second stage is the window graph"
+                    ));
+                }
+                panel_stage2 = true;
+            }
             other => {
                 return Err(format!("descriptor:{at}: unknown directive '{other}'"));
             }
         }
     }
-
     if !cadence {
         return Err(
             "cadence absent — the cadence is measured from the aligned grid, never defaulted"
                 .into(),
         );
     }
-    let matrix = build_matrix_spec(
-        matrix_head,
-        matrix_drivers,
-        matrix_targets,
-        matrix_channels,
-        matrix_cond,
-        matrix_fdr,
-        matrix_expect,
-        &conds,
-        &derived,
-    )?;
+    let panel = if let Some(label) = panel_head {
+        if matrix_drivers.is_some()
+            || matrix_targets.is_some()
+            || matrix_cond.is_some()
+            || matrix_expect.is_some()
+            || !derived.is_empty()
+        {
+            return Err(format!(
+                "descriptor: panel '{label}' carries matrix directives — one round, one form"
+            ));
+        }
+        let channels = matrix_channels
+            .take()
+            .ok_or_else(|| format!("panel '{label}' carries no channels"))?;
+        if channels.len() < 2 {
+            return Err(format!(
+                "panel '{label}' carries {} channel(s) — a panel needs at least two",
+                channels.len()
+            ));
+        }
+        if !panel_stage2 {
+            return Err(format!(
+                "panel '{label}' carries no stage2 mci — the panel is the window graph"
+            ));
+        }
+        let fdr_q = match &matrix_fdr {
+            Some((_, q, _)) => *q,
+            None => 0.05,
+        };
+        Some(PanelSpec {
+            label,
+            channels,
+            scale_s: panel_scale,
+            stage2_mci: panel_stage2,
+            fdr_q,
+        })
+    } else if panel_scale.is_some() || panel_stage2 {
+        return Err(
+            "scale/stage2 without a panel head — the directives belong to panel <label>".into(),
+        );
+    } else {
+        None
+    };
+    let matrix = if panel.is_some() {
+        None
+    } else {
+        build_matrix_spec(
+            matrix_head,
+            matrix_drivers,
+            matrix_targets,
+            matrix_channels,
+            matrix_cond,
+            matrix_fdr,
+            matrix_expect,
+            &conds,
+            &derived,
+        )?
+    };
     if matrix.is_some() && event_conditional {
         return Err(
             "descriptor carries both a matrix and the event-conditional form — one round, one form"
@@ -936,6 +1044,12 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         Some(s) => s,
         None => 100,
     };
+    if panel.is_some() && event_conditional {
+        return Err(
+            "descriptor carries both a panel and the event-conditional form — one round, one form"
+                .into(),
+        );
+    }
     if event_conditional {
         let target = witness_arm
             .ok_or_else(|| "event-conditional form carries no witness arm".to_string())?;
@@ -956,10 +1070,11 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             event_conditional: true,
             count_quantiles,
             matrix: None,
+            panel: None,
             derived: Vec::new(),
         });
     }
-    if matrix.is_none() {
+    if matrix.is_none() && panel.is_none() {
         if driver.is_none() {
             return Err("descriptor carries no driver arm".to_string());
         }
@@ -982,6 +1097,7 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
         event_conditional: false,
         count_quantiles: None,
         matrix,
+        panel,
         derived,
     })
 }
@@ -1072,6 +1188,7 @@ fn descriptor_from_args(args: &[String]) -> Result<Descriptor, String> {
         event_conditional: false,
         count_quantiles: None,
         matrix: None,
+        panel: None,
         derived: Vec::new(),
     })
 }
@@ -3337,6 +3454,7 @@ fn run_parity(sources: &[SourceConfig], witnesses: &[WitnessRecord]) -> i32 {
         event_conditional: false,
         count_quantiles: None,
         matrix: None,
+        panel: None,
         derived: Vec::new(),
     };
     let Some(result) = execute(
@@ -4676,6 +4794,7 @@ fn stage2_from_args(args: &[String]) -> Result<Descriptor, String> {
         event_conditional: false,
         count_quantiles: None,
         matrix: None,
+        panel: None,
         derived: Vec::new(),
     })
 }
@@ -5306,11 +5425,13 @@ fn run_pair_matrix(
 }
 
 fn run_summary_panel(
+    label: &str,
     channels: &str,
     scale_s: Option<f64>,
     stage2_mci: bool,
     max_lag: usize,
     n_surr: usize,
+    alpha_mci: f64,
     sources: &[SourceConfig],
     witnesses: &[WitnessRecord],
     anchor: &QueryAnchor,
@@ -5338,16 +5459,43 @@ fn run_summary_panel(
         }
     }
     let native: Vec<Option<f64>> = loaded.iter().map(|(_, s)| median_dt(s)).collect();
-    let finest = native
-        .iter()
-        .flatten()
-        .copied()
-        .fold(None::<f64>, |acc, x| Some(acc.map_or(x, |a| a.max(x))));
-    let delta = scale_s.or(finest);
+    let mut coarsest: Option<f64> = None;
+    let mut coarsest_from: Option<&str> = None;
+    let mut measured = 0usize;
+    for ((name, _), dt) in loaded.iter().zip(native.iter()) {
+        if let Some(d) = dt {
+            measured += 1;
+            match coarsest {
+                Some(c) if *d <= c => {}
+                _ => {
+                    coarsest = Some(*d);
+                    coarsest_from = Some(*name);
+                }
+            }
+        }
+    }
+    let (delta, origin) = match scale_s {
+        Some(s) => (Some(s), "(operator-declared)".to_string()),
+        None => match coarsest {
+            Some(c) => (
+                Some(c),
+                format!(
+                    "(from {}, coarsest of {})",
+                    coarsest_from.unwrap_or("?"),
+                    measured
+                ),
+            ),
+            None => (None, String::new()),
+        },
+    };
     let Some(delta) = delta else {
         println!("panel pending — no native cadence was measurable and no --scale declared");
         return 0;
     };
+    println!(
+        "panel {label} — {} channels | Δ {delta:.0}s {origin}",
+        loaded.len()
+    );
     let arms: Vec<&[(f64, f64)]> = loaded.iter().map(|(_, s)| s.as_slice()).collect();
     let (columns, _grid, grid_dt) = match align_many(&arms, Seasonal::None, Some(delta)) {
         Ok(aligned) => aligned,
@@ -5362,10 +5510,7 @@ fn run_summary_panel(
         Some(column) => column.len(),
         None => 0,
     };
-    println!(
-        "panel {} channels | declared scale {delta:.0}s | grid {grid_dt:.1}s | complete rows {n}",
-        loaded.len()
-    );
+    println!("panel grid {grid_dt:.1}s | complete rows {n}");
     for (column, (name, _)) in cols.iter().zip(loaded.iter()) {
         let present = column.iter().filter(|v| v.is_some()).count();
         println!("  {name:<28} | blocks {present}");
@@ -5378,22 +5523,35 @@ fn run_summary_panel(
             );
             return 0;
         }
-        let links = mci_window_links(
+        let bins = 4usize;
+        let graph = mci_window_graph(
             &joint,
             MciParams {
                 max_lag,
                 max_cond: 2,
                 alpha_pc: 0.2,
-                alpha_mci: 0.05,
-                bins: 4,
+                alpha_mci,
+                bins,
                 n_surr,
                 seed: MCI_SEED,
             },
         );
-        if links.is_empty() {
+        for edge in &graph.pending {
+            println!(
+                "window {} -> {} lag {} | pending — n {} below n_min {} = bins^(2+dim) with bins {}, dim {}",
+                names[edge.driver],
+                names[edge.target],
+                edge.lag,
+                edge.n,
+                edge.n_min,
+                bins,
+                edge.dim
+            );
+        }
+        if graph.links.is_empty() {
             println!("window graph pending — no MCI candidate survived");
         } else {
-            for link in &links {
+            for link in &graph.links {
                 println!(
                     "window {} -> {} lag {} | te {:.4} | p {:.4} | by {}",
                     names[link.driver],
@@ -5454,7 +5612,8 @@ fn main() {
             (2, 20)
         };
         exit(run_summary_panel(
-            channels, scale_s, stage2_mci, max_lag, n_surr, &sources, &witnesses, &anchor,
+            "cli", channels, scale_s, stage2_mci, max_lag, n_surr, 0.05, &sources, &witnesses,
+            &anchor,
         ));
     }
     if let Some(name) = arg_after(&args, "--direction") {
@@ -5520,6 +5679,23 @@ fn main() {
             }
         }
     };
+
+    if let Some(panel) = desc.panel.as_ref() {
+        let max_lag = desc.lags.iter().copied().max().unwrap_or(2);
+        let channels = panel.channels.join(",");
+        exit(run_summary_panel(
+            &panel.label,
+            &channels,
+            panel.scale_s,
+            panel.stage2_mci,
+            max_lag,
+            desc.surrogate,
+            panel.fdr_q,
+            &sources,
+            &witnesses,
+            &anchor,
+        ));
+    }
 
     if desc.matrix.is_some() {
         exit(run_pair_matrix(&desc, &sources, &witnesses, &anchor));
@@ -6501,6 +6677,54 @@ cadence live
         assert_eq!(spec.shape, MatrixShape::Upper);
         assert_eq!(spec.declared_cells(), 6, "upper i<j carries N(N-1)/2 cells");
         assert_eq!(spec.fdr.2, FdrScope::Row);
+    }
+
+    #[test]
+    fn panel_descriptor_parses_with_stage2_and_auto_scale() {
+        let text = "panel vlies_panel\n\
+                    channels a,b,c\n\
+                    scale auto\n\
+                    stage2 mci\n\
+                    fdr bh 0.05 over matrix\n\
+                    lags 2\n\
+                    surrogate 20\n\
+                    cadence live\n";
+        let desc = parse_descriptor(text).expect("a panel parses");
+        let panel = desc.panel.expect("the panel spec is carried");
+        assert_eq!(panel.label, "vlies_panel");
+        assert_eq!(panel.channels, vec!["a", "b", "c"]);
+        assert!(panel.scale_s.is_none(), "scale auto declares no fixed Δ");
+        assert!(panel.stage2_mci);
+        assert!((panel.fdr_q - 0.05).abs() < 1e-12);
+        assert!(desc.matrix.is_none(), "a panel carries no matrix");
+    }
+
+    #[test]
+    fn panel_without_stage2_is_refused() {
+        let text = "panel p\nchannels a,b\nscale 60\ncadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a panel needs stage2 mci");
+        assert!(err.contains("stage2"), "the refusal names the stage: {err}");
+    }
+
+    #[test]
+    fn panel_with_a_declared_scale_records_the_width() {
+        let text = "panel p\nchannels a,b\nscale 3600\nstage2 mci\ncadence live\n";
+        let desc = parse_descriptor(text).expect("a panel parses");
+        assert_eq!(desc.panel.unwrap().scale_s, Some(3600.0));
+    }
+
+    #[test]
+    fn panel_and_matrix_in_one_descriptor_are_refused() {
+        let text = "panel p\nmatrix m full\nchannels a,b\ncond none\nfdr bh 0.05 over matrix\nlags 1\nsurrogate 20\nstage2 mci\ncadence live\n";
+        let err = parse_descriptor(text)
+            .err()
+            .expect("a round carries one form");
+        assert!(
+            err.contains("one round") || err.contains("one form"),
+            "{err}"
+        );
     }
 
     #[test]

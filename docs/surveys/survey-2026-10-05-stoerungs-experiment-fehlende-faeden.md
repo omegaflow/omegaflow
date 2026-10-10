@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: b58af0d7fce8716d5aea24a202383d21ff3db867d15cfbf23f49c02765976edb
+  sha256: 10054bd5d3c8db9617b025930d15686382d06bcc895038500540663d0419361c
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/archiv/handover-2026-10-05-river-folge93.md
 -->
@@ -102,6 +102,9 @@ Kopplung** und sind als Stör-Treiber, nie als unabhängiger Zeuge zu behandeln.
   GOES-18-Bucket um 16/19 erweitern.
 - **River (Stein):** die 8 probe-gelesenen Kanäle in die `field_te_query`-Matrix heben;
   die Matrix als Störungs-Experiment betreiben.
+  - gemessen 2026-10-11 (Lauf `38086122792` Job `matrix-newell-omni`): der abgeleitete
+    Newell-`dΦ/dt`-OMNI-Arm gegen `intermagnet_dbdt` ist `silent` (TE 4.6e-3, p 1.0,
+    bias `off_table`; Δ 86400 s, n 944) — kein gemessener Kopplungspfad auf dieser Skala.
 
 ## 6 Quellen / Stimmen (Rohspuren)
 
