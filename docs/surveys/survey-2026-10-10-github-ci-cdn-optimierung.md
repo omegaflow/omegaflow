@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: ca2c8c58163ad28b5d71c59ef61f822343e49206ac8389327a9e232b09e6d40d
+  sha256: fa9e336fc56b7fb399767a76fe80ee579bd26488951b339816cf3edd65815a61
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)
@@ -133,6 +133,9 @@ lokale deterministische Checks · „mehr Cloud-Komfort" → ein CDN, ein Schrei
   **CC BY-NC-SA / PolyForm NC — keine OSI-Lizenz** → jedes „open-source"-gated Angebot (Azure,
   CircleCI-OSS, Blacksmith-OSS) fällt weg. Frei bleiben lizenzunabhängig: **GitHub-Standard-Runner
   (public)**, **Codespaces** (per-Konto) und **self-hosted** (eigene Hardware / Oracle Always Free).
+  **Der self-hosted Runner existiert bereits** (gemessen 2026-10-10): **20** Workflows fahren auf
+  `runs-on: [self-hosted, Linux]` (`cmb-cdn`, Ephemeriden-Compiler, …); der Baum nennt den Host
+  **`t420`** (`ci-gate.yml:53`), der Operator **`t430`** (Riss). Azure ist damit **redundant**.
 - **Blacksmith OSS-Runner** — 3 000 gratis 2-vCPU-min/mo + OSS-Programm; schnellerer Single-Core.
 - **CircleCI OSS** — 400 000 Credits/mo (~80 000 min, OSI-Lizenz) — größter freier Minuten-Pool.
 - **Ubicloud** (OSS-Cloud) — 1 250 gratis min/mo, dann $0.00125/min, x64 **und** arm64.

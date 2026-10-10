@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 9025bddd5b28df0126e14f04ea4dab4dd0c8ff8f4291efb5f70a2df672d593cb
+  sha256: e6da91a3d76688987850c6e1c7d8576bc28c011c676d70c6c8558f1b4715199d
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.2989 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, Recherchen, Rat Runde 1+2, Roster) + Workflow-Hygiene + cdn-manifest.yml + Lizenz-Korrektur (Azure-OSS descoped, self-hosted statt dessen) · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.3227 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche + Workflow-Hygiene + cdn-manifest.yml + Lizenz-/Runner-Korrektur (Azure descoped, self-hosted existiert: 20 Workflows) · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -94,17 +94,21 @@ In diesem Atom kein neuer adressierter Block.
 - **Braucht:** Architektur-Wort, ob R2 überhaupt als Hot-Tier kommt (sonst ganz weglassen) — in der
   Survey-Säule B dokumentiert.
 
-### Zweite CI-Lane — Azure OSS descoped, self-hosted statt dessen
-- **Status:** descoped | **Bindung:** eigen (self-hosted)
+### Zweite CI-Lane — self-hosted existiert bereits (Azure descoped)
+- **Status:** eigen (Ausbau/Zuverlässigkeit) | **Bindung:** eigen (Operator-Hardware)
 - **Trigger:** erneute Backlog-Messung (Runner-Sättigung)
-- **Lage:** (gemessen 2026-10-10) **Befund:** `foropensource.com` FOS-0014 — Azure-OSS-Programm
-  **discontinued** (2026-07-06, „new public projects cannot be created"); Microsoft Learn nennt es
-  noch (Riss). **Operator-Korrektur:** omegaflow ist **CC BY-NC-SA / PolyForm NC — keine OSI-Lizenz**
-  → alle „open-source"-gated Grants (Azure, CircleCI-OSS, Blacksmith-OSS) greifen nicht.
-- **Blockade:** keine.
-- **Braucht:** statt Azure die **lizenzunabhängige** zweite Lane: **self-hosted Runner** auf eigener
-  Hardware oder einer **Oracle-Always-Free-VM** (2 OCPU/12 GB ARM) — JIT/ephemer, nie ungeprüfte
-  Fork-PRs; Guardrail: ein Required-Check je SHA. Die GitHub-App-Install-Tabs sind damit gegenstandslos.
+- **Lage:** (gemessen 2026-10-10) **Die self-hosted Lane existiert:** **20** Workflows fahren auf
+  `runs-on: [self-hosted, Linux]` (`cmb-cdn`, `gaia-xp-cdn`, die Ephemeriden-Compiler, `dust`, `wod`,
+  `mpcobs-shard`, `tnbfits`, `twomass`, …). Operator-Wort 2026-10-05: der Runner läuft
+  (`state/zustand/ereignisse.φ:81058`, Host `johannes-Think…`); `cmb-cdn 38032912687` hing am
+  2026-10-10 07:00+ auf ihm (SPT-Download). **Riss:** der Baum nennt ihn **`t420`**
+  (`ci-gate.yml:53`), der Operator **`t430`** — der OS-spezifische Hostname steht nicht im Workflow
+  (`[self-hosted, Linux]` ist generisch). Azure-OSS ist **descoped** (discontinued + CC BY-NC-SA ≠ OSI).
+- **Blockade:** ein Runner = ein Job gleichzeitig (gemessen 2026-10-09: 90 `ci-gate` queued, ein
+  `subset`-Ghost 8,5 h — `ci-gate.yml:52-60`).
+- **Braucht:** (a) den Riss t420/t430 schließen (Runner-Label/Hostname messen — `gh api .../actions/runners`
+  bräuchte ein Token, per-act); (b) Zuverlässigkeit (ephemere Jobs, Ghost-Timeout) + Frage, ob weitere
+  GitHub-hosted-Last (z. B. `subset`, `tools-build`) auf den Runner darf. **Kein Drittkonto nötig.**
 
 ### MCP — lokale no-leak-Server (Autonomie-Kandidat)
 - **Status:** eigen | **Bindung:** linie:mycelium
@@ -168,8 +172,8 @@ Azure-OSS discontinued) — die vorbereiteten Azure-Tabs werden **nicht** abgesc
   evtl. nötig) + Bucket + API-Token (Token-Wert bleibt in `.secrets.local`, nie im Transcript).
   Ohne Wort: R2 bleibt `pending`, der Bulk ruht gratis auf GitHub.
 
-Die zweite CI-Lane läuft **nicht** über Azure, sondern **self-hosted** (eigene Hardware / Oracle
-Always Free) — autonom vorbereitbar, kein Drittkonto nötig.
+Die zweite CI-Lane **läuft bereits self-hosted** (20 Workflows auf `[self-hosted, Linux]`) — kein
+Azure, kein Drittkonto nötig; offen ist nur der Riss `t420`/`t430` und die Zuverlässigkeit.
 
 ## LOCK
 
