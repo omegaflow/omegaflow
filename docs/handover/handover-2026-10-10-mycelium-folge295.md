@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: c54a45fd5ade4619e3063a889e630f9517263e29578299d5a18cbe7edc2859b1
+  sha256: b29fbc6009084d08682d8a3b665fdc92551d540114bd8beb8ea03f76eeb567c6
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -172,12 +172,18 @@ Origin: mycelium-295 (2026-10-10).
 Operator-gebundene Akte (Survey-Maßnahmen 4–6), bis zur Kante vorbereitet; die Seiten
 liegen in der Browser-Gruppe `mycelium-auth` (nicht fokussiert):
 
-- **R2 (Maßnahme 4).** Cloudflare-Login `dash.cloudflare.com` — E-Mail vorausgefüllt
-  (`code@omegaflow.space`), Redirect `?to=/:account/r2`. Nach dem Login fehlen: R2
-  aktivieren (Plan/„Enable R2") + S3-API-Token anlegen. Vorschlag Bucket-Namen
-  `omegaflow`/`omegaflow-sources` (Hot-Tier = Manifeste/Indizes, kein Bulk). Token-ID/Secret
-  → `.secrets.local` (nur Schlüsselnamen dort, nie Werte in den Transcript). Der Akt
-  (Login + R2 aktivieren + Token erzeugen) = Operator-Hand.
+- **R2 (Maßnahme 4) — Subscription + Bucket + Token gebaut (2026-10-10, Operator-Hand
+  + Mycelium-Browser-Brücke).** Operator aktivierte die Subscription; Mycelium legte Bucket
+  **`omegaflow-sources`** an und den Account-API-Token **`omegaflow-ci-cdn`**
+  (**Object Read & Write**, Applied to **All buckets**, Status Active). S3-Endpoint:
+  `https://<account_id>.r2.cloudflarestorage.com` (account_id `b2891b7064691de2ef3891cfaf17190b`).
+  **Offen (Operator-Hand):** die Secret-Anzeige steht in Tab `660113413`
+  (`/r2/api-tokens/success`) — **Access Key ID + Secret Access Key** von dort in
+  `.secrets.local` (`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`, `R2_BUCKET=omegaflow-sources`);
+  Werte nie in den Transcript (Mycelium liest die Secret-Seite nicht).
+  **Vorsicht gelernt:** `browser_fill` auf React-Radios (`ApiTokenForm.tsx`) setzt nur den
+  DOM-`checked`, nicht den React-State → immer per echtem Klick wählen (der erste Lauf
+  erzeugte „Object Read only"; per Edit + Klick korrigiert).
 - **R2-Free-Tier (gemessen 2026-10-10, `developers.cloudflare.com/r2/pricing/index.md`):**
   Standard **10 GB-month/Monat** Storage, **1 Mio. Class-A**-Ops, **10 Mio. Class-B**-Ops,
   Egress frei; darüber $0.015/GB-month · $4.50/Mio. Class A · $0.36/Mio. Class B (aufgerundet
