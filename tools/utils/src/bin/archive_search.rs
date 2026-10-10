@@ -86,6 +86,8 @@ mod pubchem;
 mod pubmed;
 #[path = "archive_search/reactome.rs"]
 mod reactome;
+#[path = "archive_search/refine.rs"]
+mod refine;
 #[path = "archive_search/secrets.rs"]
 mod secrets;
 #[path = "archive_search/semanticscholar.rs"]
