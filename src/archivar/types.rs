@@ -46,7 +46,7 @@ pub struct Sample {
     pub extent: f64,
     pub tau: f64,
     pub kernel_id: f64,
-    pub force_type: f64,
+    pub channel_ref: f64,
     pub absorption: f64,
     pub advection: f64,
     pub anchor_vmax: f64,
@@ -400,7 +400,15 @@ pub const PRESENCE_FLAG_ABSORPTION: f64 = 2.0;
 pub const PRESENCE_FLAG_ADVECTION: f64 = 4.0;
 pub const PRESENCE_FLAG_FLUX: f64 = 8.0;
 pub const PRESENCE_FLAG_QUANTITY: f64 = 16.0;
-pub const FORCE_TYPE_QUANTITY: u8 = 255;
+pub const CHANNEL_REF_QUANTITY: u8 = 255;
+
+pub fn wire_channel_ref(channel_ref: f64) -> f64 {
+    if channel_ref == CHANNEL_REF_QUANTITY as f64 {
+        0.0
+    } else {
+        channel_ref
+    }
+}
 
 impl FieldConfig {
     pub fn absorption_measured(&self) -> Option<f64> {

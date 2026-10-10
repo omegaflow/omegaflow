@@ -1423,7 +1423,7 @@ pub fn anchor(
         extent,
         tau: sensor.tau,
         kernel_id: sensor.kernel as f64,
-        force_type: sensor.force as f64,
+        channel_ref: sensor.force as f64,
         absorption: absorption_for_force(sensor.force, sensor.absorption),
         advection: sensor.advection,
         anchor_vmax,

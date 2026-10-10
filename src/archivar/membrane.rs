@@ -108,7 +108,7 @@ pub fn sense_membrane(buf: &Buffer, ctx: MembraneCtx<'_>, records: &mut Vec<Samp
                 sh.tau,
                 0.0,
                 sh.kernel_id,
-                sh.force_type,
+                sh.channel_ref,
                 slot_or_pad(sh.absorption),
                 slot_or_pad(sh.advection),
                 vx,
@@ -300,7 +300,7 @@ pub fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
 }
 
 pub fn medium_reach(
-    force_type: u8,
+    channel_ref: u8,
     age: f64,
     medium: Option<&crate::media::MediumParams>,
     advection: f64,
@@ -308,7 +308,7 @@ pub fn medium_reach(
     if age == 0.0 {
         return Some(0.0);
     }
-    match force_type {
+    match channel_ref {
         2 => Some(medium?.sound_speed_m_s * age),
         3 => Some(medium?.p_wave_m_s * age),
         4 => Some(medium?.s_wave_m_s * age),
@@ -371,7 +371,7 @@ pub fn body_anchor_samples(
             extent: radius,
             tau,
             kernel_id: 0.0,
-            force_type: 1.0,
+            channel_ref: 1.0,
             absorption: absorption_for_force(1, 0.0),
             advection: 0.0,
             anchor_vmax,
@@ -418,13 +418,13 @@ pub fn all_body_anchor_samples(eph: &HashMap<String, BodyEphemeris>) -> Vec<Samp
 }
 
 pub fn signal_reach(
-    force_type: f64,
+    channel_ref: f64,
     advection: f64,
     age: f64,
     freq: f64,
     bin_width: f64,
 ) -> Option<f64> {
-    propagation_speed(force_type, advection, freq, bin_width).map(|v| v * age)
+    propagation_speed(channel_ref, advection, freq, bin_width).map(|v| v * age)
 }
 
 pub fn enclosure_rho(vmax: f64, amax: f64, dt: f64, pad: f64) -> f64 {
@@ -460,8 +460,8 @@ pub fn anchor_velocity(
     }
 }
 
-pub fn flat_propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
-    match force_type as u8 {
+pub fn flat_propagation_speed(channel_ref: f64, advection: f64) -> Option<f64> {
+    match channel_ref as u8 {
         0 | 1 | 8 => Some(C_LIGHT),
         7 => slot_measured(advection).then_some(advection),
         _ => None,
@@ -469,15 +469,15 @@ pub fn flat_propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
 }
 
 pub fn propagation_speed(
-    force_type: f64,
+    channel_ref: f64,
     advection: f64,
     freq: f64,
     bin_width: f64,
 ) -> Option<f64> {
-    if let Some(v) = crate::mathematikerin::dispersion::v_at(force_type as u8, freq, bin_width) {
+    if let Some(v) = crate::mathematikerin::dispersion::v_at(channel_ref as u8, freq, bin_width) {
         return Some(v);
     }
-    flat_propagation_speed(force_type, advection)
+    flat_propagation_speed(channel_ref, advection)
 }
 
 pub fn wire_extent(extent: f64) -> f64 {

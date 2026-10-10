@@ -575,7 +575,7 @@ pub fn catalog_sample_in_enclosure(
         name: sample.name.clone(),
         band_id: None,
         kernel: sample.kernel_id as u8,
-        force: sample.force_type as u8,
+        force: sample.channel_ref as u8,
         tau: sample.tau,
         absorption: sample.absorption,
         advection: sample.advection,

@@ -15,7 +15,7 @@ erste Stelle.
 
 1. **A = A** — eine Messung ist die Messung der Sache selbst; Fabrikation ist Gewalt gegen die Wahrheit.
 2. **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive.
-3. **force_type** — jede Messung trägt ihre physische Kraft; ohne Kraft kein Sample.
+3. **channel_ref** — jede Messung trägt ihre physische Kraft; ohne Kraft kein Sample.
 4. **0 honored** — was fehlt, fehlt; die Lücke ist eine vollwertige Eigenschaft — keine Null hinlügen.
 5. **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen.
 6. **Der Operator schließt** — die Maschine darf Stopps vorschlagen; geschlossen wird eine Front nur vom Operator, nach dem epistemischen Kriterium: beantwortet ist eine Untersuchung, wenn die Messung sie beantwortet, nicht wenn der Grenznutzen schwindet.

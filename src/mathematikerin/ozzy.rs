@@ -16,14 +16,14 @@ pub enum Kanal {
 pub struct Witness<'a> {
     pub name: &'a str,
     pub series: &'a [f64],
-    pub force_type: u8,
+    pub channel_ref: u8,
     pub kanal: Kanal,
     pub origin: &'a str,
 }
 
 pub struct WitnessStamp {
     pub name: String,
-    pub force_type: u8,
+    pub channel_ref: u8,
     pub kanal: Kanal,
     pub origin: String,
 }
@@ -137,7 +137,7 @@ pub fn residual_against_witnesses(
                 .iter()
                 .map(|&i| WitnessStamp {
                     name: witnesses[i].name.to_string(),
-                    force_type: witnesses[i].force_type,
+                    channel_ref: witnesses[i].channel_ref,
                     kanal: witnesses[i].kanal,
                     origin: witnesses[i].origin.to_string(),
                 })
@@ -356,7 +356,7 @@ mod tests {
         Witness {
             name,
             series,
-            force_type: 0,
+            channel_ref: 0,
             kanal: Kanal::StaerkeKanal,
             origin: "test",
         }
@@ -385,7 +385,7 @@ mod tests {
         assert_eq!(r.n, target.len());
         assert_eq!(r.series.len(), target.len());
         assert_eq!(r.witnesses_used.len(), 2);
-        assert_eq!(r.witnesses_used[0].force_type, 0);
+        assert_eq!(r.witnesses_used[0].channel_ref, 0);
         assert_eq!(r.witnesses_used[0].kanal, Kanal::StaerkeKanal);
         assert_eq!(r.witnesses_used[0].origin, "test");
         assert_eq!(r.lag, 0);

@@ -42,7 +42,7 @@ pub struct SpectralHash {
     pub ttl: f64,
     pub tau: f64,
     pub kernel_id: f64,
-    pub force_type: f64,
+    pub channel_ref: f64,
     pub absorption: f64,
     pub advection: f64,
     pub redshift: f64,
@@ -461,7 +461,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
             extent: body_radius_m,
             tau: f64::INFINITY,
             kernel_id: 0.0,
-            force_type: 1.0,
+            channel_ref: 1.0,
             absorption: 0.0,
             advection: 0.0,
             anchor_vmax,
@@ -484,7 +484,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 extent: body_radius_m,
                 tau: f64::INFINITY,
                 kernel_id: 1.0,
-                force_type: 1.0,
+                channel_ref: 1.0,
                 absorption: 0.0,
                 advection: 0.0,
                 anchor_vmax,
@@ -673,7 +673,7 @@ pub fn build_star_samples(bytes: &[u8], catalog_epoch_yr: Option<f64>) -> Vec<Sa
             extent: f64::INFINITY,
             tau: rec.tau,
             kernel_id: 0.0,
-            force_type: 0.0,
+            channel_ref: 0.0,
             absorption: 0.0,
             advection: 0.0,
             anchor_vmax,
@@ -733,7 +733,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 continue;
             }
             if signal_reach(
-                sample.force_type,
+                sample.channel_ref,
                 sample.advection,
                 age,
                 sample.freq,
@@ -744,7 +744,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 continue;
             }
             let v_prop = match propagation_speed(
-                sample.force_type,
+                sample.channel_ref,
                 sample.advection,
                 sample.freq,
                 sample.bin_width,
@@ -752,12 +752,12 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 Some(v) => v,
                 None => continue,
             };
-            let ft = sample.force_type as u8;
+            let ft = sample.channel_ref as u8;
             let floor_ft = if ft < 9 { floor[ft as usize] } else { f64::NAN };
             if !(floor_ft.is_finite() && floor_ft > 0.0) {
                 continue;
             }
-            let z_aperture = if sample.force_type == 0.0 && slot_measured(sample.z_flux) {
+            let z_aperture = if sample.channel_ref == 0.0 && slot_measured(sample.z_flux) {
                 let z1 = 1.0 + sample.z_flux;
                 1.0 / (z1 * z1)
             } else {
@@ -816,13 +816,13 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.tau,
                 wire_extent(sample.extent),
                 sample.kernel_id,
-                sample.force_type,
+                wire_channel_ref(sample.channel_ref),
                 slot_or_pad(sample.absorption),
                 slot_or_pad(sample.advection),
                 v[0],
                 v[1],
                 v[2],
-                if sample.force_type == 0.0 && slot_measured(sample.z_flux) {
+                if sample.channel_ref == 0.0 && slot_measured(sample.z_flux) {
                     sample.z_flux
                 } else {
                     0.0
@@ -841,7 +841,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                     sample.absorption,
                     sample.advection,
                     sample.z_flux,
-                ) + if sample.force_type == FORCE_TYPE_QUANTITY as f64 {
+                ) + if sample.channel_ref == CHANNEL_REF_QUANTITY as f64 {
                     PRESENCE_FLAG_QUANTITY
                 } else {
                     0.0
@@ -919,7 +919,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 continue;
             }
             let reach_signal = match signal_reach(
-                sample.force_type,
+                sample.channel_ref,
                 sample.advection,
                 age,
                 sample.freq,
@@ -974,13 +974,13 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 sample.tau,
                 wire_extent(sample.extent),
                 sample.kernel_id,
-                sample.force_type,
+                wire_channel_ref(sample.channel_ref),
                 slot_or_pad(sample.absorption),
                 slot_or_pad(sample.advection),
                 v[0],
                 v[1],
                 v[2],
-                if sample.force_type == 0.0 && slot_measured(sample.z_flux) {
+                if sample.channel_ref == 0.0 && slot_measured(sample.z_flux) {
                     sample.z_flux
                 } else {
                     0.0
@@ -999,7 +999,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                     sample.absorption,
                     sample.advection,
                     sample.z_flux,
-                ) + if sample.force_type == FORCE_TYPE_QUANTITY as f64 {
+                ) + if sample.channel_ref == CHANNEL_REF_QUANTITY as f64 {
                     PRESENCE_FLAG_QUANTITY
                 } else {
                     0.0
