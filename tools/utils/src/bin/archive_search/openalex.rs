@@ -2,15 +2,22 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
+    let (text, refine) = crate::refine::split_refine(query, &["filter", "select", "sort"]);
     let mailto = crate::token::secret("OPENALEX_MAILTO");
     let api_key = crate::token::secret("OPENALEX_API_KEY");
     let mut cursor: Option<String> = Some("*".to_string());
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
-        let mut url = format!(
-            "https://api.openalex.org/works?search={}&per-page={}",
-            urlencode(query),
-            max
-        );
+        let mut url = format!("https://api.openalex.org/works?per-page={}", max);
+        if !text.is_empty() {
+            url.push_str("&search=");
+            url.push_str(&urlencode(&text));
+        }
+        for (key, value) in &refine {
+            url.push('&');
+            url.push_str(key);
+            url.push('=');
+            url.push_str(&urlencode(value));
+        }
         if let Some(mail) = &mailto {
             url.push_str("&mailto=");
             url.push_str(&urlencode(mail));
