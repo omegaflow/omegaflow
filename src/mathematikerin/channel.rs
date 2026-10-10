@@ -693,10 +693,17 @@ pub fn live_channel_hash_of(d: &ChannelDescriptor) -> Option<u64> {
 
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
     let (conserved, op, pde_type, boundary, unit) = match name {
-        "em" | "electric" => (
+        "em" => (
             Conserved::Energy,
             TransportOp::Maxwell,
             PdeType::Mixed,
+            Boundary::None,
+            "V/m",
+        ),
+        "electric" => (
+            Conserved::Energy,
+            TransportOp::Maxwell,
+            PdeType::Elliptic,
             Boundary::None,
             "V/m",
         ),
@@ -784,6 +791,11 @@ pub fn descriptor_for_force_type(ft: u8) -> Option<ChannelDescriptor> {
     let name = force_name_of(ft)?;
     let medium = *LIVE_FORCE_MEDIA.get(ft as usize)?;
     descriptor_for_force(name, medium)
+}
+
+pub fn force_type_of_descriptor(d: &ChannelDescriptor) -> Option<u8> {
+    let h = d.hash();
+    (0..9u8).find(|&ft| descriptor_for_force_type(ft).is_some_and(|fd| fd.hash() == h))
 }
 
 pub fn live_channel_registry() -> ChannelRegistry {
@@ -1844,10 +1856,12 @@ mod tests {
     }
 
     #[test]
-    fn electric_is_the_em_alias() {
+    fn electric_is_the_quasi_static_subset_of_em_and_no_longer_collapses() {
         let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
         let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
-        assert_eq!(em.hash(), electric.hash());
+        assert_ne!(em.hash(), electric.hash());
+        assert_eq!(em.pde_type, PdeType::Mixed);
+        assert_eq!(electric.pde_type, PdeType::Elliptic);
     }
 
     #[test]
@@ -2587,6 +2601,18 @@ mod tests {
             .is_err(),
             "Fourier couples to energy, not mass — the admissibility relation refuses"
         );
+    }
+
+    #[test]
+    fn every_force_type_round_trips_through_its_descriptor() {
+        for ft in 0..9u8 {
+            let d = descriptor_for_force_type(ft).expect("descriptor");
+            assert_eq!(force_type_of_descriptor(&d), Some(ft), "force type {ft}");
+        }
+        let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
+        assert_eq!(force_type_of_descriptor(&em), Some(0));
+        assert_eq!(force_type_of_descriptor(&electric), Some(8));
     }
 
     #[test]
