@@ -1,16 +1,18 @@
 name: cdn-manifest
 
 # The one canonical harvester — every *-cdn.yml caller hands it the measured list
-# of {bin, netloc, asset, args?, sharded?, prefix?, timeout?, refresh?}. The setup
+# of {bin, netloc, asset, crate?, args?, sharded?, prefix?, timeout?, refresh?}. The setup
 # steps are byte-identical across the family; the parser/compiler stays distinct per
 # source (A = A). A caller is a thin `on: workflow_dispatch` + `uses: ./.github/workflows/cdn-manifest.yml`.
+# `crate` names the functional crate the bin lives in (default `omegaflow-harvest`);
+# a compiler in `omegaflow-measure`/`omegaflow-science` carries its crate explicitly.
 # `refresh: true` bypasses the idempotence skip — a source with a ttl or a schedule
 # (a live snapshot, a series) must re-harvest although its asset name is present.
 on:
   workflow_call:
     inputs:
       harvests:
-        description: 'JSON array of {bin, netloc, asset, args?, sharded?, prefix?, timeout?, refresh?}'
+        description: 'JSON array of {bin, netloc, asset, crate?, args?, sharded?, prefix?, timeout?, refresh?}'
         required: true
         type: string
     secrets:
@@ -59,4 +61,4 @@ jobs:
             echo "${{ matrix.asset }} already present — harvest skipped"
             exit 0
           fi
-          cargo run --release -p omegaflow-harvest --bin ${{ matrix.bin }} -- --ci-mode ${{ matrix.args }}
+          cargo run --release -p ${{ matrix.crate || 'omegaflow-harvest' }} --bin ${{ matrix.bin }} -- --ci-mode ${{ matrix.args }}
