@@ -102,8 +102,8 @@ fn main() {
 
 fn file_refs(line: &str) -> Vec<(&str, String)> {
     let mut out = Vec::new();
-    if let Some(idx) = line.find("see-also:") {
-        for tok in line[idx + 9..].split_whitespace() {
+    if let Some(rest) = line.trim_start().strip_prefix("see-also:") {
+        for tok in rest.split_whitespace() {
             let t = tok.trim_matches(|c| c == ',' || c == ')' || c == '(');
             let looks_like_path = t.contains('/')
                 || t.ends_with(".md")
@@ -244,6 +244,18 @@ mod tests {
         assert_eq!(
             absolute_paths("see /home/operator/a then https://x/srv/b"),
             vec!["/home/operator/a"]
+        );
+    }
+
+    #[test]
+    fn prose_see_also_mention_is_not_a_reference() {
+        assert!(
+            file_refs("- die Prosa traegt `see-also:` mitten im Satz, nicht als Direktive")
+                .is_empty()
+        );
+        assert_eq!(
+            file_refs("  see-also: docs/specs/x.md"),
+            vec![("see-also", "docs/specs/x.md".to_string())]
         );
     }
 }
