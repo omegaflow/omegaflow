@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: ee93d68f2d4aecf4a041f7215fe4b35bdaaa7372dcdfdef3be409b4b6004ab78
+  sha256: f7f1562a7d67f0b33c2d7d1877459e2e8a1b6c4efe702bdcf1326d8b73deed78
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -65,10 +65,13 @@ bleibt mountain.
   (**6/6 grün**, `node --test`). `ci-check` führt den Test (Shard 1). Deploy-Workflow
   `r2-verifier-deploy.yml` (wrangler, Secret `CLOUDFLARE_WORKERS_TOKEN`).
 - **Blockade:** keine.
-- **Braucht:** (a) Operator setzt die Repo-**Variable** `CLOUDFLARE_ACCOUNT_ID` (Haus-Regel:
-  die ID gehört nicht in den Baum); (b) `gh workflow run r2-verifier-deploy.yml` → dann
-  `r2_mirror` optional auf den Worker-PUT (OIDC-Bearer statt statischer S3-Keys) umstellen —
-  der secretlose Pfad.
+- **Braucht:** **deployed + verdrahtet (2026-10-10):** Deploy `38043617444` **success** —
+  Worker live `https://omegaflow-r2-verifier.johannes-tyroller.workers.dev`. `cdn::r2_mirror`
+  nutzt nun den Worker-PUT (`oidc_token` + `ACTIONS_ID_TOKEN_REQUEST_*`) **wenn** `OMEGAFLOW_R2_WORKER`
+  gesetzt **und** das OIDC-Env vorhanden ist, sonst Fallback auf die S3-Keys. `cdn-manifest.yml`
+  trägt `id-token: write` + `OMEGAFLOW_R2_WORKER`; **alle 35 Caller** tragen `id-token: write`.
+  Repo-Variablen `OMEGAFLOW_R2_MIRROR=1`, `CLOUDFLARE_ACCOUNT_ID`, `OMEGAFLOW_R2_WORKER` gesetzt.
+  Verbleibend: ein gated Lauf zur Abnahme des secretlosen Pfads (kein statischer Key im Job).
 
 ### Manifestation — R2-Upload-Pfad (Signer + Probe gebaut, live verifiziert)
 - **Status:** eigen (Fortsetzung) | **Bindung:** eigen
