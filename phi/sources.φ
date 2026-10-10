@@ -1989,6 +1989,7 @@ format carisma_mag
 origin https://donnees-data.asc-csa.gc.ca/users/OpenData_DonneesOuvertes/pub/CARISMA/carisma_csv/mag/daily/2009/DAWS/20090105DAWS.MAG.csv
 terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
 compiler tools/harvest/src/bin/carisma_mag_compiler.rs
+sha256 2d4398f557d98ec621438ed544008303ce88a942b192963228c7be0c63d4698e
 at earth
 ttl 86400
 field carisma_mag_x_nt carisma_mag_x_nt inverse-square em nT 1 0.0 0.0
