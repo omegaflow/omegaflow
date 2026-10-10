@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 574ad036d93fd1e6b57ea7ee08a6288183516f22a34a2064dcc0c19e74a2feef
+  sha256: c89759604fe4ce07c3396383e51e2cd253c027069e769b65895718916e50183d
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.2259 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 10 Recherchen, Rat Runde 1+2, 6+1 UI-Seats, Survey A–G) + Workflow-Hygiene + **cdn-manifest.yml gebaut + erster Aufrufer migriert** + Storage-/Azure-Messung · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.2672 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 10 Recherchen, Rat Runde 1+2, UI-Roster) + Workflow-Hygiene + cdn-manifest.yml + erster Aufrufer + Azure/R2-Registrierung bis zur Kante · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -154,6 +154,22 @@ Origin: mycelium-293 (2026-10-10); fortgeschrieben aus folge292.
   `Samples::Double`) ist gebaut; der äußere Arm bleibt aus. **Braucht:** dein gemessenes Wort, ob
   ein **neues** Operator-Wort den Riss über 2026-10-06 hinweg aufhebt — sonst bleibt das Wort
   maßgeblich.
+
+## Operator-Hand — vorbereitet bis zur Kante (2026-10-10)
+
+Browser-Profil `mycelium-auth`, drei Tabs offen (Operator führt den letzten Klick):
+
+1. **GitHub-App „Azure Pipelines"** — `https://github.com/apps/azure-pipelines/installations/new/permissions` —
+   **vorbereitet:** Konto `omegaflow`, „Only select repositories" → **`omegaflow/omegaflow`** (1 Repo).
+   **Operator-Wort erwartet:** der finale Klick **„Install"** (gewährt der App Lese-/Schreibzugriff
+   auf Checks, Code, Commit-Status, Deployments, Issues, PRs).
+2. **Azure DevOps** — `https://aex.dev.azure.com/` — **Login-Wand** (Microsoft-Konto oder „Anmelden
+   mit GitHub"). **Operator-Wort erwartet:** Anmeldung + Org-Anlage (`dev.azure.com/<org>`, Region).
+3. **Cloudflare** — `https://dash.cloudflare.com/login` — **Login-Wand** (Google/Apple/GitHub).
+   **Operator-Wort erwartet:** Anmeldung + R2 aktivieren (Free-Tier; Karte evtl. nötig) + Bucket +
+   API-Token (der Token-Wert bleibt in `.secrets.local`, nie im Transcript).
+
+Jeder Akt ist per-Akt (Konto/Key = Konsensgrenze); die Vorbereitung bis hierher ist autonom gelaufen.
 
 ## LOCK
 
