@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: d5937f3189513e213949948733990b071c6c6f6eca72048278f1d2f9b94cfa25
+  sha256: 48e89334a199cd59a89efe958cc0e55ba16e3ff4e97958a0cb396fea767cf25a
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -49,7 +49,7 @@ flash only, kein pro/max.
 - **Status:** eigen (Architektur) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Schritt je Riss/Route
 - **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`. **Messungen 2026-10-10:** Riss 3 (KNMI/Mindat) — kein Key in `.secrets.local` → `pending` (Operator-Route); Riss 4 (Overpass) — HTTP 406 direkt+Proton → bot-gated `pending`; Riss 5 — SURFRAD/ECAD/DWD/WorldClim = Messwert, GADM/Worldview = Referenz/Anzeige. **UI-Runde gefahren** (`mountain-ui`: Duck Haiku · Claude Sonnet · Qwen · Z.ai GLM, alle geantwortet): Achse tragfähig, aber **Manifestation statt Quelle** klassifizieren + **Lizenz-/Zugangs-Gate vor** der Achse + **Kontext-Achse** ergänzen — Konvergenz mit dem Rat (Riss = fehlende Gate-Achse). **Korrektur (Operator-Frage 2026-10-10):** die „12 Query"-Klassifikation war zu mechanisch („hat API" ≠ Arm); Präzedenz **`--supermag`/`--heasarc` = Dual** (Quelle + Arm), `--opencellid` = reiner Arm. Die Kandidaten sind Messquellen (→ `phi`) oder Referenz/Modell/decline — **kein neuer Arm klar gerechtfertigt**; die blockierte Arm-Hälfte ist gegenstandslos (max. optionales EMSC-Dual).
-- **Blockade:** Arm-Hälfte gegenstandslos (kein neuer Arm gerechtfertigt); Riss 4 (Overpass) bot-gated `pending`. **Incident 2026-10-10:** der frisch freigegebene KNMI-EDR-Schlüssel lief beim strukturellen Auslesen der Tyk-Erfolgsseite (`browser_query` auf einen `<p>`) in den Session-Transcript → nach Secret-Hygiene als **veröffentlicht** zu behandeln; der Wert liegt als `KNMI_API_KEY` → **Rotation empfohlen** (neuer Schlüssel, Operator-Hand). Lehre: eine gerade ausgestellte Schlüssel-Seite wird nie ausgelesen — der Operator kopiert direkt.
+- **Blockade:** Arm-Hälfte gegenstandslos (kein neuer Arm gerechtfertigt); Riss 4 (Overpass) bot-gated `pending`. **Incident 2026-10-10:** der frisch freigegebene KNMI-EDR-Schlüssel lief beim strukturellen Auslesen der Tyk-Erfolgsseite (`browser_query` auf einen `<p>`) in den Session-Transcript → nach Secret-Hygiene als **veröffentlicht** zu behandeln; der Wert liegt als `KNMI_API_KEY` → **Rotation empfohlen** (neuer Schlüssel, Operator-Hand). Lehre: eine gerade ausgestellte Schlüssel-Seite wird nie ausgelesen — der Operator kopiert direkt. → Operator-Wort 2026-10-10: **Risiko benannt und akzeptiert** (keine Rotation; öffentliche read-only Non-Commercial-Daten).
 - **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) **KNMI gebunden via EDR (live 2026-10-10):** der Operator hat den EDR-Zugang freigeschaltet; `knmi_compiler.rs` fetcht `/edr/v1/collections/10-minute-in-situ-meteorological-observations/position` (CoverageJSON) — **77 Stationen**, Felder `knmi_air_temperature` (K) · `knmi_wind_speed`/`_gust` (m/s) · `knmi_precipitation_intensity` (kg/m²s), `.bin` roundtrip-geprüft, `cargo check` 0/0. `KNMI_API_KEY` trägt jetzt den EDR-Schlüssel (die Open-Data-Route ist damit weg — EDR ist der gewählte Weg). Quelle bereit für die `## An mycelium`-Registrierung. **Mindat:** `mindat_probe.rs` — Token erkannt, Konto **Level 0**; Aktivierungs-/API-Antrag **eingereicht** → `wartend` (`state/zustand/wartend.φ: mindat-api-level1`).
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
@@ -140,6 +140,8 @@ Wort | Datum | Quelle
 „ok genau das hatte ich schon gemacht" | 2026-10-10 | Operator (Session, Mountain 303)
 „bitte nochmal warst im timeout" | 2026-10-10 | Operator (Session, Mountain 303)
 „ich hab ihn eingegeben" | 2026-10-10 | Operator (Session, Mountain 303)
+„aber ganz ehrlich wie problematisch ist das?" | 2026-10-10 | Operator (Session, Mountain 303)
+„akzeptiert" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
@@ -171,14 +173,7 @@ Origin: mountain-303 (2026-10-10).
 
 Origin: mountain-303 (2026-10-10).
 
-- **Zwei Zugangs-Schlüssel in `.secrets.local` (Operator-Akt, einfache Sprache).**
-  - **Lage:** Zwei gemessene Quellen antworten ohne Schlüssel mit HTTP 401 — **KNMI Data Platform** (`api.dataplatform.knmi.nl/open-data/v1/datasets`, Tyk; Auth als Header `Authorization: <key>`) und **Mindat** (`api.mindat.org/v1/`, `www-authenticate: Token`; Auth als Header `Authorization: Token <token>`).
-  - **Frage:** Trägst du diese zwei Zeilen in `.secrets.local` ein?
-    - `KNMI_API_KEY=<key>` — schaltet den KNMI-Compiler frei (niederländische Meteo-Beobachtungen; `phi`-Quelle, Compiler `tools/harvest/src/bin/knmi_compiler.rs` baue ich dann).
-    - `MINDAT_TOKEN=<token>` — nur falls du die Mineral-Referenz-DB (aktuell Lead, kein Compiler geplant) ernten willst.
-  - **Bei Ja:** KNMI-Key gesetzt → ich baue `knmi_compiler.rs`. **Bei Nein:** beide bleiben `pending`, kein Akt.
-- **KNMI — EDR-Schlüssel: Rotation (2026-10-10).** **Lage:** EDR ist freigeschaltet, der CoverageJSON-Pfad ist live gebunden (77 Stationen). Beim Freigeben lief der neue Schlüssel in den Session-Transcript (strukturelles Auslesen der Tyk-Erfolgsseite) → nach Secret-Hygiene als **veröffentlicht** zu behandeln; er liegt als `KNMI_API_KEY`. **Frage:** Schlüssel im KNMI-Portal **rotieren** (neuen anfordern) und `KNMI_API_KEY` ersetzen? **Bei Ja:** neuer Wert → ich prüfe den EDR-Pfad kurz erneut. **Bei Nein:** der geleakte Wert bleibt in Gebrauch (Risiko benannt und akzeptiert).
-- **Mindat — Antrag eingereicht (2026-10-10).** Das Aktivierungs-/API-Formular ist **bereits abgesendet** (Operator-Wort 2026-10-10 „genau das hatte ich schon gemacht") → **`wartend`** (`state/zustand/wartend.φ`: `mindat-api-level1`, Freigabe Level 1, Wiedervorlage 2026-10-13). Nach Freigabe: „Edit My Page" → API-Schlüssel → `MINDAT_TOKEN`, dann `mindat_probe` erneut (Routing Messung vs. `presence-catalog`).
+- **Keine offenen Operator-Akte.** Die zwei Zugangswerte sind eingetragen (`KNMI_API_KEY` = EDR-Schlüssel, `MINDAT_TOKEN`); der beim Ausstellen in den Transcript gelaufene KNMI-EDR-Schlüssel ist per Operator-Wort 2026-10-10 **als Risiko akzeptiert** (keine Rotation; Begründung: öffentliche read-only Non-Commercial-Daten, reines Quota-Token). Mindat → `wartend` (`state/zustand/wartend.φ: mindat-api-level1`).
 
 ## Abschluss
 
