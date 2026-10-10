@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 47c3f59bdd807544fd45c5328f837b262806001d8171f6b93326ce39a294a5a5
+  sha256: d59f9b287f3f7a6147b21be1bc739b3be1955e81ac65efdb273b0af548543e6e
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -217,14 +217,19 @@ erreichbare Alternative suchen und messen.
 | DE-Hessen `geodaten.hessen.de` (tot) | `geoportal.hessen.de` | **206** | Hessen-Geoportal (richtige Adresse) |
 | DE-Thüringen `geodaten.thueringen.de` (tot) | `geoportal.thueringen.de` | **200** | Thüringen-Geoportal |
 | DE-Hamburg `geoportal.hamburg.de` (tot) | `transparenz.hamburg.de` | **206** | Hamburg Transparenzportal |
-| noch blockiert | GR `geoportal.gov.gr`/`geodata.gov.gr`, RO `data.gov.ro`, BG `data.egov.bg` (403), Pacific `pacificdata.org` (403), IL `data.gov.il` (403) | tot/403 | — (Exit-Wechsel = Operator-Wort) |
+| GR `geoportal.gov.gr`/`geodata.gov.gr` (tot) | `data.gov.gr` | **200** | Griechisches Open-Data-Portal |
+| BG `gis.mrrb.government.bg` (tot) / `data.egov.bg` (403) | `egov.bg` · `www.mrrb.bg` | **200 · 200** | BG eGovernment + Ministerium (MRRB) |
+| RO `data.gov.ro` (tot) | `www.ancpi.ro` | **200** | ANCPI (LAKI III LiDAR) |
+| noch blockiert (Geo/CF) | Pacific `pacificdata.org`·`sprep.org`·`ffa.int` (403), IL `data.gov.il`·`gov.il`·`mapi.gov.il` (403) | 403 | Exit-Wechsel = Operator-Wort; Pacific teils über NOAA-PDS (Guam, 206) |
 | global (topografisch) | `srtm.csi.cgiar.org` · Copernicus DEM | 200 | globale DEM-Alternative (kein LiDAR) |
 
-**Ergebnis:** 11 der toten/blockierten LiDAR-Hosts haben eine erreichbare
+**Ergebnis:** 13 der toten/blockierten LiDAR-Hosts haben eine erreichbare
 Alternative (JP→AWS · UK-SCO→data.gov.uk · AU-VIC→Data-Vic · SG→data.gov.sg ·
-ES→datos.gob.es/IGN · SK→data.gov.sk/GKU · PT→DGT · RO→ANCPI · DE-Hessen/
-Thüringen/Hamburg→Landes-Geoportale). Nur GR, RO-`data.gov.ro`, BG `data.egov.bg`,
-Pacific, IL bleiben 403/tot (Geo/CF oder außer Betrieb) — Exit-Wechsel = Operator-Wort.
+ES→datos.gob.es/IGN · SK→data.gov.sk/GKU · PT→DGT · RO-`geoportal`+`data.gov`→ANCPI ·
+**GR→data.gov.gr** · **BG→egov.bg/mrrb.bg** · DE-Hessen/Thüringen/Hamburg→
+Landes-Geoportale). Nur **Pacific** (`pacificdata.org`/`sprep.org`/`ffa.int`) und
+**Israel** (`data.gov.il`/`gov.il`/`mapi.gov.il`) bleiben 403 — beide riechen nach
+Cloudflare/Geo; ein Exit-Wechsel ist Operator-Wort, kein stiller Akt.
 
 ## Bathymetrie / Unterwasser (topo-bathy, Multibeam, globale Relief-Modelle)
 
