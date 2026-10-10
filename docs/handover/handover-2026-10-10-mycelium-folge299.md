@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cmb-SPT-Resume gebaut (--tar + persistenter $HOME-Cache); sb_radar_compiler gebaut (Feld pending); open-lidar-data-COPC-Manifestator gebaut (CRS per --crs deklariert, Datei trägt keine); vnp46a3-Fetch-Diagnostik (HTTP-Code); surfrad_compiler (orphan, committet).
   class: handover
   date: 2026-10-10
-  sha256: f335e2f78b1cbdc5b794a93e5f6566435475b9c488dafd89023c1c895e3d7386
+  sha256: c8c6217b9e3ab78486d29e20a9ef99f02405c947bc11817a232adfd8878f29b2
   status: live
 -->
 # Handover — Mycelium-Folge 299 (2026-10-10)
@@ -134,17 +134,37 @@ kein erneuter Falt-Akt.
 - **Braucht:** (a) einen COG-Kachel-URL messen; (b) ein `dom_compiler`-Bin auf
   `tiff::apply_predictor`; (c) `sources.φ`-Block (format dom, at earth, CC-BY-4.0, ttl).
 
-### SURFRAD-Compiler — Registrierung (orphan committet)
-- **Status:** eigen | **Bindung:** eigen (Ernte)
+### φ-Manifestation — SURFRAD (gefaltet aus mountain-303)
+- **Status:** eigen | **Bindung:** eigen (Manifestation)
 - **Trigger:** nächste Dispatch-Session dieser Linie
-- **Lage:** (gemessen 2026-10-10) `tools/harvest/src/bin/surfrad_compiler.rs`
-  (566 Z., baut grün, Stundenmittel shortwave_down/direct_normal, `format surfrad`,
-  `at earth`) lag als orphaned staged `A` im Baum und wurde in diesem Atom
-  committet; `phi/sources.φ` trägt **keinen** gml.noaa.gov/surfrad-Block.
-- **Blockade:** keine.
-- **Braucht:** einen Messlauf (eine Station, ein Tag) → Ausgabe-Zeilen in den
-  `phi/sources.φ`-Block (Mountain-Verdikt + Mycelium-Direktive `url`/`compiler`/Tags),
-  dann CDN-Manifestation.
+- **Lage:** (gemessen 2026-10-10, mountain-303) `tools/harvest/src/bin/surfrad_compiler.rs`
+  (Stundenmittel `surfrad_shortwave_down` + `surfrad_direct_normal` W/m², `cargo check`
+  0/0; Sample `https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat`
+  HTTP 200). `phi/sources.φ` trägt **keinen** gml.noaa.gov/surfrad-Block.
+- **Blockade (Grenzfall, Rat):** die φ-Zeile ist zweiteilig — Mycelium die
+  Materialisierung (`url`/`origin`/`compiler`), Mountain das Verdikt (`terms`/`at`/`ttl`);
+  kein stiller Schreibakt.
+- **Braucht:** die Mycelium-Direktive setzen (`url` + `origin …/radiation/surfrad/` +
+  `compiler tools/harvest/src/bin/surfrad_compiler.rs`), die Mountain-Verdikt-Zeile
+  (terms/at/ttl) erbitten, dann den Manifestations-Workflow (`surfrad-cdn.yml`) bauen.
+
+### φ-Manifestation — ECAD · DWD CDC · WorldClim · AODN (gefaltet aus mountain-303)
+- **Status:** eigen | **Bindung:** eigen (Manifestation)
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10, mountain-303) vier Compiler stehen (`cargo check`
+  0/0), je mit Quelle + Feldern: `ecad_compiler.rs` (`https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_{tx,rr}.zip`,
+  `eca_tx/tn/tg` K 86400, `eca_rr` kg/m²) · `dwd_cdc_compiler.rs`
+  (`https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/`,
+  `dwd_air_temperature_{mean,max,min}` K, `dwd_surface_pressure` Pa, `dwd_wind_{speed_mean,gust_max}` m/s,
+  `dwd_precipitation_height` m, `dwd_relative_humidity` 1, `dwd_vapour_pressure` Pa) ·
+  `worldclim_compiler.rs` (`https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_{tavg,tmin,tmax,prec}.zip`,
+  `worldclim_{tavg,tmin,tmax}` K, `worldclim_prec` mm, monatlich) · `aodn_compiler.rs`
+  (IMOS/AODN THREDDS/OPeNDAP `https://thredds.aodn.org.au/thredds/dodsC/…`,
+  `aodn_temperature` K, `aodn_salinity` PSU, `aodn_velocity_{u,v}` m/s, `aodn_wave_height` m).
+- **Blockade:** wie SURFRAD — zweiteilige φ-Zeile (Mycelium `url`/`origin`/`compiler`,
+  Mountain `terms`/`at`/`ttl`).
+- **Braucht:** je Quelle die Mycelium-Direktive + Mountain-Verdikt-Zeile, dann je einen
+  Manifestations-Workflow (`tools/harvest`-Compiler → `*-cdn.yml` → `phi/sources.φ`).
 
 ### Architektur — GitHub/CI/CDN-Optimierung (Survey + Rat)
 - **Status:** eigen | **Bindung:** eigen · Teile linie:mountain/river
