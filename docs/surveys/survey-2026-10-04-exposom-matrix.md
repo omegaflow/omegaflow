@@ -2,7 +2,7 @@
   title: Exposom-Quellenmatrix — somatisch + psychosomatisch (Stand 2026-10-04)
   class: survey
   date: 2026-10-04
-  sha256: 829a979f761846251edcc02820561f868477be8a0feb6c442f1c0bb718dda18b
+  sha256: 16f9571ce020c014f8856b989b4895467b733272d2bb531bafc24e216900a9a3
   status: live
   see-also: docs/concepts/kybernaut-native-methodology.md
 -->
@@ -17,9 +17,19 @@ nennt einen Schlüssel-Review (y↔Exposom-Zusammenhang), eine offene Kohorte/ei
 Datensatz, eine feedbare y-Serie aus dem bisherigen y-Bestand, eine offene
 x-Serie sowie den Kollokations-Stand (Ort + Zeit in derselben Serie vorhanden?).
 
-Legende Kollokation: `ja` = Ort und Zeit gemessen vorhanden · `pending` = Zeit
-vorhanden, Ort nicht gemessen/nicht im Datensatz · `nein` = strukturell nicht
-kollokierbar (Zeit verschoben oder Ort maskiert).
+Legende Kollokation: `ja` = Ort und Zeit gemessen vorhanden · **`site`** = dokumentierter
+Studien-/Erhebungsort (Klinik/Universität/Stadt) als **Repräsentativpunkt**, Teilnehmer-
+Koordinate absent (`pending`) — expliziter **Proxy, kein `ja`**; Zusatzflags
+`geocoded_inferred` (Koordinate aus dem Namen abgeleitet, **nicht** in der Quelle genannt) und
+`centroid_only` (nur Stadt/Mittelpunkt) · `pending` = Zeit vorhanden, Ort nicht gemessen/nicht
+im Datensatz · `nein` = strukturell nicht kollokierbar (Zeit verschoben oder Ort maskiert).
+
+*`site` (Rat 2026-10-10 + Claude-UI, konvergiert):* für **grob aufgelöste Meteorologie**
+(Open-Meteo/NASA POWER) ist der Site-Proxy meist tragfähig; für **stationsgebundene
+Schadstoffe** (OpenAQ) ist die Zuordnung eine **dokumentierte Distanzannahme** (Puffer aus der
+Auflösung der x-Serie, nie beliebig). **Riss (Qwen-UI, dissent):** hält den Proxy für eine
+unzulässige Annahme (ökologischer Fehlschluss) und setzt `nein` — als Riss getragen, nicht
+geglättet. Der Site-Punkt ist ein **Query-Anker** wie der Receiver-Anker, **kein Oszillator**.
 
 Legende Verdikt-Status (`--verdict`, Stufe 1 direkt): `200`/`206` = gefunden ·
 `403` = direkte Route blockiert, wayback-Snapshot 200 (Route = key/geo-needed,
@@ -314,12 +324,12 @@ Ein zweiter, härterer Taucher-Satz hat mehrere frühere Zeilen **widerlegt** (A
 
 | Klasse | Serie | Quelle/DOI | Dauer | n | Besonderheit | Ort im Datensatz? | x-Kollokation |
 |---|---|---|---|---|---|---|---|
-| respiratorisch | **TOLIFE** | `10.5281/zenodo.16642439` | 12 Mon. | 74 | **Umweltsensorik im Paket** (T/Feuchte/Luft/Licht/Schall) | nur Land (GERMANY/SPAIN) | **`pending`** |
-| respiratorisch | **AAMOS-00** | `10.7488/ds/3775` (→ `hdl:10283/4761`) | 12 Mon. | 22 | **Wetter/Pollen/Luftqualität im Paket** | UK-admin-Region | **`pending`** |
-| Autoimmun | **Wearable+PRO Fatigue** | `10.5281/zenodo.8018238` | 1 Mon. | 183 | SLE/Sjögren, Fitbit+PRO | keiner (nur „United States") | **`pending`** |
-| Sucht | **ADARP** | `10.5281/zenodo.6640290` | 14 d | 11 | E4 HR/EDA + EMA, AUD | keiner (kein GPS-Kanal) | **`pending`** |
-| Psychose | **CrossCheck** | Kaggle `dartweichen/crosscheck` | 1 J | ~17–63 | passiv + EMA, Relapse | keine Koordinate (nur GPS-abgeleitete Features) | **`pending`** |
-| Affekt | **Labbaf** | `10.7280/D1WH6T` | ⌀7,8 Mon. | 21 | CC0, SoCal, PPG/IMU+EMA | keine Koordinate (Venue **request-only**, Region „Southern California") | **`pending`** |
+| respiratorisch | **TOLIFE** | `10.5281/zenodo.16642439` | 12 Mon. | 74 | **Umweltsensorik im Paket** (T/Feuchte/Luft/Licht/Schall) | nur Land (GERMANY/SPAIN) | **`site`** (Großhansdorf DE + Barcelona ES; `centroid_only`) |
+| respiratorisch | **AAMOS-00** | `10.7488/ds/3775` (→ `hdl:10283/4761`) | 12 Mon. | 22 | **Wetter/Pollen/Luftqualität im Paket** | UK-admin-Region | **`site`** (Edinburgh; `centroid_only`) |
+| Autoimmun | **Wearable+PRO Fatigue** | `10.5281/zenodo.8018238` | 1 Mon. | 183 | SLE/Sjögren, Fitbit+PRO | keiner (nur „United States") | **`pending`** (kein Site) |
+| Sucht | **ADARP** | `10.5281/zenodo.6640290` | 14 d | 11 | E4 HR/EDA + EMA, AUD | keiner (kein GPS-Kanal) | **`site`** (Pullman WA; `centroid_only`) |
+| Psychose | **CrossCheck** | Kaggle `dartweichen/crosscheck` | 1 J | ~17–63 | passiv + EMA, Relapse | keine Koordinate (nur GPS-abgeleitete Features) | **`site`** (Long Island NY; `centroid_only`) |
+| Affekt | **Labbaf** | `10.7280/D1WH6T` | ⌀7,8 Mon. | 21 | CC0, SoCal, PPG/IMU+EMA | keine Koordinate (Venue **request-only**, Region „Southern California") | **`site`** (Irvine CA; `centroid_only`) |
 
 **Konsequenz (korrigiert, gemessen 2026-10-10):** Kein einziger dieser sechs offenen
 Datensätze trägt eine **im Datensatz gemessene Koordinate** — alle tragen eine absolute
