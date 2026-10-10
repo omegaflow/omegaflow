@@ -5303,11 +5303,76 @@ fn run_pair_matrix(
     0
 }
 
+fn run_summary_panel(
+    channels: &str,
+    scale_s: Option<f64>,
+    sources: &[SourceConfig],
+    witnesses: &[WitnessRecord],
+    anchor: &QueryAnchor,
+) -> i32 {
+    let names: Vec<&str> = channels
+        .split(',')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty())
+        .collect();
+    if names.len() < 2 {
+        eprintln!(
+            "--panel carries {} channel(s) — a panel needs at least two",
+            names.len()
+        );
+        return 2;
+    }
+    let mut loaded: Vec<(&str, Vec<(f64, f64)>)> = Vec::new();
+    for name in &names {
+        match load_matrix_arm(name, sources, witnesses, anchor, &[]) {
+            Ok(series) => loaded.push((name, series)),
+            Err(reason) => {
+                println!("arm '{name}' stays pending — {reason}");
+                return 0;
+            }
+        }
+    }
+    let native: Vec<Option<f64>> = loaded.iter().map(|(_, s)| median_dt(s)).collect();
+    let finest = native
+        .iter()
+        .flatten()
+        .copied()
+        .fold(None::<f64>, |acc, x| Some(acc.map_or(x, |a| a.max(x))));
+    let delta = scale_s.or(finest);
+    let Some(delta) = delta else {
+        println!("panel pending — no native cadence was measurable and no --scale declared");
+        return 0;
+    };
+    let arms: Vec<&[(f64, f64)]> = loaded.iter().map(|(_, s)| s.as_slice()).collect();
+    let (columns, _grid, grid_dt) = match align_many(&arms, Seasonal::None, Some(delta)) {
+        Ok(aligned) => aligned,
+        Err(reason) => {
+            println!("panel pending — {reason}");
+            return 0;
+        }
+    };
+    let cols: Vec<&[Option<f64>]> = columns.iter().map(|c| c.as_slice()).collect();
+    let joint = joint_columns(&cols);
+    let n = match joint.first() {
+        Some(column) => column.len(),
+        None => 0,
+    };
+    println!(
+        "panel {} channels | declared scale {delta:.0}s | grid {grid_dt:.1}s | complete rows {n}",
+        loaded.len()
+    );
+    for (column, (name, _)) in cols.iter().zip(loaded.iter()) {
+        let present = column.iter().filter(|v| v.is_some()).count();
+        println!("  {name:<28} | blocks {present}");
+    }
+    0
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n> | modes --stage2 family --driver <field> [--lags <list>] [--surrogate <n>] [--bin <seconds>] [--seasonal none|climatology+standardize]"
+        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n> | modes --stage2 family --driver <field> [--lags <list>] [--surrogate <n>] [--bin <seconds>] [--seasonal none|climatology+standardize] | modes --panel <a,b,...> [--scale <seconds>]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -5318,6 +5383,12 @@ fn main() {
             exit(2);
         }
     };
+    if let Some(channels) = arg_after(&args, "--panel") {
+        let scale_s = arg_after(&args, "--scale").and_then(|s| s.parse::<f64>().ok());
+        exit(run_summary_panel(
+            channels, scale_s, &sources, &witnesses, &anchor,
+        ));
+    }
     if let Some(name) = arg_after(&args, "--direction") {
         exit(run_direction_query(name, &witnesses));
     }
