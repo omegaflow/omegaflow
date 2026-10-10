@@ -47,22 +47,10 @@ pending
 url https://pds-ppi.igpp.ucla.edu/data
 note PDS-PPI (UCLA) — 2026-10-09: EPN-TAP 200; Compiler + Workflow + harvest.φ-Arm stehen; terms TSPA=PD. Keine statische Zeile: Family unbounded, kein Manifest, pds4_fixed_width braucht field-Zeilen. Vorbedingung: Manifest + dynamische Felder.
 
-pending
-url https://skyview.gsfc.nasa.gov/cgi-bin/images
-note HI 21cm — 2026-10-09: Arm ebhis_compiler steht (FITS hpx/HPX_190.fit, EBHIS J/A+A/585/A41, 346 Serien K); GASS Falsch-Positiv, HI4PI J/A+A/594/A116 existiert. sources.φ-Block pending (Mycelium).
-
-pending
-url https://lambda.gsfc.nasa.gov/
-note CMB LAMBDA/PLA — 2026-10-09: Arme cmb_planck_compiler (NESTED) + cmb_act_compiler (ACT RING→NEST, equatorial, 1024E, uK) stehen; WMAP-Einheit TUNIT1='mK, thermodynamic' gemessen; SPT D1 tar.bz2. sources.φ-Block pending (Mycelium).
-
 blocked parser-def
 url https://opendata.cern.ch/record/1120
 gap particle-cern
 note Teilchen CERN — 2026-10-10: --probe AliVSD_Masterclass_6.root = 34 Keys (33 TDirectoryFile EventXXXX + 1 TDirectory); kein Top-Level-TTree, TTree je Event-Dir. Rat 2026-10-10 (5/7 UI): parser-def bleibt (Bau-Schuld), Indexdomäne ungemessen.
-
-pending
-url https://blinkverse.zero2x.org/
-note FRB Blinkverse — 2026-10-09: Host zero2x.org direkt 200; Arm blinkverse_compiler steht (CSV: 4020 Quellen, 35342 Pulse, 154 Hosts); alter Host zerooffset.xyz tot. sources.φ-Block pending (Mycelium).
 
 pending
 url https://losc.ligo.org/
