@@ -2,7 +2,8 @@ use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
     ChannelDescriptor, Conserved, FluxKind, Medium, PdeType, QuantityRole, Regime, TransportOp,
-    channel_ref_of_descriptor, descriptor_from_axes, unit_token,
+    channel_ref_of_descriptor, conserved_for_quantity, conserved_name, descriptor_from_axes,
+    unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -1383,14 +1384,27 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     None => continue,
                 };
                 let conserved = match op {
-                    TransportOp::Maxwell => "energy",
-                    TransportOp::Poisson => "mass",
-                    TransportOp::Wave => "energy",
-                    TransportOp::Advective => "momentum",
                     TransportOp::Flux(FluxKind::Fick) => "mass",
                     TransportOp::Flux(FluxKind::Fourier) => "energy",
                     TransportOp::Flux(FluxKind::Ohm) => "charge",
                     TransportOp::Flux(FluxKind::NewtonViscous) => "momentum",
+                    TransportOp::Advective
+                    | TransportOp::Wave
+                    | TransportOp::Maxwell
+                    | TransportOp::Poisson => match conserved_for_quantity(parts[2]) {
+                        Some(c) => conserved_name(c),
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "field {}: quantity \"{}\" resolves to no conserved quantity for operator \"{}\" — pending, never a default",
+                                    parts[1], parts[2], parts[3]
+                                ),
+                            );
+                            continue;
+                        }
+                    },
                 };
                 let role_idx = if QuantityRole::parse(parts[6]).is_some() {
                     6
@@ -2574,6 +2588,16 @@ mod tests {
                 .iter()
                 .all(|e| !matches!(e, Extract::Field(_))),
             "an unknown operator is skipped, never defaulted"
+        );
+
+        let unresolved = "url https://example.com/x\nttl 600\nat sun\nfield x xyzzy maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let pending = parse_sources(unresolved);
+        assert!(
+            pending[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "a quantity that resolves to no conserved quantity is pending, never defaulted"
         );
     }
 

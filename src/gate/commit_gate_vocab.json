@@ -115,7 +115,12 @@
     ["nur durch Verbiegen", "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"],
     ["ist kein Biegen", "a route that demands a role/persona the person does not hold (teacher, journalist, …) is a bending of the person, not a neutral eligibility gate — naming it 'not a bending' keeps the deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"],
     ["ist keine Biege", "a role/persona requirement is a bending of the person, not a neutral gate — calling it 'no bending' keeps the deforming route; classify it as ice (Operator-Wort 2026-10-10)"],
-    ["is not a bending", "a role/persona requirement is a bending of the person, not a neutral eligibility gate — the phrase keeps a deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"]
+    ["is not a bending", "a role/persona requirement is a bending of the person, not a neutral eligibility gate — the phrase keeps a deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"],
+    ["Advective => \"momentum\"", "advective (u·∇) is quantity-agnostic — its conserved quantity is the transported <quantity>, never derived from the operator; Momentum is a fabrication (Rat + roster 2026-10-10)"],
+    ["Advective => \"mass\"", "advective's conserved quantity is the transported <quantity>, never a Mass default — an operator-derived binding is a fabrication (Rat + roster 2026-10-10)"],
+    ["Wave => \"energy\"", "wave is quantity-bounded within {Momentum, Energy} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
+    ["Maxwell => \"energy\"", "maxwell is quantity-bounded within {Energy, Momentum} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
+    ["Poisson => \"mass\"", "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
