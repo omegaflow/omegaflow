@@ -81,10 +81,17 @@ fn parse_isc(body: &str) -> Vec<String> {
         if id.is_empty() || lat.is_empty() || lon.is_empty() {
             continue;
         }
-        out.push(format!(
+        let mut line = format!(
             "event {}\ttime {}\tlat {}\tlon {}\tdepth {}\tmag {}",
             id, time, lat, lon, depth, mag
-        ));
+        );
+        if let Some(magtype) = cols.get(9).copied().filter(|v| !v.is_empty()) {
+            line.push_str(&format!("\tmagtype {}", magtype));
+        }
+        if let Some(place) = cols.get(12).copied().filter(|v| !v.is_empty()) {
+            line.push_str(&format!("\tplace {}", place));
+        }
+        out.push(line);
     }
     out
 }
@@ -102,8 +109,19 @@ mod tests {
         assert_eq!(
             parse_isc(body),
             vec![
-                "event 617049575\ttime 2020-01-01T00:28:20.792\tlat -5.3600\tlon 152.5302\tdepth 45.3\tmag 4.96".to_string(),
-                "event 617050226\ttime 2020-01-01T03:53:27.504\tlat 52.5104\tlon 159.3492\tdepth 52.6\tmag 4.96".to_string(),
+                "event 617049575\ttime 2020-01-01T00:28:20.792\tlat -5.3600\tlon 152.5302\tdepth 45.3\tmag 4.96\tmagtype MW\tplace New Britain region".to_string(),
+                "event 617050226\ttime 2020-01-01T03:53:27.504\tlat 52.5104\tlon 159.3492\tdepth 52.6\tmag 4.96\tmagtype MW\tplace Off east coast of Kamchatka Peninsula".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn empty_magtype_and_place_are_omitted() {
+        let body = "700000001|2020-01-02T00:00:00.000|10.0000|20.0000|30.0|ISC|ISC|ISC|||5.00|ISC||earthquake\n";
+        assert_eq!(
+            parse_isc(body),
+            vec![
+                "event 700000001\ttime 2020-01-02T00:00:00.000\tlat 10.0000\tlon 20.0000\tdepth 30.0\tmag 5.00".to_string(),
             ]
         );
     }
