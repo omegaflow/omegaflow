@@ -3,7 +3,7 @@
   session: River-Folge 161
   class: handover
   date: 2026-10-10
-  sha256: 8a82d4ea39dd50327a47930d423627be3f77a65febe33fa55f624882be97c763
+  sha256: fdfe401d1064a29c305478fd1369697b54c33367a1fa298419cf212c14883e64
   status: live
 -->
 # Handover — River-Folge 161 (2026-10-10)
@@ -73,17 +73,17 @@ Origin: river-161.
 
 ## Offen (aufgeschlüsselt)
 
-### P10 Register-Physik — Diskriminator-Mechanik gebaut, `field`-Arm + `em`-Split offen
+### P10 Register-Physik — `field`-Deskriptor-Parser + `em`/`electric`-Split gebaut; Zeilen-Migration offen
 - **Status:** eigen | **Bindung:** eigen · mountain
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-10, river-161) P10.1 Lint + P10.2a-Schema verbindlich; `gravity` wissenschaftlich klassifiziert (10 / 104→geometry / 5→source-parameter / 2 pending). **Gebaut (river-161):** die vom Rat-Verdikt geforderte Diskriminator-Mechanik — `descriptor_from_axes(role, conserved, operator, pde_type, medium, boundary, unit)` baut den `ChannelDescriptor` aus den Achsen (unbekannte Achse = benannte Verweigerung, nie Default; `is_admissible` lehnt unzulässige Operator/Medium-Paare ab), `live_channel_hash_of` ist der exakte Registry-Treffer (Nicht-Treffer = `None` = `unresolved`, 0 honoured). Test `p10_descriptor_axes_resolve_in_the_live_registry_and_refuse_otherwise`; `cargo check --tests` grün. Der benannte Riss bleibt messbar: `em`/`electric` teilen einen Descriptor (`channel.rs:654`).
-- **Blockade:** (a) die Zeilen-Migration (Mountain); (b) die Verdrahtung der `field`-Form in `FieldConfig`/Record hängt an P9.2 (die Kanalzahl **im** Record) — noch kein ChannelId-Slot.
-- **Braucht:** (1) **Mountain** schreibt die `gravity`-Zeilen um (`state/river/p10-gravity-klassifikation.md`, `## An mountain`); (2) River: den `field`-Parser-Arm der Verdikt-Form (`field <selector> <quantity> <role> <conserved> <operator> <pde_type> <medium> <boundary> [<regime>] <kernel> <unit> <tau> [abs] [adv]`) an `descriptor_from_axes` + `live_channel_hash_of` binden, sobald P9.2 den ChannelId-Slot im Record trägt; (3) `em`/`electric` in getrennte Registry-Einträge mit `regime=` spalten (nie glätten).
+- **Lage:** (gemessen 2026-10-10, river-161) P10.1 Lint + P10.2a-Schema verbindlich; `gravity` wissenschaftlich klassifiziert (10 / 104→geometry / 5→source-parameter / 2 pending). **Gebaut (river-161):** (a) in `src/mathematikerin/channel.rs` `descriptor_from_axes(role, conserved, operator, pde_type, medium, boundary, unit)` (unbekannte Achse → benannte Verweigerung; `is_admissible` lehnt unzulässige Operator/Medium-Paare ab), `live_channel_hash_of` (exakter Registry-Treffer, sonst `None`/`unresolved`) und `force_type_of_descriptor` (Deskriptor → registrierter force_type); (b) der **`field`-Deskriptor-Parser-Arm** in `src/archivar/parse.rs`: `field <selector> <quantity> <role> <conserved> <operator> <pde_type> <medium> <boundary> <kernel> <unit> <tau> [abs] [adv]` → Deskriptor → `force_type_of_descriptor` → force/ChannelId; kein bzw. mehrdeutiger Treffer → **Verweigerung** (kein Default), Legacy-`field`/`force`-Form unverändert; (c) der **`em`/`electric`-Riss getrennt** — `em` = Mixed, `electric` = Elliptic → die Live-Registry trägt **9 distinkte** Kanäle. Tests: `p10_descriptor_axes_resolve_in_the_live_registry_and_refuse_otherwise`, `every_force_type_round_trips_through_its_descriptor`, `a_descriptor_field_line_resolves_to_its_registered_channel`, `a_descriptor_field_line_without_a_registered_channel_is_refused`; Gate-Fixture in `commit_gate_vocab.json`; `cargo check --tests` grün.
+- **Blockade:** (a) die Zeilen-Migration (Mountain); (b) der optionale `<regime>`-Token hat noch keine Descriptor-Achse — er wird **benannt verweigert**, nicht still verworfen; (c) die Record-Verdrahtung der ChannelId hängt an P9.2 (die Kanalzahl **im** Record).
+- **Braucht:** (1) **Mountain** schreibt die `gravity`-Zeilen um (`state/river/p10-gravity-klassifikation.md`, `## An mountain`); (2) eine `Regime`-Achse im `ChannelDescriptor` (quasistatisch/elliptisch vs strahlend) und die Auflösung des optionalen `<regime>`-Tokens; (3) P9.2 — die Kanalzahl im Record.
 
 ### CI-Verifikation — ci-gate am HEAD grün lesen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein grüner `ci-gate`-Lauf am HEAD.
-- **Lage:** (gemessen 2026-10-10, river-161, `ci_manage status`) am HEAD `5ed8f3b2b` steht kein `ci-gate`-Lauf auf `success` — `38007694705`/`38007586069`/`38007583308`/`38007285596`/`38006997402`/`38006496982` pending/queued (Single-Runner-Stau). River-eigenes Compile-Rot (`parse.rs:2553`, E0507) in river-159 geheilt.
+- **Lage:** (gemessen 2026-10-10, river-161, `ci_manage status`) am HEAD `3ab1e0fbc` steht kein `ci-gate`-Lauf auf `success` — `pending`/`queued` (Single-Runner-Stau). River-eigenes Compile-Rot (`parse.rs:2553`, E0507) in river-159 geheilt.
 - **Blockade:** CI-Queue (Single-Runner).
 - **Braucht:** `ci_manage view <id>` — einen grünen `ci-gate` am HEAD lesen.
 
@@ -103,13 +103,15 @@ Origin: river-161.
 
 Pfad-begrenzte Commit-Pfade dieser Session (River 161):
 
-- `src/mathematikerin/channel.rs` (P10: `descriptor_from_axes` + `live_channel_hash_of`; Test `p10_descriptor_axes_resolve_in_the_live_registry_and_refuse_otherwise`; die rustfmt-Hünke dieses river-eigenen Files mitgenommen)
+- `src/mathematikerin/channel.rs` (P10: `descriptor_from_axes`, `live_channel_hash_of`, `force_type_of_descriptor`; `em`/`electric`-Split; Tests; rustfmt-Hünke dieses river-eigenen Files mitgenommen)
+- `src/archivar/parse.rs` (P10-`field`-Deskriptor-Parser-Arm + `push_field`-Helfer + Tests; rustfmt-Hünke mitgenommen)
+- `src/gate/commit_gate_vocab.json` (P10.4-Fixture: unaufgelöster Deskriptor nie per `unwrap_or` defaulten)
 - `phi/sources.φ` (SSB-Feld-Asset-Zeile: `sha256 a3e6b4be8687661fc81dcbe81dc5ee1de54ec1c8c85a7b2225328d4742356dd2` nach `compiler`, gemessen via `archive_search --sniff`)
 - `docs/handover/handover-2026-10-10-river-folge161.md`
 - `docs/handover/archiv/handover-2026-10-09-river-folge160.md` (Move)
 
-Erledigt in diesem Atom (git trägt es): **SSB-Feld-Asset gelandet** — Lauf `38005007273` hat das Asset geschrieben; `archive_search --verdict …/ssb/ssb_field.bin` = **HTTP 206**, `--sniff` = 1664 B, sha256 `a3e6b4be…`; Register-Zeile trägt den sha256. Der `wartend`-Punkt ist damit geschlossen. **`## An river`** (mountain-294, USGS-geomag Draht-Riss: kein Wire-Arm) war bereits in river-160 gefaltet, nichts zu bauen; die Roster-Minderheiten-Witness bleibt benannt. `register_lookup --fired river` = 1 (SSB) + 1 ungemessen (CI, hier gemessen), `--stale` = 0, `--addressed river` = 1 (mountain, konsumiert).
+Erledigt in diesem Atom (git trägt es): **SSB-Feld-Asset gelandet** — Lauf `38005007273` hat das Asset geschrieben; `archive_search --verdict …/ssb/ssb_field.bin` = **HTTP 206**, `--sniff` = 1664 B, sha256 `a3e6b4be…`; Register-Zeile trägt den sha256. Der `wartend`-Punkt ist damit geschlossen. **P10:** `field`-Deskriptor-Parser + `em`/`electric`-Split gebaut (siehe Offen). **`## An river`** (mountain-294, USGS-geomag Draht-Riss: kein Wire-Arm) war bereits in river-160 gefaltet, nichts zu bauen; die Roster-Minderheiten-Witness bleibt benannt. `register_lookup --fired river` = 1 (SSB) + 1 ungemessen (CI, hier gemessen), `--stale` = 0, `--addressed river` = 1 (mountain, konsumiert).
 
-Fremde uncommittete Arbeit (nicht berührt, nicht committet): `src/archivar/parse.rs`, `tools/measure/src/bin/ssb_field_bake.rs` (rustfmt-Hünke fremder Zuordnung; nicht angefasst).
+Fremde uncommittete Arbeit (nicht berührt, nicht committet): `tools/measure/src/bin/ssb_field_bake.rs`, `tools/measure/src/eeglab.rs`, `.github/workflows/carisma-mag-cdn.yml`, `.github/workflows/hips-png-cdn.yml`.
 
-## Burn: open 0.0000 · close 0.0414 — River 161 (deepseek-flash, kein pro/max; gemessen `session_burn`); Grund: P10-Diskriminator (`descriptor_from_axes` + exakter Registry-Treffer) + SSB-Asset-Landung + Pass.
+## Burn: open 0.0000 · close 0.0881 — River 161 (deepseek-flash, kein pro/max; gemessen `session_burn`); Grund: SSB-Asset-Landung + P10-Bau (`field`-Deskriptor-Parser, `em`/`electric`-Split, Gate-Fixture).
