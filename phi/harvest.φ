@@ -199,6 +199,15 @@ idempotent true
 timeout 180
 
 asset present
+format giro_fastchar
+tag lgdc.uml.edu
+arm giro_fastchar_compiler
+workflow giro-fastchar-cdn.yml
+pattern ^giro_fastchar_.*\.bin$
+idempotent true
+timeout 120
+
+asset present
 format gmrt_bathymetry
 tag www.gmrt.org
 arm gmrt_compiler
