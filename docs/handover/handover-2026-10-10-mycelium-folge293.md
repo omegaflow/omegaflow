@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: fc10959cd246ea631365bdef5c8cd3b5451c044c0084727782eda2345cf2778e
+  sha256: 61efbf41c0d54dd754174b1ac3a4d7f1362c2e8653b2d7cddb4243d7baff5df4
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.3227 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche + Workflow-Hygiene + cdn-manifest.yml + Lizenz-/Runner-Korrektur (Azure descoped, self-hosted existiert: 20 Workflows) · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.3686 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche + Workflow-Hygiene + cdn-manifest.yml + Lizenz-/Runner-Korrektur + **t420-Last (`subset`) + intelligenter Throttle (`bin/runner_throttle.sh` + Konzept)** · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -94,24 +94,21 @@ In diesem Atom kein neuer adressierter Block.
 - **Braucht:** Architektur-Wort, ob R2 überhaupt als Hot-Tier kommt (sonst ganz weglassen) — in der
   Survey-Säule B dokumentiert.
 
-### Zweite CI-Lane — self-hosted existiert bereits (Azure descoped)
-- **Status:** eigen (Ausbau/Zuverlässigkeit) | **Bindung:** eigen (Operator-Hardware)
-- **Trigger:** erneute Backlog-Messung (Runner-Sättigung)
-- **Lage:** (gemessen 2026-10-10) **Die self-hosted Lane existiert:** **20** Workflows fahren auf
-  `runs-on: [self-hosted, Linux]` (`cmb-cdn`, `gaia-xp-cdn`, die Ephemeriden-Compiler, `dust`, `wod`,
-  (`runs-on: [self-hosted, Linux]`): `cmb-cdn`, `gaia-xp-cdn`, die Ephemeriden-Compiler, `dust`, `wod`,
-  `mpcobs-shard`, `tnbfits`, `twomass`, …). **Registrierter Runner (gemessen 2026-10-05,
-  `state/zustand/ereignisse.φ:81058`):** **`t420`**, Host `johannes-ThinkPad-T420`, Linux Mint 22.3,
-  Labels `self-hosted, Linux, X64`, Runner v2.337.0, systemd `actions.runner.omegaflow-omegaflow.t420.service`,
-  Nutzer `actions` ohne sudo, gedrosselt (Nice 10). `cmb-cdn 38032912687` hing am 2026-10-10 07:00+ auf ihm.
-  **Riss:** der Baum/Register sagt **`t420`** (Host `johannes-ThinkPad-T420`), der Operator **`t430`** —
-  entweder ein neues Gerät ohne Re-Registrierung oder ein Versprecher; am Gerät zu messen.
-  Azure-OSS ist **descoped** (discontinued + CC BY-NC-SA ≠ OSI).
-- **Blockade:** ein Runner = ein Job gleichzeitig (gemessen 2026-10-09: 90 `ci-gate` queued, ein
-  `subset`-Ghost 8,5 h — `ci-gate.yml:52-60`).
-- **Braucht:** (a) den Riss t420/t430 schließen (Runner-Label/Hostname messen — `gh api .../actions/runners`
-  bräuchte ein Token, per-act); (b) Zuverlässigkeit (ephemere Jobs, Ghost-Timeout) + Frage, ob weitere
-  GitHub-hosted-Last (z. B. `subset`, `tools-build`) auf den Runner darf. **Kein Drittkonto nötig.**
+### Zweite CI-Lane — self-hosted t420 (Riss geklärt, Last erhöht, Drosselung gebaut)
+- **Status:** eigen (Installation auf dem t420 offen) | **Bindung:** operator (Install = root auf t420)
+- **Trigger:** nächster Bedarf / Media-Session
+- **Lage:** (gemessen 2026-10-10) Riss **geklärt: `t420`** (Operator bestätigt). Registrierter Runner
+  (2026-10-05, `state/zustand/ereignisse.φ:81058`): `t420`, Host `johannes-ThinkPad-T420`, Linux Mint 22.3,
+  Labels `self-hosted, Linux, X64`, v2.337.0, systemd `actions.runner.omegaflow-omegaflow.t420.service`,
+  Nutzer `actions` ohne sudo, `Nice=10`/`CPUWeight=20`/`IOWeight=20`. **20 Workflows** auf
+  `runs-on: [self-hosted, Linux]` (`cmb-cdn`, Ephemeriden-Compiler, …); **`ci-gate.yml`-`subset` jetzt
+  ebenfalls auf `[self-hosted, Linux]`** (mehr Last). Konzept `docs/concepts/self-hosted-runner.md`
+  (sha `ade23c27…`) + Werkzeug `bin/runner_throttle.sh` (systemd-`CPUQuota=150%`, `tc`-Egress-Kappe mit
+  Headroom, **adaptiver Gateway-Latenz-Backoff**, `pause`/`resume`).
+- **Blockade:** der Throttle läuft erst nach `install` **auf dem t420** (root; der XPS 13 trägt keine Jobs).
+- **Braucht:** Operator installiert auf dem t420: `sudo bin/runner_throttle.sh install` (idempotent),
+  dann `status`. Offen (`pending`): echtes WAN-QoS am Router für den getrennten Media-PC — der t420
+  sieht dessen Verkehr nicht.
 
 ### MCP — lokale no-leak-Server (Autonomie-Kandidat)
 - **Status:** eigen | **Bindung:** linie:mycelium
