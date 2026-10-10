@@ -4211,6 +4211,7 @@ struct MatrixCellOutcome {
     res_pair: Option<(f64, f64)>,
     alignment_absent: bool,
     rungs: Vec<ScaleRung>,
+    ladder: Vec<RungMeasurement>,
 }
 
 #[cfg(test)]
@@ -4284,6 +4285,70 @@ mod scale_ladder_tests {
         assert!(rendered.contains("nat"));
         assert!(rendered.contains("agg"));
     }
+}
+
+const SCALE_MEASURE_LIMIT: usize = 4;
+
+#[derive(Clone, PartialEq, Debug)]
+struct RungMeasurement {
+    delta_s: f64,
+    roles: Vec<ScaleRole>,
+    n: usize,
+    n_eff: Option<f64>,
+    te: Option<f64>,
+    p: f64,
+}
+
+fn measure_rung(
+    req_arms: &[&[(f64, f64)]],
+    rung: &ScaleRung,
+    seasonal: Seasonal,
+    lags: &[usize],
+    surrogate: usize,
+) -> RungMeasurement {
+    let mut measurement = RungMeasurement {
+        delta_s: rung.delta_s,
+        roles: rung.roles.clone(),
+        n: 0,
+        n_eff: None,
+        te: None,
+        p: 1.0,
+    };
+    let Ok((cell_columns, _, _)) = align_many(req_arms, seasonal, Some(rung.delta_s)) else {
+        return measurement;
+    };
+    let cols: Vec<&[Option<f64>]> = cell_columns.iter().map(|c| c.as_slice()).collect();
+    let joint = joint_columns(&cols);
+    let Some(n) = joint.first().map(|c| c.len()) else {
+        return measurement;
+    };
+    measurement.n = n;
+    if n < TE_FLOOR {
+        return measurement;
+    }
+    let driver = &joint[0];
+    let target = &joint[1];
+    let conds: Vec<LaggedCond> = joint[2..]
+        .iter()
+        .map(|s| LaggedCond {
+            series: s.as_slice(),
+            lag: 0,
+        })
+        .collect();
+    if let Some(cell) = cell_te_and_surrogates(
+        target,
+        driver,
+        &conds,
+        lags,
+        MATRIX_BINS,
+        surrogate,
+        SURROGATE_SEED,
+    ) {
+        measurement.n_eff = cell.n_eff;
+        measurement.te = Some(cell.te);
+        measurement.p = surrogate_rank_p_value(cell.te, &cell.surrogates).unwrap_or(1.0);
+    }
+    measurement
 }
 
 fn resolution_representable(grid_dt: f64, tau_d: f64, tau_t: f64) -> bool {
@@ -4855,6 +4920,7 @@ fn run_pair_matrix(
                 alignment_absent: false,
                 pass: false,
                 rungs: Vec::new(),
+                ladder: Vec::new(),
             });
             continue;
         };
@@ -4872,6 +4938,7 @@ fn run_pair_matrix(
                 alignment_absent: false,
                 pass: false,
                 rungs: Vec::new(),
+                ladder: Vec::new(),
             });
             continue;
         };
@@ -4899,6 +4966,7 @@ fn run_pair_matrix(
                 alignment_absent: false,
                 pass: false,
                 rungs: Vec::new(),
+                ladder: Vec::new(),
             });
             continue;
         }
@@ -4934,6 +5002,7 @@ fn run_pair_matrix(
                     alignment_absent: true,
                     pass: false,
                     rungs: Vec::new(),
+                    ladder: Vec::new(),
                 });
                 continue;
             }
@@ -4957,6 +5026,7 @@ fn run_pair_matrix(
                     alignment_absent: false,
                     pass: false,
                     rungs: rungs.clone(),
+                    ladder: Vec::new(),
                 });
                 continue;
             }
@@ -4977,6 +5047,7 @@ fn run_pair_matrix(
                 alignment_absent: false,
                 pass: false,
                 rungs: rungs.clone(),
+                ladder: Vec::new(),
             });
             continue;
         };
@@ -4994,6 +5065,7 @@ fn run_pair_matrix(
                 alignment_absent: false,
                 pass: false,
                 rungs: rungs.clone(),
+                ladder: Vec::new(),
             });
             continue;
         }
@@ -5005,6 +5077,11 @@ fn run_pair_matrix(
                 series: s.as_slice(),
                 lag: 0,
             })
+            .collect();
+        let ladder: Vec<RungMeasurement> = rungs
+            .iter()
+            .take(SCALE_MEASURE_LIMIT)
+            .map(|rung| measure_rung(&req_arms, rung, desc.seasonal, &desc.lags, desc.surrogate))
             .collect();
         match cell_te_and_surrogates(
             target,
@@ -5030,6 +5107,7 @@ fn run_pair_matrix(
                     alignment_absent: false,
                     pass: false,
                     rungs: rungs.clone(),
+                    ladder: ladder.clone(),
                 });
             }
             None => {
@@ -5046,6 +5124,7 @@ fn run_pair_matrix(
                     alignment_absent: false,
                     pass: false,
                     rungs: rungs.clone(),
+                    ladder: ladder.clone(),
                 });
             }
         }
@@ -5146,6 +5225,29 @@ fn run_pair_matrix(
             format!("{:.4}", o.p),
             word
         );
+        for m in &o.ladder {
+            let role_names: Vec<String> = m.roles.iter().map(|r| fmt_role(*r)).collect();
+            let mte = match m.te {
+                Some(v) => format!("{v:.4e}"),
+                None => "absent".to_string(),
+            };
+            println!(
+                "    · {:>10.0}s | n {:>5} | n_eff {:>9} | te {:>12} | p {:>8} | {}",
+                m.delta_s,
+                m.n,
+                fmt_opt(m.n_eff),
+                mte,
+                format!("{:.4}", m.p),
+                role_names.join("+")
+            );
+        }
+        if o.rungs.len() > o.ladder.len() {
+            println!(
+                "    · … {} further rungs unmeasured (limit {})",
+                o.rungs.len() - o.ladder.len(),
+                SCALE_MEASURE_LIMIT
+            );
+        }
     }
     let passed = outcomes.iter().filter(|o| o.pass).count();
     println!(
