@@ -82,7 +82,9 @@ fn main() {
         None => match embedded_lsk().and_then(|l| l.system_now_tdb()) {
             Some(t) => t,
             None => {
-                eprintln!("ssb_field_bake: the embedded LSK yields no TDB now — pass --now explicitly");
+                eprintln!(
+                    "ssb_field_bake: the embedded LSK yields no TDB now — pass --now explicitly"
+                );
                 std::process::exit(2);
             }
         },
