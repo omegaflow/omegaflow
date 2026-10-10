@@ -50,19 +50,18 @@ jobs:
           health
 
   subset:
-    # Runs on the self-hosted t420 (operator word 2026-10-08 "nur der subset-Job
-    # auf den T420" + 2026-10-10 "gerne mehr Last"). The one runner serves one
-    # subset at a time; a high commit rate would queue every SHA's
-    # `cargo test --lib` behind it (measured 2026-10-09: 90 ci-gate runs queued,
-    # one subset ghost in "in_progress" for 8.5 h). The durable per-SHA verdict
-    # lives in state/zustand/ci-gate.φ (ci_gate_register), not in the run queue —
-    # so the job keeps only the tip: a newer subset cancels the older one, and
-    # the superseded SHA stays pending (never fabricated green). Rat verdict,
-    # 2026-10-09.
+    # GitHub-hosted and free + unlimited for a public repo
+    # (survey-2026-10-10-github-ci-cdn-optimierung.md:59). The self-hosted t420
+    # is the single shared runner for ~20 CDN workflows and starved the subset
+    # under a commit burst (measured 2026-10-10: every SHA's `cargo test --lib`
+    # cancelled mid-run, `ci-gate-subset-${{ github.ref }}` let each push evict
+    # the running one). The per-SHA group mirrors the top-level
+    # `ci-gate-${{ github.sha }}` so a newer push can never evict an older SHA's
+    # subset — every SHA gets a real verdict. Operator word 2026-10-10 "mach A".
     concurrency:
-      group: ci-gate-subset-${{ github.ref }}
+      group: ci-gate-subset-${{ github.sha }}
       cancel-in-progress: true
-    runs-on: [self-hosted, Linux]
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     env:
       RUSTFLAGS: -D warnings
