@@ -1586,3 +1586,54 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod predictor_tests {
+    use super::*;
+
+    #[test]
+    fn predictor3_reverses_prefix_sum_and_byte_planes() {
+        let raw: Vec<u8> = [1.0f32, -2.5, 570.25]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        let bps = 4usize;
+        let wc = raw.len() / bps;
+        let mut enc = vec![0u8; raw.len()];
+        for count in 0..wc {
+            for byte in 0..bps {
+                enc[(bps - byte - 1) * wc + count] = raw[bps * count + byte];
+            }
+        }
+        for i in (1..enc.len()).rev() {
+            enc[i] = enc[i].wrapping_sub(enc[i - 1]);
+        }
+        assert_eq!(apply_predictor(&enc, 3, raw.len()), raw);
+    }
+
+    #[test]
+    fn predictor1_is_identity() {
+        let dec = vec![7u8, 8, 9, 10];
+        assert_eq!(apply_predictor(&dec, 1, 4), dec);
+    }
+
+    #[test]
+    fn predictor2_reverses_integer_differencing() {
+        let raw: Vec<u8> = [1i32, 300, 70_000]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        let bps = 4usize;
+        let n = raw.len() / bps;
+        let mut enc = raw.clone();
+        for i in (1..n).rev() {
+            let mut borrow = 0i16;
+            for b in (0..bps).rev() {
+                let d = enc[i * bps + b] as i16 - enc[(i - 1) * bps + b] as i16 - borrow;
+                enc[i * bps + b] = (d & 0xff) as u8;
+                borrow = if d < 0 { 1 } else { 0 };
+            }
+        }
+        assert_eq!(apply_predictor(&enc, 2, bps * n), raw);
+    }
+}
