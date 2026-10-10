@@ -649,6 +649,48 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
     }
 }
 
+pub fn descriptor_from_axes(
+    role: &str,
+    conserved: &str,
+    operator: &str,
+    pde_type: &str,
+    medium: &str,
+    boundary: &str,
+    unit: &'static str,
+) -> Result<ChannelDescriptor, String> {
+    let role = QuantityRole::parse(role).ok_or_else(|| format!("unknown role \"{role}\""))?;
+    let conserved =
+        Conserved::parse(conserved).ok_or_else(|| format!("unknown conserved \"{conserved}\""))?;
+    let op =
+        TransportOp::parse(operator).ok_or_else(|| format!("unknown operator \"{operator}\""))?;
+    let pde_type =
+        PdeType::parse(pde_type).ok_or_else(|| format!("unknown pde_type \"{pde_type}\""))?;
+    let medium_token = medium;
+    let medium =
+        Medium::parse(medium_token).ok_or_else(|| format!("unknown medium \"{medium_token}\""))?;
+    let boundary =
+        Boundary::parse(boundary).ok_or_else(|| format!("unknown boundary \"{boundary}\""))?;
+    if !is_admissible(conserved, op, medium) {
+        return Err(format!(
+            "inadmissible operator/medium pair \"{operator}/{medium_token}\" is not in the admissibility relation"
+        ));
+    }
+    Ok(ChannelDescriptor::new(
+        Quantity { conserved, role },
+        op,
+        pde_type,
+        medium,
+        Domain::Unspecified,
+        boundary,
+        unit,
+    ))
+}
+
+pub fn live_channel_hash_of(d: &ChannelDescriptor) -> Option<u64> {
+    let h = d.hash();
+    live_channel_registry().descriptor(h).map(|_| h)
+}
+
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
     let (conserved, op, pde_type, boundary, unit) = match name {
         "em" | "electric" => (
@@ -2281,8 +2323,12 @@ mod tests {
         )
         .with_extent(Some(2.0))
         .with_body(Some("earth".to_string()));
-        let k = d.carrier_wavenumber().expect("geometry carries a wavenumber");
-        let v_p = d.phase_velocity_m_s().expect("scalar branch carries a velocity");
+        let k = d
+            .carrier_wavenumber()
+            .expect("geometry carries a wavenumber");
+        let v_p = d
+            .phase_velocity_m_s()
+            .expect("scalar branch carries a velocity");
         let params = crate::media::medium_params_of("earth");
         let c = characteristic_speed(Medium::Fluid, params.as_ref()).expect("earth sound speed");
         assert!(k > 0.0);
@@ -2508,6 +2554,39 @@ mod tests {
             assert!(descriptor_for_force_type(ft).is_some(), "force type {ft}");
         }
         assert!(descriptor_for_force_type(9).is_none());
+    }
+
+    #[test]
+    fn p10_descriptor_axes_resolve_in_the_live_registry_and_refuse_otherwise() {
+        let em = descriptor_from_axes(
+            "primary", "energy", "maxwell", "mixed", "vacuum", "none", "V/m",
+        )
+        .expect("the em axes build a descriptor");
+        assert!(
+            live_channel_hash_of(&em).is_some(),
+            "the em descriptor is an exact registry entry"
+        );
+
+        assert!(
+            descriptor_from_axes(
+                "primary", "energy", "maxwell", "warp", "vacuum", "none", "V/m"
+            )
+            .is_err(),
+            "an unknown pde_type is a named refusal, never a default"
+        );
+        assert!(
+            descriptor_from_axes(
+                "primary",
+                "mass",
+                "flux-fourier",
+                "parabolic",
+                "fluid",
+                "none",
+                "W/m^2"
+            )
+            .is_err(),
+            "Fourier couples to energy, not mass — the admissibility relation refuses"
+        );
     }
 
     #[test]
