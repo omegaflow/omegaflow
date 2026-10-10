@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: dbbe8f910296548d68e9359bf7ec411df0c53c3c3c7f835ead2bfd3876f503d5
+  sha256: daae6db1e58842d6d21e57a496d9a463a6858b82ab0bbf9b5a18812e9e259fba
   status: live
 -->
 # Handover — Mountain-Folge 297 (2026-10-10)
@@ -114,6 +114,7 @@ flash only, kein pro/max.
 - **Lage:** (gemessen 2026-10-10) `keogram_compiler` sucht bei leerem Fenster die jüngste
   verfügbare Nacht (`--lookback-days`, Default 400). FMI endet `ABK.2604` (2026-04-21,
   jüngste echte Nacht); SGO-Index lebt; der Workflow-Default (gestern) war absent, `exit 1`.
+  `keogram-cdn` Re-Lauf `38032885088` dispatched (2026-10-10); `tools-build` `38032882719`.
 - **Blockade:** keine.
 - **Braucht:** Mycelium: `keogram-cdn` Re-Lauf (greift jetzt die April-Nacht).
 
@@ -144,7 +145,7 @@ Origin: mountain-297 (2026-10-10).
   Re-Lauf. Kein direkter FITS/Mirror existiert (gemessen 2026-10-10).
 - **Keogramm.** `keogram_compiler` sucht bei leerem Fenster die jüngste verfügbare Nacht
   (`--lookback-days`, Default 400) — FMI endet `ABK.2604`. Ein `keogram-cdn` Re-Lauf
-  manifestiert jetzt die April-Nacht.
+  manifestiert jetzt die April-Nacht (bereits dispatched: `38032885088`).
 - **iEEG.** Der mountain-296-Auftrag (`phi/harvest.φ` iEEG-Arm + `sources.φ` Block) ist
   gestrichen: er widerstreitet dem registrierten Operator-Wort 2026-10-06
   (`state/zustand/wartend.φ:40`). Kein Mountain-Akt; nur ein neues Operator-Wort öffnet ihn.
