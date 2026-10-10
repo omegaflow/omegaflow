@@ -11,7 +11,7 @@ const USER_AGENT: &str = "omegaflow-gaia-rrl-compiler/1.0";
 
 pub const RRL_ADQL: &str = "SELECT TOP 500 g.source_id, g.ra, g.dec, g.phot_g_mean_mag, g.parallax, g.bp_rp, v.best_class_name FROM gaiadr3.vari_classifier_result AS v JOIN gaiadr3.gaia_source AS g ON g.source_id = v.source_id WHERE v.best_class_name = 'RR'";
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct RrlRecord {
     pub source_id: u64,
     pub ra_deg: f64,
