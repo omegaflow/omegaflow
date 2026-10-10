@@ -92,6 +92,10 @@ fn station_known(cdp_pad_id: u32) -> bool {
     matches!(cdp_pad_id, 7045 | 7110)
 }
 
+fn station_known_mini(ilrs_id: u32) -> bool {
+    matches!(ilrs_id, 71110 | 71111 | 71112 | 1910 | 56610 | 7941 | 70610)
+}
+
 fn meas_f64(tok: &str) -> Option<f64> {
     if tok.eq_ignore_ascii_case("na") || tok.eq_ignore_ascii_case("nan") {
         return None;
@@ -119,6 +123,82 @@ fn meas_u32(tok: &str) -> Option<u32> {
         return None;
     }
     tok.parse().ok()
+}
+
+fn mini_col<'a>(line: &'a [u8], start1: usize, len: usize) -> Option<&'a [u8]> {
+    let start = start1.checked_sub(1)?;
+    line.get(start..start.checked_add(len)?)
+}
+
+fn mini_trim(field: &[u8]) -> &[u8] {
+    let start = match field.iter().position(|b| !b.is_ascii_whitespace()) {
+        Some(i) => i,
+        None => return &field[..0],
+    };
+    let end = match field.iter().rposition(|b| !b.is_ascii_whitespace()) {
+        Some(i) => i + 1,
+        None => start,
+    };
+    &field[start..end]
+}
+
+fn mini_all_nines(field: &[u8]) -> bool {
+    !field.is_empty() && field.iter().all(|b| *b == b'9')
+}
+
+fn mini_f64(field: &[u8]) -> Option<f64> {
+    let tok = mini_trim(field);
+    let s = std::str::from_utf8(tok).ok()?;
+    if s.eq_ignore_ascii_case("na") || s.eq_ignore_ascii_case("nan") {
+        return None;
+    }
+    let v: f64 = s.parse().ok()?;
+    if !v.is_finite() || v <= NA_VALUEF {
+        return None;
+    }
+    Some(v)
+}
+
+fn mini_u32(field: &[u8]) -> Option<u32> {
+    let tok = mini_trim(field);
+    std::str::from_utf8(tok).ok()?.parse().ok()
+}
+
+fn mini_date(field: &[u8]) -> Option<(i64, i64, i64)> {
+    let tok = mini_trim(field);
+    if tok.len() != 8 || !tok.iter().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let s = std::str::from_utf8(tok).ok()?;
+    Some((
+        s[0..4].parse().ok()?,
+        s[4..6].parse().ok()?,
+        s[6..8].parse().ok()?,
+    ))
+}
+
+fn mini_sec_of_day(field: &[u8]) -> Option<f64> {
+    let tok = mini_trim(field);
+    if tok.len() != 13 || !tok.iter().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let s = std::str::from_utf8(tok).ok()?;
+    let hh: f64 = s[0..2].parse().ok()?;
+    let mm: f64 = s[2..4].parse().ok()?;
+    let ss: f64 = s[4..6].parse().ok()?;
+    let frac: f64 = s[6..13].parse().ok()?;
+    Some(hh * 3600.0 + mm * 60.0 + ss + frac * 1e-7)
+}
+
+fn mini_reflector(field: &[u8]) -> u32 {
+    match mini_trim(field).first() {
+        Some(b'0') => REFLECTOR_APOLLO11,
+        Some(b'1') => REFLECTOR_LUNA17,
+        Some(b'2') => REFLECTOR_APOLLO14,
+        Some(b'3') => REFLECTOR_APOLLO15,
+        Some(b'4') => REFLECTOR_LUNA21,
+        _ => REFLECTOR_UNKNOWN,
+    }
 }
 
 pub fn parse_crd(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
@@ -214,6 +294,7 @@ pub fn parse_crd(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
                         _ => e,
                     });
                 }
+
                 out.push(NormalPoint {
                     epoch_utc,
                     sec_of_day,
@@ -234,6 +315,122 @@ pub fn parse_crd(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
         }
     }
     if !saw_header || out.is_empty() {
+        return None;
+    }
+    Some(out)
+}
+
+pub fn parse_mini(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
+    let text = std::str::from_utf8(bytes).ok()?;
+    let mut out: Vec<NormalPoint> = Vec::new();
+    let mut last_epoch: Option<f64> = None;
+
+    for raw in text.lines() {
+        let line = raw.as_bytes();
+        if line.len() < 43 || line[0] != b'5' {
+            continue;
+        }
+
+        let date = mini_col(line, 3, 8).and_then(mini_date);
+        let sec_of_day = mini_col(line, 11, 13).and_then(mini_sec_of_day);
+        let epoch_utc = match (date, sec_of_day) {
+            (Some((y, m, d)), Some(s)) => {
+                days_from_civil(y, m, d).map(|days| days as f64 * 86400.0 + s)
+            }
+            _ => None,
+        };
+
+        let reflector = match mini_col(line, 38, 1) {
+            Some(field) => mini_reflector(field),
+            None => REFLECTOR_UNKNOWN,
+        };
+        let station = match mini_col(line, 39, 5).and_then(mini_u32) {
+            Some(s) => s,
+            None => 0,
+        };
+        let time_of_flight = mini_col(line, 24, 14).and_then(mini_f64).map(|v| v * 1e-13);
+
+        let num_returns = mini_col(line, 44, 3).and_then(mini_u32);
+        let return_rate = num_returns.map(|v| v as f64);
+        let num_ranges = num_returns;
+
+        let bin_rms_ps = match mini_col(line, 47, 6) {
+            Some(field) => {
+                let tok = mini_trim(field);
+                if tok.is_empty() || mini_all_nines(tok) {
+                    None
+                } else {
+                    mini_f64(tok)
+                }
+            }
+            None => None,
+        };
+
+        let signal_to_noise = match mini_col(line, 53, 3) {
+            Some(field) => {
+                let tok = mini_trim(field);
+                if tok.is_empty() || mini_all_nines(tok) {
+                    None
+                } else {
+                    match mini_f64(tok) {
+                        Some(v) if v != 0.0 => Some(v / 10.0),
+                        _ => None,
+                    }
+                }
+            }
+            None => None,
+        };
+
+        let mut flags = 0u32;
+        if date.is_none() {
+            flags |= FLAG_NO_SESSION;
+        }
+        if sec_of_day.is_none() {
+            flags |= FLAG_NO_TIME;
+        }
+        if reflector == REFLECTOR_UNKNOWN {
+            flags |= FLAG_UNKNOWN_REFLECTOR;
+        }
+        if !station_known_mini(station) {
+            flags |= FLAG_UNKNOWN_STATION;
+        }
+        if let Some(t) = time_of_flight {
+            if !(TOF_LO_S..=TOF_HI_S).contains(&t) {
+                flags |= FLAG_TOF_RANGE;
+            }
+        }
+        if let Some(e) = epoch_utc {
+            if !(EPOCH_LO_UTC..=EPOCH_HI_UTC).contains(&e) {
+                flags |= FLAG_TIME_RANGE;
+            }
+            if let Some(prev) = last_epoch {
+                if e < prev {
+                    flags |= FLAG_TIME_ORDER;
+                }
+            }
+            last_epoch = Some(match last_epoch {
+                Some(p) if p > e => p,
+                _ => e,
+            });
+        }
+
+        out.push(NormalPoint {
+            epoch_utc,
+            sec_of_day,
+            time_of_flight,
+            bin_rms_ps,
+            return_rate,
+            signal_to_noise,
+            np_window_length_ns: None,
+            num_ranges,
+            epoch_event: None,
+            detector_channel: None,
+            reflector,
+            station,
+            flags,
+        });
+    }
+    if out.is_empty() {
         return None;
     }
     Some(out)
@@ -476,6 +673,44 @@ h8\n";
         assert_eq!(r.return_rate, None);
         assert!(r.epoch_utc.is_some_and(f64::is_finite));
         assert_eq!(r.flags, 0);
+    }
+
+    const MINI_SAMPLE: &str =
+        "5 19690820025611999999024956468426000071110  8999000  0  79000 120 0 6943 0000";
+
+    #[test]
+    fn parses_the_measured_mini_normal_point() {
+        let recs = parse_mini(MINI_SAMPLE.as_bytes()).expect("the MINI sample parses");
+        assert_eq!(recs.len(), 1);
+        let r = recs[0];
+        assert!((r.epoch_utc.expect("epoch present") - -11_567_028.000_001).abs() < 1e-3);
+        assert!((r.sec_of_day.expect("sec present") - 10571.999999).abs() < 1e-6);
+        assert!((r.time_of_flight.expect("tof present") - 2.4956468426).abs() < 1e-12);
+        assert_eq!(r.reflector, REFLECTOR_APOLLO11);
+        assert_eq!(r.station, 71110);
+        assert_eq!(r.num_ranges, Some(8));
+        assert_eq!(r.return_rate, Some(8.0));
+        assert_eq!(r.bin_rms_ps, None);
+        assert_eq!(r.signal_to_noise, None);
+        assert_eq!(r.flags & FLAG_TOF_RANGE, 0);
+        assert_eq!(r.flags & FLAG_UNKNOWN_REFLECTOR, 0);
+        assert_eq!(r.flags & FLAG_UNKNOWN_STATION, 0);
+    }
+
+    #[test]
+    fn mini_roundtrip_preserves_present_and_absent_fields() {
+        let records = parse_mini(MINI_SAMPLE.as_bytes()).expect("the MINI sample parses");
+        let bin = write_bin(&records).expect("finite records encode");
+        assert_eq!(bin.len(), HEADER_BYTES + RECORD_BYTES);
+        assert_eq!(parse_bin(&bin), Some(records));
+    }
+
+    #[test]
+    fn parse_mini_refuses_foreign_bytes() {
+        assert_eq!(parse_mini(b"not a mini file at all"), None);
+        assert_eq!(parse_mini(b""), None);
+        assert_eq!(parse_mini(SAMPLE.as_bytes()), None);
+        assert_eq!(parse_mini(b"LLR \x01\x00\x00\x00"), None);
     }
 
     #[test]
