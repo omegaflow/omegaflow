@@ -3,7 +3,7 @@
   session: River-Folge 171
   class: handover
   date: 2026-10-10
-  sha256: 193e398314cd20fa2801734f821342aa93e1f49a054e3b25b0ef49f8264e8ad6
+  sha256: c59c63141518c2ea6f4883ae1db22e2c3046861d93cab343bd6a0c325c06c2fb
   status: live
 -->
 # Handover — River-Folge 171 (2026-10-10)
@@ -58,16 +58,16 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 ### newell-omni-alignment
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der nächste `field-te-query`-Lauf (Job `matrix-newell-omni`, `.github/workflows/field-te-query.yml:150`). Wahrheit: `state/zustand/wartend.φ:42`.
-- **Lage:** (gemessen via `wartend.φ:42`, Mountain 270, 2026-10-07) Mountain-Format-Arm steht; Job `matrix-newell-omni` **n=0**, `alignment pending`. Die Alignment-Maschine ist gebaut (`tools/measure/src/bin/field_te_query.rs:4148 align_many`, `:4511` „alignment stays pending — {reason}"); die Zellen bleiben n=0, weil keine gemeinsame Zeitachse (OMNI vs. RTSW-Join) anfällt.
-- **Blockade:** keine deckungsgleiche Zeitachse (Daten-/Lauf-Warten).
-- **Braucht:** `gh workflow run field-te-query.yml` → `matrix-newell-omni`-Zellen lesen; dann den Arm gegen `phi/pipeline/descriptors/newell_geospheric_omni.te` prüfen.
+- **Lage:** (gemessen via `wartend.φ:42`, Mountain 270, 2026-10-07; nachgemessen am Lauf `37500311359` Log, 2026-10-06) Mountain-Format-Arm steht; Job `matrix-newell-omni` **n=0**. Die Alignment-Maschine ist gebaut (`tools/measure/src/bin/field_te_query.rs:4148 align_many`, `:4511` „alignment stays pending — {reason}"). Die newell-Ableitung selbst läuft: derselbe Lauf zeigt `aligned grid: cells 350859 | cadence 3.6000e3 s (declared bin)`; die drei Träger `omni_imf_by_gsm_nt`/`omni_imf_bz_gsm_nt`/`omni_solarwind_flow_speed_kms` sind registriert (`phi/sources.φ:733,737,738`), der Treiber löst auf.
+- **Blockade:** der Treiber selbst ist nicht der Riss — es ist der per-Paar-Joint gegen `intermagnet_dbdt` (Auflösung/Überlappung), sichtbar als `alignment pending` in der Zellentafel.
+- **Braucht:** Lauf `38062303232` (2026-10-10T15:06Z dispatcht) → `matrix-newell-omni`-Zellen lesen; dann den Arm gegen `phi/pipeline/descriptors/newell_geospheric_omni.te` prüfen.
 
 ### vlies-matrix-alignment
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der nächste `field_te_query`-Lauf. Wahrheit: `state/zustand/wartend.φ:47`.
-- **Lage:** (gemessen via `wartend.φ:47`, Mountain 270 / River 112) Lauf `37500311359` 15/15 Arme; Solar-/Magnetosphären-Zellen **n=0**.
-- **Blockade:** Format-/Compiler-Arm für die deckungsgleiche Zeitachse.
-- **Braucht:** den Arm gegen die Zellen prüfen — `tools/measure/src/bin/field_te_query.rs` + `phi/pipeline/descriptors/vlies_matrix.te`; erste Messung: einen Lauf mit dem Arm lesen.
+- **Lage:** (gemessen am Lauf `37500311359` Log, 2026-10-06; via `wartend.φ:47` Mountain 270 / River 112) 15/15 Arme, alle **210** Zellen enumeriert (`pool 15`, `expect cells 210 matched`). Die Ursache der leeren Zellen ist gemessen, nicht vermutet: das per-Paar-Joint scheitert an der Auflösung — `alignment pending` (`goes_xrs_xrsa->solar_wind_speed_km_s`, `solar_wind_density_cm3->solar_wind_speed_km_s`), `unadjusted_below_floor` (n < `TE_FLOOR`), und `resolution pending` mit dem literalen Paar `12x2678400` (`aia_304_dn->ersstv5_nino34`). Die RTSW/SWPC-Kanäle sind rollende 1-min-Dateien (`rtsw_mag_1m.json`/`rtsw_wind_1m.json`, `phi/sources.φ:213-227`, `ttl 60`), QBO/ERSST monatlich — kein gemeinsames `bin 86400`-Gitter.
+- **Blockade:** der Joint-Grid-Arm — **eine** Auflösung für das ganze Vlies (`bin 86400`), die der 1-min- und der Monats-Reihe nicht gleichzeitig genügt.
+- **Braucht:** Lauf `38062303232` (2026-10-10T15:06Z dispatcht) → `matrix-vlies`-Zellen gegen die Klassen oben prüfen; dann `bin` bzw. das Auflösungspaar je Zelle in `tools/measure/src/bin/field_te_query.rs` + `phi/pipeline/descriptors/vlies_matrix.te` anpassen.
 
 ## LOCK
 
@@ -81,4 +81,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 171):
 - `docs/handover/handover-2026-10-10-river-folge171.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge170.md` (Move)
 
-## Burn: open 0.0000 · close 0.0251 — River 171 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 14 Sessions total $0.5107)
+## Burn: open 0.0000 · close 0.0561 — River 171 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 16 Sessions total $0.6272). Grund: fold mountain-302 + Träger + CI-Log-Forensik (`ci_manage log 37500311359` — per-Paar-Joint gemessen) + Dispatch `field-te-query 38062303232`.
