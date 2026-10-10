@@ -134,6 +134,7 @@ pub mod keogram;
 pub mod kepler;
 pub mod las;
 pub mod llnl_g3d;
+pub mod llr;
 pub mod lro_utf;
 pub mod lsk;
 pub mod lzw;

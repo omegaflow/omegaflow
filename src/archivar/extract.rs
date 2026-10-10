@@ -10,6 +10,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "mitdb" => mitdb::parse_bin(bytes),
         "circor" => phonocardiogram::parse_bin(bytes),
         "ltmm" => movement_monitoring::parse_bin(bytes),
+        "llr" => llr::parse_series(bytes),
         "noaa_ccor" => ccor::parse_bin(bytes),
         "celestrak_eop" => celestrak_eop::parse_bin(bytes),
         "gk2a_ami" => gk2a_ami::parse_bin(bytes).map(|granules| {
@@ -737,6 +738,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             odf::COMP_OBSERVABLE => Some("mars_express_odf_observable_hz"),
             _ => None,
         },
+        "llr" => llr::component_name(comp),
         "rosetta_odf" => match comp {
             ifms_agc::COMP_CARRIER_LEVEL => Some("rosetta_odf_carrier_level_dbm"),
             ifms_agc::COMP_POLAR_ANGLE => Some("rosetta_odf_polar_angle_cycles"),
