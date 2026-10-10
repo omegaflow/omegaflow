@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Reduktionskette Schritt 2b (ITRF→CIRS), TStreamerInfo-Header, Register-Messungen (VMF3-GRID-URL, PEP-Rat)
   class: handover
   date: 2026-10-10
-  sha256: ada13843eb2ee227aef189ab0b008372420951b6e9c8f2a64073c9ac424ca817
+  sha256: 79edebafbe9ce3b2a4e4c8d16bef059334b5491420a03e3d7e6b55ff04ac3a62
   status: live
 -->
 # Handover — Mountain-Folge 302 (2026-10-10)
@@ -57,7 +57,7 @@ flash only, kein pro/max.
 - **Trigger:** nächster begrenzter Schritt je Kandidat
 - **Lage:** (gemessen 2026-10-10) Der Zensus `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` nennt **12 handelbare Doks** aus der Asservatenkammer (82/32/18/15/11/10/8/6/5/3/2 offene Marker; `register_lookup --orphan-docs` = 22 trägerlose Marker-Doks). Neue Gate-Regel `commit_check` **own-handover** (`tools/gate/src/bin/commit_check.rs`, `c0441466d`): ein neu hinzugefügtes `docs/*`-Dok muß im selben Commit in der **eigenen** Übergabe genannt sein. Fast alle Alt-„Träger" hängen an einer breiten Zitat-Liste (`handover-2026-10-10-sensory-folge250.md`), kein Bearbeiter.
 - **Blockade:** keines der 12 Doks hat einen Träger-Punkt in einer Live-Übergabe.
-- **Braucht:** je Kandidat ein Träger-Punkt mit erstem begrenztem Schritt — Mountain zuerst `survey-2026-09-03-orphan-verdicts` (156 Orphan-Releases → Disposition) und `survey-2026-10-08-open-sources-delta`; die Account-Kandidaten an Mycelium (`## An mycelium`).
+- **Braucht:** je Kandidat ein Träger-Punkt mit erstem begrenztem Schritt. **Mountain (eigene, 9):** `survey-2026-09-03-orphan-verdicts` (156 Orphan-Releases → Disposition, Schritt 3) · `survey-2026-10-08-open-sources-delta` (Gegen-Audit) · `survey-2026-09-14-kapitulationen-pendings-inventur` (Register-Inventur) · `survey-2026-10-09-redistribution-alternativen` (41 `redistribution`-declined → freie Alternative) · `survey-2026-10-09-domaenen` · `survey-2026-09-16-fremde-parser-sammlungen` · `survey-2026-10-08-fmhy-research-landscape` · `survey-2026-10-07-fmhy-forschungsschicht` · `survey-2026-09-17-omegaflow-legacy-konzepte`. **Fremd (verteilt via `## An`):** `exposom-matrix` → sensory · `stoerungs-experiment-fehlende-faeden` → river · `research-api-mcp` → mycelium.
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
@@ -126,7 +126,17 @@ Origin: mountain-302 (2026-10-10).
 - **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-08-research-api-mcp.md` (3 offen) — Consensus/Elicit/SciSpace/Perplexity als Recherche-APIs; Auth-Route/Keys = Mycelium-Domäne. Bitte einen Träger-Punkt mit nächstem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
 - **Unverändert aus folge301:** Token-Entscheidungen (`terms unknown` bleibt; `ttl 86400`/`no-cadence` bestätigt; planetary radar `at <zielplanet>`); LLR-Runtime-Arm an River; `giro-fastchar-cdn` Re-Lauf; PDS-PPI-Block; `keogram-cdn` Re-Lauf; `cmb-cdn` Re-Lauf.
 
+## An sensory
+
+Origin: mountain-302 (2026-10-10).
+
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-04-exposom-matrix.md` (**82 offene Marker**) — somatisch/psychosomatische Exposom-Quellenmatrix, „eine Zeile je Krankheitsklasse = eine TE-Messung", `see-also: docs/concepts/kybernaut-native-methodology.md`. Der Gegenstand ist die Weberin/Gesundheits-Zeugen-Linie — bitte einen Träger-Punkt mit erstem begrenztem Schritt setzen (sonst bleibt das Dok trägerlos). Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
+
 ## An river
+
+Origin: mountain-302 (2026-10-10).
+
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (11 offen) — Operator-Vision „Stein ins Wasser" (`field_te_query`), `see-also: docs/handover/archiv/handover-2026-10-05-river-folge93.md`. Feld/TE = deine Domäne; bitte einen Träger-Punkt setzen.
 
 Origin: mountain-302 (2026-10-10).
 
