@@ -2,7 +2,7 @@
   title: Self-hosted Runner (t420) — Routing, intelligente Drosselung, Grenzen
   class: concept
   date: 2026-10-10
-  sha256: ade23c27c0d3be505be282226c45c70490459a138b636b3f0a4d8dff6e0cf291
+  sha256: ec9ad857d6f9c18da39a74953e1c4da0031ab2a99c1f4c2d174becc385452b6d
   status: live
   see-also: docs/concepts/github-pipeline.md bin/runner_throttle.sh .github/workflows/ci-gate.yml
 -->
@@ -43,16 +43,24 @@ Der t420 teilt den Uplink mit dem Media-PC. Das Werkzeug (auf dem t420 als root 
 1. **CPU/IO (soft):** systemd-Drop-in `Nice=10`, `CPUWeight=20`, `IOWeight=20`, **`CPUQuota=150%`** —
    die Hälfte des 2c/4t-ThinkPads bleibt dem Operator, der Kernel bevorzugt bei Bedarf jeden
    anderen Prozess (fair-share; das ist die „intelligente" CPU-Seite ohne Skript).
-2. **Netz-Kappe mit Headroom:** `tc`/HTB auf dem Default-Interface, **Ceiling `MAX_KBIT`** (Standard
-   20 Mbit). Der Runner nimmt nie den ganzen Uplink — der Media-PC behält Luft.
-3. **Adaptiv (das Intelligente):** ein systemd-Dienst misst alle 5 s die **Round-Trip-Zeit zum
-   Gateway** (Bufferbloat = gemessenes Symptom eines ausgelasteten Links) und regelt die Kappe
+2. **Netz-Kappe mit Headroom (Ingress):** Der schwere Verkehr ist der **Download** (Multi-GB-Ernten) —
+   `tc` auf dem physischen Egress würde nur Uploads drosseln. Deshalb wird der gesamte Eingang von
+   `wlp3s0` auf ein **IFB-Gerät** (`ifb0`) umgeleitet und dort per HTB gekappt: **Ceiling `MAX_KBIT`**.
+   Der Runner nimmt nie den ganzen Downlink — der Media-PC behält Luft.
+3. **Adaptiv (das Intelligente):** ein systemd-Dienst misst alle 5 s die **Round-Trip-Zeit zu einem
+   WAN-Host** (Bufferbloat = gemessenes Symptom eines ausgelasteten Links) und regelt die Kappe
    zwischen `MIN_KBIT` und `MAX_KBIT` herunter/hoch — steigt die Latenz **≥ `HIGH_MS`** (Media
    streamt, Link satt), weicht der Runner zurück; fällt sie **≤ `LOW_MS`**, erholt er sich.
-   `pause`/`resume` stoppen den Runner ganz für eine Media-Session.
+   `pause`/`resume` stoppen den Runner ganz für eine Media-Session. CPU-Grenzen werden **live** per
+   `systemctl set-property` gesetzt — kein laufender Job wird gekillt.
 
-Konfiguration: `/etc/default/runner-throttle` (`IFACE`, `MIN_KBIT`, `MAX_KBIT`, `GW`, `HIGH_MS`,
-`LOW_MS`). `status` zeigt Interface, Band, tc-Zustand und Latenz.
+Konfiguration: `/etc/default/runner-throttle` (`IFACE`, `MIN_KBIT`, `MAX_KBIT`, `GW`, `PROBE`,
+`HIGH_MS`, `LOW_MS`). `status` zeigt Interface, Band, tc-Zustand und Latenz.
+
+**Stand 2026-10-10 (gemessen auf dem t420):** `install` ausgeführt — Drop-in + Live-CPU
+(`CPUQuotaPerSecUSec=1.5s`, `CPUWeight=20`, `IOWeight=20`), `runner-throttle-adaptive.service`
+**active**, Ingress-Cap 20 Mbit auf `ifb0` (`wlp3s0`), RTT-Probe 5 ms; Runner-Dienst unangetastet
+(läuft weiter).
 
 ## Grenzen (0 honored)
 
