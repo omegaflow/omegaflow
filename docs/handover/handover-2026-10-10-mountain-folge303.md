@@ -1,0 +1,153 @@
+<!--
+  title: Handover — Mountain-Folge 303 (2026-10-10)
+  session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
+  class: handover
+  date: 2026-10-10
+  sha256: f59649675caceb90bff2dc8bedfb69a9f769152a6ccbd84bdb6d552f0f6bbea6
+  status: live
+-->
+# Handover — Mountain-Folge 303 (2026-10-10)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
+Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Session konsumierte `handover-2026-10-10-mountain-folge302.md` (→ `archiv/`).
+flash only, kein pro/max.
+
+## Burn: open 0.0000 · close 0.16 · cap 0.50 — Grund: line 0.0351 + 4 Diver (FMHY general 0.0364 · vantage-Bias grind-flash 0.0298 · ROOT general 0.0271 · Q(t)-Bau grind-flash); deepseek-flash, kein pro/max; Aggregat 19 Sessions $0.7006
+
+## Offen (aufgeschlüsselt)
+
+### Beobachtungsoperator + Fit — Q(t) Präzession gebaut; Nutation N(t) offen
+- **Status:** eigen (Bau läuft) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Bau-Schritt (IAU 2000A Nutation, SOFA `iauNut06a`)
+- **Lage:** (gemessen 2026-10-10, `cargo check` 0/0) `src/mathematikerin/receiver.rs` trägt jetzt `cirs_to_gcrs(r_cirs_km, tdb_jd)` (IAU 2006 Fukushima–Williams-Präzession `P=Rx(-eps_a)·Rz(-psi_b)·Rx(phi_b)·Rz(gamma_b)`, SOFA `iauP06a`/`iauPnm06a`) + `itrf_to_icrs` (Komposition `cirs_to_gcrs(itrf_to_cirs(...))`) + 5 Tests (Norm-Erhaltung · J2000-Identität bis Frame-Bias · Orthogonalität · NaN→None · Komposition). **N(t) = IAU 2000A Nutation ist NAMED-ABSENT** (1365-Term-Serie überschreitet einen begrenzten Schritt) — kein stiller Zero, im `CIRS_TO_GCRS_CONVENTION`-String und im Modul-Endkommentar benannt (N=I); `cirs_to_icrs` ist nie definiert. Der ältere `ITRF_TO_CIRS_CONVENTION`-Satz „Q(t) is absent" bleibt für `itrf_to_cirs`' eigenen Ausgabeframe (CIRS) wahr.
+- **Blockade:** keine (Mountain-Seite).
+- **Braucht:** eigener begrenzter Dispatch — die IAU 2000A-Nutationsserie als Datentabelle + `nutation_matrix_n06a`, in `cirs_to_gcrs` einsetzen, Test gegen SOFA-Referenzwerte. Danach 2a (ODF-Kalibration), 2c-medium (VMF3/IONEX je Leg), 2d (Residuum-Bin `pioneer10_odf.bin` gegen DE440, kein LSQ).
+
+### particle-cern — ROOT-Sample gemessen; Teil B (TStreamerElement/Branches) offen
+- **Status:** eigen (Parser) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Bau-Schritt (TStreamerElement-/TBranch-Decode aus dem Header)
+- **Lage:** (gemessen 2026-10-10, Diver + `archive_search --verdict` bestätigt) Teil A `parse_streamer_info_header` steht (`cargo check` 0/0, Fixture-Test). Zwei gemessene ROOT-Kandidaten (CC0, magic `root`, TTree+`StreamerInfo` im Binärkopf): Record 401 `MasterclassData.root` 1 289 541 B, `https://opendata.cern.ch/record/401/files/MasterclassData.root` (HTTP 200 bestätigt), sha256 `8694a2ed…039b`, DOI `10.7483/OPENDATA.LHCb.E7EJ.JUWR`; Record 12361 `SMHiggsToZZTo4L.root` 42 400 229 B, sha256 `78b93558…aab5`, DOI `10.7483/OPENDATA.CMS.8FLU.UIQJ`. Lokale Arbeitskopien außerhalb des Baums: `/tmp/opencode/mc.bin`, `/tmp/opencode/rootmagic.bin`.
+- **Blockade:** `parse_tree` bleibt verweigert, bis Teil B gebaut ist; die alte Blockade „kein ROOT-Sample im Baum" ist geheilt (Sample gemessen).
+- **Braucht:** Teil B — `parse_tree` um TStreamerElement + fBranches/fLeaves erweitern, gegen `MasterclassData.root` (Record 401, schnell) verifizieren; Gate auf Indexdomäne vor dem Skalar-Reader.
+
+### Vantage-Rest-Bias — (g) geheilt; (b)(c)(d) offen
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Bau-Schritt je Ort
+- **Lage:** (gemessen 2026-10-10, `cargo check` 0/0) (g) `src/archivar/port.rs:3761` **geheilt** — `frame.starts_with("at sun")` ist durch `declared_frame_class` ersetzt: Direktive `at <body>` → Barycenter, `on <body>` → Surface; leer/unklassifizierbar → `pending` (Block unberührt), nie ein Default-Glied (die Sonne ist nicht mehr privilegiert). (b) `src/archivar/odp.rs:9` `const EARTH = include_str!(…)` — Host als Parameter verlangt Signaturänderung von `station_velocity`/`downlink_rate` + 10 fremde Bins (`tools/measure/src/bin/pioneer*`, `galileo_*`, `orientation_probe`). (c) `src/weberin.rs:264-268` `frame_origin_name()` NAIF 10 — verlangt Feld in `Weberin`+`WeberinFeed` + 6 fremde Bins. (d) `src/weberin.rs:253-262` `woven_major_bodies()` `[1,2,4,5,6,7,8,301,399]` — verlangt ein Register + Träger + 4 fremde Bins.
+- **Blockade:** (b)(c)(d) je ein breiter Call-Site-Refactor über die eigene Datei hinaus.
+- **Braucht:** je Ort ein eigener begrenzter Dispatch mit benanntem Datei-/Bin-Scope. Grenzlinie (fünf Stimmen): der Code wählt keinen Körper — jeder Name/Position/Ursprung/Rahmen ist deklariert oder registriert, sonst `pending`, nie ein Default.
+
+### FMHY-Quellen-Kandidaten-Pool (future-222) — klassifiziert; Verdikt offen
+- **Status:** eigen (Quellen-Verdikt) | **Bindung:** mycelium (Ernte nach Verdikt)
+- **Trigger:** je Klasse ein begrenzter Verdikt-Schritt nach `docs/SOURCE_PORT.md`
+- **Lage:** (gemessen 2026-10-10, Diver; Liste bis Ende gelesen) `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.): 405 total / 402 NEW. Klassen: **research-data 74** (72 NEW) · **tool/service 301** (300) · **bypass-mirror 23** · **dead/nav 7**. 28 research-data-Einträge gemessen (`--verdict`+`--sniff`): u. a. ChinaRxiv 200, Neliti 403→blocked ip-blocked, All About Circuits 403→blocked, Open Textbook Library 200, IntechOpen 206. Die 23 bypass-mirror (Sci-Hub, Sci-Bot, PDFiles, Studocu/Exam-Downloader, Telegram-Kanäle …) sind eine **UrhG-§95a-/Umgehungs-Verdikt-Klasse**, keine Auslassung.
+- **Blockade:** kein Verdikt geschrieben (nur klassifiziert/gemessen).
+- **Braucht:** (a) research-data-Klasse: Register-Zeilen (Zulassung/`blocked`/`declined`) aus der Messung schreiben; (b) bypass-Klasse als `decline redistribution` verdikten. Je ein begrenzter Dispatch.
+
+### Asservatenkammer — Mountain-Träger (9 Doks)
+- **Status:** eigen (Register/Träger) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt je Dok
+- **Lage:** (gemessen 2026-10-10, Zensus `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`) Die 9 Mountain-Doks tragen jetzt je einen Namenträger in dieser Übergabe (siehe Block). Fremd verteilt via `## An`: `exposom-matrix` → sensory, `stoerungs-experiment` → river, `research-api-mcp` → mycelium.
+- **Blockade:** ohne ersten Schritt bleibt ein Dok trägerlos.
+- **Braucht:** je Dok der genannte erste Schritt:
+  - `survey-2026-09-14-kapitulationen-pendings-inventur.md` | 32 offen | Register-Inventur der aufgegebenen/offenen Quellen gegen `phi/*.φ`
+  - `survey-2026-10-08-open-sources-delta.md` | 18 offen | Gegen-Audit gegen `phi/sources.φ`
+  - `survey-2026-09-03-orphan-verdicts.md` | 15 offen (156 Orphan-Releases) | Disposition je Register-Gap (Step 3)
+  - `survey-2026-10-09-redistribution-alternativen.md` | 10 offen (41 `redistribution`-declined) | freie Alternative je Quelle
+  - `survey-2026-10-09-domaenen.md` | 8 offen | Domänen-Landschaft, Lücken als Lücken messen
+  - `survey-2026-09-16-fremde-parser-sammlungen.md` | 6 offen | fremde Parser-/Compiler-Sammlungen vergleichen
+  - `survey-2026-10-08-fmhy-research-landscape.md` | 5 offen | in die FMHY-Verdikt-Klasse falten (Punkt oben)
+  - `survey-2026-10-07-fmhy-forschungsschicht.md` | 2 offen | FMHY-Wiki vermessen → FMHY-Verdikt-Klasse
+  - `survey-2026-09-17-omegaflow-legacy-konzepte.md` | 2 offen | verlorene, heute entblockbare Konzepte durchgehen
+
+### PEP + Tudat — Schritt 0 (Präzession) gebaut; Nutation offen
+- **Status:** eigen (Register + Bau) | **Bindung:** eigen
+- **Trigger:** Nutation N(t) (Schritt-0-Rest), dann Schritt 1 (Pioneer-10-Residuum gegen DE440)
+- **Lage:** (gemessen 2026-10-10) Zwei Träger-Doks, namentlich: `docs/concepts/eigene-ephemeride.md` (die Vision: eine eigene Ephemeride aus allen Zeugen; Wert = `witness_set`/Unabhängigkeit; O−C gegen ein Haus ist `fit-residuum`, nie `blindtest`) und `docs/surveys/survey-2026-10-10-ephemeris-quellen.md` (Referenz-Landschaft). Die vier Häuser (DE440 / INPOP19a / EPM2021 / PETREL19) sind Zeugen und längst als normale `ephemeris_*`-Quellen registriert. **PEP** (`github.com/jbattat/pep_core`) und **Tudat** (arXiv:2510.23179) sind nur Lizenz-/Verfahrens-**Referenz** (nie im Shipped Binary), `reference` als `origin`-Herkunftsmarker — der Rat (Option a, neue Klasse) ist vom Baum überstimmt (PETREL19-Präzedenz: ein Programm lebt als `origin`/`compiler` auf einer Datenzeile, nie als eigene Registerklasse; unser eigenes Werk wird nach seinem Erzeuger benannt). **Schritt 0 Teil:** `cirs_to_gcrs` (Präzession) gebaut; Q(t) ist noch precession-only → die Nutation ist der verbleibende Schritt-0-Rest.
+- **Blockade:** keine (Mountain-Seite).
+- **Braucht:** Nutation (wie Punkt 1), dann Schritt 1 — Pioneer-10-ODF durch die Kette, Residuum gegen DE440, kein Fit.
+
+### ci-check-Kern-Tests — wartend
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ci-check/ci-gate-Lauf am HEAD nach dem tiff-Heil-Commit
+- **Lage:** (gemessen 2026-10-10, `ci_manage status`) HEAD `1504aaf0b`; die ci-gate-Läufe sind `queued`/`pending` (38061716952, 38061666923, 38061298302, …); register-coverage `completed/cancelled`. Kein Testausführungs-Ergebnis am HEAD gemessen. Die vier Tests (ck/extract/igrf/hdf4) sind im Baum geheilt; der lib-test-Compile-Blocker (`apply_predictor`) ist seit `3c4786a3b` geheilt.
+- **Blockade:** kein CI-Ergebnis (Runner-Queues).
+- **Braucht:** nach eigenem Push `ci_manage list` + `ci_manage log <ci-gate-id>` — die vier Tests am HEAD prüfen.
+
+### Flyby-Kette — Residual in ODF; σ_recon getrennt
+- **Status:** termin | **Bindung:** termin:2026-11-01
+- **Trigger:** ESOC-Recon-Release (oder Descope)
+- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ:34`.
+- **Blockade:** kein ESOC-Recon-Release.
+- **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
+
+### iEEG — Riss beigelegt: registriertes Wort 2026-10-06 maßgeblich
+- **Status:** eigen (Register) | **Bindung:** eigen
+- **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
+- **Lage:** (gemessen 2026-10-10, unverändert) iEEG = privates Experiment (`state/zustand/wartend.φ:40`), kein CDN; `eeglab::eeg_from_bin` akzeptiert `Samples::Double`.
+- **Blockade:** keine.
+- **Braucht:** kein Schritt — nur ein neues Operator-Wort öffnet es.
+
+### GIC-Paper — Trigger: Mycelium-Artefakt
+- **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
+- **Trigger:** `te-bias-n`-Lauf `38038722712` Abschluss → Mycelium meldet den Ground-Truth-Abschnitt
+- **Lage:** (gemessen 2026-10-10, unverändert) `te_ground_truth` in `.github/workflows/te-bias-n.yml:48`; kein Mountain-Schritt bis zum Artefakt. Wahrheit `state/zustand/wartend.φ`.
+- **Blockade:** kein CI-Ergebnis.
+- **Braucht:** nach Mycelium-Meldung — Paper §3.5/Abstract/§7 nachziehen (Mountain).
+
+## LOCK
+
+- **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82):
+  `complex_te_probe` um Detrend-along-p + CMI/pTE-mit-p-Kovariate erweitern; Lauf lokal/silent,
+  nie CI. Träger `state/mountain/kuprat-complex-te/`. Beide Arme gebaut, `--selftest` grün; offen:
+  der Sweep. Riss: KDE-CMI verliert Power bei großer Kovariat-Varianz.
+
+## Operator-Wort-Register
+
+Wort | Datum | Quelle
+--- | --- | ---
+„hast du archive search all und den roster befragt?" | 2026-10-10 | Operator (Session, Mountain 298)
+„bitte für council immer auch archive search all und den roster und bitte lasse archive search all und den roster auch auf LLR los" | 2026-10-10 | Operator (Session, Mountain 299)
+„aber warum bauen wir PEP nicht in rust nach? und bitte ja LLR … sag, ob ich ihn vorziehen soll" | 2026-10-10 | Operator (Session, Mountain 299)
+„warum nur so ein kleiner roster und warum kein vollport wir wollen doch womöglich 100% rust std" | 2026-10-10 | Operator (Session, Mountain 299)
+„und dann möchte ich dass du nochmal eine -all und roster recherche machst welche referenzen wir noch harvestenn können um unsere eigenen ephemeriden zu bauen?" | 2026-10-10 | Operator (Session, Mountain 299)
+„bitte commit und übergabe in einer frischen session dann direkt 1-4" | 2026-10-10 | Operator (Session, Mountain 299)
+„Starte die Mountain-Linie in einem Pass … bitte frage mit --all und max roster und dem rat klären Abgeschlossen und übergeben" | 2026-10-10 | Operator (Session, Mountain 301)
+„Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
+„mach das ab jetzt automatisch — committe und pushe selbst" | 2026-10-07 | Operator (Session, Mountain 264)
+„ich glaube reference ist passender oder aber warum haben wir mit allen anderen ephemeriden compilern kein problem aber mit dem PEP nachbau schon?" | 2026-10-10 | Operator (Session, Mountain 302)
+„aber müssen wir es pep nennen wenn wir unsere eigenen ephemeriden nennen und dann gab es ja noch das zweite ephemeriden tool haben wir das alles?" | 2026-10-10 | Operator (Session, Mountain 302)
+„nein das meine ich nicht ach mensch geh doch mal in das ephemeriden vision dok" | 2026-10-10 | Operator (Session, Mountain 302)
+
+## An mycelium
+
+Origin: mountain-303 (2026-10-10).
+
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-08-research-api-mcp.md` (3 offen) — Consensus/Elicit/SciSpace/Perplexity als Recherche-APIs; Auth-Route/Keys = Mycelium-Domäne. Bitte einen Träger-Punkt mit nächstem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
+
+## An river
+
+Origin: mountain-303 (2026-10-10).
+
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (11 offen) — Operator-Vision „Stein ins Wasser" (`field_te_query`); Feld/TE = deine Domäne, bitte einen Träger-Punkt setzen.
+- **`src/archivar/parse.rs:2489` auto-deref bleibt** (aus folge300/301): `QuantityRole::parse(*role)` → `parse(role)`; der Tuple-Deref `Ok((*role, …))` bleibt. Die P10-`QuantityRole`-Schicht ist river-eigen — bitte am eigenen Pass verifizieren.
+
+## An sensory
+
+Origin: mountain-303 (2026-10-10).
+
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-04-exposom-matrix.md` (82 offene Marker) — somatisch/psychosomatische Exposom-Quellenmatrix, „eine Zeile je Krankheitsklasse = eine TE-Messung". Der Gegenstand ist die Weberin/Gesundheits-Zeugen-Linie — bitte einen Träger-Punkt mit erstem begrenztem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
+
+## Abschluss
+
+Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch", 2026-10-07)
+trägt Commit und Push. **Dieses Atom (Mountain 303):** Q(t)-Präzession gebaut
+(`src/mathematikerin/receiver.rs`: `cirs_to_gcrs` + `itrf_to_icrs` + 5 Tests, `cargo check` 0/0;
+Nutation benannt-absent) · ROOT-Sample gemessen (Record 401/12361, CC0) · Vantage-Bias (g)
+geheilt (`src/archivar/port.rs`) · FMHY-Kandidaten klassifiziert (405/402; 28 research-data
+gemessen) · Asservatenkammer: 9 Mountain-Träger gesetzt. **Geteilter Baum:** fremde uncommittete
+Hunks (`AGENTS.md`, `docs/concepts/tools-map.md`, `opencode.json`, `tools/utils/src/bin/archive_search*`)
+nicht angefasst. Eigene Pfade: `src/mathematikerin/receiver.rs` · `src/archivar/port.rs` ·
+`docs/handover/handover-2026-10-10-mountain-folge303.md` ·
+`docs/handover/archiv/handover-2026-10-10-mountain-folge302.md` (Move).

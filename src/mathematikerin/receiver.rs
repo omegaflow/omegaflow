@@ -232,6 +232,102 @@ pub fn itrf_to_cirs(r_itrf_km: [f64; 3], ut1_jd: f64, eop: &EopSample) -> Option
     )
 }
 
+pub const CIRS_TO_GCRS_CONVENTION: &str = "CIRS -> GCRS = R(t)^T * V(CIRS), SOFA iauC2i06a/iauPnm06a; R(t) = P(t) * N(t); P(t) = Rx(-eps_a) * Rz(-psi_b) * Rx(phi_b) * Rz(gamma_b), the IAU 2006 Fukushima-Williams angles (SOFA iauPfw06/iauFw2m), closed-form, no table; P maps GCRS -> mean equator/equinox of date, so its transpose carries CIRS -> GCRS; R1(t)=[[1,0,0],[0,cos t,sin t],[0,-sin t,cos t]], R2(t)=[[cos t,0,-sin t],[0,1,0],[sin t,0,cos t]], R3(t)=[[cos t,sin t,0],[-sin t,cos t,0],[0,0,1]]; N(t) = IAU 2000A nutation (SOFA iauNut06a) is a NAMED ABSENT step (its 1365-term luni-solar/planetary series exceeds one bounded step), so N = I and this is precession-only; non-finite input or angle is absent -> None; this is cirs_to_gcrs, never cirs_to_icrs";
+
+type Mat3 = [[f64; 3]; 3];
+
+fn rx(phi: f64) -> Mat3 {
+    let (s, c) = (phi.sin(), phi.cos());
+    [[c, 0.0, -s], [0.0, 1.0, 0.0], [s, 0.0, c]]
+}
+
+fn rz(psi: f64) -> Mat3 {
+    let (s, c) = (psi.sin(), psi.cos());
+    [[c, s, 0.0], [-s, c, 0.0], [0.0, 0.0, 1.0]]
+}
+
+fn mat_mul(a: &Mat3, b: &Mat3) -> Mat3 {
+    let mut out = [[0.0_f64; 3]; 3];
+    for (i, row) in out.iter_mut().enumerate() {
+        for (j, cell) in row.iter_mut().enumerate() {
+            *cell = a[i][0] * b[0][j] + a[i][1] * b[1][j] + a[i][2] * b[2][j];
+        }
+    }
+    out
+}
+
+fn mat_apply(m: &Mat3, v: [f64; 3]) -> [f64; 3] {
+    [
+        m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
+        m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
+        m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2],
+    ]
+}
+
+fn mat_transpose(m: &Mat3) -> Mat3 {
+    let mut out = [[0.0_f64; 3]; 3];
+    for (i, row) in out.iter_mut().enumerate() {
+        for (j, cell) in row.iter_mut().enumerate() {
+            *cell = m[j][i];
+        }
+    }
+    out
+}
+
+fn precession_matrix_fw06(tdb_jd: f64) -> Option<Mat3> {
+    if !tdb_jd.is_finite() {
+        return None;
+    }
+    let t = (tdb_jd - 2451545.0) / 36525.0;
+    let gamb = (-0.052928
+        + (10.556378
+            + (0.4932044 + (-0.00031238 + (-0.000002788 + 0.0000000260 * t) * t) * t) * t)
+            * t)
+        * ARCSEC_TO_RAD;
+    let phib = (84381.448 + (-46.815758 + (-0.000590 + 0.001813 * t) * t) * t) * ARCSEC_TO_RAD;
+    let psib = (-0.041775
+        + (5038.481484
+            + (1.5584175 + (-0.00018522 + (-0.000026452 + (-0.0000000148) * t) * t) * t) * t)
+            * t)
+        * ARCSEC_TO_RAD;
+    let epsa = (84381.406
+        + (-46.836769
+            + (-0.0001831 + (0.00200340 + (-0.000000576 + (-0.0000000434) * t) * t) * t) * t)
+            * t)
+        * ARCSEC_TO_RAD;
+    if !gamb.is_finite() || !phib.is_finite() || !psib.is_finite() || !epsa.is_finite() {
+        return None;
+    }
+    let p = mat_mul(
+        &rx(-epsa),
+        &mat_mul(&rz(-psib), &mat_mul(&rx(phib), &rz(gamb))),
+    );
+    if p.iter().all(|row| row.iter().all(|c| c.is_finite())) {
+        Some(p)
+    } else {
+        None
+    }
+}
+
+pub fn cirs_to_gcrs(r_cirs_km: [f64; 3], tdb_jd: f64) -> Option<[f64; 3]> {
+    if !finite3(r_cirs_km) {
+        return None;
+    }
+    let p = precession_matrix_fw06(tdb_jd)?;
+    let out = mat_apply(&mat_transpose(&p), r_cirs_km);
+    if finite3(out) { Some(out) } else { None }
+}
+
+pub fn itrf_to_icrs(
+    r_itrf_km: [f64; 3],
+    ut1_jd: f64,
+    tdb_jd: f64,
+    eop: &EopSample,
+) -> Option<[f64; 3]> {
+    let r_cirs = itrf_to_cirs(r_itrf_km, ut1_jd, eop)?;
+    cirs_to_gcrs(r_cirs, tdb_jd)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -424,5 +520,56 @@ mod tests {
         };
         assert!(itrf_to_cirs(station, 2451545.0, &bad).is_none());
         assert!(itrf_to_cirs([f64::NAN, 0.0, 0.0], 2451545.0, &eop).is_none());
+    }
+
+    #[test]
+    fn cirs_to_gcrs_preserves_the_norm() {
+        let station = [6378.137, 1000.0, -2000.0];
+        let out = cirs_to_gcrs(station, 2460000.5).unwrap();
+        let d = (norm(out) - norm(station)).abs();
+        assert!(d < 1.0e-9, "norm drift {d}");
+    }
+
+    #[test]
+    fn cirs_to_gcrs_is_the_identity_at_j2000_up_to_frame_bias() {
+        let station = [6378.137, 1000.0, -2000.0];
+        let out = cirs_to_gcrs(station, 2451545.0).unwrap();
+        let sep = norm(sub(out, station));
+        assert!(sep < 1.0e-2, "frame-bias separation {sep} km");
+    }
+
+    #[test]
+    fn precession_matrix_is_orthogonal() {
+        let p = precession_matrix_fw06(2460000.5).unwrap();
+        let should_be_identity = mat_mul(&mat_transpose(&p), &p);
+        for (i, row) in should_be_identity.iter().enumerate() {
+            for (j, c) in row.iter().enumerate() {
+                let want = if i == j { 1.0 } else { 0.0 };
+                assert!((c - want).abs() < 1.0e-12, "P^T P [{i}][{j}] = {c}");
+            }
+        }
+    }
+
+    #[test]
+    fn cirs_to_gcrs_refuses_absent_input() {
+        assert!(cirs_to_gcrs([f64::NAN, 0.0, 0.0], 2451545.0).is_none());
+        assert!(cirs_to_gcrs([0.0, f64::INFINITY, 0.0], 2451545.0).is_none());
+        assert!(cirs_to_gcrs([6378.137, 1000.0, -2000.0], f64::NAN).is_none());
+        assert!(cirs_to_gcrs([6378.137, 1000.0, -2000.0], f64::INFINITY).is_none());
+    }
+
+    #[test]
+    fn itrf_to_icrs_composes_through_cirs() {
+        let station = [6378.137, 1000.0, -2000.0];
+        let eop = EopSample {
+            ut1_utc_s: 0.1,
+            pm_x_arcsec: 0.2,
+            pm_y_arcsec: -0.1,
+        };
+        let out = itrf_to_icrs(station, 2451545.0 + 0.5, 2451545.0 + 0.5, &eop).unwrap();
+        let d = (norm(out) - norm(station)).abs();
+        assert!(d < 1.0e-9, "norm drift {d}");
+        assert!(itrf_to_icrs(station, f64::NAN, 2451545.0, &eop).is_none());
+        assert!(itrf_to_icrs(station, 2451545.0, f64::NAN, &eop).is_none());
     }
 }

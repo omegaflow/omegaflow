@@ -3660,6 +3660,23 @@ pub fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool)
     0
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum DeclaredFrameClass {
+    Barycenter,
+    Surface,
+}
+
+fn declared_frame_class(frame: &str) -> Option<DeclaredFrameClass> {
+    let mut parts = frame.split_whitespace();
+    let directive = parts.next()?;
+    parts.next()?;
+    match directive {
+        "at" => Some(DeclaredFrameClass::Barycenter),
+        "on" => Some(DeclaredFrameClass::Surface),
+        _ => None,
+    }
+}
+
 pub fn draft_context_mode(path: &str) -> i32 {
     let drafts = match std::fs::read_to_string(path) {
         Ok(c) => c,
@@ -3741,12 +3758,12 @@ pub fn draft_context_mode(path: &str) -> i32 {
             None => String::new(),
         };
         let (frame, reason) = draft_frame_guess(url, &context, &registry);
-        if frame.is_empty() {
+        let Some(class) = declared_frame_class(&frame) else {
             pending += 1;
             out.push_str(b);
             out.push_str("\n\n");
             continue;
-        }
+        };
         let mut lines: Vec<String> = Vec::new();
         for l in b.lines() {
             if l == "# frame: frame pending" {
@@ -3758,10 +3775,9 @@ pub fn draft_context_mode(path: &str) -> i32 {
                 lines.push(frame.trim_end().to_string());
             }
         }
-        if frame.starts_with("at sun") {
-            celestial += 1;
-        } else {
-            terrestrial += 1;
+        match class {
+            DeclaredFrameClass::Barycenter => celestial += 1,
+            DeclaredFrameClass::Surface => terrestrial += 1,
         }
         out.push_str(&lines.join("\n"));
         out.push_str("\n\n");
