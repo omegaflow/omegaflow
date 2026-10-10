@@ -247,17 +247,14 @@ fn dmap_record_at(bytes: &[u8], p: usize) -> Option<(DmapRecord, usize)> {
         q += 1;
         let dim = le_u32_at(rec, q)?;
         q += 4;
-        if dim < 1 || dim > 8 {
+        if !(1..=8).contains(&dim) {
             return None;
         }
         let mut n: usize = 1;
         for _ in 0..dim as usize {
             let r = le_u32_at(rec, q)?;
             q += 4;
-            n = match n.checked_mul(r as usize) {
-                Some(v) => v,
-                None => return None,
-            };
+            n = n.checked_mul(r as usize)?;
         }
         if n > 200_000_000 {
             return None;

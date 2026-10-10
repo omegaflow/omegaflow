@@ -172,7 +172,7 @@ mod tests {
         );
         let (ex, ey) = parse_frame(body.as_bytes()).unwrap();
         assert_eq!(ex, Some(6.0 * 1e-6));
-        assert_eq!(ey, Some(-1.0 * 1e-6));
+        assert_eq!(ey, Some(-1e-6));
     }
 
     #[test]

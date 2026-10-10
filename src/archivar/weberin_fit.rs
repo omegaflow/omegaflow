@@ -133,7 +133,7 @@ pub fn fit_station_series(series: &StationSeries) -> Option<StationFit> {
         .map(|p| p.tdb)
         .fold(f64::NEG_INFINITY, f64::max);
     let t_span_s = t_max - t0;
-    if !(t_span_s > 0.0) {
+    if t_span_s <= 0.0 || t_span_s.is_nan() {
         return None;
     }
     let n = points.len();
@@ -147,7 +147,7 @@ pub fn fit_station_series(series: &StationSeries) -> Option<StationFit> {
             dt * dt
         })
         .sum::<f64>();
-    if !(sxx > 0.0) {
+    if sxx <= 0.0 || sxx.is_nan() {
         return None;
     }
     let sxy = points

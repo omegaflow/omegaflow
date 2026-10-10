@@ -40,7 +40,7 @@ const SOURCE_PARAM: [&str; 5] = [
     "planet_mass",
 ];
 
-const KEEP: [&str; 10] = [
+const KEEP: [&str; 12] = [
     "agrav_gravity_ms2",
     "copernicus_geopotential_height",
     "igets_gravity_nm_s2",
@@ -51,6 +51,8 @@ const KEEP: [&str; 10] = [
     "corot_logg",
     "polarbase_logg",
     "pastel_logg",
+    "gravity_wave_far",
+    "gw250207_115645",
 ];
 
 fn usage() {
@@ -98,29 +100,37 @@ fn main() {
     let mut source_param = 0usize;
     let mut keep = 0usize;
     let mut unclassified: Vec<String> = Vec::new();
-    let mut histogram: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
+    let mut histogram: std::collections::BTreeMap<String, usize> =
+        std::collections::BTreeMap::new();
     let mut out = String::with_capacity(content.len());
     for line in content.lines() {
         let tokens: Vec<&str> = line.split_whitespace().collect();
-        if tokens.len() >= 5 && tokens[0] == "field" && tokens[4] == "gravity" {
+        if tokens.len() >= 5
+            && (tokens[0] == "field" || tokens[0] == "last")
+            && tokens[4] == "gravity"
+        {
             let name = tokens[2];
             *histogram.entry(name.to_string()).or_default() += 1;
-            if GEOMETRY.contains(&name) {
+            let kind = if GEOMETRY.contains(&name) {
+                Some("geometry")
+            } else if SOURCE_PARAM.contains(&name) {
+                Some("source-parameter")
+            } else {
+                None
+            };
+            if let Some(kind) = kind {
                 let mut t = tokens.clone();
-                t[0] = "quantity";
-                t[4] = "geometry";
+                if t[0] == "field" {
+                    t[0] = "quantity";
+                }
+                t[4] = kind;
+                if kind == "geometry" {
+                    geometry += 1;
+                } else {
+                    source_param += 1;
+                }
                 out.push_str(&t.join(" "));
                 out.push('\n');
-                geometry += 1;
-                continue;
-            }
-            if SOURCE_PARAM.contains(&name) {
-                let mut t = tokens.clone();
-                t[0] = "quantity";
-                t[4] = "source-parameter";
-                out.push_str(&t.join(" "));
-                out.push('\n');
-                source_param += 1;
                 continue;
             }
             if KEEP.contains(&name) {

@@ -42,7 +42,9 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
 mod tests {
     use super::*;
 
-    fn write_bin(series: &[(u8, u8, Vec<(f64, f64)>)]) -> Vec<u8> {
+    type BinSeries = (u8, u8, Vec<(f64, f64)>);
+
+    fn write_bin(series: &[BinSeries]) -> Vec<u8> {
         let mut out: Vec<u8> = Vec::new();
         out.extend_from_slice(MAGIC);
         out.extend_from_slice(&(series.len() as u32).to_le_bytes());
@@ -70,8 +72,8 @@ mod tests {
         assert_eq!(
             rows,
             vec![
-                (1.0, 2.0, (2u32 << 8) | 0),
-                (3.0, 4.0, (2u32 << 8) | 0),
+                (1.0, 2.0, 2u32 << 8),
+                (3.0, 4.0, 2u32 << 8),
                 (5.0, 6.0, (40u32 << 8) | 2),
             ]
         );
@@ -79,7 +81,7 @@ mod tests {
 
     #[test]
     fn component_name_decodes_dtype_and_channel() {
-        assert_eq!(component_name((2u32 << 8) | 0), "bepicolombo_d2_000");
+        assert_eq!(component_name(2u32 << 8), "bepicolombo_d2_000");
         assert_eq!(component_name((40u32 << 8) | 2), "bepicolombo_d40_002");
     }
 
