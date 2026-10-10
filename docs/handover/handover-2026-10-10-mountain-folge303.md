@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 29aa6055b7bac652b61c0ae677c827422d0e260032c6cb2d722b0cd00d57a4b4
+  sha256: 98bb0274cfd3289b23d12e04b7d4c23ae63991d893cf7b81eaee2f89ca6607b3
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -50,7 +50,7 @@ flash only, kein pro/max.
 - **Trigger:** nächster begrenzter Schritt je Riss/Route
 - **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`. **Messungen 2026-10-10:** Riss 3 (KNMI/Mindat) — kein Key in `.secrets.local` → `pending` (Operator-Route); Riss 4 (Overpass) — HTTP 406 direkt+Proton → bot-gated `pending`; Riss 5 — SURFRAD/ECAD/DWD/WorldClim = Messwert, GADM/Worldview = Referenz/Anzeige. **UI-Runde gefahren** (`mountain-ui`: Duck Haiku · Claude Sonnet · Qwen · Z.ai GLM, alle geantwortet): Achse tragfähig, aber **Manifestation statt Quelle** klassifizieren + **Lizenz-/Zugangs-Gate vor** der Achse + **Kontext-Achse** ergänzen — Konvergenz mit dem Rat (Riss = fehlende Gate-Achse). **Korrektur (Operator-Frage 2026-10-10):** die „12 Query"-Klassifikation war zu mechanisch („hat API" ≠ Arm); Präzedenz **`--supermag`/`--heasarc` = Dual** (Quelle + Arm), `--opencellid` = reiner Arm. Die Kandidaten sind Messquellen (→ `phi`) oder Referenz/Modell/decline — **kein neuer Arm klar gerechtfertigt**; die blockierte Arm-Hälfte ist gegenstandslos (max. optionales EMSC-Dual).
 - **Blockade:** Arm-Hälfte blockiert — `tools/utils/src/bin/archive_search.rs` + `net.rs` tragen fremde uncommittete Hunks (archive_search-Session); ein Arm-Dispatch würde deren Arbeit mitschwemmen. Riss 3 (kein Key) + Riss 4 (bot-gated) sind `pending`.
-- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi` oder Referenz/Modell/decline) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) SURFRAD-Compiler `tools/harvest/src/bin/surfrad_compiler.rs` steht (gemessen: 1440 Z. geparst, 2 `.bin`-Felder W/m², `cargo check` 0/0) — die `phi/sources.φ`-Registrierung (`url`/`origin`/`compiler`) ist **Mycelium-Recht** → `## An mycelium`. (c) weitere `phi`-Compiler (ECAD, DWD, WorldClim, AODN) je begrenzter Dispatch. (d) KNMI/Mindat-Key → Futures Operator-Queue.
+- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) KNMI/Mindat-Key → Futures Operator-Queue.
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -132,6 +132,7 @@ Wort | Datum | Quelle
 „können wir nun eine untersuchung machen was davon als arme in archive search sollte, was in tools und was in phi dateien?" | 2026-10-10 | Operator (Session, Mountain 303)
 „ja bitte Nächste Schritte (in der Übergabe): Riss 3/4/5 messen → je Arm ein net.rs-Zweig + cargo check, je B-Kandidat url+Compiler+field; dann die UI-Runde in eigener Gruppe, dann das Routing als Register-Zeile." | 2026-10-10 | Operator (Session, Mountain 303)
 „aber gehören die da wirklich rein? GPlates · GWOSC/LIGO · Navy Weather · Mindat · KNMI · Overpass · EMSC (dual)" | 2026-10-10 | Operator (Session, Mountain 303)
+„warum sind die in Das eigentliche offene Stück bleibt: … compiler sind deine aufgabe" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
@@ -139,6 +140,11 @@ Origin: mountain-303 (2026-10-10).
 
 - **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-08-research-api-mcp.md` (3 offen) — Consensus/Elicit/SciSpace/Perplexity als Recherche-APIs; Auth-Route/Keys = Mycelium-Domäne. Bitte einen Träger-Punkt mit nächstem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
 - **SURFRAD-Compiler gebaut (Routing B):** `tools/harvest/src/bin/surfrad_compiler.rs` (gemessen 2026-10-10: SURFRAD-`*.dat` 1440 Z./Tag geparst, Felder `surfrad_shortwave_down` + `surfrad_direct_normal` W/m², hourly, `cargo check` 0/0; Sample `https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat` HTTP 200). Bitte die `phi/sources.φ`-Zeile setzen — `url` (CDN-Asset) + `origin https://gml.noaa.gov/aftp/data/radiation/surfrad/` + `compiler tools/harvest/src/bin/surfrad_compiler.rs` + `field` — plus die Manifestations-Workflow. Grenzfall (Rat): Mountain trägt die Verdikt-/`ttl`-Seite, Mycelium die Materialisierung (`url`/`origin`/`compiler`) — kein stiller Schreibakt.
+- **Vier weitere `phi`-Quellen (Compiler stehen — Mountain-Arbeit):** je `phi/sources.φ`-Zeile (`url` CDN-Asset + `origin` + `compiler` + `field`) + Manifestations-Workflow:
+  - `ecad_compiler.rs` — ECA&D daily stations (`https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_{tx,rr}.zip`), `eca_tx/tn/tg` (K, 86400), `eca_rr` (kg/m²).
+  - `dwd_cdc_compiler.rs` — DWD CDC daily KL (`https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/`), `dwd_air_temperature_{mean,max,min}` (K), `dwd_surface_pressure` (Pa), `dwd_wind_{speed_mean,gust_max}` (m/s), `dwd_precipitation_height` (m), `dwd_relative_humidity` (1), `dwd_vapour_pressure` (Pa).
+  - `worldclim_compiler.rs` — WorldClim 2.1 (`https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_{tavg,tmin,tmax,prec}.zip`), `worldclim_{tavg,tmin,tmax}` (K), `worldclim_prec` (mm), monatlich.
+  - `aodn_compiler.rs` — IMOS/AODN THREDDS/OPeNDAP (`https://thredds.aodn.org.au/thredds/dodsC/…`), `aodn_temperature` (K), `aodn_salinity` (PSU), `aodn_velocity_{u,v}` (m/s), `aodn_wave_height` (m).
 
 ## An river
 
