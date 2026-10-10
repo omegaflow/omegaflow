@@ -4,7 +4,7 @@ const WGS84_B2_KM2: f64 = 40_408_296.0;
 const IGRF_MAX_DEGREE: usize = 13;
 
 fn geodetic_to_geocentric_term() -> f64 {
-    1.0 - WGS84_B2_KM2 / WGS84_A2_KM2
+    WGS84_B2_KM2 / WGS84_A2_KM2
 }
 
 #[derive(Clone, Debug)]

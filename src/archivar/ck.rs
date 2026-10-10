@@ -869,6 +869,7 @@ mod tests {
 
     const TSC: &str = "\\begindata\n\
 SCLK_DATA_TYPE_28 = ( 1 )\n\
+SCLK01_MODULI_28 = ( 4294967296 1 )\n\
 SCLK01_COEFFICIENTS_28 = (\n\
   0.0        1000.0   1.0\n\
   1000.0     2000.0   2.0\n\

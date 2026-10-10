@@ -611,9 +611,9 @@ fn decode_coded(header: &[u8], stream: &[u8], want: usize) -> Option<Vec<u8>> {
         CODER_RLE => rle_decode(stream, want),
         CODER_DEFLATE => zlib_inflate(stream, want),
         CODER_NBIT => {
-            let typ = be_i16(header, 4)?;
-            let sign_ext = be_u16(header, 6)? != 0;
-            let fill_one = be_u16(header, 8)? != 0;
+            let typ = i16::try_from(be_i32(header, 4)?).ok()?;
+            let sign_ext = be_u16(header, 8)? != 0;
+            let fill_one = be_u16(header, 10)? != 0;
             let start_bit = be_i32(header, 12)?;
             let bit_len = be_i32(header, 16)?;
             nbit_decode(stream, want, typ, sign_ext, fill_one, start_bit, bit_len)

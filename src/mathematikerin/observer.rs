@@ -183,7 +183,7 @@ mod tests {
     fn two_way_roundtrip_reads_twice_the_light_time() {
         let orbit = circular_orbit();
         let station = [0.0, -AU_KM, 0.0];
-        let got = two_way_doppler(0.0, station, station, 2.0e9, 880.0 / 749.0, orbit).unwrap();
+        let got = two_way_doppler(0.0, station, station, 2.0e9, 880.0 / 749.0, &orbit).unwrap();
         let (pos, _vel) = orbit(got.t_bounce_tdb).unwrap();
         let d_km = norm(sub(pos, station));
         let light_time = d_km * 1000.0 / C_LIGHT;
