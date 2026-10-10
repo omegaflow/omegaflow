@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 73537ce381bc40b1df1601933a21d9dff0164d32b7a136a2970fe3f297bc195f
+  sha256: c14d5f75b1a630be45cfaa116787a171ecf712fb2aa639965b919bc2791bb69e
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -189,6 +189,15 @@ liegen in der Browser-Gruppe `mycelium-auth` (nicht fokussiert):
   Identität (Scopes am Consent-Screen, nicht gemessen). No-leak-Grenze bleibt: `state/`
   nie an Modal; public-Repo-Code ist der sanktionierte Fall. Nutzung braucht danach
   `modal setup` → Token → `.secrets.local` (Operator-Hand).
+  **Zwei gemessene Schranken (2026-10-10, nach dem Operator-Login):** (1) **Das Modal-„Gratis"
+  braucht eine Zahlungsmethode** — Workspace `omegaflow` Starter zeigt „You have $1 of
+  $30/mo in free credits. Add payment method to unlock the rest"; ohne Karte nur **$1**.
+  (2) **Toolchain-Konflikt:** der einzige Modal-/Beam-/Kaggle-Weg ist **Python**
+  (`pip install modal` · `python3 -m modal setup`; Beam-CLI ebenso) — das kollidiert mit der
+  Haus-Regel „kein Python im oder für das Repo". Maßnahme 6 ist damit nicht nur
+  `operator-gebunden` (Karte), sondern ein **Riss gegen die Sprach-Doktrin** — nur ein
+  Operator-Lauf eines externen Notebooks (nicht „für das Repo") oder ein non-Python-Pfad
+  löst ihn. R2-Kante bleibt der eine Button „Add R2 subscription to my account".
 
 ## LOCK
 
