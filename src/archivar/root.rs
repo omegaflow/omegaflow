@@ -513,6 +513,34 @@ fn parse_dir_fields(c: &mut Cursor<'_>) -> Option<(i32, i32, i64)> {
     Some((nbytes_keys, _nbytes_name, seek_keys))
 }
 
+fn read_key_list(
+    bytes: &[u8],
+    list_off: usize,
+    nbytes_keys: i32,
+) -> Result<Vec<RootKey>, &'static str> {
+    let mut hc = Cursor::new(bytes, list_off);
+    let header_key = parse_key(&mut hc).ok_or("key-list header key absent")?;
+    if header_key.nbytes != nbytes_keys {
+        return Err("key-list byte count diverges from directory header");
+    }
+    if header_key.keylen < 0 {
+        return Err("key-list header length negative");
+    }
+    let records = list_off
+        .checked_add(header_key.keylen as usize)
+        .ok_or("key-list offset out of range")?;
+    let mut lc = Cursor::new(bytes, records);
+    let nkeys = lc.i32().ok_or("key-list count absent")?;
+    if nkeys < 0 {
+        return Err("key-list count negative");
+    }
+    let mut keys = Vec::with_capacity(nkeys as usize);
+    for _ in 0..nkeys {
+        keys.push(parse_key(&mut lc).ok_or("key-list record truncated")?);
+    }
+    Ok(keys)
+}
+
 pub fn read_file(bytes: &[u8]) -> Result<RootFile, &'static str> {
     let header = parse_header(bytes).ok_or("root header absent or truncated")?;
     let begin = header.begin;
@@ -538,27 +566,7 @@ pub fn read_file(bytes: &[u8]) -> Result<RootFile, &'static str> {
             keys: Vec::new(),
         });
     }
-    let list_off = seek_keys as usize;
-    let mut hc = Cursor::new(bytes, list_off);
-    let header_key = parse_key(&mut hc).ok_or("key-list header key absent")?;
-    if header_key.nbytes != nbytes_keys {
-        return Err("key-list byte count diverges from directory header");
-    }
-    if header_key.keylen < 0 {
-        return Err("key-list header length negative");
-    }
-    let records = list_off
-        .checked_add(header_key.keylen as usize)
-        .ok_or("key-list offset out of range")?;
-    let mut lc = Cursor::new(bytes, records);
-    let nkeys = lc.i32().ok_or("key-list count absent")?;
-    if nkeys < 0 {
-        return Err("key-list count negative");
-    }
-    let mut keys = Vec::with_capacity(nkeys as usize);
-    for _ in 0..nkeys {
-        keys.push(parse_key(&mut lc).ok_or("key-list record truncated")?);
-    }
+    let keys = read_key_list(bytes, seek_keys as usize, nbytes_keys)?;
     Ok(RootFile { header, keys })
 }
 
@@ -715,6 +723,64 @@ pub fn parse_tree(bytes: &[u8], tree: &RootKey) -> Result<TreeIndex, &'static st
         return Err("no TBranch object parsed in fBranches index");
     }
     Ok(TreeIndex { branches })
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct TreeEntry {
+    pub directory: String,
+    pub tree: RootKey,
+}
+
+fn visit_directory(
+    bytes: &[u8],
+    keys: &[RootKey],
+    parent: &str,
+    visited: &mut Vec<i64>,
+    out: &mut Vec<TreeEntry>,
+) -> Result<(), &'static str> {
+    for key in keys {
+        if key.class == "TTree" {
+            out.push(TreeEntry {
+                directory: parent.to_string(),
+                tree: key.clone(),
+            });
+            continue;
+        }
+        if key.class != "TDirectoryFile" && key.class != "TDirectory" {
+            continue;
+        }
+        let obj = decompress_object(bytes, key).ok_or("directory object decompression absent")?;
+        let mut c = Cursor::new(&obj, 0);
+        let (nbytes_keys, _nbytes_name, seek_keys) =
+            parse_dir_fields(&mut c).ok_or("directory header absent")?;
+        if seek_keys <= 0 {
+            continue;
+        }
+        if visited.contains(&seek_keys) {
+            return Err("directory structure revisits a key list");
+        }
+        visited.push(seek_keys);
+        let inner = read_key_list(bytes, seek_keys as usize, nbytes_keys)?;
+        let path = if parent.is_empty() {
+            key.name.clone()
+        } else {
+            format!("{}/{}", parent, key.name)
+        };
+        visit_directory(bytes, &inner, &path, visited, out)?;
+    }
+    Ok(())
+}
+
+pub fn walk_trees(bytes: &[u8]) -> Result<Vec<TreeEntry>, &'static str> {
+    let file = read_file(bytes)?;
+    let mut out = Vec::new();
+    let mut visited = Vec::new();
+    visit_directory(bytes, &file.keys, "", &mut visited, &mut out)?;
+    Ok(out)
+}
+
+pub fn tree_index(bytes: &[u8], entry: &TreeEntry) -> Result<TreeIndex, &'static str> {
+    parse_tree(bytes, &entry.tree)
 }
 
 pub const TSTREAMER_INFO_LAYOUT: &str = "TStreamerInfo header layout, measured from ROOT v6-36 docs (dobject.html/streamerinfo.html/tobject.html), TStreamerInfo::Streamer (io/io/src/TStreamerInfo.cxx:5616), TBufferFile::ReadVersion/ReadObjectAny/SkipVersion (io/io/src/TBufferFile.cxx:2933/:2519/:2862), TObject::Streamer (core/base/src/TObject.cxx:995); Version_t = Short_t (i16), byte order big-endian; object prefix: [byte count|kByteCountMask][class tag=0xffffffff][class name NUL], the tag is the second u32 only when the mask is present; TStreamerInfo ReadVersion [byte count|mask][version i16]; TNamed ReadVersion [byte count|mask][version i16]; TObject SkipVersion [version i16][fUniqueID u32][fBits u32] (10 bytes, no count); TNamed fName,fTitle TStrings; fCheckSum u32, fClassVersion i32; fElements TObjArray* [byte count|mask][tag=0xffffffff][name NUL][byte count|mask][version i16][TObject 10 bytes][fName TString][fSize i32 = n_members][fLowerBound i32]; the older 4-byte version form predates the byte-count mask and is not read here";

@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Nutation IAU 2000A (Schritt 0 komplett), particle-cern Teil B (parse_tree), Vantage-Rest-Bias (b)(c)(d), ci-gate-Clippy-Lints, open-lidar-data-φ-Block, FMHY-7-Verdikte, Asservatenkammer 3/9
   class: handover
   date: 2026-10-11
-  sha256: da5957c22decada98357326bbb686a89fcab6d67672c733a6cf1f430feeeb43c
+  sha256: 15dfa843672f216e63162e28cb32ba7a41f06fcafca42d7453cdab72d1a18a79
   status: live
 -->
 # Handover — Mountain-Folge 305 (2026-10-11)
@@ -109,14 +109,11 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 - **Blockade:** der Repräsentativpunkt ist eine wissenschaftliche Annahme, keine Messung.
 - **Braucht:** je Zeile den extern gedeckten Repräsentativpunkt — dann `phi/sources.φ`-Zeile (Mountain-Feder), dann Te-Paar-CI-Feed (Mycelium).
 
-### blocked_sources — Klassenträger (3 Mountain parser-def)
-- **Status:** eigen (Bau) | **Bindung:** eigen
-- **Trigger:** nächster begrenzter Parser-Schritt je Klasse
-- **Lage:** (gemessen 2026-10-11) `phi/blocked_sources.φ` trägt 3 offene `blocked parser-def`-Klassen (die Wartezustände liegen in `state/zustand/wartend.φ`).
-- **Braucht:** je Klasse der fehlende Arm:
-  - `phi/blocked_sources.φ::gap:particle-cern ×1` — ROOT-TTree je Event-Dir
-  - `phi/blocked_sources.φ::gap:pds-ppi-manifest ×1` — Manifest-Arm für die unbounded PDS-PPI-Familie
-  - `phi/blocked_sources.φ::gap:gwf-strain ×1` — GW-Strain-Reader (HDF5/GWF)
+### blocked_sources — Klassenträger + zwei aufgelöste Risse
+- **Status:** eigen (Bau/Register) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt
+- **Lage:** (gemessen 2026-10-11) `phi/blocked_sources.φ` trägt nur noch **1** offene `blocked parser-def`-Klasse: `phi/blocked_sources.φ::gap:particle-cern ×1`. Zwei als „fehlender Arm" geführte Einträge waren **falsch** (der Baum gewinnt): (a) `pds-ppi-manifest` — der Arm steht (`tools/harvest/src/bin/pds_ppi_compiler.rs`, `phi/harvest.φ:522` format `pds_ppi`, Workflow `pds-ppi-cdn.yml`; EPN-TAP `vo-pds-ppi.igpp.ucla.edu/tap/sync` 200, 219 Tabellen/141 084 Granulen); (b) `gwf-strain` — `src/archivar/hdf5.rs` + `tools/harvest/src/bin/gwosc_compiler.rs` lesen die HDF5-Strain-Datei bereits.
+- **Braucht:** (1) particle-cern — TBranchElement-v9-Branch-Decode in `src/archivar/root.rs` (`walk_trees` steht, 68 innere TTrees); (2) PDS-PPI — Manifest-CI-Lauf `pds-ppi-cdn.yml` + Register-Zeile (Mycelium); (3) GWOSC/LOSC — Registrierung in `phi/sources.φ` + Kraft-Admission + Vorzeichen-Riss (Strain ist signiert, Leser-Predikat `value >= 0.0` verwirft negative Werte); **Riss** zwei Compiler für eine Quelle (`gwosc_compiler.rs` GWOS 3-Feld getrackt · `losc_compiler.rs` LOSC 26×f64 neu) — Operator/Rat entscheidet.
 
 ## LOCK
 
@@ -148,7 +145,7 @@ zwei Register-Dispatches, flash only.
 - **open-lidar-data-φ-Block geschrieben** (terms/at/ttl/field aus gemessenem License-Link).
 - **FMHY**: 7 research-data-Verdikte (3 pending, 4 declined Portale); worldclim.org als Portal korrigiert.
 - **Asservatenkammer**: 3 von 9 Doks mit erstem Schritt gemessen (Header-sha via `omega_sh sha`).
-- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon entfernt (kein Code liest ihn, kein offener Eintrag referenzierte einen Token); 5 `pending`-Dubletten der Wartezeilen konsolidiert (BepiColombo-MORE, Voyager, Mariner 10, Viking, Juno stehen schon in `state/zustand/wartend.φ:11/:6/:15/:16/:18`). Register jetzt **3 `blocked parser-def`**: particle-cern, PDS-PPI (gap `pds-ppi-manifest`), LOSC (gap `gwf-strain`).
+- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon entfernt (kein Code liest ihn, kein offener Eintrag referenzierte einen Token); 5 `pending`-Dubletten der Wartezeilen konsolidiert (BepiColombo-MORE, Voyager, Mariner 10, Viking, Juno stehen schon in `state/zustand/wartend.φ:11/:6/:15/:16/:18`). Register jetzt **1 `blocked parser-def`** (particle-cern, TBranchElement-v9-Decode offen); die zwei anderen „Arme" (PDS-PPI-Manifest, GWOSC-Strain) existierten bereits — Register-Eintrag war veraltet, korrigiert.
 **Geteilter Baum:** `src/mathematikerin/pc.rs` wird von einer parallelen Linie uncommittet
 restrukturiert — nicht angefasst/committet. Ebenso fremd uncommittet: `tools/utils/src/bin/archive_search/osf.rs`.
 Eigene committete Pfade: `src/mathematikerin/receiver.rs` · `src/mathematikerin/mci.rs` ·
