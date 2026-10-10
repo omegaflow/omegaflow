@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Ephemeris-CDN-sha256 (llr/sinex/vmf3_site) + VMF3-GRID-Block und -Aufrufer (Origin gemessen) + cmb-cdn-SPT-Re-Dispatch; mountain-301-Block gefaltet.
   class: handover
   date: 2026-10-10
-  sha256: d41b171a44d2cdf6045e86b62b76a3e4b4ef60f9ec5b062c4ea9804c8e676b92
+  sha256: 8d5f9d5c33aaa4c54262ee56e257a0a065d56203ed3926d6667ee1e348e4f66e
   status: live
 -->
 # Handover — Mycelium-Folge 297 (2026-10-10)
@@ -30,19 +30,6 @@ und LLR `no-cadence` bestätigt; planetary radar `at <zielplanet>`
 | Vorherige Worte der Linie: `archiv/handover-2026-10-10-mycelium-folge295.md` §Operator-Wort-Register (via `git show <sha>:archiv/…`) | 2026-10-10 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
-
-### VMF3-GRID — sha256 nach dem ersten Lauf
-- **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Lauf `vmf3-grid-cdn 38058462623` Abschluss
-- **Lage:** (gemessen 2026-10-10) Block
-  `vmf.geo.tuwien.ac.at/vmf3_grid.bin` (format vmf3, at earth, ttl 21600) +
-  `.github/workflows/vmf3-grid-cdn.yml` (`vmf3_compiler --grid`) geschrieben,
-  `register_sort` canonical über 2713 Blöcke; Origin gemessen über den TU-Wien-
-  GRID-Index (`trop_products/GRID/1x1/VMF3/VMF3_OP/2026/VMF3_20260105.H00`,
-  HTTP 206) — der von mountain-301 als „ungemessen" benannte Pfad.
-- **Blockade:** keine.
-- **Braucht:** bei success den `sha256` aus dem Compiler-Output in den Block
-  `vmf3_grid.bin` (`ci_manage log 38058462623 --all`).
 
 ### Manifestation — SPT-3G D1 `cmap` (cmb-cdn-Re-Lauf)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
