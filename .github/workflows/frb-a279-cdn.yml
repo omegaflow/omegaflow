@@ -6,27 +6,16 @@ concurrency:
 
 on:
   workflow_dispatch:
+
 permissions:
   contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   frb-a279:
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile FRB A279 via TAPVizieR and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
-            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-            --table J/A+A/693/A279/frbs \
-            --columns 'name:TNS;ra:RAJ2000;dec:DEJ2000;z:z;dm:DM;tausc:tausc' \
-            --out frb_a279.json \
-            --ci-mode \
-            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "flatten: frb_a279 returned void" \
-                 "frb_a279 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health; exit 1; }
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"tap_compiler","netloc":"tapvizier.cds.unistra.fr","asset":"frb_a279.json","args":"--root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync --table J/A+A/693/A279/frbs --columns 'name:TNS;ra:RAJ2000;dec:DEJ2000;z:z;dm:DM;tausc:tausc' --out frb_a279.json"}
+        ]
