@@ -5,7 +5,7 @@ use omegaflow::archivar::{
     parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_resid_bin;
-use omegaflow::odp::{EARTH, dsn_station};
+use omegaflow::odp::{dsn_host, dsn_station};
 use omegaflow::spectral::civil_from_days;
 
 const DAY_S: f64 = 86400.0;
@@ -274,9 +274,10 @@ impl KeyState {
 }
 
 fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
+    let host = dsn_host()?;
     let (lat_deg, lon_deg, _alt) = dsn_station(station)?;
     let p = body_barycenter_position("galileo_daily", t, eph)?;
-    let e = body_barycenter_position(EARTH, t, eph)?;
+    let e = body_barycenter_position(host, t, eph)?;
     let v = sub(p, e);
     let r = norm(v);
     if r <= 0.0 || !r.is_finite() {
@@ -285,7 +286,8 @@ fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> O
     let dec = (v[2] / r).clamp(-1.0, 1.0).asin();
     let ra = v[1].atan2(v[0]);
     let jd = t / 86400.0 + 2451545.0;
-    let gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)).rem_euclid(360.0);
+    let props = eph.get(host)?.props.as_ref()?;
+    let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
     let lst = (gmst + lon_deg).rem_euclid(360.0).to_radians();
     let ha = lst - ra;
     let phi = lat_deg.to_radians();
@@ -420,18 +422,22 @@ fn passcheck(recs: &[[f64; 8]], eph: &HashMap<String, BodyEphemeris>) {
 }
 
 fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo elevation: dsn host declaration void");
+        return;
+    };
     let au = 1.495978707e11;
     let start = -94392000.0;
     let (lat0, lon0, alt0) = dsn_station(43).unwrap_or((0.0, 0.0, 0.0));
-    let st0 = body_fixed_to_icrs(EARTH, lat0, lon0, alt0, start, eph).unwrap_or([f64::NAN; 3]);
-    let e0 = body_barycenter_position(EARTH, start, eph).unwrap_or([f64::NAN; 3]);
+    let st0 = body_fixed_to_icrs(host, lat0, lon0, alt0, start, eph).unwrap_or([f64::NAN; 3]);
+    let e0 = body_barycenter_position(host, start, eph).unwrap_or([f64::NAN; 3]);
     let p0 = body_barycenter_position("galileo_daily", start, eph).unwrap_or([f64::NAN; 3]);
     let off = sub(st0, e0);
     let r_pe = norm(sub(p0, e0)) / au;
     let r_st = norm(off);
     let mut latr = f64::NAN;
     let mut lonr = f64::NAN;
-    if let Some((la, lo)) = icrs_to_body_surface(st0[0], st0[1], st0[2], start, EARTH, eph) {
+    if let Some((la, lo)) = icrs_to_body_surface(st0[0], st0[1], st0[2], start, host, eph) {
         latr = la;
         lonr = lo;
     }
@@ -452,7 +458,7 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
     ] {
         let (Some(pe), Some(ee)) = (
             body_barycenter_position("galileo_daily", tq, eph),
-            body_barycenter_position(EARTH, tq, eph),
+            body_barycenter_position(host, tq, eph),
         ) else {
             continue;
         };
@@ -462,7 +468,10 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
         let ra = v[1].atan2(v[0]).to_degrees();
         let ra = if ra < 0.0 { ra + 360.0 } else { ra };
         let jd = 2451545.0 + tq / 86400.0;
-        let gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)).rem_euclid(360.0);
+        let Some(props) = eph.get(host).and_then(|e| e.props.as_ref()) else {
+            continue;
+        };
+        let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
         println!(
             "sanity {tag} tdb {tq:.0}: probe ra {ra:.2} dec {dec:.2} dist {:.3} AU; gmst {gmst:.2}",
             r / 1.495978707e11
@@ -488,8 +497,8 @@ fn sanity_geometry(eph: &HashMap<String, BodyEphemeris>) {
         let mut els: Vec<f64> = Vec::new();
         for k in 0..24 {
             let t = start + (k as f64) * 3600.0;
-            let st = body_fixed_to_icrs(EARTH, lat, lon, alt, t, eph);
-            let e = body_barycenter_position(EARTH, t, eph);
+            let st = body_fixed_to_icrs(host, lat, lon, alt, t, eph);
+            let e = body_barycenter_position(host, t, eph);
             let p = body_barycenter_position("galileo_daily", t, eph);
             if let (Some(st), Some(e), Some(p)) = (st, e, p) {
                 let up = sub(st, e);
@@ -544,7 +553,11 @@ fn main() {
     let band_w = nums.get(1).copied().unwrap_or(5.0);
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let Some(host) = dsn_host() else {
+        eprintln!("galileo: dsn host declaration void");
+        return;
+    };
+    for b in ["galileo_daily", host] {
         if !load_eph(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -667,7 +680,7 @@ fn main() {
             .to_string(),
     );
     out.push("binding: pass/sub-arc/state construction identical to galileo_pass_strength_ramp (gap > gap_s pass boundary; |resid| > 1000 Hz lock excluded; strength floor <= -2560, plateau >= -1900, between or 0 = transition/pad; sub-arc = contiguous same-state run split on state change, > 120 s gap, or 60 samples; chunk noise = resid RMS about the chunk mean; chunk >= 30 samples enters the pool)".to_string());
-    out.push("elevation proxy: spherical-astronomy topocentric elevation of the probe above the station horizon; probe topocentric direction = galileo_daily barycenter minus earth barycenter (ICRS RA/Dec; station parallax negligible at ~6 AU, probe-earth dist 1-6 AU over the era); station geodetic position via dsn_station (DSS 14 35.4268333N -116.8900000E, DSS 43 -35.4014889N 148.9816167E, DSS 63 40.4312500N -4.2487778E); local sidereal time = GMST (IAU 1982: 280.46061837 + 360.98564736629 deg/day from J2000; tdb~UT1 to ~1 min, equinox-of-date vs ICRS RA <= ~0.5 deg) + east longitude; elevation = asin(sin lat sin dec + cos lat cos dec cos HA), horizon = 0 deg; validated by pass gating (file samples occupy exactly the positive-elevation hours, e.g. DSS43 1997-01-04 peak ~+71 deg at 04:00 UTC)".to_string());
+    out.push("elevation proxy: spherical-astronomy topocentric elevation of the probe above the station horizon; probe topocentric direction = galileo_daily barycenter minus earth barycenter (ICRS RA/Dec; station parallax negligible at ~6 AU, probe-earth dist 1-6 AU over the era); station geodetic position via dsn_station (DSS 14 35.4268333N -116.8900000E, DSS 43 -35.4014889N 148.9816167E, DSS 63 40.4312500N -4.2487778E); local sidereal time = the host body's declared prime-meridian rotation (BodyProperties w0_deg + dw_dt_deg_per_day from J2000; tdb~UT1 to ~1 min, equinox-of-date vs ICRS RA <= ~0.5 deg) + east longitude; elevation = asin(sin lat sin dec + cos lat cos dec cos HA), horizon = 0 deg; validated by pass gating (file samples occupy exactly the positive-elevation hours, e.g. DSS43 1997-01-04 peak ~+71 deg at 04:00 UTC)".to_string());
     out.push("matched-elevation comparison: (A) per dual pass, floor and plateau sub-arcs whose chunk-mean elevations both fall within a tolerance window of width 2T (best common window per pass, min(state sample n) maximised, both >= 30); (B) per pass per elevation band of width band_w, sample-level floor vs plateau noise within the same band".to_string());
     out.push(format!(
         "pass gap threshold: {gap_s:.0} s; band width W {band_w:.0} deg; stations 14/43/63; modes 1 (elevation computed) and 2 (structure only)"
@@ -762,8 +775,12 @@ fn main() {
                 if ps.f.n < MIN_CELL || ps.p.n < MIN_CELL {
                     continue;
                 }
-                let fr = ps.f.rms().unwrap_or(f64::NAN);
-                let pr = ps.p.rms().unwrap_or(f64::NAN);
+                let Some(fr) = ps.f.rms() else {
+                    continue;
+                };
+                let Some(pr) = ps.p.rms() else {
+                    continue;
+                };
                 if !fr.is_finite() || !pr.is_finite() {
                     continue;
                 }
@@ -810,8 +827,12 @@ fn main() {
                 if ps.fi.n < MIN_CELL || ps.pi.n < MIN_CELL {
                     continue;
                 }
-                let fr = ps.fi.rms().unwrap_or(f64::NAN);
-                let pr = ps.pi.rms().unwrap_or(f64::NAN);
+                let Some(fr) = ps.fi.rms() else {
+                    continue;
+                };
+                let Some(pr) = ps.pi.rms() else {
+                    continue;
+                };
                 if !fr.is_finite() || !pr.is_finite() {
                     continue;
                 }

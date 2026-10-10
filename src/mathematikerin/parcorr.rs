@@ -28,7 +28,7 @@ pub fn inv_normal(p: f64) -> f64 {
     const A1: f64 = -3.969683028665376e+01;
     const A2: f64 = 2.209460984245205e+02;
     const A3: f64 = -2.759285104469687e+02;
-    const A4: f64 = 1.383577518672690e+02;
+    const A4: f64 = 1.383_577_518_672_69e2;
     const A5: f64 = -3.066479806614716e+01;
     const A6: f64 = 2.506628277459239e+00;
 
@@ -155,7 +155,7 @@ pub fn partial_correlation(x: &[f64], y: &[f64], conds: &[&[f64]]) -> Option<Par
             .map(|&v| (v - means[k]) * (v - means[k]))
             .sum::<f64>()
             / nf;
-        if !(var > 0.0) {
+        if var.partial_cmp(&0.0) != Some(std::cmp::Ordering::Greater) {
             return None;
         }
         sds[k] = var.sqrt();
@@ -178,7 +178,7 @@ pub fn partial_correlation(x: &[f64], y: &[f64], conds: &[&[f64]]) -> Option<Par
     let precision = invert(&corr, m)?;
 
     let denom = (precision[0][0] * precision[1][1]).sqrt();
-    if !(denom > 0.0) {
+    if denom.partial_cmp(&0.0) != Some(std::cmp::Ordering::Greater) {
         return None;
     }
     let r = (-precision[0][1] / denom).clamp(-1.0, 1.0);
@@ -202,8 +202,8 @@ fn invert(a: &[Vec<f64>], m: usize) -> Option<Vec<Vec<f64>>> {
     for col in 0..m {
         let mut pivot = col;
         let mut best = aug[col][col].abs();
-        for row in (col + 1)..m {
-            let v = aug[row][col].abs();
+        for (row, rowslice) in aug.iter().enumerate().skip(col + 1) {
+            let v = rowslice[col].abs();
             if v > best {
                 best = v;
                 pivot = row;
@@ -217,19 +217,20 @@ fn invert(a: &[Vec<f64>], m: usize) -> Option<Vec<Vec<f64>>> {
         }
 
         let inv_p = 1.0 / aug[col][col];
-        for j in 0..(2 * m) {
-            aug[col][j] *= inv_p;
+        for slot in aug[col].iter_mut() {
+            *slot *= inv_p;
         }
-        for row in 0..m {
+        let pivot_row = aug[col].clone();
+        for (row, rowslice) in aug.iter_mut().enumerate() {
             if row == col {
                 continue;
             }
-            let factor = aug[row][col];
+            let factor = rowslice[col];
             if factor == 0.0 {
                 continue;
             }
-            for j in 0..(2 * m) {
-                aug[row][j] -= factor * aug[col][j];
+            for (slot, &p) in rowslice.iter_mut().zip(pivot_row.iter()) {
+                *slot -= factor * p;
             }
         }
     }

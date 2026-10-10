@@ -2,7 +2,7 @@
   title: Survey — Kapitulationen & Pendings: Register-Inventur (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: d7d9c671f05cfc31a5d9b9bf718555f490db05a7e1c85bb4408fac210da9e1ca
+  sha256: 521e7578fcd8cb9e0c8243cc7757b748e1bee0c85493221793357bd8b5608381
   status: live
   see-also: phi/blocked_sources.φ phi/dead_sources.φ AGENTS.md
 -->
@@ -56,15 +56,6 @@ Werkzeuge: `giveup_scan` (`cargo run -p omegaflow-utils --bin giveup_scan`),
 | 25 | 149 | NEXRAD Level II | Compiler gebaut; Feld-System-Reader + CI-Manifest offen |
 | 26 | 153 | SuperDARN FITACF Direktroute | Compiler gebaut; erster CI-Manifest-Lauf offen |
 
-Nachzug 2026-09-17: Die Zeilen 3 (US-CRN, `uscrn_hourly.bin`), 4 (NRS,
-`nrs_audio_series.bin`), 6 (COSMIC-2, `cosmic_ro_temp.bin`), 16 (VLASS,
-`vlass_tap_component.bin`/`vlass_tap_source.bin`), 17 (CORS,
-`cors_1lsu_2024001.bin`), 21 (Himawari, `himawari_ahi_counts.bin`), 22
-(GDP-Drifter, `gdp_drifter.bin`), 24 (WOD, `noaa_wod_2000_drb.bin`), 25
-(NEXRAD, `nexrad_level2.bin`), 26 (SuperDARN, `superdarn_fitacf.bin`) sind
-aufgelöst — die Assets stehen in `phi/sources.φ` (gemessen 2026-09-17). Die
-Tabelle selbst gibt den Register-Stand 2026-09-14.
-
 ## 2. Gesperrt + Register-Verweise — `phi/blocked_sources.φ` (6)
 
 | Zeile | Klasse | Quelle |
@@ -73,10 +64,6 @@ Tabelle selbst gibt den Register-Stand 2026-09-14.
 | 19 | `blocked account` | Babamul (Caltech LSST-Broker) — HTTP 401 Auth-Wall |
 | 129 | `blocked parser-def las-laz` | NOAA NOS Coastal Lidar — LASzip-Chunk-Dekoder offen |
 | 133 | `blocked parser-def las-laz` | USGS 3DEP EPT — LASzip-Chunk-Dekoder offen |
-
-Nachzug 2026-09-17: Der LASzip-Chunk-Dekoder ist gebaut (`src/archivar/las/laszip.rs`,
-`LazDecoder`/`has_laszip_vlr`, exportiert in `src/archivar/las/mod.rs:580–581`) —
-beide `blocked parser-def las-laz`-Zeilen sind aufgelöst.
 | 17, 22 | `reg` | AQS-API-Doku, Babamul-Signup |
 
 ## 3. Kapitulationen — `phi/dead_sources.φ` (1218)
@@ -162,6 +149,52 @@ Top-Dateien: `phi/dead_sources.φ` 868 · `phi/pipeline/catalog/terrapulse_catal
 ## 6. `pending_extract` — opencode.db
 
 1 Treffer: Ernte-Session — „Passwort gültig, aber Profil nicht aktiviert (pending)".
+
+## Register-Gegenprobe (2026-10-11)
+
+Die 32 offenen Marker (26 pending aus §1 + 4 blocked/2 reg aus §2) je mit `sgrep` gegen
+`phi/sources.φ` / `phi/declined_sources.φ` / `phi/dead_sources.φ` / `phi/blocked_sources.φ`
+gemessen: **31 gedeckt, 1 ungedeckt.** Die Zeilenspalte der Tabellen §1/§2 ist Stand
+2026-09-14; die Register-Verweise unten sind der heutige Stand.
+
+| # | Quelle | Verdikt | Register (2026-10-11) |
+|---|---|---|---|
+| 1 | Pioneer-10 ATDF S-Band | gedeckt | `sources.φ:19655` |
+| 2 | NOAA MarineCadastre AIS | gedeckt | `declined_sources.φ:2516,2752` |
+| 3 | US-CRN (CDS) | gedeckt | `sources.φ:1065` |
+| 4 | NOAA-NODD NRS bioacoustic | gedeckt | `declined_sources.φ:4349` |
+| 5 | NOIRLab Astro Data Lab TAP | gedeckt | `sources.φ:21327` |
+| 6 | COSMIC-2 GNSS-RO | gedeckt | `sources.φ:10986` |
+| 7 | GNIP Niederschlags-Isotope | gedeckt | `declined_sources.φ:1476` |
+| 8 | ONC Hydrophon | gedeckt | `sources.φ:11089` |
+| 9 | VOTable/TAP-Kataloge | gedeckt | `sources.φ:21307`; `blocked_sources.φ:8` (votable-reader) |
+| 10 | ESO tap_cat | gedeckt | `sources.φ:20067,21276` |
+| 11 | ESO tap_obs | gedeckt | `declined_sources.φ:1046` |
+| 12 | WFAU OSA (ATLAS DR1) | gedeckt | `sources.φ:10467` |
+| 13 | WFAU SSA (SuperCosmos) | gedeckt | `sources.φ:10480` |
+| 14 | WFAU VSA (VISTA/VVV) | gedeckt | `declined_sources.φ:171` |
+| 15 | WFAU WSA (UKIDSS) | gedeckt | `declined_sources.φ:175` |
+| 16 | VLASS (`cirada.ca`) | gedeckt | `sources.φ:20433,21087` |
+| 17 | NOAA CORS (RINEX) | gedeckt | `sources.φ:11565` |
+| 18 | NOAA ERI imagery | **ungedeckt** | nur `phi/pipeline/catalog/noaa_nodd_disposition.φ:36` (pending Register-Duty) |
+| 19 | GK2A AMI | gedeckt | `sources.φ:1075` |
+| 20 | GOES-16 ABI | gedeckt | `sources.φ:1084` |
+| 21 | Himawari-8 AHI | gedeckt | `sources.φ:1111` |
+| 22 | GDP Drifter | gedeckt | `sources.φ:1120` |
+| 23 | OCS Hydrodata | gedeckt | `declined_sources.φ:5852` |
+| 24 | WOD Ozeanprofile | gedeckt | `sources.φ:11644` |
+| 25 | NEXRAD Level II | gedeckt | `sources.φ:4370` |
+| 26 | SuperDARN FITACF Direktroute | gedeckt | `sources.φ:19578` |
+| 27 | AQS Data Mart API (`blocked key`) | gedeckt | `sources.φ:1536,1700` |
+| 28 | Babamul (`blocked account`) | gedeckt | `sources.φ:965` |
+| 29 | NOAA NOS Coastal Lidar (las-laz) | gedeckt | `declined_sources.φ:5848` (terrain) |
+| 30 | USGS 3DEP EPT (las-laz) | gedeckt | `declined_sources.φ:5857` (terrain) |
+| 31 | AQS-API-Doku (`reg`) | gedeckt | mit #27 |
+| 32 | Babamul-Signup (`reg`) | gedeckt | mit #28 |
+
+**Ungedeckter Rest:** NOAA ERI imagery (#18) — JPEG-in-TIFF-Dekoder; nur als
+pending Register-Duty in `phi/pipeline/catalog/noaa_nodd_disposition.φ:36`, in keiner der
+vier Register.
 
 ## Methode
 
