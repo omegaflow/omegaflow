@@ -3,7 +3,7 @@
   session: River-Folge 165
   class: handover
   date: 2026-10-10
-  sha256: 6cc829d245f02ffa1969813badb9bf1396a4f66d6bbf8f154a1277a55bd642e9
+  sha256: 6919f6d21389faeb67c8a7e3efac89eedfce021df95837e408ddde10ccbd4528
   status: live
 -->
 # Handover — River-Folge 165 (2026-10-10)
@@ -86,7 +86,8 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 165):
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P10.2a-Token-Semantik nachgeführt)
 - `docs/handover/handover-2026-10-10-river-folge165.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge164.md` (Move)
+- `tools/measure/src/bin/ssb_field_bake.rs` (eigen, river-160 `e17c88898`; rustfmt-Fix der langen `eprintln!`-Zeile `:82` — Mountain meldete `format` failed `Diff …ssb_field_bake.rs:82`; River-Misattribution der Vorübergabe korrigiert)
 
-Fremde uncommittete Arbeit (nicht berührt, nicht committet): `phi/sources.φ`, `docs/zustand/dropped-legacy-baseline.txt`, `src/archivar/{bepicolombo,blinkverse,channels,dmap,ebhis,fetch,keogram,main_flow,membrane,parse,relay,spatial,swpc_efield,tests,types,weberin_fit}.rs`, `src/gate/{axioms,commit_gate_vocab.json}`, `src/mathematikerin/{actuators,channel,ozzy}.rs`, `kernels/v_freq_shelf.dat`, `static/membrane.html`, `tools/measure/src/bin/ssb_field_bake.rs`, `tools/register/src/bin/p10_gravity_migrate.rs`, `docs/concepts/archivar-mathematikerin.md`, `docs/granit.md`.
+Fremde uncommittete Arbeit (nicht berührt, nicht committet): `phi/sources.φ`, `docs/zustand/dropped-legacy-baseline.txt`, `src/archivar/{bepicolombo,blinkverse,channels,dmap,ebhis,fetch,keogram,main_flow,membrane,parse,relay,spatial,swpc_efield,tests,types,weberin_fit}.rs`, `src/gate/{axioms,commit_gate_vocab.json}`, `src/mathematikerin/{actuators,channel,ozzy}.rs`, `kernels/v_freq_shelf.dat`, `static/membrane.html`, `tools/register/src/bin/p10_gravity_migrate.rs`, `docs/concepts/archivar-mathematikerin.md`, `docs/granit.md`.
 
 ## Burn: open 0.0000 · close 0.0404 — River 165 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 22→25 Sessions $0.7629→$1.0234). Grund: volle Stimmen-Runde P10.2a (archive_search --all + Rat 2 Pässe + UI/Open-Weight-Roster), Schema-Nachführung, Übergabe.
