@@ -6,7 +6,7 @@ const FALLBACK_URL: &str = "https://osf.io/preprints/";
 
 pub fn osf_lines(query: &str, max: usize) -> Vec<String> {
     let url = format!(
-        "{}?filter[title]={}&page[size]={}",
+        "{}?filter[title]={}&page[size]={}&embed=contributors",
         ENDPOINT,
         urlencode(query),
         max
@@ -62,6 +62,50 @@ fn abstract_field(attrs: &json::Json) -> Option<String> {
     }
 }
 
+fn full_name_of(user: &json::Json) -> Option<&str> {
+    user.get("attributes")
+        .and_then(|a| a.get("full_name"))
+        .and_then(|n| n.as_str())
+        .filter(|s| !s.is_empty())
+}
+
+fn authors_field(item: &json::Json) -> Option<String> {
+    let contributors = item
+        .get("embeds")
+        .and_then(|e| e.get("contributors"))
+        .and_then(|c| c.get("data"))
+        .and_then(|d| d.as_arr())?;
+    let mut names: Vec<&str> = Vec::new();
+    for contributor in contributors {
+        let Some(users) = contributor
+            .get("embeds")
+            .and_then(|e| e.get("users"))
+            .and_then(|u| u.get("data"))
+        else {
+            continue;
+        };
+        if let Some(arr) = users.as_arr() {
+            names.extend(arr.iter().filter_map(full_name_of));
+        } else if let Some(name) = full_name_of(users) {
+            names.push(name);
+        }
+    }
+    if names.is_empty() {
+        return None;
+    }
+    let cap = 8usize;
+    let mut joined = names
+        .iter()
+        .take(cap)
+        .copied()
+        .collect::<Vec<_>>()
+        .join(", ");
+    if names.len() > cap {
+        joined.push_str(", et al.");
+    }
+    Some(joined)
+}
+
 fn parse_osf(v: &json::Json) -> Vec<String> {
     let mut out = Vec::new();
     let Some(items) = v.get("data").and_then(|d| d.as_arr()) else {
@@ -87,6 +131,9 @@ fn parse_osf(v: &json::Json) -> Vec<String> {
             .filter(|s| !s.is_empty())
         {
             line.push_str(&format!("\ttitle: {}", title));
+        }
+        if let Some(authors) = authors_field(item) {
+            line.push_str(&format!("\tauthors: {}", authors));
         }
         if let Some(doi) = attrs
             .get("doi")
@@ -147,6 +194,46 @@ mod tests {
         assert_eq!(
             parse(body),
             vec!["url https://osf.io/preprints/\ttitle: No link".to_string()]
+        );
+    }
+
+    #[test]
+    fn reads_authors_from_the_contributor_embed() {
+        let body = r#"{"data":[{"attributes":{"title":"Authored"},"links":{"html":"https://osf.io/preprints/psyarxiv/y"},"embeds":{"contributors":{"data":[{"embeds":{"users":{"data":{"attributes":{"full_name":"Ada Lovelace"}}}}},{"embeds":{"users":{"data":{"attributes":{"full_name":"Alan Turing"}}}}}]}}}]}"#;
+        assert_eq!(
+            parse(body),
+            vec!["url https://osf.io/preprints/psyarxiv/y\ttitle: Authored\tauthors: Ada Lovelace, Alan Turing".to_string()]
+        );
+    }
+
+    #[test]
+    fn reads_authors_when_the_user_embed_is_an_array() {
+        let body = r#"{"data":[{"attributes":{"title":"Grouped"},"embeds":{"contributors":{"data":[{"embeds":{"users":{"data":[{"attributes":{"full_name":"Grace Hopper"}}]}}}]}}}]}"#;
+        assert_eq!(
+            parse(body),
+            vec![
+                "url https://osf.io/preprints/\ttitle: Grouped\tauthors: Grace Hopper".to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn caps_authors_at_eight_with_et_al() {
+        let users: Vec<String> = (1..=9)
+            .map(|i| {
+                format!(
+                    r#"{{"embeds":{{"users":{{"data":{{"attributes":{{"full_name":"Author {i}"}}}}}}}}}}"#
+                )
+            })
+            .collect();
+        let body = format!(
+            r#"{{"data":[{{"attributes":{{"title":"Many"}},"embeds":{{"contributors":{{"data":[{}]}}}}}}]}}"#,
+            users.join(",")
+        );
+        let out = parse(&body);
+        assert_eq!(
+            out,
+            vec!["url https://osf.io/preprints/\ttitle: Many\tauthors: Author 1, Author 2, Author 3, Author 4, Author 5, Author 6, Author 7, Author 8, et al.".to_string()]
         );
     }
 }

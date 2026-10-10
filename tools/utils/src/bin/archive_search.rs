@@ -70,6 +70,8 @@ mod oai;
 mod openalex;
 #[path = "archive_search/openfda.rs"]
 mod openfda;
+#[path = "archive_search/openlibrary.rs"]
+mod openlibrary;
 #[path = "archive_search/osf.rs"]
 mod osf;
 #[path = "archive_search/paged.rs"]
@@ -395,6 +397,7 @@ fn main() {
             "--ena" => mode = Mode::Net("ena"),
             "--doaj" => mode = Mode::Net("doaj"),
             "--osf" => mode = Mode::Net("osf"),
+            "--openlibrary" => mode = Mode::Net("openlibrary"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--reactome" => mode = Mode::Net("reactome"),
@@ -733,7 +736,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -772,7 +775,10 @@ fn usage() {
         "  --hal       HAL open archive (api.archives-ouvertes.fr/search), keyless; url + title/doi/published"
     );
     eprintln!(
-        "  --osf       OSF Preprints title search (api.osf.io/v2/preprints), keyless; url + title/doi/date/abstract"
+        "  --osf       OSF Preprints title search (api.osf.io/v2/preprints), keyless; url + title/authors/doi/date/abstract"
+    );
+    eprintln!(
+        "  --openlibrary Open Library catalog search (openlibrary.org/search.json), keyless; url + title/authors/year/editions"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
