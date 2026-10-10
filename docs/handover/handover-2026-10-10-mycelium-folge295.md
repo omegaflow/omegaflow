@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: c14d5f75b1a630be45cfaa116787a171ecf712fb2aa639965b919bc2791bb69e
+  sha256: 9be6efe9f939e24bd231278a77ebe84062eaa29c80c3b2b9970f5c144e03b8ee
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -176,6 +176,11 @@ liegen in der Browser-Gruppe `mycelium-auth` (nicht fokussiert):
   `omegaflow`/`omegaflow-sources` (Hot-Tier = Manifeste/Indizes, kein Bulk). Token-ID/Secret
   → `.secrets.local` (nur Schlüsselnamen dort, nie Werte in den Transcript). Der Akt
   (Login + R2 aktivieren + Token erzeugen) = Operator-Hand.
+- **R2-Free-Tier (gemessen 2026-10-10, `developers.cloudflare.com/r2/pricing/index.md`):**
+  Standard **10 GB-month/Monat** Storage, **1 Mio. Class-A**-Ops, **10 Mio. Class-B**-Ops,
+  Egress frei; darüber $0.015/GB-month · $4.50/Mio. Class A · $0.36/Mio. Class B (aufgerundet
+  auf die nächste Einheit). Ein Manifest-/Index-Hot-Tier (wenige hundert MB) bleibt also **$0** —
+  die Dashboard-Zeile „You will only be charged if you exceed the monthly limits" ist korrekt.
 - **OIDC + R2-Worker-Verifier (Maßnahme 5)** hängt an (4): erst nach dem R2-Konto der
   secretlose Pfad (`id-token: write` → Worker prüft GitHub-OIDC → Binding in R2).
 - **Free-GPU (Maßnahme 6).** Modal `modal.com/signup` (GitHub/Google-OAuth bereit,
