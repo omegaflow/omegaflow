@@ -2,7 +2,7 @@
   title: Die eigene Ephemeride — aus allen Zeugen
   class: concept
   date: 2026-10-10
-  sha256: 9b84339bf327a8ab5dd50db13c239dad90dc6fc4982a2b9970cfdb6efbcce307
+  sha256: ed03a46a9260e2b315bcde099ed70d670e122fbd51c4513a4a19703bca3c6b40
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-10-10-mountain-folge301.md
 -->
@@ -130,6 +130,49 @@ Moyer 2000 (PDS-PDF, HTTP 200, 2 382 623 B) · Thornton 2000 (PDS-PDF, 2 751 014
 Verma 2013 arXiv:1306.5569 · INPOP08-Preprint (IMCCE, 2 473 822 B) · EPM2021
 (Cambridge 200) · Park 2021 DE440/441 (NAIF-PDF, 5 501 569 B) · Turyshev 2010 (LRR
 200) / 2012 (arXiv:1204.2507) · Di Ruscio 2021 (HAL-Thesis).
+
+## Die Vision (aus dem EPH-`Vision`-Gespräch, 2026-10-10)
+
+Sobald die Kette steht, ist die eigene Ephemeride kein Selbstzweck:
+
+- **Flyby-Anomalie:** Anderson 6 Vorbeiflüge × 5 Häuser = 30 Residuen statt 6; die
+  JUICE-Benotung gegen das eigene Haus; die Haus-Wahl selbst als systematischer Beitrag.
+- **Planetenmassen:** kleine Monde (Uranus-Wobble 21,65 m) + vergessene Asteroiden als
+  Nebenprodukt des Fits.
+- **Relativitätstests:** Merkur-Periheldrehung, Shapiro (Cassini ~1e-5), Äquivalenzprinzip
+  (LLR), Graviton-Masse — mit mehr Zeugen als die Häuser.
+- **Pioneer-Anomalie als Beitrag:** Pioneer 10 + 11 + Voyager + Ulysses = erster
+  Mehrsonden-Test des thermischen Rückstoß-Modells (Turyshev testete eine Sonde).
+- **Uranus/Neptun:** die Häuser stimmen nicht überein (1,57e6 m DE441↔DE442); der
+  Neptune-Refit 2025 (Gaia FPR + 42 J. Okkultations-Astrometrie) zeigt: die Region ist in
+  Bewegung.
+- **Eigene AU → H₀:** eigene Erdbahn/GM_Sonne → unterste Leitersprosse → Kreuz-Zeuge in der
+  H₀-Spannung (73,56 vs 67,36). Ehrliche Grenze: nicht präziser, sondern **Konsistenz-Prüfung**.
+
+## Was fehlt — und was schon offen liegt (Reconnaissance 2026-10-10)
+
+Drei Taucher + die neuesten `archive_search`-Arme (`--ads`/`--semanticscholar`/`--openalex`/
+`--alphaxiv`/`--perplexity`/`--core`/`--datacite`). Credential-Route gemessen
+(`bin/secrets_keys`, nur Schlüsselnamen): `EARTHDATA_EDL_TOKEN` liegt vor → CDDIS/ILRS ist
+**Auth-Route, kein `declined`** (Auth ist kein Ausschlusskriterium); ebenso
+`NASA_ADS_TOKEN`, `OPENALEX_API_KEY`, `S2_API_KEY`, `MAST_TOKEN`, `ZENODO_TOKEN`.
+
+- **Erreichbar/offen (measured):** Moyer 2000 (PDS-PDF), Thornton 2000, **PEP** (offen),
+  **Tudat** (arXiv:2510.23179, offen), CALCEPH, `anise` (Rust, MPL-2.0), EphemerisSources.jl,
+  ICRF3 (CDS `I/352`), ITRF2020-SINEX (92 MB gzip), VMF1/VMF3 (TU Wien, Offen für Vorjahre),
+  JPL-Radar-Astrometrie + NAIF-Kernels + PDS-Radioscience (MESSENGER/Cassini/Juno), Rosetta
+  RSI (PSA).
+- **Auth-Route:** CDDIS LLR-Normalpunkte (`EARTHDATA_EDL_TOKEN`); DARTS (JAXA) Wurzel 403 =
+  pauschale Sperre, kein Konto-Gate.
+- **Neu gefunden:** LLR-Äquivalenzprinzip gegen verschiedene Ephemeriden (arXiv 2609.15303) ·
+  Joint JUICE+Europa-Clipper-Tracking (A&A 2024) · Solar-Wind-Dichte-Modell für Ranging
+  (MNRAS 2022) · Lunar Degree-2 Love Number aus 4-Wege-Radiometrie + LLR (2025) ·
+  Cassini→INPOP19a (2020) · BepiColombo MORE.
+- **Neuheit (gemessen):** in **keinem** der gefahrenen Arme trägt eine Ephemeride den
+  Anspruch, NASA+ESA+sowjetisch+japanisch+Pioneer-thermisch zu vereinigen. Perplexity:
+  „not literally a fit to all spacecraft tracking data ever collected." Die „~414
+  Prüfungen" einer UI-Stimme sind eine Zählung über Register-Treffer, keine gemessene
+  Registerzahl — das Haus streicht den Superlativ.
 
 ## Nächster Schritt
 
