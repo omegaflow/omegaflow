@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 75cd44d983dea3fe6f7f9de441c4ca08d72b5592bcf4adec858f5952b7f67778
+  sha256: 338bb27cb551b41d69693b922a1ccfa4c31831f2b66a18f83e51c2b70ec98597
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.0851 · cap 0.5 — Grund: Meta-Pass (GIRO-Lauf grün, matrix-rotor-Re-Run, CI-Tafel, Stehender Pass) + CI/CDN-Recherche (archive_search --all, 4 Recherchen, Rat, 6 UI-Seats, Survey) + mountain-297-Faltung · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.1077 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 7 Recherchen, Rat, 6 UI-Seats, Survey A–G) + mountain-297-Faltung · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -69,8 +69,9 @@ In diesem Atom kein neuer adressierter Block.
 ### Architektur — GitHub/CI/CDN-Optimierung (Survey + Rat + UI-Runde)
 - **Status:** eigen (Umsetzung) | **Bindung:** linie:mycelium (Träger) · Teile linie:mountain/river
 - **Trigger:** nächste Dispatch-Session dieser Linie
-- **Lage:** (gemessen 2026-10-10 via `archive_search --all` + 4 Recherchen + Rat + 6 UI-Seats)
-  Survey `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md` (sha `19382251…`);
+- **Lage:** (gemessen 2026-10-10 via `archive_search --all` + 7 Recherchen + Rat + 6 UI-Seats)
+  Survey `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md` (sha `95e55714…`),
+  Säulen A–D (Runner/Tests · CDN · Agent↔GitHub/OIDC · Free-GPU/AI) + E–G (CPU-Runs · MCP · APIs);
   Runde `state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`. Konvergenz: R2/OIDC,
   Workflow-Konsolidierung, nextest+Built-Reuse+Cache-in-R2, GPU nur für GPU-Last. Riss:
   AI-in-CI (nur self-hosted vs. private Cloud-GPU).
@@ -80,6 +81,17 @@ In diesem Atom kein neuer adressierter Block.
   `timeout-minutes`/Retention) · (3) nextest-Sharding auf `ubuntu-24.04-arm` + rust-cache/sccache ·
   (4) R2-CDN (`operator-gebunden`: Bucket/Key = Operator-Wort) · (5) OIDC+R2-Worker-Verifier +
   `external-state`-Rate-Zeile · (6) Free-GPU-Probe (Modal/Beam) + self-hosted LLM — `pending`, hinten.
+
+### MCP — lokale no-leak-Server (Autonomie-Kandidat)
+- **Status:** eigen | **Bindung:** linie:mycelium
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10) Survey Säule F. opencode-MCP: `local` (stdio) / `remote` (HTTP) in
+  `opencode.json`. No-leak-Fit lokal: `filesystem` · `git` · `memory` · `sequential-thinking` ·
+  `time`. GitHub-MCP nur **readonly** (hosted = Dritt-Egress). **Nicht verdrahten:** AWS/Azure/GCP/
+  hosted Sentry/Slack (lethal trifecta). Docker-Gateway als Isolation.
+- **Blockade:** keine.
+- **Braucht:** Architektur-Wort (Rat) für den MCP-`block` in `opencode.json` (welche lokalen Server),
+  dann als begrenzter Dispatch umsetzen — nach der Konsolidierung.
 
 ## An mountain
 
