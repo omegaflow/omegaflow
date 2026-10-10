@@ -5481,6 +5481,7 @@ mod tests {
         FieldConfig {
             key: name.to_string(),
             name: name.to_string(),
+            band_id: None,
             kernel: 0,
             force: 0,
             tau: 0.0,
