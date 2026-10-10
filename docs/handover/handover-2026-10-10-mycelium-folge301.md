@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. BDOM-Witness registriert (witness.rs), dom-cdn.yml + fünf Klima-Manifest-Workflows (surfrad/ecad/dwd-cdc/worldclim/aodn) gebaut; open-lidar-data-cdn-Lauf 38082503772 success (Asset 50 616 273 B, sha256 e6560344·); Stehender Pass am neuen HEAD neu geschrieben.
   class: handover
   date: 2026-10-10
-  sha256: 7dd431b89079630b011b5c93aeaf2392e63c65de67076c3381e290b34af7bdfd
+  sha256: 6b444d1fb2d3f271b88ac6ae832d81fe9b58274454b3475f1c95f99651df9168
   status: live
 -->
 # Handover — Mycelium-Folge 301 (2026-10-10)
@@ -38,14 +38,19 @@ erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 - **Blockade:** der Lauf wartet in der Warteschlange.
 - **Braucht:** bei success den sha256 in den SPT-`cmap`-Block (`cmb_spt_d1_n64.json`).
 
-### CI — VNP46A3-CDN LAADS-Auth
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · Token = Operator-Hand
-- **Trigger:** Lauf `vnp46a3-cdn` nach Token-Autorisierung
-- **Lage:** (gemessen 2026-10-10 via `ci_manage log 38080557462`) LAADS-Granule-Fetch
-  antwortet **401** mit vorhandenem `EARTHDATA_EDL_TOKEN` und gebautem
-  `Authorization: Bearer`-Header (`b61840610`). Diagnostik gibt curl's stderr.
-- **Blockade:** der EDL-Token ist für LAADS nicht (mehr) autorisiert — Auth-Route, kein Code-Fix.
-- **Braucht:** `EARTHDATA_EDL_TOKEN` erneuern/autorisieren; siehe `## An future`.
+### CI — VNP46A3-CDN LAADS-Auth (Ursache gemessen: Repo-Secret veraltet)
+- **Status:** wartend | **Bindung:** eigen (Manifestation) · Repo-Secret = Operator-Hand
+- **Trigger:** `vnp46a3-cdn`-Re-Dispatch nach Repo-Secret-Update
+- **Lage:** (gemessen 2026-10-10) der LAADS-Granule-Fetch des Laufs am 2026-10-10T19:37Z
+  antwortet **401** (`ci_manage log 38080557462`) mit vorhandenem `EARTHDATA_EDL_TOKEN` und
+  gebautem `Authorization: Bearer`-Header. **Ursache gemessen:** das GitHub-Repo-Secret
+  `EARTHDATA_EDL_TOKEN` (omegaflow/omegaflow) steht auf **2026-10-06T08:34:06Z**
+  (`gh secret list --repo omegaflow/omegaflow`), nicht auf dem heute Mittag erneuerten
+  Wert — der Workflow liest `${{ secrets.EARTHDATA_EDL_TOKEN }}`, nicht die lokale Datei.
+  Der 401 ist der **alte** Token, kein fehlender.
+- **Blockade:** das erneuerte Token wurde im Repo-Secret noch nicht hinterlegt.
+- **Braucht:** das GitHub-Secret `EARTHDATA_EDL_TOKEN` (Repo omegaflow/omegaflow) auf den
+  erneuerten Wert setzen (Operator-Hand; 16 Workflows lesen es), dann Re-Dispatch.
 
 ### φ-Manifestation — open-lidar-data (COPC) — Trigger gefeuert
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
@@ -198,8 +203,9 @@ Origin: mycelium-301 (2026-10-10).
 - **KNMI Open Data API-Key angekommen** (`state/mail/mail_ledger.φ:268`, Betreff
   „Your API Key") — der Wert wurde **nicht** ausgelesen; Hinterlegung in
   `.secrets.local` = Operator-Hand.
-- **`EARTHDATA_EDL_TOKEN`** für LAADS erneuern/autorisieren (VNP46A3-CDN 401) —
-  Operator-Hand.
+- **`EARTHDATA_EDL_TOKEN`** — das **Repo-Secret** (omegaflow/omegaflow) trägt noch den
+  Wert vom `2026-10-06T08:34Z` (`gh secret list`); das heute erneuerte Token dort
+  hinterlegen (Operator-Hand) — 16 Workflows lesen es. Kein erneutes Ausstellen nötig.
 
 ## LOCK
 
