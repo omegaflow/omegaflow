@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 14f80844e7a1ec99c5824cebb49bd057fa33bc24de1046e07787dd745abc816b
+  sha256: 13eece04fb91270bae4b7bf032b99b81047aa8510f4b90f2ad2642f24678e9e5
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -291,6 +291,47 @@ aber **kein** Bathymetrie-Multibeam-Manifestator.
 Damit hat **jede** der vier problematischen Quellen eine erreichbare Route:
 IBCAO → NGDC/PANGAEA/GEBCO · AusSeabed → AODN/GA · R2R → MGDS/BCO-DMO/PANGAEA ·
 JALBTCX → Digital-Coast-Data-Access-Viewer + data.gov-Katalog.
+
+## Datensatz-Extraktion über Portal-APIs (nur redistributierbar)
+
+Portal-Kataloge mit CKAN-API liefern Datensatz **und** `license_id`
+maschinenlesbar — sauberer als HTML-Scraping. CF-Portale (`pacificdata.org`)
+werden über die **Browser-Brücke** abgefragt (`/data/api/3/action/package_search`,
+JSON), nicht-CF-Portale (`data.gov.il`) per `curl`. Das **Filterkriterium** ist die
+Lizenz gegen die geschlossene Vokabel (`license_census`): redistributierbar =
+`PD`/`other-pd`/`cc0`/`cc-by`/`cc-by-sa`/`odc-odbl`/`ogl`/`sprep-public-license`
+(Terms vor Registrierung messen); ausgeschlossen = `notspecified`/`unknown`/NC/ND.
+
+**Erster Extrakt — Pacific Data Hub, `q=bathymetry`, `fq=license_id:(sprep-public-license OR other-pd)`
+= 11 von 180** (Datensatz-URL `https://pacificdata.org/data/dataset/<name>`):
+
+| Datensatz (`name`) | Lizenz |
+| --- | --- |
+| `gebco-global-bathymetric-grid` (Gridded Bathymetry Data) | other-pd |
+| `bathymetry-nauru5c53e724-…` | sprep-public-license |
+| `general-bathymetric-chart-of-the-oceans7a9bb9fd-…` (GEBCO) | sprep-public-license |
+| `global-distribution-of-seamounts-and-knolls368d9116-…` | sprep-public-license |
+| `seafloor-geomorphology0954d9c6-…` | sprep-public-license |
+| `world-reef-map-global-coral-reef-atlas8ffee185-…` | sprep-public-license |
+| `bathymetric-mapping-survey-on-all-nine-atolls-of-tuvalubb89a9ce-…` | sprep-public-license |
+| `sea-oceanographic-data` | other-pd |
+| `vaiusu-bay-marina-fisheries-studyad4fa372-…` | sprep-public-license |
+| `tongan-socio-environmental-spatial-layers-…` | sprep-public-license |
+| `pacific-catastrophe-risk-assessment-…` (PCRAFI) | sprep-public-license |
+
+Die übrigen **169** Bathymetrie-Datensätze tragen `notspecified` → **nicht**
+redistributierbar (nur Metadaten lesbar, kein Datensatz-Link). `q=lidar` = 2 Treffer
+(1 SPREP-Bericht, 1 „notspecified") — kein Punktwolken-Datensatz im pazifischen Katalog.
+
+`data.gov.il` (nicht-CF, API 1201 Datasets): kein LiDAR/Punktwolken-Datensatz
+indexiert (Hebrew/Englisch-Suche 0); die API antwortet zudem intermittierend mit
+einer CF-Challenge auf `curl` → Browser ist die verlässliche Route.
+
+**Der skalierbare Weg:** ein `portal_harvest`-Bin (`tools/harvest`) — `package_search`
+je Portal → `license_id` gegen die geschlossene Vokabel filtern → `package_show`
+für die echten `resources[].url` → Kandidaten-Zeilen ausgeben. Der eigentliche
+Daten-Link steht erst in `package_show` (nicht in `package_search`). Dann Mountain
+(`terms`/`at`) + Mycelium (`url`/`origin`/`compiler`).
 
 ## Was fehlt — der Bau
 
