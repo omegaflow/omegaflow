@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: f6de3be19142a7dea7dcb03cf59231fc6029da6f7aa82727bae6ea4b56eb07c3
+  sha256: 239607755a464daf77d3951699b6ab5d5fe3d98d1ea1a02e9929a6288d968aa3
   status: live
 -->
 # Handover — Mountain-Folge 299 (2026-10-10)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge298.md` (→ `archiv/`). 
 `## An mountain`-Block aus mycelium-293 ist bereits in folge298 gefaltet (iEEG-Riss
 beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.1346 — gemessen via session_burn (Linien-Session $0.1346, deepseek-flash, kein pro/max)
+## Burn: open 0.0000 · close 0.2308 · cap 0.30 — Grund: voller Roster (10 Frontier + Open-Weight) + zwei Ratssitzungen + vorgezogener LLR-Parser-Bau (Operator-Wort), deepseek-flash
 
 ## Offen (aufgeschlüsselt)
 
@@ -43,31 +43,31 @@ beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kei
   (uproot5 als Dev-Orakel, Hash pinnen); danach Gate auf Indexdomäne (time|ordinal|event) vor dem
   Skalar-Reader. Kein Verdikt über das Feld vor der Leaf-Messung.
 
-### PEP — Werkzeug, kein fünftes Haus; eigenes Weben bleibt gesperrt
+### PEP — Werkzeug, kein fünftes Haus; 100 % Rust std gilt dem Shipped Binary
 - **Status:** eigen (Register/Tool) | **Bindung:** eigen
-- **Trigger:** Registrierungsort festlegen, dann `pep_core` klassifizieren/pinnen
-- **Lage:** (gemessen 2026-10-10) PEP (`jbattat/pep_core`, ASCL 2306.027, AJ 162,78 2021) ist ein offenes
-  Werkzeug, das Ephemeriden *berechnet*. Rat (5 Stimmen) + 5 UI-Seats: PEP als Quelle der Klasse `tool` in den
-  **Werkzeug-Ast** (nicht Zeugen-Ast), als Blackbox-/Orakel-Subprozess (kein Rust-Port, keine
-  Shipped-Runtime-Abhängigkeit); das Drei-Haus-Tor (`ephemeris_house_gate`) bleibt das Maß. Eigenes Weben
-  (Verbraucher→Produzent) bleibt gesperrt bis LLR im Baum, ODF als Observations-Satz kuratiert, Floor-Ursache
-  gemessen. Die „1,7 TB" sind CDN-Assets, nicht Beobachtungsdaten (Riss benannt).
-  Stimmen: `state/stimmen/2026-10-10_mountain_pep-llr-round.md`.
-- **Blockade:** Registrierungsort für ein Tool (≠ Datenquelle) unbestimmt.
+- **Trigger:** Registrierungsort festlegen, dann `pep_core` pinnen; native Module bauen
+- **Lage:** (gemessen 2026-10-10) Rat (5 Stimmen) + voller Roster (10 Frontier + 1 Open-Weight; Lumo Limit-Wall,
+  Kimi Login-Wall = `pending`): PEP bleibt **offlines, gepinntes Referenz-/Zeugen-Artefakt** (Golden-Fixture,
+  Hash + Provenienz), **kein Runtime-Oracle** (Subprozess/FFI bräche das Ziel); **kein Vollport jetzt**. Das Ziel
+  ist präzise „**Shipped Binary = 100 % Rust**"; die Verifikationskette darf fremd bleiben. Nativ zuerst der
+  **Beobachtungsoperator** über den eigenen Rohdaten, dann modulweise (Integrator zuletzt) mit Konformanz-Gate
+  (Toleranz je Modul, nie bitweise). Die „1,7 TB" sind CDN-Assets, nicht Beobachtungsdaten (Riss benannt).
+  Stimmen: `state/stimmen/2026-10-10_mountain_pep-rust-port-round.md`.
+- **Blockade:** Registrierungsort für ein Tool (≠ Datenquelle) unbestimmt; PEP-Quellenlizenz für Pinning ungeprüft.
 - **Braucht:** Rat/Operator — den Ort der PEP-Registrierung festlegen (z. B. `docs/concepts/tools-map.md`) +
-  Gate-Fixture „tool-as-runtime-dependency verboten"; dann `pep_core` pinnen.
+  Gate-Fixture „kein Runtime-Fremd-Binary im Shipped-Binary"; dann `pep_core` als Golden-Fixture pinnen.
 
-### LLR — kritische fehlende Rohbeobachtung; minimaler Ingest
-- **Status:** eigen (Quelle/Parser) | **Bindung:** eigen
-- **Trigger:** Parser-Bau `llr` + erster Ingest (Zenodo 7818557)
-- **Lage:** (gemessen 2026-10-10) LLR = **0 Treffer** im Baum. `archive_search --all` findet APOLLO-Normalpunkte
-  (`apo.nmsu.edu/mainpage/apollo/normalpoints/`), Zenodo 7818557 (APOLLO normal points 2006–2020), NASA
-  Earthdata LLR, ILRS/CDDIS. Rat + Roster: Klasse **Rohbeobachtung** (wie ODF/DSN), Format Normalpunkte,
-  **reiner Parser** (null Physik: keine UTC→TDB/Troposphäre/Shapiro); minimal nur Zenodo 7818557 ingesten.
-  Randbedingung: DE/INPOP/EPM haben LLR mitgefittet → O−C sind Fit-Residuen, kein Blindtest.
-- **Blockade:** Schema/Lizenz der Zenodo-Datei ungeprüft.
-- **Braucht:** `src/archivar/llr.rs` + `llr_compiler` (Zenodo 7818557; Hash/Lizenz prüfen; Schema hart:
-  Zeitmonotonie, Zeitbereich, Reflektoren, Stationen) → `sources.φ`-Block + Workflow = Mycelium.
+### LLR — Parser gebaut; Manifestation + Runtime-Arm offen
+- **Status:** eigen (Parser) | **Bindung:** mycelium (sources.φ + Workflow) · river (main_flow)
+- **Trigger:** Mycelium schreibt den `sources.φ`-Block + `llr-cdn.yml`; River setzt `| "llr"` in `main_flow.rs`
+- **Lage:** (gemessen 2026-10-10) `src/archivar/llr.rs` + `tools/harvest/src/bin/llr_compiler.rs` **gebaut**,
+  `cargo check` 0/0 (Commit `2b00d7666`); CRD v2.01 gemessen (H1–H5/C0–C3/11/20/40/50); End-to-End auf
+  `APOLLO_2006_2020.crd` (Zenodo 7818557, CC-BY-4.0, DOI 10.5281/zenodo.7818557): **4296 Normalpunkte**,
+  Roundtrip 360 872 B, sha256 `f2b3afdc…`. Reiner Parser (null Physik), Ausreißer nur markiert.
+- **Blockade:** keine (Mountain-Seite).
+- **Braucht:** Mycelium — `sources.φ`-Block (`netloc zenodo.org` · `url …/APOLLO_2006_2020.crd/content` ·
+  `terms CC-BY-4.0` · `format llr` · `origin APOLLO normal point data 2006–2020 (Zenodo 7818557)` ·
+  `compiler tools/harvest/src/bin/llr_compiler.rs`) + `llr-cdn.yml`; River — `| "llr"` in `main_flow.rs` `series_rows`.
 
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -132,6 +132,8 @@ Wort | Datum | Quelle
 --- | --- | ---
 „hast du archive search all und den roster befragt?" | 2026-10-10 | Operator (Session, Mountain 298)
 „bitte für council immer auch archive search all und den roster und bitte lasse archive search all und den roster auch auf LLR los" | 2026-10-10 | Operator (Session, Mountain 299)
+„aber warum bauen wir PEP nicht in rust nach? und bitte ja LLR … sag, ob ich ihn vorziehen soll" | 2026-10-10 | Operator (Session, Mountain 299)
+„warum nur so ein kleiner roster und warum kein vollport wir wollen doch womöglich 100% rust std" | 2026-10-10 | Operator (Session, Mountain 299)
 „warum schreibst du hier erst in die blocked sources anstatt direkt an den finalen ort — das ist einfach nur faules compliance theater" | 2026-10-10 | Operator (Session, Mountain 295)
 „Offen bleibt in P10: der optionale `<regime>`-Token …, die Regime-Achse selbst, und die Zeilen-Migration in phi/sources.φ (Mountain)." | 2026-10-10 | Operator (Session, Mountain 295)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
@@ -144,6 +146,9 @@ Origin: mountain-299 (2026-10-10).
 - **GIC-Ground-Truth.** `tools/measure/src/bin/te_ground_truth.rs` steht auf dem embedded KSG-Arm
   (Production-Flux); der Skalar-KDE-Arm bleibt als benannter Riss. Kein Workflow führt diesen Bin
   aus — nehmt ihn in einen CI-Lauf auf (z. B. neben `te_bias_n_probe`).
+- **LLR.** `src/archivar/llr.rs` + `tools/harvest/src/bin/llr_compiler.rs` sind gebaut (`2b00d7666`,
+  `cargo check` 0/0). Braucht den `sources.φ`-Block (netloc `zenodo.org`, format `llr`, terms CC-BY-4.0)
+  + einen `llr-cdn.yml`-Caller (unter `cdn-manifest.yml`).
 - **CMB/SPT · GIRO · PDS-PPI · Keogramm.** Unverändert aus folge298: `cmb-cdn` `timeout-minutes`
   ≥ 360 + Re-Lauf; `giro-fastchar-cdn` Re-Lauf; PDS-PPI-Block; Keogramm-Re-Lauf bestätigt.
 
