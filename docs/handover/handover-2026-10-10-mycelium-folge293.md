@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 61efbf41c0d54dd754174b1ac3a4d7f1362c2e8653b2d7cddb4243d7baff5df4
+  sha256: 8568884b28530452d15c197078eb842a1d5775aaf51b4017139d22308fe75ade
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.3686 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche + Workflow-Hygiene + cdn-manifest.yml + Lizenz-/Runner-Korrektur + **t420-Last (`subset`) + intelligenter Throttle (`bin/runner_throttle.sh` + Konzept)** · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.4126 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche + Workflow-Hygiene + cdn-manifest.yml + Lizenz-/Runner-Korrektur + t420-Last (`subset`) + Throttle installiert (Ingress/IFB, adaptiv) · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -95,20 +95,20 @@ In diesem Atom kein neuer adressierter Block.
   Survey-Säule B dokumentiert.
 
 ### Zweite CI-Lane — self-hosted t420 (Riss geklärt, Last erhöht, Drosselung gebaut)
-- **Status:** eigen (Installation auf dem t420 offen) | **Bindung:** operator (Install = root auf t420)
-- **Trigger:** nächster Bedarf / Media-Session
-- **Lage:** (gemessen 2026-10-10) Riss **geklärt: `t420`** (Operator bestätigt). Registrierter Runner
-  (2026-10-05, `state/zustand/ereignisse.φ:81058`): `t420`, Host `johannes-ThinkPad-T420`, Linux Mint 22.3,
-  Labels `self-hosted, Linux, X64`, v2.337.0, systemd `actions.runner.omegaflow-omegaflow.t420.service`,
-  Nutzer `actions` ohne sudo, `Nice=10`/`CPUWeight=20`/`IOWeight=20`. **20 Workflows** auf
-  `runs-on: [self-hosted, Linux]` (`cmb-cdn`, Ephemeriden-Compiler, …); **`ci-gate.yml`-`subset` jetzt
-  ebenfalls auf `[self-hosted, Linux]`** (mehr Last). Konzept `docs/concepts/self-hosted-runner.md`
-  (sha `ade23c27…`) + Werkzeug `bin/runner_throttle.sh` (systemd-`CPUQuota=150%`, `tc`-Egress-Kappe mit
-  Headroom, **adaptiver Gateway-Latenz-Backoff**, `pause`/`resume`).
-- **Blockade:** der Throttle läuft erst nach `install` **auf dem t420** (root; der XPS 13 trägt keine Jobs).
-- **Braucht:** Operator installiert auf dem t420: `sudo bin/runner_throttle.sh install` (idempotent),
-  dann `status`. Offen (`pending`): echtes WAN-QoS am Router für den getrennten Media-PC — der t420
-  sieht dessen Verkehr nicht.
+- **Status:** eigen (installiert, verifiziert) | **Bindung:** eigen
+- **Trigger:** Bedarf / Media-Session (regelt sich selbst)
+- **Lage:** (gemessen 2026-10-10) Riss **geklärt: `t420`**. **20** Workflows auf
+  `runs-on: [self-hosted, Linux]`; **`ci-gate.yml`-`subset` jetzt ebenfalls auf `[self-hosted, Linux]`**
+  (mehr Last). **Throttle installiert + verifiziert auf dem t420** (per SSH, `johannes@192.168.178.50`,
+  passwordless sudo): Live-CPU (`CPUQuotaPerSecUSec=1.5s`/`CPUWeight=20`/`IOWeight=20`), Ingress-Cap
+  20 Mbit auf `ifb0` (`wlp3s0`), `runner-throttle-adaptive.service` **active**, RTT-Probe 5 ms,
+  Runner-Dienst unangetastet. Konzept `docs/concepts/self-hosted-runner.md`, Werkzeug `bin/runner_throttle.sh`.
+  **Riss (klein):** der SSH-Key heißt `t460_omegaflow_ed25519` (Kommentar `omegaflow-t460-runner`),
+  tut aber Dienst am t420 — kosmetisch.
+- **Blockade:** keine.
+- **Braucht:** nichts — regelt sich selbst; tunen via `/etc/default/runner-throttle` (Band/WAN).
+  Offen (`pending`): echtes per-Gerät-QoS am Router für den getrennten Media-PC — der t420 sieht
+  dessen Verkehr nicht.
 
 ### MCP — lokale no-leak-Server (Autonomie-Kandidat)
 - **Status:** eigen | **Bindung:** linie:mycelium
