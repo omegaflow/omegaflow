@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Ephemeris-CDN-Aufrufer (llr/itrf-sinex/vmf3) + 3 sources.φ-Blöcke; cdn.rs-collapsible_if + self-hosted-runner-ABS geheilt; ci-check-Messung korrigiert (4 Kern-Tests rot auf 3cca145b9).
   class: handover
   date: 2026-10-10
-  sha256: 69bcc3405b1356eb88b447faeba04fecabd47400fca7873885774ff9032200de
+  sha256: 0391677b22255bd0acf98d4110e3e2a13963f313048f0a98482ac8f16656d8b0
   status: live
 -->
 # Handover — Mycelium-Folge 296 (2026-10-10)
@@ -23,16 +23,53 @@ offen (`at`-Frame ist eine Register-Entscheidung → `An mountain`).
 Maßnahme 5 (OIDC-Worker) entblockt+gebaut, Maßnahme 6 (Cloud-GPU) **descoped**
 (Modal-Karte abgelehnt, Beam $20, Python-Riss) — gefaltet, kein Operator-Akt offen.
 
-## Burn: open 0.0000 · close 0.1033 · cap 0.5 — Grund: Meta-Pass + 3 Ephemeris-Aufrufer + 3 sources.φ-Blöcke + 2 clippy/path-Heilungen + ci-check-Archäologie · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.1033 · cap 0.5 — Grund: Meta-Pass + 3 Ephemeris-Aufrufer + 3 sources.φ-Blöcke + 2 clippy/path-Heilungen + ci-check-Archäologie + Predictor-Refactor-Adoption + LiDAR/DOM-Recherche (--all + 5-Seat-Roster) · deepseek-flash, kein pro/max (gemessen `session_burn`; DB nach Operator-Rebalance).
 
 ## Operator-Wort-Register
 
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-10 | Operator (Session, Mycelium 296; fortgeschrieben aus 295) |
+| „ich möchte alle haben" (open-lidar-data · Bayern-DOM-Quelle · DOM-Reader-Bin) | 2026-10-10 | Operator (Session, Mycelium 296) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-10-mycelium-folge295.md` §Operator-Wort-Register (fetchbar via `git show HEAD:archiv/…`) | 2026-10-10 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
+
+### Weltweite LiDAR-Quelle — `open-lidar-data` (COPC) registrieren
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** nächste Dispatch-Session (Operator-Wort „alle")
+- **Lage:** (gemessen 2026-10-10) `--all`-Recherche: `github.com/flai-ai/open-lidar-data`
+  HTTP 206, keyless Bucket `s3.eu-central-1.amazonaws.com/open-lidar-data/` HTTP 200
+  (**390654 B** Listing, LAS/LAZ **+ COPC**, Europa→global geplant); OpenTopography
+  `portal.opentopography.org` 200 (Punktwolken + globale DEMs); USGS 3DEP LidarExplorer ·
+  NOAA Digital Coast · Canada CanElevation (open.canada.ca). omegaflow hat **kein**
+  LiDAR/DOM registriert (nur Hayabusa-PDS4-LIDAR).
+- **Blockade:** keine.
+- **Braucht:** ein Block in `phi/sources.φ` (`url`/`origin`/`compiler`/`at earth`/`terms`/`ttl`)
+  + ein LAZ/COPC-Reader — braucht Operator-Wort für `terms`/`at`; Registrierung = Mycelium.
+
+### Bayern-DOM-Rasterquelle (`geodaten.bayern.de`) registrieren
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** nächste Dispatch-Session (Operator-Wort „alle")
+- **Lage:** (gemessen 2026-10-10 über easygeodata.de/en/dom/ + `--all`) Bayern = laser
+  DOM „DOM20", nativ 0,2 m → 1 m gemittelt, Quelle Bayerische Vermessungsverwaltung
+  (`geodaten.bayern.de`), Lizenz **CC BY 4.0**; Float32, 1 m, NHN, COG mit
+  `quelle_produkt`/`quelle_gsd`/`original_laser_1m` je Kachel. Niedersachsen CC BY 4.0 ·
+  NRW dl-de/zero-2-0 · BW/Hessen dl-de/by-2-0. easygeodata.de = Aggregator.
+- **Blockade:** keine.
+- **Braucht:** `sources.φ`-Block (Format `dom`/GeoTIFF, `at earth`, `terms CC-BY-4.0`,
+  `ttl`) — Operator-Wort; Registrierung = Mycelium.
+
+### DOM-/GeoTIFF-Raster-Reader-Bin auf `tiff::apply_predictor`
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** nächste Dispatch-Session (Operator-Wort „alle")
+- **Lage:** (gemessen 2026-10-10) der Predictor-Refactor ist **adoptiert+gepusht**
+  (`014d792ea`): `src/archivar/tiff.rs` trägt jetzt `undo_predictor2`/`undo_predictor3` +
+  `apply_predictor` (public, bps=4) + Tests; die zwei `copernicus_dem_*.rs` konsumieren
+  sie (lokale Kopien entfernt). Operator-Vorschlag „nach `tiff.rs` ziehen" damit erfüllt.
+- **Blockade:** keine.
+- **Braucht:** ein `dom_compiler`-Bin (`tools/harvest`), das ein GeoTIFF-DOM (Float32,
+  deflate/tiled, Predictor 3) über `tiff::apply_predictor` liest — begrenzter Dispatch.
 
 ### Ephemeris-Harvest — sha256 der drei neuen Assets
 - **Status:** eigen | **Bindung:** eigen
