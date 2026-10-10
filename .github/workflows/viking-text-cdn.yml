@@ -11,7 +11,7 @@ name: viking-text-cdn
 
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 on:
   workflow_dispatch:
@@ -21,18 +21,12 @@ on:
 permissions:
   contents: write
 
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
-
 jobs:
   viking:
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Die Viking-Lander-Tracking-Reihe kompilieren und auf das CDN manifestieren
-        run: |
-          cargo run --release -p omegaflow-harvest --bin viking_text_compiler -- \
-            --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"viking_text_compiler","netloc":"ssd.jpl.nasa.gov-planets","asset":"viking_lander_tracking.bin"}
+        ]
