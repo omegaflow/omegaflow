@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 299 (2026-10-10)
-  session: Mycelium-Linie — Meta-Pass. cmb-SPT-Resume gebaut (--tar + persistenter $HOME-Cache); sb_radar_compiler gebaut (Feld pending); open-lidar-data-COPC-Manifestator gebaut (CRS-Riss 31370); vnp46a3-Fetch-Diagnostik (HTTP-Code); surfrad_compiler (orphan, committet).
+  session: Mycelium-Linie — Meta-Pass. cmb-SPT-Resume gebaut (--tar + persistenter $HOME-Cache); sb_radar_compiler gebaut (Feld pending); open-lidar-data-COPC-Manifestator gebaut (CRS per --crs deklariert, Datei trägt keine); vnp46a3-Fetch-Diagnostik (HTTP-Code); surfrad_compiler (orphan, committet).
   class: handover
   date: 2026-10-10
-  sha256: 365000976085659c476acdf8bab86070f5d8fe9e519cdd43763093ff7f2c2e20
+  sha256: c392b074bc9f8c5426de2ac0c7a49330fc72fdd78f7a8eed2574f3b109410b13
   status: live
 -->
 # Handover — Mycelium-Folge 299 (2026-10-10)
@@ -106,13 +106,18 @@ kein erneuter Falt-Akt.
   **Gebaut in diesem Atom:** `tools/harvest/src/bin/open_lidar_data_compiler.rs` (COPC →
   `las`-`.bin`, Reader-Aufruf `LazDecoder`/`parse_series`/`write_bin`) +
   `.github/workflows/open-lidar-data-cdn.yml`; baut grün.
-- **Blockade (Riss, nicht geglättet):** die CRS-Inverse für EPSG:31370/3812. Der Reader
-  dekodiert die COPC-Datei, aber `resolve_crs` braucht Belgisch Lambert. Zwei Linien
-  konvergieren nicht: die klassische ESRI-Definition (lon0=4,367975; lat1=49,8333;
-  lat2=51,1667) und die gemessene lokale EPSG-Registry `/usr/share/proj/proj.db`
-  (lon0=4,2202952; lat1=51,1; lat2=49,5). Der Compiler trägt vorerst die ESRI-Linie.
-- **Braucht:** (a) die WKT/VLR der BE-Datei in CI messen (Compiler-`--inspect` gegen die
-  gemessene COPC-URL) → den Riss auflösen, DANN `open-lidar-data-cdn.yml` dispatchen;
+- **Blockade (aufgelöst, kein Riss):** die CRS. Gemessen 2026-10-10 (Header-Dump der
+  ersten 256 KB): die Datei trägt **keine** CRS-VLR — nVLR=2, nur `copc` + `laszip`;
+  die CRS ist **deklarierte Dataset-Metadaten**, kein Dateiinhalt. Die vermeintliche
+  ESRI-vs-`proj.db`-Divergenz war ein Fehl-Lesen von `proj.db`; die Autorität
+  (`archive_search --jina https://epsg.io/31370.wkt`) ist EPSG:31370 mit
+  central_meridian 4,36748666666667, Standardparallelen 51,1666672333333 / 49,8333339,
+  FE 150000.013, FN 5400088.438 (International 1924). Der Compiler nimmt die CRS jetzt als
+  **deklarierte** Eingabe `--crs <epsg>` (nie code-gewählt, wie `--body`), Arm-Konstanten
+  auf die gemessenen EPSG-Werte gesetzt (31370 + 3812).
+- **Braucht:** (a) den vom Provider deklarierten CRS des BE-Datensatzes messen
+  (`registry.opendata.aws/open-lidar-data/` → `github.com/flai-ai/open-lidar-data`),
+  dann `open-lidar-data-cdn.yml` mit `--crs <epsg>` dispatchen;
   (b) je weiterer Survey-Quelle ein Manifestator (Vorlage `las_compiler.rs`/
   `copernicus_dem_compiler.rs`) + Mycelium-Registrierung. Survey-Bauordnung §„Was fehlt":
   usgs-lidar-global + noaa-nos → open-lidar-data → NL AHN4/CH swissSURFACE3D/FR IGN/UK EA/
