@@ -14,6 +14,15 @@ h4  1 2006  4  7  6 24 27 2006  4  7  6 28 50  4 0 0 0 1 0 2 0\n\
 11 23190.0000000 2.6494326499837 std1 2  518.0     44      79.2      na      na       na    na 0   3.5\n\
 h8\n";
 
+const MINI_SAMPLE: &str =
+    "5 19690820025611999999024956468426000071110  8999000  0  79000 120 0 6943 0000";
+
+fn carries_crd_marker(bytes: &[u8]) -> bool {
+    bytes
+        .windows(6)
+        .any(|window| window.eq_ignore_ascii_case(b"h1 CRD"))
+}
+
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
@@ -34,15 +43,19 @@ fn measured(records: Vec<NormalPoint>) -> (Vec<NormalPoint>, usize) {
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let input = arg_value(args, "--input")
-        .ok_or_else(|| "--input <crd.txt> absent — the file stays unread".to_string())?;
+        .ok_or_else(|| "--input <crd.txt|mini.dat> absent — the file stays unread".to_string())?;
     let out = match arg_value(args, "--out") {
         Some(p) if !p.is_empty() => p,
         _ => format!("data/{NETLOC}/{FORMAT}.bin"),
     };
 
     let bytes = std::fs::read(&input).map_err(|e| format!("{input}: read void ({e})"))?;
-    let records = llr::parse_crd(&bytes)
-        .ok_or_else(|| format!("{input}: carries no CRD normal point — refused"))?;
+    let records = if carries_crd_marker(&bytes) {
+        llr::parse_crd(&bytes)
+    } else {
+        llr::parse_mini(&bytes)
+    }
+    .ok_or_else(|| format!("{input}: carries no CRD or MINI normal point — refused"))?;
     let (mut named, held) = measured(records);
     if held > 0 {
         eprintln!(
@@ -121,7 +134,30 @@ fn selftest() {
         eprintln!("selftest: a truncated bin reads back");
         std::process::exit(1);
     }
-    eprintln!("llr_compiler: selftest passes (CRD normal point → t/round-trip/reflector series)");
+
+    let Some(mini) = llr::parse_mini(MINI_SAMPLE.as_bytes()) else {
+        eprintln!("selftest: the sample MINI does not parse");
+        std::process::exit(1);
+    };
+    if mini.len() != 1 {
+        eprintln!("selftest: the MINI sample does not carry exactly one normal point");
+        std::process::exit(1);
+    }
+    if mini[0].reflector != llr::REFLECTOR_APOLLO11 || mini[0].station != 71110 {
+        eprintln!("selftest: the MINI sample's reflector/station do not match the measurement");
+        std::process::exit(1);
+    }
+    let Some(mini_bin) = llr::write_bin(&mini) else {
+        eprintln!("selftest: MINI write_bin void");
+        std::process::exit(1);
+    };
+    if llr::parse_bin(&mini_bin) != Some(mini.clone()) {
+        eprintln!("selftest: the MINI roundtrip does not read back");
+        std::process::exit(1);
+    }
+    eprintln!(
+        "llr_compiler: selftest passes (CRD + MINI normal point → t/round-trip/reflector series)"
+    );
 }
 
 fn main() {
@@ -132,7 +168,7 @@ fn main() {
     }
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: llr_compiler --input <crd.txt> [--out <file.bin>] [--ci-mode] | --selftest"
+            "usage: llr_compiler --input <crd.txt|mini.dat> [--out <file.bin>] [--ci-mode] | --selftest"
         );
         std::process::exit(2);
     }
@@ -157,5 +193,19 @@ mod tests {
     #[test]
     fn parse_crd_refuses_foreign_bytes() {
         assert_eq!(llr::parse_crd(b"not a crd file"), None);
+    }
+
+    #[test]
+    fn mini_sample_roundtrips_the_measured_stride() {
+        let records = llr::parse_mini(MINI_SAMPLE.as_bytes()).expect("the MINI sample parses");
+        let bin = llr::write_bin(&records).expect("finite records encode");
+        assert_eq!(bin.len(), llr::HEADER_BYTES + llr::RECORD_BYTES);
+        assert_eq!(llr::parse_bin(&bin), Some(records));
+    }
+
+    #[test]
+    fn crd_marker_routes_to_the_crd_parser() {
+        assert!(carries_crd_marker(SAMPLE.as_bytes()));
+        assert!(!carries_crd_marker(MINI_SAMPLE.as_bytes()));
     }
 }
