@@ -1,5 +1,4 @@
 use super::actuators::CHANNEL_CAP;
-use super::force::force_name_of;
 use super::media::MediumParams;
 use std::collections::HashMap;
 
@@ -854,12 +853,8 @@ pub fn mechanism_of(tag: &str) -> Option<&'static Mechanism> {
     MECHANISMS.iter().find(|m| m.tag == tag)
 }
 
-pub fn interaction_of_axes(op: TransportOp) -> Option<Interaction> {
-    match op {
-        TransportOp::Maxwell => Some(Interaction::Em),
-        TransportOp::Poisson => Some(Interaction::Gravity),
-        TransportOp::Flux(_) | TransportOp::Advective | TransportOp::Wave => None,
-    }
+pub fn interaction_of(ft: u8) -> Option<Interaction> {
+    mechanism_of(FIXED_CHANNELS.get(ft as usize)?.tag).and_then(|m| m.interaction)
 }
 
 pub fn live_channel_hash_of(d: &ChannelDescriptor) -> Option<u64> {
@@ -867,27 +862,80 @@ pub fn live_channel_hash_of(d: &ChannelDescriptor) -> Option<u64> {
     live_channel_registry().descriptor(h).map(|_| h)
 }
 
-fn force_quantity(name: &str) -> Option<(Conserved, &'static str)> {
-    match name {
-        "em" | "electric" => Some((Conserved::Energy, "V/m")),
-        "gravity" => Some((Conserved::Mass, "m/s^2")),
-        "acoustic" | "seismic-body" | "seismic-surface" => Some((Conserved::Energy, "Pa")),
-        "thermal" => Some((Conserved::Energy, "K")),
-        "diffusion" => Some((Conserved::Mass, "kg/m^3")),
-        "advective" => Some((Conserved::Mass, "kg/(m^2 s)")),
-        _ => None,
-    }
+#[derive(Clone, Copy)]
+pub struct FixedChannel {
+    pub tag: &'static str,
+    pub conserved: Conserved,
+    pub unit: &'static str,
+    pub medium: Medium,
 }
 
+pub const FIXED_CHANNELS: [FixedChannel; 9] = [
+    FixedChannel {
+        tag: "em",
+        conserved: Conserved::Energy,
+        unit: "V/m",
+        medium: Medium::Vacuum,
+    },
+    FixedChannel {
+        tag: "gravity",
+        conserved: Conserved::Mass,
+        unit: "m/s^2",
+        medium: Medium::Vacuum,
+    },
+    FixedChannel {
+        tag: "acoustic",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "seismic-body",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::ElasticSolid,
+    },
+    FixedChannel {
+        tag: "seismic-surface",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::ElasticSolid,
+    },
+    FixedChannel {
+        tag: "thermal",
+        conserved: Conserved::Energy,
+        unit: "K",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "diffusion",
+        conserved: Conserved::Mass,
+        unit: "kg/m^3",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "advective",
+        conserved: Conserved::Mass,
+        unit: "kg/(m^2 s)",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "electric",
+        conserved: Conserved::Energy,
+        unit: "V/m",
+        medium: Medium::Vacuum,
+    },
+];
+
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
-    let (conserved, unit) = force_quantity(name)?;
-    let m = mechanism_of(name)?;
-    if !is_admissible(conserved, m.operator, medium) {
+    let fc = FIXED_CHANNELS.iter().find(|c| c.tag == name)?;
+    let m = mechanism_of(fc.tag)?;
+    if !is_admissible(fc.conserved, m.operator, medium) {
         return None;
     }
     Some(ChannelDescriptor::new(
         Quantity {
-            conserved,
+            conserved: fc.conserved,
             role: QuantityRole::Primary,
         },
         m.operator,
@@ -895,26 +943,13 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
         medium,
         Domain::Unspecified,
         m.boundary,
-        unit,
+        fc.unit,
     ))
 }
 
-const LIVE_FORCE_MEDIA: [Medium; 9] = [
-    Medium::Vacuum,
-    Medium::Vacuum,
-    Medium::Fluid,
-    Medium::ElasticSolid,
-    Medium::ElasticSolid,
-    Medium::Fluid,
-    Medium::Fluid,
-    Medium::Fluid,
-    Medium::Vacuum,
-];
-
 pub fn descriptor_for_channel_ref(ft: u8) -> Option<ChannelDescriptor> {
-    let name = force_name_of(ft)?;
-    let medium = *LIVE_FORCE_MEDIA.get(ft as usize)?;
-    descriptor_for_force(name, medium)
+    let fc = FIXED_CHANNELS.get(ft as usize)?;
+    descriptor_for_force(fc.tag, fc.medium)
 }
 
 pub fn channel_ref_of_descriptor(d: &ChannelDescriptor) -> Option<u8> {
@@ -1951,28 +1986,15 @@ mod tests {
     }
 
     #[test]
-    fn the_mechanism_row_holds_operator_never_conserved() {
-        for m in MECHANISMS.iter() {
-            let derived = interaction_of_axes(m.operator);
-            assert_eq!(
-                m.interaction, derived,
-                "mechanism {} carries an interaction that disagrees with its operator axes",
-                m.tag
-            );
+    fn interaction_is_read_from_the_mechanism_row_not_the_operator() {
+        for ft in 0..9u8 {
+            let fc = FIXED_CHANNELS[ft as usize];
+            let expected = mechanism_of(fc.tag).and_then(|m| m.interaction);
+            assert_eq!(interaction_of(ft), expected, "force type {ft}");
         }
-    }
-
-    #[test]
-    fn interaction_is_derived_from_the_operator_not_the_reverse() {
-        assert_eq!(
-            interaction_of_axes(TransportOp::Maxwell),
-            Some(Interaction::Em)
-        );
-        assert_eq!(
-            interaction_of_axes(TransportOp::Poisson),
-            Some(Interaction::Gravity)
-        );
-        assert_eq!(interaction_of_axes(TransportOp::Wave), None);
+        assert_eq!(interaction_of(0), Some(Interaction::Em));
+        assert_eq!(interaction_of(1), Some(Interaction::Gravity));
+        assert_eq!(interaction_of(2), None);
         assert_eq!(Interaction::parse("em"), Some(Interaction::Em));
         assert_eq!(Interaction::parse("gravity"), Some(Interaction::Gravity));
         assert_eq!(Interaction::parse("weak"), None);
@@ -1981,11 +2003,12 @@ mod tests {
     #[test]
     fn every_legacy_tag_names_a_mechanism_row() {
         for ft in 0..9u8 {
-            let name = force_name_of(ft).expect("force name");
+            let fc = FIXED_CHANNELS[ft as usize];
+            let name = fc.tag;
             let m =
                 mechanism_of(name).unwrap_or_else(|| panic!("{name} must name a mechanism row"));
-            let d = descriptor_for_force(name, LIVE_FORCE_MEDIA[ft as usize])
-                .unwrap_or_else(|| panic!("{name} must map"));
+            let d =
+                descriptor_for_force(name, fc.medium).unwrap_or_else(|| panic!("{name} must map"));
             assert_eq!(
                 d.op, m.operator,
                 "{name} operator comes from the mechanism row"

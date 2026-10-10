@@ -3,7 +3,7 @@ use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
     ChannelDescriptor, Conserved, FluxKind, Interaction, Medium, PdeType, QuantityRole, Regime,
     TransportOp, channel_ref_of_descriptor, conserved_for_quantity, conserved_name,
-    descriptor_from_axes, interaction_of_axes, unit_token,
+    descriptor_from_axes, interaction_of, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -1506,22 +1506,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                if let Some(declared) = declared_interaction {
-                    let derived = interaction_of_axes(desc.op);
-                    if derived != Some(declared) {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!(
-                                "field {} declares interaction {} but the mechanism derives {} — the interaction is derived over the mechanisms FK, never declared",
-                                parts[1],
-                                declared.name(),
-                                derived.map(|d| d.name()).unwrap_or("none")
-                            ),
-                        );
-                        continue;
-                    }
-                }
                 let f = match channel_ref_of_descriptor(&desc) {
                     Some(f) => f,
                     None => {
@@ -1536,6 +1520,22 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
+                if let Some(declared) = declared_interaction {
+                    let derived = interaction_of(f);
+                    if derived != Some(declared) {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} declares interaction {} but the mechanism derives {} — the interaction is derived over the mechanisms FK, never declared",
+                                parts[1],
+                                declared.name(),
+                                derived.map(|d| d.name()).unwrap_or("none")
+                            ),
+                        );
+                        continue;
+                    }
+                }
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),

@@ -1,18 +1,11 @@
+use crate::mathematikerin::channel::FIXED_CHANNELS;
 use std::collections::HashMap;
 
 pub fn force_id_of(name: &str) -> Option<u8> {
-    match name {
-        "em" => Some(0),
-        "gravity" => Some(1),
-        "acoustic" => Some(2),
-        "seismic-body" => Some(3),
-        "seismic-surface" => Some(4),
-        "thermal" => Some(5),
-        "diffusion" => Some(6),
-        "advective" => Some(7),
-        "electric" => Some(8),
-        _ => None,
-    }
+    FIXED_CHANNELS
+        .iter()
+        .position(|c| c.tag == name)
+        .map(|i| i as u8)
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -65,18 +58,7 @@ pub fn quantity_kind_id(kind: QuantityKind) -> u8 {
 }
 
 pub fn force_name_of(id: u8) -> Option<&'static str> {
-    match id {
-        0 => Some("em"),
-        1 => Some("gravity"),
-        2 => Some("acoustic"),
-        3 => Some("seismic-body"),
-        4 => Some("seismic-surface"),
-        5 => Some("thermal"),
-        6 => Some("diffusion"),
-        7 => Some("advective"),
-        8 => Some("electric"),
-        _ => None,
-    }
+    FIXED_CHANNELS.get(id as usize).map(|c| c.tag)
 }
 
 pub fn kernel_id_for_force(force: u8) -> Option<u8> {
