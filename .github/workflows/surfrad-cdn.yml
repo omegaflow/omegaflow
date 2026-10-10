@@ -1,0 +1,53 @@
+# auto-dispatch: manual — station/year/day are required per-act inputs; auto-dispatch cannot supply them
+name: surfrad-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: SURFRAD station code (three alphanumeric characters, e.g. tbl)
+        required: true
+        type: string
+        default: "tbl"
+      year:
+        description: measurement year (YYYY)
+        required: true
+        type: string
+        default: "2024"
+      doy:
+        description: day of year (DDD, 1..366)
+        required: true
+        type: string
+        default: "001"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  surfrad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the gml.noaa.gov release exists on the CDN
+        run: |
+          if ! gh release view gml.noaa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create gml.noaa.gov --repo omegaflow/sources \
+              --title "gml.noaa.gov" \
+              --notes "SURFRAD (NOAA GML) daily broadband radiation compiled to hourly ICRS records; magic SRFR, 8-byte header then n x 26 f64 (W/m2, inverse-square em)."
+          fi
+      - name: Compile the SURFRAD day and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin surfrad_compiler -- \
+            --station "${{ inputs.station }}" \
+            --year "${{ inputs.year }}" \
+            --doy "${{ inputs.doy }}" \
+            --body earth \
+            --out out \
+            --ci-mode

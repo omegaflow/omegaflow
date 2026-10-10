@@ -1,0 +1,41 @@
+# auto-dispatch: manual — the station id is a required per-act input; auto-dispatch cannot supply it
+name: dwd-cdc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: DWD station id (five digits, e.g. 00044)
+        required: true
+        type: string
+        default: "00044"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  dwd-cdc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the opendata.dwd.de release exists on the CDN
+        run: |
+          if ! gh release view opendata.dwd.de --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create opendata.dwd.de --repo omegaflow/sources \
+              --title "opendata.dwd.de" \
+              --notes "DWD CDC daily KL station archive compiled to ICRS records; magic DWDC, 8-byte header then n x 26 f64 (temperature K, pressure Pa, wind m/s, precipitation m, relative humidity 1, vapour pressure Pa), daily cadence."
+          fi
+      - name: Compile the DWD KL station and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin dwd_cdc_compiler -- \
+            --body earth \
+            --station "${{ inputs.station }}" \
+            --out out \
+            --ci-mode
