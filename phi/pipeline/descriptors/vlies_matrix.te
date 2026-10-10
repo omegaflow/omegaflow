@@ -31,8 +31,12 @@
 #   Aggregats (GLM, Qwen) — beide Wege offen, nicht dieses Laufs. GFZ Hp30 (30-min) wäre die feinere
 #   Reihe, wenn der Response-Weg gewählt wird.
 # EEG ds007822/ds007471: Feldname ungemessen.
-# Ein dokumentierter Bin 86400 s (1 Tag); jede Zelle trägt ihr Auflösungspaar, ein nicht
-#   darstellbares Paar (QBO-Monat × 6 s) geht als `pending` aus, nie still gebinnt (Rats-Riss).
+# Der Zellen-Bin wird aus den nativen Raten des Paares gebildet (`max` = das gröbere Gitter;
+#   das schnelle Feld wird blockweise ins langsame aggregiert, nie die langsame Reihe
+#   up-gesampelt) — `field_te_query.rs` Matrix-Zellen-Loop. Jede Zelle trägt ihr
+#   Auflösungspaar (Skala + N_eff); ein nicht darstellbares Paar geht als `pending` aus, nie
+#   still gebinnt (Rats-Riss). `bin 86400` ist nur der Fallback, wo eine native Rate ungemessen
+#   bleibt — kein globales Gitter mehr (Operator-Korrektur 2026-10-10, voller Roster + Rat).
 # Lauf: `.github/workflows/field-te-query.yml` Job `matrix-vlies` (CI), nie lokal.
 matrix vlies full
 register sources

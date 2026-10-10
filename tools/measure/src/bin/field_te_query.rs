@@ -4733,7 +4733,14 @@ fn run_pair_matrix(
                     .as_slice()
             })
             .collect();
-        let (cell_columns, _, grid_dt) = match align_many(&req_arms, desc.seasonal, desc.bin) {
+        let pair_bin = match (
+            native.get(di).copied().flatten(),
+            native.get(ti).copied().flatten(),
+        ) {
+            (Some(td), Some(tt)) => Some(td.max(tt)),
+            _ => desc.bin,
+        };
+        let (cell_columns, _, grid_dt) = match align_many(&req_arms, desc.seasonal, pair_bin) {
             Ok(a) => a,
             Err(_reason) => {
                 outcomes.push(MatrixCellOutcome {
