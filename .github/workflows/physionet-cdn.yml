@@ -9,6 +9,7 @@ on:
         type: boolean
         default: false
 
+
 permissions:
   contents: write
 
@@ -69,6 +70,7 @@ jobs:
 
   raster-bidsleep:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       chunks: ${{ steps.gen.outputs.chunks }}
       merge: ${{ steps.gen.outputs.merge }}
@@ -151,6 +153,7 @@ jobs:
 
   raster-ltmm:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       chunks: ${{ steps.gen.outputs.chunks }}
       merge: ${{ steps.gen.outputs.merge }}

@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '37 3 * * *'
+concurrency:
+  group: hips-png-cdn
+  cancel-in-progress: false
 permissions:
   contents: write
 env:
