@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: eed3b2eab8ea5fbdfc53151526adecb2419509282ba88c32ffe3e5a45a1cab5f
+  sha256: 6936224b2208bd4377b635d398bba9b05ecd116a4ac6e0e56e50d1da24cb0622
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -41,9 +41,9 @@ flash only, kein pro/max.
 ### FMHY-Quellen-Kandidaten-Pool (future-222) — klassifiziert; Verdikt offen
 - **Status:** eigen (Quellen-Verdikt) | **Bindung:** mycelium (Ernte nach Verdikt)
 - **Trigger:** je Klasse ein begrenzter Verdikt-Schritt nach `docs/SOURCE_PORT.md`
-- **Lage:** (gemessen 2026-10-10, Diver; Liste bis Ende gelesen) `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.): 405 total / 402 NEW. Klassen: **research-data 74** (72 NEW) · **tool/service 301** (300) · **bypass-mirror 23** · **dead/nav 7**. 28 research-data-Einträge gemessen (`--verdict`+`--sniff`): u. a. ChinaRxiv 200, Neliti 403→blocked ip-blocked, All About Circuits 403→blocked, Open Textbook Library 200, IntechOpen 206. Die 23 bypass-mirror (Sci-Hub, Sci-Bot, PDFiles, Studocu/Exam-Downloader, Telegram-Kanäle …) sind eine **UrhG-§95a-/Umgehungs-Verdikt-Klasse**, keine Auslassung. **Operator-Wort 2026-10-10:** die 23 Einträge sind aus der Liste entfernt (445→422 Z.) und als Klasse `decline redistribution` verdiktet (`phi/declined_sources.φ`, Klasse über `fmhy.net`, keine Einzel-URL getrackt).
+- **Lage:** (gemessen 2026-10-10, Diver; Liste bis Ende gelesen) `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.): 405 total / 402 NEW. Klassen: **research-data 74** (72 NEW) · **tool/service 301** (300) · **bypass-mirror 23** · **dead/nav 7**. 28 research-data-Einträge gemessen (`--verdict`+`--sniff`): u. a. ChinaRxiv 200, Neliti 403→blocked ip-blocked, All About Circuits 403→blocked, Open Textbook Library 200, IntechOpen 206. Die 23 bypass-mirror (Sci-Hub, Sci-Bot, PDFiles, Studocu/Exam-Downloader, Telegram-Kanäle …) sind eine **UrhG-§95a-/Umgehungs-Verdikt-Klasse**, keine Auslassung. **Operator-Wort 2026-10-10:** die 23 Einträge sind aus der Liste entfernt (445→422 Z.) und als Klasse `decline redistribution` verdiktet (`phi/declined_sources.φ`, Klasse über `fmhy.net`, keine Einzel-URL getrackt). **Erweiterung Operator-Wort 2026-10-10:** FMHY 35/35 Sektionen durch, **587** `🌐`-Sammelseiten-Verweise, 5 tief durchsucht (~55 physikalische Ressourcen, ~30 NEW); reichste Sektionen `/misc` + `/educational`; die meisten FMHY-NEW sind Viewer über registrierten Backends. Relevante NEW-Lücken am Baum verifiziert (nicht in `phi/sources.φ`): `losc.ligo.org`, `emsc.eu`, `imos.aodn.org.au`, `ngmdb.usgs.gov`, `worldclim.org`, `gadm.org`, `NOAA SURFRAD`, `awesome-lidar`, `KeepTrack` — Kandidaten-Notiz `state/mountain/fmhy-extension-2026-10-10.md`.
 - **Blockade:** kein Verdikt geschrieben (nur klassifiziert/gemessen).
-- **Braucht:** research-data-Klasse: Register-Zeilen (Zulassung/`blocked`/`declined`) aus der Messung schreiben — ein begrenzter Dispatch.
+- **Braucht:** research-data- + Erweiterungs-Klasse: Register-Zeilen (Zulassung/`blocked`/`declined`) aus der Messung schreiben — ein begrenzter Dispatch, beginnend mit Gravitation/Seismik/Ozean (LIGO OSC, EMSC, IMOS).
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
