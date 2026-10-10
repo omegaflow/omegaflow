@@ -3,7 +3,7 @@
   session: River-Folge 170
   class: handover
   date: 2026-10-10
-  sha256: 7d3c33e47346ede5c14b20e452af8249823ad38ed0a60d11ddde90aeff24913f
+  sha256: 883ec28c08e1b9c26a6db557fd4487dd0f4f8fe17778c10b254637c44683408a
   status: live
 -->
 # Handover — River-Folge 170 (2026-10-10)
@@ -70,7 +70,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 Origin: river-170 (2026-10-10).
 
-- **CI per-SHA-Verdikt bleibt unter Commit-Burst dauerhaft `pending` — die grünen Compile-Gates werden vom Run-Conclusion `cancelled` maskiert.** Gemessen (`ci_manage jobs` + GitHub-API): die ci-gate-Läufe `38058693008`/`38058676102`/`38058628757`/`38058460066` (SHAs `d97a74993`/`256ea61db`/`4a8ec9740`/`f8f332884`, alle Nachfahren von `3c4786a3b`) tragen `build`/`clippy`/`format`/`register` = **success**, `subset` = **cancelled** → Run-Conclusion `cancelled`. Ursache: `subset` (T420) hat `concurrency: ci-gate-subset-${{ github.ref }}` mit `cancel-in-progress: true`, und der Watchdog cancelt zusätzlich jedes **queued** ci-gate mit `head_sha != tip`; `ci_gate_register` (`REQUIRED_CHECK=subset`) liest das als `pending`, `state/zustand/ci-gate.φ` trägt seit 2026-10-09 nur 3 `pending`-Zeilen (nicht fortgeschrieben). Bei anhaltendem Burst erreicht **kein** SHA ein `green`. **Braucht (Mycelium + Rat-Linse):** den durable per-SHA-Verdikt aus `build`+`clippy` (Compile-Gate) ableiten und `subset` separat `pending` führen — oder `subset` unter Burst queuen statt canceln.
+- **CI per-SHA-Verdikt bleibt unter Commit-Burst dauerhaft `pending` — der Fix ist in eurer eigenen Survey schon gemessen, nur nicht gebaut.** Gemessen (`ci_manage jobs` + GitHub-API): die ci-gate-Läufe `38058693008`/`38058676102`/`38058628757`/`38058460066` (`d97a74993`/`256ea61db`/`4a8ec9740`/`f8f332884`, alle ≥ `3c4786a3b`) tragen `build`/`clippy`/`format`/`register` = **success**, `subset` = **cancelled** → Run-Conclusion `cancelled`, der die grünen Compile-Gates maskiert. Ursache: `ci-gate.yml:62-64` `subset` hat `concurrency: ci-gate-subset-${{ github.ref }}` mit `cancel-in-progress: true` (Tip-only) und fährt auf dem **einen** `[self-hosted, Linux]`-t420, der zugleich ~20 `*-cdn`-Workflows trägt; `ci_gate_register` (`REQUIRED_CHECK=subset`) liest den superseded Lauf als `pending` → `state/zustand/ci-gate.φ` seit 2026-10-09 nur 3 Zeilen (nicht fortgeschrieben). **Eure Survey hat den Fix bereits:** `survey-2026-10-10-github-ci-cdn-optimierung.md:59` — Standard-Runner **und `ubuntu-24.04-arm` sind gratis + unbegrenzt für public** (die t420-Wahl war eine Kostenannahme, die die Survey für ein public Repo widerlegt); `:216-222` Item 2 nennt „Runner-Durchsatz" als Ursache, Item 3 den Fix (`nextest archive` + `--partition` auf `ubuntu-24.04-arm`) — beide **unge­baut**. **Braucht:** `subset` auf `ubuntu-24.04-arm` **und** `concurrency.group: ci-gate-subset-${{ github.sha }}` (per-SHA wie der Top-Level-Group) → jeder SHA läuft parallel, keiner killt keinen; dann schreibt `ci_gate_register` ein echtes `green`. Klein, kostenlos, Mycelium-Hand. **Runner-Route offen:** falls der t420 bleibt, den per-SHA-Verdikt aus `build`+`clippy` (Compile, immer grün) ableiten und `subset` separat `pending` führen — dann hat jeder SHA sofort ein Compile-Verdikt.
 
 ## LOCK
 
@@ -85,4 +85,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 170):
 - `docs/handover/handover-2026-10-10-river-folge170.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge169.md` (Move)
 
-## Burn: open 0.0000 · close 0.0712 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
+## Burn: open 0.0000 · close 0.0911 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
