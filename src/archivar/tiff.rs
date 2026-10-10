@@ -1127,6 +1127,52 @@ pub fn parse_tiff(data: &[u8]) -> Option<TiffImage> {
         geo_keys,
     })
 }
+
+fn undo_predictor2(row: &[u8], bps: usize) -> Vec<u8> {
+    let mut out = row.to_vec();
+    let n = out.len() / bps;
+    for i in 1..n {
+        let mut carry = 0u16;
+        for b in 0..bps {
+            let s = out[i * bps + b] as u16 + out[(i - 1) * bps + b] as u16 + carry;
+            out[i * bps + b] = (s & 0xff) as u8;
+            carry = s >> 8;
+        }
+    }
+    out
+}
+
+fn undo_predictor3(row: &[u8], bps: usize) -> Vec<u8> {
+    let mut tmp = row.to_vec();
+    for i in 1..tmp.len() {
+        tmp[i] = tmp[i].wrapping_add(tmp[i - 1]);
+    }
+    let wc = tmp.len() / bps;
+    let mut out = vec![0u8; tmp.len()];
+    for count in 0..wc {
+        for byte in 0..bps {
+            out[bps * count + byte] = tmp[(bps - byte - 1) * wc + count];
+        }
+    }
+    out
+}
+
+pub fn apply_predictor(dec: &[u8], predictor: u16, row_bytes: usize) -> Vec<u8> {
+    if predictor == 1 || row_bytes == 0 {
+        return dec.to_vec();
+    }
+    let mut out = Vec::with_capacity(dec.len());
+    for row in dec.chunks(row_bytes) {
+        let fixed = match predictor {
+            2 => undo_predictor2(row, 4),
+            3 => undo_predictor3(row, 4),
+            _ => row.to_vec(),
+        };
+        out.extend_from_slice(&fixed);
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
