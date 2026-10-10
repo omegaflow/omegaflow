@@ -37,21 +37,21 @@ const LAMBERT72: Lambert = Lambert {
     a: INTL24_A,
     inv_f: INTL24_INV_F,
     lat0_deg: 90.0,
-    lon0_deg: 4.367_975,
-    lat1_deg: 49.833_333_333_333_3,
-    lat2_deg: 51.166_667_233_333_3,
+    lon0_deg: 4.367_486_666_666_667,
+    lat1_deg: 51.166_667_233_333_3,
+    lat2_deg: 49.833_333_9,
     k0: 1.0,
-    false_easting: 150_000.012_56,
-    false_northing: 5_400_088.437_8,
+    false_easting: 150_000.013,
+    false_northing: 5_400_088.438,
 };
 
 const LAMBERT2008: Lambert = Lambert {
     a: GRS80_A,
     inv_f: GRS80_INV_F,
     lat0_deg: 50.797_815,
-    lon0_deg: 4.359_215_833_333_333,
+    lon0_deg: 4.359_215_833_333_33,
     lat1_deg: 49.833_333_333_333_3,
-    lat2_deg: 51.166_667_233_333_3,
+    lat2_deg: 51.166_666_666_666_7,
     k0: 1.0,
     false_easting: 649_328.0,
     false_northing: 665_262.0,
@@ -442,7 +442,7 @@ fn crs_text(crs: &LasCrs) -> String {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: open_lidar_data_compiler (--input <copc.laz> | --url <https-url>) --body <receiver> --out <path> [--ci-mode]";
+    let usage = "usage: open_lidar_data_compiler (--input <copc.laz> | --url <https-url>) --body <receiver> [--crs <epsg>] --out <path> [--ci-mode]";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_path = match arg_value(&args, "--out") {
         Some(o) => o,
@@ -526,30 +526,53 @@ fn main() {
         copc.gpstime_max
     );
 
-    let crs = match projection_crs(&vlrs) {
-        Some(c) => c,
+    let declared_crs = arg_value(&args, "--crs");
+    let axis = match declared_crs.as_deref() {
+        Some(code_text) => {
+            let code: u16 = match code_text.parse() {
+                Ok(c) => c,
+                Err(_) => {
+                    eprintln!("--crs {code_text} carries no EPSG code");
+                    std::process::exit(1);
+                }
+            };
+            match resolve_crs(&LasCrs::Epsg(code)) {
+                Some(a) => a,
+                None => {
+                    eprintln!(
+                        "--crs {code}: no inverse arm in this compiler (resolve_crs in {COMPILER}) — \
+                         a record is not fabricated (pending)"
+                    );
+                    std::process::exit(1);
+                }
+            }
+        }
         None => {
-            eprintln!(
-                "{name}: no projection VLR carries a resolvable CRS (no GeoKey EPSG, no WKT ID) — \
-                 the points stay unframed (0 honored; src/archivar/las/mod.rs:459 projection_crs)"
-            );
-            std::process::exit(1);
+            let crs = match projection_crs(&vlrs) {
+                Some(c) => c,
+                None => {
+                    eprintln!(
+                        "{name}: the file carries no CRS VLR and no --crs is declared — the CRS is \
+                         dataset metadata; pass --crs <epsg> (declared, never code-chosen); the points \
+                         stay unframed (0 honored)"
+                    );
+                    std::process::exit(1);
+                }
+            };
+            match resolve_crs(&crs) {
+                Some(a) => a,
+                None => {
+                    eprintln!(
+                        "{name}: crs {} carries no inverse arm in {COMPILER} — pass --crs <epsg> \
+                         (declared) or add the arm; a record is not fabricated (pending)",
+                        crs_text(&crs)
+                    );
+                    std::process::exit(1);
+                }
+            }
         }
     };
-    let axis = match resolve_crs(&crs) {
-        Some(a) => a,
-        None => {
-            eprintln!(
-                "{name}: crs {} carries no inverse — the projection arm is unbuilt in this compiler \
-                 (resolve_crs in {COMPILER}; the reader resolves the CRS but has no inverse projection \
-                 library). A record is not fabricated (pending). Braucht: an inverse arm for this CRS, \
-                 read from the file's own WKT/VLRs (src/archivar/las/mod.rs:459 projection_crs) before it is built",
-                crs_text(&crs)
-            );
-            std::process::exit(1);
-        }
-    };
-    eprintln!("crs {} — {}", crs_text(&crs), axis.name());
+    eprintln!("crs — {}", axis.name());
 
     let eph_bytes = match fetch_raw_bytes(&body_url(&body)) {
         Some(b) => b,

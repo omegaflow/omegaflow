@@ -6,6 +6,11 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      crs:
+        description: 'EPSG code of the dataset CRS (declared metadata, e.g. 31370); the COPC file carries none'
+        required: true
+        type: string
 permissions:
   contents: write
 env:
@@ -41,6 +46,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin open_lidar_data_compiler -- \
             --input kernels/dhmv2_be.copc.laz \
             --body earth \
+            --crs "${{ inputs.crs }}" \
             --out open_lidar_data_be_dhmv2.bin \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
