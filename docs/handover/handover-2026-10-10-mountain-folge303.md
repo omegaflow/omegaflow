@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 98bb0274cfd3289b23d12e04b7d4c23ae63991d893cf7b81eaee2f89ca6607b3
+  sha256: 6ce0a0cdc6f6b51ae9182ea361c8b29d77404de1888c838635c63ac45c2ef0cc
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -50,7 +50,7 @@ flash only, kein pro/max.
 - **Trigger:** nächster begrenzter Schritt je Riss/Route
 - **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`. **Messungen 2026-10-10:** Riss 3 (KNMI/Mindat) — kein Key in `.secrets.local` → `pending` (Operator-Route); Riss 4 (Overpass) — HTTP 406 direkt+Proton → bot-gated `pending`; Riss 5 — SURFRAD/ECAD/DWD/WorldClim = Messwert, GADM/Worldview = Referenz/Anzeige. **UI-Runde gefahren** (`mountain-ui`: Duck Haiku · Claude Sonnet · Qwen · Z.ai GLM, alle geantwortet): Achse tragfähig, aber **Manifestation statt Quelle** klassifizieren + **Lizenz-/Zugangs-Gate vor** der Achse + **Kontext-Achse** ergänzen — Konvergenz mit dem Rat (Riss = fehlende Gate-Achse). **Korrektur (Operator-Frage 2026-10-10):** die „12 Query"-Klassifikation war zu mechanisch („hat API" ≠ Arm); Präzedenz **`--supermag`/`--heasarc` = Dual** (Quelle + Arm), `--opencellid` = reiner Arm. Die Kandidaten sind Messquellen (→ `phi`) oder Referenz/Modell/decline — **kein neuer Arm klar gerechtfertigt**; die blockierte Arm-Hälfte ist gegenstandslos (max. optionales EMSC-Dual).
 - **Blockade:** Arm-Hälfte blockiert — `tools/utils/src/bin/archive_search.rs` + `net.rs` tragen fremde uncommittete Hunks (archive_search-Session); ein Arm-Dispatch würde deren Arbeit mitschwemmen. Riss 3 (kein Key) + Riss 4 (bot-gated) sind `pending`.
-- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) KNMI/Mindat-Key → Futures Operator-Queue.
+- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) KNMI/Mindat-Key → `## An future` (Operator-Queue); gemessene Namen `KNMI_API_KEY` (Tyk `Authorization`) und `MINDAT_TOKEN` (DRF `Authorization: Token`).
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -133,6 +133,7 @@ Wort | Datum | Quelle
 „ja bitte Nächste Schritte (in der Übergabe): Riss 3/4/5 messen → je Arm ein net.rs-Zweig + cargo check, je B-Kandidat url+Compiler+field; dann die UI-Runde in eigener Gruppe, dann das Routing als Register-Zeile." | 2026-10-10 | Operator (Session, Mountain 303)
 „aber gehören die da wirklich rein? GPlates · GWOSC/LIGO · Navy Weather · Mindat · KNMI · Overpass · EMSC (dual)" | 2026-10-10 | Operator (Session, Mountain 303)
 „warum sind die in Das eigentliche offene Stück bleibt: … compiler sind deine aufgabe" | 2026-10-10 | Operator (Session, Mountain 303)
+„kannst du bitte Operator-Queue (Future): KNMI-/Mindat-Key … wie die keynamen heissen" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
@@ -158,6 +159,17 @@ Origin: mountain-303 (2026-10-10).
 Origin: mountain-303 (2026-10-10).
 
 - **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-04-exposom-matrix.md` (82 offene Marker) — somatisch/psychosomatische Exposom-Quellenmatrix, „eine Zeile je Krankheitsklasse = eine TE-Messung". Der Gegenstand ist die Weberin/Gesundheits-Zeugen-Linie — bitte einen Träger-Punkt mit erstem begrenztem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
+
+## An future
+
+Origin: mountain-303 (2026-10-10).
+
+- **Zwei Zugangs-Schlüssel in `.secrets.local` (Operator-Akt, einfache Sprache).**
+  - **Lage:** Zwei gemessene Quellen antworten ohne Schlüssel mit HTTP 401 — **KNMI Data Platform** (`api.dataplatform.knmi.nl/open-data/v1/datasets`, Tyk; Auth als Header `Authorization: <key>`) und **Mindat** (`api.mindat.org/v1/`, `www-authenticate: Token`; Auth als Header `Authorization: Token <token>`).
+  - **Frage:** Trägst du diese zwei Zeilen in `.secrets.local` ein?
+    - `KNMI_API_KEY=<key>` — schaltet den KNMI-Compiler frei (niederländische Meteo-Beobachtungen; `phi`-Quelle, Compiler `tools/harvest/src/bin/knmi_compiler.rs` baue ich dann).
+    - `MINDAT_TOKEN=<token>` — nur falls du die Mineral-Referenz-DB (aktuell Lead, kein Compiler geplant) ernten willst.
+  - **Bei Ja:** KNMI-Key gesetzt → ich baue `knmi_compiler.rs`. **Bei Nein:** beide bleiben `pending`, kein Akt.
 
 ## Abschluss
 
