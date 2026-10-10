@@ -196,19 +196,8 @@ fn select_fits_member<'a>(
     Some((member, data))
 }
 
-fn tarball_fits_member(url: &str, want: Option<&str>) -> Option<Vec<u8>> {
-    let bytes = match omegaflow::archivar::fetch::fetch_raw_bytes_with(
-        url,
-        omegaflow::archivar::fetch::RetryPolicy::Transient,
-        SPT_TRANSFER_BOUND_S,
-    ) {
-        Some(b) => b,
-        None => {
-            eprintln!("fetch {url} returned void: the tarball stays unread");
-            return None;
-        }
-    };
-    let tar = match omegaflow::archivar::bzip2::decompress(&bytes) {
+fn tarball_member_from_bytes(url: &str, bytes: &[u8], want: Option<&str>) -> Option<Vec<u8>> {
+    let tar = match omegaflow::archivar::bzip2::decompress(bytes) {
         Some(t) => t,
         None => {
             eprintln!("bzip2 decompress of {url} returned void: the tarball stays unread");
@@ -236,32 +225,59 @@ fn tarball_fits_member(url: &str, want: Option<&str>) -> Option<Vec<u8>> {
     Some(data.to_vec())
 }
 
+fn tarball_fits_member(url: &str, want: Option<&str>) -> Option<Vec<u8>> {
+    let bytes = match omegaflow::archivar::fetch::fetch_raw_bytes_with(
+        url,
+        omegaflow::archivar::fetch::RetryPolicy::Transient,
+        SPT_TRANSFER_BOUND_S,
+    ) {
+        Some(b) => b,
+        None => {
+            eprintln!("fetch {url} returned void: the tarball stays unread");
+            return None;
+        }
+    };
+    tarball_member_from_bytes(url, &bytes, want)
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let nside_out: i64 = arg_value(&args, "--nside")
         .and_then(|v| v.parse().ok())
         .unwrap_or(64);
     let spt_url = arg_value(&args, "--url");
-    let is_spt = spt_url.is_some();
+    let tar_path = arg_value(&args, "--tar");
+    let is_spt = spt_url.is_some() || tar_path.is_some();
     let out = match arg_value(&args, "--out") {
         Some(o) => o,
         None if is_spt => format!("cmb_spt_d1_n{}.json", nside_out),
         None => format!("cmb_planck_smica_n{}.json", nside_out),
     };
     let ci_mode = has_flag(&args, "--ci-mode");
+    let member = arg_value(&args, "--member");
 
-    let bytes = match spt_url {
-        Some(url) => {
-            let member = arg_value(&args, "--member");
-            match tarball_fits_member(&url, member.as_deref()) {
+    let bytes = match (spt_url, tar_path) {
+        (Some(url), _) => match tarball_fits_member(&url, member.as_deref()) {
+            Some(b) => b,
+            None => std::process::exit(1),
+        },
+        (None, Some(path)) => {
+            let raw = match std::fs::read(&path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("read {path} returned void: {e}");
+                    std::process::exit(1);
+                }
+            };
+            match tarball_member_from_bytes(&path, &raw, member.as_deref()) {
                 Some(b) => b,
                 None => std::process::exit(1),
             }
         }
-        None => {
+        (None, None) => {
             let Some(input) = arg_value(&args, "--input") else {
                 eprintln!(
-                    "usage: cmb_planck_compiler (--input <fits> | --url <tar.bz2> [--member <name>]) [--nside 64] [--out path] [--ci-mode]"
+                    "usage: cmb_planck_compiler (--input <fits> | --url <tar.bz2> | --tar <local.tar.bz2> [--member <name>]) [--nside 64] [--out path] [--ci-mode]"
                 );
                 std::process::exit(1);
             };

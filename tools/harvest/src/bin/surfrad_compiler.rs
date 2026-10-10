@@ -334,8 +334,9 @@ fn run(args: &[String]) -> Result<(), String> {
             "--name <slug> is required with --url/--input and no --station/--year/--doy".to_string()
         })?,
     };
-    let out_dir = arg_value(args, "--out")
-        .ok_or_else(|| "--out <dir> is required — the asset is never written to a guessed path".to_string())?;
+    let out_dir = arg_value(args, "--out").ok_or_else(|| {
+        "--out <dir> is required — the asset is never written to a guessed path".to_string()
+    })?;
 
     let mut lines = body.lines();
     let Some(name_line) = lines.next() else {
