@@ -1,8 +1,8 @@
 use super::parcorr::{CiTest, ParCorr};
 use super::pc::pc_stable_skeleton;
 use super::te::{
-    conditional_te_surrogates_n, transfer_entropy_conditional_binned_n, LaggedCond, TeEstimator,
-    TeNull, TeSurrogateParams,
+    LaggedCond, TeEstimator, TeNull, TeSurrogateParams, conditional_te_surrogates_n,
+    transfer_entropy_conditional_binned_n,
 };
 use std::collections::BTreeSet;
 
@@ -465,17 +465,23 @@ mod tests {
         let shape: Vec<(usize, usize, usize)> =
             links.iter().map(|l| (l.driver, l.target, l.lag)).collect();
         assert!(
-            links.iter().any(|l| l.driver == 0 && l.target == 1 && l.lag == 1),
+            links
+                .iter()
+                .any(|l| l.driver == 0 && l.target == 1 && l.lag == 1),
             "missing 0->1 links {:?}",
             shape
         );
         assert!(
-            links.iter().any(|l| l.driver == 1 && l.target == 2 && l.lag == 1),
+            links
+                .iter()
+                .any(|l| l.driver == 1 && l.target == 2 && l.lag == 1),
             "missing 1->2 links {:?}",
             shape
         );
         assert!(
-            !links.iter().any(|l| l.driver == 0 && l.target == 2 && l.lag == 1),
+            !links
+                .iter()
+                .any(|l| l.driver == 0 && l.target == 2 && l.lag == 1),
             "spurious 0->2 links {:?}",
             shape
         );
