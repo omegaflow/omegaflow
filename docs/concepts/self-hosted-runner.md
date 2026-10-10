@@ -2,7 +2,7 @@
   title: Self-hosted Runner (t420) — Routing, intelligente Drosselung, Grenzen
   class: concept
   date: 2026-10-10
-  sha256: ec9ad857d6f9c18da39a74953e1c4da0031ab2a99c1f4c2d174becc385452b6d
+  sha256: 52f2354dacf5ffd242de0e74e63f7d845c4813aadcd73c4d4802144b28556d20
   status: live
   see-also: docs/concepts/github-pipeline.md bin/runner_throttle.sh .github/workflows/ci-gate.yml
 -->
@@ -28,9 +28,12 @@ keine Jobs** (Operator-Wort 2026-10-08: „auf meinem XPS13 dürfen sie auf kein
 - **20 Workflows** fahren auf `runs-on: [self-hosted, Linux]` — die netz-lastigen CDN-Compiler
   (`cmb-cdn`, `gaia-xp-cdn`, die Ephemeriden-Compiler, `dust`, `wod`, `mpcobs-shard`, `tnbfits`,
   `twomass`, …). Sie profitieren, weil bei ihnen die **Bandbreite** der Engpass ist, nicht die CPU.
-- **`ci-gate.yml`-`subset`** (`cargo test --lib`) fährt auf `[self-hosted, Linux]` (Operator-Wort
-  2026-10-08 „nur der subset-Job auf den T420" + 2026-10-10 „gerne mehr Last"). Der Job hält nur
-  den **Tip** (per-ref concurrency, `cancel-in-progress`); superseded SHAs bleiben `pending`.
+- **`ci-gate.yml`-`subset`** (`cargo test --lib`) fährt seit Operator-Wort 2026-10-10 („mach A")
+  auf `ubuntu-24.04-arm` — GitHub-hosted, gratis + unbegrenzt für ein public Repo
+  (`survey-2026-10-10-github-ci-cdn-optimierung.md:59`), mit per-SHA-Concurrency
+  (`ci-gate-subset-${{ github.sha }}`). Der frühere t420-Tip (per-ref concurrency,
+  `cancel-in-progress`) wurde im Commit-Burst dauerhaft abgebrochen; jetzt läuft jeder SHA
+  parallel und bekommt ein echtes `subset`-Verdikt.
 - **Sicherheit:** self-hosted nur für **trusted** Trigger. `ci-gate` läuft auf `push`/
   `workflow_dispatch` (kein `pull_request`) → kein ungeprüfter Fork-Code auf dem Rechner.
   Nie `pull_request_target` + Fork-Checkout auf self-hosted.
