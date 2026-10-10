@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 43b19a0815183e3933498416d26ca58b7492eef32ffea55eb6109256e6ade173
+  sha256: 8351d34a57765ba3f6838e9c608959a80f50336a08748a53b9053ec4fd37f12a
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -227,6 +227,27 @@ Marine-Geo, PANGAEA und den Kampagnen-Repos (R2R/AusSeabed — teils blockiert);
 die *globale* Abdeckung existiert nur als **abgeleitetes Grid** (GEBCO/ETOPO/
 SRTM15+), nicht als Punktwolke. Für omegaflow heißt das: `slab2_depth.bin` ist da,
 aber **kein** Bathymetrie-Multibeam-Manifestator.
+
+### Alternative Routen für die blockierten/toten Hosts (gemessen 2026-10-10)
+
+| blockiert/tot | Alternative Route | HTTP | was sie trägt |
+| --- | --- | --- | --- |
+| **IBCAO** (`ibcao.org` kein Response) | `www.ngdc.noaa.gov/mgg/bathymetry/arctic/` | **200** | NCEI/NGDC-Arktis-Bathymetrie-Seite (IBCAO-Grid-Auslieferung) |
+| IBCAO (Datensatz) | `doi.pangaea.de/10.1594/PANGAEA.905295` | **200** | IBCAO-Dataset (PANGAEA-Mirror) |
+| IBCAO (regional im Grid) | `www.gebco.net` | 200 | GEBCO 2024 trägt die IBCAO-Region |
+| **AusSeabed** (`ausseabed.gov.au` 403; `data.ausseabed.gov.au` tot) | `portal.aodn.org.au` · `catalogue.aodn.org.au` | **200 · 200** | AODN (Australian Ocean Data Network) — Multibeam/Backscatter |
+| AusSeabed (Behördenweg) | `www.ga.gov.au` | **200** | Geoscience Australia (AusSeabed-Programmträger) |
+| **R2R** (`rvdata.us` + `data.rvdata.us` + `ieda.ldeo.columbia.edu` tot) | `www.marine-geo.org` | **200** | MGDS — trägt dieselben R2R-Multibeam-Fahrten |
+| R2R (Kampagnen-Daten) | `www.bco-dmo.org` · `www.pangaea.de` | **206 · 200** | BCO-DMO / PANGAEA (Fahrt-/Proben-Daten) |
+| R2R (Metadaten/Tools) | `github.com/rvdata` | **206** | R2R-Code/Metadaten-Repo |
+| **JALBTCX Topo-Bathy** (REST pending) | `coast.noaa.gov/dataviewer/` | **206** | NOAA Digital Coast **Data Access Viewer** (der Download-Pfad) |
+| JALBTCX (Katalog) | `catalog.data.gov/dataset?q=jalbtcx` | **206** | data.gov-Katalog der JALBTCX-Datensätze |
+| Topo-Bathy (Bathy-Arm) | `www.ncei.noaa.gov/maps/bathymetry/` | 206 | NCEI-Bathymetrie (Multibeam-Punktwolke) |
+| noch blockiert | `chs.coast.noaa.gov` | 403 (Geo) | — (Exit-Wechsel = Operator-Wort) |
+
+Damit hat **jede** der vier problematischen Quellen eine erreichbare Route:
+IBCAO → NGDC/PANGAEA/GEBCO · AusSeabed → AODN/GA · R2R → MGDS/BCO-DMO/PANGAEA ·
+JALBTCX → Digital-Coast-Data-Access-Viewer + data.gov-Katalog.
 
 ## Was fehlt — der Bau
 
