@@ -670,55 +670,95 @@ fn parse_atom_entries(xml: &str) -> Vec<AtomEntry> {
     out
 }
 
-pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://export.arxiv.org/api/query?search_query=all:{}&start=0&max_results={}",
-        urlencode(query),
+const ARXIV_QUERY_PREFIXES: &[&str] = &[
+    "all:", "ti:", "au:", "abs:", "cat:", "co:", "jr:", "rn:", "id:",
+];
+
+fn arxiv_query(text: &str) -> String {
+    if let Some((prefix, value)) = text.split_once(':') {
+        if ARXIV_QUERY_PREFIXES.contains(&format!("{}:", prefix).as_str()) {
+            return format!("{}:{}", prefix, urlencode(value));
+        }
+    }
+    format!("all:{}", urlencode(text))
+}
+
+fn arxiv_url(text: &str, refine: &[(String, String)], max: usize, start: usize) -> String {
+    let mut url = format!(
+        "https://export.arxiv.org/api/query?search_query={}&start={}&max_results={}",
+        arxiv_query(text),
+        start,
         arxiv_window(max)
     );
+    for (key, value) in refine {
+        url.push('&');
+        url.push_str(key);
+        url.push('=');
+        url.push_str(&urlencode(value));
+    }
+    url
+}
+
+pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
+    let (text, refine) = crate::refine::split_refine(query, &["sortBy", "sortOrder"]);
     let headers = [
         "-H",
         "User-Agent: omegaflow-archive-search (https://github.com/omegaflow/omegaflow)",
         "-H",
         "Accept: application/atom+xml",
     ];
-    match get_retrying(&url, &headers, "40") {
-        Some(f) if f.status == Some(200) => {
-            let entries = parse_atom_entries(&f.body);
-            if entries.is_empty() {
-                vec![format!(
-                    "absent — the arxiv register carries no entry: {}",
-                    query
-                )]
-            } else {
-                entries
-                    .iter()
-                    .map(|e| {
-                        let mut line = format!("url {}\ttitle: {}", e.id, e.title);
-                        if let Some(a) = &e.authors {
-                            line.push_str(&format!("\tauthors: {}", a));
-                        }
-                        if let Some(p) = &e.published {
-                            line.push_str(&format!("\tpublished: {}", p));
-                        }
-                        if let Some(p) = &e.pdf {
-                            line.push_str(&format!("\tpdf: {}", p));
-                        }
-                        if let Some(s) = &e.summary {
-                            line.push_str(&format!("\tabstract: {}", s));
-                        }
-                        line
-                    })
-                    .collect()
+    let window = arxiv_window(max);
+    let (mut lines, stop) = crate::paged::follow_pages(
+        crate::paged::DEFAULT_PAGE_BUDGET,
+        |index| {
+            let url = arxiv_url(&text, &refine, max, index * window);
+            match get_retrying(&url, &headers, "40") {
+                Some(f) if f.status == Some(200) => {
+                    let entries = parse_atom_entries(&f.body);
+                    let out: Vec<String> = entries
+                        .iter()
+                        .map(|e| {
+                            let mut line = format!("url {}\ttitle: {}", e.id, e.title);
+                            if let Some(a) = &e.authors {
+                                line.push_str(&format!("\tauthors: {}", a));
+                            }
+                            if let Some(p) = &e.published {
+                                line.push_str(&format!("\tpublished: {}", p));
+                            }
+                            if let Some(p) = &e.pdf {
+                                line.push_str(&format!("\tpdf: {}", p));
+                            }
+                            if let Some(s) = &e.summary {
+                                line.push_str(&format!("\tabstract: {}", s));
+                            }
+                            line
+                        })
+                        .collect();
+                    let has_more = out.len() >= window;
+                    (out, has_more)
+                }
+                Some(f) if f.status == Some(406) => (
+                    vec![format!(
+                        "pending — the arXiv /api/query edge answers HTTP 406 to every window (measured 2026-09-27: max_results=1 and no max_results both 406); the live route is `--arxiv-oai` (OAI-PMH)"
+                    )],
+                    false,
+                ),
+                Some(f) => (
+                    vec![format!("pending — arxiv HTTP {}", f.status_text())],
+                    false,
+                ),
+                None => (vec!["pending — no network".to_string()], false),
             }
-        }
-        Some(f) if f.status == Some(406) => {
-            vec![format!(
-                "pending — the arXiv /api/query edge answers HTTP 406 to every window (measured 2026-09-27: max_results=1 and no max_results both 406); the live route is `--arxiv-oai` (OAI-PMH)"
-            )]
-        }
-        Some(f) => vec![format!("pending — arxiv HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        },
+    );
+    if lines.is_empty() {
+        vec![format!(
+            "absent — the arxiv register carries no entry: {}",
+            query
+        )]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 
@@ -730,49 +770,91 @@ fn doc_title(doc: &Json) -> &str {
         .unwrap_or("")
 }
 
+fn ads_url(text: &str, refine: &[(String, String)], max: usize, start: usize) -> String {
+    let fl = crate::refine::value_of(refine, "fl").unwrap_or("title,bibcode");
+    let mut url = format!(
+        "https://api.adsabs.harvard.edu/v1/search/query?q={}&fl={}&rows={}",
+        urlencode(text),
+        urlencode(fl),
+        max
+    );
+    if start > 0 {
+        url.push_str("&start=");
+        url.push_str(&start.to_string());
+    }
+    for (key, value) in refine {
+        if key == "fl" {
+            continue;
+        }
+        url.push('&');
+        url.push_str(key);
+        url.push('=');
+        url.push_str(&urlencode(value));
+    }
+    url
+}
+
 pub fn ads_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — NASA_ADS_TOKEN absent from .secrets.local/.env".to_string()];
     }
-    let url = format!(
-        "https://api.adsabs.harvard.edu/v1/search/query?q={}&fl=title,bibcode&rows={}",
-        urlencode(query),
-        max
-    );
+    let (text, refine) = crate::refine::split_refine(query, &["fl", "fq", "sort"]);
     let auth = format!("Authorization: Bearer {}", token);
-    match get(&url, &["-H", auth.as_str()], "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = Vec::new();
-                if let Some(docs) = v
-                    .get("response")
-                    .and_then(|r| r.get("docs"))
-                    .and_then(|d| d.as_arr())
-                {
-                    for doc in docs {
-                        let bib = doc.get("bibcode").and_then(|b| b.as_str()).unwrap_or("");
-                        if !bib.is_empty() {
-                            out.push(format!(
-                                "url https://ui.adsabs.harvard.edu/abs/{}\ttitle: {}",
-                                bib,
-                                doc_title(doc)
-                            ));
+    let (mut lines, stop) =
+        crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |index| {
+            let start = index * max;
+            let url = ads_url(&text, &refine, max, start);
+            match get(&url, &["-H", auth.as_str()], "40") {
+                Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                    Some(v) => {
+                        let mut out = Vec::new();
+                        if let Some(docs) = v
+                            .get("response")
+                            .and_then(|r| r.get("docs"))
+                            .and_then(|d| d.as_arr())
+                        {
+                            for doc in docs {
+                                let bib = doc.get("bibcode").and_then(|b| b.as_str()).unwrap_or("");
+                                if !bib.is_empty() {
+                                    out.push(format!(
+                                        "url https://ui.adsabs.harvard.edu/abs/{}\ttitle: {}",
+                                        bib,
+                                        doc_title(doc)
+                                    ));
+                                }
+                            }
                         }
+                        let num_found = v
+                            .get("response")
+                            .and_then(|r| r.get("numFound"))
+                            .and_then(|n| n.as_scalar_string())
+                            .and_then(|s| s.parse::<usize>().ok());
+                        let has_more = match num_found {
+                            Some(n) => start + out.len() < n,
+                            None => out.len() >= max,
+                        };
+                        (out, has_more)
                     }
-                }
-                if out.is_empty() {
-                    vec![format!(
-                        "absent — the ADS register carries no entry: {}",
-                        query
-                    )]
-                } else {
-                    out
-                }
+                    None => (
+                        vec!["pending — the ADS response carries no JSON".to_string()],
+                        false,
+                    ),
+                },
+                Some(f) => (
+                    vec![format!("pending — ADS HTTP {}", f.status_text())],
+                    false,
+                ),
+                None => (vec!["pending — no network".to_string()], false),
             }
-            None => vec!["pending — the ADS response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!("pending — ADS HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        });
+    if lines.is_empty() {
+        vec![format!(
+            "absent — the ADS register carries no entry: {}",
+            query
+        )]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 
@@ -1026,18 +1108,41 @@ fn timemap_lines_from(body: &str, url: &str) -> Vec<String> {
     }
 }
 
+fn crossref_url(
+    text: &str,
+    refine: &[(String, String)],
+    max: usize,
+    cursor: Option<&str>,
+) -> String {
+    let select = crate::refine::value_of(refine, "select").unwrap_or("DOI,title,issued");
+    let mut url = format!("https://api.crossref.org/works?rows={}", max);
+    if !text.is_empty() {
+        url.push_str("&query=");
+        url.push_str(&urlencode(text));
+    }
+    url.push_str("&select=");
+    url.push_str(&urlencode(select));
+    for (key, value) in refine {
+        if key == "select" {
+            continue;
+        }
+        url.push('&');
+        url.push_str(key);
+        url.push('=');
+        url.push_str(&urlencode(value));
+    }
+    if let Some(c) = cursor {
+        url.push_str("&cursor=");
+        url.push_str(&urlencode(c));
+    }
+    url
+}
+
 pub fn crossref_lines(query: &str, max: usize) -> Vec<String> {
+    let (text, refine) = crate::refine::split_refine(query, &["filter", "sort", "order", "select"]);
     let mut cursor: Option<String> = None;
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
-        let mut url = format!(
-            "https://api.crossref.org/works?query={}&rows={}&select=DOI,title,issued",
-            urlencode(query),
-            max
-        );
-        if let Some(c) = &cursor {
-            url.push_str("&cursor=");
-            url.push_str(&urlencode(c));
-        }
+        let url = crossref_url(&text, &refine, max, cursor.as_deref());
         match get(&url, &[], "40") {
             Some(f) if f.status == Some(200) => match json::parse(&f.body) {
                 Some(v) => {
@@ -1812,26 +1917,70 @@ fn oeis_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-pub fn hal_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://api.archives-ouvertes.fr/search/?q={}&wt=json&rows={}&fl=title_s,uri_s,doiId_s,publicationDate_s",
-        urlencode(query),
-        max
+fn hal_url(text: &str, refine: &[(String, String)], max: usize, start: usize) -> String {
+    let fl =
+        crate::refine::value_of(refine, "fl").unwrap_or("title_s,uri_s,doiId_s,publicationDate_s");
+    let mut url = format!(
+        "https://api.archives-ouvertes.fr/search/?q={}&wt=json&rows={}&fl={}",
+        urlencode(text),
+        max,
+        urlencode(fl)
     );
+    if start > 0 {
+        url.push_str("&start=");
+        url.push_str(&start.to_string());
+    }
+    for (key, value) in refine {
+        if key == "fl" {
+            continue;
+        }
+        url.push('&');
+        url.push_str(key);
+        url.push('=');
+        url.push_str(&urlencode(value));
+    }
+    url
+}
+
+pub fn hal_lines(query: &str, max: usize) -> Vec<String> {
+    let (text, refine) = crate::refine::split_refine(query, &["fl", "fq", "sort"]);
     let headers = ["-H", "Accept: application/json"];
-    match get(&url, &headers, "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = hal_results(&v, max);
-                if out.is_empty() {
-                    out.push(format!("absent — HAL carries no entry: {}", query));
-                }
-                out
+    let (mut lines, stop) =
+        crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |index| {
+            let start = index * max;
+            let url = hal_url(&text, &refine, max, start);
+            match get(&url, &headers, "40") {
+                Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                    Some(v) => {
+                        let out = hal_results(&v, max);
+                        let num_found = v
+                            .get("response")
+                            .and_then(|r| r.get("numFound"))
+                            .and_then(|n| n.as_scalar_string())
+                            .and_then(|s| s.parse::<usize>().ok());
+                        let has_more = match num_found {
+                            Some(n) => start + out.len() < n,
+                            None => out.len() >= max,
+                        };
+                        (out, has_more)
+                    }
+                    None => (
+                        vec!["pending — the HAL response carries no JSON".to_string()],
+                        false,
+                    ),
+                },
+                Some(f) => (
+                    vec![format!("pending — HAL HTTP {}", f.status_text())],
+                    false,
+                ),
+                None => (vec!["pending — no network".to_string()], false),
             }
-            None => vec!["pending — the HAL response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!("pending — HAL HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        });
+    if lines.is_empty() {
+        vec![format!("absent — HAL carries no entry: {}", query)]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 
@@ -1920,32 +2069,79 @@ fn wiby_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-pub fn ia_search_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://archive.org/advancedsearch.php?q={}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=mediatype&rows={}&output=json",
-        urlencode(query),
+fn ia_search_url(text: &str, refine: &[(String, String)], max: usize, page: usize) -> String {
+    let fl = crate::refine::value_of(refine, "fl").unwrap_or("identifier,title,mediatype");
+    let mut url = format!(
+        "https://archive.org/advancedsearch.php?q={}&rows={}&output=json",
+        urlencode(text),
         max
     );
+    for field in fl.split(',') {
+        if field.is_empty() {
+            continue;
+        }
+        url.push_str("&fl%5B%5D=");
+        url.push_str(&urlencode(field));
+    }
+    if page > 1 {
+        url.push_str("&page=");
+        url.push_str(&page.to_string());
+    }
+    for (key, value) in refine {
+        if key == "fl" {
+            continue;
+        }
+        url.push_str("&sort%5B%5D=");
+        url.push_str(&urlencode(value));
+    }
+    url
+}
+
+pub fn ia_search_lines(query: &str, max: usize) -> Vec<String> {
+    let (text, refine) = crate::refine::split_refine(query, &["fl", "sort"]);
     let headers = ["-H", "Accept: application/json"];
-    match get(&url, &headers, "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = ia_search_results(&v, max);
-                if out.is_empty() {
-                    out.push(format!(
-                        "absent — the Internet Archive carries no entry: {}",
-                        query
-                    ));
-                }
-                out
+    let (mut lines, stop) =
+        crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |index| {
+            let page = index + 1;
+            let url = ia_search_url(&text, &refine, max, page);
+            match get(&url, &headers, "40") {
+                Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                    Some(v) => {
+                        let out = ia_search_results(&v, max);
+                        let num_found = v
+                            .get("response")
+                            .and_then(|r| r.get("numFound"))
+                            .and_then(|n| n.as_scalar_string())
+                            .and_then(|s| s.parse::<usize>().ok());
+                        let has_more = match num_found {
+                            Some(n) => page * max < n,
+                            None => out.len() >= max,
+                        };
+                        (out, has_more)
+                    }
+                    None => (
+                        vec!["pending — the Internet Archive response carries no JSON".to_string()],
+                        false,
+                    ),
+                },
+                Some(f) => (
+                    vec![format!(
+                        "pending — Internet Archive HTTP {}",
+                        f.status_text()
+                    )],
+                    false,
+                ),
+                None => (vec!["pending — no network".to_string()], false),
             }
-            None => vec!["pending — the Internet Archive response carries no JSON".to_string()],
-        },
-        Some(f) => vec![format!(
-            "pending — Internet Archive HTTP {}",
-            f.status_text()
-        )],
-        None => vec!["pending — no network".to_string()],
+        });
+    if lines.is_empty() {
+        vec![format!(
+            "absent — the Internet Archive carries no entry: {}",
+            query
+        )]
+    } else {
+        lines.push(format!("end: {}", stop.label()));
+        lines
     }
 }
 
@@ -3078,6 +3274,10 @@ const QUERY_MODES: &[&str] = &[
     "reactome",
     "interpro",
     "alphafold",
+    "alphaxiv",
+    "alphaxiv-researchers",
+    "consensus",
+    "perplexity",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -3454,6 +3654,22 @@ pub fn run_lines(
             crate::supermag::supermag_lines(query, max, user.as_deref())
         }
         "heasarc" => crate::heasarc::heasarc_lines(query, max),
+        "consensus" => {
+            let token = resolve_key(
+                env.get("CONSENSUS_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::consensus::consensus_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("CONSENSUS_API_KEY", marker)
+                )],
+            }
+        }
+        "perplexity" => crate::perplexity::perplexity_lines(query),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -3550,6 +3766,10 @@ mod tests {
             "reactome",
             "interpro",
             "alphafold",
+            "alphaxiv",
+            "alphaxiv-researchers",
+            "consensus",
+            "perplexity",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
@@ -4161,5 +4381,126 @@ mod tests {
             },
         );
         assert!(absent[0].ends_with("— absent"), "{}", absent[0]);
+    }
+
+    #[test]
+    fn crossref_url_carries_the_default_select_and_the_plain_query() {
+        assert_eq!(
+            crossref_url("gravitational waves", &[], 10, None),
+            "https://api.crossref.org/works?rows=10&query=gravitational%20waves&select=DOI%2Ctitle%2Cissued"
+        );
+    }
+
+    #[test]
+    fn crossref_url_lifts_filter_sort_and_a_custom_select() {
+        let opts = vec![
+            ("filter".to_string(), "type:journal-article".to_string()),
+            ("sort".to_string(), "published".to_string()),
+            ("order".to_string(), "desc".to_string()),
+            ("select".to_string(), "DOI,title".to_string()),
+        ];
+        assert_eq!(
+            crossref_url("p53", &opts, 5, Some("abc")),
+            "https://api.crossref.org/works?rows=5&query=p53&select=DOI%2Ctitle&filter=type%3Ajournal-article&sort=published&order=desc&cursor=abc"
+        );
+    }
+
+    #[test]
+    fn crossref_url_omits_the_query_when_only_a_filter_is_given() {
+        let opts = vec![("filter".to_string(), "type:journal-article".to_string())];
+        assert_eq!(
+            crossref_url("", &opts, 10, None),
+            "https://api.crossref.org/works?rows=10&select=DOI%2Ctitle%2Cissued&filter=type%3Ajournal-article"
+        );
+    }
+
+    #[test]
+    fn hal_url_carries_the_default_fl_and_omits_a_zero_start() {
+        assert_eq!(
+            hal_url("gravitational waves", &[], 10, 0),
+            "https://api.archives-ouvertes.fr/search/?q=gravitational%20waves&wt=json&rows=10&fl=title_s%2Curi_s%2CdoiId_s%2CpublicationDate_s"
+        );
+    }
+
+    #[test]
+    fn hal_url_lifts_fq_fl_sort_and_the_start_offset() {
+        let opts = vec![
+            ("fq".to_string(), "docType_s:ART".to_string()),
+            ("fl".to_string(), "title_s".to_string()),
+            ("sort".to_string(), "publicationDate_s desc".to_string()),
+        ];
+        assert_eq!(
+            hal_url("p53", &opts, 10, 20),
+            "https://api.archives-ouvertes.fr/search/?q=p53&wt=json&rows=10&fl=title_s&start=20&fq=docType_s%3AART&sort=publicationDate_s%20desc"
+        );
+    }
+
+    #[test]
+    fn ads_url_carries_the_default_fl_and_omits_a_zero_start() {
+        assert_eq!(
+            ads_url("gravitational waves", &[], 10, 0),
+            "https://api.adsabs.harvard.edu/v1/search/query?q=gravitational%20waves&fl=title%2Cbibcode&rows=10"
+        );
+    }
+
+    #[test]
+    fn ads_url_lifts_fq_sort_and_the_start_offset() {
+        let opts = vec![
+            ("fq".to_string(), "{!type=aqp} SUPERNOVA".to_string()),
+            ("sort".to_string(), "date desc".to_string()),
+        ];
+        assert_eq!(
+            ads_url("p53", &opts, 10, 30),
+            "https://api.adsabs.harvard.edu/v1/search/query?q=p53&fl=title%2Cbibcode&rows=10&start=30&fq=%7B%21type%3Daqp%7D%20SUPERNOVA&sort=date%20desc"
+        );
+    }
+
+    #[test]
+    fn ia_search_url_carries_the_default_fl_and_omits_the_first_page() {
+        assert_eq!(
+            ia_search_url("gravitational waves", &[], 10, 1),
+            "https://archive.org/advancedsearch.php?q=gravitational%20waves&rows=10&output=json&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=mediatype"
+        );
+    }
+
+    #[test]
+    fn ia_search_url_lifts_a_fl_list_a_sort_and_the_page() {
+        let opts = vec![
+            ("fl".to_string(), "identifier,title".to_string()),
+            ("sort".to_string(), "downloads desc".to_string()),
+        ];
+        assert_eq!(
+            ia_search_url("p53", &opts, 25, 3),
+            "https://archive.org/advancedsearch.php?q=p53&rows=25&output=json&fl%5B%5D=identifier&fl%5B%5D=title&page=3&sort%5B%5D=downloads%20desc"
+        );
+    }
+
+    #[test]
+    fn arxiv_query_prefixes_the_all_field_by_default() {
+        assert_eq!(
+            arxiv_query("gravitational waves"),
+            "all:gravitational%20waves"
+        );
+    }
+
+    #[test]
+    fn arxiv_query_passes_a_recognized_field_prefix_through() {
+        assert_eq!(
+            arxiv_query("ti:gravitational waves"),
+            "ti:gravitational%20waves"
+        );
+        assert_eq!(arxiv_query("cat:astro-ph"), "cat:astro-ph");
+    }
+
+    #[test]
+    fn arxiv_url_carries_the_field_query_the_start_and_the_sort() {
+        let opts = vec![
+            ("sortBy".to_string(), "submittedDate".to_string()),
+            ("sortOrder".to_string(), "descending".to_string()),
+        ];
+        assert_eq!(
+            arxiv_url("au:Einstein", &opts, 10, 2),
+            "https://export.arxiv.org/api/query?search_query=au:Einstein&start=2&max_results=2&sortBy=submittedDate&sortOrder=descending"
+        );
     }
 }
