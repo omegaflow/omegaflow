@@ -88,6 +88,30 @@ fn doc_doi(doc: &json::Json) -> Option<String> {
         .map(str::to_string)
 }
 
+fn doc_authors(doc: &json::Json) -> Option<String> {
+    let names: Vec<&str> = doc
+        .get("authors")?
+        .as_arr()?
+        .iter()
+        .filter_map(|a| a.get("name").and_then(|n| n.as_str()))
+        .filter(|s| !s.is_empty())
+        .collect();
+    if names.is_empty() {
+        return None;
+    }
+    let cap = 8usize;
+    let mut joined = names
+        .iter()
+        .take(cap)
+        .copied()
+        .collect::<Vec<_>>()
+        .join(", ");
+    if names.len() > cap {
+        joined.push_str(", et al.");
+    }
+    Some(joined)
+}
+
 fn parse_summaries(body: &str) -> Vec<String> {
     let mut out = Vec::new();
     let Some(v) = json::parse(body) else {
@@ -119,6 +143,9 @@ fn parse_summaries(body: &str) -> Vec<String> {
         if let Some(doi) = doc_doi(doc) {
             line.push_str(&format!("\tdoi: {}", doi));
         }
+        if let Some(authors) = doc_authors(doc) {
+            line.push_str(&format!("\tauthors: {}", authors));
+        }
         out.push(line);
     }
     out
@@ -146,6 +173,31 @@ mod tests {
         assert_eq!(
             parse_summaries(body),
             vec!["url https://pubmed.ncbi.nlm.nih.gov/31452104/\ttitle: Heart rate variability\tjournal: Psychophysiology\tdate: 2019\tdoi: 10.1111/psyp.13456".to_string()]
+        );
+    }
+
+    #[test]
+    fn caps_more_than_eight_authors_with_et_al() {
+        let body = r#"{"result":{"uids":["1"],"1":{"title":"Many authors","authors":[{"name":"A1","authtype":"Author"},{"name":"A2","authtype":"Author"},{"name":"A3","authtype":"Author"},{"name":"A4","authtype":"Author"},{"name":"A5","authtype":"Author"},{"name":"A6","authtype":"Author"},{"name":"A7","authtype":"Author"},{"name":"A8","authtype":"Author"},{"name":"A9","authtype":"Author"}]}}}"#;
+        assert_eq!(
+            parse_summaries(body),
+            vec![
+                "url https://pubmed.ncbi.nlm.nih.gov/1/\ttitle: Many authors\tauthors: A1, A2, A3, A4, A5, A6, A7, A8, et al."
+                    .to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn omits_the_absent_authors() {
+        let body =
+            r#"{"result":{"uids":["1"],"1":{"title":"No authors","source":"J","pubdate":"2000"}}}"#;
+        assert_eq!(
+            parse_summaries(body),
+            vec![
+                "url https://pubmed.ncbi.nlm.nih.gov/1/\ttitle: No authors\tjournal: J\tdate: 2000"
+                    .to_string()
+            ]
         );
     }
 

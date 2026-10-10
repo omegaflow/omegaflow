@@ -2,7 +2,7 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 const ENDPOINT: &str = "https://api.semanticscholar.org/graph/v1/paper/search";
-const DEFAULT_FIELDS: &str = "title,year,externalIds,url,citationCount";
+const DEFAULT_FIELDS: &str = "title,year,externalIds,url,citationCount,abstract,authors";
 
 fn semanticscholar_url(
     text: &str,
@@ -109,6 +109,31 @@ fn field(v: &json::Json, key: &str) -> Option<String> {
         .map(str::to_string)
 }
 
+fn authors_field(paper: &json::Json) -> Option<String> {
+    let arr = paper.get("authors").and_then(|a| a.as_arr())?;
+    let names: Vec<String> = arr.iter().filter_map(|a| field(a, "name")).collect();
+    if names.is_empty() {
+        return None;
+    }
+    let mut rendered = names.iter().take(8).cloned().collect::<Vec<_>>().join(", ");
+    if names.len() > 8 {
+        rendered.push_str(", et al.");
+    }
+    Some(rendered)
+}
+
+fn truncate_chars(s: &str, max: usize) -> String {
+    if s.chars().count() <= max {
+        return s.to_string();
+    }
+    s.chars().take(max).collect()
+}
+
+fn abstract_field(paper: &json::Json) -> Option<String> {
+    let s = field(paper, "abstract")?;
+    Some(truncate_chars(&s, 1200))
+}
+
 fn parse_semanticscholar(body: &str) -> Vec<String> {
     let mut out = Vec::new();
     let Some(v) = json::parse(body) else {
@@ -129,6 +154,9 @@ fn parse_semanticscholar(body: &str) -> Vec<String> {
         if let Some(title) = field(paper, "title") {
             line.push_str(&format!("\ttitle: {}", title));
         }
+        if let Some(authors) = authors_field(paper) {
+            line.push_str(&format!("\tauthors: {}", authors));
+        }
         if let Some(ids) = paper.get("externalIds") {
             if let Some(doi) = field(ids, "DOI") {
                 line.push_str(&format!("\tdoi: {}", doi));
@@ -139,6 +167,9 @@ fn parse_semanticscholar(body: &str) -> Vec<String> {
         }
         if let Some(year) = paper.get("year").and_then(|y| y.as_scalar_string()) {
             line.push_str(&format!("\tyear: {}", year));
+        }
+        if let Some(abstract_text) = abstract_field(paper) {
+            line.push_str(&format!("\tabstract: {}", abstract_text));
         }
         if let Some(cites) = paper
             .get("citationCount")
@@ -170,10 +201,59 @@ mod tests {
     }
 
     #[test]
+    fn the_authors_and_abstract_speak_when_the_paper_carries_them() {
+        let body = r#"{"data":[{"paperId":"abc","title":"Asthma","year":2019,"abstract":"A study of asthma.","authors":[{"name":"A. One"},{"name":"B. Two"}],"url":"https://www.semanticscholar.org/paper/abc"}]}"#;
+        assert_eq!(
+            parse_semanticscholar(body),
+            vec!["url https://www.semanticscholar.org/paper/abc\ttitle: Asthma\tauthors: A. One, B. Two\tyear: 2019\tabstract: A study of asthma.".to_string()]
+        );
+    }
+
+    #[test]
+    fn more_than_eight_authors_carry_et_al() {
+        let names: Vec<String> = (1..=9)
+            .map(|i| format!("{{\"name\":\"A. {}\"}}", i))
+            .collect();
+        let body = format!(
+            "{{\"data\":[{{\"paperId\":\"abc\",\"authors\":[{}]}}]}}",
+            names.join(",")
+        );
+        assert_eq!(
+            parse_semanticscholar(&body),
+            vec!["url https://www.semanticscholar.org/paper/abc\tauthors: A. 1, A. 2, A. 3, A. 4, A. 5, A. 6, A. 7, A. 8, et al.".to_string()]
+        );
+    }
+
+    #[test]
+    fn an_absent_or_empty_abstract_and_authors_are_omitted() {
+        let body = r#"{"data":[{"paperId":"abc","title":"Asthma","abstract":"","authors":[]}]}"#;
+        assert_eq!(
+            parse_semanticscholar(body),
+            vec!["url https://www.semanticscholar.org/paper/abc\ttitle: Asthma".to_string()]
+        );
+    }
+
+    #[test]
+    fn an_abstract_longer_than_1200_chars_is_cut_at_the_boundary() {
+        let long = "é".repeat(1300);
+        let body = format!(
+            "{{\"data\":[{{\"paperId\":\"abc\",\"abstract\":\"{}\"}}]}}",
+            long
+        );
+        let lines = parse_semanticscholar(&body);
+        let abstract_text = lines[0]
+            .split("\tabstract: ")
+            .nth(1)
+            .expect("abstract present");
+        assert_eq!(abstract_text.chars().count(), 1200);
+        assert!(abstract_text.chars().all(|c| c == 'é'));
+    }
+
+    #[test]
     fn the_url_carries_the_default_fields_and_the_offset() {
         assert_eq!(
             semanticscholar_url("asthma", &[], 10, Some("0")),
-            "https://api.semanticscholar.org/graph/v1/paper/search?query=asthma&limit=10&fields=title%2Cyear%2CexternalIds%2Curl%2CcitationCount&offset=0"
+            "https://api.semanticscholar.org/graph/v1/paper/search?query=asthma&limit=10&fields=title%2Cyear%2CexternalIds%2Curl%2CcitationCount%2Cabstract%2Cauthors&offset=0"
         );
     }
 
