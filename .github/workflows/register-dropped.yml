@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - 'tools/register/**'
+concurrency:
+  group: register-dropped
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:

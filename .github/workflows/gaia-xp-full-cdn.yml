@@ -16,6 +16,7 @@ env:
 jobs:
   raster:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       chunks: ${{ steps.gen.outputs.chunks }}
     steps:

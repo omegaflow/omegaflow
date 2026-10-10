@@ -3,6 +3,10 @@ name: cdse-stac-probe
 on:
   workflow_dispatch:
 
+concurrency:
+  group: cdse-stac-probe
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
