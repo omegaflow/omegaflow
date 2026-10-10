@@ -2,7 +2,7 @@ use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_bin;
-use omegaflow::odp::{EARTH, downlink_rate, dsn_station};
+use omegaflow::odp::{downlink_rate, dsn_host, dsn_station};
 use std::collections::HashMap;
 
 const PIONEER_ANOMALY: f64 = 8.74e-10;
@@ -58,6 +58,10 @@ fn lin_fit3(x1: &[f64], x2: &[f64], y: &[f64]) -> Option<(f64, f64, f64)> {
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer10: dsn host declaration void");
+        return;
+    };
     let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
@@ -68,7 +72,7 @@ fn main() {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, SC_BODY] {
+    for body in [host, SC_BODY] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -100,7 +104,7 @@ fn main() {
             no_station += 1;
             continue;
         };
-        let Some(rate) = downlink_rate(r[0], lat, lon, alt, &eph, sc) else {
+        let Some(rate) = downlink_rate(host, r[0], lat, lon, alt, &eph, sc) else {
             no_model += 1;
             continue;
         };

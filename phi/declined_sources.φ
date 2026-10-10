@@ -1876,6 +1876,10 @@ decline registry/katalog
 url https://emergency.copernicus.eu
 note Copernicus Emergency Portal (HTTP 200) — Infrastruktur-/Katalog-Portal, kein Messwert.
 
+decline registry/katalog
+url https://emsc.eu/
+note emsc.eu HTTP 200 (26583 B HTML, 2026-10-11) — EMSC-Neudomain, Katalog = emsc-csem.org (declined_sources.φ); USGS/ISC/seismicportal.eu integriert.
+
 decline no-physical-force
 url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
 note Wissensgraph.
@@ -2079,6 +2083,10 @@ note DTU-CSES-MAG — 2026-10-10: Index 200, tägliche CSES_01_MAG_*_0301.cdf (a
 decline archive-catalog
 url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items
 note PDS-STAC-Granulat-Index LOLA (items.json Capture, HTTP 200, geo+json): Produkt-Katalog mit Granulat-Footprints und Asset-Links, kein Messwert am Punkt.
+
+decline infrastructure
+url https://gadm.org/
+note gadm.org HTTP 206 (range, 2026-10-11): administrative Grenzen (GeoJSON/Shapefile), geographische Infrastruktur — kein Feld.
 
 decline redundant
 url https://gaia.aip.de/tap
@@ -2871,6 +2879,10 @@ note Bild-Sammlungs-Registry.
 decline model-fit
 url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
 note pro_review_b5 2026-08-18: Orbital-Elemente (a,e,i) sind Modell-Fits, kein Messwert am Punkt; JSON-Route hinter Anubis-PoW. H/V-Helligkeit (em) läge nur als Markdown-Text vor — kein Feld überlebt Force-Gate + Zugang.
+
+decline registry/katalog
+url https://ngmdb.usgs.gov/
+note ngmdb.usgs.gov HTTP 206 (range, 2026-10-11): USGS National Geologic Map Database — Karten-/Registry-Index, kein Messwert am Punkt.
 
 decline registry
 url https://nominatim.openstreetmap.org/reverse?format=json&accept-language=de,en&lat=$
@@ -4715,6 +4727,10 @@ note Wikimedia Text/Knowledge — Registry (Force-Gate 2026-09-23).
 decline no-physical-force
 url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
 note Wikipedia pageviews aggregate: social metric, no physical field.
+
+decline registry/katalog
+url https://worldclim.org/
+note worldclim.org HTTP 206 (range, 2026-10-11): Projekt-/Katalog-Portal, kein Messwert; die Rasterdaten liegen am Datenhost geodata.ucdavis.edu (worldclim_compiler.rs, pending-Registrierung). Datenklasse (interpolierte Klimatologie) offen.
 
 decline molecular
 url https://wormbase.org/

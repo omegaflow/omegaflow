@@ -4,7 +4,7 @@ use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, parse_ephemeris_binary,
 };
 use omegaflow::doppler::parse_bin;
-use omegaflow::odp::{EARTH, downlink_rate_core};
+use omegaflow::odp::{downlink_rate_core, dsn_host};
 
 const PIONEER_ANOMALY: f64 = 8.74e-10;
 const GAP_THRESHOLD: f64 = 5.0 * 86400.0;
@@ -175,6 +175,10 @@ fn fixed_effects_1(
 }
 
 fn run(name: &str, sc_body: &str) {
+    let Some(host) = dsn_host() else {
+        eprintln!("{name}: dsn host declaration void");
+        return;
+    };
     let path = format!("data/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin");
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("{name}: clean bin void ({path})");
@@ -195,7 +199,7 @@ fn run(name: &str, sc_body: &str) {
     );
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, sc_body] {
+    for body in [host, sc_body] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -229,8 +233,8 @@ fn run(name: &str, sc_body: &str) {
             continue;
         }
         let (Some(re), Some(ve)) = (
-            body_barycenter_position(EARTH, r[0], &eph),
-            body_barycenter_velocity(EARTH, r[0], &eph),
+            body_barycenter_position(host, r[0], &eph),
+            body_barycenter_velocity(host, r[0], &eph),
         ) else {
             continue;
         };

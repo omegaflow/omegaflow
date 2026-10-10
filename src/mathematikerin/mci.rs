@@ -6,6 +6,9 @@ use super::te::{
 };
 use std::collections::BTreeSet;
 
+type MciSeries = (Vec<f32>, Vec<f32>, Vec<Vec<f32>>);
+type ObservedMciSeries = (f64, Vec<f32>, Vec<f32>, Vec<Vec<f32>>);
+
 pub struct TeBinnedCi {
     pub bins: usize,
     pub n_surr: usize,
@@ -13,11 +16,7 @@ pub struct TeBinnedCi {
 }
 
 impl TeBinnedCi {
-    fn prepared(
-        x: &[f64],
-        y: &[f64],
-        conds: &[&[f64]],
-    ) -> Option<(Vec<f32>, Vec<f32>, Vec<Vec<f32>>)> {
+    fn prepared(x: &[f64], y: &[f64], conds: &[&[f64]]) -> Option<MciSeries> {
         let n = x.len();
         if n < 8 || y.len() != n || conds.iter().any(|c| c.len() != n) {
             return None;
@@ -41,12 +40,7 @@ impl TeBinnedCi {
             .collect()
     }
 
-    fn observed(
-        &self,
-        x: &[f64],
-        y: &[f64],
-        conds: &[&[f64]],
-    ) -> Option<(f64, Vec<f32>, Vec<f32>, Vec<Vec<f32>>)> {
+    fn observed(&self, x: &[f64], y: &[f64], conds: &[&[f64]]) -> Option<ObservedMciSeries> {
         let (xf, yf, cf) = Self::prepared(x, y, conds)?;
         let lc = Self::zero_lag(&cf);
         let te = transfer_entropy_conditional_binned_n(&xf, &yf, &lc, 1, self.bins)?;
@@ -141,7 +135,7 @@ impl PanelView {
                 d * d
             })
             .sum::<f64>();
-        if !(denom > 0.0) {
+        if denom.partial_cmp(&0.0) != Some(std::cmp::Ordering::Greater) {
             return Vec::new();
         }
         let mut out = Vec::new();
@@ -417,9 +411,9 @@ mod tests {
 
         let mut ar = vec![0.0_f32; n];
         let mut prev = 0.0_f64;
-        for t in 0..n {
+        for slot in ar.iter_mut() {
             prev = 0.9 * prev + 0.3 * rng.normal();
-            ar[t] = prev as f32;
+            *slot = prev as f32;
         }
         let a = PanelView::acf(&ar, 1);
         assert!(a[0] > 0.6, "ar acf {}", a[0]);
@@ -431,13 +425,13 @@ mod tests {
         let n = 1500;
         let mut driver = vec![0.0_f64; n];
         let mut prev = 0.0_f64;
-        for t in 0..n {
+        for slot in driver.iter_mut() {
             prev = 0.9 * prev + 0.3 * rng.normal();
-            driver[t] = prev;
+            *slot = prev;
         }
         let mut target = vec![0.0_f64; n];
-        for t in 0..n {
-            target[t] = if t == 0 {
+        for (t, slot) in target.iter_mut().enumerate() {
+            *slot = if t == 0 {
                 0.3 * rng.normal()
             } else {
                 0.7 * driver[t - 1] + 0.3 * rng.normal()

@@ -15,7 +15,8 @@ use omegaflow::inflate::gunzip;
 use omegaflow::ionex::{TecGrid, parse_gim, tec_at};
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::odp::{
-    C, EARTH, downlink_rate_core, dsn_station, interp, propagate_accel, station_velocity, sun_accel,
+    C, downlink_rate_core, dsn_host, dsn_station, interp, propagate_accel, station_velocity,
+    sun_accel,
 };
 
 const SC_BODY: &str = "pioneer10_daily";
@@ -825,7 +826,7 @@ fn run_rates_dyn(
     times: &[f64],
     r_st: &[[f64; 3]],
     v_st: &[[f64; 3]],
-) -> Vec<f64> {
+) -> Option<Vec<f64>> {
     let acc = |t: f64, r: [f64; 3]| dyn_accel(t, r, aniso, t0_rtg, a_p);
     run_rates_dyn_accel(state0, t_first, t_last, &acc, times, r_st, v_st)
 }
@@ -838,17 +839,18 @@ fn run_rates_dyn_accel(
     times: &[f64],
     r_st: &[[f64; 3]],
     v_st: &[[f64; 3]],
-) -> Vec<f64> {
+) -> Option<Vec<f64>> {
     let grid = propagate_accel(state0, t_first, t_last, GRID_DT, acc);
     let sc = |t: f64| -> Option<([f64; 3], [f64; 3])> {
         let s = interp(&grid, t)?;
         Some(([s[0], s[1], s[2]], [s[3], s[4], s[5]]))
     };
-    let mut rates = vec![0.0f64; times.len()];
+    let mut rates = Vec::with_capacity(times.len());
     for i in 0..times.len() {
-        rates[i] = downlink_rate_core(times[i], r_st[i], v_st[i], &sc).unwrap_or(f64::NAN);
+        let rate = downlink_rate_core(times[i], r_st[i], v_st[i], &sc)?;
+        rates.push(rate);
     }
-    rates
+    Some(rates)
 }
 
 fn recoil_telem_accel(
@@ -993,6 +995,10 @@ fn witness(
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer10 link: dsn host declaration void");
+        return;
+    };
     let Some(lsk) = embedded_lsk() else {
         eprintln!("pioneer10 link: naif0012 table void — the probe stays empty (0 honored)");
         return;
@@ -1029,7 +1035,7 @@ fn main() {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, SC_BODY] {
+    for body in [host, SC_BODY] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -1151,8 +1157,8 @@ fn main() {
         };
         let t1 = r[0];
         let (Some(rs), Some(vs)) = (
-            body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, &eph),
-            station_velocity(t1, lat, lon, alt, &eph),
+            body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, &eph),
+            station_velocity(host, t1, lat, lon, alt, &eph),
         ) else {
             no_model += 1;
             continue;
@@ -1170,8 +1176,7 @@ fn main() {
             no_model += 1;
             continue;
         };
-        let Some(rs2) = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1 + PLASMA_DT, &eph)
-        else {
+        let Some(rs2) = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1 + PLASMA_DT, &eph) else {
             no_model += 1;
             continue;
         };
@@ -1988,9 +1993,11 @@ fn main() {
     let mut best_aniso = RTG_ANISO_SCAN[1];
     let mut best_rms = f64::INFINITY;
     for &aniso in &RTG_ANISO_SCAN {
-        let rates = run_rates_dyn(
+        let Some(rates) = run_rates_dyn(
             state0, t_first, t_last, aniso, t0_rtg, 0.0, &times, &r_st, &v_st,
-        );
+        ) else {
+            continue;
+        };
         let Some(f) = fit_stats_w(&rates, &refs, &obs_e, &times, &files, &weights) else {
             continue;
         };
@@ -2006,9 +2013,11 @@ fn main() {
     let mut rms_hi = f64::NEG_INFINITY;
     for k in -2..=2 {
         let a_p = k as f64 * 4.0e-6;
-        let rates = run_rates_dyn(
+        let Some(rates) = run_rates_dyn(
             state0, t_first, t_last, best_aniso, t0_rtg, a_p, &times, &r_st, &v_st,
-        );
+        ) else {
+            continue;
+        };
         let Some(f) = fit_stats_w(&rates, &refs, &obs_e, &times, &files, &weights) else {
             continue;
         };
@@ -2080,8 +2089,11 @@ fn main() {
                         }
                         out
                     };
-                    let rates =
-                        run_rates_dyn_accel(state0, t_first, t_last, &acc, &times, &r_st, &v_st);
+                    let Some(rates) =
+                        run_rates_dyn_accel(state0, t_first, t_last, &acc, &times, &r_st, &v_st)
+                    else {
+                        continue;
+                    };
                     let Some(f) = fit_stats_w(&rates, &refs, &obs_e, &times, &files, &weights)
                     else {
                         continue;
@@ -2123,9 +2135,12 @@ fn main() {
             "Deduction 8 Recoil: data/pioneer10_telemetry.bin carries no PTLM holding — empty (0 honored)"
         ),
     }
-    let rates_final = run_rates_dyn(
+    let Some(rates_final) = run_rates_dyn(
         state0, t_first, t_last, best_aniso, t0_rtg, best_a_p, &times, &r_st, &v_st,
-    );
+    ) else {
+        eprintln!("pioneer10 link: dynamics model void");
+        return;
+    };
     let Some(FitStat {
         a: a_f,
         c: c_f,
@@ -2301,36 +2316,44 @@ fn main() {
         let mut drv_series: Vec<Vec<f32>> = vec![Vec::with_capacity(days.len()); 3];
         let mut sun: Vec<f32> = Vec::with_capacity(days.len());
         for d in &days {
+            let t_noon = *d as f64 * 86400.0 + 43200.0;
+            let Some((p, _)) = granule_sc(t_noon) else {
+                continue;
+            };
             let mut v = resid_day[d].clone();
             res.push(median(&mut v) as f32);
             for (k, (_, m)) in drv.iter().enumerate() {
                 let (s, c) = m[d];
                 drv_series[k].push((s / c as f64) as f32);
             }
-            let t_noon = *d as f64 * 86400.0 + 43200.0;
-            let sd = granule_sc(t_noon)
-                .map(|(p, _)| norm(p) / AU)
-                .unwrap_or(f64::NAN);
-            sun.push(sd as f32);
+            sun.push((norm(p) / AU) as f32);
         }
         let mut parts: Vec<String> = Vec::new();
         for (k, (name, _)) in drv.iter().enumerate() {
             match omegaflow::te::topological_te_phase(&drv_series[k], &res, 3, 3, TE_SEED) {
-                Some(v) => parts.push(format!(
-                    "{name}: TE {:.4} vs threshold {:.4} (τ {}/{}, {} surrogates, PE {:.2}/{:.2}) — {}",
-                    v.te,
-                    v.threshold,
-                    v.tau_c,
-                    v.tau_y,
-                    v.surrogates_used,
-                    v.pe_x.unwrap_or(f64::NAN),
-                    v.pe_y.unwrap_or(f64::NAN),
-                    if v.te > v.threshold {
-                        "carries causal transfer (natural pattern)"
-                    } else {
-                        "no transfer carried (0 honored)"
-                    }
-                )),
+                Some(v) => {
+                    let pe_x = match v.pe_x {
+                        Some(x) => format!("{x:.2}"),
+                        None => "pending".to_string(),
+                    };
+                    let pe_y = match v.pe_y {
+                        Some(y) => format!("{y:.2}"),
+                        None => "pending".to_string(),
+                    };
+                    parts.push(format!(
+                        "{name}: TE {:.4} vs threshold {:.4} (τ {}/{}, {} surrogates, PE {pe_x}/{pe_y}) — {}",
+                        v.te,
+                        v.threshold,
+                        v.tau_c,
+                        v.tau_y,
+                        v.surrogates_used,
+                        if v.te > v.threshold {
+                            "carries causal transfer (natural pattern)"
+                        } else {
+                            "no transfer carried (0 honored)"
+                        }
+                    ));
+                }
                 None => parts.push(format!(
                     "{name}: TE void — {} days do not carry the embedding",
                     days.len()
@@ -2379,12 +2402,16 @@ fn main() {
                         1,
                     );
                     match omegaflow::te::topological_te_phase(&xs, &ys, 3, 3, TE_SEED) {
-                        Some(v) => segs15.push((
-                            v.te as f32,
-                            v.threshold as f32,
-                            pe.unwrap_or(f64::NAN) as f32,
-                        )),
-                        None => segs15.push((f32::NAN, f32::NAN, pe.unwrap_or(f64::NAN) as f32)),
+                        Some(v) => {
+                            if let Some(pe_val) = pe {
+                                segs15.push((v.te as f32, v.threshold as f32, pe_val as f32));
+                            }
+                        }
+                        None => {
+                            if let Some(pe_val) = pe {
+                                segs15.push((f32::NAN, f32::NAN, pe_val as f32));
+                            }
+                        }
                     }
                 }
             }
@@ -4978,7 +5005,7 @@ fn main() {
             .and_then(|d| parse_ephemeris_binary(&d)),
     ) {
         let mut eph11: HashMap<String, BodyEphemeris> = HashMap::new();
-        eph11.insert(EARTH.to_string(), eph[EARTH].clone());
+        eph11.insert(host.to_string(), eph[host].clone());
         eph11.insert("pioneer11_daily".to_string(), ep11);
         let sc11 = |t: f64| -> Option<([f64; 3], [f64; 3])> {
             Some((
@@ -5044,6 +5071,7 @@ fn navio_chain(
     t0_rtg: f64,
     witness_map: Option<&HashMap<i64, Vec<(f64, f64)>>>,
 ) -> Option<FitStat> {
+    let host = dsn_host()?;
     let mut times: Vec<f64> = Vec::new();
     let mut obs: Vec<f64> = Vec::new();
     let mut refs: Vec<f64> = Vec::new();
@@ -5068,8 +5096,8 @@ fn navio_chain(
             continue;
         }
         let (Some(rs), Some(vs)) = (
-            body_barycenter_position(EARTH, r[0], eph),
-            body_barycenter_velocity(EARTH, r[0], eph),
+            body_barycenter_position(host, r[0], eph),
+            body_barycenter_velocity(host, r[0], eph),
         ) else {
             no_model += 1;
             continue;
@@ -5086,7 +5114,7 @@ fn navio_chain(
             no_model += 1;
             continue;
         };
-        let Some(rs2) = body_barycenter_position(EARTH, r[0] + PLASMA_DT, eph) else {
+        let Some(rs2) = body_barycenter_position(host, r[0] + PLASMA_DT, eph) else {
             no_model += 1;
             continue;
         };
@@ -5103,6 +5131,10 @@ fn navio_chain(
             }
             _ => None,
         };
+        let Some((sun_pos, _)) = sc(r[0]) else {
+            no_model += 1;
+            continue;
+        };
         times.push(r[0]);
         obs.push(r[1] + r[2]);
         refs.push(r[2]);
@@ -5110,7 +5142,7 @@ fn navio_chain(
         v_st.push(vs);
         shift_plasma.push(sh_p);
         dtype.push(r[4]);
-        sun_dist.push(sc(r[0]).map(|(p, _)| norm(p)).unwrap_or(f64::NAN));
+        sun_dist.push(norm(sun_pos));
     }
     if times.len() < 100 {
         eprintln!(
@@ -5120,7 +5152,10 @@ fn navio_chain(
         return None;
     }
     let n = times.len();
-    let rates0 = rates_modeled(sc, &times, &r_st, &v_st);
+    let Some(rates0) = rates_modeled(sc, &times, &r_st, &v_st) else {
+        eprintln!("{label}: base model void");
+        return None;
+    };
     let Some((a0, c0, resid0, _, _)) = fixed_effects(&rates0, &refs, &obs, &times) else {
         eprintln!("{label}: base fit void");
         return None;
@@ -5230,12 +5265,11 @@ fn navio_chain(
                 v_st = keep.iter().map(|&i| v_st[i]).collect();
                 shift_plasma = keep.iter().map(|&i| shift_plasma[i]).collect();
                 dtype = keep.iter().map(|&i| dtype[i]).collect();
-                let (_, _, resid0, _, _) = match fixed_effects(
-                    &rates_modeled(sc, &times, &r_st, &v_st),
-                    &refs,
-                    &obs,
-                    &times,
-                ) {
+                let Some(rates_mask) = rates_modeled(sc, &times, &r_st, &v_st) else {
+                    eprintln!("{label}: segment-mask model void");
+                    return None;
+                };
+                let (_, _, resid0, _, _) = match fixed_effects(&rates_mask, &refs, &obs, &times) {
                     Some(x) => x,
                     None => {
                         eprintln!("{label}: segment-mask refit void");
@@ -5257,7 +5291,10 @@ fn navio_chain(
     }
     let n = times.len();
     let files_zero = vec![0i64; n];
-    let rates0 = rates_modeled(sc, &times, &r_st, &v_st);
+    let Some(rates0) = rates_modeled(sc, &times, &r_st, &v_st) else {
+        eprintln!("{label}: plasma model void");
+        return None;
+    };
     let mut obs_c = obs.clone();
     let mut n_plasma = 0usize;
     let mut sum_abs = 0.0f64;
@@ -5321,7 +5358,7 @@ fn navio_chain(
     let mut best_aniso = RTG_ANISO_SCAN[1];
     let mut best_rms = f64::INFINITY;
     for &aniso in &RTG_ANISO_SCAN {
-        let rates = run_rates_dyn(
+        let Some(rates) = run_rates_dyn(
             state0,
             times[0],
             times[n - 1],
@@ -5331,7 +5368,9 @@ fn navio_chain(
             &times,
             &r_st,
             &v_st,
-        );
+        ) else {
+            continue;
+        };
         let Some(f) = fit_stats(&rates, &refs, &obs_d, &times, &files_zero) else {
             continue;
         };
@@ -5346,7 +5385,7 @@ fn navio_chain(
     let mut rms_hi = f64::NEG_INFINITY;
     for k in -1..=1 {
         let a_p = k as f64 * 8.0e-6;
-        let rates = run_rates_dyn(
+        let Some(rates) = run_rates_dyn(
             state0,
             times[0],
             times[n - 1],
@@ -5356,7 +5395,9 @@ fn navio_chain(
             &times,
             &r_st,
             &v_st,
-        );
+        ) else {
+            continue;
+        };
         let Some(f) = fit_stats(&rates, &refs, &obs_d, &times, &files_zero) else {
             continue;
         };
@@ -5370,7 +5411,7 @@ fn navio_chain(
     eprintln!(
         "  Dynamik: aniso {best_aniso:.3}, a_P-Scan ±8e-6 flach {rms_lo:.4e}…{rms_hi:.4e} Hz, best a_P {best_a_p:.4e} m/s²"
     );
-    let rates_final = run_rates_dyn(
+    let Some(rates_final) = run_rates_dyn(
         state0,
         times[0],
         times[n - 1],
@@ -5380,7 +5421,10 @@ fn navio_chain(
         &times,
         &r_st,
         &v_st,
-    );
+    ) else {
+        eprintln!("{label}: dynamics model void");
+        return None;
+    };
     let f = fit_stats(&rates_final, &refs, &obs_d, &times, &files_zero)?;
     let accel = f.drift / f.a;
     let se_accel = f.se_drift / f.a.abs();
@@ -5454,12 +5498,13 @@ fn rates_modeled(
     times: &[f64],
     r_st: &[[f64; 3]],
     v_st: &[[f64; 3]],
-) -> Vec<f64> {
-    let mut rates = vec![0.0f64; times.len()];
+) -> Option<Vec<f64>> {
+    let mut rates = Vec::with_capacity(times.len());
     for i in 0..times.len() {
-        rates[i] = downlink_rate_core(times[i], r_st[i], v_st[i], sc).unwrap_or(f64::NAN);
+        let rate = downlink_rate_core(times[i], r_st[i], v_st[i], sc)?;
+        rates.push(rate);
     }
-    rates
+    Some(rates)
 }
 
 fn solve4(mut m: [[f64; 4]; 4], mut rhs: [f64; 4]) -> Option<[f64; 4]> {

@@ -2,7 +2,7 @@
   title: Survey — Gegen-Audit: Quellen-Delta zum Open-Sources-Audit (2026-10-08)
   class: survey
   date: 2026-10-08
-  sha256: be6be3cc468e371f6cf2aaa803ed4808eb59c59d2d11e363f1236c650d1f35ac
+  sha256: 6277dd6a2d7c751499b3648fbd42e1805e447b8d82b9482be0add4ccd1e1c941
   status: live
   see-also: state/future/open-sources-audit-2026-10-08.md docs/concepts/tools-map.md docs/SOURCE_PORT.md
 -->
@@ -139,6 +139,10 @@ Der Diver zitierte CSES als `phi/sources.φ:17149-17192` — der Baum trägt dor
 (`sgrep 'leos.ac.cn' phi/sources.φ` = **0**). Register-Zeile driftet; **der Baum gewinnt** →
 LEOS/CSES ist **nicht** registriert, der Fund bleibt `pending` (Mountain-Admission).
 
+**Gegenprobe 2026-10-11:** `sgrep -i leos phi` trifft `declined_sources.φ:5096` — LEOS ist
+declined (Lizenz NINH-MEM verbietet die Weitergabe); die CSES-Messung lebt als
+`sources.φ:19529` (`scidb.cn/cses_efd` u. a.). Riss aufgelöst.
+
 ## Offen (operator-gebunden)
 Die Audit-Rückfrage „welches Teilchenexperiment": **Kuprat** (Festkörper, kein Teilchen-Experiment)
 oder ein **Detektor-/Dark-Matter-Experiment**. Bis dahin bleiben die Teilchen-Kanäle `pending`.
@@ -183,3 +187,32 @@ oder Cloudflare-blockiert — es waren falsche Hosts/Pfade bzw. fehlende Paramet
 **Fazit:** alle vier sind **kein** toter Kanal — LPF ist offen (HEASARC), Lasair/DEMETER/GOSAT-GW
 sind auth-/token-gated (Route offen). Je ein Operator-Akt (frisches Token/Cookie) bzw. eine
 Source-Registrierung (LPF-HEASARC) schließt sie.
+
+## Baum-Gegenprobe (2026-10-11)
+
+Die offenen Punkte des Blatts je mit `sgrep` gegen `phi/*.φ` gemessen (Re-Audit-Tabelle,
+Blockierte vier, Riss/Offen): **13 Punkte, 11 gedeckt, 2 ungedeckt.** Der Zensus nannte 18
+Marker-Zeilen (2026-10-10); gemessen heute sind es 15 (Zeilen 51, 86, 126–132, 134, 142,
+174, 181, 183, 184).
+
+| Punkt | Verdikt | Register (2026-10-11) |
+|---|---|---|
+| SuperMAG `services/data-api.php` | gedeckt | `declined_sources.φ:4372`; `sources.φ:19865` |
+| BepiColombo PSA | gedeckt | `sources.φ:4421`; `blocked_sources.φ:26` |
+| ESA LPF | gedeckt | `sources.φ:11329` (HEASARC `drs_fits`) |
+| Lasair `api/` | gedeckt | `declined_sources.φ:2692`; `dead_sources.φ:147` |
+| SSDC Limadou | **ungedeckt** | nur `phi/pipeline/ledger.φ:15` (TAPSSDC 0 CSES/LIMADOU) |
+| DEMETER `rs-order` | gedeckt | `declined_sources.φ:3277` |
+| GOSAT-GW | gedeckt | `sources.φ:19368` |
+| Chang'e `moon.bao.ac.cn` | gedeckt | `sources.φ:10957` (`clpds.bao.ac.cn`) |
+| LEOS/CSES | gedeckt | `declined_sources.φ:5096` (Lizenz NINH-MEM) |
+| NSSDC Voyager/Mariner/Viking/Juno | gedeckt | `blocked_sources.φ:30–44`; `sources.φ:19592,19507,11761` |
+| NED bulk redshift | gedeckt | `declined_sources.φ:2840` |
+| LiteBIRD (`litebird.jp`) | **ungedeckt** | keine der vier Register |
+| Teilchen-/Dark-Matter-Experiment | gedeckt | `blocked_sources.φ:58` (opendata.cern pending) |
+
+**Ungedeckte Reste:** SSDC Limadou (nur `ledger.φ:15` Kandidat), LiteBIRD (nur im Blatt).
+Die Delta-Tabellen (I–V, IX, XII) sind Fund-Landschaft und wurden nicht je Zeile
+gegenregistriert; die im Blattkopf als unregistriert bestätigten (HI4PI, BK18, `gll_psc_v32`,
+GEBCO, `occupation_data`, `opendata.cern`, Zenodo XENONnT/LZ, `super-k`, `DVN/MMIIZA`,
+`hepdata`, `FRBSTATS`) bleiben unregistriert.

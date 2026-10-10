@@ -6,9 +6,15 @@ use crate::archivar::{
 
 pub const C: f64 = crate::archivar::types::C_LIGHT;
 pub const SUN_MU: f64 = 1.32712440018e20;
-pub const EARTH: &str = include_str!("kernels/dsn_host.txt");
 
 pub const DSN_STATION_COORD_SOURCE: &str = "pending";
+
+pub fn dsn_host() -> Option<&'static str> {
+    include_str!("kernels/dsn_host.txt")
+        .lines()
+        .map(str::trim)
+        .find(|l| !l.is_empty() && !l.starts_with('#'))
+}
 
 pub fn dsn_station(id: i64) -> Option<(f64, f64, f64)> {
     match id {
@@ -36,6 +42,7 @@ fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
 }
 
 pub fn station_velocity(
+    host: &str,
     t: f64,
     lat: f64,
     lon: f64,
@@ -43,11 +50,11 @@ pub fn station_velocity(
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<[f64; 3]> {
     let dt = 60.0;
-    let r_plus = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t + dt, eph)?;
-    let r_minus = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t - dt, eph)?;
-    let e_plus = body_barycenter_position(EARTH, t + dt, eph)?;
-    let e_minus = body_barycenter_position(EARTH, t - dt, eph)?;
-    let v_earth = body_barycenter_velocity(EARTH, t, eph)?;
+    let r_plus = body_fixed_to_icrs_smooth(host, lat, lon, alt, t + dt, eph)?;
+    let r_minus = body_fixed_to_icrs_smooth(host, lat, lon, alt, t - dt, eph)?;
+    let e_plus = body_barycenter_position(host, t + dt, eph)?;
+    let e_minus = body_barycenter_position(host, t - dt, eph)?;
+    let v_earth = body_barycenter_velocity(host, t, eph)?;
     let mut v = [0.0; 3];
     for k in 0..3 {
         v[k] = v_earth[k] + ((r_plus[k] - e_plus[k]) - (r_minus[k] - e_minus[k])) / (2.0 * dt);
@@ -56,6 +63,7 @@ pub fn station_velocity(
 }
 
 pub fn downlink_rate(
+    host: &str,
     t1: f64,
     lat: f64,
     lon: f64,
@@ -63,8 +71,8 @@ pub fn downlink_rate(
     eph: &HashMap<String, BodyEphemeris>,
     sc: &dyn Fn(f64) -> Option<([f64; 3], [f64; 3])>,
 ) -> Option<f64> {
-    let r_st1 = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, eph)?;
-    let v_st1 = station_velocity(t1, lat, lon, alt, eph)?;
+    let r_st1 = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
+    let v_st1 = station_velocity(host, t1, lat, lon, alt, eph)?;
     downlink_rate_core(t1, r_st1, v_st1, sc)
 }
 

@@ -8,7 +8,8 @@ use omegaflow::archivar::{
     fetch_raw_bytes, icrs_to_body_surface, light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::cdn::CDN_BASE;
-use omegaflow::odp::{EARTH, dsn_station};
+use omegaflow::odp::{dsn_host, dsn_station};
+use omegaflow::weberin::frame_origin_name;
 
 const DAY_S: f64 = 86400.0;
 const RAD_DEG: f64 = 180.0 / std::f64::consts::PI;
@@ -124,7 +125,17 @@ fn analytic_eph(eph: &BodyEphemeris) -> BodyEphemeris {
     c
 }
 
+fn asset_body_name(asset: &str) -> Option<&str> {
+    asset.strip_prefix("ephemeris_")?.strip_suffix(".bin")
+}
+
 fn load_line(spec: &LineSpec, eph_dir: &str) -> Result<Line, String> {
+    let host = dsn_host().ok_or(
+        "dsn host declaration void — the earth body is absent for the orientation measure",
+    )?;
+    let sun_body = frame_origin_name().ok_or(
+        "frame origin declaration void — the sun body is absent for the orientation measure",
+    )?;
     let earth = load_body(eph_dir, spec.netloc, spec.earth_asset)?;
     let sun = load_body(eph_dir, spec.netloc, spec.sun_asset)?;
     if earth.rotation_matrices.is_empty() || earth.props.is_none() {
@@ -143,22 +154,23 @@ fn load_line(spec: &LineSpec, eph_dir: &str) -> Result<Line, String> {
         .ok()
         .map(|m| m.len());
     let mut map = HashMap::new();
-    map.insert(EARTH.to_string(), earth);
-    map.insert("sun".to_string(), sun.clone());
+    map.insert(host.to_string(), earth);
+    map.insert(sun_body.clone(), sun.clone());
     let mut map_analytic = HashMap::new();
-    map_analytic.insert(EARTH.to_string(), analytic_eph(&map[EARTH]));
-    map_analytic.insert("sun".to_string(), sun);
+    map_analytic.insert(host.to_string(), analytic_eph(&map[host]));
+    map_analytic.insert(sun_body, sun);
     Ok(Line {
         map,
         map_analytic,
-        bodies: vec![EARTH.to_string()],
+        bodies: vec![host.to_string()],
         earth_size,
     })
 }
 
 fn subsolar(body: &str, t: f64, map: &HashMap<String, BodyEphemeris>) -> Option<(f64, f64)> {
     let center = body_barycenter_position(body, t, map)?;
-    let sun = light_time_worldline(center, t, &|s| body_barycenter_position("sun", s, map))?.0;
+    let sun_body = frame_origin_name()?;
+    let sun = light_time_worldline(center, t, &|s| body_barycenter_position(&sun_body, s, map))?.0;
     icrs_to_body_surface(sun[0], sun[1], sun[2], t, body, map)
 }
 
@@ -234,7 +246,8 @@ fn station_sun_elevation(
 ) -> Option<f64> {
     let station = body_fixed_to_icrs(body, lat, lon, alt, t, map)?;
     let center = body_barycenter_position(body, t, map)?;
-    let sun = light_time_worldline(station, t, &|s| body_barycenter_position("sun", s, map))?.0;
+    let sun_body = frame_origin_name()?;
+    let sun = light_time_worldline(station, t, &|s| body_barycenter_position(&sun_body, s, map))?.0;
     elevation_via(station, center, sun)
 }
 
@@ -246,7 +259,8 @@ fn textbook_sun_elevation(
     map: &HashMap<String, BodyEphemeris>,
 ) -> Option<f64> {
     let center = body_barycenter_position(body, t, map)?;
-    let sun = light_time_worldline(center, t, &|s| body_barycenter_position("sun", s, map))?.0;
+    let sun_body = frame_origin_name()?;
+    let sun = light_time_worldline(center, t, &|s| body_barycenter_position(&sun_body, s, map))?.0;
     let v = sub(sun, center);
     let r = norm(v);
     if !(r > 0.0 && r.is_finite()) {
@@ -258,7 +272,8 @@ fn textbook_sun_elevation(
         ra += 360.0;
     }
     let jd = J2000_EPOCH + t / DAY_S;
-    let gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)).rem_euclid(360.0);
+    let props = map.get(body)?.props.as_ref()?;
+    let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
     let lst = (gmst + lon).rem_euclid(360.0);
     let mut ha = (lst - ra).rem_euclid(360.0);
     if ha > 180.0 {
@@ -277,6 +292,10 @@ fn fmt_opt(v: Option<f64>) -> String {
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("orientation: dsn host declaration void");
+        return;
+    };
     let args: Vec<String> = std::env::args().skip(1).collect();
     let eph_dir = match arg_value(&args, "--eph-dir") {
         Some(d) => d,
@@ -308,22 +327,26 @@ fn main() {
         if let Some(ma) = spec.mars_asset {
             match load_body(&eph_dir, spec.netloc, ma) {
                 Ok(mars) => {
+                    let Some(mars_name) = asset_body_name(ma) else {
+                        println!("orientation {}: {ma} carries no body name", spec.word);
+                        continue;
+                    };
                     if mars.rotation_matrices.is_empty() || mars.props.is_none() {
                         println!(
                             "orientation {}: {ma} carries no rotation matrices / props — mars absent",
                             spec.word
                         );
                     } else {
-                        line.map.insert("mars".to_string(), mars.clone());
+                        line.map.insert(mars_name.to_string(), mars.clone());
                         line.map_analytic
-                            .insert("mars".to_string(), analytic_eph(&mars));
-                        line.bodies.push("mars".to_string());
+                            .insert(mars_name.to_string(), analytic_eph(&mars));
+                        line.bodies.push(mars_name.to_string());
                     }
                 }
                 Err(e) => println!("orientation {}: {e}", spec.word),
             }
         }
-        let earth = &line.map[EARTH];
+        let earth = &line.map[host];
         let (lo, hi) = match granule_span(earth) {
             Some(s) => s,
             None => {
@@ -389,12 +412,12 @@ fn main() {
                 ),
             }
         }
-        if line.bodies.iter().any(|b| b == EARTH) {
+        if line.bodies.iter().any(|b| b == host) {
             let (lat, lon, alt) = dsn_station(43).unwrap();
             let el_analytic =
-                station_sun_elevation(EARTH, lat, lon, alt, t_anchor, &line.map_analytic);
-            let el_matrix = station_sun_elevation(EARTH, lat, lon, alt, t_anchor, &line.map);
-            let el_textbook = textbook_sun_elevation(EARTH, lat, lon, t_anchor, &line.map);
+                station_sun_elevation(host, lat, lon, alt, t_anchor, &line.map_analytic);
+            let el_matrix = station_sun_elevation(host, lat, lon, alt, t_anchor, &line.map);
+            let el_textbook = textbook_sun_elevation(host, lat, lon, t_anchor, &line.map);
             println!(
                 "orientation {} DSS43 anchor: sun elevation analytic {} matrix {} textbook {} deg",
                 spec.word,
@@ -509,6 +532,9 @@ mod tests {
 
     #[test]
     fn lehrbuch_gate_de441_anchor() {
+        let Some(host) = dsn_host() else {
+            return;
+        };
         let spec = &LINES[0];
         if !local_bins_present("data", spec.netloc, &[spec.sun_asset, spec.earth_asset]) {
             return;
@@ -523,9 +549,9 @@ mod tests {
             return;
         };
         let (lat, lon, alt) = dsn_station(43).unwrap();
-        let el_analytic = station_sun_elevation(EARTH, lat, lon, alt, t, &line.map_analytic)
+        let el_analytic = station_sun_elevation(host, lat, lon, alt, t, &line.map_analytic)
             .expect("lehrbuch gate: the analytic-path DSS43 sun elevation reads absent");
-        let el_textbook = textbook_sun_elevation(EARTH, lat, lon, t, &line.map)
+        let el_textbook = textbook_sun_elevation(host, lat, lon, t, &line.map)
             .expect("lehrbuch gate: the textbook sun elevation reads absent");
         assert!(
             (el_analytic - el_textbook).abs() < GATE_ELEVATION_DEG,

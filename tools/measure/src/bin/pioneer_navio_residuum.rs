@@ -5,7 +5,7 @@ use omegaflow::archivar::{
     light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::doppler::parse_pnav_bin;
-use omegaflow::odp::{C, EARTH, downlink_rate_core, dsn_station, station_velocity};
+use omegaflow::odp::{C, downlink_rate_core, dsn_host, dsn_station, station_velocity};
 
 const SC_BODIES: &[&str] = &["pioneer10_daily", "pioneer11_daily"];
 const SC_KEY: [&str; 2] = ["pioneer10", "pioneer11"];
@@ -103,9 +103,10 @@ fn uplink_rate(
     alt: f64,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<f64> {
+    let host = dsn_host()?;
     let mut t1 = t2;
     for _ in 0..6 {
-        let r_tx1 = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, eph)?;
+        let r_tx1 = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
         let rho = dist(r_sc2, r_tx1);
         if rho <= 0.0 {
             return None;
@@ -117,8 +118,8 @@ fn uplink_rate(
         }
         t1 = t1_new;
     }
-    let r_tx = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, eph)?;
-    let v_tx = station_velocity(t1, lat, lon, alt, eph)?;
+    let r_tx = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
+    let v_tx = station_velocity(host, t1, lat, lon, alt, eph)?;
     let rho = dist(r_sc2, r_tx);
     if rho <= 0.0 {
         return None;
@@ -312,6 +313,10 @@ fn ruck_scan(times: &[f64], vals: &[f64]) {
 }
 
 fn run(name: &str, sc_body: &str) {
+    let Some(host) = dsn_host() else {
+        eprintln!("{name}: dsn host declaration void");
+        return;
+    };
     let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio.bin");
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("{name}: pnav bin void ({path})");
@@ -322,7 +327,7 @@ fn run(name: &str, sc_body: &str) {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, sc_body] {
+    for body in [host, sc_body] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -378,8 +383,8 @@ fn run(name: &str, sc_body: &str) {
         };
         let t3 = r[0];
         let (Some(r_rcv), Some(v_rcv)) = (
-            body_fixed_to_icrs_smooth(EARTH, rcv_lat, rcv_lon, rcv_alt, t3, &eph),
-            station_velocity(t3, rcv_lat, rcv_lon, rcv_alt, &eph),
+            body_fixed_to_icrs_smooth(host, rcv_lat, rcv_lon, rcv_alt, t3, &eph),
+            station_velocity(host, t3, rcv_lat, rcv_lon, rcv_alt, &eph),
         ) else {
             continue;
         };

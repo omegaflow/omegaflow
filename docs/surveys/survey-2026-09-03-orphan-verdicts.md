@@ -2,7 +2,7 @@
   title: Survey — Orphan-Releases-Verdikt (Step 3, saubere Datenbank)
   class: survey
   date: 2026-09-03
-  sha256: 39da4f174038477aa3e51895d0b18a9e41de750238feb5ab27dfba8f72535dbd
+  sha256: 195546c79fdeb3ef903a0d7e1d04fa1eea6d6da0ac11852927517434c94a6eff
   status: live
   see-also: docs/auftrag/archiv/auftrag-saubere-datenbank.md,
             docs/specs/cdn_reconciliation.json,
@@ -66,7 +66,11 @@ fortgeschrieben, bis sie verlässlich nachgemessen ist.
   von bekannten Daten-Diensten.
 - **15 `repo_tag`** (github.com-…, raw.githubusercontent.com): per
   CDN_ZIEL_SCHEMA §1 keine Registry-Heimat (ein Repo ist nie eine
-  Release-Identität). 1 in dead_sources.φ, 14 undocumented.
+  Release-Identität). Gegenprobe 2026-10-11 (`sgrep` gegen `phi/*.φ`): **12 in den
+  Registern, 3 ungedeckt** — `raw.githubusercontent.com` in `dead_sources.φ`; 11 über den
+  `decline`-Block `declined_sources.φ:2291–2353` (`catalog-register`/`infrastructure`);
+  ungedeckt: `github.com-Bowserinator-Periodic-Table-JSON`,
+  `github.com-GEMScienceTools-gem-global-active-faults`, `github.com-jbrooksuk-JSON-Airports`.
 - **6 `dataset_host`** (ssd/spdf.jpl/gsfc, physionet.org,
   sentinel1euwest…, service.iris.edu, archive-api.open-meteo.com):
   Compiler-/Mess-Datensatz-Netlocs, **nie löschen**. 3 in dead_sources.φ.
@@ -79,8 +83,10 @@ fortgeschrieben, bis sie verlässlich nachgemessen ist.
   gegen die Register gemessen (`sources.φ`/`dead_sources.φ`/`declined_sources.φ`/
   `blocked_sources.φ`), Ergebnis im Maschinenform `cdn_orphan_verdicts.json`
   (`disposition`: 42 declined, 11 released, 2 descoped; 0 pending).
-- **14 undocumented `repo_tag`** → §1 kein Registry-Heim; das Verdikt ist
-  CDN-seitig (Step 5, nach Sicherung), kein sources.φ-Urteil.
+- **14 undocumented `repo_tag`** → gegenproben 2026-10-11: 11 dokumentiert
+  (`declined_sources.φ:2291–2353`), 3 ungedeckt (`Bowserinator-Periodic-Table-JSON`,
+  `GEMScienceTools-gem-global-active-faults`, `jbrooksuk-JSON-Airports`); §1 kein
+  Registry-Heim, das Verdikt ist CDN-seitig (Step 5, nach Sicherung), kein sources.φ-Urteil.
 - **3 undocumented `dataset_host`** → Compiler-Lease, behalten.
 
 ## Messgrenze

@@ -232,6 +232,8 @@ pub struct WeberinFeed {
     pub recs: Vec<AsteroidRec>,
     pub comets: Vec<CometRec>,
     pub mpc_recs: Vec<MpcorbRec>,
+    pub frame_origin: Option<String>,
+    pub major_bodies: Vec<String>,
 }
 
 pub struct Weberin {
@@ -243,6 +245,8 @@ pub struct Weberin {
     pub sun: Option<Arc<HashMap<String, BodyEphemeris>>>,
     pub eph_inpop: Option<Arc<HashMap<String, BodyEphemeris>>>,
     pub eph_epm: Option<Arc<HashMap<String, BodyEphemeris>>>,
+    pub frame_origin: Option<String>,
+    pub major_bodies: Vec<String>,
     pub woven: bool,
 }
 
@@ -250,10 +254,18 @@ pub const WEBERIN_TOL_M: f64 = 1.0e6;
 
 pub const PLANET_WEBERIN_TOL_M: f64 = 1.0e5;
 
+const WOVEN_MAJOR_BODIES_DECL: &str = include_str!("archivar/kernels/woven_major_bodies.txt");
+
+const FRAME_ORIGIN_DECL: &str = include_str!("archivar/kernels/frame_origin.txt");
+
 pub fn woven_major_bodies() -> Vec<String> {
     let table = crate::archivar::ephemeris::body_table();
     let mut names: Vec<String> = Vec::new();
-    for id in [1, 2, 4, 5, 6, 7, 8, 301, 399] {
+    for line in WOVEN_MAJOR_BODIES_DECL.lines() {
+        let id: i32 = match line.trim().parse() {
+            Ok(id) => id,
+            Err(_) => continue,
+        };
         if let Some(b) = table.get(&id) {
             names.push(b.name.clone());
         }
@@ -262,8 +274,14 @@ pub fn woven_major_bodies() -> Vec<String> {
 }
 
 pub fn frame_origin_name() -> Option<String> {
-    crate::archivar::ephemeris::body_table()
-        .get(&10)
+    let declared = FRAME_ORIGIN_DECL
+        .lines()
+        .map(str::trim)
+        .find(|l| !l.is_empty() && !l.starts_with('#'))?;
+    let table = crate::archivar::ephemeris::body_table();
+    table
+        .values()
+        .find(|b| b.name == declared)
         .map(|b| b.name.clone())
 }
 
@@ -407,6 +425,8 @@ impl Weberin {
             sun: None,
             eph_inpop: None,
             eph_epm: None,
+            frame_origin: None,
+            major_bodies: Vec::new(),
             woven: false,
         }
     }
@@ -444,13 +464,15 @@ impl Weberin {
         self.sun = Some(feed.sun);
         self.eph_inpop = Some(feed.eph_inpop);
         self.eph_epm = Some(feed.eph_epm);
+        self.frame_origin = feed.frame_origin;
+        self.major_bodies = feed.major_bodies;
     }
 
     pub fn weave(&mut self, tdb: f64, tol_kepler_m: f64) {
         let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
             return;
         };
-        let Some(origin) = frame_origin_name() else {
+        let Some(origin) = self.frame_origin.clone() else {
             return;
         };
         let Some(sun) = body_barycenter_position(&origin, tdb, sun_map) else {
@@ -590,7 +612,7 @@ impl Weberin {
         let (Some(eph), Some(sun_map)) = (self.eph.as_ref(), self.sun.as_ref()) else {
             return Vec::new();
         };
-        let Some(origin) = frame_origin_name() else {
+        let Some(origin) = self.frame_origin.clone() else {
             return Vec::new();
         };
         let Some(sun) = body_barycenter_position(&origin, tdb, sun_map) else {
@@ -788,6 +810,8 @@ mod tests {
             recs,
             comets,
             mpc_recs: Vec::new(),
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
         });
         w.weave(0.0, tol);
         w
@@ -808,6 +832,8 @@ mod tests {
             recs: Vec::new(),
             comets: Vec::new(),
             mpc_recs,
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
         });
         w.weave(0.0, tol);
         w
@@ -823,6 +849,8 @@ mod tests {
             recs: Vec::new(),
             comets: Vec::new(),
             mpc_recs: Vec::new(),
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
         });
         w
     }
@@ -873,6 +901,8 @@ mod tests {
             recs: vec![rec(3)],
             comets: Vec::new(),
             mpc_recs: Vec::new(),
+            frame_origin: frame_origin_name(),
+            major_bodies: woven_major_bodies(),
         });
         w.weave(0.0, WEBERIN_TOL_M);
         match outcome(&w, "juno") {

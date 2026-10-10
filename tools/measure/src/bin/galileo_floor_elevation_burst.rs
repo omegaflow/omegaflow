@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap};
 
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 use omegaflow::lsk::days_from_civil;
-use omegaflow::odp::{EARTH, dsn_station};
+use omegaflow::odp::{dsn_host, dsn_station};
 
 const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
@@ -32,9 +32,10 @@ fn tdb_day_lo(day: i64) -> f64 {
 }
 
 fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> Option<f64> {
+    let host = dsn_host()?;
     let (lat_deg, lon_deg, _alt) = dsn_station(station)?;
     let p = body_barycenter_position("galileo_daily", t, eph)?;
-    let e = body_barycenter_position(EARTH, t, eph)?;
+    let e = body_barycenter_position(host, t, eph)?;
     let v = sub(p, e);
     let r = norm(v);
     if r <= 0.0 || !r.is_finite() {
@@ -43,7 +44,8 @@ fn elevation_at(t: f64, station: i64, eph: &HashMap<String, BodyEphemeris>) -> O
     let dec = (v[2] / r).clamp(-1.0, 1.0).asin();
     let ra = v[1].atan2(v[0]);
     let jd = t / DAY_S + 2451545.0;
-    let gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)).rem_euclid(360.0);
+    let props = eph.get(host)?.props.as_ref()?;
+    let gmst = (props.w0_deg + props.dw_dt_deg_per_day * (jd - 2451545.0)).rem_euclid(360.0);
     let lst = (gmst + lon_deg).rem_euclid(360.0).to_radians();
     let ha = lst - ra;
     let phi = lat_deg.to_radians();
@@ -308,9 +310,13 @@ fn main() {
         Some(p) => p,
         None => "/tmp/opencode/galileo_floor_elevation_burst_report.txt".to_string(),
     };
+    let Some(host) = dsn_host() else {
+        println!("galileo_floor_elevation_burst: dsn host declaration absent");
+        return;
+    };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut complete = true;
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", host] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{b}.bin");
         match std::fs::read(&p)
             .ok()

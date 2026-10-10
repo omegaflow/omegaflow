@@ -3117,6 +3117,20 @@ at earth
 ttl 86400
 field nohrsc_snowfall_mm nohrsc_snowfall_mm gaussian-inverse-square acoustic mm 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.amazonaws.com/open_lidar_data_be_dhmv2.bin
+terms Gratis-Open-Data-Licentie-Vlaanderen-1.2 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
+format las
+origin https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
+compiler tools/harvest/src/bin/open_lidar_data_compiler.rs
+sha256 e6560344c5e939458c890e62d5972dbfb273f8aa2cdd6e00bdb6ec2feef09c4e
+at earth
+ttl 604800
+field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
+field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-01_task-jointaction_eeg.bin
 format openneuro_brainvision
 origin https://openneuro.org/crn/graphql
