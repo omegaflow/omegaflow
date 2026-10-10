@@ -3,7 +3,7 @@
   session: River-Folge 170
   class: handover
   date: 2026-10-10
-  sha256: 883ec28c08e1b9c26a6db557fd4487dd0f4f8fe17778c10b254637c44683408a
+  sha256: 87cc438e4a1f258370a051193bedb4fe35d40e73378b61b9fc1b6f34870017ae
   status: live
 -->
 # Handover — River-Folge 170 (2026-10-10)
@@ -29,6 +29,7 @@ Wort | Datum | Quelle
 „warum nur duck … ich möchte dass du alle frontier chats befragst" | 2026-10-07 | Operator (Session, River 127)
 „ja ich meine alle blöcke müssen korrekt sein dafür haben wir doch die wissenschaft" | 2026-10-09 | Operator (Session, River 160) — **P10-Wort**: jeder `field`-Block wird wissenschaftlich geprüft und korrekt etikettiert (Quantity | Mechanism | Medium)
 „ja natürlich sonst wartest du doch bis zum st. nimmerleinstag" + „ja bitte ihr müsst das jetzt echt mal in den griff bekommen" | 2026-10-10 | Operator (Session, River 170) — den abgebrochenen `ci-gate` neu anstoßen; den CI-Burst in den Griff bekommen
+„mach A" | 2026-10-10 | Operator (Session, River 170) — `ci-gate.yml`-`subset` von dem geteilten t420 auf GitHub-hosted `ubuntu-24.04-arm` mit per-SHA-Concurrency umziehen (Operator-Wort für den Linienwechsel in Myceliums Workflow-Pfad)
 
 Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 `state/operator-gespraeche/2026-10-09-river.md`. Fortgeschrieben aus
@@ -66,12 +67,6 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - **Blockade:** Format-/Compiler-Arm für die deckungsgleiche Zeitachse.
 - **Braucht:** den Arm gegen die Zellen prüfen — `tools/measure/src/bin/field_te_query.rs` + `phi/pipeline/descriptors/vlies_matrix.te`; erste Messung: einen Lauf mit dem Arm lesen.
 
-## An mycelium
-
-Origin: river-170 (2026-10-10).
-
-- **CI per-SHA-Verdikt bleibt unter Commit-Burst dauerhaft `pending` — der Fix ist in eurer eigenen Survey schon gemessen, nur nicht gebaut.** Gemessen (`ci_manage jobs` + GitHub-API): die ci-gate-Läufe `38058693008`/`38058676102`/`38058628757`/`38058460066` (`d97a74993`/`256ea61db`/`4a8ec9740`/`f8f332884`, alle ≥ `3c4786a3b`) tragen `build`/`clippy`/`format`/`register` = **success**, `subset` = **cancelled** → Run-Conclusion `cancelled`, der die grünen Compile-Gates maskiert. Ursache: `ci-gate.yml:62-64` `subset` hat `concurrency: ci-gate-subset-${{ github.ref }}` mit `cancel-in-progress: true` (Tip-only) und fährt auf dem **einen** `[self-hosted, Linux]`-t420, der zugleich ~20 `*-cdn`-Workflows trägt; `ci_gate_register` (`REQUIRED_CHECK=subset`) liest den superseded Lauf als `pending` → `state/zustand/ci-gate.φ` seit 2026-10-09 nur 3 Zeilen (nicht fortgeschrieben). **Eure Survey hat den Fix bereits:** `survey-2026-10-10-github-ci-cdn-optimierung.md:59` — Standard-Runner **und `ubuntu-24.04-arm` sind gratis + unbegrenzt für public** (die t420-Wahl war eine Kostenannahme, die die Survey für ein public Repo widerlegt); `:216-222` Item 2 nennt „Runner-Durchsatz" als Ursache, Item 3 den Fix (`nextest archive` + `--partition` auf `ubuntu-24.04-arm`) — beide **unge­baut**. **Braucht:** `subset` auf `ubuntu-24.04-arm` **und** `concurrency.group: ci-gate-subset-${{ github.sha }}` (per-SHA wie der Top-Level-Group) → jeder SHA läuft parallel, keiner killt keinen; dann schreibt `ci_gate_register` ein echtes `green`. Klein, kostenlos, Mycelium-Hand. **Runner-Route offen:** falls der t420 bleibt, den per-SHA-Verdikt aus `build`+`clippy` (Compile, immer grün) ableiten und `subset` separat `pending` führen — dann hat jeder SHA sofort ein Compile-Verdikt.
-
 ## LOCK
 
 - **SuperDARN Record-Download (`phi/blocked_sources.φ:78`)** — Operator-Wort 2026-09-29; kein Maschinen-Akt.
@@ -82,7 +77,9 @@ Origin: river-170 (2026-10-10).
 Pfad-begrenzte Commit-Pfade dieser Session (River 170):
 
 - `src/archivar/tiff.rs` (`apply_predictor` + `undo_predictor2/3` geheilt)
+- `.github/workflows/ci-gate.yml` (`subset` auf `ubuntu-24.04-arm`, per-SHA-Concurrency — Operator-Wort „mach A")
+- `docs/concepts/self-hosted-runner.md` (Routing an den neuen Lauf angeglichen)
 - `docs/handover/handover-2026-10-10-river-folge170.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge169.md` (Move)
 
-## Burn: open 0.0000 · close 0.0911 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
+## Burn: open 0.0000 · close 0.1198 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
