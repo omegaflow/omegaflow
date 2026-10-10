@@ -4,7 +4,7 @@
   date: 2026-10-10
   sha256: f38576a81f8215719e4f3737408330c8f2afa1927731cb51c956f6138892960b
   status: live
-  see-also: docs/handover/handover-2026-10-10-mountain-folge299.md state/stimmen/2026-10-10_mountain_ephemeris-sources-round.md
+  see-also: docs/handover/archiv/handover-2026-10-10-mountain-folge299.md state/stimmen/2026-10-10_mountain_ephemeris-sources-round.md
 -->
 # Survey — Referenz-Landschaft für eigene Ephemeriden
 
