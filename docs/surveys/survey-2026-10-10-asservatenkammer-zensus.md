@@ -4,7 +4,7 @@
   date: 2026-10-10
   sha256: db57d4d0d045102632b77ad37ccb4ae015dcd89166c5767056381720b4bbf1fb
   status: live
-  see-also: docs/handover/handover-2026-10-10-mountain-folge302.md docs/concepts/eigene-ephemeride.md
+  see-also: docs/handover/archiv/handover-2026-10-10-mountain-folge302.md docs/concepts/eigene-ephemeride.md
 -->
 # Survey — Asservatenkammer-Zensus (2026-10-10)
 
