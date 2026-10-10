@@ -2,7 +2,7 @@
   title: Exposom-Quellenmatrix — somatisch + psychosomatisch (Stand 2026-10-04)
   class: survey
   date: 2026-10-04
-  sha256: 056ef3005e3220551507ade548896517758c98d64a23cca8870be885899462b0
+  sha256: 76316f1bff0e312c31c8f841da7583db30802c6d87af3f274a7c3b6e31acb4d5
   status: live
   see-also: docs/concepts/kybernaut-native-methodology.md
 -->
@@ -310,20 +310,51 @@ Ein zweiter, härterer Taucher-Satz hat mehrere frühere Zeilen **widerlegt** (A
 - **Suizidalität** — bleibt belegtes Negativ (gefundene EMA-Studien IRB-gated/Protokoll).
 - **Onkologie** — nur TCGA/SEER (open, aber kein individuelles PRO/Wearable) → Negativ für die Serie.
 
-**Neue offene, kollokierbare Treffer (früher als Negativ geführt):**
+**Neue offene Treffer (früher als Negativ geführt) — Kollokation gemessen 2026-10-10:**
 
-| Klasse | Serie | Quelle/DOI | Dauer | n | Besonderheit |
-|---|---|---|---|---|---|
-| respiratorisch | **TOLIFE** | `10.5281/zenodo.16642439` | 12 Mon. | 74 | **Umweltsensorik im Paket** (T/Feuchte/Luft/Licht/Schall) |
-| respiratorisch | **AAMOS-00** | `10.7488/ds/3775` | 12 Mon. | 22 | **Wetter/Pollen/Luftqualität im Paket** |
-| Autoimmun | **Wearable+PRO Fatigue** | `10.5281/zenodo.8018238` | 1 Mon. | 183 | SLE/Sjögren, Fitbit+PRO |
-| Sucht | **ADARP** | `10.5281/zenodo.6640290` | 14 d | 11 | E4 HR/EDA + EMA, AUD |
-| Psychose | **CrossCheck** | Kaggle `dartweichen/crosscheck` | 1 J | ~17–63 | passiv + EMA, Relapse |
-| Affekt | **Labbaf** | `10.7280/D1WH6T` | ⌀7,8 Mon. | 21 | CC0, SoCal, PPG/IMU+EMA, x-Kollokation `ja` |
+| Klasse | Serie | Quelle/DOI | Dauer | n | Besonderheit | Ort im Datensatz? | x-Kollokation |
+|---|---|---|---|---|---|---|---|
+| respiratorisch | **TOLIFE** | `10.5281/zenodo.16642439` | 12 Mon. | 74 | **Umweltsensorik im Paket** (T/Feuchte/Luft/Licht/Schall) | nur Land (GERMANY/SPAIN) | **`pending`** |
+| respiratorisch | **AAMOS-00** | `10.7488/ds/3775` (→ `hdl:10283/4761`) | 12 Mon. | 22 | **Wetter/Pollen/Luftqualität im Paket** | UK-admin-Region | **`pending`** |
+| Autoimmun | **Wearable+PRO Fatigue** | `10.5281/zenodo.8018238` | 1 Mon. | 183 | SLE/Sjögren, Fitbit+PRO | keiner (nur „United States") | **`pending`** |
+| Sucht | **ADARP** | `10.5281/zenodo.6640290` | 14 d | 11 | E4 HR/EDA + EMA, AUD | keiner (kein GPS-Kanal) | **`pending`** |
+| Psychose | **CrossCheck** | Kaggle `dartweichen/crosscheck` | 1 J | ~17–63 | passiv + EMA, Relapse | keine Koordinate (nur GPS-abgeleitete Features) | **`pending`** |
+| Affekt | **Labbaf** | `10.7280/D1WH6T` | ⌀7,8 Mon. | 21 | CC0, SoCal, PPG/IMU+EMA | keine Koordinate (Venue **request-only**, Region „Southern California") | **`pending`** |
 
-Konsequenz: die kollokierbare **offene** Basis ist nicht Depression/GLOBEM (kein Ort), sondern
-**respiratorisch (TOLIFE/AAMOS — Umweltsensorik im Paket)**, **Autoimmun (8018238)**,
-**Sucht (ADARP)**, **Psychose (CrossCheck)** und **Labbaf (Affekt, x offen)**.
+**Konsequenz (korrigiert, gemessen 2026-10-10):** Kein einziger dieser sechs offenen
+Datensätze trägt eine **im Datensatz gemessene Koordinate** — alle tragen eine absolute
+Zeitachse, aber der Ort ist Land/Region bzw. request-only. Die frühere Zeile „x-Kollokation
+`ja`" (Labbaf) war **nicht gedeckt** und ist ein Riss, kein Treffer. Die kollokierbare offene
+Basis ist damit **keine** der genannten Zeilen in vorliegender Form: für jede müsste ein
+Repräsentativpunkt **extern** gesetzt werden (Annahme, keine Messung) — erst dann ist eine
+Ort-Kollokation gegen OpenAQ/Open-Meteo/NASA POWER belegbar.
+
+**Nachtrag je Zeile — gemessen 2026-10-10 (Sensory; `archive_search`/`grind-flash`):**
+- **TOLIFE** (`zenodo.org/api/records/16642439` 200/10 621 B; `README.md` 200/22 428 B;
+  `index.zip` 200/963 225 B, 758 Einträge, 5 450 942 B entpackt): Zeitachse **absolut**
+  (`Timestamp` ISO8601 UTC, 12-h-Aggregat 2/Tag, Mai 2024–Mai 2025), Layout
+  `index/{GERMANY,SPAIN}/<KIT-ID>/{EI,SII,SQI,MI,BRI,PRVI,PEI,clinical_indices,exacerbations}.csv`,
+  Variablen Temperatur/Feuchte/AQI/Lux (Schall dimensionlos in `SII`); Ort = **nur Land**.
+- **AAMOS-00** (`doi.org/10.7488/ds/3775` 200 → final `handle/10283/4761`; der Handle
+  `10283/3775` ist ein **anderer** Record — Nanobubbles, Riss): Zeitachse **relativ**
+  (Integer-Tagesindex 1…182, Studien-Anker 2021-06-24–2022-06-02), 22 UK-Teilnehmer, 2 054
+  Patient-Tage; täglich Temperatur/Druck/Feuchte/Wind/AQI/CO/NO/NO₂/O₃/SO₂/PM/NH₃ + Pollen;
+  Ort = **UK-admin-Region** (`patient_info.csv`).
+- **Wearable+PRO Fatigue** (`zenodo.org/api/records/8018238` 200/8 596 B; CC-BY-4.0):
+  `day_activity_features.csv` 6 706 171 B, `daily_surveys_…` 1 333 345 B; Fitbit-Tagesfeatures
+  je `user_id`+`date` (lokal + UTC-Offset), absolute Zeit; **keine** Orts-Spalte (nur „United States").
+- **ADARP** (`zenodo.org/api/records/6640290` 200/8 644 B; CC-BY-4.0): `Sensor Data.zip`
+  1 456 305 106 B (E4 ACC/BVP/EDA/HR/IBI/TEMP, Session `YYMMDD-HHMMSS`, Epoch), Phone-Survey
+  `.xlsm`; absolute Zeit; **kein** GPS-/Location-Kanal.
+- **CrossCheck** (Kaggle-Seite 200/11 696 B; Lizenz „Unknown"; Daily 14 996 021 B, Hourly
+  122 728 019 B): `day` absolut (YYYYMMDD / ISO); Ort nur **abgeleitete** GPS-Features
+  (`loc_*`, `distance_sum`), **keine** Koordinate.
+- **Labbaf** (`doi.org/10.7280/D1WH6T` 200/278 108 B; Dryad; File-Stream 403 — request/API):
+  Epoch-ms absolut; Ort nur `venue_name` — Doku „only available upon request"; **keine**
+  Koordinate/Station, feinste Angabe Region „Southern California".
+- **Braucht (für `ja`):** einen extern gedeckten Repräsentativpunkt je Datensatz — sonst bleibt
+  die Kollokation eine Annahme, keine Messung. Registrierung (`phi/sources.φ`) erst mit
+  gemessenem Punkt (Mountain-Feder).
 
 ---
 
