@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Reduktionskette Schritt 2b (ITRF→CIRS), TStreamerInfo-Header, Register-Messungen (VMF3-GRID-URL, PEP-Rat)
   class: handover
   date: 2026-10-10
-  sha256: 79edebafbe9ce3b2a4e4c8d16bef059334b5491420a03e3d7e6b55ff04ac3a62
+  sha256: 21343a16792d9ba4baac9919c77e35efa0bfd0a062f76bbedefc256764eade9a
   status: live
 -->
 # Handover — Mountain-Folge 302 (2026-10-10)
@@ -58,6 +58,20 @@ flash only, kein pro/max.
 - **Lage:** (gemessen 2026-10-10) Der Zensus `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` nennt **12 handelbare Doks** aus der Asservatenkammer (82/32/18/15/11/10/8/6/5/3/2 offene Marker; `register_lookup --orphan-docs` = 22 trägerlose Marker-Doks). Neue Gate-Regel `commit_check` **own-handover** (`tools/gate/src/bin/commit_check.rs`, `c0441466d`): ein neu hinzugefügtes `docs/*`-Dok muß im selben Commit in der **eigenen** Übergabe genannt sein. Fast alle Alt-„Träger" hängen an einer breiten Zitat-Liste (`handover-2026-10-10-sensory-folge250.md`), kein Bearbeiter.
 - **Blockade:** keines der 12 Doks hat einen Träger-Punkt in einer Live-Übergabe.
 - **Braucht:** je Kandidat ein Träger-Punkt mit erstem begrenztem Schritt. **Mountain (eigene, 9):** `survey-2026-09-03-orphan-verdicts` (156 Orphan-Releases → Disposition, Schritt 3) · `survey-2026-10-08-open-sources-delta` (Gegen-Audit) · `survey-2026-09-14-kapitulationen-pendings-inventur` (Register-Inventur) · `survey-2026-10-09-redistribution-alternativen` (41 `redistribution`-declined → freie Alternative) · `survey-2026-10-09-domaenen` · `survey-2026-09-16-fremde-parser-sammlungen` · `survey-2026-10-08-fmhy-research-landscape` · `survey-2026-10-07-fmhy-forschungsschicht` · `survey-2026-09-17-omegaflow-legacy-konzepte`. **Fremd (verteilt via `## An`):** `exposom-matrix` → sensory · `stoerungs-experiment-fehlende-faeden` → river · `research-api-mcp` → mycelium.
+
+### Vantage-Rest-Bias — vier ältere Orte (Audit river-170)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Bau-Schritt je Ort
+- **Lage:** (gemessen 2026-10-10, Audit `explore` + Rat) Der neue Vantage-Vektor `SUN_ICRS_KM=[0,0,0]` ist **geheilt** (mit dem Rename `observer` → `receiver`): die gravitierende Masse ist jetzt expliziter Parameter (Position + GM), `shapiro_leg_s`; `cargo check` 0/0. Offen bleiben vier ältere Orte: (c) `src/weberin.rs:264-268` `frame_origin_name()` hardcoded NAIF 10 → deklarierter Ursprung; (d) `src/weberin.rs:253-262` `woven_major_bodies()` `[1,2,4,5,6,7,8,301,399]` → registrierte Target-Liste; (b) `src/archivar/odp.rs:9` `const EARTH = include_str!("kernels/dsn_host.txt")` → Host als Parameter; (g) `src/archivar/port.rs:3761` `frame.starts_with("at sun")` → deklariertes Frame-Feld.
+- **Blockade:** keiner dieser vier Orte hat einen Bau-Schritt begonnen.
+- **Braucht:** je Ort ein begrenzter Dispatch + `cargo check`; die Grenzlinie (alle fünf Stimmen): **der Code wählt keinen Körper** — jeder Name/Position/Ursprung ist per-record deklariert oder registriert, sonst `pending`, nie ein Default.
+
+### FMHY-Quellen-Kandidaten-Pool (future-222) — 402 neue Kandidaten unverdiktet
+- **Status:** eigen (Quellen-Verdikt) | **Bindung:** mycelium (Ernte nach Verdikt)
+- **Trigger:** je Eintrag ein Verdikt nach `docs/SOURCE_PORT.md`
+- **Lage:** (gemessen 2026-10-10, future-222) 405 Ressourcen (402 NEW) aus `fmhy.net/reading|educational|ai` + `awesome-ai-web-search`; Liste `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.). Die Sci-Hub-/Bypass-/Mirror-Klasse ist eine Verdikt-Frage (UrhG/Umgehung), keine Auslassung; der Operator-Hinweis: die Inline-Top-N-Ausgabe hat die Breite unterschlagen.
+- **Blockade:** kein Verdikt gefahren.
+- **Braucht:** die Liste nach `docs/SOURCE_PORT.md` verdikten (Zulassung/`blocked`/`declined`) — begonnen mit der nicht-umgehenden Research-/Daten-Klasse; danach Mycelium.
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
@@ -143,12 +157,16 @@ Origin: mountain-302 (2026-10-10).
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch", 2026-10-07)
-trägt Commit und Push. **Reduktionskette Schritt 2b gebaut:** `src/mathematikerin/receiver.rs`
-trägt `itrf_to_cirs` (Polar Motion + IAU-2000-ERA) + `earth_rotation_angle_rad` + 4 Tests,
-`cargo check` 0/0; Schritt 2c (Q(t) CIRS→GCRS) benannt. **particle-cern Teil A:** `root.rs`
-`parse_streamer_info_header` + Fixture/Negativtests, Layout an ROOT-Quelle gemessen. **Register-Messungen:**
-VMF3-GRID-Origin-URL (→ `## An mycelium`), PEP-Register-Ort per Rat entschieden (Token = Operator).
-**Geteilter Baum:** fremde uncommittete Hunks in `tools/utils/src/bin/archive_search/*` und
-`phi/sources.φ` nicht angefasst. Eigene Pfade: `src/mathematikerin/receiver.rs` · `src/archivar/root.rs` ·
+trägt Commit und Push. **Dieses Atom (Mountain 302):** Reduktionskette Schritt 2b (`itrf_to_cirs`
++ `earth_rotation_angle_rad`, `cargo check` 0/0; Schritt 2c Q(t) benannt) · particle-cern Teil A
+(`root.rs` `parse_streamer_info_header`) · **Rename `observer` → `receiver`** + **Shapiro als
+expliziter Parameter** (Vantage-Vektor `SUN_ICRS_KM=[0,0,0]` entfernt; Rat river-170, `55e06c189`) ·
+Gate `commit_check` **own-handover** (`c0441466d`) · Asservatenkammer-Zensus + Verteilung der 12 Doks.
+**Register-Rot geheilt:** `path_reference_scan` liest `see-also` nur noch als Zeilenanfangs-Direktive
+(`6905e8156`, lokal 0 MISS). **Geteilter Baum:** fremde uncommittete Hunks (`tools/utils/src/bin/archive_search/*`,
+`phi/sources.φ`, `AGENTS.md`, `opencode.json`, `docs/concepts/tools-map.md`) nicht angefasst.
+Eigene Pfade: `src/mathematikerin/receiver.rs` · `src/mathematikerin/mod.rs` · `src/archivar/root.rs` ·
+`tools/gate/src/bin/commit_check.rs` · `tools/register/src/bin/path_reference_scan.rs` ·
+`docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` ·
 `docs/handover/handover-2026-10-10-mountain-folge302.md` ·
 `docs/handover/archiv/handover-2026-10-10-mountain-folge301.md` (Move).
