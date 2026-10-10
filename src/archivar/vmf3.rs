@@ -148,16 +148,15 @@ pub fn parse_grid_header(bytes: &[u8]) -> Option<GridHeader> {
                 let s = toks[5].parse::<f64>().ok();
                 if let (Some(y), Some(mo), Some(d), Some(h), Some(mi), Some(s)) =
                     (y, mo, d, h, mi, s)
+                    && s.is_finite()
                 {
-                    if s.is_finite() {
-                        epoch = Some((y, mo, d, h, mi, s));
-                    }
+                    epoch = Some((y, mo, d, h, mi, s));
                 }
             }
-        } else if let Some(v) = rest.strip_prefix("Scale_factor:") {
-            if let Some(x) = v.split_whitespace().next().and_then(req_f64) {
-                scale_factor = x;
-            }
+        } else if let Some(v) = rest.strip_prefix("Scale_factor:")
+            && let Some(x) = v.split_whitespace().next().and_then(req_f64)
+        {
+            scale_factor = x;
         }
     }
     let (epoch_year, epoch_month, epoch_day, epoch_hour, epoch_minute, epoch_second) = epoch?;

@@ -10,6 +10,7 @@ pub const REFLECTOR_APOLLO15: u32 = 2;
 pub const REFLECTOR_LUNA17: u32 = 3;
 pub const REFLECTOR_LUNA21: u32 = 4;
 pub const REFLECTOR_UNKNOWN: u32 = u32::MAX;
+pub const STATION_UNKNOWN: u32 = u32::MAX;
 
 pub const FLAG_TIME_ORDER: u32 = 1 << 0;
 pub const FLAG_TIME_RANGE: u32 = 1 << 1;
@@ -125,7 +126,7 @@ fn meas_u32(tok: &str) -> Option<u32> {
     tok.parse().ok()
 }
 
-fn mini_col<'a>(line: &'a [u8], start1: usize, len: usize) -> Option<&'a [u8]> {
+fn mini_col(line: &[u8], start1: usize, len: usize) -> Option<&[u8]> {
     let start = start1.checked_sub(1)?;
     line.get(start..start.checked_add(len)?)
 }
@@ -275,19 +276,19 @@ pub fn parse_crd(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
                 if !station_known(station) {
                     flags |= FLAG_UNKNOWN_STATION;
                 }
-                if let Some(t) = time_of_flight {
-                    if !(TOF_LO_S..=TOF_HI_S).contains(&t) {
-                        flags |= FLAG_TOF_RANGE;
-                    }
+                if let Some(t) = time_of_flight
+                    && !(TOF_LO_S..=TOF_HI_S).contains(&t)
+                {
+                    flags |= FLAG_TOF_RANGE;
                 }
                 if let Some(e) = epoch_utc {
                     if !(EPOCH_LO_UTC..EPOCH_HI_UTC).contains(&e) {
                         flags |= FLAG_TIME_RANGE;
                     }
-                    if let Some(prev) = last_epoch {
-                        if e < prev {
-                            flags |= FLAG_TIME_ORDER;
-                        }
+                    if let Some(prev) = last_epoch
+                        && e < prev
+                    {
+                        flags |= FLAG_TIME_ORDER;
                     }
                     last_epoch = Some(match last_epoch {
                         Some(p) if p > e => p,
@@ -346,7 +347,7 @@ pub fn parse_mini(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
         };
         let station = match mini_col(line, 39, 5).and_then(mini_u32) {
             Some(s) => s,
-            None => 0,
+            None => STATION_UNKNOWN,
         };
         let time_of_flight = mini_col(line, 24, 14).and_then(mini_f64).map(|v| v * 1e-13);
 
@@ -394,19 +395,19 @@ pub fn parse_mini(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
         if !station_known_mini(station) {
             flags |= FLAG_UNKNOWN_STATION;
         }
-        if let Some(t) = time_of_flight {
-            if !(TOF_LO_S..=TOF_HI_S).contains(&t) {
-                flags |= FLAG_TOF_RANGE;
-            }
+        if let Some(t) = time_of_flight
+            && !(TOF_LO_S..=TOF_HI_S).contains(&t)
+        {
+            flags |= FLAG_TOF_RANGE;
         }
         if let Some(e) = epoch_utc {
             if !(EPOCH_LO_UTC..=EPOCH_HI_UTC).contains(&e) {
                 flags |= FLAG_TIME_RANGE;
             }
-            if let Some(prev) = last_epoch {
-                if e < prev {
-                    flags |= FLAG_TIME_ORDER;
-                }
+            if let Some(prev) = last_epoch
+                && e < prev
+            {
+                flags |= FLAG_TIME_ORDER;
             }
             last_epoch = Some(match last_epoch {
                 Some(p) if p > e => p,
