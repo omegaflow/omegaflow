@@ -42,6 +42,15 @@ jobs:
             echo "present=false" >> "$GITHUB_OUTPUT"
             echo "asset carisma_mag.bin missing — compiling and manifesting"
           fi
+      - name: Provide the Entrust intermediate for the incomplete CSA TLS chain
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          curl -fsSL "http://crt.sectigo.com/EntrustOVTLSIssuingRSACA2.crt" -o /tmp/entrust.crt
+          openssl x509 -in /tmp/entrust.crt -outform PEM -out /tmp/entrust.pem
+          cat /etc/ssl/certs/ca-certificates.crt /tmp/entrust.pem > /tmp/ca-bundle.pem
+          echo "OMEGAFLOW_CA_BUNDLE=/tmp/ca-bundle.pem" >> "$GITHUB_ENV"
+          echo "the CSA mirror sends only the leaf; the Entrust OV TLS Issuing RSA CA 2 intermediate is fetched from its AIA (crt.sectigo.com) into the runner trust bundle"
       - name: Ensure the donnees-data.asc-csa.gc.ca release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
