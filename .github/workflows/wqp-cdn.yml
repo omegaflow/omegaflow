@@ -3,6 +3,9 @@ name: wqp-cdn
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   wqp:
     uses: ./.github/workflows/cdn-manifest.yml

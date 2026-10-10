@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest um `refresh` erweitert; 7 CDN-Workflows auf dünne Aufrufer migriert; `te_ground_truth` in CI (te-bias-n); cmb-cdn-Timeout 240→360.
   class: handover
   date: 2026-10-10
-  sha256: 01454c85df7ee893e42cb9445746867eb11227c36781ee8d54e2aba6cd0b19ae
+  sha256: e316d9fcca70a1d663e628993677cf4548f731c105b86f067157bc5aee461144
   status: live
 -->
 # Handover — Mycelium-Folge 294 (2026-10-10)
@@ -41,7 +41,11 @@ wird nach dem Push dispatcht; die iEEG-Antwort ist im eigenen `## An mountain` a
   `lro-trk` · `dsn` (`refresh:true`, Schedule/ttl erhalten). Matching = exakte Form
   (`checkout@v7` + `setup-rust-toolchain@v1` + **ein** `cargo run … --ci-mode`, keine
   Zusatzsteps/`inputs:`/`curl`/`mkdir`/`sha256sum`); Schedule-Caller tragen ihren `cron`
-  weiter, ttl-/Live-Quellen `refresh:true`.
+  weiter, ttl-/Live-Quellen `refresh:true`. **Reusable-Caller brauchen `permissions:
+  contents: write`** — der Aufrufer hebt die Decke; ohne sie `startup_failure`
+  („requesting `contents: write`, but is only allowed `contents: read`"; gemessen
+  2026-10-10 an 8 Läufen). Auch `planetary-odf-cdn` (mycelium-293) trug die Lücke und
+  ist im selben Atom nachgezogen — der erste Aufrufer war nie gelaufen.
 - **Blockade:** keine.
 - **Braucht:** die restlichen matchenden Ein-Job-`*-cdn`-Dateien in begrenzten Batches
   migrieren. Kandidatenreste (164 `--ci-mode`-Dateien, davon 38 ohne Zusatzschritt,
