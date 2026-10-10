@@ -1,8 +1,8 @@
 <!--
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
-  date: 2026-10-09
-  sha256: 1f8f97af50cd53d33904007ed6891397a345c89fffdb6cf5678a4500aa835466
+  date: 2026-10-10
+  sha256: 0a195f894e99efb225302510eb252d973afeb4c31722078c04910d11a67a9339
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -192,15 +192,27 @@ Ausbreitungsweg. Die Idee trägt, die Materialisierung ist falsch.
   Es gruppiert `force × kernel`, zählt, nennt je Gruppe 2–3 Beispielzeilen und meldet
   Geometrie-/Quellparameter (Tiefe, Distanz, Höhe, Magnitude) sowie die `em`/`electric`-Überlappung —
   die **Messung**, woher die 6088 `em` stammen. Kein Verdikt, keine Schreiboperation.
-- **P10.2a — Normalize-Schema (Rat-Entwurf 2026-10-09; verbindlich per Operator-Wort 2026-10-09, additiv):**
+- **P10.2a — Normalize-Schema (Rat-Entwurf 2026-10-09; verbindlich per Operator-Wort 2026-10-09, additiv).**
+  **Token-Semantik nachgeführt 2026-10-10 (Rat 5 Stimmen + UI/Open-Weight-Roster, `state/stimmen/2026-10-10-river-p10.2a-token-semantik.md`):**
+  der Entwurf war grammatisch unter-spezifiziert — `<kernel>` war undefiniert, obwohl der Baum zwei
+  getrennte Achsen trägt (`kernel_id_of` = Numerik, `TransportOp` = Transport). Beide Kanäle
+  konvergieren: **`<kernel>` = Numerik-Achse** (`kernel_id_of`: inverse-square/erf/point/…);
+  der **Operator** (TransportOp) ist ein eigener Token `<operator>` an der Position vor `<pde_type>`
+  (Vorgänger-Parser `parse.rs:1236`, Kanalspec `channel.rs:605`); `pde_type` trägt ihn nicht
+  (Maxwell ≠ Poisson, beide elliptisch). Kanonische Zeile:
 ```
-field <selector> <quantity> <kernel> <pde_type> <medium> [<interaction>] <role> <unit> <tau> [abs] [adv]
+field <selector> <quantity> <operator> <pde_type> <medium> [<interaction>] <role> <unit> <tau> [abs] [adv] <kernel>
 quantity <id> <quantity> <role> <medium> <unit> <tau>     # force_type=255, tritt nie in Σω ein
 ```
   - `force` → **n:m-Tag/FK** auf eine Lookup-Tabelle `mechanisms`; nie mehr die Reichweiten-Achse.
   - `pde_type` ∈ {elliptic, parabolic, hyperbolic, advective, mixed} — trägt den Charakter.
-  - `medium` ∈ {vacuum, atmosphere, ocean, solid-earth, ionosphere, …}; `interaction` optional ∈ {gravity, em};
-    `role` ∈ {primary, derived, geometry, source-parameter}.
+  - `<operator>` (TransportOp) ∈ {flux-fick, flux-fourier, flux-ohm, newton-viscous, advective, wave, poisson, maxwell} — trägt den Mechanismus; `is_admissible` schlüsselt auf `operator × medium`.
+  - `<kernel>` (Numerik, `kernel_id_of`) ∈ {inverse-square, erf, point, …} — die Manifestations-Gestalt der Kopplung.
+  - `medium`: **zwei Ebenen** — die Admissibility-Klasse ∈ {vacuum, fluid, elastic-solid} (`channel.rs:69`) gated den konstitutiven Tensor; der benannte Wert ∈ {atmosphere, ocean, solid-earth, ionosphere, …} ist Parameter (`media::medium_params_of`). Nicht verschmelzen.
+  - `interaction` optional ∈ {gravity, em} — **abgeleitet** über dem `mechanisms`-FK, nie Ersatz (Projektion 2 Werte gegen 9 Labels).
+  - `role` ∈ {primary, derived, geometry, source-parameter}; `quantity` trägt das Was/Kind.
+  - **Getragener Riss:** `TransportOp` mischt konstitutive Gesetze (Flux(Fick/Fourier/Ohm/NewtonViscous)) und PDE-Klassen (Wave/Poisson/Maxwell) in einem Enum (`channel.rs:60`); Auflösung wäre ein Schnitt `ConstitutiveOp` × `PdeOp` (`pending`, kein Bau).
+  - **Bau folgt:** der Parser-Arm für `<operator>` vor `<pde_type>` und `<kernel>` am Ende ist die Kontrakt-Änderung → Operator-Wort, dann bounded Dispatches.
   - **Abbildung der 9 Labels:** `em` → elliptic (quasi-statisch, In-situ) | hyperbolic (strahlend,
     **regime-abhängig**); `gravity` → elliptic (Poisson-Constraint); `acoustic`/`seismic-body`/
     `seismic-surface` → hyperbolic; `thermal` → parabolic; `diffusion` → parabolic; `advective` →
