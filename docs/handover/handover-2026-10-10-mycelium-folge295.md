@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 61a8c9d0efcf6579224dccbd43041ef876763c0cb5a3e58567dbb7cf8213f36a
+  sha256: 73537ce381bc40b1df1601933a21d9dff0164d32b7a136a2970fe3f297bc195f
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -182,6 +182,13 @@ liegen in der Browser-Gruppe `mycelium-auth` (nicht fokussiert):
   kein Formularfeld — ein Klick) und Beam `platform.beam.cloud` („Work email"
   vorausgefüllt `code@omegaflow.space`). Konto-Anlage = Operator-Hand; danach die benannte
   Probe (Modal **oder** Beam, Capability-Gate ≥4/4 + Tempo) — kein Roster ohne Messung.
+  **Modal-Trust (gemessen 2026-10-10):** SOC 2 Type II (`modal.com/blog/soc2type2`),
+  Trust Center `trust.modal.com`, HIPAA + DPA (`modal.com/legal/dpa`), TLS 1.3 in transit
+  + at rest, Retention dokumentiert, Inference zero-retention. `omegaflow` ist ein GitHub
+  **User** (id `295896184`), kein Org → „Continue with GitHub" registriert unter dieser
+  Identität (Scopes am Consent-Screen, nicht gemessen). No-leak-Grenze bleibt: `state/`
+  nie an Modal; public-Repo-Code ist der sanktionierte Fall. Nutzung braucht danach
+  `modal setup` → Token → `.secrets.local` (Operator-Hand).
 
 ## LOCK
 
