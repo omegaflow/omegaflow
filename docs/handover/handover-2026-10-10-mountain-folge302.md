@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Reduktionskette Schritt 2b (ITRF→CIRS), TStreamerInfo-Header, Register-Messungen (VMF3-GRID-URL, PEP-Rat)
   class: handover
   date: 2026-10-10
-  sha256: a1e8e0572d23bc6b3331139c430cd587ba79d196902c56740a01766648c9a657
+  sha256: 84c3ec817a1cd26d8bd8ba8adeb95276d4c4b9044683881bf4a8a82dcedf41a2
   status: live
 -->
 # Handover — Mountain-Folge 302 (2026-10-10)
@@ -45,12 +45,12 @@ flash only, kein pro/max.
 - **Blockade:** keine (Mountain-Seite).
 - **Braucht:** Mycelium — `llr-cdn.yml`; River — `| "llr"` in `main_flow.rs`.
 
-### PEP — Register-Ort am Baum gemessen: das bestehende `ephemeris_*`-Muster trägt PEP (kein Canon-Akt)
+### PEP + Tudat — die zwei offenen Ephemeriden-Programme der eigenen-Ephemeride-Vision
 - **Status:** eigen (Register + Bau) | **Bindung:** eigen
-- **Trigger:** nächster begrenzter Schritt (PEP-Ausgabe-/Port-Artefakt messen)
-- **Lage:** (gemessen 2026-10-10 am Baum) Die übrigen Ephemeriden-Werkzeuge sind längst als **normale Datenquellen** registriert — kein Code-Zeuge, keine fünfte Klasse: `ephemeris_epm_<body>.bin` mit `compiler tools/harvest/src/bin/epm_compiler.rs` + `origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp` (`phi/sources.φ:2057-2129`); `ephemeris_petrel19_<body>.bin` mit `terms CC-BY-4.0 https://github.com/TIAN-we/petrel19` (`:2345-2366`); INPOP19a mit `compiler tools/harvest/src/bin/inpop_compiler.rs` + `origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/` (`:19793`); JPL DE440/441/442 + Horizons über `origin procedure:` / `horizons_compiler`. Das fremde Programm lebt als `origin` (Herkunft) und `compiler` (unser Rust-Tool) **auf einer Datenzeile**. **PEP ist das einzige noch nicht registrierte Werkzeug** (`sgrep -i pep phi/sources.φ` = 0). **Riss, benannt:** der Rat (Option a, neue Registerklasse) wird vom Baum überstimmt — PEP paßt exakt in dasselbe Muster; der Baum ist die Messung.
-- **Blockade:** kein PEP-Ausgabe-Artefakt gemessen; PEP gibt womöglich kein fertiges Ephemeriden-File heraus.
-- **Braucht:** Schritt 1 (begrenzt) — messen, ob `github.com/jbattat/pep_core` ein Ephemeriden-Ausgabefile liefert, oder ob PEP offline (nie im Shipped Binary) erzeugt werden muß; dann den PEP-Compiler (Rust-Port) bauen, der `ephemeris_pep_<body>.bin` schreibt, mit `origin https://github.com/jbattat/pep_core` + `terms CC-BY-NC-SA` (Paper `2021AJ....162...78C`) — wie PETREL19/EPM. **Token `reference` = der `origin`-Herkunftsmarker** (Operator-Wort 2026-10-10) — keine neue Klasse, kein Canon-Akt.
+- **Trigger:** nächster begrenzter Schritt der Kette (Q(t) `cirs_to_gcrs`), dann Schritt 1 der Vision (Pioneer-10-Residuum gegen DE440)
+- **Lage:** (gemessen 2026-10-10) Das Konzept `docs/concepts/eigene-ephemeride.md` trägt die Vision: eine **eigene Ephemeride aus allen Zeugen** (NASA+ESA+sowjetisch+japanisch+Pioneer-thermisch); Wert = `witness_set`/Unabhängigkeit, nicht Vollständigkeit; O−C gegen ein Haus ist `fit-residuum`, nie `blindtest`. Die vier **Häuser** (DE440 / INPOP19a / EPM2021 / PETREL19) sind dort **Zeugen** und längst als normale `ephemeris_*`-Quellen registriert — kein Code-Zeuge, keine fünfte Klasse: `ephemeris_epm_*` (`compiler tools/harvest/src/bin/epm_compiler.rs`, `phi/sources.φ:2057-2129`), `ephemeris_petrel19_*` (`:2345-2366`), INPOP19a (`compiler tools/harvest/src/bin/inpop_compiler.rs`, `:19793`). **Zwei offene Ephemeriden-*Programme*** (kein Haus): **PEP** (Fortran, CC BY-NC-SA, `github.com/jbattat/pep_core`) und **Tudat** (TU Delft, open-source, arXiv:2510.23179 — DSN/ESTRACK-Doppler+Range, PRIDE-VLBI, MPC/NSDC-Astrometrie, Prefit/Postfit-Residuen; Postfit-Doppler 1-5 mHz MRO/GRAIL). PEP ist das einzige noch nicht registrierte Haus; **Tudat ist jetzt gemessen, aber weder geprüft noch gebaut**. **Riss, benannt:** der Rat (Option a, neue Klasse) wird vom Baum überstimmt — ein Programm lebt als `origin`/`compiler` **auf einer Datenzeile** (PETREL19-Präzedenz); unser eigenes Werk wird nach seinem Erzeuger benannt, nie nach einem Haus.
+- **Blockade:** keins der beiden Programme ist als Rust-Kette gebaut; Voraussetzung ist die Reduktionskette (Vision-Schritt 0).
+- **Braucht:** Schritt 0 abschließen (Q(t) `cirs_to_gcrs` — der nächste begrenzte Bau-Schritt), dann Schritt 1 (Pioneer-10-ODF durch die Kette, Residuum gegen DE440, kein Fit). PEP/Tudat nur als **Lizenz-/Verfahrens-Referenz** (nie im Shipped Binary); `reference` als `origin`-Herkunftsmarker genügt (keine neue Klasse, kein Canon-Akt).
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
@@ -101,6 +101,8 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
 „mach das ab jetzt automatisch — committe und pushe selbst" | 2026-10-07 | Operator (Session, Mountain 264)
 „ich glaube reference ist passender oder aber warum haben wir mit allen anderen ephemeriden compilern kein problem aber mit dem PEP nachbau schon?" | 2026-10-10 | Operator (Session, Mountain 302)
+„aber müssen wir es pep nennen wenn wir unsere eigenen ephemeriden nennen und dann gab es ja noch das zweite ephemeriden tool haben wir das alles?" | 2026-10-10 | Operator (Session, Mountain 302)
+„nein das meine ich nicht ach mensch geh doch mal in das ephemeriden vision dok" | 2026-10-10 | Operator (Session, Mountain 302)
 
 ## An mycelium
 
