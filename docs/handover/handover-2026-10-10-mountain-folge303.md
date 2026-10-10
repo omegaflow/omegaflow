@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 5b0a8ced530e0b8635b37a5259537954c387da370b7b2c7645a54bad2cca1daa
+  sha256: eed3b2eab8ea5fbdfc53151526adecb2419509282ba88c32ffe3e5a45a1cab5f
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -120,6 +120,7 @@ Wort | Datum | Quelle
 „aber müssen wir es pep nennen wenn wir unsere eigenen ephemeriden nennen und dann gab es ja noch das zweite ephemeriden tool haben wir das alles?" | 2026-10-10 | Operator (Session, Mountain 302)
 „nein das meine ich nicht ach mensch geh doch mal in das ephemeriden vision dok" | 2026-10-10 | Operator (Session, Mountain 302)
 „bypass-mirror 23 (UrhG-§95a- was bedeutet das die möchte ich bitte raus haben keine fragwürdigen links" | 2026-10-10 | Operator (Session, Mountain 303)
+„sehr gut denn die seite birgt grosse schätze aber halt auch problematische" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
