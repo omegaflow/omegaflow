@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 9be6efe9f939e24bd231278a77ebe84062eaa29c80c3b2b9970f5c144e03b8ee
+  sha256: c54a45fd5ade4619e3063a889e630f9517263e29578299d5a18cbe7edc2859b1
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -117,8 +117,10 @@ bleibt mountain.
 - **Blockade:** je eigener begrenzter Dispatch (ein Schritt je Atom).
 - **Braucht:** die verbleibenden Maßnahmen flash-first: (4) R2-CDN (`operator-gebunden`) ·
   (5) OIDC+R2-Worker-Verifier + `external-state`-Rate-Zeile · (6) Free-GPU-Probe —
-  `pending`, hinten. **Offen zu Maßnahme 3:** der ci-check-Shard-Lauf ist zu messen
-  (grün 4×?) — `nextest`-Verhalten (doctest-Ausschluss, `--partition`) am Log bestätigen.
+  **descoped-Vorschlag** (gemessen: Modal-Karte abgelehnt · Beam $20 Prepay · jeder Anbieter
+  Python vs. Rust-only-Regel) — Operator-Wort ausstehend. **Offen zu Maßnahme 3:** der
+  ci-check-Shard-Lauf ist zu messen (grün 4×?) — `nextest`-Verhalten (doctest-Ausschluss,
+  `--partition`) am Log bestätigen.
 
 ### Speicher — 1,76 TB Bulk vs. R2-10-GB
 - **Status:** eigen (Dokumentation/Architektur) | **Bindung:** eigen
@@ -202,7 +204,12 @@ liegen in der Browser-Gruppe `mycelium-auth` (nicht fokussiert):
   Haus-Regel „kein Python im oder für das Repo". Maßnahme 6 ist damit nicht nur
   `operator-gebunden` (Karte), sondern ein **Riss gegen die Sprach-Doktrin** — nur ein
   Operator-Lauf eines externen Notebooks (nicht „für das Repo") oder ein non-Python-Pfad
-  löst ihn. R2-Kante bleibt der eine Button „Add R2 subscription to my account".
+  löst ihn. **(3) Zahlungs-Schranke (gemessen 2026-10-10, Operator):** Modal akzeptiert die
+  Karte des Operators **nicht**; Beam verlangt **$20 Vorauszahlung**. Der Gratis-Pfad ist für
+  den Operator damit **nicht erreichbar**. Empfehlung an den Operator: Maßnahme 6 **descoped**
+  (kein Cloud-GPU) — die GPU-Pfade brauchen keine Hardware-GPU (lavapipe, surface-frei, Skip
+  statt Fail), und Beachten wären ohnehin Python. R2-Kante bleibt der eine Button „Add R2
+  subscription to my account".
 
 ## LOCK
 
