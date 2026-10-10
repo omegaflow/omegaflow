@@ -4,6 +4,8 @@ use omegaflow::json::{JsonVal, parse_json};
 
 const Z_CMB: f64 = 1100.0;
 
+const SPT_TRANSFER_BOUND_S: u64 = 6 * 3600;
+
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
@@ -195,7 +197,11 @@ fn select_fits_member<'a>(
 }
 
 fn tarball_fits_member(url: &str, want: Option<&str>) -> Option<Vec<u8>> {
-    let bytes = match omegaflow::archivar::fetch::fetch_raw_bytes(url) {
+    let bytes = match omegaflow::archivar::fetch::fetch_raw_bytes_with(
+        url,
+        omegaflow::archivar::fetch::RetryPolicy::Transient,
+        SPT_TRANSFER_BOUND_S,
+    ) {
         Some(b) => b,
         None => {
             eprintln!("fetch {url} returned void: the tarball stays unread");

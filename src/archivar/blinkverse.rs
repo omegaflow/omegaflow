@@ -24,7 +24,7 @@ pub fn column_index(names: &[String], wanted: &[&str]) -> Option<usize> {
 
 pub fn write_bin(table: &Table) -> Vec<u8> {
     let n_cols = table.names.len();
-    let words = (n_cols + 63) / 64;
+    let words = n_cols.div_ceil(64);
     let mut out = Vec::new();
     out.extend_from_slice(&MAGIC);
     out.extend_from_slice(&VERSION.to_le_bytes());
@@ -45,10 +45,8 @@ pub fn write_bin(table: &Table) -> Vec<u8> {
         for w in &mask {
             out.extend_from_slice(&w.to_le_bytes());
         }
-        for cell in row {
-            if let Some(v) = cell {
-                out.extend_from_slice(&v.to_le_bytes());
-            }
+        for v in row.iter().flatten() {
+            out.extend_from_slice(&v.to_le_bytes());
         }
     }
     out
@@ -76,7 +74,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Table> {
         names.push(String::from_utf8(raw.to_vec()).ok()?);
         pos += len;
     }
-    let words = (n_cols + 63) / 64;
+    let words = n_cols.div_ceil(64);
     let min_row = words.checked_mul(8)?;
     if bytes.len().checked_sub(pos)? < n_rows.checked_mul(min_row)? {
         return None;

@@ -26,6 +26,39 @@ fn parse_date(s: &str) -> Option<i64> {
     Some(days)
 }
 
+fn night_rows(day: i64, station: &str) -> Vec<(f64, u32, f64)> {
+    let Some((year, month, mday)) = civil_from_days(day) else {
+        return Vec::new();
+    };
+    let yy = year % 100;
+    let dir = format!("{station}.{yy:02}{month:02}");
+    let file = format!("{station}_{yy:02}{month:02}{mday:02}.jpg");
+    let url = format!("{BASE}/{dir}/{file}");
+    let Some(jpeg) = fetch_raw_bytes(&url) else {
+        eprintln!("{file} fetch void — night skipped (0 honored)");
+        return Vec::new();
+    };
+    let Some(cols) = brightness_columns(&jpeg) else {
+        eprintln!("{file} decodes void — night skipped (0 honored)");
+        return Vec::new();
+    };
+    let t_unix = day as f64 * 86400.0;
+    let mut rows = Vec::new();
+    for (i, &m) in cols.mean.iter().enumerate() {
+        if !m.is_finite() {
+            continue;
+        }
+        rows.push((t_unix, i as u32, m));
+    }
+    eprintln!(
+        "{file}: {}x{} -> {} columns",
+        cols.width,
+        cols.height,
+        rows.len()
+    );
+    rows
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -58,34 +91,26 @@ fn main() {
         Some(o) => o,
         None => format!("keogram_{station}.bin"),
     };
+    let lookback_days: i64 = arg_value(&args, "--lookback-days")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(400);
 
     let mut rows: Vec<(f64, u32, f64)> = Vec::new();
     for day in start_day..=stop_day {
-        let Some((year, month, mday)) = civil_from_days(day) else {
-            continue;
-        };
-        let yy = year % 100;
-        let dir = format!("{station}.{yy:02}{month:02}");
-        let file = format!("{station}_{yy:02}{month:02}{mday:02}.jpg");
-        let url = format!("{BASE}/{dir}/{file}");
-        let Some(jpeg) = fetch_raw_bytes(&url) else {
-            eprintln!("{file} fetch void — night skipped (0 honored)");
-            continue;
-        };
-        let Some(cols) = brightness_columns(&jpeg) else {
-            eprintln!("{file} decodes void — night skipped (0 honored)");
-            continue;
-        };
-        let t_unix = day as f64 * 86400.0;
-        let mut kept = 0usize;
-        for (i, &m) in cols.mean.iter().enumerate() {
-            if !m.is_finite() {
-                continue;
+        rows.extend(night_rows(day, &station));
+    }
+    if rows.is_empty() && lookback_days > 0 {
+        let floor = stop_day.saturating_sub(lookback_days);
+        let mut day = stop_day - 1;
+        while day >= floor {
+            let night = night_rows(day, &station);
+            if !night.is_empty() {
+                eprintln!("no column in {start}..{stop}; the newest available night is {day}");
+                rows = night;
+                break;
             }
-            rows.push((t_unix, i as u32, m));
-            kept += 1;
+            day -= 1;
         }
-        eprintln!("{file}: {}x{} -> {kept} columns", cols.width, cols.height);
     }
     rows.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)));
     if rows.is_empty() {
