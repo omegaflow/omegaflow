@@ -19737,6 +19737,16 @@ ma ma
 epoch epoch
 field H kbo_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/sb_radar.bin
+terms free-open https://ssd-api.jpl.nasa.gov/
+format sb_radar
+origin https://ssd-api.jpl.nasa.gov/sb_radar.api
+compiler tools/harvest/src/bin/sb_radar_compiler.rs
+sha256 442cf01c1c5af7fc3952fb020086441aac7f623612c836299ab658a18d7d85b9
+at earth
+ttl 604800
+field sb_radar_delay_s sb_radar_delay_s inverse-square em s 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-dcom5/dcom5_comets.json
 origin https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
 terms PD https://ssd.jpl.nasa.gov/

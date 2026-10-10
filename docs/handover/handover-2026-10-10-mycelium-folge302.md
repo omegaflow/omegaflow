@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. sb_radar_compiler `--emit delay` gebaut (grind-flash, 208-B-Record + Test, cargo check 0/0); ci-check-Shard-Messung (Build-vs-Test ungemessen bis grüner Lauf, Deps cache-geteilt, kein separater Build-Schritt); gaia_rrl RrlRecord Debug-Derive (Test-Kompilfehler latent); LiDAR-Survey-Träger gesetzt.
   class: handover
   date: 2026-10-10
-  sha256: e5b6934b3d50cfbc6add0f60d9373cf825ea6ea17fd893bdffd22b385fae5a18
+  sha256: 8e69871f0fccde34a8567fa005674b1f019afbe8a534a7e79cd217ba305091fd
   status: live
 -->
 # Handover — Mycelium-Folge 302 (2026-10-10)
@@ -92,21 +92,25 @@ kein erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 - **Braucht:** je Workflow dispatchen; danach je φ-Block (Mycelium
   `url`/`origin`/`compiler`, Mountain `terms`/`at`/`ttl`).
 
-### Planetary Radar — Manifestation (Rat-Verdikt: getrennte Records)
+### Planetary Radar — Manifestation (`sb-radar-cdn`)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Emit-Lauf am neuen HEAD
-- **Lage:** (gemessen 2026-10-10, dispatcher `grind-flash`, `cargo check` 0/0) `--emit delay`
-  gebaut (`tools/harvest/src/bin/sb_radar_compiler.rs`, 108→327 Z.): je Delay-Zeile **ein**
-  208-B-Record (26×f64; Container `SBRD`-Magic + u32 count wie `fink_cutout.rs:45`/
-  `planetary_radar.rs:160`); `val = value·1e-6` s — nur bei `units=="us"` und `value > 0`,
-  sonst `None` (0 honored); `epoch = lsk.unix_to_tdb(parse_epoch_utc(...))` (TDB s past J2000);
-  `freq/bin_width/phase = 0.0` (kein Band), `kernel=inverse-square`, `force=em`, `presence=1.0`;
-  `x/y/z` bleiben `0.0` (Frame gehört über die φ-`at <zielplanet>`-Direktive, `parse.rs:298`).
-  Test `a_delay_row_emits_one_wire_record_or_none` (208 B, `val`, `presence`, `None` bei absent/≤0).
-- **Blockade:** kein CDN-Asset bis zum Emit-Lauf.
-- **Braucht:** `--emit delay --params <k=v…>` einmal fahren → sha256; danach `## An mountain`
-  (Mycelium `url`/`origin`/`compiler`, Mountain `terms`/`at`/`ttl` — inkl. Verdikt, ob `x/y/z=0`
-  mit `at`-Frame genügt oder der Zielkörper-Anker in den Record gehört). Doppler-Vorzeichen/
+- **Trigger:** Lauf `sb-radar-cdn` Abschluss
+- **Lage:** (gemessen 2026-10-10) `--emit delay` gebaut + `--ci-mode`-Upload verdrahtet
+  (`tools/harvest/src/bin/sb_radar_compiler.rs`; `upload_release`). Emit ohne Query = volle API:
+  `origin https://ssd-api.jpl.nasa.gov/sb_radar.api` → **2761** Delay-Records, **1953** gehalten
+  (Doppler), **574 296 B**, sha256 `442cf01c1c5af7fc3952fb020086441aac7f623612c836299ab658a18d7d85b9`;
+  je Record 208 B (26×f64, Container `SBRD`): `val=value·1e-6 s` (nur `units=="us"`/`value>0`, sonst
+  `None`; 0 honored), `epoch=lsk.unix_to_tdb(...)` (TDB s past J2000), `freq/bin_width/phase=0`
+  (kein Band), `kernel=inverse-square`, `force=em`, `presence=1.0`; Test
+  `a_delay_row_emits_one_wire_record_or_none`. Registriert in `phi/sources.φ` (`format sb_radar`,
+  `at earth`, `ttl 604800`, `field sb_radar_delay_s`), `register_sort --write` → canonical; Workflow
+  `.github/workflows/sb-radar-cdn.yml` (`# auto-dispatch: manual`).
+- **Blockade:** CDN-Asset bis zum Workflow-Lauf (`sb-radar-cdn` nicht dispatchet).
+- **Braucht:** `sb-radar-cdn.yml` dispatchen; danach Asset/sha am Release prüfen (einmalig
+  `ci_manage view`).
+- **Riss:** die API-Zeile trägt das Ziel (`des`) und das Stationspaar (`xmit`/`rcvr`), der
+  26-f64-Wire hat keinen Ziel-/Stations-Slot — der Emit deklariert `xmit`/`rcvr` nur auf stderr,
+  das Ziel geht in den einen `at`-Frame (hier `at earth` = Empfänger-Weltlinie). Doppler-Vorzeichen/
   `phase`, `sigma`, `bp` bleiben benannte Risspunkte `pending` — nie zwei Skalare in ein `val`.
 
 ### Carriership — Asservatenkammer-Survey (Trägerschaft)

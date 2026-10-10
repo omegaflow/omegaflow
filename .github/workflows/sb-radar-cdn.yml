@@ -1,0 +1,29 @@
+name: sb-radar-cdn
+
+# auto-dispatch: manual
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 4 * * 1'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  sb_radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Compile and upload the JPL SBDB radar ranging delays
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-harvest --release --bin sb_radar_compiler -- \
+            --emit delay --ci-mode
