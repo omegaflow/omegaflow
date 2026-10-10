@@ -3,7 +3,7 @@
   session: River-Folge 170
   class: handover
   date: 2026-10-10
-  sha256: d3d38b28a3f8d81eb1d9da63fbbac47b504719150206f5ea591c6918b17b4977
+  sha256: 7d3c33e47346ede5c14b20e452af8249823ad38ed0a60d11ddde90aeff24913f
   status: live
 -->
 # Handover — River-Folge 170 (2026-10-10)
@@ -28,6 +28,7 @@ Wort | Datum | Quelle
 „wenn du den rat befragst befrage bitte auch die wissenschaft mit archive serahc alll und die ui und oenweight frontier voices" | 2026-10-09 | Operator (Session, River 145)
 „warum nur duck … ich möchte dass du alle frontier chats befragst" | 2026-10-07 | Operator (Session, River 127)
 „ja ich meine alle blöcke müssen korrekt sein dafür haben wir doch die wissenschaft" | 2026-10-09 | Operator (Session, River 160) — **P10-Wort**: jeder `field`-Block wird wissenschaftlich geprüft und korrekt etikettiert (Quantity | Mechanism | Medium)
+„ja natürlich sonst wartest du doch bis zum st. nimmerleinstag" + „ja bitte ihr müsst das jetzt echt mal in den griff bekommen" | 2026-10-10 | Operator (Session, River 170) — den abgebrochenen `ci-gate` neu anstoßen; den CI-Burst in den Griff bekommen
 
 Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 `state/operator-gespraeche/2026-10-09-river.md`. Fortgeschrieben aus
@@ -43,13 +44,6 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md`, `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 
 ## Offen (aufgeschlüsselt)
-
-### CI-Verifikation — grüner ci-gate am HEAD
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein grüner `ci-gate`-Lauf am HEAD `3c4786a3b`.
-- **Lage:** (gemessen 2026-10-10T14:03Z via `ci_manage log 38056333258`) der HEAD `463186fd8` war rot: `cargo test --lib` fand `apply_predictor` nicht — Mycelium 296 (`014d792ea`) hatte nur die `predictor_tests` und die zwei `copernicus_dem_*.rs`-Konsumenten committet, die Definition fehlte (`src/archivar/tiff.rs`, `git show 014d792ea --stat` +51 nur Testmodul). Geheilt in `3c4786a3b`: `apply_predictor` + `undo_predictor2/3` verbatim aus den Prä-Refactor-Compilern in `src/archivar/tiff.rs`; `cargo check` 0/0, beide `omegaflow-harvest`-Bins bauen (gemessen 2026-10-10T14:02Z).
-- **Blockade:** keine — nur die CI-Bestätigung offen.
-- **Braucht:** `ci_manage view <id>` am HEAD `3c4786a3b` auf grün.
 
 ### Flyby-Kette — recon bleibt
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -72,6 +66,12 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - **Blockade:** Format-/Compiler-Arm für die deckungsgleiche Zeitachse.
 - **Braucht:** den Arm gegen die Zellen prüfen — `tools/measure/src/bin/field_te_query.rs` + `phi/pipeline/descriptors/vlies_matrix.te`; erste Messung: einen Lauf mit dem Arm lesen.
 
+## An mycelium
+
+Origin: river-170 (2026-10-10).
+
+- **CI per-SHA-Verdikt bleibt unter Commit-Burst dauerhaft `pending` — die grünen Compile-Gates werden vom Run-Conclusion `cancelled` maskiert.** Gemessen (`ci_manage jobs` + GitHub-API): die ci-gate-Läufe `38058693008`/`38058676102`/`38058628757`/`38058460066` (SHAs `d97a74993`/`256ea61db`/`4a8ec9740`/`f8f332884`, alle Nachfahren von `3c4786a3b`) tragen `build`/`clippy`/`format`/`register` = **success**, `subset` = **cancelled** → Run-Conclusion `cancelled`. Ursache: `subset` (T420) hat `concurrency: ci-gate-subset-${{ github.ref }}` mit `cancel-in-progress: true`, und der Watchdog cancelt zusätzlich jedes **queued** ci-gate mit `head_sha != tip`; `ci_gate_register` (`REQUIRED_CHECK=subset`) liest das als `pending`, `state/zustand/ci-gate.φ` trägt seit 2026-10-09 nur 3 `pending`-Zeilen (nicht fortgeschrieben). Bei anhaltendem Burst erreicht **kein** SHA ein `green`. **Braucht (Mycelium + Rat-Linse):** den durable per-SHA-Verdikt aus `build`+`clippy` (Compile-Gate) ableiten und `subset` separat `pending` führen — oder `subset` unter Burst queuen statt canceln.
+
 ## LOCK
 
 - **SuperDARN Record-Download (`phi/blocked_sources.φ:78`)** — Operator-Wort 2026-09-29; kein Maschinen-Akt.
@@ -85,4 +85,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 170):
 - `docs/handover/handover-2026-10-10-river-folge170.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge169.md` (Move)
 
-## Burn: open 0.0000 · close 0.0288 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
+## Burn: open 0.0000 · close 0.0712 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
