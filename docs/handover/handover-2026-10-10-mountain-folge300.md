@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden-Harvest 1-4 (Parser)
   class: handover
   date: 2026-10-10
-  sha256: 2279de66cb4d6b934d043a4d8a3738a8cfddb55a537582ae4b05652d9f2f1808
+  sha256: f75eac0ccf9b8ec1ab7da10d5db2fb616e95ec9c449e77e34aadcb891d9a054a
   status: live
 -->
 # Handover — Mountain-Folge 300 (2026-10-10)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dies
 Session konsumierte `handover-2026-10-10-mountain-folge299.md` (→ `archiv/`).
 flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.0712 · cap 0.50 — Grund: line + 7 Sub-Agenten (4× grind-flash Parser-Bau ITRF/LLR-MINI/radar/VMF3, 2× general Konnektivitäts-Recon, 1× explore particle-cern-Struktur, 1× general PEP-Lizenz); kein pro/max; deepseek-flash (gemessen `session_burn`, line-Session „Mountain-Linie in einem Pass abarbeiten")
+## Burn: open 0.0000 · close 0.3038 · cap 0.50 — Grund: line + Sub-Agenten (4× grind-flash Parser-Bau ITRF/LLR-MINI/radar/VMF3, 1× grind-flash Beobachtungsoperator-Kern, 1× council Rat, ×general Recon/PEP/Ephemeris-Landschaft) + die volle UI-Roster-Runde (10 Seats mountain-ui + 3 open-weight) + 4 Commits/Pushes; kein pro/max; deepseek-flash (gemessen `session_burn`, line-Session „Mountain-Linie in einem Pass abarbeiten")
 
 ## Offen (aufgeschlüsselt)
 
