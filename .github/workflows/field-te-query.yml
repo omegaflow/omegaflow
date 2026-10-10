@@ -131,6 +131,22 @@ jobs:
         with:
           name: field-te-matrix-vlies
           path: field-te-matrix-vlies.txt
+  panel-vlies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Window graph — the conditional MCI panel on the RTSW/SWPC block (D2; Rat 2026-10-10)
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/vlies_panel.te | tee field-te-panel-vlies.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-panel-vlies
+          path: field-te-panel-vlies.txt
   matrix-newell:
     runs-on: ubuntu-latest
     timeout-minutes: 180

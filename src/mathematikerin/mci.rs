@@ -177,6 +177,20 @@ pub struct WindowLink {
     pub fdr_pass: bool,
 }
 
+pub struct PendingEdge {
+    pub driver: usize,
+    pub target: usize,
+    pub lag: usize,
+    pub n: usize,
+    pub n_min: usize,
+    pub dim: usize,
+}
+
+pub struct WindowGraph {
+    pub links: Vec<WindowLink>,
+    pub pending: Vec<PendingEdge>,
+}
+
 fn link_seed(base: u64, i: usize, j: usize, tau: usize) -> u64 {
     base ^ (i as u64).wrapping_mul(0x9E37_79B9)
         ^ (j as u64).wrapping_mul(0x85EB_CA6B)
@@ -206,16 +220,24 @@ fn benjamini_yekutieli_pass(p_values: &[f64], level: f64) -> Vec<bool> {
     }
 }
 
-pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
+pub fn mci_window_graph(series: &[Vec<f32>], p: MciParams) -> WindowGraph {
     let d = series.len();
     if d < 2 {
-        return Vec::new();
+        return WindowGraph {
+            links: Vec::new(),
+            pending: Vec::new(),
+        };
     }
     let stride = p.max_lag + 1;
 
     let panel = match PanelView::new(series.to_vec(), p.max_lag) {
         Some(v) => v,
-        None => return Vec::new(),
+        None => {
+            return WindowGraph {
+                links: Vec::new(),
+                pending: Vec::new(),
+            };
+        }
     };
 
     let all_nodes: Vec<(usize, usize)> = (0..d)
@@ -223,7 +245,12 @@ pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
         .collect();
     let columns = match panel.aligned(&all_nodes) {
         Some(c) => c,
-        None => return Vec::new(),
+        None => {
+            return WindowGraph {
+                links: Vec::new(),
+                pending: Vec::new(),
+            };
+        }
     };
 
     let edges = pc_stable_skeleton(&columns, &ParCorr, p.alpha_pc, p.max_cond);
@@ -238,6 +265,7 @@ pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
     }
 
     let mut links: Vec<WindowLink> = Vec::new();
+    let mut pending: Vec<PendingEdge> = Vec::new();
     for i in 0..d {
         for tau in 1..=p.max_lag {
             let candidate = i * stride + tau;
@@ -273,6 +301,20 @@ pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
                 let driver_col = cols[0].as_slice();
                 let target_col = cols[1].as_slice();
                 let cond_cols: Vec<&[f64]> = cols[2..].iter().map(|c| c.as_slice()).collect();
+
+                let dim = cond_cols.len();
+                let n_min = p.bins.pow((2 + dim) as u32);
+                if target_col.len() < n_min {
+                    pending.push(PendingEdge {
+                        driver: i,
+                        target: j,
+                        lag: tau,
+                        n: target_col.len(),
+                        n_min,
+                        dim,
+                    });
+                    continue;
+                }
 
                 let ci = TeBinnedCi {
                     bins: p.bins,
@@ -312,7 +354,11 @@ pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
     for (link, pass) in links.iter_mut().zip(passes) {
         link.fdr_pass = pass;
     }
-    links
+    WindowGraph { links, pending }
+}
+
+pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
+    mci_window_graph(series, p).links
 }
 
 #[cfg(test)]
@@ -534,6 +580,33 @@ mod tests {
             links.iter().any(|l| l.driver == 0 && l.target == 2),
             "missing z->b links {:?}",
             shape
+        );
+    }
+
+    #[test]
+    fn underpowered_window_edges_are_named_pending() {
+        let n = 12usize;
+        let x: Vec<f32> = (0..n).map(|i| (i as f32 * 0.7).sin()).collect();
+        let y: Vec<f32> = x.iter().map(|v| v * 0.9).collect();
+        let graph = mci_window_graph(
+            &[x, y],
+            MciParams {
+                max_lag: 1,
+                max_cond: 2,
+                alpha_pc: 0.2,
+                alpha_mci: 0.05,
+                bins: 4,
+                n_surr: 10,
+                seed: 1,
+            },
+        );
+        assert!(
+            !graph.pending.is_empty(),
+            "a batch below bins^(2+dim) is pending, not silently binned"
+        );
+        assert!(
+            graph.pending.iter().all(|e| e.n < e.n_min),
+            "a pending edge carries n < n_min"
         );
     }
 }

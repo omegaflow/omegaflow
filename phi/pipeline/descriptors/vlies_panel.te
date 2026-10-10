@@ -1,0 +1,18 @@
+# Window graph (D2) — the conditional MCI panel on the RTSW/SWPC block.
+# Rat + max-roster verdict 2026-10-10 (state/stimmen/2026-10-10-river-window-graph-panel-rat.md):
+#   Δ = the coarsest measured native median_dt of the loaded channels (`scale auto`) —
+#   the resolution limit of the shared grid (C-begründet), never a causal time constant.
+#   `scale <seconds>` would declare Δ by the operator; 86400 is never the graph grid.
+#   D is a conditional MCI on one grid (`stage2 mci`); C (vlies_matrix.te) stays `cond none`.
+#   C supplies Δ and the candidate pairs; D tests conditioned on the same grid.
+# The binned joint carries bins^(2+dim) cells per edge; fewer samples than cells are
+#   printed `pending` (n < n_min), never silently binned.
+# Lauf: .github/workflows/field-te-query.yml Job `panel-vlies` (CI), nie lokal.
+panel vlies_panel
+channels omni_imf_bz_gsm_nt,magnetosphere_imf_bz_nt,magnetosphere_imf_bt_nt,solar_wind_speed_km_s,solar_wind_density_cm3
+scale auto
+stage2 mci
+fdr bh 0.05 over matrix
+lags 2
+surrogate 20
+cadence live
