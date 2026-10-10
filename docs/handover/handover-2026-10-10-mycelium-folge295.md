@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: b9b881aaaa3224f3630024226e2ca066744b2244f24fe6d989b1bf764ebe4f35
+  sha256: 61a8c9d0efcf6579224dccbd43041ef876763c0cb5a3e58567dbb7cf8213f36a
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -25,6 +25,7 @@ bleibt mountain.
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-10 | Operator (Session, Mycelium 295; fortgeschrieben aus 294) |
+| „bitte öffne die seiten vorausgefüllt" (Maßnahmen 4–6: R2/Modal/Beam) | 2026-10-10 | Operator (Session, Mycelium 295) |
 | „archive search all und roster recherche … wie wir unsere github, CI und CDN abläufe optimieren können, denkt gross … analyse auch welche kostenlosen externen möglichkeiten z.b. um GPU runs oder läufe zu machen bestehen … auch die kommunikation zw. opencode und github, CI, CDN" | 2026-10-10 | Operator (Session, Mycelium 293) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-10-mycelium-folge293.md` §Operator-Wort-Register (fetchbar via `git show HEAD:archiv/…`) | 2026-10-10 | gefaltet, nicht kopiert |
 
@@ -161,6 +162,26 @@ bleibt mountain.
 ### cmb-cdn (mountain-299 adressiert)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
 - **Trigger:** s. „Manifestation SPT-3G D1" (derselbe Lauf).
+
+## An future
+
+Origin: mycelium-295 (2026-10-10).
+
+Operator-gebundene Akte (Survey-Maßnahmen 4–6), bis zur Kante vorbereitet; die Seiten
+liegen in der Browser-Gruppe `mycelium-auth` (nicht fokussiert):
+
+- **R2 (Maßnahme 4).** Cloudflare-Login `dash.cloudflare.com` — E-Mail vorausgefüllt
+  (`code@omegaflow.space`), Redirect `?to=/:account/r2`. Nach dem Login fehlen: R2
+  aktivieren (Plan/„Enable R2") + S3-API-Token anlegen. Vorschlag Bucket-Namen
+  `omegaflow`/`omegaflow-sources` (Hot-Tier = Manifeste/Indizes, kein Bulk). Token-ID/Secret
+  → `.secrets.local` (nur Schlüsselnamen dort, nie Werte in den Transcript). Der Akt
+  (Login + R2 aktivieren + Token erzeugen) = Operator-Hand.
+- **OIDC + R2-Worker-Verifier (Maßnahme 5)** hängt an (4): erst nach dem R2-Konto der
+  secretlose Pfad (`id-token: write` → Worker prüft GitHub-OIDC → Binding in R2).
+- **Free-GPU (Maßnahme 6).** Modal `modal.com/signup` (GitHub/Google-OAuth bereit,
+  kein Formularfeld — ein Klick) und Beam `platform.beam.cloud` („Work email"
+  vorausgefüllt `code@omegaflow.space`). Konto-Anlage = Operator-Hand; danach die benannte
+  Probe (Modal **oder** Beam, Capability-Gate ≥4/4 + Tempo) — kein Roster ohne Messung.
 
 ## LOCK
 
