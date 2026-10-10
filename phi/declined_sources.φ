@@ -2048,6 +2048,10 @@ decline molecular
 url https://flybase.org/
 note FlyBase — Drosophila-Genomdatenbank; 206 (2026-10-03).
 
+decline redistribution
+url https://fmhy.net/
+note FMHY-Umgehungs-/Mirror-Klasse (Sci-Hub & Co., fmhy.net): Umgehungs-Mirror, keine Redistribution; Operator-Wort 2026-10-10, Klasse declined, keine Einzel-URL getrackt (state/future/source-kandidaten-fmhy-2026-10-10.md: 23 entfernt).
+
 decline no-physical-force
 url https://fpma.fao.org/giews/fpmat4/api/v1/
 note Monitoring-Dashboard.
