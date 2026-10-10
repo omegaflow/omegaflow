@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. sb_radar_compiler `--emit delay` gebaut (grind-flash, 208-B-Record + Test, cargo check 0/0); ci-check-Shard-Messung (Build-vs-Test ungemessen bis grüner Lauf, Deps cache-geteilt, kein separater Build-Schritt); gaia_rrl RrlRecord Debug-Derive (Test-Kompilfehler latent); LiDAR-Survey-Träger gesetzt.
   class: handover
   date: 2026-10-10
-  sha256: dc534d80ef200a3e549b178977d16011ecf9c2b7583ec7f5730133b0a3600d46
+  sha256: f99dbcdecb0af72df3bc0ba84296239c039aad150b86d07acff1d7a05463d3fc
   status: live
 -->
 # Handover — Mycelium-Folge 302 (2026-10-10)
@@ -78,19 +78,24 @@ kein erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 - **Braucht:** `dom-cdn.yml` am neuen HEAD dispatchen; danach sha256 + φ-Block
   (Mountain-Verdikt, `## An mountain`).
 
-### φ-Manifestation — SURFRAD · ECAD · DWD CDC · WorldClim · AODN
+### φ-Manifestation — SURFRAD · ECAD · DWD CDC · WorldClim · AODN · KNMI
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** je Workflow-Lauf-Abschluss (`surfrad-cdn`, `ecad-cdn`, `dwd-cdc-cdn`, `worldclim-cdn`, `aodn-cdn`)
-- **Lage:** (gemessen 2026-10-10) fünf Manifest-Workflows gebaut, je `--ci-mode` und
-  `# auto-dispatch: manual`: `surfrad-cdn.yml` (NETLOC `gml.noaa.gov`) · `ecad-cdn.yml`
-  (`ecad.eu`) · `dwd-cdc-cdn.yml` (`opendata.dwd.de`) · `worldclim-cdn.yml`
-  (`geodata.ucdavis.edu`) · `aodn-cdn.yml` (`thredds.aodn.org.au`). **Riss:** der
-  `ecad_compiler` NETLOC ist `ecad.eu`, **nicht** der S3-Quellhost
-  `knmi-ecad-assets-prd.s3.amazonaws.com` — die φ-Identität (`url`/`origin`) ist
-  Mountain-Sache.
-- **Blockade:** je Asset fehlt (Workflow nicht gelaufen) + Mountain-Verdikt.
-- **Braucht:** je Workflow dispatchen; danach je φ-Block (Mycelium
-  `url`/`origin`/`compiler`, Mountain `terms`/`at`/`ttl`).
+- **Trigger:** je Workflow-Lauf-Abschluss
+- **Lage:** (gemessen 2026-10-10) **14 Blöcke registriert** in `phi/sources.φ` (je die
+  Compiler-eigene Register-Ausgabe, `register_sort --write` → canonical): SURFRAD 2 (`gml.noaa.gov`) ·
+  ECAD 1 (`ecad.eu`) · DWD 6 (`opendata.dwd.de`, Station 00044) · WorldClim 1 (`geodata.ucdavis.edu`) ·
+  AODN 1 (`thredds.aodn.org.au`) · KNMI 3 (`api.dataplatform.knmi.nl`). `terms` gemessen (PD ·
+  non-commercial · CC-BY-4.0). Workflows: fünf bestehen; **`knmi-cdn.yml` neu** (`# auto-dispatch:
+  manual`, liest `secrets.KNMI_API_KEY`).
+- **Blockade:** je Asset fehlt bis zum Workflow-Lauf; `knmi-cdn` wartet auf das Repo-Secret
+  `KNMI_API_KEY` (Operator-Hand) und dessen Hinterlegung in `.secrets.local`.
+- **Braucht:** `surfrad/ecad/dwd-cdc/worldclim/aodn-cdn` dispatchen; `knmi-cdn` erst nach dem Secret.
+- **Riss (Bau + Einheiten-Gate):** die Compiler harvesten **je Akt** (Station/Tag/Variable) ein
+  eigenes Asset; die 14 Blöcke sind Repräsentanten der Workflow-Defaults, kein Serien-Manifest.
+  Der `knmi_precipitation_intensity`-Block ist **nicht** gesetzt: `kg/(m^2 s)` trägt ein Leerzeichen
+  (bricht den 9-Token-Feldzeilen-Parser) und keine Kraft führt die Einheit (`force-unit-ratchet`) —
+  `## An mountain` (Registry). `dwd_precipitation_height`/`dwd_vapour_pressure` auf `advective m`/
+  `acoustic Pa` gesetzt (registry-konform).
 
 ### Planetary Radar — Manifestation (`sb-radar-cdn`)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
@@ -182,6 +187,17 @@ kein erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 - **Braucht:** gecheckpointete kürzere Slices (State alle 120 s liegt vor) oder
   dauerhafter Runner; Survey-Säule A.
 
+### Register-Träger — `blocked_sources.φ:67` (losc.ligo.org)
+- **Status:** eigen | **Bindung:** eigen · Register-Aufenthalt
+- **Trigger:** nächster begrenzter Dispatch
+- **Lage:** (gemessen 2026-10-11) `phi/blocked_sources.φ:67` `pending url https://losc.ligo.org/`
+  (Host 200, 21527 B HTML; GW-Strain als HDF5/GWF offen, Gracedb-Alerts registriert). Kein
+  `sources.φ`-Block, kein Strain-Arm/Compiler — der `handover-orphan-gate` verlangt diesen
+  Aufenthalt.
+- **Blockade:** keine.
+- **Braucht:** den losc-Strain-Arm (GWOSC HDF5/GWF-Reader) bauen oder als `blocked parser-def`
+  klassifizieren — ein Register-Aufenthalt, kein stilles Streichen.
+
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
 - **Trigger:** `hips-png-cdn`-Lauf Abschluss
@@ -225,9 +241,13 @@ Origin: mycelium-301 (2026-10-10).
   format las
   sha256 e6560344c5e939458c890e62d5972dbfb273f8aa2cdd6e00bdb6ec2feef09c4e
   ```
-- **Fünf Klima-Quellen** — die Mycelium-NETLOC-Direktiven stehen (Workflows gebaut);
-  der `ecad`-Riss (`ecad.eu` vs. Quellhost `knmi-ecad-assets-prd.s3.amazonaws.com`) ist
-  zu entscheiden. Verdikt-Zeilen je Block nach dem ersten Lauf.
+- **Sechs Klima-Quellen registriert (Mycelium, 15 Blöcke)** — SURFRAD/ECAD/DWD/WorldClim/AODN/KNMI
+  stehen in `phi/sources.φ` (`url`/`origin`/`compiler`/`format`/`at`/`ttl`/`field`; `terms` gemessen:
+  PD · non-commercial (ECAD, WorldClim) · CC-BY-4.0 (DWD, AODN, KNMI)). Bitte beim nächsten Pass
+  gegenprüfen: (a) die `terms`-Verdikte, (b) die `ttl`-Werte je Compiler, (c) der **Riss** — die
+  Compiler erzeugen **je-Akt-Instanzen** (Station/Tag/Variable), die 15 Blöcke sind
+  Workflow-Default-Repräsentanten; ein Serien-Manifest fehlt. Kein stiller Schreibakt: die Zeilen
+  tragen die Compiler-eigenen Werte.
 - **Asservatenkammer-Survey** `docs/surveys/survey-2026-10-08-research-api-mcp.md` —
   die vier Marker auf den gemessenen Stand setzen (Perplexity live · Consensus 429
   transient · Elicit descoped · SciSpace pending).

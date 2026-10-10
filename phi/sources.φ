@@ -1,3 +1,13 @@
+url https://github.com/omegaflow/sources/releases/download/thredds.aodn.org.au/aodn_temp_0_64.bin
+terms CC-BY-4.0 https://imos.org.au/conditions-of-use
+format aodn
+origin https://thredds.aodn.org.au/thredds/dodsC/IMOS/ANMN/NRS/NRSMAI/aggregated_timeseries/IMOS_ANMN-NRS_TZ_20080411_NRSMAI_FV01_TEMP-aggregated-timeseries_END-20260421_C-20260919.nc
+compiler tools/harvest/src/bin/aodn_compiler.rs
+sha256 01516b2b85374afe65c7769eed6e89a22840956811e4f879e7ddf274c4974543
+at earth
+ttl 1
+field aodn_temperature aodn_temperature exponential-decay thermal K 1 0.0 0.0
+
 url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
 terms unknown https://vires.services/
 ttl 4
@@ -1697,6 +1707,36 @@ terms own-work
 sha256 093e9e47b2d5f12fcccd9387ecc925512013af7398f188360fccfb5e029ddfb6
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/api.dataplatform.knmi.nl/knmi_10_minute_in_situ_meteorological_observations_1_0_knmi_air_temperature.bin
+terms CC-BY-4.0 https://developer.dataplatform.knmi.nl/fair-use
+format knmi
+origin https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
+compiler tools/harvest/src/bin/knmi_compiler.rs
+sha256 0d374c6dcf7d86075edf4415f068b45dbe1e89bf685c5c71bdf8ee893eaef1b3
+at earth
+ttl 86400
+field knmi_air_temperature knmi_air_temperature exponential-decay thermal K 600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/api.dataplatform.knmi.nl/knmi_10_minute_in_situ_meteorological_observations_1_0_knmi_wind_gust.bin
+terms CC-BY-4.0 https://developer.dataplatform.knmi.nl/fair-use
+format knmi
+origin https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
+compiler tools/harvest/src/bin/knmi_compiler.rs
+sha256 bd5ea73f574013e04e3e1b0cf836f0067712635012330d274faf0c6dd4c87c01
+at earth
+ttl 86400
+field knmi_wind_gust knmi_wind_gust patch-levy advective m/s 600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/api.dataplatform.knmi.nl/knmi_10_minute_in_situ_meteorological_observations_1_0_knmi_wind_speed.bin
+terms CC-BY-4.0 https://developer.dataplatform.knmi.nl/fair-use
+format knmi
+origin https://api.dataplatform.knmi.nl/edr/v1/collections/10-minute-in-situ-meteorological-observations/position
+compiler tools/harvest/src/bin/knmi_compiler.rs
+sha256 b744dad2981a657210d200c8e31b9fc014a56c78dbc426c5be0cacedb9d9be1b
+at earth
+ttl 86400
+field knmi_wind_speed knmi_wind_speed patch-levy advective m/s 600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/aqs.epa.gov/epa_aqs_pm25.bin
 format epa_aqs_pm25
 origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
@@ -3116,20 +3156,6 @@ compiler tools/harvest/src/bin/nohrsc_snowfall_compiler.rs
 at earth
 ttl 86400
 field nohrsc_snowfall_mm nohrsc_snowfall_mm gaussian-inverse-square acoustic mm 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.amazonaws.com/open_lidar_data_be_dhmv2.bin
-terms Gratis-Open-Data-Licentie-Vlaanderen-1.2 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
-format las
-origin https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
-compiler tools/harvest/src/bin/open_lidar_data_compiler.rs
-sha256 e6560344c5e939458c890e62d5972dbfb273f8aa2cdd6e00bdb6ec2feef09c4e
-at earth
-ttl 604800
-field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
-field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
-field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-01_task-jointaction_eeg.bin
 format openneuro_brainvision
@@ -11141,6 +11167,16 @@ field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms ga
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ecad.eu/ecad_eca_tx_TX_STAID000001.bin
+terms non-commercial https://knmi-ecad-assets-prd.s3.amazonaws.com/documents/ECAD_datapolicy.pdf
+format ecad
+origin https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip#TX_STAID000001.txt
+compiler tools/harvest/src/bin/ecad_compiler.rs
+sha256 72080c017728c3c5a31ef51a6d497a5669aaa663d2a54a6fd4d4588c7a4e3748
+at earth
+ttl 604800
+field eca_tx eca_tx exponential-decay thermal K 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/eea.europa.eu/eea_noise_2025.json
 terms CC-BY-4.0 https://www.eea.europa.eu/en/legal-notice
 format eea_noise
@@ -11252,6 +11288,26 @@ sha256 4df26cafde3c392fc99831797c9392e1f155e821716cd63db467847e9e654534
 on earth 0 0 0
 ttl 604800
 field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/surfrad_tbl_2024001_surfrad_direct_normal.bin
+terms PD https://gml.noaa.gov/about/disclaimer.html
+format surfrad
+origin https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat
+compiler tools/harvest/src/bin/surfrad_compiler.rs
+sha256 68e33da9fa45f7c0d8ab4b679e604048b396359ffd82cd491aac25e4fcb877ba
+at earth
+ttl 604800
+field surfrad_direct_normal surfrad_direct_normal inverse-square em W/m2 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/surfrad_tbl_2024001_surfrad_shortwave_down.bin
+terms PD https://gml.noaa.gov/about/disclaimer.html
+format surfrad
+origin https://gml.noaa.gov/aftp/data/radiation/surfrad/tbl/2024/tbl24001.dat
+compiler tools/harvest/src/bin/surfrad_compiler.rs
+sha256 d31177b6be26752331d9ab4118468da82d5033cc9355bb098115f7df3c4cf340
+at earth
+ttl 604800
+field surfrad_shortwave_down surfrad_shortwave_down inverse-square em W/m2 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gong2.nso.edu/gong_modes.bin
 terms free-open https://nso.edu/data/
@@ -11651,6 +11707,20 @@ on earth 0 0 0
 field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree_C 604800 0.0 0.0
 field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 604800 0.0 0.0
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.amazonaws.com/open_lidar_data_be_dhmv2.bin
+terms Gratis-Open-Data-Licentie-Vlaanderen-1.2 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
+format las
+origin https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
+compiler tools/harvest/src/bin/open_lidar_data_compiler.rs
+sha256 e6560344c5e939458c890e62d5972dbfb273f8aa2cdd6e00bdb6ec2feef09c4e
+at earth
+ttl 604800
+field las_x_icrs_m las_x_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
+field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
+field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/magellan_odf.bin
 terms PD https://pds-geosciences.wustl.edu/
@@ -21272,6 +21342,66 @@ compiler tools/harvest/src/bin/hadisst_compiler.rs
 on earth 0 0 0
 ttl 2592000
 field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_max.bin
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format dwd_cdc
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+compiler tools/harvest/src/bin/dwd_cdc_compiler.rs
+sha256 7c1a59b02c6d01078feecee4247f31d5fb790fb2d16c74dc77615d254defa47c
+at earth
+ttl 2592000
+field dwd_air_temperature_max dwd_air_temperature_max exponential-decay thermal K 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_mean.bin
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format dwd_cdc
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+compiler tools/harvest/src/bin/dwd_cdc_compiler.rs
+sha256 d483f02c3591c7ceb2237fab7e9f4c6cd151f2d214960ffcdab9712c4d8a2f27
+at earth
+ttl 2592000
+field dwd_air_temperature_mean dwd_air_temperature_mean exponential-decay thermal K 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_min.bin
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format dwd_cdc
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+compiler tools/harvest/src/bin/dwd_cdc_compiler.rs
+sha256 00a8ccd74d24fe27f55e9c7ae58515d1f0fa1ab87b96a57b6f879ffd55f5d120
+at earth
+ttl 2592000
+field dwd_air_temperature_min dwd_air_temperature_min exponential-decay thermal K 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_precipitation_height.bin
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format dwd_cdc
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+compiler tools/harvest/src/bin/dwd_cdc_compiler.rs
+sha256 52d7e6c840d4ce565825075763c6ab9349735e7df3cf32ebf6ce1fc615ee0c10
+at earth
+ttl 2592000
+field dwd_precipitation_height dwd_precipitation_height gaussian-inverse-square advective m 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_relative_humidity.bin
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format dwd_cdc
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+compiler tools/harvest/src/bin/dwd_cdc_compiler.rs
+sha256 0ba979234c812cb09926274bb9d9e72b53cb0e1bc9684f94a886082f1f1494d4
+at earth
+ttl 2592000
+field dwd_relative_humidity dwd_relative_humidity gaussian-inverse-square diffusion 1 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_vapour_pressure.bin
+terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
+format dwd_cdc
+origin https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/recent/tageswerte_KL_00044_akt.zip
+compiler tools/harvest/src/bin/dwd_cdc_compiler.rs
+sha256 6fb36bf078b78e05f1e3f8c012f88cd3e4a5a2920b29bb441cf214927db99e60
+at earth
+ttl 2592000
+field dwd_vapour_pressure dwd_vapour_pressure gaussian-inverse-square acoustic Pa 86400 0.0 0.0
 
 url http://archive.eso.org/tap_cat/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RA2000+AS+ra,DEC2000+AS+dec,KSPETROMAG+AS+ksmag+FROM+VHS_CAT_V3+WHERE+KSPETROMAG+IS+NOT+NULL
 terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
@@ -31259,3 +31389,13 @@ rows .
 lat 0
 lon 1
 quantity 2 venera15_16_surface_radius_km inverse-square geometry km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/geodata.ucdavis.edu/worldclim_tavg_10m.bin
+terms non-commercial https://www.worldclim.org/about.html
+format worldclim
+origin https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tavg.zip
+compiler tools/harvest/src/bin/worldclim_compiler.rs
+sha256 20ffec984649b71d203616348ab71c2bf5db29e8c184280bfa3b65c1066b3c5a
+at earth
+ttl 315360000
+field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
