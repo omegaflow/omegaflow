@@ -75,6 +75,73 @@ fn field(v: &json::Json, key: &str) -> Option<String> {
         .map(str::to_string)
 }
 
+fn authors_line(work: &json::Json) -> Option<String> {
+    let authorships = work.get("authorships").and_then(|a| a.as_arr())?;
+    let mut names: Vec<String> = Vec::new();
+    for authorship in authorships {
+        if let Some(name) = authorship
+            .get("author")
+            .and_then(|a| a.get("display_name"))
+            .and_then(|n| n.as_str())
+            .filter(|s| !s.is_empty())
+        {
+            names.push(name.to_string());
+        }
+    }
+    if names.is_empty() {
+        return None;
+    }
+    if names.len() > 8 {
+        let mut capped = names[..8].join(", ");
+        capped.push_str(", et al.");
+        Some(capped)
+    } else {
+        Some(names.join(", "))
+    }
+}
+
+fn abstract_line(work: &json::Json) -> Option<String> {
+    let index = match work.get("abstract_inverted_index") {
+        Some(json::Json::Obj(map)) => map,
+        _ => return None,
+    };
+    let mut positions: Vec<(usize, String)> = Vec::new();
+    for (word, pos_json) in index {
+        let Some(pos_list) = pos_json.as_arr() else {
+            continue;
+        };
+        for pos in pos_list {
+            if let Some(parsed) = pos.as_scalar_string().and_then(|s| s.parse::<usize>().ok()) {
+                positions.push((parsed, word.clone()));
+            }
+        }
+    }
+    if positions.is_empty() {
+        return None;
+    }
+    positions.sort();
+    let text = positions
+        .into_iter()
+        .map(|(_, word)| word)
+        .collect::<Vec<_>>()
+        .join(" ");
+    if text.chars().count() > 1200 {
+        let mut capped: String = text.chars().take(1200).collect();
+        capped.push('…');
+        Some(capped)
+    } else {
+        Some(text)
+    }
+}
+
+fn oa_pdf_line(work: &json::Json) -> Option<String> {
+    work.get("best_oa_location")
+        .and_then(|location| location.get("pdf_url"))
+        .and_then(|url| url.as_str())
+        .filter(|s| !s.is_empty())
+        .map(str::to_string)
+}
+
 fn parse_openalex(body: &str) -> Vec<String> {
     let mut out = Vec::new();
     let Some(v) = json::parse(body) else {
@@ -105,6 +172,15 @@ fn parse_openalex(body: &str) -> Vec<String> {
             .and_then(|c| c.as_scalar_string())
         {
             line.push_str(&format!("\tcites: {}", cites));
+        }
+        if let Some(authors) = authors_line(work) {
+            line.push_str(&format!("\tauthors: {}", authors));
+        }
+        if let Some(abstract_text) = abstract_line(work) {
+            line.push_str(&format!("\tabstract: {}", abstract_text));
+        }
+        if let Some(pdf) = oa_pdf_line(work) {
+            line.push_str(&format!("\toa_pdf: {}", pdf));
         }
         out.push(line);
     }
@@ -148,5 +224,47 @@ mod tests {
     #[test]
     fn empty_results_carry_nothing() {
         assert!(parse_openalex(r#"{"results":[],"meta":{"count":0}}"#).is_empty());
+    }
+
+    #[test]
+    fn reads_the_new_work_fields() {
+        let body = r#"{"results":[{"id":"https://openalex.org/W123","title":"A measured field","authorships":[{"author":{"display_name":"Ada Lovelace"}},{"author":{"display_name":"Alan Turing"}}],"abstract_inverted_index":{"field":[0],"a":[1],"measured":[2]},"best_oa_location":{"pdf_url":"https://example.org/w123.pdf"}}]}"#;
+        assert_eq!(
+            parse_openalex(body),
+            vec!["url https://openalex.org/W123\ttitle: A measured field\tauthors: Ada Lovelace, Alan Turing\tabstract: field a measured\toa_pdf: https://example.org/w123.pdf".to_string()]
+        );
+    }
+
+    #[test]
+    fn omits_the_absent_new_fields() {
+        let body = r#"{"results":[{"id":"https://openalex.org/W123","title":"A measured field"}]}"#;
+        assert_eq!(
+            parse_openalex(body),
+            vec!["url https://openalex.org/W123\ttitle: A measured field".to_string()]
+        );
+    }
+
+    #[test]
+    fn reconstructs_the_inverted_index_in_positional_order() {
+        let body = r#"{"results":[{"id":"https://openalex.org/W123","abstract_inverted_index":{"world":[1],"hello":[0],"again":[2]}}]}"#;
+        assert_eq!(
+            parse_openalex(body),
+            vec!["url https://openalex.org/W123\tabstract: hello world again".to_string()]
+        );
+    }
+
+    #[test]
+    fn caps_the_authors_to_eight_with_et_al() {
+        let names = (1..=9)
+            .map(|n| format!(r#"{{"author":{{"display_name":"Author {n}"}}}}"#))
+            .collect::<Vec<_>>()
+            .join(",");
+        let body = format!(
+            r#"{{"results":[{{"id":"https://openalex.org/W123","authorships":[{names}]}}]}}"#
+        );
+        assert_eq!(
+            parse_openalex(&body),
+            vec!["url https://openalex.org/W123\tauthors: Author 1, Author 2, Author 3, Author 4, Author 5, Author 6, Author 7, Author 8, et al.".to_string()]
+        );
     }
 }

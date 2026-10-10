@@ -437,6 +437,18 @@ fn flatten(s: &str) -> String {
     s.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
+const CONTENT_CAP: usize = 4000;
+
+fn cap_content(s: &str) -> String {
+    let flat = flatten(s);
+    if flat.chars().count() <= CONTENT_CAP {
+        return flat;
+    }
+    let mut out: String = flat.chars().take(CONTENT_CAP).collect();
+    out.push_str(" …");
+    out
+}
+
 fn stage(lines: &mut Vec<String>, n: u8, name: &str, url: &str, r: Option<Fetch>) {
     match r {
         Some(f) => stage_result(lines, n, name, url, f),
@@ -1140,7 +1152,8 @@ fn crossref_url(
     max: usize,
     cursor: Option<&str>,
 ) -> String {
-    let select = crate::refine::value_of(refine, "select").unwrap_or("DOI,title,issued");
+    let select = crate::refine::value_of(refine, "select")
+        .unwrap_or("DOI,title,issued,author,is-referenced-by-count,abstract");
     let mut url = format!("https://api.crossref.org/works?rows={}", max);
     if !text.is_empty() {
         url.push_str("&query=");
@@ -1164,6 +1177,74 @@ fn crossref_url(
     url
 }
 
+fn crossref_authors(item: &Json) -> Option<String> {
+    let arr = item.get("author").and_then(|a| a.as_arr())?;
+    let mut names: Vec<String> = Vec::new();
+    for entry in arr {
+        let given = entry.get("given").and_then(|g| g.as_str()).unwrap_or("");
+        let family = entry.get("family").and_then(|f| f.as_str()).unwrap_or("");
+        match (given.is_empty(), family.is_empty()) {
+            (true, true) => continue,
+            (true, false) => names.push(family.to_string()),
+            (false, true) => names.push(given.to_string()),
+            (false, false) => names.push(format!("{} {}", given, family)),
+        }
+    }
+    if names.len() > 8 {
+        names.truncate(8);
+        Some(format!("{}, et al.", names.join(", ")))
+    } else if names.is_empty() {
+        None
+    } else {
+        Some(names.join(", "))
+    }
+}
+
+fn crossref_abstract(item: &Json) -> Option<String> {
+    let raw = item.get("abstract").and_then(|a| a.as_str())?;
+    let mut stripped = String::new();
+    let mut in_tag = false;
+    for ch in raw.chars() {
+        match ch {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ if !in_tag => stripped.push(ch),
+            _ => {}
+        }
+    }
+    let collapsed: String = stripped.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.is_empty() {
+        return None;
+    }
+    if collapsed.chars().count() > 1200 {
+        let head: String = collapsed.chars().take(1200).collect();
+        Some(format!("{}…", head))
+    } else {
+        Some(collapsed)
+    }
+}
+
+fn crossref_line(item: &Json) -> Option<String> {
+    let doi = item.get("DOI").and_then(|d| d.as_str()).unwrap_or("");
+    if doi.is_empty() {
+        return None;
+    }
+    let mut line = format!("url https://doi.org/{}\ttitle: {}", doi, doc_title(item));
+    if let Some(authors) = crossref_authors(item) {
+        line.push_str(&format!("\tauthors: {}", authors));
+    }
+    if let Some(cites) = item
+        .get("is-referenced-by-count")
+        .and_then(|c| c.as_scalar_string())
+    {
+        line.push_str(&format!("\tcites: {}", cites));
+    }
+    if let Some(abstract_) = crossref_abstract(item) {
+        line.push_str(&format!("\tabstract: {}", abstract_));
+    }
+    Some(line)
+}
+
 pub fn crossref_lines(query: &str, max: usize) -> Vec<String> {
     let (text, refine) = crate::refine::split_refine(query, &["filter", "sort", "order", "select"]);
     let mut cursor: Option<String> = None;
@@ -1179,13 +1260,8 @@ pub fn crossref_lines(query: &str, max: usize) -> Vec<String> {
                         .and_then(|i| i.as_arr())
                     {
                         for item in items {
-                            let doi = item.get("DOI").and_then(|d| d.as_str()).unwrap_or("");
-                            if !doi.is_empty() {
-                                out.push(format!(
-                                    "url https://doi.org/{}\ttitle: {}",
-                                    doi,
-                                    doc_title(item)
-                                ));
+                            if let Some(line) = crossref_line(item) {
+                                out.push(line);
                             }
                         }
                     }
@@ -1235,12 +1311,8 @@ pub fn wiki_lines(query: &str, max: usize) -> Vec<String> {
                     .and_then(|s| s.as_arr())
                 {
                     for hit in hits {
-                        let title = hit.get("title").and_then(|t| t.as_str()).unwrap_or("");
-                        if !title.is_empty() {
-                            out.push(format!(
-                                "url https://en.wikipedia.org/wiki/{}",
-                                title.replace(' ', "_")
-                            ));
+                        if let Some(line) = wiki_hit_line(hit) {
+                            out.push(line);
                         }
                     }
                 }
@@ -1253,6 +1325,93 @@ pub fn wiki_lines(query: &str, max: usize) -> Vec<String> {
             None => vec!["pending — the wikipedia response carries no JSON".to_string()],
         },
         Some(f) => vec![format!("pending — wikipedia HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+const WIKI_SNIPPET_CAP: usize = 400;
+
+fn wiki_hit_line(hit: &Json) -> Option<String> {
+    let title = hit.get("title").and_then(|t| t.as_str())?;
+    if title.is_empty() {
+        return None;
+    }
+    let mut line = format!(
+        "url https://en.wikipedia.org/wiki/{}\ttitle: {}",
+        title.replace(' ', "_"),
+        title
+    );
+    if let Some(snippet) = hit.get("snippet").and_then(|s| s.as_str()) {
+        let flat = flatten(&strip_tags(snippet));
+        if !flat.is_empty() {
+            let capped: String = flat.chars().take(WIKI_SNIPPET_CAP).collect();
+            line.push_str(&format!("\tsnippet: {}", capped));
+        }
+    }
+    Some(line)
+}
+
+fn duckduckgo_instant_related(topics: &[Json], out: &mut Vec<String>, max: usize) {
+    for topic in topics {
+        if out.len() >= max {
+            return;
+        }
+        if let Some(first_url) = topic.get("FirstURL").and_then(|u| u.as_str()) {
+            if !first_url.is_empty() {
+                let text = topic.get("Text").and_then(|t| t.as_str()).unwrap_or("");
+                out.push(format!("url {first_url}\t{text}"));
+            }
+        }
+        if let Some(nested) = topic.get("Topics").and_then(|t| t.as_arr()) {
+            duckduckgo_instant_related(nested, out, max);
+        }
+    }
+}
+
+fn duckduckgo_instant_entries(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    if let Some(answer) = v.get("Answer").and_then(|a| a.as_str()) {
+        if !answer.is_empty() {
+            out.push(format!("answer: {answer}"));
+        }
+    }
+    if let Some(abstract_text) = v.get("AbstractText").and_then(|a| a.as_str()) {
+        if !abstract_text.is_empty() {
+            let url = v.get("AbstractURL").and_then(|u| u.as_str()).unwrap_or("");
+            out.push(format!("abstract: {abstract_text}\t{url}"));
+        }
+    }
+    if let Some(topics) = v.get("RelatedTopics").and_then(|t| t.as_arr()) {
+        duckduckgo_instant_related(topics, &mut out, max);
+    }
+    out
+}
+
+pub fn duckduckgo_instant_lines(query: &str, max: usize) -> Vec<String> {
+    let url = format!(
+        "https://api.duckduckgo.com/?q={}&format=json&no_html=1&skip_disambig=1",
+        urlencode(query)
+    );
+    match get(&url, &["-H", "User-Agent: omegaflow-archive-search"], "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let out = duckduckgo_instant_entries(&v, max);
+                if out.is_empty() {
+                    vec![format!(
+                        "absent — duckduckgo-instant carries no entry: {query}"
+                    )]
+                } else {
+                    out
+                }
+            }
+            None => {
+                vec!["pending — the duckduckgo-instant response carries no JSON".to_string()]
+            }
+        },
+        Some(f) => vec![format!(
+            "pending — duckduckgo-instant HTTP {}",
+            f.status_text()
+        )],
         None => vec!["pending — no network".to_string()],
     }
 }
@@ -1332,23 +1491,6 @@ pub fn crates_lines(query: &str, max: usize) -> Vec<String> {
         Some(f) => vec![format!("pending — crates.io HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
     }
-}
-
-fn extract_hrefs(html: &str) -> Vec<String> {
-    let mut out = Vec::new();
-    let lower = html.to_lowercase();
-    let mut pos = 0;
-    while let Some(rel) = lower[pos..].find("href=\"") {
-        let idx = pos + rel + 6;
-        let rest = &html[idx..];
-        let Some(end) = rest.find('"') else { break };
-        let href = rest[..end].to_string();
-        if !href.is_empty() && !out.contains(&href) {
-            out.push(href);
-        }
-        pos = idx + end;
-    }
-    out
 }
 
 pub fn brave_lines(query: &str, token: &str, max: usize) -> Vec<String> {
@@ -1537,11 +1679,7 @@ fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-const SEARXNG_INSTANCES: &[&str] = &[
-    "https://search.mectov.my.id",
-    "https://sx.xo.st",
-    "https://www.isci.si",
-];
+const SEARXNG_INSTANCES: &[&str] = &["https://sx.xo.st", "https://search.mectov.my.id"];
 
 pub fn searxng_lines(query: &str, max: usize) -> Vec<String> {
     let headers = [
@@ -1618,20 +1756,22 @@ pub fn tavily_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — TAVILY_API_KEY absent from .secrets.local/.env".to_string()];
     }
-    let body = format!(
-        "{{\"query\":\"{}\",\"max_results\":{},\"api_key\":\"{}\"}}",
-        json_escape(query),
-        max,
-        json_escape(token)
-    );
+    let (text, refine) = crate::refine::split_refine(query, &["answer", "raw"]);
+    let body = tavily_body(&text, max, token, &refine);
     let auth = format!("Authorization: Bearer {}", token);
     let headers = [auth.as_str()];
     match post("https://api.tavily.com/search", &body, &headers, "40") {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {
             Some(v) => {
                 let mut out = tavily_results(&v, max);
+                if let Some(answer) = v.get("answer").and_then(|a| a.as_str()) {
+                    let answer = flatten(answer);
+                    if !answer.is_empty() {
+                        out.insert(0, format!("answer: {}", answer));
+                    }
+                }
                 if out.is_empty() {
-                    out.push(format!("absent — Tavily carries no entry: {}", query));
+                    out.push(format!("absent — Tavily carries no entry: {}", text));
                 }
                 out
             }
@@ -1639,6 +1779,36 @@ pub fn tavily_lines(query: &str, token: &str, max: usize) -> Vec<String> {
         },
         Some(f) => vec![format!("pending — Tavily HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn tavily_body(query: &str, max: usize, token: &str, refine: &[(String, String)]) -> String {
+    let mut body = format!(
+        "{{\"query\":\"{}\",\"max_results\":{},\"api_key\":\"{}\"",
+        json_escape(query),
+        max,
+        json_escape(token)
+    );
+    if let Some(value) = crate::refine::value_of(refine, "answer") {
+        body.push_str(&format!(
+            ",\"include_answer\":{}",
+            tavily_content_value(value)
+        ));
+    }
+    if let Some(value) = crate::refine::value_of(refine, "raw") {
+        body.push_str(&format!(
+            ",\"include_raw_content\":{}",
+            tavily_content_value(value)
+        ));
+    }
+    body.push('}');
+    body
+}
+
+fn tavily_content_value(value: &str) -> String {
+    match value {
+        "1" | "true" => "true".to_string(),
+        other => format!("\"{}\"", json_escape(other)),
     }
 }
 
@@ -1669,6 +1839,10 @@ fn tavily_results(v: &Json, max: usize) -> Vec<String> {
         if !content.is_empty() {
             line.push_str(&format!("\tdescription: {}", content));
         }
+        let raw = cap_content(r.get("raw_content").and_then(|c| c.as_str()).unwrap_or(""));
+        if !raw.is_empty() {
+            line.push_str(&format!("\tcontent: {}", raw));
+        }
         out.push(line);
         if out.len() >= max {
             break;
@@ -1681,11 +1855,8 @@ pub fn exa_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — EXA_API_KEY absent from .secrets.local/.env".to_string()];
     }
-    let body = format!(
-        "{{\"query\":\"{}\",\"numResults\":{}}}",
-        json_escape(query),
-        max
-    );
+    let (text, refine) = crate::refine::split_refine(query, &["contents"]);
+    let body = exa_body(&text, max, crate::refine::value_of(&refine, "contents"));
     let auth = format!("x-api-key: {}", token);
     let headers = [auth.as_str()];
     match post("https://api.exa.ai/search", &body, &headers, "40") {
@@ -1693,7 +1864,7 @@ pub fn exa_lines(query: &str, token: &str, max: usize) -> Vec<String> {
             Some(v) => {
                 let mut out = exa_results(&v, max);
                 if out.is_empty() {
-                    out.push(format!("absent — Exa carries no entry: {}", query));
+                    out.push(format!("absent — Exa carries no entry: {}", text));
                 }
                 out
             }
@@ -1702,6 +1873,22 @@ pub fn exa_lines(query: &str, token: &str, max: usize) -> Vec<String> {
         Some(f) => vec![format!("pending — Exa HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
     }
+}
+
+fn exa_body(query: &str, max: usize, contents: Option<&str>) -> String {
+    let mut body = format!(
+        "{{\"query\":\"{}\",\"numResults\":{}",
+        json_escape(query),
+        max
+    );
+    match contents {
+        Some("highlights") => body.push_str(",\"contents\":{\"highlights\":true}"),
+        Some("summary") => body.push_str(",\"contents\":{\"summary\":true}"),
+        Some(_) => body.push_str(",\"contents\":{\"text\":true}"),
+        None => {}
+    }
+    body.push('}');
+    body
 }
 
 fn exa_results(v: &Json, max: usize) -> Vec<String> {
@@ -1728,9 +1915,23 @@ fn exa_results(v: &Json, max: usize) -> Vec<String> {
         if !published.is_empty() {
             line.push_str(&format!("\tpublished: {}", published));
         }
-        let text = flatten(r.get("text").and_then(|t| t.as_str()).unwrap_or(""));
+        let text = cap_content(r.get("text").and_then(|t| t.as_str()).unwrap_or(""));
         if !text.is_empty() {
             line.push_str(&format!("\tdescription: {}", text));
+        }
+        if let Some(highlights) = r.get("highlights").and_then(|h| h.as_arr()) {
+            for highlight in highlights {
+                if let Some(highlight) = highlight.as_str() {
+                    let highlight = cap_content(highlight);
+                    if !highlight.is_empty() {
+                        line.push_str(&format!("\thighlight: {}", highlight));
+                    }
+                }
+            }
+        }
+        let summary = cap_content(r.get("summary").and_then(|s| s.as_str()).unwrap_or(""));
+        if !summary.is_empty() {
+            line.push_str(&format!("\tsummary: {}", summary));
         }
         out.push(line);
         if out.len() >= max {
@@ -2199,12 +2400,27 @@ fn ia_search_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-pub fn ngmdb_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer/0/query?where=map_name+LIKE+%27%25{}%27&outFields=map_name,primary_state,imprint_year,scan_id&f=json&resultRecordCount={}",
-        urlencode(query),
+fn ngmdb_url(text: &str, refine: &[(String, String)], max: usize) -> String {
+    let state = crate::refine::value_of(refine, "state")
+        .map(|s| s.trim().to_uppercase())
+        .filter(|s| !s.is_empty());
+    let mut conditions = Vec::new();
+    if !(text.is_empty() && state.is_some()) {
+        conditions.push(format!("map_name+LIKE+%27%25{}%27", urlencode(text)));
+    }
+    if let Some(state) = &state {
+        conditions.push(format!("primary_state%3D%27{}%27", urlencode(state)));
+    }
+    format!(
+        "https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer/0/query?where={}&outFields=map_name,primary_state,imprint_year,scan_id&f=json&resultRecordCount={}",
+        conditions.join("+AND+"),
         max
-    );
+    )
+}
+
+pub fn ngmdb_lines(query: &str, max: usize) -> Vec<String> {
+    let (text, refine) = crate::refine::split_refine(query, &["state"]);
+    let url = ngmdb_url(&text, &refine, max);
     let headers = [
         "-H",
         "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
@@ -3099,18 +3315,18 @@ pub fn linkup_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — LINKUP_API_KEY absent from .secrets.local/.env".to_string()];
     }
-    let body = format!(
-        "{{\"q\":\"{}\",\"depth\":\"standard\",\"outputType\":\"searchResults\"}}",
-        json_escape(query)
-    );
+    let (text, refine) = crate::refine::split_refine(query, &["output", "depth"]);
+    let output = crate::refine::value_of(&refine, "output").unwrap_or("searchResults");
+    let depth = crate::refine::value_of(&refine, "depth").unwrap_or("standard");
+    let body = linkup_body(&text, output, depth);
     let auth = format!("Authorization: Bearer {}", token);
     let headers = [auth.as_str()];
     match post("https://api.linkup.so/v1/search", &body, &headers, "40") {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {
             Some(v) => {
-                let mut out = linkup_results(&v, max);
+                let mut out = linkup_output(&v, max);
                 if out.is_empty() {
-                    out.push(format!("absent — Linkup carries no entry: {}", query));
+                    out.push(format!("absent — Linkup carries no entry: {}", text));
                 }
                 out
             }
@@ -3119,6 +3335,50 @@ pub fn linkup_lines(query: &str, token: &str, max: usize) -> Vec<String> {
         Some(f) => vec![format!("pending — Linkup HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
     }
+}
+
+fn linkup_body(query: &str, output: &str, depth: &str) -> String {
+    let output = match output {
+        "sourcedAnswer" => "sourcedAnswer",
+        _ => "searchResults",
+    };
+    format!(
+        "{{\"q\":\"{}\",\"depth\":\"{}\",\"outputType\":\"{}\"}}",
+        json_escape(query),
+        json_escape(depth),
+        output
+    )
+}
+
+fn linkup_output(v: &Json, max: usize) -> Vec<String> {
+    let mut out = linkup_results(v, max);
+    if out.is_empty() {
+        if let Some(answer) = v.get("answer").and_then(|a| a.as_str()) {
+            let answer = cap_content(answer);
+            if !answer.is_empty() {
+                out.push(format!("answer: {}", answer));
+            }
+        }
+    }
+    if let Some(sources) = v.get("sources").and_then(|s| s.as_arr()) {
+        for source in sources {
+            let link = source.get("url").and_then(|u| u.as_str()).unwrap_or("");
+            if link.is_empty() {
+                continue;
+            }
+            let name = flatten(source.get("name").and_then(|n| n.as_str()).unwrap_or(""));
+            let mut line = format!("url {}\ttitle: {}", link, name);
+            let snippet = cap_content(source.get("snippet").and_then(|s| s.as_str()).unwrap_or(""));
+            if !snippet.is_empty() {
+                line.push_str(&format!("\tdescription: {}", snippet));
+            }
+            out.push(line);
+            if out.len() >= max {
+                break;
+            }
+        }
+    }
+    out
 }
 
 fn linkup_results(v: &Json, max: usize) -> Vec<String> {
@@ -3132,7 +3392,7 @@ fn linkup_results(v: &Json, max: usize) -> Vec<String> {
             continue;
         }
         let title = flatten(r.get("name").and_then(|n| n.as_str()).unwrap_or(""));
-        let content = flatten(r.get("content").and_then(|c| c.as_str()).unwrap_or(""));
+        let content = cap_content(r.get("content").and_then(|c| c.as_str()).unwrap_or(""));
         let mut line = format!("url {}\ttitle: {}", link, title);
         if !content.is_empty() {
             line.push_str(&format!("\tdescription: {}", content));
@@ -3143,61 +3403,6 @@ fn linkup_results(v: &Json, max: usize) -> Vec<String> {
         }
     }
     out
-}
-
-pub fn librs_lines(query: &str) -> Vec<String> {
-    let url = format!("https://lib.rs/search?q={}", urlencode(query));
-    let headers = [
-        "-H",
-        "User-Agent: omegaflow-archive-search",
-        "-H",
-        "Accept: text/html,application/xhtml+xml",
-    ];
-    match get(&url, &headers, "40") {
-        Some(f) if f.status == Some(200) => {
-            let mut out = Vec::new();
-            for href in extract_hrefs(&f.body) {
-                if href.contains("/crates/") {
-                    let full = if href.starts_with("http") {
-                        href
-                    } else {
-                        format!("https://lib.rs{}", href)
-                    };
-                    if !out.contains(&full) {
-                        out.push(format!("url {}", full));
-                    }
-                }
-            }
-            out.truncate(20);
-            if out.is_empty() {
-                vec![format!("absent — lib.rs carries no entry: {}", query)]
-            } else {
-                out
-            }
-        }
-        Some(f) => {
-            let mut out = crates_lines(query, 20);
-            if out
-                .iter()
-                .any(|l| l.starts_with("pending") || l.starts_with("absent"))
-            {
-                vec![format!(
-                    "pending — lib.rs HTTP {} (Cloudflare challenge) and the crates.io fallback is void",
-                    f.status_text()
-                )]
-            } else {
-                out.insert(
-                    0,
-                    format!(
-                        "note lib.rs HTTP {} (Cloudflare challenge) — crates.io fallback",
-                        f.status_text()
-                    ),
-                );
-                out
-            }
-        }
-        None => vec!["pending — no network".to_string()],
-    }
 }
 
 fn magic_label(magic: crate::magic::Magic) -> &'static str {
@@ -3243,14 +3448,15 @@ pub fn sniff_lines(url: &str) -> Vec<String> {
 
 const QUERY_MODES: &[&str] = &[
     "openalex",
+    "base",
     "arxiv",
     "crossref",
     "ads",
     "ntrs",
     "wiki",
+    "duckduckgo-instant",
     "github",
     "crates",
-    "librs",
     "mwmbl",
     "marginalia",
     "searxng",
@@ -3295,6 +3501,7 @@ const QUERY_MODES: &[&str] = &[
     "chembl",
     "ensembl",
     "doaj",
+    "osf",
     "go",
     "unpaywall",
     "reactome",
@@ -3310,19 +3517,28 @@ pub fn query_mode_count() -> usize {
     QUERY_MODES.len()
 }
 
-fn all_lines(query: &str, env: &HashMap<String, String>) -> Vec<String> {
+fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<String> {
     let mut out = Vec::new();
     let mut full = Vec::new();
     for mode in QUERY_MODES {
-        let lines = run_lines(mode, query, env, None);
+        let lines = run_lines_max(mode, query, env, None, max);
         let n = lines.len();
         full.push(format!("=== {} ({}) ===", mode, n));
         full.extend(lines.iter().cloned());
-        out.push(format!("=== {} ({}) ===", mode, n));
+        out.push(format!(
+            "=== {} ({} lines; preview {}) ===",
+            mode,
+            n,
+            n.min(5)
+        ));
         out.extend(lines.into_iter().take(5));
     }
     if let Some(path) = write_full(query, &full) {
-        out.push(format!("full: {} lines -> {}", full.len(), path));
+        out.push(format!(
+            "full: {} lines -> {}  [read the full file to its end — the previewed 5 per source are not the result]",
+            full.len(),
+            path
+        ));
     }
     out
 }
@@ -3346,16 +3562,27 @@ fn token_key(top: &str, marker: Option<String>) -> String {
     }
 }
 
+pub const DEFAULT_MAX: usize = 25;
+
 pub fn run_lines(
     mode: &str,
     query: &str,
     env: &HashMap<String, String>,
     out: Option<&str>,
 ) -> Vec<String> {
+    run_lines_max(mode, query, env, out, DEFAULT_MAX)
+}
+
+pub fn run_lines_max(
+    mode: &str,
+    query: &str,
+    env: &HashMap<String, String>,
+    out: Option<&str>,
+    max: usize,
+) -> Vec<String> {
     crate::token::set_secrets(env.clone());
-    let max = 10usize;
     if mode == "all" {
-        return all_lines(query, env);
+        return all_lines(query, env, max);
     }
     let lines = match mode {
         "arxiv" => arxiv_lines(query, max),
@@ -3377,6 +3604,7 @@ pub fn run_lines(
         "cc" => cc_lines(query, max),
         "crossref" => crossref_lines(query, max),
         "wiki" => wiki_lines(query, max),
+        "duckduckgo-instant" => duckduckgo_instant_lines(query, max),
         "github" => {
             let token = resolve_key(
                 env.get("GH_SEARCH_TOKEN").map(String::as_str).unwrap_or(""),
@@ -3395,7 +3623,6 @@ pub fn run_lines(
             }
         }
         "crates" => crates_lines(query, max),
-        "librs" => librs_lines(query),
         "brave" => {
             let token = resolve_key(
                 env.get("BRAVE_API_KEY").map(String::as_str).unwrap_or(""),
@@ -3643,6 +3870,7 @@ pub fn run_lines(
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
+        "base" => crate::base::base_lines(query, max),
         "openalex" => crate::openalex::openalex_lines(query, max),
         "pubmed" => crate::pubmed::pubmed_lines(query, max),
         "europepmc" => crate::europepmc::europepmc_lines(query, max),
@@ -3664,6 +3892,7 @@ pub fn run_lines(
         "entrez" => crate::entrez::entrez_lines(query, max),
         "ena" => crate::ena::ena_lines(query, max),
         "doaj" => crate::doaj::doaj_lines(query, max),
+        "osf" => crate::osf::osf_lines(query, max),
         "go" => crate::go::go_lines(query, max),
         "unpaywall" => crate::unpaywall::unpaywall_lines(query),
         "reactome" => crate::reactome::reactome_lines(query, max),
@@ -3732,17 +3961,135 @@ mod tests {
     }
 
     #[test]
+    fn ngmdb_url_without_a_refine_carries_the_current_url() {
+        assert_eq!(
+            ngmdb_url("Yosemite", &[], 10),
+            "https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ustOverlay/MapServer/0/query?where=map_name+LIKE+%27%25Yosemite%27&outFields=map_name,primary_state,imprint_year,scan_id&f=json&resultRecordCount=10"
+        );
+    }
+
+    #[test]
+    fn ngmdb_url_with_a_state_refine_carries_both_conditions() {
+        let refine = vec![("state".to_string(), "CA".to_string())];
+        let url = ngmdb_url("California", &refine, 10);
+        assert!(url.contains("map_name+LIKE+%27%25California%27"), "{url}");
+        assert!(url.contains("+AND+primary_state%3D%27CA%27"), "{url}");
+    }
+
+    #[test]
+    fn ngmdb_url_uppercases_and_trims_the_state() {
+        let refine = vec![("state".to_string(), " ca ".to_string())];
+        let url = ngmdb_url("California", &refine, 10);
+        assert!(url.contains("primary_state%3D%27CA%27"), "{url}");
+    }
+
+    #[test]
+    fn ngmdb_url_with_empty_text_and_state_carries_only_the_state() {
+        let refine = vec![("state".to_string(), "CA".to_string())];
+        let url = ngmdb_url("", &refine, 10);
+        assert!(!url.contains("map_name+LIKE"), "{url}");
+        assert!(
+            url.contains("?where=primary_state%3D%27CA%27&outFields="),
+            "{url}"
+        );
+    }
+
+    #[test]
+    fn duckduckgo_instant_answer_abstract_and_related() {
+        let body = r#"{"Heading":"Transfer entropy","AbstractText":"abstract body","AbstractURL":"https://example.org/a","Answer":"42","RelatedTopics":[{"Text":"first","FirstURL":"https://example.org/1"},{"Name":"more","Topics":[{"Text":"nested","FirstURL":"https://example.org/2"}]}]}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            duckduckgo_instant_entries(&v, 10),
+            vec![
+                "answer: 42".to_string(),
+                "abstract: abstract body\thttps://example.org/a".to_string(),
+                "url https://example.org/1\tfirst".to_string(),
+                "url https://example.org/2\tnested".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn duckduckgo_instant_only_related() {
+        let body = r#"{"Heading":"T","AbstractText":"","Answer":"","RelatedTopics":[{"Text":"first","FirstURL":"https://example.org/1"}]}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            duckduckgo_instant_entries(&v, 10),
+            vec!["url https://example.org/1\tfirst".to_string()]
+        );
+    }
+
+    #[test]
+    fn duckduckgo_instant_empty_carries_no_entry() {
+        let body = r#"{"Answer":"","AbstractText":"","RelatedTopics":[]}"#;
+        let v = json::parse(body).expect("json");
+        assert!(duckduckgo_instant_entries(&v, 10).is_empty());
+    }
+
+    #[test]
+    fn duckduckgo_instant_missing_fields_are_omitted() {
+        let v = json::parse(r#"{"Heading":"T","Answer":"only answer"}"#).expect("json");
+        assert_eq!(
+            duckduckgo_instant_entries(&v, 10),
+            vec!["answer: only answer".to_string()]
+        );
+    }
+
+    #[test]
+    fn wiki_hit_carries_title_and_tag_stripped_snippet() {
+        let hit = json::parse(
+            r#"{"title":"Transfer entropy","snippet":"the <span class=\"searchmatch\">transfer</span> of\n  information"}"#,
+        )
+        .expect("json");
+        assert_eq!(
+            wiki_hit_line(&hit),
+            Some(
+                "url https://en.wikipedia.org/wiki/Transfer_entropy\ttitle: Transfer entropy\tsnippet: the transfer of information"
+                    .to_string()
+            )
+        );
+    }
+
+    #[test]
+    fn wiki_hit_omits_absent_snippet() {
+        let hit = json::parse(r#"{"title":"Transfer entropy"}"#).expect("json");
+        assert_eq!(
+            wiki_hit_line(&hit),
+            Some(
+                "url https://en.wikipedia.org/wiki/Transfer_entropy\ttitle: Transfer entropy"
+                    .to_string()
+            )
+        );
+    }
+
+    #[test]
+    fn wiki_hit_omits_snippet_that_strips_to_nothing() {
+        let hit = json::parse(r#"{"title":"A","snippet":"<span></span>"}"#).expect("json");
+        assert_eq!(
+            wiki_hit_line(&hit),
+            Some("url https://en.wikipedia.org/wiki/A\ttitle: A".to_string())
+        );
+    }
+
+    #[test]
+    fn wiki_hit_without_title_carries_no_line() {
+        let hit = json::parse(r#"{"snippet":"body"}"#).expect("json");
+        assert_eq!(wiki_hit_line(&hit), None);
+    }
+
+    #[test]
     fn query_mode_list_is_the_all_fan_out_set() {
         let mut expected = vec![
             "openalex",
+            "base",
             "arxiv",
             "crossref",
             "ads",
             "ntrs",
             "wiki",
+            "duckduckgo-instant",
             "github",
             "crates",
-            "librs",
             "mwmbl",
             "marginalia",
             "searxng",
@@ -3787,6 +4134,7 @@ mod tests {
             "chembl",
             "ensembl",
             "doaj",
+            "osf",
             "go",
             "unpaywall",
             "reactome",
@@ -4005,6 +4353,94 @@ mod tests {
     }
 
     #[test]
+    fn tavily_content_modes_name_the_answer_and_raw_body_fields() {
+        let refined = vec![
+            ("answer".to_string(), "advanced".to_string()),
+            ("raw".to_string(), "1".to_string()),
+        ];
+        assert_eq!(
+            tavily_body("transfer entropy", 5, "tok", &refined),
+            "{\"query\":\"transfer entropy\",\"max_results\":5,\"api_key\":\"tok\",\"include_answer\":\"advanced\",\"include_raw_content\":true}"
+        );
+    }
+
+    #[test]
+    fn a_plain_tavily_body_stays_unchanged() {
+        assert_eq!(
+            tavily_body("transfer entropy", 5, "tok", &[]),
+            "{\"query\":\"transfer entropy\",\"max_results\":5,\"api_key\":\"tok\"}"
+        );
+    }
+
+    #[test]
+    fn tavily_results_carry_raw_content() {
+        let body = r#"{"answer":"It holds.","results":[{"title":"B","url":"https://example.org/b","raw_content":"full  text"}]}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            tavily_results(&v, 10),
+            vec!["url https://example.org/b\ttitle: B\tcontent: full text".to_string()]
+        );
+    }
+
+    #[test]
+    fn exa_content_modes_name_the_contents_object() {
+        assert_eq!(
+            exa_body("transfer entropy", 5, None),
+            "{\"query\":\"transfer entropy\",\"numResults\":5}"
+        );
+        assert_eq!(
+            exa_body("transfer entropy", 5, Some("text")),
+            "{\"query\":\"transfer entropy\",\"numResults\":5,\"contents\":{\"text\":true}}"
+        );
+        assert_eq!(
+            exa_body("transfer entropy", 5, Some("highlights")),
+            "{\"query\":\"transfer entropy\",\"numResults\":5,\"contents\":{\"highlights\":true}}"
+        );
+    }
+
+    #[test]
+    fn exa_results_carry_highlights_and_summary() {
+        let body = r#"{"results":[{"title":"B","url":"https://example.org/b","highlights":["a point"],"summary":"a summary"}]}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            exa_results(&v, 10),
+            vec![
+                "url https://example.org/b\ttitle: B\thighlight: a point\tsummary: a summary"
+                    .to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn linkup_output_modes_name_the_output_type() {
+        assert_eq!(
+            linkup_body("transfer entropy", "searchResults", "standard"),
+            "{\"q\":\"transfer entropy\",\"depth\":\"standard\",\"outputType\":\"searchResults\"}"
+        );
+        assert_eq!(
+            linkup_body("transfer entropy", "sourcedAnswer", "deep"),
+            "{\"q\":\"transfer entropy\",\"depth\":\"deep\",\"outputType\":\"sourcedAnswer\"}"
+        );
+        assert_eq!(
+            linkup_body("transfer entropy", "structured", "standard"),
+            "{\"q\":\"transfer entropy\",\"depth\":\"standard\",\"outputType\":\"searchResults\"}"
+        );
+    }
+
+    #[test]
+    fn linkup_sourced_answer_carries_the_answer_and_sources() {
+        let body = r#"{"answer":"It holds.","sources":[{"name":"B","url":"https://example.org/b","snippet":"a snippet"}]}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            linkup_output(&v, 10),
+            vec![
+                "answer: It holds.".to_string(),
+                "url https://example.org/b\ttitle: B\tdescription: a snippet".to_string(),
+            ]
+        );
+    }
+
+    #[test]
     fn json_escape_quotes_and_controls() {
         assert_eq!(json_escape("a\"b\\c\nd"), "a\\\"b\\\\c\\nd");
     }
@@ -4087,12 +4523,6 @@ mod tests {
                 "url https://web.archive.org/web/20020328012821/http://www.example.com:80/ (status 301)".to_string(),
             ]
         );
-    }
-
-    #[test]
-    fn href_extraction_dedups() {
-        let html = "<a href=\"/crates/serde\">x</a><a href=\"/crates/serde\">y</a>";
-        assert_eq!(extract_hrefs(html), vec!["/crates/serde".to_string()]);
     }
 
     #[test]
@@ -4413,7 +4843,58 @@ mod tests {
     fn crossref_url_carries_the_default_select_and_the_plain_query() {
         assert_eq!(
             crossref_url("gravitational waves", &[], 10, None),
-            "https://api.crossref.org/works?rows=10&query=gravitational%20waves&select=DOI%2Ctitle%2Cissued"
+            "https://api.crossref.org/works?rows=10&query=gravitational%20waves&select=DOI%2Ctitle%2Cissued%2Cauthor%2Cis-referenced-by-count%2Cabstract"
+        );
+    }
+
+    fn crossref_item(body: &str) -> Json {
+        json::parse(body).expect("test item parses")
+    }
+
+    #[test]
+    fn crossref_line_carries_authors_cites_and_abstract() {
+        let item = crossref_item(
+            r#"{"DOI":"10.1234/x","title":["A study"],"author":[{"given":"Ada","family":"Lovelace"},{"given":"Alan","family":"Turing"}],"is-referenced-by-count":42,"abstract":"<jats:p>Hello   <jats:italic>world</jats:italic></jats:p>"}"#,
+        );
+        assert_eq!(
+            crossref_line(&item),
+            Some(
+                "url https://doi.org/10.1234/x\ttitle: A study\tauthors: Ada Lovelace, Alan Turing\tcites: 42\tabstract: Hello world"
+                    .to_string()
+            )
+        );
+    }
+
+    #[test]
+    fn crossref_line_omits_absent_author_cites_and_abstract() {
+        let item = crossref_item(r#"{"DOI":"10.1234/y","title":["Bare"]}"#);
+        assert_eq!(
+            crossref_line(&item),
+            Some("url https://doi.org/10.1234/y\ttitle: Bare".to_string())
+        );
+    }
+
+    #[test]
+    fn crossref_line_is_none_without_a_doi() {
+        let item = crossref_item(r#"{"title":["No doi"]}"#);
+        assert_eq!(crossref_line(&item), None);
+    }
+
+    #[test]
+    fn crossref_line_caps_authors_at_eight_with_et_al() {
+        let authors: Vec<String> = (0..9)
+            .map(|i| format!(r#"{{"given":"G{i}","family":"F{i}"}}"#))
+            .collect();
+        let body = format!(
+            r#"{{"DOI":"10.1234/z","title":["Many"],"author":[{}]}}"#,
+            authors.join(",")
+        );
+        let item = crossref_item(&body);
+        let line = crossref_line(&item).expect("line builds");
+        assert!(
+            line.contains(
+                "\tauthors: G0 F0, G1 F1, G2 F2, G3 F3, G4 F4, G5 F5, G6 F6, G7 F7, et al."
+            )
         );
     }
 
@@ -4436,7 +4917,7 @@ mod tests {
         let opts = vec![("filter".to_string(), "type:journal-article".to_string())];
         assert_eq!(
             crossref_url("", &opts, 10, None),
-            "https://api.crossref.org/works?rows=10&select=DOI%2Ctitle%2Cissued&filter=type%3Ajournal-article"
+            "https://api.crossref.org/works?rows=10&select=DOI%2Ctitle%2Cissued%2Cauthor%2Cis-referenced-by-count%2Cabstract&filter=type%3Ajournal-article"
         );
     }
 

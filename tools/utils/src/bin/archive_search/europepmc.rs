@@ -53,6 +53,35 @@ fn field(v: &json::Json, key: &str) -> Option<String> {
         .map(str::to_string)
 }
 
+fn strip_markup(s: &str) -> Option<String> {
+    let mut out = String::with_capacity(s.len());
+    let mut in_tag = false;
+    for ch in s.chars() {
+        match ch {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ if !in_tag => out.push(ch),
+            _ => {}
+        }
+    }
+    let collapsed = out.split_whitespace().collect::<Vec<_>>().join(" ");
+    if collapsed.is_empty() {
+        None
+    } else {
+        Some(collapsed)
+    }
+}
+
+fn cap_abstract(s: &str, max: usize) -> String {
+    if s.chars().count() > max {
+        let mut truncated: String = s.chars().take(max).collect();
+        truncated.push('…');
+        truncated
+    } else {
+        s.to_string()
+    }
+}
+
 fn article_url(record: &json::Json) -> Option<String> {
     if let Some(pmid) = field(record, "pmid") {
         return Some(format!("https://europepmc.org/article/MED/{}", pmid));
@@ -94,6 +123,20 @@ fn parse_europepmc(body: &str) -> Vec<String> {
         {
             line.push_str(&format!("\tcites: {}", cites));
         }
+        if let Some(authors) = field(record, "authorString") {
+            line.push_str(&format!("\tauthors: {}", authors));
+        }
+        if let Some(abstract_raw) = field(record, "abstractText") {
+            if let Some(abstract_text) = strip_markup(&abstract_raw) {
+                line.push_str(&format!(
+                    "\tabstract: {}",
+                    cap_abstract(&abstract_text, 1500)
+                ));
+            }
+        }
+        if let Some(journal) = field(record, "journalTitle") {
+            line.push_str(&format!("\tjournal: {}", journal));
+        }
         out.push(line);
     }
     out
@@ -125,5 +168,40 @@ mod tests {
     #[test]
     fn an_empty_result_carries_nothing() {
         assert!(parse_europepmc(r#"{"resultList":{"result":[]}}"#).is_empty());
+    }
+
+    #[test]
+    fn reads_authors_abstract_and_journal() {
+        let body = r#"{"resultList":{"result":[{"id":"1","source":"MED","pmid":"1","authorString":"Smith J, Doe A","abstractText":"<p>Some <b>text</b> here</p>","journalTitle":"Journal of Tests"}]}}"#;
+        assert_eq!(
+            parse_europepmc(body),
+            vec!["url https://europepmc.org/article/MED/1\tauthors: Smith J, Doe A\tabstract: Some text here\tjournal: Journal of Tests".to_string()]
+        );
+    }
+
+    #[test]
+    fn absent_fields_are_omitted() {
+        let body =
+            r#"{"resultList":{"result":[{"id":"1","source":"MED","pmid":"1","title":"T"}]}}"#;
+        assert_eq!(
+            parse_europepmc(body),
+            vec!["url https://europepmc.org/article/MED/1\ttitle: T".to_string()]
+        );
+    }
+
+    #[test]
+    fn strips_tags_and_caps_the_abstract() {
+        let long = "a".repeat(1600);
+        let body = format!(
+            r#"{{"resultList":{{"result":[{{"id":"1","source":"MED","pmid":"1","abstractText":"<p>hello   <b>world</b></p>{}"}}]}}}}"#,
+            long
+        );
+        let lines = parse_europepmc(&body);
+        let line = &lines[0];
+        let abstract_field = line.split("\tabstract: ").nth(1).unwrap();
+        assert!(abstract_field.starts_with("hello world"));
+        assert!(!abstract_field.contains('<'));
+        assert_eq!(abstract_field.chars().count(), 1501);
+        assert!(abstract_field.ends_with('…'));
     }
 }
