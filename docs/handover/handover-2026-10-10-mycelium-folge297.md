@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Ephemeris-CDN-sha256 (llr/sinex/vmf3_site) + VMF3-GRID-Block und -Aufrufer (Origin gemessen) + cmb-cdn-SPT-Re-Dispatch; mountain-301-Block gefaltet.
   class: handover
   date: 2026-10-10
-  sha256: ece4a7a59a1a752eb19d9704269989265cc5494b96cea11d431b7d3ec05c040b
+  sha256: 61ceced328ab10e0b1f9a1745c1c3ad47aab847b364ae6df9acf5ec21cb180b7
   status: live
 -->
 # Handover — Mycelium-Folge 297 (2026-10-10)
@@ -70,7 +70,13 @@ und LLR `no-cadence` bestätigt; planetary radar `at <zielplanet>`
   `phi/sources.φ:20260`, NOAA NOS im Katalog, CanElevation/BC/ON/QC); LatAm
   (INPE, PMSP, IDE Chile, IGN AR …); Asien-Pazifik (JP-AWS, KR, TW, HK, IN, CN,
   SG, ID, PH-LiPAD, TH, MY, AU ELVIS/GA/QLD/NSW, NZ LINZ); Afrika/Nahost (kein
-  nationales Massen-LiDAR, nur Kampagnen). Der **LAS/COPC-Reader steht**
+  nationales Massen-LiDAR, nur Kampagnen); **Unterwasser/Bathymetrie** (GEBCO,
+  ETOPO, SRTM15+, Seabed 2030, NCEI/IHO-DCDB-Multibeam, EMODnet, IBCSO; IBCAO
+  tot, AusSeabed 403, R2R 503). Die zuvor `pending` geführten Hosts wurden
+  **inkl. Proton-Stufe** nachgemessen: PNOA/CNIG/RO/GR/SK/PT-IGEO/BG/
+  Hessen/Thüringen/Hamburg/IBCAO/HCMC liefern auf direkt UND Proton keine
+  Antwort (nur veralteter Wayback) → außer Betrieb, kein `pending`; BIG-Indonesien
+  (206) und Alaska (200) sind erreichbar. Der **LAS/COPC-Reader steht**
   (`src/archivar/las/`, LASzip-Chunk-Dekoder gebaut); die frühere Zeile
   „omegaflow hat **kein** LiDAR registriert" war **falsch** (296→297 getragen,
   hier korrigiert).
