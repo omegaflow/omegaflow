@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Reduktionskette Schritt 2b (ITRF→CIRS), TStreamerInfo-Header, Register-Messungen (VMF3-GRID-URL, PEP-Rat)
   class: handover
   date: 2026-10-10
-  sha256: 2734f1cfdbc9dba528a9ecba46b3978e023808fc1ce7d4beece38fdbc020199a
+  sha256: ada13843eb2ee227aef189ab0b008372420951b6e9c8f2a64073c9ac424ca817
   status: live
 -->
 # Handover — Mountain-Folge 302 (2026-10-10)
@@ -51,6 +51,13 @@ flash only, kein pro/max.
 - **Lage:** (gemessen 2026-10-10) Zwei Träger-Dokumente, hier namentlich geführt (der nächste Pass findet sie sonst nicht): **`docs/concepts/eigene-ephemeride.md`** (die Vision: eine **eigene Ephemeride aus allen Zeugen** — NASA+ESA+sowjetisch+japanisch+Pioneer-thermisch; Wert = `witness_set`/Unabhängigkeit, nicht Vollständigkeit; O−C gegen ein Haus ist `fit-residuum`, nie `blindtest`) und **`docs/surveys/survey-2026-10-10-ephemeris-quellen.md`** (die Referenz-Landschaft: LLR-Normalpunkte, ITRF2020, JPL-Radar-Astrometrie, VMF1/VMF3, ICRF3, GRAVITY — was noch zu ernten ist). Die vier **Häuser** (DE440 / INPOP19a / EPM2021 / PETREL19) sind dort **Zeugen** und längst als normale `ephemeris_*`-Quellen registriert — kein Code-Zeuge, keine fünfte Klasse: `ephemeris_epm_*` (`compiler tools/harvest/src/bin/epm_compiler.rs`, `phi/sources.φ:2057-2129`), `ephemeris_petrel19_*` (`:2345-2366`), INPOP19a (`compiler tools/harvest/src/bin/inpop_compiler.rs`, `:19793`). **Zwei offene Ephemeriden-*Programme*** (kein Haus): **PEP** (Fortran, CC BY-NC-SA, `github.com/jbattat/pep_core`) und **Tudat** (TU Delft, open-source, arXiv:2510.23179 — DSN/ESTRACK-Doppler+Range, PRIDE-VLBI, MPC/NSDC-Astrometrie, Prefit/Postfit-Residuen; Postfit-Doppler 1-5 mHz MRO/GRAIL). PEP ist das einzige noch nicht registrierte Haus; **Tudat ist jetzt gemessen, aber weder geprüft noch gebaut**. **Riss, benannt:** der Rat (Option a, neue Klasse) wird vom Baum überstimmt — ein Programm lebt als `origin`/`compiler` **auf einer Datenzeile** (PETREL19-Präzedenz); unser eigenes Werk wird nach seinem Erzeuger benannt, nie nach einem Haus.
 - **Blockade:** keins der beiden Programme ist als Rust-Kette gebaut; Voraussetzung ist die Reduktionskette (Vision-Schritt 0).
 - **Braucht:** Schritt 0 abschließen (Q(t) `cirs_to_gcrs` — der nächste begrenzte Bau-Schritt), dann Schritt 1 (Pioneer-10-ODF durch die Kette, Residuum gegen DE440, kein Fit). PEP/Tudat nur als **Lizenz-/Verfahrens-Referenz** (nie im Shipped Binary); `reference` als `origin`-Herkunftsmarker genügt (keine neue Klasse, kein Canon-Akt).
+
+### Asservatenkammer-Zensus — getragen; Mountain-Kandidaten offen
+- **Status:** eigen (Quellen/Register) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt je Kandidat
+- **Lage:** (gemessen 2026-10-10) Der Zensus `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` nennt **12 handelbare Doks** aus der Asservatenkammer (82/32/18/15/11/10/8/6/5/3/2 offene Marker; `register_lookup --orphan-docs` = 22 trägerlose Marker-Doks). Neue Gate-Regel `commit_check` **own-handover** (`tools/gate/src/bin/commit_check.rs`, `c0441466d`): ein neu hinzugefügtes `docs/*`-Dok muß im selben Commit in der **eigenen** Übergabe genannt sein. Fast alle Alt-„Träger" hängen an einer breiten Zitat-Liste (`handover-2026-10-10-sensory-folge250.md`), kein Bearbeiter.
+- **Blockade:** keines der 12 Doks hat einen Träger-Punkt in einer Live-Übergabe.
+- **Braucht:** je Kandidat ein Träger-Punkt mit erstem begrenztem Schritt — Mountain zuerst `survey-2026-09-03-orphan-verdicts` (156 Orphan-Releases → Disposition) und `survey-2026-10-08-open-sources-delta`; die Account-Kandidaten an Mycelium (`## An mycelium`).
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
@@ -116,6 +123,7 @@ Origin: mountain-302 (2026-10-10).
   (`--sniff` → unrecognized); `sha256 60e36038…b3f28d`. Wayback: **kein Snapshot** → nur direkt erreichbar.
   Die drei Alt-Kandidaten (ohne `1x1/VMF3/VMF3_OP`) sind als 404 bestätigt. → `vmf3_grid.bin` mit dieser URL bauen.
 - **PEP-Register-Ort (Rat):** neue Registerklasse, Canon-Akt; **Token-Name + Umfang warten auf Operator-Wort** (in der Mountain-Übergabe). Nicht vor dem Wort bauen. Die Rollen-Direktive `role reference` wird die Grenze „kein Runtime-Fremd-Binary" gatebar machen.
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-08-research-api-mcp.md` (3 offen) — Consensus/Elicit/SciSpace/Perplexity als Recherche-APIs; Auth-Route/Keys = Mycelium-Domäne. Bitte einen Träger-Punkt mit nächstem Schritt setzen. Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
 - **Unverändert aus folge301:** Token-Entscheidungen (`terms unknown` bleibt; `ttl 86400`/`no-cadence` bestätigt; planetary radar `at <zielplanet>`); LLR-Runtime-Arm an River; `giro-fastchar-cdn` Re-Lauf; PDS-PPI-Block; `keogram-cdn` Re-Lauf; `cmb-cdn` Re-Lauf.
 
 ## An river
