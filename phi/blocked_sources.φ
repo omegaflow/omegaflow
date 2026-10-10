@@ -60,9 +60,9 @@ url https://vso.stanford.edu/
 note Solar VSO/IRIS — 2026-10-09: VSO POST 411; IRIS HCR-API www.lmsal.com/hek/hcr → comp_data_url; FITS 200 (9 207 360 B). iris_compiler.rs steht; sources.φ-Zeile + Workflow pending — kein Parser-Gap.
 
 blocked parser-def
-url https://opendata.atlas.cern/
+url https://opendata.cern.ch/record/1120
 gap particle-cern
-note Teilchen CERN — 2026-10-10: Gap = ROOT-Object-Streamer (TStreamerInfo/TBuffer, TBranch/TLeaf/TBasket; root.rs:222); zlib vorhanden (inflate hdf4.rs:887), kein Codec-Gap; Header/TKey-Probe steht. Riss: particle-cern mischt ATLAS-URL + ALICE-Sample.
+note Teilchen CERN — 2026-10-10: Gap = ROOT-Object-Streamer (TStreamerInfo/TBuffer, TBranch/TLeaf/TBasket; root.rs:222); zlib vorhanden (inflate hdf4.rs:887), kein Codec-Gap; Header/TKey-Probe steht. Quelle = ALICE record 1120 (AliVSD_Masterclass_6.root).
 
 pending
 url https://blinkverse.zero2x.org/
