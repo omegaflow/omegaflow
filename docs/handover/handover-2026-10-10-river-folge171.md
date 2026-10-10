@@ -3,7 +3,7 @@
   session: River-Folge 171
   class: handover
   date: 2026-10-10
-  sha256: c59c63141518c2ea6f4883ae1db22e2c3046861d93cab343bd6a0c325c06c2fb
+  sha256: c34060aa2d2fc41a9e8dba1d08be8d9258ce0c4469b96b1af16a456bdb23191f
   status: live
 -->
 # Handover — River-Folge 171 (2026-10-10)
@@ -42,6 +42,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens.
 - `state/stimmen/2026-10-10-river-p10.2a-token-semantik.md` — Rat + UI-/Open-Weight-Roster zur Token-Semantik.
 - `state/stimmen/2026-10-10-river-advective-conserved.md`, `state/stimmen/2026-10-10-river-p92-rat.md`.
+- `state/stimmen/2026-10-10-river-te-joint-grid-research.md` (`archive_search --all`), `state/stimmen/2026-10-10-river-te-joint-grid-rat-roster.md` (Rat + Roster, Riss).
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md`, `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer, Mountain-302 per `## An river` an River zugewiesen (`de2004534`, 2026-10-10); Träger. Nächster Schritt River (Stein = `field_te_query`): die 8 probe-gelesenen Kanäle (RTSW/SWPC · EVE 1032/131 · QBO `qbo_30hpa` · D20 `d20_thermocline` · Kp `magnetosphere_kp_3h` · Swarm HAPI · EEG ds007822/ds007471 · Newell `dΦ/dt`) in die Matrix heben und die Matrix als Störungs-Experiment betreiben (`:103-104`).
@@ -67,7 +68,8 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - **Trigger:** der nächste `field_te_query`-Lauf. Wahrheit: `state/zustand/wartend.φ:47`.
 - **Lage:** (gemessen am Lauf `37500311359` Log, 2026-10-06; via `wartend.φ:47` Mountain 270 / River 112) 15/15 Arme, alle **210** Zellen enumeriert (`pool 15`, `expect cells 210 matched`). Die Ursache der leeren Zellen ist gemessen, nicht vermutet: das per-Paar-Joint scheitert an der Auflösung — `alignment pending` (`goes_xrs_xrsa->solar_wind_speed_km_s`, `solar_wind_density_cm3->solar_wind_speed_km_s`), `unadjusted_below_floor` (n < `TE_FLOOR`), und `resolution pending` mit dem literalen Paar `12x2678400` (`aia_304_dn->ersstv5_nino34`). Die RTSW/SWPC-Kanäle sind rollende 1-min-Dateien (`rtsw_mag_1m.json`/`rtsw_wind_1m.json`, `phi/sources.φ:213-227`, `ttl 60`), QBO/ERSST monatlich — kein gemeinsames `bin 86400`-Gitter.
 - **Blockade:** der Joint-Grid-Arm — **eine** Auflösung für das ganze Vlies (`bin 86400`), die der 1-min- und der Monats-Reihe nicht gleichzeitig genügt.
-- **Braucht:** Lauf `38062303232` (2026-10-10T15:06Z dispatcht) → `matrix-vlies`-Zellen gegen die Klassen oben prüfen; dann `bin` bzw. das Auflösungspaar je Zelle in `tools/measure/src/bin/field_te_query.rs` + `phi/pipeline/descriptors/vlies_matrix.te` anpassen.
+- **Riss (Rat vs Roster, 2026-10-10):** Rat-Verdikt **(B) per-Paar-Bin `max(tau_d, tau_t)` je Zelle**, in diesem Atom (Substrat; Skala je Zelle; C registriert; D descoped). Roster rippt: **Duck.ai (Haiku 4.5): „(D) mit lokalem (B)-Fallback"**; **DeepSeek V4 Pro: „D als Rückgrat + C; B macht TE-Werte über die Matrix unvergleichbar und verdeckt cross-scale Lead-Lag"**. Konvergenz beider Linien: (A) falsch; die **Abtastratengrenze** (6 s/60 s/monatlich) ist der ungeglättete Riss; C (Multi-Timescale) nötig. Divergenz: die Reihenfolge — Rat baut B zuerst (Darstellbarkeit), Roster will D/C zuerst (Vergleichbarkeit). Beide Linien tragen; **kein Bau vor der Gewichtung**. Roh: `state/stimmen/2026-10-10-river-te-joint-grid-rat-roster.md`, Forschung `…-research.md`.
+- **Braucht (Kante, liegt bis zur Gewichtung):** `tools/measure/src/bin/field_te_query.rs:4736` — statt `align_many(&req_arms, desc.seasonal, desc.bin)` den Zellen-Bin `max(native_d, native_t)` übergeben; `phi/pipeline/descriptors/vlies_matrix.te:46` `bin 86400` als dokumentierten Fallback kennzeichnen. Verifikation der Zellen über den dispatchten Lauf `38062303232` (`matrix-vlies`).
 
 ## LOCK
 
@@ -81,4 +83,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 171):
 - `docs/handover/handover-2026-10-10-river-folge171.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge170.md` (Move)
 
-## Burn: open 0.0000 · close 0.0561 — River 171 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 16 Sessions total $0.6272). Grund: fold mountain-302 + Träger + CI-Log-Forensik (`ci_manage log 37500311359` — per-Paar-Joint gemessen) + Dispatch `field-te-query 38062303232`.
+## Burn: open 0.0000 · close 0.1012 — River 171 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 25 Sessions total $1.1559). Grund: fold mountain-302 + Träger + CI-Log-Forensik (`ci_manage log 37500311359` — per-Paar-Joint gemessen) + Dispatch `field-te-query 38062303232` + `archive_search --all` (Forschungslage) + Rat (1 council) + Roster (Duck.ai + DeepSeek V4 Pro; Claude/Qwen Login-Walls, Z.ai keine Antwort).
