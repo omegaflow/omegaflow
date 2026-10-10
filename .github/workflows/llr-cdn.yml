@@ -1,0 +1,43 @@
+name: llr-cdn
+
+# Der LLR-Zustands-Compiler (`llr_compiler`) als CDN-Manifestator.
+# Quelle sind die APOLLO-Normalpunkte 2006–2020 (Zenodo-Record 7818557,
+# CC-BY-4.0); der `--input`-Pfad bleibt lokal, darum trägt dieser Aufrufer
+# einen eigenen Fetch-Step statt des `cdn-manifest.yml`-Reusable.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  llr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the APOLLO normal-point CRD (2006-2020) from Zenodo
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/apollo_2006_2020.crd \
+            "https://zenodo.org/api/records/7818557/files/APOLLO_2006_2020.crd/content"
+      - name: Compile the LLR normal-point series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin llr_compiler -- \
+            --input kernels/apollo_2006_2020.crd \
+            --out llr.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "llr-cdn: llr.bin returned void" \
+                 "llr_compiler returned void for the Zenodo APOLLO CRD. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
