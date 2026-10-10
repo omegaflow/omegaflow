@@ -1,14 +1,16 @@
 name: cdn-manifest
 
 # The one canonical harvester — every *-cdn.yml caller hands it the measured list
-# of {bin, netloc, asset, args?, sharded?, prefix?, timeout?}. The setup steps are
-# byte-identical across the family; the parser/compiler stays distinct per source
-# (A = A). A caller is a thin `on: workflow_dispatch` + `uses: ./.github/workflows/cdn-manifest.yml`.
+# of {bin, netloc, asset, args?, sharded?, prefix?, timeout?, refresh?}. The setup
+# steps are byte-identical across the family; the parser/compiler stays distinct per
+# source (A = A). A caller is a thin `on: workflow_dispatch` + `uses: ./.github/workflows/cdn-manifest.yml`.
+# `refresh: true` bypasses the idempotence skip — a source with a ttl or a schedule
+# (a live snapshot, a series) must re-harvest although its asset name is present.
 on:
   workflow_call:
     inputs:
       harvests:
-        description: 'JSON array of {bin, netloc, asset, args?, sharded?, prefix?, timeout?}'
+        description: 'JSON array of {bin, netloc, asset, args?, sharded?, prefix?, timeout?, refresh?}'
         required: true
         type: string
     secrets:
@@ -52,7 +54,7 @@ jobs:
               fi
               echo "missing from release: $(printf '%s\n' "$missing" | tr '\n' ' ')"
             fi
-          elif gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
+          elif [ "${{ matrix.refresh }}" != "true" ] && gh release view ${{ matrix.netloc }} --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ matrix.asset }}"; then
             echo "${{ matrix.asset }} already present — harvest skipped"
             exit 0

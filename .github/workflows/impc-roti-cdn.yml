@@ -1,25 +1,16 @@
 name: impc-roti-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 on:
   workflow_dispatch:
   schedule:
     - cron: '17 * * * *'
-permissions:
-  contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   impc-roti:
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Harvest the IMPC ROTI one-minute maximum grid and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin impc_roti_compiler -- --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"impc_roti_compiler","netloc":"data.impc.dlr.de","asset":"impc_roti.bin","refresh":true}
+        ]
