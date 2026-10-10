@@ -33,6 +33,10 @@ jobs:
           set -euo pipefail
           gh release download lambda.gsfc.nasa.gov --repo omegaflow/sources \
             --pattern cmb_spt_d1_n64.json --clobber 2>/dev/null && exit 0
+          mkdir -p "$HOME/.cache/omegaflow"
+          curl -sSfL -C - --retry 3 --max-time 21600 \
+            -o "$HOME/.cache/omegaflow/full_maps_d1.tar.bz2" \
+            "https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2"
           cargo run -p omegaflow-harvest --release --bin cmb_planck_compiler -- \
-            --url https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2 \
+            --tar "$HOME/.cache/omegaflow/full_maps_d1.tar.bz2" \
             --nside 64 --out cmb_spt_d1_n64.json --ci-mode
