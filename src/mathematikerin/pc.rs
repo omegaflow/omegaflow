@@ -9,24 +9,34 @@ pub fn pc_stable_skeleton(
     alpha: f64,
     max_cond: usize,
 ) -> Vec<(usize, usize)> {
+    pc_stable_skeleton_screened(series, test, alpha, max_cond).0
+}
+
+pub fn pc_stable_skeleton_screened(
+    series: &[Vec<f64>],
+    test: &dyn CiTest,
+    alpha: f64,
+    max_cond: usize,
+) -> (Vec<(usize, usize)>, Vec<(usize, usize, f64)>) {
     let d = series.len();
     if d < 2 {
-        return Vec::new();
+        return (Vec::new(), Vec::new());
     }
     let n = series[0].len();
     if series.iter().any(|c| c.len() != n) {
-        return Vec::new();
+        return (Vec::new(), Vec::new());
     }
 
     let mut adj: Vec<BTreeSet<usize>> = vec![BTreeSet::new(); d];
-    for i in 0..d {
+    for (i, neighbours) in adj.iter_mut().enumerate() {
         for j in 0..d {
             if i != j {
-                adj[i].insert(j);
+                neighbours.insert(j);
             }
         }
     }
 
+    let mut screened: Vec<(usize, usize, f64)> = Vec::new();
     for order in 0..=max_cond {
         let snapshot = adj.clone();
         let mut removed_any = false;
@@ -46,13 +56,14 @@ pub fn pc_stable_skeleton(
                         .iter()
                         .map(|&k| series[neighbours[k]].as_slice())
                         .collect();
-                    if let Some(p) = test.p(&series[i], &series[j], &conds) {
-                        if p > alpha {
-                            adj[i].remove(&j);
-                            adj[j].remove(&i);
-                            removed_any = true;
-                            break;
-                        }
+                    if let Some(p) = test.p(&series[i], &series[j], &conds)
+                        && p > alpha
+                    {
+                        adj[i].remove(&j);
+                        adj[j].remove(&i);
+                        screened.push((i, j, p));
+                        removed_any = true;
+                        break;
                     }
                 }
             }
@@ -63,15 +74,16 @@ pub fn pc_stable_skeleton(
     }
 
     let mut edges = Vec::new();
-    for i in 0..d {
-        for &j in adj[i].iter() {
+    for (i, neighbours) in adj.iter().enumerate() {
+        for &j in neighbours.iter() {
             if i < j {
                 edges.push((i, j));
             }
         }
     }
     edges.sort();
-    edges
+    screened.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)));
+    (edges, screened)
 }
 
 struct Combinations {
@@ -216,6 +228,28 @@ mod tests {
         }
         let edges = pc_stable_skeleton(&[x0, x1, x2], &ParCorr, 0.05, 3);
         assert!(edges.is_empty(), "edges {:?}", edges);
+    }
+
+    #[test]
+    fn confounder_screened_pair() {
+        let mut rng = Rng::new(11);
+        let n = 1000;
+        let mut z = vec![0.0; n];
+        let mut a = vec![0.0; n];
+        let mut b = vec![0.0; n];
+        for t in 0..n {
+            z[t] = rng.noise();
+            a[t] = 0.8 * z[t] + rng.noise();
+            b[t] = 0.8 * z[t] + rng.noise();
+        }
+        let (edges, screened) = pc_stable_skeleton_screened(&[z, a, b], &ParCorr, 0.05, 3);
+        assert!(edges.contains(&(0, 1)), "edges {:?}", edges);
+        assert!(edges.contains(&(0, 2)), "edges {:?}", edges);
+        assert!(
+            screened.iter().any(|&(i, j, _)| (i, j) == (1, 2)),
+            "screened {:?}",
+            screened
+        );
     }
 
     #[test]
