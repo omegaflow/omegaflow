@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: b29fbc6009084d08682d8a3b665fdc92551d540114bd8beb8ea03f76eeb567c6
+  sha256: 8df3d8ac46230b42bfab44b8292eeacc7d1a8628d370428026796299c834b5ae
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -54,6 +54,21 @@ bleibt mountain.
   **nicht** in `phi/sources.φ` registriert sind → Mountain-Registrierung), und
   `xp-pilot` (Compiler-Default = `gea.esac.esa.int/xp_spectra.bin`, der Workflow
   überschreibt per `--release-tag dc.g-vo.org` auf einen Pilot → distinct).
+
+### Manifestation — R2-Upload-Pfad (Signer + Probe gebaut, live verifiziert)
+- **Status:** eigen (Fortsetzung) | **Bindung:** eigen
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10) `pub fn sigv4_put_headers` in `src/archivar/range.rs`
+  (allgemeiner Writer-Signer: `method`, optionales `content-length`; PUT signiert
+  content-length, DELETE/GET ohne) + `tools/utils/src/bin/r2_probe.rs`. **Live-Probe grün:**
+  `r2_probe: put/get/delete ok — bucket=omegaflow-sources key=ci-probe.txt`. Die
+  R2-Credentials (Bucket `omegaflow-sources`, Token `omegaflow-ci-cdn`) stehen in
+  `.secrets.local` (Operator). `cargo check` grün.
+- **Blockade:** keine.
+- **Braucht:** R2 als Ziel in den `--ci-mode`-Upload-Pfad (`src/archivar/cdn.rs`) verdrahten +
+  Workflow-Secrets `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY`/`R2_ENDPOINT`/`R2_BUCKET`; danach
+  Maßnahme 5 (OIDC-Worker). **Gemessener Riss:** ein DELETE mit signiertem `content-length: 0`
+  ergab 403 (curl sendet es nicht) — der Signer lässt es jetzt weg (`Option`).
 
 ### CI — `te_ground_truth` (mountain-299 adressiert, dispatched)
 - **Status:** wartend | **Bindung:** eigen
