@@ -696,6 +696,29 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
     }
 }
 
+pub fn conserved_for_quantity(quantity: &str) -> Option<Conserved> {
+    match quantity {
+        "density" | "mass_density" | "electron_density" | "column_density" | "number_density"
+        | "humidity" | "water_vapor" | "concentration" => Some(Conserved::Mass),
+        "temperature"
+        | "brightness_temperature"
+        | "energy"
+        | "energy_density"
+        | "radiance"
+        | "irradiance"
+        | "field_intensity"
+        | "flux_density"
+        | "bx"
+        | "by"
+        | "bz"
+        | "b" => Some(Conserved::Energy),
+        "pressure" | "momentum" | "momentum_density" | "stress" | "speed" | "velocity"
+        | "wind_speed" => Some(Conserved::Momentum),
+        "charge" | "charge_density" | "current" | "current_density" => Some(Conserved::Charge),
+        _ => None,
+    }
+}
+
 pub fn descriptor_from_axes(
     role: &str,
     conserved: &str,
