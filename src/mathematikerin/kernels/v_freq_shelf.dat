@@ -1,5 +1,5 @@
 # v_freq_shelf v1 sha256:21b12ffd7b525c78aa9619bc0a64fb23d2e06b58a3b310f26ab42b2be6a0bc60
-# columns: force_type freq_hz bin_width_hz v_m_s v_unc_m_s epoch_tdb
+# columns: channel_ref freq_hz bin_width_hz v_m_s v_unc_m_s epoch_tdb
 0 1.332411e18 0.0 2.997925e8 1.441853e7 4.574526e8
 0 3.189281e16 0.0 2.997925e8 1.441853e7 4.574526e8
 0 2.288492e16 0.0 2.997925e8 1.441853e7 4.574526e8

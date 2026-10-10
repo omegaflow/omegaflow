@@ -50,7 +50,7 @@ const J2000_UNIX_S = 946728000;        // 2000-01-01T12:00:00 UTC — the query 
 // force-field asset (the enclosure query at the SSB) exists.
 
 // The exposure is data-carried, never body-carried: the carrier is the wire's
-// force_type (the 9 force media, em 0 … electric 8), the aperture is the wire's
+// channel_ref (the 9 force media, em 0 … electric 8), the aperture is the wire's
 // extent (finite anchors vs the star class's point). A key the wire never sends
 // has no level (0 honored) — the shader draws nothing, it invents no default.
 const FORCE_SLOTS = 9;
@@ -77,7 +77,7 @@ const state = {
   anchors: 0,          // records with a finite extent (body anchors) in the current field
   stars: 0,            // records with wire_extent 0.0 (the star class) in the current field
   absent: [],          // named absent assets; the loop() status line carries them past boot
-  // Exposure per (force_type, aperture) (Rat B, 2026-10-07): index ft*2+ap,
+  // Exposure per (channel_ref, aperture) (Rat B, 2026-10-07): index ft*2+ap,
   // relaxed with alpha = 1 - exp(-1/8). A key with no arriving level keeps 0.
   lvl: new Float32Array(FORCE_SLOTS * 2),
   t: 0,
@@ -155,7 +155,7 @@ async function fetchBytes(path, label) {
 }
 
 // The flat WASM response (26 × f64 per record) into the wire's two GPU planes:
-// field = osc × 12 (x,y,z,val,epoch,ttl,force_type,absorption,advection,vx,vy,vz),
+// field = osc × 12 (x,y,z,val,epoch,ttl,channel_ref,absorption,advection,vx,vy,vz),
 // meta  = osc × 16 (extent,tau,kernel_id,pole_x,pole_y,pole_z,j2,j4,r_eq,
 //                   color_index,freq,bin_width,phase,presence,pad).
 // Mirrors static/constants.js parseRecords; the record order is the data contract.
@@ -204,8 +204,8 @@ const fieldShader = `
 // vp.expose = (color_mode, lut_lo, lut_hi, spare): color_mode >= 0.5 selects the
 // measured color LUT keyed by the record's own color_index (a force/channel
 // identity, read never chosen); the neutral magnitude ramp is the fallback, never
-// a discard. The exposure is read per (force_type, aperture): the carrier is the
-// wire's force_type, the aperture is the wire's extent (finite anchor vs point),
+// a discard. The exposure is read per (channel_ref, aperture): the carrier is the
+// wire's channel_ref, the aperture is the wire's extent (finite anchor vs point),
 // a data property, not a body name. A key with no level draws nothing (0
 // honored). A force arrives colored by its channel; an unknown color_index is white.
 struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f, levels: vec4f };
@@ -213,7 +213,7 @@ struct VP { surface: vec4f, right: vec4f, up: vec4f, expose: vec4f, levels: vec4
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read> lut: array<vec4f>;
-// One vec4f per force_type: .x = star aperture, .y = anchor aperture.
+// One vec4f per channel_ref: .x = star aperture, .y = anchor aperture.
 @group(0) @binding(4) var<storage, read> exposure: array<vec4f>;
 struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @location(1) color: vec4f };
 @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
@@ -253,9 +253,13 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) local_uv: vec2f, @loca
     out.pos = vec4f(clip, 0.0, 1.0);
     out.local_uv = quad[vid];
     let ft_raw = i32(field[id * 3 + 1].z);
+    // A quantity record declares itself through PRESENCE_FLAG_QUANTITY (16) — the
+    // reader reads the bit, never the number; its channel slot carries the 0.0 pad
+    // (P9.2). It is not a Σω channel and carries no exposure level.
+    let presence = props[id * 4 + 3].z;
     let ap = select(0u, 1u, extent > 0.0);
     var lvl = 0.0;
-    if (ft_raw >= 0 && ft_raw < 9) {
+    if (ft_raw >= 0 && ft_raw < 9 && (presence & 16.0) == 0.0) {
         lvl = exposure[u32(ft_raw)][ap];
     }
     if (lvl <= 0.0) { return out; }
@@ -434,7 +438,7 @@ function render(record) {
   vpData[18] = 0;
   vpData[19] = 0;
   device.queue.writeBuffer(vpBuf, 0, vpData);
-  // One vec4f per force_type: x = star aperture, y = anchor aperture. A slot the
+  // One vec4f per channel_ref: x = star aperture, y = anchor aperture. A slot the
   // wire never sent carries 0 — no level, nothing drawn (0 honored).
   for (let ft = 0; ft < FORCE_SLOTS; ft++) {
     exposureData[ft * 4] = state.lvl[ft * 2 + APERTURE_STAR];
@@ -458,8 +462,8 @@ function render(record) {
   device.queue.submit([pass.finish()]);
 }
 
-// Exposure per (force_type, aperture) (Rat B, 2026-10-07): the carrier is the
-// wire's force_type, the aperture is the wire's extent (>0 finite anchors, 0 the
+// Exposure per (channel_ref, aperture) (Rat B, 2026-10-07): the carrier is the
+// wire's channel_ref, the aperture is the wire's extent (>0 finite anchors, 0 the
 // star class). Each key relaxes to its own max over the arriving records; a key
 // the wire never sends keeps its 0 (0 honored), never a fabricated default. A
 // shared max would pit channels against each other and let one bright source dim
@@ -474,6 +478,11 @@ function updateLvl(record) {
   state.anchors = anchors;
   state.stars = stars;
   for (let j = 0; j < record.count; j++) {
+    // A quantity record declares itself through PRESENCE_FLAG_QUANTITY (16), its
+    // channel slot carries the 0.0 pad; it is not a Σω channel (P9.2).
+    if (((record.meta[j * 16 + 14] | 0) & 16) !== 0) {
+      continue;
+    }
     const ft = record.field[j * 12 + 6] | 0;
     if (ft < 0 || ft >= FORCE_SLOTS) {
       continue;

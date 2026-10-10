@@ -2820,7 +2820,7 @@ fn test_star_samples_build_tau() {
     assert_eq!(samples.len(), 1);
     assert!(samples[0].tau > 0.0);
     assert_eq!(samples[0].val, 1.0);
-    assert_eq!(samples[0].force_type, 0.0);
+    assert_eq!(samples[0].channel_ref, 0.0);
     assert_eq!(samples[0].kernel_id, 0.0);
     assert_eq!(samples[0].ttl, samples[0].tau);
     assert_eq!(
@@ -3779,8 +3779,8 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
     assert_eq!(far_gm.val, 2.5e8);
     assert_eq!(gm.kernel_id, 0.0);
     assert_eq!(radius.kernel_id, 1.0);
-    assert_eq!(gm.force_type, 1.0);
-    assert_eq!(radius.force_type, 1.0);
+    assert_eq!(gm.channel_ref, 1.0);
+    assert_eq!(radius.channel_ref, 1.0);
     assert!(gm.extent == 3000.0 && gm.tau.is_infinite());
     assert!(radius.extent == 3000.0 && radius.tau.is_infinite());
     let Motion::Kepler { rec: rec_gm } = &gm.motion else {
@@ -6149,7 +6149,7 @@ fn test_temporal_ring_never_trims_static_under_overflow() {
         extent: if static_sample { f64::INFINITY } else { 0.0 },
         tau: 1e10,
         kernel_id: 0.0,
-        force_type: 0.0,
+        channel_ref: 0.0,
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6203,7 +6203,7 @@ fn test_temporal_ring_under_cap_keeps_everything() {
         extent: if static_sample { f64::INFINITY } else { 0.0 },
         tau: 1e10,
         kernel_id: 0.0,
-        force_type: 0.0,
+        channel_ref: 0.0,
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6241,7 +6241,7 @@ fn test_temporal_ring_shared_matches_owned_ring() {
         extent: 0.0,
         tau: 1e10,
         kernel_id: 0.0,
-        force_type: 0.0,
+        channel_ref: 0.0,
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6305,7 +6305,7 @@ fn test_rebuild_retains_shared_sample_identity() {
         extent: 0.0,
         tau: 1e10,
         kernel_id: 0.0,
-        force_type: 0.0,
+        channel_ref: 0.0,
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6350,7 +6350,7 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
         extent: 0.0,
         tau: 6.0,
         kernel_id: 0.0,
-        force_type: 0.0,
+        channel_ref: 0.0,
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -13562,7 +13562,7 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         (s.extent - 6378136.6).abs() < 1e-3,
         "extent is the measured radius"
     );
-    assert!((s.force_type - 1.0).abs() < 1e-9, "gravity anchor");
+    assert!((s.channel_ref - 1.0).abs() < 1e-9, "gravity anchor");
     let want_ttl = 34.0 * 86400.0;
     assert!(
         (s.ttl - want_ttl).abs() < 1e-3,
@@ -13635,7 +13635,7 @@ fn test_body_anchor_reaches_ssb_presence_by_signal_cone() {
         extent: 6.96e8,
         tau: f64::INFINITY,
         kernel_id: 0.0,
-        force_type: 1.0,
+        channel_ref: 1.0,
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -13677,6 +13677,6 @@ fn test_body_anchor_reaches_ssb_presence_by_signal_cone() {
     );
     assert_eq!(
         recs[0].9, 1.0,
-        "the emitted record carries the body's gravity force_type"
+        "the emitted record carries the body's gravity channel_ref"
     );
 }
