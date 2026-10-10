@@ -6,25 +6,16 @@ concurrency:
 
 on:
   workflow_dispatch:
+
 permissions:
   contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   pangaea:
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile PANGAEA sediment core 758961 and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin pangaea_harvester -- \
-            --id PANGAEA.758961 \
-            --out pangaea_758961.json \
-            --ci-mode \
-            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "flatten: pangaea_758961 returned void" \
-                 "pangaea_758961 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health; exit 1; }
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"pangaea_harvester","netloc":"doi.pangaea.de","asset":"pangaea_758961.json","args":"--id PANGAEA.758961 --out pangaea_758961.json"}
+        ]

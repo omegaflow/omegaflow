@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 295 (2026-10-10)
-  session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld; viking-text + weberin-verdicts migriert; startup_failure-Fix (66654392f) gemessen bestätigt.
+  session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 5bca206866ae9fd59238c2d63703062863e9aa4d62cc105584509127fdf45a88
+  sha256: b9b881aaaa3224f3630024226e2ca066744b2244f24fe6d989b1bf764ebe4f35
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -18,7 +18,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 (mountain-299-Wunsch erfüllt) — der `## An mycelium`-Block ist damit gefaltet. PDS-PPI
 bleibt mountain.
 
-## Burn: open 0.0000 · close 0.0617 · cap 0.5 — Grund: Meta-Pass + cdn-manifest-`crate` + 2 Aufrufer · deepseek-flash, kein pro/max (gemessen `session_burn`: 22 Sessions $0.9852 → 23 Sessions $1.0469).
+## Burn: open 0.0000 · close 0.0700 · cap 0.5 — Grund: Meta-Pass + cdn-manifest-`crate`/Failure-Health-Step + 27 Aufrufer + ci-check-nextest-Shard · deepseek-flash, kein pro/max (gemessen `session_burn`: 22 Sessions $0.9852 → 29 Sessions $1.3604; Mycelium-295 $0.0699).
 
 ## Operator-Wort-Register
 
@@ -30,28 +30,29 @@ bleibt mountain.
 
 ## Offen — eigen
 
-### Konsolidierung — `cdn-manifest.yml` (11 Aufrufer; `crate`-Feld gebaut)
+### Konsolidierung — `cdn-manifest.yml` (36 Aufrufer; `crate`-Feld + Failure-Health-Step gebaut)
 - **Status:** eigen (Fortsetzung) | **Bindung:** eigen
 - **Trigger:** nächste Dispatch-Session dieser Linie
-- **Lage:** (gemessen 2026-10-10) `cdn-manifest.yml` trägt nun ein optionales
-  `crate`-Feld (Default `omegaflow-harvest`), damit auch Compiler aus
-  `omegaflow-measure`/`-science` als dünne Aufrufer laufen. **2 weitere migriert:**
-  `viking-text-cdn` (harvest, Schedule `17 4 1 * *` erhalten) und
-  `weberin-verdicts-cdn` (`crate: omegaflow-measure`, `--out data/weberin_verdicts.bin`).
-  Damit **11** dünne Aufrufer. Der frühere 294-Fix (`66654392f`) ist **bestätigt**:
-  von 8 re-dispatchen `startup_failure`-Läufen **7 success** (frb-chime · wqp ·
-  eea-noise · hadisst · impc-roti · dsn · planetary-odf) + `register-coverage`
-  success; `lro-trk` `in_progress`; `ci-gate` `queued`.
+- **Lage:** (gemessen 2026-10-10) `cdn-manifest.yml` trägt nun (a) ein optionales
+  `crate`-Feld (Default `omegaflow-harvest`), (b) einen **Failure-Health-Step**
+  (`gh_issue_once.sh` über den `OMEGAFLOW_TOKEN`-PAT — kein `issues:`-Permission-Grant
+  nötig, der PAT trägt). Damit sind **die 25 Health-Wrapper-Caller migrierbar** und
+  **migriert** (tap_compiler-Cluster: avo · bzcat5 · cbdata · chandra-csc · corot ·
+  eso-harps-rvcat · exoplanets · first14 · frb-a279 · frbcat · gcvs · lmxb · merlin ·
+  polarbase · sb9 · sncat · swiftgrb · vsx · wd; dazu cosmicflows · exofop · gaia-sso ·
+  pangaea · tess · ztf-fresh). **27 neue dünne Aufrufer** in diesem Atom → **36 total**.
+  Zuvor (die Session): `viking-text-cdn` (harvest, Schedule erhalten) + `weberin-verdicts-cdn`
+  (`crate: omegaflow-measure`); davor 9. Jede netloc/asset-Kante gegen `phi/sources.φ`
+  verifiziert. Der 294-Fix (`66654392f`) ist **bestätigt**: 7/8 re-dispatche
+  `startup_failure`-Läufe success; `lro-trk` `in_progress`; `register-coverage` success.
 - **Blockade:** keine.
-- **Braucht:** der **exakt-formgleiche** Rest ist schmal (Filter: genau
-  `checkout@v7`+`setup-rust-toolchain@v1`+**ein** `cargo run …--ci-mode`, kein
-  `inputs:`/`idempotence`/`gh release`/`gh_issue_once`/`mkdir`/`curl`/`sha256sum`/
-  `set -euo`): **5 `*-cdn`-Dateien** — `pioneer-doppler` (`pioneer_doppler_compiler`
-  **nicht** in `phi/sources.φ` als compiler registriert → erst messen),
-  `voyager-merged` (**zwei** Assets voyager1+2_merged.bin, ein Compiler-Lauf →
-  Mehr-Asset-Form), `xp-pilot` (`gaia_xp_compiler`, Asset-Zeile nicht gefunden).
-  Die verbleibenden 339 `*-cdn` tragen Zusatzsteps (Health-Wrapper/args/inputs) und
-  brauchen je Datei-Judgment, kein Blind-Batch.
+- **Braucht:** der **nicht-exakt-formgleiche** Rest trägt echte Zusatzlogik und bleibt
+  distinct: `idempotence`/`gh release create`-Steps (z. B. `qbo-cdn`), `inputs:`-Caller,
+  `set -euo`-Mehrzeiler, `curl`/`mkdir`-Kernel-Fetches, Mehr-Asset-in-einem-Lauf
+  (`voyager-merged`), zwei-Assets-ein-Compiler (`pioneer-doppler`, dessen vier Assets
+  **nicht** in `phi/sources.φ` registriert sind → Mountain-Registrierung), und
+  `xp-pilot` (Compiler-Default = `gea.esac.esa.int/xp_spectra.bin`, der Workflow
+  überschreibt per `--release-tag dc.g-vo.org` auf einen Pilot → distinct).
 
 ### CI — `te_ground_truth` (mountain-299 adressiert, dispatched)
 - **Status:** wartend | **Bindung:** eigen
@@ -106,11 +107,17 @@ bleibt mountain.
 - **Trigger:** nächste Dispatch-Session dieser Linie
 - **Lage:** (gemessen 2026-10-10) Survey `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md`,
   Säulen A–G; Runde `state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`. Maßnahme 2
-  (Lauf-Hygiene) `b1b2bd37f`; Maßnahme 1 in Arbeit (s. Konsolidierung).
+  (Lauf-Hygiene) `b1b2bd37f`; Maßnahme 1 in Arbeit (s. Konsolidierung). **Maßnahme 3
+  (Test-Durchsatz) gebaut:** `ci-check.yml` läuft als **4-fach-Shard-Matrix** auf
+  `ubuntu-24.04-arm` über `cargo nextest run --partition count:N/4` (core
+  `--features browser_relay`, register+utils, die fünf harvest-Bins); Doctests +
+  register_sort/cdn_reconcile/node-Tests bleiben auf Shard 1. Messung (3,5 h → Shard-
+  Wall-Clock) nach dem Push-Dispatch.
 - **Blockade:** je eigener begrenzter Dispatch (ein Schritt je Atom).
-- **Braucht:** die verbleibenden Maßnahmen flash-first: (3) nextest-Sharding auf
-  `ubuntu-24.04-arm` + rust-cache/sccache · (4) R2-CDN (`operator-gebunden`) ·
-  (5) OIDC+R2-Worker-Verifier + `external-state`-Rate-Zeile · (6) Free-GPU-Probe — `pending`, hinten.
+- **Braucht:** die verbleibenden Maßnahmen flash-first: (4) R2-CDN (`operator-gebunden`) ·
+  (5) OIDC+R2-Worker-Verifier + `external-state`-Rate-Zeile · (6) Free-GPU-Probe —
+  `pending`, hinten. **Offen zu Maßnahme 3:** der ci-check-Shard-Lauf ist zu messen
+  (grün 4×?) — `nextest`-Verhalten (doctest-Ausschluss, `--partition`) am Log bestätigen.
 
 ### Speicher — 1,76 TB Bulk vs. R2-10-GB
 - **Status:** eigen (Dokumentation/Architektur) | **Bindung:** eigen
