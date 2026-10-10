@@ -21,10 +21,10 @@ pub mod machines;
 pub mod mat;
 pub mod media;
 pub mod newell;
-pub mod observer;
 pub mod omega;
 pub mod orientation;
 pub mod ozzy;
+pub mod receiver;
 pub mod s2;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod scalar_te_gpu;
