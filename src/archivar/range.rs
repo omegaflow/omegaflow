@@ -188,6 +188,70 @@ pub fn sigv4_headers(args: &Sigv4Args<'_>) -> Vec<(String, String)> {
     out
 }
 
+pub struct Sigv4PutArgs<'a> {
+    pub method: &'a str,
+    pub access_key: &'a str,
+    pub secret_key: &'a str,
+    pub region: &'a str,
+    pub host: &'a str,
+    pub canonical_uri: &'a str,
+    pub payload_sha256: &'a str,
+    pub content_length: Option<u64>,
+    pub amz_date: &'a str,
+    pub date_stamp: &'a str,
+}
+
+pub fn sigv4_put_headers(args: &Sigv4PutArgs<'_>) -> Vec<(String, String)> {
+    let Sigv4PutArgs {
+        method,
+        access_key,
+        secret_key,
+        region,
+        host,
+        canonical_uri,
+        payload_sha256,
+        content_length,
+        amz_date,
+        date_stamp,
+    } = *args;
+    let mut canonical_headers = String::new();
+    let mut signed_headers = String::new();
+    let mut out: Vec<(String, String)> = Vec::new();
+    if let Some(len) = content_length {
+        canonical_headers.push_str(&format!("content-length:{}\n", len));
+        signed_headers.push_str("content-length;");
+        out.push(("content-length".to_string(), len.to_string()));
+    }
+    canonical_headers.push_str(&format!("host:{}\n", host));
+    canonical_headers.push_str(&format!("x-amz-content-sha256:{}\n", payload_sha256));
+    canonical_headers.push_str(&format!("x-amz-date:{}\n", amz_date));
+    signed_headers.push_str("host;x-amz-content-sha256;x-amz-date");
+    let canonical_request = format!(
+        "{}\n{}\n\n{}\n{}\n{}",
+        method, canonical_uri, canonical_headers, signed_headers, payload_sha256
+    );
+    let scope = format!("{}/{}/{}/aws4_request", date_stamp, region, S3_SERVICE);
+    let string_to_sign = format!(
+        "AWS4-HMAC-SHA256\n{}\n{}\n{}",
+        amz_date,
+        scope,
+        sha256::sha256_hex(canonical_request.as_bytes())
+    );
+    let signing_key = sigv4_signing_key(secret_key, date_stamp, region);
+    let signature = hex_bytes(&hmac_sha256(&signing_key, string_to_sign.as_bytes()));
+    let authorization = format!(
+        "AWS4-HMAC-SHA256 Credential={}/{}, SignedHeaders={}, Signature={}",
+        access_key, scope, signed_headers, signature
+    );
+    out.push((
+        "x-amz-content-sha256".to_string(),
+        payload_sha256.to_string(),
+    ));
+    out.push(("x-amz-date".to_string(), amz_date.to_string()));
+    out.push(("Authorization".to_string(), authorization));
+    out
+}
+
 pub fn uri_encode_path(path: &str) -> String {
     let mut out = String::with_capacity(path.len());
     for &b in path.as_bytes() {
@@ -758,5 +822,40 @@ mod tests {
             .unwrap();
         assert_ne!(auth_no_query, auth_with_query);
         assert!(auth_with_query.contains("SignedHeaders=host;x-amz-content-sha256;x-amz-date"));
+    }
+
+    #[test]
+    fn sigv4_put_headers_carry_the_put_fields() {
+        let headers = sigv4_put_headers(&Sigv4PutArgs {
+            method: "PUT",
+            access_key: "AKIAIOSFODNN7EXAMPLE",
+            secret_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+            region: "auto",
+            host: "account.r2.cloudflarestorage.com",
+            canonical_uri: "/bucket/ci-probe.txt",
+            payload_sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            content_length: Some(20),
+            amz_date: "20130524T000000Z",
+            date_stamp: "20130524",
+        });
+        let names: Vec<&str> = headers.iter().map(|(k, _)| k.as_str()).collect();
+        assert!(names.contains(&"content-length"));
+        assert!(names.contains(&"x-amz-content-sha256"));
+        assert!(names.contains(&"x-amz-date"));
+        assert!(names.contains(&"Authorization"));
+        assert_eq!(
+            headers
+                .iter()
+                .find(|(k, _)| k == "content-length")
+                .map(|(_, v)| v.as_str()),
+            Some("20")
+        );
+        let auth = headers
+            .iter()
+            .find(|(k, _)| k == "Authorization")
+            .map(|(_, v)| v.as_str())
+            .unwrap();
+        assert!(auth.starts_with("AWS4-HMAC-SHA256 Credential="));
+        assert!(auth.contains("SignedHeaders=content-length;host;x-amz-content-sha256;x-amz-date"));
     }
 }
