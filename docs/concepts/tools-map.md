@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: c6f3bb7d747fbcece1025d38917ba8a7ddd4adb3e6c7a60dfaecf3879044a18e
+  sha256: 78d3997f2d27ba3dbe9bbbef262f0e08f59f4e55e7536ecc41f25da96bc81d66
   status: live
   see-also: AGENTS.md
 -->
@@ -145,6 +145,11 @@ bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
   liefert den sauberen Text einer Seite als `Title / URL Source / Markdown Content`.
   Gemessen 2026-10-08 end-to-end (`--jina https://example.com` → 200, 1465 B,
   Markdown-Text). Die sauberere Text-Extraktion neben `--playwright`/`--sniff`.
+- **Breite, nie Vorschau (Operator-Wort 2026-10-10).** `--max <n>` setzt die Ergebniszeilen je
+  Netz-Quelle (Default **25**, vorher fest 10); `--all` zeigt inline je Quelle nur die ersten 5
+  als **Vorschau** und schreibt das Volle in den `full: <pfad>`-Spill — der wird **vollständig
+  gelesen**, die Vorschau ist nie das Ergebnis. Eine stille Kappung („top 5", „excerpt") als
+  Grundlage eines Befunds ist eine ungemessene Behauptung = Fabrikation (`AGENTS.md`).
 - `archive_search --consensus <query>` — Consensus-Literatursuche (`api.consensus.app/v1/search`,
   `CONSENSUS_API_KEY`); `title`/`doi`/`publish_year`/`citation_count`/`study_type`/`takeaway`.
   Gemessen 2026-10-08: liefert echte Literatur (Titel/DOI/Zitat/Studientyp/Takeaway).

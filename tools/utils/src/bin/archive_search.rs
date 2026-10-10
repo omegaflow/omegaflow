@@ -6,6 +6,8 @@ mod alphaxiv;
 mod arxiv_src;
 #[path = "archive_search/awmf.rs"]
 mod awmf;
+#[path = "archive_search/base.rs"]
+mod base;
 #[path = "archive_search/biomodels.rs"]
 mod biomodels;
 #[path = "archive_search/chembl.rs"]
@@ -68,6 +70,8 @@ mod oai;
 mod openalex;
 #[path = "archive_search/openfda.rs"]
 mod openfda;
+#[path = "archive_search/osf.rs"]
+mod osf;
 #[path = "archive_search/paged.rs"]
 mod paged;
 #[path = "archive_search/pdb.rs"]
@@ -206,6 +210,7 @@ fn main() {
     let mut lines_per_file = 2usize;
     let mut max_files = 40usize;
     let mut max_mb = 100u64;
+    let mut max_results = net::DEFAULT_MAX;
     let mut skip = 0usize;
     let mut binary = false;
     let mut content = false;
@@ -331,9 +336,9 @@ fn main() {
             "--wayback-timemap" => mode = Mode::Net("wayback-timemap"),
             "--crossref" => mode = Mode::Net("crossref"),
             "--wiki" => mode = Mode::Net("wiki"),
+            "--duckduckgo-instant" => mode = Mode::Net("duckduckgo-instant"),
             "--github" => mode = Mode::Net("github"),
             "--crates" => mode = Mode::Net("crates"),
-            "--librs" => mode = Mode::Net("librs"),
             "--brave" => mode = Mode::Net("brave"),
             "--mwmbl" => mode = Mode::Net("mwmbl"),
             "--marginalia" => mode = Mode::Net("marginalia"),
@@ -367,6 +372,7 @@ fn main() {
             "--sniff" => mode = Mode::Net("sniff"),
             "--zenodo" => mode = Mode::Net("zenodo"),
             "--isc" => mode = Mode::Net("isc"),
+            "--base" => mode = Mode::Net("base"),
             "--openalex" => mode = Mode::Net("openalex"),
             "--pubmed" => mode = Mode::Net("pubmed"),
             "--europepmc" => mode = Mode::Net("europepmc"),
@@ -388,6 +394,7 @@ fn main() {
             "--entrez" => mode = Mode::Net("entrez"),
             "--ena" => mode = Mode::Net("ena"),
             "--doaj" => mode = Mode::Net("doaj"),
+            "--osf" => mode = Mode::Net("osf"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--reactome" => mode = Mode::Net("reactome"),
@@ -442,6 +449,12 @@ fn main() {
                 i += 1;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
                     max_mb = n;
+                }
+            }
+            "--max" => {
+                i += 1;
+                if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
+                    max_results = n;
                 }
             }
             "--skip" => {
@@ -683,7 +696,7 @@ fn main() {
                 Some(repo) => secrets::load_env(&repo),
                 None => env::vars().collect(),
             };
-            let lines = net::run_lines(name, &query, &env_map, pdf_out.as_deref());
+            let lines = net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
             print_lines(&lines);
         }
     }
@@ -699,6 +712,9 @@ fn usage() {
     eprintln!("  --lines <n>   hit lines shown per file (default 2)");
     eprintln!("  --files <n>   files shown, ranked (default 40)");
     eprintln!("  --max-mb <n>  skip files larger than n MiB (default 100)");
+    eprintln!(
+        "  --max <n>     network-mode result lines per source (default 25; raise for breadth)"
+    );
     eprintln!("  --skip <n>    skip the first n ranked files");
     eprintln!("  --binary      include binary files (default skipped)");
     eprintln!("  --count       print 'n files, m hits for: …' only");
@@ -717,7 +733,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--github|--crates|--librs|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -730,6 +746,9 @@ fn usage() {
     );
     eprintln!(
         "  --marginalia Marginalia public search (api.marginalia-search.com), keyless JSON; url + title/description/quality (CC-BY-NC-SA)"
+    );
+    eprintln!(
+        "  --base      BASE — Bielefeld Academic Search Engine (~400M open documents, api.base-search.net), keyless JSON; url + title/authors/year/doi"
     );
     eprintln!(
         "  --searxng   SearXNG meta-search (public JSON instances, keyless; self-host fallback); url + title/content/engine"
@@ -751,6 +770,9 @@ fn usage() {
     );
     eprintln!(
         "  --hal       HAL open archive (api.archives-ouvertes.fr/search), keyless; url + title/doi/published"
+    );
+    eprintln!(
+        "  --osf       OSF Preprints title search (api.osf.io/v2/preprints), keyless; url + title/doi/date/abstract"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
@@ -790,6 +812,9 @@ fn usage() {
     );
     eprintln!(
         "  --jina      Jina Reader (r.jina.ai), keyless; the clean text of a page for a target url"
+    );
+    eprintln!(
+        "  --duckduckgo-instant DuckDuckGo Instant Answer (api.duckduckgo.com), keyless; answer/abstract + related-topic url/title"
     );
     eprintln!(
         "  --tavily    Tavily Search API (api.tavily.com), TAVILY_API_KEY; url + title/score/text"

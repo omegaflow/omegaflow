@@ -55,6 +55,58 @@ fn first_file(hit: &json::Json) -> Option<String> {
         .map(str::to_string)
 }
 
+fn authors_field(metadata: &json::Json) -> Option<String> {
+    let creators = metadata.get("creators").and_then(|a| a.as_arr())?;
+    let names: Vec<String> = creators
+        .iter()
+        .filter_map(|c| c.get("name").and_then(|s| s.as_str()))
+        .filter(|s| !s.is_empty())
+        .map(str::to_string)
+        .collect();
+    if names.is_empty() {
+        return None;
+    }
+    if names.len() > 8 {
+        Some(format!("{}, et al.", names[..8].join(", ")))
+    } else {
+        Some(names.join(", "))
+    }
+}
+
+fn strip_tags(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut in_tag = false;
+    for c in s.chars() {
+        match c {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ if !in_tag => out.push(c),
+            _ => {}
+        }
+    }
+    out
+}
+
+fn abstract_field(metadata: &json::Json) -> Option<String> {
+    let raw = metadata
+        .get("description")
+        .and_then(|d| d.as_str())
+        .filter(|s| !s.is_empty())?;
+    let collapsed = strip_tags(raw)
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    if collapsed.is_empty() {
+        return None;
+    }
+    if collapsed.chars().count() > 1200 {
+        let capped: String = collapsed.chars().take(1200).collect();
+        Some(format!("{}…", capped))
+    } else {
+        Some(collapsed)
+    }
+}
+
 fn parse_zenodo(body: &str) -> Vec<String> {
     let mut out = Vec::new();
     let Some(v) = json::parse(body) else {
@@ -103,6 +155,14 @@ fn parse_zenodo(body: &str) -> Vec<String> {
         {
             line.push_str(&format!("\tlicense: {}", license));
         }
+        if let Some(metadata) = hit.get("metadata") {
+            if let Some(authors) = authors_field(metadata) {
+                line.push_str(&format!("\tauthors: {}", authors));
+            }
+            if let Some(abstract_) = abstract_field(metadata) {
+                line.push_str(&format!("\tabstract: {}", abstract_));
+            }
+        }
         out.push(line);
     }
     out
@@ -143,5 +203,47 @@ mod tests {
     #[test]
     fn empty_hits_carry_nothing() {
         assert!(parse_zenodo(r#"{"hits":{"hits":[]}}"#).is_empty());
+    }
+
+    #[test]
+    fn reads_the_full_record_with_authors_and_abstract() {
+        let body = r#"{"hits":{"hits":[{"doi":"10.5281/zenodo.1","title":"A dataset","metadata":{"publication_date":"2023-03-07","license":{"id":"cc-by-4.0"},"creators":[{"name":"Lovelace, Ada"},{"name":"Turing, Alan"}],"description":"<p>A <b>measured</b> field</p>"},"files":[{"links":{"self":"https://zenodo.org/api/records/1/files/x/content"}}]}]}}"#;
+        assert_eq!(
+            parse_zenodo(body),
+            vec!["url https://zenodo.org/api/records/1/files/x/content\tdoi: 10.5281/zenodo.1\ttitle: A dataset\tdate: 2023-03-07\tlicense: cc-by-4.0\tauthors: Lovelace, Ada, Turing, Alan\tabstract: A measured field".to_string()]
+        );
+    }
+
+    #[test]
+    fn omits_the_absent_authors_and_abstract() {
+        let body = r#"{"hits":{"hits":[{"doi":"10.5281/zenodo.2","title":"B","metadata":{"publication_date":"2020-01-01"}}]}}"#;
+        assert_eq!(
+            parse_zenodo(body),
+            vec!["doi: 10.5281/zenodo.2\ttitle: B\tdate: 2020-01-01".to_string()]
+        );
+    }
+
+    #[test]
+    fn caps_the_authors_to_eight_with_et_al() {
+        let names = (1..=9)
+            .map(|n| format!(r#"{{"name":"Author {n}"}}"#))
+            .collect::<Vec<_>>()
+            .join(",");
+        let body = format!(
+            r#"{{"hits":{{"hits":[{{"doi":"10.5281/zenodo.9","metadata":{{"creators":[{names}]}}}}]}}}}"#
+        );
+        assert_eq!(
+            parse_zenodo(&body),
+            vec!["doi: 10.5281/zenodo.9\tauthors: Author 1, Author 2, Author 3, Author 4, Author 5, Author 6, Author 7, Author 8, et al.".to_string()]
+        );
+    }
+
+    #[test]
+    fn strips_html_tags_and_collapses_whitespace_in_the_abstract() {
+        let body = r#"{"hits":{"hits":[{"doi":"10.5281/zenodo.4","metadata":{"description":"<p>Hello   <em>world</em>\n</p>"}}]}}"#;
+        assert_eq!(
+            parse_zenodo(body),
+            vec!["doi: 10.5281/zenodo.4\tabstract: Hello world".to_string()]
+        );
     }
 }

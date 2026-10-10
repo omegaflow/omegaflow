@@ -27,15 +27,18 @@ pub fn perplexity_lines(query: &str) -> Vec<String> {
     }
 }
 
-pub fn perplexity_body(query: &str) -> String {
+pub fn perplexity_body(query: &str, preset: &str) -> String {
     format!(
-        "{{\"preset\":\"medium\",\"input\":\"{}\"}}",
+        "{{\"preset\":\"{}\",\"input\":\"{}\"}}",
+        json_escape(preset),
         json_escape(query)
     )
 }
 
 fn perplexity_request(query: &str, token: &str) -> Vec<String> {
-    let body = perplexity_body(query);
+    let (text, refine) = crate::refine::split_refine(query, &["preset"]);
+    let preset = crate::refine::value_of(&refine, "preset").unwrap_or("medium");
+    let body = perplexity_body(&text, preset);
     let auth = format!("Authorization: Bearer {}", token);
     let headers = [auth.as_str()];
     match post(PERPLEXITY_URL, &body, &headers, "40") {
@@ -43,7 +46,7 @@ fn perplexity_request(query: &str, token: &str) -> Vec<String> {
             Some(v) => {
                 let out = perplexity_results(&v);
                 if out.is_empty() {
-                    vec![format!("absent — Perplexity carries no answer: {}", query)]
+                    vec![format!("absent — Perplexity carries no answer: {}", text)]
                 } else {
                     out
                 }
@@ -128,12 +131,20 @@ mod tests {
     #[test]
     fn builds_the_agent_body_with_json_escaped_input() {
         assert_eq!(
-            perplexity_body("transfer entropy"),
+            perplexity_body("transfer entropy", "medium"),
             "{\"preset\":\"medium\",\"input\":\"transfer entropy\"}"
         );
         assert_eq!(
-            perplexity_body("a\"b\nc"),
+            perplexity_body("a\"b\nc", "medium"),
             "{\"preset\":\"medium\",\"input\":\"a\\\"b\\nc\"}"
+        );
+    }
+
+    #[test]
+    fn a_refined_preset_names_the_agent_body() {
+        assert_eq!(
+            perplexity_body("transfer entropy", "xhigh"),
+            "{\"preset\":\"xhigh\",\"input\":\"transfer entropy\"}"
         );
     }
 

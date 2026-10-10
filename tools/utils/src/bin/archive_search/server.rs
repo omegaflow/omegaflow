@@ -23,7 +23,6 @@ pub const MODES: &[&str] = &[
     "wiki",
     "github",
     "crates",
-    "librs",
     "brave",
     "mwmbl",
     "marginalia",

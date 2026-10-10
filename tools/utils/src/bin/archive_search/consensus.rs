@@ -1,18 +1,27 @@
 use crate::json;
 use crate::net::{get, urlencode};
 
-pub fn search_url(query: &str) -> String {
-    format!(
+pub fn search_url(query: &str, fulltext: bool) -> String {
+    let mut url = format!(
         "https://api.consensus.app/v1/search?query={}",
         urlencode(query)
-    )
+    );
+    if fulltext {
+        url.push_str("&include_full_text_chunks=true");
+    }
+    url
 }
 
 pub fn consensus_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — CONSENSUS_API_KEY absent from .secrets.local/.env".to_string()];
     }
-    let url = search_url(query);
+    let (text, refine) = crate::refine::split_refine(query, &["fulltext"]);
+    let fulltext = matches!(
+        crate::refine::value_of(&refine, "fulltext"),
+        Some("1") | Some("true")
+    );
+    let url = search_url(&text, fulltext);
     let auth = format!("x-api-key: {}", token);
     let headers = ["-H", auth.as_str(), "-H", "Accept: application/json"];
     match get(&url, &headers, "40") {
@@ -20,7 +29,7 @@ pub fn consensus_lines(query: &str, token: &str, max: usize) -> Vec<String> {
             Some(v) => {
                 let mut out = consensus_results(&v, max);
                 if out.is_empty() {
-                    out.push(format!("absent — Consensus carries no entry: {}", query));
+                    out.push(format!("absent — Consensus carries no entry: {}", text));
                 }
                 out
             }
@@ -36,6 +45,16 @@ fn field_str(row: &json::Json, key: &str) -> Option<String> {
         .and_then(|v| v.as_scalar_string())
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty())
+}
+
+fn cap(s: &str) -> String {
+    let flat = s.split_whitespace().collect::<Vec<_>>().join(" ");
+    if flat.chars().count() <= 2000 {
+        return flat;
+    }
+    let mut out: String = flat.chars().take(2000).collect();
+    out.push_str(" …");
+    out
 }
 
 fn consensus_results(v: &json::Json, max: usize) -> Vec<String> {
@@ -55,10 +74,27 @@ fn consensus_results(v: &json::Json, max: usize) -> Vec<String> {
         .iter()
         .filter_map(|key| field_str(row, key))
         .collect();
-        if parts.is_empty() {
+        let mut line = parts.join(" · ");
+        let mut carried = !parts.is_empty();
+        if let Some(abstract_text) = field_str(row, "abstract") {
+            line.push_str(&format!("\tabstract: {}", cap(&abstract_text)));
+            carried = true;
+        }
+        if let Some(chunks) = row.get("full_text_chunks").and_then(|c| c.as_arr()) {
+            for chunk in chunks {
+                if let Some(chunk) = chunk.as_str() {
+                    let chunk = cap(chunk);
+                    if !chunk.is_empty() {
+                        line.push_str(&format!("\tchunk: {}", chunk));
+                        carried = true;
+                    }
+                }
+            }
+        }
+        if !carried {
             continue;
         }
-        out.push(parts.join(" · "));
+        out.push(line);
         if out.len() >= max {
             break;
         }
@@ -73,8 +109,16 @@ mod tests {
     #[test]
     fn search_url_encodes_the_query() {
         assert_eq!(
-            search_url("transfer entropy"),
+            search_url("transfer entropy", false),
             "https://api.consensus.app/v1/search?query=transfer%20entropy"
+        );
+    }
+
+    #[test]
+    fn a_fulltext_request_names_the_flag() {
+        assert_eq!(
+            search_url("transfer entropy", true),
+            "https://api.consensus.app/v1/search?query=transfer%20entropy&include_full_text_chunks=true"
         );
     }
 
