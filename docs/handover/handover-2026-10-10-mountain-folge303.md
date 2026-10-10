@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 8309f8522d3bd9bac93dec0a23f49f17e35ea2a2a3529ef9b6ce9ccf66ab9e5e
+  sha256: 95d12889361f62bb5e51404b290f09c522935aed19d122f9996db3e2ef5770a6
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -44,6 +44,13 @@ flash only, kein pro/max.
 - **Lage:** (gemessen 2026-10-10, Diver; Liste bis Ende gelesen) `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.): 405 total / 402 NEW. Klassen: **research-data 74** (72 NEW) · **tool/service 301** (300) · **bypass-mirror 23** · **dead/nav 7**. 28 research-data-Einträge gemessen (`--verdict`+`--sniff`): u. a. ChinaRxiv 200, Neliti 403→blocked ip-blocked, All About Circuits 403→blocked, Open Textbook Library 200, IntechOpen 206. Die 23 bypass-mirror (Sci-Hub, Sci-Bot, PDFiles, Studocu/Exam-Downloader, Telegram-Kanäle …) sind eine **UrhG-§95a-/Umgehungs-Verdikt-Klasse**, keine Auslassung. **Operator-Wort 2026-10-10:** die 23 Einträge sind aus der Liste entfernt (445→422 Z.) und als Klasse `decline redistribution` verdiktet (`phi/declined_sources.φ`, Klasse über `fmhy.net`, keine Einzel-URL getrackt). **Erweiterung Operator-Wort 2026-10-10:** FMHY 35/35 Sektionen durch, **587** `🌐`-Sammelseiten-Verweise, 5 tief durchsucht (~55 physikalische Ressourcen, ~30 NEW); reichste Sektionen `/misc` + `/educational`; die meisten FMHY-NEW sind Viewer über registrierten Backends. Relevante NEW-Lücken am Baum verifiziert (nicht in `phi/sources.φ`): `losc.ligo.org`, `emsc.eu`, `imos.aodn.org.au`, `ngmdb.usgs.gov`, `worldclim.org`, `gadm.org`, `NOAA SURFRAD`, `awesome-lidar`, `KeepTrack` — Kandidaten-Notiz `state/mountain/fmhy-extension-2026-10-10.md`. **Tool-/Wissens-Scan (Operator-Frage 2026-10-10):** 13 Tool-Sektionen (10 575 Z.) + 10 Wissens-Seiten (7 203 Z.) durch; 58 Tool-Treffer (~45 netto neu: CyberChef/ImHex/Wireshark, tesseract/OCRmyPDF/Marker, DuckDB, nvtop, ParaView/MeshLab/tev, shellcheck/lychee) + 101 Wissens-Treffer (~60 Kern: NASA NTRS, Feynman, OpenStax, MathWorld, Falstad, KiCad); FMHY trägt kein astro-/scientific-Computation-Tooling — Notiz `state/mountain/fmhy-tools-wissen-2026-10-10.md`.
 - **Blockade:** kein Verdikt geschrieben (nur klassifiziert/gemessen).
 - **Braucht:** research-data- + Erweiterungs-Klasse: Register-Zeilen (Zulassung/`blocked`/`declined`) aus der Messung schreiben — ein begrenzter Dispatch, beginnend mit Gravitation/Seismik/Ozean (LIGO OSC, EMSC, IMOS). Tool-/Wissens-Scan: Werkzeuge sind kein `phi/`-Quellen-Verdikt — der Operator entscheidet über lokale Installation der netto-neuen Werkzeuge (Hardware/Consent).
+
+### FMHY-Routing — Arm vs `phi` vs `tools` (Untersuchung)
+- **Status:** eigen (Architektur) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt je Riss/Route
+- **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`.
+- **Blockade:** UI-Seats fehlen (gemessen: nur fremde Gruppe `mycelium-read` verbunden, keine `mountain-ui`/`open-weight-ui`) — Rat-Verdikt struktur-pending bis UI-Konvergenz.
+- **Braucht:** Riss 3 (`--verdict`/curl mit Token → KNMI/Mindat), Riss 4 (`--verdict overpass-api.de/api/status`), Riss 5 (`field`+Einheit belegen oder Referenz-Lead); dann je Arm ein `net.rs`-Zweig + FALLBACK + Hilfe-Zeile (begrenzter Dispatch), je B-Kandidat `url`+Compiler+`field`; UI-Runde in eigener Gruppe.
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -122,6 +129,7 @@ Wort | Datum | Quelle
 „bypass-mirror 23 (UrhG-§95a- was bedeutet das die möchte ich bitte raus haben keine fragwürdigen links" | 2026-10-10 | Operator (Session, Mountain 303)
 „sehr gut denn die seite birgt grosse schätze aber halt auch problematische" | 2026-10-10 | Operator (Session, Mountain 303)
 „das waren jetzt die datenseiten aber hast du auch die tools und wissens seiten nochmal gescannt?" | 2026-10-10 | Operator (Session, Mountain 303)
+„können wir nun eine untersuchung machen was davon als arme in archive search sollte, was in tools und was in phi dateien?" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
