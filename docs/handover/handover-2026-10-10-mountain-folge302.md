@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Reduktionskette Schritt 2b (ITRF→CIRS), TStreamerInfo-Header, Register-Messungen (VMF3-GRID-URL, PEP-Rat)
   class: handover
   date: 2026-10-10
-  sha256: 29a6f50cbe43398f6d36d2cc753b482bde7fd0160bac8abda002cece7ac1e4cf
+  sha256: a1e8e0572d23bc6b3331139c430cd587ba79d196902c56740a01766648c9a657
   status: live
 -->
 # Handover — Mountain-Folge 302 (2026-10-10)
@@ -45,12 +45,12 @@ flash only, kein pro/max.
 - **Blockade:** keine (Mountain-Seite).
 - **Braucht:** Mycelium — `llr-cdn.yml`; River — `| "llr"` in `main_flow.rs`.
 
-### PEP — Register-Ort entschieden (Rat); Token-Wort = Operator
-- **Status:** eigen (Vorbereitung) | **Bindung:** rat (Canon-Akt)
-- **Trigger:** Operator-Wort für den Token-Namen der neuen Registerklasse
-- **Lage:** (gemessen 2026-10-10, Rat-Runde + Baum) Der Rat fällt einstimmig: **eine eigene Registerklasse, Canon-Akt** — nicht `witnesses.φ` (physische Grammatik → Fabrikation), nicht `sources.φ` (Daten-Grammatik + `note`-Verbot), nicht der belegte Token `tool` (`phi/llm_tool_permission.φ:1`). Ort: eine neue Registerdatei in `phi/` + `section` in `phi/canon.φ` + `.gitignore`-Whitelist + `REGISTER_SECTIONS` (`src/gate/commit_gate.rs:2322`). Direktiven: `url` · `pin` · `terms` (Lizenz + Quell-URL) · `role reference` (`runtime` verboten) · `origin` · `note` (≤256). Risse (benannt): Token-Name (`werk` vs. `referenz`), Entität-vs-Output (Code-Artefakt oder nur die goldene Ephemeride mit PEP als `origin`), Grenzschärfe „100 % Rust" (`curl` ist Fremd-Binary → „gelinkt/aufgerufen", nicht „0 externe Crates").
-- **Blockade:** Canon-Akt braucht Operator-Wort (AGENTS: „new tracked `phi/*.φ` … needs the operator/council word").
-- **Braucht:** Operator-Wort — Token-Name + Umfang (Code-Artefakt vs. goldener Output). Dann: eine neue Registerdatei (in `phi`, Name = Operator-Wort) + Canon-Zeile + `.gitignore` + `REGISTER_SECTIONS` + Gate-Fixture (`role runtime` verboten; `pin`/`terms` Pflicht) im selben Atom.
+### PEP — Register-Ort am Baum gemessen: das bestehende `ephemeris_*`-Muster trägt PEP (kein Canon-Akt)
+- **Status:** eigen (Register + Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt (PEP-Ausgabe-/Port-Artefakt messen)
+- **Lage:** (gemessen 2026-10-10 am Baum) Die übrigen Ephemeriden-Werkzeuge sind längst als **normale Datenquellen** registriert — kein Code-Zeuge, keine fünfte Klasse: `ephemeris_epm_<body>.bin` mit `compiler tools/harvest/src/bin/epm_compiler.rs` + `origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp` (`phi/sources.φ:2057-2129`); `ephemeris_petrel19_<body>.bin` mit `terms CC-BY-4.0 https://github.com/TIAN-we/petrel19` (`:2345-2366`); INPOP19a mit `compiler tools/harvest/src/bin/inpop_compiler.rs` + `origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/` (`:19793`); JPL DE440/441/442 + Horizons über `origin procedure:` / `horizons_compiler`. Das fremde Programm lebt als `origin` (Herkunft) und `compiler` (unser Rust-Tool) **auf einer Datenzeile**. **PEP ist das einzige noch nicht registrierte Werkzeug** (`sgrep -i pep phi/sources.φ` = 0). **Riss, benannt:** der Rat (Option a, neue Registerklasse) wird vom Baum überstimmt — PEP paßt exakt in dasselbe Muster; der Baum ist die Messung.
+- **Blockade:** kein PEP-Ausgabe-Artefakt gemessen; PEP gibt womöglich kein fertiges Ephemeriden-File heraus.
+- **Braucht:** Schritt 1 (begrenzt) — messen, ob `github.com/jbattat/pep_core` ein Ephemeriden-Ausgabefile liefert, oder ob PEP offline (nie im Shipped Binary) erzeugt werden muß; dann den PEP-Compiler (Rust-Port) bauen, der `ephemeris_pep_<body>.bin` schreibt, mit `origin https://github.com/jbattat/pep_core` + `terms CC-BY-NC-SA` (Paper `2021AJ....162...78C`) — wie PETREL19/EPM. **Token `reference` = der `origin`-Herkunftsmarker** (Operator-Wort 2026-10-10) — keine neue Klasse, kein Canon-Akt.
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
@@ -100,6 +100,7 @@ Wort | Datum | Quelle
 „Starte die Mountain-Linie in einem Pass … bitte frage mit --all und max roster und dem rat klären Abgeschlossen und übergeben" | 2026-10-10 | Operator (Session, Mountain 301)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
 „mach das ab jetzt automatisch — committe und pushe selbst" | 2026-10-07 | Operator (Session, Mountain 264)
+„ich glaube reference ist passender oder aber warum haben wir mit allen anderen ephemeriden compilern kein problem aber mit dem PEP nachbau schon?" | 2026-10-10 | Operator (Session, Mountain 302)
 
 ## An mycelium
 
