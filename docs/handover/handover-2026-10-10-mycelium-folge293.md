@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 1d098dd3653b71923007b56f8a896828290edc70403999ba989e5743b159a8b0
+  sha256: ecd8bbd4e816588e7d0590ec5d95f71ccfc86e36f4ae6d6eb48d8c49d244aa6e
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,13 +17,14 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.0175 · cap 0.5 — Grund: Meta-Pass (GIRO-Lauf grün bestätigt, matrix-rotor-Re-Run, CI-Tafel vermessen, Stehender Pass am neuen HEAD geschrieben) · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.0685 · cap 0.5 — Grund: Meta-Pass (GIRO-Lauf grün, matrix-rotor-Re-Run, CI-Tafel, Stehender Pass) + CI/CDN-Recherche (archive_search --all, 4 Recherchen, Rat, 6 UI-Seats, Survey) · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-10 | Operator (Session, Mycelium 293) |
+| „archive search all und roster recherche … wie wir unsere github, CI und CDN abläufe optimieren können, denkt gross … analyse auch welche kostenlosen externen möglichkeiten z.b. um GPU runs oder läufe zu machen bestehen … auch die kommunikation zw. opencode und github, CI, CDN" | 2026-10-10 | Operator (Session, Mycelium 293) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-10-mycelium-folge292.md` §Operator-Wort-Register | 2026-10-10 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -55,6 +56,21 @@ In diesem Atom kein neuer adressierter Block.
   (täglich, mycelium-290 `938c3c052`).
 - **Blockade:** keine.
 - **Braucht:** nächster geplanter Lauf bestätigt die Kadenz.
+
+### Architektur — GitHub/CI/CDN-Optimierung (Survey + Rat + UI-Runde)
+- **Status:** eigen (Umsetzung) | **Bindung:** linie:mycelium (Träger) · Teile linie:mountain/river
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10 via `archive_search --all` + 4 Recherchen + Rat + 6 UI-Seats)
+  Survey `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md` (sha `19382251…`);
+  Runde `state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`. Konvergenz: R2/OIDC,
+  Workflow-Konsolidierung, nextest+Built-Reuse+Cache-in-R2, GPU nur für GPU-Last. Riss:
+  AI-in-CI (nur self-hosted vs. private Cloud-GPU).
+- **Blockade:** 6 Maßnahmen, teils große Baum-Arbeit (446 Workflows); je eigener Dispatch.
+- **Braucht:** die 6 Maßnahmen je als **eigener, begrenzter Dispatch** (ein Schritt je Atom),
+  flash-first: (1) `workflow_call`-Konsolidierung · (2) Lauf-Hygiene (`concurrency`/`paths`/
+  `timeout-minutes`/Retention) · (3) nextest-Sharding auf `ubuntu-24.04-arm` + rust-cache/sccache ·
+  (4) R2-CDN (`operator-gebunden`: Bucket/Key = Operator-Wort) · (5) OIDC+R2-Worker-Verifier +
+  `external-state`-Rate-Zeile · (6) Free-GPU-Probe (Modal/Beam) + self-hosted LLM — `pending`, hinten.
 
 ## An mountain
 
