@@ -3312,6 +3312,9 @@ mod tests {
             "the big money is elsewhere",
             "we only get it if we bend",
             "nur durch Verbiegen",
+            "ist kein Biegen",
+            "ist keine Biege",
+            "is not a bending",
         ] {
             let args = tool_args("src/x.rs", marker);
             let v = g.check_tool_call("edit", &args).unwrap();
