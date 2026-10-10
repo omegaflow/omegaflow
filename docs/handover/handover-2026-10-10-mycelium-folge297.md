@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Ephemeris-CDN-sha256 (llr/sinex/vmf3_site) + VMF3-GRID-Block und -Aufrufer (Origin gemessen) + cmb-cdn-SPT-Re-Dispatch; mountain-301-Block gefaltet.
   class: handover
   date: 2026-10-10
-  sha256: 7df62ddcfc4129ecdfd19bff6903c937d11aee6930edec35a6a0c345159b9ff2
+  sha256: ece4a7a59a1a752eb19d9704269989265cc5494b96cea11d431b7d3ec05c040b
   status: live
 -->
 # Handover — Mycelium-Folge 297 (2026-10-10)
@@ -62,14 +62,18 @@ und LLR `no-cadence` bestätigt; planetary radar `at <zielplanet>`
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Operator-Wort „alle" liegt vor
 - **Lage:** (gemessen 2026-10-10) die **Survey**
-  `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md` trägt die Landschaft:
-  USGS 3DEP (`phi/sources.φ:20260` **registriert**), NOAA NOS Coastal
-  (`noaa_nodd_inventory.φ:26`), OpenTopography (200), open-lidar-data
-  (`s3.eu-central-1.amazonaws.com/open-lidar-data/` 200, 390654 B, LAS/LAZ + COPC),
-  Canada CanElevation, Australia ELVIS, Netherlands AHN, UK-EA LiDAR, Bayern DOM20.
-  Der **LAS/COPC-Reader steht** (`src/archivar/las/`, LASzip-Chunk-Dekoder gebaut);
-  die frühere Zeile „omegaflow hat **kein** LiDAR registriert" war **falsch**
-  (296→297 getragen, hier korrigiert).
+  `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md` trägt die weltweite
+  Landschaft (4 Recherche-Taucher, jede URL per `--verdict` gemessen): global
+  GEDI/ICESat-2/GLAD/OpenTopography/Copernicus; Europa bundesweit offen
+  (NL/CH/DK/NO/SE/FI/EE/LV/LT/PL/CZ/SK/SI/PT/FR/BE/LU/IE/UK/AT), DE nur
+  länderweise (Bayern/NRW/BW/NI/SN); Nordamerika (USGS 3DEP **registriert**
+  `phi/sources.φ:20260`, NOAA NOS im Katalog, CanElevation/BC/ON/QC); LatAm
+  (INPE, PMSP, IDE Chile, IGN AR …); Asien-Pazifik (JP-AWS, KR, TW, HK, IN, CN,
+  SG, ID, PH-LiPAD, TH, MY, AU ELVIS/GA/QLD/NSW, NZ LINZ); Afrika/Nahost (kein
+  nationales Massen-LiDAR, nur Kampagnen). Der **LAS/COPC-Reader steht**
+  (`src/archivar/las/`, LASzip-Chunk-Dekoder gebaut); die frühere Zeile
+  „omegaflow hat **kein** LiDAR registriert" war **falsch** (296→297 getragen,
+  hier korrigiert).
 - **Blockade:** keine.
 - **Braucht:** je Quelle ein Manifestator (`tools/harvest`, Vorlage
   `las_compiler.rs`/`copernicus_dem_compiler.rs`) + die Mycelium-Registrierung.
