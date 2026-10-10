@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: f623ba7f03da97bc8b39f3955794c0a58a60ab8ac3484f845575442431e79a6f
+  sha256: f674341bc81e9bc20192a6e40a4fbf25579446b6664e76eaa3fc55e08bbb33da
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -337,11 +337,17 @@ sichtbar und ist eine eigene Messung). `q=lidar` = 2 Treffer (1 SPREP-Bericht,
 indexiert (Hebrew/Englisch-Suche 0); die API antwortet zudem intermittierend mit
 einer CF-Challenge auf `curl` → Browser ist die verlässliche Route.
 
-**Der skalierbare Weg:** ein `portal_harvest`-Bin (`tools/harvest`) — `package_search`
-je Portal → `license_id` gegen die geschlossene Vokabel filtern → `package_show`
-für die echten `resources[].url` → Kandidaten-Zeilen ausgeben. Der eigentliche
-Daten-Link steht erst in `package_show` (nicht in `package_search`). Dann Mountain
-(`terms`/`at`) + Mycelium (`url`/`origin`/`compiler`).
+**Gebaut (`tools/harvest/src/bin/portal_harvest.rs`, 2026-10-10).** `portal_harvest
+--base <ckan-url> [--q <query>] [--rows N] [--start N] [--package-show] [--all] [--out path]`
+ruft `{base}/api/3/action/package_search` auf, klassifiziert `license_id`
+(`redistributable` / `terms-unknown` / `blocked`) und gibt je Datensatz
+`class | license | title | {base}/dataset/<name>` aus; `--package-show` hängt die
+echten `resources[].url` an. Es filtert `blocked` standardmäßig weg (mit `--all`
+sichtbar), lässt `terms-unknown` stehen. Getestet: `data.gov.il` (1201 Datasets,
+`--package-show` zieht die Resource-URLs); ein CF-Portal meldet klar
+„returned no JSON (Cloudflare interstitial?)" statt einer stillen Null. Der
+Daten-Link steht erst in `package_show`. Dann Mountain (`terms`/`at`) + Mycelium
+(`url`/`origin`/`compiler`).
 
 ## Was fehlt — der Bau
 
