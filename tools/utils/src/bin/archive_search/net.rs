@@ -3719,6 +3719,8 @@ const QUERY_MODES: &[&str] = &[
     "consensus",
     "perplexity",
     "gemini",
+    "wikidata",
+    "googlecse",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4137,6 +4139,8 @@ pub fn run_lines_max(
         }
         "perplexity" => crate::perplexity::perplexity_lines(query),
         "gemini" => crate::gemini::gemini_lines(query),
+        "wikidata" => crate::wikidata::wikidata_lines(query, max),
+        "googlecse" => crate::googlecse::googlecse_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4360,6 +4364,8 @@ mod tests {
             "consensus",
             "perplexity",
             "gemini",
+            "wikidata",
+            "googlecse",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
