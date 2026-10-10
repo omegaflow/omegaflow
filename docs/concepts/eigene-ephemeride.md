@@ -4,7 +4,7 @@
   date: 2026-10-10
   sha256: 076c64610cb7b16bb098717a391788f9fffb288a42dda9194bb05b74926bd0c2
   status: live
-  see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-10-10-mountain-folge301.md
+  see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-10-10-mountain-folge301.md
 -->
 # Die eigene Ephemeride — aus allen Zeugen
 
