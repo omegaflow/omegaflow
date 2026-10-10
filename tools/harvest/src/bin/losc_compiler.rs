@@ -1,6 +1,7 @@
 use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::archivar::types::{CHANNEL_REF_QUANTITY, PRESENCE_FLAG_QUANTITY};
 use omegaflow::cdn::upload_release;
-use omegaflow::force::force_id_of;
+use omegaflow::force::{force_id_of, quantity_kind_of};
 use omegaflow::hdf5::{Hdf5File, Hdf5Layout};
 
 const MAGIC: [u8; 4] = *b"LOSC";
@@ -166,7 +167,7 @@ fn emit_records(records: &mut Vec<[f64; 26]>, out: &str) {
     println!("format losc-strain");
 }
 
-fn compile(input: &str, out: &str, force_type: u8, ttl_s: f64) {
+fn compile(input: &str, out: &str, force_type: u8, presence: f64, ttl_s: f64) {
     let bytes = match std::fs::read(input) {
         Ok(b) => b,
         Err(_) => {
@@ -234,7 +235,7 @@ fn compile(input: &str, out: &str, force_type: u8, ttl_s: f64) {
         r[SLOT_VAL] = *value;
         r[SLOT_TTL] = ttl_s;
         r[SLOT_FORCE_TYPE] = force_type as f64;
-        r[SLOT_PRESENCE] = 1.0;
+        r[SLOT_PRESENCE] = presence;
         records.push(r);
     }
     eprintln!(
@@ -258,25 +259,42 @@ fn main() {
     let input = match arg_value(&args, "--input") {
         Some(p) => p,
         None => {
-            eprintln!("usage: losc_compiler --input <hdf5> --out <file.bin> --force <medium> --ttl <secs> [--ci-mode]");
+            eprintln!(
+                "usage: losc_compiler --input <hdf5> --out <file.bin> --class <force|quantity-kind> --ttl <secs> [--ci-mode]"
+            );
             std::process::exit(2);
         }
     };
-    let force_type = match arg_value(&args, "--force").and_then(|n| force_id_of(&n)) {
-        Some(id) => id,
+    let (force_type, presence) = match arg_value(&args, "--class") {
+        Some(name) => match force_id_of(&name) {
+            Some(id) => (id, 1.0),
+            None => match quantity_kind_of(&name) {
+                Some(_) => (CHANNEL_REF_QUANTITY, PRESENCE_FLAG_QUANTITY),
+                None => {
+                    eprintln!(
+                        "losc: `{name}` is neither a force nor a quantity kind — the record stays unwritten"
+                    );
+                    std::process::exit(2);
+                }
+            },
+        },
         None => {
-            eprintln!("losc: the force admission is declared per source — pass --force <medium>; the record stays unwritten");
+            eprintln!(
+                "losc: the class is declared per source — pass --class <force|quantity-kind>; the record stays unwritten"
+            );
             std::process::exit(2);
         }
     };
     let ttl_s = match arg_value(&args, "--ttl").and_then(|v| v.parse::<f64>().ok()) {
         Some(t) if t.is_finite() && t > 0.0 => t,
         _ => {
-            eprintln!("losc: the ttl is declared per source — pass --ttl <secs>; a ttl <= 0 drops every record");
+            eprintln!(
+                "losc: the ttl is declared per source — pass --ttl <secs>; a ttl <= 0 drops every record"
+            );
             std::process::exit(2);
         }
     };
-    compile(&input, &out, force_type, ttl_s);
+    compile(&input, &out, force_type, presence, ttl_s);
     if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
