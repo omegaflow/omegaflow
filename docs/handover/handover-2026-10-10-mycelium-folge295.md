@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 807ea3ed9e5e470be01fffd6cacb340652b681917dfc53735aa9ab3c90f851e1
+  sha256: 59ffc820a13477753400a1f0fe1d2e1f80464d11217eb4d3f88a906c8763393c
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -60,15 +60,21 @@ bleibt mountain.
 - **Trigger:** nächste Dispatch-Session dieser Linie
 - **Lage:** (gemessen 2026-10-10) `pub fn sigv4_put_headers` in `src/archivar/range.rs`
   (allgemeiner Writer-Signer: `method`, optionales `content-length`; PUT signiert
-  content-length, DELETE/GET ohne) + `tools/utils/src/bin/r2_probe.rs`. **Live-Probe grün:**
+  content-length, DELETE/GET ohne) + `tools/utils/src/bin/r2_probe.rs`; `r2_mirror` in
+  `src/archivar/cdn.rs` (opt-in Spiegel). **Live-Probe grün:**
   `r2_probe: put/get/delete ok — bucket=omegaflow-sources key=ci-probe.txt`. Die
   R2-Credentials (Bucket `omegaflow-sources`, Token `omegaflow-ci-cdn`) stehen in
   `.secrets.local` (Operator). `cargo check` grün.
 - **Blockade:** keine.
-- **Braucht:** R2 als Ziel in den `--ci-mode`-Upload-Pfad (`src/archivar/cdn.rs`) verdrahten +
-  Workflow-Secrets `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY`/`R2_ENDPOINT`/`R2_BUCKET`; danach
-  Maßnahme 5 (OIDC-Worker). **Gemessener Riss:** ein DELETE mit signiertem `content-length: 0`
-  ergab 403 (curl sendet es nicht) — der Signer lässt es jetzt weg (`Option`).
+- **Braucht:** — **gebaut (2026-10-10):** `pub fn r2_mirror` in `src/archivar/cdn.rs` spiegelt
+  jedes in `--ci-mode` erfolgreich hochgeladene Objekt **opt-in** nach R2 (`<tag>/<name>`;
+  no-op ohne `OMEGAFLOW_R2_MIRROR`); `cdn-manifest.yml` reicht die `R2_*`-Secrets + die
+  Repo-Variable `OMEGAFLOW_R2_MIRROR` durch. Live verifiziert (`cdn::r2_mirror -> true`,
+  Objekt gespiegelt + aufgeräumt). **Operator-Rest:** die vier Repo-Secrets
+  `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY`/`R2_ENDPOINT`/`R2_BUCKET` setzen (Settings →
+  Actions) + die Variable `OMEGAFLOW_R2_MIRROR=1` zum Aktivieren. Danach Maßnahme 5
+  (OIDC-Worker). **Riss:** ein DELETE mit signiertem `content-length: 0` ergab 403 — der
+  Signer lässt es jetzt weg (`Option`).
 
 ### CI — `te_ground_truth` (mountain-299 adressiert, dispatched)
 - **Status:** eigen | **Bindung:** eigen
