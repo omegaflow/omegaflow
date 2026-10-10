@@ -4297,10 +4297,13 @@ struct RungMeasurement {
     n_eff: Option<f64>,
     te: Option<f64>,
     p: f64,
+    tau_s: Vec<Option<f64>>,
+    pass: bool,
 }
 
 fn measure_rung(
     req_arms: &[&[(f64, f64)]],
+    required_native: &[Option<f64>],
     rung: &ScaleRung,
     seasonal: Seasonal,
     lags: &[usize],
@@ -4313,6 +4316,8 @@ fn measure_rung(
         n_eff: None,
         te: None,
         p: 1.0,
+        tau_s: required_native.to_vec(),
+        pass: false,
     };
     let Ok((cell_columns, _, _)) = align_many(req_arms, seasonal, Some(rung.delta_s)) else {
         return measurement;
@@ -5081,7 +5086,16 @@ fn run_pair_matrix(
         let ladder: Vec<RungMeasurement> = rungs
             .iter()
             .take(SCALE_MEASURE_LIMIT)
-            .map(|rung| measure_rung(&req_arms, rung, desc.seasonal, &desc.lags, desc.surrogate))
+            .map(|rung| {
+                measure_rung(
+                    &req_arms,
+                    &required_native,
+                    rung,
+                    desc.seasonal,
+                    &desc.lags,
+                    desc.surrogate,
+                )
+            })
             .collect();
         match cell_te_and_surrogates(
             target,
@@ -5167,6 +5181,31 @@ fn run_pair_matrix(
         }
     }
 
+    let max_rungs = outcomes.iter().map(|o| o.ladder.len()).fold(0, usize::max);
+    for rung_idx in 0..max_rungs {
+        let members: Vec<usize> = outcomes
+            .iter()
+            .enumerate()
+            .filter(|(_, o)| o.ladder.get(rung_idx).is_some())
+            .map(|(i, _)| i)
+            .collect();
+        let pvals: Vec<f64> = members
+            .iter()
+            .map(|&i| outcomes[i].ladder[rung_idx].p)
+            .collect();
+        let passes = match spec.fdr.0 {
+            FdrMethod::Bh => benjamini_hochberg_pass(&pvals, spec.fdr.1),
+            FdrMethod::By => benjamini_yekutieli_pass(&pvals, spec.fdr.1),
+        };
+        for (mi, &i) in members.iter().enumerate() {
+            if let (Some(pass), Some(measurement)) =
+                (passes.get(mi), outcomes[i].ladder.get_mut(rung_idx))
+            {
+                measurement.pass = *pass;
+            }
+        }
+    }
+
     println!(
         "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>11} | {:>24} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
         "cell",
@@ -5231,13 +5270,16 @@ fn run_pair_matrix(
                 Some(v) => format!("{v:.4e}"),
                 None => "absent".to_string(),
             };
+            let tau_names: Vec<String> = m.tau_s.iter().map(|t| fmt_opt(*t)).collect();
             println!(
-                "    · {:>10.0}s | n {:>5} | n_eff {:>9} | te {:>12} | p {:>8} | {}",
+                "    · {:>10.0}s | n {:>5} | n_eff {:>9} | te {:>12} | p {:>8} | {} | tau {} | {}",
                 m.delta_s,
                 m.n,
                 fmt_opt(m.n_eff),
                 mte,
                 format!("{:.4}", m.p),
+                if m.pass { "pass" } else { "silent" },
+                tau_names.join("/"),
                 role_names.join("+")
             );
         }
