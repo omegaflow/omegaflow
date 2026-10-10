@@ -179,7 +179,7 @@ pub fn earth_rotation_angle_rad(ut1_jd: f64) -> Option<f64> {
         return None;
     }
     let d = ut1_jd - 2451545.0;
-    let turn = 0.7790572732640 + 1.00273781191135448 * d;
+    let turn = 0.7790572732640 + 1.002_737_811_911_354_6 * d;
     if !turn.is_finite() {
         return None;
     }
@@ -335,7 +335,7 @@ mod tests {
         let era = earth_rotation_angle_rad(2451545.0).unwrap();
         let want = 2.0 * std::f64::consts::PI * 0.7790572732640;
         assert!((era - want).abs() < 1.0e-15, "era {era} vs {want}");
-        assert!(era >= 0.0 && era < 2.0 * std::f64::consts::PI);
+        assert!((0.0..2.0 * std::f64::consts::PI).contains(&era));
     }
 
     #[test]
