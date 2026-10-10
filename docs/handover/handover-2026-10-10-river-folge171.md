@@ -3,7 +3,7 @@
   session: River-Folge 171
   class: handover
   date: 2026-10-10
-  sha256: c34060aa2d2fc41a9e8dba1d08be8d9258ce0c4469b96b1af16a456bdb23191f
+  sha256: 7d4ba39c297ea9dec87a07567f5c61f2fc3c64c8cf4fdf548da87d0774b64b28
   status: live
 -->
 # Handover — River-Folge 171 (2026-10-10)
@@ -68,8 +68,8 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - **Trigger:** der nächste `field_te_query`-Lauf. Wahrheit: `state/zustand/wartend.φ:47`.
 - **Lage:** (gemessen am Lauf `37500311359` Log, 2026-10-06; via `wartend.φ:47` Mountain 270 / River 112) 15/15 Arme, alle **210** Zellen enumeriert (`pool 15`, `expect cells 210 matched`). Die Ursache der leeren Zellen ist gemessen, nicht vermutet: das per-Paar-Joint scheitert an der Auflösung — `alignment pending` (`goes_xrs_xrsa->solar_wind_speed_km_s`, `solar_wind_density_cm3->solar_wind_speed_km_s`), `unadjusted_below_floor` (n < `TE_FLOOR`), und `resolution pending` mit dem literalen Paar `12x2678400` (`aia_304_dn->ersstv5_nino34`). Die RTSW/SWPC-Kanäle sind rollende 1-min-Dateien (`rtsw_mag_1m.json`/`rtsw_wind_1m.json`, `phi/sources.φ:213-227`, `ttl 60`), QBO/ERSST monatlich — kein gemeinsames `bin 86400`-Gitter.
 - **Blockade:** der Joint-Grid-Arm — **eine** Auflösung für das ganze Vlies (`bin 86400`), die der 1-min- und der Monats-Reihe nicht gleichzeitig genügt.
-- **Riss (Rat vs Roster, 2026-10-10):** Rat-Verdikt **(B) per-Paar-Bin `max(tau_d, tau_t)` je Zelle**, in diesem Atom (Substrat; Skala je Zelle; C registriert; D descoped). Roster rippt: **Duck.ai (Haiku 4.5): „(D) mit lokalem (B)-Fallback"**; **DeepSeek V4 Pro: „D als Rückgrat + C; B macht TE-Werte über die Matrix unvergleichbar und verdeckt cross-scale Lead-Lag"**. Konvergenz beider Linien: (A) falsch; die **Abtastratengrenze** (6 s/60 s/monatlich) ist der ungeglättete Riss; C (Multi-Timescale) nötig. Divergenz: die Reihenfolge — Rat baut B zuerst (Darstellbarkeit), Roster will D/C zuerst (Vergleichbarkeit). Beide Linien tragen; **kein Bau vor der Gewichtung**. Roh: `state/stimmen/2026-10-10-river-te-joint-grid-rat-roster.md`, Forschung `…-research.md`.
-- **Braucht (Kante, liegt bis zur Gewichtung):** `tools/measure/src/bin/field_te_query.rs:4736` — statt `align_many(&req_arms, desc.seasonal, desc.bin)` den Zellen-Bin `max(native_d, native_t)` übergeben; `phi/pipeline/descriptors/vlies_matrix.te:46` `bin 86400` als dokumentierten Fallback kennzeichnen. Verifikation der Zellen über den dispatchten Lauf `38062303232` (`matrix-vlies`).
+- **Riss:** Rat-Verdikt vom 2026-10-10 **(B) per-Paar-Bin `max(tau_d, tau_t)` je Zelle**, in diesem Atom (Substrat; Skala je Zelle; C registriert; D descoped). Die UI-Seats rippen es: **Duck.ai (Haiku 4.5): „(D) mit lokalem (B)-Fallback"**; **DeepSeek V4 Pro: „D als Rückgrat + C; B macht TE-Werte über die Matrix unvergleichbar und verdeckt cross-scale Lead-Lag"**. Konvergenz beider Linien: (A) falsch; die **Abtastratengrenze** (6 s/60 s/monatlich) ist der ungeglättete Schnitt; C (Multi-Timescale) nötig. Divergenz: die Reihenfolge — Rat baut B zuerst (Darstellbarkeit), die UI-Seats wollen D/C zuerst (Vergleichbarkeit). Beide Linien tragen; **kein Bau vor der Gewichtung**. Roh: `state/stimmen/2026-10-10-river-te-joint-grid-rat-roster.md`, Forschung `…-research.md`.
+- **Braucht:** die Gewichtung des Risses (B-Substrat vs. D-Rahmen); bis dahin liegt die Kante: `tools/measure/src/bin/field_te_query.rs:4736` — statt `align_many(&req_arms, desc.seasonal, desc.bin)` den Zellen-Bin `max(native_d, native_t)` übergeben; `phi/pipeline/descriptors/vlies_matrix.te:46` `bin 86400` als dokumentierten Fallback kennzeichnen; Verifikation über den dispatchten Lauf `38062303232` (`matrix-vlies`).
 
 ## LOCK
 
