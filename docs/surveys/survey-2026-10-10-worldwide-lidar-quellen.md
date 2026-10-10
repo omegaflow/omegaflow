@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 8351d34a57765ba3f6838e9c608959a80f50336a08748a53b9053ec4fd37f12a
+  sha256: 47c3f59bdd807544fd45c5328f837b262806001d8171f6b93326ce39a294a5a5
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -198,6 +198,33 @@ DE `geodaten.hessen.de`/`geodaten.thueringen.de`/`geoportal.hamburg.de`.
 **Kernaussage Afrika/Nahost:** keine offene nationale Massen-LiDAR-Deckung messbar;
 Rückgrat bleiben GEDI/ICESat-2 + GLAD-Canopy + Copernicus DEM, Bodenkampagnen nur
 nach Maß (CEDA/Zenodo/Edinburgh).
+
+### Alternative Routen für die blockierten/toten LiDAR-Hosts (gemessen 2026-10-10)
+
+Dieselbe Pflicht wie bei der Bathymetrie: für jede tote/blockierte Route eine
+erreichbare Alternative suchen und messen.
+
+| blockiert/tot | Alternative Route | HTTP | was sie trägt |
+| --- | --- | --- | --- |
+| Japan `service.gsi.go.jp` (403) | `registry.opendata.aws/japan_pointcloud/` | **206** | JP-Präfektur-Punktwolken (AWS-Spiegel) |
+| UK-SCO `spatialdata.gov.scot` (403) | `www.data.gov.uk` · `remotesensingdata.gov.scot` | **206 · 206** | UK-National-LiDAR-Programm + Scottish Remote Sensing |
+| AU-VIC `land.vic.gov.au` (403) | `discover.data.vic.gov.au` | **206** | Victoria Data-Vic-Katalog (Vicmap Elevation) |
+| SG `sla.gov.sg` (403) | `data.gov.sg` · `sgpointcloud.gpslands.com` | **200 · 200** | SG Open Data + SG PointCloud |
+| ES `pnoa.ign.es` / `centrodedescargas.cnig.es` (tot) | `datos.gob.es` · `www.ign.es` | **206 · 206** | ES Open-Data-Katalog + IGN-Portal |
+| SK `zbgis.sk` (tot) | `data.gov.sk` · `gku.sk` | **200 · 200** | SK Open Data + Geodätisch-Kartografisches Amt |
+| PT `igeo.pt` (tot) | `cdd.dgterritorio.gov.pt` · `dados.gov.pt` | **200 · 200** | PT DGT-Datenzentrum + Portal |
+| RO `geoportal.gov.ro` (tot) | `www.ancpi.ro` | **200** | ANCPI (LAKI III LiDAR) |
+| DE-Hessen `geodaten.hessen.de` (tot) | `geoportal.hessen.de` | **206** | Hessen-Geoportal (richtige Adresse) |
+| DE-Thüringen `geodaten.thueringen.de` (tot) | `geoportal.thueringen.de` | **200** | Thüringen-Geoportal |
+| DE-Hamburg `geoportal.hamburg.de` (tot) | `transparenz.hamburg.de` | **206** | Hamburg Transparenzportal |
+| noch blockiert | GR `geoportal.gov.gr`/`geodata.gov.gr`, RO `data.gov.ro`, BG `data.egov.bg` (403), Pacific `pacificdata.org` (403), IL `data.gov.il` (403) | tot/403 | — (Exit-Wechsel = Operator-Wort) |
+| global (topografisch) | `srtm.csi.cgiar.org` · Copernicus DEM | 200 | globale DEM-Alternative (kein LiDAR) |
+
+**Ergebnis:** 11 der toten/blockierten LiDAR-Hosts haben eine erreichbare
+Alternative (JP→AWS · UK-SCO→data.gov.uk · AU-VIC→Data-Vic · SG→data.gov.sg ·
+ES→datos.gob.es/IGN · SK→data.gov.sk/GKU · PT→DGT · RO→ANCPI · DE-Hessen/
+Thüringen/Hamburg→Landes-Geoportale). Nur GR, RO-`data.gov.ro`, BG `data.egov.bg`,
+Pacific, IL bleiben 403/tot (Geo/CF oder außer Betrieb) — Exit-Wechsel = Operator-Wort.
 
 ## Bathymetrie / Unterwasser (topo-bathy, Multibeam, globale Relief-Modelle)
 
