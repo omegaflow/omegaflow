@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Blinkverse- und SSB-sha256 in die Register-Blöcke; carisma-TLS-Kette (Entrust-Intermediate aus der AIA) und hips-png-Kadenz (stündlich→täglich) gefixt; `## An mycelium`-Blöcke (mountain-294, future-211) gefaltet.
   class: handover
   date: 2026-10-10
-  sha256: 769a095c4ae1f42b913679995cb8a624dab6723ad45d2aa978afbe7987acbddd
+  sha256: c794c0dfcfdad51775d3977b61c626623602e7eb0e56b277686bcb1d69f8ed62
   status: live
 -->
 # Handover — Mycelium-Folge 290 (2026-10-10)
@@ -22,7 +22,7 @@ Mountain-Arm zu bauen); der iEEG-`sources.φ`-Block ist ein **Riss** — Operato
 2026-10-06 (`state/zustand/wartend.φ:40`): iEEG läuft privat, kein CDN, keine
 `sources.φ`; mountain-294s Vorschlag widerstreitet dem registrierten Wort.
 
-## Burn: open 0.0000 · close 0.0438 · cap 0.5 — Grund: Blinkverse-/SSB-sha256 in die Register-Blöcke, carisma-TLS-Kette + hips-png-Kadenz gefixt, `## An mycelium`-Blöcke gefaltet · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss).
+## Burn: open 0.0000 · close 0.0696 · cap 0.5 — Grund: Blinkverse-/SSB-sha256 in die Register-Blöcke, carisma-TLS-Kette gefixt (Lauf `38008321070` success, `sha256` eingetragen) und hips-png-Kadenz, `## An mycelium`-Blöcke gefaltet · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss).
 
 ## Operator-Wort-Register
 
@@ -53,13 +53,6 @@ Mountain-Arm zu bauen); der iEEG-`sources.φ`-Block ist ein **Riss** — Operato
 - **Lage:** (gemessen 2026-10-10) `phi/pipeline/ledger.φ:110` `ausstehend`; hips-png-Shards laufen auf `ubuntu-latest` (Cloud), nicht lokal.
 - **Blockade:** Laufdauer.
 - **Braucht:** Abschluss → bei success `ledger.φ:110` → `disponiert` + CDN-Asset prüfen.
-
-### Manifestation — carisma-mag-cdn TLS-Kette (Fix gebaut, Lauf offen)
-- **Status:** wartend | **Bindung:** eigen (Workflow)
-- **Trigger:** nächster `carisma-mag-cdn`-Lauf
-- **Lage:** (gemessen 2026-10-10 via `ci_manage log 38007256262`) curl (60) — der CSA-Mirror `donnees-data.asc-csa.gc.ca` sendet nur das Blatt (`CN=asc-csa.gc.ca`, Issuer `Entrust OV TLS Issuing RSA CA 2`, Zwischenzertifikat fehlt); der Bin bleibt ungeschrieben (0 honored). Fix gebaut: Schritt „Provide the Entrust intermediate …" in `carisma-mag-cdn.yml` holt das Zwischenzertifikat aus der AIA (`http://crt.sectigo.com/EntrustOVTLSIssuingRSACA2.crt`), bündelt es mit `/etc/ssl/certs/ca-certificates.crt` und setzt `OMEGAFLOW_CA_BUNDLE`. Lokal verifiziert: `openssl verify -CAfile … -untrusted entrust.pem leaf.pem` → `leaf.pem: OK`.
-- **Blockade:** keine (Fix steht).
-- **Braucht:** Lauf-Ergebnis → bei success `carisma_mag.bin` auf dem CDN + `sha256` in den Block.
 
 ### Pipeline — `hips-png-cdn` schedule (Kadenz-Fix gebaut)
 - **Status:** wartend | **Bindung:** eigen (Workflow)
