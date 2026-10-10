@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 13eece04fb91270bae4b7bf032b99b81047aa8510f4b90f2ad2642f24678e9e5
+  sha256: d99ead7b37a255c1c69cac574ee488d4ddcf938d8ef3c1cf908fe10420eeb9b6
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -297,10 +297,19 @@ JALBTCX → Digital-Coast-Data-Access-Viewer + data.gov-Katalog.
 Portal-Kataloge mit CKAN-API liefern Datensatz **und** `license_id`
 maschinenlesbar — sauberer als HTML-Scraping. CF-Portale (`pacificdata.org`)
 werden über die **Browser-Brücke** abgefragt (`/data/api/3/action/package_search`,
-JSON), nicht-CF-Portale (`data.gov.il`) per `curl`. Das **Filterkriterium** ist die
-Lizenz gegen die geschlossene Vokabel (`license_census`): redistributierbar =
-`PD`/`other-pd`/`cc0`/`cc-by`/`cc-by-sa`/`odc-odbl`/`ogl`/`sprep-public-license`
-(Terms vor Registrierung messen); ausgeschlossen = `notspecified`/`unknown`/NC/ND.
+JSON), nicht-CF-Portale (`data.gov.il`) per `curl`.
+
+**Lizenz-Filter (korrigiert).** `NC` ist **redistributierbar** — NC verbietet den
+*kommerziellen* Gebrauch, nicht die Weitergabe; und omegaflows eigene Lizenzgrenze
+ist selbst **CC BY-NC-SA**, das Register trägt bereits 12 Zeilen `CC-BY-NC-3.0-IGO`/
+`CC-BY-NC-4.0` (`phi/sources.φ`). Der frühere Satz „NC nicht redistributierbar" war
+**falsch**.
+- **redistributierbar:** `PD`/`other-pd`/`CC0`/`CC-BY`/`CC-BY-SA`/`CC-BY-NC`/
+  `CC-BY-NC-SA`/`ODbL`/`OGL`/`sprep-public-license` (Terms je Quelle mittragen).
+- **gesperrt:** **`ND`** (NoDerivatives — die `.bin`-Kompilierung *ist* eine
+  Bearbeitung) und proprietär/paywalled/„all rights reserved".
+- **kein Verdikt:** `notspecified`/`unknown` → als **`terms unknown`** tragen (der
+  ITRF-Block tut das), **nicht still ausschließen** — ein Messauftrag, kein Drop.
 
 **Erster Extrakt — Pacific Data Hub, `q=bathymetry`, `fq=license_id:(sprep-public-license OR other-pd)`
 = 11 von 180** (Datensatz-URL `https://pacificdata.org/data/dataset/<name>`):
@@ -319,9 +328,10 @@ Lizenz gegen die geschlossene Vokabel (`license_census`): redistributierbar =
 | `tongan-socio-environmental-spatial-layers-…` | sprep-public-license |
 | `pacific-catastrophe-risk-assessment-…` (PCRAFI) | sprep-public-license |
 
-Die übrigen **169** Bathymetrie-Datensätze tragen `notspecified` → **nicht**
-redistributierbar (nur Metadaten lesbar, kein Datensatz-Link). `q=lidar` = 2 Treffer
-(1 SPREP-Bericht, 1 „notspecified") — kein Punktwolken-Datensatz im pazifischen Katalog.
+Die übrigen **169** tragen `notspecified` → **kein Drop**: als `terms unknown`
+tragen (Metadaten lesbar; der echte Daten-Link wird erst mit `package_show`
+sichtbar und ist eine eigene Messung). `q=lidar` = 2 Treffer (1 SPREP-Bericht,
+1 „notspecified") — kein Punktwolken-Datensatz im pazifischen Katalog.
 
 `data.gov.il` (nicht-CF, API 1201 Datasets): kein LiDAR/Punktwolken-Datensatz
 indexiert (Hebrew/Englisch-Suche 0); die API antwortet zudem intermittierend mit
