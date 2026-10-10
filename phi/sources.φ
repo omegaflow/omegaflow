@@ -10809,6 +10809,7 @@ terms unknown https://blinkverse.zero2x.org/
 origin https://blinkverse.zero2x.org/api/app/adcp-blinkverse/type/FRB_SOURCE/download
 compiler tools/harvest/src/bin/blinkverse_compiler.rs
 format blinkverse_frb
+sha256 f7d998c9154054b46da2c77d99a94da2b570695372962e9ea08f8f4075538a48
 ttl 604800
 at sun
 field DM frb_blinkverse_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
@@ -19689,6 +19690,7 @@ format ssb_field
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 origin procedure: enclosure query at the resting presence (the SSB origin) over the measured star hull (catalog_tycho)
 compiler tools/measure/src/bin/ssb_field_bake.rs
+sha256 a3e6b4be8687661fc81dcbe81dc5ee1de54ec1c8c85a7b2225328d4742356dd2
 at sun
 ttl 604800
 
