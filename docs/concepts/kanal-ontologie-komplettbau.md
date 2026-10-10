@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-10
-  sha256: 0a195f894e99efb225302510eb252d973afeb4c31722078c04910d11a67a9339
+  sha256: aaaadbbf32e668f8f644b839868b7e4dcd739beb7818fe28120556f364b3ef4c
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -208,7 +208,7 @@ quantity <id> <quantity> <role> <medium> <unit> <tau>     # force_type=255, trit
   - `pde_type` ∈ {elliptic, parabolic, hyperbolic, advective, mixed} — trägt den Charakter.
   - `<operator>` (TransportOp) ∈ {flux-fick, flux-fourier, flux-ohm, newton-viscous, advective, wave, poisson, maxwell} — trägt den Mechanismus; `is_admissible` schlüsselt auf `operator × medium`.
   - `<kernel>` (Numerik, `kernel_id_of`) ∈ {inverse-square, erf, point, …} — die Manifestations-Gestalt der Kopplung.
-  - `medium`: **zwei Ebenen** — die Admissibility-Klasse ∈ {vacuum, fluid, elastic-solid} (`channel.rs:69`) gated den konstitutiven Tensor; der benannte Wert ∈ {atmosphere, ocean, solid-earth, ionosphere, …} ist Parameter (`media::medium_params_of`). Nicht verschmelzen.
+  - `medium`: **zwei Ebenen** — die Admissibility-Klasse ∈ {vacuum, fluid, elastic-solid} (`channel.rs:69`) gated den konstitutiven Tensor; der **benannte Wert** reitet als Datum auf `ChannelDescriptor.body: Option<String>` (`channel.rs:371`), gesetzt aus dem Datensatz (`channel_registry_from_sources`), nie aus dem `<medium>`-Token. Gemessener Key ist der **Planetenkörper** (`media::medium_params_of`); die Kind-Vokabel ∈ {atmosphere, ocean, solid-earth, ionosphere} ist `pending` (keine gemessene Tabelle — getragener Riss, Rat river-167). `body` gehört nicht in die Identität (`hash`/`PartialEq`). Nicht verschmelzen.
   - `interaction` optional ∈ {gravity, em} — **abgeleitet** über dem `mechanisms`-FK, nie Ersatz (Projektion 2 Werte gegen 9 Labels).
   - `role` ∈ {primary, derived, geometry, source-parameter}; `quantity` trägt das Was/Kind.
   - **Getragener Riss:** `TransportOp` mischt konstitutive Gesetze (Flux(Fick/Fourier/Ohm/NewtonViscous)) und PDE-Klassen (Wave/Poisson/Maxwell) in einem Enum (`channel.rs:60`); Auflösung wäre ein Schnitt `ConstitutiveOp` × `PdeOp` (`pending`, kein Bau).

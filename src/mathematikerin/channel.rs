@@ -384,7 +384,6 @@ impl PartialEq for ChannelDescriptor {
             && self.regime == other.regime
             && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
             && self.family == other.family
-            && self.body == other.body
             && self.unit == other.unit
     }
 }
@@ -534,13 +533,9 @@ impl ChannelDescriptor {
         h = self.domain.hash_into(h);
         h = fnv1a(&[self.boundary as u8], h);
         h = fnv1a(&[self.regime as u8], h);
-        h = match self.extent {
+        match self.extent {
             None => fnv1a(&[0u8], h),
             Some(e) => fnv1a(&e.to_bits().to_le_bytes(), fnv1a(&[1u8], h)),
-        };
-        match &self.body {
-            None => fnv1a(&[0u8], h),
-            Some(b) => fnv1a(b.as_bytes(), fnv1a(&[1u8], h)),
         }
     }
 
@@ -2372,6 +2367,20 @@ mod tests {
             .fundamental_hz()
             .expect("the earth seismic channel carries a fundamental tone");
         assert!(f.is_finite() && f > 0.0, "fundamental {f}");
+    }
+
+    #[test]
+    fn a_declared_body_stays_data_not_channel_identity() {
+        let d = descriptor_for_force("seismic-body", Medium::ElasticSolid)
+            .expect("the seismic-body channel stands");
+        let with_body = d.clone().with_body(Some("earth".to_string()));
+        assert_eq!(d, with_body, "the body is data, not identity");
+        assert_eq!(d.hash(), with_body.hash(), "the body never enters the hash");
+        assert_eq!(
+            channel_ref_of_descriptor(&with_body),
+            channel_ref_of_descriptor(&d),
+            "a body-carrying descriptor resolves to the same 9-label channel ref"
+        );
     }
 
     #[test]
