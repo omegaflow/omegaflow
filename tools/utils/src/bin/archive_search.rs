@@ -12,8 +12,12 @@ mod base;
 mod biomodels;
 #[path = "archive_search/chembl.rs"]
 mod chembl;
+#[path = "archive_search/ckan.rs"]
+mod ckan;
 #[path = "archive_search/clinicaltrials.rs"]
 mod clinicaltrials;
+#[path = "archive_search/cmr.rs"]
+mod cmr;
 #[path = "archive_search/cochrane.rs"]
 mod cochrane;
 #[path = "archive_search/cod.rs"]
@@ -413,6 +417,8 @@ fn main() {
             "--gemini" => mode = Mode::Net("gemini"),
             "--wikidata" => mode = Mode::Net("wikidata"),
             "--googlecse" => mode = Mode::Net("googlecse"),
+            "--ckan" => mode = Mode::Net("ckan"),
+            "--cmr" => mode = Mode::Net("cmr"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--reactome" => mode = Mode::Net("reactome"),
@@ -751,7 +757,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -809,6 +815,12 @@ fn usage() {
     );
     eprintln!(
         "  --googlecse Google Programmable Search JSON (googleapis.com/customsearch/v1), GOOGLE_CSE_API_KEY + GOOGLE_CSE_CX; url + title/snippet (100 queries/day on the free tier)"
+    );
+    eprintln!(
+        "  --ckan      Data-catalog search (CKAN package_search), keyless; portal=<host> (default ckan.publishing.service.gov.uk = data.gov.uk); url + title/organization/resources/notes"
+    );
+    eprintln!(
+        "  --cmr       NASA Earthdata CMR collection search (cmr.earthdata.nasa.gov), keyless; url + title/short_name/provider/summary"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
