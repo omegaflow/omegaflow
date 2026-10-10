@@ -1,0 +1,45 @@
+name: vmf3-grid-cdn
+
+# Der VMF3-Compiler (`vmf3_compiler --grid`) als CDN-Manifestator für das
+# operationelle VMF3-Grid (1°×1°, TU-Wien-VMF-Data-Server, `VMF3_OP/GRID`).
+# Das Grid ist ein 6-stündliches Produkt (H00/H06/H12/H18); der `--input`-Pfad
+# bleibt lokal, darum trägt dieser Aufrufer einen eigenen Fetch-Step. Ein Tag
+# pro Lauf: die Epoche steckt in der URL.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  vmf3-grid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the VMF3 operational grid (2026-01-05 00h)
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/VMF3_20260105.H00 \
+            "https://vmf.geo.tuwien.ac.at/trop_products/GRID/1x1/VMF3/VMF3_OP/2026/VMF3_20260105.H00"
+      - name: Compile the VMF3 grid cell series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin vmf3_compiler -- \
+            --input kernels/VMF3_20260105.H00 \
+            --grid \
+            --out vmf3_grid.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vmf3-grid-cdn: vmf3_grid.bin returned void" \
+                 "vmf3_compiler returned void for the VMF3 grid file. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

@@ -1477,6 +1477,14 @@ fanout_center receiver
 fanout_delay 20
 last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/vmf.geo.tuwien.ac.at/vmf3_grid.bin
+terms CC-BY-4.0 https://vmf.geo.tuwien.ac.at/terms.html
+format vmf3
+origin https://vmf.geo.tuwien.ac.at/trop_products/GRID/1x1/VMF3/VMF3_OP/2026/VMF3_20260105.H00
+compiler tools/harvest/src/bin/vmf3_compiler.rs
+at earth
+ttl 21600
+
 url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
 terms no-license https://www.riken.jp/en/terms/
 ttl 86400
@@ -4360,6 +4368,7 @@ terms CC-BY-4.0 https://vmf.geo.tuwien.ac.at/terms.html
 format vmf3
 origin https://vmf.geo.tuwien.ac.at/trop_products/VLBI/VMF3/VMF3_OP/daily/2026/2026002.vmf3_r
 compiler tools/harvest/src/bin/vmf3_compiler.rs
+sha256 92d40bf8adbf978b1a41e74219815bdebf4d170bdec8481c2b61c1e62f261058
 at earth
 ttl 86400
 
@@ -21931,6 +21940,7 @@ terms unknown https://itrf.ign.fr/en/solutions/ITRF2020
 format sinex
 origin https://itrf.ign.fr/ftp/pub/itrf/itrf2020/ITRF2020-IVS-TRF.SSC
 compiler tools/harvest/src/bin/itrf_sinex_compiler.rs
+sha256 8dd67252912ca0f44744fb264ace22a4870c9775409108542ee268c3c285182f
 at earth
 ttl 31536000
 
@@ -31200,6 +31210,7 @@ terms CC-BY-4.0 https://zenodo.org/records/7818557
 format llr
 origin https://zenodo.org/api/records/7818557/files/APOLLO_2006_2020.crd/content
 compiler tools/harvest/src/bin/llr_compiler.rs
+sha256 f2b3afdc0a20f55eb07afbc52c97f189b39712ba1bb656c46c47d5cce47b74de
 at moon
 no-cadence
 
