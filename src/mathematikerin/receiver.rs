@@ -101,19 +101,29 @@ pub fn shapiro_leg_s(
     }
 }
 
-pub fn two_way_doppler<S>(
-    t_rx_tdb: f64,
-    station_rx_icrs_km: [f64; 3],
-    station_tx_icrs_km: [f64; 3],
-    f_ref_hz: f64,
-    turn_ratio: f64,
-    gravitator_icrs_km: [f64; 3],
-    gm_gravitator_m3_s2: f64,
-    target_state: S,
-) -> Option<TwoWayDoppler>
+pub struct TwoWayDopplerInputs {
+    pub t_rx_tdb: f64,
+    pub station_rx_icrs_km: [f64; 3],
+    pub station_tx_icrs_km: [f64; 3],
+    pub f_ref_hz: f64,
+    pub turn_ratio: f64,
+    pub gravitator_icrs_km: [f64; 3],
+    pub gm_gravitator_m3_s2: f64,
+}
+
+pub fn two_way_doppler<S>(inputs: TwoWayDopplerInputs, target_state: S) -> Option<TwoWayDoppler>
 where
     S: Fn(f64) -> Option<([f64; 3], [f64; 3])>,
 {
+    let TwoWayDopplerInputs {
+        t_rx_tdb,
+        station_rx_icrs_km,
+        station_tx_icrs_km,
+        f_ref_hz,
+        turn_ratio,
+        gravitator_icrs_km,
+        gm_gravitator_m3_s2,
+    } = inputs;
     if !t_rx_tdb.is_finite()
         || !f_ref_hz.is_finite()
         || f_ref_hz <= 0.0
@@ -351,13 +361,15 @@ mod tests {
         let orbit = circular_orbit();
         let station = [0.0, -AU_KM, 0.0];
         let got = two_way_doppler(
-            0.0,
-            station,
-            station,
-            2.0e9,
-            880.0 / 749.0,
-            [0.0, 0.0, 0.0],
-            GM_SUN_M3_S2,
+            TwoWayDopplerInputs {
+                t_rx_tdb: 0.0,
+                station_rx_icrs_km: station,
+                station_tx_icrs_km: station,
+                f_ref_hz: 2.0e9,
+                turn_ratio: 880.0 / 749.0,
+                gravitator_icrs_km: [0.0, 0.0, 0.0],
+                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+            },
             &orbit,
         )
         .unwrap();
@@ -378,13 +390,15 @@ mod tests {
         let orbit = circular_orbit();
         let station = [0.0, -AU_KM, 0.0];
         let got = two_way_doppler(
-            0.0,
-            station,
-            station,
-            2.0e9,
-            880.0 / 749.0,
-            [0.0, 0.0, 0.0],
-            GM_SUN_M3_S2,
+            TwoWayDopplerInputs {
+                t_rx_tdb: 0.0,
+                station_rx_icrs_km: station,
+                station_tx_icrs_km: station,
+                f_ref_hz: 2.0e9,
+                turn_ratio: 880.0 / 749.0,
+                gravitator_icrs_km: [0.0, 0.0, 0.0],
+                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+            },
             orbit,
         )
         .unwrap();
@@ -418,13 +432,15 @@ mod tests {
         let station = [0.0, -AU_KM, 0.0];
         assert!(
             two_way_doppler(
-                0.0,
-                station,
-                station,
-                2.0e9,
-                880.0 / 749.0,
-                [0.0, 0.0, 0.0],
-                GM_SUN_M3_S2,
+                TwoWayDopplerInputs {
+                    t_rx_tdb: 0.0,
+                    station_rx_icrs_km: station,
+                    station_tx_icrs_km: station,
+                    f_ref_hz: 2.0e9,
+                    turn_ratio: 880.0 / 749.0,
+                    gravitator_icrs_km: [0.0, 0.0, 0.0],
+                    gm_gravitator_m3_s2: GM_SUN_M3_S2,
+                },
                 absent
             )
             .is_none()
@@ -436,13 +452,15 @@ mod tests {
         let orbit = circular_orbit();
         let station = [0.0, -AU_KM, 0.0];
         let got = two_way_doppler(
-            0.0,
-            station,
-            station,
-            2.0e9,
-            880.0 / 749.0,
-            [0.0, 0.0, 0.0],
-            GM_SUN_M3_S2,
+            TwoWayDopplerInputs {
+                t_rx_tdb: 0.0,
+                station_rx_icrs_km: station,
+                station_tx_icrs_km: station,
+                f_ref_hz: 2.0e9,
+                turn_ratio: 880.0 / 749.0,
+                gravitator_icrs_km: [0.0, 0.0, 0.0],
+                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+            },
             orbit,
         )
         .unwrap();
@@ -460,13 +478,15 @@ mod tests {
         let orbit = circular_orbit();
         let station = [0.0, -AU_KM, 0.0];
         let got = two_way_doppler(
-            0.0,
-            station,
-            station,
-            2.0e9,
-            880.0 / 749.0,
-            [0.0, 0.0, 0.0],
-            GM_SUN_M3_S2,
+            TwoWayDopplerInputs {
+                t_rx_tdb: 0.0,
+                station_rx_icrs_km: station,
+                station_tx_icrs_km: station,
+                f_ref_hz: 2.0e9,
+                turn_ratio: 880.0 / 749.0,
+                gravitator_icrs_km: [0.0, 0.0, 0.0],
+                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+            },
             orbit,
         )
         .unwrap();
