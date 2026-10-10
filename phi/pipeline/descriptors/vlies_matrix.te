@@ -42,7 +42,8 @@
 #   Leiterstufen (`scale_ladder`, paargeankert ab `max(native)`, Power-of-2). Der TE-Lauf je
 #   Stufe ist gebaut: je Zelle bis `SCALE_MEASURE_LIMIT` (4) Stufen durch `align_many` → TE,
 #   eine Zeile je Δ mit Herkunft/n/n_eff/te/p, kein Aggregat über Zeilen; nicht gemessene
-#   Stufen werden als Zahl benannt (kein stilles Cap). FDR je Stufe ist der nächste Schritt (C2b).
+#   Stufen werden als Zahl benannt (kein stilles Cap). FDR je Leiterstufe (BH über die Zellen
+#   je Rung-Position) und τ je Arm in der Zeile sind gebaut (C2b). D (Summary-Graph) folgt.
 # Lauf: `.github/workflows/field-te-query.yml` Job `matrix-vlies` (CI), nie lokal.
 matrix vlies full
 register sources
