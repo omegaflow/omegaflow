@@ -2,6 +2,7 @@ use omegaflow::archivar::json::{JsonVal, parse_json};
 use omegaflow::archivar::lsk::days_from_civil;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{LeapSeconds, embedded_lsk};
+use omegaflow::cdn::upload_release;
 use std::collections::BTreeSet;
 
 const BASE: &str = "https://ssd-api.jpl.nasa.gov/sb_radar.api";
@@ -188,17 +189,14 @@ fn main() {
     }
     let inspect = args.iter().any(|a| a == "--inspect");
     let emit = args.iter().any(|a| a == "--emit");
-    let params = match arg_value(&args, "--params") {
-        Some(p) if !p.is_empty() => p,
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let url = match arg_value(&args, "--params") {
+        Some(p) if !p.is_empty() => format!("{BASE}?{p}"),
         _ => match positional(&args) {
-            Some(p) => p,
-            None => {
-                eprintln!("sb_radar_compiler needs a positional query or --params <k=v&k=v>");
-                std::process::exit(2);
-            }
+            Some(p) => format!("{BASE}?{p}"),
+            None => BASE.to_string(),
         },
     };
-    let url = format!("{BASE}?{params}");
     let Some(body) = omegaflow::archivar::fetch_raw(&url, None, &[]) else {
         eprintln!("{url} fetch void — no row is printed (0 honored)");
         std::process::exit(1);
@@ -251,6 +249,10 @@ fn main() {
                 std::process::exit(1);
             }
         };
+        if ci_mode && !upload_release(NETLOC, &out) {
+            eprintln!("sb_radar_compiler: {out} upload void — the asset stays local");
+            std::process::exit(1);
+        }
         println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{ASSET}");
         println!("origin {url}");
         println!("compiler {COMPILER}");
