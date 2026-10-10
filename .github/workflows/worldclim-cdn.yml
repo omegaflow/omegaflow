@@ -1,0 +1,41 @@
+# auto-dispatch: manual — the variable raster URL is a required per-act input; auto-dispatch cannot supply it
+name: worldclim-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: WorldClim 2.1 base raster zip URL (e.g. https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tavg.zip)
+        required: true
+        type: string
+        default: "https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tavg.zip"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  worldclim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the geodata.ucdavis.edu release exists on the CDN
+        run: |
+          if ! gh release view geodata.ucdavis.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create geodata.ucdavis.edu --repo omegaflow/sources \
+              --title "geodata.ucdavis.edu" \
+              --notes "WorldClim 2.1 monthly climatology GeoTIFFs compiled to ICRS records; magic WCLM, 8-byte header then n x 26 f64 (temperature K, precipitation mm), monthly cadence."
+          fi
+      - name: Compile the WorldClim rasters and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin worldclim_compiler -- \
+            --body earth \
+            --out out \
+            --url "${{ inputs.url }}" \
+            --ci-mode

@@ -1,0 +1,48 @@
+# auto-dispatch: manual — the COG tile URL and asset name are required per-act inputs; auto-dispatch cannot supply them
+name: dom-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'COG tile URL (Bayern laser DOM20, e.g. https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif)'
+        required: true
+        type: string
+      asset:
+        description: output asset name on the CDN (netloc download1.bayernwolke.de)
+        required: true
+        type: string
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  dom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the download1.bayernwolke.de release exists on the CDN
+        run: |
+          if ! gh release view download1.bayernwolke.de --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create download1.bayernwolke.de --repo omegaflow/sources \
+              --title "download1.bayernwolke.de" \
+              --notes "Bayern laser DOM20 (LDBV, CC BY 4.0) compiled to height grids in ICRS; magic BDOM, 48-byte header then f32 LE metres."
+          fi
+      - name: Compile the DOM20 tile and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin dom_compiler -- \
+            --url "${{ inputs.url }}" \
+            --body earth \
+            --out "${{ inputs.asset }}" \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "dom-cdn: ${{ inputs.asset }} returned void" \
+                 "dom_compiler on ${{ inputs.url }} returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

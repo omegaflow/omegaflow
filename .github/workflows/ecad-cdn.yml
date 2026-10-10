@@ -1,0 +1,67 @@
+# auto-dispatch: manual — element and station coordinates are required per-act inputs; auto-dispatch cannot supply them
+name: ecad-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      element:
+        description: ECA&D element (tx|tn|tg|rr)
+        required: true
+        type: string
+        default: "tx"
+      station:
+        description: ECA&D station id (six digits, e.g. 000001)
+        required: true
+        type: string
+      lat:
+        description: station latitude (decimal degrees)
+        required: true
+        type: string
+      lon:
+        description: station longitude (decimal degrees)
+        required: true
+        type: string
+      alt:
+        description: station altitude (metres)
+        required: true
+        type: string
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  ecad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ecad.eu release exists on the CDN
+        run: |
+          if ! gh release view ecad.eu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ecad.eu --repo omegaflow/sources \
+              --title "ecad.eu" \
+              --notes "ECA&D blended daily station series compiled to ICRS records; magic ECAD, 8-byte header then n x 26 f64 (temperature K, precipitation kg/m2), daily cadence."
+          fi
+      - name: Fetch the ECA&D blend archive
+        run: |
+          curl -sSfL --retry 3 --max-time 600 -o ecad.zip \
+            "https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_${{ inputs.element }}.zip"
+      - name: Compile the ECA&D station series and upload to CDN
+        run: |
+          element="${{ inputs.element }}"
+          member="${element^^}_STAID${{ inputs.station }}.txt"
+          cargo run -p omegaflow-harvest --release --bin ecad_compiler -- \
+            --body earth \
+            --lat "${{ inputs.lat }}" \
+            --lon "${{ inputs.lon }}" \
+            --alt "${{ inputs.alt }}" \
+            --out out \
+            --zip ecad.zip \
+            --member "$member" \
+            --ci-mode

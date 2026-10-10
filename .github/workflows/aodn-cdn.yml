@@ -1,0 +1,58 @@
+# auto-dispatch: manual — the OPeNDAP dataset URL is a required per-act input; auto-dispatch cannot supply it
+name: aodn-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      var:
+        description: AODN variable (TEMP|PSAL|UCUR|VCUR|WSSH)
+        required: true
+        type: string
+        default: "TEMP"
+      url:
+        description: OPeNDAP dataset URL (thredds.aodn.org.au/thredds/dodsC/...; a .dds/.das/.ascii suffix is stripped)
+        required: true
+        type: string
+      start:
+        description: first observation index (default 0)
+        required: false
+        type: string
+        default: "0"
+      count:
+        description: number of observations (default 256)
+        required: false
+        type: string
+        default: "256"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  aodn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the thredds.aodn.org.au release exists on the CDN
+        run: |
+          if ! gh release view thredds.aodn.org.au --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create thredds.aodn.org.au --repo omegaflow/sources \
+              --title "thredds.aodn.org.au" \
+              --notes "IMOS/AODN THREDDS OPeNDAP observations compiled to ICRS records; magic AODN, 8-byte header then n x 26 f64, cadence measured from the observation window."
+          fi
+      - name: Compile the AODN window and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin aodn_compiler -- \
+            --var "${{ inputs.var }}" \
+            --body earth \
+            --url "${{ inputs.url }}" \
+            --start "${{ inputs.start }}" \
+            --count "${{ inputs.count }}" \
+            --out out \
+            --ci-mode
