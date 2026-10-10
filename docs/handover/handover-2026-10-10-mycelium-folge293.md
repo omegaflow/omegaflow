@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 8568884b28530452d15c197078eb842a1d5775aaf51b4017139d22308fe75ade
+  sha256: 0b1389713ac40b968636597de6e843506abfff6e3ada7d0e42210f04b8a64b9e
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -103,8 +103,11 @@ In diesem Atom kein neuer adressierter Block.
   passwordless sudo): Live-CPU (`CPUQuotaPerSecUSec=1.5s`/`CPUWeight=20`/`IOWeight=20`), Ingress-Cap
   20 Mbit auf `ifb0` (`wlp3s0`), `runner-throttle-adaptive.service` **active**, RTT-Probe 5 ms,
   Runner-Dienst unangetastet. Konzept `docs/concepts/self-hosted-runner.md`, Werkzeug `bin/runner_throttle.sh`.
-  **Riss (klein):** der SSH-Key heißt `t460_omegaflow_ed25519` (Kommentar `omegaflow-t460-runner`),
-  tut aber Dienst am t420 — kosmetisch.
+  **Riss (klein, geklärt 2026-10-10):** die lokale Key-Datei hieß `t460_omegaflow_ed25519` — auf
+  `t420_omegaflow_ed25519` **umbenannt** (auth-neutral/reversibel: der ssh-Agent hält den Key über den
+  Kommentar, die Datei ist nur ein Label; kein Skript/Config referenzierte den Pfad). Der
+  `authorized_keys`-Kommentar `omegaflow-t460-runner` bleibt kosmetisch; archivierte Übergaben
+  behalten den alten Namen.
 - **Blockade:** keine.
 - **Braucht:** nichts — regelt sich selbst; tunen via `/etc/default/runner-throttle` (Band/WAN).
   Offen (`pending`): echtes per-Gerät-QoS am Router für den getrennten Media-PC — der t420 sieht
