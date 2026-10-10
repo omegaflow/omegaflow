@@ -1,3 +1,4 @@
+# auto-dispatch: manual — the dataset CRS is a required per-act input (declared metadata, the COPC carries none); auto-dispatch cannot supply it (measured HTTP 422, run 38080672228)
 name: open-lidar-data-cdn
 
 concurrency:
