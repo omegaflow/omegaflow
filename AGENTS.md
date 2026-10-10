@@ -385,6 +385,19 @@ measures the file type, `--playwright` measures the rendered content. A stage-3
 `503`/absent on `--verdict` is not a dead end — `--brave` finds the mirror,
 `--playwright` renders the JS page.
 
+**Recherche wird nie auf ein Minimum gekastet (Operator-Wort 2026-10-10).** A measurement is
+read to its measured end. The inline summary is a signpost, never the result:
+`archive_search --all` prints at most five lines per source inline and writes the full result
+to the `full: <pfad>` temp file — **that file is read to its end**, not the preview (the paged
+sources run far deeper than the five shown; a single `--all` run is a breadth measurement, and
+its breadth lives in the file). A document is read to the end the claim needs, never the first
+window and stop. A selection is a measurement only when the selection itself *is* the
+measurement (an explicit criterion stated with the finding); a silent cap — "top 5", "die
+wichtigsten", "excerpt", the first page, the first hits — presented as a finding is an
+unmeasured claim = fabrication. A diver that returns the preview has not measured. This is not
+a licence to inflate context: the *relevant* full extent is read (the source list, the response
+file, the register), while grep-hit windows stay deliberate.
+
 **Geo-suspect and Cloudflare.** A blocked direct route or a Cloudflare
 interstitial is a measured state, not a reason to bypass silently. The tool
 prints `geo-suspect: .<tld> -> proton-wg.sh <cc>` (a suggestion — `bin/proton-wg.sh
