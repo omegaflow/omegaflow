@@ -3,7 +3,7 @@
   session: River-Folge 170
   class: handover
   date: 2026-10-10
-  sha256: 87cc438e4a1f258370a051193bedb4fe35d40e73378b61b9fc1b6f34870017ae
+  sha256: 75496c073920aaad83c283c851f57cd1be1ef6836cf1e524d1463ffd968336d5
   status: live
 -->
 # Handover — River-Folge 170 (2026-10-10)
@@ -30,6 +30,7 @@ Wort | Datum | Quelle
 „ja ich meine alle blöcke müssen korrekt sein dafür haben wir doch die wissenschaft" | 2026-10-09 | Operator (Session, River 160) — **P10-Wort**: jeder `field`-Block wird wissenschaftlich geprüft und korrekt etikettiert (Quantity | Mechanism | Medium)
 „ja natürlich sonst wartest du doch bis zum st. nimmerleinstag" + „ja bitte ihr müsst das jetzt echt mal in den griff bekommen" | 2026-10-10 | Operator (Session, River 170) — den abgebrochenen `ci-gate` neu anstoßen; den CI-Burst in den Griff bekommen
 „mach A" | 2026-10-10 | Operator (Session, River 170) — `ci-gate.yml`-`subset` von dem geteilten t420 auf GitHub-hosted `ubuntu-24.04-arm` mit per-SHA-Concurrency umziehen (Operator-Wort für den Linienwechsel in Myceliums Workflow-Pfad)
+„beides" | 2026-10-10 | Operator (Session, River 170) — (1) die zwei fremden ci-gate-Roten heilen (`observer.rs`-Clippy-Lints, `eigene-ephemeride.md`-see-also) und (2) die `observer`→`receiver`-Frage als Rat-Frage aufsetzen; dazu den Audit „wo wurde der Observer-Bias wieder eingeschleust"
 
 Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 `state/operator-gespraeche/2026-10-09-river.md`. Fortgeschrieben aus
@@ -67,6 +68,15 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - **Blockade:** Format-/Compiler-Arm für die deckungsgleiche Zeitachse.
 - **Braucht:** den Arm gegen die Zellen prüfen — `tools/measure/src/bin/field_te_query.rs` + `phi/pipeline/descriptors/vlies_matrix.te`; erste Messung: einen Lauf mit dem Arm lesen.
 
+## An mountain
+
+Origin: river-170 (2026-10-10).
+
+- **Rat-Verdikt (5 Stimmen, einstimmig): `observer` → `receiver`.** Umbenennung von Modul, Datei, Struct und Doku/Reduktionsort in **einem** Atom + `cargo check` — Name = Implementation; die Physik ist bereits Receiver-als-Worldline (explizite Parameter, absent → None). Grund ausgelöst durch Operator-Frage „warum zur hölle gibt es einen observer?".
+- **Der neue Vantage-Vektor:** `observer.rs:4` `SUN_ICRS_KM=[0,0,0]` + `shapiro_sun_leg_s` (`:73-97,:130-131`) wählt die gravitierende Sonne als ICRS-Origin — Q5-Vantage+Default, noch unverdrahtet. Rat: die Masse als **expliziten Parameter** führen, Position aus `BodyProperties` (Ephemeriden-Binary); ist der ICRS-Ursprung gemeint, ist er der **SSB**, kein Körper → Reduktion verweigert (`None`), nie `[0,0,0]`.
+- **Rest-Bias (Audit `explore` 2026-10-10, Rat-Tabelle):** (c) `weberin.rs:264-268` `frame_origin_name()` → hardcoded NAIF 10 = **Bias** → deklarierter Ursprung; (d) `weberin.rs:253-262` `woven_major_bodies()` `[1,2,4,5,6,7,8,301,399]` = **Bias** ohne registrierte Target-Liste; (b) `odp.rs:9` `const EARTH = include_str!("kernels/dsn_host.txt")` = Daten legitim, Const-Bindung **Bias** → Host als Parameter; (g) `port.rs:3761` `frame.starts_with("at sun")` = **Bias** → deklariertes Frame-Feld; (e) `gaia_sso.rs:15-30` `TNO_NAME` = legitim **bei Register-Zeile**; (f) `BODY_COMET`/`BODY_COMETELS` = legitimes Label. Geschlossen seit 2026-10-06: `frames.rs`-Defaults, `omega.rs:878`, `weberin.rs:1801`, `main_flow.rs`-Bypass, `membrane.html`-Trio.
+- **CI-`register`-Rot aus deinem Handover:** `docs/handover/handover-2026-10-10-mountain-folge302.md:133/:139` — die Prosa in `## An river` trägt `see-also:` mitten im Satz; `path_reference_scan` (`file_refs`, scannt `see-also:` an jeder Zeilenstelle) meldet daraus 5 `MISS`. **Braucht:** den Satz so umformulieren, dass `see-also:` nicht als Token-Anfang mitten im Text steht (Punkt bleibt), oder den Scanner auf Header-/Zeilenanfangs-Direktiven einschränken. Lokal gemessen `cargo run -p omegaflow-register --bin path_reference_scan` → 5 MISS. (Eigene `eigene-ephemeride.md`-MISS sind geheilt, `91c74e73f`.)
+
 ## LOCK
 
 - **SuperDARN Record-Download (`phi/blocked_sources.φ:78`)** — Operator-Wort 2026-09-29; kein Maschinen-Akt.
@@ -77,9 +87,11 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 Pfad-begrenzte Commit-Pfade dieser Session (River 170):
 
 - `src/archivar/tiff.rs` (`apply_predictor` + `undo_predictor2/3` geheilt)
+- `src/mathematikerin/observer.rs` (zwei Clippy-Lints geheilt — Operator-Wort „beides")
+- `docs/concepts/eigene-ephemeride.md` (see-also auf das archivierte `mountain-301`)
 - `.github/workflows/ci-gate.yml` (`subset` auf `ubuntu-24.04-arm`, per-SHA-Concurrency — Operator-Wort „mach A")
 - `docs/concepts/self-hosted-runner.md` (Routing an den neuen Lauf angeglichen)
 - `docs/handover/handover-2026-10-10-river-folge170.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge169.md` (Move)
 
-## Burn: open 0.0000 · close 0.1198 — River 170 (deepseek-flash, kein pro/max; gemessen `session_burn`)
+## Burn: open 0.0000 · close 0.2104 · cap 0.25 — Grund: CI-Forensik (Job-Ebene) + `subset`-Move (A) + Observer-Bias-Audit + Rat; alles flash, kein pro/max (gemessen `session_burn`)
