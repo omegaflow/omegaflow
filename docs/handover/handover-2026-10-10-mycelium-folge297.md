@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Ephemeris-CDN-sha256 (llr/sinex/vmf3_site) + VMF3-GRID-Block und -Aufrufer (Origin gemessen) + cmb-cdn-SPT-Re-Dispatch; mountain-301-Block gefaltet.
   class: handover
   date: 2026-10-10
-  sha256: 61ceced328ab10e0b1f9a1745c1c3ad47aab847b364ae6df9acf5ec21cb180b7
+  sha256: 9756d1b05339c9e73d8cf15f185bf2f76b8141183f731e75d762d48598cdbb69
   status: live
 -->
 # Handover — Mycelium-Folge 297 (2026-10-10)
@@ -83,9 +83,10 @@ und LLR `no-cadence` bestätigt; planetary radar `at <zielplanet>`
 - **Blockade:** keine.
 - **Braucht:** je Quelle ein Manifestator (`tools/harvest`, Vorlage
   `las_compiler.rs`/`copernicus_dem_compiler.rs`) + die Mycelium-Registrierung.
-  Erster Schritt: einen LAZ/COPC-Key aus dem open-lidar-data-Bucket (`curl` der
-  S3-Liste, Key extrahieren), Reader gegen die echte Datei, dann Block +
-  `*-cdn.yml`.
+  **Gebaut:** `tools/harvest/src/bin/portal_harvest.rs` (CKAN `package_search` →
+  Lizenzklassifikation `redistributable`/`terms-unknown`/`blocked` (NC erlaubt,
+  ND gesperrt) → `--package-show`-Resources; getestet an `data.gov.il`). Der erste
+  open-lidar-data-Asset ist gemessen (BE-COPC, HTTP 206).
 
 ### Bayern-DOM-Rasterquelle (`geodaten.bayern.de`) + DOM-/GeoTIFF-Reader
 - **Status:** eigen | **Bindung:** eigen
