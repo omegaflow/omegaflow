@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 60d5d2461733d5af7c7ad57d8b995dee2c1ffc094e7ac02c395daca2c1fd05ea
+  sha256: ee93d68f2d4aecf4a041f7215fe4b35bdaaa7372dcdfdef3be409b4b6004ab78
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -54,6 +54,21 @@ bleibt mountain.
   **nicht** in `phi/sources.φ` registriert sind → Mountain-Registrierung), und
   `xp-pilot` (Compiler-Default = `gea.esac.esa.int/xp_spectra.bin`, der Workflow
   überschreibt per `--release-tag dc.g-vo.org` auf einen Pilot → distinct).
+
+### Agent↔GitHub — OIDC + R2-Worker-Verifier (Kern gebaut, getestet)
+- **Status:** eigen (Fortsetzung) | **Bindung:** eigen
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10) `workers/r2-verifier/`: `src/verify.js` (GitHub-OIDC-JWT
+  RS256 via WebCrypto — `kid`/`alg`/Signatur/`iss`/`aud`/`repository`/`exp`/`nbf`),
+  `src/index.js` (Worker: JWKS-Cache, `Bearer`-OIDC, sha256-Header-Check, `env.BUCKET.put`),
+  `wrangler.toml` (R2-Binding `BUCKET` → `omegaflow-sources`), `test/verify.test.mjs`
+  (**6/6 grün**, `node --test`). `ci-check` führt den Test (Shard 1). Deploy-Workflow
+  `r2-verifier-deploy.yml` (wrangler, Secret `CLOUDFLARE_WORKERS_TOKEN`).
+- **Blockade:** keine.
+- **Braucht:** (a) Operator setzt die Repo-**Variable** `CLOUDFLARE_ACCOUNT_ID` (Haus-Regel:
+  die ID gehört nicht in den Baum); (b) `gh workflow run r2-verifier-deploy.yml` → dann
+  `r2_mirror` optional auf den Worker-PUT (OIDC-Bearer statt statischer S3-Keys) umstellen —
+  der secretlose Pfad.
 
 ### Manifestation — R2-Upload-Pfad (Signer + Probe gebaut, live verifiziert)
 - **Status:** eigen (Fortsetzung) | **Bindung:** eigen

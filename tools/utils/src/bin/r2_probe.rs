@@ -78,9 +78,8 @@ fn run() -> Result<(), String> {
     let endpoint = env.get("R2_ENDPOINT").unwrap().trim_end_matches('/');
     let bucket = env.get("R2_BUCKET").unwrap();
 
-    let host = endpoint_host(endpoint).ok_or_else(|| {
-        format!("r2_probe: R2_ENDPOINT carries no host — {}", endpoint)
-    })?;
+    let host = endpoint_host(endpoint)
+        .ok_or_else(|| format!("r2_probe: R2_ENDPOINT carries no host — {}", endpoint))?;
     let canonical_uri = format!("/{}/{}", bucket, OBJECT_KEY);
     let url = format!("{}{}", endpoint, canonical_uri);
     let payload_sha256 = sha256::sha256_hex(BODY);
@@ -158,8 +157,7 @@ fn run() -> Result<(), String> {
         let tmp = std::env::temp_dir().join("r2-mirror-probe.txt");
         std::fs::write(&tmp, BODY)
             .map_err(|e| format!("r2_probe: mirror temp write void — {}", e))?;
-        let mirrored =
-            omegaflow::archivar::cdn::r2_mirror("ci-probe", &tmp.to_string_lossy());
+        let mirrored = omegaflow::archivar::cdn::r2_mirror("ci-probe", &tmp.to_string_lossy());
         println!("r2_probe: cdn::r2_mirror -> {}", mirrored);
         let mkey = format!("/{}/ci-probe/r2-mirror-probe.txt", bucket);
         let muri = format!("{}{}", endpoint, mkey);
