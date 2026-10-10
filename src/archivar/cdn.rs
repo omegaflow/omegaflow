@@ -183,10 +183,11 @@ fn r2_mirror_oidc(worker: &str, tag: &str, path: &str) -> bool {
         .arg(format!("x-amz-content-sha256: {}", payload_sha256))
         .arg("--data-binary")
         .arg("@-");
-    if let Ok(ca) = std::env::var("OMEGAFLOW_CA_BUNDLE") {
-        if !ca.is_empty() && std::path::Path::new(&ca).is_file() {
-            cmd.arg("--cacert").arg(ca);
-        }
+    if let Ok(ca) = std::env::var("OMEGAFLOW_CA_BUNDLE")
+        && !ca.is_empty()
+        && std::path::Path::new(&ca).is_file()
+    {
+        cmd.arg("--cacert").arg(ca);
     }
     let mut child = match cmd
         .stdin(Stdio::piped())
@@ -284,10 +285,11 @@ fn r2_mirror_s3(tag: &str, path: &str) -> bool {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
     }
     cmd.arg("--data-binary").arg("@-");
-    if let Ok(ca) = std::env::var("OMEGAFLOW_CA_BUNDLE") {
-        if !ca.is_empty() && std::path::Path::new(&ca).is_file() {
-            cmd.arg("--cacert").arg(ca);
-        }
+    if let Ok(ca) = std::env::var("OMEGAFLOW_CA_BUNDLE")
+        && !ca.is_empty()
+        && std::path::Path::new(&ca).is_file()
+    {
+        cmd.arg("--cacert").arg(ca);
     }
     let mut child = match cmd
         .stdin(Stdio::piped())

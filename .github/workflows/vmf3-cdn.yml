@@ -1,0 +1,44 @@
+name: vmf3-cdn
+
+# Der VMF3-Compiler (`vmf3_compiler`) als CDN-Manifestator.
+# Quelle ist die operationelle VMF3-Tagesdatei des TU-Wien-VMF-Data-Servers
+# (`.vmf3_r`, Site-Mapping-Funktionen); der `--input`-Pfad bleibt lokal,
+# darum trägt dieser Aufrufer einen eigenen Fetch-Step statt des
+# `cdn-manifest.yml`-Reusable. Ein Tag pro Lauf: die Epoche steckt in der URL.
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  vmf3-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Download the VMF3 operational site file (2026-002)
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/2026002.vmf3_r \
+            "https://vmf.geo.tuwien.ac.at/trop_products/VLBI/VMF3/VMF3_OP/daily/2026/2026002.vmf3_r"
+      - name: Compile the VMF3 site mapping-function series and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin vmf3_compiler -- \
+            --input kernels/2026002.vmf3_r \
+            --out vmf3_site.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "vmf3-cdn: vmf3_site.bin returned void" \
+                 "vmf3_compiler returned void for the VMF3 site file. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
