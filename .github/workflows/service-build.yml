@@ -1,11 +1,15 @@
 name: service-build
 on:
   workflow_dispatch:
+concurrency:
+  group: service-build
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     env:
       RUSTFLAGS: -D warnings
     steps:

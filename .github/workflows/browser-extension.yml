@@ -5,6 +5,9 @@ on:
     paths:
       - 'tools/browser-extension/**'
       - '.github/workflows/browser-extension.yml'
+concurrency:
+  group: browser-extension
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:

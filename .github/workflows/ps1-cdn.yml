@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 * * * *'
+concurrency:
+  group: ps1-cdn
+  cancel-in-progress: false
 permissions:
   contents: write
 env:
