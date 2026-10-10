@@ -3718,6 +3718,7 @@ const QUERY_MODES: &[&str] = &[
     "alphaxiv-researchers",
     "consensus",
     "perplexity",
+    "gemini",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4135,6 +4136,7 @@ pub fn run_lines_max(
             }
         }
         "perplexity" => crate::perplexity::perplexity_lines(query),
+        "gemini" => crate::gemini::gemini_lines(query),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4357,6 +4359,7 @@ mod tests {
             "alphaxiv-researchers",
             "consensus",
             "perplexity",
+            "gemini",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
