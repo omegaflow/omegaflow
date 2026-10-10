@@ -62,7 +62,7 @@ note Solar VSO/IRIS — 2026-10-09: VSO POST 411; IRIS HCR-API www.lmsal.com/hek
 blocked parser-def
 url https://opendata.atlas.cern/
 gap particle-cern
-note Teilchen CERN + GWOSC — 2026-10-09: root.rs + cern_root_compiler stehen (TFile-Header + TKey-Liste, 34 TDirectoryFile; AliVSD_Masterclass_6.root 35,4 MB, CC0); TTree-Dekodierung offen. GWOSC Strain HDF5 steht (gwosc_compiler.rs).
+note Teilchen CERN — 2026-10-10: Gap = ROOT-Object-Streamer (TStreamerInfo/TBuffer, TBranch/TLeaf/TBasket; root.rs:222); zlib vorhanden (inflate hdf4.rs:887), kein Codec-Gap; Header/TKey-Probe steht. Riss: particle-cern mischt ATLAS-URL + ALICE-Sample.
 
 pending
 url https://blinkverse.zero2x.org/

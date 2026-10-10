@@ -93,6 +93,7 @@ pub mod galileo_odr;
 pub mod gdp_drifter;
 pub mod geo;
 pub mod gic;
+pub mod giro_fastchar;
 pub mod gk2a_ami;
 pub mod goes;
 pub mod goes16_mag;
