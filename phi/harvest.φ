@@ -331,6 +331,15 @@ timeout 240
 idempotent true
 
 asset present
+format losc
+tag gwosc.org
+arm losc_compiler
+workflow gwosc-cdn.yml
+pattern ^losc\.bin$
+idempotent true
+timeout 240
+
+asset present
 format mars_dust
 tag vo.lmd.jussieu.fr
 arm mars_dust_compiler

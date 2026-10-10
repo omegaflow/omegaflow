@@ -22004,6 +22004,15 @@ sha256 3a1b4c6396fc32eea8ffbb5a1828c8d38d55a9ca74659a5a4c8b21ebb36b3a80
 at earth
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/gwosc.org/losc.bin
+terms CC-BY-4.0 https://gwosc.org/yellow_box/
+format losc
+origin https://gwosc.org/eventapi/json/GWTC-1-confident/GW150914/v3/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5
+compiler tools/harvest/src/bin/losc_compiler.rs
+on earth 0 0 0
+ttl 31536000
+quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/hess-experiment.eu/hess_dl3.sky1
 terms unknown https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
 origin https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
