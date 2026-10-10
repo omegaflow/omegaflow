@@ -82,10 +82,8 @@ mod tests {
                 }
             }
             out.extend_from_slice(&mask);
-            for ch in &s.channels {
-                if let Some(v) = ch {
-                    out.extend_from_slice(&v.to_le_bytes());
-                }
+            for v in s.channels.iter().flatten() {
+                out.extend_from_slice(&v.to_le_bytes());
             }
         }
         out

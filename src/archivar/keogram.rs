@@ -19,13 +19,13 @@ pub fn brightness_columns(jpeg: &[u8]) -> Option<KeogramColumns> {
     }
     let mut mean = vec![0.0; width];
     for y in 0..height {
-        for x in 0..width {
+        for (x, m) in mean.iter_mut().enumerate() {
             let base = (y * width + x) * components;
             let mut acc = 0.0;
             for c in 0..components {
                 acc += pixels[base + c] as f64;
             }
-            mean[x] += acc / components as f64;
+            *m += acc / components as f64;
         }
     }
     for m in mean.iter_mut() {

@@ -553,7 +553,7 @@ stations_lat lat
 stations_lon long
 fanout 40
 fanout_center receiver
-last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
+last items.value hydrosphere_river_stage_m inverse-square geometry m 900.0 0.0 0.0
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
 terms unknown https://www.imis.bfs.de/
@@ -684,7 +684,7 @@ stations_lon lng
 fanout 40
 fanout_center receiver
 fanout_delay 10
-last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
+last data.v hydrosphere_tide_water_level_m inverse-square geometry m 3600 0.0 0.0
 
 url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=2000&format=json&age=6
 terms PD https://aviationweather.gov/
@@ -21177,8 +21177,8 @@ format tar_gz_yaml
 header Authorization {EARTHDATA_EDL_TOKEN}
 ttl 2592000
 at earth
-last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square gravity m/s 86400 0.0 0.0
-last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square gravity m/s2 86400 0.0 0.0
+last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square geometry m/s 86400 0.0 0.0
+last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square geometry m/s2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
 terms PD https://cdaw.gsfc.nasa.gov/
