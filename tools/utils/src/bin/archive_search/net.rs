@@ -809,7 +809,7 @@ fn doc_title(doc: &Json) -> &str {
 }
 
 fn ads_url(text: &str, refine: &[(String, String)], max: usize, start: usize) -> String {
-    let fl = crate::refine::value_of(refine, "fl").unwrap_or("title,bibcode");
+    let fl = crate::refine::value_of(refine, "fl").unwrap_or("title,bibcode,author,year,abstract");
     let mut url = format!(
         "https://api.adsabs.harvard.edu/v1/search/query?q={}&fl={}&rows={}",
         urlencode(text),
@@ -832,6 +832,59 @@ fn ads_url(text: &str, refine: &[(String, String)], max: usize, start: usize) ->
     url
 }
 
+fn ads_authors(doc: &Json) -> Option<String> {
+    let arr = doc.get("author").and_then(|a| a.as_arr())?;
+    let mut names: Vec<String> = arr
+        .iter()
+        .filter_map(|entry| entry.as_str())
+        .map(|s| s.to_string())
+        .collect();
+    if names.is_empty() {
+        return None;
+    }
+    if names.len() > 8 {
+        names.truncate(8);
+        Some(format!("{}, et al.", names.join(", ")))
+    } else {
+        Some(names.join(", "))
+    }
+}
+
+fn ads_year(doc: &Json) -> Option<String> {
+    let year = doc.get("year").and_then(|y| y.as_scalar_string())?;
+    if year.is_empty() { None } else { Some(year) }
+}
+
+fn ads_abstract(doc: &Json) -> Option<String> {
+    let raw = doc.get("abstract").and_then(|a| a.as_str())?;
+    if raw.is_empty() {
+        return None;
+    }
+    Some(truncate_to_chars(raw, 1200))
+}
+
+fn ads_doc_line(doc: &Json) -> Option<String> {
+    let bib = doc.get("bibcode").and_then(|b| b.as_str()).unwrap_or("");
+    if bib.is_empty() {
+        return None;
+    }
+    let mut line = format!(
+        "url https://ui.adsabs.harvard.edu/abs/{}\ttitle: {}",
+        bib,
+        doc_title(doc)
+    );
+    if let Some(authors) = ads_authors(doc) {
+        line.push_str(&format!("\tauthors: {}", authors));
+    }
+    if let Some(year) = ads_year(doc) {
+        line.push_str(&format!("\tyear: {}", year));
+    }
+    if let Some(abstract_text) = ads_abstract(doc) {
+        line.push_str(&format!("\tabstract: {}", abstract_text));
+    }
+    Some(line)
+}
+
 pub fn ads_lines(query: &str, token: &str, max: usize) -> Vec<String> {
     if token.is_empty() {
         return vec!["pending — NASA_ADS_TOKEN absent from .secrets.local/.env".to_string()];
@@ -852,13 +905,8 @@ pub fn ads_lines(query: &str, token: &str, max: usize) -> Vec<String> {
                             .and_then(|d| d.as_arr())
                         {
                             for doc in docs {
-                                let bib = doc.get("bibcode").and_then(|b| b.as_str()).unwrap_or("");
-                                if !bib.is_empty() {
-                                    out.push(format!(
-                                        "url https://ui.adsabs.harvard.edu/abs/{}\ttitle: {}",
-                                        bib,
-                                        doc_title(doc)
-                                    ));
+                                if let Some(line) = ads_doc_line(doc) {
+                                    out.push(line);
                                 }
                             }
                         }
@@ -901,6 +949,82 @@ fn ntrs_id_form(query: &str) -> bool {
     t.len() >= 6 && t.chars().all(|c| c.is_ascii_digit())
 }
 
+const NTRS_ABSTRACT_MAX: usize = 1200;
+
+fn ntrs_abstract_text(text: &str) -> String {
+    text.chars().take(NTRS_ABSTRACT_MAX).collect()
+}
+
+fn ntrs_published(doc: &Json) -> Option<String> {
+    for key in ["publicationDate", "distributionDate", "created"] {
+        if let Some(value) = doc.get(key).and_then(|d| d.as_str()) {
+            let value = value.trim();
+            if !value.is_empty() {
+                return Some(value.chars().take(10).collect());
+            }
+        }
+    }
+    None
+}
+
+fn ntrs_authors(doc: &Json) -> Option<String> {
+    let mut names: Vec<String> = Vec::new();
+    if let Some(arr) = doc.get("authorAffiliations").and_then(|a| a.as_arr()) {
+        for entry in arr {
+            if let Some(name) = entry.as_str() {
+                let name = name.trim();
+                if !name.is_empty() {
+                    names.push(name.to_string());
+                }
+            }
+        }
+    }
+    if names.is_empty() {
+        if let Some(arr) = doc.get("authors").and_then(|a| a.as_arr()) {
+            for entry in arr {
+                if let Some(name) = entry.get("name").and_then(|n| n.as_str()) {
+                    let name = name.trim();
+                    if !name.is_empty() {
+                        names.push(name.to_string());
+                    }
+                }
+            }
+        }
+    }
+    if names.is_empty() {
+        return None;
+    }
+    let et_al = names.len() > 8;
+    names.truncate(8);
+    let mut joined = names.join(", ");
+    if et_al {
+        joined.push_str(", et al.");
+    }
+    Some(joined)
+}
+
+fn ntrs_doc_line(doc: &Json, rid: &str) -> String {
+    let title = doc.get("title").and_then(|t| t.as_str()).unwrap_or("");
+    let mut line = format!(
+        "url https://ntrs.nasa.gov/citations/{}\ttitle: {}",
+        rid, title
+    );
+    if let Some(abstract_text) = doc.get("abstract").and_then(|a| a.as_str()) {
+        let abstract_text = abstract_text.trim();
+        if !abstract_text.is_empty() {
+            line.push_str("\tabstract: ");
+            line.push_str(&ntrs_abstract_text(abstract_text));
+        }
+    }
+    if let Some(published) = ntrs_published(doc) {
+        line.push_str(&format!("\tpublished: {}", published));
+    }
+    if let Some(authors) = ntrs_authors(doc) {
+        line.push_str(&format!("\tauthors: {}", authors));
+    }
+    line
+}
+
 pub fn ntrs_lines(query: &str, max: usize) -> Vec<String> {
     if ntrs_id_form(query) {
         let id = query.trim();
@@ -908,15 +1032,11 @@ pub fn ntrs_lines(query: &str, max: usize) -> Vec<String> {
         return match get(&url, &[], "40") {
             Some(f) if f.status == Some(200) => match json::parse(&f.body) {
                 Some(v) => {
-                    let title = v.get("title").and_then(|t| t.as_str()).unwrap_or("");
                     let rid = match v.get("id").and_then(|i| i.as_scalar_string()) {
                         Some(s) => s,
                         None => id.to_string(),
                     };
-                    vec![format!(
-                        "url https://ntrs.nasa.gov/citations/{}\ttitle: {}",
-                        rid, title
-                    )]
+                    vec![ntrs_doc_line(&v, &rid)]
                 }
                 None => vec!["pending — the NTRS response carries no JSON".to_string()],
             },
@@ -943,11 +1063,7 @@ pub fn ntrs_lines(query: &str, max: usize) -> Vec<String> {
                             if id.is_empty() {
                                 continue;
                             }
-                            let title = doc.get("title").and_then(|t| t.as_str()).unwrap_or("");
-                            out.push(format!(
-                                "url https://ntrs.nasa.gov/citations/{}\ttitle: {}",
-                                id, title
-                            ));
+                            out.push(ntrs_doc_line(doc, &id));
                         }
                     }
                 }
@@ -2340,7 +2456,8 @@ fn wiby_results(v: &Json, max: usize) -> Vec<String> {
 }
 
 fn ia_search_url(text: &str, refine: &[(String, String)], max: usize, page: usize) -> String {
-    let fl = crate::refine::value_of(refine, "fl").unwrap_or("identifier,title,mediatype");
+    let fl =
+        crate::refine::value_of(refine, "fl").unwrap_or("identifier,title,mediatype,creator,year");
     let mut url = format!(
         "https://archive.org/advancedsearch.php?q={}&rows={}&output=json",
         urlencode(text),
@@ -2435,12 +2552,56 @@ fn ia_search_results(v: &Json, max: usize) -> Vec<String> {
         if !mediatype.is_empty() {
             line.push_str(&format!("\tmediatype: {}", mediatype));
         }
+        if let Some(creator) = r
+            .get("creator")
+            .map(ia_creator_names)
+            .filter(|c| !c.is_empty())
+        {
+            line.push_str(&format!("\tcreator: {}", creator));
+        }
+        let year = r
+            .get("year")
+            .and_then(|y| y.as_scalar_string())
+            .map(|y| flatten(&y))
+            .filter(|y| !y.is_empty())
+            .or_else(|| {
+                r.get("date")
+                    .and_then(|d| d.as_str())
+                    .map(|d| d.chars().take(4).collect::<String>())
+                    .filter(|y| !y.is_empty())
+            });
+        if let Some(year) = year {
+            line.push_str(&format!("\tyear: {}", year));
+        }
         out.push(line);
         if out.len() >= max {
             break;
         }
     }
     out
+}
+
+fn ia_creator_names(creator: &Json) -> String {
+    if let Some(arr) = creator.as_arr() {
+        let names: Vec<String> = arr
+            .iter()
+            .filter_map(|n| n.as_str())
+            .map(flatten)
+            .filter(|n| !n.is_empty())
+            .collect();
+        if names.is_empty() {
+            return String::new();
+        }
+        if names.len() > 8 {
+            let mut out = names[..8].join(", ");
+            out.push_str(", et al.");
+            out
+        } else {
+            names.join(", ")
+        }
+    } else {
+        flatten(creator.as_str().unwrap_or(""))
+    }
 }
 
 fn ngmdb_url(text: &str, refine: &[(String, String)], max: usize) -> String {
@@ -5038,7 +5199,7 @@ mod tests {
     fn ads_url_carries_the_default_fl_and_omits_a_zero_start() {
         assert_eq!(
             ads_url("gravitational waves", &[], 10, 0),
-            "https://api.adsabs.harvard.edu/v1/search/query?q=gravitational%20waves&fl=title%2Cbibcode&rows=10"
+            "https://api.adsabs.harvard.edu/v1/search/query?q=gravitational%20waves&fl=title%2Cbibcode%2Cauthor%2Cyear%2Cabstract&rows=10"
         );
     }
 
@@ -5050,7 +5211,38 @@ mod tests {
         ];
         assert_eq!(
             ads_url("p53", &opts, 10, 30),
-            "https://api.adsabs.harvard.edu/v1/search/query?q=p53&fl=title%2Cbibcode&rows=10&start=30&fq=%7B%21type%3Daqp%7D%20SUPERNOVA&sort=date%20desc"
+            "https://api.adsabs.harvard.edu/v1/search/query?q=p53&fl=title%2Cbibcode%2Cauthor%2Cyear%2Cabstract&rows=10&start=30&fq=%7B%21type%3Daqp%7D%20SUPERNOVA&sort=date%20desc"
+        );
+    }
+
+    #[test]
+    fn ads_url_lets_a_caller_supplied_fl_override_the_default() {
+        let opts = vec![("fl".to_string(), "title".to_string())];
+        assert_eq!(
+            ads_url("p53", &opts, 10, 0),
+            "https://api.adsabs.harvard.edu/v1/search/query?q=p53&fl=title&rows=10"
+        );
+    }
+
+    #[test]
+    fn ads_doc_line_carries_authors_year_and_abstract() {
+        let body = r#"{"bibcode":"2020ApJ...900....1A","title":["A great paper"],
+            "author":["A1","A2","A3","A4","A5","A6","A7","A8","A9"],
+            "year":2020,"abstract":"The abstract."}"#;
+        let doc = json::parse(body).expect("json");
+        assert_eq!(
+            ads_doc_line(&doc).expect("line"),
+            "url https://ui.adsabs.harvard.edu/abs/2020ApJ...900....1A\ttitle: A great paper\tauthors: A1, A2, A3, A4, A5, A6, A7, A8, et al.\tyear: 2020\tabstract: The abstract."
+        );
+    }
+
+    #[test]
+    fn ads_doc_line_omits_absent_authors_year_and_abstract() {
+        let body = r#"{"bibcode":"2021ApJ...901....2B","title":["Bare paper"]}"#;
+        let doc = json::parse(body).expect("json");
+        assert_eq!(
+            ads_doc_line(&doc).expect("line"),
+            "url https://ui.adsabs.harvard.edu/abs/2021ApJ...901....2B\ttitle: Bare paper"
         );
     }
 
@@ -5058,7 +5250,56 @@ mod tests {
     fn ia_search_url_carries_the_default_fl_and_omits_the_first_page() {
         assert_eq!(
             ia_search_url("gravitational waves", &[], 10, 1),
-            "https://archive.org/advancedsearch.php?q=gravitational%20waves&rows=10&output=json&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=mediatype"
+            "https://archive.org/advancedsearch.php?q=gravitational%20waves&rows=10&output=json&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=mediatype&fl%5B%5D=creator&fl%5B%5D=year"
+        );
+    }
+
+    #[test]
+    fn ia_search_results_carry_creator_string_and_year() {
+        let body = r#"{"response":{"docs":[{"identifier":"abc","title":"A work","mediatype":"texts","creator":"Ada Lovelace","year":"1843"}]}}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            ia_search_results(&v, 10),
+            vec![
+                "url https://archive.org/details/abc\ttitle: A work\tmediatype: texts\tcreator: Ada Lovelace\tyear: 1843"
+                    .to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn ia_search_results_carry_creator_array_and_year_from_date() {
+        let body = r#"{"response":{"docs":[{"identifier":"abc","title":"A work","creator":["Ada Lovelace","Alan Turing"],"date":"1950-06-01"}]}}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            ia_search_results(&v, 10),
+            vec![
+                "url https://archive.org/details/abc\ttitle: A work\tcreator: Ada Lovelace, Alan Turing\tyear: 1950"
+                    .to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn ia_search_results_cap_the_creator_list_at_eight() {
+        let body = r#"{"response":{"docs":[{"identifier":"abc","title":"A work","creator":["A1","A2","A3","A4","A5","A6","A7","A8","A9"]}]}}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            ia_search_results(&v, 10),
+            vec![
+                "url https://archive.org/details/abc\ttitle: A work\tcreator: A1, A2, A3, A4, A5, A6, A7, A8, et al."
+                    .to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn ia_search_results_omit_absent_creator_and_year() {
+        let body = r#"{"response":{"docs":[{"identifier":"abc","title":"A work"}]}}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            ia_search_results(&v, 10),
+            vec!["url https://archive.org/details/abc\ttitle: A work".to_string()]
         );
     }
 
@@ -5100,6 +5341,39 @@ mod tests {
         assert_eq!(
             arxiv_url("au:Einstein", &opts, 10, 2),
             "https://export.arxiv.org/api/query?search_query=au:Einstein&start=2&max_results=2&sortBy=submittedDate&sortOrder=descending"
+        );
+    }
+
+    #[test]
+    fn ntrs_id_line_carries_abstract_date_authors() {
+        let body = r#"{"id":"20210005208","title":"Transfer entropy in the field","abstract":"the abstract body","publicationDate":"2021-03-15T00:00:00.000Z","authorAffiliations":["A. Author","B. Author"]}"#;
+        let v = json::parse(body).expect("json");
+        let rid = v.get("id").and_then(|i| i.as_scalar_string()).expect("id");
+        assert_eq!(
+            ntrs_doc_line(&v, &rid),
+            "url https://ntrs.nasa.gov/citations/20210005208\ttitle: Transfer entropy in the field\tabstract: the abstract body\tpublished: 2021-03-15\tauthors: A. Author, B. Author"
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn ntrs_search_line_omits_absent_fields() {
+        let body = r#"{"id":"20210005208","title":"Transfer entropy in the field"}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            ntrs_doc_line(&v, "20210005208"),
+            "url https://ntrs.nasa.gov/citations/20210005208\ttitle: Transfer entropy in the field"
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn ntrs_authors_fall_back_to_name_objects_and_cap_at_eight() {
+        let body = r#"{"authors":[{"name":"A"},{"name":"B"},{"name":"C"},{"name":"D"},{"name":"E"},{"name":"F"},{"name":"G"},{"name":"H"},{"name":"I"}]}"#;
+        let v = json::parse(body).expect("json");
+        assert_eq!(
+            ntrs_authors(&v),
+            Some("A, B, C, D, E, F, G, H, et al.".to_string())
         );
     }
 }
