@@ -4,7 +4,7 @@ use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_bin;
-use omegaflow::odp::{EARTH, downlink_rate, dsn_station};
+use omegaflow::odp::{downlink_rate, dsn_host, dsn_station};
 use omegaflow::te::topological_te_phase;
 
 const SC_BODY: &str = "pioneer10_daily";
@@ -141,6 +141,10 @@ fn annual_phase(times: &[f64], target: &[f64]) -> (f64, f64) {
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer10: dsn host declaration void");
+        return;
+    };
     let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
@@ -151,7 +155,7 @@ fn main() {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, SC_BODY] {
+    for body in [host, SC_BODY] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -187,7 +191,7 @@ fn main() {
         let Some((lat, lon, alt)) = dsn_station(r[6] as i64) else {
             continue;
         };
-        let Some(rate) = downlink_rate(r[0], lat, lon, alt, &eph, &sc) else {
+        let Some(rate) = downlink_rate(host, r[0], lat, lon, alt, &eph, &sc) else {
             continue;
         };
         if !rate.is_finite() {
@@ -203,7 +207,7 @@ fn main() {
         dsres.push(r[8]);
         samplers.push(r[3]);
         cnts.push(r[7]);
-        let re = body_barycenter_position(EARTH, r[0], &eph).unwrap_or([0.0; 3]);
+        let re = body_barycenter_position(host, r[0], &eph).unwrap_or([0.0; 3]);
         r_earth_norm.push((re[0] * re[0] + re[1] * re[1] + re[2] * re[2]).sqrt());
     }
     let (a, c, resid, epoch, offset) = fixed_effects(&rates, &refs, &obs, &times);

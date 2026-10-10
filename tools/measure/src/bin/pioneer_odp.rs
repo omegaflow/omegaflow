@@ -6,7 +6,7 @@ use omegaflow::archivar::{
 };
 use omegaflow::atdf::parse_bin;
 use omegaflow::odp::{
-    EARTH, downlink_rate_core, dsn_station, interp, propagate_grid, station_velocity,
+    downlink_rate_core, dsn_host, dsn_station, interp, propagate_grid, station_velocity,
 };
 
 const PIONEER_ANOMALY: f64 = 8.74e-10;
@@ -129,6 +129,10 @@ fn fit_and_rms(
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("pioneer10: dsn host declaration void");
+        return;
+    };
     let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
@@ -139,7 +143,7 @@ fn main() {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, SC_BODY] {
+    for body in [host, SC_BODY] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -167,8 +171,8 @@ fn main() {
             continue;
         };
         let (Some(rs), Some(vs)) = (
-            body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, r[0], &eph),
-            station_velocity(r[0], lat, lon, alt, &eph),
+            body_fixed_to_icrs_smooth(host, lat, lon, alt, r[0], &eph),
+            station_velocity(host, r[0], lat, lon, alt, &eph),
         ) else {
             no_model += 1;
             continue;
@@ -194,7 +198,11 @@ fn main() {
     };
     let state0 = [r0[0], r0[1], r0[2], v0[0], v0[1], v0[2]];
     let r_base = run_rates(state0, t_first, t_last, 0.0, &t1, &r_st, &v_st);
-    let (a0, c0, rms0, slope0, _) = fit_and_rms(&r_base, &refs, &obs, &t1).unwrap();
+    let (r_base, refs_b, obs_b, t_b) = present_rates(&r_base, &refs, &obs, &t1);
+    let Some((a0, c0, rms0, slope0, _)) = fit_and_rms(&r_base, &refs_b, &obs_b, &t_b) else {
+        eprintln!("pioneer10: base fit void");
+        return;
+    };
     eprintln!(
         "pioneer10: {} samples ({no_station} without station, {no_model} without model), {}–{} — solar orbit (a_P=0) vs Horizons granule: A {a0:.4e}, C {c0:.4e}, residual RMS {rms0:.3e} Hz, drift {slope0:.4e} Hz/s",
         t1.len(),
@@ -207,8 +215,11 @@ fn main() {
     let mut rms_hi = f64::NEG_INFINITY;
     for k in -20..=20 {
         let a_p = k as f64 * 4.0e-7;
-        let r = run_rates(state0, t_first, t_last, a_p, &t1, &r_st, &v_st);
-        let (_, _, rms, _, _) = fit_and_rms(&r, &refs, &obs, &t1).unwrap();
+        let rates = run_rates(state0, t_first, t_last, a_p, &t1, &r_st, &v_st);
+        let (rates, refs_k, obs_k, t_k) = present_rates(&rates, &refs, &obs, &t1);
+        let Some((_, _, rms, _, _)) = fit_and_rms(&rates, &refs_k, &obs_k, &t_k) else {
+            continue;
+        };
         rms_lo = rms_lo.min(rms);
         rms_hi = rms_hi.max(rms);
         if rms < best_rms {
@@ -217,7 +228,13 @@ fn main() {
         }
     }
     let r_best = run_rates(state0, t_first, t_last, best_a_p, &t1, &r_st, &v_st);
-    let (a_best, _, _, slope_best, se_best) = fit_and_rms(&r_best, &refs, &obs, &t1).unwrap();
+    let (r_best, refs_best, obs_best, t_best) = present_rates(&r_best, &refs, &obs, &t1);
+    let Some((a_best, _, _, slope_best, se_best)) =
+        fit_and_rms(&r_best, &refs_best, &obs_best, &t_best)
+    else {
+        eprintln!("pioneer10: best fit void");
+        return;
+    };
     let times_anomaly = best_a_p.abs() / PIONEER_ANOMALY;
     eprintln!(
         "a_P scan ±8e-6 m/s²: residual RMS stays flat {rms_lo:.3e}…{rms_hi:.3e} Hz (a_P=0: {rms0:.3e} Hz) — best a_P {best_a_p:.4e} m/s² changes the RMS by <0,1 %; A {a_best:.4e}, residual drift {slope_best:.4e} ± {se_best:.4e} Hz/s"
@@ -236,6 +253,27 @@ fn jd(tdb: f64) -> String {
     }
 }
 
+fn present_rates(
+    rates: &[Option<f64>],
+    refs: &[f64],
+    obs: &[f64],
+    times: &[f64],
+) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>) {
+    let mut r = Vec::new();
+    let mut rf = Vec::new();
+    let mut o = Vec::new();
+    let mut t = Vec::new();
+    for i in 0..rates.len() {
+        if let Some(v) = rates[i] {
+            r.push(v);
+            rf.push(refs[i]);
+            o.push(obs[i]);
+            t.push(times[i]);
+        }
+    }
+    (r, rf, o, t)
+}
+
 fn run_rates(
     state0: [f64; 6],
     t_first: f64,
@@ -244,15 +282,15 @@ fn run_rates(
     t1: &[f64],
     r_st: &[[f64; 3]],
     v_st: &[[f64; 3]],
-) -> Vec<f64> {
+) -> Vec<Option<f64>> {
     let grid = propagate_grid(state0, t_first, t_last, a_p, GRID_DT);
     let sc = |t: f64| -> Option<([f64; 3], [f64; 3])> {
         let s = interp(&grid, t)?;
         Some(([s[0], s[1], s[2]], [s[3], s[4], s[5]]))
     };
-    let mut rates = vec![0.0f64; t1.len()];
+    let mut rates = vec![None; t1.len()];
     for i in 0..t1.len() {
-        rates[i] = downlink_rate_core(t1[i], r_st[i], v_st[i], &sc).unwrap_or(f64::NAN);
+        rates[i] = downlink_rate_core(t1[i], r_st[i], v_st[i], &sc);
     }
     rates
 }

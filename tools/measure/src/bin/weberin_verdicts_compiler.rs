@@ -11,7 +11,8 @@ use omegaflow::dastcom::{
     AsteroidRec, COMET_RECORD_BYTES, CometRec, RECORD_STRIDE, parse_comet_record, parse_record,
 };
 use omegaflow::weberin::{
-    BodyOutcome, ThreeWayVerdict, TriadFold, Weberin, WeberinFeed, WitnessLine, woven_major_bodies,
+    BodyOutcome, ThreeWayVerdict, TriadFold, Weberin, WeberinFeed, WitnessLine, frame_origin_name,
+    woven_major_bodies,
 };
 
 const DASTCOM_TAG: &str = "ssd.jpl.nasa.gov-dastcom";
@@ -323,6 +324,8 @@ fn main() {
         recs,
         comets,
         mpc_recs: Vec::new(),
+        frame_origin: frame_origin_name(),
+        major_bodies: woven_major_bodies(),
     });
     w.weave(tdb, tol_m);
     if !w.woven {

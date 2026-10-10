@@ -63,3 +63,7 @@ note Teilchen CERN — 2026-10-10: --probe AliVSD_Masterclass_6.root = 34 Keys (
 pending
 url https://blinkverse.zero2x.org/
 note FRB Blinkverse — 2026-10-09: Host zero2x.org direkt 200; Arm blinkverse_compiler steht (CSV: 4020 Quellen, 35342 Pulse, 154 Hosts); alter Host zerooffset.xyz tot. sources.φ-Block pending (Mycelium).
+
+pending
+url https://losc.ligo.org/
+note LIGO Open Science Center 200 (21527 B HTML, 2026-10-11): GW-Strain offen (HDF5/GWF); Event-Alerts via gracedb registriert; Strain-Arm/Compiler ungebaut.

@@ -8,6 +8,7 @@ use omegaflow::archivar::{
 };
 use omegaflow::weberin::{
     BodyOutcome, WEBERIN_TOL_M, Weberin, WeberinFeed, body_number_table, frame_origin_name,
+    woven_major_bodies,
 };
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -168,6 +169,8 @@ fn main() {
         recs: Vec::new(),
         comets: Vec::new(),
         mpc_recs,
+        frame_origin: frame_origin_name(),
+        major_bodies: woven_major_bodies(),
     });
     w.weave(tdb, tol_m);
     if !w.woven {

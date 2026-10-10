@@ -7,7 +7,7 @@ use omegaflow::archivar::{
     parse_ephemeris_binary,
 };
 use omegaflow::atdf::parse_bin;
-use omegaflow::odp::{EARTH, downlink_rate_core, dsn_station, station_velocity};
+use omegaflow::odp::{downlink_rate_core, dsn_host, dsn_station, station_velocity};
 
 const SC_BODY: &str = "pioneer10_daily";
 const GAP_S: f64 = 5.0 * 86400.0;
@@ -601,6 +601,10 @@ fn gather_set(
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("retrace: dsn host declaration void");
+        return;
+    };
     let sky = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq_6file.bin";
     let Ok(bytes) = std::fs::read(sky) else {
         eprintln!("retrace: 6-file skyfreq bin void ({sky})");
@@ -611,7 +615,7 @@ fn main() {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, SC_BODY] {
+    for body in [host, SC_BODY] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -698,8 +702,8 @@ fn main() {
         };
         let t1 = r[0];
         let (Some(rs), Some(vs)) = (
-            body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, &eph),
-            station_velocity(t1, lat, lon, alt, &eph),
+            body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, &eph),
+            station_velocity(host, t1, lat, lon, alt, &eph),
         ) else {
             no_model += 1;
             continue;
@@ -717,7 +721,7 @@ fn main() {
             if let Some((r3, t3)) = light_time_worldline(rs, t1, &|t| granule_sc(t).map(|(p, _)| p))
             {
                 if let (Some(rs2), Some((r4, _))) = (
-                    body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1 + PLASMA_DT, &eph),
+                    body_fixed_to_icrs_smooth(host, lat, lon, alt, t1 + PLASMA_DT, &eph),
                     granule_sc(t3 + PLASMA_DT),
                 ) {
                     let n1 = nearest_omni(&n_series, t1, omni2_window);

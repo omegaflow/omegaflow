@@ -5,7 +5,7 @@ use omegaflow::archivar::{
     light_time_worldline, parse_ephemeris_binary,
 };
 use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, write_p11r_bin};
-use omegaflow::odp::{C, EARTH, downlink_rate_core, dsn_station, station_velocity};
+use omegaflow::odp::{C, downlink_rate_core, dsn_host, dsn_station, station_velocity};
 
 const SC_BODY: &str = "pioneer11_daily";
 const GAP_PASS_S: f64 = 5.0 * 86400.0;
@@ -101,9 +101,10 @@ fn uplink_rate(
     alt: f64,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<f64> {
+    let host = dsn_host()?;
     let mut t1 = t2;
     for _ in 0..6 {
-        let r_tx1 = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, eph)?;
+        let r_tx1 = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
         let rho = dist(r_sc2, r_tx1);
         if rho <= 0.0 {
             return None;
@@ -115,8 +116,8 @@ fn uplink_rate(
         }
         t1 = t1_new;
     }
-    let r_tx = body_fixed_to_icrs_smooth(EARTH, lat, lon, alt, t1, eph)?;
-    let v_tx = station_velocity(t1, lat, lon, alt, eph)?;
+    let r_tx = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
+    let v_tx = station_velocity(host, t1, lat, lon, alt, eph)?;
     let rho = dist(r_sc2, r_tx);
     if rho <= 0.0 {
         return None;
@@ -280,6 +281,10 @@ fn band_scan(label: &str, ts: &[f64], vs: &[f64], gap: f64) {
 }
 
 fn main() {
+    let Some(host) = dsn_host() else {
+        eprintln!("p11-resid: dsn host declaration void");
+        return;
+    };
     let podf = "data/spdf.gsfc.nasa.gov/pioneer11_odf.bin";
     let Ok(bytes) = std::fs::read(podf) else {
         eprintln!("p11-resid PODF bin void ({podf})");
@@ -290,7 +295,7 @@ fn main() {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [EARTH, SC_BODY] {
+    for body in [host, SC_BODY] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -397,8 +402,8 @@ fn main() {
         };
         let t3 = r[0];
         let (Some(r_rx), Some(v_rx)) = (
-            body_fixed_to_icrs_smooth(EARTH, rx_lat, rx_lon, rx_alt, t3, &eph),
-            station_velocity(t3, rx_lat, rx_lon, rx_alt, &eph),
+            body_fixed_to_icrs_smooth(host, rx_lat, rx_lon, rx_alt, t3, &eph),
+            station_velocity(host, t3, rx_lat, rx_lon, rx_alt, &eph),
         ) else {
             no_model += 1;
             continue;
@@ -497,10 +502,14 @@ fn main() {
         let ref_max = refs.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
         let obs_min = obs.iter().cloned().fold(f64::INFINITY, f64::min);
         let obs_max = obs.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+        let a_down_str = match a_down {
+            Some(v) => format!("{v:.4e}"),
+            None => "pending".to_string(),
+        };
         eprintln!(
-            "p11-resid station {st}: {n_st} samples, obs {obs_min:.3e}..{obs_max:.3e} Hz, ref {ref_min:.3e}..{ref_med:.3e}..{ref_max:.3e} Hz — obs = A·ṙ₂w + B_Pass: A {a_full:.4e} Hz/(m/s) (≈ +f/c), residual RMS {rms_full:.3e} Hz; downlink-only A {a_down:.4e} Hz/(m/s) (≈ 2× — the uplink leg is carried)",
+            "p11-resid station {st}: {n_st} samples, obs {obs_min:.3e}..{obs_max:.3e} Hz, ref {ref_min:.3e}..{ref_med:.3e}..{ref_max:.3e} Hz — obs = A·ṙ₂w + B_Pass: A {a_full:.4e} Hz/(m/s) (≈ +f/c), residual RMS {rms_full:.3e} Hz; downlink-only A {a_down} Hz/(m/s) (≈ 2× — the uplink leg is carried)",
             n_st = times.len(),
-            a_down = a_down.unwrap_or(f64::NAN),
+            a_down = a_down_str,
         );
     }
     let unset = resid_slot.iter().filter(|s| s.is_none()).count();

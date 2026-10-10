@@ -436,6 +436,8 @@ fn main() {
         recs,
         comets,
         mpc_recs: Vec::new(),
+        frame_origin: frame_origin_name(),
+        major_bodies: woven_major_bodies(),
     });
     w.weave(tdb, tol_m);
     if !w.woven {
