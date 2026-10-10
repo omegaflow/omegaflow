@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: 3e3d68731283d978847e5d1fb51800133b278e45bc46ec200ec34d39e578d6b4
+  sha256: e4662a6b5634e51c346ec2827f62984598e6d30b905ef0aea7bd7c60c1f1cb7b
   status: live
 -->
 # Handover — Mountain-Folge 299 (2026-10-10)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge298.md` (→ `archiv/`). 
 `## An mountain`-Block aus mycelium-293 ist bereits in folge298 gefaltet (iEEG-Riss
 beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.2807 · cap 0.40 — Grund: voller Roster (8 Frontier-Seats + Open-Weight zweimal) + zwei Ratssitzungen + vorgezogener LLR-Parser-Bau + Ephemeriden-Quellen-Recherche (Operator-Wort), deepseek-flash
+## Burn: open 0.0000 · close 0.2979 · cap 0.40 — Grund: voller Roster (8 Frontier-Seats + Open-Weight zweimal) + zwei Ratssitzungen + vorgezogener LLR-Parser-Bau + Ephemeriden-Quellen-Recherche (Operator-Wort), deepseek-flash
 
 ## Offen (aufgeschlüsselt)
 
@@ -147,6 +147,7 @@ Wort | Datum | Quelle
 „aber warum bauen wir PEP nicht in rust nach? und bitte ja LLR … sag, ob ich ihn vorziehen soll" | 2026-10-10 | Operator (Session, Mountain 299)
 „warum nur so ein kleiner roster und warum kein vollport wir wollen doch womöglich 100% rust std" | 2026-10-10 | Operator (Session, Mountain 299)
 „und dann möchte ich dass du nochmal eine -all und roster recherche machst welche referenzen wir noch harvestenn können um unsere eigenen ephemeriden zu bauen?" | 2026-10-10 | Operator (Session, Mountain 299)
+„bitte commit und übergabe in einer frischen session dann direkt 1-4" | 2026-10-10 | Operator (Session, Mountain 299)
 „warum schreibst du hier erst in die blocked sources anstatt direkt an den finalen ort — das ist einfach nur faules compliance theater" | 2026-10-10 | Operator (Session, Mountain 295)
 „Offen bleibt in P10: der optionale `<regime>`-Token …, die Regime-Achse selbst, und die Zeilen-Migration in phi/sources.φ (Mountain)." | 2026-10-10 | Operator (Session, Mountain 295)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
