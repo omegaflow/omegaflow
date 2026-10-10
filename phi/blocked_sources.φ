@@ -55,14 +55,10 @@ pending
 url https://lambda.gsfc.nasa.gov/
 note CMB LAMBDA/PLA — 2026-10-09: Arme cmb_planck_compiler (NESTED) + cmb_act_compiler (ACT RING→NEST, equatorial, 1024E, uK) stehen; WMAP-Einheit TUNIT1='mK, thermodynamic' gemessen; SPT D1 tar.bz2. sources.φ-Block pending (Mycelium).
 
-pending
-url https://vso.stanford.edu/
-note Solar VSO/IRIS — 2026-10-09: VSO POST 411; IRIS HCR-API www.lmsal.com/hek/hcr → comp_data_url; FITS 200 (9 207 360 B). iris_compiler.rs steht; sources.φ-Zeile + Workflow pending — kein Parser-Gap.
-
 blocked parser-def
 url https://opendata.cern.ch/record/1120
 gap particle-cern
-note Teilchen CERN — 2026-10-10: Gap = ROOT-Object-Streamer (TStreamerInfo/TBuffer, TBranch/TLeaf/TBasket; root.rs:222); zlib vorhanden (inflate hdf4.rs:887), kein Codec-Gap; Header/TKey-Probe steht. Quelle = ALICE record 1120 (AliVSD_Masterclass_6.root).
+note Teilchen CERN — 2026-10-10: --probe AliVSD_Masterclass_6.root = 34 Keys (33 TDirectoryFile EventXXXX + 1 TDirectory); kein Top-Level-TTree, TTree je Event-Dir. Rat 2026-10-10 (5/7 UI): parser-def bleibt (Bau-Schuld), Indexdomäne ungemessen.
 
 pending
 url https://blinkverse.zero2x.org/
