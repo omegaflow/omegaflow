@@ -21,7 +21,7 @@ terms unknown https://vires.services/
 ttl 5
 at earth
 hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
-field gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distance_m inverse-square gravity m 5 0.0 0.0
+quantity gracefo_kbr_inter_satellite_distance_m gracefo_kbr_inter_satellite_distance_m inverse-square geometry m 5 0.0 0.0
 channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2
 field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
@@ -412,7 +412,7 @@ map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 field properties.FLOW streamflow_cfs gaussian-inverse-square advective cfs 6.0 0.0 0.0
-field properties.STAGE gage_height_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
+quantity properties.STAGE gage_height_ft gaussian-inverse-square geometry ft 6.0 0.0 0.0
 
 url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms unknown https://services1.arcgis.com/
@@ -430,7 +430,7 @@ at earth
 map features
 lat properties.Buoy_lat
 lon properties.Buoy_lon
-field properties.Sig_wave_height_m sig_wave_height_m gaussian-inverse-square gravity m 6.0 0.0 0.0
+quantity properties.Sig_wave_height_m sig_wave_height_m gaussian-inverse-square geometry m 6.0 0.0 0.0
 
 url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms unknown https://services5.arcgis.com/
@@ -450,7 +450,7 @@ field properties.PRES hydrosphere_ndbc_buoy_pressure gaussian-inverse-square adv
 field properties.PTDY hydrosphere_ndbc_buoy_pressure_tendency gaussian-inverse-square advective hPa 30.0 0.0 0.0
 field properties.ATMP hydrosphere_ndbc_buoy_air_temp erfc thermal C 30.0 0.0 0.0
 field properties.WTMP hydrosphere_ndbc_buoy_water_temp erfc thermal C 30.0 0.0 0.0
-field properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square gravity m 30.0 0.0 0.0
+quantity properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square geometry m 30.0 0.0 0.0
 
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms unknown https://services9.arcgis.com/
@@ -574,7 +574,7 @@ bin 900
 prefix ndbc_dart_21414
 gate T 1 2
 gate HEIGHT 0 9999
-field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
+quantity HEIGHT ndbc_dart_21414_height_m inverse-square geometry m 900 0.0 0.0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
 terms unknown https://data.oceannetworks.ca/
@@ -1020,7 +1020,7 @@ on earth 0.0 -120.0 0
 rows .
 epoch 0
 gate iso_6 0.0 500.0
-field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
+quantity 4 d20_thermocline_depth_m erfc geometry m 86400.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/tao_wnd_zonal.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv
@@ -1396,7 +1396,7 @@ on earth 0 0 0
 map .
 lat Lat
 lon Lon
-field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
+quantity lastvalue hydrosphere_sealevel_m inverse-square geometry m 3600 0.0 0.0
 
 url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
 terms PD https://www.ncei.noaa.gov/
@@ -1820,7 +1820,7 @@ origin https://archive.podaac.earthdata.nasa.gov
 compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
 on earth 0 0 0
 ttl 86400
-field swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square gravity m 86400 0.0 0.0
+quantity swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square geometry m 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/cdaweb_roti_20121201.bin
 format cdaweb_roti
@@ -2128,7 +2128,7 @@ compiler tools/harvest/src/bin/gaia_rrl_compiler.rs
 at sun
 ttl 86400
 field phot_g_mean_mag gaia_rrl_g_mag inverse-square em mag 86400 0.0 0.0
-field parallax gaia_rrl_parallax_mas inverse-square gravity mas 86400 0.0 0.0
+quantity parallax gaia_rrl_parallax_mas inverse-square geometry mas 86400 0.0 0.0
 field bp_rp gaia_rrl_bp_rp inverse-square em mag 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gea.esac.esa.int/gaia_sso_tno.bin
@@ -8510,9 +8510,9 @@ terms PD https://maia.usno.navy.mil/
 format finals
 ttl 86400
 at earth
-field ut1_utc eop_iers_ut1_utc_s inverse-square gravity s 86400 0.0 0.0
-field pmx eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0 0.0
-field pmy eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
+quantity ut1_utc eop_iers_ut1_utc_s inverse-square geometry s 86400 0.0 0.0
+quantity pmx eop_iers_polar_motion_x_arcsec inverse-square geometry arcsec 86400 0.0 0.0
+quantity pmy eop_iers_polar_motion_y_arcsec inverse-square geometry arcsec 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 terms PD https://mars.nasa.gov/
@@ -8930,7 +8930,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -8969,7 +8969,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9008,7 +9008,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9047,7 +9047,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9086,7 +9086,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9125,7 +9125,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9164,7 +9164,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9203,7 +9203,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9242,7 +9242,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9281,7 +9281,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9320,7 +9320,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9359,7 +9359,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9398,7 +9398,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9437,7 +9437,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9476,7 +9476,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9515,7 +9515,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9554,7 +9554,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9593,7 +9593,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9632,7 +9632,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9671,7 +9671,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9710,7 +9710,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9749,7 +9749,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9788,7 +9788,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9827,7 +9827,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9866,7 +9866,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9905,7 +9905,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9944,7 +9944,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -9983,7 +9983,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10022,7 +10022,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10061,7 +10061,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10100,7 +10100,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10139,7 +10139,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10178,7 +10178,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10217,7 +10217,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10256,7 +10256,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10295,7 +10295,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10334,7 +10334,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -10897,9 +10897,9 @@ origin https://celestrak.org/SpaceData/EOP-All.csv
 compiler tools/harvest/src/bin/celestrak_eop_compiler.rs
 at earth
 ttl 604800
-field eop_iers_ut1_utc_s eop_iers_ut1_utc_s inverse-square gravity s 86400 0.0 0.0
-field eop_iers_polar_motion_x_arcsec eop_iers_polar_motion_x_arcsec inverse-square gravity arcsec 86400 0.0 0.0
-field eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-square gravity arcsec 86400 0.0 0.0
+quantity eop_iers_ut1_utc_s eop_iers_ut1_utc_s inverse-square geometry s 86400 0.0 0.0
+quantity eop_iers_polar_motion_x_arcsec eop_iers_polar_motion_x_arcsec inverse-square geometry arcsec 86400 0.0 0.0
+quantity eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-square geometry arcsec 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_annex.jsonl
 terms unknown https://clpds.bao.ac.cn/
@@ -11060,7 +11060,7 @@ origin https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-n
 compiler tools/harvest/src/bin/iers_eop_c04_compiler.rs
 at earth
 ttl 604800
-field iers_eop_lod_s iers_eop_lod_s inverse-square gravity s 86400 0.0 0.0
+quantity iers_eop_lod_s iers_eop_lod_s inverse-square geometry s 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
 terms CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
@@ -19902,8 +19902,8 @@ radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
-field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
-field m2 cb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+quantity m1 cb_primary_mass gaussian-inverse-square source-parameter M_sun 604800 0.0 0.0
+quantity m2 cb_secondary_mass gaussian-inverse-square source-parameter M_sun 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/chandra_csc.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -19962,8 +19962,8 @@ ra ra
 dec dec
 dist dist
 dist_scale 3.085677581e16
-field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
-field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
+quantity masse planet_mass gaussian-inverse-square source-parameter M_earth 604800 0.0 0.0
+quantity rade planet_radius gaussian-inverse-square geometry R_earth 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/frb_a279.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -20041,8 +20041,8 @@ radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
-field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
-field m2 lmxb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+quantity m1 lmxb_primary_mass gaussian-inverse-square source-parameter M_sun 604800 0.0 0.0
+quantity m2 lmxb_secondary_mass gaussian-inverse-square source-parameter M_sun 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/mcxc_clusters.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -20937,8 +20937,8 @@ cmap .
 ra RAJ2000
 dec DEJ2000
 plx Plx
-field UD charm2_ud_mas inverse-square gravity mas 604800 0.0 0.0
-field LD charm2_ld_mas inverse-square gravity mas 604800 0.0 0.0
+quantity UD charm2_ud_mas inverse-square geometry mas 604800 0.0 0.0
+quantity LD charm2_ld_mas inverse-square geometry mas 604800 0.0 0.0
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+RAJ2000,DEJ2000,Teff,Jmag,Hmag,Ksmag+FROM+%22III/286/catalog%22
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -20970,7 +20970,7 @@ map table.rows
 lat 1
 lon 2
 epoch 0
-field 3 uhslc_sea_level_mm inverse-square gravity mm 604800 0.0 0.0
+quantity 3 uhslc_sea_level_mm inverse-square geometry mm 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=II/346/jsdc_v2&-out.max=465877&-out.all&-out.add=_RAJ2000,_DEJ2000
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -20980,7 +20980,7 @@ at sun
 cmap .
 ra _RAJ2000
 dec _DEJ2000
-field LDD jsdc_ldd_mas inverse-square gravity mas 604800 0.0 0.0
+quantity LDD jsdc_ldd_mas inverse-square geometry mas 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=III/283&-out.max=518387&-out.all
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -21017,7 +21017,7 @@ dec DE_ICRS
 plx Plx
 pmra pmRA
 pmdec pmDE
-field Plx gaia_dr2_opencluster_plx_mas inverse-square gravity mas 604800 0.0 0.0
+quantity Plx gaia_dr2_opencluster_plx_mas inverse-square geometry mas 604800 0.0 0.0
 field Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square em mag 604800 0.0 0.0
 field BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -21739,7 +21739,7 @@ origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/
 compiler tools/harvest/src/bin/decaps_dr2_compiler.rs
 at sun
 ttl 31536000
-field decaps_dr2_parallax_arcsec decaps_dr2_parallax_arcsec inverse-square gravity arcsec 31536000 0.0 0.0
+quantity decaps_dr2_parallax_arcsec decaps_dr2_parallax_arcsec inverse-square geometry arcsec 31536000 0.0 0.0
 field decaps_dr2_r_mag decaps_dr2_r_mag inverse-square em mag 31536000 0.0 0.0
 field decaps_dr2_i_mag decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
 field decaps_dr2_z_mag decaps_dr2_z_mag inverse-square em mag 31536000 0.0 0.0
@@ -28799,8 +28799,8 @@ origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/c
 compiler tools/harvest/src/bin/charm2_compiler.rs
 at sun
 ttl 31536000
-field UD charm2_ud_mas inverse-square gravity mas 31536000 0.0 0.0
-field LD charm2_ld_mas inverse-square gravity mas 31536000 0.0 0.0
+quantity UD charm2_ud_mas inverse-square geometry mas 31536000 0.0 0.0
+quantity LD charm2_ld_mas inverse-square geometry mas 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cfa.harvard.edu/ariel_j.ast1
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -28948,7 +28948,7 @@ bin 900
 prefix ndbc_dart_21414
 gate T 1 2
 gate HEIGHT 0 9999
-field HEIGHT ndbc_dart_21414_height_m inverse-square gravity m 900 0.0 0.0
+quantity HEIGHT ndbc_dart_21414_height_m inverse-square geometry m 900 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
 terms PD https://www.ndbc.noaa.gov/
@@ -28982,7 +28982,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29021,7 +29021,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29060,7 +29060,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29099,7 +29099,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29138,7 +29138,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29177,7 +29177,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29216,7 +29216,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29255,7 +29255,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29294,7 +29294,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29333,7 +29333,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29372,7 +29372,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29411,7 +29411,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29450,7 +29450,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29489,7 +29489,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29528,7 +29528,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29567,7 +29567,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29606,7 +29606,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29645,7 +29645,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29684,7 +29684,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29723,7 +29723,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29762,7 +29762,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29801,7 +29801,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29840,7 +29840,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29879,7 +29879,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29918,7 +29918,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29957,7 +29957,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -29996,7 +29996,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30035,7 +30035,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30074,7 +30074,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30113,7 +30113,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30152,7 +30152,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30191,7 +30191,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30230,7 +30230,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30269,7 +30269,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30308,7 +30308,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -30347,7 +30347,7 @@ field PTDY ptdy_hpa inverse-square acoustic hPa 21600 0.0 0.0
 field ATMP atmp_c inverse-square thermal C 21600 0.0 0.0
 field WTMP wtmp_c inverse-square thermal C 21600 0.0 0.0
 field DEWP dewp_c inverse-square thermal C 21600 0.0 0.0
-field TIDE tide_ft inverse-square gravity ft 21600 0.0 0.0
+quantity TIDE tide_ft inverse-square geometry ft 21600 0.0 0.0
 field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
 fold sin_deg WDIR WDIR inverse-square advective 1 21600
 fold cos_deg WDIR WDIR inverse-square advective 1 21600
@@ -31188,4 +31188,4 @@ at venus
 rows .
 lat 0
 lon 1
-field 2 venera15_16_surface_radius_km inverse-square gravity km 33554432.0 0.0 0.0
+quantity 2 venera15_16_surface_radius_km inverse-square geometry km 33554432.0 0.0 0.0

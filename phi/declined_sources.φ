@@ -2068,6 +2068,10 @@ decline redistribution
 url https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.tpc
 note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
 
+decline redistribution
+url https://ftp.space.dtu.dk/data/magnetic-satellites/CSES/
+note DTU-CSES-MAG — 2026-10-10: Index 200, tägliche CSES_01_MAG_*_0301.cdf (ab 20180301; .dat keins); DTU-Policy untersagt Weitergabe/DB ohne Zustimmung, erlaubt Forschung (anna@space.dtu.dk).
+
 decline archive-catalog
 url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items
 note PDS-STAC-Granulat-Index LOLA (items.json Capture, HTTP 200, geo+json): Produkt-Katalog mit Granulat-Footprints und Asset-Links, kein Messwert am Punkt.
@@ -4848,6 +4852,10 @@ decline molecular
 url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
 note Kristallstruktur-Daten.
 
+decline advert
+url https://www.cssdc.ac.cn/en/
+note LAIC CSSDC — 2026-10-10: cssdc.ac.cn/en ist eine Telegram/APK-Advert-Seite (Titel TG纸飞机telegeram下载, APK-Link JiuJiu.apk), kein Datenportal; der frühere Riss ist aufgelöst. Kein Parser-Gap.
+
 decline redistribution
 url https://www.ctbto.org
 note CTBTO/IMS hydroacoustic (H11/H01) — Zugang kontrolliert (VDEC/Registrierung), kein anonymer Zugang; IMS-Daten nicht frei redistribuierbar (staatliche Kontrolle) — CDN-Redistribution ausgeschlossen. Verschoben aus blocked_sources.φ 2026-08-19.
@@ -5082,7 +5090,7 @@ note LAMOST DR10 TAP — von DR11 abgelöst (tap_index_lamost_dr11.φ). tap_inde
 
 decline not-redistributable
 url https://www.leos.ac.cn/
-note LEOS (CSES) — 2026-10-09: Auth existiert (LEOS_USER/PASS), Login = user/pass + Captcha (+ ggf. Mail-Code); Lizenz NINH-MEM verbietet Weitergabe an Dritte ohne Erlaubnis; CSES-Kern via scidb.cn offen.
+note LEOS (CSES) — 2026-10-10: Login user/pass + Captcha (验证码), LEOS_USER/PASS vorhanden; Lizenz NINH-MEM verbietet Weitergabe an Dritte. Riss: Mycelium-289 liest Auth als blocked account; Auth ist kein Ausschluss, die Lizenz blockt.
 
 decline registry
 url https://www.marinespecies.org/rest/
@@ -5635,6 +5643,10 @@ note Variante der live-seismicportal-Quelle (live: minmagnitude=2.5, Probe-Befun
 decline variant
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
 note Variante einer live-Quelle im Register (Probe-Befund 2026-08-15).
+
+decline image
+url https://www.sgo.fi/pub_asc/emCCD_ABK/
+note SGO emCCD_ABK — 2026-10-10: Apache-Index live, Dirs bis 202610, jüngste echte Nacht ABK_260421; Keogramm-JPG = Bildprodukt wie FMI (space.fmi.fi, declined), der ABK-Index ist über FMI integriert.
 
 decline health-stats
 url https://www.share-project.org
