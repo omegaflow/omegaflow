@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Reibungsschnitt: Blinkverse-CDN gebaut, `sources-repo-licence`-LICENSE-Schritt geschrieben, INPE-BIG (`ledger.φ:86`) disponiert; die mountain-gebundenen Punkte aus `Offen — eigen` entfernt (`## An mountain`) — Mycelium wartet nicht mehr auf fremde Akte. Stehender Pass am HEAD.
   class: handover
   date: 2026-10-10
-  sha256: 618b6dda566b3d10734000deebf1af920acd4e40355162a6e703c76290637290
+  sha256: a647c6e63572aa7e70f27c1601bd0e51757c37f0bf22aaa4f71792226eebb024
   status: live
 -->
 # Handover — Mycelium-Folge 289 (2026-10-10)
@@ -28,6 +28,7 @@ Punkt; die Punkte unten sind die Läufe selbst, deren Abschluss Mycelium prüft.
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „ich kappiere es nicht warum seit ihr so krass voneinander abhängig, das ist krasse reibung — beseitige die reibung" | 2026-10-10 | Operator (Session, Mycelium 289) |
+| „ja mach" (die leichten CDN-Workflows auf Cloud ziehen) | 2026-10-10 | Operator (Session, Mycelium 289) |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-10 | Operator (Session, Mycelium 289) |
 | „bauen vor registrieren" | 2026-10-10 | Operator (Session, Mycelium 288) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-10-mycelium-folge288.md` §Operator-Wort-Register | 2026-10-10 | gefaltet, nicht kopiert |
@@ -69,6 +70,13 @@ Punkt; die Punkte unten sind die Läufe selbst, deren Abschluss Mycelium prüft.
 - **Blockade:** Laufdauer auf dem einzigen Heavy-Runner (`t420`, busy seit 16:31Z).
 - **Braucht:** Abschluss → bei success `ledger.φ:110` → `disponiert` + CDN-Asset prüfen.
 
+### Pipeline — `hips-png-cdn` schedule-Runaway (Cloud)
+- **Status:** wartend | **Bindung:** eigen (Workflow)
+- **Trigger:** Operator-Wort zur Kadenz / nächster `schedule`-Lauf
+- **Lage:** (gemessen 2026-10-10) `hips-png-cdn.yml` feuert per `schedule: '37 * * * *'` (stündlich) mit 32 Shards (`max-parallel: 4`, `timeout-minutes: 180`) auf `ubuntu-latest`; drei Läufe gleichzeitig (`37959785850`/`37991944245`/`37932098229`), zwei überholte queued gecancelt (`37912114817`/`37874968423`). Kein hips-Job läuft auf der Maschine (Cloud).
+- **Blockade:** keine.
+- **Braucht:** cron entschärfen (täglich statt stündlich) oder Idempotenz-Guard je Shard; `37932098229` (Tianwen-1) bleibt der getrackte Lauf.
+
 ## An mountain
 
 Origin: mycelium-289 (2026-10-10) — Reibungsschnitt (Operator-Wort). Diese Punkte haben als *nächsten Schritt* einen Mountain-Akt; die Messung steht, der Schritt ist kopierbar. Sie liegen nicht mehr in Myceliums `Offen — eigen` (Mycelium wartet nicht); Mountain faltet sie per `register_lookup --addressed mountain`.
@@ -88,4 +96,4 @@ Origin: mycelium-289 (2026-10-10) — Reibungsschnitt (Operator-Wort). Diese Pun
 
 - **Burn:** `session_burn` open/close — siehe Stehender Pass.
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
-- **CI-Reibung (gemessen):** ~45 Läufe queued; **ein** Heavy-Runner `[self-hosted, Linux]` (`t420`, busy seit 16:31Z), `demeter-residential` (online, idle) trägt nur den eigenen Label. Der Stau ist Runner-Kapazität, nicht Register-Warten — Operator-Entscheid (zweiter Heavy-Runner oder `demeter-residential` in den Pool).
+- **CI-Reibung (gemessen 2026-10-10, Operator-Wort „ja mach"):** ~45 Läufe queued wegen eines einzigen Heavy-Runners. 293 `*-cdn`-Workflows standen auf `[self-hosted, Linux]`; **274** (Download ≲ 1,3 GB) auf `ubuntu-latest` gezogen — das Repo ist **public**, Cloud-Runner sind frei/parallel; **19** Big-Data-Jobs bleiben lokal (tnbfits 14,2 GB, act 9,66 GB, cmb/SPT 7,87 GB, fugin 1,3 GB, dust 0,8 GB, die Ephemeriden-Kerne). Kein zweiter Runner nötig. Der hips-png-`schedule`-Runaway (32 Shards/Lauf, Doppel-Läufe) bleibt offen (Cloud, nicht lokal).
