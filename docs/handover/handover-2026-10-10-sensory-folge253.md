@@ -3,7 +3,7 @@
   session: Sensory-Folge 253
   class: handover
   date: 2026-10-10
-  sha256: 1206215607a9b4ba46265178203ff079295fad0c4fba7a410c9ed1ee6daaa967
+  sha256: 5114fe943570b968a3713b3b0a7046ab4f400a1b6774ec93b4c95873654183d9
   status: live
 -->
 # Handover — Sensory-Folge 253 (2026-10-10)
@@ -52,11 +52,17 @@ kein Fokus): **unverändert seit F236/F248** — aktuell „Im Zollabfertigungsp
 Deutschland, jüngstes Event **Mo, 05.10.2026, 15:25** (Zollabfertigung 15:24, Einreise ins
 Zielland 15:23); kein Zustell-Event. Der Punkt bleibt `wartend`, der Trigger ungefeuert; die
 Route bleibt gespeichert (`state/zustand/wartend.φ:12`), nicht neu zu suchen. Der
-Exposom-Träger-Schritt wurde weiter gemessen: ein Taucher hat die **externe Deckung** je
-Datensatz geprüft — **5/6** tragen eine dokumentierte Studien-Site (TOLIFE/AAMOS-00/ADARP/
-CrossCheck/Labbaf; am Baum verifiziert), **Wearable+PRO Fatigue** keinen → bleibt `pending`.
-In die Survey gefaltet (Header-sha `829a979f…`); die Kollokation wird **site-level**. Offen:
-die Rat-Bestätigung, dass eine dokumentierte Studien-Site als Repräsentativpunkt trägt.
+Exposom-Träger-Schritt weiter gemessen (Operator-Wort: 6/6 + Rat + Max-Roster): ein Taucher
+hat **alle sechs** Datensätze mit `archive_search --all` geprüft — **5/6** tragen eine
+dokumentierte Studien-Site (TOLIFE/AAMOS-00/ADARP/CrossCheck/Labbaf; am Baum verifiziert),
+**Wearable+PRO Fatigue** keinen (remote/Evidation, „United States") → bleibt `pending`. Die
+Methodik-Frage (trägt eine Studien-Site als Repräsentativpunkt?) ging durch die Recherche-
+Landschaft (`state/stimmen/2026-10-10_sensory_reprpunkt-recherche.txt`), den **Rat** (fünf
+Stimmen) und den **Max-Roster** (`sensory-ui`): Rat + Claude konvergieren auf den Legenden-
+Zustand **`site`** (Proxy, `geocoded_inferred`/`centroid_only`, Puffer aus x-Serien-Auflösung,
+Query-Anker); Qwen dissentiert (ökologischer Fehlschluss) — Riss getragen. Umgesetzt in die
+Survey-Legende + die sechs Zeilen (Header-sha `16f9571c…`); Rohmaterial
+`state/stimmen/2026-10-10_sensory_reprpunkt.md`. Offen bleibt (b): der Mycelium-Te-Paar-Feed.
 Die CI-Lage wird aus dem Stehenden Pass zitiert, nicht kopiert.
 
 ## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-10)
@@ -322,11 +328,16 @@ werden getragen, nie geglättet (0 honored).
   (Dryad `10.7280/D1WH6T`). **Wearable+PRO Fatigue** (`10.5281/zenodo.8018238`) trägt **keinen**
   Site → bleibt `pending`. Die Kollokation wird damit **site-level** (Repräsentativpunkt = Site,
   nicht Teilnehmer-Koordinate) und in die Survey gefaltet (Header-sha `829a979f…`).
-  **Braucht:** (a) die Rat-Bestätigung, dass eine dokumentierte Studien-Site als
-  Repräsentativpunkt trägt; dann (b) den Te-Paar-Feed je Zeile in CI (`te_pair_probe`/
-  `field_te_query`, Workflow-YAML + Descriptor je x-Klasse, `gh workflow run`, §E) — Mycelium;
-  Registrierung `phi/sources.φ` erst mit bestätigtem Punkt (Mountain-Feder). Namenträger liegt
-  hier (Weberin/Gesundheits-Zeugen).
+  **Rat+UI (2026-10-10):** der Rat (fünf Stimmen) und Claude (Sonnet 5.5) konvergieren auf den
+  Token **`site`** (Proxy, nie `ja`; Teilnehmer-Koordinate `pending`; Koordinate
+  `geocoded_inferred`/`centroid_only`; Puffer aus der x-Serien-Auflösung; Query-Anker, kein
+  Oszillator). Qwen dissentiert („unzulässige Annahme, ökologischer Fehlschluss") — **Riss
+  getragen**, nicht geglättet. Duck.ai Tageslimit, Z.ai Deep Think ohne Antwort, `open-weight-ui`
+  Lock bei River → `pending`. Umgesetzt: Legende-Zustand `site` + Flags in der Survey
+  (Header-sha `16f9571c…`), Rohmaterial `state/stimmen/2026-10-10_sensory_reprpunkt.md`. **Braucht:**
+  (b) den Te-Paar-Feed je Zeile in CI (`te_pair_probe`/`field_te_query`, Workflow-YAML +
+  Descriptor je x-Klasse, `gh workflow run`, §E) — Mycelium; Registrierung `phi/sources.φ` mit
+  dem `site`-Punkt (Mountain-Feder). Namenträger liegt hier (Weberin/Gesundheits-Zeugen).
 
 - **Weberin/Sensory (Folge191 gefaltet):**
   `docs/surveys/survey-2026-09-07-weberin-thread-matrix.md` (11 echte Marker; Rest =
