@@ -3,6 +3,9 @@ name: lro-trk-cdn
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   lro-trk:
     uses: ./.github/workflows/cdn-manifest.yml

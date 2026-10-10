@@ -3,6 +3,9 @@ name: eea-noise-cdn
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   eea-noise:
     uses: ./.github/workflows/cdn-manifest.yml

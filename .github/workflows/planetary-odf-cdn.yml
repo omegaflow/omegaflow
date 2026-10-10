@@ -3,6 +3,9 @@ name: planetary-odf-cdn
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   odf:
     uses: ./.github/workflows/cdn-manifest.yml

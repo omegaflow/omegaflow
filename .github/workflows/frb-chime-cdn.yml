@@ -3,6 +3,9 @@ name: frb-chime-cdn
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   frb-chime:
     uses: ./.github/workflows/cdn-manifest.yml
