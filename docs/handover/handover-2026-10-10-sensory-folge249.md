@@ -3,7 +3,7 @@
   session: Sensory-Folge 249
   class: handover
   date: 2026-10-10
-  sha256: 9a1f6ad473572ad2b34b2787350a7514a8e77d3bec0338ff566a7af456f4e872
+  sha256: 54f3ec8d122fd13bd1850f92b2b6a18bc783d4387519e8d15c833182cfa25244
   status: live
 -->
 # Handover — Sensory-Folge 249 (2026-10-10)
@@ -45,6 +45,17 @@ Kategorie ist **Unabhängigkeit** (`witness_set`), nicht Vollständigkeit; der R
 ist mountain-gebunden (`handover-2026-10-10-mountain-folge301.md:25`). Die beiden
 `eigen`-Punkte (ox64-m2c `wartend`, europa-clipper `termin`) sind unverändert — ihre
 Trigger sind nicht gefeuert (ox64 zuletzt F248 gemessen, Zustellung offen).
+
+Zweiter Auftrag dieses Atoms: drei Taucher (`general`) auf die fehlenden Ephemeriden-Daten
+und -Dokumente (`archive_search`-Kaskade) + die neuesten keyed-Arme (`--ads`/`--semanticscholar`/
+`--openalex`/`--alphaxiv`/`--perplexity`/`--core`/`--datacite`); `.secrets.local` nur als
+Schlüsselnamen (`bin/secrets_keys`): `EARTHDATA_EDL_TOKEN` liegt vor → CDDIS/ILRS ist
+Auth-Route, kein `declined`. Gefunden: offener Reduktions-Code (PEP, Tudat arXiv:2510.23179,
+CALCEPH, `anise`), offene Daten (ICRF3, ITRF2020, VMF3, JPL-Radar, NAIF, PDS-Radioscience,
+Rosetta RSI), LLR-EP-Test (arXiv 2609.15303), Joint JUICE+Europa-Clipper, Solar-Wind-Dichte-
+Modell. Konzept erweitert (`## Die Vision`, `## Was fehlt — Reconnaissance`). Die „~414
+Prüfungen" einer UI-Stimme sind keine gemessene Registerzahl — die Neuheit ist als
+Negativ-Befund der gefahrenen Arme benannt, nicht als Superlativ.
 Die CI-Lage wird aus dem Stehenden Pass zitiert, nicht kopiert: `ci-gate` @`4e3bd565a` trägt
 fremde rote Jobs (`format` in `src/gate/commit_gate.rs`/`inpe_stac_compiler.rs` → mountain;
 `clippy`/`subset` in `src/mathematikerin/channel.rs:1743` → river), der `register`-Job ist mit
@@ -262,7 +273,7 @@ breiter messen.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** … **Die Übergabe IST der Stand.** … **1 · Still messen, nur Fälliges.** … **2 · Bekanntes direkt bis zur Kante arbeiten.** … **3 · Nur Ungeklärtes vorlegen.** **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). … **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. **5 · Übergabe zuletzt.** … Sensory liest die Hardware nur nach Operator-Wort; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist." | 2026-10-07 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 247.
 
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** … **Die Übergabe IST der Stand.** Lies sie und den Stehenden Pass (`sread state/zustand/standing-pass.md` — zitieren, nie kopieren …). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt. … **1 · Still messen, nur Fälliges.** … **2 · Bekanntes direkt bis zur Kante arbeiten.** … **3 · Nur Ungeklärtes vorlegen.** **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). … **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. **5 · Übergabe zuletzt.** … **Sensory liest die Hardware nur nach Operator-Wort**; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen … `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird, sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist." | 2026-10-09 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), - **Wort:** „ich möchte dass du das dokument EPH auf dem Desktop von anfang bis ende akribisch durchliest und daraus ein konzept erstellst und zwar mithilfe von --all und dem max roster" | 2026-10-10 | Operator (Session) — Auftrag: Konzept aus dem EPH-Gespräch; im selben Atom ausgeführt (`docs/concepts/eigene-ephemeride.md`; `archive_search --all` + Rat + UI-Frontier-Roster; Rohmaterial `state/stimmen/2026-10-10_sensory_eigene-ephemeride-round.md`); Sensory-Folge 249.
-- **Wort:** „Starte die Sensory-Linie **in einem Pass** … **5 · Übergabe zuletzt.** … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen …" | 2026-10-10 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 249.
+- **Wort:** „Starte die Sensory-Linie **in einem Pass** … **5 · Übergabe zuletzt.** … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen …" | 2026-10-10 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), - **Wort:** „willst du nochmal die taucher mit archive search all auf die fehlenden daten und dokumente loslassen? … und hast du secrets local geprüft wir haben einige keys auth ist kein ausschlusskriterium solange es redistributable und kostenlos ist und zudem archive search schon mit den neusten armen und suchmodi?" | 2026-10-10 | Operator (Session) — Auftrag: fehlende Daten/Dokumente mit den Tauchern; `.secrets.local` (Schlüsselnamen via `bin/secrets_keys`) prüfen, neueste `archive_search`-Arme fahren; ausgeführt: 3 Taucher + `--ads`/`--semanticscholar`/`--openalex`/`--alphaxiv`/`--perplexity`/`--core`/`--datacite`; Konzept um `## Die Vision` + `## Was fehlt — Reconnaissance` erweitert; Sensory-Folge 249.
 
 ## Offen (aufgeschlüsselt)
 
@@ -377,7 +388,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0699 · cap 0.50 · Grund: F249 — Line-Session (deepseek-flash), EPH-Gespräch akribisch gelesen → Konzept `docs/concepts/eigene-ephemeride.md` mit `archive_search --all` + Rat (5 Stimmen) + UI-Frontier-Roster (5 Seats antworteten: DeepSeek/Qwen/Z.ai/Duck/MiniMax; Lumo `blocked` Quota, Mistral `pending`) + 2 flash-Rechercheure; Register-Pass (`--fired`/`--stale`/`--addressed` = 0, `--orphan-docs` = 21) + `open_points_check` + `git_safety --snapshot`; Burn gemessen `session_burn` 2026-10-10 F249 — Session `EPH-Dokument lesen und Konzept mit --all erst…` $0.0699 (opencode.db).
+## Burn: open 0.0000 · close 0.1153 · cap 0.50 · Grund: F249 — Line-Session (deepseek-flash), EPH-Gespräch akribisch gelesen → Konzept `docs/concepts/eigene-ephemeride.md` mit `archive_search --all` + Rat (5 Stimmen) + UI-Frontier-Roster (5 Seats antworteten: DeepSeek/Qwen/Z.ai/Duck/MiniMax; Lumo `blocked` Quota, Mistral `pending`) + 2 flash-Rechercheure; Register-Pass (`--fired`/`--stale`/`--addressed` = 0, `--orphan-docs` = 21) + `open_points_check` + `git_safety --snapshot` + zweiter Auftrag (3 Taucher + neueste keyed-Arme `--ads`/`--semanticscholar`/`--openalex`/`--alphaxiv`/`--perplexity`/`--core`/`--datacite`; Vision/Reconnaissance ins Konzept); Burn gemessen `session_burn` 2026-10-10 F249 — Session `EPH-Dokument lesen und Konzept mit --all erst…` $0.1153 (opencode.db).
 
 ## Abschluss
 
