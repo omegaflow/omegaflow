@@ -166,7 +166,22 @@ fn get_retrying(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
 const VERDICT_RANGE: &[&str] = &["--range", "0-0"];
 
 fn verdict_probe(url: &str, timeout: &str, exit: &Exit) -> Option<Fetch> {
-    retry_transient(|| get_once(url, VERDICT_RANGE, timeout, exit))
+    let result = retry_transient(|| get_once(url, VERDICT_RANGE, timeout, exit));
+    if let Some(f) = &result {
+        let host = url_host(url);
+        if crate::token::is_earthdata_host(&host)
+            && (crate::token::is_unauthorized(f.status) || is_edl_login_page(f))
+        {
+            if let Some(token) = crate::token::earthdata_token() {
+                let auth = format!("Authorization: Bearer {}", token);
+                let extra = [VERDICT_RANGE[0], VERDICT_RANGE[1], "-H", auth.as_str()];
+                if let Some(retried) = retry_transient(|| get_once(url, &extra, timeout, exit)) {
+                    return Some(retried);
+                }
+            }
+        }
+    }
+    result
 }
 
 fn proton_interfaces() -> Vec<String> {
@@ -251,6 +266,12 @@ fn url_host(url: &str) -> String {
     rest.split(['/', '?', '#']).next().unwrap_or("").to_string()
 }
 
+fn is_edl_login_page(f: &Fetch) -> bool {
+    f.body.contains("urs.earthdata.nasa.gov")
+        || f.body.contains("Earthdata Login")
+        || f.body.contains("oauth/authorize")
+}
+
 struct RateGate {
     next_allowed: HashMap<String, Instant>,
     blocked_until: HashMap<String, Instant>,
@@ -318,7 +339,9 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
         result
     });
     if let Some(f) = &result {
-        if crate::token::is_unauthorized(f.status) && crate::token::is_earthdata_host(&host) {
+        if crate::token::is_earthdata_host(&host)
+            && (crate::token::is_unauthorized(f.status) || is_edl_login_page(f))
+        {
             if let Some(token) = crate::token::earthdata_token() {
                 let auth = format!("Authorization: Bearer {}", token);
                 let mut merged: Vec<&str> = extra.to_vec();
@@ -511,6 +534,9 @@ fn cdx_snapshot_lines(v: &Json) -> Vec<String> {
 }
 
 pub fn verdict_lines(url: &str) -> Vec<String> {
+    if let Some(repo) = crate::find_repo_root() {
+        crate::token::set_secrets(crate::secrets::load_env(&repo));
+    }
     let mut lines = Vec::new();
     lines.push(format!("verdict {} — three-stage ladder", url));
     let direct = verdict_probe(url, "30", &Exit::Direct);

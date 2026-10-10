@@ -23,7 +23,9 @@ pub fn is_unauthorized(status: Option<i32>) -> bool {
 }
 
 pub fn is_earthdata_host(host: &str) -> bool {
-    host == "urs.earthdata.nasa.gov" || host.ends_with(".earthdata.nasa.gov")
+    host == "urs.earthdata.nasa.gov"
+        || host.ends_with(".earthdata.nasa.gov")
+        || host == "cddis.nasa.gov"
 }
 
 pub fn earthdata_token() -> Option<String> {
@@ -47,6 +49,7 @@ mod tests {
     fn earthdata_host_reads_the_domain_and_subdomains() {
         assert!(is_earthdata_host("urs.earthdata.nasa.gov"));
         assert!(is_earthdata_host("data.gesdisc.earthdata.nasa.gov"));
+        assert!(is_earthdata_host("cddis.nasa.gov"));
         assert!(!is_earthdata_host("example.com"));
         assert!(!is_earthdata_host("notearthdata.nasa.gov"));
     }

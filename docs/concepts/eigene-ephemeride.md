@@ -2,7 +2,7 @@
   title: Die eigene Ephemeride — aus allen Zeugen
   class: concept
   date: 2026-10-10
-  sha256: ed03a46a9260e2b315bcde099ed70d670e122fbd51c4513a4a19703bca3c6b40
+  sha256: b57e84765c336966c8a4ad92e20a7150ff046fc18f795cbf769f6424fd9d569a
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-10-10-mountain-folge301.md
 -->
@@ -162,8 +162,15 @@ Drei Taucher + die neuesten `archive_search`-Arme (`--ads`/`--semanticscholar`/`
   ICRF3 (CDS `I/352`), ITRF2020-SINEX (92 MB gzip), VMF1/VMF3 (TU Wien, Offen für Vorjahre),
   JPL-Radar-Astrometrie + NAIF-Kernels + PDS-Radioscience (MESSENGER/Cassini/Juno), Rosetta
   RSI (PSA).
-- **Auth-Route:** CDDIS LLR-Normalpunkte (`EARTHDATA_EDL_TOKEN`); DARTS (JAXA) Wurzel 403 =
-  pauschale Sperre, kein Konto-Gate.
+- **Auth-Route (gemessen 2026-10-10):** CDDIS LLR-Normalpunkte — das Werkzeug sendet den
+  EDL-Bearer jetzt (`token.rs`/`net.rs`: CDDIS als EDL-Host erkannt, Login-Seite erkannt,
+  Verdict lädt die Secrets), aber **EDL antwortet 401** — auch am EDL-eigenen
+  `/api/users/tokens` und an CMR (öffentlich: ohne Auth 200, mit dem Wert 401). Das
+  vorhandene `EARTHDATA_EDL_TOKEN` ist wohlgeformt (708 Z., unquoted, keine Leerzeichen),
+  aber **abgelaufen/rotationsbedürftig** → `pending` (Operator/Mycelium), kein `declined`.
+  Offen liegt derselbe LLR-Datensatz ohne Login im **EDC-Mirror** `edc.dgfi.tum.de`
+  (`/pub/slr/data/npt_crd/…`, HTTP 200). DARTS (JAXA) Wurzel 403 = pauschale Sperre, kein
+  Konto-Gate; `/pub/akatsuki/` ist 200.
 - **Neu gefunden:** LLR-Äquivalenzprinzip gegen verschiedene Ephemeriden (arXiv 2609.15303) ·
   Joint JUICE+Europa-Clipper-Tracking (A&A 2024) · Solar-Wind-Dichte-Modell für Ranging
   (MNRAS 2022) · Lunar Degree-2 Love Number aus 4-Wege-Radiometrie + LLR (2025) ·
