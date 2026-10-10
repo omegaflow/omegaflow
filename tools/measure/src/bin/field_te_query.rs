@@ -10,6 +10,7 @@ use omegaflow::archivar::{
     series_component_name, series_rows,
 };
 use omegaflow::lsk::days_from_civil;
+use omegaflow::mathematikerin::mci::{MciParams, mci_window_links};
 use omegaflow::mathematikerin::newell::newell_dphi_dt;
 use omegaflow::mathematikerin::wy_max_t::{
     Member, ResampleMode, null_matrix, null_means_per_statistic, observed_family, phase_data,
@@ -26,6 +27,7 @@ const MONTH_S: f64 = 2_592_000.0;
 const CAL_MONTHS: usize = 12;
 const CLIMATOLOGY_FLOOR: usize = 10;
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const MCI_SEED: u64 = 0x5DEE_CE66_D1A5_3E1F;
 const TE_FLOOR: usize = 8;
 const MAXT_ALPHA: f64 = 0.05;
 const MAXT_N_CAP: usize = 2000;
@@ -5306,6 +5308,9 @@ fn run_pair_matrix(
 fn run_summary_panel(
     channels: &str,
     scale_s: Option<f64>,
+    stage2_mci: bool,
+    max_lag: usize,
+    n_surr: usize,
     sources: &[SourceConfig],
     witnesses: &[WitnessRecord],
     anchor: &QueryAnchor,
@@ -5365,6 +5370,42 @@ fn run_summary_panel(
         let present = column.iter().filter(|v| v.is_some()).count();
         println!("  {name:<28} | blocks {present}");
     }
+    if stage2_mci {
+        let surviving = joint.iter().filter(|column| !column.is_empty()).count();
+        if n == 0 || surviving < 2 {
+            println!(
+                "panel mci pending — complete-case alignment carries {surviving} channel(s) over {n} row(s)"
+            );
+            return 0;
+        }
+        let links = mci_window_links(
+            &joint,
+            MciParams {
+                max_lag,
+                max_cond: 2,
+                alpha_pc: 0.2,
+                alpha_mci: 0.05,
+                bins: 4,
+                n_surr,
+                seed: MCI_SEED,
+            },
+        );
+        if links.is_empty() {
+            println!("window graph pending — no MCI candidate survived");
+        } else {
+            for link in &links {
+                println!(
+                    "window {} -> {} lag {} | te {:.4} | p {:.4} | by {}",
+                    names[link.driver],
+                    names[link.target],
+                    link.lag,
+                    link.te,
+                    link.p_value,
+                    link.fdr_pass
+                );
+            }
+        }
+    }
     0
 }
 
@@ -5372,7 +5413,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
     println!(
-        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n> | modes --stage2 family --driver <field> [--lags <list>] [--surrogate <n>] [--bin <seconds>] [--seasonal none|climatology+standardize] | modes --panel <a,b,...> [--scale <seconds>]"
+        "grammar: pair <label> | form event-conditional | count quantile <q> | driver|target <field> [built|pending|probe] | cond <field> [built|pending|probe] (repeatable: a confounder list) | witness <name> [built|pending|probe] | register sources|witnesses | event|gate <ref> pending|probe | cadence live | seasonal none|climatology+standardize | lags <list> | surrogate <n> | bin <seconds> | anchor --lat <deg> --lon <deg> | --station <name> [--station-lat <deg> --station-lon <deg>] | modes --direction <witness> | --spectral <witness>[,<witness>...] | --parity-witness <witness> [--driver <field>] | from <derived> <carrier,carrier,...> | matrix <label> rect|full|upper | drivers|targets|channels <a,b,...> | cond rest|none | fdr bh|by <q> over matrix|row|col | expect cells <n> | modes --stage2 family --driver <field> [--lags <list>] [--surrogate <n>] [--bin <seconds>] [--seasonal none|climatology+standardize] | modes --panel <a,b,...> [--scale <seconds>] [--stage2 mci]"
     );
     let sources = load_sources();
     let witnesses = load_witnesses();
@@ -5385,8 +5426,35 @@ fn main() {
     };
     if let Some(channels) = arg_after(&args, "--panel") {
         let scale_s = arg_after(&args, "--scale").and_then(|s| s.parse::<f64>().ok());
+        let stage2_mci = arg_after(&args, "--stage2") == Some("mci");
+        let (max_lag, n_surr) = if stage2_mci {
+            let lag_list = match arg_after(&args, "--lags") {
+                Some(t) => match parse_lags(t) {
+                    Ok(lags) => lags,
+                    Err(reason) => {
+                        eprintln!("{reason}");
+                        exit(2);
+                    }
+                },
+                None => vec![2],
+            };
+            let max_lag = lag_list.iter().copied().fold(0usize, usize::max);
+            let n_surr = match arg_after(&args, "--surrogate") {
+                Some(t) => match t.parse() {
+                    Ok(n) => n,
+                    Err(_) => {
+                        eprintln!("--surrogate '{t}' carries no count");
+                        exit(2);
+                    }
+                },
+                None => 20,
+            };
+            (max_lag, n_surr)
+        } else {
+            (2, 20)
+        };
         exit(run_summary_panel(
-            channels, scale_s, &sources, &witnesses, &anchor,
+            channels, scale_s, stage2_mci, max_lag, n_surr, &sources, &witnesses, &anchor,
         ));
     }
     if let Some(name) = arg_after(&args, "--direction") {
