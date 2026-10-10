@@ -2,7 +2,7 @@
   title: Die eigene Ephemeride — aus allen Zeugen
   class: concept
   date: 2026-10-10
-  sha256: b57e84765c336966c8a4ad92e20a7150ff046fc18f795cbf769f6424fd9d569a
+  sha256: 076c64610cb7b16bb098717a391788f9fffb288a42dda9194bb05b74926bd0c2
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/handover-2026-10-10-mountain-folge301.md
 -->
@@ -164,13 +164,15 @@ Drei Taucher + die neuesten `archive_search`-Arme (`--ads`/`--semanticscholar`/`
   RSI (PSA).
 - **Auth-Route (gemessen 2026-10-10):** CDDIS LLR-Normalpunkte — das Werkzeug sendet den
   EDL-Bearer jetzt (`token.rs`/`net.rs`: CDDIS als EDL-Host erkannt, Login-Seite erkannt,
-  Verdict lädt die Secrets), aber **EDL antwortet 401** — auch am EDL-eigenen
-  `/api/users/tokens` und an CMR (öffentlich: ohne Auth 200, mit dem Wert 401). Das
-  vorhandene `EARTHDATA_EDL_TOKEN` ist wohlgeformt (708 Z., unquoted, keine Leerzeichen),
-  aber **abgelaufen/rotationsbedürftig** → `pending` (Operator/Mycelium), kein `declined`.
-  Offen liegt derselbe LLR-Datensatz ohne Login im **EDC-Mirror** `edc.dgfi.tum.de`
-  (`/pub/slr/data/npt_crd/…`, HTTP 200). DARTS (JAXA) Wurzel 403 = pauschale Sperre, kein
-  Konto-Gate; `/pub/akatsuki/` ist 200.
+  Verdict lädt die Secrets). Befund (aufgelöst 2026-10-10): der in `.secrets.local` liegende
+  Token war ein älterer (JWT, 708 Z., sha12 `f6740a863152`); nach dem Ersetzen durch den
+  aktuellen Profil-Token `/users/omegaflow.space/user_tokens` (JWT, 682 Z., sha12
+  `6ba6d93a1f83`, gültig bis 2026-12-06) misst das Werkzeug **CDDIS 200** (26 075 B Listing
+  statt 10 924 B Login-Seite). `urs.earthdata.nasa.gov/api/users/tokens` gibt auch mit
+  gültigem Token 401 — **kein gültiger Token-Test**; der Datenzugriff (CMR/CDDIS) ist der Test.
+  Kein `declined`; offen liegt derselbe LLR-Datensatz zusätzlich im **EDC-Mirror**
+  `edc.dgfi.tum.de`. DARTS (JAXA) Wurzel 403 = pauschale Sperre, kein Konto-Gate;
+  `/pub/akatsuki/` ist 200.
 - **Neu gefunden:** LLR-Äquivalenzprinzip gegen verschiedene Ephemeriden (arXiv 2609.15303) ·
   Joint JUICE+Europa-Clipper-Tracking (A&A 2024) · Solar-Wind-Dichte-Modell für Ranging
   (MNRAS 2022) · Lunar Degree-2 Love Number aus 4-Wege-Radiometrie + LLR (2025) ·
