@@ -1052,6 +1052,16 @@ field 5 emso_obsea_salinity_psu gaussian-inverse-square diffusion psu 1800 0.0 0
 field 6 emso_obsea_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 field 7 emso_obsea_conductivity_s_m inverse-square electric s/m 1800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/lgdc.uml.edu/giro_fastchar_JR055.bin
+terms CC-BY-NC-SA-4.0 https://giro.uml.edu/didbase/RulesOfTheRoad.html
+format giro_fastchar
+origin https://lgdc.uml.edu/fastchar/getbest
+compiler tools/harvest/src/bin/giro_fastchar_compiler.rs
+on earth 0 0 0
+ttl 3600
+field fof2_mhz giro_fastchar_fof2_mhz inverse-square em MHz 3600 0.0 0.0
+field cs giro_fastchar_cs inverse-square em % 3600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/uscrn_hourly.bin
 format us_crn_hourly
 terms PD https://www.ncei.noaa.gov/
@@ -11460,7 +11470,7 @@ field T cmb_act_f150_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/lambda.gsfc.nasa.gov/cmb_spt_d1_n64.json
 origin https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt_3g_d1/d1_midell_tqu_healpix/real_data_maps/full_maps_d1.tar.bz2
-terms unknown https://lambda.gsfc.nasa.gov/
+terms CC0-1.0 https://lambda.gsfc.nasa.gov/contact/
 compiler tools/harvest/src/bin/cmb_planck_compiler.rs
 ttl 604800
 at sun
