@@ -1,5 +1,6 @@
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
+use omegaflow::force::force_id_of;
 use omegaflow::hdf5::{Hdf5File, Hdf5Layout};
 
 const MAGIC: [u8; 4] = *b"LOSC";
@@ -12,6 +13,8 @@ const DATASET: &str = "strain/Strain";
 const ATTR_PATHS: [&str; 3] = ["strain/Strain", "strain", ""];
 const SLOT_VAL: usize = 3;
 const SLOT_EPOCH: usize = 4;
+const SLOT_TTL: usize = 5;
+const SLOT_FORCE_TYPE: usize = 9;
 const SLOT_PRESENCE: usize = 25;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -163,7 +166,7 @@ fn emit_records(records: &mut Vec<[f64; 26]>, out: &str) {
     println!("format losc-strain");
 }
 
-fn compile(input: &str, out: &str) {
+fn compile(input: &str, out: &str, force_type: u8, ttl_s: f64) {
     let bytes = match std::fs::read(input) {
         Ok(b) => b,
         Err(_) => {
@@ -229,6 +232,8 @@ fn compile(input: &str, out: &str) {
         let mut r = [0.0f64; 26];
         r[SLOT_EPOCH] = gps + i as f64 / rate;
         r[SLOT_VAL] = *value;
+        r[SLOT_TTL] = ttl_s;
+        r[SLOT_FORCE_TYPE] = force_type as f64;
         r[SLOT_PRESENCE] = 1.0;
         records.push(r);
     }
@@ -253,11 +258,25 @@ fn main() {
     let input = match arg_value(&args, "--input") {
         Some(p) => p,
         None => {
-            eprintln!("usage: losc_compiler --input <hdf5> [--out <file.bin>] [--ci-mode]");
+            eprintln!("usage: losc_compiler --input <hdf5> --out <file.bin> --force <medium> --ttl <secs> [--ci-mode]");
             std::process::exit(2);
         }
     };
-    compile(&input, &out);
+    let force_type = match arg_value(&args, "--force").and_then(|n| force_id_of(&n)) {
+        Some(id) => id,
+        None => {
+            eprintln!("losc: the force admission is declared per source — pass --force <medium>; the record stays unwritten");
+            std::process::exit(2);
+        }
+    };
+    let ttl_s = match arg_value(&args, "--ttl").and_then(|v| v.parse::<f64>().ok()) {
+        Some(t) if t.is_finite() && t > 0.0 => t,
+        _ => {
+            eprintln!("losc: the ttl is declared per source — pass --ttl <secs>; a ttl <= 0 drops every record");
+            std::process::exit(2);
+        }
+    };
+    compile(&input, &out, force_type, ttl_s);
     if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
