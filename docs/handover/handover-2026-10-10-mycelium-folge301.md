@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. BDOM-Witness registriert (witness.rs), dom-cdn.yml + fünf Klima-Manifest-Workflows (surfrad/ecad/dwd-cdc/worldclim/aodn) gebaut; open-lidar-data-cdn-Lauf 38082503772 success (Asset 50 616 273 B, sha256 e6560344·); Stehender Pass am neuen HEAD neu geschrieben.
   class: handover
   date: 2026-10-10
-  sha256: 6b444d1fb2d3f271b88ac6ae832d81fe9b58274454b3475f1c95f99651df9168
+  sha256: f908119797d9ddb2952fee5cede551abc424fce27b30971d2de20c8c2d0c88b8
   status: live
 -->
 # Handover — Mycelium-Folge 301 (2026-10-10)
@@ -17,13 +17,15 @@ zitiert, nie kopiert). Diese Session konsumierte
 (SURFRAD/ECAD/DWD/WorldClim/AODN-Compiler + Asservatenkammer-Träger); kein
 erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 
-## Burn: open 0.0000 · close 0.3084 · cap 0.5 — Grund: dieses Atom 1× line + 1× grind-flash · deepseek-flash, kein pro/max (gemessen `session_burn` total $2.3494→$2.6578).
+## Burn: open 0.0000 · close 0.2213 · cap 0.5 — Grund: dieses Atom 1× line ($0.1940, „Mycelium-Linie in einem Pass starten") + 1× council ($0.0273) · deepseek-flash, kein pro/max (gemessen `session_burn`; der research-general und die UI-Runde tragen eigene Posten).
 
 ## Operator-Wort-Register
 
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-10 | Operator (Session, Mycelium 301) |
+| „ist eingegeben gh secret set EARTHDATA_EDL_TOKEN --repo omegaflow/omegaflow" (Repo-Secret gesetzt) | 2026-10-10 | Operator (Session) |
+| „bitte archive search all falls nötig rat und max roster" | 2026-10-10 | Operator (Session) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-10-mycelium-folge300.md` §Operator-Wort-Register (via `git show <sha>:archiv/…`) | 2026-10-10 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -37,20 +39,6 @@ erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
   den Tarball via `curl -C -` in den persistenten Pfad (überlebt den Runner-Stop).
 - **Blockade:** der Lauf wartet in der Warteschlange.
 - **Braucht:** bei success den sha256 in den SPT-`cmap`-Block (`cmb_spt_d1_n64.json`).
-
-### CI — VNP46A3-CDN LAADS-Auth (Ursache gemessen: Repo-Secret veraltet)
-- **Status:** wartend | **Bindung:** eigen (Manifestation) · Repo-Secret = Operator-Hand
-- **Trigger:** `vnp46a3-cdn`-Re-Dispatch nach Repo-Secret-Update
-- **Lage:** (gemessen 2026-10-10) der LAADS-Granule-Fetch des Laufs am 2026-10-10T19:37Z
-  antwortet **401** (`ci_manage log 38080557462`) mit vorhandenem `EARTHDATA_EDL_TOKEN` und
-  gebautem `Authorization: Bearer`-Header. **Ursache gemessen:** das GitHub-Repo-Secret
-  `EARTHDATA_EDL_TOKEN` (omegaflow/omegaflow) steht auf **2026-10-06T08:34:06Z**
-  (`gh secret list --repo omegaflow/omegaflow`), nicht auf dem heute Mittag erneuerten
-  Wert — der Workflow liest `${{ secrets.EARTHDATA_EDL_TOKEN }}`, nicht die lokale Datei.
-  Der 401 ist der **alte** Token, kein fehlender.
-- **Blockade:** das erneuerte Token wurde im Repo-Secret noch nicht hinterlegt.
-- **Braucht:** das GitHub-Secret `EARTHDATA_EDL_TOKEN` (Repo omegaflow/omegaflow) auf den
-  erneuerten Wert setzen (Operator-Hand; 16 Workflows lesen es), dann Re-Dispatch.
 
 ### φ-Manifestation — open-lidar-data (COPC) — Trigger gefeuert
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
@@ -91,16 +79,20 @@ erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 - **Braucht:** je Workflow dispatchen; danach je φ-Block (Mycelium
   `url`/`origin`/`compiler`, Mountain `terms`/`at`/`ttl`).
 
-### Planetary Radar — Ephemeris-Block (Compiler gebaut)
+### Planetary Radar — Ephemeris-Block (Rat-Verdikt: getrennte Records)
 - **Status:** eigen | **Bindung:** eigen (Manifestation)
-- **Trigger:** Rat-Entscheidung Feld/`at`, dann Lauf
+- **Trigger:** nächster begrenzter Dispatch
 - **Lage:** (gemessen 2026-10-10) Origin `https://ssd-api.jpl.nasa.gov/sb_radar.api`
   HTTP 200, 384 112 B, sha256 `0232b4c5…`; Doc v1.1.
   `tools/harvest/src/bin/sb_radar_compiler.rs` gebaut (`--inspect`), schreibt **kein**
-  Wire-Record — die physikalische Abbildung (radar delay/doppler → 26×f64) ist `pending`.
-- **Blockade:** das Feld ist nicht entschieden — Architektur, gehört durch die fünf Stimmen.
-- **Braucht:** Rat-Entscheidung Feld + `at`-Anker (`parse.rs:298`, `at <zielplanet>`);
-  dann Compiler-Lauf + Block.
+  Wire-Record; `phi/sources.φ` trägt **keinen** `sb_radar`-Eintrag.
+- **Blockade:** keine — das Feld ist entschieden (Rat 2026-10-10, durch UI-Roster bestätigt).
+- **Braucht:** **ein** Dispatch: `sb_radar_compiler` um `--emit delay` erweitern, das **genau
+  einen** 208-Byte-Record je Delay-Zeile schreibt (`val` SI-Sekunden, `epoch` UNIX/J2000,
+  `freq/bin_width = (0, ·)`, Anker `at <zielplanet>` [Archivar-`parse.rs:298`], **Transmitter
+  UND Receiver** deklariert [bistatisch], Epoch-Konvention + COM/Oberfläche), plus
+  `#[test]` mit Fixture. Doppler-Vorzeichen/`phase`, `sigma`, `bp` (Peak vs. COM) bleiben
+  **benannte Risspunkte** `pending` — nie zwei Skalare in ein `val`.
 
 ### Carriership — Asservatenkammer-Survey (Trägerschaft)
 - **Status:** eigen | **Bindung:** eigen · Doc = Mountain-Trägerschaft
@@ -112,33 +104,45 @@ erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 - **Blockade:** das Survey ist Mountain-Trägerschaft — kein stilles Überschreiben.
 - **Braucht:** `## An mountain` — die vier Marker auf den gemessenen Stand setzen.
 
-### Architektur — GitHub/CI/CDN-Optimierung (Survey + Rat)
+### Architektur — GitHub/CI/CDN-Optimierung (Rat-Verdikt: Messung, dann Archive)
 - **Status:** eigen | **Bindung:** eigen · Teile linie:mountain/river
-- **Trigger:** Rat Runde 2 / nächster `ci-check`-Lauf
+- **Trigger:** nächster `ci-check`-Lauf
 - **Lage:** (gemessen 2026-10-10) Survey
   `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md`; Maßnahme 1–5 gebaut,
-  Maßnahme 3 (4-fach-nextest-Shard) in `ci-check.yml` verdrahtet; Shard-Wall-Clock noch
-  nicht am Lauf gemessen.
+  Maßnahme 3 (4-fach-nextest-Shard) in `ci-check.yml:47-49` verdrahtet — **jeder Shard baut
+  `--release` neu**, kein `cargo nextest archive`/`--archive-file` im Baum; Shard-Wall-Clock
+  ungemessen.
 - **Blockade:** keine.
-- **Braucht:** (a) Shard-Wall-Clock aus dem nächsten `ci-check`-Log bestätigen;
-  (b) Rat Runde 2: Test-Suite-Dedup als eigener begrenzter Dispatch.
+- **Braucht:** (a) **erst messen** — `ci_manage jobs <ci-check-run-id>` einmal lesen,
+  Build- vs. Test-Anteil je Shard (Archive-Upload/Download in die Messung, Claude);
+  (b) dominiert der Build: **ein** Dispatch `cargo nextest archive` einmal bauen + vier Shards
+  per `--archive-file` (warm cache sccache/rust-cache gegenprüfen; Doctests eigener Schritt);
+  (c) Test-Suite-Dedup als **zweite, getrennt eingeführte** Achse.
 
-### Speicher — 1,76 TB Bulk vs. R2-10-GB
-- **Status:** eigen (Architektur) | **Bindung:** eigen
-- **Trigger:** Entlastung/Rebalancing nötig
+### Speicher — 1,76 TB Bulk vs. R2-10-GB (Rat-Verdikt: messen vor bauen)
+- **Status:** pending | **Bindung:** eigen
+- **Trigger:** gemessener R2-Konsument ODER größte Datei nähert sich 2 GiB ODER Releases-Lesezugriffe werden zum Engpass (Claude-Verschärfung)
 - **Lage:** (gemessen 2026-10-10 via GitHub-API) `omegaflow/sources` = 344 Releases /
-  1763 GB → $0; R2 10 GB frei trägt Manifeste/Indizes.
-- **Blockade:** keine.
-- **Braucht:** Architektur-Wort (Survey-Säule B), ob R2 als Hot-Tier kommt.
+  1763 GB → $0; R2 10 GB frei, Zero-Egress. **Kein gemessener Live-Konsument.**
+- **Blockade:** keine — das Rat-Verdikt (2026-10-10, UI-bestätigt) ist: kein Tier ohne Hyphe.
+- **Braucht:** **kein Bau.** Ein Schritt: den **einen** manifestierenden Konsumenten messen
+  (welcher gebaute Pfad liest ein `kernel-flatten`-Manifest?) und Größe/Zugriffsfrequenz gegen
+  das 10-GB-Budget halten → Konsument benannt ⇒ R2-Hot-Tier `pending` mit Trigger; kein
+  Konsument ⇒ `descoped` mit Befund. ToS-Risiko ⇒ Portabilität (content-addressed Keys), kein
+  Sofortbau; R2-Bucket/Key = Operator-Akt (per-Akt-Wort).
 
-### MCP — lokale no-leak-Server
+### MCP — lokale no-leak-Server (Rat-Verdikt: Regel vor Knoten)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Architektur-Wort
-- **Lage:** (gemessen 2026-10-10) Survey Säule F: `local` stdio no-leak-Fit;
-  GitHub-MCP readonly.
+- **Trigger:** gemessener Session-Bedarf (`sread`/`sgrep` reichen nicht)
+- **Lage:** (gemessen 2026-10-10) Survey Säule F; `opencode.json:439-451` läuft bereits zwei
+  lokale stdio-MCPs (`chrome-devtools`), aber mit `--autoConnect`/`--allowedUrlPattern https://*`/
+  `npx -y` — **kein no-leak-Präzedenzfall** (Rat + Roster 2026-10-10).
 - **Blockade:** keine.
-- **Braucht:** Architektur-Wort (Rat) für den MCP-`block` in `opencode.json`,
-  dann begrenzter Dispatch.
+- **Braucht:** **die Regel, nicht sofort einen Server** — eine `mcp`-`local`-Aufnahme nur für
+  die no-leak-Klasse: exakter Versions-**Integrity-Pin** (Hash/Lockfile, nicht Tag),
+  `command`/`args` nur aus der getrackten Config, Repo-Wurzel-Scope, **erzwungener** Egress-Deny
+  (Netz-Namespace/Container ohne Route) + FS-Scope mit Testfall, kein Netz-Arm, kein Cloud-MCP.
+  Der konkrete Server folgt erst einem gemessenen Bedarf.
 
 ### Zweite CI-Lane — self-hosted t420
 - **Status:** eigen | **Bindung:** eigen
@@ -179,6 +183,17 @@ erneuter Falt-Akt. Der Sender entfernt ihn bei seinem nächsten Pass.
 
 Origin: mycelium-301 (2026-10-10).
 
+- **VNP46A3 φ-Block** — nach dem Repo-Secret-Update ist der Lauf `vnp46a3-cdn 38084502714`
+  **success** (der 401 war der alte Repo-Secret-Wert). Mycelium-Direktive gemessen
+  (`ci_manage log 38084502714 --all`), + Mountain-Verdikt (`terms`/`at`/`ttl`) in **einem**
+  Block:
+  ```
+  url https://github.com/omegaflow/sources/releases/download/data.laadsdaac.earthdatacloud.nasa.gov/vnp46a3_allangle_composite_snow_free.bin
+  origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/VNP46A3.A2026213.h18v07.002.2026252141449.h5
+  compiler tools/harvest/src/bin/vnp46a3_compiler.rs
+  format black_marble_vnp46a3_nightlight
+  sha256 d85ee99b9d967b5565bb79e145d9120ab09205eb41d4188b3f016e8944b94510
+  ```
 - **open-lidar-data φ-Block** — Mycelium-Direktive (gemessen, `ci_manage log
   38082503772 --all`) + Mountain-Verdikt (`terms`/`at`/`ttl`) in **einem** Block, da
   `register_sort` eine `ttl`-Zeile verlangt:
@@ -203,9 +218,7 @@ Origin: mycelium-301 (2026-10-10).
 - **KNMI Open Data API-Key angekommen** (`state/mail/mail_ledger.φ:268`, Betreff
   „Your API Key") — der Wert wurde **nicht** ausgelesen; Hinterlegung in
   `.secrets.local` = Operator-Hand.
-- **`EARTHDATA_EDL_TOKEN`** — das **Repo-Secret** (omegaflow/omegaflow) trägt noch den
-  Wert vom `2026-10-06T08:34Z` (`gh secret list`); das heute erneuerte Token dort
-  hinterlegen (Operator-Hand) — 16 Workflows lesen es. Kein erneutes Ausstellen nötig.
+
 
 ## LOCK
 
