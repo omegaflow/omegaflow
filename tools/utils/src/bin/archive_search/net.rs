@@ -3724,6 +3724,7 @@ const QUERY_MODES: &[&str] = &[
     "ckan",
     "cmr",
     "dryad",
+    "tap",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4147,6 +4148,7 @@ pub fn run_lines_max(
         "ckan" => crate::ckan::ckan_lines(query, max),
         "cmr" => crate::cmr::cmr_lines(query, max),
         "dryad" => crate::dryad::dryad_lines(query, max),
+        "tap" => crate::tap::tap_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4375,6 +4377,7 @@ mod tests {
             "ckan",
             "cmr",
             "dryad",
+            "tap",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
