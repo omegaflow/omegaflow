@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: e6da91a3d76688987850c6e1c7d8576bc28c011c676d70c6c8558f1b4715199d
+  sha256: fc10959cd246ea631365bdef5c8cd3b5451c044c0084727782eda2345cf2778e
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -99,11 +99,14 @@ In diesem Atom kein neuer adressierter Block.
 - **Trigger:** erneute Backlog-Messung (Runner-Sättigung)
 - **Lage:** (gemessen 2026-10-10) **Die self-hosted Lane existiert:** **20** Workflows fahren auf
   `runs-on: [self-hosted, Linux]` (`cmb-cdn`, `gaia-xp-cdn`, die Ephemeriden-Compiler, `dust`, `wod`,
-  `mpcobs-shard`, `tnbfits`, `twomass`, …). Operator-Wort 2026-10-05: der Runner läuft
-  (`state/zustand/ereignisse.φ:81058`, Host `johannes-Think…`); `cmb-cdn 38032912687` hing am
-  2026-10-10 07:00+ auf ihm (SPT-Download). **Riss:** der Baum nennt ihn **`t420`**
-  (`ci-gate.yml:53`), der Operator **`t430`** — der OS-spezifische Hostname steht nicht im Workflow
-  (`[self-hosted, Linux]` ist generisch). Azure-OSS ist **descoped** (discontinued + CC BY-NC-SA ≠ OSI).
+  (`runs-on: [self-hosted, Linux]`): `cmb-cdn`, `gaia-xp-cdn`, die Ephemeriden-Compiler, `dust`, `wod`,
+  `mpcobs-shard`, `tnbfits`, `twomass`, …). **Registrierter Runner (gemessen 2026-10-05,
+  `state/zustand/ereignisse.φ:81058`):** **`t420`**, Host `johannes-ThinkPad-T420`, Linux Mint 22.3,
+  Labels `self-hosted, Linux, X64`, Runner v2.337.0, systemd `actions.runner.omegaflow-omegaflow.t420.service`,
+  Nutzer `actions` ohne sudo, gedrosselt (Nice 10). `cmb-cdn 38032912687` hing am 2026-10-10 07:00+ auf ihm.
+  **Riss:** der Baum/Register sagt **`t420`** (Host `johannes-ThinkPad-T420`), der Operator **`t430`** —
+  entweder ein neues Gerät ohne Re-Registrierung oder ein Versprecher; am Gerät zu messen.
+  Azure-OSS ist **descoped** (discontinued + CC BY-NC-SA ≠ OSI).
 - **Blockade:** ein Runner = ein Job gleichzeitig (gemessen 2026-10-09: 90 `ci-gate` queued, ein
   `subset`-Ghost 8,5 h — `ci-gate.yml:52-60`).
 - **Braucht:** (a) den Riss t420/t430 schließen (Runner-Label/Hostname messen — `gh api .../actions/runners`
