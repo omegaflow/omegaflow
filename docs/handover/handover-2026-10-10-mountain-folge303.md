@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: f59649675caceb90bff2dc8bedfb69a9f769152a6ccbd84bdb6d552f0f6bbea6
+  sha256: 5b0a8ced530e0b8635b37a5259537954c387da370b7b2c7645a54bad2cca1daa
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -41,9 +41,9 @@ flash only, kein pro/max.
 ### FMHY-Quellen-Kandidaten-Pool (future-222) — klassifiziert; Verdikt offen
 - **Status:** eigen (Quellen-Verdikt) | **Bindung:** mycelium (Ernte nach Verdikt)
 - **Trigger:** je Klasse ein begrenzter Verdikt-Schritt nach `docs/SOURCE_PORT.md`
-- **Lage:** (gemessen 2026-10-10, Diver; Liste bis Ende gelesen) `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.): 405 total / 402 NEW. Klassen: **research-data 74** (72 NEW) · **tool/service 301** (300) · **bypass-mirror 23** · **dead/nav 7**. 28 research-data-Einträge gemessen (`--verdict`+`--sniff`): u. a. ChinaRxiv 200, Neliti 403→blocked ip-blocked, All About Circuits 403→blocked, Open Textbook Library 200, IntechOpen 206. Die 23 bypass-mirror (Sci-Hub, Sci-Bot, PDFiles, Studocu/Exam-Downloader, Telegram-Kanäle …) sind eine **UrhG-§95a-/Umgehungs-Verdikt-Klasse**, keine Auslassung.
+- **Lage:** (gemessen 2026-10-10, Diver; Liste bis Ende gelesen) `state/future/source-kandidaten-fmhy-2026-10-10.md` (445 Z.): 405 total / 402 NEW. Klassen: **research-data 74** (72 NEW) · **tool/service 301** (300) · **bypass-mirror 23** · **dead/nav 7**. 28 research-data-Einträge gemessen (`--verdict`+`--sniff`): u. a. ChinaRxiv 200, Neliti 403→blocked ip-blocked, All About Circuits 403→blocked, Open Textbook Library 200, IntechOpen 206. Die 23 bypass-mirror (Sci-Hub, Sci-Bot, PDFiles, Studocu/Exam-Downloader, Telegram-Kanäle …) sind eine **UrhG-§95a-/Umgehungs-Verdikt-Klasse**, keine Auslassung. **Operator-Wort 2026-10-10:** die 23 Einträge sind aus der Liste entfernt (445→422 Z.) und als Klasse `decline redistribution` verdiktet (`phi/declined_sources.φ`, Klasse über `fmhy.net`, keine Einzel-URL getrackt).
 - **Blockade:** kein Verdikt geschrieben (nur klassifiziert/gemessen).
-- **Braucht:** (a) research-data-Klasse: Register-Zeilen (Zulassung/`blocked`/`declined`) aus der Messung schreiben; (b) bypass-Klasse als `decline redistribution` verdikten. Je ein begrenzter Dispatch.
+- **Braucht:** research-data-Klasse: Register-Zeilen (Zulassung/`blocked`/`declined`) aus der Messung schreiben — ein begrenzter Dispatch.
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -119,6 +119,7 @@ Wort | Datum | Quelle
 „ich glaube reference ist passender oder aber warum haben wir mit allen anderen ephemeriden compilern kein problem aber mit dem PEP nachbau schon?" | 2026-10-10 | Operator (Session, Mountain 302)
 „aber müssen wir es pep nennen wenn wir unsere eigenen ephemeriden nennen und dann gab es ja noch das zweite ephemeriden tool haben wir das alles?" | 2026-10-10 | Operator (Session, Mountain 302)
 „nein das meine ich nicht ach mensch geh doch mal in das ephemeriden vision dok" | 2026-10-10 | Operator (Session, Mountain 302)
+„bypass-mirror 23 (UrhG-§95a- was bedeutet das die möchte ich bitte raus haben keine fragwürdigen links" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
@@ -150,4 +151,4 @@ gemessen) · Asservatenkammer: 9 Mountain-Träger gesetzt. **Geteilter Baum:** f
 Hunks (`AGENTS.md`, `docs/concepts/tools-map.md`, `opencode.json`, `tools/utils/src/bin/archive_search*`)
 nicht angefasst. Eigene Pfade: `src/mathematikerin/receiver.rs` · `src/archivar/port.rs` ·
 `docs/handover/handover-2026-10-10-mountain-folge303.md` ·
-`docs/handover/archiv/handover-2026-10-10-mountain-folge302.md` (Move).
+`docs/handover/archiv/handover-2026-10-10-mountain-folge302.md` (Move) · `phi/declined_sources.φ` (Operator-Wort 2026-10-10: 23 bypass-Mirror-Einträge aus der Kandidatenliste entfernt, Klasse `decline redistribution`).
