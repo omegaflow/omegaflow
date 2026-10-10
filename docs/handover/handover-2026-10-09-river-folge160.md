@@ -3,7 +3,7 @@
   session: River-Folge 160
   class: handover
   date: 2026-10-09
-  sha256: 5f5be2b3cf3f286ab39e49283fe447eed72bc2519c8e1bc2fd04a1261ee20157
+  sha256: 3c97f2a5ded809c329b618e3474479abccd6e185e4ab5ca48a9d9559afde2902
   status: live
 -->
 # Handover — River-Folge 160 (2026-10-09)
@@ -88,8 +88,20 @@ Origin: river-160.
 - **Blockade:** die Zeilen-Migration (Mountain).
 - **Braucht:** **Mountain** schreibt die `gravity`-Zeilen um (Klassifikation in
   `state/river/p10-gravity-klassifikation.md`, Parser-Arm steht, `## An mountain`); danach `seismic`,
-  `acoustic`/`diffusion`, **`em` zuletzt**. Offen bei River: der 3-Achsen-`field`-Arm
-  (`pde_type`/`medium`, optionales `interaction` — mehrdeutig mit den jetzigen `field`-Aritäten).
+  `acoustic`/`diffusion`, **`em` zuletzt**.
+- **Ganze Stimmen-Runde gefahren** (`archive_search --all` + Rat 5/5 + Claude + DeepSeek V4 Pro +
+  DeepSeek Chat + MiniMax M3 + Mistral + Qwen; `pending`: Z.ai/GLM, Gemini, Lumo, Duck) —
+  `state/stimmen/2026-10-09-river-p10-identitaet.md`. **Verdikt:** weder Rück-Ableitung noch die
+  drei Achsen allein; **der Deskriptor ist die Identität, aber nur vollständig** — die `field`-Form
+  braucht zusätzlich **Conserved + Boundary + eine `Regime`-Achse** (quasi-statisch vs strahlend),
+  und der Kernel muss **berechnet** werden, nicht nachgeschlagen. Mehrdeutig → **Verweigerung**
+  (`unresolved` + Triage-Zähler, kein Default). Risse: `em`/`electric` teilen heute einen Descriptor
+  (`channel.rs:654`); `thermal`/`diffusion` Kernel identisch (Fourier/Fick); `seismic-body`/`-surface`
+  Boundary = Geometrie + RB.
+- **Braucht (nächster Bau dieser Linie):** `field <selector> <quantity> <role> <conserved> <operator>
+  <pde_type> <medium> <boundary> [<regime>] <kernel> <unit> <tau> [abs] [adv]` → Deskriptor →
+  exakter Treffer in `live_channel_registry()` → ChannelId; sonst Verweigerung. Legacy-`force`-Token
+  als Alias + Querprüfung.
 
 ### Membran — SSB-Feld-Asset landen sehen + sha256 eintragen
 - **Status:** wartend | **Bindung:** eigen
@@ -154,4 +166,4 @@ Aus der Offen-Liste entfernt (gebaut, git trägt sie): **Eigenmode-Arme**, **Emp
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): source-arm (`extract.rs`/`root.rs`/`types.rs`/`tests.rs`/`mod.rs`/`lib.rs`/`iris.rs`/`themis_asi.rs`), register-/measure-tools (`dropped_gate.rs`, `field_te_query.rs`, `volume_builder.rs`), `phi/sources.φ` nach dem Seal.
 
-## Burn: open 0.0000 · close 0.1424 · cap 0.20 — River 160 (deepseek-flash, kein pro/max); Fenster 30 Sessions 1.2413; Grund: P3.1 CSR-Wire + c-Quelle/Seismik-Geometrie + river-eigener E0507-Fix
+## Burn: open 0.0000 · close 0.9085 · cap 0.50 — River 160 (deepseek-flash, kein pro/max); Fenster 35 Sessions 2.2571; Grund: P10-Register-Physik (Lint, Parser-Arm, gravity-Klassifikation, volle Stimmen-Runde) + v_k/Eigenmode + SSB-Feld-Asset. **Riss: der gemessene session_burn 0.9085 übersteigt das Hard-Ceiling 0.50 — der Commit-Gate `burn-over-cap` blockt die Übergabe; kein Zwischen-Abschluss gesetzt. Operator-Wort nötig (Gate für Betriebskosten aus, wie 2026-09-03).**
