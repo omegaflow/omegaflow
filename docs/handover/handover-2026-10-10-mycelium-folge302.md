@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. sb_radar_compiler `--emit delay` gebaut (grind-flash, 208-B-Record + Test, cargo check 0/0); ci-check-Shard-Messung (Build-vs-Test ungemessen bis grüner Lauf, Deps cache-geteilt, kein separater Build-Schritt); gaia_rrl RrlRecord Debug-Derive (Test-Kompilfehler latent); LiDAR-Survey-Träger gesetzt.
   class: handover
   date: 2026-10-10
-  sha256: 8e69871f0fccde34a8567fa005674b1f019afbe8a534a7e79cd217ba305091fd
+  sha256: dc534d80ef200a3e549b178977d16011ecf9c2b7583ec7f5730133b0a3600d46
   status: live
 -->
 # Handover — Mycelium-Folge 302 (2026-10-10)
@@ -234,11 +234,12 @@ Origin: mycelium-301 (2026-10-10).
 
 ## An future
 
-Origin: mycelium-301 (2026-10-10).
+Origin: mycelium-302 (2026-10-10).
 
-- **KNMI Open Data API-Key angekommen** (`state/mail/mail_ledger.φ:268`, Betreff
-  „Your API Key") — der Wert wurde **nicht** ausgelesen; Hinterlegung in
-  `.secrets.local` = Operator-Hand.
+- **KNMI Open Data API-Key** (`state/mail/mail_ledger.φ:270`, `opendata@knmi.nl`) —
+  **Rotation nötig:** beim Zitieren der Ledger-Zeile wurde der Key-**Wert** in den
+  Modell-Transcript gelesen (Secret-Hygiene-Incident, diese Session). Der Wert gilt damit
+  als exponiert; Rotation = Operator-Hand, danach Hinterlegung in `.secrets.local`.
 
 
 ## LOCK
