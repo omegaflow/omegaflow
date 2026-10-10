@@ -7775,7 +7775,7 @@ mod edf_arm_tests {
             p_min: -1.7e308,
             p_max: 1.7e308,
             d_min: 0.0,
-            d_max: 100.0,
+            d_max: 0.0,
             digital: vec![100],
         }]);
         let channels = edf_emit_channels(&bytes, &Position::Source, 1.0, 1.0, EDF_CHANNEL_CAP);
