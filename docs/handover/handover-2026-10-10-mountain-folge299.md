@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: 239607755a464daf77d3951699b6ab5d5fe3d98d1ea1a02e9929a6288d968aa3
+  sha256: 3e3d68731283d978847e5d1fb51800133b278e45bc46ec200ec34d39e578d6b4
   status: live
 -->
 # Handover — Mountain-Folge 299 (2026-10-10)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge298.md` (→ `archiv/`). 
 `## An mountain`-Block aus mycelium-293 ist bereits in folge298 gefaltet (iEEG-Riss
 beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.2308 · cap 0.30 — Grund: voller Roster (10 Frontier + Open-Weight) + zwei Ratssitzungen + vorgezogener LLR-Parser-Bau (Operator-Wort), deepseek-flash
+## Burn: open 0.0000 · close 0.2807 · cap 0.40 — Grund: voller Roster (8 Frontier-Seats + Open-Weight zweimal) + zwei Ratssitzungen + vorgezogener LLR-Parser-Bau + Ephemeriden-Quellen-Recherche (Operator-Wort), deepseek-flash
 
 ## Offen (aufgeschlüsselt)
 
@@ -68,6 +68,18 @@ beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kei
 - **Braucht:** Mycelium — `sources.φ`-Block (`netloc zenodo.org` · `url …/APOLLO_2006_2020.crd/content` ·
   `terms CC-BY-4.0` · `format llr` · `origin APOLLO normal point data 2006–2020 (Zenodo 7818557)` ·
   `compiler tools/harvest/src/bin/llr_compiler.rs`) + `llr-cdn.yml`; River — `| "llr"` in `main_flow.rs` `series_rows`.
+
+### Ephemeriden-Quellen — Schließungsliste (Survey)
+- **Status:** eigen (Quellen/Register) | **Bindung:** eigen (CDDIS/Earthdata = operator/future)
+- **Trigger:** Harvest der Schließungsliste; CDDIS-Daten hinter Earthdata-Login
+- **Lage:** (gemessen 2026-10-10) `archive_search --all` + Rat + voller Roster (Z.ai/Lumo/Kimi/Open-Weight
+  `pending`): die größten Lücken für eine eigene Ephemeride sind **LLR-Normalpunkte** (ILRS/CDDIS, historisch
+  via POLAC `TOTALOBS6913`), **ITRF2020**-Stationen, **JPL-Planeten-Radar** (`ssd.jpl.nasa.gov/planets/obs_data.html`),
+  **VMF1/VMF3**-Troposphäre, **ICRF3** (Rahmen). Verzichtbar: VLBI-Roh/DDOR, echo.jpl-Asteroidenradar.
+  Volle Tabelle: `docs/surveys/survey-2026-10-10-ephemeris-quellen.md`.
+- **Blockade:** CDDIS/Earthdata-Login (`blocked account` → Operator/future); Beobachtungsoperator (nativ Rust) fehlt.
+- **Braucht:** nächste Harvest in Reihenfolge — (1) LLR-Historie POLAC/CDDIS (Parser da; ggf. MINI→CRD),
+  (2) ITRF2020 SINEX, (3) JPL-Planeten-Radar, (4) VMF3; je `parser-def` prüfen und als `sources.φ`-Block + Workflow (Mycelium).
 
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -134,6 +146,7 @@ Wort | Datum | Quelle
 „bitte für council immer auch archive search all und den roster und bitte lasse archive search all und den roster auch auf LLR los" | 2026-10-10 | Operator (Session, Mountain 299)
 „aber warum bauen wir PEP nicht in rust nach? und bitte ja LLR … sag, ob ich ihn vorziehen soll" | 2026-10-10 | Operator (Session, Mountain 299)
 „warum nur so ein kleiner roster und warum kein vollport wir wollen doch womöglich 100% rust std" | 2026-10-10 | Operator (Session, Mountain 299)
+„und dann möchte ich dass du nochmal eine -all und roster recherche machst welche referenzen wir noch harvestenn können um unsere eigenen ephemeriden zu bauen?" | 2026-10-10 | Operator (Session, Mountain 299)
 „warum schreibst du hier erst in die blocked sources anstatt direkt an den finalen ort — das ist einfach nur faules compliance theater" | 2026-10-10 | Operator (Session, Mountain 295)
 „Offen bleibt in P10: der optionale `<regime>`-Token …, die Regime-Achse selbst, und die Zeilen-Migration in phi/sources.φ (Mountain)." | 2026-10-10 | Operator (Session, Mountain 295)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
