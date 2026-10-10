@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: b54bc4522c2e4f1ca0955c81c218eaa9061724f2a9193151f0e925314a26f00f
+  sha256: f6de3be19142a7dea7dcb03cf59231fc6029da6f7aa82727bae6ea4b56eb07c3
   status: live
 -->
 # Handover — Mountain-Folge 299 (2026-10-10)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge298.md` (→ `archiv/`). 
 `## An mountain`-Block aus mycelium-293 ist bereits in folge298 gefaltet (iEEG-Riss
 beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.0877 — gemessen via session_burn (Linien-Session $0.0877, deepseek-flash, kein pro/max)
+## Burn: open 0.0000 · close 0.1346 — gemessen via session_burn (Linien-Session $0.1346, deepseek-flash, kein pro/max)
 
 ## Offen (aufgeschlüsselt)
 
@@ -42,6 +42,32 @@ beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kei
 - **Braucht:** Schritt 2 — Event-Dir öffnen, TStreamerInfo-Record + fBranch/fLeaf enumerieren
   (uproot5 als Dev-Orakel, Hash pinnen); danach Gate auf Indexdomäne (time|ordinal|event) vor dem
   Skalar-Reader. Kein Verdikt über das Feld vor der Leaf-Messung.
+
+### PEP — Werkzeug, kein fünftes Haus; eigenes Weben bleibt gesperrt
+- **Status:** eigen (Register/Tool) | **Bindung:** eigen
+- **Trigger:** Registrierungsort festlegen, dann `pep_core` klassifizieren/pinnen
+- **Lage:** (gemessen 2026-10-10) PEP (`jbattat/pep_core`, ASCL 2306.027, AJ 162,78 2021) ist ein offenes
+  Werkzeug, das Ephemeriden *berechnet*. Rat (5 Stimmen) + 5 UI-Seats: PEP als Quelle der Klasse `tool` in den
+  **Werkzeug-Ast** (nicht Zeugen-Ast), als Blackbox-/Orakel-Subprozess (kein Rust-Port, keine
+  Shipped-Runtime-Abhängigkeit); das Drei-Haus-Tor (`ephemeris_house_gate`) bleibt das Maß. Eigenes Weben
+  (Verbraucher→Produzent) bleibt gesperrt bis LLR im Baum, ODF als Observations-Satz kuratiert, Floor-Ursache
+  gemessen. Die „1,7 TB" sind CDN-Assets, nicht Beobachtungsdaten (Riss benannt).
+  Stimmen: `state/stimmen/2026-10-10_mountain_pep-llr-round.md`.
+- **Blockade:** Registrierungsort für ein Tool (≠ Datenquelle) unbestimmt.
+- **Braucht:** Rat/Operator — den Ort der PEP-Registrierung festlegen (z. B. `docs/concepts/tools-map.md`) +
+  Gate-Fixture „tool-as-runtime-dependency verboten"; dann `pep_core` pinnen.
+
+### LLR — kritische fehlende Rohbeobachtung; minimaler Ingest
+- **Status:** eigen (Quelle/Parser) | **Bindung:** eigen
+- **Trigger:** Parser-Bau `llr` + erster Ingest (Zenodo 7818557)
+- **Lage:** (gemessen 2026-10-10) LLR = **0 Treffer** im Baum. `archive_search --all` findet APOLLO-Normalpunkte
+  (`apo.nmsu.edu/mainpage/apollo/normalpoints/`), Zenodo 7818557 (APOLLO normal points 2006–2020), NASA
+  Earthdata LLR, ILRS/CDDIS. Rat + Roster: Klasse **Rohbeobachtung** (wie ODF/DSN), Format Normalpunkte,
+  **reiner Parser** (null Physik: keine UTC→TDB/Troposphäre/Shapiro); minimal nur Zenodo 7818557 ingesten.
+  Randbedingung: DE/INPOP/EPM haben LLR mitgefittet → O−C sind Fit-Residuen, kein Blindtest.
+- **Blockade:** Schema/Lizenz der Zenodo-Datei ungeprüft.
+- **Braucht:** `src/archivar/llr.rs` + `llr_compiler` (Zenodo 7818557; Hash/Lizenz prüfen; Schema hart:
+  Zeitmonotonie, Zeitbereich, Reflektoren, Stationen) → `sources.φ`-Block + Workflow = Mycelium.
 
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -105,6 +131,7 @@ beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kei
 Wort | Datum | Quelle
 --- | --- | ---
 „hast du archive search all und den roster befragt?" | 2026-10-10 | Operator (Session, Mountain 298)
+„bitte für council immer auch archive search all und den roster und bitte lasse archive search all und den roster auch auf LLR los" | 2026-10-10 | Operator (Session, Mountain 299)
 „warum schreibst du hier erst in die blocked sources anstatt direkt an den finalen ort — das ist einfach nur faules compliance theater" | 2026-10-10 | Operator (Session, Mountain 295)
 „Offen bleibt in P10: der optionale `<regime>`-Token …, die Regime-Achse selbst, und die Zeilen-Migration in phi/sources.φ (Mountain)." | 2026-10-10 | Operator (Session, Mountain 295)
 „Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes" | 2026-10-07 | Operator (Session, Mountain 251–290)
