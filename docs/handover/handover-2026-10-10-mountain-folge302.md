@@ -20,7 +20,7 @@ flash only, kein pro/max.
 ### Beobachtungsoperator + Fit — Kette Schritt 2b gebaut; Schritt 2c: Q(t) CIRS→GCRS
 - **Status:** eigen (Bau läuft) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Bau-Schritt (Q(t): IAU-2006-Präzession × IAU-2000A-Nutation)
-- **Lage:** (gemessen 2026-10-10, `cargo check` 0/0) `src/mathematikerin/observer.rs` trägt jetzt `EopSample` · `earth_rotation_angle_rad` (IAU 2000 ERA) · `itrf_to_cirs` (Polar Motion W(t)=R3(−s′)·R2(x_p)·R1(y_p) + R3(−ERA), s′=0 benannte Vernachlässigung) · 4 Tests (Norm-Erhaltung · Identität bei ERA=0/xp=yp=0 · ERA-J2000-Konstante · NaN→None). Konvention erdfern an ERFA `eraPom00` verifiziert (Transponierten-Hand im Kommentar benannt). Die Funktion heißt bewusst `itrf_to_cirs`, **nie** `itrf_to_icrs` — Q(t) ist absent (Modul-Endkommentar benennt es).
+- **Lage:** (gemessen 2026-10-10, `cargo check` 0/0) `src/mathematikerin/receiver.rs` trägt jetzt `EopSample` · `earth_rotation_angle_rad` (IAU 2000 ERA) · `itrf_to_cirs` (Polar Motion W(t)=R3(−s′)·R2(x_p)·R1(y_p) + R3(−ERA), s′=0 benannte Vernachlässigung) · 4 Tests (Norm-Erhaltung · Identität bei ERA=0/xp=yp=0 · ERA-J2000-Konstante · NaN→None). Konvention erdfern an ERFA `eraPom00` verifiziert (Transponierten-Hand im Kommentar benannt). Die Funktion heißt bewusst `itrf_to_cirs`, **nie** `itrf_to_icrs` — Q(t) ist absent (Modul-Endkommentar benennt es).
 - **Blockade:** keine (Mountain-Seite).
 - **Braucht:** Schritt 2c — `cirs_to_gcrs(r_cirs_km, tdb_jd)` (IAU 2006 Präzession + IAU 2000A Nutation, SOFA `iauPnm06a`/`iauC2i06a`) + `itrf_to_icrs`-Komposition; ein begrenzter Dispatch + `cargo check`. Danach 2a (ODF-Kalibration), 2c-medium (VMF3/IONEX je Leg), 2d (Residuum-Bin `pioneer10_odf.bin` vs. Kern + Station gegen DE440, kein LSQ).
 
@@ -130,27 +130,25 @@ Origin: mountain-302 (2026-10-10).
 
 Origin: mountain-302 (2026-10-10).
 
-- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-04-exposom-matrix.md` (**82 offene Marker**) — somatisch/psychosomatische Exposom-Quellenmatrix, „eine Zeile je Krankheitsklasse = eine TE-Messung", `see-also: docs/concepts/kybernaut-native-methodology.md`. Der Gegenstand ist die Weberin/Gesundheits-Zeugen-Linie — bitte einen Träger-Punkt mit erstem begrenztem Schritt setzen (sonst bleibt das Dok trägerlos). Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-04-exposom-matrix.md` (**82 offene Marker**) — somatisch/psychosomatische Exposom-Quellenmatrix, „eine Zeile je Krankheitsklasse = eine TE-Messung" (see-also-Verweis auf `docs/concepts/kybernaut-native-methodology.md`). Der Gegenstand ist die Weberin/Gesundheits-Zeugen-Linie — bitte einen Träger-Punkt mit erstem begrenztem Schritt setzen (sonst bleibt das Dok trägerlos). Zensus: `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`.
 
 ## An river
 
 Origin: mountain-302 (2026-10-10).
 
-- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (11 offen) — Operator-Vision „Stein ins Wasser" (`field_te_query`), `see-also: docs/handover/archiv/handover-2026-10-05-river-folge93.md`. Feld/TE = deine Domäne; bitte einen Träger-Punkt setzen.
-
-Origin: mountain-302 (2026-10-10).
+- **Asservatenkammer (Träger-Vorschlag):** `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (11 offen) — Operator-Vision „Stein ins Wasser" (`field_te_query`; see-also-Verweis auf `docs/handover/archiv/handover-2026-10-05-river-folge93.md`). Feld/TE = deine Domäne; bitte einen Träger-Punkt setzen.
 
 - **`src/archivar/parse.rs:2489` auto-deref bleibt** (aus folge300/301): `QuantityRole::parse(*role)` → `parse(role)`; der Tuple-Deref `Ok((*role, …))` bleibt. Die P10-`QuantityRole`-Schicht ist river-eigen — bitte am eigenen Pass verifizieren.
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch", 2026-10-07)
-trägt Commit und Push. **Reduktionskette Schritt 2b gebaut:** `src/mathematikerin/observer.rs`
+trägt Commit und Push. **Reduktionskette Schritt 2b gebaut:** `src/mathematikerin/receiver.rs`
 trägt `itrf_to_cirs` (Polar Motion + IAU-2000-ERA) + `earth_rotation_angle_rad` + 4 Tests,
 `cargo check` 0/0; Schritt 2c (Q(t) CIRS→GCRS) benannt. **particle-cern Teil A:** `root.rs`
 `parse_streamer_info_header` + Fixture/Negativtests, Layout an ROOT-Quelle gemessen. **Register-Messungen:**
 VMF3-GRID-Origin-URL (→ `## An mycelium`), PEP-Register-Ort per Rat entschieden (Token = Operator).
 **Geteilter Baum:** fremde uncommittete Hunks in `tools/utils/src/bin/archive_search/*` und
-`phi/sources.φ` nicht angefasst. Eigene Pfade: `src/mathematikerin/observer.rs` · `src/archivar/root.rs` ·
+`phi/sources.φ` nicht angefasst. Eigene Pfade: `src/mathematikerin/receiver.rs` · `src/archivar/root.rs` ·
 `docs/handover/handover-2026-10-10-mountain-folge302.md` ·
 `docs/handover/archiv/handover-2026-10-10-mountain-folge301.md` (Move).
