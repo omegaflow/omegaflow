@@ -1,6 +1,9 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
-use crate::mathematikerin::channel::{ChannelDescriptor, unit_token};
+use crate::mathematikerin::channel::{
+    ChannelDescriptor, Conserved, QuantityRole, descriptor_from_axes, force_type_of_descriptor,
+    unit_token,
+};
 
 fn split_directive(line: &str) -> Vec<&str> {
     let bytes = line.as_bytes();
@@ -31,6 +34,30 @@ fn split_directive(line: &str) -> Vec<&str> {
         }
     }
     tokens
+}
+
+fn push_field(cur_extracts: &mut Vec<Extract>, fc: FieldConfig) {
+    if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::CelestialMap { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::Rows { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::Flatten { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::CmrPolygon { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::CelestialPolygon { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::KeplerMap { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else if let Some(Extract::EpnCore { fields, .. }) = cur_extracts.last_mut() {
+        fields.push(fc);
+    } else {
+        cur_extracts.push(Extract::Field(fc));
+    }
 }
 
 pub fn load_sources() -> Vec<SourceConfig> {
@@ -1045,11 +1072,9 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                if !matches!(
-                    kind,
-                    QuantityKind::Geometry | QuantityKind::SourceParameter
-                ) && !allowed_units_for_quantity(quantity_kind_id(kind))
-                    .contains(&normalize_unit(parts[5]).as_str())
+                if !matches!(kind, QuantityKind::Geometry | QuantityKind::SourceParameter)
+                    && !allowed_units_for_quantity(quantity_kind_id(kind))
+                        .contains(&normalize_unit(parts[5]).as_str())
                 {
                     report_anomaly(
                         "Invalid Syntax",
@@ -1207,6 +1232,116 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 } else {
                     cur_extracts.push(Extract::Field(fc.clone()));
                 }
+            }
+            "field"
+                if parts.len() >= 12
+                    && QuantityRole::parse(parts[3]).is_some()
+                    && Conserved::parse(parts[4]).is_some() =>
+            {
+                let i = 9;
+                let k = match kernel_id_of(parts[i]) {
+                    Some(k) => k,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries \"{}\" where a kernel is expected (a regime token has no descriptor axis yet)",
+                                parts[1], parts[i]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let unit = match unit_token(parts[i + 1]) {
+                    Some(u) => u,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries an unknown unit \"{}\": {}",
+                                parts[1],
+                                parts[i + 1],
+                                line
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let tau: f64 = match parts[i + 2].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => {
+                        eprintln!(
+                            "field refused at {}: tau absent or not positive (τ-Gate)",
+                            parts[1]
+                        );
+                        continue;
+                    }
+                };
+                let absorption: f64 = match parts.get(i + 3) {
+                    Some(s) => match s.parse() {
+                        Ok(v) => v,
+                        Err(_) => continue,
+                    },
+                    None => 0.0,
+                };
+                let advection: f64 = match parts.get(i + 4) {
+                    Some(s) => match s.parse() {
+                        Ok(v) => v,
+                        Err(_) => continue,
+                    },
+                    None => 0.0,
+                };
+                let desc = match descriptor_from_axes(
+                    parts[3], parts[4], parts[5], parts[6], parts[7], parts[8], unit,
+                ) {
+                    Ok(d) => d,
+                    Err(reason) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("field {}: {}", parts[1], reason),
+                        );
+                        continue;
+                    }
+                };
+                let f = match force_type_of_descriptor(&desc) {
+                    Some(f) => f,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} descriptor ({}/{}/{}/{}/{}/{}) matches no channel — unresolved",
+                                parts[1],
+                                parts[3],
+                                parts[4],
+                                parts[5],
+                                parts[6],
+                                parts[7],
+                                parts[8]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    force: f,
+                    tau,
+                    absorption,
+                    advection,
+                    unit: parts[i + 1].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                push_field(&mut cur_extracts, fc);
             }
             "field" if parts.len() >= 7 => {
                 if parts.len() >= 10 && parts[9] == "where" {
@@ -2172,6 +2307,37 @@ mod tests {
     const URL_A: &str = "https://cdn.example/x/odyssey_odf_t700000000_800000000.bin";
     const URL_B: &str = "https://cdn.example/x/odyssey_odf_t800000000_900000000.bin";
     const URL_C: &str = "https://cdn.example/x/odyssey_odf_t900000000_1000000000.bin";
+
+    #[test]
+    fn a_descriptor_field_line_resolves_to_its_registered_channel() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary energy flux-fourier parabolic fluid none exponential-decay K 60.0 0.0 0.0\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        let field = sources[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .expect("the descriptor field is admitted");
+        assert_eq!(field.force, 5, "Fourier/energy/fluid resolves to thermal");
+        assert_eq!(field.unit, "K");
+    }
+
+    #[test]
+    fn a_descriptor_field_line_without_a_registered_channel_is_refused() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary momentum flux-newton-viscous mixed fluid none patch-levy m/s 60.0 0.0 0.0\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert!(
+            sources[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "no registered channel → the field is refused, never a default"
+        );
+    }
 
     #[test]
     fn volume_frame_body_declared_and_refused_when_absent() {
