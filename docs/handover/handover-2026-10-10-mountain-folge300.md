@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden-Harvest 1-4 (Parser)
   class: handover
   date: 2026-10-10
-  sha256: f75eac0ccf9b8ec1ab7da10d5db2fb616e95ec9c449e77e34aadcb891d9a054a
+  sha256: e51f158b06e071dd0facaec7d7b54dfe656fd0028353eb87869d48ddf0f49196
   status: live
 -->
 # Handover — Mountain-Folge 300 (2026-10-10)
@@ -38,7 +38,8 @@ flash only, kein pro/max.
 - **Trigger:** nächster begrenzter Bau-Schritt (Station/EOP-Wiring an den Kern)
 - **Lage:** (gemessen 2026-10-10) Recherche `archive_search --all` (`state/mountain/2026-10-10_observer-operator_recherche.txt`, 405 Z.; Moyer 2000/DSN-ODP, Thornton 2000, DE440/441, INPOP06/08, MESSENGER/Verma 2013) + Rat (5 Stimmen) + 7 UI-Seats (Qwen, Z.ai/GLM-5.3, Claude Sonnet 5.5, DeepSeek, Mistral/Vibe, MiniMax M3, DeepSeek V4 Pro; Duck.ai leer / Gemini nicht gesendet / Lumo Limit / Kimi Kontingent = `pending`; Inkling/GLM 5.3 im shared Seat nicht gelesen) konvergieren: **Operator/Kalibration zuerst, Fit zuletzt**; Kette Zeit (UTC→TT→TDB) → Station (ITRF2020 + Displacements) → Rahmen (EOP-basiert ITRF→GCRS→ICRS, CIO) → Lichtzeit (Zwei-Wege-Iteration + Shapiro) → Medien je Leg (VMF3, IONEX) → Observable; Residuum gegen eine eingefrorene Zeugen-Ephemeride (DE440) messen, **kein LSQ**, bis das Residuum publiziertes Niveau reproduziert. Stimmen: `state/stimmen/2026-10-10_mountain_observer-operator-round.md`. Risse (nicht geglättet): Ort der Kette (Archivar vs. Mathematikerin); Referenz-Kernel Anker (Verma) vs. Zeuge (River/Sensory); erster Körper (Doppler vs. Viking-Range); Kalibration als Schritt 0 (DeepSeek) vs. Operator als Schritt 0.
 - **Blockade:** keine (Mountain-Seite).
-- **Braucht:** Schritt 2 — die Reduktionskette an den Kern binden, in Reihenfolge: (a) **Kalibration** der ODF-Rohobservable (Instrument/Clock-Delays, DeepSeek-Riss), (b) **Station ITRF2020 + EOP** → Station im ICRS zu t_tx/t_rx (Displacements, IAU 2006/2000A CIO), (c) **Medium** VMF3/IONEX je Leg, (d) **Residuum-Bin**: `pioneer10_odf.bin` (beobachtet) vs. Kern mit `ephemeris_pioneer10_daily.bin` (Horizons-Trajektorie) + Station → Residuum gegen DE440, kein LSQ. Kern gebaut: `src/mathematikerin/observer.rs` (`two_way_doppler`, Lichtzeit-Iteration + Shapiro, 7 Tests, `cargo check` 0/0; Test-Cfg lokal nicht kompiliert = CI-Gate). Ort der Kette vorerst Mathematikerin (Riss mit dem Rat offen).
+- **Braucht:** Schritt 2 — die Reduktionskette an den Kern binden, in Reihenfolge: (a) **Kalibration** der ODF-Rohobservable (Instrument/Clock-Delays, DeepSeek-Riss), (b) **Station ITRF2020 + EOP** → Station im ICRS zu t_tx/t_rx (Displacements, IAU 2006/2000A CIO), (c) **Medium** VMF3/IONEX je Leg, (d) **Residuum-Bin**: `pioneer10_odf.bin` (beobachtet) vs. Kern mit `ephemeris_pioneer10_daily.bin` (Horizons-Trajektorie) + Station → Residuum gegen DE440, kein LSQ. Kern gebaut: `src/mathematikerin/observer.rs` (`two_way_doppler`, Lichtzeit-Iteration + Shapiro, 7 Tests, `cargo check` 0/0; Test-Cfg lokal nicht kompiliert = CI-Gate).
+- **Riss-Frage (Rat + Operator, offen):** Ort der Reduktionskette. **Mountain:** Archivar (Quellen-Transformation, neben `odf.rs` — parse/datum, `ttl`-Eigenschaft). **River:** Mathematikerin (Feld/Observable, neben `mathematikerin/doppler.rs` — die ω()-Schleife bzw. ihre Observable-Schicht). Vorerst in der **Mathematikerin** gebaut (`observer.rs`); bei Wortwechsel Verschiebung (ein Move, kein Neubau). Der Riss ist nicht geglättet — er braucht das Wort.
 
 ### LLR — Parser CRD + MINI gebaut; Manifestation + Runtime-Arm offen
 - **Status:** eigen (Parser) | **Bindung:** mycelium (Block+Workflow) · river (main_flow)
