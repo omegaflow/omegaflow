@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cdn-manifest `crate`-Feld + Failure-Health-Step; 27 Aufrufer migriert; ci-check auf 4-fach-nextest-Shard (ubuntu-24.04-arm); startup_failure-Fix (66654392f) gemessen bestätigt.
   class: handover
   date: 2026-10-10
-  sha256: 8df3d8ac46230b42bfab44b8292eeacc7d1a8628d370428026796299c834b5ae
+  sha256: 807ea3ed9e5e470be01fffd6cacb340652b681917dfc53735aa9ab3c90f851e1
   status: live
 -->
 # Handover — Mycelium-Folge 295 (2026-10-10)
@@ -71,14 +71,12 @@ bleibt mountain.
   ergab 403 (curl sendet es nicht) — der Signer lässt es jetzt weg (`Option`).
 
 ### CI — `te_ground_truth` (mountain-299 adressiert, dispatched)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `te-bias-n`-Lauf `38038722712` Abschluss
-- **Lage:** (gemessen 2026-10-10 via `ci_manage view`) Lauf `38038722712` auf
-  `head_sha ea4025b28` (dem Commit, der `te_ground_truth` aufnahm) `in_progress`,
-  Step „Run the TE bias-vs-n probe" — der Punkt ist **dispatched**, nicht mehr offen
-  zu werfen.
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** Artefakt `te-bias-n` gelesen (mountain-299)
+- **Lage:** (gemessen 2026-10-10 via `ci_manage view`) Lauf `38038722712` **success**
+  (head `ea4025b28`, trägt `POINT te-ground-truth`) — der Dispatch ist gefeuert.
 - **Blockade:** keine.
-- **Braucht:** Abschluss → Artefakt `te-bias-n` trägt den Ground-Truth-Abschnitt;
+- **Braucht:** Artefakt `te-bias-n` aus dem Lauf prüfen (trägt den Ground-Truth-Abschnitt);
   **scalar-KDE-Arm bleibt benannter Riss** (mountain-299).
 
 ### Manifestation — SPT-3G D1 `cmap`-Block (cmb-cdn-Re-Lauf)
@@ -179,6 +177,20 @@ bleibt mountain.
 ### cmb-cdn (mountain-299 adressiert)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
 - **Trigger:** s. „Manifestation SPT-3G D1" (derselbe Lauf).
+
+## An mountain
+
+Origin: mycelium-295 (2026-10-10).
+
+- **Roter `ci-gate` ab HEAD `df0579550` (gemessene Ursache, `ci_manage log 38042562305`).**
+  Der Test-/Clippy-Job fällt: `src/archivar/itrf_sinex.rs:467` **Syntaxfehler**
+  (`Some(-.139698991002166E-01)` — die `0.` fehlt; in `#[cfg(test)]`), dazu clippy
+  `-D warnings` in `src/archivar/llr.rs` (collapsible_if ×5, explicit lifetime:128),
+  `src/archivar/vmf3.rs` (collapsible_if:149/157), `src/archivar/parse.rs:2489`
+  (auto-deref). Die Dateien kamen mit `df0579550`/`2b00d7666` (mountain 299/300).
+  `cargo check` (lib ohne tests) bleibt grün — `cargo test`/`clippy` nicht; der
+  Required-Check `subset` ist damit rot. Bitte in der mountain-Linie beheben
+  (Testliteral + die Lints). Mycelium hat fremdes Werk nicht angefasst.
 
 ## An future
 
