@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. cmb-SPT-Resume gebaut (--tar + persistenter $HOME-Cache); sb_radar_compiler gebaut (Feld pending); open-lidar-data-COPC-Manifestator gebaut (CRS per --crs deklariert, Datei trägt keine); vnp46a3-Fetch-Diagnostik (HTTP-Code); surfrad_compiler (orphan, committet).
   class: handover
   date: 2026-10-10
-  sha256: c392b074bc9f8c5426de2ac0c7a49330fc72fdd78f7a8eed2574f3b109410b13
+  sha256: f335e2f78b1cbdc5b794a93e5f6566435475b9c488dafd89023c1c895e3d7386
   status: live
 -->
 # Handover — Mycelium-Folge 299 (2026-10-10)
@@ -45,17 +45,18 @@ kein erneuter Falt-Akt.
 
 ### CI — VNP46A3-CDN LAADS-Auth
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Lauf `vnp46a3-cdn` Abschluss am neuen HEAD
-- **Lage:** (gemessen 2026-10-10 via `ci_manage log 38045886149`) der Lauf starb an
-  `vnp46a3: fetch https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
-  VNP46A3.A2026213.h18v07.002.2026252141449.h5 returned (exit status: 22)` — curl
-  HTTP-Fehler **bei vorhandenem `EARTHDATA_EDL_TOKEN`** (im Log maskiert, nicht leer;
-  der `Authorization: Bearer`-Header stand zur Laufzeit bereits im Compiler,
-  Commit `b61840610`). Die frühere Braucht („kein Auth-Header") war eine falsche
-  Prämisse. `fetch()` gibt jetzt curl's stderr (den HTTP-Code) im Log aus.
-- **Blockade:** HTTP-Code noch nicht sichtbar (vor der Diagnostik-Änderung).
-- **Braucht:** Re-Dispatch `vnp46a3-cdn` am neuen HEAD; der Log nennt den Code.
-  Bei 401/403: Auth-Route — Token-Erneuerung/DAAC-Autorisierung als Operator-Hand.
+- **Trigger:** Lauf `vnp46a3-cdn` nach Token-Autorisierung
+- **Lage:** (gemessen 2026-10-10 via `ci_manage log 38080557462`) `vnp46a3: fetch
+  …A2026213.h18v07… returned (exit status: 22) — curl: (22) The requested URL returned
+  error: 401`. Der LAADS-Granule-Fetch antwortet **401** — mit vorhandenem
+  `EARTHDATA_EDL_TOKEN` (Log maskiert, nicht leer) und dem bereits gebauten
+  `Authorization: Bearer`-Header (Commit `b61840610`). Die frühere Braucht
+  („kein Auth-Header") war eine falsche Prämisse; die Diagnostik (fetch gibt jetzt curl's
+  stderr) hat den Code gemessen.
+- **Blockade:** der EDL-Token ist für LAADS nicht (mehr) autorisiert/abgelaufen — eine
+  Auth-Route-Frage, kein Code-Fix.
+- **Braucht:** `EARTHDATA_EDL_TOKEN` in `.secrets.local` erneuern und für die LAADS-DAAC
+  autorisieren (Operator-Hand), dann Re-Dispatch. Kein Fabricat auf der 401.
 
 ### Planetary Radar — Ephemeris-Block (Compiler gebaut)
 - **Status:** eigen | **Bindung:** eigen (Manifestation)
