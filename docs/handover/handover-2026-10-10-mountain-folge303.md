@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 0082d207cb56ee3e865f66c1a033b427a8e5c65c5cdc0e950dcca3846d7ad4fa
+  sha256: 6f21e37332710e82c30b57e8bcbc461002a9ad62a6983d46f4acc84d76d4696a
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -50,7 +50,7 @@ flash only, kein pro/max.
 - **Trigger:** nächster begrenzter Schritt je Riss/Route
 - **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`. **Messungen 2026-10-10:** Riss 3 (KNMI/Mindat) — kein Key in `.secrets.local` → `pending` (Operator-Route); Riss 4 (Overpass) — HTTP 406 direkt+Proton → bot-gated `pending`; Riss 5 — SURFRAD/ECAD/DWD/WorldClim = Messwert, GADM/Worldview = Referenz/Anzeige. **UI-Runde gefahren** (`mountain-ui`: Duck Haiku · Claude Sonnet · Qwen · Z.ai GLM, alle geantwortet): Achse tragfähig, aber **Manifestation statt Quelle** klassifizieren + **Lizenz-/Zugangs-Gate vor** der Achse + **Kontext-Achse** ergänzen — Konvergenz mit dem Rat (Riss = fehlende Gate-Achse). **Korrektur (Operator-Frage 2026-10-10):** die „12 Query"-Klassifikation war zu mechanisch („hat API" ≠ Arm); Präzedenz **`--supermag`/`--heasarc` = Dual** (Quelle + Arm), `--opencellid` = reiner Arm. Die Kandidaten sind Messquellen (→ `phi`) oder Referenz/Modell/decline — **kein neuer Arm klar gerechtfertigt**; die blockierte Arm-Hälfte ist gegenstandslos (max. optionales EMSC-Dual).
 - **Blockade:** Arm-Hälfte blockiert — `tools/utils/src/bin/archive_search.rs` + `net.rs` tragen fremde uncommittete Hunks (archive_search-Session); ein Arm-Dispatch würde deren Arbeit mitschwemmen. Riss 3 (kein Key) + Riss 4 (bot-gated) sind `pending`.
-- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) **KNMI-Compiler `tools/harvest/src/bin/knmi_compiler.rs` gebaut** (10-Min-In-situ-Meteo `ta/ff/fx/rg` in SI, `cargo check` 0/0; ohne Zugang `pending — KNMI_API_KEY absent`, kein Fallback; live-Verifikation offen bis der Wert in der lokalen Zugangsdatei steht). Die zwei Zugangsanforderungen (`KNMI_API_KEY`, `MINDAT_TOKEN`) liegen als `## An future` in der Operator-Queue.
+- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) **KNMI-Compiler `knmi_compiler.rs` gebaut + live geprüft** (2026-10-10): der Zugang gilt auf der Open-Data-Route, aber die KDP-Datei ist **NetCDF-4/HDF5** (klassischer Reader → benannter `pending`, kein Wert), und die **EDR-API** liefert die 10-Min-In-situ-Beobachtungen **nicht an diesen Zugang** (HTTP 403 „Access to this API has been disallowed" = EDR-Scope fehlt). Nächster Schritt: **EDR-scoped KNMI-Zugang** (Operator) oder **HDF5-Reader**. **Mindat:** `mindat_probe.rs` — Token erkannt (`Invalid token` vs. `User inactive or deleted`), aber das **Konto ist inaktiv** → `blocked account` (Operator). Beide Operator-Akte stehen als `## An future`.
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -135,6 +135,7 @@ Wort | Datum | Quelle
 „warum sind die in Das eigentliche offene Stück bleibt: … compiler sind deine aufgabe" | 2026-10-10 | Operator (Session, Mountain 303)
 „kannst du bitte Operator-Queue (Future): KNMI-/Mindat-Key … wie die keynamen heissen" | 2026-10-10 | Operator (Session, Mountain 303)
 „mindat und knmi sind eingeloggt bitte bereite bis zur Kante vor" | 2026-10-10 | Operator (Session, Mountain 303)
+„sind beide eingetragen" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
@@ -171,6 +172,8 @@ Origin: mountain-303 (2026-10-10).
     - `KNMI_API_KEY=<key>` — schaltet den KNMI-Compiler frei (niederländische Meteo-Beobachtungen; `phi`-Quelle, Compiler `tools/harvest/src/bin/knmi_compiler.rs` baue ich dann).
     - `MINDAT_TOKEN=<token>` — nur falls du die Mineral-Referenz-DB (aktuell Lead, kein Compiler geplant) ernten willst.
   - **Bei Ja:** KNMI-Key gesetzt → ich baue `knmi_compiler.rs`. **Bei Nein:** beide bleiben `pending`, kein Akt.
+- **KNMI — EDR-Scope (2026-10-10, nach Eintrag).** **Lage:** Der Zugang gilt auf der Open-Data-Route; die 10-Minuten-Datei ist NetCDF-4/HDF5 (kein klassischer Reader), und die EDR-API antwortet `403 "Access to this API has been disallowed"` — der Zugang ist nicht für die EDR-API freigeschaltet. **Frage:** Im KNMI-Developer-Portal die EDR-API für den Zugang freischalten („Request an API key" → EDR) oder Zugang mit EDR-Scope? **Bei Ja:** EDR-CoverageJSON-Pfad messbar → Compiler bindet ihn. **Bei Nein:** HDF5-Reader (Mountain).
+- **Mindat — Konto inaktiv (2026-10-10, nach Eintrag).** **Lage:** Der Token wird erkannt, aber das Konto dahinter antwortet `User inactive or deleted` → `blocked account`. **Frage:** Mindat-Konto reaktivieren oder Token aus aktivem Konto? **Bei Ja:** Probe erneut → Routing (Messung vs. `presence-catalog`) entscheiden. **Bei Nein:** `blocked account` bleibt.
 
 ## Abschluss
 
