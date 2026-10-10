@@ -1,0 +1,47 @@
+name: knmi-cdn
+
+# auto-dispatch: manual — the EDR collection is a per-act surface; the runner needs the KNMI_API_KEY secret
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      collection:
+        description: KNMI EDR collection id
+        required: false
+        type: string
+        default: "10-minute-in-situ-meteorological-observations"
+  schedule:
+    - cron: '23 4 * * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  KNMI_API_KEY: ${{ secrets.KNMI_API_KEY }}
+  RUSTFLAGS: -D warnings
+jobs:
+  knmi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the api.dataplatform.knmi.nl release exists on the CDN
+        run: |
+          if ! gh release view api.dataplatform.knmi.nl --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create api.dataplatform.knmi.nl --repo omegaflow/sources \
+              --title "api.dataplatform.knmi.nl" \
+              --notes "KNMI Data Platform EDR in-situ observations compiled to ICRS records; 8-byte header then n x 26 f64 (temperature K, wind m/s, precipitation kg/(m2 s)), 10-minute cadence."
+          fi
+      - name: Compile the KNMI EDR window and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin knmi_compiler -- \
+            --body earth \
+            --out out \
+            --edr \
+            --edr-collection "${{ inputs.collection }}" \
+            --edr-dump edr-dump \
+            --ci-mode
