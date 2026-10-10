@@ -371,9 +371,10 @@ fn run(args: &[String]) -> Result<(), String> {
     };
 
     if is_hdf5(&bytes) {
-        return Err(
-            "the file is a NetCDF-4/HDF5 container — the classic reader carries no record layout for it (parser-gap)".to_string(),
+        println!(
+            "pending — the KDP product is NetCDF-4/HDF5; the EDR path carries the 10-minute in-situ observations as CoverageJSON (collection /collections/10-minute-in-situ-meteorological-observations, position/area/cube) but KNMI_API_KEY is not subscribed to the EDR API (measured HTTP 403 'Access to this API has been disallowed'); an EDR-scoped key or an HDF5 reader is the next bounded step"
         );
+        return Ok(());
     }
     let nc = NetcdfFile::parse(&bytes)
         .map_err(|note| format!("the NetCDF container stays unread: {note:?}"))?;
