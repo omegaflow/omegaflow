@@ -1,8 +1,8 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, QuantityRole, descriptor_from_axes, force_type_of_descriptor,
-    unit_token,
+    ChannelDescriptor, Conserved, QuantityRole, Regime, descriptor_from_axes,
+    force_type_of_descriptor, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -1238,7 +1238,21 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     && QuantityRole::parse(parts[3]).is_some()
                     && Conserved::parse(parts[4]).is_some() =>
             {
-                let i = 9;
+                let (i, declared_regime) = match Regime::parse(parts[9]) {
+                    Some(r) => (10, Some(r)),
+                    None => (9, None),
+                };
+                if parts.len() < i + 3 {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "field {} carries no kernel/unit/tau after the boundary (a regime token shifts the kernel by one)",
+                            parts[1]
+                        ),
+                    );
+                    continue;
+                }
                 let k = match kernel_id_of(parts[i]) {
                     Some(k) => k,
                     None => {
@@ -1246,7 +1260,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             "Invalid Syntax",
                             &cur_url,
                             &format!(
-                                "field {} carries \"{}\" where a kernel is expected (a regime token has no descriptor axis yet)",
+                                "field {} carries \"{}\" where a kernel (or a regime token) is expected",
                                 parts[1], parts[i]
                             ),
                         );
@@ -1306,6 +1320,21 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
+                if let Some(declared) = declared_regime
+                    && declared != desc.regime
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "field {} declares regime {} but the descriptor carries {} — a contradiction, not a default",
+                            parts[1],
+                            declared.name(),
+                            desc.regime.name()
+                        ),
+                    );
+                    continue;
+                }
                 let f = match force_type_of_descriptor(&desc) {
                     Some(f) => f,
                     None => {
@@ -2107,7 +2136,13 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
 
 pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
     let kernel = kernel_id_of(parts[3])?;
-    let force = force_id_of(parts[4])?;
+    let force = match force_id_of(parts[4]) {
+        Some(f) => f,
+        None => match quantity_kind_of(parts[4]) {
+            Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => FORCE_TYPE_QUANTITY,
+            _ => return None,
+        },
+    };
     let tau: f64 = match parts[6].parse() {
         Ok(v) if v > 0.0 => v,
         _ => return None,
@@ -2642,6 +2677,85 @@ mod tests {
             field_of(kind_as_force),
             None,
             "field with a quantity kind in the force slot must not become a field"
+        );
+    }
+
+    #[test]
+    fn a_last_selector_migrates_a_geometry_value_out_of_the_force_taxonomy() {
+        let last_of = |content: &str| -> Option<FieldConfig> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Last(fc, _) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+        };
+        let geometry = "url https://example.com/g.bin\nttl 604800\n\
+                        last items.value river_stage inverse-square geometry m 900.0 0.0 0.0\n";
+        let fc = last_of(geometry).expect("a last selector with a geometry kind flows");
+        assert_eq!(
+            fc.force, FORCE_TYPE_QUANTITY,
+            "a geometry value leaves Σω through the last arm, like the quantity arm"
+        );
+        assert_eq!(fc.unit, "m", "the geometry unit stays free");
+
+        let source_parameter = "url https://example.com/g.bin\nttl 604800\n\
+                                last mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
+        assert_eq!(
+            last_of(source_parameter).map(|f| f.force),
+            Some(FORCE_TYPE_QUANTITY),
+            "a source parameter leaves Σω through the last arm"
+        );
+
+        let still_a_force = "url https://example.com/g.bin\nttl 604800\n\
+                             last data.v tide_height inverse-square gravity m 3600 0.0 0.0\n";
+        assert_eq!(
+            last_of(still_a_force).map(|f| f.force),
+            Some(1),
+            "a force token in the same slot keeps its channel"
+        );
+    }
+
+    #[test]
+    fn the_field_regime_token_is_resolved_or_refused_never_defaulted() {
+        let force_of = |content: &str| -> Option<u8> {
+            parse_sources(content).first().and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.force),
+                    _ => None,
+                })
+            })
+        };
+        let bare = "url https://example.com/f.bin\nttl 604800\n\
+                    field fkey fname primary energy maxwell mixed vacuum none inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(bare),
+            Some(0),
+            "the regime is derived from the axes when no token is declared"
+        );
+
+        let declared = "url https://example.com/f.bin\nttl 604800\n\
+                        field fkey fname primary energy maxwell mixed vacuum none radiating inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(declared),
+            Some(0),
+            "a declared regime that matches the descriptor resolves"
+        );
+
+        let contradicted = "url https://example.com/f.bin\nttl 604800\n\
+                            field fkey fname primary energy maxwell mixed vacuum none quasi-static inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(contradicted),
+            None,
+            "a declared regime contradicting the descriptor is refused, never defaulted"
+        );
+
+        let electric = "url https://example.com/f.bin\nttl 604800\n\
+                        field fkey fname primary energy maxwell elliptic vacuum none quasi-static inverse-square V/m 60 0.0 0.0\n";
+        assert_eq!(
+            force_of(electric),
+            Some(8),
+            "the quasi-static regime selects the electric channel"
         );
     }
 
