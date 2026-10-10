@@ -19,6 +19,7 @@ pub mod least_squares;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod machines;
 pub mod mat;
+pub mod mci;
 pub mod media;
 pub mod newell;
 pub mod omega;
