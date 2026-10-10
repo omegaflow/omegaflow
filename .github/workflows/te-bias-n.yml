@@ -44,6 +44,8 @@ jobs:
               --replicates ${{ github.event.inputs.replicates }} \
               --estimator conditional \
               --ns 800,1260,1600,2200,4000,6000,8546,10000
+            echo "POINT te-ground-truth"
+            cargo run --release -p omegaflow-measure --bin te_ground_truth
           } > "te-bias-n.txt"
       - uses: actions/upload-artifact@v4
         if: always()

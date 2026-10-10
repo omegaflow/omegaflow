@@ -1,25 +1,16 @@
 name: hadisst-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 on:
   workflow_dispatch:
   schedule:
     - cron: '37 6 1 * *'
-permissions:
-  contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   hadisst:
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Harvest HadISST SST (Met Office NetCDF CDF-1) and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin hadisst_compiler -- --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"hadisst_compiler","netloc":"metoffice.gov.uk","asset":"hadisst_sst.bin","refresh":true}
+        ]

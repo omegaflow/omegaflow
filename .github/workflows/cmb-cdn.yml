@@ -14,7 +14,7 @@ env:
 jobs:
   cmb:
     runs-on: [self-hosted, Linux]
-    timeout-minutes: 240
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1

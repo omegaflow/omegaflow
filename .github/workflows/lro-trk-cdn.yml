@@ -1,24 +1,14 @@
 name: lro-trk-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
-
 on:
   workflow_dispatch:
-permissions:
-  contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   lro-trk:
-    runs-on: ubuntu-latest
-    timeout-minutes: 240
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile the LRO radio-tracking sky-frequency series and upload to CDN
-        run: |
-          set -euo pipefail
-          cargo run -p omegaflow-harvest --release --bin lro_trk_compiler -- --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"lro_trk_compiler","netloc":"imbrium.mit.edu","asset":"lro_trk.bin","refresh":true}
+        ]

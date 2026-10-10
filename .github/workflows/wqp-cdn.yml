@@ -1,23 +1,14 @@
 name: wqp-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
-
 on:
   workflow_dispatch:
-permissions:
-  contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   wqp:
-    runs-on: ubuntu-latest
-    timeout-minutes: 240
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile the WQP Result CSV and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin wqp_result_compiler -- --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"wqp_result_compiler","netloc":"waterqualitydata.us","asset":"wqp_result.csv.zip"}
+        ]
