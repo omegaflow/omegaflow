@@ -4101,6 +4101,103 @@ fn run_descriptor_event_conditional(
 
 const MATRIX_BINS: usize = 4;
 
+const SCALE_RUNG_LIMIT: usize = 32;
+
+const SCALE_RUNG_TOLERANCE: f64 = 0.1;
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+enum ScaleRole {
+    Native,
+    Aggregated { factor: usize },
+    AbsentTooFine,
+    AbsentUnderpowered,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+struct ScaleRung {
+    delta_s: f64,
+    roles: Vec<ScaleRole>,
+    n: usize,
+}
+
+fn rung_role(delta_s: f64, native_dt: Option<f64>, n: usize, n_min: usize) -> ScaleRole {
+    let Some(native_dt) = native_dt else {
+        return ScaleRole::AbsentTooFine;
+    };
+    if !(delta_s.is_finite() && delta_s > 0.0 && native_dt.is_finite() && native_dt > 0.0) {
+        return ScaleRole::AbsentTooFine;
+    }
+    if delta_s < native_dt * (1.0 - SCALE_RUNG_TOLERANCE) {
+        return ScaleRole::AbsentTooFine;
+    }
+    if n < n_min {
+        return ScaleRole::AbsentUnderpowered;
+    }
+    if (delta_s - native_dt).abs() <= native_dt * SCALE_RUNG_TOLERANCE {
+        ScaleRole::Native
+    } else {
+        ScaleRole::Aggregated {
+            factor: (delta_s / native_dt).round().max(1.0) as usize,
+        }
+    }
+}
+
+fn scale_ladder(required: &[Option<f64>], span_s: f64, n_min: usize) -> Vec<ScaleRung> {
+    let mut finest = 0.0f64;
+    for dt in required.iter().flatten() {
+        if dt.is_finite() && *dt > finest {
+            finest = *dt;
+        }
+    }
+    if !(finest > 0.0 && span_s.is_finite() && span_s >= finest) {
+        return Vec::new();
+    }
+    let mut rungs = Vec::new();
+    let mut delta = finest;
+    for _ in 0..SCALE_RUNG_LIMIT {
+        if delta > span_s {
+            break;
+        }
+        let n = (span_s / delta).floor() as usize;
+        let roles = required
+            .iter()
+            .map(|native| rung_role(delta, *native, n, n_min))
+            .collect();
+        rungs.push(ScaleRung {
+            delta_s: delta,
+            roles,
+            n,
+        });
+        delta *= 2.0;
+    }
+    rungs
+}
+
+fn fmt_role(role: ScaleRole) -> String {
+    match role {
+        ScaleRole::Native => "nat".to_string(),
+        ScaleRole::Aggregated { factor } => format!("agg{factor}"),
+        ScaleRole::AbsentTooFine => "fine".to_string(),
+        ScaleRole::AbsentUnderpowered => "under".to_string(),
+    }
+}
+
+fn fmt_provenance(rungs: &[ScaleRung]) -> String {
+    match rungs.first() {
+        Some(rung) => {
+            let roles: Vec<String> = rung.roles.iter().map(|r| fmt_role(*r)).collect();
+            format!(
+                "{:.0}s/n{}/{}/x{}",
+                rung.delta_s,
+                rung.n,
+                roles.join("+"),
+                rungs.len()
+            )
+        }
+        None => "absent".to_string(),
+    }
+}
+
 struct MatrixCellOutcome {
     id: String,
     cond_n: usize,
@@ -4113,6 +4210,80 @@ struct MatrixCellOutcome {
     pass: bool,
     res_pair: Option<(f64, f64)>,
     alignment_absent: bool,
+    rungs: Vec<ScaleRung>,
+}
+
+#[cfg(test)]
+mod scale_ladder_tests {
+    use super::*;
+
+    #[test]
+    fn ladder_starts_at_the_finest_honest_scale() {
+        let rungs = scale_ladder(&[Some(60.0), Some(2_592_000.0)], 6_000_000.0, 4);
+        assert_eq!(rungs.first().map(|r| r.delta_s), Some(2_592_000.0));
+    }
+
+    #[test]
+    fn ladder_is_empty_when_span_is_below_finest() {
+        assert!(scale_ladder(&[Some(60.0), Some(2_592_000.0)], 3600.0, 4).is_empty());
+    }
+
+    #[test]
+    fn ladder_is_empty_without_a_measured_arm() {
+        assert!(scale_ladder(&[None, None], 1.0e6, 4).is_empty());
+    }
+
+    #[test]
+    fn every_rung_is_at_least_the_finest() {
+        let rungs = scale_ladder(&[Some(60.0), Some(86_400.0)], 1.0e7, 4);
+        for rung in &rungs {
+            assert!(rung.delta_s >= 86_400.0);
+            assert_eq!(rung.roles.len(), 2);
+        }
+    }
+
+    #[test]
+    fn role_is_native_at_the_arm_scale() {
+        assert_eq!(rung_role(60.0, Some(60.0), 100, 4), ScaleRole::Native);
+    }
+
+    #[test]
+    fn role_is_aggregated_above_the_arm_scale() {
+        assert_eq!(
+            rung_role(240.0, Some(60.0), 100, 4),
+            ScaleRole::Aggregated { factor: 4 }
+        );
+    }
+
+    #[test]
+    fn role_is_absent_below_the_arm_scale() {
+        assert_eq!(
+            rung_role(30.0, Some(60.0), 100, 4),
+            ScaleRole::AbsentTooFine
+        );
+    }
+
+    #[test]
+    fn role_is_absent_without_a_measured_arm() {
+        assert_eq!(rung_role(60.0, None, 100, 4), ScaleRole::AbsentTooFine);
+    }
+
+    #[test]
+    fn role_is_underpowered_below_the_floor() {
+        assert_eq!(
+            rung_role(240.0, Some(60.0), 2, 4),
+            ScaleRole::AbsentUnderpowered
+        );
+    }
+
+    #[test]
+    fn provenance_names_the_finest_rung_and_its_roles() {
+        let rungs = scale_ladder(&[Some(60.0), Some(2_592_000.0)], 6_000_000.0, 1);
+        let rendered = fmt_provenance(&rungs);
+        assert!(rendered.starts_with("2592000s/n"));
+        assert!(rendered.contains("nat"));
+        assert!(rendered.contains("agg"));
+    }
 }
 
 fn resolution_representable(grid_dt: f64, tau_d: f64, tau_t: f64) -> bool {
@@ -4683,6 +4854,7 @@ fn run_pair_matrix(
                 res_pair: None,
                 alignment_absent: false,
                 pass: false,
+                rungs: Vec::new(),
             });
             continue;
         };
@@ -4699,6 +4871,7 @@ fn run_pair_matrix(
                 res_pair: None,
                 alignment_absent: false,
                 pass: false,
+                rungs: Vec::new(),
             });
             continue;
         };
@@ -4725,6 +4898,7 @@ fn run_pair_matrix(
                 res_pair: None,
                 alignment_absent: false,
                 pass: false,
+                rungs: Vec::new(),
             });
             continue;
         }
@@ -4744,7 +4918,7 @@ fn run_pair_matrix(
             (Some(td), Some(tt)) => Some(td.max(tt)),
             _ => desc.bin,
         };
-        let (cell_columns, _, grid_dt) = match align_many(&req_arms, desc.seasonal, pair_bin) {
+        let (cell_columns, grid, grid_dt) = match align_many(&req_arms, desc.seasonal, pair_bin) {
             Ok(a) => a,
             Err(_reason) => {
                 outcomes.push(MatrixCellOutcome {
@@ -4759,10 +4933,13 @@ fn run_pair_matrix(
                     res_pair: None,
                     alignment_absent: true,
                     pass: false,
+                    rungs: Vec::new(),
                 });
                 continue;
             }
         };
+        let required_native: Vec<Option<f64>> = required.iter().map(|&k| native[k]).collect();
+        let rungs = scale_ladder(&required_native, grid.len() as f64 * grid_dt, TE_FLOOR);
         let tau_d = native.get(di).copied().flatten();
         let tau_t = native.get(ti).copied().flatten();
         if let (Some(td), Some(tt)) = (tau_d, tau_t) {
@@ -4779,6 +4956,7 @@ fn run_pair_matrix(
                     res_pair: Some((td, tt)),
                     alignment_absent: false,
                     pass: false,
+                    rungs: rungs.clone(),
                 });
                 continue;
             }
@@ -4798,6 +4976,7 @@ fn run_pair_matrix(
                 res_pair: None,
                 alignment_absent: false,
                 pass: false,
+                rungs: rungs.clone(),
             });
             continue;
         };
@@ -4814,6 +4993,7 @@ fn run_pair_matrix(
                 res_pair: None,
                 alignment_absent: false,
                 pass: false,
+                rungs: rungs.clone(),
             });
             continue;
         }
@@ -4849,6 +5029,7 @@ fn run_pair_matrix(
                     res_pair: None,
                     alignment_absent: false,
                     pass: false,
+                    rungs: rungs.clone(),
                 });
             }
             None => {
@@ -4864,6 +5045,7 @@ fn run_pair_matrix(
                     res_pair: None,
                     alignment_absent: false,
                     pass: false,
+                    rungs: rungs.clone(),
                 });
             }
         }
@@ -4907,13 +5089,14 @@ fn run_pair_matrix(
     }
 
     println!(
-        "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>11} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+        "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>11} | {:>24} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
         "cell",
         "cond",
         "n",
         "res(tau_d x tau_t)",
         "n_eff",
         "scale(s)",
+        "rung0(n)/roles/x rungs",
         "TE",
         "TE_bias",
         "bias_state",
@@ -4949,13 +5132,14 @@ fn run_pair_matrix(
             None => "-".to_string(),
         };
         println!(
-            "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>11} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
+            "{:<28} | {:>4} | {:>5} | {:>13} | {:>9} | {:>11} | {:>24} | {:>12} | {:>12} | {:<22} | {:>8} | {}",
             o.id,
             o.cond_n,
             o.n,
             res,
             fmt_opt(o.n_eff),
             fmt_opt(o.scale),
+            fmt_provenance(&o.rungs),
             te,
             bias_word,
             bias_state,
