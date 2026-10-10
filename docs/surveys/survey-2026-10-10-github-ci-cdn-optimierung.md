@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: e1b4ab1243e6e31604afd73e8dfb45da49411a0eb73cb06157f79fe09c7ed904
+  sha256: 4ca93567bc547c707eb514afb7cf63b526922644256ff64fb032a78f2e4bf991
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)
@@ -213,6 +213,42 @@ Konsolidierung · nextest+Built-Reuse+Cache-in-R2 · GPU nur für GPU-Last. **Di
 6. **Free-GPU-Probe + self-hosted LLM (hinten)** — Modal **oder** Beam als benannte Probe, Roster erst
    nach Capability-Gate (≥4/4 + Tempo); „AI-in-CI" nur als self-hosted LLM im Runner. Account =
    Operator-Queue. Status `pending` (Riss).
+
+## Rat Runde 2 + Roster (2026-10-10)
+
+**Vorbereitung (Operator-Wort):** `archive_search --all` (voll in `/tmp/omegaflow_all_*`; relevant:
+Core 2025 „A comparative study of GitHub-hosted, self-hosted, and Kubernetes-based GitHub Runners",
+„An Analysis of Code Clones in GitHub Actions Workflows"; Linkup: lokale Ollama/vLLM-MCP) → **Rat**
+(5 Stimmen) → **UI-Runde**.
+
+**Rat-Verdikt (priorisiert, handover-fähig):**
+1. **`workflow_call`-Extraktion nach Identität** — byte-gleiche Step-Rümpfe → ein `cdn-manifest.yml`
+   (`on: workflow_call`, `source`-Input); distincte Parser bleiben distinct (A = A). Messung: sha256
+   der Step-Rümpfe.
+2. **Bulk bleibt GitHub-Release-Assets** ($0, 1,76 TB); **R2 = Hot-Tier**, `pending` ohne gemessenen
+   Live-Konsumenten; keine Bulk-Migration, nicht gestrichen.
+3. **Azure-Lane annehmen**, Guardrail: **genau ein Required-Check je SHA** (GitHub = required,
+   Azure = schwere Matrix, non-required); eine Lane bleibt Compile-Owner.
+4. **MCP:** Docker-Gateway, dann `filesystem` → `git` → `memory` → `time`; `sequential-thinking`
+   zuletzt; kein Cloud-MCP.
+5. **AI-in-CI-Riss** bleibt benannt: nur runner-lokaler LLM; kein `state/` an Cloud-GPU.
+6. **Sequenz (3):** (a) Duplikat messen (sha256 Step-Rümpfe); (b) `cdn-manifest.yml` via
+   `workflow_call` extrahieren; (c) Azure aktivieren (Operator) + MCP verdrahten.
+
+**Counter-Slope:** Identität entscheidet Konsolidierung, nicht Übersicht; die Engstelle wird
+**gemessen, dann gekauft** (gratis Lane vor bezahltem Tier, Hot-Tier vor Bulk-Umzug).
+**Riss (nicht geglättet):** Granularität — Mountain „ein Compiler je Quelle" vs. Mycelium
+„generischer `cdn-manifest`"; die Auflösung ist eine **Messung** (sha256 der Step-Rümpfe), keine
+Abstimmung.
+
+**Roster (Urteil):** **GLM 5.3 Flash** (open-weight, `tryingopen`) antwortete: (a) ja, Identitäts-Merging
+zuerst — deterministisch, reversibel, sofort messbar; semantisches Merging ist die falsche erste Runde;
+(b) ja, aber die **Eviction-Policy des Hot-Tiers jetzt definieren** (LRU nach CI-Zugriffszeit, nicht
+Alter); (c) ja, Guardrail ein Required-Check, eine Lane muss Compile-Owner bleiben; (d) **übersehen:
+Dedup der Test-Suite selbst** — Test-Impact-Analyse/Caching schlägt Workflow-Merging zeitlich.
+Die übrigen Seats der Linie: Folge-Frage teils mechanisch nicht gesendet (Senden-Button), die
+Erstrunden-Antworten stehen in `state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`; als `pending`
+benannt, nicht wiederholt. Geteilte `open-weight-ui`-Seats kurz gefahren (Lock gesetzt/gelöscht).
 
 ## Grenzen (0 honored)
 

@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 380329995b4eb4d42618355f18b0b510f3d5614f11fec33d92e9e97cfee21846
+  sha256: 192ba146d3787d58bab40ce52cbeafd4f4203a6e5e8a7faa388cb2291d96ca53
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.1491 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 7 Recherchen, Rat, 6 UI-Seats, Survey A–G) + Workflow-Hygiene-Schluss (`b1b2bd37f`) + Storage-/Azure-Messung · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.1885 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 10 Recherchen, Rat Runde 1+2, 6+1 UI-Seats, Survey A–G + Rat Runde 2) + Workflow-Hygiene-Schluss + Storage-/Azure-Messung · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -114,6 +114,19 @@ In diesem Atom kein neuer adressierter Block.
 - **Blockade:** keine.
 - **Braucht:** Architektur-Wort (Rat) für den MCP-`block` in `opencode.json` (welche lokalen Server),
   dann als begrenzter Dispatch umsetzen — nach der Konsolidierung.
+
+### Rat Runde 2 — CI/CDN-Architektur (Verdikt + Roster)
+- **Status:** eigen (Umsetzung) | **Bindung:** linie:mycelium · Teile operator
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10 via `archive_search --all` + Rat + UI-Runde; Survey §Rat Runde 2)
+  Verdikt: (1) `workflow_call`-Extraktion **nach Identität**; (2) Bulk GitHub-Release-Assets,
+  R2 Hot-Tier `pending`; (3) Azure-Lane, ein Required-Check je SHA; (4) MCP Docker-Gateway;
+  (5) AI-in-CI nur runner-lokal; (6) Sequenz: Duplikat messen → `cdn-manifest.yml` → Azure/MCP.
+  Roster GLM 5.3 Flash bestätigt (a–c) + Befund: **Test-Suite-Dedup** (Impact-Analyse) schlägt
+  Workflow-Merging zeitlich; Hot-Tier-Eviction (LRU nach Zugriffszeit) jetzt definieren.
+- **Blockade:** keine (bis auf Azure-Aktivierung = Operator).
+- **Braucht:** Schritt 1 autonom — `sgrep`/sha256 der Step-Rümpfe in `.github/workflows`, dann
+  `cdn-manifest.yml` (`on: workflow_call`) + Composite bauen; Azure-Aktivierung s. eigener Punkt.
 
 ## An mountain
 
