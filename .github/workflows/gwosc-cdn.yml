@@ -1,0 +1,53 @@
+name: gwosc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+
+jobs:
+  gwosc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the gwosc.org release exists on the CDN
+        run: |
+          if ! gh release view gwosc.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create gwosc.org --repo omegaflow/sources \
+              --title "gwosc.org" \
+              --notes "GWOSC/LIGO open gravitational-wave strain, compiled to the 26xf64 quantity record (class quantity relative, dimensionless, signed; magic LOSC)."
+          fi
+      - name: Fetch the GW150914 H1 strain HDF5
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5 \
+            https://gwosc.org/eventapi/json/GWTC-1-confident/GW150914/v3/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5 \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gwosc-cdn: the GW150914 H1 strain HDF5 returned void" \
+                 "curl on gwosc.org did not reach the strain file. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Compiler tests
+        run: cargo test -p omegaflow-harvest --release --bin losc_compiler
+      - name: Compile the quantity record and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin losc_compiler -- \
+            --input kernels/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5 \
+            --class relative \
+            --ttl 31536000 \
+            --out losc.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "gwosc-cdn: losc.bin returned void" \
+                 "gwosc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
