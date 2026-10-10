@@ -2,7 +2,7 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-10
-  sha256: aaaadbbf32e668f8f644b839868b7e4dcd739beb7818fe28120556f364b3ef4c
+  sha256: 343c021d12b12bf52b791952a3e820e0e57396cc4c272026266a4ac8db2778c3
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
@@ -212,7 +212,7 @@ quantity <id> <quantity> <role> <medium> <unit> <tau>     # force_type=255, trit
   - `interaction` optional ∈ {gravity, em} — **abgeleitet** über dem `mechanisms`-FK, nie Ersatz (Projektion 2 Werte gegen 9 Labels).
   - `role` ∈ {primary, derived, geometry, source-parameter}; `quantity` trägt das Was/Kind.
   - **Getragener Riss:** `TransportOp` mischt konstitutive Gesetze (Flux(Fick/Fourier/Ohm/NewtonViscous)) und PDE-Klassen (Wave/Poisson/Maxwell) in einem Enum (`channel.rs:60`); Auflösung wäre ein Schnitt `ConstitutiveOp` × `PdeOp` (`pending`, kein Bau).
-  - **Bau folgt:** der Parser-Arm für `<operator>` vor `<pde_type>` und `<kernel>` am Ende ist die Kontrakt-Änderung → Operator-Wort, dann bounded Dispatches.
+  - **Gebaut (bounded, River, 2026-10-10):** der Parser-Arm für `<operator>` vor `<pde_type>` und `<kernel>` am Ende, die `MECHANISMS`-Lookup-Tabelle (9 Zeilen: Operator + pde_type + boundary + interaction, **ohne conserved**) und die `FIXED_CHANNELS`-FK-Tabelle (9 feste Live-Kanäle, `force_type → tag/conserved/unit/medium`); die `interaction` wird über `interaction_of` aus der Mechanismus-Zeile gelesen, nie aus der Operator-Achse (`interaction_of_axes` entfernt). Der Operator-Token trägt den Operator, die Numerik trägt `<kernel>`.
   - **Abbildung der 9 Labels:** `em` → elliptic (quasi-statisch, In-situ) | hyperbolic (strahlend,
     **regime-abhängig**); `gravity` → elliptic (Poisson-Constraint); `acoustic`/`seismic-body`/
     `seismic-surface` → hyperbolic; `thermal` → parabolic; `diffusion` → parabolic; `advective` →
