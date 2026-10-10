@@ -4150,7 +4150,7 @@ note SOLARNET VO (Solar-Daten-Broker/Cross-Search, Paper 10.1007/s11207-025-0242
 
 decline image
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
-note FMI-ASC OMTI/Abisko — Keogramm-Bild = Bildprodukt, kein Feld. Riss sources.φ:19582 keogram_ABK.bin = em/relative Index (keogram.rs), RGB-Mittel 0-255 gamma, kein Rayleigh. Roster 5 Feld (provenienz-gebunden) / 1 Bild. Bild declined, Index zugelassen.
+note FMI-ASC OMTI/Abisko — Keogramm-Bild = Bildprodukt, kein Feld. Riss sources.φ:19582 keogram_ABK.bin = em/relative Index (keogram.rs), RGB-Mittel 0-255 gamma, kein Rayleigh. Roster 6 Feld/1 Bild. Bild declined, Index zugelassen (Provenienz).
 
 decline station-registry
 url https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat
