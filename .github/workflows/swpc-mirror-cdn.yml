@@ -12,7 +12,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   swpc-mirror:
-    runs-on: [self-hosted, Linux]
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
