@@ -56,6 +56,14 @@ fn doc_carried(carrier: &str, path: &str) -> bool {
         || (stem.chars().count() >= 8 && carrier.contains(stem))
 }
 
+fn own_handover_missing(doc_paths: &[String], own_handover_text: &str) -> Vec<String> {
+    doc_paths
+        .iter()
+        .filter(|p| !doc_carried(own_handover_text, p))
+        .cloned()
+        .collect()
+}
+
 fn doc_closed(content: &str) -> bool {
     let (Some(open), Some(close)) = (content.find("<!--"), content.find("-->")) else {
         return false;
@@ -319,6 +327,50 @@ fn main() {
             fail = true;
         }
     }
+    let added = Command::new("git")
+        .args([
+            "-c",
+            "core.quotePath=false",
+            "diff",
+            "--cached",
+            "--name-only",
+            "--diff-filter=A",
+        ])
+        .output()
+        .expect("git");
+    let added_files = String::from_utf8_lossy(&added.stdout).to_string();
+    let added_docs: Vec<String> = added_files
+        .lines()
+        .map(str::trim)
+        .filter(|l| {
+            !l.is_empty() && l.ends_with(".md") && DOC_DIRS.iter().any(|d| l.starts_with(d))
+        })
+        .filter(|l| {
+            std::fs::read_to_string(l)
+                .map(|c| !doc_closed(&c))
+                .unwrap_or(true)
+        })
+        .map(str::to_string)
+        .collect();
+    if !added_docs.is_empty() {
+        let mut own_carrier = String::new();
+        for path in files
+            .lines()
+            .map(str::trim)
+            .filter(|l| handover_line_of(l).is_some())
+        {
+            if let Ok(text) = std::fs::read_to_string(path) {
+                own_carrier.push_str(&text.to_lowercase());
+                own_carrier.push('\n');
+            }
+        }
+        for path in own_handover_missing(&added_docs, &own_carrier) {
+            eprintln!(
+                "commit_check: own-handover: new document {path} is not named in this commit's handover - name it in the handover point so the next line finds it"
+            );
+            fail = true;
+        }
+    }
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
         if !path.contains("handover/") || !path.ends_with(".md") || path.contains("/archiv/") {
             continue;
@@ -398,5 +450,23 @@ fn main() {
     eprintln!("commit_check: {test_file_exempt} test-file(s) exempted by path");
     if fail {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn own_handover_requires_the_new_document_named() {
+        let doc = "docs/surveys/survey-2026-10-10-foo.md".to_string();
+        assert_eq!(
+            own_handover_missing(std::slice::from_ref(&doc), "kein treffer"),
+            vec![doc.clone()]
+        );
+        assert!(
+            own_handover_missing(std::slice::from_ref(&doc), "siehe survey-2026-10-10-foo.md")
+                .is_empty()
+        );
     }
 }
