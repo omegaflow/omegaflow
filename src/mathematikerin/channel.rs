@@ -183,6 +183,49 @@ impl PdeType {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum Regime {
+    QuasiStatic = 0,
+    Radiating = 1,
+    Diffusive = 2,
+    Advective = 3,
+    Constraint = 4,
+}
+
+impl Regime {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "quasi-static" => Some(Regime::QuasiStatic),
+            "radiating" => Some(Regime::Radiating),
+            "diffusive" => Some(Regime::Diffusive),
+            "advective" => Some(Regime::Advective),
+            "constraint" => Some(Regime::Constraint),
+            _ => None,
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            Regime::QuasiStatic => "quasi-static",
+            Regime::Radiating => "radiating",
+            Regime::Diffusive => "diffusive",
+            Regime::Advective => "advective",
+            Regime::Constraint => "constraint",
+        }
+    }
+}
+
+fn regime_of(op: TransportOp, pde_type: PdeType) -> Regime {
+    match op {
+        TransportOp::Maxwell if pde_type == PdeType::Elliptic => Regime::QuasiStatic,
+        TransportOp::Maxwell | TransportOp::Wave => Regime::Radiating,
+        TransportOp::Flux(_) => Regime::Diffusive,
+        TransportOp::Advective => Regime::Advective,
+        TransportOp::Poisson => Regime::Constraint,
+    }
+}
+
 impl TransportOp {
     pub fn parse(token: &str) -> Option<Self> {
         match token {
@@ -322,6 +365,7 @@ pub struct ChannelDescriptor {
     pub medium: Medium,
     pub domain: Domain,
     pub boundary: Boundary,
+    pub regime: Regime,
     pub extent: Option<f64>,
     pub family: ModeFamily,
     pub body: Option<String>,
@@ -337,6 +381,7 @@ impl PartialEq for ChannelDescriptor {
             && self.medium == other.medium
             && self.domain == other.domain
             && self.boundary == other.boundary
+            && self.regime == other.regime
             && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
             && self.family == other.family
             && self.body == other.body
@@ -364,6 +409,7 @@ impl ChannelDescriptor {
             medium,
             domain,
             boundary,
+            regime: regime_of(op, pde_type),
             extent: None,
             family: match medium {
                 Medium::ElasticSolid => ModeFamily::Spheroidal,
@@ -487,6 +533,7 @@ impl ChannelDescriptor {
         h = fnv1a(&[self.family as u8], h);
         h = self.domain.hash_into(h);
         h = fnv1a(&[self.boundary as u8], h);
+        h = fnv1a(&[self.regime as u8], h);
         h = match self.extent {
             None => fnv1a(&[0u8], h),
             Some(e) => fnv1a(&e.to_bits().to_le_bytes(), fnv1a(&[1u8], h)),
@@ -2613,6 +2660,20 @@ mod tests {
         let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
         assert_eq!(force_type_of_descriptor(&em), Some(0));
         assert_eq!(force_type_of_descriptor(&electric), Some(8));
+    }
+
+    #[test]
+    fn em_and_electric_carry_distinct_regimes_on_the_axis() {
+        let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
+        assert_eq!(em.regime, Regime::Radiating);
+        assert_eq!(electric.regime, Regime::QuasiStatic);
+        let derived = descriptor_from_axes(
+            "primary", "energy", "maxwell", "elliptic", "vacuum", "none", "V/m",
+        )
+        .expect("electric axes");
+        assert_eq!(derived.regime, Regime::QuasiStatic);
+        assert_eq!(force_type_of_descriptor(&derived), Some(8));
     }
 
     #[test]
