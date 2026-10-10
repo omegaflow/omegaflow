@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: d99ead7b37a255c1c69cac574ee488d4ddcf938d8ef3c1cf908fe10420eeb9b6
+  sha256: f623ba7f03da97bc8b39f3955794c0a58a60ab8ac3484f845575442431e79a6f
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -364,9 +364,12 @@ CDN-Aufrufer (`*-cdn.yml`). Die Registrierung (`url`/`origin`/`compiler`/`at`/
    Bathymetrie (Grid-Reader + Multibeam-Arm; `netcdf`/Grid im Archivar messen).
 6. **Bayern DOM20** — COG-Kachel, `dom_compiler`.
 
-Erster konkreter Schritt: einen LAZ/COPC-Key aus dem open-lidar-data-Bucket
-(`curl` der S3-Liste) extrahieren, Reader gegen die echte Datei, dann Block +
-`*-cdn.yml`.
+Erster konkreter Schritt (**gemessen 2026-10-10**): der open-lidar-data-Bucket
+`?list-type=2&max-keys=1000` liefert **999 COPC-Keys** (erste Seite = `data/BE/…`,
+Struktur `data/<Land>/<Provider>/<Produkt>/copc/*.copc.laz`); ein Asset-Link ist
+erreichbar — `…/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/LiDAR_DHMV_2_P1_ATL12104_ES_52500_217000.copc.laz`
+HTTP **206**. Nächster Bau: Reader gegen diese echte COPC-Datei, dann Block +
+`*-cdn.yml`; weitere Länder über den `continuation-token` der S3-Liste.
 
 ## Offene Messungen — Proton-nachgemessen (2026-10-10)
 
