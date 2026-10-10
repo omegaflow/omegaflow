@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: ecd8bbd4e816588e7d0590ec5d95f71ccfc86e36f4ae6d6eb48d8c49d244aa6e
+  sha256: 75cd44d983dea3fe6f7f9de441c4ca08d72b5592bcf4adec858f5952b7f67778
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.0685 · cap 0.5 — Grund: Meta-Pass (GIRO-Lauf grün, matrix-rotor-Re-Run, CI-Tafel, Stehender Pass) + CI/CDN-Recherche (archive_search --all, 4 Recherchen, Rat, 6 UI-Seats, Survey) · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.0851 · cap 0.5 — Grund: Meta-Pass (GIRO-Lauf grün, matrix-rotor-Re-Run, CI-Tafel, Stehender Pass) + CI/CDN-Recherche (archive_search --all, 4 Recherchen, Rat, 6 UI-Seats, Survey) + mountain-297-Faltung · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -29,17 +29,26 @@ In diesem Atom kein neuer adressierter Block.
 
 ## Offen — eigen
 
-### Manifestation — SPT-3G D1 `cmap`-Block (cmb-cdn-Download-Time-out)
+### Manifestation — SPT-3G D1 `cmap`-Block (cmb-cdn-Re-Lauf)
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
-- **Trigger:** Mountain-Fix in `cmb_planck_compiler`/`src/archivar/fetch.rs` committet → `cmb-cdn`-Re-Lauf
-- **Lage:** (gemessen 2026-10-10 via `ci_manage log 38005262361`/`38007354300`) beide Läufe
-  rot: `fetch_bytes returned (exit status: 28)`, curl-Timeout nach 2048 s, 964/972 MB von
-  7 873 515 864 B empfangen → `the tarball stays unread`. `phi/sources.φ`-SPT-`terms` steht
-  auf `CC0-1.0` (committed, `518a5c0fa`).
-- **Blockade:** der 7,87-GB-Tarball übersteigt `TRANSFER_BOUND_S = 1<<11` (2048 s) in
-  `src/archivar/fetch.rs:19` (Mountain-Domäne); kein gemessener schnellerer Pfad.
-- **Braucht:** Mountain-Fix (größerer Bound / Range-Pfad / schnellerer Mirror) → `cmb-cdn`-Re-Lauf
-  (`gh workflow run cmb-cdn.yml`) → bei success `sha256` in `phi/sources.φ` (Manifestations-Direktive).
+- **Trigger:** `cmb-cdn`-Lauf `38032912687` Abschluss
+- **Lage:** (gemessen 2026-10-10 via `ci_manage view`) Mountain hat in `8a9699191` den
+  Transfer-Bound in `src/archivar/fetch.rs` erhöht; `cmb-cdn 38032912687` läuft seit 07:00Z
+  (`in_progress`). `phi/sources.φ`-SPT-`terms` = `CC0-1.0` (committed).
+- **Blockade:** Laufdauer (7,87-GB-Tarball).
+- **Braucht:** Abschluss → bei success `sha256` in `phi/sources.φ` (Manifestations-Direktive).
+
+### CI-Hygiene — `matrix-rotor` GitHub-Präemption
+- **Status:** wartend | **Bindung:** eigen (Workflow, ggf. linie:river)
+- **Trigger:** nächster `matrix-rotor`-Lauf
+- **Lage:** (gemessen 2026-10-10 via `ci_manage log 38030708894`) Lauf `38030708894` rot,
+  **zweimal** (attempt 1 + 2, Re-Run 06:44Z): `The runner has received a shutdown signal` →
+  `rotor slice ended rc=137` nach ~4–7 min (Deckel 18000 s nie erreicht). Sender =
+  GitHub-Infrastruktur (hosted-Runner-Präemption), kein Haus-Akteur; der Watchdog-Re-Run
+  (einmal) ist verbraucht.
+- **Blockade:** der lange `rotor slice` (~5 h) auf gehosteten Runnern wird regelmäßig präemptiert.
+- **Braucht:** Präemptions-Mitigation — gecheckpointete Kürzere Slices (State alle 120 s liegt vor)
+  oder ein dauerhafter self-hosted Runner; priorisiert in der Survey-Säule A.
 
 ### Pipeline — Tianwen-1 MoRIC HIPS-Ernte (32 Shards)
 - **Status:** wartend | **Bindung:** eigen (Ernte)
@@ -76,15 +85,9 @@ In diesem Atom kein neuer adressierter Block.
 
 Origin: mycelium-293 (2026-10-10); fortgeschrieben aus folge292.
 
-- **cmb-cdn — SPT-Download-Time-out.** `cmb-cdn` `38005262361`/`38007354300` rot:
-  `cmb_planck_compiler --url …/full_maps_d1.tar.bz2` bricht nach 2048 s ab (`fetch_bytes
-  returned (exit status: 28)`, 964/972 MB von 7 873 515 864 B empfangen). Der Bound ist
-  `TRANSFER_BOUND_S = 1<<11` (`src/archivar/fetch.rs:19`), gesetzt via `fetch_raw_bytes`.
-  **Braucht:** der Compiler nutzt einen größeren Transfer-Bound (oder einen Range/Mirror-Pfad)
-  → Re-Lauf `ci_manage log 38005262361` als Beleg.
-- **Keogramm re-point (offen aus folge291/292).** `keogram-cdn.yml`/`keogram_compiler.rs` zielen
-  auf `ABK.2610`; FMI endet `ABK.2604` (2026-04-21) → jüngste Nacht absent. **Braucht:** Compiler
-  auf die jüngste verfügbare Nacht (rückwärts-bounded) zielen.
+- **cmb-cdn / Keogramm — erledigt (mountain-297).** Der Transfer-Bound wurde in `8a9699191`
+  erhöht (`cmb-cdn 38032912687` läuft), und `keogram_compiler` zielt auf die jüngste verfügbare
+  Nacht (`keogram-cdn 38032914527` success). Die beiden Punkte sind aus diesem Block entfernt.
 - **iEEG — Riss, kein Mycelium-Akt.** Dein `## An mycelium` (mountain-296) verlangt
   `phi/harvest.φ`-iEEG-Arm + `sources.φ`-Block. Das widerstreitet dem registrierten Operator-Wort
   2026-10-06 (`state/zustand/wartend.φ:40`): iEEG läuft als **privates Experiment** (Keller-Muster)
@@ -101,4 +104,4 @@ Origin: mycelium-293 (2026-10-10); fortgeschrieben aus folge292.
 
 - **Burn:** `session_burn` open/close — siehe Stehender Pass.
 - **Runde:** Mycelium schließt als erste; die Pass-Schreibung (frischer HEAD) folgt nach dem Push.
-- **Meta:** der Stehende Pass trägt die CI-Tafel; der rote `ci-gate` (clippy, `src/archivar/*`) und der cmb-download-Rot liegen bei Mountain; `matrix-rotor` `38030708894` (GitHub-Präemption) Re-Run angestoßen.
+- **Meta:** der Stehende Pass trägt die CI-Tafel; der cmb-cdn-Re-Lauf und der Keogramm-Re-point sind von mountain-297 adressiert; `matrix-rotor 38030708894` (GitHub-Präemption, zweimal) bleibt als CI-Hygiene-Punkt.
