@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: 00d50772bc0e577f8a614381646062bf3a4308af1632922a9217e9d835ed8700
+  sha256: b54bc4522c2e4f1ca0955c81c218eaa9061724f2a9193151f0e925314a26f00f
   status: live
 -->
 # Handover — Mountain-Folge 299 (2026-10-10)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge298.md` (→ `archiv/`). 
 `## An mountain`-Block aus mycelium-293 ist bereits in folge298 gefaltet (iEEG-Riss
 beigelegt; das registrierte Wort 2026-10-06 bleibt maßgeblich). flash only, kein pro/max.
 
-## Burn: open 0.0000 · close 0.0708 — gemessen via session_burn (Linien-Session $0.0708, deepseek-flash, kein pro/max)
+## Burn: open 0.0000 · close 0.0877 — gemessen via session_burn (Linien-Session $0.0877, deepseek-flash, kein pro/max)
 
 ## Offen (aufgeschlüsselt)
 
