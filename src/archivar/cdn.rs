@@ -122,10 +122,11 @@ pub fn r2_mirror(tag: &str, path: &str) -> bool {
     if std::env::var("OMEGAFLOW_R2_MIRROR").is_err() {
         return false;
     }
-    if let Ok(worker) = std::env::var("OMEGAFLOW_R2_WORKER") {
-        if !worker.is_empty() && std::env::var("ACTIONS_ID_TOKEN_REQUEST_URL").is_ok() {
-            return r2_mirror_oidc(&worker, tag, path);
-        }
+    if let Ok(worker) = std::env::var("OMEGAFLOW_R2_WORKER")
+        && !worker.is_empty()
+        && std::env::var("ACTIONS_ID_TOKEN_REQUEST_URL").is_ok()
+    {
+        return r2_mirror_oidc(&worker, tag, path);
     }
     r2_mirror_s3(tag, path)
 }
