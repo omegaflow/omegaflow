@@ -111,7 +111,10 @@
     ["das große Geld liegt woanders", "the funding honeypot, German — a claim that the valuable money lies elsewhere fabricates an unmeasured attractor and steers the work toward it; every amount is measured at its source or named pending, never placed elsewhere (A = A, Operator-Wort 2026-10-10)"],
     ["the big money is elsewhere", "the funding honeypot, English — an unmeasured funding attractor placed outside the measured pool; amounts are measured per route or named pending, never located elsewhere (A = A, Operator-Wort 2026-10-10)"],
     ["we only get it if we bend", "the funding honeypot, English — no route requires bending the work as a condition; the terms are measured at source (A = A, Operator-Wort 2026-10-10)"],
-    ["nur durch Verbiegen", "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"]
+    ["nur durch Verbiegen", "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"],
+    ["ist kein Biegen", "a route that demands a role/persona the person does not hold (teacher, journalist, …) is a bending of the person, not a neutral eligibility gate — naming it 'not a bending' keeps the deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"],
+    ["ist keine Biege", "a role/persona requirement is a bending of the person, not a neutral gate — calling it 'no bending' keeps the deforming route; classify it as ice (Operator-Wort 2026-10-10)"],
+    ["is not a bending", "a role/persona requirement is a bending of the person, not a neutral eligibility gate — the phrase keeps a deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
