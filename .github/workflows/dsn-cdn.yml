@@ -7,31 +7,17 @@ name: dsn-cdn
 # der Release-Tag folgt der Quellen-Herkunft. Das Register führt `ttl 60`,
 # darum läuft der Manifestator häufiger als die Tages-Kadenz.
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
-
 on:
   workflow_dispatch:
   schedule:
     - cron: "*/30 * * * *"
 
-permissions:
-  contents: write
-
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
-
 jobs:
   dsn:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Den DSN-Zustand kompilieren und auf das CDN manifestieren
-        run: |
-          cargo run --release -p omegaflow-harvest --bin dsn_compiler -- \
-            --out dsn_snapshot.bin \
-            --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"dsn_compiler","netloc":"eyes.nasa.gov","asset":"dsn_snapshot.bin","args":"--out dsn_snapshot.bin","refresh":true}
+        ]

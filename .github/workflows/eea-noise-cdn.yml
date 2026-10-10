@@ -1,23 +1,14 @@
 name: eea-noise-cdn
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
-
 on:
   workflow_dispatch:
-permissions:
-  contents: write
-env:
-  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
-  RUSTFLAGS: -D warnings
+
 jobs:
   eea-noise:
-    runs-on: ubuntu-latest
-    timeout-minutes: 240
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Compile the EEA noise snapshot and upload to CDN
-        run: |
-          cargo run -p omegaflow-harvest --release --bin eea_noise_compiler -- --ci-mode
+    uses: ./.github/workflows/cdn-manifest.yml
+    secrets: inherit
+    with:
+      harvests: |
+        [
+          {"bin":"eea_noise_compiler","netloc":"eea.europa.eu","asset":"eea_noise_2025.json"}
+        ]
