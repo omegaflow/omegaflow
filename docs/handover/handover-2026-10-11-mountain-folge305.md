@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Nutation IAU 2000A (Schritt 0 komplett), particle-cern Teil B (parse_tree), Vantage-Rest-Bias (b)(c)(d), ci-gate-Clippy-Lints, open-lidar-data-φ-Block, FMHY-7-Verdikte, Asservatenkammer 3/9
   class: handover
   date: 2026-10-11
-  sha256: e232defb99880068c1f9470673fe8a1c189bdd0e8c2131008ecf096406c83ce0
+  sha256: da5957c22decada98357326bbb686a89fcab6d67672c733a6cf1f430feeeb43c
   status: live
 -->
 # Handover — Mountain-Folge 305 (2026-10-11)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-10-mountain-folge304.md` (→ `archiv/`).
 flash only, kein pro/max; vier begrenzte Dispatches (Nutation, particle-cern,
 Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 
-## Burn: open 0.0 · close 0.143 · cap 0.2 — Grund: line session with 7 bounded dispatches (grind-flash/general), deepseek-flash, kein pro/max
+## Burn: open 0.0 · close 0.164 · cap 0.2 — Grund: line session with 7 bounded dispatches (grind-flash/general), deepseek-flash, kein pro/max
 
 ## Offen (aufgeschlüsselt)
 
@@ -42,7 +42,7 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 ### FMHY-Quellen-Verdikt — 7 research-data-Verdikte geschrieben; Rest der Klasse offen
 - **Status:** eigen (Quellen-Verdikt) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Verdikt-Schritt je Teilklasse
-- **Lage:** (gemessen 2026-10-11, `archive_search --verdict`) 3 `pending` (`phi/blocked_sources.φ`: losc.ligo.org, imos.aodn.org.au, SURFRAD/`gml.noaa.gov`) + 4 `decline` Portale (`phi/declined_sources.φ`: emsc.eu registry/katalog, ngmdb.usgs.gov registry/katalog, gadm.org infrastructure, worldclim.org registry/katalog). **Korrektur:** `worldclim.org` ist das Projekt-Portal; die Raster liegen am Datenhost `geodata.ucdavis.edu` (`worldclim_compiler.rs` steht, pending-Registrierung) — Datenklasse (interpolierte Klimatologie) offen benannt.
+- **Lage:** (gemessen 2026-10-11, `archive_search --verdict`) `losc.ligo.org` → `blocked parser-def` gap `gwf-strain` (`phi/blocked_sources.φ`); `imos.aodn.org.au` + NOAA SURFRAD sind die Fünf-Klima-Quellen (Compiler stehen, `phi/sources.φ`-Registrierung pending, siehe Mycelium-φ-Blöcke) — keine Block-Register-Zeile. 4 `decline` Portale (`phi/declined_sources.φ`: emsc.eu registry/katalog, ngmdb.usgs.gov registry/katalog, gadm.org infrastructure, worldclim.org registry/katalog). **Korrektur:** `worldclim.org` ist das Projekt-Portal; die Raster liegen am Datenhost `geodata.ucdavis.edu` (`worldclim_compiler.rs` steht, pending-Registrierung) — Datenklasse (interpolierte Klimatologie) offen benannt.
 - **Blockade:** die drei `pending` sind echte Messwerte ohne Arm/Compiler (LOSC GW-Strain HDF5/GWF; IMOS THREDDS NetCDF ~30 TB; SURFRAD Text/CSV em).
 - **Braucht:** restliche research-data-Klasse (74, 72 NEW) + Erweiterungs-Klasse nach `docs/SOURCE_PORT.md`; je `pending` der Compiler/Arm.
 
@@ -109,6 +109,15 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 - **Blockade:** der Repräsentativpunkt ist eine wissenschaftliche Annahme, keine Messung.
 - **Braucht:** je Zeile den extern gedeckten Repräsentativpunkt — dann `phi/sources.φ`-Zeile (Mountain-Feder), dann Te-Paar-CI-Feed (Mycelium).
 
+### blocked_sources — Klassenträger (3 Mountain parser-def)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Parser-Schritt je Klasse
+- **Lage:** (gemessen 2026-10-11) `phi/blocked_sources.φ` trägt 3 offene `blocked parser-def`-Klassen (die Wartezustände liegen in `state/zustand/wartend.φ`).
+- **Braucht:** je Klasse der fehlende Arm:
+  - `phi/blocked_sources.φ::gap:particle-cern ×1` — ROOT-TTree je Event-Dir
+  - `phi/blocked_sources.φ::gap:pds-ppi-manifest ×1` — Manifest-Arm für die unbounded PDS-PPI-Familie
+  - `phi/blocked_sources.φ::gap:gwf-strain ×1` — GW-Strain-Reader (HDF5/GWF)
+
 ## LOCK
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82):
@@ -139,7 +148,7 @@ zwei Register-Dispatches, flash only.
 - **open-lidar-data-φ-Block geschrieben** (terms/at/ttl/field aus gemessenem License-Link).
 - **FMHY**: 7 research-data-Verdikte (3 pending, 4 declined Portale); worldclim.org als Portal korrigiert.
 - **Asservatenkammer**: 3 von 9 Doks mit erstem Schritt gemessen (Header-sha via `omega_sh sha`).
-- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — die `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon (22 `note`-Essays, kein Code liest ihn, kein offener Eintrag referenzierte einen Token) entfernt — git/Handover tragen ihn. Register jetzt 32 Zeilen: 8 offene Einträge (1 `blocked parser-def` particle-cern, 7 `pending`: BepiColombo-MORE, 4 NSSDC-Request, PDS-PPI-Manifest, LOSC).
+- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon entfernt (kein Code liest ihn, kein offener Eintrag referenzierte einen Token); 5 `pending`-Dubletten der Wartezeilen konsolidiert (BepiColombo-MORE, Voyager, Mariner 10, Viking, Juno stehen schon in `state/zustand/wartend.φ:11/:6/:15/:16/:18`). Register jetzt **3 `blocked parser-def`**: particle-cern, PDS-PPI (gap `pds-ppi-manifest`), LOSC (gap `gwf-strain`).
 **Geteilter Baum:** `src/mathematikerin/pc.rs` wird von einer parallelen Linie uncommittet
 restrukturiert — nicht angefasst/committet. Ebenso fremd uncommittet: `tools/utils/src/bin/archive_search/osf.rs`.
 Eigene committete Pfade: `src/mathematikerin/receiver.rs` · `src/mathematikerin/mci.rs` ·
