@@ -3723,6 +3723,7 @@ const QUERY_MODES: &[&str] = &[
     "googlecse",
     "ckan",
     "cmr",
+    "dryad",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4145,6 +4146,7 @@ pub fn run_lines_max(
         "googlecse" => crate::googlecse::googlecse_lines(query, max),
         "ckan" => crate::ckan::ckan_lines(query, max),
         "cmr" => crate::cmr::cmr_lines(query, max),
+        "dryad" => crate::dryad::dryad_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4372,6 +4374,7 @@ mod tests {
             "googlecse",
             "ckan",
             "cmr",
+            "dryad",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
