@@ -15,7 +15,7 @@ OSI-Lizenz — s. `survey-2026-10-10-github-ci-cdn-optimierung.md`.)
 ## Der Runner (gemessen 2026-10-05, `state/zustand/ereignisse.φ:81058`)
 
 - Registriert als **`t420`**, Host `johannes-ThinkPad-T420` (2011er ThinkPad), Linux Mint 22.3.
-- Labels `self-hosted, Linux, X64`; GitHub-Runner **v2.337.0** unter `/home/actions/actions-runner`.
+- Labels `self-hosted, Linux, X64`; GitHub-Runner **v2.337.0** unter dem Home des `actions`-Nutzers (`~/actions-runner`).
 - Nutzer **`actions`**, **ohne sudo**; systemd `actions.runner.omegaflow-omegaflow.t420.service`.
 - Sleep/Suspend/Hibernate **maskiert**, Lid-close ignoriert → dauerhaft an.
 - Bereits gedrosselt: `Nice=10`, `CPUWeight=20`, `IOWeight=20` (systemd, soft/fair-share).

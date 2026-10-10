@@ -4355,6 +4355,14 @@ quantity nexrad_level2_ref nexrad_level2_ref_dbz inverse-square scale dbz 86400 
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/vmf.geo.tuwien.ac.at/vmf3_site.bin
+terms CC-BY-4.0 https://vmf.geo.tuwien.ac.at/terms.html
+format vmf3
+origin https://vmf.geo.tuwien.ac.at/trop_products/VLBI/VMF3/VMF3_OP/daily/2026/2026002.vmf3_r
+compiler tools/harvest/src/bin/vmf3_compiler.rs
+at earth
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/vso.stanford.edu/iris.bin
 terms free-open https://iris.lmsal.com/
 format iris
@@ -21918,6 +21926,14 @@ format reference
 origin https://isla.esac.esa.int
 ttl 31536000
 
+url https://github.com/omegaflow/sources/releases/download/itrf.ign.fr/sinex.bin
+terms unknown https://itrf.ign.fr/en/solutions/ITRF2020
+format sinex
+origin https://itrf.ign.fr/ftp/pub/itrf/itrf2020/ITRF2020-IVS-TRF.SSC
+compiler tools/harvest/src/bin/itrf_sinex_compiler.rs
+at earth
+ttl 31536000
+
 url https://github.com/omegaflow/sources/releases/download/jeodpp.jrc.ec.europa.eu/ghsl_built_s.bin
 terms CC-BY-4.0 https://jeodpp.jrc.ec.europa.eu/
 format ghsl_built_s
@@ -31177,6 +31193,14 @@ terms PD https://www.census.gov/
 origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
 compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/llr.bin
+terms CC-BY-4.0 https://zenodo.org/records/7818557
+format llr
+origin https://zenodo.org/api/records/7818557/files/APOLLO_2006_2020.crd/content
+compiler tools/harvest/src/bin/llr_compiler.rs
+at moon
 no-cadence
 
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
