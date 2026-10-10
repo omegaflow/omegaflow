@@ -3,7 +3,7 @@
   session: River-Folge 174
   class: handover
   date: 2026-10-10
-  sha256: 7d5b892333844809366e7a0a2079ad639dc0691adcc3570e7fe627d2fa071d5d
+  sha256: 2096a37fb70f17ed422ea3c3ed52a2cd6a12462627184f120448f935a7f9f090
   status: live
 -->
 # Handover — River-Folge 174 (2026-10-10)
@@ -33,6 +33,7 @@ Wort | Datum | Quelle
 „beides" | 2026-10-10 | Operator (Session, River 170) — (1) die zwei fremden ci-gate-Roten heilen (`observer.rs`-Clippy-Lints, `eigene-ephemeride.md`-see-also) und (2) die `observer`→`receiver`-Frage als Rat-Frage aufsetzen; dazu den Audit „wo wurde der Observer-Bias wieder eingeschleust"
 „C (Skalenspektrum je Paar) ist der nächste begrenzte Schritt — Architekturfrage → Linse der fünf Stimmen, bevor gebaut; danach D (Summary-Graph/PCMCI, Runge 2105.10381/1702.07077). Die Seats: B ohne Skalenannotation wäre die stille Fabrikation. bitte --all rat und max roster" | 2026-10-10 | Operator (Session, River 172) — C vor dem Bau durch die fünf Stimmen + Max-Roster; `--all`-Recherche voran
 „Nächster Schritt: D2 durch die fünf Stimmen (Rat), dann Skeleton/MCI bauen. bitte --all max roster und rat" | 2026-10-10 | Operator (Session, River 172) — D2 (Summary-Graph/PCMCI) durch Rat + Max-Roster, `--all` voran
+„bitte --all max roster und rat" | 2026-10-10 | Operator (Session, River 174) — die Window-Graph-CI-Verdrahtung und die Panel-Skala Δ (D2-Rat-Verdikt Punkt 5) durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster
 
 Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 `state/operator-gespraeche/2026-10-09-river.md`. Fortgeschrieben aus
