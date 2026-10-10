@@ -14,7 +14,7 @@ env:
   RUSTFLAGS: -D warnings
 jobs:
   dmsp16-ssj:
-    runs-on: [self-hosted, Linux]
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
