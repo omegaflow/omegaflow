@@ -54,7 +54,7 @@ jobs:
     - if: matrix.shard == 1
       run: cargo run -q -p omegaflow-register --release --bin cdn_reconcile -- --fail
     - if: matrix.shard == 1
-      run: node --test static/presence_frame.test.mjs static/sensorium.test.mjs static/radiator.test.mjs static/verdicts.test.mjs static/constants.test.mjs static/color_lut.test.mjs
+      run: node --test static/presence_frame.test.mjs static/sensorium.test.mjs static/radiator.test.mjs static/verdicts.test.mjs static/constants.test.mjs static/color_lut.test.mjs workers/r2-verifier/test/verify.test.mjs
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
