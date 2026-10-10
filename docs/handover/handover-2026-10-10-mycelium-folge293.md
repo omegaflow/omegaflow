@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 338bb27cb551b41d69693b922a1ccfa4c31831f2b66a18f83e51c2b70ec98597
+  sha256: 380329995b4eb4d42618355f18b0b510f3d5614f11fec33d92e9e97cfee21846
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.1077 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 7 Recherchen, Rat, 6 UI-Seats, Survey A–G) + mountain-297-Faltung · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.1491 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 7 Recherchen, Rat, 6 UI-Seats, Survey A–G) + Workflow-Hygiene-Schluss (`b1b2bd37f`) + Storage-/Azure-Messung · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -70,17 +70,39 @@ In diesem Atom kein neuer adressierter Block.
 - **Status:** eigen (Umsetzung) | **Bindung:** linie:mycelium (Träger) · Teile linie:mountain/river
 - **Trigger:** nächste Dispatch-Session dieser Linie
 - **Lage:** (gemessen 2026-10-10 via `archive_search --all` + 7 Recherchen + Rat + 6 UI-Seats)
-  Survey `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md` (sha `95e55714…`),
+  Survey `docs/surveys/survey-2026-10-10-github-ci-cdn-optimierung.md` (sha `e1b4ab12…`),
   Säulen A–D (Runner/Tests · CDN · Agent↔GitHub/OIDC · Free-GPU/AI) + E–G (CPU-Runs · MCP · APIs);
   Runde `state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`. Konvergenz: R2/OIDC,
   Workflow-Konsolidierung, nextest+Built-Reuse+Cache-in-R2, GPU nur für GPU-Last. Riss:
   AI-in-CI (nur self-hosted vs. private Cloud-GPU).
 - **Blockade:** 6 Maßnahmen, teils große Baum-Arbeit (446 Workflows); je eigener Dispatch.
 - **Braucht:** die 6 Maßnahmen je als **eigener, begrenzter Dispatch** (ein Schritt je Atom),
-  flash-first: (1) `workflow_call`-Konsolidierung · (2) Lauf-Hygiene (`concurrency`/`paths`/
-  `timeout-minutes`/Retention) · (3) nextest-Sharding auf `ubuntu-24.04-arm` + rust-cache/sccache ·
-  (4) R2-CDN (`operator-gebunden`: Bucket/Key = Operator-Wort) · (5) OIDC+R2-Worker-Verifier +
-  `external-state`-Rate-Zeile · (6) Free-GPU-Probe (Modal/Beam) + self-hosted LLM — `pending`, hinten.
+  flash-first: (1) `workflow_call`-Konsolidierung · (2) Lauf-Hygiene — **geschlossen `b1b2bd37f`**
+  (16 Einzel-Job-Workflows nachgezogen; Matrix-Workflows job-scoped) · (3) nextest-Sharding auf
+  `ubuntu-24.04-arm` + rust-cache/sccache · (4) R2-CDN (`operator-gebunden`: Bucket/Key = Operator-Wort;
+  **10 GB frei = Hot-Tier, der 1,76-TB-Bulk bleibt auf GitHub-Release-Assets**, s. Storage-Punkt) ·
+  (5) OIDC+R2-Worker-Verifier + `external-state`-Rate-Zeile · (6) Free-GPU-Probe (Modal/Beam) +
+  self-hosted LLM — `pending`, hinten.
+
+### Speicher — 1,76 TB Bulk vs. R2-10-GB
+- **Status:** eigen (Dokumentation/Architektur) | **Bindung:** linie:mycelium
+- **Trigger:** Entlastung/Rebalancing nötig
+- **Lage:** (gemessen 2026-10-10 via GitHub-API) `omegaflow/sources` = **344 Releases / 1 763 GB**;
+  Release-Assets haben kein Gesamt-/Bandbreitenlimit → der Bulk bleibt **$0** auf GitHub. R2 **10 GB
+  frei** trägt nur Manifeste/Indizes (Hot-Tier). Voller S3-Store: R2 ≈$26/mo · R2-IA ≈$17/mo · B2 ≈$12/mo.
+- **Blockade:** keine.
+- **Braucht:** Architektur-Wort, ob R2 überhaupt als Hot-Tier kommt (sonst ganz weglassen) — in der
+  Survey-Säule B dokumentiert.
+
+### Zweite CI-Lane — Azure Pipelines OSS
+- **Status:** operator-gebunden (nur der Aktivierungs-Akt) | **Bindung:** linie:mycelium (Vorbereitung)
+- **Trigger:** Operator-Wort zur Azure-DevOps-Org-/App-Install
+- **Lage:** (gemessen 2026-10-10 via `--exa`/`--linkup`) OSS-Grant **bestätigt**: 10 gratis
+  Microsoft-hosted Parallel-Jobs + unbegrenzte Minuten; der 2021-Wechsel betraf private Projekte.
+  `ci-gate`-Backlog = Runner-Durchsatz → zweite Lane ist der eigentliche Fix.
+- **Blockade:** Azure-DevOps-Org + Azure-Pipelines-GitHub-App = **Akt an Dritten**.
+- **Braucht:** Operator-Wort (`/consent`) für Org + App-Install; danach `azure-pipelines.yml` (Entwurf
+  liegt als nächster Dispatch-Schritt) + Lane-A/B-Messung.
 
 ### MCP — lokale no-leak-Server (Autonomie-Kandidat)
 - **Status:** eigen | **Bindung:** linie:mycelium

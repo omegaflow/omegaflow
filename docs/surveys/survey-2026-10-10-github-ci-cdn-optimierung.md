@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: 95e55714930b7241243b97b77bf459da544b0eabdf6822d8c94dcbfba65f2362
+  sha256: e1b4ab1243e6e31604afd73e8dfb45da49411a0eb73cb06157f79fe09c7ed904
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)
@@ -79,6 +79,14 @@ lokale deterministische Checks · „mehr Cloud-Komfort" → ein CDN, ein Schrei
   Git LFS (10 GB metered), `upload-artifact` (≤90 d).
 - **Optimierung:** content-hash-Dateinamen (`<sha256>.bin`), immutable `Cache-Control`, kleines
   mutables `manifest.json` als atomarer Umschaltpunkt (Rollback), HTTP-Range.
+- **1,76 TB — die Speicherfrage (gemessen 2026-10-10):** `omegaflow/sources` trägt **344 Releases /
+  ~1 763 GB** (GitHub-API-Summe der Asset-Größen; `per_page=100` × 4 Seiten). Release-Assets haben
+  **kein Gesamtlimit und kein Bandbreitenlimit** (nur ≤1000 Assets/Release, je <2 GiB). Der **Bulk
+  bleibt dort ($0)** — das ist der deklarierte CDN-Pfad, NICHT R2. R2s **10 GB frei** ist ein
+  **Hot-Tier** für kleine Manifeste/Indizes, nicht für 1,76 TB. Wer einen echten S3-Store aller
+  1,76 TB will: **R2 Standard ≈ $26/mo** (1 741 GB × $0.015), **R2 IA ≈ $17/mo**, **Backblaze B2
+  ≈ $12/mo** (1,7 TB × $6.95/TB, Egress via Cloudflare frei). Zenodo/figshare nur für kuratierte
+  DOI-Releases (50/20 GB) — kein Bulk.
 
 ## Säule C — opencode ↔ GitHub / CI / CDN (gemessen)
 
@@ -114,8 +122,11 @@ lokale deterministische Checks · „mehr Cloud-Komfort" → ein CDN, ein Schrei
 
 - **GitHub standard x64 + `ubuntu-24.04-arm`** bleiben gratis+unbegrenzt für public (Baseline).
   larger x64/arm64 **immer kostenpflichtig** (x64 4-core $0.012/min, arm64 4-core $0.008/min).
-- **Azure Pipelines** — **unbegrenzte Minuten + 10 parallele Jobs gratis für OSS** (Kandidat für
-  zweite Lane; ein 2026-Alters-Hinweis auf die OSS-Grant nicht gemessen → `unverified`).
+- **Azure Pipelines (bestätigt 2026-10-10):** **10 gratis Microsoft-hosted Parallel-Jobs +
+  unbegrenzte Minuten für OSS** (`github.com/apps/azure-pipelines`; Microsoft-Blog 2018). Der
+  2021-Grant-Wechsel betraf **private** Projekte, nicht OSS — der OSS-Grant steht (kein gemessener
+  2026-Alters-Hinweis). Aktivierung = **Azure-DevOps-Org + Azure-Pipelines-GitHub-App-Install** =
+  Operator-Akt (nicht autonom); YAML + Grant-Nachweis = autonom vorbereitbar.
 - **Blacksmith OSS-Runner** — 3 000 gratis 2-vCPU-min/mo + OSS-Programm; schnellerer Single-Core.
 - **CircleCI OSS** — 400 000 Credits/mo (~80 000 min, OSI-Lizenz) — größter freier Minuten-Pool.
 - **Ubicloud** (OSS-Cloud) — 1 250 gratis min/mo, dann $0.00125/min, x64 **und** arm64.
@@ -188,7 +199,11 @@ Konsolidierung · nextest+Built-Reuse+Cache-in-R2 · GPU nur für GPU-Last. **Di
 1. **Workflow-Konsolidierung** — kanonische Compiler-/CDN-`workflow_call`s, die 446 `*-cdn.yml`
    werden dünne Aufrufer; Messung: Workflow-Zahl + Diff. Status `eigen` (Mountain/River/Mycelium).
 2. **Lauf-Hygiene** — `concurrency`+`cancel-in-progress`, `paths`-Filter, `timeout-minutes`,
-   Retention 90 d. Status `eigen` (River).
+   Retention 90 d. Status `eigen` (River). **Weitgehend geschlossen (gemessen 2026-10-10):**
+   436/446 Workflows trugen bereits `concurrency`; `ci-gate` trägt `paths` + per-SHA-`concurrency`
+   + `timeout-minutes: 30`; die verbleibenden 16 Einzel-Job-Workflows wurden geschlossen
+   (`b1b2bd37f`, Matrix-Workflows bleiben job-scoped). Der ci-gate-**Backlog** ist damit
+   **Runner-Durchsatz**, nicht fehlende Hygiene → die zweite Lane (Azure) ist der eigentliche Fix.
 3. **Test-Durchsatz** — `nextest archive` + `--partition` auf `ubuntu-24.04-arm` + rust-cache/sccache;
    Messung: 3,5 h → Partition-Wall-Clock. Status `eigen`.
 4. **CDN: R2** — Cloudflare R2 als ein Ziel, S3-API-Upload nur im `--ci-mode`, Release-Asset-Spiegel
