@@ -154,6 +154,31 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P9.1** `phi/sources.φ`-Descriptor-Direktiven je Quelle (Mountain) + Parse (River).
 - **P9.2** Der Record bleibt das *Gesicht* (26×f64) — die Zahl **im** Record wird zur deklarierten
   Kanalzahl; `color_index`/`force_type`-Semantik neu binden.
+  - **Rat-Verdikt 2026-10-10 (fünf Stimmen, einstimmig; UI-Frontier konvergent —
+    `state/stimmen/2026-10-10-river-p92-rat.md`):** CAP und n leben **nicht** im Record —
+    sie sind Frame-/Registry-Eigenschaft und liegen im Kopf (`n`, `offsets`, `schema_hash`,
+    P3.1) und im Manifest. **Kein neuer Slot.** Der Record bleibt 26×f64.
+  - **Nur der Kanalslot wird umgewidmet:** vom „Kanal-Index aus der festen 9er-Liste" zum
+    **Kanal-Griff** — ein Index in die deklarierte Registry, über das Manifest auf die
+    **Identität (Hash)** auflösend. Das Feld heißt künftig `channel_ref`, nicht `force_type`
+    (Name = Implementation), die Bit-Breite/Lage bleibt. `kernel_id` (Kernel-Achse) und
+    `color_index` (Empfänger-Eigenfarbe/Wellenlänge) bleiben, was sie sind.
+  - **GPU:** der Zweig-Dispatch läuft über das **Operator-Enum** (P4.2), nie über die
+    lebendige Kanalzahl n; `idx ≥ n` wird maskiert (Beitrag 0), nicht undefiniert. Die
+    Deskriptortabelle (CAP-groß, Strides konstant) liegt im Storage-Buffer, n als
+    Launch-Parameter.
+  - **Die 255-Marke wandert auf den Presence-Bit:** `PRESENCE_FLAG_QUANTITY` (Wert 16,
+    `types.rs:402`) trägt die Quantity-Zeile; der Leser liest den Bit, nie die Zahl 255 —
+    so bleibt 255 ein legaler Kanal-Griff (Riss 2 des Rates).
+  - **Getragene Risse (nicht geglättet):** (1) ein u64-Hash passt nicht verlustfrei in f64
+    (53 Bit Mantisse) — der Hash lebt **nur** im Manifest, der Record trägt den Griff;
+    (2) positionelle/handle-Bindung → Ordinal-/Epochen-Drift: Manifest **append-only**,
+    Indizes nie wiederverwenden (Tombstones), `schema_hash`-Missverhältnis = Verweigerung
+    (`unresolved`, 0 honored), nie Default; (3) offene Deskriptor-Semantik gegen das
+    geschlossene Operator-Enum — ein neuer Operatortyp erzwingt weiterhin ein Shader-Update.
+  - **Baut folgt:** `force_type`→`channel_ref`-Rename (Wire + JS/WGSL, layout-neutral) und
+    die 255→Presence-Bit-Umstellung. Beides ist eine Wire-Kontrakt-Änderung → vor dem Code
+    ein Operator-Wort (der Rat trägt das Verdikt, das Wort gibt den Bau frei).
 
 ### P10 — `phi`-Register: `force` → Quantity | Mechanism | Medium (Register-Physik)
 **Operator-Wort 2026-10-09 („alle Blöcke müssen korrekt sein, dafür haben wir die Wissenschaft"): die Migration läuft; jeder `field`-Block wird wissenschaftlich geprüft.** P10.1 ist gebaut und gemessen (`source_physics_lint`, 2026-10-09/10): `phi/sources.φ` = **7989 `field` · 24 `quantity` · 90 Geometrie-Kandidaten**; `em × inverse-square: 6002` (~75 %). P10.2a unten ist das **verbindliche Zielschema**; der Parser-Arm dafür (River) ist der nächste Bau, dann die Zeilen (Mountain).
