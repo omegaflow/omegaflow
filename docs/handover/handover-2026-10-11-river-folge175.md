@@ -3,7 +3,7 @@
   session: River-Folge 175
   class: handover
   date: 2026-10-11
-  sha256: b839dad158e96d9807c6d5fcb9a85b11bb2d4674699fe5c25228a138e07aa64e
+  sha256: b554f0c31320dd7f05ec70c60c06a142db502d0028809f202ed30fd7acdaea5b
   status: live
 -->
 # Handover — River-Folge 175 (2026-10-11)
@@ -66,10 +66,10 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 ### panel-vlies — Lauf-Verifikation
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der dispatchte `field-te-query`-Lauf (Job `panel-vlies`, Artefakt `field-te-panel-vlies.txt`).
-- **Lage:** (gemessen 2026-10-11, River 175) Die Verdrahtung ist gebaut: Deskriptor `vlies_panel.te`, `parse_descriptor` Form `panel`, `run_summary_panel` Δ-Herkunft + `n_min`-Kanten, Job `panel-vlies`; `cargo check` (core) und `cargo build -p omegaflow-measure --bin field_te_query` sind grün. Der Lauf ist nicht abgewartet.
+- **Trigger:** der dispatchte `field-te-query`-Lauf `38091393819` (Job `panel-vlies`, Artefakt `field-te-panel-vlies.txt`); `unit`-Job (`cargo test --release -p omegaflow-measure --bin field_te_query`) verifiziert die Panel-Tests.
+- **Lage:** (gemessen 2026-10-11, River 175) Die Verdrahtung ist gebaut: Deskriptor `vlies_panel.te`, `parse_descriptor` Form `panel`, `run_summary_panel` Δ-Herkunft + `n_min`-Kanten, Job `panel-vlies`; `cargo check` (core) und `cargo build -p omegaflow-measure --bin field_te_query` sind grün. Lauf `38091393819` dispatcht, nicht abgewartet.
 - **Blockade:** kein lokaler Testlauf erlaubt (Batterie läuft in CI).
-- **Braucht:** `ci_manage log <run-id> --all | archive_search <kw> --root /tmp` bzw. Artefakt `field-te-panel-vlies.txt` lesen; Δ-Herkunft und die `pending`/`link`-Zeilen prüfen.
+- **Braucht:** `ci_manage log 38091393819 --all` bzw. Artefakt `field-te-panel-vlies.txt` lesen; Δ-Herkunft und die `pending`/`link`-Zeilen prüfen.
 
 ### window-graph — die zwei Ohren + Summary-Graph
 - **Status:** eigen | **Bindung:** eigen
