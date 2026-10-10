@@ -1,9 +1,9 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, FluxKind, Medium, PdeType, QuantityRole, Regime, TransportOp,
-    channel_ref_of_descriptor, conserved_for_quantity, conserved_name, descriptor_from_axes,
-    unit_token,
+    ChannelDescriptor, Conserved, FluxKind, Interaction, Medium, PdeType, QuantityRole, Regime,
+    TransportOp, channel_ref_of_descriptor, conserved_for_quantity, conserved_name,
+    descriptor_from_axes, interaction_of_axes, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -1406,7 +1406,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         }
                     },
                 };
-                let (role, role_idx) = match interaction_or_role(&parts, 6) {
+                let (role, role_idx, declared_interaction) = match interaction_or_role(&parts, 6) {
                     Ok(resolved) => resolved,
                     Err(reason) => {
                         report_anomaly(
@@ -1506,6 +1506,22 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
+                if let Some(declared) = declared_interaction {
+                    let derived = interaction_of_axes(desc.op);
+                    if derived != Some(declared) {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} declares interaction {} but the mechanism derives {} — the interaction is derived over the mechanisms FK, never declared",
+                                parts[1],
+                                declared.name(),
+                                derived.map(|d| d.name()).unwrap_or("none")
+                            ),
+                        );
+                        continue;
+                    }
+                }
                 let f = match channel_ref_of_descriptor(&desc) {
                     Some(f) => f,
                     None => {
@@ -2453,25 +2469,33 @@ fn parse_wavelength_range_m(token: &str) -> Option<(f64, f64)> {
     }
 }
 
-fn interaction_or_role<'a>(parts: &[&'a str], idx: usize) -> Result<(&'a str, usize), String> {
+fn interaction_or_role<'a>(
+    parts: &[&'a str],
+    idx: usize,
+) -> Result<(&'a str, usize, Option<Interaction>), String> {
     if QuantityRole::parse(parts[idx]).is_some() {
-        return Ok((parts[idx], idx));
+        return Ok((parts[idx], idx, None));
     }
-    match parts[idx] {
-        "gravity" | "em" => match parts.get(idx + 1) {
-            Some(role) if QuantityRole::parse(*role).is_some() => Ok((*role, idx + 1)),
-            Some(other) => Err(format!(
-                "carries \"{}\" where a role (primary/derived/geometry/source-parameter) is expected after the interaction token",
-                other
-            )),
-            None => Err(format!(
-                "carries interaction \"{}\" with no role after it",
+    let interaction = match Interaction::parse(parts[idx]) {
+        Some(i) => i,
+        None => {
+            return Err(format!(
+                "carries \"{}\" where an interaction (gravity/em) or a role is expected",
                 parts[idx]
-            )),
-        },
-        other => Err(format!(
-            "carries \"{}\" where an interaction (gravity/em) or a role is expected",
+            ));
+        }
+    };
+    match parts.get(idx + 1) {
+        Some(role) if QuantityRole::parse(*role).is_some() => {
+            Ok((*role, idx + 1, Some(interaction)))
+        }
+        Some(other) => Err(format!(
+            "carries \"{}\" where a role (primary/derived/geometry/source-parameter) is expected after the interaction token",
             other
+        )),
+        None => Err(format!(
+            "carries interaction \"{}\" with no role after it",
+            parts[idx]
         )),
     }
 }
@@ -2633,6 +2657,29 @@ mod tests {
                 .iter()
                 .all(|e| !matches!(e, Extract::Field(_))),
             "a token that is neither an interaction (gravity/em) nor a role is refused, never defaulted"
+        );
+    }
+
+    #[test]
+    fn p10_2a_declared_interaction_must_match_the_derived_one() {
+        let contradiction = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum gravity primary V/m 60.0 inverse-square\n";
+        let refused = parse_sources(contradiction);
+        assert!(
+            refused[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "a declared interaction contradicting the mechanism is refused, never smoothed"
+        );
+
+        let matching = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let flows = parse_sources(matching);
+        assert!(
+            flows[0]
+                .extracts
+                .iter()
+                .any(|e| matches!(e, Extract::Field(_))),
+            "the derived interaction as a declared token is admitted"
         );
     }
 

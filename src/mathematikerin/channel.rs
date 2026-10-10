@@ -751,79 +751,138 @@ pub fn descriptor_from_axes(
     ))
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(u8)]
+pub enum Interaction {
+    Gravity = 0,
+    Em = 1,
+}
+
+impl Interaction {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "gravity" => Some(Interaction::Gravity),
+            "em" => Some(Interaction::Em),
+            _ => None,
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            Interaction::Gravity => "gravity",
+            Interaction::Em => "em",
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Mechanism {
+    pub tag: &'static str,
+    pub operator: TransportOp,
+    pub pde_type: PdeType,
+    pub boundary: Boundary,
+    pub interaction: Option<Interaction>,
+}
+
+pub const MECHANISMS: [Mechanism; 9] = [
+    Mechanism {
+        tag: "em",
+        operator: TransportOp::Maxwell,
+        pde_type: PdeType::Mixed,
+        boundary: Boundary::None,
+        interaction: Some(Interaction::Em),
+    },
+    Mechanism {
+        tag: "electric",
+        operator: TransportOp::Maxwell,
+        pde_type: PdeType::Elliptic,
+        boundary: Boundary::None,
+        interaction: Some(Interaction::Em),
+    },
+    Mechanism {
+        tag: "gravity",
+        operator: TransportOp::Poisson,
+        pde_type: PdeType::Elliptic,
+        boundary: Boundary::None,
+        interaction: Some(Interaction::Gravity),
+    },
+    Mechanism {
+        tag: "acoustic",
+        operator: TransportOp::Wave,
+        pde_type: PdeType::Hyperbolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "seismic-body",
+        operator: TransportOp::Wave,
+        pde_type: PdeType::Hyperbolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "seismic-surface",
+        operator: TransportOp::Wave,
+        pde_type: PdeType::Hyperbolic,
+        boundary: Boundary::FreeSurface,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "thermal",
+        operator: TransportOp::Flux(FluxKind::Fourier),
+        pde_type: PdeType::Parabolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "diffusion",
+        operator: TransportOp::Flux(FluxKind::Fick),
+        pde_type: PdeType::Parabolic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+    Mechanism {
+        tag: "advective",
+        operator: TransportOp::Advective,
+        pde_type: PdeType::Advective,
+        boundary: Boundary::None,
+        interaction: None,
+    },
+];
+
+pub fn mechanism_of(tag: &str) -> Option<&'static Mechanism> {
+    MECHANISMS.iter().find(|m| m.tag == tag)
+}
+
+pub fn interaction_of_axes(op: TransportOp) -> Option<Interaction> {
+    match op {
+        TransportOp::Maxwell => Some(Interaction::Em),
+        TransportOp::Poisson => Some(Interaction::Gravity),
+        TransportOp::Flux(_) | TransportOp::Advective | TransportOp::Wave => None,
+    }
+}
+
 pub fn live_channel_hash_of(d: &ChannelDescriptor) -> Option<u64> {
     let h = d.hash();
     live_channel_registry().descriptor(h).map(|_| h)
 }
 
+fn force_quantity(name: &str) -> Option<(Conserved, &'static str)> {
+    match name {
+        "em" | "electric" => Some((Conserved::Energy, "V/m")),
+        "gravity" => Some((Conserved::Mass, "m/s^2")),
+        "acoustic" | "seismic-body" | "seismic-surface" => Some((Conserved::Energy, "Pa")),
+        "thermal" => Some((Conserved::Energy, "K")),
+        "diffusion" => Some((Conserved::Mass, "kg/m^3")),
+        "advective" => Some((Conserved::Mass, "kg/(m^2 s)")),
+        _ => None,
+    }
+}
+
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
-    let (conserved, op, pde_type, boundary, unit) = match name {
-        "em" => (
-            Conserved::Energy,
-            TransportOp::Maxwell,
-            PdeType::Mixed,
-            Boundary::None,
-            "V/m",
-        ),
-        "electric" => (
-            Conserved::Energy,
-            TransportOp::Maxwell,
-            PdeType::Elliptic,
-            Boundary::None,
-            "V/m",
-        ),
-        "gravity" => (
-            Conserved::Mass,
-            TransportOp::Poisson,
-            PdeType::Elliptic,
-            Boundary::None,
-            "m/s^2",
-        ),
-        "acoustic" => (
-            Conserved::Energy,
-            TransportOp::Wave,
-            PdeType::Hyperbolic,
-            Boundary::None,
-            "Pa",
-        ),
-        "seismic-body" => (
-            Conserved::Energy,
-            TransportOp::Wave,
-            PdeType::Hyperbolic,
-            Boundary::None,
-            "Pa",
-        ),
-        "seismic-surface" => (
-            Conserved::Energy,
-            TransportOp::Wave,
-            PdeType::Hyperbolic,
-            Boundary::FreeSurface,
-            "Pa",
-        ),
-        "thermal" => (
-            Conserved::Energy,
-            TransportOp::Flux(FluxKind::Fourier),
-            PdeType::Parabolic,
-            Boundary::None,
-            "K",
-        ),
-        "diffusion" => (
-            Conserved::Mass,
-            TransportOp::Flux(FluxKind::Fick),
-            PdeType::Parabolic,
-            Boundary::None,
-            "kg/m^3",
-        ),
-        "advective" => (
-            Conserved::Mass,
-            TransportOp::Advective,
-            PdeType::Advective,
-            Boundary::None,
-            "kg/(m^2 s)",
-        ),
-        _ => return None,
-    };
-    if !is_admissible(conserved, op, medium) {
+    let (conserved, unit) = force_quantity(name)?;
+    let m = mechanism_of(name)?;
+    if !is_admissible(conserved, m.operator, medium) {
         return None;
     }
     Some(ChannelDescriptor::new(
@@ -831,11 +890,11 @@ pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescrip
             conserved,
             role: QuantityRole::Primary,
         },
-        op,
-        pde_type,
+        m.operator,
+        m.pde_type,
         medium,
         Domain::Unspecified,
-        boundary,
+        m.boundary,
         unit,
     ))
 }
@@ -1889,6 +1948,51 @@ mod tests {
         latch.mark_pending();
         assert_eq!(latch.state, TriState::Pending);
         assert_eq!(latch.observe(false), TriState::Pending);
+    }
+
+    #[test]
+    fn the_mechanism_row_holds_operator_never_conserved() {
+        for m in MECHANISMS.iter() {
+            let derived = interaction_of_axes(m.operator);
+            assert_eq!(
+                m.interaction, derived,
+                "mechanism {} carries an interaction that disagrees with its operator axes",
+                m.tag
+            );
+        }
+    }
+
+    #[test]
+    fn interaction_is_derived_from_the_operator_not_the_reverse() {
+        assert_eq!(
+            interaction_of_axes(TransportOp::Maxwell),
+            Some(Interaction::Em)
+        );
+        assert_eq!(
+            interaction_of_axes(TransportOp::Poisson),
+            Some(Interaction::Gravity)
+        );
+        assert_eq!(interaction_of_axes(TransportOp::Wave), None);
+        assert_eq!(Interaction::parse("em"), Some(Interaction::Em));
+        assert_eq!(Interaction::parse("gravity"), Some(Interaction::Gravity));
+        assert_eq!(Interaction::parse("weak"), None);
+    }
+
+    #[test]
+    fn every_legacy_tag_names_a_mechanism_row() {
+        for ft in 0..9u8 {
+            let name = force_name_of(ft).expect("force name");
+            let m =
+                mechanism_of(name).unwrap_or_else(|| panic!("{name} must name a mechanism row"));
+            let d = descriptor_for_force(name, LIVE_FORCE_MEDIA[ft as usize])
+                .unwrap_or_else(|| panic!("{name} must map"));
+            assert_eq!(
+                d.op, m.operator,
+                "{name} operator comes from the mechanism row"
+            );
+            assert_eq!(d.pde_type, m.pde_type);
+            assert_eq!(d.boundary, m.boundary);
+        }
     }
 
     #[test]
