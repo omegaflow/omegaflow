@@ -34,6 +34,8 @@ mod ensembl;
 mod entrez;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
+#[path = "archive_search/gemini.rs"]
+mod gemini;
 #[path = "archive_search/git.rs"]
 mod git;
 #[path = "archive_search/go.rs"]
@@ -404,6 +406,7 @@ fn main() {
             "--openlibrary" => mode = Mode::Net("openlibrary"),
             "--stackexchange" => mode = Mode::Net("stackexchange"),
             "--sourcegraph" => mode = Mode::Net("sourcegraph"),
+            "--gemini" => mode = Mode::Net("gemini"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--reactome" => mode = Mode::Net("reactome"),
@@ -742,7 +745,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -790,7 +793,10 @@ fn usage() {
         "  --stackexchange Stack Exchange Q&A search (api.stackexchange.com/2.3, site=stackoverflow), keyless; url + title/score/answered/answers/tags"
     );
     eprintln!(
-        "  --sourcegraph Sourcegraph code search (sourcegraph.com/.api/search/stream), keyless; repo/path/line/preview"
+        "  --sourcegraph Sourcegraph code search (sourcegraph.com/.api/search/stream), keyless; repo/path/line/match"
+    );
+    eprintln!(
+        "  --gemini    Google Gemini answer+search (generativelanguage.googleapis.com), GEMINI_API_KEY; answer text + Google-Search grounding sources (model=<id> overrides gemini-flash-latest)"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
