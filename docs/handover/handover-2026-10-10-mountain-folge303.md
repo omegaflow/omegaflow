@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Q(t)-Präzession gebaut (Nutation benannt-absent), ROOT-Sample gemessen, Vantage-Bias (g) geheilt, FMHY-Kandidaten klassifiziert
   class: handover
   date: 2026-10-10
-  sha256: 6f21e37332710e82c30b57e8bcbc461002a9ad62a6983d46f4acc84d76d4696a
+  sha256: 2cc2e41f912b8ab4297271ae637a8a19b977e8eaa45032dd5114768ddb0ff74f
   status: live
 -->
 # Handover — Mountain-Folge 303 (2026-10-10)
@@ -136,6 +136,7 @@ Wort | Datum | Quelle
 „kannst du bitte Operator-Queue (Future): KNMI-/Mindat-Key … wie die keynamen heissen" | 2026-10-10 | Operator (Session, Mountain 303)
 „mindat und knmi sind eingeloggt bitte bereite bis zur Kante vor" | 2026-10-10 | Operator (Session, Mountain 303)
 „sind beide eingetragen" | 2026-10-10 | Operator (Session, Mountain 303)
+„ich bin in mindat eingeloggt bitte prüfe was fehlt" | 2026-10-10 | Operator (Session, Mountain 303)
 
 ## An mycelium
 
@@ -173,7 +174,7 @@ Origin: mountain-303 (2026-10-10).
     - `MINDAT_TOKEN=<token>` — nur falls du die Mineral-Referenz-DB (aktuell Lead, kein Compiler geplant) ernten willst.
   - **Bei Ja:** KNMI-Key gesetzt → ich baue `knmi_compiler.rs`. **Bei Nein:** beide bleiben `pending`, kein Akt.
 - **KNMI — EDR-Scope (2026-10-10, nach Eintrag).** **Lage:** Der Zugang gilt auf der Open-Data-Route; die 10-Minuten-Datei ist NetCDF-4/HDF5 (kein klassischer Reader), und die EDR-API antwortet `403 "Access to this API has been disallowed"` — der Zugang ist nicht für die EDR-API freigeschaltet. **Frage:** Im KNMI-Developer-Portal die EDR-API für den Zugang freischalten („Request an API key" → EDR) oder Zugang mit EDR-Scope? **Bei Ja:** EDR-CoverageJSON-Pfad messbar → Compiler bindet ihn. **Bei Nein:** HDF5-Reader (Mountain).
-- **Mindat — Konto inaktiv (2026-10-10, nach Eintrag).** **Lage:** Der Token wird erkannt, aber das Konto dahinter antwortet `User inactive or deleted` → `blocked account`. **Frage:** Mindat-Konto reaktivieren oder Token aus aktivem Konto? **Bei Ja:** Probe erneut → Routing (Messung vs. `presence-catalog`) entscheiden. **Bei Nein:** `blocked account` bleibt.
+- **Mindat — Konto Level 0 (2026-10-10, nach Eintrag).** **Lage:** Der Token wird erkannt, aber das Konto ist **Level 0** → die API antwortet `User inactive or deleted`. Mindats Anleitung `www.mindat.org/a/how_to_get_my_mindat_api_key` (2026-09-25): API-Zugang erst ab **Level 1**, erreicht über das **Aktivierungs-/API-Formular auf „My Home Page"** (echter Name/Organisation + beabsichtigte Nutzung, nonkommerziell, API-Bezug; Prüfung dauert Tage); nach Freigabe erscheint „Edit My Page" → API-Schlüssel unten. **Frage:** Formular absenden? **Bei Ja:** nach Freigabe Schlüssel in `MINDAT_TOKEN` → Probe + Routing (Messung vs. `presence-catalog`). **Bei Nein:** bleibt `pending` (Level 0).
 
 ## Abschluss
 
