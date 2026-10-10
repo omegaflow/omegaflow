@@ -1,8 +1,8 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, QuantityRole, Regime, channel_ref_of_descriptor,
-    descriptor_from_axes, unit_token,
+    ChannelDescriptor, Conserved, FluxKind, Medium, PdeType, QuantityRole, Regime, TransportOp,
+    channel_ref_of_descriptor, descriptor_from_axes, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -1372,6 +1372,178 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 push_field(&mut cur_extracts, fc);
             }
+            "field"
+                if parts.len() >= 11
+                    && TransportOp::parse(parts[3]).is_some()
+                    && PdeType::parse(parts[4]).is_some()
+                    && Medium::parse(parts[5]).is_some() =>
+            {
+                let op = match TransportOp::parse(parts[3]) {
+                    Some(op) => op,
+                    None => continue,
+                };
+                let conserved = match op {
+                    TransportOp::Maxwell => "energy",
+                    TransportOp::Poisson => "mass",
+                    TransportOp::Wave => "energy",
+                    TransportOp::Advective => "momentum",
+                    TransportOp::Flux(FluxKind::Fick) => "mass",
+                    TransportOp::Flux(FluxKind::Fourier) => "energy",
+                    TransportOp::Flux(FluxKind::Ohm) => "charge",
+                    TransportOp::Flux(FluxKind::NewtonViscous) => "momentum",
+                };
+                let role_idx = if QuantityRole::parse(parts[6]).is_some() {
+                    6
+                } else {
+                    match parts[6] {
+                        "gravity" | "em" => 7,
+                        _ => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "field {} carries \"{}\" where an interaction (gravity/em) or a role is expected",
+                                    parts[1], parts[6]
+                                ),
+                            );
+                            continue;
+                        }
+                    }
+                };
+                let role = match QuantityRole::parse(parts[role_idx]) {
+                    Some(_) => parts[role_idx],
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries \"{}\" where a role (primary/derived/geometry/source-parameter) is expected",
+                                parts[1], parts[role_idx]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let unit_idx = role_idx + 1;
+                let tau_idx = role_idx + 2;
+                if parts.len() < tau_idx + 2 {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!(
+                            "field {} carries no unit/tau/kernel after the role",
+                            parts[1]
+                        ),
+                    );
+                    continue;
+                }
+                let k = match kernel_id_of(parts[parts.len() - 1]) {
+                    Some(k) => k,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries \"{}\" where a kernel is expected",
+                                parts[1],
+                                parts[parts.len() - 1]
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let unit = match unit_token(parts[unit_idx]) {
+                    Some(u) => u,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries an unknown unit \"{}\": {}",
+                                parts[1], parts[unit_idx], line
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let tau: f64 = match parts[tau_idx].parse() {
+                    Ok(v) if v > 0.0 => v,
+                    _ => {
+                        eprintln!(
+                            "field refused at {}: tau absent or not positive (τ-Gate)",
+                            parts[1]
+                        );
+                        continue;
+                    }
+                };
+                let tail = &parts[tau_idx + 1..];
+                let (absorption, advection) = match tail.len() {
+                    1 => (0.0, 0.0),
+                    2 => match tail[0].parse() {
+                        Ok(v) => (v, 0.0),
+                        Err(_) => continue,
+                    },
+                    3 => match (tail[0].parse(), tail[1].parse()) {
+                        (Ok(a), Ok(b)) => (a, b),
+                        _ => continue,
+                    },
+                    _ => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries {} trailing tokens after tau where [abs] [adv] <kernel> is expected",
+                                parts[1],
+                                tail.len()
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let desc = match descriptor_from_axes(
+                    role, conserved, parts[3], parts[4], parts[5], "none", unit,
+                ) {
+                    Ok(d) => d,
+                    Err(reason) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("field {}: {}", parts[1], reason),
+                        );
+                        continue;
+                    }
+                };
+                let f = match channel_ref_of_descriptor(&desc) {
+                    Some(f) => f,
+                    None => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} descriptor ({}/{}/{}/{}/{}/{}) matches no channel — unresolved",
+                                parts[1], role, conserved, parts[3], parts[4], parts[5], unit
+                            ),
+                        );
+                        continue;
+                    }
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[2].to_string(),
+                    band_id: None,
+                    kernel: k,
+                    force: f,
+                    tau,
+                    absorption,
+                    advection,
+                    unit: parts[unit_idx].to_string(),
+                    freq: crate::spectral::SPECTRAL_NO_BAND,
+                    bin_width: crate::spectral::SPECTRAL_NO_BAND,
+                    fold: None,
+                    aperture: Aperture::None,
+                };
+                push_field(&mut cur_extracts, fc);
+            }
             "field" if parts.len() >= 7 => {
                 if parts.len() >= 10 && parts[9] == "where" {
                     eprintln!(
@@ -2371,6 +2543,37 @@ mod tests {
                 .iter()
                 .all(|e| !matches!(e, Extract::Field(_))),
             "no registered channel → the field is refused, never a default"
+        );
+    }
+
+    #[test]
+    fn p10_2a_target_grammar_parses() {
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        let field = sources[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc),
+                _ => None,
+            })
+            .expect("the P10.2a target line is admitted");
+        assert_eq!(field.kernel, 0, "inverse-square is kernel 0");
+        assert_eq!(
+            field.force, 8,
+            "maxwell/elliptic/vacuum resolves to electric"
+        );
+        assert_eq!(field.unit, "V/m");
+
+        let invalid = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz bogus elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let skipped = parse_sources(invalid);
+        assert!(
+            skipped[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_))),
+            "an unknown operator is skipped, never defaulted"
         );
     }
 
