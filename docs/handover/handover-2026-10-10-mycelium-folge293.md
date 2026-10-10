@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: c89759604fe4ce07c3396383e51e2cd253c027069e769b65895718916e50183d
+  sha256: 9025bddd5b28df0126e14f04ea4dab4dd0c8ff8f4291efb5f70a2df672d593cb
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.2672 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 10 Recherchen, Rat Runde 1+2, UI-Roster) + Workflow-Hygiene + cdn-manifest.yml + erster Aufrufer + Azure/R2-Registrierung bis zur Kante · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.2989 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, Recherchen, Rat Runde 1+2, Roster) + Workflow-Hygiene + cdn-manifest.yml + Lizenz-Korrektur (Azure-OSS descoped, self-hosted statt dessen) · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -94,15 +94,17 @@ In diesem Atom kein neuer adressierter Block.
 - **Braucht:** Architektur-Wort, ob R2 überhaupt als Hot-Tier kommt (sonst ganz weglassen) — in der
   Survey-Säule B dokumentiert.
 
-### Zweite CI-Lane — Azure Pipelines OSS
-- **Status:** operator-gebunden (nur der Aktivierungs-Akt) | **Bindung:** linie:mycelium (Vorbereitung)
-- **Trigger:** Operator-Wort zur Azure-DevOps-Org-/App-Install
-- **Lage:** (gemessen 2026-10-10 via `--exa`/`--linkup`) OSS-Grant **bestätigt**: 10 gratis
-  Microsoft-hosted Parallel-Jobs + unbegrenzte Minuten; der 2021-Wechsel betraf private Projekte.
-  `ci-gate`-Backlog = Runner-Durchsatz → zweite Lane ist der eigentliche Fix.
-- **Blockade:** Azure-DevOps-Org + Azure-Pipelines-GitHub-App = **Akt an Dritten**.
-- **Braucht:** Operator-Wort (`/consent`) für Org + App-Install; danach `azure-pipelines.yml` (Entwurf
-  liegt als nächster Dispatch-Schritt) + Lane-A/B-Messung.
+### Zweite CI-Lane — Azure OSS descoped, self-hosted statt dessen
+- **Status:** descoped | **Bindung:** eigen (self-hosted)
+- **Trigger:** erneute Backlog-Messung (Runner-Sättigung)
+- **Lage:** (gemessen 2026-10-10) **Befund:** `foropensource.com` FOS-0014 — Azure-OSS-Programm
+  **discontinued** (2026-07-06, „new public projects cannot be created"); Microsoft Learn nennt es
+  noch (Riss). **Operator-Korrektur:** omegaflow ist **CC BY-NC-SA / PolyForm NC — keine OSI-Lizenz**
+  → alle „open-source"-gated Grants (Azure, CircleCI-OSS, Blacksmith-OSS) greifen nicht.
+- **Blockade:** keine.
+- **Braucht:** statt Azure die **lizenzunabhängige** zweite Lane: **self-hosted Runner** auf eigener
+  Hardware oder einer **Oracle-Always-Free-VM** (2 OCPU/12 GB ARM) — JIT/ephemer, nie ungeprüfte
+  Fork-PRs; Guardrail: ein Required-Check je SHA. Die GitHub-App-Install-Tabs sind damit gegenstandslos.
 
 ### MCP — lokale no-leak-Server (Autonomie-Kandidat)
 - **Status:** eigen | **Bindung:** linie:mycelium
@@ -120,13 +122,14 @@ In diesem Atom kein neuer adressierter Block.
 - **Trigger:** nächste Dispatch-Session dieser Linie
 - **Lage:** (gemessen 2026-10-10 via `archive_search --all` + Rat + UI-Runde; Survey §Rat Runde 2)
   Verdikt: (1) `workflow_call`-Extraktion **nach Identität**; (2) Bulk GitHub-Release-Assets,
-  R2 Hot-Tier `pending`; (3) Azure-Lane, ein Required-Check je SHA; (4) MCP Docker-Gateway;
-  (5) AI-in-CI nur runner-lokal; (6) Sequenz: Duplikat messen → `cdn-manifest.yml` → Azure/MCP.
+  R2 Hot-Tier `pending`; (3) zweite Lane **lizenzunabhängig** (self-hosted; Azure-OSS descoped, s. o.);
+  (4) MCP Docker-Gateway; (5) AI-in-CI nur runner-lokal; (6) Sequenz: Duplikat messen →
+  `cdn-manifest.yml` → self-hosted/MCP.
   Roster GLM 5.3 Flash bestätigt (a–c) + Befund: **Test-Suite-Dedup** (Impact-Analyse) schlägt
   Workflow-Merging zeitlich; Hot-Tier-Eviction (LRU nach Zugriffszeit) jetzt definieren.
-- **Blockade:** keine (bis auf Azure-Aktivierung = Operator).
-- **Braucht:** Schritt 1 autonom — `sgrep`/sha256 der Step-Rümpfe in `.github/workflows`, dann
-  `cdn-manifest.yml` (`on: workflow_call`) + Composite bauen; Azure-Aktivierung s. eigener Punkt.
+- **Blockade:** keine.
+- **Braucht:** Schritt 1 autonom — siehe „Konsolidierung" (`cdn-manifest.yml` gebaut); self-hosted-Lane
+  s. eigener Punkt.
 
 ### Konsolidierung — `cdn-manifest.yml` (Schritt 1 umgesetzt)
 - **Status:** eigen (Fortsetzung) | **Bindung:** linie:mycelium
@@ -157,19 +160,16 @@ Origin: mycelium-293 (2026-10-10); fortgeschrieben aus folge292.
 
 ## Operator-Hand — vorbereitet bis zur Kante (2026-10-10)
 
-Browser-Profil `mycelium-auth`, drei Tabs offen (Operator führt den letzten Klick):
+Der Azure-Weg ist nach der Lizenz-Korrektur **gegenstandslos** (CC BY-NC-SA = keine OSI-Lizenz,
+Azure-OSS discontinued) — die vorbereiteten Azure-Tabs werden **nicht** abgeschlossen. Bleibt:
 
-1. **GitHub-App „Azure Pipelines"** — `https://github.com/apps/azure-pipelines/installations/new/permissions` —
-   **vorbereitet:** Konto `omegaflow`, „Only select repositories" → **`omegaflow/omegaflow`** (1 Repo).
-   **Operator-Wort erwartet:** der finale Klick **„Install"** (gewährt der App Lese-/Schreibzugriff
-   auf Checks, Code, Commit-Status, Deployments, Issues, PRs).
-2. **Azure DevOps** — `https://aex.dev.azure.com/` — **Login-Wand** (Microsoft-Konto oder „Anmelden
-   mit GitHub"). **Operator-Wort erwartet:** Anmeldung + Org-Anlage (`dev.azure.com/<org>`, Region).
-3. **Cloudflare** — `https://dash.cloudflare.com/login` — **Login-Wand** (Google/Apple/GitHub).
-   **Operator-Wort erwartet:** Anmeldung + R2 aktivieren (Free-Tier; Karte evtl. nötig) + Bucket +
-   API-Token (der Token-Wert bleibt in `.secrets.local`, nie im Transcript).
+- **Cloudflare R2 (nur falls Hot-Tier gewünscht)** — `https://dash.cloudflare.com/login` — Login-Wand
+  (Google/Apple/GitHub). **Operator-Wort erwartet:** Anmeldung + R2 aktivieren (Free-Tier; Karte
+  evtl. nötig) + Bucket + API-Token (Token-Wert bleibt in `.secrets.local`, nie im Transcript).
+  Ohne Wort: R2 bleibt `pending`, der Bulk ruht gratis auf GitHub.
 
-Jeder Akt ist per-Akt (Konto/Key = Konsensgrenze); die Vorbereitung bis hierher ist autonom gelaufen.
+Die zweite CI-Lane läuft **nicht** über Azure, sondern **self-hosted** (eigene Hardware / Oracle
+Always Free) — autonom vorbereitbar, kein Drittkonto nötig.
 
 ## LOCK
 

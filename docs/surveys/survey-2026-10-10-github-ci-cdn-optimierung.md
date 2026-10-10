@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: 3ba22360800992bfb6c938cd80509b0ccfb2c991d45e8287ba9de14efbd662f8
+  sha256: ca2c8c58163ad28b5d71c59ef61f822343e49206ac8389327a9e232b09e6d40d
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)
@@ -18,6 +18,10 @@ sind gemessen mit Quelle; `unverified` ist benannt.
 ## Ist-Zustand (gemessen am Baum)
 
 - Öffentliches Repo, **446** GitHub-Actions-Workflows (`.github/workflows/`), Test-Suite ~3,5 h.
+- **Lizenz (Operator-Korrektur 2026-10-10):** `src/` = PolyForm Noncommercial + ShareAlike, alles
+  andere = CC BY-NC-SA — **keine OSI-Open-Source-Lizenz**. „open-source"-gated Gratis-Angebote
+  (Azure-OSS, CircleCI-OSS, Blacksmith-OSS) greifen **nicht**; lizenzunabhängig frei bleiben
+  GitHub-Standard-Runner (public) und Codespaces.
 - Pipeline-Doku `docs/concepts/github-pipeline.md` (2026-09-28): Korpora als Release-Assets
   (`omegaflow/sources`, 1000 Assets/<2 GiB, „kein Bandbreitenlimit"); Compiler fetchen →
   kompilieren → CDN via `--ci-mode` (**nur CI schreibt**); `kernel-flatten.yml` + die `*-cdn.yml`.
@@ -122,11 +126,13 @@ lokale deterministische Checks · „mehr Cloud-Komfort" → ein CDN, ein Schrei
 
 - **GitHub standard x64 + `ubuntu-24.04-arm`** bleiben gratis+unbegrenzt für public (Baseline).
   larger x64/arm64 **immer kostenpflichtig** (x64 4-core $0.012/min, arm64 4-core $0.008/min).
-- **Azure Pipelines (bestätigt 2026-10-10):** **10 gratis Microsoft-hosted Parallel-Jobs +
-  unbegrenzte Minuten für OSS** (`github.com/apps/azure-pipelines`; Microsoft-Blog 2018). Der
-  2021-Grant-Wechsel betraf **private** Projekte, nicht OSS — der OSS-Grant steht (kein gemessener
-  2026-Alters-Hinweis). Aktivierung = **Azure-DevOps-Org + Azure-Pipelines-GitHub-App-Install** =
-  Operator-Akt (nicht autonom); YAML + Grant-Nachweis = autonom vorbereitbar.
+- **Azure Pipelines — RISS, für omegaflow NICHT verfügbar (gemessen 2026-10-10):** der
+  Community-Registry `foropensource.com` (FOS-0014) meldet das OSS-Programm **discontinued**
+  (geprüft 2026-07-06, „new public projects cannot be created"); Microsoft Learn nennt weiter
+  „10 parallele Gratis-Jobs für public projects". **Zusätzlich (Operator-Korrektur):** omegaflow ist
+  **CC BY-NC-SA / PolyForm NC — keine OSI-Lizenz** → jedes „open-source"-gated Angebot (Azure,
+  CircleCI-OSS, Blacksmith-OSS) fällt weg. Frei bleiben lizenzunabhängig: **GitHub-Standard-Runner
+  (public)**, **Codespaces** (per-Konto) und **self-hosted** (eigene Hardware / Oracle Always Free).
 - **Blacksmith OSS-Runner** — 3 000 gratis 2-vCPU-min/mo + OSS-Programm; schnellerer Single-Core.
 - **CircleCI OSS** — 400 000 Credits/mo (~80 000 min, OSI-Lizenz) — größter freier Minuten-Pool.
 - **Ubicloud** (OSS-Cloud) — 1 250 gratis min/mo, dann $0.00125/min, x64 **und** arm64.
@@ -232,8 +238,10 @@ Core 2025 „A comparative study of GitHub-hosted, self-hosted, and Kubernetes-b
    der Step-Rümpfe.
 2. **Bulk bleibt GitHub-Release-Assets** ($0, 1,76 TB); **R2 = Hot-Tier**, `pending` ohne gemessenen
    Live-Konsumenten; keine Bulk-Migration, nicht gestrichen.
-3. **Azure-Lane annehmen**, Guardrail: **genau ein Required-Check je SHA** (GitHub = required,
-   Azure = schwere Matrix, non-required); eine Lane bleibt Compile-Owner.
+3. **Zweite Lane — korrigiert (2026-10-10):** Azure-OSS-Grant ist **discontinued und für eine
+   Nicht-OSI-Lizenz ohnehin nicht zugänglich** (s. Säule E). Statt Azure die **lizenzunabhängigen**
+   Wege: GitHub-Standard-Runner (x64 + ARM64, public), **self-hosted** (eigene Hardware / Oracle
+   Always Free 2 OCPU/12 GB ARM) — mit derselben Guardrail (ein Required-Check je SHA).
 4. **MCP:** Docker-Gateway, dann `filesystem` → `git` → `memory` → `time`; `sequential-thinking`
    zuletzt; kein Cloud-MCP.
 5. **AI-in-CI-Riss** bleibt benannt: nur runner-lokaler LLM; kein `state/` an Cloud-GPU.
