@@ -24,6 +24,7 @@ pub mod newell;
 pub mod omega;
 pub mod orientation;
 pub mod ozzy;
+pub mod parcorr;
 pub mod receiver;
 pub mod s2;
 #[cfg(not(target_arch = "wasm32"))]
