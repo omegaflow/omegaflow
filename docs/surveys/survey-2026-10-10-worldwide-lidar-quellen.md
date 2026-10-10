@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 8602bded6ad011c75c152b4563cbc88004391fe1a385fa146cf2f487f92ca59a
+  sha256: 43b19a0815183e3933498416d26ca58b7492eef32ffea55eb6109256e6ade173
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -199,6 +199,35 @@ DE `geodaten.hessen.de`/`geodaten.thueringen.de`/`geoportal.hamburg.de`.
 Rückgrat bleiben GEDI/ICESat-2 + GLAD-Canopy + Copernicus DEM, Bodenkampagnen nur
 nach Maß (CEDA/Zenodo/Edinburgh).
 
+## Bathymetrie / Unterwasser (topo-bathy, Multibeam, globale Relief-Modelle)
+
+Gemessen 2026-10-10 (`--verdict`, Leiter inkl. Proton). Unterwasser ist teils
+multibeam-**Punktwolke**, teils **Grid** (aus Multibeam + Satellit abgeleitet).
+
+| Scope | Programm | URL | HTTP | Format | Lizenz | Zugang |
+| --- | --- | --- | --- | --- | --- | --- |
+| Global | **GEBCO** (Grid 2024, inkl. Seabed 2030) | gebco.net | 200 | GeoTIFF/NetCDF ~15″ | frei (citation) | bulk |
+| Global | **NOAA/NCEI ETOPO** (Global Relief) | ncei.noaa.gov/products/etopo-global-relief-model | 200 | NetCDF/GeoTIFF | PD | bulk |
+| Global | **SRTM15+** (UCSD/Scripps) | topex.ucsd.edu/marine_topo/ | 200 | Grid | frei | bulk |
+| Global | **Seabed 2030** (Nippon Foundation/GEBCO) | seabed2030.org | 200 | Program + Grid | frei | Web/API |
+| Global | **NOAA NCEI Bathymetry** (Multibeam) | ncei.noaa.gov/maps/bathymetry/ | 206 | MB-System Punktwolke/Grid | PD | API/bulk |
+| Global | **IHO DCDB** (Datenzentrum, via NCEI) | ngdc.noaa.gov/mgg/bathymetry/ | 200 | Multibeam Punktwolke | PD | bulk/API |
+| Global | Marine Geoscience Data System | marine-geo.org | 200 | MB/Grid | divers | API/bulk |
+| Global | PANGAEA (Kampagnen-Bathymetrie) | pangaea.de | 200 | divers (NetCDF/CSV) | CC-BY | API/bulk |
+| EU | **EMODnet Bathymetry** | emodnet.ec.europa.eu/en/bathymetry | 200 | Grid DTM + Multibeam-Index | offen | API/bulk |
+| Arktis | **IBCAO** | ibcao.org | **kein Response** (direkt+Proton), Wayback 2008 | Grid | frei | pending |
+| Antarktis | **IBCSO** | ibcso.org | 200 | Grid | frei | bulk |
+| AU | **AusSeabed** (Meeresboden AU) | ausseabed.gov.au | **403** direkt+Proton | MB/Grid | offen | blocked (Geo/CF) |
+| US | Rolling Deck to Repository (R2R) | rvdata.us | **503** direkt+Proton | MB/Grid-Kampagnen | divers | pending |
+| US | NOAA Digital Coast (bathymetry) | coast.noaa.gov/digitalcoast | 206 | Bathy-Punktwolke | PD | bulk |
+| US | USACE JALBTCX Topo-Bathy LiDAR | spatial.usace.army.mil/…/JALBTCX…MapServer/0 | pending | LAZ (topo-bathy) | PD | REST |
+
+**Kernaussage Unterwasser:** *Punktwolken*-Multibeam liegt bei NCEI/IHO DCDB,
+Marine-Geo, PANGAEA und den Kampagnen-Repos (R2R/AusSeabed — teils blockiert);
+die *globale* Abdeckung existiert nur als **abgeleitetes Grid** (GEBCO/ETOPO/
+SRTM15+), nicht als Punktwolke. Für omegaflow heißt das: `slab2_depth.bin` ist da,
+aber **kein** Bathymetrie-Multibeam-Manifestator.
+
 ## Was fehlt — der Bau
 
 Reader (`src/archivar/las/`) und TIFF-Predictor stehen. Je Quelle fehlt ein
@@ -216,16 +245,33 @@ CDN-Aufrufer (`*-cdn.yml`). Die Registrierung (`url`/`origin`/`compiler`/`at`/
    Point-Cloud-Slabs.
 4. **GEDI L2A/L4A + ICESat-2 ATL03/ATL08** — die globale Deckung (HDF5-Reader
    nötig; Earthdata-Login).
-5. **Bayern DOM20** — COG-Kachel, `dom_compiler`.
+5. **GEBCO/ETOPO/SRTM15+** (Unterwasser-Grid) + **NCEI/IHO-DCDB-Multibeam** —
+   Bathymetrie (Grid-Reader + Multibeam-Arm; `netcdf`/Grid im Archivar messen).
+6. **Bayern DOM20** — COG-Kachel, `dom_compiler`.
 
 Erster konkreter Schritt: einen LAZ/COPC-Key aus dem open-lidar-data-Bucket
 (`curl` der S3-Liste) extrahieren, Reader gegen die echte Datei, dann Block +
 `*-cdn.yml`.
 
-## Offene Messungen (nicht als Fakt geführt)
+## Offene Messungen — Proton-nachgemessen (2026-10-10)
 
-Spanien (`pnoa.ign.es`, `centrodedescargas.cnig.es`), Rumänien, Griechenland,
-Bulgarien, Slowakei, Portugal-IGEO, Hessen/Thüringen/Hamburg, Vietnam HCMC,
-Indonesien BIG ImageServer, Alaska-DNR, Grootbos/SMCRI — alle `pending (unmeasured)`
-(Timeout/kein Response). Geo-Blocks (`403`) sind Zugangs-Zustände, kein
-Quellen-Verdikt; ein Exit-Wechsel braucht Operator-Wort.
+Die zuvor als `pending` geführten Hosts wurden mit `archive_search --verdict`
+**inkl. Proton-Stufe** (`socks5h://127.0.0.1:25344`) erneut gemessen:
+
+- **Tot/kein Response auf direkt UND Proton, nur veralteter Wayback-Snapshot:**
+  `pnoa.ign.es` (Wayback 2015) · `centrodedescargas.cnig.es` (2010) ·
+  `geoportal.gov.ro` (2012) · `geoportal.gov.gr` (kein Snapshot) · `zbgis.sk`
+  (2017) · `igeo.pt` (2002) · `gis.mrrb.government.bg` (2013) ·
+  `geodaten.hessen.de` (2003) · `geodaten.thueringen.de` (kein Snapshot) ·
+  `geoportal.hamburg.de` (kein Snapshot) · `ibcao.org` (2008) ·
+  `geoportal-stnmt.tphcm.gov.vn` (2022). → **kein `pending` mehr**, sondern
+  gemessen: Host aus dieser Sicht außer Betrieb/umbenannt.
+- **Nach der Erinnerung doch erreichbar:** `geoservices.big.go.id` (**206**) ·
+  `gis.data.alaska.gov` (**200**).
+- **403 auf direkt und Proton (Geo/CF, Exit-Wechsel = Operator-Wort):**
+  `ausseabed.gov.au`, `spatialdata.gov.scot`.
+- **503 auf direkt und Proton:** `rvdata.us`.
+
+Geo-Blocks sind Zugangs-Zustände, kein Quellen-Verdikt; ein weiterer Exit
+(`bin/proton-wg.sh suggest <host>`) braucht Operator-Wort.
+
