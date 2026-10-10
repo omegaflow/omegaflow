@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: 4ca93567bc547c707eb514afb7cf63b526922644256ff64fb032a78f2e4bf991
+  sha256: 3ba22360800992bfb6c938cd80509b0ccfb2c991d45e8287ba9de14efbd662f8
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)
@@ -196,8 +196,13 @@ Konsolidierung · nextest+Built-Reuse+Cache-in-R2 · GPU nur für GPU-Last. **Di
 
 ## Priorisierte Maßnahmen (handover-fähig; Status = f(Trigger))
 
-1. **Workflow-Konsolidierung** — kanonische Compiler-/CDN-`workflow_call`s, die 446 `*-cdn.yml`
-   werden dünne Aufrufer; Messung: Workflow-Zahl + Diff. Status `eigen` (Mountain/River/Mycelium).
+1. **Workflow-Konsolidierung** — kanonische Compiler-/CDN-`workflow_call`s, die `*-cdn.yml`
+   werden dünne Aufrufer; Messung: Workflow-Zahl + Diff. Status `eigen`. **Schritt 1 gebaut
+   (2026-10-10, `0a1f7c9dc`):** Setup byte-identisch (493/501 Toolchain-Steps nach `checkout@v7`);
+   **292 distincte Compiler-Bins** → die Run-Rümpfe bleiben distinct (A = A). Kanonischer
+   `cdn-manifest.yml` (`on: workflow_call`, `harvests`-JSON, Job-Matrix) + erster Aufrufer
+   `planetary-odf-cdn.yml` migriert (Gate grün). Distincte Parser bleiben distinct
+   (`ps1-cdn` Band-Slab, `celestrak-eop-cdn` Zwei-Job-Gate).
 2. **Lauf-Hygiene** — `concurrency`+`cancel-in-progress`, `paths`-Filter, `timeout-minutes`,
    Retention 90 d. Status `eigen` (River). **Weitgehend geschlossen (gemessen 2026-10-10):**
    436/446 Workflows trugen bereits `concurrency`; `ci-gate` trägt `paths` + per-SHA-`concurrency`

@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. GIRO-DIDBase-FastChar-Lauf grün (Manifestation geschlossen); matrix-rotor-Präemption Re-Run angestoßen; ci-gate-clippy-Rot und cmb-cdn-Download-Time-out neu vermessen.
   class: handover
   date: 2026-10-10
-  sha256: 192ba146d3787d58bab40ce52cbeafd4f4203a6e5e8a7faa388cb2291d96ca53
+  sha256: 574ad036d93fd1e6b57ea7ee08a6288183516f22a34a2064dcc0c19e74a2feef
   status: live
 -->
 # Handover — Mycelium-Folge 293 (2026-10-10)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 folge292 gefaltet — GIRO-Manifestation erledigt, SPT-`terms` auf CC0-1.0 gesetzt.
 In diesem Atom kein neuer adressierter Block.
 
-## Burn: open 0.0000 · close 0.1885 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 10 Recherchen, Rat Runde 1+2, 6+1 UI-Seats, Survey A–G + Rat Runde 2) + Workflow-Hygiene-Schluss + Storage-/Azure-Messung · deepseek-flash, kein pro/max (gemessen `session_burn`).
+## Burn: open 0.0000 · close 0.2259 · cap 0.5 — Grund: Meta-Pass + CI/CDN-Recherche (archive_search --all, 10 Recherchen, Rat Runde 1+2, 6+1 UI-Seats, Survey A–G) + Workflow-Hygiene + **cdn-manifest.yml gebaut + erster Aufrufer migriert** + Storage-/Azure-Messung · deepseek-flash, kein pro/max (gemessen `session_burn`).
 
 ## Operator-Wort-Register
 
@@ -127,6 +127,18 @@ In diesem Atom kein neuer adressierter Block.
 - **Blockade:** keine (bis auf Azure-Aktivierung = Operator).
 - **Braucht:** Schritt 1 autonom — `sgrep`/sha256 der Step-Rümpfe in `.github/workflows`, dann
   `cdn-manifest.yml` (`on: workflow_call`) + Composite bauen; Azure-Aktivierung s. eigener Punkt.
+
+### Konsolidierung — `cdn-manifest.yml` (Schritt 1 umgesetzt)
+- **Status:** eigen (Fortsetzung) | **Bindung:** linie:mycelium
+- **Trigger:** nächste Dispatch-Session dieser Linie
+- **Lage:** (gemessen 2026-10-10) Setup byte-identisch: **493/501** Toolchain-Steps direkt nach
+  `actions/checkout@v7`; **292** distincte Compiler-Bins (die Run-Rümpfe sind distinct). Kanonischer
+  `cdn-manifest.yml` gebaut (`on: workflow_call`, `harvests`-JSON, Job-Matrix, job-scoped
+  concurrency) und **erster Aufrufer `planetary-odf-cdn.yml`** migriert (`0a1f7c9dc`, Gate grün).
+- **Blockade:** keine.
+- **Braucht:** die restlichen **matchenden Ein-Job-`*-cdn`-Dateien** in begrenzten Dispatch-Batches
+  migrieren (Aufrufer: `uses: ./.github/workflows/cdn-manifest.yml` + `harvests`-JSON). **Distincte**
+  Parser bleiben distinct: `ps1-cdn` (Band-Slab-Logik), `celestrak-eop-cdn` (Zwei-Job-Gate), ….
 
 ## An mountain
 
