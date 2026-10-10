@@ -3,7 +3,7 @@
   session: Sensory-Folge 253
   class: handover
   date: 2026-10-10
-  sha256: 6c5545eb2bd32fd3f91829309274580decf18602d55bb166cf91cd3a20503f82
+  sha256: 1206215607a9b4ba46265178203ff079295fad0c4fba7a410c9ed1ee6daaa967
   status: live
 -->
 # Handover — Sensory-Folge 253 (2026-10-10)
@@ -52,8 +52,11 @@ kein Fokus): **unverändert seit F236/F248** — aktuell „Im Zollabfertigungsp
 Deutschland, jüngstes Event **Mo, 05.10.2026, 15:25** (Zollabfertigung 15:24, Einreise ins
 Zielland 15:23); kein Zustell-Event. Der Punkt bleibt `wartend`, der Trigger ungefeuert; die
 Route bleibt gespeichert (`state/zustand/wartend.φ:12`), nicht neu zu suchen. Der
-Exposom-Träger-Schritt bleibt wie in F252 gemessen (alle sechs offenen Treffer ohne
-datensatz-eigene Koordinate → Kollokation `pending`; Survey-Korrektur + sha `76316f1b…` steht).
+Exposom-Träger-Schritt wurde weiter gemessen: ein Taucher hat die **externe Deckung** je
+Datensatz geprüft — **5/6** tragen eine dokumentierte Studien-Site (TOLIFE/AAMOS-00/ADARP/
+CrossCheck/Labbaf; am Baum verifiziert), **Wearable+PRO Fatigue** keinen → bleibt `pending`.
+In die Survey gefaltet (Header-sha `829a979f…`); die Kollokation wird **site-level**. Offen:
+die Rat-Bestätigung, dass eine dokumentierte Studien-Site als Repräsentativpunkt trägt.
 Die CI-Lage wird aus dem Stehenden Pass zitiert, nicht kopiert.
 
 ## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-10)
@@ -310,12 +313,20 @@ werden getragen, nie geglättet (0 honored).
   `10.7488/ds/3775` → Handle `10283/4761`, 8018238, ADARP, CrossCheck, Labbaf) trägt eine
   **im Datensatz gemessene Koordinate** — alle absolute Zeitachse, aber Ort nur Land/Region
   (Labbaf Venue request-only). Kollokation x-Kern = **`pending` für jede Zeile** (die alte
-  Labbaf-Zeile „`ja`" ist widerlegt); Survey-Header-sha `76316f1b…`. **Braucht:** (a) einen
-  extern gedeckten Repräsentativpunkt je Datensatz (sonst keine Ort-Kollokation), dann (b) den
-  Te-Paar-Feed je Zeile in CI (`te_pair_probe`/`field_te_query`, Workflow-YAML + Descriptor
-  je x-Klasse, `gh workflow run`, §E) — Mycelium-Dispatch; Registrierung `phi/sources.φ`
-  erst mit gemessenem Punkt (Mountain-Feder). Namenträger liegt hier (Weberin/Gesundheits-
-  Zeugen).
+  Labbaf-Zeile „`ja`" ist widerlegt); Survey-Header-sha `76316f1b…`.
+  **Nachtrag F253 (2026-10-10, Taucher + am Baum verifiziert):** der Repräsentativpunkt ist für
+  **5/6** Datensätze **extern gedeckt** (dokumentierte Studien-Site): TOLIFE Pisa/Großhansdorf/
+  Barcelona (`tolife-project.eu/partners` 200), AAMOS-00 Usher Institute/Edinburgh (DataCite
+  `10.7488/ds/3775`; die Handle-Seite 403), ADARP WSU Pullman (`zenodo.org/records/6640290`),
+  CrossCheck Zucker Hillside/Long Island (Paper `10.1145/2971648.2971740`), Labbaf UC Irvine
+  (Dryad `10.7280/D1WH6T`). **Wearable+PRO Fatigue** (`10.5281/zenodo.8018238`) trägt **keinen**
+  Site → bleibt `pending`. Die Kollokation wird damit **site-level** (Repräsentativpunkt = Site,
+  nicht Teilnehmer-Koordinate) und in die Survey gefaltet (Header-sha `829a979f…`).
+  **Braucht:** (a) die Rat-Bestätigung, dass eine dokumentierte Studien-Site als
+  Repräsentativpunkt trägt; dann (b) den Te-Paar-Feed je Zeile in CI (`te_pair_probe`/
+  `field_te_query`, Workflow-YAML + Descriptor je x-Klasse, `gh workflow run`, §E) — Mycelium;
+  Registrierung `phi/sources.φ` erst mit bestätigtem Punkt (Mountain-Feder). Namenträger liegt
+  hier (Weberin/Gesundheits-Zeugen).
 
 - **Weberin/Sensory (Folge191 gefaltet):**
   `docs/surveys/survey-2026-09-07-weberin-thread-matrix.md` (11 echte Marker; Rest =

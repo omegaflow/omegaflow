@@ -2,7 +2,7 @@
   title: Exposom-Quellenmatrix — somatisch + psychosomatisch (Stand 2026-10-04)
   class: survey
   date: 2026-10-04
-  sha256: 76316f1bff0e312c31c8f841da7583db30802c6d87af3f274a7c3b6e31acb4d5
+  sha256: 829a979f761846251edcc02820561f868477be8a0feb6c442f1c0bb718dda18b
   status: live
   see-also: docs/concepts/kybernaut-native-methodology.md
 -->
@@ -352,9 +352,29 @@ Ort-Kollokation gegen OpenAQ/Open-Meteo/NASA POWER belegbar.
 - **Labbaf** (`doi.org/10.7280/D1WH6T` 200/278 108 B; Dryad; File-Stream 403 — request/API):
   Epoch-ms absolut; Ort nur `venue_name` — Doku „only available upon request"; **keine**
   Koordinate/Station, feinste Angabe Region „Southern California".
-- **Braucht (für `ja`):** einen extern gedeckten Repräsentativpunkt je Datensatz — sonst bleibt
-  die Kollokation eine Annahme, keine Messung. Registrierung (`phi/sources.φ`) erst mit
-  gemessenem Punkt (Mountain-Feder).
+**Externe Deckung je Datensatz — gemessen 2026-10-10 (Sensory; Taucher + am Baum verifiziert):**
+Der Repräsentativpunkt ist für **5/6** Datensätze **extern gedeckt** — die Quelle dokumentiert den
+Studien-/Erhebungsort (Site/Stadt), nicht nur Land/Region. Die Koordinate ist im Beleg **nicht** als
+lat/lon genannt; der dokumentierte Ort ist der Kandidat-Repräsentativpunkt (**site-level**, nicht
+Teilnehmer-Koordinate).
+
+| Datensatz | externer Studienort (Beleg, am Baum verifiziert) | Repräsentativpunkt |
+|---|---|---|
+| TOLIFE | University of Pisa (IT, Koordinator + klinische Site) · LungenClinic Großhansdorf (DE, Recruiting-Site) · Consorci Mar Parc de Salut de Barcelona/IMIM (ES, Rekrutierung) — `tolife-project.eu/partners` (200) | **ja (Site)** — Datensatz-Index nur GERMANY/SPAIN → Großhansdorf (DE) + Barcelona (ES) |
+| AAMOS-00 | Usher Institute, University of Edinburgh (UK) — DataCite `10.7488/ds/3775` (Description: „…at the Usher Institute at the University of Edinburgh…", Mobistudy/Malmö University); die Handle-Seite `datashare.ed.ac.uk/handle/10283/4761` liefert jetzt **403** (Bot), die API trägt die Site | **ja (Site)** — Edinburgh |
+| Wearable+PRO Fatigue | keiner — remote über Evidation Health, „in the United States" (`zenodo.org/records/8018238`; Paper `10.3389/fdgth.2023.1099456` §2.1) | **nein** |
+| ADARP | Washington State University (WSU), Pullman, WA, USA — `zenodo.org/records/6640290` (Description: „…at Washington State University (WSU), Pullman, WA, USA") | **ja (Site)** — Pullman |
+| CrossCheck | Zucker Hillside Hospital, Long Island, NY, USA — Paper `10.1145/2971648.2971740` („a large psychiatric hospital in Long Island, NY"; IRB Zucker Hillside) | **ja (Site)** — Long Island |
+| Labbaf | University of California, Irvine, CA, USA — Dryad `10.7280/D1WH6T` („Research facility: University of California, Irvine"; THRIVE Lab) | **ja (Site)** — Irvine |
+
+**Riss (0-Kanon):** der Repräsentativpunkt ist die **dokumentierte Studien-Site**, nicht eine im
+Datensatz gemessene Teilnehmer-Koordinate. Die Kollokation gegen die x-Kern-Serien wird damit
+**site-level** — sie behauptet keine individuelle Orts-Kopplung; die fehlende Information bleibt
+`pending` (nie 0). Wearable+PRO Fatigue trägt **keinen** Site → bleibt `pending`.
+- **Braucht:** (a) die Bestätigung, dass eine dokumentierte Studien-Site als Repräsentativpunkt
+  trägt (Methodik — Rat), sonst bleibt die Kollokation eine Annahme; dann (b) den Mycelium-Te-Paar-
+  Feed je Zeile (Workflow-YAML + Descriptor, `gh workflow run`). Registrierung (`phi/sources.φ`)
+  erst mit bestätigtem Punkt (Mountain-Feder).
 
 ---
 
