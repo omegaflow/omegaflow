@@ -3,7 +3,7 @@
   session: River-Folge 165
   class: handover
   date: 2026-10-10
-  sha256: 4236c0b3a32e00c698bac24150908998abcbd401b92e2814e63df7936bfbb5b0
+  sha256: dcf5d5d906f4b99211fdbae868b46a9bc72c00c32d6b2adf4a29ab9b56632391
   status: live
 -->
 # Handover — River-Folge 165 (2026-10-10)
@@ -33,6 +33,7 @@ fortgeschrieben, nicht kopiert.
 - `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P10.2a-Token-Semantik nachgeführt (2026-10-10, river-165):** `<kernel>` = Numerik-Achse; der Operator ist ein eigener Token `<operator>` vor `<pde_type>` (das Zielschema war ein Token zu kurz) — siehe `:195`.
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — geheilt (river-159).
 - `state/stimmen/2026-10-10-river-p10.2a-token-semantik.md` — Rat (5 Stimmen, 2 Pässe) + UI-/Open-Weight-Roster zur P10.2a-Token-Semantik (neu, river-165).
+- `state/stimmen/2026-10-10-river-advective-conserved.md` — Rat (5 Stimmen) + UI-/Open-Weight-Roster zum `Advective→Conserved`-Riss (neu, river-165).
 - `state/stimmen/2026-10-10-river-p92-rat.md` — Rat (5 Stimmen) + UI-/Open-Weight-Runde zu P9.2 (river-163).
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
@@ -42,9 +43,9 @@ fortgeschrieben, nicht kopiert.
 ### P10.2a Bau — Parser-Arme (Register-Physik)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** nächster bounded Dispatch.
-- **Lage:** (gemessen 2026-10-10, river-165) Die Token-Semantik ist **entschieden** — Rat (5 Stimmen, 2 Pässe) und UI-/Open-Weight-Roster konvergieren (`state/stimmen/2026-10-10-river-p10.2a-token-semantik.md`): **`<kernel>` = Numerik-Achse** (`kernel_id_of`), der Operator (TransportOp) ist ein **eigener Token `<operator>` vor `<pde_type>`** — das Zielschema `:197` war ein Token zu kurz. `<quantity>` = Was/Kind, `<role>` = Stand; `interaction` optional/abgeleitet; Medium = zwei Ebenen. Konzept-Doc nachgeführt (`docs/concepts/kanal-ontologie-komplettbau.md:195`). **Schritt 1 gebaut** (`parse.rs:1375-1549`, guard `TransportOp@3/PdeType@4/Medium@5`; `conserved` aus dem Operator abgeleitet; `<kernel>` aus dem letzten Token; Test `p10_2a_target_grammar_parses` `parse.rs:2553`; `cargo check` 0/0; rückwärtskompatibel, alle Alt-Arme unangetastet). Der Working tree ist clean — Mountain hat `src/archivar/*` committet, der frühere Blocker ist weg. Getragener Riss in `TransportOp` (konstitutive Gesetze vs. PDE-Klassen, `channel.rs:60`) und der `Advective→Momentum`-vs-`Mass`-Riss (`channel.rs:741`) bleiben benannt.
+- **Lage:** (gemessen 2026-10-10, river-165) Die Token-Semantik ist **entschieden** — Rat (5 Stimmen, 2 Pässe) und UI-/Open-Weight-Roster konvergieren (`state/stimmen/2026-10-10-river-p10.2a-token-semantik.md`): **`<kernel>` = Numerik-Achse** (`kernel_id_of`), der Operator (TransportOp) ist ein **eigener Token `<operator>` vor `<pde_type>`** — das Zielschema `:197` war ein Token zu kurz. `<quantity>` = Was/Kind, `<role>` = Stand; `interaction` optional/abgeleitet; Medium = zwei Ebenen. Konzept-Doc nachgeführt (`docs/concepts/kanal-ontologie-komplettbau.md:195`). **Schritt 1 gebaut** (`parse.rs:1375-1549`, guard `TransportOp@3/PdeType@4/Medium@5`; `<kernel>` aus dem letzten Token; Test `p10_2a_target_grammar_parses` `parse.rs:2553`; `cargo check` 0/0; rückwärtskompatibel). Der Working tree ist clean — Mountain hat `src/archivar/*` committet. **Der `Advective→Conserved`-Riss ist entschieden** (Rat 5 Stimmen + UI-/Open-Weight-Roster konvergieren, `state/stimmen/2026-10-10-river-advective-conserved.md`): `Advective` ist **größen-agnostisch** — `Advective→Mass` (`channel.rs:800`) und `Advective→Momentum` (Schritt-1-Arm `parse.rs:1389`) sind **beide Fabrikationen**; die Conserved-Größe kommt aus dem `<quantity>`-Token. Die Tafel wird **zweistufig** (aus `is_admissible` gemessen): Flux operator-bestimmend (`Fick→Mass/Fourier→Energy/Ohm→Charge/NewtonViscous→Momentum`), `Advective`/`Wave`/`Maxwell`/`Poisson` quantity-bestimmend (Menge constraint, `<quantity>` wählt). Dritter Zeuge: die `unit` (`advective "kg/(m^2 s)"` Massenstrom; `acoustic "Pa"` Impulsstrom vs. hartkodierter `Energy`). Wurzel-Riss C bleibt: `TransportOp` mischt konstitutive Gesetze und PDE-Klassen (`channel.rs:60`).
 - **Blockade:** keine.
-- **Braucht:** die weiteren bounded Dispatches — (2. `interaction`-Achse explizit als Token absichern samt Gate-Fixture, 3. Medium zwei Ebenen (Admissibility-Klasse vs. benannter Wert), 4. `mechanisms`-FK/Lookup, 5. `<quantity>`→Conserved-Auflösungstafel statt Operator-Ableitung; je `cargo check`-Gate); Handover-commit hält Schritt 1.
+- **Braucht:** die weiteren bounded Dispatches — (2. `interaction`-Achse explizit absichern samt Gate-Fixture, 3. Medium zwei Ebenen, 4. `mechanisms`-FK/Lookup, **5. `<quantity>`→Conserved-Lookup ersetzt die Operator-Ableitung im Schritt-1-Arm `parse.rs:1385-1394`** — Miss = `pending`/`absent`, nie Default; `descriptor_for_force` nimmt die aufgelöste Conserved-Größe entgegen, `unit` folgt der Größe; Gate-Fixture „Conserved aus Operator abgeleitet für agnostischen Operator"; je `cargo check`-Gate); Schritt 5 ist die Voraussetzung für die Register-Migration (P10.3).
 
 ### CI-Verifikation — ci-gate rot (clippy 1.99.0 in fremden Parser-Files)
 - **Status:** wartend | **Bindung:** eigen
@@ -91,4 +92,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 165):
 
 Fremde uncommittete Arbeit (nicht berührt, nicht committet): `phi/sources.φ`, `docs/zustand/dropped-legacy-baseline.txt`, `src/archivar/{bepicolombo,blinkverse,channels,dmap,ebhis,fetch,keogram,main_flow,membrane,relay,spatial,swpc_efield,tests,types,weberin_fit}.rs`, `src/gate/{axioms,commit_gate_vocab.json}`, `src/mathematikerin/{actuators,channel,ozzy}.rs`, `kernels/v_freq_shelf.dat`, `static/membrane.html`, `tools/measure/src/bin/te_ground_truth.rs`, `tools/register/src/bin/p10_gravity_migrate.rs`, `docs/concepts/archivar-mathematikerin.md`, `docs/granit.md`.
 
-## Burn: open 0.0000 · close 0.0755 — River 165 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 22→26 Sessions $0.7629→$1.0506). Grund: volle Stimmen-Runde P10.2a (archive_search --all + Rat 2 Pässe + UI/Open-Weight-Roster), Schema-Nachführung, P10.2a-Schritt-1-Parser-Arm (`grind-flash`), Übergabe.
+## Burn: open 0.0000 · close 0.1031 — River 165 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 22→28 Sessions $0.7629→$1.1712). Grund: P10.2a-Token-Semantik-Runde (archive_search --all + Rat 2 Pässe + UI/Open-Weight-Roster), Advective-Conserved-Runde (archive_search --all + Rat + Roster), Schema-Nachführung, P10.2a-Schritt-1-Parser-Arm (`grind-flash`), Übergabe.
