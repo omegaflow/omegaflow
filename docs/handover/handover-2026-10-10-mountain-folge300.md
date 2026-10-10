@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden-Harvest 1-4 (Parser)
   class: handover
   date: 2026-10-10
-  sha256: 1a84865336b51c8c5ed1bc34d32359abca2fc6650ee9cce91d01b5d1ae3edd02
+  sha256: 0114ed66b6fcd8fe14f6ca50d8447318dca79269095e42fea88e73feb9cabaa2
   status: live
 -->
 # Handover — Mountain-Folge 300 (2026-10-10)
@@ -47,12 +47,12 @@ flash only, kein pro/max.
 - **Blockade:** TStreamerInfo-Serialisierungsformat ungedecodiert; Indexdomäne (time|ordinal|event) ungated.
 - **Braucht:** Schritt 2 — `parse_tree` um TStreamerInfo + fBranches/fLeaves erweitern; dann Gate auf Indexdomäne vor dem Skalar-Reader. Verdikt erst nach Leaf-Messung. (Kein Python-Orakel: uproot5 entfällt, Python ist strukturell verweigert.)
 
-### PEP — Lizenz gemessen: keine → Pinning blockiert; Register-Ort = Architektur-Akt
-- **Status:** blockiert | **Bindung:** eigen (Messung) · operator (Ort)
-- **Trigger:** Operator-/Rat-Wort für den Register-Ort; Klärung der Lizenzfrage
-- **Lage:** (gemessen 2026-10-10) PEP = **Planetary Ephemeris Program** (Fortran; nicht „Python Evaluation Package"), `github.com/jbattat/pep_core`, ASCL 2306.027. **Lizenz fehlt messbar:** GitHub-API `"license": null`, `/license` 404, keine LICENSE/COPYING im Root, ASCL ohne License-Feld. Pinning/Mirroring in Baum/CDN ist damit **blockiert** (SOURCE_PORT Mirror-Gate verlangt Redistributionsrecht; `terms unknown` gibt keins). Rat 2026-10-10: PEP bleibt offline gepinntes Referenz-/Zeugen-Artefakt, kein Runtime-Oracle, kein Vollport; Ziel „Shipped Binary = 100% Rust". Kein `tool`-Register existiert (`phi/canon.φ` kennt keine Tool-Klasse; `docs/concepts/tools-map.md` ist kein Register).
-- **Blockade:** Lücke — ein gepinntes Zitat ohne Redistributionsrecht + fehlende Register-Klasse.
-- **Braucht:** Rat/Operator — (a) den Register-Ort festlegen (neue `tool`-Klasse oder `phi/*.φ`, Canon-Akt) + Gate-Fixture „kein Runtime-Fremd-Binary im Shipped-Binary"; (b) die Lizenzfrage entscheiden (lokal nutzen ohne Mirror, oder Alternative).
+### PEP — Lizenz gemessen: CC BY-NC-SA (Autorenpaper); Register-Ort offen
+- **Status:** eigen (Pinning erlaubt) | **Bindung:** rat (Register-Ort)
+- **Trigger:** Rat-Wort für den Register-Ort eines Code-Zeugen
+- **Lage:** (gemessen 2026-10-10) PEP = **Planetary Ephemeris Program** (Fortran; nicht „Python Evaluation Package"), `github.com/jbattat/pep_core`, ASCL 2306.027. GitHub-API `"license": null` und kein LICENSE-File — die Lizenz steht **im Autorenpaper** `2021AJ....162...78C` (DOI 10.3847/1538-3881/ac00ac): „The PEP source code … are now all publicly available via GitHub, and are distributed under a **Creative Commons Attribution-NonCommercial-ShareAlike license**" (Battat 2021b) — also **CC BY-NC-SA**, dieselbe Lizenz wie omegaflow außerhalb `src/`. Pinning/Mirroring in Baum/CDN ist damit **erlaubt** (Attribution, nicht-kommerziell, ShareAlike); nicht all-rights-reserved. Kein `tool`-Register in `phi/canon.φ`; `phi/witnesses.φ` trägt nur Daten-Zeugen (`record`/`force`), keinen Code-Zeugen. Rat 2026-10-10: PEP bleibt offline gepinntes Referenz-/Zeugen-Artefakt, kein Runtime-Oracle, kein Vollport; Ziel „Shipped Binary = 100% Rust". Nebenbefund (`--crates`/`--librs`): keine PEP-Rust-Umsetzung; eine Rust-Ephemeriden-Landschaft existiert (`empyrean`, `pleiades-events`, `swisseph-rs`, `rust-jpl`, `astrodyn_ephemeris`, `adam_core_rs_kernel_data`).
+- **Blockade:** Register-Ort für einen Code-Zeugen unbestimmt (keine `tool`-Klasse im Canon).
+- **Braucht:** Rat — Register-Ort festlegen (neue `tool`-Klasse oder `phi/*.φ`, Canon-Akt) + Gate-Fixture „kein Runtime-Fremd-Binary im Shipped-Binary"; dann `pep_core` als Golden-Fixture pinnen (CC BY-NC-SA-Zeile + Paper-Zitat als Lizenzquelle).
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
