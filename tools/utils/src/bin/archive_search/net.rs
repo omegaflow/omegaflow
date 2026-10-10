@@ -1009,7 +1009,11 @@ fn cc_index(query: &str) -> Option<String> {
 fn cc_target(query: &str) -> String {
     query
         .split_whitespace()
-        .filter(|token| !token.starts_with("index=") && !token.starts_with("url="))
+        .filter(|token| !token.starts_with("index="))
+        .map(|token| match token.strip_prefix("url=") {
+            Some(target) => target,
+            None => token,
+        })
         .collect::<Vec<_>>()
         .join(" ")
 }
@@ -2245,12 +2249,51 @@ fn hal_results(v: &Json, max: usize) -> Vec<String> {
         if !published.is_empty() {
             line.push_str(&format!("\tpublished: {}", published));
         }
+        let authors: Vec<&str> = match r.get("authFullName_s").and_then(|a| a.as_arr()) {
+            Some(arr) => arr.iter().filter_map(|n| n.as_str()).collect(),
+            None => Vec::new(),
+        };
+        if !authors.is_empty() {
+            let shown = if authors.len() > 8 {
+                &authors[..8]
+            } else {
+                &authors[..]
+            };
+            let mut names = shown.join(", ");
+            if authors.len() > 8 {
+                names.push_str(", et al.");
+            }
+            line.push_str(&format!("\tauthors: {}", names));
+        }
+        let abstract_text = match r
+            .get("abstract_s")
+            .and_then(|a| a.as_arr())
+            .and_then(|a| a.first())
+            .and_then(|s| s.as_str())
+        {
+            Some(s) if !s.is_empty() => flatten(s),
+            _ => String::new(),
+        };
+        if !abstract_text.is_empty() {
+            line.push_str(&format!(
+                "\tabstract: {}",
+                truncate_to_chars(&abstract_text, 1200)
+            ));
+        }
         out.push(line);
         if out.len() >= max {
             break;
         }
     }
     out
+}
+
+fn truncate_to_chars(s: &str, max: usize) -> String {
+    if let Some((i, _)) = s.char_indices().nth(max) {
+        s[..i].to_string()
+    } else {
+        s.to_string()
+    }
 }
 
 pub fn wiby_lines(query: &str, max: usize) -> Vec<String> {
@@ -4940,6 +4983,55 @@ mod tests {
             hal_url("p53", &opts, 10, 20),
             "https://api.archives-ouvertes.fr/search/?q=p53&wt=json&rows=10&fl=title_s&start=20&fq=docType_s%3AART&sort=publicationDate_s%20desc"
         );
+    }
+
+    #[test]
+    fn hal_results_caps_authors_at_eight_and_appends_et_al() {
+        let body = r#"{"response":{"docs":[{
+            "uri_s":"https://hal.science/hal-1",
+            "title_s":["A study"],
+            "authFullName_s":["A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"]
+        }]}}"#;
+        let v = json::parse(body).expect("json");
+        let lines = hal_results(&v, 10);
+        assert_eq!(lines.len(), 1);
+        assert_eq!(
+            lines[0],
+            "url https://hal.science/hal-1\ttitle: A study\tauthors: A1, A2, A3, A4, A5, A6, A7, A8, et al."
+        );
+    }
+
+    #[test]
+    fn hal_results_carries_the_authors_and_the_abstract() {
+        let body = r#"{"response":{"docs":[{
+            "uri_s":"https://hal.science/hal-2",
+            "title_s":["Another study"],
+            "doiId_s":"10.1/x",
+            "publicationDate_s":"2020",
+            "authFullName_s":["B1","B2"],
+            "abstract_s":["The first abstract text."]
+        }]}}"#;
+        let v = json::parse(body).expect("json");
+        let lines = hal_results(&v, 10);
+        assert_eq!(lines.len(), 1);
+        assert_eq!(
+            lines[0],
+            "url https://hal.science/hal-2\ttitle: Another study\tdoi: 10.1/x\tpublished: 2020\tauthors: B1, B2\tabstract: The first abstract text."
+        );
+    }
+
+    #[test]
+    fn hal_results_omits_absent_authors_and_abstract() {
+        let body = r#"{"response":{"docs":[{
+            "uri_s":"https://hal.science/hal-3",
+            "title_s":["No extras"],
+            "authFullName_s":[],
+            "abstract_s":[]
+        }]}}"#;
+        let v = json::parse(body).expect("json");
+        let lines = hal_results(&v, 10);
+        assert_eq!(lines.len(), 1);
+        assert_eq!(lines[0], "url https://hal.science/hal-3\ttitle: No extras");
     }
 
     #[test]
