@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Nutation IAU 2000A (Schritt 0 komplett), particle-cern Teil B (parse_tree), Vantage-Rest-Bias (b)(c)(d), ci-gate-Clippy-Lints, open-lidar-data-φ-Block, FMHY-7-Verdikte, Asservatenkammer 3/9
   class: handover
   date: 2026-10-11
-  sha256: 15dfa843672f216e63162e28cb32ba7a41f06fcafca42d7453cdab72d1a18a79
+  sha256: 692cedb1238ba0657b3764f29aa6466a0eaec88fa08f02a84fdb68f7599ce21c
   status: live
 -->
 # Handover — Mountain-Folge 305 (2026-10-11)
@@ -115,6 +115,13 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 - **Lage:** (gemessen 2026-10-11) `phi/blocked_sources.φ` trägt nur noch **1** offene `blocked parser-def`-Klasse: `phi/blocked_sources.φ::gap:particle-cern ×1`. Zwei als „fehlender Arm" geführte Einträge waren **falsch** (der Baum gewinnt): (a) `pds-ppi-manifest` — der Arm steht (`tools/harvest/src/bin/pds_ppi_compiler.rs`, `phi/harvest.φ:522` format `pds_ppi`, Workflow `pds-ppi-cdn.yml`; EPN-TAP `vo-pds-ppi.igpp.ucla.edu/tap/sync` 200, 219 Tabellen/141 084 Granulen); (b) `gwf-strain` — `src/archivar/hdf5.rs` + `tools/harvest/src/bin/gwosc_compiler.rs` lesen die HDF5-Strain-Datei bereits.
 - **Braucht:** (1) particle-cern — TBranchElement-v9-Branch-Decode in `src/archivar/root.rs` (`walk_trees` steht, 68 innere TTrees); (2) PDS-PPI — Manifest-CI-Lauf `pds-ppi-cdn.yml` + Register-Zeile (Mycelium); (3) GWOSC/LOSC — Registrierung in `phi/sources.φ` + Kraft-Admission + Vorzeichen-Riss (Strain ist signiert, Leser-Predikat `value >= 0.0` verwirft negative Werte); **Riss** zwei Compiler für eine Quelle (`gwosc_compiler.rs` GWOS 3-Feld getrackt · `losc_compiler.rs` LOSC 26×f64 neu) — Operator/Rat entscheidet.
 
+### GWOSC-Strain — Rat + Roster gefahren (Kraft-Admission: Riss, Operator-Wort nötig)
+- **Status:** eigen (Register/Bau) | **Bindung:** eigen
+- **Trigger:** Operator-Wort zur Kraft-/Klassen-Admission (via `## An future`)
+- **Lage:** (gemessen 2026-10-11) Recherche (`archive_search --all`) + Rat (5 Stimmen) + UI-Runde `mountain-ui` (Claude ✓ · Qwen ✓ · Duck.ai `pending` Tageslimit · Z.ai `pending` Timeout). **Konvergenz:** (a) der „Vorzeichen-Riss" ist ein **Doku-Riss** — der Leser `spatial.rs:766` nutzt `val.abs()` als NaN-Gate, der Sign trägt; Doku-Zeile `archivar-mathematikerin.md:31` korrigiert. (b) ein Arm, eine Quelle: **LOSC (26×f64) bleibt**, `gwosc_compiler.rs` (GWOS 3-Feld, kein Leser im Baum) descoped mit Befund. (c) Kraft: **Riss** — eigene Klasse (Krümmung/Gezeiten; Rat) ↔ `force gravity` + deklarierter Empfänger (Claude/Qwen) — beide brauchen das Operator-/Kanon-Wort. `losc_compiler.rs` setzt jetzt `SLOT_TTL`/`SLOT_FORCE_TYPE` und erzwingt `--force`/`--ttl` (vorher ttl=0 → jeder Record verworfen; force=em fabriziert).
+- **Blockade:** Kanon-/Operator-Wort für die Kraft-/Klassen-Klasse (`phi/canon.φ` + WGSL-Branch = River).
+- **Braucht:** Operator-Wort (siehe `## An future`); danach `losc_compiler.rs` verdrahten + `phi/sources.φ`-Registrierung.
+
 ## LOCK
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82):
@@ -132,6 +139,12 @@ Wort | Datum | Quelle
 „können wir nun eine untersuchung machen was davon als arme in archive search sollte, was in tools und was in phi dateien?" | 2026-10-10 | Operator (Session, Mountain 303)
 „aber ganz ehrlich wie problematisch ist das?" · „akzeptiert" (KNMI-Key-Risiko) | 2026-10-10 | Operator (Session, Mountain 303)
 „zudem schreibt das die Kante ist — ehrlich: Der nächste Schritt ist kein weiterer Messschritt von mir. Er ist ein wissenschaftlicher Annahme-Akt: für jede Zeile müsste ein extern gedeckter Repräsentativpunkt gesetzt werden (Region→Gitterpunkt / Stadt→Station) — das ist eine Annahme, keine Messung, und gehört nicht in meinen autonomen Bereich (die x-Kern-Serien OpenAQ/Open-Meteo/NASA POWER bleiben wie in der Matrix gemessen). Erst mit diesem Punkt wird die Zeile ja und darf (Mountain-Feder) in phi/sources.φ, dann (Mycelium) in den Te-Paar-CI-Feed. Das steht als Braucht im Träger." | 2026-10-10 | Operator (Session, Mountain 304)
+
+## An future
+
+Origin: mountain-305 (2026-10-11).
+
+- **GWOSC/LIGO-Strain — Kraft-Admission (Operator-Wort nötig).** Lage: der Gravitationswellen-Strain h=ΔL/L (dimensionslos, signiert, ~1e-21) soll als Feldquelle registriert werden; der HDF5-Arm + `losc_compiler.rs` stehen (26×f64), die Quelle ist aber nicht in `phi/sources.φ`. Rat (5 Stimmen) + UI-Runde geben zwei Lesarten: (A) **eigene Klasse** (Krümmung/Gezeiten, Empfänger = Interferometer-Weltlinie) oder (B) **`force gravity` + deklarierte Empfänger-Weltlinie**. Frage: welche Klasse? Bei (A): neuer Kanon-Eintrag (`phi/canon.φ`) + WGSL-Branch (River). Bei (B): Empfänger-Weltlinie je Record deklarieren. Träger: diese Zeile; nach dem Wort in Mountains Handover (`handover-2026-10-11-mountain-folge305.md`).
 
 ## Abschluss
 
