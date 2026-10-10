@@ -122,6 +122,105 @@ pub fn r2_mirror(tag: &str, path: &str) -> bool {
     if std::env::var("OMEGAFLOW_R2_MIRROR").is_err() {
         return false;
     }
+    if let Ok(worker) = std::env::var("OMEGAFLOW_R2_WORKER") {
+        if !worker.is_empty() && std::env::var("ACTIONS_ID_TOKEN_REQUEST_URL").is_ok() {
+            return r2_mirror_oidc(&worker, tag, path);
+        }
+    }
+    r2_mirror_s3(tag, path)
+}
+
+fn oidc_token() -> Option<String> {
+    let url = std::env::var("ACTIONS_ID_TOKEN_REQUEST_URL").ok()?;
+    let token = std::env::var("ACTIONS_ID_TOKEN_REQUEST_TOKEN").ok()?;
+    let sep = if url.contains('?') { '&' } else { '?' };
+    let request = format!("{}{}audience=omegaflow-r2-verifier", url, sep);
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("-f")
+        .arg("-H")
+        .arg(format!("Authorization: bearer {}", token))
+        .arg(&request)
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let body = String::from_utf8_lossy(&out.stdout);
+    let start = body.find("\"value\":\"")? + "\"value\":\"".len();
+    let rest = &body[start..];
+    let end = rest.find('"')?;
+    Some(rest[..end].to_string())
+}
+
+fn r2_mirror_oidc(worker: &str, tag: &str, path: &str) -> bool {
+    let Some(jwt) = oidc_token() else {
+        eprintln!("r2_mirror {}: OIDC token absent — pending", path);
+        return false;
+    };
+    let body = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(e) => {
+            eprintln!("r2_mirror {}: read void: {}", path, e);
+            return false;
+        }
+    };
+    let name = std::path::Path::new(path)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or(path);
+    let url = format!("{}/{}/{}", worker.trim_end_matches('/'), tag, name);
+    let payload_sha256 = sha256::sha256_hex(&body);
+    let mut cmd = Command::new("curl");
+    cmd.arg("-sS")
+        .arg("-f")
+        .arg("-X")
+        .arg("PUT")
+        .arg(&url)
+        .arg("-H")
+        .arg(format!("Authorization: Bearer {}", jwt))
+        .arg("-H")
+        .arg(format!("x-amz-content-sha256: {}", payload_sha256))
+        .arg("--data-binary")
+        .arg("@-");
+    if let Ok(ca) = std::env::var("OMEGAFLOW_CA_BUNDLE") {
+        if !ca.is_empty() && std::path::Path::new(&ca).is_file() {
+            cmd.arg("--cacert").arg(ca);
+        }
+    }
+    let mut child = match cmd
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("r2_mirror {}: curl absent: {}", path, e);
+            return false;
+        }
+    };
+    if let Some(mut stdin) = child.stdin.take() {
+        let _ = stdin.write_all(&body);
+    }
+    match child.wait_with_output() {
+        Ok(o) if o.status.success() => true,
+        Ok(o) => {
+            eprintln!(
+                "r2_mirror {}: worker returned void: {}",
+                path,
+                String::from_utf8_lossy(&o.stderr).trim()
+            );
+            false
+        }
+        Err(e) => {
+            eprintln!("r2_mirror {}: wait void: {}", path, e);
+            false
+        }
+    }
+}
+
+fn r2_mirror_s3(tag: &str, path: &str) -> bool {
     let env = load_env();
     let (Some(access_key), Some(secret_key), Some(endpoint), Some(bucket)) = (
         env.get("R2_ACCESS_KEY_ID"),
