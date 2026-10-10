@@ -162,6 +162,60 @@ where
     })
 }
 
+pub const ITRF_TO_CIRS_CONVENTION: &str = "ITRS -> CIRS = R3(-ERA) * W(t), IERS Conventions 2010 (TN36 ch. 5.4.2); W(t) = R3(-s') * R2(x_p) * R1(y_p); R(t) = R3(-ERA); R1(t)=[[1,0,0],[0,cos t,sin t],[0,-sin t,cos t]], R2(t)=[[cos t,0,-sin t],[0,1,0],[sin t,0,cos t]], R3(t)=[[cos t,sin t,0],[-sin t,cos t,0],[0,0,1]]; x_p along the 0-degree meridian, y_p along 90-degree west; s' ~ 0 neglected (secular drift near -47 uas/century, SOFA iauSp00); the transpose hand is verified against ERFA eraPom00 (V(TRS) = rpom * V(CIP), i.e. CIRS -> ITRS), so this carries W = rpom^T; the next step Q(t) = IAU-2006 precession * IAU-2000A nutation (SOFA iauPnm06a/iauC2i06a) is absent, so this is itrf_to_cirs, never itrf_to_icrs";
+
+pub const EARTH_ROTATION_ANGLE_CONVENTION: &str = "IAU 2000 ERA from a UT1 Julian date (SOFA iauEra00 linear part): ERA = 2*pi * frac(0.7790572732640 + 1.00273781191135448 * (UT1_JD - 2451545.0)), result in [0, 2*pi); non-finite input is absent -> None; 1 arcsec = pi/648000 rad (IERS Conventions 2010, Table 1.1)";
+
+const ARCSEC_TO_RAD: f64 = std::f64::consts::PI / 648000.0;
+
+pub struct EopSample {
+    pub ut1_utc_s: f64,
+    pub pm_x_arcsec: f64,
+    pub pm_y_arcsec: f64,
+}
+
+pub fn earth_rotation_angle_rad(ut1_jd: f64) -> Option<f64> {
+    if !ut1_jd.is_finite() {
+        return None;
+    }
+    let d = ut1_jd - 2451545.0;
+    let turn = 0.7790572732640 + 1.00273781191135448 * d;
+    if !turn.is_finite() {
+        return None;
+    }
+    let frac = turn - turn.floor();
+    Some(2.0 * std::f64::consts::PI * frac)
+}
+
+fn itrf_to_cirs_at(
+    era_rad: f64,
+    xp_rad: f64,
+    yp_rad: f64,
+    r_itrf_km: [f64; 3],
+) -> Option<[f64; 3]> {
+    if !finite3(r_itrf_km) || !era_rad.is_finite() || !xp_rad.is_finite() || !yp_rad.is_finite() {
+        return None;
+    }
+    let (cx, sx) = (xp_rad.cos(), xp_rad.sin());
+    let (cy, sy) = (yp_rad.cos(), yp_rad.sin());
+    let t0 = cx * r_itrf_km[0] + sx * sy * r_itrf_km[1] - sx * cy * r_itrf_km[2];
+    let t1 = cy * r_itrf_km[1] + sy * r_itrf_km[2];
+    let t2 = sx * r_itrf_km[0] - cx * sy * r_itrf_km[1] + cx * cy * r_itrf_km[2];
+    let (ce, se) = (era_rad.cos(), era_rad.sin());
+    let out = [ce * t0 - se * t1, se * t0 + ce * t1, t2];
+    if finite3(out) { Some(out) } else { None }
+}
+
+pub fn itrf_to_cirs(r_itrf_km: [f64; 3], ut1_jd: f64, eop: &EopSample) -> Option<[f64; 3]> {
+    let era = earth_rotation_angle_rad(ut1_jd)?;
+    itrf_to_cirs_at(
+        era,
+        eop.pm_x_arcsec * ARCSEC_TO_RAD,
+        eop.pm_y_arcsec * ARCSEC_TO_RAD,
+        r_itrf_km,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -254,5 +308,52 @@ mod tests {
         let nominal = 2.0e9 * 880.0 / 749.0;
         let shift = got.observable_hz - nominal;
         assert!(shift.abs() > 1.0e5 && shift.abs() < 1.0e8, "shift {shift}");
+    }
+
+    #[test]
+    fn itrf_to_cirs_preserves_the_norm() {
+        let station = [6378.137, 1000.0, -2000.0];
+        let eop = EopSample {
+            ut1_utc_s: 0.1,
+            pm_x_arcsec: 0.2,
+            pm_y_arcsec: -0.1,
+        };
+        let out = itrf_to_cirs(station, 2451545.0 + 0.5, &eop).unwrap();
+        let d = (norm(out) - norm(station)).abs();
+        assert!(d < 1.0e-9, "norm drift {d}");
+    }
+
+    #[test]
+    fn itrf_to_cirs_identity_at_zero_polar_motion_and_zero_era() {
+        let station = [6378.137, 1000.0, -2000.0];
+        let out = itrf_to_cirs_at(0.0, 0.0, 0.0, station).unwrap();
+        assert_eq!(out, station);
+    }
+
+    #[test]
+    fn earth_rotation_angle_reads_the_j2000_constant() {
+        let era = earth_rotation_angle_rad(2451545.0).unwrap();
+        let want = 2.0 * std::f64::consts::PI * 0.7790572732640;
+        assert!((era - want).abs() < 1.0e-15, "era {era} vs {want}");
+        assert!(era >= 0.0 && era < 2.0 * std::f64::consts::PI);
+    }
+
+    #[test]
+    fn itrf_to_cirs_refuses_absent_input() {
+        let station = [6378.137, 1000.0, -2000.0];
+        let eop = EopSample {
+            ut1_utc_s: 0.0,
+            pm_x_arcsec: 0.0,
+            pm_y_arcsec: 0.0,
+        };
+        assert!(itrf_to_cirs(station, f64::NAN, &eop).is_none());
+        assert!(earth_rotation_angle_rad(f64::INFINITY).is_none());
+        let bad = EopSample {
+            ut1_utc_s: 0.0,
+            pm_x_arcsec: f64::NAN,
+            pm_y_arcsec: 0.0,
+        };
+        assert!(itrf_to_cirs(station, 2451545.0, &bad).is_none());
+        assert!(itrf_to_cirs([f64::NAN, 0.0, 0.0], 2451545.0, &eop).is_none());
     }
 }

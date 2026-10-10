@@ -1,5 +1,9 @@
 pub const MAGIC: [u8; 4] = *b"root";
 
+const K_BYTE_COUNT_MASK: u32 = 0x4000_0000; // TBuffer::kByteCountMask
+const K_BYTE_COUNT_V_MASK: i16 = 0x4000; // kByteCountVMask: high bit of the first Version_t short
+const K_NEW_CLASS_TAG: u32 = 0xffff_ffff; // TBuffer::kNewClassTag
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct RootHeader {
     pub version: i32,
@@ -33,6 +37,15 @@ pub struct RootKey {
 pub struct RootFile {
     pub header: RootHeader,
     pub keys: Vec<RootKey>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct StreamerInfoHeader {
+    pub version: i16,
+    pub byte_count: i32,
+    pub class_name: String,
+    pub checksum: u32,
+    pub n_members: i32,
 }
 
 struct Cursor<'a> {
@@ -84,6 +97,39 @@ impl<'a> Cursor<'a> {
         }
         let raw = self.take(len as usize)?;
         String::from_utf8(raw.to_vec()).ok()
+    }
+
+    fn u32(&mut self) -> Option<u32> {
+        Some(u32::from_be_bytes(self.take(4)?.try_into().ok()?))
+    }
+
+    fn class_tag_name(&mut self) -> Option<&'a str> {
+        let rest = self.buf.get(self.pos..)?;
+        let end = rest.iter().position(|&b| b == 0)?;
+        let name = std::str::from_utf8(rest.get(..end)?).ok()?;
+        self.pos += end + 1;
+        Some(name)
+    }
+
+    fn read_version(&mut self) -> Option<(i16, i32)> {
+        let count_pos = self.pos;
+        let count = self.u32()?;
+        if count & K_BYTE_COUNT_MASK == 0 {
+            self.pos = count_pos;
+            Some((self.i16()?, 0))
+        } else {
+            Some((self.i16()?, (count & !K_BYTE_COUNT_MASK) as i32))
+        }
+    }
+
+    fn skip_version(&mut self) -> Option<i16> {
+        let first = self.i16()?;
+        if first & K_BYTE_COUNT_V_MASK != 0 {
+            self.i16()?;
+            self.i16()
+        } else {
+            Some(first)
+        }
     }
 }
 
@@ -237,6 +283,69 @@ pub fn parse_tree(bytes: &[u8], tree: &RootKey) -> Result<Vec<(f64, f64, u32)>, 
     )
 }
 
+pub const TSTREAMER_INFO_LAYOUT: &str = "TStreamerInfo header layout, measured from ROOT v6-36 docs (dobject.html/streamerinfo.html/tobject.html), TStreamerInfo::Streamer (io/io/src/TStreamerInfo.cxx:5616), TBufferFile::ReadVersion/ReadObjectAny/SkipVersion (io/io/src/TBufferFile.cxx:2933/:2519/:2862), TObject::Streamer (core/base/src/TObject.cxx:995); Version_t = Short_t (i16), byte order big-endian; object prefix: [byte count|kByteCountMask][class tag=0xffffffff][class name NUL], the tag is the second u32 only when the mask is present; TStreamerInfo ReadVersion [byte count|mask][version i16]; TNamed ReadVersion [byte count|mask][version i16]; TObject SkipVersion [version i16][fUniqueID u32][fBits u32] (10 bytes, no count); TNamed fName,fTitle TStrings; fCheckSum u32, fClassVersion i32; fElements TObjArray* [byte count|mask][tag=0xffffffff][name NUL][byte count|mask][version i16][TObject 10 bytes][fName TString][fSize i32 = n_members][fLowerBound i32]; the older 4-byte version form predates the byte-count mask and is not read here";
+
+fn read_object_tag(c: &mut Cursor<'_>) -> Option<u32> {
+    let first = c.u32()?;
+    if first & K_BYTE_COUNT_MASK == 0 || first == K_NEW_CLASS_TAG {
+        Some(first)
+    } else {
+        c.u32()
+    }
+}
+
+pub fn parse_streamer_info_header(bytes: &[u8]) -> Option<StreamerInfoHeader> {
+    let mut c = Cursor::new(bytes, 0);
+
+    if read_object_tag(&mut c)? != K_NEW_CLASS_TAG {
+        return None;
+    }
+    c.class_tag_name()?;
+
+    let object_start = c.pos;
+    let (version, byte_count) = c.read_version()?;
+    let object_end = object_start
+        .checked_add(4)?
+        .checked_add(byte_count as usize)?;
+    if object_end > bytes.len() {
+        return None;
+    }
+
+    c.read_version()?;
+    c.skip_version()?;
+    c.u32()?;
+    c.u32()?;
+
+    let class_name = c.tstring()?;
+    c.tstring()?;
+
+    let checksum = c.u32()?;
+    c.i32()?;
+
+    if read_object_tag(&mut c)? != K_NEW_CLASS_TAG {
+        return None;
+    }
+    c.class_tag_name()?;
+    c.read_version()?;
+    c.skip_version()?;
+    c.u32()?;
+    c.u32()?;
+    c.tstring()?;
+    let n_members = c.i32()?;
+    c.i32()?;
+    if n_members < 0 {
+        return None;
+    }
+
+    Some(StreamerInfoHeader {
+        version,
+        byte_count,
+        class_name,
+        checksum,
+        n_members,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -318,5 +427,84 @@ mod tests {
             parse_tree(&[0u8; 64], &directory),
             Err("key is not a TTree")
         );
+    }
+
+    fn push_u32(b: &mut Vec<u8>, v: u32) {
+        b.extend_from_slice(&v.to_be_bytes());
+    }
+
+    fn push_i32(b: &mut Vec<u8>, v: i32) {
+        b.extend_from_slice(&v.to_be_bytes());
+    }
+
+    fn push_i16(b: &mut Vec<u8>, v: i16) {
+        b.extend_from_slice(&v.to_be_bytes());
+    }
+
+    const SI_OBJECT_START: usize = 4 + 4 + "TStreamerInfo".len() + 1;
+
+    fn streamer_info_fixture() -> (Vec<u8>, i32) {
+        let mut b = Vec::new();
+        push_u32(&mut b, K_BYTE_COUNT_MASK);
+        push_u32(&mut b, K_NEW_CLASS_TAG);
+        b.extend_from_slice(b"TStreamerInfo\0");
+
+        let object_start = b.len();
+        push_u32(&mut b, K_BYTE_COUNT_MASK);
+        push_i16(&mut b, 9);
+        push_u32(&mut b, K_BYTE_COUNT_MASK);
+        push_i16(&mut b, 1);
+        push_i16(&mut b, 1);
+        push_u32(&mut b, 0);
+        push_u32(&mut b, 0x0300_0000);
+        b.push(6);
+        b.extend_from_slice(b"AliVSD");
+        b.push(0);
+        push_u32(&mut b, 0xdead_beef);
+        push_i32(&mut b, 5);
+        push_u32(&mut b, K_BYTE_COUNT_MASK);
+        push_u32(&mut b, K_NEW_CLASS_TAG);
+        b.extend_from_slice(b"TObjArray\0");
+        push_u32(&mut b, K_BYTE_COUNT_MASK);
+        push_i16(&mut b, 1);
+        push_i16(&mut b, 1);
+        push_u32(&mut b, 0);
+        push_u32(&mut b, 0x0300_0000);
+        b.push(0);
+        push_i32(&mut b, 12);
+        push_i32(&mut b, 0);
+
+        let byte_count = (b.len() - object_start - 4) as u32;
+        b[object_start..object_start + 4]
+            .copy_from_slice(&(byte_count | K_BYTE_COUNT_MASK).to_be_bytes());
+        (b, byte_count as i32)
+    }
+
+    #[test]
+    fn streamer_info_header_fixture_parses_measured_fields() {
+        let (bytes, byte_count) = streamer_info_fixture();
+        let h = parse_streamer_info_header(&bytes).expect("measured header parses");
+        assert_eq!(h.version, 9);
+        assert_eq!(h.byte_count, byte_count);
+        assert_eq!(h.class_name, "AliVSD");
+        assert_eq!(h.checksum, 0xdead_beef);
+        assert_eq!(h.n_members, 12);
+    }
+
+    #[test]
+    fn streamer_info_header_rejects_empty_truncated_and_corrupt_slices() {
+        assert_eq!(parse_streamer_info_header(&[]), None);
+
+        let (bytes, _) = streamer_info_fixture();
+        assert_eq!(parse_streamer_info_header(&bytes[..bytes.len() / 2]), None);
+
+        let mut absurd = bytes.clone();
+        absurd[SI_OBJECT_START..SI_OBJECT_START + 4]
+            .copy_from_slice(&(K_BYTE_COUNT_MASK | 0x3fff_ffff).to_be_bytes());
+        assert_eq!(parse_streamer_info_header(&absurd), None);
+
+        let mut reference = bytes.clone();
+        reference[0..4].copy_from_slice(&2u32.to_be_bytes());
+        assert_eq!(parse_streamer_info_header(&reference), None);
     }
 }
