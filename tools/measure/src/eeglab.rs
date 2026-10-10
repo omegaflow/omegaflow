@@ -389,7 +389,7 @@ pub fn eeg_from_bin(bytes: &[u8]) -> Option<(EeglabSet, Vec<f32>)> {
     } = omegaflow::openneuro_eeg::parse_bin(bytes)?;
     let samples = match samples {
         omegaflow::openneuro_eeg::Samples::Single(s) => s,
-        omegaflow::openneuro_eeg::Samples::Double(_) => return None,
+        omegaflow::openneuro_eeg::Samples::Double(s) => s.into_iter().map(|v| v as f32).collect(),
     };
     let set = EeglabSet {
         datfile: String::new(),
