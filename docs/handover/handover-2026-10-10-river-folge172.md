@@ -3,7 +3,7 @@
   session: River-Folge 172
   class: handover
   date: 2026-10-10
-  sha256: 5f1f19686e8f7c345d0ea8a3bbe0508ec12837beec43cf4f0db41bfa1b546976
+  sha256: 2d7dfbbf0130655447c2e1c8a83a39e3301f3fcaf7ed5f654a919daa57ab57d8
   status: live
 -->
 # Handover — River-Folge 172 (2026-10-10)
@@ -44,7 +44,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - `state/stimmen/2026-10-10-river-p10.2a-token-semantik.md` — Rat + UI-/Open-Weight-Roster zur Token-Semantik.
 - `state/stimmen/2026-10-10-river-advective-conserved.md`, `state/stimmen/2026-10-10-river-p92-rat.md`.
 - `state/stimmen/2026-10-10-river-te-joint-grid-research.md` (`archive_search --all`), `state/stimmen/2026-10-10-river-te-joint-grid-rat-roster.md` (Rat + Roster, Riss).
-- `state/stimmen/2026-10-10-river-c-skalen-spektrum-research.txt` (`archive_search --all` zu C), `state/stimmen/2026-10-10-river-c-skalenspektrum-rat.md` (Rat, 5 Stimmen, C-Verdikt), `state/stimmen/2026-10-10-river-c-skalenspektrum-roster.md` (Max-Roster: Claude · Qwen3.8 2.4T · Qwen; Z.ai/Duck pending).
+- `state/stimmen/2026-10-10-river-c-skalen-spektrum-research.txt` (`archive_search --all` zu C), `state/stimmen/2026-10-10-river-c-skalenspektrum-rat.md` (Rat, 5 Stimmen, C-Verdikt), `state/stimmen/2026-10-10-river-c-skalenspektrum-roster.md` (Max-Roster: Claude · Qwen3.8 2.4T · Qwen · Z.ai/GLM-5.3 Deep Think Max · Duck/Claude Haiku · open-weight GLM 5.3 — alle geantwortet; Duck-Send-Ursache gemessen).
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, offen.
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md`, `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer (11 offen), Mountain-303 per `## An river` an River als Träger bestätigt (2026-10-10). Nächster Schritt River (Stein = `field_te_query`): die 8 probe-gelesenen Kanäle (RTSW/SWPC · EVE 1032/131 · QBO `qbo_30hpa` · D20 `d20_thermocline` · Kp `magnetosphere_kp_3h` · Swarm HAPI · EEG ds007822/ds007471 · Newell `dΦ/dt`) in die Matrix heben und die Matrix als Störungs-Experiment betreiben (`:103-104`).
@@ -86,4 +86,4 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 172):
 - `docs/handover/handover-2026-10-10-river-folge172.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge171.md` (Move)
 
-## Burn: open 0.0000 · close 0.1013 — River 172 (deepseek-flash, kein pro/max; gemessen `session_burn`/opencode.db, Session „Skalenannotation in MatrixCellOutcome ergänzen" $0.1013). Grund: fold mountain-303 + B (Skala je Zelle, 9 Konstruktoren + Print-Spalte) + `cargo build -p omegaflow-measure --bin field_te_query` + `archive_search --all` (C-Recherche) + Rat (council) + Max-Roster (Claude · Qwen3.8 2.4T · Qwen; Z.ai/Duck pending).
+## Burn: open 0.0000 · close 0.1357 — River 172 (deepseek-flash, kein pro/max; gemessen `session_burn`/opencode.db, Session „Skalenannotation in MatrixCellOutcome ergänzen" $0.1357). Grund: fold mountain-303 + B (Skala je Zelle, 9 Konstruktoren + Print-Spalte) + `cargo build -p omegaflow-measure --bin field_te_query` + `archive_search --all` (C-Recherche) + Rat (council) + Max-Roster (Claude · Qwen3.8 2.4T · Qwen · Z.ai · Duck · open-weight GLM 5.3).
