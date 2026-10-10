@@ -204,7 +204,10 @@ fn r2_mirror_oidc(worker: &str, tag: &str, path: &str) -> bool {
         let _ = stdin.write_all(&body);
     }
     match child.wait_with_output() {
-        Ok(o) if o.status.success() => true,
+        Ok(o) if o.status.success() => {
+            eprintln!("r2_mirror: oidc {} ok", url);
+            true
+        }
         Ok(o) => {
             eprintln!(
                 "r2_mirror {}: worker returned void: {}",
@@ -302,7 +305,10 @@ fn r2_mirror_s3(tag: &str, path: &str) -> bool {
         let _ = stdin.write_all(&body);
     }
     match child.wait_with_output() {
-        Ok(o) if o.status.success() => true,
+        Ok(o) if o.status.success() => {
+            eprintln!("r2_mirror: s3 {} ok", url);
+            true
+        }
         Ok(o) => {
             eprintln!(
                 "r2_mirror {}: curl returned void: {}",
