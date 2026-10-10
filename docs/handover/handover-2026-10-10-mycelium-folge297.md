@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Ephemeris-CDN-sha256 (llr/sinex/vmf3_site) + VMF3-GRID-Block und -Aufrufer (Origin gemessen) + cmb-cdn-SPT-Re-Dispatch; mountain-301-Block gefaltet.
   class: handover
   date: 2026-10-10
-  sha256: 8d5f9d5c33aaa4c54262ee56e257a0a065d56203ed3926d6667ee1e348e4f66e
+  sha256: 7df62ddcfc4129ecdfd19bff6903c937d11aee6930edec35a6a0c345159b9ff2
   status: live
 -->
 # Handover — Mycelium-Folge 297 (2026-10-10)
@@ -58,18 +58,24 @@ und LLR `no-cadence` bestätigt; planetary radar `at <zielplanet>`
   der `sb_radar.api`-Endpunkte), dann den Block (`at venus`/`at mercur`/`at mars`,
   `compiler`, `terms`, `ttl`) schreiben — kein `at` ohne Origin, kein Fabricat.
 
-### Weltweite LiDAR-Quelle — `open-lidar-data` (COPC) + LAZ/COPC-Reader
+### Weltweite LiDAR-Landschaft + `open-lidar-data` (COPC) + Manifestator
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** Operator-Wort „alle" liegt vor
-- **Lage:** (gemessen 2026-10-10) `github.com/flai-ai/open-lidar-data` HTTP 206,
-  keyless Bucket `s3.eu-central-1.amazonaws.com/open-lidar-data/` HTTP 200
-  (Listing 390654 B, LAS/LAZ + COPC); omegaflow hat **kein** LiDAR registriert
-  (nur Hayabusa-PDS4-LIDAR).
+- **Lage:** (gemessen 2026-10-10) die **Survey**
+  `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md` trägt die Landschaft:
+  USGS 3DEP (`phi/sources.φ:20260` **registriert**), NOAA NOS Coastal
+  (`noaa_nodd_inventory.φ:26`), OpenTopography (200), open-lidar-data
+  (`s3.eu-central-1.amazonaws.com/open-lidar-data/` 200, 390654 B, LAS/LAZ + COPC),
+  Canada CanElevation, Australia ELVIS, Netherlands AHN, UK-EA LiDAR, Bayern DOM20.
+  Der **LAS/COPC-Reader steht** (`src/archivar/las/`, LASzip-Chunk-Dekoder gebaut);
+  die frühere Zeile „omegaflow hat **kein** LiDAR registriert" war **falsch**
+  (296→297 getragen, hier korrigiert).
 - **Blockade:** keine.
-- **Braucht:** (a) einen LAZ/COPC-Reader (`tools/harvest`); (b) ein
-  `sources.φ`-Block — `terms`/`at` folgen dem Bucket; Registrierung = Mycelium.
-  Erster Schritt: ein LAZ/COPC-Key aus dem Bucket-Listing (`curl` der S3-Liste,
-  Key extrahieren), dann den Reader gegen die echte Datei bauen.
+- **Braucht:** je Quelle ein Manifestator (`tools/harvest`, Vorlage
+  `las_compiler.rs`/`copernicus_dem_compiler.rs`) + die Mycelium-Registrierung.
+  Erster Schritt: einen LAZ/COPC-Key aus dem open-lidar-data-Bucket (`curl` der
+  S3-Liste, Key extrahieren), Reader gegen die echte Datei, dann Block +
+  `*-cdn.yml`.
 
 ### Bayern-DOM-Rasterquelle (`geodaten.bayern.de`) + DOM-/GeoTIFF-Reader
 - **Status:** eigen | **Bindung:** eigen
