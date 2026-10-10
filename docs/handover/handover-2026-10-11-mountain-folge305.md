@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Nutation IAU 2000A (Schritt 0 komplett), particle-cern Teil B (parse_tree), Vantage-Rest-Bias (b)(c)(d), ci-gate-Clippy-Lints, open-lidar-data-φ-Block, FMHY-7-Verdikte, Asservatenkammer 3/9
   class: handover
   date: 2026-10-11
-  sha256: 480b77ef57dfe724bfde20ce9b1a00034c1b40648ba2a9acf9eab10ee980d8d1
+  sha256: e0ffd2f9c33fad56e36168c681b44e30b5b16f58b098ad2a655e8ba5a9bafa74
   status: live
 -->
 # Handover — Mountain-Folge 305 (2026-10-11)
@@ -120,7 +120,7 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) **Operator-Wort: A** — eigene Klasse (Krümmung/Gezeiten) als `quantity`-Feld (Kind `relative`, dimensionslos, ohne Kraft: `CHANNEL_REF_QUANTITY` 255 + `PRESENCE_FLAG_QUANTITY` 16.0; `units.rs:519` erlaubt `relative|1|dn|count|%`). Recherche + Rat + Roster tragen das (6/6 „signiert trägt" + „26-Kontrakt bleibt"; 5/6 „eigene Klasse"). „Vorzeichen"-Riss war ein **Doku-Riss** — Leser `spatial.rs:766` (`val.abs()` NaN-Gate) trägt den Sign; `archivar-mathematikerin.md:31` korrigiert. `losc_compiler.rs` emittiert die Klasse jetzt über `--class <force|quantity-kind>` (Quantity-Kind → force 255 + presence 16.0), `SLOT_TTL` gesetzt (vorher ttl=0 → jeder Record verworfen; force=em fabriziert); `gwosc_compiler.rs` (GWOS 3-Feld, kein Leser) descoped.
 - **Blockade:** keine (Mountain-Seite).
-- **Braucht:** den CI-Lauf `gwosc-cdn.yml` (am HEAD dispatcht) → sha256 in den Block `phi/sources.φ:22007` nachtragen. Source-port gebaut: `phi/harvest.φ`-Arm `format losc` (tag `gwosc.org`, arm `losc_compiler`, workflow `gwosc-cdn.yml`, pattern `^losc\.bin$`), `.github/workflows/gwosc-cdn.yml`, `phi/sources.φ`-Block (terms `CC-BY-4.0`, `format losc`, `on earth 0 0 0`, `ttl 31536000`, `quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0`); `register_sort` kanonisch (2730 Blöcke).
+- **Braucht:** den CI-Lauf `gwosc-cdn.yml` (am HEAD dispatcht, Lauf `38096865460`; nie gepollt — Ergebnis aus dem Watchdog/`ci_manage`) → sha256 in den Block `phi/sources.φ:22007` nachtragen. Source-port gebaut: `phi/harvest.φ`-Arm `format losc` (tag `gwosc.org`, arm `losc_compiler`, workflow `gwosc-cdn.yml`, pattern `^losc\.bin$`), `.github/workflows/gwosc-cdn.yml`, `phi/sources.φ`-Block (terms `CC-BY-4.0`, `format losc`, `on earth 0 0 0`, `ttl 31536000`, `quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0`); `register_sort` kanonisch (2730 Blöcke).
 
 ## LOCK
 
