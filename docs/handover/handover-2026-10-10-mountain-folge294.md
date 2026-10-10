@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass abarbeiten
   class: handover
   date: 2026-10-10
-  sha256: e8438146f6c7de589d5cfe7cf20027d11eb5cacde6b7e332ccbb9ecac837ee9a
+  sha256: 9614ef213777e54ecda98461150f76dc594aa3adeb24c5d49b985e033efa1776
   status: live
 -->
 # Handover — Mountain-Folge 294 (2026-10-10)
@@ -49,11 +49,10 @@ uncommittete Arbeit (river: `src/mathematikerin/channel.rs`,
 - **Trigger:** Gate-Fixture + Test in `src/gate/commit_gate_vocab.json`
 - **Lage:** (gemessen 2026-10-10) Rat-Verdikt mit vorgeschalteter Vorbereitung
   (`archive_search --all` `/tmp/omegaflow_all_1791589716_keogram*` + `/tmp/omegaflow_all_1791589434_aurora_keogram*`)
-  und UI-Roster: **Claude** Bild; **Qwen/DeepSeek/Mistral/MiniMax/Perplexity** Feld
-  (provenienz-gebunden, gamma-/JPEG-Mittel als Fabrication-Riss); **Duck.ai** (Tageslimit),
-  **Z.ai** (Deep-Think ohne Antwort), **Lumo** (Limit), **Kimi** (Kontingent),
-  **Perplexity** beantwortet, **Gemini** (nicht gesendet/ohne Antwort), **tryingopen/Nemotron**
-  (out of API credit) = `pending`. Verdikt: das Keogramm-Bild bleibt `decline image`; der
+  und UI-Roster (7 beantwortet): **Claude** Bild; **Qwen/DeepSeek/Mistral/MiniMax/Perplexity/Z.ai-GLM-5.3**
+  Feld (provenienz-gebunden, gamma-/JPEG-Mittel als Fabrication-Riss); `pending` (gemessen):
+  **Duck.ai** (Tageslimit), **Lumo** (Limit), **Kimi** (Kontingent), **Gemini** (nicht gesendet),
+  **tryingopen/Nemotron** (out of API credit). Verdikt: das Keogramm-Bild bleibt `decline image`; der
   kompilierte `keogram_ABK.bin` bleibt als `em`/`relative`-Index zugelassen (Präzedenz
   THEMIS-ASI/`emm_exi_count`), mit Provenienz (Browse-JPEG, 0–255, gamma, kein Rayleigh).
   Note in `declined_sources.φ:4151-4153` ersetzt (die alte „Wire-Feld descoped"-Behauptung
