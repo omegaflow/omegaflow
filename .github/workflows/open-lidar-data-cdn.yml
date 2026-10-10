@@ -1,0 +1,49 @@
+name: open-lidar-data-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  open-lidar-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the open-lidar-data.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view open-lidar-data.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create open-lidar-data.s3.amazonaws.com --repo omegaflow/sources \
+              --title "open-lidar-data.s3.amazonaws.com" \
+              --notes "AWS Open Data lidar COPC clouds compiled to ICRS point samples. CRS read from the file's own projection VLRs and inverted to geodetic, earth body-fixed to ICRS via the ssd.jpl.nasa.gov ephemeris. Record stride: t_tdb s (f64 LE), x/y/z ICRS m (f64 LE), intensity (u16 LE), classification (u8). Magic LAS1."
+          fi
+      - name: Fetch the Belgian EODaS LiDAR DHMV II COPC cloud
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 -o kernels/dhmv2_be.copc.laz \
+            https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/LiDAR_DHMV_2_P1_ATL12104_ES_52500_217000.copc.laz \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "open-lidar-data-cdn: LiDAR_DHMV_2_P1_ATL12104_ES_52500_217000.copc.laz returned void" \
+                 "curl on open-lidar-data.s3.amazonaws.com did not reach the COPC cloud. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Compiler tests
+        run: cargo test -p omegaflow-harvest --release --bin open_lidar_data_compiler
+      - name: Compile the ICRS point samples and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin open_lidar_data_compiler -- \
+            --input kernels/dhmv2_be.copc.laz \
+            --body earth \
+            --out open_lidar_data_be_dhmv2.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "open-lidar-data-cdn: open_lidar_data_be_dhmv2.bin returned void" \
+                 "open-lidar-data compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

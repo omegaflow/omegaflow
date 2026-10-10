@@ -59,8 +59,10 @@ fn fetch(url: &str, token: &str) -> Option<Vec<u8>> {
     if out.status.success() {
         Some(out.stdout)
     } else {
+        let detail = String::from_utf8_lossy(&out.stderr);
+        let detail = detail.trim();
         eprintln!(
-            "vnp46a3: fetch {url} returned ({}) — the granule stays pending",
+            "vnp46a3: fetch {url} returned ({}) — {detail} — the granule stays pending",
             out.status
         );
         None
