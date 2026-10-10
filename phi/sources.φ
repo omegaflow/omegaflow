@@ -1482,6 +1482,7 @@ terms CC-BY-4.0 https://vmf.geo.tuwien.ac.at/terms.html
 format vmf3
 origin https://vmf.geo.tuwien.ac.at/trop_products/GRID/1x1/VMF3/VMF3_OP/2026/VMF3_20260105.H00
 compiler tools/harvest/src/bin/vmf3_compiler.rs
+sha256 f388b49705a006d4538ae61252de5f5064cdd1a391ca0b0585a59a2f9738bb6a
 at earth
 ttl 21600
 
