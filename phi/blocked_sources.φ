@@ -1,14 +1,4 @@
 blocked parser-def
-url https://pds-ppi.igpp.ucla.edu/data
-gap pds-ppi-manifest
-note PDS-PPI (UCLA) — 2026-10-11: EPN-TAP 200, Compiler + Workflow + harvest.φ-Arm stehen (terms TSPA=PD); der Familie fehlt ein Manifest + dynamische field-Zeilen. Vorbedingung: Manifest-Arm.
-
-blocked parser-def
 url https://opendata.cern.ch/record/1120
 gap particle-cern
-note Teilchen CERN — 2026-10-10: --probe AliVSD_Masterclass_6.root = 34 Keys (33 TDirectoryFile EventXXXX + 1 TDirectory); kein Top-Level-TTree, TTree je Event-Dir. Rat 2026-10-10 (5/7 UI): parser-def bleibt (Bau-Schuld), Indexdomäne ungemessen.
-
-blocked parser-def
-url https://losc.ligo.org/
-gap gwf-strain
-note LIGO Open Science Center — 2026-10-11: losc.ligo.org 200 (21527 B HTML), Event-Alerts via gracedb registriert; GW-Strain (HDF5/GWF) Arm/Compiler ungebaut.
+note Teilchen CERN — 2026-10-11: walk_trees findet 68 innere TTrees in den 33 TDirectoryFile-Events (AliVSD_Masterclass_6.root); offen bleibt der TBranchElement-v9-Branch-Decode (fBranches absent). Indexdomäne ungemessen.
