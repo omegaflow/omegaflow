@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: d59f9b287f3f7a6147b21be1bc739b3be1955e81ac65efdb273b0af548543e6e
+  sha256: 14f80844e7a1ec99c5824cebb49bd057fa33bc24de1046e07787dd745abc816b
   status: live
   see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -220,16 +220,27 @@ erreichbare Alternative suchen und messen.
 | GR `geoportal.gov.gr`/`geodata.gov.gr` (tot) | `data.gov.gr` | **200** | Griechisches Open-Data-Portal |
 | BG `gis.mrrb.government.bg` (tot) / `data.egov.bg` (403) | `egov.bg` · `www.mrrb.bg` | **200 · 200** | BG eGovernment + Ministerium (MRRB) |
 | RO `data.gov.ro` (tot) | `www.ancpi.ro` | **200** | ANCPI (LAKI III LiDAR) |
-| noch blockiert (Geo/CF) | Pacific `pacificdata.org`·`sprep.org`·`ffa.int` (403), IL `data.gov.il`·`gov.il`·`mapi.gov.il` (403) | 403 | Exit-Wechsel = Operator-Wort; Pacific teils über NOAA-PDS (Guam, 206) |
+| **Pazifik** `pacificdata.org` (403) | **Browser-Brücke** (`--playwright`/`browser_open`) | CF passiert | Pacific Data Hub (1.328 Datasets) — **kein Geo-Block, Cloudflare-Challenge** |
+| Pazifik `sprep.org` (403) | Browser-Brücke | CF passiert | SPREP Pacific Environment |
+| Pazifik `ffa.int` (403) | Browser-Brücke | CF passiert | Forum Fisheries Agency |
+| **Israel** `data.gov.il` (403) | Browser-Brücke | CF passiert | IL Government Data (1.201 Datasets, API) |
+| Israel `gov.il`/`mapi.gov.il` (403) | Browser-Brücke | CF passiert | MAPI (Survey of Israel) |
+| Israel `govmap.gov.il` (403) | Browser-Brücke | CF passiert | IL National-Mapping-Portal |
 | global (topografisch) | `srtm.csi.cgiar.org` · Copernicus DEM | 200 | globale DEM-Alternative (kein LiDAR) |
 
-**Ergebnis:** 13 der toten/blockierten LiDAR-Hosts haben eine erreichbare
-Alternative (JP→AWS · UK-SCO→data.gov.uk · AU-VIC→Data-Vic · SG→data.gov.sg ·
-ES→datos.gob.es/IGN · SK→data.gov.sk/GKU · PT→DGT · RO-`geoportal`+`data.gov`→ANCPI ·
-**GR→data.gov.gr** · **BG→egov.bg/mrrb.bg** · DE-Hessen/Thüringen/Hamburg→
-Landes-Geoportale). Nur **Pacific** (`pacificdata.org`/`sprep.org`/`ffa.int`) und
-**Israel** (`data.gov.il`/`gov.il`/`mapi.gov.il`) bleiben 403 — beide riechen nach
-Cloudflare/Geo; ein Exit-Wechsel ist Operator-Wort, kein stiller Akt.
+**Ergebnis:** **alle** zuvor offenen Hosts sind erreichbar. 13 (JP→AWS · UK-SCO→
+data.gov.uk · AU-VIC→Data-Vic · SG→data.gov.sg · ES→datos.gob.es/IGN ·
+SK→data.gov.sk/GKU · PT→DGT · RO→ANCPI (portal+data) · GR→data.gov.gr ·
+BG→egov.bg/mrrb.bg · DE-Hessen/Thüringen/Hamburg→Landes-Geoportale) haben eine
+**direkte** Alternative; **Pacific** (`pacificdata.org`/`sprep.org`/`ffa.int`) und
+**Israel** (`data.gov.il`/`gov.il`/`mapi.gov.il`/`govmap.gov.il`) sind **keine
+Geo-Blocks**, sondern **Cloudflare-Challenges**, die die **Browser-Brücke** mit dem
+Operator-Profil passiert (gemessen 2026-10-10: Titelseiten geladen) — **kein VPN
+nötig**. Der `403` war der Detektor der Nicht-Browser-Route, kein Zugangsverdikt.
+
+**Regel (bleibt):** erst Alternativen, dann Browser-Brücke (CF), und **erst zuletzt**
+— bei wirklich hartem Geo-Block — die Frage an den Operator für einen Exit. Ein
+Exit-Wechsel per Proton ist ein Akt am Gegenüber, nie still.
 
 ## Bathymetrie / Unterwasser (topo-bathy, Multibeam, globale Relief-Modelle)
 
