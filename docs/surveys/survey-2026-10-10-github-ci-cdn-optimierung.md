@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: 19382251ed61431ca8d3a78dd6c1a67297af6a3915c95609dd77e3529d259605
+  sha256: 95e55714930b7241243b97b77bf459da544b0eabdf6822d8c94dcbfba65f2362
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)
@@ -109,6 +109,70 @@ lokale deterministische Checks · „mehr Cloud-Komfort" → ein CDN, ein Schrei
   Der Rat hält dagegen: das berührt die no-leak-Grenze (Code/Logs an einen Dritten). Als **Riss**
   getragen; Realisierung nur als **self-hosted LLM auf eigenem/inspected Runner**, nie über eine
   fremde Cloud-GPU mit Repo-Daten.
+
+## Säule E — CPU-Runs (free/cheap, gemessen)
+
+- **GitHub standard x64 + `ubuntu-24.04-arm`** bleiben gratis+unbegrenzt für public (Baseline).
+  larger x64/arm64 **immer kostenpflichtig** (x64 4-core $0.012/min, arm64 4-core $0.008/min).
+- **Azure Pipelines** — **unbegrenzte Minuten + 10 parallele Jobs gratis für OSS** (Kandidat für
+  zweite Lane; ein 2026-Alters-Hinweis auf die OSS-Grant nicht gemessen → `unverified`).
+- **Blacksmith OSS-Runner** — 3 000 gratis 2-vCPU-min/mo + OSS-Programm; schnellerer Single-Core.
+- **CircleCI OSS** — 400 000 Credits/mo (~80 000 min, OSI-Lizenz) — größter freier Minuten-Pool.
+- **Ubicloud** (OSS-Cloud) — 1 250 gratis min/mo, dann $0.00125/min, x64 **und** arm64.
+- **AppVeyor OSS** — nur falls je eine Windows-Lane nötig (1 concurrent).
+- **Caches:** Turborepo/Vercel Remote Cache (frei) · Nx Cloud Hobby (50 k Credits) · BuildBuddy RBE
+  (frei OSS) · **sccache → Cloudflare R2** (Zero-Egress) — schrumpft jeden Lauf.
+- **Free/cheap VMs als self-hosted-Runner/Ernte-Box:** **Oracle Always Free 2 OCPU/12 GB ARM**
+  (2026 halbiert; 10 TB/mo Egress) · GCP always-free e2-micro (1 GB) · AWS/Azure zeitlich limitiert ·
+  Hetzner CX23 2vCPU/4 GB ~€4 · netcup 4 vCPU/8 GB ~€10. **Fly.io ohne free tier.**
+- **Codespaces** — 120 core-h/mo (Free) = ~60 h auf 2-Core; Dev-Umgebung, kein CI-Scheduler.
+- **Tote Lanes (nicht adoptieren):** Cirrus CI (schließt), BuildJet (tot 2026-03-31), Earthly CI (tot).
+- **Riss:** GitHub self-hosted $0.002/min — „postponed" vs. „effektiv 2026-03-01" (Quellen streiten).
+
+## Säule F — MCP-Server (gemessen)
+
+- **Wie opencode MCP fährt:** `opencode.json` → `mcp`: `{type:"local", command:[…]}` (stdio) oder
+  `{type:"remote", url, headers, oauth}` (HTTP); Auto-OAuth auf 401 (Tokens in
+  `~/.local/share/opencode/mcp-auth.json`); `opencode mcp auth|list|logout|debug`. Docs-Warnung:
+  das **GitHub-MCP ergänzt viele Tokens** und kann das Kontextlimit sprengen. opencode.ai/docs/mcp-servers
+- **No-leak-Fit (lokal, stdio, kein Fremd-Egress):** `filesystem` (root-scoped), `git` (lokales Repo),
+  `memory`, `sequential-thinking`, `time`, `everything`, archiviertes `sqlite`. Genau die Klasse des
+  vorhandenen chrome-devtools-MCP.
+- **Bedingt:** `fetch` + self-hosted Playwright/Puppeteer (Netz nur zu benannten URLs; Inhalt als
+  untrusted behandeln).
+- **GitHub-MCP** (`github/github-mcp-server`, Go v2): lokal (stdio, PAT) **oder** remote hosted
+  `api.githubcopilot.com/mcp/`; **`/readonly`-Toolset-Variante** bzw. `--read-only`; der **hosted**
+  Pfad schickt Repo/Actions-Kontext an `api.githubcopilot.com` = Dritt-Egress (nicht `state/`, aber
+  nur fürs eigene public Repo). Toolsets: repos/issues/pull_requests/actions/security_advisories/…
+- **Cloudflare-MCP** (`cloudflare/mcp-server-cloudflare`, 16+ Server: Workers/R2/D1/KV, logs, radar):
+  streamable-HTTP (`/mcp`) + `mcp-remote`-Bridge; API-Token scoped. Natürlicher R2-Begleiter, aber
+  Tools können **schreiben** (Worker deployen, R2 löschen) → Token auf R2-only scopen.
+- **Nicht verdrahten (`state/`-Risiko):** AWS/Azure/GCP-Management, hosted Sentry/Slack — lesen **und**
+  schreiben nach außen = **lethal trifecta** (untrusted input + sensitive data + outbound channel).
+  Wenn doch: **Docker-Gateway** als Container-Isolation (Keychain-Secrets, `--block-secrets`, Logs).
+- **Transport 2026-07-28:** stateless core, **streamable HTTP** (Mcp-Method/-Name-Header), SSE deprecated;
+  OAuth 2.1 (RFC 9207 `iss`-Prüfung, DCR → CIMD). Registries: Official ~9 652 · mcp.so ~20 222 ·
+  PulseMCP 16 820+ · Docker-Katalog 300+ signiert.
+
+## Säule G — APIs (gemessen)
+
+- **GitHub:** REST anon 60/h · PAT 5 000/h · App-Installation ≥5 000/h (Cap 12 500) · `GITHUB_TOKEN`
+  1 000/h/repo; GraphQL 5 000 Punkte/h; secundary: 100 concurrent, 900 pts/min REST, ≤80 content-writes/min.
+  **Actions-API** (`/actions`) — `workflow dispatch`, runs/jobs/logs/artifacts/caches/runners;
+  Checks-, Releases-, GHCR-API; **OIDC** `id-token: write`. docs.github.com/en/rest
+- **CI-Vendor-APIs:** CircleCI v2 · Buildkite REST (**200/min org, 50/min user**) · Depot · Blacksmith ·
+  Namespace · Cirrus (gRPC/GraphQL) — Blacksmith/Namespace/Depot-Limits `unverified`.
+- **Free-Compute-APIs:** **Modal** (`modal token`, Starter $30/mo) · Beam.cloud · Kaggle (`kaggle.json`) ·
+  **HF Hub** (anon 1 000/5 min) · RunPod/Vast.ai · Colab **keine Compute-API**.
+- **CDN-APIs:** **Cloudflare REST** (global 1 200/5 min/user, 200/s/IP; GraphQL 320/5 min) + **R2 S3-API**
+  (10 GB frei, 1M Class A / 10M Class B, Zero-Egress) + **Workers AI** · Backblaze B2 S3 ·
+  Bunny Core API · **Zenodo** (auth 100/min, 5 000/h; DOI) · figshare v2 · OSF v2.
+- **Free-Inferenz-APIs:** Groq (`gpt-oss-120b` 30 RPM, 1K RPD) · Cerebras (5 RPM free) · CF Workers AI
+  (task-RPM) · OpenRouter (`:free` 20 RPM, 50–1 000 RPD) · Gemini free tier · Mistral free mode.
+- **Such-APIs (archive_search):** Tavily (dev 100 RPM) · Exa (10 QPS) · Linkup (prepaid) · Jina (keyless) ·
+  Firecrawl (Free 10 RPM) · SearXNG (self-host).
+- **Höchster Hebel:** Actions-API + `GITHUB_TOKEN` (freies CI) · **Cloudflare REST+R2+Workers AI** aus
+  einem Token · **OIDC** keyless · Groq/Cerebras free · Zenodo-DOI.
 
 ## Die Runde (Urteil) — Pointer
 
