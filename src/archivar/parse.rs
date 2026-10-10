@@ -1,8 +1,8 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, QuantityRole, Regime, descriptor_from_axes,
-    force_type_of_descriptor, unit_token,
+    ChannelDescriptor, Conserved, QuantityRole, Regime, channel_ref_of_descriptor,
+    descriptor_from_axes, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -1199,7 +1199,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         None
                     },
                     kernel: k,
-                    force: FORCE_TYPE_QUANTITY,
+                    force: CHANNEL_REF_QUANTITY,
                     tau,
                     absorption,
                     advection,
@@ -1335,7 +1335,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     );
                     continue;
                 }
-                let f = match force_type_of_descriptor(&desc) {
+                let f = match channel_ref_of_descriptor(&desc) {
                     Some(f) => f,
                     None => {
                         report_anomaly(
@@ -2139,7 +2139,7 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
     let force = match force_id_of(parts[4]) {
         Some(f) => f,
         None => match quantity_kind_of(parts[4]) {
-            Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => FORCE_TYPE_QUANTITY,
+            Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => CHANNEL_REF_QUANTITY,
             _ => return None,
         },
     };
@@ -2661,7 +2661,7 @@ mod tests {
 
         let valid = "url https://example.com/q.bin\nttl 604800\n\
                      quantity qkey qname inverse-square mass kg 3600 0.0 0.0\n";
-        assert_eq!(field_of(valid), Some(FORCE_TYPE_QUANTITY));
+        assert_eq!(field_of(valid), Some(CHANNEL_REF_QUANTITY));
 
         let force_as_kind = "url https://example.com/q.bin\nttl 604800\n\
                              quantity qkey qname inverse-square em kg 3600 0.0 0.0\n";
@@ -2694,7 +2694,7 @@ mod tests {
                         last items.value river_stage inverse-square geometry m 900.0 0.0 0.0\n";
         let fc = last_of(geometry).expect("a last selector with a geometry kind flows");
         assert_eq!(
-            fc.force, FORCE_TYPE_QUANTITY,
+            fc.force, CHANNEL_REF_QUANTITY,
             "a geometry value leaves Σω through the last arm, like the quantity arm"
         );
         assert_eq!(fc.unit, "m", "the geometry unit stays free");
@@ -2703,7 +2703,7 @@ mod tests {
                                 last mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
         assert_eq!(
             last_of(source_parameter).map(|f| f.force),
-            Some(FORCE_TYPE_QUANTITY),
+            Some(CHANNEL_REF_QUANTITY),
             "a source parameter leaves Σω through the last arm"
         );
 
@@ -2773,7 +2773,7 @@ mod tests {
                  quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
         let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
         assert_eq!(
-            fc.force, FORCE_TYPE_QUANTITY,
+            fc.force, CHANNEL_REF_QUANTITY,
             "a derived index stays outside Σω"
         );
     }
@@ -2791,7 +2791,7 @@ mod tests {
         let geometry = "url https://example.com/q.bin\nttl 604800\n\
                         quantity tide_ft tide_ft inverse-square geometry ft 3600 0.0 0.0\n";
         let fc = field_of(geometry).expect("a geometry quantity flows");
-        assert_eq!(fc.force, FORCE_TYPE_QUANTITY);
+        assert_eq!(fc.force, CHANNEL_REF_QUANTITY);
         assert_eq!(
             fc.unit, "ft",
             "the geometry unit is free (length, angle, mass …)"
@@ -2801,7 +2801,7 @@ mod tests {
                                 quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
         assert_eq!(
             field_of(source_parameter).map(|f| f.force),
-            Some(FORCE_TYPE_QUANTITY),
+            Some(CHANNEL_REF_QUANTITY),
             "a source parameter flows as a quantity, never a field"
         );
     }

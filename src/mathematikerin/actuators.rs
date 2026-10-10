@@ -426,7 +426,7 @@ mod tests {
         }
     }
 
-    fn pack_one(force_type: f64, val: f64, color_index: f64) -> (Vec<f32>, Vec<f32>) {
+    fn pack_one(channel_ref: f64, val: f64, color_index: f64) -> (Vec<f32>, Vec<f32>) {
         let r: SampleRecord = (
             0.0,
             0.0,
@@ -437,7 +437,7 @@ mod tests {
             1.0,
             0.0,
             0.0,
-            force_type,
+            channel_ref,
             0.0,
             0.0,
             0.0,

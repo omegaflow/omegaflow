@@ -3,7 +3,7 @@
   session: River-Folge 163
   class: handover
   date: 2026-10-10
-  sha256: 758614ed38d155197ed5fdc43d12d4fbab792a4e66270ca9bb593f02e3295d70
+  sha256: d27af4a98f5405ea309c557bf6bd5ec96bb585b76c32b60c24ecbbc555a61d0b
   status: live
 -->
 # Handover — River-Folge 163 (2026-10-10)
@@ -54,7 +54,7 @@ nicht kopiert.
 ## Träger (Prosa, eigene)
 
 - `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens (P0.1, river-152: `n` + `schema_hash` + 2-Bit-State-Maske; seit river-160 CSR-`offsets` und die A=A-Regel unter freier Bewegung/Drehung).
-- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P9.2 Design of record (river-163):** Rat (5 Stimmen) + Frontier-UI + Open-Weight konvergieren auf (b) — CAP/n im Frame-Kopf + Manifest, Record bleibt 26×f64, `force_type` → Kanal-Griff (`channel_ref`), WGSL-Dispatch über Operator-Enum (P4.2), 255-Marke → `PRESENCE_FLAG_QUANTITY`.
+- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (feste 9 → Kapazität 2ⁿ + lebendiges n; P0–P10); Träger dieser Linie. **P9.2 gebaut (river-163):** Rat + Frontier-UI + Open-Weight konvergierten auf (b) — Record bleibt 26×f64, Wire-Slot `force_type`→`channel_ref` (Kanal-Griff), Quantity-Sentinel 255 → `PRESENCE_FLAG_QUANTITY` (Bit 16), Wire-Quantity-Slot = 0.0-Pad; der Leser liest den Bit (Rust/JS/WGSL). `cargo check` grün.
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — geheilt (river-159).
 - `state/stimmen/2026-10-10-river-p92-rat.md` — Rat (5 Stimmen) + UI-/Open-Weight-Runde zu P9.2 (neu, river-163).
 - `state/stimmen/2026-10-09-river-*.md` — Rat + Wissenschaft + Frontier-UI + Open-Weight zu Eigenmode-Armen, elastischer Polarisation, Tonmodell, Kanal-Zulassung, Register-Physik.
@@ -66,13 +66,6 @@ nicht kopiert.
 - mountain-296 `## An river` (Origin: mountain-296): der `last … <kind>`-Arm — von river-162 gebaut (`src/archivar/parse.rs:2684`, Test grün, `parse_field_config`). Der Block ist damit aufgelöst; die 4 `last`-Zeilen (river_stage/tide_water/range_rate/range_accl) können `gravity`→`geometry` migrieren.
 
 ## Offen (aufgeschlüsselt)
-
-### P9.2 Wire-Rebind — Design of record steht; Bau offen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-10, river-163) Rat (5 Stimmen) + 4 Frontier-Seats (Duck/Claude/Qwen/Z.ai) + open-weight konvergieren einstimmig auf **(b)**: CAP und n leben im Frame-Kopf (`n`, `offsets`, `schema_hash`, P3.1) und im Manifest, der Record bleibt 26×f64 (kein neuer Slot); `force_type` wird zum **Kanal-Griff** (Index in die Registry, über das Manifest auf die Identität/Hash auflösend; Name künftig `channel_ref`); der WGSL-Dispatch läuft über das Operator-Enum (P4.2), nie über n; die 255-Marke wandert auf `PRESENCE_FLAG_QUANTITY` (Bit 16, `types.rs:402`, bereits gesetzt in `spatial.rs:844/1002`). Design of record: `docs/concepts/kanal-ontologie-komplettbau.md` §P9.2; Rohbelege `state/stimmen/2026-10-10-river-p92-rat.md`.
-- **Blockade:** keine (layout-neutral). Der Bau berührt Wire + JS/WGSL (Feld-Rename, Write-Seite des Quantity-Slots).
-- **Braucht:** den `force_type`→`channel_ref`-Rename (`types.rs`, `spatial.rs`, `relay.rs`, `channel.rs`, `actuators.rs`, `ozzy.rs`, `parse.rs`, `static/membrane.html` + `constants.js`) und die Write-Seite der 255→Presence-Bit-Umstellung (Wire-Wert des Quantity-Slots → 0.0-Pad, der Leser liest den Bit) als bounded build; `cargo check` grün.
 
 ### CI-Verifikation — ci-gate rot (clippy 1.99.0 in fremden Parser-Files)
 - **Status:** wartend | **Bindung:** eigen
@@ -98,9 +91,11 @@ nicht kopiert.
 Pfad-begrenzte Commit-Pfade dieser Session (River 163):
 
 - `docs/concepts/kanal-ontologie-komplettbau.md` (P9.2 Design of record: Rat+UI-Verdikt)
+- P9.2-Bau: `src/archivar/{types,spatial,relay,parse,main_flow,membrane,channels,fetch,tests}.rs`, `src/mathematikerin/{actuators,channel,ozzy}.rs`, `src/mathematikerin/kernels/v_freq_shelf.dat`, `src/gate/axioms.rs`, `src/gate/commit_gate_vocab.json`, `static/membrane.html`
+- Wire-Vertrag: `docs/concepts/archivar-mathematikerin.md`, `docs/granit.md`
 - `docs/handover/handover-2026-10-10-river-folge163.md`
 - `docs/handover/archiv/handover-2026-10-10-river-folge162.md` (Move)
 
-Fremde uncommittete Arbeit (nicht berührt, nicht committet): `tools/measure/src/bin/ssb_field_bake.rs`, `tools/register/src/bin/p10_gravity_migrate.rs`.
+Fremde uncommittete Arbeit (nicht berührt, nicht committet): `phi/sources.φ`, `docs/zustand/dropped-legacy-baseline.txt`, `src/archivar/{bepicolombo,blinkverse,dmap,ebhis,keogram,swpc_efield,weberin_fit}.rs`, `tools/measure/src/bin/ssb_field_bake.rs`, `tools/register/src/bin/p10_gravity_migrate.rs`.
 
-## Burn: open 0.0000 · close 0.0697 — River 163 (deepseek-flash, kein pro/max; gemessen `session_burn`); Grund: P9.2-Rats-Runde (Wissenschaft + Rat + Frontier-UI + Open-Weight), Design of record.
+## Burn: open 0.0000 · close 0.1251 — River 163 (deepseek-flash, kein pro/max; gemessen `session_burn`); Grund: P9.2-Rats-Runde (Wissenschaft + Rat + Frontier-UI + Open-Weight) + P9.2-Bau (rename + Quantity-Presence-Bit).

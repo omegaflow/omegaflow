@@ -847,7 +847,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 tau,
                 extent,
                 kernel_id,
-                force_type,
+                channel_ref,
                 absorption,
                 advection,
                 vx,
@@ -875,7 +875,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 out.extend_from_slice(&tau.to_le_bytes());
                 out.extend_from_slice(&extent.to_le_bytes());
                 out.extend_from_slice(&kernel_id.to_le_bytes());
-                out.extend_from_slice(&force_type.to_le_bytes());
+                out.extend_from_slice(&channel_ref.to_le_bytes());
                 out.extend_from_slice(&absorption.to_le_bytes());
                 out.extend_from_slice(&advection.to_le_bytes());
                 out.extend_from_slice(&vx.to_le_bytes());

@@ -834,21 +834,21 @@ const LIVE_FORCE_MEDIA: [Medium; 9] = [
     Medium::Vacuum,
 ];
 
-pub fn descriptor_for_force_type(ft: u8) -> Option<ChannelDescriptor> {
+pub fn descriptor_for_channel_ref(ft: u8) -> Option<ChannelDescriptor> {
     let name = force_name_of(ft)?;
     let medium = *LIVE_FORCE_MEDIA.get(ft as usize)?;
     descriptor_for_force(name, medium)
 }
 
-pub fn force_type_of_descriptor(d: &ChannelDescriptor) -> Option<u8> {
+pub fn channel_ref_of_descriptor(d: &ChannelDescriptor) -> Option<u8> {
     let h = d.hash();
-    (0..9u8).find(|&ft| descriptor_for_force_type(ft).is_some_and(|fd| fd.hash() == h))
+    (0..9u8).find(|&ft| descriptor_for_channel_ref(ft).is_some_and(|fd| fd.hash() == h))
 }
 
 pub fn live_channel_registry() -> ChannelRegistry {
     let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
     for ft in 0..9u8 {
-        if let Some(d) = descriptor_for_force_type(ft) {
+        if let Some(d) = descriptor_for_channel_ref(ft) {
             reg.register(d);
         }
     }
@@ -2610,11 +2610,11 @@ mod tests {
     }
 
     #[test]
-    fn every_live_force_type_carries_a_descriptor() {
+    fn every_live_channel_ref_carries_a_descriptor() {
         for ft in 0..9u8 {
-            assert!(descriptor_for_force_type(ft).is_some(), "force type {ft}");
+            assert!(descriptor_for_channel_ref(ft).is_some(), "force type {ft}");
         }
-        assert!(descriptor_for_force_type(9).is_none());
+        assert!(descriptor_for_channel_ref(9).is_none());
     }
 
     #[test]
@@ -2651,15 +2651,15 @@ mod tests {
     }
 
     #[test]
-    fn every_force_type_round_trips_through_its_descriptor() {
+    fn every_channel_ref_round_trips_through_its_descriptor() {
         for ft in 0..9u8 {
-            let d = descriptor_for_force_type(ft).expect("descriptor");
-            assert_eq!(force_type_of_descriptor(&d), Some(ft), "force type {ft}");
+            let d = descriptor_for_channel_ref(ft).expect("descriptor");
+            assert_eq!(channel_ref_of_descriptor(&d), Some(ft), "force type {ft}");
         }
         let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
         let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
-        assert_eq!(force_type_of_descriptor(&em), Some(0));
-        assert_eq!(force_type_of_descriptor(&electric), Some(8));
+        assert_eq!(channel_ref_of_descriptor(&em), Some(0));
+        assert_eq!(channel_ref_of_descriptor(&electric), Some(8));
     }
 
     #[test]
@@ -2673,7 +2673,7 @@ mod tests {
         )
         .expect("electric axes");
         assert_eq!(derived.regime, Regime::QuasiStatic);
-        assert_eq!(force_type_of_descriptor(&derived), Some(8));
+        assert_eq!(channel_ref_of_descriptor(&derived), Some(8));
     }
 
     #[test]
