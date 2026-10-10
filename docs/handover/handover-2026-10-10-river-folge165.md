@@ -3,7 +3,7 @@
   session: River-Folge 165
   class: handover
   date: 2026-10-10
-  sha256: 6919f6d21389faeb67c8a7e3efac89eedfce021df95837e408ddde10ccbd4528
+  sha256: 4236c0b3a32e00c698bac24150908998abcbd401b92e2814e63df7936bfbb5b0
   status: live
 -->
 # Handover — River-Folge 165 (2026-10-10)
@@ -39,12 +39,12 @@ fortgeschrieben, nicht kopiert.
 
 ## Offen (aufgeschlüsselt)
 
-### P10.2a Bau — Operator-Token + Parser-Arme (Register-Physik)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** `src/archivar/parse.rs` frei von fremder uncommitteter Arbeit (Mountain-Commit), dann bounded Dispatch.
-- **Lage:** (gemessen 2026-10-10, river-165) Die Token-Semantik ist **entschieden** — Rat (5 Stimmen, 2 Pässe) und UI-/Open-Weight-Roster konvergieren (`state/stimmen/2026-10-10-river-p10.2a-token-semantik.md`): **`<kernel>` = Numerik-Achse** (`kernel_id_of`: inverse-square/erf/point), der Operator (TransportOp) ist ein **eigener Token `<operator>` vor `<pde_type>`** — das Zielschema `:197` war ein Token zu kurz. `<quantity>` = Was/Kind, `<role>` = Stand; `interaction` optional/abgeleitet über dem `mechanisms`-FK; Medium = zwei Ebenen (Admissibility-Klasse {vacuum,fluid,elastic-solid} + benannter Wert). Konzept-Doc nachgeführt (`docs/concepts/kanal-ontologie-komplettbau.md:195`). Der Vorläufer-Parser trägt den Operator bereits an `parts[5]`, die Numerik an `parts[i]` (`parse.rs:1236`/`:1256`). Getragener Riss: `TransportOp` mischt konstitutive Gesetze und PDE-Klassen (`channel.rs:60`).
-- **Blockade:** `src/archivar/parse.rs` (und die übrigen `src/archivar/*.rs`) sind mit fremder uncommitteter Arbeit belegt (CI-clippy-Fix Mountain); ein path-gebundener Commit würde fremde Hunks einfangen.
-- **Braucht:** Mountain committet `src/archivar/*` → dann bounded Dispatches (1. `<operator>`-Token + `<kernel>`-Position explizit, 2. `<quantity>`-Arm role/medium, 3. `interaction`-Achse, 4. Medium zwei Ebenen, 5. `mechanisms`-FK; je `cargo check`-Gate).
+### P10.2a Bau — Parser-Arme (Register-Physik)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** nächster bounded Dispatch.
+- **Lage:** (gemessen 2026-10-10, river-165) Die Token-Semantik ist **entschieden** — Rat (5 Stimmen, 2 Pässe) und UI-/Open-Weight-Roster konvergieren (`state/stimmen/2026-10-10-river-p10.2a-token-semantik.md`): **`<kernel>` = Numerik-Achse** (`kernel_id_of`), der Operator (TransportOp) ist ein **eigener Token `<operator>` vor `<pde_type>`** — das Zielschema `:197` war ein Token zu kurz. `<quantity>` = Was/Kind, `<role>` = Stand; `interaction` optional/abgeleitet; Medium = zwei Ebenen. Konzept-Doc nachgeführt (`docs/concepts/kanal-ontologie-komplettbau.md:195`). **Schritt 1 gebaut** (`parse.rs:1375-1549`, guard `TransportOp@3/PdeType@4/Medium@5`; `conserved` aus dem Operator abgeleitet; `<kernel>` aus dem letzten Token; Test `p10_2a_target_grammar_parses` `parse.rs:2553`; `cargo check` 0/0; rückwärtskompatibel, alle Alt-Arme unangetastet). Der Working tree ist clean — Mountain hat `src/archivar/*` committet, der frühere Blocker ist weg. Getragener Riss in `TransportOp` (konstitutive Gesetze vs. PDE-Klassen, `channel.rs:60`) und der `Advective→Momentum`-vs-`Mass`-Riss (`channel.rs:741`) bleiben benannt.
+- **Blockade:** keine.
+- **Braucht:** die weiteren bounded Dispatches — (2. `interaction`-Achse explizit als Token absichern samt Gate-Fixture, 3. Medium zwei Ebenen (Admissibility-Klasse vs. benannter Wert), 4. `mechanisms`-FK/Lookup, 5. `<quantity>`→Conserved-Auflösungstafel statt Operator-Ableitung; je `cargo check`-Gate); Handover-commit hält Schritt 1.
 
 ### CI-Verifikation — ci-gate rot (clippy 1.99.0 in fremden Parser-Files)
 - **Status:** wartend | **Bindung:** eigen
@@ -87,7 +87,8 @@ Pfad-begrenzte Commit-Pfade dieser Session (River 165):
 - `docs/handover/handover-2026-10-10-river-folge165.md` (neu)
 - `docs/handover/archiv/handover-2026-10-10-river-folge164.md` (Move)
 - `tools/measure/src/bin/ssb_field_bake.rs` (eigen, river-160 `e17c88898`; rustfmt-Fix der langen `eprintln!`-Zeile `:82` — Mountain meldete `format` failed `Diff …ssb_field_bake.rs:82`; River-Misattribution der Vorübergabe korrigiert)
+- `src/archivar/parse.rs` (P10.2a Schritt 1: Ziel-Grammatik-Arm `:1375-1549` + Test `:2553`, rückwärtskompatibel)
 
-Fremde uncommittete Arbeit (nicht berührt, nicht committet): `phi/sources.φ`, `docs/zustand/dropped-legacy-baseline.txt`, `src/archivar/{bepicolombo,blinkverse,channels,dmap,ebhis,fetch,keogram,main_flow,membrane,parse,relay,spatial,swpc_efield,tests,types,weberin_fit}.rs`, `src/gate/{axioms,commit_gate_vocab.json}`, `src/mathematikerin/{actuators,channel,ozzy}.rs`, `kernels/v_freq_shelf.dat`, `static/membrane.html`, `tools/register/src/bin/p10_gravity_migrate.rs`, `docs/concepts/archivar-mathematikerin.md`, `docs/granit.md`.
+Fremde uncommittete Arbeit (nicht berührt, nicht committet): `phi/sources.φ`, `docs/zustand/dropped-legacy-baseline.txt`, `src/archivar/{bepicolombo,blinkverse,channels,dmap,ebhis,fetch,keogram,main_flow,membrane,relay,spatial,swpc_efield,tests,types,weberin_fit}.rs`, `src/gate/{axioms,commit_gate_vocab.json}`, `src/mathematikerin/{actuators,channel,ozzy}.rs`, `kernels/v_freq_shelf.dat`, `static/membrane.html`, `tools/measure/src/bin/te_ground_truth.rs`, `tools/register/src/bin/p10_gravity_migrate.rs`, `docs/concepts/archivar-mathematikerin.md`, `docs/granit.md`.
 
-## Burn: open 0.0000 · close 0.0404 — River 165 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 22→25 Sessions $0.7629→$1.0234). Grund: volle Stimmen-Runde P10.2a (archive_search --all + Rat 2 Pässe + UI/Open-Weight-Roster), Schema-Nachführung, Übergabe.
+## Burn: open 0.0000 · close 0.0755 — River 165 (deepseek-flash, kein pro/max; gemessen `session_burn`; Fenster 22→26 Sessions $0.7629→$1.0506). Grund: volle Stimmen-Runde P10.2a (archive_search --all + Rat 2 Pässe + UI/Open-Weight-Roster), Schema-Nachführung, P10.2a-Schritt-1-Parser-Arm (`grind-flash`), Übergabe.
