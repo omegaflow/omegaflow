@@ -86,6 +86,8 @@ mod openlibrary;
 mod osf;
 #[path = "archive_search/paged.rs"]
 mod paged;
+#[path = "archive_search/pangaea.rs"]
+mod pangaea;
 #[path = "archive_search/pdb.rs"]
 mod pdb;
 #[path = "archive_search/pdf.rs"]
@@ -100,6 +102,8 @@ mod psychporta;
 mod pubchem;
 #[path = "archive_search/pubmed.rs"]
 mod pubmed;
+#[path = "archive_search/re3data.rs"]
+mod re3data;
 #[path = "archive_search/reactome.rs"]
 mod reactome;
 #[path = "archive_search/refine.rs"]
@@ -424,6 +428,8 @@ fn main() {
             "--ckan" => mode = Mode::Net("ckan"),
             "--cmr" => mode = Mode::Net("cmr"),
             "--tap" => mode = Mode::Net("tap"),
+            "--pangaea" => mode = Mode::Net("pangaea"),
+            "--re3data" => mode = Mode::Net("re3data"),
             "--dryad" => mode = Mode::Net("dryad"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
@@ -763,7 +769,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--tap|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--tap|--pangaea|--re3data|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -833,6 +839,12 @@ fn usage() {
     );
     eprintln!(
         "  --tap       IVOA TAP sync ADQL query: `--tap \"endpoint=<tap-sync-url> SELECT ...\"`, keyless; rows as col=val (find a service with `--regtap`)"
+    );
+    eprintln!(
+        "  --pangaea   PANGAEA earth-science data search (pangaea.de/advanced/search.php), keyless; doi + title/abstract"
+    );
+    eprintln!(
+        "  --re3data   re3data research-data repository search (re3data.org/api/v1), keyless; id + name/doi"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
