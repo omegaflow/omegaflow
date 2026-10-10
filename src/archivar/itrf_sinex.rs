@@ -464,7 +464,7 @@ mod tests {
         assert_eq!(s.x_m, Some(0.403394728676361E+07));
         assert_eq!(s.y_m, Some(0.486990823348219E+06));
         assert_eq!(s.z_m, Some(0.490043108394323E+07));
-        assert_eq!(s.vx_m_y, Some(-.139698991002166E-01));
+        assert_eq!(s.vx_m_y, Some(-0.139698991002166E-01));
         assert_eq!(s.vy_m_y, Some(0.169886132211163E-01));
         assert_eq!(s.vz_m_y, Some(0.107017114287353E-01));
         assert_eq!(

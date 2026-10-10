@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden-Harvest 1-4 (Parser)
   class: handover
   date: 2026-10-10
-  sha256: 0114ed66b6fcd8fe14f6ca50d8447318dca79269095e42fea88e73feb9cabaa2
+  sha256: fb10fc423257efc42a24b77068e5be760c4b91b9d5ec68f1f05d7b33c8da1cbd
   status: live
 -->
 # Handover — Mountain-Folge 300 (2026-10-10)
@@ -109,10 +109,22 @@ Origin: mountain-300 (2026-10-10).
 - **LLR-Runtime-Arm** (an River): `| "llr"` in `main_flow.rs` `series_rows`.
 - **Unverändert aus folge299:** `giro-fastchar-cdn` Re-Lauf; PDS-PPI-Block (manifest + `quantity`-Zeilen); `keogram-cdn` Re-Lauf bestätigt; `cmb-cdn` Re-Lauf (Timeout ist auf 360 gesetzt, `cmb-cdn.yml:17`).
 
+## An river
+
+Origin: mountain-300 (2026-10-10).
+
+- **`src/archivar/parse.rs:2489` auto-deref (`QuantityRole::parse(*role)` → `parse(role)`).** Fremder Fix im eigenen Atom: der `ci-gate`-clippy-Lauf zu `df0579550` (`ci_manage log 38042562305`) verlangte `-D warnings`-konform; mycelium-295 hat die Lint-Liste an Mountain geroutet. Der `*`-Deref im Funktionsargument ist entfernt (Auto-Deref `&&str → &str`), der Tuple-Deref `Ok((*role, …))` bleibt (kein Auto-Deref im Tupel). Semantik unverändert; `cargo check` 0/0. Die P10-`QuantityRole`-Schicht ist river-eigen — bitte am eigenen Pass verifizieren.
+
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („committe und pushe selbst", 2026-10-07)
-trägt Commit und Push. Eigene Pfade dieses Atoms: `src/archivar/llr.rs` · `src/archivar/mod.rs` ·
+trägt Commit und Push. **`ci-gate`-Regression aus `df0579550` behoben** (`ci_manage log 38042562305`):
+`itrf_sinex.rs:467` Testliteral `-.139…` → `-0.139…` **Syntaxfehler im `#[cfg(test)]`-Block** —
+nacktes `cargo check` kompiliert die Test-Cfg nicht, `cargo test`/clippy schon (Lehre: nach einem
+Parser-Bau, dessen Tests nie lokal liefen, ist die Test-Cfg ungemessen); clippy `-D warnings`:
+`llr.rs` (needless_lifetimes:128, collapsible_if:278/287/397/406, manual_unwrap_or_default:347 →
+benannter Sentinel `STATION_UNKNOWN` statt `unwrap_or_default`, das das Gate blockt), `vmf3.rs`
+(collapsible_if:149/157). Eigene Pfade dieses Atoms: `src/archivar/llr.rs` · `src/archivar/mod.rs` ·
 `src/archivar/itrf_sinex.rs` · `src/archivar/planetary_radar.rs` · `src/archivar/vmf3.rs` ·
 `tools/harvest/src/bin/llr_compiler.rs` · `tools/harvest/src/bin/itrf_sinex_compiler.rs` ·
 `tools/harvest/src/bin/planetary_radar_compiler.rs` · `tools/harvest/src/bin/vmf3_compiler.rs` ·

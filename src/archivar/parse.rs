@@ -2486,7 +2486,7 @@ fn interaction_or_role<'a>(
         }
     };
     match parts.get(idx + 1) {
-        Some(role) if QuantityRole::parse(*role).is_some() => {
+        Some(role) if QuantityRole::parse(role).is_some() => {
             Ok((*role, idx + 1, Some(interaction)))
         }
         Some(other) => Err(format!(
