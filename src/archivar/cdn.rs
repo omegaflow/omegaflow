@@ -7,6 +7,18 @@ use crate::archivar::range::{Sigv4PutArgs, sigv4_put_headers};
 use crate::archivar::{date_str, hour_str, load_env, sha256};
 
 const R2_REGION: &str = "auto";
+const R2_MIRROR_MAX_BYTES: u64 = 16 * 1024 * 1024;
+
+fn r2_mirror_cap() -> u64 {
+    std::env::var("OMEGAFLOW_R2_MIRROR_MAX_BYTES")
+        .ok()
+        .and_then(|v| v.parse::<u64>().ok())
+        .unwrap_or(R2_MIRROR_MAX_BYTES)
+}
+
+fn r2_mirror_within_cap(size: u64) -> bool {
+    size <= r2_mirror_cap()
+}
 
 pub const EPHEMERIS_TAG: &str = "ssd.jpl.nasa.gov-ephemeris";
 pub const CAPPED_RELEASE: &str = "ssd.jpl.nasa.gov";
@@ -120,6 +132,22 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
 
 pub fn r2_mirror(tag: &str, path: &str) -> bool {
     if std::env::var("OMEGAFLOW_R2_MIRROR").is_err() {
+        return false;
+    }
+    let size = match std::fs::metadata(path) {
+        Ok(m) => m.len(),
+        Err(e) => {
+            eprintln!("r2_mirror {}: metadata absent: {}", path, e);
+            return false;
+        }
+    };
+    if !r2_mirror_within_cap(size) {
+        eprintln!(
+            "r2_mirror {}: {} B over the {}-B cap — the release keeps it, R2 stays the manifest/idx tier",
+            path,
+            size,
+            r2_mirror_cap()
+        );
         return false;
     }
     if let Ok(worker) = std::env::var("OMEGAFLOW_R2_WORKER")
@@ -401,6 +429,17 @@ mod tests {
             return;
         }
         assert!(!r2_mirror("ci-probe", "Cargo.toml"));
+    }
+
+    #[test]
+    fn r2_mirror_cap_excludes_dataset_scale_assets() {
+        if std::env::var("OMEGAFLOW_R2_MIRROR_MAX_BYTES").is_ok() {
+            return;
+        }
+        assert!(r2_mirror_within_cap(1024));
+        assert!(r2_mirror_within_cap(R2_MIRROR_MAX_BYTES));
+        assert!(!r2_mirror_within_cap(R2_MIRROR_MAX_BYTES + 1));
+        assert!(!r2_mirror_within_cap(100 * 1024 * 1024));
     }
 
     #[test]
