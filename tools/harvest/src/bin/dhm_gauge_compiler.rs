@@ -1,4 +1,3 @@
-use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, jstr, parse_json};
 use omegaflow::lsk::days_from_civil;
 use std::path::{Path, PathBuf};
@@ -337,8 +336,11 @@ fn run(args: &[String]) -> Result<(), String> {
         "dhm_gauge_compiler: {} stage rows written to {out} ({series_url})",
         series.len()
     );
-    if ci_mode && !upload_release(NETLOC, &out) {
-        return Err(format!("{out}: CDN upload did not reach the release"));
+    if ci_mode {
+        return Err(format!(
+            "{} cannot be redistributed — no CDN upload",
+            NETLOC
+        ));
     }
     Ok(())
 }

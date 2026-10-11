@@ -1,4 +1,3 @@
-use omegaflow::cdn::upload_release;
 use omegaflow::hapi_csv::parse_iso_seconds;
 use omegaflow::substorm::{SubstormOnset, parse_bin, parse_csv, write_bin};
 
@@ -129,7 +128,8 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("supermag.jhuapl.edu", &out) {
-        std::process::exit(1);
+    if ci_mode {
+        eprintln!("supermag.jhuapl.edu cannot be redistributed — no CDN upload");
+        std::process::exit(2);
     }
 }

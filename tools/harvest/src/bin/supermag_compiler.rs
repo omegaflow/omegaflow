@@ -10,7 +10,6 @@ use omegaflow::archivar::geo::{
     write_bin,
 };
 use omegaflow::archivar::{JsonVal, fetch_raw, jpath, parse_json};
-use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{LeapSeconds, parse as parse_lsk};
 
 const NETLOC: &str = "supermag.jhuapl.edu";
@@ -571,7 +570,8 @@ fn main() {
         );
     }
 
-    if ci_mode && !upload_release(NETLOC, &out) {
-        std::process::exit(1);
+    if ci_mode {
+        eprintln!("{} cannot be redistributed — no CDN upload", NETLOC);
+        std::process::exit(2);
     }
 }
