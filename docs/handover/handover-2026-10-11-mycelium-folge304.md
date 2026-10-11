@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: 1e7bb30a3e76ca68822a646f959de4800e81c918cba2a92f161bbd62b513c770
+  sha256: 224ab4b40156e63803b200128f147dc3e4486b22727d1234824fcff35f7189a1
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -37,9 +37,14 @@ zitiert, nie kopiert). Diese Session konsumierte
   `phi/sources.φ:11559` trägt **keine** `sha256` — das Asset ward nie materialisiert.
 - **Blockade:** non-streaming bz2/tar — 7,87 GB komprimiert **plus** ein Multi-GB-entpackter
   Tar (und der FITS-Member) gleichzeitig im RAM sprengen jeden ≤16-GB-Runner.
-- **Braucht:** Streaming-Arm in `src/archivar/bzip2.rs`/`inflate.rs` (`Bz2Reader` über `Read`
-  -> Tar-Member streamend auf Platte, nie `out`-Akkumulation) + FITS-aus-Datei; Architektur —
-  vorher `rat`. Alternativ ein Einzelband-Produkt < Speichergrenze.
+- **Braucht:** Rat gefallen (2026-10-11, fünf Stimmen): Weg (a) additiv, einsträngig —
+  (1) **erledigt** `Bz2Decoder<R: Read>` + `decompress_reader` neben `decompress`
+  (`src/archivar/bzip2.rs`, Commit `55a8601b7`, Gate-Test byte-identisch, vier Aufrufer
+  unberührt); (2) `bzip2_tar_members` über den bestehenden streamenden `TarScan`
+  (`src/archivar/inflate.rs`), Member streamend auf Platte statt `Vec`-Puffer;
+  (3) Compiler-`--tar`-Arm `File → BufReader → Bz2Decoder → Tar-Member-Datei`, FITS aus
+  der Datei; (4) der `--url`-Arm bleibt benannter Folgeschritt. Danach `gh workflow run
+  cmb-cdn.yml`; Manifestation schließt mit `sha256` in `phi/sources.φ:11559`.
 
 ### Coverage-Manifest — Fetch-Loop (River) + usgs-shard-Form gebaut; Nationalportale enumeriert
 - **Status:** eigen | **Bindung:** eigen (Core-Archivar) · Teile linie:river
@@ -70,14 +75,22 @@ zitiert, nie kopiert). Diese Session konsumierte
   der Build: **ein** Dispatch `cargo nextest archive` + vier Shards per `--archive-file`;
   (c) Test-Suite-Dedup als **zweite, getrennt eingeführte** Achse.
 
-### Speicher — 1,76 TB Bulk vs. R2-10-GB (Rat-Verdikt: messen vor bauen)
-- **Status:** pending | **Bindung:** eigen
-- **Trigger:** gemessener R2-Konsument ODER größte Datei nähert sich 2 GiB ODER Releases-Lesezugriffe werden zum Engpass
-- **Lage:** (gemessen 2026-10-10 via GitHub-API) `omegaflow/sources` = 344 Releases /
-  1763 GB -> $0; R2 10 GB frei, Zero-Egress. **Kein gemessener Live-Konsument.**
-- **Blockade:** keine — das Rat-Verdikt (2026-10-10, UI-bestätigt): kein Tier ohne Hyphe.
-- **Braucht:** **kein Bau.** Den **einen** manifestierenden Konsumenten messen; kein
-  Konsument -> `descoped` mit Befund. R2-Bucket/Key = Operator-Akt (per-Akt-Wort).
+### Speicher — R2-Spiegel LIVE, aber OHNE Cap (10-GB-Burn-Gefahr) — Cap gesetzt
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) der R2-Spiegel ist **live** (`OMEGAFLOW_R2_MIRROR=1`,
+  Worker antwortet HTTP 405 = deployt, `cdn.rs:103` `r2_mirror` im Upload-Pfad,
+  `cdn-manifest.yml:40-45` exportiert die R2-Vars an die **36 Caller**). Der Worker tat
+  `BUCKET.put` **ohne Größen-/Klassenfilter** — der 10-GB-Free-Tier wäre von jedem
+  Katalog-Caller mit GB-Asset verbraucht worden. Die **großen** Compiler (Bayern-DOM
+  100 MB, WorldClim 2 GB, cmb) sind **standalone** (kein `OMEGAFLOW_R2_MIRROR`) und
+  spiegeln **nicht** — der Burn käme aus der `cdn-manifest`-Familie, nicht von Dominosteinen.
+  Absicht laut folge295:165: „R2 **10 GB frei** trägt nur Manifeste/Indizes".
+- **Blockade:** keine.
+- **Braucht:** **Cap gesetzt** — `r2_mirror` überspringt Dateien über `R2_MIRROR_MAX_BYTES`
+  = 16 MiB (`OMEGAFLOW_R2_MIRROR_MAX_BYTES` überschreibbar; Commit `70a66b9d6`), die
+  Dataset-Klasse bleibt auf dem Release. Der **Schwellwert 16 MiB** ist eine Setzung
+  (Manifest-/Index-Größe) — ein anderes Maß ist ein Operator-/Rat-Wort.
 
 ### MCP — lokale no-leak-Server (Rat-Verdikt: Regel vor Knoten)
 - **Status:** eigen | **Bindung:** eigen
