@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — register_sort canonical + mla/ola fmt geheilt (ci-gate register/format), te-bias-n dispatcht, DEMETER-Lizenz-Riss + GIC/Re-Admission-Verdikte gemessen; vier Taucher-Dossiers
   class: handover
   date: 2026-10-11
-  sha256: 5fd73358b3d6ddd1d1dd512089bcb85e97e684e38d652bf00f1a199dee243c9c
+  sha256: 312005e3b387bfc6cef785a46a430da3c4882192c8c9e8cf6942e4962f1552e5
   status: live
 -->
 # Handover — Mountain-Folge 316 (2026-10-11)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 
-## Burn: open 0.0076 · close 0.37 (Linien-Session 0.131 + Taucher ≈0.24) · cap 0.45 · reason: Mountain-Linien-Session + sieben grind-flash Taucher (CI-Triage, GIC, Re-Admission, DEMETER, MLA-RDR/Coverage, eigene-Ephemeride-Survey, Witness-Bin) + register_sort + te-bias-n; Fenster-Aggregat 1.2101 über 29 Sessions (fremde Linien inkl., Linien-Anteil nicht exakt isolierbar); deepseek-flash, kein pro/max; gemessen via `session_burn`.
+## Burn: open 0.0076 · close 0.49 (Linien-Session 0.175 + Taucher ≈0.31) · cap 0.50 · reason: Mountain-Linien-Session + zehn Taucher (CI-Triage, GIC, Re-Admission, DEMETER, MLA-RDR/Coverage, eigene-Ephemeride-Survey, Witness-Bin, `two_way_doppler`-Adapter, VMF3-Tropo, Sonnen-Gravitator-Survey) + register_sort + te-bias-n; Fenster-Aggregat 1.4893 über 38 Sessions (fremde Linien inkl., Linien-Anteil nicht exakt isolierbar); deepseek-flash, kein pro/max; gemessen via `session_burn`.
 
 ## Offen (aufgeschlüsselt)
 
@@ -89,9 +89,9 @@ Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 ### Eigene Ephemeride (PEP/Tudat) — Kette gemessen; Witness-Residuum-Bin gebaut (Step 3)
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** der nächste begrenzte Schritt (den vollen `two_way_doppler`-Operator an das Witness-Residuum binden)
-- **Lage:** (gemessen 2026-10-11 via `sread` + `cargo check`; Träger `docs/concepts/eigene-ephemeride.md`) **Step 0 (Operator/Kalibration): teil** — Zeit `src/archivar/lsk.rs unix_to_tdb` ✓, Rahmen `src/mathematikerin/receiver.rs` (`precession_matrix_fw06`/`nutation_angles_2000a` 1365-Term/`cirs_to_gcrs`/`itrf_to_icrs`) ✓, Lichtzeit+Shapiro `receiver.rs two_way_doppler`/`shapiro_leg_s` ✓ — **aber `two_way_doppler` wird von keinem Bin gerufen** (nur Tests); die Residuen-Tools nutzen den alten Teil-Pfad `odp.rs downlink_rate_core` (downlink only, kein Shapiro/EOP). **Step 0e Medien/Troposphäre: absent** (VMF3/IONEX nur als Harvest-Compiler). **Step 1/2: teil** (Pioneer-Residuen-Tools, je hartkodiert `const SC_BODY`). **Step 3 vorher absent → in diesem Atom gebaut:** `tools/measure/src/bin/witness_odf_residuum.rs` (Registry `witness_source` + `--body`; pioneer10/galileo_e1 registriert; `cargo check` + build 0/0). **Step 4: `least_squares.rs` gebaut, nicht an ein Bahn-Residuum verdrahtet.** Riss: Konzept/Handover nennen `observer.rs` — die Datei heißt seit `55e06c189` `receiver.rs`.
+- **Lage:** (gemessen 2026-10-11 via `sread` + `cargo check`; Träger `docs/concepts/eigene-ephemeride.md`) **Step 0 (Operator/Kalibration): teil** — Zeit `src/archivar/lsk.rs unix_to_tdb` ✓, Rahmen `src/mathematikerin/receiver.rs` (`precession_matrix_fw06`/`nutation_angles_2000a` 1365-Term/`cirs_to_gcrs`/`itrf_to_icrs`) ✓, Lichtzeit+Shapiro `receiver.rs two_way_doppler`/`shapiro_leg_s` ✓ — **aber `two_way_doppler` wird von keinem Bin gerufen** (nur Tests); die Residuen-Tools nutzen den alten Teil-Pfad `odp.rs downlink_rate_core` (downlink only, kein Shapiro/EOP). **Step 0e Medien/Troposphäre: absent** (VMF3/IONEX nur als Harvest-Compiler). **Step 1/2: teil** (Pioneer-Residuen-Tools, je hartkodiert `const SC_BODY`). **Step 3 vorher absent → in diesem Atom gebaut:** `tools/measure/src/bin/witness_odf_residuum.rs` (Registry `witness_source` + `--body`; pioneer10/galileo_e1 registriert; `cargo check` + build 0/0). **Adapter gebaut** (`007396f68`): `receiver.rs two_way_light_time` exponiert `t_tx_tdb`, die Gravitator-Felder in `TwoWayDopplerInputs` werden `Option` (absent ≠ 0), neues `src/mathematikerin/tropo.rs` (VMF3-Slant-Delay + 4 Tests) — `cargo check` 0/0. **Step 4: `least_squares.rs` gebaut, nicht an ein Bahn-Residuum verdrahtet.** Riss: Konzept/Handover nennen `observer.rs` — die Datei heißt seit `55e06c189` `receiver.rs`.
 - **Blockade:** der volle Operator passt nicht ohne Adapter — `two_way_doppler` liefert `observable_hz` (nicht range-rate), braucht `turn_ratio` + einen deklarierten Sonnen-Gravitator + `t_tx` aus der Lichtzeit-Iteration (nicht exponiert).
-- **Braucht:** `t1` aus dem Lichtzeit-Helper zurückgeben, `turn_ratio` + `ephemeris_sun.bin`-Position/`GM_SUN_M3_S2` deklarieren, dann den Fit auf `observable_hz` umstellen (nächster begrenzter Schritt); parallel Step 0e Medien (VMF3) an die Kette binden. PEP/Tudat bleiben Lizenz-/Verfahrens-Referenz.
+- **Braucht:** (a) das Witness-Bin an `two_way_doppler` binden — `turn_ratio` deklarieren, `ephemeris_sun.bin` via `body_barycenter_position` (liefert **Meter** → km) + `kepler::GM_SUN_M3_S2` als Gravitator, dann den Fit auf `observable_hz` umstellen; (b) die VMF3-**Koeffizienten** (`b`/`c`, SH-Terme) in den Baum holen und in `roundtrip_s` binden — nur die Mapping-Funktion steht; (c) Riss: `ephemeris_sun.bin` ist unter Tag `ssd.jpl.nasa.gov-ephemeris` registriert, die Tools zeigen auf `ssd.jpl.nasa.gov` (zwei CDN-Pfade). PEP/Tudat bleiben Lizenz-/Verfahrens-Referenz.
 
 ### particle-cern — Baskets + Sample-Verifikation
 - **Status:** wartend | **Bindung:** eigen
@@ -114,12 +114,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es. **Nicht erneut vorlegen.**
 
-### api.sensor.community — zulassen, Zielzeile unbenannt
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das wörtliche Future-Wort (welcher Arm/welche Zeile)
-- **Lage:** (gemessen 2026-10-11 via folge315-Register) (folge315, unverändert) HTTP 200; `sensor.community` bereits registriert (`phi:338/1218`).
+### api.sensor.community — eigener Punkt, Arm/Zielzeile unbenannt
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt (Arm/Zielzeile benennen)
+- **Lage:** (gemessen 2026-10-11 via future-235) HTTP 200; `sensor.community` bereits registriert (`phi:338/1218`). **Kein Future-Wort** — es ist ein eigener Register-Punkt (Ursprung `mycelium-158…162` 403/ip-blocked + `mountain-306`).
 - **Blockade:** „zulassen" nennt keinen Arm/keine Zeile.
-- **Braucht:** das wörtliche Future-Wort.
+- **Braucht:** Arm/Zielzeile selbst benennen oder `descoped` mit Befund.
 
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -147,7 +147,14 @@ Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 - **Trigger:** der nächste Register-Pass
 - **Lage:** (gemessen 2026-10-11 durch Taucher, `archive_search --zenodo`/`--verdict`) **CSES** Zenodo `13329652`+`8082201` — `cc-by-4.0` (Zenodo-API), ttl 604800; **PCN** `ftp.space.dtu.dk` — `CC-BY-4.0` belegt auf `isgi.unistra.fr/indices_pc.php` (bestehender `phi:2211`-Eintrag trägt `terms CC-BY-4.0` ohne URL), ttl 86400; **PCS** — Lizenz auf der Seite nicht genannt → `pending`; **EAGLE-I** `data.openei.org/submissions/6458` — `CC BY 4.0` (JSON-LD `license`), ttl 604800; **OE-417** `eia.gov` — US-`PD`; **FMI/BPA/BGS GIC** — offen (Taucher-Lauf unvollständig). **INTERMAGNET** — `CC BY-NC 4.0`, aber Bulk-Weitergabe an Dritte schriftlich vorbehalten → lokale Quelle ja, CDN nein; **GIRO DIDBase** — `CC BY-NC-SA 4.0`, bereits registriert (`phi:1066`).
 - **Blockade:** url/origin sind Myceliums Manifestations-Recht.
-- **Braucht:** je Quelle die Verdikt-`terms`-Zeile (Mountain) + url/origin (Mycelium); FMI/BPA/BGS GIC restlich messen.
+- **Braucht:** je Quelle die Verdikt-`terms`-Zeile (Mountain) + url/origin (Mycelium); FMI/BPA/BGS GIC restlich messen. **Korrektur river-187:** OE-417 `eia.gov` ist tot → echtes Portal `doe417.pnnl.gov` (SPA; Roh-Records auth-gated via Microsoft Entra) und trägt **keine GMD-Kategorie** → nicht als GMD-Quelle führen; OE-417/EAGLE-I brauchen zudem eine neue Feld-Familie (`count` aus `customers_out` / `power` aus `demand_loss_mw`, mycelium-309) — Entscheidung: Familie `count`/`power` freigeben? **THEMIS-ASI** frei (`api.aurorax.space`, `data.phys.ucalgary.ca`) — neuer Aurora-Zeuge; **PCN** 1975–2024 definitive (`PCN_quicklook`/`PCN_provisional` für 2025) bestätigt.
+
+### Sechs Klima-`series-manifest` — erster Lauf je Familie (mycelium-phi-serien-ciplauf)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der erste `series-manifest`-Lauf je Klima-Familie
+- **Lage:** (gemessen 2026-10-11 via future-235) die sechs Klima-Workflows tragen je einen `series-manifest`-Job (Shard-Assets → `<familie>.manifest`, `sort -u`, 0 honored); offen ist der erste Lauf je Familie (sha256). Alt-Stand `state/zustand/wartend-archiv-2026-10-11-r3.φ`.
+- **Blockade:** kein Lauf.
+- **Braucht:** die sechs Manifest-Läufe lesen (`ci_manage log <id>`), sha256 je Familie tragen.
 
 ### Re-Admission lizenz-blockierter Kandidaten (future-233)
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -167,9 +174,8 @@ Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 
 Origin: mountain-folge316 (2026-10-11).
 
-- **Drei cdn-Workflows für die neuen Compiler** — `modvolc-cdn.yml`, `its_live-cdn.yml`, `masie-cdn.yml` liegen **untracked** im Baum (`git status`), je mit Formula-Header `# harvest: asset=…`; die Compiler sind registriert (`modis.higp.hawaii.edu/modvolc_thermal.bin` `phi:32152` · `stac.itslive.cloud/its_live_velocity.bin` `phi:32161` · `noaadata.apps.nsidc.org/masie_ice_extent.bin` `phi:1619`). Bitte committen + dispatcht (`--body earth --ci-mode`).
-- **DEMETER — Lizenz-Riss:** die behauptete „Licence Etalab-2.0" (`handover-2026-10-11-mycelium-folge308.md:118`) ist am Baum widerlegt (CDPP Data-Centre-Lizenz V1.1, nicht-kommerziell, Weitergabe an Dritte nur mit schriftlicher Zustimmung). Vor url/origin der DEMETER-Serie den CDN-Spiegel gegen die Lizenz prüfen; bei Konflikt nur lokale Registrierung.
 - **GIC/Space-Weather + Re-Admission:** die vier Neu-Admits (GRDC-Caravan/RouteViews/EPH-VSOP/GloFAS) brauchen nach Mountains `terms`-Verdikt url/origin.
+- **DEMETER — Lizenz-Riss:** die behauptete „Licence Etalab-2.0" (`handover-2026-10-11-mycelium-folge308.md:118`) ist am Baum widerlegt (CDPP Data-Centre-Lizenz V1.1, nicht-kommerziell, Weitergabe an Dritte nur mit schriftlicher Zustimmung). Vor url/origin der DEMETER-Serie den CDN-Spiegel gegen die Lizenz prüfen; bei Konflikt nur lokale Registrierung.
 
 ## Operator-Wort-Register
 
@@ -181,6 +187,8 @@ Origin: mountain-folge316 (2026-10-11).
 - **„MODVOLC: 2000–2019-Archiv admitieren+bauen"** | 2026-10-11 | Operator-Session (mountain).
 - **„schicke eine taucherstaffel los und BAU ENDLICH!!!!"** | 2026-10-11 | Operator-Session (mountain).
 - **„die weltlinie kennt kein jetzt"** | 2026-10-11 | Operator-Session (mountain).
+- **„wie bitte gehts noch wir wollen unsere eigenen Ephemeriden bauen"** | 2026-10-11 | Operator-Session (mountain) — die eigene Ephemeride (`docs/concepts/eigene-ephemeride.md`) ist Mountains Bau-Arbeit, nicht die Registrierung fremder (JPL-)Assets.
+- **„mit einer taucherstaffel: ja bitte … und kümmer dich um deinen teil"** | 2026-10-11 | Operator-Session (mountain) — den `two_way_doppler`-Adapter (Step 3) per Taucherstaffel bauen; die adressierten `## An mountain`-Blöcke falten.
 
 ## Abschluss
 
