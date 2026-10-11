@@ -1,0 +1,86 @@
+<!--
+  title: Handover — River-Folge 185 (2026-10-11)
+  session: River-Linie in einem Pass — der An-mountain-Block gefaltet (Mountain 311), das Blatt-Siegel an Future transportiert, das Offen-Register gegen den Baum gehalten
+  class: handover
+  date: 2026-10-11
+  sha256: ccf4c236bd0e44fda3f3711ad862ef599512d609d6ca7a4d4b6f8fb05531130c
+  status: live
+-->
+# Handover — River-Folge 185 (2026-10-11)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
+markiert, nicht erklärt; git trägt, was gemacht wurde. Eine Session arbeitet so
+viele Punkte ab wie möglich — die Delegation an Sub-Agenten (eigener Kontext)
+macht die Anzahl problemlos. Nur eigene Arbeit: bei geteilten Dateien nur die
+eigenen Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit
+wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und
+`origin/main` Vorfahr von HEAD ist (Fast-Forward).
+
+Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte werden
+**parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
+(**Trigger** / **Lage** / **Blockade** / **Braucht**).
+
+## Burn: open 0.0000 · close 0.0753 · cap 0.15 — Grund: River F185 (deepseek-flash, kein pro/max, kein Dispatch). `session_burn` total 3.0650→3.1403 (40→43 Sessions) — von parallelen Linien geteilt. Keine Fälligkeit gefeuert (`--fired river`/`--stale river --persist 3` = 0), `--addressed river` = 0, `open_points_check` clean.
+
+## Operator-Wort-Register
+
+Wort | Datum | Quelle
+--- | --- | ---
+„Nicht gebaut — die P10.2a-Token-Semantik ist nicht entschieden; ein geratener Bau wäre Fabrikation (A=A). bitte archive search all rat und roster" | 2026-10-10 | Operator (Session, River 165)
+„wenn du den rat befragst befrage bitte auch die wissenschaft mit archive serahc alll und die ui und oenweight frontier voices" | 2026-10-09 | Operator (Session, River 145)
+„warum nur duck … ich möchte dass du alle frontier chats befragst" | 2026-10-07 | Operator (Session, River 127)
+„ja ich meine alle blöcke müssen korrekt sein dafür haben wir doch die wissenschaft" | 2026-10-09 | Operator (Session, River 160) — **P10-Wort**: jeder `field`-Block wird wissenschaftlich geprüft und korrekt etikettiert (Quantity | Mechanism | Medium)
+„ja natürlich sonst wartest du doch bis zum st. nimmerleinstag" + „ja bitte ihr müsst das jetzt echt mal in den griff bekommen" | 2026-10-10 | Operator (Session, River 170) — den abgebrochenen `ci-gate` neu anstoßen; den CI-Burst in den Griff bekommen
+„mach A" | 2026-10-10 | Operator (Session, River 170) — `ci-gate.yml`-`subset` von dem geteilten t420 auf GitHub-hosted `ubuntu-24.04-arm` mit per-SHA-Concurrency umziehen
+„beides" | 2026-10-10 | Operator (Session, River 170) — (1) die zwei fremden ci-gate-Roten heilen; (2) die `observer`→`receiver`-Frage als Rat-Frage aufsetzen; Audit „wo wurde der Observer-Bias wieder eingeschleust"
+„C (Skalenspektrum je Paar) ist der nächste begrenzte Schritt — Architekturfrage → Linse der fünf Stimmen, bevor gebaut; danach D (Summary-Graph/PCMCI, Runge 2105.10381/1702.07077). Die Seats: B ohne Skalenannotation wäre die stille Fabrikation. bitte --all rat und max roster" | 2026-10-10 | Operator (Session, River 172) — C vor dem Bau durch die fünf Stimmen + Max-Roster; `--all`-Recherche voran
+„Nächster Schritt: D2 durch die fünf Stimmen (Rat), dann Skeleton/MCI bauen. bitte --all max roster und rat" | 2026-10-10 | Operator (Session, River 172) — D2 (Summary-Graph/PCMCI) durch Rat + Max-Roster, `--all` voran
+„bitte --all max roster und rat" | 2026-10-10 | Operator (Session, River 174) — die Window-Graph-CI-Verdrahtung und die Panel-Skala Δ (D2-Rat-Verdikt Punkt 5) durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster
+„z.ai immer glm 5.3 max gibt es auch in tryong open genauso wie qwen" | 2026-10-10 | Operator (Session, River 174) — Z.ai stets **GLM-5.3 Max**; `tryingopen` führt **GLM 5.3 Max** und **Qwen**
+„mit archive search dem rat und max roster (alle und warten bedenke tryingopen1)" | 2026-10-11 | Operator (Session, River 181) — die window-graph-Orientierungs-Architekturfrage durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster (alle UI-Seats, `open-weight-ui` nur über das Lock) führen
+„Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** … /commit ist das Commit-Wort — beide getrennt." | 2026-10-11 | Operator (Session, River 183) — session-weiter Delegations-Consent, nicht das Commit-Wort.
+„Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** … /commit ist das Commit-Wort — beide getrennt." | 2026-10-11 | Operator (Session, River 184) — session-weiter Delegations-Consent, nicht das Commit-Wort.
+„Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** … /commit ist das Commit-Wort — beide getrennt." | 2026-10-11 | Operator (Session, River 185) — session-weiter Delegations-Consent, nicht das Commit-Wort.
+
+Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md` und
+`2026-10-09-river.md`. Fortgeschrieben aus
+`docs/handover/archiv/handover-2026-10-11-river-folge184.md` §Operator-Wort-Register.
+
+## Träger (Prosa, eigene)
+
+- `docs/concepts/kanal-ontologie-komplettbau.md` — der komplette Bauplan (P0–P10); P10.2a (der Parser-Arm ist Rivers Teil) als gebaut nachgeführt (`:215`).
+- `docs/concepts/archivar-mathematikerin.md` — der Wire/GPU-Force-Vertrag; Träger des kinetischen Rahmens.
+- `state/stimmen/2026-10-10-river-window-graph-panel-rat.md` (Rat, 5 Stimmen), `…-roster.md`, `…-research.txt`.
+- `state/stimmen/2026-10-10-river-d2-pcmci-rat.md` / `…-roster.md` / `…-research.txt`; `state/stimmen/2026-10-10-river-c-skalenspektrum-rat.md` / `…-roster.md` / `…-research.txt`.
+- `state/stimmen/2026-10-11-river-panel-aufloesung-rat.md` — der Rat zur Auflösungspolitik von `load_field_across_sources` (Registerfix kanonisch; `first-load-wins` → gemessene Eigenschafts-Auswahl).
+- `state/stimmen/2026-10-11-river-window-orientierung-research.txt` + `…-roster.md` — die `--all`-Forschungs-Schicht + Rat (5 Stimmen) + Max-Roster zur C-Rung-Orientierungs-Semantik; Bau umgesetzt in `tools/measure/src/bin/field_te_query.rs:5516-5826` (`PairOrientation`/`pairwise_orientation`, vier Test-Gates), D-Pfad in `mci_window_graph`.
+- `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — §4 am 2026-10-11 nachgezogen (Messungen gegen `omegaflow-legacy`).
+- `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, jetzt als `## An future` transportiert.
+- `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer (11 offen).
+- `docs/surveys/survey-2026-10-07-fwer-te-landschaft.md`, `docs/paper/gic-causal-driver.md`, `docs/paper/flyby-path-2-addendum-2026-09-29.md`, `docs/concepts/remove-bias.md`.
+
+## Offen (aufgeschlüsselt)
+
+### Flyby-Kette — recon bleibt
+- **Status:** termin | **Bindung:** termin:2026-11-01
+- **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34`.
+- **Lage:** (gemessen 2026-10-11 via `sread state/zustand/wartend.φ:34`) die Wiedervorlage 2026-11-01 steht; `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` absent, `phi/sources.φ` trägt keine tote `url`-Zeile; `ephemeris_juice_recon.bin` 404 (gemessen 2026-10-02, kein Snapshot).
+- **Blockade:** ESA/ESOC-recon-SPK + 1-σ-Kovarianz absent.
+- **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
+
+## An mycelium
+
+Origin: river-182 (2026-10-11).
+
+- **Coverage-Manifest-Fetch-Loop gebaut** (aus `mycelium-303 §An river` gefaltet) — der Arm `format coverage_manifest` steht in `src/archivar/main_flow.rs:5102-5224` (Manifest fetchen → `parse_coverage_manifest` → `shard_intersects_hull` über die eine `enclosure_rho` → überlappende Shards in den Cache; `cargo check`/`fmt` grün). Offen auf Mycelium-Seite: (a) `usgs_lidar_coverage.rs`-Manifest auf `shard <url> <6 f64>` entscheiden (emittiert weiter `url size`); (b) die 104 Nationalportale (`docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md`) enumerieren.
+
+## An future
+
+Origin: river-185 (2026-10-11).
+
+- **Blatt `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — das Siegel wartet auf das Operator-Wort.** Vorregistrierung der GIC-Breitenband-Familien (Fixierung vor dem Lauf, 2026-10-06); offene Slots bis zur Versiegelung: α-Ebene Stufe 2 (`pending`, aus der kalibrierten Null), Resample-Blocklänge/Binnung (`pending`), Familien-Deskriptoren (`pending`, warten auf den per-Station-dB/dt-Bestand, Mountain). Kein Live-Carrier in der aktuellen Future-Übergabe (`handover-2026-10-11-future-folge228.md` trägt kein „Siegel" für dieses Blatt). **Braucht:** das Operator-Wort zum Siegeln (oder die Rücknahme/Nicht-Siegelung) — die Maschine bereitet bis zur Kante vor, sie schließt nicht.
+
+## Abschluss
+
+Der Commit steht aus — er wartet auf das Operator-Wort (`/commit`); `/consent` ist der
+session-weite Delegations-Consent, nie das Commit-Wort.
