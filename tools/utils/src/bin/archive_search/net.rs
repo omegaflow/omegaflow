@@ -4077,10 +4077,21 @@ pub fn run_lines_max(
                                 Ok(d) => d.as_secs().to_string(),
                                 Err(_) => "unknown".to_string(),
                             };
-                            let path = format!("{dir}/alphaxiv-{tool}-{epoch}.txt");
-                            match std::fs::write(&path, text) {
-                                Ok(()) => vec![format!("alphaxiv-call: wrote {path}")],
-                                Err(e) => vec![format!("pending — could not write {path}: {e}")],
+                            let path = std::path::PathBuf::from(format!(
+                                "{dir}/alphaxiv-{tool}-{epoch}.txt"
+                            ));
+                            match crate::write_fetched(
+                                &path,
+                                text.as_bytes(),
+                                Some(crate::alphaxiv::MCP_URL),
+                            ) {
+                                Ok(()) => {
+                                    vec![format!("alphaxiv-call: wrote {}", path.display())]
+                                }
+                                Err(e) => vec![format!(
+                                    "pending — could not write {}: {e}",
+                                    path.display()
+                                )],
                             }
                         }
                         Err(e) => e,

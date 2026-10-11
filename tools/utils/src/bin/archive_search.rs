@@ -1145,7 +1145,11 @@ fn sanitize_stem(s: &str) -> String {
         .collect()
 }
 
-fn write_fetched(path: &Path, bytes: &[u8], source_url: Option<&str>) -> std::io::Result<()> {
+pub(crate) fn write_fetched(
+    path: &Path,
+    bytes: &[u8],
+    source_url: Option<&str>,
+) -> std::io::Result<()> {
     fs::write(path, bytes)?;
     let Some(url) = source_url.filter(|u| !u.is_empty()) else {
         return Ok(());

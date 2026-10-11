@@ -2,7 +2,7 @@ use crate::json::{self, Json};
 use crate::net::json_escape;
 use std::process::Command;
 
-const MCP_URL: &str = "https://api.alphaxiv.org/mcp/v1";
+pub(crate) const MCP_URL: &str = "https://api.alphaxiv.org/mcp/v1";
 const TAIL_MARK: &str = "\n__OMEGAFLOW_MCP__";
 
 struct Call {
