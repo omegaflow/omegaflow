@@ -22,14 +22,12 @@ phi/bindings/bands.φ
 
 section Stationstabellen
 phi/nrs_stations.φ
-phi/supermag_stations.φ
 
 section Reports
 phi/reports/scan_coverage.φ
 
 section Pipeline-Register
 phi/pipeline/library.φ
-phi/pipeline/frame_registry.φ
 
 section Katalog
 phi/pipeline/catalog/MANIFEST.φ
