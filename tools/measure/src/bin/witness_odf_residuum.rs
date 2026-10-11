@@ -1,11 +1,15 @@
 use std::collections::{BTreeMap, HashMap};
 
 use omegaflow::archivar::{
-    BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
-    light_time_worldline, parse_ephemeris_binary,
+    BodyEphemeris, C_LIGHT, body_barycenter_position, body_barycenter_velocity,
+    body_fixed_to_icrs_smooth, parse_ephemeris_binary,
+};
+use omegaflow::kepler::GM_SUN_M3_S2;
+use omegaflow::mathematikerin::receiver::{
+    TwoWayDopplerInputs, two_way_doppler, two_way_light_time,
 };
 use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, ref_uplink_hz, write_p11r_bin};
-use omegaflow::odp::{C, downlink_rate_core, dsn_host, dsn_station, station_velocity};
+use omegaflow::odp::{dsn_host, dsn_station};
 
 const PROG: &str = "witness-resid";
 
@@ -60,15 +64,20 @@ const MIN_CELL: usize = 500;
 
 const BEAT_BOUND: f64 = 5.0e5;
 
-fn dist(a: [f64; 3], b: [f64; 3]) -> f64 {
-    let dx = a[0] - b[0];
-    let dy = a[1] - b[1];
-    let dz = a[2] - b[2];
-    (dx * dx + dy * dy + dz * dz).sqrt()
-}
+const ODF_S_BAND_DOWNLINK: i64 = 1;
+const ODF_X_BAND_DOWNLINK: i64 = 2;
+const ODF_S_BAND_TURN_RATIO: f64 = 240.0 / 221.0;
+const ODF_X_BAND_TURN_RATIO: f64 = 880.0 / 749.0;
+const METRES_PER_KM: f64 = 1000.0;
 
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+const ODF_DOPPLER_CONVENTION: &str = "the ODF observable is a residual frequency in Hz; the receiver chain returns an absolute downlink observable_hz, so the comparable modeled residual is observable_hz - f_ref_hz * turn_ratio; the per-pass fit consumes the equivalent two-way range-rate (nominal_hz - observable_hz) * C_LIGHT / nominal_hz with nominal_hz = f_ref_hz * turn_ratio (positive receding, m/s), which is the retired downlink_rate_core + uplink_rate sum; f_ref_hz = ref_uplink_hz(data_type, odf_ref_hz); turn_ratio = 240/221 for Downlink Band ID 1 and 880/749 for ID 2 (DSN TRK-2-18 T-transmitter pair + X-band exciters); a one-way observation (data_type 11) uses the chain's downlink_hz leg; station and target ICRS vectors are metres and are scaled into km for the receiver chain; the gravitator worldline is declared per act (--gravitator <body>, loaded from ephemeris_<body>.bin) at the bounce epoch; the Shapiro GM is GM_SUN_M3_S2";
+
+fn odf_turn_ratio(downlink_band: i64) -> Option<f64> {
+    match downlink_band {
+        ODF_S_BAND_DOWNLINK => Some(ODF_S_BAND_TURN_RATIO),
+        ODF_X_BAND_DOWNLINK => Some(ODF_X_BAND_TURN_RATIO),
+        _ => None,
+    }
 }
 
 fn jd_date(tdb: f64) -> String {
@@ -129,45 +138,6 @@ fn fixed_effects_1(
         resid[i] = obs[i] - a * x[i] - offset[epoch[i]];
     }
     Some((a, resid, epoch, offset))
-}
-
-fn uplink_rate(
-    t2: f64,
-    r_sc2: [f64; 3],
-    v_sc2: [f64; 3],
-    lat: f64,
-    lon: f64,
-    alt: f64,
-    eph: &HashMap<String, BodyEphemeris>,
-) -> Option<f64> {
-    let host = dsn_host()?;
-    let mut t1 = t2;
-    for _ in 0..6 {
-        let r_tx1 = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
-        let rho = dist(r_sc2, r_tx1);
-        if rho <= 0.0 {
-            return None;
-        }
-        let t1_new = t2 - rho / C;
-        if (t1_new - t1).abs() < 1e-9 {
-            t1 = t1_new;
-            break;
-        }
-        t1 = t1_new;
-    }
-    let r_tx = body_fixed_to_icrs_smooth(host, lat, lon, alt, t1, eph)?;
-    let v_tx = station_velocity(host, t1, lat, lon, alt, eph)?;
-    let rho = dist(r_sc2, r_tx);
-    if rho <= 0.0 {
-        return None;
-    }
-    let mut du = [0.0; 3];
-    let mut vu = [0.0; 3];
-    for k in 0..3 {
-        du[k] = r_sc2[k] - r_tx[k];
-        vu[k] = v_sc2[k] - v_tx[k];
-    }
-    Some(dot(du, vu) / rho)
 }
 
 fn detrend_blocks(ts: &[f64], vs: &[f64], gap: f64, min_len: usize) -> (Vec<f64>, Vec<f64>) {
@@ -321,10 +291,13 @@ fn band_scan(tag: &str, label: &str, ts: &[f64], vs: &[f64], gap: f64) {
 
 fn main() {
     let mut body: Option<String> = None;
+    let mut gravitator: Option<String> = None;
     let mut it = std::env::args().skip(1);
     while let Some(arg) = it.next() {
         if arg == "--body" {
             body = it.next();
+        } else if arg == "--gravitator" {
+            gravitator = it.next();
         }
     }
     let Some(name) = body else {
@@ -343,16 +316,23 @@ fn main() {
         );
         std::process::exit(2);
     };
-    run(witness);
+    let Some(gravitator) = gravitator else {
+        eprintln!(
+            "{PROG}: --gravitator <name> required; the gravitating worldline is declared per act"
+        );
+        std::process::exit(2);
+    };
+    run(witness, &gravitator);
 }
 
-fn run(witness: Witness) {
+fn run(witness: Witness, gravitator: &str) {
     let tag = witness.tag;
     let sc_body = witness.body;
     let Some(host) = dsn_host() else {
         eprintln!("{tag}: dsn host declaration void");
         return;
     };
+    eprintln!("{tag} convention: {ODF_DOPPLER_CONVENTION}");
     let podf = witness.odf_path;
     let Ok(bytes) = std::fs::read(podf) else {
         eprintln!("{tag} ODF bin void ({podf})");
@@ -363,7 +343,7 @@ fn run(witness: Witness) {
         return;
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for body in [host, sc_body] {
+    for body in [host, sc_body, gravitator] {
         let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
@@ -382,6 +362,21 @@ fn run(witness: Witness) {
         Some((
             body_barycenter_position(sc_body, t, &eph)?,
             body_barycenter_velocity(sc_body, t, &eph)?,
+        ))
+    };
+    let sc_km = |t: f64| -> Option<([f64; 3], [f64; 3])> {
+        let (p, v) = sc(t)?;
+        Some((
+            [
+                p[0] / METRES_PER_KM,
+                p[1] / METRES_PER_KM,
+                p[2] / METRES_PER_KM,
+            ],
+            [
+                v[0] / METRES_PER_KM,
+                v[1] / METRES_PER_KM,
+                v[2] / METRES_PER_KM,
+            ],
         ))
     };
 
@@ -469,41 +464,86 @@ fn run(witness: Witness) {
             None
         };
         let t3 = r[0];
-        let (Some(r_rx), Some(v_rx)) = (
-            body_fixed_to_icrs_smooth(host, rx_lat, rx_lon, rx_alt, t3, &eph),
-            station_velocity(host, t3, rx_lat, rx_lon, rx_alt, &eph),
-        ) else {
+        let Some(turn_ratio) = odf_turn_ratio(r[6] as i64) else {
             no_model += 1;
             continue;
         };
-        let Some(rdown) = downlink_rate_core(t3, r_rx, v_rx, &sc) else {
-            no_model += 1;
-            continue;
-        };
-        if !rdown.is_finite() {
+        let f_ref_hz = ref_uplink_hz(mode as i32, r[2]);
+        if !(f_ref_hz.is_finite() && f_ref_hz > 0.0) {
             no_model += 1;
             continue;
         }
-        let mut rate = rdown;
-        if let Some((tx_lat, tx_lon, tx_alt)) = tx_ll {
-            let Some((r_sc2, t2)) = light_time_worldline(r_rx, t3, &|t| sc(t).map(|(p, _)| p))
-            else {
-                no_model += 1;
-                continue;
-            };
-            let Some((_, v_sc2)) = sc(t2) else {
-                no_model += 1;
-                continue;
-            };
-            let Some(rup) = uplink_rate(t2, r_sc2, v_sc2, tx_lat, tx_lon, tx_alt, &eph) else {
-                no_model += 1;
-                continue;
-            };
-            if !rup.is_finite() {
-                no_model += 1;
-                continue;
+        let Some(r_rx_m) = body_fixed_to_icrs_smooth(host, rx_lat, rx_lon, rx_alt, t3, &eph) else {
+            no_model += 1;
+            continue;
+        };
+        let r_rx = [
+            r_rx_m[0] / METRES_PER_KM,
+            r_rx_m[1] / METRES_PER_KM,
+            r_rx_m[2] / METRES_PER_KM,
+        ];
+        let mut t_tx = t3;
+        let mut r_tx = r_rx;
+        let mut light = None;
+        for _ in 0..8 {
+            if let Some((tx_lat, tx_lon, tx_alt)) = tx_ll {
+                let Some(p) = body_fixed_to_icrs_smooth(host, tx_lat, tx_lon, tx_alt, t_tx, &eph)
+                else {
+                    break;
+                };
+                r_tx = [
+                    p[0] / METRES_PER_KM,
+                    p[1] / METRES_PER_KM,
+                    p[2] / METRES_PER_KM,
+                ];
             }
-            rate += rup;
+            let Some(l) = two_way_light_time(t3, r_rx, r_tx, &sc_km) else {
+                break;
+            };
+            let settled = (l.t_tx_tdb - t_tx).abs() < 1e-9;
+            t_tx = l.t_tx_tdb;
+            light = Some(l);
+            if settled {
+                break;
+            }
+        }
+        let Some(light) = light else {
+            no_model += 1;
+            continue;
+        };
+        let Some(sun_m) = body_barycenter_position(gravitator, light.t_bounce_tdb, &eph) else {
+            no_model += 1;
+            continue;
+        };
+        let sun_km = [
+            sun_m[0] / METRES_PER_KM,
+            sun_m[1] / METRES_PER_KM,
+            sun_m[2] / METRES_PER_KM,
+        ];
+        let inputs = TwoWayDopplerInputs {
+            t_rx_tdb: t3,
+            station_rx_icrs_km: r_rx,
+            station_tx_icrs_km: r_tx,
+            f_ref_hz,
+            turn_ratio,
+            gravitator_icrs_km: Some(sun_km),
+            gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
+        };
+        let Some(dop) = two_way_doppler(inputs, &sc_km) else {
+            no_model += 1;
+            continue;
+        };
+        let nominal_hz = f_ref_hz * turn_ratio;
+        let modeled_abs_hz = if mode == 11 {
+            dop.downlink_hz
+        } else {
+            dop.observable_hz
+        };
+        let rate = (nominal_hz - modeled_abs_hz) * C_LIGHT / nominal_hz;
+        let rdown = (nominal_hz - dop.downlink_hz) * C_LIGHT / nominal_hz;
+        if !rate.is_finite() || !rdown.is_finite() {
+            no_model += 1;
+            continue;
         }
         modeled.push([
             t3,
