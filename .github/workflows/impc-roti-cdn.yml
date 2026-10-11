@@ -1,3 +1,5 @@
+# harvest: format=impc_roti asset=present arm=impc_roti_compiler pattern=^impc_roti\.bin$ idempotent=true timeout=300 tag=data.impc.dlr.de
+
 name: impc-roti-cdn
 
 on:

@@ -1,3 +1,5 @@
+# harvest: format=osha_cehd_si_axis_value_text asset=present arm=osha_cehd_compiler pattern=^osha_cehd_si\.txt$ idempotent=true timeout=600 tag=obis.osha.gov
+
 name: osha-cehd-cdn
 
 concurrency:

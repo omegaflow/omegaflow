@@ -1,3 +1,5 @@
+# harvest: format=quake_ptevent asset=present arm=quake_ptevent_compiler pattern=^quake_ptevent_.+\.bin$ idempotent=true timeout=240 tag=quake-ptevent
+
 name: quake-ptevent-cdn
 
 concurrency:

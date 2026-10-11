@@ -1,3 +1,5 @@
+# harvest: format=soho_lasco_cme asset=present arm=soho_lasco_compiler pattern=^soho_lasco_cme\.bin$ idempotent=true timeout=120 tag=cdaw.gsfc.nasa.gov
+
 name: soho-lasco-cme-cdn
 
 concurrency:

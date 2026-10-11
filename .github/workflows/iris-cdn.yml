@@ -1,3 +1,5 @@
+# harvest: format=iris asset=present arm=iris_compiler pattern=^iris\.bin$ idempotent=true timeout=120 tag=vso.stanford.edu
+
 name: iris-cdn
 
 concurrency:

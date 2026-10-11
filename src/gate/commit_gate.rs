@@ -2112,12 +2112,7 @@ pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<
     (tracked_not_declared, declared_not_tracked)
 }
 
-pub const REGISTER_CLASSES: [&str; 4] = [
-    "phi/sources.φ",
-    "phi/witnesses.φ",
-    "phi/footprints.φ",
-    "phi/harvest.φ",
-];
+pub const REGISTER_CLASSES: [&str; 2] = ["phi/sources.φ", "phi/witnesses.φ"];
 
 pub fn declared_canon() -> Vec<String> {
     REGISTER_CLASSES.iter().map(|s| s.to_string()).collect()
@@ -4620,9 +4615,9 @@ mod tests {
     }
 
     #[test]
-    fn fn_register_classes_are_the_four_living_registers() {
+    fn fn_register_classes_are_the_two_living_registers() {
         let classes = register_classes();
-        assert_eq!(classes.len(), 4);
+        assert_eq!(classes.len(), 2);
         assert!(classes.iter().any(|p| p == "phi/sources.φ"));
         assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
@@ -4649,7 +4644,6 @@ mod tests {
             Some("phi-sources-note")
         );
         assert!(prose_violation_for("phi/witnesses.φ", &fx("phi_sources_note")).is_none());
-        assert!(prose_violation_for("phi/footprints.φ", &fx("phi_sources_note")).is_none());
     }
 
     #[test]
@@ -4702,7 +4696,7 @@ mod tests {
     #[test]
     fn fn_register_classes_hold_registers_not_canon() {
         let classes = register_classes();
-        assert_eq!(classes.len(), 4);
+        assert_eq!(classes.len(), 2);
         assert!(classes.iter().any(|p| p == "phi/sources.φ"));
         assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));

@@ -1,3 +1,5 @@
+# harvest: format=viking_grav asset=present arm=viking_grav_compiler pattern=^viking_grav_vmar001l\.bin$ idempotent=true timeout=240 tag=pds-geosciences.wustl.edu
+
 name: viking-grav-cdn
 
 concurrency:

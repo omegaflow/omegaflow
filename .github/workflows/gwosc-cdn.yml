@@ -1,3 +1,5 @@
+# harvest: format=losc asset=present arm=losc_compiler pattern=^losc\.bin$ idempotent=true timeout=240 tag=gwosc.org
+
 name: gwosc-cdn
 
 concurrency:

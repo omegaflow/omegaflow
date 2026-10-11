@@ -1,3 +1,5 @@
+# harvest: format=gaia_rrl asset=present arm=gaia_rrl_compiler pattern=^gaia_rrl\.bin$ idempotent=true timeout=240 tag=gea.esac.esa.int
+
 name: gaia-rrl-cdn
 
 concurrency:

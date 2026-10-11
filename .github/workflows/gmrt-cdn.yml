@@ -1,3 +1,5 @@
+# harvest: format=gmrt_bathymetry asset=present arm=gmrt_compiler pattern=^gmrt_bathymetry\.bin$ idempotent=true timeout=120 tag=www.gmrt.org
+
 name: gmrt-cdn
 
 concurrency:

@@ -28,8 +28,8 @@ Register ersetzen sie.
 Der Zustand offener Arbeit liegt **nicht** mehr in einem Pipeline-Ledger: er
 liegt in `state/zustand/wartend.φ` (12 pending Compiler + Zugangs-Waits;
 gitignored, lokal) und wird owner-getaggt mit `register_lookup --open` gelesen.
-`phi/` trägt die **4 lebenden Register** (`sources`,
-`witnesses`, `footprints`, `harvest`),
+`phi/` trägt die **2 lebenden Register** (`sources`,
+`witnesses`),
 kein weiteres.
 
 ## 2. Pfadkarte (gemessen 2026-10-11)
@@ -38,8 +38,6 @@ kein weiteres.
 |------|------------|
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). 2730 `url`-Blöcke. |
 | `phi/witnesses.φ` | Das Zeugen-Register (S²-Richtung, Gestalt, Presence …). 34 Einträge. |
-| `phi/footprints.φ` | Die Coverage-Records `.fp01`. 5 Einträge. |
-| `phi/harvest.φ` | Das Harvest-Master-Register: ein Block je Arm/Format, Felder `asset` (present/fehlt), `format`, `tag`, `arm`, `workflow`, `pattern`, `idempotent`, `timeout`; 77 Formate. `harvest.yml` liest den Block und reicht die Felder dem Arm weiter; `harvest_reg --check` whitelistet sie, ein fehlendes Pflicht-Argument verweigert der Arm selbst (exit 2). |
 | `state/zustand/wartend.φ` | Das Wartend-Register (gitignored, lokal): `key \| Gegenüber \| Trigger \| Aufnehmer \| Lage`, eine Zeile je Wait; 12 pending Compiler + Zugangs-Waits. |
 | `src/mathematikerin/descriptors/*.te` | Kanal-Deskriptoren (20) — Konsument `tools/measure/src/bin/field_te_query.rs`. |
 | `src/archivar/testdata/` | Test-Fixtures (8 Verzeichnisse: twomass, ncei_ssi, ncei_goes_xrs, noaa_goes16, noaa_gk2a, noaa_wod, cosmic_wetprf, celestrak_eop). |
@@ -71,8 +69,8 @@ Werts liest sich als `no-cadence`.
 
 Die drei früheren Dispositions-Register (`dead_sources.φ`/`declined_sources.φ`/
 `blocked_sources.φ`) sind mit dem Architektur-Akt (Operator-Wort 2026-10-11) aus
-dem Kanon entfernt: `phi/` trägt nur noch `sources`/`witnesses`/`footprints`/
-`harvest`. Die Verdikt-, `dead`- und Zugangs-Zustände leben nicht mehr als
+dem Kanon entfernt: `phi/` trägt nur noch `sources`/`witnesses`. Die Verdikt-,
+`dead`- und Zugangs-Zustände leben nicht mehr als
 eigene Register; die Zugangs-/Verdikt-Grenze (Operator-Wort 2026-09-15) bleibt
 als Prinzip in `AGENTS.md` (Source-Curation) beschrieben.
 

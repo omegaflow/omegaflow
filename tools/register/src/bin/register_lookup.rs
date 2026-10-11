@@ -51,8 +51,6 @@ const LEDGER_PATH: &str = "phi/pipeline/ledger.\u{3c6}";
 const INDEX_PATH: &str = "phi/pipeline/index.\u{3c6}";
 const SOURCES_PATH: &str = "phi/sources.\u{3c6}";
 const WITNESSES_PATH: &str = "phi/witnesses.\u{3c6}";
-const FOOTPRINTS_PATH: &str = "phi/footprints.\u{3c6}";
-const HARVEST_PATH: &str = "phi/harvest.\u{3c6}";
 const NRS_PATH: &str = "phi/nrs_stations.\u{3c6}";
 const PROBE_PATHS: &[&str] = &[
     "phi/pipeline/probe_wave.\u{3c6}",
@@ -64,9 +62,7 @@ const DISPOSITION_REGISTER_PATHS: &[&str] = &[
     "phi/sources.\u{3c6}",
     "phi/pipeline/ledger.\u{3c6}",
     "phi/pipeline/index.\u{3c6}",
-    "phi/harvest.\u{3c6}",
     "phi/witnesses.\u{3c6}",
-    "phi/footprints.\u{3c6}",
     "phi/nrs_stations.\u{3c6}",
 ];
 
@@ -1434,31 +1430,6 @@ fn run_open() {
     );
     print_section("WITNESSES", witnesses, &witnesses_open, &witnesses_released);
 
-    let mut footprints_open: Vec<String> = Vec::new();
-    let mut footprints_released: Vec<String> = Vec::new();
-    let footprints = scan_note_markers(
-        Path::new(FOOTPRINTS_PATH),
-        &["pending"],
-        &["refused"],
-        &mut footprints_open,
-        &mut footprints_released,
-    );
-    print_section(
-        "FOOTPRINTS",
-        footprints,
-        &footprints_open,
-        &footprints_released,
-    );
-
-    let mut harvest_open: Vec<String> = Vec::new();
-    let mut harvest_released: Vec<String> = Vec::new();
-    let harvest = scan_state_blocks(
-        Path::new(HARVEST_PATH),
-        &mut harvest_open,
-        &mut harvest_released,
-    );
-    print_section("HARVEST", harvest, &harvest_open, &harvest_released);
-
     let mut nrs_open: Vec<String> = Vec::new();
     let mut nrs_released: Vec<String> = Vec::new();
     let nrs = scan_note_markers(
@@ -1495,7 +1466,7 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} future, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, footprints {} open, harvest {} open, nrs {} open, probes {} open, ereignisse {} open, {} candidates ({} disposed)",
+        "register_lookup --open: {} docs, {} future, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, nrs {} open, probes {} open, ereignisse {} open, {} candidates ({} disposed)",
         docs.len(),
         future_lines.len(),
         opens.len(),
@@ -1510,8 +1481,6 @@ fn run_open() {
         index,
         sources,
         witnesses,
-        footprints,
-        harvest,
         nrs,
         probe,
         ereignisse,
@@ -3720,7 +3689,7 @@ fn workflows_text(root: &Path) -> String {
 }
 
 fn register_anchor(root: &Path, stem: &str) -> Option<String> {
-    let mut files = vec![WITNESSES_PATH.to_string(), FOOTPRINTS_PATH.to_string()];
+    let mut files = vec![WITNESSES_PATH.to_string(), SOURCES_PATH.to_string()];
     if let Ok(entries) = fs::read_dir(root.join(BINDINGS_DIR)) {
         for entry in entries.flatten() {
             let name = entry.file_name().to_string_lossy().to_string();
@@ -4386,7 +4355,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
     }
 
     #[test]
-    fn scan_state_blocks_harvest_tags_asset_fehlt_and_ignores_present() {
+    fn scan_state_blocks_text_tags_asset_fehlt_and_ignores_present() {
         let text = "asset fehlt\nformat lro_trk\nnote LRO RSS raw tracking\n\nasset present\nformat gaia_sso\nnote gaia asset\n";
         let mut open_out = Vec::new();
         let mut released_out = Vec::new();

@@ -1,3 +1,5 @@
+# harvest: format=emtf_impedance asset=present arm=emtf_compiler pattern=^emtf_usarray_cao01_2010\.bin$ idempotent=true timeout=7200 tag=data.earthscope.org
+
 name: emtf-cdn
 
 concurrency:

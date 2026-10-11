@@ -1,3 +1,5 @@
+# harvest: format=cdaweb_tec asset=present arm=cdaweb_tec_compiler pattern=^cdaweb_tec\.bin$ idempotent=true timeout=60 tag=cdaweb.gsfc.nasa.gov
+
 name: cdaweb-tec-cdn
 
 concurrency:

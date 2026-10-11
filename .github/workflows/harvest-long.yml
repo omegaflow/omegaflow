@@ -1,3 +1,5 @@
+# harvest: format=lro_trk asset=present arm=lro_trk_compiler pattern=^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$ idempotent=true timeout=240 tag=imbrium.mit.edu shard=1
+
 name: harvest-long
 
 concurrency:
@@ -8,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       format:
-        description: format name — the phi/harvest.φ block key
+        description: format name — the harvest header key
         required: true
         type: string
       force:
@@ -17,7 +19,7 @@ on:
         type: boolean
         default: false
       timeout:
-        description: explicit job timeout override — absent, the phi/harvest.φ block's timeout field carries
+        description: explicit job timeout override — absent, the harvest header timeout field carries
         required: false
         type: string
 
@@ -44,32 +46,33 @@ jobs:
       timeout: ${{ steps.block.outputs.timeout }}
     steps:
       - uses: actions/checkout@v7
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Read the phi/harvest.φ block for ${{ github.event.inputs.format }}
+      - name: Read the harvest header for ${{ github.event.inputs.format }}
         id: block
         run: |
-          cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup "$FORMAT" > block.txt \
-            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "harvest: $FORMAT has no measured block in phi/harvest.φ" \
-                 "harvest_reg --lookup $FORMAT returned void — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 health; exit 1; }
-          tag=$(sed -n 's/^tag //p' block.txt)
-          arm=$(sed -n 's/^arm //p' block.txt)
-          pattern=$(sed -n 's/^pattern //p' block.txt)
-          shard=$(sed -n 's/^shard //p' block.txt)
-          idem=$(sed -n 's/^idempotent //p' block.txt)
-          args=$(sed -n 's/^args //p' block.txt)
-          timeout=$(sed -n 's/^timeout //p' block.txt)
+          line=$(grep -m1 "^# harvest: format=$FORMAT " .github/workflows/harvest-long.yml || true)
+          if [ -z "$line" ]; then
+            bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+              "harvest: $FORMAT has no measured harvest header in harvest-long.yml" \
+              "no '# harvest: format=$FORMAT' header in .github/workflows/harvest-long.yml — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              health; exit 1
+          fi
+          tag=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]tag=\([^ ]*\).*/\1/p')
+          arm=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]arm=\([^ ]*\).*/\1/p')
+          pattern=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]pattern=\([^ ]*\).*/\1/p')
+          shard=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]shard=\([^ ]*\).*/\1/p')
+          idem=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]idempotent=\([^ ]*\).*/\1/p')
+          args=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]args=//p')
+          timeout=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]timeout=\([^ ]*\).*/\1/p')
           if [ -z "$tag" ] || [ -z "$arm" ] || [ -z "$pattern" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "harvest: $FORMAT carries incomplete fields in phi/harvest.φ" \
-              "The $FORMAT block is missing tag, arm or pattern — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              "harvest: $FORMAT carries incomplete fields in the harvest header" \
+              "the $FORMAT header is missing tag, arm or pattern — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
               health; exit 1
           fi
           if [ "$idem" != "true" ] && [ "$idem" != "false" ]; then
             bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-              "harvest: $FORMAT carries no idempotent verdict in phi/harvest.φ" \
-              "The $FORMAT block has no true|false idempotent field — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              "harvest: $FORMAT carries no idempotent verdict in the harvest header" \
+              "the $FORMAT header has no true|false idempotent field — register duty. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
               health; exit 1
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"

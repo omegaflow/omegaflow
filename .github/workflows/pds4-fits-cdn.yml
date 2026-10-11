@@ -1,3 +1,5 @@
+# harvest: format=pds4_fits asset=present arm=pds4_fits_compiler pattern=^pds4_fits_.+\.fits$ idempotent=true timeout=240 tag=pds-geosciences.wustl.edu
+
 name: pds4-fits-cdn
 
 concurrency:

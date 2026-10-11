@@ -1,3 +1,5 @@
+# harvest: format=keogram asset=present arm=keogram_compiler pattern=^keogram_.*\.bin$ idempotent=true timeout=120 tag=space.fmi.fi
+
 name: keogram-cdn
 
 concurrency:

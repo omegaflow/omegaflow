@@ -1,3 +1,5 @@
+# harvest: format=cassini_rsr asset=present arm=cassini_rsr_compiler pattern=^cassini_rsr\.bin$ idempotent=true timeout=350 tag=atmos.nmsu.edu args=--files 1
+
 name: cassini-rsr-cdn
 
 concurrency:

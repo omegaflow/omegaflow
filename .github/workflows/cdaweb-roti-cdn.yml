@@ -1,3 +1,5 @@
+# harvest: format=cdaweb_roti asset=present arm=cdaweb_roti_compiler pattern=^cdaweb_roti_[0-9]{8}\.bin$ idempotent=true timeout=360 tag=cdaweb.gsfc.nasa.gov
+
 name: cdaweb-roti-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=vlf_awesome asset=present arm=vlf_awesome_compiler pattern=^vlf_awesome_.+\.csv$ idempotent=true timeout=120 tag=craam-files-bucket.s3.amazonaws.com
+
 name: vlf-awesome-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=hapi_csv asset=present arm=das2_iowa_compiler pattern=^das2_iowa_.+\.bin$ idempotent=true tag=planet.physics.uiowa.edu
+
 name: das2-iowa-cdn
 
 concurrency:

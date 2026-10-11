@@ -1,3 +1,5 @@
+# harvest: format=swarm_fac asset=present arm=swarm_fac_compiler pattern=^swarm_fac\.bin$ idempotent=true timeout=120 tag=isdc-data.gfz.de
+
 name: swarm-fac-cdn
 
 concurrency:

@@ -52,15 +52,13 @@ abk_dbdt_daily.tsv
 abk_dbdt_1h_SOD_2024.tsv
 fam_state_SOD_2024.txt
 
-# A=A: der verbindliche Register-Kanon sind die 4 lebenden Register, fest im
+# A=A: der verbindliche Register-Kanon sind die 2 lebenden Register, fest im
 # Gate-Code deklariert (`REGISTER_CLASSES`, src/gate/commit_gate.rs); eine neue
 # getrackte phi/*.φ-Datei ist ein Architektur-Akt (Operator/Council-Wort +
 # REGISTER_CLASSES-Eintrag im selben Commit). Alle Register liegen flach in phi/.
 phi/*
 !phi/sources.φ
 !phi/witnesses.φ
-!phi/footprints.φ
-!phi/harvest.φ
 # Asteroid-Diameter-Kataloge sind Compiler-Eingaben (dastcom_compiler/kernel-flatten) — groß und nicht auf dem CI-Runner; die gm-Kataloge sind getrackt, die Diameter bleiben lokal.
 tools/harvest/data/asteroid/asteroid_diameters_*.φ
 

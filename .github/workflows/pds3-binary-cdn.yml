@@ -1,3 +1,5 @@
+# harvest: format=pds3_binary asset=present arm=pds3_binary_compiler pattern=^pds3_binary_.+\.bin$ idempotent=true timeout=240 tag=data.darts.isas.jaxa.jp
+
 name: pds3-binary-cdn
 
 concurrency:

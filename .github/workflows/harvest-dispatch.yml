@@ -9,7 +9,6 @@ on:
     branches: [main]
     paths:
       - 'phi/sources.φ'
-      - 'phi/harvest.φ'
       - 'tools/harvest/src/bin/**'
 
 permissions:
@@ -23,9 +22,6 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Gate — every block in phi/harvest.φ is measured and well-formed
-        run: cargo run -q -p omegaflow-utils --bin harvest_reg -- --check
       - name: Resolve the changed harvest formats and dispatch the missing ones
         env:
           GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
@@ -34,31 +30,48 @@ jobs:
           if [ "$before" = "0000000000000000000000000000000000000000" ]; then
             before='${{ github.sha }}^'
           fi
+
+          # the token after "<key>=" up to the next space; args carries the tail
+          field() { printf '%s\n' "$1" | sed -n "s/.*[[:space:]]$2=\([^ ]*\).*/\1/p"; }
+          # the "<path>:<header line>" of the workflow that carries format <name>
+          header_of() {
+            grep -H '^# harvest: ' .github/workflows/*.yml \
+              | awk -v f="format=$1" '{ for(i=1;i<=NF;i++) if($i==f){ print; exit } }'
+          }
+
           formats=""
           for path in $(git diff --name-only "$before" '${{ github.sha }}' -- 'tools/harvest/src/bin/*.rs' || true); do
             stem=$(basename "$path" .rs)
-            found=$(cargo run -q -p omegaflow-utils --bin harvest_reg -- --arm "$stem" || true)
+            found=$(grep -h '^# harvest: ' .github/workflows/*.yml \
+              | awk -v a="arm=$stem" '{
+                  hit=0; f="";
+                  for(i=1;i<=NF;i++){ if($i==a) hit=1; if(substr($i,1,7)=="format=") f=substr($i,8) }
+                  if(hit && f!="") print f
+                }')
             if [ -z "$found" ]; then
-              echo "arm $stem changed — no harvest block names it, register duty"
+              echo "arm $stem changed — no harvest header names it, register duty"
               continue
             fi
-            formats="$formats $(printf '%s\n' "$found" | sed 's/^format //')"
+            formats="$formats $found"
           done
-          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | grep '^+format ' | sed 's/^+format //' || true)"
-          formats="$formats $(git diff --unified=6 "$before" '${{ github.sha }}' -- phi/harvest.φ | grep '^[ +-]format ' | sed 's/^[ +-]format //' || true)"
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | sed -n 's/^+format //p' || true)"
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- '.github/workflows/*.yml' | sed -n 's/^+# harvest: .*format=\([a-z0-9_]*\).*/\1/p' || true)"
+          formats=$(printf '%s\n' $formats | sort -u)
+
           args_changed=""
-          if git show "$before:phi/harvest.φ" > /tmp/harvest_before.φ 2>/dev/null; then
-            for fmt in $formats; do
-              old=$(awk -v f="$fmt" '$1=="format" {cur=$2} $1=="args" && cur==f {print; exit}' /tmp/harvest_before.φ)
-              new=$(awk -v f="$fmt" '$1=="format" {cur=$2} $1=="args" && cur==f {print; exit}' phi/harvest.φ)
-              if [ "$old" != "$new" ]; then
-                args_changed="$args_changed $fmt"
-              fi
-            done
-          else
-            echo "no phi/harvest.φ at $before — args-change compare void, no auto-force"
-          fi
-          formats=$(printf '%s\n' $formats $args_changed | sort -u)
+          for fmt in $formats; do
+            entry=$(header_of "$fmt")
+            [ -z "$entry" ] && continue
+            wfpath="${entry%%:*}"
+            old_line=$(git show "$before:$wfpath" 2>/dev/null | grep -m1 "^# harvest: format=$fmt " || true)
+            [ -z "$old_line" ] && continue
+            new_args=$(printf '%s\n' "${entry#*:}" | sed -n 's/.* args=//p')
+            old_args=$(printf '%s\n' "$old_line" | sed -n 's/.* args=//p')
+            if [ "$old_args" != "$new_args" ]; then
+              args_changed="$args_changed $fmt"
+            fi
+          done
+
           bad=0
           dispatch() {
             local fmt="$1" wf="$2" tmo="$3" force="$4"
@@ -79,20 +92,16 @@ jobs:
               || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
           }
           for fmt in $formats; do
-            block=$(cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup "$fmt" 2>/dev/null || true)
-            if [ -z "$block" ]; then
-              echo "format $fmt: no measured block in phi/harvest.φ — register duty, no dispatch"
+            entry=$(header_of "$fmt")
+            if [ -z "$entry" ]; then
+              echo "format $fmt: no measured harvest header — register duty, no dispatch"
               continue
             fi
-            asset=$(printf '%s\n' "$block" | sed -n 's/^asset //p')
-            wf=$(printf '%s\n' "$block" | sed -n 's/^workflow //p')
-            wf=${wf:-harvest.yml}
-            # the register may name the workflow by its name: (harvest-long) or by its file (harvest.yml)
-            if [ ! -f ".github/workflows/$wf" ] && [ -f ".github/workflows/$wf.yml" ]; then
-              wf="$wf.yml"
-            fi
-            tmo=$(printf '%s\n' "$block" | sed -n 's/^timeout //p')
-            idem=$(printf '%s\n' "$block" | sed -n 's/^idempotent //p')
+            wf=$(basename "${entry%%:*}")
+            line="${entry#*:}"
+            asset=$(field "$line" asset)
+            tmo=$(field "$line" timeout)
+            idem=$(field "$line" idempotent)
             case "$asset" in
               fehlt)
                 echo "format $fmt: asset fehlt — dispatch $wf"
@@ -117,7 +126,7 @@ jobs:
                 esac
                 ;;
               *)
-                echo "format $fmt: block unmeasured — register duty, no dispatch"
+                echo "format $fmt: harvest header unmeasured — register duty, no dispatch"
                 ;;
             esac
           done

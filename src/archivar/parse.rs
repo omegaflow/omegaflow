@@ -87,6 +87,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_post_body: Option<String> = None;
     let mut cur_origin: Option<String> = None;
     let mut cur_terms: Option<String> = None;
+    let mut cur_band: Option<String> = None;
+    let mut cur_footprint: Option<String> = None;
     let mut cur_rights_identifier: Option<String> = None;
     let mut cur_rights_scheme: Option<String> = None;
     let mut cur_rights_uri: Option<String> = None;
@@ -122,6 +124,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             if active && cur_ttl > 0 && !cur_url.is_empty() {
                 if cur_format == "kernel_text"
                     || cur_format == "reference"
+                    || cur_format == "fp01"
                     || cur_frame.is_some()
                     || !cur_extracts.is_empty()
                     || !cur_channels.is_empty()
@@ -147,6 +150,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             target: cur_target.clone(),
                             origin: cur_origin.clone(),
                             terms: cur_terms.clone(),
+                            band: cur_band.clone(),
+                            footprint: cur_footprint.clone(),
                             rights_identifier: cur_rights_identifier.clone(),
                             rights_scheme: cur_rights_scheme.clone(),
                             rights_uri: cur_rights_uri.clone(),
@@ -213,6 +218,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_post_body = None;
                 cur_origin = None;
                 cur_terms = None;
+                cur_band = None;
+                cur_footprint = None;
                 cur_rights_identifier = None;
                 cur_rights_scheme = None;
                 cur_rights_uri = None;
@@ -253,6 +260,22 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "terms" => {
                 let rest = line.strip_prefix("terms").unwrap_or("").trim();
                 cur_terms = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "band" => {
+                let rest = line.strip_prefix("band").unwrap_or("").trim();
+                cur_band = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "footprint" => {
+                let rest = line.strip_prefix("footprint").unwrap_or("").trim();
+                cur_footprint = if rest.is_empty() {
                     None
                 } else {
                     Some(rest.to_string())
@@ -2510,6 +2533,8 @@ mod tests {
             url: url.into(),
             origin: None,
             terms: None,
+            band: None,
+            footprint: None,
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,

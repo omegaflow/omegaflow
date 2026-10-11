@@ -1,3 +1,5 @@
+# harvest: format=iaga_text asset=present arm=iaga_text_compiler pattern=^iaga_text\.bin$ idempotent=true tag=zenodo.org
+
 name: iaga-text-cdn
 
 concurrency:

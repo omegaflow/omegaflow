@@ -1,3 +1,5 @@
+# harvest: format=agrav asset=present arm=agrav_compiler pattern=^agrav\.bin$ idempotent=true timeout=240 tag=api.sedoo.fr
+
 name: agrav-cdn
 
 concurrency:

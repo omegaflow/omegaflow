@@ -1,3 +1,5 @@
+# harvest: format=usgs_comcat_m45 asset=present arm=usgs_comcat_compiler pattern=^usgs_comcat_m45\.bin$ idempotent=true timeout=240 tag=earthquake.usgs.gov
+
 name: usgs-comcat-cdn
 
 concurrency:

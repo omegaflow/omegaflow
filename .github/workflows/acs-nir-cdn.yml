@@ -1,3 +1,5 @@
+# harvest: format=pds4_acs_nir asset=present arm=acs_nir_compiler pattern=^acs_raw_sc_nir_.+\.tab$ idempotent=true timeout=240 tag=archives.esac.esa.int
+
 name: acs-nir-cdn
 
 concurrency:

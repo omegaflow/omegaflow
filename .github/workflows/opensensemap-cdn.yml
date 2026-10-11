@@ -1,3 +1,5 @@
+# harvest: format=opensensemap_temperatur asset=present arm=opensensemap_compiler pattern=^opensensemap_temperatur\.bin$ idempotent=true timeout=120 tag=api.opensensemap.org
+
 name: opensensemap-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=carisma_mag asset=present arm=carisma_mag_compiler pattern=^carisma_mag\.bin$ idempotent=true timeout=120 tag=donnees-data.asc-csa.gc.ca
+
 name: carisma-mag-cdn
 
 concurrency:

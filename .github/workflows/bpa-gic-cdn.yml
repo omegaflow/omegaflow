@@ -1,3 +1,5 @@
+# harvest: format=bpa_gic asset=present arm=bpa_gic_compiler pattern=^bpa_gic\.bin$ idempotent=true timeout=120 tag=transmission.bpa.gov
+
 name: bpa-gic-cdn
 
 concurrency:
