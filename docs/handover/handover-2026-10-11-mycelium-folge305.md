@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 305 (2026-10-11)
-  session: Mycelium-Linie — Meta-Pass. Taucher-Batterie (Operator-Wort): cmb-cdn-Streaming vollständig (tar_stream/bzip2_tar_stream/fetch_to_file + beide Compiler-Arme), vier Portal-Coverage-Manifestatoren gebaut (NL AHN4 · CH swisstopo · NZ LINZ · FR IGN) + coverage-manifest-Workflow, MCP-no-leak-Gate (src/gate/mcp.rs) gebaut + in commit_check verdrahtet, t420-Throttle-Boot-Lücke + matrix-rotor-Trap-Flush gebaut; UK EA blockiert account.
+  session: Mycelium-Linie — Meta-Pass. Taucher-Batterie(n): cmb-cdn-Streaming vollständig (tar_stream/bzip2_tar_stream/fetch_raw_to_file_with + beide Compiler-Arme); vier Portal-Coverage-Manifestatoren + coverage-manifest-Workflow; MCP-no-leak-Gate (src/gate/mcp.rs) in commit_check; t420-Throttle-Boot-Lücke + matrix-rotor-Trap-Flush; keyless-OGC-EA-Index (ea_lidar_index.rs). **Korrektur: UK EA ist NICHT account-gated** — keyless via flai `open-lidar-data` S3 + EA `/tiles` (gemessen). Das flai-Aggregat ist bereits getrackt (`open_lidar_data_coverage.rs`, Welt). Extraterrestrische + Bathymetrie-LiDAR-Landschaft gemessen. OpenTopography-Key eingetragen.
   class: handover
   date: 2026-10-11
-  sha256: 82e2fc674a3abd2d1dc1a349c8744577e21326e271e742f7bc0b5e88b03d8883
+  sha256: 611a64ccdbbfd066581652db85348f08f9b89c0080c9181e169ab839ac2e42e5
   status: live
 -->
 # Handover — Mycelium-Folge 305 (2026-10-11)
@@ -21,11 +21,19 @@ zitiert, nie kopiert). Diese Session konsumierte
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-11 | Operator (Session, Mycelium 305) |
 | „bitte fang mal an zu bauen statt nur zu messen — setze eine Batterie von Tauchern auf die Aufgaben an und ERLEDIGT sie" | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „vorbestehend ist verboten" (kein Vertrösten auf vorhandenen Schmutz) | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „öffne die seite(n) zur registrierung ausgefüllt bis zur Kante" | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „key ist eingetragen" (OpenTopography) | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „habt ihr denn auch die auth quellen gegen secrets local geprüft? (nicht ausgeben!)" | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „was hat es mit flai open-lidar-data auf sich? ist das nicht das Aggregat für globale Abdeckung?" | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „sind da auch die bathymetry lidar daten drin oder gibt es ein pendant open-bathymetry?" | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „taucher mit harten bandagen auf extraterrestrisches lidar — für welche ephemeridenkörper gibt es lidar?" | 2026-10-11 | Operator (Session, Mycelium 305) |
+| „ich habe den Eindruck du kehrst es gerade unter den Teppich" — Befunde gehören ins Register, nicht in den Chat | 2026-10-11 | Operator (Session, Mycelium 305) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge304.md` §Operator-Wort-Register (via `git show <sha>:archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
 
-### Portal-Coverage-Manifestatoren — 4 gebaut + Workflow; UK EA blockiert; Manifestation offen
+### Portal-Coverage-Manifestatoren — 4 gebaut + Workflow; Überlappung mit dem flai-Aggregat
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) vier neue Bins, je `shard <absolute-url>`, `cargo build` grün + Einmal-Lauf gezogen:
@@ -34,8 +42,8 @@ zitiert, nie kopiert). Diese Session konsumierte
   - `tools/harvest/src/bin/linz_coverage.rs` — S3 `nz-elevation` (`s3-ap-southeast-2`), COG `.tiff` (die LAZ-Kante ist key-gated, s. Blockade); **30835** tiles; netloc `nz-elevation.s3-ap-southeast-2.amazonaws.com`.
   - `tools/harvest/src/bin/ign_lidarhd_coverage.rs` — WFS `data.geopf.fr` (`IGNF_LIDAR-HD_METADONNEE:metadata`, Property `url_npl` → `.copc.laz`, **524687** tiles); netloc `data.geopf.fr`.
   - Workflow `.github/workflows/coverage-manifest.yml` (Matrix, `--ci-mode`, `[self-hosted, Linux]`).
-- **Blockade:** UK EA (`tools/harvest/src/bin/ea_lidar_coverage.rs` **nicht** gebaut) — die `.laz`-Tiles liegen nur hinter `environment.data.gov.uk/geoservices/data-requests` (**401**, Authorization header required); der keyless File-Store trägt nur Index-Archive (`.gpkg.zip` 35 532 884 B, gemessen), keine `.laz` (download-url generisch 200, SAS-URL 404). **Keine** Fabrikation.
-- **Braucht:** (a) die 4 Manifeste manifestieren + in `phi/sources.φ` registrieren (Mycelium: `url`/`origin`/`compiler`/`format`; Mountain: `terms`/`at`/`ttl`) und die Workflows dispatchen; (b) UK EA: EA-Account (Operator) für den Survey-`data-request`, ODER Bau gegen das OGC-Index als reines Coverage-Metadaten-Werkzeug (Entscheidung offen).
+- **Blockade:** keine. **Korrektur (gemessen 2026-10-11):** UK EA ist **nicht** account-gated — keyless Tiles via flai `open-lidar-data` S3 (`data/UK/DEFRA/LIDAR_<year>/copc/*.copc.laz`, 200, 2 048 828 B) und EA `/tiles/collections/survey/lidar_point_cloud/<year>/NaN/<tile>` (200, `application/zip` mit 25 `.laz`), Scottish SRS 206; `geoservices/data-requests` bleibt JWT-only, ist aber nicht der einzige Weg. `tools/harvest/src/bin/ea_lidar_index.rs` (OGC-Index-Metadatenkatalog, `numberMatched` **244324**) gebaut.
+- **Braucht:** (a) die 4 Download-Manifeste + den EA-Katalog manifestieren + in `phi/sources.φ` registrieren (Mycelium `url`/`origin`/`compiler`, Mountain `terms`/`at`/`ttl`) und `coverage-manifest.yml` dispatchen; (b) **Konsolidierungs-Entscheidung** (s. `Open-LiDAR-Konsolidierung`): `ahn4`/`swisstopo`/`ign` überlappen das flai-Aggregat, `linz` bleibt eigenständig.
 
 ### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — Streaming vollständig gebaut; Dispatch + sha256 offen
 - **Status:** eigen | **Bindung:** eigen (Manifestation)
@@ -71,6 +79,41 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-11, `ci_manage log 38118057124`) `rotor slice ended rc=137`, `The runner has received a shutdown signal`. Der Resume-Pfad ist gebaut (`OMEGAFLOW_STATE=data` + Workflow-Download `matrix-rotor.yml:51-88`; `matrix.rs:257-267`). **Gebaut:** `checkpoint` im SIGTERM-Trap (`matrix-rotor.yml:120`) flusht das jüngste State.
 - **Blockade:** ein Runner-Shutdown bricht den Job ab (auch `always()`) — im Workflow nicht heilbar.
 - **Braucht:** der einzige dauerhafte Modus ist der persistente t420 (`bin/matrix_watchdog.sh:11-21`); offen: Doc/Code-Divergenz `matrix_watchdog.sh:4` (Default `~/.local/state/omegaflow`) vs `matrix.rs:33` (`data`).
+
+### Open-LiDAR-Konsolidierung — Welt-Aggregat schon getrackt; Überlappung + Klassen
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `open-lidar-data` (eu-central-1) ist das **globale Aggregat** (18 Länder BE·CH·DE·DK·EE·ES·FI·FR·IE·LT·LU·LV·NL·PL·SE·SI·UK·US; COPC; OGL/CC). **Getrackt:** `open_lidar_data_coverage.rs` manifestiert den **ganzen** Bucket (`--prefix data/`, `shard <url> <6 bbox>` via COPC-Header-Range-Fetch) — der Welt-Manifestator **existiert schon**; dazu `noaa_nos_coverage.rs` (NOAA Küste/Topo-Bathy), `usgs_lidar_coverage.rs` (USGS 3DEP), `open_lidar_data_compiler.rs` (Belgien-EODaS). **Überlappung:** flai trägt NL AHN4, CH swisssurface3d, FR IGN, UK DEFRA → `ahn4_coverage`/`swisstopo_coverage`/`ign_lidarhd_coverage` **duplizieren** es (ohne bbox); **NZ fehlt in flai** → `linz_coverage` bleibt eigenständig. `ea_lidar_index.rs` ist ein Metadaten-Index (kein Tile-Manifest).
+- **Blockade:** keine.
+- **Braucht:** Mountain-Verdikt — `ahn4`/`swisstopo`/`ign` als Origin-Quellen behalten oder `descoped` zugunsten des bbox-tragenden flai-Aggregats? Brauchen wir `ea_lidar_index` oder reicht flai UK DEFRA?
+
+### Extraterrestrische LiDAR — keyless Bestand gemessen; LOLA passt in den shard-Kontrakt
+- **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, keyless) **Mond:** LOLA — PDS `imbrium.mit.edu` (`.img`/`.tab`/PDS4) **und** COPC auf USGS `astrogeo-ard`/`asc-moon` S3 (`shard`-fähig, 151/201 MB Kacheln); LALT (Kaguya) `data.darts.isas.jaxa.jp/pub/pds3/…lalt…`; Clementine LIDAR PDS. Gated: Chandrayaan-1 LLRI (ISSDC), Chang'e LAM (BAO). **Mars:** MOLA PDS `pds-geosciences.wustl.edu/mgs/…` (`.img`/`.tab`). **Merkur:** MLA (MESSENGER) PDS (`.tab`/`.img`). **Kleine Körper:** Eros NLR · Bennu OLA · Ryugu Hayabusa2-LIDAR · Itokawa Hayabusa-LIDAR (SBN/DARTS PDS3/4; Hayabusa haus-registriert `phi/sources.φ:19529`). **Künftig:** BepiColombo BELA (PSA partial), JUICE GALA (nur SPICE), Hera PALT, MMX. Nur Mond/Mars/Merkur unter den Planeten führen Laser-Altimeter.
+- **Blockade:** keine.
+- **Braucht:** `lola_coverage.rs` (astrogeo-ard COPC → `shard`+bbox) als nächster Bau; MOLA/MLA/NLR/OLA/Hayabusa brauchen **Parser** (Mountain).
+
+### Bathymetrie — Grids keyless; Topo-Bathy-Punktwolken getrennt
+- **Status:** eigen | **Bindung:** eigen · **Teile linie:river**
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, keyless) **Grids:** GEBCO 2024 (CEDA, GeoTIFF/NetCDF, ~4 GB), NOAA BlueTopo S3, ETOPO 2022, EMODnet WCS, GMRT `GridServer`, SRTM15+. **Topo-Bathy-Punktwolken:** NOAA `noaa-nos-coastal-lidar-pds` S3 COPC (+ STAC 193 Topobathy-Titel) — `shard`-fähig, `noaa_nos_coverage.rs` getrackt; flai NOAA `NGS_Topobathy_*` (3). Ein `open-bathymetry`-Pendant zum flai-Bucket **existiert nicht** (gemessen).
+- **Blockade:** Grids sind Raster, keine Punktwolken → nicht im `shard`-Kontrakt.
+- **Braucht:** Raster-Konsument für die Grids (`pending`); Topo-Bathy-Punktwolken laufen über `noaa_nos_coverage` + flai.
+
+### OpenTopography — Key eingetragen; Konsument fehlt
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11 via `bin/secrets_keys` + `archive_search --help`) **`OPENTOPOGRAPHY_API_KEY`** in `.secrets.local` (Operator-Wort „key ist eingetragen"; nur der Name gelesen). `archive_search` hat **keinen** OT-Arm (kein `--opentopo*`); Quelle nur als Lead `tools/utils/data/library.φ:2804`. Registrierung `portal.opentopography.org/newUser` vorbereitet bis zur Kante (Johannes Tyroller · `code@omegaflow.space` · Affiliation `Other` · Org `omegaflow`), nicht abgeschickt.
+- **Blockade:** kein Konsument; ein CI-Lauf bräuchte den Key als GitHub-Actions-Secret.
+- **Braucht:** Konsument bauen — `archive_search --opentopo <q>` (Katalog keyless) ODER ein eigenständiges Manifestator-Bin (Default).
+
+## Registrierte Korrekturen & Vorfälle
+
+- **Korrektur (Rücknahme):** „UK EA blockiert account" ist **falsifiziert** (gemessen 2026-10-11). Keyless Tiles: flai `open-lidar-data` (`data/UK/DEFRA/LIDAR_<year>/copc/*.copc.laz`, 200), EA `/tiles/collections/survey/lidar_point_cloud/<year>/NaN/<tile>` (200, ZIP mit `.laz`), Scottish SRS (206). `geoservices/data-requests` bleibt JWT-only, ist aber **nicht** der einzige Weg. Lehre (Operator-Prüfregel): kein Quellen-Verdikt ohne gemessenen **401 mit dem vorhandenen Token**.
+- **Vorfall — Fremd-Werk überschrieben:** ein `grind-flash`-Taucher überschrieb die **getrackte** `tools/harvest/src/bin/open_lidar_data_coverage.rs` (201→361 Z.). **Restore** aus `git_safety refs/safety/1791704979`; Diff leer, Status clean. Lehre: jeder Taucher-Auftrag trägt „create NEW file; if the path exists, STOP".
+- **Vorfall — Duplikate:** in diesem Atom `open_lidar_data_world_coverage.rs` gebaut (= Duplikat des getrackten Aggregat-Bins) → **gelöscht**; `ea_lidar_coverage.rs` (UK-eng) gebaut → **gelöscht** (superseded).
+- **Stale-Gate-Blocker (geheilt):** `tools-build 38123001050` war rot an `tools/utils/src/bin/volume_builder.rs:346` (Fremd-Hunk, `SourceConfig.band/footprint`) → `tools-latest` stale → installiertes `commit_check` blockte `declared-not-tracked: phi/footprints.φ`+`harvest.φ`. **Mountain 311 (`6f47cf0c9`) hat die Release geheilt.**
 
 ## An mountain
 
@@ -137,7 +180,7 @@ Origin: mycelium-302 (2026-10-10).
   **Rotation nötig:** beim Zitieren der Ledger-Zeile wurde der Key-**Wert** in den
   Modell-Transcript gelesen (Secret-Hygiene-Incident). Der Wert gilt als exponiert;
   Rotation = Operator-Hand, danach Hinterlegung in `.secrets.local`.
-- **UK EA LiDAR** — der Survey-Tile-Download ist account-gated (`environment.data.gov.uk/geoservices/data-requests` 401). Braucht einen EA-Account (Operator) oder die Entscheidung, gegen das OGC-Index als Metadaten-Werkzeug zu bauen.
+- **UK EA LiDAR — korrigiert:** nicht account-gated (keyless via flai `open-lidar-data` S3 und EA `/tiles/collections/survey/...`, s. `## Registrierte Korrekturen`); kein Operator-Akt nötig.
 
 ## LOCK
 
