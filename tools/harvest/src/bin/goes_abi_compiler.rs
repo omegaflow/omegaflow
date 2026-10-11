@@ -165,7 +165,7 @@ mod tests {
 
     #[test]
     fn real_goes16_abi_granule_compiles() {
-        let path = "phi/pipeline/catalog/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
+        let path = "src/archivar/testdata/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
         if !std::path::Path::new(path).exists() {
             eprintln!(
                 "skipped (fixture absent): goes16 abi — fetch from noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/2024/001/00/"
