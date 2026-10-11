@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: e7674dff862b33a4a1c342ee099ce6ebd11d759f2cbfde4deb04338290dcd534
+  sha256: 088f2ca769299c604fd0a0210a31f3f434024152c8c1fd504ce5ea68b1944229
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -13,7 +13,7 @@ gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge306.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.34 · cap 0.5 — Grund: 7 grind-flash (6 Bau + 1 Messung/Bau), deepseek-flash, kein pro/max. (session_burn total 1.6303 → 1.9700.)
+## Burn: open 0.0000 · close 0.45 · cap 0.5 — Grund: 9 grind-flash (Bau/Messung) + 1 general, deepseek-flash, kein pro/max. (session_burn-Total $0.8782/24 Sessions, DB-Rollover → Atom-Delta nicht exakt isolierbar; nahe `BURN_CAP_HARD_USD` 0.50.)
 
 ## Operator-Wort-Register
 
@@ -22,6 +22,8 @@ zitiert, nie kopiert). Diese Session konsumierte
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Name leer → neueste offene Mycelium-Übergabe (folge306) | 2026-10-11 | Operator (Session, Mycelium 307) |
 | „bitte umsetzen [ID-Diff-Schema + Diff-Lauf + Mountain-Verdikt; weitere coverage-Arme; Frame/Epoche-Transform; cmb-cdn prüfen; MCP-Wrapper; CI-Subset-Hang]" | 2026-10-11 | Operator (Session, Mycelium 307) |
+| **„ja"** — `OPENTOPOGRAPHY_API_KEY` als GitHub-Actions-Secret im eigenen Repo hinterlegen | 2026-10-11 | Operator (Session, Mycelium 307) |
+| **„ja"** — `opencode.json`-MCP-Konfiguration anfassen (Wrapper `bin/chrome-devtools-mcp` + egress-Allowlist) | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge306.md` §Operator-Wort-Register (via `git show <sha>:docs/handover/archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -54,19 +56,26 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 38129785553` (bzw. `log`), dann sha256/Länge aus dem Release-Digest in den `phi/sources.φ:11559`-Block.
 
-### MCP no-leak-Regel — Gate gebaut; Wrapper + egress-Allowlist offen
+### MCP no-leak-Regel — Wrapper gebaut + verdrahtet; Allowlist-Verschärfung offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet.
-- **Blockade:** host-scoped egress-Allowlist braucht per-Seat-Network-Capture; opencode-MCP-Schema hat kein Integrity-Feld.
-- **Braucht:** (a) getrackten Wrapper `bin/chrome-devtools-mcp` (sha512 `RnzXoJiUQ44hpOihWk90uOhLD/CnwDkDy0ldHMZONJ2nYQ+dWN1fq1luHHqyd+7FuYnyIlCY6uTThbN5ut9kSQ==`) bauen; (b) Seats' Host-Listen capturen, `--allowedUrlPattern https://*` ersetzen. **Nicht in diesem Atom umgesetzt** (opencode-MCP-Infra; ohne Operator-Wort nicht angefasst).
+- **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet. **Neu:** getrackter Wrapper `bin/chrome-devtools-mcp` (Pin `chrome-devtools-mcp@1.9.0` + stille Defaults, kein `@latest`-Drift), beide `opencode.json`-MCP-Einträge laufen über ihn; `chrome-devtools-voices` trägt jetzt `--no-javascript-evaluation` (deaktiviert `evaluate`/`initScript`/`javascript:`-URLs). Gemessen `chrome-devtools-mcp@1.9.0 --help`: `--allowedUrlPattern` ist ein **Array** und verlangt **Chrome 149+** (installiert: `Google Chrome 155.0.8059.39`); `--proxyServer` als Alternative. `opencode.json` gültiges JSON (`jaq -e`).
+- **Blockade:** eine **enge** Allowlist blockt auch Subressourcen (Fonts/CDNs) → die Seats' tatsächliche Host-Menge ist ohne per-Seat-Network-Capture unbekannt; ein enges Muster blind würde die Stimmen brechen. `https://*` bleibt daher vorerst.
+- **Braucht:** (a) per-Seat-Network-Capture der Stimmen-Gruppe (CDP `browser_network`, JIT, focus:false) → Host-Menge; (b) `--allowedUrlPattern`-Array aus (a) setzen; (c) Config-Restart-Test (opencode lädt MCP-Config nur beim Start).
+
+### OpenTopography — Konsument gebaut; CI-Secret gesetzt
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `tools/harvest/src/bin/opentopography_coverage.rs` walkt `https://portal.opentopography.org/API/otCatalog` (keyless, HTTP 200; 1152 Datasets, 707 PointCloud; `globaldem` keyed → 401 = Auth-Grenze) und emittiert `shard <href>` (je Dataset die DOI/Landing-`url`; **keine** per-Tile-URL — gemessen, nicht erfunden); `API_Key` nur auf `portal.opentopography.org/API/`-Hrefs. Workflow `.github/workflows/opentopography-cdn.yml` (`workflow_dispatch`, self-hosted). `bin/secrets-sync.sh --set` gesetzt: `OPENTOPOGRAPHY_API_KEY` **und** alle `.github`-referenzierten Secrets (39) + `OMEGAFLOW_SECRETS_FILE`.
+- **Blockade:** keine.
+- **Braucht:** Workflow bei Bedarf dispatchen (lang; self-hosted).
 
 ### Architektur — GitHub/CI/CDN-Optimierung
 - **Status:** wartend | **Bindung:** eigen · **Teile linie:mountain/river**
 - **Trigger:** grüner `ci-check`-Lauf
-- **Lage:** (gemessen 2026-10-11) `ci-gate`-`subset` hängt im Step `Run cargo test --lib` (`38129998370` in_progress). **Rote Jobs** (gemessen aus dem Job-Log, run 38129998370): `dropped-gate` failure (`dropped-set-gate: current 13 | pinned 100 | new 13` — 13 neue Drops, Baseline `docs/zustand/dropped-legacy-baseline.txt`) · `format` failure (rustfmt-Diff `tools/measure/src/bin/eclipse_shadow_probe.rs:354,634` — fremde Datei, unstaged im Baum). `build`/`register`/`clippy` success.
-- **Blockade:** Shard-Build-vs-Test-Anteil erst an green ci-check messbar; die roten Jobs sind **nicht Mycelium-eigen** (dropped-baseline = Mountain/gate, format = measure-Datei).
-- **Braucht:** (a) grüner `ci-check` → `ci_manage jobs <id>`; (b) dominiert Build: `cargo nextest archive` + Shards `--archive-file`; (c) Test-Suite-Dedup.
+- **Lage:** (gemessen 2026-10-11) `ci-gate`-`subset` hängt im Step `Run cargo test --lib` (`38129998370` in_progress, runner `ubuntu-24.04-arm`, `timeout-minutes: 30`). **Hang-Ursache gemessen (aus dem Baum, Log `unread` — 404 während des Laufs):** `src/archivar/tests.rs:8234 test_live_sources_extract` (Sweep `live_sweep(...,600)` → `curl -m 2048s` je Quelle, `--connect-timeout 32 ×3`, **kein** `#[ignore]`, kein Offline-Gate) — ein ungekappter Live-Netz-Sweep im Unit-Suite; Zweitkandidaten `test_dst_and_co2_mlo_channels_extract_live` (`:8253`, live), `local_http_head` (`:7663`, `TcpListener::accept()` ohne Deadline). **Rote Jobs** (run 38129998370): `dropped-gate` failure (`current 13 | pinned 100 | new 13`) · `format` failure (rustfmt `tools/measure/src/bin/eclipse_shadow_probe.rs:354,634`).
+- **Blockade:** Shard-Build-vs-Test-Anteil erst an green ci-check messbar; rote Jobs + Hang sind **nicht Mycelium-eigen** (Archivar-Tests = Mountain/River, dropped-baseline = Mountain/gate, format = measure-Datei).
+- **Braucht:** (a) `src/archivar/tests.rs`-Live-Tests gaten (`#[ignore = "live network"]` oder Offline-Gate) — **Fix bei mountain/river**; (b) grüner `ci-check` → `ci_manage jobs <id>`; (c) dominiert Build: `cargo nextest archive` + Shards `--archive-file`; (d) Test-Suite-Dedup.
 
 ### matrix-rotor — Trap-Flush gebaut; Nur der persistente t420 beendet die Klasse
 - **Status:** wartend | **Bindung:** eigen (Workflow) · **Teile linie:river**
@@ -95,13 +104,6 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-11, keyless) Grids GEBCO/BlueTopo/ETOPO/EMODnet/GMRT/SRTM15+; Topo-Bathy-Punktwolken NOAA `noaa-nos-coastal-lidar-pds` (`noaa_nos_coverage.rs` + STAC 193 Topobathy).
 - **Blockade:** Grids sind Raster, nicht im `shard`-Kontrakt.
 - **Braucht:** Raster-Konsument (`pending`); Topo-Bathy läuft über `noaa_nos_coverage` + flai.
-
-### OpenTopography — Key eingetragen; Konsument fehlt
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `OPENTOPOGRAPHY_API_KEY` in `.secrets.local` (nur Name gelesen); `archive_search` hat keinen OT-Arm.
-- **Blockade:** kein Konsument; CI bräuchte den Key als Actions-Secret.
-- **Braucht:** Konsument (`archive_search --opentopo <q>` oder eigenes Manifestator-Bin).
 
 ## Registrierte Korrekturen & Vorfälle
 

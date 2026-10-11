@@ -1,0 +1,31 @@
+# auto-dispatch: manual — the walk is a single network listing of the keyless
+# OpenTopography catalog (1152 datasets at /API/otCatalog?outputFormat=json,
+# measured 2026-10-11; the productFormat=PointCloud filter yields 707); the run is
+# operator-triggered. The catalog carries no per-tile download URL — each shard
+# href is the dataset's declared DOI/landing url. OPENTOPOGRAPHY_API_KEY is read
+# by the bin and appended as API_Key only on an OpenTopography API href.
+name: opentopography-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  OPENTOPOGRAPHY_API_KEY: ${{ secrets.OPENTOPOGRAPHY_API_KEY }}
+  RUSTFLAGS: -D warnings
+jobs:
+  opentopography:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Walk the OpenTopography catalog and manifest it to the CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin opentopography_coverage -- \
+            --out data/portal.opentopography.org/opentopography_coverage.manifest --ci-mode

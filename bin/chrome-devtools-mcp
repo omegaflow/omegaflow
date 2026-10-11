@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# chrome-devtools-mcp — tracked wrapper (Mycelium line).
+#
+# Pins the MCP version (no @latest drift) and applies the silent defaults shared
+# by both opencode MCP entries. Mode flags (--auto-connect / --headless --isolated
+# …) and the --allowedUrlPattern array are passed by the caller (opencode.json),
+# so the egress allowlist lives in the config, not in a floating npx name.
+#
+# Measured 2026-10-11 (chrome-devtools-mcp@1.9.0 --help):
+#   --allowedUrlPattern  array, URL-Pattern spec, requires Chrome 149+
+#                        (installed: Google Chrome 155.0.8059.39)
+#   --no-javascript-evaluation   disables evaluate/initScript and javascript:/data: URLs
+#   --isolated           temporary user-data-dir, cleaned on close
+set -eu
+exec npx -y chrome-devtools-mcp@1.9.0 --no-usage-statistics --no-performance-crux "$@"
