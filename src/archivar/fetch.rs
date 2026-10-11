@@ -146,6 +146,30 @@ pub fn fetch_raw_bytes_with(
     }
 }
 
+pub fn fetch_raw_to_file_with(
+    url: &str,
+    retry: RetryPolicy,
+    transfer_bound_s: u64,
+    path: &std::path::Path,
+) -> Option<u64> {
+    let mut cmd = curl_base(retry, transfer_bound_s, 0);
+    cmd.arg("-o").arg(path);
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if output.status.success() {
+        std::fs::metadata(path).ok().map(|m| m.len())
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!(
+            "\r\x1b[Kfetch_to_file returned ({}): {} {}",
+            output.status,
+            redact_secret(url),
+            stderr.trim()
+        );
+        None
+    }
+}
+
 pub fn fetch_raw_bytes(url: &str) -> Option<Vec<u8>> {
     fetch_raw_bytes_with(url, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }

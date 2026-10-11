@@ -508,7 +508,6 @@ struct TarScan {
     long_buf: Vec<u8>,
     long_remaining: usize,
     long_name: String,
-    member: Vec<u8>,
     member_keep: bool,
     member_name: String,
     data_remaining: usize,
@@ -527,7 +526,6 @@ impl TarScan {
             long_buf: Vec::new(),
             long_remaining: 0,
             long_name: String::new(),
-            member: Vec::new(),
             member_keep: false,
             member_name: String::new(),
             data_remaining: 0,
@@ -538,11 +536,11 @@ impl TarScan {
         }
     }
 
-    fn feed<W: FnMut(&str) -> bool, S: FnMut(&str, &[u8])>(
+    fn feed<W: FnMut(&str) -> bool, E: FnMut(&str, Option<&[u8]>)>(
         &mut self,
         chunk: &[u8],
         want: &mut W,
-        sink: &mut S,
+        emit: &mut E,
     ) {
         let mut pos = 0usize;
         while pos < chunk.len() && !self.ended {
@@ -586,7 +584,6 @@ impl TarScan {
                             };
                             self.long_name.clear();
                             self.member_keep = want(&self.member_name);
-                            self.member.clear();
                             self.data_remaining = size;
                             self.phase = TarPhase::Data;
                         }
@@ -612,14 +609,13 @@ impl TarScan {
                 TarPhase::Data => {
                     let take = self.data_remaining.min(chunk.len() - pos);
                     if self.member_keep {
-                        self.member.extend_from_slice(&chunk[pos..pos + take]);
+                        emit(&self.member_name, Some(&chunk[pos..pos + take]));
                     }
                     self.data_remaining -= take;
                     pos += take;
                     if self.data_remaining == 0 {
                         if self.member_keep {
-                            sink(&self.member_name, &self.member);
-                            self.member.clear();
+                            emit(&self.member_name, None);
                         }
                         self.phase = TarPhase::Pad;
                     }
@@ -644,7 +640,20 @@ pub fn gunzip_tar_members<R: std::io::Read>(
     mut sink: impl FnMut(&str, &[u8]),
 ) -> Result<u64, String> {
     let mut scan = TarScan::new();
-    let streamed = gunzip_stream(src, |chunk| scan.feed(chunk, &mut want, &mut sink));
+    let mut member: Vec<u8> = Vec::new();
+    let streamed = gunzip_stream(src, |chunk| {
+        scan.feed(
+            chunk,
+            &mut want,
+            &mut |name: &str, part: Option<&[u8]>| match part {
+                Some(d) => member.extend_from_slice(d),
+                None => {
+                    let bytes = std::mem::take(&mut member);
+                    sink(name, &bytes);
+                }
+            },
+        );
+    });
     if let Some(e) = scan.err {
         return Err(e);
     }
@@ -658,6 +667,31 @@ pub fn gunzip_tar_members<R: std::io::Read>(
         Ok(total) => Ok(total),
         Err(_) => Ok(scan.total),
     }
+}
+
+pub fn tar_stream<R: std::io::Read>(
+    mut src: R,
+    mut want: impl FnMut(&str) -> bool,
+    mut emit: impl FnMut(&str, Option<&[u8]>),
+) -> Result<u64, String> {
+    let mut scan = TarScan::new();
+    let mut buf = [0u8; 65536];
+    loop {
+        let n = src
+            .read(&mut buf)
+            .map_err(|e| format!("tar read returned void: {e}"))?;
+        if n == 0 {
+            break;
+        }
+        scan.feed(&buf[..n], &mut want, &mut emit);
+    }
+    if let Some(e) = scan.err {
+        return Err(e);
+    }
+    if !scan.ended {
+        return Err("tar stream ends before the zero-block terminator".into());
+    }
+    Ok(scan.total)
 }
 
 struct ZStream<'a, R: std::io::Read> {
@@ -1266,6 +1300,34 @@ mod tests {
         assert_eq!(delivered.len(), 1);
         assert_eq!(delivered[0].0, long);
         assert_eq!(delivered[0].1, b"hi");
+    }
+
+    #[test]
+    fn tar_stream_emits_data_chunks_then_end() {
+        let want_name = "want_member";
+        let mut tar = Vec::new();
+        tar.extend_from_slice(&tar_header("skip.txt", 3, b'0'));
+        tar.extend_from_slice(b"abc");
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&tar_header(want_name, 5, b'0'));
+        tar.extend_from_slice(b"hello");
+        pad_to_block(&mut tar);
+        tar.extend_from_slice(&[0u8; 1024]);
+
+        let mut collected: Vec<u8> = Vec::new();
+        let mut ended = 0usize;
+        let n = tar_stream(
+            std::io::Cursor::new(&tar[..]),
+            |name| name == want_name,
+            |_name, part| match part {
+                Some(d) => collected.extend_from_slice(d),
+                None => ended += 1,
+            },
+        )
+        .expect("the tar streams");
+        assert_eq!(n as usize, tar.len());
+        assert_eq!(collected, b"hello");
+        assert_eq!(ended, 1);
     }
 
     #[test]

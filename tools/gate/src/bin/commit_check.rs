@@ -1,10 +1,11 @@
 use omegaflow::commit_gate::{
     Gate, addressed_origin_violations, canon_diff, check_handover_burn, declared_canon,
-    doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
-    is_test_file_path, json_write, prose_violation_for, register_field_unit_issues,
-    status_proof_violations, unbacked_mirror_violations, word_register_origin_violations,
+    doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations, is_test_file_path,
+    json_write, prose_violation_for, register_field_unit_issues, status_proof_violations,
+    unbacked_mirror_violations, word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
+use omegaflow::mcp::mcp_leak_violations;
 use std::collections::HashMap;
 use std::process::Command;
 
@@ -160,6 +161,25 @@ fn main() {
         }
     }
     let staged: Vec<&str> = files.lines().map(str::trim).collect();
+    if staged.contains(&"opencode.json") {
+        match std::fs::read_to_string("opencode.json") {
+            Ok(cfg) => {
+                for leak in mcp_leak_violations(&cfg) {
+                    eprintln!(
+                        "commit_check: opencode.json: {} [{}] - {}",
+                        leak.rule, leak.server, leak.detail
+                    );
+                    fail = true;
+                }
+            }
+            Err(_) => {
+                eprintln!(
+                    "commit_check: opencode.json: mcp-no-leak gate did not read the staged config"
+                );
+                fail = true;
+            }
+        }
+    }
     if staged.contains(&"phi/sources.φ") {
         match std::fs::read_to_string("docs/specs/force-unit-baseline.txt") {
             Ok(baseline) => {

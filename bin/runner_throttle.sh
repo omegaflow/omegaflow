@@ -131,6 +131,9 @@ cmd_resume() { need_root; systemctl start "$SERVICE"; echo "runner_throttle: run
 
 cmd_adaptive() {
   need_root
+  # The IFB device and the tc classes are kernel runtime state — gone after a
+  # reboot. Re-apply the cap on start so the runner never runs uncapped silently.
+  apply_cap "$MAX_KBIT"
   local rate="$MAX_KBIT"
   while true; do
     local ms; ms=$(rtt_ms "$PROBE")
