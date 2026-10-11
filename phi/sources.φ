@@ -1616,10 +1616,30 @@ epoch 0
 field 3 hfradar_codar_2015_u_cm_s inverse-square advective cm/s 21600 0.0 0.0
 field 4 hfradar_codar_2015_v_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://daacdata.apps.nsidc.org/pub/DATASETS/nsidc0792_masie/
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/masie_ice_extent.bin
 terms PD https://www.earthdata.nasa.gov/
+format masie_ice_extent
+origin https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
+compiler tools/harvest/src/bin/masie_compiler.rs
 at earth
 ttl 86400
+quantity masie_ice_extent_northern_hemisphere masie_ice_extent_northern_hemisphere inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_beaufort_sea masie_ice_extent_beaufort_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_chukchi_sea masie_ice_extent_chukchi_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_east_siberian_sea masie_ice_extent_east_siberian_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_laptev_sea masie_ice_extent_laptev_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_kara_sea masie_ice_extent_kara_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_barents_sea masie_ice_extent_barents_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_greenland_sea masie_ice_extent_greenland_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_baffin_bay_gulf_of_st__lawrence masie_ice_extent_baffin_bay_gulf_of_st__lawrence inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_canadian_archipelago masie_ice_extent_canadian_archipelago inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_hudson_bay masie_ice_extent_hudson_bay inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_central_arctic masie_ice_extent_central_arctic inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_bering_sea masie_ice_extent_bering_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_baltic_sea masie_ice_extent_baltic_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_sea_of_okhotsk masie_ice_extent_sea_of_okhotsk inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_yellow_sea masie_ice_extent_yellow_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_cook_inlet masie_ice_extent_cook_inlet inverse-square area m2 86400 0.0 0.0
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
@@ -32128,3 +32148,21 @@ compiler tools/harvest/src/bin/ola_compiler.rs
 at bennu
 ttl 604800
 field radius ola_radius inverse-square em km 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/modis.higp.hawaii.edu/modvolc_thermal.bin
+terms unknown http://modis.higp.hawaii.edu/
+format modvolc_thermal
+origin http://modis.higp.hawaii.edu/data/
+compiler tools/harvest/src/bin/modvolc_compiler.rs
+at earth
+ttl 2592000
+field modvolc_thermal modvolc_thermal inverse-square em w/m2/sr/um 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/stac.itslive.cloud/its_live_velocity.bin
+format its_live_velocity
+terms CC-BY-4.0 https://its-live.jpl.nasa.gov/
+origin https://stac.itslive.cloud/collections/itslive-granules/items
+compiler tools/harvest/src/bin/its_live_compiler.rs
+at earth
+ttl 31536000
+field its_live_velocity its_live_velocity patch-levy advective m/yr 604800 0.0 0.0
