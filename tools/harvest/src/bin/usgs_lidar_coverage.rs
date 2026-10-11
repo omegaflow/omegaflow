@@ -13,7 +13,6 @@ const MAX_KEYS: usize = 1000;
 
 struct S3Object {
     key: String,
-    size: Option<u64>,
 }
 
 struct Listing {
@@ -207,10 +206,7 @@ fn parse_listing(body: &str) -> Listing {
         if key.is_empty() {
             continue;
         }
-        objects.push(S3Object {
-            key,
-            size: child_value(blk, "Size").parse::<u64>().ok(),
-        });
+        objects.push(S3Object { key });
     }
     let truncated = child_value(body, "IsTruncated").eq_ignore_ascii_case("true");
     let next_token = child_value(body, "NextContinuationToken");
@@ -248,28 +244,18 @@ fn listing_url(base: &str, prefix: &str, token: &str) -> String {
 }
 
 fn is_lidar_key(key: &str) -> bool {
-    key.ends_with(".laz") || key.ends_with(".las") || is_ept_json(key)
+    key.ends_with(".laz") || key.ends_with(".las")
 }
 
-fn is_ept_json(key: &str) -> bool {
-    key.rsplit('/').next() == Some("ept.json")
-}
-
-fn manifest_lines(base: &str, objects: &[S3Object]) -> Result<Vec<String>, String> {
+fn manifest_lines(base: &str, objects: &[S3Object]) -> Vec<String> {
     let mut out = Vec::new();
     for o in objects {
         if !is_lidar_key(&o.key) {
             continue;
         }
-        let Some(size) = o.size else {
-            return Err(format!(
-                "lidar key {} carries no size in the listing — the manifest stays unwritten",
-                o.key
-            ));
-        };
-        out.push(format!("{base}/{} {}", o.key, size));
+        out.push(format!("shard {base}/{}", o.key));
     }
-    Ok(out)
+    out
 }
 
 fn enumerate(base: &str, prefix: &str) -> Result<(Vec<S3Object>, usize), String> {
@@ -449,7 +435,7 @@ fn run(args: &[String]) -> Result<(), String> {
             "{bucket} prefix '{prefix}': the listing carries no object — nothing manifestiert (0 honored)"
         ));
     }
-    let lines = manifest_lines(&base, &objects)?;
+    let lines = manifest_lines(&base, &objects);
     if lines.is_empty() {
         return Err(format!(
             "{bucket} prefix '{prefix}': {} objects over {pages} pages, none a lidar key — nothing manifestiert (0 honored)",
@@ -510,41 +496,33 @@ mod tests {
 <ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>usgs-lidar-public</Name><Prefix></Prefix><NextContinuationToken>1U/7Zn6jhc6EKWGtcZNtHw=</NextContinuationToken><KeyCount>5</KeyCount><MaxKeys>5</MaxKeys><IsTruncated>true</IsTruncated><Contents><Key>AK_BrooksCamp_2012/ept-data/0-0-0-0.laz</Key><LastModified>2018-12-26T00:00:00.000Z</LastModified><ETag>&quot;abc&quot;</ETag><Size>123456</Size></Contents><Contents><Key>AK_BrooksCamp_2012/ept.json</Key><LastModified>2018-12-25T23:56:47.000Z</LastModified><ETag>&quot;def&quot;</ETag><Size>42</Size></Contents><Contents><Key>AK_BrooksCamp_2012/boundary.json</Key><LastModified>2019-01-17T21:34:58.000Z</LastModified><ETag>&quot;ghi&quot;</ETag><Size>3490</Size></Contents><Contents><Key>OR_Willamette_2016/tile.copc.laz</Key><LastModified>2020-01-01T00:00:00.000Z</LastModified><ETag>&quot;jkl&quot;</ETag><Size>987654321</Size></Contents><Contents><Key>OR_Willamette_2016/cloud.las</Key><LastModified>2020-01-01T00:00:00.000Z</LastModified><ETag>&quot;mno&quot;</ETag><Size>7</Size></Contents></ListBucketResult>"#;
 
     #[test]
-    fn lidar_keys_become_absolute_url_lines_with_size() {
+    fn lidar_keys_become_shard_lines_on_an_absolute_url() {
         let listing = parse_listing(PAGE);
         assert!(listing.truncated);
         assert_eq!(listing.next_token, "1U/7Zn6jhc6EKWGtcZNtHw=");
         assert_eq!(listing.objects.len(), 5);
         let base = "https://usgs-lidar-public.s3.amazonaws.com";
-        let lines = manifest_lines(base, &listing.objects).unwrap();
+        let lines = manifest_lines(base, &listing.objects);
         assert_eq!(lines.len(), 3);
         assert_eq!(
             lines[0],
-            "https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz 123456"
+            "shard https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz"
         );
         assert_eq!(
             lines[1],
-            "https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept.json 42"
+            "shard https://usgs-lidar-public.s3.amazonaws.com/OR_Willamette_2016/tile.copc.laz"
         );
         assert_eq!(
             lines[2],
-            "https://usgs-lidar-public.s3.amazonaws.com/OR_Willamette_2016/tile.copc.laz 987654321"
+            "shard https://usgs-lidar-public.s3.amazonaws.com/OR_Willamette_2016/cloud.las"
         );
-    }
-
-    #[test]
-    fn lidar_key_without_size_refuses_the_manifest() {
-        let body = r#"<ListBucketResult><Contents><Key>a.laz</Key></Contents></ListBucketResult>"#;
-        let listing = parse_listing(body);
-        assert_eq!(listing.objects.len(), 1);
-        assert!(manifest_lines("https://b", &listing.objects).is_err());
     }
 
     #[test]
     fn non_lidar_objects_are_left_out() {
-        let body = r#"<ListBucketResult><Contents><Key>x/boundary.json</Key><Size>10</Size></Contents><Contents><Key>x/ept-1.json</Key><Size>2250</Size></Contents></ListBucketResult>"#;
+        let body = r#"<ListBucketResult><Contents><Key>x/boundary.json</Key><Size>10</Size></Contents><Contents><Key>x/ept-1.json</Key><Size>2250</Size></Contents><Contents><Key>x/ept.json</Key><Size>42</Size></Contents></ListBucketResult>"#;
         let listing = parse_listing(body);
-        let lines = manifest_lines("https://b", &listing.objects).unwrap();
+        let lines = manifest_lines("https://b", &listing.objects);
         assert!(lines.is_empty());
     }
 }
