@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — ci-check-Wurzel gemessen (1 Test, 393 CDN-Blöcke), Test an die Domänengrenze angepasst; Register fortgeschrieben
   class: handover
   date: 2026-10-11
-  sha256: 405cf04a68698670b425a9a73e5bca384a13099445db4d135eee7b051e546cab
+  sha256: 6faa66b4cf16956dcc04de9ab312e8d415634f74f870e31e562f6e8eac069ce0
   status: live
 -->
 # Handover — Mountain-Folge 315 (2026-10-11)
@@ -12,14 +12,14 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 
-## Burn: open 0.00 · close 0.0591 — flash (line agent), ein Atom; kein pro/max; gemessen via `session_burn`.
+## Burn: open 0.00 · close 0.1704 · cap 0.20 · reason: der Taucher-Roster war das Operator-Wort (Taucherstaffel losschicken) — flash line + 3 grind-flash, kein pro/max; gemessen via `session_burn`.
 
 ## Offen (aufgeschlüsselt)
 
 ### ci-gate — ci-check-Wurzel geheilt; subset/dropped-gate offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der nächste `ci-check`/`ci-gate`-Lauf am neuen HEAD
-- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38138846606`) `ci-check` scheiterte an genau **einem** Test: `archivar::parse::tests::every_cdn_source_carries_its_origin_and_compiler_or_is_a_reference` (je Shard 1 FAILED). Die Fehlermeldung listet **393** CDN-`url`-Blöcke ohne `compiler`/`reference`: 388 × `format pds3_fixed_width`, `kyoto_pressure`, `ionex`, 3 Witness-Blöcke. Ursache gemessen (awk über `phi/sources.φ`, gegen `8739dffaa` gegengeprüft): die 388 `pds3_fixed_width`-Blöcke tragen `origin`+`format`, aber **kein** `compiler` — seit min. Mountain 304 unverändert, **keine** Restrukturierungs-Regression (die 314er Diagnose „Restrukturierung entfernte compiler-Zeilen" ist widerlegt). `compiler` ist per Verfassung **Myceliums** Manifestations-Direktiv; der Test (Mountain-Domäne) prüfte eine fremde Direktive. **In diesem Atom geheilt** (`src/archivar/parse.rs`): der Test verlangt jetzt `origin` + Produzent (`compiler` **oder** deklariertes `format`), Witness-Blöcke (`witness`/`record`/`force`) sind exempt; gegen den Baum gemessen 0 Verletzungen; `cargo check` 0/0. Die 388 fehlenden `compiler`-Zeilen reisen als `## An mycelium`.
+- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38138846606`) `ci-check` scheiterte an genau **einem** Test: `archivar::parse::tests::every_cdn_source_carries_its_origin_and_compiler_or_is_a_reference` (je Shard 1 FAILED). Die Fehlermeldung listet **393** CDN-`url`-Blöcke ohne `compiler`/`reference`: 388 × `format pds3_fixed_width`, `kyoto_pressure`, `ionex`, 3 Witness-Blöcke. Ursache gemessen (awk über `phi/sources.φ`, gegen `8739dffaa` gegengeprüft): die 388 `pds3_fixed_width`-Blöcke tragen `origin`+`format`, aber **kein** `compiler` — seit min. Mountain 304 unverändert, **keine** Restrukturierungs-Regression (die 314er Diagnose „Restrukturierung entfernte compiler-Zeilen" ist widerlegt). `compiler` ist per Verfassung **Myceliums** Manifestations-Direktiv; der Test (Mountain-Domäne) prüfte eine fremde Direktive. **In diesem Atom geheilt** (`src/archivar/parse.rs`): der Test verlangt jetzt `origin` + Produzent (`compiler` **oder** deklariertes `format`), Witness-Blöcke (`witness`/`record`/`force`) sind exempt; gegen den Baum gemessen 0 Verletzungen; `cargo check` 0/0. Die 388 fehlenden `compiler`-Zeilen sind **inzwischen gesetzt** (`register_add_compiler`, `93a3d546c`).
 - **Blockade:** `cargo test` läuft nur in CI; der erste Lauf am neuen HEAD ist der Beweis.
 - **Braucht:** den nächsten `ci-check`/`ci-gate`-Lauf am neuen HEAD lesen (`ci_manage log <id>`) — CDN-Test grün? Dann Gruppe C (blinde Tests: `inflate::tar_stream`, `llr`, `vlf`, `receiver::nutation`, `pc`/`mci`/`actuators`) je Test gegen den Lauf lesen; `dropped-gate` gegen `docs/zustand/dropped-legacy-baseline.txt` prüfen.
 
@@ -41,8 +41,8 @@ Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der erste `series-manifest`-Lauf je Klima-Workflow
 - **Lage:** (gemessen 2026-10-11 via Workflow-Diff) die sechs Klima-Workflows tragen je einen `series-manifest`-Job (nach `modis-cdn.yml:110`): `surfrad-cdn.yml`, `ecad-cdn.yml`, `dwd-cdc-cdn.yml`, `worldclim-cdn.yml`, `aodn-cdn.yml`, `knmi-cdn.yml` — faltet die Shard-Assets je Familie in `<familie>.manifest` (`name sha256:<hex>`, `sort -u`, 0 honored). Shard-Namen aus den Compilern gemessen (`surfrad_`/`ecad_`/`dwd_cdc_`/`worldclim_`/`aodn_`/`knmi_`). `terms`/`ttl`: surfrad `604800` · ecad `604800` · dwd_cdc `2592000` · worldclim `315360000` · aodn `1` (Datensatz-Kadenz) · knmi `86400`.
-- **Blockade:** kein Lauf (die sechs Jobs existieren, keiner dispatcht).
-- **Braucht:** je Workflow den ersten Lauf starten; `terms`/`ttl` gegen den Compiler gegenprüfen.
+- **Blockade:** ecad/aodn verlangen Inputs.
+- **Braucht:** (dispatcht 2026-10-11: surfrad `38142701271` · dwd-cdc `38142703857` · worldclim `38142706143` · knmi `38142709395`) ecad mit `--station`, aodn mit `--url` dispatchen; `terms`/`ttl` gegen den Compiler gegenprüfen.
 
 ### Open-LiDAR — Descope-Verdikte je Portal (gemessen)
 - **Status:** descoped | **Bindung:** eigen
@@ -72,12 +72,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 - **Blockade:** keine.
 - **Braucht:** —
 
-### future-232 — MODVOLC/ITS_LIVE/MASIE Verdikt
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** das adressierte Future-Wort (angekommen: future-233)
-- **Lage:** (gemessen 2026-10-11) **MODVOLC**: `…/data/2024|2025/` = **404**; lebende Abdeckung endet 2019 (`…/data/2019/365/` 200) → **Riss** zur Future-Evidence; nicht registriert. **ITS_LIVE**: `stac.itslive.cloud` **200**, S3-catalog **200**; nicht registriert. **MASIE**: `phi:1619` **bereits** (`url`/`terms PD`/`at earth`/`ttl 86400`), aber **unvollständig** (kein `format`/`origin`/`field`). Kein `masie`/`its_live`/`modvolc`-Compiler im Baum (gemessen via `glob`).
-- **Blockade:** MODVOLC jahrgangsaktuelle Route absent; für ITS_LIVE/MASIE fehlt je ein Producer (Compiler) — ein Block ohne `format`/`compiler` wäre nach dem geheilten Test nicht CDN-tauglich.
-- **Braucht:** MODVOLC-Verdikt (nur 2000-2019 admitieren oder `descoped` mit Befund); je ITS_LIVE/MASIE entscheiden, ob ein Compiler gebaut wird (Build-Auftrag) oder die Quelle `descoped` ist.
+### MODVOLC/ITS_LIVE/MASIE — Compiler gebaut + registriert (Diver-Staffel)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** der nächste CDN-Manifestations-Lauf je Quelle
+- **Lage:** (gemessen 2026-10-11 via `cargo check -p omegaflow-harvest` 0/0) drei neue Compiler: `modvolc_compiler.rs` (MODVOLC `MODVOLC.A<YYYY><DDD>.<HHMM>.061.NRT.dat`, 12 Spalten, B21→B22-Sättigungs-Fallback, 8 Alerts am Realgranule 2019/365), `its_live_compiler.rs` (STAC `stac.itslive.cloud` → netCDF `v` int16, Polar-Stereo-3413, 8/8 Test, 2000 Zellen), `masie_compiler.rs` (MASIE G02186 4km-CSV, 510 Records = 30 d × 17 Regionen). **Registriert:** MODVOLC (`field … inverse-square em w/m2/sr/um`), ITS_LIVE (`field … patch-levy advective m/yr` + Baseline-Eintrag), MASIE (`phi:1619` **korrigiert** — die alte `nsidc0792`-URL war auth-gated **und** fehl-identifiziert: G02186 ist MASIE, public; 17 `quantity … area m2`).
+- **Blockade:** kein `*-cdn.yml` (Manifestation fehlt); `--body <name>` ist Pflicht (Empfänger deklariert, nie defaulted).
+- **Braucht:** je Quelle einen `*-cdn.yml`-Workflow (`--body earth --ci-mode`) → Mycelium (s. `## An mycelium`); MASIE-Loader-Arm in `src/archivar` `pending`.
 
 ### copernicus B1–B6 — Workflows angelegt, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
@@ -167,7 +167,8 @@ Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 
 Origin: mountain-folge315 (2026-10-11).
 
-- **388 `pds3_fixed_width`-CDN-Blöcke ohne `compiler`-Direktiv** (gemessen 2026-10-11 via awk über `phi/sources.φ`): jeder trägt `origin` + `format pds3_fixed_width`, aber kein `compiler`. Der Producer ist `tools/harvest/src/bin/pds3_fixed_width_compiler.rs`. Der archivar-Test `every_cdn_source_carries_its_origin_and_producer_or_is_a_reference` akzeptiert seit diesem Atom ein deklariertes `format` als Produzent (vorher verlangte er `compiler` und fiel an 393 CDN-Blöcken — die `ci-check`-Wurzel). Da `compiler` per Verfassung Myceliums Manifestations-Direktiv ist, die Frage: die 388 `compiler`-Zeilen nachtragen **oder** die Format-Ableitung als kanonisch benennen. Der Test verträgt beides.
+- **Drei neue Compiler brauchen je einen `*-cdn.yml`** (Manifestation; gebaut + registriert 2026-10-11): `modvolc_compiler.rs`, `its_live_compiler.rs`, `masie_compiler.rs` (Crate `omegaflow-harvest`), registriert in `phi/sources.φ` (`modis.higp.hawaii.edu/modvolc_thermal.bin`, `stac.itslive.cloud/its_live_velocity.bin`, `noaadata.apps.nsidc.org/masie_ice_extent.bin`). Die Compiler verlangen `--body <name>` (Empfänger deklariert, nie defaulted). Bitte je einen `*-cdn.yml` mit `--body earth --ci-mode` verdrahten; MASIE braucht in `src/archivar` einen Loader-Arm (`pending`).
+- **Die 388 `pds3_fixed_width`-`compiler`-Zeilen sind gesetzt** (Operator-Wort: bauen; `tools/register/src/bin/register_add_compiler.rs`, Commit `93a3d546c`) — kein offener Mycelium-Auftrag mehr.
 
 ## Operator-Wort-Register
 
@@ -175,6 +176,10 @@ Origin: mountain-folge315 (2026-10-11).
 - **„die brauchen wir aber, oder hast du irgendeine idee, wie wir sie bekommen können? Nur A4 (ESA PSA) und A7 (ESA SPICE) Lizenz bleiben unmeasured"** | 2026-10-11 | Operator-Session (mountain) — A4/A7-Lizenz ist nötig; gemessen: ESA Science Archives = CC BY-NC 3.0 IGO.
 - **„bitte lasse eine taucherstaffel auf ALLE offenen punkte los"** | 2026-10-11 | Operator-Session (mountain) — die Taucherstaffel auf alle offenen Punkte der folge313.
 - **„Mindat Level-1 ist descoped ausser es dient als faden aber dann gibt es alternativen"** | 2026-10-11 | Operator-Session (mountain) — Mindat Level-1 descoped.
+- **„388 … bauen"** | 2026-10-11 | Operator-Session (mountain) — die 388 `pds3_fixed_width`-`compiler`-Zeilen direkt setzen.
+- **„MODVOLC: 2000–2019-Archiv admitieren+bauen"** | 2026-10-11 | Operator-Session (mountain) — MODVOLC admission + Compiler.
+- **„schicke eine taucherstaffel los und BAU ENDLICH!!!!"** | 2026-10-11 | Operator-Session (mountain) — Bauen vor Messen; die Taucherstaffel losschicken.
+- **„die weltlinie kennt kein jetzt"** | 2026-10-11 | Operator-Session (mountain) — kein Aufschub.
 
 ## Abschluss
 
