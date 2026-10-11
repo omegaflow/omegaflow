@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: 9ab8a01486926a01ec5cfc62a81720faf1db565a95c204bfa0b37ac4e96deab8
+  sha256: 8277868374b44b760aa7af575f84eb4cc7efcb72d442f45bf927caa4a82ff6b5
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -13,7 +13,7 @@ gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge306.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.50 · cap 0.5 — Grund: 11 grind-flash (Bau/Messung), 1 general, 1 council (Rat), 1 UI-Runde (Claude/Z.ai/Qwen; Duck `pending`), deepseek-flash, kein pro/max. **An `BURN_CAP_HARD_USD` 0.50 — Atom geschlossen.** (session_burn-Total $0.8782/24 Sessions, DB-Rollover → Delta nicht exakt isolierbar.)
+## Burn: open 0.0000 · close 0.50 · cap 0.5 (zweiter Atom-Teil nach „bitte weiter" separat) — Grund: 14 grind-flash (Bau/Messung), 1 general, 1 council (Rat), 1 UI-Runde (Claude/Z.ai/Qwen; Duck `pending`), deepseek-flash, kein pro/max. **An `BURN_CAP_HARD_USD` 0.50.** (session_burn-Total-Delta via DB-Rollover nicht exakt isolierbar.)
 
 ## Operator-Wort-Register
 
@@ -25,6 +25,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 | **„ja"** — `OPENTOPOGRAPHY_API_KEY` als GitHub-Actions-Secret im eigenen Repo hinterlegen | 2026-10-11 | Operator (Session, Mycelium 307) |
 | **„ja"** — `opencode.json`-MCP-Konfiguration anfassen (Wrapper `bin/chrome-devtools-mcp` + egress-Allowlist) | 2026-10-11 | Operator (Session, Mycelium 307) |
 | **„weiter"** — research + Rat + Roster auf die offenen Architekturfragen fahren | 2026-10-11 | Operator (Session, Mycelium 307) |
+| **„bitte weiter"** mit den nächsten Atomen: BlueTopo/EMODnet-Compiler + Register-Zeilen; Query-Time-Loader-VLR-Decode; per-Seat-Network-Capture | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge306.md` §Operator-Wort-Register (via `git show <sha>:docs/handover/archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -48,7 +49,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) Research `state/mycelium/frame-epoch-feasibility.md` + Rat (`confirm`) + UI-Runde (`state/stimmen/20261011T1035Z_mycelium_architektur-verdikte.md`; Claude/Z.ai/Qwen bestätigen): **`--bbox-off` bleibt der verlustfreie Default** (`ShardPlacement::Pending` → `coverage_manifest.rs:78`); der Frame-Transform gehört an den **Query-Time-Loader**, nicht ins statische Manifest. Korrekturen am Befund: die ICRS-Hälfte ist gebaut (`itrf_to_icrs`, `receiver.rs:1918`); nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`), die zwei anderen Emitter-Bboxes sind inert; der Format-Token steht `coverage.rs:714` (nicht `:529`).
 - **Blockade:** eine 7. Token/Grammatik-Slot-Erweiterung des `shard`-Vertrags = Wire-Kontrakt-Änderung (Operator/Rat-Wort), nicht Session-Schreibakt.
-- **Braucht:** (a) Query-Time-Loader liest CRS **und** Epoche aus dem Shard-Header (LAS/COPC-VLR-Decode = die Vorbedingung; UI-Schärfung); (b) **wenn** je ein Grammatik-Slot erwogen wird → Operator/Rat-Wort. Sonst bleibt bbox-off permanent.
+- **Braucht:** (a) **VLR-Decode steht bereits** — `las/mod.rs:173 vlrs` + `:459 projection_crs` (EPSG/WKT); **neu gebaut**: `src/archivar/projection.rs` (`utm_inverse(epsg,easting,northing)`, EPSG 326xx/327xx, + `to_geodetic(&LasCrs,x,y,z)`), `cargo check` 0/0, Anker über epsg.io/MapTiler gemessen; (b) Loader-**Wiring** (Shard-File-CRS lesen + `to_geodetic` anwenden) offen; (c) **wenn** je ein Grammatik-Slot erwogen wird → Operator/Rat-Wort. Sonst bleibt bbox-off permanent.
 
 ### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — dispatched; sha256 offen
 - **Status:** wartend | **Bindung:** eigen
@@ -62,7 +63,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet. **Neu:** getrackter Wrapper `bin/chrome-devtools-mcp` (Pin `chrome-devtools-mcp@1.9.0` + stille Defaults, kein `@latest`-Drift), beide `opencode.json`-MCP-Einträge laufen über ihn; `chrome-devtools-voices` trägt jetzt `--no-javascript-evaluation` (deaktiviert `evaluate`/`initScript`/`javascript:`-URLs). Gemessen `chrome-devtools-mcp@1.9.0 --help`: `--allowedUrlPattern` ist ein **Array** und verlangt **Chrome 149+** (installiert: `Google Chrome 155.0.8059.39`); `--proxyServer` als Alternative. `opencode.json` gültiges JSON (`jaq -e`).
 - **Blockade:** eine **enge** Allowlist blockt auch Subressourcen (Fonts/CDNs) → die Seats' tatsächliche Host-Menge ist ohne per-Seat-Network-Capture unbekannt; ein enges Muster blind würde die Stimmen brechen. `https://*` bleibt daher vorerst.
-- **Braucht:** (a) per-Seat-Network-Capture der Stimmen-Gruppe (CDP `browser_network`, JIT, focus:false) → Host-Menge; (b) `--allowedUrlPattern`-Array aus (a) setzen; (c) Config-Restart-Test (opencode lädt MCP-Config nur beim Start).
+- **Braucht:** (a) **Capture gefahren** (`state/mycelium/mcp_allowlist_capture_measured.md`): Duck = `duck.ai` + `improving.duckduckgo.com` (Telemetrie, bewusst geblockt), Qwen = `chat.qwen.ai` + `aplus.qwen.ai` (Telemetrie) → same-origin, die 13-Host-Allowlist genügt; **Z.ai/DeepSeek `pending`** (Capture leer/Timeout); (b) nach dem Config-Restart die Seats prüfen (leere Seite = fehlende Domain → Capture nachziehen); (c) `(2)` härter prüfen verlangt den `Gestalt`-Slot-Umfang — offen.
 
 ### OpenTopography — Konsument gebaut; CI-Secret gesetzt
 - **Status:** eigen | **Bindung:** eigen
@@ -103,8 +104,8 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:river**
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) Research `state/mycelium/raster-consumer-feasibility.md` + Rat (`confirm`) + UI (`state/stimmen/20261011T1035Z_mycelium_architektur-verdikte.md`): **kein Vertragswechsel** — die `FieldIdentity::Witness(WitnessKind::Gestalt)`-Klasse (`witness.rs:24`) + Sampling-Compiler (`gmrt_compiler.rs:38-120`, `gebco_bathymetry_compiler.rs`) tragen die Raster. **Punkt/XYZ-servierbar** (gemessen): GEBCO (`api.opentopodata.org/v1/gebco2020`), GMRT (`gmrt.org/services/PointServer`), ETOPO (`opentopodata.org/v1/etopo1`), BlueTopo (ArcGIS `gis.ccom.unh.edu`, ERDDAP). **Raster-only:** SRTM15+, EMODnet (`depth_sample` 500 = unverifiziert).
-- **Blockade:** keine (Muster steht). UI-Schärfung: der Compiler muss Sampling-Parameter (Auflösung/Interpolation) **und** vertikales Datum (Chart Datum vs. Ellipsoid) festhalten.
-- **Braucht:** BlueTopo + EMODnet als Register-Zeile + Sampling-Compiler (EMODnet wartet auf eine gemessene Sampling-Form); Topo-Bathy-Punktwolken laufen über `noaa_nos_coverage` + flai.
+- **Blockade:** die **Register-Zeilen** (`phi/sources.φ`) — Datei ist aktuell von einer fremden Linie modifiziert (nicht angefasst).
+- **Braucht:** (a) **gebaut:** `bluetopo_compiler.rs` (ERDDAP griddap CSV, `bluetopo_5899_7471_de41`, NaN-Zellen übersprungen, GMR1-Gestalt) + `emodnet_bathymetry_compiler.rs` (`rest.emodnet-bathymetry.eu/depth_sample?geom=POINT(lon lat)` → 200 JSON `avg`; neue `EMOD`-Gestalt in `witness.rs`/`geo.rs`); beide `cargo check`/build 0/0. (b) `phi/sources.φ`-Register-Blöcke (url/origin/compiler/format) — **Mountain-Aufenthalt**, geschrieben sobald frei; (c) BlueTopo braucht noch eine **eigene Gestalt-Identität** (heute unter `GMR1`; Riss benannt); (d) UI-Schärfung: Sampling-Parameter + vertikales Datum festhalten.
 
 ## Registrierte Korrekturen & Vorfälle
 
