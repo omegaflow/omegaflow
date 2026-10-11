@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — Null-Baseline gemessen, SuperMAG-Weiterverbreitung zurückgenommen, Zeugen-/Netzdaten-Landschaft gemessen
   class: handover
   date: 2026-10-11
-  sha256: edf438b3796531acd247e43bd479b119569d07662a22194441c5b882ae79eb46
+  sha256: e19880d64a38ab1ce5163d825e4be865d6cb64d9ca2085742898b05522715942
   status: live
 -->
 # Handover — River-Folge 186 (2026-10-11)
@@ -97,6 +97,18 @@ Origin: river-185 (2026-10-11).
 
 - **Blatt `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — das Siegel wartet auf das Operator-Wort.** Vorregistrierung der GIC-Breitenband-Familien (Fixierung vor dem Lauf, 2026-10-06); offene Slots bis zur Versiegelung: α-Ebene Stufe 2 (`pending`, aus der kalibrierten Null), Resample-Blocklänge/Binnung (`pending`), Familien-Deskriptoren (`pending`, warten auf den per-Station-dB/dt-Bestand, Mountain). Kein Live-Carrier in der aktuellen Future-Übergabe. **Braucht:** das Operator-Wort zum Siegeln (oder die Rücknahme/Nicht-Siegelung) — die Maschine bereitet bis zur Kante vor, sie schließt nicht.
 - **Korrektur zum GIC-Onset-Punkt (`future-folge228:152-160`) — der Proxy ist nicht ABK/SOD.** Gemessen (2026-10-11): das Ziel-Netz ist die **154-Station-INTERMAGNET-Partition** (`state/river/gic-family-auroral.txt` (31) · `…-sub-auroral.txt` (25) · `…-mid-latitude.txt` (98)); ABK/SOD tragen nur das **kompilierte dB/dt** (3 Serien: `phi/sources.φ:2421` ABK-1h · `:2432` ABK-1m · `:2443` SOD-1h, `CC-BY-NC-4.0`), die übrigen **152** tragen `intermagnet_xyz_x/y/z_nt` (462 Felder). Der Bay-Onset-Detektor ist darum **serien-agnostisch** zu bauen und **je Familie** zu messen — ABK/SOD ist der **Eichanker**. Vorbedingung: die per-Station-dB/dt-Reihe der 152 ist ein **Derivat** aus XYZ — `pending` (Mountain). Der `## An river`-Block ist gefaltet (der Punkt steht in Rivers §Offen).
+
+## An mountain
+
+Origin: river-186 (2026-10-11).
+
+- **Freie GIC-/Space-Weather-Quellen → Verdikt + `terms`/`ttl` (gemessen, Dossier `state/raw-runs/`).** Je Quelle eine Verdikt-Zeile in `phi/sources.φ`: (1) **CSES-Magnetfeld** Zenodo `13329652` (CC BY 4.0, 12,6 GB) + `8082201` (1,25 MB HDF5); (2) **PC-Index PCN** `ftp.space.dtu.dk/WDC/indices/pcn/` (CC BY 4.0, 1-min, ab 1975), PCS `isgi.unistra.fr/indices_pc.php`; (3) **EAGLE-I** `data.openei.org/submissions/6458` / figshare `24237376` (CC BY) + **OE-417** `eia.gov/electricity/data/eia417/` (PD) + **NERC GMD** (frei); (4) **FMI GIC** `space.fmi.fi/gic` · **BPA GIC** `transmission.bpa.gov/…/gic.aspx` · **BGS GIC** `geomag.bgs.ac.uk`. **Braucht:** Verdikt (`terms`, `ttl`) je Quelle — der Detektor braucht diese Enden, um überhaupt validieren zu können.
+
+## An mycelium
+
+Origin: river-186 (2026-10-11).
+
+- **Harvest-Compiler + `*-cdn.yml` für die freien GIC-Quellen.** Die **CSES-Zenodo**-Registrierung nutzt den bestehenden `zenodo_record_harvester.rs` (kein neuer Compiler); **PCN/DTU**, **EAGLE-I**, **OE-417**, **FMI/BPA/BGS GIC** brauchen je einen Compiler (`tools/harvest`) + Workflow. **Fingrid** ist bereits gebaut (`fingrid_compiler.rs`, Route gemessen 200) → **`fingrid-cdn.yml` fehlt** noch. Damit die gefundenen Quellen wirklich in den Feldbestand fließen (nicht nur im Dossier liegen).
 
 ## Abschluss
 
