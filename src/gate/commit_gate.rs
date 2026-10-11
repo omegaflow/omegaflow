@@ -2129,8 +2129,7 @@ pub fn canon_format_violations(text: &str) -> Vec<(usize, String)> {
     let mut out = Vec::new();
     for (i, line) in text.lines().enumerate() {
         let t = line.trim();
-        if t.is_empty() || t.starts_with("section ") || (t.starts_with("phi/") && t.ends_with(".φ"))
-        {
+        if t.is_empty() || t.starts_with("section ") || t.starts_with("phi/") {
             continue;
         }
         out.push((i + 1, t.to_string()));
@@ -4828,7 +4827,7 @@ mod tests {
 
     #[test]
     fn fn_canon_format_sections_and_paths_pass() {
-        let ok = "section Kanon\nphi/canon.φ\n\nsection Maschinen-Register\nphi/sources.φ\n";
+        let ok = "section Kanon\nphi/canon.φ\n\nsection Reports\nphi/reports/probe_sweep_void.txt\n\nsection Meteo\nphi/meteo/japan-tsunami-2026.json\n";
         assert!(canon_format_violations(ok).is_empty());
         let bad = "section Kanon\n# a comment\nphi/canon.φ\n";
         assert_eq!(
