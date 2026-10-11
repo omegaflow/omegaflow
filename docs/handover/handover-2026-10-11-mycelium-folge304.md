@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: 9b7083f5d7faf588fdab365585028327381980d420371bb2eaab25adac5907cb
+  sha256: af697b733324e575e674de1644a12c221681326ba9bd6f439908423eeb9bdb44
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -24,35 +24,37 @@ zitiert, nie kopiert). Diese Session konsumierte
 
 ## Offen — eigen
 
-### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — drei Reläufe rot (Runner-Preemption), am self-hosted Stop blockiert
+### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — Speichermodell blockiert (7,87-GB-bz2 im RAM)
 - **Status:** blockiert | **Bindung:** eigen (Manifestation)
 - **Trigger:** Lauf `cmb-cdn` Abschluss
-- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38117879560` + `38117250487`) drei
-  aufeinanderfolgende Läufe rot: exit 137 — der Release-Build lief je 6 m 31-33 s, dann wurde
-  `cmb_planck_compiler --tar …/full_maps_d1.tar.bz2` „Getötet"; „The runner has received a
-  shutdown signal" (Preemption). Jüngster Lauf `38117879560` (dieser Re-Dispatch). Asset am
-  CDN weiter absent (`archive_search --verdict`, alle drei Stufen 404).
-- **Blockade:** wiederholte Self-hosted-Runner-Preemption (~6,5 min Build je Versuch) — kein
-  dritter Blind-Dispatch.
-- **Braucht:** throttle-stabiler/dauerhafter Runner (siehe „Zweite CI-Lane"), dann
-  `gh workflow run cmb-cdn.yml`; bei success sha256 in den SPT-`cmap`-Block (`phi/sources.φ:11559`).
+- **Lage:** (gemessen 2026-10-11) die Quelle `full_maps_d1.tar.bz2` ist **7 873 515 864 B**
+  (`curl -sI` Content-Length). Der Compiler liest sie ganz (`fs::read`,
+  `cmb_planck_compiler.rs:259-272`) und `archivar::bzip2::decompress`
+  (`src/archivar/bzip2.rs:361`, `out.extend_from_slice` je Block) baut den **entpackten**
+  Tar zusätzlich vollständig im RAM; drei cmb-cdn-Läufe starben exit 137/„Getötet" genau beim
+  Compiler-Start (Build je 6 m 31-33 s sauber) — ein **Speicher-Signal**, nicht die zuvor
+  notierte Preemption (`ci_manage log 38117879560`/`38117250487`). Der Block
+  `phi/sources.φ:11559` trägt **keine** `sha256` — das Asset ward nie materialisiert.
+- **Blockade:** non-streaming bz2/tar — 7,87 GB komprimiert **plus** ein Multi-GB-entpackter
+  Tar (und der FITS-Member) gleichzeitig im RAM sprengen jeden ≤16-GB-Runner.
+- **Braucht:** Streaming-Arm in `src/archivar/bzip2.rs`/`inflate.rs` (`Bz2Reader` über `Read`
+  -> Tar-Member streamend auf Platte, nie `out`-Akkumulation) + FITS-aus-Datei; Architektur —
+  vorher `rat`. Alternativ ein Einzelband-Produkt < Speichergrenze.
 
-### Coverage-Manifest — usgs-Manifestator auf shard-Form geschnitten; River-Wiring + nationale Portale offen
+### Coverage-Manifest — Fetch-Loop (River) + usgs-shard-Form gebaut; Nationalportale enumeriert
 - **Status:** eigen | **Bindung:** eigen (Core-Archivar) · Teile linie:river
-- **Trigger:** Faltung des `## An river`-Blocks (Fetch-Loop `main_flow.rs`)
-- **Lage:** (gemessen 2026-10-11) **alle drei** Manifestatoren emittieren `shard`-Form.
-  Neu: `tools/harvest/src/bin/usgs_lidar_coverage.rs` — `manifest_lines` schreibt
-  `shard <url>` (Payload `Pending`), `is_lidar_key` führt nur `.laz`/`.las`;
-  `ept.json`/`boundary.json` (EPT-Metadaten, keine Point-Cloud-Shards) fallen heraus.
-  Das S3-Listing-XML trägt keine bbox; ein Per-Objekt-LAS-Header-Range-GET wäre auf dem
-  ganzen 3DEP-Bucket unbeschränkt -> `shard <url>` = `Pending` (kein fabriziertes 0, der
-  Loader liest das Objekt zur Query-Zeit). `cargo build -p omegaflow-harvest --bin
-  usgs_lidar_coverage` sauber; `cargo fmt --` angewandt; die Unit-Tests auf `shard`-Zeilen
-  gezogen (ept.json ausgeschlossen).
-- **Blockade:** (b) der Fetch-Loop liegt in `main_flow.rs` = River-Membran — `## An river`.
-- **Braucht:** (b) `## An river` — Fetch-Loop über `format coverage_manifest`; danach die
-  104 Nationalportale aus `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md`
-  enumerieren.
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) (a) **erledigt** — `usgs_lidar_coverage.rs` emittiert
+  `shard`-Form (`manifest_lines` = `shard <url>`/`Pending`, `is_lidar_key` nur `.laz`/`.las`;
+  `ept.json`/`boundary.json` heraus; Commit `8739dffaa`). (b) **erledigt** — river 181
+  (`05ec9423f`) baute den Fetch-Loop `format coverage_manifest` in `main_flow.rs` und faltete
+  den `## An river`-Block. **Enumeriert:** `state/mycelium/national_lidar_portals.txt`
+  (143 Zeilen; 95 Portal · 33 alt-route · 15 bathy; Regionen EU 29 · NA 17 · LATAM 10 ·
+  APAC 27 · AF/ME 12) — aus `survey-2026-10-10-worldwide-lidar-quellen.md`.
+- **Blockade:** keine.
+- **Braucht:** je Portal ein Manifestator (Survey-Reihenfolge „Was fehlt": NL AHN4 ·
+  CH swissSURFACE3D · FR IGN LiDAR HD · UK EA · NZ LINZ); `portal_harvest.rs` trägt die
+  CKAN-Klasse, der S3-Manifestator die Bucket-Klasse.
 
 ### Architektur — GitHub/CI/CDN-Optimierung (Rat-Verdikt: Messung, dann Archive)
 - **Status:** wartend | **Bindung:** eigen · Teile linie:mountain/river
