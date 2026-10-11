@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 878370930538d5a6c41f8760ceb1b6d9a20b99e513243af28d75be794b4f2981
+  sha256: c1a85386994b0a6bc3dd739e2d481da44fd9004186f5bb7592027cec7a6c00bd
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a round-maximum family bound whose AR(1) calibration showed a near-nominal rate but does not establish family-wise error control for this dependent, non-stationary design (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min but stays family bound in a 22-hour window. At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so the lag is not resolved (§3.1, §5). The hardened quarterly witness (n_surr = 100) keeps all rows family bound; density never clears the bound, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS on two arms: the production Takens-embedded KSG arm nulls the reverse channel at strong coupling yet does not reconstruct its c = 0 null control, while the scalar Silverman-KDE reference does not null the reverse channel at strong coupling — the riss between the two arms stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko, with phase-randomized surrogates and a round-maximum family bound whose near-nominal AR(1) calibration does not establish family-wise control for this dependent, non-stationary design (§3.2). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so no lag is resolved (§3.1, §5). The hardened quarterly witness keeps all rows family bound; density never clears it, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS on two arms: the Takens-embedded KSG arm nulls the reverse channel at strong coupling yet not its c = 0 null control, while the scalar Silverman-KDE reference does not — the riss stands.
 
 ## Key Points
 
