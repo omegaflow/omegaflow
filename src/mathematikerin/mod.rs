@@ -33,9 +33,9 @@ pub mod s2;
 pub mod scalar_te_gpu;
 pub mod shaders;
 pub mod te;
-pub mod tropo;
 #[cfg(test)]
 mod tests;
+pub mod tropo;
 pub mod wy_max_t;
 
 pub use actuators::*;

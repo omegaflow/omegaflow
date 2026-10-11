@@ -172,12 +172,17 @@ where
     {
         return None;
     }
-    let (gravitator_icrs_km, gm_gravitator_m3_s2) =
-        match (gravitator_icrs_km, gm_gravitator_m3_s2) {
-            (Some(g), Some(gm)) => (g, gm),
-            _ => return None,
-        };
-    let light = two_way_light_time(t_rx_tdb, station_rx_icrs_km, station_tx_icrs_km, target_state)?;
+    let (gravitator_icrs_km, gm_gravitator_m3_s2) = match (gravitator_icrs_km, gm_gravitator_m3_s2)
+    {
+        (Some(g), Some(gm)) => (g, gm),
+        _ => return None,
+    };
+    let light = two_way_light_time(
+        t_rx_tdb,
+        station_rx_icrs_km,
+        station_tx_icrs_km,
+        target_state,
+    )?;
     let t_bounce = light.t_bounce_tdb;
     let t_tx = light.t_tx_tdb;
     let pos = light.bounce_pos_icrs_km;

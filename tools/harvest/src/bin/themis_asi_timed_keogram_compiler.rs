@@ -331,8 +331,9 @@ fn emit(name: &str, origin: &str, sha: &str) {
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
 
-    let station = arg_value(args, "--station")
-        .ok_or("--station <label|code> is absent — the timed keogram stays unfetched (0 honored)")?;
+    let station = arg_value(args, "--station").ok_or(
+        "--station <label|code> is absent — the timed keogram stays unfetched (0 honored)",
+    )?;
     let date_str = arg_value(args, "--date")
         .ok_or("--date <YYYYMMDD> is absent — the timed keogram stays unfetched (0 honored)")?;
     let d = parse_date(&date_str).ok_or_else(|| format!("--date {date_str} is not YYYYMMDD"))?;
@@ -356,9 +357,8 @@ fn run(args: &[String]) -> Result<(), String> {
     let start_hh = start_min.map(|v| v / 100);
     let stop_hh = stop_min.map(|v| v / 100);
 
-    let out = arg_value(args, "--out-bin").ok_or_else(|| {
-        "--out-bin is absent — the asset stays unwritten (0 honored)".to_string()
-    })?;
+    let out = arg_value(args, "--out-bin")
+        .ok_or_else(|| "--out-bin is absent — the asset stays unwritten (0 honored)".to_string())?;
 
     let label = label_for(&station, d).ok_or_else(|| {
         format!(
