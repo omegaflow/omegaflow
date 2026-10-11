@@ -218,6 +218,68 @@ fn min_separation_of(args: &[String]) -> f64 {
     }
 }
 
+fn mean(values: &[f64]) -> f64 {
+    values.iter().sum::<f64>() / values.len() as f64
+}
+
+fn percentile(values: &mut [f64], q: f64) -> f64 {
+    values.sort_by(|a, b| a.total_cmp(b));
+    let idx = (((values.len() - 1) as f64) * q).round() as usize;
+    values[idx]
+}
+
+fn shifted_within(sorted: &[f64], offset_s: f64, lo: f64, span: f64) -> Vec<f64> {
+    let mut out: Vec<f64> = sorted
+        .iter()
+        .map(|&t| lo + (t - lo + offset_s).rem_euclid(span))
+        .collect();
+    out.sort_by(|a, b| a.total_cmp(b));
+    out
+}
+
+fn run_null(mcp: &[f64], cand: &[f64], lo: f64, hi: f64, tols: &[i64], n: usize) {
+    let span = hi - lo;
+    if !(span > 0.0) {
+        println!("null: the comparison window carries no extent — no surrogate (0 honored)");
+        return;
+    }
+    if n == 0 {
+        eprintln!("--null needs a positive surrogate count");
+        std::process::exit(2);
+    }
+    if mcp.is_empty() || cand.is_empty() {
+        println!("null: witness or detector set empty — no null (0 honored)");
+        return;
+    }
+    println!("null surrogates={n} span_s={span:.3}");
+    for &tol_min in tols {
+        let tol = tol_min as f64 * MINUTE;
+        let (_, hit_cand_real, _) = match_onsets(mcp, cand, tol);
+        let (_, hit_mcp_real, _) = match_onsets(cand, mcp, tol);
+        let real_prec = hit_cand_real as f64 / cand.len() as f64;
+        let real_rec = hit_mcp_real as f64 / mcp.len() as f64;
+        let mut precs: Vec<f64> = Vec::with_capacity(n);
+        let mut recs: Vec<f64> = Vec::with_capacity(n);
+        for i in 0..n {
+            let offset = ((i as f64 + 0.5) / n as f64) * span;
+            let shifted = shifted_within(cand, offset, lo, span);
+            let (_, hit_cand, _) = match_onsets(mcp, &shifted, tol);
+            let (_, hit_mcp, _) = match_onsets(&shifted, mcp, tol);
+            precs.push(hit_cand as f64 / cand.len() as f64);
+            recs.push(hit_mcp as f64 / mcp.len() as f64);
+        }
+        let prec_ge = precs.iter().filter(|p| **p >= real_prec).count();
+        let rec_ge = recs.iter().filter(|r| **r >= real_rec).count();
+        let prec_mean = mean(&precs);
+        let rec_mean = mean(&recs);
+        let prec_p95 = percentile(&mut precs, 0.95);
+        let rec_p95 = percentile(&mut recs, 0.95);
+        println!(
+            "null tol_min={tol_min} real_prec={real_prec:.6} null_prec_mean={prec_mean:.6} null_prec_p95={prec_p95:.6} prec_ge={prec_ge} real_rec={real_rec:.6} null_rec_mean={rec_mean:.6} null_rec_p95={rec_p95:.6} rec_ge={rec_ge}"
+        );
+    }
+}
+
 fn run_sweep(series: &[(f64, f64)], station: &str, csv: &str, args: &[String]) {
     let Some((med, mad)) = median_mad(series) else {
         eprintln!("gic_onset_detector: series carries no finite sample");
@@ -402,7 +464,7 @@ fn main() {
             mcp.len(),
             cand.len()
         );
-        for tol_min in tols {
+        for &tol_min in &tols {
             let tol = tol_min as f64 * MINUTE;
             let (hit_mcp, hit_cand, med) = match_onsets(&mcp, &cand, tol);
             println!(
@@ -418,6 +480,16 @@ fn main() {
                     None => "n/a".to_string(),
                 }
             );
+        }
+        if let Some(s) = arg_value(&args, "--null") {
+            let n = match s.parse::<usize>() {
+                Ok(v) => v,
+                Err(_) => {
+                    eprintln!("--null must be a non-negative surrogate count");
+                    std::process::exit(2);
+                }
+            };
+            run_null(&mcp, &cand, lo, hi, &tols, n);
         }
     }
 }
@@ -496,5 +568,29 @@ mod tests {
     fn the_civil_epoch_matches_the_measured_reference() {
         assert_eq!(days_from_civil(1970, 1, 1) * DAY, 0.0);
         assert_eq!(days_from_civil(1966, 1, 1) * DAY, -126230400.0);
+    }
+
+    #[test]
+    fn a_circular_shift_moves_onsets_and_wraps_inside_the_window() {
+        let shifted = shifted_within(&[0.0, 100.0, 900.0], 200.0, 0.0, 1000.0);
+        assert_eq!(shifted, vec![100.0, 200.0, 300.0]);
+    }
+
+    #[test]
+    fn a_circular_shift_preserves_the_count_and_the_internal_gaps() {
+        let cand = [10.0, 500.0, 1500.0, 4000.0];
+        let shifted = shifted_within(&cand, 137.0, 0.0, 8000.0);
+        assert_eq!(shifted.len(), cand.len());
+        let gaps = |s: &[f64]| -> Vec<f64> { s.windows(2).map(|w| w[1] - w[0]).collect() };
+        assert_eq!(gaps(&shifted), gaps(&cand));
+    }
+
+    #[test]
+    fn the_null_mean_and_percentile_are_measured_from_the_surrogates() {
+        assert_eq!(mean(&[0.0, 0.5, 1.0]), 0.5);
+        let mut v = [0.0, 1.0, 2.0, 3.0, 4.0];
+        assert_eq!(percentile(&mut v, 0.95), 4.0);
+        let mut w = [10.0, 0.0, 5.0];
+        assert_eq!(percentile(&mut w, 0.0), 0.0);
     }
 }
