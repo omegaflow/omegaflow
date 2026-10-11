@@ -39,3 +39,36 @@ jobs:
             --station "${{ inputs.station }}" \
             --out out \
             --ci-mode
+  series-manifest:
+    needs: [dwd-cdc]
+    if: always() && needs.dwd-cdc.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fold every dwd_cdc shard on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          FAMILY="opendata.dwd.de"
+          PREFIX="dwd_cdc_"
+          MANIFEST="dwd_cdc.manifest"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh api --paginate "repos/$REPO/releases?per_page=100" \
+            | jq -r '.[].tag_name' > "$tmp/tags"
+          : > "$tmp/$MANIFEST"
+          while IFS= read -r tag; do
+            case "$tag" in
+              "$FAMILY"|"$FAMILY"-*) ;;
+              *) continue ;;
+            esac
+            gh release view "$tag" --repo "$REPO" \
+              --json assets \
+              --jq ".assets[] | select(.name|startswith(\"$PREFIX\")) | select(.name|endswith(\".bin\")) | \"\(.name) \(.digest)\"" \
+              >> "$tmp/$MANIFEST"
+          done < "$tmp/tags"
+          sort -u -o "$tmp/$MANIFEST" "$tmp/$MANIFEST"
+          if [ ! -s "$tmp/$MANIFEST" ]; then
+            echo "no dwd_cdc shards on the CDN — the series manifest stays unwritten (0 honored)"
+            exit 0
+          fi
+          echo "$MANIFEST lists $(wc -l < "$tmp/$MANIFEST") shards"
+          gh release upload "$FAMILY" "$tmp/$MANIFEST" --clobber --repo "$REPO"

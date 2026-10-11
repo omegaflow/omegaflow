@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Taucherstaffel (10 Taucher) über alle offenen Punkte der folge313: Messungen, Riss-Auflösungen, verdikt-reife Vorlagen
   class: handover
   date: 2026-10-11
-  sha256: 88fdeb248495fd79f9df4175d5f4dabcbaf3c3adaa7d403bfa24dbd16d5fcb7a
+  sha256: bc4c28834234ff98a3c885d30618bf6515c17543d44e9016e27ed34ed07b8cce
   status: live
 -->
 # Handover — Mountain-Folge 314 (2026-10-11)
@@ -34,15 +34,15 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** der nächste Register-Pass
 - **Lage:** (gemessen 2026-10-11 via `cargo build`: je bin grün, 0 warnings) **MOLA + NLR** als Arme in `pds3_fixed_width_compiler.rs` (+55/−4; `MOLA_ROUTE` = PRDR-Volume, da die PEDR-Volume **keine** `.tab` trägt — `RAMAPPING.FMT` via `^STRUCTURE`; `NLR_ROUTE` = `NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/`). **MLA** `mla_compiler.rs` (340 Z., 113 numerische Spalten, Live-Lauf 988 Zeilen) und **OLA** `ola_compiler.rs` (419 Z., 21 numerische Spalten, PDS4 `Table_Binary` nativ dekodiert). Hayabusa war bereits gebaut (`phi:19609-19674`).
-- **Blockade:** `phi/sources.φ` fremd-modifiziert → die vier `phi`-Blöcke (`at mars`/`at mercury`/`at eros`/`at bennu`) erst bei sauberer Datei.
-- **Braucht:** vier `phi`-Blöcke setzen; **neu gemessene Parser-Lücke:** NLR `UTC` = ISO **day-of-year** (`2000-074T…`), `unix_of_iso` erwartet Kalender-ISO → die Zeitachse würde NLR-Zeilen überspringen — in `pds3_table.rs` schließen (eigener begrenzter Schritt).
+- **Blockade:** die vier `phi`-Blöcke brauchen die `extract.rs`-Format-Arme (MOLA/NLR `pds3_fixed_width`, MLA/OLA neue Formate) — erst dann tragen die Blöcke.
+- **Braucht:** `extract.rs`-Arm je Format + vier `phi`-Blöcke (`at mars`/`at mercury`/`at eros`/`at bennu`); **neu gemessene Parser-Lücke:** NLR `UTC` = ISO **day-of-year** (`2000-074T…`), `unix_of_iso` erwartet Kalender-ISO → die Zeitachse würde NLR-Zeilen überspringen — in `pds3_table.rs` schließen (eigener begrenzter Schritt).
 
-### Sechs Klima-Quellen — terms/ttl + Serien-Manifest-Format
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** der Serien-Manifest-Entwurf
-- **Lage:** (gemessen 2026-10-11) surfrad `ttl 604800` · ecad `604800` · dwd_cdc `2592000` · worldclim `315360000` · aodn `1` (Datensatz-Kadenz, kein `TTL_S`) · knmi `86400`; je Workflow-Default (`*-cdn.yml`). **Kein** Serien-Manifest-Dokument unter `state/`/`docs/`; Präzedenz im Code: `modis-cdn.yml:110` + `gosat-cdn.yml:105` (`series-manifest`-Job), Schema-Notiz `modis-year-split.yml:11`. CI-Wait je Block: `state/zustand/wartend.φ:38`.
-- **Blockade:** ohne Format trägt jeder Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format nach dem modis/gosat-Muster entwerfen; `terms`/`ttl` je Compiler gegenprüfen.
+### Sechs Klima-Quellen — Serien-Manifest gebaut, terms/ttl gegenprüfen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der erste `series-manifest`-Lauf je Klima-Workflow
+- **Lage:** (gemessen 2026-10-11 via Workflow-Diff) die sechs Klima-Workflows tragen je einen `series-manifest`-Job (nach `modis-cdn.yml:110`): `surfrad-cdn.yml`, `ecad-cdn.yml`, `dwd-cdc-cdn.yml`, `worldclim-cdn.yml`, `aodn-cdn.yml`, `knmi-cdn.yml` — faltet die Shard-Assets je Familie in `<familie>.manifest` (`name sha256:<hex>`, `sort -u`, 0 honored). Shard-Namen aus den Compilern gemessen (`surfrad_`/`ecad_`/`dwd_cdc_`/`worldclim_`/`aodn_`/`knmi_`). `terms`/`ttl`: surfrad `604800` · ecad `604800` · dwd_cdc `2592000` · worldclim `315360000` · aodn `1` (Datensatz-Kadenz) · knmi `86400`.
+- **Blockade:** kein Lauf (die sechs Jobs existieren, keiner dispatcht).
+- **Braucht:** je Workflow den ersten Lauf starten; `terms`/`ttl` gegen den Compiler gegenprüfen.
 
 ### Open-LiDAR — Descope-Verdikte je Portal
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -135,12 +135,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Blockade:** der Repräsentativpunkt ist eine wissenschaftliche Annahme, keine Messung.
 - **Braucht:** je Zeile den extern gedeckten Repräsentativpunkt → eine Zeile in `phi/sources.φ` → TE-Paar-CI-Feed.
 
-### Exposom-Register — `field`-Zeilen je Klasse
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11, `state/zustand/wartend.φ:27`) Reader `osm_pbf`/`eionet_cdr` + Compiler stehen; die `field`-Zeilen je Exposom-Klasse fehlen (Mountain).
-- **Blockade:** `phi/sources.φ` fremd-modifiziert (s. SuperMAG-Riss).
-- **Braucht:** je Klasse die `field`-Zeilen aus dem Reader-Schema setzen.
+### Exposom-Register — geschlossen (Baum trägt die Felder)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) die Wartend-Zeile „`field`-Zeilen je Exposom-Klasse fehlen" ist **stale**: `osm_pbf` `field osm_node` (`phi:2080`) und `eionet_cdr` 276 `field`-Zeilen (`phi:21551-21834`, 92 Pollutant × 3 Medium) stehen (committet Mountain 253 `295c731a8` / 268 `4b01d9166`) und spiegeln die Compiler-Komponenten exakt. Zeile aus `state/zustand/wartend.φ` entfernt.
+- **Blockade:** keine.
+- **Braucht:** —
 
 ### Mindat Level-1 — descoped (Operator-Wort)
 - **Status:** descoped | **Bindung:** eigen

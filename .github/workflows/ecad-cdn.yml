@@ -65,3 +65,36 @@ jobs:
             --zip ecad.zip \
             --member "$member" \
             --ci-mode
+  series-manifest:
+    needs: [ecad]
+    if: always() && needs.ecad.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fold every ecad shard on the CDN into the year-less series manifest
+        run: |
+          set -euo pipefail
+          FAMILY="ecad.eu"
+          PREFIX="ecad_"
+          MANIFEST="ecad.manifest"
+          REPO="omegaflow/sources"
+          tmp="$(mktemp -d)"
+          gh api --paginate "repos/$REPO/releases?per_page=100" \
+            | jq -r '.[].tag_name' > "$tmp/tags"
+          : > "$tmp/$MANIFEST"
+          while IFS= read -r tag; do
+            case "$tag" in
+              "$FAMILY"|"$FAMILY"-*) ;;
+              *) continue ;;
+            esac
+            gh release view "$tag" --repo "$REPO" \
+              --json assets \
+              --jq ".assets[] | select(.name|startswith(\"$PREFIX\")) | select(.name|endswith(\".bin\")) | \"\(.name) \(.digest)\"" \
+              >> "$tmp/$MANIFEST"
+          done < "$tmp/tags"
+          sort -u -o "$tmp/$MANIFEST" "$tmp/$MANIFEST"
+          if [ ! -s "$tmp/$MANIFEST" ]; then
+            echo "no ecad shards on the CDN — the series manifest stays unwritten (0 honored)"
+            exit 0
+          fi
+          echo "$MANIFEST lists $(wc -l < "$tmp/$MANIFEST") shards"
+          gh release upload "$FAMILY" "$tmp/$MANIFEST" --clobber --repo "$REPO"
