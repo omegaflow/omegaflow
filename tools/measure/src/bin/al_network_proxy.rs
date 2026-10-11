@@ -118,6 +118,34 @@ fn envelope(stations: &[Vec<(f64, f64)>], min_stations: usize) -> Vec<(f64, f64)
     out
 }
 
+fn family_code(line: &str) -> Option<String> {
+    let line = line.trim();
+    if line.is_empty() || line.starts_with('#') {
+        return None;
+    }
+    let code = match line.strip_prefix("intermagnet_xyz_x_nt_") {
+        Some(c) => c,
+        None => line,
+    };
+    let code = code.trim().to_lowercase();
+    if code.is_empty() { None } else { Some(code) }
+}
+
+fn load_family(path: &str, dir: &str) -> Vec<(String, Option<f64>, String)> {
+    let Ok(text) = std::fs::read_to_string(path) else {
+        eprintln!("al_network_proxy: {path} read void");
+        std::process::exit(1);
+    };
+    let mut out = Vec::new();
+    for line in text.lines() {
+        if let Some(code) = family_code(line) {
+            let bin = format!("{dir}/{code}_xyz_1m.bin");
+            out.push((code, None, bin));
+        }
+    }
+    out
+}
+
 fn load_manifest(path: &str) -> Vec<(String, Option<f64>, String)> {
     let Ok(text) = std::fs::read_to_string(path) else {
         eprintln!("al_network_proxy: {path} read void");
@@ -155,8 +183,18 @@ fn load_manifest(path: &str) -> Vec<(String, Option<f64>, String)> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let Some(manifest_path) = arg_value(&args, "--manifest") else {
-        eprintln!("al_network_proxy needs --manifest <file> (lines: CODE decl_deg xyz-bin-path)");
+    let stations = if let Some(manifest_path) = arg_value(&args, "--manifest") {
+        load_manifest(&manifest_path)
+    } else if let Some(family_path) = arg_value(&args, "--family") {
+        let Some(dir) = arg_value(&args, "--dir") else {
+            eprintln!("al_network_proxy: --family needs --dir <xyz-bin directory>");
+            std::process::exit(2);
+        };
+        load_family(&family_path, &dir)
+    } else {
+        eprintln!(
+            "al_network_proxy needs --manifest <file> (CODE decl|auto bin-path) or --family <file> --dir <path>"
+        );
         std::process::exit(2);
     };
     let Some(block) = arg_value(&args, "--baseline-block").and_then(|v| v.parse::<usize>().ok())
@@ -178,7 +216,6 @@ fn main() {
         eprintln!("--min-stations must be at least 2");
         std::process::exit(2);
     }
-    let stations = load_manifest(&manifest_path);
     if stations.is_empty() {
         eprintln!("al_network_proxy: manifest carries no station");
         std::process::exit(1);
@@ -282,6 +319,17 @@ mod tests {
         let dh = station_dh(&samples, None, 2).expect("declination derives");
         assert!(dh[0].1.abs() < 1e-9);
         assert!(dh[1].1.abs() < 1e-9);
+    }
+
+    #[test]
+    fn the_family_line_yields_the_station_code() {
+        assert_eq!(
+            family_code("intermagnet_xyz_x_nt_abk"),
+            Some("abk".to_string())
+        );
+        assert_eq!(family_code("SOD"), Some("sod".to_string()));
+        assert_eq!(family_code("# comment"), None);
+        assert_eq!(family_code("   "), None);
     }
 
     #[test]
