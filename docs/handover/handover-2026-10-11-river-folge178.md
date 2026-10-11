@@ -3,7 +3,7 @@
   session: River-Folge 178
   class: handover
   date: 2026-10-11
-  sha256: 47b0b4e49b049328b929c90198b486de399c1198ae8c2894d113d3b0153c8341
+  sha256: 7bae9ba5ca14d2bbd4b443517f6555e9595c56a53c3b7b3233212cacd033d663
   status: live
 -->
 # Handover — River-Folge 178 (2026-10-11)
@@ -70,7 +70,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 ### panel-vlies — Auflösung: Messung läuft, Register offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Artefakt `field-te-panel-vlies.txt` des am HEAD `ff82e1e2a` dispatchten `field-te-query`-Laufs (Job `panel-vlies`).
+- **Trigger:** CI-Artefakt `field-te-panel-vlies.txt` des am HEAD `2df1fee0f` dispatchten `field-te-query`-Laufs `38105380164` (Job `panel-vlies`).
 - **Lage:** (gemessen 2026-10-11, River 178 via `sread`/`sgrep`/`git status`) Die Auflösungs-Sonde (`resolution_probe`) ist gebaut — je Kanal alle Kandidaten-Registrierungen, `median_dt`, und die Überlappungs-Korrelation des groben gegen den feinen Zeugen auf dem groben Gitter; `cargo build -p omegaflow-measure --bin field_te_query` grün. Der Descriptor `src/mathematikerin/descriptors/vlies_panel.te` steht; die `field-te-query.yml`-Pfade sind repariert (die alten Pipeline-Descriptor-Pfade waren seit Mountain-306 ENOENT — `read_to_string` ohne Fallback).
 - **Blockade:** Schritt 2 (Register-Entflechtung in `phi/sources.φ`) hängt am aktiven Fremd-Hunk — `git status` misst `phi/sources.φ` als `M` (parallele Session); River schreibt das Register nicht. Geroutet als `## An mountain`.
 - **Braucht:** (Schritt 1) das Artefakt lesen und entscheiden, ob die drei `omni_imf_bz_gsm_nt`-Registrierungen dieselbe Größe tragen; (Schritt 3, nach 1.) `load_field_across_sources` (`tools/measure/src/bin/field_te_query.rs:1249`) auf gemessene Auswahl umbauen — `median_dt` je Kandidat, feinster gleichartiger Zeuge, Zeuge benannt; bei verschiedener Aggregation `panel pending` mit beiden Zeugen; danach `panel-vlies` neu dispatchen.
