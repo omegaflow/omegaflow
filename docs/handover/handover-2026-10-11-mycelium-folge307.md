@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: 45d79251e63d398c76bbdfd30a37952f2e9cc365e7dc9d7111ef6254c46e4094
+  sha256: 55031e9e0e335eeb6becdbabbad24e9a2ec8ff7964e71f3a27f3c7dcacbaf13e
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -113,11 +113,11 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) die zwei Releases + Tags in `omegaflow/sources` sind gelöscht; die vier Recreations-Workflows entfernt (der nightly `dhm`-Cron ist weg).
 - **Blockade:** keine.
-- **Braucht:** (a) die Bins `{supermag,substorm,supermag_index,dhm_gauge}_compiler.rs` — `upload_release(<tag>)` streichen (Mountain-Verdikt „cannot be redistributed"; ein manueller `--ci-mode` recreatet sonst); (b) `docs/concepts/self-hosted-runner.md:68-73` (per-Gerät-QoS) auf das gemessene `descoped` fortschreiben + Skript-Stand-Zeile (future-folge233 §An mycelium).
+- **Braucht:** (a) erledigt — `upload_release` aus den vier Bins gestrichen (`--ci-mode` verweigert benannt); (b) `docs/concepts/self-hosted-runner.md:68-73` (per-Gerät-QoS) auf das gemessene `descoped` fortschreiben + Skript-Stand-Zeile (future-folge233 §An mycelium).
 
 ## Registrierte Korrekturen & Vorfälle
 
-- **Weiterverbreitung zurückgenommen (Operator-Wort 2026-10-11, aus river-186 §An mycelium gefaltet):** die zwei live Release-Assets in `omegaflow/sources` — Tags `supermag.jhuapl.edu` (Substorm-Bins) und `dhm.gov.np` — sind **gelöscht** (`gh release delete <tag> --repo omegaflow/sources --cleanup-tag --yes`; Verifikation: `gh release view` → `release not found`, `gh api .../git/refs/tags/<tag>` → 404). Der `gh`-Weg nutzt den gespeicherten Token (kein Inline, Token-Hygiene gewahrt). Zusätzlich die **vier Recreations-Workflows entfernt** (Mycelium-Domain): `.github/workflows/{supermag,supermag-magstid,substorm,dhm-gauge}-cdn.yml` — `dhm-gauge-cdn.yml` trug einen **nächtlichen Cron** (`23 3 * * *`) und hätte das Release sonst automatisch neu erzeugt. `trishuli-pfeil.yml` ist harmlos (`contents: read`, kein Upload). **Latent offen:** die Compiler-Bins `{supermag,substorm,supermag_index,dhm_gauge}_compiler.rs` tragen weiter `upload_release(<tag>)` — ein manueller `--ci-mode`-Lauf erzeugt ein Release neu (Mensch-Akt, keine Workflow-Maschine).
+- **Weiterverbreitung zurückgenommen (Operator-Wort 2026-10-11, aus river-186 §An mycelium gefaltet):** die zwei live Release-Assets in `omegaflow/sources` — Tags `supermag.jhuapl.edu` (Substorm-Bins) und `dhm.gov.np` — sind **gelöscht** (`gh release delete <tag> --repo omegaflow/sources --cleanup-tag --yes`; Verifikation: `gh release view` → `release not found`, `gh api .../git/refs/tags/<tag>` → 404). Der `gh`-Weg nutzt den gespeicherten Token (kein Inline, Token-Hygiene gewahrt). Zusätzlich die **vier Recreations-Workflows entfernt** (Mycelium-Domain): `.github/workflows/{supermag,supermag-magstid,substorm,dhm-gauge}-cdn.yml` — `dhm-gauge-cdn.yml` trug einen **nächtlichen Cron** (`23 3 * * *`) und hätte das Release sonst automatisch neu erzeugt. `trishuli-pfeil.yml` ist harmlos (`contents: read`, kein Upload). **Latent geschlossen (Operator-Wort 2026-10-11):** `upload_release` ist aus allen vier Bins `{supermag,substorm,supermag_index,dhm_gauge}_compiler.rs` **gestrichen** — `--ci-mode` verweigert jetzt benannt (`eprintln!`/`Err`, exit 2); Import entfernt, 4 Bin-Builds 0/0. Damit ist der Recreations-Pfad auf **Maschine und Hand** zu.
 
 - **CH-Origin-Zahl widerlegt (Riss):** `flai_coverage_measured.md` nennt CH `swisssurface3d` 79683 ≫ Origin **70**; der gebundene Origin-Walk (`swisstopo_coverage --max-pages 10`) und ein Cursor-Probe erreichten **>10 000 Items** mit `next`-Link weiterhin vorhanden (gemessen 2026-10-11). Die „70" ist ein Flächen-Indikator-Fehler, kein Origin-Count — CH-Diff `unread` bis zum vollen Lauf.
 - **Riss getragen (Namensraum):** NL raw missing = 1375, normalisiert+`c_`-gestrippt = 2 — File-Key (`C_01CZ1`) ≠ Origin-`Name` (`01CZ1`) ist ein Namensraum-Riss, kein Abdeckungs-Riss; beide Linien im Report gehalten.
