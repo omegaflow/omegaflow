@@ -563,7 +563,7 @@ fn manifest_lines(tiles: &[Tile], emit_bbox: bool) -> Vec<String> {
     for t in tiles {
         match t.bbox {
             Some(b) if emit_bbox && b.iter().all(|v| v.is_finite()) => out.push(format!(
-                "shard {} {} {} {} {} {} {}",
+                "shard {} {} {} {} {} {} {} EPSG:4326",
                 t.href, b[0], b[1], b[2], b[3], b[4], b[5]
             )),
             _ => out.push(format!("shard {}", t.href)),

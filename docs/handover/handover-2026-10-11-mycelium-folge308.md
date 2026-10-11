@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (ein Operator-Wort). SPT-3G D1 partial-sky/RING-Pfad im `cmb_planck_compiler` gebaut (`pix2ang_ring` + `FitsTable`-Partial-Branch); `coverage-manifest.yml` um USGS-TNM + LOLA erweitert; `ci-check.yml` um den cmb-Bin-Test; `self-hosted-runner` per-Gerät-QoS descoped; MCP/Wrapper unverändert.
   class: handover
   date: 2026-10-11
-  sha256: b25a44b182892856d224971b36a89274478ba7f89cd90601e80f1fc4ea367fa5
+  sha256: 8e6ad214198eeb24dfc4952ff753e74dca8d92da78d3d7461f7c97c939179dd9
   status: live
 -->
 # Handover — Mycelium-Folge 308 (2026-10-11)
@@ -22,6 +22,8 @@ zitiert, nie kopiert). Diese Session konsumierte
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-11 | Operator (Session, Mycelium 308) |
 | Name leer → neueste offene Mycelium-Übergabe (folge307) | 2026-10-11 | Operator (Session, Mycelium 308) |
 | „Die Übergabe IST der Stand … Mycelium ist die Meta-Linie — der Stehende Pass. Sie schließt als erste … erst danach öffnen die anderen Linien." | 2026-10-11 | Operator (Session, Mycelium 308) |
+| **„A"** — Frame/Epoche: CRS+Epoche als Token in den `shard`-Vertrag (Wire-Kontrakt-Änderung); `Pending` bleibt der verlustfreie Fallback für tokenlose Alt-Manifeste; B bleibt writer-seitige Ableitung beim Stempeln, der Leser rät nie | 2026-10-11 | Operator (Session, Mycelium 308) |
+| „bei ratsfragen musst du aber auch recherche und roster machen" + „und die starten varianten und nicht nur die vier … die starken openweight" | 2026-10-11 | Operator (Session, Mycelium 308) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge307.md` §Operator-Wort-Register (via `git show <sha>:docs/handover/archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -54,12 +56,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** (a) **Riss korrigiert (gemessen 2026-10-11):** `usgs_lidar_coverage.rs` emittiert bereits `shard <url>` (der Parser lädt das als `ShardPlacement::Pending`, `coverage_manifest.rs:39-45,78`); die alte „`url size`"-Behauptung ist stale (Commit `8739dffaa`). Der echte Gap: der Lader dispatcht nur auf `format == "coverage_manifest"` (`main_flow.rs:5103`), `usgs_lidar_coverage.rs:475` deklariert aber `format usgs_lidar_coverage`, und das Manifest ist **nicht** in `phi/sources.φ` registriert → Manifest mit `format coverage_manifest` registrieren (oder den Dispatch erweitern). (b) Portal-Inventar gemessen (2026-10-11): das Survey trägt **124** Tabellenzeilen (+9 DE-Prosa; „104" steht nirgends im Survey — Riss), `national_lidar_portals.txt` 143 Datenzeilen; neue Arme nach Portal-Zahl: **CKAN-REST** (größter Block: sk/es/pt/tw/qld/nsw/vic/ca/cnra/uy/cl/pacificdata) > **Earthdata-Granule-Index** (GEDI L2A/L4A, ATL03/08) > **CSW/OGC-API-Records** (INSPIRE).
 
-### Frame/Epoche — Riss: CRS im Kontrakt (A) vs. Query-Time-Ableitung (B)
-- **Status:** operator-gebunden | **Bindung:** eigen · **Teile linie:mountain**
-- **Trigger:** Operator-/Rat-Wort zur Auflösung des Risses
-- **Lage:** (gemessen 2026-10-11) Recherche-Schicht (`state/stimmen/20261011T1250Z_mycelium_frame-epoche-recherche.txt`, 249 Z.) + **voller UI-Roster (15 Stimmen)** (`state/stimmen/20261011T1310Z_mycelium_frame-epoche-roster.md`): **9× A** — Claude · Mistral · DeepSeek Chat · Gemini 3.1 Pro · Lumo · MiniMax M3 · **GLM-5.3 (Z.ai)** · **Qwen3.8 2.4T (Open-Weight 2,4T)** · **Inkling (Open-Weight 975B)**; **2× B** — Rat · Qwen3.7-Plus. Nichtantwort: DeepSeek V4 Pro + GLM 5.3 (tryingopen „out of API credit"), Perplexity `unread`, Duck (nicht abgeschickt). Recherche stützt **A** (luma.gl/GeoParquet). `--bbox-off` bleibt der verlustfreie Default (`Pending`); `projection.rs` + `itrf_to_icrs` gebaut; nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`). Die uncommittete B-Implementierung (`resolve_placement`) wurde zurückgenommen.
-- **Blockade:** Riss A vs. B — der Rat hält B, die UI-Frontier **und** die starken Open-Weight reißen ihn (9:2 für A); A = Wire-Kontrakt-Änderung (Operator-Wort).
-- **Braucht:** Operator-Wort (Wire-Kontrakt): A (CRS-Token + Epoche im `shard`-Vertrag, `Pending`-Fallback für tokenlose Manifeste) oder B (Loader-Transform über den Format-Token)? Bei A laut UI: B bleibt als **Writer-seitige** Ableitung (Token beim Emittieren stempeln, Leser rät nie).
+### Frame/Epoche — Operator-Wort **A** gewortet + gebaut; weitere CRS offen
+- **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, Operator-Wort **A**) Der `shard`-Vertrag trägt jetzt CRS + Epoche: `shard <url> [<6 f64> <EPSG> [<epoch(TDB s)>]]`. `coverage_manifest.rs`: `parse_crs`/`epoch` am `ShardDescriptor`; `resolve_placement` transformiert zur Query-Zeit — `4326` (WGS84°) → `body_fixed_to_icrs`; `326xx`/`327xx` (UTM) → `projection::to_geodetic` → `body_fixed_to_icrs`; Epoche-Token sonst Query-Epoche; **unbekannt/fehlend → `Pending`** (verlustfrei, der Leser rät nie). `coverage.rs` stempelt `EPSG:4326` beim `--bbox`. `cargo check` + Bin-Build 0/0; Test (Parse CRS + `Pending`-Guard) im `#[cfg(test)]`. Der Roster (9:2 für A) + Recherche: `state/stimmen/20261011T1310Z_mycelium_frame-epoche-roster.md`.
+- **Blockade:** keine.
+- **Braucht:** (a) weitere CRS in `projection.rs` (Lambert-93/CH1903+/RD New — heute nur UTM 326xx/327xx; `to_geodetic` → `LasCrs::Wkt` = `None`); (b) Wire-Kontrakt-Doc fortschreiben (`shard`-Grammatik mit CRS/Epoche).
 
 ### MCP no-leak-Regel — Wrapper verdrahtet; Capture vollständig; Allowlist erweitert
 - **Status:** eigen | **Bindung:** eigen
@@ -125,7 +127,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Riss — `usgs_lidar_coverage`-Format:** die Behauptung „emittiert weiter `url size`" (307/Braucht) ist widerlegt — der Baum emittiert `shard <url>` (Commit `8739dffaa`); der echte Gap ist der `format`-Dispatch (`main_flow.rs:5103`).
 - **Riss — „104 Nationalportale":** die Zahl steht nicht im Survey (gemessen: 124 Tabellenzeilen / 143 txt-Zeilen).
 - **Riss — DEMETER-Komponenten:** der Adressblock nannte ein „ICE-E-Feld"; die Bin trägt 6 ISL-Langmuir-Sonden-Größen (kein E-Feld), und die Monats-Assets fehlen noch (77 Prä-Fix-Namen).
-- **Rat-Prozess korrigiert (Operator-Wort 2026-10-11):** eine Ratsfrage läuft **zuerst** durch die Recherche-Schicht (`archive_search`) **und** den UI-Roster (alle Seats der Linie) — dann den Rat. Die Frame/Epoche-Frage ist danach ein **Riss** (A vs. B), kein Verdikt; die B-Implementierung wurde zurückgenommen.
+- **Rat-Prozess korrigiert (Operator-Wort 2026-10-11):** eine Ratsfrage läuft **zuerst** durch die Recherche-Schicht (`archive_search`) **und** den UI-Roster (alle Seats der Linie, inkl. der starken Open-Weight) — dann den Rat. Die Frame/Epoche-Frage ist danach **9:2 für A** ausgegangen; das Operator-Wort **A** ist gebaut.
 
 ## An mountain
 
