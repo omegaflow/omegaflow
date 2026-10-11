@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Wartend-Register gegen Baum und Netz gemessen (16 Warten über den vollen archive_search-Katalog aufgelöst, Operator-Wort), zwei rote measure-Bins geheilt, zwei Prosa-Docs auf den Baum gezogen
   class: handover
   date: 2026-10-11
-  sha256: f1f9fa61b3b249814e6bc3b645276b976ec8f2319b6da6914295bf60894aade0
+  sha256: b24fde2ae7ecf42b9f2ad7563d11bc2ff17c2be2409a29c8359afd1fc24f5f38
   status: live
 -->
 # Handover — Mountain-Folge 312 (2026-10-11)
@@ -150,21 +150,21 @@ Dataset-IDs, CC-BY-4.0); die 12 Compiler-Zeilen tragen jetzt die gemessene Route
 - **Trigger:** die gemessene Route (gefeuert)
 - **Lage:** (gemessen 2026-10-11 via `archive_search --verdict`/`--all`/`--datacite` + `curl`) keyless Routen: `pds-rings.seti.org/pds4/bundles/voyager_rss_raw/`, `pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001n.dat`, `pds-ppi.igpp.ucla.edu/mission/Mariner%2010`, `atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-sroc15-v10/`, `atmos.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/`, `archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/`, `pds-geosciences.wustl.edu/messenger/urn-nasa-pds-mess-rs-raw/data-odf/`, `spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_orbc_000116_230414_310721_v01.bsp`, `cdaweb.gsfc.nasa.gov/hapi/dataset?id=THG_L2_MAG_<CODE>` (190 Stationen) + `WI_K0_SWE`/`WI_H2_MFI`, `waldo.world` (CC0, DOI `10.48322/fzcf-f191`), `www.carisma.ca/data`, `cseslimadou.it/public-data-download/`.
 - **Blockade:** keine.
-- **Braucht:** je Route eine `url`-Zeile + `terms` (PDS: open US-Gov; WALDO: CC0) in `phi/sources.φ`; den `--gosat GWT3F_L1B`-Arm im Werkzeug-Katalog dokumentieren.
+- **Braucht:** je Route eine `url`-Zeile + `terms` (PDS: open US-Gov; WALDO: CC0) in `phi/sources.φ`; den `--gosat GWT3F_L1B`-Arm im Werkzeug-Katalog dokumentieren. **Auftrag (wörtlich alle Routen):** `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` (Teile A/B/C).
 
 ### Copernicus in-situ — 6 Compiler (CDS)
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Schritt
 - **Lage:** (gemessen 2026-10-11) Dataset-IDs + CC-BY-4.0 gemessen, Key `CDS_API_KEY` (401 ohne Token); zwei Compiler existieren (`copernicus_icoads_compiler` = surface-marine, `copernicus_cuon_compiler` = gruan-ua).
 - **Blockade:** keine.
-- **Braucht:** je Dataset einen Klon-Compiler: surface-land, uscrn, igra, woudc-ozone, gruan, gnss.
+- **Braucht:** je Dataset einen Klon-Compiler: surface-land, uscrn, igra, woudc-ozone, gruan, gnss. **Auftrag:** `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` Teil B (B1–B6).
 
 ### NOAA S3 — 2 Compiler
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Schritt
 - **Lage:** (gemessen 2026-10-11) `noaa-nos-coastal-lidar-pds` + `noaa-eri-pds` keyless (anonyme Listung 200), NODD open data; Riss: `noaa-global-hourly`/`noaa-oar-hourly-gdp` sind bereits gebaut (`noaa_isd_compiler`, `gdp_drifter_compiler`).
 - **Blockade:** keine.
-- **Braucht:** `noaa_nos_lidar_compiler` + `noaa_eri_compiler`.
+- **Braucht:** `noaa_nos_lidar_compiler` + `noaa_eri_compiler`. **Auftrag:** `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` Teil B (B7–B8).
 
 ## An future
 
