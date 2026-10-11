@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 312 (2026-10-11)
-  session: Mountain-Linie in einem Pass — Wartend-Register gegen den Baum gemessen und bereinigt (Operator-Wort), zwei rote measure-Bins geheilt, zwei Prosa-Docs auf den Baum gezogen
+  session: Mountain-Linie in einem Pass — Wartend-Register gegen Baum und Netz gemessen (16 Warten über den vollen archive_search-Katalog aufgelöst, Operator-Wort), zwei rote measure-Bins geheilt, zwei Prosa-Docs auf den Baum gezogen
   class: handover
   date: 2026-10-11
-  sha256: 59b69113a6fd9a3b062e253f4c23d5b8e565c44e5220643194994efe58fa5ed1
+  sha256: f1f9fa61b3b249814e6bc3b645276b976ec8f2319b6da6914295bf60894aade0
   status: live
 -->
 # Handover — Mountain-Folge 312 (2026-10-11)
@@ -12,22 +12,31 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge311.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close 0.24 · cap 0.25 — Grund: 1× line (flash only), kein pro/max; Taucher (2× grind-flash, 1× general) im selben Atom
+## Burn: open 0.0 · close 0.14 · cap 0.25 — Grund: 1× line (flash only), kein pro/max; Taucher (2× grind-flash, 3× general) im selben Atom
 
 ## Wartend-Register (Operator-Wort 2026-10-11: „die wartend vornehmen … gegen den Baum gemessen")
 
-`state/zustand/wartend.φ` gegen den Baum gemessen und bereinigt (71 → 53 Zeilen;
-Archiv der Vor-Fassung: `state/zustand/wartend-archiv-2026-10-11.φ`). **Entfernt
-(gemessen aufgelöst):** `ned-token` (`phi/sources.φ:11597` `ned_byparams_redshift.json`
-steht), `laic-cses` (Operator-Wort „Nein", der Akt entfällt), `petrel19-license`
-(`phi/sources.φ:2386` `terms CC-BY-4.0`), `solar-omega-g` (`docs/concepts/zeugnis.md:275`
-— 1277 nHz quellenlos entfernt, Kanal bleibt abwesend = 0 honored), `gic-paper-groundtruth`
-(Artefakt gelesen, Riss → te-ground-truth unten), die 13 `#`-Resolutionen.
-**Zusammengeführt:** `demeter-18400` + `demeter-refresh` (ein Wait).
-**Toten Register-Verweisen gezogen** (die alten Ledger-/Dispositions-Register
-existieren nicht mehr — `phi/` trägt nur `sources.φ`).
-Die 12 „Compiler pending"-Zeilen (copernicus-insitu ×8, noaa ×4) bleiben — sie sind
-per `AGENTS.md` der Heimat-Ort der realen pending-Compiler.
+`state/zustand/wartend.φ` in zwei Passes gegen Baum und Netz gemessen und ausgedünnt
+(71 → 53 → 34 Zeilen; Archive: `wartend-archiv-2026-10-11.φ`, `…-r2.φ`).
+
+**Pass 1 (gegen den Baum):** entfernt `ned-token` (`phi/sources.φ:11597`),
+`laic-cses` (Operator-Wort „Nein"), `petrel19-license` (`terms CC-BY-4.0`),
+`solar-omega-g` (`docs/concepts/zeugnis.md:275`, quellenlos), `gic-paper-groundtruth`
+(Artefakt gelesen); `demeter`-Duplikat zusammengeführt; tote Register-Verweise gezogen.
+
+**Pass 2 (Taucher-Batterie über den vollen `archive_search`-Katalog; Autorisation
+inklusive):** **16 Warten aufgelöst** — die Route ist gemessen offen, der Wait fällt:
+`ssdc-limadou` (keyless `cseslimadou.it/public-data-download/` + `leos.ac.cn`),
+`cassini-trk`/`juno-jplnav` (NMSU PDS), `flyby-odf-esoc-datenpaket` (PSA RSI EAR2),
+`flyby-odf-kinetx`/`flyby-odf-turyshev` (PPI Galileo + NMSU Cassini + WUSTL MESSENGER),
+`ephemeris-juice-recon` (ESAC `juice_orbc_…bsp` 206), `themis-gmag` (190 keyless
+CDAWeb-HAPI-Stationen), `wind-swe-mfi` (WI_K0_SWE + WI_H2_MFI keyless), `vlf-awesome`
+(WALDO `waldo.world`, DataCite **CC0**), `gosat-gw` (`archive_search --gosat GWT3F_L1B`
+→ 980 Produkte), `carisma-zugang` (`carisma.ca/data` + `open.canada.ca`),
+`copernicus-insitu-surface-marine` + `-gruan-ua` (Compiler stehen),
+`noaa-global-hourly` (`noaa_isd_compiler`) + `noaa-oar-hourly-gdp` (`gdp_drifter_compiler`).
+Die restlichen 30 Warten stehen mit gemessener Lage/Route (COPERNICUS + NOAA keyless,
+Dataset-IDs, CC-BY-4.0); die 12 Compiler-Zeilen tragen jetzt die gemessene Route.
 
 ## Offen (aufgeschlüsselt)
 
@@ -135,6 +144,27 @@ per `AGENTS.md` der Heimat-Ort der realen pending-Compiler.
 - **Lage:** (gemessen 2026-10-11) HTTP 200, sha256 `ad345805…`; `sensor.community` bereits registriert.
 - **Blockade:** „zulassen" nennt keinen Arm/keine Zeile.
 - **Braucht:** das wörtliche Future-Wort.
+
+### Wartend-Auflösung — Register-Zeilen für die gemessenen Routen
+- **Status:** eigen (Register) | **Bindung:** eigen
+- **Trigger:** die gemessene Route (gefeuert)
+- **Lage:** (gemessen 2026-10-11 via `archive_search --verdict`/`--all`/`--datacite` + `curl`) keyless Routen: `pds-rings.seti.org/pds4/bundles/voyager_rss_raw/`, `pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001n.dat`, `pds-ppi.igpp.ucla.edu/mission/Mariner%2010`, `atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-sroc15-v10/`, `atmos.nmsu.edu/PDS/data/jnogrv_0001/DATA/ODF/`, `archives.esac.esa.int/psa/ftp/INTERNATIONAL-ROSETTA-MISSION/RSI/`, `pds-geosciences.wustl.edu/messenger/urn-nasa-pds-mess-rs-raw/data-odf/`, `spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_orbc_000116_230414_310721_v01.bsp`, `cdaweb.gsfc.nasa.gov/hapi/dataset?id=THG_L2_MAG_<CODE>` (190 Stationen) + `WI_K0_SWE`/`WI_H2_MFI`, `waldo.world` (CC0, DOI `10.48322/fzcf-f191`), `www.carisma.ca/data`, `cseslimadou.it/public-data-download/`.
+- **Blockade:** keine.
+- **Braucht:** je Route eine `url`-Zeile + `terms` (PDS: open US-Gov; WALDO: CC0) in `phi/sources.φ`; den `--gosat GWT3F_L1B`-Arm im Werkzeug-Katalog dokumentieren.
+
+### Copernicus in-situ — 6 Compiler (CDS)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt
+- **Lage:** (gemessen 2026-10-11) Dataset-IDs + CC-BY-4.0 gemessen, Key `CDS_API_KEY` (401 ohne Token); zwei Compiler existieren (`copernicus_icoads_compiler` = surface-marine, `copernicus_cuon_compiler` = gruan-ua).
+- **Blockade:** keine.
+- **Braucht:** je Dataset einen Klon-Compiler: surface-land, uscrn, igra, woudc-ozone, gruan, gnss.
+
+### NOAA S3 — 2 Compiler
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt
+- **Lage:** (gemessen 2026-10-11) `noaa-nos-coastal-lidar-pds` + `noaa-eri-pds` keyless (anonyme Listung 200), NODD open data; Riss: `noaa-global-hourly`/`noaa-oar-hourly-gdp` sind bereits gebaut (`noaa_isd_compiler`, `gdp_drifter_compiler`).
+- **Blockade:** keine.
+- **Braucht:** `noaa_nos_lidar_compiler` + `noaa_eri_compiler`.
 
 ## An future
 
