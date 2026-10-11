@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: e12d4fb67a092bf3d00461e437ba26dad80c39d4f2c5dd77aed15f75c4cab2f1
+  sha256: 41b7fc676c11881d1f19162c7d496225b95fad60a5408b097161082d27c79db4
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -103,8 +103,10 @@ zitiert, nie kopiert). Diese Session konsumierte
   (Duck 9 · Claude 8 · Z.ai 8 GB). Jede Entfernung als `phi/sources.φ`-`url`-Zeile; LRU
   erst, wenn der Verifier-Worker Reads als Zähler meldet. Misswerkzeug `r2_probe --list`
   (`210c34b7f`); Roster-Wortlaut `state/stimmen/2026-10-11_mycelium_r2-eviction-roster.md`.
-  **Nächster Bau:** 8-GB-Alarm (CI-Prüfung auf `r2_probe --list`) — Trigger: Bucket nähert
-  sich 8 GB (heute 519 KB).
+  **Alarm gebaut** (`22ada594f`): `r2_probe --list` überschreitet `R2_HOT_TIER_MAX_BYTES`
+  (Default 8 GiB) mit benanntem Alarm + exit 2; `.github/workflows/r2-usage.yml` läuft
+  täglich (`cron 17 3 * * *`) + dispatcht (`38120714117`) und öffnet **eine** Health-Issue
+  vor dem 10-GB-Free-Tier. Der Alarm ist eine Messung, nie ein Delete.
 
 ### MCP — lokale no-leak-Server (Rat-Verdikt: Regel vor Knoten)
 - **Status:** eigen | **Bindung:** eigen
