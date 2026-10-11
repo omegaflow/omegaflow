@@ -4,8 +4,14 @@
 # Ersetzt die Fassung vom 2026-10-09 (Mountain-287, HEAD aa8b999cd) — kein Altformat.
 # Der `ci-gate`-Key-Set-Gate vergleicht die aktuelle Menge gegen diese Liste und rotet nur bei NEUEN
 # Namen (fehlt die Datei → pending).
+# Erweitert 2026-10-11 (Mountain-Linie, `dropped-gate-move-disposition`): 24 Drops der Paare
+# folge315→316 (mountain) und folge309→310 (mycelium) disponiert — je ein Rename/Move, ein
+# descoped oder eine Register-/An-<line>-Zeile; keiner ein echter, still verschwundener Offen-Punkt.
+adressierte φ-vorschläge mycelium-307 305 verdiktet
+architektur github ci cdn-optimierung
 asservatenkammer-survey-marker prosa-reconciliation
 asservatenkammer-zensus getragen mountain-kandidaten
+bathymetrie raster bluetopo emodnet compiler gebaut
 bayern-dom-rasterquelle geodaten bayern de dom compiler
 bayern-dom-rasterquelle geodaten bayern de dom- geotiff-reader
 beobachtungsoperator fit kette schritt 2b gebaut
@@ -14,10 +20,14 @@ carriership asservatenkammer-survey trägerschaft
 carriership asservatenkammer-zensus research-api-mcp
 ci-check-kern-tests 4 geheilt ci-verifikation blocker geheilt
 ci-check-kern-tests ci-gate-rot mci parcorr receiver geheilt
+ci-gate ci-check-wurzel geheilt subset dropped-gate
 ci-gate-rot pc rs von der fremd-linie
 ci-gate-rot trigger abgeschlossener lauf
 ci-hygiene matrix-rotor github-präemption trap-flush gebaut nur
 cmb spt transfer-bound gebaut mycelium hebt
+coverage-manifest-fetch-loop gefaltet aus river-folge186 usgs-registrierung
+coverage-manifest usgs-tnm lola verdrahtet weitere arme
+descope-verdikt open-lidar unverändert state mycelium lidar
 dom- geotiff-raster-reader-bin auf tiff apply predictor
 empfänger-apertur deklaration fanout-refusal gebaut per-kraft-wert-ableitung
 empfänger-apertur deklaration fanout-refusal gebaut record-refusal wert-ableitung
@@ -28,31 +38,48 @@ ephemeriden-harvest 1-4 parser gebaut register-token entschieden
 epn-core epncore-spatial daten erreichbar parser-arm fehlt
 epn-core epncore-spatial -gap registriert
 extraterrestrische lidar keyless bestand gemessen lola-copc
+extraterrestrische lidar lola coverage verdrahtet mola
 fmhy-quellen-kandidaten-pool future-222 402 neue kandidaten unverdiktet
 fmhy-quellen-kandidaten-pool future-222 klassifiziert verdikt
 fmhy-quellen-verdikt 7 research-data-verdikte geschrieben rest der
 fmhy-quellen-verdikt research-data-klasse verortet nicht in den
 fmhy-routing arm-hälfte gegenstandslos riss 4 bot-gated
+frame epoche operator-wort a gewortet gebaut
 goes gsics-kalibrierung l1b-radiance calib benannt nie
 gwosc-strain block steht ohne sha256 ci-lauf
 iris rohpixel kein feld bunit-riss benannt
 keine operator-akte die zwei zugangswerte sind
 klassen-träger register-ledger
 -konten-träger gemessen 2026-09-28 phi blocked sources
+lidar-inventar extraterrestrisch parser vier blöcke gebaut
 lidar-quellen-inventar fmhy sammelseiten neue keyless buckets
 lidar-quellen-inventar neue keyless buckets indizes gemessen
+lidar-quellen-inventar tnm gemessen verdrahtet weitere bucket-bins
+matrix-rotor persistenter t420 trägt die klasse
 mcp no-leak-regel regel gebaut gate test
+mcp no-leak-regel wrapper capture fertig allowlist
 mycelium-φ-blöcke gefaltet aus mycelium-folge302 an mountain
 mycelium-φ-blöcke open-lidar-data-block steht fünf klima-quellen
+name leer neueste mycelium-übergabe folge308
+neu gic-restquellen gemessen river-186 eagle-i oe-417
+neu re-admission-cdns mountain-316 vier neu-admits brauchen
+noaa s3-compiler b7 b8 workflows angelegt
+open-lidar descope-verdikte je portal gemessen
 open-lidar-konsolidierung gemessene basis z ai-bedingung mountain-verdikt
+open-lidar-konsolidierung set-diff gemessen ch-lauf rot 2
 open-lidar-konsolidierung welt-aggregat schon getrackt überlappung klassen
+opentopography konsument gebaut ci-secret gesetzt
 p10 2a bau parser-arme register-physik
+pds esa-missionsrouten at geklärt
 portal-coverage-manifestatoren 4 gebaut workflow überlappung mit
 ps1-fraktional order-10-final order-10-final-größe aus dem
+sechs klima-quellen serien-manifest gebaut terms ttl
 speicher 1 76 tb bulk vs
 speicher r2-spiegel live aber ohne cap
+supermag-derivate descoped river redistribution
 supermag-ersatz substurm-onset-katalog future-228
 -swallow-stellen in 87 workflows auf
+te-ground-truth ar 1 -null-arm gebaut neu-messung
 thomas sample contact lab a sendet
 vier portal-coverage-φ-blöcke mycelium-305
 weberin-lücke prosa-träger membran-ladearchitektur
