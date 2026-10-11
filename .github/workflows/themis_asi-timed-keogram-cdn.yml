@@ -1,4 +1,4 @@
-# harvest: format=themis_asi_timed_keogram asset=present arm=themis_asi_timed_keogram_compiler pattern=^themis_asi_timed_keogram\.bin$ idempotent=true timeout=120 tag=data.phys.ucalgary.ca
+# harvest: format=themis_asi_timed_keogram asset=present arm=themis_asi_timed_keogram_compiler pattern=^themis_asi_timed_keogram_[0-9]{8}_.+\.bin$ idempotent=true timeout=120 tag=data.phys.ucalgary.ca
 
 # auto-dispatch: manual — station, date and the UT window are required per-act inputs (the station coordinate table is pending); auto-dispatch cannot supply them
 name: themis_asi-timed-keogram-cdn
@@ -53,23 +53,25 @@ jobs:
             echo "force re-manifest requested — compiling and manifesting"
             exit 0
           fi
+          asset="themis_asi_timed_keogram_${{ inputs.date }}_${{ inputs.station }}.bin"
           if gh release view data.phys.ucalgary.ca --repo omegaflow/sources \
               --json assets --jq '.assets[]?.name' 2>/dev/null \
-              | grep -qE '^themis_asi_timed_keogram\.bin$'; then
+              | grep -qx "$asset"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "themis_asi_timed_keogram.bin already present — manifest skipped"
+            echo "$asset already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "themis_asi_timed_keogram.bin missing — compiling and manifesting"
+            echo "$asset missing — compiling and manifesting"
           fi
       - name: Compile the THEMIS ASI timed keogram and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
           set -euo pipefail
           mkdir -p data/data.phys.ucalgary.ca
-          ARGS="--station ${{ inputs.station }} --date ${{ inputs.date }} --out-bin data/data.phys.ucalgary.ca/themis_asi_timed_keogram.bin --ci-mode"
+          OUT="data/data.phys.ucalgary.ca/themis_asi_timed_keogram_${{ inputs.date }}_${{ inputs.station }}.bin"
+          ARGS="--station ${{ inputs.station }} --date ${{ inputs.date }} --out-bin $OUT --ci-mode"
           if [ -n "${{ inputs.start }}" ] && [ -n "${{ inputs.stop }}" ]; then
-            ARGS="--station ${{ inputs.station }} --date ${{ inputs.date }} --start ${{ inputs.start }} --stop ${{ inputs.stop }} --out-bin data/data.phys.ucalgary.ca/themis_asi_timed_keogram.bin --ci-mode"
+            ARGS="--station ${{ inputs.station }} --date ${{ inputs.date }} --start ${{ inputs.start }} --stop ${{ inputs.stop }} --out-bin $OUT --ci-mode"
           fi
           cargo run --release -p omegaflow-harvest --bin themis_asi_timed_keogram_compiler -- $ARGS \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

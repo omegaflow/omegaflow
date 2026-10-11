@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: EA-LiDAR-4xx-End geheilt (Ursache gemessen), THEMIS-getimetes-Keogramm-Harness gebaut (stream0), drei Register-Blöcke (mcpherron/grdc_caravan/themis_asi_timed_keogram) + fingrid/mcpherron-sha256, dropped-gate-Churn gepinnt, ENTSOE-Secret gesetzt; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: e9ef2f08b69fdaadad2d4148cf4448526418fdf2d6b5cb5f66a0a2615a2cc613
+  sha256: d045b4634915db9b74c23c5b688ee826ab2cfe080f9ec3d7117d5f599924c370
   status: live
 -->
 # Handover — Mycelium-Folge 312 (2026-10-11)
@@ -13,7 +13,7 @@ gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge311.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0962 — Grund: Meta-Pass (flash-first; 6 Taucher: 4×grind-flash, 2×general); kein pro/max.
+## Burn: open 0.0000 · close 0.1528 · cap 0.17 — Grund: Meta-Pass + Nacharbeit der drei offenen Punkte (flash-first; 7 Taucher: 4×grind-flash, 3×general); kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -39,12 +39,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** Parser/Register-Blöcke bei Mountain.
 - **Braucht:** die 2 fehlenden ahn4-Kacheln + swisstopo/ign-Epochen nachziehen ODER die Descopes neu messen; Mountain-Verdikt.
 
-### THEMIS-ASI getimetes Keogramm — Harness gebaut; Asset-Name-Riss
+### THEMIS-ASI getimetes Keogramm — Harness gebaut; Riss aufgelöst
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** neuer `themis_asi-timed-keogram-cdn`-Lauf endet
-- **Lage:** (gemessen 2026-10-11) River maß: der 310 gebaute `themis_asi_keogram_compiler.rs` spiegelt die achsenlosen stream2-JPGs — **nicht** das getimete Keogramm. Die Zeitachse liegt in den UCalgary **stream0**-Minuten-Frames (20 P5-Sub-Frames je Datei, `#"Image request start" … UTC`, ~3 s); gemessene URL `…/stream0/2026/10/01/atha_themis02/ut06/20261001_0610_atha_themis02_full.pgm.gz` (HTTP 200, 2 107 429 B). **Gebaut:** `tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs` (Walk stream0 → gunzip → TKDG-Reduce, portiert aus `tools/measure/…`; `--station/--date/--start/--stop/--ci-mode`) + `.github/workflows/themis_asi-timed-keogram-cdn.yml` + Register-Block (`phi/sources.φ:11221`, `format themis_asi_timed_keogram`); `cargo check` 0/0.
-- **Blockade:** **Riss** — fester Asset-Name `themis_asi_timed_keogram.bin` gegen per-`--station/--date`-Eingaben (zweiter Lauf clobbert den ersten; Idempotenz-Guard überspringt danach); Station-Koordinaten-Tabelle + `terms` (UCalgary) fehlen.
-- **Braucht:** Operator-/Mountain-Entscheid Asset-Name (`<YYYYMMDD>_<label>`-Infix?); `terms`/Koordinaten (Mountain); erster Lauf nach Push.
+- **Lage:** (gemessen 2026-10-11) River maß: der 310 gebaute `themis_asi_keogram_compiler.rs` spiegelt die achsenlosen stream2-JPGs — **nicht** das getimete Keogramm. Die Zeitachse liegt in den UCalgary **stream0**-Minuten-Frames (20 P5-Sub-Frames je Datei, `#"Image request start" … UTC`, ~3 s); gemessene URL `…/stream0/2026/10/01/atha_themis02/ut06/20261001_0610_atha_themis02_full.pgm.gz` (HTTP 200, 2 107 429 B). **Gebaut:** `tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs` (Walk stream0 → gunzip → TKDG-Reduce; `--station/--date/--start/--stop/--out-bin/--ci-mode`) + `.github/workflows/themis_asi-timed-keogram-cdn.yml`; `cargo check` 0/0. **Riss aufgelöst:** der feste Asset-Name `themis_asi_timed_keogram.bin` war die Fabrikation — der Compiler nennt das Asset jetzt **per Nacht** (`themis_asi_timed_keogram_<YYYYMMDD>_<station>.bin`, aus gemessenem station+date), `emit` folgt dem tatsächlichen Dateinamen; der Workflow + Idempotenz-Guard (`grep -qx "$asset"`) sind per Nacht; der feste phi-Block wurde **entfernt** (der Tag `data.phys.ucalgary.ca` bleibt durch `themis_asi.bin` gebunden, `cdn_reconcile` grün).
+- **Blockade:** Station-Koordinaten-Tabelle + `terms` (UCalgary) fehlen; die per-Nacht-Menge braucht einen Manifest-Arm (wie der stream2-Keogramm-Zwilling, river-189 b).
+- **Braucht:** Station-Koordinaten/`terms` (Mountain); Manifest-Arm für die per-Nacht-Assets; erster Lauf nach Push.
 
 ### GIC CSES + PCN — Läufe enden; sha256 nachtragen
 - **Status:** wartend | **Bindung:** eigen
@@ -151,12 +151,13 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** wartet auf den Lauf.
 - **Braucht:** Merge-Lauf-Ergebnis.
 
-### dropped-gate — echter Fix (case-sensitiver Match) offen
+### dropped-gate — Match-Fix gebaut; Event-Fold offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) `ci-gate`-Job `dropped-gate` rotete auf `new 5` (`38165122495`); die 5 Namen sind Handover-Churn (je Rename/Move/Descope mit belegendem Commit), **nicht** echte Drops — Ursache: `register_lookup` `scan_words_case` matcht case-sensitiv, pendente Tokens sind lowercase. **Disponiert:** die 5 Keys in `docs/zustand/dropped-legacy-baseline.txt` gepinnt. **Riss:** der future-235-Block behauptet „Baseline (924 keys, `278ba2905`)"; die getrackte `dropped-legacy-baseline.txt` trägt **78** Keys (+5 dieses Atoms), HEAD `7012c20f8` — die 924 ist stale.
-- **Blockade:** der eigentliche Match-Fix im `register_lookup` (`config`/`dropped_gate.rs` Q2/Q3-Event-Fold) ist ein eigener CI-only-Atom.
-- **Braucht:** `scan_words_case` case-insensitiv machen (oder typisiertes Event) + Gate-Test.
+- **Lage-Nachtrag (2026-10-11):** **Match-Fix gebaut** — `offer_word` (`register_lookup.rs:2412`) verglich das Diff-Wort case-sensitiv gegen die lowercase-Pending-Tokens; jetzt `to_lowercase()` (auch die `-`-Teile) + Test `offer_word_matches_the_lowercased_pending_token`; `cargo check` 0/0.
+- **Blockade:** die Q2/Q3-Event-Fold-Verdrahtung (`dropped_gate.rs` `alias:`/typisiertes Event) ist ein eigener CI-only-Atom.
+- **Braucht:** Q2/Q3-Event-Fold; der case-sensitive Match ist geheilt (dieses Atom).
 
 ### SWPC/RTSW-Archivreihe — wartet Mountain
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
@@ -168,9 +169,9 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### Architektur — CI-Optimierung
 - **Status:** wartend · **Teile linie:mountain/river** | **Bindung:** eigen
 - **Trigger:** grüner `ci-check`-Lauf
-- **Lage:** (gemessen 2026-10-11) mehrere `ci-gate`-Läufe in `subset`; `38166097283`/`38165553676` rot in `register`/`clippy`/`format` (Jobs gemessen via `ci_manage jobs`; Ursache noch nicht log-gelesen).
+- **Lage:** (gemessen 2026-10-11, `ci_manage log 38166097283 --all`) `register` failure = `cdn_reconcile: fingrid-cdn.yml:48: create writes "data.fingrid.fi", not bound in phi/sources.φ` (auf `1bf37f2e6` — vor mycelium-311s fingrid-Block; inzwischen behoben); `clippy` failure = 3 Compile-Fehler in `src/archivar/odf.rs` (`:179` `op_ref`, `:213`/`:2222` `type_complexity`, auf `1bf37f2e6`); `format` failure = `cargo fmt --check`-Diffs in `src/mathematikerin/{mod,receiver,tropo}.rs` + `tools/harvest/src/bin/themis_asi_keogram_compiler.rs:124` (letzteres in diesem Atom gefixt).
 - **Blockade:** Shard-Build-vs-Test-Anteil erst an green `ci-check` messbar.
-- **Braucht:** grüner `ci-check` → `ci_manage jobs <id>`; dann `cargo nextest archive` + Shards. Rot-Ursachen der zwei Läufe log-gelesen nachtragen.
+- **Braucht:** **Mountain:** `odf.rs` clippy-clean (`:179`/`:213`/`:2222`) + `src/mathematikerin/*` fmt; dann grüner `ci-check` → `cargo nextest archive` + Shards.
 
 ### matrix-rotor
 - **Status:** wartend · **Teile linie:river** | **Bindung:** eigen
