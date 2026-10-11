@@ -1,0 +1,55 @@
+name: noaa-nos-lidar-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: S3 key prefix (blank = whole bucket)
+        required: false
+        type: string
+        default: "laz/"
+      jobs:
+        description: parallel workers over top-level prefixes (blank = 1; only used with a blank prefix)
+        required: false
+        type: string
+        default: ""
+      asset:
+        description: output asset name on the CDN (netloc noaa-nos-coastal-lidar-pds.s3.amazonaws.com)
+        required: true
+        type: string
+        default: noaa_nos_coastal_lidar_pds.manifest
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  noaa-nos-lidar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view noaa-nos-coastal-lidar-pds.s3.amazonaws.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+          fi
+      - name: Walk the NOAA NOS coastal lidar bucket, compile the manifest, and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          extra=()
+          if [ -n "${{ inputs.prefix }}" ]; then extra+=(--prefix "${{ inputs.prefix }}"); fi
+          if [ -n "${{ inputs.jobs }}" ]; then extra+=(--jobs "${{ inputs.jobs }}"); fi
+          cargo run -p omegaflow-harvest --release --bin noaa_nos_lidar_compiler -- \
+            "${extra[@]}" --out "${{ inputs.asset }}" --ci-mode

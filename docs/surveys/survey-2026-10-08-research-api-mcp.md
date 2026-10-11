@@ -2,7 +2,7 @@
   title: Survey — Research-APIs & MCPs (Consensus · Elicit · SciSpace · Perplexity)
   class: survey
   date: 2026-10-08
-  sha256: 288588b5f65867dfa6e722ac0f45e7cf2a898483aa1161163b763cac5df2dcb3
+  sha256: 871441c34c2d2f5bb17de438743192e310cb09007a7ec9c0b26acc1ea96a98e7
   status: live
   see-also: docs/surveys/survey-2026-10-08-fmhy-research-landscape.md docs/concepts/ui-seats.md docs/concepts/tools-map.md
 -->
@@ -29,13 +29,13 @@ HTTP gemessen: `api.consensus.app/v1/search` = **401** (Key nötig, erreichbar),
 `mcp.consensus.app/mcp` = **401** (Auth), Consensus-MCP-README = 200, Perplexity-MCP-README = 200.
 
 **Status 2026-10-08:** `CONSENSUS_API_KEY` und `PERPLEXITY_API_KEY` liegen in `.secrets.local`;
-**`--consensus` läuft live** (10 Treffer am Baum). **`--perplexity` läuft live** (`1569a26d8`):
+**`--consensus` läuft (HTTP 429, transient — Rate-Limit, kein Bau-Gap).** **`--perplexity` läuft live** (`1569a26d8`):
 der 403 war der **umgezogene Endpunkt** — Sonar ist jetzt die **Agent-API** (`POST
 api.perplexity.ai/v1/agent`, `preset`+`input` statt `model`+`messages`); Live-Antwort mit
 `[web:n]`-Citations. **Elicit `descoped`** (Operator-Wort): API nur Pro/Scale/Enterprise =
 kommerziell. **SciSpace:** `api.scispace.com/api/v1/*` → HTTP 403 `{"message":"Missing
 cookies"}` — eine **cookie-interne Web-API, keine Key-API**; keine öffentlichen REST-Docs
-gefunden; MCP nur gebrokert (Claude/ChatGPT) → **kein Arm** (`pending`/descoped).
+gefunden; MCP nur gebrokert (Claude/ChatGPT) → **kein Arm** (`pending`).
 
 ## Consensus — der stärkste Arm (220–400M Papers, Volltext)
 
