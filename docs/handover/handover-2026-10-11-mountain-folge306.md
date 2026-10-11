@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden Schritt 1 gefahren (Pioneer-10/11-ODF-Residuum gemessen), Asservatenkammer 9/9, FMHY-Klasse verortet
   class: handover
   date: 2026-10-11
-  sha256: 0d59e98061c89dc18d65bf55f7c0432f6d9345d84ad70eaec3586bacdfdbb201
+  sha256: 0578cc03d54897a8cad60c339a41f877c0cf4ca163235f5a41bccdfa9e2be792
   status: live
 -->
 # Handover — Mountain-Folge 306 (2026-10-11)
@@ -121,13 +121,21 @@ zu machen" — **Schritt 1 der Ephemeriden-Kette ist jetzt gefahren, nicht neu a
 - **Blockade:** der Repräsentativpunkt ist eine wissenschaftliche Annahme, keine Messung.
 - **Braucht:** je Zeile den extern gedeckten Repräsentativpunkt — dann `phi/sources.φ`-Zeile (Mountain-Feder), dann Te-Paar-CI-Feed (Mycelium).
 
-### phi/pipeline nach Verbraucher trennen (Future-Paket `483709e`) — Deskriptor-Klasse getrennt; 4 Naturen offen
+### phi/pipeline nach Verbraucher trennen (Future-Paket `483709e`) — 3 Naturen getrennt; Register + Vorrat offen
 - **Status:** eigen (Bau/Register) | **Bindung:** eigen
 - **Trigger:** je Klasse der Konsumenten-Umbau (`cargo check` 0/0) → dann verschieben/entfernen
-- **Lage:** (gemessen 2026-10-11) `phi/pipeline/` = **315 Dateien**, fünf Naturen. **Getrennt (dieses Atom):** Kanal-Deskriptoren `descriptors/*.te` (20) → `src/mathematikerin/descriptors/`, der **einzige** Konsument `tools/measure/src/bin/field_te_query.rs` (3 Pfade) umgestellt, `cargo check -p omegaflow-measure --bin field_te_query` 0/0, Commit `d039f7618`. **Offen:** (a) **Verdikt-Register** `ledger.φ`/`index.φ`/`decline_lens.φ` — Konsumenten `tools/register/src/bin/register_lookup.rs:53/54/71/72`, `source_physics_lint.rs:39`, `silence_map_probe.rs:431`; (b) **Kandidaten-Vorrat** `queue/`(2) · `stage/`(33) · `tap_index_*`(72, canon:55–123) · `probe_*.φ` · `leads.φ` — Konsumenten `discovery.rs:5–8`, `register_lookup.rs:61–65`, `tap_index_merge.rs`, ferner `port.rs`, `probe_sweep.rs`, `leads_merge.rs`, `frame_registry.rs`, `source_scanner.rs`; (c) **Compiler-Eingaben (echt)** `catalog/asteroid_gm_inpop25c.φ` + `asteroid_gm_sb441.φ` (getrackt, `canon.φ:42–43`) und `asteroid_diameters_{neowise,akari}.φ` (**akari gitignored, neowise untracked**) — Konsumenten `dastcom_compiler.rs:10–11`, `ephemeris_compiler.rs:1537` (Hilfetext), `.github/workflows/kernel-flatten.yml:114`; (d) **Test-Fixtures** `catalog/{twomass,ncei_ssi,ncei_goes_xrs,noaa_goes16,noaa_gk2a,noaa_wod,cosmic_wetprf,celestrak_eop}` — Konsumenten `src/archivar/{hdf5,netcdf,twomass}.rs`, `goes_abi_compiler`, `cosmic_ro_compiler`.
-- **Blockade:** jede Klasse hängt an ihrem Konsumenten-Umbau voraus; (c) übergreift `.github/workflows/` (Mycelium) und `phi/canon.φ`; (d)/(a) übergreifen `src/archivar` (River).
+- **Lage:** (gemessen 2026-10-11) `phi/` = **308 Dateien, 10 Ordner** (110 getrackt, ~198 lokal/ignored). **Getrennt (dieses Atom, 3 Naturen):** (1) **Kanal-Deskriptoren** `descriptors/*.te` (20) → `src/mathematikerin/descriptors/`, Konsument `field_te_query.rs` (`d039f7618`); (2) **Compiler-Eingaben** `asteroid_gm_{inpop25c,sb441}.φ` (getrackt) + `asteroid_diameters_{neowise,akari}.φ` → `tools/harvest/data/asteroid/`, Konsumenten `dastcom_compiler.rs:10–11`, `ephemeris_compiler.rs:1537`, `kernel-flatten.yml:89/113/114`, `canon.φ`, `MANIFEST.φ` (`dc9a2e792`); (3) **Test-Fixtures** 8 Dir `catalog/{twomass,ncei_ssi,ncei_goes_xrs,noaa_goes16,noaa_gk2a,noaa_wod,cosmic_wetprf,celestrak_eop}` → `src/archivar/testdata/`, 5 Konsumenten `src/archivar/{hdf5,netcdf,twomass}.rs` + `goes_abi_compiler`/`cosmic_ro_compiler` (`01449065f`). **Offen:** (a) **Verdikt-Register** `ledger.φ`/`index.φ`/`decline_lens.φ` — laut Future-Block **`descoped`** (nicht Hoist); Konsumenten `register_lookup.rs:53/54/71/72`, `source_physics_lint.rs:39`, `silence_map_probe.rs:431`, `regtap_census.rs:128`; (b) **Kandidaten-Vorrat** `queue/`(2) · `stage/`(33) · `tap_index_*`(72) · `probe_*.φ` · `leads.φ` — Konsumenten `discovery.rs:5–8`, `register_lookup.rs:61–65`, `tap_index_merge.rs`, `port.rs`, `probe_sweep.rs`, `leads_merge.rs`, `frame_registry.rs`, `source_scanner.rs`.
+- **Blockade:** (a)/(b) brauchen den Konsumenten-Umbau voraus; (b) ist ein Live-Arm-Umbau (`discovery.rs`), kein Verschieben.
 - **Braucht:** je Klasse **ein Atom**: Konsument umbauen (`cargo check` 0/0 wie bei den Deskriptoren), dann verschieben/entfernen — nicht Datei-für-Datei löschen. Danach trägt `phi/pipeline/` eine einzige Natur (oder entfällt).
 - **Protokoll-Riss:** das Paket kam über den Operator; **Futures privater `## An mountain`-Block wird von `register_lookup --addressed mountain` nicht erfasst** (nur öffentliche Handover) — die Faltung lief über den Wortlaut des Operators, nicht über `register_lookup`.
+
+### phi/ Ordnung — canon-Gate erweitert; 5 getrackte Deklarationen warten auf die frische `commit_check`-Release
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** die nächste frische `commit_check`-Binary aus `tools-latest` (Lauf `38100528499`)
+- **Lage:** (gemessen 2026-10-11) **110 getrackte phi-Dateien, 105 in `canon.φ` deklariert — 5 getrackt-aber-undeclared**: `phi/meteo/{aaretal-hochwasser,bordeaux-waldbrand,japan-tsunami,tibet-flut}-2026.json` + `phi/reports/probe_sweep_void.txt`. Die Gate-Regel `canon_format_violations` akzeptierte nur `.φ` → **erweitert** auf jeden `phi/`-Pfad (`src/gate/commit_gate.rs`, Test nachgezogen, Commit `1eadd4a32`). Die 5 Deklarationen in `canon.φ` sind geschrieben, aber **lokal noch geblockt**: der pre-commit-Hook zieht die **stale** `commit_check`-Release (`target/release`), die die alte Regel trägt; `bin/.tools_ensure` überschreibt sie.
+- **Blockade:** die neue Gate-Binary existiert erst nach dem CI-`tools-build`-Lauf.
+- **Braucht:** nach der Release: die 5 Zeilen in `canon.φ` setzen (`section Reports` + `section Meteo`) und committen — dann ist `tracked == declared` (0/0).
+- **Reihenfolge-Hinweis:** die 3 Code-Klassen sind committet; ein Hoist der Register-Dateien in `phi/` wurde **verworfen** (widerspricht dem Future-`descoped`-Verdikt) und uncommittet zurückgenommen.
 
 ### api.sensor.community — zulassen (der neue Faden), Zielzeile unbenannt
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -175,12 +183,11 @@ Asservatenkammer 9/9, FMHY-Klasse verortet, drei begrenzte Dispatches (general/g
 - **Ephemeriden Schritt 1 gefahren:** `pioneer{10,11}_odf_residuum` lokal (Einzel-Bin, `OMEGAFLOW_HIDDEN=1`);
   A ≈ +f/c je Station, Downlink ≈2×; Vorzeichen gemessen, Maßstab ein hartkodiertes Tool-Label (`ref_hz`-Skalen-Riss offen);
   erstes Modell trägt die Serie nicht bis Hz (Medien fehlen); `fit-residuum`, kein Blindtest. Neuer Bin `tools/measure/src/bin/pioneer10_odf_residuum.rs` (cargo check 0/0).
-- **phi/pipeline-Trennung begonnen:** Deskriptor-Klasse (20 `.te`) nach `src/mathematikerin/descriptors/`, Konsument `field_te_query.rs` umgestellt, Commit `d039f7618`; 4 weitere Naturen als Punkte gefaltet.
+- **phi/pipeline-Trennung:** 3 von 5 Naturen getrennt — Deskriptoren `d039f7618` · Compiler-Eingaben `dc9a2e792` · Test-Fixtures `01449065f`; Register + Kandidaten-Vorrat offen. `canon-Gate` auf jeden `phi/`-Pfad erweitert (`1eadd4a32`), 5 Deklarationen warten auf die frische `commit_check`-Release. Ein Hoist der Register-Dateien wurde verworfen und zurückgenommen.
 - **Asservatenkammer 9/9 Doks** mit erstem Schritt gemessen; 5 Rest-Marker ohne Träger benannt.
 - **FMHY:** research-data-Klasse liegt in `state/future/source-kandidaten-fmhy-2026-10-10.md:7`, nicht in den Surveys (Riss); 12 NEW gemessen.
 - **Mycelium-φ-Blöcke:** als stale belegt — die Klima-Blöcke stehen vollständig (SURFRAD sha256 verifiziert).
 - **particle-cern:** nächster begrenzter Schritt exakt verortet (`root.rs:835`, `parse_streamer_elements`).
 Geteilter Baum: `tools/utils/src/bin/archive_search.rs` und die drei `tools/harvest/src/bin/*_coverage.rs`
 gehören fremden Linien — nicht angefasst/committet.
-Eigene Pfade: `tools/measure/src/bin/pioneer10_odf_residuum.rs` · `src/mathematikerin/descriptors/` ·
-`tools/measure/src/bin/field_te_query.rs` · diese Übergabe · der Archiv-Move folge305.
+Eigene Pfade dieses Atoms (committet, `git show --stat`): die 6 Commits `d039f7618` · `dc9a2e792` · `01449065f` · `b5b46739c` · `1eadd4a32` + die früheren (Ephemeriden/Folding) · diese Übergabe · der Archiv-Move folge305.
