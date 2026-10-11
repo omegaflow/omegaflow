@@ -11130,6 +11130,13 @@ quantity emtf_zyx_im emtf_zyx_im inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyy_re emtf_zyy_re inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyy_im emtf_zyy_im inverse-square impedance ohm 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_datasets.bin
+origin https://data.fingrid.fi/api/datasets
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+format fingrid_datasets
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/data.geo.admin.ch/swisstopo_coverage.manifest
 terms open-by-attribution https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices
 format swisstopo_coverage
@@ -11752,6 +11759,13 @@ compiler tools/harvest/src/bin/noaa_dcdb_bathymetry_compiler.rs
 at earth
 field noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square acoustic m 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/noaa-eri-pds.s3.amazonaws.com/noaa_eri.manifest
+origin https://noaa-eri-pds.s3.amazonaws.com
+compiler tools/harvest/src/bin/noaa_eri_compiler.rs
+format noaa_eri
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/noaa-global-hourly-pds.s3.amazonaws.com/isd_01001099999_2025-03.bin
 terms PD https://www.noaa.gov/
 format noaa_isd
@@ -11790,6 +11804,13 @@ field noaa_gsod_gust_ms noaa_gsod_gust_ms gaussian-inverse-square advective m/s 
 field noaa_gsod_max_c noaa_gsod_max_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_min_c noaa_gsod_min_c exponential-decay thermal C 86400 0.0 0.0
 field noaa_gsod_prcp_mm noaa_gsod_prcp_mm gaussian-inverse-square advective mm 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaa-nos-coastal-lidar-pds.s3.amazonaws.com/noaa_nos_coastal_lidar_pds.manifest
+origin https://noaa-nos-coastal-lidar-pds.s3.amazonaws.com
+compiler tools/harvest/src/bin/noaa_nos_lidar_compiler.rs
+format noaa_nos_coastal_lidar_pds
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/noaa-oar-keo-papa-pds.s3.amazonaws.com/keo_OS_KEO_200406_M_TSVMBP_32N145E_dy.bin
 terms PD https://www.noaa.gov/
@@ -19973,6 +19994,13 @@ field hapi_csv_x_nt hapi_csv_x_nt inverse-square em nT 604800 0.0 0.0
 field hapi_csv_y_nt hapi_csv_y_nt inverse-square em nT 604800 0.0 0.0
 field hapi_csv_z_nt hapi_csv_z_nt inverse-square em nT 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/portal.opentopography.org/opentopography_coverage.manifest
+origin https://portal.opentopography.org/API/otCatalog?outputFormat=json
+compiler tools/harvest/src/bin/opentopography_coverage.rs
+format opentopography_coverage
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 terms unknown https://product.gosat-gw.nies.go.jp/
 format gosat_tanso3
@@ -20489,6 +20517,13 @@ compiler tools/harvest/src/bin/flac_compiler.rs
 at earth
 ttl 604800
 field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/superdarn.ca/superdarn_fitacf.bin
+origin https://superdarn.ca/
+compiler tools/harvest/src/bin/superdarn_compiler.rs
+format superdarn_fitacf
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -22503,6 +22538,13 @@ url https://github.com/omegaflow/sources/releases/download/eas.esac.esa.int/tap-
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
 origin https://eas.esac.esa.int
+ttl 31536000
+
+url https://github.com/omegaflow/sources/releases/download/ers.usda.gov/usda_fara_low_access.bin
+origin https://www.ers.usda.gov/media/5627/2019-large-retailer-access-map-lram-formerly-known-as-the-food-access-research-atlas-fara-data.zip
+compiler register-only
+format usda_fara_low_access
+at earth
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_ra_dec_sy_dist_st_teff_FROM_stellarhosts_WHERE_ra_IS_NOT_NULL_AND_st_teff_IS_NOT_NULL.json
@@ -31205,6 +31247,27 @@ record sky1
 force em
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/crystallography.net/eels_acoustic.bin
+origin https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
+compiler tools/harvest/src/bin/crystal_compiler.rs
+format eels_acoustic
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/crystallography.net/rixs_charge.bin
+origin https://zenodo.org/api/records/15179114/files/data.zip/content
+compiler tools/harvest/src/bin/crystal_compiler.rs
+format rixs_charge
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/crystallography.net/rixs_spin.bin
+origin https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
+compiler tools/harvest/src/bin/crystal_compiler.rs
+format rixs_spin
+at earth
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
 terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
 format pds4_fixed_width
@@ -31247,6 +31310,13 @@ format fp01
 compiler tools/harvest/src/bin/wise_coverage_combiner.rs
 band w1 w2 w3 w4
 footprint allwise_coverage.fp01
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/oderest.rsl.wustl.edu/live2.json
+origin https://oderest.rsl.wustl.edu/
+compiler register-only
+format live2
+at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/ps1_dr2_binary.fp01

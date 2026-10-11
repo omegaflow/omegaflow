@@ -320,6 +320,8 @@ fn internal_family(netloc: &str) -> Option<&'static str> {
         Some("ps1-dr2")
     } else if netloc.starts_with("ssd.jpl.nasa.gov-") {
         Some("ssd.jpl.nasa.gov")
+    } else if netloc.starts_with("alasky.cds.unistra.fr-") {
+        Some("alasky.cds.unistra.fr")
     } else {
         netloc
             .strip_prefix(MODIS_LST_CMG_FAMILY)
@@ -744,6 +746,11 @@ mod tests {
             internal_family("ssd.jpl.nasa.gov-korpora"),
             Some("ssd.jpl.nasa.gov")
         );
+        assert_eq!(
+            internal_family("alasky.cds.unistra.fr-CDS_P_Mars_Tianwen1-MoRIC"),
+            Some("alasky.cds.unistra.fr")
+        );
+        assert_eq!(internal_family("alasky.cds.unistra.fr"), None);
         assert_eq!(internal_family(MODIS_LST_CMG_FAMILY), None);
         assert_eq!(
             internal_family("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmgX"),
