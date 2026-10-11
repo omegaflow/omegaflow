@@ -5099,6 +5099,132 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "coverage_manifest" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                let receiver_aperture = archive.receiver_aperture.clone();
+                let body_radius = archive
+                    .body_ephemerides
+                    .get(frame_body_name(&src.frame).as_str())
+                    .and_then(|e| e.props.as_ref())
+                    .map(|p| p.radius_m);
+                let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
+                let eph_arc = archive.body_ephemerides.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("coverage").to_string();
+                    let tmp_path = content_cache(&format!("omegaflow_coverage_{name}"));
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!(
+                                    "coverage {}: manifest fetch void — retry in ttl/Φ·2ⁿ",
+                                    url
+                                );
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("coverage {}: manifest write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    let text = match std::fs::read_to_string(&tmp_path) {
+                        Ok(t) => t,
+                        Err(_) => {
+                            eprintln!("coverage {}: manifest read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    };
+                    let shards = crate::archivar::coverage_manifest::parse_coverage_manifest(&text);
+                    let fields: Vec<FieldConfig> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    let Some(fc) = fields.first() else {
+                        eprintln!(
+                            "coverage {}: field undeclared — the block carries no field line",
+                            url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
+                    let body_name = frame_body_name(&src.frame);
+                    let body_medium = eph_arc
+                        .get(body_name.as_str())
+                        .and_then(|e| e.medium.as_ref());
+                    let field = EnclosureField {
+                        config: fc,
+                        medium: body_medium,
+                        body_radius,
+                        receiver_aperture: receiver_aperture.resolve(fc.force, fc.aperture),
+                    };
+                    let env = AnchorEnvelope {
+                        vmax: 0.0,
+                        amax: 0.0,
+                        pad: 0.0,
+                        ttl: src_ttl as f64,
+                    };
+                    let mut selected = 0usize;
+                    for shard in &shards {
+                        if !crate::archivar::coverage_manifest::shard_intersects_hull(
+                            &shard.placement,
+                            &presences,
+                            &field,
+                            &env,
+                        ) {
+                            continue;
+                        }
+                        selected += 1;
+                        let shard_path = {
+                            use std::hash::{Hash, Hasher};
+                            let mut h = std::collections::hash_map::DefaultHasher::new();
+                            shard.url.hash(&mut h);
+                            content_cache(&format!(
+                                "omegaflow_coverage_shard_{}_{:016x}",
+                                src_idx,
+                                h.finish()
+                            ))
+                        };
+                        if cache_fresh(&shard_path, src_ttl) {
+                            continue;
+                        }
+                        if let Some(bytes) = fetch_raw_bytes(&shard.url) {
+                            let _ = std::fs::write(&shard_path, &bytes);
+                        }
+                    }
+                    eprintln!(
+                        "\r\x1b[Kcoverage {}: {} of {} shards intersect the hull",
+                        source_name(&url),
+                        selected,
+                        shards.len()
+                    );
+                    let _ = ftx.send(empty(true));
+                });
+                continue;
+            }
             if archive.sources[i].format == "decaps_dr2_stars" {
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
