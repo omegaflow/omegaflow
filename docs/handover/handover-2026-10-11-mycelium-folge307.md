@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: 088f2ca769299c604fd0a0210a31f3f434024152c8c1fd504ce5ea68b1944229
+  sha256: 9ab8a01486926a01ec5cfc62a81720faf1db565a95c204bfa0b37ac4e96deab8
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -13,7 +13,7 @@ gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge306.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.45 · cap 0.5 — Grund: 9 grind-flash (Bau/Messung) + 1 general, deepseek-flash, kein pro/max. (session_burn-Total $0.8782/24 Sessions, DB-Rollover → Atom-Delta nicht exakt isolierbar; nahe `BURN_CAP_HARD_USD` 0.50.)
+## Burn: open 0.0000 · close 0.50 · cap 0.5 — Grund: 11 grind-flash (Bau/Messung), 1 general, 1 council (Rat), 1 UI-Runde (Claude/Z.ai/Qwen; Duck `pending`), deepseek-flash, kein pro/max. **An `BURN_CAP_HARD_USD` 0.50 — Atom geschlossen.** (session_burn-Total $0.8782/24 Sessions, DB-Rollover → Delta nicht exakt isolierbar.)
 
 ## Operator-Wort-Register
 
@@ -24,6 +24,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 | „bitte umsetzen [ID-Diff-Schema + Diff-Lauf + Mountain-Verdikt; weitere coverage-Arme; Frame/Epoche-Transform; cmb-cdn prüfen; MCP-Wrapper; CI-Subset-Hang]" | 2026-10-11 | Operator (Session, Mycelium 307) |
 | **„ja"** — `OPENTOPOGRAPHY_API_KEY` als GitHub-Actions-Secret im eigenen Repo hinterlegen | 2026-10-11 | Operator (Session, Mycelium 307) |
 | **„ja"** — `opencode.json`-MCP-Konfiguration anfassen (Wrapper `bin/chrome-devtools-mcp` + egress-Allowlist) | 2026-10-11 | Operator (Session, Mycelium 307) |
+| **„weiter"** — research + Rat + Roster auf die offenen Architekturfragen fahren | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge306.md` §Operator-Wort-Register (via `git show <sha>:docs/handover/archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -42,12 +43,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** (a) `coverage-manifest.yml`-Matrix-Eintrag für `tnm` + Page-Bound; (b) weitere Arme `s3-copc|s3-laz|wfs|arcgis|ept`.
 
-### Frame/Epoche → bbox-off als sicherer Default; Transform-Layer `pending`
+### Frame/Epoche → bbox-off bleibt; Transform gehört an den Query-Time-Loader (Rat+UI bestätigt)
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `state/mycelium/frame-epoch-findings.md`: drei bbox-Emitter defaulten url-only (`ShardPlacement::Pending` → nicht verworfen). Fünf Portal-Bins bereits url-only.
-- **Blockade:** Transform-Layer braucht CRS-aus-VLRs (zweiter Range-Request) + projiziert→geodätisch (fehlt) + Epoche je Shard + Grammatik-Slot.
-- **Braucht:** Transform-Layer als eigener Bau oder dauerhaft bbox-off; Entscheidung bei Mountain. **Nicht in diesem Atom umgesetzt** (Architektur; braucht Mountain/Rat-Wort).
+- **Lage:** (gemessen 2026-10-11) Research `state/mycelium/frame-epoch-feasibility.md` + Rat (`confirm`) + UI-Runde (`state/stimmen/20261011T1035Z_mycelium_architektur-verdikte.md`; Claude/Z.ai/Qwen bestätigen): **`--bbox-off` bleibt der verlustfreie Default** (`ShardPlacement::Pending` → `coverage_manifest.rs:78`); der Frame-Transform gehört an den **Query-Time-Loader**, nicht ins statische Manifest. Korrekturen am Befund: die ICRS-Hälfte ist gebaut (`itrf_to_icrs`, `receiver.rs:1918`); nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`), die zwei anderen Emitter-Bboxes sind inert; der Format-Token steht `coverage.rs:714` (nicht `:529`).
+- **Blockade:** eine 7. Token/Grammatik-Slot-Erweiterung des `shard`-Vertrags = Wire-Kontrakt-Änderung (Operator/Rat-Wort), nicht Session-Schreibakt.
+- **Braucht:** (a) Query-Time-Loader liest CRS **und** Epoche aus dem Shard-Header (LAS/COPC-VLR-Decode = die Vorbedingung; UI-Schärfung); (b) **wenn** je ein Grammatik-Slot erwogen wird → Operator/Rat-Wort. Sonst bleibt bbox-off permanent.
 
 ### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — dispatched; sha256 offen
 - **Status:** wartend | **Bindung:** eigen
@@ -98,12 +99,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** die nicht-COPC-Körper brauchen Parser (Mountain).
 - **Braucht:** Parser für MOLA/MLA/NLR/OLA/Hayabusa (Mountain); LOLA-Bin in `coverage-manifest.yml` verdrahten.
 
-### Bathymetrie — Grids keyless; Topo-Bathy-Punktwolken getrennt
+### Bathymetrie/Raster — Sampling-Compiler in die `Gestalt`-Witness (Rat+UI bestätigt); BlueTopo/EMODnet offen
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:river**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11, keyless) Grids GEBCO/BlueTopo/ETOPO/EMODnet/GMRT/SRTM15+; Topo-Bathy-Punktwolken NOAA `noaa-nos-coastal-lidar-pds` (`noaa_nos_coverage.rs` + STAC 193 Topobathy).
-- **Blockade:** Grids sind Raster, nicht im `shard`-Kontrakt.
-- **Braucht:** Raster-Konsument (`pending`); Topo-Bathy läuft über `noaa_nos_coverage` + flai.
+- **Lage:** (gemessen 2026-10-11) Research `state/mycelium/raster-consumer-feasibility.md` + Rat (`confirm`) + UI (`state/stimmen/20261011T1035Z_mycelium_architektur-verdikte.md`): **kein Vertragswechsel** — die `FieldIdentity::Witness(WitnessKind::Gestalt)`-Klasse (`witness.rs:24`) + Sampling-Compiler (`gmrt_compiler.rs:38-120`, `gebco_bathymetry_compiler.rs`) tragen die Raster. **Punkt/XYZ-servierbar** (gemessen): GEBCO (`api.opentopodata.org/v1/gebco2020`), GMRT (`gmrt.org/services/PointServer`), ETOPO (`opentopodata.org/v1/etopo1`), BlueTopo (ArcGIS `gis.ccom.unh.edu`, ERDDAP). **Raster-only:** SRTM15+, EMODnet (`depth_sample` 500 = unverifiziert).
+- **Blockade:** keine (Muster steht). UI-Schärfung: der Compiler muss Sampling-Parameter (Auflösung/Interpolation) **und** vertikales Datum (Chart Datum vs. Ellipsoid) festhalten.
+- **Braucht:** BlueTopo + EMODnet als Register-Zeile + Sampling-Compiler (EMODnet wartet auf eine gemessene Sampling-Form); Topo-Bathy-Punktwolken laufen über `noaa_nos_coverage` + flai.
 
 ## Registrierte Korrekturen & Vorfälle
 
