@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Fortsetzungs-Atom auf Operator-Befehl („auf jeden eigen einen Taucher, der abschließt"). Gebaut/geheilt: SPT-3G-D1 FITS-HDU-Offset (Fix v2), Frame/Epoche-CRS 2154/2056/28992, ea_lidar-Walk-Ende, coverage-CKAN-Arm, usgs-Manifest-Dispatch, OE-417+EAGLE-I-Compiler (+cdn.yml), DemoTER-Lizenz gemessen (nicht-kommerziell), MCP-Config verifiziert, OpenTopography dispatcht, dwd/worldclim-Testbrüche geheilt.
   class: handover
   date: 2026-10-11
-  sha256: 7de119b59ecf41f301af7763e4381b0a97b52b27adaa7aee0ebc0208099187f6
+  sha256: 3913fe093e2674ccd50f493b6c71c016076d9c0ac114a09c97359dd44b8d2596
   status: live
 -->
 # Handover — Mycelium-Folge 310 (2026-10-11)
@@ -75,12 +75,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** die Register-Direktiven (url/origin/compiler/format/quantity) gehören in `phi/sources.φ` — von fremder Linie gehalten; Mountain muss `terms`/`field` setzen.
 - **Braucht:** (a) Register-Block OE-417 + EAGLE-I (Mountain terms + Mycelium url/origin); (b) die beiden Workflows dispatcht messen.
 
-### DEMETER — Lizenz gemessen (nicht-kommerziell → nur lokale Registrierung)
+### DEMETER — Lizenz V1.1 nicht-kommerziell; **CDN-Spiegel entfernt, CI-Upload gestoppt**
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
-- **Trigger:** Lauf `38135966376` endet
-- **Lage:** (gemessen 2026-10-11) **Riss gelöst:** die Lizenz ist die **CDPP Data-Centre-Lizenz V1.1** (`cdpp.irap.omp.eu/index.php/licence-sipad`, HTTP 200): nicht-kommerziell, Weitergabe an Dritte nur mit schriftlicher vorheriger Zustimmung. „Licence Etalab-2.0" war eine Cross-Source-Fehlzuordnung (`phi/sources.φ:11142` gehört zu IGN LiDAR HD). Lauf `38135966376` in_progress.
-- **Blockade:** **kein CDN-Spiegel** (Lizenz verbietet Weitergabe) → nur lokale Registrierung.
-- **Braucht:** lokale Registrierung (kein CDN-Asset) nach Lauf-Ende; `terms` = CDPP V1.1 (Mountain).
+- **Trigger:** Mountains `terms`-Zeile für `regards.cnes.fr`
+- **Lage:** (gemessen 2026-10-11) **Riss gelöst:** Lizenz = **CDPP Data-Centre-Lizenz V1.1** (`cdpp.irap.omp.eu/index.php/licence-sipad`, HTTP 200): nicht-kommerziell, Weitergabe an Dritte nur mit schriftlicher vorheriger Zustimmung. „Etalab-2.0" war eine Cross-Source-Fehlzuordnung (`phi/sources.φ:11142` = IGN LiDAR HD). **CDN-Befund:** der Release `regards.cnes.fr` (`omegaflow/sources`) trug **77 `demeter_isl_*.bin`** (2026-08-04 … 2026-09-12), und `demeter-cdn`-Lauf `38135966376` stand im Upload-Schritt (`--ci-mode`). **Gehandelt:** Lauf `38135966376` **cancelled**; Release `regards.cnes.fr` **gelöscht** (`gh release delete --cleanup-tag`, öffentlicher Spiegel damit weg); die beiden DEMETER-CDN-Workflows **entfernt** (kein CI-Upload-Pfad mehr). Der `--ci-mode`-Upload im `demeter_compiler.rs` bleibt als Code, hat aber keinen Lauf mehr.
+- **Blockade:** keine (Lizenz erzwingt lokal-only).
+- **Braucht:** lokale Registrierung (kein CDN-Asset); `terms` = CDPP V1.1 (Mountain).
 
 ### MCP no-leak — Config verifiziert (Runtime-Hälfte offen)
 - **Status:** eigen | **Bindung:** eigen
@@ -93,31 +93,71 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf `38150636428` endet
 - **Lage:** (gemessen 2026-10-11) Run `38150636428` in_progress (self-hosted, head `22f125ea`); Secret `OPENTOPOGRAPHY_API_KEY` im Repo gesetzt.
+- **Blockade:** keine
 - **Braucht:** Ergebnis lesen.
 
 ### LiDAR-Inventar / extraterr. LiDAR / Bathymetrie — Teile mountain
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) TNM/TNM + LOLA + CKAN verdrahtet; `bluetopo`/`emodnet_bathymetry`-Compiler stehen.
+- **Blockade:** die Parser/Register-Blöcke liegen bei Mountain.
 - **Braucht:** (a) je weiterer Bucket ein `<x>_coverage.rs`; (b) Parser für MOLA/MLA/NLR/OLA/Hayabusa (Mountain); (c) BlueTopo-Gestalt + Register-Blöcke (Mountain, `phi` fremd-gehalten).
 
 ### modvolc/its_live/masie/fingrid — Manifestationsstand
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `38148104363` (modvolc-cdn) endet
 - **Lage:** (gemessen 2026-10-11) `masie-cdn` **success**; `its_live-cdn 38148180126` **success**; `modvolc-cdn` queued/in_progress; `fingrid-cdn` rot (s. o.).
+- **Blockade:** wartet auf die Läufe.
 - **Braucht:** `modvolc-cdn`-Ergebnis lesen.
 
 ### Architektur — CI-Optimierung
 - **Status:** wartend | **Bindung:** eigen · **Teile linie:mountain/river**
 - **Trigger:** grüner `ci-check`-Lauf
 - **Lage:** (gemessen 2026-10-11) mehrere `ci-gate`-Läufe in `subset → Run cargo test --lib`.
+- **Blockade:** Shard-Build-vs-Test-Anteil erst an green ci-check messbar.
 - **Braucht:** grüner `ci-check` → `ci_manage jobs <id>`; dann `cargo nextest archive` + Shards.
 
 ### matrix-rotor
 - **Status:** wartend | **Bindung:** eigen (Workflow) · **Teile linie:river**
 - **Trigger:** nächster Lauf
 - **Lage:** (gemessen 2026-10-11) letzter rot = transienter Runner-Shutdown (kein Assertion-Rot); Doc/Code-Divergenz geschlossen.
+- **Blockade:** nur der persistente t420 ist dauerhaft.
 - **Braucht:** —
+
+### fingrid-cdn — Secret angelegt; re-dispatcht
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf `38151131599` endet
+- **Lage:** (gemessen 2026-10-11) Ursache gemessen (river-folge187): der Repo-Secret-Liste fehlte `FINGRID_API_KEY` (Sync-Mechanismus legt Einzel-Secrets nur für zur Sync-Zeit in `.github` gelesene `secrets.<NAME>` an; Workflow kam nach dem letzten Bulk-Sync). `bin/secrets-sync.sh --set FINGRID_API_KEY` → Secret existiert jetzt (Repo-Secret-Zahl 51→52, angelegt 15:23:54Z, Werte nie gelesen); re-dispatcht `38151131599`.
+- **Blockade:** keine
+- **Braucht:** Ergebnis lesen.
+
+### Future-235 §An mycelium gefaltet — `de441-de442-sha` (resolved) + `dropped-gate-move-disposition` (Riss)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, `de44-cdn`-Lauf `37634706117` success + Release `ssd.jpl.nasa.gov-de`) `de441-de442-sha` ist **geschlossen** — die neun Register-`sha256` (`phi/sources.φ:4334-4406`) stimmen 9/9 mit dem CDN-Release-Digest (Commit `b85c0e7b72`, Mycelium-288). **Riss:** `dropped-gate-move-disposition` — die Baseline `docs/zustand/dropped-legacy-baseline.txt` ist **neu gesetzt 2026-10-11 auf 54 Keys** (`7e6e39650`), nicht mehr „924, `278ba2905`" (future-235-Zitat korrekt-historisch, aber stale); der `ci-gate`-Job `dropped-gate` ist am HEAD **rot**: `current 9 | pinned 54 | new 9` (9 neue Drop-Keys ohne Disposition, `--changed-since 0833f05ad`).
+- **Blockade:** die 9 neuen Keys brauchen eine Disposition oder die Baseline eine Re-Seed.
+- **Braucht:** die 9 Keys witnessen/disponieren oder die Baseline nach Messung re-seeden (`docs/zustand/dropped-legacy-baseline.txt`).
+
+### Orphan-Prosa-Träger (future-235) — Träger in dieser Übergabe
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, future-235) trägerlose Prosa-Dokumente mit offenem Marker: `docs/concepts/free-voices.md` (1) · `docs/concepts/tools-map.md` (2) · `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (1) · `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1) · `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2).
+- **Blockade:** keine
+- **Braucht:** je Dokument den nächsten Schritt abarbeiten (frei/offen); Carry ist diese Zeile.
+
+### THEMIS-ASI-Keogramm-Compiler (gefaltet aus river-187)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, river-187) river-187 bittet um einen keylosen Compiler in `tools/harvest`, der je Nacht/Station die `stream2`-Keogramme (`.pgm.jpg`) am UCalgary-Archiv holt und per `--ci-mode` aufs CDN legt (reproduzierbare gelabelte Nächte).
+- **Blockade:** keine
+- **Braucht:** Bau (Taucher) + `*-cdn.yml`.
+
+### SWPC/RTSW-Archivreihe-Harvest (gefaltet aus river-187)
+- **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** Mountains Quelle + `ttl` genannt
+- **Lage:** (gemessen 2026-10-11, Lauf `38119733631` Job `matrix-vlies`) die 126 `alignment pending`-Zellen schließen erst mit einem Compiler auf die **Archivreihe** (statt ~1-Tag-Live). Vorher ein Quellen-/Gitter-Thema.
+- **Blockade:** Mountains Quelle/`ttl` noch nicht genannt.
+- **Braucht:** Mountains Quelle+`ttl`, dann Compiler + `*-cdn.yml`.
 
 ## Registrierte Korrekturen & Vorfälle
 
@@ -125,6 +165,9 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Zwei Testbrüche auf HEAD geheilt (riss):** `dwd_cdc_compiler.rs` (`Station` ohne `Debug`/`PartialEq`), `worldclim_compiler.rs` (`Variable` ohne `Debug`) — `cargo check -p omegaflow-harvest --tests` jetzt 0/0.
 - **DEMETER-Lizenz-Riss aufgelöst (gemessen):** „Etalab-2.0" widerlegt (Cross-Source-Fehlzuordnung); CDPP V1.1 = nicht-kommerziell → **kein CDN**.
 - **fingrid weiter rot trotz Repo-Secret** — Ursache unread (`38149706994`).
+- **DEMETER war auf dem öffentlichen CDN (gemessen 2026-10-11):** Release `regards.cnes.fr` trug 77 `demeter_isl_*.bin`; `demeter-cdn`-Lauf `38135966376` im Upload-Schritt. Lizenz V1.1 verbietet Weitergabe → Lauf cancelled, Release gelöscht, die zwei `demeter-*-cdn.yml` entfernt.
+- **`dropped-gate`-Baseline stale (gemessen):** `docs/zustand/dropped-legacy-baseline.txt` = 54 Keys (`7e6e39650`), nicht „924, `278ba2905`"; `ci-gate`-Job `dropped-gate` rot (`current 9 | pinned 54 | new 9`).
+- **Drei adressierte Blöcke gefaltet:** future-235, mountain-316, river-187.
 
 ## An mountain
 
