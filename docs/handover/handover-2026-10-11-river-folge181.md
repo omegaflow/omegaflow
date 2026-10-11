@@ -3,7 +3,7 @@
   session: River-Folge 181
   class: handover
   date: 2026-10-11
-  sha256: 7d15a54803cacf089abbf51c2fcfafc98812ca466bfdd57b849964ed8f1b9eae
+  sha256: eceba9feac4464248a365361a40e73567f22354d32ee3d305c56bfa722b64bfc
   status: live
 -->
 # Handover — River-Folge 181 (2026-10-11)
@@ -20,7 +20,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 **parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
 (**Trigger** / **Lage** / **Blockade** / **Braucht**).
 
-## Burn: open 0.0000 · close 0.1290 · cap 0.15 — Grund: River F181 (deepseek-flash), kein pro/max; der Coverage-Manifest-Fetch-Loop in `main_flow.rs` gebaut + die window-graph-Orientierungsfrage durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster (7 UI-Seats) geführt; die eigene `line`-Session „River-Linie: Übergabe in einem Pass abarbeiten" bei $0.1290 (session_burn zur Messzeit).
+## Burn: open 0.0000 · close 0.1789 · cap 0.25 (erhöht, Operator-Wort 2026-10-11: zweite Deep-Thinking-Roster-Runde) — Grund: River F181 (deepseek-flash), kein pro/max; der Coverage-Manifest-Fetch-Loop in `main_flow.rs` gebaut + die window-graph-Orientierungsfrage durch `--all`-Recherche + Rat (5 Stimmen) + zwei Max-Roster-Runden (Frontier + Tryingopen; zweite in Deep-Thinking-Mode) geführt; die eigene `line`-Session „River-Linie: Übergabe in einem Pass abarbeiten" bei $0.1789 (session_burn zur Messzeit).
 
 ## Operator-Wort-Register
 
@@ -66,7 +66,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 ### window-graph — min-p-Rung steht, Orientierungs-Architektur entschieden (Rat + Roster)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keiner — eigener Bau-Schritt (die Architektur ist entschieden).
-- **Lage:** (gemessen 2026-10-11, River 181) Schritt 5 steht (F180): `summary_edge()` + `summary_graph_from_rungs()` — je Zelle die min-p-Rung (per-Paar native Skala), annotiert Skala/Lag/n/te/p (Assaad 2022, kein Resampling). Die Zellen sind gerichtet (`expect cells 210` = 15·14). **Die Orientierungs-Semantik ist entschieden** (`state/stimmen/2026-10-11-river-window-orientierung-roster.md`; Rat + 7 Seats): die unbedingte C-Rung-Zeile orientiert **nicht**, sie klassifiziert Kandidaten; der Pfeil lebt in D (bedingtes MCI, PC1, BY-FDR). Vergleich nur bei identischer `delta_s`; Kippen über Skalen = `pending`, `riss` erst bei bedingtem Widerspruch.
+- **Lage:** (gemessen 2026-10-11, River 181) Schritt 5 steht (F180): `summary_edge()` + `summary_graph_from_rungs()` — je Zelle die min-p-Rung (per-Paar native Skala), annotiert Skala/Lag/n/te/p (Assaad 2022, kein Resampling). Die Zellen sind gerichtet (`expect cells 210` = 15·14). **Die Orientierungs-Semantik ist entschieden** (`state/stimmen/2026-10-11-river-window-orientierung-roster.md`; Rat + 7 Seats): die unbedingte C-Rung-Zeile orientiert **nicht**, sie klassifiziert Kandidaten; der Pfeil lebt in D (bedingtes MCI, PC1, BY-FDR). Vergleich nur bei identischer `delta_s`; Kippen über Skalen = `pending`, `riss` erst bei bedingtem Widerspruch. Eine zweite **Deep-Thinking-Runde** (GPT-6 Luna + Sonnet 5.5 Extra hoch + GLM-5.3 Deep Think Max + Hy4 770B, Operator-Wort) bestätigt und schärft: gleiche Δs allein genügt nicht (Horizont/Fenster/Sampling/Schätzer gleich halten); für „nur X→Y" eine Äquivalenzgrenze statt „rückwärts nicht signifikant", ergänzend ein gepaarter Block-Bootstrap des Richtungsunterschieds.
 - **Blockade:** keine.
 - **Braucht:** bauen — `enum PairOrientation { Candidate, Colliding, Riss, Absent, Pending }` + `fn pairwise_orientation(outcomes: &[MatrixCellOutcome]) -> Vec<PairOrientation>` neben `summary_edge` (`tools/measure/src/bin/field_te_query.rs:5433`): rung-index-gleich (`o.ladder[i].delta_s == o2.ladder[i].delta_s`, sonst `Riss`), auf den FDR-korrigierten `pass`-Flags; vier Test-Gates (beide pass → Colliding; einer pass → Candidate; Kippen über Rungen → pending/riss; keine gemeinsame `delta_s` → Riss). Danach `summary_graph_from_rungs` um die Pair-Klassen-Zeilen ergänzen (Kandidat als `candidate`, nie als Pfeil). Die Pfeil-Prägung bleibt dem D-Pfad (`mci.rs`/`run_summary_panel`).
 
