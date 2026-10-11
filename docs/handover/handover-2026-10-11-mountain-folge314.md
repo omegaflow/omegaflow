@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Taucherstaffel (10 Taucher) über alle offenen Punkte der folge313: Messungen, Riss-Auflösungen, verdikt-reife Vorlagen
   class: handover
   date: 2026-10-11
-  sha256: 6e6bd3ef72178b126e8568501ce7636595f35b02d4c696b2d5ab38d86ab4d918
+  sha256: 411dfb84d4f274339470ad97aca416bf4fbdbb669abd4142efee97e18a57e762
   status: live
 -->
 # Handover — Mountain-Folge 314 (2026-10-11)
@@ -65,12 +65,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Blockade:** `phi/sources.φ` fremd-modifiziert (s. o.).
 - **Braucht:** `at voyager1`/`at voyager2` setzen, sobald das Register sauber ist.
 
-### SuperMAG-Derivate — Keep-Entscheid
+### SuperMAG-Derivate — Keep-Entscheid + Riss (uncommittete Löschung)
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11) `sgrep -i substorm src tools` = Konsumenten **vorhanden**: `src/archivar/substorm.rs`, `tools/measure/src/bin/substorm_compare.rs`, `gic_onset_detector.rs`, `nobel_probe_bz.rs`. Ein Abstoßen würde lebende Konsumenten orpharen → **Keep**.
-- **Blockade:** keine.
-- **Braucht:** Verdikt `keep` in `phi/sources.φ` (den Future-Abstoß-Vorschlag zurückweisen); CDN-Release bleibt.
+- **Lage:** (gemessen 2026-10-11) `sgrep -i substorm src tools` = Konsumenten **vorhanden**: `src/archivar/substorm.rs`, `tools/measure/src/bin/substorm_compare.rs`, `gic_onset_detector.rs`, `nobel_probe_bz.rs` → **Keep**. **Riss:** `phi/sources.φ` trägt **uncommittete** Arbeitsbaum-Deletionen (`git diff --numstat` = 0 add / 40 del) — genau die 5 `substorm_{forsyth,frey,liou,newell,ohtani}`-Blöcke (`:20011-20050`); **kein committeter Autor** (letzter phi-Commit `8d0b4c633` = Mountain 313, die Blöcke sind darin); nicht aus dieser Session. Die Deletion würde die vier Konsumenten orpharen.
+- **Blockade:** die uncommittete Fremd-Deletion steht im Weg jedes phi-Edits (nicht sweepbar ohne fremde Arbeit mitzunehmen).
+- **Braucht:** **Klärung des Autors** der Deletion (Operator/concurrent line?) — entweder die Blöcke **wiederherstellen** (Konsumenten-Beleg) oder die Konsumenten mit-abschaffen; erst danach die übrigen Mountain-Register-Verdikte setzen.
 
 ### future-232 — MODVOLC/ITS_LIVE/MASIE Verdikt
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -134,6 +134,20 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Lage:** (gemessen 2026-10-11, unverändert) kein offener Datensatz trägt eine im Datensatz gemessene Koordinate.
 - **Blockade:** der Repräsentativpunkt ist eine wissenschaftliche Annahme, keine Messung.
 - **Braucht:** je Zeile den extern gedeckten Repräsentativpunkt → eine Zeile in `phi/sources.φ` → TE-Paar-CI-Feed.
+
+### Exposom-Register — `field`-Zeilen je Klasse
+- **Status:** eigen (Register) | **Bindung:** eigen
+- **Trigger:** der nächste Register-Pass
+- **Lage:** (gemessen 2026-10-11, `state/zustand/wartend.φ:27`) Reader `osm_pbf`/`eionet_cdr` + Compiler stehen; die `field`-Zeilen je Exposom-Klasse fehlen (Mountain).
+- **Blockade:** `phi/sources.φ` fremd-modifiziert (s. SuperMAG-Riss).
+- **Braucht:** je Klasse die `field`-Zeilen aus dem Reader-Schema setzen.
+
+### Mindat Level-1 — Wiedervorlage
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Freigabe Level 1 — Wiedervorlage 2026-10-13
+- **Lage:** (gemessen 2026-10-11, `state/zustand/wartend.φ:29`) kein keyless Bulk-Pfad (OpenMindat tokenpflichtig; `mindat.org/copyrights.php` CC-SA noch nicht in Kraft); `MINDAT_TOKEN` Level 0.
+- **Blockade:** externe Freigabe.
+- **Braucht:** Wiedervorlage 2026-10-13.
 
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
