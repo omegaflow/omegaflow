@@ -33,11 +33,10 @@ const GEOMETRY_HINTS: [&str; 15] = [
     "coordinate",
 ];
 
-const REGISTERS: [&str; 5] = [
+const REGISTERS: [&str; 4] = [
     "phi/sources.φ",
     "phi/pipeline/ledger.φ",
     "tools/utils/data/library.φ",
-    "phi/witnesses.φ",
     "tools/register/data/bands.φ",
 ];
 

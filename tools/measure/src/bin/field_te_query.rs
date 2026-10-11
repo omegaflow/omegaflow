@@ -1393,7 +1393,7 @@ fn witness_kind_token(token: &str) -> Option<WitnessKind> {
 }
 
 fn load_witnesses() -> Vec<WitnessRecord> {
-    match std::fs::read_to_string("phi/witnesses.φ") {
+    match std::fs::read_to_string("phi/sources.φ") {
         Ok(content) => parse_witnesses(&content),
         Err(_) => Vec::new(),
     }
@@ -1939,7 +1939,7 @@ fn direction_angles(pairs: &[(f64, f64)]) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
 }
 
 fn run_direction_query(name: &str, witnesses: &[WitnessRecord]) -> i32 {
-    println!("=== direction query — circular form over phi/witnesses.φ ===");
+    println!("=== direction query — circular form over phi/sources.φ ===");
     let Some(w) = find_witness(witnesses, name) else {
         println!("DIRECTION: pending — '{name}' stands in no witness block");
         return 0;
@@ -2192,7 +2192,7 @@ fn compare_spectral_epochs(aligned: &[(f64, f64, f64)]) -> Option<SpectralEpochC
 }
 
 fn run_spectral_query(name_arg: &str, witnesses: &[WitnessRecord]) -> i32 {
-    println!("=== spectral / substance / gestalt form over phi/witnesses.φ ===");
+    println!("=== spectral / substance / gestalt form over phi/sources.φ ===");
     let names = spectral_epoch_names(name_arg);
     let Some(&first) = names.first() else {
         println!("SPECTRAL: pending — no witness named");
@@ -4180,7 +4180,7 @@ fn run_parity_witness(
     driver_name: Option<&str>,
     anchor: &QueryAnchor,
 ) -> i32 {
-    println!("=== parity bridge — witness register over phi/witnesses.φ ===");
+    println!("=== parity bridge — witness register over phi/sources.φ ===");
     let Some(w) = find_witness(witnesses, name) else {
         println!("PARITY-WITNESS: pending — '{name}' stands in no witness block");
         return 0;
@@ -6298,6 +6298,8 @@ mod tests {
             url: "https://example.com/x".into(),
             origin: None,
             terms: None,
+            band: None,
+            footprint: None,
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,
@@ -6336,6 +6338,7 @@ mod tests {
             cgm_source: None,
             geomag_lat: None,
             weberin_role: None,
+            witness: None,
         }
     }
 

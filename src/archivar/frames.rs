@@ -21,7 +21,7 @@ pub fn draft_frame_guess(
 
 pub fn build_frame_registry() -> HashMap<String, String> {
     let mut map: HashMap<String, String> = HashMap::new();
-    for path in ["phi/sources.φ", "phi/witnesses.φ"] {
+    for path in ["phi/sources.φ"] {
         let Ok(content) = std::fs::read_to_string(path) else {
             continue;
         };

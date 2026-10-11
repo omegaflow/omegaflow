@@ -3719,7 +3719,7 @@ pub fn draft_context_mode(path: &str) -> i32 {
     }
     let registry = build_frame_registry();
     let mut reg = String::from(
-        "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + witnesses.φ + frame_learned.φ\n",
+        "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + frame_learned.φ\n",
     );
     let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
     reg_keys.sort();
@@ -3800,24 +3800,26 @@ pub fn gate_learn_mode() -> i32 {
     let mut delta: Vec<(i32, String, String)> = Vec::new();
     let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
     if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ")
-                && let Some(nl) = extract_netloc(rest.trim())
-                && seen.insert(format!("+{}", nl))
-            {
-                delta.push((4, "-".to_string(), nl.to_string()));
+        for block in content.split("\n\n") {
+            let mut witness = false;
+            let mut url: Option<&str> = None;
+            for line in block.lines() {
+                let t = line.trim();
+                if t.starts_with("witness ") {
+                    witness = true;
+                } else if let Some(rest) = t.strip_prefix("url ") {
+                    url = extract_netloc(rest.trim());
+                }
             }
-        }
-    }
-    if let Ok(content) = std::fs::read_to_string("phi/witnesses.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ")
-                && let Some(nl) = extract_netloc(rest.trim())
-                && seen.insert(format!("w{}", nl))
-            {
-                delta.push((2, "w".to_string(), nl.to_string()));
+            if let Some(nl) = url {
+                let (w, tag, key) = if witness {
+                    (2, "w", format!("w{}", nl))
+                } else {
+                    (4, "-", format!("+{}", nl))
+                };
+                if seen.insert(key) {
+                    delta.push((w, tag.to_string(), nl.to_string()));
+                }
             }
         }
     }
@@ -3830,7 +3832,7 @@ pub fn gate_learn_mode() -> i32 {
         }
     }
     let mut d = String::from(
-        "# gate-delta — netloc weights, self-learning from sources.φ (+) + witnesses.φ (w)\n",
+        "# gate-delta — netloc weights, self-learning from sources.φ (+ force sources, w witnesses)\n",
     );
     for (w, f, tag) in &delta {
         d.push_str(&format!("{} {} {}\n", w, f, tag));

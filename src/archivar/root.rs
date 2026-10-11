@@ -82,6 +82,15 @@ impl<'a> Cursor<'a> {
         Some(slice)
     }
 
+    fn skip(&mut self, n: usize) -> Option<()> {
+        let end = self.pos.checked_add(n)?;
+        if end > self.buf.len() {
+            return None;
+        }
+        self.pos = end;
+        Some(())
+    }
+
     fn u8(&mut self) -> Option<u8> {
         Some(self.take(1)?[0])
     }
@@ -622,12 +631,34 @@ pub fn decompress_object(bytes: &[u8], key: &RootKey) -> Option<Vec<u8>> {
 const BRANCH_VERSION: i16 = 12;
 const BRANCH_ELEMENT_VERSION: i16 = 9;
 
+pub const BRANCH_BASKET_LAYOUT: &str = "TBranch basket layout, measured 2026-10-11 against ROOT master tree/tree/src/TBranch.cxx (Streamer :2967 v>9 ReadClassBuffer; explicit path :3034-3066) and byte-exact in MasterclassData.root (opendata.cern.ch/record/401, sha256 8694a2ed...039b): TBranch v12, class tag obj+229, version i16 0x000c obj+241, TNamed obj+243, TAttFill count 6 obj+279, fCompress obj+289, fBasketSize obj+293 (=138240), fEntryOffsetLen 297, fWriteBasket 301, fEntryNumber i64 305, fOffset 313, fMaxBaskets 317 (=10), fSplitLevel 321, fEntries i64 325, fFirstEntry i64 333, fTotBytes 341, fZipBytes 349; fBranches/fLeaves/fBaskets inline TObjArrays each leading with [byte count|mask] (fBranches 0x15 obj+357, fLeaves 0x6c obj+382, fBaskets 0x15 obj+494); then per array a present flag byte + elements: fBasketBytes i32[fMaxBaskets] flag obj+519, fBasketEntry i64[fMaxBaskets] flag obj+560, fBasketSeek i64[fMaxBaskets] flag obj+641, fFileName TString obj+722; v<=9 explicit path: fEntryNumber i32, fEntries/fTotBytes/fZipBytes f64 (Stat_t), no fFirstEntry, fBasketEntry i32[fMaxBaskets], fBasketSeek i32 or i64 by its flag byte; TAttFill present for version > 7";
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct BranchMeta {
     pub name: String,
     pub title: String,
     pub leaf_type: String,
     pub offset: i64,
+    pub version: i16,
+    pub basket_size: i32,
+    pub write_basket: i32,
+    pub max_baskets: i32,
+    pub entries: i64,
+    pub basket_bytes: Vec<i32>,
+    pub basket_entry: Vec<i64>,
+    pub basket_seek: Vec<i64>,
+    pub file_name: String,
+}
+
+struct BranchBaskets {
+    basket_size: i32,
+    write_basket: i32,
+    max_baskets: i32,
+    entries: i64,
+    basket_bytes: Vec<i32>,
+    basket_entry: Vec<i64>,
+    basket_seek: Vec<i64>,
+    file_name: String,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -665,6 +696,123 @@ fn leaf_type_from_title(title: &str) -> String {
     }
 }
 
+fn skip_tobjarray(c: &mut Cursor<'_>) -> Option<()> {
+    let count = c.u32()?;
+    if count & K_BYTE_COUNT_MASK == 0 {
+        return None;
+    }
+    c.skip((count & !K_BYTE_COUNT_MASK) as usize)
+}
+
+fn read_basket_bytes_v12(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i32>> {
+    if c.u8()? != 1 {
+        return Some(Vec::new());
+    }
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        out.push(c.i32()?);
+    }
+    Some(out)
+}
+
+fn read_basket_long_v12(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i64>> {
+    if c.u8()? != 1 {
+        return Some(Vec::new());
+    }
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        out.push(c.i64()?);
+    }
+    Some(out)
+}
+
+fn read_basket_bytes_v9(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i32>> {
+    c.u8()?;
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        out.push(c.i32()?);
+    }
+    Some(out)
+}
+
+fn read_basket_entry_v9(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i64>> {
+    c.u8()?;
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        out.push(c.i32()? as i64);
+    }
+    Some(out)
+}
+
+fn read_basket_seek_v9(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i64>> {
+    let wide = c.u8()? == 2;
+    let mut out = Vec::with_capacity(n);
+    for _ in 0..n {
+        out.push(if wide { c.i64()? } else { c.i32()? as i64 });
+    }
+    Some(out)
+}
+
+fn parse_branch_body(c: &mut Cursor<'_>, version: i16) -> Option<BranchBaskets> {
+    c.i32()?;
+    let basket_size = c.i32()?;
+    c.i32()?;
+    let write_basket = c.i32()?;
+    let max_baskets;
+    let entries;
+    if version > 9 {
+        c.i64()?;
+        c.i32()?;
+        max_baskets = c.i32()?;
+        c.i32()?;
+        entries = c.i64()?;
+        c.i64()?;
+        c.i64()?;
+        c.i64()?;
+    } else {
+        c.i32()?;
+        c.i32()?;
+        max_baskets = c.i32()?;
+        if version > 6 {
+            c.i32()?;
+        }
+        entries = c.f64()? as i64;
+        c.f64()?;
+        c.f64()?;
+    }
+    if max_baskets < 0 {
+        return None;
+    }
+    let n = max_baskets as usize;
+    skip_tobjarray(c)?;
+    skip_tobjarray(c)?;
+    skip_tobjarray(c)?;
+    let (basket_bytes, basket_entry, basket_seek) = if version > 9 {
+        (
+            read_basket_bytes_v12(c, n)?,
+            read_basket_long_v12(c, n)?,
+            read_basket_long_v12(c, n)?,
+        )
+    } else {
+        (
+            read_basket_bytes_v9(c, n)?,
+            read_basket_entry_v9(c, n)?,
+            read_basket_seek_v9(c, n)?,
+        )
+    };
+    let file_name = c.tstring()?;
+    Some(BranchBaskets {
+        basket_size,
+        write_basket,
+        max_baskets,
+        entries,
+        basket_bytes,
+        basket_entry,
+        basket_seek,
+        file_name,
+    })
+}
+
 fn parse_branch_frame(obj: &[u8], start: usize) -> Option<(BranchMeta, u32, usize)> {
     let outer = read_u32_at(obj, start)?;
     if outer & K_BYTE_COUNT_MASK == 0 {
@@ -689,6 +837,11 @@ fn parse_branch_frame(obj: &[u8], start: usize) -> Option<(BranchMeta, u32, usiz
     if inner_len < 0 || inner_len as usize != outer_len.checked_sub(prefix_len)? {
         return None;
     }
+    let base_version = if version == BRANCH_ELEMENT_VERSION {
+        c.read_version()?.0
+    } else {
+        version
+    };
     c.read_version()?;
     c.skip_version()?;
     c.u32()?;
@@ -696,12 +849,27 @@ fn parse_branch_frame(obj: &[u8], start: usize) -> Option<(BranchMeta, u32, usiz
     let name = c.tstring()?;
     let title = c.tstring()?;
     let leaf_type = leaf_type_from_title(&title);
+    if base_version > 7 {
+        c.read_version()?;
+        c.i16()?;
+        c.i16()?;
+    }
+    let body = parse_branch_body(&mut c, base_version)?;
     Some((
         BranchMeta {
             name,
             title,
             leaf_type,
             offset: start as i64,
+            version,
+            basket_size: body.basket_size,
+            write_basket: body.write_basket,
+            max_baskets: body.max_baskets,
+            entries: body.entries,
+            basket_bytes: body.basket_bytes,
+            basket_entry: body.basket_entry,
+            basket_seek: body.basket_seek,
+            file_name: body.file_name,
         },
         tag,
         frame_end,
@@ -1250,24 +1418,113 @@ mod tests {
         assert!(parse_streamer_elements(&frame, 0, 1).is_err());
     }
 
-    fn branch_frame(tag: u32, class_name: Option<&str>, version: i16) -> Vec<u8> {
-        let mut tail = Vec::new();
-        push_u32(&mut tail, K_BYTE_COUNT_MASK);
-        push_i16(&mut tail, 1);
-        push_i16(&mut tail, 1);
-        push_u32(&mut tail, 0);
-        push_u32(&mut tail, 0);
-        push_tstring(&mut tail, "px");
-        push_tstring(&mut tail, "px/F");
+    fn push_tobjarray_empty(b: &mut Vec<u8>) {
+        push_u32(b, 19 | K_BYTE_COUNT_MASK);
+        push_i16(b, 3);
+        push_u32(b, 0);
+        push_u32(b, 0);
+        b.push(0);
+        push_i32(b, 0);
+        push_i32(b, 0);
+    }
+
+    fn branch_frame_baskets(
+        tag: u32,
+        class_name: Option<&str>,
+        version: i16,
+        base_version: i16,
+        name: &str,
+        title: &str,
+        basket_bytes: &[i32],
+        basket_entry: &[i64],
+        basket_seek: &[i64],
+    ) -> Vec<u8> {
+        let count = basket_bytes.len() as i32;
+        let mut base = Vec::new();
+        push_u32(&mut base, K_BYTE_COUNT_MASK);
+        push_i16(&mut base, 1);
+        push_i16(&mut base, 1);
+        push_u32(&mut base, 0);
+        push_u32(&mut base, 0);
+        push_tstring(&mut base, name);
+        push_tstring(&mut base, title);
+        if base_version > 7 {
+            push_u32(&mut base, 6 | K_BYTE_COUNT_MASK);
+            push_i16(&mut base, 1);
+            push_i16(&mut base, 0);
+            push_i16(&mut base, 0);
+        }
+        push_i32(&mut base, 0);
+        push_i32(&mut base, 0);
+        push_i32(&mut base, 0);
+        push_i32(&mut base, 0);
+        if base_version > 9 {
+            base.extend_from_slice(&0i64.to_be_bytes());
+            push_i32(&mut base, 0);
+            push_i32(&mut base, count);
+            push_i32(&mut base, 0);
+            for _ in 0..4 {
+                base.extend_from_slice(&0i64.to_be_bytes());
+            }
+        } else {
+            push_i32(&mut base, 0);
+            push_i32(&mut base, 0);
+            push_i32(&mut base, count);
+            push_i32(&mut base, 0);
+            for _ in 0..3 {
+                base.extend_from_slice(&0f64.to_be_bytes());
+            }
+        }
+        push_tobjarray_empty(&mut base);
+        push_tobjarray_empty(&mut base);
+        push_tobjarray_empty(&mut base);
+        if base_version > 9 {
+            base.push(1);
+            for value in basket_bytes {
+                push_i32(&mut base, *value);
+            }
+            base.push(1);
+            for value in basket_entry {
+                base.extend_from_slice(&value.to_be_bytes());
+            }
+            base.push(1);
+            for value in basket_seek {
+                base.extend_from_slice(&value.to_be_bytes());
+            }
+        } else {
+            base.push(1);
+            for value in basket_bytes {
+                push_i32(&mut base, *value);
+            }
+            base.push(1);
+            for value in basket_entry {
+                push_i32(&mut base, *value as i32);
+            }
+            base.push(1);
+            for value in basket_seek {
+                push_i32(&mut base, *value as i32);
+            }
+        }
+        push_tstring(&mut base, "");
+
+        let mut class_body = Vec::new();
+        if version == BRANCH_ELEMENT_VERSION {
+            push_u32(
+                &mut class_body,
+                ((base.len() as u32) + 2) | K_BYTE_COUNT_MASK,
+            );
+            push_i16(&mut class_body, base_version);
+        }
+        class_body.extend_from_slice(&base);
 
         let mut inner = Vec::new();
         push_i16(&mut inner, version);
-        inner.extend_from_slice(&tail);
+        inner.extend_from_slice(&class_body);
 
         let mut body = Vec::new();
         push_u32(&mut body, tag);
-        if let Some(name) = class_name {
-            body.extend_from_slice(name.as_bytes());
+        if let Some(cn) = class_name {
+            body.extend_from_slice(cn.as_bytes());
             body.push(0);
         }
         push_u32(&mut body, (inner.len() as u32) | K_BYTE_COUNT_MASK);
@@ -1277,6 +1534,33 @@ mod tests {
         push_u32(&mut frame, (body.len() as u32) | K_BYTE_COUNT_MASK);
         frame.extend_from_slice(&body);
         frame
+    }
+
+    fn branch_frame(tag: u32, class_name: Option<&str>, version: i16) -> Vec<u8> {
+        branch_frame_baskets(
+            tag,
+            class_name,
+            version,
+            version,
+            "px",
+            "px/F",
+            &[],
+            &[],
+            &[],
+        )
+    }
+
+    fn tree_key(obj: &[u8]) -> RootKey {
+        RootKey {
+            name: "tree".to_string(),
+            class: "TTree".to_string(),
+            nbytes: obj.len() as i32,
+            objlen: obj.len() as i32,
+            keylen: 0,
+            cycle: 1,
+            seek_key: 0,
+            seek_pdir: 0,
+        }
     }
 
     #[test]
@@ -1293,20 +1577,100 @@ mod tests {
             BRANCH_ELEMENT_VERSION,
         ));
 
-        let tree = RootKey {
-            name: "tree".to_string(),
-            class: "TTree".to_string(),
-            nbytes: obj.len() as i32,
-            objlen: obj.len() as i32,
-            keylen: 0,
-            cycle: 1,
-            seek_key: 0,
-            seek_pdir: 0,
-        };
-        let index = parse_tree(&obj, &tree).expect("TBranchElement frames parse");
+        let index = parse_tree(&obj, &tree_key(&obj)).expect("TBranchElement frames parse");
         assert_eq!(index.branches.len(), 2);
         assert_eq!(index.branches[0].name, "px");
         assert_eq!(index.branches[0].leaf_type, "F");
         assert_eq!(index.branches[1].name, "px");
+    }
+
+    #[test]
+    fn branch_frame_v12_reads_basket_arrays_by_max_baskets() {
+        let obj = branch_frame_baskets(
+            K_NEW_CLASS_TAG,
+            Some("TBranch"),
+            BRANCH_VERSION,
+            BRANCH_VERSION,
+            "px",
+            "px/F",
+            &[11, 22],
+            &[33, 44],
+            &[55, 66],
+        );
+        let index = parse_tree(&obj, &tree_key(&obj)).expect("v12 branch with baskets parses");
+        assert_eq!(index.branches.len(), 1);
+        let branch = &index.branches[0];
+        assert_eq!(branch.version, BRANCH_VERSION);
+        assert_eq!(branch.max_baskets, 2);
+        assert_eq!(branch.write_basket, 0);
+        assert_eq!(branch.basket_bytes, vec![11, 22]);
+        assert_eq!(branch.basket_entry, vec![33, 44]);
+        assert_eq!(branch.basket_seek, vec![55, 66]);
+        assert_eq!(branch.file_name, "");
+    }
+
+    #[test]
+    fn branch_frame_v9_reads_int_entry_and_seek_arrays() {
+        let obj = branch_frame_baskets(
+            K_NEW_CLASS_TAG,
+            Some("TBranchElement"),
+            BRANCH_ELEMENT_VERSION,
+            BRANCH_ELEMENT_VERSION,
+            "t",
+            "t/I",
+            &[7],
+            &[9],
+            &[13],
+        );
+        let index = parse_tree(&obj, &tree_key(&obj)).expect("v9 branch with baskets parses");
+        assert_eq!(index.branches.len(), 1);
+        let branch = &index.branches[0];
+        assert_eq!(branch.version, BRANCH_ELEMENT_VERSION);
+        assert_eq!(branch.max_baskets, 1);
+        assert_eq!(branch.basket_bytes, vec![7]);
+        assert_eq!(branch.basket_entry, vec![9]);
+        assert_eq!(branch.basket_seek, vec![13]);
+    }
+
+    #[test]
+    fn branch_frame_element_v9_base12_reads_v12_basket_arrays() {
+        let obj = branch_frame_baskets(
+            K_NEW_CLASS_TAG,
+            Some("TBranchElement"),
+            BRANCH_ELEMENT_VERSION,
+            BRANCH_VERSION,
+            "fDetId",
+            "fDetId/I",
+            &[17, 34],
+            &[51, 68],
+            &[85, 102],
+        );
+        let index =
+            parse_tree(&obj, &tree_key(&obj)).expect("TBranchElement base 12 with baskets parses");
+        assert_eq!(index.branches.len(), 1);
+        let branch = &index.branches[0];
+        assert_eq!(branch.version, BRANCH_ELEMENT_VERSION);
+        assert_eq!(branch.name, "fDetId");
+        assert_eq!(branch.max_baskets, 2);
+        assert_eq!(branch.basket_bytes, vec![17, 34]);
+        assert_eq!(branch.basket_entry, vec![51, 68]);
+        assert_eq!(branch.basket_seek, vec![85, 102]);
+    }
+
+    #[test]
+    fn branch_frame_truncated_basket_array_is_rejected() {
+        let mut obj = branch_frame_baskets(
+            K_NEW_CLASS_TAG,
+            Some("TBranch"),
+            BRANCH_VERSION,
+            BRANCH_VERSION,
+            "px",
+            "px/F",
+            &[11, 22],
+            &[33, 44],
+            &[55, 66],
+        );
+        obj.truncate(obj.len() - 12);
+        assert!(parse_tree(&obj, &tree_key(&obj)).is_err());
     }
 }

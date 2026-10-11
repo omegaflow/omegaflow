@@ -348,6 +348,8 @@ fn main() {
             url: path.clone(),
             origin: None,
             terms: None,
+            band: None,
+            footprint: None,
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,
@@ -394,6 +396,7 @@ fn main() {
             cgm_source: None,
             geomag_lat: None,
             weberin_role: None,
+            witness: None,
         };
         match build_netcdf4_volume(&src, &bytes) {
             Some((live_name, live)) => match compare_volumes(&volume, &live) {

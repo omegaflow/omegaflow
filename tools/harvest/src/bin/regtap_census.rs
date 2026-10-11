@@ -120,7 +120,6 @@ fn main() {
             let ledger_path = arg(&args, "--ledger");
             let mut paths = vec![
                 "phi/sources.φ".to_string(),
-                "phi/witnesses.φ".to_string(),
                 "phi/pipeline/ledger.φ".to_string(),
             ];
             if let Some(p) = &ledger_path {

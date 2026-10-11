@@ -89,6 +89,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_terms: Option<String> = None;
     let mut cur_band: Option<String> = None;
     let mut cur_footprint: Option<String> = None;
+    let mut cur_witness: Option<String> = None;
     let mut cur_rights_identifier: Option<String> = None;
     let mut cur_rights_scheme: Option<String> = None;
     let mut cur_rights_uri: Option<String> = None;
@@ -128,6 +129,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     || cur_frame.is_some()
                     || !cur_extracts.is_empty()
                     || !cur_channels.is_empty()
+                    || cur_witness.is_some()
                 {
                     if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                         eprintln!(
@@ -152,6 +154,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             terms: cur_terms.clone(),
                             band: cur_band.clone(),
                             footprint: cur_footprint.clone(),
+                            witness: cur_witness.clone(),
                             rights_identifier: cur_rights_identifier.clone(),
                             rights_scheme: cur_rights_scheme.clone(),
                             rights_uri: cur_rights_uri.clone(),
@@ -220,6 +223,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_terms = None;
                 cur_band = None;
                 cur_footprint = None;
+                cur_witness = None;
                 cur_rights_identifier = None;
                 cur_rights_scheme = None;
                 cur_rights_uri = None;
@@ -281,6 +285,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Some(rest.to_string())
                 };
             }
+            "witness" if parts.len() >= 2 => {
+                cur_witness = Some(parts[1].to_string());
+            }
+            "record" if parts.len() >= 2 => {}
             "rights" => {
                 cur_rights_identifier = parts.get(1).map(|s| s.to_string());
                 cur_rights_scheme = parts.get(2).map(|s| s.to_string());
@@ -2132,10 +2140,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_body = Some(parts[1].to_string());
             }
             "force" if parts.len() >= 2 => {
-                eprintln!(
-                    "force directive refused at {}: force is a field token, not a standalone directive",
-                    parts[1]
-                );
+                if cur_witness.is_none() {
+                    eprintln!(
+                        "force directive refused at {}: force is a field token, not a standalone directive",
+                        parts[1]
+                    );
+                }
             }
             "header" if parts.len() >= 3 => {
                 cur_headers.push((parts[1].to_string(), parts[2].to_string()));
@@ -2535,6 +2545,7 @@ mod tests {
             terms: None,
             band: None,
             footprint: None,
+            witness: None,
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,

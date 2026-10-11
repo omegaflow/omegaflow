@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const REGISTERS: [&str; 2] = ["phi/sources.φ", "phi/witnesses.φ"];
+const REGISTERS: [&str; 1] = ["phi/sources.φ"];
 
 fn collect_files(dir: &str) -> Vec<PathBuf> {
     let mut out = Vec::new();

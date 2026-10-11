@@ -28,16 +28,14 @@ Register ersetzen sie.
 Der Zustand offener Arbeit liegt **nicht** mehr in einem Pipeline-Ledger: er
 liegt in `state/zustand/wartend.φ` (12 pending Compiler + Zugangs-Waits;
 gitignored, lokal) und wird owner-getaggt mit `register_lookup --open` gelesen.
-`phi/` trägt die **2 lebenden Register** (`sources`,
-`witnesses`),
+`phi/` trägt das **1 lebende Daten-Register** (`sources`),
 kein weiteres.
 
 ## 2. Pfadkarte (gemessen 2026-10-11)
 
 | Pfad | Was es IST |
 |------|------------|
-| `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). 2730 `url`-Blöcke. |
-| `phi/witnesses.φ` | Das Zeugen-Register (S²-Richtung, Gestalt, Presence …). 34 Einträge. |
+| `phi/sources.φ` | Das kanonische Register (Annahme-Ziel): die `field`/`force_type`-Blöcke (Kraft-Quellen) + die 34 `witness`/`record`-Blöcke (nicht-strahlende Zeugen: S²-Richtung, Gestalt, Substance, point-event). |
 | `state/zustand/wartend.φ` | Das Wartend-Register (gitignored, lokal): `key \| Gegenüber \| Trigger \| Aufnehmer \| Lage`, eine Zeile je Wait; 12 pending Compiler + Zugangs-Waits. |
 | `src/mathematikerin/descriptors/*.te` | Kanal-Deskriptoren (20) — Konsument `tools/measure/src/bin/field_te_query.rs`. |
 | `src/archivar/testdata/` | Test-Fixtures (8 Verzeichnisse: twomass, ncei_ssi, ncei_goes_xrs, noaa_goes16, noaa_gk2a, noaa_wod, cosmic_wetprf, celestrak_eop). |
@@ -65,11 +63,15 @@ Leerzeile zwischen Blöcken; Direktivenreihenfolge: `url`, Blockzustand
 Extracts in Abhängigkeitsreihenfolge. `no-cadence` trägt eine Quelle ohne
 natürliche Kadenz (ein statisches Archiv): der Parser setzt den Guard 2²⁵ s ≈ 388 d
 (reservierter Wert), das Wort überlebt den Round-trip; eine explizite `ttl` dieses
-Werts liest sich als `no-cadence`.
+Werts liest sich als `no-cadence`. Der Block-Opener unterscheidet die Kraft-Quelle
+(`field`/`force_type`, ein strahlender Feld-Arm) vom nicht-strahlenden Zeugen
+(`witness`/`record` — `witness <kind>` trägt den Diskriminator `SourceConfig::witness`,
+`record <tokens…>` die Record-Namen, `force <medium>` die Kraft-Art; `no-cadence`
+trägt den Zeugen ohne natürliche Kadenz). Beide Block-Klassen liegen in `phi/sources.φ`.
 
 Die drei früheren Dispositions-Register (`dead_sources.φ`/`declined_sources.φ`/
 `blocked_sources.φ`) sind mit dem Architektur-Akt (Operator-Wort 2026-10-11) aus
-dem Kanon entfernt: `phi/` trägt nur noch `sources`/`witnesses`. Die Verdikt-,
+dem Kanon entfernt: `phi/` trägt nur noch `sources`. Die Verdikt-,
 `dead`- und Zugangs-Zustände leben nicht mehr als
 eigene Register; die Zugangs-/Verdikt-Grenze (Operator-Wort 2026-09-15) bleibt
 als Prinzip in `AGENTS.md` (Source-Curation) beschrieben.
