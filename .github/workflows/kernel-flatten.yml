@@ -86,7 +86,7 @@ jobs:
             https://ssd.jpl.nasa.gov/ftp/eph/small_bodies/asteroids_de441/sb441-n373.bsp \
             | cargo run -p omegaflow-utils --release --bin spk_split -- \
               --bodies 2136199,2136108,2136472,2050000,2090482,2020000,2028978,2120347,2174567,2208996,2055565,2055637 \
-              --gm-catalog phi/pipeline/catalog/asteroid_gm_sb441.φ \
+              --gm-catalog tools/harvest/data/asteroid/asteroid_gm_sb441.φ \
               --carrier kernels/de441.bsp \
               --dest kernels \
               --ci-mode
@@ -110,8 +110,8 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin dastcom_compiler -- \
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
-            --gm phi/pipeline/catalog/asteroid_gm_inpop25c.φ \
-            --diameters phi/pipeline/catalog/asteroid_diameters_neowise.φ,phi/pipeline/catalog/asteroid_diameters_akari.φ \
+            --gm tools/harvest/data/asteroid/asteroid_gm_inpop25c.φ \
+            --diameters tools/harvest/data/asteroid/asteroid_diameters_neowise.φ,tools/harvest/data/asteroid/asteroid_diameters_akari.φ \
             --ci-mode
       - name: Compile KBO elements and upload to CDN
         run: |
