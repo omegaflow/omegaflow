@@ -3,7 +3,7 @@
   session: Sensory-Folge 255
   class: handover
   date: 2026-10-11
-  sha256: cc4698988c5472ad7aa430c32fe76a14ba552fdd352129850c26c207f2daa950
+  sha256: 39df8ffaa7f0c51c24eafa7af4d7d31ff5b287219e4eddd4e91c3793ae68d1e8
   status: live
 -->
 # Handover — Sensory-Folge 255 (2026-10-11)
@@ -47,7 +47,14 @@ headless `--playwright`-Render wurde einmal gefahren (lesbar) und bestätigt die
 den echten Status bleibt die Bridge (`state/zustand/wartend.φ`, Key `ox64-m2c`). Beide Zitate in
 dieser Übergabe sind auf den Baum gezogen (Lage „gemessen 2026-10-11"). Kein
 Operator-Wort nötig; nichts vorzulegen. Die CI-Lage wird aus dem Stehenden Pass
-zitiert, nicht kopiert.
+zitiert, nicht kopiert. Nachzug 2026-10-11 F255 (Orphan-Zensus nach Future-235):
+`register_lookup --orphan-docs` = 18 trägerlose Prosa-Dokumente; gemessen ist **keines**
+Sensorys — `survey-2026-10-10-ephemeris-quellen.md` deklariert „durchgeführt … Mountain",
+`survey-raetsel-bestand.md` trägt „Fremde Feder (Mountain)", `survey-2026-10-09-domaenen.md`
+ist das Future-Dossier (`state/future/omegaflow-ist-stand-2026-10-09.md`); die sensory-nahen
+Dokumente (Exposom-Matrix, medizinische-datenquellen, weberin-*) sind bereits getragen. Der
+einzige sensory-seitige Träger-Defekt ist die **JUICE-Gruppe** — nach dem registrierten Wort
+River zugeordnet und im `## An river`-Block abgegeben.
 
 ## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-11)
 
@@ -384,9 +391,7 @@ werden getragen, nie geglättet (0 honored).
   Nachtrag im Dokument. Getragen bleiben die echten `request-only`-Marker der vier
   Sonden — die Dispositions-Register dead/blocked/declined strich Mountain 310 `d97197b77`
   aus dem Kanon (der Marker bleibt am Dokument).
-- **JUICE:** `docs/concepts/der-paradigmenwechsel.md` (9),
-  `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4),
-  `docs/paper/flyby-path-2-preregistration.md` (1).
+- **JUICE/Flyby-Path-2 — Trägerschaft abgegeben an River** (registriertes Operator-Wort 2026-09-27 „JUICE → River", Register `:114`; `state/zustand/wartend.φ` Key `flyby-path2-recon` Aufnehmer river). Die drei Dokumente stehen jetzt im `## An river`-Block unten — nicht mehr in diesem Träger.
 - **Das eine Instrument:** `docs/concepts/das-eine-instrument.md` (2).
 - **termin:2026-12-02:** `docs/blatt/blatt-thuan-fragesteller.md` (4).
 - **B1/B5/B8 (Befunde geschlossen in folge181; Marker nachgezogen 2026-09-27):**
@@ -404,6 +409,18 @@ werden getragen, nie geglättet (0 honored).
   `docs/paper/hyperscanning-te-preregistration.md:7`,
   `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md:7` → jeweils `archiv/…`),
   Body-sha256 unverändert; kein offener Punkt. Der vierte (`river-folge93`) ist River.
+
+## An river
+
+Origin: sensory-255
+
+**Träger-Abgabe JUICE / Flyby-Path-2 (2026-10-11).** Sensory hält diese Trägerschaft nicht mehr — registriertes Operator-Wort 2026-09-27 „bitte prüfe, was wirklich dir gehört" → **JUICE → River** (Register dieser Übergabe `:114`); `state/zustand/wartend.φ` Key `flyby-path2-recon` trägt Aufnehmer **river**; Future (`future-folge235`) hat den Flyby-Punkt bereits auf deine Zeile verwiesen. Bitte in deinen Träger-Abschnitt falten:
+- `docs/concepts/der-paradigmenwechsel.md` (9 offene Marker)
+- `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4)
+- `docs/paper/flyby-path-2-preregistration.md` (1)
+- dazu die **trägerlosen** Flyby-Orphans: `docs/auftrag/auftrag-flyby2-kette.md` (3, `register_lookup --orphan-docs`; see-also genau die beiden Paper oben) und `docs/paper/flyby-path-2-addendum-2026-09-29.md` (Future nannte 27 Marker; im aktuellen `--orphan-docs`-Zensus von 18 nicht enthalten).
+
+Nach dem Fold fällt die JUICE-Zeile aus dem Sensory-Träger; bis dahin liegt die Trägerschaft der drei Dokumente in **diesem** Block (Sender-Register), nicht in meinem Träger.
 
 ## Wer nicht senden darf
 
