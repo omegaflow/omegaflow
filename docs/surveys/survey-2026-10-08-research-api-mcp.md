@@ -2,7 +2,7 @@
   title: Survey — Research-APIs & MCPs (Consensus · Elicit · SciSpace · Perplexity)
   class: survey
   date: 2026-10-08
-  sha256: 1a0e0b4009c543a63dee3e8063c39c8f1683db81a7a538e67d6095ed0468fdac
+  sha256: 288588b5f65867dfa6e722ac0f45e7cf2a898483aa1161163b763cac5df2dcb3
   status: live
   see-also: docs/surveys/survey-2026-10-08-fmhy-research-landscape.md docs/concepts/ui-seats.md docs/concepts/tools-map.md
 -->
@@ -54,11 +54,13 @@ gefunden; MCP nur gebrokert (Claude/ChatGPT) → **kein Arm** (`pending`/descope
 
 1. **`archive_search --consensus <query>`** — REST-Arm (`api.consensus.app/v1/search`,
    `x-api-key` aus `.secrets.local`, Muster `--tavily`/`--exa`); Ausgabe `title/doi/year/
-   citations/study_type/takeaway`. **Braucht:** `CONSENSUS_API_KEY` (self-serve im
-   Consensus-Konto) im `.secrets.local` (Operator), dann Arm bauen.
-2. **`archive_search --perplexity <query>`** — Perplexity Search/Agent API (`PERPLEXITY_API_KEY`).
-3. **Elicit API/MCP** und **SciSpace API/MCP** — Endpunkte + Auth aus `docs.elicit.com`
-   bzw. SciSpace-Connector-Doku ziehen; Keys (Elicit/SciSpace) anlegen.
+   citations/study_type/takeaway`. Arm + `CONSENSUS_API_KEY` stehen; der Arm antwortet
+   **HTTP 429** (Rate-Limit, transient — kein Bau-Gap).
+2. **`archive_search --perplexity <query>`** — **live** (HTTP 200, echter Antworttext):
+   Perplexity Search/Agent API (`PERPLEXITY_API_KEY`).
+3. **Elicit `descoped`** (API nur Pro/Scale/Enterprise = kommerziell, Operator-Wort);
+   **SciSpace `pending`** — kein Arm: cookie-gebundene Web-API (`api.scispace.com/api/v1/*`
+   HTTP 403 `Missing cookies`), keine Key-API.
 4. **MCP-Harness (opencode ist der Harness):** `opencode.json` hat einen `mcp`-Block mit
    `type: "remote"` + `{env:VAR}`-Interpolation. **Verdrahtet 2026-10-08:** `consensus`
    (`https://mcp.consensus.app/mcp`, Header `x-api-key: {env:CONSENSUS_API_KEY}`) und
