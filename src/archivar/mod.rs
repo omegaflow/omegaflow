@@ -51,6 +51,7 @@ pub mod ck;
 pub mod cometels;
 pub mod copernicus;
 pub mod cors;
+pub mod coverage_manifest;
 pub mod dastcom;
 pub mod decaps;
 pub mod demeter;
