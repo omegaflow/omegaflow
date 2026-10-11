@@ -46,7 +46,7 @@ jobs:
     - run: sudo apt-get update && sudo apt-get install -y mesa-vulkan-drivers
     - run: cargo nextest run --release --features browser_relay --partition count:${{ matrix.shard }}/4
     - run: cargo nextest run --release -p omegaflow-register -p omegaflow-utils --partition count:${{ matrix.shard }}/4
-    - run: cargo nextest run --release -p omegaflow-harvest --bin skydirection_compiler --bin kcdc_compiler --bin openneuro_compiler --bin brainvision_compiler --bin snirf_compiler --partition count:${{ matrix.shard }}/4
+    - run: cargo nextest run --release -p omegaflow-harvest --bin skydirection_compiler --bin kcdc_compiler --bin openneuro_compiler --bin brainvision_compiler --bin snirf_compiler --bin cmb_planck_compiler --partition count:${{ matrix.shard }}/4
     - if: matrix.shard == 1
       run: cargo test --release --features browser_relay --doc
     - if: matrix.shard == 1

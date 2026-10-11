@@ -49,6 +49,17 @@ jobs:
             # the EA tiles themselves are account-gated (data-requests 401); this keyless run
             # catalogues the OGC index (244,324 tiles) as a metadata manifest, not a download list
             args: ""
+          - bin: coverage
+            netloc: tnmaccess.nationalmap.gov
+            out: coverage_tnm.manifest
+            # USGS TNM Access (Lidar Point Cloud LPC); an offset chain bounded by the fixed
+            # MAX_PAGES=5000 constant (this bin carries no --max-pages flag); --limit is the page size
+            args: "--kind tnm --limit 1000"
+          - bin: lola_coverage
+            netloc: astrogeo-ard.s3.amazonaws.com
+            out: lola_coverage.manifest
+            # LOLA COPC emitter; the S3 walk follows continuation tokens to the end (bucket/prefix defaults)
+            args: ""
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1

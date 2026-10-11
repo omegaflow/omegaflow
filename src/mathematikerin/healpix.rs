@@ -86,6 +86,44 @@ pub fn pix2ang_nest(nside: i64, pix: i64) -> Option<(f64, f64)> {
     Some((theta, phi))
 }
 
+pub fn pix2ang_ring(nside: i64, ipix: i64) -> Option<(f64, f64)> {
+    if nside <= 0 || (nside & (nside - 1)) != 0 {
+        return None;
+    }
+    let npix = 12 * nside * nside;
+    if ipix < 0 || ipix >= npix {
+        return None;
+    }
+    let ncap = 2 * nside * (nside - 1);
+    let n = nside as f64;
+    let fact2 = 4.0 / npix as f64;
+    let (z, phi) = if ipix < ncap {
+        let iring = (1 + isqrt(1 + 2 * ipix)) / 2;
+        let iphi = ipix + 1 - 2 * iring * (iring - 1);
+        let z = 1.0 - (iring * iring) as f64 * fact2;
+        let phi = (iphi as f64 - 0.5) * PI / (2.0 * iring as f64);
+        (z, phi)
+    } else if ipix < npix - ncap {
+        let fact1 = (2 * nside) as f64 * fact2;
+        let ip = ipix - ncap;
+        let iring = ip / (4 * nside) + nside;
+        let iphi = ip % (4 * nside) + 1;
+        let fodd = if (iring + nside) & 1 == 1 { 1.0 } else { 0.5 };
+        let z = (2 * nside - iring) as f64 * fact1;
+        let phi = (iphi as f64 - fodd) * PI / (2.0 * n);
+        (z, phi)
+    } else {
+        let ip = npix - ipix;
+        let iring = (1 + isqrt(2 * ip - 1)) / 2;
+        let iphi = 4 * iring + 1 - (ip - 2 * iring * (iring - 1));
+        let z = -1.0 + (iring * iring) as f64 * fact2;
+        let phi = (iphi as f64 - 0.5) * PI / (2.0 * iring as f64);
+        (z, phi)
+    };
+    let theta = z.clamp(-1.0, 1.0).acos();
+    Some((theta, phi))
+}
+
 pub fn galactic_to_icrs(theta: f64, phi: f64) -> (f64, f64) {
     let (st, ct) = theta.sin_cos();
     let (sp, cp) = phi.sin_cos();
@@ -240,6 +278,33 @@ mod tests {
             theta > PI - 0.02,
             "face 11 bottom corner sits at the south pole"
         );
+    }
+
+    #[test]
+    fn ring_nside1_matches_the_twelve_face_centers() {
+        for p in 0..12 {
+            let ring = pix2ang_ring(1, p).unwrap();
+            let nest = pix2ang_nest(1, p).unwrap();
+            assert!(near(ring.0, nest.0, 1e-12), "theta p={p}");
+            assert!(near(ring.1, nest.1, 1e-12), "phi p={p}");
+        }
+    }
+
+    #[test]
+    fn ring_nside2_known_pixels() {
+        let n = 2;
+        let (theta, phi) = pix2ang_ring(n, 0).unwrap();
+        assert!(near(theta, (11.0f64 / 12.0).acos(), 1e-12));
+        assert!(near(phi, PI / 4.0, 1e-12));
+        let (theta, phi) = pix2ang_ring(n, 4).unwrap();
+        assert!(near(theta, (2.0f64 / 3.0).acos(), 1e-12));
+        assert!(near(phi, PI / 8.0, 1e-12));
+        let (theta, phi) = pix2ang_ring(n, 47).unwrap();
+        assert!(near(theta, (-11.0f64 / 12.0).acos(), 1e-12));
+        assert!(near(phi, 7.0 * PI / 4.0, 1e-12));
+        assert!(pix2ang_ring(n, -1).is_none());
+        assert!(pix2ang_ring(n, 48).is_none());
+        assert!(pix2ang_ring(3, 0).is_none());
     }
 
     #[test]
