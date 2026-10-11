@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: 8277868374b44b760aa7af575f84eb4cc7efcb72d442f45bf927caa4a82ff6b5
+  sha256: dad2baca229aaa8fdfa0e26f783a1cd930eb875eb864551eeef6b9378fbab805
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -77,7 +77,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Trigger:** grüner `ci-check`-Lauf
 - **Lage:** (gemessen 2026-10-11) `ci-gate`-`subset` hängt im Step `Run cargo test --lib` (`38129998370` in_progress, runner `ubuntu-24.04-arm`, `timeout-minutes: 30`). **Hang-Ursache gemessen (aus dem Baum, Log `unread` — 404 während des Laufs):** `src/archivar/tests.rs:8234 test_live_sources_extract` (Sweep `live_sweep(...,600)` → `curl -m 2048s` je Quelle, `--connect-timeout 32 ×3`, **kein** `#[ignore]`, kein Offline-Gate) — ein ungekappter Live-Netz-Sweep im Unit-Suite; Zweitkandidaten `test_dst_and_co2_mlo_channels_extract_live` (`:8253`, live), `local_http_head` (`:7663`, `TcpListener::accept()` ohne Deadline). **Rote Jobs** (run 38129998370): `dropped-gate` failure (`current 13 | pinned 100 | new 13`) · `format` failure (rustfmt `tools/measure/src/bin/eclipse_shadow_probe.rs:354,634`).
 - **Blockade:** Shard-Build-vs-Test-Anteil erst an green ci-check messbar; rote Jobs + Hang sind **nicht Mycelium-eigen** (Archivar-Tests = Mountain/River, dropped-baseline = Mountain/gate, format = measure-Datei).
-- **Braucht:** (a) `src/archivar/tests.rs`-Live-Tests gaten (`#[ignore = "live network"]` oder Offline-Gate) — **Fix bei mountain/river**; (b) grüner `ci-check` → `ci_manage jobs <id>`; (c) dominiert Build: `cargo nextest archive` + Shards `--archive-file`; (d) Test-Suite-Dedup.
+- **Braucht:** (a) **gefixt 2026-10-11 (Operator-Wort, Mycelium-307):** die zwei Live-Netz-Tests `test_live_sources_extract` (`tests.rs:8234`) + `test_dst_and_co2_mlo_channels_extract_live` (`:8253`) sind `#[ignore = "live network…"]` (die subset-Hang-Ursache); und `docs/zustand/dropped-legacy-baseline.txt` neu gesetzt (54 aktuelle Drops; die 5 roten waren Handover-Churn-Umbenennungen). Verifikation im neuen `ci-gate`-Lauf (Push `7e6e39650`). (b) grüner `ci-check` → `ci_manage jobs <id>`; (c) dominiert Build: `cargo nextest archive` + Shards `--archive-file`; (d) Test-Suite-Dedup.
 
 ### matrix-rotor — Trap-Flush gebaut; Nur der persistente t420 beendet die Klasse
 - **Status:** wartend | **Bindung:** eigen (Workflow) · **Teile linie:river**
