@@ -7934,6 +7934,38 @@ fn test_anchor_bodies_have_ephemeris_sources() {
 }
 
 #[test]
+fn omni2_daily_bin_carries_its_own_aggregation_names() {
+    let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+    let sources = super::parse_sources(&content);
+    let daily = sources
+        .iter()
+        .find(|s| s.url.ends_with("omni2_serie.bin"))
+        .expect("the daily OMNI2 bin is registered");
+    let hourly = sources
+        .iter()
+        .find(|s| s.url.ends_with("omni2_serie_1h.bin"))
+        .expect("the hourly OMNI2 bin is registered");
+    assert_eq!(daily.format, "omni2_serie_daily");
+    assert_eq!(hourly.format, "omni2_serie");
+    let daily_name = |want: &str| {
+        daily
+            .extracts
+            .iter()
+            .any(|e| matches!(e, Extract::Field(fc) if fc.name == want))
+    };
+    let hourly_name = |want: &str| {
+        hourly
+            .extracts
+            .iter()
+            .any(|e| matches!(e, Extract::Field(fc) if fc.name == want))
+    };
+    assert!(daily_name("omni_imf_bz_gsm_nt_daily"));
+    assert!(!daily_name("omni_imf_bz_gsm_nt"));
+    assert!(hourly_name("omni_imf_bz_gsm_nt"));
+    assert!(!hourly_name("omni_imf_bz_gsm_nt_daily"));
+}
+
+#[test]
 fn test_gracefo_l1b_tar_gz_yaml_source_parses() {
     let content = std::fs::read_to_string("phi/sources.φ").unwrap();
     let sources = super::parse_sources(&content);
