@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Taucherstaffel (10 Taucher) über alle offenen Punkte der folge313: Messungen, Riss-Auflösungen, verdikt-reife Vorlagen
   class: handover
   date: 2026-10-11
-  sha256: e445719bd32762eb9eeae0b069011c2a80071d8261dd4dcfce116c75e5ddce6e
+  sha256: e0bf0e78562e6ec09994198b3f9962e376d2db1d955440c6c88715864610e624
   status: live
 -->
 # Handover — Mountain-Folge 314 (2026-10-11)
@@ -19,9 +19,9 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 ### ci-gate — subset (37 FAILED) + dropped-gate
 - **Status:** eigen (Messung) | **Bindung:** eigen
 - **Trigger:** der nächste `ci-gate`-Lauf am HEAD
-- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38131646200`/`38131433493`) `format`/`register`/`build`/`clippy` success; **dropped-gate failure** (`current 2 | pinned 100 | new 2`: `asservatenkammer-survey-marker prosa-reconciliation`, `omegaflow-measure zwei bins rot river-184`); **subset cancelled** nach **37 FAILED** — u. a. `parse::range_directive_*` ×3, `parse::every_cdn_source_carries_its_origin_and_compiler_or_is_a_reference`, `inflate::tar_stream_emits_data_chunks_then_end`, `port::probe_classify_tests::*` ×10, `archivar::tests::*` ×15, `llr`, `vlf_awesome`, `mathematikerin::actuators/mci/pc/receiver`. Die vier in folge313 genannten sind darunter; 33 weitere kamen hinzu (Funktions-Zeilen verschoben: `parse.rs` 2822/2914 statt 2826/2944, `inflate.rs` 1306 statt 1328, `port.rs` 4167 statt 4169).
-- **Blockade:** die 37 Test-Ausfälle + dropped-gate; Kern `src/archivar` (Mountain/River).
-- **Braucht:** die 37 Ausfälle auf eine Ursache zurückführen (`ci_manage log 38131646200`), droppten-Gate gegen `docs/zustand/dropped-legacy-baseline.txt` prüfen.
+- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38131646200` + die `ci-check`-Panics) `subset` ist **cancelled**, nicht von den 37 gefällt: der Live-Netz-Sweep `test_live_sources_extract` (`tests.rs:8234`) hängt und wird am 30-min-Cap gekappt — **bereits behoben** (`7e6e39650`, `#[ignore]`). Die **37 FAILED** sind heterogen: **A** (~21) Register-Fiktion — die `phi/sources.φ`-Umstrukturierung Mountain 306/310 (`94129c942`, `1f2d4e2c4`, `ff6f4315f`, `e87398886`) entfernte `field`/`origin`/`compiler`-Zeilen, die Tests erwarten den alten Stand (`port.rs:1798` `register_field_map`, `parse.rs:2914`); **B** (3) `range`-only-Quellen wurden vom `flush!()`-Gate verworfen — **behoben** (`6014fafc8`, `|| cur_range.is_some()`, `parse.rs:126`); **C** blinde Tests (`inflate::tar_stream` `b0c9227e7`, `llr` `df0579550`, `vlf` `0d12e17d0`, `receiver::nutation` `f95350d25`, `pc`/`mci`/`actuators` river-142). dropped-gate: `current 2 | pinned 100 | new 2`.
+- **Blockade:** Gruppe A (Test-Erwartungen vs. neuer Register-Stand) + Gruppe C (nie gegated); `cargo test` läuft nur in CI.
+- **Braucht:** A — `port.rs:1798`/`parse.rs:2914` an den neuen Register-Stand anpassen (21 Tests); C — je Test die Zahl aus einem neuen `subset`-Lauf lesen; dropped-gate gegen `docs/zustand/dropped-legacy-baseline.txt` prüfen.
 
 ### te-ground-truth — AR(1)-Null-Arm gebaut, Neu-Messung offen
 - **Status:** wartend | **Bindung:** eigen
@@ -30,12 +30,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Blockade:** CI-Lauf steht aus.
 - **Braucht:** `te-bias-n` dispatchen/laufen lassen; dann entscheiden, ob der KSG-Arm mit der strukturerhaltenden Null beide Gates hält.
 
-### LiDAR-Inventar / Extraterrestrisch — Parser gebaut, Registrierung offen
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11 via `cargo build`: je bin grün, 0 warnings) **MOLA + NLR** als Arme in `pds3_fixed_width_compiler.rs` (+55/−4; `MOLA_ROUTE` = PRDR-Volume, da die PEDR-Volume **keine** `.tab` trägt — `RAMAPPING.FMT` via `^STRUCTURE`; `NLR_ROUTE` = `NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/`). **MLA** `mla_compiler.rs` (340 Z., 113 numerische Spalten, Live-Lauf 988 Zeilen) und **OLA** `ola_compiler.rs` (419 Z., 21 numerische Spalten, PDS4 `Table_Binary` nativ dekodiert). Hayabusa war bereits gebaut (`phi:19609-19674`).
-- **Blockade:** die vier `phi`-Blöcke brauchen die `extract.rs`-Format-Arme (MOLA/NLR `pds3_fixed_width`, MLA/OLA neue Formate) — erst dann tragen die Blöcke.
-- **Braucht:** `extract.rs`-Arm je Format + vier `phi`-Blöcke (`at mars`/`at mercury`/`at eros`/`at bennu`); **neu gemessene Parser-Lücke:** NLR `UTC` = ISO **day-of-year** (`2000-074T…`), `unix_of_iso` erwartet Kalender-ISO → die Zeitachse würde NLR-Zeilen überspringen — in `pds3_table.rs` schließen (eigener begrenzter Schritt).
+### LiDAR-Inventar / Extraterrestrisch — Parser + vier Blöcke gebaut
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt
+- **Lage:** (gemessen 2026-10-11 via `cargo build`: je bin grün, 0 warnings) **MOLA + NLR** als Arme in `pds3_fixed_width_compiler.rs`; **MLA** `mla_compiler.rs` (340 Z., 113 num. Spalten), **OLA** `ola_compiler.rs` (419 Z., 21 num. Spalten). Die vier Quellen sind **registriert** (`phi:31707-31917`: MOLA/NLR/OLA je ein Registry-taugliches `em m`/`km`-Range-Feld, MLA ohne Feld — s. Blockade). Die NLR-DOY-Lücke ist **behoben** (`b334bf278`, `unix_of_iso` parst `YYYY-DDDT…`). Hayabusa war bereits gebaut.
+- **Blockade:** MLA trägt **kein** Messfeld — das getestete CDR-Label ist reine Housekeeping-Telemetrie (V/degC), kein `RANGE`; das RDR trägt die Bereiche.
+- **Braucht:** MLA-RDR-Label als Quelle (statt CDR); optional weitere registry-taugliche Felder (MOLA `MARS_RANGE`, NLR `SCDST`, je `em m`) nachtragen.
 
 ### Sechs Klima-Quellen — Serien-Manifest gebaut, terms/ttl gegenprüfen
 - **Status:** wartend | **Bindung:** eigen
@@ -44,12 +44,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Blockade:** kein Lauf (die sechs Jobs existieren, keiner dispatcht).
 - **Braucht:** je Workflow den ersten Lauf starten; `terms`/`ttl` gegen den Compiler gegenprüfen.
 
-### Open-LiDAR — Descope-Verdikte je Portal
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** das Mountain-Verdikt je Portal
-- **Lage:** (gemessen 2026-10-11) **NL `ahn4`**: flai ⊇ Origin außer den 2 Kacheln `08BZ1`/`40HZ1` (norm. Diff `coverage_id_diff --normalize basename --strip-prefix c_`) → **Origin behalten** (2 unique Kacheln = Provenanz). **CH `swisstopo`**: STAC >10 000 Items (100-Seiten-Probe endet mit `next`), Sidecar fehlt → **unread**. **FR `ign_lidarhd`**: unread. **NZ `linz`**: bleibt. **`ea_lidar_index`**: der Kompiler emittiert `tile <filename> <bbox> <pt_count>` (`ea_lidar_index.rs:262-274`) → widerlegt die folge305-Zeile „Metadaten-Index"; kein phi-Block.
-- **Blockade:** CH/FR brauchen Live-Fetch.
-- **Braucht:** `target/debug/swisstopo_coverage --out /tmp/opencode/ch_origin.manifest --emit-ids /tmp/opencode/ch_origin.ids` → awk-ID-Norm (`swisssurface3d_<jahr>_` strippen) → `coverage_id_diff --origin … --mirror /tmp/opencode/ch_flai.ids --normalize basename`; FR `open_lidar_data_coverage --prefix data/FR/ --emit-ids`; dann je Portal Verdikt.
+### Open-LiDAR — Descope-Verdikte je Portal (gemessen)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) **NL `ahn4`**: flai ⊇ Origin außer `08BZ1`/`40HZ1` (2/1375) → **Origin behalten**. **CH `swisstopo`**: flai deckt **39515/41982 = 94,1 %** (56843 STAC-IDs → 41982 unique; norm. Diff missing **2468**) → flai **partial** → **Origin behalten**. **FR `ign_lidarhd`**: flai 337207 vs Origin 524687, id-**disjunkt** (Aggregat hält nur `data/FR/IGN/Lidar_2021/`) → **Origin behalten**. **NZ `linz`**: bleibt. **`ea_lidar_index`**: emittiert `tile`-bbox-Zeilen (`ea_lidar_index.rs:262-274`), kein phi-Block.
+- **Blockade:** keine.
+- **Braucht:** — (kein Portal wird descoped; flai ist nirgends ein Superset).
 
 ### Adressierte φ-Vorschläge (mycelium-307/305) — verdiktet
 - **Status:** descoped | **Bindung:** eigen
