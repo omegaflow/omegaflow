@@ -3,7 +3,7 @@
   session: Sensory-Folge 255
   class: handover
   date: 2026-10-11
-  sha256: 501c598ee53fe565bf4e509e72bdbe72e32287856259f09fb1902d62d4527219
+  sha256: cc4698988c5472ad7aa430c32fe76a14ba552fdd352129850c26c207f2daa950
   status: live
 -->
 # Handover — Sensory-Folge 255 (2026-10-11)
@@ -34,8 +34,9 @@ u. a. ohne Live-Träger; nicht Sensory); `open_points_check` F254 = 3 absent / 0
 stale-citations / 0 done-carried / 0 word-carried / 0 guardians / 0 format-gaps /
 0 owner-drift / 0 post-md — die 3 „absent" sind Parser-Artefakte: zwei sind
 Curly-Brace-Verweise (`tools/harvest/src/bin/{cmb_planck,mla,ola}_compiler.rs`, real
-vorhanden), einer ein Backtick-verkürzter Pfad (`phi/sources.φ`-Zeile → real
-`phi/sources.φ:31411-31417`); kein echter Pfad fehlt. Die Form-Karte
+vorhanden), einer ein Backtick-verkürzter Pfad (`phi/sources.φ`-Zeile → real vorhanden,
+Key `at europa_clipper`); kein echter Pfad fehlt. Zeilennummern in `phi/sources.φ`
+werden nicht zitiert — `register_sort` verschiebt sie (`at europa_clipper` wandert). Die Form-Karte
 `docs/concepts/tool-forms.md` wurde als erste Handlung gelesen.
 Gearbeitet dieses Atoms (2026-10-11 F255): kein sensory-eigener Trigger gefeuert —
 beide `eigen`-Punkte (ox64-m2c `wartend`, europa-clipper `termin`) stehen unverändert,
@@ -43,7 +44,7 @@ ihre Trigger (physische Zustellung / Flyby 2026-12-03) sind nicht gefeuert. Der
 ox64-Status wurde **nicht** erneut am Baum gemessen (unverändert seit 2026-10-10); der
 headless `--playwright`-Render wurde einmal gefahren (lesbar) und bestätigt die
 Übergabe-Lage: er liefert den JS-Paketstatus nicht (nur Kopf/FAQ/Links), die Route für
-den echten Status bleibt die Bridge (`state/zustand/wartend.φ:13`). Beide Zitate in
+den echten Status bleibt die Bridge (`state/zustand/wartend.φ`, Key `ox64-m2c`). Beide Zitate in
 dieser Übergabe sind auf den Baum gezogen (Lage „gemessen 2026-10-11"). Kein
 Operator-Wort nötig; nichts vorzulegen. Die CI-Lage wird aus dem Stehenden Pass
 zitiert, nicht kopiert.
@@ -60,7 +61,7 @@ breiter messen.
   Hardware Operator-gebunden (Operator-Wort 2026-09-27, „erst bei Förderung") — der Brustgurt
   ist an die Future-Queue geroutet. [redacted]/DEMETER — die
   Daten/Datei verlassen das Gerät nie (Operator-Wort 2026-09-25). ox64-M2C Carrier — Route
-  gespeichert (`state/zustand/wartend.φ:13`, gemessen 2026-10-11): `archive_search --playwright
+  gespeichert (`state/zustand/wartend.φ`, Key `ox64-m2c`, gemessen 2026-10-11): `archive_search --playwright
   --headed "https://www.chinapostaltracking.com/package-tracking/?trackingno=LZ473049629CN"`.
 - **BLE-HR-Reader (PENDING, `external-state.md:41`):** gebaut (`src/archivar/ble.rs`, std-only
   BlueZ-D-Bus, `0x2A37`-Decode, 14 Fixture-Tests); Braucht den Live-Lauf am gekoppelten Gerät
@@ -276,15 +277,15 @@ Akte stehen in Futures Operator-Queue bzw. `state/zustand/wartend.φ`, nicht hie
 
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Zustellung LZ473049629CN — die physische Zustellung ist das Ereignis, keine Ferndiagnose; Route `state/zustand/wartend.φ:13`.
+- **Trigger:** Zustellung LZ473049629CN — die physische Zustellung ist das Ereignis, keine Ferndiagnose; Route `state/zustand/wartend.φ` (Key `ox64-m2c`).
 - **Lage:** (gemessen 2026-10-10 F253 über die Browser-Bridge; Route am Baum nachgezogen 2026-10-11 F254; 2026-10-11 F255 nicht neu gemessen — Status unverändert, der headless Render liefert den JS-Status nicht) **„Im Zollabfertigungsprozess"**, Zielland Deutschland; jüngstes Event **Mo, 05.10.2026, 15:25** (Zollabfertigung für den Import begonnen 15:24), Einreise ins Zielland **Mo, 05.10.2026, 15:23**; davor nur China VR (2026-09-23 02:40). Der headless `--playwright`-Render liefert den JS-Status nicht, die Bridge liest ihn.
 - **Blockade:** Zollabfertigung → Zustellung; die physische Zustellung ist der Auslöser.
-- **Braucht:** Zustellung abwarten; Status über die Browser-Bridge messen — Route `archive_search --playwright --headed "https://www.chinapostaltracking.com/package-tracking/?trackingno=LZ473049629CN"` (`state/zustand/wartend.φ:13`).
+- **Braucht:** Zustellung abwarten; Status über die Browser-Bridge messen — Route `archive_search --playwright --headed "https://www.chinapostaltracking.com/package-tracking/?trackingno=LZ473049629CN"` (`state/zustand/wartend.φ`, Key `ox64-m2c`).
 
 ### europa-clipper — ESA, Flyby
 - **Status:** termin | **Bindung:** eigen
 - **Trigger:** Flyby 2026-12-03.
-- **Lage:** (gemessen 2026-10-11 F254 am Baum + CDN; 2026-10-11 F255 unverändert — same day, nicht remessen) Asset `ephemeris_europa_clipper.bin` 200 / 103 120 B, Siegel `3b03ea697d96e567…` (der alte Wert `dae553fb…` aus F245 war stale — Riss am CDN aufgelöst); **registriert**: `phi/sources.φ:31411-31417` trägt `url`/`format ephemeris_binary`/`terms PD`/`origin …flyby epoch 2026-12-03`/`compiler horizons_compiler.rs`/`at europa_clipper`/`no-cadence` (die Zeile wandert — `:27724-27729` ist stale). NOW < Termin.
+- **Lage:** (gemessen 2026-10-11 F254 am Baum + CDN; 2026-10-11 F255 unverändert — same day, nicht remessen) Asset `ephemeris_europa_clipper.bin` 200 / 103 120 B, Siegel `3b03ea697d96e567…` (der alte Wert `dae553fb…` aus F245 war stale — Riss am CDN aufgelöst); **registriert**: `phi/sources.φ`, Key `at europa_clipper` (Mountain 316 meldet die Zeile bei `:31874`; `register_sort` verschiebt sie weiter — darum kein Zeilennummer-Zitat), trägt `url`/`format ephemeris_binary`/`terms PD`/`origin …flyby epoch 2026-12-03`/`compiler horizons_compiler.rs`/`at europa_clipper`/`no-cadence`. NOW < Termin.
 - **Blockade:** Termin.
 - **Braucht:** nach dem Flyby `gh workflow run kernel-flatten.yml` (`horizons_compiler --flyby --ci-mode`, Eintrag `tools/harvest/src/bin/horizons_compiler.rs:22` `-159/europa_clipper`) + `archive_search --sniff "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin"` gegen `3b03ea69…`.
 
@@ -411,7 +412,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0364 · cap 0.15 · Grund: F255 — Line-Session (deepseek-flash), Ein-Pass; kein sensory-eigener Trigger gefeuert (beide `eigen`-Punkte wartend/termin; `--fired`/`--stale`/`--addressed` = 0), Register-Pass (`--orphan-docs` = 21 = fremde Linien, `open_points_check` F254 = 3 Parser-Artefakte, kein echter absent) + `git_safety --snapshot`; ox64 headless `--playwright` einmal gefahren (kein JS-Status — bestätigt die Route `wartend.φ:13`), Status sonst unverändert (same day, nicht remessen); konsumierte F254 nach `archiv/` (`git mv`). Burn gemessen `session_burn` 2026-10-11 F255 — Laufzeit-Fenster 14 Sessions $0.1949; die eigene Line-Session steht im Fenster als $0.0364; eine exakte Isolation der laufenden Session gibt das Werkzeug nicht her (Fenster umfasst die parallel gestarteten Linien).
+## Burn: open 0.0000 · close 0.0364 · cap 0.15 · Grund: F255 — Line-Session (deepseek-flash), Ein-Pass; kein sensory-eigener Trigger gefeuert (beide `eigen`-Punkte wartend/termin; `--fired`/`--stale`/`--addressed` = 0), Register-Pass (`--orphan-docs` = 21 = fremde Linien, `open_points_check` F254 = 3 Parser-Artefakte, kein echter absent) + `git_safety --snapshot`; ox64 headless `--playwright` einmal gefahren (kein JS-Status — bestätigt die Route `wartend.φ`, Key `ox64-m2c`), Status sonst unverändert (same day, nicht remessen); konsumierte F254 nach `archiv/` (`git mv`). Burn gemessen `session_burn` 2026-10-11 F255 — Laufzeit-Fenster 14 Sessions $0.1949; die eigene Line-Session steht im Fenster als $0.0364; eine exakte Isolation der laufenden Session gibt das Werkzeug nicht her (Fenster umfasst die parallel gestarteten Linien).
 
 ## Abschluss
 
