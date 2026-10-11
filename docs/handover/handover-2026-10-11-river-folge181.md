@@ -3,7 +3,7 @@
   session: River-Folge 181
   class: handover
   date: 2026-10-11
-  sha256: 83c936d9605e4ac5bef12e16ae85e8633c44af9e4805f9ae5af726daed3697a5
+  sha256: 7d15a54803cacf089abbf51c2fcfafc98812ca466bfdd57b849964ed8f1b9eae
   status: live
 -->
 # Handover — River-Folge 181 (2026-10-11)
@@ -20,7 +20,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 **parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
 (**Trigger** / **Lage** / **Blockade** / **Braucht**).
 
-## Burn: open 0.0000 · close 0.0462 · cap 0.15 — Grund: River F181 Ein-Pass (deepseek-flash), kein pro/max, kein Diver; der Coverage-Manifest-Fetch-Loop in `main_flow.rs` gebaut (126 Zeilen, `cargo check` + `cargo fmt` grün); die eigene `line`-Session „River-Linie: Übergabe in einem Pass abarbeiten" bei $0.0462 (session_burn zur Messzeit).
+## Burn: open 0.0000 · close 0.1290 · cap 0.15 — Grund: River F181 (deepseek-flash), kein pro/max; der Coverage-Manifest-Fetch-Loop in `main_flow.rs` gebaut + die window-graph-Orientierungsfrage durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster (7 UI-Seats) geführt; die eigene `line`-Session „River-Linie: Übergabe in einem Pass abarbeiten" bei $0.1290 (session_burn zur Messzeit).
 
 ## Operator-Wort-Register
 
@@ -37,6 +37,7 @@ Wort | Datum | Quelle
 „Nächster Schritt: D2 durch die fünf Stimmen (Rat), dann Skeleton/MCI bauen. bitte --all max roster und rat" | 2026-10-10 | Operator (Session, River 172) — D2 (Summary-Graph/PCMCI) durch Rat + Max-Roster, `--all` voran
 „bitte --all max roster und rat" | 2026-10-10 | Operator (Session, River 174) — die Window-Graph-CI-Verdrahtung und die Panel-Skala Δ (D2-Rat-Verdikt Punkt 5) durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster
 „z.ai immer glm 5.3 max gibt es auch in tryong open genauso wie qwen" | 2026-10-10 | Operator (Session, River 174) — Z.ai stets **GLM-5.3 Max**; `tryingopen` führt **GLM 5.3 Max** und **Qwen**
+„mit archive search dem rat und max roster (alle und warten bedenke tryingopen1)" | 2026-10-11 | Operator (Session, River 181) — die window-graph-Orientierungs-Architekturfrage durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster (alle UI-Seats, `open-weight-ui` nur über das Lock) führen
 
 Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 `state/operator-gespraeche/2026-10-09-river.md`. Fortgeschrieben aus
@@ -49,6 +50,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 - `state/stimmen/2026-10-10-river-window-graph-panel-rat.md` (Rat, 5 Stimmen), `…-roster.md`, `…-research.txt`.
 - `state/stimmen/2026-10-10-river-d2-pcmci-rat.md` / `…-roster.md` / `…-research.txt`; `state/stimmen/2026-10-10-river-c-skalenspektrum-rat.md` / `…-roster.md` / `…-research.txt`.
 - `state/stimmen/2026-10-11-river-panel-aufloesung-rat.md` — der Rat zur Auflösungspolitik von `load_field_across_sources` (Registerfix kanonisch; `first-load-wins` → gemessene Eigenschafts-Auswahl).
+- `state/stimmen/2026-10-11-river-window-orientierung-research.txt` + `…-roster.md` — die `--all`-Forschungs-Schicht + Rat (5 Stimmen) + Max-Roster (Duck/Claude/Qwen/Z.ai + tryingopen DeepSeek V4 Pro/GLM 5.3/Inkling) zur C-Rung-Orientierungs-Semantik.
 - `src/mathematikerin/descriptors/vlies_panel.te` + `vlies_matrix.te` (in `src/mathematikerin/descriptors/`).
 - `src/mathematikerin/mci.rs` — `mci_window_graph` gibt `WindowGraph.screened` (das zweite Ohr).
 - `src/mathematikerin/pc.rs` — `pc_stable_skeleton_screened` (Commit `10e0d1323`).
@@ -61,12 +63,12 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 ## Offen (aufgeschlüsselt)
 
-### window-graph — min-p-Rung steht, Assaad-Orientierung ist Architektur (Rat)
+### window-graph — min-p-Rung steht, Orientierungs-Architektur entschieden (Rat + Roster)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keiner — eigener Schritt, aber Architektur ⇒ Rat-Linse vor dem Bau (Operator-Wort).
-- **Lage:** (gemessen 2026-10-11, River 181) Schritt 5 steht (F180): `summary_edge()` + `summary_graph_from_rungs()` — je Zelle die min-p-Rung der Leiter (per-Paar native Skala), annotiert Skala/Lag/n/te/p (Assaad 2022 `Entropy 24(8):1156`, kein Resampling). `cargo check` grün. Die Zellen sind gerichtet (`expect cells 210` = 15·14, `vlies_matrix.te`) — beide Richtungen `d->t`/`t->d` liegen als getrennte `MatrixCellOutcome` vor.
-- **Blockade:** keine (der Bau selbst); die Semantik der Orientierung ist unentschieden.
-- **Braucht:** die fünf Stimmen zur Orientierungs-Semantik der C-Rung-Zeilen (Kante gerichtet/kollidierend/`riss`) — nicht solo bauen: der offene Riss D2-Verdikt Punkt 5 (D liest die C-Rungtabelle gefiltert auf Δ vs. eigenständiges bedingtes MCI auf einem Δ, `state/stimmen/2026-10-10-river-d2-pcmci-rat.md:60`) berührt genau diese Frage, und das Rat-Verdikt hält `Kollider-Regeln erst nach grünem Gate`. Danach der begrenzte Schnitt: je Zelle `d->t` gegen `t->d` auf den nativen Rungen vergleichen, in `vlies_matrix.te`/Job verdrahten.
+- **Trigger:** keiner — eigener Bau-Schritt (die Architektur ist entschieden).
+- **Lage:** (gemessen 2026-10-11, River 181) Schritt 5 steht (F180): `summary_edge()` + `summary_graph_from_rungs()` — je Zelle die min-p-Rung (per-Paar native Skala), annotiert Skala/Lag/n/te/p (Assaad 2022, kein Resampling). Die Zellen sind gerichtet (`expect cells 210` = 15·14). **Die Orientierungs-Semantik ist entschieden** (`state/stimmen/2026-10-11-river-window-orientierung-roster.md`; Rat + 7 Seats): die unbedingte C-Rung-Zeile orientiert **nicht**, sie klassifiziert Kandidaten; der Pfeil lebt in D (bedingtes MCI, PC1, BY-FDR). Vergleich nur bei identischer `delta_s`; Kippen über Skalen = `pending`, `riss` erst bei bedingtem Widerspruch.
+- **Blockade:** keine.
+- **Braucht:** bauen — `enum PairOrientation { Candidate, Colliding, Riss, Absent, Pending }` + `fn pairwise_orientation(outcomes: &[MatrixCellOutcome]) -> Vec<PairOrientation>` neben `summary_edge` (`tools/measure/src/bin/field_te_query.rs:5433`): rung-index-gleich (`o.ladder[i].delta_s == o2.ladder[i].delta_s`, sonst `Riss`), auf den FDR-korrigierten `pass`-Flags; vier Test-Gates (beide pass → Colliding; einer pass → Candidate; Kippen über Rungen → pending/riss; keine gemeinsame `delta_s` → Riss). Danach `summary_graph_from_rungs` um die Pair-Klassen-Zeilen ergänzen (Kandidat als `candidate`, nie als Pfeil). Die Pfeil-Prägung bleibt dem D-Pfad (`mci.rs`/`run_summary_panel`).
 
 ### panel-vlies — Auflösung: Kandidaten benannt, Register geheilt, CDN bleibt
 - **Status:** wartend | **Bindung:** eigen
