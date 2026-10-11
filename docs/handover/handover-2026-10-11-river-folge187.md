@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — GIC-Zeugen-Landschaft weiter gemessen: THEMIS-ASI-Rohdaten erreichbar (aurorax.space + UCalgary stream2-Keogramme), OE-417 ohne GMD-Kategorie (Riss), Netz-End-Validierung geschärft
   class: handover
   date: 2026-10-11
-  sha256: 392a084b1711d0dc4d89f367b5f1e891221faf53e7fff7722e50a7b359ec578d
+  sha256: 8238aa7920227abd6813065be86ef114232710db091ee094fa2aa26ab9a6e02d
   status: live
 -->
 # Handover — River-Folge 187 (2026-10-11)
@@ -91,19 +91,6 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - **Blockade:** ESA/ESOC-recon-SPK + die 1-σ-Kovarianz absent.
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
-### Newell/OMNI-Zeitachse — deckungsgleiche Achse (`newell-omni-alignment`, aus future-235)
-- **Status:** eigen (Messung) | **Bindung:** eigen
-- **Trigger:** der nächste `field-te-query`-Lauf.
-- **Lage:** (gemessen 2026-10-11 via `wartend-archiv-2026-10-11-r3.φ:24` + future-235) der Upstream `OMNI2_H0_MRG1HR` ist keyless 200 (`phi/sources.φ:738`, 1963→2026-10-05); die Register-Lage „n=0" ist **stale** — der Lauf 2026-10-11 nennt n=944. `ci_manage list` zeigt aktuell keinen `field-te`-Lauf.
-- **Blockade:** keine (Code/Datenfenster).
-- **Braucht:** den `field-te-query`-Lauf via `ci_manage log <id>` neu messen und die n-Zahl setzen (Survey↔Register abgleichen).
-
-### Vlies-Matrix-Zeitachse — Format-/Compiler-Arm (`vlies-matrix-alignment`, aus future-235)
-- **Status:** eigen (Bau) | **Bindung:** eigen
-- **Trigger:** derselbe `field_te_query`-Lauf.
-- **Lage:** (gemessen 2026-10-11 via `wartend-archiv-2026-10-11-r3.φ:27`) `src/mathematikerin/descriptors/vlies_matrix.te` + `vlies_panel.te` stehen; `OMNI2_H0_MRG1HR` keyless 200; kein externer Blocker — die n=0-Zellen sind ein Code/Datenfenster.
-- **Blockade:** keine.
-- **Braucht:** `cargo check` + den `field_te_query`-Lauf gegen die OMNI-Zeitachse; die n=0-Zellen schließen oder den Grund benennen.
 
 ## An mountain
 

@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: 10054bd5d3c8db9617b025930d15686382d06bcc895038500540663d0419361c
+  sha256: 962b315e1c85fc60cfbe1b646928dc72aac4e7c4261c5181c2462fd2148f0054
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/archiv/handover-2026-10-05-river-folge93.md
 -->
@@ -101,10 +101,16 @@ Kopplung** und sind als Stör-Treiber, nie als unabhängiger Zeuge zu behandeln.
 - **Mycelium (Ernte/Transport):** BGI AGrav + CEEIN C9 + nordische GIC-DB manifestieren;
   GOES-18-Bucket um 16/19 erweitern.
 - **River (Stein):** die 8 probe-gelesenen Kanäle in die `field_te_query`-Matrix heben;
-  die Matrix als Störungs-Experiment betreiben.
-  - gemessen 2026-10-11 (Lauf `38086122792` Job `matrix-newell-omni`): der abgeleitete
-    Newell-`dΦ/dt`-OMNI-Arm gegen `intermagnet_dbdt` ist `silent` (TE 4.6e-3, p 1.0,
-    bias `off_table`; Δ 86400 s, n 944) — kein gemessener Kopplungspfad auf dieser Skala.
+  die Matrix als Störungs-Experiment betreiben. — **gebaut + gemessen (2026-10-11).**
+  - gemessen 2026-10-11 (Lauf `38119733631`, Job `matrix-newell-omni`): der abgeleitete
+    Newell-`dΦ/dt`-OMNI-Arm gegen `intermagnet_dbdt` ist `silent` (TE 4.5969e-3, p 1.0,
+    bias `off_table`; Δ 86400 s, n 944, n_eff 42.9) — kein gemessener Kopplungspfad auf dieser Skala.
+  - gemessen 2026-10-11 (Lauf `38119733631`, Job `matrix-vlies`): die Vlies-Matrix läuft
+    15/15 Arme, 210/210 Zellen; die `n=0`-Zellen sind **alle** `alignment pending` — die
+    SWPC/RTSW-Kurzreihen (`magnetosphere_imf_bz_nt`/`bt_nt`, `solar_wind_speed_km_s`/`density_cm3`)
+    decken nur ein kurzes Fenster (das OMNI-Archiv endet 2026-10-05) und schneiden die
+    mehrjährigen Felder nicht; der Format-/Compiler-Arm ist gebaut, die `pending`-Zellen sind
+    ein Datenfenster, kein Code-Defekt.
 
 ## 6 Quellen / Stimmen (Rohspuren)
 
