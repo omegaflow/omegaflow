@@ -11168,7 +11168,7 @@ field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa gaussian-i
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz gaussian-inverse-square acoustic hz 300 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ecad.eu/ecad_eca_tx_TX_STAID000001.bin
-terms non-commercial https://knmi-ecad-assets-prd.s3.amazonaws.com/documents/ECAD_datapolicy.pdf
+terms CC-BY-NC-4.0 https://knmi-ecad-assets-prd.s3.amazonaws.com/documents/ECAD_datapolicy.pdf
 format ecad
 origin https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip#TX_STAID000001.txt
 compiler tools/harvest/src/bin/ecad_compiler.rs
@@ -11709,7 +11709,7 @@ field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 60
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.amazonaws.com/open_lidar_data_be_dhmv2.bin
-terms Gratis-Open-Data-Licentie-Vlaanderen-1.2 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
+terms CC-BY-3.0 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
 format las
 origin https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/
 compiler tools/harvest/src/bin/open_lidar_data_compiler.rs
@@ -31643,7 +31643,7 @@ at earth
 ttl 63072000
 
 url https://github.com/omegaflow/sources/releases/download/geodata.ucdavis.edu/worldclim_tavg_10m.bin
-terms non-commercial https://www.worldclim.org/about.html
+terms CC-BY-NC-4.0 https://www.worldclim.org/about.html
 format worldclim
 origin https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tavg.zip
 compiler tools/harvest/src/bin/worldclim_compiler.rs
