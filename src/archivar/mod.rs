@@ -157,6 +157,7 @@ pub mod nexrad;
 pub mod noaa_nodd;
 pub mod odf;
 pub mod odp;
+pub mod oe417;
 pub mod omni2;
 pub mod omni_hro;
 pub mod opendap;

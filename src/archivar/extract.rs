@@ -147,6 +147,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "ampere_fac" => ampere_fac::parse_series(bytes),
         "dmsp16_ssj" => dmsp16_ssj::parse_series(bytes),
         "pcn" => pcn::parse_series(bytes),
+        "oe417" => oe417::parse_series(bytes),
         "viking_grav" => viking_grav::parse_series(bytes),
         "agrav" => agrav::parse_series(bytes),
         "emm_exi_l2a" => emm_exi::parse_series(bytes),
@@ -906,6 +907,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "ampere_fac" => ampere_fac::component_name(comp),
         "dmsp16_ssj" => dmsp16_ssj::component_name(comp),
         "pcn" => pcn::component_name(comp),
+        "oe417" => oe417::component_name(comp),
         "viking_grav" => viking_grav::component_name(comp),
         "agrav" => agrav::component_name(comp),
         "vlf_awesome" => vlf_awesome::component_name(comp),
@@ -1270,6 +1272,10 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "hadisst_sst" => match comp {
             crate::geo::COMP_HADISST => Some("hadisst_sst"),
+            _ => None,
+        },
+        "eaglei_outage" => match comp {
+            crate::geo::COMP_EAGLEI_CUSTOMERS_OUT => Some("eaglei_customers_out"),
             _ => None,
         },
         "ascat_wind" => match comp {

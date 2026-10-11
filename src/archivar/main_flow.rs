@@ -3132,6 +3132,7 @@ pub fn main_flow() {
                     | "ampere_fac"
                     | "dmsp16_ssj"
                     | "pcn"
+                    | "oe417"
                     | "intermagnet_dbdt"
                     | "omni2_serie"
                     | "omni2_serie_daily"
@@ -4407,6 +4408,7 @@ pub fn main_flow() {
                     | "epa_aqs_pm25"
                     | "osm_nodes"
                     | "eionet_cdr"
+                    | "eaglei_outage"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -5101,7 +5103,9 @@ pub fn main_flow() {
                 });
                 continue;
             }
-            if archive.sources[i].format == "coverage_manifest" {
+            if archive.sources[i].format == "coverage_manifest"
+                || archive.sources[i].format == "usgs_lidar_coverage"
+            {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
                 begin_fetch(&mut archive.origins, i as u32, now);

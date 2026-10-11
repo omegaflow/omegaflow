@@ -58,6 +58,7 @@ pub const MAGIC_EPA_AQS_VOC: [u8; 4] = *b"EPV1";
 pub const MAGIC_OSM_PBF: [u8; 4] = super::osm_pbf::MAGIC;
 pub const MAGIC_EIONET_CDR: [u8; 4] = *b"ECD1";
 pub const MAGIC_HADISST: [u8; 4] = *b"HIS1";
+pub const MAGIC_EAGLEI: [u8; 4] = *b"EGL1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -250,6 +251,9 @@ pub const COMP_ERSSTV5: u32 = 1;
 
 pub const COMP_HADISST: u32 = 1;
 
+pub const COMP_EAGLEI_CUSTOMERS_OUT: u32 = 1;
+pub const COMP_EAGLEI_MAX: u32 = 1;
+
 pub const COMP_ASCAT_WSPD: u32 = 1;
 pub const COMP_ASCAT_WDIR: u32 = 2;
 pub const COMP_ASCAT_MAX: u32 = 2;
@@ -359,6 +363,7 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "cses_hpm" => Some(MAGIC_CSES_HPM),
         "cses_scm" => Some(MAGIC_CSES_SCM),
         "eionet_cdr" => Some(MAGIC_EIONET_CDR),
+        "eaglei_outage" => Some(MAGIC_EAGLEI),
         _ => None,
     }
 }
@@ -422,6 +427,7 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "cses_hpm" => Some(COMP_CSES_HPM_MAX),
         "cses_scm" => Some(COMP_CSES_SCM_MAX),
         "eionet_cdr" => Some(crate::archivar::eionet_cdr::COMP_MAX),
+        "eaglei_outage" => Some(COMP_EAGLEI_MAX),
         _ => None,
     }
 }
