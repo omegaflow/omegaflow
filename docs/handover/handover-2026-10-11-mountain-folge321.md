@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — NSSDC-Arm gebaut (NASA NSSDCA Master Catalog + China NSSDC/VSSO coreMetadata; cargo check 0/0, live verifiziert) + Mariner 4 Rohband-Framing/6-bit-Packing gemessen (Zeit→1964) + Mariner 10 Imaging-EDR end-to-end gegen die realen Bytes verifiziert
   class: handover
   date: 2026-10-11
-  sha256: d0e88fcd1a05db3157ea18d949d1c35dd3421e3f4725b7c0fb04d993358fa2a4
+  sha256: 21563d227bddfe3190770a0fb644df614bf5c816286907a970186fb3d4be9ebd
   status: live
 -->
 # Handover — Mountain-Folge 321 (2026-10-11)
@@ -23,12 +23,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge320.md` (→ `archiv/`).
 - **Blockade:** keine für den Arm; die Ausgabe-Route ist kein Maschinenakt.
 - **Braucht:** `NSSDC_USER`/`NSSDC_PASS` gehören nach Messung zum **China**-NSSDC (CAS/Captcha-gated, `state/river/gic-sources-broad-2026-10-11.md:57`), **nicht** zum NASA-NSSDCA — der Riss ist benannt; für CSES der Operator-Antrag (Future), sonst `descoped`.
 
-### Mariner 4 `mariner4_odg` — Parser offen, Framing gemessen (eigen)
+### Mariner 4 `mariner4_odg` — Parser offen, Format + DSC-Spec gemessen (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Bau-Pass
-- **Lage:** (gemessen 2026-10-11 via grind-flash + `od`) die zwei SPDF-Tapes `PSCM-00021_DD001528_05-DEC-64.tar` (389 120 B, sha256 `709c739c…e43a0ba`) und `…_DD001529_28-NOV-64.tar` (40 960 B, sha256 `a7d86a10…1c71ef3`) tragen je ein Member `<name>.dir/<name>_F1.DAT`; Framing `u16 BE Recordlänge + Payload` (Walk `2+L` konsumiert beide Dateien exakt); Payload = **6-bit-Zeichen, 4 pro 3 Bytes, big-endian** (NICHT das M6/7-Schema „1 Zeichen/Byte ≤ 0x3F" — `mariner_rst` korrumpiert M4); 36-bit-Wort = 6 Zeichen; die 72-bit-Zeit floatet → **1964-11-28 15:35:41** (529) / **1964-12-05 16:33:21** (528), deckt die Attribut-Spannen. Die M4-DSC-0044/0045/0074/0176/0119 liegen (0119 = Feldtabelle).
-- **Blockade:** die Wort-Grenze im Zeichenstrom (ODP-Record-Alignment) ist noch nicht gepinnt — 906-B-Payload → 1208 Zeichen ist keine ganze Wortzahl; ohne das wäre ein Parser fabriziert.
-- **Braucht:** ein fokussierter Lauf — rec0 (46-B-Payload, Master-Label 10 Wörter) 6-bit-chars→Wörter dekodieren und gegen BCD prüfen; dann `mariner4_odg` (ODG Master-Label/Station-Summary/ODP + Observable-Skalierung aus DSC 0119) + Compiler + `extract.rs`-Arm.
+- **Lage:** (gemessen 2026-10-11 via grind-flash + `od` + `vision`) die zwei SPDF-Tapes `PSCM-00021_DD001528_05-DEC-64.tar` (389 120 B, sha256 `709c739c…e43a0ba`) und `…_DD001529_28-NOV-64.tar` (40 960 B, sha256 `a7d86a10…1c71ef3`) tragen je ein Member `<name>.dir/<name>_F1.DAT`; Framing `u16 BE Recordlänge + Payload` (Walk `2+L` konsumiert beide Dateien exakt); Payload = **6-bit-Zeichen, 4 pro 3 Bytes, big-endian** (NICHT das M6/7-Schema „1 Zeichen/Byte ≤ 0x3F" — `mariner_rst` korrumpiert M4); 36-bit-Wort = 6 Zeichen; die 72-bit-Zeit floatet → **1964-11-28 15:35:41** (529) / **1964-12-05 16:33:21** (528), deckt die Attribut-Spannen. **DSC 0119 vollständig gelesen** (16 Seiten `--pdf-image` + `vision`, Format-Transkription in `state/mountain/mariner4_dsc0119_format.md`): ODG Data File (Label 9 BCD + Check-Sum; Station-Summary 201 W; Datentypen 1–15) · ODP Logical Record (W0 = #Wörter · W1–2 DP-Zeit s past 1950.0 · W3 Freq-Increment · W4 Pass · W5 Code Word · W6 Observable No.1 · W7 Weight Code Word) · Code-Word-Bit-Legende (1 Range … 11 RU) · Weight-Code-Word · Fig. 2. Identität: `64-077A-09A`, Tapes `D-01528`/`D-01529` = JPL `A55822`/`A55823`.
+- **Blockade:** die **Multi-Datentyp-Record-Länge** (DSC Table 3) fehlt im Scan — der beobachtete 8-Wort-Stride trägt je Record nur ein Observable-Wort, aber 529 `w5 = 0x80809103c` setzt nach der Legende zwei Datentyp-Bits; ohne Table 3 wäre ein Observable-Parser fabriziert.
+- **Braucht:** `TM GTB900-1`/Table 3 auftreiben (ArchiveSearch/NSSDC-Anfrage) **oder** den Multi-Datentyp-Record an einem zweiten Datentape messen; dann `mariner4_odg` (ODG/ODP + Observable-Skalierung) + Compiler + `extract.rs`-Arm.
 
 ### Mariner 10 Imaging-EDR — verifiziert; Bild-Erkennungspfad offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
