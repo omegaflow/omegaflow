@@ -29,12 +29,7 @@ phi/reports/scan_coverage.φ
 phi/reports/probe_sweep_survivors.φ
 
 section Pipeline-Register
-phi/pipeline/ledger.φ
-phi/pipeline/decline_lens.φ
 phi/pipeline/library.φ
-phi/pipeline/index.φ
-phi/pipeline/probe_wave.φ
-phi/pipeline/probe_batch_skymap.φ
 phi/pipeline/frame_registry.φ
 
 section Katalog
