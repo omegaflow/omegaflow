@@ -82,6 +82,8 @@ mod magic;
 mod materialsproject;
 #[path = "archive_search/net.rs"]
 mod net;
+#[path = "archive_search/nssdc.rs"]
+mod nssdc;
 #[path = "archive_search/ntfs.rs"]
 mod ntfs;
 #[path = "archive_search/oai.rs"]
@@ -472,6 +474,8 @@ fn main() {
             "--alphaxiv-call" => mode = Mode::Net("alphaxiv-call"),
             "--supermag" => mode = Mode::Net("supermag"),
             "--heasarc" => mode = Mode::Net("heasarc"),
+            "--nssdc" => mode = Mode::Net("nssdc"),
+            "--nssdca" => mode = Mode::Net("nssdca"),
             "--gosat" => mode = Mode::Gosat,
             "--kind" => {
                 i += 1;
@@ -799,7 +803,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -1013,6 +1017,12 @@ fn usage() {
     );
     eprintln!(
         "  --lpf       <start> <end> [hdu]   (LISA Pathfinder DRS availability from the HEASARC selector, start/end as MJD or ISO; default hdu=SCI_SCIENCE_1Hz; binary body is measured, never printed)"
+    );
+    eprintln!(
+        "  --nssdca    <query>   (NASA NSSDCA Master Catalog — public; a data-collection name query, or key=value spacecraft/experiment/pi, or a bare NSSDCA ID like PSCM-00009 for the dataset detail)"
+    );
+    eprintln!(
+        "  --nssdc     <query>   (China NSSDC/VSSO coreMetadata search, vsso.nssdc.ac.cn — public metadata; the download is CAS/captcha + application-gated)"
     );
     eprintln!(
         "  --all       the query through every keyword search mode ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",

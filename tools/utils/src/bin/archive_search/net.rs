@@ -4149,6 +4149,8 @@ pub fn run_lines_max(
             crate::supermag::supermag_lines(query, max, user.as_deref())
         }
         "heasarc" => crate::heasarc::heasarc_lines(query, max),
+        "nssdc" => crate::nssdc::nssdc_lines(query, max),
+        "nssdca" => crate::nssdc::nssdca_lines(query, max),
         "consensus" => {
             let token = resolve_key(
                 env.get("CONSENSUS_API_KEY")
