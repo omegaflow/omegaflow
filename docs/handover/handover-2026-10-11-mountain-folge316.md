@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — register_sort canonical + mla/ola fmt geheilt (ci-gate register/format), te-bias-n dispatcht, DEMETER-Lizenz-Riss + GIC/Re-Admission-Verdikte gemessen; vier Taucher-Dossiers
   class: handover
   date: 2026-10-11
-  sha256: f606bfd8ea89ba35179b752cfa9a970abc26bdce7a3c31aa8ae67a1068e94658
+  sha256: 6e33874b904fb7e534db40b68160c7f085e6b37731aab2bb7319f699c566edea
   status: live
 -->
 # Handover — Mountain-Folge 316 (2026-10-11)
@@ -188,6 +188,15 @@ Origin: mountain-folge316 (2026-10-11).
 - **„die weltlinie kennt kein jetzt"** | 2026-10-11 | Operator-Session (mountain).
 - **„wie bitte gehts noch wir wollen unsere eigenen Ephemeriden bauen"** | 2026-10-11 | Operator-Session (mountain) — die eigene Ephemeride (`docs/concepts/eigene-ephemeride.md`) ist Mountains Bau-Arbeit, nicht die Registrierung fremder (JPL-)Assets.
 - **„mit einer taucherstaffel: ja bitte … und kümmer dich um deinen teil"** | 2026-10-11 | Operator-Session (mountain) — den `two_way_doppler`-Adapter (Step 3) per Taucherstaffel bauen; die adressierten `## An mountain`-Blöcke falten.
+
+## Träger in `state/` — vieles ist schon recherchiert, nicht neu fahren
+
+- **Eigene Ephemeride / Reduktionskette:** `state/mountain/2026-10-10_observer-operator_recherche.txt` · `state/mountain/2026-10-10_riss-ort_recherche.txt` · `state/stimmen/2026-10-02_ephemeriden-deepseek.md` · `state/stimmen/2026-10-10_sensory_eigene-ephemeride-round.md` · Konzept `docs/concepts/eigene-ephemeride.md`.
+- **GIC / Space-Weather:** `state/stimmen/2026-10-02_autolauf-gsics-deepseek.md` (+ `-glm53flash`/`-kiloultra`/`-muse`/`-nemotron*`) · `state/stimmen/2026-09-30_arena-ui_grok-4.6-high_gic-review3.json` · `state/stimmen/2026-10-01_zai-ui_gic-review.txt`.
+- **LiDAR-Verdikte:** `state/mycelium/lidar_id_diff_measured.md`.
+- **Re-Admission / revive:** `state/future/revive-kandidaten-2026-10-11.md`.
+- **Quellen-Landschaft / Routing / Lizenzen:** `state/mountain/routing-untersuchung-2026-10-10.md` · `state/mountain/license-census.tsv` · `state/mountain/blocked-sources-klassen.md`.
+- **Asservatenkammer:** `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md`; **Elektronen-/Vlies-/TE-Runden:** `state/research/` + `state/stimmen/2026-10-10-river-c-skalenspektrum-rat.md`.
 
 ## Abschluss
 
