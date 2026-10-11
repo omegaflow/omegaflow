@@ -226,10 +226,20 @@ fn copc_bbox(url: &str) -> Option<[f64; 6]> {
     parse_las_bbox(&bytes)
 }
 
+fn shard_line(url: &str, bbox: Option<[f64; 6]>, emit_bbox: bool) -> String {
+    match bbox {
+        Some(b) if emit_bbox && b.iter().all(|v| v.is_finite()) => format!(
+            "shard {url} {} {} {} {} {} {}",
+            b[0], b[1], b[2], b[3], b[4], b[5]
+        ),
+        _ => format!("shard {url}"),
+    }
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     let Some(bucket) = arg_value(args, "--bucket").filter(|b| !b.is_empty()) else {
         return Err(
-            "usage: noaa_nos_coverage --bucket <name> [--prefix <p>] [--out <path>] [--ci-mode]"
+            "usage: noaa_nos_coverage --bucket <name> [--prefix <p>] [--out <path>] [--bbox|--bbox-off] [--ci-mode]  (default: url-only shard lines; --bbox emits the LAS header bbox)"
                 .into(),
         );
     };
@@ -247,6 +257,7 @@ fn run(args: &[String]) -> Result<(), String> {
         None => format!("data/{netloc}/{MANIFEST_NAME}"),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let emit_bbox = args.iter().any(|a| a == "--bbox") && !args.iter().any(|a| a == "--bbox-off");
     let out_name = match Path::new(&out).file_name().and_then(|n| n.to_str()) {
         Some(n) => n.to_string(),
         None => MANIFEST_NAME.to_string(),
@@ -265,13 +276,9 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut text = String::with_capacity(copc.len() * 160);
     for key in &copc {
         let url = format!("{base}/{key}");
-        match copc_bbox(&url) {
-            Some(b) => text.push_str(&format!(
-                "shard {url} {} {} {} {} {} {}\n",
-                b[0], b[1], b[2], b[3], b[4], b[5]
-            )),
-            None => text.push_str(&format!("shard {url}\n")),
-        }
+        let bbox = if emit_bbox { copc_bbox(&url) } else { None };
+        text.push_str(&shard_line(&url, bbox, emit_bbox));
+        text.push('\n');
     }
     if let Some(parent) = Path::new(&out).parent() {
         if !parent.as_os_str().is_empty() {
@@ -345,6 +352,23 @@ mod tests {
         ));
         assert!(
             url.contains("3p%2FPms3O60CRWchPLwOZ3IRFH2jShZHRWR1HjGEQZ6GhaCPL2pZq94gq2fkDIRTFcqsm")
+        );
+    }
+
+    #[test]
+    fn default_shard_is_url_only_and_bbox_is_opt_in() {
+        let bbox = Some([10.0, 20.0, 30.0, 40.0, 50.0, 60.0]);
+        assert_eq!(
+            shard_line("https://x/a.copc.laz", bbox, false),
+            "shard https://x/a.copc.laz"
+        );
+        assert_eq!(
+            shard_line("https://x/a.copc.laz", bbox, true),
+            "shard https://x/a.copc.laz 10 20 30 40 50 60"
+        );
+        assert_eq!(
+            shard_line("https://x/a.copc.laz", None, true),
+            "shard https://x/a.copc.laz"
         );
     }
 }
