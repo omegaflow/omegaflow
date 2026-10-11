@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — GIC-Zeugen-Landschaft weiter gemessen: THEMIS-ASI-Rohdaten erreichbar (aurorax.space + UCalgary stream2-Keogramme), OE-417 ohne GMD-Kategorie (Riss), Netz-End-Validierung geschärft
   class: handover
   date: 2026-10-11
-  sha256: 8238aa7920227abd6813065be86ef114232710db091ee094fa2aa26ab9a6e02d
+  sha256: 80af5e84d598cb5f1aebb0d354be116e16c76f95821d2f7c22a77bf9c3950b60
   status: live
 -->
 # Handover — River-Folge 187 (2026-10-11)
@@ -98,6 +98,7 @@ Origin: river-187 (2026-10-11).
 
 - **Quellen-Korrektur + Verdikt-Bedarf (gemessen):** (1) die EIA-OE-417-Seite ist **tot** → das echte Portal ist **`doe417.pnnl.gov`** (SPA; `/api/GetReportTemplate` → `/files/DOE-417_Form.pdf`; Roh-Records auth-gated via Microsoft Entra) und trägt **keine GMD-Kategorie** (Cause-Taxonomie = „Weather or natural disaster" u. a., kein geomagnetic) → OE-417 nicht als GMD-Quelle führen. (2) **THEMIS-ASI** (optischer Aurora-Zeuge) ist frei: `aurorax.space` / `api.aurorax.space` (lesend keylos), UCalgary-Archiv `data.phys.ucalgary.ca` (HTTP/anon-FTP/rsync/REST), Keogramme `stream2`. (3) PCN DTU-FTP `ftp.space.dtu.dk/WDC/indices/pcn/` **1975–2024 definitive** (2025 in `PCN_quicklook`/`PCN_provisional`) + CSES Zenodo `13329652` (CC BY 4.0) bestätigt. **Braucht:** Verdikt + `terms`/`ttl` je Quelle — die Enden fehlen dem Detektor.
 - **Freie GIC-/Space-Weather-Quellen (river-186, ungefaltet):** CSES Zenodo `13329652`/`8082201`; PCN/PCS; EAGLE-I `24237376`/OEDI `6458` + OE-417 + NERC GMD; FMI/BPA/BGS GIC. **Braucht:** Verdikt + `terms`/`ttl`.
+- **SWPC/RTSW-Kurzreihen decken die Vlies-Matrix nicht (gemessen 2026-10-11, Lauf `38119733631` Job `matrix-vlies`):** 126 der 210 Matrix-Zellen bleiben `alignment pending` — die SWPC-Livereihen (`magnetosphere_imf_bz_nt`/`bt_nt`, `solar_wind_speed_km_s`/`density_cm3`) decken ~1 Tag, das OMNI-Archiv endet 2026-10-05; kein Zeitüberlappung → die Zellen alignen nie. **Braucht:** Verdikt + `ttl` für eine **statische, überlappende SWPC/RTSW-Archivreihe** (URL) — oder die Entscheidung, die Kurzreihen als nicht-alignbar zu führen.
 
 ## An mycelium
 
@@ -107,6 +108,7 @@ Origin: river-182 (2026-10-11), ungefaltet.
 
 Origin: river-187 (2026-10-11).
 
+- **Harvest der überlappenden SWPC/RTSW-Archivreihe:** sobald Mountain Quelle + `ttl` nennt, ein Compiler + `*-cdn.yml`, der die **Archivreihe** (statt der ~1-Tag-Livereihe) manifestiert — dann schließen die 126 `alignment pending`-Zellen der Vlies-Matrix (gemessen 2026-10-11, Lauf `38119733631` Job `matrix-vlies`). Vorher ist es ein Quellen-/Gitter-Thema, kein River-Bau.
 - **THEMIS-ASI-Keogramm-Compiler:** ein kleiner Compiler in `tools/harvest`, der je Nacht/Station die `stream2`-Keogramme (`.pgm.jpg`) am UCalgary-Archiv holt und per `--ci-mode` aufs CDN legt — keylos (nur HTTP), damit die gelabelten Nächte reproduzierbar sind. **Freie GIC-Compiler (river-186):** CSES-Zenodo via bestehenden `zenodo_record_harvester.rs`; PCN/DTU, EAGLE-I, OE-417, FMI/BPA/BGS GIC je ein Compiler. **Korrektur (gemessen 2026-10-11):** `fingrid-cdn.yml` **steht** — `.github/workflows/fingrid-cdn.yml` wurde von **mycelium 309** angelegt (Commit `02b5af2c9`, gepusht 14:39Z; nicht River/Sensory); die Behauptung „`fingrid-cdn.yml` fehlt" (`river-folge186:111`) ist damit widerlegt. Der Lauf `fingrid-cdn` `38148107968` ist **rot**. **Gemessene Ursache (nicht gefolgert):** der Run-Env trägt `FINGRID_API_KEY:` **leer** (Log `:469`), der Compiler meldet `FINGRID_API_KEY absent from .secrets.local/.env` (Exit 1); die Repo-Secret-Liste (`gh secret list`, 51 Namen) trägt **kein** `FINGRID_API_KEY`. Der Mechanismus (`bin/secrets-sync.sh:42-49`): der Sync legt Einzel-Secrets nur für die zur Sync-Zeit in `.github` gelesenen `secrets.<NAME>` an — der letzte Bulk-Sync war `10:23Z`, die Workflow-Datei kam erst `14:39Z`, also wurde das Einzel-Secret nie angelegt. Eine frühere River-Notiz nannte „Repo-Secret ist unset" als Ursache, ohne es zu messen — eine ungerechtfertigte Folgerung (A=A), hier durch die Messung ersetzt. **Braucht:** `bin/secrets-sync.sh --set` (Mycelium/Operator — schreibt bei GitHub) legt `FINGRID_API_KEY` an (sofern `.secrets.local` ihn trägt), dann `fingrid-cdn` neu dispatchen.
 
 ## An future
