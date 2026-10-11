@@ -215,6 +215,22 @@ fn dup_map_sorted(dups: &BTreeMap<String, Vec<String>>) -> String {
     format!("[{}]", objs.join(", "))
 }
 
+fn family_map(families: &BTreeMap<String, Vec<String>>) -> String {
+    let objs: Vec<String> = families
+        .iter()
+        .map(|(family, tags)| {
+            format!(
+                "{{{}: {}, {}: {}}}",
+                esc("family"),
+                esc(family),
+                esc("tags"),
+                str_list(tags)
+            )
+        })
+        .collect();
+    format!("[{}]", objs.join(", "))
+}
+
 fn group_list(groups: &[Vec<String>]) -> String {
     let objs: Vec<String> = groups
         .iter()
@@ -297,6 +313,19 @@ fn is_literal_tag(tag: &str) -> bool {
         && !tag.contains('(')
         && !tag.contains('/')
         && tag != "tools-latest"
+}
+
+fn internal_family(netloc: &str) -> Option<&'static str> {
+    if netloc.starts_with("ps1-dr2-") {
+        Some("ps1-dr2")
+    } else if netloc.starts_with("ssd.jpl.nasa.gov-") {
+        Some("ssd.jpl.nasa.gov")
+    } else {
+        netloc
+            .strip_prefix(MODIS_LST_CMG_FAMILY)
+            .filter(|rest| rest.starts_with('-'))
+            .map(|_| MODIS_LST_CMG_FAMILY)
+    }
 }
 
 fn host_known(tag: &str, hosts: &BTreeSet<String>) -> bool {
@@ -486,16 +515,12 @@ fn main() {
     let non_source_tags: BTreeSet<&str> =
         ["srdata.nist.gov", "rave-survey.org"].into_iter().collect();
 
-    let modis_year_prefix = format!("{MODIS_LST_CMG_FAMILY}-");
     let classify = |nl: &str| -> &'static str {
         if dataset_hosts.contains(nl) {
             "dataset_host"
         } else if non_source_tags.contains(nl) {
             "non_source"
-        } else if nl.starts_with("ps1-dr2-")
-            || nl.starts_with("ssd.jpl.nasa.gov-")
-            || nl.starts_with(modis_year_prefix.as_str())
-        {
+        } else if internal_family(nl).is_some() {
             "internal"
         } else if nl.starts_with("github.com")
             || nl.starts_with("raw.githubusercontent.com")
@@ -509,14 +534,23 @@ fn main() {
 
     let mut orphan_releases: Vec<String> = Vec::new();
     let mut orphan_by_class: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut family_bound: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut duplicate_netloc_tags: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for (tag, nl) in &tag_netloc {
         if !source_netlocs.contains(nl) {
-            orphan_releases.push(tag.clone());
-            orphan_by_class
-                .entry(classify(nl).to_string())
-                .or_default()
-                .push(tag.clone());
+            match internal_family(nl) {
+                Some(family) => family_bound
+                    .entry(family.to_string())
+                    .or_default()
+                    .push(tag.clone()),
+                None => {
+                    orphan_releases.push(tag.clone());
+                    orphan_by_class
+                        .entry(classify(nl).to_string())
+                        .or_default()
+                        .push(tag.clone());
+                }
+            }
         } else {
             duplicate_netloc_tags
                 .entry(nl.clone())
@@ -526,6 +560,9 @@ fn main() {
     }
     orphan_releases.sort();
     for v in orphan_by_class.values_mut() {
+        v.sort();
+    }
+    for v in family_bound.values_mut() {
         v.sort();
     }
     duplicate_netloc_tags.retain(|_, v| v.len() > 1);
@@ -623,6 +660,10 @@ fn main() {
         dup_map_sorted(&orphan_by_class),
     ));
     report.push((
+        "family_bound_releases_by_family".into(),
+        family_map(&family_bound),
+    ));
+    report.push((
         "unmanifested_source_netlocs".into(),
         str_list(&unmanifested_sources),
     ));
@@ -661,9 +702,10 @@ fn main() {
     }
     match std::fs::write(&out_full, &out_text) {
         Ok(()) => eprintln!(
-            "cdn_reconcile: {} written (orphan {} unmanifest {} divergence {} missing {} dupegroups {} www {})",
+            "cdn_reconcile: {} written (orphan {} family_bound {} unmanifest {} divergence {} missing {} dupegroups {} www {})",
             out_full,
             orphan_releases.len(),
+            family_bound.values().map(Vec::len).sum::<usize>(),
             unmanifested_sources.len(),
             divergence.len(),
             missing_assets.len(),
@@ -689,6 +731,25 @@ mod tests {
             release_tag_netloc("ssd.jpl.nasa.gov"),
             ("ssd.jpl.nasa.gov", false)
         );
+    }
+
+    #[test]
+    fn internal_family_binds_runtime_derived_members() {
+        assert_eq!(
+            internal_family("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-2026"),
+            Some(MODIS_LST_CMG_FAMILY)
+        );
+        assert_eq!(internal_family("ps1-dr2-1120"), Some("ps1-dr2"));
+        assert_eq!(
+            internal_family("ssd.jpl.nasa.gov-korpora"),
+            Some("ssd.jpl.nasa.gov")
+        );
+        assert_eq!(internal_family(MODIS_LST_CMG_FAMILY), None);
+        assert_eq!(
+            internal_family("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmgX"),
+            None
+        );
+        assert_eq!(internal_family("bom.gov.au"), None);
     }
 
     #[test]
