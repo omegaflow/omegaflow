@@ -6,8 +6,7 @@ use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
 const NETLOC: &str = "sbnarchive.psi.edu";
-const OLA_ROUTE: &str =
-    "https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/";
+const OLA_ROUTE: &str = "https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -295,9 +294,13 @@ fn compile_entry(
     };
     let file_name = label.file_name.as_deref().unwrap_or("");
     if !file_name.is_empty()
-        && !dat_spec.to_ascii_lowercase().ends_with(&file_name.to_ascii_lowercase())
+        && !dat_spec
+            .to_ascii_lowercase()
+            .ends_with(&file_name.to_ascii_lowercase())
     {
-        eprintln!("{label_spec}: file_name {file_name} does not name {dat_spec} — label/data unpaired");
+        eprintln!(
+            "{label_spec}: file_name {file_name} does not name {dat_spec} — label/data unpaired"
+        );
         return None;
     }
     let Some((table, skipped, trailing)) = build_table(&label, &dat_bytes) else {
