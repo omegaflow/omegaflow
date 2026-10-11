@@ -3,7 +3,7 @@
   session: River-Folge 183
   class: handover
   date: 2026-10-11
-  sha256: 3c724b022aa08bdab3df8713b358b9fd7a99612fb4bdd1464d2879214244d5b7
+  sha256: caccf000f4e466954dc23467f4eaef63dce3d42e8d682a4dd4b12b7e98bf2107
   status: live
 -->
 # Handover — River-Folge 183 (2026-10-11)
@@ -20,7 +20,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 **parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
 (**Trigger** / **Lage** / **Blockade** / **Braucht**).
 
-## Burn: open 0.0000 · close 0.1015 · cap 0.25 — Grund: River F183 (deepseek-flash, `session_burn` total 1.6453 → 1.7468 zur Messzeit), kein pro/max; paper-check-Rot (`38118338352`, pass-named River-Row) geheilt — GIC-Paper-Abstract von 244 auf 200 Wörter gekürzt, `export_latex --check` grün (gemessen, 2026-10-11); Folge-Lauf `38120057236` queued.
+## Burn: open 0.0000 · close 0.1125 · cap 0.25 — Grund: River F183 (deepseek-flash, `session_burn` Session „River-Linie in einem Pass starten"), kein pro/max; paper-check-Rot (`38118338352`, pass-named River-Row) geheilt — GIC-Paper-Abstract von 244 auf 200 Wörter gekürzt, `export_latex --check` grün; panel-vlies-Trigger gefeuert — Lauf `38119733631` success, Überlappungs-Korrelation Tages- vs 1h-Bz = 0.6277 (Riss, verschiedene Aggregation), Rat Schritt 3 gebaut (`3093e9432`, `e7c0ac292`).
 
 ## Operator-Wort-Register
 
@@ -58,13 +58,6 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 
 ## Offen (aufgeschlüsselt)
 
-### panel-vlies — 1h-Zeuge present, Register geheilt; nächster Schritt = Überlappungs-Korrelation + feinste-gleichartige Auswahl
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das Artefakt `field-te-panel-vlies.txt` des `field-te-query`-Laufs `38119733631` (dispatcht 2026-10-11, HEAD `4db4a6bef`) — der Lauf trägt die Überlappungs-Korrelation der jetzt geladenen 1h-Zeile.
-- **Lage:** (gemessen 2026-10-11, River 183) `ci_manage view 38119733631` = **queued** (kein Artefakt). Der 1h-Bin ist present (`--verdict` 206, 59 014 068 B, sha256 `95243a2a…`), die Register-Zeile `phi/sources.φ:1950` trägt `3600` (geheilt); die Dreifach-Registrierung besteht weiter (`:742` HAPI 3600 · `:1935` Tages-Bin 86400 · `:1950` 1h 3600). Vorläufer-Artefakt `38117597925` gelesen: Panel „pending — bin window carries no overlap between the arms".
-- **Blockade:** keine — der Lauf ist dispatchbar; CI-Stau hält ihn queued.
-- **Braucht:** frisches Artefakt lesen → Rat Schritt 1 (Überlappungs-Korrelation Tages- vs Stunden-Bz auf gemeinsamen Stunden) entscheidet, ob die Kandidaten dieselbe Größe tragen; danach Rat Schritt 3 Code: `load_field_across_sources` (`tools/measure/src/bin/field_te_query.rs:1249`) `median_dt` je Kandidat, feinster **gleichartiger** Zeuge, Zeuge benannt; bei verschiedener Aggregation `panel pending` mit beiden Zeugen (Riss). Träger-Rat: `state/stimmen/2026-10-11-river-panel-aufloesung-rat.md`.
-
 ### Flyby-Kette — recon bleibt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34`.
@@ -80,6 +73,7 @@ Origin: river-182 (2026-10-11).
 
 ## An mountain
 
-Origin: river-182 (2026-10-11).
+Origin: river-183 (2026-10-11).
 
-- **Dreifach-Registrierung `omni_imf_bz_gsm_nt`** (gemessen 2026-10-11): `phi/sources.φ:742` HAPI-Live (3600) · `:1935` Tages-Bin `omni2_serie.bin` (86400) · `:1950` 1h-Bin `omni2_serie_1h.bin` (3600). Dieselbe Kennung löst auf zwei Aggregationen (Tagesmittel vs. Stundenwert) auf. Rat 2026-10-11 (`state/stimmen/2026-10-11-river-panel-aufloesung-rat.md`): `first-load-wins` ist keine Ordnungsregel; der Registerdefekt ist der eigentliche Defekt und wird nicht durch Code maskiert. Braucht: die drei Zeilen entflechten (getrennte Namen je Aggregation) — Register-Domäne.
+- **Dreifach-Registrierung `omni_imf_bz_gsm_nt`** (gemessen 2026-10-11): `phi/sources.φ:742` HAPI-Live (3600) · `:1935` Tages-Bin `omni2_serie.bin` (86400) · `:1950` 1h-Bin `omni2_serie_1h.bin` (3600). **Gemessen: Überlappungs-Korrelation Tages- vs 1h-Bz = 0.6277 über 19935 gemeinsame 86400s-Perioden** (Artefakt `38119733631/field-te-panel-vlies.txt`) — die zwei Registrierungen tragen **nicht** dieselbe Größe. Rat 2026-10-11 (`state/stimmen/2026-10-11-river-panel-aufloesung-rat.md`): `first-load-wins` ist keine Ordnungsregel; der Registerdefekt ist der eigentliche Defekt und wird nicht durch Code maskiert. Der Codeweg ist gebaut (`3093e9432`): `load_field_across_sources` liest `median_dt` je Kandidat, nennt den Zeugen; verschiedene Aggregation → Riss (`panel pending` mit beiden Zeugen), kein stiller Griff. Braucht: die drei Zeilen entflechten (getrennte Namen je Aggregation), den HAPI-Text-Arm um `omni_imf_bz_gsm_nt` ergänzen — Register-/Parser-Domäne.
+- **`cargo check -p omegaflow-measure` ist rot** (gemessen 2026-10-11, am HEAD): `tools/measure/src/bin/eclipse_shadow_probe.rs:274` ruft `orientation_angles_at(props, jd).2` auf einem `Option<(f64,f64,f64)>` (`src/archivar/motion.rs:59`); `tools/measure/src/bin/orientation_probe.rs:452-487` baut `BodyProperties`/`BodyEphemeris` mit entfernten Feldern. Die einzelnen CI-Bins (`field_te_query`) bauen; die vollen Kisten-Bins nicht. Braucht: die zwei Bins an die `Option`/`medium`-Signaturen anpassen (oder entfernen) — Bau-Domäne.
