@@ -1,0 +1,43 @@
+name: substorm-compare
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: start ISO date (McPherron/SuperMAG overlap, e.g. 2000-01-01)
+        required: true
+        type: string
+        default: "2000-01-01"
+      stop:
+        description: stop ISO date (e.g. 2010-01-01)
+        required: true
+        type: string
+        default: "2010-01-01"
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the McPherron onset list (Zenodo, CC BY 4.0)
+        run: |
+          set -euo pipefail
+          curl -sSL -o /tmp/CorrOnsFiles.zip https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
+          unzip -q /tmp/CorrOnsFiles.zip -d /tmp/mcpherron
+      - name: Head-to-head against the five SuperMAG lists
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-measure --release --bin substorm_compare -- \
+            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+            --start "${{ inputs.start }}" \
+            --stop "${{ inputs.stop }}"
