@@ -3729,6 +3729,7 @@ const QUERY_MODES: &[&str] = &[
     "re3data",
     "seanoe",
     "arcgis",
+    "dataverse",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4157,6 +4158,7 @@ pub fn run_lines_max(
         "re3data" => crate::re3data::re3data_lines(query, max),
         "seanoe" => crate::seanoe::seanoe_lines(query, max),
         "arcgis" => crate::arcgis::arcgis_lines(query, max),
+        "dataverse" => crate::dataverse::dataverse_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4390,6 +4392,7 @@ mod tests {
             "re3data",
             "seanoe",
             "arcgis",
+            "dataverse",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
