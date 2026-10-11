@@ -1,0 +1,57 @@
+# harvest: format=pds3_fixed_width asset=fehlt arm=mla_compiler pattern=^pds3_fixed_width_mlaradr.*\.bin$ idempotent=true timeout=240 tag=pds-geosciences.wustl.edu
+
+name: mla-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/mla_compiler.rs'
+      - '.github/workflows/mla-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  mla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-geosciences.wustl.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "pds3_fixed_width_mlaradr0801141902.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset pds3_fixed_width_mlaradr0801141902.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset pds3_fixed_width_mlaradr0801141902.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-geosciences.wustl.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-geosciences.wustl.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-geosciences.wustl.edu --repo omegaflow/sources \
+              --title "pds-geosciences.wustl.edu" \
+              --notes "NASA PDS Geosciences Node fixed-width tables (MESSENGER MLA RDR) compiled to typed bin assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the MESSENGER MLA RDR table to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin mla_compiler -- \
+            --dat https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/rdr_radr/2008/jan/mlaradr0801141902.tab \
+            --label https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/rdr_radr/2008/jan/mlaradr0801141902.lbl \
+            --out data/pds-geosciences.wustl.edu/pds3_fixed_width_mlaradr0801141902.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "mla-cdn: pds3_fixed_width_mlaradr0801141902.bin returned void" \
+                 "mla_compiler returned void for the MESSENGER MLA RDR source. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

@@ -1,7 +1,7 @@
 use omegaflow::cdn::upload_release;
 use std::env;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 const TAG: &str = "data.fingrid.fi";
@@ -108,6 +108,12 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let bytes = fetch(DATASETS_URL, &key)?;
     let count = dataset_count(&bytes);
+
+    if let Some(parent) = Path::new(&out_path).parent()
+        && !parent.as_os_str().is_empty()
+    {
+        std::fs::create_dir_all(parent).map_err(|e| format!("create parent void: {e}"))?;
+    }
 
     let mut file = std::fs::File::create(&out_path)
         .map_err(|e| format!("{out_path} create returned void: {e}"))?;
