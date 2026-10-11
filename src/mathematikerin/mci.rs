@@ -1,5 +1,5 @@
 use super::parcorr::{CiTest, ParCorr};
-use super::pc::pc_stable_skeleton;
+use super::pc::pc_stable_skeleton_screened;
 use super::te::{
     LaggedCond, TeEstimator, TeNull, TeSurrogateParams, conditional_te_surrogates_n,
     transfer_entropy_conditional_binned_n,
@@ -180,9 +180,17 @@ pub struct PendingEdge {
     pub dim: usize,
 }
 
+pub struct ScreenedLink {
+    pub driver: usize,
+    pub target: usize,
+    pub lag: usize,
+    pub p_pc: f64,
+}
+
 pub struct WindowGraph {
     pub links: Vec<WindowLink>,
     pub pending: Vec<PendingEdge>,
+    pub screened: Vec<ScreenedLink>,
 }
 
 fn link_seed(base: u64, i: usize, j: usize, tau: usize) -> u64 {
@@ -220,6 +228,7 @@ pub fn mci_window_graph(series: &[Vec<f32>], p: MciParams) -> WindowGraph {
         return WindowGraph {
             links: Vec::new(),
             pending: Vec::new(),
+            screened: Vec::new(),
         };
     }
     let stride = p.max_lag + 1;
@@ -230,6 +239,7 @@ pub fn mci_window_graph(series: &[Vec<f32>], p: MciParams) -> WindowGraph {
             return WindowGraph {
                 links: Vec::new(),
                 pending: Vec::new(),
+                screened: Vec::new(),
             };
         }
     };
@@ -243,11 +253,34 @@ pub fn mci_window_graph(series: &[Vec<f32>], p: MciParams) -> WindowGraph {
             return WindowGraph {
                 links: Vec::new(),
                 pending: Vec::new(),
+                screened: Vec::new(),
             };
         }
     };
 
-    let edges = pc_stable_skeleton(&columns, &ParCorr, p.alpha_pc, p.max_cond);
+    let (edges, screened_nodes) =
+        pc_stable_skeleton_screened(&columns, &ParCorr, p.alpha_pc, p.max_cond);
+
+    let mut screened: Vec<ScreenedLink> = Vec::new();
+    for &(a, b, p_pc) in &screened_nodes {
+        let (candidate, target_node) = if a % stride != 0 && b % stride == 0 {
+            (a, b)
+        } else if b % stride != 0 && a % stride == 0 {
+            (b, a)
+        } else {
+            continue;
+        };
+        let driver = candidate / stride;
+        let target = target_node / stride;
+        if driver != target {
+            screened.push(ScreenedLink {
+                driver,
+                target,
+                lag: candidate % stride,
+                p_pc,
+            });
+        }
+    }
 
     let mut parents: Vec<BTreeSet<usize>> = vec![BTreeSet::new(); d];
     for &(a, b) in &edges {
@@ -348,7 +381,11 @@ pub fn mci_window_graph(series: &[Vec<f32>], p: MciParams) -> WindowGraph {
     for (link, pass) in links.iter_mut().zip(passes) {
         link.fdr_pass = pass;
     }
-    WindowGraph { links, pending }
+    WindowGraph {
+        links,
+        pending,
+        screened,
+    }
 }
 
 pub fn mci_window_links(series: &[Vec<f32>], p: MciParams) -> Vec<WindowLink> {
