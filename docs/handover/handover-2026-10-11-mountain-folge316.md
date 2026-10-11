@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — register_sort canonical + mla/ola fmt geheilt (ci-gate register/format), te-bias-n dispatcht, DEMETER-Lizenz-Riss + GIC/Re-Admission-Verdikte gemessen; vier Taucher-Dossiers
   class: handover
   date: 2026-10-11
-  sha256: 33e6196d3a02403dc39583aea6189c10046c7444208fda66f055d6b379bc28d5
+  sha256: 245d593d0121a9c64740a48480777796d59f8331c01aef0c0282c4c5055616f9
   status: live
 -->
 # Handover — Mountain-Folge 316 (2026-10-11)
@@ -30,12 +30,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 - **Blockade:** CI-Lauf.
 - **Braucht:** `38147870533` lesen (`ci_manage log 38147870533`); dann entscheiden, ob der KSG-Arm mit der strukturerhaltenden Null beide Gates hält.
 
-### LiDAR-Inventar / Extraterrestrisch — MLA braucht das RDR-Label
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der nächste `archive_search`-Verdikt-Schritt auf das MLA-RDR-Label
-- **Lage:** (gemessen 2026-10-11 via folge315-Register) (folge315, unverändert) MOLA/NLR/MLA/OLA registriert (`phi:31707-31917`); NLR-DOY-Lücke behoben (`b334bf278`). MLA trägt kein Messfeld — das getestete CDR-Label ist Housekeeping (V/degC), die Bereiche stehen im RDR.
-- **Blockade:** MLA-RDR nicht als Quelle erfasst.
-- **Braucht:** MLA-RDR-Label `archive_search --verdict`; bei Zugang registrieren, sonst `descoped` mit Befund.
+### LiDAR-Inventar / Extraterrestrisch — MLA-RDR gemessen (Code-Änderung), Coverage-Blöcke gesetzt
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt (MLA-Route + Coverage-Register)
+- **Lage:** (gemessen 2026-10-11 via `archive_search --verdict` + `sread`) Extraterrestrisch registriert: MOLA `field MARS_RADIUS mola_mars_radius` · NLR `field RANGE nlr_range`/`nlr_eros_radius` · OLA `field radius ola_radius` · Hayabusa `field RANGE hay_lidar_range`. **MLA** (`format pds3_fixed_width`, CDR-`origin`): der **RDR ist erreichbar** — `…/messmla_2001/rdr_radr/` HTTP 200 (die Vermutung `…/rdr/` war 404), und `label/mlascirdr.fmt` trägt `NAME = RANGE` (Spalte 11, `F10.4`, Unit KM); Blocker ist der **hartkodierte `CDR_ROUTE`** in `tools/harvest/src/bin/mla_compiler.rs:10` (walkt nur `cdr/2004/aug/`), kein fehlender Zugang. Terrestrische Coverage: ahn4/swisstopo/linz/ign_lidarhd registriert; **drei fehlende Blöcke in diesem Atom gesetzt** — `coverage_tnm` (`tnmaccess.nationalmap.gov`, terms `PD`) · `ea_lidar_index` (`environment.data.gov.uk`, OGL-UK-3.0) · `lola_coverage` (`astrogeo-ard.s3.amazonaws.com`, `at moon`, terms `PD`) — `register_sort` canonical über **2789** Blöcke. **Offen:** `opentopography_coverage` (`portal.opentopography.org/API/otCatalog?outputFormat=json`, `format coverage_manifest`) — Lizenz **per-Dataset**, ein einzelnes `terms` überzeichnet → Riss. Tatsächliche Punktdaten: nur `open-lidar-data` BE (`format las`) + `usgs-lidar-public` BrooksCamp; die terrestrischen Portale sind **coverage-only** (Daten descoped, folge315).
+- **Blockade:** MLA ist eine **Code-Änderung** (Route auf `rdr_radr/` + `RANGE`-Mapping), kein Register-Akt; die opentopography-Lizenz ist **per-Dataset** (ein einzelnes `terms` überzeichnet) → Riss.
+- **Braucht:** (a) `mla_compiler.rs` `CDR_ROUTE` → RDR-Route (`--route`-Flag/Repoint) + `field RANGE mla_range em km`, `cargo build -p omegaflow-harvest --bin mla_compiler`, Block-`origin` auf `rdr_radr`. (b) `opentopography_coverage`: Lizenz-Verdikt (per-Dataset → `terms`-Modell) oder nur `archive_search`-Arm.
 
 ### Sechs Klima-Quellen — ecad/aodn brauchen gewählte Eingaben
 - **Status:** wartend | **Bindung:** eigen
