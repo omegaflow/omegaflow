@@ -1,4 +1,7 @@
-use omegaflow::te::{phase_randomized_surrogate, topological_te_estimate, transfer_entropy_lag};
+use omegaflow::te::{
+    arx_restricted_surrogate, phase_randomized_surrogate, topological_te_estimate,
+    transfer_entropy_lag,
+};
 
 const N: usize = 10000;
 const TRANSIENT: usize = 1000;
@@ -6,6 +9,22 @@ const COUPLING: f64 = 0.2;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const N_SURR: usize = 10;
 const DIM: usize = 3;
+const ARX_NULL_LAG: usize = 12;
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum NullKind {
+    Phase,
+    Arx,
+}
+
+impl NullKind {
+    fn label(self) -> &'static str {
+        match self {
+            NullKind::Phase => "phase",
+            NullKind::Arx => "arx",
+        }
+    }
+}
 
 fn coupled_henon(n: usize, transient: usize, c: f64) -> (Vec<f32>, Vec<f32>) {
     let total = n + transient;
@@ -34,11 +53,25 @@ fn mean_plus_2sigma(vals: &[f64]) -> f64 {
     m + 2.0 * var.sqrt()
 }
 
-fn embedded_threshold(target: &[f32], source: &[f32], fam_pool: &mut Vec<f64>) -> Option<f64> {
+fn embedded_threshold(
+    target: &[f32],
+    source: &[f32],
+    kind: NullKind,
+    fam_pool: &mut Vec<f64>,
+) -> Option<f64> {
     let mut rng = SEED.wrapping_add(0x9E37_79B9_7F4A_7C15);
     let mut surr = Vec::with_capacity(N_SURR);
     for _ in 0..N_SURR {
-        let ys = phase_randomized_surrogate(source, &mut rng);
+        let ys = match kind {
+            NullKind::Phase => phase_randomized_surrogate(source, &mut rng),
+            NullKind::Arx => match arx_restricted_surrogate(source, ARX_NULL_LAG, &mut rng) {
+                Some(v) => v,
+                None => continue,
+            },
+        };
+        if ys.len() != source.len() {
+            continue;
+        }
         if let Some(t) = topological_te_estimate(target, &ys, DIM) {
             surr.push(t.te);
             fam_pool.push(t.te);
@@ -55,17 +88,19 @@ fn embedded_direction(
     target: &[f32],
     source: &[f32],
     label: &str,
+    kind: NullKind,
     fam_pool: &mut Vec<f64>,
 ) -> Option<(f64, f64)> {
     let te = topological_te_estimate(target, source, DIM)?.te;
-    let thr = embedded_threshold(target, source, fam_pool)?;
+    let thr = embedded_threshold(target, source, kind, fam_pool)?;
     println!(
-        "  {:<12} | TE {:>10.4e} | thr {:>10.4e} | {} ({} surrogate, dim {})",
+        "  {:<12} | TE {:>10.4e} | thr {:>10.4e} | {} ({} {} surrogate, dim {})",
         label,
         te,
         thr,
         if te > thr { "arrow" } else { "still" },
         N_SURR,
+        kind.label(),
         DIM
     );
     Some((te, thr))
@@ -113,14 +148,14 @@ fn main() {
     );
     println!("Coupling c = {:.2} (known direction: X → Y):", COUPLING);
     let mut fam_pool: Vec<f64> = Vec::new();
-    let xy = embedded_direction(&yc, &xc, "TE(X→Y)", &mut fam_pool);
-    let yx = embedded_direction(&xc, &yc, "TE(Y→X)", &mut fam_pool);
+    let xy = embedded_direction(&yc, &xc, "TE(X→Y)", NullKind::Phase, &mut fam_pool);
+    let yx = embedded_direction(&xc, &yc, "TE(Y→X)", NullKind::Phase, &mut fam_pool);
 
     let (xi, yi) = coupled_henon(N, TRANSIENT, 0.0);
     println!();
     println!("Control c = 0.00 (independent):");
-    let cxy = embedded_direction(&yi, &xi, "TE(X→Y)", &mut fam_pool);
-    let cyx = embedded_direction(&xi, &yi, "TE(Y→X)", &mut fam_pool);
+    let cxy = embedded_direction(&yi, &xi, "TE(X→Y)", NullKind::Phase, &mut fam_pool);
+    let cyx = embedded_direction(&xi, &yi, "TE(Y→X)", NullKind::Phase, &mut fam_pool);
 
     println!();
     match (xy, yx, cxy, cyx) {
@@ -159,4 +194,34 @@ fn main() {
     println!(
         "  the scalar arm does not null the reverse channel at strong coupling (finite-sample bias, te_bias_n_probe) — a riss against the production arm, carried, not smoothed."
     );
+
+    println!();
+    println!(
+        "Structurally-preserving AR(1) null arm — arx_restricted_surrogate (lag {ARX_NULL_LAG}, the tree's topological_te_arx null), the same Takens-embedded KSG arm against a null that keeps the autocorrelation:"
+    );
+    let mut fam_pool_arx: Vec<f64> = Vec::new();
+    let arx_xy = embedded_direction(&yc, &xc, "TE(X→Y)", NullKind::Arx, &mut fam_pool_arx);
+    let arx_yx = embedded_direction(&xc, &yc, "TE(Y→X)", NullKind::Arx, &mut fam_pool_arx);
+    println!();
+    println!("Control c = 0.00 (independent), AR(1) null:");
+    let arx_xy0 = embedded_direction(&yi, &xi, "TE(X→Y)", NullKind::Arx, &mut fam_pool_arx);
+    let arx_yx0 = embedded_direction(&xi, &yi, "TE(Y→X)", NullKind::Arx, &mut fam_pool_arx);
+    match (arx_xy, arx_yx, arx_xy0, arx_yx0) {
+        (Some((te_xy, _)), Some((te_yx, _)), Some((te_xy0, _)), Some((te_yx0, _))) => {
+            let fam = fam_pool_arx
+                .iter()
+                .cloned()
+                .fold(f64::NEG_INFINITY, f64::max);
+            println!(
+                "AR(1)-null fam = {:.4e}; asymmetry TE(X→Y)/TE(Y→X) = {:.2}; c=0: TE(X→Y) = {:.4e}, TE(Y→X) = {:.4e}.",
+                fam,
+                te_xy / te_yx,
+                te_xy0,
+                te_yx0
+            );
+        }
+        _ => println!(
+            "AR(1)-null arm: pending — a direction carries no MI-τ or no measurable surrogate (0 honored); absent values name no direction."
+        ),
+    }
 }

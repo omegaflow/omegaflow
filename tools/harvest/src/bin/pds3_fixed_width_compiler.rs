@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::pds3_table::{
-    Pds3Table, TableColumn, TableMeta, TableRow, decode_rows, pack, parse_label, parse_table,
-    unix_of_iso,
+    Pds3Table, TableColumn, TableMeta, TableRow, decode_rows, odl_kv, pack, parse_label,
+    parse_table, unix_of_iso,
 };
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
@@ -10,6 +10,12 @@ const DEFAULT_NETLOC: &str = "pds-smallbodies.astro.umd.edu";
 const KRFM_ROUTE: &str =
     "https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/";
 const VEGA_ROUTE: &str = "https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/";
+const MOLA_ROUTE: &str =
+    "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/mapping/";
+const MOLA_STRUCTURE_ROUTE: &str =
+    "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/label/";
+const NLR_ROUTE: &str =
+    "https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/";
 const AXIS_UNIT: &str = "SECOND";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
@@ -56,6 +62,13 @@ fn is_numeric_type(data_type: &str) -> bool {
             | "ASCII_REAL"
             | "FLOAT"
     )
+}
+
+fn merge_structure(label_text: &str, structure_text: &str) -> String {
+    match label_text.find("END_OBJECT") {
+        Some(cut) => format!("{}\n{structure_text}", &label_text[..cut]),
+        None => format!("{label_text}\n{structure_text}"),
+    }
 }
 
 enum Axis {
@@ -259,11 +272,30 @@ fn compile_entry(
         eprintln!("label fetch void ({label_spec})");
         return None;
     };
-    let Ok(label_text) = std::str::from_utf8(&label_bytes) else {
+    let Ok(label_raw) = std::str::from_utf8(&label_bytes) else {
         eprintln!("label not utf8 ({label_spec})");
         return None;
     };
-    let Some(meta) = parse_label(label_text) else {
+    let label_text = match odl_kv(label_raw)
+        .into_iter()
+        .find(|(k, _)| k == "^STRUCTURE")
+        .map(|(_, v)| v.trim_matches('"').trim().to_ascii_lowercase())
+    {
+        Some(name) => {
+            let spec = format!("{MOLA_STRUCTURE_ROUTE}{name}");
+            let Some(structure_bytes) = fetch_or_read(&spec) else {
+                eprintln!("structure fetch void ({spec})");
+                return None;
+            };
+            let Ok(structure_text) = std::str::from_utf8(&structure_bytes) else {
+                eprintln!("structure not utf8 ({spec})");
+                return None;
+            };
+            merge_structure(label_raw, structure_text)
+        }
+        None => label_raw.to_string(),
+    };
+    let Some(meta) = parse_label(&label_text) else {
         eprintln!("label parse void ({label_spec})");
         return None;
     };
@@ -406,6 +438,12 @@ fn walk_vega(out: &mut Vec<(String, String)>) {
     }
 }
 
+fn walk_mola(out: &mut Vec<(String, String)>) {
+    for orbit in collect_dirs(MOLA_ROUTE) {
+        collect_pairs(&orbit, "tab", ".lbl", out);
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
@@ -427,6 +465,8 @@ fn main() {
         (None, None) => {
             collect_pairs(KRFM_ROUTE, "dat", ".lbl", &mut pairs);
             walk_vega(&mut pairs);
+            walk_mola(&mut pairs);
+            collect_pairs(NLR_ROUTE, "tab", ".lbl", &mut pairs);
             false
         }
     };
