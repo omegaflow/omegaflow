@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 316
   class: handover
   date: 2026-10-12
-  sha256: a4dcd3b8958a4040e83a309ca30c3a9afcf244349811d8ca4700c339d07b377b
+  sha256: df07e83bc77f205c6c15a4b751d5103152317e99b156af11c253430b0744eb32
   status: live
 -->
 # Handover — Mycelium-Folge 316 (2026-10-12)
@@ -88,6 +88,13 @@ adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
 - **Lage:** (gemessen 2026-10-11) `nist_ncnr_nse_compiler.rs` + Workflow + Block (`phi/sources.φ:11711`, `format coverage_manifest`); Lauf `38170359508` **success** → Asset 3149 B, sha256 `eee1e943…`. Ersetzt das descopte `trisp-keller`.
 - **Blockade:** keine (Lauf grün).
 - **Braucht:** `terms` (US-PD) + `field` (Mountain).
+
+### Architektur — `on earth alt` Bezug (Rat + Roster; Riss benannt)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-Wort bzw. Rat-Fortgang
+- **Lage:** (gemessen 2026-10-12) **Rat (Konsens der fünf Stimmen):** der Slot `alt` **ist** die ellipsoidische Höhe h (`src/archivar/motion.rs:185` `(N+alt)`, geodätisch→ECEF); H (MSL) darf **nicht** als h geschrieben werden (Datums-Fabrikation), und `0` darf **kein** Pad für „absent" sein (0 ist ein echter h-Wert). Für die ASI (Quelle liefert nur MSL) lautet die kanonische Form `on earth <lat> <lon>` + `station <CODE>` — `alt` **absent**; dazu die Code-Pflicht: `src/archivar/parse.rs` verweigert heute alt-Losigkeit (`:375-382` „on without alt refused"), muss `Option<f64>` werden. **Recherche:** Community-Riss (IERS/ITRF ellipsoidal · INTERMAGNET orthometrisch · SPASE datumlos; Netz-Stationslisten ohne Höhe). **Roster (UI):** DeepSeek Chat = (c) absent (stimmt dem Rat zu); Z.ai/GLM = (a) h + Datum-Tag, ASI → h=0; Qwen = (a) h, Emitter rechnet h=H+N.
+- **Riss (benannt, nie gemittelt):** Rat + DeepSeek = **absent** (kein Geoid-Modell an die Stelle einer Messung); Z.ai + Qwen = **h** (Register intern ellipsoidal; Z.ai setzt ASI→0, Qwen rechnet H+N). Die Front trennt sich an „ehrliche Absenz" vs. „interne Konsistenz".
+- **Braucht:** Operator-Wort oder Rat-Fortgang: (i) Rat folgen (absent + `parse.rs`-Option-Pflicht) oder (ii) h mit Datum-Tag + Geoid-Adapter (h = H + N, EGM2008). Danach `emit()` + Form.
 
 ### Rätsel-/NSE- + Mariner-Quellen — `url`/`origin` geschrieben; Produzenten/`terms` offen
 - **Status:** wartend | **Bindung:** eigen
