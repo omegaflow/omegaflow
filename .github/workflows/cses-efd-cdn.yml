@@ -1,3 +1,5 @@
+# harvest: format=cses_efd asset=present arm=cses_efd_compiler pattern=^cses_efd\.bin$ idempotent=true timeout=90 tag=scidb.cn
+
 name: cses-efd-cdn
 
 concurrency:

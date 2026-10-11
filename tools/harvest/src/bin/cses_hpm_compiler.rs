@@ -5,15 +5,20 @@ use omegaflow::archivar::geo::{
 };
 use omegaflow::archivar::hdf5::Hdf5File;
 use omegaflow::archivar::rinex::{ecef_to_geodetic, receiver_ellipsoid_for_compiler};
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::SPECTRAL_NO_BAND;
 
 const NETLOC: &str = "scidb.cn";
+const FORMAT: &str = "cses_hpm";
+const COMPILER: &str = "tools/harvest/src/bin/cses_hpm_compiler.rs";
 const FILETREE_URL: &str = "https://www.scidb.cn/api/sdb-filetree-service/getAllUrl?dataSetId=30660a0fa4f04312b49689c3365fb474&type=personal&version=V1&global=en";
 const DEFAULT_FILE_ID: &str = "6398427cbae2f1393c118b52";
 const DOWNLOAD: &str = "https://download.scidb.cn/download?fileId=";
 const DAY_S: f64 = 86400.0;
+const TTL_S: f64 = 604800.0;
+const FIELD_TAU_S: f64 = 86400.0;
 const BIN: &str = "cses_hpm_compiler";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -212,9 +217,9 @@ fn main() {
         }
     };
 
-    let bytes = if let Some(path) = arg_value(&args, "--input") {
+    let (bytes, source) = if let Some(path) = arg_value(&args, "--input") {
         match std::fs::read(&path) {
-            Ok(b) => b,
+            Ok(b) => (b, path),
             Err(e) => {
                 eprintln!("cses_hpm_compiler: read {path}: {e} — the file stays unread");
                 std::process::exit(1);
@@ -229,7 +234,7 @@ fn main() {
             },
         };
         match fetch_raw_bytes(&url) {
-            Some(b) => b,
+            Some(b) => (b, url),
             None => {
                 eprintln!("cses_hpm_compiler: fetch void ({url}); filetree {FILETREE_URL}");
                 std::process::exit(1);
@@ -273,6 +278,29 @@ fn main() {
             std::process::exit(1);
         }
     }
+    let out_name = match std::path::Path::new(&out).file_name() {
+        Some(n) => n.to_string_lossy().into_owned(),
+        None => out.to_string(),
+    };
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{out_name}");
+    println!("origin {source}");
+    println!("compiler {COMPILER}");
+    println!("sha256 {}", sha256_hex(&bin));
+    println!("format {FORMAT}");
+    println!("ttl {}", TTL_S as u64);
+    println!("at earth");
+    println!(
+        "field FG2_X cses_hpm_fg2_x_nt inverse-square em nT {} 0.0 0.0",
+        FIELD_TAU_S as u64
+    );
+    println!(
+        "field FG2_Y cses_hpm_fg2_y_nt inverse-square em nT {} 0.0 0.0",
+        FIELD_TAU_S as u64
+    );
+    println!(
+        "field FG2_Z cses_hpm_fg2_z_nt inverse-square em nT {} 0.0 0.0",
+        FIELD_TAU_S as u64
+    );
     if ci_mode && !upload_release(NETLOC, &out) {
         eprintln!("cses_hpm_compiler: upload {out} did not reach the CDN");
         std::process::exit(1);

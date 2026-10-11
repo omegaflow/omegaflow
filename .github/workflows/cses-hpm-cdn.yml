@@ -1,3 +1,5 @@
+# harvest: format=cses_hpm asset=present arm=cses_hpm_compiler pattern=^cses_hpm\.bin$ idempotent=true timeout=90 tag=scidb.cn
+
 name: cses-hpm-cdn
 
 concurrency:
