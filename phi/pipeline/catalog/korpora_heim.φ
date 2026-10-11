@@ -1,9 +1,9 @@
 
-redistribute pangaea_catalog.φ | CC0 metadata, CC-BY data | https://www.pangaea.de/about/terms.php §6.2
-redistribute pangaea_catalog_full.φ | CC0 metadata, CC-BY data | https://www.pangaea.de/about/terms.php §6.2
-redistribute re3data_catalog.φ | CC0 (waiver auf die Datenbankeinträge) | https://www.re3data.org/about
-redistribute zenodo_catalog.φ | CC0 metadata | https://about.zenodo.org/terms/
-redistribute dryad_catalog.φ | CC0 (Datensätze/Metadaten), CC-BY 4.0 (übrige Inhalte) | https://datadryad.org/stash/terms
+descoped pangaea_catalog.φ | live-Arm --pangaea durchsucht PANGAEA direkt (2026-10-11); statischer CDN-Dump entfällt | https://www.pangaea.de/about/terms.php §6.2
+descoped pangaea_catalog_full.φ | live-Arm --pangaea (2026-10-11) | https://www.pangaea.de/about/terms.php §6.2
+descoped re3data_catalog.φ | live-Arm --re3data (2026-10-11) | https://www.re3data.org/about
+descoped zenodo_catalog.φ | live-Arm --zenodo (2026-10-11) | https://about.zenodo.org/terms/
+descoped dryad_catalog.φ | live-Arm --dryad (2026-10-11) | https://datadryad.org/stash/terms
 
 decline b2find_catalogs_index.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte ohne Autorisierung untersagt | https://www.eudat.eu/legal-notice
 decline b2find_intermagnet_catalog.φ | EUDAT legal notice: Verbreitung/Weitergabe an Dritte untersagt | https://www.eudat.eu/legal-notice
@@ -15,7 +15,7 @@ redistribute wdcc_catalog.φ | metadata CC0 (Terms of Use §2: "defaulted under 
 redistribute dataverse_harvard.φ | datasets CC0-by-default (Community Norms §CC0 Waiver); metadata citation reusable | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute dataverse_borealis.φ | datasets CC0-by-default (Community Norms §CC0 Waiver) | https://dataverse.org/best-practices/dataverse-community-norms
 redistribute cmr_catalog.φ | NASA CMR = US-Gov-Werk, public domain (17 U.S.C. §105); Metadaten-Sätze NASA-erzeugt | https://www.nasa.gov/terms-of-use/
-redistribute seanoe_catalog.φ | Datensätze CC-lizenziert (gemessen: LICENCE-Facette CC-BY/CC0/CC-BY-NC/…) | https://www.seanoe.org/
+descoped seanoe_catalog.φ | statischer CDN-Dump entfällt, Live-Suche (2026-10-11) | https://www.seanoe.org/
 
 redistribute erddap_noaa_pmel_catalog.φ | public domain — "in the public domain… may be used without charge for any lawful purpose" | https://www.weather.gov/disclaimer
 redistribute noaa_nodd_inventory.φ | public domain (NOAA) — s.o. | https://www.weather.gov/disclaimer

@@ -57,12 +57,6 @@ fam_state_SOD_2024.txt
 # + Kanon-Deklaration im selben Commit). Die !-Zeilen darunter bleiben
 # Sichtbarkeitsmuster.
 phi/*
-# Meteo-Ereignis-Konfigurationen (phi/meteo/*.json) sind die Eingabe des
-# Korrelations-Screenings (meteo_harvest/cross_te_screen) und die
-# workflow_dispatch-Konfig des meteo-cdn.yml — versioniert wie die Register.
-!phi/meteo/
-phi/meteo/*
-!phi/meteo/*.json
 !phi/canon.φ
 !phi/sources.φ
 !phi/dead_sources.φ
@@ -91,18 +85,8 @@ phi/pipeline/catalog/*
 # Das Korpora-Heim-Verdikt (Lizenzverdikt je Korpus: redistribute/decline/pending)
 # ist ein Registrierungs-Urteil — versioniert; korpora-cdn.yml liest es.
 !phi/pipeline/catalog/korpora_heim.φ
-# Die redistribute-Verdikt-Korpora (CC0/CC-BY-Metadaten, korpora_heim.φ) sind
-# versioniert, damit der CI-Runner sie für die CDN-Manifestation sieht
-# (korpora-cdn.yml); nach der Manifestation ist das CDN das dauerhafte Heim.
-!phi/pipeline/catalog/pangaea_catalog.φ
-!phi/pipeline/catalog/pangaea_catalog_full.φ
-!phi/pipeline/catalog/re3data_catalog.φ
-!phi/pipeline/catalog/zenodo_catalog.φ
-!phi/pipeline/catalog/dryad_catalog.φ
-!phi/pipeline/catalog/wdcc_catalog.φ
-!phi/pipeline/catalog/dataverse_harvard.φ
-!phi/pipeline/catalog/dataverse_borealis.φ
-!phi/pipeline/catalog/seanoe_catalog.φ
+# Die redistribute-Katalog-Corpora (pangaea/re3data/zenodo/dryad/seanoe/…) sind descoped —
+# die live-Arme (--zenodo/--dryad/--re3data/--pangaea) durchsuchen die Upstreams direkt; kein statischer CDN-Dump.
 # Asteroid-Diameter-Kataloge sind Compiler-Eingaben (dastcom_compiler/kernel-flatten) — groß und nicht auf dem CI-Runner; die gm-Kataloge sind getrackt, die Diameter bleiben lokal.
 tools/harvest/data/asteroid/asteroid_diameters_*.φ
 # Bindungen (Vorregistrierungen) sind Registrierungs-Urteile — versioniert.
@@ -112,9 +96,6 @@ tools/harvest/data/asteroid/asteroid_diameters_*.φ
 !phi/reports/
 phi/reports/*
 !phi/reports/scan_coverage.φ
-# Der Probe-Sweep-Bericht (survivors/void) ist ein Registrierungs-Urteil — versioniert.
-!phi/reports/probe_sweep_survivors.φ
-!phi/reports/probe_sweep_void.txt
 
 # Strang-Marker (Arbeitsebene der Session, je Branch im Worktree)
 .omegaflow-strand
