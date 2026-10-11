@@ -2,7 +2,7 @@
   title: Sonnen-Render-Archäologie — nebra bis HEAD, jede Variante
   class: survey
   date: 2026-10-08
-  sha256: 15a8eef8522882570804cf4ff248844337b8d516f3a765718c8b8a4ee8c6cdcf
+  sha256: bb380b83cd79674d607a385e07fb576d2b476723756ed39fb76103ad554ba5d1
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/handover/archiv/handover-2026-10-08-river-folge139.md
 -->
@@ -49,13 +49,27 @@ Die Sonne ist **kein Sonderfall im Code** — sie ist ein Oszillator/Körper unt
 
 Die Sonne war in **nebra** ein per-Pixel-Feldbeitrag: das kontinuierliche `GM/dist²`, gefärbt durch `(log2(Ω)+14)/22`, kein Objekt, kein Sprite, keine Subpixel-Frage. In omegaflow kippte sie durch sechs Architekturen: Quad mit Angular-Size (2px-Floor) → Subpixel-Floors → Körper-Quads (`extent/scale`, 64px-Cap) → Per-Pixel-Feld → Compute-Grid → Körper-Scheibe → wieder Feldbeitrag ohne Objekt (`e918bda1`). Jeder Kipp war eine Architektur-Entscheidung, nie eine Sonnen-Entscheidung. Der heutige serverless Body-Anker (`all_body_anchor_samples`, River 91/114) sitzt **nach** `e918bda1` und kehrt die Objekt-Tilgung wieder um.
 
-## 4 · Offene Risse (gemessen)
+## 4 · Risse (nachgezogen 2026-10-11, `git -C archive-root/omegaflow-legacy` + `archive_search`)
 
-1. **Doc-Attributionen falsch:** `docs/concepts/4d-membrane.md §2.2` nennt `a9d87bd` für den 2px-Floor (real: `090b1662`) und `eadc980` für den +64px-Cap (real: `56878394`); `00dc55c` trägt gar kein `point_size_px`.
-2. **Message ≠ Diff:** `ce6b5a07` behauptet „Nebra thermal ramp `(log2+14)/22`", führt aber `log2(abs(o)/lvls)/8+0.5` ein (`:472`); die Nebra-Rampe landet erst `49bdf88b:403`.
-3. **Token-Erwartungen ohne Code:** `tonemap`, `Sonne`, `MASS_SUN`, `BODY10_GM`, `gm_de440`, `color_index` (in `index.html`) = 0 Treffer in den Render-Dateien.
-4. **Branch-only-Varianten nicht Zeile für Zeile gelesen:** `nebra-zeichnen` (Fisheye, `6582255`), `generation-kacheln` (`8218852`). Erste Messung: `git show 6582255:src/main.rs`.
-5. **Früheste Variante (< `090b1662`):** Phase 1/2 (`f01ac81b`, `9b3292c0`) ungemessen. Erste Messung: `git show 9b3292c0:static/index.html`.
+1. **Doc-Attributionen ungenau, nicht falsch:** `docs/concepts/4d-membrane.md §2.2` nennt `a9d87bd` für
+   den 2px-Floor und `eadc980` für den +64px-Cap — **beide tragen die Formel** (gemessen: `a9d87bd:271`
+   = `090b1662:266` = `point_size_px = max((extent / dist), 1.0) * 2.0`; `eadc980:362` = `56878394:362`
+   = `clamp(phys_extent / scale, 0.5, min(w_f, 64.0))`). Die **Einführer** sind `090b1662` (2px,
+   2026-07-30 — vor `a9d87bd` 07-31) und `56878394` (64px-Cap, Commit „fix: clamp max point_size_px to
+   64"); `4d-membrane.md §2.2` auf diese beiden nachgeführt. **Widerlegt (frühere Fassung dieses
+   Surveys):** „`00dc55c` trägt gar kein `point_size_px`" — `00dc55c:362` = `clamp(phys_extent / scale,
+   0.5, w_f)`, die 0.5px-Zeile.
+2. **Message ≠ Diff (bestätigt):** `ce6b5a07:472` = `let t = log2(abs(o) / max(lvls[k], …)) / 8.0 + 0.5`
+   — nicht die Nebra-Rampe; die Rampe `(log2(omega_total) + 14.0) / 22.0` landet `49bdf88b:403` und
+   (auf dem `nebra-zeichnen`-Branch) `6582255:src/main.rs:154`.
+3. **Token-Erwartungen ohne Code (bestätigt, HEAD):** `MASS_SUN` / `BODY10_GM` / `gm_de440` /
+   `color_index` / `tonemap` = 0 Treffer in `static/index.html` (sgrep).
+4. **Branch-only-Varianten (nachgezogen):** `nebra-zeichnen` `6582255` (Fisheye; `src/main.rs:144` =
+   `clamp(extent / scale, 0.5, w_f)` — ohne 64px-Cap; `:154` = die Nebra-Rampe) und `generation-kacheln`
+   `8218852` (Message: drei tote WGSL-Funktionen `fold_eff` / `val_eff_at` / `osc_field` getilgt) gelesen.
+5. **Früheste Variante (nachgezogen):** `9b3292c0` und `f01ac81b` (Phase 1/2) tragen **kein**
+   `point_size_px` und **kein** `gl_PointSize` (beide tragen `canvas`); die Quad-/Angular-Größenachse
+   beginnt erst mit `090b1662` (2026-07-30).
 
 ## 5 · Kanal-Runde (Membran) — Rat + 11 Stimmen, Kanon-adressiert (River 139, 2026-10-08)
 
