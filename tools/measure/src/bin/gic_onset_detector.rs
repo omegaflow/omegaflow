@@ -61,7 +61,7 @@ fn median(values: &mut [f64]) -> Option<f64> {
     })
 }
 
-fn robust_threshold(series: &[(f64, f64)]) -> Option<f64> {
+fn median_mad(series: &[(f64, f64)]) -> Option<(f64, f64)> {
     let mut vals: Vec<f64> = series
         .iter()
         .map(|(_, v)| *v)
@@ -74,6 +74,11 @@ fn robust_threshold(series: &[(f64, f64)]) -> Option<f64> {
         .filter(|d| d.is_finite())
         .collect();
     let mad = median(&mut dev)?;
+    Some((med, mad))
+}
+
+fn robust_threshold(series: &[(f64, f64)]) -> Option<f64> {
+    let (med, mad) = median_mad(series)?;
     if !(mad > 0.0) {
         return None;
     }
@@ -88,8 +93,8 @@ fn detect_onsets(series: &[(f64, f64)], threshold: f64, min_separation_s: f64) -
             i += 1;
             continue;
         }
-        let t_unix = series[i].0;
         let mut peak = series[i].1;
+        let mut peak_t = series[i].0;
         let mut last_above = i;
         let mut j = i + 1;
         while j < series.len() {
@@ -99,12 +104,16 @@ fn detect_onsets(series: &[(f64, f64)], threshold: f64, min_separation_s: f64) -
             if series[j].1.is_finite() && series[j].1 >= threshold {
                 if series[j].1 > peak {
                     peak = series[j].1;
+                    peak_t = series[j].0;
                 }
                 last_above = j;
             }
             j += 1;
         }
-        onsets.push(Onset { t_unix, peak });
+        onsets.push(Onset {
+            t_unix: peak_t,
+            peak,
+        });
         i = j;
     }
     onsets
@@ -196,6 +205,93 @@ fn ratio(num: usize, den: usize) -> String {
     }
 }
 
+fn min_separation_of(args: &[String]) -> f64 {
+    match arg_value(args, "--min-separation") {
+        Some(s) => match s.parse::<f64>() {
+            Ok(v) if v.is_finite() && v > 0.0 => v,
+            _ => {
+                eprintln!("--min-separation must be positive seconds");
+                std::process::exit(2);
+            }
+        },
+        None => MIN_SEPARATION_S,
+    }
+}
+
+fn run_sweep(series: &[(f64, f64)], station: &str, csv: &str, args: &[String]) {
+    let Some((med, mad)) = median_mad(series) else {
+        eprintln!("gic_onset_detector: series carries no finite sample");
+        std::process::exit(1);
+    };
+    if !(mad > 0.0) {
+        println!(
+            "gic_onset_detector{station} sweep — the series carries no variation (0 honored: no onset)"
+        );
+        return;
+    }
+    let sigma = ROBUST_SIGMA * mad;
+    let ks: Vec<f64> = csv
+        .split(',')
+        .filter_map(|s| s.trim().parse::<f64>().ok())
+        .filter(|k| *k > 0.0)
+        .collect();
+    if ks.is_empty() {
+        eprintln!("--sweep-k needs a positive CSV of multipliers");
+        std::process::exit(2);
+    }
+    let min_separation_s = min_separation_of(args);
+    let lo = series[0].0;
+    let hi = series[series.len() - 1].0;
+    let mcp: Vec<f64> = match arg_value(args, "--mcpherron") {
+        Some(p) => read_mcpherron(&p)
+            .into_iter()
+            .filter(|&t| t >= lo && t <= hi)
+            .collect(),
+        None => Vec::new(),
+    };
+    let tol = match arg_value(args, "--tol-min") {
+        Some(csv) => {
+            let mut t = 15.0 * MINUTE;
+            if let Some(v) = csv
+                .split(',')
+                .filter_map(|s| s.trim().parse::<i64>().ok())
+                .find(|v| *v > 0)
+            {
+                t = v as f64 * MINUTE;
+            }
+            t
+        }
+        None => 15.0 * MINUTE,
+    };
+    println!(
+        "sweep{station} samples={} median={med:.4} mad={mad:.4} min_separation={min_separation_s:.0}s",
+        series.len()
+    );
+    for k in ks {
+        let threshold = med + k * sigma;
+        let onsets = detect_onsets(series, threshold, min_separation_s);
+        if mcp.is_empty() {
+            println!(
+                "sweep k={k} threshold={threshold:.4} onsets={}",
+                onsets.len()
+            );
+        } else {
+            let cand: Vec<f64> = onsets.iter().map(|o| o.t_unix).collect();
+            let (hit_mcp, hit_cand, med_dt) = match_onsets(&mcp, &cand, tol);
+            println!(
+                "sweep k={k} threshold={threshold:.4} onsets={} prec_onset={} rec_mcp={} median_dt_s={}",
+                onsets.len(),
+                ratio(hit_cand, cand.len()),
+                ratio(hit_mcp, mcp.len()),
+                match med_dt {
+                    Some(x) => format!("{x:.3}"),
+                    None => "n/a".to_string(),
+                }
+            );
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(path) = arg_value(&args, "--series") else {
@@ -221,6 +317,10 @@ fn main() {
     if series.is_empty() {
         eprintln!("gic_onset_detector: {path} carries no sample");
         std::process::exit(1);
+    }
+    if let Some(csv) = arg_value(&args, "--sweep-k") {
+        run_sweep(&series, &station, &csv, &args);
+        return;
     }
     let threshold = match arg_value(&args, "--threshold") {
         Some(t) => match t.parse::<f64>() {
@@ -347,7 +447,7 @@ mod tests {
         let s = series(&[(0.0, 5.0), (600.0, 9.0), (1200.0, 3.0), (1800.0, 7.0)]);
         let onsets = detect_onsets(&s, 1.0, 1800.0);
         assert_eq!(onsets.len(), 1);
-        assert_eq!(onsets[0].t_unix, 0.0);
+        assert_eq!(onsets[0].t_unix, 600.0);
         assert_eq!(onsets[0].peak, 9.0);
     }
 
