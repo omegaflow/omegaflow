@@ -14,6 +14,8 @@ const DAY_S: f64 = 86400.0;
 const HOUR_S: f64 = 3600.0;
 const PGM_MAXVAL: u32 = 65535;
 
+const ORIENTATION: &str = "raw stream0 row0=north (measured 2026-10-11: ucalgary-srs/pyUCalgarySRS _themis.py and mshumko/asilib themis.py both flip N-S to render north-up, so the stored PGM row0 is north); poleward = decreasing row";
+
 struct Frame {
     epoch: f64,
     profile: Vec<u16>,
@@ -176,6 +178,20 @@ fn parse_frames(data: &[u8], name: &str) -> Result<Vec<Frame>, String> {
     Ok(frames)
 }
 
+fn profile_stats(profile: &[u16]) -> (f64, usize) {
+    let sum: u64 = profile.iter().map(|&v| v as u64).sum();
+    let mean = sum as f64 / profile.len() as f64;
+    let mut argmax = 0usize;
+    let mut best = 0u16;
+    for (row, &v) in profile.iter().enumerate() {
+        if v > best {
+            best = v;
+            argmax = row;
+        }
+    }
+    (mean, argmax)
+}
+
 fn write_tkdg(frames: &[Frame]) -> Vec<u8> {
     let mut out = Vec::with_capacity(8 + frames.len() * (8 + FRAME_H * 2));
     out.extend_from_slice(MAGIC);
@@ -283,6 +299,15 @@ fn main() {
         iso(last.epoch),
         last.epoch - first.epoch
     );
+
+    if args.iter().any(|a| a == "--report") {
+        println!("report UT band_mean argmax_row");
+        println!("# orientation: {ORIENTATION}");
+        for f in &frames {
+            let (mean, argmax) = profile_stats(&f.profile);
+            println!("{} {:.1} {}", iso(f.epoch), mean, argmax);
+        }
+    }
 
     match std::fs::write(&out_path, write_tkdg(&frames)) {
         Ok(()) => println!("wrote {} frame(s) -> {}", frames.len(), out_path),
