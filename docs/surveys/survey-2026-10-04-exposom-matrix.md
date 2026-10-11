@@ -2,7 +2,7 @@
   title: Exposom-Quellenmatrix — somatisch + psychosomatisch (Stand 2026-10-04)
   class: survey
   date: 2026-10-04
-  sha256: 16f9571ce020c014f8856b989b4895467b733272d2bb531bafc24e216900a9a3
+  sha256: d25a7e3750733906d91cf90db3c997680169c440fafe6f80a3a9cb95b0febad2
   status: live
   see-also: docs/concepts/kybernaut-native-methodology.md
 -->
@@ -262,7 +262,10 @@ unter `.github/workflows/` + Descriptor je X-Klasse, dann `gh workflow run`.
 **Kollokations-Gate im Lauf:** eine Zeile ohne gemeinsamen Ort (Kollokation
 `nein`/`pending`) fährt nur die zeitliche Kopplung; der Lauf markiert sie als
 `time-only` und behauptet **keine** räumliche Kopplung — die fehlende Ortsachse
-wird als `pending` getragen, nie als 0.
+wird als `pending` getragen, nie als 0. Eine Zeile mit **`site`** fährt eine
+**räumliche Proxy-Kopplung** am Site-Anker (site-level, `geocoded_inferred`/
+`centroid_only`, Puffer aus der x-Serien-Auflösung) — sie behauptet die Kopplung
+am **Studienort**, nie an der Teilnehmer-Koordinate.
 
 ---
 
@@ -334,10 +337,11 @@ Ein zweiter, härterer Taucher-Satz hat mehrere frühere Zeilen **widerlegt** (A
 **Konsequenz (korrigiert, gemessen 2026-10-10):** Kein einziger dieser sechs offenen
 Datensätze trägt eine **im Datensatz gemessene Koordinate** — alle tragen eine absolute
 Zeitachse, aber der Ort ist Land/Region bzw. request-only. Die frühere Zeile „x-Kollokation
-`ja`" (Labbaf) war **nicht gedeckt** und ist ein Riss, kein Treffer. Die kollokierbare offene
-Basis ist damit **keine** der genannten Zeilen in vorliegender Form: für jede müsste ein
-Repräsentativpunkt **extern** gesetzt werden (Annahme, keine Messung) — erst dann ist eine
-Ort-Kollokation gegen OpenAQ/Open-Meteo/NASA POWER belegbar.
+`ja`" (Labbaf) war **nicht gedeckt** und ist ein Riss, kein Treffer. Der Kandidat-
+Repräsentativpunkt ist seither für **5/6 extern gedeckt** (Studien-Site, unten) und wird als
+eigener Zustand **`site`** geführt (Proxy; die Teilnehmer-Koordinate bleibt `pending`) — **nicht**
+als `ja`, und nicht mehr als bloße „Annahme": die Site ist am Baum belegt, die fehlende
+Teilnehmer-Koordinate wird benannt, nicht gefüllt.
 
 **Nachtrag je Zeile — gemessen 2026-10-10 (Sensory; `archive_search`/`grind-flash`):**
 - **TOLIFE** (`zenodo.org/api/records/16642439` 200/10 621 B; `README.md` 200/22 428 B;
@@ -362,6 +366,7 @@ Ort-Kollokation gegen OpenAQ/Open-Meteo/NASA POWER belegbar.
 - **Labbaf** (`doi.org/10.7280/D1WH6T` 200/278 108 B; Dryad; File-Stream 403 — request/API):
   Epoch-ms absolut; Ort nur `venue_name` — Doku „only available upon request"; **keine**
   Koordinate/Station, feinste Angabe Region „Southern California".
+
 **Externe Deckung je Datensatz — gemessen 2026-10-10 (Sensory; Taucher + am Baum verifiziert):**
 Der Repräsentativpunkt ist für **5/6** Datensätze **extern gedeckt** — die Quelle dokumentiert den
 Studien-/Erhebungsort (Site/Stadt), nicht nur Land/Region. Die Koordinate ist im Beleg **nicht** als
@@ -370,21 +375,23 @@ Teilnehmer-Koordinate).
 
 | Datensatz | externer Studienort (Beleg, am Baum verifiziert) | Repräsentativpunkt |
 |---|---|---|
-| TOLIFE | University of Pisa (IT, Koordinator + klinische Site) · LungenClinic Großhansdorf (DE, Recruiting-Site) · Consorci Mar Parc de Salut de Barcelona/IMIM (ES, Rekrutierung) — `tolife-project.eu/partners` (200) | **ja (Site)** — Datensatz-Index nur GERMANY/SPAIN → Großhansdorf (DE) + Barcelona (ES) |
-| AAMOS-00 | Usher Institute, University of Edinburgh (UK) — DataCite `10.7488/ds/3775` (Description: „…at the Usher Institute at the University of Edinburgh…", Mobistudy/Malmö University); die Handle-Seite `datashare.ed.ac.uk/handle/10283/4761` liefert jetzt **403** (Bot), die API trägt die Site | **ja (Site)** — Edinburgh |
-| Wearable+PRO Fatigue | keiner — remote über Evidation Health, „in the United States" (`zenodo.org/records/8018238`; Paper `10.3389/fdgth.2023.1099456` §2.1) | **nein** |
-| ADARP | Washington State University (WSU), Pullman, WA, USA — `zenodo.org/records/6640290` (Description: „…at Washington State University (WSU), Pullman, WA, USA") | **ja (Site)** — Pullman |
-| CrossCheck | Zucker Hillside Hospital, Long Island, NY, USA — Paper `10.1145/2971648.2971740` („a large psychiatric hospital in Long Island, NY"; IRB Zucker Hillside) | **ja (Site)** — Long Island |
-| Labbaf | University of California, Irvine, CA, USA — Dryad `10.7280/D1WH6T` („Research facility: University of California, Irvine"; THRIVE Lab) | **ja (Site)** — Irvine |
+| TOLIFE | University of Pisa (IT, Koordinator + klinische Site) · LungenClinic Großhansdorf (DE, Recruiting-Site) · Consorci Mar Parc de Salut de Barcelona/IMIM (ES, Rekrutierung) — `tolife-project.eu/partners` (200) | **`site`** — Datensatz-Index nur GERMANY/SPAIN, **Zuordnung Land→Site inferiert** → Großhansdorf (DE) + Barcelona (ES) |
+| AAMOS-00 | Usher Institute, University of Edinburgh (UK) — DataCite `10.7488/ds/3775` (Description: „…at the Usher Institute at the University of Edinburgh…", Mobistudy/Malmö University); die Handle-Seite `datashare.ed.ac.uk/handle/10283/4761` liefert jetzt **403** (Bot), die API trägt die Site | **`site`** — Edinburgh |
+| Wearable+PRO Fatigue | keiner — remote über Evidation Health, „in the United States" (`zenodo.org/records/8018238`; Paper `10.3389/fdgth.2023.1099456` §2.1) | **`pending`** |
+| ADARP | Washington State University (WSU), Pullman, WA, USA — `zenodo.org/records/6640290` (Description: „…at Washington State University (WSU), Pullman, WA, USA") | **`site`** — Pullman |
+| CrossCheck | Zucker Hillside Hospital, Long Island, NY, USA — Paper `10.1145/2971648.2971740` („a large psychiatric hospital in Long Island, NY"; IRB Zucker Hillside) | **`site`** — Long Island |
+| Labbaf | University of California, Irvine, CA, USA — Dryad `10.7280/D1WH6T` („Research facility: University of California, Irvine"; THRIVE Lab) | **`site`** — Irvine |
 
 **Riss (0-Kanon):** der Repräsentativpunkt ist die **dokumentierte Studien-Site**, nicht eine im
 Datensatz gemessene Teilnehmer-Koordinate. Die Kollokation gegen die x-Kern-Serien wird damit
 **site-level** — sie behauptet keine individuelle Orts-Kopplung; die fehlende Information bleibt
 `pending` (nie 0). Wearable+PRO Fatigue trägt **keinen** Site → bleibt `pending`.
-- **Braucht:** (a) die Bestätigung, dass eine dokumentierte Studien-Site als Repräsentativpunkt
-  trägt (Methodik — Rat), sonst bleibt die Kollokation eine Annahme; dann (b) den Mycelium-Te-Paar-
-  Feed je Zeile (Workflow-YAML + Descriptor, `gh workflow run`). Registrierung (`phi/sources.φ`)
-  erst mit bestätigtem Punkt (Mountain-Feder).
+
+**Entschieden (Rat + Max-Roster, 2026-10-10):** die dokumentierte Studien-Site trägt als eigener
+Legenden-Zustand **`site`** (Proxy; Koordinate `geocoded_inferred`/`centroid_only`; Puffer aus der
+x-Serien-Auflösung; Query-Anker, kein Oszillator). Qwen-UI dissent (ökologischer Fehlschluss) als
+Riss getragen. **Braucht:** (b) den Mycelium-Te-Paar-Feed je Zeile (Workflow-YAML + Descriptor,
+`gh workflow run`); Registrierung `phi/sources.φ` mit dem `site`-Punkt (Mountain-Feder).
 
 ---
 
