@@ -27,7 +27,7 @@ const WITNESSES: [Witness; 2] = [
         body: "pioneer10_daily",
         odf_path: "data/spdf.gsfc.nasa.gov/pioneer10_odf.bin",
         residuum_path: "data/spdf.gsfc.nasa.gov/pioneer10_residuum.bin",
-        tag: "{tag}",
+        tag: "w10-resid",
         parser: parse_podf_bin,
     },
     Witness {
