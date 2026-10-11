@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: ba45393e972100cf75a6cf473fd1db0e6d184295a62920a97620c0221bb0b6fd
+  sha256: 58a2f76b36af3537574a7c14c207793198e0c3fa19f2cdb0400cb1e2378ae0f2
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -53,12 +53,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** Mountain-Verdikt NL-Basis offen (`state/mycelium/lidar_id_diff_measured.md`).
 - **Braucht:** Lauf-Ergebnis lesen; Mountain-Verdikt NL.
 
-### OpenTopography — Lauf success; Registrierung offen
+### OpenTopography — Lauf success; Registrierung juristisch geklärt
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) Lauf `38150636428` **success**; Secret `OPENTOPOGRAPHY_API_KEY` im Repo gesetzt.
-- **Blockade:** die url/origin/compiler-Direktiven fehlen in `phi/sources.φ` (sgrep leer).
-- **Braucht:** Register-Block OpenTopography (Mycelium url/origin + Mountain terms/field).
+- **Lage:** (gemessen 2026-10-11) Lauf `38150636428` **success**; Secret `OPENTOPOGRAPHY_API_KEY` im Repo gesetzt. **Juristisch geklärt:** der Manifest-Inhalt ist nur der URL/DOI-Index (keine Datenbytes); das Publizieren eines freien Index ist nach § 2 / §§ 87a–e UrhG und *Svensson*/*GS Media* zulässig; OT-Nutzungsbedingungen: Daten „free of all copyright restrictions", per-Dataset-Compliance beim Konsumenten. Der `terms`-Block ist damit kein Blankett-Problem.
+- **Blockade:** der `field`-Riss der coverage-Klasse (`main_flow.rs:5173-5180` „field undeclared") — Mountain-Zeilenklasse.
+- **Braucht:** Register-Block (Mycelium url/origin/compiler/format/ttl; `terms` = OT-Nutzungsbedingungen + `field` = Mountain).
 
 ### GIC OE-417 + EAGLE-I — url/origin registriert; Mountains `terms`/`field` offen
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
@@ -81,12 +81,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** der `extract.rs`-Reader-Arm `grdc_caravan` fehlt (Bin noch nicht konsumierbar); `field`/`terms` (Mountain).
 - **Braucht:** (a) Reader-Arm + erster Manifest-Lauf; (b) url/origin/sha256 registrieren (Mycelium); (c) `field` (mm/d) + `terms` (Mountain).
 
-### DEMETER — CDN-Spiegel entfernt; lokale Registrierung + terms
-- **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
-- **Trigger:** Mountains `terms`-Zeile für `regards.cnes.fr`
-- **Lage:** (gemessen 2026-10-11) Lizenz = **CDPP Data-Centre-Lizenz V1.1** (nicht-kommerziell, Weitergabe nur mit schriftlicher Zustimmung); CDN-Release `regards.cnes.fr` (77 `demeter_isl_*.bin`) gelöscht, `demeter-cdn`-Lauf `38135966376` cancelled, die zwei `demeter-*-cdn.yml` entfernt.
-- **Blockade:** keine (Lizenz erzwingt lokal-only).
-- **Braucht:** lokale Registrierung (kein CDN-Asset); `terms` = CDPP V1.1 (Mountain).
+### DEMETER — descoped (Operator-Wort 2026-10-11)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11, Operator-Wort) Lizenz = **CDPP Data-Centre-Lizenz V1.1** (nicht-kommerziell, Weitergabe nur mit schriftlicher Zustimmung) → wie SuperMAG **nur für private Experimente**, kein Register/CDN. CDN-Release `regards.cnes.fr` (77 Bins) gelöscht, `demeter-cdn 38135966376` cancelled, die zwei `demeter-*-cdn.yml` entfernt. Wort: „descoped siehe SuperMAG nur für private Experimente".
+- **Blockade:** keine
+- **Braucht:** keine (descoped mit Befund).
 
 ### Coverage-Manifest-Fetch-Loop — `shard`-Form steht; USGS-Register + `field`-Riss
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
@@ -185,13 +185,17 @@ Ein Zensus über die nicht-Spill-`state/`-Dateien gegen diese Übergabe + `warte
 fand offene Schleifen; die Mycelium-Anteile hier gefaltet, die fremden als
 Registerzeilen in `## An mountain`/`## An river` (die Owner falten).
 
-- **VO-Landschaft (mycelium-269) — Riss, descoped:** `state/zustand/mycelium-269-an-naechste-session.md:30-39` ist stale — die 72 `tap_index_*`-Kataloge + `tap_index_merge` wurden von `mountain 306` (`1a885775f`, 75 Dateien) **gelöscht**; der Live-Nachfolger ist gebaut (`archive_search --regtap`/`--tap`, `regtap_census.rs`, `tap_compiler.rs`). `Domain→UCD` hat keine messbare Domain-Quelle → `pending` (Riss, kein Bau). **Riss benannt:** die Roster-Forderung „Compiler migrieren, nicht abschaffen" vs Mountains Löschung.
+- **VO-Landschaft (mycelium-269) — descoped (Operator-Wort 2026-10-11):** die 72 `tap_index_*`-Kataloge + `tap_index_merge` wurden von `mountain 306` (`1a885775f`) **gelöscht**; die Live-Suche steht und ist gemessen (`archive_search --regtap "solar"` → live IVOA-Dienste; `regtap_census.rs`, `tap_compiler.rs`). Der Operator: „wir haben doch jetzt die Möglichkeit die Kataloge live zu durchsuchen" → statischer Index `descoped`, kein Migrations-Arm.
+- **`Domain→UCD`-Mapping — pending (Operator-Wort 2026-10-11):** eine `domain`-Achse wird nicht eingeführt; das Mapping bleibt `pending` (keine messbare Domain-Quelle, kein Bau).
 - **Swarm-Recherche:** `state/mycelium/swarm-recherche-synthese-2026-10-05.md:85` — q3–q6 mit demselben Roster nachholen (braucht UI-Seats).
 - **CDN-Reconcile:** `state/zustand/ereignisse.φ:70822` — `cdn_reconcile` (144 orphan releases, 687 missing assets, 6873 Namens-Divergenzen); je Lösch-Klasse ein Atom, **Operator-Wort vor destruktivem Release-Delete**.
 - **Fehlende Arme (`ereignisse.φ:163087`) — je Taucher gemessen:** **hi-21cm → HI4PI gebaut** (`hi4pi_compiler.rs` + `hi4pi-cdn.yml`, CDSARC `J/A+A/594/A116`, 933 Kanäle, `cargo check` 0/0); **cmb-lambda** bereits gebaut (`cmb_act_compiler.rs`, `act-cdn.yml`, `phi:11653`); **particle-cern** bereits gebaut (`root.rs` + `cern_root_compiler.rs`, Tree-Walk-Sicht ergänzt); **mariner-rst** = `descoped` (nur Offline-CD-WO, PSCM-00009, gemessen); **viking-tracking** = `descoped` (`viking_text` trägt bereits Lander-Range/Doppler; PSPG-00011 „not received", gemessen). Verbleibend: keiner der fünf ist baubar offen.
 - **LiDAR-Verdikt — gemessen (nicht ratifiziert):** `swisstopo` 94,1 % Fläche + Epochen-Riss (2015–2026 vs flai 2022/2023), `ign` 64,3 % + eine Epoche → **re-open**; `ahn4` 99,85 %/2 Kacheln → halten; `linz` ohne Überlappung → bleibt; Detail im LiDAR-Inventar-Punkt.
 - **Ungepoolte phi-Blöcke:** `state/mycelium/holdings-opencode-tmp-2026-10-07.md:54` — Mountains Sichtung/Merge.
 - **Fetch-Provenienz:** die Diver-Regel ist in `docs/SOURCE_PORT.md` (Provenienz-Bullet, sha `f5659ddc…`) — zusätzlich zum gebauten Sidecar.
+- **cdn_reconcile — gemessen (Operator-Wort vor jedem Löschen):** der Reporter (`tools/register/src/bin/cdn_reconcile.rs`, nur Report, **kein Delete-Flag**) maß heute: **orphan_releases 97** (davon `internal` 81 = bekannte Familien-Tags `modis_lst_cmg-*`/`ssd.jpl.nasa.gov-*`/`ps1-dr2-*` → **nicht löschen**, re-binden; `stale_pending` 15 = echte Kandidaten; `dataset_host` 1) · **missing_assets 755** (Upload-Lücke, kein Löschen) · `unmanifested_source_netlocs` 40 · **asset_name_divergence 7480** (Namens-Fix oder Entfernen) · **byte_identical_duplicate_groups 15** (einkopierbar) · `www`-Präfix 1. Der ereignis-Stand (144/687/6873) ist stale.
+- **Swarm q3–q6 — blockiert (gemessen):** die aufgezeichnete Methode (`state/mycelium/swarm-recherche-synthese-2026-10-05.md:3-5`) ist ein **freie-API-Modell-Roster** (`opencode run -m …`), nicht die UI-Seats; `opencode.json:12` deaktiviert `google/openrouter/nvidia/…` und alle `voice-*` außer `voice-deepseek` (striktes Operator-Wort 2026-10-07) → nur eine Stimme überlebt, kein Schwarm. Die vier Fragen (q3 BepiColombo-Route · q4 PDS-Imaging-Mirror · q5 GOSAT-GW-Klasse · q6 Rubin/LSST-Broker) bleiben `pending`; brauchen ein Operator-Wort (Provider re-enablen) oder den UI-Kanal (schwächeres Instrument).
+- **OpenTopography — juristisch (gemessen):** der Manifest-Inhalt ist **nur die Liste der Landing-URLs/DOIs** (keine Datenbytes; Compiler `opentopography_coverage.rs:83-95`, Log `38150636428:567`). Ein URL/DOI-Index ist nach § 2 UrhG (Fakten), §§ 87a–e UrhG (ECJ C-203/02 *BHB/William Hill*, C-338/02 *Fixtures*: kein Recht am Einzelinhalt, Spin-off-Doktrin) und *Svensson*/*GS Media* (bloßes Verlinken frei zugänglicher Inhalte) **keine Weiterverbreitung der Datensätze**. Die OT-Nutzungsbedingungen (`opentopography.org/usageterms`, HTTP 200): Daten „free of all copyright restrictions"; „certain datasets may have open data licenses … users responsible for license compliance". **Juristisch korrekt:** den Index publizieren mit `terms` = OT-Nutzungsbedingungen (per-Dataset-Compliance trägt der Konsument, der die Daten selbst holt) — kein Blankett-Lizenzanspruch, keine Umgehung. Mountain setzt `terms`.
 
 ## An mountain
 
