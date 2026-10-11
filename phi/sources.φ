@@ -11172,7 +11172,7 @@ terms non-commercial https://knmi-ecad-assets-prd.s3.amazonaws.com/documents/ECA
 format ecad
 origin https://knmi-ecad-assets-prd.s3.amazonaws.com/download/ECA_blend_tx.zip#TX_STAID000001.txt
 compiler tools/harvest/src/bin/ecad_compiler.rs
-sha256 72080c017728c3c5a31ef51a6d497a5669aaa663d2a54a6fd4d4588c7a4e3748
+sha256 198aea26ff59d69f5c9ca9dac72f20230a96ef7dfeaa3ebd35c069e6c8529a25
 at earth
 ttl 604800
 field eca_tx eca_tx exponential-decay thermal K 86400 0.0 0.0
@@ -31405,7 +31405,7 @@ terms non-commercial https://www.worldclim.org/about.html
 format worldclim
 origin https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_10m_tavg.zip
 compiler tools/harvest/src/bin/worldclim_compiler.rs
-sha256 20ffec984649b71d203616348ab71c2bf5db29e8c184280bfa3b65c1066b3c5a
+sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
