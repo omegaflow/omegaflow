@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: 39c8926be936f49de0ca732a97a38f2f52c037f1ffff8c6baf560cc805d05a53
+  sha256: 9b7083f5d7faf588fdab365585028327381980d420371bb2eaab25adac5907cb
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -24,17 +24,18 @@ zitiert, nie kopiert). Diese Session konsumierte
 
 ## Offen — eigen
 
-### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — zweiter Relauf rot (Runner-Preemption), neu dispatcht
-- **Status:** wartend | **Bindung:** eigen (Manifestation)
+### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — drei Reläufe rot (Runner-Preemption), am self-hosted Stop blockiert
+- **Status:** blockiert | **Bindung:** eigen (Manifestation)
 - **Trigger:** Lauf `cmb-cdn` Abschluss
-- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38117250487`) der Relauf am head
-  `300ac2028` schlug erneut fehl: exit 137 — der Release-Build lief 6 m 31 s, dann wurde
+- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38117879560` + `38117250487`) drei
+  aufeinanderfolgende Läufe rot: exit 137 — der Release-Build lief je 6 m 31-33 s, dann wurde
   `cmb_planck_compiler --tar …/full_maps_d1.tar.bz2` „Getötet"; „The runner has received a
-  shutdown signal" (Preemption). Neu dispatcht: `38117879560`. Asset am CDN weiter absent
-  (`archive_search --verdict`, alle drei Stufen 404).
-- **Blockade:** Self-hosted Runner-Preemption.
-- **Braucht:** nach success `ci_manage log <run-id>` -> sha256 in den SPT-`cmap`-Block
-  (`phi/sources.φ:11559`).
+  shutdown signal" (Preemption). Jüngster Lauf `38117879560` (dieser Re-Dispatch). Asset am
+  CDN weiter absent (`archive_search --verdict`, alle drei Stufen 404).
+- **Blockade:** wiederholte Self-hosted-Runner-Preemption (~6,5 min Build je Versuch) — kein
+  dritter Blind-Dispatch.
+- **Braucht:** throttle-stabiler/dauerhafter Runner (siehe „Zweite CI-Lane"), dann
+  `gh workflow run cmb-cdn.yml`; bei success sha256 in den SPT-`cmap`-Block (`phi/sources.φ:11559`).
 
 ### Coverage-Manifest — usgs-Manifestator auf shard-Form geschnitten; River-Wiring + nationale Portale offen
 - **Status:** eigen | **Bindung:** eigen (Core-Archivar) · Teile linie:river
