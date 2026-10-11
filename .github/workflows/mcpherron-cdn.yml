@@ -1,4 +1,4 @@
-# harvest: format=substorm asset=present arm=mcpherron_compiler pattern=^mcpherron\.bin$ idempotent=true timeout=120 tag=zenodo.org
+# harvest: format=mcon_event asset=present arm=mcpherron_compiler pattern=^mcpherron_onsets\.bin$ idempotent=true timeout=120 tag=zenodo.org
 name: mcpherron-cdn
 
 concurrency:
@@ -23,14 +23,14 @@ jobs:
         id: idempotence
         run: |
           if gh release view zenodo.org --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "mcpherron.bin"; then
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "mcpherron_onsets.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "asset mcpherron.bin already present — manifest skipped"
+            echo "asset mcpherron_onsets.bin already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "asset mcpherron.bin missing — compiling and manifesting"
+            echo "asset mcpherron_onsets.bin missing — compiling and manifesting"
           fi
       - name: Compile the McPherron onset list and upload to CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          cargo run -p omegaflow-harvest --release --bin mcpherron_compiler -- --out-bin mcpherron.bin --ci-mode
+          cargo run -p omegaflow-harvest --release --bin mcpherron_compiler -- --out-bin mcpherron_onsets.bin --ci-mode
