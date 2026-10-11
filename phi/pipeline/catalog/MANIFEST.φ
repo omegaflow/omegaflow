@@ -124,11 +124,6 @@ file nasa_cmr_tags.φ | vocabulary | live | visible
 file nasa_cmr_vokabular.φ | vocabulary | live | visible
 file nasa_gcmd_keywords.φ | vocabulary | live | visible
 
-file asteroid_diameters_akari.φ | asteroid | live | visible
-file asteroid_diameters_neowise.φ | asteroid | live | visible
-file asteroid_gm_inpop25c.φ | asteroid | live | visible
-file asteroid_gm_sb441.φ | asteroid | versioned | visible
-
 file archeology_gaps_index.φ | map | live | visible
 file b2find_provider_map.φ | map | live | visible
 file provider_links.φ | map | live | visible
