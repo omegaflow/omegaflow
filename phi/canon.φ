@@ -28,7 +28,5 @@ section Pipeline-Register
 phi/pipeline/library.φ
 
 section Katalog
-phi/pipeline/catalog/copernicus_disposition.φ
 phi/pipeline/catalog/korpora_heim.φ
-phi/pipeline/catalog/noaa_nodd_disposition.φ
 phi/pipeline/catalog/solar_omega_g.φ
