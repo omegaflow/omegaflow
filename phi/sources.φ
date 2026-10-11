@@ -2185,6 +2185,7 @@ format pcn
 origin https://ftp.space.dtu.dk/WDC/indices/pcn/PCN_definitive/pcn2015d.dat
 terms CC-BY-4.0
 compiler tools/harvest/src/bin/pcn_compiler.rs
+sha256 2704914d8831a257122afb3525c846d834a401a4c49b912af0e2540064fb7a62
 at earth
 ttl 86400
 field pcn_mvm pcn_mvm inverse-square electric mV/m 60 0.0 0.0
@@ -11288,6 +11289,13 @@ terms OGL-UK-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence
 format ea_lidar_index
 origin https://environment.data.gov.uk/geoservices/datasets/9f0fa3fc-a860-4729-adc9-47fe53f658d0/ogc/features/v1/collections/LIDAR_Point_Cloud_Index_Catalogue/items
 compiler tools/harvest/src/bin/ea_lidar_index.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/ewds.climate.copernicus.eu/glofas_ewds_coverage.manifest
+origin https://ewds.climate.copernicus.eu/api/catalogue/v1/collections
+compiler tools/harvest/src/bin/glofas_ewds_compiler.rs
+format coverage_manifest
 at earth
 ttl 604800
 
@@ -20932,6 +20940,13 @@ field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
 field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/usgs_lidar_coverage.manifest
+origin https://usgs-lidar-public.s3.amazonaws.com/?list-type=2
+compiler tools/harvest/src/bin/usgs_lidar_coverage.rs
+format usgs_lidar_coverage
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/denis.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html

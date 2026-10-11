@@ -3955,9 +3955,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
 
     #[test]
     fn offer_word_matches_the_lowercased_pending_token() {
-        let mut pending: BTreeSet<String> = ["asservatenkammer".to_string()]
-            .into_iter()
-            .collect();
+        let mut pending: BTreeSet<String> = ["asservatenkammer".to_string()].into_iter().collect();
         let mut found: BTreeSet<String> = BTreeSet::new();
         offer_word("Asservatenkammer-Survey", &mut pending, &mut found);
         assert!(found.contains("asservatenkammer"));

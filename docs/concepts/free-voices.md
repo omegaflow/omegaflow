@@ -2,7 +2,7 @@
   title: Free-Voices — der kostenlose Recherche-Schwarm
   class: concept
   date: 2026-10-02
-  sha256: f177b449a78764dc1e65c9f3bf0cc9b764cf4528014dabf720a750c2e93d470a
+  sha256: fcc3c4737e93dbac7aa8f90daf3fadb0125952b344827d18f48c1e42df176f10
   status: live
   see-also: docs/concepts/tools-map.md docs/concepts/tool-forms.md state/stimmen/reviewer-roster-2026-10-01.md
 -->
@@ -84,7 +84,7 @@ und **API-Modelle** (die `voice-*`-Subagenten, das Basis-`voice`-Rollenprompt in
 und der arch-PROLOG von `state/mycelium/voice-swarm.sh --mode arch`).
 
 - **Fünf Stimmen:** Mountain · River · Mycelium · Sensory · Future (`AGENTS.md`).
-- **Fünf Axiome:** A = A · ICRS & TDB · force_type · 0 honored · pending (`docs/granit.md:16-20`).
+- **Fünf Axiome:** A = A · ICRS & TDB · force_type · 0 honored · `pending` (`docs/granit.md:16-20`).
 - **Fünf Achsen:** Voxelisierung (Mitte) · Crossmatch (Sensory) · TE-Maschine (River) ·
   Nullkontrolle (Mycelium) · Residuum (Future) (`docs/concepts/die-vier-schilde.md`).
 
