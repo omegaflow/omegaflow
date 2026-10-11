@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: dad2baca229aaa8fdfa0e26f783a1cd930eb875eb864551eeef6b9378fbab805
+  sha256: 45d79251e63d398c76bbdfd30a37952f2e9cc365e7dc9d7111ef6254c46e4094
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -26,6 +26,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 | **„ja"** — `opencode.json`-MCP-Konfiguration anfassen (Wrapper `bin/chrome-devtools-mcp` + egress-Allowlist) | 2026-10-11 | Operator (Session, Mycelium 307) |
 | **„weiter"** — research + Rat + Roster auf die offenen Architekturfragen fahren | 2026-10-11 | Operator (Session, Mycelium 307) |
 | **„bitte weiter"** mit den nächsten Atomen: BlueTopo/EMODnet-Compiler + Register-Zeilen; Query-Time-Loader-VLR-Decode; per-Seat-Network-Capture | 2026-10-11 | Operator (Session, Mycelium 307) |
+| **„bitte kümmer dich drum!!!"** — die SuperMAG/DHM-Releases in `omegaflow/sources` sind die offene Weiterverbreitung; löschen (Mycelium-Hand) | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge306.md` §Operator-Wort-Register (via `git show <sha>:docs/handover/archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
@@ -107,7 +108,16 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** die **Register-Zeilen** (`phi/sources.φ`) — Datei ist aktuell von einer fremden Linie modifiziert (nicht angefasst).
 - **Braucht:** (a) **gebaut:** `bluetopo_compiler.rs` (ERDDAP griddap CSV, `bluetopo_5899_7471_de41`, NaN-Zellen übersprungen, GMR1-Gestalt) + `emodnet_bathymetry_compiler.rs` (`rest.emodnet-bathymetry.eu/depth_sample?geom=POINT(lon lat)` → 200 JSON `avg`; neue `EMOD`-Gestalt in `witness.rs`/`geo.rs`); beide `cargo check`/build 0/0. (b) `phi/sources.φ`-Register-Blöcke (url/origin/compiler/format) — **Mountain-Aufenthalt**, geschrieben sobald frei; (c) BlueTopo braucht noch eine **eigene Gestalt-Identität** (heute unter `GMR1`; Riss benannt); (d) UI-Schärfung: Sampling-Parameter + vertikales Datum festhalten.
 
+### SuperMAG/DHM-Weiterverbreitung — Releases gelöscht; latente Bin-Pfade + Router-Doc offen
+- **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) die zwei Releases + Tags in `omegaflow/sources` sind gelöscht; die vier Recreations-Workflows entfernt (der nightly `dhm`-Cron ist weg).
+- **Blockade:** keine.
+- **Braucht:** (a) die Bins `{supermag,substorm,supermag_index,dhm_gauge}_compiler.rs` — `upload_release(<tag>)` streichen (Mountain-Verdikt „cannot be redistributed"; ein manueller `--ci-mode` recreatet sonst); (b) `docs/concepts/self-hosted-runner.md:68-73` (per-Gerät-QoS) auf das gemessene `descoped` fortschreiben + Skript-Stand-Zeile (future-folge233 §An mycelium).
+
 ## Registrierte Korrekturen & Vorfälle
+
+- **Weiterverbreitung zurückgenommen (Operator-Wort 2026-10-11, aus river-186 §An mycelium gefaltet):** die zwei live Release-Assets in `omegaflow/sources` — Tags `supermag.jhuapl.edu` (Substorm-Bins) und `dhm.gov.np` — sind **gelöscht** (`gh release delete <tag> --repo omegaflow/sources --cleanup-tag --yes`; Verifikation: `gh release view` → `release not found`, `gh api .../git/refs/tags/<tag>` → 404). Der `gh`-Weg nutzt den gespeicherten Token (kein Inline, Token-Hygiene gewahrt). Zusätzlich die **vier Recreations-Workflows entfernt** (Mycelium-Domain): `.github/workflows/{supermag,supermag-magstid,substorm,dhm-gauge}-cdn.yml` — `dhm-gauge-cdn.yml` trug einen **nächtlichen Cron** (`23 3 * * *`) und hätte das Release sonst automatisch neu erzeugt. `trishuli-pfeil.yml` ist harmlos (`contents: read`, kein Upload). **Latent offen:** die Compiler-Bins `{supermag,substorm,supermag_index,dhm_gauge}_compiler.rs` tragen weiter `upload_release(<tag>)` — ein manueller `--ci-mode`-Lauf erzeugt ein Release neu (Mensch-Akt, keine Workflow-Maschine).
 
 - **CH-Origin-Zahl widerlegt (Riss):** `flai_coverage_measured.md` nennt CH `swisssurface3d` 79683 ≫ Origin **70**; der gebundene Origin-Walk (`swisstopo_coverage --max-pages 10`) und ein Cursor-Probe erreichten **>10 000 Items** mit `next`-Link weiterhin vorhanden (gemessen 2026-10-11). Die „70" ist ein Flächen-Indikator-Fehler, kein Origin-Count — CH-Diff `unread` bis zum vollen Lauf.
 - **Riss getragen (Namensraum):** NL raw missing = 1375, normalisiert+`c_`-gestrippt = 2 — File-Key (`C_01CZ1`) ≠ Origin-`Name` (`01CZ1`) ist ein Namensraum-Riss, kein Abdeckungs-Riss; beide Linien im Report gehalten.
