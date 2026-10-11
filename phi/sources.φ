@@ -12504,6 +12504,7 @@ field ul_phase_cycles nh_rex_tnf_uplink_phase_cycle inverse-square em cycle 6048
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0110.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0110.tab
 at halley
@@ -12517,6 +12518,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0110f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0110f.tab
 at halley
@@ -12540,6 +12542,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d.tab
 at halley
@@ -12553,6 +12556,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d1.tab
 at halley
@@ -12566,6 +12570,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d2.tab
 at halley
@@ -12579,6 +12584,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d3.tab
 at halley
@@ -12592,6 +12598,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d4.tab
 at halley
@@ -12605,6 +12612,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d5.tab
 at halley
@@ -12618,6 +12626,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d6.tab
 at halley
@@ -12631,6 +12640,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115d7.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0115d7.tab
 at halley
@@ -12644,6 +12654,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df.tab
 at halley
@@ -12667,6 +12678,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df1.tab
 at halley
@@ -12690,6 +12702,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df2.tab
 at halley
@@ -12713,6 +12726,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df3.tab
 at halley
@@ -12736,6 +12750,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df4.tab
 at halley
@@ -12759,6 +12774,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df5.tab
 at halley
@@ -12782,6 +12798,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df6.tab
 at halley
@@ -12805,6 +12822,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0115df7.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0115df7.tab
 at halley
@@ -12828,6 +12846,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0125.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0125.tab
 at halley
@@ -12841,6 +12860,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0125f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0125f.tab
 at halley
@@ -12864,6 +12884,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0201.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0201.tab
 at halley
@@ -12877,6 +12898,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0201f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0201f.tab
 at halley
@@ -12900,6 +12922,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0203.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0203.tab
 at halley
@@ -12913,6 +12936,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0203f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0203f.tab
 at halley
@@ -12936,6 +12960,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0209.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0209.tab
 at halley
@@ -12949,6 +12974,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0209f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0209f.tab
 at halley
@@ -12972,6 +12998,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0212.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0212.tab
 at halley
@@ -12985,6 +13012,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0212f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0212f.tab
 at halley
@@ -13008,6 +13036,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0218.tab
 at halley
@@ -13021,6 +13050,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0218d.tab
 at halley
@@ -13034,6 +13064,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0218d1.tab
 at halley
@@ -13047,6 +13078,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0218d2.tab
 at halley
@@ -13060,6 +13092,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0218d3.tab
 at halley
@@ -13073,6 +13106,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0218d4.tab
 at halley
@@ -13086,6 +13120,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0218df.tab
 at halley
@@ -13109,6 +13144,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0218df1.tab
 at halley
@@ -13132,6 +13168,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0218df2.tab
 at halley
@@ -13155,6 +13192,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0218df3.tab
 at halley
@@ -13178,6 +13216,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0218df4.tab
 at halley
@@ -13201,6 +13240,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0218f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0218f.tab
 at halley
@@ -13224,6 +13264,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/0221.tab
 at halley
@@ -13237,6 +13278,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0221d.tab
 at halley
@@ -13250,6 +13292,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0221d1.tab
 at halley
@@ -13263,6 +13306,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0221d2.tab
 at halley
@@ -13276,6 +13320,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0221d3.tab
 at halley
@@ -13289,6 +13334,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0221d4.tab
 at halley
@@ -13302,6 +13348,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0221d5.tab
 at halley
@@ -13315,6 +13362,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0221df.tab
 at halley
@@ -13338,6 +13386,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0221df1.tab
 at halley
@@ -13361,6 +13410,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0221df2.tab
 at halley
@@ -13384,6 +13434,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0221df3.tab
 at halley
@@ -13407,6 +13458,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0221df4.tab
 at halley
@@ -13430,6 +13482,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0221df5.tab
 at halley
@@ -13453,6 +13506,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0221f.tab
 at halley
@@ -13476,6 +13530,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0221s.tab
 at halley
@@ -13489,6 +13544,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221s1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0221s1.tab
 at halley
@@ -13502,6 +13558,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221s2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0221s2.tab
 at halley
@@ -13515,6 +13572,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0221sf.tab
 at halley
@@ -13538,6 +13596,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221sf1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0221sf1.tab
 at halley
@@ -13561,6 +13620,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0221sf2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0221sf2.tab
 at halley
@@ -13584,6 +13644,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/0222.tab
 at halley
@@ -13597,6 +13658,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0222d.tab
 at halley
@@ -13610,6 +13672,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0222d1.tab
 at halley
@@ -13623,6 +13686,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0222d2.tab
 at halley
@@ -13636,6 +13700,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0222d3.tab
 at halley
@@ -13649,6 +13714,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0222d4.tab
 at halley
@@ -13662,6 +13728,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0222d5.tab
 at halley
@@ -13675,6 +13742,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0222df.tab
 at halley
@@ -13698,6 +13766,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0222df1.tab
 at halley
@@ -13721,6 +13790,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0222df2.tab
 at halley
@@ -13744,6 +13814,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0222df3.tab
 at halley
@@ -13767,6 +13838,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0222df4.tab
 at halley
@@ -13790,6 +13862,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0222df5.tab
 at halley
@@ -13813,6 +13886,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0222f.tab
 at halley
@@ -13836,6 +13910,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0222s.tab
 at halley
@@ -13849,6 +13924,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222s1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0222s1.tab
 at halley
@@ -13862,6 +13938,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222s2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0222s2.tab
 at halley
@@ -13875,6 +13952,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0222sf.tab
 at halley
@@ -13898,6 +13976,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222sf1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0222sf1.tab
 at halley
@@ -13921,6 +14000,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0222sf2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0222sf2.tab
 at halley
@@ -13944,6 +14024,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0227.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0227.tab
 at halley
@@ -13957,6 +14038,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0227f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0227f.tab
 at halley
@@ -13980,6 +14062,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0228d.tab
 at halley
@@ -13993,6 +14076,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0228d1.tab
 at halley
@@ -14006,6 +14090,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0228d2.tab
 at halley
@@ -14019,6 +14104,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0228d3.tab
 at halley
@@ -14032,6 +14118,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0228d4.tab
 at halley
@@ -14045,6 +14132,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0228d5.tab
 at halley
@@ -14058,6 +14146,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0228df.tab
 at halley
@@ -14081,6 +14170,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0228df1.tab
 at halley
@@ -14104,6 +14194,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0228df2.tab
 at halley
@@ -14127,6 +14218,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0228df3.tab
 at halley
@@ -14150,6 +14242,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0228df4.tab
 at halley
@@ -14173,6 +14266,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0228df5.tab
 at halley
@@ -14196,6 +14290,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0228s.tab
 at halley
@@ -14209,6 +14304,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228s1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0228s1.tab
 at halley
@@ -14222,6 +14318,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228s2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0228s2.tab
 at halley
@@ -14235,6 +14332,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0228sf.tab
 at halley
@@ -14258,6 +14356,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228sf1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0228sf1.tab
 at halley
@@ -14281,6 +14380,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0228sf2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0228sf2.tab
 at halley
@@ -14304,6 +14404,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0303s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0303s.tab
 at halley
@@ -14317,6 +14418,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0303sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0303sf.tab
 at halley
@@ -14340,6 +14442,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0306.tab
 at halley
@@ -14353,6 +14456,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0306d.tab
 at halley
@@ -14366,6 +14470,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0306d1.tab
 at halley
@@ -14379,6 +14484,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0306d2.tab
 at halley
@@ -14392,6 +14498,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0306d3.tab
 at halley
@@ -14405,6 +14512,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0306d4.tab
 at halley
@@ -14418,6 +14526,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0306df.tab
 at halley
@@ -14441,6 +14550,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0306df1.tab
 at halley
@@ -14464,6 +14574,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0306df2.tab
 at halley
@@ -14487,6 +14598,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0306df3.tab
 at halley
@@ -14510,6 +14622,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0306df4.tab
 at halley
@@ -14533,6 +14646,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0306f.tab
 at halley
@@ -14556,6 +14670,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0306s.tab
 at halley
@@ -14569,6 +14684,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0306sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0306sf.tab
 at halley
@@ -14592,6 +14708,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/0307.tab
 at halley
@@ -14605,6 +14722,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0307d.tab
 at halley
@@ -14618,6 +14736,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0307d1.tab
 at halley
@@ -14631,6 +14750,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0307d2.tab
 at halley
@@ -14644,6 +14764,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0307df.tab
 at halley
@@ -14667,6 +14788,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0307df1.tab
 at halley
@@ -14690,6 +14812,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0307df2.tab
 at halley
@@ -14713,6 +14836,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0307f.tab
 at halley
@@ -14736,6 +14860,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0307s.tab
 at halley
@@ -14749,6 +14874,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0307sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0307sf.tab
 at halley
@@ -14772,6 +14898,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/0308.tab
 at halley
@@ -14785,6 +14912,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_03081.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/03081.tab
 at halley
@@ -14798,6 +14926,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_03082.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/03082.tab
 at halley
@@ -14811,6 +14940,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0308d.tab
 at halley
@@ -14824,6 +14954,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0308d1.tab
 at halley
@@ -14837,6 +14968,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0308d2.tab
 at halley
@@ -14850,6 +14982,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0308df.tab
 at halley
@@ -14873,6 +15006,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0308df1.tab
 at halley
@@ -14896,6 +15030,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0308df2.tab
 at halley
@@ -14919,6 +15054,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0308f.tab
 at halley
@@ -14942,6 +15078,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308f1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0308f1.tab
 at halley
@@ -14965,6 +15102,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308f2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0308f2.tab
 at halley
@@ -14988,6 +15126,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0308s.tab
 at halley
@@ -15001,6 +15140,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308s1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0308s1.tab
 at halley
@@ -15014,6 +15154,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0308sf.tab
 at halley
@@ -15037,6 +15178,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0308sf1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0308sf1.tab
 at halley
@@ -15060,6 +15202,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0309.tab
 at halley
@@ -15073,6 +15216,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_03091.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/03091.tab
 at halley
@@ -15086,6 +15230,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d.tab
 at halley
@@ -15099,6 +15244,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d1.tab
 at halley
@@ -15112,6 +15258,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d2.tab
 at halley
@@ -15125,6 +15272,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d3.tab
 at halley
@@ -15138,6 +15286,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d4.tab
 at halley
@@ -15151,6 +15300,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d5.tab
 at halley
@@ -15164,6 +15314,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309d6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0309d6.tab
 at halley
@@ -15177,6 +15328,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df.tab
 at halley
@@ -15200,6 +15352,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df1.tab
 at halley
@@ -15223,6 +15376,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df2.tab
 at halley
@@ -15246,6 +15400,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df3.tab
 at halley
@@ -15269,6 +15424,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df4.tab
 at halley
@@ -15292,6 +15448,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df5.tab
 at halley
@@ -15315,6 +15472,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309df6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0309df6.tab
 at halley
@@ -15338,6 +15496,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0309f.tab
 at halley
@@ -15361,6 +15520,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1986/0309s.tab
 at halley
@@ -15374,6 +15534,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0309sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1986/0309sf.tab
 at halley
@@ -15397,6 +15558,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0310d.tab
 at halley
@@ -15410,6 +15572,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0310d1.tab
 at halley
@@ -15423,6 +15586,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0310d2.tab
 at halley
@@ -15436,6 +15600,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0310d3.tab
 at halley
@@ -15449,6 +15614,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0310d4.tab
 at halley
@@ -15462,6 +15628,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0310df.tab
 at halley
@@ -15485,6 +15652,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0310df1.tab
 at halley
@@ -15508,6 +15676,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0310df2.tab
 at halley
@@ -15531,6 +15700,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0310df3.tab
 at halley
@@ -15554,6 +15724,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0310df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0310df4.tab
 at halley
@@ -15577,6 +15748,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0311.tab
 at halley
@@ -15590,6 +15762,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0311d.tab
 at halley
@@ -15603,6 +15776,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0311d1.tab
 at halley
@@ -15616,6 +15790,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0311d2.tab
 at halley
@@ -15629,6 +15804,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0311df.tab
 at halley
@@ -15652,6 +15828,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0311df1.tab
 at halley
@@ -15675,6 +15852,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0311df2.tab
 at halley
@@ -15698,6 +15876,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0311f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0311f.tab
 at halley
@@ -15721,6 +15900,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0314.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0314.tab
 at halley
@@ -15734,6 +15914,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0314f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0314f.tab
 at halley
@@ -15757,6 +15938,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0319.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0319.tab
 at halley
@@ -15770,6 +15952,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0319f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0319f.tab
 at halley
@@ -15793,6 +15976,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0325.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0325.tab
 at halley
@@ -15806,6 +15990,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0325f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0325f.tab
 at halley
@@ -15829,6 +16014,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0327d.tab
 at halley
@@ -15842,6 +16028,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0327d1.tab
 at halley
@@ -15855,6 +16042,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0327d2.tab
 at halley
@@ -15868,6 +16056,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0327d3.tab
 at halley
@@ -15881,6 +16070,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0327d4.tab
 at halley
@@ -15894,6 +16084,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0327df.tab
 at halley
@@ -15917,6 +16108,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0327df1.tab
 at halley
@@ -15940,6 +16132,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0327df2.tab
 at halley
@@ -15963,6 +16156,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0327df3.tab
 at halley
@@ -15986,6 +16180,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0327df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0327df4.tab
 at halley
@@ -16009,6 +16204,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0331.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0331.tab
 at halley
@@ -16022,6 +16218,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0331f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0331f.tab
 at halley
@@ -16045,6 +16242,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0405.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0405.tab
 at halley
@@ -16058,6 +16256,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0405f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0405f.tab
 at halley
@@ -16081,6 +16280,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0406.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0406.tab
 at halley
@@ -16094,6 +16294,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0406f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0406f.tab
 at halley
@@ -16117,6 +16318,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0410.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0410.tab
 at halley
@@ -16130,6 +16332,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0410f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0410f.tab
 at halley
@@ -16153,6 +16356,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0415.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0415.tab
 at halley
@@ -16166,6 +16370,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0415f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0415f.tab
 at halley
@@ -16189,6 +16394,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0419.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0419.tab
 at halley
@@ -16202,6 +16408,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0419f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0419f.tab
 at halley
@@ -16225,6 +16432,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_04261.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/04261.tab
 at halley
@@ -16238,6 +16446,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0426f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0426f.tab
 at halley
@@ -16261,6 +16470,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0503.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0503.tab
 at halley
@@ -16274,6 +16484,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0503f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0503f.tab
 at halley
@@ -16297,6 +16508,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0514.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0514.tab
 at halley
@@ -16310,6 +16522,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0514f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0514f.tab
 at halley
@@ -16333,6 +16546,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0521.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0521.tab
 at halley
@@ -16346,6 +16560,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0521f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0521f.tab
 at halley
@@ -16369,6 +16584,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0527d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0527d.tab
 at halley
@@ -16382,6 +16598,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0527d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0527d1.tab
 at halley
@@ -16395,6 +16612,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0527d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1986/0527d2.tab
 at halley
@@ -16408,6 +16626,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0527df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0527df.tab
 at halley
@@ -16431,6 +16650,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0527df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0527df1.tab
 at halley
@@ -16454,6 +16674,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0527df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1986/0527df2.tab
 at halley
@@ -16477,6 +16698,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0609.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0609.tab
 at halley
@@ -16490,6 +16712,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0609f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0609f.tab
 at halley
@@ -16513,6 +16736,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0622.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0622.tab
 at halley
@@ -16526,6 +16750,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_06221.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1986/06221.tab
 at halley
@@ -16539,6 +16764,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0622f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1986/0622f.tab
 at halley
@@ -16562,6 +16788,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0630.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0630.tab
 at halley
@@ -16575,6 +16802,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_06301.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/06301.tab
 at halley
@@ -16588,6 +16816,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_06302.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/06302.tab
 at halley
@@ -16601,6 +16830,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0630f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0630f.tab
 at halley
@@ -16624,6 +16854,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0630f1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0630f1.tab
 at halley
@@ -16647,6 +16878,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0630s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0630s.tab
 at halley
@@ -16660,6 +16892,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0630sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0630sf.tab
 at halley
@@ -16683,6 +16916,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0703.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/0703.tab
 at halley
@@ -16696,6 +16930,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0703f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0703f.tab
 at halley
@@ -16719,6 +16954,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0703s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0703s.tab
 at halley
@@ -16732,6 +16968,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0703s1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0703s1.tab
 at halley
@@ -16745,6 +16982,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0703sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0703sf.tab
 at halley
@@ -16768,6 +17006,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0703sf1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0703sf1.tab
 at halley
@@ -16791,6 +17030,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0706.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0706.tab
 at halley
@@ -16804,6 +17044,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0706f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0706f.tab
 at halley
@@ -16827,6 +17068,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0719.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/0719.tab
 at halley
@@ -16840,6 +17082,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0719f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0719f.tab
 at halley
@@ -16863,6 +17106,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0722d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0722d.tab
 at halley
@@ -16876,6 +17120,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0722df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0722df.tab
 at halley
@@ -16899,6 +17144,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0722s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0722s.tab
 at halley
@@ -16912,6 +17158,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0722sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0722sf.tab
 at halley
@@ -16935,6 +17182,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/0725.tab
 at halley
@@ -16948,6 +17196,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_07251.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/07251.tab
 at halley
@@ -16961,6 +17210,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d.tab
 at halley
@@ -16974,6 +17224,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d1.tab
 at halley
@@ -16987,6 +17238,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d2.tab
 at halley
@@ -17000,6 +17252,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d3.tab
 at halley
@@ -17013,6 +17266,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d4.tab
 at halley
@@ -17026,6 +17280,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d5.tab
 at halley
@@ -17039,6 +17294,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725d6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0725d6.tab
 at halley
@@ -17052,6 +17308,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df.tab
 at halley
@@ -17075,6 +17332,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df1.tab
 at halley
@@ -17098,6 +17356,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df2.tab
 at halley
@@ -17121,6 +17380,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df3.tab
 at halley
@@ -17144,6 +17404,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df4.tab
 at halley
@@ -17167,6 +17428,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df5.tab
 at halley
@@ -17190,6 +17452,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725df6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0725df6.tab
 at halley
@@ -17213,6 +17476,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0725f.tab
 at halley
@@ -17236,6 +17500,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725f1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0725f1.tab
 at halley
@@ -17259,6 +17524,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0725s.tab
 at halley
@@ -17272,6 +17538,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725s1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0725s1.tab
 at halley
@@ -17285,6 +17552,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0725sf.tab
 at halley
@@ -17308,6 +17576,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0725sf1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0725sf1.tab
 at halley
@@ -17331,6 +17600,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d.tab
 at halley
@@ -17344,6 +17614,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d1.tab
 at halley
@@ -17357,6 +17628,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d2.tab
 at halley
@@ -17370,6 +17642,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d3.tab
 at halley
@@ -17383,6 +17656,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d4.tab
 at halley
@@ -17396,6 +17670,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d5.tab
 at halley
@@ -17409,6 +17684,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729d6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0729d6.tab
 at halley
@@ -17422,6 +17698,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df.tab
 at halley
@@ -17445,6 +17722,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df1.tab
 at halley
@@ -17468,6 +17746,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df2.tab
 at halley
@@ -17491,6 +17770,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df3.tab
 at halley
@@ -17514,6 +17794,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df4.tab
 at halley
@@ -17537,6 +17818,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df5.tab
 at halley
@@ -17560,6 +17842,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729df6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0729df6.tab
 at halley
@@ -17583,6 +17866,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0729s.tab
 at halley
@@ -17596,6 +17880,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0729sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0729sf.tab
 at halley
@@ -17619,6 +17904,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0805.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0805.tab
 at halley
@@ -17632,6 +17918,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0805f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0805f.tab
 at halley
@@ -17655,6 +17942,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0810.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/0810.tab
 at halley
@@ -17668,6 +17956,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_08101.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/08101.tab
 at halley
@@ -17681,6 +17970,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0810f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0810f.tab
 at halley
@@ -17704,6 +17994,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0810f1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0810f1.tab
 at halley
@@ -17727,6 +18018,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0810s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0810s.tab
 at halley
@@ -17740,6 +18032,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0810sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0810sf.tab
 at halley
@@ -17763,6 +18056,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0910.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/0910.tab
 at halley
@@ -17776,6 +18070,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0910f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0910f.tab
 at halley
@@ -17799,6 +18094,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0911.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/0911.tab
 at halley
@@ -17812,6 +18108,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0911f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0911f.tab
 at halley
@@ -17835,6 +18132,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0922.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/0922.tab
 at halley
@@ -17848,6 +18146,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0922f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/0922f.tab
 at halley
@@ -17871,6 +18170,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/60s/1985/0923.tab
 at halley
@@ -17884,6 +18184,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_09231.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/09231.tab
 at halley
@@ -17897,6 +18198,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0923d.tab
 at halley
@@ -17910,6 +18212,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0923d1.tab
 at halley
@@ -17923,6 +18226,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0923d2.tab
 at halley
@@ -17936,6 +18240,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0923d3.tab
 at halley
@@ -17949,6 +18254,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0923d4.tab
 at halley
@@ -17962,6 +18268,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0923d5.tab
 at halley
@@ -17975,6 +18282,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0923df.tab
 at halley
@@ -17998,6 +18306,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0923df1.tab
 at halley
@@ -18021,6 +18330,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0923df2.tab
 at halley
@@ -18044,6 +18354,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0923df3.tab
 at halley
@@ -18067,6 +18378,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0923df4.tab
 at halley
@@ -18090,6 +18402,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0923df5.tab
 at halley
@@ -18113,6 +18426,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f300s/1985/0923f.tab
 at halley
@@ -18136,6 +18450,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923f1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/0923f1.tab
 at halley
@@ -18159,6 +18474,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0923s.tab
 at halley
@@ -18172,6 +18488,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0923sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0923sf.tab
 at halley
@@ -18195,6 +18512,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d.tab
 at halley
@@ -18208,6 +18526,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d1.tab
 at halley
@@ -18221,6 +18540,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d2.tab
 at halley
@@ -18234,6 +18554,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d3.tab
 at halley
@@ -18247,6 +18568,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d4.tab
 at halley
@@ -18260,6 +18582,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d5.tab
 at halley
@@ -18273,6 +18596,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d6.tab
 at halley
@@ -18286,6 +18610,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926d7.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/0926d7.tab
 at halley
@@ -18299,6 +18624,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df.tab
 at halley
@@ -18322,6 +18648,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df1.tab
 at halley
@@ -18345,6 +18672,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df2.tab
 at halley
@@ -18368,6 +18696,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df3.tab
 at halley
@@ -18391,6 +18720,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df4.tab
 at halley
@@ -18414,6 +18744,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df5.tab
 at halley
@@ -18437,6 +18768,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df6.tab
 at halley
@@ -18460,6 +18792,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926df7.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/0926df7.tab
 at halley
@@ -18483,6 +18816,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/0926s.tab
 at halley
@@ -18496,6 +18830,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_0926sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/0926sf.tab
 at halley
@@ -18519,6 +18854,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1005.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/1005.tab
 at halley
@@ -18532,6 +18868,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1005f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/1005f.tab
 at halley
@@ -18555,6 +18892,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1006.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1986/1006.tab
 at halley
@@ -18568,6 +18906,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1006f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1986/1006f.tab
 at halley
@@ -18591,6 +18930,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1021.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/1021.tab
 at halley
@@ -18604,6 +18944,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1021f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/1021f.tab
 at halley
@@ -18627,6 +18968,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1105.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/1105.tab
 at halley
@@ -18640,6 +18982,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1105f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/1105f.tab
 at halley
@@ -18663,6 +19006,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1122d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1122d.tab
 at halley
@@ -18676,6 +19020,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1122d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1122d1.tab
 at halley
@@ -18689,6 +19034,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1122df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1122df.tab
 at halley
@@ -18712,6 +19058,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1122df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1122df1.tab
 at halley
@@ -18735,6 +19082,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1123.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/1123.tab
 at halley
@@ -18748,6 +19096,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1123d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1123d.tab
 at halley
@@ -18761,6 +19110,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1123d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1123d1.tab
 at halley
@@ -18774,6 +19124,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1123df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1123df.tab
 at halley
@@ -18797,6 +19148,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1123df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1123df1.tab
 at halley
@@ -18820,6 +19172,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1123f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/1123f.tab
 at halley
@@ -18843,6 +19196,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/1128.tab
 at halley
@@ -18856,6 +19210,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d.tab
 at halley
@@ -18869,6 +19224,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d1.tab
 at halley
@@ -18882,6 +19238,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d2.tab
 at halley
@@ -18895,6 +19252,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d3.tab
 at halley
@@ -18908,6 +19266,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d4.tab
 at halley
@@ -18921,6 +19280,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d5.tab
 at halley
@@ -18934,6 +19294,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128d6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1128d6.tab
 at halley
@@ -18947,6 +19308,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df.tab
 at halley
@@ -18970,6 +19332,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df1.tab
 at halley
@@ -18993,6 +19356,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df2.tab
 at halley
@@ -19016,6 +19380,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df3.tab
 at halley
@@ -19039,6 +19404,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df4.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df4.tab
 at halley
@@ -19062,6 +19428,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df5.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df5.tab
 at halley
@@ -19085,6 +19452,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128df6.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1128df6.tab
 at halley
@@ -19108,6 +19476,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/1128f.tab
 at halley
@@ -19131,6 +19500,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1985/1128s.tab
 at halley
@@ -19144,6 +19514,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1128sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1985/1128sf.tab
 at halley
@@ -19167,6 +19538,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202d.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1202d.tab
 at halley
@@ -19180,6 +19552,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202d1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1202d1.tab
 at halley
@@ -19193,6 +19566,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202d2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1202d2.tab
 at halley
@@ -19206,6 +19580,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202d3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/100ms/1985/1202d3.tab
 at halley
@@ -19219,6 +19594,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202df.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1202df.tab
 at halley
@@ -19242,6 +19618,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202df1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1202df1.tab
 at halley
@@ -19265,6 +19642,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202df2.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1202df2.tab
 at halley
@@ -19288,6 +19666,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1202df3.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f24s/1985/1202df3.tab
 at halley
@@ -19311,6 +19690,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1215.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1985/1215.tab
 at halley
@@ -19324,6 +19704,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1215f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1985/1215f.tab
 at halley
@@ -19347,6 +19728,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1228.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1984/1228.tab
 at halley
@@ -19360,6 +19742,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_12281.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1984/12281.tab
 at halley
@@ -19373,6 +19756,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_12282.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/150s/1984/12282.tab
 at halley
@@ -19386,6 +19770,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1228f.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1984/1228f.tab
 at halley
@@ -19409,6 +19794,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1228f1.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f4800s/1984/1228f1.tab
 at halley
@@ -19432,6 +19818,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1228s.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/6s/1984/1228s.tab
 at halley
@@ -19445,6 +19832,7 @@ field "BUXPSSO" pds3_mischa_bux_pso inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_1228sf.bin
 format pds3_fixed_width
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 terms PD https://sbn.psi.edu/pds/
 origin https://pds-smallbodies.astro.umd.edu/holdings/vega2-c_sw-mischa-3-rdr-original-v1.0/data/ascii/f30s/1984/1228sf.tab
 at halley
