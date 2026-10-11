@@ -1,0 +1,84 @@
+# harvest: format=modvolc_thermal asset=present arm=modvolc_compiler pattern=^modvolc_thermal\.bin$ idempotent=true timeout=180 tag=modis.higp.hawaii.edu
+
+name: modvolc-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: 'MODVOLC archive year (2000-2019)'
+        type: string
+        default: '2019'
+      doy:
+        description: 'MODVOLC day-of-year directory (001-365)'
+        type: string
+        default: '001'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  modvolc:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view modis.higp.hawaii.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "modvolc_thermal.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset modvolc_thermal.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset modvolc_thermal.bin missing — compiling and manifesting"
+          fi
+      - name: Fetch the MODVOLC daily granule set (measured route)
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          year="${{ inputs.year }}"; [ -n "$year" ] || year="2019"
+          doy="${{ inputs.doy }}"; [ -n "$doy" ] || doy="001"
+          base="http://modis.higp.hawaii.edu/data/$year/$doy"
+          mkdir -p gran
+          curl -sSfL --retry 3 --max-time 180 -o listing.html "$base/" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "modvolc-cdn: day directory $base/ returned void" \
+                 "curl on modis.higp.hawaii.edu did not reach $base/. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          grep -oE 'MODVOLC[^"<> ]*\.NRT\.dat' listing.html | sort -u > names.txt
+          test -s names.txt || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "modvolc-cdn: $base/ carries no MODVOLC granule" \
+                 "the autoindex at $base/ listed no MODVOLC*.NRT.dat granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          while read -r name; do
+            curl -sSfL --retry 3 --max-time 180 -o "gran/$name" "$base/$name"
+          done < names.txt
+          echo "harvest measured: $(ls gran | wc -l) MODVOLC granules from $base/"
+      - name: Ensure the modis.higp.hawaii.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view modis.higp.hawaii.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create modis.higp.hawaii.edu --repo omegaflow/sources \
+              --title "modis.higp.hawaii.edu" \
+              --notes "MODVOLC (HIGP) thermal anomalies from MODIS 3.959um/2.1um radiance compiled to the omegaflow modvolc_thermal binary (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the MODVOLC thermal alerts to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin modvolc_compiler -- \
+            --in gran \
+            --out data/modvolc_thermal.bin \
+            --body earth \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "modvolc-cdn: modvolc_thermal compile returned void" \
+                 "modvolc thermal compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

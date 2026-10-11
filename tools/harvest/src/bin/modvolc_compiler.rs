@@ -6,6 +6,7 @@ use omegaflow::archivar::motion::body_fixed_to_icrs;
 use omegaflow::archivar::parse_ephemeris_binary;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::body_url;
+use omegaflow::cdn::upload_release;
 use omegaflow::force::{force_id_of, kernel_id_for_force};
 use std::collections::HashMap;
 
@@ -26,7 +27,7 @@ const OUT_DEFAULT: &str = "data/modvolc_thermal.bin";
 
 fn usage() -> &'static str {
     "usage: modvolc_compiler <day-file.dat|url|directory> [--in <path|url>] [--out <file.bin>] \
-     [--ephemeris <path|url>] [--limit N]"
+     [--ephemeris <path|url>] [--limit N] [--ci-mode]"
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -205,6 +206,7 @@ fn gather(src: &str) -> Result<Vec<String>, String> {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out_flag = arg_value(args, "--out");
     let src = match arg_value(args, "--in").or_else(|| {
         args.iter()
@@ -320,6 +322,10 @@ fn run(args: &[String]) -> Result<(), String> {
         records.len(),
         bin.len()
     );
+
+    if ci_mode && !upload_release(NETLOC, &out) {
+        return Err(format!("{out}: CDN upload returned void"));
+    }
     Ok(())
 }
 

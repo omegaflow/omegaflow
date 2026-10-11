@@ -6,6 +6,7 @@ use omegaflow::archivar::motion::{BodyEphemeris, body_fixed_to_icrs};
 use omegaflow::archivar::parse_ephemeris_binary;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::body_url;
+use omegaflow::cdn::upload_release;
 use omegaflow::force::{force_id_of, kernel_id_for_force};
 use omegaflow::hdf5::Hdf5File;
 use omegaflow::json::{JsonVal, parse_json};
@@ -31,7 +32,7 @@ const REFERENCE_SURFACE_ALT: f64 = 0.0;
 
 fn usage() -> &'static str {
     "usage: its_live_compiler [--items <url|file>] [--item <url|file>] [--out <file.bin>] \
-     [--stride N] [--limit N] [--ephemeris <path|url>] [--probe]"
+     [--stride N] [--limit N] [--ephemeris <path|url>] [--probe] [--ci-mode]"
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -538,6 +539,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let stride = parse_step(args, "--stride", 1)?;
     let limit = parse_step(args, "--limit", usize::MAX)?;
     let probe_mode = args.iter().any(|a| a == "--probe");
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let receiver = arg_value(args, "--body").ok_or_else(|| {
         "--body <name> is required — the receiver body is declared, never defaulted".to_string()
     })?;
@@ -679,6 +681,10 @@ fn run(args: &[String]) -> Result<(), String> {
         records.len(),
         bin.len()
     );
+
+    if ci_mode && !upload_release(NETLOC, &out) {
+        return Err(format!("{out}: CDN upload returned void"));
+    }
     Ok(())
 }
 
