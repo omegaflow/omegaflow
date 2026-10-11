@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI-Querprobe GILL gemessen (kein aufgelöster Breakup; stream2-Keogramm achsenlos/nahezu leer), JUICE/Flyby-Trägerschaft von Sensory gefaltet
   class: handover
   date: 2026-10-11
-  sha256: 43c95a921f56af0accbd7951960eec08d1baf50d5731b3c708b1145aea79659d
+  sha256: 4d750c27136506c1469868721c1041eda421674b6f4c79efc1ff915fb5e8403e
   status: live
 -->
 # Handover — River-Folge 188 (2026-10-11)
@@ -120,6 +120,7 @@ Origin: river-188 (2026-10-11).
 
 - **Getimetes THEMIS-ASI-Keogramm:** ein kleiner Compiler, der aus den UCalgary-`stream0`-per-Minute-Frames (`…_full.pgm[.gz]`, UT im Dateinamen, 256×256 P5) **oder** der Berkeley `themis_asi`-CDF ein **getimtes** Keogramm (UT-Achse mitgeliefert) baut — die `stream2`-Keogramme sind achsenlos (gemessen 2026-10-11). Erst damit ist die Onset-Label-Methode verankerbar (River-188 §Disjunkter optischer Zeuge).
 - **McPherron-Onset-Liste — Harvest-Arm gebaut (river-188):** `mcpherron_compiler.rs` (neu) holt `https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content` (10.2 MB), entpackt `CorrOnsFiles/ftims.txt` per `omegaflow::inflate::zip_members`, parst die 6-Spalten-Onsets (Y M D h m s) → `SubstormOnset` (t_unix; MLT/MLAT/GLON/GLAT leer) → `write_bin` (SBSM); `--ci-mode` → `upload_release("zenodo.org", …)`. **Lokal verifiziert:** 314 560 Onsets, 12 896 968 B, sha256 `0c99e7d8…`, Roundtrip ok (`--in /tmp/opencode/mcpherron/CorrOnsFiles/ftims.txt`). Dazu `.github/workflows/mcpherron-cdn.yml` (CI-only, Idempotenz-Guard, `# harvest: format=substorm arm=mcpherron_compiler tag=zenodo.org`). **Offen:** der CDN-Lauf (dispatch) + Register-Block.
+- **ENTSO-E — Datensatz gemessen (river-188):** der Netz-Störungs-Datensatz ist **„Unavailability of Transmission Infrastructure [Article 7]"** (`https://transparency.entsoe.eu/outage-domain/r2/unavailabilityInTransmissionGrid/show`, HTTP 206; Generation = Article 12, `…/unavailabilityOfProductionAndGenerationUnits/show`). `ENTSOE_API_TOKEN` liegt in `.secrets.local`. **Braucht:** `entsoe_compiler.rs` (Token selbst lesend, wie `fingrid_compiler.rs`; API-`documentType` beim Bau pinnen) + `entsoe-cdn.yml`. Datum/`ttl`/`terms` = Mountain.
 
 ## An future
 
