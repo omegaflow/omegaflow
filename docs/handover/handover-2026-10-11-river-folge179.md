@@ -3,7 +3,7 @@
   session: River-Folge 179
   class: handover
   date: 2026-10-11
-  sha256: 108064983e65849d1b3178ead527d08c6b41a0db36d456c2d14898b3b1c70ead
+  sha256: f9c13dba1366c00bf67a7c069018c08572c9e9de6eaac664b43bc0b083de4acf
   status: live
 -->
 # Handover — River-Folge 179 (2026-10-11)
@@ -62,7 +62,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 ### panel-vlies — Auflösung: Kandidaten werden jetzt benannt, Register/CDN bleiben
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Artefakt `field-te-panel-vlies.txt` der `field-te-query`-Neudispatches nach dem Push (F179).
+- **Trigger:** CI-Artefakt `field-te-panel-vlies.txt` des `field-te-query`-Neudispatches `38117177282` (HEAD `a7fe3a61b`, F179).
 - **Lage:** (gemessen 2026-10-11, River 179 via `ci_manage log`/`gh api`/`sread`) Der Lauf `38105380164` (HEAD `2df1fee0f`) endet `panel pending — bin window carries no overlap between the arms`; die Log-Zeile ist `omni2_serie_1h.bin … 404` (CDN-Asset fehlt); eine `resolution`-Zeile fehlt, weil nur **ein** `omni_imf_bz_gsm_nt`-Kandidat lud. Register: drei Registrierungen — `:748` HAPI live `3600` (ohne `format`), `:1935` Tages-Bin `86400`, `:1950` 1h-Bin `86400` — **nicht dieselbe Größe**; die 1h-Bin-native ist `3600` (`omni2_compiler --decimate-min 60`). Weil der HAPI-live-Block kein `format` trägt, fällt `first-load-wins` auf den historischen Tages-Bin (endet 2026-08-06) → disjunkte Fenster gegen die SWPC-Live-Arme. **Gebaut (dieser Atom):** `resolution_probe` nennt jeden registrierten Kandidaten (median_dt oder Ladefehler); `run_summary_panel` nennt bei `panel pending` je Arm den Zeit-Span. `cargo build -p omegaflow-measure --bin field_te_query` grün.
 - **Blockade:** der 1h-Bin ist auf dem CDN **404** (Manifestation fehlt, Mycelium) und die Register-Zeile deklariert ihn mit `86400` (Register-Lüge, Mountain); der Register-Hunk in `phi/sources.φ` ist **volatil** — bei Session-Start clean, am Sessionende `M` (14 Zeilen, parallele Session) — und wird von River nicht geschrieben.
 - **Braucht:** nach Push `gh workflow run field-te-query.yml` (Job `panel-vlies`), Artefakt lesen → die neuen `resolution`-Zeilen nennen die Zeugen; danach Rat Schritt 3: `load_field_across_sources` (`:1249`) auf gemessene Auswahl (`median_dt` je Kandidat, feinster gleichartiger Zeuge, Zeuge benannt) umbauen.
