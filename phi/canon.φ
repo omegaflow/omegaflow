@@ -1,28 +1,8 @@
-section Kanon
 phi/canon.φ
-
-section Maschinen-Register
 phi/sources.φ
 phi/witnesses.φ
 phi/footprints.φ
-
-section Dispositions-Register
 phi/dead_sources.φ
 phi/declined_sources.φ
 phi/blocked_sources.φ
-
-section Harvest-Master
 phi/harvest.φ
-
-section Stationstabellen
-phi/nrs_stations.φ
-
-section Bindings
-phi/dust-maske.φ
-phi/bands.φ
-
-section Such-Linse
-phi/library.φ
-
-section Reports
-phi/scan_coverage.φ
