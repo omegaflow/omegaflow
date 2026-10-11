@@ -220,21 +220,23 @@ at sun
 last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
 last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
 
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
-terms PD https://www.swpc.noaa.gov/
-ttl 60
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_MFI&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Magnitude,BGSM&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
 at sun
-first bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
-first by_gsm magnetosphere_imf_by_nt inverse-square em nT 6.0 0.0 0.0
-first bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
+hapi Magnitude=magnetosphere_imf_bt_nt BGSM.1=magnetosphere_imf_by_nt BGSM.2=magnetosphere_imf_bz_nt
+field magnetosphere_imf_bt_nt magnetosphere_imf_bt_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_imf_by_nt magnetosphere_imf_by_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_imf_bz_nt magnetosphere_imf_bz_nt inverse-square em nT 3600 0.0 0.0
 
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
-terms PD https://www.swpc.noaa.gov/
-ttl 60
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_SWE&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Np,Vp,Tpr&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
 at sun
-first proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0
-first proton_density solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 6.0 0.0 0.0
-first proton_temperature solar_wind_temp_k exponential-decay thermal K 6.0 0.0 0.0
+hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s Tpr=solar_wind_temp_k
+field solar_wind_speed_km_s solar_wind_speed_km_s patch-levy advective km/s 3600 0.0 400000.0
+field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 3600 0.0 0.0
+field solar_wind_temp_k solar_wind_temp_k exponential-decay thermal K 3600 0.0 0.0
 
 url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms unknown https://services6.arcgis.com/
