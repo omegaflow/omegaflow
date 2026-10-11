@@ -37,6 +37,7 @@ fn merge_bytes(
     bytes: &[u8],
     lsk: &omegaflow::archivar::LeapSeconds,
     merged: &mut Vec<[f64; 9]>,
+    uplink_bands: &mut Vec<Option<i64>>,
 ) {
     let Some(recs) = odf::parse_odf(bytes) else {
         eprintln!("{label}: parse void — {} B", bytes.len());
@@ -66,6 +67,11 @@ fn merge_bytes(
             r.scid as f64,
             r.compression_s,
         ]);
+        uplink_bands.push(if r.uplink_band == 0 {
+            None
+        } else {
+            Some(r.uplink_band)
+        });
         kept += 1;
     }
     eprintln!(
@@ -88,6 +94,7 @@ fn main() {
         return;
     };
     let mut merged: Vec<[f64; 9]> = Vec::new();
+    let mut uplink_bands: Vec<Option<i64>> = Vec::new();
     if inputs.is_empty() {
         for volume in VOLUMES {
             let rels = files_of(volume);
@@ -98,13 +105,19 @@ fn main() {
                     eprintln!("{volume}/{rel}: fetch void ({url})");
                     continue;
                 };
-                merge_bytes(&format!("{volume}/{rel}"), &bytes, &lsk, &mut merged);
+                merge_bytes(
+                    &format!("{volume}/{rel}"),
+                    &bytes,
+                    &lsk,
+                    &mut merged,
+                    &mut uplink_bands,
+                );
             }
         }
     } else {
         for path in &inputs {
             match std::fs::read(path) {
-                Ok(bytes) => merge_bytes(path, &bytes, &lsk, &mut merged),
+                Ok(bytes) => merge_bytes(path, &bytes, &lsk, &mut merged, &mut uplink_bands),
                 Err(e) => eprintln!("read {path} returned void: {e}"),
             }
         }
@@ -115,10 +128,12 @@ fn main() {
         );
         return;
     }
-    merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    let mut paired: Vec<([f64; 9], Option<i64>)> = merged.into_iter().zip(uplink_bands).collect();
+    paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
+    let (merged, uplink_bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
     let out = "data/atmos.nmsu.edu/vex_odf.bin";
     std::fs::create_dir_all("data/atmos.nmsu.edu").ok();
-    let bin = odf::write_podf_bin(&merged);
+    let bin = odf::write_podf_bin_bands(&merged, &uplink_bands);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");
         return;

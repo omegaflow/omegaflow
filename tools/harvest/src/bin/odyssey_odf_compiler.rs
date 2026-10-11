@@ -112,16 +112,17 @@ fn files_by_volume(vols: &[String]) -> Vec<(String, String)> {
     })
 }
 
-fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
+fn harvest(url: &str, lsk: &LeapSeconds) -> (Vec<[f64; 9]>, Vec<Option<i64>>) {
     let Some(bytes) = fetch_raw_bytes(url) else {
         eprintln!("{url}: fetch void");
-        return Vec::new();
+        return (Vec::new(), Vec::new());
     };
     let Some(recs) = odf::parse_odf(&bytes) else {
         eprintln!("{url}: parse void — {} B", bytes.len());
-        return Vec::new();
+        return (Vec::new(), Vec::new());
     };
     let mut rows: Vec<[f64; 9]> = Vec::new();
+    let mut uplink_bands: Vec<Option<i64>> = Vec::new();
     let mut skipped = 0usize;
     for r in &recs {
         let doppler = (11..=14).contains(&r.data_type);
@@ -145,16 +146,21 @@ fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
             r.scid as f64,
             r.compression_s,
         ]);
+        uplink_bands.push(if r.uplink_band == 0 {
+            None
+        } else {
+            Some(r.uplink_band)
+        });
     }
     eprintln!(
         "{url}: {} orbit records, {} kept ({skipped} discarded)",
         recs.len(),
         rows.len()
     );
-    rows
+    (rows, uplink_bands)
 }
 
-fn harvest_all(urls: &[String], lsk: &LeapSeconds) -> Vec<[f64; 9]> {
+fn harvest_all(urls: &[String], lsk: &LeapSeconds) -> (Vec<[f64; 9]>, Vec<Option<i64>>) {
     let next = AtomicUsize::new(0);
     std::thread::scope(|s| {
         let mut handles = Vec::with_capacity(WORKERS);
@@ -162,24 +168,31 @@ fn harvest_all(urls: &[String], lsk: &LeapSeconds) -> Vec<[f64; 9]> {
             let next = &next;
             handles.push(s.spawn(move || {
                 let mut rows: Vec<[f64; 9]> = Vec::new();
+                let mut uplink_bands: Vec<Option<i64>> = Vec::new();
                 loop {
                     let i = next.fetch_add(1, Ordering::SeqCst);
                     let Some(url) = urls.get(i) else {
                         break;
                     };
-                    rows.extend(harvest(url, lsk));
+                    let (mut found, mut found_bands) = harvest(url, lsk);
+                    rows.append(&mut found);
+                    uplink_bands.append(&mut found_bands);
                 }
-                rows
+                (rows, uplink_bands)
             }));
         }
         let mut merged: Vec<[f64; 9]> = Vec::new();
+        let mut uplink_bands: Vec<Option<i64>> = Vec::new();
         for h in handles {
             match h.join() {
-                Ok(mut rows) => merged.append(&mut rows),
+                Ok((mut rows, mut bands)) => {
+                    merged.append(&mut rows);
+                    uplink_bands.append(&mut bands);
+                }
                 Err(_) => eprintln!("a harvest worker stayed unjoined"),
             }
         }
-        merged
+        (merged, uplink_bands)
     })
 }
 
@@ -198,17 +211,19 @@ fn main() {
         .map(|(vol, rel)| format!("{BASE}{vol}/odf/{rel}"))
         .collect();
     eprintln!("ody-m-rss-1-raw-v1: {} odf files", urls.len());
-    let mut merged = harvest_all(&urls, &lsk);
+    let (merged, uplink_bands) = harvest_all(&urls, &lsk);
     if merged.is_empty() {
         eprintln!("no Mars Odyssey ODF orbit samples — the series stays unwritten (0 honored)");
         return;
     }
-    merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    let mut paired: Vec<([f64; 9], Option<i64>)> = merged.into_iter().zip(uplink_bands).collect();
+    paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
+    let (merged, uplink_bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
     std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
     let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
     if ranges.len() == 1 {
         let out = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
-        let bin = odf::write_podf_bin(&merged);
+        let bin = odf::write_podf_bin_bands(&merged, &uplink_bands);
         if std::fs::write(&out, &bin).is_err() {
             eprintln!("write {out} void");
             return;
@@ -248,7 +263,7 @@ fn main() {
             name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, ord);
         }
         names.push(name.clone());
-        let bin = odf::write_podf_bin(&merged[lo..hi]);
+        let bin = odf::write_podf_bin_bands(&merged[lo..hi], &uplink_bands[lo..hi]);
         assert!(bin.len() <= odf::PODF_SHARD_LIMIT);
         let parsed = match odf::parse_podf_bin(&bin) {
             Some(p) => p,

@@ -118,6 +118,7 @@ fn main() {
         return;
     };
     let mut merged: Vec<[f64; 9]> = Vec::new();
+    let mut uplink_bands: Vec<Option<i64>> = Vec::new();
     for rel in FILES {
         let url = format!("{BASE}/{rel}");
         let Some(bytes) = fetch_raw_bytes(&url) else {
@@ -151,6 +152,11 @@ fn main() {
                 r.scid as f64,
                 r.compression_s,
             ]);
+            uplink_bands.push(if r.uplink_band == 0 {
+                None
+            } else {
+                Some(r.uplink_band)
+            });
             kept += 1;
         }
         eprintln!(
@@ -162,10 +168,12 @@ fn main() {
         eprintln!("no P11-ODF samples — the series stays unwritten (0 honored)");
         return;
     }
-    merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    let mut paired: Vec<([f64; 9], Option<i64>)> = merged.into_iter().zip(uplink_bands).collect();
+    paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
+    let (merged, uplink_bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
     let out = "data/spdf.gsfc.nasa.gov/pioneer11_odf.bin";
     std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
-    let bin = odf::write_podf_bin(&merged);
+    let bin = odf::write_podf_bin_bands(&merged, &uplink_bands);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");
         return;

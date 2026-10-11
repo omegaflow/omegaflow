@@ -92,26 +92,31 @@ fn main() {
     files.sort();
     files.dedup();
     eprintln!("cassini rss tnf files: {}", files.len());
-    let mut merged: Vec<[f64; 9]> = Vec::new();
+    let mut paired: Vec<([f64; 9], Option<i64>)> = Vec::new();
     for url in &files {
         let Some(bytes) = fetch_raw_bytes(url) else {
             eprintln!("{url}: fetch void");
             continue;
         };
-        let Some(recs) = odf::tnf_rows(&bytes, &lsk) else {
+        let Some((recs, rec_bands)) = odf::tnf_rows_bands(&bytes, &lsk) else {
             eprintln!("{url}: tnf scan void — {} B", bytes.len());
             continue;
         };
-        merged.extend(recs.into_iter().filter(|r| r[odf::TNF_ROW_FORMAT] == 0.0));
+        paired.extend(
+            recs.into_iter()
+                .zip(rec_bands)
+                .filter(|(r, _)| r[odf::TNF_ROW_FORMAT] == 0.0),
+        );
     }
-    if merged.is_empty() {
+    if paired.is_empty() {
         eprintln!("no cassini TNF DT0 samples — the series stays unwritten (0 honored)");
         return;
     }
-    merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
+    let (merged, bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
     let out = "data/atmos.nmsu.edu/cassini_tnf.bin";
     std::fs::create_dir_all("data/atmos.nmsu.edu").ok();
-    let bin = odf::write_podf_bin(&merged);
+    let bin = odf::write_podf_bin_bands(&merged, &bands);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");
         return;

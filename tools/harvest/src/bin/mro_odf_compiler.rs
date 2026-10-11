@@ -49,16 +49,17 @@ fn files_of() -> Vec<String> {
     out
 }
 
-fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
+fn harvest(url: &str, lsk: &LeapSeconds) -> (Vec<[f64; 9]>, Vec<Option<i64>>) {
     let Some(bytes) = fetch_raw_bytes(url) else {
         eprintln!("{url}: fetch void");
-        return Vec::new();
+        return (Vec::new(), Vec::new());
     };
     let Some(recs) = odf::parse_odf(&bytes) else {
         eprintln!("{url}: parse void — {} B", bytes.len());
-        return Vec::new();
+        return (Vec::new(), Vec::new());
     };
     let mut rows: Vec<[f64; 9]> = Vec::new();
+    let mut bands: Vec<Option<i64>> = Vec::new();
     let mut skipped = 0usize;
     for r in &recs {
         let doppler = (11..=14).contains(&r.data_type);
@@ -82,18 +83,27 @@ fn harvest(url: &str, lsk: &LeapSeconds) -> Vec<[f64; 9]> {
             r.scid as f64,
             r.compression_s,
         ]);
+        bands.push(if r.uplink_band == 0 {
+            None
+        } else {
+            Some(r.uplink_band)
+        });
     }
     eprintln!(
         "{url}: {} orbit records, {} kept ({skipped} discarded)",
         recs.len(),
         rows.len()
     );
-    rows
+    (rows, bands)
 }
 
-fn harvest_stream<F: FnMut(Vec<[f64; 9]>)>(urls: &[String], lsk: &LeapSeconds, mut on_rows: F) {
+fn harvest_stream<F: FnMut(Vec<[f64; 9]>, Vec<Option<i64>>)>(
+    urls: &[String],
+    lsk: &LeapSeconds,
+    mut on_rows: F,
+) {
     for chunk in urls.chunks(WORKERS) {
-        let mut chunk_rows: Vec<Vec<[f64; 9]>> = std::thread::scope(|s| {
+        let mut chunk_rows: Vec<(Vec<[f64; 9]>, Vec<Option<i64>>)> = std::thread::scope(|s| {
             let handles: Vec<_> = chunk
                 .iter()
                 .map(|url| s.spawn(move || harvest(url, lsk)))
@@ -104,26 +114,33 @@ fn harvest_stream<F: FnMut(Vec<[f64; 9]>)>(urls: &[String], lsk: &LeapSeconds, m
                     Ok(rows) => rows,
                     Err(_) => {
                         eprintln!("a harvest worker stayed unjoined");
-                        Vec::new()
+                        (Vec::new(), Vec::new())
                     }
                 })
                 .collect()
         });
-        for mut rows in chunk_rows.drain(..) {
-            rows.sort_by(|a, b| a[0].total_cmp(&b[0]));
-            on_rows(rows);
+        for (rows, bands) in chunk_rows.drain(..) {
+            let mut paired: Vec<([f64; 9], Option<i64>)> = rows.into_iter().zip(bands).collect();
+            paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
+            let (rows, bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
+            on_rows(rows, bands);
         }
     }
 }
 
-fn flush_shard(buffer: &mut Vec<[f64; 9]>, names: &mut Vec<String>, paths: &mut Vec<String>) {
+fn flush_shard(
+    buffer: &mut Vec<[f64; 9]>,
+    uplink_bands: &mut Vec<Option<i64>>,
+    names: &mut Vec<String>,
+    paths: &mut Vec<String>,
+) {
     let t_lo = buffer[0][0];
     let t_hi = buffer[buffer.len() - 1][0];
     let mut name = odf::podf_shard_name(PREFIX, t_lo, t_hi);
     if names.contains(&name) {
         name = odf::podf_shard_name_ord(PREFIX, t_lo, t_hi, names.len());
     }
-    let bin = odf::write_podf_bin(buffer);
+    let bin = odf::write_podf_bin_bands(buffer, uplink_bands);
     assert!(bin.len() <= odf::PODF_SHARD_LIMIT);
     let parsed = match odf::parse_podf_bin(&bin) {
         Some(p) => p,
@@ -149,6 +166,7 @@ fn flush_shard(buffer: &mut Vec<[f64; 9]>, names: &mut Vec<String>, paths: &mut 
     names.push(name);
     paths.push(path);
     buffer.clear();
+    uplink_bands.clear();
 }
 
 fn main() {
@@ -165,15 +183,17 @@ fn main() {
 
     let shard_records = (odf::PODF_SHARD_BUDGET - 8) / 72;
     let mut buffer: Vec<[f64; 9]> = Vec::with_capacity(shard_records);
+    let mut uplink_bands: Vec<Option<i64>> = Vec::with_capacity(shard_records);
     let mut names: Vec<String> = Vec::new();
     let mut paths: Vec<String> = Vec::new();
     let mut total = 0usize;
-    harvest_stream(&urls, &lsk, |rows| {
+    harvest_stream(&urls, &lsk, |rows, bands| {
         total += rows.len();
-        for r in rows {
+        for (r, band) in rows.into_iter().zip(bands) {
             buffer.push(r);
+            uplink_bands.push(band);
             if buffer.len() >= shard_records {
-                flush_shard(&mut buffer, &mut names, &mut paths);
+                flush_shard(&mut buffer, &mut uplink_bands, &mut names, &mut paths);
             }
         }
     });
@@ -182,7 +202,7 @@ fn main() {
         return;
     }
     if !buffer.is_empty() {
-        flush_shard(&mut buffer, &mut names, &mut paths);
+        flush_shard(&mut buffer, &mut uplink_bands, &mut names, &mut paths);
     }
     if names.len() == 1 {
         let single = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
