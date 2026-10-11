@@ -5107,6 +5107,7 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
+                let epoch = now;
                 let receiver_aperture = archive.receiver_aperture.clone();
                 let body_radius = archive
                     .body_ephemerides
@@ -5190,11 +5191,16 @@ pub fn main_flow() {
                     };
                     let mut selected = 0usize;
                     for shard in &shards {
-                        if !crate::archivar::coverage_manifest::shard_intersects_hull(
+                        let resolved = crate::archivar::coverage_manifest::resolve_placement(
                             &shard.placement,
-                            &presences,
-                            &field,
-                            &env,
+                            shard.crs,
+                            shard.epoch,
+                            &body_name,
+                            epoch,
+                            &eph_arc,
+                        );
+                        if !crate::archivar::coverage_manifest::shard_intersects_hull(
+                            &resolved, &presences, &field, &env,
                         ) {
                             continue;
                         }

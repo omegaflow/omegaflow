@@ -11,6 +11,20 @@ pub enum ShardPlacement {
 pub struct ShardDescriptor {
     pub url: String,
     pub placement: ShardPlacement,
+    pub crs: Option<i32>,
+    pub epoch: Option<f64>,
+}
+
+fn parse_crs(token: Option<&&str>) -> Option<i32> {
+    let text = token?.trim();
+    let digits = text
+        .strip_prefix("EPSG:")
+        .or_else(|| text.strip_prefix("epsg:"))
+        .unwrap_or(text);
+    if digits.eq_ignore_ascii_case("pending") || digits == "-" {
+        return None;
+    }
+    digits.parse::<i32>().ok().filter(|c| *c > 0)
 }
 
 fn parse_bbox(tokens: &[&str]) -> ShardPlacement {
@@ -38,18 +52,44 @@ pub fn parse_coverage_manifest(text: &str) -> Vec<ShardDescriptor> {
         match tokens.first().copied() {
             Some("shard") => {
                 let Some(url) = tokens.get(1) else { continue };
+                let placement = parse_bbox(&tokens[2..]);
+                let (crs, epoch) = match placement {
+                    ShardPlacement::Placed(_) => (
+                        parse_crs(tokens.get(8)),
+                        tokens
+                            .get(9)
+                            .and_then(|t| t.parse::<f64>().ok())
+                            .filter(|v| v.is_finite()),
+                    ),
+                    ShardPlacement::Pending => (None, None),
+                };
                 shards.push(ShardDescriptor {
                     url: (*url).to_string(),
-                    placement: parse_bbox(&tokens[2..]),
+                    placement,
+                    crs,
+                    epoch,
                 });
             }
             Some("node") => {
                 let Some(prefix) = tokens.get(1) else {
                     continue;
                 };
+                let placement = parse_bbox(&tokens[2..]);
+                let (crs, epoch) = match placement {
+                    ShardPlacement::Placed(_) => (
+                        parse_crs(tokens.get(8)),
+                        tokens
+                            .get(9)
+                            .and_then(|t| t.parse::<f64>().ok())
+                            .filter(|v| v.is_finite()),
+                    ),
+                    ShardPlacement::Pending => (None, None),
+                };
                 shards.push(ShardDescriptor {
                     url: (*prefix).to_string(),
-                    placement: parse_bbox(&tokens[2..]),
+                    placement,
+                    crs,
+                    epoch,
                 });
             }
             _ => {}
@@ -101,11 +141,80 @@ pub fn shard_intersects_hull(
     })
 }
 
+pub fn resolve_placement(
+    placement: &ShardPlacement,
+    crs: Option<i32>,
+    epoch: Option<f64>,
+    body_name: &str,
+    tdb: f64,
+    eph: &std::collections::HashMap<String, BodyEphemeris>,
+) -> ShardPlacement {
+    const EARTH_A: f64 = 6_378_137.0;
+    const EARTH_F_INV: f64 = 298.257_223_563;
+    let bbox = match placement {
+        ShardPlacement::Placed(b) => b,
+        ShardPlacement::Pending => return ShardPlacement::Pending,
+    };
+    let Some(code) = crs else {
+        return ShardPlacement::Pending;
+    };
+    let (lon, lat, alt, d_east, d_north, dz) = if code == 4326 {
+        let lon = 0.5 * (bbox[0] + bbox[3]);
+        let lat = 0.5 * (bbox[1] + bbox[4]);
+        let m_per_deg_lat = 111_320.0;
+        let m_per_deg_lon = (m_per_deg_lat * lat.to_radians().cos()).abs().max(1.0);
+        (
+            lon,
+            lat,
+            0.5 * (bbox[2] + bbox[5]),
+            0.5 * (bbox[3] - bbox[0]).abs() * m_per_deg_lon,
+            0.5 * (bbox[4] - bbox[1]).abs() * m_per_deg_lat,
+            0.5 * (bbox[5] - bbox[2]).abs(),
+        )
+    } else {
+        let e_center = 0.5 * (bbox[0] + bbox[3]);
+        let n_center = 0.5 * (bbox[1] + bbox[4]);
+        let alt = 0.5 * (bbox[2] + bbox[5]);
+        let Some((lon, lat, alt)) = super::projection::to_geodetic(
+            &super::las::LasCrs::Epsg(code as u16),
+            e_center,
+            n_center,
+            alt,
+            EARTH_A,
+            EARTH_F_INV,
+        ) else {
+            return ShardPlacement::Pending;
+        };
+        (
+            lon,
+            lat,
+            alt,
+            0.5 * (bbox[3] - bbox[0]).abs(),
+            0.5 * (bbox[4] - bbox[1]).abs(),
+            0.5 * (bbox[5] - bbox[2]).abs(),
+        )
+    };
+    let Some(center) =
+        super::motion::body_fixed_to_icrs(body_name, lat, lon, alt, epoch.unwrap_or(tdb), eph)
+    else {
+        return ShardPlacement::Pending;
+    };
+    let pad = (d_east * d_east + d_north * d_north + dz * dz).sqrt() + 1.0;
+    ShardPlacement::Placed([
+        center[0] - pad,
+        center[1] - pad,
+        center[2] - pad,
+        center[0] + pad,
+        center[1] + pad,
+        center[2] + pad,
+    ])
+}
+
 #[test]
 fn coverage_manifest_parse_and_hull() {
     let text = "\
 # coverage manifest fixture
-shard https://cdn.example/shard-a.las 1 1 1 2 2 2
+shard https://cdn.example/shard-a.las 1 1 1 2 2 2 EPSG:4326
 shard https://cdn.example/shard-b.las 10 10 10 20 20
 node https://cdn.example/tile- 0 0 0 5 5 5
 ";
@@ -116,12 +225,37 @@ node https://cdn.example/tile- 0 0 0 5 5 5
         shards[0].placement,
         ShardPlacement::Placed([1.0, 1.0, 1.0, 2.0, 2.0, 2.0])
     );
+    assert_eq!(shards[0].crs, Some(4326));
     assert_eq!(shards[1].url, "https://cdn.example/shard-b.las");
     assert_eq!(shards[1].placement, ShardPlacement::Pending);
     assert_eq!(shards[2].url, "https://cdn.example/tile-");
     assert_eq!(
         shards[2].placement,
         ShardPlacement::Placed([0.0, 0.0, 0.0, 5.0, 5.0, 5.0])
+    );
+
+    let no_eph = std::collections::HashMap::new();
+    assert_eq!(
+        resolve_placement(
+            &ShardPlacement::Placed([1.0, 1.0, 1.0, 2.0, 2.0, 2.0]),
+            Some(4326),
+            None,
+            "Earth",
+            0.0,
+            &no_eph
+        ),
+        ShardPlacement::Pending
+    );
+    assert_eq!(
+        resolve_placement(
+            &ShardPlacement::Placed([1.0, 1.0, 1.0, 2.0, 2.0, 2.0]),
+            None,
+            None,
+            "Earth",
+            0.0,
+            &no_eph
+        ),
+        ShardPlacement::Pending
     );
 
     let presences: [PresenceSample; 1] = [(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0)];
