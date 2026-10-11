@@ -39,6 +39,8 @@ server.log
 /data/
 /cache/
 archeology/
+# Archivar-Test-Fixtures (ncei/twomass/goes/cosmic/wod/celestrak) — lokal gehalten; die Tests skippen bei Abwesenheit. 36 MB bleiben aus dem Repo.
+src/archivar/testdata/
 
 # Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
 rave_dr5.json

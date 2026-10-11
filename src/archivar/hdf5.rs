@@ -3538,15 +3538,15 @@ mod tests {
     use std::path::Path;
 
     const SSI_2026: &str =
-        "phi/pipeline/catalog/ncei_ssi/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc";
+        "src/archivar/testdata/ncei_ssi/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc";
     const SSI_1874: &str =
-        "phi/pipeline/catalog/ncei_ssi/ssi_v03r00_monthly_s187405_e187412_c20240831.nc";
-    const FILTERS: &str = "phi/pipeline/catalog/ncei_ssi/filters.h5";
+        "src/archivar/testdata/ncei_ssi/ssi_v03r00_monthly_s187405_e187412_c20240831.nc";
+    const FILTERS: &str = "src/archivar/testdata/ncei_ssi/filters.h5";
     const GOES_XRS: &str =
-        "phi/pipeline/catalog/ncei_goes_xrs/sci_xrsf-l2-avg1m_g14_d20200101_v2-2-1.nc";
-    const GOES16_ABI: &str = "phi/pipeline/catalog/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
+        "src/archivar/testdata/ncei_goes_xrs/sci_xrsf-l2-avg1m_g14_d20200101_v2-2-1.nc";
+    const GOES16_ABI: &str = "src/archivar/testdata/noaa_goes16/OR_ABI-L1b-RadC-M6C01_G16_s20240010001173_e20240010003546_c20240010004005.nc";
     const GK2A_AMI: &str =
-        "phi/pipeline/catalog/noaa_gk2a/gk2a_ami_le1b_ir087_fd020ge_202302160000.nc";
+        "src/archivar/testdata/noaa_gk2a/gk2a_ami_le1b_ir087_fd020ge_202302160000.nc";
 
     fn read_fixture(name: &str, path: &str) -> Option<Vec<u8>> {
         if !Path::new(path).exists() {
@@ -5190,7 +5190,7 @@ mod tests {
 
     #[test]
     fn real_wod_ragged_temperature_profiles() {
-        const WOD_MBT: &str = "phi/pipeline/catalog/noaa_wod/wod_mbt_1903.nc";
+        const WOD_MBT: &str = "src/archivar/testdata/noaa_wod/wod_mbt_1903.nc";
         if !Path::new(WOD_MBT).exists() {
             eprintln!(
                 "skipped (fixture absent): wod — fetch from noaa-wod-pds.s3.amazonaws.com/1903/wod_mbt_1903.nc"

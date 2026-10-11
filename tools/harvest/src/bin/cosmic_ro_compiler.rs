@@ -783,7 +783,7 @@ mod tests {
     #[test]
     fn cosmic1_wetprf_fixture_profile_reads() {
         const FIXTURE: &str =
-            "phi/pipeline/catalog/cosmic_wetprf/wetPrf_C001.2014.121.00.02.G27_2014.2860_nc";
+            "src/archivar/testdata/cosmic_wetprf/wetPrf_C001.2014.121.00.02.G27_2014.2860_nc";
         if !std::path::Path::new(FIXTURE).exists() {
             eprintln!(
                 "skipped (fixture absent): cosmic wetPrf — fetch from data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level2/2014/121/wetPrf_postProc_2014_121.tar.gz"

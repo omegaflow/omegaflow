@@ -218,7 +218,7 @@ pub fn file_list() -> Vec<String> {
 mod tests {
     use super::*;
 
-    const FIXTURE: &str = "phi/pipeline/catalog/twomass/test_psc";
+    const FIXTURE: &str = "src/archivar/testdata/twomass/test_psc";
 
     fn fixture_lines() -> Option<String> {
         std::fs::read_to_string(FIXTURE).ok()
