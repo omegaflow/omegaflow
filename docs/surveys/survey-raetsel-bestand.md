@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-10-03
-  sha256: 400ee7959df1e18a781dc1e96c47147e5e4a84bec2e3839f79b0ca32c36520ff
+  sha256: a52a8857144b3742564d4ad9fc6960e3f49856a7e0823fdc6b7edc707baedc28
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -117,9 +117,15 @@ Datenlücken je ein Taucher mit `archive_search --all` (voller Katalog), jede Ro
 - Ⅻ Urknall — B-Moden: BK18 `http://bicepkeck.org/bk18_2021_release.html` (CC-BY-4.0, live) · LAMBDA-Spiegel · Planck PLA + Zenodo `16283859`.
 - GIC/Bz — Mäntsälä-dB/dt: am GIC-Standort kein eigenes Magnetometer; nächstes ist NUR (Nurmijärvi, ~27 km), FMI IMAGE (CC-BY-4.0).
 
-**Weiter offen (1):** Ⅺ Placebo — Gabe×HRV×Blutmarker: kein einzelnes offenes Dataset
-(BioStudies-RCT `S-EPMC12320331` = Blutmarker ohne HRV; OpenNeuro `ds004746`/`ds007865` = Placebo
-ohne Immun-Gabe/HRV).
+**Weiter offen (1) — geprüft, ob es einen Weg gibt:** Ⅺ Placebo — Gabe×HRV×Blutmarker: **kein**
+offenes Einzeldataset trägt alle drei (`archive_search --all` + PhysioNet/OpenNeuro/BioStudies/
+Zenodo/Dryad/Figshare). Offen liegen nur **Zwei-Kanal**-Quellen: Dryad `10.5061/dryad.sh00j9s`
+(LPS/Placebo × IL-6/IL-8/TNF-α, CC0) · Zenodo `20492716` (HRW/Placebo × HRV, CC-BY-4.0) ·
+Mendeley `w5mfysjymp` (HRV + IL-6/hs-CRP, CC-BY-4.0) · Zenodo `15427392` (Keton/Placebo × HRV ×
+Blutgas — Marker ist Blutgas, kein Immunmarker). **Kein Subjekt-Join** über die Studien; die
+Protokolle mit allen drei (PMC10880037, PMC4297222) haben kein offenes Depot. Der Weg ist damit
+nicht „Daten existieren, wir fanden sie nicht", sondern: **selbst erheben oder ein eigenes Blatt
+über die Zwei-Kanal-Quellen** (ohne Subjekt-Triple).
 
 **Nicht suchbar (5):** Ⅰ Gaia DR4 (Termin 2026-12-02) · Ⅱ Flyby-Gate (`pending`) · Ⅲ Netloc-Riss
 (`ssd.jpl`↔`ncei`) · Ⅸ FRB-Paar-Artefakt (glob 0) · Kuprat 5. Ader (LOCK privat).
