@@ -1435,10 +1435,9 @@ mod tests {
         base_version: i16,
         name: &str,
         title: &str,
-        basket_bytes: &[i32],
-        basket_entry: &[i64],
-        basket_seek: &[i64],
+        baskets: (&[i32], &[i64], &[i64]),
     ) -> Vec<u8> {
+        let (basket_bytes, basket_entry, basket_seek) = baskets;
         let count = basket_bytes.len() as i32;
         let mut base = Vec::new();
         push_u32(&mut base, K_BYTE_COUNT_MASK);
@@ -1544,9 +1543,7 @@ mod tests {
             version,
             "px",
             "px/F",
-            &[],
-            &[],
-            &[],
+            (&[], &[], &[]),
         )
     }
 
@@ -1593,9 +1590,7 @@ mod tests {
             BRANCH_VERSION,
             "px",
             "px/F",
-            &[11, 22],
-            &[33, 44],
-            &[55, 66],
+            (&[11, 22], &[33, 44], &[55, 66]),
         );
         let index = parse_tree(&obj, &tree_key(&obj)).expect("v12 branch with baskets parses");
         assert_eq!(index.branches.len(), 1);
@@ -1618,9 +1613,7 @@ mod tests {
             BRANCH_ELEMENT_VERSION,
             "t",
             "t/I",
-            &[7],
-            &[9],
-            &[13],
+            (&[7], &[9], &[13]),
         );
         let index = parse_tree(&obj, &tree_key(&obj)).expect("v9 branch with baskets parses");
         assert_eq!(index.branches.len(), 1);
@@ -1641,9 +1634,7 @@ mod tests {
             BRANCH_VERSION,
             "fDetId",
             "fDetId/I",
-            &[17, 34],
-            &[51, 68],
-            &[85, 102],
+            (&[17, 34], &[51, 68], &[85, 102]),
         );
         let index =
             parse_tree(&obj, &tree_key(&obj)).expect("TBranchElement base 12 with baskets parses");
@@ -1666,9 +1657,7 @@ mod tests {
             BRANCH_VERSION,
             "px",
             "px/F",
-            &[11, 22],
-            &[33, 44],
-            &[55, 66],
+            (&[11, 22], &[33, 44], &[55, 66]),
         );
         obj.truncate(obj.len() - 12);
         assert!(parse_tree(&obj, &tree_key(&obj)).is_err());
