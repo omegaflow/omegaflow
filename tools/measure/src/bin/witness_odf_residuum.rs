@@ -1,5 +1,6 @@
 use std::collections::{BTreeMap, HashMap};
 
+use omegaflow::archivar::vmf3::{GridCell, Vmf3Product, grid_product, parse_grid_bin};
 use omegaflow::archivar::{
     BodyEphemeris, C_LIGHT, body_barycenter_position, body_barycenter_velocity,
     body_fixed_to_icrs_smooth, parse_ephemeris_binary,
@@ -8,10 +9,45 @@ use omegaflow::kepler::GM_SUN_M3_S2;
 use omegaflow::mathematikerin::receiver::{
     TwoWayDopplerInputs, two_way_doppler, two_way_light_time,
 };
+use omegaflow::mathematikerin::tropo::slant_delay_m;
 use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, ref_uplink_hz, write_p11r_bin};
 use omegaflow::odp::{dsn_host, dsn_station};
 
 const PROG: &str = "witness-resid";
+
+const VMF3_GRID_PATH: &str = "data/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
+const TROPO_RATE_DT_S: f64 = 30.0;
+
+const TROPO_CONVENTION: &str = "the tropospheric range correction enters the modeled two-way range-rate: the VMF3 grid product (vmf3_bin, 1x1) is bilinearly interpolated at the receive station lat/lon and the observation mjd, the empirical b/c from the degree-12 SH model are added, and the one-way slant delay tau(el) = mf_h(el)*zhd + mf_w(el)*zwd is formed at the geometric elevation of the line of sight; the two-way range-rate correction is 2*d(tau)/dt, a symmetric-in-sign forward difference over TROPO_RATE_DT_S with the station held at the receive epoch (Earth rotation over 30 s is sub-metre for the delay derivative); the entry point is the line `let rate = ... + tropo_rate` in the model loop; absent grid asset, coefficients, or elevation at or below the horizon -> no tropospheric term (the geometric rate stands, 0 honored, named)";
+
+fn sub3(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+}
+
+fn dot3(a: [f64; 3], b: [f64; 3]) -> f64 {
+    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
+}
+
+fn norm3(a: [f64; 3]) -> f64 {
+    (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]).sqrt()
+}
+
+fn elevation_rad(station_km: [f64; 3], target_km: [f64; 3]) -> Option<f64> {
+    let los = sub3(target_km, station_km);
+    let n_los = norm3(los);
+    let n_up = norm3(station_km);
+    if !(n_los > 0.0 && n_up > 0.0) {
+        return None;
+    }
+    let sin_el = (dot3(los, station_km) / (n_los * n_up)).clamp(-1.0, 1.0);
+    let el = sin_el.asin();
+    if el.is_finite() { Some(el) } else { None }
+}
+
+fn tropo_slant_m(product: &Vmf3Product, station_km: [f64; 3], target_km: [f64; 3]) -> Option<f64> {
+    let el = elevation_rad(station_km, target_km)?;
+    slant_delay_m(el, product.zhd_m, product.zwd_m, product.coefficients)
+}
 
 #[derive(Clone, Copy)]
 struct Witness {
@@ -333,6 +369,16 @@ fn run(witness: Witness, gravitator: &str) {
         return;
     };
     eprintln!("{tag} convention: {ODF_DOPPLER_CONVENTION}");
+    eprintln!("{tag} tropo: {TROPO_CONVENTION}");
+    let grid_cells: Option<Vec<GridCell>> = std::fs::read(VMF3_GRID_PATH)
+        .ok()
+        .and_then(|d| parse_grid_bin(&d));
+    match &grid_cells {
+        Some(cells) => eprintln!("{tag} tropo grid: {VMF3_GRID_PATH} ({} cells)", cells.len()),
+        None => eprintln!(
+            "{tag} tropo grid: {VMF3_GRID_PATH} absent or unparsed — the troposphere stays absent (named, 0 honored)"
+        ),
+    }
     let podf = witness.odf_path;
     let Ok(bytes) = std::fs::read(podf) else {
         eprintln!("{tag} ODF bin void ({podf})");
@@ -436,6 +482,8 @@ fn run(witness: Witness, gravitator: &str) {
     let mut no_station = 0usize;
     let mut no_model = 0usize;
     let mut no_comp = 0usize;
+    let mut tropo_used = 0usize;
+    let mut tropo_held = 0usize;
     for r in &records {
         if r[8] < 2.0 {
             no_comp += 1;
@@ -540,6 +588,30 @@ fn run(witness: Witness, gravitator: &str) {
             dop.observable_hz
         };
         let rate = (nominal_hz - modeled_abs_hz) * C_LIGHT / nominal_hz;
+        let tropo_rate_m_s = match &grid_cells {
+            Some(cells) => {
+                let mjd = t3 / 86400.0 + 51544.5;
+                grid_product(cells, mjd, rx_lat, rx_lon).and_then(|p| {
+                    let tau0 = tropo_slant_m(&p, r_rx, light.bounce_pos_icrs_km)?;
+                    let (p1, _v1) = sc_km(t3 + TROPO_RATE_DT_S)?;
+                    let tau1 = tropo_slant_m(&p, r_rx, p1)?;
+                    let d = 2.0 * (tau1 - tau0) / TROPO_RATE_DT_S;
+                    if d.is_finite() { Some(d) } else { None }
+                })
+            }
+            None => None,
+        };
+        if grid_cells.is_some() {
+            if tropo_rate_m_s.is_some() {
+                tropo_used += 1;
+            } else {
+                tropo_held += 1;
+            }
+        }
+        let rate = match tropo_rate_m_s {
+            Some(t) => rate + t,
+            None => rate,
+        };
         let rdown = (nominal_hz - dop.downlink_hz) * C_LIGHT / nominal_hz;
         if !rate.is_finite() || !rdown.is_finite() {
             no_model += 1;
@@ -559,6 +631,9 @@ fn run(witness: Witness, gravitator: &str) {
         resid_slot.push(None);
         rdown_of.push(rdown);
     }
+    eprintln!(
+        "{tag} tropo: {tropo_used} samples carry a two-way tropospheric range-rate correction, {tropo_held} held without one (coefficients or elevation absent — named)"
+    );
     eprintln!(
         "{tag} model: {} samples modeled ({} without station coordinates, {} without model, {} without compression) — skipped ones stay unwritten (0 honored)",
         modeled.len(),

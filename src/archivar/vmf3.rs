@@ -1,3 +1,8 @@
+use crate::archivar::spectral::civil_from_days;
+use crate::mathematikerin::tropo::Vmf3Coefficients;
+
+use super::vmf3_sh;
+
 pub const MAGIC: [u8; 4] = *b"VMF3";
 pub const GRID_MAGIC: [u8; 4] = *b"VMFG";
 pub const HEADER_BYTES: usize = 8;
@@ -368,6 +373,161 @@ pub fn parse_grid_bin(bytes: &[u8]) -> Option<Vec<GridCell>> {
     Some(out)
 }
 
+pub const VMF3_PRODUCT_CONVENTION: &str = "VMF3 a_h/a_w/zhd/zwd come from the discrete product: the 1x1 grid (64800 cells, lat 89.5..-89.5 step 1, lon 0.5..359.5 step 1) is interpolated bilinearly at the station lat/lon; the site product is read at the station's nearest daily row; b/c come from the empirical degree-12 spherical-harmonic model (vmf3_sh) at the observation day-of-year, lat and lon; the product carries a single epoch, so no temporal interpolation of a is done (a stays the file epoch's) — a historical observation bound to a 2026 product carries that temporal offset, named, never smoothed";
+
+const GRID_NLAT: usize = 180;
+const GRID_NLON: usize = 360;
+
+const MONTH_DAYS: [u32; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vmf3Product {
+    pub coefficients: Vmf3Coefficients,
+    pub zhd_m: f64,
+    pub zwd_m: f64,
+}
+
+fn is_leap(year: u32) -> bool {
+    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+}
+
+fn doy_from_mjd(mjd: f64) -> Option<f64> {
+    if !mjd.is_finite() {
+        return None;
+    }
+    let unix = mjd + 40587.0;
+    let (year, month, day) = civil_from_days(unix.floor() as i64)?;
+    if !(1..=12).contains(&month) || !(1..=31).contains(&day) {
+        return None;
+    }
+    let mut doy = 0u32;
+    for k in 0..(month as usize - 1) {
+        doy += MONTH_DAYS[k];
+    }
+    if is_leap(year) && month > 2 {
+        doy += 1;
+    }
+    doy += day;
+    let frac = unix - unix.floor();
+    Some(doy as f64 + frac)
+}
+
+fn finite_positive(v: f64) -> Option<f64> {
+    if v.is_finite() && v > 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+fn finite_non_negative(v: f64) -> Option<f64> {
+    if v.is_finite() && v >= 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+fn product_of(
+    ah: f64,
+    aw: f64,
+    zhd_m: f64,
+    zwd_m: f64,
+    mjd: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+) -> Option<Vmf3Product> {
+    let ah = finite_positive(ah)?;
+    let aw = finite_positive(aw)?;
+    let zhd_m = finite_non_negative(zhd_m)?;
+    let zwd_m = finite_non_negative(zwd_m)?;
+    let doy = doy_from_mjd(mjd)?;
+    let bc = vmf3_sh::b_c(doy, lat_deg, lon_deg)?;
+    Some(Vmf3Product {
+        coefficients: Vmf3Coefficients {
+            a_h: Some(ah),
+            b_h: bc.b_h,
+            c_h: bc.c_h,
+            a_w: Some(aw),
+            b_w: bc.b_w,
+            c_w: bc.c_w,
+        },
+        zhd_m,
+        zwd_m,
+    })
+}
+
+pub fn grid_product(
+    cells: &[GridCell],
+    mjd: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+) -> Option<Vmf3Product> {
+    if cells.len() != GRID_NLAT * GRID_NLON {
+        return None;
+    }
+    if !lat_deg.is_finite() || !lon_deg.is_finite() {
+        return None;
+    }
+    if !(-89.5..=89.5).contains(&lat_deg) {
+        return None;
+    }
+    let lon = lon_deg.rem_euclid(360.0);
+    let fi = 89.5 - lat_deg;
+    let i0f = fi.floor();
+    let i0 = i0f.clamp(0.0, (GRID_NLAT - 2) as f64) as usize;
+    let i1 = i0 + 1;
+    let tlat = (fi - i0 as f64).clamp(0.0, 1.0);
+    let fj = lon - 0.5;
+    let j0f = fj.floor();
+    let j0 = j0f.rem_euclid(GRID_NLON as f64) as usize;
+    let j1 = (j0 + 1) % GRID_NLON;
+    let tlon = (fj - j0f).clamp(0.0, 1.0);
+    let cell = |i: usize, j: usize| cells.get(i * GRID_NLON + j).copied();
+    let c00 = cell(i0, j0)?;
+    let c01 = cell(i0, j1)?;
+    let c10 = cell(i1, j0)?;
+    let c11 = cell(i1, j1)?;
+    let w00 = (1.0 - tlat) * (1.0 - tlon);
+    let w01 = (1.0 - tlat) * tlon;
+    let w10 = tlat * (1.0 - tlon);
+    let w11 = tlat * tlon;
+    let blend = |f: fn(&GridCell) -> f64| -> f64 {
+        f(&c00) * w00 + f(&c01) * w01 + f(&c10) * w10 + f(&c11) * w11
+    };
+    product_of(
+        blend(|c| c.ah),
+        blend(|c| c.aw),
+        blend(|c| c.zhd_m),
+        blend(|c| c.zwd_m),
+        mjd,
+        lat_deg,
+        lon_deg,
+    )
+}
+
+pub fn site_product(
+    rows: &[SiteMf],
+    station: &str,
+    mjd: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+) -> Option<Vmf3Product> {
+    let mut best: Option<&SiteMf> = None;
+    let mut best_dt = f64::INFINITY;
+    for r in rows {
+        if r.station == station {
+            let dt = (r.mjd - mjd).abs();
+            if dt < best_dt {
+                best_dt = dt;
+                best = Some(r);
+            }
+        }
+    }
+    let r = best?;
+    product_of(r.ah, r.aw, r.zhd_m, r.zwd_m, mjd, lat_deg, lon_deg)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -510,5 +670,50 @@ AIRA      61042.00  0.00121746  0.00041399  2.2444  0.0500   983.52   1.96   5.4
         let bin = write_grid_bin(&cells).expect("finite grid cells encode");
         assert_eq!(bin.len(), HEADER_BYTES + 64800 * GRID_RECORD_BYTES);
         assert_eq!(parse_grid_bin(&bin), Some(cells));
+    }
+
+    const GRID_BIN_PATH: &str = "data/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
+    const SITE_BIN_PATH: &str = "data/vmf.geo.tuwien.ac.at/vmf3_site.bin";
+    const GRID_BIN_SHA: &str = "f388b49705a006d4538ae61252de5f5064cdd1a391ca0b0585a59a2f9738bb6a";
+    const SITE_BIN_SHA: &str = "92d40bf8adbf978b1a41e74219815bdebf4d170bdec8481c2b61c1e62f261058";
+
+    #[test]
+    fn cdn_grid_bin_yields_a_finite_coefficient_set() {
+        let Ok(bytes) = std::fs::read(GRID_BIN_PATH) else {
+            eprintln!(
+                "cdn_grid_bin_yields_a_finite_coefficient_set: {GRID_BIN_PATH} absent — named skip"
+            );
+            return;
+        };
+        assert_eq!(sha256_hex(&bytes), GRID_BIN_SHA);
+        let cells = parse_grid_bin(&bytes).expect("the grid bin parses");
+        assert_eq!(cells.len(), 64800);
+        let p =
+            grid_product(&cells, 61049.5, -34.874, -58.140).expect("the grid carries a product");
+        let c = p.coefficients;
+        assert!(c.a_h.is_some() && c.b_h.is_some() && c.c_h.is_some());
+        assert!(c.a_w.is_some() && c.b_w.is_some() && c.c_w.is_some());
+        assert!(p.zhd_m > 0.0 && p.zwd_m >= 0.0);
+    }
+
+    #[test]
+    fn cdn_site_bin_yields_a_finite_coefficient_set() {
+        let Ok(bytes) = std::fs::read(SITE_BIN_PATH) else {
+            eprintln!(
+                "cdn_site_bin_yields_a_finite_coefficient_set: {SITE_BIN_PATH} absent — named skip"
+            );
+            return;
+        };
+        assert_eq!(sha256_hex(&bytes), SITE_BIN_SHA);
+        let rows = parse_bin(&bytes).expect("the site bin parses");
+        assert_eq!(rows.len(), 1052);
+        let p = site_product(&rows, "AGGO", 61042.0, -34.874, -58.140)
+            .expect("the AGGO row carries a product");
+        let c = p.coefficients;
+        assert_eq!(c.a_h, Some(0.00126424));
+        assert_eq!(c.a_w, Some(0.00043626));
+        assert!(c.b_h.is_some() && c.c_h.is_some() && c.b_w.is_some() && c.c_w.is_some());
+        assert_eq!(p.zhd_m, 2.2940);
+        assert_eq!(p.zwd_m, 0.1199);
     }
 }
