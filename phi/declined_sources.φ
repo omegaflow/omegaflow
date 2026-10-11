@@ -158,6 +158,10 @@ decline registry/katalog
 url http://pvol2.ehu.eus:8083/tap
 note nur pvol.epn_core — Discovery.
 
+decline registry/katalog
+url http://repec.org/
+note Ökonomisches Literaturarchiv (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline schema
 url http://schemas.opengis.net/os-geojson/1.0/os-geojson.jsonld
 note Schema-Dokument.
@@ -225,6 +229,10 @@ note UTC-Zeit/Zeitzone — Referenz-Konstante, kein propagierendes Feld; Kraft a
 decline no-physical-force
 url http://www.bom.gov.au/fwo/marine_warnings.json
 note BOM marine warnings JSON: text warning records (title/summary), no scalar field.
+
+decline registry/katalog
+url http://www.freemedicaljournals.com/
+note Zeitschriften-Registry (HTTP 206, direkt, http) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline schema
 url http://www.opengis.net/wfs/2.0
@@ -302,6 +310,10 @@ decline superseded-by-integrated
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
 note AERONET SDA bbox-Variante; sources.φ trägt print_web_data_v3?site=GSFC.
 
+decline registry/katalog
+url https://aftergleam.app/
+note Papier-Leser (HTTP 200, direkt) — bibliografisches Werkzeug, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline model-forecast
 url https://air-quality-api.open-meteo.com/v1/air-quality
 note open-meteo: Modell-/Reanalyse-Ausgabe — kein Organismus spürt Modelloutput.
@@ -341,6 +353,10 @@ note ALMA TAP obscore — © ALMA (ESO/NAOJ/NRAO), keine Weitergabe-Erlaubnis, k
 decline model
 url https://alphafold.ebi.ac.uk/
 note AlphaFold DB — vorhergesagte Strukturen; 200 (2026-10-03).
+
+decline registry/katalog
+url https://alphaxiv.org/
+note arXiv-Chatbot/-Suchoberfläche (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
 
 decline aggregated-index
 url https://ams02.space/
@@ -1022,6 +1038,10 @@ decline registry
 url https://app.birdweather.com/api/v1/stations/
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
+decline registry/katalog
+url https://app.litmaps.com/
+note Literatur-Graph-Suche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline legacy
 url https://apps.who.int/gho/athena/api/GHO/WHOSIS_000015.json
 note GHO-Legacy-Dashboard.
@@ -1086,6 +1106,14 @@ decline presence
 url https://artenfinder.net/api/v2/sichtbeobachtungen/55423273?format=xml
 note Arten-Sichtbeobachtungen (Presence).
 
+decline registry/katalog
+url https://arxivxplorer.com/
+note arXiv-Suchoberfläche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://asta.allen.ai/
+note KI-Papiersuche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline registry
 url https://atlas.marine.ie/arcgis/rest/services/OceanFeatures/MapServer/17
 note grind: grind_arcgis_deep.φ
@@ -1097,6 +1125,10 @@ note Internet-Messnetz (Probes).
 decline no-measurement-field
 url https://atoavo.atnf.csiro.au/tap
 note ATOAVO TAP (ivo://au.csiro/atoavo/tap) — nur ivoa.obscore, kein Katalog, kein Messwert-Feld. tap_index_atoavo.φ geerntet.
+
+decline registry/katalog
+url https://authors.library.caltech.edu/
+note Institutional-Repository (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline text-warning
 url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
@@ -1311,13 +1343,25 @@ decline molecular
 url https://cellxgene.cziscience.com
 note CZ CELLxGENE — Single-Cell H5AD; 206 (2026-10-03).
 
+decline registry/katalog
+url https://censorbib.nymity.ch/
+note Zensurforschungs-Bibliografie (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline catalog
 url https://chime-frb.ca/
 note CHIME/FRB-Burst-Katalog, Register ohne Live-Messwert (Quelle CANFAR-DOIs); conn-refused/cert, Wayback 2026-07-31 lebt.
 
+decline registry/katalog
+url https://chinarxiv.org/
+note Preprint-/Literaturportal (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
+
 decline no-physical-force
 url https://chromium.googlesource.com/chromium/src/+/0fcdce5f4fdec8d442d7df760cb541f1ca6e446d/gpu/config/gpu_driver_bug_list.json
 note Quellcode-Repo.
+
+decline registry/katalog
+url https://citrus-search.com/
+note Literatur-Ähnlichkeitssuche (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
 
 decline model-forecast
 url https://climate-api.open-meteo.com/v1/climate
@@ -1383,9 +1427,17 @@ decline catalog
 url https://coastwatch.pfeg.noaa.gov/erddap/griddap/
 note curl: curl: (28) Operation timed out after 11141 milliseconds with 1935855 bytes received Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
 
+decline registry/katalog
+url https://consensus.app/
+note KI-Literatursuche (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline no-physical-force
 url https://coral.tsr.lol/
 note Coral Watch API (demo) — ökologisch, kein Kraftmedium (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://core.ac.uk/
+note Open-Access-Aggregator (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline superseded-by-integrated
 url https://cosmicrays.oulu.fi/phi/Pulu_1min.txt
@@ -1630,6 +1682,10 @@ note DHM Nepal — 2026-10-09: „© Nepal Meteorological Department"; CDN-Mirro
 decline redistribution
 url https://dhm.gov.np/hydrology/hms-Single/4661
 note DHM Nepal — 2026-10-09: „© Nepal Meteorological Department"; CDN-Mirror entfernt (Operator-Wort); geschlossen.
+
+decline registry/katalog
+url https://digital.library.ucsb.edu/
+note Digitalbibliothek (HTTP 403 Bot-Gate, direkt/Proton; Wayback 200) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline health-stats
 url https://disease.sh/v3/covid-19/all
@@ -2068,6 +2124,10 @@ decline no-physical-force
 url https://fred.stlouisfed.org/docs/api/api_key.html
 note Ökonomie-Daten.
 
+decline registry/katalog
+url https://freefullpdf.com/
+note PDF-Literatursuche (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline redistribution
 url https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
 note IMCCE/INPOP+NOE4 — 2026-10-09: „without explicit authorization" (imcce.fr/mentions-legales); CDN-Mirror entfernt (Operator-Wort); lokal halten in data/ftp.imcce.fr/.
@@ -2460,6 +2520,10 @@ decline no-physical-force
 url https://gwosc.org/eventapi/jsonfull/allevents/
 note 671 Events; events=Objekt (kein Array). SNR/chi_eff/p_astro/redshift dimensionslos; Massen M_sun, luminosity_distance Mpc, far 1/yr = positionslose Quellparameter. Kein ra/dec. GW-Skymap via GraceDB gw250207_115645.sky1 (gracedb.ligo.org).
 
+decline registry/katalog
+url https://hal.science/
+note HAL-Literaturarchiv (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline health-stats
 url https://healthdata.gov
 note Public-Health-/Medicare-Statistik; 200 (2026-10-03).
@@ -2547,6 +2611,10 @@ note GLDAS = Landmodell.
 decline model
 url https://icgem.gfz-potsdam.de
 note grind: grind_b2find.φ
+
+decline registry/katalog
+url https://ideas.repec.org/
+note Ökonomische-Literatursuche (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline registry/katalog
 url https://idoc-dachs.ias.u-psud.fr/tap
@@ -2648,6 +2716,10 @@ decline reference-constant
 url https://itrf.ign.fr/
 note ITRF terrestrischer Referenzrahmen (HTTP 200) — Referenz-Konstanten, kein Feldwert.
 
+decline registry/katalog
+url https://jmirpublications.com/
+note Medizin-/Gesundheitsverlag (HTTP 500, direkt; Wayback 200) — Verlagsinhalte, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline superseded-by-integrated
 url https://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch?op=rs_list&ds=hmi.M_720s
 note JSOC jsoc_fetch — derselbe Endpoint traegt die integrierten AIA-Bloecke (jsoc.stanford.edu); HMI-Serie Variante.
@@ -2711,6 +2783,10 @@ note LISIRD SDO/EVE Spektralbestrahlung — physikalisch; Probe klassifizierte k
 decline kein-feld
 url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
 note LISIRD TSIS Gesamtbestrahlung — physikalisch; Probe klassifizierte kein Feld; lasp fism/eve ist decline.
+
+decline registry/katalog
+url https://link.springer.com/
+note Kommerzieller Springer-Paywall (HTTP 200 Paywall, Vormessung 2026-10-10) — Verlagsinhalte, kein offenes Messwert-Feld.
 
 decline no-physical-force
 url https://ll.thespacedevs.com/
@@ -2791,6 +2867,10 @@ note Meteostat verlangt API-Key (key=). Verdikt 2026-08-17: kommerziell (paid) �
 decline computation
 url https://minorplanetcenter.net/data
 note grind: grind_host.φ Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+
+decline registry/katalog
+url https://mjl.clarivate.com/
+note Clarivate Master Journal List (HTTP 206, direkt) — Zeitschriften-Registry, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline docs
 url https://modis.gsfc.nasa.gov/
@@ -2900,6 +2980,10 @@ decline redistribution
 url https://nucleus.iaea.org/wiser/
 note IAEA WISER (GNIP) — SSO-gated, Redistributionslizenz unklar. Descope 2026-09-12. Party-Messung 2026-09-14: WISER SSO-Wand (VPN-neutral), aber GNIP public domain via data.mendeley.com/datasets/75tsccprd2/1 (1961–2023) + waterisotopesDB.org.
 
+decline registry/katalog
+url https://oa.mg/
+note Open-Access-Suchindex (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline presence-catalog
 url https://obis.org/
 note OBIS Biodiversität-Occurrence — Presence-Registry (wie GBIF declined; Force-Gate 2026-09-23).
@@ -2968,6 +3052,10 @@ decline health-stats
 url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/csv/data.csv
 note Fallzahlen-Statistik.
 
+decline registry/katalog
+url https://openknowledgemaps.org/
+note Literatur-Kartensuche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline no-physical-force
 url https://openlibrary.org/authors.json?limit=1
 note Bibliothekskatalog.
@@ -2983,6 +3071,10 @@ note Müllfunde — Presence-Katalog.
 decline presence
 url https://openlittermap.com/api/getdata`
 note Müllfunde.
+
+decline registry/katalog
+url https://openmd.com/
+note Medizinischer Literaturindex (HTTP 403 Bot-Gate, direkt/Proton; Wayback 200) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline no-physical-force
 url https://openneuro.org/api/v1/datasets
@@ -3108,6 +3200,10 @@ decline aggregate-index
 url https://platform.opentargets.org
 note Open Targets — Target-Disease-Associationen; 206 (2026-10-03).
 
+decline registry/katalog
+url https://pmc.ncbi.nlm.nih.gov/
+note PubMed-Central-Literaturdatenbank (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline no-measurement
 url https://polarwatch.noaa.gov/erddap/index.json
 note Weberin-Re-Run 2026-09-14: kein BGC-Argo-Kanal (0 Argo-Treffer).
@@ -3187,6 +3283,18 @@ note PubChem compound count: naked count, no physical field.
 decline no-physical-force
 url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
 note PubChem substance count: naked count, no physical field.
+
+decline registry/katalog
+url https://pubmed.ncbi.nlm.nih.gov/
+note PubMed-Literaturdatenbank (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://pubmedisearch.com/
+note Medizinische Literatursuche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://pubpeer.com/
+note Post-Publication-Kommentar-Datenbank (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline infra
 url https://pypi.org/
@@ -3300,6 +3408,10 @@ decline registry
 url https://registry.opendata.aws/sentinel-1/
 note AWS-Open-Data-Registry-Seite. Registry — die Daten liegen im S3-Bucket, nicht in dieser Seite. Gemessen 2026-09-14 HTTP 200.
 
+decline registry/katalog
+url https://repository.alt.ac.uk/
+note Institutional-Repository (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline image
 url https://res.cloudinary.com/superdarncanada/image/upload/v1589217350/superDARN/innovation_jhnc5f.png
 note Bild-Datei.
@@ -3329,12 +3441,32 @@ url https://retlector.eu/tle/active
 note Retlector.eu TLE (Two-Line-Elements = Orbital-Ephemeriden, position-only): /tle/active HTTP 400 (unterstuetzt csv/json/tle/kvn) gemessen 2026-09-23. TLE = Ephemeride, kein Feldmesswert.
 
 decline registry/katalog
+url https://retractionwatch.com/
+note Retraction-Datenbank (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
 url https://saber.gats-inc.com/
 note SABER/TIMED Portal (HTTP 200 91386 B) — Datenportal-Root, kein Feed.
 
 decline registry/katalog
+url https://scholar.archive.org/
+note Internet-Archive-Scholar (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://scholar.google.com/
+note Google-Scholar-Suchoberfläche (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
+
+decline registry/katalog
+url https://scialert.net/
+note Verlags-/Literaturportal (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
 url https://sciencebase.gov/
 note USGS ScienceBase Katalog — Registry ohne Messwert (Force-Gate 2026-09-23).
+
+decline registry/katalog
+url https://scinapse.io/
+note Literatur-Suchindex (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline imagery
 url https://sdo.gsfc.nasa.gov/data/dashboard/
@@ -3343,6 +3475,10 @@ note SDO Dashboard (AIA EUV-Livefeed) — 2026-10-07: 200; JPEG-Produkt, das Bil
 decline molecular
 url https://search.rcsb.org/rcsbsearch/v2/query?json=
 note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie). Host lebt (Browser 2026-09-10), dead war curl-Artefakt.
+
+decline registry/katalog
+url https://searchthearxiv.com/
+note arXiv-Suchoberfläche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline infrastructure
 url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry=
@@ -4161,12 +4297,20 @@ url https://so2.gsfc.nasa.gov/measures/measures_so2.html
 note Global-SO2-Monitoring-Portal: SO2-Saeule (diffusion DU) bei NASA Earthdata GES DISC (netCDF); so2.gsfc.nasa.gov liefert nur Monitoring-Portal, /measures 404 gemessen 2026-09-23.
 
 decline registry/katalog
+url https://soarxiv.org/
+note arXiv-Suchoberfläche (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
 url https://solar-dachs.oca.eu/tap
 note nur meteospace.epn_core (View) — Discovery.
 
 decline registry/katalog
 url https://solarnet.oma.be/
 note SOLARNET VO (Solar-Daten-Broker/Cross-Search, Paper 10.1007/s11207-025-02424-0) — 2026-10-07 API /service/api/svo 200 (6003 B), kein Einzel-Asset; Data-Policy-PDF 206. Rat 2026-10-07.
+
+decline registry/katalog
+url https://sophon.at/
+note KI-Papiersuche (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
 
 decline image
 url https://space.fmi.fi/MIRACLE/ASC/ASC_keograms/
@@ -4780,6 +4924,10 @@ decline html
 url https://www.aavso.org/vsx/
 note HTML-Formular; der Katalog ist über den CDN-Pfad bereits registriert
 
+decline registry/katalog
+url https://www.academia.edu/
+note Literatur-Netzwerk (HTTP 403 Bot-+Login-Gate, direkt/Proton; Wayback 200) — bibliografischer Index, kein Messwert-Feld; Zugang via Konto-Route (gemessen 2026-10-10).
+
 decline superseded-by-integrated
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
 note AMS-Meteors check_data.php — Login-Wall (2026-09-15: 200 HTML „temporarily offline", kein JSON); visuelle Feuerkugel-Meldungen (citizen science), keine Strahlungsenergie. Bolide-em integriert: JPL-Fireball + GLM-Bolide.
@@ -4812,6 +4960,14 @@ decline molecular
 url https://www.bindingdb.org/
 note BindingDB — Bindungsaffinitäten; 206 (2026-10-03).
 
+decline registry/katalog
+url https://www.bioline.org.br/
+note Bioscience-Verlag/Literaturportal (direkte Route pending ohne Antwort; Wayback 200) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://www.biorxiv.org/
+note Preprint-Server (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline geographic-infrastructure
 url https://www.boem.gov/oil-gas-energy/mapping-and-data
 note BOEM Offshore Mapping & Data (US DOI) 2026-10-02 HTTP 206; Geometrie + NREL-WIND-Toolkit-Modellwind. Kein Kraftfeld, kein Zeuge: ein Modell ist kein Welt-Zeugnis.
@@ -4828,9 +4984,25 @@ decline geographic-infrastructure
 url https://www.bsee.gov/offshore-data-tools
 note BSEE Offshore Data & Tools (US DOI) 2026-10-02 HTTP 200; Infrastruktur-Geometrie (Pipelines/Plattformen/Blöcke), kein 9-Kraft-Medium, kein Zeuge (keine Messlinie).
 
+decline registry/katalog
+url https://www.bulletpapers.ai/
+note Papier-Zusammenfassungen (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
+
+decline registry/katalog
+url https://www.catalyzex.com/
+note KI-Papierindex (HTTP 403 Bot-Gate, direkt; Wayback 429 ohne Snapshot) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline commercial
 url https://www.ccdc.cam.ac.uk/
 note CCDC/CSD — lizenzpflichtig (akademische Lizenz); 206 (2026-10-03).
+
+decline registry/katalog
+url https://www.chunkr.ai/
+note KI-Papiersuche (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
+
+decline registry/katalog
+url https://www.connectedpapers.com/
+note Literatur-Graph-Suche (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline aggregate-index
 url https://www.cpc.ncep.noaa.gov/data/indices/
@@ -5107,6 +5279,10 @@ note ISRCTN — Studien-Registry; 200 (2026-10-03).
 decline superseded-by-integrated
 url https://www.lamost.org/dr10/v2.0/voservice/tap
 note LAMOST DR10 TAP — von DR11 abgelöst (tap_index_lamost_dr11.φ). tap_index_lamost_dr10.φ geerntet.
+
+decline registry/katalog
+url https://www.lens.org/
+note Literatur-/Patent-Suchindex (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline not-redistributable
 url https://www.leos.ac.cn/
@@ -5484,6 +5660,10 @@ decline superseded-by-integrated
 url https://www.ndbc.noaa.gov/view_text_file.php?filename=15006h{prev_year}.txt.gz&dir=data/historical/stdmet/
 note realtime2/15006.txt already live in sources.φ; the historical stdmet year-file was never generated (absent).
 
+decline registry/katalog
+url https://www.neliti.com/
+note Literatur-Suchindex (HTTP 403 Bot-Gate, direkt/Proton; Wayback 200) — bibliografischer Index, kein Messwert-Feld; Zugang ist eine Route (gemessen 2026-10-10).
+
 decline no-physical-force
 url https://www.ngdc.noaa.gov/gazetteer/rest/feature?typeCode=Ridge&format=json&maxResults=2000
 note Namensverzeichnis (Gazetteer), kein Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
@@ -5547,6 +5727,10 @@ note SNODAS = Schnee-Daten-Assimilation-Reanalyse/abgeleitetes Produkt, kein Pun
 decline superseded-by-integrated
 url https://www.nssdc.ac.cn/
 note NSSDC China Tianwen-1/Zhurong — konto-gebunden; CDS-HiPS CDS_P_Mars_Tianwen1-MoRIC trägt die Oberfläche (ODbL, anonym, Arm hips.rs). Descoped 2026-10-04 (Future 177); direct HTTP 206 (1 B), measured 2026-10-08.
+
+decline registry/katalog
+url https://www.oalib.com/
+note Open-Access-Literaturindex (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline imagery
 url https://www.oasis-brains.org
@@ -5621,6 +5805,10 @@ url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json
 note Stations-Registry; gehört als stations_url zum Accept-Kandidaten measurements.json (TODO).
 
 decline registry/katalog
+url https://www.pidantuan.com/
+note Papier-Sharing-Portal (HTTP 403 Bot-/Sign-up-Gate, direkt/Proton; Wayback 200) — bibliografischer Index, kein Messwert-Feld; Zugang ist eine Route (gemessen 2026-10-10).
+
+decline registry/katalog
 url https://www.plate-archive.org/tap
 note Photoplatten-Archiv — Metadaten digitalisierter Platten, kein Messwert am Punkt.
 
@@ -5644,9 +5832,25 @@ decline health-stats
 url https://www.researchallofus.org
 note Kohorte Workbench+DUA; 200 (2026-10-03).
 
+decline registry/katalog
+url https://www.researchgate.net/
+note Literatur-Netzwerk (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
+
+decline registry/katalog
+url https://www.science.gov/
+note Behörden-Wissenschaftssuche (HTTP 200, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
+
 decline catalog
 url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
 note ScienceBase-Katalog.
+
+decline registry/katalog
+url https://www.sciencedirect.com/
+note Kommerzieller Elsevier-Paywall (HTTP 403, direkt) — Verlagsinhalte, kein offenes Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://www.scilit.com/
+note Literatur-Index (Vormessung 2026-10-10) — bibliografischer Index, kein Messwert-Feld.
 
 decline publisher
 url https://www.seanoe.org
@@ -5703,6 +5907,14 @@ note grind: grind_terrapulse_a.φ
 decline no-physical-force
 url https://www.spc.noaa.gov/wcm/
 note grind: grind_terrapulse_a.φ
+
+decline registry/katalog
+url https://www.springer.com/
+note Kommerzieller Springer-Paywall (HTTP 200, direkt) — Verlagsinhalte, kein offenes Messwert-Feld (gemessen 2026-10-10).
+
+decline registry/katalog
+url https://www.ssrn.com/
+note Preprint-/Literaturportal (HTTP 403 Bot-Gate, direkt/Proton; Wayback 200) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline infrastructure
 url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
@@ -5771,6 +5983,10 @@ note WorldPop = Modell/Populationsschätzung, kein Live-Feed (wpgp 500, /rest/da
 decline molecular
 url https://www.yeastgenome.org/
 note SGD — Hefe-Genomdatenbank; 200 (2026-10-03).
+
+decline registry/katalog
+url https://www.zotero.org/
+note Literaturverwaltung (Vormessung 2026-10-10) — bibliografisches Werkzeug, kein Messwert-Feld.
 
 decline superseded-by-cencoos
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
