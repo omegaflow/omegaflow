@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: af697b733324e575e674de1644a12c221681326ba9bd6f439908423eeb9bdb44
+  sha256: 1e7bb30a3e76ca68822a646f959de4800e81c918cba2a92f161bbd62b513c770
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -13,7 +13,7 @@ gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge303.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.0678 · cap 0.5 — Grund: dieses Atom 1× line ($0.0568) + 1× grind-flash ($0.0110, CDN-Asset-Verifikation) · deepseek-flash, kein pro/max.
+## Burn: open 0.0000 · close 0.1421 · cap 0.5 — Grund: dieses Atom (zwei Fortsetzungen) 1× line ($0.1311) + 2× grind-flash (CDN-Asset-Verifikation $0.0110 + Portal-Enumeration) · deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
