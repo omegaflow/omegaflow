@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: 224ab4b40156e63803b200128f147dc3e4486b22727d1234824fcff35f7189a1
+  sha256: d7ef690ec83d276bb91226d84ee83059dd6c3402f5a853c26d638eacc8cca25b
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -86,11 +86,16 @@ zitiert, nie kopiert). Diese Session konsumierte
   100 MB, WorldClim 2 GB, cmb) sind **standalone** (kein `OMEGAFLOW_R2_MIRROR`) und
   spiegeln **nicht** — der Burn käme aus der `cdn-manifest`-Familie, nicht von Dominosteinen.
   Absicht laut folge295:165: „R2 **10 GB frei** trägt nur Manifeste/Indizes".
+- **Bucket-Stand (gemessen 2026-10-11 `r2_probe --list`, signiertes ListObjectsV2):
+  `omegaflow-sources` = 2 Objekte, 519 127 B = 0,001 GB** (`impc_roti.bin` 518 408 B,
+  `dsn_snapshot.bin` 719 B) — **nichts verbrannt**; die meisten `cdn-manifest`-Läufe
+  greifen die Idempotenz-Skip (Asset present) und spiegeln gar nicht.
 - **Blockade:** keine.
 - **Braucht:** **Cap gesetzt** — `r2_mirror` überspringt Dateien über `R2_MIRROR_MAX_BYTES`
   = 16 MiB (`OMEGAFLOW_R2_MIRROR_MAX_BYTES` überschreibbar; Commit `70a66b9d6`), die
-  Dataset-Klasse bleibt auf dem Release. Der **Schwellwert 16 MiB** ist eine Setzung
-  (Manifest-/Index-Größe) — ein anderes Maß ist ein Operator-/Rat-Wort.
+  Dataset-Klasse bleibt auf dem Release. Misswerkzeug: `r2_probe --list` (Commit `210c34b7f`).
+  Der **Schwellwert 16 MiB** ist eine Setzung (Manifest-/Index-Größe) — ein anderes Maß
+  ist ein Operator-/Rat-Wort.
 
 ### MCP — lokale no-leak-Server (Rat-Verdikt: Regel vor Knoten)
 - **Status:** eigen | **Bindung:** eigen
