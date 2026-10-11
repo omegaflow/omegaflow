@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — Null-Baseline gemessen, SuperMAG-Weiterverbreitung zurückgenommen, Zeugen-/Netzdaten-Landschaft gemessen
   class: handover
   date: 2026-10-11
-  sha256: 94078424d50ce99c67a89934a6fd887e92e1d072be81cd4e6ed8acb1f3d00027
+  sha256: edf438b3796531acd247e43bd479b119569d07662a22194441c5b882ae79eb46
   status: live
 -->
 # Handover — River-Folge 186 (2026-10-11)
@@ -53,6 +53,7 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - `state/river/gic-sources-and-grid-outage-research-2026-10-11.md` — die Quellen-/Zeugen-/Netzausfall-Landschaft (`--all`).
 - `state/river/gic-sources-broad-2026-10-11.md` — **das Recherche-Dossier**: die breite `--all`-Landschaft (7 Läufe); disjunkte Zeugen, Indizes, TSO-/GIC-Messkampagnen (Fingrid/FMI/BPA/BGS), Auth-Key-Mapping, PC/CSES-Auflösung, Browser-Nachmessung.
 - `state/river/registrierungen-2026-10-11.md` — ENTSO-E + Fingrid ausgefüllt-vorbereitet (Operator-Akt).
+- `state/river/gic-research-dossier-2026-10-11.md` — **das konsolidierte Dossier** (alles an einem Ort: Landschaft, APIs, Keys, Riss, nächste Schritte) + `state/river/raw/*.txt` — **15 volle `--all`-Rohläufe** (17 730 Z.), sonst volatile `/tmp`.
 - `state/stimmen/2026-10-11-river-gic-zeugen-rat.md` — der Rat (fünf Stimmen) zu Kalibrier-Zeugen, SuperMAG-Grenze, Netz-End-Validator.
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, als `## An future` transportiert.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer (11 offen).
