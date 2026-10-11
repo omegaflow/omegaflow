@@ -268,11 +268,11 @@ anderen Boten:
 - **Kosmische Strahlung**: die Richtung als Zeuge.
 - **Der gravity-Katalog** — nicht nur Ereignis-Skymaps, sondern gemessene
   Gravitations-Werte im Katalog-Bestand: die INPOP25c-Asteroidenmassen
-  (`phi/pipeline/catalog/asteroid_gm_inpop25c.φ`, Mariani+2025 — GM aus
-  Bahndynamik realer Begleiter, Force-Gate: gravity) und das solare ΩG
-  (`solar_omega_g.φ`). Der gravity-Sinn trägt also bereits eine
-  Katalog-Harvest-Route durch die VizieR-Tafeln — derselbe Weg, den die
-  Parallaxe als Distanz-Anker trägt.
+  (`tools/harvest/data/asteroid/asteroid_gm_inpop25c.φ`, Mariani+2025 — GM aus
+  Bahndynamik realer Begleiter, Force-Gate: gravity). Der gravity-Sinn trägt also
+  bereits eine Katalog-Harvest-Route durch die VizieR-Tafeln — derselbe Weg, den
+  die Parallaxe als Distanz-Anker trägt. (Das solare ΩG `solar_omega_g.φ` wurde
+  2026-10-11 entfernt — der Wert 1277 nHz hatte keine Quelle: Fabrikation.)
 
 Jeder Bote hat seine eigene Lichtkegel-Reichweite; die Röhre befragt jeden
 Boten in seiner eigenen `signal_reach`. Wo der erste Entwurf optisch über IR

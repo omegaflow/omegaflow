@@ -5840,7 +5840,10 @@ mod tests {
     fn gic_bands_are_pairwise_disjoint_and_cover_the_154_station_pool() {
         let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../../");
         let bands = [
-            ("gic_auroral", "src/mathematikerin/descriptors/gic_auroral.te"),
+            (
+                "gic_auroral",
+                "src/mathematikerin/descriptors/gic_auroral.te",
+            ),
             (
                 "gic_subauroral",
                 "src/mathematikerin/descriptors/gic_subauroral.te",
