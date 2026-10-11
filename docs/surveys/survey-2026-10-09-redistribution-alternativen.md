@@ -2,7 +2,7 @@
   title: Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
   class: survey
   date: 2026-10-09
-  sha256: 3d5e7ae88a11c4b24a2c03785e8fbe0cd2621654942a949b16e13f6dc2d805dd
+  sha256: bc5bd59be7738632592879da3d9328f47f84cab6acbc25668c8b9b2b2fba263e
   status: live
 -->
 # Survey — Freie Alternativen für redistributions-abgelehnte Quellen (2026-10-09)
@@ -201,4 +201,34 @@ Copernicus/Sentinel = Gestalt-Binding, GOES GLM = Presence-/Event-Zeuge.
 **Kern:** der Redistributions-Filter hat viele **Daten**-, aber nur wenige
 **Weberin**-Quellen betroffen. Die verlorenen Weberin-Fäden (Magnetometer,
 Seismik, Infraschall, Gravimeter) sind über die zugelassenen freien Quellen
-bereits rückgeholt; neu bleibt allein **GIRO** und **ds.iris.edu**.
+  bereits rückgeholt; neu bleibt allein **GIRO** und **ds.iris.edu**.
+
+## Dritter Lauf — Lizenz-Zertifizierung der blockierten Kerne (2026-10-11)
+
+Die verbleibenden **existierenden, aber lizenz-blockierten** Kandidaten wurden mit
+`archive_search --all` (voller Katalog) + `--verdict`/`--jina` neu gemessen; jede
+Lizenz-Zeile trägt ihre Quell-URL. Mehrere Verdicts wandern von „blockiert" zu
+**legal erreichbar**:
+
+| Quelle | Lizenz (gemessen) | Verdikt | Legale Route |
+|---|---|---|---|
+| IMCCE INPOP19a / NOE-4 | „may not be used or reproduced without the explicit authorization" (`imcce.fr/mentions-legales`) | blockiert | JPL DE440/441 (PD) · EPM2021 (öffentl. FTP, Lizenz ungemessen) · VSOP/ELP via EPH (`zenodo.org/records/17142232`, CC-BY-4.0) |
+| GRDC | „no commercial … no redistribution" (`grdc.bafg.de/about/data_policy`) | blockiert | GRDC-Caravan (CC-BY-4.0, `zenodo.org/records/15349031`) · USGS NWIS (PD) · ECCC/HYDAT (OGL-Canada) · Copernicus GloFAS (frei/open) · ADHI (CC-BY-4.0) |
+| RIPE RIS | widerrufliche Default-Erlaubnis (`ripe.net/.../routing-information-service-ris/commercial-use/`) | blockiert | RouteViews (CC-BY-4.0; **Riss**: Seitentext nennt BY, Link zielt BY-SA) |
+| ALMA (ObsCore) | JAO-Archiv ohne offene Lizenz | teil-blockiert | **ESO Science Archive (CC BY 4.0, Dritte dürfen verteilen**, `archive.eso.org/cms/eso-data-access-policy.html`) |
+| LSST / Rubin TAP | „No access … for individuals who do not have Rubin data rights" (`rubinobservatory.org/for-scientists/data-products/data-policy`) | blockiert | Gaia (CC BY-NC 3.0 IGO, NC-kompatibel) |
+| TRISP/YBCO-NSE (MPI-FKF) | kein öffentliches Roh | blockiert | NIST NCNR NSE (US-PD, 17 USC §105) · Zenodo 18306252 (CC-BY-4.0) |
+
+**NC-kompatibel (admissibel, kein Block) — verifiziert:** INTERMAGNET
+(**CC BY-NC 4.0**, `intermagnet.org/data_conditions.html`) · GIRO DIDBase
+(CC BY-NC-SA 4.0) · waterisotopesDB (NC + Policy-Carry).
+
+**Offen gemessen:** NOAA SWPC/NDBC (PD) · ds.iris.edu (frei, Attribution) ·
+globalfloods.eu (Copernicus, frei) · Mendeley (je Dataset CC).
+
+**Risse (nicht geglättet):** RouteViews BY-vs-BY-SA; das ESO-CC-BY-4.0 deckt nur die
+ESO-bedienten ALMA-Records (JAO-Archiv separat); EPM2021 trägt keinen expliziten
+Lizenztext; DE442 im SSD-Baum nicht einzeln bestätigt; VizieR-TAP down (HTTP 500).
+
+**Konsequenz:** die Re-Admission dieser Kandidaten ist **Mountains Verdikt**; danach
+**Mycelium-CDN/`sources.φ`-Block**. Rückzeile an beide (Future 233).
