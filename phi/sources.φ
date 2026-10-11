@@ -22009,6 +22009,7 @@ terms CC-BY-4.0 https://gwosc.org/yellow_box/
 format losc
 origin https://gwosc.org/eventapi/json/GWTC-1-confident/GW150914/v3/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5
 compiler tools/harvest/src/bin/losc_compiler.rs
+sha256 155df05741d0e79b11d228dd41f91b6c303a9dde82aea01fcd5bb953449beb14
 on earth 0 0 0
 ttl 31536000
 quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0
