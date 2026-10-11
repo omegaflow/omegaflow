@@ -76,8 +76,7 @@ fn run(args: &[String]) -> Result<(), String> {
         }
         None => {
             let bytes = fetch_raw_bytes(URL).ok_or_else(|| format!("{URL}: fetch void"))?;
-            member_text(&bytes)
-                .ok_or_else(|| format!("{URL}: zip carries no {MEMBER} member"))?
+            member_text(&bytes).ok_or_else(|| format!("{URL}: zip carries no {MEMBER} member"))?
         }
     };
 

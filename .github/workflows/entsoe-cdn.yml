@@ -1,0 +1,44 @@
+# harvest: format=entsoe_unavailability asset=present arm=entsoe_compiler pattern=^entsoe_a78\.bin$ idempotent=true timeout=120 tag=web-api.tp.entsoe.eu
+
+name: entsoe-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  entsoe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view transparency.entsoe.eu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "entsoe_a78.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset entsoe_a78.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset entsoe_a78.bin missing — compiling and manifesting"
+          fi
+      - name: Materialize the ENTSO-E API token (read_secret reads .secrets.local)
+        if: steps.idempotence.outputs.present == 'false'
+        env:
+          ENTSOE_API_TOKEN: ${{ secrets.ENTSOE_API_TOKEN }}
+        run: |
+          printf 'ENTSOE_API_TOKEN=%s\n' "$ENTSOE_API_TOKEN" > .secrets.local
+      - name: Compile the ENTSO-E A78 transmission unavailability series and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin entsoe_compiler -- \
+            --domain 10YFI-1--------U --start 2024-01-01 --stop 2024-02-01 --out-bin entsoe_a78.bin --ci-mode
