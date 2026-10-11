@@ -7,7 +7,7 @@ use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
 const NETLOC: &str = "pds-geosciences.wustl.edu";
-const CDR_ROUTE: &str = "https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/cdr/2004/aug/";
+const RDR_ROUTE: &str = "https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/rdr_radr/";
 const LABEL_ROUTE: &str = "https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/label/";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
@@ -266,21 +266,43 @@ fn collect_pairs(dir_url: &str, data_ext: &str, label_ext: &str, out: &mut Vec<(
         eprintln!("{dir_url}: listing not utf8");
         return;
     };
+    let base = dir_url.trim_end_matches('/');
+    let origin = base
+        .find("://")
+        .and_then(|i| base[i + 3..].find('/').map(|j| &base[..i + 3 + j]))
+        .unwrap_or("");
     let low = data_ext.to_ascii_lowercase();
-    let mut names: Vec<String> = hrefs(text)
-        .into_iter()
-        .filter(|h| h.to_ascii_lowercase().ends_with(label_ext))
-        .map(|h| {
-            h.trim_end_matches('/')
-                .rsplit('/')
-                .next()
-                .unwrap_or("")
-                .to_string()
-        })
-        .collect();
+    let deeper = format!("{base}/");
+    let mut names: Vec<String> = Vec::new();
+    let mut subdirs: Vec<String> = Vec::new();
+    for href in hrefs(text) {
+        let h = href.trim();
+        if h.is_empty() || h.starts_with('#') || h.starts_with('?') {
+            continue;
+        }
+        let full = if h.starts_with("http://") || h.starts_with("https://") {
+            h.to_string()
+        } else if let Some(rest) = h.strip_prefix('/') {
+            format!("{origin}/{rest}")
+        } else {
+            format!("{base}/{h}")
+        };
+        let full = full.trim_end_matches('/');
+        if full == base {
+            continue;
+        }
+        if h.ends_with('/') {
+            if full.starts_with(&deeper) {
+                subdirs.push(full.to_string());
+            }
+            continue;
+        }
+        if h.to_ascii_lowercase().ends_with(label_ext) {
+            names.push(full.rsplit('/').next().unwrap_or("").to_string());
+        }
+    }
     names.sort();
     names.dedup();
-    let base = dir_url.trim_end_matches('/');
     for name in &names {
         let lower = name.to_ascii_lowercase();
         let Some(stem) = lower.strip_suffix(label_ext) else {
@@ -288,6 +310,11 @@ fn collect_pairs(dir_url: &str, data_ext: &str, label_ext: &str, out: &mut Vec<(
         };
         let dat_name = format!("{stem}.{low}");
         out.push((format!("{base}/{name}"), format!("{base}/{dat_name}")));
+    }
+    subdirs.sort();
+    subdirs.dedup();
+    for sub in subdirs {
+        collect_pairs(&format!("{sub}/"), data_ext, label_ext, out);
     }
 }
 
@@ -300,6 +327,10 @@ fn main() {
         Some(n) if !n.is_empty() => n,
         _ => NETLOC.to_string(),
     };
+    let route = match arg_value(&args, "--route") {
+        Some(r) if !r.is_empty() => r,
+        _ => RDR_ROUTE.to_string(),
+    };
     let mut pairs: Vec<(String, String)> = Vec::new();
     let pair_mode = match (arg_value(&args, "--dat"), arg_value(&args, "--label")) {
         (Some(dat), Some(label)) => {
@@ -311,7 +342,7 @@ fn main() {
             std::process::exit(2);
         }
         (None, None) => {
-            collect_pairs(CDR_ROUTE, "tab", ".lbl", &mut pairs);
+            collect_pairs(&route, "tab", ".lbl", &mut pairs);
             false
         }
     };
