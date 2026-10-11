@@ -3724,7 +3724,9 @@ const QUERY_MODES: &[&str] = &[
     "ckan",
     "cmr",
     "dataeuropa",
+    "opensn",
     "dryad",
+    "frbcat",
     "tap",
     "pangaea",
     "re3data",
@@ -4158,7 +4160,18 @@ pub fn run_lines_max(
         "ckan" => crate::ckan::ckan_lines(query, max),
         "cmr" => crate::cmr::cmr_lines(query, max),
         "dataeuropa" => crate::dataeuropa::dataeuropa_lines(query, max),
+        "opensn" => {
+            let token = match resolve_key(
+                env.get("GH_SEARCH_TOKEN").map(String::as_str).unwrap_or(""),
+                env,
+            ) {
+                Secret::Value(t) => t,
+                Secret::Absent(_) => String::new(),
+            };
+            crate::opensn::opensn_lines(query, &token, max)
+        }
         "dryad" => crate::dryad::dryad_lines(query, max),
+        "frbcat" => crate::frbcat::frbcat_lines(query, max),
         "tap" => crate::tap::tap_lines(query, max),
         "pangaea" => crate::pangaea::pangaea_lines(query, max),
         "re3data" => crate::re3data::re3data_lines(query, max),
@@ -4397,7 +4410,9 @@ mod tests {
             "ckan",
             "cmr",
             "dataeuropa",
+            "opensn",
             "dryad",
+            "frbcat",
             "tap",
             "pangaea",
             "re3data",
