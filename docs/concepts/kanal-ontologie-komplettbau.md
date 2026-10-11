@@ -48,7 +48,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   analog `fanout`/`fanout_center`. Die achte Achse `extent` (positive finite Länge in
   Metern) ist die **M-Achse** — die Wellenzahl-Quantisierung `k_j^M`; `unspecified`/`-`
   trägt das Fehlen (nicht 0.0). **Mountain-Domäne** (Verdikt-Zeilen) + River (Parse/Schema).
-- **P0.4** `phi/canon.φ` falls eine neue Registerdatei entsteht.
+- **P0.4** `REGISTER_CLASSES` (`src/gate/commit_gate.rs`) erweitern, falls eine neue Registerdatei entsteht.
 - **P0.5 — Ton-Relation (Operator-Wort 2026-10-09: „es muss doch alles zusammenpassen").**
   Das Ton-Modell wird **vor** P1/P2.2 entschieden (nicht erst in P6.2): der Klang ist **keine
   Zuordnung `𝒯→Klangfamilie`**, sondern eine **Ableitung**: `f_j = ω_𝒯(k_j^M)/2π` — Dispersion

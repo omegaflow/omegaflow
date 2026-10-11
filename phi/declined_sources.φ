@@ -878,6 +878,10 @@ decline redistribution
 url https://api.sncf.com/v1/coverage/sncf/stop_areas/
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (ToS) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E).
 
+decline catalog
+url https://api.sne.space/objects?format=json
+note Open Supernova Catalog: api.sne.space löst nicht auf (konsistent über Sessions). Server down oder umgezogen. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://github.com/astrocatalogs/supernovae.
+
 decline redistribution
 url https://api.sofarocean.com/api/devices
 note Sofar Spotter — Spotter-Konto-Token; Daten Eigentum der Netzbetreiber (kommerziell) — CDN-Redistribution ausgeschlossen (ref-auth-apis.md §E). Verschoben aus blocked_sources.φ 2026-08-19.
@@ -4288,6 +4292,10 @@ decline registry/katalog
 url https://sios-svalbard.org/metsis/api/datasets?format=json&limit=200&subject=atmosphere
 note SIOS Svalbard METSIS dataset catalog: dataset registry, no measurement field.
 
+decline catalog
+url https://sisal.ees.ucdavis.edu/api/v3/entities?format=json&limit=500&has_isotopes=true
+note curl: curl: (6) Could not resolve host: sisal.ees.ucdavis.edu Browser 2026-09-10: Host tot, Dienst-Nachfolger https://geochem.hu/SISAL_webApp/.
+
 decline superseded-by-skyServerWS
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
 note Diese Route liefert HTML; JSON-Route beim SkyServerWS-Sibling, in sources.φ integriert (sdss_photoobj 2026-08-18). photoObj.z = modelMag_z (KEINE Rotverschiebung); spektroskopische z nur im specObj-Join. Verschoben aus blocked_sources.φ 2026-08-19.
@@ -5195,6 +5203,10 @@ note FAO AQUASTAT water withdrawal statistics: country statistics, no field at a
 decline molecular
 url https://www.finngen.fi
 note FinnGen — Genomik, individual-level DUA; 206 (2026-10-03).
+
+decline catalog
+url https://www.frbcat.org/
+note FRBCAT: Host löst auf (ASTRON), Connect schlägt fehl. FRB-Katalog, kein Live-Messwert. Browser 2026-09-10: Host tot, Dienst-Nachfolger https://github.com/HeRTA/FRBSTATS.
 
 decline superseded-by-integrated
 url https://www.frdr-dfdr.ca/repo/collection/superdarn

@@ -3,6 +3,8 @@ pub const MAGIC: [u8; 4] = *b"root";
 const K_BYTE_COUNT_MASK: u32 = 0x4000_0000; // TBuffer::kByteCountMask
 const K_BYTE_COUNT_V_MASK: i16 = 0x4000; // kByteCountVMask: high bit of the first Version_t short
 const K_NEW_CLASS_TAG: u32 = 0xffff_ffff; // TBuffer::kNewClassTag
+const K_CLASS_MASK: u32 = 0x8000_0000; // TBuffer::kClassMask, ORed onto a class reference tag
+const K_MAP_OFFSET: u32 = 2; // TBuffer::kMapOffset, the first two map entries are reserved
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct RootHeader {
@@ -56,6 +58,11 @@ pub struct StreamerElement {
     pub title: String,
     pub element_type: i32,
     pub size: i32,
+    pub array_length: i32,
+    pub array_dim: i32,
+    pub max_index: [i32; 5],
+    pub type_name: String,
+    pub range: Option<[f64; 3]>,
 }
 
 struct Cursor<'a> {
@@ -93,6 +100,12 @@ impl<'a> Cursor<'a> {
 
     fn i64(&mut self) -> Option<i64> {
         Some(i64::from_be_bytes(self.take(8)?.try_into().ok()?))
+    }
+
+    fn f64(&mut self) -> Option<f64> {
+        Some(f64::from_bits(u64::from_be_bytes(
+            self.take(8)?.try_into().ok()?,
+        )))
     }
 
     fn tstring(&mut self) -> Option<String> {
@@ -607,6 +620,7 @@ pub fn decompress_object(bytes: &[u8], key: &RootKey) -> Option<Vec<u8>> {
 }
 
 const BRANCH_VERSION: i16 = 12;
+const BRANCH_ELEMENT_VERSION: i16 = 9;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct BranchMeta {
@@ -669,7 +683,7 @@ fn parse_branch_frame(obj: &[u8], start: usize) -> Option<(BranchMeta, u32, usiz
     }
     let prefix_len = c.pos - start;
     let (version, inner_len) = c.read_version()?;
-    if version != BRANCH_VERSION {
+    if version != BRANCH_VERSION && version != BRANCH_ELEMENT_VERSION {
         return None;
     }
     if inner_len < 0 || inner_len as usize != outer_len.checked_sub(prefix_len)? {
@@ -699,8 +713,9 @@ pub fn parse_tree(bytes: &[u8], tree: &RootKey) -> Result<TreeIndex, &'static st
         return Err("key is not a TTree");
     }
     let obj = decompress_object(bytes, tree).ok_or("TTree object decompression failed")?;
-    let tag_offset =
-        find_new_class_tag(&obj, "TBranch").ok_or("fBranches absent in TTree object")?;
+    let tag_offset = find_new_class_tag(&obj, "TBranchElement")
+        .or_else(|| find_new_class_tag(&obj, "TBranch"))
+        .ok_or("fBranches absent in TTree object")?;
     let mut pos = tag_offset
         .checked_sub(4)
         .ok_or("TBranch frame offset underflow")?;
@@ -712,11 +727,15 @@ pub fn parse_tree(bytes: &[u8], tree: &RootKey) -> Result<TreeIndex, &'static st
             break;
         }
         let tag = read_u32_at(&obj, pos + 4).ok_or("branch frame tag absent")?;
-        let is_branch_ref = tag == K_NEW_CLASS_TAG || branch_ref == Some(tag);
+        let is_branch_ref = tag == K_NEW_CLASS_TAG
+            || (tag & K_CLASS_MASK != 0
+                && matches!(branch_ref, Some(reference) if tag & !K_CLASS_MASK == reference));
         match parse_branch_frame(&obj, pos) {
             Some((meta, frame_tag, end)) => {
-                if frame_tag != K_NEW_CLASS_TAG {
-                    branch_ref = Some(frame_tag);
+                if frame_tag == K_NEW_CLASS_TAG {
+                    branch_ref = Some((pos as u32).wrapping_add(4).wrapping_add(K_MAP_OFFSET));
+                } else {
+                    branch_ref = Some(frame_tag & !K_CLASS_MASK);
                 }
                 branches.push(meta);
                 pos = end;
@@ -865,6 +884,7 @@ pub fn parse_streamer_elements(
 ) -> Result<Vec<StreamerElement>, &'static str> {
     let mut c = Cursor::new(obj, start);
     let mut elements = Vec::with_capacity(n_members as usize);
+    let mut last_class: Option<(u32, String)> = None;
     for _ in 0..n_members {
         let frame_start = c.pos;
         let outer = c.u32().ok_or("streamer element frame count absent")?;
@@ -878,15 +898,25 @@ pub fn parse_streamer_elements(
         if frame_end > obj.len() {
             return Err("streamer element frame end beyond object");
         }
+        let tag_pos = c.pos;
         let tag = c.u32().ok_or("streamer element class tag absent")?;
         let class_name = if tag == K_NEW_CLASS_TAG {
-            c.class_tag_name()
+            let name = c
+                .class_tag_name()
                 .ok_or("streamer element class name absent")?
-                .to_string()
+                .to_string();
+            let reference = ((tag_pos as u32).wrapping_add(K_MAP_OFFSET)) | K_CLASS_MASK;
+            last_class = Some((reference, name.clone()));
+            name
+        } else if tag & K_CLASS_MASK != 0 {
+            match &last_class {
+                Some((reference, name)) if *reference == tag => name.clone(),
+                _ => return Err("streamer element class reference unresolved"),
+            }
         } else {
-            String::new()
+            return Err("streamer element class tag absent");
         };
-        c.read_version().ok_or("streamer element version absent")?;
+        let (element_version, _) = c.read_version().ok_or("streamer element version absent")?;
         c.read_version()
             .ok_or("streamer element TNamed version absent")?;
         c.skip_version()
@@ -897,8 +927,24 @@ pub fn parse_streamer_elements(
         let title = c.tstring().ok_or("streamer element fTitle absent")?;
         let element_type = c.i32().ok_or("streamer element fType absent")?;
         let size = c.i32().ok_or("streamer element fSize absent")?;
-        if c.pos > frame_end {
-            return Err("streamer element body exceeds its frame");
+        let array_length = c.i32().ok_or("streamer element fArrayLength absent")?;
+        let array_dim = c.i32().ok_or("streamer element fArrayDim absent")?;
+        let mut max_index = [0i32; 5];
+        for slot in max_index.iter_mut() {
+            *slot = c.i32().ok_or("streamer element fMaxIndex absent")?;
+        }
+        let type_name = c.tstring().ok_or("streamer element fTypeName absent")?;
+        let range = if element_version == 3 {
+            Some([
+                c.f64().ok_or("streamer element fXmin absent")?,
+                c.f64().ok_or("streamer element fXmax absent")?,
+                c.f64().ok_or("streamer element fFactor absent")?,
+            ])
+        } else {
+            None
+        };
+        if c.pos != frame_end {
+            return Err("streamer element body does not fill its frame");
         }
         elements.push(StreamerElement {
             class_name,
@@ -906,6 +952,11 @@ pub fn parse_streamer_elements(
             title,
             element_type,
             size,
+            array_length,
+            array_dim,
+            max_index,
+            type_name,
+            range,
         });
         c.pos = frame_end;
     }
@@ -1108,5 +1159,154 @@ mod tests {
         let mut reference = bytes.clone();
         reference[0..4].copy_from_slice(&2u32.to_be_bytes());
         assert_eq!(parse_streamer_info_header(&reference), None);
+    }
+
+    fn push_tstring(b: &mut Vec<u8>, s: &str) {
+        b.push(s.len() as u8);
+        b.extend_from_slice(s.as_bytes());
+    }
+
+    fn streamer_element_frame(tag: u32, class_name: Option<&str>, element_version: i16) -> Vec<u8> {
+        let mut body = Vec::new();
+        push_u32(&mut body, tag);
+        if let Some(name) = class_name {
+            body.extend_from_slice(name.as_bytes());
+            body.push(0);
+        }
+        push_u32(&mut body, K_BYTE_COUNT_MASK);
+        push_i16(&mut body, element_version);
+        push_u32(&mut body, K_BYTE_COUNT_MASK);
+        push_i16(&mut body, 1);
+        push_i16(&mut body, 1);
+        push_u32(&mut body, 0);
+        push_u32(&mut body, 0);
+        push_tstring(&mut body, "member");
+        push_tstring(&mut body, "Int_t member");
+        push_i32(&mut body, 11);
+        push_i32(&mut body, 32);
+        push_i32(&mut body, 4);
+        push_i32(&mut body, 1);
+        for value in [3, 0, 0, 0, 0] {
+            push_i32(&mut body, value);
+        }
+        push_tstring(&mut body, "Int_t");
+        if element_version == 3 {
+            for value in [1.5f64, 9.5, 0.0] {
+                body.extend_from_slice(&value.to_be_bytes());
+            }
+        }
+        let mut frame = Vec::new();
+        push_u32(&mut frame, (body.len() as u32) | K_BYTE_COUNT_MASK);
+        frame.extend_from_slice(&body);
+        frame
+    }
+
+    #[test]
+    fn streamer_element_v4_parses_tail_and_max_index() {
+        let frame = streamer_element_frame(K_NEW_CLASS_TAG, Some("TStreamerBasicType"), 4);
+        let elements = parse_streamer_elements(&frame, 0, 1).expect("v4 element parses");
+        assert_eq!(elements.len(), 1);
+        let element = &elements[0];
+        assert_eq!(element.class_name, "TStreamerBasicType");
+        assert_eq!(element.name, "member");
+        assert_eq!(element.title, "Int_t member");
+        assert_eq!(element.element_type, 11);
+        assert_eq!(element.size, 32);
+        assert_eq!(element.array_length, 4);
+        assert_eq!(element.array_dim, 1);
+        assert_eq!(element.max_index, [3, 0, 0, 0, 0]);
+        assert_eq!(element.type_name, "Int_t");
+        assert_eq!(element.range, None);
+    }
+
+    #[test]
+    fn streamer_element_v3_reads_range_tail() {
+        let frame = streamer_element_frame(K_NEW_CLASS_TAG, Some("TStreamerBasicType"), 3);
+        let elements = parse_streamer_elements(&frame, 0, 1).expect("v3 element parses");
+        assert_eq!(elements[0].range, Some([1.5, 9.5, 0.0]));
+    }
+
+    #[test]
+    fn streamer_element_class_reference_resolves_name() {
+        let declared = streamer_element_frame(K_NEW_CLASS_TAG, Some("TStreamerBasicType"), 4);
+        let reference = ((4u32 + K_MAP_OFFSET) | K_CLASS_MASK).to_be_bytes();
+        let mut obj = declared.clone();
+        obj.extend_from_slice(&streamer_element_frame(
+            u32::from_be_bytes(reference),
+            None,
+            4,
+        ));
+        let elements = parse_streamer_elements(&obj, 0, 2).expect("reference resolves");
+        assert_eq!(elements[0].class_name, "TStreamerBasicType");
+        assert_eq!(elements[1].class_name, "TStreamerBasicType");
+    }
+
+    #[test]
+    fn streamer_element_short_frame_is_rejected() {
+        let mut frame = streamer_element_frame(K_NEW_CLASS_TAG, Some("TStreamerBasicType"), 4);
+        let declared = u32::from_be_bytes(frame[0..4].try_into().unwrap());
+        let shrunk = (declared & !K_BYTE_COUNT_MASK) - 4;
+        frame[0..4].copy_from_slice(&(shrunk | K_BYTE_COUNT_MASK).to_be_bytes());
+        assert!(parse_streamer_elements(&frame, 0, 1).is_err());
+    }
+
+    fn branch_frame(tag: u32, class_name: Option<&str>, version: i16) -> Vec<u8> {
+        let mut tail = Vec::new();
+        push_u32(&mut tail, K_BYTE_COUNT_MASK);
+        push_i16(&mut tail, 1);
+        push_i16(&mut tail, 1);
+        push_u32(&mut tail, 0);
+        push_u32(&mut tail, 0);
+        push_tstring(&mut tail, "px");
+        push_tstring(&mut tail, "px/F");
+
+        let mut inner = Vec::new();
+        push_i16(&mut inner, version);
+        inner.extend_from_slice(&tail);
+
+        let mut body = Vec::new();
+        push_u32(&mut body, tag);
+        if let Some(name) = class_name {
+            body.extend_from_slice(name.as_bytes());
+            body.push(0);
+        }
+        push_u32(&mut body, (inner.len() as u32) | K_BYTE_COUNT_MASK);
+        body.extend_from_slice(&inner);
+
+        let mut frame = Vec::new();
+        push_u32(&mut frame, (body.len() as u32) | K_BYTE_COUNT_MASK);
+        frame.extend_from_slice(&body);
+        frame
+    }
+
+    #[test]
+    fn parse_tree_bootstraps_from_tbranch_element_and_accepts_reference() {
+        let mut obj = branch_frame(
+            K_NEW_CLASS_TAG,
+            Some("TBranchElement"),
+            BRANCH_ELEMENT_VERSION,
+        );
+        let reference = 4u32 + K_MAP_OFFSET;
+        obj.extend_from_slice(&branch_frame(
+            reference | K_CLASS_MASK,
+            None,
+            BRANCH_ELEMENT_VERSION,
+        ));
+
+        let tree = RootKey {
+            name: "tree".to_string(),
+            class: "TTree".to_string(),
+            nbytes: obj.len() as i32,
+            objlen: obj.len() as i32,
+            keylen: 0,
+            cycle: 1,
+            seek_key: 0,
+            seek_pdir: 0,
+        };
+        let index = parse_tree(&obj, &tree).expect("TBranchElement frames parse");
+        assert_eq!(index.branches.len(), 2);
+        assert_eq!(index.branches[0].name, "px");
+        assert_eq!(index.branches[0].leaf_type, "F");
+        assert_eq!(index.branches[1].name, "px");
     }
 }

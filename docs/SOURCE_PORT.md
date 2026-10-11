@@ -1,3 +1,11 @@
+<!--
+  title: Source-Port: Der eine Pfad
+  class: concept
+  date: 2026-10-11
+  sha256: 1fd98ed45ec8238dc2f5edbadfaa4bce76598d598da67e60ca6236b15abe09ff
+  status: live
+  see-also: docs/README.md AGENTS.md phi/sources.φ
+-->
 # Source-Port: Der eine Pfad
 
 Selbsttragend. Interpretierbar von einer Session mit null Vorkontext. Dieses
@@ -6,39 +14,54 @@ Kuration). Eine neue Session liest genau dieses eine Dokument.
 
 ## 1. Was die Arbeit ist
 
-Die gold/pre-cdn-Korpora (alte Grammatik, teilweise gitignored-historie) werden
-mechanisch nach v6 überführt (Konvertierung), gegen die lebenden APIs
-verifiziert (Probe + Extract) und in eines der zwei Register disponiert.
-Daneben: neue Kandidaten aus dem Recherche-Bestand grinden. Der Reichtum sind
-nicht nur die URLs — Katalog-Inventare, Domänen-Maps und Kandidaten-Listen
-liegen im Bestand und sind im Ledger registriert. Kein offener Posten ohne
-registrierten Ort.
+Die Source-Arbeit ist die Kuration der Quellen: eine Kandidaten-Adresse wird
+gemessen (Erreichbarkeit, Dateityp, Struktur), durch das Oszillator-Gate und
+die Weberin-Eignung geführt und in genau ein Register disponiert. Die
+Maschinerie, die das mechanisch aus Korpora konvertierte — die alte
+gold/pre-cdn-Grammatik, der `--port`-Konverter, der Probe-Sweep und das
+`ledger.φ` — ist **descoped** (2026-10-11; Befund
+`docs/handover/archiv/handover-2026-10-11-mountain-folge306.md`): `phi/pipeline/`
+ist am Datenträger absent (gemessen 2026-10-11: `git ls-files 'phi/pipeline*'`
+leer, kein Verzeichnis auf der Platte). Lebende Arme (`archive_search`) und die
+Register ersetzen sie.
 
-## 2. Pfadkarte
+Der Zustand offener Arbeit liegt **nicht** mehr in einem Pipeline-Ledger: er
+liegt in `state/zustand/wartend.φ` (12 pending Compiler + Zugangs-Waits;
+gitignored, lokal) und wird owner-getaggt mit `register_lookup --open` gelesen.
+`phi/` trägt die **7 lebenden Register** (`sources`, `dead_sources`,
+`declined_sources`, `blocked_sources`, `witnesses`, `footprints`, `harvest`),
+kein weiteres.
+
+## 2. Pfadkarte (gemessen 2026-10-11)
 
 | Pfad | Was es IST |
 |------|------------|
-| `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). **Gemessen 2026-09-17: am Datenträger absent** (gitignored, nie getrackt; Git-Blob `760a93b5` = 3.416 Blöcke). Träger der Inventar-Funktion ist `archive-root/pipeline-auslese-2026-09-17/stage/master_converted.φ` (5.206 v6-Blöcke) — byte-genaue Re-Derivation gemessen unnötig (13. Korpus unidentifiziert, Merge one-off). |
-| `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. **Gemessen 2026-09-17: am Datenträger vorhanden** (`_pre-cdn_9k_richest` 824 + `_params` 63 Blöcke, gitignored). |
-| `phi/pipeline/queue/grind_*` | descoped mit Befund (2026-09-18: `phi/pipeline/queue/` trägt keine `.φ`) — nie gebaut, nicht gebraucht; die Disposition führt `register_lookup --open` (owner-getaggt). |
-| `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. Ruhend ausgelagert 2026-09-17 (Entscheid-Folge 38) nach `archive-root/pipeline-auslese-2026-09-17/stage/` — regenerierbar; ebenso `weights_*.txt`, die Probe-Ausgänge und `meteo_harvest/` (CDN `archive-api.open-meteo.com`). |
-| `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
-| `phi/pipeline/library.φ` | Die kuratierte Tag-Library (Linse). Kuratiertes Input — versioniert (force-add, obwohl `phi/pipeline/` fetch-only ist). |
-| `phi/pipeline/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
-| `phi/pipeline/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
-| `phi/pipeline/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
-| `phi/pipeline/catalog/` | Katalog-Inventare (tap_index*, b2find, eogateway, VirES, ArcGIS, TerraPulse, ESA, archeology_gaps). |
-| `phi/pipeline/catalog/MANIFEST.φ` | Karte des Katalogs — role/state/lens je Datei, versioniert (Rats-Verdikt 2026-09-10). |
-| `phi/pipeline/decline_lens.φ` | Maschinen-Zwilling des Oszillator-Gates — 9 Decline-Klassen + 3 Familien als Daten (`bucket_litmus`), versioniert. |
-| `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
-| `phi/dead_sources.φ` | Dispositionen: nur `dead` (unerreichbar — Re-Check-Pflicht). |
-| `phi/declined_sources.φ` | Dispositionen: `decline` (lebt, geurteilt) + `superseded-by-integrated`. |
-| `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
-| `phi/harvest.φ` | Das Harvest-Master-Register: ein Block je Arm/Format, Felder `asset` (present/fehlt), `format`, `tag`, `arm`, `args`, `pattern`, `shard`, `timeout`, `idempotent`, `note`. `args <cli>` trägt die Zusatz-Argumente des Arms — `harvest.yml` liest sie aus dem Block und reicht sie dem Arm weiter; `harvest_reg --check` whitelistet das Feld, ein fehlendes Pflicht-Argument verweigert der Arm selbst (exit 2). |
-| `archive-root/` | Externes Archiv (Legacy): `handover/`, `bundles/`, `concept-history/`, `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`, `commit_rewrite-2026-09-06/`. |
+| `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). 2730 `url`-Blöcke. |
+| `phi/declined_sources.φ` | Dispositionen: Verdikt. 1528 Einträge. |
+| `phi/dead_sources.φ` | Dispositionen: `dead` (unerreichbar — Re-Check-Pflicht). 259 Einträge. |
+| `phi/blocked_sources.φ` | Dispositionen: Zutritt gesperrt. Gemessen 2026-10-11 **1** Eintrag: `blocked parser-def` (particle-cern). |
+| `phi/witnesses.φ` | Das Zeugen-Register (S²-Richtung, Gestalt, Presence …). 34 Einträge. |
+| `phi/footprints.φ` | Die Coverage-Records `.fp01`. 5 Einträge. |
+| `phi/harvest.φ` | Das Harvest-Master-Register: ein Block je Arm/Format, Felder `asset` (present/fehlt), `format`, `tag`, `arm`, `workflow`, `pattern`, `idempotent`, `timeout`; 77 Formate. `harvest.yml` liest den Block und reicht die Felder dem Arm weiter; `harvest_reg --check` whitelistet sie, ein fehlendes Pflicht-Argument verweigert der Arm selbst (exit 2). |
+| `state/zustand/wartend.φ` | Das Wartend-Register (gitignored, lokal): `key \| Gegenüber \| Trigger \| Aufnehmer \| Lage`, eine Zeile je Wait; 12 pending Compiler + Zugangs-Waits. |
+| `src/mathematikerin/descriptors/*.te` | Kanal-Deskriptoren (20) — Konsument `tools/measure/src/bin/field_te_query.rs`. |
+| `src/archivar/testdata/` | Test-Fixtures (8 Verzeichnisse: twomass, ncei_ssi, ncei_goes_xrs, noaa_goes16, noaa_gk2a, noaa_wod, cosmic_wetprf, celestrak_eop). |
+| `tools/harvest/data/` | Werkzeug-Eingaben: `asteroid/` (gm + diameters), `nrs_stations.φ`, `dust-maske.φ`. |
+| `tools/register/data/bands.φ` · `tools/measure/data/scan_coverage.φ` · `tools/utils/data/library.φ` | Werkzeug-Eingaben je Konsument. |
 | `docs/specs/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
+| `archive-root/` | Externes Archiv (Legacy): `handover/`, `bundles/`, `concept-history/`, `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`, `commit_rewrite-2026-09-06/`. |
 
-## 3. Die zwei Register
+**Descoped (2026-10-11, am Datenträger absent):** `phi/pipeline/queue/`,
+`phi/pipeline/stage/`, `phi/pipeline/research/`, `phi/pipeline/catalog/`
+(`tap_index_*.φ`, die Katalog-Dumps), `phi/pipeline/ledger.φ`, `index.φ`,
+`decline_lens.φ`, `library.φ`, `frame_registry.φ`, `master_urls.txt`,
+`master.φ`, `prompt.φ`, `MANIFEST.φ`, `leads.φ`, die `probe_*`-Entwürfe und die
+statischen Katalog-Dispositionen. Diese Pfade stehen nicht zur Verfügung; wo
+eine Messreihe gebraucht wird, tragen git und die datierten Snapshots in
+§12–§16 sie. Der eine lebende Katalog-Arm ist `--regtap`/`--tap` in
+`archive_search`.
+
+## 3. Die Register
 
 `phi/sources.φ`: kanonisches Format nach SOURCES_V2_SPEC §1.0 — Blöcke
 sortiert nach `ttl` (aufsteigend), dann nach `url`; keine Kommentare; eine
@@ -52,18 +75,24 @@ Werts liest sich als `no-cadence`.
 `phi/dead_sources.φ`: Einträge sortiert nach `url`; eine Dispositionszeile,
 eine `url`-Zeile, eine `note`-Zeile; Leerzeile zwischen Einträgen; keine
 Duplikate pro URL. Enthält NUR `dead` (URL antwortet nicht — die
-Re-Check-Pflicht).
+Re-Check-Pflicht; gemessene Klassen `dead 404`/`dns-unresolved`/
+`redirect-maintenance`/`unreachable`/`5xx`/`ssl`/`frozen`/`absent`).
 
-`phi/declined_sources.φ`: gleiches Format. Enthält `decline`
-(nicht-physikalisch/kommerziell/kein Konsument — lebt, aber geurteilt) +
-`decline superseded-by-integrated` (lebt, anderswo integriert, früher
-`integrated`). Keine Re-Check-Pflicht: die Erreichbarkeit ist nicht die Frage,
-das Verdikt ist die Frage (die getrennte Datei hält den Re-Check bei ~403
-`dead`-URLs statt 1221).
+`phi/declined_sources.φ`: gleiches Format. Enthält das **Verdikt** — die
+Quelle lebt, aber sie trägt kein physikalisches Feld. Keine Re-Check-Pflicht:
+die Erreichbarkeit ist nicht die Frage, das Verdikt ist die Frage (die
+getrennte Datei hält den Re-Check bei den `dead`-URLs, nicht beim Verdikt).
+Die Klassen sind freie, gemessene Verdikt-Worte (`decline no-physical-force`,
+`registry/katalog`, `model-forecast`, `superseded-by-integrated`,
+`redistribution`, `presence-catalog`, `variant`, `static` …).
 
-`phi/blocked_sources.φ`: gleiches Format; `key-needed` (Key frei
-registrierbar, `.secrets.local`) + `parser-def` (Gap-Verweis) — blockiert,
-gewollt, nicht tot.
+`phi/blocked_sources.φ`: gleiches Format; die **Zugangs**-Sperre. Trägt
+`blocked key`/`blocked account`/`blocked ip-blocked`/`blocked parser-def`
+(+ `reg <url>`-Zeile, Registrierungsseite) — blockiert, gewollt, nicht tot.
+Gemessen 2026-10-11 trägt es genau **einen** Eintrag: `blocked parser-def`
+(particle-cern). Die account-/key-Waits leben ihrer Natur nach als Zeilen in
+`state/zustand/wartend.φ` (Aufnehmer-Pflicht); `blocked` bleibt das Register
+der gemessenen Zugangs-Sperre.
 
 **Die Grenze declined/blocked (Operator-Wort 2026-09-15).** Die Frage
 entscheidet, nicht die Quelle:
@@ -84,103 +113,66 @@ wenn heute kein ω()-Konsument sie liest. „kein gebauter Konsument" ist eine
 zugängliche Quelle aus `sources.φ` heraus und verschiebt sie nicht nach
 `declined`.
 
-## 4. Zustandsmaschine + ledger.φ
+## 4. Der Zustand — wartend.φ + register_lookup --open
 
-Zustände: `ausstehend | verifiziert | kompiliert | void | parser-gap | disponiert`.
+Es gibt keine Pipeline-Zustandsmaschine mehr (`ausstehend`/`verifiziert`/
+`kompiliert`/`void`/`parser-gap`/`disponiert` sind mit `phi/pipeline/ledger.φ`
+descoped, 2026-10-11). Der Zustand lebt an zwei Orten:
 
-- `ausstehend` — unberührt, offene Arbeit (entdeckt, noch nicht angefasst)
-- `verifiziert` — Sweep lief, Samples extrahiert, Merge in die Register steht aus
-- `kompiliert` — Kompilat gebaut (Struktur-Reader/Compiler lief, Asset erzeugt);
-  die Disposition in die Register steht aus
-- `void` — Sweep lief, alle URLs void (diagnostiziert) — Korpus ist erschöpft
-- `parser-gap` — Kandidat wartet auf einen benannten Parser-Gap (kein Parkplatz; der Parkplatz wurde 2026-09-08 geschlossen)
-- `disponiert` — in `sources.φ` / `dead_sources.φ` / `blocked_sources.φ` eingegangen; Eintrag wird entfernt (Git trägt ihn)
+- **Die Register selbst** sind das Ledger: eine entdeckte Quelle ist bis zur
+  Disposition `pending` (Ernte/Prüfung ungebaut), danach steht ihr Verdikt in
+  genau einem Register. `phi/sources.φ` + `blocked_sources.φ` +
+  `declined_sources.φ` + `dead_sources.φ` tragen den einen Pfad.
+- **`state/zustand/wartend.φ`** trägt das Warten: eine Zeile je Wait,
+  `key | Gegenüber | Trigger | Aufnehmer | Lage`. Der Aufnehmer arbeitet die
+  Zeile im selben Atom, in dem der Trigger feuert. Die 12 pending Compiler
+  (copernicus-insitu ×8, noaa ×4) und die Zugangs-Waits stehen dort.
 
-Ledger-Format (wie dead_sources.φ, φ-Textformat):
+`register_lookup --open` ist die Queue: es liest die Zustands-Register
+owner-getaggt (`blocked parser-def`/`parser-gap`/`asset fehlt` → mountain,
+`blocked account`/`blocked key` → future → operator, `blocked ip-blocked`/
+`pending` → mycelium, released → released) und legt die Zeilen dem Owner vor.
 
-```
-<zustand>
-<art> <wert>
-note <was IST — Herkunft, Umfang, Gap-Verweis>
-```
+## 5. Der eine Pfad (Prozedur)
 
-Arten: `queue` (Korpus-Datei), `kandidat` (URL), `bestand` (Recherche-Asset),
-`nachlauf` (verlorenes Session-Artefakt), `parser-gap` (P-Liste-Eintrag).
-Beispiel:
+Pro Quelle, in einem Atom:
 
-```
-ausstehend
-queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
-note 30 Blöcke, alte Grammatik — kein URL im kanonischen Register; --port + Sweep, dann Disposition
-```
+1. **Messen.** Bekannte URL → `archive_search --verdict <url>` (Leiter direkt
+   → Proton-Exit → Wayback) und `archive_search --sniff <url>` (Magic-Bytes +
+   sha256). JS-gerenderte Seite → `--playwright <url>`. PDF → `--pdf-text`,
+   sonst `--pdf-image` + vision. Unbekannte Quelle → die Suchmaschinen
+   (`--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless);
+   `--all` ist die letzte Bewegung (84 Arme, sequenziell — die letzte, nie die
+   erste). Die Arm-Landschaft liest man aus `archive_search --help` (der Kanon),
+   nicht aus diesem Dokument.
+2. **Struktur prüfen.** 200er-HTML ist kein Daten-JSON; Binär-/Zip-Inhalt
+   wird mit `curl` + `unzip`/Reader geprüft, nie als JSON-Fetch.
+3. **Gate.** Oszillator-Gate (§8), τ-Bestimmung (§8), Weberin-Eignung (§8).
+4. **Disponieren.** `accepted` → `phi/sources.φ` (Format §1.0, plus
+   `url`/`origin`/`compiler`/`sha256`; Manifestation via `*-cdn.yml`).
+   `parser-def` → `phi/blocked_sources.φ` mit `gap`-Verweis. `key`/`account`/
+   `ip-blocked` → `phi/blocked_sources.φ` mit `reg`-Zeile (die Operator-/
+   Aufnehmer-Seite als Zeile in `state/zustand/wartend.φ`). `decline` →
+   `phi/declined_sources.φ`. Endpunkt tot → erst die tote-Endpoint-Recherche
+   (§9), dann `dead` mit `note`, die den Recherche-Stand nennt.
+5. **Manifestieren.** Eine neue/geänderte Quelle wird in `phi/sources.φ`
+   registriert, damit der CI-Manifestator (`*-cdn.yml --ci-mode`) das Asset auf
+   das CDN bringt (Session-Duty; ein lokal geerntetes, unmanifestiertes
+   Dataset ist eine Register-Schuld). Der CDN-Upload läuft nur mit `--ci-mode`
+   — ein lokaler Lauf allein speist das gemeinsame Gedächtnis nicht.
+6. **Schließen.** `cargo check` 0/0; der Commit ist die letzte Handlung, das
+   Handover-Register im selben Schritt; Erledigtes wird entfernt.
 
-## 5. Workflow-Prozedur (Trichter: Linse → Probe → Review)
-
-Pro Korpus:
-
-1. `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ`
-   — mechanische Quellgrammatik→kanonisch-Konvertierung (Lautsignal: der
-   Konverter meldet Blöcke, die nicht parse-fähig sind; `source`-Köpfe,
-   `method`, `pos` und unbekannte Direktiven fallen — siehe §9).
-2. Linse: `cargo run --bin source_scanner -- phi/pipeline/library.φ <katalog.φ>`
-   — die gewichtete Tag-Library (Ratssitzungen, 2.358 Tags) wiegt die
-   Kandidaten; positive Gewichte sind die Probe-Kandidaten.
-3. Probe: `cargo run -- --probe <blöcke.φ>` — fetch → parse →
-   `walk_json_probe`-Auto-Draft → `extract`-Verdict. Überlebende (echte
-   Samples) nach `phi/pipeline/probe_survivors.φ`, Diagnosen nach
-   `phi/pipeline/probe_void.txt`. Befunde: `phi/pipeline/probe_comparison.txt`
-   (Linse 57% vs 2% Survivor-Rate, fetch_one == fetch_raw_probe für
-   unmanifestierte Kandidaten).
-4. Review (Mensch): Survivor-Duplikate gegen `phi/sources.φ` prüfen;
-   Oszillator-Gate; echte Neue nach §1.0 in `phi/sources.φ`, Varianten/Modelle/
-   Tote nach `phi/dead_sources.φ`; `ledger.φ` aktualisieren; den nächsten
-   Batch in `phi/pipeline/probe_batch.φ` nachrücken.
-5. `cargo check` 0/0; ein Commit, der das Handover-Register im selben Schritt aktualisiert.
-
-**Discovery-Ladder (Ernte + Probe).** Die mechanische Suche nach neuen
-Probe-Quellen ist als zwei std-only Rust-Bins gebaut (CWD = Repo-Root; die
-Stufen schreiben relativ nach `phi/pipeline/`):
-
-- `cargo run -p omegaflow-utils --bin source_url_candidates` — die Linse:
-  liest die kuratierte Tag-Library `phi/pipeline/library.φ` + die Katalog-Inventare
-  `phi/pipeline/catalog/*.φ`; wiegt NUR die `url `/`candidate `-Zeilen (der
-  erste `http(s)`-Token, `gate_weigh`, Schwelle `CANDIDATE_WEIGHT_FLOOR = 1`);
-  schreibt die dedupliziert sortierte Kandidaten-URL-Liste deterministisch
-  nach `phi/pipeline/probe_url_candidates.txt`. Beschreibungs-Zeilen
-  (`catalog `/`# dataset `/nackt) bleiben ungewogen — ihre positiven Gewichte
-  (die Leads) liegen bereits pro Katalog in `weights_*.txt` (Linse
-  `source_scanner`). `master_urls.txt` ist nur Quercheck (bekannt/neu), nie
-  Quelle. Messung: 30 Kandidaten (25 bekannt, 5 neu) statt der fabrizierten 14k.
-- `cargo run -p omegaflow-utils --bin probe_sweep [--candidates <datei>]` —
-  die Kette: Linse (übersprungen bei `--candidates`) → `url_probe_mode`
-  (Reachability) → `draft` → `draft-context` → Rust-Totfilter (Blöcke
-  mit `# frame: frame pending` fallen) → `probe`. Überlebende nach
-  `phi/pipeline/probe_survivors.φ`, Diagnosen nach `phi/pipeline/probe_void.txt`;
-  der Review-Bericht wird nach `phi/reports/probe_sweep_survivors.φ` +
-  `phi/reports/probe_sweep_void.txt` kopiert (versioniert — ein Commit = Häkchen).
-
-Die Kette ist LOKAL (kein Cron, keine CI-Schleife): die Katalog-Korpora
-(~120 MB, gitignored) liegen nur auf der Maschine. Die Keys
-(`.secrets.local`, 46, GitHub-Parität — §10) sind gespiegelt und die
-`*-cdn.yml`-Jobs fetchen mit ihnen bereits; die Discovery-Ernte bleibt
-lokal, weil die Korpora der CI fehlen und die Review (Schritt 4) in der
-Session bleibt. Der Wochen-Cron `probe-sweep.yml`, der eine 14k-URL-Ernte
-aus nichts fabrizierte, ist entfernt. Review bleibt in der Session:
-Bericht lesen → Schritt 4 → Commit.
-
-Die Linse (`source_url_candidates`) liest auch `catalog/MANIFEST.φ` und
-`decline_lens.φ` — beide tragen keine `url `/`candidate `-Zeilen, also null
-Kandidaten (A = A, kein Skip-Filter, kein Code-Pfad).
-
-Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
-URL-Templates füllen → Erreichbarkeit `archive_search --verdict <url>` (direct →
-Proton → Wayback) und Datei-Typ `--sniff <url>` (Magic-Bytes + sha256) → Struktur
-prüfen (200er-HTML ist kein Daten-JSON; Binär-/Zip-Inhalt wird mit `curl` +
-`unzip`/Reader geprüft, nie als JSON-Fetch) → Oszillator-Gate → Klassifikation →
-Disposition.
-
-Die kanonischen Register werden nie gemirrort — nur `--verify phi` spiegelt
-(CI). `phi/pipeline/` und `phi/pipeline/research/` sind fetch-only (kein Mirror, Quota).
+Es gibt **keinen mechanischen Korpus-Konverter** mehr (`cargo run -- --port …`,
+Probe-Sweep, Tag-Library-Linse `source_scanner`) — diese Bins und ihr
+`phi/pipeline/`-Schreibpfad sind descoped (2026-10-11). Die Discovery ist
+live über `archive_search`: `--leads` scannt unregistrierte Kandidaten-Heime
+minus der registrierten Hosts; `--root`/`--index`/`--git` sind lokale Wege. Die
+Kuration ist per Block, nicht per Korpus (die Per-Block-Kuration aus §8 und der
+Proton-Exit aus §9 bleiben der Kern). Der eine Katalog-Arm ist `--regtap`/`--tap`;
+`--regtap` erntet die RegTAP-Liste der TAP-Dienste, `--tap` fragt einen
+TAP-Endpoint direkt. Die kanonischen Register werden nie gemirrort — nur
+`--verify phi` spiegelt (CI).
 
 ## 6. Grammatik-Kurzfassung
 
@@ -240,9 +232,10 @@ Parser liest den Token zuerst (`parse.rs:759/1167`), der Konverter materialisier
 den Default nur im Synthese-/Entwurfspfad (`port.rs:18/1214/1237`).
 
 Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
-unkonsumierbar) → `blocked_sources.φ` mit Gap-Verweis (oder `park/` bei
-Block-Draft); `key-needed` → `blocked_sources.φ` mit Key-Marker;
-`decline` (Oszillator-Gate) → `declined_sources.φ`.
+unkonsumierbar) → `blocked_sources.φ` mit `gap`-Verweis; `key-needed`/
+`account`/`ip-blocked` → `blocked_sources.φ` mit `reg`-Zeile (die Operator-/
+Aufnehmer-Seite als Zeile in `state/zustand/wartend.φ`); `decline`
+(Oszillator-Gate) → `declined_sources.φ`.
 
 **Weberin-Eignung — die vierte Prüfung (Operator-Wort 2026-10-02).** Nach
 `force`/τ/Klassifikation wird jede Quelle zusätzlich auf die *komplette*
@@ -259,8 +252,9 @@ je benannt, vor jedem `url`/`compiler`-Eintrag:
    *eine*? Eine einzelne Linie ergibt `absent`/DirectionOnly, nie Placed. Ein
    Kanal ist **nicht** „gedeckt", solange nur eine Linie läuft; die fehlende
    zweite Linie ist ein Register-Punkt (`pending`/`blocked`), nie stillschweigend
-   „gedeckt". Die Auswertung ist gebaut: `weberin_verdicts_compiler`
-   (`sources.φ:10409`).
+   „gedeckt".    Die Auswertung ist gebaut:
+   `tools/measure/src/bin/weberin_verdicts_compiler.rs` +
+   `src/archivar/weberin_verdicts.rs`.
 
 **Toter Endpoint ist kein Endzustand.** Funktioniert der Endpoint nicht, wird
 erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
@@ -299,9 +293,10 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
 - **Auth ist kein Hindernis** solange die Registrierung frei, public und
   nicht-kommerziell ist (NASA Earthdata, NOAA, Copernicus, GBIF, …). Der
   Parser greift bereits auf `.secrets.local` zu — Key dort eintragen, als
-  `{MARKER}` in `url`/`header` referenzieren; `resolve_secret`/`render_headers`
+  `{MARKER}` in `url`/`header` referenzieren;   `resolve_secret`/`render_headers`
   lösen ihn auf. Kein Code nötig. Kommerzielle/private Keys bleiben declined.
-  Re-review-Kandidaten stehen in `phi/pipeline/review_kandidaten.txt`.
+  (Die frühere Re-review-Liste `phi/pipeline/review_kandidaten.txt` ist mit
+  `phi/pipeline/` descoped, 2026-10-11.)
 - **Der Proton-Exit ist die Netz-Ebene der Eskalation** (seit 2026-09-13 auch
   userspace ohne root, siehe unten): re-routet die eigene Exit-IP gegen
   Geo-/IP-Block. Reihenfolge: direkte Route → Proton-Exit → WebArchive.
@@ -358,15 +353,14 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
   Provider-Namen, (5) Proton-Exit für Netzwerk-Blocks. Nur wenn all das leer
   bleibt → `dead` mit `note`, die den Recherche-Stand nennt.
-- Der `--port`-Konverter übernimmt: `url/format/header/target/catalog/
-  flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`/`no-cadence`; `on/at`;
-  numerisches `lat/lon/alt` → synthetisches `on earth`; `map/cmap/rows`;
-  `lat_key/lon_key/alt_key/epoch_key` → `lat/lon/alt/epoch`; `field/field_in/
-  first/last/count/path/deep` → 9-Token-`field`; `last_row`→`lastrow`,
-  `last_line`→`lastline`, `last_obj`→`lastobj`, `regex` (Join), `geojson`
-  (tau = ttl/10). **Fällt**: `source`, `method`, `body` (POST), `pos`,
-  unbekannte Direktiven — solche Blöcke sind `park/`-Kandidaten mit
-  Gap-Verweis (post_body-Migration ist offene Arbeit).
+- Der `--port`-Konverter (descoped 2026-10-11 mit `phi/pipeline/`) übernahm
+  `url/format/header/target/catalog` direkt, `ttl`/`no-cadence`, `on/at`,
+  numerisches `lat/lon/alt` → `on earth`, `map/cmap/rows`, `lat_key/…` →
+  `lat/lon/alt/epoch`, `field/field_in/…` → 9-Token-`field`, `last_row`→`lastrow`
+  usw. **Er fiel**: `source`, `method`, `body` (POST), `pos`, unbekannte
+  Direktiven. Die Grammatik-Fakten der 9-Token-`field`-Form bleiben lebend und
+  stehen in §6 + `docs/specs/sources-v2-spec.md`; der Konverter-Pfad selbst ist
+  absent.
 - **Session 2026-08-19 — Teleskop-Endpoints (Wayback + curl verifiziert,
   volle Log §13):** `nhsa.esac.esa.int` tot → Herschel-Archiv lebt unter
   `archives.esac.esa.int/hsa` (HAIO: `/hsa/aio`); `svom.nscs.ac.cn` tot →
@@ -385,8 +379,8 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
 - **GCN-API v0.1 ist tot** (2026-08-19 verifiziert): `api/v0.1/circulars`
   → 404 Remix-SPA. Circulars jetzt nur SPA-Suche + `/circulars/{id}.json`
   (JSON mit body-Freitext, KEINE ra/dec). Kein Listen-Feed gefunden — die
-  `gcn_einstein_probe_*`-Blöcke in master.φ:27360-27385 sind stale
-  (Ledger: parser-gap). TAP-Formen (verifiziert): ESO `archive.eso.org/tap_obs/sync`
+  `gcn_einstein_probe_*`-Blöcke im (descopten) `master.φ:27360-27385` sind
+  stale (parser-gap). TAP-Formen (verifiziert): ESO `archive.eso.org/tap_obs/sync`
   (nicht `/tap_obs/tap/sync` — 404) → csv; ESA-TAP-Server nur unter
   `eas.esac.esa.int/tap-server/tap` (AMA `archives.esac.esa.int/tap-server/tap`
   → 404); SARAO `/tap/sync` → Portal-HTML (kein TAP); ALMA TAP lebt
@@ -397,54 +391,67 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   IRSA-TAP trägt `spherex.obscore` (s_ra/s_dec); Rubin-TAP 401 (OAuth,
   blocked bestätigt); ATLAS-Forced-Photometrie = Formularseite
   `fallingstar-data.com/forcedphot/` (bootstrap, Token nötig); eROSITA DR2 =
-  HTML-Landing `erosita.mpe.mpg.de/dr2/`. Befund-Dateien:
-  `phi/pipeline/research/agent_output/verify_astro{,_b}_2026-08-19.φ`.
+  HTML-Landing `erosita.mpe.mpg.de/dr2/`. Die Befund-Dateien lagen unter dem
+  (descopten) `phi/pipeline/research/agent_output/verify_astro{,_b}_2026-08-19.φ`;
+  die Messreihe trägt git.
 
 ## 10. Secrets
 
-`.secrets.local` (Repo-Root, gitignored, 46 Keys, GitHub-Parität) — geladen
-via `resolve_asset` (CWD-relativ). Probe-Läufe außerhalb des Repo-Roots
-brauchen einen Symlink. `{MARKER}` in URLs wird case-insensitiv gegen die
-UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
+`.secrets.local` (Repo-Root, gitignored, gemessen 2026-10-11: 165 Keys via
+`bin/secrets_keys`) — geladen via `resolve_asset` (CWD-relativ). Probe-Läufe
+außerhalb des Repo-Roots brauchen einen Symlink. `{MARKER}` in URLs wird
+case-insensitiv gegen die UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
+Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
 
 ## 11. Regeln
 
-- Name = Implementation. Keine Kommentare in φ-Dateien; Wissen lebt in
-  Protokoll und Ledger.
-- Ein Commit = ein Häkchen: das Handover-Register im selben Commit; Erledigtes entfernt.
-- `cargo check` 0 Errors, 0 Warnings. Der Sweep-Test ist der Verifikator;
-  `cargo check` prüft nur Syntax.
-- Die Session ist das Atom: ein Korpus pro Session komplett durch die
-  Prozedur — kein halber Port.
-- 0 honored: eine void-Diagnose ist eine vollständige Disposition, kein
-  Fehler. Absent ist erst nach Recherche absent (`ausstehend` bis dahin).
-- Blocked-Kanon (2026-08-19, verbindlich): genau drei Auth-Formen —
+- Name = Implementation. Keine Kommentare in φ-Dateien; Wissen lebt im
+  Register und im Handover.
+- Ein Commit = ein Häkchen: das Handover-Register im selben Commit; Erledigtes
+  wird entfernt.
+- `cargo check` 0 Errors, 0 Warnings; `cargo check` prüft nur Syntax — die
+  Verifikation ist am Baum (die Session ist der Verifikator).
+- Die Session ist das Atom: eine Klasse von Quellen pro Session durch die
+  Prozedur (§5) — kein halber Port.
+- 0 honored: eine leere/absente Diagnose ist eine vollständige Disposition,
+  kein Fehler. Absent ist erst nach Recherche absent (`pending` bis dahin).
+- Blocked-Kanon (2026-08-19, verbindlich): Auth-Formen —
   `blocked key` (API-Key/Ticket), `blocked account` (Konto/Login/
-  Registrierung), `blocked ip-blocked` (Bot-/IP-Sperre). Je Eintrag eine
-  `reg <url>`-Zeile (Registrierungsseite). Mirror-Gate: nur Quellen
-  bleiben, deren Daten gespiegelt werden dürfen (CDN) — Open-Data,
-  Regierungs-Open-Data, Forschungsdaten → bleibt, Mirror-Einordnung in
-  der note; kommerzielle ToS / Redistribution → `decline redistribution`
-  in dead_sources.φ. `parser-def` trägt immer den Dateityp
-  (html/json/xml/csv), nie nackt. Sortierung: blocked (key, account,
-  ip-blocked) dann parser-def, jeweils alphabetisch nach URL.
-  Kaskaden-200 (Proton-Exit/Wayback) = entblockt → der Eintrag verlässt
-  blocked_sources.φ; sein Zielort ist `phi/sources.φ` über die bestehende
-  Port-Prozedur. Der queue-Grind-Draft-Pfad ist descoped (gemessen
-  2026-09-18: `phi/pipeline/queue/` trägt keine `.φ`) — nie gebaut, nicht
-  gebraucht: `register_lookup --open` ist die Queue — es liest die
-  Zustands-Register owner-getaggt (`blocked parser-def`/`parser-gap`/`asset
-  fehlt` → mountain, `blocked account`/`blocked key` → future → operator,
-  `blocked ip-blocked`/`pending`/`ausstehend`/`kompiliert` → mycelium, released
-  Zustände → released), dazu `pipeline/ledger.φ` und die `probe_*`-Entwürfe
-  per-Eintrag, die Katalog-Kandidatenpools als Zählzeile; die Kaskade ist
-  Grind-Werkzeug, kein Archivar-Code.
+  Registrierung), `blocked ip-blocked` (Bot-/IP-Sperre), `blocked parser-def`
+  (Format unkonsumierbar, trägt immer den Dateityp html/json/xml/csv, nie
+  nackt). Je Zugangs-Eintrag eine `reg <url>`-Zeile (Registrierungsseite).
+  Mirror-Gate: nur Quellen bleiben, deren Daten gespiegelt werden dürfen (CDN)
+  — Open-Data, Regierungs-Open-Data, Forschungsdaten → bleibt, Mirror-
+  Einordnung in der `note`; kommerzielle ToS/Redistribution →
+  `decline redistribution`. Sortierung: blocked (key, account, ip-blocked) dann
+  parser-def, jeweils alphabetisch nach URL. Kaskaden-200 (Proton-Exit/
+  Wayback) = entblockt → der Eintrag verlässt `blocked_sources.φ`; sein Zielort
+  ist `phi/sources.φ` über die Prozedur (§5). `register_lookup --open` ist die
+  Queue — es liest die Zustands-Register owner-getaggt (`blocked`/`parser-def`/
+  `asset fehlt` → mountain, `blocked account`/`blocked key` → future →
+  operator, `blocked ip-blocked`/`pending` → mycelium, released → released) und
+  `state/zustand/wartend.φ`; es gibt keinen `phi/pipeline/`-Draft-Pfad
+  (descoped 2026-10-11).
 - Grenze declined/blocked (Operator-Wort 2026-09-15): **kommerziell →
   `decline redistribution`** (nicht blocked — der Zugang ist nicht gesperrt,
   das Verdikt ist kommerziell); **der Konsument ist kein Kriterium** — die
   Presence bewegt sich frei durch den 4D-Block, eine physikalische,
   zugängliche Messung gehört ins Register (der Konsument ist eine
   Bau-Reihenfolge, kein Quellen-Verdikt).
+- **Authentifizierung ist kein Ausschlusskriterium** (Operator-Wort 2026-10-08):
+  ein `blocked account`/`blocked key` ist eine `pending`-Operator-Aufgabe, kein
+  Quellen-Verdikt — wo der Operator zugangsberechtigt ist oder ein Key besteht,
+  führt die **Auth-Route** zur Quelle, nie ein `decline`.
+
+## Anhang — datierte Recherche-Snapshots
+
+> **Hinweis (2026-10-11).** §12–§16 sind datierte Snapshots aus den Sessions
+> 2026-08-19 und 2026-09-10, konserviert als Messreihe (die Messung gehört der
+> Zukunft). Die darin genannten `phi/pipeline/...`-Pfade (`queue/`·`master.φ`,
+> `research/agent_output/`, `ledger.φ`, `catalog/`) sind **descoped und am
+> Datenträger absent** (gemessen 2026-10-11); die genannten Kandidaten-URLs und
+> Endpoint-Fakten bleiben als Messung gültig und sind über `archive_search`
+> nachprüfbar. Der laufende Pfad ist §1–§11.
 
 ## 12. Teleskop-Inventar (Session 2026-08-19)
 

@@ -65,10 +65,15 @@ jobs:
             local inputs=()
             if grep -qE '^[[:space:]]+format:' ".github/workflows/$wf"; then
               inputs+=(-f format="$fmt")
-              if [ -n "$tmo" ]; then inputs+=(-f timeout="$tmo"); fi
-              if [ "$force" = "true" ]; then inputs+=(-f force=true); fi
-            else
-              echo "format $fmt: $wf declares no format input — dispatch without inputs"
+            fi
+            if [ -n "$tmo" ] && grep -qE '^[[:space:]]+timeout:' ".github/workflows/$wf"; then
+              inputs+=(-f timeout="$tmo")
+            fi
+            if [ "$force" = "true" ] && grep -qE '^[[:space:]]+force:' ".github/workflows/$wf"; then
+              inputs+=(-f force=true)
+            fi
+            if [ ${#inputs[@]} -eq 0 ]; then
+              echo "format $fmt: $wf declares no matching input — dispatch without inputs"
             fi
             gh workflow run "$wf" "${inputs[@]}" --repo '${{ github.repository }}' \
               || { echo "format $fmt: gh workflow run returned non-zero — dispatch void"; bad=1; }
@@ -82,6 +87,10 @@ jobs:
             asset=$(printf '%s\n' "$block" | sed -n 's/^asset //p')
             wf=$(printf '%s\n' "$block" | sed -n 's/^workflow //p')
             wf=${wf:-harvest.yml}
+            # the register may name the workflow by its name: (harvest-long) or by its file (harvest.yml)
+            if [ ! -f ".github/workflows/$wf" ] && [ -f ".github/workflows/$wf.yml" ]; then
+              wf="$wf.yml"
+            fi
             tmo=$(printf '%s\n' "$block" | sed -n 's/^timeout //p')
             idem=$(printf '%s\n' "$block" | sed -n 's/^idempotent //p')
             case "$asset" in
