@@ -281,16 +281,24 @@ pub fn record_stride(meta: &TableMeta, file_len: usize) -> Option<usize> {
 
 pub fn unix_of_iso(s: &str) -> Option<f64> {
     let b = s.as_bytes();
-    if b.len() < 19 || b[4] != b'-' || b[7] != b'-' || b[10] != b'T' {
+    if b.len() < 19 || b[4] != b'-' || b[10] != b'T' {
         return None;
     }
     let year = s.get(0..4)?.parse::<i64>().ok()?;
-    let month = s.get(5..7)?.parse::<i64>().ok()?;
-    let day = s.get(8..10)?.parse::<i64>().ok()?;
+    let days = if b[7] == b'-' {
+        let month = s.get(5..7)?.parse::<i64>().ok()?;
+        let day = s.get(8..10)?.parse::<i64>().ok()?;
+        days_from_civil(year, month, day)?
+    } else {
+        let doy = s.get(5..8)?.parse::<i64>().ok()?;
+        if !(1..=366).contains(&doy) {
+            return None;
+        }
+        days_from_civil(year, 1, 1)? + (doy - 1)
+    };
     let hour = s.get(11..13)?.parse::<i64>().ok()?;
     let minute = s.get(14..16)?.parse::<i64>().ok()?;
     let second = s.get(17..19)?.parse::<i64>().ok()?;
-    let days = days_from_civil(year, month, day)?;
     let frac = if b.get(19) == Some(&b'.') {
         let frac_str = s.get(20..)?.trim_end_matches('Z');
         if frac_str.is_empty() {
@@ -830,6 +838,14 @@ END
         assert_eq!(parse_cell(b"inf", "ASCII_REAL", None), None);
         assert_eq!(parse_cell(b"1e308", "ASCII_REAL", None), Some(1e308));
         assert_eq!(parse_cell(b"N/A", "ASCII_REAL", None), None);
+    }
+
+    #[test]
+    fn unix_of_iso_parses_day_of_year() {
+        assert_eq!(
+            unix_of_iso("2000-074T00:09:30.817"),
+            unix_of_iso("2000-03-14T00:09:30.817")
+        );
     }
 
     #[test]
