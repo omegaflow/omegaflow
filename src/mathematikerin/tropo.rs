@@ -22,11 +22,7 @@ fn mapping_factor(elevation_rad: f64, a: f64, b: f64, c: f64) -> Option<f64> {
     let numerator = 1.0 + a / (1.0 + b / (1.0 + c));
     let denominator = sin_el + a / (sin_el + b / (sin_el + c));
     let mf = numerator / denominator;
-    if mf.is_finite() {
-        Some(mf)
-    } else {
-        None
-    }
+    if mf.is_finite() { Some(mf) } else { None }
 }
 
 pub fn slant_delay_m(
@@ -65,11 +61,7 @@ pub fn slant_delay_m(
     let mfh = mapping_factor(elevation_rad, a_h, b_h, c_h)?;
     let mfw = mapping_factor(elevation_rad, a_w, b_w, c_w)?;
     let delay = mfh * zhd_m + mfw * zwd_m;
-    if delay.is_finite() {
-        Some(delay)
-    } else {
-        None
-    }
+    if delay.is_finite() { Some(delay) } else { None }
 }
 
 #[cfg(test)]
@@ -111,7 +103,10 @@ mod tests {
         let zwd_m = 0.1199;
         let low = slant_delay_m(0.1, zhd_m, zwd_m, aggo_coefficients()).expect("a finite delay");
         let high = slant_delay_m(1.5, zhd_m, zwd_m, aggo_coefficients()).expect("a finite delay");
-        assert!(low > zhd_m + zwd_m, "low elevation {low} above the zenith sum");
+        assert!(
+            low > zhd_m + zwd_m,
+            "low elevation {low} above the zenith sum"
+        );
         assert!(
             low > high,
             "delay grows toward the horizon: low {low} vs high {high}"
