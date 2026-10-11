@@ -1,5 +1,5 @@
-use omegaflow::fits::FitsHeader;
-use omegaflow::healpix::{galactic_to_icrs, pix2ang_nest};
+use omegaflow::fits::{FitsHeader, FitsTable};
+use omegaflow::healpix::{ang2pix_nest, galactic_to_icrs, pix2ang_nest, pix2ang_ring};
 use omegaflow::json::{JsonVal, parse_json};
 
 const Z_CMB: f64 = 1100.0;
@@ -37,6 +37,19 @@ struct Table {
     t_width: usize,
     width: usize,
     unit: f64,
+}
+
+struct PartialTable {
+    nside: i64,
+    fits: FitsTable,
+    pixel_idx: usize,
+    temp_idx: usize,
+    unit: f64,
+}
+
+enum Map {
+    Full(Table, String),
+    Partial(PartialTable, String),
 }
 
 fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
@@ -123,6 +136,87 @@ fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
     ))
 }
 
+fn read_table_partial(bytes: &[u8]) -> Option<(PartialTable, String)> {
+    let (_, off) = FitsHeader::parse(bytes, 0)?;
+    let (h, hdu_start) = FitsHeader::parse(bytes, off)?;
+    let (fits, _) = FitsTable::parse(bytes, hdu_start)?;
+    let nside = h.int("NSIDE")?;
+    if nside <= 0 || (nside & (nside - 1)) != 0 {
+        eprintln!("NSIDE {nside} is not a positive power of two — the map stays unwritten");
+        return None;
+    }
+    let npix_full = 12 * nside * nside;
+    if fits.n_rows == 0 {
+        eprintln!("NAXIS2 0: no EXPLICIT rows — the map stays unwritten (0 honored)");
+        return None;
+    }
+    if fits.n_rows as i64 > npix_full {
+        eprintln!(
+            "NAXIS2 {} exceeds 12*NSIDE^2 ({npix_full}): the table shape stays unread",
+            fits.n_rows
+        );
+        return None;
+    }
+    let pixel_idx = fits.columns.iter().position(|c| c.name == "PIXEL")?;
+    if !matches!(fits.columns[pixel_idx].code, 'J' | 'I' | 'K') {
+        eprintln!("PIXEL column is not an integer type — the map stays unwritten");
+        return None;
+    }
+    let temp_idx = fits.columns.iter().position(|c| c.name == "TEMPERATURE")?;
+    if !matches!(fits.columns[temp_idx].code, 'D' | 'E') {
+        eprintln!("TEMPERATURE column is not a floating type — the map stays unwritten");
+        return None;
+    }
+    let unit_text = fits.columns[temp_idx]
+        .unit
+        .clone()
+        .or_else(|| h.str_unescaped("BUNIT"))
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty());
+    let unit = match unit_text.as_deref().and_then(unit_factor) {
+        Some(u) => u,
+        None => {
+            eprintln!("TEMPERATURE TUNIT/BUNIT absent or unknown: the unit stays unread");
+            return None;
+        }
+    };
+    let label = format!(
+        "PIXEL/TEMPERATURE {}",
+        unit_text.as_deref().unwrap_or("(unit absent)")
+    );
+    Some((
+        PartialTable {
+            nside,
+            fits,
+            pixel_idx,
+            temp_idx,
+            unit,
+        },
+        label,
+    ))
+}
+
+fn read_map(bytes: &[u8]) -> Option<Map> {
+    let (_, off) = FitsHeader::parse(bytes, 0)?;
+    let (h, hdu_start) = FitsHeader::parse(bytes, off)?;
+    let ordering = h
+        .str_unescaped("ORDERING")
+        .map(|s| s.trim().to_ascii_uppercase());
+    let indxschm = h
+        .str_unescaped("INDXSCHM")
+        .map(|s| s.trim().to_ascii_uppercase());
+    let has_pixel = FitsTable::parse(bytes, hdu_start)
+        .map(|(t, _)| t.column("PIXEL").is_some())
+        .unwrap_or(false);
+    let partial =
+        ordering.as_deref() == Some("RING") || indxschm.as_deref() == Some("EXPLICIT") || has_pixel;
+    if partial {
+        read_table_partial(bytes).map(|(t, l)| Map::Partial(t, l))
+    } else {
+        read_table(bytes).map(|(t, l)| Map::Full(t, l))
+    }
+}
+
 fn col_value(bytes: &[u8], table: &Table, row: usize, width: usize) -> Option<f64> {
     let off = table.data_start + row * width;
     if table.t_width == 8 {
@@ -149,6 +243,47 @@ fn degrade(bytes: &[u8], table: &Table, width: usize, nside_out: i64) -> Vec<Opt
         let c = (r as i64 / (ratio * ratio)) as usize;
         sum[c] += v;
         count[c] += 1;
+    }
+    (0..npix_out)
+        .map(|c| {
+            if count[c] == 0 {
+                None
+            } else {
+                Some((sum[c] / count[c] as f64 * table.unit, count[c]))
+            }
+        })
+        .collect()
+}
+
+fn degrade_partial(bytes: &[u8], table: &PartialTable, nside_out: i64) -> Vec<Option<(f64, u64)>> {
+    let npix_out = (12 * nside_out * nside_out) as usize;
+    let mut sum = vec![0.0f64; npix_out];
+    let mut count = vec![0u64; npix_out];
+    let npix_in = 12 * table.nside * table.nside;
+    let pixel = &table.fits.columns[table.pixel_idx];
+    let temp = &table.fits.columns[table.temp_idx];
+    for r in 0..table.fits.n_rows {
+        let Some(p) = table.fits.cell_i64(bytes, r, pixel) else {
+            continue;
+        };
+        if p < 0 || p >= npix_in {
+            continue;
+        }
+        let Some(v) = table.fits.cell_f64(bytes, r, temp) else {
+            continue;
+        };
+        if !v.is_finite() {
+            continue;
+        }
+        let Some((theta, phi)) = pix2ang_ring(table.nside, p) else {
+            continue;
+        };
+        let Some(c) = ang2pix_nest(nside_out, theta, phi) else {
+            continue;
+        };
+        let ci = c as usize;
+        sum[ci] += v;
+        count[ci] += 1;
     }
     (0..npix_out)
         .map(|c| {
@@ -359,22 +494,39 @@ fn main() {
             }
         }
     };
-    let Some((table, col)) = read_table(&bytes) else {
+    let Some(map) = read_map(&bytes) else {
         std::process::exit(1);
     };
-    if nside_out <= 0 || nside_out > table.nside || table.nside % nside_out != 0 {
-        eprintln!(
-            "--nside {} is not a power-of-two divisor of NSIDE {} — the map stays unwritten",
-            nside_out, table.nside
-        );
-        std::process::exit(1);
-    }
-    eprintln!(
-        "NSIDE {} ({} pixels), column {}, ORDERING NESTED, degrade to NSIDE {}",
-        table.nside, table.npix, col, nside_out
-    );
-
-    let coarse = degrade(&bytes, &table, table.width, nside_out);
+    let coarse = match &map {
+        Map::Full(table, col) => {
+            if nside_out <= 0 || nside_out > table.nside || table.nside % nside_out != 0 {
+                eprintln!(
+                    "--nside {} is not a power-of-two divisor of NSIDE {} — the map stays unwritten",
+                    nside_out, table.nside
+                );
+                std::process::exit(1);
+            }
+            eprintln!(
+                "NSIDE {} ({} pixels), column {}, ORDERING NESTED, degrade to NSIDE {}",
+                table.nside, table.npix, col, nside_out
+            );
+            degrade(&bytes, table, table.width, nside_out)
+        }
+        Map::Partial(table, col) => {
+            if nside_out <= 0 || nside_out > table.nside || table.nside % nside_out != 0 {
+                eprintln!(
+                    "--nside {} is not a power-of-two divisor of NSIDE {} — the map stays unwritten",
+                    nside_out, table.nside
+                );
+                std::process::exit(1);
+            }
+            eprintln!(
+                "NSIDE {} ({} EXPLICIT rows), column {}, ORDERING RING, degrade to NSIDE {}",
+                table.nside, table.fits.n_rows, col, nside_out
+            );
+            degrade_partial(&bytes, table, nside_out)
+        }
+    };
     let mut rows: Vec<(f64, f64, f64)> = Vec::new();
     let mut skipped = 0usize;
     let mut tsum = 0.0f64;
@@ -490,6 +642,93 @@ mod tests {
             buf.extend_from_slice(&row);
         }
         buf
+    }
+
+    const PARTIAL_ROW_BYTES: usize = 12;
+
+    fn synth_partial(nside: i64, rows: &[(i64, f64)], unit: Option<&str>) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let primary = format!(
+            "{}{}{}",
+            card("SIMPLE", "T"),
+            card("BITPIX", "8"),
+            card("NAXIS", "0")
+        );
+        let mut hdr = primary.into_bytes();
+        hdr.extend(card("END", "").into_bytes());
+        while hdr.len() % 2880 != 0 {
+            hdr.push(b' ');
+        }
+        buf.extend_from_slice(&hdr);
+        let mut table = String::new();
+        table.push_str(&card("XTENSION", "'BINTABLE'"));
+        table.push_str(&card("BITPIX", "8"));
+        table.push_str(&card("NAXIS", "2"));
+        table.push_str(&card("NAXIS1", &PARTIAL_ROW_BYTES.to_string()));
+        table.push_str(&card("NAXIS2", &rows.len().to_string()));
+        table.push_str(&card("TFIELDS", "2"));
+        table.push_str(&card("PIXTYPE", "'HEALPIX'"));
+        table.push_str(&card("ORDERING", "'RING'"));
+        table.push_str(&card("NSIDE", &nside.to_string()));
+        table.push_str(&card("INDXSCHM", "'EXPLICIT'"));
+        table.push_str(&card("TTYPE1", "'PIXEL'"));
+        table.push_str(&card("TFORM1", "'1J'"));
+        table.push_str(&card("TTYPE2", "'TEMPERATURE'"));
+        table.push_str(&card("TFORM2", "'1D'"));
+        if let Some(u) = unit {
+            table.push_str(&card("TUNIT2", &format!("'{}'", u)));
+        }
+        let mut thdr = table.into_bytes();
+        thdr.extend(card("END", "").into_bytes());
+        while thdr.len() % 2880 != 0 {
+            thdr.push(b' ');
+        }
+        buf.extend_from_slice(&thdr);
+        for (p, v) in rows {
+            let mut row = [0u8; PARTIAL_ROW_BYTES];
+            row[0..4].copy_from_slice(&(*p as i32).to_be_bytes());
+            row[4..12].copy_from_slice(&v.to_be_bytes());
+            buf.extend_from_slice(&row);
+        }
+        buf
+    }
+
+    #[test]
+    fn partial_ring_downsample_selects_coarse_nest_pixels() {
+        let rows = [
+            (0i64, 10.0f64),
+            (4, 20.0),
+            (8, 30.0),
+            (12, 40.0),
+            (47, 50.0),
+        ];
+        let bytes = synth_partial(2, &rows, Some("uK"));
+        let (table, _) = read_table_partial(&bytes).unwrap();
+        assert_eq!(table.nside, 2);
+        let coarse = degrade_partial(&bytes, &table, 1);
+        assert_eq!(coarse.len(), 12);
+        let c0 = coarse[0].unwrap();
+        assert!((c0.0 - 15e-6).abs() < 1e-18, "coarse 0 = {}", c0.0);
+        assert_eq!(c0.1, 2);
+        let c2 = coarse[2].unwrap();
+        assert!((c2.0 - 30e-6).abs() < 1e-18, "coarse 2 = {}", c2.0);
+        assert_eq!(c2.1, 1);
+        let c4 = coarse[4].unwrap();
+        assert!((c4.0 - 40e-6).abs() < 1e-18, "coarse 4 = {}", c4.0);
+        assert_eq!(c4.1, 1);
+        let c11 = coarse[11].unwrap();
+        assert!((c11.0 - 50e-6).abs() < 1e-18, "coarse 11 = {}", c11.0);
+        assert_eq!(c11.1, 1);
+        assert!(coarse[1].is_none());
+        assert!(coarse[3].is_none());
+    }
+
+    #[test]
+    fn read_map_selects_partial_and_full() {
+        let partial = synth_partial(2, &[(0i64, 1.0f64)], Some("uK"));
+        assert!(matches!(read_map(&partial), Some(Map::Partial(_, _))));
+        let nested = synth_map(2, &vec![1.0; 48], "NESTED", Some("K"));
+        assert!(matches!(read_map(&nested), Some(Map::Full(_, _))));
     }
 
     #[test]

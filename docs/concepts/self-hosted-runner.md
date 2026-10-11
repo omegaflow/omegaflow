@@ -68,9 +68,16 @@ Konfiguration: `/etc/default/runner-throttle` (`IFACE`, `MIN_KBIT`, `MAX_KBIT`, 
 ## Grenzen (0 honored)
 
 - **Der Media-PC ist ein eigenes Gerät** — der t420 sieht dessen Verkehr nicht. Die ehrliche,
-  lokale Regel ist deshalb **Headroom lassen** (Kappe + Adaption über die gemessene Gateway-Latenz);
-  die **wirklich** adaptive Stelle bei getrennten WLAN-Clients ist **QoS am Router** (Bufferbloat-
-  Management, `cake`/SQM) — das ist Operator-Config, nicht t420-Config, und bleibt hier `pending`.
+  lokale Regel ist deshalb **Headroom lassen** (Kappe + Adaption über die gemessene Gateway-Latenz).
+  Die **wirklich** adaptive Stelle bei getrennten WLAN-Clients wäre **QoS am Router** (Bufferbloat-
+  Management, `cake`/SQM) — **gemessen `descoped` (2026-10-11, FRITZ!Box 7530, `Internet → Filter →
+  Priorisierung`):** die Firmware bietet **keine Geräte-Priorisierung** — nur *Anwendungs*-Regeln
+  (Echtzeit/Priorisiert/Hintergrund) und die *Heimnetz-Bandbreitenreservierung*; der Runner-Download
+  läuft über HTTPS/443 und ist als Anwendung nicht adressierbar, und die Reservierung hülfe nur im
+  Gastnetz (bricht die SSH-Verwaltung). Die t420-eigene Kappe (`bin/runner_throttle.sh`) ist damit die
+  **wirksame** Stelle; die Router-Config ist kein t420-Akt. Operator-Akt 2026-10-11: „Automatisch faire
+  Verteilung der Bandbreite" (fair-share über Heim- und Gastnetz, kein Geräte-Vorrang) — ergänzt die
+  Kappe, schadet nicht.
 - Der Runner ist ein 2011er ThinkPad: für CPU-schwere Jobs **langsamer** als GitHub-hosted. Deswegen
   laufen dort die **netz-lastigen** Compiler und der kleine `--lib`-Subset, nicht die volle Suite.
 - Ein Runner = ein Job. Der `subset`-Tip hält die Queue; bei Offline-Gerät hängt ein Required-Check
