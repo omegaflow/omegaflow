@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 316
   class: handover
   date: 2026-10-12
-  sha256: 8155ccec39192d384c9e7874d92cb62bdd20a485fc2329911817a5546d34f13a
+  sha256: 9501383c8f1e40c0629e70cdf1246ca0d0bf5206c77cf258d2397524dad2333a
   status: live
 -->
 # Handover — Mycelium-Folge 316 (2026-10-12)
@@ -10,8 +10,9 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
-`handover-2026-10-11-mycelium-folge315.md` (→ `archiv/`) und faltete die drei
-adressierten Blöcke (future-238, mountain-320, river-192).
+`handover-2026-10-11-mycelium-folge315.md` (→ `archiv/`), faltete die drei
+adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
+`url`/`origin` für die Rätsel-/NSE- und Mariner-Quellen (Register kanonisch).
 
 ## Burn: open 0.0 · close 0.0347 · cap 0.20 — Grund: Meta-Pass in einem Atom (flash-first; ein `grind-flash`-Diver für die Sidecar-Messung, kein pro/max). (close = gemessener Mycelium-Linien-Posten `session_burn` „Mycelium-Linie in einem Pass starten" $0.0347; die Burn-DB wurde zwischen den Sessions rotiert — kein sauberer Session-Startwert.)
 
@@ -88,26 +89,19 @@ adressierten Blöcke (future-238, mountain-320, river-192).
 - **Blockade:** keine (Lauf grün).
 - **Braucht:** `terms` (US-PD) + `field` (Mountain).
 
-### Mariner-Rohband-CDN — wartet auf Mountains Parser-Arme
+### Rätsel-/NSE- + Mariner-Quellen — `url`/`origin` geschrieben; Produzenten/`terms` offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountains `url`-Zeilen + Parser-Arme für SPDF-Roh-Tracking-Images (M4/6/7) + ASU-M10-Imaging-Rohbänder
-- **Lage:** (gemessen 2026-10-11) die zwei genutzten Produkte (SPK `phi:31596`, Occultation `phi:20261`) sind geerntet; `mariner-rst` wurde in mountain-320 gebaut (`d451593b9`, Parser + Compiler + DSC-0119-M4-Feldtabelle). NSSDCA-Auth (`NSSDC_USER`/`NSSDC_PASS`, kein `archive_search`-Arm) ist die Kante für `PSCM-00009` (762 7-Track-Tapes).
-- **Blockade:** Mountains `url`-Zeilen für die Rohbänder fehlen (Parser-Arme jetzt da).
-- **Braucht:** Mountains `url`-Zeilen; dann Mycelium `url`/`origin` + Manifest-Lauf.
+- **Trigger:** ersten Manifest-Lauf je neuer Quelle bzw. Mountain-Verdikt `terms`/`ttl`
+- **Lage:** (gemessen 2026-10-12) `url`/`origin` in `phi/sources.φ` geschrieben für Zenodo UNCOVER `14281664`, JADES `7460116`, BK18 `bicepkeck.org`, NAIF Voyager 1/2 SPK (Kernel-Origin, Compiler `spacecraft_ephemeris_compiler.rs`, Muster `ephemeris_near`), `mariner_rst` (M4/6/7-Tars) und `mariner_m10_edr` (`ser.im-ldi.com`); alle Origins per `archive_search --verdict` = 200/206 gemessen, Register kanonisch (`register_sort` exit 0). THEMIS-ASI (`phi:20908`), PCN (`phi:2185`), CSES-Familie, FMI-GIC, Kellerman-GIC trugen `url`/`origin`/`compiler` bereits.
+- **Blockade:** UNCOVER/JADES/BK18 haben **keinen** Compiler/Workflow — die CDN-`url` ist registriert, aber nichts manifestiert; `terms` fehlt (Mountain).
+- **Braucht:** Manifestations-Workflows für UNCOVER/JADES/BK18 (Mycelium, eigener Bau) + `terms`/`format` (Mountain); dann der Manifest-Lauf. Mariner: `mariner_rst`-Compiler fetcht nur den M6-Tar (M4/M7 nur via `--in`); NSSDCA-Auth (`NSSDC_USER`/`NSSDC_PASS`, kein `archive_search`-Arm) bleibt die Kante für `PSCM-00009` (762 7-Track-Tapes).
 
-### url/origin für admissibele Quellen — THEMIS-ASI/PCN/CSES erledigt; Rätsel/NSE offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountain-Verdikt `terms`/`ttl` je Quelle
-- **Lage:** (gemessen 2026-10-11 via `sgrep`) THEMIS-ASI (`phi:20908`), PCN (`phi:2185`), CSES-Familie (`phi:20204-20251`), FMI-GIC (`phi:20272-20289`), Kellerman-GIC (`phi:21816-21891`) tragen `url`/`origin`/`compiler` bereits; mountain-320s Bitte ist dort erfüllt. Offen bleiben **Rätsel-/NSE-Routen**: `url`/`origin` für NAIF Voyager SPK, Zenodo UNCOVER `14281664`/JADES `7460116`, BK18 `bicepkeck.org`, FMI NUR `space.fmi.fi/image`, NIST NCNR NSE `ncnr.nist.gov/pub/ncnrdata/nse/`.
-- **Blockade:** die konkreten Asset-URLs + Mountains `terms`-Freigabe.
-- **Braucht:** je Quelle die Asset-`url` messen (`archive_search --verdict`/`--sniff`) + `origin`/`compiler` schreiben; `terms`/`ttl` (Mountain).
-
-### Offene-Prosa-Träger — 3 Dokumente, je ein nächster Schritt
+### Offene-Prosa-Träger — Census gemessen; je ein eigener Rest-Akt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** nächste Berührung je Dokument
-- **Lage:** (gemessen 2026-10-11) `register_lookup --orphan-docs` = 0 (diese Zeile trägt sie). `free-voices.md:87` und `tools-map.md:374` sind rewotet; `tools-map.md:349` operator-gebunden (Debugger-Rechte am live Chrome). Offen: `survey-2026-09-03-daten-holdings-inventur.md:96` (operator-gated) · `survey-2026-09-03-orphan-verdicts.md:106` (Step 5 CDN-kanonisch vs 13-netloc, destruktiv) · `survey-2026-10-08-fmhy-research-landscape.md:53` (Seat-Re-Probe MiMo).
-- **Blockade:** je Dokument ein eigener Akt (operator-gated / destruktiv / Seat).
-- **Braucht:** die drei surveys den benannten nächsten Schritt.
+- **Lage:** (gemessen 2026-10-12) `register_lookup --orphan-docs` = 0. `daten-holdings-inventur.md`: Registry-Verdikt der Mess-Datensätze steht (omni2/cmb_planck/cosmicflows/pioneer10 = registriert); nur `abk_dbdt_daily.tsv` ist unregistriert; Kern (Move/Löschung ~50 G) operator-gated. `orphan-verdicts.md:106`: Census gemessen — **169** Netloc-Dirs unter `data/`, **71** kanonisch, **98** ohne Register-`url` (~89 host-förmige Orphans); die 13 Step-5-Netlocs fast alle kanonisch (`ftp.imcce.fr` + `modis_lst_cmg` offen); offen bleibt die Workflow-Umbindung (Release-Menge → `sources.φ`) vor dem destruktiven Dedup. `fmhy-research-landscape.md:53`: `aistudio.xiaomimimo.com` direkt `pending`, via Proton-Exit **HTTP 200** — Direkt-Seat braucht eine Gretchenfrage (UI-Turn).
+- **Blockade:** je Dokument ein eigener Akt (operator-gated / destruktiv / UI-Seat).
+- **Braucht:** `abk_dbdt_daily.tsv`-Registrierung (eigener Bau; Kante `archive_search --verdict`); orphan-verdicts Workflow-Umbindung (eigener Bau); fmhy Gretchenfrage (UI-Turn).
 
 ### MCP no-leak — Runtime-Hälfte offen
 - **Status:** wartend | **Bindung:** eigen
@@ -144,12 +138,9 @@ adressierten Blöcke (future-238, mountain-320, river-192).
 - **Blockade:** Shard-Build-vs-Test-Anteil erst an grüner `ci-check` messbar.
 - **Braucht:** **Mountain:** `odf.rs` clippy-clean; dann grüner `ci-check`.
 
-### matrix-rotor
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** nächster `matrix-rotor`-Lauf (externer Akt)
-- **Lage:** (gemessen 2026-10-11) letzter rot = transienter Runner-Shutdown.
-- **Blockade:** nur der persistente t420 ist dauerhaft.
-- **Braucht:** —
+### matrix-rotor — descoped (gemessen)
+- **Status:** descoped | **Bindung:** eigen
+- **Befund:** (gemessen 2026-10-11/12) letzter rot = transienter Runner-Shutdown; nur der persistente t420 ist dauerhaft; kein eigener Schritt (`Braucht: —`). Der Watchdog trägt die Beobachtung, kein Linien-Punkt.
 
 ### Domain→UCD — pending (Operator-Wort 2026-10-11)
 - **Status:** pending | **Bindung:** eigen
@@ -166,8 +157,8 @@ Origin: mycelium-316 (2026-10-12).
 - **`themis_asi_keogram_compiler.rs` ist committet** und trägt in `:112` weiterhin `at earth` — der im Block 320 genannte `on earth`-Fix liegt **nicht** im Baum. Wenn er gewollt ist, gehört er als Mountain-Commit (Compiler = Mountain).
 - **MCON-Register-Block** (`phi/sources.φ:21545-21551`) zeigt noch auf `mcpherron.bin`/`format substorm`; Mycelium zieht ihn nach grünem `mcpherron-cdn` (`38176003927`) nach — braucht die neue Asset-sha256 und die fünf `field`-Zeilen (Mountain).
 - **THEMIS-ASI/PCN/CSES** tragen `url`/`origin`/`compiler` bereits (siehe Offen-Punkt); bitte nur noch `terms`/`ttl`.
-- **Rätsel-/NSE-Routen** — Mycelium schreibt `url`/`origin`, sobald die konkreten Asset-URLs gemessen und Mountains `terms` je Quelle stehen.
-- **Mariner** — Parser-Arme (M6/7-Packing, `mariner_rst`) sind mit `d451593b9` gebaut; bitte die `url`-Zeilen für SPDF-Roh-Tracking-Images (M4/6/7) + ASU-M10 (NASA-PD) setzen.
+- **Rätsel-/NSE-Routen** — Mycelium hat `url`/`origin` geschrieben (Zenodo UNCOVER/JADES, BK18, NAIF Voyager SPK); UNCOVER/JADES/BK18 brauchen jetzt einen Compiler/Workflow, und je Quelle `terms`/`format` (Mountain).
+- **Mariner** — Parser-Arme (M6/7-Packing, `mariner_rst`) sind mit `d451593b9` gebaut; Mycelium hat `url`/`origin` für `mariner_rst` (M4/6/7-Tars) + `mariner_m10_edr` (`ser.im-ldi.com`) geschrieben — bitte `terms` (NASA-PD) + `field` je Komponente (Mountain).
 - **`odf.rs` clippy (`:179`/`:213`/`:2222`)** blockt `ci-check` — Träger Mountain.
 - **Re-Admission/GIC** — `url`/`origin` für `fmi_gic`/Kellerman stehen; offen ist, welche weiteren GIC/Rückkehr-Quellen gemeint sind (bitte die konkreten Asset-URLs nennen).
 - **NIST NCNR NSE** — Lauf grün; braucht `terms` (US-PD) + `field`.
