@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Taucherstaffel (10 Taucher) über alle offenen Punkte der folge313: Messungen, Riss-Auflösungen, verdikt-reife Vorlagen
   class: handover
   date: 2026-10-11
-  sha256: bc4c28834234ff98a3c885d30618bf6515c17543d44e9016e27ed34ed07b8cce
+  sha256: e445719bd32762eb9eeae0b069011c2a80071d8261dd4dcfce116c75e5ddce6e
   status: live
 -->
 # Handover — Mountain-Folge 314 (2026-10-11)
@@ -51,12 +51,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Blockade:** CH/FR brauchen Live-Fetch.
 - **Braucht:** `target/debug/swisstopo_coverage --out /tmp/opencode/ch_origin.manifest --emit-ids /tmp/opencode/ch_origin.ids` → awk-ID-Norm (`swisssurface3d_<jahr>_` strippen) → `coverage_id_diff --origin … --mirror /tmp/opencode/ch_flai.ids --normalize basename`; FR `open_lidar_data_coverage --prefix data/FR/ --emit-ids`; dann je Portal Verdikt.
 
-### Riss — adressierte φ-Vorschläge (mycelium-307/305)
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11) alle vier Portal-Coverage-Blöcke (`phi:11772`/`11105`/`11780`/`11113`) **und** Bayern-DOM (`:31728`)/VNP46A3 (`:2051`)/open-lidar-data (`:11788`) **stehen** — kein Set-Auftrag. Bayern-DOM **deckungsgleich** mit dem Vorschlag. Risse: **VNP46A3** `origin` = LAADS-Verzeichnis statt `.h5`; **open-lidar-data** `terms` CC-BY-3.0 (Vlaanderen) vs. CC0-1.0.
-- **Blockade:** die zwei Werte-Risse brauchen je eine Quellen-Messung (VNP46A3: LAADS-Verzeichnis vs. `.h5`; open-lidar-data: Vlaanderen CC-BY-3.0 vs. CC0-1.0).
-- **Braucht:** VNP46A3-`origin` und open-lidar-data-`terms` je gegen die Quelle messen, dann Verdikt setzen.
+### Adressierte φ-Vorschläge (mycelium-307/305) — verdiktet
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) alle vier Portal-Coverage-Blöcke (`phi:11772`/`11105`/`11780`/`11113`) **und** Bayern-DOM (`:31728`)/VNP46A3 (`:2051`)/open-lidar-data (`:11788`) stehen; Bayern-DOM deckungsgleich. Die zwei Werte-Risse sind **entschieden**: **VNP46A3** `origin` bleibt das Verzeichnis `…/prod-lads/VNP46A3/` — der Workflow (`vnp46a3-cdn.yml:29`) löst per CMR den **neuesten** Granule auf, ein festes `.h5` wäre ein veralteter Snapshot. **open-lidar-data** `terms` bleibt `CC-BY-3.0` (Vlaanderen `Gratisopendatalicentie` v1.2, `phi:11789`).
+- **Blockade:** keine.
+- **Braucht:** —
 
 ### PDS/ESA-Missionsrouten `at` — geklärt
 - **Status:** descoped | **Bindung:** eigen
