@@ -1507,6 +1507,11 @@ field 3 maxi_J0006+202_2_4kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
 field 5 maxi_J0006+202_4_10kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
 field 7 maxi_J0006+202_10_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
 
+url http://modis.higp.hawaii.edu/data/
+terms unknown http://modis.higp.hawaii.edu/
+at earth
+ttl 86400
+
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
 terms PD https://aeronet.gsfc.nasa.gov/
 ttl 86400
@@ -1517,6 +1522,11 @@ field AOD_500nm aeronet_aod_500nm inverse-square em 1 86400.0 0.0 0.0
 field AOD_440nm aeronet_aod_440nm inverse-square em 1 86400.0 0.0 0.0
 field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
 field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
+
+url https://api.bas.ac.uk/superdarn/mirror/v3/
+terms OGL-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+at earth
+ttl 86400
 
 url https://api.v2.sondehub.org/sonde/Y3313219
 terms CC-BY-SA-2.0 https://registry.opendata.aws/sondehub-telemetry/
@@ -1605,6 +1615,11 @@ lon 1
 epoch 0
 field 3 hfradar_codar_2015_u_cm_s inverse-square advective cm/s 21600 0.0 0.0
 field 4 hfradar_codar_2015_v_cm_s inverse-square advective cm/s 21600 0.0 0.0
+
+url https://daacdata.apps.nsidc.org/pub/DATASETS/nsidc0792_masie/
+terms PD https://www.earthdata.nasa.gov/
+at earth
+ttl 86400
 
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
@@ -8829,6 +8844,16 @@ format reference
 sha256 0a8479226fd0f4474068c2aa68afebfb2c4f517cb412c2724180ba2aa2fe7393
 ttl 86400
 
+url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_orbc_000116_230414_310721_v01.bsp
+terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
+format reference
+ttl 86400
+
+url https://stac.itslive.cloud
+terms PD https://www.earthdata.nasa.gov/
+at earth
+ttl 86400
+
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
 ttl 86400
@@ -8932,6 +8957,11 @@ at earth
 hapi Absolute_VTEC=swarm_absolute_vertical_tec_tecu
 field swarm_absolute_vertical_tec_tecu swarm_absolute_vertical_tec_tecu inverse-square em TECU 86400 0.0 0.0
 
+url https://waldo.world
+terms CC0-1.0 https://doi.org/10.48322/fzcf-f191
+at earth
+ttl 86400
+
 url https://weather.uwyo.edu/wsgi/sounding?datetime={yesterday}%2000:00:00&id=72293&src=UNKNOWN&type=TEXT:CSV
 terms unknown https://weather.uwyo.edu/
 ttl 86400
@@ -8946,6 +8976,16 @@ field 3 radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 0.0 
 field 6 radiosonde_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
 field 8 radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 8640.0 0.0 0.0
 field 12 radiosonde_wind_speed_m_s patch-levy advective m/s 8640.0 0.0 0.0
+
+url https://www.carisma.ca/data
+terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
+at earth
+ttl 86400
+
+url https://www.cseslimadou.it/public-data-download/
+terms unknown https://www.cseslimadou.it/public-data-download/
+at earth
+ttl 86400
 
 url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
 terms no-license https://www.ldeo.columbia.edu/chrr/terms_of_use.html
@@ -10551,6 +10591,11 @@ format reference
 at mars
 ttl 604800
 
+url https://atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-sroc15-v10/
+terms PD https://pds.nasa.gov/
+at earth
+ttl 604800
+
 url https://dachs.oca.eu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,abs_mag,diameter+FROM+mp3c_main.best+WHERE+abs_mag+IS+NOT+NULL
 terms unknown https://dachs.oca.eu/
 format tap
@@ -11056,6 +11101,22 @@ quantity emtf_zyx_re emtf_zyx_re inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyx_im emtf_zyx_im inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyy_re emtf_zyy_re inverse-square impedance ohm 604800 0.0 0.0
 quantity emtf_zyy_im emtf_zyy_im inverse-square impedance ohm 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.geo.admin.ch/swisstopo_coverage.manifest
+terms open-by-attribution https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices
+format swisstopo_coverage
+origin https://data.geo.admin.ch/api/stac/v0.9/collections/ch.swisstopo.swisssurface3d/items
+compiler tools/harvest/src/bin/swisstopo_coverage.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/data.geopf.fr/ign_lidarhd_coverage.manifest
+terms etalab-2.0 https://www.etalab.gouv.fr/wp-content/uploads/2018/11/open-licence.pdf
+format ign_lidarhd_coverage
+origin https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=IGNF_LIDAR-HD_METADONNEE:metadata
+compiler tools/harvest/src/bin/ign_lidarhd_coverage.rs
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/data.inpe.br/inpe_stac_samet_daily.bin
 terms CC-BY-4.0 https://data.inpe.br/bdc/stac/v1/collections/samet_daily-1
@@ -11707,6 +11768,22 @@ on earth 0 0 0
 field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree_C 604800 0.0 0.0
 field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 604800 0.0 0.0
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ns_hwh.fundaments.nl/ahn4_coverage.manifest
+terms CC0-1.0 https://creativecommons.org/publicdomain/zero/1.0/
+format ahn4_coverage
+origin https://services.arcgis.com/nSZVuSZjHpEZZbRo/arcgis/rest/services/Kaartbladen_AHN4/FeatureServer/0/query?where=1%3D1&outFields=Name,AHN4_LAZ
+compiler tools/harvest/src/bin/ahn4_coverage.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/nz-elevation.s3-ap-southeast-2.amazonaws.com/linz_coverage.manifest
+terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
+format linz_coverage
+origin https://nz-elevation.s3-ap-southeast-2.amazonaws.com/?list-type=2
+compiler tools/harvest/src/bin/linz_coverage.rs
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/open-lidar-data.s3.amazonaws.com/open_lidar_data_be_dhmv2.bin
 terms CC-BY-3.0 https://assets.vlaanderen.be/image/upload/v1679331485/GratisopendatalicentieVlaanderenv12_bqxu2t.pdf
@@ -21000,6 +21077,21 @@ cmap .
 ra ra
 dec dec
 field ep_flux xmm_epic_flux_wm2 inverse-square em W/m2 604800 0.0 0.0
+
+url https://pds-ppi.igpp.ucla.edu/annex/GO-X-RSS-1-ODR-V1.0/
+terms PD https://pds-ppi.igpp.ucla.edu/
+at earth
+ttl 604800
+
+url https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
+terms PD https://pds-ppi.igpp.ucla.edu/
+at earth
+ttl 604800
+
+url https://pds-rings.seti.org/pds4/bundles/voyager_rss_raw/
+terms PD https://pds-rings.seti.org/
+at earth
+ttl 604800
 
 url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms unknown https://sheffieldcitycouncil.cloud.esriuk.com/

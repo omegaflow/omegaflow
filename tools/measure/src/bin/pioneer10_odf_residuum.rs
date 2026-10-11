@@ -4,7 +4,7 @@ use omegaflow::archivar::{
     BodyEphemeris, body_barycenter_position, body_barycenter_velocity, body_fixed_to_icrs_smooth,
     light_time_worldline, parse_ephemeris_binary,
 };
-use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, write_p11r_bin};
+use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, ref_uplink_hz, write_p11r_bin};
 use omegaflow::odp::{C, downlink_rate_core, dsn_host, dsn_station, station_velocity};
 
 const SC_BODY: &str = "pioneer10_daily";
@@ -476,7 +476,7 @@ fn main() {
         for (i, m) in modeled.iter().enumerate() {
             if m[5] as i64 == *st {
                 rates.push(m[4]);
-                refs.push(m[3]);
+                refs.push(ref_uplink_hz(m[7] as i32, m[3]));
                 obs.push(m[2]);
                 times.push(m[0]);
                 idx.push(i);
