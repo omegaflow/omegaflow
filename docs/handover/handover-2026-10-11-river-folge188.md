@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI-Querprobe GILL gemessen (kein aufgelöster Breakup; stream2-Keogramm achsenlos/nahezu leer), JUICE/Flyby-Trägerschaft von Sensory gefaltet
   class: handover
   date: 2026-10-11
-  sha256: 34b0d937fc739f9f2a64dd36a7d9ef62260192e57fae071375ce867341dcd36e
+  sha256: 500af040c9048108d70ed86c5ae2186fc6815407d1984ef7f1d4243af93b2e76
   status: live
 -->
 # Handover — River-Folge 188 (2026-10-11)
@@ -39,6 +39,7 @@ Wort | Datum | Quelle
 „z.ai immer glm 5.3 max gibt es auch in tryong open genauso wie qwen" | 2026-10-10 | Operator (Session, River 174) — Z.ai stets **GLM-5.3 Max**; `tryingopen` führt **GLM 5.3 Max** und **Qwen**
 „mit archive search dem rat und max roster (alle und warten bedenke tryingopen1)" | 2026-10-11 | Operator (Session, River 181) — die window-graph-Orientierungs-Architekturfrage durch `--all`-Recherche + Rat (5 Stimmen) + Max-Roster (alle UI-Seats, `open-weight-ui` nur über das Lock) führen
 „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die River-Linie **in einem Pass** … /commit ist das Commit-Wort — beide getrennt." | 2026-10-11 | Operator (Session, River 188) — session-weiter Delegations-Consent, nicht das Commit-Wort.
+„ok dann ist es pending … dann warten wir bis wir zugelassen sind kannst du nochmal in state schauen wir hatten da eigentlich einige netzbetreiber" | 2026-10-11 | Operator (Session, River 188) — ENTSO-E/NERC bleiben `pending`; **auf die Zulassung warten**, bis dahin die Netzbetreiber aus `state` referenzieren (nicht re-suchen).
 
 Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md` und
 `2026-10-09-river.md`. Fortgeschrieben aus
@@ -62,6 +63,22 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, als `## An future` transportiert.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer (11 offen).
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — §4 am 2026-10-11 nachgezogen.
+
+## Netzbetreiber-Referenz (state, nicht re-run)
+
+Gemessen 2026-10-11. Quellen: `state/future/space-weather-service-kante.md` §Adressat · `state/river/gic-sources-broad-2026-10-11.md` · `state/river/registrierungen-2026-10-11.md` · `state/future/funding-register-fuenf-achsen-2026-10-09.md`.
+
+- **ENTSO-E** (EU, Dach 40 TSOs) — `token pending` (A78-Compiler gebaut).
+- **Fingrid** (FI) — Token + Compiler; `fingrid-cdn 38162332055`.
+- **NESO** (UK) — keyless CKAN 200, **kein** Outage-Datensatz.
+- **BGS** (UK) — nur B_GIC-Index/Modell.
+- **Statnett** (NO) — PDF-only.
+- **Amprion** (DE) — **keyless CSV-Outage-API** (`…/api/grid-data/items/csv/KRAFTWERKS_UND_LASTAUSFAELLE/<from>/<to>`).
+- **TenneT** (DE) — 403 geo-block.
+- **50Hertz** (DE) — PDF-only.
+- **Svenska Kraftnät** (SE) — `data.svk.se` CKAN, kein Outage.
+
+Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die Netzbetreiber aus `state` referenzieren, nicht re-suchen.
 
 ## Offen (aufgeschlüsselt)
 
