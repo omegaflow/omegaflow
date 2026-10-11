@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — ci-check-Wurzel gemessen (1 Test, 393 CDN-Blöcke), Test an die Domänengrenze angepasst; Register fortgeschrieben
   class: handover
   date: 2026-10-11
-  sha256: 927bd596a32514c9ee67badde8bb27a6fb9d8747b98fc0d84d224bd86f8bc33e
+  sha256: 405cf04a68698670b425a9a73e5bca384a13099445db4d135eee7b051e546cab
   status: live
 -->
 # Handover — Mountain-Folge 315 (2026-10-11)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 
-## Burn: open 0.05 · close 0.14 — flash only, kein pro/max. Die ci-check-Wurzel war ein einzelner Test; keine Taucherstaffel nötig.
+## Burn: open 0.00 · close 0.0591 — flash (line agent), ein Atom; kein pro/max; gemessen via `session_burn`.
 
 ## Offen (aufgeschlüsselt)
 
