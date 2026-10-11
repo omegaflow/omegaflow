@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: eb653aaaf07bef86f1ad1d1e331fc910abda480fc9fd6edf26c2a5fec2639d31
+  sha256: e99f416bd651eaf9974563505f431ba4fecafc39a21d32bcce631087ef953150
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -67,6 +67,20 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** Mountains `terms`/`field` (OE-417 Public Domain / EAGLE-I CC-BY-4.0 im `## An mountain`-Block angefragt — zusätzlich Riss: der ORNL-Mirror `openenergyhub.ornl.gov` ist nicht die von Mountain gemessene `eia.gov`/`doe417.pnnl.gov`-Quelle).
 - **Braucht:** Mountain trägt `terms` + `field` nach.
 
+### GIC CSES + PCN — Emission/Header gebaut; Läufe dispatcht
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** die fünf GIC-Läufe enden (`38154704083`/`38154706463`/`38154708648`/`38154711279`/`38154713840`)
+- **Lage:** (gemessen 2026-10-11) CSES-Blöcke + PCN-Block stehen in `phi/sources.φ` (CSES `:20156-20203`, PCN `:2183-2190`), aber die vier CSES-Compiler emittierten **keine** Register-Direktiven und die vier Workflows trugen **keinen** `# harvest:`-Header. **Gebaut:** die vier Compiler emittieren jetzt die pcn-Form (url/origin/compiler/sha256/format/ttl/at earth/field) + Header in den vier `cses-*-cdn.yml`; `cargo check` 0/0. **Dispatcht:** `cses-efd 38154704083` · `cses-hpm 38154706463` · `cses-lap 38154708648` · `cses-scm 38154711279` · `pcn 38154713840` (alle queued).
+- **Blockade:** Läufe laufen.
+- **Braucht:** Ergebnisse lesen; bei grün sha256 in die Blöcke nachtragen; `terms` (CSES CC0 / PCN CC-BY-4.0) + `field`-Riss (PCN) bei Mountain.
+
+### GRDC-Caravan — Compiler + Workflow gebaut (Re-Admission)
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `tools/harvest/src/bin/grdc_caravan_compiler.rs` + `.github/workflows/grdc-caravan-cdn.yml` gebaut (Zenodo `15349031`; `GRDC_Caravan_extension_nc.zip` Zip64, 5357 Einträge / 5356 `.nc`, Variable `streamflow` **mm/d**, CC-BY-4.0); `cargo check` 0/0. **Riss:** die ursprünglich emittierte `field`-Zeile trug die bestehende `streamflow_cfs`/cfs-Triade, die gemessene Einheit ist **mm/d** — die `field`-Zeile wurde aus der Emission entfernt (kein `cfs` über `mm/d`).
+- **Blockade:** der `extract.rs`-Reader-Arm `grdc_caravan` fehlt (Bin noch nicht konsumierbar); `field`/`terms` (Mountain).
+- **Braucht:** (a) Reader-Arm + erster Manifest-Lauf; (b) url/origin/sha256 registrieren (Mycelium); (c) `field` (mm/d) + `terms` (Mountain).
+
 ### DEMETER — CDN-Spiegel entfernt; lokale Registrierung + terms
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** Mountains `terms`-Zeile für `regards.cnes.fr`
@@ -128,7 +142,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) `themis_asi_keogram_compiler.rs` gebaut (Route `…/THEMIS/asi/stream2/<YYYY>/<MM>/<DD>/<label>/…_full-keogram.pgm.jpg`, keyless, `--station`/`--date`/`--start`/`--stop`/`--ci-mode`); `cargo check`/`--bin` 0/0.
 - **Blockade:** Station-Koordinaten-Tabelle fehlt; `terms` fehlt.
-- **Braucht:** (a) `themis_asi-keogram-cdn.yml`; (b) Station-Koordinaten (Mountain); (c) `terms` (UCalgary).
+- **Braucht:** (a) **gebaut:** `.github/workflows/themis_asi-keogram-cdn.yml` (`workflow_dispatch` mit `station`/`date`/`start`/`stop`/`force`, kein fabrizierter Default; Idempotenz je Nacht); (b) Station-Koordinaten (Mountain); (c) `terms` (UCalgary).
 
 ### LiDAR-Inventar / extraterr. LiDAR / Bathymetrie — Teile mountain
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
@@ -165,9 +179,24 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** nur der persistente t420 ist dauerhaft.
 - **Braucht:** —
 
+## Aus dem State-Zensus (Operator-Relais „in state steckt viel Wissen", 2026-10-11)
+
+Ein Zensus über die nicht-Spill-`state/`-Dateien gegen diese Übergabe + `wartend.φ`
+fand offene Schleifen; die Mycelium-Anteile hier gefaltet, die fremden als
+Registerzeilen in `## An mountain`/`## An river` (die Owner falten).
+
+- **VO-Landschaft (mycelium-269):** `state/zustand/mycelium-269-an-naechste-session.md:30-39` — VO-Katalog-Index bauen (Arm 1) · IVOA/China-VO/Brazilian-VO registrieren (Mountain) · `Domain→UCD`-Mapping (der Riss) · `--gfw`-Feinschliff · Branch-Protection + `SHA→Verdikt`-Register · Frontier-Vielfalt.
+- **Swarm-Recherche:** `state/mycelium/swarm-recherche-synthese-2026-10-05.md:85` — q3–q6 mit demselben Roster nachholen, Rohordner registrieren.
+- **CDN-Reconcile:** `state/zustand/ereignisse.φ:70822` — `cdn_reconcile` (144 orphan releases, 687 missing assets, 6873 Namens-Divergenzen); je Lösch-Klasse ein Atom, **Operator-Wort vor destruktivem Release-Delete**.
+- **Fehlende Arme (Operator-Wort `ereignisse.φ:163087`):** mariner-rst (7-Track) · viking-tracking · hi-21cm (HI+EBHIS) · cmb-lambda (ACT-Ring) · particle-cern (ROOT) — je Compiler + Block (blinkverse ist gebaut).
+- **LiDAR-Verdikt unratifiziert:** `state/mycelium/rat-roster-lidar-verdikt-2026-10-11.md:31-32` — per-Portal-Fläche/Epoche-Gleichauf messen (Kachel-ID-Diff, nicht Count) für `ahn4`/`swisstopo`/`ign`.
+- **Ungepoolte phi-Blöcke:** `state/mycelium/holdings-opencode-tmp-2026-10-07.md:54` — Mountains Sichtung/Merge.
+
 ## An mountain
 
 Origin: mycelium-311 (2026-10-11).
+
+- **Aus dem State-Zensus (Mountain-Anteil):** `state/mountain/blocked-sources-klassen.md:35-52` (Zitat-Re-Messung / fehlende Arme+WF, ≈18 Zeilen) · `state/mountain/routing-untersuchung-2026-10-10.md:54-66` (KNMI/Mindat 401 **mit** Token messen · Overpass-Bot-Gate · GADM/WorldClim-Referenz-Verdikt) · `state/mountain/frageblatt-routen.md:47-58` (JADES-Mirror · DSN-Endpoint · DEMETER-DM*-Dateien · CEERS-z) · `state/mountain/fmhy-extension-2026-10-10.md:74-76` (Verdikt-Schritt LIGO OSC/EMSC/IMOS) · `state/future/exposom-matrix-2026-10-04.md:231-236` (X-Klassen-Feld: y-Serien unregistriert).
 
 - **MLA-Register (mountain-317):** Block `phi/sources.φ:12036` repointet (url → `pds3_fixed_width_mlaradr0801141902.bin`, origin → `…/rdr_radr/2008/jan/mlaradr0801141902.tab`); neuer Workflow `mla-cdn.yml`. **Riss:** das RDR-`.lbl` trug kein `NAME` (nur `PRODUCT_ID`/`INSTRUMENT_MODE_ID={"SC_RANGE"}`) — die behauptete `NAME = RANGE`-Zeile braucht eine Messung.
 - **OE-417 + EAGLE-I:** die Compiler emittieren die Direktiven verbatim (url/origin/compiler/sha256/format/ttl/at earth/quantity). Workflows `38151005570`/`38151003530` **success**. Braucht Mountains `terms` (OE-417 Public Domain / EAGLE-I CC-BY-4.0) + `field`; dann schreibt Mycelium url/origin.
@@ -176,6 +205,15 @@ Origin: mycelium-311 (2026-10-11).
 - **Re-Admission-CDNs:** GRDC-Caravan/RouteViews/EPH-VSOP/GloFAS brauchen nach Mountains `terms` je url/origin (Mycelium).
 - **THEMIS-ASI-Keogramm:** Compiler gebaut; Braucht eine **gemessene THEMIS-ASI-Station-Koordinaten-Tabelle** (`on earth <lat> <lon> <alt>`) + `terms`.
 - **Coverage-Manifest-Fetch-Loop:** USGS-Manifest auf `shard <url> <6 f64>` entscheiden + registrieren.
+
+## An river
+
+Origin: mycelium-311 (2026-10-11) — State-Zensus, River-Anteil.
+
+- `state/zustand/ereignisse.φ:213089` — den schweren Chain in CI auf `pioneer10_odf.bin` + `ephemeris_sun.bin` fahren, Per-Pass-Slope ≈ 1,0 prüfen; Riss `uplink_band` (`pioneer10_odf_compiler.rs:61`).
+- `state/zustand/ereignisse.φ:46923` — `wy-max-t` neu dispatchen, α/X/Z/Bz benennen (Siegel = Operator).
+- `state/zustand/ereignisse.φ:100114` — Rat-Entscheid Span/Apertur, dann `source_contrib` per Fragment (Operator-Browser-Messung).
+- `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md:20-80` — Familien-Partition, zwei Register-Nägel, dann `matrix gic_auroral/subauroral/midlat full`.
 
 ## LOCK
 
