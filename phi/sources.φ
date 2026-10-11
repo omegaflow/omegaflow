@@ -20009,46 +20009,6 @@ at earth
 ttl 604800
 field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_forsyth.bin
-terms unknown https://supermag.jhuapl.edu/lib/services/
-format substorm
-origin https://supermag.jhuapl.edu/lib/services/
-compiler tools/harvest/src/bin/substorm_compiler.rs
-at earth
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_frey.bin
-terms unknown https://supermag.jhuapl.edu/lib/services/
-format substorm
-origin https://supermag.jhuapl.edu/lib/services/
-compiler tools/harvest/src/bin/substorm_compiler.rs
-at earth
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_liou.bin
-terms unknown https://supermag.jhuapl.edu/lib/services/
-format substorm
-origin https://supermag.jhuapl.edu/lib/services/
-compiler tools/harvest/src/bin/substorm_compiler.rs
-at earth
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_newell.bin
-terms unknown https://supermag.jhuapl.edu/lib/services/
-format substorm
-origin https://supermag.jhuapl.edu/lib/services/
-compiler tools/harvest/src/bin/substorm_compiler.rs
-at earth
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/supermag.jhuapl.edu/substorm_ohtani.bin
-terms unknown https://supermag.jhuapl.edu/lib/services/
-format substorm
-origin https://supermag.jhuapl.edu/lib/services/
-compiler tools/harvest/src/bin/substorm_compiler.rs
-at earth
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/abell_clusters.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync tables=VII/110A/table3,VII/110A/table4
