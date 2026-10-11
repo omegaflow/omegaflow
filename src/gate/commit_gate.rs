@@ -2112,29 +2112,18 @@ pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<
     (tracked_not_declared, declared_not_tracked)
 }
 
-pub fn declared_canon() -> Vec<String> {
-    let text = match fs::read_to_string("phi/canon.φ") {
-        Ok(t) => t,
-        Err(_) => return Vec::new(),
-    };
-    text.lines()
-        .map(str::trim)
-        .filter(|l| !l.is_empty() && !l.starts_with("section "))
-        .filter(|l| l.starts_with("phi/") && l.ends_with(".φ"))
-        .map(str::to_string)
-        .collect()
-}
+pub const REGISTER_CLASSES: [&str; 7] = [
+    "phi/sources.φ",
+    "phi/witnesses.φ",
+    "phi/footprints.φ",
+    "phi/dead_sources.φ",
+    "phi/declined_sources.φ",
+    "phi/blocked_sources.φ",
+    "phi/harvest.φ",
+];
 
-pub fn canon_format_violations(text: &str) -> Vec<(usize, String)> {
-    let mut out = Vec::new();
-    for (i, line) in text.lines().enumerate() {
-        let t = line.trim();
-        if t.is_empty() || t.starts_with("section ") || t.starts_with("phi/") {
-            continue;
-        }
-        out.push((i + 1, t.to_string()));
-    }
-    out
+pub fn declared_canon() -> Vec<String> {
+    REGISTER_CLASSES.iter().map(|s| s.to_string()).collect()
 }
 
 pub const PHI_NOTE_MAX: usize = 256;
@@ -2318,33 +2307,8 @@ pub fn doc_open_marker_line(line: &str) -> bool {
         .any(|m| marker_in_status_context(&lower, m))
 }
 
-const REGISTER_SECTIONS: [&str; 6] = [
-    "Maschinen-Register",
-    "Dispositions-Register",
-    "Harvest-Master",
-    "Bindings",
-    "Stationstabellen",
-    "Reports",
-];
-
 pub fn register_classes() -> Vec<String> {
-    let text = match fs::read_to_string("phi/canon.φ") {
-        Ok(t) => t,
-        Err(_) => return Vec::new(),
-    };
-    let mut out: Vec<String> = Vec::new();
-    let mut active = false;
-    for line in text.lines() {
-        let t = line.trim();
-        if let Some(name) = t.strip_prefix("section ") {
-            active = REGISTER_SECTIONS.contains(&name.trim());
-            continue;
-        }
-        if active && t.starts_with("phi/") && t.ends_with(".φ") {
-            out.push(t.to_string());
-        }
-    }
-    out
+    REGISTER_CLASSES.iter().map(|s| s.to_string()).collect()
 }
 
 pub fn home_of(path: &str) -> Option<&'static str> {
@@ -4826,14 +4790,14 @@ mod tests {
     }
 
     #[test]
-    fn fn_canon_format_sections_and_paths_pass() {
-        let ok = "section Kanon\nphi/canon.φ\n\nsection Reports\nphi/reports/probe_sweep_void.txt\n\nsection Meteo\nphi/meteo/japan-tsunami-2026.json\n";
-        assert!(canon_format_violations(ok).is_empty());
-        let bad = "section Kanon\n# a comment\nphi/canon.φ\n";
-        assert_eq!(
-            canon_format_violations(bad),
-            vec![(2usize, "# a comment".to_string())]
-        );
+    fn fn_register_classes_are_the_seven_living_registers() {
+        let classes = register_classes();
+        assert_eq!(classes.len(), 7);
+        assert!(classes.iter().any(|p| p == "phi/sources.φ"));
+        assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
+        assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
+        assert!(!classes.iter().any(|p| p == "phi/dust-maske.φ"));
+        assert!(!classes.iter().any(|p| p == "phi/scan_coverage.φ"));
     }
 
     #[test]
@@ -4908,11 +4872,11 @@ mod tests {
     #[test]
     fn fn_register_classes_hold_registers_not_canon() {
         let classes = register_classes();
+        assert_eq!(classes.len(), 7);
+        assert!(classes.iter().any(|p| p == "phi/sources.φ"));
         assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
         assert!(!classes.iter().any(|p| p.starts_with("phi/pipeline/")));
-        assert!(classes.iter().any(|p| p == "phi/dust-maske.φ"));
-        assert!(classes.iter().any(|p| p == "phi/scan_coverage.φ"));
     }
 
     fn point(
