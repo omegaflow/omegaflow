@@ -3,7 +3,7 @@
   session: River-Folge 180
   class: handover
   date: 2026-10-11
-  sha256: d99e13a72026a42a1d30911de3e9e10584382ecb0bd3804903b06f1e4ed76c5e
+  sha256: 1c5c357802b34a45fa9bf98b826cf36ad01267fd967d55f73bdcb67291eb0fa0
   status: live
 -->
 # Handover — River-Folge 180 (2026-10-11)
@@ -62,7 +62,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 ### panel-vlies — Auflösung: Kandidaten benannt, Register geheilt, CDN bleibt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** CI-Artefakt `field-te-panel-vlies.txt` des `field-te-query`-Laufs `38117177282` (HEAD `a7fe3a61b`, F179) — am 2026-10-11 `in_progress` (gemessen `ci_manage jobs`).
+- **Trigger:** CI-Artefakt `field-te-panel-vlies.txt` des `field-te-query`-Laufs `38117597925` (HEAD `a5dd13d26`, F180, nach Push dispatcht; der Vorgänger `38117177282`/`a7fe3a61b` war bei Session-Ende noch `in_progress`, gemessen `ci_manage jobs`).
 - **Lage:** (gemessen 2026-10-11, River 180 via `archive_search --verdict`) `resolution_probe` + Arm-Span-Nennung stehen (F179). Die Register-Lüge ist **geheilt**: `phi/sources.φ:1945-1951` trägt jetzt `3600` (Mountain folge308:149, River-adressierter Block gefaltet); der Fremd-Hunk ist am Sessionende `M` (14 Zeilen) — River schreibt ihn nicht. Der 1h-Bin ist am CDN weiter **404** (alle drei Verdict-Stufen 404/absent).
 - **Blockade:** der 1h-Bin ist auf dem CDN 404 (Manifestation fehlt, Mycelium).
 - **Braucht:** CI-Artefakt lesen → die `resolution`-Zeilen nennen die Zeugen; danach Rat Schritt 3 (`load_field_across_sources` `:1249` auf gemessene Auswahl: `median_dt` je Kandidat, feinster gleichartiger Zeuge, Zeuge benannt).
@@ -70,7 +70,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 ### window-graph — min-p-Rung-Summary steht, Orientierung bleibt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keiner — eigener Bau-Schritt.
-- **Lage:** (gemessen 2026-10-11, River 180; `cargo build -p omegaflow-measure --bin field_te_query` grün) Schritt 5 erster Schnitt gebaut: `summary_edge()` + `summary_graph_from_rungs()` — je Zelle die min-p-Rung der Leiter (per-Paar native Skala), annotiert Skala/Lag/n/te/p (Assaad 2022 `Entropy 24(8):1156`, kein Resampling); `CellTe`/`RungMeasurement` tragen den gewählten `lag`; drei Test-Gates `summary_graph_tests`. Der Aufruf hängt am Ende des Matrix-Laufs (Artefakt `field-te-matrix-vlies`).
+- **Lage:** (gemessen 2026-10-11, River 180; `cargo build -p omegaflow-measure --bin field_te_query` grün) Schritt 5 erster Schnitt gebaut: `summary_edge()` + `summary_graph_from_rungs()` — je Zelle die min-p-Rung der Leiter (per-Paar native Skala), annotiert Skala/Lag/n/te/p (Assaad 2022 `Entropy 24(8):1156`, kein Resampling); `CellTe`/`RungMeasurement` tragen den gewählten `lag`; drei Test-Gates `summary_graph_tests`. Der Aufruf hängt am Ende des Matrix-Laufs (Artefakt `field-te-matrix-vlies`); Lauf `38117597925` (HEAD `a5dd13d26`) trägt ihn.
 - **Blockade:** keine.
 - **Braucht:** Assaad-Orientierung als nächster begrenzter Schnitt — je Zelle `d->t` gegen `t->d` auf den nativen Rungen vergleichen (Kante gerichtet/kollidierend/`riss`), dann in `vlies_matrix.te`/Job verdrahten. Offener Riss (nicht geglättet): D2-Verdikt Punkt 5 (Filter auf Δ) vs window-graph-Rat (per-Paar native Skala).
 
