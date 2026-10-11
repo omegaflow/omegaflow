@@ -3,7 +3,7 @@
   session: River-Folge 183
   class: handover
   date: 2026-10-11
-  sha256: 147368d664e46193f12c50f4712f0d35c87b89854d5bc776b95e8a67706f3f0d
+  sha256: 3c724b022aa08bdab3df8713b358b9fd7a99612fb4bdd1464d2879214244d5b7
   status: live
 -->
 # Handover — River-Folge 183 (2026-10-11)
@@ -20,7 +20,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 **parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
 (**Trigger** / **Lage** / **Blockade** / **Braucht**).
 
-## Burn: open 0.0000 · close 0.0809 · cap 0.25 — Grund: River F183 (deepseek-flash, `session_burn`), kein pro/max; paper-check-Rot (`38118338352`, pass-named River-Row) geheilt — GIC-Paper-Abstract von 244 auf 200 Wörter gekürzt, `export_latex --check` grün (gemessen, 2026-10-11).
+## Burn: open 0.0000 · close 0.1015 · cap 0.25 — Grund: River F183 (deepseek-flash, `session_burn` total 1.6453 → 1.7468 zur Messzeit), kein pro/max; paper-check-Rot (`38118338352`, pass-named River-Row) geheilt — GIC-Paper-Abstract von 244 auf 200 Wörter gekürzt, `export_latex --check` grün (gemessen, 2026-10-11); Folge-Lauf `38120057236` queued.
 
 ## Operator-Wort-Register
 
