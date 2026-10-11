@@ -3134,6 +3134,7 @@ pub fn main_flow() {
                     | "pcn"
                     | "intermagnet_dbdt"
                     | "omni2_serie"
+                    | "omni2_serie_daily"
                     | "omni_hro"
                     | "mitdb"
                     | "circor"

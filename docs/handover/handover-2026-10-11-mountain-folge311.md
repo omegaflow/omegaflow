@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Gate-Release-Frische geheilt (river-Commit entblockt), adressierte Blöcke gefaltet, register_sort-Gap mit dem Register gefallen, Offen-Register fortgeschrieben
   class: handover
   date: 2026-10-11
-  sha256: 2078e694393ee7d2eb6e6319e2eb2759d7bd5329fff8d809e4ba9b558bd3a938
+  sha256: b7ea355f5bfe844fb693f8e18e992f0558c4276a5e87f788ed7252c7d9cc00e2
   status: live
 -->
 # Handover — Mountain-Folge 311 (2026-10-11)
@@ -202,7 +202,8 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
   0.6277 = verschiedene Aggregation). Der Tages-Bin `omni2_serie.bin` trägt jetzt `format omni2_serie_daily`
   und `_daily`-Feldnamen (`phi/sources.φ:1924,1930-1936`); der Stunden-Name `omni_imf_bz_gsm_nt` lebt nur
   noch im HAPI-Live-Block (`:742/:748`) und im 1h-Bin (`:1950`) — beide 3600 s, kein Riss. Code:
-  `series_parse_bin`/`series_component_name` um den `omni2_serie_daily`-Arm (`src/archivar/extract.rs:9,532`);
+  `series_parse_bin`/`series_component_name` um den `omni2_serie_daily`-Arm (`src/archivar/extract.rs:9,532`)
+  und die Serie-Format-Whitelist (`src/archivar/main_flow.rs:3137`);
   Tests `omni2_daily_series_carries_its_own_names_not_the_hourly_ones` (`extract.rs`) und
   `omni2_daily_bin_carries_its_own_aggregation_names` (`tests.rs`); `cargo check` 0/0.
 - **register_sort-Gap mit dem Register gefallen:** `phi/blocked_sources.φ` existiert nicht mehr
