@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-10-03
-  sha256: 524d61dc130004f35b6642a97fe25f870918482a93288126273897fdf13245a5
+  sha256: 400ee7959df1e18a781dc1e96c47147e5e4a84bec2e3839f79b0ca32c36520ff
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -93,4 +93,32 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
    (privat, NSE), NSE-Redistribution (`state/mail/`).
 5. **Fremde Feder (Mountain).** Kuprat-Zeugenklasse: `witness kuprat` existiert nicht
    (0 Treffer in `phi/`); die vier Kanäle sind als `witness substance` admitiert
-   (`witnesses.φ:120-142`) — kein `format`/`field`/`ttl` nötig (Verdikt 2026-09-30).
+    (`witnesses.φ:120-142`) — kein `format`/`field`/`ttl` nötig (Verdikt 2026-09-30).
+
+## Nachtrag 2026-10-11 — Datenlücken gegen den Baum geprüft (Future 235)
+
+Je Rätsel die „fehlenden Kanäle" gegen `state/` und `phi/sources.φ` gemessen; für die echten
+Datenlücken je ein Taucher mit `archive_search --all` (voller Katalog), jede Route
+`--verdict`-verifiziert. Ergebnis: **7 geschlossen, 4 offen erreichbar, 1 weiter offen, 5 nicht suchbar.**
+
+**Geschlossen (7):**
+- Ⅰ Dunkle Materie — HI-Kanal: `ebhis_hpx190.bin` + `ebhis_compiler` (`phi/sources.φ:11003`).
+- Ⅳ LAIC — CSES `cses_efd/hpm/lap/scm` (`phi:20156`); Swarm-TEC `swarm_absolute_vertical_tec_tecu` (`phi:8977`).
+- Ⅴ Technosignaturen — Gaia `bp_rp` (`gaia_rrl_bp_rp`, `phi:2201`).
+- Ⅷ Dunkler Fluss — `cosmicflows_cf4.json` (`phi:20579`).
+- Ⅸ FRB — FRBCAT `frbcat_flat.json` (`phi:20620`) · CHIME `frb_chime_cat1.json` (`phi:11011`).
+- Ⅺ Placebo — OpenNeuro sham/verum (`phi:3195-3823`).
+- ENSO — Becken-Windfeld: `ascat_wind` (UHR-ASCAT) (`phi:3092`).
+
+**Datenlücke offen erreichbar (4) — Route gefunden, noch nicht registriert:**
+- Ⅶ Wurmloch — Sonden-Bahnen: NAIF Voyager SPK `https://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/` (US-PD) · PDS-PPI VG1-SPICE · Zenodo Voyager-2-CSV (CC-BY-4.0).
+- Ⅷ Dunkler Fluss — z≳10: Zenodo UNCOVER `zenodo.org/records/14281664` (CC-BY-4.0, z bis ~15) · JADES z>10-FITS `zenodo.org/records/7460116`.
+- Ⅻ Urknall — B-Moden: BK18 `http://bicepkeck.org/bk18_2021_release.html` (CC-BY-4.0, live) · LAMBDA-Spiegel · Planck PLA + Zenodo `16283859`.
+- GIC/Bz — Mäntsälä-dB/dt: am GIC-Standort kein eigenes Magnetometer; nächstes ist NUR (Nurmijärvi, ~27 km), FMI IMAGE (CC-BY-4.0).
+
+**Weiter offen (1):** Ⅺ Placebo — Gabe×HRV×Blutmarker: kein einzelnes offenes Dataset
+(BioStudies-RCT `S-EPMC12320331` = Blutmarker ohne HRV; OpenNeuro `ds004746`/`ds007865` = Placebo
+ohne Immun-Gabe/HRV).
+
+**Nicht suchbar (5):** Ⅰ Gaia DR4 (Termin 2026-12-02) · Ⅱ Flyby-Gate (`pending`) · Ⅲ Netloc-Riss
+(`ssd.jpl`↔`ncei`) · Ⅸ FRB-Paar-Artefakt (glob 0) · Kuprat 5. Ader (LOCK privat).
