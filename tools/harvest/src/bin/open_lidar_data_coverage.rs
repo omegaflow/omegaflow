@@ -147,6 +147,16 @@ fn copc_bbox(url: &str) -> Option<[f64; 6]> {
     parse_las_bbox(&bytes)
 }
 
+fn shard_line(url: &str, bbox: Option<[f64; 6]>, emit_bbox: bool) -> String {
+    match bbox {
+        Some(b) if emit_bbox && b.iter().all(|v| v.is_finite()) => format!(
+            "shard {url} {} {} {} {} {} {}",
+            b[0], b[1], b[2], b[3], b[4], b[5]
+        ),
+        _ => format!("shard {url}"),
+    }
+}
+
 fn coverage(keys: &[String]) -> (Vec<String>, Vec<String>) {
     let mut urls = Vec::new();
     let mut countries: BTreeSet<String> = BTreeSet::new();
@@ -167,8 +177,9 @@ fn coverage(keys: &[String]) -> (Vec<String>, Vec<String>) {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: open_lidar_data_coverage [--prefix <data/>] [--out <manifest>] [--ci-mode]";
+    let usage = "usage: open_lidar_data_coverage [--prefix <data/>] [--out <manifest>] [--bbox|--bbox-off] [--ci-mode]  (default: url-only shard lines; --bbox emits the LAS header bbox)";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let emit_bbox = args.iter().any(|a| a == "--bbox") && !args.iter().any(|a| a == "--bbox-off");
     let prefix = match arg_value(&args, "--prefix") {
         Some(p) if !p.is_empty() => p,
         _ => DEFAULT_PREFIX.to_string(),
@@ -201,13 +212,9 @@ fn main() {
 
     let mut text = String::new();
     for u in &urls {
-        match copc_bbox(u) {
-            Some(b) => text.push_str(&format!(
-                "shard {u} {} {} {} {} {} {}\n",
-                b[0], b[1], b[2], b[3], b[4], b[5]
-            )),
-            None => text.push_str(&format!("shard {u}\n")),
-        }
+        let bbox = if emit_bbox { copc_bbox(u) } else { None };
+        text.push_str(&shard_line(u, bbox, emit_bbox));
+        text.push('\n');
     }
     if let Some(parent) = std::path::Path::new(&out_path).parent() {
         if !parent.as_os_str().is_empty() {
@@ -274,5 +281,22 @@ mod tests {
         assert_eq!(country_of("data/BE/x"), Some("BE"));
         assert_eq!(country_of("data/"), None);
         assert_eq!(country_of("other/BE/x"), None);
+    }
+
+    #[test]
+    fn default_shard_is_url_only_and_bbox_is_opt_in() {
+        let bbox = Some([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+        assert_eq!(
+            shard_line("https://x/a.copc.laz", bbox, false),
+            "shard https://x/a.copc.laz"
+        );
+        assert_eq!(
+            shard_line("https://x/a.copc.laz", bbox, true),
+            "shard https://x/a.copc.laz 1 2 3 4 5 6"
+        );
+        assert_eq!(
+            shard_line("https://x/a.copc.laz", None, true),
+            "shard https://x/a.copc.laz"
+        );
     }
 }
