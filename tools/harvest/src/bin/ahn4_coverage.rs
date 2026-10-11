@@ -484,6 +484,13 @@ fn run(args: &[String]) -> Result<(), String> {
         fs::write(path, &id_text).map_err(|e| format!("write {path} returned void: {e}"))?;
         eprintln!("ahn4_coverage: {} tile ids -> {path}", id_lines.len());
     }
+    if ci_mode {
+        if let Some(path) = emit_ids.as_deref() {
+            if !upload_release(NETLOC, path) {
+                return Err(format!("{path} did not reach the CDN"));
+            }
+        }
+    }
 
     println!("url {CDN_BASE}/{NETLOC}/{out_name}");
     println!("origin {base}/query?where=1%3D1&outFields={ID_FIELD},{LAZ_FIELD}");

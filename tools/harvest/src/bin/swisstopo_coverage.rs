@@ -525,6 +525,13 @@ fn run(args: &[String]) -> Result<(), String> {
         fs::write(path, &id_text).map_err(|e| format!("write {path} returned void: {e}"))?;
         eprintln!("swisstopo_coverage: {} tile ids -> {path}", id_lines.len());
     }
+    if ci_mode {
+        if let Some(path) = emit_ids.as_deref() {
+            if !upload_release(NETLOC, path) {
+                return Err(format!("{path} did not reach the CDN"));
+            }
+        }
+    }
 
     println!("url {CDN_BASE}/{NETLOC}/{out_name}");
     println!("origin {base}/collections/{collection}/items");
