@@ -111,7 +111,13 @@ fn print_register_lines(asset: &str) {
     println!();
 }
 
-fn print_inventory(asset: &str, table: &Pds3Table, meta: &TableMeta, skipped: usize, trailing: usize) {
+fn print_inventory(
+    asset: &str,
+    table: &Pds3Table,
+    meta: &TableMeta,
+    skipped: usize,
+    trailing: usize,
+) {
     let mut cols = Vec::new();
     for c in &table.columns {
         let mut s = match &c.data_type {

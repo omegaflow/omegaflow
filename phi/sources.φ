@@ -1616,31 +1616,6 @@ epoch 0
 field 3 hfradar_codar_2015_u_cm_s inverse-square advective cm/s 21600 0.0 0.0
 field 4 hfradar_codar_2015_v_cm_s inverse-square advective cm/s 21600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/masie_ice_extent.bin
-terms PD https://www.earthdata.nasa.gov/
-format masie_ice_extent
-origin https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
-compiler tools/harvest/src/bin/masie_compiler.rs
-at earth
-ttl 86400
-quantity masie_ice_extent_northern_hemisphere masie_ice_extent_northern_hemisphere inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_beaufort_sea masie_ice_extent_beaufort_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_chukchi_sea masie_ice_extent_chukchi_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_east_siberian_sea masie_ice_extent_east_siberian_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_laptev_sea masie_ice_extent_laptev_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_kara_sea masie_ice_extent_kara_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_barents_sea masie_ice_extent_barents_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_greenland_sea masie_ice_extent_greenland_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_baffin_bay_gulf_of_st__lawrence masie_ice_extent_baffin_bay_gulf_of_st__lawrence inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_canadian_archipelago masie_ice_extent_canadian_archipelago inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_hudson_bay masie_ice_extent_hudson_bay inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_central_arctic masie_ice_extent_central_arctic inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_bering_sea masie_ice_extent_bering_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_baltic_sea masie_ice_extent_baltic_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_sea_of_okhotsk masie_ice_extent_sea_of_okhotsk inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_yellow_sea masie_ice_extent_yellow_sea inverse-square area m2 86400 0.0 0.0
-quantity masie_ice_extent_cook_inlet masie_ice_extent_cook_inlet inverse-square area m2 86400 0.0 0.0
-
 url https://data.earthscope.org/archive/seismology/products/emc/netcdf/AFRP20-MASK-3D.r0.0-n4c.nc
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format reference
@@ -3182,6 +3157,31 @@ compiler tools/harvest/src/bin/noaa_ccor_compiler.rs
 at sun
 ttl 86400
 field noaa_ccor_intensity_dn noaa_ccor_intensity_dn inverse-square em 1 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/masie_ice_extent.bin
+terms PD https://www.earthdata.nasa.gov/
+format masie_ice_extent
+origin https://noaadata.apps.nsidc.org/NOAA/G02186/masie_4km_allyears_extent_sqkm.csv
+compiler tools/harvest/src/bin/masie_compiler.rs
+at earth
+ttl 86400
+quantity masie_ice_extent_northern_hemisphere masie_ice_extent_northern_hemisphere inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_beaufort_sea masie_ice_extent_beaufort_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_chukchi_sea masie_ice_extent_chukchi_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_east_siberian_sea masie_ice_extent_east_siberian_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_laptev_sea masie_ice_extent_laptev_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_kara_sea masie_ice_extent_kara_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_barents_sea masie_ice_extent_barents_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_greenland_sea masie_ice_extent_greenland_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_baffin_bay_gulf_of_st__lawrence masie_ice_extent_baffin_bay_gulf_of_st__lawrence inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_canadian_archipelago masie_ice_extent_canadian_archipelago inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_hudson_bay masie_ice_extent_hudson_bay inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_central_arctic masie_ice_extent_central_arctic inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_bering_sea masie_ice_extent_bering_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_baltic_sea masie_ice_extent_baltic_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_sea_of_okhotsk masie_ice_extent_sea_of_okhotsk inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_yellow_sea masie_ice_extent_yellow_sea inverse-square area m2 86400 0.0 0.0
+quantity masie_ice_extent_cook_inlet masie_ice_extent_cook_inlet inverse-square area m2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/nohrsc.noaa.gov/nohrsc_snowfall.bin
 format nohrsc_snowfall
@@ -12008,6 +12008,23 @@ at earth
 ttl 604800
 field observable_hz pathfinder_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_fixed_width_ap01578l.bin
+format pds3_fixed_width
+terms PD https://pds-geosciences.wustl.edu/
+origin https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/mapping/ap01xxx/ap01578l.tab
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+at mars
+ttl 604800
+field MARS_RADIUS mola_mars_radius inverse-square em m 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_fixed_width_mlastacdr0408192000.bin
+format pds3_fixed_width
+terms PD https://pds-geosciences.wustl.edu/
+origin https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/cdr/2004/aug/mlastacdr0408192000.tab
+compiler tools/harvest/src/bin/mla_compiler.rs
+at mercury
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_img_fsb_00720_1cd_xhu_84n209_v1.bin
 terms PD https://pds-geosciences.wustl.edu/
 format pds3_img
@@ -20011,6 +20028,26 @@ at earth
 ttl 604800
 field observable_hz dawn_odf_observable_hz inverse-square em Hz 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds3_fixed_width_l00074ng.bin
+format pds3_fixed_width
+terms PD https://sbn.psi.edu/pds/
+origin https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/l00074ng.tab
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+at eros
+ttl 604800
+field RANGE nlr_range inverse-square em m 604800 0.0 0.0
+field EROS_RADIUS nlr_eros_radius inverse-square em m 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_20190213_ola_scil2id02100.bin
+format pds4_fixed_width
+terms PD https://sbn.psi.edu/pds/
+origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.xml
+origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.dat
+compiler tools/harvest/src/bin/ola_compiler.rs
+at bennu
+ttl 604800
+field radius ola_radius inverse-square em km 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_cdr_f_20051029_20051118.bin
 terms PD https://sbn.psi.edu/pds/
 format pds4_fixed_width
@@ -21802,6 +21839,15 @@ compiler tools/harvest/src/bin/hadisst_compiler.rs
 on earth 0 0 0
 ttl 2592000
 field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/modis.higp.hawaii.edu/modvolc_thermal.bin
+terms unknown http://modis.higp.hawaii.edu/
+format modvolc_thermal
+origin http://modis.higp.hawaii.edu/data/
+compiler tools/harvest/src/bin/modvolc_compiler.rs
+at earth
+ttl 2592000
+field modvolc_thermal modvolc_thermal inverse-square em w/m2/sr/um 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_max.bin
 terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
@@ -29405,6 +29451,15 @@ at sun
 ttl 31536000
 field f107_penticton solar_f107_flux_sfu inverse-square em sfu 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/stac.itslive.cloud/its_live_velocity.bin
+format its_live_velocity
+terms CC-BY-4.0 https://its-live.jpl.nasa.gov/
+origin https://stac.itslive.cloud/collections/itslive-granules/items
+compiler tools/harvest/src/bin/its_live_compiler.rs
+at earth
+ttl 31536000
+field its_live_velocity its_live_velocity patch-levy advective m/yr 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/TAPVizieR-tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_MPC_massINPOP25c_sigmaINPOP25c_FROM__22J-A_2BA-705-A189-tablea1_22.json
 terms unknown https://cds.unistra.fr/vizier-org/licences_vizier.html
 format reference
@@ -32111,58 +32166,3 @@ sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_fixed_width_ap01578l.bin
-format pds3_fixed_width
-terms PD https://pds-geosciences.wustl.edu/
-origin https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/mapping/ap01xxx/ap01578l.tab
-compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
-at mars
-ttl 604800
-field MARS_RADIUS mola_mars_radius inverse-square em m 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds3_fixed_width_l00074ng.bin
-format pds3_fixed_width
-terms PD https://sbn.psi.edu/pds/
-origin https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/l00074ng.tab
-compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
-at eros
-ttl 604800
-field RANGE nlr_range inverse-square em m 604800 0.0 0.0
-field EROS_RADIUS nlr_eros_radius inverse-square em m 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_fixed_width_mlastacdr0408192000.bin
-format pds3_fixed_width
-terms PD https://pds-geosciences.wustl.edu/
-origin https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/cdr/2004/aug/mlastacdr0408192000.tab
-compiler tools/harvest/src/bin/mla_compiler.rs
-at mercury
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_20190213_ola_scil2id02100.bin
-format pds4_fixed_width
-terms PD https://sbn.psi.edu/pds/
-origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.xml
-origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.dat
-compiler tools/harvest/src/bin/ola_compiler.rs
-at bennu
-ttl 604800
-field radius ola_radius inverse-square em km 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/modis.higp.hawaii.edu/modvolc_thermal.bin
-terms unknown http://modis.higp.hawaii.edu/
-format modvolc_thermal
-origin http://modis.higp.hawaii.edu/data/
-compiler tools/harvest/src/bin/modvolc_compiler.rs
-at earth
-ttl 2592000
-field modvolc_thermal modvolc_thermal inverse-square em w/m2/sr/um 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/stac.itslive.cloud/its_live_velocity.bin
-format its_live_velocity
-terms CC-BY-4.0 https://its-live.jpl.nasa.gov/
-origin https://stac.itslive.cloud/collections/itslive-granules/items
-compiler tools/harvest/src/bin/its_live_compiler.rs
-at earth
-ttl 31536000
-field its_live_velocity its_live_velocity patch-levy advective m/yr 604800 0.0 0.0
