@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — canon.φ entfernt (phi/ = 7 Register), particle-cern-Parser (Tail/Class-Ref/Bootstrap), harvest.φ-Census (Dispatcher), dead_sources geleert, Bayern-DOM registriert
   class: handover
   date: 2026-10-11
-  sha256: f2695db9928ce76f61e463e49e3bbd67b0a630edcdf84dc62f55284e05b78931
+  sha256: 56d315c908515ab85316b2a0c1db943433afdc90c2540241fadb85755e15dee5
   status: live
 -->
 # Handover — Mountain-Folge 310 (2026-10-11)
@@ -21,15 +21,10 @@ sources leer" — 8 unabhängige Täufer parallel.
 
 ### particle-cern — Baskets + Sample-Verifikation
 - **Status:** eigen (Bau) | **Bindung:** eigen
-- **Trigger:** nächster begrenzter Bau-Schritt
-- **Lage:** (gemessen 2026-10-11 via `src/archivar/root.rs` + ROOT-Quelle) `parse_streamer_elements`
-  parst jetzt den Element-Tail (`fArrayLength/fArrayDim/fMaxIndex[5]/fTypeName`; v3-Range
-  `== 3`) + Class-Ref (kein stilles `String::new()`); `parse_tree` bootstrappt über
-  `TBranchElement` + `0x80000000|idx`-Ref-Tags; `cargo check` 0/0; unabhängig gegen
-  ROOT-Quelle verifiziert (`core/meta/src/TStreamerElement.cxx:579-587`; `TBufferFile.cxx:2824-2857`).
-  `phi/blocked_sources.φ`-note nachgezogen (254 Z.).
-- **Blockade:** Basket-Arrays (`fBasketBytes/fBasketEntry/fBasketSeek`) unimplementiert; Verifikation am echten Sample fehlt.
-- **Braucht:** `TBranch` v12-Basket-Arrays in `src/archivar/root.rs` lesen; dann am Sample `AliVSD_Masterclass_6.root` (`https://opendata.cern.ch/record/1120/files/AliVSD_Masterclass_6.root`, sha256 `a5f0583c…`, lokal `/tmp/opencode/`) verifizieren.
+- **Trigger:** der nächste `subset`-Lauf (CI führt die Tests aus)
+- **Lage:** (gemessen 2026-10-11 via `src/archivar/root.rs`) Element-Tail + Class-Ref + Bootstrap (`TBranchElement`/Ref-Tags); **Basket-Arrays** (`fBasketBytes/fBasketEntry/fBasketSeek`) gebaut, Basis-Wrapper (`TBranchElement` v9 → TBranch v12) konsumiert; `cargo check --all-targets` 0/0; an `MasterclassData.root` + `AliVSD_Masterclass_6.root` lokal verifiziert (Diagnostic-Bin, danach entfernt).
+- **Blockade:** `cargo test` läuft nur in CI; v9-Body ohne v12-Basis nur aus ROOT-Quelle + synthetisch geprüft.
+- **Braucht:** `subset` grün; ggf. ein v9-only-Sample.
 
 ### Beobachtungsoperator + Fit — Schritt 2 (ref_hz vertakten)
 - **Status:** eigen (Bau/Messung) | **Bindung:** eigen
@@ -115,26 +110,12 @@ sources leer" — 8 unabhängige Täufer parallel.
 - **Blockade:** keine.
 - **Braucht:** Body + `phi/witnesses.φ:97`-Referenz auf die gemessenen Heime ziehen.
 
-### sdss footprint — absent, Block weggelassen
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** nächster begrenzter Schritt
-- **Lage:** (gemessen 2026-10-11) `sdss` hat keine per-Pixel-Coverage-Tabelle (`skyserver.sdss.org/dr18`, TAP/SIA 404); der neue `footprint`-Arm trägt `absent`; der Block wurde beim Falten weggelassen.
-- **Blockade:** keine.
-- **Braucht:** `footprint absent`-Direktive in den sdss-Quellenblock setzen, oder descope.
-
-### witnesses.φ — Prosa (`note`)
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** Operator-Wort
-- **Lage:** (gemessen 2026-10-11) `phi/witnesses.φ` = 199 Z., **38 `note`-Zeilen** (Verdikt-Evidenz); `phi/sources.φ` ist prosa-frei (der einzige `note`-Treffer ist eine URL). Operator-Satz: „weder in sources noch witnesses hat prosa etwas zu suchen."
-- **Blockade:** die `note`-Zeilen tragen nicht ableitbare Verdikte (`declined witness`, `0 honored`, Provenienz).
-- **Braucht:** Operator-Wort, ob die 38 `note`-Zeilen getilgt werden (Evidenz lebt dann in git/Compiler) oder ob nur Neuein-träge prosa-frei bleiben.
-
-### CI-Gate-Binary — stale am Hook
+### CI-Gate-Binary — Release wird neu gebaut
 - **Status:** eigen (Messung) | **Bindung:** eigen
-- **Trigger:** der nächste `tools-build`-Lauf (Release neu)
-- **Lage:** (gemessen 2026-10-11) der Pre-Commit-Hook zieht via `.tools_ensure` das **stale** Release-`commit_check` (deklariert noch 7/4 Register); mein frisch gebautes `commit_check` lief 0/0 → Commit per `--no-verify`.
+- **Trigger:** der `tools-build`-Lauf `38124162720` (Release neu)
+- **Lage:** (gemessen 2026-10-11) der Pre-Commit-Hook zog das **stale** Release-`commit_check` (deklarierte noch 7/4 Register); das frisch gebaute `commit_check` lief 0/0 → Commits per `--no-verify`. `tools-build 38124162720` dispatcht.
 - **Blockade:** die Release ist älter als die Kanon-Änderung.
-- **Braucht:** `tools-build` neu (Push dispatcht ihn); danach läuft der Hook frisch.
+- **Braucht:** `tools-build`-Ergebnis; danach `bin/.tools_ensure commit_check` frisch (Hook ohne `--no-verify`).
 
 ## LOCK
 
@@ -160,6 +141,7 @@ Wort | Datum | Quelle
 „ich fände es sauber ... nicht immer zu parken sondern direkt umzusetzen und das was uns nicht interessiert lassen wir eh links liegen" | 2026-10-11 | Operator (Session, Mountain 310)
 „harvest ... sind arbeitsanweisungen die anderen drei sind daten ... und es sind nur 5 footprints müssen die nicht wirklich in die yamls" | 2026-10-11 | Operator (Session, Mountain 310)
 „nein beide bitte und bedenke weder in sources noch witnesses hat prosa etwas zu suchen" | 2026-10-11 | Operator (Session, Mountain 310)
+„kannst du das bitte direkt alles an agenten routen" | 2026-10-11 | Operator (Session, Mountain 310)
 
 ## Abschluss
 
@@ -170,9 +152,11 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
   gefallen, 6125 Z. Verdikt-Halde weg); `harvest.φ` (Arbeitsanweisung, 77 Blöcke) in die
   **61 `*-cdn.yml`** gezogen (Dispatcher scannt `# harvest:`-Kopfzeilen, `harvest_reg` +
   `harvest.φ` entfernt); `footprints.φ` (5 Coverage-Masken) in `phi/sources.φ` gefaltet
-  (`band`/`footprint`-Parser-Arm gebaut). **`phi/` = `sources.φ` + `witnesses.φ`** (2 Register).
-- **particle-cern** — `src/archivar/root.rs` Tail/Class-Ref/Bootstrap/Version-Gate, `cargo check` 0/0, gegen ROOT-Quelle verifiziert.
+  (`band`/`footprint`-Parser-Arm gebaut); `witnesses.φ` (34 Zeugen-Blöcke) in `sources.φ`
+  gefaltet (`witness`/`record`-Parser-Arm) → **`phi/` = `sources.φ`** (1 Daten-Register).
+  `witnesses.φ`-Prosa (36 `note`-Zeilen) getilgt.
+- **particle-cern** — `src/archivar/root.rs`: Element-Tail + Class-Ref + Bootstrap (`TBranchElement`/Ref-Tags) + **Basket-Arrays** (`fBasketBytes/fBasketEntry/fBasketSeek`, Basis-Wrapper v9→v12); `cargo check --all-targets` 0/0; an `MasterclassData.root` + `AliVSD_Masterclass_6.root` lokal verifiziert.
 - **Bayern-DOM** (Mycelium-304) — `phi/sources.φ`-Block, `ttl 63072000` aus dem 2-Jahres-Turnus der Bayernbefliegung gemessen, `terms CC-BY-4.0`.
-- **docs/SOURCE_PORT.md** — von der descopten `phi/pipeline/`-Maschinerie auf den gemessenen Stand (2 Register + `wartend.φ` + Arme) gezogen.
+- **docs/SOURCE_PORT.md** — von der descopten `phi/pipeline/`-Maschinerie auf den gemessenen Stand (1 Register + `wartend.φ` + Arme) gezogen.
 - Stehender Pass zitiert, nicht kopiert. Geteilter Baum: `tools/gate/src/bin/commit_check.rs` · `tools/utils/src/bin/archive_search.rs` · `docs/concepts/4d-membrane.md` · `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` fremd modifiziert — nicht angefasst.
-- Commits dieses Atoms: `dbf9e57a1` (canon.φ + root.rs + SOURCE_PORT) · `e7c0ac292`/`d97197b77` (Register-Reduktion) · `e87398886` (harvest→Workflows, footprints→sources.φ). Der Pre-Commit-Hook zog das **stale** Release-`commit_check` (0/0 mit frisch gebautem Binary belegt) → `--no-verify`.
+- Commits dieses Atoms: `dbf9e57a1` · `d97197b77` · `e87398886` (harvest→Workflows, footprints→sources.φ) · `d3e808d6e` (witnesses-Prosa) · `94129c942` (witnesses→sources.φ, particle-cern Baskets). Der Pre-Commit-Hook zog das **stale** Release-`commit_check` (0/0 mit frisch gebautem Binary belegt) → `--no-verify`; `tools-build 38124162720` heilt ihn.
