@@ -95,6 +95,9 @@ const CANONS: [Canon; 2] = [
 struct Line {
     word: &'static str,
     map: HashMap<String, BodyEphemeris>,
+    sun_key: &'static str,
+    moon_key: &'static str,
+    earth_key: &'static str,
     sun_radius_m: Option<f64>,
     moon_radius_m: Option<f64>,
 }
@@ -160,10 +163,10 @@ fn load_line(spec: &LineSpec, eph_dir: &str) -> Option<Line> {
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut sun_radius_m = None;
     let mut moon_radius_m = None;
-    for (name, asset) in [
-        ("sun", spec.sun_asset),
-        ("moon", spec.moon_asset),
-        ("earth", spec.earth_asset),
+    for (asset, is_sun, is_moon) in [
+        (spec.sun_asset, true, false),
+        (spec.moon_asset, false, true),
+        (spec.earth_asset, false, false),
     ] {
         let path = format!("{eph_dir}/{}/{asset}", spec.netloc);
         let Some(bytes) = ensure_bin(&path, spec.netloc, asset) else {
@@ -188,34 +191,37 @@ fn load_line(spec: &LineSpec, eph_dir: &str) -> Option<Line> {
                 None
             }
         });
-        if name == "sun" {
+        if is_sun {
             sun_radius_m = radius;
-        } else if name == "moon" {
+        } else if is_moon {
             moon_radius_m = radius;
         }
-        map.insert(name.to_string(), eph);
+        map.insert(asset.to_string(), eph);
     }
     Some(Line {
         word: spec.word,
         map,
+        sun_key: spec.sun_asset,
+        moon_key: spec.moon_asset,
+        earth_key: spec.earth_asset,
         sun_radius_m,
         moon_radius_m,
     })
 }
 
 fn covers_event(line: &Line, day_tdb: f64) -> bool {
-    ["sun", "moon", "earth"]
+    [line.sun_key, line.moon_key, line.earth_key]
         .iter()
         .all(|name| body_barycenter_position(name, day_tdb, &line.map).is_some())
 }
 
 fn apparent_bodies(line: &Line, station: [f64; 3], t: f64) -> Option<([f64; 3], [f64; 3])> {
     let sun = light_time_worldline(station, t, &|s| {
-        body_barycenter_position("sun", s, &line.map)
+        body_barycenter_position(line.sun_key, s, &line.map)
     })?
     .0;
     let moon = light_time_worldline(station, t, &|s| {
-        body_barycenter_position("moon", s, &line.map)
+        body_barycenter_position(line.moon_key, s, &line.map)
     })?
     .0;
     Some((sun, moon))
@@ -229,13 +235,13 @@ fn separation_rad(a: [f64; 3], b: [f64; 3]) -> Option<f64> {
 }
 
 fn elongation_rad(line: &Line, t: f64) -> Option<f64> {
-    let geo = body_barycenter_position("earth", t, &line.map)?;
+    let geo = body_barycenter_position(line.earth_key, t, &line.map)?;
     let (sun, moon) = apparent_bodies(line, geo, t)?;
     separation_rad(vsub(sun, geo), vsub(moon, geo))
 }
 
 fn axis_state(line: &Line, t: f64) -> Option<([f64; 3], [f64; 3], [f64; 3])> {
-    let geo = body_barycenter_position("earth", t, &line.map)?;
+    let geo = body_barycenter_position(line.earth_key, t, &line.map)?;
     let (sun, moon) = apparent_bodies(line, geo, t)?;
     Some((geo, sun, moon))
 }
@@ -261,7 +267,11 @@ fn jd_year(jd: f64) -> f64 {
 }
 
 fn print_rotation_audit(line: &Line, t_great: f64, pierce_lat: f64) {
-    let Some(props) = line.map.get("earth").and_then(|e| e.props.as_ref()) else {
+    let Some(props) = line
+        .map
+        .get(line.earth_key)
+        .and_then(|e| e.props.as_ref())
+    else {
         println!(
             "eclipse {} rotation audit: the earth bin carries no BodyProperties",
             line.word
@@ -271,8 +281,20 @@ fn print_rotation_audit(line: &Line, t_great: f64, pierce_lat: f64) {
     let jd_tdb = t_great / 86400.0 + 2451545.0;
     let dt = delta_t_espenak_meeus(jd_year(jd_tdb));
     let jd_ut1 = jd_tdb - dt / 86400.0;
-    let w_tdb = orientation_angles_at(props, jd_tdb).2;
-    let w_ut1 = orientation_angles_at(props, jd_ut1).2;
+    let Some((_, _, w_tdb)) = orientation_angles_at(props, jd_tdb) else {
+        println!(
+            "eclipse {} rotation audit: the earth orientation is absent at jd_tdb {:.6}",
+            line.word, jd_tdb
+        );
+        return;
+    };
+    let Some((_, _, w_ut1)) = orientation_angles_at(props, jd_ut1) else {
+        println!(
+            "eclipse {} rotation audit: the earth orientation is absent at jd_ut1 {:.6}",
+            line.word, jd_ut1
+        );
+        return;
+    };
     let dw = (w_tdb - w_ut1).rem_euclid(360.0);
     let dw = if dw > 180.0 { dw - 360.0 } else { dw };
     let lon_km = dw.abs() * 111.32 * pierce_lat.to_radians().cos();
@@ -333,7 +355,7 @@ fn magnitude_at(line: &Line, t: f64, obs: [f64; 3]) -> Option<f64> {
 
 fn sunlit(line: &Line, t: f64, obs: [f64; 3], geo: [f64; 3]) -> bool {
     let Some(sun) =
-        light_time_worldline(obs, t, &|s| body_barycenter_position("sun", s, &line.map))
+        light_time_worldline(obs, t, &|s| body_barycenter_position(line.sun_key, s, &line.map))
             .map(|(p, _)| p)
     else {
         return false;
@@ -402,7 +424,8 @@ fn best_in_box(
         let mut lon = lon_c - half_lon;
         while lon <= lon_c + half_lon {
             let lon_w = wrap_lon(lon);
-            let Some(obs) = body_fixed_to_icrs_smooth("earth", lat, lon_w, 0.0, t, &line.map)
+            let Some(obs) =
+                body_fixed_to_icrs_smooth(line.earth_key, lat, lon_w, 0.0, t, &line.map)
             else {
                 lon += step;
                 continue;
@@ -438,7 +461,7 @@ fn wrap_lon(lon: f64) -> f64 {
 }
 
 fn deepest_pierce(line: &Line, t: f64, seed: Option<(f64, f64)>) -> Option<Surface> {
-    let geo = body_barycenter_position("earth", t, &line.map)?;
+    let geo = body_barycenter_position(line.earth_key, t, &line.map)?;
     if line.sun_radius_m.is_none() || line.moon_radius_m.is_none() {
         return None;
     }
@@ -609,10 +632,10 @@ fn run_line(line: &Line, day_tdb: f64, lsk: &LeapSeconds) -> Option<(f64, f64, f
     let cov = greatest_coverage(line, day_tdb)?;
     let (t_great, miss) = greatest_time(line, day_tdb)?;
     let pierce = deepest_pierce(line, t_great, None)?;
-    let obs = body_fixed_to_icrs_smooth("earth", cov.lat, cov.lon, 0.0, cov.t, &line.map)?;
+    let obs = body_fixed_to_icrs_smooth(line.earth_key, cov.lat, cov.lon, 0.0, cov.t, &line.map)?;
     let ratio_cov = diameter_ratio_at(line, cov.t, obs)?;
     let obs_p =
-        body_fixed_to_icrs_smooth("earth", pierce.lat, pierce.lon, 0.0, t_great, &line.map)?;
+        body_fixed_to_icrs_smooth(line.earth_key, pierce.lat, pierce.lon, 0.0, t_great, &line.map)?;
     let ratio_p = diameter_ratio_at(line, t_great, obs_p)?;
     let utc_syz = lsk.tdb_to_unix(t_syz)?;
     let utc_great = lsk.tdb_to_unix(t_great)?;
@@ -733,10 +756,10 @@ fn main() {
                     ) else {
                         continue;
                     };
-                    let moon_a = body_barycenter_position("moon", t_ref, &la.map);
-                    let moon_b = body_barycenter_position("moon", t_ref, &lb.map);
-                    let earth_a = body_barycenter_position("earth", t_ref, &la.map);
-                    let earth_b = body_barycenter_position("earth", t_ref, &lb.map);
+                    let moon_a = body_barycenter_position(la.moon_key, t_ref, &la.map);
+                    let moon_b = body_barycenter_position(lb.moon_key, t_ref, &lb.map);
+                    let earth_a = body_barycenter_position(la.earth_key, t_ref, &la.map);
+                    let earth_b = body_barycenter_position(lb.earth_key, t_ref, &lb.map);
                     if let (Some(ma), Some(mb), Some(ea), Some(eb)) =
                         (moon_a, moon_b, earth_a, earth_b)
                     {

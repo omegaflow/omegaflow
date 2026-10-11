@@ -2,13 +2,13 @@
   title: Bindings — dust-maske + bathymetrie-gebco (Prosa-Preregistrierung)
   class: concept
   date: 2026-09-18
-  sha256: c1d50f25f34a9b42a354ebf1f7f08250ddb655bb9309e511a72d40bef3822627
+  sha256: ccf4160140cf157e1337b0663925e6c0d2eb3b9cb8a3e6f593e5be29bea1abbc
   status: live
   see-also: tools/harvest/data/dust-maske.φ
 -->
 # Bindings — dust-maske + bathymetrie-gebco
 
-Dies ist das Prosa-Heim der beiden Bindings. Die `phi/bindings/*.φ` tragen nur
+Dies ist das Prosa-Heim der beiden Bindings. Die Binding-Direktive `tools/harvest/data/dust-maske.φ` trägt nur
 noch die Direktiven: die Compiler lesen sie als Existenz-/Preregistrierungs-Gate
 (`dust_map_compiler --mask-run --binding <file>` prüft `Path::exists()`, nie den
 Text), die Begründung lebt hier. Der `#`-freie Register-Kanon gilt für die `.φ`,
@@ -99,5 +99,5 @@ re-read here as witnesses for shape.
   for this binding.
 
 ### Register cross-reference
-- The Gestalt-witness identity now also lives in phi/witnesses.φ (witness gestalt, record gbco):
+- The Gestalt-witness identity now also lives in phi/sources.φ (witness gestalt, record gbco):
   this binding stays the primary home (Haupt-Heim); the register names the kind.
