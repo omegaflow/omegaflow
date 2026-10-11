@@ -115,6 +115,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "usgs_comcat_m45" => usgs_comcat::parse_bin(bytes),
         "usgs_geomag_efield" => usgs_geomag::parse_bin(bytes),
         "quake_ptevent" => quake_event::parse_series(bytes),
+        "mcon_event" => mcon_event::parse_series(bytes),
         "f107" => f107::parse_series(bytes),
         "goes_euvs" => euvs::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
