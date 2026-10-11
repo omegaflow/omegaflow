@@ -43,6 +43,12 @@ jobs:
             out: ign_lidarhd_coverage.manifest
             # bounded default: 100 pages x 600 = 60,000 tiles (the full WFS walk is ~875 pages)
             args: "--max-pages 100"
+          - bin: ea_lidar_index
+            netloc: environment.data.gov.uk
+            out: ea_lidar_index.manifest
+            # the EA tiles themselves are account-gated (data-requests 401); this keyless run
+            # catalogues the OGC index (244,324 tiles) as a metadata manifest, not a download list
+            args: ""
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
