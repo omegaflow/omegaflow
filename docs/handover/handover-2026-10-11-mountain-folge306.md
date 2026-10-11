@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden Schritt 1 gefahren (Pioneer-10/11-ODF-Residuum gemessen), Asservatenkammer 9/9, FMHY-Klasse verortet
   class: handover
   date: 2026-10-11
-  sha256: 85809170b11750e955c103dd8105e78f55c01e0900f7746a7673f994645a91f1
+  sha256: de35749ca1af3202cc02670400df8fb64788da44daac95268d1cbd0b6627fb03
   status: live
 -->
 # Handover — Mountain-Folge 306 (2026-10-11)
@@ -23,12 +23,12 @@ zu machen" — **Schritt 1 der Ephemeriden-Kette ist jetzt gefahren, nicht neu a
 - **Status:** eigen (Bau/Messung) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Schritt — Schritt 2 (Residuum verhören: Kette falsch / Modell trägt Rest / Beobachtung trägt Artefakt)
 - **Lage:** (gemessen 2026-10-11, zwei lokale Einzel-Bin-Läufe `OMEGAFLOW_HIDDEN=1 cargo run -p omegaflow-measure --bin pioneer{10,11}_odf_residuum`, Daten aus den registrierten CDN-Assets `pioneer{10,11}_odf.bin` + `ephemeris_{earth,pioneer{10,11}_daily}.bin`)
-  - **P11:** 27 907 ODF-Samples (Stationen 11/12/14/42/43/44/51/61/62/63, 1974-04-19..1990-10-01) → **24 808 modelliert**; je Station `obs = A·ṙ₂w + B_Pass`, **A ≈ +f/c (7,65–9,16 Hz/(m/s))**, Downlink-only A ≈ 2× (Uplink-Bein getragen); Residuum-RMS 2,6e2..6,6e4 Hz. `pioneer11_residuum.bin` **1 786 184 B, 24 808 Samples, Roundtrip parst**.
-  - **P10:** 59 486 ODF-Samples (14/42/43/61/63, 1973-10-15..1998-07-21) → **59 363 modelliert**; A ≈ +f/c (Station 61: A 7,636 Hz/(m/s), RMS **0,169 Hz** bei n=6); **Riss** Stationen 43/63 (RMS 2,1e6/1,8e6 Hz) — die `ref_hz` läuft dort bis 2,292e9 Hz (X-Band-Mix) gegen 2,198e7 Hz der übrigen. `pioneer10_residuum.bin` **4 274 144 B, 59 363 Samples, Roundtrip parst**.
-  - **Verdikt:** Vorzeichen/Maßstab des Beobachtungsoperators stimmen (A ≈ +f/c, Downlink ≈2×); das **erste Modell (baryzentrisches ṙ, `obs=A·ṙ+B_Pass`) trägt die Serie nicht** zu Hz für die meisten Stationen — die volle Beobachtungsgleichung (Uplink-Ramp, Station, Moyer) fehlt noch. Gegen die Horizons-DE440-Tagesephemeride → **`fit-residuum`, kein Blindtest**.
-  - **Träger** (neuer Bin, mech. Klon von `pioneer11_odf_residuum.rs`): `tools/measure/src/bin/pioneer10_odf_residuum.rs` — `cargo check -p omegaflow-measure --bin pioneer10_odf_residuum` 0/0. **Namens-Riss:** die Ausgabe serialisiert mit `odf::write_p11r_bin` (Formatsname, nicht Mission) — funktional, aber der Name trägt p11.
+  - **P11:** 27 907 ODF-Samples (Stationen 11/12/14/42/43/44/51/61/62/63, 1974-04-19..1990-10-01) → **24 808 modelliert**; je Station `obs = A·ṙ₂w + B_Pass`, **A gemessen 7,65–9,16 Hz/(m/s)** (impliziert f = A·c ≈ 2,29–2,75 GHz, S-Band); Downlink-only A **exakt 2×** (St 11: 15,331 = 2,0000·7,6656) — struktur, weil die Rate Uplink+Downlink summiert. Residuum-RMS 2,6e2..6,6e4 Hz. `pioneer11_residuum.bin` **1 786 184 B, 24 808 Samples, Roundtrip parst**.
+  - **P10:** 59 486 ODF-Samples (14/42/43/61/63, 1973-10-15..1998-07-21) → **59 363 modelliert**; A 3,996 (St 63) … 7,729 (St 43), Station 42 A 367 bei n=86 (Ausreißer); Station 61 A 7,636, RMS **0,169 Hz** bei n=6; Stationen 43/63 RMS 2,1e6/1,8e6 Hz. `pioneer10_residuum.bin` **4 274 144 B, 59 363 Samples, Roundtrip parst**.
+  - **Verdikt (nachgeprüft, NICHT aus dem Tool-Label übernommen):** **Vorzeichen gemessen** (A > 0). **Der Maßstab ist NICHT verifiziert** — das Tool druckt `A ≈ +f/c` als hartkodiertes Label und rechnet f/c nirgends; A·c ergibt f ≈ 2,0–2,75 GHz, konsistent mit der ODF-Referenz (~2,3e9 Hz, `odf.rs:2432`/`:2458`). **Riss:** die gedruckte `ref_hz` ist **gemischt skaliert** — P10 zeigt `2.198e7..2.199e7..2.292e9 Hz`, d. h. die Pioneer/Turyshev-ODF-Variante trifft beide Parser-Zweige (`odf.rs:61–86`) mit ~100× unterschiedlicher Skala; ungelöst, welcher gilt. Das **erste Modell (`obs=A·ṙ+B_Pass`) trägt die Serie nicht bis Hz** (RMS 1e2–1e5 Hz); das Tool führt Uplink-Rate, Station und Lichtzeit **bereits** (`odp.rs`/`uplink_rate`) — es fehlen die **Medien** (Troposphäre/Ionosphäre), nicht die Beobachtungsgleichung. Gegen die Horizons-DE440-Tagesephemeride → **`fit-residuum`, kein Blindtest**.
+  - **Träger** (neuer Bin, mech. Klon von `pioneer11_odf_residuum.rs`): `tools/measure/src/bin/pioneer10_odf_residuum.rs` — `cargo check -p omegaflow-measure --bin pioneer10_odf_residuum` 0/0. **Zwei Risse:** (a) Ausgabe serialisiert mit `odf::write_p11r_bin` (Formatsname, nicht Mission); (b) die Labels `(≈ +f/c)`/`(≈ 2×)` sind hartkodiert statt gerechnet.
 - **Blockade:** keine (Mountain-Seite).
-- **Braucht:** Schritt 2 — die drei Lesarten; erster Hinweis ist der S/X-Band-`ref_hz`-Mix der Stationen 43/63.
+- **Braucht:** (1) den `ref_hz`-Skalen-Riss klären — welcher Parser-Zweig (`odf.rs:61–86`) die Pioneer-ODF trifft; (2) Schritt 2 — drei Lesarten (Kette/Modell/Beobachtung); (3) Medien (Troposphäre/Ionosphäre) in die Kette.
 
 ### particle-cern — Teil B (Branches) gebaut; TStreamerElement-Liste + Baskets offen
 - **Status:** eigen (Parser) | **Bindung:** eigen
