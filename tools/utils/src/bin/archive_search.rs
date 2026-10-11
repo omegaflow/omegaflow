@@ -26,6 +26,8 @@ mod cochrane;
 mod cod;
 #[path = "archive_search/consensus.rs"]
 mod consensus;
+#[path = "archive_search/copernicus.rs"]
+mod copernicus;
 #[path = "archive_search/core.rs"]
 mod core_api;
 #[path = "archive_search/datacite.rs"]
@@ -80,6 +82,8 @@ mod net;
 mod ntfs;
 #[path = "archive_search/oai.rs"]
 mod oai;
+#[path = "archive_search/oai_pmh.rs"]
+mod oai_pmh;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
 #[path = "archive_search/openfda.rs"]
@@ -136,6 +140,8 @@ mod token;
 mod uniprot;
 #[path = "archive_search/unpaywall.rs"]
 mod unpaywall;
+#[path = "archive_search/vires.rs"]
+mod vires;
 #[path = "archive_search/web.rs"]
 mod web;
 #[path = "archive_search/wikidata.rs"]
@@ -442,6 +448,9 @@ fn main() {
             "--arcgis" => mode = Mode::Net("arcgis"),
             "--dataverse" => mode = Mode::Net("dataverse"),
             "--sparql" => mode = Mode::Net("sparql"),
+            "--copernicus" => mode = Mode::Net("copernicus"),
+            "--vires" => mode = Mode::Net("vires"),
+            "--oai-pmh" => mode = Mode::Net("oai-pmh"),
             "--dryad" => mode = Mode::Net("dryad"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
@@ -781,7 +790,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -869,6 +878,15 @@ fn usage() {
     );
     eprintln!(
         "  --sparql    Generic SPARQL query: `--sparql \"endpoint=<url> SELECT ...\"`, keyless; rows as var=value"
+    );
+    eprintln!(
+        "  --copernicus Copernicus CDS/CAMS collection filter (catalogue v1 STAC), keyless; url + title/description (substring filter)"
+    );
+    eprintln!(
+        "  --vires     VirES HAPI dataset catalog filter (vires.services/hapi), keyless; dataset url (substring filter)"
+    );
+    eprintln!(
+        "  --oai-pmh   Generic OAI-PMH ListRecords: `--oai-pmh \"endpoint=<oai-url> [set=<set>]\"`, keyless; id + title"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
