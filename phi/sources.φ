@@ -12059,6 +12059,7 @@ origin https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-da
 compiler tools/harvest/src/bin/mla_compiler.rs
 at mercury
 ttl 604800
+field RANGE mla_range inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_img_fsb_00720_1cd_xhu_84n209_v1.bin
 terms PD https://pds-geosciences.wustl.edu/
