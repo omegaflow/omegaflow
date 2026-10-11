@@ -3,7 +3,7 @@
   session: Sensory-Folge 253
   class: handover
   date: 2026-10-10
-  sha256: 5114fe943570b968a3713b3b0a7046ab4f400a1b6774ec93b4c95873654183d9
+  sha256: 0595b79bbfa4036cacc23f285d52f837c9bca59c977ff97d97be3b299d2b460c
   status: live
 -->
 # Handover — Sensory-Folge 253 (2026-10-10)
@@ -25,9 +25,10 @@ Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md` (g
 nicht kopiert). Der eigene Atom-HEAD ist seither weitergerückt (`cb7c59195`).
 Eigene Messung dieses Atoms (2026-10-10 F253): HEAD `cb7c59195` == `origin/main`; der
 Arbeitsbaum trägt fremde uncommittete Hünke (`AGENTS.md`, `docs/concepts/tools-map.md`,
-`opencode.json`, `.github/workflows/open-lidar-data-cdn.yml`,
-`phi/pipeline/descriptors/vlies_matrix.te`, `tools/measure/src/bin/field_te_query.rs`,
-`tools/harvest/src/bin/knmi_compiler.rs`, die `tools/utils/src/bin/archive_search*`-Dateien
+`opencode.json`, `.github/workflows/open-lidar-data-cdn.yml`, der `vlies_matrix`-Descriptor
+(Mountain 306 `d039f7618` verlagerte die `.te` nach `src/mathematikerin/descriptors/`),
+`tools/measure/src/bin/field_te_query.rs`, `tools/harvest/src/bin/knmi_compiler.rs`, die
+`tools/utils/src/bin/archive_search*`-Dateien
 samt `archive_search/*.rs`-Modulen) — nicht überschrieben (gemessen `git status --short`).
 Eigener Register-Pass (2026-10-10 F253): `register_lookup --fired sensory` = 0;
 `--stale sensory --persist 3` = 0; `--addressed sensory` = **1** (der `mountain-folge303`-
@@ -61,7 +62,7 @@ Landschaft (`state/stimmen/2026-10-10_sensory_reprpunkt-recherche.txt`), den **R
 Stimmen) und den **Max-Roster** (`sensory-ui`): Rat + Claude konvergieren auf den Legenden-
 Zustand **`site`** (Proxy, `geocoded_inferred`/`centroid_only`, Puffer aus x-Serien-Auflösung,
 Query-Anker); Qwen dissentiert (ökologischer Fehlschluss) — Riss getragen. Umgesetzt in die
-Survey-Legende + die sechs Zeilen (Header-sha `16f9571c…`); Rohmaterial
+Survey-Legende + die sechs Zeilen (Header-sha `d25a7e37…`); Rohmaterial
 `state/stimmen/2026-10-10_sensory_reprpunkt.md`. Offen bleibt (b): der Mycelium-Te-Paar-Feed.
 Die CI-Lage wird aus dem Stehenden Pass zitiert, nicht kopiert.
 
@@ -334,7 +335,7 @@ werden getragen, nie geglättet (0 honored).
   Oszillator). Qwen dissentiert („unzulässige Annahme, ökologischer Fehlschluss") — **Riss
   getragen**, nicht geglättet. Duck.ai Tageslimit, Z.ai Deep Think ohne Antwort, `open-weight-ui`
   Lock bei River → `pending`. Umgesetzt: Legende-Zustand `site` + Flags in der Survey
-  (Header-sha `16f9571c…`), Rohmaterial `state/stimmen/2026-10-10_sensory_reprpunkt.md`. **Braucht:**
+  (Header-sha `d25a7e37…`), Rohmaterial `state/stimmen/2026-10-10_sensory_reprpunkt.md`. **Braucht:**
   (b) den Te-Paar-Feed je Zeile in CI (`te_pair_probe`/`field_te_query`, Workflow-YAML +
   Descriptor je x-Klasse, `gh workflow run`, §E) — Mycelium; Registrierung `phi/sources.φ` mit
   dem `site`-Punkt (Mountain-Feder). Namenträger liegt hier (Weberin/Gesundheits-Zeugen).
@@ -396,7 +397,8 @@ werden getragen, nie geglättet (0 honored).
   2026-09-17 gemessene Lücke „PDF→Bild-Konversion fehlt" ist **gebaut und gemessen
   2026-09-28** (`archive_search --pdf-image` aus `gosat_l1b_format.pdf` → 19 PNG);
   Nachtrag im Dokument. Getragen bleiben die echten `request-only`-Marker der vier
-  Sonden (Register: `phi/blocked_sources.φ`).
+  Sonden — die Dispositions-Register dead/blocked/declined strich Mountain 310 `d97197b77`
+  aus dem Kanon (der Marker bleibt am Dokument).
 - **JUICE:** `docs/concepts/der-paradigmenwechsel.md` (9),
   `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4),
   `docs/paper/flyby-path-2-preregistration.md` (1).
@@ -443,7 +445,7 @@ Eigene Pfade dieses Atoms:
 
 Arbeitsbaum bei Atom-Ende (gemessen 2026-10-10 F253): fremde uncommittete Hünke
 (`AGENTS.md`, `docs/concepts/tools-map.md`, `opencode.json`,
-`.github/workflows/open-lidar-data-cdn.yml`, `phi/pipeline/descriptors/vlies_matrix.te`,
+`.github/workflows/open-lidar-data-cdn.yml`, der `vlies_matrix`-Descriptor,
 `tools/measure/src/bin/field_te_query.rs`, `tools/harvest/src/bin/knmi_compiler.rs`,
 `tools/utils/src/bin/archive_search*` samt `archive_search/*.rs`-Modulen)
-bleiben unberührt und außerhalb dieses Commits.
+blieben unberührt und außerhalb dieses Commits.
