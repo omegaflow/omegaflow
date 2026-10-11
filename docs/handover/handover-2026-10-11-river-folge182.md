@@ -3,7 +3,7 @@
   session: River-Folge 182
   class: handover
   date: 2026-10-11
-  sha256: fd20dc177c3f71fb6933e103b6a2e7e21dea601ee780ed33f72f7127e602ff13
+  sha256: 2dba78e01330a9c23af7a14ca5095660d1dbdfd09f0c3a5e2c1a290092c71b07
   status: live
 -->
 # Handover — River-Folge 182 (2026-10-11)
@@ -20,7 +20,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 **parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
 (**Trigger** / **Lage** / **Blockade** / **Braucht**).
 
-## Burn: open 0.0000 · close 0.0000 · cap 0.25 — Grund: River F182 (deepseek-flash), kein pro/max; window-graph Pair-Klassen (`PairOrientation` + `pairwise_orientation`) gebaut (Rat + Roster 2026-10-11), Artefakt `field-te-panel-vlies` gelesen, `field-te-query` frisch dispatcht.
+## Burn: open 0.0000 · close 0.0497 · cap 0.25 — Grund: River F182 (deepseek-flash, `session_burn` zur Messzeit), kein pro/max; window-graph Pair-Klassen (`PairOrientation` + `pairwise_orientation`) gebaut (Rat + Roster 2026-10-11), Artefakt `field-te-panel-vlies` gelesen, `field-te-query` frisch dispatcht (`38119733631`).
 
 ## Operator-Wort-Register
 
@@ -65,7 +65,7 @@ Verbatim: `state/operator-gespraeche/2026-10-10-river.md` und
 
 ### panel-vlies — 1h-Zeuge jetzt present, Register geheilt; nächster Schritt = Überlappungs-Korrelation + feinste-gleichartige Auswahl
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das Artefakt `field-te-panel-vlies.txt` des frischen `field-te-query`-Laufs (nach diesem Push dispatcht) — der Lauf trägt die Überlappungs-Korrelation der jetzt geladenen 1h-Zeile.
+- **Trigger:** das Artefakt `field-te-panel-vlies.txt` des `field-te-query`-Laufs `38119733631` (dispatcht 2026-10-11, HEAD `4db4a6bef`) — der Lauf trägt die Überlappungs-Korrelation der jetzt geladenen 1h-Zeile.
 - **Lage:** (gemessen 2026-10-11, River 182) Artefakt `38117597925` gelesen: 3 Kandidaten für `omni_imf_bz_gsm_nt` — HAPI-Handarm pending (kein `format`-Arm), Tages-Bin `omni2_serie.bin` median_dt 86400 s n 20272 (span -1139097565..839289669), 1h-Bin `omni2_serie_1h.bin` fetch void (404); Panel „pending — bin window carries no overlap between the arms". Der 1h-Bin ist jetzt **present** (`--verdict` 206, 2026-10-11); die Register-Zeile `phi/sources.φ:1950` trägt `3600` (geheilt). Die Dreifach-Registrierung besteht weiter (`:742` HAPI 3600 · `:1935` Tages-Bin 86400 · `:1950` 1h 3600).
 - **Blockade:** keine — der Lauf ist dispatchbar.
 - **Braucht:** frisches Artefakt lesen → Rat Schritt 1 (Überlappungs-Korrelation Tages- vs Stunden-Bz auf gemeinsamen Stunden) entscheidet, ob die Kandidaten dieselbe Größe tragen; danach Rat Schritt 3 Code: `load_field_across_sources` (`tools/measure/src/bin/field_te_query.rs:1249`) `median_dt` je Kandidat, feinster **gleichartiger** Zeuge, Zeuge benannt; bei verschiedener Aggregation `panel pending` mit beiden Zeugen (Riss).
