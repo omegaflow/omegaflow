@@ -77,10 +77,6 @@ phi/meteo/*
 # (TNO-Split-GM + Solar-ω). Alles andere im Katalog bleibt lokale Ernte.
 !phi/pipeline/
 phi/pipeline/*
-# Die TE-Deskriptoren sind Werkzeug-Eingaben (field_te_query --descriptor) — versioniert,
-# sonst fehlen sie dem CI-Runner nach dem Checkout. Alles andere bleibt lokale Ernte.
-!phi/pipeline/descriptors/
-!phi/pipeline/descriptors/**
 # Der Maschinen-Zwilling des Oszillator-Gates ist ein Registrierungs-Urteil — versioniert.
 !phi/pipeline/decline_lens.φ
 # Das Zustands-Register (SOURCE_PORT §4) ist ein Registrierungs-Urteil — versioniert wie dead_sources.φ.
