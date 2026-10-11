@@ -1,0 +1,43 @@
+name: witness-odf-residuum
+
+concurrency:
+  group: witness-odf-residuum
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  witness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the witness residual runner
+        run: cargo build --release -p omegaflow-measure --bin witness_odf_residuum
+      - name: Fetch the witness assets from the CDN
+        run: |
+          set -euo pipefail
+          base=https://github.com/omegaflow/sources/releases/download
+          mkdir -p data/spdf.gsfc.nasa.gov data/ssd.jpl.nasa.gov
+          curl -sSfL --retry 3 -o data/spdf.gsfc.nasa.gov/pioneer10_odf.bin "$base/spdf.gsfc.nasa.gov/pioneer10_odf.bin"
+          curl -sSfL --retry 3 -o data/ssd.jpl.nasa.gov/ephemeris_earth.bin "$base/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin"
+          curl -sSfL --retry 3 -o data/ssd.jpl.nasa.gov/ephemeris_sun.bin "$base/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin"
+          curl -sSfL --retry 3 -o data/ssd.jpl.nasa.gov/ephemeris_pioneer10_daily.bin "$base/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin"
+          ls -l data/spdf.gsfc.nasa.gov data/ssd.jpl.nasa.gov
+      - name: Run the witness residual over the full chain
+        run: |
+          set -o pipefail
+          ./target/release/witness_odf_residuum --body pioneer10_daily --gravitator sun 2>&1 | tee witness-resid.log
+      - name: Upload the residual log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: witness-residuum
+          path: witness-resid.log
+          retention-days: 7
