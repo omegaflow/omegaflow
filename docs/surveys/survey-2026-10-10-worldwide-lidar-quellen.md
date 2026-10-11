@@ -4,7 +4,7 @@
   date: 2026-10-10
   sha256: f674341bc81e9bc20192a6e40a4fbf25579446b6664e76eaa3fc55e08bbb33da
   status: live
-  see-also: docs/handover/handover-2026-10-10-mycelium-folge297.md
+  see-also: docs/handover/archiv/handover-2026-10-10-mycelium-folge297.md
 -->
 # Survey — Weltweite LiDAR-/Punktwolken-Landschaft
 
