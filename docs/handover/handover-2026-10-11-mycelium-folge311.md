@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: 3220ff03bc6c2d7aa5c4337d20d524d27b558009c15d43b0d3c220b526e563f3
+  sha256: 5600652a04a0f6c5521a17c5d409f3f7c21d3eb4d87882c5ec71b8cb72ee5d10
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -201,7 +201,7 @@ Registerzeilen in `## An mountain`/`## An river` (die Owner falten).
 
 ## Registrierte Korrekturen & Vorfälle
 
-- **Grenzverletzung (gemessen 2026-10-11):** der Commit `8a818afe7` sweepte **Mountains gestagten Rename** `handover-2026-10-11-mountain-folge317.md → archiv/` (der geteilte Index trug die `R`-Stufe; ein pfad-begrenztes `git add` hebt eine bereits gestagte fremde Stufe nicht auf). Kein fremder Inhalt verändert; die Archivierung ist inhaltlich korrekt, aber unter fremder Commit-Message. Lehre: vor jedem Commit `git diff --cached --name-only` prüfen — der geteilte Index kann fremde Stufen tragen.
+- **Grenzverletzung (gemessen 2026-10-11, zweimal):** (a) Commit `8a818afe7` sweepte **Mountains gestagten Rename** `…mountain-folge317.md → archiv/`; (b) Commit `85d912ec7` sweepte **Mountains gestagte Löschung** des alten Pfads `…mountain-folge318.md` (die Archivkopie `archiv/…folge318.md` war bereits in `d5525435f` — **kein Inhaltsverlust**, nur der Altpfad). Ursache: der geteilte Index trug die fremden Stufen; ein pfad-begrenztes `git add` hebt sie nicht auf. Lehre (schärfer): vor jedem Commit `git diff --cached --name-only` prüfen; trägt der Index eine fremde Stufe, wird der Commit **aufgeschoben** (kein `git restore` — destruktives Git ist verboten), bis die fremde Linie sie committet oder der Index eigen ist.
 
 ## An mountain
 
