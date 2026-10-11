@@ -26,7 +26,6 @@ phi/supermag_stations.φ
 
 section Reports
 phi/reports/scan_coverage.φ
-phi/reports/probe_sweep_survivors.φ
 
 section Pipeline-Register
 phi/pipeline/library.φ
@@ -35,11 +34,6 @@ phi/pipeline/frame_registry.φ
 section Katalog
 phi/pipeline/catalog/MANIFEST.φ
 phi/pipeline/catalog/copernicus_disposition.φ
-phi/pipeline/catalog/dryad_catalog.φ
 phi/pipeline/catalog/korpora_heim.φ
 phi/pipeline/catalog/noaa_nodd_disposition.φ
-phi/pipeline/catalog/pangaea_catalog.φ
-phi/pipeline/catalog/re3data_catalog.φ
-phi/pipeline/catalog/seanoe_catalog.φ
 phi/pipeline/catalog/solar_omega_g.φ
-phi/pipeline/catalog/zenodo_catalog.φ

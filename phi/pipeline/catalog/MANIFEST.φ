@@ -1,9 +1,4 @@
 file copernicus_disposition.φ | disposition | versioned | visible
-file dryad_catalog.φ | catalog | versioned | visible
 file korpora_heim.φ | disposition | versioned | visible
 file noaa_nodd_disposition.φ | disposition | versioned | visible
-file pangaea_catalog.φ | catalog | versioned | visible
-file re3data_catalog.φ | catalog | versioned | visible
-file seanoe_catalog.φ | catalog | versioned | visible
 file solar_omega_g.φ | special | versioned | visible
-file zenodo_catalog.φ | catalog | versioned | visible
