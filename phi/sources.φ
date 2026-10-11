@@ -31703,3 +31703,40 @@ sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_fixed_width_ap01578l.bin
+format pds3_fixed_width
+terms PD https://pds-geosciences.wustl.edu/
+origin https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/mgslr_xxxx/mapping/ap01xxx/ap01578l.tab
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+at mars
+ttl 604800
+field MARS_RADIUS mola_mars_radius inverse-square em m 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds3_fixed_width_l00074ng.bin
+format pds3_fixed_width
+terms PD https://sbn.psi.edu/pds/
+origin https://sbnarchive.psi.edu/pds3/near/NEAR_A_NLR_5_CDR_EROS_ORBIT_V1_0/data/topo/l00074ng.tab
+compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
+at eros
+ttl 604800
+field RANGE nlr_range inverse-square em m 604800 0.0 0.0
+field EROS_RADIUS nlr_eros_radius inverse-square em m 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds3_fixed_width_mlastacdr0408192000.bin
+format pds3_fixed_width
+terms PD https://pds-geosciences.wustl.edu/
+origin https://pds-geosciences.wustl.edu/messenger/mess-e_v_h-mla-3_4-cdr_rdr-data-v1/messmla_2001/cdr/2004/aug/mlastacdr0408192000.tab
+compiler tools/harvest/src/bin/mla_compiler.rs
+at mercury
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/sbnarchive.psi.edu/pds4_fixed_width_20190213_ola_scil2id02100.bin
+format pds4_fixed_width
+terms PD https://sbn.psi.edu/pds/
+origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.xml
+origin https://sbnarchive.psi.edu/pds4/orex/orex.ola/data_calibrated/orbit_a/20190213_ola_scil2id02100.dat
+compiler tools/harvest/src/bin/ola_compiler.rs
+at bennu
+ttl 604800
+field radius ola_radius inverse-square em km 604800 0.0 0.0

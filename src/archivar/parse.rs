@@ -130,6 +130,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     || !cur_extracts.is_empty()
                     || !cur_channels.is_empty()
                     || cur_witness.is_some()
+                    || cur_range.is_some()
                 {
                     if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                         eprintln!(
