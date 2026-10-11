@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — canon.φ entfernt (phi/ = 7 Register), particle-cern-Parser (Tail/Class-Ref/Bootstrap), harvest.φ-Census (Dispatcher), dead_sources geleert, Bayern-DOM registriert
   class: handover
   date: 2026-10-11
-  sha256: 56d315c908515ab85316b2a0c1db943433afdc90c2540241fadb85755e15dee5
+  sha256: ef9b8613774d8a6631eec84c43f643e29a0485c8c77f5ed1641d61985517faaf
   status: live
 -->
 # Handover — Mountain-Folge 310 (2026-10-11)
@@ -110,12 +110,12 @@ sources leer" — 8 unabhängige Täufer parallel.
 - **Blockade:** keine.
 - **Braucht:** Body + `phi/witnesses.φ:97`-Referenz auf die gemessenen Heime ziehen.
 
-### CI-Gate-Binary — Release wird neu gebaut
-- **Status:** eigen (Messung) | **Bindung:** eigen
-- **Trigger:** der `tools-build`-Lauf `38124162720` (Release neu)
-- **Lage:** (gemessen 2026-10-11) der Pre-Commit-Hook zog das **stale** Release-`commit_check` (deklarierte noch 7/4 Register); das frisch gebaute `commit_check` lief 0/0 → Commits per `--no-verify`. `tools-build 38124162720` dispatcht.
-- **Blockade:** die Release ist älter als die Kanon-Änderung.
-- **Braucht:** `tools-build`-Ergebnis; danach `bin/.tools_ensure commit_check` frisch (Hook ohne `--no-verify`).
+### ROOT v9-Sample — Body korrekt, zwei reale Barrieren
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** nächster begrenzter Schritt
+- **Lage:** (gemessen 2026-10-11) reales ROOT-4.00/07-Sample `stock.root` (`https://cdn.jsdelivr.net/gh/root-project/root@v4-04-02/tutorials/stock.root`, sha256 `8cc2dec6…`, 163873 B; TBranch ClassDef 9, TBranchElement 8). Der v9-Body-Skalar-Reader liest byte-exakt (Probe: TBE-Version 8→9 in-memory → `basket_size=8000`, `entries=974`, `max_baskets=10`). Zwei Barrieren am echten File: (a) TBranchElement-Klassenversion **8** wird verworfen (`parse_branch_frame` akzeptiert nur 9/12); (b) die „CS"-Kompressions-Magic (`kOldCompressionAlgo`, raw deflate) wird nicht akzeptiert (nur „ZL").
+- **Blockade:** der v9-Body erscheint real nur unter TBranchElement 8; dazu Alt-Kompression.
+- **Braucht:** `parse_branch_frame` um TBranchElement-Version 8 erweitern und `inflate` um „CS"/raw-deflate.
 
 ## LOCK
 
@@ -155,8 +155,9 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
   (`band`/`footprint`-Parser-Arm gebaut); `witnesses.φ` (34 Zeugen-Blöcke) in `sources.φ`
   gefaltet (`witness`/`record`-Parser-Arm) → **`phi/` = `sources.φ`** (1 Daten-Register).
   `witnesses.φ`-Prosa (36 `note`-Zeilen) getilgt.
-- **particle-cern** — `src/archivar/root.rs`: Element-Tail + Class-Ref + Bootstrap (`TBranchElement`/Ref-Tags) + **Basket-Arrays** (`fBasketBytes/fBasketEntry/fBasketSeek`, Basis-Wrapper v9→v12); `cargo check --all-targets` 0/0; an `MasterclassData.root` + `AliVSD_Masterclass_6.root` lokal verifiziert.
+- **particle-cern** — `src/archivar/root.rs`: Element-Tail + Class-Ref + Bootstrap (`TBranchElement`/Ref-Tags) + **Basket-Arrays** (`fBasketBytes/fBasketEntry/fBasketSeek`, Basis-Wrapper v9→v12); `cargo check --all-targets` 0/0; an `MasterclassData.root` + `AliVSD_Masterclass_6.root` lokal verifiziert. v9-Sample `stock.root` (ROOT 4.00/07) gemessen: der v9-Body-Reader liest byte-exakt; zwei reale Barrieren (TBranchElement v8, „CS"-Altkompression).
 - **Bayern-DOM** (Mycelium-304) — `phi/sources.φ`-Block, `ttl 63072000` aus dem 2-Jahres-Turnus der Bayernbefliegung gemessen, `terms CC-BY-4.0`.
 - **docs/SOURCE_PORT.md** — von der descopten `phi/pipeline/`-Maschinerie auf den gemessenen Stand (1 Register + `wartend.φ` + Arme) gezogen.
+- **ci-gate-Fixes** — `clippy` `too_many_arguments` (`branch_frame_baskets` 9→7 Args, Tuple); `register`/`license_census` 3 `terms-vocab`-Verstöße → SPDX (`CC-BY-NC-4.0` ECAD/WorldClim, `CC-BY-3.0` Vlaanderen); `license_census --fail` 0 Verstöße.
 - Stehender Pass zitiert, nicht kopiert. Geteilter Baum: `tools/gate/src/bin/commit_check.rs` · `tools/utils/src/bin/archive_search.rs` · `docs/concepts/4d-membrane.md` · `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` fremd modifiziert — nicht angefasst.
-- Commits dieses Atoms: `dbf9e57a1` · `d97197b77` · `e87398886` (harvest→Workflows, footprints→sources.φ) · `d3e808d6e` (witnesses-Prosa) · `94129c942` (witnesses→sources.φ, particle-cern Baskets). Der Pre-Commit-Hook zog das **stale** Release-`commit_check` (0/0 mit frisch gebautem Binary belegt) → `--no-verify`; `tools-build 38124162720` heilt ihn.
+- Commits dieses Atoms: `dbf9e57a1` · `d97197b77` · `e87398886` · `d3e808d6e` · `94129c942` · `27419f35d` (ci-gate-Fixes). Der Pre-Commit-Hook zog das **stale** Release-`commit_check` (0/0 mit frisch gebautem Binary belegt) → `--no-verify`; `tools-build 38124162720` = **success** (Release frisch, Hook geheilt); `ci-gate 38125078239` am neuen HEAD läuft.
