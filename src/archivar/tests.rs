@@ -8232,6 +8232,7 @@ fn test_parse_ephemeris_binary_rejects_truncated_props() {
 }
 
 #[test]
+#[ignore = "live network sweep (curl -m 2048s, up to 600 sources); run via the live gate"]
 fn test_live_sources_extract() {
     let srcs = super::load_sources();
     eprintln!("load_sources returned {} sources", srcs.len());
@@ -8251,6 +8252,7 @@ fn test_live_sources_extract() {
 }
 
 #[test]
+#[ignore = "live network (real NOAA/CPC/NMDB/PMEL/AOML hosts); run via the live gate"]
 fn test_dst_and_co2_mlo_channels_extract_live() {
     let dst_block = "url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
 ttl 3600

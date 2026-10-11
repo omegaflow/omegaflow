@@ -1,107 +1,60 @@
 # dropped-legacy-Baseline — kanonische Punkt-Schlüssel der un-belegten Drops (NAMENS-Kopf-Basis)
-# Ersetzt die bag-Key-Fassung vom 2026-10-07 (Mycelium-264, Lauf 37686830067) — kein Altformat.
-# Erzeugt 2026-10-09 (Mountain-287) via `register_lookup --dropped-keys` am HEAD aa8b999cd,
-# nach Mountains Verdikt: canonical_point_key = der kurze Namens-Kopf (`match_prefix`, sechs Wörter)
-# statt des ganzen sortierten Token-Beutels; die **ID:**-Sonderform ist entfernt (keine zweite Namens-Quelle).
+# Neu gesetzt 2026-10-11 (Operator-Wort, Mycelium-307) via `register_lookup --dropped-keys | sort -u`
+# am HEAD 7012c20f8 — das ci-gate-dropped-gate rotete auf 5 Handover-Churn-Drops (Punkt-Umbenennungen).
+# Ersetzt die Fassung vom 2026-10-09 (Mountain-287, HEAD aa8b999cd) — kein Altformat.
 # Der `ci-gate`-Key-Set-Gate vergleicht die aktuelle Menge gegen diese Liste und rotet nur bei NEUEN
 # Namen (fehlt die Datei → pending).
-3bc1455f force true bei success sha256
-3bc1455f force true war queued seit
-arbeitsbaum-grenze fremde uncommittete wip src -commits
-archivar-doku force type -offset widersprüchlich riss
-baum-befund die cors- sources φ tests
-baupunkte cycle phase shift surrogate -nutzung
-ble -accessor-heil ci-bestätigung
-body -deklaration fehlt alle stations-samples verworfen
-buster-store- updated -datum erledigt gemessen 2026-09-20
-buster-store- updated -datum operator cws-listing nur
-buster-store- updated -datum operator cws nur
-ci-check-bin-tests openneuro brainvision snirf test -job
-clpds-annex --with-annex gefixt lauf läuft
-concurrency-gridlock geteilte phi -register phi sources
-dawn-pds4-sbn-odf-route flash beide routen real 200
-der registry-stamm-join-fix tools harvest src bin
-die -bindung ist gefallen gemessen 2026-09-18
-die drei cdn-arme aus mountain-273 asset-prüfung
-ernte-historie-analyse register lookup --dropped ist gebaut
-fit-sample lizenz ci-verdrahtung getrennt vom persönlichen
-fit-verifikation eigene redacted -datei lokal-only
-fix c39deab8 tnf-zeit am chdo-typ-offset dt16
-gap-port der parser-def parser-gap -blöcke mountain-klassen-träger
-goes euvs alt-asset-orphan ist widerlegt gemessen
-gras 2c gate-kanäle self-declared range -direktive
-gzip-body ohne gz -suffix kein erkennungs-
-http 401 -residuum
+asservatenkammer-survey-marker prosa-reconciliation
+asservatenkammer-zensus getragen mountain-kandidaten
+bayern-dom-rasterquelle geodaten bayern de dom compiler
+bayern-dom-rasterquelle geodaten bayern de dom- geotiff-reader
+beobachtungsoperator fit kette schritt 2b gebaut
+beobachtungsoperator fit produzent-pfad rat roster
+carriership asservatenkammer-survey trägerschaft
+carriership asservatenkammer-zensus research-api-mcp
+ci-check-kern-tests 4 geheilt ci-verifikation blocker geheilt
+ci-check-kern-tests ci-gate-rot mci parcorr receiver geheilt
+ci-gate-rot pc rs von der fremd-linie
+ci-gate-rot trigger abgeschlossener lauf
+ci-hygiene matrix-rotor github-präemption trap-flush gebaut nur
+cmb spt transfer-bound gebaut mycelium hebt
+dom- geotiff-raster-reader-bin auf tiff apply predictor
+empfänger-apertur deklaration fanout-refusal gebaut per-kraft-wert-ableitung
+empfänger-apertur deklaration fanout-refusal gebaut record-refusal wert-ableitung
+empfänger-apertur deklaration fanout-refusal record-apertur gebaut per-kraft-wert-ableitung
+empfänger-apertur per-kraft-wert-ableitung
+empfänger-apertur rat-verdikt b erster schrankenschritt gebaut
+ephemeriden-harvest 1-4 parser gebaut register-token entschieden
+epn-core epncore-spatial daten erreichbar parser-arm fehlt
+epn-core epncore-spatial -gap registriert
+extraterrestrische lidar keyless bestand gemessen lola-copc
+fmhy-quellen-kandidaten-pool future-222 402 neue kandidaten unverdiktet
+fmhy-quellen-kandidaten-pool future-222 klassifiziert verdikt
+fmhy-quellen-verdikt 7 research-data-verdikte geschrieben rest der
+fmhy-quellen-verdikt research-data-klasse verortet nicht in den
+fmhy-routing arm-hälfte gegenstandslos riss 4 bot-gated
+goes gsics-kalibrierung l1b-radiance calib benannt nie
+gwosc-strain block steht ohne sha256 ci-lauf
+iris rohpixel kein feld bunit-riss benannt
+keine operator-akte die zwei zugangswerte sind
+klassen-träger register-ledger
 -konten-träger gemessen 2026-09-28 phi blocked sources
-kraft-taxonomie register-physik-migration rat frontend-runde gefallen lint
-kraft-taxonomie register-physik-migration wort gefeuert schema-riss benannt
-kraft-taxonomie ton-modell stimmen-runde konvergenz riss
-lage r -normalisierung kirkley eq 20
-lauf 35204897220 headsha 67f4e8c1 queued compiler
-leos-riss blocked sources φ vs open-sources-delta
-linien-kommandos nur start md nennt omega
-lizenz-disposition terms -feld spdx esa intermagnet
-lizenz-disposition terms -feld spdx jeder block
-lizenz-disposition terms -feld spdx rest-sweep
-lizenz-disposition terms -feld spdx rights read
-lizenz-disposition terms -feld unbestimmt ohne-lizenz 159
-m3-zeile registriert manifestation phi sources φ
-maxi rows-zeitachse mjd tdb position via
-mpc-shard-verdrahtung der shard-modus im mpcobs compiler
-mro odf -registrierung steht 14 shard-blöcke
-ncdc-cdn- www -orphan löschen operator-wort 2026-09-27
-pds3 pds4 -cdn-verdikt
-petrel19-ephemeriden wei erteilt cc by 4
-pfad-parser meldete falsche absent -treffer gemessen
-physik-review des archivar-datenlayers session 2026-10-05 operator-auftrag
-pos ohne body -direktiv gemessen 3
-rat-verdikte fünf stimmen 2026-10-08 vollständig im
-read -tool-größenlimit für extrahierte flatedecode-bilder
-release-namespace-migration ssd jpl nasa gov -legacy-tag
-release-namespace-migration url origin -drift
-richtungssemantik legacy exp -vc g 1
-rote te rs -lib-tests
-routen- api- mcp-stand aller punkte gemessen
-schritt 7 vlies-asset-manifestation upload asset -wiring
-span-direktive presence-hull- star-grid-apertur schritt für river
-substorm-onset supermag zitat gefixt arm workflow
-such-arme aus awesome-ai-web-search fmhy meta-apis gebaut
-supermag-index-träger-entscheid der index-endpoint ist gemessen services
+lidar-quellen-inventar fmhy sammelseiten neue keyless buckets
+lidar-quellen-inventar neue keyless buckets indizes gemessen
+mcp no-leak-regel regel gebaut gate test
+mycelium-φ-blöcke gefaltet aus mycelium-folge302 an mountain
+mycelium-φ-blöcke open-lidar-data-block steht fünf klima-quellen
+open-lidar-konsolidierung gemessene basis z ai-bedingung mountain-verdikt
+open-lidar-konsolidierung welt-aggregat schon getrackt überlappung klassen
+p10 2a bau parser-arme register-physik
+portal-coverage-manifestatoren 4 gebaut workflow überlappung mit
+ps1-fraktional order-10-final order-10-final-größe aus dem
+speicher 1 76 tb bulk vs
+speicher r2-spiegel live aber ohne cap
+supermag-ersatz substurm-onset-katalog future-228
 -swallow-stellen in 87 workflows auf
-tavily-quota 80 der oktober-grenze mail ledger
-tooling-lücke register lookup --dropped --count lokal
-ui-chat-stimmen zum epochrange -befund
-ui-chat-stimmen zum epochrange -befund vier von
-ui-untermauerung gruppe mountain-ui 2026-10-08
-usgs-geomag e-feld produkt getrennt riss gefixt
-usgs-geomag e-feld verdikt d compiler-arm rat
-vc-inversion belegt legacy exp -vc g
-venus-express-vera-psa-route flash kein psa-dsn odf-pfad ifms
-vollstreckt fortsetzung 2 operator-wort ja bitte
-vollstreckt fortsetzung 3 agenten ja bitte
-kanalzahl a a senken-projektion p3 3
-kanalzahl a a senken-projektion tonkern gebaut
-noch n die live-registry speist sich
-ton-anbindung m-achse geometrie extent fehlt register-zeilen
-dimensionlose einheit relative leser gebaut sources
-domänen-survey öffentlicher survey oder descope gefaltet
-drei neue -dispositionen aufenthalt bei euch
-freigabe-anfrage an psahelp cosmos esa int
-generiertes license im omegaflow sources -repo
-gw-ereignismarker gravity wave far gw250207 115645
-keogramm-disposition riss ungeglättet
-keogramm-fabrikations-fixture rat-verdikt umgesetzt
-keogramm-quelle als vision-asset
-medizin-kante sudep exposom gefaltet aus future-209
-medizin-kante sudep exposom ieeg-arm gebaut eeglab-dtype-riss
-redistributions-alternativen survey mountain-verdikt
-shadowcam-admission admission ja format-arm fehlt
-keogramm abk quelle saisonal workflow-ziel falsch
-gic-estimator ground-truth not pass riss unverändert
-p10 register-physik gravity -gruppe migriert last
-asservatenkammer-survey als eigener punkt oben geführt
-canon φ fällt release greift dependency
-exposom-matrix te-paar-feed repräsentativpunkt ist annahme-akt
-keine leads-datei live suchen
-phi ordnung harvest φ auflösen
-queue stage ledger φ descope-zeile je
+thomas sample contact lab a sendet
+vier portal-coverage-φ-blöcke mycelium-305
+weberin-lücke prosa-träger membran-ladearchitektur
+worldwide-lidar-quellen-survey träger mycelium
+φ-manifestation surfrad dwd cdc worldclim aodn
