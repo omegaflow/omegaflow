@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — GIC-Zeugen-Landschaft weiter gemessen: THEMIS-ASI-Rohdaten erreichbar (aurorax.space + UCalgary stream2-Keogramme), OE-417 ohne GMD-Kategorie (Riss), Netz-End-Validierung geschärft
   class: handover
   date: 2026-10-11
-  sha256: 587f12d99b93ac131576c064c8ac0ec649f88f5a7382aeefc96c29ba3f4a6d61
+  sha256: 392a084b1711d0dc4d89f367b5f1e891221faf53e7fff7722e50a7b359ec578d
   status: live
 -->
 # Handover — River-Folge 187 (2026-10-11)
@@ -58,6 +58,8 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, als `## An future` transportiert.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer (11 offen).
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` — §4 am 2026-10-11 nachgezogen.
+- `docs/paper/flyby-path-2-addendum-2026-09-29.md` — **Prosa-Träger adoptiert (future-235-orphan):** die Zellen der Flugbahn stehen `pending` (nach dem Flyby gefüllt); der `pending`-Rest ist die 1-σ-Kovarianz (siehe §Flyby-Kette).
+- `docs/auftrag/auftrag-flyby2-kette.md` — **Prosa-Träger adoptiert (future-235-orphan):** Auftrag der Flyby-2-Kette; Marker sichten und schließen oder terminieren.
 
 ## Offen (aufgeschlüsselt)
 
@@ -82,12 +84,26 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - **Blockade:** kein GMD-Label in OE-417; EAGLE-I „Event-correlated Outage" ist nicht geomagnetisch klassifiziert.
 - **Braucht:** GMD-gekoppelte Netzstörungen aus **NERC-GMD-/DOE-GMD-Berichten** (nicht OE-417) oder **gemessenes GIC** (FMI/BPA/BGS) als das ehrliche Ende; EAGLE-I nur als schwacher Null-Check.
 
-### Flyby-Kette — recon bleibt
+### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:17`.
-- **Lage:** (gemessen 2026-10-11 via `sread state/zustand/wartend.φ:17`) die Wiedervorlage 2026-11-01 steht; `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` absent, `phi/sources.φ` trägt keine tote `url`-Zeile; `ephemeris_juice_recon.bin` 404 (gemessen 2026-10-02, kein Snapshot).
-- **Blockade:** ESA/ESOC-recon-SPK + 1-σ-Kovarianz absent.
+- **Lage:** (gemessen 2026-10-11 via `sread state/zustand/wartend.φ:17`) die Wiedervorlage 2026-11-01 steht; `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` absent, `phi/sources.φ` trägt keine tote `url`-Zeile; `ephemeris_juice_recon.bin` 404 (gemessen 2026-10-02, kein Snapshot). **Aus `flyby-path2-recon` (future-235/`wartend-archiv-2026-10-11-r3.φ:20`):** die orbc-SPK ist keyless erreichbar `https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_orbc_000116_230414_310721_v01.bsp` (HTTP 206); die **1-σ-Kovarianz liegt nicht im SPICE-Baum**.
+- **Blockade:** ESA/ESOC-recon-SPK + die 1-σ-Kovarianz absent.
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
+
+### Newell/OMNI-Zeitachse — deckungsgleiche Achse (`newell-omni-alignment`, aus future-235)
+- **Status:** eigen (Messung) | **Bindung:** eigen
+- **Trigger:** der nächste `field-te-query`-Lauf.
+- **Lage:** (gemessen 2026-10-11 via `wartend-archiv-2026-10-11-r3.φ:24` + future-235) der Upstream `OMNI2_H0_MRG1HR` ist keyless 200 (`phi/sources.φ:738`, 1963→2026-10-05); die Register-Lage „n=0" ist **stale** — der Lauf 2026-10-11 nennt n=944. `ci_manage list` zeigt aktuell keinen `field-te`-Lauf.
+- **Blockade:** keine (Code/Datenfenster).
+- **Braucht:** den `field-te-query`-Lauf via `ci_manage log <id>` neu messen und die n-Zahl setzen (Survey↔Register abgleichen).
+
+### Vlies-Matrix-Zeitachse — Format-/Compiler-Arm (`vlies-matrix-alignment`, aus future-235)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** derselbe `field_te_query`-Lauf.
+- **Lage:** (gemessen 2026-10-11 via `wartend-archiv-2026-10-11-r3.φ:27`) `src/mathematikerin/descriptors/vlies_matrix.te` + `vlies_panel.te` stehen; `OMNI2_H0_MRG1HR` keyless 200; kein externer Blocker — die n=0-Zellen sind ein Code/Datenfenster.
+- **Blockade:** keine.
+- **Braucht:** `cargo check` + den `field_te_query`-Lauf gegen die OMNI-Zeitachse; die n=0-Zellen schließen oder den Grund benennen.
 
 ## An mountain
 
