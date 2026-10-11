@@ -5437,6 +5437,107 @@ fn summary_edge(ladder: &[RungMeasurement]) -> Option<&RungMeasurement> {
         .min_by(|a, b| a.p.partial_cmp(&b.p).unwrap_or(std::cmp::Ordering::Equal))
 }
 
+#[derive(Debug, PartialEq)]
+enum PairOrientation {
+    Candidate {
+        from: String,
+        to: String,
+        delta_s: f64,
+    },
+    Colliding {
+        a: String,
+        b: String,
+        delta_s: f64,
+    },
+    Riss {
+        a: String,
+        b: String,
+    },
+    Absent {
+        a: String,
+        b: String,
+    },
+    Pending {
+        a: String,
+        b: String,
+    },
+}
+
+fn reciprocal_id(id: &str) -> Option<String> {
+    let (from, to) = id.split_once("->")?;
+    Some(format!("{to}->{from}"))
+}
+
+fn pairwise_orientation(outcomes: &[MatrixCellOutcome]) -> Vec<PairOrientation> {
+    let mut classes = Vec::new();
+    for a in outcomes {
+        let Some(reciprocal) = reciprocal_id(&a.id) else {
+            continue;
+        };
+        let Some((ad, at)) = a.id.split_once("->") else {
+            continue;
+        };
+        if ad >= at {
+            continue;
+        }
+        let Some(b) = outcomes.iter().find(|o| o.id == reciprocal) else {
+            continue;
+        };
+        classes.push(orient_pair(ad, at, a, b));
+    }
+    classes
+}
+
+fn orient_pair(
+    ad: &str,
+    at: &str,
+    a: &MatrixCellOutcome,
+    b: &MatrixCellOutcome,
+) -> PairOrientation {
+    let a_id = a.id.clone();
+    let b_id = b.id.clone();
+    let shared = a.ladder.len().min(b.ladder.len());
+    if shared == 0 {
+        return PairOrientation::Pending { a: a_id, b: b_id };
+    }
+    let mut direction: Option<(bool, f64)> = None;
+    for k in 0..shared {
+        let ra = &a.ladder[k];
+        let rb = &b.ladder[k];
+        if ra.delta_s != rb.delta_s {
+            return PairOrientation::Riss { a: a_id, b: b_id };
+        }
+        match (ra.pass, rb.pass) {
+            (true, true) => {
+                return PairOrientation::Colliding {
+                    a: a_id,
+                    b: b_id,
+                    delta_s: ra.delta_s,
+                };
+            }
+            (true, false) | (false, true) => match direction {
+                None => direction = Some((ra.pass, ra.delta_s)),
+                Some((existing, _)) if existing == ra.pass => {}
+                Some(_) => return PairOrientation::Pending { a: a_id, b: b_id },
+            },
+            (false, false) => {}
+        }
+    }
+    match direction {
+        Some((true, delta_s)) => PairOrientation::Candidate {
+            from: ad.to_string(),
+            to: at.to_string(),
+            delta_s,
+        },
+        Some((false, delta_s)) => PairOrientation::Candidate {
+            from: at.to_string(),
+            to: ad.to_string(),
+            delta_s,
+        },
+        None => PairOrientation::Absent { a: a_id, b: b_id },
+    }
+}
+
 fn summary_graph_from_rungs(outcomes: &[MatrixCellOutcome]) {
     let mut edges = 0usize;
     println!();
@@ -5470,6 +5571,26 @@ fn summary_graph_from_rungs(outcomes: &[MatrixCellOutcome]) {
         }
     }
     println!("summary graph: {edges} edge(s) pass at their native rung");
+
+    let classes = pairwise_orientation(outcomes);
+    if classes.is_empty() {
+        println!("pair classes: none — no complete reciprocal pair");
+    } else {
+        println!("pair classes — C-rung candidate classification (no arrow; Rat 2026-10-11)");
+        for class in classes {
+            match class {
+                PairOrientation::Candidate { from, to, delta_s } => {
+                    println!("pair {from}->{to} | candidate | scale {delta_s:.0}s")
+                }
+                PairOrientation::Colliding { a, b, delta_s } => {
+                    println!("pair {a} / {b} | colliding | scale {delta_s:.0}s")
+                }
+                PairOrientation::Riss { a, b } => println!("pair {a} / {b} | riss"),
+                PairOrientation::Absent { a, b } => println!("pair {a} / {b} | absent"),
+                PairOrientation::Pending { a, b } => println!("pair {a} / {b} | pending"),
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -5512,6 +5633,120 @@ mod summary_graph_tests {
     fn summary_edge_is_pending_without_a_measured_rung() {
         let ladder = vec![rung(3600.0, 0.4, None), rung(7200.0, 0.7, None)];
         assert!(summary_edge(&ladder).is_none());
+    }
+}
+
+#[cfg(test)]
+mod pairwise_orientation_tests {
+    use super::*;
+
+    fn cell(id: &str, rungs: &[(f64, bool)]) -> MatrixCellOutcome {
+        let ladder = rungs
+            .iter()
+            .map(|&(delta_s, pass)| RungMeasurement {
+                delta_s,
+                roles: Vec::new(),
+                n: 100,
+                n_eff: None,
+                te: Some(0.1),
+                p: if pass { 0.01 } else { 0.5 },
+                tau_s: Vec::new(),
+                lag: Some(1),
+                pass,
+            })
+            .collect();
+        MatrixCellOutcome {
+            id: id.to_string(),
+            cond_n: 0,
+            n: 100,
+            n_eff: None,
+            scale: None,
+            te: None,
+            p: 1.0,
+            floor: false,
+            pass: false,
+            res_pair: None,
+            alignment_absent: false,
+            rungs: Vec::new(),
+            ladder,
+        }
+    }
+
+    #[test]
+    fn both_sides_passing_collide() {
+        let outcomes = vec![
+            cell("a->b", &[(3600.0, true)]),
+            cell("b->a", &[(3600.0, true)]),
+        ];
+        assert_eq!(
+            pairwise_orientation(&outcomes),
+            vec![PairOrientation::Colliding {
+                a: "a->b".to_string(),
+                b: "b->a".to_string(),
+                delta_s: 3600.0
+            }]
+        );
+    }
+
+    #[test]
+    fn one_side_passing_is_a_candidate() {
+        let outcomes = vec![
+            cell("a->b", &[(3600.0, true)]),
+            cell("b->a", &[(3600.0, false)]),
+        ];
+        assert_eq!(
+            pairwise_orientation(&outcomes),
+            vec![PairOrientation::Candidate {
+                from: "a".to_string(),
+                to: "b".to_string(),
+                delta_s: 3600.0
+            }]
+        );
+    }
+
+    #[test]
+    fn a_direction_flip_over_rungs_is_pending() {
+        let outcomes = vec![
+            cell("a->b", &[(3600.0, true), (7200.0, false)]),
+            cell("b->a", &[(3600.0, false), (7200.0, true)]),
+        ];
+        assert_eq!(
+            pairwise_orientation(&outcomes),
+            vec![PairOrientation::Pending {
+                a: "a->b".to_string(),
+                b: "b->a".to_string()
+            }]
+        );
+    }
+
+    #[test]
+    fn a_scale_mismatch_is_a_riss() {
+        let outcomes = vec![
+            cell("a->b", &[(3600.0, true)]),
+            cell("b->a", &[(7200.0, false)]),
+        ];
+        assert_eq!(
+            pairwise_orientation(&outcomes),
+            vec![PairOrientation::Riss {
+                a: "a->b".to_string(),
+                b: "b->a".to_string()
+            }]
+        );
+    }
+
+    #[test]
+    fn neither_side_passing_is_absent() {
+        let outcomes = vec![
+            cell("a->b", &[(3600.0, false)]),
+            cell("b->a", &[(3600.0, false)]),
+        ];
+        assert_eq!(
+            pairwise_orientation(&outcomes),
+            vec![PairOrientation::Absent {
+                a: "a->b".to_string(),
+                b: "b->a".to_string()
+            }]
+        );
     }
 }
 
