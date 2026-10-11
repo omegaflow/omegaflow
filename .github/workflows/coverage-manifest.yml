@@ -1,0 +1,52 @@
+# auto-dispatch: manual — each walk is a long network listing (swisstopo ~40k tiles/year,
+# IGN LiDAR HD ~875 pages / 524,687 matched, measured 2026-10-11); the run is operator-triggered
+# and bounded per bin (the bound is named in each matrix `args`).
+name: coverage-manifest
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  coverage:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - bin: ahn4_coverage
+            netloc: ns_hwh.fundaments.nl
+            out: ahn4_coverage.manifest
+            # the walk is bounded in the bin itself (MAX_PAGES=100, PAGE_LIMIT=2000) — no bound flag
+            args: ""
+          - bin: swisstopo_coverage
+            netloc: data.geo.admin.ch
+            out: swisstopo_coverage.manifest
+            # bounded default: 40 pages x 1000 assets = ~40k, one year of swisssurface3d
+            args: "--max-pages 40"
+          - bin: linz_coverage
+            netloc: nz-elevation.s3-ap-southeast-2.amazonaws.com
+            out: linz_coverage.manifest
+            # the bin exposes no bound flag (only --bucket/--prefix/--jobs) — the S3 walk follows
+            # continuation tokens to the end; scope it with --prefix when a bounded run is wanted
+            args: ""
+          - bin: ign_lidarhd_coverage
+            netloc: data.geopf.fr
+            out: ign_lidarhd_coverage.manifest
+            # bounded default: 100 pages x 600 = 60,000 tiles (the full WFS walk is ~875 pages)
+            args: "--max-pages 100"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Walk the ${{ matrix.netloc }} listing and manifest it to the CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin ${{ matrix.bin }} -- \
+            --out data/${{ matrix.netloc }}/${{ matrix.out }} ${{ matrix.args }} --ci-mode

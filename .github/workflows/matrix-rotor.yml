@@ -117,7 +117,7 @@ jobs:
             echo "SHA $(git rev-parse HEAD)"
             echo "state vorher: $(stat -c %s data/omegaflow_matrix_state.bin 2>/dev/null || echo absent) B"
             set +e
-            trap 't="step shell: SIGTERM $(date -u +%T)"; echo "$t"; echo "$t" >> matrix-rotor.txt' TERM INT
+            trap 'checkpoint; t="step shell: SIGTERM $(date -u +%T)"; echo "$t"; echo "$t" >> matrix-rotor.txt' TERM INT
           } > matrix-rotor.txt 2>&1
           OMEGAFLOW_STATE=data OMEGAFLOW_HIDDEN=1 \
             timeout --verbose --signal=TERM --kill-after=180 18000 \

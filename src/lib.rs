@@ -8,7 +8,7 @@ pub mod wasm;
 pub mod weberin;
 
 #[cfg(feature = "commit_gate")]
-pub use gate::{axioms, commit_gate, friction, handover, state, tool_perm};
+pub use gate::{axioms, commit_gate, friction, handover, mcp, state, tool_perm};
 
 pub use archivar::ak135;
 pub use archivar::amon;

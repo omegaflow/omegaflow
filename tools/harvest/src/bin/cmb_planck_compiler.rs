@@ -181,6 +181,7 @@ fn write_json(rows: &[(f64, f64, f64)], path: &str) -> bool {
     true
 }
 
+#[cfg(test)]
 fn select_fits_member<'a>(
     members: &'a [omegaflow::archivar::inflate::TarMember],
     tar: &'a [u8],
@@ -196,48 +197,65 @@ fn select_fits_member<'a>(
     Some((member, data))
 }
 
-fn tarball_member_from_bytes(url: &str, bytes: &[u8], want: Option<&str>) -> Option<Vec<u8>> {
-    let tar = match omegaflow::archivar::bzip2::decompress(bytes) {
-        Some(t) => t,
-        None => {
-            eprintln!("bzip2 decompress of {url} returned void: the tarball stays unread");
+fn stream_fits_member_to_file(
+    path: &str,
+    want: Option<&str>,
+    out: &std::path::Path,
+) -> Option<String> {
+    use std::io::Write;
+    let file = match std::fs::File::open(path) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("open {path} returned void: {e}");
             return None;
         }
     };
-    let members = match omegaflow::archivar::inflate::tar_members(&tar) {
-        Some(m) => m,
-        None => {
-            eprintln!("tar_members of {url} returned void: the tarball stays unread");
+    let exact = want.map(str::to_string);
+    let mut want_fn = |name: &str| match &exact {
+        Some(w) => name == w,
+        None => name.to_ascii_lowercase().ends_with(".fits"),
+    };
+    let mut out_file: Option<std::fs::File> = None;
+    let mut written = String::new();
+    {
+        let mut emit = |name: &str, part: Option<&[u8]>| match part {
+            Some(d) => {
+                if out_file.is_none() {
+                    match std::fs::File::create(out) {
+                        Ok(f) => {
+                            written = name.to_string();
+                            out_file = Some(f);
+                        }
+                        Err(e) => {
+                            eprintln!("create {} returned void: {e}", out.display());
+                        }
+                    }
+                }
+                if let Some(f) = out_file.as_mut() {
+                    if f.write_all(d).is_err() {
+                        out_file = None;
+                    }
+                }
+            }
+            None => {
+                if let Some(mut f) = out_file.take() {
+                    let _ = f.flush();
+                }
+            }
+        };
+        let reader = std::io::BufReader::with_capacity(1 << 16, file);
+        if let Err(e) =
+            omegaflow::archivar::bzip2::bzip2_tar_stream(reader, &mut want_fn, &mut emit)
+        {
+            eprintln!("bzip2 tar stream of {path} returned void: {e}");
             return None;
         }
-    };
-    let (member, data) = match select_fits_member(&members, &tar, want) {
-        Some(v) => v,
-        None => {
-            eprintln!(
-                "no .fits member among {} tar members from {url}: the map stays unwritten",
-                members.len()
-            );
-            return None;
-        }
-    };
-    eprintln!("tar member '{}': {} bytes -> FITS", member.name, data.len());
-    Some(data.to_vec())
-}
-
-fn tarball_fits_member(url: &str, want: Option<&str>) -> Option<Vec<u8>> {
-    let bytes = match omegaflow::archivar::fetch::fetch_raw_bytes_with(
-        url,
-        omegaflow::archivar::fetch::RetryPolicy::Transient,
-        SPT_TRANSFER_BOUND_S,
-    ) {
-        Some(b) => b,
-        None => {
-            eprintln!("fetch {url} returned void: the tarball stays unread");
-            return None;
-        }
-    };
-    tarball_member_from_bytes(url, &bytes, want)
+    }
+    if written.is_empty() {
+        None
+    } else {
+        Some(written)
+    }
 }
 
 fn main() {
@@ -257,21 +275,72 @@ fn main() {
     let member = arg_value(&args, "--member");
 
     let bytes = match (spt_url, tar_path) {
-        (Some(url), _) => match tarball_fits_member(&url, member.as_deref()) {
-            Some(b) => b,
-            None => std::process::exit(1),
-        },
-        (None, Some(path)) => {
-            let raw = match std::fs::read(&path) {
-                Ok(b) => b,
-                Err(e) => {
-                    eprintln!("read {path} returned void: {e}");
+        (Some(url), _) => {
+            let temp_tar =
+                std::env::temp_dir().join(format!("cmb_spt_url_{}.tar.bz2", std::process::id()));
+            let Some(temp_tar_str) = temp_tar.to_str() else {
+                eprintln!(
+                    "temp tarball path {} is not UTF-8: the map stays unwritten",
+                    temp_tar.display()
+                );
+                std::process::exit(1);
+            };
+            match omegaflow::archivar::fetch::fetch_raw_to_file_with(
+                &url,
+                omegaflow::archivar::fetch::RetryPolicy::Transient,
+                SPT_TRANSFER_BOUND_S,
+                &temp_tar,
+            ) {
+                Some(n) => eprintln!("fetch {url}: {n} bytes streamed to {}", temp_tar.display()),
+                None => {
+                    eprintln!("fetch {url} returned void: the tarball stays unread");
                     std::process::exit(1);
                 }
-            };
-            match tarball_member_from_bytes(&path, &raw, member.as_deref()) {
-                Some(b) => b,
-                None => std::process::exit(1),
+            }
+            let fits_tmp =
+                std::env::temp_dir().join(format!("cmb_spt_url_{}.fits", std::process::id()));
+            let downloaded =
+                match stream_fits_member_to_file(temp_tar_str, member.as_deref(), &fits_tmp) {
+                    Some(name) => {
+                        eprintln!("tar member '{name}' streamed to {}", fits_tmp.display());
+                        std::fs::read(&fits_tmp)
+                    }
+                    None => {
+                        eprintln!("no .fits member streamed from {url}: the map stays unwritten");
+                        let _ = std::fs::remove_file(&temp_tar);
+                        std::process::exit(1);
+                    }
+                };
+            let _ = std::fs::remove_file(&fits_tmp);
+            let _ = std::fs::remove_file(&temp_tar);
+            match downloaded {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("read {} returned void: {e}", fits_tmp.display());
+                    std::process::exit(1);
+                }
+            }
+        }
+        (None, Some(path)) => {
+            let tmp = std::env::temp_dir().join(format!("cmb_spt_d1_{}.fits", std::process::id()));
+            match stream_fits_member_to_file(&path, member.as_deref(), &tmp) {
+                Some(name) => {
+                    eprintln!("tar member '{name}' streamed to {}", tmp.display());
+                    match std::fs::read(&tmp) {
+                        Ok(b) => {
+                            let _ = std::fs::remove_file(&tmp);
+                            b
+                        }
+                        Err(e) => {
+                            eprintln!("read {} returned void: {e}", tmp.display());
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                None => {
+                    eprintln!("no .fits member streamed from {path}: the map stays unwritten");
+                    std::process::exit(1);
+                }
             }
         }
         (None, None) => {

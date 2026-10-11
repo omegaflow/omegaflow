@@ -564,6 +564,16 @@ pub fn decompress_reader<R: std::io::Read, W: std::io::Write>(
     std::io::copy(&mut dec, out)
 }
 
+pub fn bzip2_tar_stream<R: std::io::Read>(
+    reader: R,
+    want: impl FnMut(&str) -> bool,
+    emit: impl FnMut(&str, Option<&[u8]>),
+) -> std::io::Result<u64> {
+    let dec = Bz2Decoder::new(reader)?;
+    crate::archivar::inflate::tar_stream(dec, want, emit)
+        .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
