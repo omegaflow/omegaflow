@@ -3,6 +3,8 @@ use std::collections::BTreeSet;
 
 const MAX_NEIGHBOURS: usize = 12;
 
+type ScreenedSkeleton = (Vec<(usize, usize)>, Vec<(usize, usize, f64)>);
+
 pub fn pc_stable_skeleton(
     series: &[Vec<f64>],
     test: &dyn CiTest,
@@ -17,7 +19,7 @@ pub fn pc_stable_skeleton_screened(
     test: &dyn CiTest,
     alpha: f64,
     max_cond: usize,
-) -> (Vec<(usize, usize)>, Vec<(usize, usize, f64)>) {
+) -> ScreenedSkeleton {
     let d = series.len();
     if d < 2 {
         return (Vec::new(), Vec::new());
