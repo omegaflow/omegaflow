@@ -1,0 +1,187 @@
+<!--
+  title: Handover — Mycelium-Folge 311 (2026-10-11)
+  session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
+  class: handover
+  date: 2026-10-11
+  sha256: 2078c450f735e638e8a288f263b14a293df80e6676a1144ac0cac66ce9ad606c
+  status: live
+-->
+# Handover — Mycelium-Folge 311 (2026-10-11)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
+gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+zitiert, nie kopiert). Diese Session konsumierte
+`handover-2026-10-11-mycelium-folge310.md` (→ `archiv/`).
+
+## Burn: open 0.0040 · close 0.1070 — Grund: Meta-Pass (flash-first; 1 Taucher MLA-Route, 1 Taucher Orphan-Marker); kein pro/max.
+
+## Operator-Wort-Register
+
+| Wort | Datum | Quelle |
+| --- | --- | --- |
+| „Starte die Mycelium-Linie in einem Pass …" + „Die Übergabe IST der Stand … sie schließt als erste." | 2026-10-11 | Operator (Session 309) · `state/operator-gespraeche/2026-10-11-mycelium.md` |
+| „auf jeden eigen setzt du jetzt einen taucher an und der schliesst die aufgabe ab — das ist ein befehl" | 2026-10-11 | Operator (Session 310) |
+| Sensory: `{cmb_planck,mla,ola}_compiler.rs` = Referenz, kein Träger (a) | 2026-10-11 | Operator/Sensory (Session 310) |
+
+## Offen — eigen
+
+### fingrid-cdn — Dir-Bug geheilt (Ursache gemessen)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Push-Trigger-Lauf `fingrid-cdn` endet
+- **Lage:** (gemessen 2026-10-11, Log Lauf `38151131599`:520) `fingrid_compiler: data/data.fingrid.fi/fingrid_datasets.bin create returned void: No such file or directory (os error 2)` — der Compiler legte das Elternverzeichnis nicht an; das Secret ist jetzt gesetzt (Log :475 `FINGRID_API_KEY: ***`). **Fix:** `create_dir_all(parent)` vor `File::create` (`fingrid_compiler.rs`); `cargo check -p omegaflow-harvest --bin fingrid_compiler` 0/0.
+- **Blockade:** keine
+- **Braucht:** Lauf-Ergebnis lesen (Push-Trigger auf `fingrid_compiler.rs`); bei grün sha256/Länge in `phi/sources.φ` (Mountain-Aufenthalt).
+
+### MLA-Register-Block auf RDR repointet (mountain-317) — Workflow gebaut
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** Lauf `mla-cdn` endet
+- **Lage:** (gemessen 2026-10-11) Block `phi/sources.φ:12036` repointet — `url` → `…/pds-geosciences.wustl.edu/pds3_fixed_width_mlaradr0801141902.bin`, `origin` → `…/rdr_radr/2008/jan/mlaradr0801141902.tab`. Gemessen (Taucher): erste RDR-Paarung `mlaradr0801141902.{lbl,tab}` (rdr_radr → `2008/jan/`); die CDR-Route existiert noch, das alte Produkt `mlastacdr0408192000.tab` ist **404**. Neuer Workflow `.github/workflows/mla-cdn.yml` (`arm=mla_compiler`, `--dat/--label`-Paar, `--ci-mode`, Idempotenz gegen `pds-geosciences.wustl.edu`).
+- **Blockade:** **Riss:** mountain-317 behauptet, das RDR-`.lbl` trage `NAME = RANGE`; der Taucher maß **kein `NAME`** im `.lbl` (nur `PRODUCT_ID`, `INSTRUMENT_MODE_ID = {"SC_RANGE"}`, `RECORD_BYTES = 180`). Der `.lbl`-`^TABLE`-Pointer ist uppercase (`.TAB`) gegen die lowercase Datei — die Compiler-Paarung (`<stem>.lbl`↔`<stem>.tab`) ist case-tolerant.
+- **Braucht:** (a) `mla-cdn`-Ergebnis lesen; (b) Mountain: `field RANGE …`-Zeile + NAME-Riss auflösen.
+
+### SPT-3G D1 `cmap` (cmb-cdn) — Fix v2 unter Test
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Lauf `38150991206` endet
+- **Lage:** (gemessen 2026-10-11) Fix v2 (FITS-HDU-Header-Start statt DATA-Start) in `8f23c7a71`; `cargo check`/`--bin` 0/0; Lauf in_progress.
+- **Blockade:** keine
+- **Braucht:** Ergebnis lesen; bei grün sha256 in `phi/sources.φ:11620` (Mountain-Aufenthalt).
+
+### Open-LiDAR / coverage-manifest — swisstopo-Bound entfernt; re-dispatcht
+- **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** Lauf `38152623110` endet
+- **Lage:** (gemessen 2026-10-11, Log `38139624730`) `swisstopo_coverage: STAC walk reached the page bound 40 — the walk stays incomplete` (exit 2); `ea_lidar_index` 404 nach ≥1 Seite = Katalogende (Fix). Der 40-Seiten-Bound ist entfernt (`308795bc8`, Compiler-Default 5000), re-dispatcht `38152623110`.
+- **Blockade:** Mountain-Verdikt NL-Basis offen (`state/mycelium/lidar_id_diff_measured.md`).
+- **Braucht:** Lauf-Ergebnis lesen; Mountain-Verdikt NL.
+
+### OpenTopography — Lauf success; Registrierung offen
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) Lauf `38150636428` **success**; Secret `OPENTOPOGRAPHY_API_KEY` im Repo gesetzt.
+- **Blockade:** die url/origin/compiler-Direktiven fehlen in `phi/sources.φ` (sgrep leer).
+- **Braucht:** Register-Block OpenTopography (Mycelium url/origin + Mountain terms/field).
+
+### GIC OE-417 + EAGLE-I — Workflows success; Register-Block offen
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `oe417-cdn 38151005570` **success**; `eaglei-cdn 38151003530` **success**. Die Compiler emittieren die Direktiven (url/origin/compiler/sha256/format/ttl/at earth/quantity), kein `terms`. Register-Blöcke fehlen in `phi/sources.φ` (sgrep leer).
+- **Blockade:** Mountains `terms`/`field` (OE-417 Public Domain / EAGLE-I CC-BY-4.0 sind im `An mountain`-Block angefragt).
+- **Braucht:** Register-Block (Mycelium url/origin + Mountain terms/field), wie in `## An mountain`.
+
+### DEMETER — CDN-Spiegel entfernt; lokale Registrierung + terms
+- **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** Mountains `terms`-Zeile für `regards.cnes.fr`
+- **Lage:** (gemessen 2026-10-11) Lizenz = **CDPP Data-Centre-Lizenz V1.1** (nicht-kommerziell, Weitergabe nur mit schriftlicher Zustimmung); CDN-Release `regards.cnes.fr` (77 `demeter_isl_*.bin`) gelöscht, `demeter-cdn`-Lauf `38135966376` cancelled, die zwei `demeter-*-cdn.yml` entfernt.
+- **Blockade:** keine (Lizenz erzwingt lokal-only).
+- **Braucht:** lokale Registrierung (kein CDN-Asset); `terms` = CDPP V1.1 (Mountain).
+
+### Coverage-Manifest-Fetch-Loop — USGS-Manifest-Registrierung + `shard`-Entscheidung
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `main_flow.rs:5103` dispatcht `coverage_manifest` **und** `usgs_lidar_coverage`; `cargo check` 0/0.
+- **Blockade:** das USGS-Manifest ist nicht in `phi/sources.φ` registriert; `usgs_lidar_coverage.rs` emittiert `url size` statt `shard <url> <6 f64>`.
+- **Braucht:** `shard`-Form entscheiden; USGS-Manifest registrieren (Mountain terms + Mycelium url).
+
+### Frame/Epoche — CRS gebaut; Wire-Doc offen
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `projection.rs` +344 Z. — Lambert-93 (`EPSG:2154`), CH1903+/LV95 (`2056`), RD New (`28992`); 9 Kontrollpunkt-Tests; `cargo check` 0/0. CHENyx06-Grid `pending`.
+- **Blockade:** keine
+- **Braucht:** Wire-Kontrakt-Doc fortschreiben (`shard`-Grammatik mit CRS/Epoche).
+
+### MCP no-leak — Runtime-Hälfte offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** MCP-Session-Restart → `state/mycelium/mcp_allowlist_capture_measured.md`
+- **Lage:** (gemessen 2026-10-11) `opencode.json` parst; Wrapper Pin `1.9.0`; `chrome-devtools-voices` trägt `--no-javascript-evaluation`; Allowlist-Hosts konsistent.
+- **Blockade:** die Live-Seat-Prüfung braucht einen MCP-Session-Restart.
+- **Braucht:** nach dem Restart die Seats live prüfen.
+
+### Orphan-Prosa-Träger (future-235) — Marker neu gemessen; Träger diese Übergabe
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `register_lookup --orphan-docs` = 0 (diese Zeile trägt sie). Marker am Baum neu gemessen: `docs/concepts/free-voices.md:87` = **Falsch-Positiv** (Axiom-Name `pending` in Backticks, `docs/granit.md:20`); `docs/concepts/tools-map.md:374` = **Falsch-Positiv** (Verb „wartet"); `docs/concepts/tools-map.md:349` = **operator-gebunden** (Debugger-Rechte am live Chrome; Binding steht `opencode.json:442`, nur das Operator-Wort fehlt; die zitierte Zeile `opencode.json:172-178` ist stale); `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md:96` = offen, Migrationsschritte operator-gated; `docs/surveys/survey-2026-09-03-orphan-verdicts.md:106` = Step 5 (CDN-kanonisch vs 13-netloc, destruktiv); `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md:53` = Seat-Re-Probe (MiMo).
+- **Blockade:** keine
+- **Braucht:** je Dokument den benannten nächsten Schritt; die zwei Falsch-Positive bei nächster Doku-Berührung rewording (kein Marker).
+
+### Fetch-Provenienz (future-235) — Taucher-Sidecar
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) die Provenienz liegt in `opencode.db`; `state/research/README.md` §Provenienz hat 76 Dateien nach `data/<netloc>/` gehoben. Der wirkliche Fix bleibt: die Taucher schreiben die URL **beim Fetch** mit (Sidecar `<datei>.src`).
+- **Blockade:** keine
+- **Braucht:** Sidecar-Schreibpfad in den Fetch-Weg (Werkzeug) + Mountain-Seite.
+
+### de441-de442-sha (future-235)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** erster Manifest-Lauf je NAIF-Anker (`phi/sources.φ:4321-4369`)
+- **Lage:** (gemessen 2026-10-11) NAIF-Assets registriert (`phi/sources.φ:4321-4369`); sha256 erst nach dem Merge-Lauf.
+- **Blockade:** wartet auf den Lauf.
+- **Braucht:** Merge-Lauf-Ergebnis.
+
+### dropped-gate-move-disposition (future-235)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `--dropped-keys` + Baseline stehen (924 keys, `278ba2905`).
+- **Blockade:** keine
+- **Braucht:** Punkt-ID/Hash-Disposition.
+
+### THEMIS-ASI-Keogramm-Compiler — Workflow + Station-Koordinaten + terms
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) `themis_asi_keogram_compiler.rs` gebaut (Route `…/THEMIS/asi/stream2/<YYYY>/<MM>/<DD>/<label>/…_full-keogram.pgm.jpg`, keyless, `--station`/`--date`/`--start`/`--stop`/`--ci-mode`); `cargo check`/`--bin` 0/0.
+- **Blockade:** Station-Koordinaten-Tabelle fehlt; `terms` fehlt.
+- **Braucht:** (a) `themis_asi-keogram-cdn.yml`; (b) Station-Koordinaten (Mountain); (c) `terms` (UCalgary).
+
+### LiDAR-Inventar / extraterr. LiDAR / Bathymetrie — Teile mountain
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) TNM + LOLA + CKAN verdrahtet; `bluetopo`/`emodnet_bathymetry`-Compiler stehen.
+- **Blockade:** Parser/Register-Blöcke bei Mountain.
+- **Braucht:** (a) je weiterer Bucket ein `<x>_coverage.rs`; (b) Parser MOLA/MLA/NLR/OLA/Hayabusa (Mountain); (c) BlueTopo-Gestalt + Register-Blöcke (Mountain).
+
+### Re-Admission-CDNs (mountain-317/316)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Mountains `terms`-Verdikt je Quelle
+- **Lage:** (gemessen 2026-10-11) GRDC-Caravan / RouteViews / EPH-VSOP / GloFAS neu-admittiert; url/origin je Quelle nach Mountains `terms`.
+- **Blockade:** Mountains `terms` fehlt.
+- **Braucht:** nach `terms` je url/origin (Mycelium).
+
+### SWPC/RTSW-Archivreihe-Harvest (river-187)
+- **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** Mountains Quelle + `ttl` genannt
+- **Lage:** (gemessen 2026-10-11, Lauf `38119733631` Job `matrix-vlies`) die 126 `alignment pending`-Zellen schließen erst mit einem Compiler auf die **Archivreihe** (statt ~1-Tag-Live).
+- **Blockade:** Mountains Quelle/`ttl` noch nicht genannt.
+- **Braucht:** Mountains Quelle+`ttl`, dann Compiler + `*-cdn.yml`.
+
+### Architektur — CI-Optimierung
+- **Status:** wartend · **Teile linie:mountain/river** | **Bindung:** eigen
+- **Trigger:** grüner `ci-check`-Lauf
+- **Lage:** (gemessen 2026-10-11) mehrere `ci-gate`-Läufe in `subset → Run cargo test --lib`.
+- **Blockade:** Shard-Build-vs-Test-Anteil erst an green `ci-check` messbar.
+- **Braucht:** grüner `ci-check` → `ci_manage jobs <id>`; dann `cargo nextest archive` + Shards.
+
+### matrix-rotor
+- **Status:** wartend · **Teile linie:river** | **Bindung:** eigen
+- **Trigger:** nächster `matrix-rotor`-Lauf (externer Akt)
+- **Lage:** (gemessen 2026-10-11) letzter rot = transienter Runner-Shutdown (kein Assertion-Rot).
+- **Blockade:** nur der persistente t420 ist dauerhaft.
+- **Braucht:** —
+
+## An mountain
+
+Origin: mycelium-311 (2026-10-11).
+
+- **MLA-Register (mountain-317):** Block `phi/sources.φ:12036` repointet (url → `pds3_fixed_width_mlaradr0801141902.bin`, origin → `…/rdr_radr/2008/jan/mlaradr0801141902.tab`); neuer Workflow `mla-cdn.yml`. **Riss:** das RDR-`.lbl` trug kein `NAME` (nur `PRODUCT_ID`/`INSTRUMENT_MODE_ID={"SC_RANGE"}`) — die behauptete `NAME = RANGE`-Zeile braucht eine Messung.
+- **OE-417 + EAGLE-I:** die Compiler emittieren die Direktiven verbatim (url/origin/compiler/sha256/format/ttl/at earth/quantity). Workflows `38151005570`/`38151003530` **success**. Braucht Mountains `terms` (OE-417 Public Domain / EAGLE-I CC-BY-4.0) + `field`; dann schreibt Mycelium url/origin.
+- **DEMETER:** `terms` = CDPP Data-Centre-Lizenz V1.1 (nicht-kommerziell); **nur lokale Registrierung**, kein CDN-Spiegel.
+- **OpenTopography:** Lauf `38150636428` success; Register-Block (url/origin + terms) fehlt.
+- **Re-Admission-CDNs:** GRDC-Caravan/RouteViews/EPH-VSOP/GloFAS brauchen nach Mountains `terms` je url/origin (Mycelium).
+- **THEMIS-ASI-Keogramm:** Compiler gebaut; Braucht eine **gemessene THEMIS-ASI-Station-Koordinaten-Tabelle** (`on earth <lat> <lon> <alt>`) + `terms`.
+- **Coverage-Manifest-Fetch-Loop:** USGS-Manifest auf `shard <url> <6 f64>` entscheiden + registrieren.
+
+## LOCK
+
+- **SuperDARN Record-Download** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht messen das lade ich erst herunter wenn ich glasfaser habe." (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt.
+
+## Abschluss
+
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`); `/consent` ist der
+session-weite Consent, nie das Commit-Wort.
