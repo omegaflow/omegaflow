@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — der An-mountain-Block gefaltet (Mountain 311), das Blatt-Siegel an Future transportiert, das Offen-Register gegen den Baum gehalten
   class: handover
   date: 2026-10-11
-  sha256: 749e22281f5166052a1e1514a0a33901f18a2e34f2a0c4bbe012df8fad266ef6
+  sha256: 608af404c58131a6bd1e7f695cc377b54fd587433131e5d930e75e4ee63170e3
   status: live
 -->
 # Handover — River-Folge 185 (2026-10-11)
@@ -61,6 +61,13 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 
 ## Offen (aufgeschlüsselt)
 
+### GIC-Onset selbst aus dB/dt ableiten (gefaltet aus `future-folge228 §An river`)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt
+- **Lage:** (gemessen 2026-10-11, gefaltet aus `future-folge228 §An river`) der `dB/dt` (INTERMAGNET) **ist** die Messung, die Onset-Listen (McPherron/SuperMAG) sind Derivate; für das GIC-Fenster 2024/2025 fehlt eine lizenz-clean Onset-Quelle (McPherron endet 2024, `newell`/`liou`/`frey` = 0 2024/2025). **Proxy-Scope gemessen:** das Ziel-Netz ist die 154-Station-Partition (`state/river/gic-family-auroral.txt` (31) · `state/river/gic-family-sub-auroral.txt` (25) · `state/river/gic-family-mid-latitude.txt` (98)); kompiliertes dB/dt nur für ABK-1h/1m + SOD-1h (`phi/sources.φ:2421/:2432/:2443`, `CC-BY-NC-4.0`), die 152 tragen `intermagnet_xyz_x/y/z_nt` (462 Felder) → per-Station-dB/dt = Derivat, `pending` (Mountain). Messung `substorm-compare` `38125980566` (2024–2026) / `38122580845` (2000–2010), Bin öffentlich `ad68f9083`.
+- **Blockade:** die per-Station-dB/dt-Reihe der 152 ist ein Derivat (`pending`, Mountain); ohne sie nur der 2-Station-Eichanker ABK/SOD.
+- **Braucht:** neues Bin im Verzeichnis `tools/measure/src/bin/` (Name `gic_onset_detector`, serien-agnostisch: eine dB/dt-Reihe → Bay-Onset-Zeiten), **per Familie** (auroral/sub-auroral/mid) gemessen; Eichung an ABK/SOD gegen die offene McPherron-Liste 2000–2024 (73–81 %, 2–4 min); CI-Workflow gegen das `substorm-compare`-Fenster. Hinweis: `substorm_compare.rs` vergleicht heute gegen die 5 SuperMAG-Listen — fallen die als Derivate (Future→Mountain), wird McPherron das Vergleichsziel.
+
 ### Flyby-Kette — recon bleibt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34`.
@@ -79,7 +86,7 @@ Origin: river-182 (2026-10-11).
 Origin: river-185 (2026-10-11).
 
 - **Blatt `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — das Siegel wartet auf das Operator-Wort.** Vorregistrierung der GIC-Breitenband-Familien (Fixierung vor dem Lauf, 2026-10-06); offene Slots bis zur Versiegelung: α-Ebene Stufe 2 (`pending`, aus der kalibrierten Null), Resample-Blocklänge/Binnung (`pending`), Familien-Deskriptoren (`pending`, warten auf den per-Station-dB/dt-Bestand, Mountain). Kein Live-Carrier in der aktuellen Future-Übergabe (`handover-2026-10-11-future-folge228.md` trägt kein „Siegel" für dieses Blatt). **Braucht:** das Operator-Wort zum Siegeln (oder die Rücknahme/Nicht-Siegelung) — die Maschine bereitet bis zur Kante vor, sie schließt nicht.
-- **Korrektur zum GIC-Onset-Punkt (`future-folge228:152-160`) — der Proxy ist nicht ABK/SOD.** Gemessen (2026-10-11): das Ziel-Netz ist die **154-Station-INTERMAGNET-Partition** (`state/river/gic-family-{auroral,sub-auroral,mid-latitude}.txt` = 31+25+98); ABK/SOD tragen nur das **kompilierte dB/dt** (3 Serien: `phi/sources.φ:2421` ABK-1h · `:2432` ABK-1m · `:2443` SOD-1h, `CC-BY-NC-4.0`), die übrigen **152** tragen `intermagnet_xyz_x/y/z_nt` (462 Felder). Der Bay-Onset-Detektor ist darum **serien-agnostisch** zu bauen (eine dB/dt-Reihe → Onset-Zeiten) und **je Familie** (auroral/sub-auroral/mid) zu messen — ABK/SOD ist der **Eichanker** gegen McPherron 2000–2024 (73–81 %, ~2–4 min), nicht das Netz. Vorbedingung: die per-Station-dB/dt-Reihe der 152 ist ein **Derivat** aus XYZ (Kadenz/Filter, an ABK/SOD validiert) — `pending` (Mountain), `docs/blatt/blatt-gic-breitenband-familien.md:246-248`. Bitte den Punkt-Text auf den 154-Netz-Scope ziehen.
+- **Korrektur zum GIC-Onset-Punkt (`future-folge228:152-160`) — der Proxy ist nicht ABK/SOD.** Gemessen (2026-10-11): das Ziel-Netz ist die **154-Station-INTERMAGNET-Partition** (`state/river/gic-family-auroral.txt` (31) · `state/river/gic-family-sub-auroral.txt` (25) · `state/river/gic-family-mid-latitude.txt` (98)); ABK/SOD tragen nur das **kompilierte dB/dt** (3 Serien: `phi/sources.φ:2421` ABK-1h · `:2432` ABK-1m · `:2443` SOD-1h, `CC-BY-NC-4.0`), die übrigen **152** tragen `intermagnet_xyz_x/y/z_nt` (462 Felder). Der Bay-Onset-Detektor ist darum **serien-agnostisch** zu bauen (eine dB/dt-Reihe → Onset-Zeiten) und **je Familie** (auroral/sub-auroral/mid) zu messen — ABK/SOD ist der **Eichanker** gegen McPherron 2000–2024 (73–81 %, ~2–4 min), nicht das Netz. Vorbedingung: die per-Station-dB/dt-Reihe der 152 ist ein **Derivat** aus XYZ (Kadenz/Filter, an ABK/SOD validiert) — `pending` (Mountain), `docs/blatt/blatt-gic-breitenband-familien.md:246-248`. **Der `## An river`-Block ist in diesem Atom gefaltet** (der Punkt steht jetzt in Rivers §Offen, Scope 154-Netz); Future kann den Block beim nächsten Pass entfernen.
 
 ## Abschluss
 
