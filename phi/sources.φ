@@ -1942,13 +1942,13 @@ terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni2_compiler.rs
 at sun
 ttl 86400
-field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 86400 0.0 0.0
-field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
-field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 86400 0.0 0.0
-field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 86400 0.0 0.0
-field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
-field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
-field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
+field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/poes19_meped.bin
 format poes19_meped

@@ -407,7 +407,7 @@ fn inflate_zlib(data: &[u8], out_len: usize) -> Option<Vec<u8>> {
     if cmf & 0x0f != 8 {
         return None;
     }
-    if (((cmf as u16) << 8) | flg as u16) % 31 != 0 {
+    if !(((cmf as u16) << 8) | flg as u16).is_multiple_of(31) {
         return None;
     }
     let mut bits = Bits::new(data.get(2..)?);
@@ -629,7 +629,7 @@ fn find_new_class_tag(buf: &[u8], name: &str) -> Option<usize> {
     let tag = K_NEW_CLASS_TAG.to_be_bytes();
     let needle = name.as_bytes();
     let mut i = 0;
-    while i + 4 + needle.len() + 1 <= buf.len() {
+    while i + 4 + needle.len() < buf.len() {
         if buf[i..i + 4] == tag {
             let rest = &buf[i + 4..];
             if rest.len() > needle.len()

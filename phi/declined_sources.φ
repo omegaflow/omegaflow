@@ -1347,6 +1347,10 @@ decline registry/katalog
 url https://censorbib.nymity.ch/
 note Zensurforschungs-Bibliografie (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
+decline no-physical-force
+url https://censoredplanet.org/
+note Netz-Zensur-Messprojekt (Univ. Michigan), Rohdaten via GraphQL data.censoredplanet.org — Netz-Verhalten, kein physikalisches Feld (sniff 200 3581 B, Playwright GraphiQL, 2026-10-11).
+
 decline catalog
 url https://chime-frb.ca/
 note CHIME/FRB-Burst-Katalog, Register ohne Live-Messwert (Quelle CANFAR-DOIs); conn-refused/cert, Wayback 2026-07-31 lebt.
@@ -3445,6 +3449,10 @@ url https://retractionwatch.com/
 note Retraction-Datenbank (HTTP 206, direkt) — bibliografischer Index, kein Messwert-Feld (gemessen 2026-10-10).
 
 decline registry/katalog
+url https://rpubs.com/
+note R-Markdown-Report-Publishing (sniff 200 13407 B) — Dokument-Index, kein Messwert-Feld; Sunset Juni 2027 (Playwright 2026-10-11).
+
+decline registry/katalog
 url https://saber.gats-inc.com/
 note SABER/TIMED Portal (HTTP 200 91386 B) — Datenportal-Root, kein Feed.
 
@@ -5056,6 +5064,14 @@ decline geographic-infrastructure
 url https://www.data.bsee.gov/Pipeline/ROWDescriptions/Default.aspx
 note BSEE Pipeline Right-of-Way (US DOI) 2026-10-02 HTTP 200 (240837 B); ROW-Routen-Geometrie, kein Kraftfeld, kein Zeuge (administratives Inventar).
 
+decline registry/katalog
+url https://www.dataone.org/
+note Forschungsdaten-Katalog/Repo-Föderation (search.dataone.org), Rohdaten bei Member-Repos — Registry, kein Messwert-Feld (sniff 200 140483 B, Playwright 2026-10-11).
+
+decline registry/katalog
+url https://www.dbpedia.org/
+note Wikipedia/Wikidata-abgeleiteter RDF-Knowledge-Graph (Data Downloads, derived, kein Roh-Messwert) — Registry (sniff 200 116428 B, Playwright 403 NinjaFirewall, 2026-10-11).
+
 decline literature
 url https://www.dimensions.ai/products/free
 note Dimensions (Digital Science) — freie Metrics-API (metricssignup), Antwort = Zitations-/Altmetrics-Zählwerte (citations, field citation ratio), kein physikalischer Messwert. Kein Konsument. decline literature (Präzedenz OpenAlex registry, Scopus).
@@ -5275,6 +5291,10 @@ note ISC-Bulletin — als isc_bulletin.iscb integriert (origin fdsnws/event/1/qu
 decline registry
 url https://www.isrctn.com
 note ISRCTN — Studien-Registry; 200 (2026-10-03).
+
+decline registry/katalog
+url https://www.kaggle.com/datasets
+note Datensatz-Marktplatz (account-gated /account/login), kein definierter Kraft-/Format-Arm (sniff 200 6004 B, Playwright 2026-10-11).
 
 decline superseded-by-integrated
 url https://www.lamost.org/dr10/v2.0/voservice/tap
@@ -5983,6 +6003,10 @@ note WorldPop = Modell/Populationsschätzung, kein Live-Feed (wpgp 500, /rest/da
 decline molecular
 url https://www.yeastgenome.org/
 note SGD — Hefe-Genomdatenbank; 200 (2026-10-03).
+
+decline registry/katalog
+url https://www.zooniverse.org/
+note Citizen-Science-Projekt-Plattform/Katalog (Featured Projects, Discipline-Filter) — Projekt-Index, keine Messung (sniff 200 52725 B, Playwright 2026-10-11).
 
 decline registry/katalog
 url https://www.zotero.org/
