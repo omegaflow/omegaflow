@@ -30,8 +30,9 @@ jobs:
           - bin: swisstopo_coverage
             netloc: data.geo.admin.ch
             out: swisstopo_coverage.manifest
-            # bounded default: 40 pages x 1000 assets = ~40k, one year of swisssurface3d
-            args: "--max-pages 40 --emit-ids data/data.geo.admin.ch/swisstopo_coverage.ids"
+            # the full CH swisssurface3d walk exceeds 40 pages (measured 38139624730: "reached the
+            # page bound 40"); walk to the compiler default bound (MAX_PAGES=5000) to reach the end
+            args: "--emit-ids data/data.geo.admin.ch/swisstopo_coverage.ids"
           - bin: linz_coverage
             netloc: nz-elevation.s3-ap-southeast-2.amazonaws.com
             out: linz_coverage.manifest
