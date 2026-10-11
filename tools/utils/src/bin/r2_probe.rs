@@ -90,6 +90,7 @@ fn list_bucket(
     bucket: &str,
     amz_date: &str,
     date_stamp: &str,
+    max_bytes: u64,
 ) -> Result<(), String> {
     let canonical_uri = format!("/{}", bucket);
     let mut token: Option<String> = None;
@@ -155,6 +156,11 @@ fn list_bucket(
     for (n, k) in largest.iter().take(10) {
         println!("r2_probe:   {} B  {}", n, k);
     }
+    if bytes > max_bytes {
+        return Err(format!(
+            "r2_probe: hot-tier ALARM — {objects} objects, {bytes} bytes over the {max_bytes}-byte soft cap"
+        ));
+    }
     Ok(())
 }
 
@@ -190,6 +196,17 @@ fn run() -> Result<(), String> {
     let amz_date = hour_str(unix).replace(['-', ':'], "");
 
     if args.iter().any(|a| a.as_str() == "--list") {
+        let max_bytes = args
+            .iter()
+            .position(|a| a.as_str() == "--max")
+            .and_then(|i| args.get(i + 1))
+            .and_then(|v| v.parse::<u64>().ok())
+            .or_else(|| {
+                std::env::var("R2_HOT_TIER_MAX_BYTES")
+                    .ok()
+                    .and_then(|v| v.parse::<u64>().ok())
+            })
+            .unwrap_or(8 * 1024 * 1024 * 1024);
         return list_bucket(
             access_key,
             secret_key,
@@ -198,6 +215,7 @@ fn run() -> Result<(), String> {
             bucket,
             &amz_date,
             &date_stamp,
+            max_bytes,
         );
     }
 
