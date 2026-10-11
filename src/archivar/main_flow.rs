@@ -3151,6 +3151,7 @@ pub fn main_flow() {
                     | "drs_fits"
                     | "emm_exi_l2a"
                     | "demeter_isl"
+                    | "masie_ice_extent"
                     | "kcdc_kascade"
                     | "kasi"
                     | "wqp_result"
